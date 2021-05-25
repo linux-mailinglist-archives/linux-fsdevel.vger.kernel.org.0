@@ -2,165 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12285390428
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 16:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42F2D390458
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 16:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233982AbhEYOmG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 10:42:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53180 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232939AbhEYOmG (ORCPT
+        id S234196AbhEYOzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 10:55:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53040 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234090AbhEYOzJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 10:42:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621953635;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=njoB89ftAHN7n/O/lGgRgd4/0s+fvP1HkvXPNe11cV8=;
-        b=NMwvaXIgUP7HoTzJTrVFdm6Zmjtw644vut7QuMiM0MGh1FKQzcf1jiYXJHDkKnN6mmD+ZW
-        NEDaCxcEaEZHorxsq6uKX+nQQPjJz4BDV8xBKA5m1hiN5Rl3SRPIIrEHk6EP+FfjSyXUGM
-        UoaTo7t405oirW371GJ/A6ySM4RWct0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-197-e7mfoCAQPNuClKFKU0Mv3A-1; Tue, 25 May 2021 10:40:30 -0400
-X-MC-Unique: e7mfoCAQPNuClKFKU0Mv3A-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 247061926DA1;
-        Tue, 25 May 2021 14:40:29 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-24.rdu2.redhat.com [10.10.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 112AA2BFE6;
-        Tue, 25 May 2021 14:40:22 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix fall-through warnings for Clang
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Jeffrey Altman <jaltman@auristor.com>,
-        linux-afs@lists.infradead.org, linux-hardening@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 25 May 2021 15:40:22 +0100
-Message-ID: <162195362220.4082674.5166981803589803097.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Tue, 25 May 2021 10:55:09 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75CF5C061756
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 07:53:38 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id z12so46341153ejw.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 07:53:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Nu/GHBpjSZqFLQJdrv2WofUEakGX52odyE7jVmGTpWQ=;
+        b=c9QvKR2OT26IxxSxa+atw/d+xpWLPFbnoeKFXH3K8Mvfcxt8tUMbT+2tqs8VSSKs7F
+         TSSS7PHKhLLCrHf99UhSXPd9mlJvVBoOz41qNw86HnB+nMjXTB6gRyYXVLA8I9Ycs5a7
+         ynoYKi/4jkHvqrGSY9M5+xwm9F+P7f2XMOomNXrBQ+F4j3Uz58OKkfEDB+6Yl4nZbd7q
+         RNsaWvawcuTrVPiIN/N7KdKK7GnkySLs/LpDurc67rCdJQDjs2RlVJQEy/QIrMYlM3OB
+         Gx7QXYRlryExwLR3xXf/5rsLQvDO6CkT/FlSE1YDGXPKcS3VmEcNc1wGgrzntFqzwH70
+         ZoAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Nu/GHBpjSZqFLQJdrv2WofUEakGX52odyE7jVmGTpWQ=;
+        b=FFdZnjA1xI+25ffw/5wgRp9CrG2CwswtOHsV3oEFUNq8WvP0x5CVTVhoyLNIdx06QS
+         +nSSzDgp2auVZCj5A8VDDs4WtqfgHokx4adsRtfauqZpBPGdj/qNxCR338rDVa91qWNe
+         Gs3LOF3bUz3k9tcP+cAQ/hRxuCKtypn4JJYOKgOSdfQQdjD1WmTfAJI6NPMm7a55l0oC
+         S/JxWzR3KufWTtgYSMbRO1SXrjXObv1S3p+b3Kk6ob2PiIL8wkVKC/Qp+tnpEZ5fP2qS
+         0j9S9hUzFJf1rJP7Uc/uRWqcu/dUEqFDDu2aC3mw8BHplQ3Ci6WlTJBpyb+HlU0FIfbv
+         EP4Q==
+X-Gm-Message-State: AOAM531SeaW6uaxvHSDbLaAEiw2n+/3N88zKJ/cUoH+Qf2+zyGWhKkOc
+        CXVVJ7Rj5j/6K7dMA1shvgvcziR/o5H8i4qGEfrO
+X-Google-Smtp-Source: ABdhPJwkXErdYWtLRoRdThvmdvfiliPdTp4bhmfacT9ChcVlEWEvajLzbaqcInOamF9r7J4ax4pk/cUClWjqd9xalWw=
+X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr28861448ejb.542.1621954416913;
+ Tue, 25 May 2021 07:53:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl> <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com> <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <e701511f-520d-4a94-9931-d218b14a80fe@gmail.com>
+In-Reply-To: <e701511f-520d-4a94-9931-d218b14a80fe@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 25 May 2021 10:53:25 -0400
+Message-ID: <CAHC9VhTS_Yt0PzG_WjsgUA04inHa=N8+OjWju9waefP==Di39A@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavoars@kernel.org>
+On Tue, May 25, 2021 at 4:27 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> On 5/24/21 8:59 PM, Paul Moore wrote:
+> > On Sun, May 23, 2021 at 4:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >> On 5/22/21 3:36 AM, Paul Moore wrote:
+> >>> On Fri, May 21, 2021 at 8:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >>>> On 5/21/21 10:49 PM, Paul Moore wrote:
+> >> [...]
+> >>>>>
+> >>>>> +     if (req->opcode < IORING_OP_LAST)
+> >>>>
+> >>>> always true at this point
+> >>>
+> >>> I placed the opcode check before the audit call because the switch
+> >>> statement below which handles the operation dispatching has a 'ret =
+> >>> -EINVAL' for the default case, implying that there are some paths
+> >>> where an invalid opcode could be passed into the function.  Obviously
+> >>> if that is not the case and you can guarantee that req->opcode will
+> >>> always be valid we can easily drop the check prior to the audit call.
+> >>
+> >> It is always true at this point, would be completely broken
+> >> otherwise
+> >
+> > Understood, I was just pointing out an oddity in the code.  I just
+> > dropped the checks from my local tree, you'll see it in the next draft
+> > of the patchset.
+> >
+> >>>> So, it adds two if's with memory loads (i.e. current->audit_context)
+> >>>> per request in one of the hottest functions here... No way, nack
+> >>>>
+> >>>> Maybe, if it's dynamically compiled into like kprobes if it's
+> >>>> _really_ used.
+> >>>
+> >>> I'm open to suggestions on how to tweak the io_uring/audit
+> >>> integration, if you don't like what I've proposed in this patchset,
+> >>> lets try to come up with a solution that is more palatable.  If you
+> >>> were going to add audit support for these io_uring operations, how
+> >>> would you propose we do it?  Not being able to properly audit io_uring
+> >>> operations is going to be a significant issue for a chunk of users, if
+> >>> it isn't already, we need to work to find a solution to this problem.
+> >>
+> >> Who knows. First of all, seems CONFIG_AUDIT is enabled by default
+> >> for many popular distributions, so I assume that is not compiled out.
+> >>
+> >> What are use cases for audit? Always running I guess?
+> >
+> > Audit has been around for quite some time now, and it's goal is to
+> > provide a mechanism for logging "security relevant" information in
+> > such a way that it meets the needs of various security certification
+> > efforts.  Traditional Linux event logging, e.g. syslog and the like,
+> > does not meet these requirements and changing them would likely affect
+> > the usability for those who are not required to be compliant with
+> > these security certifications.  The Linux audit subsystem allows Linux
+> > to be used in places it couldn't be used otherwise (or rather makes it
+> > a *lot* easier).
+> >
+> > That said, audit is not for everyone, and we have build time and
+> > runtime options to help make life easier.  Beyond simply disabling
+> > audit at compile time a number of Linux distributions effectively
+> > shortcut audit at runtime by adding a "never" rule to the audit
+> > filter, for example:
+> >
+> >  % auditctl -a task,never
+> >
+> >> Putting aside compatibility problems, it sounds that with the amount of overhead
+> >> it adds there is no much profit in using io_uring in the first place.
+> >> Is that so?
+> >
+> > Well, if audit alone erased all of the io_uring advantages we should
+> > just rip io_uring out of the kernel and people can just disable audit
+> > instead ;)
+>
+> Hah, if we add a simple idle "feature" like
+>
+> for (i=0;i<1000000;i+) {;}
+>
+> and it would destroy all the performance, let's throw useless
+> Linux kernel then!
+>
+> If seriously, it's more of an open question to me, how much overhead
+> it adds if enabled (with typical filters/options/etc).
 
-In preparation to enable -Wimplicit-fallthrough for Clang, fix multiple
-warnings by explicitly adding multiple fallthrough pseudo-keywords
-in places where the code is intended to fall through to the next
-case.
+I am very hesitant to define a "typical" audit configuration as it
+really is dependent on the user's security requirements as well as the
+particular solution/environment.  Any configuration I pick will be
+"wrong" for a lot of audit users :)
 
-Link: https://github.com/KSPP/linux/issues/115
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-hardening@vger.kernel.org
-Link: https://lore.kernel.org/r/51150b54e0b0431a2c401cd54f2c4e7f50e94601.1605896059.git.gustavoars@kernel.org/ # v1
-Link: https://lore.kernel.org/r/20210420211615.GA51432@embeddedor/ # v2
----
+As I see it, users will likely find themselves in one of three
+performance buckets:
 
- fs/afs/cmservice.c |    5 +++++
- fs/afs/fsclient.c  |    4 ++++
- fs/afs/vlclient.c  |    1 +
- 3 files changed, 10 insertions(+)
+* io_uring enabled, CONFIG_AUDIT=n
 
-diff --git a/fs/afs/cmservice.c b/fs/afs/cmservice.c
-index a4e9e6e07e93..d3c6bb22c5f4 100644
---- a/fs/afs/cmservice.c
-+++ b/fs/afs/cmservice.c
-@@ -322,6 +322,8 @@ static int afs_deliver_cb_callback(struct afs_call *call)
- 			return ret;
- 
- 		call->unmarshall++;
-+		fallthrough;
-+
- 	case 5:
- 		break;
- 	}
-@@ -418,6 +420,7 @@ static int afs_deliver_cb_init_call_back_state3(struct afs_call *call)
- 			r->node[loop] = ntohl(b[loop + 5]);
- 
- 		call->unmarshall++;
-+		fallthrough;
- 
- 	case 2:
- 		break;
-@@ -530,6 +533,7 @@ static int afs_deliver_cb_probe_uuid(struct afs_call *call)
- 			r->node[loop] = ntohl(b[loop + 5]);
- 
- 		call->unmarshall++;
-+		fallthrough;
- 
- 	case 2:
- 		break;
-@@ -663,6 +667,7 @@ static int afs_deliver_yfs_cb_callback(struct afs_call *call)
- 
- 		afs_extract_to_tmp(call);
- 		call->unmarshall++;
-+		fallthrough;
- 
- 	case 3:
- 		break;
-diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
-index 2f695a260442..dd3f45d906d2 100644
---- a/fs/afs/fsclient.c
-+++ b/fs/afs/fsclient.c
-@@ -388,6 +388,7 @@ static int afs_deliver_fs_fetch_data(struct afs_call *call)
- 		req->file_size = vp->scb.status.size;
- 
- 		call->unmarshall++;
-+		fallthrough;
- 
- 	case 5:
- 		break;
-@@ -1408,6 +1409,7 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
- 		_debug("motd '%s'", p);
- 
- 		call->unmarshall++;
-+		fallthrough;
- 
- 	case 8:
- 		break;
-@@ -1845,6 +1847,7 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
- 		xdr_decode_AFSVolSync(&bp, &op->volsync);
- 
- 		call->unmarshall++;
-+		fallthrough;
- 
- 	case 6:
- 		break;
-@@ -1979,6 +1982,7 @@ static int afs_deliver_fs_fetch_acl(struct afs_call *call)
- 		xdr_decode_AFSVolSync(&bp, &op->volsync);
- 
- 		call->unmarshall++;
-+		fallthrough;
- 
- 	case 4:
- 		break;
-diff --git a/fs/afs/vlclient.c b/fs/afs/vlclient.c
-index dc9327332f06..00fca3c66ba6 100644
---- a/fs/afs/vlclient.c
-+++ b/fs/afs/vlclient.c
-@@ -593,6 +593,7 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
- 		if (ret < 0)
- 			return ret;
- 		call->unmarshall = 6;
-+		fallthrough;
- 
- 	case 6:
- 		break;
+For those who are already trying to get that last 1% of performance
+from their kernel and are willing to give up most everything else to
+get it this is the obvious choice.  Needless to say there should not
+be any audit related impact in this case (especially since we've
+removed that req->opcode checks prior to the audit calls).
 
+* io_uring enabled, CONFIG_AUDIT=y, audit "task,never" runtime config
 
+[side note: I made some tweaks to audit_uring_entry() to move the
+audit_enabled check there so we no longer need to call into
+__audit_uring_entry() in this fastpath case.  Similarly
+audit_uring_exit() now does an audit_dummy_context() check instead of
+simply checking audit_context(), this should avoid calling into
+__audit_uring_exit() when the io_uring op is not being audited.]
+
+I'm guessing that most distro users will fall into this bucket.  Here
+the task's audit_context should always be NULL, both in the syscall
+context and sqpoll context, so io_uring would call into the inline
+audit_uring_entry() function and return without calling into
+__audit_uring_entry() (see the "side note" above).  The
+audit_uring_exit() call would behave in a similar manner.
+
+* io_uring enabled, CONFIG_AUDIT=y, some sort of runtime audit config
+
+For obvious reasons this case has the most performance impact and as
+mentioned above it can vary quite a bit.  In my opinion this is the
+least important bucket from a performance perspective as the user
+clearly has a need for the security information that audit provides
+and enabling that functionality in io_uring is critical to allowing
+the user to take advantage of io_uring.  The performance of io_uring
+is impacted, but it should still be more performant than synchronous
+I/O and it allows the user to run their existing io_uring
+applications/code-paths.
+
+> Btw, do you really need two hooks -- before and right after
+> execution?
+
+Yes, the entry/before hook does the setup for the io_uring op (very
+similar to a syscall entry point) and the exit/after hook is what does
+the audit record generation based on what took place during the
+io_uring operation.
+
+> > I believe there are people who would like to use io_uring and are also
+> > required to use a kernel with audit, either due to the need to run a
+> > distribution kernel or the need to capture security information in the
+> > audit stream.  I'm hoping that we can find a solution for these users;
+> > if we don't we are asking this group to choose either io_uring or
+> > audit, and that is something I would like to avoid.
+
+I'm leaving this old paragraph here because I really think this is
+important to the discussion.  If we can't find a solution here we
+would need to make io_uring and audit mutually exclusive and I don't
+think that is in the best interests of the users, and would surely
+create a headache for the distros.
+
+-- 
+paul moore
+www.paul-moore.com
