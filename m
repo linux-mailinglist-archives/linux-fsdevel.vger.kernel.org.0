@@ -2,64 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEBF63907DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 19:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5EFF390808
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 19:44:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233088AbhEYRiE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 13:38:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234125AbhEYRhx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 13:37:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id D808E61157;
-        Tue, 25 May 2021 17:36:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621964182;
-        bh=LskCapKtyB8RvSvFDfob6jRHdNLRDzxTgT9OF4bwRiI=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Ny9MBHfnFRBWDZ5MaAeHH23HUW1HtoA9ZG0uLesxIxrOzDxzq5Gadxv2HQz/Yhqh0
-         pusvJG8wsNSJq0TglpUrg1uQbQmSGfZ4dnLomTqhchJRsIYOQF7LMUGyvDx71bWGa5
-         PETGfYUjgVBZiAog9xmPRfGhn/0IDwEYA4LEisITlNPo9vN/0Mp/RI/nqE/Ejxzkcm
-         oCK0BqSAQr6i5ety5eL3kWRNgq7DGhnSgtra3Sch8HOHDbBeAc31ruhd1S+rOyx9/N
-         cX/pi3MeCA4BSGwcfwDcjuUA+DiO9bvQkVYAqCGHHYtkzymrl8QwzqKS7x/rDi+whW
-         vGZhk8ikkDIww==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id C8A19608B8;
-        Tue, 25 May 2021 17:36:22 +0000 (UTC)
-Subject: Re: [GIT PULL] netfs: Fixes
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <4007708.1621947662@warthog.procyon.org.uk>
-References: <4007708.1621947662@warthog.procyon.org.uk>
-X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <4007708.1621947662@warthog.procyon.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/netfs-lib-fixes-20200525
-X-PR-Tracked-Commit-Id: b71c791254ff5e78a124c8949585dccd9e225e06
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ad9f25d338605d26acedcaf3ba5fab5ca26f1c10
-Message-Id: <162196418275.15660.9511112826045891745.pr-tracker-bot@kernel.org>
-Date:   Tue, 25 May 2021 17:36:22 +0000
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
-        geert@linux-m68k.org, willy@infradead.org,
-        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net
+        id S232516AbhEYRp2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 13:45:28 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:48705 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231346AbhEYRp2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 13:45:28 -0400
+Received: (Authenticated sender: josh@joshtriplett.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 4E2F940005;
+        Tue, 25 May 2021 17:43:42 +0000 (UTC)
+Date:   Tue, 25 May 2021 10:43:41 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     menglong8.dong@gmail.com
+Cc:     mcgrof@kernel.org, viro@zeniv.linux.org.uk, keescook@chromium.org,
+        samitolvanen@google.com, ojeda@kernel.org, johan@kernel.org,
+        bhelgaas@google.com, masahiroy@kernel.org,
+        dong.menglong@zte.com.cn, joe@perches.com, axboe@kernel.dk,
+        hare@suse.de, jack@suse.cz, tj@kernel.org,
+        gregkh@linuxfoundation.org, song@kernel.org, neilb@suse.de,
+        akpm@linux-foundation.org, f.fainelli@gmail.com, arnd@arndb.de,
+        linux@rasmusvillemoes.dk, wangkefeng.wang@huawei.com,
+        brho@google.com, mhiramat@kernel.org, rostedt@goodmis.org,
+        vbabka@suse.cz, glider@google.com, pmladek@suse.com,
+        chris@chrisdown.name, ebiederm@xmission.com, jojing64@gmail.com,
+        terrelln@fb.com, geert@linux-m68k.org, mingo@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jeyu@kernel.org
+Subject: Re: [PATCH v2 0/3] init/initramfs.c: make initramfs support
+ pivot_root
+Message-ID: <YK03TRIlXOpvM0Br@localhost>
+References: <20210525141524.3995-1-dong.menglong@zte.com.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210525141524.3995-1-dong.menglong@zte.com.cn>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Tue, 25 May 2021 14:01:02 +0100:
+On Tue, May 25, 2021 at 10:15:21PM +0800, menglong8.dong@gmail.com wrote:
+> From: Menglong Dong <dong.menglong@zte.com.cn>
+> 
+> As Luis Chamberlain suggested, I split the patch:
+> [init/initramfs.c: make initramfs support pivot_root]
+> (https://lore.kernel.org/linux-fsdevel/20210520154244.20209-1-dong.menglong@zte.com.cn/)
+> into three.
+> 
+> The goal of the series patches is to make pivot_root() support initramfs.
+> 
+> In the first patch, I introduce the function ramdisk_exec_exist(), which
+> is used to check the exist of 'ramdisk_execute_command' in LOOKUP_DOWN
+> lookup mode.
+> 
+> In the second patch, I create a second mount, which is called
+> 'user root', and make it become the root. Therefore, the root has a
+> parent mount, and it can be umounted or pivot_root.
+> 
+> In the third patch, I fix rootfs_fs_type with ramfs, as it is not used
+> directly any more, and it make no sense to switch it between ramfs and
+> tmpfs, just fix it with ramfs to simplify the code.
+> 
+> Changes since V1:
+> 
+> In the first patch, I add the flag LOOKUP_DOWN to init_eaccess(), to make
+> it support the check of filesystem mounted on '/'.
+> 
+> In the second patch, I control 'user root' with kconfig option
+> 'CONFIG_INITRAMFS_USER_ROOT', and add some comments, as Luis Chamberlain
+> suggested.
+> 
+> In the third patch, I make 'rootfs_fs_type' in control of
+> 'CONFIG_INITRAMFS_USER_ROOT'.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/netfs-lib-fixes-20200525
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ad9f25d338605d26acedcaf3ba5fab5ca26f1c10
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+This looks much better, thank you; this addresses all my concerns with
+v1. I appreciate having the config option to control this as well.
