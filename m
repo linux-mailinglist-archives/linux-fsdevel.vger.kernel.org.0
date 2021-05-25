@@ -2,201 +2,323 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4646D38FB47
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 08:55:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2081F38FB74
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 09:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbhEYG4o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 02:56:44 -0400
-Received: from mx0a-0064b401.pphosted.com ([205.220.166.238]:26206 "EHLO
-        mx0a-0064b401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230366AbhEYG4o (ORCPT
+        id S231547AbhEYHNK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 03:13:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46880 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231501AbhEYHNK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 02:56:44 -0400
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-        by mx0a-0064b401.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14P6rXj2017384;
-        Mon, 24 May 2021 23:55:14 -0700
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1anam02lp2044.outbound.protection.outlook.com [104.47.57.44])
-        by mx0a-0064b401.pphosted.com with ESMTP id 38rr6yr42j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 May 2021 23:55:13 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OTVup5bs+NWT16GQFGOkYvLZUD76Q6MZut7tnwPGG76x1SnBbJpnYzXbuXpPTnrABMTuBsT66qlqvErIVuB5amZpT5FLqeviMvnsxpzoUCasa6NzGASgdhSugbVUtFnKxaXDhyEoC2aW5Im4rY09X9ugiGgGbrJoZdYSbzbGPW7hz4U8pk1I3ARRI2tScJRlTu9HBV/8oZ4urgghf8BGR4seXxqbaTqnCPqWWUs6NpmKdalmCp7u2G+KMDHitlfR8GRavarIgseeCbPypgOl7H10y/2Tf8CMGcN6vogsiV4MO5X+0jAKIc69BsVyaOiOsKV+7fo0Knu0GTpEPF54rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GmkOwP5FK6W5EMD3n/2XS8eJR0O6goBdiRGieloYMTU=;
- b=l6vzzVlgm85XbVfMc7WlC2fw3ko0ieLhBX+K4+b8/xnJ16DWDUEmtE4lonmHB43KIwJU9+JZQ8Tv9SDC5Z16nUlg3RAng611Lm7wMW3J4oAbQIxHMcKolk6JPQQC9FYyzE+jjN+/XjwddvH91AZAvYviQE87pvFdjx9yPYUm8ppFFa+tQuzDrHgkezHNOtRFOO6csxmDgsaLSemtCSWZsGn/xGsnHyj3GXLRu+z7fgO3hW8lBkG9IloiD8Vxi98yXNjeV7f5aaPZjffm7Dk5DDcVxEE6WUJy4R2Rmq3TrfFzPR5viwImCU+i9K3PpkGoKi5w1uTL5v3eQeuUce8BRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=windriversystems.onmicrosoft.com;
- s=selector2-windriversystems-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GmkOwP5FK6W5EMD3n/2XS8eJR0O6goBdiRGieloYMTU=;
- b=HdTv5UkZruEHqHuAHX5fQMdNDWoQ7ii6rU5P5X7fXjUvOYm/APw5J8kmTtr4dOD27dUpxhijuT4px/4d5p4/b8Qp/KeMoj/O4N4C9iI++d/P0rlMYpxZNao6fneUco5XltxHF2PcLU82UeOxk93IYo8dbr3f6ysRV9jZ7BI85RQ=
-Authentication-Results: zeniv.linux.org.uk; dkim=none (message not signed)
- header.d=none;zeniv.linux.org.uk; dmarc=none action=none
- header.from=windriver.com;
-Received: from DM6PR11MB4202.namprd11.prod.outlook.com (2603:10b6:5:1df::16)
- by DM6PR11MB2987.namprd11.prod.outlook.com (2603:10b6:5:65::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.26; Tue, 25 May
- 2021 06:55:11 +0000
-Received: from DM6PR11MB4202.namprd11.prod.outlook.com
- ([fe80::3590:5f5:9e9e:ed18]) by DM6PR11MB4202.namprd11.prod.outlook.com
- ([fe80::3590:5f5:9e9e:ed18%7]) with mapi id 15.20.4150.027; Tue, 25 May 2021
- 06:55:11 +0000
-From:   qiang.zhang@windriver.com
-To:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/super: simplify superblock destroy action
-Date:   Tue, 25 May 2021 14:55:20 +0800
-Message-Id: <20210525065520.23596-1-qiang.zhang@windriver.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-Originating-IP: [60.247.85.82]
-X-ClientProxiedBy: SJ0PR05CA0067.namprd05.prod.outlook.com
- (2603:10b6:a03:332::12) To DM6PR11MB4202.namprd11.prod.outlook.com
- (2603:10b6:5:1df::16)
+        Tue, 25 May 2021 03:13:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1621926700;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=c+jOwuXnrv6w5E8VQc63WP+bAoAy3VD+Yg2CcTHav28=;
+        b=WM8QZGrLZ1eHeollpMeFZQKOcPXofA6+Mjt9crAp3FC3lCBIGCvydffisHrSWVWFxr//gr
+        pwgYzDYz64BzMvrLo5g9zwrQxhBgDFk5SjlxnzgIHlcmWKB3I9SCcFkZNyn5EqGTLK1Ac8
+        LGir5tnj6jTj5Q+WZ6CLGGzvABEo31o=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-198-yMUUl-_TPCKslpXYqJ9gEQ-1; Tue, 25 May 2021 03:11:38 -0400
+X-MC-Unique: yMUUl-_TPCKslpXYqJ9gEQ-1
+Received: by mail-lf1-f71.google.com with SMTP id u23-20020a1979170000b02901d2e8dd801dso7377323lfc.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 00:11:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=c+jOwuXnrv6w5E8VQc63WP+bAoAy3VD+Yg2CcTHav28=;
+        b=YxpVWIBUW252ODZP5HkhZd4U2K3CVurdn/Irvqb5J4zuXbrnudqfZwF93VCszA9PTg
+         Ne3j03E/CDVzCLUgU+S+H+5nshaLnSRJ5Eifd/tgJV5Pah9Yi15DXBgMV80CuivOxlTe
+         4yXHcnGC28AW9lo9PSD47KMM1izdfUZohSWznyTahdl4cXLwBjtAKDKTZxW8yf0d6xpU
+         wJkqYWr1Ynq8eCk3fY9AHVwk3asUNMNnMEmO7R3ni6P/jVJjEBoB3+rKP1BfNK0ewLcS
+         K6LoUYpgdSSPfLXoTugOwZADAYDDmnIPf97h4UqiZOiBQk6adIVOFHP0o4MmHA6siuZr
+         Ve/A==
+X-Gm-Message-State: AOAM531Vsh2Im/HrmNlj/sYy4edahnoI5qGzC/6q9OplYbRRjRtt2eaj
+        T0cXkFL3/soUroH+mdY19MNoUvgN/v/SBPlh8qBpM4FIqwiGDTbIl9J7bHIuy1/TYujJT//MqiS
+        98/K+cgWT6gfSZHDKLWp7OBRYPHpNKLZfg587CnwqxQ==
+X-Received: by 2002:a2e:8681:: with SMTP id l1mr19878091lji.494.1621926696857;
+        Tue, 25 May 2021 00:11:36 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyczZMOa2TWeLJ/W/lfSx4o8+fNsMYOICnJsWfNJWAJpdMrk6M2MyFHAccwCNFcVyF65ZRhbqOH/Ioxg4NXiOk=
+X-Received: by 2002:a2e:8681:: with SMTP id l1mr19878075lji.494.1621926696622;
+ Tue, 25 May 2021 00:11:36 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from pek-qzhang2-d1.wrs.com (60.247.85.82) by SJ0PR05CA0067.namprd05.prod.outlook.com (2603:10b6:a03:332::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.11 via Frontend Transport; Tue, 25 May 2021 06:55:09 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 795805bb-8fd4-4fc4-442b-08d91f4a0a0b
-X-MS-TrafficTypeDiagnostic: DM6PR11MB2987:
-X-Microsoft-Antispam-PRVS: <DM6PR11MB298749F5FE971007647485F7FF259@DM6PR11MB2987.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:94;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qq33g7SI/lUxNThrgQVz4PN3WOzNW8XewzARZjnwWKK0m3YmKxMmQL03Q+Yxzo5eUXVd+krCMKc17Ef/JbIouirppUNRe+gpJi2YxVt2QsCXPGPU8B5tkLcqytvaEQUqTp+3nqMXkVdP1qiKp2q+6XpKEOT9uuaJilzBplEti1Mv4gltvzxAD5PjLpsqLkkzdSaIrfOt3KpZSmLjYhLjT4+UmrUznv/+ufMMaVFoWjBq5ItabnGyZM4sEkNlYhhy+/Z1Xo1iGOwwVxcRvFJ0b6c11InnG7K0d4ROT9IoUqOfLL2QKh4Gp312vOWaq5gvv8/AN+J8g9WRmaYUTX32tFznRahk59E4n+HAkVBye4xGhOZ3CxEvNID/GDxlQZEv2vvAb6FMDXg/QYw7gEwYfjokmiR2BCT20RThsZW9gI913nmBN/FdpmgCKVHBgXjzJYENh7l4enTVfWyLw+s/+I2jPRqVHl6bpNwoqiQhwgtcdmxz+qFZj1mEQ/R4yMohxXRdI3j4nZvXBFuJBh4FI1CE7ddYFzHZDb27O0g40EmAqkreH+3ajhRJ6rd6siru/FW8yj5hlRMdUk3OgQsGwkqu0k6zYNkUMnkCaeJfMbW1pNxDecU6fyaZRBfcvHtNvLl/iz2r1ktYCRwcyWwxwA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4202.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(396003)(136003)(376002)(346002)(39850400004)(86362001)(2906002)(38100700002)(38350700002)(66556008)(8936002)(5660300002)(36756003)(6666004)(26005)(186003)(16526019)(956004)(2616005)(66946007)(66476007)(1076003)(478600001)(52116002)(6506007)(6512007)(9686003)(6486002)(4326008)(316002)(8676002)(83380400001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?1TTHjp94JvXpRGHC96iOc7IM4aEI9PHZ4nyA8+lslJVe9ewbDVkpjh5XrZjO?=
- =?us-ascii?Q?wZMFKLpYkx4kZrvQhd2lIFcgtkBqhK6SwX6L14gfGIT7jBMKLwkTqXrwj55m?=
- =?us-ascii?Q?ATlAB5E4nk6pRVTrGWwSDACJTzr3WhFa6WScyFrR8RNcVFAAy53N7ie+z0OB?=
- =?us-ascii?Q?1kKTpqDjJOmxeip42skNxvn4NRCaacerbpbv+hILO6KQ3fl7V+6v7it9a2mT?=
- =?us-ascii?Q?LiknRM2ci+rySlTzomPl52/WxQHnlyYMtMamSaqCzW1IdOEugOgX++TCYG7e?=
- =?us-ascii?Q?JWBCF3oTgeehB4iEJef3AIebPQP7bDmyb+97iR49N0/U6P3dJEp4PK4A7FA7?=
- =?us-ascii?Q?nJ/zJ3PfVe+QJZkoc5XPtAcshKx/S9hJAIpz49t419s85l0+66bsd1K9TFV2?=
- =?us-ascii?Q?tkrWnwYbA0tyJHC6OIbmcbkmvITxWUEqM8zVm2J8MHrK5dUAxBUElbjKkkin?=
- =?us-ascii?Q?FBJTtsooMIm7PgV+PXL7X4nQuUzPkav646ZiWCWxnw8hQqNIFkjqoq64RqFJ?=
- =?us-ascii?Q?+aNDbwPUBTnatxJH8JAL3mRT5NmziVQInVUND6WhMzHuasMV4gRqVw8sYRdw?=
- =?us-ascii?Q?yMUXBHYd1zq7I633eJBORulFEk1ezscHHZL3eWRRAf+aMtO8nSwpW45Sh3M1?=
- =?us-ascii?Q?tbFb5d4UIM1uWP4zyOayEbkcFIPWapW3T/0Y6vfzncvpNKBQqLaiJrtnBYA5?=
- =?us-ascii?Q?01OfxiZ5jMSWncBs3a7WlpGt49AMqtiEAOrASElC6DjE8hB4H/L1wdhpMRBu?=
- =?us-ascii?Q?FD+/MbkQT4dgoRV66L4tOtMW2Vf1RZpwA2BzUNxJODcOCo04f4WTgN8psqcz?=
- =?us-ascii?Q?4qE5pmAhpWj3IxRYIw0dAzm3mqK/6yj/kHV6UmPJ14l59SYC6yOZHf4p8o1V?=
- =?us-ascii?Q?YKZrTZpl4bwdIUU1NGYCr0PCn3wX06w6O+O0hGsEPSyQb1eUW1oGtyhQ3MuG?=
- =?us-ascii?Q?uTG8XGcdbC+j+jEkazyU9mjlIcZ0kngWZinDbw1mt5UZrMDc7BNs4VK5on8h?=
- =?us-ascii?Q?62oFeYUCbGyeXsrqa0p3n+rG9KpsFrMiZsTV1zkRXrazQQy2DTnirV/2ZdYm?=
- =?us-ascii?Q?w2YDnZdz8W3srEaudN8nzfow/paq0FbrsvEFAkAlexvNgsZCb+B5eVarkOrh?=
- =?us-ascii?Q?BZLyZstGyCNI5N9o8kK0y80bNqRjNC+swxhk7H69e7IGasYVpEDDYB9ckjBx?=
- =?us-ascii?Q?UmDNcjOzhPGmgzEpNu6IF+3GbD5cgpW4J7A5WMVrJEUfi9dxgmySFnNd3niG?=
- =?us-ascii?Q?kuKl2nzLV4uMqybaXCxxOpdiwzgRy8e3/PobjJHysM59hn8dFFciTkWavZNy?=
- =?us-ascii?Q?66PZ4d/D0igQQIJd3+/SjKLQ?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 795805bb-8fd4-4fc4-442b-08d91f4a0a0b
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4202.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2021 06:55:11.0155
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uOmo8sXtgtvssG6kOlOZcC5954FxHxz6nGOKrLhSsLNRUtgBK5SeHbiPs8wWCsibqo7egco0FH7sOU1FGlZHAgdlPfFsX8UiPalLU3VzXmQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB2987
-X-Proofpoint-ORIG-GUID: f28U2bsMEr7gG0vxz5DzBTghTStQBAE-
-X-Proofpoint-GUID: f28U2bsMEr7gG0vxz5DzBTghTStQBAE-
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-05-25_03:2021-05-24,2021-05-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- suspectscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- impostorscore=0 clxscore=1011 malwarescore=0 priorityscore=1501
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2105250047
+References: <20210517095513.850-1-xieyongji@bytedance.com> <20210520014349-mutt-send-email-mst@kernel.org>
+ <CACycT3tKY2V=dmOJjeiZxkqA3cH8_KF93NNbRnNU04e5Job2cw@mail.gmail.com>
+ <2a79fa0f-352d-b8e9-f60a-181960d054ec@redhat.com> <20210525024500-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20210525024500-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Date:   Tue, 25 May 2021 15:11:25 +0800
+Message-ID: <CACGkMEsg1X95nmnVsm9x8vML7EUOE195gQrvRdr+3woOEcNBeA@mail.gmail.com>
+Subject: Re: [PATCH v7 00/12] Introduce VDUSE - vDPA Device in Userspace
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Yongji Xie <xieyongji@bytedance.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Zqiang <qiang.zhang@windriver.com>
+On Tue, May 25, 2021 at 2:48 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Tue, May 25, 2021 at 02:40:57PM +0800, Jason Wang wrote:
+> >
+> > =E5=9C=A8 2021/5/20 =E4=B8=8B=E5=8D=885:06, Yongji Xie =E5=86=99=E9=81=
+=93:
+> > > On Thu, May 20, 2021 at 2:06 PM Michael S. Tsirkin <mst@redhat.com> w=
+rote:
+> > > > On Mon, May 17, 2021 at 05:55:01PM +0800, Xie Yongji wrote:
+> > > > > This series introduces a framework, which can be used to implemen=
+t
+> > > > > vDPA Devices in a userspace program. The work consist of two part=
+s:
+> > > > > control path forwarding and data path offloading.
+> > > > >
+> > > > > In the control path, the VDUSE driver will make use of message
+> > > > > mechnism to forward the config operation from vdpa bus driver
+> > > > > to userspace. Userspace can use read()/write() to receive/reply
+> > > > > those control messages.
+> > > > >
+> > > > > In the data path, the core is mapping dma buffer into VDUSE
+> > > > > daemon's address space, which can be implemented in different way=
+s
+> > > > > depending on the vdpa bus to which the vDPA device is attached.
+> > > > >
+> > > > > In virtio-vdpa case, we implements a MMU-based on-chip IOMMU driv=
+er with
+> > > > > bounce-buffering mechanism to achieve that. And in vhost-vdpa cas=
+e, the dma
+> > > > > buffer is reside in a userspace memory region which can be shared=
+ to the
+> > > > > VDUSE userspace processs via transferring the shmfd.
+> > > > >
+> > > > > The details and our user case is shown below:
+> > > > >
+> > > > > ------------------------    -------------------------   ---------=
+-------------------------------------
+> > > > > |            Container |    |              QEMU(VM) |   |        =
+                       VDUSE daemon |
+> > > > > |       ---------      |    |  -------------------  |   | -------=
+------------------ ---------------- |
+> > > > > |       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA =
+device emulation | | block driver | |
+> > > > > ------------+-----------     -----------+------------   ---------=
+----+----------------------+---------
+> > > > >              |                           |                       =
+     |                      |
+> > > > >              |                           |                       =
+     |                      |
+> > > > > ------------+---------------------------+------------------------=
+----+----------------------+---------
+> > > > > |    | block device |           |  vhost device |            | vd=
+use driver |          | TCP/IP |    |
+> > > > > |    -------+--------           --------+--------            ----=
+---+--------          -----+----    |
+> > > > > |           |                           |                        =
+   |                       |        |
+> > > > > | ----------+----------       ----------+-----------         ----=
+---+-------                |        |
+> > > > > | | virtio-blk driver |       |  vhost-vdpa driver |         | vd=
+pa device |                |        |
+> > > > > | ----------+----------       ----------+-----------         ----=
+---+-------                |        |
+> > > > > |           |      virtio bus           |                        =
+   |                       |        |
+> > > > > |   --------+----+-----------           |                        =
+   |                       |        |
+> > > > > |                |                      |                        =
+   |                       |        |
+> > > > > |      ----------+----------            |                        =
+   |                       |        |
+> > > > > |      | virtio-blk device |            |                        =
+   |                       |        |
+> > > > > |      ----------+----------            |                        =
+   |                       |        |
+> > > > > |                |                      |                        =
+   |                       |        |
+> > > > > |     -----------+-----------           |                        =
+   |                       |        |
+> > > > > |     |  virtio-vdpa driver |           |                        =
+   |                       |        |
+> > > > > |     -----------+-----------           |                        =
+   |                       |        |
+> > > > > |                |                      |                        =
+   |    vdpa bus           |        |
+> > > > > |     -----------+----------------------+------------------------=
+---+------------           |        |
+> > > > > |                                                                =
+                        ---+---     |
+> > > > > -----------------------------------------------------------------=
+------------------------| NIC |------
+> > > > >                                                                  =
+                         ---+---
+> > > > >                                                                  =
+                            |
+> > > > >                                                                  =
+                   ---------+---------
+> > > > >                                                                  =
+                   | Remote Storages |
+> > > > >                                                                  =
+                   -------------------
+> > > > >
+> > > > > We make use of it to implement a block device connecting to
+> > > > > our distributed storage, which can be used both in containers and
+> > > > > VMs. Thus, we can have an unified technology stack in this two ca=
+ses.
+> > > > >
+> > > > > To test it with null-blk:
+> > > > >
+> > > > >    $ qemu-storage-daemon \
+> > > > >        --chardev socket,id=3Dcharmonitor,path=3D/tmp/qmp.sock,ser=
+ver,nowait \
+> > > > >        --monitor chardev=3Dcharmonitor \
+> > > > >        --blockdev driver=3Dhost_device,cache.direct=3Don,aio=3Dna=
+tive,filename=3D/dev/nullb0,node-name=3Ddisk0 \
+> > > > >        --export type=3Dvduse-blk,id=3Dtest,node-name=3Ddisk0,writ=
+able=3Don,name=3Dvduse-null,num-queues=3D16,queue-size=3D128
+> > > > >
+> > > > > The qemu-storage-daemon can be found at https://github.com/byteda=
+nce/qemu/tree/vduse
+> > > > >
+> > > > > To make the userspace VDUSE processes such as qemu-storage-daemon=
+ able to
+> > > > > run unprivileged. We did some works on virtio driver to avoid tru=
+sting
+> > > > > device, including:
+> > > > >
+> > > > >    - validating the device status:
+> > > > >
+> > > > >      * https://lore.kernel.org/lkml/20210517093428.670-1-xieyongj=
+i@bytedance.com/
+> > > > >
+> > > > >    - validating the used length:
+> > > > >
+> > > > >      * https://lore.kernel.org/lkml/20210517090836.533-1-xieyongj=
+i@bytedance.com/
+> > > > >
+> > > > >    - validating the device config:
+> > > > >
+> > > > >      * patch 4 ("virtio-blk: Add validation for block size in con=
+fig space")
+> > > > >
+> > > > >    - validating the device response:
+> > > > >
+> > > > >      * patch 5 ("virtio_scsi: Add validation for residual bytes f=
+rom response")
+> > > > >
+> > > > > Since I'm not sure if I missing something during auditing, especi=
+ally on some
+> > > > > virtio device drivers that I'm not familiar with, now we only sup=
+port emualting
+> > > > > a few vDPA devices by default, including: virtio-net device, virt=
+io-blk device,
+> > > > > virtio-scsi device and virtio-fs device. This limitation can help=
+ to reduce
+> > > > > security risks.
+> > > > I suspect there are a lot of assumptions even with these 4.
+> > > > Just what are the security assumptions and guarantees here?
+> >
+> >
+> > Note that VDUSE is not the only device that may suffer from this, here'=
+re
+> > two others:
+> >
+> > 1) Encrypted VM
+>
+> Encrypted VMs are generally understood not to be fully
+> protected from attacks by a malicious hypervisor. For example
+> a DoS by a hypervisor is currently trivial.
 
-The superblock is freed through call_rcu() and schedule_work(),
-these two steps can be replaced by queue_rcu_work().
+Right, but I mainly meant the emulated virtio-net device in the case
+of an encrypted VM. We should not leak information to the
+device/hypervisor.
 
-Signed-off-by: Zqiang <qiang.zhang@windriver.com>
----
- fs/super.c         | 15 +++++----------
- include/linux/fs.h |  3 +--
- 2 files changed, 6 insertions(+), 12 deletions(-)
+>
+> > 2) Smart NICs
+>
+> More or less the same thing.
 
-diff --git a/fs/super.c b/fs/super.c
-index 11b7e7213fd1..6b796bbc5ba3 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -156,8 +156,8 @@ static unsigned long super_cache_count(struct shrinker *shrink,
- 
- static void destroy_super_work(struct work_struct *work)
- {
--	struct super_block *s = container_of(work, struct super_block,
--							destroy_work);
-+	struct super_block *s = container_of(to_rcu_work(work), struct super_block,
-+							rcu_work);
- 	int i;
- 
- 	for (i = 0; i < SB_FREEZE_LEVELS; i++)
-@@ -165,12 +165,6 @@ static void destroy_super_work(struct work_struct *work)
- 	kfree(s);
- }
- 
--static void destroy_super_rcu(struct rcu_head *head)
--{
--	struct super_block *s = container_of(head, struct super_block, rcu);
--	INIT_WORK(&s->destroy_work, destroy_super_work);
--	schedule_work(&s->destroy_work);
--}
- 
- /* Free a superblock that has never been seen by anyone */
- static void destroy_unused_super(struct super_block *s)
-@@ -185,7 +179,7 @@ static void destroy_unused_super(struct super_block *s)
- 	kfree(s->s_subtype);
- 	free_prealloced_shrinker(&s->s_shrink);
- 	/* no delays needed */
--	destroy_super_work(&s->destroy_work);
-+	destroy_super_work(&s->rcu_work.work);
- }
- 
- /**
-@@ -249,6 +243,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
- 	spin_lock_init(&s->s_inode_list_lock);
- 	INIT_LIST_HEAD(&s->s_inodes_wb);
- 	spin_lock_init(&s->s_inode_wblist_lock);
-+	INIT_RCU_WORK(&s->rcu_work, destroy_super_work);
- 
- 	s->s_count = 1;
- 	atomic_set(&s->s_active, 1);
-@@ -296,7 +291,7 @@ static void __put_super(struct super_block *s)
- 		fscrypt_sb_free(s);
- 		put_user_ns(s->s_user_ns);
- 		kfree(s->s_subtype);
--		call_rcu(&s->rcu, destroy_super_rcu);
-+		queue_rcu_work(system_wq, &s->rcu_work);
- 	}
- }
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c3c88fdb9b2a..2fe2b4d67af2 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1534,8 +1534,7 @@ struct super_block {
- 	 */
- 	struct list_lru		s_dentry_lru;
- 	struct list_lru		s_inode_lru;
--	struct rcu_head		rcu;
--	struct work_struct	destroy_work;
-+	struct rcu_work         rcu_work;
- 
- 	struct mutex		s_sync_lock;	/* sync serialisation lock */
- 
--- 
-2.17.1
+In my opinion, this is more similar to VDUSE. Without an encrypted VM,
+we trust the hypervisor but not the device so DOS from a device should
+be eliminated.
+
+Thanks
+
+>
+>
+> >
+> > > The attack surface from a virtio device is limited with IOMMU enabled=
+.
+> > > It should be able to avoid security risk if we can validate all data
+> > > such as config space and used length from device in device driver.
+> > >
+> > > > E.g. it seems pretty clear that exposing a malformed FS
+> > > > to a random kernel config can cause untold mischief.
+> > > >
+> > > > Things like virtnet_send_command are also an easy way for
+> > > > the device to DOS the kernel.
+> >
+> >
+> > I think the virtnet_send_command() needs to use interrupt instead of
+> > polling.
+> >
+> > Thanks
+> >
+> >
+> > > > And before you try to add
+> > > > an arbitrary timeout there - please don't,
+> > > > the fix is moving things that must be guaranteed into kernel
+> > > > and making things that are not guaranteed asynchronous.
+> > > > Right now there are some things that happen with locks taken,
+> > > > where if we don't wait for device we lose the ability to report fai=
+lures
+> > > > to userspace. E.g. all kind of netlink things are like this.
+> > > > One can think of a bunch of ways to address this, this
+> > > > needs to be discussed with the relevant subsystem maintainers.
+> > > >
+> > > >
+> > > > If I were you I would start with one type of device, and as simple =
+one
+> > > > as possible.
+> > > >
+> > > Make sense to me. The virtio-blk device might be a good start. We
+> > > already have some existing interface like NBD to do similar things.
+> > >
+> > > >
+> > > > > When a sysadmin trusts the userspace process enough, it can relax
+> > > > > the limitation with a 'allow_unsafe_device_emulation' module para=
+meter.
+> > > > That's not a great security interface. It's a global module specifi=
+c knob
+> > > > that just allows any userspace to emulate anything at all.
+> > > > Coming up with a reasonable interface isn't going to be easy.
+> > > > For now maybe just have people patch their kernels if they want to
+> > > > move fast and break things.
+> > > >
+> > > OK. A reasonable interface can be added if we need it in the future.
+> > >
+> > > Thanks,
+> > > Yongji
+>
 
