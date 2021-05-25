@@ -2,82 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94F4139021F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 15:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CC9A3902D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 15:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233241AbhEYNZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 09:25:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60532 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233232AbhEYNZG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 09:25:06 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A163C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 06:23:37 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id a8so23388516ioa.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 06:23:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aH2S9cb5inSSXBHPiUpQ/ZDpNgEfTJ6VQ9x2Zk3ZvFE=;
-        b=GyR3qHtLe+EvuvrEEqAyP1CpPTbg3gkx3/Sir2MW9cCGBW+N5IGbt4bX27z05WigXi
-         zpvaCEWJuNZnM8fRPFv38Q+eYYwbMQRPdTly+6kmiQB2XBybb6WTF9SCbVvx3G18ONvJ
-         FRa8jgPcJVmRTgOOy+4xeDOK/5R8JSJ4o/tr0tvHFgtrPKvvh7ZSuH3RCPdbL7SQXNCd
-         1MzOkvk0POAu2rSar9Xuv0SXhbn2aUGw70hHO0RxTCeacsFnM8v7OKYnmy5qNZra0wF8
-         iAoWFw/SXTsvZWsWh1OaG5jxvqIcp/yKQ//ef6NDGnK78QJPBBiQ5Ah1h5J9ity1A1P+
-         igdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aH2S9cb5inSSXBHPiUpQ/ZDpNgEfTJ6VQ9x2Zk3ZvFE=;
-        b=l8mcjbx0MDHtsVPI3HykY1gxQ2zYC5XM1ksMkdvrYmcYG8fA8TwxMoVQr8UnfMk/Fx
-         y4CrVRGDjdG65W+wyfPBq7Vpni8GFhtTAa1amMIBZDtEvzyVDzGXtwNLDQPGwH93W0dm
-         0rlfsjdc0YdaGwjYHzDxrvxykZd6l/a7hETycxLMNzBHfUMkttWGkoBdwM1OTn4nIGn2
-         eueYNT3Lh9qhDp2vIIpisbMaV9rwVh3oHSZ7qzKAjEwcz+kCdOOzRRMIt6SMYxhPZmAq
-         oDs0GX49JwCFklN1Ba9z3zWU0V7AxwhwEnCMiwXCmn+AYyRh973BsFwPfVhUlMYxWH5J
-         t5oA==
-X-Gm-Message-State: AOAM533kHybQjOvxO2PfNLhFo8mTAWqUBm0gx9Q57KeUYt8nqccjLu6p
-        TzP3xJRQnhuXkwUn18Wrp9kFP8exO7E7/b6EN5BmJS5TW78=
-X-Google-Smtp-Source: ABdhPJxbHuPs5/JFDTsDMe/rQ55yCf4zywT4HUtUBZu9xUbLclrve7lpqTg7/gNboTVnXaRHZ+TgCIUBbz+HnufxNTw=
-X-Received: by 2002:a6b:6b11:: with SMTP id g17mr19644156ioc.72.1621949016616;
- Tue, 25 May 2021 06:23:36 -0700 (PDT)
+        id S233482AbhEYNwk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 09:52:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42524 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233193AbhEYNwd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 09:52:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1621950662; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=IgdiZSIksJKZJJBeE+3E0SKcPJ/OLd2TYXDb2TzzPSE=;
+        b=rtJhyDHqbJ2gWMsn83eK6XBEPYn5QhqVL61VynXm194xqzgJFMd3pAY1Q6bhqrbNurdv+B
+        y3anoWRupX7Gq80JYBka/FERIfWuZcNAUXYmm0I5yMfWupTdR3ijVmf6SEViA65I3lC20m
+        E1FoEu0khhgBUCKOLHzXronTPJES3eY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1621950662;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=IgdiZSIksJKZJJBeE+3E0SKcPJ/OLd2TYXDb2TzzPSE=;
+        b=Pwm/5L0cRw/9Y810+7Iq97g8+HdjgE3uv4Jxvs/x/w6m7FqRVmpb3PkrnXBvPQIdRvXkhh
+        1T6xz3rQ7jUcJFDA==
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AE383AEAB;
+        Tue, 25 May 2021 13:51:01 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 0EFDA1F2C98; Tue, 25 May 2021 15:51:00 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
+To:     <linux-fsdevel@vger.kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-cifs@vger.kernel.org, <linux-ext4@vger.kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net, <linux-mm@kvack.org>,
+        <linux-xfs@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 0/13 v6] fs: Hole punch vs page cache filling races
+Date:   Tue, 25 May 2021 15:50:37 +0200
+Message-Id: <20210525125652.20457-1-jack@suse.cz>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-References: <20210524135321.2190062-1-amir73il@gmail.com> <20210525101505.rspv2c6kajzswvwn@wittgenstein>
-In-Reply-To: <20210525101505.rspv2c6kajzswvwn@wittgenstein>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 25 May 2021 16:23:25 +0300
-Message-ID: <CAOQ4uxhqkF7J06FCY6phoK1nY=1COo=swT8Ffg3vrU1koGs0wA@mail.gmail.com>
-Subject: Re: [PATCH][v2] fanotify: fix permission model of unprivileged group
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 25, 2021 at 1:15 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> On Mon, May 24, 2021 at 04:53:21PM +0300, Amir Goldstein wrote:
-> > Reporting event->pid should depend on the privileges of the user that
-> > initialized the group, not the privileges of the user reading the
-> > events.
->
-> I think it's in general a good permission model to not have the result
-> depend as little on the reader as possible post-open/init. So this makes
-> a lot of sense to me and I'm a bit surprised it wasn't like that right
-> away. :)
->
+Hello,
 
-You are right. We got lot there.
-The fact that pid_vnr() may not report pid depending on the caller's ns
-contributed to the confusion for making it depend in the caller's creds,
-but namespace and credentials behave differently.
+here is another version of my patches to address races between hole punching
+and page cache filling functions for ext4 and other filesystems. The biggest
+change since the last time is providing function to lock two mappings and using
+it from XFS. Other changes were pretty minor.
 
-Thanks for the review,
-Amir.
+Out of all filesystem supporting hole punching, only GFS2 and OCFS2 remain
+unresolved. GFS2 people are working on their own solution (cluster locking is
+involved), OCFS2 has even bigger issues (maintainers informed, looking into
+it).
+
+As a next step, I'd like to actually make sure all calls to
+truncate_inode_pages() happen under mapping->invalidate_lock, add the assert
+and then we can also get rid of i_size checks in some places (truncate can
+use the same serialization scheme as hole punch). But that step is mostly
+a cleanup so I'd like to get these functional fixes in first.
+
+Note that the first patch of the series is already in mm tree but I'm
+submitting it here so that the series applies to Linus' tree cleanly.
+
+Changes since v5:
+* Added some reviewed-by tags
+* Added functions for locking two mappings and using them from XFS where needed
+* Some minor code style & comment fixes
+
+Changes since v4:
+* Rebased onto 5.13-rc1
+* Removed shmfs conversion patches
+* Fixed up zonefs changelog
+* Fixed up XFS comments
+* Added patch fixing up definition of file_operations in Documentation/vfs/
+* Updated documentation and comments to explain invalidate_lock is used also
+  to prevent changes through memory mappings to existing pages for some VFS
+  operations.
+
+Changes since v3:
+* Renamed and moved lock to struct address_space
+* Added conversions of tmpfs, ceph, cifs, fuse, f2fs
+* Fixed error handling path in filemap_read()
+* Removed .page_mkwrite() cleanup from the series for now
+
+Changes since v2:
+* Added documentation and comments regarding lock ordering and how the lock is
+  supposed to be used
+* Added conversions of ext2, xfs, zonefs
+* Added patch removing i_mapping_sem protection from .page_mkwrite handlers
+
+Changes since v1:
+* Moved to using inode->i_mapping_sem instead of aops handler to acquire
+  appropriate lock
+
+---
+Motivation:
+
+Amir has reported [1] a that ext4 has a potential issues when reads can race
+with hole punching possibly exposing stale data from freed blocks or even
+corrupting filesystem when stale mapping data gets used for writeout. The
+problem is that during hole punching, new page cache pages can get instantiated
+and block mapping from the looked up in a punched range after
+truncate_inode_pages() has run but before the filesystem removes blocks from
+the file. In principle any filesystem implementing hole punching thus needs to
+implement a mechanism to block instantiating page cache pages during hole
+punching to avoid this race. This is further complicated by the fact that there
+are multiple places that can instantiate pages in page cache.  We can have
+regular read(2) or page fault doing this but fadvise(2) or madvise(2) can also
+result in reading in page cache pages through force_page_cache_readahead().
+
+There are couple of ways how to fix this. First way (currently implemented by
+XFS) is to protect read(2) and *advise(2) calls with i_rwsem so that they are
+serialized with hole punching. This is easy to do but as a result all reads
+would then be serialized with writes and thus mixed read-write workloads suffer
+heavily on ext4. Thus this series introduces inode->i_mapping_sem and uses it
+when creating new pages in the page cache and looking up their corresponding
+block mapping. We also replace EXT4_I(inode)->i_mmap_sem with this new rwsem
+which provides necessary serialization with hole punching for ext4.
+
+								Honza
+
+[1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
+
+Previous versions:
+Link: https://lore.kernel.org/linux-fsdevel/20210208163918.7871-1-jack@suse.cz/
+Link: https://lore.kernel.org/r/20210413105205.3093-1-jack@suse.cz
+Link: https://lore.kernel.org/r/20210423171010.12-1-jack@suse.cz
+Link: https://lore.kernel.org/r/20210512101639.22278-1-jack@suse.cz
