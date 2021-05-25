@@ -2,59 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F121038FEAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 12:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A9F38FEC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 12:15:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230312AbhEYKPp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 06:15:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40254 "EHLO mx2.suse.de"
+        id S230465AbhEYKQm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 06:16:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230353AbhEYKPl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 06:15:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1621937650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1mJ2ZSkeDX0JzpEakS+272aDyvp8m1ipZ2m6mMqB8lc=;
-        b=BT4xDoE5VjLKUgL4JgOyIa1VZGQPXcQSkbVIJXf/ip+niNRgMmvSASkoGxM9c1Ifun25SE
-        O4qUOKe9j5xzs7fGoBD7ONShKOwJ+X3R2ULCcnNe07tpdz3vPVPSSlJC6SC7RNGlW9emHY
-        FvLPvCM5CzbBNkIU7sMpTW1aXhFr+/0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1621937650;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1mJ2ZSkeDX0JzpEakS+272aDyvp8m1ipZ2m6mMqB8lc=;
-        b=Od4LjChpQFYjOm1NsativRY7/pK5K0n6416Vv0OBpqjq/OisbRm2Qr7/5BmKPRXmNVTc3E
-        1BeMtfN2u6UVx8BA==
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A61D0AEC6;
-        Tue, 25 May 2021 10:14:10 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 018B71F2C98; Tue, 25 May 2021 12:14:09 +0200 (CEST)
-Date:   Tue, 25 May 2021 12:14:09 +0200
-From:   Jan Kara <jack@suse.cz>
+        id S230491AbhEYKQj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 06:16:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 941C86140E;
+        Tue, 25 May 2021 10:15:08 +0000 (UTC)
+Date:   Tue, 25 May 2021 12:15:05 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Amir Goldstein <amir73il@gmail.com>
 Cc:     Jan Kara <jack@suse.cz>,
         Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH][v2] fanotify: fix permission model of unprivileged group
-Message-ID: <20210525101409.GC4112@quack2.suse.cz>
+Message-ID: <20210525101505.rspv2c6kajzswvwn@wittgenstein>
 References: <20210524135321.2190062-1-amir73il@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 In-Reply-To: <20210524135321.2190062-1-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 24-05-21 16:53:21, Amir Goldstein wrote:
+On Mon, May 24, 2021 at 04:53:21PM +0300, Amir Goldstein wrote:
 > Reporting event->pid should depend on the privileges of the user that
 > initialized the group, not the privileges of the user reading the
 > events.
+
+I think it's in general a good permission model to not have the result
+depend as little on the reader as possible post-open/init. So this makes
+a lot of sense to me and I'm a bit surprised it wasn't like that right
+away. :)
+
 > 
 > Use an internal group flag FANOTIFY_UNPRIV to record the fact that the
 > group was initialized by an unprivileged user.
@@ -67,13 +52,11 @@ On Mon 24-05-21 16:53:21, Amir Goldstein wrote:
 > Fixes: 7cea2a3c505e ("fanotify: support limited functionality for unprivileged users")
 > Cc: <Stable@vger.kernel.org> # v5.12+
 > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-
-Thanks, I've merged the patch to my tree. I plan to sent it to Linus at the
-end of the week.
-
-								Honza
-
 > ---
+
+Looks good,
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+
 > 
 > Changes since v1:
 > - Address Matthew's editorial review comments
@@ -196,6 +179,3 @@ end of the week.
 > -- 
 > 2.25.1
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
