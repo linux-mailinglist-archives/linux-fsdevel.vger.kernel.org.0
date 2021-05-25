@@ -2,230 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D805B3903CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 16:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12285390428
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 16:40:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233910AbhEYOWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 10:22:37 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:26209 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233889AbhEYOWg (ORCPT
+        id S233982AbhEYOmG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 10:42:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53180 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232939AbhEYOmG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 10:22:36 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1621952466; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=k3b3VGhhUtXR1YL5/iZcThNS3+h1FIIFPBCi88ZXGJY=; b=vtPqesZSiSAchGi5NmRGzy21aK5zFdqolDtyklckbr1kYsRL/JtglbNe4kXz05dm0ZzG0pZP
- +yRTbwBrlqZ1OivfPIyOe0+y5LX8Rd0V0LrK/aoCpi8RG5oX3/4M5o47fjiqe64/GExRa2Kx
- 6tZB/c1gwG+cSlE0Po9Qjxi7/vY=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
- 60ad07cc2bff04e53b970a76 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 25 May 2021 14:21:00
- GMT
-Sender: charante=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 95412C43217; Tue, 25 May 2021 14:21:00 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        NICE_REPLY_A,SPF_FAIL,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [192.168.29.110] (unknown [49.37.158.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 25 May 2021 10:42:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1621953635;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=njoB89ftAHN7n/O/lGgRgd4/0s+fvP1HkvXPNe11cV8=;
+        b=NMwvaXIgUP7HoTzJTrVFdm6Zmjtw644vut7QuMiM0MGh1FKQzcf1jiYXJHDkKnN6mmD+ZW
+        NEDaCxcEaEZHorxsq6uKX+nQQPjJz4BDV8xBKA5m1hiN5Rl3SRPIIrEHk6EP+FfjSyXUGM
+        UoaTo7t405oirW371GJ/A6ySM4RWct0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-197-e7mfoCAQPNuClKFKU0Mv3A-1; Tue, 25 May 2021 10:40:30 -0400
+X-MC-Unique: e7mfoCAQPNuClKFKU0Mv3A-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: charante)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 654BBC433F1;
-        Tue, 25 May 2021 14:20:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 654BBC433F1
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
-Subject: Re: [PATCH V2] mm: compaction: support triggering of proactive
- compaction by user
-To:     akpm@linux-foundation.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com, vbabka@suse.cz,
-        nigupta@nvidia.com, bhe@redhat.com, mateusznosek0@gmail.com,
-        sh_def@163.com, iamjoonsoo.kim@lge.com, vinmenon@codeaurora.org
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <1621345058-26676-1-git-send-email-charante@codeaurora.org>
-From:   Charan Teja Kalla <charante@codeaurora.org>
-Message-ID: <fd9dd82c-0728-46db-1647-7e03d43e245d@codeaurora.org>
-Date:   Tue, 25 May 2021 19:50:51 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 247061926DA1;
+        Tue, 25 May 2021 14:40:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-24.rdu2.redhat.com [10.10.112.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 112AA2BFE6;
+        Tue, 25 May 2021 14:40:22 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix fall-through warnings for Clang
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Jeffrey Altman <jaltman@auristor.com>,
+        linux-afs@lists.infradead.org, linux-hardening@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 25 May 2021 15:40:22 +0100
+Message-ID: <162195362220.4082674.5166981803589803097.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-In-Reply-To: <1621345058-26676-1-git-send-email-charante@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Gentle ping.
+From: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-Thanks,
-Charan
+In preparation to enable -Wimplicit-fallthrough for Clang, fix multiple
+warnings by explicitly adding multiple fallthrough pseudo-keywords
+in places where the code is intended to fall through to the next
+case.
 
-On 5/18/2021 7:07 PM, Charan Teja Reddy wrote:
-> The proactive compaction[1] gets triggered for every 500msec and run
-> compaction on the node for COMPACTION_HPAGE_ORDER (usually order-9)
-> pages based on the value set to sysctl.compaction_proactiveness.
-> Triggering the compaction for every 500msec in search of
-> COMPACTION_HPAGE_ORDER pages is not needed for all applications,
-> especially on the embedded system usecases which may have few MB's of
-> RAM. Enabling the proactive compaction in its state will endup in
-> running almost always on such systems.
-> 
-> Other side, proactive compaction can still be very much useful for
-> getting a set of higher order pages in some controllable
-> manner(controlled by using the sysctl.compaction_proactiveness). Thus on
-> systems where enabling the proactive compaction always may proove not
-> required, can trigger the same from user space on write to its sysctl
-> interface. As an example, say app launcher decide to launch the memory
-> heavy application which can be launched fast if it gets more higher
-> order pages thus launcher can prepare the system in advance by
-> triggering the proactive compaction from userspace.
-> 
-> This triggering of proactive compaction is done on a write to
-> sysctl.compaction_proactiveness by user.
-> 
-> [1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
-> 
-> Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
-> ---
-> changes in V2: 
->     - remove /proc interface trigger for proactive compaction
->     - Intention is same that add a way to trigger proactive compaction by user.
-> 
-> changes in V1:
->     -  https://lore.kernel.org/lkml/1619098678-8501-1-git-send-email-charante@codeaurora.org/
-> 
->  include/linux/compaction.h |  2 ++
->  include/linux/mmzone.h     |  1 +
->  kernel/sysctl.c            |  2 +-
->  mm/compaction.c            | 35 ++++++++++++++++++++++++++++++++---
->  4 files changed, 36 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-> index 4221888..04d5d9f 100644
-> --- a/include/linux/compaction.h
-> +++ b/include/linux/compaction.h
-> @@ -84,6 +84,8 @@ static inline unsigned long compact_gap(unsigned int order)
->  extern unsigned int sysctl_compaction_proactiveness;
->  extern int sysctl_compaction_handler(struct ctl_table *table, int write,
->  			void *buffer, size_t *length, loff_t *ppos);
-> +extern int compaction_proactiveness_sysctl_handler(struct ctl_table *table,
-> +		int write, void *buffer, size_t *length, loff_t *ppos);
->  extern int sysctl_extfrag_threshold;
->  extern int sysctl_compact_unevictable_allowed;
->  
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 0d53eba..9455809 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -815,6 +815,7 @@ typedef struct pglist_data {
->  	enum zone_type kcompactd_highest_zoneidx;
->  	wait_queue_head_t kcompactd_wait;
->  	struct task_struct *kcompactd;
-> +	bool proactive_compact_trigger;
->  #endif
->  	/*
->  	 * This is a per-node reserve of pages that are not available
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 14edf84..bed2fad 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -2840,7 +2840,7 @@ static struct ctl_table vm_table[] = {
->  		.data		= &sysctl_compaction_proactiveness,
->  		.maxlen		= sizeof(sysctl_compaction_proactiveness),
->  		.mode		= 0644,
-> -		.proc_handler	= proc_dointvec_minmax,
-> +		.proc_handler	= compaction_proactiveness_sysctl_handler,
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= &one_hundred,
->  	},
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index 84fde27..9056693 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -2708,6 +2708,30 @@ static void compact_nodes(void)
->   */
->  unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
->  
-> +int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
-> +		void *buffer, size_t *length, loff_t *ppos)
-> +{
-> +	int rc, nid;
-> +
-> +	rc = proc_dointvec_minmax(table, write, buffer, length, ppos);
-> +	if (rc)
-> +		return rc;
-> +
-> +	if (write && sysctl_compaction_proactiveness) {
-> +		for_each_online_node(nid) {
-> +			pg_data_t *pgdat = NODE_DATA(nid);
-> +
-> +			if (pgdat->proactive_compact_trigger)
-> +				continue;
-> +
-> +			pgdat->proactive_compact_trigger = true;
-> +			wake_up_interruptible(&pgdat->kcompactd_wait);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * This is the entry point for compacting all nodes via
->   * /proc/sys/vm/compact_memory
-> @@ -2752,7 +2776,8 @@ void compaction_unregister_node(struct node *node)
->  
->  static inline bool kcompactd_work_requested(pg_data_t *pgdat)
->  {
-> -	return pgdat->kcompactd_max_order > 0 || kthread_should_stop();
-> +	return pgdat->kcompactd_max_order > 0 || kthread_should_stop() ||
-> +		pgdat->proactive_compact_trigger;
->  }
->  
->  static bool kcompactd_node_suitable(pg_data_t *pgdat)
-> @@ -2905,7 +2930,8 @@ static int kcompactd(void *p)
->  		trace_mm_compaction_kcompactd_sleep(pgdat->node_id);
->  		if (wait_event_freezable_timeout(pgdat->kcompactd_wait,
->  			kcompactd_work_requested(pgdat),
-> -			msecs_to_jiffies(HPAGE_FRAG_CHECK_INTERVAL_MSEC))) {
-> +			msecs_to_jiffies(HPAGE_FRAG_CHECK_INTERVAL_MSEC)) &&
-> +			!pgdat->proactive_compact_trigger) {
->  
->  			psi_memstall_enter(&pflags);
->  			kcompactd_do_work(pgdat);
-> @@ -2919,7 +2945,7 @@ static int kcompactd(void *p)
->  
->  			if (proactive_defer) {
->  				proactive_defer--;
-> -				continue;
-> +				goto loop;
->  			}
->  			prev_score = fragmentation_score_node(pgdat);
->  			proactive_compact_node(pgdat);
-> @@ -2931,6 +2957,9 @@ static int kcompactd(void *p)
->  			proactive_defer = score < prev_score ?
->  					0 : 1 << COMPACT_MAX_DEFER_SHIFT;
->  		}
-> +loop:
-> +		if (pgdat->proactive_compact_trigger)
-> +			pgdat->proactive_compact_trigger = false;
->  	}
->  
->  	return 0;
-> 
+Link: https://github.com/KSPP/linux/issues/115
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
+cc: linux-afs@lists.infradead.org
+cc: linux-hardening@vger.kernel.org
+Link: https://lore.kernel.org/r/51150b54e0b0431a2c401cd54f2c4e7f50e94601.1605896059.git.gustavoars@kernel.org/ # v1
+Link: https://lore.kernel.org/r/20210420211615.GA51432@embeddedor/ # v2
+---
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
-Forum, a Linux Foundation Collaborative Project
+ fs/afs/cmservice.c |    5 +++++
+ fs/afs/fsclient.c  |    4 ++++
+ fs/afs/vlclient.c  |    1 +
+ 3 files changed, 10 insertions(+)
+
+diff --git a/fs/afs/cmservice.c b/fs/afs/cmservice.c
+index a4e9e6e07e93..d3c6bb22c5f4 100644
+--- a/fs/afs/cmservice.c
++++ b/fs/afs/cmservice.c
+@@ -322,6 +322,8 @@ static int afs_deliver_cb_callback(struct afs_call *call)
+ 			return ret;
+ 
+ 		call->unmarshall++;
++		fallthrough;
++
+ 	case 5:
+ 		break;
+ 	}
+@@ -418,6 +420,7 @@ static int afs_deliver_cb_init_call_back_state3(struct afs_call *call)
+ 			r->node[loop] = ntohl(b[loop + 5]);
+ 
+ 		call->unmarshall++;
++		fallthrough;
+ 
+ 	case 2:
+ 		break;
+@@ -530,6 +533,7 @@ static int afs_deliver_cb_probe_uuid(struct afs_call *call)
+ 			r->node[loop] = ntohl(b[loop + 5]);
+ 
+ 		call->unmarshall++;
++		fallthrough;
+ 
+ 	case 2:
+ 		break;
+@@ -663,6 +667,7 @@ static int afs_deliver_yfs_cb_callback(struct afs_call *call)
+ 
+ 		afs_extract_to_tmp(call);
+ 		call->unmarshall++;
++		fallthrough;
+ 
+ 	case 3:
+ 		break;
+diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
+index 2f695a260442..dd3f45d906d2 100644
+--- a/fs/afs/fsclient.c
++++ b/fs/afs/fsclient.c
+@@ -388,6 +388,7 @@ static int afs_deliver_fs_fetch_data(struct afs_call *call)
+ 		req->file_size = vp->scb.status.size;
+ 
+ 		call->unmarshall++;
++		fallthrough;
+ 
+ 	case 5:
+ 		break;
+@@ -1408,6 +1409,7 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
+ 		_debug("motd '%s'", p);
+ 
+ 		call->unmarshall++;
++		fallthrough;
+ 
+ 	case 8:
+ 		break;
+@@ -1845,6 +1847,7 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
+ 		xdr_decode_AFSVolSync(&bp, &op->volsync);
+ 
+ 		call->unmarshall++;
++		fallthrough;
+ 
+ 	case 6:
+ 		break;
+@@ -1979,6 +1982,7 @@ static int afs_deliver_fs_fetch_acl(struct afs_call *call)
+ 		xdr_decode_AFSVolSync(&bp, &op->volsync);
+ 
+ 		call->unmarshall++;
++		fallthrough;
+ 
+ 	case 4:
+ 		break;
+diff --git a/fs/afs/vlclient.c b/fs/afs/vlclient.c
+index dc9327332f06..00fca3c66ba6 100644
+--- a/fs/afs/vlclient.c
++++ b/fs/afs/vlclient.c
+@@ -593,6 +593,7 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 		if (ret < 0)
+ 			return ret;
+ 		call->unmarshall = 6;
++		fallthrough;
+ 
+ 	case 6:
+ 		break;
+
+
