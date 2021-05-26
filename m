@@ -2,116 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF39A391C12
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 17:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AAD3391C63
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 17:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235350AbhEZPeY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 May 2021 11:34:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234615AbhEZPeY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 May 2021 11:34:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5E70560FEB;
-        Wed, 26 May 2021 15:32:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622043172;
-        bh=V5vCXBefwn7ATI2q09Zc6Pyr3lgUwNBruf3selAP4x4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jbwHAkWFow3o+pBkhghb3kHEKwUgkNydGv3mNOmncX52Qoz1jR2s3vJbxA6JPcd88
-         tab4+/Gep3cvFcm3cZMlAQxOOmHOWF86MNOlkpXVV0n2emp7yBv++bsf9Zail+czZ/
-         4AwrVtxdw45GdYyGip8v1vFDbPEI1l6/GKxPDVKUAz97lejoC/GIypyNOFV2/7orn9
-         AwoGrXmEstbTzqHVdZQadJZX+Kld/lh1w/YQ+Oi1d9U5EtitGuZAvULQN/GbfIBQkf
-         Lsq/rxD2moQfCmv6WNsXnHOKeGsJ5R+L0/D6492eq6NGD7sDKAYmg4SAWgQZh3H+UD
-         3oYe04vxFLyHQ==
-Date:   Wed, 26 May 2021 08:32:51 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 07/13] xfs: Convert to use invalidate_lock
-Message-ID: <20210526153251.GZ202121@locust>
-References: <20210525125652.20457-1-jack@suse.cz>
- <20210525135100.11221-7-jack@suse.cz>
- <20210525213729.GC202144@locust>
- <20210526101840.GC30369@quack2.suse.cz>
+        id S234547AbhEZPv3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 May 2021 11:51:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:20739 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235221AbhEZPvP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 May 2021 11:51:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622044168;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=r1Ej9c3HqF4N34dLokWBDDDLrsUjOS1R2qnUxM+2GaA=;
+        b=VMhFHGBF1oLVpsFcJ1cAJMwFwl663bVg9OK1ZO2bg1Fzt1SEiQ1CUi5Nc9TkbnXK6iZJgL
+        JkS9/c30ZGQk95l4ue62YInZhrcE4F0LMiK7is51cWRe7nQkqr/+rtCO7vOPLNE2m5f7vP
+        g1m9TJOd350wJ5MmT4TtlhktEXh9bqE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-270-8ehnYgxmNmaY3t-x9HlAHw-1; Wed, 26 May 2021 11:49:18 -0400
+X-MC-Unique: 8ehnYgxmNmaY3t-x9HlAHw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 15355188E3C1;
+        Wed, 26 May 2021 15:49:17 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CE0AC90BE;
+        Wed, 26 May 2021 15:49:07 +0000 (UTC)
+Date:   Wed, 26 May 2021 11:49:05 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+Message-ID: <20210526154905.GJ447005@madcap2.tricolour.ca>
+References: <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+ <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
+ <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+ <0a668302-b170-31ce-1651-ddf45f63d02a@gmail.com>
+ <CAHC9VhTAvcB0A2dpv1Xn7sa+Kh1n+e-dJr_8wSSRaxS4D0f9Sw@mail.gmail.com>
+ <18823c99-7d65-0e6f-d508-a487f1b4b9e7@samba.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210526101840.GC30369@quack2.suse.cz>
+In-Reply-To: <18823c99-7d65-0e6f-d508-a487f1b4b9e7@samba.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 26, 2021 at 12:18:40PM +0200, Jan Kara wrote:
-> On Tue 25-05-21 14:37:29, Darrick J. Wong wrote:
-> > On Tue, May 25, 2021 at 03:50:44PM +0200, Jan Kara wrote:
-> > > Use invalidate_lock instead of XFS internal i_mmap_lock. The intended
-> > > purpose of invalidate_lock is exactly the same. Note that the locking in
-> > > __xfs_filemap_fault() slightly changes as filemap_fault() already takes
-> > > invalidate_lock.
-> > > 
-> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > CC: <linux-xfs@vger.kernel.org>
-> > > CC: "Darrick J. Wong" <darrick.wong@oracle.com>
-> > 
-> > It's djwong@kernel.org now.
+On 2021-05-26 17:17, Stefan Metzmacher wrote:
 > 
-> OK, updated.
+> Am 26.05.21 um 16:38 schrieb Paul Moore:
+> > On Wed, May 26, 2021 at 6:19 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >> On 5/26/21 3:04 AM, Paul Moore wrote:
+> >>> On Tue, May 25, 2021 at 9:11 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>>> On 5/24/21 1:59 PM, Paul Moore wrote:
+> >>>>> That said, audit is not for everyone, and we have build time and
+> >>>>> runtime options to help make life easier.  Beyond simply disabling
+> >>>>> audit at compile time a number of Linux distributions effectively
+> >>>>> shortcut audit at runtime by adding a "never" rule to the audit
+> >>>>> filter, for example:
+> >>>>>
+> >>>>>  % auditctl -a task,never
+> >>>>
+> >>>> As has been brought up, the issue we're facing is that distros have
+> >>>> CONFIG_AUDIT=y and hence the above is the best real world case outside
+> >>>> of people doing custom kernels. My question would then be how much
+> >>>> overhead the above will add, considering it's an entry/exit call per op.
+> >>>> If auditctl is turned off, what is the expectation in turns of overhead?
+> >>>
+> >>> I commented on that case in my last email to Pavel, but I'll try to go
+> >>> over it again in a little more detail.
+> >>>
+> >>> As we discussed earlier in this thread, we can skip the req->opcode
+> >>> check before both the _entry and _exit calls, so we are left with just
+> >>> the bare audit calls in the io_uring code.  As the _entry and _exit
+> >>> functions are small, I've copied them and their supporting functions
+> >>> below and I'll try to explain what would happen in CONFIG_AUDIT=y,
+> >>> "task,never" case.
+> >>>
+> >>> +  static inline struct audit_context *audit_context(void)
+> >>> +  {
+> >>> +    return current->audit_context;
+> >>> +  }
+> >>>
+> >>> +  static inline bool audit_dummy_context(void)
+> >>> +  {
+> >>> +    void *p = audit_context();
+> >>> +    return !p || *(int *)p;
+> >>> +  }
+> >>>
+> >>> +  static inline void audit_uring_entry(u8 op)
+> >>> +  {
+> >>> +    if (unlikely(audit_enabled && audit_context()))
+> >>> +      __audit_uring_entry(op);
+> >>> +  }
+> >>
+> >> I'd rather agree that it's my cycle-picking. The case I care about
+> >> is CONFIG_AUDIT=y (because everybody enable it), and io_uring
+> >> tracing _not_ enabled at runtime. If enabled let them suffer
+> >> the overhead, it will probably dip down the performance
+> >>
+> >> So, for the case I care about it's two of
+> >>
+> >> if (unlikely(audit_enabled && current->audit_context))
+> >>
+> >> in the hot path. load-test-jump + current, so it will
+> >> be around 7x2 instructions. We can throw away audit_enabled
+> >> as you say systemd already enables it, that will give
+> >> 4x2 instructions including 2 conditional jumps.
+> > 
+> > We've basically got it down to the equivalent of two
+> > "current->audit_context != NULL" checks in the case where audit is
+> > built into the kernel but disabled at runtime, e.g. CONFIG_AUDIT=y and
+> > "task,never".  I'm at a loss for how we can lower the overhead any
+> > further, but I'm open to suggestions.
+> > 
+> >> That's not great at all. And that's why I brought up
+> >> the question about need of pre and post hooks and whether
+> >> can be combined. Would be just 4 instructions and that is
+> >> ok (ish).
+> > 
+> > As discussed previously in this thread that isn't really an option
+> > from an audit perspective.
+> > 
+> >>> We would need to check with the current security requirements (there
+> >>> are distro people on the linux-audit list that keep track of that
+> >>> stuff), but looking at the opcodes right now my gut feeling is that
+> >>> most of the opcodes would be considered "security relevant" so
+> >>> selective auditing might not be that useful in practice.  It would
+> >>> definitely clutter the code and increase the chances that new opcodes
+> >>> would not be properly audited when they are merged.
+> >>
+> >> I'm curious, why it's enabled by many distros by default? Are there
+> >> use cases they use?
+> > 
+> > We've already talked about certain users and environments where audit
+> > is an important requirement, e.g. public sector, health care,
+> > financial institutions, etc.; without audit Linux wouldn't be an
+> > option for these users, at least not without heavy modification,
+> > out-of-tree/ISV patches, etc.  I currently don't have any direct ties
+> > to any distros, "Enterprise" or otherwise, but in the past it has been
+> > my experience that distros much prefer to have a single kernel build
+> > to address the needs of all their users.  In the few cases I have seen
+> > where a second kernel build is supported it is usually for hardware
+> > enablement.  I'm sure there are other cases too, I just haven't seen
+> > them personally; the big distros definitely seem to have a strong
+> > desire to limit the number of supported kernel configs/builds.
+> > 
+> >> Tempting to add AUDIT_IOURING=default N, but won't work I guess
+> > 
+> > One of the nice things about audit is that it can give you a history
+> > of what a user did on a system, which is very important for a number
+> > of use cases.  If we selectively disable audit for certain subsystems
+> > we create a blind spot in the audit log, and in the case of io_uring
+> > this can be a very serious blind spot.  I fear that if we can't come
+> > to some agreement here we will need to make io_uring and audit
+> > mutually exclusive at build time which would be awful; forcing many
+> > distros to either make a hard choice or carry out-of-tree patches.
 > 
-> > > @@ -355,8 +358,11 @@ xfs_isilocked(
-> > >  
-> > >  	if (lock_flags & (XFS_MMAPLOCK_EXCL|XFS_MMAPLOCK_SHARED)) {
-> > >  		if (!(lock_flags & XFS_MMAPLOCK_SHARED))
-> > > -			return !!ip->i_mmaplock.mr_writer;
-> > > -		return rwsem_is_locked(&ip->i_mmaplock.mr_lock);
-> > > +			return !debug_locks ||
-> > > +				lockdep_is_held_type(
-> > > +					&VFS_I(ip)->i_mapping->invalidate_lock,
-> > > +					0);
-> > > +		return rwsem_is_locked(&VFS_I(ip)->i_mapping->invalidate_lock);
-> > 
-> > This doesn't look right...
-> > 
-> > If lockdep is disabled, we always return true for
-> > xfs_isilocked(ip, XFS_MMAPLOCK_EXCL) even if nobody holds the lock?
-> > 
-> > Granted, you probably just copy-pasted from the IOLOCK_SHARED clause
-> > beneath it.  Er... oh right, preichl was messing with all that...
-> > 
-> > https://lore.kernel.org/linux-xfs/20201016021005.548850-2-preichl@redhat.com/
+> I'm wondering why it's not enough to have the native auditing just to happen.
+
+The audit context needs to be set up for each event.  This happens in
+audit_syslog_entry and audit_syslog_exit.
+
+> E.g. all (I have checked RECVMSG,SENDMSG,SEND and CONNECT) socket related io_uring opcodes
+> already go via security_socket_{recvmsg,sendmsg,connect}()
 > 
-> Indeed copy-paste programming ;) It certainly makes the assertions happy
-> but useless. Should I pull the patch you reference into the series? It
-> seems to have been uncontroversial and reviewed. Or will you pull the
-> series to xfs tree so I can just rebase on top?
+> IORING_OP_OPENAT* goes via do_filp_open() which is in common with the open[at[2]]() syscalls
+> and should also trigger audit_inode() and security_file_open().
 
-The full conversion series introduced assertion failures because lockdep
-can't handle some of the ILOCK usage patterns, specifically the fact
-that a thread sometimes takes the ILOCK but then hands the inode to a
-workqueue to avoid overflowing the first thread's stack.  That's why it
-never got merged into the xfs tree.
+These are extra hooks to grab operation-specific (syscall) parameters.
 
-However, that kind of switcheroo isn't done with the
-MMAPLOCK/invalidate_lock, so you could simply pull the patch I linked
-above into your series.
+> So why is there anything special needed for io_uring (now that the native worker threads are used)?
 
---D
+Because syscall has been bypassed by a memory-mapped work queue.
 
+> Is there really any io_uring opcode that bypasses the security checks the corresponding native syscall
+> would do? If so, I think that should just be fixed...
+
+This is by design to speed it up.  This is what Paul's iouring entry and
+exit hooks do.
+
+> Additional LSM based restrictions could be hooked into the io_check_restriction() path
+> and setup at io_uring_setup() or early io_uring_register() time.
 > 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> What do you think?
+> 
+> metze
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
