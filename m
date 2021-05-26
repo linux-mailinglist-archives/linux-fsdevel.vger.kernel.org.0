@@ -2,126 +2,274 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A57CD39166D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 13:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9258D391719
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 14:11:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232933AbhEZLqt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 May 2021 07:46:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58220 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229799AbhEZLqr (ORCPT
+        id S234690AbhEZMNX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 May 2021 08:13:23 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:19779 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234639AbhEZMNT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 May 2021 07:46:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1622029516;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5Uw+/IY4PFLhc9QD0XQTD8Vq22Bv9V1A42B8cw/tcfQ=;
-        b=KZW7SBXegZu/wpZtz8zD3v+c+Tfn24w8Eh3QahoBAYv0mpHdy6NN90Pi9eTOR4ih+SkyEC
-        Jf0bJbiqlXJ21kPasLIbijiQ9LPvSbiQI8LWQ2eukOZjfTtYzxlONsPX/yCSUf1N4nyABf
-        PSighAa3eR5ZZsVoX0qyYHzpK1vuiOQ=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-532-gJDS7jqNNFuyRJZtrKC19Q-1; Wed, 26 May 2021 07:45:15 -0400
-X-MC-Unique: gJDS7jqNNFuyRJZtrKC19Q-1
-Received: by mail-yb1-f199.google.com with SMTP id a139-20020a25ca910000b0290525c6ebf206so1337270ybg.15
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 04:45:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5Uw+/IY4PFLhc9QD0XQTD8Vq22Bv9V1A42B8cw/tcfQ=;
-        b=WdNHIX3pD6BnwST6ctJ9hBgL1ZBYwzwQt7Aa5HWHtb7wkdNN+9BvT1DG8JuN60JCZL
-         6mg9uPGb01UIFgenzvEAM0FSSOTQKoizBYGfySMEZb/IMGC5dwDgRFR4YvMKUqZpabQK
-         L9Sw4dnXz6/QPztmDUslZS+hw6Hn5SjAQjXhlkhdcS2RwK5SfcAv6g7d+6mRqqpe+ojJ
-         wCSJ/PzkPbo+s8GHi+E6ZWYfeKj8YY3qYPQ+ro7BoexwF3mEmvAnYo2DRpaRXbrfRzsZ
-         xv8TMurKzGU0njE36DgxF30cYulPrOdhuVZ9KNrZ4pClHlUPxdLbr3YwKwlrQKdFgEY9
-         qKVw==
-X-Gm-Message-State: AOAM533g6jj5pXsnqdRs2PzZ7cNTwK98/QMhZkPpZpKksbj56vdzOYWE
-        +BCnV/eZ8zB8bPjML7QxUTeNwORIEGOXPWet5RhXJRaOdcRu15nO+e6dCL/HpNb7wOuV78GLaHX
-        ck9PR2dAaiFNTYxEToYupuqPCmtDmNC7/J6hL1cQPPA==
-X-Received: by 2002:a25:f50e:: with SMTP id a14mr48352360ybe.172.1622029514559;
-        Wed, 26 May 2021 04:45:14 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw7JX0t9Q+MjZUdNuGYqNNwFWjv7mwlUzB5zjT5J9a7c3DzGoUhB3CdgL/OZI5wwTVrJZE9FoOnkmowu6kRXnk=
-X-Received: by 2002:a25:f50e:: with SMTP id a14mr48352333ybe.172.1622029514339;
- Wed, 26 May 2021 04:45:14 -0700 (PDT)
+        Wed, 26 May 2021 08:13:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1622031107; x=1653567107;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=A/fLkGFNJLYGOMgSuSdnQ7y6GKUg2aOv7LqkVVTuRCY=;
+  b=DQdWxz+P7PPHVDzRgjcQHyzcpgHM3kFMwBm2YT2VQcNXtm8K/wLLWosf
+   +jGAqP8QRT8/0MuvJvW8sgg2cgd4nbXDrYOVZFNs/AgbXKC0GyU96ECT3
+   1WMZa4PjJBWVU6vLcpWEFrFIE2U69RRSzBtD4n5PuPcmnhenMQizChFcL
+   IAXi9T8wJko9o3PYWjEjHXfKe5F0XaD/XL4SuQeCG8o82XmzLSJl3mcv/
+   r5zgO0+0y7vhiac/RUWMu6aP/1E1ei77P5KU4pamUPpK/kUrEzKrjQWX0
+   Q6Mr+ODxE99F4oVr1vpbnn+x5qLPYW0A3ycr0lbI1azgYLYTUW+pglTOB
+   Q==;
+IronPort-SDR: GpsNxMAA/ioOM0RVQqAhzSr/4bnRGCtphhyhoaPuV9eoRL84Qlj3l2bFp1ZfL4aTtiQDWA0Vcz
+ 78leWMRdTHWoebpd9bUR4EUzrojRUQ0rDQB364883EyrWg8nLgMY3d+MSHDlKAZrvEwJ0dq1qc
+ dAPD4GR68vy+ckaupy3TxBgvA/SyExoiQ2dbVGv8/iO6ToRxKSf4EkDP2HaVcKWBsu2OGg8XJ0
+ 6BfxDP94u959IUQitwnK+n4DUwg5JvJyH+TWpdMbaUNXffSmtcgGragRuS6aZGI1dXpxn23p7l
+ rqo=
+X-IronPort-AV: E=Sophos;i="5.82,331,1613404800"; 
+   d="scan'208";a="168794691"
+Received: from mail-dm6nam11lp2177.outbound.protection.outlook.com (HELO NAM11-DM6-obe.outbound.protection.outlook.com) ([104.47.57.177])
+  by ob1.hgst.iphmx.com with ESMTP; 26 May 2021 20:11:45 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SyxRTPvts2RrkVLLwOzr3YEk8C2tB4Yev6y+MKFYO1La4KZOpvTziAN0O0EPtvOWNNmRm0QeMbL97mEYblkDZsXKW3rCAaXf4gr9s2xBnVjGmVS7t7kIRJAAZFFxoYb2+udUqkoUehGPMSIWajvHheVsi3J9YMnpysMlogAIjTqNu8x5zXRFXI4j57aIhco5yF7ZGgEDoulzPDSvDTC8mljzCIgoAIJKGfWe2xqo3ywxlQ5z0RXC2e8RQ8dvqJfVsMM7zA2955R8mdR2H+a29Nk3mgQ8a/TaTKr3NYRHQd1VVVrrkoD+zWJCDmz8FT2H2B7nc1r5pMheeOKlQpQ0IQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KORs6cDMaNRwjkFnu9T8O4YkFG6aDMtvzAGQf6LxvrU=;
+ b=PT2omP1+QUKHQ9ZeWa4jTw4fgBo0gpV+H3pgclgamykbKftdKM1ZK7lW0hL1TW38OyyECiYSzAChiHwzfS3P75LuueKGQab+aMmbNoBg63R6M6S4KTvWPqVHfesRMxVbJgw0QZX+URTiAYaOPSuqOaIE07f+t2rFuTMmbUzmV1cNz3uUcDnqqD3JxTmcXItsEIl0NWD2jRFZadQdhmhW5eykKvUTMTkbLfdfIdpqU5X3RYcxZCPwdDDq4TU5vfXgRrXjbj4zJ+1jUEp4XSD7bwFyqKCQu8CjxaXqlXTT5HoU76ceR3m78UAQqdFi+ijhMscwjZONH00Tln62W5faGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KORs6cDMaNRwjkFnu9T8O4YkFG6aDMtvzAGQf6LxvrU=;
+ b=BE9nUJ9CiXLIW45LOG2BqxSJUyD4+psg5dCeZFjQb3FMGNmHyTedTmjzq7vhdviPa+my6AzjAmffhvvG7+BpntcZahLeBmBsbVlqzUXpxxe4afHNosYBRI1VxbMouM6H7Z1CdV4UJmwOzn1Ci5FdR5lEFkFHWn8Vuf/7DzTCziQ=
+Received: from DM6PR04MB7081.namprd04.prod.outlook.com (2603:10b6:5:244::21)
+ by DM6PR04MB5995.namprd04.prod.outlook.com (2603:10b6:5:121::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.26; Wed, 26 May
+ 2021 12:11:43 +0000
+Received: from DM6PR04MB7081.namprd04.prod.outlook.com
+ ([fe80::64f9:51d2:1e04:f806]) by DM6PR04MB7081.namprd04.prod.outlook.com
+ ([fe80::64f9:51d2:1e04:f806%9]) with mapi id 15.20.4173.020; Wed, 26 May 2021
+ 12:11:43 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 04/13] mm: Add functions to lock invalidate_lock for two
+ mappings
+Thread-Topic: [PATCH 04/13] mm: Add functions to lock invalidate_lock for two
+ mappings
+Thread-Index: AQHXUW0PB1DDoKdbbkudtJQ756uiLQ==
+Date:   Wed, 26 May 2021 12:11:43 +0000
+Message-ID: <DM6PR04MB7081EBE7CE3404AB53F62795E7249@DM6PR04MB7081.namprd04.prod.outlook.com>
+References: <20210525125652.20457-1-jack@suse.cz>
+ <20210525135100.11221-4-jack@suse.cz> <20210525204805.GM202121@locust>
+ <20210526100702.GB30369@quack2.suse.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: suse.cz; dkim=none (message not signed)
+ header.d=none;suse.cz; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2400:2411:43c0:6000:11c4:96fb:3c8e:5a63]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fdb28495-13b5-49b7-f647-08d9203f6d4d
+x-ms-traffictypediagnostic: DM6PR04MB5995:
+x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
+x-microsoft-antispam-prvs: <DM6PR04MB599597759AB6C006F60D60C4E7249@DM6PR04MB5995.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:1186;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 0lwiJaJ0yxdrkgx/qZ5t3p31kR6ZelWKcXYm1R3aKb2h08BsOpmDsoYfzaCagNRBxqX9XR2Fs7SenY6qSqCWSScTR/+vwy17QnHj0glm6azPyMBBtNtZJI0vhxhKu8k9VPFZFmRo8kFemIzcJvhifpywG0xhNzpXkFzuoQp809UFA2XwE4h0+e3SpuD4Rm+BUrNnMTS1QP5/1Uz2LCyaPI0dXuvVF81Wpz2p5z5VTNGaaCo7vkWJ2GQaCAqAb7nHgLdC3QPstVnD1RW7fVECyxsTSHBwnoQE7kfHsOkr3YTneUfUGUsg7QCptmRPOJi7WsVeONUHVkwVqWGkaC2QdoBNoLVBKUGGn/97K1sHzBrkCzPiEcxQ7a1U5o2V0pnr9kRffdVsFqa2STYyQtDJacSBBDgTnCdG81C2TqWnfbBSEx2Ipu7kmaLMgrh78NWminmHdP6OaD+fi1YjoIFHD1JRAuBcoVwxURTCc5CUn9+ReygkbL/rNgAQPH5r1SPfdmzELpomfjdNgcTx5Bvz3tUFE3eDwOPq1NKW/PtP2SuWvI9xyYqbYd9EvIz+qh0OTfK0ndaB5C7KQMCbbt+6Q8oqfBN5BoimDCtuvU68rKE=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB7081.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(39840400004)(376002)(136003)(346002)(396003)(6506007)(7416002)(316002)(4326008)(478600001)(186003)(66946007)(71200400001)(53546011)(9686003)(83380400001)(2906002)(55016002)(5660300002)(122000001)(86362001)(76116006)(91956017)(8936002)(66476007)(66556008)(66446008)(64756008)(52536014)(38100700002)(8676002)(110136005)(7696005)(54906003)(33656002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?MJfxghB0mOToMvacjsrlAIlfBgcuoJYGLTwhNLFfYGQPF8mdbKRHWl7J+rY8?=
+ =?us-ascii?Q?Zb+dXSOHTVbkYa2Gm5TTsE7yOLMOe4YJP7jtLOQfGmCww+AZVH6wUHR2zAOj?=
+ =?us-ascii?Q?yQ1XE/pSHQkxE8EYFw9pDk7A63/GqwUAvrNZSe0gZpQ0g2D/jJtKdNu6M96B?=
+ =?us-ascii?Q?vao8+dl5EQ1l5f9bPg01tv0O/1TjPPIrXNP0Z1c2M7QSZ+BKoYJOk7aEHYy/?=
+ =?us-ascii?Q?K6H9/9uMAiFL6vbsAVcmfg6WYSrfoXqTYC1H67rD3nzBaYcQFZOyb78h6Fx9?=
+ =?us-ascii?Q?NrgE/RS8rz4uhhhzDxAqDBl+3Tjs4w4q/EhPKte4aDwQBCGpNpTuKHU+GoHb?=
+ =?us-ascii?Q?7vZaF4mZYbUx0QYTecu54VihUtHYO5eU8a2lj3brQuVBOyJ5NGh1z8tOqVsl?=
+ =?us-ascii?Q?VvCKEUk84AIWBmMZ7V4SeHNmZoRA+sHQxc2gFW/vuR41Y7BQeheH1n3dv0Sn?=
+ =?us-ascii?Q?i+s5dtn+O4tbvz2N0ddEMHHDO4PJNtia0fC8uAeiH6+Gs+26JjuzPgrzpUZT?=
+ =?us-ascii?Q?8GMxwaVmfZcXbEL6A28VGu7k8g3PSbZrlSPFZDjpiK6dyG/B/DMBvZyvjXZf?=
+ =?us-ascii?Q?XTKSTzEua/AqxXeaaOg2uKrf4OoZu51RnYlIzhC7vGMsQcjmdsNe1OHHrmoM?=
+ =?us-ascii?Q?Fek6cIXg9H4ZOFh9QSrs5jKI4IrHotNsnOwT8LtFCX9Rnm8tlNhDd/hj2/S9?=
+ =?us-ascii?Q?Efnj3NRQhwdKcMUYV1HkyuZ7O1rZc7wJLznimpCmehA6IiVtDpKotOvCOiRB?=
+ =?us-ascii?Q?RfPZZdieaiZpEri+pcYRAIj4eFsf8pKYhBE/JHzB/q8PoMkd6cp3ZdiWWTob?=
+ =?us-ascii?Q?8QvKwbmjj4kM+KwzqhKe/wE+1SZLFsD0sPpzppcluzdComQyXmmDtDvYSJyQ?=
+ =?us-ascii?Q?25ukmCzEqqdhkbxsdGdR11Gwpeh5Kb0fl6BL3Zo/JdcgmhoLUlGUROxoqMi2?=
+ =?us-ascii?Q?0NKIB/Q1A5BVzLoqd5UHKq9FTf3vhPHxYFoThy8U8wAUU0PYupYd3HI5XLTE?=
+ =?us-ascii?Q?U6csvSptmMhoM7cWavMTtSILRt7EHDsZz8EEwtezb9Ia+w+2M8CJN3+lwhKG?=
+ =?us-ascii?Q?r2dScGtKnS9wKlXz0uJvxSQcAFQdmEOHdCRpA61XKZYFN972bNFRGhaLFUC+?=
+ =?us-ascii?Q?ebxBP0mOYuUpyhLD5uuVTiEvacW/tiR+EuIG033VwmZffRv14Rk/iez2GO0E?=
+ =?us-ascii?Q?0BP9ATGD9b/wJOuGrqw5mQbblvrIRB2tK3lc0hsShouTTNcSCHmk7HvSu4z1?=
+ =?us-ascii?Q?62oGL7A+8paeBedD+IHNCsG+DKQ1Exf2U3WZK6ykmJ3Ql67c9T/UtHhS0G44?=
+ =?us-ascii?Q?9kYDME6t/i20NS1XXHSXdb/5gWizEptq1NVGuVUfJjOShFmnk8zaVVpCxx9S?=
+ =?us-ascii?Q?IjDfBWsoj8gzZAkcBcXYJ6mqmDT33UtqPh+5X5zTGwohzuGz+g=3D=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <87o8d9k4ln.fsf@mpe.ellerman.id.au>
-In-Reply-To: <87o8d9k4ln.fsf@mpe.ellerman.id.au>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Wed, 26 May 2021 13:44:59 +0200
-Message-ID: <CAFqZXNtUvrGxT6UMy81WfMsfZsydGN5k-VGFBq8yjDWN5ARAWw@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB7081.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdb28495-13b5-49b7-f647-08d9203f6d4d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2021 12:11:43.7066
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OVc1dAwFaGj5Ta5zGOOBGnsk7Aqfocn0DcFT67KOjwNBHSQBKH9d1f9P7d1VSIotitd3WRMTx1w8PXf+6c+ecQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB5995
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 17, 2021 at 1:00 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
-> Ondrej Mosnacek <omosnace@redhat.com> writes:
-> > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
-> > lockdown") added an implementation of the locked_down LSM hook to
-> > SELinux, with the aim to restrict which domains are allowed to perform
-> > operations that would breach lockdown.
-> >
-> > However, in several places the security_locked_down() hook is called in
-> > situations where the current task isn't doing any action that would
-> > directly breach lockdown, leading to SELinux checks that are basically
-> > bogus.
-> >
-> > Since in most of these situations converting the callers such that
-> > security_locked_down() is called in a context where the current task
-> > would be meaningful for SELinux is impossible or very non-trivial (and
-> > could lead to TOCTOU issues for the classic Lockdown LSM
-> > implementation), fix this by modifying the hook to accept a struct cred
-> > pointer as argument, where NULL will be interpreted as a request for a
-> > "global", task-independent lockdown decision only. Then modify SELinux
-> > to ignore calls with cred == NULL.
-> >
-> > Since most callers will just want to pass current_cred() as the cred
-> > parameter, rename the hook to security_cred_locked_down() and provide
-> > the original security_locked_down() function as a simple wrapper around
-> > the new hook.
-> >
-> > The callers migrated to the new hook, passing NULL as cred:
-> > 1. arch/powerpc/xmon/xmon.c
-> >      Here the hook seems to be called from non-task context and is only
-> >      used for redacting some sensitive values from output sent to
-> >      userspace.
->
-> It's hard to follow but it actually disables interactive use of xmon
-> entirely if lockdown is in confidentiality mode, and disables
-> modifications of the kernel in integrity mode.
->
-> But that's not really that important, the patch looks fine.
->
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-
-Thanks, Michael!
-
-James/Paul, is there anything blocking this patch from being merged?
-Especially the BPF case is causing real trouble for people and the
-only workaround is to broadly allow lockdown::confidentiality in the
-policy.
-
---
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+On 2021/05/26 19:07, Jan Kara wrote:=0A=
+> On Tue 25-05-21 13:48:05, Darrick J. Wong wrote:=0A=
+>> On Tue, May 25, 2021 at 03:50:41PM +0200, Jan Kara wrote:=0A=
+>>> Some operations such as reflinking blocks among files will need to lock=
+=0A=
+>>> invalidate_lock for two mappings. Add helper functions to do that.=0A=
+>>>=0A=
+>>> Signed-off-by: Jan Kara <jack@suse.cz>=0A=
+>>> ---=0A=
+>>>  include/linux/fs.h |  6 ++++++=0A=
+>>>  mm/filemap.c       | 38 ++++++++++++++++++++++++++++++++++++++=0A=
+>>>  2 files changed, 44 insertions(+)=0A=
+>>>=0A=
+>>> diff --git a/include/linux/fs.h b/include/linux/fs.h=0A=
+>>> index 897238d9f1e0..e6f7447505f5 100644=0A=
+>>> --- a/include/linux/fs.h=0A=
+>>> +++ b/include/linux/fs.h=0A=
+>>> @@ -822,6 +822,12 @@ static inline void inode_lock_shared_nested(struct=
+ inode *inode, unsigned subcla=0A=
+>>>  void lock_two_nondirectories(struct inode *, struct inode*);=0A=
+>>>  void unlock_two_nondirectories(struct inode *, struct inode*);=0A=
+>>>  =0A=
+>>> +void filemap_invalidate_down_write_two(struct address_space *mapping1,=
+=0A=
+>>> +				       struct address_space *mapping2);=0A=
+>>> +void filemap_invalidate_up_write_two(struct address_space *mapping1,=
+=0A=
+>>=0A=
+>> TBH I find myself wishing that the invalidate_lock used the same=0A=
+>> lock/unlock style wrappers that we use for i_rwsem.=0A=
+>>=0A=
+>> filemap_invalidate_lock(inode1->mapping);=0A=
+>> filemap_invalidate_lock_two(inode1->i_mapping, inode2->i_mapping);=0A=
+> =0A=
+> OK, and filemap_invalidate_lock_shared() for down_read()? I guess that=0A=
+> works for me.=0A=
+=0A=
+What about filemap_invalidate_lock_read() and filemap_invalidate_lock_write=
+() ?=0A=
+That reminds the down_read()/down_write() without the slightly confusing do=
+wn/up.=0A=
+=0A=
+> =0A=
+> 								Honza=0A=
+> =0A=
+>  =0A=
+>> To be fair, I've never been able to keep straight that down means lock=
+=0A=
+>> and up means unlock.  Ah well, at least you didn't use "p" and "v".=0A=
+>>=0A=
+>> Mechanically, the changes look ok to me.=0A=
+>> Acked-by: Darrick J. Wong <djwong@kernel.org>=0A=
+>>=0A=
+>> --D=0A=
+>>=0A=
+>>> +				     struct address_space *mapping2);=0A=
+>>> +=0A=
+>>> +=0A=
+>>>  /*=0A=
+>>>   * NOTE: in a 32bit arch with a preemptable kernel and=0A=
+>>>   * an UP compile the i_size_read/write must be atomic=0A=
+>>> diff --git a/mm/filemap.c b/mm/filemap.c=0A=
+>>> index 4d9ec4c6cc34..d3801a9739aa 100644=0A=
+>>> --- a/mm/filemap.c=0A=
+>>> +++ b/mm/filemap.c=0A=
+>>> @@ -1009,6 +1009,44 @@ struct page *__page_cache_alloc(gfp_t gfp)=0A=
+>>>  EXPORT_SYMBOL(__page_cache_alloc);=0A=
+>>>  #endif=0A=
+>>>  =0A=
+>>> +/*=0A=
+>>> + * filemap_invalidate_down_write_two - lock invalidate_lock for two ma=
+ppings=0A=
+>>> + *=0A=
+>>> + * Lock exclusively invalidate_lock of any passed mapping that is not =
+NULL.=0A=
+>>> + *=0A=
+>>> + * @mapping1: the first mapping to lock=0A=
+>>> + * @mapping2: the second mapping to lock=0A=
+>>> + */=0A=
+>>> +void filemap_invalidate_down_write_two(struct address_space *mapping1,=
+=0A=
+>>> +				       struct address_space *mapping2)=0A=
+>>> +{=0A=
+>>> +	if (mapping1 > mapping2)=0A=
+>>> +		swap(mapping1, mapping2);=0A=
+>>> +	if (mapping1)=0A=
+>>> +		down_write(&mapping1->invalidate_lock);=0A=
+>>> +	if (mapping2 && mapping1 !=3D mapping2)=0A=
+>>> +		down_write_nested(&mapping2->invalidate_lock, 1);=0A=
+>>> +}=0A=
+>>> +EXPORT_SYMBOL(filemap_invalidate_down_write_two);=0A=
+>>> +=0A=
+>>> +/*=0A=
+>>> + * filemap_invalidate_up_write_two - unlock invalidate_lock for two ma=
+ppings=0A=
+>>> + *=0A=
+>>> + * Unlock exclusive invalidate_lock of any passed mapping that is not =
+NULL.=0A=
+>>> + *=0A=
+>>> + * @mapping1: the first mapping to unlock=0A=
+>>> + * @mapping2: the second mapping to unlock=0A=
+>>> + */=0A=
+>>> +void filemap_invalidate_up_write_two(struct address_space *mapping1,=
+=0A=
+>>> +				     struct address_space *mapping2)=0A=
+>>> +{=0A=
+>>> +	if (mapping1)=0A=
+>>> +		up_write(&mapping1->invalidate_lock);=0A=
+>>> +	if (mapping2 && mapping1 !=3D mapping2)=0A=
+>>> +		up_write(&mapping2->invalidate_lock);=0A=
+>>> +}=0A=
+>>> +EXPORT_SYMBOL(filemap_invalidate_up_write_two);=0A=
+>>> +=0A=
+>>>  /*=0A=
+>>>   * In order to wait for pages to become available there must be=0A=
+>>>   * waitqueues associated with pages. By using a hash table of=0A=
+>>> -- =0A=
+>>> 2.26.2=0A=
+>>>=0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
