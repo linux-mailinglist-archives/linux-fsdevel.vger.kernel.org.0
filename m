@@ -2,97 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EEC0439125B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 10:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 792D7391268
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 10:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232743AbhEZIdP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 May 2021 04:33:15 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:39008 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231410AbhEZIdO (ORCPT
+        id S231993AbhEZIer (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 May 2021 04:34:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36206 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231982AbhEZIeq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 May 2021 04:33:14 -0400
-Received: from dread.disaster.area (pa49-180-230-185.pa.nsw.optusnet.com.au [49.180.230.185])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id CD4E1104350A;
-        Wed, 26 May 2021 18:31:38 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1llowz-005N7h-2k; Wed, 26 May 2021 18:31:37 +1000
-Date:   Wed, 26 May 2021 18:31:37 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc:     Wu Bo <wubo40@huawei.com>, linfeilong@huawei.com,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, davem@davemloft.net,
-        herbert@gondor.apana.org.au, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 1/2] crypto: af_alg - use DIV_ROUND_UP helper macro for
- calculations
-Message-ID: <20210526083137.GK2817@dread.disaster.area>
-References: <1621930520-515336-1-git-send-email-wubo40@huawei.com>
- <1621930520-515336-2-git-send-email-wubo40@huawei.com>
- <20210525103744.Horde.nmFFeC3J2_-Qdu7udOYa8g1@messagerie.c-s.fr>
+        Wed, 26 May 2021 04:34:46 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AFCEC061574;
+        Wed, 26 May 2021 01:33:14 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id e2so563621ljk.4;
+        Wed, 26 May 2021 01:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RIDZ06jndbCoInmR0ANM92ad6K9XlyXkeP1SRnmZcmc=;
+        b=oBl3rccG9MRxe9Y2RMnwifVlE7e965esj7+OeoKb4ak7uHSjLuBUquJIK8FpygeQQX
+         nLMu8a4BEtIsURdDzThku8WxA1K11y3H4cXP0OBA6UXxhcJfj/VZHLfNtE/ultIbWc6Y
+         2Y9pnRBtpit+AtiNpcbpI/Awhtd0NH//0/FyJa+wIHQIoAbEOBd7X+YUpzi87f6CQQWz
+         wwZvNI/ah20BSau+sQzjIgyrNBtRd4bJpurLXv7uoIQq6lqt0uoEYzAAHQyT1OjjPF3X
+         tutl2pEAaLJ3wlLsyHOiFggXHlhPSV6l78oH46L57GN450dgK1oH9Wa4IY2avPgYoKzw
+         j10A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RIDZ06jndbCoInmR0ANM92ad6K9XlyXkeP1SRnmZcmc=;
+        b=VRJXGyGxE31DObt9fyggL+5deSvMUYUNHoBw4mmQ8joYaRctkvz/MYXLUAWJMlfFsV
+         b54X4HrEgM7SHrQx7CBt9Si9fnbSQTgWBK53uZqzULMUuTfuey6LXGSB+nd0jemr1NiU
+         fLvaPEFNyab7e//WURjMQxnJzrPmqJRdAq9hLJaZnmVkn1K88Ap/EkuiVuFH8Ot2GAtd
+         i0eAuYDF8OGguIr8UBaMRdr79CEz7zju+oebEByrB6ECqhCPO/RY2HKWAoamJYqHvaYI
+         XMg7MRe/iJzJlV+WWM1uPa3iWDVKGEOZCCDppBsygNApoWIDM3bwd5Uy5Mwd0jKVym/E
+         a0sQ==
+X-Gm-Message-State: AOAM533tSawriDd39RqR1AekmHfZ6WiAWtRh9zU5FZwsPaYgJg72SMhI
+        TWCX8wS/9rwt9BgGCBVrpzDww/63JtDnpGs8edI=
+X-Google-Smtp-Source: ABdhPJz1Y4k0QbOkkq7w1NmO1s9FVTULUKFaD2KGPyhRBK9Tko7lVnITZKV4YKgY2Gav1lequ3jqhsjwWfDSj4vxLLs=
+X-Received: by 2002:a2e:7a06:: with SMTP id v6mr1327638ljc.219.1622017992692;
+ Wed, 26 May 2021 01:33:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210525103744.Horde.nmFFeC3J2_-Qdu7udOYa8g1@messagerie.c-s.fr>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
-        a=dUIOjvib2kB+GiIc1vUx8g==:117 a=dUIOjvib2kB+GiIc1vUx8g==:17
-        a=8nJEP1OIZ-IA:10 a=5FLXtPjwQuUA:10 a=i0EeH86SAAAA:8 a=7-415B0cAAAA:8
-        a=PjDj1IsLZaY1bt5ZHPIA:9 a=wPNLvfGTeEIA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20210525141524.3995-1-dong.menglong@zte.com.cn>
+ <20210525141524.3995-3-dong.menglong@zte.com.cn> <m18s42odgz.fsf@fess.ebiederm.org>
+ <CADxym3a5nsuw2hiDF=ZS51Wpjs-i_VW+OGd-sgGDVrKYw2AiHQ@mail.gmail.com>
+ <m11r9umb4y.fsf@fess.ebiederm.org> <YK3Pb/OGwWVzvDZM@localhost>
+In-Reply-To: <YK3Pb/OGwWVzvDZM@localhost>
+From:   Menglong Dong <menglong8.dong@gmail.com>
+Date:   Wed, 26 May 2021 16:33:00 +0800
+Message-ID: <CADxym3bznknEWLaa-SgYZAsTGucP_9m+9=JW7oc6=ggrUaBk7A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] init/do_cmounts.c: introduce 'user_root' for initramfs
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Sami Tolvanen <samitolvanen@google.com>, ojeda@kernel.org,
+        johan@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        masahiroy@kernel.org, Menglong Dong <dong.menglong@zte.com.cn>,
+        joe@perches.com, Jens Axboe <axboe@kernel.dk>, hare@suse.de,
+        Jan Kara <jack@suse.cz>, tj@kernel.org,
+        gregkh@linuxfoundation.org, song@kernel.org,
+        NeilBrown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        f.fainelli@gmail.com, arnd@arndb.de,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        wangkefeng.wang@huawei.com, Barret Rhoden <brho@google.com>,
+        mhiramat@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        vbabka@suse.cz, Alexander Potapenko <glider@google.com>,
+        pmladek@suse.com, Chris Down <chris@chrisdown.name>,
+        jojing64@gmail.com, terrelln@fb.com, geert@linux-m68k.org,
+        mingo@kernel.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, jeyu@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 25, 2021 at 10:37:44AM +0200, Christophe Leroy wrote:
-> Wu Bo <wubo40@huawei.com> a écrit :
-> 
-> > From: Wu Bo <wubo40@huawei.com>
-> > 
-> > Replace open coded divisor calculations with the DIV_ROUND_UP kernel
-> > macro for better readability.
-> > 
-> > Signed-off-by: Wu Bo <wubo40@huawei.com>
-> > ---
-> >  crypto/af_alg.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-> > index 18cc82d..8bd288d 100644
-> > --- a/crypto/af_alg.c
-> > +++ b/crypto/af_alg.c
-> > @@ -411,7 +411,7 @@ int af_alg_make_sg(struct af_alg_sgl *sgl, struct
-> > iov_iter *iter, int len)
-> >  	if (n < 0)
-> >  		return n;
-> > 
-> > -	npages = (off + n + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> > +	npages = DIV_ROUND_UP(off + n, PAGE_SIZE);
-> 
-> You should use PFN_UP()
+On Wed, May 26, 2021 at 12:33 PM Josh Triplett <josh@joshtriplett.org> wrote:
+>
+> On Tue, May 25, 2021 at 10:23:09PM -0500, Eric W. Biederman wrote:
+> > If we are going to do this something that is so small and clean it can
+> > be done unconditionally always.
+> [...]
+> > The net request as I understand it: Make the filesystem the initramfs
+> > lives in be an ordinary filesystem so it can just be used as the systems
+> > primary filesystem.
+>
+> Including the ability to pivot_root it away, which seems like the main
+> sticking point.
+>
+> If this can be done without any overhead, that seems fine, but if this
+> involves mounting an extra filesystem, that may add an appreciable
+> amount of boot time for systems trying to boot in milliseconds. (Such
+> systems would not use an initramfs if they're going to go on and boot a
+> separate root filesystem, but they can use an initramfs as their *only*
+> filesystem.)
 
-No. We are not using pfns here - we're converting a byte count to a
-page count.
+Compared to the time the unpacking spent, a mounting seems nothing. In the
+scene above, this change can be disabled by kconfig, if pivot_root
+is not needed in initramfs.
 
-Besides, "PFN_UP" is a horrible, awful api. It does not decribe what
-it does and anyone who is not a mm developer will look at it and ask
-"what <the ....> does this do?" and have to go looking for it's
-definition to determine what it does. Yes, that's exactyl what I've
-just done, and I really wish I didn't because, well, it just
-reinforces how much we suck at APIs...
-
-OTOH, what DIV_ROUND_UP() does is obvious, widely understood, self
-documenting and easy to determine if the usage is correct, which
-indeed this is.
-
-The lesson: do not use whacky obscure, out of context macros when a
-simple, obvious, widely known macro will give the same result and
-make the code easier to understand.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks!
+Menglong Dong
