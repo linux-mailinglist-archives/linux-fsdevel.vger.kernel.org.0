@@ -2,177 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAFE43914C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 12:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A57CD39166D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 13:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233903AbhEZKWg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 May 2021 06:22:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34770 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233730AbhEZKWf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 May 2021 06:22:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1622024462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        id S232933AbhEZLqt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 May 2021 07:46:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58220 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229799AbhEZLqr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 May 2021 07:46:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622029516;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=KNXtYbX9PoD7HWobCfGe506uRcOdWxiA8Gr7nrDFogA=;
-        b=2urB98NmE/jP6mSICb3YhJoU3CNmVA3jsTPkDf7uho1D8U4aLvX/lEIJbpI3lzu6DI90cx
-        2tW3Ki9mRLc2S7rBmkdiGaAABLeduUVN5U6+vxKaHtuTRR9ubsJronVXiVU/Mr1KlGAcCl
-        37efE24YmVwNASTk4LKCY08gWwFykkk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1622024462;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KNXtYbX9PoD7HWobCfGe506uRcOdWxiA8Gr7nrDFogA=;
-        b=7FeQ1oYTjy3dESOA3v95EZt/vKI8f9cxYKZTi5iS4eZ6729GTgdeaYfZCfXLAK5U9i4RIo
-        5mD2xUxmmobGLpAg==
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 57F18B25F;
-        Wed, 26 May 2021 10:21:01 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DE7451F2CAC; Wed, 26 May 2021 12:20:59 +0200 (CEST)
-Date:   Wed, 26 May 2021 12:20:59 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 07/13] xfs: Convert to use invalidate_lock
-Message-ID: <20210526102059.GD30369@quack2.suse.cz>
-References: <20210525125652.20457-1-jack@suse.cz>
- <20210525135100.11221-7-jack@suse.cz>
- <20210525214041.GJ664593@dread.disaster.area>
+        bh=5Uw+/IY4PFLhc9QD0XQTD8Vq22Bv9V1A42B8cw/tcfQ=;
+        b=KZW7SBXegZu/wpZtz8zD3v+c+Tfn24w8Eh3QahoBAYv0mpHdy6NN90Pi9eTOR4ih+SkyEC
+        Jf0bJbiqlXJ21kPasLIbijiQ9LPvSbiQI8LWQ2eukOZjfTtYzxlONsPX/yCSUf1N4nyABf
+        PSighAa3eR5ZZsVoX0qyYHzpK1vuiOQ=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-532-gJDS7jqNNFuyRJZtrKC19Q-1; Wed, 26 May 2021 07:45:15 -0400
+X-MC-Unique: gJDS7jqNNFuyRJZtrKC19Q-1
+Received: by mail-yb1-f199.google.com with SMTP id a139-20020a25ca910000b0290525c6ebf206so1337270ybg.15
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 04:45:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5Uw+/IY4PFLhc9QD0XQTD8Vq22Bv9V1A42B8cw/tcfQ=;
+        b=WdNHIX3pD6BnwST6ctJ9hBgL1ZBYwzwQt7Aa5HWHtb7wkdNN+9BvT1DG8JuN60JCZL
+         6mg9uPGb01UIFgenzvEAM0FSSOTQKoizBYGfySMEZb/IMGC5dwDgRFR4YvMKUqZpabQK
+         L9Sw4dnXz6/QPztmDUslZS+hw6Hn5SjAQjXhlkhdcS2RwK5SfcAv6g7d+6mRqqpe+ojJ
+         wCSJ/PzkPbo+s8GHi+E6ZWYfeKj8YY3qYPQ+ro7BoexwF3mEmvAnYo2DRpaRXbrfRzsZ
+         xv8TMurKzGU0njE36DgxF30cYulPrOdhuVZ9KNrZ4pClHlUPxdLbr3YwKwlrQKdFgEY9
+         qKVw==
+X-Gm-Message-State: AOAM533g6jj5pXsnqdRs2PzZ7cNTwK98/QMhZkPpZpKksbj56vdzOYWE
+        +BCnV/eZ8zB8bPjML7QxUTeNwORIEGOXPWet5RhXJRaOdcRu15nO+e6dCL/HpNb7wOuV78GLaHX
+        ck9PR2dAaiFNTYxEToYupuqPCmtDmNC7/J6hL1cQPPA==
+X-Received: by 2002:a25:f50e:: with SMTP id a14mr48352360ybe.172.1622029514559;
+        Wed, 26 May 2021 04:45:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw7JX0t9Q+MjZUdNuGYqNNwFWjv7mwlUzB5zjT5J9a7c3DzGoUhB3CdgL/OZI5wwTVrJZE9FoOnkmowu6kRXnk=
+X-Received: by 2002:a25:f50e:: with SMTP id a14mr48352333ybe.172.1622029514339;
+ Wed, 26 May 2021 04:45:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210525214041.GJ664593@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210517092006.803332-1-omosnace@redhat.com> <87o8d9k4ln.fsf@mpe.ellerman.id.au>
+In-Reply-To: <87o8d9k4ln.fsf@mpe.ellerman.id.au>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Wed, 26 May 2021 13:44:59 +0200
+Message-ID: <CAFqZXNtUvrGxT6UMy81WfMsfZsydGN5k-VGFBq8yjDWN5ARAWw@mail.gmail.com>
+Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
+ permission checks
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 26-05-21 07:40:41, Dave Chinner wrote:
-> On Tue, May 25, 2021 at 03:50:44PM +0200, Jan Kara wrote:
-> > Use invalidate_lock instead of XFS internal i_mmap_lock. The intended
-> > purpose of invalidate_lock is exactly the same. Note that the locking in
-> > __xfs_filemap_fault() slightly changes as filemap_fault() already takes
-> > invalidate_lock.
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > CC: <linux-xfs@vger.kernel.org>
-> > CC: "Darrick J. Wong" <darrick.wong@oracle.com>
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> >  fs/xfs/xfs_file.c  | 12 ++++++-----
-> >  fs/xfs/xfs_inode.c | 52 ++++++++++++++++++++++++++--------------------
-> >  fs/xfs/xfs_inode.h |  1 -
-> >  fs/xfs/xfs_super.c |  2 --
-> >  4 files changed, 36 insertions(+), 31 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> > index 396ef36dcd0a..dc9cb5c20549 100644
-> > --- a/fs/xfs/xfs_file.c
-> > +++ b/fs/xfs/xfs_file.c
-> > @@ -1282,7 +1282,7 @@ xfs_file_llseek(
-> >   *
-> >   * mmap_lock (MM)
-> >   *   sb_start_pagefault(vfs, freeze)
-> > - *     i_mmaplock (XFS - truncate serialisation)
-> > + *     invalidate_lock (vfs/XFS_MMAPLOCK - truncate serialisation)
-> >   *       page_lock (MM)
-> >   *         i_lock (XFS - extent map serialisation)
-> >   */
-> > @@ -1303,24 +1303,26 @@ __xfs_filemap_fault(
-> >  		file_update_time(vmf->vma->vm_file);
-> >  	}
-> >  
-> > -	xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
-> >  	if (IS_DAX(inode)) {
-> >  		pfn_t pfn;
-> >  
-> > +		xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
-> >  		ret = dax_iomap_fault(vmf, pe_size, &pfn, NULL,
-> >  				(write_fault && !vmf->cow_page) ?
-> >  				 &xfs_direct_write_iomap_ops :
-> >  				 &xfs_read_iomap_ops);
-> >  		if (ret & VM_FAULT_NEEDDSYNC)
-> >  			ret = dax_finish_sync_fault(vmf, pe_size, pfn);
-> > +		xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
-> >  	} else {
-> > -		if (write_fault)
-> > +		if (write_fault) {
-> > +			xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
-> >  			ret = iomap_page_mkwrite(vmf,
-> >  					&xfs_buffered_write_iomap_ops);
-> > -		else
-> > +			xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
-> > +		} else
-> >  			ret = filemap_fault(vmf);
-> >  	}
-> > -	xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
-> 
-> This seems kinda messy. filemap_fault() basically takes the
-> invalidate lock around the entire operation, it runs, so maybe it
-> would be cleaner to implement it as:
-> 
-> filemap_fault_locked(vmf)
-> {
-> 	/* does the filemap fault work */
-> }
-> 
-> filemap_fault(vmf)
-> {
-> 	filemap_invalidate_down_read(...)
-> 	ret = filemap_fault_locked(vmf)
-> 	filemap_invalidate_up_read(...)
-> 	return ret;
-> }
-> 
-> And that means XFS could just call filemap_fault_locked() and not 
-> have to do all this messy locking just to avoid holding the lock
-> that filemap_fault has now internalised.
+On Mon, May 17, 2021 at 1:00 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
+> Ondrej Mosnacek <omosnace@redhat.com> writes:
+> > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> > lockdown") added an implementation of the locked_down LSM hook to
+> > SELinux, with the aim to restrict which domains are allowed to perform
+> > operations that would breach lockdown.
+> >
+> > However, in several places the security_locked_down() hook is called in
+> > situations where the current task isn't doing any action that would
+> > directly breach lockdown, leading to SELinux checks that are basically
+> > bogus.
+> >
+> > Since in most of these situations converting the callers such that
+> > security_locked_down() is called in a context where the current task
+> > would be meaningful for SELinux is impossible or very non-trivial (and
+> > could lead to TOCTOU issues for the classic Lockdown LSM
+> > implementation), fix this by modifying the hook to accept a struct cred
+> > pointer as argument, where NULL will be interpreted as a request for a
+> > "global", task-independent lockdown decision only. Then modify SELinux
+> > to ignore calls with cred == NULL.
+> >
+> > Since most callers will just want to pass current_cred() as the cred
+> > parameter, rename the hook to security_cred_locked_down() and provide
+> > the original security_locked_down() function as a simple wrapper around
+> > the new hook.
+> >
+> > The callers migrated to the new hook, passing NULL as cred:
+> > 1. arch/powerpc/xmon/xmon.c
+> >      Here the hook seems to be called from non-task context and is only
+> >      used for redacting some sensitive values from output sent to
+> >      userspace.
+>
+> It's hard to follow but it actually disables interactive use of xmon
+> entirely if lockdown is in confidentiality mode, and disables
+> modifications of the kernel in integrity mode.
+>
+> But that's not really that important, the patch looks fine.
+>
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-Sure, I can do that.
+Thanks, Michael!
 
-> > @@ -355,8 +358,11 @@ xfs_isilocked(
-> >  
-> >  	if (lock_flags & (XFS_MMAPLOCK_EXCL|XFS_MMAPLOCK_SHARED)) {
-> >  		if (!(lock_flags & XFS_MMAPLOCK_SHARED))
-> > -			return !!ip->i_mmaplock.mr_writer;
-> > -		return rwsem_is_locked(&ip->i_mmaplock.mr_lock);
-> > +			return !debug_locks ||
-> > +				lockdep_is_held_type(
-> > +					&VFS_I(ip)->i_mapping->invalidate_lock,
-> > +					0);
-> > +		return rwsem_is_locked(&VFS_I(ip)->i_mapping->invalidate_lock);
-> >  	}
-> 
-> <sigh>
-> 
-> And so here we are again, losing more of our read vs write debug
-> checks on debug kernels when lockdep is not enabled....
-> 
-> Can we please add rwsem_is_locked_read() and rwsem_is_locked_write()
-> wrappers that just look at the rwsem counter value to determine how
-> the lock is held? Then the mrlock_t can go away entirely....
+James/Paul, is there anything blocking this patch from being merged?
+Especially the BPF case is causing real trouble for people and the
+only workaround is to broadly allow lockdown::confidentiality in the
+policy.
 
-Apparently someone already did that for XFS as Darrick pointed out. So we
-just have to sort out how to merge it.
+--
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
