@@ -2,183 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93609390ED1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 05:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62EED390EE0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 05:32:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231504AbhEZDZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 23:25:27 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:37108 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbhEZDZ1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 23:25:27 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1llk8m-009FJV-6g; Tue, 25 May 2021 21:23:28 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1llk8l-0005ks-42; Tue, 25 May 2021 21:23:27 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Menglong Dong <menglong8.dong@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Sami Tolvanen <samitolvanen@google.com>, ojeda@kernel.org,
-        johan@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        masahiroy@kernel.org, Menglong Dong <dong.menglong@zte.com.cn>,
-        joe@perches.com, Jens Axboe <axboe@kernel.dk>, hare@suse.de,
-        Jan Kara <jack@suse.cz>, tj@kernel.org,
-        gregkh@linuxfoundation.org, song@kernel.org,
-        NeilBrown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        f.fainelli@gmail.com, arnd@arndb.de,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        wangkefeng.wang@huawei.com, Barret Rhoden <brho@google.com>,
-        mhiramat@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        vbabka@suse.cz, Alexander Potapenko <glider@google.com>,
-        pmladek@suse.com, Chris Down <chris@chrisdown.name>,
-        jojing64@gmail.com, terrelln@fb.com, geert@linux-m68k.org,
-        mingo@kernel.org, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, jeyu@kernel.org
-References: <20210525141524.3995-1-dong.menglong@zte.com.cn>
-        <20210525141524.3995-3-dong.menglong@zte.com.cn>
-        <m18s42odgz.fsf@fess.ebiederm.org>
-        <CADxym3a5nsuw2hiDF=ZS51Wpjs-i_VW+OGd-sgGDVrKYw2AiHQ@mail.gmail.com>
-Date:   Tue, 25 May 2021 22:23:09 -0500
-In-Reply-To: <CADxym3a5nsuw2hiDF=ZS51Wpjs-i_VW+OGd-sgGDVrKYw2AiHQ@mail.gmail.com>
-        (Menglong Dong's message of "Wed, 26 May 2021 09:51:22 +0800")
-Message-ID: <m11r9umb4y.fsf@fess.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S231721AbhEZDdo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 23:33:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50466 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231461AbhEZDdl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 23:33:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 03E6361417;
+        Wed, 26 May 2021 03:32:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621999931;
+        bh=EPD8eWdL3o3BGUuFoBklCzaXdZghvgcsgGeaq/Pagu0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ReSYn2le/FVvB1mjKEj2QlTS83t0aH3zV3R88CtS4z95l5lbwn+g0rnMGGvQvCYGY
+         TdQuEPaSVL9KF+8bfkw4ExGspkvmbVEoqO0Wd2opEJn1Ax3/Hp/+nuLIiAJ1ax9c73
+         PyG+BLLsFsk18KUC9bE9mPGeJPzaXyUmQFFB5cQuCG5xxX/BXOvpjpeeOdcbTuAbje
+         3zt5g1PE8KO8c0lyU//EAd3r20XVIQ3cb3EGd6wYJTr7L2XHp9NcjITw1hxRAY7Oyk
+         kY9bqGj2KcC9q4Rvvf/yyI0woR6h+yYMQFSFKlW4OEXjKl6Sy7GSqoE1ZibkuH+Q1G
+         hVU39XXJxTgtw==
+Date:   Tue, 25 May 2021 20:32:10 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Brian Foster <bfoster@redhat.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v3 3/3] iomap: bound ioend size to 4096 pages
+Message-ID: <20210526033210.GG202078@locust>
+References: <20210517171722.1266878-1-bfoster@redhat.com>
+ <20210517171722.1266878-4-bfoster@redhat.com>
+ <20210520232737.GA9675@magnolia>
+ <YKuVymtSYhrDCytP@bfoster>
+ <20210525042035.GE202121@locust>
+ <YK2uorrbm0L76p68@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1llk8l-0005ks-42;;;mid=<m11r9umb4y.fsf@fess.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19UEqCr4Wgg2PYoJNFhlS45Ajf4X6WIQe0=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.8 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,TR_XM_PhishingBody,T_TM2_M_HEADER_IN_MSG,
-        T_TooManySym_01,T_TooManySym_02,T_TooManySym_03,XMSubLong,XM_B_Phish66,
-        XM_B_SpammyWords autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4999]
-        *  0.7 XMSubLong Long Subject
-        *  2.0 XM_B_Phish66 BODY: Obfuscated XMission
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.0 TR_XM_PhishingBody Phishing flag in body of message
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Menglong Dong <menglong8.dong@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 561 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 12 (2.1%), b_tie_ro: 10 (1.8%), parse: 1.27
-        (0.2%), extract_message_metadata: 14 (2.5%), get_uri_detail_list: 2.6
-        (0.5%), tests_pri_-1000: 15 (2.7%), tests_pri_-950: 1.21 (0.2%),
-        tests_pri_-900: 1.07 (0.2%), tests_pri_-90: 91 (16.2%), check_bayes:
-        90 (16.0%), b_tokenize: 13 (2.3%), b_tok_get_all: 11 (2.0%),
-        b_comp_prob: 3.5 (0.6%), b_tok_touch_all: 59 (10.5%), b_finish: 0.91
-        (0.2%), tests_pri_0: 402 (71.8%), check_dkim_signature: 0.76 (0.1%),
-        check_dkim_adsp: 2.4 (0.4%), poll_dns_idle: 0.63 (0.1%), tests_pri_10:
-        3.2 (0.6%), tests_pri_500: 16 (2.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 2/3] init/do_cmounts.c: introduce 'user_root' for initramfs
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YK2uorrbm0L76p68@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Menglong Dong <menglong8.dong@gmail.com> writes:
+On Wed, May 26, 2021 at 03:12:50AM +0100, Matthew Wilcox wrote:
+> On Mon, May 24, 2021 at 09:20:35PM -0700, Darrick J. Wong wrote:
+> > > > This patch establishes a maximum ioend size of 4096 pages so that we
+> > > > don't trip the lockup watchdog while clearing pagewriteback and also so
+> > > > that we don't pin a large number of pages while constructing a big chain
+> > > > of bios.  On gfs2 and zonefs, each ioend completion will now have to
+> > > > clear up to 4096 pages from whatever context bio_endio is called.
+> > > > 
+> > > > For XFS it's a more complicated -- XFS already overrode the bio handler
+> > > > for ioends that required further metadata updates (e.g. unwritten
+> > > > conversion, eof extension, or cow) so that it could combine ioends when
+> > > > possible.  XFS wants to combine ioends to amortize the cost of getting
+> > > > the ILOCK and running transactions over a larger number of pages.
+> > > > 
+> > > > So I guess I see how the two changes dovetail nicely for XFS -- iomap
+> > > > issues smaller write bios, and the xfs ioend worker can recombine
+> > > > however many bios complete before the worker runs.  As a bonus, we don't
+> > > > have to worry about situations like the device driver completing so many
+> > > > bios from a single invocation of a bottom half handler that we run afoul
+> > > > of the soft lockup timer.
+> > > > 
+> > > > Is that a correct understanding of how the two changes intersect with
+> > > > each other?  TBH I was expecting the two thresholds to be closer in
+> > > > value.
+> > > > 
+> > > 
+> > > I think so. That's interesting because my inclination was to make them
+> > > farther apart (or more specifically, increase the threshold in this
+> > > patch and leave the previous). The primary goal of this series was to
+> > > address the soft lockup warning problem, hence the thresholds on earlier
+> > > versions started at rather conservative values. I think both values have
+> > > been reasonably justified in being reduced, though this patch has a more
+> > > broad impact than the previous in that it changes behavior for all iomap
+> > > based fs'. Of course that's something that could also be addressed with
+> > > a more dynamic tunable..
+> > 
+> > <shrug> I think I'm comfortable starting with 256 for xfs to bump an
+> > ioend to a workqueue, and 4096 pages as the limit for an iomap ioend.
+> > If people demonstrate a need to smart-tune or manual-tune we can always
+> > add one later.
+> > 
+> > Though I guess I did kind of wonder if maybe a better limit for iomap
+> > would be max_hw_sectors?  Since that's the maximum size of an IO that
+> > the kernel will for that device?
+> 
+> I think you're looking at this wrong.  The question is whether the
+> system can tolerate the additional latency of bumping to a workqueue vs
+> servicing directly.
+> 
+> If the I/O is large, then clearly it can.  It already waited for all
+> those DMAs to happen which took a certain amount of time on the I/O bus.
+> If the I/O is small, then maybe it can and maybe it can't.  So we should
+> be conservative and complete it in interrupt context.
+> 
+> This is why I think "number of pages" is really a red herring.  Sure,
+> that's the amount of work to be done, but really the question is "can
+> this I/O tolerate the extra delay".  Short of passing that information
+> in from the caller, number of bytes really is our best way of knowing.
+> And that doesn't scale with anything to do with the device or the
+> system bus.  
 
-> On Wed, May 26, 2021 at 2:50 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
-> ......
->>
->> What is the flow where docker uses an initramfs?
->>
->> Just thinking about this I am not being able to connect the dots.
->>
->> The way I imagine the world is that an initramfs will be used either
->> when a linux system boots for the first time, or an initramfs would
->> come from the distribution you are running inside a container.  In
->> neither case do I see docker being in a position to add functionality
->> to the initramfs as docker is not responsible for it.
->>
->> Is docker doing something creating like running a container in a VM,
->> and running some directly out of the initramfs, and wanting that code
->> to exactly match the non-VM case?
->>
->> If that is the case I think the easy solution would be to actually use
->> an actual ramdisk where pivot_root works.
->
-> In fact, nowadays, initramfs is widely used by embedded devices in the
-> production environment, which makes the whole system run in ram.
->
-> That make sense. First, running in ram will speed up the system. The size
-> of the system won't be too large for embedded devices, which makes this
-> idea work. Second, this will reduce the I/O of disk devices, which can
-> extend the life of the disk. Third, RAM is getting cheaper.
->
-> So in this scene, Docker runs directly in initramfs.
+It doesn't matter whether the process(es) that triggered writeback will
+tolerate the extra latency of a workqueue.  The hangcheck timer trips,
+which means we've been doing things in softirq context too long.
 
-That is the piece of the puzzle I was missing.  An small system
-with it's root in an initramfs.
+The next thing that happens is that the kind of people who treat **ANY**
+stack trace in dmesg as grounds to file a bug and escalate it will file
+a bug and escalate it, and now I'm working 10 hour days trying to stomp
+down all 6 escalations, run a QA botnet, review patches, and make any
+incremental progress on long term goals when I can squeeze out five
+minutes of free time.
 
->> I really don't see why it makes sense for docker to be a special
->> snowflake and require kernel features that no other distribution does.
->>
->> It might make sense to create a completely empty filesystem underneath
->> an initramfs, and use that new rootfs as the unchanging root of the
->> mount tree, if it can be done with a trivial amount of code, and
->> generally make everything cleaner.
->>
->> As this change sits it looks like a lot of code to handle a problem
->> in the implementation of docker.   Which quite frankly will be a pain
->> to have to maintain if this is not a clean general feature that
->> other people can also use.
->>
->
-> I don't think that it's all for docker, pivot_root may be used by other
-> users in the above scene. It may work to create an empty filesystem, as you
-> mentioned above. But I don't think it's a good idea to make all users,
-> who want to use pivot_root, do that. After all, it's not friendly to
-> users.
->
-> As for the code, it may look a lot, but it's not complex. Maybe a clean
-> up for the code I add can make it better?
+Yeah, it'd be nice to rebuild writeback with some sort of QOS system so
+that it could pick different strategies based on the amount of work to
+do and the impatience levels of the processes waiting for it.  But that
+is a project of its own.  This is a starter fix to take the heat off.
 
-If we are going to do this something that is so small and clean it can
-be done unconditionally always.
+The reason I've been running at 110% burnout for the last 9 months is
+exactly this -- someone submits a patchset to fix or improve something,
+but then the reviewers pile on with "No no no, you should consider
+building this far more elaborate solution", withhold review tags, but
+then seem to be too busy to participate in building the elaborate thing.
 
-I will see if I can dig in and look at little more.  I think there is
-a reason Al Viro and H. Peter Anvin implemeted initramfs this way.
-Perhaps it was just a desire to make pivot_root unnecessary.
+At least in this case I can do something about it.  We're nearly to rc4
+so barring anything weird showing up in QA runs overnight I plan to
+stuff this in for 5.14.
 
-Container filesystem setup does throw a bit of a wrench in the works as
-unlike a initramfs where you can just delete everything there is not
-a clean way to get rid of a root filesystem you don't need without
-pivot_root.
-
-
-The net request as I understand it: Make the filesystem the initramfs
-lives in be an ordinary filesystem so it can just be used as the systems
-primary filesystem.
-
-There might be technical reasons why that is a bad idea and userspace
-would be requested to move everything into another ramfs manually (which
-would have the same effect).  But it is take a good look to see if it
-can be accomplished cleanly.
-
-Eric
+--D
