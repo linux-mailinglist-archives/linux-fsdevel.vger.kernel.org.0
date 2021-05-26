@@ -2,77 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9BE9390E0E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 03:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C57A390E20
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 04:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231785AbhEZBzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 21:55:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59916 "EHLO
+        id S232211AbhEZCGA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 22:06:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbhEZBzX (ORCPT
+        with ESMTP id S230445AbhEZCF7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 21:55:23 -0400
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EFD0C061574;
-        Tue, 25 May 2021 18:53:52 -0700 (PDT)
-Received: by mail-qt1-x832.google.com with SMTP id g17so1123804qtk.9;
-        Tue, 25 May 2021 18:53:52 -0700 (PDT)
+        Tue, 25 May 2021 22:05:59 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D96F6C061760
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 19:04:28 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id h16so38535605edr.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 19:04:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=z5EbPy327867YcKmvP7oFErquE6ILB03Efh2jyvdUgE=;
-        b=JDPqmBeXiw9KLPtgi037lL76EBLj82h5nn2/FWwDSF2qJUYZLugvQOKExbDkhXWQN7
-         izaqGUrOt7aES4wN8wxJQ5qW6b4FrgS19d3Y3AihXMoUJlKIq1oubYg4c17Yf/CKRxWj
-         eJXZzEXnXIM228UHyQwUmcI0QsPg1D4RcalK2tWRBhK7ROH4+uWiak1NXqCiiUvKkFJR
-         Va7WGULdd/3mfA3dBc7IPP/4h5816xk/xcUTOzBln1wq1exA0E/kw0K+4ZWMiwr1T1jg
-         jNwBVtU41rHdsmhggrEwB2366NyEUTtwwPHpuj02YcSh7wqgMg3OlBx8ligaOv2XinnP
-         LxOg==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AVDziIe4V6YxS8ijZfxm39fjCEHx8wW3u92rBRAH8wk=;
+        b=wO+80CzEAh2K7zjQM/+DAnqTpqxNNVW5Jdf0wlMQ8P4pL3oox/BSLi2p/cUcQIIseY
+         5NHP2F2BEMjNLtOXvK5SSrkFDgxHvO/D7d7QnuX+L4xm48YH9ahiJNoYtCqm2imnh6H3
+         11kAOkwpwqV2bO5gUwjHgu3AYJI+XuECE5mH1GwfKY/TSkQkfvvotCyt57HRRXh/GQHw
+         zkewwScEbupzXXC6ksgTeAxR09CoSUzt/1YXPmgkvyqeED+LaoOOfrSY6QG3Cl6HC4Vg
+         OuMwbo+ryg+zLZSt5wmB9juExFO/KmuGSHCal+vzCamHKvqy1rBT0/iaJRR0JczLKHU/
+         4CGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=z5EbPy327867YcKmvP7oFErquE6ILB03Efh2jyvdUgE=;
-        b=LyMe1Dl2r0OOPu/+hb+M511zj30fcoFgkM3zWgsUK0it6y6j6U/HR/C2Z5Vx69iD8I
-         BRqThuMqJQVjCoySyGVe1SiIqe4xxZjEBYXh3od0UdN7C7YAsdJfzYuKu81XHjjUIW+6
-         eiB1f8W9pd+bjAAAbf4j+7slthdpZqbT+DdVtiM8fTvQTvLzh4N9WMAj7ncUZO9w7G+u
-         kNBpH8Q6p2eTTv3KU9wHMu7L1TVXcsqXKQF6Dm7xZh37nVfu8a61wb8s6pPEL2O/7Niv
-         PZvWWdT9NO/KR1utcI3H6K7m0KR1E1g79gI/p39jdIwt5NKitz1/Z83BT9m6+lqaDcHl
-         989Q==
-X-Gm-Message-State: AOAM5315x4dG2U7QoSEL1GNvOe5JjrkX/OvF4nYnX9PKxaypm5zdRIp/
-        gwuw1uhEUDzwXZV5Jy81WCx7ZFIB9cL6
-X-Google-Smtp-Source: ABdhPJyFePqFktGCt7HWdDsH+oU6KbhxsMmTgna0VHaTWjSR42/DeDyJ201BXc2JX4Kn9QT6DD4Myg==
-X-Received: by 2002:ac8:7dc9:: with SMTP id c9mr35210838qte.169.1621994031617;
-        Tue, 25 May 2021 18:53:51 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id r3sm606891qtu.50.2021.05.25.18.53.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 May 2021 18:53:51 -0700 (PDT)
-Date:   Tue, 25 May 2021 21:53:46 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] generic/269: add _check_scratch_fs
-Message-ID: <YK2qKlYgnfd/eX62@moria.home.lan>
-References: <20210525221955.265524-1-kent.overstreet@gmail.com>
- <20210525221955.265524-8-kent.overstreet@gmail.com>
- <20210526013418.GK202095@locust>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AVDziIe4V6YxS8ijZfxm39fjCEHx8wW3u92rBRAH8wk=;
+        b=U45tWgn851xItGpkQMfDgUQHdHK+DvxGeKWTgGi2kfk/PsAyA2l3dAA3nJABaRqD04
+         RmL0AEBLLxRJWjWAo24qk9B2XGqjeBO5yQ7+yktSsxApdrwX5SIIP4ieZzpbgY9xD/ST
+         jl/4hOPBHS1DccOjFC6PWVAJ84cSkUPLMhqv1VOumxWz77xHNmAwap9aDvt4GgI1/+MG
+         Raijm2XuCuUP66h5S/Z11vEIN1MM0PWHKFgQrZkevYD98FktegKf3+eVdNLVlcd/BPzK
+         4ImfRf5OCC9QFX3SCer9xOzwA+uqEDRcDPGl841HhI/QJnft839r3p+J9KKUKl/rtYZw
+         WdyA==
+X-Gm-Message-State: AOAM531ogyuQC4PbKdrcxlEVX3ckLC5X1+ppzAkIXQlpHOBpf3G10NnH
+        7xMl5M99aK4zGpjjuArN+Imivp1hlIlXJer4qrDk
+X-Google-Smtp-Source: ABdhPJzLxVYWHyIPDuzmWEqrz4zwzl/MN/HfR7rgSiIG2g2/GNZnsS+o3skTAZzrh5FnnRtatTsqRTZDXToXHCfXJnw=
+X-Received: by 2002:aa7:c7cd:: with SMTP id o13mr12537237eds.269.1621994667198;
+ Tue, 25 May 2021 19:04:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210526013418.GK202095@locust>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl> <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com> <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
+In-Reply-To: <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 25 May 2021 22:04:16 -0400
+Message-ID: <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 25, 2021 at 06:34:18PM -0700, Darrick J. Wong wrote:
-> On Tue, May 25, 2021 at 06:19:55PM -0400, Kent Overstreet wrote:
-> > This probably should be in every test that uses the scratch device.
-> 
-> Um, it is -- ./check runs fsck on the test and scratch devices if you
-> _require_test or _require_scratch'd them (which this test does).  What
-> weird output did you see?
+On Tue, May 25, 2021 at 9:11 PM Jens Axboe <axboe@kernel.dk> wrote:
+> On 5/24/21 1:59 PM, Paul Moore wrote:
+> > That said, audit is not for everyone, and we have build time and
+> > runtime options to help make life easier.  Beyond simply disabling
+> > audit at compile time a number of Linux distributions effectively
+> > shortcut audit at runtime by adding a "never" rule to the audit
+> > filter, for example:
+> >
+> >  % auditctl -a task,never
+>
+> As has been brought up, the issue we're facing is that distros have
+> CONFIG_AUDIT=y and hence the above is the best real world case outside
+> of people doing custom kernels. My question would then be how much
+> overhead the above will add, considering it's an entry/exit call per op.
+> If auditctl is turned off, what is the expectation in turns of overhead?
 
-I could've sworn I had generic/269 pass until I adedd that, but I just rechecked
-and it's doing what you describe - my bad, I'll drop this one.
+I commented on that case in my last email to Pavel, but I'll try to go
+over it again in a little more detail.
+
+As we discussed earlier in this thread, we can skip the req->opcode
+check before both the _entry and _exit calls, so we are left with just
+the bare audit calls in the io_uring code.  As the _entry and _exit
+functions are small, I've copied them and their supporting functions
+below and I'll try to explain what would happen in CONFIG_AUDIT=y,
+"task,never" case.
+
++  static inline struct audit_context *audit_context(void)
++  {
++    return current->audit_context;
++  }
+
++  static inline bool audit_dummy_context(void)
++  {
++    void *p = audit_context();
++    return !p || *(int *)p;
++  }
+
++  static inline void audit_uring_entry(u8 op)
++  {
++    if (unlikely(audit_enabled && audit_context()))
++      __audit_uring_entry(op);
++  }
+
+We have one if statement where the conditional checks on two
+individual conditions.  The first (audit_enabled) is simply a check to
+see if anyone has "turned on" auditing at runtime; historically this
+worked rather well, and still does in a number of places, but ever
+since systemd has taken to forcing audit on regardless of the admin's
+audit configuration it is less useful.  The second (audit_context())
+is a check to see if an audit_context has been allocated for the
+current task.  In the case of "task,never" current->audit_context will
+be NULL (see audit_alloc()) and the __audit_uring_entry() slowpath
+will never be called.
+
+Worst case here is checking the value of audit_enabled and
+current->audit_context.  Depending on which you think is more likely
+we can change the order of the check so that the
+current->audit_context check is first if you feel that is more likely
+to be NULL than audit_enabled is to be false (it may be that way now).
+
++  static inline void audit_uring_exit(int success, long code)
++  {
++    if (unlikely(!audit_dummy_context()))
++      __audit_uring_exit(success, code);
++  }
+
+The exit call is very similar to the entry call, but in the
+"task,never" case it is very simple as the first check to be performed
+is the current->audit_context check which we know to be NULL.  The
+__audit_uring_exit() slowpath will never be called.
+
+> aio never had any audit logging as far as I can tell. I think it'd make
+> a lot more sense to selectively enable audit logging only for opcodes
+> that we care about. File open/create/unlink/mkdir etc, that kind of
+> thing. File level operations that people would care about logging. Would
+> they care about logging a buffer registration or a polled read from a
+> device/file? I highly doubt it, and we don't do that for alternative
+> methods either. Doesn't really make sense for a lot of the other
+> operations, imho.
+
+We would need to check with the current security requirements (there
+are distro people on the linux-audit list that keep track of that
+stuff), but looking at the opcodes right now my gut feeling is that
+most of the opcodes would be considered "security relevant" so
+selective auditing might not be that useful in practice.  It would
+definitely clutter the code and increase the chances that new opcodes
+would not be properly audited when they are merged.
+
+-- 
+paul moore
+www.paul-moore.com
