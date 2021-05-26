@@ -2,77 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D275391DAE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 19:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6809F391DFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 19:22:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234266AbhEZRRA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 May 2021 13:17:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43096 "EHLO
+        id S229497AbhEZRYD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 May 2021 13:24:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234232AbhEZRQ7 (ORCPT
+        with ESMTP id S234461AbhEZRXt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 May 2021 13:16:59 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 287E5C06175F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 10:15:27 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id l15so1584300ilh.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 10:15:27 -0700 (PDT)
+        Wed, 26 May 2021 13:23:49 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA308C061760
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 10:22:17 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id g11so1599059ilq.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 10:22:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aYKMuSKZVVdni+NfNKkXv3BlEOKam17qC1VvXW9yFpQ=;
-        b=a79j6AZMQTm+qQYGqVhkjMfcARroJ37lEZmgKGSigQBNpJHMY+kK9LW9RAn4voppaq
-         XtqQNIQWw7a2tOKPDT4Mxt6E335/aEB7eO0w6OPzc2J6+6K2PBWJbCLCXX+nDNmMl7YF
-         roHuhUXs9sl/DW+BRZ2GlTgnlGrgqfsmRi+s6jBud8GGbh0Z4xeLMSRgr8r2Lj+RhRnn
-         gsnnvEedrEEqBoAI4iERcpp90OL3eX+lTL6c5MRkP8Iy355puOTWM1/yPL07wsR4nyNf
-         iWkW5CFUozrq9C5DWCO5OxmfT95+mTuym2psTB5xtsMze3LPCoLEU/s519mp8zc9pqlj
-         nnzw==
+        bh=2OhppeIspUDCdDqTlenJ6aztMdU67TtMNZxD3yeg400=;
+        b=dyd853IHw273IeiG2uqfnTqRkPVyWHq5JcW2VXwCIvV+1DaSqFqjfPrCTLG3FL0d4w
+         415nNgjSm0mvKIx9c+cgRohXhL6yOkH08muFt/QmULyvhpf1y6h9EXr9H+QSEvPzZtWJ
+         hvUz08Dv4/8FwLxukH4PI5gmPHOCOjqiaumvgb+Eq/2ZmmVZQnMaFg6R1RGt2avy7gdr
+         KSxYid7vN+mVenTGYZzcaVIEAvA28SZxrbLXS1EFDARdWGOYDApUPt8pefet0TC+J80q
+         4j4t2fRYH/ldBlUorDyTQLwG0aPwttoWRArOcs6GVj152WX5lYOwRVluIyk/FYr4pvP5
+         Zg3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=aYKMuSKZVVdni+NfNKkXv3BlEOKam17qC1VvXW9yFpQ=;
-        b=KxCYQDbpU9iftMsTVUKo9N/4OchAhoKgYW0wGiXvvhhb6AUrT1CJdAF+PrYwv2sVu4
-         pxaiqz2zSZT47JSNZyFEmWUQX2lv331BPpMMRbvBH0Xo0Ccn2XobHB75WDDsACHYtCYq
-         FEdXY1A2/nKloqYZxledBnvydF+TdGKCIFGgaCAxzU22RQU75ePQMNJw0ZbV/rhP3Cxy
-         E+6Z+h4IaPcPsvaDNO3fp+KiGKKiZc+/5HiFsbCuWTjXwX7FLLE06UZPxA/N54NdyGgn
-         MM9UqIIBPIsI8CEhFGABLSccEA8GEmvHZWLMah0Bw83PS3kfOTbw21vbzb8AwlApQl0J
-         I+Dg==
-X-Gm-Message-State: AOAM531JQb3sNpj1HxvAvP/Pt6YR2+BqlYR6CbzFmTI2Nrd7J8/e97Gp
-        vPbVWbJcAcFnq+C9Fu/eA4vq/Q==
-X-Google-Smtp-Source: ABdhPJziYu08DO0Qp7L+9EYTQPjE1ppNL7H8P/SYVnqtm1MiORyY5E/g7M4RCyWBvbIGB5hTfGUucA==
-X-Received: by 2002:a92:d24d:: with SMTP id v13mr27737100ilg.174.1622049326279;
-        Wed, 26 May 2021 10:15:26 -0700 (PDT)
+        bh=2OhppeIspUDCdDqTlenJ6aztMdU67TtMNZxD3yeg400=;
+        b=BObeH8NgmJ4XWJlZyX+jwu66tDSk2BJYaR4TCwJMpprdot4oH175LDhcRw1uSBMIeN
+         GJr1o+83pFeeI8MTQkggU7zHTP0Ejh3W0evEK6aeUNIt+l6Vq/XStsPKo28nCfUzdDOW
+         KApdKXt9POhgjW+/WcMaxQkx7ru6rn0MGo2Qj+w+qXYvzvEhxVhavdSW+o8jJKIzvg93
+         wLc8ke1CmSj2njb/c09SfO/wNyloVP6pnRix2AJBy5VrBj0D2TMyDPHLaUSMRH/DbJGE
+         o4RTEB/fZ+bMPX/a98ykluQIr/iQVU1Ob5ybJbzIjtHHfewuKukEfY5cn8yBj65VFDFj
+         xSPA==
+X-Gm-Message-State: AOAM530SNujcpXdQAjSOnZ+Uu70fKnx7mydyC4bJK1Cv0Khb65S5c2Ll
+        P92lERE3aQdXsh3GUIstfQqLEA==
+X-Google-Smtp-Source: ABdhPJxPLz3YY9EUDMQFtFn/VcophkNmNE0tWvvBLvKnHP1NR0b0HejoaWXYugArW/GqD1kJy2w6DA==
+X-Received: by 2002:a05:6e02:ea8:: with SMTP id u8mr26501483ilj.67.1622049736979;
+        Wed, 26 May 2021 10:22:16 -0700 (PDT)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id c11sm15132793ilo.61.2021.05.26.10.15.25
+        by smtp.gmail.com with ESMTPSA id a11sm6820114ioq.12.2021.05.26.10.22.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 May 2021 10:15:25 -0700 (PDT)
+        Wed, 26 May 2021 10:22:16 -0700 (PDT)
 Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
  support to io_uring
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+To:     Richard Guy Briggs <rgb@redhat.com>,
+        Stefan Metzmacher <metze@samba.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-audit@redhat.com, Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
- <162163379461.8379.9691291608621179559.stgit@sifl>
+References: <162163379461.8379.9691291608621179559.stgit@sifl>
  <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
  <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
  <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
  <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
  <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
  <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+ <0a668302-b170-31ce-1651-ddf45f63d02a@gmail.com>
+ <CAHC9VhTAvcB0A2dpv1Xn7sa+Kh1n+e-dJr_8wSSRaxS4D0f9Sw@mail.gmail.com>
+ <18823c99-7d65-0e6f-d508-a487f1b4b9e7@samba.org>
+ <20210526154905.GJ447005@madcap2.tricolour.ca>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9e69e4b6-2b87-a688-d604-c7f70be894f5@kernel.dk>
-Date:   Wed, 26 May 2021 11:15:24 -0600
+Message-ID: <aaa98bcc-0515-f0e4-f15f-058ef0eb61e7@kernel.dk>
+Date:   Wed, 26 May 2021 11:22:15 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+In-Reply-To: <20210526154905.GJ447005@madcap2.tricolour.ca>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -80,134 +84,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/25/21 8:04 PM, Paul Moore wrote:
-> On Tue, May 25, 2021 at 9:11 PM Jens Axboe <axboe@kernel.dk> wrote:
->> On 5/24/21 1:59 PM, Paul Moore wrote:
->>> That said, audit is not for everyone, and we have build time and
->>> runtime options to help make life easier.  Beyond simply disabling
->>> audit at compile time a number of Linux distributions effectively
->>> shortcut audit at runtime by adding a "never" rule to the audit
->>> filter, for example:
->>>
->>>  % auditctl -a task,never
->>
->> As has been brought up, the issue we're facing is that distros have
->> CONFIG_AUDIT=y and hence the above is the best real world case outside
->> of people doing custom kernels. My question would then be how much
->> overhead the above will add, considering it's an entry/exit call per op.
->> If auditctl is turned off, what is the expectation in turns of overhead?
+On 5/26/21 9:49 AM, Richard Guy Briggs wrote:
+>> So why is there anything special needed for io_uring (now that the
+>> native worker threads are used)?
 > 
-> I commented on that case in my last email to Pavel, but I'll try to go
-> over it again in a little more detail.
-> 
-> As we discussed earlier in this thread, we can skip the req->opcode
-> check before both the _entry and _exit calls, so we are left with just
-> the bare audit calls in the io_uring code.  As the _entry and _exit
-> functions are small, I've copied them and their supporting functions
-> below and I'll try to explain what would happen in CONFIG_AUDIT=y,
-> "task,never" case.
-> 
-> +  static inline struct audit_context *audit_context(void)
-> +  {
-> +    return current->audit_context;
-> +  }
-> 
-> +  static inline bool audit_dummy_context(void)
-> +  {
-> +    void *p = audit_context();
-> +    return !p || *(int *)p;
-> +  }
-> 
-> +  static inline void audit_uring_entry(u8 op)
-> +  {
-> +    if (unlikely(audit_enabled && audit_context()))
-> +      __audit_uring_entry(op);
-> +  }
-> 
-> We have one if statement where the conditional checks on two
-> individual conditions.  The first (audit_enabled) is simply a check to
-> see if anyone has "turned on" auditing at runtime; historically this
-> worked rather well, and still does in a number of places, but ever
-> since systemd has taken to forcing audit on regardless of the admin's
-> audit configuration it is less useful.  The second (audit_context())
-> is a check to see if an audit_context has been allocated for the
-> current task.  In the case of "task,never" current->audit_context will
-> be NULL (see audit_alloc()) and the __audit_uring_entry() slowpath
-> will never be called.
-> 
-> Worst case here is checking the value of audit_enabled and
-> current->audit_context.  Depending on which you think is more likely
-> we can change the order of the check so that the
-> current->audit_context check is first if you feel that is more likely
-> to be NULL than audit_enabled is to be false (it may be that way now).
-> 
-> +  static inline void audit_uring_exit(int success, long code)
-> +  {
-> +    if (unlikely(!audit_dummy_context()))
-> +      __audit_uring_exit(success, code);
-> +  }
-> 
-> The exit call is very similar to the entry call, but in the
-> "task,never" case it is very simple as the first check to be performed
-> is the current->audit_context check which we know to be NULL.  The
-> __audit_uring_exit() slowpath will never be called.
+> Because syscall has been bypassed by a memory-mapped work queue.
 
-I actually ran some numbers this morning. The test base is 5.13+, and
-CONFIG_AUDIT=y and CONFIG_AUDITSYSCALL=y is set for both the baseline
-test and the test with this series applied. I used your git branch as of
-this morning.
+I don't follow this one at all, that's just the delivery mechanism if
+you choose to use SQPOLL. If you do, then a thread sibling of the
+original task does the actual system call. There's no magic involved
+there, and the tasks are related.
 
-The test case is my usual peak perf test, which is random reads at
-QD=128 and using polled IO. It's a single core test, not threaded. I ran
-two different tests - one was having a thread just do the IO, the other
-is using SQPOLL to do the IO for us. The device is capable than more
-IOPS than a single core can deliver, so we're CPU limited in this test.
-Hence it's a good test case as it does actual work, and shows software
-overhead quite nicely. Runs are very stable (less than 0.5% difference
-between runs on the same base), yet I did average 4 runs.
+So care to expand on that?
 
-Kernel		SQPOLL		IOPS		Perf diff
----------------------------------------------------------
-5.13		0		3029872		0.0%
-5.13		1		3031056		0.0%
-5.13 + audit	0		2894160		-4.5%
-5.13 + audit	1		2886168		-4.8%
-
-That's an immediate drop in perf of almost 5%. Looking at a quick
-profile of it (nothing fancy, just checking for 'audit' in the profile)
-shows this:
-
-+    2.17%  io_uring  [kernel.vmlinux]  [k] __audit_uring_entry
-+    0.71%  io_uring  [kernel.vmlinux]  [k] __audit_uring_exit
-     0.07%  io_uring  [kernel.vmlinux]  [k] __audit_syscall_entry
-     0.02%  io_uring  [kernel.vmlinux]  [k] __audit_syscall_exit
-
-Note that this is with _no_ rules!
-
->> aio never had any audit logging as far as I can tell. I think it'd make
->> a lot more sense to selectively enable audit logging only for opcodes
->> that we care about. File open/create/unlink/mkdir etc, that kind of
->> thing. File level operations that people would care about logging. Would
->> they care about logging a buffer registration or a polled read from a
->> device/file? I highly doubt it, and we don't do that for alternative
->> methods either. Doesn't really make sense for a lot of the other
->> operations, imho.
+>> Is there really any io_uring opcode that bypasses the security checks the corresponding native syscall
+>> would do? If so, I think that should just be fixed...
 > 
-> We would need to check with the current security requirements (there
-> are distro people on the linux-audit list that keep track of that
-> stuff), but looking at the opcodes right now my gut feeling is that
-> most of the opcodes would be considered "security relevant" so
-> selective auditing might not be that useful in practice.  It would
-> definitely clutter the code and increase the chances that new opcodes
-> would not be properly audited when they are merged.
+> This is by design to speed it up.  This is what Paul's iouring entry and
+> exit hooks do.
 
-We don't audit read/write from aio, as mentioned. In the past two
-decades, I take it that hasn't been a concern? I agree that some opcodes
-should _definitely_ be audited. Things like opening a file, closing a
-file, removing/creating a file, mount, etc. But normal read/write, I
-think that's just utter noise and not useful at all. Auditing on a
-per-opcode basis is trivial, io_uring already has provisions for
-flagging opcode requirements and this would just be another one.
+As far as I can tell, we're doing double logging at that point, if the
+syscall helper does the audit as well. We'll get something logging the
+io_uring opcode (eg IORING_OP_OPENAT2), then log again when we call the
+fs helper. That's _assuming_ that we always hit the logging part when we
+call into the vfs, but that's something that can be updated to be true
+and kept an eye on for future additions.
+
+Why is the double logging useful? It only tells you that the invocation
+was via io_uring as the delivery mechanism rather than the usual system
+call, but the effect is the same - the file is opened, for example.
+
+I feel like I'm missing something here, or the other side is. Or both!
 
 -- 
 Jens Axboe
