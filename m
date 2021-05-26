@@ -2,268 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95948391EA1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 20:02:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F4F3391EAB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 20:05:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235412AbhEZSDd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 May 2021 14:03:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53850 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235433AbhEZSD3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 May 2021 14:03:29 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89932C061756
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 11:01:57 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id b81so1970732iof.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 11:01:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BdL8vmcb1cxKPn9udDlqG4Iw5AURof2CP/0Mp7zS9Lk=;
-        b=CKbbZkv3N+Fe9ktx+LeTQS/y6uwEGrmn8YEblVXujPpqkOoDqJkTtKxSUJnC9820mb
-         u+ZIhH7iNldtNJ11Y/Qjo8DRhG5TxrrwTSY7n1kDnuOEoFg/eb/ZntoobfspabBIKutt
-         jOMe6Wc4Qv06HnJ7fjOi5rf/PynoYbUBXsVhfRspQY66Ye+u+yIgZqa4zozu3nMYtPWH
-         94uGeQjn5a0UtCSTzwIHG6PaBjpkABRerwGsmHk9nUtAIdUQw5+ViZo/yEQSjigTvrff
-         ChvJSeu/Yy3qTDESUfzfZeqWbP2e0NpceBqwZt4Am6BCTg5N8j77tvkzNCM2E/uKRXSP
-         j6vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BdL8vmcb1cxKPn9udDlqG4Iw5AURof2CP/0Mp7zS9Lk=;
-        b=oCzUj5+5HYapFwXABUIk4HkPI37aYBizyv+DmkuCbIKCAOClfIEsE3GQ0gq4X9LdbZ
-         fF9n1adD4h/kB+x0F3viGBLAgAf9wpxT7Wb4v+XVQoVTSVHDnn3PbRbN6C7sjcK0W6lo
-         OOH9CAdiRiTe2ee0r2AS+k69lSou1zHpsB7uZcWt0NGMI1LRPGQB35Nt9yT8xpOPCVLG
-         NWX1UZhB77YMo9l4iMH4NSEjJZxKL4SVOqMDFmxwgLSNUS5dTis9Y4phVbJsfq2DdNCu
-         a4qFskL8ikEaUhf4SWUiCau7f2tsd3U3xsqCIEEOZhnBunQSrcp2W/OSjiVDf7lRjcvM
-         SX+g==
-X-Gm-Message-State: AOAM532Qa9FmcrQ5tvjcfWZ+Tbp7Sa6+9TB4zDaaNNH11nKeOA0NZPGI
-        D3zaAh53F6Zx4D1qXmFYcc5Pmw==
-X-Google-Smtp-Source: ABdhPJxijEuaOs0WYknoxU7Se4Y+4ZupNYEjwEa7CaUQdyLFEXKVX9KKUeigMrOGlS+bpbPljmTiqg==
-X-Received: by 2002:a05:6602:1c4:: with SMTP id w4mr24895998iot.44.1622052116797;
-        Wed, 26 May 2021 11:01:56 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id v18sm35179iob.3.2021.05.26.11.01.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 May 2021 11:01:56 -0700 (PDT)
-Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
- support to io_uring
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
- <162163379461.8379.9691291608621179559.stgit@sifl>
- <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
- <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
- <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
- <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
- <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
- <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
- <9e69e4b6-2b87-a688-d604-c7f70be894f5@kernel.dk>
- <3bef7c8a-ee70-d91d-74db-367ad0137d00@kernel.dk>
- <fa7bf4a5-5975-3e8c-99b4-c8d54c57da10@kernel.dk>
-Message-ID: <a7669e4a-e7a7-7e94-f6ce-fa48311f7175@kernel.dk>
-Date:   Wed, 26 May 2021 12:01:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S232632AbhEZSHG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 May 2021 14:07:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59118 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232141AbhEZSHG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 May 2021 14:07:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E4206113D;
+        Wed, 26 May 2021 18:05:32 +0000 (UTC)
+Date:   Wed, 26 May 2021 20:05:29 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Matthew Bobrowski <repnop@google.com>
+Cc:     Jan Kara <jack@suse.cz>, amir73il@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH 0/5] Add pidfd support to the fanotify API
+Message-ID: <20210526180529.egrtfruccbioe7az@wittgenstein>
+References: <cover.1621473846.git.repnop@google.com>
+ <20210520135527.GD18952@quack2.suse.cz>
+ <YKeIR+LiSXqUHL8Q@google.com>
+ <20210521104056.GG18952@quack2.suse.cz>
+ <YKhDFCUWX7iU7AzM@google.com>
+ <20210524084746.GB32705@quack2.suse.cz>
+ <20210525103133.uctijrnffehlvjr3@wittgenstein>
+ <YK2GV7hLamMpcO8i@google.com>
 MIME-Version: 1.0
-In-Reply-To: <fa7bf4a5-5975-3e8c-99b4-c8d54c57da10@kernel.dk>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <YK2GV7hLamMpcO8i@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/26/21 11:54 AM, Jens Axboe wrote:
-> On 5/26/21 11:31 AM, Jens Axboe wrote:
->> On 5/26/21 11:15 AM, Jens Axboe wrote:
->>> On 5/25/21 8:04 PM, Paul Moore wrote:
->>>> On Tue, May 25, 2021 at 9:11 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>> On 5/24/21 1:59 PM, Paul Moore wrote:
->>>>>> That said, audit is not for everyone, and we have build time and
->>>>>> runtime options to help make life easier.  Beyond simply disabling
->>>>>> audit at compile time a number of Linux distributions effectively
->>>>>> shortcut audit at runtime by adding a "never" rule to the audit
->>>>>> filter, for example:
->>>>>>
->>>>>>  % auditctl -a task,never
->>>>>
->>>>> As has been brought up, the issue we're facing is that distros have
->>>>> CONFIG_AUDIT=y and hence the above is the best real world case outside
->>>>> of people doing custom kernels. My question would then be how much
->>>>> overhead the above will add, considering it's an entry/exit call per op.
->>>>> If auditctl is turned off, what is the expectation in turns of overhead?
->>>>
->>>> I commented on that case in my last email to Pavel, but I'll try to go
->>>> over it again in a little more detail.
->>>>
->>>> As we discussed earlier in this thread, we can skip the req->opcode
->>>> check before both the _entry and _exit calls, so we are left with just
->>>> the bare audit calls in the io_uring code.  As the _entry and _exit
->>>> functions are small, I've copied them and their supporting functions
->>>> below and I'll try to explain what would happen in CONFIG_AUDIT=y,
->>>> "task,never" case.
->>>>
->>>> +  static inline struct audit_context *audit_context(void)
->>>> +  {
->>>> +    return current->audit_context;
->>>> +  }
->>>>
->>>> +  static inline bool audit_dummy_context(void)
->>>> +  {
->>>> +    void *p = audit_context();
->>>> +    return !p || *(int *)p;
->>>> +  }
->>>>
->>>> +  static inline void audit_uring_entry(u8 op)
->>>> +  {
->>>> +    if (unlikely(audit_enabled && audit_context()))
->>>> +      __audit_uring_entry(op);
->>>> +  }
->>>>
->>>> We have one if statement where the conditional checks on two
->>>> individual conditions.  The first (audit_enabled) is simply a check to
->>>> see if anyone has "turned on" auditing at runtime; historically this
->>>> worked rather well, and still does in a number of places, but ever
->>>> since systemd has taken to forcing audit on regardless of the admin's
->>>> audit configuration it is less useful.  The second (audit_context())
->>>> is a check to see if an audit_context has been allocated for the
->>>> current task.  In the case of "task,never" current->audit_context will
->>>> be NULL (see audit_alloc()) and the __audit_uring_entry() slowpath
->>>> will never be called.
->>>>
->>>> Worst case here is checking the value of audit_enabled and
->>>> current->audit_context.  Depending on which you think is more likely
->>>> we can change the order of the check so that the
->>>> current->audit_context check is first if you feel that is more likely
->>>> to be NULL than audit_enabled is to be false (it may be that way now).
->>>>
->>>> +  static inline void audit_uring_exit(int success, long code)
->>>> +  {
->>>> +    if (unlikely(!audit_dummy_context()))
->>>> +      __audit_uring_exit(success, code);
->>>> +  }
->>>>
->>>> The exit call is very similar to the entry call, but in the
->>>> "task,never" case it is very simple as the first check to be performed
->>>> is the current->audit_context check which we know to be NULL.  The
->>>> __audit_uring_exit() slowpath will never be called.
->>>
->>> I actually ran some numbers this morning. The test base is 5.13+, and
->>> CONFIG_AUDIT=y and CONFIG_AUDITSYSCALL=y is set for both the baseline
->>> test and the test with this series applied. I used your git branch as of
->>> this morning.
->>>
->>> The test case is my usual peak perf test, which is random reads at
->>> QD=128 and using polled IO. It's a single core test, not threaded. I ran
->>> two different tests - one was having a thread just do the IO, the other
->>> is using SQPOLL to do the IO for us. The device is capable than more
->>> IOPS than a single core can deliver, so we're CPU limited in this test.
->>> Hence it's a good test case as it does actual work, and shows software
->>> overhead quite nicely. Runs are very stable (less than 0.5% difference
->>> between runs on the same base), yet I did average 4 runs.
->>>
->>> Kernel		SQPOLL		IOPS		Perf diff
->>> ---------------------------------------------------------
->>> 5.13		0		3029872		0.0%
->>> 5.13		1		3031056		0.0%
->>> 5.13 + audit	0		2894160		-4.5%
->>> 5.13 + audit	1		2886168		-4.8%
->>>
->>> That's an immediate drop in perf of almost 5%. Looking at a quick
->>> profile of it (nothing fancy, just checking for 'audit' in the profile)
->>> shows this:
->>>
->>> +    2.17%  io_uring  [kernel.vmlinux]  [k] __audit_uring_entry
->>> +    0.71%  io_uring  [kernel.vmlinux]  [k] __audit_uring_exit
->>>      0.07%  io_uring  [kernel.vmlinux]  [k] __audit_syscall_entry
->>>      0.02%  io_uring  [kernel.vmlinux]  [k] __audit_syscall_exit
->>>
->>> Note that this is with _no_ rules!
->>
->> io_uring also supports a NOP command, which basically just measures
->> reqs/sec through the interface. Ran that as well:
->>
->> Kernel		SQPOLL		IOPS		Perf diff
->> ---------------------------------------------------------
->> 5.13		0		31.05M		0.0%
->> 5.13 + audit	0		25.31M		-18.5%
->>
->> and profile for the latter includes:
->>
->> +    5.19%  io_uring  [kernel.vmlinux]  [k] __audit_uring_entry
->> +    4.31%  io_uring  [kernel.vmlinux]  [k] __audit_uring_exit
->>      0.26%  io_uring  [kernel.vmlinux]  [k] __audit_syscall_entry
->>      0.08%  io_uring  [kernel.vmlinux]  [k] __audit_syscall_exit
+On Wed, May 26, 2021 at 09:20:55AM +1000, Matthew Bobrowski wrote:
+> On Tue, May 25, 2021 at 12:31:33PM +0200, Christian Brauner wrote:
+> > On Mon, May 24, 2021 at 10:47:46AM +0200, Jan Kara wrote:
+> > > On Sat 22-05-21 09:32:36, Matthew Bobrowski wrote:
+> > > > On Fri, May 21, 2021 at 12:40:56PM +0200, Jan Kara wrote:
+> > > > > On Fri 21-05-21 20:15:35, Matthew Bobrowski wrote:
+> > > > > > On Thu, May 20, 2021 at 03:55:27PM +0200, Jan Kara wrote:
+> > > > > > There's one thing that I'd like to mention, and it's something in
+> > > > > > regards to the overall approach we've taken that I'm not particularly
+> > > > > > happy about and I'd like to hear all your thoughts. Basically, with
+> > > > > > this approach the pidfd creation is done only once an event has been
+> > > > > > queued and the notification worker wakes up and picks up the event
+> > > > > > from the queue processes it. There's a subtle latency introduced when
+> > > > > > taking such an approach which at times leads to pidfd creation
+> > > > > > failures. As in, by the time pidfd_create() is called the struct pid
+> > > > > > has already been reaped, which then results in FAN_NOPIDFD being
+> > > > > > returned in the pidfd info record.
+> > > > > > 
+> > > > > > Having said that, I'm wondering what the thoughts are on doing pidfd
+> > > > > > creation earlier on i.e. in the event allocation stages? This way, the
+> > > > > > struct pid is pinned earlier on and rather than FAN_NOPIDFD being
+> > > > > > returned in the pidfd info record because the struct pid has been
+> > > > > > already reaped, userspace application will atleast receive a valid
+> > > > > > pidfd which can be used to check whether the process still exists or
+> > > > > > not. I think it'll just set the expectation better from an API
+> > > > > > perspective.
+> > > > > 
+> > > > > Yes, there's this race. OTOH if FAN_NOPIDFD is returned, the listener can
+> > > > > be sure the original process doesn't exist anymore. So is it useful to
+> > > > > still receive pidfd of the dead process?
+> > > > 
+> > > > Well, you're absolutely right. However, FWIW I was approaching this
+> > > > from two different angles:
+> > > > 
+> > > > 1) I wanted to keep the pattern in which the listener checks for the
+> > > >    existence/recycling of the process consistent. As in, the listener
+> > > >    would receive the pidfd, then send the pidfd a signal via
+> > > >    pidfd_send_signal() and check for -ESRCH which clearly indicates
+> > > >    that the target process has terminated.
+> > > > 
+> > > > 2) I didn't want to mask failed pidfd creation because of early
+> > > >    process termination and other possible failures behind a single
+> > > >    FAN_NOPIDFD. IOW, if we take the -ESRCH approach above, the
+> > > >    listener can take clear corrective branches as what's to be done
+> > > >    next if a race is to have been detected, whereas simply returning
+> > > >    FAN_NOPIDFD at this stage can mean multiple things.
+> > > > 
+> > > > Now that I've written the above and keeping in mind that we'd like to
+> > > > refrain from doing anything in the event allocation stages, perhaps we
+> > > > could introduce a different error code for detecting early process
+> > > > termination while attempting to construct the info record. WDYT?
+> > > 
+> > > Sure, I wouldn't like to overengineer it but having one special fd value for
+> > > "process doesn't exist anymore" and another for general "creating pidfd
+> > > failed" looks OK to me.
+> > 
+> > FAN_EPIDFD -> "creation failed"
+> > FAN_NOPIDFD -> "no such process"
 > 
-> As Pavel correctly pointed it, looks like auditing is enabled. And
-> indeed it was! Hence the above numbers is without having turned off
-> auditing. Running the NOPs after having turned off audit, we get 30.6M
-> IOPS, which is down about 1.5% from the baseline. The results for the
-> polled random read test above did _not_ change from this, they are still
-> down the same amount.
+> Yes, I was thinking something along the lines of this...
 > 
-> Note, and I should have included this in the first email, this is not
-> any kind of argument for or against audit logging. It's purely meant to
-> be a set of numbers that show how the current series impacts
-> performance.
+> With the approach that I've proposed in this series, the pidfd
+> creation failure trips up in pidfd_create() at the following
+> condition:
+> 
+> 	if (!pid || !pid_has_task(pid, PIDTYPE_TGID))
+> 	   	 return -EINVAL;
+> 
+> Specifically, the following check:
+> 	!pid_has_task(pid, PIDTYPE_TGID)
+> 
+> In order to properly report either FAN_NOPIDFD/FAN_EPIDFD to
+> userspace, AFAIK I'll have to do one of either two things to better
+> distinguish between why the pidfd creation had failed:
 
-And finally, just checking if we make it optional per opcode if we see
-any real impact, and the answer is no. Using the below patch which
-effectively bypasses audit calls unless the opcode has flagged the need
-to do so, I cannot measure any difference in perf (as expected).
+Ok, I see. You already do have a reference to a struct pid and in that
+case we should just always return a pidfd to the caller. For
+pidfd_open() for example we only report an error when
+find_get_pid(<pidnr>) doesn't find a struct pid to refer to. But in your
+case here you already have a struct pid so I think we should just keep
+this simple and always return a pidfd to the caller and in fact do
+burden them with figuring out that the process is gone via
+pidfd_send_signal() instead of complicating our lives here.
 
-To turn this into something useful, my suggestion as a viable path
-forward would be:
+(I think if would be interesting to see perf numbers and how high you
+need to bump the number of open fds sysctl limit to make this useable on
+systems with a lot of events. I'd be interested in that just in case you
+have something there.)
 
-1) Use something like the below patch and flag request types that we
-   want to do audit logging for.
-
-2) As Pavel suggested, eliminate the need for having both and entry/exit
-   hook, turning it into just one. That effectively cuts the number of
-   checks and calls in half.
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index aa065808ddcf..2c7c913b786b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -885,6 +885,8 @@ struct io_op_def {
- 	unsigned		needs_async_setup : 1;
- 	/* should block plug */
- 	unsigned		plug : 1;
-+	/* should audit */
-+	unsigned		audit : 1;
- 	/* size of async data needed, if any */
- 	unsigned short		async_size;
- };
-@@ -6122,7 +6124,7 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	if (req->work.creds && req->work.creds != current_cred())
- 		creds = override_creds(req->work.creds);
- 
--	if (req->opcode < IORING_OP_LAST)
-+	if (io_op_defs[req->opcode].audit)
- 		audit_uring_entry(req->opcode);
- 
- 	switch (req->opcode) {
-@@ -6231,7 +6233,7 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 		break;
- 	}
- 
--	if (req->opcode < IORING_OP_LAST)
-+	if (io_op_defs[req->opcode].audit)
- 		audit_uring_exit(!ret, ret);
- 
- 	if (creds)
-
--- 
-Jens Axboe
-
+> 
+> 1) Implement an additional check in pidfd_create() that effectively
+>    checks whether provided pid still holds reference to a struct pid
+>    that isn't in the process of being cleaned up. If it is being
+>    cleaned up, then return something like -ESRCH instead of -EINVAL so
+>    that the caller, in this case fanotify, can check and set
+>    FAN_NOPIDFD if -ESRCH is returned from pidfd_create(). I definitely
+>    don't feel as though returning -ESRCH from the !pid_has_task(pid,
+>    PIDTYPE_TGID) would be appropriate. In saying that, I'm not aware
+>    of a helper by which would allow us to perform such an in-flight
+>    check? Perhaps something needs to be introduced here, IDK...
+> 
+> 2) Refrain from performing any further changes to pidfd_create()
+>    i.e. as proposed in option 1), and manually perform the pidfd
+>    creation from some kind of new fanotify helper, as suggested by you
+>    here [0]. However, I'm not convinved that I like this approach as
+>    we may end up slowly drifting away from pidfd creation semantics
+>    over time.
+> 
+> [0] https://www.spinics.net/lists/linux-fsdevel/msg195556.html 
+> 
+> /M
