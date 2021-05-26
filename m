@@ -2,112 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E95D39134B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 11:03:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F03B03913B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 11:31:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233618AbhEZJEw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 May 2021 05:04:52 -0400
-Received: from mail-pl1-f176.google.com ([209.85.214.176]:36800 "EHLO
-        mail-pl1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233165AbhEZJEo (ORCPT
+        id S233223AbhEZJcc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 May 2021 05:32:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20299 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232218AbhEZJcb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 May 2021 05:04:44 -0400
-Received: by mail-pl1-f176.google.com with SMTP id a7so291999plh.3;
-        Wed, 26 May 2021 02:03:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=FfaHo86msd1EgsJw0CluY8kQybsB/BEq62rqhKYqHGg=;
-        b=HE7d6v1gxGcHupBLogEwpNG56jVwVarfR4ICrIr+JrTI0a4vJth+fBAIK/IX54QE+6
-         725blKc+1U8uhAMZeA3rkSAISwzW5ekhzEmdAIHt5CN+Efniov49I1y8srj22a1SluDi
-         fchU7jdaD28lilprVqZxqgK9Xp5sewGfDbR8bX+yk4faTLmDFFSgRbjAMTt2XJ+svk1A
-         KKzJQSsBeZKAkdkkRjTcbqCezs2xuBjTvQyd6poSJHV9WUAObiy7/d6sCoDQpcZZiB6/
-         mEjyJ4fiDtAEEmgFGjAZaO+4bEPC9WG0HBVxFdl4HhuG7fMREPVxquCsO+lDv0c+CQq3
-         v6sw==
-X-Gm-Message-State: AOAM5311LoHKBv4BVLY2wuHnfGlTPdZnepCYZ/GrgSw6Zt52/6x0xwOz
-        34legj2I10zOIKWDgZ0EQiM=
-X-Google-Smtp-Source: ABdhPJzCzlRGDdb9oh59T1rIT1mKuLZYc1+OZySDa6uTw/G4F08G+VegLYCrJe2h9nQXC5lGK3c4Rw==
-X-Received: by 2002:a17:902:bf46:b029:ee:b949:bd0 with SMTP id u6-20020a170902bf46b02900eeb9490bd0mr34888223pls.14.1622019792132;
-        Wed, 26 May 2021 02:03:12 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id gg10sm13914062pjb.49.2021.05.26.02.03.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 May 2021 02:03:11 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 27E3840254; Wed, 26 May 2021 09:03:10 +0000 (UTC)
-Date:   Wed, 26 May 2021 09:03:10 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Menglong Dong <menglong8.dong@gmail.com>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Sami Tolvanen <samitolvanen@google.com>, ojeda@kernel.org,
-        johan@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        masahiroy@kernel.org, Menglong Dong <dong.menglong@zte.com.cn>,
-        joe@perches.com, Jens Axboe <axboe@kernel.dk>, hare@suse.de,
-        Jan Kara <jack@suse.cz>, tj@kernel.org,
-        gregkh@linuxfoundation.org, song@kernel.org,
-        NeilBrown <neilb@suse.de>,
+        Wed, 26 May 2021 05:32:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622021460;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=uXwHyc8YEWzgO7cvp9x09kOnIf54F6bkUKMKciKUfB0=;
+        b=ZCP/yKWiqBqEI4XjaDd6gG8Zlc13ejKTB1CUJFl5Q7KsvI3Dx3G19HY1UM1x6FrbmPeCMr
+        QXvXDwVsFUVGyeTM0GyNM+aygoczkRe91wcAPL7+/LsIvTgj/gOuAtUVSJdZDRsvU9hPEC
+        9TwkoLijaHQHfZAzZpStcixSD+z9zVw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-71-sT7g9JJoMvawfd5AZdW9aQ-1; Wed, 26 May 2021 05:30:58 -0400
+X-MC-Unique: sT7g9JJoMvawfd5AZdW9aQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BCD0D106BB2A;
+        Wed, 26 May 2021 09:30:54 +0000 (UTC)
+Received: from t480s.redhat.com (ovpn-113-99.ams2.redhat.com [10.36.113.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 924105D9D3;
+        Wed, 26 May 2021 09:30:42 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        f.fainelli@gmail.com, arnd@arndb.de,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        wangkefeng.wang@huawei.com, Barret Rhoden <brho@google.com>,
-        mhiramat@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        vbabka@suse.cz, Alexander Potapenko <glider@google.com>,
-        pmladek@suse.com, Chris Down <chris@chrisdown.name>,
-        jojing64@gmail.com, terrelln@fb.com, geert@linux-m68k.org,
-        mingo@kernel.org, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, jeyu@kernel.org
-Subject: Re: [PATCH v2 2/3] init/do_cmounts.c: introduce 'user_root' for
- initramfs
-Message-ID: <20210526090310.GI4332@42.do-not-panic.com>
-References: <20210525141524.3995-1-dong.menglong@zte.com.cn>
- <20210525141524.3995-3-dong.menglong@zte.com.cn>
- <m18s42odgz.fsf@fess.ebiederm.org>
- <CADxym3a5nsuw2hiDF=ZS51Wpjs-i_VW+OGd-sgGDVrKYw2AiHQ@mail.gmail.com>
- <m11r9umb4y.fsf@fess.ebiederm.org>
- <YK3Pb/OGwWVzvDZM@localhost>
- <CADxym3bznknEWLaa-SgYZAsTGucP_9m+9=JW7oc6=ggrUaBk7A@mail.gmail.com>
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Steven Price <steven.price@arm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Aili Yao <yaoaili@kingsoft.com>, Jiri Bohac <jbohac@suse.cz>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        linux-hyperv@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v3 0/6] fs/proc/kcore: don't read offline sections, logically offline pages and hwpoisoned pages
+Date:   Wed, 26 May 2021 11:30:35 +0200
+Message-Id: <20210526093041.8800-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADxym3bznknEWLaa-SgYZAsTGucP_9m+9=JW7oc6=ggrUaBk7A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 26, 2021 at 04:33:00PM +0800, Menglong Dong wrote:
-> On Wed, May 26, 2021 at 12:33 PM Josh Triplett <josh@joshtriplett.org> wrote:
-> >
-> > On Tue, May 25, 2021 at 10:23:09PM -0500, Eric W. Biederman wrote:
-> > > If we are going to do this something that is so small and clean it can
-> > > be done unconditionally always.
-> > [...]
-> > > The net request as I understand it: Make the filesystem the initramfs
-> > > lives in be an ordinary filesystem so it can just be used as the systems
-> > > primary filesystem.
-> >
-> > Including the ability to pivot_root it away, which seems like the main
-> > sticking point.
-> >
-> > If this can be done without any overhead, that seems fine, but if this
-> > involves mounting an extra filesystem, that may add an appreciable
-> > amount of boot time for systems trying to boot in milliseconds. (Such
-> > systems would not use an initramfs if they're going to go on and boot a
-> > separate root filesystem, but they can use an initramfs as their *only*
-> > filesystem.)
-> 
-> Compared to the time the unpacking spent, a mounting seems nothing. In the
-> scene above, this change can be disabled by kconfig, if pivot_root
-> is not needed in initramfs.
+Looking for places where the kernel might unconditionally read
+PageOffline() pages, I stumbled over /proc/kcore; turns out /proc/kcore
+needs some more love to not touch some other pages we really don't want to
+read -- i.e., hwpoisoned ones.
 
-I asked for the kconfig entry. And it would be good to document then
-also the worst case expected on boot for what this could do to you. I
-mean, we are opening a different evil universe. So that's why the
-kconfig exists.  How bad and evil can this be?
+Examples for PageOffline() pages are pages inflated in a balloon,
+memory unplugged via virtio-mem, and partially-present sections in
+memory added by the Hyper-V balloon.
 
-I don't think anyone has clarified that yet.
+When reading pages inflated in a balloon, we essentially produce
+unnecessary load in the hypervisor; holes in partially present sections in
+case of Hyper-V are not accessible and already were a problem for
+/proc/vmcore, fixed in makedumpfile by detecting PageOffline() pages. In
+the future, virtio-mem might disallow reading unplugged memory -- marked
+as PageOffline() -- in some environments, resulting in undefined behavior
+when accessed; therefore, I'm trying to identify and rework all these
+(corner) cases.
 
-  Luis
+With this series, there is really only access via /dev/mem, /proc/vmcore
+and kdb left after I ripped out /dev/kmem. kdb is an advanced corner-case
+use case -- we won't care for now if someone explicitly tries to do nasty
+things by reading from/writing to physical addresses we better not touch.
+/dev/mem is a use case we won't support for virtio-mem, at least for now,
+so we'll simply disallow mapping any virtio-mem memory via /dev/mem next.
+/proc/vmcore is really only a problem when dumping the old kernel via
+something that's not makedumpfile (read: basically never), however, we'll
+try sanitizing that as well in the second kernel in the future.
+
+Tested via kcore_dump:
+	https://github.com/schlafwandler/kcore_dump
+
+v2 -> v3:
+- "mm: introduce page_offline_(begin|end|freeze|thaw) to synchronize
+   setting PageOffline()"
+-- Rephrased a comment as suggested by Mike
+- Collected acks and rbs
+
+v1 -> v2:
+- Dropped "mm: rename and move page_is_poisoned()"
+- "fs/proc/kcore: don't read offline sections, logically offline pages ..."
+-- Add is_page_hwpoison() in page-flags.h along with a comment
+- "mm: introduce page_offline_(begin|end|freeze|thaw) to ..."
+-- s/unfreeze/thaw/
+-- Add a comment to PageOffline documentation in page-flags.h
+- "virtio-mem: use page_offline_(start|end) when setting PageOffline()"
+-- Extend patch description
+- "fs/proc/kcore: use page_offline_(freeze|thaw)"
+-- Simplify freeze/thaw logic
+- Collected acks/rbs
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Steven Price <steven.price@arm.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Aili Yao <yaoaili@kingsoft.com>
+Cc: Jiri Bohac <jbohac@suse.cz>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: Wei Liu <wei.liu@kernel.org>
+Cc: Naoya Horiguchi <naoya.horiguchi@nec.com>
+Cc: linux-hyperv@vger.kernel.org
+Cc: virtualization@lists.linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+
+David Hildenbrand (6):
+  fs/proc/kcore: drop KCORE_REMAP and KCORE_OTHER
+  fs/proc/kcore: pfn_is_ram check only applies to KCORE_RAM
+  fs/proc/kcore: don't read offline sections, logically offline pages
+    and hwpoisoned pages
+  mm: introduce page_offline_(begin|end|freeze|thaw) to synchronize
+    setting PageOffline()
+  virtio-mem: use page_offline_(start|end) when setting PageOffline()
+  fs/proc/kcore: use page_offline_(freeze|thaw)
+
+ drivers/virtio/virtio_mem.c |  2 ++
+ fs/proc/kcore.c             | 67 ++++++++++++++++++++++++++++++-------
+ include/linux/kcore.h       |  3 --
+ include/linux/page-flags.h  | 22 ++++++++++++
+ mm/util.c                   | 40 ++++++++++++++++++++++
+ 5 files changed, 118 insertions(+), 16 deletions(-)
+
+
+base-commit: 6efb943b8616ec53a5e444193dccf1af9ad627b5
+-- 
+2.31.1
+
