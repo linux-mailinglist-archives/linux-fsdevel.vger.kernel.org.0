@@ -2,112 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98D083914BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 12:18:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 799883914C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 12:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233913AbhEZKUO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 May 2021 06:20:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58510 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233875AbhEZKUN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 May 2021 06:20:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1622024321; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Zy950XykkrJ6BQwKrm2bOZ69SbTGj6TawhTTxHONnfc=;
-        b=wkbwouza/uoHMYVNU2DGIsOW7TInyVbvT0rZ7N1OWO6Rh+djnaSCfcAyeF6DN/8dJ1wL64
-        rHi+2qgfiyBeulHqBiX0hnyvOgf4l2CuTdZW8kUS6fzCEFHDQuky3UGZGOSXymBaLH4KHR
-        Lm88zZdt8iZCUNRO0yBGBjg/FShyHHI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1622024321;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Zy950XykkrJ6BQwKrm2bOZ69SbTGj6TawhTTxHONnfc=;
-        b=9hNfRZyzRnis/OPuk5nHQikSuG7UpjGYzqxh8Fx9LtXgJhKisRFsTmBBlUbXWJw3rWKKnj
-        KP4FtPqoswh/zIAA==
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id DD935B23D;
-        Wed, 26 May 2021 10:18:40 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 643461F2CAC; Wed, 26 May 2021 12:18:40 +0200 (CEST)
-Date:   Wed, 26 May 2021 12:18:40 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 07/13] xfs: Convert to use invalidate_lock
-Message-ID: <20210526101840.GC30369@quack2.suse.cz>
-References: <20210525125652.20457-1-jack@suse.cz>
- <20210525135100.11221-7-jack@suse.cz>
- <20210525213729.GC202144@locust>
+        id S233879AbhEZKUv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 May 2021 06:20:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60794 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233793AbhEZKUv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 May 2021 06:20:51 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97863C061574;
+        Wed, 26 May 2021 03:19:18 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id p7so491115wru.10;
+        Wed, 26 May 2021 03:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=z+Ri2n3Ocsu19UbwoKK73grQnRbFQovYzLp7sCDG7XU=;
+        b=HT2qdFrJEOcbSqmn0mj2PZXPRGJPTyWLMUq4Sz5FBCUsKzvBMnojJApDwbnIG2Jcwq
+         CObn/SIeDSWdNbEm2Q0vOyG7B/T/jQtWsobjvyGytUJ0a0GFSOZ8HZPhqXl+MyOhqDn+
+         21oHC+3cyl/2rSO3q9WeQ9HVIEUNzSNHhIRrxXmRtcuOY4FA/Po5GYpgu9lpJRSy8MoO
+         PXnRAHw2NlZ5naEUFKX7UhGXyCYpOyi4L1DwxatAMiOg+CYwRHPBVvFmFnq77FOhhPvC
+         /QhsjLiZMF9jgrleP2f/GTD3oELCq0SihHcojHWjksoRBHvqS8WiSHuyvtr5HyizyoUX
+         mi5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=z+Ri2n3Ocsu19UbwoKK73grQnRbFQovYzLp7sCDG7XU=;
+        b=qItsuLbon3SrGakcsPpHIDITwz2D6Vf9P79gd19mr5aADFURjUz5rgaP1I3z372j9i
+         x6G/xiZ0sW6wk8lt1lyD3Egr9+EdOWlh9ZCWGJMOANZHhxMpjwuSuTHeDgzejVZcTVRX
+         jTLJoPO+lIjRMQdmgZ/uP2JdOT1b6C5LZdy3SMatEIGpEgyZNxd5Qzwg/9V+Qw4HVXYk
+         t7+g32mG45PBKshyXzzSu6uQ9Z/2o80hCIsVkrMBMVOiSuAylqYcGTb7knNeBUCGhcQc
+         uieNebLlHZSFFZhmngkFdObb/G2D1E2Pf/cBX/2y99WR2vy1EkWj5sM255zF1JSJOk99
+         6SMg==
+X-Gm-Message-State: AOAM530d/rwpWD8SFOiJTu1i/1JjJn0fEGNuxpgjFIm4Y9XL7UCXDrKN
+        T0e/swJHCyokd6C/19bBR30=
+X-Google-Smtp-Source: ABdhPJywganIcqZjZaYvnZH3uWCkDwi9O5Ktdyk9fsy+ejFwjvibA7TSYKN66vm6LiQxTCnmYRzmCQ==
+X-Received: by 2002:a5d:5407:: with SMTP id g7mr32338951wrv.207.1622024357214;
+        Wed, 26 May 2021 03:19:17 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.235.102])
+        by smtp.gmail.com with ESMTPSA id u8sm5538665wmq.29.2021.05.26.03.19.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 May 2021 03:19:16 -0700 (PDT)
+To:     Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+ <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
+ <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+Message-ID: <0a668302-b170-31ce-1651-ddf45f63d02a@gmail.com>
+Date:   Wed, 26 May 2021 11:19:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210525213729.GC202144@locust>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 25-05-21 14:37:29, Darrick J. Wong wrote:
-> On Tue, May 25, 2021 at 03:50:44PM +0200, Jan Kara wrote:
-> > Use invalidate_lock instead of XFS internal i_mmap_lock. The intended
-> > purpose of invalidate_lock is exactly the same. Note that the locking in
-> > __xfs_filemap_fault() slightly changes as filemap_fault() already takes
-> > invalidate_lock.
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > CC: <linux-xfs@vger.kernel.org>
-> > CC: "Darrick J. Wong" <darrick.wong@oracle.com>
+On 5/26/21 3:04 AM, Paul Moore wrote:
+> On Tue, May 25, 2021 at 9:11 PM Jens Axboe <axboe@kernel.dk> wrote:
+>> On 5/24/21 1:59 PM, Paul Moore wrote:
+>>> That said, audit is not for everyone, and we have build time and
+>>> runtime options to help make life easier.  Beyond simply disabling
+>>> audit at compile time a number of Linux distributions effectively
+>>> shortcut audit at runtime by adding a "never" rule to the audit
+>>> filter, for example:
+>>>
+>>>  % auditctl -a task,never
+>>
+>> As has been brought up, the issue we're facing is that distros have
+>> CONFIG_AUDIT=y and hence the above is the best real world case outside
+>> of people doing custom kernels. My question would then be how much
+>> overhead the above will add, considering it's an entry/exit call per op.
+>> If auditctl is turned off, what is the expectation in turns of overhead?
 > 
-> It's djwong@kernel.org now.
+> I commented on that case in my last email to Pavel, but I'll try to go
+> over it again in a little more detail.
+> 
+> As we discussed earlier in this thread, we can skip the req->opcode
+> check before both the _entry and _exit calls, so we are left with just
+> the bare audit calls in the io_uring code.  As the _entry and _exit
+> functions are small, I've copied them and their supporting functions
+> below and I'll try to explain what would happen in CONFIG_AUDIT=y,
+> "task,never" case.
+> 
+> +  static inline struct audit_context *audit_context(void)
+> +  {
+> +    return current->audit_context;
+> +  }
+> 
+> +  static inline bool audit_dummy_context(void)
+> +  {
+> +    void *p = audit_context();
+> +    return !p || *(int *)p;
+> +  }
+> 
+> +  static inline void audit_uring_entry(u8 op)
+> +  {
+> +    if (unlikely(audit_enabled && audit_context()))
+> +      __audit_uring_entry(op);
+> +  }
 
-OK, updated.
+I'd rather agree that it's my cycle-picking. The case I care about
+is CONFIG_AUDIT=y (because everybody enable it), and io_uring
+tracing _not_ enabled at runtime. If enabled let them suffer
+the overhead, it will probably dip down the performance
 
-> > @@ -355,8 +358,11 @@ xfs_isilocked(
-> >  
-> >  	if (lock_flags & (XFS_MMAPLOCK_EXCL|XFS_MMAPLOCK_SHARED)) {
-> >  		if (!(lock_flags & XFS_MMAPLOCK_SHARED))
-> > -			return !!ip->i_mmaplock.mr_writer;
-> > -		return rwsem_is_locked(&ip->i_mmaplock.mr_lock);
-> > +			return !debug_locks ||
-> > +				lockdep_is_held_type(
-> > +					&VFS_I(ip)->i_mapping->invalidate_lock,
-> > +					0);
-> > +		return rwsem_is_locked(&VFS_I(ip)->i_mapping->invalidate_lock);
-> 
-> This doesn't look right...
-> 
-> If lockdep is disabled, we always return true for
-> xfs_isilocked(ip, XFS_MMAPLOCK_EXCL) even if nobody holds the lock?
-> 
-> Granted, you probably just copy-pasted from the IOLOCK_SHARED clause
-> beneath it.  Er... oh right, preichl was messing with all that...
-> 
-> https://lore.kernel.org/linux-xfs/20201016021005.548850-2-preichl@redhat.com/
+So, for the case I care about it's two of
 
-Indeed copy-paste programming ;) It certainly makes the assertions happy
-but useless. Should I pull the patch you reference into the series? It
-seems to have been uncontroversial and reviewed. Or will you pull the
-series to xfs tree so I can just rebase on top?
+if (unlikely(audit_enabled && current->audit_context))
 
-								Honza
+in the hot path. load-test-jump + current, so it will
+be around 7x2 instructions. We can throw away audit_enabled
+as you say systemd already enables it, that will give
+4x2 instructions including 2 conditional jumps.
+
+That's not great at all. And that's why I brought up
+the question about need of pre and post hooks and whether
+can be combined. Would be just 4 instructions and that is
+ok (ish).
+
+> We would need to check with the current security requirements (there
+> are distro people on the linux-audit list that keep track of that
+> stuff), but looking at the opcodes right now my gut feeling is that
+> most of the opcodes would be considered "security relevant" so
+> selective auditing might not be that useful in practice.  It would
+> definitely clutter the code and increase the chances that new opcodes
+> would not be properly audited when they are merged.
+
+I'm curious, why it's enabled by many distros by default? Are there
+use cases they use? Tempting to add AUDIT_IOURING=default N, but
+won't work I guess
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pavel Begunkov
