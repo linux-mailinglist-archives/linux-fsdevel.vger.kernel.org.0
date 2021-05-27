@@ -2,198 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B86F2392B8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 12:14:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30D2A392BB4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 12:24:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236114AbhE0KQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 06:16:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46528 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236106AbhE0KQQ (ORCPT
+        id S236067AbhE0K0L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 06:26:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49359 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236008AbhE0K0K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 06:16:16 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11557C061760
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 03:14:41 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id r11so164108edt.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 03:14:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=o38M2BO4ULC4BwKVVDJHYXw+IueHUfFLXYDhWYbT5Ig=;
-        b=bk97lq21A/Gg9EU/Cabtt5Dqiuz3zBqg0ZUgn7vHbNo202Sf8zs+esbsZi1472wnDw
-         S7tg6T6IbhEKaYeIj4ycsX234NuYYQ0O03FJH5OuiLMpN12/IGb9B/GLV656R4LkrXT7
-         zQXhfkYtCReY5f9nCUn7YrhTXkoz5KTPkbYMp2eVWnOvCvOgMk7Ao4RZ5Kt3v2UB38LU
-         FgaCGvVGlM5kjH6PanAP74M5XXJO0vEBEDZcBdVLoVPKz7aiDJuuycVw1/jPmGZ/Y2Zw
-         NVvS36r16Wba8DeiGMEViGPX9yGp3JsaaE96mEEaPQwksZ0ldz0nzt72uYtVn0AqNCTd
-         81Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=o38M2BO4ULC4BwKVVDJHYXw+IueHUfFLXYDhWYbT5Ig=;
-        b=jHu889zezP8kp97piSqu4OCSSFjx1SHtXwWuDmbpc3uckFM12/thn4zSsXx9CbsPjl
-         AvcLU8wrPrUZH33xm79PHtI+UFppRdtI2/+1YkCV6TCaifnF1u+M6HTlGUK35ky2bCMM
-         qTdXROjszrjyhK2Iztmtpti5xnkoZH/lGOdrLPgdLZR9o34zzdt/79ygMWwc6LNN5v7e
-         8dJdxKCUIKgNILy9vp7MK8FOxhFkHwMr5z2nXUot+uKsVMpEWBHeUPZWvCZa0F6Mw7Ep
-         w0qRTOnbezjvr70jNy4hhd4EzVeYn2FSBvyNmDROSjeCDkAt3fkQC8tnmhmDBrntMZbV
-         OE3Q==
-X-Gm-Message-State: AOAM530nSsfI5FAIA6DJfK9AiQaffGr6jJATkH0kSnd6u+I71exCo8nJ
-        d9gwmmfK5S6Hzj0wxZBFOr1FOgbGikbsJ6OCVlug
-X-Google-Smtp-Source: ABdhPJxWXHvU/O2LATe1oBP0kHpNNov+YKoz7byZgiRDTGMJZExbTJNux7H0l7VRJaIaAseiGKHKWtgXJ2fM2OTaKZE=
-X-Received: by 2002:a05:6402:4252:: with SMTP id g18mr3221715edb.195.1622110479663;
- Thu, 27 May 2021 03:14:39 -0700 (PDT)
+        Thu, 27 May 2021 06:26:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622111077;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=zD053S+JtGOJd2KF0odlaJPL/U3ZxA8pIk2xD19hKgI=;
+        b=UdgEkqsa4CM46+W+OnNipMViUeppoQCshBjDrfva+fSTyGuJifk6EK87wh38SUaWR707jN
+        0TJGy6TJ6QFBp21gmBcDX7gScfEWZppZgDZjl3jn8rkE7eJCI7oVkrvKEFAjRqVNI/4+Wq
+        EPZdOL3B0TyMkjBBrZDCjnmCwNP5H0M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-224-7Fsq34D_OZG0-EbwWi7VfQ-1; Thu, 27 May 2021 06:24:36 -0400
+X-MC-Unique: 7Fsq34D_OZG0-EbwWi7VfQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EEB136D4F0;
+        Thu, 27 May 2021 10:24:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-24.rdu2.redhat.com [10.10.112.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E2D425D6D3;
+        Thu, 27 May 2021 10:24:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix the nlink handling of dir-over-dir rename
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     Marc Dionne <marc.dionne@auristor.com>,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 27 May 2021 11:24:33 +0100
+Message-ID: <162211107302.582915.15087790435117657722.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20210517095513.850-1-xieyongji@bytedance.com> <20210517095513.850-12-xieyongji@bytedance.com>
- <3740c7eb-e457-07f3-5048-917c8606275d@redhat.com> <CACycT3uAqa6azso_8MGreh+quj-JXO1piuGnrV8k2kTfc34N2g@mail.gmail.com>
- <5a68bb7c-fd05-ce02-cd61-8a601055c604@redhat.com> <CACycT3ve7YvKF+F+AnTQoJZMPua+jDvGMs_ox8GQe_=SGdeCMA@mail.gmail.com>
- <ee00efca-b26d-c1be-68d2-f9e34a735515@redhat.com> <CACycT3ufok97cKpk47NjUBTc0QAyfauFUyuFvhWKmuqCGJ7zZw@mail.gmail.com>
- <00ded99f-91b6-ba92-5d92-2366b163f129@redhat.com> <3cc7407d-9637-227e-9afa-402b6894d8ac@redhat.com>
-In-Reply-To: <3cc7407d-9637-227e-9afa-402b6894d8ac@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 27 May 2021 18:14:27 +0800
-Message-ID: <CACycT3s6SkER09KL_Ns9d03quYSKOuZwd3=HJ_s1SL7eH7y5gA@mail.gmail.com>
-Subject: Re: Re: [PATCH v7 11/12] vduse: Introduce VDUSE - vDPA Device in Userspace
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 27, 2021 at 4:43 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=884:41, Jason Wang =E5=86=99=E9=81=93=
-:
-> >
-> > =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=883:34, Yongji Xie =E5=86=99=E9=81=
-=93:
-> >> On Thu, May 27, 2021 at 1:40 PM Jason Wang <jasowang@redhat.com> wrote=
-:
-> >>>
-> >>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=881:08, Yongji Xie =E5=86=99=E9=
-=81=93:
-> >>>> On Thu, May 27, 2021 at 1:00 PM Jason Wang <jasowang@redhat.com>
-> >>>> wrote:
-> >>>>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=8812:57, Yongji Xie =E5=86=99=
-=E9=81=93:
-> >>>>>> On Thu, May 27, 2021 at 12:13 PM Jason Wang <jasowang@redhat.com>
-> >>>>>> wrote:
-> >>>>>>> =E5=9C=A8 2021/5/17 =E4=B8=8B=E5=8D=885:55, Xie Yongji =E5=86=99=
-=E9=81=93:
-> >>>>>>>> +
-> >>>>>>>> +static int vduse_dev_msg_sync(struct vduse_dev *dev,
-> >>>>>>>> +                           struct vduse_dev_msg *msg)
-> >>>>>>>> +{
-> >>>>>>>> +     init_waitqueue_head(&msg->waitq);
-> >>>>>>>> +     spin_lock(&dev->msg_lock);
-> >>>>>>>> +     vduse_enqueue_msg(&dev->send_list, msg);
-> >>>>>>>> +     wake_up(&dev->waitq);
-> >>>>>>>> +     spin_unlock(&dev->msg_lock);
-> >>>>>>>> +     wait_event_killable(msg->waitq, msg->completed);
-> >>>>>>> What happens if the userspace(malicous) doesn't give a response
-> >>>>>>> forever?
-> >>>>>>>
-> >>>>>>> It looks like a DOS. If yes, we need to consider a way to fix tha=
-t.
-> >>>>>>>
-> >>>>>> How about using wait_event_killable_timeout() instead?
-> >>>>> Probably, and then we need choose a suitable timeout and more
-> >>>>> important,
-> >>>>> need to report the failure to virtio.
-> >>>>>
-> >>>> Makes sense to me. But it looks like some
-> >>>> vdpa_config_ops/virtio_config_ops such as set_status() didn't have a
-> >>>> return value.  Now I add a WARN_ON() for the failure. Do you mean we
-> >>>> need to add some change for virtio core to handle the failure?
-> >>>
-> >>> Maybe, but I'm not sure how hard we can do that.
-> >>>
-> >> We need to change all virtio device drivers in this way.
-> >
-> >
-> > Probably.
-> >
-> >
-> >>
-> >>> We had NEEDS_RESET but it looks we don't implement it.
-> >>>
-> >> Could it handle the failure of get_feature() and get/set_config()?
-> >
-> >
-> > Looks not:
-> >
-> > "
-> >
-> > The device SHOULD set DEVICE_NEEDS_RESET when it enters an error state
-> > that a reset is needed. If DRIVER_OK is set, after it sets
-> > DEVICE_NEEDS_RESET, the device MUST send a device configuration change
-> > notification to the driver.
-> >
-> > "
-> >
-> > This looks implies that NEEDS_RESET may only work after device is
-> > probed. But in the current design, even the reset() is not reliable.
-> >
-> >
-> >>
-> >>> Or a rough idea is that maybe need some relaxing to be coupled loosel=
-y
-> >>> with userspace. E.g the device (control path) is implemented in the
-> >>> kernel but the datapath is implemented in the userspace like TUN/TAP.
-> >>>
-> >> I think it can work for most cases. One problem is that the set_config
-> >> might change the behavior of the data path at runtime, e.g.
-> >> virtnet_set_mac_address() in the virtio-net driver and
-> >> cache_type_store() in the virtio-blk driver. Not sure if this path is
-> >> able to return before the datapath is aware of this change.
-> >
-> >
-> > Good point.
-> >
-> > But set_config() should be rare:
-> >
-> > E.g in the case of virtio-net with VERSION_1, config space is read
-> > only, and it was set via control vq.
-> >
-> > For block, we can
-> >
-> > 1) start from without WCE or
-> > 2) we add a config change notification to userspace or
-> > 3) extend the spec to use vq instead of config space
-> >
-> > Thanks
->
->
-> Another thing if we want to go this way:
->
-> We need find a way to terminate the data path from the kernel side, to
-> implement to reset semantic.
->
+Fix rename of one directory over another such that the nlink on the deleted
+directory is cleared to 0 rather than being decremented to 1.
 
-Do you mean terminate the data path in vdpa_reset(). Is it ok to just
-notify userspace to stop data path asynchronously? Userspace should
-not be able to do any I/O at that time because the iotlb mapping is
-already removed.
+This was causing the generic/035 xfstest to fail.
 
-Thanks,
-Yongji
+Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" concept")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+Link: https://lore.kernel.org/r/162194384460.3999479.7605572278074191079.stgit@warthog.procyon.org.uk/ # v1
+---
+
+ fs/afs/dir.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 9fbe5a5ec9bd..78719f2f567e 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -1919,7 +1919,9 @@ static void afs_rename_edit_dir(struct afs_operation *op)
+ 	new_inode = d_inode(new_dentry);
+ 	if (new_inode) {
+ 		spin_lock(&new_inode->i_lock);
+-		if (new_inode->i_nlink > 0)
++		if (S_ISDIR(new_inode->i_mode))
++			clear_nlink(new_inode);
++		else if (new_inode->i_nlink > 0)
+ 			drop_nlink(new_inode);
+ 		spin_unlock(&new_inode->i_lock);
+ 	}
+
+
