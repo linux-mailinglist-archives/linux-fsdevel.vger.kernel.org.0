@@ -2,208 +2,279 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE701393687
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 21:45:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 727C93936A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 21:49:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235455AbhE0TrM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 15:47:12 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:31190 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235425AbhE0TrL (ORCPT
+        id S235512AbhE0Tud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 15:50:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235288AbhE0Tuc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 15:47:11 -0400
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14RJdtfE007579;
-        Thu, 27 May 2021 12:45:32 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=fSfIG7r8/wS76RHFmp/8KL3FLU4e/faxcxSvO9e6uLc=;
- b=Fg53ALtEw/ZJgfTBkyykeuvlIAla3OcTRMxVWSawbjvvdvupEryJ28q2/VY0JQB7Zizu
- OWPdeXr1IuZNn4AbzdKQ7ui0RidEErDOM3P9qKXRY5x08oE3JTg6SMpSkQ65DDsYgXGH
- BB2kzQgx84zUClVbuO94E7BZnMoo/U0P45g= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 38sud900gu-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 27 May 2021 12:45:31 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 27 May 2021 12:45:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=m02kIMbjiwjw7drm7rRAlRD+SayteHuNqfZ0rYb3LOofxQ7l9jGDyufYMeFlPT/ofdKTrquhFE6CRbHLaIvuIIsmFpnxSdxUOVuFu1x4O6hXrqcbznZ0yX3EzGZ8Fi6pJvDB9bXnRLUNXmfNDdUmESuhwNn7mJhOvaFWF27zxGP4ET0MV3dIvcvGBZ2oYsBdvOwwspaBFc5uUhemJWUf7gczlTUQ65md3SGwOANL5J9Q+XPpSewDQtvReuEhvoyoD4K0k3jlY61vqcKMWNdsjzdmDKJZstiBXTLJlbR8NNbezRXh8QBtfWsyP8u3ObJF6ulNk4qKPOLh8NyqLMYNJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fSfIG7r8/wS76RHFmp/8KL3FLU4e/faxcxSvO9e6uLc=;
- b=V085BrbtfweLwWh1qa7xadPirBZ6Rc8/DEJBdyVUbwS9GKJxJSE+M96FBXfm6zeT3hP0z/r6xXpeJh7fe49quEHLMI2ko0x+09J6xaemb2AWesHMuzbJSw2ewv3Lkqrzwjn2WqqpFdkXC9cTbYwO8ZLVGujQTOGKt/aWlnM5f4LCZ0ZLU0dT25H0+q9AQ46x84MLiAPDCC1jzDepa3c5eTOModj0oyXlnP98FpqSYvBfv5tpKLQevsYGHFTjoOnC2ciRofbC7+solIZbW4i04jrF+3OKApCGBxK/tFGteqorS93SmNYHKaEWQE3ZgonZ7MsVIGlLX7JLfWk0aePkkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Authentication-Results: suse.cz; dkim=none (message not signed)
- header.d=none;suse.cz; dmarc=none action=none header.from=fb.com;
-Received: from SN6PR1501MB4141.namprd15.prod.outlook.com
- (2603:10b6:805:e3::14) by SN6PR1501MB2093.namprd15.prod.outlook.com
- (2603:10b6:805:3::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.20; Thu, 27 May
- 2021 19:45:29 +0000
-Received: from SN6PR1501MB4141.namprd15.prod.outlook.com
- ([fe80::b802:71f2:d495:35eb]) by SN6PR1501MB4141.namprd15.prod.outlook.com
- ([fe80::b802:71f2:d495:35eb%7]) with mapi id 15.20.4173.020; Thu, 27 May 2021
- 19:45:29 +0000
-Date:   Thu, 27 May 2021 12:45:23 -0700
-From:   Roman Gushchin <guro@fb.com>
-To:     Jan Kara <jack@suse.cz>
-CC:     Tejun Heo <tj@kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dennis Zhou <dennis@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>, <cgroups@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] writeback, cgroup: release dying cgwbs by
- switching attached inodes
-Message-ID: <YK/20x1zGbjJ6mg8@carbon.DHCP.thefacebook.com>
-References: <20210526222557.3118114-1-guro@fb.com>
- <20210526222557.3118114-3-guro@fb.com>
- <20210527112403.GC24486@quack2.suse.cz>
- <YK/bi1OU7bNgPBab@carbon.DHCP.thefacebook.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <YK/bi1OU7bNgPBab@carbon.DHCP.thefacebook.com>
-X-Originating-IP: [2620:10d:c090:400::5:426]
-X-ClientProxiedBy: CO2PR04CA0098.namprd04.prod.outlook.com
- (2603:10b6:104:6::24) To SN6PR1501MB4141.namprd15.prod.outlook.com
- (2603:10b6:805:e3::14)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:426) by CO2PR04CA0098.namprd04.prod.outlook.com (2603:10b6:104:6::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.20 via Frontend Transport; Thu, 27 May 2021 19:45:28 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5570f720-c52c-4a89-717b-08d92147fb39
-X-MS-TrafficTypeDiagnostic: SN6PR1501MB2093:
-X-Microsoft-Antispam-PRVS: <SN6PR1501MB20931CC4CC187A6DEEBDCAF7BE239@SN6PR1501MB2093.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: TlluneLxQGlu2tu/cf0dvTbpzxw8Qc4BPiaxnN59wsvuqphIz+OlX6fbKIJ0XEm4C5e5Fd1Sku+k232yKy9yppX0HYCIXcy+N3Y0XM1N7InFNXszg0MqgdBCjH4A4LGT44wlFvqzYcxkVbxDstFpwEHj8dHnAOrR3eP0657HfRD+hzuWOwYoJ2Xo7L/9ZxVOi53/Mjwlh+2A9qTIZLki0zK7RVo+tkwec23UTRK5nV/++jiM8D6XAMJbpYZ+PDxEe/jrZ91W7pooc93jqCRYhLQTGWJvB3lhC1ckuBEW248aio35cjhjmGRyaUGLMXZhpHFGxBhpE6wSqjuqEj+fimz8+1h7jidulqZNGa0I3Niwbl41NszGfjxelJfNSNIY3vkmc4bqD2JysOkyckB7zt8Jb58kwiublHAJdkAiU/UrEHCcCZOUNS/XHZV7B/Vp2yxkVcCect6MnEa5CkKU9QAHEFg4FijS4+zAtc58j5EvjyVHOhU96XQr2sIm4ORxVkK40axbvj7/ZuMi01wveKL7SOFI8MOVR9ZLnCdShz8ss487VsE4CJrcWxBt70eVHdd3TSpeN4ZiMp909/JCMRwUIqZphSUTusr4qdodbpU=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR1501MB4141.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(346002)(39860400002)(396003)(136003)(54906003)(186003)(9686003)(83380400001)(55016002)(316002)(6666004)(8936002)(8676002)(4326008)(2906002)(86362001)(66476007)(66556008)(6506007)(52116002)(7696005)(6916009)(38100700002)(478600001)(16526019)(66946007)(5660300002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?TUPfWY6c2PGvsLpR4YuI/rteemvIEqELEYc7b5L9aLfnbn+VzwQwC+l742Fv?=
- =?us-ascii?Q?y2Ij6BEJ1TNyaxtfXGSbPm1VhJtpE97WXS1y6sWS7Ku79b2MnMHB/JZOpQE3?=
- =?us-ascii?Q?EKftNlBuOD3/6dRdYwgUpNUp0GYk5oBhKuz2bRl74sDlz6u3K2n1wMQ0DloP?=
- =?us-ascii?Q?hFXI3qv4w6iOwAhI31ITpZNi9noJvIL25aDXgmhYDn6cqpkC6TZ6Z4kTQkEl?=
- =?us-ascii?Q?A6q6TFhNObR99ZK/K78OLjXwtASVASj0XdX86Ab28IQc3Xl3eshz+ezvGrWE?=
- =?us-ascii?Q?IeL695LGYa9zeqf53FhFmA9/NfgUN4jD8D8y8Pxj3fi3P8s8W9xG1xQXFLW3?=
- =?us-ascii?Q?ev27uIJS5AaxDVWVlWKA7tvaxVaPPCBhfFV3EMgEdHtRH3HWU/GOKjtZZPFA?=
- =?us-ascii?Q?zAmiKW9o5fbbydNldpbXwgMDCDnIqB55+wc4gEjdkUGiiggDGN6EBz/TFDzf?=
- =?us-ascii?Q?MYQaMm/npInxNUx4zp4hQzwgwxnM7IZgjKMN8kfkWXQs/Zq61vKpgV3IJXd/?=
- =?us-ascii?Q?4zEd5j/HUIzGaQvgswT8vTSZyNNYLAZ6LtSxhSUpooD3Myf1z84lYzP9tqB5?=
- =?us-ascii?Q?aSs87/klC4jmnlIskjCgj7zk4Jdty/yAlWSrM3zFARpuSYO7QP2xOzt+RpeZ?=
- =?us-ascii?Q?VdJNMis4lHfpr3uT9xfOhTecxuS3ObxeRJHTtYCTGvm6wLL4ALSkul34johj?=
- =?us-ascii?Q?Ub3U2kbSHskDvpHjZzfnW39K91jCrwbTu/y1p5zbgiBXWqz0JUCFx5uzLalQ?=
- =?us-ascii?Q?wBrwjlJszToopFviMb4/elUR2n3zcm5w2iEQR9p47OWQkaHw1AvK4njiNu8k?=
- =?us-ascii?Q?kff+9x3DIolvG072Fw9xMIHQZYb5P8SznFwGwQZlzQxqWaPlQku/tKsxgpro?=
- =?us-ascii?Q?KDALUk8VDang9GpjWKs7Njg9NyDyQTtuosdr2ZyHTs5iQ9Dqo2SEQtFfcFFb?=
- =?us-ascii?Q?cTaoYN9Xz4elfC6KZTrxM9+KSS2CZRn5A7HZypnPMCh2hTq7c7gTk7mVb8cE?=
- =?us-ascii?Q?bABpcFmMjLR5XztdHqoNyxp5hTIivJrAKYDB8UTi6RqhQ/Z2EdxmSbmshpe8?=
- =?us-ascii?Q?KMyWRZ0GoA+g4OYAXVAo3irrMJS1WQh6j0j9eWGsQADIwUXjl0fdufTYY8e1?=
- =?us-ascii?Q?GlIAIhIdIa04FhY5+X+VWAYD2rvYDTCqDwvp6eIjdHkDALzIPSH01SNgYICN?=
- =?us-ascii?Q?M8dfshvdkloALKpls4XBHt0LlA8c3s3TrfbXAPe6faLwzc71Q48DuOQh6dUd?=
- =?us-ascii?Q?FKr1m/ewdyBtP+HmVk+rdX+KYoixlpDFC0UQC1nPUVxjs4h7X8P7lBCleyn1?=
- =?us-ascii?Q?IC5xS5Q/BzAgny3IiNOiVfe3fDNKHHx0r5nN95X3e6r/3Q=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5570f720-c52c-4a89-717b-08d92147fb39
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR1501MB4141.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2021 19:45:29.3224
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NQHdUtRaEKbcqvnjo3ZMSWyZm7KpxWbq81n0zpvJvMyx3l8lqkX37Ur7EQTyOHdG
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR1501MB2093
-X-OriginatorOrg: fb.com
-X-Proofpoint-ORIG-GUID: Xsqkc1fnLcV4MtGSLUf9XaF3ZrSAfDfZ
-X-Proofpoint-GUID: Xsqkc1fnLcV4MtGSLUf9XaF3ZrSAfDfZ
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-05-27_10:2021-05-27,2021-05-27 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
- mlxlogscore=777 adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 bulkscore=0 spamscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2105270125
-X-FB-Internal: deliver
+        Thu, 27 May 2021 15:50:32 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A36A8C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 12:48:58 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id v12so472630plo.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 12:48:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=7u+DFIut9SqCS/XVsWkAkpJzHtHQ1b1Q4EJvXmbpC8A=;
+        b=vYrQxqk4hOue1v8BKZ7sKsorrlXKSzgBwOROVHZ5YvB8M5tZhktoPtJD+DWZ0oYEZR
+         r23j9cxuB0vjIyeYYnQhI0hftrrfu3pkJDitGr7oH1IzJWbF/1XIFJP/Er3K3fL7x+HQ
+         v0QhmXdFeSjnR8xgEgzXPCzKc5wvbDC6txZinNEKUoi24z4kkrnrG48sZ+MNvtUq/fBi
+         EHYJ8aQrA6TUaTGOGCylmZwby0quLCyl59lmRUNVO/NI0UAqwFNdK+QKC3n3O3lc0uCI
+         hNV+17oO9/HVK90ofZR/cxfMadzmro7RQKiW9mQ+NCM05M9i1XjO503HuFAUn38RxfIk
+         UCkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=7u+DFIut9SqCS/XVsWkAkpJzHtHQ1b1Q4EJvXmbpC8A=;
+        b=UH6DUBtst5zCT4iFVAKSGsJp2F1EL3qgZvlhs3khH3NtJ1AMBAsYCp3xW+QYgdwPrt
+         3BUazhUk11kAp0MiPLFI/IQb9i8a6IHlevRoEEkYGY4kUKmFcoLyiZyCBKLTixbRla8P
+         Kftyqk1HfXRzWeI6i3BRNZA/E04e/qkR8Ks4Lp0Rf37Rz3fCeV6cnhMf8+Z2Dzor2ROZ
+         3MQ4aeD4tEllI+2qYVR5Yc/4OKDGFiRs2FWie2w5LVsE69mNtWjcGqgLny2Paq5zd4jk
+         10t35ej1ekeDqJuVoWH7qV2ip9naB4n2ATOoK6DmGwKADYzVq1xY0fuTKv4f9s6Ac1hK
+         SWDw==
+X-Gm-Message-State: AOAM532nDnqQB7PFMvFOTu4b9YkDLf0QGqSvtQ6cY8z8ih8ZhMYzY3/B
+        rIbSZ/cUV9Elsa5LKI+ouqsc6Q==
+X-Google-Smtp-Source: ABdhPJyQIaMNVxO3naGeHkI+P47Sq8qkMaY39quKxeYAu+Ct3chlpRTQmbVgYQnM8GO3IVYyRz3wYA==
+X-Received: by 2002:a17:902:b687:b029:eb:6491:b3f7 with SMTP id c7-20020a170902b687b02900eb6491b3f7mr4660729pls.38.1622144937705;
+        Thu, 27 May 2021 12:48:57 -0700 (PDT)
+Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id i13sm2545570pgg.30.2021.05.27.12.48.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 May 2021 12:48:57 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <FE449796-7F83-41D8-9F3A-555B7B65B5DE@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_92503AC5-DEEF-4307-ADDC-CD91BA817B4A";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH V2 2/7] ext4: add new helper interface
+ ext4_try_to_trim_range()
+Date:   Thu, 27 May 2021 13:48:55 -0600
+In-Reply-To: <72360aac-48f9-95c6-539f-739464f9fc9e@gmail.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        lishujin@kuaishou.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+To:     Wang Jianchao <jianchao.wan9@gmail.com>
+References: <164ffa3b-c4d5-6967-feba-b972995a6dfb@gmail.com>
+ <a602a6ba-2073-8384-4c8f-d669ee25c065@gmail.com>
+ <72360aac-48f9-95c6-539f-739464f9fc9e@gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 27, 2021 at 10:48:59AM -0700, Roman Gushchin wrote:
-> On Thu, May 27, 2021 at 01:24:03PM +0200, Jan Kara wrote:
-> > On Wed 26-05-21 15:25:57, Roman Gushchin wrote:
-> > > Asynchronously try to release dying cgwbs by switching clean attached
-> > > inodes to the bdi's wb. It helps to get rid of per-cgroup writeback
-> > > structures themselves and of pinned memory and block cgroups, which
-> > > are way larger structures (mostly due to large per-cpu statistics
-> > > data). It helps to prevent memory waste and different scalability
-> > > problems caused by large piles of dying cgroups.
-> > > 
-> > > A cgwb cleanup operation can fail due to different reasons (e.g. the
-> > > cgwb has in-glight/pending io, an attached inode is locked or isn't
-> > > clean, etc). In this case the next scheduled cleanup will make a new
-> > > attempt. An attempt is made each time a new cgwb is offlined (in other
-> > > words a memcg and/or a blkcg is deleted by a user). In the future an
-> > > additional attempt scheduled by a timer can be implemented.
-> > > 
-> > > Signed-off-by: Roman Gushchin <guro@fb.com>
-> > > ---
-> > >  fs/fs-writeback.c                | 35 ++++++++++++++++++
-> > >  include/linux/backing-dev-defs.h |  1 +
-> > >  include/linux/writeback.h        |  1 +
-> > >  mm/backing-dev.c                 | 61 ++++++++++++++++++++++++++++++--
-> > >  4 files changed, 96 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > > index 631ef6366293..8fbcd50844f0 100644
-> > > --- a/fs/fs-writeback.c
-> > > +++ b/fs/fs-writeback.c
-> > > @@ -577,6 +577,41 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
-> > >  	kfree(isw);
-> > >  }
-> > >  
-> > > +/**
-> > > + * cleanup_offline_wb - detach associated clean inodes
-> > > + * @wb: target wb
-> > > + *
-> > > + * Switch the inode->i_wb pointer of the attached inodes to the bdi's wb and
-> > > + * drop the corresponding per-cgroup wb's reference. Skip inodes which are
-> > > + * dirty, freeing, in the active writeback process or are in any way busy.
-> > 
-> > I think the comment doesn't match the function anymore.
-> > 
-> > > + */
-> > > +void cleanup_offline_wb(struct bdi_writeback *wb)
-> > > +{
-> > > +	struct inode *inode, *tmp;
-> > > +
-> > > +	spin_lock(&wb->list_lock);
-> > > +restart:
-> > > +	list_for_each_entry_safe(inode, tmp, &wb->b_attached, i_io_list) {
-> > > +		if (!spin_trylock(&inode->i_lock))
-> > > +			continue;
-> > > +		xa_lock_irq(&inode->i_mapping->i_pages);
-> > > +		if ((inode->i_state & I_REFERENCED) != I_REFERENCED) {
-> > 
-> > Why the I_REFERENCED check here? That's just inode aging bit and I have
-> > hard time seeing how it would relate to whether inode should switch wbs...
-> 
-> What I tried to say (and failed :) ) was that I_REFERENCED is the only accepted
-> flag here. So there must be
-> 	if ((inode->i_state | I_REFERENCED) != I_REFERENCED)
 
-Sorry, I'm wrong. Must be:
+--Apple-Mail=_92503AC5-DEEF-4307-ADDC-CD91BA817B4A
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-if ((inode->i_state | I_REFERENCED) == I_REFERENCED) {
-	...
-}
+On May 26, 2021, at 2:43 AM, Wang Jianchao <jianchao.wan9@gmail.com> =
+wrote:
+>=20
+> There is no functional change in this patch but just split the
+> codes, which serachs free block and does trim, into a new function
+> ext4_try_to_trim_range. This is preparing for the following async
+> backgroup discard.
+>=20
+> Signed-off-by: Wang Jianchao <wangjianchao@kuaishou.com>
 
-or even simpler:
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
-if (!(inode->i_state & ~I_REFERENCED)) {
-	...
-}
+> ---
+> fs/ext4/mballoc.c | 102 =
+++++++++++++++++++++++++++++++------------------------
+> 1 file changed, 57 insertions(+), 45 deletions(-)
+>=20
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index d81f1fd22..f984f15 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -5685,6 +5685,54 @@ static int ext4_trim_extent(struct super_block =
+*sb,
+> 	return ret;
+> }
+>=20
+> +static int ext4_try_to_trim_range(struct super_block *sb,
+> +		struct ext4_buddy *e4b, ext4_grpblk_t start,
+> +		ext4_grpblk_t max, ext4_grpblk_t minblocks)
+> +{
+> +	ext4_grpblk_t next, count, free_count;
+> +	void *bitmap;
+> +	int ret =3D 0;
+> +
+> +	bitmap =3D e4b->bd_bitmap;
+> +	start =3D (e4b->bd_info->bb_first_free > start) ?
+> +		e4b->bd_info->bb_first_free : start;
+> +	count =3D 0;
+> +	free_count =3D 0;
+> +
+> +	while (start <=3D max) {
+> +		start =3D mb_find_next_zero_bit(bitmap, max + 1, start);
+> +		if (start > max)
+> +			break;
+> +		next =3D mb_find_next_bit(bitmap, max + 1, start);
+> +
+> +		if ((next - start) >=3D minblocks) {
+> +			ret =3D ext4_trim_extent(sb, start, next - =
+start, e4b);
+> +			if (ret && ret !=3D -EOPNOTSUPP)
+> +				break;
+> +			ret =3D 0;
+> +			count +=3D next - start;
+> +		}
+> +		free_count +=3D next - start;
+> +		start =3D next + 1;
+> +
+> +		if (fatal_signal_pending(current)) {
+> +			count =3D -ERESTARTSYS;
+> +			break;
+> +		}
+> +
+> +		if (need_resched()) {
+> +			ext4_unlock_group(sb, e4b->bd_group);
+> +			cond_resched();
+> +			ext4_lock_group(sb, e4b->bd_group);
+> +		}
+> +
+> +		if ((e4b->bd_info->bb_free - free_count) < minblocks)
+> +			break;
+> +	}
+> +
+> +	return count;
+> +}
+> +
+> /**
+>  * ext4_trim_all_free -- function to trim all free space in alloc. =
+group
+>  * @sb:			super block for file system
+> @@ -5708,10 +5756,8 @@ static int ext4_trim_extent(struct super_block =
+*sb,
+> 		   ext4_grpblk_t start, ext4_grpblk_t max,
+> 		   ext4_grpblk_t minblocks)
+> {
+> -	void *bitmap;
+> -	ext4_grpblk_t next, count =3D 0, free_count =3D 0;
+> 	struct ext4_buddy e4b;
+> -	int ret =3D 0;
+> +	int ret;
+>=20
+> 	trace_ext4_trim_all_free(sb, group, start, max);
+>=20
+> @@ -5721,57 +5767,23 @@ static int ext4_trim_extent(struct super_block =
+*sb,
+> 			     ret, group);
+> 		return ret;
+> 	}
+> -	bitmap =3D e4b.bd_bitmap;
+>=20
+> 	ext4_lock_group(sb, group);
+> -	if (EXT4_MB_GRP_WAS_TRIMMED(e4b.bd_info) &&
+> -	    minblocks >=3D =
+atomic_read(&EXT4_SB(sb)->s_last_trim_minblks))
+> -		goto out;
+> -
+> -	start =3D (e4b.bd_info->bb_first_free > start) ?
+> -		e4b.bd_info->bb_first_free : start;
+>=20
+> -	while (start <=3D max) {
+> -		start =3D mb_find_next_zero_bit(bitmap, max + 1, start);
+> -		if (start > max)
+> -			break;
+> -		next =3D mb_find_next_bit(bitmap, max + 1, start);
+> -
+> -		if ((next - start) >=3D minblocks) {
+> -			ret =3D ext4_trim_extent(sb, start, next - =
+start, &e4b);
+> -			if (ret && ret !=3D -EOPNOTSUPP)
+> -				break;
+> -			ret =3D 0;
+> -			count +=3D next - start;
+> -		}
+> -		free_count +=3D next - start;
+> -		start =3D next + 1;
+> -
+> -		if (fatal_signal_pending(current)) {
+> -			count =3D -ERESTARTSYS;
+> -			break;
+> -		}
+> -
+> -		if (need_resched()) {
+> -			ext4_unlock_group(sb, group);
+> -			cond_resched();
+> -			ext4_lock_group(sb, group);
+> -		}
+> -
+> -		if ((e4b.bd_info->bb_free - free_count) < minblocks)
+> -			break;
+> +	if (!EXT4_MB_GRP_WAS_TRIMMED(e4b.bd_info) ||
+> +	    minblocks < atomic_read(&EXT4_SB(sb)->s_last_trim_minblks)) =
+{
+> +		ret =3D ext4_try_to_trim_range(sb, &e4b, start, max, =
+minblocks);
+> +		if (ret >=3D 0)
+> +			EXT4_MB_GRP_SET_TRIMMED(e4b.bd_info);
+> +	} else {
+> +		ret =3D 0;
+> 	}
+>=20
+> -	if (!ret) {
+> -		ret =3D count;
+> -		EXT4_MB_GRP_SET_TRIMMED(e4b.bd_info);
+> -	}
+> -out:
+> 	ext4_unlock_group(sb, group);
+> 	ext4_mb_unload_buddy(&e4b);
+>=20
+> 	ext4_debug("trimmed %d blocks in the group %d\n",
+> -		count, group);
+> +		ret, group);
+>=20
+> 	return ret;
+> }
+> --
+> 1.8.3.1
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_92503AC5-DEEF-4307-ADDC-CD91BA817B4A
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmCv96gACgkQcqXauRfM
+H+BkOA/9EVWci2buDhRIa54UlM5wG0Yio77494TAzPUYOvTvRvE0S5AgecTKOmNx
+bnocVv19eOLhu0xhlXRmOynyHjSnlMHPgKJmw+irwYPe8vIF9oAGAWnx2mHzwr8v
+bxUVEqYsa+G7ajwXq/GvoewKkbCUWeo6Ihc5oFGvSQDoPaE8mMxjQ16FeQZYpFIj
+3nTVGwFGuIjWjXWPwMzSQInV0kFbPCf4s5tGaRzTFjuySSh07byYWKlMwFwUArCM
+tQ+uKWbiWDsC6NV4/IdQIiLZISIeQSDY+PdQkFh07cz33MkOxbynyqL+4y66DyDv
+5ugmEFBLKI2yyss277gPLE9mkBbo4/0CZO64atMoacNuj3VSWCGyZEX5aecye6ut
+ujA9eIWeMQNlWle1hyGcBr6QGnTBcI+Yf9B/IiAtimD9oPOjEs3mT4h8kcQRwPWS
+ecBwzOJHmgOgisy30ZYxIm3aeUkFGshMVw/r5UqZ8gZobvqZG/3RB2xEfnMVS7fM
+I3/4/Yr5IwLyihbUDDVNoZ/X2AyI4Yh07+2KO+dUb1GVGRj979wlscNxNXwj75x1
+KXcaeXuotW5rB8vEOz3mmbmlT94LKBFRUJrHgMsZb58mJ2lOpUvNIa4rl1RAwgCG
+GekVVm2IWwLx3SNuNlsF3wWPcmgU/fChXuqOh+lXN4EElcgnsuA=
+=mcv/
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_92503AC5-DEEF-4307-ADDC-CD91BA817B4A--
