@@ -2,154 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE0C4392AB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 11:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B51392B28
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 11:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235825AbhE0J3y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 05:29:54 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:52131 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235666AbhE0J3y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 05:29:54 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1622107701; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=WkY2YTOgRI4Ys9jejhJv/SZd6Pl6W+z9jTGwMepK7Jc=; b=NjoJkB6hiSSpLZwqLNqtWkos6RMie6N2YYHgz7bxNdTejdQAwfA5sQ+5ZMzyma2olOqYRxPL
- 1ALFO2MRTrRnR7ATprHbHuZwHG8EKwV4dtEEJqY3Cm62BxuBsBa+pYmnMmgYSqhAf2utNRaP
- yUbURwkL8V65za/BhaoNGTIHDHg=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
- 60af662c5f788b52a508b26e (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 27 May 2021 09:28:12
- GMT
-Sender: charante=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 3E385C43143; Thu, 27 May 2021 09:28:12 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        NICE_REPLY_A,SPF_FAIL autolearn=no autolearn_force=no version=3.4.0
-Received: from [192.168.29.110] (unknown [49.37.159.213])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S235844AbhE0JxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 05:53:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24356 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235770AbhE0JxV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 May 2021 05:53:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622109108;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=u9Cxtk2CGDavcxRvdG5xqMXG/D6DQ86Gj3Jra0Du2iA=;
+        b=JoscmxOsBQCWDPPaE0kZojQUtPyZR6xxmzZUk63GuyX+vEznZhfvRVp6cD0VGRDMS0e7gE
+        AMYwxDUHjjggEGNhrasB+oJQbMHIs77MHwqhqwna8HfDH+BogHfZ86JZsF363DGSGXZokY
+        LCaZvPIq8XOFkxb9x6geIDOKKkt2vN4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-276-H_O0Ks53PH6uw7WYjNETzA-1; Thu, 27 May 2021 05:51:46 -0400
+X-MC-Unique: H_O0Ks53PH6uw7WYjNETzA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: charante)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DC715C433F1;
-        Thu, 27 May 2021 09:28:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC715C433F1
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
-Subject: Re: [PATCH V2] mm: compaction: support triggering of proactive
- compaction by user
-To:     Nitin Gupta <nigupta@nvidia.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "yzaikin@google.com" <yzaikin@google.com>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
-        "sh_def@163.com" <sh_def@163.com>,
-        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
-        "vinmenon@codeaurora.org" <vinmenon@codeaurora.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <1621345058-26676-1-git-send-email-charante@codeaurora.org>
- <BYAPR12MB3416727DB2BE2198C324124CD8259@BYAPR12MB3416.namprd12.prod.outlook.com>
-From:   Charan Teja Kalla <charante@codeaurora.org>
-Message-ID: <2733c513-d9ca-9c33-42ee-38df0a057f8a@codeaurora.org>
-Date:   Thu, 27 May 2021 14:58:04 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 28388101371B;
+        Thu, 27 May 2021 09:51:45 +0000 (UTC)
+Received: from dresden.str.redhat.com (ovpn-114-232.ams2.redhat.com [10.36.114.232])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 873B3687D7;
+        Thu, 27 May 2021 09:51:39 +0000 (UTC)
+Subject: Re: [Virtio-fs] [PATCH 1/4] fuse: Fix crash in
+ fuse_dentry_automount() error path
+To:     Greg Kurz <groug@kaod.org>, Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        virtio-fs@redhat.com, linux-fsdevel@vger.kernel.org,
+        Vivek Goyal <vgoyal@redhat.com>
+References: <20210525150230.157586-1-groug@kaod.org>
+ <20210525150230.157586-2-groug@kaod.org>
+From:   Max Reitz <mreitz@redhat.com>
+Message-ID: <cef80ba1-b0c1-a8bd-387a-9c7d2730a766@redhat.com>
+Date:   Thu, 27 May 2021 11:51:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB3416727DB2BE2198C324124CD8259@BYAPR12MB3416.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210525150230.157586-2-groug@kaod.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks Nitin for your inputs!!
-
-On 5/26/2021 2:05 AM, Nitin Gupta wrote:
-> The proactive compaction[1] gets triggered for every 500msec and run
-> compaction on the node for COMPACTION_HPAGE_ORDER (usually order-9)
-> pages based on the value set to sysctl.compaction_proactiveness.
-> Triggering the compaction for every 500msec in search of
+On 25.05.21 17:02, Greg Kurz wrote:
+> If fuse_fill_super_submount() returns an error, the error path
+> triggers a crash:
 > 
-> COMPACTION_HPAGE_ORDER pages is not needed for all applications,
->> especially on the embedded system usecases which may have few MB's of
->> RAM. Enabling the proactive compaction in its state will endup in running
->> almost always on such systems.
->>
-> You can disable proactive compaction by setting sysctl.compaction_proactiveness to 0.
-
-Agree. But proactive compaction got its own uses too like it knows when
-to stop the compaction, instead of simply doing the full node
-compaction, thus we don't want to disable it always.
-
+> [   26.206673] BUG: kernel NULL pointer dereference, address: 0000000000000000
+> [...]
+> [   26.226362] RIP: 0010:__list_del_entry_valid+0x25/0x90
+> [...]
+> [   26.247938] Call Trace:
+> [   26.248300]  fuse_mount_remove+0x2c/0x70 [fuse]
+> [   26.248892]  virtio_kill_sb+0x22/0x160 [virtiofs]
+> [   26.249487]  deactivate_locked_super+0x36/0xa0
+> [   26.250077]  fuse_dentry_automount+0x178/0x1a0 [fuse]
 > 
+> The crash happens because fuse_mount_remove() assumes that the FUSE
+> mount was already added to list under the FUSE connection, but this
+> only done after fuse_fill_super_submount() has returned success.
 > 
->> As an example, say app
->> launcher decide to launch the memory heavy application which can be
->> launched fast if it gets more higher order pages thus launcher can prepare
->> the system in advance by triggering the proactive compaction from
->> userspace.
->>
-> You can always do: echo 1 > /proc/sys/vm/compact_memory
-> On a small system, this should not take much time.
-
-Hmm... With 3GB Snapdragon system, we have observed that write to
-compact_memory is taking peak time of 400+msec, could be that
-MIGRATE_SYNC on a full node is causing this peak, which is much time.
-
-
+> This means that until fuse_fill_super_submount() has returned success,
+> the FUSE mount isn't actually owned by the superblock. We should thus
+> reclaim ownership by clearing sb->s_fs_info, which will skip the call
+> to fuse_mount_remove(), and perform rollback, like virtio_fs_get_tree()
+> already does for the root sb.
 > 
-> Hijacking proactive compaction for one-off compaction (say, before a large app launch)
-> does not sound right to me.
+> Fixes: bf109c64040f ("fuse: implement crossmounts")
+> Cc: mreitz@redhat.com
+> Cc: stable@vger.kernel.org # v5.10+
+> Signed-off-by: Greg Kurz <groug@kaod.org>
+> ---
+>   fs/fuse/dir.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
 
-Actually we are using the proactive compaction to 'just prepare the
-system before asking for huge memory' as compact_memory can take longer
-and is not controllable like proactive compaction.
+Reviewed-by: Max Reitz <mreitz@redhat.com>
 
-In the V1 of this patch, we actually created a /proc interface(similar
-to compact_memory), providing a way to trigger the proactive compaction
-from user space. https://lore.kernel.org/patchwork/patch/1417064/. But
-since this involved a new /proc interface addition, in V2 we just
-implemented an alternative way to it.
-
-Another problem, I think, this patch tried to address is that, in the
-existing implementation it is not guaranteed the user set value of
-compaction_proactiveness is effective unless atleast
-HPAGE_FRAG_CHECK_INTERVAL_MSEC(500msec) is elapsed, Right? Does this
-seems correct provided we had given this user interface and can't
-specified any where when this value will be effective(where it comes
-into effect in the next compact thread wake up for proactive compaction).
-
-Consider the below testcase where a user thinks that the application he
-is going to run is performance critical thus decides to do the below steps:
-1) Save the present the compaction_proactiveness (Say it is zero thus
-disabled)
-2) Set the compaction_proactiveness to 100.
-3) Allocate memory for the application.
-4) Restore the compaction_proactiveness.(set to disabled again)
-5) Then proactive compaction is tried to run.
-
-First, Does the user doing the above steps are valid?
-If yes, then we should guarantee to the user that proactive compaction
-atleast tried to run when the user changed the proactiveness.
-If not, I feel, we should document that 'once user changed the
-compaction_proactiveness, he need to wait atleast
-HPAGE_FRAG_CHECK_INTERVAL_MSEC before considering that the value he
-tried to set is effective and proactive compaction tried to run on
-that'. Doesn't this seem okay?
-
---Charan
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
-Forum, a Linux Foundation Collaborative Project
