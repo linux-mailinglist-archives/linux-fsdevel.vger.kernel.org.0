@@ -2,120 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E71E0393884
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 00:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D9823938B7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 00:30:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235340AbhE0WG0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 18:06:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38768 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234703AbhE0WGY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 18:06:24 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA0BC061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 15:04:50 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id q5so1320601wrs.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 15:04:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=GIBwG8U0VtrhX6b02bNOMwodqYUD3wGIXiZ91uqobPE=;
-        b=O0+3poSPsNTeaIoSf6t8TWIYHLkSgs3oq1kgU9iY7NNXmXGU8I1EM+7VpATDhdIsR3
-         11KDk4H5XZCzv5LMwSTUE6lqYNMKbvGiPFF7fhJ7Z/ZcUYFATXci9YVSqv2QFpfcBeiN
-         w4YbYDeYx17QZt6oEa5AJGaZMjPPyRCaf8cXqVyHdVjF8i3yvcUgulgzYnY6imOi9Ynz
-         4FVw6wAdQGbGhLd8a8vCAMqN3CKn85z67xkBJF2jeK8CSC9ZcG2HXKtYNWGHFOzcCVi+
-         ilmpgQ6ZGpU9NHsrsiYyDuxrsOwDt/5CjD5/RBxHTUj3V49uAOKvEWosQW/EfesWjw47
-         +m/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=GIBwG8U0VtrhX6b02bNOMwodqYUD3wGIXiZ91uqobPE=;
-        b=QUKaagTPOQHoOydy9qqxJyiFTModqjgeL59xQbjTP1xaByY6mNBjC42YIkGKYUb3Cm
-         j1mnDBsruPw/6wavpYD2JZmAQubZoeIqGWpu+wTgXsM7clQ7VZsDpf+m35Xfs42ibmHu
-         O8Ex65JphLqf1vkOek4tLaRfz4a+W6nyQ+IQlydHXPng47FD/hzhsIYsxHLdCrs6k6ph
-         Rur//Fci3HLP5VqaKvIsRaofzS0V35b8N0RgCz08HF3lY1HXHM6XT7LUyeQmzeMqEtX0
-         ige5Q9sVbSlPny9s0tN4G38TJrFoCYi+7X7AQ8kh5CyZ5ZUszzcqvbiGnlUePvRILWG8
-         sMzg==
-X-Gm-Message-State: AOAM531Zu4AAmkIRaiuQzV2UPd2Ks+AAd/0/zg3Rwsyim9Gw3ME7/rVd
-        sFOnQV9PnVoNkd4/BUL4zWJH75kgEA==
-X-Google-Smtp-Source: ABdhPJw6prljWIL7nBjKKqVekWrsqToWFxcnhrZXOcBiINCJmVikt9V/mWKuC+LNiYJAtLs9ZEIFFA==
-X-Received: by 2002:adf:e3c8:: with SMTP id k8mr5349567wrm.212.1622153088764;
-        Thu, 27 May 2021 15:04:48 -0700 (PDT)
-Received: from localhost.localdomain ([46.53.249.5])
-        by smtp.gmail.com with ESMTPSA id w8sm3706913wre.70.2021.05.27.15.04.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 15:04:47 -0700 (PDT)
-Date:   Fri, 28 May 2021 01:04:46 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     dhowells@redhat.com
-Cc:     linux-afs@lists.infradead.org, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] afs: fix tracepoint string placement with built-in AFS
-Message-ID: <YLAXfvZ+rObEOdc/@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        id S234492AbhE0Wcb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 18:32:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233203AbhE0Wca (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 May 2021 18:32:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 84445613BF;
+        Thu, 27 May 2021 22:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1622154655;
+        bh=WJmieutuwb6wkOGdzy8Hj2ZjOYjV2ibJ9Y9kPqy6aw4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=tVGGg5rxq0/R2ltpNyFklO7UPieKW96IS8mI2FQx8Gx2qy0lRrWpGIOE6DQRfZrcW
+         Hi7LdCSO+n8i4Qc9c5HcqQXsprAuabloQ0N7uVsqO/kJcQv99d3S2r/c3CyqXNSwmg
+         fwUvxE8zqXG+/anrty4+uT9S+kfuilI+ybP9Nkro=
+Date:   Thu, 27 May 2021 15:30:55 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     zhoufeng <zhoufeng.zf@bytedance.com>
+Cc:     adobriyan@gmail.com, rppt@kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, songmuchun@bytedance.com,
+        zhouchengming@bytedance.com, chenying.kernel@bytedance.com,
+        zhengqi.arch@bytedance.com
+Subject: Re: [External] Re: [PATCH] fs/proc/kcore.c: add mmap interface
+Message-Id: <20210527153055.aefeee8d8385da8152bdbacc@linux-foundation.org>
+In-Reply-To: <d71a4ffa-f21e-62f5-7fa6-83ca14b3f05b@bytedance.com>
+References: <20210526075142.9740-1-zhoufeng.zf@bytedance.com>
+        <20210526173953.49fb3dc48c0f2a8b3c31fe2b@linux-foundation.org>
+        <d71a4ffa-f21e-62f5-7fa6-83ca14b3f05b@bytedance.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I was adding custom tracepoint to the kernel, grabbed full F34 kernel
-.config, disabled modules and booted whole shebang as VM kernel.
+On Thu, 27 May 2021 14:13:09 +0800 zhoufeng <zhoufeng.zf@bytedance.com> wrote:
 
-Then did
+> > I'm surprised that it makes this much difference.  Has DRGN been fully
+> > optimised to minimise the amount of pread()ing which it does?  Why does
+> > it do so much reading?
+> DRGN is a tool similar to Crash, but much lighter. It allows users to 
+> obtain kernel data structures from Python scripts. Based on this, we 
+> intend to use DRGN for kernel monitoring. So we used some pressure test 
+> scripts to test the loss of monitoring.
+> Monitoring is all about getting current real-time data, so every time 
+> DRGN tries to get kernel data, it needs to read /proc/kcore. In my 
+> script, I tried to loop 1000 times to obtain the information of all the 
+> processes in the machine, in order to construct a scene where kernel 
+> data is frequently read. So, the frequency in the default version of 
+> kcore, pread is very high. In view of this situation, our optimization 
+> idea is to reduce the number of context switches as much as possible 
+> under the scenario of frequent kernel data acquisition, to reduce the 
+> performance loss to a minimum, and then move the monitoring system to 
+> the production environment.
 
-	perf record -a -e ...
+Why would a pread() cause a context switch?
 
-It crashed:
-
-	general protection fault, probably for non-canonical address 0x435f5346592e4243: 0000 [#1] SMP PTI
-	CPU: 1 PID: 842 Comm: cat Not tainted 5.12.6+ #26
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-1.fc33 04/01/2014
-	RIP: 0010:t_show+0x22/0xd0
-
-Then reproducer was narrowed to 
-
-	# cat /sys/kernel/tracing/printk_formats
-
-Original F34 kernel with modules didn't crash.
-
-So I started to disable options and after disabling AFS everything
-started working again.
-
-The root cause is that AFS was placing char arrays content into a section
-full of _pointers_ to strings with predictable consequences.
-
-Non canonical address 435f5346592e4243 is "CB.YFS_" which came from
-CM_NAME macro.
-
-The fix is to create char array and pointer to it separatedly.
-
-Steps to reproduce:
-
-	CONFIG_AFS=y
-	CONFIG_TRACING=y
-
-	# cat /sys/kernel/tracing/printk_formats
-
-Signed-off-by: Alexey Dobriyan (SK hynix) <adobriyan@gmail.com>
----
-
- fs/afs/cmservice.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
---- a/fs/afs/cmservice.c
-+++ b/fs/afs/cmservice.c
-@@ -30,8 +30,9 @@ static void SRXAFSCB_TellMeAboutYourself(struct work_struct *);
- static int afs_deliver_yfs_cb_callback(struct afs_call *);
- 
- #define CM_NAME(name) \
--	char afs_SRXCB##name##_name[] __tracepoint_string =	\
--		"CB." #name
-+	const char afs_SRXCB##name##_name[] = "CB." #name;		\
-+	static const char *_afs_SRXCB##name##_name __tracepoint_string =\
-+		afs_SRXCB##name##_name
- 
- /*
-  * CB.CallBack operation type
+> After running for a long time in a 
+> production environment, the number of kernel data reads was added as 
+> time went on, and the pread number also increased. If users use mmap, 
+> it's once for all.
