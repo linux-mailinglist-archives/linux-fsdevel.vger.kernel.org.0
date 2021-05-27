@@ -2,119 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DEB2392B71
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 12:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B86F2392B8C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 12:14:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236056AbhE0KKZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 06:10:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39255 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235938AbhE0KKY (ORCPT
+        id S236114AbhE0KQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 06:16:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46528 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236106AbhE0KQQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 06:10:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1622110131;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ttq7axdVYLD81r74CE3D8qHE56GrIu6ITcvhMbY6oeE=;
-        b=IYEwl/OHo3BqE9YKwHAZqrE1vmWTxZSLIpToFrFMxaSAkn8+AbIYVP8+Bmbifjifky9OKW
-        HQoEcgUWmCmPfRoj1JMhjXb/kB3SwAZS37UZxKX0Pk2s8yUsPNqjLeehmuVsINW8VUQXFP
-        hdm3aHTC1BNWIUtd7xiPvcVGgr+gLAY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-118-uKPL4hILOpORFmZcbPfMoQ-1; Thu, 27 May 2021 06:08:47 -0400
-X-MC-Unique: uKPL4hILOpORFmZcbPfMoQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6F2D2108BD1D;
-        Thu, 27 May 2021 10:08:45 +0000 (UTC)
-Received: from dresden.str.redhat.com (ovpn-114-232.ams2.redhat.com [10.36.114.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9CA085F90E;
-        Thu, 27 May 2021 10:08:43 +0000 (UTC)
-Subject: Re: [Virtio-fs] [PATCH 2/4] fuse: Fix infinite loop in sget_fc()
-To:     Greg Kurz <groug@kaod.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        virtio-fs@redhat.com, linux-fsdevel@vger.kernel.org,
-        Vivek Goyal <vgoyal@redhat.com>
-References: <20210525150230.157586-1-groug@kaod.org>
- <20210525150230.157586-3-groug@kaod.org>
-From:   Max Reitz <mreitz@redhat.com>
-Message-ID: <58c70352-2df5-0cb9-9ca6-bb4bf2edd1c2@redhat.com>
-Date:   Thu, 27 May 2021 12:08:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Thu, 27 May 2021 06:16:16 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11557C061760
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 03:14:41 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id r11so164108edt.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 03:14:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=o38M2BO4ULC4BwKVVDJHYXw+IueHUfFLXYDhWYbT5Ig=;
+        b=bk97lq21A/Gg9EU/Cabtt5Dqiuz3zBqg0ZUgn7vHbNo202Sf8zs+esbsZi1472wnDw
+         S7tg6T6IbhEKaYeIj4ycsX234NuYYQ0O03FJH5OuiLMpN12/IGb9B/GLV656R4LkrXT7
+         zQXhfkYtCReY5f9nCUn7YrhTXkoz5KTPkbYMp2eVWnOvCvOgMk7Ao4RZ5Kt3v2UB38LU
+         FgaCGvVGlM5kjH6PanAP74M5XXJO0vEBEDZcBdVLoVPKz7aiDJuuycVw1/jPmGZ/Y2Zw
+         NVvS36r16Wba8DeiGMEViGPX9yGp3JsaaE96mEEaPQwksZ0ldz0nzt72uYtVn0AqNCTd
+         81Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=o38M2BO4ULC4BwKVVDJHYXw+IueHUfFLXYDhWYbT5Ig=;
+        b=jHu889zezP8kp97piSqu4OCSSFjx1SHtXwWuDmbpc3uckFM12/thn4zSsXx9CbsPjl
+         AvcLU8wrPrUZH33xm79PHtI+UFppRdtI2/+1YkCV6TCaifnF1u+M6HTlGUK35ky2bCMM
+         qTdXROjszrjyhK2Iztmtpti5xnkoZH/lGOdrLPgdLZR9o34zzdt/79ygMWwc6LNN5v7e
+         8dJdxKCUIKgNILy9vp7MK8FOxhFkHwMr5z2nXUot+uKsVMpEWBHeUPZWvCZa0F6Mw7Ep
+         w0qRTOnbezjvr70jNy4hhd4EzVeYn2FSBvyNmDROSjeCDkAt3fkQC8tnmhmDBrntMZbV
+         OE3Q==
+X-Gm-Message-State: AOAM530nSsfI5FAIA6DJfK9AiQaffGr6jJATkH0kSnd6u+I71exCo8nJ
+        d9gwmmfK5S6Hzj0wxZBFOr1FOgbGikbsJ6OCVlug
+X-Google-Smtp-Source: ABdhPJxWXHvU/O2LATe1oBP0kHpNNov+YKoz7byZgiRDTGMJZExbTJNux7H0l7VRJaIaAseiGKHKWtgXJ2fM2OTaKZE=
+X-Received: by 2002:a05:6402:4252:: with SMTP id g18mr3221715edb.195.1622110479663;
+ Thu, 27 May 2021 03:14:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210525150230.157586-3-groug@kaod.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <20210517095513.850-1-xieyongji@bytedance.com> <20210517095513.850-12-xieyongji@bytedance.com>
+ <3740c7eb-e457-07f3-5048-917c8606275d@redhat.com> <CACycT3uAqa6azso_8MGreh+quj-JXO1piuGnrV8k2kTfc34N2g@mail.gmail.com>
+ <5a68bb7c-fd05-ce02-cd61-8a601055c604@redhat.com> <CACycT3ve7YvKF+F+AnTQoJZMPua+jDvGMs_ox8GQe_=SGdeCMA@mail.gmail.com>
+ <ee00efca-b26d-c1be-68d2-f9e34a735515@redhat.com> <CACycT3ufok97cKpk47NjUBTc0QAyfauFUyuFvhWKmuqCGJ7zZw@mail.gmail.com>
+ <00ded99f-91b6-ba92-5d92-2366b163f129@redhat.com> <3cc7407d-9637-227e-9afa-402b6894d8ac@redhat.com>
+In-Reply-To: <3cc7407d-9637-227e-9afa-402b6894d8ac@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Thu, 27 May 2021 18:14:27 +0800
+Message-ID: <CACycT3s6SkER09KL_Ns9d03quYSKOuZwd3=HJ_s1SL7eH7y5gA@mail.gmail.com>
+Subject: Re: Re: [PATCH v7 11/12] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 25.05.21 17:02, Greg Kurz wrote:
-> We don't set the SB_BORN flag on submounts. This is wrong as these
-> superblocks are then considered as partially constructed or dying
-> in the rest of the code and can break some assumptions.
-> 
-> One such case is when you have a virtiofs filesystem with submounts
-> and you try to mount it again : virtio_fs_get_tree() tries to obtain
-> a superblock with sget_fc(). The logic in sget_fc() is to loop until
-> it has either found an existing matching superblock with SB_BORN set
-> or to create a brand new one. It is assumed that a superblock without
-> SB_BORN is transient and should go away. Forgetting to set SB_BORN on
-> submounts hence causes sget_fc() to retry forever.
-> 
-> Setting SB_BORN requires special care, i.e. a write barrier for
-> super_cache_count() which can check SB_BORN without taking any lock.
-> We should call vfs_get_tree() to deal with that but this requires
-> to have a proper ->get_tree() implementation for submounts, which
-> is a bigger piece of work. Go for a simple bug fix in the meatime.
-> 
-> Fixes: bf109c64040f ("fuse: implement crossmounts")
-> Cc: mreitz@redhat.com
-> Cc: stable@vger.kernel.org # v5.10+
-> Signed-off-by: Greg Kurz <groug@kaod.org>
-> ---
->   fs/fuse/dir.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 01559061cbfb..3b0482738741 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -346,6 +346,16 @@ static struct vfsmount *fuse_dentry_automount(struct path *path)
->   		goto out_put_sb;
->   	}
->   
-> +	/*
-> +	 * FIXME: setting SB_BORN requires a write barrier for
-> +	 *        super_cache_count(). We should actually come
-> +	 *        up with a proper ->get_tree() implementation
-> +	 *        for submounts and call vfs_get_tree() to take
-> +	 *        care of the write barrier.
-> +	 */
-> +	smp_wmb();
-> +	sb->s_flags |= SB_BORN;
-> +
+On Thu, May 27, 2021 at 4:43 PM Jason Wang <jasowang@redhat.com> wrote:
+>
+>
+> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=884:41, Jason Wang =E5=86=99=E9=81=93=
+:
+> >
+> > =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=883:34, Yongji Xie =E5=86=99=E9=81=
+=93:
+> >> On Thu, May 27, 2021 at 1:40 PM Jason Wang <jasowang@redhat.com> wrote=
+:
+> >>>
+> >>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=881:08, Yongji Xie =E5=86=99=E9=
+=81=93:
+> >>>> On Thu, May 27, 2021 at 1:00 PM Jason Wang <jasowang@redhat.com>
+> >>>> wrote:
+> >>>>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=8812:57, Yongji Xie =E5=86=99=
+=E9=81=93:
+> >>>>>> On Thu, May 27, 2021 at 12:13 PM Jason Wang <jasowang@redhat.com>
+> >>>>>> wrote:
+> >>>>>>> =E5=9C=A8 2021/5/17 =E4=B8=8B=E5=8D=885:55, Xie Yongji =E5=86=99=
+=E9=81=93:
+> >>>>>>>> +
+> >>>>>>>> +static int vduse_dev_msg_sync(struct vduse_dev *dev,
+> >>>>>>>> +                           struct vduse_dev_msg *msg)
+> >>>>>>>> +{
+> >>>>>>>> +     init_waitqueue_head(&msg->waitq);
+> >>>>>>>> +     spin_lock(&dev->msg_lock);
+> >>>>>>>> +     vduse_enqueue_msg(&dev->send_list, msg);
+> >>>>>>>> +     wake_up(&dev->waitq);
+> >>>>>>>> +     spin_unlock(&dev->msg_lock);
+> >>>>>>>> +     wait_event_killable(msg->waitq, msg->completed);
+> >>>>>>> What happens if the userspace(malicous) doesn't give a response
+> >>>>>>> forever?
+> >>>>>>>
+> >>>>>>> It looks like a DOS. If yes, we need to consider a way to fix tha=
+t.
+> >>>>>>>
+> >>>>>> How about using wait_event_killable_timeout() instead?
+> >>>>> Probably, and then we need choose a suitable timeout and more
+> >>>>> important,
+> >>>>> need to report the failure to virtio.
+> >>>>>
+> >>>> Makes sense to me. But it looks like some
+> >>>> vdpa_config_ops/virtio_config_ops such as set_status() didn't have a
+> >>>> return value.  Now I add a WARN_ON() for the failure. Do you mean we
+> >>>> need to add some change for virtio core to handle the failure?
+> >>>
+> >>> Maybe, but I'm not sure how hard we can do that.
+> >>>
+> >> We need to change all virtio device drivers in this way.
+> >
+> >
+> > Probably.
+> >
+> >
+> >>
+> >>> We had NEEDS_RESET but it looks we don't implement it.
+> >>>
+> >> Could it handle the failure of get_feature() and get/set_config()?
+> >
+> >
+> > Looks not:
+> >
+> > "
+> >
+> > The device SHOULD set DEVICE_NEEDS_RESET when it enters an error state
+> > that a reset is needed. If DRIVER_OK is set, after it sets
+> > DEVICE_NEEDS_RESET, the device MUST send a device configuration change
+> > notification to the driver.
+> >
+> > "
+> >
+> > This looks implies that NEEDS_RESET may only work after device is
+> > probed. But in the current design, even the reset() is not reliable.
+> >
+> >
+> >>
+> >>> Or a rough idea is that maybe need some relaxing to be coupled loosel=
+y
+> >>> with userspace. E.g the device (control path) is implemented in the
+> >>> kernel but the datapath is implemented in the userspace like TUN/TAP.
+> >>>
+> >> I think it can work for most cases. One problem is that the set_config
+> >> might change the behavior of the data path at runtime, e.g.
+> >> virtnet_set_mac_address() in the virtio-net driver and
+> >> cache_type_store() in the virtio-blk driver. Not sure if this path is
+> >> able to return before the datapath is aware of this change.
+> >
+> >
+> > Good point.
+> >
+> > But set_config() should be rare:
+> >
+> > E.g in the case of virtio-net with VERSION_1, config space is read
+> > only, and it was set via control vq.
+> >
+> > For block, we can
+> >
+> > 1) start from without WCE or
+> > 2) we add a config change notification to userspace or
+> > 3) extend the spec to use vq instead of config space
+> >
+> > Thanks
+>
+>
+> Another thing if we want to go this way:
+>
+> We need find a way to terminate the data path from the kernel side, to
+> implement to reset semantic.
+>
 
-I’m not sure whether we should have the order be exactly the same as in 
-vfs_get_tree(), i.e. whether this should be put after fsc->root has been 
-set.  Or maybe even after fm has been added to fc->mounts, because that 
-too was part of the fuse_get_tree_submount() function of your “fuse: 
-Call vfs_get_tree() for submounts” patch.
+Do you mean terminate the data path in vdpa_reset(). Is it ok to just
+notify userspace to stop data path asynchronously? Userspace should
+not be able to do any I/O at that time because the iotlb mapping is
+already removed.
 
- From a quick look at SB_BORN users, it doesn’t seem to make a 
-difference to me, though, so:
-
-Reviewed-by: Max Reitz <mreitz@redhat.com>
-
->   	sb->s_flags |= SB_ACTIVE;
->   	fsc->root = dget(sb->s_root);
->   	/* We are done configuring the superblock, so unlock it */
-> 
-
+Thanks,
+Yongji
