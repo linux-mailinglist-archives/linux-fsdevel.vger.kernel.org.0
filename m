@@ -2,178 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4EB39279B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 08:27:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDA523927BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 08:37:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235250AbhE0G27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 02:28:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50472 "EHLO
+        id S229833AbhE0GjN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 02:39:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234403AbhE0G2Z (ORCPT
+        with ESMTP id S229635AbhE0GjN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 02:28:25 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0D17C061346
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 23:26:51 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d78so2847458pfd.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 23:26:51 -0700 (PDT)
+        Thu, 27 May 2021 02:39:13 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67DFFC061760
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 23:37:39 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id f22so2938303pgb.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 May 2021 23:37:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=saeNxjM08r5E+Sxs4m/QIhTTsKS/EbXdDHTVWv65coY=;
-        b=e477haKznXStV5QieRFLlp0oO6Mf7tJUPQD/akahq0QEMUAs9WhgOa8q4TAUL0mNbp
-         tCbPP9HrJFaOCgJMFNXRdTj2N+slXNojfhxZ9+KsGhkbA57CcSwqoF9fSxEYlm3NpMtf
-         b2KAO/RQjm/XUHC8jhaCDihIBYEGU57r/yVkCp3Pbri6GKVGfn0avw1etj1Ek1htHp3M
-         pc0wYQtUG6MUlJwFlS+nKjMeE14vx21zzCA1R8wRZQkSvAEkyjpFYU2fotx8UefC8WSG
-         JXj21Ts/X5GhBs0I032lldbxlfC2xKl/4YpZUHk10bi1NYIHI8k/9fcmyigK4tjnhkyT
-         23Vg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=tf0o2vs0T6C29p93j+xX0Wb3cwZvOLfvMJ6EQ3nK0vA=;
+        b=xOKj/CYrKJUifx2Y1O2r/iim5TBbQkrFqHQG+JEt6BSAHhtB3ABMnhb4AYCRA+wd6m
+         9DgFq5DuRtejpr2r6eraIjnd7abCzgRs6v151vWtWmZu/VD45J69mJTWsOCmQwe0GLnb
+         AmJCsx4qjZwnaLE6hpmofoqWdfMsL9FUR8/HTCMctf/sWAFX3AEyYm+mmRRPByJW3szX
+         tvrg2RMf4jL5D/+5rpkFkr9vtdOzl5yQZTgAH70iaabGqEF3SMMMWquZq9ciHSNuiCCm
+         5zaAK7Zdm/0unV0FLMJFa9bMQVSDRBnC96wEFkeuyPN4W3pkJ1He61HoHo8hE8NPHJWr
+         731w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=saeNxjM08r5E+Sxs4m/QIhTTsKS/EbXdDHTVWv65coY=;
-        b=pWi7rZ9gdcWT5jm6c/p/Ae1VAq8hlhahkzqpVPqjh8tk+lnygk32xc3uah0uxOHHiI
-         YMVbLSQ0lWAEGkcaByGuni0Q0Srr1fPijaQY42aD8Aw03QdPUSjJDMpv38ipCMsjNwO8
-         zU97F9HKpUP32NdTnNNnh5YWjAFyIaMqmQAV+0itMSasmS/YW4UttBItobKeQ5zxB+Oz
-         ue4bbCsx/0zN/FIOmqFlQT8mmnOv7q8zymwmAedCLhKKe2QYUrpR6Zp9F8vVc6Wt3nDz
-         yKoNhzjwYxhI0Z3RUsudgIqgM+i0wRA6E37pZ0bDkLecPlKndm2rxR159ybwy2AOMbX4
-         3mVQ==
-X-Gm-Message-State: AOAM531k21f5JaI02Ja+zxWrqqCH8HOk8i2+VHVs6lYR+1IKBhKx8155
-        pUYm7S02eM2D2CxvqLmsD5HwFw==
-X-Google-Smtp-Source: ABdhPJyqz+2+MPfbYrdMkC+0d1NyNM7mJV+9i/WYx14HfOOaqe+ZuDWugDDPw7OgbcsrX7OPn62MqQ==
-X-Received: by 2002:a63:752:: with SMTP id 79mr2314672pgh.10.1622096811343;
-        Wed, 26 May 2021 23:26:51 -0700 (PDT)
-Received: from localhost.localdomain ([139.177.225.254])
-        by smtp.gmail.com with ESMTPSA id m5sm882971pgl.75.2021.05.26.23.26.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 May 2021 23:26:51 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     willy@infradead.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
-        mhocko@kernel.org, vdavydov.dev@gmail.com, shakeelb@google.com,
-        guro@fb.com, shy828301@gmail.com, alexs@kernel.org,
-        richard.weiyang@gmail.com, david@fromorbit.com,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-        zhengqi.arch@bytedance.com, duanxiongchun@bytedance.com,
-        fam.zheng@bytedance.com, Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v2 21/21] mm: memcontrol: rename memcg_cache_id to memcg_kmem_id
-Date:   Thu, 27 May 2021 14:21:48 +0800
-Message-Id: <20210527062148.9361-22-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
-In-Reply-To: <20210527062148.9361-1-songmuchun@bytedance.com>
-References: <20210527062148.9361-1-songmuchun@bytedance.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=tf0o2vs0T6C29p93j+xX0Wb3cwZvOLfvMJ6EQ3nK0vA=;
+        b=tZA2xA0hZarlM97Jjd4gtuPtcv6xgGmTacK2HsiLvW5Y/J6Aj3NuerS1db998R3qxL
+         kVpcHuLUuPCKC7oGuDHwUWS76V6DK5zkiL+ooRvE/7ek4YO+hVJwr9zx6LOveaBVwl8E
+         t8RSzP1qQ99nl2OcvwfSvHtlPzfYAJNSpQFubhl+WWaWJ0BRLxIEwM8lBE97KEBgrWY3
+         zg0WV4jo3D9fn8sDRHZurXNtJnMZYVXAqr0p5RSS+GmPUftJuqjMCUBzL88+G+XrCTUK
+         HXqCp8xqt5Au4J5L35L6Hm94y7WXAzu2b3ip+O2DINauEx5wgRnJftvT087o9WkciYpw
+         0h7Q==
+X-Gm-Message-State: AOAM533CQtc+k/ek9Z2VCroCKHejccDIzPGb8Mwd1aoegD3d+Qg62H8E
+        hAFW24xlrivjriwN1IJx6XcBJA==
+X-Google-Smtp-Source: ABdhPJzZaq8D6xBG+Thlxap9mTdChxd1tyEKxVIfetix/NPBx1jmzHIargKuNUFgELkX/csEHlvqmg==
+X-Received: by 2002:a63:f245:: with SMTP id d5mr2289866pgk.416.1622097459337;
+        Wed, 26 May 2021 23:37:39 -0700 (PDT)
+Received: from [10.86.119.121] ([139.177.225.224])
+        by smtp.gmail.com with ESMTPSA id p18sm979473pff.112.2021.05.26.23.37.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 May 2021 23:37:38 -0700 (PDT)
+Subject: Re: [External] Re: [PATCH] fs/proc/kcore.c: add mmap interface
+To:     Andrew Morton <akpm@linux-foundation.org>, adobriyan@gmail.com,
+        rppt@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        songmuchun@bytedance.com, zhouchengming@bytedance.com,
+        chenying.kernel@bytedance.com, zhengqi.arch@bytedance.com
+References: <20210526075142.9740-1-zhoufeng.zf@bytedance.com>
+ <20210526173953.49fb3dc48c0f2a8b3c31fe2b@linux-foundation.org>
+From:   zhoufeng <zhoufeng.zf@bytedance.com>
+Message-ID: <5faab938-8eb9-268b-e45d-b33e6a9089d6@bytedance.com>
+Date:   Thu, 27 May 2021 14:37:32 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.2
 MIME-Version: 1.0
+In-Reply-To: <20210526173953.49fb3dc48c0f2a8b3c31fe2b@linux-foundation.org>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The memcg_cache_id is introduced by commit 2633d7a02823 ("slab/slub:
-consider a memcg parameter in kmem_create_cache"). It is used to index
-in the kmem_cache->memcg_params->memcg_caches array. Since
-kmem_cache->memcg_params.memcg_caches has been removed by commit
-9855609bde03 ("mm: memcg/slab: use a single set of kmem_caches for
-all accounted allocations"). So the name does not need to reflect cache
-related. Just rename it to memcg_kmem_id. And it can reflect kmem
-related.
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
- include/linux/memcontrol.h |  4 ++--
- mm/list_lru.c              | 14 +++++++-------
- 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index e129c7067f63..637d5854fdda 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1654,7 +1654,7 @@ static inline void memcg_kmem_uncharge_page(struct page *page, int order)
-  * A helper for accessing memcg's kmem_id, used for getting
-  * corresponding LRU lists.
-  */
--static inline int memcg_cache_id(struct mem_cgroup *memcg)
-+static inline int memcg_kmem_id(struct mem_cgroup *memcg)
- {
- 	return memcg ? memcg->kmemcg_id : -1;
- }
-@@ -1688,7 +1688,7 @@ static inline bool memcg_kmem_enabled(void)
- 	return false;
- }
- 
--static inline int memcg_cache_id(struct mem_cgroup *memcg)
-+static inline int memcg_kmem_id(struct mem_cgroup *memcg)
- {
- 	return -1;
- }
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index 77efdd0c8b24..1ee2b28ded7d 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -74,7 +74,7 @@ list_lru_from_kmem(struct list_lru *lru, int nid, void *ptr,
- 	if (!memcg)
- 		goto out;
- 
--	l = list_lru_from_memcg_idx(lru, nid, memcg_cache_id(memcg));
-+	l = list_lru_from_memcg_idx(lru, nid, memcg_kmem_id(memcg));
- out:
- 	if (memcg_ptr)
- 		*memcg_ptr = memcg;
-@@ -181,7 +181,7 @@ unsigned long list_lru_count_one(struct list_lru *lru,
- 	long count = 0;
- 
- 	rcu_read_lock();
--	l = list_lru_from_memcg_idx(lru, nid, memcg_cache_id(memcg));
-+	l = list_lru_from_memcg_idx(lru, nid, memcg_kmem_id(memcg));
- 	if (l)
- 		count = READ_ONCE(l->nr_items);
- 	rcu_read_unlock();
-@@ -273,7 +273,7 @@ list_lru_walk_one(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
- 	unsigned long ret;
- 
- 	spin_lock(&nlru->lock);
--	ret = __list_lru_walk_one(lru, nid, memcg_cache_id(memcg), isolate,
-+	ret = __list_lru_walk_one(lru, nid, memcg_kmem_id(memcg), isolate,
- 				  cb_arg, nr_to_walk);
- 	spin_unlock(&nlru->lock);
- 	return ret;
-@@ -289,7 +289,7 @@ list_lru_walk_one_irq(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
- 	unsigned long ret;
- 
- 	spin_lock_irq(&nlru->lock);
--	ret = __list_lru_walk_one(lru, nid, memcg_cache_id(memcg), isolate,
-+	ret = __list_lru_walk_one(lru, nid, memcg_kmem_id(memcg), isolate,
- 				  cb_arg, nr_to_walk);
- 	spin_unlock_irq(&nlru->lock);
- 	return ret;
-@@ -469,7 +469,7 @@ void memcg_reparent_list_lrus(struct mem_cgroup *memcg, struct mem_cgroup *paren
- static bool memcg_list_lru_skip_alloc(struct list_lru *lru,
- 				      struct mem_cgroup *memcg)
- {
--	int idx = memcg_cache_id(memcg);
-+	int idx = memcg_kmem_id(memcg);
- 
- 	if (unlikely(idx < 0) || xa_load(lru->xa, idx))
- 		return true;
-@@ -524,7 +524,7 @@ int list_lru_memcg_alloc(struct list_lru *lru, struct mem_cgroup *memcg, gfp_t g
- 
- 	xas_lock_irqsave(&xas, flags);
- 	while (i--) {
--		int index = memcg_cache_id(table[i].memcg);
-+		int index = memcg_kmem_id(table[i].memcg);
- 		struct list_lru_memcg *mlru = table[i].mlru;
- 
- 		xas_set(&xas, index);
-@@ -544,7 +544,7 @@ int list_lru_memcg_alloc(struct list_lru *lru, struct mem_cgroup *memcg, gfp_t g
- 				 * memcg id. More details see the comments
- 				 * in memcg_reparent_list_lrus().
- 				 */
--				index = memcg_cache_id(table[i].memcg);
-+				index = memcg_kmem_id(table[i].memcg);
- 				if (index < 0)
- 					ret = 0;
- 				else if (!ret && index != xas.xa_index)
--- 
-2.11.0
+ÔÚ 2021/5/27 ÉÏÎç8:39, Andrew Morton Ð´µÀ:
+> On Wed, 26 May 2021 15:51:42 +0800 Feng zhou <zhoufeng.zf@bytedance.com> wrote:
+> 
+>> From: ZHOUFENG <zhoufeng.zf@bytedance.com>
+>>
+>> When we do the kernel monitor, use the DRGN
+>> (https://github.com/osandov/drgn) access to kernel data structures,
+>> found that the system calls a lot. DRGN is implemented by reading
+>> /proc/kcore. After looking at the kcore code, it is found that kcore
+>> does not implement mmap, resulting in frequent context switching
+>> triggered by read. Therefore, we want to add mmap interface to optimize
+>> performance. Since vmalloc and module areas will change with allocation
+>> and release, consistency cannot be guaranteed, so mmap interface only
+>> maps KCORE_TEXT and KCORE_RAM.
+>>
+>> The test results:
+>> 1. the default version of kcore
+>> real 11.00
+>> user 8.53
+>> sys 3.59
+>>
+>> % time     seconds  usecs/call     calls    errors syscall
+>> ------ ----------- ----------- --------- --------- ----------------
+>> 99.64  128.578319          12  11168701           pread64
+>> ...
+>> ------ ----------- ----------- --------- --------- ----------------
+>> 100.00  129.042853              11193748       966 total
+>>
+>> 2. added kcore for the mmap interface
+>> real 6.44
+>> user 7.32
+>> sys 0.24
+>>
+>> % time     seconds  usecs/call     calls    errors syscall
+>> ------ ----------- ----------- --------- --------- ----------------
+>> 32.94    0.130120          24      5317       315 futex
+>> 11.66    0.046077          21      2231         1 lstat
+>>   9.23    0.036449         177       206           mmap
+>> ...
+>> ------ ----------- ----------- --------- --------- ----------------
+>> 100.00    0.395077                 25435       971 total
+>>
+>> The test results show that the number of system calls and time
+>> consumption are significantly reduced.
+>>
+> 
+> hm, OK, I guess why not.  The performance improvements for DRGN (which
+> appears to be useful) are nice and the code is simple.
+> 
+> I'm surprised that it makes this much difference.  Has DRGN been fully
+> optimised to minimise the amount of pread()ing which it does?  Why does
+> it do so much reading?
 
+DRGN is a tool similar to Crash, but much lighter. It allows users to 
+obtain kernel data structures from Python scripts. Based on this, we 
+intend to use DRGN for kernel monitoring. So we used some pressure test 
+scripts to test the loss of monitoring.
+Monitoring is all about getting current real-time data, so every time 
+DRGN tries to get kernel data, it needs to read /proc/kcore. In my 
+script, I tried to loop 1000 times to obtain the information of all the 
+processes in the machine, in order to construct a scene where kernel 
+data is frequently read. So, the frequency in the default version of 
+kcore, pread is very high. In view of this situation, our optimization 
+idea is to reduce the number of context switches as much as possible 
+under the scenario of frequent kernel data acquisition, to reduce the 
+performance loss to a minimum, and then move the monitoring system to 
+the production environment.  After running for a long time in a 
+production environment, the number of kernel data reads was added as 
+time went on, and the pread number also increased. If users use mmap, 
+it's once for all.
+
+Attached is the test script:
+#!/usr/bin/env drgn
+# Copyright (c) Facebook, Inc. and its affiliates.
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+"""A simplified implementation of ps(1) using drgn"""
+
+from drgn.helpers.linux.pid import for_each_task
+
+count = 0
+while (count < 1000):
+     count = count + 1
+     #print("PID        COMM")
+     for task in for_each_task(prog):
+         pid = task.pid.value_()
+         comm = task.comm.string_().decode()
+         #print(f"{pid:<10} {comm}")
+
+> 
+> Thanks, I shall await input from others before moving ahead with this.
+> 
