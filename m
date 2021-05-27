@@ -2,96 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B603939309A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 16:19:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9C843932E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 17:52:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236366AbhE0OUj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 10:20:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46484 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235492AbhE0OUi (ORCPT
+        id S236166AbhE0PyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 11:54:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55950 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234291AbhE0PyS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 10:20:38 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097EEC061761
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 07:19:05 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id k14so398346eji.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 07:19:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0KMicP7dPruhWbetN8SS8Qn8WRBhDpCdjlUFYTYIPQY=;
-        b=oL8+TZNnSedYZxnjK4DI9LSvARM8ndmpxlxh6MbE8xc+bzPwC15R8Oe7BjBHBNDZJU
-         TNJP8Tt8TyG1DmWC33rk+d5R2TN/mvP/gK0UeOcVkgdELmghktfHLYP8jQjpCHsvmX2b
-         DhFL94mzDwpgYjyGSpg4J/rAkkNxNjR97srQQgHxVbtNcfz5kQ/cblTw8NQzxSMLaOrY
-         G1r+90PQY64rR4qLSENwuRJU1aPtfVkjFCNY2D6JqIUDBKPVcJCgfP8G2hKezSwWEDi4
-         apxq9vHVNpXDgfq28VM6AgmXZQSXQY5PyR5QvKTo1urmbFatACON7BQ19GUEX0119z5i
-         Scww==
+        Thu, 27 May 2021 11:54:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622130765;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rG+92U6EckL/F6v/WvYk3IWApdqSpAz8CewV9YyMDAc=;
+        b=GvrCWPTPGjuwVYVXJAjRclAfqfD3UjAkSzHUIMHdkzHVLRMZYbXS2wMJFX7gO8HuzMnrk2
+        RfpKqemMxqydLbaV5cIuaQAJR6Nv3JTIVp9NhKNAXUPeZrU4vb6WtmIQ+5zVpY9qGGwDBs
+        gSBZ94FZ7Oic0gn9NQsJVsV2eq/yvwE=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-233-eetwqwVFMUO_ydQqYqwFhA-1; Thu, 27 May 2021 11:52:43 -0400
+X-MC-Unique: eetwqwVFMUO_ydQqYqwFhA-1
+Received: by mail-qk1-f197.google.com with SMTP id n2-20020a37a4020000b02902e9aef597f7so717190qke.21
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 08:52:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0KMicP7dPruhWbetN8SS8Qn8WRBhDpCdjlUFYTYIPQY=;
-        b=iMo5Pe8cTCLJfMm5Sn9Pf+7q/+LHMWZXJLKcpRTJSGWxjTp0NQxqpLo1dNDNI3aB59
-         b3U6ZIxaKC1YhOxLgtRw8N7RCgAYA4gxQReavqRg2aA+ZVTmSn6Z6YaLl7x1TeEfN+7C
-         Fslnokd4RKiZZANYWmOzTo4aIJo5Iz+u0pgsdje4WIHXS67YE+W4k0BOwfbQWjprdT7b
-         uwOOeqNKkkSw7DYnoocp50j0b27n5HV3uteDJ/AQCl8DTN2pUBf2laHtWCv4WCrE4D9m
-         VcSaIgJOi40k7AK1x4AAhsxBJObi73qYXYFWoWjc1bRfZfVERObUPWF5A4YORabuVpUS
-         COLw==
-X-Gm-Message-State: AOAM531eVco6m9LUmcCj15DmFOrfJe0GczXtXQN3P6M5F6jFv4FxAgO3
-        OStotd/Q2blwj4PE+sxLFssvUKH9zubWzOsC+AL8
-X-Google-Smtp-Source: ABdhPJxNY45Rvc2vrfaQ2IL4Eku6yyHzxMbb+NaSgzTa9DTK2YgRMf8cywVg6CWuAUNioudc7Sfjin2qWfEjUKkshxk=
-X-Received: by 2002:a17:906:f283:: with SMTP id gu3mr4078724ejb.91.1622125143443;
- Thu, 27 May 2021 07:19:03 -0700 (PDT)
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=rG+92U6EckL/F6v/WvYk3IWApdqSpAz8CewV9YyMDAc=;
+        b=m+2rTK6MG/yzTBt5Hv+aj3Np6Ei0DVwBwbr1WvL21qbeRHOrDXQEYa6+/5Usalg1ms
+         ZTYRHr2naU0+5moK8j5EDaat6Xlz9GddY1MLI5y7qcj2GeZsvcEgOlZSG2Mr4Rm2Py/M
+         wMkCwYhv9c7hKycAi2CO+h+SRqcfULmbUafFQKoU8UlOcGLzC1LUgO3PUsqRk6d4oMXW
+         l+rfhj79GXEVKtvQ8JuPOIWx6aGHAalhzSDim6VsOvgRZ5JAbAwFEXqVPJ9Xcy6oovXB
+         rW0Syt6h1wF9nrxvGlF/vIPZ2d4FtiPXYML1iY6eeCl4RyAHxFA5FhiZfqqs7FlaTzKS
+         RoMw==
+X-Gm-Message-State: AOAM531I3vGZOYU59aFBwbe//jqSoonr8Cm3Rv9TDblNtZAgip3XxhyS
+        6vjREiJP5wCJUVxOdz3qeKUuPEpBDHIECaek1DnuH15Y/NbU3wSFW51rzM8YRutUSkfDEBVcXep
+        ftEuwX1r4KC+PLOg8gQRaJKQrjA==
+X-Received: by 2002:a05:6214:226c:: with SMTP id gs12mr4269652qvb.38.1622130762964;
+        Thu, 27 May 2021 08:52:42 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyaxisEbtADMfLh/SxW50Zkf00ozokWziqLpECSi8sOxlDYDhqU1nXkujghal3Eaac1dNuHUg==
+X-Received: by 2002:a05:6214:226c:: with SMTP id gs12mr4269643qvb.38.1622130762797;
+        Thu, 27 May 2021 08:52:42 -0700 (PDT)
+Received: from [192.168.1.10] (c-24-147-78-103.hsd1.nh.comcast.net. [24.147.78.103])
+        by smtp.gmail.com with ESMTPSA id g85sm1563307qke.123.2021.05.27.08.52.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 May 2021 08:52:42 -0700 (PDT)
+From:   Nitesh Narayan Lal <nilal@redhat.com>
+X-Google-Original-From: Nitesh Narayan Lal <nitesh@redhat.com>
+Subject: Re: [PATCH] eventfd: Enlarge recursion limit to allow vhost to work
+To:     He Zhe <zhe.he@windriver.com>, Juri Lelli <juri.lelli@redhat.com>,
+        viro@zeniv.linux.org.uk, axboe@kernel.dk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nilal@redhat.com
+References: <20200410114720.24838-1-zhe.he@windriver.com>
+ <20200703081209.GN9670@localhost.localdomain>
+ <cbecaad6-48fc-3c52-d764-747ea91dc3fa@windriver.com>
+ <20200706064557.GA26135@localhost.localdomain>
+ <20200713132211.GB5564@localhost.localdomain>
+ <20200722090132.GB14912@localhost.localdomain>
+ <2af418ff-6859-3d42-4ab3-16464e1d98bf@windriver.com>
+Message-ID: <beac2025-2e11-8ed0-61e2-9f6e633482e8@redhat.com>
+Date:   Thu, 27 May 2021 11:52:40 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <87o8d9k4ln.fsf@mpe.ellerman.id.au>
- <CAFqZXNtUvrGxT6UMy81WfMsfZsydGN5k-VGFBq8yjDWN5ARAWw@mail.gmail.com> <3ad4fb7f-99f3-fa71-fdb2-59db751c7e2b@namei.org>
-In-Reply-To: <3ad4fb7f-99f3-fa71-fdb2-59db751c7e2b@namei.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 27 May 2021 10:18:52 -0400
-Message-ID: <CAHC9VhSSZzDeM1bcOjVBN6u5KPAvMysg3sLcSniq+cLr65WFqg@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     James Morris <jmorris@namei.org>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2af418ff-6859-3d42-4ab3-16464e1d98bf@windriver.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 27, 2021 at 12:33 AM James Morris <jmorris@namei.org> wrote:
-> On Wed, 26 May 2021, Ondrej Mosnacek wrote:
+
+On 8/20/20 6:41 AM, He Zhe wrote:
 >
-> > Thanks, Michael!
-> >
-> > James/Paul, is there anything blocking this patch from being merged?
-> > Especially the BPF case is causing real trouble for people and the
-> > only workaround is to broadly allow lockdown::confidentiality in the
-> > policy.
+> On 7/22/20 5:01 PM, Juri Lelli wrote:
+>> On 13/07/20 15:22, Juri Lelli wrote:
+>>
+>> [...]
+>>
+>>> Gentle ping about this issue (mainly addressing relevant maintainers and
+>>> potential reviewers). It's easily reproducible with PREEMPT_RT.
+>> Ping. Any comment at all? :-)
+> Hi Maintainer(s),
 >
-> It would be good to see more signoffs/reviews, especially from Paul, but
-> he is busy with the io_uring stuff.
+> It's been 4 months. Can this be considered this round?
 
-Yes, it's been a busy week with various things going on around here.
-I looked at the v1 posting but haven't had a chance yet to look at v2;
-I promise to get to it today, but it might not happen until later
-tonight.
+Gentle ping, is there any update or comments here?
 
-> Let's see if anyone else can look at this in the next couple of days.
+As Juri mentioned the issue is still easily reproducible with PREEMPT_RT.
 
--- 
-paul moore
-www.paul-moore.com
+--
+Thanks
+Nitesh
+
