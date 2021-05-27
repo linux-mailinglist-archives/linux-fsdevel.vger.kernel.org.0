@@ -2,75 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 453E6392999
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 10:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 066823929AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 10:41:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235381AbhE0Ic4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 04:32:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50932 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235336AbhE0Icz (ORCPT
+        id S235457AbhE0Imz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 04:42:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44113 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235324AbhE0Imy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 04:32:55 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534B4C061574;
-        Thu, 27 May 2021 01:31:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=i7BWqfskeK9kW3dSo9ld0sv/Je9/N41pQm9p0c/HcNQ=; b=Yozlr+C0MAefXsNXcCwqD2C1+3
-        n/ks5zxvGw25ayN20tLSWFEC5h+F41iNKBwAcN7h+LhIKbAL9xhZ3phR1TYoWsmrDMSpGlnVH9/Sr
-        g2aXJsbycGI41VWSTZzRcgMn4MomUUdWyCggj10GaE0zJIX0km20jHpVNzxXheIEVpx/6bDUd2lID
-        VfkZK05V/iL3D4wfMRSSUCrtgRa+tM0rmoISTJiTcfA4Gbdszhi1uoJEyBqkTprcjlSu7W2gQd76/
-        v8x7OeoHB6bVCFHfTebDTX8l6Cd3W34xcqF9VpTo5u+1V2cpaS4GysN75FOkfa7OAi+KTNVqjt3Wr
-        mZh54MYA==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lmBQ5-005Ksd-DJ; Thu, 27 May 2021 08:31:10 +0000
-Date:   Thu, 27 May 2021 09:31:09 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 33/33] mm: Add folio_mapped
-Message-ID: <YK9YzS1T3xp3QI8/@infradead.org>
-References: <20210511214735.1836149-1-willy@infradead.org>
- <20210511214735.1836149-34-willy@infradead.org>
+        Thu, 27 May 2021 04:42:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622104877;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yN1LmC6tLlwHE2JSmI5/WtXdvMUbtIRH+V/hkQT9TzA=;
+        b=JHr2dwA3m2wYjgaiPOSQfPpwDC+2/4Kn0W3j/E/U/xkC//oJoDjRUEufaik8zryPnbVqud
+        VKJoyzyamPL8qu1XV9EQZIF1HIKZoNhwYYZl7/Vaja4vLyA24C0aeAtGJm+FMkXi0zljyA
+        Y5e031OIUryvuOalYF1tg/hwv8fELw4=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-242--spYifwDOOeeNr6TPmHytw-1; Thu, 27 May 2021 04:41:15 -0400
+X-MC-Unique: -spYifwDOOeeNr6TPmHytw-1
+Received: by mail-pg1-f199.google.com with SMTP id 1-20020a6306010000b0290215c617f0f8so2529664pgg.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 01:41:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=yN1LmC6tLlwHE2JSmI5/WtXdvMUbtIRH+V/hkQT9TzA=;
+        b=IPgNynBLw9lA+8PzJ+dNSEAKPlx9s8UX0TBFWJOwK/9ZIhZxLwlLCl0UYUEclPF/je
+         NAo7bFQYLidEZqfkWWhsNEMLh29q9Xp1bG060614N4gufr3lU0sNczMebX3HcW8bFSnP
+         rFHnD4DoMY6WekFFRuNt0I2WEST+MddSNQ36vojX4w40979U0QmiVGJxFh1eokbJT+pu
+         UX+XUdjxnVfE0Jah4kxlcsnw4OiAMyDTDmoFtGLhrJawmwrei/NZ3SsbnJFt9ozo6x8v
+         Zh3nNlgvhmBzOi24Jx71i/lJ7IpfyCeh3EdOD3pL4QVi9tsu6WIZTCuoJYNpbw9+TgZe
+         kjYQ==
+X-Gm-Message-State: AOAM5310kcmKog3vcU/QeGIV59uK1bqf0XDbzU5yOOounuZhL7FdNNsC
+        57EokG+Sy7MmOOOuvqfJBYpEbG6mWYNph3rxNJOAI49b9S0XOjfr2G86BX6Cd5FQvJUz6G3xcY9
+        VAYyKXpYMqVxp6aoUMljOrl7aWw==
+X-Received: by 2002:a17:902:d508:b029:ef:b008:f4ad with SMTP id b8-20020a170902d508b02900efb008f4admr2333591plg.8.1622104874606;
+        Thu, 27 May 2021 01:41:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzvPNDcYkAS3faf7fevSyiFC8ZU6oTJ+el34W9W0mGRDdwfnLELCNOSU91eRydTJVumJh4SSA==
+X-Received: by 2002:a17:902:d508:b029:ef:b008:f4ad with SMTP id b8-20020a170902d508b02900efb008f4admr2333565plg.8.1622104874245;
+        Thu, 27 May 2021 01:41:14 -0700 (PDT)
+Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id a12sm1513042pfg.102.2021.05.27.01.41.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 May 2021 01:41:13 -0700 (PDT)
+Subject: Re: [PATCH v7 11/12] vduse: Introduce VDUSE - vDPA Device in
+ Userspace
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20210517095513.850-1-xieyongji@bytedance.com>
+ <20210517095513.850-12-xieyongji@bytedance.com>
+ <3740c7eb-e457-07f3-5048-917c8606275d@redhat.com>
+ <CACycT3uAqa6azso_8MGreh+quj-JXO1piuGnrV8k2kTfc34N2g@mail.gmail.com>
+ <5a68bb7c-fd05-ce02-cd61-8a601055c604@redhat.com>
+ <CACycT3ve7YvKF+F+AnTQoJZMPua+jDvGMs_ox8GQe_=SGdeCMA@mail.gmail.com>
+ <ee00efca-b26d-c1be-68d2-f9e34a735515@redhat.com>
+ <CACycT3ufok97cKpk47NjUBTc0QAyfauFUyuFvhWKmuqCGJ7zZw@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <00ded99f-91b6-ba92-5d92-2366b163f129@redhat.com>
+Date:   Thu, 27 May 2021 16:41:01 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210511214735.1836149-34-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CACycT3ufok97cKpk47NjUBTc0QAyfauFUyuFvhWKmuqCGJ7zZw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 11, 2021 at 10:47:35PM +0100, Matthew Wilcox (Oracle) wrote:
-> This function is the equivalent of page_mapped().  It is slightly
-> shorter as we do not need to handle the PageTail() case.  Reimplement
-> page_mapped() as a wrapper around folio_mapped().
 
-No byte savings numbers as for the other patches?
+在 2021/5/27 下午3:34, Yongji Xie 写道:
+> On Thu, May 27, 2021 at 1:40 PM Jason Wang <jasowang@redhat.com> wrote:
+>>
+>> 在 2021/5/27 下午1:08, Yongji Xie 写道:
+>>> On Thu, May 27, 2021 at 1:00 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>> 在 2021/5/27 下午12:57, Yongji Xie 写道:
+>>>>> On Thu, May 27, 2021 at 12:13 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>>>> 在 2021/5/17 下午5:55, Xie Yongji 写道:
+>>>>>>> +
+>>>>>>> +static int vduse_dev_msg_sync(struct vduse_dev *dev,
+>>>>>>> +                           struct vduse_dev_msg *msg)
+>>>>>>> +{
+>>>>>>> +     init_waitqueue_head(&msg->waitq);
+>>>>>>> +     spin_lock(&dev->msg_lock);
+>>>>>>> +     vduse_enqueue_msg(&dev->send_list, msg);
+>>>>>>> +     wake_up(&dev->waitq);
+>>>>>>> +     spin_unlock(&dev->msg_lock);
+>>>>>>> +     wait_event_killable(msg->waitq, msg->completed);
+>>>>>> What happens if the userspace(malicous) doesn't give a response forever?
+>>>>>>
+>>>>>> It looks like a DOS. If yes, we need to consider a way to fix that.
+>>>>>>
+>>>>> How about using wait_event_killable_timeout() instead?
+>>>> Probably, and then we need choose a suitable timeout and more important,
+>>>> need to report the failure to virtio.
+>>>>
+>>> Makes sense to me. But it looks like some
+>>> vdpa_config_ops/virtio_config_ops such as set_status() didn't have a
+>>> return value.  Now I add a WARN_ON() for the failure. Do you mean we
+>>> need to add some change for virtio core to handle the failure?
+>>
+>> Maybe, but I'm not sure how hard we can do that.
+>>
+> We need to change all virtio device drivers in this way.
 
-The patch itself looks good, although I'd go for a slightly easier
-readable structure:
 
-bool folio_mapped(struct folio *folio)
-{
-	if (folio_single(folio))
-		return atomic_read(&folio->_mapcount) >= 0;
+Probably.
 
-	if (atomic_read(compound_mapcount_ptr(&folio->page)) >= 0)
-		return true;
 
-	if (!folio_hugetlb(folio)) {
-		unsigned long i;
+>
+>> We had NEEDS_RESET but it looks we don't implement it.
+>>
+> Could it handle the failure of get_feature() and get/set_config()?
 
-		for (i = 0; i < folio_nr_pages(folio); i++)
-			if (atomic_read(&folio_page(folio, i)->_mapcount) >= 0)
- 				return true;
- 	}
- 	return false;
- }
 
- Shouldn't we also have a folio version of compound_mapcount_ptr?
+Looks not:
+
+"
+
+The device SHOULD set DEVICE_NEEDS_RESET when it enters an error state 
+that a reset is needed. If DRIVER_OK is set, after it sets 
+DEVICE_NEEDS_RESET, the device MUST send a device configuration change 
+notification to the driver.
+
+"
+
+This looks implies that NEEDS_RESET may only work after device is 
+probed. But in the current design, even the reset() is not reliable.
+
+
+>
+>> Or a rough idea is that maybe need some relaxing to be coupled loosely
+>> with userspace. E.g the device (control path) is implemented in the
+>> kernel but the datapath is implemented in the userspace like TUN/TAP.
+>>
+> I think it can work for most cases. One problem is that the set_config
+> might change the behavior of the data path at runtime, e.g.
+> virtnet_set_mac_address() in the virtio-net driver and
+> cache_type_store() in the virtio-blk driver. Not sure if this path is
+> able to return before the datapath is aware of this change.
+
+
+Good point.
+
+But set_config() should be rare:
+
+E.g in the case of virtio-net with VERSION_1, config space is read only, 
+and it was set via control vq.
+
+For block, we can
+
+1) start from without WCE or
+2) we add a config change notification to userspace or
+3) extend the spec to use vq instead of config space
+
+Thanks
+
+
+>
+> Thanks,
+> Yongji
+>
+
