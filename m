@@ -2,92 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3C17392FB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 15:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B603939309A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 16:19:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236453AbhE0NbE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 09:31:04 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:50945 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236335AbhE0NbD (ORCPT
+        id S236366AbhE0OUj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 10:20:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235492AbhE0OUi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 09:31:03 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 03E7658472F;
-        Thu, 27 May 2021 09:29:26 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Thu, 27 May 2021 09:29:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=6GRC/0MZj+00ZlSbSG5P9vkghEm
-        DAwpet/OoF+tag/w=; b=J30v3f1+Fi4bHN7Zn4dwceyEbf5fD488Th/llLcnfxg
-        1rz6UKwNj3gIPfRjzPu66rZ1QtWKMCU+bJdfrxyY2fqfmHrHL8NJC8eKqc54iVRa
-        quCEMoDTab5jRc91dT7ZT+pwuD+w6Z+YKM1q7WrGfaox0dgJrMl29aRL2LQKjW6z
-        5aSVawgcfKcFLMFOoHe/1VcKwfBBv/Ki94XiiyHalvg91O2eqfFw87pE3BKUibOV
-        53VUN3N3IPOC/dWKxsQe2PQmxMA6TrtudBhADFT4IpW7sIWRkN4fAbzCGx1//mgr
-        LcIbzvcBB9O5cc5bEa2QDReidoHHQQThTLwYkLqmGFQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=6GRC/0
-        MZj+00ZlSbSG5P9vkghEmDAwpet/OoF+tag/w=; b=LK+sfIEv8YeEF+e3vwIVGf
-        Y2aK45WaeUtarPyLe7y1UH8LAPgdmtSIKR2Rxw4oJpwWLewVHna1nsTVdtil4skT
-        FI0HW3TsE+HY+YF0pIYWpGlM0t/Xd4+wUVN0yK2pSgqyRjL6WkIGZdN1KR10IHTl
-        SZpyCAkg+5WkQQJvhcFpAnj0JrslVbOQhwtTyBcVBZewNuZu6g+yqm5PmJtbdkoa
-        iBVYi5J2gL70lNENxM+zouRkovpGmydn0YGiV/Fa2S6MP3uLoG1dS1+9uIW2Zz0h
-        R+bWSZ1ewImJ5uz0Wi/ulKM9T3YrnjN/lwH7CeL7tGuvCcZnVZfRcn3QFLkbu9JA
-        ==
-X-ME-Sender: <xms:tJ6vYJh9d7hPAKdE4nTdv8A2OU9nvV6H50bjfjx0PhCEQNliYEtUGA>
-    <xme:tJ6vYOAlzcXj-yHCUs8ygoKaHBp8TxtaK_h8BCYY0HnwUqUfXG-Q2aGk-qwZfdDeI
-    JfFsHrVCVJGMQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdekhedgieeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeevueehje
-    fgfffgiedvudekvdektdelleelgefhleejieeugeegveeuuddukedvteenucfkphepkeef
-    rdekiedrjeegrdeigeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:tJ6vYJG4QKrbZvbduRD91eEuShjSfEhn51iSOiLpyKIyRce8Iq5Quw>
-    <xmx:tJ6vYORH8MtfBkmd705suIxefTdfwI59n9nQqle4CGuo1_6KXS1p1A>
-    <xmx:tJ6vYGw4WfBGZNbtnM_lsJ_wv2oJhm3o-u7k3qlTfooie76SJAQqMA>
-    <xmx:tZ6vYLGBmm35YucC4o8kg85jksAT9NRr2GsPTvGH_YzP87de6qsP3w>
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        by mail.messagingengine.com (Postfix) with ESMTPA;
-        Thu, 27 May 2021 09:29:24 -0400 (EDT)
-Date:   Thu, 27 May 2021 15:29:22 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Christoph Lameter <cl@gentwo.de>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
-        ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-Message-ID: <YK+esqGjKaPb+b/Q@kroah.com>
-References: <YH2hs6EsPTpDAqXc@mit.edu>
- <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
- <YIx7R6tmcRRCl/az@mit.edu>
- <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de>
+        Thu, 27 May 2021 10:20:38 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097EEC061761
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 07:19:05 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id k14so398346eji.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 07:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0KMicP7dPruhWbetN8SS8Qn8WRBhDpCdjlUFYTYIPQY=;
+        b=oL8+TZNnSedYZxnjK4DI9LSvARM8ndmpxlxh6MbE8xc+bzPwC15R8Oe7BjBHBNDZJU
+         TNJP8Tt8TyG1DmWC33rk+d5R2TN/mvP/gK0UeOcVkgdELmghktfHLYP8jQjpCHsvmX2b
+         DhFL94mzDwpgYjyGSpg4J/rAkkNxNjR97srQQgHxVbtNcfz5kQ/cblTw8NQzxSMLaOrY
+         G1r+90PQY64rR4qLSENwuRJU1aPtfVkjFCNY2D6JqIUDBKPVcJCgfP8G2hKezSwWEDi4
+         apxq9vHVNpXDgfq28VM6AgmXZQSXQY5PyR5QvKTo1urmbFatACON7BQ19GUEX0119z5i
+         Scww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0KMicP7dPruhWbetN8SS8Qn8WRBhDpCdjlUFYTYIPQY=;
+        b=iMo5Pe8cTCLJfMm5Sn9Pf+7q/+LHMWZXJLKcpRTJSGWxjTp0NQxqpLo1dNDNI3aB59
+         b3U6ZIxaKC1YhOxLgtRw8N7RCgAYA4gxQReavqRg2aA+ZVTmSn6Z6YaLl7x1TeEfN+7C
+         Fslnokd4RKiZZANYWmOzTo4aIJo5Iz+u0pgsdje4WIHXS67YE+W4k0BOwfbQWjprdT7b
+         uwOOeqNKkkSw7DYnoocp50j0b27n5HV3uteDJ/AQCl8DTN2pUBf2laHtWCv4WCrE4D9m
+         VcSaIgJOi40k7AK1x4AAhsxBJObi73qYXYFWoWjc1bRfZfVERObUPWF5A4YORabuVpUS
+         COLw==
+X-Gm-Message-State: AOAM531eVco6m9LUmcCj15DmFOrfJe0GczXtXQN3P6M5F6jFv4FxAgO3
+        OStotd/Q2blwj4PE+sxLFssvUKH9zubWzOsC+AL8
+X-Google-Smtp-Source: ABdhPJxNY45Rvc2vrfaQ2IL4Eku6yyHzxMbb+NaSgzTa9DTK2YgRMf8cywVg6CWuAUNioudc7Sfjin2qWfEjUKkshxk=
+X-Received: by 2002:a17:906:f283:: with SMTP id gu3mr4078724ejb.91.1622125143443;
+ Thu, 27 May 2021 07:19:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de>
+References: <20210517092006.803332-1-omosnace@redhat.com> <87o8d9k4ln.fsf@mpe.ellerman.id.au>
+ <CAFqZXNtUvrGxT6UMy81WfMsfZsydGN5k-VGFBq8yjDWN5ARAWw@mail.gmail.com> <3ad4fb7f-99f3-fa71-fdb2-59db751c7e2b@namei.org>
+In-Reply-To: <3ad4fb7f-99f3-fa71-fdb2-59db751c7e2b@namei.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 27 May 2021 10:18:52 -0400
+Message-ID: <CAHC9VhSSZzDeM1bcOjVBN6u5KPAvMysg3sLcSniq+cLr65WFqg@mail.gmail.com>
+Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
+ permission checks
+To:     James Morris <jmorris@namei.org>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 27, 2021 at 03:23:03PM +0200, Christoph Lameter wrote:
-> On Fri, 30 Apr 2021, Theodore Ts'o wrote:
-> 
-> > I know we're all really hungry for some in-person meetups and
-> > discussions, but at least for LPC, Kernel Summit, and Maintainer's
-> > Summit, we're going to have to wait for another year,
-> 
-> Well now that we are vaccinated: Can we still change it?
-> 
+On Thu, May 27, 2021 at 12:33 AM James Morris <jmorris@namei.org> wrote:
+> On Wed, 26 May 2021, Ondrej Mosnacek wrote:
+>
+> > Thanks, Michael!
+> >
+> > James/Paul, is there anything blocking this patch from being merged?
+> > Especially the BPF case is causing real trouble for people and the
+> > only workaround is to broadly allow lockdown::confidentiality in the
+> > policy.
+>
+> It would be good to see more signoffs/reviews, especially from Paul, but
+> he is busy with the io_uring stuff.
 
-Speak for yourself, remember that Europe and other parts of the world
-are not as "flush" with vaccines as the US currently is :(
+Yes, it's been a busy week with various things going on around here.
+I looked at the v1 posting but haven't had a chance yet to look at v2;
+I promise to get to it today, but it might not happen until later
+tonight.
 
-greg k-h
+> Let's see if anyone else can look at this in the next couple of days.
+
+-- 
+paul moore
+www.paul-moore.com
