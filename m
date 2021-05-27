@@ -2,92 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5B51392B28
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 11:51:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DEB2392B71
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 May 2021 12:08:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235844AbhE0JxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 05:53:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24356 "EHLO
+        id S236056AbhE0KKZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 06:10:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39255 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235770AbhE0JxV (ORCPT
+        by vger.kernel.org with ESMTP id S235938AbhE0KKY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 05:53:21 -0400
+        Thu, 27 May 2021 06:10:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1622109108;
+        s=mimecast20190719; t=1622110131;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=u9Cxtk2CGDavcxRvdG5xqMXG/D6DQ86Gj3Jra0Du2iA=;
-        b=JoscmxOsBQCWDPPaE0kZojQUtPyZR6xxmzZUk63GuyX+vEznZhfvRVp6cD0VGRDMS0e7gE
-        AMYwxDUHjjggEGNhrasB+oJQbMHIs77MHwqhqwna8HfDH+BogHfZ86JZsF363DGSGXZokY
-        LCaZvPIq8XOFkxb9x6geIDOKKkt2vN4=
+        bh=ttq7axdVYLD81r74CE3D8qHE56GrIu6ITcvhMbY6oeE=;
+        b=IYEwl/OHo3BqE9YKwHAZqrE1vmWTxZSLIpToFrFMxaSAkn8+AbIYVP8+Bmbifjifky9OKW
+        HQoEcgUWmCmPfRoj1JMhjXb/kB3SwAZS37UZxKX0Pk2s8yUsPNqjLeehmuVsINW8VUQXFP
+        hdm3aHTC1BNWIUtd7xiPvcVGgr+gLAY=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-276-H_O0Ks53PH6uw7WYjNETzA-1; Thu, 27 May 2021 05:51:46 -0400
-X-MC-Unique: H_O0Ks53PH6uw7WYjNETzA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-118-uKPL4hILOpORFmZcbPfMoQ-1; Thu, 27 May 2021 06:08:47 -0400
+X-MC-Unique: uKPL4hILOpORFmZcbPfMoQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 28388101371B;
-        Thu, 27 May 2021 09:51:45 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6F2D2108BD1D;
+        Thu, 27 May 2021 10:08:45 +0000 (UTC)
 Received: from dresden.str.redhat.com (ovpn-114-232.ams2.redhat.com [10.36.114.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 873B3687D7;
-        Thu, 27 May 2021 09:51:39 +0000 (UTC)
-Subject: Re: [Virtio-fs] [PATCH 1/4] fuse: Fix crash in
- fuse_dentry_automount() error path
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9CA085F90E;
+        Thu, 27 May 2021 10:08:43 +0000 (UTC)
+Subject: Re: [Virtio-fs] [PATCH 2/4] fuse: Fix infinite loop in sget_fc()
 To:     Greg Kurz <groug@kaod.org>, Miklos Szeredi <miklos@szeredi.hu>
 Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
         virtio-fs@redhat.com, linux-fsdevel@vger.kernel.org,
         Vivek Goyal <vgoyal@redhat.com>
 References: <20210525150230.157586-1-groug@kaod.org>
- <20210525150230.157586-2-groug@kaod.org>
+ <20210525150230.157586-3-groug@kaod.org>
 From:   Max Reitz <mreitz@redhat.com>
-Message-ID: <cef80ba1-b0c1-a8bd-387a-9c7d2730a766@redhat.com>
-Date:   Thu, 27 May 2021 11:51:37 +0200
+Message-ID: <58c70352-2df5-0cb9-9ca6-bb4bf2edd1c2@redhat.com>
+Date:   Thu, 27 May 2021 12:08:36 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210525150230.157586-2-groug@kaod.org>
+In-Reply-To: <20210525150230.157586-3-groug@kaod.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 25.05.21 17:02, Greg Kurz wrote:
-> If fuse_fill_super_submount() returns an error, the error path
-> triggers a crash:
+> We don't set the SB_BORN flag on submounts. This is wrong as these
+> superblocks are then considered as partially constructed or dying
+> in the rest of the code and can break some assumptions.
 > 
-> [   26.206673] BUG: kernel NULL pointer dereference, address: 0000000000000000
-> [...]
-> [   26.226362] RIP: 0010:__list_del_entry_valid+0x25/0x90
-> [...]
-> [   26.247938] Call Trace:
-> [   26.248300]  fuse_mount_remove+0x2c/0x70 [fuse]
-> [   26.248892]  virtio_kill_sb+0x22/0x160 [virtiofs]
-> [   26.249487]  deactivate_locked_super+0x36/0xa0
-> [   26.250077]  fuse_dentry_automount+0x178/0x1a0 [fuse]
+> One such case is when you have a virtiofs filesystem with submounts
+> and you try to mount it again : virtio_fs_get_tree() tries to obtain
+> a superblock with sget_fc(). The logic in sget_fc() is to loop until
+> it has either found an existing matching superblock with SB_BORN set
+> or to create a brand new one. It is assumed that a superblock without
+> SB_BORN is transient and should go away. Forgetting to set SB_BORN on
+> submounts hence causes sget_fc() to retry forever.
 > 
-> The crash happens because fuse_mount_remove() assumes that the FUSE
-> mount was already added to list under the FUSE connection, but this
-> only done after fuse_fill_super_submount() has returned success.
-> 
-> This means that until fuse_fill_super_submount() has returned success,
-> the FUSE mount isn't actually owned by the superblock. We should thus
-> reclaim ownership by clearing sb->s_fs_info, which will skip the call
-> to fuse_mount_remove(), and perform rollback, like virtio_fs_get_tree()
-> already does for the root sb.
+> Setting SB_BORN requires special care, i.e. a write barrier for
+> super_cache_count() which can check SB_BORN without taking any lock.
+> We should call vfs_get_tree() to deal with that but this requires
+> to have a proper ->get_tree() implementation for submounts, which
+> is a bigger piece of work. Go for a simple bug fix in the meatime.
 > 
 > Fixes: bf109c64040f ("fuse: implement crossmounts")
 > Cc: mreitz@redhat.com
 > Cc: stable@vger.kernel.org # v5.10+
 > Signed-off-by: Greg Kurz <groug@kaod.org>
 > ---
->   fs/fuse/dir.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
+>   fs/fuse/dir.c | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 01559061cbfb..3b0482738741 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -346,6 +346,16 @@ static struct vfsmount *fuse_dentry_automount(struct path *path)
+>   		goto out_put_sb;
+>   	}
+>   
+> +	/*
+> +	 * FIXME: setting SB_BORN requires a write barrier for
+> +	 *        super_cache_count(). We should actually come
+> +	 *        up with a proper ->get_tree() implementation
+> +	 *        for submounts and call vfs_get_tree() to take
+> +	 *        care of the write barrier.
+> +	 */
+> +	smp_wmb();
+> +	sb->s_flags |= SB_BORN;
+> +
+
+I’m not sure whether we should have the order be exactly the same as in 
+vfs_get_tree(), i.e. whether this should be put after fsc->root has been 
+set.  Or maybe even after fm has been added to fc->mounts, because that 
+too was part of the fuse_get_tree_submount() function of your “fuse: 
+Call vfs_get_tree() for submounts” patch.
+
+ From a quick look at SB_BORN users, it doesn’t seem to make a 
+difference to me, though, so:
 
 Reviewed-by: Max Reitz <mreitz@redhat.com>
+
+>   	sb->s_flags |= SB_ACTIVE;
+>   	fsc->root = dget(sb->s_root);
+>   	/* We are done configuring the superblock, so unlock it */
+> 
 
