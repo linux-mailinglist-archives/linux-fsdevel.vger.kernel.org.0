@@ -2,236 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51FA739469A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 19:42:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF42394701
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 20:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229476AbhE1RoG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 May 2021 13:44:06 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:43240 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbhE1RoG (ORCPT
+        id S229571AbhE1SaV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 May 2021 14:30:21 -0400
+Received: from www62.your-server.de ([213.133.104.62]:46032 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229463AbhE1SaU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 May 2021 13:44:06 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id DF24D1FD2E;
-        Fri, 28 May 2021 17:42:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1622223749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Zq80NlXSvdx5/aOv0vEANOPqKQZGQ+8KXE80Dg+Lb1w=;
-        b=jfX2Sw2HQrMoeIpcNyvriHpwcBGWuQWDfh1JnVyBilNTFtmKqFqkKYoGCOheQqMd1gqfuI
-        R5RCIgP70zmGwzUuZCMTXt7ti0i+NokMNGXoPU8FhNsaQy0lEdoyq3JLmBAuX7UAjK8xXx
-        +hgdxgkxTBh24hoKhmJ04gapPv4EVlM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1622223749;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Zq80NlXSvdx5/aOv0vEANOPqKQZGQ+8KXE80Dg+Lb1w=;
-        b=7GVp6oY7SMnRWOlOJybfPl7psUPH0V/IEjSq6nBDsZ/eoncGtSDm9aMWWmZgpP5FHYdgQ0
-        zdyd0Tom76nh3kBA==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 6A174118DD;
-        Fri, 28 May 2021 17:42:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1622223749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Zq80NlXSvdx5/aOv0vEANOPqKQZGQ+8KXE80Dg+Lb1w=;
-        b=jfX2Sw2HQrMoeIpcNyvriHpwcBGWuQWDfh1JnVyBilNTFtmKqFqkKYoGCOheQqMd1gqfuI
-        R5RCIgP70zmGwzUuZCMTXt7ti0i+NokMNGXoPU8FhNsaQy0lEdoyq3JLmBAuX7UAjK8xXx
-        +hgdxgkxTBh24hoKhmJ04gapPv4EVlM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1622223749;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Zq80NlXSvdx5/aOv0vEANOPqKQZGQ+8KXE80Dg+Lb1w=;
-        b=7GVp6oY7SMnRWOlOJybfPl7psUPH0V/IEjSq6nBDsZ/eoncGtSDm9aMWWmZgpP5FHYdgQ0
-        zdyd0Tom76nh3kBA==
-Received: from director2.suse.de ([192.168.254.72])
-        by imap3-int with ESMTPSA
-        id 7XfGGIUrsWDQUQAALh3uQQ
-        (envelope-from <vbabka@suse.cz>); Fri, 28 May 2021 17:42:29 +0000
-Subject: Re: [PATCH v4] mm/compaction: let proactive compaction order
- configurable
-To:     chukaiping <chukaiping@baidu.com>, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, nigupta@nvidia.com, bhe@redhat.com,
-        khalid.aziz@oracle.com, iamjoonsoo.kim@lge.com,
-        mateusznosek0@gmail.com, sh_def@163.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <1619576901-9531-1-git-send-email-chukaiping@baidu.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <aa99cdab-cc0d-6cc2-464d-be42da5efa97@suse.cz>
-Date:   Fri, 28 May 2021 19:42:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        Fri, 28 May 2021 14:30:20 -0400
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1lmgwN-0005jM-Ee; Fri, 28 May 2021 20:10:35 +0200
+Received: from [85.7.101.30] (helo=linux.home)
+        by sslproxy02.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1lmgwN-000BQv-4m; Fri, 28 May 2021 20:10:35 +0200
+Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
+ permission checks
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>, jolsa@redhat.com
+References: <20210517092006.803332-1-omosnace@redhat.com>
+ <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
+ <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net>
+ <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net>
+Date:   Fri, 28 May 2021 20:10:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <1619576901-9531-1-git-send-email-chukaiping@baidu.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Authentication-Results: imap.suse.de;
-        none
-X-Spam-Level: 
-X-Spam-Score: 0.00
-X-Spamd-Result: default: False [0.00 / 100.00];
-         ARC_NA(0.00)[];
-         RCVD_VIA_SMTP_AUTH(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-         RCPT_COUNT_TWELVE(0.00)[14];
-         FREEMAIL_TO(0.00)[baidu.com,kernel.org,chromium.org,google.com,linux-foundation.org,nvidia.com,redhat.com,oracle.com,lge.com,gmail.com,163.com];
-         RCVD_NO_TLS_LAST(0.10)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[]
-X-Spam-Flag: NO
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.2/26184/Fri May 28 13:05:50 2021)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/28/21 4:28 AM, chukaiping wrote:
-> Currently the proactive compaction order is fixed to
-> COMPACTION_HPAGE_ORDER(9), it's OK in most machines with lots of
-> normal 4KB memory, but it's too high for the machines with small
-> normal memory, for example the machines with most memory configured
-> as 1GB hugetlbfs huge pages. In these machines the max order of
-> free pages is often below 9, and it's always below 9 even with hard
-> compaction. This will lead to proactive compaction be triggered very
-> frequently.
+On 5/28/21 5:47 PM, Paul Moore wrote:
+> On Fri, May 28, 2021 at 3:10 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>> On 5/28/21 3:37 AM, Paul Moore wrote:
+>>> On Mon, May 17, 2021 at 5:22 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>>>>
+>>>> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+>>>> lockdown") added an implementation of the locked_down LSM hook to
+>>>> SELinux, with the aim to restrict which domains are allowed to perform
+>>>> operations that would breach lockdown.
+>>>>
+>>>> However, in several places the security_locked_down() hook is called in
+>>>> situations where the current task isn't doing any action that would
+>>>> directly breach lockdown, leading to SELinux checks that are basically
+>>>> bogus.
+>>>>
+>>>> Since in most of these situations converting the callers such that
+>>>> security_locked_down() is called in a context where the current task
+>>>> would be meaningful for SELinux is impossible or very non-trivial (and
+>>>> could lead to TOCTOU issues for the classic Lockdown LSM
+>>>> implementation), fix this by modifying the hook to accept a struct cred
+>>>> pointer as argument, where NULL will be interpreted as a request for a
+>>>> "global", task-independent lockdown decision only. Then modify SELinux
+>>>> to ignore calls with cred == NULL.
+>>>
+>>> I'm not overly excited about skipping the access check when cred is
+>>> NULL.  Based on the description and the little bit that I've dug into
+>>> thus far it looks like using SECINITSID_KERNEL as the subject would be
+>>> much more appropriate.  *Something* (the kernel in most of the
+>>> relevant cases it looks like) is requesting that a potentially
+>>> sensitive disclosure be made, and ignoring it seems like the wrong
+>>> thing to do.  Leaving the access control intact also provides a nice
+>>> avenue to audit these requests should users want to do that.
+>>
+>> I think the rationale/workaround for ignoring calls with cred == NULL (or the previous
+>> patch with the unimplemented hook) from Ondrej was two-fold, at least speaking for his
+>> seen tracing cases:
+>>
+>>     i) The audit events that are triggered due to calls to security_locked_down()
+>>        can OOM kill a machine, see below details [0].
+>>
+>>    ii) It seems to be causing a deadlock via slow_avc_audit() -> audit_log_end()
+>>        when presumingly trying to wake up kauditd [1].
+>>
+>> How would your suggestion above solve both i) and ii)?
+> 
+> First off, a bit of general commentary - I'm not sure if Ondrej was
+> aware of this, but info like that is good to have in the commit
+> description.  Perhaps it was in the linked RHBZ but I try not to look
+> at those when reviewing patches; the commit descriptions must be
+> self-sufficient since we can't rely on the accessibility or the
+> lifetime of external references.  It's fine if people want to include
+> external links in their commits, I would actually even encourage it in
+> some cases, but the links shouldn't replace a proper description of
+> the problem and why the proposed solution is The Best Solution.
+> 
+> With that out of the way, it sounds like your issue isn't so much the
+> access check, but rather the frequency of the access denials and the
+> resulting audit records in your particular use case.  My initial
+> reaction is that you might want to understand why you are getting so
+> many SELinux access denials, your loaded security policy clearly does
+> not match with your intended use :)  Beyond that, if you want to
+> basically leave things as-is but quiet the high frequency audit
+> records that result from these SELinux denials you might want to look
+> into the SELinux "dontaudit" policy rule, it was created for things
+> like this.  Some info can be found in The SELinux Notebook, relevant
+> link below:
+> 
+> * https://github.com/SELinuxProject/selinux-notebook/blob/main/src/avc_rules.md#dontaudit
+> 
+> The deadlock issue that was previously reported remains an open case
+> as far as I'm concerned; I'm presently occupied trying to sort out a
+> rather serious issue with respect to io_uring and LSM/audit (plus
+> general stuff at $DAYJOB) so I haven't had time to investigate this
+> any further.  Of course anyone else is welcome to dive into it (I
+> always want to encourage this, especially from "performance people"
+> who just want to shut it all off), however if the answer is basically
+> "disable LSM and/or audit checks" you have to know that it is going to
+> result in a high degree of skepticism from me, so heavy documentation
+> on why it is The Best Solution would be a very good thing :)  Beyond
+> that, I think the suggestions above of "why do you have so many policy
+> denials?" and "have you looked into dontaudit?" are solid places to
+> look for a solution in your particular case.
+> 
+>>>> Since most callers will just want to pass current_cred() as the cred
+>>>> parameter, rename the hook to security_cred_locked_down() and provide
+>>>> the original security_locked_down() function as a simple wrapper around
+>>>> the new hook.
+>>
+>> [...]
+>>>
+>>>> 3. kernel/trace/bpf_trace.c:bpf_probe_read_kernel{,_str}_common()
+>>>>        Called when a BPF program calls a helper that could leak kernel
+>>>>        memory. The task context is not relevant here, since the program
+>>>>        may very well be run in the context of a different task than the
+>>>>        consumer of the data.
+>>>>        See: https://bugzilla.redhat.com/show_bug.cgi?id=1955585
+>>>
+>>> The access control check isn't so much who is consuming the data, but
+>>> who is requesting a potential violation of a "lockdown", yes?  For
+>>> example, the SELinux policy rule for the current lockdown check looks
+>>> something like this:
+>>>
+>>>     allow <who> <who> : lockdown { <reason> };
+>>>
+>>> It seems to me that the task context is relevant here and performing
+>>> the access control check based on the task's domain is correct.
+>>
+>> This doesn't make much sense to me, it's /not/ the task 'requesting a potential
+>> violation of a "lockdown"', but rather the running tracing program which is e.g.
+>> inspecting kernel data structures around the triggered event. If I understood
+>> you correctly, having an 'allow' check on, say, httpd would be rather odd since
+>> things like perf/bcc/bpftrace/systemtap/etc is installing the tracing probe instead.
+>>
+>> Meaning, if we would /not/ trace such events (like in the prior mentioned syscall
+>> example), then there is also no call to the security_locked_down() from that same/
+>> unmodified application.
+> 
+> My turn to say that you don't make much sense to me :)
+> 
+> Let's reset.
 
-Could you be more concrete about "very frequently"? There's a proactive_defer
-mechanism that should help here. Normally the proactive compaction attempt
-happens each 500ms, but if it fails to improve the fragmentation score, it
-defers for 32 seconds. So is 32 seconds still too frequent? Or the score does
-improve thus defer doesn't happen, but the cost of that improvement is too high
-compared to the amount of the improvement?
+Sure, yep, lets shortly take one step back. :)
 
-> In these machines we only care about order of 3 or 4.
-> This patch export the oder to proc and let it configurable
-> by user, and the default value is still COMPACTION_HPAGE_ORDER.
-> 
-> Signed-off-by: chukaiping <chukaiping@baidu.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> ---
-> 
-> Changes in v4:
->     - change the sysctl file name to proactive_compation_order
-> 
-> Changes in v3:
->     - change the min value of compaction_order to 1 because the fragmentation
->       index of order 0 is always 0
->     - move the definition of max_buddy_zone into #ifdef CONFIG_COMPACTION
-> 
-> Changes in v2:
->     - fix the compile error in ia64 and powerpc, move the initialization
->       of sysctl_compaction_order to kcompactd_init because
->       COMPACTION_HPAGE_ORDER is a variable in these architectures
->     - change the hard coded max order number from 10 to MAX_ORDER - 1
-> 
->  include/linux/compaction.h |    1 +
->  kernel/sysctl.c            |   10 ++++++++++
->  mm/compaction.c            |   12 ++++++++----
->  3 files changed, 19 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-> index ed4070e..a0226b1 100644
-> --- a/include/linux/compaction.h
-> +++ b/include/linux/compaction.h
-> @@ -83,6 +83,7 @@ static inline unsigned long compact_gap(unsigned int order)
->  #ifdef CONFIG_COMPACTION
->  extern int sysctl_compact_memory;
->  extern unsigned int sysctl_compaction_proactiveness;
-> +extern unsigned int sysctl_proactive_compaction_order;
->  extern int sysctl_compaction_handler(struct ctl_table *table, int write,
->  			void *buffer, size_t *length, loff_t *ppos);
->  extern int sysctl_extfrag_threshold;
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 62fbd09..ed9012e 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -196,6 +196,7 @@ enum sysctl_writes_mode {
->  #endif /* CONFIG_SCHED_DEBUG */
->  
->  #ifdef CONFIG_COMPACTION
-> +static int max_buddy_zone = MAX_ORDER - 1;
->  static int min_extfrag_threshold;
->  static int max_extfrag_threshold = 1000;
->  #endif
-> @@ -2871,6 +2872,15 @@ int proc_do_static_key(struct ctl_table *table, int write,
->  		.extra2		= &one_hundred,
->  	},
->  	{
-> +		.procname       = "proactive_compation_order",
-> +		.data           = &sysctl_proactive_compaction_order,
-> +		.maxlen         = sizeof(sysctl_proactive_compaction_order),
-> +		.mode           = 0644,
-> +		.proc_handler   = proc_dointvec_minmax,
-> +		.extra1         = SYSCTL_ONE,
-> +		.extra2         = &max_buddy_zone,
-> +	},
-> +	{
->  		.procname	= "extfrag_threshold",
->  		.data		= &sysctl_extfrag_threshold,
->  		.maxlen		= sizeof(int),
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index e04f447..171436e 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -1925,17 +1925,18 @@ static bool kswapd_is_running(pg_data_t *pgdat)
->  
->  /*
->   * A zone's fragmentation score is the external fragmentation wrt to the
-> - * COMPACTION_HPAGE_ORDER. It returns a value in the range [0, 100].
-> + * sysctl_proactive_compaction_order. It returns a value in the range
-> + * [0, 100].
->   */
->  static unsigned int fragmentation_score_zone(struct zone *zone)
->  {
-> -	return extfrag_for_order(zone, COMPACTION_HPAGE_ORDER);
-> +	return extfrag_for_order(zone, sysctl_proactive_compaction_order);
->  }
->  
->  /*
->   * A weighted zone's fragmentation score is the external fragmentation
-> - * wrt to the COMPACTION_HPAGE_ORDER scaled by the zone's size. It
-> - * returns a value in the range [0, 100].
-> + * wrt to the sysctl_proactive_compaction_order scaled by the zone's size.
-> + * It returns a value in the range [0, 100].
->   *
->   * The scaling factor ensures that proactive compaction focuses on larger
->   * zones like ZONE_NORMAL, rather than smaller, specialized zones like
-> @@ -2666,6 +2667,7 @@ static void compact_nodes(void)
->   * background. It takes values in the range [0, 100].
->   */
->  unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
-> +unsigned int __read_mostly sysctl_proactive_compaction_order;
->  
->  /*
->   * This is the entry point for compacting all nodes via
-> @@ -2958,6 +2960,8 @@ static int __init kcompactd_init(void)
->  	int nid;
->  	int ret;
->  
-> +	sysctl_proactive_compaction_order = COMPACTION_HPAGE_ORDER;
-> +
->  	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
->  					"mm/compaction:online",
->  					kcompactd_cpu_online, NULL);
-> 
+> What task_struct is running the BPF tracing program which is calling
+> into security_locked_down()?  My current feeling is that it is this
+> context/domain/cred that should be used for the access control check;
+> in the cases where it is a kernel thread, I think passing NULL is
+> reasonable, but I think the proper thing for SELinux is to interpret
+> NULL as kernel_t.
 
+If this was a typical LSM hook and, say, your app calls into bind(2) where
+we then invoke security_socket_bind() and check 'current' task, then I'm all
+with you, because this was _explicitly initiated_ by the httpd app, so that
+allow/deny policy belongs in the context of httpd.
+
+In the case of tracing, it's different. You install small programs that are
+triggered when certain events fire. Random example from bpftrace's README [0],
+you want to generate a histogram of syscall counts by program. One-liner is:
+
+   bpftrace -e 'tracepoint:raw_syscalls:sys_enter { @[comm] = count(); }'
+
+bpftrace then goes and generates a BPF prog from this internally. One way of
+doing it could be to call bpf_get_current_task() helper and then access
+current->comm via one of bpf_probe_read_kernel{,_str}() helpers. So the
+program itself has nothing to do with httpd or any other random app doing
+a syscall here. The BPF prog _explicitly initiated_ the lockdown check.
+The allow/deny policy belongs in the context of bpftrace: meaning, you want
+to grant bpftrace access to use these helpers, but other tracers on the
+systems like my_random_tracer not. While this works for prior mentioned
+cases of security_locked_down() with open_kcore() for /proc/kcore access
+or the module_sig_check(), it is broken for tracing as-is, and the patch
+I sent earlier fixes this.
+
+Thanks,
+Daniel
+
+   [0] https://github.com/iovisor/bpftrace
