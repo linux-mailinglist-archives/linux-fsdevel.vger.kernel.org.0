@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D12D393FEA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 11:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02332393FEB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 11:26:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235160AbhE1J22 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 May 2021 05:28:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52856 "EHLO mail.kernel.org"
+        id S235493AbhE1J2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 May 2021 05:28:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230200AbhE1J21 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 May 2021 05:28:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6CE7E6128B;
-        Fri, 28 May 2021 09:26:51 +0000 (UTC)
+        id S230200AbhE1J23 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 May 2021 05:28:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6A2CB6127A;
+        Fri, 28 May 2021 09:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622194013;
-        bh=NANZZOD4iHEuG2BalPId6STrno2r5MeN/jIIE747vDE=;
+        s=k20201202; t=1622194014;
+        bh=n7L8THJ3hgZnP0QknCDp3CNVsn2J9iLiP7bBjnxa8/c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iDyLxEYnSx4GtB0UG2fwkQ5Ha17NagcbRiUj2JawID6MhMzQK4MZFK9eG4E+oWVev
-         U2Trufc5+Xl6FoKyVHunAI1SjixTIKvJSsqh0dpBpiUIKO7/8ypHeobRgydoSs5fyp
-         K81ZX/dmtnYlm46PDGx34srqajyh0Zr5gZ1rtYgI22Fv/b6wZUyQR74F5qAEgGlLz6
-         L43NqKTre4jBJIVqaN40QmomYXqYp3izzbE2p+17+UhzbZoIixoDdrxnX80mcRA6oJ
-         XLl9hlNaC8mFVt5gxSm7YgJOeR0qjTpeYGe86LbMqX/KcBfr0CLvbCMKoclX2i9vte
-         Mv6cMOdaM1v+w==
+        b=F8nGVd+7W0rKD5PftV8egcAMuatHe4J+OZtYV19FwqQFAHfZquYE+leRb2IC3gYvt
+         wOXn7EHa6rjwWcmK6TrQpigfUZf+gLjjMkJsfMyWE+pmE0P2AP3b/62Q3dDFpJNdw9
+         dcE4j5IheFRI35++VXbGxNacmwkaA9um4dZVNobg3B8dyDSRlUPvWUbcXaS43M70GM
+         2LnW4SEBEG4uRn+hNToRpWpSADwYZ+FE+h/f/CxEudyG7VRNGRsXaFZGUkI2rev30N
+         gKsI2RszmhHxAEdtWNcPE/q8lHPhdbRm5YUTzhC6UBe19EV4R8/RWXCxrj4vqjDRgq
+         9Cf5lEa8vMGGQ==
 From:   Christian Brauner <brauner@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Aleksa Sarai <cyphar@cyphar.com>,
         Richard Guy Briggs <rgb@redhat.com>,
         linux-fsdevel@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v2 1/3] fcntl: remove unused VALID_UPGRADE_FLAGS
-Date:   Fri, 28 May 2021 11:24:15 +0200
-Message-Id: <20210528092417.3942079-2-brauner@kernel.org>
+Subject: [PATCH v2 2/3] open: don't silently ignore unknown O-flags in openat2()
+Date:   Fri, 28 May 2021 11:24:16 +0200
+Message-Id: <20210528092417.3942079-3-brauner@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210528092417.3942079-1-brauner@kernel.org>
 References: <20210528092417.3942079-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=DTBkIkRNd4bcqOtvuhl7Obc19oP2/yrBuWrgwMlrBXs=; m=jKjin0LP0quJpwA9N7t4NVUj9m+WI4gTZYsJsEIxnU4=; p=1vlusdo5gjwAF0kBP5kBKm1VG2vyL2qLrK4eGEkLgIQ=; g=9d11c722bc61e3dc9015e1ec2b7c3e9cbb3b59e8
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYLC2egAKCRCRxhvAZXjcorauAQDQ9DC AL19EkaqLy6PC1S9Gr+yW2CQYxOYPi+6otEnlRwD+JYt9AcIOOIAKwv8Fgk9vRDvkdPcTw5KxxtS7 4MLX2Q4=
+X-Patch-Hashes: v=1; h=sha256; i=6HfI8flciKZB4VJnvGhErn3MBardNcPBqXfs5h/OfHw=; m=/i3HZZPKrmP04P+3mxM9YAOUPpHgr0g11FybAeMMEik=; p=NhmB7D6ZKh509a1KOnsYyxxVfeBSiBZ7igGZNN3BR3g=; g=de67de0e05d85c0da892ea52f4de0f5e1b5519a9
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYLC2egAKCRCRxhvAZXjcoij8AP9XPXl 44vksthPj4/+j9WHtdJ1Q8xK0S4MBt28P7cKEiwEAv5nt5d97XgTj97gtcPjyKTatf7xQsth/Ts8y sJGXCgI=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -45,39 +45,104 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Christian Brauner <christian.brauner@ubuntu.com>
 
-We currently do not maky use of this feature and should we implement
-something like this in the future it's trivial to add it back.
+The new openat2() syscall verifies that no unknown O-flag values are
+set and returns an error to userspace if they are while the older open
+syscalls like open() and openat() simply ignore unknown flag values:
+
+  #define O_FLAG_CURRENTLY_INVALID (1 << 31)
+  struct open_how how = {
+          .flags = O_RDONLY | O_FLAG_CURRENTLY_INVALID,
+          .resolve = 0,
+  };
+
+  /* fails */
+  fd = openat2(-EBADF, "/dev/null", &how, sizeof(how));
+
+  /* succeeds */
+  fd = openat(-EBADF, "/dev/null", O_RDONLY | O_FLAG_CURRENTLY_INVALID);
+
+However, openat2() silently truncates the upper 32 bits meaning:
+
+  #define O_FLAG_CURRENTLY_INVALID_LOWER32 (1 << 31)
+  #define O_FLAG_CURRENTLY_INVALID_UPPER32 (1 << 40)
+
+  struct open_how how_lowe32 = {
+          .flags = O_RDONLY | O_FLAG_CURRENTLY_INVALID_LOWER32,
+  };
+
+  struct open_how how_upper32 = {
+          .flags = O_RDONLY | O_FLAG_CURRENTLY_INVALID_UPPER32,
+  };
+
+  /* fails */
+  fd = openat2(-EBADF, "/dev/null", &how_lower32, sizeof(how_lower32));
+
+  /* succeeds */
+  fd = openat2(-EBADF, "/dev/null", &how_upper32, sizeof(how_upper32));
+
+Fix this by preventing the immediate truncation in build_open_flags().
+
+There's a snafu here though stripping FMODE_* directly from flags would
+cause the upper 32 bits to be truncated as well due to integer promotion
+rules since FMODE_* is unsigned int, O_* are signed ints (yuck).
+
+In addition, struct open_flags currently defines flags to be 32 bit
+which is reasonable. If we simply were to bump it to 64 bit we would
+need to change a lot of code preemptively which doesn't seem worth it.
+So simply add a compile-time check verifying that all currently known
+O_* flags are within the 32 bit range and fail to build if they aren't
+anymore.
+
+This change shouldn't regress old open syscalls since they silently
+truncate any unknown values anyway. It is a tiny semantic change for
+openat2() but it is very unlikely people pass ing > 32 bit unknown flags
+and the syscall is relatively new too.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Aleksa Sarai <cyphar@cyphar.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
-Suggested-by: Richard Guy Briggs <rgb@redhat.com>
-Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
+Reported-by: Richard Guy Briggs <rgb@redhat.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-unchanged
+- Richard Guy Briggs <rgb@redhat.com>:
+  - Add an explicit BUILD_BUG_ON() to check when we need to change
+    struct open_flags to account for O_* flags > 32 bits.
 ---
- include/linux/fcntl.h | 4 ----
- 1 file changed, 4 deletions(-)
+ fs/open.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index 766fcd973beb..a332e79b3207 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -12,10 +12,6 @@
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
- 	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
+diff --git a/fs/open.c b/fs/open.c
+index e53af13b5835..53bc0573c0ec 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1002,12 +1002,20 @@ inline struct open_how build_open_how(int flags, umode_t mode)
  
--/* List of all valid flags for the how->upgrade_mask argument: */
--#define VALID_UPGRADE_FLAGS \
--	(UPGRADE_NOWRITE | UPGRADE_NOREAD)
--
- /* List of all valid flags for the how->resolve argument: */
- #define VALID_RESOLVE_FLAGS \
- 	(RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS | \
+ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ {
+-	int flags = how->flags;
++	u64 flags = how->flags;
++	u64 strip = FMODE_NONOTIFY | O_CLOEXEC;
+ 	int lookup_flags = 0;
+ 	int acc_mode = ACC_MODE(flags);
+ 
+-	/* Must never be set by userspace */
+-	flags &= ~(FMODE_NONOTIFY | O_CLOEXEC);
++	BUILD_BUG_ON_MSG(upper_32_bits(VALID_OPEN_FLAGS),
++			 "struct open_flags doesn't yet handle flags > 32 bits");
++
++	/*
++	 * Strip flags that either shouldn't be set by userspace like
++	 * FMODE_NONOTIFY or that aren't relevant in determining struct
++	 * open_flags like O_CLOEXEC.
++	 */
++	flags &= ~strip;
+ 
+ 	/*
+ 	 * Older syscalls implicitly clear all of the invalid flags or argument
 -- 
 2.27.0
 
