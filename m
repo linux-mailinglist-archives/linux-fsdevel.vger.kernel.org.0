@@ -2,232 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EC9E393D3D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 08:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0684A393D7B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 09:10:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231672AbhE1Gkr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 May 2021 02:40:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57397 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230281AbhE1Gkq (ORCPT
+        id S233800AbhE1HLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 May 2021 03:11:37 -0400
+Received: from www62.your-server.de ([213.133.104.62]:43568 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229574AbhE1HLh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 May 2021 02:40:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1622183951;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6RpP8rpfd8a3e0y5nF0RPgT5RVi2VhGM0rPjlvoSzx4=;
-        b=VaJEX0OkHRa0BO8XqwlHdK7dTpNH3/8wJMCn7yjZZvZ6eWMpR4t8V067GjzSJdobAjxZMt
-        TjqkTcEJmmffsmN7IinSArVywB4hrPLmKh1j3PV8/xBIWKftL+7z2Da9JyS18chYIQOPfn
-        zMvEzxXgHcjE23grhPeBPfD7MYdxcKc=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-458-cLINO2t0P9S4oeqSdjkQDQ-1; Fri, 28 May 2021 02:39:08 -0400
-X-MC-Unique: cLINO2t0P9S4oeqSdjkQDQ-1
-Received: by mail-pf1-f197.google.com with SMTP id l199-20020a6288d00000b02902db317806d5so1882010pfd.18
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 23:39:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=6RpP8rpfd8a3e0y5nF0RPgT5RVi2VhGM0rPjlvoSzx4=;
-        b=k0vfp+vH3ifHQpMZzhKVyOAVv84pkFiIAWkK327qKW5JCyBVPaFvk79zaQe3krQaKV
-         Yclir+ADsfGKmL1X35MFtJVmmiO+tBwvpCZDoEAxYDExieHhTnd4FTjjXzDEROgqHeEC
-         feXiYsl1V/u3WJsmC5CqK3rEkyKvG5KhuTb+75YlDaqsuwh9goBpBa24Mm9S4kx9jNCS
-         xqB5TxurhT7Fc/3sxfBRTHIMajwxbCyE9D0uVlSBQYYBFUeRNhFYwbIPbx4DQ8xue9rO
-         ZA5jiioi19LRaC3XFScqZlAHinbW3giN3ojjHVG9fTYFQjvcqcSkp5vL7TImh8p29pKp
-         AsvQ==
-X-Gm-Message-State: AOAM530j0eDi5ujuHHLZWjxiJzMdbUf2HEJ+WLRPz6lW7Jn9GrDKyh5A
-        21lo0X2L9DOTu2is+OymdM5qqSZ3IixqQdvnNaOvMD005xLWJX3TxPLZvsz16XiAX/xhlnlw1nI
-        TNKZm/YGeVaj+LC2yJUoehXZCOw==
-X-Received: by 2002:a17:90a:bd05:: with SMTP id y5mr2664316pjr.229.1622183947111;
-        Thu, 27 May 2021 23:39:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxGNmAqjgmxntdDKOd5qocBDSk4ZjOlVFy0XRLBTCjKcdzj+d4zuGqzz/QNeE7UYpYTrC3W9A==
-X-Received: by 2002:a17:90a:bd05:: with SMTP id y5mr2664285pjr.229.1622183946816;
-        Thu, 27 May 2021 23:39:06 -0700 (PDT)
-Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id q24sm3476480pjp.6.2021.05.27.23.38.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 May 2021 23:39:06 -0700 (PDT)
-Subject: Re: [PATCH v7 11/12] vduse: Introduce VDUSE - vDPA Device in
- Userspace
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20210517095513.850-1-xieyongji@bytedance.com>
- <20210517095513.850-12-xieyongji@bytedance.com>
- <3740c7eb-e457-07f3-5048-917c8606275d@redhat.com>
- <CACycT3uAqa6azso_8MGreh+quj-JXO1piuGnrV8k2kTfc34N2g@mail.gmail.com>
- <5a68bb7c-fd05-ce02-cd61-8a601055c604@redhat.com>
- <CACycT3ve7YvKF+F+AnTQoJZMPua+jDvGMs_ox8GQe_=SGdeCMA@mail.gmail.com>
- <ee00efca-b26d-c1be-68d2-f9e34a735515@redhat.com>
- <CACycT3ufok97cKpk47NjUBTc0QAyfauFUyuFvhWKmuqCGJ7zZw@mail.gmail.com>
- <00ded99f-91b6-ba92-5d92-2366b163f129@redhat.com>
- <3cc7407d-9637-227e-9afa-402b6894d8ac@redhat.com>
- <CACycT3s6SkER09KL_Ns9d03quYSKOuZwd3=HJ_s1SL7eH7y5gA@mail.gmail.com>
- <baf0016a-7930-2ae2-399f-c28259f415c1@redhat.com>
- <CACycT3vKZ3y0gga8PrSVtssZfNV0Y-A8=iYZSi9sbpHRNkVf-A@mail.gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <503cee35-e5d7-7ccf-347b-73487872ac11@redhat.com>
-Date:   Fri, 28 May 2021 14:38:54 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.2
+        Fri, 28 May 2021 03:11:37 -0400
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1lmWd4-0004Br-Bp; Fri, 28 May 2021 09:09:58 +0200
+Received: from [85.7.101.30] (helo=linux.home)
+        by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1lmWd4-000WOo-1p; Fri, 28 May 2021 09:09:58 +0200
+Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
+ permission checks
+To:     Paul Moore <paul@paul-moore.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>, jolsa@redhat.com
+References: <20210517092006.803332-1-omosnace@redhat.com>
+ <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net>
+Date:   Fri, 28 May 2021 09:09:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <CACycT3vKZ3y0gga8PrSVtssZfNV0Y-A8=iYZSi9sbpHRNkVf-A@mail.gmail.com>
+In-Reply-To: <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.2/26183/Thu May 27 13:07:49 2021)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-在 2021/5/28 上午11:54, Yongji Xie 写道:
-> On Fri, May 28, 2021 at 9:33 AM Jason Wang <jasowang@redhat.com> wrote:
+On 5/28/21 3:37 AM, Paul Moore wrote:
+> On Mon, May 17, 2021 at 5:22 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
 >>
->> 在 2021/5/27 下午6:14, Yongji Xie 写道:
->>> On Thu, May 27, 2021 at 4:43 PM Jason Wang <jasowang@redhat.com> wrote:
->>>> 在 2021/5/27 下午4:41, Jason Wang 写道:
->>>>> 在 2021/5/27 下午3:34, Yongji Xie 写道:
->>>>>> On Thu, May 27, 2021 at 1:40 PM Jason Wang <jasowang@redhat.com> wrote:
->>>>>>> 在 2021/5/27 下午1:08, Yongji Xie 写道:
->>>>>>>> On Thu, May 27, 2021 at 1:00 PM Jason Wang <jasowang@redhat.com>
->>>>>>>> wrote:
->>>>>>>>> 在 2021/5/27 下午12:57, Yongji Xie 写道:
->>>>>>>>>> On Thu, May 27, 2021 at 12:13 PM Jason Wang <jasowang@redhat.com>
->>>>>>>>>> wrote:
->>>>>>>>>>> 在 2021/5/17 下午5:55, Xie Yongji 写道:
->>>>>>>>>>>> +
->>>>>>>>>>>> +static int vduse_dev_msg_sync(struct vduse_dev *dev,
->>>>>>>>>>>> +                           struct vduse_dev_msg *msg)
->>>>>>>>>>>> +{
->>>>>>>>>>>> +     init_waitqueue_head(&msg->waitq);
->>>>>>>>>>>> +     spin_lock(&dev->msg_lock);
->>>>>>>>>>>> +     vduse_enqueue_msg(&dev->send_list, msg);
->>>>>>>>>>>> +     wake_up(&dev->waitq);
->>>>>>>>>>>> +     spin_unlock(&dev->msg_lock);
->>>>>>>>>>>> +     wait_event_killable(msg->waitq, msg->completed);
->>>>>>>>>>> What happens if the userspace(malicous) doesn't give a response
->>>>>>>>>>> forever?
->>>>>>>>>>>
->>>>>>>>>>> It looks like a DOS. If yes, we need to consider a way to fix that.
->>>>>>>>>>>
->>>>>>>>>> How about using wait_event_killable_timeout() instead?
->>>>>>>>> Probably, and then we need choose a suitable timeout and more
->>>>>>>>> important,
->>>>>>>>> need to report the failure to virtio.
->>>>>>>>>
->>>>>>>> Makes sense to me. But it looks like some
->>>>>>>> vdpa_config_ops/virtio_config_ops such as set_status() didn't have a
->>>>>>>> return value.  Now I add a WARN_ON() for the failure. Do you mean we
->>>>>>>> need to add some change for virtio core to handle the failure?
->>>>>>> Maybe, but I'm not sure how hard we can do that.
->>>>>>>
->>>>>> We need to change all virtio device drivers in this way.
->>>>> Probably.
->>>>>
->>>>>
->>>>>>> We had NEEDS_RESET but it looks we don't implement it.
->>>>>>>
->>>>>> Could it handle the failure of get_feature() and get/set_config()?
->>>>> Looks not:
->>>>>
->>>>> "
->>>>>
->>>>> The device SHOULD set DEVICE_NEEDS_RESET when it enters an error state
->>>>> that a reset is needed. If DRIVER_OK is set, after it sets
->>>>> DEVICE_NEEDS_RESET, the device MUST send a device configuration change
->>>>> notification to the driver.
->>>>>
->>>>> "
->>>>>
->>>>> This looks implies that NEEDS_RESET may only work after device is
->>>>> probed. But in the current design, even the reset() is not reliable.
->>>>>
->>>>>
->>>>>>> Or a rough idea is that maybe need some relaxing to be coupled loosely
->>>>>>> with userspace. E.g the device (control path) is implemented in the
->>>>>>> kernel but the datapath is implemented in the userspace like TUN/TAP.
->>>>>>>
->>>>>> I think it can work for most cases. One problem is that the set_config
->>>>>> might change the behavior of the data path at runtime, e.g.
->>>>>> virtnet_set_mac_address() in the virtio-net driver and
->>>>>> cache_type_store() in the virtio-blk driver. Not sure if this path is
->>>>>> able to return before the datapath is aware of this change.
->>>>> Good point.
->>>>>
->>>>> But set_config() should be rare:
->>>>>
->>>>> E.g in the case of virtio-net with VERSION_1, config space is read
->>>>> only, and it was set via control vq.
->>>>>
->>>>> For block, we can
->>>>>
->>>>> 1) start from without WCE or
->>>>> 2) we add a config change notification to userspace or
->>>>> 3) extend the spec to use vq instead of config space
->>>>>
->>>>> Thanks
->>>> Another thing if we want to go this way:
->>>>
->>>> We need find a way to terminate the data path from the kernel side, to
->>>> implement to reset semantic.
->>>>
->>> Do you mean terminate the data path in vdpa_reset().
+>> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+>> lockdown") added an implementation of the locked_down LSM hook to
+>> SELinux, with the aim to restrict which domains are allowed to perform
+>> operations that would breach lockdown.
 >>
->> Yes.
+>> However, in several places the security_locked_down() hook is called in
+>> situations where the current task isn't doing any action that would
+>> directly breach lockdown, leading to SELinux checks that are basically
+>> bogus.
 >>
->>
->>>    Is it ok to just
->>> notify userspace to stop data path asynchronously?
->>
->> For well-behaved userspace, yes but no for buggy or malicious ones.
->>
-> But the buggy or malicious daemons can't do anything if my
-> understanding is correct.
+>> Since in most of these situations converting the callers such that
+>> security_locked_down() is called in a context where the current task
+>> would be meaningful for SELinux is impossible or very non-trivial (and
+>> could lead to TOCTOU issues for the classic Lockdown LSM
+>> implementation), fix this by modifying the hook to accept a struct cred
+>> pointer as argument, where NULL will be interpreted as a request for a
+>> "global", task-independent lockdown decision only. Then modify SELinux
+>> to ignore calls with cred == NULL.
+> 
+> I'm not overly excited about skipping the access check when cred is
+> NULL.  Based on the description and the little bit that I've dug into
+> thus far it looks like using SECINITSID_KERNEL as the subject would be
+> much more appropriate.  *Something* (the kernel in most of the
+> relevant cases it looks like) is requesting that a potentially
+> sensitive disclosure be made, and ignoring it seems like the wrong
+> thing to do.  Leaving the access control intact also provides a nice
+> avenue to audit these requests should users want to do that.
 
+I think the rationale/workaround for ignoring calls with cred == NULL (or the previous
+patch with the unimplemented hook) from Ondrej was two-fold, at least speaking for his
+seen tracing cases:
 
-You're right. I originally thought there can still have bouncing. But 
-consider we don't do that during fault.
+   i) The audit events that are triggered due to calls to security_locked_down()
+      can OOM kill a machine, see below details [0].
 
-It should be safe.
+  ii) It seems to be causing a deadlock via slow_avc_audit() -> audit_log_end()
+      when presumingly trying to wake up kauditd [1].
 
+How would your suggestion above solve both i) and ii)?
 
->
->> I had an idea, how about terminate IOTLB in this case? Then we're in
->> fact turn datapath off.
->>
-> Sorry, I didn't get your point here. What do you mean by terminating
-> IOTLB?
+[0] https://bugzilla.redhat.com/show_bug.cgi?id=1955585 :
 
+   I starting seeing this with F-34. When I run a container that is traced with eBPF
+   to record the syscalls it is doing, auditd is flooded with messages like:
 
-I meant terminate the bouncing but it looks safe after a second thought :)
+   type=AVC msg=audit(1619784520.593:282387): avc:  denied  { confidentiality } for
+    pid=476 comm="auditd" lockdown_reason="use of bpf to read kernel RAM"
+     scontext=system_u:system_r:auditd_t:s0 tcontext=system_u:system_r:auditd_t:s0 tclass=lockdown permissive=0
 
-Thanks
+   This seems to be leading to auditd running out of space in the backlog buffer and
+   eventually OOMs the machine.
 
+   auditd running at 99% CPU presumably processing all the messages, eventually I get:
+   Apr 30 12:20:42 fedora kernel: audit: backlog limit exceeded
+   Apr 30 12:20:42 fedora kernel: audit: backlog limit exceeded
+   Apr 30 12:20:42 fedora kernel: audit: audit_backlog=2152579 > audit_backlog_limit=64
+   Apr 30 12:20:42 fedora kernel: audit: audit_backlog=2152626 > audit_backlog_limit=64
+   Apr 30 12:20:42 fedora kernel: audit: audit_backlog=2152694 > audit_backlog_limit=64
+   Apr 30 12:20:42 fedora kernel: audit: audit_lost=6878426 audit_rate_limit=0 audit_backlog_limit=64
+   Apr 30 12:20:45 fedora kernel: oci-seccomp-bpf invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0, oom_score_adj=-1000
+   Apr 30 12:20:45 fedora kernel: CPU: 0 PID: 13284 Comm: oci-seccomp-bpf Not tainted 5.11.12-300.fc34.x86_64 #1
+   Apr 30 12:20:45 fedora kernel: Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-2.fc32 04/01/2014
 
->   Remove iotlb mapping? But userspace can still access the mapped
-> region.
->
-> Thanks,
-> Yongji
->
+[1] https://lore.kernel.org/linux-audit/CANYvDQN7H5tVp47fbYcRasv4XF07eUbsDwT_eDCHXJUj43J7jQ@mail.gmail.com/ :
 
+   Upstream kernel 5.11.0-rc7 and later was found to deadlock during a bpf_probe_read_compat()
+   call within a sched_switch tracepoint. The problem is reproducible with the reg_alloc3
+   testcase from SystemTap's BPF backend testsuite on x86_64 as well as the runqlat,runqslower
+   tools from bcc on ppc64le. Example stack trace from [1]:
+
+   [  730.868702] stack backtrace:
+   [  730.869590] CPU: 1 PID: 701 Comm: in:imjournal Not tainted, 5.12.0-0.rc2.20210309git144c79ef3353.166.fc35.x86_64 #1
+   [  730.871605] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.13.0-2.fc32 04/01/2014
+   [  730.873278] Call Trace:
+   [  730.873770]  dump_stack+0x7f/0xa1
+   [  730.874433]  check_noncircular+0xdf/0x100
+   [  730.875232]  __lock_acquire+0x1202/0x1e10
+   [  730.876031]  ? __lock_acquire+0xfc0/0x1e10
+   [  730.876844]  lock_acquire+0xc2/0x3a0
+   [  730.877551]  ? __wake_up_common_lock+0x52/0x90
+   [  730.878434]  ? lock_acquire+0xc2/0x3a0
+   [  730.879186]  ? lock_is_held_type+0xa7/0x120
+   [  730.880044]  ? skb_queue_tail+0x1b/0x50
+   [  730.880800]  _raw_spin_lock_irqsave+0x4d/0x90
+   [  730.881656]  ? __wake_up_common_lock+0x52/0x90
+   [  730.882532]  __wake_up_common_lock+0x52/0x90
+   [  730.883375]  audit_log_end+0x5b/0x100
+   [  730.884104]  slow_avc_audit+0x69/0x90
+   [  730.884836]  avc_has_perm+0x8b/0xb0
+   [  730.885532]  selinux_lockdown+0xa5/0xd0
+   [  730.886297]  security_locked_down+0x20/0x40
+   [  730.887133]  bpf_probe_read_compat+0x66/0xd0
+   [  730.887983]  bpf_prog_250599c5469ac7b5+0x10f/0x820
+   [  730.888917]  trace_call_bpf+0xe9/0x240
+   [  730.889672]  perf_trace_run_bpf_submit+0x4d/0xc0
+   [  730.890579]  perf_trace_sched_switch+0x142/0x180
+   [  730.891485]  ? __schedule+0x6d8/0xb20
+   [  730.892209]  __schedule+0x6d8/0xb20
+   [  730.892899]  schedule+0x5b/0xc0
+   [  730.893522]  exit_to_user_mode_prepare+0x11d/0x240
+   [  730.894457]  syscall_exit_to_user_mode+0x27/0x70
+   [  730.895361]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+>> Since most callers will just want to pass current_cred() as the cred
+>> parameter, rename the hook to security_cred_locked_down() and provide
+>> the original security_locked_down() function as a simple wrapper around
+>> the new hook.
+[...]
+> 
+>> 3. kernel/trace/bpf_trace.c:bpf_probe_read_kernel{,_str}_common()
+>>       Called when a BPF program calls a helper that could leak kernel
+>>       memory. The task context is not relevant here, since the program
+>>       may very well be run in the context of a different task than the
+>>       consumer of the data.
+>>       See: https://bugzilla.redhat.com/show_bug.cgi?id=1955585
+> 
+> The access control check isn't so much who is consuming the data, but
+> who is requesting a potential violation of a "lockdown", yes?  For
+> example, the SELinux policy rule for the current lockdown check looks
+> something like this:
+> 
+>    allow <who> <who> : lockdown { <reason> };
+> 
+> It seems to me that the task context is relevant here and performing
+> the access control check based on the task's domain is correct.
+This doesn't make much sense to me, it's /not/ the task 'requesting a potential
+violation of a "lockdown"', but rather the running tracing program which is e.g.
+inspecting kernel data structures around the triggered event. If I understood
+you correctly, having an 'allow' check on, say, httpd would be rather odd since
+things like perf/bcc/bpftrace/systemtap/etc is installing the tracing probe instead.
+
+Meaning, if we would /not/ trace such events (like in the prior mentioned syscall
+example), then there is also no call to the security_locked_down() from that same/
+unmodified application.
+
+Thanks,
+Daniel
