@@ -2,220 +2,277 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C79393C1D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 05:55:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ECEB393CBE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 07:45:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236388AbhE1D4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 23:56:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60474 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236365AbhE1D4a (ORCPT
+        id S234566AbhE1FrR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 May 2021 01:47:17 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:59123 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234038AbhE1FrP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 23:56:30 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8980C06174A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 20:54:54 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id h20so3331793ejg.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 20:54:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2ZLRemtbPVIGxGdr14fJ4jpBPRhMcvlWcSDK9Lq8+cA=;
-        b=UFv0CeSDqvB7H4mkMIIZWvzf4ZRd39QgluC5dBflrM0VjpNZjb4IxVcqKSaFjQwfoU
-         rWgDGpgWI0xme5OQoPqmq8AD4Bg47GUZ3YvvnYsyOqUgiOAVd+/QgHxhOseSV4531t1Y
-         q98vrZOP0RiW2TNaGpGtHw15oZuuCxpO73Asd1j4SQ6gy0lkm58WXtdB/hN4BqYh6FU9
-         yEPJgHuNA8Ks60yGNmeOlV3X8KsoFvpP05Rqnp8tYwo8GUgycM88TNuz9mDhgbSWS0TP
-         NxrAo+V30nyDjMdF8BGfXOf5ZfkePuBez8giFvm6iDMPI8AxgjdRKhgpEh9WCjnfb+4Q
-         JHEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2ZLRemtbPVIGxGdr14fJ4jpBPRhMcvlWcSDK9Lq8+cA=;
-        b=HTuFHPqSB3NrT2CUooveV7+gvIvTTX7s/n2DzsM7xwC7g3b/X1PrrLGRaqBOxUv4mT
-         o9opfPrGywZ2qdJyIle5A4+WGO0M9REvv55gvSqVUooe16NflAzeM9uVLfMX45RtppVw
-         JRsdp3HMwcqk/EfpLn+SfoNmvmNNqNZYioxQ5b5w3q1xCiQoLS+oI0NolqBMMCsHcN+3
-         N0lhUkjTF2Vlioi88mT4vYNxwxVWzlzZzcSTeW9HURrX+7Bcx7UeoRO9l6Zg9YnhRLcX
-         JrazXDXIE2ysPNekGltjtzVIB1WXFKskvwjw7XN7HRiX6cFGkMQP5/2BdczsbDU6A2PN
-         wsmA==
-X-Gm-Message-State: AOAM533TJcCl3RX6ZdTiI1g6mAKmcqYLMELkTv5rHud8Vlv0Fn/pBysC
-        yWIHdQ7BG5Qmj4Cs4m8HKiV8s8FdmzuftU8/nGef
-X-Google-Smtp-Source: ABdhPJxDXENlmXrhp9PJ7iDubTy3e2MiMZjJiP/T1ExNiyEHROjd2EqD6OIxlhrl7NlegeNQLvRVHcx+LTeAeQsIVcE=
-X-Received: by 2002:a17:906:edaf:: with SMTP id sa15mr7021823ejb.174.1622174093482;
- Thu, 27 May 2021 20:54:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210517095513.850-1-xieyongji@bytedance.com> <20210517095513.850-12-xieyongji@bytedance.com>
- <3740c7eb-e457-07f3-5048-917c8606275d@redhat.com> <CACycT3uAqa6azso_8MGreh+quj-JXO1piuGnrV8k2kTfc34N2g@mail.gmail.com>
- <5a68bb7c-fd05-ce02-cd61-8a601055c604@redhat.com> <CACycT3ve7YvKF+F+AnTQoJZMPua+jDvGMs_ox8GQe_=SGdeCMA@mail.gmail.com>
- <ee00efca-b26d-c1be-68d2-f9e34a735515@redhat.com> <CACycT3ufok97cKpk47NjUBTc0QAyfauFUyuFvhWKmuqCGJ7zZw@mail.gmail.com>
- <00ded99f-91b6-ba92-5d92-2366b163f129@redhat.com> <3cc7407d-9637-227e-9afa-402b6894d8ac@redhat.com>
- <CACycT3s6SkER09KL_Ns9d03quYSKOuZwd3=HJ_s1SL7eH7y5gA@mail.gmail.com> <baf0016a-7930-2ae2-399f-c28259f415c1@redhat.com>
-In-Reply-To: <baf0016a-7930-2ae2-399f-c28259f415c1@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Fri, 28 May 2021 11:54:42 +0800
-Message-ID: <CACycT3vKZ3y0gga8PrSVtssZfNV0Y-A8=iYZSi9sbpHRNkVf-A@mail.gmail.com>
-Subject: Re: Re: [PATCH v7 11/12] vduse: Introduce VDUSE - vDPA Device in Userspace
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        Fri, 28 May 2021 01:47:15 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id C872316CB;
+        Fri, 28 May 2021 01:45:40 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Fri, 28 May 2021 01:45:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        hUPEHjmea6gD9ghw//VNr0qe9P0/zWbmbhFy14SWfpg=; b=Pmc7BrYoVsyuZhrQ
+        GVOKKXUS2VnjHJA7uQPKVW2T8OtszL3POW1n+f8csA/bCtokWXujSJrJWxYwzprz
+        qAnIhyVe98lWSjSFMNh5Mjld3EimduKMTGTEg1BZPKUM2MUHLzVCgLgwBSvje28i
+        NckbK+UQCdfG9iqPwqmy64o4bLjOQxjrgBZGNBuOzRrIfCFzRfG6EZM/hZgzVJDV
+        G0fmbxiDEXXHjhf1xKlNAeNfYq4Wy8kKDHu7fz5BlOduiCULBHLoT+k7PbveJYUj
+        GPgECB/tKYohgbo1FCzXq/zqlskrRnmaNqf0oTg7XTd+VyB2yT/eKKeY8CRa0DhW
+        5TI/iQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=hUPEHjmea6gD9ghw//VNr0qe9P0/zWbmbhFy14SWf
+        pg=; b=foZ7Qw3xnR9RISop9zW8p5e27DhH8JxIcqS7JtmgLwLod/WPZgfO7hHbM
+        5B4L5iO6qzar2jZ6/T0nUnAEA2FLBnyEhC8YiCWRPfdE05wdyMHqIaC3lBt0wegE
+        SsTWqixz8Go6ot88BdEY/Pco2Oi+wSF9r8fBlYBYLTcL1gMFnfTyt1QH6n+/BxWB
+        IkOj6Kg5ZqcYSVkSwx4dmHxQ1zT/iaANVCTD4cr0GNbRWYtNlBu+pDLofBoOUvsx
+        kOHKKLx09qM8+4lT3REPSPBplI2jIN3sUkSEofyNc2m1yQEc9KbEw6zYD9lAnZ5z
+        /ekHhtV2An5nDRfquH7+YB8cB8I1g==
+X-ME-Sender: <xms:gYOwYF4nJbCyBkg93tfRYKlhhZRRfaJZcCBv-pIxvHMCRYF_pR0-sA>
+    <xme:gYOwYC5TzneNVdPoJYQZYIJdGNFwy5qzmHeX0Lpv1CIwTqhP4XNd35ZO1s0qHf4eF
+    gB0nDkPpRQn>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdekiedgleekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    elgedtleeltdffteejudetfefgieehheekffehuefhkeegkeeuleehffehieegjeenucff
+    ohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucfkphepuddtie
+    drieelrddvheehrdeggeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:gYOwYMcWXeu9LZnsBLsoIVikFcTtv2tDzY3dvmmvqzK-Utd7wKLDTw>
+    <xmx:gYOwYOLocK_QOLVBA3u2ivT_DDv6XayuYnh3C70AQEoR2HJcaRB1mw>
+    <xmx:gYOwYJL46QyuQGIsW6hZVDLGdMb0q9sTEllhDQ4oKvP-09vz-JArnQ>
+    <xmx:hIOwYA8_q6Y89COrNQD-ZrDSviiufDpYs7vW2N7wt0nThyPwpJA0RNAliyk>
+Received: from mickey.long.domain.name.themaw.net (106-69-255-44.dyn.iinet.net.au [106.69.255.44])
+        by mail.messagingengine.com (Postfix) with ESMTPA;
+        Fri, 28 May 2021 01:45:32 -0400 (EDT)
+Message-ID: <c21ca225d5c98da1ba8cfb8a472d42f6a4fe29ed.camel@themaw.net>
+Subject: Re: [PATCH v4 0/5] kernfs: proposed locking and concurrency
+ improvement
+From:   Ian Kent <raven@themaw.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Fox Chen <foxhlchen@gmail.com>, Tejun Heo <tj@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        Eric Sandeen <sandeen@sandeen.net>,
+        Brice Goglin <brice.goglin@gmail.com>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Fri, 28 May 2021 13:45:28 +0800
+In-Reply-To: <YK9BKr5h8wOh6YpU@kroah.com>
+References: <YJtz6mmgPIwEQNgD@kroah.com>
+         <CAC2o3D+28g67vbNOaVxuF0OfE0RjFGHVwAcA_3t1AAS_b_EnPg@mail.gmail.com>
+         <CAC2o3DJm0ugq60c8mBafjd81nPmhpBKBT5cCKWvc4rYT0dDgGg@mail.gmail.com>
+         <CAC2o3DJdwr0aqT6LwhuRj8kyXt6NAPex2nG5ToadUTJ3Jqr_4w@mail.gmail.com>
+         <4eae44395ad321d05f47571b58fe3fe2413b6b36.camel@themaw.net>
+         <CAC2o3DKvq12CrsgWTNmQmu3iDJ+9tytMdCJepdBjUKN1iUJ0RQ@mail.gmail.com>
+         <bc9650145291b6e568a8f75d02663b9e4f2bcfd7.camel@themaw.net>
+         <CAC2o3DL1VwbLgajSYSR_UPL-53cjHDp+X63CerQsZ8tgNgO=-A@mail.gmail.com>
+         <da58dcefb59d2b51d95d1dfc012ba058bc77f23b.camel@themaw.net>
+         <6df8d572c6e7a20fab3df13a64f28c1a69648c9f.camel@themaw.net>
+         <YK9BKr5h8wOh6YpU@kroah.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 28, 2021 at 9:33 AM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=886:14, Yongji Xie =E5=86=99=E9=81=93=
-:
-> > On Thu, May 27, 2021 at 4:43 PM Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=884:41, Jason Wang =E5=86=99=E9=81=
-=93:
-> >>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=883:34, Yongji Xie =E5=86=99=E9=
-=81=93:
-> >>>> On Thu, May 27, 2021 at 1:40 PM Jason Wang <jasowang@redhat.com> wro=
-te:
-> >>>>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=881:08, Yongji Xie =E5=86=99=E9=
-=81=93:
-> >>>>>> On Thu, May 27, 2021 at 1:00 PM Jason Wang <jasowang@redhat.com>
-> >>>>>> wrote:
-> >>>>>>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=8812:57, Yongji Xie =E5=86=99=
-=E9=81=93:
-> >>>>>>>> On Thu, May 27, 2021 at 12:13 PM Jason Wang <jasowang@redhat.com=
->
-> >>>>>>>> wrote:
-> >>>>>>>>> =E5=9C=A8 2021/5/17 =E4=B8=8B=E5=8D=885:55, Xie Yongji =E5=86=
-=99=E9=81=93:
-> >>>>>>>>>> +
-> >>>>>>>>>> +static int vduse_dev_msg_sync(struct vduse_dev *dev,
-> >>>>>>>>>> +                           struct vduse_dev_msg *msg)
-> >>>>>>>>>> +{
-> >>>>>>>>>> +     init_waitqueue_head(&msg->waitq);
-> >>>>>>>>>> +     spin_lock(&dev->msg_lock);
-> >>>>>>>>>> +     vduse_enqueue_msg(&dev->send_list, msg);
-> >>>>>>>>>> +     wake_up(&dev->waitq);
-> >>>>>>>>>> +     spin_unlock(&dev->msg_lock);
-> >>>>>>>>>> +     wait_event_killable(msg->waitq, msg->completed);
-> >>>>>>>>> What happens if the userspace(malicous) doesn't give a response
-> >>>>>>>>> forever?
-> >>>>>>>>>
-> >>>>>>>>> It looks like a DOS. If yes, we need to consider a way to fix t=
-hat.
-> >>>>>>>>>
-> >>>>>>>> How about using wait_event_killable_timeout() instead?
-> >>>>>>> Probably, and then we need choose a suitable timeout and more
-> >>>>>>> important,
-> >>>>>>> need to report the failure to virtio.
-> >>>>>>>
-> >>>>>> Makes sense to me. But it looks like some
-> >>>>>> vdpa_config_ops/virtio_config_ops such as set_status() didn't have=
- a
-> >>>>>> return value.  Now I add a WARN_ON() for the failure. Do you mean =
-we
-> >>>>>> need to add some change for virtio core to handle the failure?
-> >>>>> Maybe, but I'm not sure how hard we can do that.
-> >>>>>
-> >>>> We need to change all virtio device drivers in this way.
-> >>>
-> >>> Probably.
-> >>>
-> >>>
-> >>>>> We had NEEDS_RESET but it looks we don't implement it.
-> >>>>>
-> >>>> Could it handle the failure of get_feature() and get/set_config()?
-> >>>
-> >>> Looks not:
-> >>>
-> >>> "
-> >>>
-> >>> The device SHOULD set DEVICE_NEEDS_RESET when it enters an error stat=
-e
-> >>> that a reset is needed. If DRIVER_OK is set, after it sets
-> >>> DEVICE_NEEDS_RESET, the device MUST send a device configuration chang=
-e
-> >>> notification to the driver.
-> >>>
-> >>> "
-> >>>
-> >>> This looks implies that NEEDS_RESET may only work after device is
-> >>> probed. But in the current design, even the reset() is not reliable.
-> >>>
-> >>>
-> >>>>> Or a rough idea is that maybe need some relaxing to be coupled loos=
-ely
-> >>>>> with userspace. E.g the device (control path) is implemented in the
-> >>>>> kernel but the datapath is implemented in the userspace like TUN/TA=
-P.
-> >>>>>
-> >>>> I think it can work for most cases. One problem is that the set_conf=
-ig
-> >>>> might change the behavior of the data path at runtime, e.g.
-> >>>> virtnet_set_mac_address() in the virtio-net driver and
-> >>>> cache_type_store() in the virtio-blk driver. Not sure if this path i=
-s
-> >>>> able to return before the datapath is aware of this change.
-> >>>
-> >>> Good point.
-> >>>
-> >>> But set_config() should be rare:
-> >>>
-> >>> E.g in the case of virtio-net with VERSION_1, config space is read
-> >>> only, and it was set via control vq.
-> >>>
-> >>> For block, we can
-> >>>
-> >>> 1) start from without WCE or
-> >>> 2) we add a config change notification to userspace or
-> >>> 3) extend the spec to use vq instead of config space
-> >>>
-> >>> Thanks
-> >>
-> >> Another thing if we want to go this way:
-> >>
-> >> We need find a way to terminate the data path from the kernel side, to
-> >> implement to reset semantic.
-> >>
-> > Do you mean terminate the data path in vdpa_reset().
->
->
-> Yes.
->
->
-> >   Is it ok to just
-> > notify userspace to stop data path asynchronously?
->
->
-> For well-behaved userspace, yes but no for buggy or malicious ones.
->
+On Thu, 2021-05-27 at 08:50 +0200, Greg Kroah-Hartman wrote:
+> On Thu, May 27, 2021 at 09:23:06AM +0800, Ian Kent wrote:
+> > On Mon, 2021-05-17 at 09:32 +0800, Ian Kent wrote:
+> > > On Fri, 2021-05-14 at 10:34 +0800, Fox Chen wrote:
+> > > > On Fri, May 14, 2021 at 9:34 AM Ian Kent <raven@themaw.net>
+> > > > wrote:
+> > > > > 
+> > > > > On Thu, 2021-05-13 at 23:37 +0800, Fox Chen wrote:
+> > > > > > Hi Ian
+> > > > > > 
+> > > > > > On Thu, May 13, 2021 at 10:10 PM Ian Kent
+> > > > > > <raven@themaw.net>
+> > > > > > wrote:
+> > > > > > > 
+> > > > > > > On Wed, 2021-05-12 at 16:54 +0800, Fox Chen wrote:
+> > > > > > > > On Wed, May 12, 2021 at 4:47 PM Fox Chen
+> > > > > > > > <foxhlchen@gmail.com>
+> > > > > > > > wrote:
+> > > > > > > > > 
+> > > > > > > > > Hi,
+> > > > > > > > > 
+> > > > > > > > > I ran it on my benchmark (
+> > > > > > > > > https://github.com/foxhlchen/sysfs_benchmark).
+> > > > > > > > > 
+> > > > > > > > > machine: aws c5 (Intel Xeon with 96 logical cores)
+> > > > > > > > > kernel: v5.12
+> > > > > > > > > benchmark: create 96 threads and bind them to each
+> > > > > > > > > core
+> > > > > > > > > then
+> > > > > > > > > run
+> > > > > > > > > open+read+close on a sysfs file simultaneously for
+> > > > > > > > > 1000
+> > > > > > > > > times.
+> > > > > > > > > result:
+> > > > > > > > > Without the patchset, an open+read+close operation
+> > > > > > > > > takes
+> > > > > > > > > 550-
+> > > > > > > > > 570
+> > > > > > > > > us,
+> > > > > > > > > perf shows significant time(>40%) spending on
+> > > > > > > > > mutex_lock.
+> > > > > > > > > After applying it, it takes 410-440 us for that
+> > > > > > > > > operation
+> > > > > > > > > and
+> > > > > > > > > perf
+> > > > > > > > > shows only ~4% time on mutex_lock.
+> > > > > > > > > 
+> > > > > > > > > It's weird, I don't see a huge performance boost
+> > > > > > > > > compared
+> > > > > > > > > to
+> > > > > > > > > v2,
+> > > > > > > > > even
+> > > > > > > > 
+> > > > > > > > I meant I don't see a huge performance boost here and
+> > > > > > > > it's
+> > > > > > > > way
+> > > > > > > > worse
+> > > > > > > > than v2.
+> > > > > > > > IIRC, for v2 fastest one only takes 40us
+> > > > > > > 
+> > > > > > > Thanks Fox,
+> > > > > > > 
+> > > > > > > I'll have a look at those reports but this is puzzling.
+> > > > > > > 
+> > > > > > > Perhaps the added overhead of the check if an update is
+> > > > > > > needed is taking more than expected and more than just
+> > > > > > > taking the lock and being done with it. Then there's
+> > > > > > > the v2 series ... I'll see if I can dig out your reports
+> > > > > > > on those too.
+> > > > > > 
+> > > > > > Apologies, I was mistaken, it's compared to V3, not V2. 
+> > > > > > The
+> > > > > > previous
+> > > > > > benchmark report is here.
+> > > > > > https://lore.kernel.org/linux-fsdevel/CAC2o3DKNc=sL2n8291Dpiyb0bRHaX=nd33ogvO_LkJqpBj-YmA@mail.gmail.com/
+> > > > > 
+> > > > > Are all these tests using a single file name in the
+> > > > > open/read/close
+> > > > > loop?
+> > > > 
+> > > > Yes,  because It's easy to implement yet enough to trigger the
+> > > > mutex_lock.
+> > > > 
+> > > > And you are right It's not a real-life pattern, but on the
+> > > > bright
+> > > > side, it proves there is no original mutex_lock problem
+> > > > anymore. :)
+> > > 
+> > > I've been looking at your reports and they are quite interesting.
+> > > 
+> > > > 
+> > > > > That being the case the per-object inode lock will behave
+> > > > > like a
+> > > > > mutex and once contention occurs any speed benefits of a
+> > > > > spinlock
+> > > > > over a mutex (or rwsem) will disappear.
+> > > > > 
+> > > > > In this case changing from a write lock to a read lock in
+> > > > > those
+> > > > > functions and adding the inode mutex will do nothing but add
+> > > > > the
+> > > > > overhead of taking the read lock. And similarly adding the
+> > > > > update
+> > > > > check function also just adds overhead and, as we see, once
+> > > > > contention starts it has a cumulative effect that's often not
+> > > > > linear.
+> > > > > 
+> > > > > The whole idea of a read lock/per-object spin lock was to
+> > > > > reduce
+> > > > > the possibility of contention for paths other than the same
+> > > > > path
+> > > > > while not impacting same path accesses too much for an
+> > > > > overall
+> > > > > gain. Based on this I'm thinking the update check function is
+> > > > > probably not worth keeping, it just adds unnecessary churn
+> > > > > and
+> > > > > has a negative impact for same file contention access
+> > > > > patterns.
+> > > 
+> > > The reports indicate (to me anyway) that the slowdown isn't
+> > > due to kernfs. It looks more like kernfs is now putting pressure
+> > > on the VFS, mostly on the file table lock but it looks like
+> > > there's a mild amount of contention on a few other locks as well
+> > > now.
+> > > 
+> > > That's a whole different problem and those file table handling
+> > > functions don't appear to have any obvious problems so they are
+> > > doing what they have to do and that can't be avoided.
+> > > 
+> > > That's definitely out of scope for these changes.
+> > > 
+> > > And, as you'd expect, once any appreciable amount of contention
+> > > happens our measurements go out the window, certainly with
+> > > respect to kernfs.
+> > > 
+> > > It also doesn't change my option that checking if an inode
+> > > attribute update is needed in kernfs isn't useful since, IIUC
+> > > that file table lock contention would result even if you were
+> > > using different paths.
+> > > 
+> > > So I'll drop that patch from the series.
+> > 
+> > It will probably not make any difference, but for completeness
+> > and after some thought, I felt I should post what I think is
+> > happening with the benchmark.
+> > 
+> > The benchmark application runs a pthreads thread for each CPU
+> > and goes into a tight open/read/close loop to demonstrate the
+> > contention that can occur on the kernfs mutex as the number of
+> > CPUs grows.
+> > 
+> > But that tight open/read/close loop causes contention on the VFS
+> > file table because the pthreads threads share the process file
+> > table.
+> > 
+> > So the poor performance is actually evidence the last patch is
+> > doing what it's meant to do rather than evidence of a regression
+> > with the series.
+> > 
+> > The benchmark is putting pressure on the process file table on
+> > some hardware configurations but those critical sections are small
+> > and there's really nothing obvious that can be done to improve the
+> > file table locking.
+> > 
+> > It is however important to remember that the benckmark application
+> > access pattern is not a normal access pattern by a long way.
+> > 
+> > So I don't see the need for a new revision of the series with the
+> > last patch dropped.
+> > 
+> > If there's a change of heart and the series was to be merged I'll
+> > leave whether to include this last patch to the discretion of the
+> > maintainer as the bulk of the improvement comes from the earlier
+> > patches anyway.
+> 
+> Can you please resubmit the series, it is long-gone from my review
+> queue.
 
-But the buggy or malicious daemons can't do anything if my
-understanding is correct.
+Sure, will do as soon as I can.
 
-> I had an idea, how about terminate IOTLB in this case? Then we're in
-> fact turn datapath off.
->
+Thanks
+Ian
 
-Sorry, I didn't get your point here. What do you mean by terminating
-IOTLB? Remove iotlb mapping? But userspace can still access the mapped
-region.
-
-Thanks,
-Yongji
