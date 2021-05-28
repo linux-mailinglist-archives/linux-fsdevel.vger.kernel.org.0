@@ -2,104 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB273393B50
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 04:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBEC1393B6D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 04:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235991AbhE1CMH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 22:12:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37484 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235823AbhE1CMF (ORCPT
+        id S234646AbhE1Cct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 22:32:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49152 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233824AbhE1Ccs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 22:12:05 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DC1AC06174A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 19:10:30 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id j12so1394703pgh.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 19:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=v+SsYqHRR/RJ2vuPiv+eqG29wbplMivXPG8IiOrrLnM=;
-        b=sIbw/QaVCgWRNBJNdHkNrAqeT3Pjq7PWyq5SAhXrEPVzo0yXmysC4kjRVwzApIyJNA
-         xWJ4kS8DWQ3xk4FFLqulePDZ7gqBjqHDYjEeXKehf3PKj47PiCEQRycUK0FwHj+KBEGF
-         TpcfEySwaXHWINwsdTgw4rRtnZsG7qzRS/u3k8QNdcn9cMUxNwyqnWEwLYjyp2y3cHoO
-         jxRsufKBHgwGNPLqnTgA9bal4bY/uL6aBR/rBrX9+MrLVwhkwrSCG+SPb1Z0/4oisNLA
-         noTSOmgrPp/3IvAkYPbA+9ra9kjDfiqZO5a/dKYb/Sx3J5Y7culyEvsso+gkJBy6NTBR
-         Y8EQ==
+        Thu, 27 May 2021 22:32:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622169074;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9EGKgkb8o4xv2IZRZTEVrb1Y1+m/UXhkrrjmtsfSqmQ=;
+        b=Dz/+ZFEeytbF90rFAvvFvEM11SvkR+Bzir6ipkQL+h0Qgv1mKT47IvKHXrzKa0L1ZWNaM5
+        7G1eFVgEEEZGq/s8kvz7aWmPJCYWWvVv5LYbaXgFrgKJPqb7Zreec26vAJYR3j34WjoTg5
+        A/acKWOqXePaQWuxMH/ybMCTL6O4wpA=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-496-4kQUUXNOPge_B-NZLKXTOA-1; Thu, 27 May 2021 22:31:12 -0400
+X-MC-Unique: 4kQUUXNOPge_B-NZLKXTOA-1
+Received: by mail-pl1-f199.google.com with SMTP id t2-20020a170902d202b02900fee5c3472cso654329ply.21
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 19:31:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=v+SsYqHRR/RJ2vuPiv+eqG29wbplMivXPG8IiOrrLnM=;
-        b=jull+2CT1m0OR1EOdr0zoKzfVcfWCOKieEoXv9FfB/34GZL93O+cQwRbHwIfwjZe7D
-         5HYSEkG/8m6uByFyBmk/JmeqB2gr7SX1ksNmlgNtKpbuVg1/MQYMY/Vrrg6IkFz/ukjh
-         W+P+sqfxUgL9rnvJN6L1JFSo/ZzMko72PxllAEgr0WugMd3owel0Ph8ztc/rexIEUmd7
-         PONxtbeab3oRkx4mVq6BHei/5Xne4B/yzJmrH2ySSd5ZrMVzw66uILh7HTG245484BrZ
-         /O2dYR1pcpm7HNjldwEM4QP/rzTS65BU7xACEG8NCtaF1rh6Tlmz0EB/I/pHgVi3tJr7
-         lFEw==
-X-Gm-Message-State: AOAM5331aM12HKz16gs3L7qAhz80ad8BJmSBsfGPfIgjoWMoXVGwcAw2
-        vE69pGtC47t7eNxzl2OHZSotJA==
-X-Google-Smtp-Source: ABdhPJxQPhDpq0Ub4uva2R6FuXj7T55eOSlSy33otSXAEV5oqDlsIzviCKGT+I9tdtgTwgix2LBYLg==
-X-Received: by 2002:a62:148c:0:b029:2cf:3c2d:7ba with SMTP id 134-20020a62148c0000b02902cf3c2d07bamr1399070pfu.79.1622167829740;
-        Thu, 27 May 2021 19:10:29 -0700 (PDT)
-Received: from [10.86.119.121] ([139.177.225.240])
-        by smtp.gmail.com with ESMTPSA id l1sm2829449pjt.40.2021.05.27.19.10.25
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=9EGKgkb8o4xv2IZRZTEVrb1Y1+m/UXhkrrjmtsfSqmQ=;
+        b=RhwaSMHEh6tEEwa+pA0DDzMhEY8e3t+0NXk2nJ7Ib9KPmYz33ZuRLsW1lpz302koDx
+         jHo4qt+r5UjVhmMoYLbkiUeAzI5Yd/bOLnnqncyuQwfAWBB2TaGRUcir4lf+GGzxzenO
+         FxxjmYL3XsanI/HXHLX3f+/jWsFac/uXFFipM0uRezYFCK6InILj947E1cA+h6PH5ttr
+         qjRfkkQnLEAJxr5ylAlR/WPmTaqCzKzwzEhfici8mIeelGkrHJ6wkcAJpkfaqtgkb4Vr
+         BDJPdabnX5XjJ9f24rz+TiJff3j7YwsuHCY20Y/2QMHJRo7KBYp2I87N2vTNfE1QYvd4
+         /jTg==
+X-Gm-Message-State: AOAM530pv+KLFH1m379PXE7xctqhVecHMYFZ/Mtqk57ge8oQdgpXYzox
+        QcdvUJUdkpmMqMP80f9BzmyZpT8NcG0zGwdhqZL0r4Ec2lbmcWkSDatvd8ZS+UPOhf4EgQpR5VP
+        IYga+DKP22PSMFNfVWobYg9MmHQ==
+X-Received: by 2002:a17:903:1d0:b029:fd:b754:5b8d with SMTP id e16-20020a17090301d0b02900fdb7545b8dmr6051983plh.76.1622169071557;
+        Thu, 27 May 2021 19:31:11 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy3iJPxs/zsjpLpOcecD0zg+TsVkVvFwUGn6NU1wfATInhZz+P2BUuHZdQCGRFkKA1lSiT38Q==
+X-Received: by 2002:a17:903:1d0:b029:fd:b754:5b8d with SMTP id e16-20020a17090301d0b02900fdb7545b8dmr6051955plh.76.1622169071233;
+        Thu, 27 May 2021 19:31:11 -0700 (PDT)
+Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id t14sm2733839pfg.168.2021.05.27.19.31.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 May 2021 19:10:29 -0700 (PDT)
-Subject: Re: [External] Re: [PATCH] fs/proc/kcore.c: add mmap interface
-To:     Andrew Morton <akpm@linux-foundation.org>, adobriyan@gmail.com,
-        rppt@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        songmuchun@bytedance.com, zhouchengming@bytedance.com,
-        chenying.kernel@bytedance.com, zhengqi.arch@bytedance.com
-References: <20210526075142.9740-1-zhoufeng.zf@bytedance.com>
- <20210526173953.49fb3dc48c0f2a8b3c31fe2b@linux-foundation.org>
- <d71a4ffa-f21e-62f5-7fa6-83ca14b3f05b@bytedance.com>
- <20210527153055.aefeee8d8385da8152bdbacc@linux-foundation.org>
-From:   zhoufeng <zhoufeng.zf@bytedance.com>
-Message-ID: <d36b56ca-6405-d7dc-a531-fcbe0acc425d@bytedance.com>
-Date:   Fri, 28 May 2021 10:10:23 +0800
+        Thu, 27 May 2021 19:31:10 -0700 (PDT)
+Subject: Re: [PATCH v7 11/12] vduse: Introduce VDUSE - vDPA Device in
+ Userspace
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20210517095513.850-1-xieyongji@bytedance.com>
+ <20210517095513.850-12-xieyongji@bytedance.com>
+ <3740c7eb-e457-07f3-5048-917c8606275d@redhat.com>
+ <CACycT3uAqa6azso_8MGreh+quj-JXO1piuGnrV8k2kTfc34N2g@mail.gmail.com>
+ <5a68bb7c-fd05-ce02-cd61-8a601055c604@redhat.com>
+ <CACycT3ve7YvKF+F+AnTQoJZMPua+jDvGMs_ox8GQe_=SGdeCMA@mail.gmail.com>
+ <ee00efca-b26d-c1be-68d2-f9e34a735515@redhat.com>
+ <CACycT3ufok97cKpk47NjUBTc0QAyfauFUyuFvhWKmuqCGJ7zZw@mail.gmail.com>
+ <00ded99f-91b6-ba92-5d92-2366b163f129@redhat.com>
+ <CACycT3uK_Fuade-b8FVYkGCKZnne_UGGbYRFwv7WOH2oKCsXSg@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <f20edd55-20cb-c016-b347-dd71c5406ed8@redhat.com>
+Date:   Fri, 28 May 2021 10:31:02 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.10.2
 MIME-Version: 1.0
-In-Reply-To: <20210527153055.aefeee8d8385da8152bdbacc@linux-foundation.org>
-Content-Type: text/plain; charset=gbk; format=flowed
+In-Reply-To: <CACycT3uK_Fuade-b8FVYkGCKZnne_UGGbYRFwv7WOH2oKCsXSg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+在 2021/5/27 下午9:17, Yongji Xie 写道:
+> On Thu, May 27, 2021 at 4:41 PM Jason Wang <jasowang@redhat.com> wrote:
+>>
+>> 在 2021/5/27 下午3:34, Yongji Xie 写道:
+>>> On Thu, May 27, 2021 at 1:40 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>> 在 2021/5/27 下午1:08, Yongji Xie 写道:
+>>>>> On Thu, May 27, 2021 at 1:00 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>>>> 在 2021/5/27 下午12:57, Yongji Xie 写道:
+>>>>>>> On Thu, May 27, 2021 at 12:13 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>>>>>> 在 2021/5/17 下午5:55, Xie Yongji 写道:
+>>>>>>>>> +
+>>>>>>>>> +static int vduse_dev_msg_sync(struct vduse_dev *dev,
+>>>>>>>>> +                           struct vduse_dev_msg *msg)
+>>>>>>>>> +{
+>>>>>>>>> +     init_waitqueue_head(&msg->waitq);
+>>>>>>>>> +     spin_lock(&dev->msg_lock);
+>>>>>>>>> +     vduse_enqueue_msg(&dev->send_list, msg);
+>>>>>>>>> +     wake_up(&dev->waitq);
+>>>>>>>>> +     spin_unlock(&dev->msg_lock);
+>>>>>>>>> +     wait_event_killable(msg->waitq, msg->completed);
+>>>>>>>> What happens if the userspace(malicous) doesn't give a response forever?
+>>>>>>>>
+>>>>>>>> It looks like a DOS. If yes, we need to consider a way to fix that.
+>>>>>>>>
+>>>>>>> How about using wait_event_killable_timeout() instead?
+>>>>>> Probably, and then we need choose a suitable timeout and more important,
+>>>>>> need to report the failure to virtio.
+>>>>>>
+>>>>> Makes sense to me. But it looks like some
+>>>>> vdpa_config_ops/virtio_config_ops such as set_status() didn't have a
+>>>>> return value.  Now I add a WARN_ON() for the failure. Do you mean we
+>>>>> need to add some change for virtio core to handle the failure?
+>>>> Maybe, but I'm not sure how hard we can do that.
+>>>>
+>>> We need to change all virtio device drivers in this way.
+>>
+>> Probably.
+>>
+>>
+>>>> We had NEEDS_RESET but it looks we don't implement it.
+>>>>
+>>> Could it handle the failure of get_feature() and get/set_config()?
+>>
+>> Looks not:
+>>
+>> "
+>>
+>> The device SHOULD set DEVICE_NEEDS_RESET when it enters an error state
+>> that a reset is needed. If DRIVER_OK is set, after it sets
+>> DEVICE_NEEDS_RESET, the device MUST send a device configuration change
+>> notification to the driver.
+>>
+>> "
+>>
+>> This looks implies that NEEDS_RESET may only work after device is
+>> probed. But in the current design, even the reset() is not reliable.
+>>
+>>
+>>>> Or a rough idea is that maybe need some relaxing to be coupled loosely
+>>>> with userspace. E.g the device (control path) is implemented in the
+>>>> kernel but the datapath is implemented in the userspace like TUN/TAP.
+>>>>
+>>> I think it can work for most cases. One problem is that the set_config
+>>> might change the behavior of the data path at runtime, e.g.
+>>> virtnet_set_mac_address() in the virtio-net driver and
+>>> cache_type_store() in the virtio-blk driver. Not sure if this path is
+>>> able to return before the datapath is aware of this change.
+>>
+>> Good point.
+>>
+>> But set_config() should be rare:
+>>
+>> E.g in the case of virtio-net with VERSION_1, config space is read only,
+>> and it was set via control vq.
+>>
+>> For block, we can
+>>
+>> 1) start from without WCE or
+>> 2) we add a config change notification to userspace or
+> I prefer this way. And I think we also need to do similar things for
+> set/get_vq_state().
 
-�� 2021/5/28 ����6:30, Andrew Morton д��:
-> On Thu, 27 May 2021 14:13:09 +0800 zhoufeng <zhoufeng.zf@bytedance.com> wrote:
-> 
->>> I'm surprised that it makes this much difference.  Has DRGN been fully
->>> optimised to minimise the amount of pread()ing which it does?  Why does
->>> it do so much reading?
->> DRGN is a tool similar to Crash, but much lighter. It allows users to
->> obtain kernel data structures from Python scripts. Based on this, we
->> intend to use DRGN for kernel monitoring. So we used some pressure test
->> scripts to test the loss of monitoring.
->> Monitoring is all about getting current real-time data, so every time
->> DRGN tries to get kernel data, it needs to read /proc/kcore. In my
->> script, I tried to loop 1000 times to obtain the information of all the
->> processes in the machine, in order to construct a scene where kernel
->> data is frequently read. So, the frequency in the default version of
->> kcore, pread is very high. In view of this situation, our optimization
->> idea is to reduce the number of context switches as much as possible
->> under the scenario of frequent kernel data acquisition, to reduce the
->> performance loss to a minimum, and then move the monitoring system to
->> the production environment.
-> 
-> Why would a pread() cause a context switch?
-> 
 
-Sorry, my English is poor. I mean trigger the system call.
+Yes, I agree.
 
->> After running for a long time in a
->> production environment, the number of kernel data reads was added as
->> time went on, and the pread number also increased. If users use mmap,
->> it's once for all.
+Thanks
+
+
+>
+> Thanks,
+> Yongji
+>
+
