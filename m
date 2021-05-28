@@ -2,216 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DDFAB393C05
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 05:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62C79393C1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 05:55:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236055AbhE1Dpp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 May 2021 23:45:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58054 "EHLO
+        id S236388AbhE1D4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 May 2021 23:56:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229883AbhE1Dpm (ORCPT
+        with ESMTP id S236365AbhE1D4a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 May 2021 23:45:42 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E41C7C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 20:44:08 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id pi6-20020a17090b1e46b029015cec51d7cdso1729773pjb.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 20:44:08 -0700 (PDT)
+        Thu, 27 May 2021 23:56:30 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8980C06174A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 20:54:54 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id h20so3331793ejg.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 May 2021 20:54:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lh+EYCLoUcN5j6D/Y+n/b8ai24Cn5mqFXxFcteegjFo=;
-        b=vozsVGeqo0Ckn0+Y2O/TK9Dbw7JR8a9ngc9iFrch/sN3pXDdiz1RJXvthFLjcFcuQi
-         zBas4i1V6UykahH0BLxKklVImiDhHYXKsfSFOTNVYQmzhXbBYtKHBnvMHb/Fjw5QAXWu
-         zH+nhDvQ1EE3mJlbDtCL+Q+Um2Pb3HKG6XKNKgGbBk3TtZnAVjCsJZUjx0RQmmCC0yB2
-         gOrpVaL4wBbOpQ1kt03atdfWrbQa2ebWu2gEQfzxhgxZpdhqJGrUbCQX1AqTMQHVwU+Z
-         OF4Jwrk94JM5/+5AzDpuAS8OR39XhxeAFBFbayLMucDFunIhBkTkm6ZkRcMsZxbpPs7g
-         BdjA==
+         :cc:content-transfer-encoding;
+        bh=2ZLRemtbPVIGxGdr14fJ4jpBPRhMcvlWcSDK9Lq8+cA=;
+        b=UFv0CeSDqvB7H4mkMIIZWvzf4ZRd39QgluC5dBflrM0VjpNZjb4IxVcqKSaFjQwfoU
+         rWgDGpgWI0xme5OQoPqmq8AD4Bg47GUZ3YvvnYsyOqUgiOAVd+/QgHxhOseSV4531t1Y
+         q98vrZOP0RiW2TNaGpGtHw15oZuuCxpO73Asd1j4SQ6gy0lkm58WXtdB/hN4BqYh6FU9
+         yEPJgHuNA8Ks60yGNmeOlV3X8KsoFvpP05Rqnp8tYwo8GUgycM88TNuz9mDhgbSWS0TP
+         NxrAo+V30nyDjMdF8BGfXOf5ZfkePuBez8giFvm6iDMPI8AxgjdRKhgpEh9WCjnfb+4Q
+         JHEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lh+EYCLoUcN5j6D/Y+n/b8ai24Cn5mqFXxFcteegjFo=;
-        b=sMicm3OOV7gK/XuHA/xu/V4Rs7OMFCb49PrYai4W/H80gnVrMtVlfpfdwGperiBqt7
-         0OWVykZeHPq2l5c0Y42oL31PRjcnxWb30cQOXQZndG42FjcyDlShoPx8Q2W9jH+9kHIu
-         9lAxh2oBOEeNAC4N+ZWIsd0N1VtQJG1vZMxthGVeVsJv4KS+KoKd4SpSbwQOa5m/npdX
-         6CBqbdAWZNjmAtcqR2Tl4qEoCz9ZWnlbOpHLZMxEXPxzHW/LWJya0dyPFfkVxoxZOyHL
-         kM6Fp01bB8hXcE2eUJq8sMWbzmix5FddCa/jzS3z1R1KlU8fEWllr97DHK2gz7qWjqrU
-         NcdQ==
-X-Gm-Message-State: AOAM5303SVFUpY/HEbGO8sJQpcO93CutPgc3n/xHMukg580HEDnHBEW0
-        pfKpB0H7jb/FOE7nzn/9kMZ3RZX40kC/xyGfv+6wOA==
-X-Google-Smtp-Source: ABdhPJxVg/yaMOcm8kfjg+lyfSkRngQO04M367IWDQJgFRhkfJgKJsl/ryGstDi7um2yVreMtfAldziCbcHmzYltWGM=
-X-Received: by 2002:a17:902:d2c8:b029:fe:cd9a:a6bb with SMTP id
- n8-20020a170902d2c8b02900fecd9aa6bbmr5516453plc.34.1622173448368; Thu, 27 May
- 2021 20:44:08 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2ZLRemtbPVIGxGdr14fJ4jpBPRhMcvlWcSDK9Lq8+cA=;
+        b=HTuFHPqSB3NrT2CUooveV7+gvIvTTX7s/n2DzsM7xwC7g3b/X1PrrLGRaqBOxUv4mT
+         o9opfPrGywZ2qdJyIle5A4+WGO0M9REvv55gvSqVUooe16NflAzeM9uVLfMX45RtppVw
+         JRsdp3HMwcqk/EfpLn+SfoNmvmNNqNZYioxQ5b5w3q1xCiQoLS+oI0NolqBMMCsHcN+3
+         N0lhUkjTF2Vlioi88mT4vYNxwxVWzlzZzcSTeW9HURrX+7Bcx7UeoRO9l6Zg9YnhRLcX
+         JrazXDXIE2ysPNekGltjtzVIB1WXFKskvwjw7XN7HRiX6cFGkMQP5/2BdczsbDU6A2PN
+         wsmA==
+X-Gm-Message-State: AOAM533TJcCl3RX6ZdTiI1g6mAKmcqYLMELkTv5rHud8Vlv0Fn/pBysC
+        yWIHdQ7BG5Qmj4Cs4m8HKiV8s8FdmzuftU8/nGef
+X-Google-Smtp-Source: ABdhPJxDXENlmXrhp9PJ7iDubTy3e2MiMZjJiP/T1ExNiyEHROjd2EqD6OIxlhrl7NlegeNQLvRVHcx+LTeAeQsIVcE=
+X-Received: by 2002:a17:906:edaf:: with SMTP id sa15mr7021823ejb.174.1622174093482;
+ Thu, 27 May 2021 20:54:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210527062148.9361-1-songmuchun@bytedance.com>
- <20210527062148.9361-18-songmuchun@bytedance.com> <YK+LhWvabd+KQWOJ@casper.infradead.org>
-In-Reply-To: <YK+LhWvabd+KQWOJ@casper.infradead.org>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 28 May 2021 11:43:29 +0800
-Message-ID: <CAMZfGtWUNBaGmSq-WKXc+DJTbTiSi96SzmGVZsnc-SQ=UiL=QQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2 17/21] mm: list_lru: replace linear
- array with xarray
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Roman Gushchin <guro@fb.com>, Yang Shi <shy828301@gmail.com>,
-        Alex Shi <alexs@kernel.org>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Dave Chinner <david@fromorbit.com>,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-nfs@vger.kernel.org, zhengqi.arch@bytedance.com,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        fam.zheng@bytedance.com
+References: <20210517095513.850-1-xieyongji@bytedance.com> <20210517095513.850-12-xieyongji@bytedance.com>
+ <3740c7eb-e457-07f3-5048-917c8606275d@redhat.com> <CACycT3uAqa6azso_8MGreh+quj-JXO1piuGnrV8k2kTfc34N2g@mail.gmail.com>
+ <5a68bb7c-fd05-ce02-cd61-8a601055c604@redhat.com> <CACycT3ve7YvKF+F+AnTQoJZMPua+jDvGMs_ox8GQe_=SGdeCMA@mail.gmail.com>
+ <ee00efca-b26d-c1be-68d2-f9e34a735515@redhat.com> <CACycT3ufok97cKpk47NjUBTc0QAyfauFUyuFvhWKmuqCGJ7zZw@mail.gmail.com>
+ <00ded99f-91b6-ba92-5d92-2366b163f129@redhat.com> <3cc7407d-9637-227e-9afa-402b6894d8ac@redhat.com>
+ <CACycT3s6SkER09KL_Ns9d03quYSKOuZwd3=HJ_s1SL7eH7y5gA@mail.gmail.com> <baf0016a-7930-2ae2-399f-c28259f415c1@redhat.com>
+In-Reply-To: <baf0016a-7930-2ae2-399f-c28259f415c1@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Fri, 28 May 2021 11:54:42 +0800
+Message-ID: <CACycT3vKZ3y0gga8PrSVtssZfNV0Y-A8=iYZSi9sbpHRNkVf-A@mail.gmail.com>
+Subject: Re: Re: [PATCH v7 11/12] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 27, 2021 at 8:08 PM Matthew Wilcox <willy@infradead.org> wrote:
+On Fri, May 28, 2021 at 9:33 AM Jason Wang <jasowang@redhat.com> wrote:
 >
-> On Thu, May 27, 2021 at 02:21:44PM +0800, Muchun Song wrote:
-> > If we run 10k containers in the system, the size of the
-> > list_lru_memcg->lrus can be ~96KB per list_lru. When we decrease the
-> > number containers, the size of the array will not be shrinked. It is
-> > not scalable. The xarray is a good choice for this case. We can save
-> > a lot of memory when there are tens of thousands continers in the
-> > system. If we use xarray, we also can remove the logic code of
-> > resizing array, which can simplify the code.
 >
-> I am all for this, in concept.  Some thoughts below ...
+> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=886:14, Yongji Xie =E5=86=99=E9=81=93=
+:
+> > On Thu, May 27, 2021 at 4:43 PM Jason Wang <jasowang@redhat.com> wrote:
+> >>
+> >> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=884:41, Jason Wang =E5=86=99=E9=81=
+=93:
+> >>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=883:34, Yongji Xie =E5=86=99=E9=
+=81=93:
+> >>>> On Thu, May 27, 2021 at 1:40 PM Jason Wang <jasowang@redhat.com> wro=
+te:
+> >>>>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=881:08, Yongji Xie =E5=86=99=E9=
+=81=93:
+> >>>>>> On Thu, May 27, 2021 at 1:00 PM Jason Wang <jasowang@redhat.com>
+> >>>>>> wrote:
+> >>>>>>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=8812:57, Yongji Xie =E5=86=99=
+=E9=81=93:
+> >>>>>>>> On Thu, May 27, 2021 at 12:13 PM Jason Wang <jasowang@redhat.com=
 >
-> > @@ -56,10 +51,8 @@ struct list_lru {
-> >  #ifdef CONFIG_MEMCG_KMEM
-> >       struct list_head        list;
-> >       int                     shrinker_id;
-> > -     /* protects ->memcg_lrus->lrus[i] */
-> > -     spinlock_t              lock;
-> >       /* for cgroup aware lrus points to per cgroup lists, otherwise NULL */
-> > -     struct list_lru_memcg   __rcu *memcg_lrus;
-> > +     struct xarray           *xa;
-> >  #endif
+> >>>>>>>> wrote:
+> >>>>>>>>> =E5=9C=A8 2021/5/17 =E4=B8=8B=E5=8D=885:55, Xie Yongji =E5=86=
+=99=E9=81=93:
+> >>>>>>>>>> +
+> >>>>>>>>>> +static int vduse_dev_msg_sync(struct vduse_dev *dev,
+> >>>>>>>>>> +                           struct vduse_dev_msg *msg)
+> >>>>>>>>>> +{
+> >>>>>>>>>> +     init_waitqueue_head(&msg->waitq);
+> >>>>>>>>>> +     spin_lock(&dev->msg_lock);
+> >>>>>>>>>> +     vduse_enqueue_msg(&dev->send_list, msg);
+> >>>>>>>>>> +     wake_up(&dev->waitq);
+> >>>>>>>>>> +     spin_unlock(&dev->msg_lock);
+> >>>>>>>>>> +     wait_event_killable(msg->waitq, msg->completed);
+> >>>>>>>>> What happens if the userspace(malicous) doesn't give a response
+> >>>>>>>>> forever?
+> >>>>>>>>>
+> >>>>>>>>> It looks like a DOS. If yes, we need to consider a way to fix t=
+hat.
+> >>>>>>>>>
+> >>>>>>>> How about using wait_event_killable_timeout() instead?
+> >>>>>>> Probably, and then we need choose a suitable timeout and more
+> >>>>>>> important,
+> >>>>>>> need to report the failure to virtio.
+> >>>>>>>
+> >>>>>> Makes sense to me. But it looks like some
+> >>>>>> vdpa_config_ops/virtio_config_ops such as set_status() didn't have=
+ a
+> >>>>>> return value.  Now I add a WARN_ON() for the failure. Do you mean =
+we
+> >>>>>> need to add some change for virtio core to handle the failure?
+> >>>>> Maybe, but I'm not sure how hard we can do that.
+> >>>>>
+> >>>> We need to change all virtio device drivers in this way.
+> >>>
+> >>> Probably.
+> >>>
+> >>>
+> >>>>> We had NEEDS_RESET but it looks we don't implement it.
+> >>>>>
+> >>>> Could it handle the failure of get_feature() and get/set_config()?
+> >>>
+> >>> Looks not:
+> >>>
+> >>> "
+> >>>
+> >>> The device SHOULD set DEVICE_NEEDS_RESET when it enters an error stat=
+e
+> >>> that a reset is needed. If DRIVER_OK is set, after it sets
+> >>> DEVICE_NEEDS_RESET, the device MUST send a device configuration chang=
+e
+> >>> notification to the driver.
+> >>>
+> >>> "
+> >>>
+> >>> This looks implies that NEEDS_RESET may only work after device is
+> >>> probed. But in the current design, even the reset() is not reliable.
+> >>>
+> >>>
+> >>>>> Or a rough idea is that maybe need some relaxing to be coupled loos=
+ely
+> >>>>> with userspace. E.g the device (control path) is implemented in the
+> >>>>> kernel but the datapath is implemented in the userspace like TUN/TA=
+P.
+> >>>>>
+> >>>> I think it can work for most cases. One problem is that the set_conf=
+ig
+> >>>> might change the behavior of the data path at runtime, e.g.
+> >>>> virtnet_set_mac_address() in the virtio-net driver and
+> >>>> cache_type_store() in the virtio-blk driver. Not sure if this path i=
+s
+> >>>> able to return before the datapath is aware of this change.
+> >>>
+> >>> Good point.
+> >>>
+> >>> But set_config() should be rare:
+> >>>
+> >>> E.g in the case of virtio-net with VERSION_1, config space is read
+> >>> only, and it was set via control vq.
+> >>>
+> >>> For block, we can
+> >>>
+> >>> 1) start from without WCE or
+> >>> 2) we add a config change notification to userspace or
+> >>> 3) extend the spec to use vq instead of config space
+> >>>
+> >>> Thanks
+> >>
+> >> Another thing if we want to go this way:
+> >>
+> >> We need find a way to terminate the data path from the kernel side, to
+> >> implement to reset semantic.
+> >>
+> > Do you mean terminate the data path in vdpa_reset().
 >
-> Normally, we embed an xarray in its containing structure instead of
-> allocating it.  It's only a pointer, int and spinlock, so generally
-> 16 bytes, as opposed to the 8 bytes for the pointer and a 16 byte
-> allocation.  There is a minor wrinkle in that currently 'NULL' is
-> used to indicate "is not cgroup aware".  Maybe there's another way
-> to indicate that?
+>
+> Yes.
+>
+>
+> >   Is it ok to just
+> > notify userspace to stop data path asynchronously?
+>
+>
+> For well-behaved userspace, yes but no for buggy or malicious ones.
+>
 
-Sure. I can drop patch 8 in this series. In that case, we can use
-->memcg_aware to indicate that.
+But the buggy or malicious daemons can't do anything if my
+understanding is correct.
 
+> I had an idea, how about terminate IOTLB in this case? Then we're in
+> fact turn datapath off.
+>
 
->
-> > @@ -51,22 +51,12 @@ static int lru_shrinker_id(struct list_lru *lru)
-> >  static inline struct list_lru_one *
-> >  list_lru_from_memcg_idx(struct list_lru *lru, int nid, int idx)
-> >  {
-> > -     struct list_lru_memcg *memcg_lrus;
-> > -     struct list_lru_node *nlru = &lru->node[nid];
-> > +     if (list_lru_memcg_aware(lru) && idx >= 0) {
-> > +             struct list_lru_per_memcg *mlru = xa_load(lru->xa, idx);
-> >
-> > -     /*
-> > -      * Either lock or RCU protects the array of per cgroup lists
-> > -      * from relocation (see memcg_update_list_lru).
-> > -      */
-> > -     memcg_lrus = rcu_dereference_check(lru->memcg_lrus,
-> > -                                        lockdep_is_held(&nlru->lock));
-> > -     if (memcg_lrus && idx >= 0) {
-> > -             struct list_lru_per_memcg *mlru;
-> > -
-> > -             mlru = rcu_dereference_check(memcg_lrus->lrus[idx], true);
-> >               return mlru ? &mlru->nodes[nid] : NULL;
-> >       }
-> > -     return &nlru->lru;
-> > +     return &lru->node[nid].lru;
-> >  }
->
-> ... perhaps we move the xarray out from under the #ifdef and use index 0
-> for non-memcg-aware lrus?  The XArray is specially optimised for arrays
-> which only have one entry at 0.
+Sorry, I didn't get your point here. What do you mean by terminating
+IOTLB? Remove iotlb mapping? But userspace can still access the mapped
+region.
 
-Sounds like a good idea. I can do a try.
-
->
-> >  int list_lru_memcg_alloc(struct list_lru *lru, struct mem_cgroup *memcg, gfp_t gfp)
-> >  {
-> > +     XA_STATE(xas, lru->xa, 0);
-> >       unsigned long flags;
-> > -     struct list_lru_memcg *memcg_lrus;
-> > -     int i;
-> > +     int i, ret = 0;
-> >
-> >       struct list_lru_memcg_table {
-> >               struct list_lru_per_memcg *mlru;
-> > @@ -601,22 +522,45 @@ int list_lru_memcg_alloc(struct list_lru *lru, struct mem_cgroup *memcg, gfp_t g
-> >               }
-> >       }
-> >
-> > -     spin_lock_irqsave(&lru->lock, flags);
-> > -     memcg_lrus = rcu_dereference_protected(lru->memcg_lrus, true);
-> > +     xas_lock_irqsave(&xas, flags);
-> >       while (i--) {
-> >               int index = memcg_cache_id(table[i].memcg);
-> >               struct list_lru_per_memcg *mlru = table[i].mlru;
-> >
-> > -             if (index < 0 || rcu_dereference_protected(memcg_lrus->lrus[index], true))
-> > +             xas_set(&xas, index);
-> > +retry:
-> > +             if (unlikely(index < 0 || ret || xas_load(&xas))) {
-> >                       kfree(mlru);
-> > -             else
-> > -                     rcu_assign_pointer(memcg_lrus->lrus[index], mlru);
-> > +             } else {
-> > +                     ret = xa_err(xas_store(&xas, mlru));
->
-> This is mixing advanced and normal XArray concepts ... sorry to have
-> confused you.  I think what you meant to do here was:
->
->                         xas_store(&xas, mlru);
->                         ret = xas_error(&xas);
-
-Sure. Thanks for pointing it out. It's my bad usage.
-
->
-> Or you can avoid introducing 'ret' at all, and keep your errors in the
-> xa_state.  You're kind of mirroring the xa_state errors into 'ret'
-> anyway, so that seems easier to understand?
-
-Make sense. I will do this in the next version. Thanks for your
-all suggestions.
-
->
-> > -     memcg_id = memcg_alloc_cache_id();
-> > +     memcg_id = ida_simple_get(&memcg_cache_ida, 0, MEMCG_CACHES_MAX_SIZE,
-> > +                               GFP_KERNEL);
->
->         memcg_id = ida_alloc_max(&memcg_cache_ida,
->                         MEMCG_CACHES_MAX_SIZE - 1, GFP_KERNEL);
->
-> ... although i think there's actually a fencepost error, and this really
-> should be MEMCG_CACHES_MAX_SIZE.
-
-Totally agree. I have fixed this issue in patch 19.
-
->
-> >       objcg = obj_cgroup_alloc();
-> >       if (!objcg) {
-> > -             memcg_free_cache_id(memcg_id);
-> > +             ida_simple_remove(&memcg_cache_ida, memcg_id);
->
->                 ida_free(&memcg_cache_ida, memcg_id);
-
-I Will update to this new API.
-
->
+Thanks,
+Yongji
