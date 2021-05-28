@@ -2,213 +2,281 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BF42394701
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 20:28:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DB72394824
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 May 2021 23:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229571AbhE1SaV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 May 2021 14:30:21 -0400
-Received: from www62.your-server.de ([213.133.104.62]:46032 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbhE1SaU (ORCPT
+        id S229528AbhE1VKY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 May 2021 17:10:24 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60054 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229500AbhE1VKX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 May 2021 14:30:20 -0400
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1lmgwN-0005jM-Ee; Fri, 28 May 2021 20:10:35 +0200
-Received: from [85.7.101.30] (helo=linux.home)
-        by sslproxy02.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1lmgwN-000BQv-4m; Fri, 28 May 2021 20:10:35 +0200
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>, jolsa@redhat.com
-References: <20210517092006.803332-1-omosnace@redhat.com>
- <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net>
- <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net>
-Date:   Fri, 28 May 2021 20:10:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 28 May 2021 17:10:23 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14SL0IUO157093;
+        Fri, 28 May 2021 21:08:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : content-transfer-encoding : content-type :
+ mime-version; s=corp-2020-01-29;
+ bh=xHwxLDpO0pfhkR2iBQMc6ATfCHVLWrbIrgqq40Sq8Zg=;
+ b=JvFFg98FN0k3vLDRVRKLjZEM0hYiZ8ak0quIm/hi5ATMDYw2XfzbzFz4sH0oBQR3iugI
+ opxyhEHORpCvF4NBJsCxejbgduX9B/IKSIR3zg7LePEjy0QBAFb8OtjYMSf5orCAOabj
+ Cuxi2WnIQTM/9YdMLIYHOMsXr7JZz7yW3DpBGk5r/OCcV7l8B6bJY7hrsdRjSnKvdsL1
+ Lel9nqxZWRJDePFXII2GGdyWS6Iipen3UkygHOzRu9b5FwaoCvbqSrqdXtcZweluLPp2
+ Van+559DNz6/sz4zioTjN6eEjqjKaCEGvNehtWUBvVSYEUOtVd6tczvvuBgtDdHCKOPr SA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 38rne4bnxy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 May 2021 21:08:43 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14SL6Hue188784;
+        Fri, 28 May 2021 21:08:43 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1anam02lp2044.outbound.protection.outlook.com [104.47.57.44])
+        by aserp3030.oracle.com with ESMTP id 38pr0evxw2-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 May 2021 21:08:43 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Dy7reBpE3zoVGqctQ4llYtIHqHDN0GOCALcVDxJh1ZMMDK+swQ9BprvkVPvfwXmnP5vmaC72nlb+Q3qBW6/shpUe5LHrSOS26PGr/QccstkZEXyK/m5R0oDihX0soVXlhHkanL+7y/zTgCLuTRe3ssgYCb5O33oOJ6S9NgiqziE58PFkfKgRvSZyXG58Om0nTuv3xMUHFeFdBxHQQOudtCzKZ6eydLsiv75IZFnvcY3KLmD0/M0UXnx1Qw+sB7TXirPuKuBYtsh9HhgdRHuNaLB1RvgMefKmVn7bohilLyOJL6T/f6lJzKCRNMIH9PQhMcl7I1dUaVQW1QZDZKjuVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xHwxLDpO0pfhkR2iBQMc6ATfCHVLWrbIrgqq40Sq8Zg=;
+ b=Ler1JcWgJON2NgoNVWU9Eqxr+u3302hSeyglSwl98Ocv1Si5H896uNVYisZbFKto/IUO/mrlaB1Am6pvUdjx5iPlWlQY421n3NflRoT6E1fCNxWGcnlirA/ZpvrDcfixWaVCAnkOwms3vXa0C9nT9hOYzqLJo3zOfB7nKLiv+FQmc32wE2qMTp2uz+EVUgmmpnPJG5FL36CAh6x+ZQFIVSK/g8mpHECZIUXJcvHfmdTeXCkpHAnWhUR8schzgOJGLYbG9X/jHxqNTT2KVpMEXQ+LUbOdCCVqcrK+mIFJ8P86+zIvoHVbNAEP71PvOK6+jowwNBJjfp5Upj+NsL4I5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xHwxLDpO0pfhkR2iBQMc6ATfCHVLWrbIrgqq40Sq8Zg=;
+ b=c9zP/2sfYp88iRiHtjxczb2RSVVRiswuoU53tjPY/A/634wo8tONKM6gbcYkH5NScgPcvt9HrHbdXcu85DHcxDG91nFFuZtltDXDpyOTd9h6DsktNZW1Syp9QTjjEJl3r8O74pVtYO6dUZ2+dp2G5Zisv6b6YKicpdKmZB7V6M4=
+Authentication-Results: oss.oracle.com; dkim=none (message not signed)
+ header.d=none;oss.oracle.com; dmarc=none action=none header.from=oracle.com;
+Received: from SJ0PR10MB4752.namprd10.prod.outlook.com (2603:10b6:a03:2d7::19)
+ by SJ0PR10MB4431.namprd10.prod.outlook.com (2603:10b6:a03:2dc::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.22; Fri, 28 May
+ 2021 21:08:41 +0000
+Received: from SJ0PR10MB4752.namprd10.prod.outlook.com
+ ([fe80::4519:4046:5549:95d9]) by SJ0PR10MB4752.namprd10.prod.outlook.com
+ ([fe80::4519:4046:5549:95d9%5]) with mapi id 15.20.4173.024; Fri, 28 May 2021
+ 21:08:41 +0000
+From:   Junxiao Bi <junxiao.bi@oracle.com>
+To:     ocfs2-devel@oss.oracle.com
+Cc:     joseph.qi@linux.alibaba.com, linux-fsdevel@vger.kernel.org,
+        junxiao.bi@oracle.com
+Subject: [PATCH V3] ocfs2: fix data corruption by fallocate
+Date:   Fri, 28 May 2021 14:06:48 -0700
+Message-Id: <20210528210648.9124-1-junxiao.bi@oracle.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [73.231.9.254]
+X-ClientProxiedBy: SJ0PR13CA0012.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c0::17) To SJ0PR10MB4752.namprd10.prod.outlook.com
+ (2603:10b6:a03:2d7::19)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.2/26184/Fri May 28 13:05:50 2021)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from dhcp-10-159-129-251.vpn.oracle.com (73.231.9.254) by SJ0PR13CA0012.namprd13.prod.outlook.com (2603:10b6:a03:2c0::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.9 via Frontend Transport; Fri, 28 May 2021 21:08:41 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 81a7a93c-862a-4175-78fc-08d9221cc554
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB4431:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SJ0PR10MB44317D595EDD416A54B8C78BE8229@SJ0PR10MB4431.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:272;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 4USP7psa/lDc/30RWIYTwSuoFttN86xuPzxiovtUNSXJHdEpZveMx6HNpOHmyagH2zp+DLf1P9vreVRB4eyKjAYx2tenxf+MGqUcEmzxlaTohd0X8ijGrm1A3D7Tu4lxpXgYLfqY2pyxYteqAc5Mr0vJYGw6u7z0YuWIgCd14ZFPLsLNCi/H7/YadvLkO8yzMfGVlYfkXpGZ/5EKODyImhYSHtVbBATtcmGBY9oleBpGIfBNGgjNQXEGzQd4hToInFzjiesB2LT0t+EcIDu4HWRsyfymtovd5Ey3yzBSE0zdeDBt1pP3O72pYYgi0DbnNoQI8AfT/K2wL5XSJt5+pRO1jXBMQiTHP0KACpYjlIDldn0+nu2KSmImBpAWtF6KWEFW3OxCdbzn8SHrbdr1+VYFiL1VqfXirC1TZt0ggMHxmQnY6ymeZ0x7qX7J+wbFKYq/bv6MCr6ntYPrNnaV/NAGSAd2onBrLiIR4Fp8QAo8zItAxfa/ehIJAPe27ru+q62GZ3W728MfU9vFxfUjE6bhxKVWIUPbdYkhh+XGcsADgRAmey5zhOb6WJq56A2jmoUC7hT9fik0xUSv201IDj3Ge5mJd9EAmjh9uNjb0yBShpy5fuH4C3nv78ISRAgWpaBOTAKOfJ4cegb4De1txVOr8NuSb3juWU0bJ9cPiWFlzaRoxRwO1EsTejTzmiOkygNz9B/CA0edrBoTGTMU0BCsKNeAqonE80HvPxgbIieAldwlbpBv7nseCkVUrxedYlUo/UTmzMqLwY9q3yQXmSyxv7UEkWFRj13+Hn178GsZ+nr0Tyz7RuTQzWsgaLK4
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4752.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(366004)(39860400002)(136003)(376002)(346002)(66476007)(66556008)(1076003)(66946007)(316002)(52116002)(36756003)(107886003)(966005)(5660300002)(7696005)(478600001)(8676002)(956004)(2616005)(38100700002)(2906002)(16526019)(186003)(44832011)(26005)(83380400001)(34206002)(6486002)(4326008)(8936002)(86362001)(38350700002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?bXPoqWVJv8xzLdl68wxYDlcrqI7E+lMIJS387DDkupIQBL2LseiZ/MKn+oOr?=
+ =?us-ascii?Q?W+kUsPjsZx3/+sduyxLJTQlVE0Vgk9UcP2yQ9S8zqypkp57vha8lfmBfcf27?=
+ =?us-ascii?Q?aZn59Gis2r/Yjr5h7a07PR2iPMMucMbQBECqH63zyMCCooCTaIgTc/O5fv3C?=
+ =?us-ascii?Q?0S4MdqRLo62e8l4t2k5udatbnyV5rxnVABV9cwTZLBD02WLqTWq88gNfSSEu?=
+ =?us-ascii?Q?3iOFfvm5WoRhTDARtOO0Zi8kPGC2Y2luEXiIwAns2CK/jfAVw7GlAfJqMxen?=
+ =?us-ascii?Q?BeiY+XJwyrBnQGhO8QrhxGRqmoh1uKFIcrMV1U8FuW8kIbu9a3pVJ80BIY0N?=
+ =?us-ascii?Q?6y0stxr0Oqqhn6gcgQOOLL/OEWr9U92td5y0DdDvpAnYxQMwO8zhoPxZjOp0?=
+ =?us-ascii?Q?DcnHnUdBk70SIhdbTg54XGqPHXeowMs9acRlJ0k52IsEZcxh62TRf1vuE8sQ?=
+ =?us-ascii?Q?Sv9pVgVUwXsUh5kq4CKuIlU4nm03XX8c8HLBxg8boMNNVE0EeHt8Zb8/NmS8?=
+ =?us-ascii?Q?n0FUrgIVz8/CJYOJsE6qoo97xw+VtF/u/9gHWe6vYaX0eFLQ2vI8uPIXAx3Y?=
+ =?us-ascii?Q?3LOvSd5apj9DTttlHa78QEur19dJ6Lgkg2aGfNkl2SLRKGpXcXgULoLIba0g?=
+ =?us-ascii?Q?qYbY7KcTRCJxmacNc/T1N1j+iEf0gYnwYzgp1DOgOuf0kXRRoNoB0tOHySWo?=
+ =?us-ascii?Q?QjY5wndtDjRNB4caKSrjGLg14qjmV677ti4ICjuijPBd0g0eTMq4X9ZSsK2m?=
+ =?us-ascii?Q?OXJmRepfvgdiIQ7D0SjN+yYE88aUbOFjRSBirSYSBS9UsB4NJIPW4LuWz1+q?=
+ =?us-ascii?Q?mChEyW6tRGywAPsEnSYG87FW2CKF/3plDDWLVOM/QrroE2qRelnrIIuiWo8G?=
+ =?us-ascii?Q?zvS+HTE94glsDN7eWAAbd1hPrVQeBKCeR09XyFzTnCfjWw40x25+10ynEf/Z?=
+ =?us-ascii?Q?i2RmzbbT2ItH15IO0TSx5NmyBkG7WaIGor822lfh7pq6yicG6mdDe22Ng9w2?=
+ =?us-ascii?Q?+sqbaa86Wz0N399yG4/Qu3WpUbvMO4GaPW/ASvxDksuUKoFOTlE6YyTJ3aMK?=
+ =?us-ascii?Q?RFlBYZA5IA/cUaB/bBU06YU+f5jEEMMPGfvqbItzFfy8m/SMI/fK/zDTJ3EN?=
+ =?us-ascii?Q?JO6NKT9K5E/O7Pezir2kcWTGOCagg4nBYT2c+F98k49LlcCouA8z9cT3Xf3z?=
+ =?us-ascii?Q?eC5LauqM1N/vRv5+rgNuh8m++CYYuf59CvSni/LlZDSvoMLnBNmQQA0ws/83?=
+ =?us-ascii?Q?f5UiXfQ/0FJR7hAfUn7Q/i8Q2vLoiQj5nZt8IgZeT08h1o9pEVa6WwLY2LA6?=
+ =?us-ascii?Q?CRn73Uj0WQxGIvO17/mrT98L?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81a7a93c-862a-4175-78fc-08d9221cc554
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4752.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2021 21:08:41.5737
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oE7wnJ+/wDAI4vkqRgCo46Nlpw11zgYzOQnwSB+a455YzujD0yorE4MuTXo9NCtckRKDZNMo7hmc8gPnviXSCA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4431
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9998 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105280140
+X-Proofpoint-ORIG-GUID: ujP-RCDvc12xgCVHFkEdAhA7OCvyTsNd
+X-Proofpoint-GUID: ujP-RCDvc12xgCVHFkEdAhA7OCvyTsNd
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9998 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 adultscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2105280139
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/28/21 5:47 PM, Paul Moore wrote:
-> On Fri, May 28, 2021 at 3:10 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
->> On 5/28/21 3:37 AM, Paul Moore wrote:
->>> On Mon, May 17, 2021 at 5:22 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->>>>
->>>> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
->>>> lockdown") added an implementation of the locked_down LSM hook to
->>>> SELinux, with the aim to restrict which domains are allowed to perform
->>>> operations that would breach lockdown.
->>>>
->>>> However, in several places the security_locked_down() hook is called in
->>>> situations where the current task isn't doing any action that would
->>>> directly breach lockdown, leading to SELinux checks that are basically
->>>> bogus.
->>>>
->>>> Since in most of these situations converting the callers such that
->>>> security_locked_down() is called in a context where the current task
->>>> would be meaningful for SELinux is impossible or very non-trivial (and
->>>> could lead to TOCTOU issues for the classic Lockdown LSM
->>>> implementation), fix this by modifying the hook to accept a struct cred
->>>> pointer as argument, where NULL will be interpreted as a request for a
->>>> "global", task-independent lockdown decision only. Then modify SELinux
->>>> to ignore calls with cred == NULL.
->>>
->>> I'm not overly excited about skipping the access check when cred is
->>> NULL.  Based on the description and the little bit that I've dug into
->>> thus far it looks like using SECINITSID_KERNEL as the subject would be
->>> much more appropriate.  *Something* (the kernel in most of the
->>> relevant cases it looks like) is requesting that a potentially
->>> sensitive disclosure be made, and ignoring it seems like the wrong
->>> thing to do.  Leaving the access control intact also provides a nice
->>> avenue to audit these requests should users want to do that.
->>
->> I think the rationale/workaround for ignoring calls with cred == NULL (or the previous
->> patch with the unimplemented hook) from Ondrej was two-fold, at least speaking for his
->> seen tracing cases:
->>
->>     i) The audit events that are triggered due to calls to security_locked_down()
->>        can OOM kill a machine, see below details [0].
->>
->>    ii) It seems to be causing a deadlock via slow_avc_audit() -> audit_log_end()
->>        when presumingly trying to wake up kauditd [1].
->>
->> How would your suggestion above solve both i) and ii)?
-> 
-> First off, a bit of general commentary - I'm not sure if Ondrej was
-> aware of this, but info like that is good to have in the commit
-> description.  Perhaps it was in the linked RHBZ but I try not to look
-> at those when reviewing patches; the commit descriptions must be
-> self-sufficient since we can't rely on the accessibility or the
-> lifetime of external references.  It's fine if people want to include
-> external links in their commits, I would actually even encourage it in
-> some cases, but the links shouldn't replace a proper description of
-> the problem and why the proposed solution is The Best Solution.
-> 
-> With that out of the way, it sounds like your issue isn't so much the
-> access check, but rather the frequency of the access denials and the
-> resulting audit records in your particular use case.  My initial
-> reaction is that you might want to understand why you are getting so
-> many SELinux access denials, your loaded security policy clearly does
-> not match with your intended use :)  Beyond that, if you want to
-> basically leave things as-is but quiet the high frequency audit
-> records that result from these SELinux denials you might want to look
-> into the SELinux "dontaudit" policy rule, it was created for things
-> like this.  Some info can be found in The SELinux Notebook, relevant
-> link below:
-> 
-> * https://github.com/SELinuxProject/selinux-notebook/blob/main/src/avc_rules.md#dontaudit
-> 
-> The deadlock issue that was previously reported remains an open case
-> as far as I'm concerned; I'm presently occupied trying to sort out a
-> rather serious issue with respect to io_uring and LSM/audit (plus
-> general stuff at $DAYJOB) so I haven't had time to investigate this
-> any further.  Of course anyone else is welcome to dive into it (I
-> always want to encourage this, especially from "performance people"
-> who just want to shut it all off), however if the answer is basically
-> "disable LSM and/or audit checks" you have to know that it is going to
-> result in a high degree of skepticism from me, so heavy documentation
-> on why it is The Best Solution would be a very good thing :)  Beyond
-> that, I think the suggestions above of "why do you have so many policy
-> denials?" and "have you looked into dontaudit?" are solid places to
-> look for a solution in your particular case.
-> 
->>>> Since most callers will just want to pass current_cred() as the cred
->>>> parameter, rename the hook to security_cred_locked_down() and provide
->>>> the original security_locked_down() function as a simple wrapper around
->>>> the new hook.
->>
->> [...]
->>>
->>>> 3. kernel/trace/bpf_trace.c:bpf_probe_read_kernel{,_str}_common()
->>>>        Called when a BPF program calls a helper that could leak kernel
->>>>        memory. The task context is not relevant here, since the program
->>>>        may very well be run in the context of a different task than the
->>>>        consumer of the data.
->>>>        See: https://bugzilla.redhat.com/show_bug.cgi?id=1955585
->>>
->>> The access control check isn't so much who is consuming the data, but
->>> who is requesting a potential violation of a "lockdown", yes?  For
->>> example, the SELinux policy rule for the current lockdown check looks
->>> something like this:
->>>
->>>     allow <who> <who> : lockdown { <reason> };
->>>
->>> It seems to me that the task context is relevant here and performing
->>> the access control check based on the task's domain is correct.
->>
->> This doesn't make much sense to me, it's /not/ the task 'requesting a potential
->> violation of a "lockdown"', but rather the running tracing program which is e.g.
->> inspecting kernel data structures around the triggered event. If I understood
->> you correctly, having an 'allow' check on, say, httpd would be rather odd since
->> things like perf/bcc/bpftrace/systemtap/etc is installing the tracing probe instead.
->>
->> Meaning, if we would /not/ trace such events (like in the prior mentioned syscall
->> example), then there is also no call to the security_locked_down() from that same/
->> unmodified application.
-> 
-> My turn to say that you don't make much sense to me :)
-> 
-> Let's reset.
+When fallocate punches holes out of inode size, if original isize is in
+the middle of last cluster, then the part from isize to the end of the
+cluster will be zeroed with buffer write, at that time isize is not
+yet updated to match the new size, if writeback is kicked in, it will
+invoke ocfs2_writepage()->block_write_full_page() where the pages out
+of inode size will be dropped. That will cause file corruption. Fix
+this by zero out eof blocks when extending the inode size.
 
-Sure, yep, lets shortly take one step back. :)
+Running the following command with qemu-image 4.2.1 can get a corrupted
+coverted image file easily.
 
-> What task_struct is running the BPF tracing program which is calling
-> into security_locked_down()?  My current feeling is that it is this
-> context/domain/cred that should be used for the access control check;
-> in the cases where it is a kernel thread, I think passing NULL is
-> reasonable, but I think the proper thing for SELinux is to interpret
-> NULL as kernel_t.
+    qemu-img convert -p -t none -T none -f qcow2 $qcow_image \
+             -O qcow2 -o compat=1.1 $qcow_image.conv
 
-If this was a typical LSM hook and, say, your app calls into bind(2) where
-we then invoke security_socket_bind() and check 'current' task, then I'm all
-with you, because this was _explicitly initiated_ by the httpd app, so that
-allow/deny policy belongs in the context of httpd.
+The usage of fallocate in qemu is like this, it first punches holes out of
+inode size, then extend the inode size.
 
-In the case of tracing, it's different. You install small programs that are
-triggered when certain events fire. Random example from bpftrace's README [0],
-you want to generate a histogram of syscall counts by program. One-liner is:
+    fallocate(11, FALLOC_FL_KEEP_SIZE|FALLOC_FL_PUNCH_HOLE, 2276196352, 65536) = 0
+    fallocate(11, 0, 2276196352, 65536) = 0
 
-   bpftrace -e 'tracepoint:raw_syscalls:sys_enter { @[comm] = count(); }'
+v1: https://www.spinics.net/lists/linux-fsdevel/msg193999.html
+v2: https://lore.kernel.org/linux-fsdevel/20210525093034.GB4112@quack2.suse.cz/T/
 
-bpftrace then goes and generates a BPF prog from this internally. One way of
-doing it could be to call bpf_get_current_task() helper and then access
-current->comm via one of bpf_probe_read_kernel{,_str}() helpers. So the
-program itself has nothing to do with httpd or any other random app doing
-a syscall here. The BPF prog _explicitly initiated_ the lockdown check.
-The allow/deny policy belongs in the context of bpftrace: meaning, you want
-to grant bpftrace access to use these helpers, but other tracers on the
-systems like my_random_tracer not. While this works for prior mentioned
-cases of security_locked_down() with open_kcore() for /proc/kcore access
-or the module_sig_check(), it is broken for tracing as-is, and the patch
-I sent earlier fixes this.
+Cc: <stable@vger.kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+---
 
-Thanks,
-Daniel
+Changes in v3:
+- move i_size_write after zeroout done, this can remove duplicated code and kill possible race.
 
-   [0] https://github.com/iovisor/bpftrace
+Changes in v2:
+- suggested by Jan Kara, using sb_issue_zeroout to zero eof blocks in disk directly.
+
+ fs/ocfs2/file.c | 55 ++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 50 insertions(+), 5 deletions(-)
+
+diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+index f17c3d33fb18..775657943057 100644
+--- a/fs/ocfs2/file.c
++++ b/fs/ocfs2/file.c
+@@ -1855,6 +1855,45 @@ int ocfs2_remove_inode_range(struct inode *inode,
+ 	return ret;
+ }
+ 
++/*
++ * zero out partial blocks of one cluster.
++ *
++ * start: file offset where zero starts, will be made upper block aligned.
++ * len: it will be trimmed to the end of current cluster if "start + len"
++ *      is bigger than it.
++ */
++static int ocfs2_zeroout_partial_cluster(struct inode *inode,
++					u64 start, u64 len)
++{
++	int ret;
++	u64 start_block, end_block, nr_blocks;
++	u64 p_block, offset;
++	u32 cluster, p_cluster, nr_clusters;
++	struct super_block *sb = inode->i_sb;
++	u64 end = ocfs2_align_bytes_to_clusters(sb, start);
++
++	if (start + len < end)
++		end = start + len;
++
++	start_block = ocfs2_blocks_for_bytes(sb, start);
++	end_block = ocfs2_blocks_for_bytes(sb, end);
++	nr_blocks = end_block - start_block;
++	if (!nr_blocks)
++		return 0;
++
++	cluster = ocfs2_bytes_to_clusters(sb, start);
++	ret = ocfs2_get_clusters(inode, cluster, &p_cluster,
++				&nr_clusters, NULL);
++	if (ret)
++		return ret;
++	if (!p_cluster)
++		return 0;
++
++	offset = start_block - ocfs2_clusters_to_blocks(sb, cluster);
++	p_block = ocfs2_clusters_to_blocks(sb, p_cluster) + offset;
++	return sb_issue_zeroout(sb, p_block, nr_blocks, GFP_NOFS);
++}
++
+ /*
+  * Parts of this function taken from xfs_change_file_space()
+  */
+@@ -1865,7 +1904,7 @@ static int __ocfs2_change_file_space(struct file *file, struct inode *inode,
+ {
+ 	int ret;
+ 	s64 llen;
+-	loff_t size;
++	loff_t size, orig_isize;
+ 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+ 	struct buffer_head *di_bh = NULL;
+ 	handle_t *handle;
+@@ -1896,6 +1935,7 @@ static int __ocfs2_change_file_space(struct file *file, struct inode *inode,
+ 		goto out_inode_unlock;
+ 	}
+ 
++	orig_isize = i_size_read(inode);
+ 	switch (sr->l_whence) {
+ 	case 0: /*SEEK_SET*/
+ 		break;
+@@ -1903,7 +1943,7 @@ static int __ocfs2_change_file_space(struct file *file, struct inode *inode,
+ 		sr->l_start += f_pos;
+ 		break;
+ 	case 2: /*SEEK_END*/
+-		sr->l_start += i_size_read(inode);
++		sr->l_start += orig_isize;
+ 		break;
+ 	default:
+ 		ret = -EINVAL;
+@@ -1957,6 +1997,14 @@ static int __ocfs2_change_file_space(struct file *file, struct inode *inode,
+ 	default:
+ 		ret = -EINVAL;
+ 	}
++
++	/* zeroout eof blocks in the cluster. */
++	if (!ret && change_size && orig_isize < size) {
++		ret = ocfs2_zeroout_partial_cluster(inode, orig_isize,
++					size - orig_isize);
++		if (!ret)
++			i_size_write(inode, size);
++	}
+ 	up_write(&OCFS2_I(inode)->ip_alloc_sem);
+ 	if (ret) {
+ 		mlog_errno(ret);
+@@ -1973,9 +2021,6 @@ static int __ocfs2_change_file_space(struct file *file, struct inode *inode,
+ 		goto out_inode_unlock;
+ 	}
+ 
+-	if (change_size && i_size_read(inode) < size)
+-		i_size_write(inode, size);
+-
+ 	inode->i_ctime = inode->i_mtime = current_time(inode);
+ 	ret = ocfs2_mark_inode_dirty(handle, inode, di_bh);
+ 	if (ret < 0)
+-- 
+2.24.3 (Apple Git-128)
+
