@@ -2,124 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2B5A3948F4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 May 2021 00:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42BB63949C4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 May 2021 03:10:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbhE1Wy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 May 2021 18:54:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60528 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229575AbhE1WyY (ORCPT
+        id S229559AbhE2BMD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 May 2021 21:12:03 -0400
+Received: from mail-40135.protonmail.ch ([185.70.40.135]:45907 "EHLO
+        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229563AbhE2BMD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 May 2021 18:54:24 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC372C061760
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 May 2021 15:52:47 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id s22so7499974ejv.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 May 2021 15:52:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hYw5L9uovAkFsfHnHeXQzSMU5L4IRTMjhY6/K5rzT9U=;
-        b=yuNgeXWN+6xWyHkZN3hopiuhLwOwLkMW4jfx/Ke9qnP+4D2F8F70wSggXfODvDfJTi
-         ILz10rk+8ClZi8HbQdGtQbcSvgtB1sGOONGOZStOBth62K6Hz5gg9CX1vrt+j4VA5tlX
-         Ix+Nfa7RDnmnOhfUmMbJi+8cg+u3ye37cM6IYBcAIMHhRDDaEBkVCskOi0kOs7gnKSdI
-         mXKdCDDvyo3dLsxWV8KBORTR/cOBJBOknrc9qVd3Bzm0TtTxq1bM5m5gMw8Uhs9lgJXG
-         aX1MQzG+pMBsWwu0lszw5ECGLix/RDqMzdlR8Bx+v92dGBI1vhRO3aOIv5eom6bntiJ4
-         /j8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hYw5L9uovAkFsfHnHeXQzSMU5L4IRTMjhY6/K5rzT9U=;
-        b=nataXfsuFkhU+vGQ1llvkl8c1PBBuvT+nEmWKuZ+BUwZivjk7vfLUNnuf6irkgK6LB
-         4u/hXcPoTHvOl8lupmQFN6GVYrxX9iPgkZmC+59ohpyql1gGcCG5lX0ZWGrS+Cu6mJSG
-         ese10GpevvVmvrMiXXnCE+zqusGsAU5TtjxM1+No1XUfBUIelI8246y3RhUngohJ/wND
-         0R31inWmf0YZ2/ELyczu/UqXJZG8Ir5cB5Bmen8u5fWGenFFD8w0mM8FChRnWi64u6Iw
-         N6YXcOdn9RB9t2koT5BOVFm/ck5OQWa/wcE7yIyguEmycN2la65TswdHcZz7vSHod9PA
-         UOjg==
-X-Gm-Message-State: AOAM530x+1L5AUyrLL13TFkjJic8dEtk3vDLuFglKCVAmVVcCc9m6ZQa
-        VptU5PESlcuZez4Wtdb5PbYY7wkUsR7/oUulllmUYTbOkA==
-X-Google-Smtp-Source: ABdhPJyM59D/3ndTZ2tM5xKxQiqHabnQvuoHlfDxd+J5YttV0ukxr9SsE/gZ/BunSIgaPf5x9SH6g251CYE//WbdFbc=
-X-Received: by 2002:a17:906:4111:: with SMTP id j17mr1665351ejk.488.1622242365987;
- Fri, 28 May 2021 15:52:45 -0700 (PDT)
+        Fri, 28 May 2021 21:12:03 -0400
+Date:   Sat, 29 May 2021 01:10:12 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1622250625;
+        bh=+w5DrFGtQT7qGSjGuDnH/5/WNWgRUzVCn8cxpkKg+UU=;
+        h=Date:To:From:Cc:Reply-To:Subject:From;
+        b=R9WETm0fyZJzkJ3UkIhI88VJVw2PneoVEsKtpATIg/MSMvGzx9WW/J/YwW0XLLhju
+         w586zYWrm7sLSPr6V9af+jdYDQUAI4r9sbtk+FZbUx2wn62l/Htz2dz0mtbBEWy3tp
+         ylZwW0a2r55zLl7TcHcxCkwy4RyfOxjDlc+NTflY=
+To:     "namjae.jeon@samsung.com" <namjae.jeon@samsung.com>,
+        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
+From:   Aidan MacDonald <amachronic@protonmail.com>
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Reply-To: Aidan MacDonald <amachronic@protonmail.com>
+Subject: exFAT unexpected handling of filenames ending with dots
+Message-ID: <WCLW4rMlL5bsun3xz4lbVpKFcjJnaWwoKKvl-QPTF1YEaDtDX5uS3Pj472UxXuxgBnDbznfc0MpYj5fsCzLuhnbStgEN7jHv8Q_Ynxy3kFk=@protonmail.com>
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
- <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net>
-In-Reply-To: <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 28 May 2021 18:52:34 -0400
-Message-ID: <CAHC9VhRkz48MLv_QNfnRWFPvFxEV7oJH5eNHGUtvWdjG4M1YFA@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>, jolsa@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.2 required=10.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM shortcircuit=no
+        autolearn=disabled version=3.4.4
+X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on
+        mailout.protonmail.ch
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 28, 2021 at 2:28 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
-> On 5/28/21 5:47 PM, Paul Moore wrote:
-> > Let's reset.
->
-> Sure, yep, lets shortly take one step back. :)
->
-> > What task_struct is running the BPF tracing program which is calling
-> > into security_locked_down()?  My current feeling is that it is this
-> > context/domain/cred that should be used for the access control check;
-> > in the cases where it is a kernel thread, I think passing NULL is
-> > reasonable, but I think the proper thing for SELinux is to interpret
-> > NULL as kernel_t.
->
-> If this was a typical LSM hook and, say, your app calls into bind(2) where
-> we then invoke security_socket_bind() and check 'current' task, then I'm all
-> with you, because this was _explicitly initiated_ by the httpd app, so that
-> allow/deny policy belongs in the context of httpd.
->
-> In the case of tracing, it's different. You install small programs that are
-> triggered when certain events fire. Random example from bpftrace's README [0],
-> you want to generate a histogram of syscall counts by program. One-liner is:
->
->    bpftrace -e 'tracepoint:raw_syscalls:sys_enter { @[comm] = count(); }'
->
-> bpftrace then goes and generates a BPF prog from this internally. One way of
-> doing it could be to call bpf_get_current_task() helper and then access
-> current->comm via one of bpf_probe_read_kernel{,_str}() helpers. So the
-> program itself has nothing to do with httpd or any other random app doing
-> a syscall here. The BPF prog _explicitly initiated_ the lockdown check.
-> The allow/deny policy belongs in the context of bpftrace: meaning, you want
-> to grant bpftrace access to use these helpers, but other tracers on the
-> systems like my_random_tracer not. While this works for prior mentioned
-> cases of security_locked_down() with open_kcore() for /proc/kcore access
-> or the module_sig_check(), it is broken for tracing as-is, and the patch
-> I sent earlier fixes this.
+Hi, Namjae and Sungjong,
 
-Sigh.
+Recently, I was made aware of a problem with how the exFAT driver handles f=
+ilenames ending with dots.
 
-Generally it's helpful when someone asks a question if you answer it
-directly before going off and answering your own questions.  Listen, I
-get it, you wrote a patch and it fixes your problem (you've mentioned
-that already) and it's wonderful and all that, but the rest of us
-(maybe just me) need to sort this out too and talking past questions
-isn't a great way to help us get there (once again, maybe just me).  I
-think I can infer an answer from you, but you've made me grumpy now so
-I'm not ACK'ing or NACK'ing anything right now; I clearly need to go
-spend some time reading through BPF code.  Woo.
+Original bug report was against an audio player supported by Rockbox:
+https://www.rockbox.org/tracker/task/13293
 
->    [0] https://github.com/iovisor/bpftrace
+Upon further investigation it turned out to be a Linux kernel issue. Note t=
+he audio player referenced there runs Linux 3.10 or so and uses some versio=
+n of the Samsung exFAT driver -- so I guess this has been an issue for a _l=
+ong_ time. I was able to reproduce it on my laptop running v5.10.39!
 
--- 
-paul moore
-www.paul-moore.com
+It appears that any number of trailing dots are stripped from the end of th=
+e filename, causing some interesting bugs.
+
+The behaviour I am observing is this:
+
+1. If creating a file, the name is stripped of all trailing dots and the st=
+ripped name is used to create the file (original name is silently discarded=
+).
+
+2. If accessing a file within a directory, the stripped filename is used to=
+ conduct the search, ie. if you enter 'A...' the driver will actually searc=
+h using the name 'A'.
+
+It is this second part which causes problems. If you have a file named "A."=
+ on an exFAT filesystem, it will show up in directory listings but if you t=
+ry to access it, you get 'file not found'. That is because the driver is ac=
+tually looking for "A" even though you think you are looking for "A." -- an=
+d even worse, if "A" does exist, the driver will silently access "A" instea=
+d!
+
+Clearly due to the first part, you cannot get into this situation without u=
+sing another driver -- like the exFAT FUSE driver -- to create the problema=
+tic filenames. (That's how the Rockbox bug reporter managed to run into thi=
+s.)
+
+Now, a function called exfat_striptail_len() in fs/exfat/namei.c is respons=
+ible for the filename stripping, it simply removes all the trailing dots fr=
+om a name and I guess it is the cause of this problem. So this 'feature' wa=
+s intentionally added in.
+
+I've only skimmed the exFAT spec but I can find nothing in it about strippi=
+ng dots from the end of a filename. The FUSE-based exFAT driver appears to =
+treat dots as significant too.
+
+It seems Windows suffers the same trailing dots bug, silently accessing the=
+ wrong files despite listing all names correctly. But I obviously can't say=
+ whether that is due to filesystem drivers or issues higher up the stack.
+
+To be honest I have no idea what the purpose of this 'dot stripping' is... =
+even if it was for the sake of "Windows compatibility" -- ie. mimicking Win=
+dows bugs -- there are names that Windows normally rejects which the in-ker=
+nel exFAT driver will accept, such as names with trailing spaces.
+
+Personally, I don't see any issue with how the FUSE driver behaves. It also=
+ seems to be correct with respect to Microsoft's official spec. I don't see=
+ why Linux should deviate from the spec, especially in a way that makes it =
+_less_ robust.
+
+I did search for any other reports of this issue, but it seems to be such a=
+ corner case that nobody's mentioned it anywhere. Nor can I find any discus=
+sion or rationale for the dot stripping behaviour.
+
+Kind regards,
+Aidan
