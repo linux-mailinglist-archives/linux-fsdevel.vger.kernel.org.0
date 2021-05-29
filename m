@@ -2,160 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 805A5394D13
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 May 2021 18:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4188A394D80
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 May 2021 19:12:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbhE2QGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 May 2021 12:06:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56730 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229693AbhE2QGw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 May 2021 12:06:52 -0400
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A693C061574;
-        Sat, 29 May 2021 09:05:15 -0700 (PDT)
-Received: by mail-il1-x130.google.com with SMTP id j30so6065583ila.5;
-        Sat, 29 May 2021 09:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UeCTtwbtJUiWSQAeIGeQfdmWGqZFg8Y6F6ODdUcAxyQ=;
-        b=NfLMvDaTnZVbpmuFivIg/42Em+xIjAQ6JEDx1caupZNeLa4nEXUXKhRggGayEUxJsC
-         KDNOqZXkXcha8IKsR2lRWmtQX2enI8P7PGmclb4tFcL53QqEyGgA8T3dQ4HM6DZzEzD5
-         vOwWYTFNJEdDU7Dvblw/sz6v2cx/+RQ/v8UuOETJzpOydOvoaeDBNaic5b0WPxbpjMsF
-         +3puNnMHxjeI/PGW1ZBhwhb+E2msn7iiwWYWVzIQrvhxro4EPn4Yh4y7EeYMM1Zw3RI1
-         7rZ3yWdgCSU4JTo+vrvgiupz7OqPVw50pM1qlLFL0sv5QzRqhWBOd4Wx/A9eeS4u/Umm
-         1WIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UeCTtwbtJUiWSQAeIGeQfdmWGqZFg8Y6F6ODdUcAxyQ=;
-        b=hrQx8VlDuabFLGdZm8sp6G9Qu1Eamh1GeAn273pPCagzgu2BqFK3nnojOHwq9k67qH
-         drYayS2KXIQGAUY9vSyOwutDtPzf7FLv0fiis34UZEKvALEx3gBVyTQu8ICk2HZX8ewQ
-         MFzdT3jfQtr07C2YwKViMsbOwn4ee0ciYubWl8zt8bLa24et4kjZ4sDAzVVWA5J3fxKx
-         yGaJLRXcDJsGwV6GiHsbz/szvDmskN01fGZEsSiV0aIodaU6D2i4MzOUshWkvtCqeXQL
-         newRn67QhAjvHZvxD/fb8Ma4ibxCmvpBgN5Xr9EMNsiviaoRM9UhUfMcx9V3jkcSZdYN
-         HPAA==
-X-Gm-Message-State: AOAM530QC0qt7lkbOP108ADudlxhyN/UeCjL9S+AQkMvZ4noiP7Z0Zig
-        gjpRULAM/xK3Lo/SJPOjjQtO67UcuZJFwpTg6H1YE0P9eTo=
-X-Google-Smtp-Source: ABdhPJzYfqm88FcV5qakZY1eh0A74PUChsz2A7bm6WNQlE9GniDhfI5RcYYqUTRGEUAgv0EDJSL8WAYyxhL6wI8gMU8=
-X-Received: by 2002:a92:cc43:: with SMTP id t3mr11751892ilq.250.1622304314595;
- Sat, 29 May 2021 09:05:14 -0700 (PDT)
+        id S229792AbhE2RNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 May 2021 13:13:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229734AbhE2RNt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 29 May 2021 13:13:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6B52961107;
+        Sat, 29 May 2021 17:12:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622308332;
+        bh=ylmSLyCL6LF00Vk0pDrjmwZ52LFnCSdobf7HKQl8Tec=;
+        h=Date:From:To:Cc:Subject:From;
+        b=gxV8/pypK+O5GF1dp+CgEtLlb7hZt1TBSe56NumWNM3VD23SSXbS4L1wQfYZK8gqL
+         m6UAz6i7qceUkiVQXphvLdDqdAN3NcSp0Scv4imSC/IHfOPzLoOitZjK9SvqduQTvQ
+         8pIs47hHvUTobfk5W3xUffEQx1Jadn/FtAWj+NDg1aPtohqE4Lr1q9T7h9n4FvI1Ib
+         Fx8kWb0nrNn5AWVd8S7VNaEztthHUDzwJm6cyVLoNfmt8cz4eyDYY7U6bYhZ/cRCaP
+         y0RK5ZckZgUyZEd+WDyluHScDxi9GfxIqu+5+VaqKcvpcxUa6gaFK72zuJVRYs5fpv
+         am4tLWbbGWlmw==
+Date:   Sat, 29 May 2021 10:12:12 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
+Subject: [GIT PULL] xfs: fixes for 5.13-rc4
+Message-ID: <20210529171212.GQ2402049@locust>
 MIME-Version: 1.0
-References: <a8828676-210a-99e8-30d7-6076f334ed71@virtuozzo.com>
- <CAOQ4uxgZ08ePA5WFOYFoLZaq_-Kjr-haNzBN5Aj3MfF=f9pjdg@mail.gmail.com>
- <1bb71cbf-0a10-34c7-409d-914058e102f6@virtuozzo.com> <CAOQ4uxieqnKENV_kJYwfcnPjNdVuqH3BnKVx_zLz=N_PdAguNg@mail.gmail.com>
- <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com> <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
- <20200922210445.GG57620@redhat.com> <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
- <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com>
- <CAOQ4uxgKr75J1YcuYAqRGC_C5H_mpCt01p5T9fHSuao_JnxcJA@mail.gmail.com> <CAJfpegviT38gja+-pE+5DCG0y9n3GUv4wWG_r3XmSWW6me88Cw@mail.gmail.com>
-In-Reply-To: <CAJfpegviT38gja+-pE+5DCG0y9n3GUv4wWG_r3XmSWW6me88Cw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 29 May 2021 19:05:03 +0300
-Message-ID: <CAOQ4uxjNcWCfKLvdq2=TM5fE5RaBf+XvnsP6v_Q6u3b1_mxazw@mail.gmail.com>
-Subject: Re: virtiofs uuid and file handles
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Max Reitz <mreitz@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 2:12 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Wed, Sep 23, 2020 at 11:57 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Wed, Sep 23, 2020 at 10:44 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > >
-> > > On Wed, Sep 23, 2020 at 4:49 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > > I think that the proper was to implement reliable persistent file
-> > > > handles in fuse/virtiofs would be to add ENCODE/DECODE to
-> > > > FUSE protocol and allow the server to handle this.
-> > >
-> > > Max Reitz (Cc-d) is currently looking into this.
-> > >
-> > > One proposal was to add  LOOKUP_HANDLE operation that is similar to
-> > > LOOKUP except it takes a {variable length handle, name} as input and
-> > > returns a variable length handle *and* a u64 node_id that can be used
-> > > normally for all other operations.
-> > >
+Hi Linus,
 
-Miklos, Max,
+Please pull this branch containing bug fixes for 5.13-rc4.  This week's
+pile mitigates some decades-old problems in how extent size hints
+interact with realtime volumes, fixes some failures in online shrink,
+and fixes a problem where directory and symlink shrinking on extremely
+fragmented filesystems could fail.
 
-Any updates on LOOKUP_HANDLE work?
+The most user-notable change here is to point users at our (new) IRC
+channel on OFTC.  Freedom isn't free, it costs folks like you and me;
+and if you don't kowtow, they'll expel everyone and take over your
+channel.  (Ok, ok, that didn't fit the song lyrics...)
 
-> > > The advantage of such a scheme for virtio-fs (and possibly other fuse
-> > > based fs) would be that userspace need not keep a refcounted object
-> > > around until the kernel sends a FORGET, but can prune its node ID
-> > > based cache at any time.   If that happens and a request from the
-> > > client (kernel) comes in with a stale node ID, the server will return
-> > > -ESTALE and the client can ask for a new node ID with a special
-> > > lookup_handle(fh, NULL).
-> > >
-> > > Disadvantages being:
-> > >
-> > >  - cost of generating a file handle on all lookups
-> >
-> > I never ran into a local fs implementation where this was expensive.
-> >
-> > >  - cost of storing file handle in kernel icache
-> > >
-> > > I don't think either of those are problematic in the virtiofs case.
-> > > The cost of having to keep fds open while the client has them in its
-> > > cache is much higher.
-> > >
-> >
-> > Sounds good.
-> > I suppose flock() does need to keep the open fd on server.
->
-> Open files are a separate issue and do need an active object in the server.
->
-> The issue this solves  is synchronizing "released" and "evicted"
-> states of objects between  server and client.  I.e. when a file is
-> closed (and no more open files exist referencing the same object) the
-> dentry refcount goes to zero but it remains in the cache.   In this
-> state the server could really evict it's own cached object, but can't
-> because the client can gain an active reference at any time  via
-> cached path lookup.
->
-> One other solution would be for the server to send a notification
-> (NOTIFY_EVICT) that would try to clean out the object from the server
-> cache and respond with a FORGET if successful.   But I sort of like
-> the file handle one better, since it solves multiple problems.
->
+The branch merges cleanly against upstream as of a few minutes ago.
+Please let me know if anything else strange happens during the merge
+process.
 
-Even with LOOKUP_HANDLE, I am struggling to understand how we
-intend to invalidate all fuse dentries referring to ino X in case the server
-replies with reused ino X with a different generation that the one stored
-in fuse inode cache.
+--D
 
-This is an issue that I encountered when running the passthrough_hp test,
-on my filesystem. In tst_readdir_big() for example, underlying files are being
-unlinked and new files created reusing the old inode numbers.
+The following changes since commit e3c2b047475b52739bcf178a9e95176c42bbcf8f:
 
-This creates a situation where server gets a lookup request
-for file B that uses the reused inode number X, while old file A is
-still in fuse dentry cache using the older generation of real inode
-number X which is still in fuse inode cache.
+  xfs: restore old ioctl definitions (2021-05-20 08:31:22 -0700)
 
-Now the server knows that the real inode has been rused, because
-the server caches the old generation value, but it cannot reply to
-the lookup request before the old fuse inode has been invalidated.
-IIUC, fuse_lowlevel_notify_inval_inode() is not enough(?).
-We would also need to change fuse_dentry_revalidate() to
-detect the case of reused/invalidated inode.
+are available in the Git repository at:
 
-The straightforward way I can think of is to store inode generation
-in fuse_dentry. It won't even grow the size of the struct.
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.13-fixes-3
 
-Am I over complicating this?
+for you to fetch changes up to 0fe0bbe00a6fb77adf75085b7d06b71a830dd6f2:
 
-Thanks,
-Amir.
+  xfs: bunmapi has unnecessary AG lock ordering issues (2021-05-27 08:11:24 -0700)
+
+----------------------------------------------------------------
+Fixes for 5.13-rc4:
+- Fix a bug where unmapping operations end earlier than expected, which
+  can cause chaos on multi-block directory and symlink shrink
+  operations.
+- Fix an erroneous assert that can trigger if we try to transition a
+  bmap structure from btree format to extents format with zero extents.
+  This was exposed by xfs/538.
+
+----------------------------------------------------------------
+Darrick J. Wong (4):
+      xfs: check free AG space when making per-AG reservations
+      xfs: standardize extent size hint validation
+      xfs: validate extsz hints against rt extent size when rtinherit is set
+      xfs: add new IRC channel to MAINTAINERS
+
+Dave Chinner (2):
+      xfs: btree format inode forks can have zero extents
+      xfs: bunmapi has unnecessary AG lock ordering issues
+
+ MAINTAINERS                     |   1 +
+ fs/xfs/libxfs/xfs_ag_resv.c     |  18 +++++--
+ fs/xfs/libxfs/xfs_bmap.c        |  12 -----
+ fs/xfs/libxfs/xfs_inode_buf.c   |  46 ++++++++++++++++--
+ fs/xfs/libxfs/xfs_trans_inode.c |  17 +++++++
+ fs/xfs/xfs_inode.c              |  29 ++++++++++++
+ fs/xfs/xfs_ioctl.c              | 101 ++++++++++++++--------------------------
+ fs/xfs/xfs_message.h            |   2 +
+ 8 files changed, 140 insertions(+), 86 deletions(-)
