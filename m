@@ -2,133 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EFAE3949F0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 May 2021 04:26:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09F87394A03
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 May 2021 05:14:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229549AbhE2C2Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 May 2021 22:28:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55726 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229528AbhE2C2Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 May 2021 22:28:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F2A361090;
-        Sat, 29 May 2021 02:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622255209;
-        bh=aEwQ7gtW8SBWhXtpPyxd8abH3bVt9Pdwm73a/Rj59xU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=EoouXyVE/uSO4rw0qMk4O9Vj9DsO74HDrd8wD3yoSnWI8RT5MBB2H3/OZTDekq4M9
-         YaDYwBQC4nu4SB4gY6egVmcA0YZy8nn4E9X5gAqYpeVS0PqGv9AghovRWKzPhXcJhg
-         8DDXeMvsnTFxVHQ1Gwj9WeVefMVT6vXqsuLfMVLFNztapYmEL4hSrWgxy5by/eHV8J
-         cKm/mjXVtA71arJnrtjy6pvv3U8zY7k3bZu9SmtaH3ZVWpXki8WJ5lj9dQADlX1cBR
-         JtJoLs+LnRCC0vn3OLERJMFax7ovPGr90249HSeK7eY3Ll8nnVlHJ69DhHGWlXvCCi
-         SfUlxbMWZSyvA==
-Date:   Sat, 29 May 2021 11:26:38 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     menglong8.dong@gmail.com
-Cc:     mcgrof@kernel.org, josh@joshtriplett.org, viro@zeniv.linux.org.uk,
-        keescook@chromium.org, samitolvanen@google.com, ojeda@kernel.org,
-        johan@kernel.org, jeyu@kernel.org, masahiroy@kernel.org,
-        dong.menglong@zte.com.cn, joe@perches.com, axboe@kernel.dk,
-        jack@suse.cz, hare@suse.de, tj@kernel.org,
-        gregkh@linuxfoundation.org, song@kernel.org, neilb@suse.de,
-        akpm@linux-foundation.org, f.fainelli@gmail.com,
-        wangkefeng.wang@huawei.com, arnd@arndb.de,
-        linux@rasmusvillemoes.dk, brho@google.com, rostedt@goodmis.org,
-        vbabka@suse.cz, pmladek@suse.com, glider@google.com,
-        chris@chrisdown.name, jojing64@gmail.com, ebiederm@xmission.com,
-        mingo@kernel.org, terrelln@fb.com, geert@linux-m68k.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com
-Subject: Re: [PATCH v3 0/3] init/initramfs.c: make initramfs support
- pivot_root
-Message-Id: <20210529112638.b3a9ec5475ca8e4f51648ff0@kernel.org>
-In-Reply-To: <20210528143802.78635-1-dong.menglong@zte.com.cn>
-References: <20210528143802.78635-1-dong.menglong@zte.com.cn>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S229559AbhE2C7s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 May 2021 22:59:48 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:44602 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229547AbhE2C7q (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 May 2021 22:59:46 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1622257090; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=UQqC9SGA/mI3zwU5m0sSjfH4Zy9TonhCXautmNeV5Uk=; b=MUrBALKW1Ogytx/uM/KVt12/2wOqrQvAl4IwA8aD1fMDSSFKSR80xnGFKwl+j7PtWSO0at2I
+ F9NecCnUaHmyJ2yTvN+HRpbdvN8IpdPGlEnFfhY8G4kbJRzo4IEdERwbYvL5Koiun5Qz7QYX
+ PsRRKXQycq8aoG/VoCEtPmHHFyg=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
+ 60b1adaef726fa4188ae01a9 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 29 May 2021 02:57:50
+ GMT
+Sender: charante=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 86530C43147; Sat, 29 May 2021 02:57:49 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        NICE_REPLY_A,SPF_FAIL autolearn=no autolearn_force=no version=3.4.0
+Received: from [192.168.29.110] (unknown [49.37.157.63])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: charante)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 50008C433F1;
+        Sat, 29 May 2021 02:57:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 50008C433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
+Subject: Re: [PATCH V2] mm: compaction: support triggering of proactive
+ compaction by user
+To:     Nitin Gupta <nigupta@nvidia.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "yzaikin@google.com" <yzaikin@google.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
+        "sh_def@163.com" <sh_def@163.com>,
+        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
+        "vinmenon@codeaurora.org" <vinmenon@codeaurora.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <1621345058-26676-1-git-send-email-charante@codeaurora.org>
+ <BYAPR12MB3416727DB2BE2198C324124CD8259@BYAPR12MB3416.namprd12.prod.outlook.com>
+ <2733c513-d9ca-9c33-42ee-38df0a057f8a@codeaurora.org>
+ <BYAPR12MB34163A80AD9567746F7904CDD8239@BYAPR12MB3416.namprd12.prod.outlook.com>
+From:   Charan Teja Kalla <charante@codeaurora.org>
+Message-ID: <c8e7f2dd-c6ca-6b1d-0a92-52a24771a15f@codeaurora.org>
+Date:   Sat, 29 May 2021 08:27:41 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
+MIME-Version: 1.0
+In-Reply-To: <BYAPR12MB34163A80AD9567746F7904CDD8239@BYAPR12MB3416.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Menglong,
+Thanks Nitin for your inputs.
 
-On Fri, 28 May 2021 22:37:59 +0800
-menglong8.dong@gmail.com wrote:
+On 5/28/2021 5:22 AM, Nitin Gupta wrote:
+>> First, Does the user doing the above steps are valid?
+>> If yes, then we should guarantee to the user that proactive compaction
+>> atleast tried to run when the user changed the proactiveness.
+>> If not, I feel, we should document that 'once user changed the
+>> compaction_proactiveness, he need to wait atleast
+>> HPAGE_FRAG_CHECK_INTERVAL_MSEC before considering that the value he
+>> tried to set is effective and proactive compaction tried to run on that'.
+>> Doesn't this seem okay?
+> Proactive compaction does not guarantee if the kernel will be able to achieve
+> fragmentation targets implied from the compaction_proactiveness sysctl. It also
+> does not guarantee how much time it will take to reach desired fragmentation
+> levels (if at all possible). 
 
-> From: Menglong Dong <dong.menglong@zte.com.cn>
-> 
-> As Luis Chamberlain suggested, I split the patch:
-> [init/initramfs.c: make initramfs support pivot_root]
-> (https://lore.kernel.org/linux-fsdevel/20210520154244.20209-1-dong.menglong@zte.com.cn/)
-> into three.
-> 
-> The goal of the series patches is to make pivot_root() support initramfs.
-> 
-> In the first patch, I introduce the function ramdisk_exec_exist(), which
-> is used to check the exist of 'ramdisk_execute_command' in LOOKUP_DOWN
-> lookup mode.
-> 
-> In the second patch, I create a second mount, which is called
-> 'user root', and make it become the root. Therefore, the root has a
-> parent mount, and it can be umounted or pivot_root.
-> 
-> In the third patch, I fix rootfs_fs_type with ramfs, as it is not used
-> directly any more, and it make no sense to switch it between ramfs and
-> tmpfs, just fix it with ramfs to simplify the code.
-> 
-> 
-> Changes since V2:
-> 
-> In the first patch, I use vfs_path_lookup() in init_eaccess() to make the
-> path lookup follow the mount on '/'. After this, the problem reported by
-> Masami Hiramatsu is solved. Thanks for your report :/
-
-Thank you for the fix, I confirmed that the issue has been solved with this.
-
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-for this series.
-
-Regards,
+Shouldn't we add these lines in the Documentation. Will raise a patch If
+it is fine.
 
 
-> 
-> 
-> Changes since V1:
-> 
-> In the first patch, I add the flag LOOKUP_DOWN to init_eaccess(), to make
-> it support the check of filesystem mounted on '/'.
-> 
-> In the second patch, I control 'user root' with kconfig option
-> 'CONFIG_INITRAMFS_USER_ROOT', and add some comments, as Luis Chamberlain
-> suggested.
-> 
-> In the third patch, I make 'rootfs_fs_type' in control of
-> 'CONFIG_INITRAMFS_USER_ROOT'.
-> 
-> 
-> 
-> Menglong Dong (3):
->   init/main.c: introduce function ramdisk_exec_exist()
->   init/do_cmounts.c: introduce 'user_root' for initramfs
->   init/do_mounts.c: fix rootfs_fs_type with ramfs
-> 
->  fs/init.c            |  11 ++++-
->  include/linux/init.h |   5 ++
->  init/do_mounts.c     | 109 +++++++++++++++++++++++++++++++++++++++++++
->  init/do_mounts.h     |  18 ++++++-
->  init/initramfs.c     |  10 ++++
->  init/main.c          |   7 ++-
->  usr/Kconfig          |  10 ++++
->  7 files changed, 166 insertions(+), 4 deletions(-)
-> 
-> -- 
-> 2.32.0.rc0
-> 
+> Maybe add a Kconfig parameter for setting
+> HPAGE_FRAG_CHECK_INTERVAL_MSEC to say 1msec?
 
+I really don't have an use case to make the
+HPAGE_FRAG_CHECK_INTERVAL_MSEC as config option. But should we make it
+as Kconfig option and let the user decide how aggressively proactive
+compaction should do the job of system defragmentation in his system?
+Selection will be limited in the range of 10msec to 500msec, defaults to
+500msec.
+
+--Thanks
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
+Forum, a Linux Foundation Collaborative Project
