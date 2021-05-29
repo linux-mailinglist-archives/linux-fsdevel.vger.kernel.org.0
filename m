@@ -2,109 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42BB63949C4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 May 2021 03:10:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EFAE3949F0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 May 2021 04:26:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229559AbhE2BMD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 May 2021 21:12:03 -0400
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:45907 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbhE2BMD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 May 2021 21:12:03 -0400
-Date:   Sat, 29 May 2021 01:10:12 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1622250625;
-        bh=+w5DrFGtQT7qGSjGuDnH/5/WNWgRUzVCn8cxpkKg+UU=;
-        h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=R9WETm0fyZJzkJ3UkIhI88VJVw2PneoVEsKtpATIg/MSMvGzx9WW/J/YwW0XLLhju
-         w586zYWrm7sLSPr6V9af+jdYDQUAI4r9sbtk+FZbUx2wn62l/Htz2dz0mtbBEWy3tp
-         ylZwW0a2r55zLl7TcHcxCkwy4RyfOxjDlc+NTflY=
-To:     "namjae.jeon@samsung.com" <namjae.jeon@samsung.com>,
-        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
-From:   Aidan MacDonald <amachronic@protonmail.com>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Reply-To: Aidan MacDonald <amachronic@protonmail.com>
-Subject: exFAT unexpected handling of filenames ending with dots
-Message-ID: <WCLW4rMlL5bsun3xz4lbVpKFcjJnaWwoKKvl-QPTF1YEaDtDX5uS3Pj472UxXuxgBnDbznfc0MpYj5fsCzLuhnbStgEN7jHv8Q_Ynxy3kFk=@protonmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=10.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM shortcircuit=no
-        autolearn=disabled version=3.4.4
-X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on
-        mailout.protonmail.ch
+        id S229549AbhE2C2Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 May 2021 22:28:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55726 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229528AbhE2C2Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 May 2021 22:28:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F2A361090;
+        Sat, 29 May 2021 02:26:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622255209;
+        bh=aEwQ7gtW8SBWhXtpPyxd8abH3bVt9Pdwm73a/Rj59xU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=EoouXyVE/uSO4rw0qMk4O9Vj9DsO74HDrd8wD3yoSnWI8RT5MBB2H3/OZTDekq4M9
+         YaDYwBQC4nu4SB4gY6egVmcA0YZy8nn4E9X5gAqYpeVS0PqGv9AghovRWKzPhXcJhg
+         8DDXeMvsnTFxVHQ1Gwj9WeVefMVT6vXqsuLfMVLFNztapYmEL4hSrWgxy5by/eHV8J
+         cKm/mjXVtA71arJnrtjy6pvv3U8zY7k3bZu9SmtaH3ZVWpXki8WJ5lj9dQADlX1cBR
+         JtJoLs+LnRCC0vn3OLERJMFax7ovPGr90249HSeK7eY3Ll8nnVlHJ69DhHGWlXvCCi
+         SfUlxbMWZSyvA==
+Date:   Sat, 29 May 2021 11:26:38 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     menglong8.dong@gmail.com
+Cc:     mcgrof@kernel.org, josh@joshtriplett.org, viro@zeniv.linux.org.uk,
+        keescook@chromium.org, samitolvanen@google.com, ojeda@kernel.org,
+        johan@kernel.org, jeyu@kernel.org, masahiroy@kernel.org,
+        dong.menglong@zte.com.cn, joe@perches.com, axboe@kernel.dk,
+        jack@suse.cz, hare@suse.de, tj@kernel.org,
+        gregkh@linuxfoundation.org, song@kernel.org, neilb@suse.de,
+        akpm@linux-foundation.org, f.fainelli@gmail.com,
+        wangkefeng.wang@huawei.com, arnd@arndb.de,
+        linux@rasmusvillemoes.dk, brho@google.com, rostedt@goodmis.org,
+        vbabka@suse.cz, pmladek@suse.com, glider@google.com,
+        chris@chrisdown.name, jojing64@gmail.com, ebiederm@xmission.com,
+        mingo@kernel.org, terrelln@fb.com, geert@linux-m68k.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com
+Subject: Re: [PATCH v3 0/3] init/initramfs.c: make initramfs support
+ pivot_root
+Message-Id: <20210529112638.b3a9ec5475ca8e4f51648ff0@kernel.org>
+In-Reply-To: <20210528143802.78635-1-dong.menglong@zte.com.cn>
+References: <20210528143802.78635-1-dong.menglong@zte.com.cn>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Namjae and Sungjong,
+Hi Menglong,
 
-Recently, I was made aware of a problem with how the exFAT driver handles f=
-ilenames ending with dots.
+On Fri, 28 May 2021 22:37:59 +0800
+menglong8.dong@gmail.com wrote:
 
-Original bug report was against an audio player supported by Rockbox:
-https://www.rockbox.org/tracker/task/13293
+> From: Menglong Dong <dong.menglong@zte.com.cn>
+> 
+> As Luis Chamberlain suggested, I split the patch:
+> [init/initramfs.c: make initramfs support pivot_root]
+> (https://lore.kernel.org/linux-fsdevel/20210520154244.20209-1-dong.menglong@zte.com.cn/)
+> into three.
+> 
+> The goal of the series patches is to make pivot_root() support initramfs.
+> 
+> In the first patch, I introduce the function ramdisk_exec_exist(), which
+> is used to check the exist of 'ramdisk_execute_command' in LOOKUP_DOWN
+> lookup mode.
+> 
+> In the second patch, I create a second mount, which is called
+> 'user root', and make it become the root. Therefore, the root has a
+> parent mount, and it can be umounted or pivot_root.
+> 
+> In the third patch, I fix rootfs_fs_type with ramfs, as it is not used
+> directly any more, and it make no sense to switch it between ramfs and
+> tmpfs, just fix it with ramfs to simplify the code.
+> 
+> 
+> Changes since V2:
+> 
+> In the first patch, I use vfs_path_lookup() in init_eaccess() to make the
+> path lookup follow the mount on '/'. After this, the problem reported by
+> Masami Hiramatsu is solved. Thanks for your report :/
 
-Upon further investigation it turned out to be a Linux kernel issue. Note t=
-he audio player referenced there runs Linux 3.10 or so and uses some versio=
-n of the Samsung exFAT driver -- so I guess this has been an issue for a _l=
-ong_ time. I was able to reproduce it on my laptop running v5.10.39!
+Thank you for the fix, I confirmed that the issue has been solved with this.
 
-It appears that any number of trailing dots are stripped from the end of th=
-e filename, causing some interesting bugs.
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-The behaviour I am observing is this:
+for this series.
 
-1. If creating a file, the name is stripped of all trailing dots and the st=
-ripped name is used to create the file (original name is silently discarded=
-).
+Regards,
 
-2. If accessing a file within a directory, the stripped filename is used to=
- conduct the search, ie. if you enter 'A...' the driver will actually searc=
-h using the name 'A'.
 
-It is this second part which causes problems. If you have a file named "A."=
- on an exFAT filesystem, it will show up in directory listings but if you t=
-ry to access it, you get 'file not found'. That is because the driver is ac=
-tually looking for "A" even though you think you are looking for "A." -- an=
-d even worse, if "A" does exist, the driver will silently access "A" instea=
-d!
+> 
+> 
+> Changes since V1:
+> 
+> In the first patch, I add the flag LOOKUP_DOWN to init_eaccess(), to make
+> it support the check of filesystem mounted on '/'.
+> 
+> In the second patch, I control 'user root' with kconfig option
+> 'CONFIG_INITRAMFS_USER_ROOT', and add some comments, as Luis Chamberlain
+> suggested.
+> 
+> In the third patch, I make 'rootfs_fs_type' in control of
+> 'CONFIG_INITRAMFS_USER_ROOT'.
+> 
+> 
+> 
+> Menglong Dong (3):
+>   init/main.c: introduce function ramdisk_exec_exist()
+>   init/do_cmounts.c: introduce 'user_root' for initramfs
+>   init/do_mounts.c: fix rootfs_fs_type with ramfs
+> 
+>  fs/init.c            |  11 ++++-
+>  include/linux/init.h |   5 ++
+>  init/do_mounts.c     | 109 +++++++++++++++++++++++++++++++++++++++++++
+>  init/do_mounts.h     |  18 ++++++-
+>  init/initramfs.c     |  10 ++++
+>  init/main.c          |   7 ++-
+>  usr/Kconfig          |  10 ++++
+>  7 files changed, 166 insertions(+), 4 deletions(-)
+> 
+> -- 
+> 2.32.0.rc0
+> 
 
-Clearly due to the first part, you cannot get into this situation without u=
-sing another driver -- like the exFAT FUSE driver -- to create the problema=
-tic filenames. (That's how the Rockbox bug reporter managed to run into thi=
-s.)
 
-Now, a function called exfat_striptail_len() in fs/exfat/namei.c is respons=
-ible for the filename stripping, it simply removes all the trailing dots fr=
-om a name and I guess it is the cause of this problem. So this 'feature' wa=
-s intentionally added in.
-
-I've only skimmed the exFAT spec but I can find nothing in it about strippi=
-ng dots from the end of a filename. The FUSE-based exFAT driver appears to =
-treat dots as significant too.
-
-It seems Windows suffers the same trailing dots bug, silently accessing the=
- wrong files despite listing all names correctly. But I obviously can't say=
- whether that is due to filesystem drivers or issues higher up the stack.
-
-To be honest I have no idea what the purpose of this 'dot stripping' is... =
-even if it was for the sake of "Windows compatibility" -- ie. mimicking Win=
-dows bugs -- there are names that Windows normally rejects which the in-ker=
-nel exFAT driver will accept, such as names with trailing spaces.
-
-Personally, I don't see any issue with how the FUSE driver behaves. It also=
- seems to be correct with respect to Microsoft's official spec. I don't see=
- why Linux should deviate from the spec, especially in a way that makes it =
-_less_ robust.
-
-I did search for any other reports of this issue, but it seems to be such a=
- corner case that nobody's mentioned it anywhere. Nor can I find any discus=
-sion or rationale for the dot stripping behaviour.
-
-Kind regards,
-Aidan
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
