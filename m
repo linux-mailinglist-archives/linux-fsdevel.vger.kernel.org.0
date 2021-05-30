@@ -2,192 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EACBF395109
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 May 2021 15:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AA143951B5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 May 2021 17:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbhE3NUc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 May 2021 09:20:32 -0400
-Received: from out20-98.mail.aliyun.com ([115.124.20.98]:37229 "EHLO
-        out20-98.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbhE3NUb (ORCPT
+        id S229800AbhE3P2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 May 2021 11:28:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49958 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229580AbhE3P2Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 May 2021 09:20:31 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07440292|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_alarm|0.0401097-0.00176082-0.958129;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047199;MF=guan@eryu.me;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.KKw8YYQ_1622380730;
-Received: from localhost(mailfrom:guan@eryu.me fp:SMTPD_---.KKw8YYQ_1622380730)
-          by smtp.aliyun-inc.com(10.147.40.7);
-          Sun, 30 May 2021 21:18:51 +0800
-Date:   Sun, 30 May 2021 21:18:49 +0800
-From:   Eryu Guan <guan@eryu.me>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] generic/{455,457,482}: make dmlogwrites tests
- work on bcachefs
-Message-ID: <YLOQuagLB3LhKPOl@desktop>
-References: <20210525221955.265524-1-kent.overstreet@gmail.com>
- <20210525221955.265524-7-kent.overstreet@gmail.com>
+        Sun, 30 May 2021 11:28:16 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE41DC06174A
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 May 2021 08:26:37 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id e12so12768933ejt.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 May 2021 08:26:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e83Xdcrb8ArQTK3BfJ+SKjS0Z61QsbiftdtWKkLx9t0=;
+        b=xxmRfSdqR7k/5JUg2bVa/HZl4RASa24Zfj1QgGechwXgZHEtHOd0ktJScwP5bQimAm
+         XUYqJtP0hDxk+ZXVnZR4aY1OyjeHBf+veNfgXsQ3vgLWtPekUJL/BZGg3oI1MAThdQTI
+         VDjF7lyY0rwv9afdqBsYU7gAlRJxy5AFHgVvegxl82XdF/HwAEB3uDOjThe/mpZ0IHtx
+         gvJWtS2SmUqSAW4v401VZRgrbfAl79crzB3oMHe0uRFOXkOawtpQXplEsxlMa4gTfuN9
+         zX3d54/1D/AucoBl0RsmoItn6LRW7Syu3nCvuZzyeFkQTxMQH7XvVVLZiF6lCoDV8xyt
+         7KBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e83Xdcrb8ArQTK3BfJ+SKjS0Z61QsbiftdtWKkLx9t0=;
+        b=kPNPh9DXV24GcSs4bd7y7npW6BctdIt1zSNZhhHdwYbHT+hD1h+kpetcQIfsOpC3fm
+         ciRpv0qv8br4+Ehe0xDjMM88NkjiGelIbXGQUsHjIFLX4d3A9yrzmDaCFoDk5txCRpF+
+         ZoQ5HitShTXSqhewM4vdfmfJqEWrlQDKy4cyVc5QhkgQuHP20bxITRE2L2omw8vytjV9
+         xbG/WVchIRGwtpS/zR2kPQgSk0ThU9t2+Ry7qETT6WXjFUBMPDF/fY7WKtmJlFjnPd2X
+         EQ2p9Z7vxVy3XhUIQ4FJaUFWGH1QH8jwDZkJqpes0KtW/Tth2ylKg2MAfr2dXxU1hkXs
+         4JqQ==
+X-Gm-Message-State: AOAM532qXHunH8E3iQegfJDI5h2Pp4zkp+ze0gIJp0YCfZZe6YkBMOdL
+        T9YFw0Et1K3KLq/JyFLHbWqjCGfDvPnCdtbebRy5
+X-Google-Smtp-Source: ABdhPJwPsCNauSlDJZZCjOpy5U50sK0NxibF5HbYEJWlsb/BX8Aa7YBzBA+a2fJHbO4WCKa8o/7Q2nAhnogkBmdUNtg=
+X-Received: by 2002:a17:906:4111:: with SMTP id j17mr9037573ejk.488.1622388396174;
+ Sun, 30 May 2021 08:26:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210525221955.265524-7-kent.overstreet@gmail.com>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163380685.8379.17381053199011043757.stgit@sifl> <20210528223544.GL447005@madcap2.tricolour.ca>
+In-Reply-To: <20210528223544.GL447005@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 30 May 2021 11:26:25 -0400
+Message-ID: <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/9] audit: add filtering for io_uring records
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 25, 2021 at 06:19:54PM -0400, Kent Overstreet wrote:
-> bcachefs has log structured btree nodes, in addition to a regular
-> journal, which means that unless we replay to markers in the log in the
-> same order that they happened and are careful to avoid writing in
-> between replaying to different events - we need to wipe and start fresh
-> each time.
-> 
-> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-> ---
->  tests/generic/455 | 14 ++++++++++++++
->  tests/generic/457 | 14 ++++++++++++++
->  tests/generic/482 | 27 ++++++++++++++++++++-------
->  3 files changed, 48 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tests/generic/455 b/tests/generic/455
-> index 5b4b242e74..6dc46c3c72 100755
-> --- a/tests/generic/455
-> +++ b/tests/generic/455
-> @@ -35,6 +35,17 @@ _require_dm_target thin-pool
->  
->  rm -f $seqres.full
->  
-> +_reset_dmthin()
-> +{
-> +    # With bcachefs, we need to wipe and start fresh every time we replay to a
-> +    # different point in time - if we see metadata from a future point in time,
-> +    # or an unrelated mount, bcachefs will get confused:
-> +    if [ "$FSTYP" = "bcachefs" ]; then
-> +	_dmthin_cleanup
-> +	_dmthin_init $devsize $devsize $csize $lowspace
-> +    fi
-> +}
+On Fri, May 28, 2021 at 6:36 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2021-05-21 17:50, Paul Moore wrote:
+> > WARNING - This is a work in progress and should not be merged
+> > anywhere important.  It is almost surely not complete, and while it
+> > probably compiles it likely hasn't been booted and will do terrible
+> > things.  You have been warned.
+> >
+> > This patch adds basic audit io_uring filtering, using as much of the
+> > existing audit filtering infrastructure as possible.  In order to do
+> > this we reuse the audit filter rule's syscall mask for the io_uring
+> > operation and we create a new filter for io_uring operations as
+> > AUDIT_FILTER_URING_EXIT/audit_filter_list[7].
+> >
+> > <TODO - provide some additional guidance for the userspace tools>
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > ---
+> >  include/uapi/linux/audit.h |    3 +-
+> >  kernel/auditfilter.c       |    4 ++-
+> >  kernel/auditsc.c           |   65 ++++++++++++++++++++++++++++++++++----------
+> >  3 files changed, 55 insertions(+), 17 deletions(-)
 
-I think we probably could make it a common helper, and currently only
-bcachefs needs reset, and more log structured filesystems may be
-supported in the future.
+...
 
-Thanks,
-Eryu
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index d8aa2c690bf9..4f6ab34020fb 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -799,6 +799,35 @@ static int audit_in_mask(const struct audit_krule *rule, unsigned long val)
+> >       return rule->mask[word] & bit;
+> >  }
+> >
+> > +/**
+> > + * audit_filter_uring - apply filters to an io_uring operation
+> > + * @tsk: associated task
+> > + * @ctx: audit context
+> > + */
+> > +static void audit_filter_uring(struct task_struct *tsk,
+> > +                            struct audit_context *ctx)
+> > +{
+> > +     struct audit_entry *e;
+> > +     enum audit_state state;
+> > +
+> > +     if (auditd_test_task(tsk))
+> > +             return;
+>
+> Is this necessary?  auditd and auditctl don't (intentionally) use any
+> io_uring functionality.  Is it possible it might inadvertantly use some
+> by virtue of libc or other library calls now or in the future?
 
-> +
->  check_files()
->  {
->  	local name=$1
-> @@ -44,6 +55,7 @@ check_files()
->  		local filename=$(basename $i)
->  		local mark="${filename##*.}"
->  		echo "checking $filename" >> $seqres.full
-> +		_reset_dmthin
->  		_log_writes_replay_log $filename $DMTHIN_VOL_DEV
->  		_dmthin_mount
->  		local expected_md5=$(_md5_checksum $i)
-> @@ -101,6 +113,7 @@ _dmthin_check_fs
->  
->  # check pre umount
->  echo "checking pre umount" >> $seqres.full
-> +_reset_dmthin
->  _log_writes_replay_log last $DMTHIN_VOL_DEV
->  _dmthin_mount
->  _dmthin_check_fs
-> @@ -111,6 +124,7 @@ done
->  
->  # Check the end
->  echo "checking post umount" >> $seqres.full
-> +_reset_dmthin
->  _log_writes_replay_log end $DMTHIN_VOL_DEV
->  _dmthin_mount
->  for j in `seq 0 $((NUM_FILES-1))`; do
-> diff --git a/tests/generic/457 b/tests/generic/457
-> index ddbd90cf0c..f17d4e4430 100755
-> --- a/tests/generic/457
-> +++ b/tests/generic/457
-> @@ -37,6 +37,17 @@ _require_dm_target thin-pool
->  
->  rm -f $seqres.full
->  
-> +_reset_dmthin()
-> +{
-> +    # With bcachefs, we need to wipe and start fresh every time we replay to a
-> +    # different point in time - if we see metadata from a future point in time,
-> +    # or an unrelated mount, bcachefs will get confused:
-> +    if [ "$FSTYP" = "bcachefs" ]; then
-> +	_dmthin_cleanup
-> +	_dmthin_init $devsize $devsize $csize $lowspace
-> +    fi
-> +}
-> +
->  check_files()
->  {
->  	local name=$1
-> @@ -46,6 +57,7 @@ check_files()
->  		local filename=$(basename $i)
->  		local mark="${filename##*.}"
->  		echo "checking $filename" >> $seqres.full
-> +		_reset_dmthin
->  		_log_writes_replay_log $filename $DMTHIN_VOL_DEV
->  		_dmthin_mount
->  		local expected_md5=$(_md5_checksum $i)
-> @@ -105,6 +117,7 @@ _dmthin_check_fs
->  
->  # check pre umount
->  echo "checking pre umount" >> $seqres.full
-> +_reset_dmthin
->  _log_writes_replay_log last $DMTHIN_VOL_DEV
->  _dmthin_mount
->  _dmthin_check_fs
-> @@ -115,6 +128,7 @@ done
->  
->  # Check the end
->  echo "checking post umount" >> $seqres.full
-> +_reset_dmthin
->  _log_writes_replay_log end $DMTHIN_VOL_DEV
->  _dmthin_mount
->  for j in `seq 0 $((NUM_FILES-1))`; do
-> diff --git a/tests/generic/482 b/tests/generic/482
-> index 86941e8468..3cbe187f2e 100755
-> --- a/tests/generic/482
-> +++ b/tests/generic/482
-> @@ -77,16 +77,29 @@ prev=$(_log_writes_mark_to_entry_number mkfs)
->  cur=$(_log_writes_find_next_fua $prev)
->  [ -z "$cur" ] && _fail "failed to locate next FUA write"
->  
-> +if [ "$FSTYP" = "bcachefs" ]; then
-> +    _dmthin_cleanup
-> +    _dmthin_init $devsize $devsize $csize $lowspace
-> +fi
-> +
->  while [ ! -z "$cur" ]; do
->  	_log_writes_replay_log_range $cur $DMTHIN_VOL_DEV >> $seqres.full
->  
-> -	# Here we need extra mount to replay the log, mainly for journal based
-> -	# fs, as their fsck will report dirty log as error.
-> -	# We don't care to preserve any data on the replay dev, as we can replay
-> -	# back to the point we need, and in fact sometimes creating/deleting
-> -	# snapshots repeatedly can be slower than replaying the log.
-> -	_dmthin_mount
-> -	_dmthin_check_fs
-> +	if [ "$FSTYP" = "bcachefs" ]; then
-> +	    # bcachefs will get confused if fsck does writes to replay the log,
-> +	    # but then we replay writes from an earlier point in time on the
-> +	    # same fs - but  fsck in -n mode won't do any writes:
-> +	    _check_scratch_fs -n $DMTHIN_VOL_DEV
-> +	else
-> +	    # Here we need extra mount to replay the log, mainly for journal based
-> +	    # fs, as their fsck will report dirty log as error.
-> +	    # We don't care to preserve any data on the replay dev, as we can replay
-> +	    # back to the point we need, and in fact sometimes creating/deleting
-> +	    # snapshots repeatedly can be slower than replaying the log.
-> +
-> +	    _dmthin_mount
-> +	    _dmthin_check_fs
-> +	fi
->  
->  	prev=$cur
->  	cur=$(_log_writes_find_next_fua $(($cur + 1)))
-> -- 
-> 2.32.0.rc0
+I think the better question is what harm does it do?  Yes, I'm not
+aware of an auditd implementation that currently makes use of
+io_uring, but it is also not inconceivable some future implementation
+might want to make use of it and given the disjoint nature of kernel
+and userspace development I don't want the kernel to block such
+developments.  However, if you can think of a reason why having this
+check here is bad I'm listening (note: we are already in the slow path
+here so having the additional check isn't an issue as far as I'm
+concerned).
+
+As a reminder, auditd_test_task() only returns true/1 if the task is
+registered with the audit subsystem as an auditd connection, an
+auditctl process should not cause this function to return true.
+
+> > +     rcu_read_lock();
+> > +     list_for_each_entry_rcu(e, &audit_filter_list[AUDIT_FILTER_URING_EXIT],
+> > +                             list) {
+> > +             if (audit_in_mask(&e->rule, ctx->uring_op) &&
+>
+> While this seems like the most obvious approach given the parallels
+> between syscalls and io_uring operations, as coded here it won't work
+> due to the different mappings of syscall numbers and io_uring
+> operations unless we re-use the auditctl -S field with raw io_uring
+> operation numbers in the place of syscall numbers.  This should have
+> been obvious to me when I first looked at this patch.  It became obvious
+> when I started looking at the userspace auditctl.c.
+
+FWIW, my intention was to treat io_uring opcodes exactly like we treat
+syscall numbers.  Yes, this would potentially be an issue if we wanted
+to combine syscalls and io_uring opcodes into one filter, but why
+would we ever want to do that?  Combining the two into one filter not
+only makes the filter lists longer than needed (we will always know if
+we are filtering on a syscall or io_uring op) and complicates the
+filter rule processing.
+
+Or is there a problem with this that I'm missing?
+
+> The easy first step would be to use something like this:
+>         auditctl -a uring,always -S 18,28 -F key=uring_open
+> to monitor file open commands only.  The same is not yet possible for
+> the perm field, but there are so few io_uring ops at this point compared
+> with syscalls that it might be manageable.  The arch is irrelevant since
+> io_uring operation numbers are identical across all hardware as far as I
+> can tell.  Most of the rest of the fields should make sense if they do
+> for a syscall rule.
+
+I've never been a fan of audit's "perm" filtering; I've always felt
+there were better ways to handle that so I'm not overly upset that we
+are skipping that functionality with this initial support.  If it
+becomes a problem in the future we can always add that support at a
+later date.
+
+I currently fear that just getting io_uring and audit to coexist is
+going to be a large enough problem in the immediate future.
+
+> Here's a sample of userspace code to support this
+> patch:
+>         https://github.com/rgbriggs/audit-userspace/commit/a77baa1651b7ad841a220eb962d4cc92bc07dc96
+>         https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghau-iouring-filtering.v1.0
+
+Great, thank you.  I haven't grabbed a copy yet for testing, but I will.
+
+> If we abuse the syscall infrastructure at first, we'd need a transition
+> plan to coordinate user and kernel switchover to seperate mechanisms for
+> the two to work together if the need should arise to have both syscall
+> and uring filters in the same rule.
+
+See my comments above, I don't currently see why we would ever want
+syscall and io_uring filtering to happen in the same rule.  Please
+speak up if you can think of a reason why this would either be needed,
+or desirable for some reason.
+
+> It might be wise to deliberately not support auditctl "-w" (and the
+> exported audit_add_watch() function) since that is currently hardcoded
+> to the AUDIT_FILTER_EXIT list and is the old watch form [replaced by
+> audit_rule_fieldpair_data()] anyways that is more likely to be
+> deprecated.  It also appears to make sense not to support autrace (at
+> least initially).
+
+I'm going to be honest with you and simply say that I've run out of my
+email/review time in front of the computer on this holiday weekend
+(blame the lockdown/bpf/lsm discussion <g>) and I need to go for
+today, but this is something I'll take a look it this coming week.
+Hopefully the comments above give us something to think/talk about in
+the meantime.
+
+Regardless, thanks for your help on the userspace side of the
+filtering, that should make testing a lot easier moving forward.
+
+--
+paul moore
+www.paul-moore.com
