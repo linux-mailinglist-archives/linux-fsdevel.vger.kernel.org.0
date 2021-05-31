@@ -2,89 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 618D739668D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 May 2021 19:09:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6AEC396692
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 May 2021 19:10:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233188AbhEaRKu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 May 2021 13:10:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50086 "EHLO
+        id S233846AbhEaRLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 May 2021 13:11:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234179AbhEaRHL (ORCPT
+        with ESMTP id S234983AbhEaRJs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 May 2021 13:07:11 -0400
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 941D9C035433
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 May 2021 08:17:45 -0700 (PDT)
-Received: by mail-il1-x136.google.com with SMTP id v13so4572819ilh.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 May 2021 08:17:45 -0700 (PDT)
+        Mon, 31 May 2021 13:09:48 -0400
+Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F09C00366F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 May 2021 08:19:00 -0700 (PDT)
+Received: by mail-ua1-x92e.google.com with SMTP id g34so6766841uah.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 May 2021 08:19:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=qwRRLkLoXNDIQdovU1zPLyrg6JIvWrQf/bakSwhNMqE=;
-        b=DKdSajSyW09omZdU9de7mzdEKympONwXv6cmndp3hotS2j1qSlJa2RgAlW1I4jlHlb
-         EGtnCNJrI/m0riKdDSieJSZkAFKDGxH/rPSS5lkxM+vr8/NYAOnBY23KmgV22vkzVsWX
-         FMq2OnGAXOmAiAqegF0KIkJnMzNRVP3n3z0ZquCFQcvNlf1N+hcXiK/C4ZN+Ys+pu0e/
-         NNWb7Xv7nckjxVM1pX7fGZFNjKrJZJrrdSYtF5iUiX9OekK0FWBYO2liJLErRfWnM6Fg
-         T3AHC0CGjA397574PGjTqRtr+f+46/s31B3j3sXTOdT3LIl+X5JeRI6tY64oI2QK873z
-         VFAA==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fNltilBZCxZe9ndZGv3YEuGsfBN+sRawj2EzksEgeWg=;
+        b=KtjapTzMxSmJ0WXwmWapiKFOcWTFlGwfhXEEp6OgWjsPmSxlrlB+37CiGQFvAtOuk7
+         0G2/wUKmx8LvClvh7s3AjghvYB0G7Nz0P49Bk+2JAtiX68mF2sI7GvO3+/JN/wwSPOcg
+         hUvopZUSZBgQwt2FE63QBp2EiYSCqzfvDrax4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=qwRRLkLoXNDIQdovU1zPLyrg6JIvWrQf/bakSwhNMqE=;
-        b=RsLUvyeAdYqLvmGVBm4IbVVECiH04hqKjOPJF7+H2vPq7UdC7TIQ+d17SRsZqWMwB7
-         XWbhQ57MnSOYX+d0LOV88b0EGn4kFiBfj0faVHMknYyVNalw/raDRkjWMq5TttCgjop/
-         /Dh8BmbvlM5VcQ7V9sJJOCE//bfF2WWsJrz6LJ/wbWMKzO8/4kNsUTlV+8cmV4TA9x44
-         hZNhQ9h/LaLrv8RawzUWGsOlmE41wpR0eNb671OTA56ELd+4vuTuwbdAgNXG/pVArI39
-         1/CmUWhD624IThm+2/rzqqApMIUK6xJw9olHclvWvKI2V2DdjKYLpUhsgu1F6Hff1jua
-         OLyQ==
-X-Gm-Message-State: AOAM5315QZKBMVV1DiLEeYABCb5shOUwS9EU/A1pWkZMeZOHpt05DYbz
-        BtxYmO67oeRYCOkfy+aX9pQvroI+0vhwH70AC96sG4A1kxjHAQ==
-X-Google-Smtp-Source: ABdhPJwrBpCt7EeXdY82h5u5MNSQBUI3oshWw3XAR9XYTE41rggKg17S0APqOuRWpl6+U57FzZ83tcP3YuXcX9HcklI=
-X-Received: by 2002:a05:6e02:e8d:: with SMTP id t13mr3964703ilj.189.1622474265000;
- Mon, 31 May 2021 08:17:45 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fNltilBZCxZe9ndZGv3YEuGsfBN+sRawj2EzksEgeWg=;
+        b=XDZc2jol1Fbr8DmUVC5N0kgUcCj0tkSGC+eIiwWxteaC+rI8SnDuqjYNyE12MPC7by
+         laIaXMGNiMShUsvrEfZECr98d2Sv/2Qm3htul5nRNj4peDfOPNbEifWi+uDq1yubJnGT
+         61OpAi2TwSPMpV0+YCxpbG2ALDXlr5ugSfdeW7eNJiPQfpkyIJ88iU2O8R+pm06YyR24
+         47S1FpkLoldmeY185tthoNBO3Ih6v70AtDaogk/QJYEenXI1Qwd+l8xGGn/6BSgoQ4Om
+         8apxSvZ2iPBSIWvKTZkZo3/JEpSuazix0mdp2CFrXGQUfD1lBHOwI4XHjzJI98hUTAl+
+         H08Q==
+X-Gm-Message-State: AOAM5337D8sU0GhejlF6CZlufpDX09jZTwbMuCE5xlYfQvFR6epDkKsr
+        08v6SvVwGVFQDCRwtHR/os5YAYrjkQ9itLtLvju/OJf/Y98=
+X-Google-Smtp-Source: ABdhPJwvrtkSbwkPFvA5i7e9osfmP6TxOlHnWxpQ+VqKpH3TnfW6CJQMRstNcRR3WyvrX274nBxxejvuFFqaH+rMBsg=
+X-Received: by 2002:a1f:6dc6:: with SMTP id i189mr13672386vkc.19.1622474339475;
+ Mon, 31 May 2021 08:18:59 -0700 (PDT)
 MIME-Version: 1.0
-From:   tianyu zhou <tyjoe.linux@gmail.com>
-Date:   Mon, 31 May 2021 23:17:34 +0800
-Message-ID: <CAM6ytZqioJ91r8Ax7KpNzkF0Ai9DSoU0oVt0VOT2Svv=zSGvRA@mail.gmail.com>
-Subject: Missing check for CAP_SYS_ADMIN before calling reconfigure_super()
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
+References: <CAOQ4uxguanxEis-82vLr7OKbxsLvk86M0Ehz2nN1dAq8brOxtw@mail.gmail.com>
+ <CAJfpeguCwxXRM4XgQWHyPxUbbvUh-M6ei-tYa5Y0P56MJMW7OA@mail.gmail.com> <CAOQ4uxhsxmzWp+YMRBA3xFDzJ1ov--n=f+VAnBsJZ_4DyHoYXw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhsxmzWp+YMRBA3xFDzJ1ov--n=f+VAnBsJZ_4DyHoYXw@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 31 May 2021 17:18:48 +0200
+Message-ID: <CAJfpegsqqwMgtDKESNVXvtYU=fsu2pZ_nE8UdXQSLudKqK8Xmw@mail.gmail.com>
+Subject: Re: fsnotify events for overlayfs real file
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, there exists a check for CAP_SYS_ADMIN in do_remount(),
-do_umount() and vfs_fsconfig_locked() before they finally call
-reconfigure_super().
+On Tue, 18 May 2021 at 19:56, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Tue, May 18, 2021 at 5:43 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Mon, 10 May 2021 at 18:32, Amir Goldstein <amir73il@gmail.com> wrote:
 
----------------------
-// fs/namespace.c
-static int do_umount(struct mount *mnt, int flags)
-{
-        ...
-        if (!ns_capable(sb->s_user_ns, CAP_SYS_ADMIN))
-            return -EPERM;
-        return do_umount_root(sb);
-        ...
-}
+> > > My thinking was that we can change d_real() to provide the real path:
+> > >
+> > > static inline struct path d_real_path(struct path *path,
+> > >                                     const struct inode *inode)
+> > > {
+> > >         struct realpath = {};
+> > >         if (!unlikely(dentry->d_flags & DCACHE_OP_REAL))
+> > >                return *path;
+> > >         dentry->d_op->d_real(path->dentry, inode, &realpath);
+> > >         return realpath;
+> > > }
 
-static int do_umount_root(struct super_block *sb)
-{
-                ...
-                ret = reconfigure_super(fc);
-                ...
-}
----------------------
+Real paths are internal, we can't pass them (as fd in permission
+events) to userspace.
 
-However, for function do_emergency_remount_callback(), vfs_get_super()
-and reconfigure_single() in fs/super.c, there is no such check for
-CAP_SYS_ADMIN before calling reconfigure_super(), neither do their
-callers.
+> > >
+> > >
+> > > Another option, instead of getting the realpath, just detect the
+> > > mismatch of file_inode(file) != d_inode(path->dentry) in
+> > > fanotify_file() and pass FSNOTIFY_EVENT_DENTRY data type
+> > > with d_real() dentry to backend instead of FSNOTIFY_EVENT_PATH.
+> > >
+> > > For inotify it should be enough and for fanotify it is enough for
+> > > FAN_REPORT_FID and legacy fanotify can report FAN_NOFD,
+> > > so at least permission events listeners can identify the situation and
+> > > be able to block access to unknown paths.
 
-Is this a missing check bug which may break the protection for superblock?
+That sounds like a good short term solution.
 
-Thanks!
 
-Best regards,
-Tianyu
+>
+> Is there a reason for the fake path besides the displayed path in
+> /proc/self/maps?
+
+I'm not aware of any.
+
+>
+> Does it make sense to keep one realfile with fake path for mmaped
+> files along side a realfile with private/detached path used for all the
+> other operations?
+
+This should work, but it would add more open files, so needs some good
+justifications.
+
+> While at it, we can also cache both upper and lower realfiles in case
+> file was copied up after open.
+
+Right, although this doesn't seem to be an issue (it's a rare corner
+case that is being cared for).
+
+Thanks,
+Miklos
