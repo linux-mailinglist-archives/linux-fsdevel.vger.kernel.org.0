@@ -2,118 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E6AEC396692
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 May 2021 19:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9A443966C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 May 2021 19:19:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233846AbhEaRLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 May 2021 13:11:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49846 "EHLO
+        id S232752AbhEaRV1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 May 2021 13:21:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234983AbhEaRJs (ORCPT
+        with ESMTP id S233271AbhEaRUk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 May 2021 13:09:48 -0400
-Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F09C00366F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 May 2021 08:19:00 -0700 (PDT)
-Received: by mail-ua1-x92e.google.com with SMTP id g34so6766841uah.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 May 2021 08:19:00 -0700 (PDT)
+        Mon, 31 May 2021 13:20:40 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40996C0431FC;
+        Mon, 31 May 2021 08:34:35 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id b15-20020a17090a550fb029015dad75163dso195798pji.0;
+        Mon, 31 May 2021 08:34:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fNltilBZCxZe9ndZGv3YEuGsfBN+sRawj2EzksEgeWg=;
-        b=KtjapTzMxSmJ0WXwmWapiKFOcWTFlGwfhXEEp6OgWjsPmSxlrlB+37CiGQFvAtOuk7
-         0G2/wUKmx8LvClvh7s3AjghvYB0G7Nz0P49Bk+2JAtiX68mF2sI7GvO3+/JN/wwSPOcg
-         hUvopZUSZBgQwt2FE63QBp2EiYSCqzfvDrax4=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YIxlSk91TuUABFkgr/k5Yi3OXLq37Uwi7gnEsi3Btt4=;
+        b=qA1l1Pe1DWi2hEyakId/vhm80G9PN4zkftLWig/60q0ofmynv4I1G8aZ4XXV8vQXbj
+         WVB3kXNm6E9OQqjJHiGyxRZ4c1O7V6o3ncjQi0a93RiGYfFi0E8e13d2PiXvRRCrvXeo
+         PxyrN926RykD739bnPk8dOe43GPF0cRbDyF+0JY/9LeFfP/QNriKZ1VCACRAz+ZLWGpS
+         ebwNvVgr1Hm4u180TAnKmKaDiv3MKIAflhjnlBVeS/Jox/Qzzz1CtYBWk8lY9KeIvlCw
+         079N4B+ZGg1KzzZQBPpXNkkBwkWpqlhD5eooQ/TctDSzGJQMcJDEIgewQN8d9v1Dn0Uy
+         qJOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fNltilBZCxZe9ndZGv3YEuGsfBN+sRawj2EzksEgeWg=;
-        b=XDZc2jol1Fbr8DmUVC5N0kgUcCj0tkSGC+eIiwWxteaC+rI8SnDuqjYNyE12MPC7by
-         laIaXMGNiMShUsvrEfZECr98d2Sv/2Qm3htul5nRNj4peDfOPNbEifWi+uDq1yubJnGT
-         61OpAi2TwSPMpV0+YCxpbG2ALDXlr5ugSfdeW7eNJiPQfpkyIJ88iU2O8R+pm06YyR24
-         47S1FpkLoldmeY185tthoNBO3Ih6v70AtDaogk/QJYEenXI1Qwd+l8xGGn/6BSgoQ4Om
-         8apxSvZ2iPBSIWvKTZkZo3/JEpSuazix0mdp2CFrXGQUfD1lBHOwI4XHjzJI98hUTAl+
-         H08Q==
-X-Gm-Message-State: AOAM5337D8sU0GhejlF6CZlufpDX09jZTwbMuCE5xlYfQvFR6epDkKsr
-        08v6SvVwGVFQDCRwtHR/os5YAYrjkQ9itLtLvju/OJf/Y98=
-X-Google-Smtp-Source: ABdhPJwvrtkSbwkPFvA5i7e9osfmP6TxOlHnWxpQ+VqKpH3TnfW6CJQMRstNcRR3WyvrX274nBxxejvuFFqaH+rMBsg=
-X-Received: by 2002:a1f:6dc6:: with SMTP id i189mr13672386vkc.19.1622474339475;
- Mon, 31 May 2021 08:18:59 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YIxlSk91TuUABFkgr/k5Yi3OXLq37Uwi7gnEsi3Btt4=;
+        b=MEo2pALqI07o9n8WYQfD+2n6uBfxVJm7eeVVMDauOC8qev/JLSXYqDMmw15PBYbP4A
+         /FhYvxf4aielTZwkGzHl/q8FOPWaJXFs9FQt6kT1q5HaZa8nhAErrFuGCGcyvNd5kKqK
+         speVMhhtVcpVU+NKuOP7dgxAPyoEVBg8S+epmjDig1njCXz/vUoMe2c+ZpnZ0P5RfUcL
+         WGU2inTeT9ZrRH3gbfKswOUce+0KezyAuaPByNtJBOEOGaLU5X/h27QZgM4mTiOl13qC
+         M4hKMjHyUV6IgYz6tfvWq3w7U56QmmNqWtvvN8OEcqorkXb3Ed5XGeUcEQ3TL4idGqh1
+         xlYQ==
+X-Gm-Message-State: AOAM5307BxTkcIe/IAMqMYxsqHAI2TKIZnaoOuQTXKe/qqbjV8MLODr5
+        TTrBuL+9QJQ3BpjA1g68Inh3XGZ5ylqw9Q==
+X-Google-Smtp-Source: ABdhPJxBeDoQ03UvPdZrXyEDANCwqA6KpN9Fw8xlBY8PZqLQZjNg5gycu4uQgC25e5/u1f8AccrWlg==
+X-Received: by 2002:a17:90a:aa12:: with SMTP id k18mr19852008pjq.232.1622475274796;
+        Mon, 31 May 2021 08:34:34 -0700 (PDT)
+Received: from WRT-WX9.. ([141.164.41.4])
+        by smtp.gmail.com with ESMTPSA id q91sm4369382pja.50.2021.05.31.08.34.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 May 2021 08:34:34 -0700 (PDT)
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kici nski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Changbin Du <changbin.du@gmail.com>, stable@vger.kernel.org,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Laight <David.Laight@ACULAB.COM>
+Subject: [PATCH] nsfs: fix oops when ns->ops is not provided
+Date:   Mon, 31 May 2021 23:34:10 +0800
+Message-Id: <20210531153410.93150-1-changbin.du@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <CAOQ4uxguanxEis-82vLr7OKbxsLvk86M0Ehz2nN1dAq8brOxtw@mail.gmail.com>
- <CAJfpeguCwxXRM4XgQWHyPxUbbvUh-M6ei-tYa5Y0P56MJMW7OA@mail.gmail.com> <CAOQ4uxhsxmzWp+YMRBA3xFDzJ1ov--n=f+VAnBsJZ_4DyHoYXw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhsxmzWp+YMRBA3xFDzJ1ov--n=f+VAnBsJZ_4DyHoYXw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 31 May 2021 17:18:48 +0200
-Message-ID: <CAJfpegsqqwMgtDKESNVXvtYU=fsu2pZ_nE8UdXQSLudKqK8Xmw@mail.gmail.com>
-Subject: Re: fsnotify events for overlayfs real file
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 18 May 2021 at 19:56, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, May 18, 2021 at 5:43 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Mon, 10 May 2021 at 18:32, Amir Goldstein <amir73il@gmail.com> wrote:
+We should not create inode for disabled namespace. A disabled namespace
+sets its ns->ops to NULL. Kernel could panic if we try to create a inode
+for such namespace.
 
-> > > My thinking was that we can change d_real() to provide the real path:
-> > >
-> > > static inline struct path d_real_path(struct path *path,
-> > >                                     const struct inode *inode)
-> > > {
-> > >         struct realpath = {};
-> > >         if (!unlikely(dentry->d_flags & DCACHE_OP_REAL))
-> > >                return *path;
-> > >         dentry->d_op->d_real(path->dentry, inode, &realpath);
-> > >         return realpath;
-> > > }
+Here is an example oops in socket ioctl cmd SIOCGSKNS when NET_NS is
+disabled. Kernel panicked wherever nsfs trys to access ns->ops since the
+proc_ns_operations is not implemented in this case.
 
-Real paths are internal, we can't pass them (as fd in permission
-events) to userspace.
+[7.670023] Unable to handle kernel NULL pointer dereference at virtual address 00000010
+[7.670268] pgd = 32b54000
+[7.670544] [00000010] *pgd=00000000
+[7.671861] Internal error: Oops: 5 [#1] SMP ARM
+[7.672315] Modules linked in:
+[7.672918] CPU: 0 PID: 1 Comm: systemd Not tainted 5.13.0-rc3-00375-g6799d4f2da49 #16
+[7.673309] Hardware name: Generic DT based system
+[7.673642] PC is at nsfs_evict+0x24/0x30
+[7.674486] LR is at clear_inode+0x20/0x9c
 
-> > >
-> > >
-> > > Another option, instead of getting the realpath, just detect the
-> > > mismatch of file_inode(file) != d_inode(path->dentry) in
-> > > fanotify_file() and pass FSNOTIFY_EVENT_DENTRY data type
-> > > with d_real() dentry to backend instead of FSNOTIFY_EVENT_PATH.
-> > >
-> > > For inotify it should be enough and for fanotify it is enough for
-> > > FAN_REPORT_FID and legacy fanotify can report FAN_NOFD,
-> > > so at least permission events listeners can identify the situation and
-> > > be able to block access to unknown paths.
+So let's reject such request for disabled namespace.
 
-That sounds like a good short term solution.
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
+Cc: <stable@vger.kernel.org>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: David Laight <David.Laight@ACULAB.COM>
+---
+ fs/nsfs.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 800c1d0eb0d0..6c055eb7757b 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -62,6 +62,10 @@ static int __ns_get_path(struct path *path, struct ns_common *ns)
+ 	struct inode *inode;
+ 	unsigned long d;
+ 
++	/* In case the namespace is not actually enabled. */
++	if (!ns->ops)
++		return -EOPNOTSUPP;
++
+ 	rcu_read_lock();
+ 	d = atomic_long_read(&ns->stashed);
+ 	if (!d)
+-- 
+2.30.2
 
->
-> Is there a reason for the fake path besides the displayed path in
-> /proc/self/maps?
-
-I'm not aware of any.
-
->
-> Does it make sense to keep one realfile with fake path for mmaped
-> files along side a realfile with private/detached path used for all the
-> other operations?
-
-This should work, but it would add more open files, so needs some good
-justifications.
-
-> While at it, we can also cache both upper and lower realfiles in case
-> file was copied up after open.
-
-Right, although this doesn't seem to be an issue (it's a rare corner
-case that is being cared for).
-
-Thanks,
-Miklos
