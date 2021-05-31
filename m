@@ -2,97 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B599395417
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 May 2021 04:55:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B909039549A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 May 2021 06:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbhEaC4w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 May 2021 22:56:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58666 "EHLO
+        id S229925AbhEaE3V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 May 2021 00:29:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229952AbhEaC4l (ORCPT
+        with ESMTP id S229475AbhEaE3U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 May 2021 22:56:41 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD80FC061574;
-        Sun, 30 May 2021 19:55:01 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id j10so11724956edw.8;
-        Sun, 30 May 2021 19:55:01 -0700 (PDT)
+        Mon, 31 May 2021 00:29:20 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1434C061761
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 May 2021 21:27:39 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id b9so14566776ejc.13
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 May 2021 21:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qi4JwnuStjKrl13hwRZNjYRqAXVvLVe47KpI8ZOLhcA=;
-        b=uElWrWzvBAHrc44Imdhjdq0EX+o1vZtfPPFcY84AGmkmIZjj/6YT6uIGdn3c457aYq
-         Dj7xt/j+bqZIEqb8XWQTCtMpiIpZhGX+hf5rB1zPzxQT9owtNsctHaUPlajlEe+EoH/d
-         72ByMG7lQXgnvlkXVLd6tyqUdHvL+uVNbcB4MWGeRyjutC+aleeSuLqTLBYQ2r47t/Bd
-         zAfvRJ/4WxNFaQkfOVIb6V19u15onpv6Fi/ZtU/wCuUFSnwD3tYaq1xUg5yemY2C8rf/
-         s9Xr9hYmMs8kGTbN97B0KVaW6kdCPvOX1dM7zR1QLtrfqwT/NHt6wBZ3qmcbajMJAbvz
-         tSkg==
+         :cc:content-transfer-encoding;
+        bh=j6WTPEiBQdPonWFjY55x7ZuSzgTUsPLMHH6aX/4/Gw8=;
+        b=EXENnrfEXaCiPMCaojpc5es9c4FAJrIpcPU8gJJf9odMOs7D8t1cPqCLzQVxVp8cbn
+         W2gadoISAhB0Zx5YzlO7O3crhw6O+npP4SIchdHydbmf7MhAaAqn6OY+orHyvKJxMtPC
+         TG1LHwL6aBkBg/I5k0qODQ82E0gszg399vZza4Ktkk+3QsObwVcYhvDRjwfgSKUKbz0H
+         ZdvrMAvKDBRKfx7j1LyV2vpm5rLOHjEpJKpDIut/0u2C0r7wm7TLozEeYbmmy+s+3mBm
+         UgmsyRSKfdyCLeq1aVgJCnko00wNUy6PRwe3GG2SIQIMzBpr9nDRNHEQHrxA3n7H0jef
+         l+vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qi4JwnuStjKrl13hwRZNjYRqAXVvLVe47KpI8ZOLhcA=;
-        b=fHTu7cTraO4D/hFWICjMJlUrypY449EwdfkNUCJwa8tkUhfsLAIjvSJVWC3m/XG5fl
-         xL7YlUyxVr6LOCAH2m18vK6Kpjb6IkqUsWZTnDDV/ZUd+kAuwr8giLsQBSE6nwhAqvhc
-         yI4GONm/KsJzC4dYSQ9EA4l0kNDhUuc5WNI8834H10lDxlwyauwtRapCVSQYLMP9fGJG
-         dii/Baj0AUvR4oOF8lrJWnyj8hFvBioh9zoXz8FQqQ6mL34uhq3EA37J1vB8rVOaOqci
-         DFyOd8tEFmgDR3ibaQD6WbBbQ4WJCAuNjqibxR/RYQWGRIGS6RRDqKsulToSlXNHY5F/
-         6Vyw==
-X-Gm-Message-State: AOAM533kHhbjzhRwYyfAhJze+oYx8IjHGb3tI33gAk3tRKdqU7KvPbXU
-        krcYFwk+18L0TL6Yo6zNkuEzi/15UFCJM2+/2XQmCWxd
-X-Google-Smtp-Source: ABdhPJw7Y0d92GylmlMCy9GMNyn7kQnkHuYBMaViMJry1bY7neGEi5I54S2HU379J78rHAbRggiff+zo5ufy89Pi0Wo=
-X-Received: by 2002:a05:6402:2713:: with SMTP id y19mr22499149edd.59.1622429700519;
- Sun, 30 May 2021 19:55:00 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=j6WTPEiBQdPonWFjY55x7ZuSzgTUsPLMHH6aX/4/Gw8=;
+        b=HxgAnR18ngsiySjBXUZiolgXXi4MnqIgXX7a7xc6uqJ1qtOSDeuJ/g1SbYFTa5WsdW
+         MKKyDkXmknz3kC1MflThdsPAz3biWUZmBxQAU+6UbCoB/TDOThGkkMwtgxm5J1uyAkdM
+         Jj8NP/M6N4u+SPSsa4FIRHlK5ihKJfBhoAco6w3b+khpt6Rgo0zSCwi+gaAYEZ8RvtpH
+         t/2SMp9cDp8YgdAzhc631it91WMKM111fotPX9tdXu7r9b79NBi4Tvel++9XVOOi7GUG
+         IEKvovxnAd1sKQzBYi3CvI2+fl1mxmdeAOf+RVJZ+MPbIrMREAaEgqD6cV+4U00MPjw7
+         xVWA==
+X-Gm-Message-State: AOAM532zrKE8xTt2ldpFDeXzK7z2/0IbLQhYZ0KmP0dbJJU/ngLHr1VL
+        tIkF+VKHSCMOU7CXHWmlGE6kp9X0CPKB0ui0sZiH
+X-Google-Smtp-Source: ABdhPJwhWkGN+YD4HVomVtgpj6PoKjpLAKuMwiNQd38DxcDTR1RBUa8K6flHPHMrV8WCVdAdhenY0lyPQ9+3KiWhFNo=
+X-Received: by 2002:a17:906:c211:: with SMTP id d17mr21087083ejz.247.1622435258309;
+ Sun, 30 May 2021 21:27:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAOuPNLjgpkBh9dnfNTdDcfk5HiL=HjjiB9o_=fjrm+0vP7Re2Q@mail.gmail.com>
- <CAOuPNLh_0Q9w96GKT-ogC0BBcEHgo=Hv3+c=JBcas2VgqDiyaw@mail.gmail.com>
- <CAOuPNLjmJ0YufFktJzjkyvdxwFTOpxVj5AW5gANAGSG=_yT=mQ@mail.gmail.com>
- <1762403920.6716767.1621029029246@webmail.123-reg.co.uk> <CAOuPNLhn90z9i6jt0-Vv4e9hjsxwYUT2Su-7SQrxy+N=HDe_xA@mail.gmail.com>
- <486335206.6969995.1621485014357@webmail.123-reg.co.uk> <CAOuPNLjBsm9YLtcb4SnqLYYaHPnscYq4captvCmsR7DthiWGsQ@mail.gmail.com>
- <1339b24a-b5a5-5c73-7de0-9541455b66af@geanix.com> <CAOuPNLiMnHJJNFBbOrMOLmnxU86ROMBaLaeFxviPENCkuKfUVg@mail.gmail.com>
- <4304c082-6fc5-7389-f883-d0adfc95ee86@geanix.com>
-In-Reply-To: <4304c082-6fc5-7389-f883-d0adfc95ee86@geanix.com>
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Mon, 31 May 2021 08:24:49 +0530
-Message-ID: <CAOuPNLigHdbu_OTpsFr7gq+nFK2Pv+4MUSrC6A6PfKfF1H1X3Q@mail.gmail.com>
-Subject: Re: [RESEND]: Kernel 4.14: UBIFS+SQUASHFS: Device fails to boot after
- flashing rootfs volume
-To:     Sean Nyekjaer <sean@geanix.com>
-Cc:     Phillip Lougher <phillip@squashfs.org.uk>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <20210517095513.850-1-xieyongji@bytedance.com> <20210517095513.850-12-xieyongji@bytedance.com>
+ <3740c7eb-e457-07f3-5048-917c8606275d@redhat.com> <CACycT3uAqa6azso_8MGreh+quj-JXO1piuGnrV8k2kTfc34N2g@mail.gmail.com>
+ <5a68bb7c-fd05-ce02-cd61-8a601055c604@redhat.com> <CACycT3ve7YvKF+F+AnTQoJZMPua+jDvGMs_ox8GQe_=SGdeCMA@mail.gmail.com>
+ <ee00efca-b26d-c1be-68d2-f9e34a735515@redhat.com> <CACycT3ufok97cKpk47NjUBTc0QAyfauFUyuFvhWKmuqCGJ7zZw@mail.gmail.com>
+ <00ded99f-91b6-ba92-5d92-2366b163f129@redhat.com> <CACycT3uK_Fuade-b8FVYkGCKZnne_UGGbYRFwv7WOH2oKCsXSg@mail.gmail.com>
+ <f20edd55-20cb-c016-b347-dd71c5406ed8@redhat.com>
+In-Reply-To: <f20edd55-20cb-c016-b347-dd71c5406ed8@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Mon, 31 May 2021 12:27:27 +0800
+Message-ID: <CACycT3tLj6a7-tbqO9SzCLStwYrOALdkfnt1jxQBv3s0VzD6AQ@mail.gmail.com>
+Subject: Re: Re: [PATCH v7 11/12] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 25 May 2021 at 11:07, Sean Nyekjaer <sean@geanix.com> wrote:
-> We are writing our rootfs with this command:
-> ubiupdatevol /dev/ubi0_4 rootfs.squashfs
+On Fri, May 28, 2021 at 10:31 AM Jason Wang <jasowang@redhat.com> wrote:
 >
-> Please understand the differences between the UBI and UBIFS. UBI(unsorted block image) and UBIFS(UBI File System).
-> I think you want to write the squashfs to the UBI(unsorted block image).
 >
-> Can you try to boot with a initramfs, and then use ubiupdatevol to write the rootfs.squshfs.
+> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=889:17, Yongji Xie =E5=86=99=E9=81=93=
+:
+> > On Thu, May 27, 2021 at 4:41 PM Jason Wang <jasowang@redhat.com> wrote:
+> >>
+> >> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=883:34, Yongji Xie =E5=86=99=E9=81=
+=93:
+> >>> On Thu, May 27, 2021 at 1:40 PM Jason Wang <jasowang@redhat.com> wrot=
+e:
+> >>>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=881:08, Yongji Xie =E5=86=99=E9=
+=81=93:
+> >>>>> On Thu, May 27, 2021 at 1:00 PM Jason Wang <jasowang@redhat.com> wr=
+ote:
+> >>>>>> =E5=9C=A8 2021/5/27 =E4=B8=8B=E5=8D=8812:57, Yongji Xie =E5=86=99=
+=E9=81=93:
+> >>>>>>> On Thu, May 27, 2021 at 12:13 PM Jason Wang <jasowang@redhat.com>=
+ wrote:
+> >>>>>>>> =E5=9C=A8 2021/5/17 =E4=B8=8B=E5=8D=885:55, Xie Yongji =E5=86=99=
+=E9=81=93:
+> >>>>>>>>> +
+> >>>>>>>>> +static int vduse_dev_msg_sync(struct vduse_dev *dev,
+> >>>>>>>>> +                           struct vduse_dev_msg *msg)
+> >>>>>>>>> +{
+> >>>>>>>>> +     init_waitqueue_head(&msg->waitq);
+> >>>>>>>>> +     spin_lock(&dev->msg_lock);
+> >>>>>>>>> +     vduse_enqueue_msg(&dev->send_list, msg);
+> >>>>>>>>> +     wake_up(&dev->waitq);
+> >>>>>>>>> +     spin_unlock(&dev->msg_lock);
+> >>>>>>>>> +     wait_event_killable(msg->waitq, msg->completed);
+> >>>>>>>> What happens if the userspace(malicous) doesn't give a response =
+forever?
+> >>>>>>>>
+> >>>>>>>> It looks like a DOS. If yes, we need to consider a way to fix th=
+at.
+> >>>>>>>>
+> >>>>>>> How about using wait_event_killable_timeout() instead?
+> >>>>>> Probably, and then we need choose a suitable timeout and more impo=
+rtant,
+> >>>>>> need to report the failure to virtio.
+> >>>>>>
+> >>>>> Makes sense to me. But it looks like some
+> >>>>> vdpa_config_ops/virtio_config_ops such as set_status() didn't have =
+a
+> >>>>> return value.  Now I add a WARN_ON() for the failure. Do you mean w=
+e
+> >>>>> need to add some change for virtio core to handle the failure?
+> >>>> Maybe, but I'm not sure how hard we can do that.
+> >>>>
+> >>> We need to change all virtio device drivers in this way.
+> >>
+> >> Probably.
+> >>
+> >>
+> >>>> We had NEEDS_RESET but it looks we don't implement it.
+> >>>>
+> >>> Could it handle the failure of get_feature() and get/set_config()?
+> >>
+> >> Looks not:
+> >>
+> >> "
+> >>
+> >> The device SHOULD set DEVICE_NEEDS_RESET when it enters an error state
+> >> that a reset is needed. If DRIVER_OK is set, after it sets
+> >> DEVICE_NEEDS_RESET, the device MUST send a device configuration change
+> >> notification to the driver.
+> >>
+> >> "
+> >>
+> >> This looks implies that NEEDS_RESET may only work after device is
+> >> probed. But in the current design, even the reset() is not reliable.
+> >>
+> >>
+> >>>> Or a rough idea is that maybe need some relaxing to be coupled loose=
+ly
+> >>>> with userspace. E.g the device (control path) is implemented in the
+> >>>> kernel but the datapath is implemented in the userspace like TUN/TAP=
+.
+> >>>>
+> >>> I think it can work for most cases. One problem is that the set_confi=
+g
+> >>> might change the behavior of the data path at runtime, e.g.
+> >>> virtnet_set_mac_address() in the virtio-net driver and
+> >>> cache_type_store() in the virtio-blk driver. Not sure if this path is
+> >>> able to return before the datapath is aware of this change.
+> >>
+> >> Good point.
+> >>
+> >> But set_config() should be rare:
+> >>
+> >> E.g in the case of virtio-net with VERSION_1, config space is read onl=
+y,
+> >> and it was set via control vq.
+> >>
+> >> For block, we can
+> >>
+> >> 1) start from without WCE or
+> >> 2) we add a config change notification to userspace or
+> > I prefer this way. And I think we also need to do similar things for
+> > set/get_vq_state().
 >
-Dear Sean, thank you so much for this suggestion.
-Just a final help I need here.
+>
+> Yes, I agree.
+>
 
-For future experiment purposes, I am trying to setup my qemu-arm
-environment using ubifs/squashfs and "nandsim" module.
-I already have a working setup for qemu-arm with busybox/initramfs.
-Now I wanted to prepare ubifs/squashfs based busybox rootfs which I
-can use for booting the mainline kernel.
-Is it possible ?
-Are there already some pre-built ubifs images available which I can
-use for my qemu-arm ?
-Or, please guide me how to do it ?
+Hi Jason,
 
-I think it is more convenient to do all experiments with "nandsim"
-instead of corrupting the actual NAND hardware.
-If you have any other suggestions please let me know.
+Now I'm working on this. But I found the config change notification
+must be synchronous in the virtio-blk case, which means the kernel
+still needs to wait for the response from userspace in set_config().
+Otherwise, some I/Os might still run the old way after we change the
+cache_type in sysfs.
 
+The simple ways to solve this problem are:
+
+1. Only support read-only config space, disable WCE as you suggested
+2. Add a return value to set_config() and handle the failure only in
+virtio-blk driver
+3. Print some warnings after timeout since it only affects the
+dataplane which is under userspace's control
+
+Any suggestions?
 
 Thanks,
-Pintu
+Yongji
