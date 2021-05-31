@@ -2,412 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AE4A396818
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 May 2021 20:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E1C396839
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 May 2021 21:02:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231144AbhEaStf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 May 2021 14:49:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44560 "EHLO
+        id S231144AbhEaTEf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 May 2021 15:04:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230174AbhEaSte (ORCPT
+        with ESMTP id S230174AbhEaTEf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 May 2021 14:49:34 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63ABBC061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 May 2021 11:47:53 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 1CF511F41F90
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     tytso@mit.edu, jaegeuk@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, kunit-dev@googlegroups.com,
-        =?UTF-8?q?Ricardo=20Ca=C3=B1uelo?= <ricardo.canuelo@collabora.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH] unicode: Implement UTF-8 tests as a KUnit test
-Date:   Mon, 31 May 2021 14:47:42 -0400
-Message-Id: <20210531184742.1142042-1-krisman@collabora.com>
-X-Mailer: git-send-email 2.31.0
+        Mon, 31 May 2021 15:04:35 -0400
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCC6BC061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 May 2021 12:02:53 -0700 (PDT)
+Received: by mail-il1-x132.google.com with SMTP id x18so5229062ila.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 May 2021 12:02:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=RZ7BAyySEJy4Lyl5uxB2d32KZdqXL0StXiQ19LEPFuU=;
+        b=KvpssveBeWcliCHLZfKlKDLhTjoAH/TKYAtzvMOgG9cayhrqW+hhlN/mm+rBWXWekv
+         HLoith0Ls6KRJmODQe73O9wSwujXwqkvaE/oV9sqmzdvLw5wgKuNZvOk0M8DKhuQCRNs
+         BjMTwP5Y6JE2VAtsDRFinb+BJ8IWaI93VoyJ/RVDyKBXNqpjnJuM+pYb1uGNv8SY741H
+         OWqT72a4aREKXz3ZEtX331u97R2+XUUC8csQqVvEfPRqiZPUOUiGdg2o8lrkYypVTa4i
+         pTPWPDfAd7HYHpk4MWaK5L6gePJUOtm0hgNtsd88UNhkyzRuZj6Llj3a7Mk4n0sJsWaT
+         bCcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RZ7BAyySEJy4Lyl5uxB2d32KZdqXL0StXiQ19LEPFuU=;
+        b=HOXZh5NOsKJpNC/H5CjAAgg/vLfr/zGPa756MnNCZu72BASAfmeP2Q8JhJ1R/0i+Sz
+         jy/NDjC3hfL7dODI5KKbtcliwx059MOyHnT0QO1gH2Muarfhpfg8F40/ydqTjCvBzCnx
+         o+5KfJ2KR79c3bUqAfzJJKwb3Bt6YNVVnvUbo8sWSVTLufKcWsUYkRdkXOhHZYKcVFTf
+         aSKQ14IQezVgvEmi7eEo/FnUBEcc4hKdwquHSQ6G7TZG/MJE5WUWiewjk98uQspfaiib
+         m2pUDm/QGaxSFspN/FwWNhfR40rJmxuLYKG2qdw7rfiAu8wG4e7ljQamwi3W5BbypQzg
+         fchA==
+X-Gm-Message-State: AOAM531KitzlMB5okqBf70XZE5fE+xsrxM6EtYr0tc9OHeX2eZmjJteW
+        J5Vz6ZnjWJO/CmfatEvz/xTVeXBkT6aeTSWP5Omj8+kEEzAXkg==
+X-Google-Smtp-Source: ABdhPJxychpQPXaeXjOWNjDuFGzfK826W4sHBgLp00AUCNl5yz4F+IzeU71XlFiPXTw3QwlZ2oQHywsX990y/UWRcj4=
+X-Received: by 2002:a92:dd0c:: with SMTP id n12mr5429206ilm.236.1622487773211;
+ Mon, 31 May 2021 12:02:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAM6ytZrBUMB6xpP_srni8VParnNiuFPZZ2H-WsWUJEZH_vSk1w@mail.gmail.com>
+ <YLUXvOI433/W8EvD@casper.infradead.org>
+In-Reply-To: <YLUXvOI433/W8EvD@casper.infradead.org>
+From:   tianyu zhou <tyjoe.linux@gmail.com>
+Date:   Tue, 1 Jun 2021 03:02:42 +0800
+Message-ID: <CAM6ytZo5H3rvGqwJOAXmo1Zp3fxXH_ZLivGg1jNc9c_PgAkTUQ@mail.gmail.com>
+Subject: Re: Missing check for CAP_SYS_ADMIN in do_reconfigure_mnt()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ricardo Cañuelo <ricardo.canuelo@collabora.com>
+Thanks for reminding!
 
-Hi,
+But here is one more question about the CAP_SYS_ADMIN check inside
+may_mount(): why does it check the CAP in
+current->nsproxy->mnt_ns->user_ns?
 
-This patch saw some review on the list around one year ago [1], and I
-proposed it on a PR that ended up vanishing on the list noise [2], while
-I moved on to other things.
+for do_remount(), it checks CAP_SYS_ADMIN in path->mnt->mnt_sb->s_user_ns;
+for path_mount(), it checks CAP_SYS_ADMIN in current->nsproxy->mnt_ns->user=
+_ns.
 
-Given the long time since last review, I'm proposing it for review again
-instead of making it part of a new PR.  From the version I've been
-carrying, the only update of this iteration is the KUNIT_ALL_TESTS
-symbol dependency on Kconfig, and the CONFIG_ option rename to better
-fit other KUNIT tests.  The actual code continues to work fine on top of
-mainline.
+Is these two user ns are same during runtime? (If they are same, then
+it will be redundant check in path_mount() and its callee
+do_remount(); if they are not same, maybe do_reconfigure_mnt() need
+more check for path->mnt->mnt_sb->s_user_ns)
 
-Please, let me know what you think.
+Tianyu
 
-[1] https://www.spinics.net/lists/linux-fsdevel/msg166356.html
-[2] https://patchwork.kernel.org/project/linux-fsdevel/patch/87blkap6az.fsf@collabora.com/
-
--- >8 --
-
-This translates the existing UTF-8 unit test module into a
-KUnit-compliant test suite. No functionality has been added or removed.
-
-Some names changed to make the file name, the Kconfig option and test
-suite name less specific, since this source file might hold more UTF-8
-tests in the future.
-
-Signed-off-by: Ricardo Cañuelo <ricardo.canuelo@collabora.com>
-[Fix checkpatch's complaint. Fix module build.
- Add KUNIT_ALL_TESTS to kconfig]
-Co-developed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- fs/unicode/Kconfig                          |  21 ++-
- fs/unicode/Makefile                         |   2 +-
- fs/unicode/{utf8-selftest.c => utf8-test.c} | 199 +++++++++-----------
- 3 files changed, 109 insertions(+), 113 deletions(-)
- rename fs/unicode/{utf8-selftest.c => utf8-test.c} (60%)
-
-diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
-index 2c27b9a5cd6c..e29aca813374 100644
---- a/fs/unicode/Kconfig
-+++ b/fs/unicode/Kconfig
-@@ -8,7 +8,20 @@ config UNICODE
- 	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
- 	  support.
- 
--config UNICODE_NORMALIZATION_SELFTEST
--	tristate "Test UTF-8 normalization support"
--	depends on UNICODE
--	default n
-+config UNICODE_KUNIT_TESTS
-+	tristate "KUnit test UTF-8 normalization support" if !KUNIT_ALL_TESTS
-+	depends on UNICODE && KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds the KUnit test suite for Unicode normalization and
-+	  casefolding support.
-+
-+	  KUnit tests run during boot and output the results to the debug log
-+	  in TAP format (http://testanything.org/). Only useful for kernel devs
-+	  running KUnit test harness and are not for inclusion into a production
-+	  build.
-+
-+	  For more information on KUnit and unit tests in general please refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-+
-+	  If unsure, say N.
-diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-index b88aecc86550..0e8e2192a715 100644
---- a/fs/unicode/Makefile
-+++ b/fs/unicode/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- obj-$(CONFIG_UNICODE) += unicode.o
--obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
-+obj-$(CONFIG_UNICODE_KUNIT_TESTS) += utf8-test.o
- 
- unicode-y := utf8-norm.o utf8-core.o
- 
-diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-test.c
-similarity index 60%
-rename from fs/unicode/utf8-selftest.c
-rename to fs/unicode/utf8-test.c
-index 6fe8af7edccb..3ef3a80f9407 100644
---- a/fs/unicode/utf8-selftest.c
-+++ b/fs/unicode/utf8-test.c
-@@ -1,39 +1,23 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Kernel module for testing utf-8 support.
-+ * KUnit tests for utf-8 support.
-  *
-- * Copyright 2017 Collabora Ltd.
-+ * Copyright 2020 Collabora Ltd.
-  */
- 
--#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
--
--#include <linux/module.h>
--#include <linux/printk.h>
-+#include <kunit/test.h>
- #include <linux/unicode.h>
--#include <linux/dcache.h>
--
- #include "utf8n.h"
- 
--unsigned int failed_tests;
--unsigned int total_tests;
--
- /* Tests will be based on this version. */
- #define latest_maj 12
- #define latest_min 1
- #define latest_rev 0
- 
--#define _test(cond, func, line, fmt, ...) do {				\
--		total_tests++;						\
--		if (!cond) {						\
--			failed_tests++;					\
--			pr_err("test %s:%d Failed: %s%s",		\
--			       func, line, #cond, (fmt?":":"."));	\
--			if (fmt)					\
--				pr_err(fmt, ##__VA_ARGS__);		\
--		}							\
--	} while (0)
--#define test_f(cond, fmt, ...) _test(cond, __func__, __LINE__, fmt, ##__VA_ARGS__)
--#define test(cond) _test(cond, __func__, __LINE__, "")
-+#define str(s) #s
-+#define VERSION_STR(maj, min, rev) str(maj) "." str(min) "." str(rev)
-+
-+/* Test data */
- 
- static const struct {
- 	/* UTF-8 strings in this vector _must_ be NULL-terminated. */
-@@ -160,88 +144,117 @@ static const struct {
- 	}
- };
- 
--static void check_utf8_nfdi(void)
-+
-+/* Test cases */
-+
-+static void utf8_test_supported_versions(struct kunit *test)
-+{
-+	/* Unicode 7.0.0 should be supported. */
-+	KUNIT_EXPECT_TRUE(test, utf8version_is_supported(7, 0, 0));
-+
-+	/* Unicode 9.0.0 should be supported. */
-+	KUNIT_EXPECT_TRUE(test, utf8version_is_supported(9, 0, 0));
-+
-+	/* Unicode 1x.0.0 (the latest version) should be supported. */
-+	KUNIT_EXPECT_TRUE(test,
-+		utf8version_is_supported(latest_maj, latest_min, latest_rev));
-+
-+	/* Next versions don't exist. */
-+	KUNIT_EXPECT_FALSE(test,
-+		utf8version_is_supported(latest_maj + 1, 0, 0));
-+
-+	/* Test for invalid version values */
-+	KUNIT_EXPECT_FALSE(test, utf8version_is_supported(0, 0, 0));
-+	KUNIT_EXPECT_FALSE(test, utf8version_is_supported(-1, -1, -1));
-+}
-+
-+static void utf8_test_nfdi(struct kunit *test)
- {
- 	int i;
- 	struct utf8cursor u8c;
- 	const struct utf8data *data;
- 
- 	data = utf8nfdi(UNICODE_AGE(latest_maj, latest_min, latest_rev));
--	if (!data) {
--		pr_err("%s: Unable to load utf8-%d.%d.%d. Skipping.\n",
--		       __func__, latest_maj, latest_min, latest_rev);
--		return;
--	}
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL_MSG(test, data,
-+		"Unable to load utf8-%d.%d.%d. Skipping.",
-+		latest_maj, latest_min, latest_rev);
- 
- 	for (i = 0; i < ARRAY_SIZE(nfdi_test_data); i++) {
--		int len = strlen(nfdi_test_data[i].str);
--		int nlen = strlen(nfdi_test_data[i].dec);
-+		size_t len = strlen(nfdi_test_data[i].str);
-+		size_t nlen = strlen(nfdi_test_data[i].dec);
- 		int j = 0;
- 		unsigned char c;
- 
--		test((utf8len(data, nfdi_test_data[i].str) == nlen));
--		test((utf8nlen(data, nfdi_test_data[i].str, len) == nlen));
-+		KUNIT_EXPECT_EQ(test,
-+			utf8len(data, nfdi_test_data[i].str),
-+			(ssize_t)nlen);
-+		KUNIT_EXPECT_EQ(test,
-+			utf8nlen(data, nfdi_test_data[i].str, len),
-+			(ssize_t)nlen);
- 
--		if (utf8cursor(&u8c, data, nfdi_test_data[i].str) < 0)
--			pr_err("can't create cursor\n");
-+		KUNIT_ASSERT_EQ_MSG(test,
-+			utf8cursor(&u8c, data, nfdi_test_data[i].str), 0,
-+			"Can't create cursor");
- 
- 		while ((c = utf8byte(&u8c)) > 0) {
--			test_f((c == nfdi_test_data[i].dec[j]),
--			       "Unexpected byte 0x%x should be 0x%x\n",
--			       c, nfdi_test_data[i].dec[j]);
-+			KUNIT_EXPECT_EQ_MSG(test, c, nfdi_test_data[i].dec[j],
-+				"Unexpected byte 0x%x should be 0x%x",
-+				c, nfdi_test_data[i].dec[j]);
- 			j++;
- 		}
- 
--		test((j == nlen));
-+		KUNIT_EXPECT_EQ(test, j, (int)nlen);
- 	}
- }
- 
--static void check_utf8_nfdicf(void)
-+static void utf8_test_nfdicf(struct kunit *test)
- {
- 	int i;
- 	struct utf8cursor u8c;
- 	const struct utf8data *data;
- 
- 	data = utf8nfdicf(UNICODE_AGE(latest_maj, latest_min, latest_rev));
--	if (!data) {
--		pr_err("%s: Unable to load utf8-%d.%d.%d. Skipping.\n",
--		       __func__, latest_maj, latest_min, latest_rev);
--		return;
--	}
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL_MSG(test, data,
-+		"Unable to load utf8-%d.%d.%d. Skipping.",
-+		latest_maj, latest_min, latest_rev);
- 
- 	for (i = 0; i < ARRAY_SIZE(nfdicf_test_data); i++) {
--		int len = strlen(nfdicf_test_data[i].str);
--		int nlen = strlen(nfdicf_test_data[i].ncf);
-+		size_t len = strlen(nfdicf_test_data[i].str);
-+		size_t nlen = strlen(nfdicf_test_data[i].ncf);
- 		int j = 0;
- 		unsigned char c;
- 
--		test((utf8len(data, nfdicf_test_data[i].str) == nlen));
--		test((utf8nlen(data, nfdicf_test_data[i].str, len) == nlen));
-+		KUNIT_EXPECT_EQ(test,
-+			utf8len(data, nfdicf_test_data[i].str),
-+			(ssize_t)nlen);
-+		KUNIT_EXPECT_EQ(test,
-+			utf8nlen(data, nfdicf_test_data[i].str, len),
-+			(ssize_t)nlen);
- 
--		if (utf8cursor(&u8c, data, nfdicf_test_data[i].str) < 0)
--			pr_err("can't create cursor\n");
-+		KUNIT_ASSERT_EQ_MSG(test,
-+			utf8cursor(&u8c, data, nfdicf_test_data[i].str), 0,
-+			"Can't create cursor");
- 
- 		while ((c = utf8byte(&u8c)) > 0) {
--			test_f((c == nfdicf_test_data[i].ncf[j]),
--			       "Unexpected byte 0x%x should be 0x%x\n",
--			       c, nfdicf_test_data[i].ncf[j]);
-+			KUNIT_EXPECT_EQ_MSG(test, c, nfdicf_test_data[i].ncf[j],
-+				"Unexpected byte 0x%x should be 0x%x\n",
-+				c, nfdicf_test_data[i].ncf[j]);
- 			j++;
- 		}
- 
--		test((j == nlen));
-+		KUNIT_EXPECT_EQ(test, j, (int)nlen);
- 	}
- }
- 
--static void check_utf8_comparisons(void)
-+static void utf8_test_comparisons(struct kunit *test)
- {
- 	int i;
--	struct unicode_map *table = utf8_load("12.1.0");
-+	struct unicode_map *table;
- 
--	if (IS_ERR(table)) {
--		pr_err("%s: Unable to load utf8 %d.%d.%d. Skipping.\n",
--		       __func__, latest_maj, latest_min, latest_rev);
--		return;
--	}
-+	table = utf8_load(VERSION_STR(latest_maj, latest_min, latest_rev));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL_MSG(test, table,
-+		"Unable to load utf8-%d.%d.%d. Skipping.\n",
-+		latest_maj, latest_min, latest_rev);
- 
- 	for (i = 0; i < ARRAY_SIZE(nfdi_test_data); i++) {
- 		const struct qstr s1 = {.name = nfdi_test_data[i].str,
-@@ -249,8 +262,8 @@ static void check_utf8_comparisons(void)
- 		const struct qstr s2 = {.name = nfdi_test_data[i].dec,
- 					.len = sizeof(nfdi_test_data[i].dec)};
- 
--		test_f(!utf8_strncmp(table, &s1, &s2),
--		       "%s %s comparison mismatch\n", s1.name, s2.name);
-+		KUNIT_EXPECT_EQ_MSG(test, utf8_strncmp(table, &s1, &s2), 0,
-+			"%s %s comparison mismatch", s1.name, s2.name);
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(nfdicf_test_data); i++) {
-@@ -259,54 +272,24 @@ static void check_utf8_comparisons(void)
- 		const struct qstr s2 = {.name = nfdicf_test_data[i].ncf,
- 					.len = sizeof(nfdicf_test_data[i].ncf)};
- 
--		test_f(!utf8_strncasecmp(table, &s1, &s2),
--		       "%s %s comparison mismatch\n", s1.name, s2.name);
-+		KUNIT_EXPECT_EQ_MSG(test, utf8_strncasecmp(table, &s1, &s2), 0,
-+			"%s %s comparison mismatch", s1.name, s2.name);
- 	}
- 
- 	utf8_unload(table);
- }
- 
--static void check_supported_versions(void)
--{
--	/* Unicode 7.0.0 should be supported. */
--	test(utf8version_is_supported(7, 0, 0));
--
--	/* Unicode 9.0.0 should be supported. */
--	test(utf8version_is_supported(9, 0, 0));
--
--	/* Unicode 1x.0.0 (the latest version) should be supported. */
--	test(utf8version_is_supported(latest_maj, latest_min, latest_rev));
--
--	/* Next versions don't exist. */
--	test(!utf8version_is_supported(13, 0, 0));
--	test(!utf8version_is_supported(0, 0, 0));
--	test(!utf8version_is_supported(-1, -1, -1));
--}
--
--static int __init init_test_ucd(void)
--{
--	failed_tests = 0;
--	total_tests = 0;
--
--	check_supported_versions();
--	check_utf8_nfdi();
--	check_utf8_nfdicf();
--	check_utf8_comparisons();
--
--	if (!failed_tests)
--		pr_info("All %u tests passed\n", total_tests);
--	else
--		pr_err("%u out of %u tests failed\n", failed_tests,
--		       total_tests);
--	return 0;
--}
--
--static void __exit exit_test_ucd(void)
--{
--}
-+static struct kunit_case utf8_test_cases[] = {
-+	KUNIT_CASE(utf8_test_supported_versions),
-+	KUNIT_CASE(utf8_test_nfdi),
-+	KUNIT_CASE(utf8_test_nfdicf),
-+	KUNIT_CASE(utf8_test_comparisons),
-+	{}
-+};
- 
--module_init(init_test_ucd);
--module_exit(exit_test_ucd);
-+static struct kunit_suite utf8_test_suite = {
-+	.name = "utf8-unit-test",
-+	.test_cases = utf8_test_cases,
-+};
- 
--MODULE_AUTHOR("Gabriel Krisman Bertazi <krisman@collabora.co.uk>");
--MODULE_LICENSE("GPL");
-+kunit_test_suite(utf8_test_suite);
--- 
-2.31.0
-
+Matthew Wilcox <willy@infradead.org> =E4=BA=8E2021=E5=B9=B46=E6=9C=881=E6=
+=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8A=E5=8D=881:07=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Mon, May 31, 2021 at 10:59:54PM +0800, tianyu zhou wrote:
+> > Hi, function do_remount() in fs/namespace.c checks the CAP_SYS_ADMIN
+> > before it calls set_mount_attributes().
+> >
+> > However, in another caller of set_mount_attributes(),
+> > do_reconfigure_mnt(), I have not found any check for CAP_SYS_ADMIN.
+> > So, is there a missing check bug inside do_reconfigure_mnt() ? (which
+> > makes it possible for normal user to reach set_mount_attributes())
+>
+> You weren't looking hard enough ...
+>
+> path_mount()
+>         if (!may_mount())
+>                 return -EPERM;
+> ...
+>         if ((flags & (MS_REMOUNT | MS_BIND)) =3D=3D (MS_REMOUNT | MS_BIND=
+))
+>                 return do_reconfigure_mnt(path, mnt_flags);
+>
+> (this is the only call to do_reconfigure_mnt())
+>
+> and:
+>
+> static inline bool may_mount(void)
+> {
+>         return ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMI=
+N);
+> }
+>
