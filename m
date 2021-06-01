@@ -2,92 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA315396C98
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 07:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 144B3396D26
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 08:10:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232875AbhFAFDK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Jun 2021 01:03:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230170AbhFAFDK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Jun 2021 01:03:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 23A576102A;
-        Tue,  1 Jun 2021 05:01:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622523689;
-        bh=oQlazZST/xTVF4xaTCspIjwCZZNAdsOrYEBHpFSLUMs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Inbx6eGf8uuOhQpwvwOY2NdQNf4FEQvyhePt97HJPaBu+P7lDcMo97U3y77wQdtLs
-         U68yCi02NBh5197AT/2PMfcB0HNQb729i9LSwNkhfA+r/HC13kE9z/lMaA1qtbLeZA
-         4rcorJ3nQn69RNdpiKD0kQX8UgAydFSziuyZnbVOA/AboAZBoaw7WTHGI8VtiIPOxb
-         oQrCUCVKWhQ/8Xt3zpwg8wQM6jw2N9kW6pXnm0FDpfb2Cwue5cRmw0EGSisGbQzVOa
-         204Y/snDAT2adrZeA8BUDBLl9fl1F3iDOYnf5ziuyjt5aNPL4lVdc1PxJhULJSCByz
-         vGUSMNZnjiGjA==
-Date:   Mon, 31 May 2021 22:01:28 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        David Laight <David.Laight@ACULAB.COM>
-Subject: Re: [PATCH] nsfs: fix oops when ns->ops is not provided
-Message-ID: <20210531220128.26c0cb36@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
-In-Reply-To: <20210531153410.93150-1-changbin.du@gmail.com>
-References: <20210531153410.93150-1-changbin.du@gmail.com>
+        id S232963AbhFAGLz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Jun 2021 02:11:55 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2920 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230326AbhFAGLy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Jun 2021 02:11:54 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FvMBV4GLPz677M;
+        Tue,  1 Jun 2021 14:07:14 +0800 (CST)
+Received: from dggpeml500019.china.huawei.com (7.185.36.137) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 1 Jun 2021 14:10:11 +0800
+Received: from [10.174.179.189] (10.174.179.189) by
+ dggpeml500019.china.huawei.com (7.185.36.137) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 1 Jun 2021 14:10:11 +0800
+Subject: Re: [PATCH] fuse: use DIV_ROUND_UP helper macro for calculations
+To:     <miklos@szeredi.hu>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <linfeilong@huawei.com>
+References: <1621928447-456653-1-git-send-email-wubo40@huawei.com>
+From:   Wu Bo <wubo40@huawei.com>
+Message-ID: <79744e88-7f72-ce71-c379-cf749a6ba2f4@huawei.com>
+Date:   Tue, 1 Jun 2021 14:10:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1621928447-456653-1-git-send-email-wubo40@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.179.189]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500019.china.huawei.com (7.185.36.137)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 31 May 2021 23:34:10 +0800 Changbin Du wrote:
-> We should not create inode for disabled namespace. A disabled namespace
-> sets its ns->ops to NULL. Kernel could panic if we try to create a inode
-> for such namespace.
-> 
-> Here is an example oops in socket ioctl cmd SIOCGSKNS when NET_NS is
-> disabled. Kernel panicked wherever nsfs trys to access ns->ops since the
-> proc_ns_operations is not implemented in this case.
-> 
-> [7.670023] Unable to handle kernel NULL pointer dereference at virtual address 00000010
-> [7.670268] pgd = 32b54000
-> [7.670544] [00000010] *pgd=00000000
-> [7.671861] Internal error: Oops: 5 [#1] SMP ARM
-> [7.672315] Modules linked in:
-> [7.672918] CPU: 0 PID: 1 Comm: systemd Not tainted 5.13.0-rc3-00375-g6799d4f2da49 #16
-> [7.673309] Hardware name: Generic DT based system
-> [7.673642] PC is at nsfs_evict+0x24/0x30
-> [7.674486] LR is at clear_inode+0x20/0x9c
-> 
-> So let's reject such request for disabled namespace.
-> 
-> Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> Cc: <stable@vger.kernel.org>
-> Cc: Cong Wang <xiyou.wangcong@gmail.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: David Laight <David.Laight@ACULAB.COM>
-> ---
->  fs/nsfs.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/nsfs.c b/fs/nsfs.c
-> index 800c1d0eb0d0..6c055eb7757b 100644
-> --- a/fs/nsfs.c
-> +++ b/fs/nsfs.c
-> @@ -62,6 +62,10 @@ static int __ns_get_path(struct path *path, struct ns_common *ns)
->  	struct inode *inode;
->  	unsigned long d;
->  
-> +	/* In case the namespace is not actually enabled. */
-> +	if (!ns->ops)
-> +		return -EOPNOTSUPP;
-> +
->  	rcu_read_lock();
->  	d = atomic_long_read(&ns->stashed);
->  	if (!d)
+ping ...
 
-I'm not sure why we'd pick runtime checks for something that can be
-perfectly easily solved at compilation time. Networking should not
-be asking for FDs for objects which don't exist.
+On 2021/5/25 15:40, Wu Bo wrote:
+> From: Wu Bo <wubo40@huawei.com>
+> 
+> Replace open coded divisor calculations with the DIV_ROUND_UP kernel
+> macro for better readability.
+> 
+> Signed-off-by: Wu Bo <wubo40@huawei.com>
+> ---
+>   fs/fuse/file.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 09ef2a4..62443eb 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1405,7 +1405,7 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+>   		nbytes += ret;
+>   
+>   		ret += start;
+> -		npages = (ret + PAGE_SIZE - 1) / PAGE_SIZE;
+> +		npages = DIV_ROUND_UP(ret, PAGE_SIZE);
+>   
+>   		ap->descs[ap->num_pages].offset = start;
+>   		fuse_page_descs_length_init(ap->descs, ap->num_pages, npages);
+> 
+
