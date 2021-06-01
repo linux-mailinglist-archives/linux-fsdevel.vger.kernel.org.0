@@ -2,213 +2,345 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CED51397571
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 16:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D5513975A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 16:39:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234132AbhFAOcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Jun 2021 10:32:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54724 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234014AbhFAOcT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Jun 2021 10:32:19 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EEFDC061574;
-        Tue,  1 Jun 2021 07:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=HJDgl1iY2Z3fUN3IPfhLi/UD9VZIA/neNyy393ulZWo=; b=Srqfo/9bnr/j7N2SYfCtTP9zGa
-        enNfxpv7x7y9A2cEgwGiiCqgSJgUaZr//4MkdKoO9ffCC+NP8vVGdYU8UK1A+oF2AEOLyaOfY9DOe
-        QQTYghj92V6d47Kaaf0o6KgS4rzaojSz+8Kq+Faf5yYLpqXnQZNn/u9I71jf6CdGi2o2Xra/dRc2L
-        zOV6Jbnk0GeDKYnPhw9C7afLakax84WLSWsYOtQaGy9FzM9a5SW3Sriz16goK46YNQ8PHjiiy5Y4b
-        vDfN9vHI0j/w9yokgGHxG5QA3aFHQ1Gsph4oFOm91dHj0hHiMakyylRClhsEyCPgGQ3FKW374vl8l
-        q/+f51Fw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lo5Pa-00A7Ao-Uf; Tue, 01 Jun 2021 14:30:31 +0000
-Date:   Tue, 1 Jun 2021 15:30:30 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Nathan Chancellor <nathan@kernel.org>, linux-fbdev@vger.kernel.org,
-        linux-mm@kvack.org, Jani Nikula <jani.nikula@intel.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        William Kucharski <william.kucharski@oracle.com>,
-        Ian Campbell <ijc@hellion.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Jaya Kumar <jayakumar.lkml@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2] fb_defio: Remove custom address_space_operations
-Message-ID: <YLZEhv0cpZp8uVE3@casper.infradead.org>
-References: <20210310185530.1053320-1-willy@infradead.org>
- <YLPjwUUmHDRjyPpR@Ryzen-9-3900X.localdomain>
- <YLQALv2YENIDh77N@casper.infradead.org>
- <YLY/2O16fAjriZGQ@phenom.ffwll.local>
+        id S234238AbhFAOlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Jun 2021 10:41:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234160AbhFAOlV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Jun 2021 10:41:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 596F161375;
+        Tue,  1 Jun 2021 14:39:31 +0000 (UTC)
+Date:   Tue, 1 Jun 2021 16:39:28 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     menglong8.dong@gmail.com
+Cc:     mhiramat@kernel.org, mcgrof@kernel.org, josh@joshtriplett.org,
+        viro@zeniv.linux.org.uk, keescook@chromium.org,
+        samitolvanen@google.com, ojeda@kernel.org, johan@kernel.org,
+        jeyu@kernel.org, masahiroy@kernel.org, dong.menglong@zte.com.cn,
+        joe@perches.com, axboe@kernel.dk, jack@suse.cz, hare@suse.de,
+        tj@kernel.org, gregkh@linuxfoundation.org, song@kernel.org,
+        neilb@suse.de, akpm@linux-foundation.org, f.fainelli@gmail.com,
+        wangkefeng.wang@huawei.com, arnd@arndb.de,
+        linux@rasmusvillemoes.dk, brho@google.com, rostedt@goodmis.org,
+        vbabka@suse.cz, pmladek@suse.com, glider@google.com,
+        chris@chrisdown.name, jojing64@gmail.com, ebiederm@xmission.com,
+        mingo@kernel.org, terrelln@fb.com, geert@linux-m68k.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com
+Subject: Re: [PATCH v3 2/3] init/do_cmounts.c: introduce 'user_root' for
+ initramfs
+Message-ID: <20210601143928.b2t2xwxnqma5h6li@wittgenstein>
+References: <20210528143802.78635-1-dong.menglong@zte.com.cn>
+ <20210528143802.78635-3-dong.menglong@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="OUZuLF3ujgGn3J2J"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YLY/2O16fAjriZGQ@phenom.ffwll.local>
+In-Reply-To: <20210528143802.78635-3-dong.menglong@zte.com.cn>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---OUZuLF3ujgGn3J2J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Jun 01, 2021 at 04:10:32PM +0200, Daniel Vetter wrote:
-> On Sun, May 30, 2021 at 10:14:22PM +0100, Matthew Wilcox wrote:
-> > On Sun, May 30, 2021 at 12:13:05PM -0700, Nathan Chancellor wrote:
-> > > Hi Matthew,
-> > > 
-> > > On Wed, Mar 10, 2021 at 06:55:30PM +0000, Matthew Wilcox (Oracle) wrote:
-> > > > There's no need to give the page an address_space.  Leaving the
-> > > > page->mapping as NULL will cause the VM to handle set_page_dirty()
-> > > > the same way that it's handled now, and that was the only reason to
-> > > > set the address_space in the first place.
-> > > > 
-> > > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> > > 
-> > > This patch in mainline as commit ccf953d8f3d6 ("fb_defio: Remove custom
-> > > address_space_operations") causes my Hyper-V based VM to no longer make
-> > > it to a graphical environment.
-> > 
-> > Hi Nathan,
-> > 
-> > Thanks for the report.  I sent Daniel a revert patch with a full
-> > explanation last week, which I assume he'll queue up for a pull soon.
-> > You can just git revert ccf953d8f3d6 for yourself until that shows up.
-> > Sorry for the inconvenience.
+On Fri, May 28, 2021 at 10:38:01PM +0800, menglong8.dong@gmail.com wrote:
+> From: Menglong Dong <dong.menglong@zte.com.cn>
 > 
-> Uh that patch didn't get cc'ed to any list so I've ignored it. I've found
-> it now, but lack of lore link is awkward. Can you pls resubmit with
-> dri-devel on cc? fbdev list is dead, I don't look there.
+> If using container platforms such as Docker, upon initialization it
+> wants to use pivot_root() so that currently mounted devices do not
+> propagate to containers. An example of value in this is that
+> a USB device connected prior to the creation of a containers on the
+> host gets disconnected after a container is created; if the
+> USB device was mounted on containers, but already removed and
+> umounted on the host, the mount point will not go away until all
+> containers unmount the USB device.
+> 
+> Another reason for container platforms such as Docker to use pivot_root
+> is that upon initialization the net-namspace is mounted under
+> /var/run/docker/netns/ on the host by dockerd. Without pivot_root
+> Docker must either wait to create the network namespace prior to
+> the creation of containers or simply deal with leaking this to each
+> container.
+> 
+> pivot_root is supported if the rootfs is a initrd or block device, but
+> it's not supported if the rootfs uses an initramfs (tmpfs). This means
+> container platforms today must resort to using block devices if
+> they want to pivot_root from the rootfs. A workaround to use chroot()
+> is not a clean viable option given every container will have a
+> duplicate of every mount point on the host.
+> 
+> In order to support using container platforms such as Docker on
+> all the supported rootfs types we must extend Linux to support
+> pivot_root on initramfs as well. This patch does the work to do
+> just that.
+> 
+> pivot_root will unmount the mount of the rootfs from its parent mount
+> and mount the new root to it. However, when it comes to initramfs, it
+> donesn't work, because the root filesystem has not parent mount, which
+> makes initramfs not supported by pivot_root.
+> 
+> In order to support pivot_root on initramfs we introduce a second
+> "user_root" mount which is created before we do the cpio unpacking.
+> The filesystem of the "user_root" mount is the same the rootfs.
+> 
+> While mounting the 'user_root', 'rootflags' is passed to it, and it means
+> that we can set options for the mount of rootfs in boot cmd now.
+> For example, the size of tmpfs can be set with 'rootflags=size=1024M'.
+> 
+> Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
+> ---
+>  init/do_mounts.c | 101 +++++++++++++++++++++++++++++++++++++++++++++++
+>  init/do_mounts.h |  18 ++++++++-
+>  init/initramfs.c |  10 +++++
+>  usr/Kconfig      |  10 +++++
+>  4 files changed, 138 insertions(+), 1 deletion(-)
+> 
+> diff --git a/init/do_mounts.c b/init/do_mounts.c
+> index a78e44ee6adb..2fd168cca480 100644
+> --- a/init/do_mounts.c
+> +++ b/init/do_mounts.c
+> @@ -617,6 +617,107 @@ void __init prepare_namespace(void)
+>  	init_chroot(".");
+>  }
+>  
+> +#ifdef CONFIG_INITRAMFS_USER_ROOT
+> +#ifdef CONFIG_TMPFS
+> +static __init bool is_tmpfs_enabled(void)
+> +{
+> +	return (!root_fs_names || strstr(root_fs_names, "tmpfs")) &&
+> +	       !saved_root_name[0];
+> +}
+> +#endif
 
-How about I just attach it here?
+This code is duplicated below in this file
 
---OUZuLF3ujgGn3J2J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-Revert-fb_defio-Remove-custom-address_space_operatio.patch"
+void __init init_rootfs(void)
+{
+	if (IS_ENABLED(CONFIG_TMPFS) && !saved_root_name[0] &&
+		(!root_fs_names || strstr(root_fs_names, "tmpfs")))
+		is_tmpfs = true;
+}
+                                        
+so you should add a tiny inline helper that can be called in both
+places. Will also allow you to get rid of one ifdef and makes the patch
+smaller.
 
-From e88921d0775d87323a8688af37dfd7cdebdde5a9 Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Tue, 25 May 2021 08:37:33 -0400
-Subject: [PATCH] Revert "fb_defio: Remove custom address_space_operations"
+> +
+> +static __init bool is_ramfs_enabled(void)
+> +{
+> +	return true;
+> +}
+> +
+> +struct fs_user_root {
+> +	bool (*enabled)(void);
+> +	char *dev_name;
+> +	char *fs_name;
+> +};
+> +
+> +static struct fs_user_root user_roots[] __initdata = {
+> +#ifdef CONFIG_TMPFS
+> +	{
+> +		.enabled  = is_tmpfs_enabled,
+> +		.dev_name = "tmpfs",
+> +		.fs_name  = "tmpfs",
+> +	},
+> +#endif
+> +	{
+> +		.enabled  = is_ramfs_enabled,
+> +		.dev_name = "ramfs",
+> +		.fs_name  = "ramfs"
+> +	}
+> +};
+> +static struct fs_user_root * __initdata user_root;
+> +
+> +/*
+> + * The syscall 'pivot_root' is used to change root and it is able to
+> + * clean the old mounts, which make it preferred by container platforms
+> + * such as Docker. However, initramfs is not supported by pivot_root,
+> + * and 'chroot()' has to be used, which is unable to clean the mounts
+> + * that propagate from HOST. These useless mounts make the release of
+> + * removable device or network namespace a big problem.
+> + *
+> + * To make initramfs supported by pivot_root, the mount of the root
+> + * filesystem should have a parent, which will make it unmountable. In
+> + * this function, the second mount, which is called 'user root', is
+> + * created and mounted on '/root', and it will be made the root filesystem
+> + * in end_mount_user_root() by init_chroot().
+> + *
+> + * The 'user root' has a parent mount, which makes it unmountable and
+> + * pivot_root work.
+> + *
+> + * What's more, root_mountflags and root_mount_data are used here, which
+> + * makes the 'rootflags' in boot cmd work for 'user root'.
 
-Commit ccf953d8f3d6 makes framebuffers which use deferred I/O stop
-displaying updates after the first one.  This is because the pages
-handled by fb_defio no longer have a page_mapping().  That prevents
-page_mkclean() from marking the PTEs as clean, and so writes are only
-noticed the first time.
+I appreciate the detail but most of that should go in the commit
+message it also repeats some info a couple of times. :) Here sm like the
+following should suffice, I think:
 
-Reported-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- drivers/video/fbdev/core/fb_defio.c | 35 +++++++++++++++++++++++++++++
- drivers/video/fbdev/core/fbmem.c    |  4 ++++
- include/linux/fb.h                  |  3 +++
- 3 files changed, 42 insertions(+)
+/*
+ * Give systems running from the initramfs and making use of pivot_root a
+ * proper mount so it can be umounted during pivot_root.
+ */
 
-diff --git a/drivers/video/fbdev/core/fb_defio.c b/drivers/video/fbdev/core/fb_defio.c
-index b292887a2481..a591d291b231 100644
---- a/drivers/video/fbdev/core/fb_defio.c
-+++ b/drivers/video/fbdev/core/fb_defio.c
-@@ -52,6 +52,13 @@ static vm_fault_t fb_deferred_io_fault(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
- 
- 	get_page(page);
-+
-+	if (vmf->vma->vm_file)
-+		page->mapping = vmf->vma->vm_file->f_mapping;
-+	else
-+		printk(KERN_ERR "no mapping available\n");
-+
-+	BUG_ON(!page->mapping);
- 	page->index = vmf->pgoff;
- 
- 	vmf->page = page;
-@@ -144,6 +151,17 @@ static const struct vm_operations_struct fb_deferred_io_vm_ops = {
- 	.page_mkwrite	= fb_deferred_io_mkwrite,
- };
- 
-+static int fb_deferred_io_set_page_dirty(struct page *page)
-+{
-+	if (!PageDirty(page))
-+		SetPageDirty(page);
-+	return 0;
-+}
-+
-+static const struct address_space_operations fb_deferred_io_aops = {
-+	.set_page_dirty = fb_deferred_io_set_page_dirty,
-+};
-+
- int fb_deferred_io_mmap(struct fb_info *info, struct vm_area_struct *vma)
- {
- 	vma->vm_ops = &fb_deferred_io_vm_ops;
-@@ -194,12 +212,29 @@ void fb_deferred_io_init(struct fb_info *info)
- }
- EXPORT_SYMBOL_GPL(fb_deferred_io_init);
- 
-+void fb_deferred_io_open(struct fb_info *info,
-+			 struct inode *inode,
-+			 struct file *file)
-+{
-+	file->f_mapping->a_ops = &fb_deferred_io_aops;
-+}
-+EXPORT_SYMBOL_GPL(fb_deferred_io_open);
-+
- void fb_deferred_io_cleanup(struct fb_info *info)
- {
- 	struct fb_deferred_io *fbdefio = info->fbdefio;
-+	struct page *page;
-+	int i;
- 
- 	BUG_ON(!fbdefio);
- 	cancel_delayed_work_sync(&info->deferred_work);
-+
-+	/* clear out the mapping that we setup */
-+	for (i = 0 ; i < info->fix.smem_len; i += PAGE_SIZE) {
-+		page = fb_deferred_io_page(info, i);
-+		page->mapping = NULL;
-+	}
-+
- 	mutex_destroy(&fbdefio->lock);
- }
- EXPORT_SYMBOL_GPL(fb_deferred_io_cleanup);
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index 072780b0e570..98f193078c05 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -1415,6 +1415,10 @@ __releases(&info->lock)
- 		if (res)
- 			module_put(info->fbops->owner);
- 	}
-+#ifdef CONFIG_FB_DEFERRED_IO
-+	if (info->fbdefio)
-+		fb_deferred_io_open(info, inode, file);
-+#endif
- out:
- 	unlock_fb_info(info);
- 	if (res)
-diff --git a/include/linux/fb.h b/include/linux/fb.h
-index a8dccd23c249..ecfbcc0553a5 100644
---- a/include/linux/fb.h
-+++ b/include/linux/fb.h
-@@ -659,6 +659,9 @@ static inline void __fb_pad_aligned_buffer(u8 *dst, u32 d_pitch,
- /* drivers/video/fb_defio.c */
- int fb_deferred_io_mmap(struct fb_info *info, struct vm_area_struct *vma);
- extern void fb_deferred_io_init(struct fb_info *info);
-+extern void fb_deferred_io_open(struct fb_info *info,
-+				struct inode *inode,
-+				struct file *file);
- extern void fb_deferred_io_cleanup(struct fb_info *info);
- extern int fb_deferred_io_fsync(struct file *file, loff_t start,
- 				loff_t end, int datasync);
--- 
-2.30.2
+> + */
+> +int __init mount_user_root(void)
+> +{
+> +	return do_mount_root(user_root->dev_name,
+> +			     user_root->fs_name,
+> +			     root_mountflags & ~MS_RDONLY,
+> +			     root_mount_data);
+> +}
+> +
+> +/*
+> + * This function is used to chroot to new initramfs root that
+> + * we unpacked on success. It will chdir to '/' and umount
+> + * the secound mount on failure.
+> + */
+> +void __init end_mount_user_root(bool succeed)
+> +{
+> +	init_chdir("/");
+> +	if (!succeed) {
+> +		init_umount("/root", 0);
+> +		return;
+> +	}
+> +
+> +	init_mount("/root", "/", NULL, MS_MOVE, NULL);
+> +	if (!ramdisk_exec_exist()) {
+> +		init_umount("/..", 0);
+> +		return;
+> +	}
+> +
+> +	init_chroot("/..");
+> +}
+> +
+> +void __init init_user_rootfs(void)
+> +{
+> +	struct fs_user_root *root;
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(user_roots); i++) {
+> +		root = &user_roots[i];
+> +		if (root->enabled()) {
+> +			user_root = root;
+> +			break;
+> +		}
+> +	}
+> +}
+> +#endif
+> +
+>  static bool is_tmpfs;
+>  static int rootfs_init_fs_context(struct fs_context *fc)
+>  {
+> diff --git a/init/do_mounts.h b/init/do_mounts.h
+> index 7a29ac3e427b..3802c7a3ba91 100644
+> --- a/init/do_mounts.h
+> +++ b/init/do_mounts.h
+> @@ -10,9 +10,25 @@
+>  #include <linux/root_dev.h>
+>  #include <linux/init_syscalls.h>
+>  
+> +extern int root_mountflags;
+> +
+>  void  mount_block_root(char *name, int flags);
+>  void  mount_root(void);
+> -extern int root_mountflags;
+> +bool  ramdisk_exec_exist(void);
+> +
+> +#ifdef CONFIG_INITRAMFS_USER_ROOT
+> +
+> +int   mount_user_root(void);
+> +void  end_mount_user_root(bool succeed);
+> +void  init_user_rootfs(void);
+> +
+> +#else
+> +
+> +static inline int   mount_user_root(void) { return 0; }
+> +static inline void  end_mount_user_root(bool succeed) { }
+> +static inline void  init_user_rootfs(void) { }
+> +
+> +#endif
+>  
+>  static inline __init int create_dev(char *name, dev_t dev)
+>  {
+> diff --git a/init/initramfs.c b/init/initramfs.c
+> index af27abc59643..ffa78932ae65 100644
+> --- a/init/initramfs.c
+> +++ b/init/initramfs.c
+> @@ -16,6 +16,8 @@
+>  #include <linux/namei.h>
+>  #include <linux/init_syscalls.h>
+>  
+> +#include "do_mounts.h"
+> +
+>  static ssize_t __init xwrite(struct file *file, const char *p, size_t count,
+>  		loff_t *pos)
+>  {
+> @@ -682,15 +684,23 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+>  	else
+>  		printk(KERN_INFO "Unpacking initramfs...\n");
+>  
+> +	init_user_rootfs();
+> +
+> +	if (mount_user_root())
 
+I would call this sm like
 
---OUZuLF3ujgGn3J2J--
+prepare_mount_rootfs()
+finish_mount_rootfs()
+
+> +		panic("Failed to create user root");
+
+I don't think you need to call init_user_rootfs() separately? You could
+just move it into the prepare_mount_rootfs()/mount_user_root() call.
+
+> +
+>  	err = unpack_to_rootfs((char *)initrd_start, initrd_end - initrd_start);
+>  	if (err) {
+> +		end_mount_user_root(false);
+
+This boolean argument to end_mount_user_root() is a bit strange. Just
+call init_umount() directly here?
+
+>  #ifdef CONFIG_BLK_DEV_RAM
+>  		populate_initrd_image(err);
+>  #else
+>  		printk(KERN_EMERG "Initramfs unpacking failed: %s\n", err);
+>  #endif
+> +		goto done;
+>  	}
+>  
+> +	end_mount_user_root(true);
+>  done:
+>  	/*
+>  	 * If the initrd region is overlapped with crashkernel reserved region,
+> diff --git a/usr/Kconfig b/usr/Kconfig
+> index 8bbcf699fe3b..f9c96de539c3 100644
+> --- a/usr/Kconfig
+> +++ b/usr/Kconfig
+> @@ -52,6 +52,16 @@ config INITRAMFS_ROOT_GID
+>  
+>  	  If you are not sure, leave it set to "0".
+>  
+> +config INITRAMFS_USER_ROOT
+
+I think the naming isn't great. Just call it INITRAMFS_MOUNT. The "user"
+part in all the function and variabe names seems confusing to me at
+least it doesn't convey a lot of useful info. So I'd just drop it and
+try to stick with plain rootfs/initramfs terminology.
+
+> +	bool "Create 'user root' to make pivot_root supported"
+> +	default y
+> +	help
+> +	  Before unpacking cpio, create a second mount and make it become
+> +	  the root filesystem. Therefore, initramfs will be supported by
+> +	  pivot_root().
+> +
+> +	  If container platforms is used with initramfs, say Y.
+> +
+>  config RD_GZIP
+>  	bool "Support initial ramdisk/ramfs compressed using gzip"
+>  	default y
+> -- 
+> 2.32.0.rc0
+> 
+> 
