@@ -2,114 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9740397A37
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 20:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68188397A5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 21:01:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234702AbhFASwQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Jun 2021 14:52:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57736 "EHLO
+        id S234721AbhFATDd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Jun 2021 15:03:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234628AbhFASwP (ORCPT
+        with ESMTP id S234650AbhFATDc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Jun 2021 14:52:15 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36B00C061574;
-        Tue,  1 Jun 2021 11:50:33 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id c20so15390791qkm.3;
-        Tue, 01 Jun 2021 11:50:33 -0700 (PDT)
+        Tue, 1 Jun 2021 15:03:32 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04AA3C06175F
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jun 2021 12:01:49 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id c11so5164671ljd.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jun 2021 12:01:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XGHKI8ma4DK7J7qlYbA/NiKeB0z2A5W21OWmsXuND3M=;
-        b=RIclKYcWUb8FOvCG4c2/M+STw5k+Yoy29gyIrXWjuVp7NBtj1aAkUVRdIhvbBT1rb2
-         DSjzbWt+w2ABi7B8hE2IwHN/QLU3J7JYJiRo6L92kSPAQBKRKEgzh1rat5mITZuCb9bE
-         am2MuCMaLPCwX/GfvlgmQM3eu902g64myP6RnVGe2F9H/E/RQJklGw4oSJa6FOhPRVYt
-         RVeCJp/2Xi91FqUlmPrNCNjSUohWVBfrDx5M3di7Sib233ygkuJYf3TX4uujXiIeHJ2d
-         NrYEcKBCPxgOr8c1b6GHxOVAM0CbXsK1Pbg/FV/atu/iWJjfK1IHBfVZOm91gTwNnWtY
-         HAiw==
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RAu0njSTC+kf8drexs7MaZKoE+RFr/l6rpBisM//YE8=;
+        b=Ubm1IKre509GEWJnIt1bo0fRJNfmHccoI20TkXQ9yfHdF/oebFoF8keJiNoiUOrs7X
+         VfT4DycS9NU6tC6PB5TL9w1v0tqnoJiSrlqYUM0sNWE2MwixNys6XjGaG7v6mpXb57b7
+         LWKaKfyXXz9TMrKN2/lbmduSACCMKLBdvT3SM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XGHKI8ma4DK7J7qlYbA/NiKeB0z2A5W21OWmsXuND3M=;
-        b=MhxxcVcDxbIwJyzN40QYshNqMS1ZF+u1g+4CwY0xbYI4VzwejN0GFXQo1OXpxwkQZ3
-         RvBJOmskHf7lZxHhCfJMrqIhYVTYnO1KquXZt9tw3IjK41L2W2xJlX2t6167wj4XdgS/
-         zbC7ohyStMcZe5PJHQQlaU/PgwayMItR5DaCbHF1zKcU/kkHzIT7XoHmb23m2f7nUHXU
-         zBaBaRCFHGrMMNZ5lzV2k2oxBcRD0vBdW96zKzqh1PrzAp9RUkrui6GsBcQCGOgo9Auu
-         KSCKHONjSg90S1gUvY1v6mTjB5VERZmgc4EnS0T2wH4j7MXpHaTvIKFnNPLnOGgUQETN
-         U/og==
-X-Gm-Message-State: AOAM532SYH52TRRqI5kW5kDc8fv7LmeY2RAbE36J7ehkgdWWgMrsnrcj
-        +A4wHRrh2RpesDKc4xOhV1ju+JkPiQqe
-X-Google-Smtp-Source: ABdhPJx7SlZPu5N/mzg+OmXO73KStJf/96ORnbQqpYpEWzZpYP5pBO08hJgMtpclq3vD6DfkOdVCGw==
-X-Received: by 2002:a37:b143:: with SMTP id a64mr23850330qkf.492.1622573432410;
-        Tue, 01 Jun 2021 11:50:32 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id a23sm11689560qkl.6.2021.06.01.11.50.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 11:50:31 -0700 (PDT)
-Date:   Tue, 1 Jun 2021 14:50:28 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Eryu Guan <guan@eryu.me>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] generic/{455,457,482}: make dmlogwrites tests
- work on bcachefs
-Message-ID: <YLaBdAxSrK0s4xEP@moria.home.lan>
-References: <20210525221955.265524-1-kent.overstreet@gmail.com>
- <20210525221955.265524-7-kent.overstreet@gmail.com>
- <YLOQuagLB3LhKPOl@desktop>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RAu0njSTC+kf8drexs7MaZKoE+RFr/l6rpBisM//YE8=;
+        b=Cat4KCY5Xoc6WOApcRL0xHr2D+Lf6YBQ5CLHwTEhDCNciZbErjIXR/ow5ejd9JsSjk
+         6xX/B3kD/ODVJsyIP8z8YtRlu5a/pkCBunaNen77nO4Ilp+UG1Cxxj7nA6wWP8doGjLN
+         II/QgPeg4wMpPzlWeDnOqHiYBIHy9ZGp9DEi+ISsu+h50/M4DhrGn2TTiWbdFf32146w
+         EYsUh9IPGEVQ1YUbogU7lk7hFMiewz063xSDqbA5tXCWPEaqdaRdItuQirPsdk8Ef7py
+         alm/PtBrBXamIHbJWtRCHnDd/e3dl/ZVZIYW52v+178LAbt1iFk32M1m4C2OkcAJtYKu
+         jIBw==
+X-Gm-Message-State: AOAM53353Rprq17qVfC8JhzN8L+HvvZxjuvQ3nAZ59x0LkIzW4tR8lwT
+        UYNZkYdPbw3r2xdbsO3RsZdkzcTyOkBDUpht
+X-Google-Smtp-Source: ABdhPJw9s8bBsmzDHRpKgKg/J93DXW07RWbA/3WaPNRwJsVn9SJW571H6MDEnq3hSiz8E+K7r3/Pmg==
+X-Received: by 2002:a05:651c:2c7:: with SMTP id f7mr22407178ljo.255.1622574107996;
+        Tue, 01 Jun 2021 12:01:47 -0700 (PDT)
+Received: from [172.17.20.140] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id g2sm2103831ljn.35.2021.06.01.12.01.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jun 2021 12:01:47 -0700 (PDT)
+Subject: Re: [PATCH RFCv2 2/3] lib/vsprintf.c: make %pD print full path for
+ file
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Justin He <Justin.He@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <AM6PR08MB437691E7314C6B774EFED4BDF7229@AM6PR08MB4376.eurprd08.prod.outlook.com>
+ <YLEDwFCPcFx+qeul@casper.infradead.org>
+ <AM6PR08MB437615DB6A6DEC33223A3138F7229@AM6PR08MB4376.eurprd08.prod.outlook.com>
+ <YLEKqGkm8bX6LZfP@casper.infradead.org>
+ <AM6PR08MB43764764B52AAC7F05B71056F73E9@AM6PR08MB4376.eurprd08.prod.outlook.com>
+ <YLZSgZIcWyYTmqOT@casper.infradead.org>
+ <CAHp75VfYgEtJeiVp8b10Va54QShyg4DmWeufuB_WGC8C2SE2mQ@mail.gmail.com>
+ <YLZVwFh9MZJR3amM@casper.infradead.org> <YLZX9oicn8u4ZVCl@smile.fi.intel.com>
+ <YLZcAesVG1SYL5fp@smile.fi.intel.com> <YLZoyjSJyzU5w1qO@casper.infradead.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <39f599a7-9175-f220-3803-b1920ddb8d40@rasmusvillemoes.dk>
+Date:   Tue, 1 Jun 2021 21:01:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YLOQuagLB3LhKPOl@desktop>
+In-Reply-To: <YLZoyjSJyzU5w1qO@casper.infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 30, 2021 at 09:18:49PM +0800, Eryu Guan wrote:
-> On Tue, May 25, 2021 at 06:19:54PM -0400, Kent Overstreet wrote:
-> > bcachefs has log structured btree nodes, in addition to a regular
-> > journal, which means that unless we replay to markers in the log in the
-> > same order that they happened and are careful to avoid writing in
-> > between replaying to different events - we need to wipe and start fresh
-> > each time.
-> > 
-> > Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-> > ---
-> >  tests/generic/455 | 14 ++++++++++++++
-> >  tests/generic/457 | 14 ++++++++++++++
-> >  tests/generic/482 | 27 ++++++++++++++++++++-------
-> >  3 files changed, 48 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/tests/generic/455 b/tests/generic/455
-> > index 5b4b242e74..6dc46c3c72 100755
-> > --- a/tests/generic/455
-> > +++ b/tests/generic/455
-> > @@ -35,6 +35,17 @@ _require_dm_target thin-pool
-> >  
-> >  rm -f $seqres.full
-> >  
-> > +_reset_dmthin()
-> > +{
-> > +    # With bcachefs, we need to wipe and start fresh every time we replay to a
-> > +    # different point in time - if we see metadata from a future point in time,
-> > +    # or an unrelated mount, bcachefs will get confused:
-> > +    if [ "$FSTYP" = "bcachefs" ]; then
-> > +	_dmthin_cleanup
-> > +	_dmthin_init $devsize $devsize $csize $lowspace
-> > +    fi
-> > +}
+On 01/06/2021 19.05, Matthew Wilcox wrote:
+
+> Here's some examples, what do you think makes sense?
 > 
-> I think we probably could make it a common helper, and currently only
-> bcachefs needs reset, and more log structured filesystems may be
-> supported in the future.
+> snprintf(buf, 16, "bad file '%pD'\n", q);
+> 
+> what content do you want buf to have when q is variously:
+> 
+> 1. /abcd/efgh
+> 2. /a/bcdefgh.iso
+> 3. /abcdef/gh
+> 
+> I would argue that
+> "bad file ''\n"
+> is actually a better string to have than any of (case 2)
+> "bad file '/a/bc"
+> "bad file 'bcdef"
+> "bad file 'h.iso"
+> 
 
-I think it might be better to wait until we have more dmlogwrites tests or
-another filesystem that needs this - I don't think this would be a good common
-helper as is, it's too coupled to what the tests are doing - factoring out
-helpers just because you spot identical code is an anti pattern when there isn't
-a good notion of what you're abstracting
+Whatever ends up being decided, _please_ document that in
+machine-readable and -verifiable form. I.e., update lib/test_printf.c
+accordingly.
 
-Right now 455 and 457 are basically identical anyways, factoring out a single
-helper and ignoring the rest doesn't make much sense to me.
+Currently (and originally) it only tests %pd because %pD is/was
+essentially just %pd with an indirection to get the struct dentry* from
+a struct file*.
+
+The existing framework is strongly centered around expecting '/a/bc (see
+all the logic where we do multiple checks with size 0, size random, size
+plenty, and for the random case check that the buffer contents match the
+complete output up till the randomly chosen size), so adding tests for
+some other semantics would require a bit more juggling.
+
+Not that that should be an argument in favor of that behaviour. But FWIW
+that would be my preference.
+
+Rasmus
+
+
