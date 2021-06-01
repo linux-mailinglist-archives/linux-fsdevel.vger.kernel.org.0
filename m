@@ -2,243 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4D683976E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 17:39:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 203333976F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 17:42:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234294AbhFAPlK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Jun 2021 11:41:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42382 "EHLO
+        id S234328AbhFAPoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Jun 2021 11:44:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233088AbhFAPlK (ORCPT
+        with ESMTP id S234295AbhFAPoO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Jun 2021 11:41:10 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DF1C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jun 2021 08:39:28 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id q5so14831788wrs.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jun 2021 08:39:28 -0700 (PDT)
+        Tue, 1 Jun 2021 11:44:14 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17C35C061574;
+        Tue,  1 Jun 2021 08:42:32 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id z24so15811449ioi.3;
+        Tue, 01 Jun 2021 08:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Z/ysYleRM2YWzX9orexLMMrJ25j/bIHTJa7Myg7V+/g=;
-        b=eu9MiLEbQyakIhjEXcMmgjSRv78Ba7G/e1UOLBHnzFW/YA+RyANkoF4bC/6/K0B/hU
-         3vzKx00aYuV61b3NWUWl+Sruw4cWGJK9FdTT0O9uLhRged5Tx49j2vUbmETZQiZ3pYHB
-         IA4NGuTOYCEjOJf0RiCqhil8b3s/w6/5+Kh9k=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A/jl7FF0zONs4aFFAvjVG1zzDWVrAeOG8tm6IIw/Zz0=;
+        b=JL5+6X5lvC1sJYddcwPfRu0aUobkyw1isBYSaystu03ReFHJYrTs7ZO9CIrwPchc9E
+         qJlYmk6IsaITX2ibuWIIswIDflB5FoJ6j/nKvjkwrcUkvF7DGXjpTxQ/ib+7w83r3YaM
+         QmAsJvtWZHjDJEQoPFsK0D5ol9dj2SvizG8IBIULs4b2+aOpfFqDXI1N7vbDSLVs8+aB
+         tUkOLWhcBYhbCR4zoXYSeLegCNwJltzfRY/bwDXG6HWvDQA3I1h+vSHt3MScvuuWwkNA
+         mQEBcCGMjhz2qGgGV1zrV/5KY7SLpha59AuKjRHBJXDqRcJ7R+64cK+tbgWr1HDY4hUv
+         dxxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=Z/ysYleRM2YWzX9orexLMMrJ25j/bIHTJa7Myg7V+/g=;
-        b=oQZ3yz7bMAjdHvDLrozgsVC0GviwCiG8iFkFF8iqFK9pCVveyevkX2GtoHn1v3/kIJ
-         BjLt8zNXBhuFKaxXqNbS0yHrTN0rrXkUD8Tm+YPh7nFevgc3b1WssrDINvxhXANEXZjN
-         2+21gXfUAb42qRZpsH195Pvs2TnLstYUKz264hlbi58e7Xqkvx9ufYVLUylZs3ogjc8I
-         cE4ygqSVLk2hDLRj5/A52mOaarOodVPJNQQ4vSs9pNuK+C3SJ7BeIs9r4Hs6dRq0+ztP
-         QG5fZ0WaaJHg8a15AXUcF66xTyCkj0AWF5iYrGOnmxyTndBwh6vDSbVjnU5Nl9IjzkzT
-         jn1g==
-X-Gm-Message-State: AOAM532t+rlIYD00JpF4qZa8rYKP7g/lSp0pulDXWVFMIZZKoRdoP/Gm
-        zwmAdtJg5ziycF/EHQHiqp7odg==
-X-Google-Smtp-Source: ABdhPJyWk8xbTDu5kyBta0mIR4LHfdyYJ1fyzR7WqhCo0hJxT1KtDnyJ8ajPu2j2FMjyD1tm65qN0Q==
-X-Received: by 2002:adf:9dd1:: with SMTP id q17mr16440710wre.402.1622561967210;
-        Tue, 01 Jun 2021 08:39:27 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 62sm3894313wrm.1.2021.06.01.08.39.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 08:39:26 -0700 (PDT)
-Date:   Tue, 1 Jun 2021 17:39:24 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Nathan Chancellor <nathan@kernel.org>, linux-fbdev@vger.kernel.org,
-        linux-mm@kvack.org, Jani Nikula <jani.nikula@intel.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        William Kucharski <william.kucharski@oracle.com>,
-        Ian Campbell <ijc@hellion.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Jaya Kumar <jayakumar.lkml@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2] fb_defio: Remove custom address_space_operations
-Message-ID: <YLZUrEjVJWBGGMxf@phenom.ffwll.local>
-Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
-        Nathan Chancellor <nathan@kernel.org>, linux-fbdev@vger.kernel.org,
-        linux-mm@kvack.org, Jani Nikula <jani.nikula@intel.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        William Kucharski <william.kucharski@oracle.com>,
-        Ian Campbell <ijc@hellion.org.uk>, linux-fsdevel@vger.kernel.org,
-        Jaya Kumar <jayakumar.lkml@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20210310185530.1053320-1-willy@infradead.org>
- <YLPjwUUmHDRjyPpR@Ryzen-9-3900X.localdomain>
- <YLQALv2YENIDh77N@casper.infradead.org>
- <YLY/2O16fAjriZGQ@phenom.ffwll.local>
- <YLZEhv0cpZp8uVE3@casper.infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A/jl7FF0zONs4aFFAvjVG1zzDWVrAeOG8tm6IIw/Zz0=;
+        b=XUMMibJmCya2SdCf4z5s3Mz6PFyicJiq/AoGFwDpAJ0lXVkUMZB4UwcWxKlWCbMsF2
+         egCtQ2NfLKbMEH3foVE3BL6u3paLQA8qVbdpbmsBzpOFPYpArORZXPjzU0kWjeroYxf0
+         5OIKY9Y3WUwy0PQx2+BKxsKNu2eYjqxMVBQvRU8A6sWpP0/vV3NQuyRZx875qDq+1PPv
+         ZAwnsubPUZ/5qdD0LaF5AkigXW5386QNmuSdKJqsmU6dnhJE1zxQfQZin+NPtimf8vBV
+         D9JBVENveCft+3MWpqmzcX5zybKRfax4pr0a+BFqxOhj7u1JXPIujWYbtm1fNb6Oq6Re
+         8Zrw==
+X-Gm-Message-State: AOAM530AQmrvLQDo0mYZg6KLge1c0rT2j4XGiRzX8Lzz69EgVQOf0v+V
+        liQ0BEIcXWNBMdlBuDvsuJhfT0Jj24ayThkyWjpFGJguJII=
+X-Google-Smtp-Source: ABdhPJym+6dIXV5TjB6CvyuBoqf23mIYV+IxrcWdv5+cvpxl3RWqoi9m5ots7EMjZoqqb1twtLbaAkEfR2QwrnqoCzw=
+X-Received: by 2002:a5d:8a16:: with SMTP id w22mr21476254iod.186.1622562151302;
+ Tue, 01 Jun 2021 08:42:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YLZEhv0cpZp8uVE3@casper.infradead.org>
-X-Operating-System: Linux phenom 5.10.32scarlett+ 
+References: <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com>
+ <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
+ <20200922210445.GG57620@redhat.com> <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
+ <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com>
+ <CAOQ4uxgKr75J1YcuYAqRGC_C5H_mpCt01p5T9fHSuao_JnxcJA@mail.gmail.com>
+ <CAJfpegviT38gja+-pE+5DCG0y9n3GUv4wWG_r3XmSWW6me88Cw@mail.gmail.com>
+ <CAOQ4uxjNcWCfKLvdq2=TM5fE5RaBf+XvnsP6v_Q6u3b1_mxazw@mail.gmail.com>
+ <CAJfpeguOLLV94Bzs7_JNOdZZ+6p-tcP7b1PXrQY4qWPxXKosnA@mail.gmail.com>
+ <CAOQ4uxiJRii2FQrX51ZDmw_kGWTNvL21J7=Ow_z6Th_O-aruDA@mail.gmail.com> <20210601144909.GC24846@redhat.com>
+In-Reply-To: <20210601144909.GC24846@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 1 Jun 2021 18:42:20 +0300
+Message-ID: <CAOQ4uxgDMGUpK35huwqFYGH_idBB8S6eLiz85o0DDKOyDH4Syg@mail.gmail.com>
+Subject: Re: virtiofs uuid and file handles
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Max Reitz <mreitz@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 01, 2021 at 03:30:30PM +0100, Matthew Wilcox wrote:
-> On Tue, Jun 01, 2021 at 04:10:32PM +0200, Daniel Vetter wrote:
-> > On Sun, May 30, 2021 at 10:14:22PM +0100, Matthew Wilcox wrote:
-> > > On Sun, May 30, 2021 at 12:13:05PM -0700, Nathan Chancellor wrote:
-> > > > Hi Matthew,
-> > > > 
-> > > > On Wed, Mar 10, 2021 at 06:55:30PM +0000, Matthew Wilcox (Oracle) wrote:
-> > > > > There's no need to give the page an address_space.  Leaving the
-> > > > > page->mapping as NULL will cause the VM to handle set_page_dirty()
-> > > > > the same way that it's handled now, and that was the only reason to
-> > > > > set the address_space in the first place.
-> > > > > 
-> > > > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > > Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> > > > 
-> > > > This patch in mainline as commit ccf953d8f3d6 ("fb_defio: Remove custom
-> > > > address_space_operations") causes my Hyper-V based VM to no longer make
-> > > > it to a graphical environment.
-> > > 
-> > > Hi Nathan,
-> > > 
-> > > Thanks for the report.  I sent Daniel a revert patch with a full
-> > > explanation last week, which I assume he'll queue up for a pull soon.
-> > > You can just git revert ccf953d8f3d6 for yourself until that shows up.
-> > > Sorry for the inconvenience.
-> > 
-> > Uh that patch didn't get cc'ed to any list so I've ignored it. I've found
-> > it now, but lack of lore link is awkward. Can you pls resubmit with
-> > dri-devel on cc? fbdev list is dead, I don't look there.
-> 
-> How about I just attach it here?
+On Tue, Jun 1, 2021 at 5:49 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Mon, May 31, 2021 at 09:12:59PM +0300, Amir Goldstein wrote:
+> > On Mon, May 31, 2021 at 5:11 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > >
+> > > On Sat, 29 May 2021 at 18:05, Amir Goldstein <amir73il@gmail.com> wrote:
+> > > >
+> > > > On Wed, Sep 23, 2020 at 2:12 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > > > >
+> > > > > On Wed, Sep 23, 2020 at 11:57 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > > > >
+> > > > > > On Wed, Sep 23, 2020 at 10:44 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > > > > > >
+> > > > > > > On Wed, Sep 23, 2020 at 4:49 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > > > > >
+> > > > > > > > I think that the proper was to implement reliable persistent file
+> > > > > > > > handles in fuse/virtiofs would be to add ENCODE/DECODE to
+> > > > > > > > FUSE protocol and allow the server to handle this.
+> > > > > > >
+> > > > > > > Max Reitz (Cc-d) is currently looking into this.
+> > > > > > >
+> > > > > > > One proposal was to add  LOOKUP_HANDLE operation that is similar to
+> > > > > > > LOOKUP except it takes a {variable length handle, name} as input and
+> > > > > > > returns a variable length handle *and* a u64 node_id that can be used
+> > > > > > > normally for all other operations.
+> > > > > > >
+> > > >
+> > > > Miklos, Max,
+> > > >
+> > > > Any updates on LOOKUP_HANDLE work?
+> > > >
+> > > > > > > The advantage of such a scheme for virtio-fs (and possibly other fuse
+> > > > > > > based fs) would be that userspace need not keep a refcounted object
+> > > > > > > around until the kernel sends a FORGET, but can prune its node ID
+> > > > > > > based cache at any time.   If that happens and a request from the
+> > > > > > > client (kernel) comes in with a stale node ID, the server will return
+> > > > > > > -ESTALE and the client can ask for a new node ID with a special
+> > > > > > > lookup_handle(fh, NULL).
+> > > > > > >
+> > > > > > > Disadvantages being:
+> > > > > > >
+> > > > > > >  - cost of generating a file handle on all lookups
+> > > > > >
+> > > > > > I never ran into a local fs implementation where this was expensive.
+> > > > > >
+> > > > > > >  - cost of storing file handle in kernel icache
+> > > > > > >
+> > > > > > > I don't think either of those are problematic in the virtiofs case.
+> > > > > > > The cost of having to keep fds open while the client has them in its
+> > > > > > > cache is much higher.
+> > > > > > >
+> > > > > >
+> > > > > > Sounds good.
+> > > > > > I suppose flock() does need to keep the open fd on server.
+> > > > >
+> > > > > Open files are a separate issue and do need an active object in the server.
+> > > > >
+> > > > > The issue this solves  is synchronizing "released" and "evicted"
+> > > > > states of objects between  server and client.  I.e. when a file is
+> > > > > closed (and no more open files exist referencing the same object) the
+> > > > > dentry refcount goes to zero but it remains in the cache.   In this
+> > > > > state the server could really evict it's own cached object, but can't
+> > > > > because the client can gain an active reference at any time  via
+> > > > > cached path lookup.
+> > > > >
+> > > > > One other solution would be for the server to send a notification
+> > > > > (NOTIFY_EVICT) that would try to clean out the object from the server
+> > > > > cache and respond with a FORGET if successful.   But I sort of like
+> > > > > the file handle one better, since it solves multiple problems.
+> > > > >
+> > > >
+> > > > Even with LOOKUP_HANDLE, I am struggling to understand how we
+> > > > intend to invalidate all fuse dentries referring to ino X in case the server
+> > > > replies with reused ino X with a different generation that the one stored
+> > > > in fuse inode cache.
+> > > >
+> > > > This is an issue that I encountered when running the passthrough_hp test,
+> > > > on my filesystem. In tst_readdir_big() for example, underlying files are being
+> > > > unlinked and new files created reusing the old inode numbers.
+> > > >
+> > > > This creates a situation where server gets a lookup request
+> > > > for file B that uses the reused inode number X, while old file A is
+> > > > still in fuse dentry cache using the older generation of real inode
+> > > > number X which is still in fuse inode cache.
+> > > >
+> > > > Now the server knows that the real inode has been rused, because
+> > > > the server caches the old generation value, but it cannot reply to
+> > > > the lookup request before the old fuse inode has been invalidated.
+> > > > IIUC, fuse_lowlevel_notify_inval_inode() is not enough(?).
+> > > > We would also need to change fuse_dentry_revalidate() to
+> > > > detect the case of reused/invalidated inode.
+> > > >
+> > > > The straightforward way I can think of is to store inode generation
+> > > > in fuse_dentry. It won't even grow the size of the struct.
+> > > >
+> > > > Am I over complicating this?
+> > >
+> > > In this scheme the generation number is already embedded in the file
+> > > handle.  If LOOKUP_HANDLE returns a nodeid that can be found in the
+> > > icache, but which doesn't match the new file handle, then the old
+> > > inode will be marked bad and a new one allocated.
+> > >
+> > > Does that answer your worries?  Or am I missing something?
+> >
+> > It affirms my understanding of the future implementation, but
+> > does not help my implementation without protocol changes.
+> > I thought I could get away without LOOKUP_HANDLE for
+> > underlying fs that is able to resolve by ino, but seems that I still have an
+> > unhandled corner case, so will need to add some kernel patch.
+> > Unless there is already a way to signal from server to make the
+> > inode bad in a synchronous manner (I did not find any) before
+> > replying to LOOKUP with a new generation of the same ino.
+> >
+> > Any idea about the timeline for LOOKUP_HANDLE?
+> > I may be able to pick this up myself if there is no one actively
+> > working on it or plans for anyone to make this happen.
+>
+> AFAIK, right now max is not actively looking into LOOKUP_HANDLE.
+>
+> To solve the issue of virtiofs server having too many fds open, he
+> is now planning to store corresonding file handle in server and use
+> that to open fd later.
+>
+> But this does not help with persistent file handle issue for fuse
+> client.
+>
 
-Thanks, that worked with Link: and everything and no choking of my script
-:-)
+I see. Yes that should work, but he'd still need to cope with reused
+inode numbers in case you allow unlinks from the host (do you?),
+because LOOKUP can find a host fs inode that does not match
+the file handle of a previously found inode of the same ino.
 
-Cheers, Daniel
+Quoting Miklos' response above:
+> > > If LOOKUP_HANDLE returns a nodeid that can be found in the
+> > > icache, but which doesn't match the new file handle, then the old
+> > > inode will be marked bad and a new one allocated.
 
-> From e88921d0775d87323a8688af37dfd7cdebdde5a9 Mon Sep 17 00:00:00 2001
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> Date: Tue, 25 May 2021 08:37:33 -0400
-> Subject: [PATCH] Revert "fb_defio: Remove custom address_space_operations"
-> 
-> Commit ccf953d8f3d6 makes framebuffers which use deferred I/O stop
-> displaying updates after the first one.  This is because the pages
-> handled by fb_defio no longer have a page_mapping().  That prevents
-> page_mkclean() from marking the PTEs as clean, and so writes are only
-> noticed the first time.
-> 
-> Reported-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  drivers/video/fbdev/core/fb_defio.c | 35 +++++++++++++++++++++++++++++
->  drivers/video/fbdev/core/fbmem.c    |  4 ++++
->  include/linux/fb.h                  |  3 +++
->  3 files changed, 42 insertions(+)
-> 
-> diff --git a/drivers/video/fbdev/core/fb_defio.c b/drivers/video/fbdev/core/fb_defio.c
-> index b292887a2481..a591d291b231 100644
-> --- a/drivers/video/fbdev/core/fb_defio.c
-> +++ b/drivers/video/fbdev/core/fb_defio.c
-> @@ -52,6 +52,13 @@ static vm_fault_t fb_deferred_io_fault(struct vm_fault *vmf)
->  		return VM_FAULT_SIGBUS;
->  
->  	get_page(page);
-> +
-> +	if (vmf->vma->vm_file)
-> +		page->mapping = vmf->vma->vm_file->f_mapping;
-> +	else
-> +		printk(KERN_ERR "no mapping available\n");
-> +
-> +	BUG_ON(!page->mapping);
->  	page->index = vmf->pgoff;
->  
->  	vmf->page = page;
-> @@ -144,6 +151,17 @@ static const struct vm_operations_struct fb_deferred_io_vm_ops = {
->  	.page_mkwrite	= fb_deferred_io_mkwrite,
->  };
->  
-> +static int fb_deferred_io_set_page_dirty(struct page *page)
-> +{
-> +	if (!PageDirty(page))
-> +		SetPageDirty(page);
-> +	return 0;
-> +}
-> +
-> +static const struct address_space_operations fb_deferred_io_aops = {
-> +	.set_page_dirty = fb_deferred_io_set_page_dirty,
-> +};
-> +
->  int fb_deferred_io_mmap(struct fb_info *info, struct vm_area_struct *vma)
->  {
->  	vma->vm_ops = &fb_deferred_io_vm_ops;
-> @@ -194,12 +212,29 @@ void fb_deferred_io_init(struct fb_info *info)
->  }
->  EXPORT_SYMBOL_GPL(fb_deferred_io_init);
->  
-> +void fb_deferred_io_open(struct fb_info *info,
-> +			 struct inode *inode,
-> +			 struct file *file)
-> +{
-> +	file->f_mapping->a_ops = &fb_deferred_io_aops;
-> +}
-> +EXPORT_SYMBOL_GPL(fb_deferred_io_open);
-> +
->  void fb_deferred_io_cleanup(struct fb_info *info)
->  {
->  	struct fb_deferred_io *fbdefio = info->fbdefio;
-> +	struct page *page;
-> +	int i;
->  
->  	BUG_ON(!fbdefio);
->  	cancel_delayed_work_sync(&info->deferred_work);
-> +
-> +	/* clear out the mapping that we setup */
-> +	for (i = 0 ; i < info->fix.smem_len; i += PAGE_SIZE) {
-> +		page = fb_deferred_io_page(info, i);
-> +		page->mapping = NULL;
-> +	}
-> +
->  	mutex_destroy(&fbdefio->lock);
->  }
->  EXPORT_SYMBOL_GPL(fb_deferred_io_cleanup);
-> diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-> index 072780b0e570..98f193078c05 100644
-> --- a/drivers/video/fbdev/core/fbmem.c
-> +++ b/drivers/video/fbdev/core/fbmem.c
-> @@ -1415,6 +1415,10 @@ __releases(&info->lock)
->  		if (res)
->  			module_put(info->fbops->owner);
->  	}
-> +#ifdef CONFIG_FB_DEFERRED_IO
-> +	if (info->fbdefio)
-> +		fb_deferred_io_open(info, inode, file);
-> +#endif
->  out:
->  	unlock_fb_info(info);
->  	if (res)
-> diff --git a/include/linux/fb.h b/include/linux/fb.h
-> index a8dccd23c249..ecfbcc0553a5 100644
-> --- a/include/linux/fb.h
-> +++ b/include/linux/fb.h
-> @@ -659,6 +659,9 @@ static inline void __fb_pad_aligned_buffer(u8 *dst, u32 d_pitch,
->  /* drivers/video/fb_defio.c */
->  int fb_deferred_io_mmap(struct fb_info *info, struct vm_area_struct *vma);
->  extern void fb_deferred_io_init(struct fb_info *info);
-> +extern void fb_deferred_io_open(struct fb_info *info,
-> +				struct inode *inode,
-> +				struct file *file);
->  extern void fb_deferred_io_cleanup(struct fb_info *info);
->  extern int fb_deferred_io_fsync(struct file *file, loff_t start,
->  				loff_t end, int datasync);
-> -- 
-> 2.30.2
-> 
+This statement, with minor adjustments is also true for LOOKUP:
 
+"If LOOKUP returns a nodeid that can be found in the icache, but
+ whose i_generation doesn't match the generation returned in outarg,
+ then the old inode should be marked bad and a new one allocated."
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> BTW, one concern with file handles coming from guest kernel was that
+> how to trust those handles. Guest can create anything and use
+> file server to open the files on same filesystem (but not shared
+> with guest).
+>
+> I am assuming same concern should be there with non-virtiofs use
+> cases. Regular fuse client must be sending a file handle and
+> file server is running with CAP_DAC_READ_SEARCH. How will it make
+> sure that client is not able to access files not exported through
+> shared directory but are present on same filesystem.
+>
+
+That is a concern.
+It's the same concern for NFS clients that can guess file handles.
+
+The ways to address this concern with NFS is the export option
+subtree_check, but that uses non unique file handles to an inode
+which include a parent handle, so that's probably not a good fit for
+LOOKUP_HANDLE.
+
+If there are no plans to go forward with LOOKUP_HANDLE, I may
+respin my protosal to add  ENCODE/DECODE to FUSE protocol
+in place of the lookup(".") command.
+
+Thanks,
+Amir.
