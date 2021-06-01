@@ -2,173 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A14BC396A8E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 03:16:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55DA3396A95
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 03:23:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232356AbhFABRd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 May 2021 21:17:33 -0400
-Received: from mx21.baidu.com ([220.181.3.85]:41106 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232081AbhFABRd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 May 2021 21:17:33 -0400
-Received: from BC-Mail-Ex19.internal.baidu.com (unknown [172.31.51.13])
-        by Forcepoint Email with ESMTPS id 6869AD47FFFE83147BB7;
-        Tue,  1 Jun 2021 09:15:42 +0800 (CST)
-Received: from BC-Mail-Ex20.internal.baidu.com (172.31.51.14) by
- BC-Mail-Ex19.internal.baidu.com (172.31.51.13) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2242.4; Tue, 1 Jun 2021 09:15:42 +0800
-Received: from BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) by
- BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) with mapi id 15.01.2242.008;
- Tue, 1 Jun 2021 09:15:42 +0800
-From:   "Chu,Kaiping" <chukaiping@baidu.com>
-To:     Vlastimil Babka <vbabka@suse.cz>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "yzaikin@google.com" <yzaikin@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nigupta@nvidia.com" <nigupta@nvidia.com>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
-        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
-        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
-        "sh_def@163.com" <sh_def@163.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjRdIG1tL2NvbXBhY3Rpb246IGxldCBwcm9hY3Rp?=
- =?utf-8?Q?ve_compaction_order_configurable?=
-Thread-Topic: [PATCH v4] mm/compaction: let proactive compaction order
- configurable
-Thread-Index: AQHXU+jUuGTRst2hN0Oxvb824V5mK6r+XiBw
-Date:   Tue, 1 Jun 2021 01:15:41 +0000
-Message-ID: <a49d590f143e40c8bda4db22111f49b7@baidu.com>
-References: <1619576901-9531-1-git-send-email-chukaiping@baidu.com>
- <aa99cdab-cc0d-6cc2-464d-be42da5efa97@suse.cz>
-In-Reply-To: <aa99cdab-cc0d-6cc2-464d-be42da5efa97@suse.cz>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.193.252]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S232341AbhFABZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 May 2021 21:25:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38274 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231714AbhFABZ1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 31 May 2021 21:25:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3EC0E610A1;
+        Tue,  1 Jun 2021 01:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1622510625;
+        bh=tJI6iUgH4WbJL1Ain1qtmC88ZJN93TFAElZ2sjKd3y4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Zhgp/24FPdRQOadk7iDa1k61dyyZzMYu6led2E3+OeDYEdb1tJrXVQZEwu+W68Y0h
+         QMDV3gDpsHnpZpDT0GNEq3uwuC+Nby97gttsTRJmot2hF5urRncGUuHvfjxYOpQSDz
+         hE8i2JpfiKyHzHm1BD8GlngnqIU/um/VQVpDaC0o=
+Date:   Mon, 31 May 2021 18:23:44 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Feng zhou <zhoufeng.zf@bytedance.com>
+Cc:     adobriyan@gmail.com, rppt@kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, songmuchun@bytedance.com,
+        zhouchengming@bytedance.com, chenying.kernel@bytedance.com,
+        zhengqi.arch@bytedance.com
+Subject: Re: [PATCH] fs/proc/kcore.c: add mmap interface
+Message-Id: <20210531182344.e9692132981a5bf9bf6d4583@linux-foundation.org>
+In-Reply-To: <20210526075142.9740-1-zhoufeng.zf@bytedance.com>
+References: <20210526075142.9740-1-zhoufeng.zf@bytedance.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DQoNCj4gLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0KPiDlj5Hku7bkuro6IFZsYXN0aW1pbCBCYWJr
-YSA8dmJhYmthQHN1c2UuY3o+DQo+IOWPkemAgeaXtumXtDogMjAyMeW5tDXmnIgyOeaXpSAxOjQy
-DQo+IOaUtuS7tuS6ujogQ2h1LEthaXBpbmcgPGNodWthaXBpbmdAYmFpZHUuY29tPjsgbWNncm9m
-QGtlcm5lbC5vcmc7DQo+IGtlZXNjb29rQGNocm9taXVtLm9yZzsgeXphaWtpbkBnb29nbGUuY29t
-OyBha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnOw0KPiBuaWd1cHRhQG52aWRpYS5jb207IGJoZUBy
-ZWRoYXQuY29tOyBraGFsaWQuYXppekBvcmFjbGUuY29tOw0KPiBpYW1qb29uc29vLmtpbUBsZ2Uu
-Y29tOyBtYXRldXN6bm9zZWswQGdtYWlsLmNvbTsgc2hfZGVmQDE2My5jb20NCj4g5oqE6YCBOiBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9y
-ZzsNCj4gbGludXgtbW1Aa3ZhY2sub3JnDQo+IOS4u+mimDogUmU6IFtQQVRDSCB2NF0gbW0vY29t
-cGFjdGlvbjogbGV0IHByb2FjdGl2ZSBjb21wYWN0aW9uIG9yZGVyDQo+IGNvbmZpZ3VyYWJsZQ0K
-PiANCj4gT24gNC8yOC8yMSA0OjI4IEFNLCBjaHVrYWlwaW5nIHdyb3RlOg0KPiA+IEN1cnJlbnRs
-eSB0aGUgcHJvYWN0aXZlIGNvbXBhY3Rpb24gb3JkZXIgaXMgZml4ZWQgdG8NCj4gPiBDT01QQUNU
-SU9OX0hQQUdFX09SREVSKDkpLCBpdCdzIE9LIGluIG1vc3QgbWFjaGluZXMgd2l0aCBsb3RzIG9m
-DQo+ID4gbm9ybWFsIDRLQiBtZW1vcnksIGJ1dCBpdCdzIHRvbyBoaWdoIGZvciB0aGUgbWFjaGlu
-ZXMgd2l0aCBzbWFsbA0KPiA+IG5vcm1hbCBtZW1vcnksIGZvciBleGFtcGxlIHRoZSBtYWNoaW5l
-cyB3aXRoIG1vc3QgbWVtb3J5IGNvbmZpZ3VyZWQgYXMNCj4gPiAxR0IgaHVnZXRsYmZzIGh1Z2Ug
-cGFnZXMuIEluIHRoZXNlIG1hY2hpbmVzIHRoZSBtYXggb3JkZXIgb2YgZnJlZQ0KPiA+IHBhZ2Vz
-IGlzIG9mdGVuIGJlbG93IDksIGFuZCBpdCdzIGFsd2F5cyBiZWxvdyA5IGV2ZW4gd2l0aCBoYXJk
-DQo+ID4gY29tcGFjdGlvbi4gVGhpcyB3aWxsIGxlYWQgdG8gcHJvYWN0aXZlIGNvbXBhY3Rpb24g
-YmUgdHJpZ2dlcmVkIHZlcnkNCj4gPiBmcmVxdWVudGx5Lg0KPiANCj4gQ291bGQgeW91IGJlIG1v
-cmUgY29uY3JldGUgYWJvdXQgInZlcnkgZnJlcXVlbnRseSI/IFRoZXJlJ3MgYQ0KPiBwcm9hY3Rp
-dmVfZGVmZXIgbWVjaGFuaXNtIHRoYXQgc2hvdWxkIGhlbHAgaGVyZS4gTm9ybWFsbHkgdGhlIHBy
-b2FjdGl2ZQ0KPiBjb21wYWN0aW9uIGF0dGVtcHQgaGFwcGVucyBlYWNoIDUwMG1zLCBidXQgaWYg
-aXQgZmFpbHMgdG8gaW1wcm92ZSB0aGUNCj4gZnJhZ21lbnRhdGlvbiBzY29yZSwgaXQgZGVmZXJz
-IGZvciAzMiBzZWNvbmRzLiBTbyBpcyAzMiBzZWNvbmRzIHN0aWxsIHRvbw0KPiBmcmVxdWVudD8g
-T3IgdGhlIHNjb3JlIGRvZXMgaW1wcm92ZSB0aHVzIGRlZmVyIGRvZXNuJ3QgaGFwcGVuLCBidXQg
-dGhlIGNvc3QNCj4gb2YgdGhhdCBpbXByb3ZlbWVudCBpcyB0b28gaGlnaCBjb21wYXJlZCB0byB0
-aGUgYW1vdW50IG9mIHRoZQ0KPiBpbXByb3ZlbWVudD8NCkkgZGlkbid0IG1lYXN1cmUgdGhlIGZy
-ZXF1ZW5jeSBhY2N1cmF0ZWx5LCBJIG9ubHkganVkZ2UgaXQgZnJvbSBjb2RlLiBUaGUgZGVmZXIg
-b2YgMzIgc2Vjb25kcyBpcyBzdGlsbCB2ZXJ5IHNob3J0IHRvIHVzLCB3ZSB3YW50IHRoZSBwcm9h
-Y3RpdmUgY29tcGFjdGlvbiBydW5uaW5nIHBlcmlvZCB0byBiZSBob3Vycy4NCg0KPiANCj4gPiBJ
-biB0aGVzZSBtYWNoaW5lcyB3ZSBvbmx5IGNhcmUgYWJvdXQgb3JkZXIgb2YgMyBvciA0Lg0KPiA+
-IFRoaXMgcGF0Y2ggZXhwb3J0IHRoZSBvZGVyIHRvIHByb2MgYW5kIGxldCBpdCBjb25maWd1cmFi
-bGUgYnkgdXNlciwNCj4gPiBhbmQgdGhlIGRlZmF1bHQgdmFsdWUgaXMgc3RpbGwgQ09NUEFDVElP
-Tl9IUEFHRV9PUkRFUi4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IGNodWthaXBpbmcgPGNodWth
-aXBpbmdAYmFpZHUuY29tPg0KPiA+IFJlcG9ydGVkLWJ5OiBrZXJuZWwgdGVzdCByb2JvdCA8bGtw
-QGludGVsLmNvbT4NCj4gPiAtLS0NCj4gPg0KPiA+IENoYW5nZXMgaW4gdjQ6DQo+ID4gICAgIC0g
-Y2hhbmdlIHRoZSBzeXNjdGwgZmlsZSBuYW1lIHRvIHByb2FjdGl2ZV9jb21wYXRpb25fb3JkZXIN
-Cj4gPg0KPiA+IENoYW5nZXMgaW4gdjM6DQo+ID4gICAgIC0gY2hhbmdlIHRoZSBtaW4gdmFsdWUg
-b2YgY29tcGFjdGlvbl9vcmRlciB0byAxIGJlY2F1c2UgdGhlDQo+IGZyYWdtZW50YXRpb24NCj4g
-PiAgICAgICBpbmRleCBvZiBvcmRlciAwIGlzIGFsd2F5cyAwDQo+ID4gICAgIC0gbW92ZSB0aGUg
-ZGVmaW5pdGlvbiBvZiBtYXhfYnVkZHlfem9uZSBpbnRvICNpZmRlZg0KPiA+IENPTkZJR19DT01Q
-QUNUSU9ODQo+ID4NCj4gPiBDaGFuZ2VzIGluIHYyOg0KPiA+ICAgICAtIGZpeCB0aGUgY29tcGls
-ZSBlcnJvciBpbiBpYTY0IGFuZCBwb3dlcnBjLCBtb3ZlIHRoZSBpbml0aWFsaXphdGlvbg0KPiA+
-ICAgICAgIG9mIHN5c2N0bF9jb21wYWN0aW9uX29yZGVyIHRvIGtjb21wYWN0ZF9pbml0IGJlY2F1
-c2UNCj4gPiAgICAgICBDT01QQUNUSU9OX0hQQUdFX09SREVSIGlzIGEgdmFyaWFibGUgaW4gdGhl
-c2UgYXJjaGl0ZWN0dXJlcw0KPiA+ICAgICAtIGNoYW5nZSB0aGUgaGFyZCBjb2RlZCBtYXggb3Jk
-ZXIgbnVtYmVyIGZyb20gMTAgdG8gTUFYX09SREVSIC0gMQ0KPiA+DQo+ID4gIGluY2x1ZGUvbGlu
-dXgvY29tcGFjdGlvbi5oIHwgICAgMSArDQo+ID4gIGtlcm5lbC9zeXNjdGwuYyAgICAgICAgICAg
-IHwgICAxMCArKysrKysrKysrDQo+ID4gIG1tL2NvbXBhY3Rpb24uYyAgICAgICAgICAgIHwgICAx
-MiArKysrKysrKy0tLS0NCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCAxOSBpbnNlcnRpb25zKCspLCA0
-IGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvY29tcGFj
-dGlvbi5oIGIvaW5jbHVkZS9saW51eC9jb21wYWN0aW9uLmgNCj4gPiBpbmRleCBlZDQwNzBlLi5h
-MDIyNmIxIDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvY29tcGFjdGlvbi5oDQo+ID4g
-KysrIGIvaW5jbHVkZS9saW51eC9jb21wYWN0aW9uLmgNCj4gPiBAQCAtODMsNiArODMsNyBAQCBz
-dGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcgY29tcGFjdF9nYXAodW5zaWduZWQgaW50DQo+ID4g
-b3JkZXIpICAjaWZkZWYgQ09ORklHX0NPTVBBQ1RJT04gIGV4dGVybiBpbnQgc3lzY3RsX2NvbXBh
-Y3RfbWVtb3J5Ow0KPiA+IGV4dGVybiB1bnNpZ25lZCBpbnQgc3lzY3RsX2NvbXBhY3Rpb25fcHJv
-YWN0aXZlbmVzczsNCj4gPiArZXh0ZXJuIHVuc2lnbmVkIGludCBzeXNjdGxfcHJvYWN0aXZlX2Nv
-bXBhY3Rpb25fb3JkZXI7DQo+ID4gIGV4dGVybiBpbnQgc3lzY3RsX2NvbXBhY3Rpb25faGFuZGxl
-cihzdHJ1Y3QgY3RsX3RhYmxlICp0YWJsZSwgaW50IHdyaXRlLA0KPiA+ICAJCQl2b2lkICpidWZm
-ZXIsIHNpemVfdCAqbGVuZ3RoLCBsb2ZmX3QgKnBwb3MpOyAgZXh0ZXJuIGludA0KPiA+IHN5c2N0
-bF9leHRmcmFnX3RocmVzaG9sZDsgZGlmZiAtLWdpdCBhL2tlcm5lbC9zeXNjdGwuYw0KPiA+IGIv
-a2VybmVsL3N5c2N0bC5jIGluZGV4IDYyZmJkMDkuLmVkOTAxMmUgMTAwNjQ0DQo+ID4gLS0tIGEv
-a2VybmVsL3N5c2N0bC5jDQo+ID4gKysrIGIva2VybmVsL3N5c2N0bC5jDQo+ID4gQEAgLTE5Niw2
-ICsxOTYsNyBAQCBlbnVtIHN5c2N0bF93cml0ZXNfbW9kZSB7ICAjZW5kaWYgLyoNCj4gPiBDT05G
-SUdfU0NIRURfREVCVUcgKi8NCj4gPg0KPiA+ICAjaWZkZWYgQ09ORklHX0NPTVBBQ1RJT04NCj4g
-PiArc3RhdGljIGludCBtYXhfYnVkZHlfem9uZSA9IE1BWF9PUkRFUiAtIDE7DQo+ID4gIHN0YXRp
-YyBpbnQgbWluX2V4dGZyYWdfdGhyZXNob2xkOw0KPiA+ICBzdGF0aWMgaW50IG1heF9leHRmcmFn
-X3RocmVzaG9sZCA9IDEwMDA7ICAjZW5kaWYgQEAgLTI4NzEsNiArMjg3MiwxNQ0KPiA+IEBAIGlu
-dCBwcm9jX2RvX3N0YXRpY19rZXkoc3RydWN0IGN0bF90YWJsZSAqdGFibGUsIGludCB3cml0ZSwN
-Cj4gPiAgCQkuZXh0cmEyCQk9ICZvbmVfaHVuZHJlZCwNCj4gPiAgCX0sDQo+ID4gIAl7DQo+ID4g
-KwkJLnByb2NuYW1lICAgICAgID0gInByb2FjdGl2ZV9jb21wYXRpb25fb3JkZXIiLA0KPiA+ICsJ
-CS5kYXRhICAgICAgICAgICA9ICZzeXNjdGxfcHJvYWN0aXZlX2NvbXBhY3Rpb25fb3JkZXIsDQo+
-ID4gKwkJLm1heGxlbiAgICAgICAgID0gc2l6ZW9mKHN5c2N0bF9wcm9hY3RpdmVfY29tcGFjdGlv
-bl9vcmRlciksDQo+ID4gKwkJLm1vZGUgICAgICAgICAgID0gMDY0NCwNCj4gPiArCQkucHJvY19o
-YW5kbGVyICAgPSBwcm9jX2RvaW50dmVjX21pbm1heCwNCj4gPiArCQkuZXh0cmExICAgICAgICAg
-PSBTWVNDVExfT05FLA0KPiA+ICsJCS5leHRyYTIgICAgICAgICA9ICZtYXhfYnVkZHlfem9uZSwN
-Cj4gPiArCX0sDQo+ID4gKwl7DQo+ID4gIAkJLnByb2NuYW1lCT0gImV4dGZyYWdfdGhyZXNob2xk
-IiwNCj4gPiAgCQkuZGF0YQkJPSAmc3lzY3RsX2V4dGZyYWdfdGhyZXNob2xkLA0KPiA+ICAJCS5t
-YXhsZW4JCT0gc2l6ZW9mKGludCksDQo+ID4gZGlmZiAtLWdpdCBhL21tL2NvbXBhY3Rpb24uYyBi
-L21tL2NvbXBhY3Rpb24uYyBpbmRleCBlMDRmNDQ3Li4xNzE0MzZlDQo+ID4gMTAwNjQ0DQo+ID4g
-LS0tIGEvbW0vY29tcGFjdGlvbi5jDQo+ID4gKysrIGIvbW0vY29tcGFjdGlvbi5jDQo+ID4gQEAg
-LTE5MjUsMTcgKzE5MjUsMTggQEAgc3RhdGljIGJvb2wga3N3YXBkX2lzX3J1bm5pbmcocGdfZGF0
-YV90DQo+ID4gKnBnZGF0KQ0KPiA+DQo+ID4gIC8qDQo+ID4gICAqIEEgem9uZSdzIGZyYWdtZW50
-YXRpb24gc2NvcmUgaXMgdGhlIGV4dGVybmFsIGZyYWdtZW50YXRpb24gd3J0IHRvDQo+ID4gdGhl
-DQo+ID4gLSAqIENPTVBBQ1RJT05fSFBBR0VfT1JERVIuIEl0IHJldHVybnMgYSB2YWx1ZSBpbiB0
-aGUgcmFuZ2UgWzAsIDEwMF0uDQo+ID4gKyAqIHN5c2N0bF9wcm9hY3RpdmVfY29tcGFjdGlvbl9v
-cmRlci4gSXQgcmV0dXJucyBhIHZhbHVlIGluIHRoZSByYW5nZQ0KPiA+ICsgKiBbMCwgMTAwXS4N
-Cj4gPiAgICovDQo+ID4gIHN0YXRpYyB1bnNpZ25lZCBpbnQgZnJhZ21lbnRhdGlvbl9zY29yZV96
-b25lKHN0cnVjdCB6b25lICp6b25lKSAgew0KPiA+IC0JcmV0dXJuIGV4dGZyYWdfZm9yX29yZGVy
-KHpvbmUsIENPTVBBQ1RJT05fSFBBR0VfT1JERVIpOw0KPiA+ICsJcmV0dXJuIGV4dGZyYWdfZm9y
-X29yZGVyKHpvbmUsIHN5c2N0bF9wcm9hY3RpdmVfY29tcGFjdGlvbl9vcmRlcik7DQo+ID4gIH0N
-Cj4gPg0KPiA+ICAvKg0KPiA+ICAgKiBBIHdlaWdodGVkIHpvbmUncyBmcmFnbWVudGF0aW9uIHNj
-b3JlIGlzIHRoZSBleHRlcm5hbA0KPiA+IGZyYWdtZW50YXRpb24NCj4gPiAtICogd3J0IHRvIHRo
-ZSBDT01QQUNUSU9OX0hQQUdFX09SREVSIHNjYWxlZCBieSB0aGUgem9uZSdzIHNpemUuIEl0DQo+
-ID4gLSAqIHJldHVybnMgYSB2YWx1ZSBpbiB0aGUgcmFuZ2UgWzAsIDEwMF0uDQo+ID4gKyAqIHdy
-dCB0byB0aGUgc3lzY3RsX3Byb2FjdGl2ZV9jb21wYWN0aW9uX29yZGVyIHNjYWxlZCBieSB0aGUg
-em9uZSdzIHNpemUuDQo+ID4gKyAqIEl0IHJldHVybnMgYSB2YWx1ZSBpbiB0aGUgcmFuZ2UgWzAs
-IDEwMF0uDQo+ID4gICAqDQo+ID4gICAqIFRoZSBzY2FsaW5nIGZhY3RvciBlbnN1cmVzIHRoYXQg
-cHJvYWN0aXZlIGNvbXBhY3Rpb24gZm9jdXNlcyBvbiBsYXJnZXINCj4gPiAgICogem9uZXMgbGlr
-ZSBaT05FX05PUk1BTCwgcmF0aGVyIHRoYW4gc21hbGxlciwgc3BlY2lhbGl6ZWQgem9uZXMNCj4g
-PiBsaWtlIEBAIC0yNjY2LDYgKzI2NjcsNyBAQCBzdGF0aWMgdm9pZCBjb21wYWN0X25vZGVzKHZv
-aWQpDQo+ID4gICAqIGJhY2tncm91bmQuIEl0IHRha2VzIHZhbHVlcyBpbiB0aGUgcmFuZ2UgWzAs
-IDEwMF0uDQo+ID4gICAqLw0KPiA+ICB1bnNpZ25lZCBpbnQgX19yZWFkX21vc3RseSBzeXNjdGxf
-Y29tcGFjdGlvbl9wcm9hY3RpdmVuZXNzID0gMjA7DQo+ID4gK3Vuc2lnbmVkIGludCBfX3JlYWRf
-bW9zdGx5IHN5c2N0bF9wcm9hY3RpdmVfY29tcGFjdGlvbl9vcmRlcjsNCj4gPg0KPiA+ICAvKg0K
-PiA+ICAgKiBUaGlzIGlzIHRoZSBlbnRyeSBwb2ludCBmb3IgY29tcGFjdGluZyBhbGwgbm9kZXMg
-dmlhIEBAIC0yOTU4LDYNCj4gPiArMjk2MCw4IEBAIHN0YXRpYyBpbnQgX19pbml0IGtjb21wYWN0
-ZF9pbml0KHZvaWQpDQo+ID4gIAlpbnQgbmlkOw0KPiA+ICAJaW50IHJldDsNCj4gPg0KPiA+ICsJ
-c3lzY3RsX3Byb2FjdGl2ZV9jb21wYWN0aW9uX29yZGVyID0gQ09NUEFDVElPTl9IUEFHRV9PUkRF
-UjsNCj4gPiArDQo+ID4gIAlyZXQgPSBjcHVocF9zZXR1cF9zdGF0ZV9ub2NhbGxzKENQVUhQX0FQ
-X09OTElORV9EWU4sDQo+ID4gIAkJCQkJIm1tL2NvbXBhY3Rpb246b25saW5lIiwNCj4gPiAgCQkJ
-CQlrY29tcGFjdGRfY3B1X29ubGluZSwgTlVMTCk7DQo+ID4NCg0K
+On Wed, 26 May 2021 15:51:42 +0800 Feng zhou <zhoufeng.zf@bytedance.com> wrote:
+
+> From: ZHOUFENG <zhoufeng.zf@bytedance.com>
+> 
+> When we do the kernel monitor, use the DRGN
+> (https://github.com/osandov/drgn) access to kernel data structures,
+> found that the system calls a lot. DRGN is implemented by reading
+> /proc/kcore. After looking at the kcore code, it is found that kcore
+> does not implement mmap, resulting in frequent context switching
+> triggered by read. Therefore, we want to add mmap interface to optimize
+> performance. Since vmalloc and module areas will change with allocation
+> and release, consistency cannot be guaranteed, so mmap interface only
+> maps KCORE_TEXT and KCORE_RAM.
+> 
+> ...
+>
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -573,11 +573,81 @@ static int release_kcore(struct inode *inode, struct file *file)
+>  	return 0;
+>  }
+>  
+> +static vm_fault_t mmap_kcore_fault(struct vm_fault *vmf)
+> +{
+> +	return VM_FAULT_SIGBUS;
+> +}
+> +
+> +static const struct vm_operations_struct kcore_mmap_ops = {
+> +	.fault = mmap_kcore_fault,
+> +};
+> +
+> +static int mmap_kcore(struct file *file, struct vm_area_struct *vma)
+> +{
+> +	size_t size = vma->vm_end - vma->vm_start;
+> +	u64 start, pfn;
+> +	int nphdr;
+> +	size_t data_offset;
+> +	size_t phdrs_len, notes_len;
+> +	struct kcore_list *m = NULL;
+> +	int ret = 0;
+> +
+> +	down_read(&kclist_lock);
+> +
+> +	get_kcore_size(&nphdr, &phdrs_len, &notes_len, &data_offset);
+> +
+> +	start = kc_offset_to_vaddr(((u64)vma->vm_pgoff << PAGE_SHIFT) -
+> +		((data_offset >> PAGE_SHIFT) << PAGE_SHIFT));
+> +
+> +	list_for_each_entry(m, &kclist_head, list) {
+> +		if (start >= m->addr && size <= m->size)
+> +			break;
+> +	}
+> +
+> +	if (&m->list == &kclist_head) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (vma->vm_flags & (VM_WRITE | VM_EXEC)) {
+> +		ret = -EPERM;
+> +		goto out;
+> +	}
+> +
+> +	vma->vm_flags &= ~(VM_MAYWRITE | VM_MAYEXEC);
+> +	vma->vm_flags |= VM_MIXEDMAP;
+> +	vma->vm_ops = &kcore_mmap_ops;
+> +
+> +	if (kern_addr_valid(start)) {
+> +		if (m->type == KCORE_RAM || m->type == KCORE_REMAP)
+> +			pfn = __pa(start) >> PAGE_SHIFT;
+> +		else if (m->type == KCORE_TEXT)
+> +			pfn = __pa_symbol(start) >> PAGE_SHIFT;
+> +		else {
+> +			ret = -EFAULT;
+> +			goto out;
+> +		}
+> +
+> +		if (remap_pfn_range(vma, vma->vm_start, pfn, size,
+> +				vma->vm_page_prot)) {
+> +			ret = -EAGAIN;
+
+EAGAIN seems a strange errno for this case.   The mmap manpage says
+
+       EAGAIN The file has been locked, or too much  memory  has  been  locked
+              (see setrlimit(2)).
+
+
+remap_pfn_range() already returns an errno - why not return whatever
+that code was?
+
+> +			goto out;
+> +		}
+> +	} else {
+> +		ret = -EFAULT;
+> +	}
+> +
+> +out:
+> +	up_read(&kclist_lock);
+> +	return ret;
+> +}
+> +
+>  static const struct proc_ops kcore_proc_ops = {
+>  	.proc_read	= read_kcore,
+>  	.proc_open	= open_kcore,
+>  	.proc_release	= release_kcore,
+>  	.proc_lseek	= default_llseek,
+> +	.proc_mmap	= mmap_kcore,
+>  };
+>  
+>  /* just remember that we have to update kcore */
+
+Otherwise looks OK to me.  Please update the changelog to reflect the
+discussion thus far and send a v2?  
