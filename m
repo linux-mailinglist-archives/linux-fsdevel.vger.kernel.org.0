@@ -2,153 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55DA3396A95
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 03:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1139396AE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 04:13:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232341AbhFABZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 May 2021 21:25:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231714AbhFABZ1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 May 2021 21:25:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3EC0E610A1;
-        Tue,  1 Jun 2021 01:23:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1622510625;
-        bh=tJI6iUgH4WbJL1Ain1qtmC88ZJN93TFAElZ2sjKd3y4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Zhgp/24FPdRQOadk7iDa1k61dyyZzMYu6led2E3+OeDYEdb1tJrXVQZEwu+W68Y0h
-         QMDV3gDpsHnpZpDT0GNEq3uwuC+Nby97gttsTRJmot2hF5urRncGUuHvfjxYOpQSDz
-         hE8i2JpfiKyHzHm1BD8GlngnqIU/um/VQVpDaC0o=
-Date:   Mon, 31 May 2021 18:23:44 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Feng zhou <zhoufeng.zf@bytedance.com>
-Cc:     adobriyan@gmail.com, rppt@kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, songmuchun@bytedance.com,
-        zhouchengming@bytedance.com, chenying.kernel@bytedance.com,
-        zhengqi.arch@bytedance.com
-Subject: Re: [PATCH] fs/proc/kcore.c: add mmap interface
-Message-Id: <20210531182344.e9692132981a5bf9bf6d4583@linux-foundation.org>
-In-Reply-To: <20210526075142.9740-1-zhoufeng.zf@bytedance.com>
-References: <20210526075142.9740-1-zhoufeng.zf@bytedance.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S232356AbhFACOz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 May 2021 22:14:55 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:2807 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232268AbhFACOz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 31 May 2021 22:14:55 -0400
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4FvFtz0y7dzWq2c;
+        Tue,  1 Jun 2021 10:08:27 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (7.185.36.114) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 1 Jun 2021 10:13:03 +0800
+Received: from localhost.localdomain (10.69.192.56) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 1 Jun 2021 10:12:49 +0800
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+To:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Yuqi Jin <jinyuqi@huawei.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>
+Subject: [PATCH RESEND] fs: Optimized file struct to improve performance
+Date:   Tue, 1 Jun 2021 10:12:37 +0800
+Message-ID: <1622513557-46189-1-git-send-email-zhangshaokun@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.56]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 26 May 2021 15:51:42 +0800 Feng zhou <zhoufeng.zf@bytedance.com> wrote:
+From: Yuqi Jin <jinyuqi@huawei.com>
 
-> From: ZHOUFENG <zhoufeng.zf@bytedance.com>
-> 
-> When we do the kernel monitor, use the DRGN
-> (https://github.com/osandov/drgn) access to kernel data structures,
-> found that the system calls a lot. DRGN is implemented by reading
-> /proc/kcore. After looking at the kcore code, it is found that kcore
-> does not implement mmap, resulting in frequent context switching
-> triggered by read. Therefore, we want to add mmap interface to optimize
-> performance. Since vmalloc and module areas will change with allocation
-> and release, consistency cannot be guaranteed, so mmap interface only
-> maps KCORE_TEXT and KCORE_RAM.
-> 
-> ...
->
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -573,11 +573,81 @@ static int release_kcore(struct inode *inode, struct file *file)
->  	return 0;
->  }
->  
-> +static vm_fault_t mmap_kcore_fault(struct vm_fault *vmf)
-> +{
-> +	return VM_FAULT_SIGBUS;
-> +}
-> +
-> +static const struct vm_operations_struct kcore_mmap_ops = {
-> +	.fault = mmap_kcore_fault,
-> +};
-> +
-> +static int mmap_kcore(struct file *file, struct vm_area_struct *vma)
-> +{
-> +	size_t size = vma->vm_end - vma->vm_start;
-> +	u64 start, pfn;
-> +	int nphdr;
-> +	size_t data_offset;
-> +	size_t phdrs_len, notes_len;
-> +	struct kcore_list *m = NULL;
-> +	int ret = 0;
-> +
-> +	down_read(&kclist_lock);
-> +
-> +	get_kcore_size(&nphdr, &phdrs_len, &notes_len, &data_offset);
-> +
-> +	start = kc_offset_to_vaddr(((u64)vma->vm_pgoff << PAGE_SHIFT) -
-> +		((data_offset >> PAGE_SHIFT) << PAGE_SHIFT));
-> +
-> +	list_for_each_entry(m, &kclist_head, list) {
-> +		if (start >= m->addr && size <= m->size)
-> +			break;
-> +	}
-> +
-> +	if (&m->list == &kclist_head) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	if (vma->vm_flags & (VM_WRITE | VM_EXEC)) {
-> +		ret = -EPERM;
-> +		goto out;
-> +	}
-> +
-> +	vma->vm_flags &= ~(VM_MAYWRITE | VM_MAYEXEC);
-> +	vma->vm_flags |= VM_MIXEDMAP;
-> +	vma->vm_ops = &kcore_mmap_ops;
-> +
-> +	if (kern_addr_valid(start)) {
-> +		if (m->type == KCORE_RAM || m->type == KCORE_REMAP)
-> +			pfn = __pa(start) >> PAGE_SHIFT;
-> +		else if (m->type == KCORE_TEXT)
-> +			pfn = __pa_symbol(start) >> PAGE_SHIFT;
-> +		else {
-> +			ret = -EFAULT;
-> +			goto out;
-> +		}
-> +
-> +		if (remap_pfn_range(vma, vma->vm_start, pfn, size,
-> +				vma->vm_page_prot)) {
-> +			ret = -EAGAIN;
+In the syscall process, @f_count and @f_mod are frequently used, if
+we put them together with each other and they will share the same
+cacheline. It is useful for the performance.
 
-EAGAIN seems a strange errno for this case.   The mmap manpage says
+syscall of unixbench is tested on Intel 8180.
+before this patch
+80 CPUs in system; running 80 parallel copies of tests
 
-       EAGAIN The file has been locked, or too much  memory  has  been  locked
-              (see setrlimit(2)).
+System Call Overhead                    3789860.2 lps   (10.0 s, 1 samples)
 
+System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+System Call Overhead                          15000.0    3789860.2   2526.6
+                                                                   ========
+System Benchmarks Index Score (Partial Only)                         2526.6
 
-remap_pfn_range() already returns an errno - why not return whatever
-that code was?
+after this patch
+80 CPUs in system; running 80 parallel copies of tests
 
-> +			goto out;
-> +		}
-> +	} else {
-> +		ret = -EFAULT;
-> +	}
-> +
-> +out:
-> +	up_read(&kclist_lock);
-> +	return ret;
-> +}
-> +
->  static const struct proc_ops kcore_proc_ops = {
->  	.proc_read	= read_kcore,
->  	.proc_open	= open_kcore,
->  	.proc_release	= release_kcore,
->  	.proc_lseek	= default_llseek,
-> +	.proc_mmap	= mmap_kcore,
->  };
->  
->  /* just remember that we have to update kcore */
+System Call Overhead                    3951328.1 lps   (10.0 s, 1 samples)
 
-Otherwise looks OK to me.  Please update the changelog to reflect the
-discussion thus far and send a v2?  
+System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+System Call Overhead                          15000.0    3951328.1   2634.2
+                                                                   ========
+System Benchmarks Index Score (Partial Only)                         2634.2
+
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Yuqi Jin <jinyuqi@huawei.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+---
+Hi,
+    Sorry for the noise that I resent the patch since v1[1], while
+Intel's robot gives the 19.2% improvement[2].
+
+[1]https://www.spinics.net/lists/linux-fsdevel/msg192888.html
+[2]https://www.spinics.net/lists/linux-fsdevel/msg193521.html
+
+ include/linux/fs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c3c88fdb9b2a..23baa7c8301b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -922,7 +922,6 @@ struct file {
+ 		struct llist_node	fu_llist;
+ 		struct rcu_head 	fu_rcuhead;
+ 	} f_u;
+-	struct path		f_path;
+ 	struct inode		*f_inode;	/* cached value */
+ 	const struct file_operations	*f_op;
+ 
+@@ -931,13 +930,14 @@ struct file {
+ 	 * Must not be taken from IRQ context.
+ 	 */
+ 	spinlock_t		f_lock;
+-	enum rw_hint		f_write_hint;
+ 	atomic_long_t		f_count;
+ 	unsigned int 		f_flags;
+ 	fmode_t			f_mode;
+ 	struct mutex		f_pos_lock;
+ 	loff_t			f_pos;
+ 	struct fown_struct	f_owner;
++	enum rw_hint		f_write_hint;
++	struct path		f_path;
+ 	const struct cred	*f_cred;
+ 	struct file_ra_state	f_ra;
+ 
+-- 
+2.7.4
+
