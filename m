@@ -2,115 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3C1D397523
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 16:10:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D4A397564
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 16:25:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234084AbhFAOMT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Jun 2021 10:12:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50180 "EHLO
+        id S234043AbhFAO13 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Jun 2021 10:27:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233970AbhFAOMS (ORCPT
+        with ESMTP id S233797AbhFAO12 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Jun 2021 10:12:18 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A18AC06174A
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jun 2021 07:10:37 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id l11-20020a05600c4f0bb029017a7cd488f5so2029904wmq.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jun 2021 07:10:37 -0700 (PDT)
+        Tue, 1 Jun 2021 10:27:28 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E6CFC061574;
+        Tue,  1 Jun 2021 07:25:46 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id a4so19505108ljd.5;
+        Tue, 01 Jun 2021 07:25:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=7iGbvcFYMb3tLwZvkHa1Xrgwf6I7yyg/yxMiEiySaC0=;
-        b=ejnEUTO1DiWDFagv+Dl6hADRqW7H1logS/cF6NBmsns/CZtF8MMuELJR17uBvI2xCD
-         ngbYDadN3KqmTc1Ga64JG9ipPURDyswvZSzXT8SgS+f7+2fznZZ5iWjaYZC/aQASeaFy
-         V8hUWaNgJgUeTGGYdT4EErDL9mDPIsVnl+zdU=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fXwBkVh1KOdsr+KAjML5tZJwuUk3Uy21Fq6dGjEOiZg=;
+        b=Q9h+LrKoylLZsYtEqjwuS7hFLOYHLqI83SIMLRl66myPHKPdiPcOii2nrW2kSlp4K1
+         Y9A2HHJsq6eiBpN+Epthp+aUCN/vBJP5VujK3mRyG/yC1UM8wxLl00mLfN91OQ6AARAH
+         x8v8EVwLyJXY6YGxb1N7VsQ2AVK13TNmSOtHNmmgOtTCcsTvu7zrHJVy+YaZ5ieUYO3k
+         DFMFCvU29ku+uwmXi5DOgniPOxPC/QaXS0hBpXuDgasJcqjrV4U9AmMqfmHNrvbN6Txs
+         V/GptEVfgPGLm1pBnh/WTBJzgpzO5aJK3Cc/DIBMXn0asjYlo6KMwoMlkBnBBV1BStx3
+         Z9rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=7iGbvcFYMb3tLwZvkHa1Xrgwf6I7yyg/yxMiEiySaC0=;
-        b=OGp2+iIiG2f/E57DFz0gHh0WJ2TLeOw9Ew0MuSW2CpZgtJJFYWDJCjPz21KUzRCAuE
-         lGbGjPu+CmN48XRQIR5f/OWd/P1HwQqXE4zOEBc4LPvGrVkVHyD+boIHWFFjiklatVmG
-         5/wBsXTMoc4DcoceHJgjPmYJqQhtL5vo53SiFCrJauN/gqCg5UMEVFuHzp37Cs8X6F6S
-         M/GvnnsXwVN+TZD6xBxIOELrAb0NTN4XdaKOureB2WK/WGuu3ZfMgRQUMf7OpA7cAjnf
-         teSdyANx8TqwUYMWIb2m3sePM1PkfxsKC0jN09tnNMj2GKOqyRXTD+S3k33umZRTbs6b
-         cmaQ==
-X-Gm-Message-State: AOAM531hiNIRCLbbaNyn4lo4Zf5Zhkktyea6m4qsHXQre1Ysaj59y5cs
-        EnV+FZs/yOT55m0k7H/pQqwkxQ==
-X-Google-Smtp-Source: ABdhPJxmv2iRwq3JXX8sQlPH3fi0l96M70KDiLaBl1d14VByekZy30x12OgkHti6Mr59TGXbgwmE1g==
-X-Received: by 2002:a05:600c:2109:: with SMTP id u9mr104645wml.7.1622556635096;
-        Tue, 01 Jun 2021 07:10:35 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id f1sm4206218wrr.63.2021.06.01.07.10.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 07:10:34 -0700 (PDT)
-Date:   Tue, 1 Jun 2021 16:10:32 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Nathan Chancellor <nathan@kernel.org>, linux-fbdev@vger.kernel.org,
-        linux-mm@kvack.org, Jani Nikula <jani.nikula@intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        William Kucharski <william.kucharski@oracle.com>,
-        Ian Campbell <ijc@hellion.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Jaya Kumar <jayakumar.lkml@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2] fb_defio: Remove custom address_space_operations
-Message-ID: <YLY/2O16fAjriZGQ@phenom.ffwll.local>
-Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
-        Nathan Chancellor <nathan@kernel.org>, linux-fbdev@vger.kernel.org,
-        linux-mm@kvack.org, Jani Nikula <jani.nikula@intel.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        William Kucharski <william.kucharski@oracle.com>,
-        Ian Campbell <ijc@hellion.org.uk>, linux-fsdevel@vger.kernel.org,
-        Jaya Kumar <jayakumar.lkml@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20210310185530.1053320-1-willy@infradead.org>
- <YLPjwUUmHDRjyPpR@Ryzen-9-3900X.localdomain>
- <YLQALv2YENIDh77N@casper.infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fXwBkVh1KOdsr+KAjML5tZJwuUk3Uy21Fq6dGjEOiZg=;
+        b=fVp2eOvgubEiHTGS3rBlCiKwEquCZlyTB/XijedDXSSbLv+mCrqtrCgZ0aMd5ogm/3
+         n5glTd/3P7S00p9Ydf4rixBYAzARM2ix4aLr0I/sxWRNTj00tDiAACUNHZUwV+WNiEEW
+         6Fp+SKEHn7xn4VD89+0B4wM+riCdMYmLVaqt+TZG0+4Nl/3KojvreDB6PkcgQ9TRlSvn
+         5jxlahkwI57gS3qk0hg3RkFSpKr7ds/nlgX+DdHBoUIDtnKrr+/qJ4QyZKp6uuVw7FBF
+         +pQ9PqRBXEx4K/WFE5hZmkteiALFkRUMVwf4LC+ATZ3/Ic0CkQAfVlRCLTUNDLHeMNS4
+         GixQ==
+X-Gm-Message-State: AOAM533P4hmRP+yTb0vzeIfy9DlFlSDoth2f5+mYpLIW8c8Yi/MrQriD
+        NyY5fp4NTe/iOI/dOokBj/tbJAfXABa2Le3zc3U=
+X-Google-Smtp-Source: ABdhPJxfuuOlYn8u/cUjN4OxD9jt/ci6zN92sBMLK2ZQiBgNE2BKtsq27R7REJZREeESz1DH0pLFFUzjTJLEzYzdwA8=
+X-Received: by 2002:a2e:7f16:: with SMTP id a22mr21877791ljd.360.1622557544705;
+ Tue, 01 Jun 2021 07:25:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YLQALv2YENIDh77N@casper.infradead.org>
-X-Operating-System: Linux phenom 5.10.32scarlett+ 
+References: <20210528143802.78635-1-dong.menglong@zte.com.cn>
+ <20210529112638.b3a9ec5475ca8e4f51648ff0@kernel.org> <CADxym3Ya3Jv_tUMJyq+ymd8m1_S-KezqNDfsLtMcJCXtDytBzA@mail.gmail.com>
+ <YLY+MNDgCT89hwQg@casper.infradead.org>
+In-Reply-To: <YLY+MNDgCT89hwQg@casper.infradead.org>
+From:   Menglong Dong <menglong8.dong@gmail.com>
+Date:   Tue, 1 Jun 2021 22:25:33 +0800
+Message-ID: <CADxym3YKdkRTMKVFbPjD0xLFL4tn20PK7gA6gDd7BQUK8+kQxQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] init/initramfs.c: make initramfs support pivot_root
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Sami Tolvanen <samitolvanen@google.com>, ojeda@kernel.org,
+        johan@kernel.org, jeyu@kernel.org, masahiroy@kernel.org,
+        Menglong Dong <dong.menglong@zte.com.cn>, joe@perches.com,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        hare@suse.de, tj@kernel.org, gregkh@linuxfoundation.org,
+        song@kernel.org, NeilBrown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        f.fainelli@gmail.com, wangkefeng.wang@huawei.com, arnd@arndb.de,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Barret Rhoden <brho@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, vbabka@suse.cz,
+        pmladek@suse.com, Alexander Potapenko <glider@google.com>,
+        Chris Down <chris@chrisdown.name>, jojing64@gmail.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>, mingo@kernel.org,
+        terrelln@fb.com, geert@linux-m68k.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 30, 2021 at 10:14:22PM +0100, Matthew Wilcox wrote:
-> On Sun, May 30, 2021 at 12:13:05PM -0700, Nathan Chancellor wrote:
-> > Hi Matthew,
-> > 
-> > On Wed, Mar 10, 2021 at 06:55:30PM +0000, Matthew Wilcox (Oracle) wrote:
-> > > There's no need to give the page an address_space.  Leaving the
-> > > page->mapping as NULL will cause the VM to handle set_page_dirty()
-> > > the same way that it's handled now, and that was the only reason to
-> > > set the address_space in the first place.
-> > > 
-> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> > 
-> > This patch in mainline as commit ccf953d8f3d6 ("fb_defio: Remove custom
-> > address_space_operations") causes my Hyper-V based VM to no longer make
-> > it to a graphical environment.
-> 
-> Hi Nathan,
-> 
-> Thanks for the report.  I sent Daniel a revert patch with a full
-> explanation last week, which I assume he'll queue up for a pull soon.
-> You can just git revert ccf953d8f3d6 for yourself until that shows up.
-> Sorry for the inconvenience.
+On Tue, Jun 1, 2021 at 10:03 PM Matthew Wilcox <willy@infradead.org> wrote:
+[...]
 
-Uh that patch didn't get cc'ed to any list so I've ignored it. I've found
-it now, but lack of lore link is awkward. Can you pls resubmit with
-dri-devel on cc? fbdev list is dead, I don't look there.
+>
+> You sent this on Friday.  Monday was a holiday in the USA.  Generally
+> you should wait a week before pinging a patch.
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Ok, get it! I'll keep it in mind this time :/
+
+Thanks!
+Menglong Dong
