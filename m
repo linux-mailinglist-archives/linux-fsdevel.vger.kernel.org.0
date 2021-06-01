@@ -2,145 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F3B83978AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 19:06:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 913C8397A04
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 20:23:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234336AbhFARIE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Jun 2021 13:08:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34256 "EHLO
+        id S234589AbhFASZZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Jun 2021 14:25:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231918AbhFARIE (ORCPT
+        with ESMTP id S233853AbhFASZZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Jun 2021 13:08:04 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C0B5C061574;
-        Tue,  1 Jun 2021 10:06:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=hA62la00vFMppd9s1AomcqtrMlyNDRJAkQFp1nXnFAg=; b=bhrq8HGvk2ZC9QEwuF3N+FtO15
-        D91cwCGObxRWpjhgo3KsDyZ/ccqpaKL1PKiqNJ6DyXoAd3sH8j3/v38LCVcvBBaQBBbuic3LwsDAJ
-        +8tAvC6xnAzAmA2HBRfvUbPq/pfObzWigW5VlFNHN6lhA+Gd/VRL+a5EXewYUpnCrHRxvkb1TzGlH
-        N401VSuO7kjeKd04aOalX52/LMQFAWweJvJvB+wz/rFUfpsnLI/iY+MRzMxnPT/d5GwzdRe7k/JbE
-        vf5bEBx1jR7MUlL5Kj0nk0aza5v71zysqRMPjrRoDA00lec1DdVTRanpocwFGdS/z1Iad8J2I7IBt
-        rFdK0zyg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lo7pK-00AEY3-91; Tue, 01 Jun 2021 17:05:15 +0000
-Date:   Tue, 1 Jun 2021 18:05:14 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Justin He <Justin.He@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH RFCv2 2/3] lib/vsprintf.c: make %pD print full path for
- file
-Message-ID: <YLZoyjSJyzU5w1qO@casper.infradead.org>
-References: <AM6PR08MB437691E7314C6B774EFED4BDF7229@AM6PR08MB4376.eurprd08.prod.outlook.com>
- <YLEDwFCPcFx+qeul@casper.infradead.org>
- <AM6PR08MB437615DB6A6DEC33223A3138F7229@AM6PR08MB4376.eurprd08.prod.outlook.com>
- <YLEKqGkm8bX6LZfP@casper.infradead.org>
- <AM6PR08MB43764764B52AAC7F05B71056F73E9@AM6PR08MB4376.eurprd08.prod.outlook.com>
- <YLZSgZIcWyYTmqOT@casper.infradead.org>
- <CAHp75VfYgEtJeiVp8b10Va54QShyg4DmWeufuB_WGC8C2SE2mQ@mail.gmail.com>
- <YLZVwFh9MZJR3amM@casper.infradead.org>
- <YLZX9oicn8u4ZVCl@smile.fi.intel.com>
- <YLZcAesVG1SYL5fp@smile.fi.intel.com>
+        Tue, 1 Jun 2021 14:25:25 -0400
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5250DC061574;
+        Tue,  1 Jun 2021 11:23:43 -0700 (PDT)
+Received: by mail-il1-x12e.google.com with SMTP id e7so2365849ils.3;
+        Tue, 01 Jun 2021 11:23:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=0pBp2bOSzI+VDfi9SAgD6XQij5VdQmkbbjIGJEizdy4=;
+        b=F6Cc9XGHqTWMpeJariO8d3Be+wYiiZh0pKRqeM5Z0Fk233pjF9oY1Ns8USRlPVhZ8z
+         QW+G4Z5wb61UHV0oS7SBf4t360Qw8/jtXJCQG+SBYPv3RxLpCZTky6QYDokPsYgfokhQ
+         7kbJUlt5v+QJIKH742yeTUajpeMecbY9PWRA45Hd8la3XwavDhWUOWvw6K/Jo2b/i5hV
+         +kMkqCKytcvxDSb0VmXn6FXdZ+gnnqKiTskoqNVuGAtVbAJGVoVX/E/OkiuTWINTXZUk
+         4zpZxrgtmQRqaZ/XsQ+683ll63h0jBiq9IjPwc9fsIk5YMf9I7QW7xcZDDyitKESm7+Y
+         263g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0pBp2bOSzI+VDfi9SAgD6XQij5VdQmkbbjIGJEizdy4=;
+        b=qa+8XlBLAGENnfFfsoT6Xq3S1HzGULWhJj1vHwknb0lOZPZJZ3aSghBCzdpoLBiFo+
+         UQ6A4nLwDDImKnUv+Gh5Mn8Cpm7z7M4syyWxJbq0GJsSczNg8L2XXPpoyAPPYG7dO2EB
+         wJ7e21v/+sZiPFUEcMrYoCv/gSe7cOzSYWRPWfrMEmjAigPzvsATHZ9upEExQGpycg2i
+         dOyr0U2TXitMdtpNmhTiCeeptXyd2RB9TaGSjBl/YBY5AS23udYl+sjPn8H9GgueuDFL
+         /QJIvV6OKrxBmMt/y5MB1s+J3sqDwOunn7OUYqCC3KWbYpUuWLr8uMeoy9rMYJz/XRpe
+         HhVA==
+X-Gm-Message-State: AOAM531kMkxBkCquaXLxrcGpbNU3hCrTLFRvIoIuMxGPidhPgw7Mlqwi
+        ODU5FkNpAmcFizyIH9SavvDpbYp2lxZ5EIe0KkYe8Rlz
+X-Google-Smtp-Source: ABdhPJxQWYbGMXPhCbB3ZX4yiu6zZQePPyQad/tPInameWhpIOKKMwlEnpvjEuI5SQeXZVdqjlhsy1+Kf220QucvZs0=
+X-Received: by 2002:a05:6e02:1a67:: with SMTP id w7mr21865651ilv.137.1622571822724;
+ Tue, 01 Jun 2021 11:23:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YLZcAesVG1SYL5fp@smile.fi.intel.com>
+References: <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com>
+ <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
+ <20200922210445.GG57620@redhat.com> <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
+ <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com>
+ <CAOQ4uxgKr75J1YcuYAqRGC_C5H_mpCt01p5T9fHSuao_JnxcJA@mail.gmail.com>
+ <CAJfpegviT38gja+-pE+5DCG0y9n3GUv4wWG_r3XmSWW6me88Cw@mail.gmail.com>
+ <CAOQ4uxjNcWCfKLvdq2=TM5fE5RaBf+XvnsP6v_Q6u3b1_mxazw@mail.gmail.com>
+ <CAJfpeguOLLV94Bzs7_JNOdZZ+6p-tcP7b1PXrQY4qWPxXKosnA@mail.gmail.com>
+ <CAOQ4uxiJRii2FQrX51ZDmw_kGWTNvL21J7=Ow_z6Th_O-aruDA@mail.gmail.com>
+ <20210601144909.GC24846@redhat.com> <CAOQ4uxgDMGUpK35huwqFYGH_idBB8S6eLiz85o0DDKOyDH4Syg@mail.gmail.com>
+ <4a85fc2f-8ee0-9772-0347-76221a13ef95@redhat.com>
+In-Reply-To: <4a85fc2f-8ee0-9772-0347-76221a13ef95@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 1 Jun 2021 21:23:31 +0300
+Message-ID: <CAOQ4uxgcDBCD1xSDv-yuknyA4bN-qLBrFXwjMyT8RdMM5ZZc-g@mail.gmail.com>
+Subject: Re: virtiofs uuid and file handles
+To:     Max Reitz <mreitz@redhat.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 01, 2021 at 07:10:41PM +0300, Andy Shevchenko wrote:
-> On Tue, Jun 01, 2021 at 06:53:26PM +0300, Andy Shevchenko wrote:
-> > On Tue, Jun 01, 2021 at 04:44:00PM +0100, Matthew Wilcox wrote:
-> > > On Tue, Jun 01, 2021 at 06:36:41PM +0300, Andy Shevchenko wrote:
-> > > > On Tue, Jun 1, 2021 at 6:32 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > > On Tue, Jun 01, 2021 at 02:42:15PM +0000, Justin He wrote:
-> > > > 
-> > > > ...
-> > > > 
-> > > > > Just don't put anything
-> > > > > in the buffer if the user didn't supply enough space.  As long as you
-> > > > > get the return value right, they know the string is bad (or they don't
-> > > > > care if the string is bad)
-> > > > 
-> > > > It might be that I'm out of context here, but printf() functionality
-> > > > in the kernel (vsprintf() if being precise)  and its users consider
-> > > > that it should fill buffer up to the end of whatever space is
-> > > > available.
-> > > 
-> > > Do they though?  What use is it to specify a small buffer, print a
-> > > large filename into it and then use that buffer, knowing that it wasn't
-> > > big enough?  That would help decide whether we should print the
-> > > start or the end of the filename.
-> > > 
-> > > Remember, we're going for usefulness here, not abiding by the letter of
-> > > the standard under all circumstances, no matter the cost.  At least
-> > > partially because we're far outside the standard here; POSIX does
-> > > not specify what %pD does.
-> > > 
-> > > "The argument shall be a pointer to void. The value of the
-> > > pointer is converted to a sequence of printable characters, in an
-> > > implementation-defined manner."
-> > 
-> > All nice words, but don't forget kasprintf() or other usages like this.
-> > For the same input we have to have the same result independently on the room in
-> > the buffer.
-> > 
-> > So, if I print "Hello, World" I should always get it, not "Monkey's Paw".
-> > I.o.w.
-> > 
-> >  snprintf(10) ==> "Hello, Wor"
-> >  snprintf(5)  ==> "Hello"
-> >  snprintf(2)  !=> "Mo"
-> >  snprintf(1)  !=> "M"
-> >  snprintf(1)  ==> "H"
-> > 
-> > Inconsistency here is really not what we want.
-> 
-> I have to add that in light of the topic those characters should be counted
-> from the end of the filename. So, we will give user as much as possible of useful
-> information. I.o.w. always print the last part of filename up to the buffer
-> size or if the filename is shorter than buffer we will have it in full.
+> >> But this does not help with persistent file handle issue for fuse
+> >> client.
+> >>
+> > I see. Yes that should work, but he'd still need to cope with reused
+> > inode numbers in case you allow unlinks from the host (do you?),
+> > because LOOKUP can find a host fs inode that does not match
+> > the file handle of a previously found inode of the same ino.
+>
+> That=E2=80=99s indeed an issue.  My current approach is to use the file h=
+andle
+> (if available) as the key for lookups, so that the generation ID is
+> included.
+>
+> Right now, we use st_ino+st_dev+mnt_id as the key.  st_dev is just a
+> fallback for the mount ID, basically, so what we=E2=80=99d really need is=
+ inode
+> ID + generation ID + mount ID, and that=E2=80=99s basically the file hand=
+le +
+> mount ID.  So different generation IDs will lead to lookup
+> finding/creating a different inode object (lo_inode in C virtiofsd,
+> InodeData in virtiofsd-rs), and thus returning different fuse_ino IDs to
+> the guest.
+>
+> (See also:
+> https://gitlab.com/mreitz/virtiofsd-rs/-/blob/handles-for-inodes-v4/src/p=
+assthrough/mod.rs#L594)
+>
 
-Ah, not monkey's paw, but donkey hoof then ...
+I see, because you do not require persistent inode numbers.
+That makes sense if you do not need to export file handles to NFS
+and if you are not evicting inode objects from the server inodes map.
 
-Here's some examples, what do you think makes sense?
+Please keep me posted if there are any updates on LOOKUP_HANDLE.
 
-snprintf(buf, 16, "bad file '%pD'\n", q);
-
-what content do you want buf to have when q is variously:
-
-1. /abcd/efgh
-2. /a/bcdefgh.iso
-3. /abcdef/gh
-
-I would argue that
-"bad file ''\n"
-is actually a better string to have than any of (case 2)
-"bad file '/a/bc"
-"bad file 'bcdef"
-"bad file 'h.iso"
+Thanks,
+Amir.
