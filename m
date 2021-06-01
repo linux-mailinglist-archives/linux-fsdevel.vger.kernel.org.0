@@ -2,203 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5F13974B0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 15:55:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD10B3974B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jun 2021 15:55:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233871AbhFAN5W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Jun 2021 09:57:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234017AbhFAN5V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Jun 2021 09:57:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 96034613AE;
-        Tue,  1 Jun 2021 13:55:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622555740;
-        bh=YzbBUwDeMWGiT0AR2Br7M/QG3lE0r08fL1CqkfOI1Sk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aLMMrzseo+qKcvcJP7MxC9jTVFWdC93fXZeH5LMSuMV41JHqmfqeqsJbVf8K+mp17
-         uu6vT4YbTNQZqJ4bftJvrztPmX0WyaOjTAFgFoJpUT+TWCI960HSNtLbdb/W/SVNsC
-         dJJSH54ypc6hpJTAUBVyrQDXosIkLO39zkYOM5gTvqazL7tHXrW2U0k1HKRcRfJYjC
-         bd9CbosVBE4/ZTjkpu4vTGRz/jnI/3VOOKfSaSwTsyqIXVy6LECGCuqdXtRyCz6naU
-         QWrRHwoQHWIfu1Dg2fFr+tKCFVLm0tIcneM8x+wEuHnrdcKEaCquWWVqSEqqAaTn2J
-         BNYfqSHbOlqhw==
-From:   Christian Brauner <brauner@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Mattias Nissler <mnissler@chromium.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Ross Zwisler <zwisler@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 2/2] tests: test MOUNT_ATTR_NOSYMFOLLOW with mount_setattr()
-Date:   Tue,  1 Jun 2021 15:55:15 +0200
-Message-Id: <20210601135515.126639-3-brauner@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210601135515.126639-1-brauner@kernel.org>
-References: <20210601135515.126639-1-brauner@kernel.org>
+        id S234135AbhFAN53 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Jun 2021 09:57:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46554 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234116AbhFAN53 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Jun 2021 09:57:29 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A750C061574;
+        Tue,  1 Jun 2021 06:55:46 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id f11so13070906lfq.4;
+        Tue, 01 Jun 2021 06:55:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y1/x96UHDOyz4mo8Dx52Cylgiw8juPxSALX40n8TPCk=;
+        b=u1GjTSS+Wsu8wRn3z2JByj4bKIT74WoOKBq//n+U/Dg2jQs1SWiqyT9sedwtjKVqRn
+         0U1z9V8gPco4dM/w+iW9pFs0wo/Lkh/1cr38e+B29rx+lPiMDdRaXesVDUPlmVWZTZXj
+         dbsIQTwUXWefxOL/wGtJDGx9+GV9FEG1vbMzqyROZXIH+tSCWP5W2m5kNjKgacRWjjvn
+         YXD02UZsCKZ/D9uH+nNFFGRAM1RtjXTTcMYu0cDlU03CqLMqO2JQoWDNrGPl7aI+lmUy
+         WZOZ4lFC7uGYjsQ+zIc8lLhozYYISZjYtoXWO49en/A4/8w7CWXtwYB+wqoxeKYkwzvx
+         E3yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y1/x96UHDOyz4mo8Dx52Cylgiw8juPxSALX40n8TPCk=;
+        b=XXVoV8ZEDwcsC9BBY8okkkIpD4WZvfL5wMt4+cF171XrTYLRv+uExyXctUgtyr4iRL
+         xbdR7zdURvT9NAS5k2Iw4FsIo4D8ibFLgheaVpLD9qWi1dvNyfLIr5BBPOC478x6BGxO
+         c1yyWzCY3xCGiJkb9Pob5tFx+I7H9YPNgm5ullb9Jgft7yVo2riwhYV1VXYhXIEAZkSb
+         PVsiUweEpnsktfJJc3Rvaq2gvIXZwVpKyu7p0eW/X4O4S5pq3czBHA1Jx87ZQLgdLa3G
+         M0T/ac8NENDe95/1uA6rlyy6LyhidqaQrs7Wq+Lo8r4L59ZM3qiYrNrLEv6aRu6xNXmc
+         z17A==
+X-Gm-Message-State: AOAM531aZJQ/utWUtBnJ6wngdv7BTIrsjCReqxcPTWG7rqHwLH28UykI
+        PPeVhEBnB58od4mtiq3bgyYQJBoYZcsfKEV4Qbs=
+X-Google-Smtp-Source: ABdhPJz2QveIKeaW5IevsO5kSbKCgvt8JDrTYlMlKizZr9/AJ1PzvSVbuMQp68gL1DzLMoLI9FrvpV/w/SKJRM/U0x8=
+X-Received: by 2002:a05:6512:3772:: with SMTP id z18mr18821229lft.423.1622555744932;
+ Tue, 01 Jun 2021 06:55:44 -0700 (PDT)
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4769; h=from:subject; bh=cpwDOoxglal5Bq5peEgodqurmQKN4mTuqs3drqG2Izc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSRss3HQTOZ9Me1x3jzD+U0tWyLat0w2+PTj27XPqstjJG7M XRCs3VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjAReUuGv5KXT85I+FVyp2Wj3IW4ey sUXf6XvInov/NbXUOmxEiCRYKR4fZXN16u8pQFeyZFaXsUX1mUq7sxO2/T1K1OGooT522r4wMA
-X-Developer-Key: i=christian.brauner@ubuntu.com; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20210528143802.78635-1-dong.menglong@zte.com.cn> <20210529112638.b3a9ec5475ca8e4f51648ff0@kernel.org>
+In-Reply-To: <20210529112638.b3a9ec5475ca8e4f51648ff0@kernel.org>
+From:   Menglong Dong <menglong8.dong@gmail.com>
+Date:   Tue, 1 Jun 2021 21:55:33 +0800
+Message-ID: <CADxym3Ya3Jv_tUMJyq+ymd8m1_S-KezqNDfsLtMcJCXtDytBzA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] init/initramfs.c: make initramfs support pivot_root
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Sami Tolvanen <samitolvanen@google.com>, ojeda@kernel.org,
+        johan@kernel.org, jeyu@kernel.org, masahiroy@kernel.org,
+        Menglong Dong <dong.menglong@zte.com.cn>, joe@perches.com,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        hare@suse.de, tj@kernel.org, gregkh@linuxfoundation.org,
+        song@kernel.org, NeilBrown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        f.fainelli@gmail.com, wangkefeng.wang@huawei.com, arnd@arndb.de,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Barret Rhoden <brho@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, vbabka@suse.cz,
+        pmladek@suse.com, Alexander Potapenko <glider@google.com>,
+        Chris Down <chris@chrisdown.name>, jojing64@gmail.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>, mingo@kernel.org,
+        terrelln@fb.com, geert@linux-m68k.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+Hello!
 
-Add tests to verify that MOUNT_ATTR_NOSYMFOLLOW is honored.
+What's the status or fate of this patch? Does anyone do an in-depth
+study of this field? Knock-knock~
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Mattias Nissler <mnissler@chromium.org>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Ross Zwisler <zwisler@google.com>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- .../mount_setattr/mount_setattr_test.c        | 88 ++++++++++++++++++-
- 1 file changed, 85 insertions(+), 3 deletions(-)
+On Sat, May 29, 2021 at 10:26 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>
+> Hi Menglong,
+>
+> On Fri, 28 May 2021 22:37:59 +0800
+> menglong8.dong@gmail.com wrote:
+>
+> > From: Menglong Dong <dong.menglong@zte.com.cn>
+> >
+> > As Luis Chamberlain suggested, I split the patch:
+> > [init/initramfs.c: make initramfs support pivot_root]
+> > (https://lore.kernel.org/linux-fsdevel/20210520154244.20209-1-dong.menglong@zte.com.cn/)
+> > into three.
+> >
+> > The goal of the series patches is to make pivot_root() support initramfs.
+> >
+> > In the first patch, I introduce the function ramdisk_exec_exist(), which
+> > is used to check the exist of 'ramdisk_execute_command' in LOOKUP_DOWN
+> > lookup mode.
+> >
+> > In the second patch, I create a second mount, which is called
+> > 'user root', and make it become the root. Therefore, the root has a
+> > parent mount, and it can be umounted or pivot_root.
+> >
+> > In the third patch, I fix rootfs_fs_type with ramfs, as it is not used
+> > directly any more, and it make no sense to switch it between ramfs and
+> > tmpfs, just fix it with ramfs to simplify the code.
+> >
+> >
+> > Changes since V2:
+> >
+> > In the first patch, I use vfs_path_lookup() in init_eaccess() to make the
+> > path lookup follow the mount on '/'. After this, the problem reported by
+> > Masami Hiramatsu is solved. Thanks for your report :/
+>
+> Thank you for the fix, I confirmed that the issue has been solved with this.
+>
+> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+>
+> for this series.
+>
+> Regards,
+>
+>
+> >
+> >
+> > Changes since V1:
+> >
+> > In the first patch, I add the flag LOOKUP_DOWN to init_eaccess(), to make
+> > it support the check of filesystem mounted on '/'.
+> >
+> > In the second patch, I control 'user root' with kconfig option
+> > 'CONFIG_INITRAMFS_USER_ROOT', and add some comments, as Luis Chamberlain
+> > suggested.
+> >
+> > In the third patch, I make 'rootfs_fs_type' in control of
+> > 'CONFIG_INITRAMFS_USER_ROOT'.
+> >
+> >
+> >
+> > Menglong Dong (3):
+> >   init/main.c: introduce function ramdisk_exec_exist()
+> >   init/do_cmounts.c: introduce 'user_root' for initramfs
+> >   init/do_mounts.c: fix rootfs_fs_type with ramfs
+> >
+> >  fs/init.c            |  11 ++++-
+> >  include/linux/init.h |   5 ++
+> >  init/do_mounts.c     | 109 +++++++++++++++++++++++++++++++++++++++++++
+> >  init/do_mounts.h     |  18 ++++++-
+> >  init/initramfs.c     |  10 ++++
+> >  init/main.c          |   7 ++-
+> >  usr/Kconfig          |  10 ++++
+> >  7 files changed, 166 insertions(+), 4 deletions(-)
+> >
+> > --
+> > 2.32.0.rc0
+> >
+>
+>
+> --
+> Masami Hiramatsu <mhiramat@kernel.org>
 
-diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-index 4e94e566e040..f31205f04ee0 100644
---- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-+++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-@@ -136,6 +136,10 @@ struct mount_attr {
- #define MOUNT_ATTR_IDMAP 0x00100000
- #endif
- 
-+#ifndef MOUNT_ATTR_NOSYMFOLLOW
-+#define MOUNT_ATTR_NOSYMFOLLOW 0x00200000
-+#endif
-+
- static inline int sys_mount_setattr(int dfd, const char *path, unsigned int flags,
- 				    struct mount_attr *attr, size_t size)
- {
-@@ -235,6 +239,10 @@ static int prepare_unpriv_mountns(void)
- 	return 0;
- }
- 
-+#ifndef ST_NOSYMFOLLOW
-+#define ST_NOSYMFOLLOW 0x2000 /* do not follow symlinks */
-+#endif
-+
- static int read_mnt_flags(const char *path)
- {
- 	int ret;
-@@ -245,9 +253,9 @@ static int read_mnt_flags(const char *path)
- 	if (ret != 0)
- 		return -EINVAL;
- 
--	if (stat.f_flag &
--	    ~(ST_RDONLY | ST_NOSUID | ST_NODEV | ST_NOEXEC | ST_NOATIME |
--	      ST_NODIRATIME | ST_RELATIME | ST_SYNCHRONOUS | ST_MANDLOCK))
-+	if (stat.f_flag & ~(ST_RDONLY | ST_NOSUID | ST_NODEV | ST_NOEXEC |
-+			    ST_NOATIME | ST_NODIRATIME | ST_RELATIME |
-+			    ST_SYNCHRONOUS | ST_MANDLOCK | ST_NOSYMFOLLOW))
- 		return -EINVAL;
- 
- 	mnt_flags = 0;
-@@ -269,6 +277,8 @@ static int read_mnt_flags(const char *path)
- 		mnt_flags |= MS_SYNCHRONOUS;
- 	if (stat.f_flag & ST_MANDLOCK)
- 		mnt_flags |= ST_MANDLOCK;
-+	if (stat.f_flag & ST_NOSYMFOLLOW)
-+		mnt_flags |= ST_NOSYMFOLLOW;
- 
- 	return mnt_flags;
- }
-@@ -368,8 +378,13 @@ static bool mount_setattr_supported(void)
- FIXTURE(mount_setattr) {
- };
- 
-+#define NOSYMFOLLOW_TARGET "/mnt/A/AA/data"
-+#define NOSYMFOLLOW_SYMLINK "/mnt/A/AA/symlink"
-+
- FIXTURE_SETUP(mount_setattr)
- {
-+	int fd = -EBADF;
-+
- 	if (!mount_setattr_supported())
- 		SKIP(return, "mount_setattr syscall not supported");
- 
-@@ -412,6 +427,11 @@ FIXTURE_SETUP(mount_setattr)
- 
- 	ASSERT_EQ(mount("testing", "/tmp/B/BB", "devpts",
- 			MS_RELATIME | MS_NOEXEC | MS_RDONLY, 0), 0);
-+
-+	fd = creat(NOSYMFOLLOW_TARGET, O_RDWR | O_CLOEXEC);
-+	ASSERT_GT(fd, 0);
-+	ASSERT_EQ(symlink(NOSYMFOLLOW_TARGET, NOSYMFOLLOW_SYMLINK), 0);
-+	ASSERT_EQ(close(fd), 0);
- }
- 
- FIXTURE_TEARDOWN(mount_setattr)
-@@ -1421,4 +1441,66 @@ TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
- 	ASSERT_EQ(expected_uid_gid(open_tree_fd, "B/BB/b", 0, 0, 0), 0);
- }
- 
-+TEST_F(mount_setattr, mount_attr_nosymfollow)
-+{
-+	int fd;
-+	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
-+	struct mount_attr attr = {
-+		.attr_set	= MOUNT_ATTR_NOSYMFOLLOW,
-+	};
-+
-+	if (!mount_setattr_supported())
-+		SKIP(return, "mount_setattr syscall not supported");
-+
-+	fd = open(NOSYMFOLLOW_SYMLINK, O_RDWR | O_CLOEXEC);
-+	ASSERT_GT(fd, 0);
-+	ASSERT_EQ(close(fd), 0);
-+
-+	old_flags = read_mnt_flags("/mnt/A");
-+	ASSERT_GT(old_flags, 0);
-+
-+	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
-+
-+	expected_flags = old_flags;
-+	expected_flags |= ST_NOSYMFOLLOW;
-+
-+	new_flags = read_mnt_flags("/mnt/A");
-+	ASSERT_EQ(new_flags, expected_flags);
-+
-+	new_flags = read_mnt_flags("/mnt/A/AA");
-+	ASSERT_EQ(new_flags, expected_flags);
-+
-+	new_flags = read_mnt_flags("/mnt/A/AA/B");
-+	ASSERT_EQ(new_flags, expected_flags);
-+
-+	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
-+	ASSERT_EQ(new_flags, expected_flags);
-+
-+	fd = open(NOSYMFOLLOW_SYMLINK, O_RDWR | O_CLOEXEC);
-+	ASSERT_LT(fd, 0);
-+	ASSERT_EQ(errno, ELOOP);
-+
-+	attr.attr_set &= ~MOUNT_ATTR_NOSYMFOLLOW;
-+	attr.attr_clr |= MOUNT_ATTR_NOSYMFOLLOW;
-+
-+	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
-+
-+	expected_flags &= ~ST_NOSYMFOLLOW;
-+	new_flags = read_mnt_flags("/mnt/A");
-+	ASSERT_EQ(new_flags, expected_flags);
-+
-+	new_flags = read_mnt_flags("/mnt/A/AA");
-+	ASSERT_EQ(new_flags, expected_flags);
-+
-+	new_flags = read_mnt_flags("/mnt/A/AA/B");
-+	ASSERT_EQ(new_flags, expected_flags);
-+
-+	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
-+	ASSERT_EQ(new_flags, expected_flags);
-+
-+	fd = open(NOSYMFOLLOW_SYMLINK, O_RDWR | O_CLOEXEC);
-+	ASSERT_GT(fd, 0);
-+	ASSERT_EQ(close(fd), 0);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.27.0
-
+Thanks!
+Menglong Dong
