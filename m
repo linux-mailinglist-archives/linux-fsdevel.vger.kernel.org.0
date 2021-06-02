@@ -2,119 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BE12398E13
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 17:14:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E3F2398E35
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 17:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231790AbhFBPQW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 11:16:22 -0400
-Received: from mail-ej1-f45.google.com ([209.85.218.45]:33419 "EHLO
-        mail-ej1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231777AbhFBPQW (ORCPT
+        id S232186AbhFBPTw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 11:19:52 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:50218 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229989AbhFBPTs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 11:16:22 -0400
-Received: by mail-ej1-f45.google.com with SMTP id g20so4480858ejt.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jun 2021 08:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+J7KF4ks9US2bAffAcsOJQKFyjMfB4gR4lgzzMSLNYI=;
-        b=igpuWRlb73xmxahkSHaMuUjyZe1AZUKePohe+4Fi/InrT6JxVOc8e91F5osWhaSLgX
-         E84EkXnpmXUZMoleQY1TbZkS7zMEZN4+HXy889QAxq82OaDUCta8mDCg+CDFR0S68+/f
-         DwY+xH9cCE0L/2BTW7CmtzXLbJ0WcObPFs2rxeOAsHButkL/MPV4qN+JjL3+3vK+FmR2
-         Tme3hvmLA2IKH5aKNG7E7QJEpZrATS6Njz5FrIOFpBzua8jgqkDvKqiu000m3hQ5f23y
-         nyETPrIfZtVbKPopwrFxW+VhJEa29oaIO9TR9M3v2rjZnVsDs06ghXOLkpMzEgh7PvwR
-         gZgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+J7KF4ks9US2bAffAcsOJQKFyjMfB4gR4lgzzMSLNYI=;
-        b=TwBYOyD47OHC0TVcJmkLPXgOuZmWXipV2DcG8YqtMlVOpUHoKjU+WrZl4ICuHMmM2S
-         iUuiK9ypH/GQHzbtk0ry/JAhWeGzkksqfJ9eyQCbyQfzBVTM1+tfw562ZokijpFNWVzF
-         XsK0TgoEuns3GEjqTiRQ8aUQa+GzlrlddymvdSFGtbpeX0Y5IssqWu5oqlkzDFUcVSuB
-         QoL3UkPKoNvJnz1Rl/bR+I7PtfH0QaVwkPEYMmQVD025pU/xX9MEPxMh4KAB1QYlzgWf
-         hXyYqNjYVassmzJtksmXa0h4Yn3wxbNv6/3e2yCC/8xsmdX9Pc40cCncVkwd3B7TCX1g
-         vAGQ==
-X-Gm-Message-State: AOAM533r5ylmOGMU9YrHzYccqXdJ4uPXjHWZj5AcgAEuqyuwcE1aFuq5
-        vzUlpyau+Sh34dIM9LUCSw9bC8k5oXd9o2nqXfv9
-X-Google-Smtp-Source: ABdhPJwFomdKMYZxRrY9ExJPtl6HzjR84K/gicCWfDx/868bcJc4eB2tlYYJNUFzU5Q4QC96WaC2lUPEqPL7r6AtsDo=
-X-Received: by 2002:a17:906:2c54:: with SMTP id f20mr17365763ejh.91.1622646818352;
- Wed, 02 Jun 2021 08:13:38 -0700 (PDT)
+        Wed, 2 Jun 2021 11:19:48 -0400
+Received: from relay2.suse.de (unknown [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 303BB221A2;
+        Wed,  2 Jun 2021 15:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1622647084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=zEcvJJtB5ZZ8X3Pwr4CJiFmKxs/RV46XyrbByZQvcmw=;
+        b=W3Ww4J5poIByE64fCgmyHc95Wyw35z4mRgRPLiOk4cqvsyT7tUWNXYlvX6s+V8z6ofNCV2
+        g0bK57XsIM7kY5JrnuVVdbjfahksiqc7189MK+M6uQcj2f/Yigz54+P6IJK59igA08Lo9y
+        y+e3AWuznpGWfr4Wov1z0sli1NprVUw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1622647084;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=zEcvJJtB5ZZ8X3Pwr4CJiFmKxs/RV46XyrbByZQvcmw=;
+        b=EgM3xWO6z/2DscKQOGkz/i10K1jO2LRaLUduTQyFdz5FxulhYb1LHVYqYpEoKjf6RCA1GK
+        UCd8QZ2ZvHD/WCDg==
+Received: by relay2.suse.de (Postfix, from userid 51)
+        id 2BB72A3D80; Wed,  2 Jun 2021 15:25:59 +0000 (UTC)
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 52C40A8176;
+        Wed,  2 Jun 2021 15:15:59 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 2F5631F2CAC; Wed,  2 Jun 2021 17:15:59 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
+To:     <linux-fsdevel@vger.kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, brauner@suse.cz,
+        <linux-api@vger.kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 0/2] Change quotactl_path() to an fd-based syscall
+Date:   Wed,  2 Jun 2021 17:15:51 +0200
+Message-Id: <20210602151553.30090-1-jack@suse.cz>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
- <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net> <CAHC9VhS1XRZjKcTFgH1+n5uA-CeT+9BeSP5jvT2+RE5ougLpUg@mail.gmail.com>
- <2e541bdc-ae21-9a07-7ac7-6c6a4dda09e8@iogearbox.net> <CAHC9VhT464vr9sWxqY3PRB4DAccz=LvRMLgWBsSViWMR0JJvOQ@mail.gmail.com>
- <3ca181e3-df32-9ae0-12c6-efb899b7ce7a@iogearbox.net>
-In-Reply-To: <3ca181e3-df32-9ae0-12c6-efb899b7ce7a@iogearbox.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 2 Jun 2021 11:13:27 -0400
-Message-ID: <CAHC9VhTuPnPs1wMTmoGUZ4fvyy-es9QJpE7O_yTs2JKos4fgbw@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>, jolsa@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=577; h=from:subject; bh=RQHeSUZ+8nnut0tpFXDRWIhRsMEPE1l7gaYEIo3rNl0=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBgt6BpWVcA/jt1oYfBDnI31q0Bb0o/KMoZpkwUa3jK gPPGwEWJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYLegaQAKCRCcnaoHP2RA2V+lCA CP5A97MOvTgVeC1nr0NnO0QcmY91OFryXrfL/4WVhLuRcV1jCM+JQjvF0VODAF99fawsvh98mzPsGS 51Cw7R7xe+OLmjks8YQD1soFwnSFhlym3CxvOnxs1tbOWS3A46V6ZZZg10yxVBWMLeJCb+ppKBdzsA saUpfYWvsmxhFDyjDliqslME7y97xB2iH8TFyu6LuukIAAGmknsVUPIubXe8vGF3JyS4VeUK1ov2c8 y7d65GlhXWFdHZNMgiV8SHVeLO5/f1GFdnJkBWyg0gtBpCMVu0IMsVLDL83FaGACAjGLOKT0RRFIEE a/Y/Mq3pUjWlMHFRaYze3FEytUTBza
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 2, 2021 at 8:40 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
-> On 6/1/21 10:47 PM, Paul Moore wrote:
-> > The thing I'm worried about would be the case where a LSM policy
-> > change requires that an existing BPF program be removed or disabled.
-> > I'm guessing based on the refcounting that there is not presently a
-> > clean way to remove a BPF program from the system, but is this
-> > something we could resolve?  If we can't safely remove a BPF program
-> > from the system, can we replace/swap it with an empty/NULL BPF
-> > program?
->
-> Removing progs would somehow mean destroying those references from an
-> async event and then /safely/ guaranteeing that nothing is accessing
-> them anymore. But then if policy changes once more where they would
-> be allowed again we would need to revert back to the original state,
-> which brings us to your replace/swap question with an empty/null prog.
-> It's not feasible either, because there are different BPF program types
-> and they can have different return code semantics that lead to subsequent
-> actions. If we were to replace them with an empty/NULL program, then
-> essentially this will get us into an undefined system state given it's
-> unclear what should be a default policy for each program type, etc.
-> Just to pick one simple example, outside of tracing, that comes to mind:
-> say, you attached a program with tc to a given device ingress hook. That
-> program implements firewalling functionality, and potentially deep down
-> in that program there is functionality to record/sample packets along
-> with some meta data. Part of what is exported to the ring buffer to the
-> user space reader may be a struct net_device field that is otherwise not
-> available (or at least not yet), hence it's probe-read with mentioned
-> helpers. If you were now to change the SELinux policy for that tc loader
-> application, and therefore replace/swap the progs in the kernel that were
-> loaded with it (given tc's lockdown policy was recorded in their sec blob)
-> with an empty/NULL program, then either you say allow-all or drop-all,
-> but either way, you break the firewalling functionality completely by
-> locking yourself out of the machine or letting everything through. There
-> is no sane way where we could reason about the context/internals of a
-> given program where it would be safe to replace with a simple empty/NULL
-> prog.
+Hello,
 
-Help me out here, is your answer that the access check can only be
-done at BPF program load time?  That isn't really a solution from a
-SELinux perspective as far as I'm concerned.
+this patch series changes Sasha's quotactl_path() syscall to an fd-based one
+quotactl_fd() syscall and enables the syscall again. The fd-based syscall was
+chosen over the path based one because there's no real need for the path -
+identifying filesystem to operate on by fd is perfectly fine for quotactl and
+thus we can avoid the need to specify all the details of path lookup in the
+quotactl_path() API (and possibly keep that uptodate with all the developments
+in that field).
 
-I understand the ideas I've tossed out aren't practical from a BPF
-perspective, but it would be nice if we could find something that does
-work.  Surely you BPF folks can think of some way to provide a
-runtime, not load time, check?
+Patches passed some basic functional testing. Please review.
 
--- 
-paul moore
-www.paul-moore.com
+								Honza
