@@ -2,235 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD716397E2F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 03:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77667397EF9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 04:23:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbhFBBl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Jun 2021 21:41:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35010 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230143AbhFBBl6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Jun 2021 21:41:58 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0978C061756
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jun 2021 18:40:15 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id l1so1350315ejb.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jun 2021 18:40:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7+6GengPTpnBNKRiprYjAxUmTuo80Mwv0XF47zfhAB0=;
-        b=eHaMWPqA67Ms9cMf+MpCDlqXpy7gUU+QZLG79G7lMeuxyBVPP6W+UzN3hICWjKjiBJ
-         44peCH0PgM1siFi8Gc4aqT8FiLU/ehdSIKr0nBCH1uOLEJoZzDBKL2/MsPttMhJSGqeL
-         heKa7CKjkZvPwSBHdRp7V8pLoZ3NIKPFNnJLrybRmV83gMVHIMG9st6DySEqrhg+/2nr
-         Nt1dcVVMckoCjW6RMFbLosyOhYo5n1uhlUEhS/qG6jVenahGHkyqBFBNFyuZH/lDrEXZ
-         Ufysh0UsjrPKikT6wQB8O9OUwbdDrkFBQIdmhfg06tut+RW2/WDitMIf6tve/CvEgA2O
-         1jbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7+6GengPTpnBNKRiprYjAxUmTuo80Mwv0XF47zfhAB0=;
-        b=bByOGdwMNJ1DxWQIBBaGs4QY1XY45WhDrOrCsBeAosk2XXrOkXLV6FjGhHev3gwio2
-         a4bMJoiJML5Xpe5OBZ00VHeesCMl8ysmBDaVcGxsyRGM0h1q16FF3Ahu/0VKhYllU7LQ
-         sch4tLjGK+gbZPQE7gq1F5BhVrZ92tZveWQgwSra/qIWJRP54eu3cYynEY07jK/VAroT
-         TAAjCEfe755FbHPXQyX+fKNXN74/mURuxDTmFVeZc4VsRCSKTfLaXAfraBPBBEr2YNgy
-         AW/zd5ezKPWbJcEgCYkMyCOjGvRWvw/54+cYvuc6C1GBqtEqTn7m+WanCUl+haEcLsDv
-         b9rA==
-X-Gm-Message-State: AOAM530euP5JdqHZ7+1rukVqiXtMFKFMK/egLj0LZLZ/A/MWFjXQjqnp
-        51v2zWW/+VZQqCox9o/+HM0h29KaMaEjDOle9GHpm+YMMA==
-X-Google-Smtp-Source: ABdhPJzKGdNVsjgTej2xcBpuoKPd2C3Oqdgb3f4h5vrwkEShRjjAx36JJyUkFtyB1rEm/0O5DJTEmL545Nl/g7Jerlg=
-X-Received: by 2002:a17:906:2c54:: with SMTP id f20mr14631744ejh.91.1622598014322;
- Tue, 01 Jun 2021 18:40:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
- <162163380685.8379.17381053199011043757.stgit@sifl> <20210528223544.GL447005@madcap2.tricolour.ca>
- <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com> <20210531134408.GL2268484@madcap2.tricolour.ca>
-In-Reply-To: <20210531134408.GL2268484@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 1 Jun 2021 21:40:03 -0400
-Message-ID: <CAHC9VhSFNNE7AGGA20fDk201VLvzr5HB60VEqqq5qt9yGTH4mg@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/9] audit: add filtering for io_uring records
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+        id S230217AbhFBCZT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Jun 2021 22:25:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230518AbhFBCYl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Jun 2021 22:24:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6C78E61008;
+        Wed,  2 Jun 2021 02:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1622600578;
+        bh=4+yLy4p99WqcuQe2+GKoMtnbQHolk38VvFSqueJl5PU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zVJyKrG2rWXB0c0ILxAig2g02HhkupS08S9YYUFJwhsoOwK6dNcpSZAHebVgu5zA/
+         SP/a9+40z4KAho+ozQDZNICPodGMS33gMlt6vUdv5pxS2A28yQGWBe2yWY8lj2uczo
+         l0btlGYYEaI09TzIUrQWAccv2zH0/gJ2ovDfVBbI=
+Date:   Tue, 1 Jun 2021 19:22:57 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Feng zhou <zhoufeng.zf@bytedance.com>
+Cc:     adobriyan@gmail.com, rppt@kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, songmuchun@bytedance.com,
+        zhouchengming@bytedance.com, chenying.kernel@bytedance.com,
+        zhengqi.arch@bytedance.com
+Subject: Re: [PATCH v2] fs/proc/kcore.c: add mmap interface
+Message-Id: <20210601192257.65a514606382f0a972f918c3@linux-foundation.org>
+In-Reply-To: <20210601082241.13378-1-zhoufeng.zf@bytedance.com>
+References: <20210601082241.13378-1-zhoufeng.zf@bytedance.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 31, 2021 at 9:44 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2021-05-30 11:26, Paul Moore wrote:
-> > On Fri, May 28, 2021 at 6:36 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2021-05-21 17:50, Paul Moore wrote:
+On Tue,  1 Jun 2021 16:22:41 +0800 Feng zhou <zhoufeng.zf@bytedance.com> wrote:
 
-...
-
-> > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > > > index d8aa2c690bf9..4f6ab34020fb 100644
-> > > > --- a/kernel/auditsc.c
-> > > > +++ b/kernel/auditsc.c
-> > > > @@ -799,6 +799,35 @@ static int audit_in_mask(const struct audit_krule *rule, unsigned long val)
-> > > >       return rule->mask[word] & bit;
-> > > >  }
-> > > >
-> > > > +/**
-> > > > + * audit_filter_uring - apply filters to an io_uring operation
-> > > > + * @tsk: associated task
-> > > > + * @ctx: audit context
-> > > > + */
-> > > > +static void audit_filter_uring(struct task_struct *tsk,
-> > > > +                            struct audit_context *ctx)
-> > > > +{
-> > > > +     struct audit_entry *e;
-> > > > +     enum audit_state state;
-> > > > +
-> > > > +     if (auditd_test_task(tsk))
-> > > > +             return;
-> > >
-> > > Is this necessary?  auditd and auditctl don't (intentionally) use any
-> > > io_uring functionality.  Is it possible it might inadvertantly use some
-> > > by virtue of libc or other library calls now or in the future?
-> >
-> > I think the better question is what harm does it do?  Yes, I'm not
-> > aware of an auditd implementation that currently makes use of
-> > io_uring, but it is also not inconceivable some future implementation
-> > might want to make use of it and given the disjoint nature of kernel
-> > and userspace development I don't want the kernel to block such
-> > developments.  However, if you can think of a reason why having this
-> > check here is bad I'm listening (note: we are already in the slow path
-> > here so having the additional check isn't an issue as far as I'm
-> > concerned).
-> >
-> > As a reminder, auditd_test_task() only returns true/1 if the task is
-> > registered with the audit subsystem as an auditd connection, an
-> > auditctl process should not cause this function to return true.
+> From: ZHOUFENG <zhoufeng.zf@bytedance.com>
+> 
+> When we do the kernel monitor, use the DRGN
+> (https://github.com/osandov/drgn) access to kernel data structures,
+> found that the system calls a lot. DRGN is implemented by reading
+> /proc/kcore. After looking at the kcore code, it is found that kcore
+> does not implement mmap, resulting in frequent context switching
+> triggered by read. Therefore, we want to add mmap interface to optimize
+> performance. Since vmalloc and module areas will change with allocation
+> and release, consistency cannot be guaranteed, so mmap interface only
+> maps KCORE_TEXT and KCORE_RAM.
+> 
+> ...
 >
-> My main concern was overhead, since the whole goal of io_uring is speed.
+> +static int mmap_kcore(struct file *file, struct vm_area_struct *vma)
+> +{
+> +	size_t size = vma->vm_end - vma->vm_start;
+> +	u64 start, pfn;
+> +	int nphdr;
+> +	size_t data_offset;
+> +	size_t phdrs_len, notes_len;
+> +	struct kcore_list *m = NULL;
+> +	int ret = 0;
+> +
+> +	down_read(&kclist_lock);
+> +
+> +	get_kcore_size(&nphdr, &phdrs_len, &notes_len, &data_offset);
+> +
+> +	start = kc_offset_to_vaddr(((u64)vma->vm_pgoff << PAGE_SHIFT) -
+> +		((data_offset >> PAGE_SHIFT) << PAGE_SHIFT));
+> +
+> +	list_for_each_entry(m, &kclist_head, list) {
+> +		if (start >= m->addr && size <= m->size)
+> +			break;
+> +	}
+> +
+> +	if (&m->list == &kclist_head) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (vma->vm_flags & (VM_WRITE | VM_EXEC)) {
+> +		ret = -EPERM;
+> +		goto out;
+> +	}
+> +
+> +	vma->vm_flags &= ~(VM_MAYWRITE | VM_MAYEXEC);
+> +	vma->vm_flags |= VM_MIXEDMAP;
+> +	vma->vm_ops = &kcore_mmap_ops;
+> +
+> +	if (kern_addr_valid(start)) {
+> +		if (m->type == KCORE_RAM || m->type == KCORE_REMAP)
 
-At the point where this test takes place we are already in the audit
-slow path as far as io_uring is concerned.  I understand your concern,
-but the advantage of being able to effectively use io_uring in the
-future makes this worth keeping in my opinion.
+KCORE_REMAP was removed by
+https://lkml.kernel.org/r/20210526093041.8800-2-david@redhat.com
 
-> The chances that audit does use this functionality in the future suggest
-> to me that it is best to leave this check in.
+I did this:
 
-Sounds like we are in agreement.  We'll keep it for now.
+--- a/fs/proc/kcore.c~fs-proc-kcorec-add-mmap-interface-fix
++++ a/fs/proc/kcore.c
+@@ -660,7 +660,7 @@ static int mmap_kcore(struct file *file,
+ 	vma->vm_ops = &kcore_mmap_ops;
+ 
+ 	if (kern_addr_valid(start)) {
+-		if (m->type == KCORE_RAM || m->type == KCORE_REMAP)
++		if (m->type == KCORE_RAM)
+ 			pfn = __pa(start) >> PAGE_SHIFT;
+ 		else if (m->type == KCORE_TEXT)
+ 			pfn = __pa_symbol(start) >> PAGE_SHIFT;
 
-> > > > +     rcu_read_lock();
-> > > > +     list_for_each_entry_rcu(e, &audit_filter_list[AUDIT_FILTER_URING_EXIT],
-> > > > +                             list) {
-> > > > +             if (audit_in_mask(&e->rule, ctx->uring_op) &&
-> > >
-> > > While this seems like the most obvious approach given the parallels
-> > > between syscalls and io_uring operations, as coded here it won't work
-> > > due to the different mappings of syscall numbers and io_uring
-> > > operations unless we re-use the auditctl -S field with raw io_uring
-> > > operation numbers in the place of syscall numbers.  This should have
-> > > been obvious to me when I first looked at this patch.  It became obvious
-> > > when I started looking at the userspace auditctl.c.
-> >
-> > FWIW, my intention was to treat io_uring opcodes exactly like we treat
-> > syscall numbers.  Yes, this would potentially be an issue if we wanted
-> > to combine syscalls and io_uring opcodes into one filter, but why
-> > would we ever want to do that?  Combining the two into one filter not
-> > only makes the filter lists longer than needed (we will always know if
-> > we are filtering on a syscall or io_uring op) and complicates the
-> > filter rule processing.
-> >
-> > Or is there a problem with this that I'm missing?
->
-> No, I think you have a good understanding of it.  I'm asking hard
-> questions to avoid missing something important.  If we can reuse the
-> syscall infrastructure for this then that is extremely helpful (if not
-> lazy, which isn't necessarily a bad thing).  It does mean that the
-> io_uring op dictionary will need to live in userspace audit the way it
-> is currently implemented ....
-
-Which I currently believe is the right thing to do.
-
-> > > The easy first step would be to use something like this:
-> > >         auditctl -a uring,always -S 18,28 -F key=uring_open
-> > > to monitor file open commands only.  The same is not yet possible for
-> > > the perm field, but there are so few io_uring ops at this point compared
-> > > with syscalls that it might be manageable.  The arch is irrelevant since
-> > > io_uring operation numbers are identical across all hardware as far as I
-> > > can tell.  Most of the rest of the fields should make sense if they do
-> > > for a syscall rule.
-> >
-> > I've never been a fan of audit's "perm" filtering; I've always felt
-> > there were better ways to handle that so I'm not overly upset that we
-> > are skipping that functionality with this initial support.  If it
-> > becomes a problem in the future we can always add that support at a
-> > later date.
->
-> Ok, I don't see a pressing need to add it initially, but should add a
-> check to block that field from being used to avoid the confusion of
-> unpredictable behaviour should someone try to add a perm filter to a
-> io_uring filter.  That should be done protectively in the kernel and
-> proactively in userspace.
-
-Sure, that's reasonable.
-
-> > > Here's a sample of userspace code to support this
-> > > patch:
-> > >         https://github.com/rgbriggs/audit-userspace/commit/a77baa1651b7ad841a220eb962d4cc92bc07dc96
-> > >         https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghau-iouring-filtering.v1.0
-> >
-> > Great, thank you.  I haven't grabbed a copy yet for testing, but I will.
->
-> I've added a perm filter block as an additional patch in userspace and
-> updated the tree so that first commit is no longer the top of tree but
-> the branch name is current.
->
-> I'll add a kernel perm filter check.
->
-> I just noticed some list checking that is missing in tree and watch in
-> your patch.
->
-> Suggested fixup patches to follow...
-
-I see them, thank you, comments will follow over there.  Although to
-be honest I'm mostly focusing on the testing right now while we wait
-to hear back from Jens on what he is willing to accept regarding audit
-calls in io_issue_sqe().  If we can't do the _entry()/_exit() calls
-then this work is pretty much dead and we just have to deal with it in
-Kconfig.  I might make one last, clean patchset and put it in a branch
-for the distros that want to carry the patchset, but it isn't clear to
-me that it is something I would want to maintain long term.  Long
-running out of tree patches are generally A Bad Idea.
-
-> > > If we abuse the syscall infrastructure at first, we'd need a transition
-> > > plan to coordinate user and kernel switchover to seperate mechanisms for
-> > > the two to work together if the need should arise to have both syscall
-> > > and uring filters in the same rule.
-> >
-> > See my comments above, I don't currently see why we would ever want
-> > syscall and io_uring filtering to happen in the same rule.  Please
-> > speak up if you can think of a reason why this would either be needed,
-> > or desirable for some reason.
->
-> I think they can be seperate rules for now.  Either a syscall rule
-> catching all io_uring ops can be added, or an io_uring rule can be added
-> to catch specific ops.  The scenario I was thinking of was catching
-> syscalls of specific io_uring ops.
-
-Perhaps I'm misunderstand you, but that scenario really shouldn't
-exist.  The io_uring ops function independently of syscalls; you can
-*submit* io_uring ops via io_uring_enter(), but they are not
-guaranteed to be dispatched synchronously (obviously), and given the
-cred shenanigans that can happen with io_uring there is no guarantee
-the filters would even be applicable.
-
-It isn't an issue of "can" the filters be separate, they *have* to be separate.
-
--- 
-paul moore
-www.paul-moore.com
