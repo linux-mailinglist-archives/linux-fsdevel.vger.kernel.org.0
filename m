@@ -2,118 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCC5398516
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 11:16:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EDB0398681
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 12:30:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231629AbhFBJSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 05:18:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47436 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229603AbhFBJSU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 05:18:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1F55260FE3;
-        Wed,  2 Jun 2021 09:16:34 +0000 (UTC)
-Date:   Wed, 2 Jun 2021 11:16:32 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Changbin Du <changbin.du@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        David Laight <David.Laight@ACULAB.COM>
-Subject: Re: [PATCH] nsfs: fix oops when ns->ops is not provided
-Message-ID: <20210602091632.qijrpc2z6z44wu54@wittgenstein>
-References: <20210531153410.93150-1-changbin.du@gmail.com>
- <20210531220128.26c0cb36@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
- <20210601080654.cl7caplm7rsagl6u@wittgenstein>
- <20210601132602.02e92678@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+        id S232109AbhFBKbv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 06:31:51 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:38601 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230462AbhFBKbt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Jun 2021 06:31:49 -0400
+Received: by mail-io1-f69.google.com with SMTP id i13-20020a5e9e0d0000b029042f7925649eso1198400ioq.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jun 2021 03:30:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=/5Yxeay+76HnzJp/CqXkJ+ggXqViaQWyqCEQjK6m184=;
+        b=AOpBq2hVYIeyhiKhjJfekWmzllEmMsmKfA8zBdvfyRim0w0f5y1fgs/pvrHji2vBXw
+         ENF66hJq0g76iX9yZC+7Op4PhrC6D/SX/Rc/j8jpF2PegPd7+BWg+8Wy83ljcAJ299UG
+         Zy0JTxOnKoNfsnWojZoq9J/59MVnQB8UWfswNuPBg6Mkwe6tqCmPj2b7DCy8uiY+sAWW
+         nE4Tdw3ZlDRlUgnHDpeajPmtUHg6q+6UUavEC1glAmQF94MtZzX2Igvl2+g+Jj//p3ou
+         yzAnmWxGuhvWzNK0/7w0gfTgjPtdmNuwSfaWGll0AC9CH96D72nEaLoYMLHTw5vrYM/4
+         5Wag==
+X-Gm-Message-State: AOAM531evfAAR62U9HRk9yxNmIVlNuA2BY1b8Z1dWmFSAy8Wrv0BAEGf
+        zl/y8Zq1nycElWHhiAqyXYQn17em8+rhMBsnPtgZJtiIQC9C
+X-Google-Smtp-Source: ABdhPJx4g6XX+uFaQ6ef+gub/km+nZfMcKw0yEZ80kxD960AgE53q9Q4me2ar2pMKzoHdIlLr3xuAqcMTYpF4PDEjYk9rMPzqPr8
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210601132602.02e92678@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+X-Received: by 2002:a05:6e02:1a4c:: with SMTP id u12mr25215033ilv.221.1622629806914;
+ Wed, 02 Jun 2021 03:30:06 -0700 (PDT)
+Date:   Wed, 02 Jun 2021 03:30:06 -0700
+In-Reply-To: <000000000000c98d7205ae300144@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003e409f05c3c5f190@google.com>
+Subject: Re: [syzbot] WARNING in idr_get_next
+From:   syzbot <syzbot+f7204dcf3df4bb4ce42c@syzkaller.appspotmail.com>
+To:     anmol.karan123@gmail.com, bjorn.andersson@linaro.org,
+        coreteam@netfilter.org, davem@davemloft.net, dsahern@kernel.org,
+        ebiggers@google.com, ebiggers@kernel.org, eric.dumazet@gmail.com,
+        fw@strlen.de, kadlec@netfilter.org, kuba@kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org, manivannan.sadhasivam@linaro.org,
+        necip@google.com, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org,
+        yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 01, 2021 at 01:26:02PM -0700, Jakub Kicinski wrote:
-> On Tue, 1 Jun 2021 10:06:54 +0200 Christian Brauner wrote:
-> > > I'm not sure why we'd pick runtime checks for something that can be
-> > > perfectly easily solved at compilation time. Networking should not
-> > > be asking for FDs for objects which don't exist.  
-> > 
-> > Agreed!
-> > This should be fixable by sm like:
-> > 
-> > diff --git a/net/socket.c b/net/socket.c
-> > index 27e3e7d53f8e..2484466d96ad 100644
-> > --- a/net/socket.c
-> > +++ b/net/socket.c
-> > @@ -1150,10 +1150,12 @@ static long sock_ioctl(struct file *file, unsigned cmd, unsigned long arg)
-> >                         break;
-> >                 case SIOCGSKNS:
-> >                         err = -EPERM;
-> > +#ifdef CONFIG_NET_NS
-> >                         if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
-> >                                 break;
-> > 
-> >                         err = open_related_ns(&net->ns, get_net_ns);
-> > +#endif
-> >                         break;
-> >                 case SIOCGSTAMP_OLD:
-> >                 case SIOCGSTAMPNS_OLD:
-> 
-> Thanks! You weren't CCed on v1, so FWIW I was suggesting
-> checking in get_net_ns(), to catch other callers:
-> 
-> diff --git a/net/socket.c b/net/socket.c
-> index 27e3e7d53f8e..3b44f2700e0c 100644
-> --- a/net/socket.c
-> +++ b/net/socket.c
-> @@ -1081,6 +1081,8 @@ static long sock_do_ioctl(struct net *net, struct socket *sock,
->  
->  struct ns_common *get_net_ns(struct ns_common *ns)
->  {
-> +       if (!IS_ENABLED(CONFIG_NET_NS))
-> +               return ERR_PTR(-EOPNOTSUPP);
->         return &get_net(container_of(ns, struct net, ns))->ns;
->  }
->  EXPORT_SYMBOL_GPL(get_net_ns);
+syzbot suspects this issue was fixed by commit:
 
-Yeah, that's better than my hack. :) Maybe this function should simply
-move over to net/core/net_namespace.c with the other netns getters, e.g.
-get_net_ns_by_fd()?
+commit 43016d02cf6e46edfc4696452251d34bba0c0435
+Author: Florian Westphal <fw@strlen.de>
+Date:   Mon May 3 11:51:15 2021 +0000
 
-#ifdef CONFIG_NET_NS
+    netfilter: arptables: use pernet ops struct during unregister
 
-[...]
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11518847d00000
+start commit:   4d41ead6 Merge tag 'block-5.9-2020-08-28' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=891ca5711a9f1650
+dashboard link: https://syzkaller.appspot.com/bug?extid=f7204dcf3df4bb4ce42c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a1352e900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11fdaf41900000
 
-struct net *get_net_ns_by_fd(int fd)
-{
-	struct file *file;
-	struct ns_common *ns;
-	struct net *net;
+If the result looks correct, please mark the issue as fixed by replying with:
 
-	file = proc_ns_fget(fd);
-	if (IS_ERR(file))
-		return ERR_CAST(file);
+#syz fix: netfilter: arptables: use pernet ops struct during unregister
 
-	ns = get_proc_ns(file_inode(file));
-	if (ns->ops == &netns_operations)
-		net = get_net(container_of(ns, struct net, ns));
-	else
-		net = ERR_PTR(-EINVAL);
-
-	fput(file);
-	return net;
-}
-
-#else
-struct net *get_net_ns_by_fd(int fd)
-{
-	return ERR_PTR(-EINVAL);
-}
-#endif
-EXPORT_SYMBOL_GPL(get_net_ns_by_fd);
-
-Christian
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
