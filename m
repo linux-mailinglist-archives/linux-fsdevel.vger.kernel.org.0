@@ -2,36 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 74FE9398EA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 17:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E5D3398EB5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 17:32:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232285AbhFBPdG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 11:33:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53040 "EHLO
+        id S232116AbhFBPdd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 11:33:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232045AbhFBPdG (ORCPT
+        with ESMTP id S232464AbhFBPdY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 11:33:06 -0400
-X-Greylist: delayed 120 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 02 Jun 2021 08:31:22 PDT
-Received: from forwardcorp1o.mail.yandex.net (forwardcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::193])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7432C06174A;
-        Wed,  2 Jun 2021 08:31:22 -0700 (PDT)
-Received: from sas1-6b1512233ef6.qloud-c.yandex.net (sas1-6b1512233ef6.qloud-c.yandex.net [IPv6:2a02:6b8:c14:44af:0:640:6b15:1223])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 1C6472E1D2E;
+        Wed, 2 Jun 2021 11:33:24 -0400
+Received: from forwardcorp1p.mail.yandex.net (forwardcorp1p.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b6:217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F26F7C061574;
+        Wed,  2 Jun 2021 08:31:40 -0700 (PDT)
+Received: from sas1-ec30c78b6c5b.qloud-c.yandex.net (sas1-ec30c78b6c5b.qloud-c.yandex.net [IPv6:2a02:6b8:c14:2704:0:640:ec30:c78b])
+        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id C9F522E1943;
         Wed,  2 Jun 2021 18:29:22 +0300 (MSK)
 Received: from sas2-d40aa8807eff.qloud-c.yandex.net (sas2-d40aa8807eff.qloud-c.yandex.net [2a02:6b8:c08:b921:0:640:d40a:a880])
-        by sas1-6b1512233ef6.qloud-c.yandex.net (mxbackcorp/Yandex) with ESMTP id XrUECaB8IF-TL1qV7d2;
+        by sas1-ec30c78b6c5b.qloud-c.yandex.net (mxbackcorp/Yandex) with ESMTP id fOIfbyR6pP-TM1Wwi3t;
         Wed, 02 Jun 2021 18:29:22 +0300
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1622647762; bh=8wJcLLg+BillrJ9UHnzlrqTLTSwh0Y5dlFFF7RlJ/k4=;
+        t=1622647762; bh=9GlD6HleP2FtlpMNZDQZEVXlxMyxhvy+ki1vOkW/b5Q=;
         h=Message-Id:References:Date:Subject:To:From:In-Reply-To:Cc;
-        b=Ka38oQsGBLcIKLSPnYT9CKvdUTpqODcyH83nm/tW55bqB1fLgFyEMvE93Bg1J2RfN
-         mAh1XrdUTD/4uSn/EJLjE6QMP13ies7cLWxGqYqF1dYITDOUNZYE9ZuArAOPE3ITya
-         Jsoxr2dKyrADsXrOJctGPdwYdm9BKrfCstTDmfcA=
-Authentication-Results: sas1-6b1512233ef6.qloud-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+        b=lhMTK8IjEg82H+IF9FUlv5bIEVXJPcqjv0erpb73tuhl/XNmKNzCLJX6Gsa8A/gPb
+         6ON+HAKmn1m+2TKDdlaql4mNWyBPXsdkECeqJqy93B0BmhXqn+BRhmFq0YYly876wQ
+         SAubQCnvABjPpGUcbGx5w0o+6VOHe25EcZhmGGaY=
+Authentication-Results: sas1-ec30c78b6c5b.qloud-c.yandex.net; dkim=pass header.i=@yandex-team.ru
 Received: from warwish-linux.sas.yp-c.yandex.net (warwish-linux.sas.yp-c.yandex.net [2a02:6b8:c1b:2920:0:696:cc9e:0])
-        by sas2-d40aa8807eff.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id 42DbdVHlBw-TLoinGKp;
-        Wed, 02 Jun 2021 18:29:21 +0300
+        by sas2-d40aa8807eff.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id 42DbdVHlBw-TMoiVeh9;
+        Wed, 02 Jun 2021 18:29:22 +0300
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (Client certificate not present)
 From:   Anton Suvorov <warwish@yandex-team.ru>
@@ -39,9 +38,9 @@ To:     linux-kernel@vger.kernel.org
 Cc:     warwish@yandex-team.ru, linux-fsdevel@vger.kernel.org,
         dmtrmonakhov@yandex-team.ru, linux-block@vger.kernel.org,
         viro@zeniv.linux.org.uk
-Subject: [PATCH 08/10] ext4: reduce stack footprint in ext4_end_bio()
-Date:   Wed,  2 Jun 2021 18:29:01 +0300
-Message-Id: <20210602152903.910190-9-warwish@yandex-team.ru>
+Subject: [PATCH 09/10] security: reduce stack footprint in loadpin_read_file()
+Date:   Wed,  2 Jun 2021 18:29:02 +0300
+Message-Id: <20210602152903.910190-10-warwish@yandex-team.ru>
 In-Reply-To: <20210602152903.910190-1-warwish@yandex-team.ru>
 References: <20210602152903.910190-1-warwish@yandex-team.ru>
 MIME-Version: 1.0
@@ -52,30 +51,30 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Stack usage reduced (measured with allyesconfig):
 
-./fs/ext4/page-io.c     ext4_end_bio    224     88      -136
+./security/loadpin/loadpin.c    loadpin_read_file       200     56      -144
 
 Signed-off-by: Anton Suvorov <warwish@yandex-team.ru>
 ---
- fs/ext4/page-io.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ security/loadpin/loadpin.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index f038d578d8d8..56074f2f5e63 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -323,10 +323,9 @@ static void ext4_end_bio(struct bio *bio)
- {
- 	ext4_io_end_t *io_end = bio->bi_private;
- 	sector_t bi_sector = bio->bi_iter.bi_sector;
--	char b[BDEVNAME_SIZE];
- 
--	if (WARN_ONCE(!io_end, "io_end is NULL: %s: sector %Lu len %u err %d\n",
--		      bio_devname(bio, b),
-+	if (WARN_ONCE(!io_end, "io_end is NULL: %pg: sector %llu len %u err %d\n",
-+		      bio->bi_bdev,
- 		      (long long) bio->bi_iter.bi_sector,
- 		      (unsigned) bio_sectors(bio),
- 		      bio->bi_status)) {
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index b12f7d986b1e..ad4e6756c038 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -78,11 +78,8 @@ static void check_pinning_enforcement(struct super_block *mnt_sb)
+ 	 * device, allow sysctl to change modes for testing.
+ 	 */
+ 	if (mnt_sb->s_bdev) {
+-		char bdev[BDEVNAME_SIZE];
+-
+ 		ro = bdev_read_only(mnt_sb->s_bdev);
+-		bdevname(mnt_sb->s_bdev, bdev);
+-		pr_info("%s (%u:%u): %s\n", bdev,
++		pr_info("%pg (%u:%u): %s\n", mnt_sb->s_bdev,
+ 			MAJOR(mnt_sb->s_bdev->bd_dev),
+ 			MINOR(mnt_sb->s_bdev->bd_dev),
+ 			ro ? "read-only" : "writable");
 -- 
 2.25.1
 
