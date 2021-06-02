@@ -2,76 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59345398797
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 13:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBEB63987E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 13:19:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbhFBLGu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 07:06:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48822 "EHLO
+        id S231942AbhFBLUw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 07:20:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231806AbhFBLGc (ORCPT
+        with ESMTP id S230343AbhFBLUv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 07:06:32 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36278C06138C
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jun 2021 04:04:41 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id b9so3214239ybg.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jun 2021 04:04:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=eOvUj57ZPA4+yT/KqN6kzCD66yqu4Ev5aKqKNcM4ZJs=;
-        b=Vr/M/UT0xshuUV3ke2sVEsh41oV5uR11CnxwVV83/jra4xkoL/RRhFgldX1JdAamxk
-         HOfFwd+QC9/fC/tSkd6iW0oQlzQYwIf5m+gAGvx6u3glPpz4DRBhKXcdh4QKkFsn7+Tj
-         wQ9hBCOmFZYi4LxXklX7QCaRn1smXGik/235IhWv3ggZ/FTl+VBwhMlrOfzsVdu4skSi
-         +4+yO6LkEwNNX/L6/hwc+8ZPS3JZ6zIGHzCmVSHu6NXNeyYDrTweIfTBiq4XKjMD44VO
-         Q+9jq6kIWARJ+r07V/r3meoU6NruHscp7B89XEAalnHkNlspnahUk8Q6vAVtm9BVQZkk
-         aqHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=eOvUj57ZPA4+yT/KqN6kzCD66yqu4Ev5aKqKNcM4ZJs=;
-        b=SfM5wQLK5EJGdMmBlAf6XBV4uZoI6BhMWxQxNg8UBkMtJgzRwiU5hM+b8w0eMeoKj6
-         LS21svs3K+wyMbFgHImDxI9kx852kyBswuSEAcvUOHsdE6lVmNcCgBhIdXaUTx+c294n
-         XZSndB8V2F6brjtNBZTrMlByC28lGHpi0luehsIBml3KKV/qi+jKly/iRAPNGqnwCoil
-         cu9G6Swv0aXsZIBuTItsQW0ep/hUPuqXa18IIunmt+i2NCgMW1rgN66uRk5kd72GbMqS
-         YnrmwEvBSlV6mB4cik1+SRy/Y5n82oj7gksGlQHt6W1ucwaaqWZ4ApYiQiOPtqwui6az
-         /fiQ==
-X-Gm-Message-State: AOAM532W+SPxJdqQhNUU5w+A/9I1/13036A8gEhyLQdRQJeQbmpguVs2
-        45sz24aIeDK87te+R91qnpsLp+7+t6Cq93gxVJ0=
-X-Google-Smtp-Source: ABdhPJxryezK9Q+gTeBWvmAW7CY780lxyUtdxyphqiEdmWX39iVHqMf8kmsmt2mobmpd7rVQxDIqwzhAct6woaEuOPY=
-X-Received: by 2002:a25:3483:: with SMTP id b125mr36979098yba.355.1622631880097;
- Wed, 02 Jun 2021 04:04:40 -0700 (PDT)
+        Wed, 2 Jun 2021 07:20:51 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F442C061574;
+        Wed,  2 Jun 2021 04:19:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=HDweTCl+XEUHn4S+CyKOejrxpiweHcZr8IDGuVHWUQs=; b=Tcy9hOUYXzaNYvb838lLrK5nCc
+        5O8nyC5DFTersZ93EfzI5GQE21FOEITswYvUc1bzoXzAdmLrF9tATY/XDeKZrK6+Y7uDTo5SwI51V
+        FR7b3yUH8ZgB9lTGbgNiLOmPV9WaVtGCr2o1NZ6zmpnEnirvy/vLeqagzG8OwvRtkfqctkQqmBwLF
+        6eHNPe1uOWKY0CLOQJHqsjx2ew98SABPi+1IhMLEXUA+Fsr57UhENhx7uAjt2qKyo2SfVW15W8XR7
+        BMcLuj4i65zASAENdaHGegVz1dnCwLR8NxGcvdydOTuvbYsXAOwarYwENq71hDSajiOaROsMPsWXk
+        bTgtZoLg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1loOsx-00B1wM-Qt; Wed, 02 Jun 2021 11:18:13 +0000
+Date:   Wed, 2 Jun 2021 12:18:07 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     syzbot <syzbot+f7204dcf3df4bb4ce42c@syzkaller.appspotmail.com>
+Cc:     anmol.karan123@gmail.com, bjorn.andersson@linaro.org,
+        coreteam@netfilter.org, davem@davemloft.net, dsahern@kernel.org,
+        ebiggers@google.com, ebiggers@kernel.org, eric.dumazet@gmail.com,
+        fw@strlen.de, kadlec@netfilter.org, kuba@kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org, manivannan.sadhasivam@linaro.org,
+        necip@google.com, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Subject: Re: [syzbot] WARNING in idr_get_next
+Message-ID: <YLdo77SkmGLgPUBi@casper.infradead.org>
+References: <000000000000c98d7205ae300144@google.com>
+ <0000000000003e409f05c3c5f190@google.com>
 MIME-Version: 1.0
-Sender: wzack034@gmail.com
-Received: by 2002:a26:8c2:0:0:0:0:0 with HTTP; Wed, 2 Jun 2021 04:04:39 -0700 (PDT)
-From:   MRS ORGIL BAATAR <mrs.orgilbaatar21@gmail.com>
-Date:   Wed, 2 Jun 2021 04:04:39 -0700
-X-Google-Sender-Auth: NHDdJeGq4--mf0qIAWB5JoB7jzs
-Message-ID: <CAG4K-g3D9g5NW+eC+HhMdMfBCZxC=HAgNvp+2o=J=FWcJzLTYw@mail.gmail.com>
-Subject: Your long awaited part payment of $14.5.000.00Usd
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000003e409f05c3c5f190@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Attention: Beneficiary,
+#syz fixed qrtr: Convert qrtr_ports from IDR to XArray
 
-My name is Mrs. Orgil Baatar and i am citizen of Australia and i have
-company here in Burkina Faso West Africa as a business woman dealing
-with Gold / Diamond export and import, however i have been suffering
-from ovarian cancer disease,i surprise the doctor says that i will not
-survive to live longer because of the damage infection.
+On Wed, Jun 02, 2021 at 03:30:06AM -0700, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
+> 
+> commit 43016d02cf6e46edfc4696452251d34bba0c0435
+> Author: Florian Westphal <fw@strlen.de>
+> Date:   Mon May 3 11:51:15 2021 +0000
 
-I have $ 14. 5 Million US Dollars at UBA BANK here in Burkina Faso,
-and i instructed the UBA management to transfer the capital to a
-foreigner that will apply in my name after i have gone to released the
-riches to the person,because i sent to UBAbank the doctor report of my
-physical condition says i will not survived. I will give you more
-details when i hear from you.
-
-Best regard
-Yours Sick Sister
-Mrs. Mrs. Orgil Baatar
+Your bisect went astray.
