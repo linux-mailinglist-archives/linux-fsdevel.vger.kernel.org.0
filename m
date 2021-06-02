@@ -2,212 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABD4F3989FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 14:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DAFE398AA5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 15:32:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229692AbhFBMsg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 08:48:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229482AbhFBMsd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 08:48:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 55E576121D;
-        Wed,  2 Jun 2021 12:46:48 +0000 (UTC)
-Date:   Wed, 2 Jun 2021 14:46:45 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Matthew Bobrowski <repnop@google.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 0/5] Add pidfd support to the fanotify API
-Message-ID: <20210602124645.ushfacqlj6wzq6sz@wittgenstein>
-References: <20210524084746.GB32705@quack2.suse.cz>
- <20210525103133.uctijrnffehlvjr3@wittgenstein>
- <YK2GV7hLamMpcO8i@google.com>
- <20210526180529.egrtfruccbioe7az@wittgenstein>
- <YLYT/oeBCcnbfMzE@google.com>
- <20210601114628.f3w33yyca5twgfho@wittgenstein>
- <YLcliQRh4HRGt4Mi@google.com>
- <CAOQ4uxieRQ3s5rWA55ZBDr4xm6i9vXyWx-iErMgYzGCE5nYKcA@mail.gmail.com>
- <20210602084854.sokpeqr2wgz7ci4a@wittgenstein>
- <YLdj9pk4Jpz1qqVl@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YLdj9pk4Jpz1qqVl@google.com>
+        id S230177AbhFBNdM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 09:33:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53976 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230114AbhFBNdG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Jun 2021 09:33:06 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D10CC061761;
+        Wed,  2 Jun 2021 06:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Subject:Cc:To:From:Date:Message-ID:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=+0GJIyUeezLFp/ym4/vP+fC11EDSc+9M3QstIcNFnoM=; b=HwUP711Hi7fk/GRlHwhhfYuQB5
+        K5vYCOeQPuOhkpRqo74FjxBE7Qmwx8Wj6GWtoLKoGosJHAwdRgo9jNLQy1TmIkJWwpfsGoVcLemhp
+        yE/DBMFhvtilIfo4dv1JJaSo/mfYt/uX/LfisWcd+3wnlJLAvfkdTdiO1+HtsYKFPZ/tV6bjzqFeK
+        4bo4vY52aoMqPrC7we688zYhvu7+dOw4A1kcJpeVTuCoCOtBGxbR88VN+otXu+yI9l3xV+f66r/TA
+        vzFWO4ght7JIQB07yN0JwJ0Lzx83FvV5EUgJ9xU0ODmz2KYDDLO3n44qTW1zqH17jqyBTMXum4Ngk
+        tEM+eMIg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1loQxe-00B8nb-51; Wed, 02 Jun 2021 13:31:08 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id B184A300299;
+        Wed,  2 Jun 2021 15:31:04 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 90C662C08A5B8; Wed,  2 Jun 2021 15:31:04 +0200 (CEST)
+Message-ID: <20210602131225.336600299@infradead.org>
+User-Agent: quilt/0.66
+Date:   Wed, 02 Jun 2021 15:12:25 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
+        rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
+Subject: [PATCH 0/6] sched: Cleanup task_struct::state
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 08:56:54PM +1000, Matthew Bobrowski wrote:
-> On Wed, Jun 02, 2021 at 10:48:54AM +0200, Christian Brauner wrote:
-> > On Wed, Jun 02, 2021 at 10:18:36AM +0300, Amir Goldstein wrote:
-> > > On Wed, Jun 2, 2021 at 9:30 AM Matthew Bobrowski <repnop@google.com> wrote:
-> > > >
-> > > > On Tue, Jun 01, 2021 at 01:46:28PM +0200, Christian Brauner wrote:
-> > > > > On Tue, Jun 01, 2021 at 09:03:26PM +1000, Matthew Bobrowski wrote:
-> > > > > > On Wed, May 26, 2021 at 08:05:29PM +0200, Christian Brauner wrote:
-> > > > > > > On Wed, May 26, 2021 at 09:20:55AM +1000, Matthew Bobrowski wrote:
-> > > > > > > > On Tue, May 25, 2021 at 12:31:33PM +0200, Christian Brauner wrote:
-> > > > > > > > > On Mon, May 24, 2021 at 10:47:46AM +0200, Jan Kara wrote:
-> > > > > > > > > > On Sat 22-05-21 09:32:36, Matthew Bobrowski wrote:
-> > > > > > > > > > > On Fri, May 21, 2021 at 12:40:56PM +0200, Jan Kara wrote:
-> > > > > > > > > > > > On Fri 21-05-21 20:15:35, Matthew Bobrowski wrote:
-> > > > > > > > > > > > > On Thu, May 20, 2021 at 03:55:27PM +0200, Jan Kara wrote:
-> > > > > > > > > > > > > There's one thing that I'd like to mention, and it's something in
-> > > > > > > > > > > > > regards to the overall approach we've taken that I'm not particularly
-> > > > > > > > > > > > > happy about and I'd like to hear all your thoughts. Basically, with
-> > > > > > > > > > > > > this approach the pidfd creation is done only once an event has been
-> > > > > > > > > > > > > queued and the notification worker wakes up and picks up the event
-> > > > > > > > > > > > > from the queue processes it. There's a subtle latency introduced when
-> > > > > > > > > > > > > taking such an approach which at times leads to pidfd creation
-> > > > > > > > > > > > > failures. As in, by the time pidfd_create() is called the struct pid
-> > > > > > > > > > > > > has already been reaped, which then results in FAN_NOPIDFD being
-> > > > > > > > > > > > > returned in the pidfd info record.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Having said that, I'm wondering what the thoughts are on doing pidfd
-> > > > > > > > > > > > > creation earlier on i.e. in the event allocation stages? This way, the
-> > > > > > > > > > > > > struct pid is pinned earlier on and rather than FAN_NOPIDFD being
-> > > > > > > > > > > > > returned in the pidfd info record because the struct pid has been
-> > > > > > > > > > > > > already reaped, userspace application will atleast receive a valid
-> > > > > > > > > > > > > pidfd which can be used to check whether the process still exists or
-> > > > > > > > > > > > > not. I think it'll just set the expectation better from an API
-> > > > > > > > > > > > > perspective.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Yes, there's this race. OTOH if FAN_NOPIDFD is returned, the listener can
-> > > > > > > > > > > > be sure the original process doesn't exist anymore. So is it useful to
-> > > > > > > > > > > > still receive pidfd of the dead process?
-> > > > > > > > > > >
-> > > > > > > > > > > Well, you're absolutely right. However, FWIW I was approaching this
-> > > > > > > > > > > from two different angles:
-> > > > > > > > > > >
-> > > > > > > > > > > 1) I wanted to keep the pattern in which the listener checks for the
-> > > > > > > > > > >    existence/recycling of the process consistent. As in, the listener
-> > > > > > > > > > >    would receive the pidfd, then send the pidfd a signal via
-> > > > > > > > > > >    pidfd_send_signal() and check for -ESRCH which clearly indicates
-> > > > > > > > > > >    that the target process has terminated.
-> > > > > > > > > > >
-> > > > > > > > > > > 2) I didn't want to mask failed pidfd creation because of early
-> > > > > > > > > > >    process termination and other possible failures behind a single
-> > > > > > > > > > >    FAN_NOPIDFD. IOW, if we take the -ESRCH approach above, the
-> > > > > > > > > > >    listener can take clear corrective branches as what's to be done
-> > > > > > > > > > >    next if a race is to have been detected, whereas simply returning
-> > > > > > > > > > >    FAN_NOPIDFD at this stage can mean multiple things.
-> > > > > > > > > > >
-> > > > > > > > > > > Now that I've written the above and keeping in mind that we'd like to
-> > > > > > > > > > > refrain from doing anything in the event allocation stages, perhaps we
-> > > > > > > > > > > could introduce a different error code for detecting early process
-> > > > > > > > > > > termination while attempting to construct the info record. WDYT?
-> > > > > > > > > >
-> > > > > > > > > > Sure, I wouldn't like to overengineer it but having one special fd value for
-> > > > > > > > > > "process doesn't exist anymore" and another for general "creating pidfd
-> > > > > > > > > > failed" looks OK to me.
-> > > > > > > > >
-> > > > > > > > > FAN_EPIDFD -> "creation failed"
-> > > > > > > > > FAN_NOPIDFD -> "no such process"
-> > > > > > > >
-> > > > > > > > Yes, I was thinking something along the lines of this...
-> > > > > > > >
-> > > > > > > > With the approach that I've proposed in this series, the pidfd
-> > > > > > > > creation failure trips up in pidfd_create() at the following
-> > > > > > > > condition:
-> > > > > > > >
-> > > > > > > >         if (!pid || !pid_has_task(pid, PIDTYPE_TGID))
-> > > > > > > >                  return -EINVAL;
-> > > > > > > >
-> > > > > > > > Specifically, the following check:
-> > > > > > > >         !pid_has_task(pid, PIDTYPE_TGID)
-> > > > > > > >
-> > > > > > > > In order to properly report either FAN_NOPIDFD/FAN_EPIDFD to
-> > > > > > > > userspace, AFAIK I'll have to do one of either two things to better
-> > > > > > > > distinguish between why the pidfd creation had failed:
-> > > > > > >
-> > > > > > > Ok, I see. You already do have a reference to a struct pid and in that
-> > > > > > > case we should just always return a pidfd to the caller. For
-> > > > > > > pidfd_open() for example we only report an error when
-> > > > > > > find_get_pid(<pidnr>) doesn't find a struct pid to refer to. But in your
-> > > > > > > case here you already have a struct pid so I think we should just keep
-> > > > > > > this simple and always return a pidfd to the caller and in fact do
-> > > > > > > burden them with figuring out that the process is gone via
-> > > > > > > pidfd_send_signal() instead of complicating our lives here.
-> > > > > >
-> > > > > > Ah, actually Christian... Before, I go ahead and send through the updated
-> > > > > > series. Given what you've mentioned above I'm working with the assumption
-> > > > > > that you're OK with dropping the pid_has_task() check from pidfd_create()
-> > > > > > [0]. Is that right?
-> > > > > >
-> > > > > > If so, I don't know how I feel about this given that pidfd_create() is now
-> > > > > > to be exposed to the rest of the kernel and the pidfd API, as it stands,
-> > > > > > doesn't support the creation of pidfds for non-thread-group leaders. I
-> > > > > > suppose what I don't want is other kernel subsystems, if any, thinking it's
-> > > > > > OK to call pidfd_create() with an arbitrary struct pid and setting the
-> > > > > > expectation that a fully functional pidfd will be returned.
-> > > > > >
-> > > > > > The way I see it, I think we've got two options here:
-> > > > > >
-> > > > > > 1) Leave the pid_has_task() check within pidfd_create() and perform another
-> > > > > >    explicit pid_has_task() check from the fanotify code before calling
-> > > > > >    pidfd_create(). If it returns false, we set something like FAN_NOPIDFD
-> > > > > >    indicating to userspace that there's no such process when the event was
-> > > > > >    created.
-> > > > > >
-> > > > > > 2) Scrap using pidfd_create() all together and implement a fanotify
-> > > > > >    specific pidfd creation wrapper which would allow for more
-> > > > > >    control. Something along the lines of what you've done in kernel/fork.c
-> > > > > >    [1]. Not the biggest fan of this idea just yet given the possibility of
-> > > > > >    it leading to an API drift over time.
-> > > > > >
-> > > > > > WDYT?
-> > > > >
-> > > > > Hm, why would you have to drop the pid_has_task() check again?
-> > > >
-> > > > Because of the race that I brielfy decscribed here [0]. The race exists
-> > > 
-> > > Sorry for being thich. I still don't understand what's racy about this.
-> > > Won't the event reader get a valid pidfd?
-> > > Can't the event reader verify that the pidfd points to a dead process?
-> > > I don't mind returning FAN_NOPIDFD for convenience, but user
-> > > will have to check the pidfd that it got anyway, because process
-> > > can die at any time between reading the event and acting on the
-> > > pidfd.
-> > 
-> > (Replying to this part of the thread so we don't have to many parallel
-> > replies.)
-> > 
-> > Hm, so quoting from link [0] Matthew posted so we all have some context
-> > here:
-> > "Basically, with this approach the pidfd creation is done only once an
-> > event has been queued and the notification worker wakes up and picks up
-> > the event from the queue processes it. There's a subtle latency
-> > introduced when taking such an approach which at times leads to pidfd
-> > creation failures. As in, by the time pidfd_create() is called the
-> > struct pid has already been reaped, which then results in FAN_NOPIDFD
-> > being returned in the pidfd info record."
-> > 
-> > I don't think that's a race and even if I don't think that it's a
-> > meaningful one. So when the event is queued the process is still alive
-> > but when the notification is actually delivered the process is dead.
-> > 
-> > And your point, Matthew, seems to be that the caller should always get a
-> > pidfd back even if the process has already exited _and_ been reaped,
-> > i.e. is dead because it was alive when the event was generated.
-> > 
-> > I think that's no how it needs to work and I have a hard time seeing
-> > this as a good argument. What's problematic about just returning
-> > FAN_NOPIDFD in that case? After all the process is gone. All the caller
-> > can do with such a pidfd is to send it a signal and immediately realize
-> > that the process is gone, i.e. -ESRCH anyway.
-> 
-> To get things straight, there's no argument here. There's a discussion
+Hi!
 
-Ok, I read it as an argument for dropping that check. :)
+The task_struct::state variable is a bit odd in a number of ways:
 
-> about what the best approach is for communicating to the event listener
-> that a process has been killed prior to a pidfd being created by/from
-> fanotify. I have no issues with communicating FAN_NOPIDFD to the event
-> listener in such cases. I just want to make sure everyone else is OK with
-> it.
+ - it's declared 'volatile' (against current practises);
+ - it's 'unsigned long' which is a weird size;
+ - it's type is inconsistent when used for function arguments.
 
-I'm ok with it.
+These patches clean that up by making it consistently 'unsigned int', and
+replace (almost) all accesses with READ_ONCE()/WRITE_ONCE(). In order to not
+miss any, the variable is renamed, ensuring a missed conversion results in a
+compile error.
 
-Christian
+The first few patches fix a number of pre-existing errors and introduce a few
+helpers to make the final conversion less painful.
+
+
