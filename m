@@ -2,147 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFBB3397F1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 04:31:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0198A397F39
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 04:57:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230359AbhFBCdf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Jun 2021 22:33:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46814 "EHLO
+        id S230080AbhFBC6s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Jun 2021 22:58:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229792AbhFBCdf (ORCPT
+        with ESMTP id S229631AbhFBC6r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Jun 2021 22:33:35 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E11C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jun 2021 19:31:51 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id k7so782438pjf.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jun 2021 19:31:51 -0700 (PDT)
+        Tue, 1 Jun 2021 22:58:47 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F07FDC061574;
+        Tue,  1 Jun 2021 19:57:04 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id 131so686400ljj.3;
+        Tue, 01 Jun 2021 19:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=sT/ogThoChr1uPFVVzKVR3CGfQEDl6jQU/9/uFyWW5g=;
-        b=R9SHjWMTNpwstv/KAwlpVle1p5NurrO10Nvcb7Vjyuop9tVSCA42g8zz5PZY5Wrzrz
-         FYKfTjjUvMYQBCxBG9FQutYPG11L+K45/FrOX8zcg74Mj7wMgx8lw2AWRqqmEj1wDWrV
-         t7UTR3pqRrCXMTso4D4WiEg/ZQDspEPKPPJJIEJEPkk3bbacXj8onLXOJYKlVD4tCW8o
-         vTv6Z707Weo+A4cz6F56Ri26U3Rx4t9ZEHL8xGylXpIjQeVzPRvxHUO4nNQ43rUt3Qaz
-         ZkBxtyzzYSRsbYsi+dfU6AB3lkeH70d4G9VPOyC6ZWtaW4Uam9muoVY9r3nCSE9HplXi
-         X1zw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f6Is0i1WWuAiX9FLSlbAA0Ntx7WXKcqgVfD6AgfT9IU=;
+        b=KKjnQAMB0qNMMPK9CDN9GlvfCIuN8uZUvRQnswCeBUsiVBQowriJO11353kMp2B+KT
+         EJys52/kfFTHv8GTw34we2BHbkMZEbWgI8kOEL+vdDSYcQXZe7NzE+0cQblDUxX4i7WL
+         igVFD5ZQI+PhFV3BaTTiyKXukujfpY3UmdoFbCZuaVGFBZ7tPZIMcH2MmjYk76IeEuoO
+         kj8gn3Xsv5W2Min9HKcUcZkEoJ1pYpCpIlqoWKkO01/w9E6A2i77ssQ1RzvoLa+Ecrra
+         W4KRXc8pT0osXPW2PzDtwa9IWq2cDNIdWcnozDFo6Ey/BtC57gorKYqhgMqljfn4ToOb
+         Qa1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=sT/ogThoChr1uPFVVzKVR3CGfQEDl6jQU/9/uFyWW5g=;
-        b=XDoBh3UFo2ogwt2BWvEzD6KkKw6IxE0vVzFV4A8REO3HQtbrQynZPHC72RSBrheZ3i
-         +ls6vj7PrBSsaX9wVIt0LlipDrupXz6Azh+tydy3xthwUb9Xb90DSm9OAZKk0idxre/T
-         ksRwaWDTIaEdYw7AOo0qlIFYBmfDP0OH2uX8yGK9xZ7GUOjspnFNycWKd4ymibe2xO6y
-         IdHArFwiK6/D+FOxSHNHhK3qJnjH9dmzY5IfeFOTwIJ5RAUFxdVeeSk0d/XyBzn8vllt
-         eZEUsfdTyuPU+H1xQBnlBER7TRbRUy5gqdyp0dCcbrBx5ap4hJMx60Gg8mcF2hs2P/ht
-         hvUw==
-X-Gm-Message-State: AOAM532pN8QNqEJLjAwq93x94jAqlz3R4VW8nu8Wu8VqO19wHBizowrR
-        F4YViMUKkftgdr0nQwak9kM1Lg==
-X-Google-Smtp-Source: ABdhPJwb+DeSZnRW4rwnn+8msc5yEgIKNM8POntUbCZwyaInAWajfp7lemFjPNJpBZnKi7mhxS7cxQ==
-X-Received: by 2002:a17:902:e309:b029:f1:9342:2036 with SMTP id q9-20020a170902e309b02900f193422036mr28802305plc.53.1622601111408;
-        Tue, 01 Jun 2021 19:31:51 -0700 (PDT)
-Received: from [10.86.119.121] ([139.177.225.224])
-        by smtp.gmail.com with ESMTPSA id q24sm15120581pgb.19.2021.06.01.19.31.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jun 2021 19:31:50 -0700 (PDT)
-Subject: Re: [External] Re: [PATCH v2] fs/proc/kcore.c: add mmap interface
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     adobriyan@gmail.com, rppt@kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, songmuchun@bytedance.com,
-        zhouchengming@bytedance.com, chenying.kernel@bytedance.com,
-        zhengqi.arch@bytedance.com
-References: <20210601082241.13378-1-zhoufeng.zf@bytedance.com>
- <20210601192257.65a514606382f0a972f918c3@linux-foundation.org>
-From:   zhoufeng <zhoufeng.zf@bytedance.com>
-Message-ID: <be411abf-1794-521a-8c79-0a3cbea4d3bd@bytedance.com>
-Date:   Wed, 2 Jun 2021 10:31:44 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f6Is0i1WWuAiX9FLSlbAA0Ntx7WXKcqgVfD6AgfT9IU=;
+        b=pMTZILh1t7NCnpBZJKK9Tv6lVYH4l6WXhK0EG/9rp6hL0kh/HyiOgRSF3qHhq/Epe0
+         3PXHvIzQLTbnUvb668YUQfIiJWqb0S34EGHGqnp6XIaGUyLWbCLFmN2YEQvYid2ORst1
+         MqUK3pWm+wb20TVZ40KNuerqxC5bZOuduqsIe5bh/4yM8cwglDCXgXvB0bJ1ocpJ9oLs
+         jCCIHKqPTyFVdJc5x1PGplATI90Yom3lPgtSPjWnjB6g5mhPQyz2P/MIGUWaXLAh0f2U
+         Z612eN3zzu5PKzhlqYS7MUNk0rc15R6ANqeRWTOUjewqf8bxpDC9llQfTQBxSyVKoSj7
+         Q72g==
+X-Gm-Message-State: AOAM530jifQ6UzLAal5ghUgqlWB9sRIlpfoBVO5oWPIncUpE5cdVGJch
+        iz5qLxuHdu2fxZRGSmT8TEGdEf+zsFNutMEkDxDb0By5Fp+kZw==
+X-Google-Smtp-Source: ABdhPJxQoNCcsX7iV/vEDWx6JWxLRtExRM6x7xW1mF4c9BhJXaV9luKD+SiPOrS6FyNRjLB1bMHVTlxyPaxopmxJ/P8=
+X-Received: by 2002:a2e:9a14:: with SMTP id o20mr23799376lji.309.1622602623137;
+ Tue, 01 Jun 2021 19:57:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210601192257.65a514606382f0a972f918c3@linux-foundation.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20210528143802.78635-1-dong.menglong@zte.com.cn>
+ <20210528143802.78635-3-dong.menglong@zte.com.cn> <20210601143928.b2t2xwxnqma5h6li@wittgenstein>
+In-Reply-To: <20210601143928.b2t2xwxnqma5h6li@wittgenstein>
+From:   Menglong Dong <menglong8.dong@gmail.com>
+Date:   Wed, 2 Jun 2021 10:56:50 +0800
+Message-ID: <CADxym3YJETHbqg44VXN9bjhfD4ARTZBq74OEpXqs7UE6_vpPZg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] init/do_cmounts.c: introduce 'user_root' for initramfs
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Sami Tolvanen <samitolvanen@google.com>, ojeda@kernel.org,
+        johan@kernel.org, jeyu@kernel.org, masahiroy@kernel.org,
+        Menglong Dong <dong.menglong@zte.com.cn>, joe@perches.com,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        hare@suse.de, tj@kernel.org, gregkh@linuxfoundation.org,
+        song@kernel.org, NeilBrown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        f.fainelli@gmail.com, wangkefeng.wang@huawei.com, arnd@arndb.de,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Barret Rhoden <brho@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, vbabka@suse.cz,
+        pmladek@suse.com, Alexander Potapenko <glider@google.com>,
+        Chris Down <chris@chrisdown.name>, jojing64@gmail.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>, mingo@kernel.org,
+        terrelln@fb.com, geert@linux-m68k.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Jun 1, 2021 at 10:39 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+[...]
+>
+> This code is duplicated below in this file
+>
+> void __init init_rootfs(void)
+> {
+>         if (IS_ENABLED(CONFIG_TMPFS) && !saved_root_name[0] &&
+>                 (!root_fs_names || strstr(root_fs_names, "tmpfs")))
+>                 is_tmpfs = true;
+> }
+>
+> so you should add a tiny inline helper that can be called in both
+> places. Will also allow you to get rid of one ifdef and makes the patch
+> smaller.
+
+Seems the code here is indeed duplicated, I'll replace it with an inline
+function.
+
+[...]
+> > +
+> > +/*
+> > + * The syscall 'pivot_root' is used to change root and it is able to
+> > + * clean the old mounts, which make it preferred by container platforms
+> > + * such as Docker. However, initramfs is not supported by pivot_root,
+> > + * and 'chroot()' has to be used, which is unable to clean the mounts
+> > + * that propagate from HOST. These useless mounts make the release of
+> > + * removable device or network namespace a big problem.
+> > + *
+> > + * To make initramfs supported by pivot_root, the mount of the root
+> > + * filesystem should have a parent, which will make it unmountable. In
+> > + * this function, the second mount, which is called 'user root', is
+> > + * created and mounted on '/root', and it will be made the root filesystem
+> > + * in end_mount_user_root() by init_chroot().
+> > + *
+> > + * The 'user root' has a parent mount, which makes it unmountable and
+> > + * pivot_root work.
+> > + *
+> > + * What's more, root_mountflags and root_mount_data are used here, which
+> > + * makes the 'rootflags' in boot cmd work for 'user root'.
+>
+> I appreciate the detail but most of that should go in the commit
+> message it also repeats some info a couple of times. :) Here sm like the
+> following should suffice, I think:
+>
+> /*
+>  * Give systems running from the initramfs and making use of pivot_root a
+>  * proper mount so it can be umounted during pivot_root.
+>  */
+
+I added the comments here to make the folks understand what these changes
+are for, as LuisChamberlain suggested. Do you think that it is
+unnecessary and the commit message is enough for users to understand this
+function?
+
+[...]
+> > +
+> >  static ssize_t __init xwrite(struct file *file, const char *p, size_t count,
+> >               loff_t *pos)
+> >  {
+> > @@ -682,15 +684,23 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+> >       else
+> >               printk(KERN_INFO "Unpacking initramfs...\n");
+> >
+> > +     init_user_rootfs();
+> > +
+> > +     if (mount_user_root())
+>
+> I would call this sm like
+>
+> prepare_mount_rootfs()
+> finish_mount_rootfs()
+
+Yeah, this name seems better! I'll change it.
+
+>
+> > +             panic("Failed to create user root");
+>
+> I don't think you need to call init_user_rootfs() separately? You could
+> just move it into the prepare_mount_rootfs()/mount_user_root() call.
+
+After rename 'mount_user_root()' to 'prepare_mount_rootfs()', it seems
+reasonable to call 'init_user_rootfs()' in 'prepare_mount_rootfs()'.
+
+>
+> > +
+> >       err = unpack_to_rootfs((char *)initrd_start, initrd_end - initrd_start);
+> >       if (err) {
+> > +             end_mount_user_root(false);
+>
+> This boolean argument to end_mount_user_root() is a bit strange. Just
+> call init_umount() directly here?
+
+I don't think it is suitable to call init_umount() directly here. Before
+umount, 'init_chdir("/")' should be called too, and it seems a little
+weird to do these stuff in do_populate_rootfs().
+
+According to the result, finish_mount_rootfs() will change root to the new
+mount or fall back and do the clean work, it seems fine.
+
+>
+> >  #ifdef CONFIG_BLK_DEV_RAM
+> >               populate_initrd_image(err);
+> >  #else
+> >               printk(KERN_EMERG "Initramfs unpacking failed: %s\n", err);
+> >  #endif
+> > +             goto done;
+> >       }
+> >
+> > +     end_mount_user_root(true);
+> >  done:
+> >       /*
+> >        * If the initrd region is overlapped with crashkernel reserved region,
+> > diff --git a/usr/Kconfig b/usr/Kconfig
+> > index 8bbcf699fe3b..f9c96de539c3 100644
+> > --- a/usr/Kconfig
+> > +++ b/usr/Kconfig
+> > @@ -52,6 +52,16 @@ config INITRAMFS_ROOT_GID
+> >
+> >         If you are not sure, leave it set to "0".
+> >
+> > +config INITRAMFS_USER_ROOT
+>
+> I think the naming isn't great. Just call it INITRAMFS_MOUNT. The "user"
+> part in all the function and variabe names seems confusing to me at
+> least it doesn't convey a lot of useful info. So I'd just drop it and
+> try to stick with plain rootfs/initramfs terminology.
+
+Yeah, it now appears that 'user' seems indeed weird here. I thought that
+this mount is created for user space, seems kernel is using it too. I'll
+clean these 'user'.
+
+I appreciate your detail comments, thank you!
 
 
-ÔÚ 2021/6/2 ÉÏÎç10:22, Andrew Morton Ð´µÀ:
-> On Tue,  1 Jun 2021 16:22:41 +0800 Feng zhou <zhoufeng.zf@bytedance.com> wrote:
-> 
->> From: ZHOUFENG <zhoufeng.zf@bytedance.com>
->>
->> When we do the kernel monitor, use the DRGN
->> (https://github.com/osandov/drgn) access to kernel data structures,
->> found that the system calls a lot. DRGN is implemented by reading
->> /proc/kcore. After looking at the kcore code, it is found that kcore
->> does not implement mmap, resulting in frequent context switching
->> triggered by read. Therefore, we want to add mmap interface to optimize
->> performance. Since vmalloc and module areas will change with allocation
->> and release, consistency cannot be guaranteed, so mmap interface only
->> maps KCORE_TEXT and KCORE_RAM.
->>
->> ...
->>
->> +static int mmap_kcore(struct file *file, struct vm_area_struct *vma)
->> +{
->> +	size_t size = vma->vm_end - vma->vm_start;
->> +	u64 start, pfn;
->> +	int nphdr;
->> +	size_t data_offset;
->> +	size_t phdrs_len, notes_len;
->> +	struct kcore_list *m = NULL;
->> +	int ret = 0;
->> +
->> +	down_read(&kclist_lock);
->> +
->> +	get_kcore_size(&nphdr, &phdrs_len, &notes_len, &data_offset);
->> +
->> +	start = kc_offset_to_vaddr(((u64)vma->vm_pgoff << PAGE_SHIFT) -
->> +		((data_offset >> PAGE_SHIFT) << PAGE_SHIFT));
->> +
->> +	list_for_each_entry(m, &kclist_head, list) {
->> +		if (start >= m->addr && size <= m->size)
->> +			break;
->> +	}
->> +
->> +	if (&m->list == &kclist_head) {
->> +		ret = -EINVAL;
->> +		goto out;
->> +	}
->> +
->> +	if (vma->vm_flags & (VM_WRITE | VM_EXEC)) {
->> +		ret = -EPERM;
->> +		goto out;
->> +	}
->> +
->> +	vma->vm_flags &= ~(VM_MAYWRITE | VM_MAYEXEC);
->> +	vma->vm_flags |= VM_MIXEDMAP;
->> +	vma->vm_ops = &kcore_mmap_ops;
->> +
->> +	if (kern_addr_valid(start)) {
->> +		if (m->type == KCORE_RAM || m->type == KCORE_REMAP)
-> 
-> KCORE_REMAP was removed by
-> https://lkml.kernel.org/r/20210526093041.8800-2-david@redhat.com
-> 
-> I did this:
-> 
-> --- a/fs/proc/kcore.c~fs-proc-kcorec-add-mmap-interface-fix
-> +++ a/fs/proc/kcore.c
-> @@ -660,7 +660,7 @@ static int mmap_kcore(struct file *file,
->   	vma->vm_ops = &kcore_mmap_ops;
->   
->   	if (kern_addr_valid(start)) {
-> -		if (m->type == KCORE_RAM || m->type == KCORE_REMAP)
-> +		if (m->type == KCORE_RAM)
->   			pfn = __pa(start) >> PAGE_SHIFT;
->   		else if (m->type == KCORE_TEXT)
->   			pfn = __pa_symbol(start) >> PAGE_SHIFT;
-> 
 
-   Thank you very much.
+Thanks!
+Menglong Dong
