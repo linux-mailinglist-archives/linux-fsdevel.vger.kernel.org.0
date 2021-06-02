@@ -2,133 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A014398F33
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 17:46:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 658C0398F3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 17:50:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232079AbhFBPsg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 11:48:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47967 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231770AbhFBPsg (ORCPT
+        id S232322AbhFBPwF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 11:52:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231614AbhFBPwE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 11:48:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1622648812;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VHIsflmb9bo7+7z4ppg/I+v72fjIcbK96I8VFOpCXh8=;
-        b=XH9OmckizezjF4RAMxVaEPAx7hYSaRmk4E3/BgXyJseVdXapbaRLGGKfdZms+S4+wtDQBR
-        MY4pKs3O20pxf1OuXbQTTrpoKXUiWvIUH97iu+A/M36oLj/SWvQ0ehf/NG9JWOqEpQFmod
-        rkPSpVZUo5l0aRy0cZQZGQonyw+alxI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-537--p8Xm_ZOMI6igpusBMRAAg-1; Wed, 02 Jun 2021 11:46:51 -0400
-X-MC-Unique: -p8Xm_ZOMI6igpusBMRAAg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D1AFB180E46D;
-        Wed,  2 Jun 2021 15:46:49 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E9CCA100238C;
-        Wed,  2 Jun 2021 15:46:40 +0000 (UTC)
-Date:   Wed, 2 Jun 2021 11:46:38 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-audit@redhat.com, Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
- support to io_uring
-Message-ID: <20210602154638.GA3711857@madcap2.tricolour.ca>
-References: <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
- <9e69e4b6-2b87-a688-d604-c7f70be894f5@kernel.dk>
- <3bef7c8a-ee70-d91d-74db-367ad0137d00@kernel.dk>
- <fa7bf4a5-5975-3e8c-99b4-c8d54c57da10@kernel.dk>
- <a7669e4a-e7a7-7e94-f6ce-fa48311f7175@kernel.dk>
- <CAHC9VhSKPzADh=qcPp7r7ZVD2cpr2m8kQsui43LAwPr-9BNaxQ@mail.gmail.com>
- <b20f0373-d597-eb0e-5af3-6dcd8c6ba0dc@kernel.dk>
- <CAHC9VhRZEwtsxjhpZM1DXGNJ9yL59B7T_p2B60oLmC_YxCrOiw@mail.gmail.com>
- <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com>
- <94e50554-f71a-50ab-c468-418863d2b46f@gmail.com>
+        Wed, 2 Jun 2021 11:52:04 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA6F1C06174A
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jun 2021 08:50:20 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id h5-20020a05600c3505b029019f0654f6f1so3549564wmq.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jun 2021 08:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=QtEpTHFvtzggN4P1k0hsNnVoWjVRPry/NFswHCPs2UM=;
+        b=hFLLKLcW08wh4AyNyILNZ03SoR18vh8RNV7DCwZ0y5/0HYhJ+FppkpwaU+UmhBy8ey
+         xEzUjIkxwcbRrH51MoyQLY80fK+VDJDtVi37daTcf6uWw0Q1D/voO7yEsRBt4qZL//ow
+         SXRYXRA9wbzQ6mc0Q98Fj9n5KBF3+EslAVpTtJYwH64KsYXDe5FkQuqy4LxoUpbMFXRk
+         Ee6oqThsFUjxUOlihtjxKQ7kx12sTx0oVIbpGxpApfHAxiUZoT2j87Crp1RdWlalqVvE
+         8YAysRsBdkguTjQKW2IP3Rxnipi38DIWk24SANKTivUzFF+8VcpI36vLwe/Gv8Bj27d8
+         YTJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QtEpTHFvtzggN4P1k0hsNnVoWjVRPry/NFswHCPs2UM=;
+        b=WaoYwAhKudOZkNPlevf+HS1j/OUH1mXL5y9c354m4CdCu9UgtBr2qib8PsoO3rM7qD
+         ttPfBCkv8wyddlsWJgyRQb4F8eJhv0c/oCdzJx/lYxXwKLir5JfuQv1QK3k6Dh6jResY
+         a7i3wTjh1/XH5viVzcURTP3TSD4xzRuwfiGzahW0KmTiYNOW2VCZKbRU8dAz76oLSu6a
+         DsvutXAgLTTKK0tX2u9lHBPKyyEa3Hg34Sz9CzJyQ0QG021HIimnyBT1PoJ2YHRkF+yD
+         RSU8P67tNyT9R1UtbQn2OcI5kCiBeV4C5tl+b1xtVGreuYI/UMiW30izYfQvrNHh4I+A
+         CTuA==
+X-Gm-Message-State: AOAM5338akw5hPPljJdbkAOkyhix2XsIaqDYY91VzKV41B0suAIgrNkD
+        LkD9Ih8dSxT4zhcXvspbhNyc+g==
+X-Google-Smtp-Source: ABdhPJyVWDPrVUxeC7SY7yjQOBdmqSY7OoOvkcyI/OlA3S06goyyAUZXvP47RlBmiBUQFTE2d8+eOQ==
+X-Received: by 2002:a05:600c:2dd7:: with SMTP id e23mr5900075wmh.186.1622649019512;
+        Wed, 02 Jun 2021 08:50:19 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:c7a8:950f:56b5:4064])
+        by smtp.gmail.com with ESMTPSA id q5sm126351wmc.0.2021.06.02.08.50.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jun 2021 08:50:19 -0700 (PDT)
+Date:   Wed, 2 Jun 2021 16:50:17 +0100
+From:   Alessio Balsini <balsini@android.com>
+To:     Peng Tao <tao.peng@linux.alibaba.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Alessio Balsini <balsini@android.com>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH RFC] fuse: add generic file store
+Message-ID: <YLeoucLiMOSPwn4U@google.com>
+References: <1622537906-54361-1-git-send-email-tao.peng@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <94e50554-f71a-50ab-c468-418863d2b46f@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <1622537906-54361-1-git-send-email-tao.peng@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-06-02 09:26, Pavel Begunkov wrote:
-> On 5/28/21 5:02 PM, Paul Moore wrote:
-> > On Wed, May 26, 2021 at 4:19 PM Paul Moore <paul@paul-moore.com> wrote:
-> >> ... If we moved the _entry
-> >> and _exit calls into the individual operation case blocks (quick
-> >> openat example below) so that only certain operations were able to be
-> >> audited would that be acceptable assuming the high frequency ops were
-> >> untouched?  My initial gut feeling was that this would involve >50% of
-> >> the ops, but Steve Grubb seems to think it would be less; it may be
-> >> time to look at that a bit more seriously, but if it gets a NACK
-> >> regardless it isn't worth the time - thoughts?
-> >>
-> >>   case IORING_OP_OPENAT:
-> >>     audit_uring_entry(req->opcode);
-> >>     ret = io_openat(req, issue_flags);
-> >>     audit_uring_exit(!ret, ret);
-> >>     break;
-> > 
-> > I wanted to pose this question again in case it was lost in the
-> > thread, I suspect this may be the last option before we have to "fix"
-> > things at the Kconfig level.  I definitely don't want to have to go
-> > that route, and I suspect most everyone on this thread feels the same,
-> > so I'm hopeful we can find a solution that is begrudgingly acceptable
-> > to both groups.
+On Tue, Jun 01, 2021 at 04:58:26PM +0800, Peng Tao wrote:
+> Add a generic file store that userspace can save/restore any open file
+> descriptor. These file descriptors can be managed by different
+> applications not just the same user space application.
 > 
-> May work for me, but have to ask how many, and what is the
-> criteria? I'd think anything opening a file or manipulating fs:
+> A possible use case is fuse fd passthrough being developed
+> by Alessio Balsini [1] where underlying file system fd can be saved in
+> this file store.
 > 
-> IORING_OP_ACCEPT, IORING_OP_CONNECT, IORING_OP_OPENAT[2],
-> IORING_OP_RENAMEAT, IORING_OP_UNLINKAT, IORING_OP_SHUTDOWN,
-> IORING_OP_FILES_UPDATE
-> + coming mkdirat and others.
+> Another possible use case is user space application live upgrade and
+> failover (upon panic etc.). Currently during userspace live upgrade and
+> failover, open file descriptors usually have to be saved seprately in
+> a different management process with AF_UNIX sendmsg.
 > 
-> IORING_OP_CLOSE? IORING_OP_SEND IORING_OP_RECV?
+> But it causes chicken and egg problem and such management process needs
+> to support live upgrade and failover as well. With a generic file store
+> in the kernel, application live upgrade and failover no longer require such
+> management process to hold reference for their open file descriptors.
 > 
-> What about?
-> IORING_OP_FSYNC, IORING_OP_SYNC_FILE_RANGE,
-> IORING_OP_FALLOCATE, IORING_OP_STATX,
-> IORING_OP_FADVISE, IORING_OP_MADVISE,
-> IORING_OP_EPOLL_CTL
+> This is an RFC to see if the approach makes sense to upstream and it can be
+> tested with the following C programe.
 > 
+> Why FUSE?
+> - Because we are trying to solve FUSE fd passthrough and FUSE daemon
+>   live upgrade.
 > 
-> Another question, io_uring may exercise asynchronous paths,
-> i.e. io_issue_sqe() returns before requests completes.
-> Shouldn't be the case for open/etc at the moment, but was that
-> considered?
+> Why global IDR rather than per fuse connnection one?
+> - Because for live upgrade new process, we don't have a valid fuse connection
+>   in the first place.
+> 
+> Missing cleanup method in case user space messes up?
+> - We can limit the number of saved FDs and hey it is RFC ;).
+> 
+> [1] https://lore.kernel.org/lkml/20210125153057.3623715-1-balsini@android.com/
+> --------
+> 
+> [...]
+> 
 
-This would be why audit needs to monitor a thread until it wraps up, to
-wait for the result code.  My understanding is that both sync and async
-parts of an op would be monitored.
 
-> I don't see it happening, but would prefer to keep it open
-> async reimplementation in a distant future. Does audit sleep?
+Hi Peng,
 
-Some parts do, some parts don't depending on what they are interacting
-with in the kernel.  It can be made to not sleep if needed.
+This is a cool feature indeed.
 
-> Pavel Begunkov
+I guess we also want to ensure that restoring an FD can only be
+performed by a trusted FUSE daemon, and not any other process attached
+to /dev/fuse. Maybe adding some permission checks?
 
-- RGB
+I also see that multiple restores can be done on the same FD, is that
+intended? Shouldn't the IDR entry be removed once restored?
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+As far as I understand, the main use case is to be able to replace a
+FUSE daemon with another, preserving the opened lower file system files.
+How would user space handle the unmounting of the old FUSE file system
+and mounting of the new one?
+I wonder if something can be done with a pair of ioctls similar to
+FUSE_DEV_IOC_CLONE to transfer the FUSE connection from the old to the
+new FUSE daemon.  Maybe either the IDR or some other container to store
+the files that are intended to be preserved can be put in fuse_conn
+instead of keeping it global.
+
+Does it make sense?
+
+Thanks,
+Alessio
 
