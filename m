@@ -2,115 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37C05398D86
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 16:57:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36EB5398D92
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 16:59:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230262AbhFBO7K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 10:59:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34534 "EHLO mail.kernel.org"
+        id S230453AbhFBPBU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 11:01:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230029AbhFBO7J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 10:59:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 63A6F60C3F;
-        Wed,  2 Jun 2021 14:57:22 +0000 (UTC)
+        id S230031AbhFBPBT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Jun 2021 11:01:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B95E7613B4;
+        Wed,  2 Jun 2021 14:59:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622645846;
-        bh=9S5+0imidO+Ol9OzZqRG2yXOFZnJXLzoJ8dwHhJ87c0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nTptz/RlreMg0+WvWbELEa13RR9Mh6Crt8dAeUzRJtFkqemJWRI+ULnVKfkhaZstK
-         vawFGwKVXBV0TVqZkzQZDnRrbYNfKZQ6UBZTxELF8o2ClxDpl7vFkeoieBg2BRWB6V
-         mQ6ozIIHUrgorrb/sJdGW9dfL/SO9mIR+UCiwgO6W9o2y45oeB/uiw6CWwYBiwJtC5
-         Y0GbUj65jYHd/OgfuIqc8gs7BrFGTnDjxy80AdnLetKU7UGZ4GTin2ZgyubqFz3x9h
-         oJXgwPx3LLdNBok4d7d8cab8mhdwhx5U/g7YKOr0ndvllgPTgBXNQZ/CEkkZri42kq
-         hXmxbPGlR3tcw==
-Subject: Re: [PATCH 2/2] f2fs: Advertise encrypted casefolding in sysfs
-To:     Daniel Rosenberg <drosen@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-References: <20210602041539.123097-1-drosen@google.com>
- <20210602041539.123097-3-drosen@google.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <a954e38e-8ace-df39-3d74-814afd798267@kernel.org>
-Date:   Wed, 2 Jun 2021 22:57:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        s=k20201202; t=1622645976;
+        bh=lULBTNw8ShimVVrtBYDbb5vhV5dQ9U6lx3o98b0hW5w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OQiBvXalcmFDhP4VUJkLfFfjUL+AdCowcIIHtwCBDEqTOBmz1OdBU6rrODvuN+9rD
+         mOLZKyuSS6i9EOd55gn+hVr2qB4URf3FK/46utTh8Mh1nd3yfAS9gC2T8qY5RT3IQY
+         b4rlXGea5BqIi+sm9FltOrrnryu0LA5VhApDTgyH63PLiPiZ2y0qibL1ECCDe/bn4n
+         SELGuhZLGN0WPbHVxREPrkTVpEWesEuUbZ+F7OzJ3FIIUPCtX92osJVk5KljY297eg
+         yycYme0OjJHY2hdQ/MWGMhjJv0YWgp66DxbyRygrcbb6F9I+DfNX1xA1IgwfjJU0xb
+         xfBJRIrGQb7lw==
+Date:   Wed, 2 Jun 2021 15:59:21 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
+        rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
+Subject: Re: [PATCH 2/6] sched: Introduce task_is_running()
+Message-ID: <20210602145921.GB31179@willie-the-truck>
+References: <20210602131225.336600299@infradead.org>
+ <20210602133040.334970485@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20210602041539.123097-3-drosen@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210602133040.334970485@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/6/2 12:15, Daniel Rosenberg wrote:
-> Older kernels don't support encryption with casefolding. This adds
-> the sysfs entry encrypted_casefold to show support for those combined
-> features. Support for this feature was originally added by
-> commit 7ad08a58bf67 ("f2fs: Handle casefolding with Encryption")
-
-Shouldn't this be backported to the kernel where we support casefolding
-with encryption? So adding a fixes tag here?
-
-Thanks,
-
+On Wed, Jun 02, 2021 at 03:12:27PM +0200, Peter Zijlstra wrote:
+> Replace a bunch of 'p->state == TASK_RUNNING' with a new helper:
+> task_is_running(p).
 > 
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
->   fs/f2fs/sysfs.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
+>  arch/x86/kernel/process.c |    4 ++--
+>  block/blk-mq.c            |    2 +-
+>  include/linux/sched.h     |    2 ++
+>  kernel/locking/lockdep.c  |    2 +-
+>  kernel/rcu/tree_plugin.h  |    2 +-
+>  kernel/sched/core.c       |    6 +++---
+>  kernel/sched/stats.h      |    2 +-
+>  kernel/signal.c           |    2 +-
+>  kernel/softirq.c          |    3 +--
+>  mm/compaction.c           |    2 +-
+>  10 files changed, 14 insertions(+), 13 deletions(-)
 > 
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 09e3f258eb52..3c1095a76710 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -161,6 +161,9 @@ static ssize_t features_show(struct f2fs_attr *a,
->   	if (f2fs_sb_has_compression(sbi))
->   		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
->   				len ? ", " : "", "compression");
-> +	if (f2fs_sb_has_casefold(sbi) && f2fs_sb_has_encrypt(sbi))
-> +		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> +				len ? ", " : "", "encrypted_casefold");
->   	len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
->   				len ? ", " : "", "pin_file");
->   	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
-> @@ -579,6 +582,7 @@ enum feat_id {
->   	FEAT_CASEFOLD,
->   	FEAT_COMPRESSION,
->   	FEAT_TEST_DUMMY_ENCRYPTION_V2,
-> +	FEAT_ENCRYPTED_CASEFOLD,
->   };
->   
->   static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-> @@ -600,6 +604,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
->   	case FEAT_CASEFOLD:
->   	case FEAT_COMPRESSION:
->   	case FEAT_TEST_DUMMY_ENCRYPTION_V2:
-> +	case FEAT_ENCRYPTED_CASEFOLD:
->   		return sprintf(buf, "supported\n");
->   	}
->   	return 0;
-> @@ -704,6 +709,9 @@ F2FS_GENERAL_RO_ATTR(avg_vblocks);
->   #ifdef CONFIG_FS_ENCRYPTION
->   F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
->   F2FS_FEATURE_RO_ATTR(test_dummy_encryption_v2, FEAT_TEST_DUMMY_ENCRYPTION_V2);
-> +#ifdef CONFIG_UNICODE
-> +F2FS_FEATURE_RO_ATTR(encrypted_casefold, FEAT_ENCRYPTED_CASEFOLD);
-> +#endif
->   #endif
->   #ifdef CONFIG_BLK_DEV_ZONED
->   F2FS_FEATURE_RO_ATTR(block_zoned, FEAT_BLKZONED);
-> @@ -815,6 +823,9 @@ static struct attribute *f2fs_feat_attrs[] = {
->   #ifdef CONFIG_FS_ENCRYPTION
->   	ATTR_LIST(encryption),
->   	ATTR_LIST(test_dummy_encryption_v2),
-> +#ifdef CONFIG_UNICODE
-> +	ATTR_LIST(encrypted_casefold),
-> +#endif
->   #endif
->   #ifdef CONFIG_BLK_DEV_ZONED
->   	ATTR_LIST(block_zoned),
-> 
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -931,7 +931,7 @@ unsigned long get_wchan(struct task_stru
+>  	unsigned long start, bottom, top, sp, fp, ip, ret = 0;
+>  	int count = 0;
+>  
+> -	if (p == current || p->state == TASK_RUNNING)
+> +	if (p == current || task_is_running(p))
+
+Looks like this one in get_wchan() has been cargo-culted across most of
+arch/ so they'll need fixing up before you rename the struct member.
+
+There's also a weird one in tools/bpf/runqslower/runqslower.bpf.c (!)
+
+Will
