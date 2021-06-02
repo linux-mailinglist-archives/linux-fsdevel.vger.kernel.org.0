@@ -2,121 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E257398D70
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 16:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A8C6398D7C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 16:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231396AbhFBOtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 10:49:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33254 "EHLO mail.kernel.org"
+        id S230169AbhFBO4V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 10:56:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230092AbhFBOtv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 10:49:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0E82261207;
-        Wed,  2 Jun 2021 14:47:58 +0000 (UTC)
+        id S230029AbhFBO4V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Jun 2021 10:56:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2CF09613B4;
+        Wed,  2 Jun 2021 14:54:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622645288;
-        bh=ytbkft451AVHu/sv9O+1yHxWE5QaUUcYpHinzQWGilY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oFaPf/EGcp1bqCNSfbPd9OF2xa7o2Ntfin1h55YHUCHihLqUhuRWFALcsjyJqVvu3
-         Y91bwUZOIsEFC/tL7PsAT3NW2pmuCMMri5f6mMQdOP0nuAVKe9SwYQcmWW9WbZ/XpA
-         PoIpRGydGKIhIKVtHhzVu6FV2kTgGYhx9VOZ08mm/nHsF72YOGlYy3Wo5rD1Ycl6VO
-         iEfCLUY4hdvzrtVG3Pt7BekNhlDuUClohcALpyQQ1KVISUxk8dSk+DozQEt+xxMpvZ
-         6oRLbg4A4VBWbNLsQ8t27gcIkpn2wcsBwsMswN4j9Vrag6G0GPb4whAagnddnPqQmz
-         nNoYUZ6ZDqJdQ==
-Date:   Wed, 2 Jun 2021 15:47:55 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
-        rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 1/6] sched: Unbreak wakeups
-Message-ID: <20210602144755.GA31179@willie-the-truck>
-References: <20210602131225.336600299@infradead.org>
- <20210602133040.271625424@infradead.org>
+        s=k20201202; t=1622645678;
+        bh=CMRWorkve5j9VMMOu1GS9nLuWySAM7tRxFor5CPGeyU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=uIlweWKVN5VnHOpjMBsC3ZymUoSB+/zw6E15DFHI6pN1degN/3CS2BO6EV6DtZ7C+
+         6+l8WXTpq9NzPXrA4CCY4CKxmIT/ydfP+N9QAvUcTBlAvQnyLYWz8jkChuRIagCyHL
+         Lkiy7ztQ0eeyJCNRBRQx6/bRKryr2BklC4KSfhBZIzw0xsAR8+TnHgtbnp/t/xkQ96
+         du/yPC7zS7eZLIz9uYVntSQqR2pzSWsL8lUabl81qaMDlVAvjbRP557Od2c1H6Qzu4
+         PkAuS6SMWutxk4N3w6yu/c82H1wjWhPlj0mkVHWDMgwjzgxN17/f3qymzCGFB8opQl
+         EwzPyutsrPKUw==
+Subject: Re: [PATCH 1/2] f2fs: Show casefolding support only when supported
+To:     Daniel Rosenberg <drosen@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com
+References: <20210602041539.123097-1-drosen@google.com>
+ <20210602041539.123097-2-drosen@google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <f5344d8e-aa94-f3ef-8f74-01f96103632a@kernel.org>
+Date:   Wed, 2 Jun 2021 22:54:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210602133040.271625424@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210602041539.123097-2-drosen@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 03:12:26PM +0200, Peter Zijlstra wrote:
-> Remove broken task->state references and let wake_up_process() DTRT.
+On 2021/6/2 12:15, Daniel Rosenberg wrote:
+> The casefolding feature is only supported when CONFIG_UNICODE is set.
+> This modifies the feature list f2fs presents under sysfs accordingly.
 > 
-> The anti-pattern in these patches breaks the ordering of ->state vs
-> COND as described in the comment near set_current_state() and can lead
-> to missed wakeups:
-> 
-> 	(OoO load, observes RUNNING)<-.
-> 	for (;;) {                    |
-> 	  t->state = UNINTERRUPTIBLE; |
-> 	  smp_mb();          ,-----> ,' (OoO load, observed !COND)
->                              |       |
-> 	                     |       |	COND = 1;
-> 			     |	     `- if (t->state != RUNNING)
->                              |		  wake_up_process(t); // not done
-> 	  if (COND) ---------'
-> 	    break;
-> 	  schedule(); // forever waiting
-> 	}
-> 	t->state = TASK_RUNNING;
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  drivers/net/ethernet/qualcomm/qca_spi.c |    6 ++----
->  drivers/usb/gadget/udc/max3420_udc.c    |   15 +++++----------
->  drivers/usb/host/max3421-hcd.c          |    3 +--
->  kernel/softirq.c                        |    2 +-
->  4 files changed, 9 insertions(+), 17 deletions(-)
+> Fixes: 5aba54302a46 ("f2fs: include charset encoding information in the superblock")
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
 
-Acked-by: Will Deacon <will@kernel.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-I couldn't spot any others.
-
-Will
+Thanks,
