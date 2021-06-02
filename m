@@ -2,177 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F16263984CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 10:59:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAF4B39850D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 11:15:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233004AbhFBJAn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 05:00:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48456 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232922AbhFBJAm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 05:00:42 -0400
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34EEBC061574
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jun 2021 01:59:00 -0700 (PDT)
-Received: by mail-vs1-xe35.google.com with SMTP id f15so683411vsq.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jun 2021 01:59:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kLWpOnx/iw1CEqFu8aVvjEaq/agq3E2iyw94IErInPc=;
-        b=nY1kbY7/QSUCDrXiaFOhA8gbbzhozBN9OX3YIsdbiCCbuY7QO5BqrLZJCFEjB2VYRX
-         asu2pKOjfnO5y0WIadVkgfT8iuJUbt15ZZo2gnik45qZGhELHNFLaqZWP23LwiMPhRtW
-         rIYbrClloptrBKGAgmpU2Yqjpojs1fPfCtQSY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kLWpOnx/iw1CEqFu8aVvjEaq/agq3E2iyw94IErInPc=;
-        b=QZzez1tU6vMR6uWs2+cZO9bBO3bwkcxmEdQ2BvUYD6ZaaOoZQ4mLYgK71MaeqrI6+0
-         oCZZKoVU772VJXH3Os/4Z0fdkqsI5+zKWHVO9rZLjySc8kVVGyvtptaQQiY+WPBI9q1Q
-         mdoHni0kmlQcmktdmgwvl8/YfyflEo5g0vOvDxNDi/bW+LunHr5df0HtBzKmcWsFVNxZ
-         qIrPRwJzs24+6t5X5wRrdZgWsXpvIGaVxs19gd2hcSscbFuS34Q0PO5XoLvBE8shdZ9z
-         cBDeSNnVaWyQ0b/0YnR3DuoLvuxoOaNnNFUhAUcYSK6gcUirP1q0L5Tu34l63q4BesRY
-         9BFQ==
-X-Gm-Message-State: AOAM531npE4nWuDq18Jrq4q/KjLVQt6uPGUwpjdj28g1dtHIXP3CewBL
-        LwBXe9DWArQ3q9JBmq4+HbUd4MtwCpVJfjhDQuq6zA==
-X-Google-Smtp-Source: ABdhPJzWOb/Y/vvMixw7Ap9EZqJmB1Nrwg3Z+raefHVfOAoYA/iY/ULLwcNG9/BhNPcy7/7Wk286HqW7ysbcXK70UaI=
-X-Received: by 2002:a05:6102:b06:: with SMTP id b6mr22371112vst.21.1622624338774;
- Wed, 02 Jun 2021 01:58:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <162218354775.34379.5629941272050849549.stgit@web.messagingengine.com>
- <162218364554.34379.636306635794792903.stgit@web.messagingengine.com>
- <CAJfpeguUj5WKtKZsn_tZZNpiL17ggAPcPBXdpA03aAnjaexWug@mail.gmail.com> <972701826ebb1b3b3e00b12cde821b85eebc9749.camel@themaw.net>
-In-Reply-To: <972701826ebb1b3b3e00b12cde821b85eebc9749.camel@themaw.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 2 Jun 2021 10:58:47 +0200
-Message-ID: <CAJfpegsLqowjMPCAgsFe6eQK_CeixrevUPyA04V2hdYvc0HpLQ@mail.gmail.com>
-Subject: Re: [REPOST PATCH v4 2/5] kernfs: use VFS negative dentry caching
-To:     Ian Kent <raven@themaw.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>,
-        Fox Chen <foxhlchen@gmail.com>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
+        id S231575AbhFBJQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 05:16:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231543AbhFBJQk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Jun 2021 05:16:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9DE94610A8;
+        Wed,  2 Jun 2021 09:14:54 +0000 (UTC)
+Date:   Wed, 2 Jun 2021 11:14:51 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        stable <stable@vger.kernel.org>,
+        David Laight <David.Laight@aculab.com>
+Subject: Re: [PATCH] nsfs: fix oops when ns->ops is not provided
+Message-ID: <20210602091451.kbdul6nhobilwqvi@wittgenstein>
+References: <20210531153410.93150-1-changbin.du@gmail.com>
+ <20210531220128.26c0cb36@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+ <CAM_iQpUEjBDK44=mD5shkmmoDYhmHQaSZtR34rLRkgd9wSWiQQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAM_iQpUEjBDK44=mD5shkmmoDYhmHQaSZtR34rLRkgd9wSWiQQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2 Jun 2021 at 05:44, Ian Kent <raven@themaw.net> wrote:
->
-> On Tue, 2021-06-01 at 14:41 +0200, Miklos Szeredi wrote:
-> > On Fri, 28 May 2021 at 08:34, Ian Kent <raven@themaw.net> wrote:
-> > >
-> > > If there are many lookups for non-existent paths these negative
-> > > lookups
-> > > can lead to a lot of overhead during path walks.
-> > >
-> > > The VFS allows dentries to be created as negative and hashed, and
-> > > caches
-> > > them so they can be used to reduce the fairly high overhead
-> > > alloc/free
-> > > cycle that occurs during these lookups.
+On Tue, Jun 01, 2021 at 12:51:51PM -0700, Cong Wang wrote:
+> On Mon, May 31, 2021 at 10:01 PM Jakub Kicinski <kuba@kernel.org> wrote:
 > >
-> > Obviously there's a cost associated with negative caching too.  For
-> > normal filesystems it's trivially worth that cost, but in case of
-> > kernfs, not sure...
-> >
-> > Can "fairly high" be somewhat substantiated with a microbenchmark for
-> > negative lookups?
->
-> Well, maybe, but anything we do for a benchmark would be totally
-> artificial.
->
-> The reason I added this is because I saw appreciable contention
-> on the dentry alloc path in one case I saw.
-
-If multiple tasks are trying to look up the same negative dentry in
-parallel, then there will be contention on the parent inode lock.
-Was this the issue?   This could easily be reproduced with an
-artificial benchmark.
-
-> > > diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-> > > index 4c69e2af82dac..5151c712f06f5 100644
-> > > --- a/fs/kernfs/dir.c
-> > > +++ b/fs/kernfs/dir.c
-> > > @@ -1037,12 +1037,33 @@ static int kernfs_dop_revalidate(struct
-> > > dentry *dentry, unsigned int flags)
-> > >         if (flags & LOOKUP_RCU)
-> > >                 return -ECHILD;
+> > On Mon, 31 May 2021 23:34:10 +0800 Changbin Du wrote:
+> > > We should not create inode for disabled namespace. A disabled namespace
+> > > sets its ns->ops to NULL. Kernel could panic if we try to create a inode
+> > > for such namespace.
 > > >
-> > > -       /* Always perform fresh lookup for negatives */
-> > > -       if (d_really_is_negative(dentry))
-> > > -               goto out_bad_unlocked;
-> > > +       mutex_lock(&kernfs_mutex);
+> > > Here is an example oops in socket ioctl cmd SIOCGSKNS when NET_NS is
+> > > disabled. Kernel panicked wherever nsfs trys to access ns->ops since the
+> > > proc_ns_operations is not implemented in this case.
 > > >
-> > >         kn = kernfs_dentry_node(dentry);
-> > > -       mutex_lock(&kernfs_mutex);
+> > > [7.670023] Unable to handle kernel NULL pointer dereference at virtual address 00000010
+> > > [7.670268] pgd = 32b54000
+> > > [7.670544] [00000010] *pgd=00000000
+> > > [7.671861] Internal error: Oops: 5 [#1] SMP ARM
+> > > [7.672315] Modules linked in:
+> > > [7.672918] CPU: 0 PID: 1 Comm: systemd Not tainted 5.13.0-rc3-00375-g6799d4f2da49 #16
+> > > [7.673309] Hardware name: Generic DT based system
+> > > [7.673642] PC is at nsfs_evict+0x24/0x30
+> > > [7.674486] LR is at clear_inode+0x20/0x9c
+> > >
+> > > So let's reject such request for disabled namespace.
+> > >
+> > > Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> > > Cc: <stable@vger.kernel.org>
+> > > Cc: Cong Wang <xiyou.wangcong@gmail.com>
+> > > Cc: Jakub Kicinski <kuba@kernel.org>
+> > > Cc: David Laight <David.Laight@ACULAB.COM>
+> > > ---
+> > >  fs/nsfs.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/fs/nsfs.c b/fs/nsfs.c
+> > > index 800c1d0eb0d0..6c055eb7757b 100644
+> > > --- a/fs/nsfs.c
+> > > +++ b/fs/nsfs.c
+> > > @@ -62,6 +62,10 @@ static int __ns_get_path(struct path *path, struct ns_common *ns)
+> > >       struct inode *inode;
+> > >       unsigned long d;
+> > >
+> > > +     /* In case the namespace is not actually enabled. */
+> > > +     if (!ns->ops)
+> > > +             return -EOPNOTSUPP;
 > > > +
-> > > +       /* Negative hashed dentry? */
-> > > +       if (!kn) {
-> > > +               struct kernfs_node *parent;
-> > > +
-> > > +               /* If the kernfs node can be found this is a stale
-> > > negative
-> > > +                * hashed dentry so it must be discarded and the
-> > > lookup redone.
-> > > +                */
-> > > +               parent = kernfs_dentry_node(dentry->d_parent);
+> > >       rcu_read_lock();
+> > >       d = atomic_long_read(&ns->stashed);
+> > >       if (!d)
 > >
-> > This doesn't look safe WRT a racing sys_rename().  In this case
-> > d_move() is called only with parent inode locked, but not with
-> > kernfs_mutex while ->d_revalidate() may not have parent inode locked.
-> > After d_move() the old parent dentry can be freed, resulting in use
-> > after free.  Easily fixed by dget_parent().
->
-> Umm ... I'll need some more explanation here ...
->
-> We are in ref-walk mode so the parent dentry isn't going away.
+> > I'm not sure why we'd pick runtime checks for something that can be
+> > perfectly easily solved at compilation time. Networking should not
+> > be asking for FDs for objects which don't exist.
+> 
+> Four reasons:
+> 
+> 1) ioctl() is not a hot path, so performance is not a problem here.
 
-The parent that was used to lookup the dentry in __d_lookup() isn't
-going away.  But it's not necessarily equal to dentry->d_parent
-anymore.
+Hm, I think a compile time check is better than a runtime check
+independent of performance benefits.
 
-> And this is a negative dentry so rename is going to bail out
-> with ENOENT way early.
+> 
+> 2) There are 3 different places (tun has two more) that need the same
+> fix.
 
-You are right.  But note that negative dentry in question could be the
-target of a rename.  Current implementation doesn't switch the
-target's parent or name, but this wasn't always the case (commit
-076515fc9267 ("make non-exchanging __d_move() copy ->d_parent rather
-than swap them")), so a backport of this patch could become incorrect
-on old enough kernels.
 
-So I still think using dget_parent() is the correct way to do this.
+> 
+> 3) init_net always exits, except it does not have an ops when
+> CONFIG_NET_NS is disabled:
 
-> >
-> > > +               if (parent) {
-> > > +                       const void *ns = NULL;
-> > > +
-> > > +                       if (kernfs_ns_enabled(parent))
-> > > +                               ns = kernfs_info(dentry->d_sb)->ns;
-> > > +                       kn = kernfs_find_ns(parent, dentry-
-> > > >d_name.name, ns);
-> >
-> > Same thing with d_name.  There's
-> > take_dentry_name_snapshot()/release_dentry_name_snapshot() to
-> > properly
-> > take care of that.
->
-> I don't see that problem either, due to the dentry being negative,
-> but please explain what your seeing here.
+Which is true for every namespace.
 
-Yeah.  Negative dentries' names weren't always stable, but that was a
-long time ago (commit 8d85b4845a66 ("Allow sharing external names
-after __d_move()")).
+> 
+> static __net_init int net_ns_net_init(struct net *net)
+> {
+> #ifdef CONFIG_NET_NS
+>         net->ns.ops = &netns_operations;
+> #endif
+>         return ns_alloc_inum(&net->ns);
+> }
+> 
+> 4) *I think* other namespaces need this fix too, for instance
+> init_ipc_ns:
 
-Thanks,
-Miklos
+None of them should have paths to trigger ->ops.
+
+> 
+> struct ipc_namespace init_ipc_ns = {
+>         .ns.count = REFCOUNT_INIT(1),
+>         .user_ns = &init_user_ns,
+>         .ns.inum = PROC_IPC_INIT_INO,
+> #ifdef CONFIG_IPC_NS
+>         .ns.ops = &ipcns_operations,
+> #endif
+> };
+> 
+> whose ns->ops is NULL too if disabled.
+
+But the point is that ns->ops should never be accessed when that
+namespace type is disabled. Or in other words, the bug is that something
+in netns makes use of namespace features when they are disabled. If we
+handle ->ops being NULL we might be tapering over a real bug somewhere.
+
+Jakub's proposal in the other mail makes sense and falls in line with
+how the rest of the netns getters are implemented. For example
+get_net_ns_fd_fd():
+
+#ifdef CONFIG_NET_NS
+
+[...]
+
+struct net *get_net_ns_by_fd(int fd)
+{
+	struct file *file;
+	struct ns_common *ns;
+	struct net *net;
+
+	file = proc_ns_fget(fd);
+	if (IS_ERR(file))
+		return ERR_CAST(file);
+
+	ns = get_proc_ns(file_inode(file));
+	if (ns->ops == &netns_operations)
+		net = get_net(container_of(ns, struct net, ns));
+	else
+		net = ERR_PTR(-EINVAL);
+
+	fput(file);
+	return net;
+}
+
+#else
+struct net *get_net_ns_by_fd(int fd)
+{
+	return ERR_PTR(-EINVAL);
+}
+#endif
+EXPORT_SYMBOL_GPL(get_net_ns_by_fd);
+
+(It seems that "get_net_ns()" could also be moved into the same file as
+get_net_ns_by_fd() btw.)
+
+Christian
