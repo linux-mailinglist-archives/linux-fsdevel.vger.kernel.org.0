@@ -2,146 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11AB1398D73
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 16:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E257398D70
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 16:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231670AbhFBOuK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 10:50:10 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42528 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231611AbhFBOt7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 10:49:59 -0400
-Received: by mail-pl1-f196.google.com with SMTP id v13so1214537ple.9;
-        Wed, 02 Jun 2021 07:48:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NVbiioOCcOcyQ1wfFSkXAav6hw3gHoT6PQtqxVwJtos=;
-        b=Ed3Ts1RN+DIPGKvDGNZ63Q2q9KbJdlj50HkhcgroPktbcIy7kRj+I27WbaUyjtGK4C
-         lmhuhGjQ4v3kPADCOc2zMs0gPqVL2t4axB0dTtq9JmobkotB+sgFelgkDe0vMOiRoyQ7
-         RuHZr+shnzLJzlxBnnN0DrGouICaEwtfVOUzhvWQB4yhH2o25LUhH+az/5x+9FW5i1f8
-         fAcvoNyjS72IqLwE8oQqiwJXSb/IofTuQMmKSOGxLvFDUoj00Q7Ua05aXpCEuZJ99xWW
-         rOruciGtHPTCSJztAashQzkbL2qOMFW92U6GeT8sYAD/FEp3k4XKBbNAXgsc25iWXVMk
-         0Bvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NVbiioOCcOcyQ1wfFSkXAav6hw3gHoT6PQtqxVwJtos=;
-        b=a0DzDr5Gc6wqtd7+KSzSdHD1sqs2II0aKTMBGZVLWVXzZj7/3jnt6C+kZ0ZOR3VmlW
-         w8PkJ3OiypGUfoXYE9AIB4GlvMRXNJRT/Tpy3Dv8HyjGbhJ+DQb0q/EeWYCfiTYLn2w0
-         Os4cBHGhfLaW2Z/S2MC5jQ5RsozOaSjsrW0IpqwwIHc6tOewLJVLZaSVqRNXRDdmjtB9
-         N+Wia2VJdCG+xvLJFDvXy5YCpdPjavkQYXqlh6cp8Y7ahAhfNWrxecWlfdXkNpv6Dfco
-         oPJbSN+0sz9QWOc3AsTUyqLFBdo+NYXURoly5W6agXkSBwx+AHugkJ7xzk2DlMD95Ncb
-         qHRw==
-X-Gm-Message-State: AOAM5316/fuV3dwM8xOsQudWbHzUJx1DGHsbCdnGOqwJKhf/E2WhlS7A
-        vZdLGqLtPiV0StiTWHo31BU=
-X-Google-Smtp-Source: ABdhPJxl+7iCOUsaiyRv/SFrxt248HFsWs3hiUFr5CmaTJKN7SYNd+BpRcthFwjAdtgiMxQkixsr7w==
-X-Received: by 2002:a17:902:eb05:b029:fe:e0fa:e1f1 with SMTP id l5-20020a170902eb05b02900fee0fae1f1mr18555789plb.10.1622645236725;
-        Wed, 02 Jun 2021 07:47:16 -0700 (PDT)
-Received: from localhost ([178.236.46.205])
-        by smtp.gmail.com with ESMTPSA id r135sm7315441pfc.184.2021.06.02.07.47.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 07:47:16 -0700 (PDT)
-From:   menglong8.dong@gmail.com
-X-Google-Original-From: dong.menglong@zte.com.cn
-To:     christian.brauner@ubuntu.com
-Cc:     viro@zeniv.linux.org.uk, keescook@chromium.org,
-        samitolvanen@google.com, johan@kernel.org, ojeda@kernel.org,
-        akpm@linux-foundation.org, dong.menglong@zte.com.cn,
-        masahiroy@kernel.org, joe@perches.com, hare@suse.de,
-        axboe@kernel.dk, jack@suse.cz, tj@kernel.org,
-        gregkh@linuxfoundation.org, song@kernel.org, neilb@suse.de,
-        brho@google.com, mcgrof@kernel.org, palmerdabbelt@google.com,
-        arnd@arndb.de, f.fainelli@gmail.com, linux@rasmusvillemoes.dk,
-        wangkefeng.wang@huawei.com, mhiramat@kernel.org,
-        rostedt@goodmis.org, vbabka@suse.cz, pmladek@suse.com,
-        glider@google.com, chris@chrisdown.name, ebiederm@xmission.com,
-        jojing64@gmail.com, mingo@kernel.org, terrelln@fb.com,
-        geert@linux-m68k.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jeyu@kernel.org, bhelgaas@google.com,
-        josh@joshtriplett.org
-Subject: [PATCH v4 3/3] init/do_mounts.c: fix rootfs_fs_type with ramfs
-Date:   Wed,  2 Jun 2021 22:46:30 +0800
-Message-Id: <20210602144630.161982-4-dong.menglong@zte.com.cn>
-X-Mailer: git-send-email 2.32.0.rc0
-In-Reply-To: <20210602144630.161982-1-dong.menglong@zte.com.cn>
-References: <20210602144630.161982-1-dong.menglong@zte.com.cn>
+        id S231396AbhFBOtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 10:49:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33254 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230092AbhFBOtv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Jun 2021 10:49:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0E82261207;
+        Wed,  2 Jun 2021 14:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622645288;
+        bh=ytbkft451AVHu/sv9O+1yHxWE5QaUUcYpHinzQWGilY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oFaPf/EGcp1bqCNSfbPd9OF2xa7o2Ntfin1h55YHUCHihLqUhuRWFALcsjyJqVvu3
+         Y91bwUZOIsEFC/tL7PsAT3NW2pmuCMMri5f6mMQdOP0nuAVKe9SwYQcmWW9WbZ/XpA
+         PoIpRGydGKIhIKVtHhzVu6FV2kTgGYhx9VOZ08mm/nHsF72YOGlYy3Wo5rD1Ycl6VO
+         iEfCLUY4hdvzrtVG3Pt7BekNhlDuUClohcALpyQQ1KVISUxk8dSk+DozQEt+xxMpvZ
+         6oRLbg4A4VBWbNLsQ8t27gcIkpn2wcsBwsMswN4j9Vrag6G0GPb4whAagnddnPqQmz
+         nNoYUZ6ZDqJdQ==
+Date:   Wed, 2 Jun 2021 15:47:55 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
+        rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
+Subject: Re: [PATCH 1/6] sched: Unbreak wakeups
+Message-ID: <20210602144755.GA31179@willie-the-truck>
+References: <20210602131225.336600299@infradead.org>
+ <20210602133040.271625424@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210602133040.271625424@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Menglong Dong <dong.menglong@zte.com.cn>
+On Wed, Jun 02, 2021 at 03:12:26PM +0200, Peter Zijlstra wrote:
+> Remove broken task->state references and let wake_up_process() DTRT.
+> 
+> The anti-pattern in these patches breaks the ordering of ->state vs
+> COND as described in the comment near set_current_state() and can lead
+> to missed wakeups:
+> 
+> 	(OoO load, observes RUNNING)<-.
+> 	for (;;) {                    |
+> 	  t->state = UNINTERRUPTIBLE; |
+> 	  smp_mb();          ,-----> ,' (OoO load, observed !COND)
+>                              |       |
+> 	                     |       |	COND = 1;
+> 			     |	     `- if (t->state != RUNNING)
+>                              |		  wake_up_process(t); // not done
+> 	  if (COND) ---------'
+> 	    break;
+> 	  schedule(); // forever waiting
+> 	}
+> 	t->state = TASK_RUNNING;
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  drivers/net/ethernet/qualcomm/qca_spi.c |    6 ++----
+>  drivers/usb/gadget/udc/max3420_udc.c    |   15 +++++----------
+>  drivers/usb/host/max3421-hcd.c          |    3 +--
+>  kernel/softirq.c                        |    2 +-
+>  4 files changed, 9 insertions(+), 17 deletions(-)
 
-As for the existence of second mount which is introduced in previous
-patch, 'rootfs_fs_type', which is used as the root of mount tree, is
-not used directly any more. So it make no sense to make it tmpfs
-while 'CONFIG_INITRAMFS_MOUNT' is enabled.
+Acked-by: Will Deacon <will@kernel.org>
 
-Make 'rootfs_fs_type' ramfs when 'CONFIG_INITRAMFS_MOUNT' enabled.
+I couldn't spot any others.
 
-Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
----
- include/linux/init.h |  4 ++++
- init/do_mounts.c     | 16 ++++++++++------
- 2 files changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/init.h b/include/linux/init.h
-index 045ad1650ed1..45ab6970851f 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -148,7 +148,11 @@ extern unsigned int reset_devices;
- /* used by init/main.c */
- void setup_arch(char **);
- void prepare_namespace(void);
-+#ifndef CONFIG_INITRAMFS_MOUNT
- void __init init_rootfs(void);
-+#else
-+static inline void __init init_rootfs(void) { }
-+#endif
- extern struct file_system_type rootfs_fs_type;
- 
- #if defined(CONFIG_STRICT_KERNEL_RWX) || defined(CONFIG_STRICT_MODULE_RWX)
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 5f82db43ac0f..fcdc849a102a 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -700,7 +700,10 @@ void __init finish_mount_rootfs(bool success)
- 	init_chdir("/");
- 	init_umount(".", 0);
- }
--#endif
-+
-+#define rootfs_init_fs_context ramfs_init_fs_context
-+
-+#else
- 
- static bool is_tmpfs;
- static int rootfs_init_fs_context(struct fs_context *fc)
-@@ -711,13 +714,14 @@ static int rootfs_init_fs_context(struct fs_context *fc)
- 	return ramfs_init_fs_context(fc);
- }
- 
-+void __init init_rootfs(void)
-+{
-+	is_tmpfs = check_tmpfs_enabled();
-+}
-+#endif
-+
- struct file_system_type rootfs_fs_type = {
- 	.name		= "rootfs",
- 	.init_fs_context = rootfs_init_fs_context,
- 	.kill_sb	= kill_litter_super,
- };
--
--void __init init_rootfs(void)
--{
--	is_tmpfs = check_tmpfs_enabled();
--}
--- 
-2.32.0.rc0
-
+Will
