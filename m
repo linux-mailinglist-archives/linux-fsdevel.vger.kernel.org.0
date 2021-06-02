@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F0A398DC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 17:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C770C398DE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 17:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232056AbhFBPEL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 11:04:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36236 "EHLO mail.kernel.org"
+        id S231392AbhFBPIG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 11:08:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232054AbhFBPEH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 11:04:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 407C1613BF;
-        Wed,  2 Jun 2021 15:02:15 +0000 (UTC)
+        id S230456AbhFBPIF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Jun 2021 11:08:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DA65E613B1;
+        Wed,  2 Jun 2021 15:06:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622646144;
-        bh=iqy0WVYDEpl3OEqiwYR2vHlixZDZNAuGOuMgnWDXeR8=;
+        s=k20201202; t=1622646382;
+        bh=BP0oFnLplpQzbCvalvHpB7NqrdywR5DFEAfyxB1g9Jw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O+pqG+GrEcw9WVS8/OW/fQfSxSijYrBV2XZxysaVScijAUnd0cVcWSF4nom6VYF7/
-         Xyj4yQuXkrrTuHJnUpufQZyClixRruRrV6dddsrZRqOQc+UgpG4vsSCBUy91HBwhfj
-         S4qt9rHniezYWqyJmpYVr3rEugD00r4pGxG9asyrSW0y4cnvEcyeHwtxVwtOD0WKZZ
-         CxVeWNbOBJkHO0H7W+0s6rOxAZoTcR6qnwXcmM/nQ5icf4zBj8IsluJAeqSZ9roUcx
-         S4+extTRu1FhJzpL0fTK8fMnTglu0lQMSa9EV3Tq/LcFiaa96LORrcAJlT/uJ7FgCX
-         ZTIEp+h3YHIzg==
-Date:   Wed, 2 Jun 2021 16:02:11 +0100
+        b=jt/JfwEGGlSy3hTqeZO3M/TRZGRYdN+uS6BuUDgGWYc5+7OM1jehc/I9GyTKk2giU
+         x8Fz6MywEP2GyftaSPZuTT4frUE4LJJFTbKNlFpWaV8FNSJBHs39bu4E9I4SLfLcqO
+         HMHRVnWqIqa56gxBT11Ofr79h6KJWIenXTFIjgotpx1WoRwxUuESzepF3f2J82onWW
+         6KmGn6d5Bc6iSjd3ikJm06ctf56Aqa5WONxHcW0SvlYtFWsSxXD7djl+hbn3SCVIAR
+         qZZg4puE8ocBtV+bfRn446ajL6ZLJwoZfD6XNzRQcxu8UqCMnHwciVTCXlxPOmPFq8
+         KdRM+B30YEPFA==
+Date:   Wed, 2 Jun 2021 16:06:09 +0100
 From:   Will Deacon <will@kernel.org>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -73,33 +73,34 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         kgdb-bugreport@lists.sourceforge.net,
         linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
         rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 4/6] sched: Add get_current_state()
-Message-ID: <20210602150211.GC31179@willie-the-truck>
+Subject: Re: [PATCH 5/6] sched,timer: Use __set_current_state()
+Message-ID: <20210602150609.GD31179@willie-the-truck>
 References: <20210602131225.336600299@infradead.org>
- <20210602133040.461908001@infradead.org>
+ <20210602133040.524487671@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210602133040.461908001@infradead.org>
+In-Reply-To: <20210602133040.524487671@infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 03:12:29PM +0200, Peter Zijlstra wrote:
-> Remove yet another few p->state accesses.
+On Wed, Jun 02, 2021 at 03:12:30PM +0200, Peter Zijlstra wrote:
 > 
 > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
->  block/blk-mq.c        |    2 +-
->  include/linux/sched.h |    2 ++
->  kernel/freezer.c      |    2 +-
->  kernel/sched/core.c   |    6 +++---
->  4 files changed, 7 insertions(+), 5 deletions(-)
-
-I think you can include kernel/kcsan/report.c here too.
-
-With that:
+>  kernel/time/timer.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- a/kernel/time/timer.c
+> +++ b/kernel/time/timer.c
+> @@ -1879,7 +1879,7 @@ signed long __sched schedule_timeout(sig
+>  			printk(KERN_ERR "schedule_timeout: wrong timeout "
+>  				"value %lx\n", timeout);
+>  			dump_stack();
+> -			current->state = TASK_RUNNING;
+> +			__set_current_state(TASK_RUNNING);
 
 Acked-by: Will Deacon <will@kernel.org>
 
