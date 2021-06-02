@@ -2,155 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8AA3993B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 21:44:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6AB23993CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 21:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229769AbhFBTqC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 15:46:02 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:56082 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbhFBTqC (ORCPT
+        id S229813AbhFBTtH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 15:49:07 -0400
+Received: from mail-ed1-f45.google.com ([209.85.208.45]:36490 "EHLO
+        mail-ed1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229656AbhFBTtD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 15:46:02 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 11B1A219C9;
-        Wed,  2 Jun 2021 19:44:17 +0000 (UTC)
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id E98D2118DD;
-        Wed,  2 Jun 2021 19:44:04 +0000 (UTC)
-Received: from director2.suse.de ([192.168.254.72])
-        by imap3-int with ESMTPSA
-        id 2jzcLITft2B5CwAALh3uQQ
-        (envelope-from <dave@stgolabs.net>); Wed, 02 Jun 2021 19:44:04 +0000
-Date:   Wed, 2 Jun 2021 12:43:59 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
-        rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 1/6] sched: Unbreak wakeups
-Message-ID: <20210602194359.pxujd4rx4lxv2ldm@offworld>
-Mail-Followup-To: Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
-        Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
-        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
-        rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
-References: <20210602131225.336600299@infradead.org>
- <20210602133040.271625424@infradead.org>
+        Wed, 2 Jun 2021 15:49:03 -0400
+Received: by mail-ed1-f45.google.com with SMTP id w21so4221164edv.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jun 2021 12:47:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LqoEKJiVAWZlSSI9JgAO1d0PhyXvjYnfYNG32/S+e5M=;
+        b=EMhP/o1/rpuV//xhmlzEPw8/EVDK0SFQUUhcfioPAsN846CbLBW+OYC6S0TtOyA4DP
+         FQoc7RIEZ5fySWPmQ+1x0gGHcjimL5ZMJKac/EcqA3Z4zueIvP59l+rPEnduGE10lKxF
+         0TwDwwYXXAmxS0JZjdNetQ9YUHm1RQBkY3i1fRXYOEFIxB06Met+Ehp5v5bhM+QHKioD
+         zs6XsYZyeieLi9zikaOnzNKOcV2ikrCtYtP+E+WHWsoCaTc0myMCTy+/5gaXyp+53GEy
+         g4nmpHLHEX3KLyp98x0/yUgMVxjrGL/Xe3uDImW/N3q95rwaIQCgyF5hNXFbAzEoXYPt
+         EQjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LqoEKJiVAWZlSSI9JgAO1d0PhyXvjYnfYNG32/S+e5M=;
+        b=PPR6Wwd4Z+Lipt/85Ol+aQsT15/lf6tZTNRHMySuwbTfdCIVX2Ly36nEbpBZGdQ6J5
+         vsFsDbBsnTnS+LFYs2z5ri3EOhuY4Jq4IaOyae+xccDFgGR5cjoqWzJ2MRbzUgFkK5VR
+         OEnSj7uoEoFC2pAne7W7DxUYF+WtRYGohvvdDSMmsNddPvM/FwgC6xn/yBSPZgVziC7H
+         zFBx1dJpNIPBBbw66fJIIZUh+1MxT6i+8rj36/MuAOdCYjJV8FtBcJuHP8zVSKp4yhvI
+         FIjGpLruROd47M40650ig93N9rHxSqnjYMO/ujxAtbCiTttFoufyy1JW6O9+lfkdoauz
+         BodA==
+X-Gm-Message-State: AOAM531AxoovpkpOQCuAG0F+4BKJcqjkDaNzxq+Kx5tlFul9Wcczrzen
+        7mchNS7g2Yt1C4Da3b1nhVgKeBmtVTGAJMcYo0Jl
+X-Google-Smtp-Source: ABdhPJyuLy2X/c63hvfm+x3eKVgUZz+1DStQP3zkb//f5hhY17s9fx1FxgbH/tqGdqyXbTZs3U+uNHV5N9KUTgXL4f8=
+X-Received: by 2002:a05:6402:35d4:: with SMTP id z20mr40197715edc.164.1622663179644;
+ Wed, 02 Jun 2021 12:46:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20210602133040.271625424@infradead.org>
-User-Agent: NeoMutt/20201120
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl> <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com> <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk> <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+ <9e69e4b6-2b87-a688-d604-c7f70be894f5@kernel.dk> <3bef7c8a-ee70-d91d-74db-367ad0137d00@kernel.dk>
+ <fa7bf4a5-5975-3e8c-99b4-c8d54c57da10@kernel.dk> <a7669e4a-e7a7-7e94-f6ce-fa48311f7175@kernel.dk>
+ <CAHC9VhSKPzADh=qcPp7r7ZVD2cpr2m8kQsui43LAwPr-9BNaxQ@mail.gmail.com>
+ <b20f0373-d597-eb0e-5af3-6dcd8c6ba0dc@kernel.dk> <CAHC9VhRZEwtsxjhpZM1DXGNJ9yL59B7T_p2B60oLmC_YxCrOiw@mail.gmail.com>
+ <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com> <94e50554-f71a-50ab-c468-418863d2b46f@gmail.com>
+In-Reply-To: <94e50554-f71a-50ab-c468-418863d2b46f@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 2 Jun 2021 15:46:08 -0400
+Message-ID: <CAHC9VhS7Vhby4YR94U2YOwMtva-rc=_ifRcZYi1YVPwfi+Xuzg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 02 Jun 2021, Peter Zijlstra wrote:
+On Wed, Jun 2, 2021 at 4:27 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> On 5/28/21 5:02 PM, Paul Moore wrote:
+> > On Wed, May 26, 2021 at 4:19 PM Paul Moore <paul@paul-moore.com> wrote:
+> >> ... If we moved the _entry
+> >> and _exit calls into the individual operation case blocks (quick
+> >> openat example below) so that only certain operations were able to be
+> >> audited would that be acceptable assuming the high frequency ops were
+> >> untouched?  My initial gut feeling was that this would involve >50% of
+> >> the ops, but Steve Grubb seems to think it would be less; it may be
+> >> time to look at that a bit more seriously, but if it gets a NACK
+> >> regardless it isn't worth the time - thoughts?
+> >>
+> >>   case IORING_OP_OPENAT:
+> >>     audit_uring_entry(req->opcode);
+> >>     ret = io_openat(req, issue_flags);
+> >>     audit_uring_exit(!ret, ret);
+> >>     break;
+> >
+> > I wanted to pose this question again in case it was lost in the
+> > thread, I suspect this may be the last option before we have to "fix"
+> > things at the Kconfig level.  I definitely don't want to have to go
+> > that route, and I suspect most everyone on this thread feels the same,
+> > so I'm hopeful we can find a solution that is begrudgingly acceptable
+> > to both groups.
+>
+> May work for me, but have to ask how many, and what is the
+> criteria? I'd think anything opening a file or manipulating fs:
+>
+> IORING_OP_ACCEPT, IORING_OP_CONNECT, IORING_OP_OPENAT[2],
+> IORING_OP_RENAMEAT, IORING_OP_UNLINKAT, IORING_OP_SHUTDOWN,
+> IORING_OP_FILES_UPDATE
+> + coming mkdirat and others.
+>
+> IORING_OP_CLOSE? IORING_OP_SEND IORING_OP_RECV?
+>
+> What about?
+> IORING_OP_FSYNC, IORING_OP_SYNC_FILE_RANGE,
+> IORING_OP_FALLOCATE, IORING_OP_STATX,
+> IORING_OP_FADVISE, IORING_OP_MADVISE,
+> IORING_OP_EPOLL_CTL
 
->Remove broken task->state references and let wake_up_process() DTRT.
->
->The anti-pattern in these patches breaks the ordering of ->state vs
->COND as described in the comment near set_current_state() and can lead
->to missed wakeups:
->
->	(OoO load, observes RUNNING)<-.
->	for (;;) {                    |
->	  t->state = UNINTERRUPTIBLE; |
->	  smp_mb();          ,-----> ,' (OoO load, observed !COND)
->                             |       |
->	                     |       |	COND = 1;
->			     |	     `- if (t->state != RUNNING)
->                             |		  wake_up_process(t); // not done
->	  if (COND) ---------'
->	    break;
->	  schedule(); // forever waiting
->	}
->	t->state = TASK_RUNNING;
->
->Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Looking quickly at v5.13-rc4 the following seems like candidates for
+auditing, there may be a small number of subtractions/additions to
+this list as people take a closer look, but it should serve as a
+starting point:
 
-Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
+IORING_OP_SENDMSG
+IORING_OP_RECVMSG
+IORING_OP_ACCEPT
+IORING_OP_CONNECT
+IORING_OP_FALLOCATE
+IORING_OP_OPENAT
+IORING_OP_CLOSE
+IORING_OP_MADVISE
+IORING_OP_OPENAT2
+IORING_OP_SHUTDOWN
+IORING_OP_RENAMEAT
+IORING_OP_UNLINKAT
+
+... can you live with that list?
+
+> Another question, io_uring may exercise asynchronous paths,
+> i.e. io_issue_sqe() returns before requests completes.
+> Shouldn't be the case for open/etc at the moment, but was that
+> considered?
+
+Yes, I noticed that when testing the code (and it makes sense when you
+look at how io_uring handles things).  Depending on the state of the
+system when the io_uring request is submitted I've seen both sync and
+async io_uring operations with the associated different calling
+contexts.  In the case where io_issue_sqe() needs to defer the
+operation to a different context you will see an audit record
+indicating that the operation failed and then another audit record
+when it completes; it's actually pretty interesting to be able to see
+how the system and io_uring are working.
+
+We could always mask out these delayed attempts, but at this early
+stage they are helpful, and they may be useful for admins.
+
+> I don't see it happening, but would prefer to keep it open
+> async reimplementation in a distant future. Does audit sleep?
+
+The only place in the audit_uring_entry()/audit_uring_exit() code path
+that could sleep at present is the call to audit_log_uring() which is
+made when the rules dictate that an audit record be generated.  The
+offending code is an allocation in audit_log_uring() which is
+currently GFP_KERNEL but really should be GFP_ATOMIC, or similar.  It
+was a copy-n-paste from the similar syscall function where GFP_KERNEL
+is appropriate due to the calling context at the end of the syscall.
+I'll change that as soon as I'm done with this email.
+
+Of course if you are calling io_uring_enter(2), or something similar,
+then audit may sleep as part of the normal syscall processing (as
+mentioned above), but that is due to the fact that io_uring_enter(2)
+is a syscall and not because of anything in io_issue_sqe().
+
+-- 
+paul moore
+www.paul-moore.com
