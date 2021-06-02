@@ -2,155 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EF233989D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 14:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABD4F3989FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 14:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229997AbhFBMmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 08:42:23 -0400
-Received: from www62.your-server.de ([213.133.104.62]:46128 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbhFBMmV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 08:42:21 -0400
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1loQAj-000D4R-Ns; Wed, 02 Jun 2021 14:40:33 +0200
-Received: from [2001:1620:665:0:5795:5b0a:e5d5:5944] (helo=linux-3.fritz.box)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1loQAj-000MyV-DJ; Wed, 02 Jun 2021 14:40:33 +0200
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>, jolsa@redhat.com
-References: <20210517092006.803332-1-omosnace@redhat.com>
- <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net>
- <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
- <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net>
- <CAHC9VhS1XRZjKcTFgH1+n5uA-CeT+9BeSP5jvT2+RE5ougLpUg@mail.gmail.com>
- <2e541bdc-ae21-9a07-7ac7-6c6a4dda09e8@iogearbox.net>
- <CAHC9VhT464vr9sWxqY3PRB4DAccz=LvRMLgWBsSViWMR0JJvOQ@mail.gmail.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <3ca181e3-df32-9ae0-12c6-efb899b7ce7a@iogearbox.net>
-Date:   Wed, 2 Jun 2021 14:40:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S229692AbhFBMsg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 08:48:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34146 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229482AbhFBMsd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Jun 2021 08:48:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 55E576121D;
+        Wed,  2 Jun 2021 12:46:48 +0000 (UTC)
+Date:   Wed, 2 Jun 2021 14:46:45 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Matthew Bobrowski <repnop@google.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 0/5] Add pidfd support to the fanotify API
+Message-ID: <20210602124645.ushfacqlj6wzq6sz@wittgenstein>
+References: <20210524084746.GB32705@quack2.suse.cz>
+ <20210525103133.uctijrnffehlvjr3@wittgenstein>
+ <YK2GV7hLamMpcO8i@google.com>
+ <20210526180529.egrtfruccbioe7az@wittgenstein>
+ <YLYT/oeBCcnbfMzE@google.com>
+ <20210601114628.f3w33yyca5twgfho@wittgenstein>
+ <YLcliQRh4HRGt4Mi@google.com>
+ <CAOQ4uxieRQ3s5rWA55ZBDr4xm6i9vXyWx-iErMgYzGCE5nYKcA@mail.gmail.com>
+ <20210602084854.sokpeqr2wgz7ci4a@wittgenstein>
+ <YLdj9pk4Jpz1qqVl@google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhT464vr9sWxqY3PRB4DAccz=LvRMLgWBsSViWMR0JJvOQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.2/26189/Wed Jun  2 13:10:34 2021)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YLdj9pk4Jpz1qqVl@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/1/21 10:47 PM, Paul Moore wrote:
-> On Mon, May 31, 2021 at 4:24 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
->> On 5/29/21 8:48 PM, Paul Moore wrote:
->> [...]
->>> Daniel's patch side steps that worry by just doing the lockdown
->>> permission check when the BPF program is loaded, but that isn't a
->>> great solution if the policy changes afterward.  I was hoping there
->>> might be some way to perform the permission check as needed, but the
->>> more I look the more that appears to be difficult, if not impossible
->>> (once again, corrections are welcome).
->>
->> Your observation is correct, will try to clarify below a bit.
->>
->>> I'm now wondering if the right solution here is to make use of the LSM
->>> notifier mechanism.  I'm not yet entirely sure if this would work from
->>> a BPF perspective, but I could envision the BPF subsystem registering
->>> a LSM notification callback via register_blocking_lsm_notifier(), see
->>> if Infiniband code as an example, and then when the LSM(s) policy
->>> changes the BPF subsystem would get a notification and it could
->>> revalidate the existing BPF programs and take block/remove/whatever
->>> the offending BPF programs.  This obviously requires a few things
->>> which I'm not sure are easily done, or even possible:
->>>
->>> 1. Somehow the BPF programs would need to be "marked" at
->>> load/verification time with respect to their lockdown requirements so
->>> that decisions can be made later.  Perhaps a flag in bpf_prog_aux?
->>>
->>> 2. While it looks like it should be possible to iterate over all of
->>> the loaded BPF programs in the LSM notifier callback via
->>> idr_for_each(prog_idr, ...), it is not clear to me if it is possible
->>> to safely remove, or somehow disable, BPF programs once they have been
->>> loaded.  Hopefully the BPF folks can help answer that question.
->>>
->>> 3. Disabling of BPF programs might be preferable to removing them
->>> entirely on LSM policy changes as it would be possible to make the
->>> lockdown state less restrictive at a future point in time, allowing
->>> for the BPF program to be executed again.  Once again, not sure if
->>> this is even possible.
->>
->> Part of why this gets really complex/impossible is that BPF programs in
->> the kernel are reference counted from various sides, be it that there
->> are references from user space to them (fd from application, BPF fs, or
->> BPF links), hooks where they are attached to as well as tail call maps
->> where one BPF prog calls into another. There is currently also no global
->> infra of some sort where you could piggy back to atomically keep track of
->> all the references in a list or such. And the other thing is that BPF progs
->> have no ownership that is tied to a specific task after they have been
->> loaded. Meaning, once they are loaded into the kernel by an application
->> and attached to a specific hook, they can remain there potentially until
->> reboot of the node, so lifecycle of the user space application != lifecycle
->> of the BPF program.
+On Wed, Jun 02, 2021 at 08:56:54PM +1000, Matthew Bobrowski wrote:
+> On Wed, Jun 02, 2021 at 10:48:54AM +0200, Christian Brauner wrote:
+> > On Wed, Jun 02, 2021 at 10:18:36AM +0300, Amir Goldstein wrote:
+> > > On Wed, Jun 2, 2021 at 9:30 AM Matthew Bobrowski <repnop@google.com> wrote:
+> > > >
+> > > > On Tue, Jun 01, 2021 at 01:46:28PM +0200, Christian Brauner wrote:
+> > > > > On Tue, Jun 01, 2021 at 09:03:26PM +1000, Matthew Bobrowski wrote:
+> > > > > > On Wed, May 26, 2021 at 08:05:29PM +0200, Christian Brauner wrote:
+> > > > > > > On Wed, May 26, 2021 at 09:20:55AM +1000, Matthew Bobrowski wrote:
+> > > > > > > > On Tue, May 25, 2021 at 12:31:33PM +0200, Christian Brauner wrote:
+> > > > > > > > > On Mon, May 24, 2021 at 10:47:46AM +0200, Jan Kara wrote:
+> > > > > > > > > > On Sat 22-05-21 09:32:36, Matthew Bobrowski wrote:
+> > > > > > > > > > > On Fri, May 21, 2021 at 12:40:56PM +0200, Jan Kara wrote:
+> > > > > > > > > > > > On Fri 21-05-21 20:15:35, Matthew Bobrowski wrote:
+> > > > > > > > > > > > > On Thu, May 20, 2021 at 03:55:27PM +0200, Jan Kara wrote:
+> > > > > > > > > > > > > There's one thing that I'd like to mention, and it's something in
+> > > > > > > > > > > > > regards to the overall approach we've taken that I'm not particularly
+> > > > > > > > > > > > > happy about and I'd like to hear all your thoughts. Basically, with
+> > > > > > > > > > > > > this approach the pidfd creation is done only once an event has been
+> > > > > > > > > > > > > queued and the notification worker wakes up and picks up the event
+> > > > > > > > > > > > > from the queue processes it. There's a subtle latency introduced when
+> > > > > > > > > > > > > taking such an approach which at times leads to pidfd creation
+> > > > > > > > > > > > > failures. As in, by the time pidfd_create() is called the struct pid
+> > > > > > > > > > > > > has already been reaped, which then results in FAN_NOPIDFD being
+> > > > > > > > > > > > > returned in the pidfd info record.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Having said that, I'm wondering what the thoughts are on doing pidfd
+> > > > > > > > > > > > > creation earlier on i.e. in the event allocation stages? This way, the
+> > > > > > > > > > > > > struct pid is pinned earlier on and rather than FAN_NOPIDFD being
+> > > > > > > > > > > > > returned in the pidfd info record because the struct pid has been
+> > > > > > > > > > > > > already reaped, userspace application will atleast receive a valid
+> > > > > > > > > > > > > pidfd which can be used to check whether the process still exists or
+> > > > > > > > > > > > > not. I think it'll just set the expectation better from an API
+> > > > > > > > > > > > > perspective.
+> > > > > > > > > > > >
+> > > > > > > > > > > > Yes, there's this race. OTOH if FAN_NOPIDFD is returned, the listener can
+> > > > > > > > > > > > be sure the original process doesn't exist anymore. So is it useful to
+> > > > > > > > > > > > still receive pidfd of the dead process?
+> > > > > > > > > > >
+> > > > > > > > > > > Well, you're absolutely right. However, FWIW I was approaching this
+> > > > > > > > > > > from two different angles:
+> > > > > > > > > > >
+> > > > > > > > > > > 1) I wanted to keep the pattern in which the listener checks for the
+> > > > > > > > > > >    existence/recycling of the process consistent. As in, the listener
+> > > > > > > > > > >    would receive the pidfd, then send the pidfd a signal via
+> > > > > > > > > > >    pidfd_send_signal() and check for -ESRCH which clearly indicates
+> > > > > > > > > > >    that the target process has terminated.
+> > > > > > > > > > >
+> > > > > > > > > > > 2) I didn't want to mask failed pidfd creation because of early
+> > > > > > > > > > >    process termination and other possible failures behind a single
+> > > > > > > > > > >    FAN_NOPIDFD. IOW, if we take the -ESRCH approach above, the
+> > > > > > > > > > >    listener can take clear corrective branches as what's to be done
+> > > > > > > > > > >    next if a race is to have been detected, whereas simply returning
+> > > > > > > > > > >    FAN_NOPIDFD at this stage can mean multiple things.
+> > > > > > > > > > >
+> > > > > > > > > > > Now that I've written the above and keeping in mind that we'd like to
+> > > > > > > > > > > refrain from doing anything in the event allocation stages, perhaps we
+> > > > > > > > > > > could introduce a different error code for detecting early process
+> > > > > > > > > > > termination while attempting to construct the info record. WDYT?
+> > > > > > > > > >
+> > > > > > > > > > Sure, I wouldn't like to overengineer it but having one special fd value for
+> > > > > > > > > > "process doesn't exist anymore" and another for general "creating pidfd
+> > > > > > > > > > failed" looks OK to me.
+> > > > > > > > >
+> > > > > > > > > FAN_EPIDFD -> "creation failed"
+> > > > > > > > > FAN_NOPIDFD -> "no such process"
+> > > > > > > >
+> > > > > > > > Yes, I was thinking something along the lines of this...
+> > > > > > > >
+> > > > > > > > With the approach that I've proposed in this series, the pidfd
+> > > > > > > > creation failure trips up in pidfd_create() at the following
+> > > > > > > > condition:
+> > > > > > > >
+> > > > > > > >         if (!pid || !pid_has_task(pid, PIDTYPE_TGID))
+> > > > > > > >                  return -EINVAL;
+> > > > > > > >
+> > > > > > > > Specifically, the following check:
+> > > > > > > >         !pid_has_task(pid, PIDTYPE_TGID)
+> > > > > > > >
+> > > > > > > > In order to properly report either FAN_NOPIDFD/FAN_EPIDFD to
+> > > > > > > > userspace, AFAIK I'll have to do one of either two things to better
+> > > > > > > > distinguish between why the pidfd creation had failed:
+> > > > > > >
+> > > > > > > Ok, I see. You already do have a reference to a struct pid and in that
+> > > > > > > case we should just always return a pidfd to the caller. For
+> > > > > > > pidfd_open() for example we only report an error when
+> > > > > > > find_get_pid(<pidnr>) doesn't find a struct pid to refer to. But in your
+> > > > > > > case here you already have a struct pid so I think we should just keep
+> > > > > > > this simple and always return a pidfd to the caller and in fact do
+> > > > > > > burden them with figuring out that the process is gone via
+> > > > > > > pidfd_send_signal() instead of complicating our lives here.
+> > > > > >
+> > > > > > Ah, actually Christian... Before, I go ahead and send through the updated
+> > > > > > series. Given what you've mentioned above I'm working with the assumption
+> > > > > > that you're OK with dropping the pid_has_task() check from pidfd_create()
+> > > > > > [0]. Is that right?
+> > > > > >
+> > > > > > If so, I don't know how I feel about this given that pidfd_create() is now
+> > > > > > to be exposed to the rest of the kernel and the pidfd API, as it stands,
+> > > > > > doesn't support the creation of pidfds for non-thread-group leaders. I
+> > > > > > suppose what I don't want is other kernel subsystems, if any, thinking it's
+> > > > > > OK to call pidfd_create() with an arbitrary struct pid and setting the
+> > > > > > expectation that a fully functional pidfd will be returned.
+> > > > > >
+> > > > > > The way I see it, I think we've got two options here:
+> > > > > >
+> > > > > > 1) Leave the pid_has_task() check within pidfd_create() and perform another
+> > > > > >    explicit pid_has_task() check from the fanotify code before calling
+> > > > > >    pidfd_create(). If it returns false, we set something like FAN_NOPIDFD
+> > > > > >    indicating to userspace that there's no such process when the event was
+> > > > > >    created.
+> > > > > >
+> > > > > > 2) Scrap using pidfd_create() all together and implement a fanotify
+> > > > > >    specific pidfd creation wrapper which would allow for more
+> > > > > >    control. Something along the lines of what you've done in kernel/fork.c
+> > > > > >    [1]. Not the biggest fan of this idea just yet given the possibility of
+> > > > > >    it leading to an API drift over time.
+> > > > > >
+> > > > > > WDYT?
+> > > > >
+> > > > > Hm, why would you have to drop the pid_has_task() check again?
+> > > >
+> > > > Because of the race that I brielfy decscribed here [0]. The race exists
+> > > 
+> > > Sorry for being thich. I still don't understand what's racy about this.
+> > > Won't the event reader get a valid pidfd?
+> > > Can't the event reader verify that the pidfd points to a dead process?
+> > > I don't mind returning FAN_NOPIDFD for convenience, but user
+> > > will have to check the pidfd that it got anyway, because process
+> > > can die at any time between reading the event and acting on the
+> > > pidfd.
+> > 
+> > (Replying to this part of the thread so we don't have to many parallel
+> > replies.)
+> > 
+> > Hm, so quoting from link [0] Matthew posted so we all have some context
+> > here:
+> > "Basically, with this approach the pidfd creation is done only once an
+> > event has been queued and the notification worker wakes up and picks up
+> > the event from the queue processes it. There's a subtle latency
+> > introduced when taking such an approach which at times leads to pidfd
+> > creation failures. As in, by the time pidfd_create() is called the
+> > struct pid has already been reaped, which then results in FAN_NOPIDFD
+> > being returned in the pidfd info record."
+> > 
+> > I don't think that's a race and even if I don't think that it's a
+> > meaningful one. So when the event is queued the process is still alive
+> > but when the notification is actually delivered the process is dead.
+> > 
+> > And your point, Matthew, seems to be that the caller should always get a
+> > pidfd back even if the process has already exited _and_ been reaped,
+> > i.e. is dead because it was alive when the event was generated.
+> > 
+> > I think that's no how it needs to work and I have a hard time seeing
+> > this as a good argument. What's problematic about just returning
+> > FAN_NOPIDFD in that case? After all the process is gone. All the caller
+> > can do with such a pidfd is to send it a signal and immediately realize
+> > that the process is gone, i.e. -ESRCH anyway.
 > 
-> I don't think the disjoint lifecycle or lack of task ownership is a
-> deal breaker from a LSM perspective as the LSMs can stash whatever
-> info they need in the security pointer during the program allocation
-> hook, e.g. selinux_bpf_prog_alloc() saves the security domain which
-> allocates/loads the BPF program.
-> 
-> The thing I'm worried about would be the case where a LSM policy
-> change requires that an existing BPF program be removed or disabled.
-> I'm guessing based on the refcounting that there is not presently a
-> clean way to remove a BPF program from the system, but is this
-> something we could resolve?  If we can't safely remove a BPF program
-> from the system, can we replace/swap it with an empty/NULL BPF
-> program?
+> To get things straight, there's no argument here. There's a discussion
 
-Removing progs would somehow mean destroying those references from an
-async event and then /safely/ guaranteeing that nothing is accessing
-them anymore. But then if policy changes once more where they would
-be allowed again we would need to revert back to the original state,
-which brings us to your replace/swap question with an empty/null prog.
-It's not feasible either, because there are different BPF program types
-and they can have different return code semantics that lead to subsequent
-actions. If we were to replace them with an empty/NULL program, then
-essentially this will get us into an undefined system state given it's
-unclear what should be a default policy for each program type, etc.
-Just to pick one simple example, outside of tracing, that comes to mind:
-say, you attached a program with tc to a given device ingress hook. That
-program implements firewalling functionality, and potentially deep down
-in that program there is functionality to record/sample packets along
-with some meta data. Part of what is exported to the ring buffer to the
-user space reader may be a struct net_device field that is otherwise not
-available (or at least not yet), hence it's probe-read with mentioned
-helpers. If you were now to change the SELinux policy for that tc loader
-application, and therefore replace/swap the progs in the kernel that were
-loaded with it (given tc's lockdown policy was recorded in their sec blob)
-with an empty/NULL program, then either you say allow-all or drop-all,
-but either way, you break the firewalling functionality completely by
-locking yourself out of the machine or letting everything through. There
-is no sane way where we could reason about the context/internals of a
-given program where it would be safe to replace with a simple empty/NULL
-prog.
+Ok, I read it as an argument for dropping that check. :)
 
-Best,
-Daniel
+> about what the best approach is for communicating to the event listener
+> that a process has been killed prior to a pidfd being created by/from
+> fanotify. I have no issues with communicating FAN_NOPIDFD to the event
+> listener in such cases. I just want to make sure everyone else is OK with
+> it.
+
+I'm ok with it.
+
+Christian
