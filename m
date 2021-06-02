@@ -2,209 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84DB43982D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 09:18:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C55C398412
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 10:27:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbhFBHUb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 03:20:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53688 "EHLO
+        id S232566AbhFBI2q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 04:28:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbhFBHUa (ORCPT
+        with ESMTP id S232553AbhFBI2p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 03:20:30 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 764F7C061574;
-        Wed,  2 Jun 2021 00:18:48 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id v13so1204599ilh.13;
-        Wed, 02 Jun 2021 00:18:48 -0700 (PDT)
+        Wed, 2 Jun 2021 04:28:45 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8395FC061574;
+        Wed,  2 Jun 2021 01:27:02 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id z137-20020a1c7e8f0000b02901774f2a7dc4so893695wmc.0;
+        Wed, 02 Jun 2021 01:27:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4Yb89e2RPQAY1g3e+qzgCcTeNhI3Fi/TBzgmgk6b208=;
-        b=lie/x3tuRTvP6Sn2+Nqu50VKOrJYDCbY9+WeRs54fevBowol3sP1SF0bTMmxMfc0lN
-         M9t237Qp/emd2/zUi57ouf+ZjttElrynEtSIdJqLzIeGdLy3e56iVT8aBX1oLNNu2t0O
-         8CWeKXdaKYqH8n4IgdwAq6Gd507QpPgoavhQ6aQxmL6RCzdndfDG5c/44Nc89N3duVXl
-         e1wA9SBoNdbI04ptTJGQ7mfYcQGQxZFKbvi+8j53Ei9dlCXlDxwIPY0rqgIq17qcAAW2
-         aHZ62yGPP5qeIvWRD2OgKELc9lcyQpki8T0wrHUfhovznR7ymIqyMmuiB1F2XrRXBvG3
-         yY4g==
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CU0B/oJqWatyP0iZPnko3W/2+Dczj4WeybZjMPNiDQQ=;
+        b=rKx8sgq/rksoQjxuVTAKCHOfo2duG70cbNLuuSluZsvBLfiYMJtrJSrGjKppMtlVJK
+         RAGPaqCXs/QgB3CY4i1rV7Emto/AFXxMeQUI9OeCaP/UnGdIDZ8M3M0nOL6thFM9s9tv
+         kBb7C6pH0YzsalcmK4FytfGrf2BU9jTqeIvBqDqSo5DbmI+/LbSdr96vK3scCXH5fFmm
+         GwpSaX7wkmczKYhMeoidYZPTn+jHwUp5i+5QGzst1vDZqrkCEtk3WugJ1t9LdVVfnOzS
+         TiFOLBlqdIi4A15XeAS1npIJQR/YM5ZgwWiXNJPDhxbAGozSCrc4a1ECzZcYbcDks8fd
+         gePw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4Yb89e2RPQAY1g3e+qzgCcTeNhI3Fi/TBzgmgk6b208=;
-        b=jHVMjA6jWAug8fIZS6BZHGf0emkh/bS4623EVCUknRqhshL6sPyVBFn+rAaKZHdxdJ
-         VDYxcOR073piG4YvJEpAkQXVQSzUNpHNV9+wku+9osIJRXcnuvPC068D9f9Nn+VYbJQF
-         OYcT/j7ZxiZp73vvJkpKQBP40gHM8woZ4b2OGY2WmXPzRlVdHKR8Fv8aRp1rPk0ByJLg
-         H6W6FYRUmgHoYTbqecAcsgKSQcEq1N4255PDzLlrOjt3i/XErMHTIVCEEVI92vwZe9Mt
-         EqUhBcbizNeMXvwaw5+cjkubHqFpraXNCQAIrVa2G16MbR+6gr11cMRaCDQkH2CdTjci
-         bNxw==
-X-Gm-Message-State: AOAM533xQdBOm0DCaO2DHZawv8J4xoGCNiHqIaPs+v2OJMLhpXrv783m
-        PGE4oYkMayabvV7GTeYENgl9lJi4jajg5Zb+M4MTrIrPDhw=
-X-Google-Smtp-Source: ABdhPJwnC+1HG7q2xLk0lBKQX30Ni5RRQMKfGPlyLj58eIu0hzvdpliOiH9Ko+HnK6PTZtJR141TEtlXPhLZYyA2AGY=
-X-Received: by 2002:a05:6e02:1a67:: with SMTP id w7mr24044550ilv.137.1622618327548;
- Wed, 02 Jun 2021 00:18:47 -0700 (PDT)
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CU0B/oJqWatyP0iZPnko3W/2+Dczj4WeybZjMPNiDQQ=;
+        b=hDxdD5VZnVj2tGT7g4pUOLqC7bYyvyuiceWaClBkB+0SrrrWg6soiSnXBiD36DgFId
+         soGa53AGyHqzPY4AK+oTcZ6P/c7889mcew00F7wKW8r4KETmiOLVUyts2/3EPL8DbQkx
+         0yEv/8iiPxCPCKiTNnG/F2wIEy8LTJ6ViFu1T2k517WzCBCxryoXuDEsduQk2kIZNbIT
+         MDwzMS+1vud5lC9APvbSWRSKLQj4Ms/nnRIqSITcLo0jNp3NFOLfGlW7ZQtZrDi2ZzPJ
+         i2/fsAwJicVnqBeM4p7bWf7kbEg19gVhHI5n8RQQtjvHRdNNRGLsB/KCOD+57lG6uuAA
+         kPNg==
+X-Gm-Message-State: AOAM533QmNpvDySkwnq0EtkTe9QUCXACRrYQBKvf9bt20Yz/FRSDfmx0
+        nzAdKuOGFFQ74raBpgYnM9M=
+X-Google-Smtp-Source: ABdhPJwvZTlPfMn4KfCZxEL6JOqJss24Kw5hd2byShk3vARpVOt44/VQKL7R2Fd+bHQ8mGGIyyYhbA==
+X-Received: by 2002:a1c:4304:: with SMTP id q4mr3746995wma.89.1622622421178;
+        Wed, 02 Jun 2021 01:27:01 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.237.139])
+        by smtp.gmail.com with ESMTPSA id p187sm1942070wmp.28.2021.06.02.01.27.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jun 2021 01:27:00 -0700 (PDT)
+To:     Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+ <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
+ <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+ <9e69e4b6-2b87-a688-d604-c7f70be894f5@kernel.dk>
+ <3bef7c8a-ee70-d91d-74db-367ad0137d00@kernel.dk>
+ <fa7bf4a5-5975-3e8c-99b4-c8d54c57da10@kernel.dk>
+ <a7669e4a-e7a7-7e94-f6ce-fa48311f7175@kernel.dk>
+ <CAHC9VhSKPzADh=qcPp7r7ZVD2cpr2m8kQsui43LAwPr-9BNaxQ@mail.gmail.com>
+ <b20f0373-d597-eb0e-5af3-6dcd8c6ba0dc@kernel.dk>
+ <CAHC9VhRZEwtsxjhpZM1DXGNJ9yL59B7T_p2B60oLmC_YxCrOiw@mail.gmail.com>
+ <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+Message-ID: <94e50554-f71a-50ab-c468-418863d2b46f@gmail.com>
+Date:   Wed, 2 Jun 2021 09:26:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <20210520135527.GD18952@quack2.suse.cz> <YKeIR+LiSXqUHL8Q@google.com>
- <20210521104056.GG18952@quack2.suse.cz> <YKhDFCUWX7iU7AzM@google.com>
- <20210524084746.GB32705@quack2.suse.cz> <20210525103133.uctijrnffehlvjr3@wittgenstein>
- <YK2GV7hLamMpcO8i@google.com> <20210526180529.egrtfruccbioe7az@wittgenstein>
- <YLYT/oeBCcnbfMzE@google.com> <20210601114628.f3w33yyca5twgfho@wittgenstein> <YLcliQRh4HRGt4Mi@google.com>
-In-Reply-To: <YLcliQRh4HRGt4Mi@google.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 2 Jun 2021 10:18:36 +0300
-Message-ID: <CAOQ4uxieRQ3s5rWA55ZBDr4xm6i9vXyWx-iErMgYzGCE5nYKcA@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Add pidfd support to the fanotify API
-To:     Matthew Bobrowski <repnop@google.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 2, 2021 at 9:30 AM Matthew Bobrowski <repnop@google.com> wrote:
->
-> On Tue, Jun 01, 2021 at 01:46:28PM +0200, Christian Brauner wrote:
-> > On Tue, Jun 01, 2021 at 09:03:26PM +1000, Matthew Bobrowski wrote:
-> > > On Wed, May 26, 2021 at 08:05:29PM +0200, Christian Brauner wrote:
-> > > > On Wed, May 26, 2021 at 09:20:55AM +1000, Matthew Bobrowski wrote:
-> > > > > On Tue, May 25, 2021 at 12:31:33PM +0200, Christian Brauner wrote:
-> > > > > > On Mon, May 24, 2021 at 10:47:46AM +0200, Jan Kara wrote:
-> > > > > > > On Sat 22-05-21 09:32:36, Matthew Bobrowski wrote:
-> > > > > > > > On Fri, May 21, 2021 at 12:40:56PM +0200, Jan Kara wrote:
-> > > > > > > > > On Fri 21-05-21 20:15:35, Matthew Bobrowski wrote:
-> > > > > > > > > > On Thu, May 20, 2021 at 03:55:27PM +0200, Jan Kara wrote:
-> > > > > > > > > > There's one thing that I'd like to mention, and it's something in
-> > > > > > > > > > regards to the overall approach we've taken that I'm not particularly
-> > > > > > > > > > happy about and I'd like to hear all your thoughts. Basically, with
-> > > > > > > > > > this approach the pidfd creation is done only once an event has been
-> > > > > > > > > > queued and the notification worker wakes up and picks up the event
-> > > > > > > > > > from the queue processes it. There's a subtle latency introduced when
-> > > > > > > > > > taking such an approach which at times leads to pidfd creation
-> > > > > > > > > > failures. As in, by the time pidfd_create() is called the struct pid
-> > > > > > > > > > has already been reaped, which then results in FAN_NOPIDFD being
-> > > > > > > > > > returned in the pidfd info record.
-> > > > > > > > > >
-> > > > > > > > > > Having said that, I'm wondering what the thoughts are on doing pidfd
-> > > > > > > > > > creation earlier on i.e. in the event allocation stages? This way, the
-> > > > > > > > > > struct pid is pinned earlier on and rather than FAN_NOPIDFD being
-> > > > > > > > > > returned in the pidfd info record because the struct pid has been
-> > > > > > > > > > already reaped, userspace application will atleast receive a valid
-> > > > > > > > > > pidfd which can be used to check whether the process still exists or
-> > > > > > > > > > not. I think it'll just set the expectation better from an API
-> > > > > > > > > > perspective.
-> > > > > > > > >
-> > > > > > > > > Yes, there's this race. OTOH if FAN_NOPIDFD is returned, the listener can
-> > > > > > > > > be sure the original process doesn't exist anymore. So is it useful to
-> > > > > > > > > still receive pidfd of the dead process?
-> > > > > > > >
-> > > > > > > > Well, you're absolutely right. However, FWIW I was approaching this
-> > > > > > > > from two different angles:
-> > > > > > > >
-> > > > > > > > 1) I wanted to keep the pattern in which the listener checks for the
-> > > > > > > >    existence/recycling of the process consistent. As in, the listener
-> > > > > > > >    would receive the pidfd, then send the pidfd a signal via
-> > > > > > > >    pidfd_send_signal() and check for -ESRCH which clearly indicates
-> > > > > > > >    that the target process has terminated.
-> > > > > > > >
-> > > > > > > > 2) I didn't want to mask failed pidfd creation because of early
-> > > > > > > >    process termination and other possible failures behind a single
-> > > > > > > >    FAN_NOPIDFD. IOW, if we take the -ESRCH approach above, the
-> > > > > > > >    listener can take clear corrective branches as what's to be done
-> > > > > > > >    next if a race is to have been detected, whereas simply returning
-> > > > > > > >    FAN_NOPIDFD at this stage can mean multiple things.
-> > > > > > > >
-> > > > > > > > Now that I've written the above and keeping in mind that we'd like to
-> > > > > > > > refrain from doing anything in the event allocation stages, perhaps we
-> > > > > > > > could introduce a different error code for detecting early process
-> > > > > > > > termination while attempting to construct the info record. WDYT?
-> > > > > > >
-> > > > > > > Sure, I wouldn't like to overengineer it but having one special fd value for
-> > > > > > > "process doesn't exist anymore" and another for general "creating pidfd
-> > > > > > > failed" looks OK to me.
-> > > > > >
-> > > > > > FAN_EPIDFD -> "creation failed"
-> > > > > > FAN_NOPIDFD -> "no such process"
-> > > > >
-> > > > > Yes, I was thinking something along the lines of this...
-> > > > >
-> > > > > With the approach that I've proposed in this series, the pidfd
-> > > > > creation failure trips up in pidfd_create() at the following
-> > > > > condition:
-> > > > >
-> > > > >         if (!pid || !pid_has_task(pid, PIDTYPE_TGID))
-> > > > >                  return -EINVAL;
-> > > > >
-> > > > > Specifically, the following check:
-> > > > >         !pid_has_task(pid, PIDTYPE_TGID)
-> > > > >
-> > > > > In order to properly report either FAN_NOPIDFD/FAN_EPIDFD to
-> > > > > userspace, AFAIK I'll have to do one of either two things to better
-> > > > > distinguish between why the pidfd creation had failed:
-> > > >
-> > > > Ok, I see. You already do have a reference to a struct pid and in that
-> > > > case we should just always return a pidfd to the caller. For
-> > > > pidfd_open() for example we only report an error when
-> > > > find_get_pid(<pidnr>) doesn't find a struct pid to refer to. But in your
-> > > > case here you already have a struct pid so I think we should just keep
-> > > > this simple and always return a pidfd to the caller and in fact do
-> > > > burden them with figuring out that the process is gone via
-> > > > pidfd_send_signal() instead of complicating our lives here.
-> > >
-> > > Ah, actually Christian... Before, I go ahead and send through the updated
-> > > series. Given what you've mentioned above I'm working with the assumption
-> > > that you're OK with dropping the pid_has_task() check from pidfd_create()
-> > > [0]. Is that right?
-> > >
-> > > If so, I don't know how I feel about this given that pidfd_create() is now
-> > > to be exposed to the rest of the kernel and the pidfd API, as it stands,
-> > > doesn't support the creation of pidfds for non-thread-group leaders. I
-> > > suppose what I don't want is other kernel subsystems, if any, thinking it's
-> > > OK to call pidfd_create() with an arbitrary struct pid and setting the
-> > > expectation that a fully functional pidfd will be returned.
-> > >
-> > > The way I see it, I think we've got two options here:
-> > >
-> > > 1) Leave the pid_has_task() check within pidfd_create() and perform another
-> > >    explicit pid_has_task() check from the fanotify code before calling
-> > >    pidfd_create(). If it returns false, we set something like FAN_NOPIDFD
-> > >    indicating to userspace that there's no such process when the event was
-> > >    created.
-> > >
-> > > 2) Scrap using pidfd_create() all together and implement a fanotify
-> > >    specific pidfd creation wrapper which would allow for more
-> > >    control. Something along the lines of what you've done in kernel/fork.c
-> > >    [1]. Not the biggest fan of this idea just yet given the possibility of
-> > >    it leading to an API drift over time.
-> > >
-> > > WDYT?
-> >
-> > Hm, why would you have to drop the pid_has_task() check again?
->
-> Because of the race that I brielfy decscribed here [0]. The race exists
+On 5/28/21 5:02 PM, Paul Moore wrote:
+> On Wed, May 26, 2021 at 4:19 PM Paul Moore <paul@paul-moore.com> wrote:
+>> ... If we moved the _entry
+>> and _exit calls into the individual operation case blocks (quick
+>> openat example below) so that only certain operations were able to be
+>> audited would that be acceptable assuming the high frequency ops were
+>> untouched?  My initial gut feeling was that this would involve >50% of
+>> the ops, but Steve Grubb seems to think it would be less; it may be
+>> time to look at that a bit more seriously, but if it gets a NACK
+>> regardless it isn't worth the time - thoughts?
+>>
+>>   case IORING_OP_OPENAT:
+>>     audit_uring_entry(req->opcode);
+>>     ret = io_openat(req, issue_flags);
+>>     audit_uring_exit(!ret, ret);
+>>     break;
+> 
+> I wanted to pose this question again in case it was lost in the
+> thread, I suspect this may be the last option before we have to "fix"
+> things at the Kconfig level.  I definitely don't want to have to go
+> that route, and I suspect most everyone on this thread feels the same,
+> so I'm hopeful we can find a solution that is begrudgingly acceptable
+> to both groups.
 
-Sorry for being thich. I still don't understand what's racy about this.
-Won't the event reader get a valid pidfd?
-Can't the event reader verify that the pidfd points to a dead process?
-I don't mind returning FAN_NOPIDFD for convenience, but user
-will have to check the pidfd that it got anyway, because process
-can die at any time between reading the event and acting on the
-pidfd.
+May work for me, but have to ask how many, and what is the
+criteria? I'd think anything opening a file or manipulating fs:
 
-> because we perform the pidfd creation during the notification queue
-> processing and not in the event allocation stages (for reasons that Jan has
-> already covered here [1]). So, tl;dr there is the case where the fanotify
-> calls pidfd_create() and the check for pid_has_task() fails because the
-> struct pid that we're hanging onto within an event no longer contains a
-> task of type PIDTYPE_TGID...
->
-> [0] https://www.spinics.net/lists/linux-api/msg48630.html
-> [1] https://www.spinics.net/lists/linux-api/msg48632.html
+IORING_OP_ACCEPT, IORING_OP_CONNECT, IORING_OP_OPENAT[2],
+IORING_OP_RENAMEAT, IORING_OP_UNLINKAT, IORING_OP_SHUTDOWN,
+IORING_OP_FILES_UPDATE
++ coming mkdirat and others.
 
-I warmly recommend that you use lore.kernel.org for archive links.
+IORING_OP_CLOSE? IORING_OP_SEND IORING_OP_RECV?
 
-Thanks,
-Amir.
+What about?
+IORING_OP_FSYNC, IORING_OP_SYNC_FILE_RANGE,
+IORING_OP_FALLOCATE, IORING_OP_STATX,
+IORING_OP_FADVISE, IORING_OP_MADVISE,
+IORING_OP_EPOLL_CTL
+
+
+Another question, io_uring may exercise asynchronous paths,
+i.e. io_issue_sqe() returns before requests completes.
+Shouldn't be the case for open/etc at the moment, but was that
+considered?
+
+I don't see it happening, but would prefer to keep it open
+async reimplementation in a distant future. Does audit sleep?
+
+-- 
+Pavel Begunkov
