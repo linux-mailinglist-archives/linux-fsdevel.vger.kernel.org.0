@@ -2,126 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B161398CC1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 16:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34FB8398D62
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 16:47:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230273AbhFBOcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 10:32:17 -0400
-Received: from foss.arm.com ([217.140.110.172]:46354 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230031AbhFBOcQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 10:32:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 379C011FB;
-        Wed,  2 Jun 2021 07:30:32 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (unknown [10.57.31.212])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D16593F73D;
-        Wed,  2 Jun 2021 07:30:19 -0700 (PDT)
-Date:   Wed, 2 Jun 2021 15:30:16 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, bristot <bristot@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86 <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        acme <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        paulmck <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        linux-usb@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        cgroups <cgroups@vger.kernel.org>,
-        kgdb-bugreport@lists.sourceforge.net,
-        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
-        rcu <rcu@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        KVM list <kvm@vger.kernel.org>
-Subject: Re: [PATCH 3/6] sched,perf,kvm: Fix preemption condition
-Message-ID: <20210602143016.GE12753@C02TD0UTHF1T.local>
-References: <20210602131225.336600299@infradead.org>
- <20210602133040.398289363@infradead.org>
- <1873020549.5854.1622642347895.JavaMail.zimbra@efficios.com>
- <YLeRVQbXt2hCiO8f@hirez.programming.kicks-ass.net>
+        id S230444AbhFBOsv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 10:48:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42924 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229586AbhFBOst (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Jun 2021 10:48:49 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 932F3C061574;
+        Wed,  2 Jun 2021 07:46:53 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id g18so2385381pfr.2;
+        Wed, 02 Jun 2021 07:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XFhBv3P/CMQqX0kCJSqkaDf0YsrFNm/vuqtLa8LET58=;
+        b=XeBnXTMGLRT1N1VvnG8J0JfYo9xcPHJidl5dvIDrLCcPPhVHTqdFU1r5cuya48XKcX
+         zxPPZf6/3uKpbZQmWcaKLpeGoZyZYyicldsDcR/18ajvKTKlsp6AeKhJ9RGNiI/QO0PI
+         hLL1THvTlOt3Lxj5NVgUhPZyBLCXfCkcFnEblYJs0/Z+/EmYNkLGS6PPPgr86pmITv4g
+         N17IOpMAeAyCPDhTUHGv2gmk2hYfWjgN9TC2c2tusSUT90r2pnHe7HOqB3Idg7sWu5bC
+         5lOk1g1S67ytYq13L/d51601sJvOkgegw7lKtWwqLRwxxyHs/6b/3lwFbbs+qt81h6lp
+         5jmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XFhBv3P/CMQqX0kCJSqkaDf0YsrFNm/vuqtLa8LET58=;
+        b=LyXKVEf7gW16lbwXKylFJW4zjaqp5fnl7jSfpa11eB/8dBiuskHxSROBZwgqMMhDI/
+         gUdlbD6sC0pv5fHZN8Z6MaVVdw7os4+GqAUOGSinX8iSZJca6PjC1qV1ZlEVW7jbyreu
+         JixOADkFvtmU2rpK2ZDTfds8cGxlg0JYAUe5i0GK6ZsH1+3tjHcqtvpIp6Ml1E4e8dyd
+         uooj4Dt1G74i5Ryw+C4TjZpRGPMnhqGrxGOVUOwBUnPkXpArN9Ch5TPIThl0exL/SrdL
+         Yz4HE896SzPn4/2PhXyXIpgh5bjWIiSs85CSfdnPrDAVhys1Hehb9wS5+FrU+8x3bkVH
+         /Lvw==
+X-Gm-Message-State: AOAM533WRT2clF8wBoqr7ewBbNqRehtoY9dZJd1a6+QmOLjonk0PL4hY
+        kIRuq8nGCb7ogXnC0PVr5xg=
+X-Google-Smtp-Source: ABdhPJx39eESncZM65uP9p0EMY6BTJM6mfNVVUzLJWiV6uKzLLHWgyaDKlrHsLMo1oXkpuHPues+qQ==
+X-Received: by 2002:a05:6a00:c8e:b029:2e9:c6a2:bd78 with SMTP id a14-20020a056a000c8eb02902e9c6a2bd78mr17784024pfv.1.1622645213109;
+        Wed, 02 Jun 2021 07:46:53 -0700 (PDT)
+Received: from localhost ([178.236.46.205])
+        by smtp.gmail.com with ESMTPSA id s29sm43942pgm.82.2021.06.02.07.46.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jun 2021 07:46:52 -0700 (PDT)
+From:   menglong8.dong@gmail.com
+X-Google-Original-From: dong.menglong@zte.com.cn
+To:     christian.brauner@ubuntu.com
+Cc:     viro@zeniv.linux.org.uk, keescook@chromium.org,
+        samitolvanen@google.com, johan@kernel.org, ojeda@kernel.org,
+        akpm@linux-foundation.org, dong.menglong@zte.com.cn,
+        masahiroy@kernel.org, joe@perches.com, hare@suse.de,
+        axboe@kernel.dk, jack@suse.cz, tj@kernel.org,
+        gregkh@linuxfoundation.org, song@kernel.org, neilb@suse.de,
+        brho@google.com, mcgrof@kernel.org, palmerdabbelt@google.com,
+        arnd@arndb.de, f.fainelli@gmail.com, linux@rasmusvillemoes.dk,
+        wangkefeng.wang@huawei.com, mhiramat@kernel.org,
+        rostedt@goodmis.org, vbabka@suse.cz, pmladek@suse.com,
+        glider@google.com, chris@chrisdown.name, ebiederm@xmission.com,
+        jojing64@gmail.com, mingo@kernel.org, terrelln@fb.com,
+        geert@linux-m68k.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jeyu@kernel.org, bhelgaas@google.com,
+        josh@joshtriplett.org
+Subject: [PATCH v4 0/3] init/initramfs.c: make initramfs support pivot_root
+Date:   Wed,  2 Jun 2021 22:46:27 +0800
+Message-Id: <20210602144630.161982-1-dong.menglong@zte.com.cn>
+X-Mailer: git-send-email 2.32.0.rc0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YLeRVQbXt2hCiO8f@hirez.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 04:10:29PM +0200, Peter Zijlstra wrote:
-> On Wed, Jun 02, 2021 at 09:59:07AM -0400, Mathieu Desnoyers wrote:
-> > ----- On Jun 2, 2021, at 9:12 AM, Peter Zijlstra peterz@infradead.org wrote:
-> > 
-> > > When ran from the sched-out path (preempt_notifier or perf_event),
-> > > p->state is irrelevant to determine preemption. You can get preempted
-> > > with !task_is_running() just fine.
-> > > 
-> > > The right indicator for preemption is if the task is still on the
-> > > runqueue in the sched-out path.
-> > > 
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > > kernel/events/core.c |    7 +++----
-> > > virt/kvm/kvm_main.c  |    2 +-
-> > > 2 files changed, 4 insertions(+), 5 deletions(-)
-> > > 
-> > > --- a/kernel/events/core.c
-> > > +++ b/kernel/events/core.c
-> > > @@ -8568,13 +8568,12 @@ static void perf_event_switch(struct tas
-> > > 		},
-> > > 	};
-> > > 
-> > > -	if (!sched_in && task->state == TASK_RUNNING)
-> > > +	if (!sched_in && current->on_rq) {
-> > 
-> > This changes from checking task->state to current->on_rq, but this change
-> > from "task" to "current" is not described in the commit message, which is odd.
-> > 
-> > Are we really sure that task == current here ?
-> 
-> Yeah, @task == @prev == current at this point, but yes, not sure why I
-> changed that... lemme change that back to task.
+From: Menglong Dong <dong.menglong@zte.com.cn>
 
-FWIW, with that:
+As Luis Chamberlain suggested, I split the patch:
+[init/initramfs.c: make initramfs support pivot_root]
+(https://lore.kernel.org/linux-fsdevel/20210520154244.20209-1-dong.menglong@zte.com.cn/)
+into three.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+The goal of the series patches is to make pivot_root() support initramfs.
 
-I have no strong feelings either way w.r.t. the whitespace cleanup. ;)
+In the first patch, I introduce the function ramdisk_exec_exist(), which
+is used to check the exist of 'ramdisk_execute_command' in LOOKUP_DOWN
+lookup mode.
 
-Thanks,
-Mark
+In the second patch, I create a second mount, which is called
+'user root', and make it become the root. Therefore, the root has a
+parent mount, and it can be umounted or pivot_root.
+
+In the third patch, I fix rootfs_fs_type with ramfs, as it is not used
+directly any more, and it make no sense to switch it between ramfs and
+tmpfs, just fix it with ramfs to simplify the code.
+
+Changes since V3:
+
+Do a code cleanup for the second patch, as Christian Brauner suggested:
+- remove the concept 'user root', which seems not suitable.
+- introduce inline function 'check_tmpfs_enabled()' to avoid duplicated
+  code.
+- rename function 'mount_user_root' to 'prepare_mount_rootfs'
+- rename function 'end_mount_user_root' to 'finish_mount_rootfs'
+- join 'init_user_rootfs()' with 'prepare_mount_rootfs()'
+
+Changes since V2:
+
+In the first patch, I use vfs_path_lookup() in init_eaccess() to make the
+path lookup follow the mount on '/'. After this, the problem reported by
+Masami Hiramatsu is solved. Thanks for your report :/
+
+
+Changes since V1:
+
+In the first patch, I add the flag LOOKUP_DOWN to init_eaccess(), to make
+it support the check of filesystem mounted on '/'.
+
+In the second patch, I control 'user root' with kconfig option
+'CONFIG_INITRAMFS_USER_ROOT', and add some comments, as Luis Chamberlain
+suggested.
+
+In the third patch, I make 'rootfs_fs_type' in control of
+'CONFIG_INITRAMFS_USER_ROOT'.
+
+
+
+Menglong Dong (3):
+  init/main.c: introduce function ramdisk_exec_exist()
+  init/do_mounts.c: create second mount for initramfs
+  init/do_mounts.c: fix rootfs_fs_type with ramfs
+
+ fs/init.c            |  11 ++++-
+ include/linux/init.h |   4 ++
+ init/do_mounts.c     | 101 ++++++++++++++++++++++++++++++++++++++++---
+ init/do_mounts.h     |  16 ++++++-
+ init/initramfs.c     |   8 ++++
+ init/main.c          |   7 ++-
+ usr/Kconfig          |  10 +++++
+ 7 files changed, 146 insertions(+), 11 deletions(-)
+
+-- 
+2.32.0.rc0
+
