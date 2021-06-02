@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36EB5398D92
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 16:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F0A398DC0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jun 2021 17:02:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbhFBPBU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Jun 2021 11:01:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34894 "EHLO mail.kernel.org"
+        id S232056AbhFBPEL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Jun 2021 11:04:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230031AbhFBPBT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Jun 2021 11:01:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B95E7613B4;
-        Wed,  2 Jun 2021 14:59:27 +0000 (UTC)
+        id S232054AbhFBPEH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Jun 2021 11:04:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 407C1613BF;
+        Wed,  2 Jun 2021 15:02:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622645976;
-        bh=lULBTNw8ShimVVrtBYDbb5vhV5dQ9U6lx3o98b0hW5w=;
+        s=k20201202; t=1622646144;
+        bh=iqy0WVYDEpl3OEqiwYR2vHlixZDZNAuGOuMgnWDXeR8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OQiBvXalcmFDhP4VUJkLfFfjUL+AdCowcIIHtwCBDEqTOBmz1OdBU6rrODvuN+9rD
-         mOLZKyuSS6i9EOd55gn+hVr2qB4URf3FK/46utTh8Mh1nd3yfAS9gC2T8qY5RT3IQY
-         b4rlXGea5BqIi+sm9FltOrrnryu0LA5VhApDTgyH63PLiPiZ2y0qibL1ECCDe/bn4n
-         SELGuhZLGN0WPbHVxREPrkTVpEWesEuUbZ+F7OzJ3FIIUPCtX92osJVk5KljY297eg
-         yycYme0OjJHY2hdQ/MWGMhjJv0YWgp66DxbyRygrcbb6F9I+DfNX1xA1IgwfjJU0xb
-         xfBJRIrGQb7lw==
-Date:   Wed, 2 Jun 2021 15:59:21 +0100
+        b=O+pqG+GrEcw9WVS8/OW/fQfSxSijYrBV2XZxysaVScijAUnd0cVcWSF4nom6VYF7/
+         Xyj4yQuXkrrTuHJnUpufQZyClixRruRrV6dddsrZRqOQc+UgpG4vsSCBUy91HBwhfj
+         S4qt9rHniezYWqyJmpYVr3rEugD00r4pGxG9asyrSW0y4cnvEcyeHwtxVwtOD0WKZZ
+         CxVeWNbOBJkHO0H7W+0s6rOxAZoTcR6qnwXcmM/nQ5icf4zBj8IsluJAeqSZ9roUcx
+         S4+extTRu1FhJzpL0fTK8fMnTglu0lQMSa9EV3Tq/LcFiaa96LORrcAJlT/uJ7FgCX
+         ZTIEp+h3YHIzg==
+Date:   Wed, 2 Jun 2021 16:02:11 +0100
 From:   Will Deacon <will@kernel.org>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -73,49 +73,34 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         kgdb-bugreport@lists.sourceforge.net,
         linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
         rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 2/6] sched: Introduce task_is_running()
-Message-ID: <20210602145921.GB31179@willie-the-truck>
+Subject: Re: [PATCH 4/6] sched: Add get_current_state()
+Message-ID: <20210602150211.GC31179@willie-the-truck>
 References: <20210602131225.336600299@infradead.org>
- <20210602133040.334970485@infradead.org>
+ <20210602133040.461908001@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210602133040.334970485@infradead.org>
+In-Reply-To: <20210602133040.461908001@infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 03:12:27PM +0200, Peter Zijlstra wrote:
-> Replace a bunch of 'p->state == TASK_RUNNING' with a new helper:
-> task_is_running(p).
+On Wed, Jun 02, 2021 at 03:12:29PM +0200, Peter Zijlstra wrote:
+> Remove yet another few p->state accesses.
 > 
 > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
->  arch/x86/kernel/process.c |    4 ++--
->  block/blk-mq.c            |    2 +-
->  include/linux/sched.h     |    2 ++
->  kernel/locking/lockdep.c  |    2 +-
->  kernel/rcu/tree_plugin.h  |    2 +-
->  kernel/sched/core.c       |    6 +++---
->  kernel/sched/stats.h      |    2 +-
->  kernel/signal.c           |    2 +-
->  kernel/softirq.c          |    3 +--
->  mm/compaction.c           |    2 +-
->  10 files changed, 14 insertions(+), 13 deletions(-)
-> 
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -931,7 +931,7 @@ unsigned long get_wchan(struct task_stru
->  	unsigned long start, bottom, top, sp, fp, ip, ret = 0;
->  	int count = 0;
->  
-> -	if (p == current || p->state == TASK_RUNNING)
-> +	if (p == current || task_is_running(p))
+>  block/blk-mq.c        |    2 +-
+>  include/linux/sched.h |    2 ++
+>  kernel/freezer.c      |    2 +-
+>  kernel/sched/core.c   |    6 +++---
+>  4 files changed, 7 insertions(+), 5 deletions(-)
 
-Looks like this one in get_wchan() has been cargo-culted across most of
-arch/ so they'll need fixing up before you rename the struct member.
+I think you can include kernel/kcsan/report.c here too.
 
-There's also a weird one in tools/bpf/runqslower/runqslower.bpf.c (!)
+With that:
+
+Acked-by: Will Deacon <will@kernel.org>
 
 Will
