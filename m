@@ -2,63 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E93739A999
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jun 2021 19:55:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DDBF39A9AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jun 2021 20:02:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229882AbhFCR4z convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 3 Jun 2021 13:56:55 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51772 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbhFCR4z (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Jun 2021 13:56:55 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 19A9F1F43470
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Ricardo =?utf-8?Q?Ca=C3=B1uelo?= <ricardo.canuelo@collabora.com>
-Cc:     tytso@mit.edu, jaegeuk@kernel.org, dlatypov@google.com,
-        kernel@collabora.com, linux-fsdevel@vger.kernel.org,
-        kunit-dev@googlegroups.com
-Subject: Re: [PATCH v2] unicode: Implement UTF-8 tests as a KUnit test
-Organization: Collabora
-References: <20210602123234.3009423-1-ricardo.canuelo@collabora.com>
-Date:   Thu, 03 Jun 2021 13:55:05 -0400
-In-Reply-To: <20210602123234.3009423-1-ricardo.canuelo@collabora.com>
-        ("Ricardo =?utf-8?Q?Ca=C3=B1uelo=22's?= message of "Wed, 2 Jun 2021
- 14:32:34 +0200")
-Message-ID: <87fsxyj0jq.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        id S230175AbhFCSDz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Jun 2021 14:03:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230075AbhFCSDy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Jun 2021 14:03:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6D50661168;
+        Thu,  3 Jun 2021 18:02:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622743329;
+        bh=AYv0ziU2fZoIFGrB9jAtGF3UoZuuMZuDZMmboZOyAQE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=bdeF0Heb5uv6B0G8M9xsMdQ8COYs/gvL4EnTIdZhW5MZIqpqTLMPOUjnsYROkk8Af
+         JBiFlGRCA3KUk6iC1EQUwd4dtQoBz8KVb1hJQZVYXCrz2uKVk18nYLoQ6cXacHgZo4
+         u34qYoKftut2kQ91LOn+UhcPZJjQg6a9vxRSDABDJQUxQKdp889KT0CficU7THf0c9
+         LHPG9mx1j66U7CwnHzz2UfdnsYBdRsiaKLrQ9/axZJO2eaChKZr//t2LcQq7nBNNSl
+         KCpBggaE3M7nKSaibM3uzLGICPjjdfS6evOzysFYc/evDswDO7MPp7rf2kRZVqbaWH
+         9bnfOymir5BHQ==
+Message-ID: <589c225884ced126b0ff52f419686fa6d185c5c8.camel@kernel.org>
+Subject: Re: question about mapping_set_error when writeback fails?
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Thu, 03 Jun 2021 14:02:08 -0400
+In-Reply-To: <YLgFpqi63K/NMO2D@casper.infradead.org>
+References: <20210602202756.GA26333@locust>
+         <YLgFpqi63K/NMO2D@casper.infradead.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.1 (3.40.1-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ricardo Cañuelo <ricardo.canuelo@collabora.com> writes:
+On Wed, 2021-06-02 at 23:26 +0100, Matthew Wilcox wrote:
+> On Wed, Jun 02, 2021 at 01:27:56PM -0700, Darrick J. Wong wrote:
+> > In iomap_finish_page_writeback,
+> > 
+> > static void
+> > iomap_finish_page_writeback(struct inode *inode, struct page *page,
+> > 		int error, unsigned int len)
+> > {
+> > 	struct iomap_page *iop = to_iomap_page(page);
+> > 
+> > 	if (error) {
+> > 		SetPageError(page);
+> > 		mapping_set_error(inode->i_mapping, -EIO);
+> > 
+> > Why don't we pass error to mapping_set_error here?  If the writeback
+> > completion failed due to insufficient space (e.g. extent mapping btree
+> > expansion hit ENOSPC while trying to perform an unwritten extent
+> > conversion) then we set AS_EIO which causes fsync to return EIO instead
+> > of ENOSPC like you'd expect.
+> 
+> Hah, I noticed the same thing a few weeks ago and didn't get round to
+> asking about it yet.  I'm pretty sure we should pass the real error to
+> mapping_set_error().
+> 
+> I also wonder if we shouldn't support more of the errors from
+> blk_errors, like -ETIMEDOUT or -EILSEQ, but that's a different
+> conversation.
 
-> This translates the existing UTF-8 unit test module into a
-> KUnit-compliant test suite. No functionality has been added or removed.
->
-> Some names changed to make the file name, the Kconfig option and test
-> suite name less specific, since this source file might hold more UTF-8
-> tests in the future.
->
-> Signed-off-by: Ricardo Cañuelo <ricardo.canuelo@collabora.com>
-> [Fix checkpatch's complaint. Fix module build.
->  Add KUNIT_ALL_TESTS to kconfig]
-> Co-developed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> Acked-by: Daniel Latypov <dlatypov@google.com>
-> ---
-> Thanks for the review, Daniel.
-
-Thanks for picking this up again Ricardo.
-
-Acked-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
-Ted, once ready, can you pick this up directly through your tree?
-
+Note that whatever error you pass there is likely to bubble up to
+userland via fsync/msync or whatever. Most file_check_and_advance_wb_err
+callers don't vet that return code in any way. That's not a problem,
+per-se, but you should be aware of the potential effects.
 -- 
-Gabriel Krisman Bertazi
+Jeff Layton <jlayton@kernel.org>
+
