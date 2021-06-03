@@ -2,110 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 161BD399AEF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jun 2021 08:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9344A399B14
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jun 2021 08:57:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbhFCGn2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Jun 2021 02:43:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54138 "EHLO
+        id S229721AbhFCG7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Jun 2021 02:59:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbhFCGn1 (ORCPT
+        with ESMTP id S229665AbhFCG7W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Jun 2021 02:43:27 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5A12C06174A;
-        Wed,  2 Jun 2021 23:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=kX55QmPWFxDII3Sge2GJJeSnbWWFYdnRducRMGOGHKQ=; b=hARedGyAr0sDE+BtvdYhtLLhqT
-        xBRJL5OHbgF/0VaAM6QvlBJXr83HT5NVS7V8DRpuXyYFELaqdsUVDKE7xdQXCUsOoQxD+ZryBn0Lj
-        TQUUpF9nIf+OhCYb2DCINiYA10TI8AImzzNG9gBDI61JDK4y9IyT9HC7swn3WceMAMX+pproGTr+z
-        euH2oJmi+z8yDYk4o986bBSmMqnp2oduWzGnBnR6zXjKvIqpkjAsnYAK7TaquLehFRzRkMRw2LFzB
-        sQkU84q2RHe9CpB6m2+QJnfPaODcV/HKj6IpiHproIA95ZpBeuavpXhNkqQKbgxpRXe24aJvU2Taj
-        vd1R75YA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1loh0W-00Bsrp-Tp; Thu, 03 Jun 2021 06:39:12 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A34D330018A;
-        Thu,  3 Jun 2021 08:39:05 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8DD1F20223DB5; Thu,  3 Jun 2021 08:39:05 +0200 (CEST)
-Date:   Thu, 3 Jun 2021 08:39:05 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
-        rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 5/6] sched,timer: Use __set_current_state()
-Message-ID: <YLh5CaqPHBhBhfVu@hirez.programming.kicks-ass.net>
-References: <20210602131225.336600299@infradead.org>
- <20210602133040.524487671@infradead.org>
- <20210602195458.uj3rsci4suz4mufj@offworld>
+        Thu, 3 Jun 2021 02:59:22 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F265AC06174A;
+        Wed,  2 Jun 2021 23:57:27 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id x9so4583884ilp.4;
+        Wed, 02 Jun 2021 23:57:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aNhL/pCq/YfCQK2j2fUpAq1gpLmTFSOWf12RosUThJ4=;
+        b=j+TWFj9YDJWmJ6pah4ZDuXT4p37G/KxRcVzkwlXlGZcgHTgRPWSJ6XvHB7r0p47oUd
+         sAQUWE98CXCGCDh+iQ6lFibUAY63LDSrr1Tw0I/XtaEsPHmQXyPj5ZiygW/qjd4FVRVL
+         BHMztfQkmBBQB7Knb132Ue5aRwW/KQtn4UUS94ECdypz7lNet2s7akalRYbAoQigMYle
+         SwfFd2wvrlvNEuNpChd26R3rOO4wPTHhcgi5cLeyOBL03mzdaUVp5g6nQdCD7IXRXpFZ
+         /7rmaT4rbnh9g1hsQyDRtmLXATmuOpUt/k7i4t1jEzeMFI7hDp7buwC9/eEAbsMds5Il
+         Xfxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aNhL/pCq/YfCQK2j2fUpAq1gpLmTFSOWf12RosUThJ4=;
+        b=PEBf0HaEjBz5ydw2Z2JTPDZyb/Uxr9/EDo4yeQVrBHUaZ9hIXIpOrDv1agtPl3oXB9
+         nNxa+Pk3zgKR3tAzX3ZhYT9Kb1v2FmxF6Pyhl400x9lKzCcbRXIyS3nrs9VA8v5BEx57
+         YTnw0v8oHaGG4ovHSe7lB1LHhAut/IlQKEDnV7Uqi3D0ncb9WmQhc34h0yyBIztXroqS
+         FhjPW8jd3DtDvU4Xjavs1Bcf8OvVvwZODhtUYBpfBm+ZeR0INB1/vc+BLd9wxdIi41a4
+         J+8PwQN0dddi/nixhlbcbQ6rFZlJcDm/9CzOAQzeOGDHsvSRaEKuFO4Z9aCwLWq8re03
+         dtzQ==
+X-Gm-Message-State: AOAM530dxL/i+9uh576OFiZAgv0D8dowDf6do51nEUD9IX1YhZm9zSxs
+        D7sGKtMPP4AIArs9oxC5b7jHuvDSBF2rL11OP4Y=
+X-Google-Smtp-Source: ABdhPJzXdb7acv90///XjJCxH53FWwGHNU3BDyM0pIsZ6uB6sIZu+hcQtp9BLkNDr3TgAYiGohV66F2WlnWuN5vwtG0=
+X-Received: by 2002:a05:6e02:1352:: with SMTP id k18mr5295294ilr.275.1622703447242;
+ Wed, 02 Jun 2021 23:57:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210602195458.uj3rsci4suz4mufj@offworld>
+References: <20210603015314.GA21290@xsang-OptiPlex-9020>
+In-Reply-To: <20210603015314.GA21290@xsang-OptiPlex-9020>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 3 Jun 2021 09:57:15 +0300
+Message-ID: <CAOQ4uxjdtfriARxh_CiTxFi8=T6j065HtbJGnuAas7oyPNADKg@mail.gmail.com>
+Subject: Re: [fanotify] a8b98c808e: stress-ng.fanotify.ops_per_sec 32.2% improvement
+To:     kernel test robot <oliver.sang@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        kbuild test robot <lkp@intel.com>, ying.huang@intel.com,
+        feng.tang@intel.com, zhengjun.xing@linux.intel.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 12:54:58PM -0700, Davidlohr Bueso wrote:
-> On Wed, 02 Jun 2021, Peter Zijlstra wrote:
-> 
-> -ENOCHANGELONG
+On Thu, Jun 3, 2021 at 4:36 AM kernel test robot <oliver.sang@intel.com> wrote:
+>
+>
+>
+> Greeting,
+>
+> FYI, we noticed a 32.2% improvement of stress-ng.fanotify.ops_per_sec due to commit:
+>
+>
+> commit: a8b98c808eab3ec8f1b5a64be967b0f4af4cae43 ("fanotify: fix permission model of unprivileged group")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
+>
 
-I completely failed to come up with something useful, still do. Subject
-says it all.
+I guess now we know what caused the reported regression:
+https://lore.kernel.org/lkml/20210511124632.GL24154@quack2.suse.cz/
 
-> But yeah, I thought we had gotten rid of all these.
+I didn't know that capable() is so significant.
 
-I too was surprised to find it :-)
+FWIW, here is a link to the test code:
+https://github.com/ColinIanKing/stress-ng/blob/master/stress-fanotify.c#L474
+
+It creates events in a loop by child process while the parent process
+reads the generated events in a loop (on two different fanotify groups).
+
+Thanks,
+Amir.
