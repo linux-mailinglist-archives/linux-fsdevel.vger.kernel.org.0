@@ -2,217 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9343439A3E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jun 2021 17:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6E4339A3F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jun 2021 17:05:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231693AbhFCPEN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Jun 2021 11:04:13 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:43296 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231908AbhFCPEM (ORCPT
+        id S231328AbhFCPHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Jun 2021 11:07:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51638 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230396AbhFCPHW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Jun 2021 11:04:12 -0400
-Received: from relay2.suse.de (unknown [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 34F9B219FC;
-        Thu,  3 Jun 2021 15:02:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1622732547; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WX+SEg5nwUPzzeI7E04yJuBmldNqEDwn2vR6lnVynXI=;
-        b=RbuUYgSocAgICzH7jjupg/ZhnBagEnPzwTxPFVYIAuQUiFR25T3zWSasxi5K6W7w/whghQ
-        WOoDe7zlvQ7bgILYYE/rlsl8GP/VLypfPfEkTfysFpyI/LMDf4qWshpUOymtCBt0dTjpbd
-        LfNipaTM4oYiYF4et0tHFhO7H9+4ncE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1622732547;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WX+SEg5nwUPzzeI7E04yJuBmldNqEDwn2vR6lnVynXI=;
-        b=dwf8+LuKjGVVvbfwNr19jiEXDNVMgAi0T3LxCH4g27IHmGx1d+8slbOt6QGU3er9czOA8p
-        HWinU17NNmzV3vBw==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 1606AA3B81;
-        Thu,  3 Jun 2021 15:02:27 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DB6351F2C96; Thu,  3 Jun 2021 17:02:26 +0200 (CEST)
-Date:   Thu, 3 Jun 2021 17:02:26 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-api@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH 1/2] quota: Change quotactl_path() systcall to an
- fd-based one
-Message-ID: <20210603150226.GK23647@quack2.suse.cz>
-References: <20210602151553.30090-1-jack@suse.cz>
- <20210602151553.30090-2-jack@suse.cz>
- <20210603122504.656sd6kqs3cfivzp@wittgenstein>
+        Thu, 3 Jun 2021 11:07:22 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC088C06174A;
+        Thu,  3 Jun 2021 08:05:22 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id i10so9341805lfj.2;
+        Thu, 03 Jun 2021 08:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4iH2YqRuX9TbVqFy+5J3qDQrY5ch5XHp+h4ttxH/MyQ=;
+        b=GBnM2wZp9yQXhA9CUrLSHUX1wWuLlZkbRRtUXHAPLCZ1V7zajz8yxdfEwyvE4DEjsh
+         P2Dlyrpxs1d+ZmkjjKeQsho0s6nBsMjb/+pMEGEzR6dyVzdsevm8uI0CkC3c/NKhbJYU
+         VVzWOb7PsuN2XsC0qoARfu7PP+NfeRhDvL0u0fedqQP+6OHY+Jv2E0odXgj/DvepbTO5
+         pjn68Lth2HK8rnUn/58kE9yuhZ9ITKXuFUteBZJk4U0HmsIG8N5wCNSJJmMX9eQjZXhZ
+         4WOUB1xs5KKsIlqCSazCqnJtk5lKYBpTKYmsEhvweu15RDIJmEisOSPcekOZdKrjNRcv
+         QIlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4iH2YqRuX9TbVqFy+5J3qDQrY5ch5XHp+h4ttxH/MyQ=;
+        b=uktsQtlcWMV2naGt08lm+ArnN9qY5YNSkqoOutJlqIBLHA+HSjsMr+O0FudX0x21wy
+         aDH9+7AKlu5hd/jqRfKbht2+dhoZuE0tJEW7W2VQYS9wKXdJkJUiLe2Xrj1G2yruQZK6
+         Hm2KFQKg9IumVaTTbEmTeFQP8LSaUH5fZTUwYp993kHwY4wbI3TZdqgyR311VZXTK4NI
+         9mPoQm+jEK8CmjIOFm+yRwtXHu0NA35sO/5m3oJsyK7v+hrU+KxDUzj4B9aqUxxMbyN9
+         Jxe9biCraTSq912Sw3a6xONX5wKKZGLm9jRq/9uREzLlpxQqIZCg4TXDKxB5hGp4Pfzs
+         ZW+g==
+X-Gm-Message-State: AOAM533G6I2CBvB7sfueOtFY7zwm9GQWGAffZUkUkmVnysDFDL7c/BCC
+        yuxa3bzGLCAeCTNHonKQAx1+AYMJkplK5quHFts=
+X-Google-Smtp-Source: ABdhPJwQ9xBB550TWDnlNqjgr2U+Dv+fy/cjvhUI+PgFCJdk3956J4GG9gr2F9/dSF7ycTmRZePJzjgXKUZvoUjsZHo=
+X-Received: by 2002:a05:6512:3045:: with SMTP id b5mr77288lfb.273.1622732720453;
+ Thu, 03 Jun 2021 08:05:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210603122504.656sd6kqs3cfivzp@wittgenstein>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210602144630.161982-1-dong.menglong@zte.com.cn>
+ <20210602144630.161982-3-dong.menglong@zte.com.cn> <20210603133015.gvr5wpbotkyhhtqx@wittgenstein>
+In-Reply-To: <20210603133015.gvr5wpbotkyhhtqx@wittgenstein>
+From:   Menglong Dong <menglong8.dong@gmail.com>
+Date:   Thu, 3 Jun 2021 23:05:08 +0800
+Message-ID: <CADxym3YWUBf6W4pgeSPuYKFXPXeGse0t=DW8fAm-3WvgjWkRnA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] init/do_mounts.c: create second mount for initramfs
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Sami Tolvanen <samitolvanen@google.com>, johan@kernel.org,
+        ojeda@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        Menglong Dong <dong.menglong@zte.com.cn>, masahiroy@kernel.org,
+        joe@perches.com, hare@suse.de, Jens Axboe <axboe@kernel.dk>,
+        Jan Kara <jack@suse.cz>, tj@kernel.org,
+        gregkh@linuxfoundation.org, song@kernel.org,
+        NeilBrown <neilb@suse.de>, Barret Rhoden <brho@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>, palmerdabbelt@google.com,
+        arnd@arndb.de, f.fainelli@gmail.com,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        wangkefeng.wang@huawei.com, Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, vbabka@suse.cz,
+        pmladek@suse.com, Alexander Potapenko <glider@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, jojing64@gmail.com,
+        mingo@kernel.org, terrelln@fb.com, geert@linux-m68k.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        jeyu@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Josh Triplett <josh@joshtriplett.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 03-06-21 14:25:04, Christian Brauner wrote:
-> On Wed, Jun 02, 2021 at 05:15:52PM +0200, Jan Kara wrote:
-> > Some users have pointed out that path-based syscalls are problematic in
-> > some environments and at least directory fd argument and possibly also
-> > resolve flags are desirable for such syscalls. Rather than
-> > reimplementing all details of pathname lookup and following where it may
-> > eventually evolve, let's go for full file descriptor based syscall
-> 
-> Fair, I can accept that.
-> 
-> > similar to how ioctl(2) works since the beginning. Managing of quotas
-> > isn't performance sensitive so the extra overhead of open does not
-> > matter and we are able to consume O_PATH descriptors as well which makes
-> > open cheap anyway. Also for frequent operations (such as retrieving
-> > usage information for all users) we can reuse single fd and in fact get
-> > even better performance as well as avoiding races with possible remounts
-> > etc.
-> > 
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> >  fs/quota/quota.c                  | 27 ++++++++++++---------------
-> >  include/linux/syscalls.h          |  4 ++--
-> >  include/uapi/asm-generic/unistd.h |  4 ++--
-> >  kernel/sys_ni.c                   |  2 +-
-> >  4 files changed, 17 insertions(+), 20 deletions(-)
-> > 
-> > diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-> > index 05e4bd9ab6d6..8450bb6186f4 100644
-> > --- a/fs/quota/quota.c
-> > +++ b/fs/quota/quota.c
-> > @@ -968,31 +968,29 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
-> >  	return ret;
-> >  }
-> >  
-> > -SYSCALL_DEFINE4(quotactl_path, unsigned int, cmd, const char __user *,
-> > -		mountpoint, qid_t, id, void __user *, addr)
-> > +SYSCALL_DEFINE4(quotactl_fd, unsigned int, fd, unsigned int, cmd,
-> > +		qid_t, id, void __user *, addr)
-> >  {
-> >  	struct super_block *sb;
-> > -	struct path mountpath;
-> >  	unsigned int cmds = cmd >> SUBCMDSHIFT;
-> >  	unsigned int type = cmd & SUBCMDMASK;
-> > +	struct fd f = fdget_raw(fd);
-> >  	int ret;
-> >  
-> > -	if (type >= MAXQUOTAS)
-> > -		return -EINVAL;
-> > +	if (!f.file)
-> > +		return -EBADF;
-> 
-> I would maybe change this to
-> 
-> f = fdget_raw(fd);
-> if (!f.file)
-> 	return -EBADF;
-> 
-> instead of directly assigning when declaring the variable.
+On Thu, Jun 3, 2021 at 9:30 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+[...]
+>
+> In fact you seem to be only using this struct you're introducing in this
+> single place which makes me think that it's not needed at all. So what's
+> preventing us from doing:
+>
+> > +
+> > +     return do_mount_root(root->dev_name,
+> > +                          root->fs_name,
+> > +                          root_mountflags & ~MS_RDONLY,
+> > +                          root_mount_data);
+> > +}
+>
+> int __init prepare_mount_rootfs(void)
+> {
+>         if (is_tmpfs_enabled())
+>                 return do_mount_root("tmpfs", "tmpfs",
+>                                      root_mountflags & ~MS_RDONLY,
+>                                      root_mount_data);
+>
+>         return do_mount_root("ramfs", "ramfs",
+>                              root_mountflags & ~MS_RDONLY,
+>                              root_mount_data);
+> }
 
-OK, I'll do this.
+It seems to make sense, but I just feel that it is a little hardcode.
+What if a new file system
+of rootfs arises? Am I too sensitive?
 
-> (And it might make sense to fold the second commit into this one.)
+[...]
+>
+> This is convoluted imho. I would simply use two tiny helpers:
+>
+> void __init finish_mount_rootfs(void)
+> {
+>         init_mount(".", "/", NULL, MS_MOVE, NULL);
+>
+>         if (ramdisk_exec_exist())
+>                 init_chroot(".");
+> }
+>
+> void __init revert_mount_rootfs(void)
+> {
+>         init_chdir("/");
+>         init_umount(".", 0);
+> }
+>
 
-Well, I wanted to keep mostly mechanical (and partly autogenerated ;))
-changes separately from the "real" stuff that needs serious review... So I
-prefer to keep the split.
+This looks nice.
 
-> But other than these nits this looks good,
-> 
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-Thanks for review!
-
-								Honza
-> 
-> >  
-> > -	ret = user_path_at(AT_FDCWD, mountpoint,
-> > -			     LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &mountpath);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	sb = mountpath.mnt->mnt_sb;
-> > +	ret = -EINVAL;
-> > +	if (type >= MAXQUOTAS)
-> > +		goto out;
-> >  
-> >  	if (quotactl_cmd_write(cmds)) {
-> > -		ret = mnt_want_write(mountpath.mnt);
-> > +		ret = mnt_want_write(f.file->f_path.mnt);
-> >  		if (ret)
-> >  			goto out;
-> >  	}
-> >  
-> > +	sb = f.file->f_path.mnt->mnt_sb;
-> >  	if (quotactl_cmd_onoff(cmds))
-> >  		down_write(&sb->s_umount);
-> >  	else
-> > @@ -1006,9 +1004,8 @@ SYSCALL_DEFINE4(quotactl_path, unsigned int, cmd, const char __user *,
-> >  		up_read(&sb->s_umount);
-> >  
-> >  	if (quotactl_cmd_write(cmds))
-> > -		mnt_drop_write(mountpath.mnt);
-> > +		mnt_drop_write(f.file->f_path.mnt);
-> >  out:
-> > -	path_put(&mountpath);
-> > -
-> > +	fdput(f);
-> >  	return ret;
-> >  }
-> > diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> > index 050511e8f1f8..586128d5c3b8 100644
-> > --- a/include/linux/syscalls.h
-> > +++ b/include/linux/syscalls.h
-> > @@ -485,8 +485,8 @@ asmlinkage long sys_pipe2(int __user *fildes, int flags);
-> >  /* fs/quota.c */
-> >  asmlinkage long sys_quotactl(unsigned int cmd, const char __user *special,
-> >  				qid_t id, void __user *addr);
-> > -asmlinkage long sys_quotactl_path(unsigned int cmd, const char __user *mountpoint,
-> > -				  qid_t id, void __user *addr);
-> > +asmlinkage long sys_quotactl_fd(unsigned int fd, unsigned int cmd, qid_t id,
-> > +				void __user *addr);
-> >  
-> >  /* fs/readdir.c */
-> >  asmlinkage long sys_getdents64(unsigned int fd,
-> > diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> > index 6de5a7fc066b..f211961ce1da 100644
-> > --- a/include/uapi/asm-generic/unistd.h
-> > +++ b/include/uapi/asm-generic/unistd.h
-> > @@ -863,8 +863,8 @@ __SYSCALL(__NR_process_madvise, sys_process_madvise)
-> >  __SC_COMP(__NR_epoll_pwait2, sys_epoll_pwait2, compat_sys_epoll_pwait2)
-> >  #define __NR_mount_setattr 442
-> >  __SYSCALL(__NR_mount_setattr, sys_mount_setattr)
-> > -#define __NR_quotactl_path 443
-> > -__SYSCALL(__NR_quotactl_path, sys_quotactl_path)
-> > +#define __NR_quotactl_fd 443
-> > +__SYSCALL(__NR_quotactl_fd, sys_quotactl_fd)
-> >  
-> >  #define __NR_landlock_create_ruleset 444
-> >  __SYSCALL(__NR_landlock_create_ruleset, sys_landlock_create_ruleset)
-> > diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-> > index 0ea8128468c3..dad4d994641e 100644
-> > --- a/kernel/sys_ni.c
-> > +++ b/kernel/sys_ni.c
-> > @@ -99,7 +99,7 @@ COND_SYSCALL(flock);
-> >  
-> >  /* fs/quota.c */
-> >  COND_SYSCALL(quotactl);
-> > -COND_SYSCALL(quotactl_path);
-> > +COND_SYSCALL(quotactl_fd);
-> >  
-> >  /* fs/readdir.c */
-> >  
-> > -- 
-> > 2.26.2
-> > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks!
+Menglong Dong
