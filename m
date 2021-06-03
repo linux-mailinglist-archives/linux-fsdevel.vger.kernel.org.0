@@ -2,91 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2F7039A4CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jun 2021 17:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C562939A50D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jun 2021 17:54:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229952AbhFCPmM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Jun 2021 11:42:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53290 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229854AbhFCPmK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Jun 2021 11:42:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B4F50611ED;
-        Thu,  3 Jun 2021 15:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622734826;
-        bh=mFAhNgmUD+wtIhwDrs/ENUxcjRAmrenuOPwzcjPUBhE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ki8nDtgjf9jwCjL2WGcL99KCyzystjkusR4WvwQzMFYK5PnVnLQoUkUJBT2nP57B+
-         e3qgJjXtUWbjITUVd0T7cNiVvBL+KA4KS7wEfZKT/4Hsg3HxUmvfWMpUavO9GpcMb2
-         KqDhVPCAAQCCdU0pFU1iWNclAyfWxlfH0gkfdTor3lWQ1DDfaBPZAWYZLsoSX/wjSZ
-         SeMJd17P8brabyO8/W3NeFScwHTimO6tHXX5c5tb5S8i/cFYUh2KpC0Ou1DHEQgZFy
-         Ss4VE2QlwyGVg0thG1u0fdcCP2kj6WWtw0c9EiNiuuuUWwx4ZgWA82C+Vsm0BbajFq
-         z6j5l6F77w91A==
-Date:   Thu, 3 Jun 2021 08:40:24 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Daniel Rosenberg <drosen@google.com>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] f2fs: Advertise encrypted casefolding in sysfs
-Message-ID: <YLj36Fmz3dSHmkSG@google.com>
-References: <20210603095038.314949-1-drosen@google.com>
- <20210603095038.314949-3-drosen@google.com>
- <YLipSQxNaUDy9Ff1@kroah.com>
+        id S229900AbhFCP4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Jun 2021 11:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34200 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229726AbhFCP4G (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Jun 2021 11:56:06 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5EE6C06175F
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jun 2021 08:54:06 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id b5so6001479ilc.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Jun 2021 08:54:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=buCUvWOaV46TEe0pfybKHgNeLuajhkCoUvc4V9kk0GM=;
+        b=AvHRoUndMbsOR2LZQbV9UyOHSi2H1HcMJtDtgjOBthii3UKRGsG7GL9gvctRI4YTI2
+         0X9ilAdtUWDZFiGmyoPZBn+lXmQfQZ6KY1ZpZvgZhJaJ3ULWIl/8uS7SPC8m+7FcnOxS
+         clyfp/+5Vqub24anQIDa/6/e0+sFnJ7s4mkbPZW7i3fnrqBxXoh3C7Ww4vlAz2rtqMe9
+         CtP5aaQ0MyyliBAq/hWpqGP8hPmdjDDu02ogwMSzqRt88NEhbzkmE7EgRb9TkzFDow0c
+         0UAK0ZAB6xYTithTdVkeFKWhJCWDAMu8QETBbIN3cbEdaR/c/XH5/Vhi/x28M2u4PqQB
+         sVzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=buCUvWOaV46TEe0pfybKHgNeLuajhkCoUvc4V9kk0GM=;
+        b=d5zu/luG/jIMWZGFlt3V1+AztRrkkQog4Sl/qrdv3oecbcJLMa9XRTSOGJrdalQWmk
+         482s+POGgakBeowj7zurtOi40AwigfBipqejJTxrOJevI9rK5dCYFlAT86V33UbuntLn
+         asjFrJu64I5XUtbh4w21TqczaWpdyG6AHFDWdQtm+DHiDO/1NrwlalJ5DaEovh3VohFq
+         wc7329zvQYH8l0iqKYfPS8GMRzpiz4SYpXOJ/FQkgV+0DLk7qGltDy9mzRJgveQuQMgl
+         az/uBrhHKp4rHD3PE56LMJhz2eOWHn/qkIWMCGJ+y26i/XH7tL2GMGhJr3RMgXPj7u/c
+         EP8g==
+X-Gm-Message-State: AOAM530DLn2Vg9TJsZpmXTCeSQKRwRkr8Q04uHMnN21dN/o6axZJNMp3
+        YC3B+i8sS1jpzNcq8EnDmaQr3A==
+X-Google-Smtp-Source: ABdhPJxTgRBRHHntkEyxXKkKZCy9JIZBYhMq02FcIt13uKSk14obLbdz2JV2Qm8ADOaXFhFzOvBNQg==
+X-Received: by 2002:a05:6e02:13a9:: with SMTP id h9mr62415ilo.96.1622735645969;
+        Thu, 03 Jun 2021 08:54:05 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id s6sm787512ilt.50.2021.06.03.08.54.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jun 2021 08:54:05 -0700 (PDT)
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+ <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
+ <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+ <9e69e4b6-2b87-a688-d604-c7f70be894f5@kernel.dk>
+ <3bef7c8a-ee70-d91d-74db-367ad0137d00@kernel.dk>
+ <fa7bf4a5-5975-3e8c-99b4-c8d54c57da10@kernel.dk>
+ <a7669e4a-e7a7-7e94-f6ce-fa48311f7175@kernel.dk>
+ <CAHC9VhSKPzADh=qcPp7r7ZVD2cpr2m8kQsui43LAwPr-9BNaxQ@mail.gmail.com>
+ <b20f0373-d597-eb0e-5af3-6dcd8c6ba0dc@kernel.dk>
+ <CAHC9VhRZEwtsxjhpZM1DXGNJ9yL59B7T_p2B60oLmC_YxCrOiw@mail.gmail.com>
+ <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <46381e4e-a65d-f217-1d0d-43d1fa8a99aa@kernel.dk>
+Date:   Thu, 3 Jun 2021 09:54:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YLipSQxNaUDy9Ff1@kroah.com>
+In-Reply-To: <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 06/03, Greg KH wrote:
-> On Thu, Jun 03, 2021 at 09:50:38AM +0000, Daniel Rosenberg wrote:
-> > Older kernels don't support encryption with casefolding. This adds
-> > the sysfs entry encrypted_casefold to show support for those combined
-> > features. Support for this feature was originally added by
-> > commit 7ad08a58bf67 ("f2fs: Handle casefolding with Encryption")
-> > 
-> > Fixes: 7ad08a58bf67 ("f2fs: Handle casefolding with Encryption")
-> > Cc: stable@vger.kernel.org # v5.11+
-> > Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> > ---
-> >  fs/f2fs/sysfs.c | 15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> > index 09e3f258eb52..6604291a3cdf 100644
-> > --- a/fs/f2fs/sysfs.c
-> > +++ b/fs/f2fs/sysfs.c
-> > @@ -161,6 +161,9 @@ static ssize_t features_show(struct f2fs_attr *a,
-> >  	if (f2fs_sb_has_compression(sbi))
-> >  		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> >  				len ? ", " : "", "compression");
-> > +	if (f2fs_sb_has_casefold(sbi) && f2fs_sb_has_encrypt(sbi))
-> > +		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> > +				len ? ", " : "", "encrypted_casefold");
-> >  	len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> >  				len ? ", " : "", "pin_file");
-> >  	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
+On 5/28/21 10:02 AM, Paul Moore wrote:
+> On Wed, May 26, 2021 at 4:19 PM Paul Moore <paul@paul-moore.com> wrote:
+>> ... If we moved the _entry
+>> and _exit calls into the individual operation case blocks (quick
+>> openat example below) so that only certain operations were able to be
+>> audited would that be acceptable assuming the high frequency ops were
+>> untouched?  My initial gut feeling was that this would involve >50% of
+>> the ops, but Steve Grubb seems to think it would be less; it may be
+>> time to look at that a bit more seriously, but if it gets a NACK
+>> regardless it isn't worth the time - thoughts?
+>>
+>>   case IORING_OP_OPENAT:
+>>     audit_uring_entry(req->opcode);
+>>     ret = io_openat(req, issue_flags);
+>>     audit_uring_exit(!ret, ret);
+>>     break;
 > 
-> This is a HUGE abuse of sysfs and should not be encouraged and added to.
+> I wanted to pose this question again in case it was lost in the
+> thread, I suspect this may be the last option before we have to "fix"
+> things at the Kconfig level.  I definitely don't want to have to go
+> that route, and I suspect most everyone on this thread feels the same,
+> so I'm hopeful we can find a solution that is begrudgingly acceptable
+> to both groups.
 
-This feature entry was originally added in 2017. Let me try to clean this up
-after merging this.
+Sorry for the lack of response here, but to sum up my order of
+preference:
 
-> 
-> Please make these "one value per file" and do not keep growing a single
-> file that has to be parsed otherwise you will break userspace tools.
-> 
-> And I don't see a Documentation/ABI/ entry for this either :(
+1) It's probably better to just make the audit an opt-out in io_op_defs
+   for each opcode, and avoid needing boiler plate code for each op
+   handler. The opt-out would ensure that new opcodes get it by default
+   it someone doesn't know what it is, and the io_op_defs addition would
+   mean that it's in generic code rather then in the handlers. Yes it's
+   a bit slower, but it's saner imho.
 
-There is in Documentation/ABI/testing/sysfs-fs-f2fs.
+2) With the above, I'm fine with adding this to io_uring. I don't think
+   going the route of mutual exclusion in kconfig helps anyone, it'd
+   be counter productive to both sides.
 
-> 
-> not good...
-> 
-> greg k-h
+Hope that works and helps move this forward. I'll be mostly out of touch
+the next week and a half, but wanted to ensure that I sent out my
+(brief) thoughts before going away.
+
+-- 
+Jens Axboe
+
