@@ -2,221 +2,563 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF2DE399F45
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jun 2021 12:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FEB1399FD5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jun 2021 13:33:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbhFCKxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Jun 2021 06:53:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52378 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229625AbhFCKxz (ORCPT
+        id S229840AbhFCLfR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Jun 2021 07:35:17 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:46054 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229702AbhFCLfR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Jun 2021 06:53:55 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65789C06174A;
-        Thu,  3 Jun 2021 03:51:55 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id s6so6545049edu.10;
-        Thu, 03 Jun 2021 03:51:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2l+/pTIkSAMgANRmwouFqdl/kEDa6lMjdLO01s6/yys=;
-        b=Y2uPxWyhic09EXZIQ1ZF0iBGPh1sHCEKHj8LJc8Y7bFnP5EBQKLbaJb55cbQq8na12
-         5SfIwlcAWnnlflpxnBs4tQtdlG/xJA2tiavyAhRNUpvGlzqpljysnyiUBe+jxVCg2KBN
-         g6WLOmaVonCYtJy2FbaYuHFiER2766XM8w4vv7MccGhkExsDKOho78FeGwj5enXDtNSh
-         C5udtDfu8IUtB0vsLylyMvG37hhKDMzjFZdxkdmFNrJHquN+zrhs3ZUqtL9Ggwa2ck9n
-         pxfszCA2T729GMJxnEscxsRZuVq12RCzkMuoqXRYIasSzMKtX0QZAKyQcIjGwCCxnExZ
-         O95A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2l+/pTIkSAMgANRmwouFqdl/kEDa6lMjdLO01s6/yys=;
-        b=ZQF1SyjMEADl0tNCcHYSMGWDuC8f5j+lfCf1ktZ3zc5JaXuq8BvvBK4YgJmwoWRhS/
-         /gek6DkpmrDscSrnVZUcmqfCmB6gViC09Yf09VpyjTMBt7XwAk6Pfpp3wKjjCYi7HqOh
-         VdiKtY/gaYQdTUeOqpuv5bulaFTVxhttalis512hVrVawnAjQyY8WzIhvrnMaysVXq42
-         BS0qt/gnBd2o4DFn1Hq4J4CmXKPMt+KNyqTEopIIhD/fhgCZZZnjUGOQ1qxYSNriZtOX
-         m64Dmm0K85H2//XopaE5FYbDPOaQ010BzxVsyEKXZrWtZ3QBxybG3UYXvjO8eqlu92jI
-         lJDw==
-X-Gm-Message-State: AOAM530+fcBKFlKsPA0viocwzV4xrHPrysXG7YAuF3Pcxo/wlc3stFhy
-        A2d02r5F6BJ4t3a3Gl8wR0M=
-X-Google-Smtp-Source: ABdhPJxUc5fUcgMU/ObpolC/f7QYCa63xLFOrtM2BNvy8DNUPsv88nO1fflfb7VAyJ9Z3Q1MegcQMA==
-X-Received: by 2002:a05:6402:34cb:: with SMTP id w11mr20794266edc.299.1622717513978;
-        Thu, 03 Jun 2021 03:51:53 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c093:600::2:6c45])
-        by smtp.gmail.com with ESMTPSA id o21sm1343631ejh.57.2021.06.03.03.51.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jun 2021 03:51:53 -0700 (PDT)
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
- <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
- <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
- <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
- <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
- <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
- <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
- <9e69e4b6-2b87-a688-d604-c7f70be894f5@kernel.dk>
- <3bef7c8a-ee70-d91d-74db-367ad0137d00@kernel.dk>
- <fa7bf4a5-5975-3e8c-99b4-c8d54c57da10@kernel.dk>
- <a7669e4a-e7a7-7e94-f6ce-fa48311f7175@kernel.dk>
- <CAHC9VhSKPzADh=qcPp7r7ZVD2cpr2m8kQsui43LAwPr-9BNaxQ@mail.gmail.com>
- <b20f0373-d597-eb0e-5af3-6dcd8c6ba0dc@kernel.dk>
- <CAHC9VhRZEwtsxjhpZM1DXGNJ9yL59B7T_p2B60oLmC_YxCrOiw@mail.gmail.com>
- <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com>
- <94e50554-f71a-50ab-c468-418863d2b46f@gmail.com>
- <CAHC9VhS7Vhby4YR94U2YOwMtva-rc=_ifRcZYi1YVPwfi+Xuzg@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
- support to io_uring
-Message-ID: <41bc1351-b07b-d9de-f7e3-8c58be14ba9f@gmail.com>
-Date:   Thu, 3 Jun 2021 11:51:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Thu, 3 Jun 2021 07:35:17 -0400
+Received: from relay2.suse.de (unknown [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 3E2E01FD4D;
+        Thu,  3 Jun 2021 11:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1622720011; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8tya0gRA16vqccjCYxDsEZaA/iXon4YBfXX220snnpc=;
+        b=jLh4jsJZ6mHJ4E0UU3yQ0vCldT/9pITZuQvPlq47gsoQHLb0o/5mNKepMY7mcMoOe3i/PD
+        lGwtxmCfIGb29JOa0LpEhmkKxERHZJoxbu9mHa/U5uC0y+FA+1X2jpW8ZS/SklEn02Q9Sk
+        RxNlQDSkt7Wor8sUolGDmz1EeLofUcY=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id A9384A3B88;
+        Thu,  3 Jun 2021 11:33:30 +0000 (UTC)
+Date:   Thu, 3 Jun 2021 13:33:29 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     legion@kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux.dev>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-api@vger.kernel.org
+Subject: Re: [PATCH v1] proc: Implement /proc/self/meminfo
+Message-ID: <YLi+CVAmWle9Ecwe@dhcp22.suse.cz>
+References: <ac070cd90c0d45b7a554366f235262fa5c566435.1622716926.git.legion@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhS7Vhby4YR94U2YOwMtva-rc=_ifRcZYi1YVPwfi+Xuzg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac070cd90c0d45b7a554366f235262fa5c566435.1622716926.git.legion@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/2/21 8:46 PM, Paul Moore wrote:
-> On Wed, Jun 2, 2021 at 4:27 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->> On 5/28/21 5:02 PM, Paul Moore wrote:
->>> On Wed, May 26, 2021 at 4:19 PM Paul Moore <paul@paul-moore.com> wrote:
->>>> ... If we moved the _entry
->>>> and _exit calls into the individual operation case blocks (quick
->>>> openat example below) so that only certain operations were able to be
->>>> audited would that be acceptable assuming the high frequency ops were
->>>> untouched?  My initial gut feeling was that this would involve >50% of
->>>> the ops, but Steve Grubb seems to think it would be less; it may be
->>>> time to look at that a bit more seriously, but if it gets a NACK
->>>> regardless it isn't worth the time - thoughts?
->>>>
->>>>   case IORING_OP_OPENAT:
->>>>     audit_uring_entry(req->opcode);
->>>>     ret = io_openat(req, issue_flags);
->>>>     audit_uring_exit(!ret, ret);
->>>>     break;
->>>
->>> I wanted to pose this question again in case it was lost in the
->>> thread, I suspect this may be the last option before we have to "fix"
->>> things at the Kconfig level.  I definitely don't want to have to go
->>> that route, and I suspect most everyone on this thread feels the same,
->>> so I'm hopeful we can find a solution that is begrudgingly acceptable
->>> to both groups.
->>
->> May work for me, but have to ask how many, and what is the
->> criteria? I'd think anything opening a file or manipulating fs:
->>
->> IORING_OP_ACCEPT, IORING_OP_CONNECT, IORING_OP_OPENAT[2],
->> IORING_OP_RENAMEAT, IORING_OP_UNLINKAT, IORING_OP_SHUTDOWN,
->> IORING_OP_FILES_UPDATE
->> + coming mkdirat and others.
->>
->> IORING_OP_CLOSE? IORING_OP_SEND IORING_OP_RECV?
->>
->> What about?
->> IORING_OP_FSYNC, IORING_OP_SYNC_FILE_RANGE,
->> IORING_OP_FALLOCATE, IORING_OP_STATX,
->> IORING_OP_FADVISE, IORING_OP_MADVISE,
->> IORING_OP_EPOLL_CTL
+[Cc linux-api]
+
+On Thu 03-06-21 12:43:07, legion@kernel.org wrote:
+> From: Alexey Gladkov <legion@kernel.org>
 > 
-> Looking quickly at v5.13-rc4 the following seems like candidates for
-> auditing, there may be a small number of subtractions/additions to
-> this list as people take a closer look, but it should serve as a
-> starting point:
+> The /proc/meminfo contains information regardless of the cgroups
+> restrictions. This file is still widely used [1]. This means that all
+> these programs will not work correctly inside container [2][3][4]. Some
+> programs try to respect the cgroups limits, but not all of them
+> implement support for all cgroup versions [5].
 > 
-> IORING_OP_SENDMSG
-> IORING_OP_RECVMSG
-> IORING_OP_ACCEPT
-> IORING_OP_CONNECT
-> IORING_OP_FALLOCATE
-> IORING_OP_OPENAT
-> IORING_OP_CLOSE
-> IORING_OP_MADVISE
-> IORING_OP_OPENAT2
-> IORING_OP_SHUTDOWN
-> IORING_OP_RENAMEAT
-> IORING_OP_UNLINKAT
+> Correct information can be obtained from cgroups, but this requires the
+> cgroups to be available inside container and the correct version of
+> cgroups to be supported.
 > 
-> ... can you live with that list?
-
-it will bloat binary somewhat, but considering it's all in one
-place -- io_issue_sqe(), it's workable.
-
-Not nice to have send/recv msg in the list, but I admit they
-may do some crazy things. What can be traced for them? Because
-at the moment of issue_sqe() not everything is read from the
-userspace.
-
-see: io_sendmsg() { ...; io_sendmsg_copy_hdr(); },
-
-will copy header only in io_sendmsg() in most cases, and
-then stash it for re-issuing if needed.
-
-
->> Another question, io_uring may exercise asynchronous paths,
->> i.e. io_issue_sqe() returns before requests completes.
->> Shouldn't be the case for open/etc at the moment, but was that
->> considered?
+> There is lxcfs [6] that emulates /proc/meminfo using fuse to provide
+> information regarding cgroups. This patch can help them.
 > 
-> Yes, I noticed that when testing the code (and it makes sense when you
-> look at how io_uring handles things).  Depending on the state of the
-> system when the io_uring request is submitted I've seen both sync and
-> async io_uring operations with the associated different calling
-> contexts.  In the case where io_issue_sqe() needs to defer the
-> operation to a different context you will see an audit record
-> indicating that the operation failed and then another audit record
-> when it completes; it's actually pretty interesting to be able to see
-> how the system and io_uring are working.
-
-Copying a reply to another message to keep clear out
-of misunderstanding.
-
-"io_issue_sqe() may return 0 but leave the request inflight,
-which will be completed asynchronously e.g. by IRQ, not going
-through io_issue_sqe() or any io_read()/etc helpers again, and
-after last audit_end() had already happened.
-That's the case with read/write/timeout, but is not true for
-open/etc."
-
-And there is interest in async send/recv[msg] as well (via
-IRQ as described, callbacks, etc.).
- 
-> We could always mask out these delayed attempts, but at this early
-> stage they are helpful, and they may be useful for admins.
+> This patch adds /proc/self/meminfo that contains a subset of
+> /proc/meminfo respecting cgroup restrictions.
 > 
->> I don't see it happening, but would prefer to keep it open
->> async reimplementation in a distant future. Does audit sleep?
+> We cannot just create /proc/self/meminfo and make a symlink at the old
+> location because this will break the existing apparmor rules [7].
+> Therefore, the patch adds a separate file with the same format.
 > 
-> The only place in the audit_uring_entry()/audit_uring_exit() code path
-> that could sleep at present is the call to audit_log_uring() which is
-> made when the rules dictate that an audit record be generated.  The
-> offending code is an allocation in audit_log_uring() which is
-> currently GFP_KERNEL but really should be GFP_ATOMIC, or similar.  It
-> was a copy-n-paste from the similar syscall function where GFP_KERNEL
-> is appropriate due to the calling context at the end of the syscall.
-> I'll change that as soon as I'm done with this email.
-
-Ok, depends where it steers, but there may be a requirement to
-not sleep for some hooks because of not having a sleepable context.
-
+> [1] https://codesearch.debian.net/search?q=%2Fproc%2Fmeminfo
+> [2] https://sources.debian.org/src/erlang/1:23.2.6+dfsg-1/lib/os_mon/c_src/memsup.c#L300
+> [3] https://sources.debian.org/src/p7zip/16.02+dfsg-8/CPP/Windows/System.cpp/#L103
+> [4] https://sources.debian.org/src/systemd/247.3-5/src/oom/oomd.c/#L138
+> [5] https://sources.debian.org/src/nodejs/12.21.0%7Edfsg-4/deps/uv/src/unix/linux-core.c/#L1059
+> [6] https://linuxcontainers.org/lxcfs/
+> [7] https://gitlab.com/apparmor/apparmor/-/blob/master/profiles/apparmor.d/abstractions/base#L98
 > 
-> Of course if you are calling io_uring_enter(2), or something similar,
-> then audit may sleep as part of the normal syscall processing (as
-> mentioned above), but that is due to the fact that io_uring_enter(2)
-> is a syscall and not because of anything in io_issue_sqe().
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> ---
+>  fs/proc/base.c             |   2 +
+>  fs/proc/internal.h         |   6 ++
+>  fs/proc/meminfo.c          | 160 +++++++++++++++++++++++--------------
+>  include/linux/memcontrol.h |   2 +
+>  include/linux/mm.h         |  15 ++++
+>  mm/memcontrol.c            |  80 +++++++++++++++++++
+>  mm/page_alloc.c            |  28 ++++---
+>  7 files changed, 222 insertions(+), 71 deletions(-)
 > 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 58bbf334265b..e95837cf713f 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -3269,6 +3269,7 @@ static const struct pid_entry tgid_base_stuff[] = {
+>  #ifdef CONFIG_SECCOMP_CACHE_DEBUG
+>  	ONE("seccomp_cache", S_IRUSR, proc_pid_seccomp_cache),
+>  #endif
+> +	ONE("meminfo",  S_IRUGO, proc_meminfo_show),
+>  };
+>  
+>  static int proc_tgid_base_readdir(struct file *file, struct dir_context *ctx)
+> @@ -3602,6 +3603,7 @@ static const struct pid_entry tid_base_stuff[] = {
+>  #ifdef CONFIG_SECCOMP_CACHE_DEBUG
+>  	ONE("seccomp_cache", S_IRUSR, proc_pid_seccomp_cache),
+>  #endif
+> +	ONE("meminfo",  S_IRUGO, proc_meminfo_show),
+>  };
+>  
+>  static int proc_tid_base_readdir(struct file *file, struct dir_context *ctx)
+> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+> index 03415f3fb3a8..a6e8540afbd3 100644
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -241,6 +241,12 @@ extern int proc_net_init(void);
+>  static inline int proc_net_init(void) { return 0; }
+>  #endif
+>  
+> +/*
+> + * meminfo.c
+> + */
+> +extern int proc_meminfo_show(struct seq_file *m, struct pid_namespace *ns,
+> +		struct pid *pid, struct task_struct *tsk);
+> +
+>  /*
+>   * proc_self.c
+>   */
+> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+> index 6fa761c9cc78..3587a79d4b96 100644
+> --- a/fs/proc/meminfo.c
+> +++ b/fs/proc/meminfo.c
+> @@ -16,6 +16,9 @@
+>  #ifdef CONFIG_CMA
+>  #include <linux/cma.h>
+>  #endif
+> +#ifdef CONFIG_MEMCG
+> +#include <linux/memcontrol.h>
+> +#endif
+>  #include <asm/page.h>
+>  #include "internal.h"
+>  
+> @@ -23,91 +26,112 @@ void __attribute__((weak)) arch_report_meminfo(struct seq_file *m)
+>  {
+>  }
+>  
+> +static void proc_fill_meminfo(struct meminfo *mi)
+> +{
+> +	int lru;
+> +	long cached;
+> +
+> +	si_meminfo(&mi->si);
+> +	si_swapinfo(&mi->si);
+> +
+> +	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+> +		mi->pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+> +
+> +	cached = global_node_page_state(NR_FILE_PAGES) - total_swapcache_pages() - mi->si.bufferram;
+> +	if (cached < 0)
+> +		cached = 0;
+> +
+> +	mi->cached = cached;
+> +	mi->swapcached = total_swapcache_pages();
+> +	mi->slab_reclaimable = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B);
+> +	mi->slab_unreclaimable = global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B);
+> +	mi->anon_pages = global_node_page_state(NR_ANON_MAPPED);
+> +	mi->mapped = global_node_page_state(NR_FILE_MAPPED);
+> +	mi->nr_pagetable = global_node_page_state(NR_PAGETABLE);
+> +	mi->dirty_pages = global_node_page_state(NR_FILE_DIRTY);
+> +	mi->writeback_pages = global_node_page_state(NR_WRITEBACK);
+> +}
+> +
+> +#ifdef CONFIG_MEMCG
+> +static inline void fill_meminfo(struct meminfo *mi, struct task_struct *task)
+> +{
+> +	mem_fill_meminfo(mi, task);
+> +}
+> +#else
+> +static inline void fill_meminfo(struct meminfo *mi, struct task_struct *task)
+> +{
+> +	proc_fill_meminfo(mi);
+> +}
+> +#endif
+> +
+>  static void show_val_kb(struct seq_file *m, const char *s, unsigned long num)
+>  {
+>  	seq_put_decimal_ull_width(m, s, num << (PAGE_SHIFT - 10), 8);
+>  	seq_write(m, " kB\n", 4);
+>  }
+>  
+> +static int meminfo_proc_show_mi(struct seq_file *m, struct meminfo *mi)
+> +{
+> +	show_val_kb(m, "MemTotal:       ", mi->si.totalram);
+> +	show_val_kb(m, "MemFree:        ", mi->si.freeram);
+> +	show_val_kb(m, "MemAvailable:   ", si_mem_available_mi(mi));
+> +	show_val_kb(m, "Buffers:        ", mi->si.bufferram);
+> +	show_val_kb(m, "Cached:         ", mi->cached);
+> +	show_val_kb(m, "SwapCached:     ", mi->swapcached);
+> +	show_val_kb(m, "Active:         ", mi->pages[LRU_ACTIVE_ANON] + mi->pages[LRU_ACTIVE_FILE]);
+> +	show_val_kb(m, "Inactive:       ", mi->pages[LRU_INACTIVE_ANON] + mi->pages[LRU_INACTIVE_FILE]);
+> +	show_val_kb(m, "Active(anon):   ", mi->pages[LRU_ACTIVE_ANON]);
+> +	show_val_kb(m, "Inactive(anon): ", mi->pages[LRU_INACTIVE_ANON]);
+> +	show_val_kb(m, "Active(file):   ", mi->pages[LRU_ACTIVE_FILE]);
+> +	show_val_kb(m, "Inactive(file): ", mi->pages[LRU_INACTIVE_FILE]);
+> +	show_val_kb(m, "Unevictable:    ", mi->pages[LRU_UNEVICTABLE]);
+> +
+> +#ifdef CONFIG_HIGHMEM
+> +	show_val_kb(m, "HighTotal:      ", mi->si.totalhigh);
+> +	show_val_kb(m, "HighFree:       ", mi->si.freehigh);
+> +	show_val_kb(m, "LowTotal:       ", mi->si.totalram - mi->si.totalhigh);
+> +	show_val_kb(m, "LowFree:        ", mi->si.freeram - mi->si.freehigh);
+> +#endif
+> +
+> +	show_val_kb(m, "SwapTotal:      ", mi->si.totalswap);
+> +	show_val_kb(m, "SwapFree:       ", mi->si.freeswap);
+> +	show_val_kb(m, "Dirty:          ", mi->dirty_pages);
+> +	show_val_kb(m, "Writeback:      ", mi->writeback_pages);
+> +
+> +	show_val_kb(m, "AnonPages:      ", mi->anon_pages);
+> +	show_val_kb(m, "Mapped:         ", mi->mapped);
+> +	show_val_kb(m, "Shmem:          ", mi->si.sharedram);
+> +	show_val_kb(m, "Slab:           ", mi->slab_reclaimable + mi->slab_unreclaimable);
+> +	show_val_kb(m, "SReclaimable:   ", mi->slab_reclaimable);
+> +	show_val_kb(m, "SUnreclaim:     ", mi->slab_unreclaimable);
+> +	show_val_kb(m, "PageTables:     ", mi->nr_pagetable);
+> +
+> +	return 0;
+> +}
+> +
+>  static int meminfo_proc_show(struct seq_file *m, void *v)
+>  {
+> -	struct sysinfo i;
+> -	unsigned long committed;
+> -	long cached;
+> -	long available;
+> -	unsigned long pages[NR_LRU_LISTS];
+> -	unsigned long sreclaimable, sunreclaim;
+> -	int lru;
+>  
+> -	si_meminfo(&i);
+> -	si_swapinfo(&i);
+> -	committed = vm_memory_committed();
+> +	struct meminfo mi;
+>  
+> -	cached = global_node_page_state(NR_FILE_PAGES) -
+> -			total_swapcache_pages() - i.bufferram;
+> -	if (cached < 0)
+> -		cached = 0;
+> +	proc_fill_meminfo(&mi);
+> +	meminfo_proc_show_mi(m, &mi);
+>  
+> -	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+> -		pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+> -
+> -	available = si_mem_available();
+> -	sreclaimable = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B);
+> -	sunreclaim = global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B);
+> -
+> -	show_val_kb(m, "MemTotal:       ", i.totalram);
+> -	show_val_kb(m, "MemFree:        ", i.freeram);
+> -	show_val_kb(m, "MemAvailable:   ", available);
+> -	show_val_kb(m, "Buffers:        ", i.bufferram);
+> -	show_val_kb(m, "Cached:         ", cached);
+> -	show_val_kb(m, "SwapCached:     ", total_swapcache_pages());
+> -	show_val_kb(m, "Active:         ", pages[LRU_ACTIVE_ANON] +
+> -					   pages[LRU_ACTIVE_FILE]);
+> -	show_val_kb(m, "Inactive:       ", pages[LRU_INACTIVE_ANON] +
+> -					   pages[LRU_INACTIVE_FILE]);
+> -	show_val_kb(m, "Active(anon):   ", pages[LRU_ACTIVE_ANON]);
+> -	show_val_kb(m, "Inactive(anon): ", pages[LRU_INACTIVE_ANON]);
+> -	show_val_kb(m, "Active(file):   ", pages[LRU_ACTIVE_FILE]);
+> -	show_val_kb(m, "Inactive(file): ", pages[LRU_INACTIVE_FILE]);
+> -	show_val_kb(m, "Unevictable:    ", pages[LRU_UNEVICTABLE]);
+>  	show_val_kb(m, "Mlocked:        ", global_zone_page_state(NR_MLOCK));
+>  
+> -#ifdef CONFIG_HIGHMEM
+> -	show_val_kb(m, "HighTotal:      ", i.totalhigh);
+> -	show_val_kb(m, "HighFree:       ", i.freehigh);
+> -	show_val_kb(m, "LowTotal:       ", i.totalram - i.totalhigh);
+> -	show_val_kb(m, "LowFree:        ", i.freeram - i.freehigh);
+> -#endif
+> -
+>  #ifndef CONFIG_MMU
+>  	show_val_kb(m, "MmapCopy:       ",
+>  		    (unsigned long)atomic_long_read(&mmap_pages_allocated));
+>  #endif
+>  
+> -	show_val_kb(m, "SwapTotal:      ", i.totalswap);
+> -	show_val_kb(m, "SwapFree:       ", i.freeswap);
+> -	show_val_kb(m, "Dirty:          ",
+> -		    global_node_page_state(NR_FILE_DIRTY));
+> -	show_val_kb(m, "Writeback:      ",
+> -		    global_node_page_state(NR_WRITEBACK));
+> -	show_val_kb(m, "AnonPages:      ",
+> -		    global_node_page_state(NR_ANON_MAPPED));
+> -	show_val_kb(m, "Mapped:         ",
+> -		    global_node_page_state(NR_FILE_MAPPED));
+> -	show_val_kb(m, "Shmem:          ", i.sharedram);
+> -	show_val_kb(m, "KReclaimable:   ", sreclaimable +
+> +	show_val_kb(m, "KReclaimable:   ", mi.slab_reclaimable +
+>  		    global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE));
+> -	show_val_kb(m, "Slab:           ", sreclaimable + sunreclaim);
+> -	show_val_kb(m, "SReclaimable:   ", sreclaimable);
+> -	show_val_kb(m, "SUnreclaim:     ", sunreclaim);
+>  	seq_printf(m, "KernelStack:    %8lu kB\n",
+>  		   global_node_page_state(NR_KERNEL_STACK_KB));
+>  #ifdef CONFIG_SHADOW_CALL_STACK
+>  	seq_printf(m, "ShadowCallStack:%8lu kB\n",
+>  		   global_node_page_state(NR_KERNEL_SCS_KB));
+>  #endif
+> -	show_val_kb(m, "PageTables:     ",
+> -		    global_node_page_state(NR_PAGETABLE));
+>  
+>  	show_val_kb(m, "NFS_Unstable:   ", 0);
+>  	show_val_kb(m, "Bounce:         ",
+> @@ -115,7 +139,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+>  	show_val_kb(m, "WritebackTmp:   ",
+>  		    global_node_page_state(NR_WRITEBACK_TEMP));
+>  	show_val_kb(m, "CommitLimit:    ", vm_commit_limit());
+> -	show_val_kb(m, "Committed_AS:   ", committed);
+> +	show_val_kb(m, "Committed_AS:   ", vm_memory_committed());
+>  	seq_printf(m, "VmallocTotal:   %8lu kB\n",
+>  		   (unsigned long)VMALLOC_TOTAL >> 10);
+>  	show_val_kb(m, "VmallocUsed:    ", vmalloc_nr_pages());
+> @@ -153,6 +177,20 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+>  	return 0;
+>  }
+>  
+> +int proc_meminfo_show(struct seq_file *m, struct pid_namespace *ns,
+> +		     struct pid *pid, struct task_struct *task)
+> +{
+> +	struct meminfo mi;
+> +
+> +	fill_meminfo(&mi, task);
+> +
+> +	meminfo_proc_show_mi(m, &mi);
+> +	hugetlb_report_meminfo(m);
+> +	arch_report_meminfo(m);
+> +
+> +	return 0;
+> +}
+> +
+>  static int __init proc_meminfo_init(void)
+>  {
+>  	proc_create_single("meminfo", 0, NULL, meminfo_proc_show);
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index c193be760709..4a7e2894954f 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -1119,6 +1119,8 @@ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
+>  						gfp_t gfp_mask,
+>  						unsigned long *total_scanned);
+>  
+> +void mem_fill_meminfo(struct meminfo *mi, struct task_struct *task);
+> +
+>  #else /* CONFIG_MEMCG */
+>  
+>  #define MEM_CGROUP_ID_SHIFT	0
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index c274f75efcf9..7faeaddd5b88 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2467,6 +2467,20 @@ static inline int early_pfn_to_nid(unsigned long pfn)
+>  extern int __meminit early_pfn_to_nid(unsigned long pfn);
+>  #endif
+>  
+> +struct meminfo {
+> +	struct sysinfo si;
+> +	unsigned long pages[NR_LRU_LISTS];
+> +	unsigned long cached;
+> +	unsigned long swapcached;
+> +	unsigned long anon_pages;
+> +	unsigned long mapped;
+> +	unsigned long nr_pagetable;
+> +	unsigned long dirty_pages;
+> +	unsigned long writeback_pages;
+> +	unsigned long slab_reclaimable;
+> +	unsigned long slab_unreclaimable;
+> +};
+> +
+>  extern void set_dma_reserve(unsigned long new_dma_reserve);
+>  extern void memmap_init_range(unsigned long, int, unsigned long,
+>  		unsigned long, unsigned long, enum meminit_context,
+> @@ -2477,6 +2491,7 @@ extern int __meminit init_per_zone_wmark_min(void);
+>  extern void mem_init(void);
+>  extern void __init mmap_init(void);
+>  extern void show_mem(unsigned int flags, nodemask_t *nodemask);
+> +extern long si_mem_available_mi(struct meminfo *mi);
+>  extern long si_mem_available(void);
+>  extern void si_meminfo(struct sysinfo * val);
+>  extern void si_meminfo_node(struct sysinfo *val, int nid);
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 64ada9e650a5..344b546f9e25 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -3750,6 +3750,86 @@ static unsigned long mem_cgroup_nr_lru_pages(struct mem_cgroup *memcg,
+>  	return nr;
+>  }
+>  
+> +static void mem_cgroup_nr_pages(struct mem_cgroup *memcg, int nid, unsigned long *pages)
+> +{
+> +	struct mem_cgroup *iter;
+> +	int i;
+> +
+> +	for_each_mem_cgroup_tree(iter, memcg) {
+> +		for (i = 0; i < NR_LRU_LISTS; i++)
+> +			pages[i] += mem_cgroup_node_nr_lru_pages(iter, nid, BIT(i), false);
+> +	}
+> +}
+> +
+> +static void mem_cgroup_si_meminfo(struct sysinfo *si, struct task_struct *task)
+> +{
+> +	unsigned long memtotal, memused, swapsize;
+> +	struct mem_cgroup *memcg;
+> +	struct cgroup_subsys_state *css;
+> +
+> +	css = task_css(task, memory_cgrp_id);
+> +	memcg = mem_cgroup_from_css(css);
+> +
+> +	memtotal = READ_ONCE(memcg->memory.max);
+> +
+> +	if (memtotal != PAGE_COUNTER_MAX) {
+> +		memused = page_counter_read(&memcg->memory);
+> +
+> +		si->totalram = memtotal;
+> +		si->freeram = (memtotal > memused ? memtotal - memused : 0);
+> +		si->sharedram = memcg_page_state(memcg, NR_SHMEM);
+> +
+> +		si->bufferram = nr_blockdev_pages();
+> +		si->totalhigh = totalhigh_pages();
+> +		si->freehigh = nr_free_highpages();
+> +		si->mem_unit = PAGE_SIZE;
+> +	} else {
+> +		si_meminfo(si);
+> +		memused = si->totalram - si->freeram;
+> +	}
+> +
+> +	swapsize = READ_ONCE(memcg->memsw.max);
+> +
+> +	if (swapsize != PAGE_COUNTER_MAX) {
+> +		unsigned long swaptotal, swapused;
+> +
+> +		swaptotal = swapsize - memtotal;
+> +		swapused = page_counter_read(&memcg->memsw) - memused;
+> +		si->totalswap = swaptotal;
+> +		/* Due to global reclaim, memory.memsw.usage can be greater than
+> +		 * (memory.memsw.max - memory.max). */
+> +		si->freeswap = (swaptotal > swapused ? swaptotal - swapused : 0);
+> +	} else {
+> +		si_swapinfo(si);
+> +	}
+> +
+> +	css_put(css);
+> +}
+> +
+> +void mem_fill_meminfo(struct meminfo *mi, struct task_struct *task)
+> +{
+> +	struct cgroup_subsys_state *memcg_css = task_css(task, memory_cgrp_id);
+> +	struct mem_cgroup *memcg = mem_cgroup_from_css(memcg_css);
+> +	int nid;
+> +
+> +	memset(&mi->pages, 0, sizeof(mi->pages));
+> +
+> +	mem_cgroup_si_meminfo(&mi->si, task);
+> +
+> +	for_each_online_node(nid)
+> +		mem_cgroup_nr_pages(memcg, nid, mi->pages);
+> +
+> +	mi->slab_reclaimable = memcg_page_state(memcg, NR_SLAB_RECLAIMABLE_B);
+> +	mi->slab_unreclaimable = memcg_page_state(memcg, NR_SLAB_UNRECLAIMABLE_B);
+> +	mi->cached = memcg_page_state(memcg, NR_FILE_PAGES);
+> +	mi->swapcached = memcg_page_state(memcg, NR_SWAPCACHE);
+> +	mi->anon_pages = memcg_page_state(memcg, NR_ANON_MAPPED);
+> +	mi->mapped = memcg_page_state(memcg, NR_FILE_MAPPED);
+> +	mi->nr_pagetable = memcg_page_state(memcg, NR_PAGETABLE);
+> +	mi->dirty_pages = memcg_page_state(memcg, NR_FILE_DIRTY);
+> +	mi->writeback_pages = memcg_page_state(memcg, NR_WRITEBACK);
+> +}
+> +
+>  static int memcg_numa_stat_show(struct seq_file *m, void *v)
+>  {
+>  	struct numa_stat {
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index aaa1655cf682..0a3c9dcd2c13 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5551,18 +5551,13 @@ static inline void show_node(struct zone *zone)
+>  		printk("Node %d ", zone_to_nid(zone));
+>  }
+>  
+> -long si_mem_available(void)
+> +long si_mem_available_mi(struct meminfo *mi)
+>  {
+>  	long available;
+>  	unsigned long pagecache;
+>  	unsigned long wmark_low = 0;
+> -	unsigned long pages[NR_LRU_LISTS];
+>  	unsigned long reclaimable;
+>  	struct zone *zone;
+> -	int lru;
+> -
+> -	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+> -		pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+>  
+>  	for_each_zone(zone)
+>  		wmark_low += low_wmark_pages(zone);
+> @@ -5571,14 +5566,14 @@ long si_mem_available(void)
+>  	 * Estimate the amount of memory available for userspace allocations,
+>  	 * without causing swapping.
+>  	 */
+> -	available = global_zone_page_state(NR_FREE_PAGES) - totalreserve_pages;
+> +	available = mi->si.freeram - totalreserve_pages;
+>  
+>  	/*
+>  	 * Not all the page cache can be freed, otherwise the system will
+>  	 * start swapping. Assume at least half of the page cache, or the
+>  	 * low watermark worth of cache, needs to stay.
+>  	 */
+> -	pagecache = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
+> +	pagecache = mi->pages[LRU_ACTIVE_FILE] + mi->pages[LRU_INACTIVE_FILE];
+>  	pagecache -= min(pagecache / 2, wmark_low);
+>  	available += pagecache;
+>  
+> @@ -5587,14 +5582,27 @@ long si_mem_available(void)
+>  	 * items that are in use, and cannot be freed. Cap this estimate at the
+>  	 * low watermark.
+>  	 */
+> -	reclaimable = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B) +
+> -		global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE);
+> +	reclaimable = mi->slab_reclaimable + global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE);
+>  	available += reclaimable - min(reclaimable / 2, wmark_low);
+>  
+>  	if (available < 0)
+>  		available = 0;
+>  	return available;
+>  }
+> +
+> +long si_mem_available(void)
+> +{
+> +	struct meminfo mi;
+> +	int lru;
+> +
+> +	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+> +		mi.pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+> +
+> +	mi.si.freeram = global_zone_page_state(NR_FREE_PAGES);
+> +	mi.slab_reclaimable = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B);
+> +
+> +	return si_mem_available_mi(&mi);
+> +}
+>  EXPORT_SYMBOL_GPL(si_mem_available);
+>  
+>  void si_meminfo(struct sysinfo *val)
+> -- 
+> 2.29.3
 
 -- 
-Pavel Begunkov
+Michal Hocko
+SUSE Labs
