@@ -2,132 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6048239B642
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jun 2021 11:55:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91C4E39B64F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jun 2021 11:59:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230052AbhFDJ4o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Jun 2021 05:56:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46586 "EHLO mail.kernel.org"
+        id S229962AbhFDKBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Jun 2021 06:01:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229930AbhFDJ4n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Jun 2021 05:56:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 96D516140C;
-        Fri,  4 Jun 2021 09:54:54 +0000 (UTC)
-Date:   Fri, 4 Jun 2021 11:54:51 +0200
+        id S229690AbhFDKBA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Jun 2021 06:01:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 85F4E61415;
+        Fri,  4 Jun 2021 09:59:04 +0000 (UTC)
+Date:   Fri, 4 Jun 2021 11:59:01 +0200
 From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Cong Wang <xiyou.wangcong@gmail.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        David Laight <David.Laight@aculab.com>
-Subject: Re: [PATCH] nsfs: fix oops when ns->ops is not provided
-Message-ID: <20210604095451.nkfgpsibm5nrqt3f@wittgenstein>
-References: <20210531153410.93150-1-changbin.du@gmail.com>
- <20210531220128.26c0cb36@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
- <CAM_iQpUEjBDK44=mD5shkmmoDYhmHQaSZtR34rLRkgd9wSWiQQ@mail.gmail.com>
- <20210602091451.kbdul6nhobilwqvi@wittgenstein>
- <CAM_iQpUqgeoY_mA6cazUPCWwMK6yw9SaD6DRg-Ja4r6r_zOmLg@mail.gmail.com>
+To:     Menglong Dong <menglong8.dong@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Sami Tolvanen <samitolvanen@google.com>, johan@kernel.org,
+        ojeda@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        Menglong Dong <dong.menglong@zte.com.cn>, masahiroy@kernel.org,
+        joe@perches.com, hare@suse.de, Jens Axboe <axboe@kernel.dk>,
+        Jan Kara <jack@suse.cz>, tj@kernel.org,
+        gregkh@linuxfoundation.org, song@kernel.org,
+        NeilBrown <neilb@suse.de>, Barret Rhoden <brho@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>, palmerdabbelt@google.com,
+        arnd@arndb.de, f.fainelli@gmail.com,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        wangkefeng.wang@huawei.com, Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, vbabka@suse.cz,
+        pmladek@suse.com, Alexander Potapenko <glider@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, jojing64@gmail.com,
+        mingo@kernel.org, terrelln@fb.com, geert@linux-m68k.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        jeyu@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Josh Triplett <josh@joshtriplett.org>
+Subject: Re: [PATCH v4 2/3] init/do_mounts.c: create second mount for
+ initramfs
+Message-ID: <20210604095901.zqh7saubd6eivpbe@wittgenstein>
+References: <20210602144630.161982-1-dong.menglong@zte.com.cn>
+ <20210602144630.161982-3-dong.menglong@zte.com.cn>
+ <20210603133015.gvr5wpbotkyhhtqx@wittgenstein>
+ <CADxym3YWUBf6W4pgeSPuYKFXPXeGse0t=DW8fAm-3WvgjWkRnA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAM_iQpUqgeoY_mA6cazUPCWwMK6yw9SaD6DRg-Ja4r6r_zOmLg@mail.gmail.com>
+In-Reply-To: <CADxym3YWUBf6W4pgeSPuYKFXPXeGse0t=DW8fAm-3WvgjWkRnA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 03, 2021 at 03:52:29PM -0700, Cong Wang wrote:
-> On Wed, Jun 2, 2021 at 2:14 AM Christian Brauner
+On Thu, Jun 03, 2021 at 11:05:08PM +0800, Menglong Dong wrote:
+> On Thu, Jun 3, 2021 at 9:30 PM Christian Brauner
 > <christian.brauner@ubuntu.com> wrote:
-> > But the point is that ns->ops should never be accessed when that
-> > namespace type is disabled. Or in other words, the bug is that something
-> > in netns makes use of namespace features when they are disabled. If we
-> > handle ->ops being NULL we might be tapering over a real bug somewhere.
-> 
-> It is merely a protocol between fs/nsfs.c and other namespace users,
-> so there is certainly no right or wrong here, the only question is which
-> one is better.
-> 
 > >
-> > Jakub's proposal in the other mail makes sense and falls in line with
-> > how the rest of the netns getters are implemented. For example
-> > get_net_ns_fd_fd():
-> 
-> It does not make any sense to me. get_net_ns() merely increases
-> the netns refcount, which is certainly fine for init_net too, no matter
-> CONFIG_NET_NS is enabled or disabled. Returning EOPNOTSUPP
-> there is literally saying we do not support increasing init_net refcount,
-> which is of course false.
-> 
-> > struct net *get_net_ns_by_fd(int fd)
+> [...]
+> >
+> > In fact you seem to be only using this struct you're introducing in this
+> > single place which makes me think that it's not needed at all. So what's
+> > preventing us from doing:
+> >
+> > > +
+> > > +     return do_mount_root(root->dev_name,
+> > > +                          root->fs_name,
+> > > +                          root_mountflags & ~MS_RDONLY,
+> > > +                          root_mount_data);
+> > > +}
+> >
+> > int __init prepare_mount_rootfs(void)
 > > {
-> >         return ERR_PTR(-EINVAL);
+> >         if (is_tmpfs_enabled())
+> >                 return do_mount_root("tmpfs", "tmpfs",
+> >                                      root_mountflags & ~MS_RDONLY,
+> >                                      root_mount_data);
+> >
+> >         return do_mount_root("ramfs", "ramfs",
+> >                              root_mountflags & ~MS_RDONLY,
+> >                              root_mount_data);
 > > }
 > 
-> There is a huge difference between just increasing netns refcount
-> and retrieving it by fd, right? I have no idea why you bring this up,
-> calling them getters is missing their difference.
+> It seems to make sense, but I just feel that it is a little hardcode.
+> What if a new file system
+> of rootfs arises? Am I too sensitive?
 
-This argument doesn't hold up. All netns helpers ultimately increase the
-reference count of the net namespace they find. And if any of them
-perform operations where they are called in environments wherey they
-need CONFIG_NET_NS they handle this case at compile time.
+It'sn understandable but premature worry and I don't think it should
+justify all that extra code.
 
-(Pluse they are defined in a central place in net/net_namespace.{c,h}.
-That includes the low-level get_net() function and all the others.
-get_net_ns() is the only one that's defined out of band. So get_net_ns()
-currently is arguably also misplaced.)
-
-The problem I have with fixing this in nsfs is that it gives the
-impression that this is a bug in nsfs whereas it isn't and it
-potentially helps tapering over other bugs.
-
-get_net_ns() is only called for codepaths that call into nsfs via
-open_related_ns() and it's the only namespace that does this. But
-open_related_ns() is only well defined if CONFIG_<NAMESPACE_TYPE> is
-set. For example, none of the procfs namespace f_ops will be set for
-!CONFIG_NET_NS. So clearly the socket specific getter here is buggy as
-it doesn't account for !CONFIG_NET_NS and it should be fixed.
-
-Plus your fix leaks references to init netns without fixing get_net_ns()
-too.
-You succeed to increase the refcount of init netns in get_net_ns() but
-then you return in __ns_get_path() because ns->ops aren't set before
-ns->ops->put() can be called.  But you also _can't_ call it since it's
-not set because !CONFIG_NET_NS. So everytime you call any of those
-ioctls you increas the refcount of init net ns without decrementing it
-on failure. So the fix is buggy as it is too and would suggest you to
-fixup get_net_ns() too.
-
-Cc: <stable@vger.kernel.org>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
----
- fs/nsfs.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index 800c1d0eb0d0..6c055eb7757b 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -62,6 +62,10 @@ static int __ns_get_path(struct path *path, struct ns_common *ns)
- 	struct inode *inode;
- 	unsigned long d;
- 
-+	/* In case the namespace is not actually enabled. */
-+	if (!ns->ops)
-+		return -EOPNOTSUPP;
-+
- 	rcu_read_lock();
- 	d = atomic_long_read(&ns->stashed);
- 	if (!d)
--- 
-2.30.2
-
-
+Christian
