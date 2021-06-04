@@ -2,98 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB2239BBBF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jun 2021 17:24:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D38039BC3F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jun 2021 17:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbhFDP0B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Jun 2021 11:26:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59728 "EHLO
+        id S231186AbhFDPxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Jun 2021 11:53:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230289AbhFDP0B (ORCPT
+        with ESMTP id S229809AbhFDPxG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Jun 2021 11:26:01 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95519C061766
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jun 2021 08:23:59 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id n12so7665843lft.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jun 2021 08:23:59 -0700 (PDT)
+        Fri, 4 Jun 2021 11:53:06 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF8CC061766;
+        Fri,  4 Jun 2021 08:51:05 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id m13so7287724qtk.13;
+        Fri, 04 Jun 2021 08:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=ij2m//i2vBsvWVnhGZ0XX68OI3bOnqi+sqV2qYh6ilE=;
-        b=0a0ckhenY104NwViOzux/nsF7MNxKyTmqDt4G3pYeg6N05gBAHLJ1e167QtHn+tanr
-         l8jqrm/IaCj4GSXMxQ7nHM6w0q/WNVAK8h4GtYe7z8y2idNAJ6tXLaOFhy/DulQj2QRp
-         DC2B8mE+JPu3LcDhNvivHczs3p0QQc3uTbyom6kOciHY5sRoMwEdQabF5td7wcD9qonk
-         Xj5j+SAtQaGJsFdIzhQWJuD4sPLe0Fh8ecxyF70FaMeIkknYs4EkZr8M6uaUrwZ/UbIW
-         pVwjp69OKq4ls0OmKT4wBQzA3BoUyebi02nVubEAtu2tBtr7NWntpSkAdXhkBDt62mVS
-         WO8w==
+        bh=uBZ/7zA0rgZN1i3qGEvYkxVHxjspKbk9HCZ8aw1XUNE=;
+        b=bY59MWvfcUywNdjpMUbwtYEHsD11yoPOxdrhEQsx9FOhgynwo7kkXWedl9XQsAy9z3
+         DUMRa5rEumkb0I6USrRgSlbMnbT1g2T0ibgeTGBHZujAdzzK0kYRF8HohIgYHAhRutdm
+         o419IsVMLvjkT3XOL/qlApJniWX2WmLMNFU+Py1BjoYyjpb0m/FO6Ahr5GkwAnRijC3X
+         ld/j5/pTft68bjR1Nh+DaF1pjzrlM1aT0U7oGqroUG5X8rDWLFSyVl0zNfRs/P2N09Gh
+         oZ33WXpfnbxdaTVwqGIpxP/TZ6HzIFfhtyg0nocOAlJwxXvoTmiD3Xiwj5G5++RAZRg3
+         YMwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ij2m//i2vBsvWVnhGZ0XX68OI3bOnqi+sqV2qYh6ilE=;
-        b=hFjGLItnJe4qexQ+hZ8NY2BD1JsCdi0EQEUgeMg9PGqeXyMD1b3Td5uAUIZ4NTR0mz
-         KbUfU0Rm/Q0dalntFRSpRHVDiuoX0PaOhnPY4K8iVHZQ8+CC30didwwh1KUj3k/dMcAb
-         YFXqzU4rhpY60h+YnCJpp9GpqkA1Ro2KRZtCllwEo1JwT1E8v4nD/ySmCW7TMJEcPCER
-         R3V/2OsMJ/WkbtmczWWsMqP9yNPiP48UoDeNY9zDiOQYWsdCZC74k1mtwQDc+ZroZaHF
-         pHo6niJvJGq46nhByUft6DvU2j272L3yQJyDobIc+llPK/YXn5ZmeM/zhXalXH7+8tim
-         nE2g==
-X-Gm-Message-State: AOAM531gOYyK/1WronxPnXnqDOaKQl9PsnumHEzMYtd2rvag7uLn4GTR
-        qQKZP/aBPYnM/+iLQCna/HRPInXbvclB1A==
-X-Google-Smtp-Source: ABdhPJy+REWo212Wm8EnBabZxH14h5sBHwmDpzuQ7H2pjbEiesqoXy6o5AY9mSz57y/2j7sa5NNzFg==
-X-Received: by 2002:ac2:4899:: with SMTP id x25mr2636953lfc.372.1622820236389;
-        Fri, 04 Jun 2021 08:23:56 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id l15sm496245ljc.35.2021.06.04.08.23.55
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=uBZ/7zA0rgZN1i3qGEvYkxVHxjspKbk9HCZ8aw1XUNE=;
+        b=NY1lPjdJ7Xn8Zx/3Tf5uLZbQk+LvuWAgGsu2PLWZBAQAXLcRHzf6A6fcnAALgE0sCm
+         A29WptnpYm2eVP64XN3RhfjswVHqcW3Wimr4u56u0Z8EKYLY/9QllS4j4hIRlTHwJyIv
+         b0CDmcfBS5tn3/Tu1xwmXqB79tMHXUHYS+iSbIAPVPa091veZ8G7aNk+o/u9lLYZ7ZE6
+         xLPIjsW2Z2zVzZCUbacAFFV5ZH+kKLOegJtdoymB9m5wla5/SMnrrIkEuhwPDVJ65MU1
+         cx5hmG5FPrFUQjP1F3bOsWvB5EnjZ7Ramsmk7lB/BE51OmArEz0wrIB65V9lcgUE2CQ4
+         VKwg==
+X-Gm-Message-State: AOAM532W3CEfcUBv/hVs2zcI++CuuxpZRurpGWSZf4ggGJ1L1MXIFmom
+        i6b81gHRj/EG6pDQleDWpWc=
+X-Google-Smtp-Source: ABdhPJyu188ZUbkxyE/86Gh1Io9LR7qUTnlhY/CCRA7iq+vqTMqQDCZA+T5rHg0vLfahVTF8yCMxIQ==
+X-Received: by 2002:a05:622a:ce:: with SMTP id p14mr1413541qtw.133.1622821864221;
+        Fri, 04 Jun 2021 08:51:04 -0700 (PDT)
+Received: from localhost ([199.192.137.73])
+        by smtp.gmail.com with ESMTPSA id z136sm1079735qkb.34.2021.06.04.08.51.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jun 2021 08:23:55 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id D566B1027A9; Fri,  4 Jun 2021 18:24:07 +0300 (+03)
-Date:   Fri, 4 Jun 2021 18:24:07 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Ming Lin <mlin@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Simon Ser <contact@emersion.fr>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mm: adds NOSIGBUS extension to mmap()
-Message-ID: <20210604152407.ouchyfuxjvchfroe@box>
-References: <1622792602-40459-1-git-send-email-mlin@kernel.org>
- <1622792602-40459-3-git-send-email-mlin@kernel.org>
+        Fri, 04 Jun 2021 08:51:03 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Fri, 4 Jun 2021 11:51:02 -0400
+From:   Tejun Heo <tj@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dennis Zhou <dennis@kernel.org>,
+        Dave Chinner <dchinner@redhat.com>, cgroups@vger.kernel.org
+Subject: Re: [PATCH v7 6/6] writeback, cgroup: release dying cgwbs by
+ switching attached inodes
+Message-ID: <YLpL5lpaRSS8uhHl@slm.duckdns.org>
+References: <20210604013159.3126180-1-guro@fb.com>
+ <20210604013159.3126180-7-guro@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1622792602-40459-3-git-send-email-mlin@kernel.org>
+In-Reply-To: <20210604013159.3126180-7-guro@fb.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 04, 2021 at 12:43:22AM -0700, Ming Lin wrote:
-> Adds new flag MAP_NOSIGBUS of mmap() to specify the behavior of
-> "don't SIGBUS on fault". Right now, this flag is only allowed
-> for private mapping.
+Hello,
 
-That's not what your use case asks for.
+On Thu, Jun 03, 2021 at 06:31:59PM -0700, Roman Gushchin wrote:
 
-SIGBUS can be generated for a number of reasons, not only on fault beyond
-end-of-file. vmf_error() would convert any errno, except ENOMEM to
-VM_FAULT_SIGBUS.
+> +bool cleanup_offline_cgwb(struct bdi_writeback *wb)
+> +{
+> +	struct inode_switch_wbs_context *isw;
+> +	struct inode *inode;
+> +	int nr;
+> +	bool restart = false;
+> +
+> +	isw = kzalloc(sizeof(*isw) + WB_MAX_INODES_PER_ISW *
+> +		      sizeof(struct inode *), GFP_KERNEL);
+> +	if (!isw)
+> +		return restart;
+> +
+> +	/* no need to call wb_get() here: bdi's root wb is not refcounted */
+> +	isw->new_wb = &wb->bdi->wb;
 
-Do you want to ignore -EIO or -ENOSPC? I don't think so.
+Not a deal breaker but I wonder whether it'd be safer to migrate it to the
+nearest live ancestor rather than directly to the root. As adaptive
+migration isn't something guaranteed, there's some chance that this can
+behave as escape-to-root path in pathological cases especially for inodes
+which may be written to by multiple cgroups.
 
-> For MAP_NOSIGBUS mapping, map in the zero page on read fault
-> or fill a freshly allocated page with zeroes on write fault.
-
-I don't like the resulting semantics: if you had a read fault beyond EOF
-and got zero page, you will still see zero page even if the file grows.
-Yes, it's allowed by POSIX for MAP_PRIVATE to get out-of-sync with the
-file, but it's not what users used to.
-
-It might be enough for the use case, but I would rather avoid one-user
-features.
+Thanks.
 
 -- 
- Kirill A. Shutemov
+tejun
