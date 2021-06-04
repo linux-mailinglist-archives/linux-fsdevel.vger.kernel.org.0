@@ -2,109 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2628E39B4E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jun 2021 10:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AC1539B4F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jun 2021 10:37:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230016AbhFDIe4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Jun 2021 04:34:56 -0400
-Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:34537 "EHLO
-        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229900AbhFDIez (ORCPT
+        id S229955AbhFDIjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Jun 2021 04:39:40 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:4472 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229936AbhFDIjk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Jun 2021 04:34:55 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id 2FB4B10FD;
-        Fri,  4 Jun 2021 04:33:08 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Fri, 04 Jun 2021 04:33:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=0QaX15AhSJWfHsnr5gihB3yVDuh
-        8b9trAJVDVBkiUD4=; b=CnkrDlNGkGa4MOf2Cy06uaBzfIbQe7fGKLCuRMAGOi1
-        n/iQBiw/FoYn/spSiV5q01C4jk+qfBhD8KvHHfvAlczcbcOgnddxWwrJTf02tbBf
-        F1o+LC7edEtdOAjDfxL2sbObcArkCRl4O67uYtFkwmNULRCKbbV7VX9q3zyzqU4N
-        oHzG14bnUgMPMJJ7acQqP70B4y/hHDZs80UvKbB2e4K2AXdZJF0qBW55A4VLyZjT
-        oH7/8XZwc8FSXKU3CdxFt+J3yLWfi23B1XdWTPPXhXdGTinu+gJakGFiF53uBLLi
-        02OlyFztYOsWt7G6aZdzBDoOf3oGft5z9nkp+KZl2HQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=0QaX15
-        AhSJWfHsnr5gihB3yVDuh8b9trAJVDVBkiUD4=; b=G2rVdkeh8vMSGKkpyvbRJt
-        5g3hydXtZI85c0lsB9xcDuc1M1HPQQ6F1EmAww/hE8x0nDodsLDrYl5bR+KIp2Ht
-        h3TOTJdqCEuz3A2lR711pWzw10nEcRSvEh0D7nOKZz0sSaqb8f3qObGU/Gyx/g9k
-        eJpcIIALi9p4nMm/AnoNP8pAfj+1fhJ9JrpM0iQn+zCvKxTCKInURsDhCDxkkscK
-        vRue5NBD5qkOFVBD+1FBlqUBhTHAWjhJZD1M1Y2LiuMFPkLrQVQ6gsYgK1BpPDCI
-        3aDTPQ1KYQD/pCaAwZYl2JYhTC+xRXPjiieHEDoB94dOqxZWPCJqQYkgXNMllnfQ
-        ==
-X-ME-Sender: <xms:QuW5YBMFfkAZpEeNW-Y9EAviOKSYjtxM7_J6HQ5i4fss82b3Ls66hA>
-    <xme:QuW5YD9XsR3aV32Vx29taDVe7KJYazGG_SkEoEfs4wVkVl12NDfxCD_cBB6ehIsQb
-    LG0trTl7Ah3oQ>
-X-ME-Received: <xmr:QuW5YAQYWQBZ3fwBNvuGrVaWi_F6OVh6sa0-zGGObjPK7KQH_7MynB_gcbvtn9xgp8DbkLW1sXXEQiAm-pwdy5NCNztoop7r>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfedtuddgtdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeevueehje
-    fgfffgiedvudekvdektdelleelgefhleejieeugeegveeuuddukedvteenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
-    drtghomh
-X-ME-Proxy: <xmx:QuW5YNs9FhIFWoLNTZAMkssAER8XpFd1neOO87s5ONtSB60jIjgZeA>
-    <xmx:QuW5YJfcMtvh1Jk2wNEsocJBuzr4bKgz1SNVnL7f94yzqLLPd5Le1w>
-    <xmx:QuW5YJ0y8tRQTawilnv76UEWNBGYXis9TxNUUi4X19VxDTAlNbZAqw>
-    <xmx:Q-W5YP-HI2XWXwWtpg-fcB6Mde4_azUEyCWDEeRLhhGZtERNLbWFJLxgBoY>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 4 Jun 2021 04:33:06 -0400 (EDT)
-Date:   Fri, 4 Jun 2021 10:33:03 +0200
-From:   Greg KH <greg@kroah.com>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     'Jaegeuk Kim' <jaegeuk@kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Daniel Rosenberg <drosen@google.com>,
-        Chao Yu <chao@kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] f2fs: Advertise encrypted casefolding in sysfs
-Message-ID: <YLnlPxfCVJD+p6/a@kroah.com>
-References: <20210603095038.314949-1-drosen@google.com>
- <20210603095038.314949-3-drosen@google.com>
- <YLlj+h4RiT6FvyK6@sol.localdomain>
- <YLmv5Ykb3QUzDOlL@google.com>
- <4f56f2781fac4b8bac1a78b0fecc318d@AcuMS.aculab.com>
+        Fri, 4 Jun 2021 04:39:40 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FxGKj5M23zZcQQ;
+        Fri,  4 Jun 2021 16:35:05 +0800 (CST)
+Received: from dggema766-chm.china.huawei.com (10.1.198.208) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Fri, 4 Jun 2021 16:37:51 +0800
+Received: from localhost.localdomain (10.175.127.227) by
+ dggema766-chm.china.huawei.com (10.1.198.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Fri, 4 Jun 2021 16:37:51 +0800
+From:   yangerkun <yangerkun@huawei.com>
+To:     <naoya.horiguchi@nec.com>, <akpm@linux-foundation.org>,
+        <jack@suse.cz>, <tytso@mit.edu>, <osalvador@suse.de>
+CC:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+        <yangerkun@huawei.com>, <yukuai3@huawei.com>
+Subject: [PATCH v2] mm/memory-failure: make sure wait for page writeback in memory_failure
+Date:   Fri, 4 Jun 2021 16:47:05 +0800
+Message-ID: <20210604084705.3729204-1-yangerkun@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f56f2781fac4b8bac1a78b0fecc318d@AcuMS.aculab.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggema766-chm.china.huawei.com (10.1.198.208)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 04, 2021 at 08:27:32AM +0000, David Laight wrote:
-> From: Jaegeuk Kim
-> > Sent: 04 June 2021 05:45
-> ...
-> > > > @@ -161,6 +161,9 @@ static ssize_t features_show(struct f2fs_attr *a,
-> > > >  	if (f2fs_sb_has_compression(sbi))
-> > > >  		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> > > >  				len ? ", " : "", "compression");
-> > > > +	if (f2fs_sb_has_casefold(sbi) && f2fs_sb_has_encrypt(sbi))
-> > > > +		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> > > > +				len ? ", " : "", "encrypted_casefold");
-> > > >  	len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> > > >  				len ? ", " : "", "pin_file");
-> > > >  	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
-> 
-> Looking at that pattern, why don't you just append "tag, "
-> each time and then replace the final ", " with "\n" at the end.
+Our syzkaller trigger the "BUG_ON(!list_empty(&inode->i_wb_list))" in
+clear_inode:
 
-Again PLEASE NO!
+[  292.016156] ------------[ cut here ]------------
+[  292.017144] kernel BUG at fs/inode.c:519!
+[  292.017860] Internal error: Oops - BUG: 0 [#1] SMP
+[  292.018741] Dumping ftrace buffer:
+[  292.019577]    (ftrace buffer empty)
+[  292.020430] Modules linked in:
+[  292.021748] Process syz-executor.0 (pid: 249, stack limit =
+0x00000000a12409d7)
+[  292.023719] CPU: 1 PID: 249 Comm: syz-executor.0 Not tainted 4.19.95
+[  292.025206] Hardware name: linux,dummy-virt (DT)
+[  292.026176] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[  292.027244] pc : clear_inode+0x280/0x2a8
+[  292.028045] lr : clear_inode+0x280/0x2a8
+[  292.028877] sp : ffff8003366c7950
+[  292.029582] x29: ffff8003366c7950 x28: 0000000000000000
+[  292.030570] x27: ffff80032b5f4708 x26: ffff80032b5f4678
+[  292.031863] x25: ffff80036ae6b300 x24: ffff8003689254d0
+[  292.032902] x23: ffff80036ae69d80 x22: 0000000000033cc8
+[  292.033928] x21: 0000000000000000 x20: ffff80032b5f47a0
+[  292.034941] x19: ffff80032b5f4678 x18: 0000000000000000
+[  292.035958] x17: 0000000000000000 x16: 0000000000000000
+[  292.037102] x15: 0000000000000000 x14: 0000000000000000
+[  292.038103] x13: 0000000000000004 x12: 0000000000000000
+[  292.039137] x11: 1ffff00066cd8f52 x10: 1ffff00066cd8ec8
+[  292.040216] x9 : dfff200000000000 x8 : ffff10006ac1e86a
+[  292.041432] x7 : dfff200000000000 x6 : ffff100066cd8f1e
+[  292.042516] x5 : dfff200000000000 x4 : ffff80032b5f47a0
+[  292.043525] x3 : ffff200008000000 x2 : ffff200009867000
+[  292.044560] x1 : ffff8003366bb000 x0 : 0000000000000000
+[  292.045569] Call trace:
+[  292.046083]  clear_inode+0x280/0x2a8
+[  292.046828]  ext4_clear_inode+0x38/0xe8
+[  292.047593]  ext4_free_inode+0x130/0xc68
+[  292.048383]  ext4_evict_inode+0xb20/0xcb8
+[  292.049162]  evict+0x1a8/0x3c0
+[  292.049761]  iput+0x344/0x460
+[  292.050350]  do_unlinkat+0x260/0x410
+[  292.051042]  __arm64_sys_unlinkat+0x6c/0xc0
+[  292.051846]  el0_svc_common+0xdc/0x3b0
+[  292.052570]  el0_svc_handler+0xf8/0x160
+[  292.053303]  el0_svc+0x10/0x218
+[  292.053908] Code: 9413f4a9 d503201f f90017b6 97f4d5b1 (d4210000)
+[  292.055471] ---[ end trace 01b339dd07795f8d ]---
+[  292.056443] Kernel panic - not syncing: Fatal exception
+[  292.057488] SMP: stopping secondary CPUs
+[  292.058419] Dumping ftrace buffer:
+[  292.059078]    (ftrace buffer empty)
+[  292.059756] Kernel Offset: disabled
+[  292.060443] CPU features: 0x10,a1006000
+[  292.061195] Memory Limit: none
+[  292.061794] Rebooting in 86400 seconds..
 
-This is not how sysfs is supposed to work and do not perpetuate this
-mess in any way.
+Crash of this problem show that someone call __munlock_pagevec to clear
+page LRU without lock_page.
 
-greg k-h
+ #0 [ffff80035f02f4c0] __switch_to at ffff20000808d020
+ #1 [ffff80035f02f4f0] __schedule at ffff20000985102c
+ #2 [ffff80035f02f5e0] schedule at ffff200009851d1c
+ #3 [ffff80035f02f600] io_schedule at ffff2000098525c0
+ #4 [ffff80035f02f620] __lock_page at ffff20000842d2d4
+ #5 [ffff80035f02f710] __munlock_pagevec at ffff2000084c4600
+ #6 [ffff80035f02f870] munlock_vma_pages_range at ffff2000084c5928
+ #7 [ffff80035f02fa60] do_munmap at ffff2000084cbdf4
+ #8 [ffff80035f02faf0] mmap_region at ffff2000084ce20c
+ #9 [ffff80035f02fb90] do_mmap at ffff2000084cf018
+
+So memory_failure will call identify_page_state without
+wait_on_page_writeback. And after truncate_error_page clear the
+mapping of this page. end_page_writeback won't call
+sb_clear_inode_writeback to clear inode->i_wb_list. That will trigger
+BUG_ON in clear_inode!
+
+Fix it by check PageWriteback too to help determine should we can skip
+wait_on_page_writeback.
+
+Fixes: 0bc1f8b0682c ("hwpoison: fix the handling path of the victimized page frame that belong to non-LRU")
+Signed-off-by: yangerkun <yangerkun@huawei.com>
+---
+ mm/memory-failure.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 85ad98c00fd9..61368b46bd67 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -1527,7 +1527,12 @@ int memory_failure(unsigned long pfn, int flags)
+ 		return 0;
+ 	}
+ 
+-	if (!PageTransTail(p) && !PageLRU(p))
++	/*
++	 * __munlock_pagevec may clear a writeback page's LRU flag without
++	 * page_lock. We need wait writeback completion for this page or it
++	 * may trigger vfs BUG while evict inode.
++	 */
++	if (!PageTransTail(p) && !PageLRU(p) && !PageWriteback(p))
+ 		goto identify_page_state;
+ 
+ 	/*
+-- 
+2.31.1
+
