@@ -2,110 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 174A939CA7F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jun 2021 20:23:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3686C39CA80
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jun 2021 20:25:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230010AbhFESZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Jun 2021 14:25:34 -0400
-Received: from mail-ej1-f50.google.com ([209.85.218.50]:43734 "EHLO
-        mail-ej1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbhFESZd (ORCPT
+        id S230019AbhFES1c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Jun 2021 14:27:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45244 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229994AbhFES1b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Jun 2021 14:25:33 -0400
-Received: by mail-ej1-f50.google.com with SMTP id ci15so19533139ejc.10
-        for <linux-fsdevel@vger.kernel.org>; Sat, 05 Jun 2021 11:23:35 -0700 (PDT)
+        Sat, 5 Jun 2021 14:27:31 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 985B7C061766
+        for <linux-fsdevel@vger.kernel.org>; Sat,  5 Jun 2021 11:25:43 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id b12so357303plg.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 05 Jun 2021 11:25:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hWseLMsHC1Tl+tjltvawHbNPgfRx7qxCEi8/dkUNOU4=;
-        b=dq91qTUDZfLAHHlQj01Xackwp7mLXGslcYSqKR8QjQWjay1MPlIiBx9Q2OjLRJv3Ny
-         tUvoHIhp+fIOQUEt5cgx436HWwJytvd/+6hnvkb9my5cWuHI21RlTnevNOOSMWGTQ9Xp
-         QlUNP5FJUEwnP+uHbMzVIztOiIoJLIajgm2Dk=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:in-reply-to:references:from:mime-version:content-id
+         :date:message-id;
+        bh=Sj8R2OLtu20ezahDTWPDqbPeVSB8wwQMNYSXeKWf6XI=;
+        b=Qm6wbr+DsIGnzCbQYBoURetRzAf/puoUBzuJMSaA9KiM1IIedyPaEnFDxfgB8zL91y
+         H3ddgHKJdCT69j3FV6p70wSZK+JEFGibWGyg/160muBYc3rMGzWf0djOtKM/QPwCO362
+         eP6nKkN0TpNEpssk/Ezy5P4aQLL8tbuAed7F6dy/v0pH/Qf0Sua859n6HFehayLV6lut
+         qYAJS1dCReNUGMsLYXFVNv8cGpzXaMZeMbpO2arNDDmPwHK3YZhKXxknW5rPNwUjYq2Q
+         zlmPdaulXtuMqrQ17BaFLwGq2AHIv/7Q33HwHMNp4ObJ+l0MofyQXg380cKQY6N8YvgV
+         IgZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hWseLMsHC1Tl+tjltvawHbNPgfRx7qxCEi8/dkUNOU4=;
-        b=jDRl+jUxFOwQcp09o6lM6lTaGt9d0Z9QiKn3uTlbwEPMSHwpBnUbDCU1kuw3YXOGaT
-         HYulwgf0z5JMu566xQwooKUzNj5vj8XXytpiYcUfrafBNygCYd+tUO39oarlc3g823hR
-         bxvwfQVLzgklEdncXoMNbElCMTCknmzBNDmwJ8p2SqVDX8Q6Aba9fJShDfKsov9bDw2d
-         1N6fI+/k7IVuAFw1DjH8B1bbaMGEADRAhBKog7jyTajwr0uBakNgoM+Si9tYz46zPdeg
-         DTxOI7t47OC8nrp6H28MrOE0ISGLh17U2EpMyFRPbYCyyIQK70rHp/ieFNx723I0X64d
-         ngIg==
-X-Gm-Message-State: AOAM532hecOTJiqExY70lHhMmwgYHeOex+BCjcGZD03GbcVv3k9OFkV8
-        ML6ZWLTYYjNqe90KNfsVkGwFOGCUMdEnXzX4JM0=
-X-Google-Smtp-Source: ABdhPJzQSxGy0ZNALipaizoDZMBmL/zbcb7Zajon591+Aw4fXP5yjWw6yKF7UguOOINtE+U3bhRuIQ==
-X-Received: by 2002:a17:906:68c1:: with SMTP id y1mr10165429ejr.32.1622917354933;
-        Sat, 05 Jun 2021 11:22:34 -0700 (PDT)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
-        by smtp.gmail.com with ESMTPSA id h6sm1657649edj.91.2021.06.05.11.22.34
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Jun 2021 11:22:34 -0700 (PDT)
-Received: by mail-wr1-f43.google.com with SMTP id z8so12563565wrp.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 05 Jun 2021 11:22:34 -0700 (PDT)
-X-Received: by 2002:a05:6512:374b:: with SMTP id a11mr6305938lfs.377.1622917038058;
- Sat, 05 Jun 2021 11:17:18 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:in-reply-to:references:from
+         :mime-version:content-id:date:message-id;
+        bh=Sj8R2OLtu20ezahDTWPDqbPeVSB8wwQMNYSXeKWf6XI=;
+        b=Azu/Y3bJiZxmRhXXSJqzZ8c78RWNkiyv3NzHH+5+JLzXbuKfTZwCEo4145qJOhLPgT
+         Q1JyLeSjiSVSycBsEScRynO+A9SxEgtRSpLSPKoz+Q98VZuMhiFhePsP/ohO9fAqDAz9
+         xExnXXO50so8RWgzIpXWVzah7B4OoY21GFUeBmLq5NBUK8n6QWdqe5AlPcttujePwxjO
+         m2zqh+yujMpk/jSdWZqmAOuprek2PXedc8C1bM1JC48mH3Ho7XZ1aZLAwNYmLCqIzjGh
+         06sitcAl2ySE85hcVD9A7KyS77Ay/jxaEnwtuQ2X7Y+yCIBexRjPGmcOphm5RmV4HtNP
+         OpcA==
+X-Gm-Message-State: AOAM530xI0cp52Y3os2FJB0UL3bFnu0rRu5XJqLmxQORFWfiRMpGkXTS
+        rB8XwNVJvlYfzRR6zA1n9DRhdLpS1vM=
+X-Google-Smtp-Source: ABdhPJxZSawktermWflNEMA8UHf6z5xpmD820E3eu04/dMk3mzRSgULVl2emY9oclW89o/vIC4tLKA==
+X-Received: by 2002:a17:902:6a84:b029:f3:f285:7d8 with SMTP id n4-20020a1709026a84b02900f3f28507d8mr9906634plk.57.1622917543097;
+        Sat, 05 Jun 2021 11:25:43 -0700 (PDT)
+Received: from jrobl (h219-110-108-104.catv02.itscom.jp. [219.110.108.104])
+        by smtp.gmail.com with ESMTPSA id g8sm4807664pgo.10.2021.06.05.11.25.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Jun 2021 11:25:42 -0700 (PDT)
+Received: from localhost ([127.0.0.1] helo=jrobl) by jrobl id 1lpazN-0001p4-E5 ; Sun, 06 Jun 2021 03:25:41 +0900
+Subject: Re: fanotify: FAN_OPEN_EXEC_PERM stops invoking the commands
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <CAOQ4uxhkDBgC1Sa87vt=DV6mfCoZR-8X5Oc1iqHD6_vVfjv_Ug@mail.gmail.com>
+References: <1461.1622909071@jrobl> <CAOQ4uxhkDBgC1Sa87vt=DV6mfCoZR-8X5Oc1iqHD6_vVfjv_Ug@mail.gmail.com>
+From:   hooanon05g@gmail.com
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
- <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net> <CAHC9VhS1XRZjKcTFgH1+n5uA-CeT+9BeSP5jvT2+RE5ougLpUg@mail.gmail.com>
- <2e541bdc-ae21-9a07-7ac7-6c6a4dda09e8@iogearbox.net> <CAHC9VhT464vr9sWxqY3PRB4DAccz=LvRMLgWBsSViWMR0JJvOQ@mail.gmail.com>
- <3ca181e3-df32-9ae0-12c6-efb899b7ce7a@iogearbox.net> <CAHC9VhTuPnPs1wMTmoGUZ4fvyy-es9QJpE7O_yTs2JKos4fgbw@mail.gmail.com>
- <f4373013-88fb-b839-aaaa-3826548ebd0c@iogearbox.net> <CAHC9VhS=BeGdaAi8Ae5Fx42Fzy_ybkcXwMNcPwK=uuA6=+SRcg@mail.gmail.com>
- <c59743f6-0000-1b15-bc16-ff761b443aef@iogearbox.net> <CAHC9VhT1JhdRw9P_m3niY-U-vukxTWKTE9q6AMyQ=r_ohpPxMw@mail.gmail.com>
- <CAADnVQ+0bNtDj46Q8s-h=rqJgZz2JaGTeHpbmof3e7fBBQKuDQ@mail.gmail.com> <64552a82-d878-b6e6-e650-52423153b624@schaufler-ca.com>
-In-Reply-To: <64552a82-d878-b6e6-e650-52423153b624@schaufler-ca.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 5 Jun 2021 11:17:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiUVqHN76YUwhkjZzwTdjMMJf_zN4+u7vEJjmEGh3recw@mail.gmail.com>
-Message-ID: <CAHk-=wiUVqHN76YUwhkjZzwTdjMMJf_zN4+u7vEJjmEGh3recw@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7008.1622917541.1@jrobl>
+Date:   Sun, 06 Jun 2021 03:25:41 +0900
+Message-ID: <7009.1622917541@jrobl>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 5, 2021 at 11:11 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> You have fallen into a common fallacy. The fact that the "code runs"
-> does not assure that the "system works right". In the security world
-> we face this all the time, often with performance expectations. In this
-> case the BPF design has failed [..]
+Amir Goldstein:
+> fanotify_fd is writable regardless of the argument event_f_flags of
+> fanotify_init(). See fanotify_init(2) man page and example in fanotify(7).
 
-I think it's the lockdown patches that have failed. They did the wrong
-thing, they didn't work,
+Ah, I was misunderstanding the meaning of event_f_flags.
+Thanks for clarifying.
 
-The report in question is for a regression.
 
-THERE ARE NO VALID ARGUMENTS FOR REGRESSIONS.
-
-Honestly, security people need to understand that "not working" is not
-a success case of security. It's a failure case.
-
-Yes, "not working" may be secure. But security in that case is *pointless*.
-
-              Linus
+J. R. Okajima
