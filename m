@@ -2,251 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D855939C7F3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jun 2021 13:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B369A39C8E7
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jun 2021 15:40:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230110AbhFELwT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Jun 2021 07:52:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229902AbhFELwS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Jun 2021 07:52:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C4EA361380;
-        Sat,  5 Jun 2021 11:50:21 +0000 (UTC)
-Date:   Sat, 5 Jun 2021 13:50:19 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     menglong8.dong@gmail.com
-Cc:     viro@zeniv.linux.org.uk, keescook@chromium.org,
-        samitolvanen@google.com, johan@kernel.org, ojeda@kernel.org,
-        jeyu@kernel.org, masahiroy@kernel.org, joe@perches.com,
-        dong.menglong@zte.com.cn, jack@suse.cz, hare@suse.de,
-        axboe@kernel.dk, tj@kernel.org, gregkh@linuxfoundation.org,
-        song@kernel.org, neilb@suse.de, akpm@linux-foundation.org,
-        linux@rasmusvillemoes.dk, brho@google.com, f.fainelli@gmail.com,
-        palmerdabbelt@google.com, wangkefeng.wang@huawei.com,
-        mhiramat@kernel.org, rostedt@goodmis.org, vbabka@suse.cz,
-        glider@google.com, pmladek@suse.com, johannes.berg@intel.com,
-        ebiederm@xmission.com, jojing64@gmail.com, terrelln@fb.com,
-        geert@linux-m68k.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mcgrof@kernel.org, arnd@arndb.de,
-        chris@chrisdown.name, mingo@kernel.org, bhelgaas@google.com,
-        josh@joshtriplett.org
-Subject: Re: [PATCH v6 2/2] init/do_mounts.c: create second mount for
- initramfs
-Message-ID: <20210605115019.umjumoasiwrclcks@wittgenstein>
-References: <20210605034447.92917-1-dong.menglong@zte.com.cn>
- <20210605034447.92917-3-dong.menglong@zte.com.cn>
+        id S230104AbhFENmH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Jun 2021 09:42:07 -0400
+Received: from mail-qk1-f179.google.com ([209.85.222.179]:34801 "EHLO
+        mail-qk1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229959AbhFENmH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 5 Jun 2021 09:42:07 -0400
+Received: by mail-qk1-f179.google.com with SMTP id k11so10569657qkk.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 05 Jun 2021 06:40:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4Atvk23VAJRECo9gPmro4DFImXIG4NDqEfap1exKlKA=;
+        b=GoIlQAOVCIkuM0rDmfLKmend+emu/3tfZr00HzMcgeR2Rzv4LvpAS92aJxNYw+M5UJ
+         FpYZiGfjBHmpQ13B6Yx59IKS0oMeH+YImmGxhPlkOW7uMSNjNZ/Ln1IsBYEe0kVtoDlo
+         czoe4hs6Itaasb6Xbg+2JJyvtyAnway8sPQVnNylYr4bKkjK14udQP4UMfnCaLncxdeM
+         R3ZznE37tkAJH1hykxV6tzyY1j21glrRTKGjkSZgHAUfo1sgdvqo+mdXH50QAUCkfXRa
+         uXo2eEZ7zHv52PUj8ibdL6WdToRHdaC+o8oIoeBVk00adqKCYBluQ8tTS0emEF0v6pmG
+         IZWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4Atvk23VAJRECo9gPmro4DFImXIG4NDqEfap1exKlKA=;
+        b=TsZ4qcFVrbuuzP5sNNJCLv/eztWh3FWYg02ot+3nSPq+3Z8ROLs45kWTiSCgEo69HA
+         VZz8cV98dYHtOSrZOK4tzjlEdYkaTKY0xJFX3VREqQyvtjuORD+JdtBVfMTmdKvbdtEU
+         uscQoS1cPCd80GOg/kTEE6dfsJoObOfSNzT5OhLQIxyOX+n7B96dlhM6frJIisOD/YOk
+         49S23lOOX/KH2n7Yk8aH5/msvDErnC3OcAfyYKzXPEOniKzvHJxtMTqE5unCD8vh90Qr
+         L/Ob0clK095YSfhKuHT4DHaV66NJRNrrHdADYoivdB5pb1soGbNvGuMZ9//9Br9+zRBg
+         YRow==
+X-Gm-Message-State: AOAM533Yw4aIMyBMQztI4lcDOTW9XJTBFcfHSGWTaPCw+8tQ9+rTQtP/
+        E28Y5p3rE3NXHUTmgVz6XRCSQQ==
+X-Google-Smtp-Source: ABdhPJxxQmtZ5zcZUhMN8lSaketJPR9mnwCxRc9RBRcUQivKmWRw06oGdARzPmIk964gpjL9qs0S5g==
+X-Received: by 2002:a05:620a:29c9:: with SMTP id s9mr8738237qkp.171.1622900347586;
+        Sat, 05 Jun 2021 06:39:07 -0700 (PDT)
+Received: from [192.168.1.10] (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id a14sm5355058qtj.57.2021.06.05.06.39.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 05 Jun 2021 06:39:06 -0700 (PDT)
+Subject: Re: [RFC v2 00/43] PKRAM: Preserved-over-Kexec RAM
+To:     Anthony Yznaga <anthony.yznaga@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        rppt@kernel.org, akpm@linux-foundation.org, hughd@google.com,
+        ebiederm@xmission.com, keescook@chromium.org, ardb@kernel.org,
+        nivedita@alum.mit.edu, jroedel@suse.de, masahiroy@kernel.org,
+        nathan@kernel.org, terrelln@fb.com, vincenzo.frascino@arm.com,
+        martin.b.radev@gmail.com, andreyknvl@google.com,
+        daniel.kiper@oracle.com, rafael.j.wysocki@intel.com,
+        dan.j.williams@intel.com, Jonathan.Cameron@huawei.com,
+        bhe@redhat.com, rminnich@gmail.com, ashish.kalra@amd.com,
+        guro@fb.com, hannes@cmpxchg.org, mhocko@kernel.org,
+        iamjoonsoo.kim@lge.com, vbabka@suse.cz, alex.shi@linux.alibaba.com,
+        david@redhat.com, richard.weiyang@gmail.com,
+        vdavydov.dev@gmail.com, graf@amazon.com, jason.zeng@intel.com,
+        lei.l.li@intel.com, daniel.m.jordan@oracle.com,
+        steven.sistare@oracle.com, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kexec@lists.infradead.org
+References: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Message-ID: <6e74451b-6a29-d0fc-cf26-b3700a099a09@soleen.com>
+Date:   Sat, 5 Jun 2021 09:39:04 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
+In-Reply-To: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210605034447.92917-3-dong.menglong@zte.com.cn>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 05, 2021 at 11:44:47AM +0800, menglong8.dong@gmail.com wrote:
-> From: Menglong Dong <dong.menglong@zte.com.cn>
-> 
-> If using container platforms such as Docker, upon initialization it
-> wants to use pivot_root() so that currently mounted devices do not
-> propagate to containers. An example of value in this is that
-> a USB device connected prior to the creation of a containers on the
-> host gets disconnected after a container is created; if the
-> USB device was mounted on containers, but already removed and
-> umounted on the host, the mount point will not go away until all
-> containers unmount the USB device.
-> 
-> Another reason for container platforms such as Docker to use pivot_root
-> is that upon initialization the net-namspace is mounted under
-> /var/run/docker/netns/ on the host by dockerd. Without pivot_root
-> Docker must either wait to create the network namespace prior to
-> the creation of containers or simply deal with leaking this to each
-> container.
-> 
-> pivot_root is supported if the rootfs is a initrd or block device, but
-> it's not supported if the rootfs uses an initramfs (tmpfs). This means
-> container platforms today must resort to using block devices if
-> they want to pivot_root from the rootfs. A workaround to use chroot()
-> is not a clean viable option given every container will have a
-> duplicate of every mount point on the host.
-> 
-> In order to support using container platforms such as Docker on
-> all the supported rootfs types we must extend Linux to support
-> pivot_root on initramfs as well. This patch does the work to do
-> just that.
-> 
-> pivot_root will unmount the mount of the rootfs from its parent mount
-> and mount the new root to it. However, when it comes to initramfs, it
-> donesn't work, because the root filesystem has not parent mount, which
-> makes initramfs not supported by pivot_root.
-> 
-> In order to make pivot_root supported on initramfs, we create a second
-> mount with type of rootfs before unpacking cpio, and change root to
-> this mount after unpacking.
-> 
-> While mounting the second rootfs, 'rootflags' is passed, and it means
-> that we can set options for the mount of rootfs in boot cmd now.
-> For example, the size of tmpfs can be set with 'rootflags=size=1024M'.
-> 
-> Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
-> ---
->  init/do_mounts.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  init/do_mounts.h | 17 ++++++++++++++++-
->  init/initramfs.c |  8 ++++++++
->  usr/Kconfig      | 10 ++++++++++
->  4 files changed, 78 insertions(+), 1 deletion(-)
-> 
-> diff --git a/init/do_mounts.c b/init/do_mounts.c
-> index a78e44ee6adb..715bdaa89b81 100644
-> --- a/init/do_mounts.c
-> +++ b/init/do_mounts.c
-> @@ -618,6 +618,49 @@ void __init prepare_namespace(void)
->  }
->  
->  static bool is_tmpfs;
-> +#ifdef CONFIG_INITRAMFS_MOUNT
-> +
-> +/*
-> + * Give systems running from the initramfs and making use of pivot_root a
-> + * proper mount so it can be umounted during pivot_root.
-> + */
-> +int __init prepare_mount_rootfs(void)
-> +{
-> +	char *rootfs = "ramfs";
-> +
-> +	if (is_tmpfs)
-> +		rootfs = "tmpfs";
-> +
-> +	return do_mount_root(rootfs, rootfs,
-> +			     root_mountflags & ~MS_RDONLY,
-> +			     root_mount_data);
-> +}
-> +
-> +/*
-> + * Revert to previous mount by chdir to '/' and unmounting the second
-> + * mount.
-> + */
-> +void __init revert_mount_rootfs(void)
-> +{
-> +	init_chdir("/");
-> +	init_umount(".", MNT_DETACH);
-> +}
-> +
-> +/*
-> + * Change root to the new rootfs that mounted in prepare_mount_rootfs()
-> + * if cpio is unpacked successfully and 'ramdisk_execute_command' exist.
-> + */
-> +void __init finish_mount_rootfs(void)
-> +{
-> +	init_mount(".", "/", NULL, MS_MOVE, NULL);
-> +	if (likely(ramdisk_exec_exist()))
-> +		init_chroot(".");
-> +	else
-> +		revert_mount_rootfs();
-> +}
-> +
-> +#define rootfs_init_fs_context ramfs_init_fs_context
 
-Sorry, I think we're nearly there. What's the rationale for using ramfs
-when unconditionally when a separate mount for initramfs is requested?
-Meaning, why do we need this define at all?
 
-> +#else
->  static int rootfs_init_fs_context(struct fs_context *fc)
->  {
->  	if (IS_ENABLED(CONFIG_TMPFS) && is_tmpfs)
-> @@ -625,6 +668,7 @@ static int rootfs_init_fs_context(struct fs_context *fc)
->  
->  	return ramfs_init_fs_context(fc);
->  }
-> +#endif
->  
->  struct file_system_type rootfs_fs_type = {
->  	.name		= "rootfs",
-> diff --git a/init/do_mounts.h b/init/do_mounts.h
-> index 7a29ac3e427b..ae4ab306caa9 100644
-> --- a/init/do_mounts.h
-> +++ b/init/do_mounts.h
-> @@ -10,9 +10,24 @@
->  #include <linux/root_dev.h>
->  #include <linux/init_syscalls.h>
->  
-> +extern int root_mountflags;
-> +
->  void  mount_block_root(char *name, int flags);
->  void  mount_root(void);
-> -extern int root_mountflags;
-> +
-> +#ifdef CONFIG_INITRAMFS_MOUNT
-> +
-> +int  prepare_mount_rootfs(void);
-> +void finish_mount_rootfs(void);
-> +void revert_mount_rootfs(void);
-> +
-> +#else
-> +
-> +static inline int  prepare_mount_rootfs(void) { return 0; }
-> +static inline void finish_mount_rootfs(void) { }
-> +static inline void revert_mount_rootfs(void) { }
-> +
-> +#endif
->  
->  static inline __init int create_dev(char *name, dev_t dev)
->  {
-> diff --git a/init/initramfs.c b/init/initramfs.c
-> index af27abc59643..1833de3cf04e 100644
-> --- a/init/initramfs.c
-> +++ b/init/initramfs.c
-> @@ -16,6 +16,8 @@
->  #include <linux/namei.h>
->  #include <linux/init_syscalls.h>
->  
-> +#include "do_mounts.h"
-> +
->  static ssize_t __init xwrite(struct file *file, const char *p, size_t count,
->  		loff_t *pos)
->  {
-> @@ -682,13 +684,19 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
->  	else
->  		printk(KERN_INFO "Unpacking initramfs...\n");
->  
-> +	if (prepare_mount_rootfs())
-> +		panic("Failed to mount rootfs");
-> +
->  	err = unpack_to_rootfs((char *)initrd_start, initrd_end - initrd_start);
->  	if (err) {
-> +		revert_mount_rootfs();
->  #ifdef CONFIG_BLK_DEV_RAM
->  		populate_initrd_image(err);
->  #else
->  		printk(KERN_EMERG "Initramfs unpacking failed: %s\n", err);
->  #endif
-> +	} else {
-> +		finish_mount_rootfs();
->  	}
->  
->  done:
-> diff --git a/usr/Kconfig b/usr/Kconfig
-> index 8bbcf699fe3b..4f6ac12eafe9 100644
-> --- a/usr/Kconfig
-> +++ b/usr/Kconfig
-> @@ -52,6 +52,16 @@ config INITRAMFS_ROOT_GID
->  
->  	  If you are not sure, leave it set to "0".
->  
-> +config INITRAMFS_MOUNT
-> +	bool "Create second mount to make pivot_root() supported"
-> +	default y
-> +	help
-> +	  Before unpacking cpio, create a second mount and make it become
-> +	  the root filesystem. Therefore, initramfs will be supported by
-> +	  pivot_root().
-> +
-> +	  If container platforms is used with initramfs, say Y.
-> +
->  config RD_GZIP
->  	bool "Support initial ramdisk/ramfs compressed using gzip"
->  	default y
-> -- 
-> 2.32.0.rc0
+On 3/30/21 5:35 PM, Anthony Yznaga wrote:
+> This patchset implements preserved-over-kexec memory storage or PKRAM as a
+> method for saving memory pages of the currently executing kernel so that
+> they may be restored after kexec into a new kernel. The patches are adapted
+> from an RFC patchset sent out in 2013 by Vladimir Davydov [1]. They
+> introduce the PKRAM kernel API and implement its use within tmpfs, allowing
+> tmpfs files to be preserved across kexec.
 > 
+> One use case for PKRAM is preserving guest memory and/or auxillary supporting
+> data (e.g. iommu data) across kexec in support of VMM Fast Restart[2].
+> VMM Fast Restart is currently using PKRAM to support preserving "Keep Alive
+> State" across reboot[3].  PKRAM provides a flexible way for doing this
+> without requiring that the amount of memory used by a fixed size created
+> a priori.  Another use case is for databases to preserve their block caches
+> in shared memory across reboot.
+
+Hi Anthony,
+
+I have several concerns about preserving arbitrary not prereserved segments across reboot.
+
+1. PKRAM does not work across firmware reboots
+With emulated persistent memory it is possible to do reboot through firmware and not loose the preserved-memory. The firmware can be modified to mark the required ranges pages as PRAM, and Linux will treat them as such. The benefit of this is that it works for both cases kexec and reboot through firmware. The disadvantage is that you have to know in advance how much memory needs to be preserved. However, with the ability to hot-plug/hot-remove the PMEM, the second point becomes moot as it is possible to mark a large chunk of memory as PMEM if needed. I have designed something like this for one of our projects, and it is already been used in the fleet. Reboot through firmware, allows us to service firmware in addition to kernel.
+
+2. Boot failures due to memory fragmentation
+We also considered using PRAM instead of PMEM. PRAM was one of the previous attempts to do the persistent memory thing via tmpfs flag: mount -t tmpfs -o pram=mytmpfs none /mnt/crdump"; that project was never upstreamed. However, we gave up with that idea because in addition to loosing possibility to reboot through the firmware, it also adds memory fragmentation. For example, if the new kernel require larger contiguous memory chunks to be allocated during boot than the previous kernel (i.e. the next kernel has new drivers, or some debug feature enabled), the boot might simply fail because of the extra memory ranges being reserved.
+
+3. New intra-kernel dependencies
+Kexec reboot is when one Linux kernel works as a bootloader for the next one. Currently, there is very little information that is passed from the old kernel to the next kernel. Adding more information that two independent kernels must know about each other is not a very good thing from architectural point of view. It limits the flexibility of kexec.
+
+However, we do need PKRAM and ability to preserve kernel memory across reboot for fast hypervisor updates or such. User pages can already be preserved across reboot on emulated or real persistent memory. The easiest way is via DAXFS placed on that memory.
+Kernel cannot preserve its memory on  PMEM across the reboot. However, functionality can be extended so kernel memory can be preserved on both emulated persistent memory or on real persistent memory. PKRAM could provide an interface to save kernel data to a file, and that file could be placed on any filesystem including DAXFS. When placed on DAXFS, that file can be used as iommu data, as it is actually located in physical memory and not moving anywhere. It is preserved across firmware/kexec reboot with having the devices survive the reboot state intact. During boot, have the device drivers that use PKRAM preserve functionality map saved files from DAXFS in order to have IOMMU functionality working again.
+
+Thank you,
+Pasha
