@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88EFE39C58E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jun 2021 05:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26AAC39C590
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jun 2021 05:46:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbhFEDsU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Jun 2021 23:48:20 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43632 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230406AbhFEDsT (ORCPT
+        id S231259AbhFEDs0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Jun 2021 23:48:26 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39821 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230297AbhFEDsZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Jun 2021 23:48:19 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e22so9353639pgv.10;
-        Fri, 04 Jun 2021 20:46:17 -0700 (PDT)
+        Fri, 4 Jun 2021 23:48:25 -0400
+Received: by mail-pl1-f194.google.com with SMTP id q16so5632242pls.6;
+        Fri, 04 Jun 2021 20:46:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q5AeDLf+a8AwPCCUtEt+QawZwpPhzutW1uszRngdpoY=;
-        b=UEgF4gW/UCsSbJHt5erm4kwHu+aH/ShI3iNWDGHTEKL6OiTJMmHFlcjJn9PSnh0LQl
-         3qbRnTZ1no6LWp3ACKk+AaiPVWrwRuZJvxj9rSailecx/aI2ApAe0SPllW8QGEnc4OyH
-         RNuZpwrPMz5Tgjfx14VZZx9ivrXAWdLFoJgFozgijXvihDRkrrhLW49Sv6iDg6RkDv7D
-         M9ptj4F2I6onW6afTgJI7KX1KvLkHhY4Ve3UPfFOyWdATMIPUPVFU+1ZGoDt851dPVTO
-         PM04OUppaW2PTkjCdk2ESuGRhq4Y3PW4aB78l56cfo4nvCtFybTPj9IQLo9nTLvDqZ20
-         IJzw==
+        bh=SO+yaAY8Fk45u9d7CKIQc/HZvjGFxnb666ka7wNnXAs=;
+        b=C8Ip1DjssxWq1dZe/uqZBbxzaxEVMS7RMFfdCwuuXTPtSr/d0d0a2nKHDHiEG2nK3F
+         3zZNXeKjTEGl4zev9xmoKdIXtCMZsxJMmhXs0RINn0dLiJLmUn8fgVoiu0P+3Yo0Ly3q
+         H4zmHRLBG6N5C6nUFHa+EVnjMQCpfFo6Ke8Y8FuS7grAaENWu88u6zvn8aGzlMxl6RUs
+         tPxRzEvK8iUTka/btIvxcBmI6VfduPjOpGRFE8kLL8V6cxP1ADUiJklwbakagRGifxIa
+         Qi4Ng88fTiLD0xf/MDo5I1wiT7vJti98AG17Be21Nlh9adkZc3dlUeLd3BoC310tZmCz
+         74qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q5AeDLf+a8AwPCCUtEt+QawZwpPhzutW1uszRngdpoY=;
-        b=QE1Z5EQEiakKXAUr+5STOo21OuNjuU3Z3RPU3M3lNlU6xtjN0pjggiUpi3bZ7+wTpq
-         4Lf2SDiG8+gKJ8LsZ6soT08SsFLMopqcc52/Xz62v1XzrG7bghhGI9kXQLM6W7ny3iD/
-         lVX7Q+usZBIK1Bw08Rx2CoZAfKWDfSAz74oBxt9d9yqOebfNfHOmY39ib6XfcVJTzQrZ
-         fffHM+vBsCJetLQHqpTJuBYZrikT0sCzImMKWSmSyMRw0/8uLlwMsq+3J7aA9scQGOJf
-         1Ms9JjLViyiyuarloduseV8Bq8idDKxVmOJcJIzCOhRYQnuPVkRNUg17/Tj4KcjJDzex
-         QMTg==
-X-Gm-Message-State: AOAM533hW24h8V7poBQuu4g5cTO/tR7eSDJCHhP82ciZCle1NzRYvEBo
-        F5Ar+t6MYCkWXeixHCwlZ08=
-X-Google-Smtp-Source: ABdhPJyvEKjN1WPmdRE8I796ORw/HdPBwZMSwF/zyPGtLNmyZIQRA/TfMkKM/ZR94XQLLgQ+OVe5YQ==
-X-Received: by 2002:a62:7b4c:0:b029:2e9:cec2:e252 with SMTP id w73-20020a627b4c0000b02902e9cec2e252mr7595128pfc.56.1622864717110;
-        Fri, 04 Jun 2021 20:45:17 -0700 (PDT)
+        bh=SO+yaAY8Fk45u9d7CKIQc/HZvjGFxnb666ka7wNnXAs=;
+        b=G+LuwIpks01w1BfYrAl7+4sGzd/BxMeVMfnVkZpfYwftGOy93pnhdnjjhrQzcDQemr
+         0Fj6s2FC03YdhoWZGFD8a9+raAmv3FBW2k4oj//26ywjnJhpJJRLZx8Z0SKNNdvVjuLn
+         lIrgLt9/Y6Rr/zpTkDFhwtqp4EJjBxCVSvj0Y9mCxfoE7Lnzh0ZeUfOSwQQuTTx4+dwx
+         9HhiWxG55fjDZ1vW90ggbavnhIr27vQ1NQyI6BWuJtUpFfh4wC1Ivdqp7BL4j6jgby67
+         S2z1Tit/cyuMkDzU6W7dwdhF3ZbMukzyPykyjFj0kKGz1Xzu7rerUFMX1rwRf+h+De7p
+         5KNw==
+X-Gm-Message-State: AOAM533MnVFP+QwpPhFKISWLFZjKN1LNlFvypKUviRq80JHSDRH3++/Q
+        k3QAtmbzrA/cNZXVnbQgbdY=
+X-Google-Smtp-Source: ABdhPJzPAKUItdRzDe5QyifhuhFM/ppGFwnoWr6+dTn/kPApkyeQRrmxJaL+25RHl+4+rXE+xMkmaw==
+X-Received: by 2002:a17:90b:4b0c:: with SMTP id lx12mr8321724pjb.88.1622864724605;
+        Fri, 04 Jun 2021 20:45:24 -0700 (PDT)
 Received: from localhost ([178.236.46.205])
-        by smtp.gmail.com with ESMTPSA id d22sm3040006pgb.15.2021.06.04.20.45.16
+        by smtp.gmail.com with ESMTPSA id i10sm2879186pfk.74.2021.06.04.20.45.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jun 2021 20:45:16 -0700 (PDT)
+        Fri, 04 Jun 2021 20:45:24 -0700 (PDT)
 From:   menglong8.dong@gmail.com
 X-Google-Original-From: dong.menglong@zte.com.cn
 To:     christian.brauner@ubuntu.com
@@ -63,9 +63,9 @@ Cc:     viro@zeniv.linux.org.uk, keescook@chromium.org,
         linux-kernel@vger.kernel.org, mcgrof@kernel.org, arnd@arndb.de,
         chris@chrisdown.name, mingo@kernel.org, bhelgaas@google.com,
         josh@joshtriplett.org
-Subject: [PATCH v6 1/2] init/main.c: introduce function ramdisk_exec_exist()
-Date:   Sat,  5 Jun 2021 11:44:46 +0800
-Message-Id: <20210605034447.92917-2-dong.menglong@zte.com.cn>
+Subject: [PATCH v6 2/2] init/do_mounts.c: create second mount for initramfs
+Date:   Sat,  5 Jun 2021 11:44:47 +0800
+Message-Id: <20210605034447.92917-3-dong.menglong@zte.com.cn>
 X-Mailer: git-send-email 2.32.0.rc0
 In-Reply-To: <20210605034447.92917-1-dong.menglong@zte.com.cn>
 References: <20210605034447.92917-1-dong.menglong@zte.com.cn>
@@ -77,85 +77,201 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Menglong Dong <dong.menglong@zte.com.cn>
 
-Introduce the function ramdisk_exec_exist, which is used to check the
-exist of 'ramdisk_execute_command'.
+If using container platforms such as Docker, upon initialization it
+wants to use pivot_root() so that currently mounted devices do not
+propagate to containers. An example of value in this is that
+a USB device connected prior to the creation of a containers on the
+host gets disconnected after a container is created; if the
+USB device was mounted on containers, but already removed and
+umounted on the host, the mount point will not go away until all
+containers unmount the USB device.
 
-To make path lookup follow the mount on '/', use vfs_path_lookup() in
-init_eaccess(), and make the filesystem that mounted on '/' as root
-during path lookup.
+Another reason for container platforms such as Docker to use pivot_root
+is that upon initialization the net-namspace is mounted under
+/var/run/docker/netns/ on the host by dockerd. Without pivot_root
+Docker must either wait to create the network namespace prior to
+the creation of containers or simply deal with leaking this to each
+container.
+
+pivot_root is supported if the rootfs is a initrd or block device, but
+it's not supported if the rootfs uses an initramfs (tmpfs). This means
+container platforms today must resort to using block devices if
+they want to pivot_root from the rootfs. A workaround to use chroot()
+is not a clean viable option given every container will have a
+duplicate of every mount point on the host.
+
+In order to support using container platforms such as Docker on
+all the supported rootfs types we must extend Linux to support
+pivot_root on initramfs as well. This patch does the work to do
+just that.
+
+pivot_root will unmount the mount of the rootfs from its parent mount
+and mount the new root to it. However, when it comes to initramfs, it
+donesn't work, because the root filesystem has not parent mount, which
+makes initramfs not supported by pivot_root.
+
+In order to make pivot_root supported on initramfs, we create a second
+mount with type of rootfs before unpacking cpio, and change root to
+this mount after unpacking.
+
+While mounting the second rootfs, 'rootflags' is passed, and it means
+that we can set options for the mount of rootfs in boot cmd now.
+For example, the size of tmpfs can be set with 'rootflags=size=1024M'.
 
 Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
 ---
- fs/init.c            | 11 +++++++++--
- include/linux/init.h |  1 +
- init/main.c          |  7 ++++++-
- 3 files changed, 16 insertions(+), 3 deletions(-)
+ init/do_mounts.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ init/do_mounts.h | 17 ++++++++++++++++-
+ init/initramfs.c |  8 ++++++++
+ usr/Kconfig      | 10 ++++++++++
+ 4 files changed, 78 insertions(+), 1 deletion(-)
 
-diff --git a/fs/init.c b/fs/init.c
-index 5c36adaa9b44..166356a1f15f 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -112,14 +112,21 @@ int __init init_chmod(const char *filename, umode_t mode)
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index a78e44ee6adb..715bdaa89b81 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -618,6 +618,49 @@ void __init prepare_namespace(void)
+ }
  
- int __init init_eaccess(const char *filename)
- {
--	struct path path;
-+	struct path path, root;
- 	int error;
- 
--	error = kern_path(filename, LOOKUP_FOLLOW, &path);
-+	error = kern_path("/", LOOKUP_DOWN, &root);
- 	if (error)
- 		return error;
-+	error = vfs_path_lookup(root.dentry, root.mnt, filename,
-+				LOOKUP_FOLLOW, &path);
-+	if (error)
-+		goto on_err;
- 	error = path_permission(&path, MAY_ACCESS);
+ static bool is_tmpfs;
++#ifdef CONFIG_INITRAMFS_MOUNT
 +
- 	path_put(&path);
-+on_err:
-+	path_put(&root);
- 	return error;
- }
- 
-diff --git a/include/linux/init.h b/include/linux/init.h
-index d82b4b2e1d25..889d538b6dfa 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -149,6 +149,7 @@ extern unsigned int reset_devices;
- void setup_arch(char **);
- void prepare_namespace(void);
- void __init init_rootfs(void);
-+bool ramdisk_exec_exist(void);
- extern struct file_system_type rootfs_fs_type;
- 
- #if defined(CONFIG_STRICT_KERNEL_RWX) || defined(CONFIG_STRICT_MODULE_RWX)
-diff --git a/init/main.c b/init/main.c
-index eb01e121d2f1..1153571ca977 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1522,6 +1522,11 @@ void __init console_on_rootfs(void)
- 	fput(file);
- }
- 
-+bool __init ramdisk_exec_exist(void)
++/*
++ * Give systems running from the initramfs and making use of pivot_root a
++ * proper mount so it can be umounted during pivot_root.
++ */
++int __init prepare_mount_rootfs(void)
 +{
-+	return init_eaccess(ramdisk_execute_command) == 0;
++	char *rootfs = "ramfs";
++
++	if (is_tmpfs)
++		rootfs = "tmpfs";
++
++	return do_mount_root(rootfs, rootfs,
++			     root_mountflags & ~MS_RDONLY,
++			     root_mount_data);
 +}
 +
- static noinline void __init kernel_init_freeable(void)
++/*
++ * Revert to previous mount by chdir to '/' and unmounting the second
++ * mount.
++ */
++void __init revert_mount_rootfs(void)
++{
++	init_chdir("/");
++	init_umount(".", MNT_DETACH);
++}
++
++/*
++ * Change root to the new rootfs that mounted in prepare_mount_rootfs()
++ * if cpio is unpacked successfully and 'ramdisk_execute_command' exist.
++ */
++void __init finish_mount_rootfs(void)
++{
++	init_mount(".", "/", NULL, MS_MOVE, NULL);
++	if (likely(ramdisk_exec_exist()))
++		init_chroot(".");
++	else
++		revert_mount_rootfs();
++}
++
++#define rootfs_init_fs_context ramfs_init_fs_context
++#else
+ static int rootfs_init_fs_context(struct fs_context *fc)
  {
- 	/*
-@@ -1568,7 +1573,7 @@ static noinline void __init kernel_init_freeable(void)
- 	 * check if there is an early userspace init.  If yes, let it do all
- 	 * the work
- 	 */
--	if (init_eaccess(ramdisk_execute_command) != 0) {
-+	if (!ramdisk_exec_exist()) {
- 		ramdisk_execute_command = NULL;
- 		prepare_namespace();
+ 	if (IS_ENABLED(CONFIG_TMPFS) && is_tmpfs)
+@@ -625,6 +668,7 @@ static int rootfs_init_fs_context(struct fs_context *fc)
+ 
+ 	return ramfs_init_fs_context(fc);
+ }
++#endif
+ 
+ struct file_system_type rootfs_fs_type = {
+ 	.name		= "rootfs",
+diff --git a/init/do_mounts.h b/init/do_mounts.h
+index 7a29ac3e427b..ae4ab306caa9 100644
+--- a/init/do_mounts.h
++++ b/init/do_mounts.h
+@@ -10,9 +10,24 @@
+ #include <linux/root_dev.h>
+ #include <linux/init_syscalls.h>
+ 
++extern int root_mountflags;
++
+ void  mount_block_root(char *name, int flags);
+ void  mount_root(void);
+-extern int root_mountflags;
++
++#ifdef CONFIG_INITRAMFS_MOUNT
++
++int  prepare_mount_rootfs(void);
++void finish_mount_rootfs(void);
++void revert_mount_rootfs(void);
++
++#else
++
++static inline int  prepare_mount_rootfs(void) { return 0; }
++static inline void finish_mount_rootfs(void) { }
++static inline void revert_mount_rootfs(void) { }
++
++#endif
+ 
+ static inline __init int create_dev(char *name, dev_t dev)
+ {
+diff --git a/init/initramfs.c b/init/initramfs.c
+index af27abc59643..1833de3cf04e 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -16,6 +16,8 @@
+ #include <linux/namei.h>
+ #include <linux/init_syscalls.h>
+ 
++#include "do_mounts.h"
++
+ static ssize_t __init xwrite(struct file *file, const char *p, size_t count,
+ 		loff_t *pos)
+ {
+@@ -682,13 +684,19 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+ 	else
+ 		printk(KERN_INFO "Unpacking initramfs...\n");
+ 
++	if (prepare_mount_rootfs())
++		panic("Failed to mount rootfs");
++
+ 	err = unpack_to_rootfs((char *)initrd_start, initrd_end - initrd_start);
+ 	if (err) {
++		revert_mount_rootfs();
+ #ifdef CONFIG_BLK_DEV_RAM
+ 		populate_initrd_image(err);
+ #else
+ 		printk(KERN_EMERG "Initramfs unpacking failed: %s\n", err);
+ #endif
++	} else {
++		finish_mount_rootfs();
  	}
+ 
+ done:
+diff --git a/usr/Kconfig b/usr/Kconfig
+index 8bbcf699fe3b..4f6ac12eafe9 100644
+--- a/usr/Kconfig
++++ b/usr/Kconfig
+@@ -52,6 +52,16 @@ config INITRAMFS_ROOT_GID
+ 
+ 	  If you are not sure, leave it set to "0".
+ 
++config INITRAMFS_MOUNT
++	bool "Create second mount to make pivot_root() supported"
++	default y
++	help
++	  Before unpacking cpio, create a second mount and make it become
++	  the root filesystem. Therefore, initramfs will be supported by
++	  pivot_root().
++
++	  If container platforms is used with initramfs, say Y.
++
+ config RD_GZIP
+ 	bool "Support initial ramdisk/ramfs compressed using gzip"
+ 	default y
 -- 
 2.32.0.rc0
 
