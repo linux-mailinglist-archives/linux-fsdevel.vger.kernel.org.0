@@ -2,106 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF21839C42F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jun 2021 02:09:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C175B39C434
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jun 2021 02:11:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229982AbhFEAKq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Jun 2021 20:10:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33952 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229847AbhFEAKp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Jun 2021 20:10:45 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1537C061766;
-        Fri,  4 Jun 2021 17:08:41 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id a2so16514627lfc.9;
-        Fri, 04 Jun 2021 17:08:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7O4yi6cn6gBER8XX7UVPJXE8JpTGO2BmTJOk3c1YezY=;
-        b=lONezNtAYZiUSr1iYLLF2FAFUQSyPAyKMiOyNd4PyFlEEnMeuQSfMC3kgd+j+4lyji
-         fB5o3HzOIrLuUbRM74zkvm4Lt68gJ2bu5r4E/DIf+13z01pKiEq2BtEUXGB73MKFTX3w
-         OEDOrkvwgTp9wS6cLO57bDvnaiRV8YFGvYrFASu3FMK79mLc02KdHb6y+LVIDrnO6QKw
-         OSuOcAHiocCmla4RrGF0uChppDDsJ5qc8sbiJuIE4IFOCKqw+6XUleMpLHNKKl40lPFC
-         3RjG+nHOzqrsTla4+yu4BnwK2TNFFsAS5jni8Dx5cVESEw7yHiVvjBYtk2QSO39BkQ7e
-         wgDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7O4yi6cn6gBER8XX7UVPJXE8JpTGO2BmTJOk3c1YezY=;
-        b=dvBbrvd6DRAvLd0X/ulF/IXJg7JVPaDLFRYtlkOhr3JdilQEqrIZriNMTIMX94zm6d
-         NpKNwTLGvypNYiNM6hqvfPdV6W5mQWSGJBvz4cQl1R4mzRjlosZ/mB5HbURyFvJc6c2J
-         5ny1ShcixfrqIlAjf/eVAk7A721VUrneF+NB4zHyitavLxoduKXzenDn89VGrvQwEw2+
-         tcW7d2V3u5xDEBoYdGYd2NUSiDtahVDlRcy3G+yvFVs2BELxxMQOAy+LpkIgrAGDMVz9
-         gwOzsCia8zjjEjeGegrFFsx9zUr8l/7V8NRsOPcJKqqb2RQvOKGRkde33fgtoWjRy+ks
-         B5RQ==
-X-Gm-Message-State: AOAM533VJlS/9jE4YjhS7Kps3jNjdhkHxXbnMwZhg+7l/ThFUUX5wGSX
-        4COUzwcHoZvylUKG/OgM5lfAWS3Xo3VWR0N7nbA=
-X-Google-Smtp-Source: ABdhPJyE/AGEeMxwVpH/EFqVAUdh2yIubA70g70dg+zntH7F/uX+weKdCYbLk357XbEMR55n50qHL7nDnccDNBTMu8k=
-X-Received: by 2002:a05:6512:3c91:: with SMTP id h17mr4482345lfv.214.1622851715688;
- Fri, 04 Jun 2021 17:08:35 -0700 (PDT)
+        id S230286AbhFEANV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Jun 2021 20:13:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229847AbhFEANV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Jun 2021 20:13:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4FCCA61287;
+        Sat,  5 Jun 2021 00:11:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622851894;
+        bh=f5TsQHdvVfNDUeQro5QfvN7k2bDUHRhBhKEqsKjrefc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=N5Npf//n/FGbPXFQeTJRQBLb2VOXTp3u4QqYsU2zd1oQEtdlyhGlTnSDYOeMPzgqB
+         557EwpHqhN/WVxg0ZrnR0aCYC4ODiaRgUVuMyRSIN91w/mLOoJTEazArDNljj+8nAS
+         zEiCKqULjAqBZvaySvonDjeAAW1KoH7XwI0dpPsGpTGPzS/+xfoqq0AFb5L049F2Y3
+         jZsUIXaUTsz6bzzQ03Ll2bRQjPzuCxYnLobq3DKsLfkJNy8cao6Atb8iKu+LCHRkzx
+         JTX/VZRN9a+cnDA0Ag36Ycug7o2cfW3U62S4biUOCeGGRQ3X8SVZ9lxE0ZODY5hsuV
+         A8uyOy45reSpg==
+Subject: Re: [PATCH v2 2/2] f2fs: Advertise encrypted casefolding in sysfs
+To:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com, stable@vger.kernel.org
+References: <20210603095038.314949-1-drosen@google.com>
+ <20210603095038.314949-3-drosen@google.com>
+ <YLlj+h4RiT6FvyK6@sol.localdomain> <YLmv5Ykb3QUzDOlL@google.com>
+ <YLmzkzPZwBVYf5LO@sol.localdomain> <YLm8aOs6Sc/CLaAv@google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <452273b4-b386-3180-9b6e-f060bdbe3802@kernel.org>
+Date:   Sat, 5 Jun 2021 08:11:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
- <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net> <CAHC9VhS1XRZjKcTFgH1+n5uA-CeT+9BeSP5jvT2+RE5ougLpUg@mail.gmail.com>
- <2e541bdc-ae21-9a07-7ac7-6c6a4dda09e8@iogearbox.net> <CAHC9VhT464vr9sWxqY3PRB4DAccz=LvRMLgWBsSViWMR0JJvOQ@mail.gmail.com>
- <3ca181e3-df32-9ae0-12c6-efb899b7ce7a@iogearbox.net> <CAHC9VhTuPnPs1wMTmoGUZ4fvyy-es9QJpE7O_yTs2JKos4fgbw@mail.gmail.com>
- <f4373013-88fb-b839-aaaa-3826548ebd0c@iogearbox.net> <CAHC9VhS=BeGdaAi8Ae5Fx42Fzy_ybkcXwMNcPwK=uuA6=+SRcg@mail.gmail.com>
- <c59743f6-0000-1b15-bc16-ff761b443aef@iogearbox.net> <CAHC9VhT1JhdRw9P_m3niY-U-vukxTWKTE9q6AMyQ=r_ohpPxMw@mail.gmail.com>
-In-Reply-To: <CAHC9VhT1JhdRw9P_m3niY-U-vukxTWKTE9q6AMyQ=r_ohpPxMw@mail.gmail.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Fri, 4 Jun 2021 17:08:24 -0700
-Message-ID: <CAADnVQ+0bNtDj46Q8s-h=rqJgZz2JaGTeHpbmof3e7fBBQKuDQ@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YLm8aOs6Sc/CLaAv@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 4, 2021 at 4:34 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> > Again, the problem is not limited to BPF at all. kprobes is doing register-
-> > time hooks which are equivalent to the one of BPF. Anything in run-time
-> > trying to prevent probe_read_kernel by kprobes or BPF is broken by design.
->
-> Not being an expert on kprobes I can't really comment on that, but
-> right now I'm focused on trying to make things work for the BPF
-> helpers.  I suspect that if we can get the SELinux lockdown
-> implementation working properly for BPF the solution for kprobes won't
-> be far off.
+On 2021/6/4 13:38, Jaegeuk Kim wrote:
+> On 06/03, Eric Biggers wrote:
+>> On Thu, Jun 03, 2021 at 09:45:25PM -0700, Jaegeuk Kim wrote:
+>>> On 06/03, Eric Biggers wrote:
+>>>> On Thu, Jun 03, 2021 at 09:50:38AM +0000, Daniel Rosenberg wrote:
+>>>>> Older kernels don't support encryption with casefolding. This adds
+>>>>> the sysfs entry encrypted_casefold to show support for those combined
+>>>>> features. Support for this feature was originally added by
+>>>>> commit 7ad08a58bf67 ("f2fs: Handle casefolding with Encryption")
+>>>>>
+>>>>> Fixes: 7ad08a58bf67 ("f2fs: Handle casefolding with Encryption")
+>>>>> Cc: stable@vger.kernel.org # v5.11+
+>>>>> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+>>>>> ---
+>>>>>   fs/f2fs/sysfs.c | 15 +++++++++++++--
+>>>>>   1 file changed, 13 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>>>>> index 09e3f258eb52..6604291a3cdf 100644
+>>>>> --- a/fs/f2fs/sysfs.c
+>>>>> +++ b/fs/f2fs/sysfs.c
+>>>>> @@ -161,6 +161,9 @@ static ssize_t features_show(struct f2fs_attr *a,
+>>>>>   	if (f2fs_sb_has_compression(sbi))
+>>>>>   		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
+>>>>>   				len ? ", " : "", "compression");
+>>>>> +	if (f2fs_sb_has_casefold(sbi) && f2fs_sb_has_encrypt(sbi))
+>>>>> +		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
+>>>>> +				len ? ", " : "", "encrypted_casefold");
+>>>>>   	len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
+>>>>>   				len ? ", " : "", "pin_file");
+>>>>>   	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
+>>>>> @@ -579,6 +582,7 @@ enum feat_id {
+>>>>>   	FEAT_CASEFOLD,
+>>>>>   	FEAT_COMPRESSION,
+>>>>>   	FEAT_TEST_DUMMY_ENCRYPTION_V2,
+>>>>> +	FEAT_ENCRYPTED_CASEFOLD,
+>>>>>   };
+>>>>
+>>>> Actually looking at it more closely, this patch is wrong.
+>>>>
+>>>> It only makes sense to declare "encrypted_casefold" as a feature of the
+>>>> filesystem implementation, i.e. /sys/fs/f2fs/features/encrypted_casefold.
+>>>>
+>>>> It does *not* make sense to declare it as a feature of a particular filesystem
+>>>> instance, i.e. /sys/fs/f2fs/$disk/features, as it is already implied by the
+>>>> filesystem instance having both the encryption and casefold features enabled.
+>>>>
+>>>> Can we add /sys/fs/f2fs/features/encrypted_casefold only?
+>>>
+>>> wait.. /sys/fs/f2fs/features/encrypted_casefold is on by
+>>> CONFIG_FS_ENCRYPTION && CONFIG_UNICODE.
+>>> OTOH, /sys/fs/f2fs/$dis/feature_list/encrypted_casefold is on by
+>>> on-disk features: F2FS_FEATURE_ENCRYPT and F2FS_FEATURE_CASEFOLD.
+>>>
+>>
+>> Yes, but in the on-disk case, encrypted_casefold is redundant because it simply
+>> means encrypt && casefold.  There is no encrypted_casefold flag on-disk.
+> 
+> I prefer to keep encrypted_casefold likewise kernel feature, which is more
+> intuitive to users.
 
-Paul,
+encrypted_casefold is a kernel feature support flag, not a disk one, IMO, it's
+not needed to add it in to per-disk feature list, it may mislead user that
+compatible encrypted casefold needs a extra disk layout support while disk has
+already encrypted and casefold feature enabled.
 
-Both kprobe and bpf can call probe_read_kernel==copy_from_kernel_nofault
-from all contexts.
-Including NMI. Most of audit_log_* is not acceptable.
-Just removing a wakeup is not solving anything.
-Audit hooks don't belong in NMI.
-Audit design needs memory allocation. Hence it's not suitable
-for NMI and hardirq. But kprobes and bpf progs do run just fine there.
-BPF, for example, only uses pre-allocated memory.
+Thanks,
+
+> 
+>>
+>> - Eric
