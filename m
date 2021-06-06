@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA5E139D0BC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 21:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DADF39D0AF
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 21:11:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbhFFTNR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Jun 2021 15:13:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54100 "EHLO
+        id S230254AbhFFTNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Jun 2021 15:13:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230239AbhFFTMw (ORCPT
+        with ESMTP id S230156AbhFFTMp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Jun 2021 15:12:52 -0400
+        Sun, 6 Jun 2021 15:12:45 -0400
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F9E8C061787;
-        Sun,  6 Jun 2021 12:11:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534F8C06178B;
+        Sun,  6 Jun 2021 12:10:55 -0700 (PDT)
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lpyAg-0056ax-5p; Sun, 06 Jun 2021 19:10:54 +0000
+        id 1lpyAg-0056b1-8J; Sun, 06 Jun 2021 19:10:54 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -26,9 +26,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [RFC PATCH 21/37] csum_and_copy_to_iter(): massage into form closer to csum_and_copy_from_iter()
-Date:   Sun,  6 Jun 2021 19:10:35 +0000
-Message-Id: <20210606191051.1216821-21-viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH 22/37] iterate_and_advance(): get rid of magic in case when n is 0
+Date:   Sun,  6 Jun 2021 19:10:36 +0000
+Message-Id: <20210606191051.1216821-22-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210606191051.1216821-1-viro@zeniv.linux.org.uk>
 References: <YL0dCEVEiVL+NwG6@zeniv-ca.linux.org.uk>
@@ -40,76 +40,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Namely, have off counted starting from 0 rather than from csstate->off.
-To compensate we need to shift the initial value (csstate->sum) (rotate
-by 8 bits, as usual for csum) and do the same after we are finished adding
-the pieces up.
-
-What we get out of that is a bit more redundancy in our variables - from
-is always equal to addr + off, which will be useful several commits down
-the road.
+iov_iter_advance() needs to do some non-trivial work when it's given
+0 as argument (skip all empty iovecs, mostly).  We used to implement
+it via iterate_and_advance(); we no longer do so and for all other
+users of iterate_and_advance() zero length is a no-op.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- include/net/checksum.h | 14 ++++++++------
- lib/iov_iter.c         |  8 ++++----
- 2 files changed, 12 insertions(+), 10 deletions(-)
+ lib/iov_iter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/net/checksum.h b/include/net/checksum.h
-index 0d05b9e8690b..5b96d5bd6e54 100644
---- a/include/net/checksum.h
-+++ b/include/net/checksum.h
-@@ -80,16 +80,18 @@ static inline __sum16 csum16_sub(__sum16 csum, __be16 addend)
- 	return csum16_add(csum, ~addend);
- }
- 
--static inline __wsum
--csum_block_add(__wsum csum, __wsum csum2, int offset)
-+static inline __wsum csum_shift(__wsum sum, int offset)
- {
--	u32 sum = (__force u32)csum2;
--
- 	/* rotate sum to align it with a 16b boundary */
- 	if (offset & 1)
--		sum = ror32(sum, 8);
-+		return (__force __wsum)ror32((__force u32)sum, 8);
-+	return sum;
-+}
- 
--	return csum_add(csum, (__force __wsum)sum);
-+static inline __wsum
-+csum_block_add(__wsum csum, __wsum csum2, int offset)
-+{
-+	return csum_add(csum, csum_shift(csum2, offset));
- }
- 
- static inline __wsum
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index dbd6b92f6200..906e9d49c487 100644
+index 906e9d49c487..ebb907c6393c 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1794,8 +1794,8 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, void *_csstate,
- 	if (unlikely(iov_iter_is_pipe(i)))
- 		return csum_and_copy_to_pipe_iter(addr, bytes, _csstate, i);
- 
--	sum = csstate->csum;
--	off = csstate->off;
-+	sum = csum_shift(csstate->csum, csstate->off);
-+	off = 0;
- 	if (unlikely(iov_iter_is_discard(i))) {
- 		WARN_ON(1);	/* for now */
- 		return 0;
-@@ -1830,8 +1830,8 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, void *_csstate,
- 		off += v.bv_len;
- 	})
- 	)
--	csstate->csum = sum;
--	csstate->off = off;
-+	csstate->csum = csum_shift(sum, csstate->off);
-+	csstate->off += bytes;
- 	return bytes;
- }
- EXPORT_SYMBOL(csum_and_copy_to_iter);
+@@ -117,7 +117,7 @@
+ #define iterate_and_advance(i, n, v, I, B, K, X) {		\
+ 	if (unlikely(i->count < n))				\
+ 		n = i->count;					\
+-	if (i->count) {						\
++	if (likely(n)) {					\
+ 		size_t skip = i->iov_offset;			\
+ 		if (likely(iter_is_iovec(i))) {			\
+ 			const struct iovec *iov;		\
 -- 
 2.11.0
 
