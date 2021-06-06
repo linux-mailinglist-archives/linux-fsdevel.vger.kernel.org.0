@@ -2,135 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E382539CC36
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 04:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30B1C39CC5E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 05:06:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbhFFCOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Jun 2021 22:14:02 -0400
-Received: from mail-ed1-f50.google.com ([209.85.208.50]:34401 "EHLO
-        mail-ed1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230197AbhFFCOB (ORCPT
+        id S230090AbhFFDIY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Jun 2021 23:08:24 -0400
+Received: from mail-pg1-f171.google.com ([209.85.215.171]:35802 "EHLO
+        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230060AbhFFDIY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Jun 2021 22:14:01 -0400
-Received: by mail-ed1-f50.google.com with SMTP id cb9so15860714edb.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 05 Jun 2021 19:12:12 -0700 (PDT)
+        Sat, 5 Jun 2021 23:08:24 -0400
+Received: by mail-pg1-f171.google.com with SMTP id o9so8294112pgd.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 05 Jun 2021 20:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nOTcniWTVc9slYXWLxXSv1uRyKmcmZRO+63M/pSzE/U=;
-        b=cwZ2lIKKIQuoesuejMOtqIBw38LWmdJQRco7DTpm+On7hiyFzSIynCDa52d+sLCIqB
-         2zP8pj4E3rGCuqfhnJ5MRag1NFm53lXVMwQKVQbdijwfbaxWRtV4bmYjHioSZXD6kkwg
-         Dlj3L7D4QLBXl9X//0lK2mPz5kWslHUxKRvcBa2juD05DpNuxQp//Z0f+OYjTO6stdwc
-         EZHN0Y1DxgOncdZ7gzfETOgtK9k4bhYfZebdAtgUMPDxU3VJkT9f7Tfuk6EcJw0zLdbF
-         FqFv+pxxBNtA2aX39hOynje/H5TcETj5t1HDzA84k39g9uwCsZz2riUv/7IvQm3jw6Tq
-         ydjg==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TmNq4peZOAOyDPklFXMeKeYFKClQGReaGV/U+xkvXQ0=;
+        b=w7tT8XJpLxNPgu+o/5mF+K2jB/4Nuo2lE+4B0epXqNpufBtNPiER3R7Tss6U6gkmar
+         IQFrIZ/Whw8TqMtbCCbBq9F41ZBiIFybwAsEhPcN1iA/+JWsOXjkgVDJbHA5L8GN7YyR
+         xpbYvCGtDVd7Ayl7jcqd1/V3RElnhQAGivpppSn6L8IY9AAD98EfNpPb8WOM8DkVAsLf
+         LqlNRVZwIUtCi6ilNm9ot8vxwa/cOCRT5+fWgFVvMJRXbGk4W1OhaliyolRCJfUNCTlk
+         fiA2NbJSPmbLubBh/TfW8UECkjmQwTLQ5UT8pXaTluyg/X6VZvW6Df4/BrbJ3UkY8eXw
+         boIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nOTcniWTVc9slYXWLxXSv1uRyKmcmZRO+63M/pSzE/U=;
-        b=PscPrJ5+6iawVuxvKFqA6juRl9tEqJ5oaIVEzSgdvA5ca14BhYfQg08HG6g+sUnfb0
-         h+I1kGeMsu3+GssxltkmBHgKwuvgf/BJASk7Wma+IS8h3Xq3xzsL8OwskdYjWb0gBvZi
-         sWtbVZudghCad5HkPuKcUcIWJBU6fLW0hR5HgNJMXvIs2yvXLjgTzH5a99dIn+F6Lqq4
-         lfin3++rs6Gb4m6LU887c9LBm+MtZCqSj2Ld2t0oYkTck72b6udKveHEastA0Uv0BUWW
-         1MIwnq91bjyVXOpUcxMFrOzp4ZSe90uhTm7JM4gvRdTIvCp7zV8O3PNF0WuV6tJtePfe
-         KE4w==
-X-Gm-Message-State: AOAM533lJdgzhiLZDOK2ucm7ZcBkLAjcXLL6AduMDXxxLRZXJopiLokn
-        5AX5p7XacR6rX+0NawiOeMUTM6DSf6ibATQttPru
-X-Google-Smtp-Source: ABdhPJwLR1qKiHaU3a0P90iLeTPVN3ZXpgSHJmVvViAS0IGrSqN4ECheDNlb9g/W/t2kLVz7Gr1DZIJGJ5G/2AgcIkk=
-X-Received: by 2002:a05:6402:348f:: with SMTP id v15mr1175334edc.135.1622945471846;
- Sat, 05 Jun 2021 19:11:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TmNq4peZOAOyDPklFXMeKeYFKClQGReaGV/U+xkvXQ0=;
+        b=lwjd4Qwg9g7PldNf0VBl7fo8p8fI4SjV3nTg+N15xwlFvJN3LIYy6Szpvjv16ZuBX9
+         XHJqN6E7fJPR5IhJbMHcvedvB8lEYpLTl9XRsHGVMrB8fRKDT2+AND4ofv8bTmGLwCR0
+         p1gDvB0aDg/M5vvolHdKS4tflqH/PIHGC9WE4EcYPoeFpwhzwaOfeZFJEwzlpvl6YVU+
+         u/xmAFZOzFJJc6Ac2mp23KjUl5NDgTQUKuuMs3c8mkkfGqVaLxQOGT/EsKJ2CqSOkVh1
+         TevyFR298QjVq+UaIGAjmK/1qkxyYn333T2HgBRl7I3Ihy6mSsrUupOyeF1vAr8saJUn
+         u6rA==
+X-Gm-Message-State: AOAM533Z54rmX0TP7A1SouPZWw0THw0TsScjxlWEB2B+9IAYLfD+q/6A
+        BO2yJI9OL8s8j0ly3WF6fa9ucA==
+X-Google-Smtp-Source: ABdhPJwupnG0F7AOML64hOYrBSXuTXNGc5Kpa7E8SpvMxYSBytsEswYDa/ueeM2osUYRANIxrxCxqA==
+X-Received: by 2002:aa7:8588:0:b029:28e:dfa1:e31a with SMTP id w8-20020aa785880000b029028edfa1e31amr11432836pfn.77.1622948720555;
+        Sat, 05 Jun 2021 20:05:20 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.249])
+        by smtp.gmail.com with ESMTPSA id q23sm5435219pgj.61.2021.06.05.20.05.16
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 05 Jun 2021 20:05:20 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     viro@zeniv.linux.org.uk, tj@kernel.org, axboe@fb.com,
+        willy@infradead.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>,
+        Michal Hocko <mhocko@suse.com>, stable@vger.kernel.org
+Subject: [PATCH RESEND v3] writeback: fix obtain a reference to a freeing memcg css
+Date:   Sun,  6 Jun 2021 11:02:26 +0800
+Message-Id: <20210606030226.66667-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
- <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net> <CAHC9VhS1XRZjKcTFgH1+n5uA-CeT+9BeSP5jvT2+RE5ougLpUg@mail.gmail.com>
- <2e541bdc-ae21-9a07-7ac7-6c6a4dda09e8@iogearbox.net> <CAHC9VhT464vr9sWxqY3PRB4DAccz=LvRMLgWBsSViWMR0JJvOQ@mail.gmail.com>
- <3ca181e3-df32-9ae0-12c6-efb899b7ce7a@iogearbox.net> <CAHC9VhTuPnPs1wMTmoGUZ4fvyy-es9QJpE7O_yTs2JKos4fgbw@mail.gmail.com>
- <f4373013-88fb-b839-aaaa-3826548ebd0c@iogearbox.net> <CAHC9VhS=BeGdaAi8Ae5Fx42Fzy_ybkcXwMNcPwK=uuA6=+SRcg@mail.gmail.com>
- <c59743f6-0000-1b15-bc16-ff761b443aef@iogearbox.net> <CAHC9VhT1JhdRw9P_m3niY-U-vukxTWKTE9q6AMyQ=r_ohpPxMw@mail.gmail.com>
- <CAADnVQ+0bNtDj46Q8s-h=rqJgZz2JaGTeHpbmof3e7fBBQKuDQ@mail.gmail.com>
- <64552a82-d878-b6e6-e650-52423153b624@schaufler-ca.com> <CAHk-=wiUVqHN76YUwhkjZzwTdjMMJf_zN4+u7vEJjmEGh3recw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiUVqHN76YUwhkjZzwTdjMMJf_zN4+u7vEJjmEGh3recw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 5 Jun 2021 22:11:00 -0400
-Message-ID: <CAHC9VhRJDr6HO8NbEwcqcXCgpzyLL7KEmKM=VLXGz0zPJG5iXw@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 5, 2021 at 2:17 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Sat, Jun 5, 2021 at 11:11 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >
-> > You have fallen into a common fallacy. The fact that the "code runs"
-> > does not assure that the "system works right". In the security world
-> > we face this all the time, often with performance expectations. In this
-> > case the BPF design has failed [..]
->
-> I think it's the lockdown patches that have failed. They did the wrong
-> thing, they didn't work,
->
-> The report in question is for a regression.
->
-> THERE ARE NO VALID ARGUMENTS FOR REGRESSIONS.
+The caller of wb_get_create() should pin the memcg, because
+wb_get_create() relies on this guarantee. The rcu read lock
+only can guarantee that the memcg css returned by css_from_id()
+cannot be released, but the reference of the memcg can be zero.
 
-To think I was worried we might end this thread without a bit of CAPS
-LOCK, whew! :)
+  rcu_read_lock()
+  memcg_css = css_from_id()
+  wb_get_create(memcg_css)
+      cgwb_create(memcg_css)
+          // css_get can change the ref counter from 0 back to 1
+          css_get(memcg_css)
+  rcu_read_unlock()
 
-I don't think anyone in this discussion, even Casey's last comment,
-was denying that there was a problem.  The discussion and the
-disagreements were about what a "proper" fix would be, and how one
-might implement that fix; of course there were different ideas of
-"proper" and implementations vary even when people agree, so things
-were a bit of a mess.  If you want to get upset and shouty, I think
-there are a few things spread across the subsystems involved that
-would be worthy targets, but to say that Casey, myself, or anyone else
-who plays under security/ denied the problem in this thread is not
-fair, or correct, in my opinion.
+Fix it by holding a reference to the css before calling
+wb_get_create(). This is not a problem I encountered in the
+real world. Just the result of a code review.
 
-> Honestly, security people need to understand that "not working" is not
-> a success case of security. It's a failure case.
+Fixes: 682aa8e1a6a1 ("writeback: implement unlocked_inode_to_wb transaction and use it for stat updates")
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: <stable@vger.kernel.org>
+---
+Since this patch has not been merged to the linux-next tree,
+just resend it.
 
-I can't pretend to know what all of the "security people" are
-thinking, but I can say with a good degree of certainty that my goal
-is not to crash, panic, kill, or otherwise disable a user's system.
-When it comes to things like the LSM hooks, my goal is to try and make
-sure we have the right hooks in the right places so that admins and
-users have the tools they need to control access to their data and
-systems in the way that they choose.  Sometimes this puts us at odds
-with other subsystems in the kernel, we saw that in this thread, but
-that's to be expected anytime you have competing priorities.  The
-important part is that eventually we figure out some way to move
-forward, and the fact that we are still all making progress and
-putting out new kernel releases is proof that we are finding a way.
-That's what matters to me, and if I was forced to guess, I would
-imagine that matters quite a lot to most of us here.
+Changelog in v3:
+ 1. Do not change GFP_ATOMIC.
+ 2. Update commit log.
 
+ Thanks for Michal's review and suggestions.
+
+Changelog in v2:
+ 1. Replace GFP_ATOMIC with GFP_NOIO suggested by Matthew.
+
+ fs/fs-writeback.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 3ac002561327..dedde99da40d 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -506,9 +506,14 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+ 	/* find and pin the new wb */
+ 	rcu_read_lock();
+ 	memcg_css = css_from_id(new_wb_id, &memory_cgrp_subsys);
+-	if (memcg_css)
+-		isw->new_wb = wb_get_create(bdi, memcg_css, GFP_ATOMIC);
++	if (memcg_css && !css_tryget(memcg_css))
++		memcg_css = NULL;
+ 	rcu_read_unlock();
++	if (!memcg_css)
++		goto out_free;
++
++	isw->new_wb = wb_get_create(bdi, memcg_css, GFP_ATOMIC);
++	css_put(memcg_css);
+ 	if (!isw->new_wb)
+ 		goto out_free;
+ 
 -- 
-paul moore
-www.paul-moore.com
+2.11.0
+
