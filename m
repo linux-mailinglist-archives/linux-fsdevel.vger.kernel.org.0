@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17DED39D0A4
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 21:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F5639D0A8
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 21:11:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230253AbhFFTMx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Jun 2021 15:12:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54096 "EHLO
+        id S230288AbhFFTMz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Jun 2021 15:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230112AbhFFTMo (ORCPT
+        with ESMTP id S230131AbhFFTMo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 6 Jun 2021 15:12:44 -0400
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 653FEC0613A4;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97709C061280;
         Sun,  6 Jun 2021 12:10:53 -0700 (PDT)
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lpyAe-0056Zh-96; Sun, 06 Jun 2021 19:10:52 +0000
+        id 1lpyAe-0056Zn-CN; Sun, 06 Jun 2021 19:10:52 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -26,9 +26,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [RFC PATCH 14/37] sanitize iov_iter_fault_in_readable()
-Date:   Sun,  6 Jun 2021 19:10:28 +0000
-Message-Id: <20210606191051.1216821-14-viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH 15/37] iov_iter_alignment(): don't bother with iterate_all_kinds()
+Date:   Sun,  6 Jun 2021 19:10:29 +0000
+Message-Id: <20210606191051.1216821-15-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210606191051.1216821-1-viro@zeniv.linux.org.uk>
 References: <YL0dCEVEiVL+NwG6@zeniv-ca.linux.org.uk>
@@ -40,76 +40,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-1) constify iov_iter argument; we are not advancing it in this primitive.
-
-2) cap the amount requested by the amount of data in iov_iter.  All
-existing callers should've been safe, but the check is really cheap and
-doing it here makes for easier analysis, as well as more consistent
-semantics among the primitives.
-
-3) don't bother with iterate_iovec().  Explicit loop is not any harder
-to follow, and we get rid of standalone iterate_iovec() users - it's
-only used by iterate_and_advance() and (soon to be gone) iterate_all_kinds().
+It's easier to go over the array manually.  We need to watch out
+for truncated iov_iter, though - iovec array might cover more
+than i->count.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- include/linux/uio.h |  2 +-
- lib/iov_iter.c      | 26 ++++++++++++++++----------
- 2 files changed, 17 insertions(+), 11 deletions(-)
+ lib/iov_iter.c | 63 ++++++++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 53 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 56b6ff235281..18b4e0a8e3bf 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -119,7 +119,7 @@ size_t iov_iter_copy_from_user_atomic(struct page *page,
- 		struct iov_iter *i, unsigned long offset, size_t bytes);
- void iov_iter_advance(struct iov_iter *i, size_t bytes);
- void iov_iter_revert(struct iov_iter *i, size_t bytes);
--int iov_iter_fault_in_readable(struct iov_iter *i, size_t bytes);
-+int iov_iter_fault_in_readable(const struct iov_iter *i, size_t bytes);
- size_t iov_iter_single_seg_count(const struct iov_iter *i);
- size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
- 			 struct iov_iter *i);
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 5621a3457118..21b3e253b766 100644
+index 21b3e253b766..bb7089cd0cf7 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -466,19 +466,25 @@ static size_t copy_page_to_iter_pipe(struct page *page, size_t offset, size_t by
-  * Return 0 on success, or non-zero if the memory could not be accessed (i.e.
-  * because it is an invalid address).
-  */
--int iov_iter_fault_in_readable(struct iov_iter *i, size_t bytes)
-+int iov_iter_fault_in_readable(const struct iov_iter *i, size_t bytes)
- {
--	size_t skip = i->iov_offset;
--	const struct iovec *iov;
--	int err;
--	struct iovec v;
--
- 	if (iter_is_iovec(i)) {
--		iterate_iovec(i, bytes, v, iov, skip, ({
--			err = fault_in_pages_readable(v.iov_base, v.iov_len);
-+		const struct iovec *p;
-+		size_t skip;
-+
-+		if (bytes > i->count)
-+			bytes = i->count;
-+		for (p = i->iov, skip = i->iov_offset; bytes; p++, skip = 0) {
-+			size_t len = min(bytes, p->iov_len - skip);
-+			int err;
-+
-+			if (unlikely(!len))
-+				continue;
-+			err = fault_in_pages_readable(p->iov_base + skip, len);
- 			if (unlikely(err))
--			return err;
--		0;}))
-+				return err;
-+			bytes -= len;
-+		}
- 	}
- 	return 0;
+@@ -1339,27 +1339,70 @@ void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count)
  }
+ EXPORT_SYMBOL(iov_iter_discard);
+ 
+-unsigned long iov_iter_alignment(const struct iov_iter *i)
++static unsigned long iov_iter_alignment_iovec(const struct iov_iter *i)
+ {
+ 	unsigned long res = 0;
+ 	size_t size = i->count;
++	size_t skip = i->iov_offset;
++	unsigned k;
++
++	for (k = 0; k < i->nr_segs; k++, skip = 0) {
++		size_t len = i->iov[k].iov_len - skip;
++		if (len) {
++			res |= (unsigned long)i->iov[k].iov_base + skip;
++			if (len > size)
++				len = size;
++			res |= len;
++			size -= len;
++			if (!size)
++				break;
++		}
++	}
++	return res;
++}
+ 
+-	if (unlikely(iov_iter_is_pipe(i))) {
++static unsigned long iov_iter_alignment_bvec(const struct iov_iter *i)
++{
++	unsigned res = 0;
++	size_t size = i->count;
++	unsigned skip = i->iov_offset;
++	unsigned k;
++
++	for (k = 0; k < i->nr_segs; k++, skip = 0) {
++		size_t len = i->bvec[k].bv_len - skip;
++		res |= (unsigned long)i->bvec[k].bv_offset + skip;
++		if (len > size)
++			len = size;
++		res |= len;
++		size -= len;
++		if (!size)
++			break;
++	}
++	return res;
++}
++
++unsigned long iov_iter_alignment(const struct iov_iter *i)
++{
++	/* iovec and kvec have identical layouts */
++	if (likely(iter_is_iovec(i) || iov_iter_is_kvec(i)))
++		return iov_iter_alignment_iovec(i);
++
++	if (iov_iter_is_bvec(i))
++		return iov_iter_alignment_bvec(i);
++
++	if (iov_iter_is_pipe(i)) {
+ 		unsigned int p_mask = i->pipe->ring_size - 1;
++		size_t size = i->count;
+ 
+ 		if (size && i->iov_offset && allocated(&i->pipe->bufs[i->head & p_mask]))
+ 			return size | i->iov_offset;
+ 		return size;
+ 	}
+-	if (unlikely(iov_iter_is_xarray(i)))
++
++	if (iov_iter_is_xarray(i))
+ 		return (i->xarray_start + i->iov_offset) | i->count;
+-	iterate_all_kinds(i, size, v,
+-		(res |= (unsigned long)v.iov_base | v.iov_len, 0),
+-		res |= v.bv_offset | v.bv_len,
+-		res |= (unsigned long)v.iov_base | v.iov_len,
+-		res |= v.bv_offset | v.bv_len
+-	)
+-	return res;
++
++	return 0;
+ }
+ EXPORT_SYMBOL(iov_iter_alignment);
+ 
 -- 
 2.11.0
 
