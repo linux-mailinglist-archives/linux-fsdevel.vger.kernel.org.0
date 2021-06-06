@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4432139D09F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 21:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17DED39D0A4
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 21:11:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230217AbhFFTMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Jun 2021 15:12:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54090 "EHLO
+        id S230253AbhFFTMx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Jun 2021 15:12:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229944AbhFFTMn (ORCPT
+        with ESMTP id S230112AbhFFTMo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Jun 2021 15:12:43 -0400
+        Sun, 6 Jun 2021 15:12:44 -0400
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64F05C0613A2;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 653FEC0613A4;
         Sun,  6 Jun 2021 12:10:53 -0700 (PDT)
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lpyAe-0056Zd-6o; Sun, 06 Jun 2021 19:10:52 +0000
+        id 1lpyAe-0056Zh-96; Sun, 06 Jun 2021 19:10:52 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -26,9 +26,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [RFC PATCH 13/37] iov_iter: optimize iov_iter_advance() for iovec and kvec
-Date:   Sun,  6 Jun 2021 19:10:27 +0000
-Message-Id: <20210606191051.1216821-13-viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH 14/37] sanitize iov_iter_fault_in_readable()
+Date:   Sun,  6 Jun 2021 19:10:28 +0000
+Message-Id: <20210606191051.1216821-14-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210606191051.1216821-1-viro@zeniv.linux.org.uk>
 References: <YL0dCEVEiVL+NwG6@zeniv-ca.linux.org.uk>
@@ -40,78 +40,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We can do better than generic iterate_and_advance() for this one;
-inspired by bvec_iter_advance() (and massaged into that form by
-equivalent transformations).
+1) constify iov_iter argument; we are not advancing it in this primitive.
 
-[fixed a braino caught by kernel test robot <oliver.sang@intel.com>]
+2) cap the amount requested by the amount of data in iov_iter.  All
+existing callers should've been safe, but the check is really cheap and
+doing it here makes for easier analysis, as well as more consistent
+semantics among the primitives.
+
+3) don't bother with iterate_iovec().  Explicit loop is not any harder
+to follow, and we get rid of standalone iterate_iovec() users - it's
+only used by iterate_and_advance() and (soon to be gone) iterate_all_kinds().
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- lib/iov_iter.c | 42 ++++++++++++++++++++++++++++--------------
- 1 file changed, 28 insertions(+), 14 deletions(-)
+ include/linux/uio.h |  2 +-
+ lib/iov_iter.c      | 26 ++++++++++++++++----------
+ 2 files changed, 17 insertions(+), 11 deletions(-)
 
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 56b6ff235281..18b4e0a8e3bf 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -119,7 +119,7 @@ size_t iov_iter_copy_from_user_atomic(struct page *page,
+ 		struct iov_iter *i, unsigned long offset, size_t bytes);
+ void iov_iter_advance(struct iov_iter *i, size_t bytes);
+ void iov_iter_revert(struct iov_iter *i, size_t bytes);
+-int iov_iter_fault_in_readable(struct iov_iter *i, size_t bytes);
++int iov_iter_fault_in_readable(const struct iov_iter *i, size_t bytes);
+ size_t iov_iter_single_seg_count(const struct iov_iter *i);
+ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
+ 			 struct iov_iter *i);
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 5a02c94a51ab..5621a3457118 100644
+index 5621a3457118..21b3e253b766 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1107,28 +1107,42 @@ static void iov_iter_bvec_advance(struct iov_iter *i, size_t size)
- 	i->iov_offset = bi.bi_bvec_done;
- }
- 
-+static void iov_iter_iovec_advance(struct iov_iter *i, size_t size)
-+{
-+	const struct iovec *iov, *end;
-+
-+	if (!i->count)
-+		return;
-+	i->count -= size;
-+
-+	size += i->iov_offset; // from beginning of current segment
-+	for (iov = i->iov, end = iov + i->nr_segs; iov < end; iov++) {
-+		if (likely(size < iov->iov_len))
-+			break;
-+		size -= iov->iov_len;
-+	}
-+	i->iov_offset = size;
-+	i->nr_segs -= iov - i->iov;
-+	i->iov = iov;
-+}
-+
- void iov_iter_advance(struct iov_iter *i, size_t size)
+@@ -466,19 +466,25 @@ static size_t copy_page_to_iter_pipe(struct page *page, size_t offset, size_t by
+  * Return 0 on success, or non-zero if the memory could not be accessed (i.e.
+  * because it is an invalid address).
+  */
+-int iov_iter_fault_in_readable(struct iov_iter *i, size_t bytes)
++int iov_iter_fault_in_readable(const struct iov_iter *i, size_t bytes)
  {
- 	if (unlikely(i->count < size))
- 		size = i->count;
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (likely(iter_is_iovec(i) || iov_iter_is_kvec(i))) {
-+		/* iovec and kvec have identical layouts */
-+		iov_iter_iovec_advance(i, size);
-+	} else if (iov_iter_is_bvec(i)) {
-+		iov_iter_bvec_advance(i, size);
-+	} else if (iov_iter_is_pipe(i)) {
- 		pipe_advance(i, size);
--		return;
--	}
--	if (unlikely(iov_iter_is_discard(i))) {
--		i->count -= size;
--		return;
--	}
--	if (unlikely(iov_iter_is_xarray(i))) {
-+	} else if (unlikely(iov_iter_is_xarray(i))) {
- 		i->iov_offset += size;
- 		i->count -= size;
--		return;
--	}
--	if (iov_iter_is_bvec(i)) {
--		iov_iter_bvec_advance(i, size);
--		return;
-+	} else if (iov_iter_is_discard(i)) {
-+		i->count -= size;
+-	size_t skip = i->iov_offset;
+-	const struct iovec *iov;
+-	int err;
+-	struct iovec v;
+-
+ 	if (iter_is_iovec(i)) {
+-		iterate_iovec(i, bytes, v, iov, skip, ({
+-			err = fault_in_pages_readable(v.iov_base, v.iov_len);
++		const struct iovec *p;
++		size_t skip;
++
++		if (bytes > i->count)
++			bytes = i->count;
++		for (p = i->iov, skip = i->iov_offset; bytes; p++, skip = 0) {
++			size_t len = min(bytes, p->iov_len - skip);
++			int err;
++
++			if (unlikely(!len))
++				continue;
++			err = fault_in_pages_readable(p->iov_base + skip, len);
+ 			if (unlikely(err))
+-			return err;
+-		0;}))
++				return err;
++			bytes -= len;
++		}
  	}
--	iterate_and_advance(i, size, v, 0, 0, 0, 0)
+ 	return 0;
  }
- EXPORT_SYMBOL(iov_iter_advance);
- 
 -- 
 2.11.0
 
