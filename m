@@ -2,130 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0097839D0B6
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 21:11:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33BD839D110
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 21:35:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230297AbhFFTNM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Jun 2021 15:13:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54142 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230225AbhFFTMv (ORCPT
+        id S230078AbhFFThG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Jun 2021 15:37:06 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:39050 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229721AbhFFThF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Jun 2021 15:12:51 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AC3C061226;
-        Sun,  6 Jun 2021 12:10:57 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lpyAi-0056dY-CA; Sun, 06 Jun 2021 19:10:56 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Sterba <dsterba@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: [RFC PATCH 37/37] csum_and_copy_to_pipe_iter(): leave handling of csum_state to caller
-Date:   Sun,  6 Jun 2021 19:10:51 +0000
-Message-Id: <20210606191051.1216821-37-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210606191051.1216821-1-viro@zeniv.linux.org.uk>
-References: <YL0dCEVEiVL+NwG6@zeniv-ca.linux.org.uk>
- <20210606191051.1216821-1-viro@zeniv.linux.org.uk>
+        Sun, 6 Jun 2021 15:37:05 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lpyYE-00FlQA-8k; Sun, 06 Jun 2021 13:35:14 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=email.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lpyYD-007nKe-97; Sun, 06 Jun 2021 13:35:13 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <AM8PR10MB47081071E64EAAB343196D5AE4399@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+Date:   Sun, 06 Jun 2021 14:34:53 -0500
+In-Reply-To: <AM8PR10MB47081071E64EAAB343196D5AE4399@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+        (Bernd Edlinger's message of "Sun, 6 Jun 2021 12:41:18 +0200")
+Message-ID: <87mts2kcrm.fsf@disp2133>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain
+X-XM-SPF: eid=1lpyYD-007nKe-97;;;mid=<87mts2kcrm.fsf@disp2133>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19tkxyVQPNifWvgwI/68HlKr0bp7WhB3vk=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.8 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XM_Body_Dirty_Words
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  1.0 XM_Body_Dirty_Words Contains a dirty word
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 388 ms - load_scoreonly_sql: 0.08 (0.0%),
+        signal_user_changed: 13 (3.3%), b_tie_ro: 11 (2.8%), parse: 1.34
+        (0.3%), extract_message_metadata: 20 (5.1%), get_uri_detail_list: 1.34
+        (0.3%), tests_pri_-1000: 16 (4.1%), tests_pri_-950: 1.29 (0.3%),
+        tests_pri_-900: 1.05 (0.3%), tests_pri_-90: 83 (21.3%), check_bayes:
+        80 (20.5%), b_tokenize: 7 (1.8%), b_tok_get_all: 7 (1.8%),
+        b_comp_prob: 2.7 (0.7%), b_tok_touch_all: 59 (15.2%), b_finish: 1.42
+        (0.4%), tests_pri_0: 240 (61.7%), check_dkim_signature: 0.69 (0.2%),
+        check_dkim_adsp: 12 (3.1%), poll_dns_idle: 0.57 (0.1%), tests_pri_10:
+        2.0 (0.5%), tests_pri_500: 8 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] Fix error handling in begin_new_exec
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-... since all the logics is already there for use by iovec/kvec/etc.
-cases.
+Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- lib/iov_iter.c | 41 ++++++++++++++++++-----------------------
- 1 file changed, 18 insertions(+), 23 deletions(-)
+> If get_unused_fd_flags() fails, the error handling is incomplete
+> because bprm->cred is already set to NULL, and therefore
+> free_bprm will not unlock the cred_guard_mutex.
+> Note there are two error conditions which end up here,
+> one before and one after bprm->cred is cleared.
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 0ee359b62afc..11b39bd1d1ab 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -593,39 +593,34 @@ static __wsum csum_and_memcpy(void *to, const void *from, size_t len,
- }
- 
- static size_t csum_and_copy_to_pipe_iter(const void *addr, size_t bytes,
--					 struct csum_state *csstate,
--					 struct iov_iter *i)
-+					 struct iov_iter *i, __wsum *sump)
- {
- 	struct pipe_inode_info *pipe = i->pipe;
- 	unsigned int p_mask = pipe->ring_size - 1;
--	__wsum sum = csstate->csum;
--	size_t off = csstate->off;
-+	__wsum sum = *sump;
-+	size_t off = 0;
- 	unsigned int i_head;
--	size_t n, r;
-+	size_t r;
- 
- 	if (!sanity(i))
- 		return 0;
- 
--	bytes = n = push_pipe(i, bytes, &i_head, &r);
--	if (unlikely(!n))
--		return 0;
--	do {
--		size_t chunk = min_t(size_t, n, PAGE_SIZE - r);
-+	bytes = push_pipe(i, bytes, &i_head, &r);
-+	while (bytes) {
-+		size_t chunk = min_t(size_t, bytes, PAGE_SIZE - r);
- 		char *p = kmap_local_page(pipe->bufs[i_head & p_mask].page);
--		sum = csum_and_memcpy(p + r, addr, chunk, sum, off);
-+		sum = csum_and_memcpy(p + r, addr + off, chunk, sum, off);
- 		kunmap_local(p);
- 		i->head = i_head;
- 		i->iov_offset = r + chunk;
--		n -= chunk;
-+		bytes -= chunk;
- 		off += chunk;
--		addr += chunk;
- 		r = 0;
- 		i_head++;
--	} while (n);
--	i->count -= bytes;
--	csstate->csum = sum;
--	csstate->off = off;
--	return bytes;
-+	}
-+	*sump = sum;
-+	i->count -= off;
-+	return off;
- }
- 
- size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
-@@ -1682,15 +1677,15 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, void *_csstate,
- 	struct csum_state *csstate = _csstate;
- 	__wsum sum, next;
- 
--	if (unlikely(iov_iter_is_pipe(i)))
--		return csum_and_copy_to_pipe_iter(addr, bytes, _csstate, i);
--
--	sum = csum_shift(csstate->csum, csstate->off);
- 	if (unlikely(iov_iter_is_discard(i))) {
- 		WARN_ON(1);	/* for now */
- 		return 0;
- 	}
--	iterate_and_advance(i, bytes, base, len, off, ({
-+
-+	sum = csum_shift(csstate->csum, csstate->off);
-+	if (unlikely(iov_iter_is_pipe(i)))
-+		bytes = csum_and_copy_to_pipe_iter(addr, bytes, i, &sum);
-+	else iterate_and_advance(i, bytes, base, len, off, ({
- 		next = csum_and_copy_to_user(addr + off, base, len);
- 		sum = csum_block_add(sum, next, off);
- 		next ? 0 : len;
--- 
-2.11.0
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
+Yuck.  I wonder if there is a less error prone idiom we could be using
+here than testing bprm->cred in free_bprm.  Especially as this lock is
+expected to stay held through setup_new_exec.
+
+Something feels too clever here.
+
+> Fixes: b8a61c9e7b4 ("exec: Generic execfd support")
+>
+> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+> ---
+>  fs/exec.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 18594f1..d8af85f 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1396,6 +1396,9 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  
+>  out_unlock:
+>  	up_write(&me->signal->exec_update_lock);
+> +	if (!bprm->cred)
+> +		mutex_unlock(&me->signal->cred_guard_mutex);
+> +
+>  out:
+>  	return retval;
+>  }
