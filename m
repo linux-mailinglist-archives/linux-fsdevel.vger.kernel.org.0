@@ -2,140 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C57C39CB45
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jun 2021 23:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4185839CC13
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jun 2021 03:31:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230132AbhFEVjo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Jun 2021 17:39:44 -0400
-Received: from mail-il1-f180.google.com ([209.85.166.180]:42516 "EHLO
-        mail-il1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230010AbhFEVjn (ORCPT
+        id S230111AbhFFBdO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Jun 2021 21:33:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52038 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230083AbhFFBdN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Jun 2021 17:39:43 -0400
-Received: by mail-il1-f180.google.com with SMTP id a8so11300949ilv.9;
-        Sat, 05 Jun 2021 14:37:39 -0700 (PDT)
+        Sat, 5 Jun 2021 21:33:13 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09B67C061767
+        for <linux-fsdevel@vger.kernel.org>; Sat,  5 Jun 2021 18:31:10 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id k25so15048506eja.9
+        for <linux-fsdevel@vger.kernel.org>; Sat, 05 Jun 2021 18:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fCe+jGmEAwmTn8B7zS0WgL0TEtprm2eMCt59nOvx6D0=;
+        b=1C/ZT6VO9/kFcqfqv3/zGsJrGPbrhEkvKHwxEuzs8VA+HqFgEw+D7iKUER1uKs1Jo/
+         WFi9sbz3aeTG7eP+wDUwtqXJxTGLIeLKpe+Neul/K0LwdDBXA6m6MUnx7DVMfVCm0TNl
+         24B6T3B5amn7STxRsQYCiKJoj/OTiS9PdP6TF3DpFYm4CINKKT2/qhFX55q9g5XzM1gW
+         IsLV/oz6uv37DVUDE/J4BvW1bzN2zZWz2qp9lhp57jie5gag3PPX2j+mA/S9azmajBOK
+         UH4ORdfwCnJ6mSDzr3achqJ+PRt1OuF9IX6S/DKHAy992Bmd7Ocqyxg5RmNb5/eOhu3C
+         p9Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=f0JYFWLbU1K2WU+3KcY+euQ65dBHJZ+TcnqUBRn+Ixw=;
-        b=rYrH/iCtcdSFI9Wp5XTB6rFjWGy65dCezviNROeFN5cdB0KuU3jaMkNAp0pDyCoq54
-         KgM2DUOGWR77jZBGQD9hinqSyumCsRmLJjPL7R6tUyVmPJLLI0eEmWbq/Pm9181ZafLV
-         A2BG6OKnk6daBcrFcYP3eYwc9hUx43esDCNL7F+71MaauBn7g//3eA5hs0UfG9wColS3
-         DnBKqTZ3hXekmtn2C2/O2V9evrvH5YogK92Vao0LPpfCqiyQotPy9RH35sbV6dNEZ0CO
-         nK1un+b/bx/r3Hgu5mUnilxldWv9NsZEhFVNcD+cXYCMQY3n/+hLPqUmxDtnrUgpb0V0
-         svBA==
-X-Gm-Message-State: AOAM5326Inj7PmUlImMzAgbReo2Wbl2tupkCgO9yfref3yByoW3Bq+0Z
-        4c8xY2luC6mrZJCpDsPETzU=
-X-Google-Smtp-Source: ABdhPJwMLOVVfaiNYKItkPtUrVqfpfgw6YBhzHcDjMO92/yapMMAIYYVBoDqFzfAUq9CFL3+jjmLaA==
-X-Received: by 2002:a92:c611:: with SMTP id p17mr8862502ilm.166.1622929059076;
-        Sat, 05 Jun 2021 14:37:39 -0700 (PDT)
-Received: from google.com (243.199.238.35.bc.googleusercontent.com. [35.238.199.243])
-        by smtp.gmail.com with ESMTPSA id 15sm3666647ilt.66.2021.06.05.14.37.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Jun 2021 14:37:38 -0700 (PDT)
-Date:   Sat, 5 Jun 2021 21:37:37 +0000
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <dchinner@redhat.com>, cgroups@vger.kernel.org
-Subject: Re: [PATCH v7 0/6] cgroup, blkcg: prevent dirty inodes to pin dying
- memory cgroups
-Message-ID: <YLvuofB0xMuz/wz9@google.com>
-References: <20210604013159.3126180-1-guro@fb.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fCe+jGmEAwmTn8B7zS0WgL0TEtprm2eMCt59nOvx6D0=;
+        b=gmsl3zL3wV9epcDCmCMfw4dFKNkawyIce/gchZgSYJ5rCb4EH7SLzP32VqFJz3aAj+
+         R/OfDxLZgG1BXKDSlLO6dpVuvHrBKHTPgdPRonq0leIQx0AeYLbw8+aX+bvUN074tO2o
+         4nYZetgYkB2GZ/4U2Eay7ZphAdCneg7zyaKEldfsjCZALZzW/L4gD5RUDzrP0Xve7Jkr
+         wCxjp+t7267Nc1jt1vx2Aax4uSMMZFhCFEvDh/Fca8EBmAKEMNPmhbZhKfueV/5gATCZ
+         /B9e9COFvtDLvxPlMjWwPpQ2dAAKw8ES+9ixFwBjVKB2iP+VhhPMrEp5yn4VCUFUBKm0
+         4Fyg==
+X-Gm-Message-State: AOAM532Y6O35y3oyV00Zd6d9xMM32XWGGV4E+5TiMN50chRfkK2xW7wp
+        18S1yJGY9G/oaVGwCWMjyaGglSn+ioiTsWsGsF6E
+X-Google-Smtp-Source: ABdhPJyhY/AL0NTznJ9xF6JwaBvqMnxz7Ps9n6YMYTY6wpWXUGQF/hzXLj9xr7+Kqv4CWEHA77JSrz2Ou+hnQjZ4Kv8=
+X-Received: by 2002:a17:906:4111:: with SMTP id j17mr11223553ejk.488.1622943068465;
+ Sat, 05 Jun 2021 18:31:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210604013159.3126180-1-guro@fb.com>
+References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
+ <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
+ <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net> <CAHC9VhS1XRZjKcTFgH1+n5uA-CeT+9BeSP5jvT2+RE5ougLpUg@mail.gmail.com>
+ <2e541bdc-ae21-9a07-7ac7-6c6a4dda09e8@iogearbox.net> <CAHC9VhT464vr9sWxqY3PRB4DAccz=LvRMLgWBsSViWMR0JJvOQ@mail.gmail.com>
+ <3ca181e3-df32-9ae0-12c6-efb899b7ce7a@iogearbox.net> <CAHC9VhTuPnPs1wMTmoGUZ4fvyy-es9QJpE7O_yTs2JKos4fgbw@mail.gmail.com>
+ <f4373013-88fb-b839-aaaa-3826548ebd0c@iogearbox.net> <CAHC9VhS=BeGdaAi8Ae5Fx42Fzy_ybkcXwMNcPwK=uuA6=+SRcg@mail.gmail.com>
+ <c59743f6-0000-1b15-bc16-ff761b443aef@iogearbox.net> <CAHC9VhT1JhdRw9P_m3niY-U-vukxTWKTE9q6AMyQ=r_ohpPxMw@mail.gmail.com>
+ <CAADnVQ+0bNtDj46Q8s-h=rqJgZz2JaGTeHpbmof3e7fBBQKuDQ@mail.gmail.com>
+In-Reply-To: <CAADnVQ+0bNtDj46Q8s-h=rqJgZz2JaGTeHpbmof3e7fBBQKuDQ@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sat, 5 Jun 2021 21:30:57 -0400
+Message-ID: <CAHC9VhQv4xNhHsxpR7wqBsuch2UC=5DPAXTJAtujtF9G8wpfmQ@mail.gmail.com>
+Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
+ permission checks
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Jun 4, 2021 at 8:08 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Fri, Jun 4, 2021 at 4:34 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > > Again, the problem is not limited to BPF at all. kprobes is doing register-
+> > > time hooks which are equivalent to the one of BPF. Anything in run-time
+> > > trying to prevent probe_read_kernel by kprobes or BPF is broken by design.
+> >
+> > Not being an expert on kprobes I can't really comment on that, but
+> > right now I'm focused on trying to make things work for the BPF
+> > helpers.  I suspect that if we can get the SELinux lockdown
+> > implementation working properly for BPF the solution for kprobes won't
+> > be far off.
+>
+> Paul,
 
-On Thu, Jun 03, 2021 at 06:31:53PM -0700, Roman Gushchin wrote:
-> When an inode is getting dirty for the first time it's associated
-> with a wb structure (see __inode_attach_wb()). It can later be
-> switched to another wb (if e.g. some other cgroup is writing a lot of
-> data to the same inode), but otherwise stays attached to the original
-> wb until being reclaimed.
-> 
-> The problem is that the wb structure holds a reference to the original
-> memory and blkcg cgroups. So if an inode has been dirty once and later
-> is actively used in read-only mode, it has a good chance to pin down
-> the original memory and blkcg cgroups forewer. This is often the case with
-> services bringing data for other services, e.g. updating some rpm
-> packages.
-> 
-> In the real life it becomes a problem due to a large size of the memcg
-> structure, which can easily be 1000x larger than an inode. Also a
-> really large number of dying cgroups can raise different scalability
-> issues, e.g. making the memory reclaim costly and less effective.
-> 
-> To solve the problem inodes should be eventually detached from the
-> corresponding writeback structure. It's inefficient to do it after
-> every writeback completion. Instead it can be done whenever the
-> original memory cgroup is offlined and writeback structure is getting
-> killed. Scanning over a (potentially long) list of inodes and detach
-> them from the writeback structure can take quite some time. To avoid
-> scanning all inodes, attached inodes are kept on a new list (b_attached).
-> To make it less noticeable to a user, the scanning and switching is performed
-> from a work context.
-> 
-> Big thanks to Jan Kara, Dennis Zhou and Hillf Danton for their ideas and
-> contribution to this patchset.
-> 
-> v7:
->   - shared locking for multiple inode switching
->   - introduced inode_prepare_wbs_switch() helper
->   - extended the pre-switch inode check for I_WILL_FREE
->   - added comments here and there
-> 
-> v6:
->   - extended and reused wbs switching functionality to switch inodes
->     on cgwb cleanup
->   - fixed offline_list handling
->   - switched to the unbound_wq
->   - other minor fixes
-> 
-> v5:
->   - switch inodes to bdi->wb instead of zeroing inode->i_wb
->   - split the single patch into two
->   - only cgwbs maintain lists of attached inodes
->   - added cond_resched()
->   - fixed !CONFIG_CGROUP_WRITEBACK handling
->   - extended list of prohibited inodes flag
->   - other small fixes
-> 
-> 
-> Roman Gushchin (6):
->   writeback, cgroup: do not switch inodes with I_WILL_FREE flag
->   writeback, cgroup: switch to rcu_work API in inode_switch_wbs()
->   writeback, cgroup: keep list of inodes attached to bdi_writeback
->   writeback, cgroup: split out the functional part of
->     inode_switch_wbs_work_fn()
->   writeback, cgroup: support switching multiple inodes at once
->   writeback, cgroup: release dying cgwbs by switching attached inodes
-> 
->  fs/fs-writeback.c                | 302 +++++++++++++++++++++----------
->  include/linux/backing-dev-defs.h |  20 +-
->  include/linux/writeback.h        |   1 +
->  mm/backing-dev.c                 |  69 ++++++-
->  4 files changed, 293 insertions(+), 99 deletions(-)
-> 
-> -- 
-> 2.31.1
-> 
+Hi Alexei,
 
-I too am a bit late to the party. Feel free to add mine as well to the
-series.
+> Both kprobe and bpf can call probe_read_kernel==copy_from_kernel_nofault
+> from all contexts.
+> Including NMI.
 
-Acked-by: Dennis Zhou <dennis@kernel.org>
+Thanks, that is helpful.  In hindsight it should have been obvious
+that kprobe/BPF would offer to insert code into the NMI handlers, but
+I don't recall it earlier in the discussion, it's possible I simply
+missed the mention.
 
-I left my one comment on the last patch regarding a possible future
-extension.
+> Most of audit_log_* is not acceptable.
+> Just removing a wakeup is not solving anything.
 
-Thanks,
-Dennis
+That's not really fair now is it?  Removing the wakeups in
+audit_log_start() and audit_log_end() does solve some problems,
+although not all of them (i.e. the NMI problem being the 800lb
+gorilla).  Because of the NMI case we're not going to solve the
+LSM/audit case anytime soon so it looks like we are going to have to
+fall back to the patch Daniel proposed.
+
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+--
+paul moore
+www.paul-moore.com
