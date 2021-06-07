@@ -2,68 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE2FA39D4A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 08:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2BDE39D4C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 08:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbhFGGJ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Jun 2021 02:09:57 -0400
-Received: from m12-12.163.com ([220.181.12.12]:42034 "EHLO m12-12.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229449AbhFGGJ5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Jun 2021 02:09:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=e3HVO
-        33jWIQeAYjTiaJgSFTUeqx8JRvBeqjse2s1de8=; b=DmxaclLUdaVMkprQ5kReh
-        4+G4MYuaj94L20EOXzCJLr0o8j/e/aQQerVs8CvAKY+hF17ClGqfOKj9r0kiHhUL
-        MUQofZjsao/uB96wu6h6weNGjFxCwEeoGiGa7KppL50wE239fLlxOq/titKUd5XC
-        MM9p4qJBXS/zSqeNRkdSYk=
-Received: from localhost.localdomain (unknown [218.17.89.92])
-        by smtp8 (Coremail) with SMTP id DMCowABHECHAt71g2aYbIg--.2774S2;
-        Mon, 07 Jun 2021 14:08:01 +0800 (CST)
-From:   lijian_8010a29@163.com
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lijian <lijian@yulong.com>
-Subject: [PATCH] fs: read_write: Fix a typo
-Date:   Mon,  7 Jun 2021 14:07:03 +0800
-Message-Id: <20210607060703.174599-1-lijian_8010a29@163.com>
-X-Mailer: git-send-email 2.25.1
+        id S230306AbhFGGRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Jun 2021 02:17:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56372 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230286AbhFGGRD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Jun 2021 02:17:03 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A3AC061766;
+        Sun,  6 Jun 2021 23:15:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=oawbtEP8uHGSz69C5s6bH+uzE7
+        6fsCnhdr6gYc7uq/gcDnDL00mDMZMI5vxky9QSfdYwDPbQ7CWL0bw0Ri7INiiZjKeg4/O2n74g9Yn
+        t0GpJ9TJcjjHtVctveaOFP0Gd5DN4RFasPHYsOU60RItaERL4cOTKiD5Okq+tHgKoSVUS52gDNAS1
+        PLOjbf706ECQgyIo9iOSzj5A3d0ZU8xGkJ5SIEDusRBOoJSClyloEMPVO49mOB9Ee0FEacaKdKw05
+        ZriqylSq2yUNXXAxtSZCYzHrm+wAtjkITR83CF4lvmzylOugNbbZ9o8nl7rvJw7m7hxq9O4yZq5X0
+        gYLIjEPw==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lq8Wz-00FQfc-HT; Mon, 07 Jun 2021 06:14:41 +0000
+Date:   Mon, 7 Jun 2021 07:14:37 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, brauner@suse.cz,
+        linux-api@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH 0/2] Change quotactl_path() to an fd-based syscall
+Message-ID: <YL25TVhiqAoF2voU@infradead.org>
+References: <20210602151553.30090-1-jack@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DMCowABHECHAt71g2aYbIg--.2774S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrur4xWryUtry8Kr4rZw1kZrb_yoW3JwcEkr
-        WIkr4vvr4qvr1xAa48uayYqw1jg3yFkFsYqanxtr98t347t34vka9Iqwn5Kr1UJr47WFyY
-        kFs2qw1rWr12vjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnunQUUUUUU==
-X-Originating-IP: [218.17.89.92]
-X-CM-SenderInfo: 5olmxttqbyiikqdsmqqrwthudrp/1tbi3wGqUGB0GdN6SwAAsL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210602151553.30090-1-jack@suse.cz>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: lijian <lijian@yulong.com>
+Looks good,
 
-Change 'implemenation' to 'implementation'.
-
-Signed-off-by: lijian <lijian@yulong.com>
----
- fs/read_write.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 9db7adf160d2..ba9bf77d93f8 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -137,7 +137,7 @@ EXPORT_SYMBOL(generic_file_llseek_size);
-  * @offset:	file offset to seek to
-  * @whence:	type of seek
-  *
-- * This is a generic implemenation of ->llseek useable for all normal local
-+ * This is a generic implementation of ->llseek useable for all normal local
-  * filesystems.  It just updates the file offset to the value specified by
-  * @offset and @whence.
-  */
--- 
-2.25.1
-
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
