@@ -2,154 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C6A439E9F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 01:16:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76F4D39EA0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 01:19:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230239AbhFGXSQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Jun 2021 19:18:16 -0400
-Received: from mail-ej1-f44.google.com ([209.85.218.44]:35592 "EHLO
-        mail-ej1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230209AbhFGXSQ (ORCPT
+        id S230383AbhFGXUw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Jun 2021 19:20:52 -0400
+Received: from mail-pg1-f174.google.com ([209.85.215.174]:38707 "EHLO
+        mail-pg1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230183AbhFGXUv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Jun 2021 19:18:16 -0400
-Received: by mail-ej1-f44.google.com with SMTP id h24so29430299ejy.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jun 2021 16:16:12 -0700 (PDT)
+        Mon, 7 Jun 2021 19:20:51 -0400
+Received: by mail-pg1-f174.google.com with SMTP id 6so15031984pgk.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jun 2021 16:18:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yVcvHZxl4JqB10edFM0rP0Xu4QSj7UArIpCEg3v5Ei8=;
-        b=U7TfcbAM3zxrbqLIzDoEUv43hEGINXWMWhYClak8CfaaNFxcUhS/u8mLrcy4H1f/lL
-         8Dv7Y0aXJzyPOgKgY1zRrNzyIhlGulAI+YN3MCJrf3gVmss94O+O82qMJfO/bLwWaU7K
-         Ryc5eFkS0Oj1u3a6R7AvzqIVUGTS+E9WDcB/ZiJfGKXucs31Fa4hdrgUJYDdQapNOCLY
-         8bXmuY/xVLkCKvbj/Rccpk63vbHR1DMPdYTLV2MM5bTfRDrB8T9ShsdDzfYu6nNfV3vI
-         xduQ4zw+eJF/FWzKjySwuoij9H8dUNzRMPX0Gi7L0edr2pQBxPQVYlk04xQPRevi3Srl
-         iPXw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7enO4NtQ2aqqP6tz58zY+25dGjq834VWlAo1YL2PSJU=;
+        b=i/Yo9IxIolr0k6IvaDYl3yGrjIePm0xy63F6tv5De7tDIvpygn0PRJYxXHTuH5dbaZ
+         QON6wL1BAg4Q+KUJgu/+n0rlivX1dUnaHFOJdULPM2uhy2Q4WGIFh9MBVEINj1SMFPlM
+         d85gwJXyBhRi2GJ7caPsoQWPtlxPhKoCTgwrI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yVcvHZxl4JqB10edFM0rP0Xu4QSj7UArIpCEg3v5Ei8=;
-        b=Ji6BAl8kJFRdRAU54PPID0Bu8uqPD8CpJWyA5uh71Pq4QmojbX2YMVLAGWNBFgDk+6
-         3GaM/+eF19W+KLVgeZ5760S26XexWjFbR366UTXqv7paPgP2AvB+QM7MBkh84GImA0Bq
-         5MIR9UpIPKevc7oxP/WJ4ScI5NOxP0zaBFpcBPAMKbugCIs1yaVVz9ZwKWMTWG+Z0mzP
-         DFvTt/+jeb5rGt8Gf5AQMf+KLIMqxZ2QVYZkL3WODxV7SwUPL+rrT3+woGyrRkYD/kps
-         5E+gf8MZNE5E1queZnY4pk6tObMbRzHyrLG/1GymvQcLRqqdQxvgdHIGRhPoj25J/JEX
-         VCGA==
-X-Gm-Message-State: AOAM530NvWA2FIJAfq0e8dPdyvt23KuXnkyXE0eCrrpKvK0T5KCMbTVl
-        3YE23LnTUbAFhgR4YAC0X1ht0691vXBPcah9umAn
-X-Google-Smtp-Source: ABdhPJwQmKKFjCUccixQJ2loM5vdZurrcHLgZFSdBmxemrGWy9aCkt/1ll1v8r13AIWiK1ynSFD9QO7MXzHvxVJN8wk=
-X-Received: by 2002:a17:906:518b:: with SMTP id y11mr20728839ejk.178.1623107712097;
- Mon, 07 Jun 2021 16:15:12 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7enO4NtQ2aqqP6tz58zY+25dGjq834VWlAo1YL2PSJU=;
+        b=QME0fOajHlqqPSRoZBcyNH5KHpBLSq9t38dvrkBcYc4hrEOVVsBwh1RMQuvRY2e8DW
+         Du8O9s5txyLLGQEUri9u7kO85RpVmmPh7RD6QXYYucTG2Uwfmyc8U0+3YuAz1S4O9V2W
+         zKyE1OhozTIrAYMGb9AgjPvTmYbo+G2+3AR6T4eLJsq9kzX5buBrNyHRYdc0qPW+cxUi
+         +eU72/qbKMD7/091pwf9byNwOmJqX1o5BR+8Ayrg/NQ69BuvX3cktFVzshO+I3cQqv+T
+         A+Zl8gcQNmCIW+aWyuDHnxIcv6jhzSGe056F8Eu3PnggwoavTIFPWNojS4ofrZ2JCqrz
+         oXMQ==
+X-Gm-Message-State: AOAM5314ijPtxdHgJJuLc6C/tAOYPpKaFUULGmi7NrEqfZLzcdNB/+f2
+        riuB6sNx9YBGP1dUGwZ5XDKtoQ==
+X-Google-Smtp-Source: ABdhPJzoloNWwXXzGEtNUVdr2Eg3gvBKxyCkTkENCk3XmjikAfGX4r4l8HQpyrVi7sqk0A+e9b7euw==
+X-Received: by 2002:a63:e253:: with SMTP id y19mr19920458pgj.137.1623107865845;
+        Mon, 07 Jun 2021 16:17:45 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 192sm8838002pfw.200.2021.06.07.16.17.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jun 2021 16:17:42 -0700 (PDT)
+Date:   Mon, 7 Jun 2021 16:17:41 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] exec: Copy oldsighand->action under spin-lock
+Message-ID: <202106071617.5713E0A01@keescook>
+References: <AM8PR10MB470871DEBD1DED081F9CC391E4389@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-References: <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com>
- <3a2903574a4d03f73230047866112b2dad9b4a9e.1622467740.git.rgb@redhat.com>
-In-Reply-To: <3a2903574a4d03f73230047866112b2dad9b4a9e.1622467740.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 7 Jun 2021 19:15:01 -0400
-Message-ID: <CAHC9VhRa9dvCfPf5WHKYofrvQrGff7Lh+H4HMAhi_z3nK_rtoA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] audit: add filtering for io_uring records, addendum
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM8PR10MB470871DEBD1DED081F9CC391E4389@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 31, 2021 at 9:45 AM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> The commit ("audit: add filtering for io_uring records") added support for
-> filtering io_uring operations.
->
-> Add checks to the audit io_uring filtering code for directory and path watches,
-> and to keep the list counts consistent.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+On Mon, Jun 07, 2021 at 03:54:27PM +0200, Bernd Edlinger wrote:
+> unshare_sighand should only access oldsighand->action
+> while holding oldsighand->siglock, to make sure that
+> newsighand->action is in a consistent state.
+> 
+> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
 > ---
->  kernel/audit_tree.c  | 3 ++-
->  kernel/audit_watch.c | 3 ++-
->  kernel/auditfilter.c | 7 +++++--
->  3 files changed, 9 insertions(+), 4 deletions(-)
+>  fs/exec.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index d8af85f..8344fba 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1193,11 +1193,11 @@ static int unshare_sighand(struct task_struct *me)
+>  			return -ENOMEM;
+>  
+>  		refcount_set(&newsighand->count, 1);
+> -		memcpy(newsighand->action, oldsighand->action,
+> -		       sizeof(newsighand->action));
+>  
+>  		write_lock_irq(&tasklist_lock);
+>  		spin_lock(&oldsighand->siglock);
+> +		memcpy(newsighand->action, oldsighand->action,
+> +		       sizeof(newsighand->action));
+>  		rcu_assign_pointer(me->sighand, newsighand);
+>  		spin_unlock(&oldsighand->siglock);
+>  		write_unlock_irq(&tasklist_lock);
 
-Thanks for pointing these omissions out in the original patch.  When a
-patch has obvious problems generally people just provide feedback and
-the patch author incorporates the fixes; this helps ensure we don't
-merge known broken patches, helping preserve `git bisect`.
+Oh, yeah, that's a nice catch.
 
-Do you mind if I incorporate these suggestions, and the one in patch
-2/2, into the filtering patch in the original RFC patchset?  I'll add
-a 'thank you' comment in the commit description as I did to the other
-patch where you provided feedback.  I feel that is the proper way to
-handle this.
-
-> diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-> index 6c91902f4f45..2be285c2f069 100644
-> --- a/kernel/audit_tree.c
-> +++ b/kernel/audit_tree.c
-> @@ -727,7 +727,8 @@ int audit_make_tree(struct audit_krule *rule, char *pathname, u32 op)
->  {
->
->         if (pathname[0] != '/' ||
-> -           rule->listnr != AUDIT_FILTER_EXIT ||
-> +           (rule->listnr != AUDIT_FILTER_EXIT &&
-> +            rule->listnr != AUDIT_FILTER_URING_EXIT) ||
->             op != Audit_equal ||
->             rule->inode_f || rule->watch || rule->tree)
->                 return -EINVAL;
-> diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-> index 2acf7ca49154..698b62b4a2ec 100644
-> --- a/kernel/audit_watch.c
-> +++ b/kernel/audit_watch.c
-> @@ -183,7 +183,8 @@ int audit_to_watch(struct audit_krule *krule, char *path, int len, u32 op)
->                 return -EOPNOTSUPP;
->
->         if (path[0] != '/' || path[len-1] == '/' ||
-> -           krule->listnr != AUDIT_FILTER_EXIT ||
-> +           (krule->listnr != AUDIT_FILTER_EXIT &&
-> +            krule->listnr != AUDIT_FILTER_URING_EXIT) ||
->             op != Audit_equal ||
->             krule->inode_f || krule->watch || krule->tree)
->                 return -EINVAL;
-> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> index c21119c00504..bcdedfd1088c 100644
-> --- a/kernel/auditfilter.c
-> +++ b/kernel/auditfilter.c
-> @@ -153,7 +153,8 @@ char *audit_unpack_string(void **bufp, size_t *remain, size_t len)
->  static inline int audit_to_inode(struct audit_krule *krule,
->                                  struct audit_field *f)
->  {
-> -       if (krule->listnr != AUDIT_FILTER_EXIT ||
-> +       if ((krule->listnr != AUDIT_FILTER_EXIT &&
-> +            krule->listnr != AUDIT_FILTER_URING_EXIT) ||
->             krule->inode_f || krule->watch || krule->tree ||
->             (f->op != Audit_equal && f->op != Audit_not_equal))
->                 return -EINVAL;
-> @@ -250,6 +251,7 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule_data *
->                 pr_err("AUDIT_FILTER_ENTRY is deprecated\n");
->                 goto exit_err;
->         case AUDIT_FILTER_EXIT:
-> +       case AUDIT_FILTER_URING_EXIT:
->         case AUDIT_FILTER_TASK:
->  #endif
->         case AUDIT_FILTER_USER:
-> @@ -982,7 +984,8 @@ static inline int audit_add_rule(struct audit_entry *entry)
->         }
->
->         entry->rule.prio = ~0ULL;
-> -       if (entry->rule.listnr == AUDIT_FILTER_EXIT) {
-> +       if (entry->rule.listnr == AUDIT_FILTER_EXIT ||
-> +           entry->rule.listnr == AUDIT_FILTER_URING_EXIT) {
->                 if (entry->rule.flags & AUDIT_FILTER_PREPEND)
->                         entry->rule.prio = ++prio_high;
->                 else
-> --
-> 2.27.0
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
-paul moore
-www.paul-moore.com
+Kees Cook
