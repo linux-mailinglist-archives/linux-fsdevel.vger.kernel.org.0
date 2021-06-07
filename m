@@ -2,77 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF7C339D4F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 08:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81DD339D650
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 09:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230192AbhFGGfQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Jun 2021 02:35:16 -0400
-Received: from m12-14.163.com ([220.181.12.14]:52593 "EHLO m12-14.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229545AbhFGGfQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Jun 2021 02:35:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=y/X18
-        uRpnqtljL+RMDssIh68K1hPqzLYkK1yRT0fxe0=; b=MNmOj8bZHGTAuUb24U3J8
-        iDn24Fn9OfpAL5z0gZE6f2++oHAiGZfoawDH+YYfeDys53yZtSauTyB51mVf5l3p
-        eBnGq00GSl0fllz+Md4In1bKSZ39/gGPVuIqOIMO5KQUVnmxQ2ryBk1hxDDFOFic
-        bF0xqF37oeppYDGGa8H6rg=
-Received: from localhost.localdomain (unknown [218.17.89.92])
-        by smtp10 (Coremail) with SMTP id DsCowAAnGoWzvb1gwCN2NQ--.44785S2;
-        Mon, 07 Jun 2021 14:33:23 +0800 (CST)
-From:   lijian_8010a29@163.com
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lijian <lijian@yulong.com>
-Subject: [PATCH] fs: inode: Fix a typo
-Date:   Mon,  7 Jun 2021 14:32:26 +0800
-Message-Id: <20210607063226.205255-1-lijian_8010a29@163.com>
-X-Mailer: git-send-email 2.25.1
+        id S230139AbhFGHvE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Jun 2021 03:51:04 -0400
+Received: from condef-06.nifty.com ([202.248.20.71]:17928 "EHLO
+        condef-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229545AbhFGHvD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Jun 2021 03:51:03 -0400
+X-Greylist: delayed 357 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Jun 2021 03:51:02 EDT
+Received: from conssluserg-02.nifty.com ([10.126.8.81])by condef-06.nifty.com with ESMTP id 1577ejMR032763;
+        Mon, 7 Jun 2021 16:40:45 +0900
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 1577e4cr029736;
+        Mon, 7 Jun 2021 16:40:05 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 1577e4cr029736
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1623051605;
+        bh=EKJEqB3Q6tIfy2A4ywMNYaG/WTIqmzMmTredZAM1eyY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rCbmr+PJtfqOvYdx+tg6tNe+ulGgWc8DM4wPOwDOMxO464uhW3SM4YIp8ouiWr6D2
+         yFDq3SUMr6K9d+k5CD8oaK0+wjbbkRKpgzxm5gU6Jt6sHwUJgPukt+Ie+EUJidvouB
+         QCipHwGMraBCrfZK+6+YKhTBqf1Ry9qjyiqwPM/8++rBqeoo5ZmqM3pP0yXVOqriyR
+         KAOmcpss4ARyFtb8cITGpqkbe3DgZZR7YsNJvfFhcNz9GrjTi5d/JwxNdvLO3yrTJ5
+         Pw7WfuQyhmz6+DkHWz7V0TVVxdSewlTy3Q2hCQmMNnHwBP8yFWvNhLBsudkRKgWHHz
+         To5r+JyNQhNtg==
+X-Nifty-SrcIP: [209.85.217.51]
+Received: by mail-vs1-f51.google.com with SMTP id j15so8412318vsf.2;
+        Mon, 07 Jun 2021 00:40:04 -0700 (PDT)
+X-Gm-Message-State: AOAM530ilV7x9BOYsxhMHcnwVwqHaih58l/6kueGfJCzvVlGiGTj+8dd
+        PXKRy3Ke8jMTTkQathvLHaRFAv3O3xAwgDA5ZIY=
+X-Google-Smtp-Source: ABdhPJwPmFut2nTxArXa07v4xPlHzxrJ0sLjVDtvrdtLChTFpKiR9239Z6WTj44UnleODc79Z+HXDtosElosU9UFvGs=
+X-Received: by 2002:aa7:99c9:0:b029:2e9:e084:e1de with SMTP id
+ v9-20020aa799c90000b02902e9e084e1demr15812551pfi.80.1623051593156; Mon, 07
+ Jun 2021 00:39:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DsCowAAnGoWzvb1gwCN2NQ--.44785S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZrWDKry5WF1rZF15tr43Jrb_yoWkCFX_tF
-        yxJ34xW34UXwn2va9rC3Z8Jasa9r4kuF15uanYqr98Ga4Uta9rur4DCrZ7ur4UCF47ua90
-        vF1kWFyxGr12qjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUeb6pJUUUUU==
-X-Originating-IP: [218.17.89.92]
-X-CM-SenderInfo: 5olmxttqbyiikqdsmqqrwthudrp/1tbiqxSqUFUMZuiXVQAAsQ
+References: <20210227183910.221873-1-masahiroy@kernel.org> <CAK7LNASL_X43_nMTz1CZQB+jiLCRAJbh-wQdc23QV0pWceL_Lw@mail.gmail.com>
+ <20210228064936.zixrhxlthyy6fmid@24bbad8f3778>
+In-Reply-To: <20210228064936.zixrhxlthyy6fmid@24bbad8f3778>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Mon, 7 Jun 2021 16:39:16 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASY_+_38XEMLZAf7txr4EdukkcFL8pnGGe2XyhQ9F4oDQ@mail.gmail.com>
+Message-ID: <CAK7LNASY_+_38XEMLZAf7txr4EdukkcFL8pnGGe2XyhQ9F4oDQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] x86: remove toolchain check for X32 ABI capability
+To:     Nathan Chancellor <nathan@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Fangrui Song <maskray@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
+        "Chang S. Bae" <chang.seok.bae@intel.com>,
+        Chao Yu <chao@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Kees Cook <keescook@chromium.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Sean Christopherson <seanjc@google.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: lijian <lijian@yulong.com>
+On Sun, Feb 28, 2021 at 3:49 PM Nathan Chancellor <nathan@kernel.org> wrote:
+>
+> On Sun, Feb 28, 2021 at 12:15:16PM +0900, Masahiro Yamada wrote:
+> > On Sun, Feb 28, 2021 at 3:41 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > >
+> > > This commit reverts 0bf6276392e9 ("x32: Warn and disable rather than
+> > > error if binutils too old").
+> > >
+> > > The help text in arch/x86/Kconfig says enabling the X32 ABI support
+> > > needs binutils 2.22 or later. This is met because the minimal binutils
+> > > version is 2.23 according to Documentation/process/changes.rst.
+> > >
+> > > I would not say I am not familiar with toolchain configuration, but
+> >
+> > I mean:
+> > I would not say I am familiar ...
+> > That is why I added RFC.
+> >
+> > I appreciate comments from people who are familiar
+> > with toolchains (binutils, llvm).
+> >
+> > If this change is not safe,
+> > we can move this check to Kconfig at least.
+>
+> Hi Masahiro,
+>
+> As Fangrui pointed out, there are two outstanding issues with x32 with
+> LLVM=1, both seemingly related to LLVM=1.
 
-Change 'funtion' to 'function', and
-change 'priviledges' to 'privileges'.
+Is this still a problem for Clang built Linux?
 
-Signed-off-by: lijian <lijian@yulong.com>
----
- fs/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index c93500d84264..fd00657184f2 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1429,7 +1429,7 @@ EXPORT_SYMBOL(ilookup);
-  * function must never block --- find_inode() can block in
-  * __wait_on_freeing_inode() --- or when the caller can not increment
-  * the reference count because the resulting iput() might cause an
-- * inode eviction.  The tradeoff is that the @match funtion must be
-+ * inode eviction.  The tradeoff is that the @match function must be
-  * very carefully implemented.
-  */
- struct inode *find_inode_nowait(struct super_block *sb,
-@@ -1926,7 +1926,7 @@ static int __remove_privs(struct user_namespace *mnt_userns,
- }
- 
- /*
-- * Remove special file priviledges (suid, capabilities) when file is written
-+ * Remove special file privileges (suid, capabilities) when file is written
-  * to or truncated.
-  */
- int file_remove_privs(struct file *file)
+
+> https://github.com/ClangBuiltLinux/linux/issues/514
+
+I am not tracking the status.
+What was the conclusion?
+
+> https://github.com/ClangBuiltLinux/linux/issues/1141
+
+
+This got marked "unreproducible"
+
+>
+> Additionally, there appears to be one from Arnd as well but that one has
+> received no triage yet.
+>
+> https://github.com/ClangBuiltLinux/linux/issues/1205
+
+Same as well.
+
+
+>
+> I intend to test this patch as well as a few others at some point in the
+> coming week although I am having to play sysadmin due to moving servers
+> so I might not be able to get to it until later in the week.
+>
+> Cheers,
+> Nathan
+>
+
+
 -- 
-2.25.1
-
+Best Regards
+Masahiro Yamada
