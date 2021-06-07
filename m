@@ -2,164 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 744A939D8A7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 11:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B58339D8B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 11:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230197AbhFGJ0T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Jun 2021 05:26:19 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:51572 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbhFGJ0T (ORCPT
+        id S230214AbhFGJ2u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Jun 2021 05:28:50 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:4378 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230139AbhFGJ2t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Jun 2021 05:26:19 -0400
-Received: from relay2.suse.de (unknown [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 5C98021A77;
-        Mon,  7 Jun 2021 09:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1623057867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=sOGqKzhgYBJUkisx6oR/UwgWtkESGg4b4M95r4DmGTI=;
-        b=RHJf4Ncr9dO+xsOPBtLRHE1rorrlDHdCJJd7DFdJMbVN7t6sajjX1WUKCkU/cXqj7aumpD
-        ypKijwCm3L7FH663RzmWVnu78qAPyoo6UpPzb79Mmyn7UXPxxUg0yQVqz2o+qe3bDsKARn
-        VB+f25tYzJLQIsrygL+mZa4GCzzqJec=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1623057867;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=sOGqKzhgYBJUkisx6oR/UwgWtkESGg4b4M95r4DmGTI=;
-        b=kCa0g89MrqPSIr0lJH3aSBO0+i1rwcBuOCWK+iyzQiYcDpMAv6LCcUJ3nYp3TQ8UmcoBal
-        X1sGKzfbjppGizCQ==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 107E3A3B83;
-        Mon,  7 Jun 2021 09:24:27 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DE08D1F2CA8; Mon,  7 Jun 2021 11:24:26 +0200 (CEST)
-Date:   Mon, 7 Jun 2021 11:24:26 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dennis Zhou <dennis@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>, cgroups@vger.kernel.org
-Subject: Re: [PATCH v7 6/6] writeback, cgroup: release dying cgwbs by
- switching attached inodes
-Message-ID: <20210607092426.GC30275@quack2.suse.cz>
-References: <20210604013159.3126180-1-guro@fb.com>
- <20210604013159.3126180-7-guro@fb.com>
+        Mon, 7 Jun 2021 05:28:49 -0400
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Fz7Fl0stnz6tsw;
+        Mon,  7 Jun 2021 17:23:07 +0800 (CST)
+Received: from dggema772-chm.china.huawei.com (10.1.198.214) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Mon, 7 Jun 2021 17:26:56 +0800
+Received: from [127.0.0.1] (10.69.38.196) by dggema772-chm.china.huawei.com
+ (10.1.198.214) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 7 Jun
+ 2021 17:26:56 +0800
+Subject: Re: [PATCH v3] libfs: fix error cast of negative value in
+ simple_attr_write()
+To:     "Luck, Tony" <tony.luck@intel.com>
+CC:     <viro@zeniv.linux.org.uk>, <akpm@linux-foundation.org>,
+        <David.Laight@aculab.com>, <linux-fsdevel@vger.kernel.org>,
+        <akinobu.mita@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <prime.zeng@huawei.com>
+References: <1605341356-11872-1-git-send-email-yangyicong@hisilicon.com>
+ <20210603160904.GA983893@agluck-desk2.amr.corp.intel.com>
+From:   Yicong Yang <yangyicong@hisilicon.com>
+Message-ID: <dfa18dc9-84fd-d21c-b21d-f58bf2c446eb@hisilicon.com>
+Date:   Mon, 7 Jun 2021 17:26:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210604013159.3126180-7-guro@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210603160904.GA983893@agluck-desk2.amr.corp.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.69.38.196]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggema772-chm.china.huawei.com (10.1.198.214)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 03-06-21 18:31:59, Roman Gushchin wrote:
-> Asynchronously try to release dying cgwbs by switching attached inodes
-> to the bdi's wb. It helps to get rid of per-cgroup writeback
-> structures themselves and of pinned memory and block cgroups, which
-> are significantly larger structures (mostly due to large per-cpu
-> statistics data). This prevents memory waste and helps to avoid
-> different scalability problems caused by large piles of dying cgroups.
+On 2021/6/4 0:09, Luck, Tony wrote:
+> On Sat, Nov 14, 2020 at 04:09:16PM +0800, Yicong Yang wrote:
+>> The attr->set() receive a value of u64, but simple_strtoll() is used
+>> for doing the conversion. It will lead to the error cast if user inputs
+>> a negative value.
+>>
+>> Use kstrtoull() instead of simple_strtoll() to convert a string got
+>> from the user to an unsigned value. The former will return '-EINVAL' if
+>> it gets a negetive value, but the latter can't handle the situation
+>> correctly. Make 'val' unsigned long long as what kstrtoull() takes, this
+>> will eliminate the compile warning on no 64-bit architectures.
+>>
+>> Fixes: f7b88631a897 ("fs/libfs.c: fix simple_attr_write() on 32bit machines")
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> ---
+>> Change since v1:
+>> - address the compile warning for non-64 bit platform.
+>> Change since v2:
+>> Link: https://lore.kernel.org/linux-fsdevel/1605000324-7428-1-git-send-email-yangyicong@hisilicon.com/
+>> - make 'val' unsigned long long and mentioned in the commit
+>> Link: https://lore.kernel.org/linux-fsdevel/1605261369-551-1-git-send-email-yangyicong@hisilicon.com/
 > 
-> Reuse the existing mechanism of inode switching used for foreign inode
-> detection. To speed things up batch up to 115 inode switching in a
-> single operation (the maximum number is selected so that the resulting
-> struct inode_switch_wbs_context can fit into 1024 bytes). Because
-> every switching consists of two steps divided by an RCU grace period,
-> it would be too slow without batching. Please note that the whole
-> batch counts as a single operation (when increasing/decreasing
-> isw_nr_in_flight). This allows to keep umounting working (flush the
-> switching queue), however prevents cleanups from consuming the whole
-> switching quota and effectively blocking the frn switching.
+> Belated error report on this. Some validation team just moved to
+> v5.10 and found their error injection scripts no longer work.
+> 
+> They have been using:
+> 
+> # echo $((-1 << 12)) > /sys/kernel/debug/apei/einj/param2
+> 
+> to write the mask value 0xfffffffffffff000 for many years ... but
+> now writing a negative value (-4096) to this file gives an EINVAL error.
+> 
 
-Hum, your comment about unmount made me think... Isn't all that stuff racy?
-generic_shutdown_super() has:
-                sync_filesystem(sb);
-                sb->s_flags &= ~SB_ACTIVE;
+ok. i didn't know this usage. I was using debugfs for my driver but
+found I cannot figure out whether user has entered a negative value.
 
-                cgroup_writeback_umount();
+> Maybe they've been taking advantage of a bug all this time? The
+> comment for debugfs_create_x64() says it is for reading/writing
+> an unsigned value. But when a bug fix breaks user code ... then
+> we are supposed to ask whether that bug is actually a feature.
+> 
 
-and cgroup_writeback_umount() is:
-        if (atomic_read(&isw_nr_in_flight)) {
-                /*
-                 * Use rcu_barrier() to wait for all pending callbacks to
-                 * ensure that all in-flight wb switches are in the workqueue.
-                 */
-                rcu_barrier();
-                flush_workqueue(isw_wq);
-	}
+ok. sounds reasonable.
 
-So we are clearly missing a smp_mb() here (likely in
-cgroup_writeback_umount()) as clearing of SB_ACTIVE needs to be reliably
-happing before atomic_read(&isw_nr_in_flight).
+> If there was a debugfs_create_s64() I might just fix einj.c to
+> use that ... but there isn't :-(
 
-Also ...
+yes, a debugfs_create_s64() seems better for this case.
+But it's okay for me to revert this fix if we regard this bug as
+a feature.
 
-> +bool cleanup_offline_cgwb(struct bdi_writeback *wb)
-> +{
-> +	struct inode_switch_wbs_context *isw;
-> +	struct inode *inode;
-> +	int nr;
-> +	bool restart = false;
-> +
-> +	isw = kzalloc(sizeof(*isw) + WB_MAX_INODES_PER_ISW *
-> +		      sizeof(struct inode *), GFP_KERNEL);
-> +	if (!isw)
-> +		return restart;
-> +
-> +	/* no need to call wb_get() here: bdi's root wb is not refcounted */
-> +	isw->new_wb = &wb->bdi->wb;
-> +
-> +	nr = 0;
-> +	spin_lock(&wb->list_lock);
-> +	list_for_each_entry(inode, &wb->b_attached, i_io_list) {
-> +		if (!inode_prepare_wbs_switch(inode, isw->new_wb))
-> +			continue;
-> +
-> +		isw->inodes[nr++] = inode;
-> +
-> +		if (nr >= WB_MAX_INODES_PER_ISW - 1) {
-> +			restart = true;
-> +			break;
-> +		}
-> +	}
-> +	spin_unlock(&wb->list_lock);
-> +
-> +	/* no attached inodes? bail out */
-> +	if (nr == 0) {
-> +		kfree(isw);
-> +		return restart;
-> +	}
-> +
-> +	/*
-> +	 * In addition to synchronizing among switchers, I_WB_SWITCH tells
-> +	 * the RCU protected stat update paths to grab the i_page
-> +	 * lock so that stat transfer can synchronize against them.
-> +	 * Let's continue after I_WB_SWITCH is guaranteed to be visible.
-> +	 */
-> +	INIT_RCU_WORK(&isw->work, inode_switch_wbs_work_fn);
-> +	queue_rcu_work(isw_wq, &isw->work);
-> +
-> +	atomic_inc(&isw_nr_in_flight);
+Thanks
+Yicong
 
-... the increment of isw_nr_in_flight needs to happen before we start to
-grab any inodes. Otherwise unmount can pass past cgroup_writeback_umount()
-while we are still holding inode references in cleanup_offline_cgwb() the
-result will be "Busy inodes after unmount." message and use-after-free
-issues (with inode->i_sb which gets freed).
-
-Frankly, I think much safer option would be to wait in evict() for
-I_WB_SWITCH similarly as we wait for I_SYNC (through
-inode_wait_for_writeback()). And with that we can do away with
-cgroup_writeback_umount() altogether. But I guess that's out of scope of
-this series.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
