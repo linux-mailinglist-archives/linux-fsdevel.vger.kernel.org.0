@@ -2,183 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0636D39D9B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 12:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41D9D39D9E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 12:39:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230418AbhFGKd4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Jun 2021 06:33:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56258 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230390AbhFGKdz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Jun 2021 06:33:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3448361153;
-        Mon,  7 Jun 2021 10:31:50 +0000 (UTC)
-Date:   Mon, 7 Jun 2021 12:31:47 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Menglong Dong <menglong8.dong@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Sami Tolvanen <samitolvanen@google.com>, johan@kernel.org,
-        ojeda@kernel.org, jeyu@kernel.org, masahiroy@kernel.org,
-        joe@perches.com, Menglong Dong <dong.menglong@zte.com.cn>,
-        Jan Kara <jack@suse.cz>, hare@suse.de,
-        Jens Axboe <axboe@kernel.dk>, tj@kernel.org,
-        gregkh@linuxfoundation.org, song@kernel.org,
-        NeilBrown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Barret Rhoden <brho@google.com>, f.fainelli@gmail.com,
-        palmerdabbelt@google.com, wangkefeng.wang@huawei.com,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, vbabka@suse.cz,
-        Alexander Potapenko <glider@google.com>, pmladek@suse.com,
-        johannes.berg@intel.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>, jojing64@gmail.com,
-        terrelln@fb.com, geert@linux-m68k.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, arnd@arndb.de,
-        Chris Down <chris@chrisdown.name>, mingo@kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [PATCH v6 2/2] init/do_mounts.c: create second mount for
- initramfs
-Message-ID: <20210607103147.yhniqeulw4pmvjdr@wittgenstein>
-References: <20210605034447.92917-1-dong.menglong@zte.com.cn>
- <20210605034447.92917-3-dong.menglong@zte.com.cn>
- <20210605115019.umjumoasiwrclcks@wittgenstein>
- <CADxym3bs1r_+aPk9Z_5Y7QBBV_RzUbW9PUqSLB7akbss_dJi_g@mail.gmail.com>
+        id S230291AbhFGKlf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Jun 2021 06:41:35 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:46619 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230256AbhFGKlf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Jun 2021 06:41:35 -0400
+Received: by mail-wr1-f42.google.com with SMTP id a11so15136054wrt.13;
+        Mon, 07 Jun 2021 03:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4xfi/BIIZDakHWphz8cAHHVuPoLUgNVnu9MXQz7t4ww=;
+        b=dU0KK1itqPuS7fTpW8Uhe0deZ3zT3Nrl2+5GhKv/K477VWEP6XIkrFzkUXoTeylmNN
+         iuMZJKPA8d+2985aMnQQOkSD2cHfT+SvDymWppfFP5TRBnFSdyxpO6g5a5kzhu1WFhee
+         TOJMzeTpKiwghKJbM+e6ym6BJ0fU6xLtyDIpRlLKv0KQeGvGDNfewg5cgraalnqgeuAq
+         jZSC8it7R1ijPjKPvMapEsISMtspnlIcDuQMfiDCwiAPbtstdutGiTzi9tUC7ueVgSF/
+         Olq3iW4+QL6hzjcx5aHKMd/ioEoWNeFyy3WVQREfxZgSWBi4vZPGAyOrMFKLvFPTTE+w
+         FrgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4xfi/BIIZDakHWphz8cAHHVuPoLUgNVnu9MXQz7t4ww=;
+        b=LVf1fx17Rz2GHKptxAainoIuctQ7dq4tmhN3FAt3F3HT7UKhImyIl2gg7EZQI7sJGi
+         n13a0zFxzzU5r+3Hd7DeDxxwE+HWRa/sKFc7418DpNh9OZHxolN03umGkhON9hrVWqYA
+         +uDfSq+Cn5mDbf7jZZy0mJZ+FGeAlJzMEMtKKkTv/rKsrCDeWqXd2XvmtEq4IZIV/YKw
+         uuhIXUr6QDT33zXNiE/kcaO7uR5ogan5I8XXEggDJPHFeYtzqgqFkCVbfrf7xeynU85P
+         6NKVpBUQIG1fO52z9N4+Q3IpXRXswMddtddLajAWtpRZCj8+cmNtZwPjJnm5NROFFb0d
+         z1ng==
+X-Gm-Message-State: AOAM532JFj38vqu05fgDN1NzH3LBypBLMHTdTnZ2d/mHuWabEUc12RDW
+        FVoNUy3EPM54//otHMIqchg=
+X-Google-Smtp-Source: ABdhPJy/LNUURTIsklfBLhxR9xY5FvVFrL0Wj6ekw3Pq5dsxgTTmb6Z8dxgk0VkRW/doSJ2BjpeAvg==
+X-Received: by 2002:adf:ea86:: with SMTP id s6mr16321943wrm.75.1623062323319;
+        Mon, 07 Jun 2021 03:38:43 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.232.1])
+        by smtp.gmail.com with ESMTPSA id j12sm7292888wrt.69.2021.06.07.03.38.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jun 2021 03:38:43 -0700 (PDT)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <YL0dCEVEiVL+NwG6@zeniv-ca.linux.org.uk>
+ <CAHk-=wj6ZiTgqbeCPtzP+5tgHjur6Amag66YWub_2DkGpP9h-Q@mail.gmail.com>
+ <YL1ad7+I30xnCto8@zeniv-ca.linux.org.uk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC][PATCHSET] iov_iter work
+Message-ID: <eb4dd349-0416-3654-c856-7672b0bfef15@gmail.com>
+Date:   Mon, 7 Jun 2021 11:38:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <YL1ad7+I30xnCto8@zeniv-ca.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CADxym3bs1r_+aPk9Z_5Y7QBBV_RzUbW9PUqSLB7akbss_dJi_g@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 05, 2021 at 10:47:07PM +0800, Menglong Dong wrote:
-> Hello,
+On 6/7/21 12:29 AM, Al Viro wrote:
+> On Sun, Jun 06, 2021 at 03:05:49PM -0700, Linus Torvalds wrote:
+[...]
 > 
-> On Sat, Jun 5, 2021 at 7:50 PM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> >
-> > On Sat, Jun 05, 2021 at 11:44:47AM +0800, menglong8.dong@gmail.com wrote:
-> > > From: Menglong Dong <dong.menglong@zte.com.cn>
-> > >
-> > > If using container platforms such as Docker, upon initialization it
-> > > wants to use pivot_root() so that currently mounted devices do not
-> > > propagate to containers. An example of value in this is that
-> > > a USB device connected prior to the creation of a containers on the
-> > > host gets disconnected after a container is created; if the
-> > > USB device was mounted on containers, but already removed and
-> > > umounted on the host, the mount point will not go away until all
-> > > containers unmount the USB device.
-> > >
-> > > Another reason for container platforms such as Docker to use pivot_root
-> > > is that upon initialization the net-namspace is mounted under
-> > > /var/run/docker/netns/ on the host by dockerd. Without pivot_root
-> > > Docker must either wait to create the network namespace prior to
-> > > the creation of containers or simply deal with leaking this to each
-> > > container.
-> > >
-> > > pivot_root is supported if the rootfs is a initrd or block device, but
-> > > it's not supported if the rootfs uses an initramfs (tmpfs). This means
-> > > container platforms today must resort to using block devices if
-> > > they want to pivot_root from the rootfs. A workaround to use chroot()
-> > > is not a clean viable option given every container will have a
-> > > duplicate of every mount point on the host.
-> > >
-> > > In order to support using container platforms such as Docker on
-> > > all the supported rootfs types we must extend Linux to support
-> > > pivot_root on initramfs as well. This patch does the work to do
-> > > just that.
-> > >
-> > > pivot_root will unmount the mount of the rootfs from its parent mount
-> > > and mount the new root to it. However, when it comes to initramfs, it
-> > > donesn't work, because the root filesystem has not parent mount, which
-> > > makes initramfs not supported by pivot_root.
-> > >
-> > > In order to make pivot_root supported on initramfs, we create a second
-> > > mount with type of rootfs before unpacking cpio, and change root to
-> > > this mount after unpacking.
-> > >
-> > > While mounting the second rootfs, 'rootflags' is passed, and it means
-> > > that we can set options for the mount of rootfs in boot cmd now.
-> > > For example, the size of tmpfs can be set with 'rootflags=size=1024M'.
-> > >
-> > > Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
-> > > ---
-> > >  init/do_mounts.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
-> > >  init/do_mounts.h | 17 ++++++++++++++++-
-> > >  init/initramfs.c |  8 ++++++++
-> > >  usr/Kconfig      | 10 ++++++++++
-> > >  4 files changed, 78 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/init/do_mounts.c b/init/do_mounts.c
-> > > index a78e44ee6adb..715bdaa89b81 100644
-> > > --- a/init/do_mounts.c
-> > > +++ b/init/do_mounts.c
-> > > @@ -618,6 +618,49 @@ void __init prepare_namespace(void)
-> > >  }
-> > >
-> > >  static bool is_tmpfs;
-> > > +#ifdef CONFIG_INITRAMFS_MOUNT
-> > > +
-> > > +/*
-> > > + * Give systems running from the initramfs and making use of pivot_root a
-> > > + * proper mount so it can be umounted during pivot_root.
-> > > + */
-> > > +int __init prepare_mount_rootfs(void)
-> > > +{
-> > > +     char *rootfs = "ramfs";
-> > > +
-> > > +     if (is_tmpfs)
-> > > +             rootfs = "tmpfs";
-> > > +
-> > > +     return do_mount_root(rootfs, rootfs,
-> > > +                          root_mountflags & ~MS_RDONLY,
-> > > +                          root_mount_data);
-> > > +}
-> > > +
-> > > +/*
-> > > + * Revert to previous mount by chdir to '/' and unmounting the second
-> > > + * mount.
-> > > + */
-> > > +void __init revert_mount_rootfs(void)
-> > > +{
-> > > +     init_chdir("/");
-> > > +     init_umount(".", MNT_DETACH);
-> > > +}
-> > > +
-> > > +/*
-> > > + * Change root to the new rootfs that mounted in prepare_mount_rootfs()
-> > > + * if cpio is unpacked successfully and 'ramdisk_execute_command' exist.
-> > > + */
-> > > +void __init finish_mount_rootfs(void)
-> > > +{
-> > > +     init_mount(".", "/", NULL, MS_MOVE, NULL);
-> > > +     if (likely(ramdisk_exec_exist()))
-> > > +             init_chroot(".");
-> > > +     else
-> > > +             revert_mount_rootfs();
-> > > +}
-> > > +
-> > > +#define rootfs_init_fs_context ramfs_init_fs_context
-> >
-> > Sorry, I think we're nearly there. What's the rationale for using ramfs
-> > when unconditionally when a separate mount for initramfs is requested?
-> > Meaning, why do we need this define at all?
-> 
-> I think it's necessary, as I explained in the third patch. When the rootfs
-> is a block device, ramfs is used in init_mount_tree() unconditionally,
-> which can be seen from the enable of is_tmpfs.
-> 
-> That makes sense, because rootfs will not become the root if a block
-> device is specified by 'root' in boot cmd, so it makes no sense to use
-> tmpfs, because ramfs is more simple.
-> 
-> Here, I make rootfs as ramfs for the same reason: the first mount is not
-> used as the root, so make it ramfs which is more simple.
+> 	BTW, speaking of initializers...  Pavel, could you check if
+> the following breaks anything?  Unless I'm misreading __io_import_fixed(),
+> looks like that's what it's trying to do...
 
-Ok. If you don't mind I'd like to pull and test this before moving
-further. (Btw, I talked about this at Plumbers before btw.)
-What did you use for testing this? Any way you can share it?
+It's a version of iov_iter_advance() that assumes all bvecs are
+single-paged and all possibly besides first/last are page
+aligned/sized.
+Looks and works well, will try the full set later.
+
+btw, as that assumption is not true in general, I'd suggest to add
+a comment. Don't like the idea of it being misused...
+
+
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index f46acbbeed57..9bd2da9a4c3d 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2773,57 +2773,14 @@ static int __io_import_fixed(struct io_kiocb *req, int rw, struct iov_iter *iter
+>  {
+>  	size_t len = req->rw.len;
+>  	u64 buf_end, buf_addr = req->rw.addr;
+> -	size_t offset;
+>  
+>  	if (unlikely(check_add_overflow(buf_addr, (u64)len, &buf_end)))
+>  		return -EFAULT;
+>  	/* not inside the mapped region */
+>  	if (unlikely(buf_addr < imu->ubuf || buf_end > imu->ubuf_end))
+>  		return -EFAULT;
+> -
+> -	/*
+> -	 * May not be a start of buffer, set size appropriately
+> -	 * and advance us to the beginning.
+> -	 */
+> -	offset = buf_addr - imu->ubuf;
+> -	iov_iter_bvec(iter, rw, imu->bvec, imu->nr_bvecs, offset + len);
+> -
+> -	if (offset) {
+> -		/*
+> -		 * Don't use iov_iter_advance() here, as it's really slow for
+> -		 * using the latter parts of a big fixed buffer - it iterates
+> -		 * over each segment manually. We can cheat a bit here, because
+> -		 * we know that:
+> -		 *
+> -		 * 1) it's a BVEC iter, we set it up
+> -		 * 2) all bvecs are PAGE_SIZE in size, except potentially the
+> -		 *    first and last bvec
+> -		 *
+> -		 * So just find our index, and adjust the iterator afterwards.
+> -		 * If the offset is within the first bvec (or the whole first
+> -		 * bvec, just use iov_iter_advance(). This makes it easier
+> -		 * since we can just skip the first segment, which may not
+> -		 * be PAGE_SIZE aligned.
+> -		 */
+> -		const struct bio_vec *bvec = imu->bvec;
+> -
+> -		if (offset <= bvec->bv_len) {
+> -			iov_iter_advance(iter, offset);
+> -		} else {
+> -			unsigned long seg_skip;
+> -
+> -			/* skip first vec */
+> -			offset -= bvec->bv_len;
+> -			seg_skip = 1 + (offset >> PAGE_SHIFT);
+> -
+> -			iter->bvec = bvec + seg_skip;
+> -			iter->nr_segs -= seg_skip;
+> -			iter->count -= bvec->bv_len + offset;
+> -			iter->iov_offset = offset & ~PAGE_MASK;
+> -		}
+> -	}
+> -
+> -	return 0;
+> +	return import_pagevec(rw, buf_addr, len, imu->ubuf,
+> +			      imu->nr_bvecs, imu->bvec, iter);
+>  }
+>  
+>  static int io_import_fixed(struct io_kiocb *req, int rw, struct iov_iter *iter)
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index fd88d9911dad..f6291e981d07 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -299,5 +299,8 @@ ssize_t __import_iovec(int type, const struct iovec __user *uvec,
+>  		 struct iov_iter *i, bool compat);
+>  int import_single_range(int type, void __user *buf, size_t len,
+>  		 struct iovec *iov, struct iov_iter *i);
+> +int import_pagevec(int rw, unsigned long from, size_t len,
+> +		unsigned long base, unsigned nr_pages,
+> +		struct bio_vec *bvec, struct iov_iter *i);
+>  
+>  #endif
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index 11b39bd1d1ab..4a771fcb529b 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -1982,3 +1982,21 @@ int import_single_range(int rw, void __user *buf, size_t len,
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(import_single_range);
+> +
+> +int import_pagevec(int rw, unsigned long from, size_t len,
+> +		unsigned long base, unsigned nr_pages,
+> +		struct bio_vec *bvec, struct iov_iter *i)
+> +
+> +{
+> +	unsigned long skip_pages = (from >> PAGE_SHIFT) - (base >> PAGE_SHIFT);
+> +
+> +	*i = (struct iov_iter){
+> +		.iter_type = ITER_BVEC,
+> +		.data_source = rw,
+> +		.bvec = bvec + skip_pages,
+> +		.nr_segs = nr_pages - skip_pages,
+> +		.iov_offset = skip_pages ? from & ~PAGE_MASK : from - base,
+> +		.count = len
+> +	};
+> +	return 0;
+> +}
+> 
+
+-- 
+Pavel Begunkov
