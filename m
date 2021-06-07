@@ -2,157 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80DEF39D86F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 11:17:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 744A939D8A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 11:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230291AbhFGJSt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Jun 2021 05:18:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230246AbhFGJSo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Jun 2021 05:18:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0A2AC61002;
-        Mon,  7 Jun 2021 09:16:49 +0000 (UTC)
-Date:   Mon, 7 Jun 2021 11:16:47 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        David Laight <David.Laight@aculab.com>
-Subject: Re: [PATCH] nsfs: fix oops when ns->ops is not provided
-Message-ID: <20210607091647.pzqyarxbupvnbxyw@wittgenstein>
-References: <20210531153410.93150-1-changbin.du@gmail.com>
- <20210531220128.26c0cb36@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
- <CAM_iQpUEjBDK44=mD5shkmmoDYhmHQaSZtR34rLRkgd9wSWiQQ@mail.gmail.com>
- <20210602091451.kbdul6nhobilwqvi@wittgenstein>
- <CAM_iQpUqgeoY_mA6cazUPCWwMK6yw9SaD6DRg-Ja4r6r_zOmLg@mail.gmail.com>
- <20210604095451.nkfgpsibm5nrqt3f@wittgenstein>
- <20210606224322.yxr47tgdqis35dcl@mail.google.com>
+        id S230197AbhFGJ0T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Jun 2021 05:26:19 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:51572 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230097AbhFGJ0T (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Jun 2021 05:26:19 -0400
+Received: from relay2.suse.de (unknown [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 5C98021A77;
+        Mon,  7 Jun 2021 09:24:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1623057867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sOGqKzhgYBJUkisx6oR/UwgWtkESGg4b4M95r4DmGTI=;
+        b=RHJf4Ncr9dO+xsOPBtLRHE1rorrlDHdCJJd7DFdJMbVN7t6sajjX1WUKCkU/cXqj7aumpD
+        ypKijwCm3L7FH663RzmWVnu78qAPyoo6UpPzb79Mmyn7UXPxxUg0yQVqz2o+qe3bDsKARn
+        VB+f25tYzJLQIsrygL+mZa4GCzzqJec=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1623057867;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sOGqKzhgYBJUkisx6oR/UwgWtkESGg4b4M95r4DmGTI=;
+        b=kCa0g89MrqPSIr0lJH3aSBO0+i1rwcBuOCWK+iyzQiYcDpMAv6LCcUJ3nYp3TQ8UmcoBal
+        X1sGKzfbjppGizCQ==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 107E3A3B83;
+        Mon,  7 Jun 2021 09:24:27 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id DE08D1F2CA8; Mon,  7 Jun 2021 11:24:26 +0200 (CEST)
+Date:   Mon, 7 Jun 2021 11:24:26 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dennis Zhou <dennis@kernel.org>,
+        Dave Chinner <dchinner@redhat.com>, cgroups@vger.kernel.org
+Subject: Re: [PATCH v7 6/6] writeback, cgroup: release dying cgwbs by
+ switching attached inodes
+Message-ID: <20210607092426.GC30275@quack2.suse.cz>
+References: <20210604013159.3126180-1-guro@fb.com>
+ <20210604013159.3126180-7-guro@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210606224322.yxr47tgdqis35dcl@mail.google.com>
+In-Reply-To: <20210604013159.3126180-7-guro@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 07, 2021 at 06:43:41AM +0800, Changbin Du wrote:
-> On Fri, Jun 04, 2021 at 11:54:51AM +0200, Christian Brauner wrote:
-> > On Thu, Jun 03, 2021 at 03:52:29PM -0700, Cong Wang wrote:
-> > > On Wed, Jun 2, 2021 at 2:14 AM Christian Brauner
-> > > <christian.brauner@ubuntu.com> wrote:
-> > > > But the point is that ns->ops should never be accessed when that
-> > > > namespace type is disabled. Or in other words, the bug is that something
-> > > > in netns makes use of namespace features when they are disabled. If we
-> > > > handle ->ops being NULL we might be tapering over a real bug somewhere.
-> > > 
-> > > It is merely a protocol between fs/nsfs.c and other namespace users,
-> > > so there is certainly no right or wrong here, the only question is which
-> > > one is better.
-> > > 
-> > > >
-> > > > Jakub's proposal in the other mail makes sense and falls in line with
-> > > > how the rest of the netns getters are implemented. For example
-> > > > get_net_ns_fd_fd():
-> > > 
-> > > It does not make any sense to me. get_net_ns() merely increases
-> > > the netns refcount, which is certainly fine for init_net too, no matter
-> > > CONFIG_NET_NS is enabled or disabled. Returning EOPNOTSUPP
-> > > there is literally saying we do not support increasing init_net refcount,
-> > > which is of course false.
-> > > 
-> > > > struct net *get_net_ns_by_fd(int fd)
-> > > > {
-> > > >         return ERR_PTR(-EINVAL);
-> > > > }
-> > > 
-> > > There is a huge difference between just increasing netns refcount
-> > > and retrieving it by fd, right? I have no idea why you bring this up,
-> > > calling them getters is missing their difference.
-> > 
-> > This argument doesn't hold up. All netns helpers ultimately increase the
-> > reference count of the net namespace they find. And if any of them
-> > perform operations where they are called in environments wherey they
-> > need CONFIG_NET_NS they handle this case at compile time.
-> > 
-> > (Pluse they are defined in a central place in net/net_namespace.{c,h}.
-> > That includes the low-level get_net() function and all the others.
-> > get_net_ns() is the only one that's defined out of band. So get_net_ns()
-> > currently is arguably also misplaced.)
-> > 
-> Ihe get_net_ns() was a static helper function and then sb made it exported
-> but didn't move it. See commit d8d211a2a0 ('net: Make extern and export get_net_ns()').
+On Thu 03-06-21 18:31:59, Roman Gushchin wrote:
+> Asynchronously try to release dying cgwbs by switching attached inodes
+> to the bdi's wb. It helps to get rid of per-cgroup writeback
+> structures themselves and of pinned memory and block cgroups, which
+> are significantly larger structures (mostly due to large per-cpu
+> statistics data). This prevents memory waste and helps to avoid
+> different scalability problems caused by large piles of dying cgroups.
 > 
-> > The problem I have with fixing this in nsfs is that it gives the
-> > impression that this is a bug in nsfs whereas it isn't and it
-> > potentially helps tapering over other bugs.
-> > 
-> > get_net_ns() is only called for codepaths that call into nsfs via
-> > open_related_ns() and it's the only namespace that does this. But
-> > open_related_ns() is only well defined if CONFIG_<NAMESPACE_TYPE> is
-> > set. For example, none of the procfs namespace f_ops will be set for
-> > !CONFIG_NET_NS. So clearly the socket specific getter here is buggy as
-> > it doesn't account for !CONFIG_NET_NS and it should be fixed.
-> I agree with Cong that a pure getter returns a generic error is a bit weird.
-> And get_net_ns() is to get the ns_common which always exists indepent of
-> CONFIG_NET_NS. For get_net_ns_by_fd(), I think it is a 'findder + getter'.
-> 
-> So maybe we can rollback to patch V1 to fix all code called into
-> open_related_ns()?
-> https://lore.kernel.org/netdev/CAM_iQpWwApLVg39rUkyXxnhsiP0SZf=0ft6vsq=VxFtJ2SumAQ@mail.gmail.com/T/
-> 
-> --- a/net/socket.c
-> +++ b/net/socket.c
-> @@ -1149,11 +1149,15 @@ static long sock_ioctl(struct file *file, unsigned cmd, unsigned long arg)
->  			mutex_unlock(&vlan_ioctl_mutex);
->  			break;
->  		case SIOCGSKNS:
-> +#ifdef CONFIG_NET_NS
->  			err = -EPERM;
->  			if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
->  				break;
->  
->  			err = open_related_ns(&net->ns, get_net_ns);
-> +#else
-> +			err = -ENOTSUPP;
-> +#endif
+> Reuse the existing mechanism of inode switching used for foreign inode
+> detection. To speed things up batch up to 115 inode switching in a
+> single operation (the maximum number is selected so that the resulting
+> struct inode_switch_wbs_context can fit into 1024 bytes). Because
+> every switching consists of two steps divided by an RCU grace period,
+> it would be too slow without batching. Please note that the whole
+> batch counts as a single operation (when increasing/decreasing
+> isw_nr_in_flight). This allows to keep umounting working (flush the
+> switching queue), however prevents cleanups from consuming the whole
+> switching quota and effectively blocking the frn switching.
 
-If Jakub is fine with it I don't really care much but then you need to
-fix the other places in tun.c as well.
-I'm just not sure what's so special about get_net_ns() that it can't
-simply get an ifdef !CONFIG_NET_NS section.
-But it seems that there's magic semantics deeply hidden in this helper
-that btw only exists for open_related_ns() that makes this necessary:
+Hum, your comment about unmount made me think... Isn't all that stuff racy?
+generic_shutdown_super() has:
+                sync_filesystem(sb);
+                sb->s_flags &= ~SB_ACTIVE;
 
-drivers/net/tun.c:              return open_related_ns(&net->ns, get_net_ns);
-drivers/net/tun.c:              ret = open_related_ns(&net->ns, get_net_ns);
-include/linux/socket.h:extern struct ns_common *get_net_ns(struct ns_common *ns);
-net/socket.c: * get_net_ns - increment the refcount of the network namespace
-net/socket.c:struct ns_common *get_net_ns(struct ns_common *ns)
-net/socket.c:EXPORT_SYMBOL_GPL(get_net_ns);
-net/socket.c:                   err = open_related_ns(&net->ns, get_net_ns);
-tools/perf/trace/beauty/include/linux/socket.h:extern struct ns_common *get_net_ns(struct ns_common *ns);
+                cgroup_writeback_umount();
 
-> 
-> > 
-> > Plus your fix leaks references to init netns without fixing get_net_ns()
-> > too.
-> > You succeed to increase the refcount of init netns in get_net_ns() but
-> > then you return in __ns_get_path() because ns->ops aren't set before
-> > ns->ops->put() can be called.  But you also _can't_ call it since it's
-> > not set because !CONFIG_NET_NS. So everytime you call any of those
-> > ioctls you increas the refcount of init net ns without decrementing it
-> > on failure. So the fix is buggy as it is too and would suggest you to
-> > fixup get_net_ns() too.
-> Yes, it is a problem. Can be put a BUG_ON() in nsfs so that such bug (calling
-> into nsfs without ops) can be catched early?
+and cgroup_writeback_umount() is:
+        if (atomic_read(&isw_nr_in_flight)) {
+                /*
+                 * Use rcu_barrier() to wait for all pending callbacks to
+                 * ensure that all in-flight wb switches are in the workqueue.
+                 */
+                rcu_barrier();
+                flush_workqueue(isw_wq);
+	}
 
-Maybe place a WARN_ON() in there.
+So we are clearly missing a smp_mb() here (likely in
+cgroup_writeback_umount()) as clearing of SB_ACTIVE needs to be reliably
+happing before atomic_read(&isw_nr_in_flight).
 
-Christian
+Also ...
+
+> +bool cleanup_offline_cgwb(struct bdi_writeback *wb)
+> +{
+> +	struct inode_switch_wbs_context *isw;
+> +	struct inode *inode;
+> +	int nr;
+> +	bool restart = false;
+> +
+> +	isw = kzalloc(sizeof(*isw) + WB_MAX_INODES_PER_ISW *
+> +		      sizeof(struct inode *), GFP_KERNEL);
+> +	if (!isw)
+> +		return restart;
+> +
+> +	/* no need to call wb_get() here: bdi's root wb is not refcounted */
+> +	isw->new_wb = &wb->bdi->wb;
+> +
+> +	nr = 0;
+> +	spin_lock(&wb->list_lock);
+> +	list_for_each_entry(inode, &wb->b_attached, i_io_list) {
+> +		if (!inode_prepare_wbs_switch(inode, isw->new_wb))
+> +			continue;
+> +
+> +		isw->inodes[nr++] = inode;
+> +
+> +		if (nr >= WB_MAX_INODES_PER_ISW - 1) {
+> +			restart = true;
+> +			break;
+> +		}
+> +	}
+> +	spin_unlock(&wb->list_lock);
+> +
+> +	/* no attached inodes? bail out */
+> +	if (nr == 0) {
+> +		kfree(isw);
+> +		return restart;
+> +	}
+> +
+> +	/*
+> +	 * In addition to synchronizing among switchers, I_WB_SWITCH tells
+> +	 * the RCU protected stat update paths to grab the i_page
+> +	 * lock so that stat transfer can synchronize against them.
+> +	 * Let's continue after I_WB_SWITCH is guaranteed to be visible.
+> +	 */
+> +	INIT_RCU_WORK(&isw->work, inode_switch_wbs_work_fn);
+> +	queue_rcu_work(isw_wq, &isw->work);
+> +
+> +	atomic_inc(&isw_nr_in_flight);
+
+... the increment of isw_nr_in_flight needs to happen before we start to
+grab any inodes. Otherwise unmount can pass past cgroup_writeback_umount()
+while we are still holding inode references in cleanup_offline_cgwb() the
+result will be "Busy inodes after unmount." message and use-after-free
+issues (with inode->i_sb which gets freed).
+
+Frankly, I think much safer option would be to wait in evict() for
+I_WB_SWITCH similarly as we wait for I_SYNC (through
+inode_wait_for_writeback()). And with that we can do away with
+cgroup_writeback_umount() altogether. But I guess that's out of scope of
+this series.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
