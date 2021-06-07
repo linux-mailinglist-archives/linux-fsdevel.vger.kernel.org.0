@@ -2,148 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DD339D650
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 09:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AF8839D64A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 09:47:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbhFGHvE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Jun 2021 03:51:04 -0400
-Received: from condef-06.nifty.com ([202.248.20.71]:17928 "EHLO
-        condef-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbhFGHvD (ORCPT
+        id S230177AbhFGHtV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Jun 2021 03:49:21 -0400
+Received: from mail-pf1-f179.google.com ([209.85.210.179]:40560 "EHLO
+        mail-pf1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229545AbhFGHtU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Jun 2021 03:51:03 -0400
-X-Greylist: delayed 357 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Jun 2021 03:51:02 EDT
-Received: from conssluserg-02.nifty.com ([10.126.8.81])by condef-06.nifty.com with ESMTP id 1577ejMR032763;
-        Mon, 7 Jun 2021 16:40:45 +0900
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 1577e4cr029736;
-        Mon, 7 Jun 2021 16:40:05 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 1577e4cr029736
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1623051605;
-        bh=EKJEqB3Q6tIfy2A4ywMNYaG/WTIqmzMmTredZAM1eyY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rCbmr+PJtfqOvYdx+tg6tNe+ulGgWc8DM4wPOwDOMxO464uhW3SM4YIp8ouiWr6D2
-         yFDq3SUMr6K9d+k5CD8oaK0+wjbbkRKpgzxm5gU6Jt6sHwUJgPukt+Ie+EUJidvouB
-         QCipHwGMraBCrfZK+6+YKhTBqf1Ry9qjyiqwPM/8++rBqeoo5ZmqM3pP0yXVOqriyR
-         KAOmcpss4ARyFtb8cITGpqkbe3DgZZR7YsNJvfFhcNz9GrjTi5d/JwxNdvLO3yrTJ5
-         Pw7WfuQyhmz6+DkHWz7V0TVVxdSewlTy3Q2hCQmMNnHwBP8yFWvNhLBsudkRKgWHHz
-         To5r+JyNQhNtg==
-X-Nifty-SrcIP: [209.85.217.51]
-Received: by mail-vs1-f51.google.com with SMTP id j15so8412318vsf.2;
-        Mon, 07 Jun 2021 00:40:04 -0700 (PDT)
-X-Gm-Message-State: AOAM530ilV7x9BOYsxhMHcnwVwqHaih58l/6kueGfJCzvVlGiGTj+8dd
-        PXKRy3Ke8jMTTkQathvLHaRFAv3O3xAwgDA5ZIY=
-X-Google-Smtp-Source: ABdhPJwPmFut2nTxArXa07v4xPlHzxrJ0sLjVDtvrdtLChTFpKiR9239Z6WTj44UnleODc79Z+HXDtosElosU9UFvGs=
-X-Received: by 2002:aa7:99c9:0:b029:2e9:e084:e1de with SMTP id
- v9-20020aa799c90000b02902e9e084e1demr15812551pfi.80.1623051593156; Mon, 07
- Jun 2021 00:39:53 -0700 (PDT)
+        Mon, 7 Jun 2021 03:49:20 -0400
+Received: by mail-pf1-f179.google.com with SMTP id q25so12462766pfh.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jun 2021 00:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9DodaeneTSitzgzJXeCCRXbjiNdJoXEj83o/MdYpmtA=;
+        b=h+8tMj9mn8wQPDpTHQlTCo0cpEV1hAs57O3TVDVZ/IZn9O2eYr/lLmWRsQ6xtxPEHh
+         NMEK4TFk0mcTwx3VpJ635Je2OHUT4nHJs4IjXCDGvkB6NANVhMaqc9p5XLzKIxgnZVM/
+         KEDr5M38dhknIqipFODGd7NsgUirMhwNJApNicRB75vJJJTd9o7jqn4yfUPvZoZ/8Y1x
+         DmWvQjQegQ/XYm1R96F601llnWhzxgQT2t6jj0Ui3Trq7Rj1YVV3Hvov18bmf8E1BxD/
+         HGASRilgpzYUMb86c83z4VF4Xubo3T+5UHuaH3alMlPzINKxNkpkNOXTz06iH5Kma/u6
+         WuiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9DodaeneTSitzgzJXeCCRXbjiNdJoXEj83o/MdYpmtA=;
+        b=XuKg+8Du5zeGa+whjz5Oy7j1ALVjvuG5NxfVyfy0INjd7O6r4V49M6lXJwZhtVWEMb
+         b7Gmu073iouU6bA3dFjB2H2XqRwyrMbNgLk0St6z9IP2x3OyENp8mSsPv23Rwd1js24R
+         jaGCmZwSVyQR8AnfZej3qb1WWTjmTLPDumpvgV+iCoXprdTgj7lmpRUKqJouSUNgSPP4
+         GutV5ZLncVFvZEHehq+uGTHnRnU9i8jUdgs0tpsvvOHPvx+sjoOCBLrfcTdlXMTuNKCc
+         jf6CcUIl1gY3qG6ZXs3wAPMlxtEzIw+B4ZKbKJCnvTPeHn5kAuAfC/IZMJaLRAm/p7LO
+         DLVQ==
+X-Gm-Message-State: AOAM530JmK6aU8HPDapoC0tVs3CpIeO0QApriNRdtaD7xVjFhRzQ4cL1
+        LJ/T4T8X1jcjsN+4CJIgoXw1oIY3ZHjLDEkq/Bc=
+X-Google-Smtp-Source: ABdhPJzG9BjvCqRVErGOyuAxgEKIHiDERevV35Y9lIyNmAzIzCkdxMSwTdPf22u8PcbNN67iK4+1auD7WLUrE5TcXo4=
+X-Received: by 2002:a63:1f57:: with SMTP id q23mr2175596pgm.398.1623051989993;
+ Mon, 07 Jun 2021 00:46:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210227183910.221873-1-masahiroy@kernel.org> <CAK7LNASL_X43_nMTz1CZQB+jiLCRAJbh-wQdc23QV0pWceL_Lw@mail.gmail.com>
- <20210228064936.zixrhxlthyy6fmid@24bbad8f3778>
-In-Reply-To: <20210228064936.zixrhxlthyy6fmid@24bbad8f3778>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Mon, 7 Jun 2021 16:39:16 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASY_+_38XEMLZAf7txr4EdukkcFL8pnGGe2XyhQ9F4oDQ@mail.gmail.com>
-Message-ID: <CAK7LNASY_+_38XEMLZAf7txr4EdukkcFL8pnGGe2XyhQ9F4oDQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] x86: remove toolchain check for X32 ABI capability
-To:     Nathan Chancellor <nathan@kernel.org>
-Cc:     X86 ML <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Fangrui Song <maskray@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
-        "Chang S. Bae" <chang.seok.bae@intel.com>,
-        Chao Yu <chao@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Kees Cook <keescook@chromium.org>,
+References: <1622537906-54361-1-git-send-email-tao.peng@linux.alibaba.com> <YLeoucLiMOSPwn4U@google.com>
+In-Reply-To: <YLeoucLiMOSPwn4U@google.com>
+From:   Peng Tao <bergwolf@gmail.com>
+Date:   Mon, 7 Jun 2021 15:46:18 +0800
+Message-ID: <CA+a=Yy4kjVJvaf4YWsUQRmhs58zbyt6APs5U+yz_m+MFtA3FUQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] fuse: add generic file store
+To:     Alessio Balsini <balsini@android.com>
+Cc:     Peng Tao <tao.peng@linux.alibaba.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Sean Christopherson <seanjc@google.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>
+        Amir Goldstein <amir73il@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 28, 2021 at 3:49 PM Nathan Chancellor <nathan@kernel.org> wrote:
+On Wed, Jun 2, 2021 at 11:52 PM Alessio Balsini <balsini@android.com> wrote:
 >
-> On Sun, Feb 28, 2021 at 12:15:16PM +0900, Masahiro Yamada wrote:
-> > On Sun, Feb 28, 2021 at 3:41 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > >
-> > > This commit reverts 0bf6276392e9 ("x32: Warn and disable rather than
-> > > error if binutils too old").
-> > >
-> > > The help text in arch/x86/Kconfig says enabling the X32 ABI support
-> > > needs binutils 2.22 or later. This is met because the minimal binutils
-> > > version is 2.23 according to Documentation/process/changes.rst.
-> > >
-> > > I would not say I am not familiar with toolchain configuration, but
+> On Tue, Jun 01, 2021 at 04:58:26PM +0800, Peng Tao wrote:
+> > Add a generic file store that userspace can save/restore any open file
+> > descriptor. These file descriptors can be managed by different
+> > applications not just the same user space application.
 > >
-> > I mean:
-> > I would not say I am familiar ...
-> > That is why I added RFC.
+> > A possible use case is fuse fd passthrough being developed
+> > by Alessio Balsini [1] where underlying file system fd can be saved in
+> > this file store.
 > >
-> > I appreciate comments from people who are familiar
-> > with toolchains (binutils, llvm).
+> > Another possible use case is user space application live upgrade and
+> > failover (upon panic etc.). Currently during userspace live upgrade and
+> > failover, open file descriptors usually have to be saved seprately in
+> > a different management process with AF_UNIX sendmsg.
 > >
-> > If this change is not safe,
-> > we can move this check to Kconfig at least.
+> > But it causes chicken and egg problem and such management process needs
+> > to support live upgrade and failover as well. With a generic file store
+> > in the kernel, application live upgrade and failover no longer require such
+> > management process to hold reference for their open file descriptors.
+> >
+> > This is an RFC to see if the approach makes sense to upstream and it can be
+> > tested with the following C programe.
+> >
+> > Why FUSE?
+> > - Because we are trying to solve FUSE fd passthrough and FUSE daemon
+> >   live upgrade.
+> >
+> > Why global IDR rather than per fuse connnection one?
+> > - Because for live upgrade new process, we don't have a valid fuse connection
+> >   in the first place.
+> >
+> > Missing cleanup method in case user space messes up?
+> > - We can limit the number of saved FDs and hey it is RFC ;).
+> >
+> > [1] https://lore.kernel.org/lkml/20210125153057.3623715-1-balsini@android.com/
+> > --------
+> >
+> > [...]
+> >
 >
-> Hi Masahiro,
 >
-> As Fangrui pointed out, there are two outstanding issues with x32 with
-> LLVM=1, both seemingly related to LLVM=1.
-
-Is this still a problem for Clang built Linux?
-
-
-
-> https://github.com/ClangBuiltLinux/linux/issues/514
-
-I am not tracking the status.
-What was the conclusion?
-
-> https://github.com/ClangBuiltLinux/linux/issues/1141
-
-
-This got marked "unreproducible"
-
->
-> Additionally, there appears to be one from Arnd as well but that one has
-> received no triage yet.
->
-> https://github.com/ClangBuiltLinux/linux/issues/1205
-
-Same as well.
-
+> Hi Peng,
+Hi Alessio,
 
 >
-> I intend to test this patch as well as a few others at some point in the
-> coming week although I am having to play sysadmin due to moving servers
-> so I might not be able to get to it until later in the week.
+> This is a cool feature indeed.
 >
-> Cheers,
-> Nathan
+> I guess we also want to ensure that restoring an FD can only be
+> performed by a trusted FUSE daemon, and not any other process attached
+> to /dev/fuse. Maybe adding some permission checks?
 >
+The idea is to allow any daemon capable of opening /dev/fuse to be
+able to restore an FD. I don't quite get which permissions do you like
+to check? SYS_ADMIN?
 
+> I also see that multiple restores can be done on the same FD, is that
+> intended? Shouldn't the IDR entry be removed once restored?
+>
+In a crash recovery scenario, if the kernel destroys the IDR once an
+FD is restored, and the recovering daemon panics again, the FD is lost
+forever. So I would prefer to keep it in the kernel until explicit FD
+removal.
+
+> As far as I understand, the main use case is to be able to replace a
+> FUSE daemon with another, preserving the opened lower file system files.
+> How would user space handle the unmounting of the old FUSE file system
+> and mounting of the new one?
+It can call FUSE_DEV_IOC_REMOVE_FD before or after unmounting the old
+FUSE file system. Either way, the last closer of the FUSE connection
+FD would actually close the FUSE connection.
+
+> I wonder if something can be done with a pair of ioctls similar to
+> FUSE_DEV_IOC_CLONE to transfer the FUSE connection from the old to the
+> new FUSE daemon.  Maybe either the IDR or some other container to store
+> the files that are intended to be preserved can be put in fuse_conn
+> instead of keeping it global.
+>
+> Does it make sense?
+>
+It makes sense at first glance since obviously it helps IDR cleaning
+up as we can do it on a per fuse_conn basis. But giving it a second
+thought, how do we preserve the FUSE connection fd representing the
+same fuse_conn itself? We need to do it because we want to handle FUSE
+daemon crash recovery cases. Maybe we can have something like:
+1. use a tag to uniquely identify a fuse conn (as being done for virtio-fs)
+2. in each of these SAVE/GET/REMOVE ioctls, it takes a tag argument so
+FDs are kept locally to the specified fuse_conn
+3. add FUSE_DEV_IOC_TRANSFER ioctl to transfer ownership of a saved FD
+to a new userspace daemon. It can be seen as a combination of GET and
+REMOVE ioctls
+
+Cheers,
+Tao
 
 -- 
-Best Regards
-Masahiro Yamada
+Into Sth. Rich & Strange
