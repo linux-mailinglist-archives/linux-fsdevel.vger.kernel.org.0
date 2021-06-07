@@ -2,52 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B223C39DA0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 12:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC7C239DAD0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 13:11:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230494AbhFGKsJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Jun 2021 06:48:09 -0400
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:36691 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230487AbhFGKsJ (ORCPT
+        id S230341AbhFGLMr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Jun 2021 07:12:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37178 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230230AbhFGLMq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Jun 2021 06:48:09 -0400
-Received: by mail-wr1-f47.google.com with SMTP id e11so6824853wrg.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jun 2021 03:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=aqlB3nweefXMBd+1n3TfVg5Imk7mqG7GGko5Cn1Ypjk=;
-        b=fokBrG+2G1fkq/XmZlW8Qn8gNsGVee/kxIBq16SYHHcihUEHhxAiLiYioDzjZCKPWV
-         9QEZOxcXx7fkFSqzCPab9ejYwiSWHFrBFKIvS4T83XVPbmSdXZpWw/7QLttpVgGupn7M
-         FoWs2xbakjWUMbWyKY9toPvBiRJY2NSMoomhdLwJgft1TVJGXI1KGV/tNqHpK+0t4K/c
-         ssThtjIQ5Gd6U2Vgt07NOm/v5UajEDZu6QDpCKD4dz0UaryRPm6OwVwk+zBYdDwhZepP
-         9jCgvqxA0rUhD0TtVGl/Sk+NMb0qRwm6JS3LOkQ+swNNoK5wt0XeTzNUgGulkw29L99w
-         ZQaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=aqlB3nweefXMBd+1n3TfVg5Imk7mqG7GGko5Cn1Ypjk=;
-        b=obBYhmgXHQO5Ey0heCzrHB7EQ+TXBuha7WoeB1LZLtRvNUVPX94Y3ao8PyJNP5ZkBQ
-         XbBK4q/Jkm0xkJj9xbb6LX7bRNXffU1D0rfHWKREQjN5XXvJ4yd0eFdyqwKmz79AVCqE
-         CQW3VRfoG7+K42e9aqxFmk1lQ/dfxMMABpvT7q3J4M51TbZCYoqcsrMU9Gb+V/HiROfe
-         XFmIG3ARm3AW/pNFrHQXrQt8lUoyTRETXcUPmdY0nsxu22xxwAEXcn0BXp6U8vLKbJXw
-         zYKDVM/qGPnECcVb9wT5+uWK4EomjbimpCXIU9DLJUhSHh4i59vbLollxj65rdUa1dQT
-         g8hA==
-X-Gm-Message-State: AOAM530G7HpM6HXhtZ2qYCqdUE/tiNlnsazFvG7bB0zSht4+FKckfF3/
-        WcL4IZtZlSVo0ftjZ2k0j9obBw==
-X-Google-Smtp-Source: ABdhPJwqNBSGH0k0cJir/i3kAe7gRK7bFBO/b5hmcAfd7Z+SvyV8tZwYe+ey/npaVItqY9949tYt3w==
-X-Received: by 2002:a05:6000:1563:: with SMTP id 3mr16068224wrz.59.1623062703694;
-        Mon, 07 Jun 2021 03:45:03 -0700 (PDT)
-Received: from maple.lan (cpc141216-aztw34-2-0-cust174.18-1.cable.virginm.net. [80.7.220.175])
-        by smtp.gmail.com with ESMTPSA id p16sm16000678wrs.52.2021.06.07.03.45.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jun 2021 03:45:03 -0700 (PDT)
-Date:   Mon, 7 Jun 2021 11:45:00 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Peter Zijlstra <peterz@infradead.org>
+        Mon, 7 Jun 2021 07:12:46 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60354C061766;
+        Mon,  7 Jun 2021 04:10:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=NLj4NYDQW6SbenCIcbS9QrwkO4aohp/HPEuCGPuaREs=; b=cPnEKquwt970ZOfmptV8ZPqMgA
+        nDKIN3sS9ih9nuu8IzgPQnkE+3vwyvAnDc2ZrMU9wmERzTb3IGMYGi4WE6+4lUgqF2JtL/lM/I5kJ
+        eiHF9IMB2d+Y9lTFFFVOwPJJI9S76oa/nkFLOGjGCPqHZTpDXHEuTaeqYbLfHC8bQodhRsFoh+Qy8
+        dTHV3vTaUZfqdQXrfYxuM6d63mJeyrNKoQ2Zm8n4XPuwlvYtbjKQlZwLanaf8FCczQxwMbK2aY9KZ
+        5ZBbcHBMtWS/MR3PhHmCJk3dhHVW0UT+bEq4donFnJVNzTVZUBUUF9jUBREUKuzW6aCVhr/V5xCxL
+        LVjMXPEw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lqD9Y-004Mvp-0K; Mon, 07 Jun 2021 11:10:51 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C9BD33002A6;
+        Mon,  7 Jun 2021 13:10:49 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A8BB82CF3852B; Mon,  7 Jun 2021 13:10:49 +0200 (CEST)
+Date:   Mon, 7 Jun 2021 13:10:49 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         Juri Lelli <juri.lelli@redhat.com>,
@@ -96,72 +87,68 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
         rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
 Subject: Re: [PATCH 6/6] sched: Change task_struct::state
-Message-ID: <20210607104500.sopvslejuoxwzhrs@maple.lan>
+Message-ID: <YL3+ucpG/LOcO35G@hirez.programming.kicks-ass.net>
 References: <20210602131225.336600299@infradead.org>
  <20210602133040.587042016@infradead.org>
+ <20210607104500.sopvslejuoxwzhrs@maple.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210602133040.587042016@infradead.org>
+In-Reply-To: <20210607104500.sopvslejuoxwzhrs@maple.lan>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 03:12:31PM +0200, Peter Zijlstra wrote:
-> Change the type and name of task_struct::state. Drop the volatile and
-> shrink it to an 'unsigned int'. Rename it in order to find all uses
-> such that we can use READ_ONCE/WRITE_ONCE as appropriate.
+On Mon, Jun 07, 2021 at 11:45:00AM +0100, Daniel Thompson wrote:
+> On Wed, Jun 02, 2021 at 03:12:31PM +0200, Peter Zijlstra wrote:
+> > Change the type and name of task_struct::state. Drop the volatile and
+> > shrink it to an 'unsigned int'. Rename it in order to find all uses
+> > such that we can use READ_ONCE/WRITE_ONCE as appropriate.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  ...
+> >  kernel/debug/kdb/kdb_support.c |   18 +++++++------
+> >  ...
+> > --- a/kernel/debug/kdb/kdb_support.c
+> > +++ b/kernel/debug/kdb/kdb_support.c
+> > @@ -609,23 +609,25 @@ unsigned long kdb_task_state_string(cons
+> >   */
+> >  char kdb_task_state_char (const struct task_struct *p)
+> >  {
+> > -	int cpu;
+> > -	char state;
+> > +	unsigned int p_state;
+> >  	unsigned long tmp;
+> > +	char state;
+> > +	int cpu;
+> >  
+> >  	if (!p ||
+> >  	    copy_from_kernel_nofault(&tmp, (char *)p, sizeof(unsigned long)))
+> >  		return 'E';
+> >  
+> >  	cpu = kdb_process_cpu(p);
+> > -	state = (p->state == 0) ? 'R' :
+> > -		(p->state < 0) ? 'U' :
+> > -		(p->state & TASK_UNINTERRUPTIBLE) ? 'D' :
+> > -		(p->state & TASK_STOPPED) ? 'T' :
+> > -		(p->state & TASK_TRACED) ? 'C' :
+> > +	p_state = READ_ONCE(p->__state);
+> > +	state = (p_state == 0) ? 'R' :
+> > +		(p_state < 0) ? 'U' :
 > 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  ...
->  kernel/debug/kdb/kdb_support.c |   18 +++++++------
->  ...
-> --- a/kernel/debug/kdb/kdb_support.c
-> +++ b/kernel/debug/kdb/kdb_support.c
-> @@ -609,23 +609,25 @@ unsigned long kdb_task_state_string(cons
->   */
->  char kdb_task_state_char (const struct task_struct *p)
->  {
-> -	int cpu;
-> -	char state;
-> +	unsigned int p_state;
->  	unsigned long tmp;
-> +	char state;
-> +	int cpu;
->  
->  	if (!p ||
->  	    copy_from_kernel_nofault(&tmp, (char *)p, sizeof(unsigned long)))
->  		return 'E';
->  
->  	cpu = kdb_process_cpu(p);
-> -	state = (p->state == 0) ? 'R' :
-> -		(p->state < 0) ? 'U' :
-> -		(p->state & TASK_UNINTERRUPTIBLE) ? 'D' :
-> -		(p->state & TASK_STOPPED) ? 'T' :
-> -		(p->state & TASK_TRACED) ? 'C' :
-> +	p_state = READ_ONCE(p->__state);
-> +	state = (p_state == 0) ? 'R' :
-> +		(p_state < 0) ? 'U' :
+> Looks like the U here stands for Unreachable since this patch makes it
+> more obvious that this clause is (and previously was) exactly that!
+> 
+> Dropping the U state would be good since I guess this will show up as a
+> "new" warning in some tools. However it was a preexisting problem so with
+> or without this cleaned up:
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-Looks like the U here stands for Unreachable since this patch makes it
-more obvious that this clause is (and previously was) exactly that!
+Thanks!
 
-Dropping the U state would be good since I guess this will show up as a
-"new" warning in some tools. However it was a preexisting problem so with
-or without this cleaned up:
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Note that there's a second instance of this exact code in
+arch/powerpc/xmon/xmon.c, with the same 'U' issue.
 
-
-Daniel.
-
-> +		(p_state & TASK_UNINTERRUPTIBLE) ? 'D' :
-> +		(p_state & TASK_STOPPED) ? 'T' :
-> +		(p_state & TASK_TRACED) ? 'C' :
->  		(p->exit_state & EXIT_ZOMBIE) ? 'Z' :
->  		(p->exit_state & EXIT_DEAD) ? 'E' :
-> -		(p->state & TASK_INTERRUPTIBLE) ? 'S' : '?';
-> +		(p_state & TASK_INTERRUPTIBLE) ? 'S' : '?';
->  	if (is_idle_task(p)) {
->  		/* Idle task.  Is it really idle, apart from the kdb
->  		 * interrupt? */
+I'll repost this soon, as it seems I've fixed all robot failout (fingers
+crossed).
