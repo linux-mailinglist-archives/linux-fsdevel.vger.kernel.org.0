@@ -2,109 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB97939E77C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 21:27:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A254039E8DC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jun 2021 23:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230517AbhFGT3D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Jun 2021 15:29:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34808 "EHLO
+        id S230438AbhFGVJF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Jun 2021 17:09:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230351AbhFGT3C (ORCPT
+        with ESMTP id S230366AbhFGVJE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Jun 2021 15:29:02 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49559C061789
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jun 2021 12:27:11 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id x73so13864823pfc.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jun 2021 12:27:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zeH4yya8Ov0XNzvCZS7NtOG1PVDjiVam/k7S0CY0xuQ=;
-        b=DmqkaxcE7zU7zcky0JuI4pNmEdX+7cebd2/eWDHmDZ8Cm5DsXNt7ekoVzffpe+hrs8
-         Zy//wL10OwQRNNAinAR3oTuvy85GLhXcpNiwx0nXDxhMfkFYXdwQuoafSKF0vvR9VuQQ
-         R189XtCfOlsJGOzs0+o3kzu3LI0FZglDmI/6EGc/ovKdaVQBCfmO379Ngs29JrMwMbF8
-         +KS4/08FmDpIeagDvnoRkurquBpfNfOl7eV1alo4WxatYewjWpblL5VVRh3SDETC7Cng
-         +xbPqnSDHm+TVLt9gL9aazUzy4583bRW8+BuXmvbpFDZsQyEniwFmi8KgjfHMvbXTGrv
-         Q+zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zeH4yya8Ov0XNzvCZS7NtOG1PVDjiVam/k7S0CY0xuQ=;
-        b=Bf32l/gXKo4Wrexb5UlpFRYurhjQrv31wrn8NMuqZCc5695QDgVHT9702QYGcYqj0M
-         B4FdiU5YmeCUcv2pQWAymL9LUnW3apSObqXFwA2KJyu8AyVxIclU/SbfiqdS8OmEzGhu
-         7XaJm88/ZMoKvxJacbG5CkWeqM9kiN4/8uMLO2SjkOJ8WOMtQSapD6kZJUCqfJOhxNcz
-         ZWQcor3Ey6CpeRSdOWo6QP5Hl/tsTm6JTmykJPgqczC38tqmE911sundYTgA8zqwJxuR
-         qcVh+73/vFx3XdskxY0k+EyUVdcvJ1C2OoWvey/AdxiOBgrevpPuSP60omTFtPFJgVmk
-         4vOg==
-X-Gm-Message-State: AOAM533foNz3Qt7oCTU2gWzc/rchpIBbMa+5q5MuBswLumXEk2r1oREL
-        xrJNtJbpJssHxJ5c0PDK0TLnTQ==
-X-Google-Smtp-Source: ABdhPJz1Z3LXQzm5cAAz83b2SU/IXLOt0dJC1KUkJtXXZcvcu7iCLEhu9pSXhX8Tp7l3PsW5G6jR7w==
-X-Received: by 2002:a05:6a00:234e:b029:2ea:311e:ea9c with SMTP id j14-20020a056a00234eb02902ea311eea9cmr18111072pfj.36.1623094030577;
-        Mon, 07 Jun 2021 12:27:10 -0700 (PDT)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:7f52])
-        by smtp.gmail.com with ESMTPSA id 23sm8139908pjw.28.2021.06.07.12.27.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jun 2021 12:27:09 -0700 (PDT)
-Date:   Mon, 7 Jun 2021 12:27:07 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: [PATCH RERESEND v9 0/9] fs: interface for directly
- reading/writing compressed data
-Message-ID: <YL5zCxGx/J1WxSCq@relinquished.localdomain>
-References: <cover.1621276134.git.osandov@fb.com>
- <CAHk-=wh74eFxL0f_HSLUEsD1OQfFNH9ccYVgCXNoV1098VCV6Q@mail.gmail.com>
+        Mon, 7 Jun 2021 17:09:04 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08E43C061574;
+        Mon,  7 Jun 2021 14:07:12 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lqMSc-005abR-Q6; Mon, 07 Jun 2021 21:07:02 +0000
+Date:   Mon, 7 Jun 2021 21:07:02 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC][PATCHSET] iov_iter work
+Message-ID: <YL6KdoHzYiBOsu5t@zeniv-ca.linux.org.uk>
+References: <YL0dCEVEiVL+NwG6@zeniv-ca.linux.org.uk>
+ <CAHk-=wj6ZiTgqbeCPtzP+5tgHjur6Amag66YWub_2DkGpP9h-Q@mail.gmail.com>
+ <CAHk-=wiYPhhieXHBtBku4kZWHfLUTU7VZN9_zg0LTxcYH+0VRQ@mail.gmail.com>
+ <YL3mxdEc7uw4rhjn@infradead.org>
+ <YL4wnMbSmy3507fk@zeniv-ca.linux.org.uk>
+ <YL5CTiR94f5DYPFK@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wh74eFxL0f_HSLUEsD1OQfFNH9ccYVgCXNoV1098VCV6Q@mail.gmail.com>
+In-Reply-To: <YL5CTiR94f5DYPFK@infradead.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 17, 2021 at 02:32:47PM -0700, Linus Torvalds wrote:
-> On Mon, May 17, 2021 at 11:35 AM Omar Sandoval <osandov@osandov.com> wrote:
-> >
-> > Patches 1-3 add the VFS support, UAPI, and documentation. Patches 4-7
-> > are Btrfs prep patches. Patch 8 adds Btrfs encoded read support and
-> > patch 9 adds Btrfs encoded write support.
+On Mon, Jun 07, 2021 at 04:59:10PM +0100, Christoph Hellwig wrote:
+> On Mon, Jun 07, 2021 at 02:43:40PM +0000, Al Viro wrote:
+> > > It can't even happen for the legacy architectures, given that the
+> > > remaining set_fs() areas are small and never do iov_iter based I/O.
+> > 
+> > 	Umm...  It's a bit trickier than that - e.g. a kernel thread on
+> > a CONFIG_SET_FS target passing a kernel pointer to vfs_read() could've
+> > ended up with new_sync_write() hitting iov_iter_init().
 > 
-> I don't love the RWF_ENCODED flag, but if that's the way people think
-> this should be done, as a model this looks reasonable to me.
-> 
-> I'm not sure what the deal with the encryption metadata is. I realize
-> there is currently only one encryption type ("none") in this series,
-> but it's not clear how any other encryption type would actually ever
-> be described. It's not like you can pass in the key (well, I guess
-> passing in the key would be fine, but passing it back out certainly
-> would not be).  A key ID from a keyring?
-> 
-> So there's presumably some future plan for it, but it would be good to
-> verify that that plan makes sense..
+> Yes, that is a possbility, but rather unlikely - it would require an
+> arch-specific thread using iov_iter_init.  iov_iter_init instances are
+> rather fewer, and only very few in arch code.
 
-To summarize the discussion and answer your original question, using
-RWF_ENCODED for encryption will require additional support for getting
-encryption metadata, but that support is best suited for a separate
-interface, with RWF_ENCODED purely for the encrypted data itself. The
-harder part of encrypted backups is restoring filenames, and that would
-also be best as a separate interface.
+Doesn't have to be in arch code itself (see above re vfs_read()/vfs_write()),
+but AFAICS it doesn't happen.
 
-My use case is only for compression, so none of that is a blocker for
-RWF_ENCODED.
+Anyway, what I'm going to do is
+void iov_iter_init(struct iov_iter *i, unsigned int direction,
+                        const struct iovec *iov, unsigned long nr_segs,
+			size_t count)
+{
+	WARN_ON(direction & ~(READ | WRITE));
 
-What else can I do to move this along?
+        if (WARN_ON(uaccess_kernel())) {
+		// shouldn't be any such callers left...
+		iov_iter_kvec(i, direction, (const struct kvec *)iov,
+			      nr_segs, count);
+		return;
+	}
+	*i = (struct iov_iter) {
+		.iter_type = ITER_IOVEC,
+		.data_source = direction,
+		.iov = iov,
+		.nr_segs = nr_segs,
+		.iov_offset = 0,
+		.count = count
+	};
+}
 
-Thanks,
-Omar
+and in a cycle or two replace that if (WARN_ON()) into flat BUG_ON()
+
+Linus, can you live with that variant?  AFAICS, we really should have
+no such callers left on any targets.
