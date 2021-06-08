@@ -2,138 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8959E39FD93
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 19:26:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00B3D39FDCE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 19:35:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233281AbhFHR20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Jun 2021 13:28:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231416AbhFHR20 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Jun 2021 13:28:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 752536136D;
-        Tue,  8 Jun 2021 17:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623173193;
-        bh=quLPk8hf1rTsI/xDu+n2XJpKuLPzI5budPumpjnNExg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BzsBwSngPLULxxPD6oB4tsxncLu2Xc8OBaztzdTDKmYZZ5qr1mDI/jNZWGmEW3ynD
-         N4YKqlrlp1/SxNQ2ppnMpRDsl6tIfj18eHsqKOvbuxIa8CrC2takPVQ0yqFfiUO/ls
-         AJhV/UxK5syg4kFKzNGeEdAfxQW6elZBw46CRkAKlg+mumbkoyF9XQGa/H6jOLrZTa
-         BNazLU1YGSeTLVDuLsCTt7vKyMqEs6CovHtqujL7UjMucc23T6hLCbTtFTRtwGzZdZ
-         lpPCIrReBi+xIXYuBUZPXo8WFDfH4Y8RTQyvQ6VOIDDzcOBidx3A/slQvjQw+ufFyh
-         9e0vUf1WLgbBQ==
-Subject: Re: [PATCH RFC] x86: remove toolchain check for X32 ABI capability
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     X86 ML <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Fangrui Song <maskray@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
-        "Chang S. Bae" <chang.seok.bae@intel.com>,
-        Chao Yu <chao@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Kees Cook <keescook@chromium.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Sean Christopherson <seanjc@google.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>
-References: <20210227183910.221873-1-masahiroy@kernel.org>
- <CAK7LNASL_X43_nMTz1CZQB+jiLCRAJbh-wQdc23QV0pWceL_Lw@mail.gmail.com>
- <20210228064936.zixrhxlthyy6fmid@24bbad8f3778>
- <CAK7LNASY_+_38XEMLZAf7txr4EdukkcFL8pnGGe2XyhQ9F4oDQ@mail.gmail.com>
-From:   Nathan Chancellor <nathan@kernel.org>
-Message-ID: <1992c9cf-739e-d98f-85c0-bbcf7df123ea@kernel.org>
-Date:   Tue, 8 Jun 2021 10:26:30 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S233653AbhFHRgl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Jun 2021 13:36:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233584AbhFHRgl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Jun 2021 13:36:41 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36AC8C061789
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jun 2021 10:34:31 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id u126so12275226pfu.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jun 2021 10:34:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=YLvKoBEvfY2Ptqya3hzaWF4xLVwI7EHKO0HHIAZbjlk=;
+        b=i0MmDl8Ps0IZQmWQ2ViKg1qX561L8Orz5iYseHhCKEYr93sUci8K/7wS9nivt46/z8
+         myDrRIqzCtf6XZHgB/yp7wRZxT3r6mBuocIx00CTkorpFU3db3YRdvOAXbfrnieGxlgx
+         LCLQNEC2KqG1w+FfuXKHUpQh2dflywFCwrjhI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YLvKoBEvfY2Ptqya3hzaWF4xLVwI7EHKO0HHIAZbjlk=;
+        b=H8oyq2wBYsbPwRX6BhHU7atkZ3q5p7WBLvGtmFS0mK+/4W73p9paUTBCCIlQweJZBM
+         8eUhmBm7F9igddpDTstxdRGyVLRQ3MBpS2hOh/Cw+ioxAhEHZpI50Btb8LCJXLRXNSrj
+         h4Iv+ZDSHizv8Tmsslk4+885fVu+uXnUUihQ2dQAT0OCZSqhCiY6DUWJOc8Fybjv00yP
+         ePkjUEFd9qlq7eaEu3s+80KJ5aT/tTzqRVNu0NP9vrQ7QG2MfyeVHfkij3arrB1vM6ss
+         I2K36F7LRzlLZSTYf/V8EG1FUgKqXZztXKryiiVypQL5Ys7P9dxMSPbO7grA02AxuVpz
+         +V2Q==
+X-Gm-Message-State: AOAM533lFW5r2AzRbtAkhc+H5j73YoRk4D2RcdiHny2nWc04Zw3LoTjs
+        ZL1rLn6+fiG6gTv8WnmIVUy1sg==
+X-Google-Smtp-Source: ABdhPJw9cte543iNlOqM4Zf8WDgZK8UQ3GrQhbOt80HpmTn122EUoVoTmcwVaheYzTeFl8F9id315w==
+X-Received: by 2002:aa7:8114:0:b029:2e9:ae2b:7ff with SMTP id b20-20020aa781140000b02902e9ae2b07ffmr1055597pfi.48.1623173670797;
+        Tue, 08 Jun 2021 10:34:30 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id u19sm6420346pfi.127.2021.06.08.10.34.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jun 2021 10:34:29 -0700 (PDT)
+Date:   Tue, 8 Jun 2021 10:34:29 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     axboe@kernel.dk, anton@enomsg.org, ccross@android.com,
+        tony.luck@intel.com, gmpy.liaowx@gmail.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mark pstore-blk as broken
+Message-ID: <202106081033.F59D7A4@keescook>
+References: <20210608161327.1537919-1-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNASY_+_38XEMLZAf7txr4EdukkcFL8pnGGe2XyhQ9F4oDQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210608161327.1537919-1-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Masahiro,
-
-On 6/7/2021 12:39 AM, Masahiro Yamada wrote:
-> On Sun, Feb 28, 2021 at 3:49 PM Nathan Chancellor <nathan@kernel.org> wrote:
->>
->> On Sun, Feb 28, 2021 at 12:15:16PM +0900, Masahiro Yamada wrote:
->>> On Sun, Feb 28, 2021 at 3:41 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
->>>>
->>>> This commit reverts 0bf6276392e9 ("x32: Warn and disable rather than
->>>> error if binutils too old").
->>>>
->>>> The help text in arch/x86/Kconfig says enabling the X32 ABI support
->>>> needs binutils 2.22 or later. This is met because the minimal binutils
->>>> version is 2.23 according to Documentation/process/changes.rst.
->>>>
->>>> I would not say I am not familiar with toolchain configuration, but
->>>
->>> I mean:
->>> I would not say I am familiar ...
->>> That is why I added RFC.
->>>
->>> I appreciate comments from people who are familiar
->>> with toolchains (binutils, llvm).
->>>
->>> If this change is not safe,
->>> we can move this check to Kconfig at least.
->>
->> Hi Masahiro,
->>
->> As Fangrui pointed out, there are two outstanding issues with x32 with
->> LLVM=1, both seemingly related to LLVM=1.
+On Tue, Jun 08, 2021 at 06:13:27PM +0200, Christoph Hellwig wrote:
+> pstore-blk just pokes directly into the pagecache for the block
+> device without going through the file operations for that by faking
+> up it's own file operations that do not match the block device ones.
 > 
-> Is this still a problem for Clang built Linux?
+> As this breaks the control of the block layer of it's page cache,
+> and even now just works by accident only the best thing is to just
+> disable this driver.
 > 
+> Fixes: 17639f67c1d6 ("pstore/blk: Introduce backend for block devices")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/pstore/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
+> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+> index 8adabde685f1..328da35da390 100644
+> --- a/fs/pstore/Kconfig
+> +++ b/fs/pstore/Kconfig
+> @@ -173,6 +173,7 @@ config PSTORE_BLK
+>  	tristate "Log panic/oops to a block device"
+>  	depends on PSTORE
+>  	depends on BLOCK
+> +	depends on BROKEN
+>  	select PSTORE_ZONE
+>  	default n
+>  	help
+> -- 
+> 2.30.2
 > 
->> https://github.com/ClangBuiltLinux/linux/issues/514
-> 
-> I am not tracking the status.
-> What was the conclusion?
 
-This appears to no longer be reproducible so I closed it.
+NAK, please answer my concerns about your patches instead:
+https://lore.kernel.org/lkml/202012011149.5650B9796@keescook/
 
->> https://github.com/ClangBuiltLinux/linux/issues/1141
-> 
-> 
-> This got marked "unreproducible"
-
-I just had a look at this and it is still reproducible (see the bug for 
-details).
-
->> Additionally, there appears to be one from Arnd as well but that one has
->> received no triage yet.
->>
->> https://github.com/ClangBuiltLinux/linux/issues/1205
-> 
-> Same as well.
-
-Yeah, I cannot reproduce this.
-
-It seems like a Kconfig test would still be best for the issue above, if 
-it is not too much to maintain.
-
-Cheers,
-Nathan
+-- 
+Kees Cook
