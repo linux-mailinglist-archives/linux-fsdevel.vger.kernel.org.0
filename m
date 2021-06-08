@@ -2,104 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE51E39F9AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 16:55:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F42E39F9B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 16:57:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233664AbhFHO4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Jun 2021 10:56:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36882 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233606AbhFHO4w (ORCPT
+        id S233690AbhFHO6y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Jun 2021 10:58:54 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:38364 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233598AbhFHO6w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Jun 2021 10:56:52 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8431DC061574;
-        Tue,  8 Jun 2021 07:54:45 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id ei4so12064851pjb.3;
-        Tue, 08 Jun 2021 07:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ecMLMqcE8EeIbuN513nFwbk5RzSrqoR2JVfpDeyBHiQ=;
-        b=hhfh1uvzextiNN5Z9ttuL6IojH7aEw0WSbEOCUkpsgIIcTtYDcy5oXc8nyh9y2m25Q
-         5eiJrvwNMXL9XKYr51VeiUBoUk8Cu4zdZ3VfAeLQV2ioCQrttjPDu7KMCVSnmhBf7FiF
-         ebcbBcXBi9vDwyBgVYU6bOLacWjT5FLnlWapuJBILIOmCuf38N9PQz6HcwsHB+gCa1Ge
-         FfmA9wwsJl1TE9pvYx7BegBKAdzIxXFOCdFMgVM9EE00WY5KwD/dvfFXluGNfabFGjV0
-         M4SJjBWX0dIC9WT99zWrjI8qHRvn78c0uWmDKOf8RY+yxskiaoqx1IL+u76jo2bWr5XC
-         P6Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ecMLMqcE8EeIbuN513nFwbk5RzSrqoR2JVfpDeyBHiQ=;
-        b=PlTivDJqB+bFZ9QtcKGaPz1VHJyeIC7EX5BnQ5pwaYTj3k0EH1/AER7yyYJrH/wHKV
-         EIKn1tvrNiT4NKTj68U1crs7twXVp9fcr9LqlCgn/QYKQJFcLE/oPXw17GLzALrLSzCA
-         w0RTzkxSedW8Rne1TmO55ige1Sn/D6SGLOXxmnom5f3DTcjIIc5vr/7/K42RVhwXZtH4
-         q0x+60kGtpFCrMOQDLcGSqlRNbLzJ6EZ6J4K5ql5P+4JevEqUPg0cIlIzyZ1StHp7dZn
-         nONhMLuv125GXTkCV9NVdEAlKko0BHOGjtWufXyvCPoWp9qM4HBPnJkVmojbqYuqMzhp
-         Uf7A==
-X-Gm-Message-State: AOAM533X8XqKI3/ulnZrQOb6Ao6l/lk9Btdti+xlY+viSp26L5pYpMux
-        IOrbbFBlWAM5unLKG7ZcTl0=
-X-Google-Smtp-Source: ABdhPJx+XgdfHeO51+cCWNG5czFR+df7dLUPQj3BYSlBjqpwNILpNVry7RH0BDVF9KkhOGJh/nOoEg==
-X-Received: by 2002:a17:902:e00e:b029:ef:5f1c:18a8 with SMTP id o14-20020a170902e00eb02900ef5f1c18a8mr415620plo.38.1623164084185;
-        Tue, 08 Jun 2021 07:54:44 -0700 (PDT)
-Received: from mi-HP-ProDesk-600-G5-PCI-MT.mioffice.cn ([43.224.245.180])
-        by smtp.gmail.com with ESMTPSA id u14sm16171304pjx.14.2021.06.08.07.54.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jun 2021 07:54:43 -0700 (PDT)
-From:   chenguanyou <chenguanyou9338@gmail.com>
-X-Google-Original-From: chenguanyou <chenguanyou@xiaomi.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chenguanyou@xiaomi.com
-Subject: Re:[PATCH] fuse: alloc_page nofs avoid deadlock
-Date:   Tue,  8 Jun 2021 22:54:36 +0800
-Message-Id: <20210608145436.1695-1-chenguanyou@xiaomi.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210603125242.31699-1-chenguanyou@xiaomi.com>
-References: <20210603125242.31699-1-chenguanyou@xiaomi.com>
+        Tue, 8 Jun 2021 10:58:52 -0400
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 684B520B83C5;
+        Tue,  8 Jun 2021 07:56:59 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 684B520B83C5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1623164219;
+        bh=5adkBab5YgC4ua7cy6g3IJlMevjI3rkkXDpAoANH9ho=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BaXOma7rHPHFSCxmGUeLjFRe22Dav9/8UdX+EwMLhxCiIfkKRd9/FnXM4JLfKnnCz
+         143ihX/qoVP5IyJq6KydhH+lUN8bDRzB4bP2jupk6lQ6rDocZXtFtf1OmunaiwTTqg
+         3eyIEW7OcCiSKjGRMAJFitXJgFUZEYz6MXLPayZc=
+Received: by mail-pj1-f54.google.com with SMTP id h12-20020a17090aa88cb029016400fd8ad8so2449670pjq.3;
+        Tue, 08 Jun 2021 07:56:59 -0700 (PDT)
+X-Gm-Message-State: AOAM53358IoVhrT5nc/7gdIX+vqrNX+pAKQumyegiTwYUEmHvUjzdPQR
+        ELjn69Vs5fiJGA/YX0/Qxlh4OU0TP2RZbJLf+M0=
+X-Google-Smtp-Source: ABdhPJzNnGHBMRnqD7hcfQnkP4ftZvW9/ffkse696Bzy4x7VTQyeIyWA6fK1974zMmVl3AKfQy85iM5JjczuDF0rpu8=
+X-Received: by 2002:a17:90b:109:: with SMTP id p9mr5359058pjz.11.1623164218966;
+ Tue, 08 Jun 2021 07:56:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210511214735.1836149-1-willy@infradead.org> <20210604030712.11b31259@linux.microsoft.com>
+ <YLmMQJgld6ndNzqI@casper.infradead.org>
+In-Reply-To: <YLmMQJgld6ndNzqI@casper.infradead.org>
+From:   Matteo Croce <mcroce@linux.microsoft.com>
+Date:   Tue, 8 Jun 2021 16:56:23 +0200
+X-Gmail-Original-Message-ID: <CAFnufp0=N-dyW4dwMLLdeg-AZE_uYBXMsNNh6FFpG869v0_aFw@mail.gmail.com>
+Message-ID: <CAFnufp0=N-dyW4dwMLLdeg-AZE_uYBXMsNNh6FFpG869v0_aFw@mail.gmail.com>
+Subject: Re: [PATCH v10 00/33] Memory folios
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ABCA deadlock
+On Fri, Jun 4, 2021 at 4:13 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Fri, Jun 04, 2021 at 03:07:12AM +0200, Matteo Croce wrote:
+> > On Tue, 11 May 2021 22:47:02 +0100
+> > "Matthew Wilcox (Oracle)" <willy@infradead.org> wrote:
+> >
+> > > We also waste a lot of instructions ensuring that we're not looking at
+> > > a tail page.  Almost every call to PageFoo() contains one or more
+> > > hidden calls to compound_head().  This also happens for get_page(),
+> > > put_page() and many more functions.  There does not appear to be a
+> > > way to tell gcc that it can cache the result of compound_head(), nor
+> > > is there a way to tell it that compound_head() is idempotent.
+> > >
+> >
+> > Maybe it's not effective in all situations but the following hint to
+> > the compiler seems to have an effect, at least according to bloat-o-meter:
+>
+> It definitely has an effect ;-)
+>
+>      Note that a function that has pointer arguments and examines the
+>      data pointed to must _not_ be declared 'const' if the pointed-to
+>      data might change between successive invocations of the function.
+>      In general, since a function cannot distinguish data that might
+>      change from data that cannot, const functions should never take
+>      pointer or, in C++, reference arguments.  Likewise, a function that
+>      calls a non-const function usually must not be const itself.
+>
+> So that's not going to work because a call to split_huge_page() won't
+> tell the compiler that it's changed.
+>
+> Reading the documentation, we might be able to get away with marking the
+> function as pure:
+>
+>      The 'pure' attribute imposes similar but looser restrictions on a
+>      function's definition than the 'const' attribute: 'pure' allows the
+>      function to read any non-volatile memory, even if it changes in
+>      between successive invocations of the function.
+>
+> although that's going to miss opportunities, since taking a lock will
+> modify the contents of struct page, meaning the compiler won't cache
+> the results of compound_head().
+>
+> > $ scripts/bloat-o-meter vmlinux.o.orig vmlinux.o
+> > add/remove: 3/13 grow/shrink: 65/689 up/down: 21080/-198089 (-177009)
+>
+> I assume this is an allyesconfig kernel?    I think it's a good
+> indication of how much opportunity there is.
+>
 
-kswapd0 D 0 159 2 0x00000000
-Call trace:
-__switch_to+0x134/0x150
-__schedule+0x12ac/0x172c
-schedule+0x70/0x90
-bit_wait+0x14/0x54
-__wait_on_bit+0x74/0xe0
-inode_wait_for_writeback+0xa0/0xe4
-evict+0xa4/0x298
-iput+0x33c/0x38c
-dentry_unlink_inode+0xd8/0xe4
-__dentry_kill+0xe8/0x22c
-shrink_dentry_list+0x1e8/0x4f0
-prune_dcache_sb+0x54/0x80
-super_cache_scan+0x114/0x164
-shrink_slab+0x5f8/0x708
-shrink_node+0x144/0x318
-kswapd+0xa10/0xc24
-kthread+0x124/0x134
-ret_from_fork+0x10/0x18
+Yes, it's an allyesconfig kernel.
+I did the same with pure:
 
- 
-Thread-5 D 0 3396 698 0x01000808
-Call trace:
-__switch_to+0x134/0x150
-__schedule+0x12ac/0x172c
-schedule+0x70/0x90
-try_to_free_pages+0x280/0x67c
-__alloc_pages_nodemask+0x918/0x145c
-fuse_copy_fill+0x15c/0x210
-fuse_dev_do_read+0x4e8/0xcd4
-fuse_dev_splice_read+0x84/0x1d8
-SyS_splice+0x6ac/0x8fc
-__sys_trace_return+0x0/0x4
+$ git diff
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 04a34c08e0a6..548b72b46eb1 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -179,7 +179,7 @@ enum pageflags {
+
+struct page;   /* forward declaration */
+
+-static inline struct page *compound_head(struct page *page)
++static inline __pure struct page *compound_head(struct page *page)
+{
+       unsigned long head = READ_ONCE(page->compound_head);
 
 
-u:r:kernel:s0 root 159 159 2 0 0 inode_wait_for_writeback 0 D 19 0 - 0 fg 6 [kswapd0] kswapd0
-u:r:kernel:s0 root 25798 25798 2 0 0 __fuse_request_send 0 S 19 0 - 0 fg 2 [kworker/u16:0] kworker/u16:0
-u:r:mediaprovider_app:s0:c203,c256,c512,c768 u0_a203 3254 3396 698 5736296 62012 try_to_free_pages 0 D 19 0 - 0 ta 4 com.android.providers.media.module Thread-5
+$ scripts/bloat-o-meter vmlinux.o.orig vmlinux.o
+add/remove: 3/13 grow/shrink: 63/689 up/down: 20910/-192081 (-171171)
+Function                                     old     new   delta
+ntfs_mft_record_alloc                      14414   16627   +2213
+migrate_pages                               8891   10819   +1928
+ext2_get_page.isra                          1029    2343   +1314
+kfence_init                                  180    1331   +1151
+page_remove_rmap                             754    1893   +1139
+f2fs_fsync_node_pages                       4378    5406   +1028
+[...]
+migrate_page_states                         7088    4842   -2246
+ntfs_mft_record_format                      2940       -   -2940
+lru_deactivate_file_fn                      9220    6277   -2943
+shrink_page_list                           20653   15749   -4904
+page_memcg                                  5149     193   -4956
+Total: Before=388869713, After=388698542, chg -0.04%
+
+$ ls -l vmlinux.o.orig vmlinux.o
+-rw-rw-r-- 1 mcroce mcroce 1295502680 Jun  8 16:47 vmlinux.o
+-rw-rw-r-- 1 mcroce mcroce 1295934624 Jun  8 16:28 vmlinux.o.orig
+
+vmlinux is ~420 kb smaller..
+
+-- 
+per aspera ad upstream
