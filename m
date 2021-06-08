@@ -2,64 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DD4C39F2C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 11:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B88539F423
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 12:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230398AbhFHJtY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Jun 2021 05:49:24 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:57977 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229536AbhFHJtX (ORCPT
+        id S232006AbhFHKwC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Jun 2021 06:52:02 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:47053 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231660AbhFHKv6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Jun 2021 05:49:23 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R611e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Ubkgp-5_1623145644;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0Ubkgp-5_1623145644)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 08 Jun 2021 17:47:25 +0800
-Subject: Re: [syzbot] WARNING in io_wqe_enqueue
-To:     syzbot <syzbot+ea2f1484cffe5109dc10@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <0000000000000bdfa905c3f6720f@google.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <b9cb6dc4-3dfe-de60-a933-1f423301b3ca@linux.alibaba.com>
-Date:   Tue, 8 Jun 2021 17:47:24 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.1
+        Tue, 8 Jun 2021 06:51:58 -0400
+Received: from [192.168.1.155] ([77.7.0.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1Mn2iP-1l6ou72jjT-00k7Qq; Tue, 08 Jun 2021 12:50:00 +0200
+Subject: Re: [PATCH RFC] fuse: add generic file store
+To:     Peng Tao <bergwolf@gmail.com>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Peng Tao <tao.peng@linux.alibaba.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>
+References: <1622537906-54361-1-git-send-email-tao.peng@linux.alibaba.com>
+ <YLeoucLiMOSPwn4U@google.com>
+ <244309bf-4f2e-342e-dd98-755862c643b8@metux.net>
+ <CA+a=Yy5moy0Bv=mhsrC9FrY+cEYt8+YJL8TvXQ=N7pNyktccRQ@mail.gmail.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <429fc51b-ece0-b5cb-9540-2e7f5b472d73@metux.net>
+Date:   Tue, 8 Jun 2021 12:49:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-In-Reply-To: <0000000000000bdfa905c3f6720f@google.com>
+In-Reply-To: <CA+a=Yy5moy0Bv=mhsrC9FrY+cEYt8+YJL8TvXQ=N7pNyktccRQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: tl
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:+iX9SxgmDWlSCJa3FT3ntRx0FN0dur6biN9j/XF0iY+NVrxfvHm
+ 1PSon1AqTAxfp33U3isDabq56uY4/9v3YuHy3CEnniiOdOAYNZDOJ/q9n5j9kTFIrKZEm/l
+ Fu/H+nEo4+SH3nna7q1Xi57Xe6PPovfC5vQNG49Y/VLoc4yyE0Ltbhea+IQzUpGozocKQCV
+ pvlASDPf1hk24We1g+G7Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5V3wurUshAM=:GGRA3dsVkMGU0N9FP5XpYv
+ jfpNHQ02cS4udUJ/G2JdnvgaWcl3ZRtlkb9588KNPsPtc9pnLC2TjpAWD5AP7+Zk/6zYFnNWN
+ PV9J3rdMsPg4i1dzaK+2rfITVcePRSJxLSHlQA1MRJClC6DYmGOsoioO0nrFvNkqXSX/S6hQV
+ +4vHKjhbiUlqoe1xoQkhrGIVmp04CSqtXMbt5JwJhRURe7FUBiZWC2ptJSW4VSmAbtmZ6C+4k
+ 4yQs7W6mLdGzfpm5L8oe4iCu5FVJb/Nq4UrlcJfcg21xpwi0qlbsO0Ty+bv4KVEYI2dKzb5nW
+ 3sFzGQh9nJB4ethF4CfLY4T9RgA3boQuY+3rWPfUmDgUsH+cKsEFqGy/5Z0FIet6homf//ZpM
+ fo9T1RC5q+nGAFqDLOMLXKAKsBKRk9nqAXKRiS4t3g7shmJpWHd8ex1kRNbJ72DeM/hr+wvsa
+ NkDZ6w4JLgYUDU/Ipvy3p25TJYd2wj4LkzV0bhyf6hMSi3FBjCQGOCTWDtGopzRZLUQhgY8pR
+ 526eaXiTjnG0Y0v/nIdXo4=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-在 2021/6/5 上午4:22, syzbot 写道:
-> syzbot has bisected this issue to:
+On 08.06.21 04:58, Peng Tao wrote:
+
+>> oh, this could be quite what I'm currently intending do implement
+>> (just considered 9p instead of fuse as it looks simpler to me):
+>>
+>> I'd like the server being able to directly send an already opened fd to
+>> the client (in response to it calling open()), quite like we can send
+>> fd's via unix sockets.
+>>
+>> The primary use case of that is sending already prepared fd's (eg. an
+>> active network connection, locked-down file fd, a device that the client
+>> can't open himself, etc).
+>>
+>> Is that what you're working on ?
+> If the server and client run on the same kernel, then yes, the current
+> RFC supports your use case as well, E.g.,
+> 1. the server opens a file, saves the FD to the kernel, and passes the
+> IDR to the client.
+> 2. the client retrieves the FD from the kernel
 > 
-> commit 24369c2e3bb06d8c4e71fd6ceaf4f8a01ae79b7c
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Tue Jan 28 00:15:48 2020 +0000
-> 
->      io_uring: add io-wq workqueue sharing
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17934777d00000
-> start commit:   f88cd3fb Merge tag 'vfio-v5.13-rc5' of git://github.com/aw..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=14534777d00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10534777d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=82d85e75046e5e64
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ea2f1484cffe5109dc10
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d5772fd00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10525947d00000
-> 
-> Reported-by: syzbot+ea2f1484cffe5109dc10@syzkaller.appspotmail.com
-> Fixes: 24369c2e3bb0 ("io_uring: add io-wq workqueue sharing")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> 
-This is not a bug, the repro program first set RLIMIT_NPROC to 0, then 
-submits an unbound work whcih raises a warning of
-WARN_ON_ONCE(!acct->max_workers). Since unbound->max_workers is
-task_rlimit(current, RLIMIT_NPROC), so it is expected.
+> Does it match your use case?
+
+Seems that's exactly what I'm looking for :)
+
+Could you perhaps give a little example code how it looks in userland ?
+
+
+--mtx
+
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
