@@ -2,100 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B3D39FDCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 19:35:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73A0A39FDDD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 19:38:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233653AbhFHRgl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Jun 2021 13:36:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
+        id S233365AbhFHRjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Jun 2021 13:39:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233584AbhFHRgl (ORCPT
+        with ESMTP id S233025AbhFHRjk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Jun 2021 13:36:41 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36AC8C061789
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jun 2021 10:34:31 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id u126so12275226pfu.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jun 2021 10:34:31 -0700 (PDT)
+        Tue, 8 Jun 2021 13:39:40 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D0C0C061787
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jun 2021 10:37:47 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id c12so16297232pfl.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jun 2021 10:37:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=YLvKoBEvfY2Ptqya3hzaWF4xLVwI7EHKO0HHIAZbjlk=;
-        b=i0MmDl8Ps0IZQmWQ2ViKg1qX561L8Orz5iYseHhCKEYr93sUci8K/7wS9nivt46/z8
-         myDrRIqzCtf6XZHgB/yp7wRZxT3r6mBuocIx00CTkorpFU3db3YRdvOAXbfrnieGxlgx
-         LCLQNEC2KqG1w+FfuXKHUpQh2dflywFCwrjhI=
+        bh=VYVl7szFEBK6C42IK2EXBO8BhWc8zsrG6U+k/87a+5E=;
+        b=cgGYIpNaZ6iE0KhM2pK2533D8tirYFFO5sH+DLDp6h6o2j5kwQMDrH2fxKCr9QIy/O
+         FDmzdwqj2T/+o0YiqJ+YQZkFC6HZUV2R5BMpGuGGMhgu5P9tQtKSTQhhe2PjxrjQSuJI
+         ma2t2S0KURAMesD+aZMf8z20bDbvrVf6t6hEQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=YLvKoBEvfY2Ptqya3hzaWF4xLVwI7EHKO0HHIAZbjlk=;
-        b=H8oyq2wBYsbPwRX6BhHU7atkZ3q5p7WBLvGtmFS0mK+/4W73p9paUTBCCIlQweJZBM
-         8eUhmBm7F9igddpDTstxdRGyVLRQ3MBpS2hOh/Cw+ioxAhEHZpI50Btb8LCJXLRXNSrj
-         h4Iv+ZDSHizv8Tmsslk4+885fVu+uXnUUihQ2dQAT0OCZSqhCiY6DUWJOc8Fybjv00yP
-         ePkjUEFd9qlq7eaEu3s+80KJ5aT/tTzqRVNu0NP9vrQ7QG2MfyeVHfkij3arrB1vM6ss
-         I2K36F7LRzlLZSTYf/V8EG1FUgKqXZztXKryiiVypQL5Ys7P9dxMSPbO7grA02AxuVpz
-         +V2Q==
-X-Gm-Message-State: AOAM533lFW5r2AzRbtAkhc+H5j73YoRk4D2RcdiHny2nWc04Zw3LoTjs
-        ZL1rLn6+fiG6gTv8WnmIVUy1sg==
-X-Google-Smtp-Source: ABdhPJw9cte543iNlOqM4Zf8WDgZK8UQ3GrQhbOt80HpmTn122EUoVoTmcwVaheYzTeFl8F9id315w==
-X-Received: by 2002:aa7:8114:0:b029:2e9:ae2b:7ff with SMTP id b20-20020aa781140000b02902e9ae2b07ffmr1055597pfi.48.1623173670797;
-        Tue, 08 Jun 2021 10:34:30 -0700 (PDT)
+        bh=VYVl7szFEBK6C42IK2EXBO8BhWc8zsrG6U+k/87a+5E=;
+        b=IvrO/dXHjZrmdlxQjwY0cxB1hNe2jl9HHqtklxLTmqT8vOW4SXsiYOnKvJrUujrrAH
+         nBABlfNFXXI1H155pS4IIebbZNIni0BLV6VUuJeanM7rW44Odrg2o7kdN1qSrP1lmQkN
+         KU50OzYI+h7CnwET6hNSzGuoXvZPtfJK0bBVAfx8Q9jhu6PJ72Fyrbzr9OR21uqnkEw0
+         aXQedL9ql+n6CBBx8y546H3KmKknY4VSqcg12DEDXmU/Nwd+TzsqzMjO6Qv3AJ9fMg0+
+         DjWC1y5zY1H22+APPv0TefzE9oBB0sqGrqSGGaEVcNhw8Jah60Zp1OlLt9VwMH2FNxyV
+         jN9w==
+X-Gm-Message-State: AOAM5332WoVFAADhqMKsNfvPPvlF/7R3EPgvqq8ywYj53iHzDiFGl1px
+        tn91MLyLvwvyPV1ezxSZuhMxnw==
+X-Google-Smtp-Source: ABdhPJyQ8uYoWu20PGLwrzt9tyJVMnFgrFO31FHFR6A9l/q0q9qRSLEOBallutB5qpBq34etUJ1Uwg==
+X-Received: by 2002:a05:6a00:9a:b029:2f1:6fd:aa51 with SMTP id c26-20020a056a00009ab02902f106fdaa51mr993390pfj.38.1623173866752;
+        Tue, 08 Jun 2021 10:37:46 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u19sm6420346pfi.127.2021.06.08.10.34.29
+        by smtp.gmail.com with ESMTPSA id h18sm12025517pgl.87.2021.06.08.10.37.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jun 2021 10:34:29 -0700 (PDT)
-Date:   Tue, 8 Jun 2021 10:34:29 -0700
+        Tue, 08 Jun 2021 10:37:46 -0700 (PDT)
+Date:   Tue, 8 Jun 2021 10:37:45 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     axboe@kernel.dk, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com, gmpy.liaowx@gmail.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mark pstore-blk as broken
-Message-ID: <202106081033.F59D7A4@keescook>
-References: <20210608161327.1537919-1-hch@lst.de>
+To:     Zhen Lei <thunder.leizhen@huawei.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] sysctl: remove trailing spaces and tabs
+Message-ID: <202106081037.7FBEA6D63E@keescook>
+References: <20210608075700.13173-1-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210608161327.1537919-1-hch@lst.de>
+In-Reply-To: <20210608075700.13173-1-thunder.leizhen@huawei.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 08, 2021 at 06:13:27PM +0200, Christoph Hellwig wrote:
-> pstore-blk just pokes directly into the pagecache for the block
-> device without going through the file operations for that by faking
-> up it's own file operations that do not match the block device ones.
+On Tue, Jun 08, 2021 at 03:57:00PM +0800, Zhen Lei wrote:
+> Run the following command to find and remove the trailing spaces and tabs:
 > 
-> As this breaks the control of the block layer of it's page cache,
-> and even now just works by accident only the best thing is to just
-> disable this driver.
+> sed -r -i 's/[ \t]+$//' kernel/sysctl*
 > 
-> Fixes: 17639f67c1d6 ("pstore/blk: Introduce backend for block devices")
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/pstore/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-> index 8adabde685f1..328da35da390 100644
-> --- a/fs/pstore/Kconfig
-> +++ b/fs/pstore/Kconfig
-> @@ -173,6 +173,7 @@ config PSTORE_BLK
->  	tristate "Log panic/oops to a block device"
->  	depends on PSTORE
->  	depends on BLOCK
-> +	depends on BROKEN
->  	select PSTORE_ZONE
->  	default n
->  	help
-> -- 
-> 2.30.2
-> 
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 
-NAK, please answer my concerns about your patches instead:
-https://lore.kernel.org/lkml/202012011149.5650B9796@keescook/
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
 Kees Cook
