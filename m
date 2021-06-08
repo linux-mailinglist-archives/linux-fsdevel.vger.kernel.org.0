@@ -2,167 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F2739F72A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 14:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 412FC39F73F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 15:02:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232732AbhFHM5S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Jun 2021 08:57:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25513 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232644AbhFHM5R (ORCPT
+        id S232739AbhFHNEd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Tue, 8 Jun 2021 09:04:33 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3174 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232644AbhFHNEc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Jun 2021 08:57:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623156924;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=x+SsMma3Ar3rP8pZze2lcFu2xVDJbqONiUJxA3GUBLM=;
-        b=T6yOrHp9bupaim5rcfvPuH0mWy5yozA35WdbHkXPBZtBb7hKkjMcgO058xkpgh/OEvSjtC
-        RQMcOglHnzk9K0YIi4B5sxLL1svjmkk/JX3TkerM/wGtsZOZNaep3baqzrNOpvS2zuVFUF
-        dr1vG2aSBdrr10art5jWnTQFhTNQQMA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-544-THXSXa15OuConKqzS8b_Kw-1; Tue, 08 Jun 2021 08:55:20 -0400
-X-MC-Unique: THXSXa15OuConKqzS8b_Kw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 05E07107ACC7;
-        Tue,  8 Jun 2021 12:55:19 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D7DCC5C1D5;
-        Tue,  8 Jun 2021 12:55:07 +0000 (UTC)
-Date:   Tue, 8 Jun 2021 08:55:05 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 1/2] audit: add filtering for io_uring records, addendum
-Message-ID: <20210608125504.GA2268484@madcap2.tricolour.ca>
-References: <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com>
- <3a2903574a4d03f73230047866112b2dad9b4a9e.1622467740.git.rgb@redhat.com>
- <CAHC9VhRa9dvCfPf5WHKYofrvQrGff7Lh+H4HMAhi_z3nK_rtoA@mail.gmail.com>
+        Tue, 8 Jun 2021 09:04:32 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Fzqnm1j93z6G8Ld;
+        Tue,  8 Jun 2021 20:49:48 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 8 Jun 2021 15:02:31 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
+ Tue, 8 Jun 2021 15:02:31 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 0/6] evm: Prepare for moving to the LSM infrastructure
+Thread-Topic: [PATCH v3 0/6] evm: Prepare for moving to the LSM infrastructure
+Thread-Index: AQHXO1m+0r2rDzPUfUeQgzgvelgBH6sKU6hA
+Date:   Tue, 8 Jun 2021 13:02:31 +0000
+Message-ID: <55b09274c7e14287ac2a6081fc98b4ef@huawei.com>
+References: <20210427113732.471066-1-roberto.sassu@huawei.com>
+In-Reply-To: <20210427113732.471066-1-roberto.sassu@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRa9dvCfPf5WHKYofrvQrGff7Lh+H4HMAhi_z3nK_rtoA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-06-07 19:15, Paul Moore wrote:
-> On Mon, May 31, 2021 at 9:45 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > The commit ("audit: add filtering for io_uring records") added support for
-> > filtering io_uring operations.
-> >
-> > Add checks to the audit io_uring filtering code for directory and path watches,
-> > and to keep the list counts consistent.
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  kernel/audit_tree.c  | 3 ++-
-> >  kernel/audit_watch.c | 3 ++-
-> >  kernel/auditfilter.c | 7 +++++--
-> >  3 files changed, 9 insertions(+), 4 deletions(-)
+> From: Roberto Sassu
+> Sent: Tuesday, April 27, 2021 1:37 PM
+> This patch set depends on:
 > 
-> Thanks for pointing these omissions out in the original patch.  When a
-> patch has obvious problems generally people just provide feedback and
-> the patch author incorporates the fixes; this helps ensure we don't
-> merge known broken patches, helping preserve `git bisect`.
+> https://lore.kernel.org/linux-integrity/20210409114313.4073-1-
+> roberto.sassu@huawei.com/
+> https://lore.kernel.org/linux-integrity/20210407105252.30721-1-
+> roberto.sassu@huawei.com/
 > 
-> Do you mind if I incorporate these suggestions, and the one in patch
-> 2/2, into the filtering patch in the original RFC patchset?  I'll add
-> a 'thank you' comment in the commit description as I did to the other
-> patch where you provided feedback.  I feel that is the proper way to
-> handle this.
+> One of the challenges that must be tackled to move IMA and EVM to the
+> LSM
+> infrastructure is to ensure that EVM is capable to correctly handle
+> multiple stacked LSMs providing an xattr at file creation. At the moment,
+> there are few issues that would prevent a correct integration. This patch
+> set aims at solving them.
 
-I should have been more explicit.  The intent was to have the fixes
-incorporated directly into your patches since they aren't committed in
-any public tree yet, exactly for bisect reasons.  I didn't add a
-"fixes:" tag because it had no public commit hash, but could/should have
-instead made a note about it or even used the "fixup:" subject tag.
-Posting using the thread as the "in-reply-to:" for this patchset was the
-simplest and clearest way to demonstrate the intent and check they were
-correct and I was too lazy to add a cover letter explaining that.  There
-is also a Co-developed-by: tag that could be used if you feel that is
-appropriate, now that you mention it, but that appears to imply a much
-stronger equal contribution.
+Hi
 
-> > diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-> > index 6c91902f4f45..2be285c2f069 100644
-> > --- a/kernel/audit_tree.c
-> > +++ b/kernel/audit_tree.c
-> > @@ -727,7 +727,8 @@ int audit_make_tree(struct audit_krule *rule, char *pathname, u32 op)
-> >  {
-> >
-> >         if (pathname[0] != '/' ||
-> > -           rule->listnr != AUDIT_FILTER_EXIT ||
-> > +           (rule->listnr != AUDIT_FILTER_EXIT &&
-> > +            rule->listnr != AUDIT_FILTER_URING_EXIT) ||
-> >             op != Audit_equal ||
-> >             rule->inode_f || rule->watch || rule->tree)
-> >                 return -EINVAL;
-> > diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-> > index 2acf7ca49154..698b62b4a2ec 100644
-> > --- a/kernel/audit_watch.c
-> > +++ b/kernel/audit_watch.c
-> > @@ -183,7 +183,8 @@ int audit_to_watch(struct audit_krule *krule, char *path, int len, u32 op)
-> >                 return -EOPNOTSUPP;
-> >
-> >         if (path[0] != '/' || path[len-1] == '/' ||
-> > -           krule->listnr != AUDIT_FILTER_EXIT ||
-> > +           (krule->listnr != AUDIT_FILTER_EXIT &&
-> > +            krule->listnr != AUDIT_FILTER_URING_EXIT) ||
-> >             op != Audit_equal ||
-> >             krule->inode_f || krule->watch || krule->tree)
-> >                 return -EINVAL;
-> > diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> > index c21119c00504..bcdedfd1088c 100644
-> > --- a/kernel/auditfilter.c
-> > +++ b/kernel/auditfilter.c
-> > @@ -153,7 +153,8 @@ char *audit_unpack_string(void **bufp, size_t *remain, size_t len)
-> >  static inline int audit_to_inode(struct audit_krule *krule,
-> >                                  struct audit_field *f)
-> >  {
-> > -       if (krule->listnr != AUDIT_FILTER_EXIT ||
-> > +       if ((krule->listnr != AUDIT_FILTER_EXIT &&
-> > +            krule->listnr != AUDIT_FILTER_URING_EXIT) ||
-> >             krule->inode_f || krule->watch || krule->tree ||
-> >             (f->op != Audit_equal && f->op != Audit_not_equal))
-> >                 return -EINVAL;
-> > @@ -250,6 +251,7 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule_data *
-> >                 pr_err("AUDIT_FILTER_ENTRY is deprecated\n");
-> >                 goto exit_err;
-> >         case AUDIT_FILTER_EXIT:
-> > +       case AUDIT_FILTER_URING_EXIT:
-> >         case AUDIT_FILTER_TASK:
-> >  #endif
-> >         case AUDIT_FILTER_USER:
-> > @@ -982,7 +984,8 @@ static inline int audit_add_rule(struct audit_entry *entry)
-> >         }
-> >
-> >         entry->rule.prio = ~0ULL;
-> > -       if (entry->rule.listnr == AUDIT_FILTER_EXIT) {
-> > +       if (entry->rule.listnr == AUDIT_FILTER_EXIT ||
-> > +           entry->rule.listnr == AUDIT_FILTER_URING_EXIT) {
-> >                 if (entry->rule.flags & AUDIT_FILTER_PREPEND)
-> >                         entry->rule.prio = ++prio_high;
-> >                 else
+anything I should do more for this patch set?
+
+The first two patches are bug fixes and should be ready for merge.
+
+For the rest, this patch set would be still useful even if IMA/EVM are
+not moved to the LSM infrastructure. Its main purpose is to make it
+possible to use multiple LSMs providing an implementation for the
+inode_init_security hook.
+
+Although this wouldn't be needed by LSMs already in the kernel,
+as there can be only one major LSM, it would be useful for people
+developing new LSMs.
+
+Thanks
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
+
+> From the LSM infrastructure side, the LSM stacking feature added the
+> possibility of registering multiple implementations of the security hooks,
+> that are called sequentially whenever someone calls the corresponding
+> security hook. However, security_inode_init_security() and
+> security_old_inode_init_security() are currently limited to support one
+> xattr provided by LSM and one by EVM.
 > 
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+> In addition, using the call_int_hook() macro causes some issues. According
+> to the documentation in include/linux/lsm_hooks.h, it is a legitimate case
+> that an LSM returns -EOPNOTSUPP when it does not want to provide an
+> xattr.
+> However, the loop defined in the macro would stop calling subsequent LSMs
+> if that happens. In the case of security_old_inode_init_security(), using
+> the macro would also cause a memory leak due to replacing the *value
+> pointer, if multiple LSMs provide an xattr.
+> 
+> From EVM side, the first operation to be done is to change the definition
+> of evm_inode_init_security() to be compatible with the security hook
+> definition. Unfortunately, the current definition does not provide enough
+> information for EVM, as it must have visibility of all xattrs provided by
+> LSMs to correctly calculate the HMAC. This patch set changes the security
+> hook definition by replacing the name, value and len triple with the xattr
+> array allocated by security_inode_init_security().
+> 
+> Secondly, EVM must know how many elements are in the xattr array. EVM
+> can
+> rely on the fact that the xattr array must be terminated with an element
+> with name field set to NULL, but can also benefit from the enhancements
+> that have been included in this version of the patch set.
+> 
+> Casey suggested to use the reservation mechanism currently implemented
+> for
+> other security blobs, for xattrs. In this way,
+> security_inode_init_security() can know after LSM initialization how many
+> slots for xattrs should be allocated, and LSMs know the offset in the
+> array from where they can start writing xattrs.
+> 
+> One of the problem was that LSMs can decide at run-time, although they
+> reserved a slot, to not use it (for example because they were not
+> initialized). Given that the initxattrs() method implemented by filesystems
+> expect that the array is continuous, they would miss the slots after the
+> one not being initialized. security_inode_init_security() should have been
+> modified to compact the array.
+> 
+> Instead, the preferred solution was to introduce the base slot as a
+> parameter, in addition to the xattr array, containing the up to date
+> information about the slots used by previous LSMs. The correctness of the
+> update of the slot is ensured by both the LSMs, if they use the new helper
+> lsm_find_xattr_slot(), and by security_inode_init_security() which checks
+> the slot each time after an LSM executes the inode_init_security hook.
+> 
+> This patch set has been tested by introducing several instances of a
+> TestLSM (some providing an xattr, some not, one with a wrong
+> implementation
+> to see how the LSM infrastructure handles it). The patch is not included
+> in this set but it is available here:
+> 
+> https://github.com/robertosassu/linux/commit/c7e01af6cb2c6780f0b143070
+> 269fff7e30053f9
+> 
+> The test, added to ima-evm-utils, is available here:
+> 
+> https://github.com/robertosassu/ima-evm-utils/blob/evm-multiple-lsms-v3-
+> devel-v7/tests/evm_multiple_lsms.test
+> 
+> The test takes a UML kernel built by Travis and launches it several times,
+> each time with a different combination of LSMs. After boot, it first checks
+> that there is an xattr for each LSM providing it, and then calculates the
+> HMAC in user space and compares it with the HMAC calculated by EVM in
+> kernel space.
+> 
+> A test report can be obtained here:
+> 
+> https://travis-ci.com/github/robertosassu/ima-evm-utils/jobs/501101861
+> 
+> SELinux Test Suite result (diff 5.11.14-200.fc33.x86_64 5.12.0-rc8+):
+> -Files=70, Tests=1099, 82 wallclock secs ( 0.35 usr  0.09 sys +  7.39 cusr 10.14
+> csys = 17.97 CPU)
+> +Files=70, Tests=1108, 85 wallclock secs ( 0.34 usr  0.10 sys +  7.25 cusr 11.39
+> csys = 19.08 CPU)
+>  Result: FAIL
+> -Failed 2/70 test programs. 5/1099 subtests failed.
+> +Failed 2/70 test programs. 5/1108 subtests failed.
+> 
+> Smack Test Suite result:
+> smack_set_ambient 1 TPASS: Test "smack_set_ambient" success.
+> smack_set_current 1 TPASS: Test "smack_set_current" success.
+> smack_set_doi 1 TPASS: Test "smack_set_doi" success.
+> smack_set_netlabel 1 TPASS: Test "smack_set_netlabel" success.
+> smack_set_socket_labels    1  TPASS  :  Test smack_set_socket_labels
+> success.
+> smack_set_cipso 1 TPASS: Test "smack_set_cipso" success.
+> smack_set_direct 1 TPASS: Test "smack_set_direct" success.
+> smack_set_load 1 TPASS: Test "smack_set_load" success.
+> smack_set_onlycap 1 TFAIL: The smack label reported for "/smack/onlycap"
+> 
+> Lastly, running the test on reiserfs to check
+> security_old_inode_init_security(), some issues have been discovered: a
+> free of xattr->name which is not correct after commit 9548906b2bb7 ('xattr:
+> Constify ->name member of "struct xattr"'), missing calls to
+> reiserfs_security_free() and a misalignment with
+> security_inode_init_security() (the old version expects the full xattr name
+> with the security. prefix, the new version just the suffix). The last issue
+> has not been fixed yet.
+> 
+> Changelog
+> 
+> v2:
+> - rewrite selinux_old_inode_init_security() to use
+>   security_inode_init_security()
+> - add lbs_xattr field to lsm_blob_sizes structure, to give the ability to
+>   LSMs to reserve slots in the xattr array (suggested by Casey)
+> - add new parameter base_slot to inode_init_security hook definition
+> 
+> v1:
+> - add calls to reiserfs_security_free() and initialize sec->value to NULL
+>   (suggested by Tetsuo and Mimi)
+> - change definition of inode_init_security hook, replace the name, value
+>   and len triple with the xattr array (suggested by Casey)
+> - introduce lsm_find_xattr_slot() helper for LSMs to find an unused slot in
+>   the passed xattr array
+> 
+> Roberto Sassu (6):
+>   reiserfs: Add missing calls to reiserfs_security_free()
+>   security: Rewrite security_old_inode_init_security()
+>   security: Pass xattrs allocated by LSMs to the inode_init_security
+>     hook
+>   security: Support multiple LSMs implementing the inode_init_security
+>     hook
+>   evm: Align evm_inode_init_security() definition with LSM
+>     infrastructure
+>   evm: Support multiple LSMs providing an xattr
+> 
+>  fs/reiserfs/namei.c                 |   4 +
+>  fs/reiserfs/xattr_security.c        |   1 +
+>  include/linux/evm.h                 |  19 +++--
+>  include/linux/lsm_hook_defs.h       |   4 +-
+>  include/linux/lsm_hooks.h           |  22 +++++-
+>  security/integrity/evm/evm.h        |   2 +
+>  security/integrity/evm/evm_crypto.c |   9 ++-
+>  security/integrity/evm/evm_main.c   |  30 +++++--
+>  security/security.c                 | 116 +++++++++++++++++++++++-----
+>  security/selinux/hooks.c            |  18 +++--
+>  security/smack/smack_lsm.c          |  27 ++++---
+>  11 files changed, 194 insertions(+), 58 deletions(-)
+> 
+> --
+> 2.25.1
 
