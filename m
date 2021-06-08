@@ -2,180 +2,250 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9558E39EAA3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 02:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5E8139EB56
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jun 2021 03:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230366AbhFHAWa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Jun 2021 20:22:30 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:34606 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230209AbhFHAWa (ORCPT
+        id S231148AbhFHB23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Jun 2021 21:28:29 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:54173 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230209AbhFHB23 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Jun 2021 20:22:30 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15809tTS004509;
-        Mon, 7 Jun 2021 17:20:32 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=IVK68f95zn6CENMdKH0iXxJ7dtkbyJAbPipxz4l/l/E=;
- b=Gg1bYcOKcOdtfQqzOfxhB2mIkAHABhPFYmTzTxy0cQCOkeHMLV9ZpQTw1TF/p8g01Ork
- hivXUndjD7iJl7RI/msjvt08SirvOXIejt/gUVpLzFfSa1+HpmTr+7lvgTpJkWzXpiak
- FTbzwRLwiS0tVKCi6Nh+Fy4fU95+28a1zKU= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 391rhyhvud-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 07 Jun 2021 17:20:32 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 7 Jun 2021 17:20:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZiwPU2DepKsC8LGqByvr/AImdMK2kmrdRiOJBntJnvm425N6q9PE4S9+XVxTy4l+Wsud5RoSlgCA+EMPRlHSauZEO+Y/H1q5JVm9uBOoCH15F8rwZqbyFBY23eHgBv22rOx7YVN5usEwFrJpiZ+TtbbuF5cef9tNT/k8zEMk3EipBXrdFfZpcev+tjvbUXcU59pWlceqgL4rGMebdxd5f5BL7pflTend+9ueeuNjmTB7nnlMGFeOGvCAqFTHzN6Tpb/vbB+dvvBOHU85vHKHTpaUbJ5EtRN52KyQ6vm1ajXYrX1spbnhqJoO0TiHbISFiI4cG2sQiIXiituhO2oJ4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IVK68f95zn6CENMdKH0iXxJ7dtkbyJAbPipxz4l/l/E=;
- b=M3ku3Wnhc/It1cHEiaLwkRCGAZr7E5mptorMdnuKaBP1gCavBqY2xBkCLBYotVZhHagPVmzqhYJ6cxQeBGRuG7vPLcq6OTkce837iSrnRGv0k7e0A/46/tglFwt5ImmQgw/tIPkZj/JeY23p5FSESBh/Q0QsEyEbyZpPKB1Dgx3fPpga9gsH4iTCevuOIRMHdSmJ+puf45OcD9JQFurHyn8X8s3f5yZ8d3QEopEsYN/fB2QDMTMdi43f2LTx463oU8E7W1qSFLxdy50e+L/AdJQBI/UW9Kr/GVJUvyrnhfo4p1VKnJwzHN6vWt1Fw2SjflvGMjdJTCWzkSxm1jvj0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Authentication-Results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=fb.com;
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
- by BYAPR15MB2712.namprd15.prod.outlook.com (2603:10b6:a03:15c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.29; Tue, 8 Jun
- 2021 00:20:29 +0000
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::dd03:6ead:be0f:eca0]) by BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::dd03:6ead:be0f:eca0%5]) with mapi id 15.20.4195.030; Tue, 8 Jun 2021
- 00:20:29 +0000
-Date:   Mon, 7 Jun 2021 17:20:25 -0700
-From:   Roman Gushchin <guro@fb.com>
-To:     Dennis Zhou <dennis@kernel.org>
-CC:     Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <dchinner@redhat.com>, <cgroups@vger.kernel.org>
-Subject: Re: [PATCH v7 6/6] writeback, cgroup: release dying cgwbs by
- switching attached inodes
-Message-ID: <YL63yf3oIuLDlxNF@carbon.DHCP.thefacebook.com>
-References: <20210604013159.3126180-1-guro@fb.com>
- <20210604013159.3126180-7-guro@fb.com>
- <YLvt8f+r7aFkmluG@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <YLvt8f+r7aFkmluG@google.com>
-X-Originating-IP: [2620:10d:c090:400::5:2c0c]
-X-ClientProxiedBy: BY5PR16CA0015.namprd16.prod.outlook.com
- (2603:10b6:a03:1a0::28) To BYAPR15MB4136.namprd15.prod.outlook.com
- (2603:10b6:a03:96::24)
+        Mon, 7 Jun 2021 21:28:29 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 34623580583;
+        Mon,  7 Jun 2021 21:26:37 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 07 Jun 2021 21:26:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        WH1t09n48tt98CsYrFQhoATRT0+qevpaW5ZsSX8+uss=; b=x5ExHTr/8FY2UUUp
+        NpEuvTuhBpj4TfDzVODt3vX7O2lqkiXn577w6P8YD92JvJ31+ZJ52w2crqtZA6gj
+        q15MqKlUCmofb/6i5wUDI9kKquSrxIRe4YIzwCdEM6HhYu1tB2vDFOIP5B/vOw4/
+        v05oU+yi8qs9sqHpmGJRkii0hAfX6w1y88sJFhDq3G+OHImQYFB0JJ8YE9dKnqIN
+        wBOBLw5h8cIWciV1G6HnVkj70a8AFNzl7l41tjPIlf+o4DvnWZh7YLNUuk5nVoOw
+        /AuMJKLMmHzi/6erBlSDwBf1gqYty7Ot0QCgBhMMbv4B8Vg7UXtGtU8Dso29RA9V
+        CVdUvw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=WH1t09n48tt98CsYrFQhoATRT0+qevpaW5ZsSX8+u
+        ss=; b=SSMxKToEY4iFxsW7V017XYUYOhIvdeYbo5oG/kGo8HTwH5Rzvlv5Tv86C
+        IvtrdU92WbBK25JRaL7Wt5tPzIOOLegc5kEMgLs6/33B9WddZfNR6XyRqqP1+qhA
+        MA8TapDsDwgUbxT1UY2yIyXD0a73qfzc/sWJIgemPfbbKSo7HCzuFy00/mllNMd0
+        GV9KfCB+F0ob7ZHLH+4ccSdr9+CKCjjxPAABP+baJHVpMXD+DGzKEYWPLwNu9v7b
+        l5e6sL2jqzNMJ6DotYcL1Vl1FAp78/ECDDG/BcYdndzr6VV2pJVAWR6W1AMMWMyU
+        YrXJVTk63ui6Lm+y25yB0yrh8Mz1w==
+X-ME-Sender: <xms:Sce-YAaCS4nD2zGyY-8A0OjaGc0-7f9r8X3hRlAWxBrUUG52fxRU6Q>
+    <xme:Sce-YLbcdaUJLXtLeuJ0qd8NyuruDvtG_iBQgYDmaVzvuPEo7GLHLnHs_7alMzaBY
+    kaQkjNcD_5d>
+X-ME-Received: <xmr:Sce-YK_VopoVvguWZmafKhLYUrLOA4br2zqHFlNRoM6HxYLMQtw4FbqC6_l05-NMjrAmWWClm2usF4j8zLRZkA_fSj0I-w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfedtkedgfeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    fgleelkeetheelgeehueejueduhfeufffgleehgfevtdehhffhhffhtddugfefheenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:Sse-YKqhhyfs3dNu1DkO08bkM_nsPjL6ctJtg-Xzp3SltzTyA7kX2w>
+    <xmx:Sse-YLpV-mBgA3WdaTYIi2xE1GqCYIrzxmtYZkIEqZr76gKNGTY0Lw>
+    <xmx:Sse-YIQ4-gdIcHNhdLxcABMiEHFfNcItEYi33ct-bggAD3s5FGBT5g>
+    <xmx:Tce-YER0X1Xy_ssBGqhya4EOjF1jTbaiGwf-dmc4Q6BalkqQsIKLzw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 7 Jun 2021 21:26:28 -0400 (EDT)
+Message-ID: <d4a3f3c717e786e8d0d26d044ef3dbe8b913452c.camel@themaw.net>
+Subject: Re: [PATCH v5 2/6] kernfs: add a revision to identify directory
+ node changes
+From:   Ian Kent <raven@themaw.net>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>,
+        Fox Chen <foxhlchen@gmail.com>,
+        Brice Goglin <brice.goglin@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 08 Jun 2021 09:26:25 +0800
+In-Reply-To: <87a6o1k1cu.fsf@disp2133>
+References: <162306058093.69474.2367505736322611930.stgit@web.messagingengine.com>
+         <162306071065.69474.8064509709844383785.stgit@web.messagingengine.com>
+         <87a6o1k1cu.fsf@disp2133>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:2c0c) by BY5PR16CA0015.namprd16.prod.outlook.com (2603:10b6:a03:1a0::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.21 via Frontend Transport; Tue, 8 Jun 2021 00:20:29 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f6dc09d2-6527-4cae-b199-08d92a1338b7
-X-MS-TrafficTypeDiagnostic: BYAPR15MB2712:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB2712B03BD919E14EE4EC06C6BE379@BYAPR15MB2712.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: BR+tBukYmg/zo2oUEuaIZ1i2p0v3t7ErgU1bjYA1eINhLWF7ax7LW0ECek/x7qhG23PTKZD4bsPK7MuNRU60psDWF1vms8BTuSzsDitDSeRKbcKSZMjZQdDoCvtP8bGsAF46mOL1+pkx5fBxPCpOicQTttyst3u9gvDqK1uq+Syff2bQXDxPCegtZKTdfXf9tbf4w6NQ/0G2V2Re8K4mVx6AG6vVzUW+DlW5lI8GcSD01TE858PWJ5amolsPeL2MflAov8nMgymDcFN6dCgIqPsJBUEjEs8A+Acz5SUz7usSmry4pcxDJYku1xLs70pF8j+kkxCyY4culEkT6vDJzz5t0WVy4/JrCCqX0P1JaEllzslz/xWAqNjSsjbwEhJUKYKyVZyq3CBYDGKVnHe9bFbPt11SMXPdXjhgPueE/Jjd8yEKHZV1SSKpQ9jQ0u4zwN1TIa2GtM5y3QwwDc4kbYUIbqDFnNy4ZGmz0EXYhV1HP1mVkEn8VEShkVo76Ljk0ZZD8HMw7ubplLIe66IWWWwdUIR8pYLH4SqJs3QQ42V3iR6U2vW2vpvgg3f0FCwvd8W0j2ZwxVuQBrDCs0y2lg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(366004)(136003)(376002)(39860400002)(346002)(54906003)(316002)(66946007)(186003)(8676002)(5660300002)(8936002)(66476007)(66556008)(9686003)(478600001)(7696005)(6916009)(83380400001)(6666004)(6506007)(4326008)(2906002)(16526019)(38100700002)(52116002)(55016002)(86362001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?k91FgOR8WleEEEJo22Bpncb4AiV4qSB96mutp1vY5HZ4ADEe8ZA+NefUlpFH?=
- =?us-ascii?Q?o8xNdxP7R9yzSRKJxx442Qzs0WKyjV6jCpdsbV+ESGB0l0nIzUgGii2v91mi?=
- =?us-ascii?Q?bp3kemq7JpQ5442ji5gNysZCFhZtqvUCpP3gGV1eGwYWIZeaBN/1rPfYpjwW?=
- =?us-ascii?Q?hNJ8Ur+XRDUY68qSJvz5Nef9mhFYA6bj86Vqgl/CKFH2V/3xCVWpAqGn4kWa?=
- =?us-ascii?Q?T4PVYXV7FmzGWNZO7BN65kJsZHh0HakhpIfr2yhOAIcOVmf3W7alz20ooph9?=
- =?us-ascii?Q?nmsGEnFK3aIkhXBzVmpOjizM40sm8C3IaCpodL3KvSxXzUZr05/A7JgCvq3H?=
- =?us-ascii?Q?r0B6Su4mccNV02WalXt1Q39rSAb8fD4meC+DTEqct7A57DwFOQGCxm6x47Oj?=
- =?us-ascii?Q?2PTor8MvMxohVT8qOlVLsb7d67ZOb009rYk1KfyYNWe5yPqSFUUsYasitPDs?=
- =?us-ascii?Q?1yJa7mVDR8GDGCbPhC68erRsn96w+RJ3LIAFbHzoYyTPZvqwpgVVqcq+NHkK?=
- =?us-ascii?Q?PgIBOuGoUraN0+f1N7BVtJU4viSQFvaujoRFlCYc7f9LQtHJ+fc81nPV4/1D?=
- =?us-ascii?Q?AdzwRxlE5IBDEkSoD8D7CTpQZH7rPcngDcrnFk7BmWnSaA1fNCbgOCJ/yTn4?=
- =?us-ascii?Q?e/bp2+FEHoTtdTOIweP8QQ32vNKfzjBm1Tpkm8PICy5bZaTFh8b/CKEBKr4g?=
- =?us-ascii?Q?087Yg7IUK2FoXz1K/DS0oc3d7AQ8r/qY88hQvxvgn7Uzn1EWeMW002yu4AEi?=
- =?us-ascii?Q?mFrn7DT72NjBpnnJ2hlTj2N73SOsDyLOxbmlGtPP66vzn3dk94XmtG0NGycz?=
- =?us-ascii?Q?MgaVwoig77JAcMdAsvIUW7L6CojSXYwvW9BswFQlBPQBRJUQYl9qoIn4FHDU?=
- =?us-ascii?Q?dy8mETH7JfXVWNZyUge1HgxmAwU+56c8tyrMKV/jPPaV+UNvAdwFcpVidb6s?=
- =?us-ascii?Q?DmV+fUEzwWu61IDmrmSIjYZE0khWjdISWAJb9VZKvvrowNupXVqTnUhkgDI1?=
- =?us-ascii?Q?gLddw0GUhLrl3x7UIIMSeBOV/tyXs6wBzNSs2IWcL4Od6Ci8dF5q85uvbESK?=
- =?us-ascii?Q?om0Gnyz3cP2ce7M4PRy1lD7Kl2hLmTISZHxtS4xuRD+JsxtYSpNZIzFBaA3B?=
- =?us-ascii?Q?v762orD+KqNaEytzoWqMsMr5eTGS29YfC6vhGUsjmA2mV9RK/seWhFUn8Myl?=
- =?us-ascii?Q?BOSYpoQQbt7yCreRjQV7WN0uoqNiBEl0fJFkxAswy10GpsyG2Ic4nl4U7exQ?=
- =?us-ascii?Q?6OYS8x3RHH/UVJPLRJ+yrZakKEVLNaplx0x1QLwCEaKkSbuRQ8rj57A+v3k6?=
- =?us-ascii?Q?0c0SmqXYJm2oS2gokAYl4vqnQ4tw6veD0wp8SZFy5AO/Gg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6dc09d2-6527-4cae-b199-08d92a1338b7
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2021 00:20:29.6531
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Pa7egUtFcnZnPbsAWbw1C48OpIxChjiaeBSjclcI8E7Pdyu67tscSU6KMYlQ6mb4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2712
-X-OriginatorOrg: fb.com
-X-Proofpoint-GUID: 3rFgCFOYt_YULrstMiecIdB1w_ggVOT5
-X-Proofpoint-ORIG-GUID: 3rFgCFOYt_YULrstMiecIdB1w_ggVOT5
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-06-07_15:2021-06-04,2021-06-07 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=423
- priorityscore=1501 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 adultscore=0 phishscore=0 mlxscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2104190000 definitions=main-2106070161
-X-FB-Internal: deliver
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 05, 2021 at 09:34:41PM +0000, Dennis Zhou wrote:
-> Hello,
+On Mon, 2021-06-07 at 12:53 -0500, Eric W. Biederman wrote:
+> Ian Kent <raven@themaw.net> writes:
 > 
-> On Thu, Jun 03, 2021 at 06:31:59PM -0700, Roman Gushchin wrote:
-> > Asynchronously try to release dying cgwbs by switching attached inodes
-> > to the bdi's wb. It helps to get rid of per-cgroup writeback
-> > structures themselves and of pinned memory and block cgroups, which
-> > are significantly larger structures (mostly due to large per-cpu
-> > statistics data). This prevents memory waste and helps to avoid
-> > different scalability problems caused by large piles of dying cgroups.
+> > Add a revision counter to kernfs directory nodes so it can be used
+> > to detect if a directory node has changed.
 > > 
-> > Reuse the existing mechanism of inode switching used for foreign inode
-> > detection. To speed things up batch up to 115 inode switching in a
-> > single operation (the maximum number is selected so that the resulting
-> > struct inode_switch_wbs_context can fit into 1024 bytes). Because
-> > every switching consists of two steps divided by an RCU grace period,
-> > it would be too slow without batching. Please note that the whole
-> > batch counts as a single operation (when increasing/decreasing
-> > isw_nr_in_flight). This allows to keep umounting working (flush the
-> > switching queue), however prevents cleanups from consuming the whole
-> > switching quota and effectively blocking the frn switching.
+> > There's an assumption that sizeof(unsigned long) <= sizeof(pointer)
+> > on all architectures and as far as I know that assumption holds.
 > > 
-> > A cgwb cleanup operation can fail due to different reasons (e.g. not
-> > enough memory, the cgwb has an in-flight/pending io, an attached inode
-> > in a wrong state, etc). In this case the next scheduled cleanup will
-> > make a new attempt. An attempt is made each time a new cgwb is offlined
-> > (in other words a memcg and/or a blkcg is deleted by a user). In the
-> > future an additional attempt scheduled by a timer can be implemented.
+> > So adding a revision counter to the struct kernfs_elem_dir variant
+> > of
+> > the kernfs_node type union won't increase the size of the
+> > kernfs_node
+> > struct. This is because struct kernfs_elem_dir is at least
+> > sizeof(pointer) smaller than the largest union variant. It's
+> > tempting
+> > to make the revision counter a u64 but that would increase the size
+> > of
+> > kernfs_node on archs where sizeof(pointer) is smaller than the
+> > revision
+> > counter.
+> > 
+> > Signed-off-by: Ian Kent <raven@themaw.net>
+> > ---
+> >  fs/kernfs/dir.c             |    8 ++++++++
+> >  fs/kernfs/kernfs-internal.h |   24 ++++++++++++++++++++++++
+> >  include/linux/kernfs.h      |    5 +++++
+> >  3 files changed, 37 insertions(+)
+> > 
+> > diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+> > index 33166ec90a112..b88432c48851f 100644
+> > --- a/fs/kernfs/dir.c
+> > +++ b/fs/kernfs/dir.c
+> > @@ -372,6 +372,7 @@ static int kernfs_link_sibling(struct
+> > kernfs_node *kn)
+> >         /* successfully added, account subdir number */
+> >         if (kernfs_type(kn) == KERNFS_DIR)
+> >                 kn->parent->dir.subdirs++;
+> > +       kernfs_inc_rev(kn->parent);
+> >  
+> >         return 0;
+> >  }
+> > @@ -394,6 +395,7 @@ static bool kernfs_unlink_sibling(struct
+> > kernfs_node *kn)
+> >  
+> >         if (kernfs_type(kn) == KERNFS_DIR)
+> >                 kn->parent->dir.subdirs--;
+> > +       kernfs_inc_rev(kn->parent);
+> >  
+> >         rb_erase(&kn->rb, &kn->parent->dir.children);
+> >         RB_CLEAR_NODE(&kn->rb);
+> > @@ -1105,6 +1107,12 @@ static struct dentry
+> > *kernfs_iop_lookup(struct inode *dir,
+> >  
+> >         /* instantiate and hash dentry */
+> >         ret = d_splice_alias(inode, dentry);
+> > +       if (!IS_ERR(ret)) {
+> > +               if (unlikely(ret))
+> > +                       kernfs_set_rev(parent, ret);
+> > +               else
+> > +                       kernfs_set_rev(parent, dentry);
 > 
-> I've been thinking about this for a little while and the only thing I'm
-> not super thrilled by is that the subsequent cleanup work trigger isn't
-> due to forward progress.
-> 
-> As future work, we could tag the inodes to switch when writeback
-> completes instead of using a timer. This would be nice because then we
-> only have to make a single (successful) pass switching the inodes we can
-> and then mark the others to switch. Once a cgwb is killed no one else
-> can attach to it so we should be good there.
-> 
-> I don't think this is a blocker or even necessary, I just wanted to put
-> it out there as possible future direction instead of a timer.
+> Do we care about d_time on non-NULL dentries?
 
-Yeah, I agree that it's a good direction to explore. It will be likely
-more intrusive and will require new inode flag. So I'd leave it for further
-improvements.
+Would we ever need to use it avoid a search for any other cases?
 
-Thank you for reviewing the series!
+Probably not ... those export ops mean that some dentries might
+not have d_time set.
+
+Maybe it's best to put a comment in about only using it for
+negative dentries and set it unconditionally in ->lookup() as
+you describe.
+
+> 
+> For d_splice_alias to return a different dentry implies
+> that the dentry was non-NULL.
+> 
+> I am wondering if having a guarantee that d_time never changes could
+> help simplify the implementation.  For never changing it would see to
+> make sense to call kernfs_set_rev before d_splice_alias on dentry,
+> and
+> simply not worry about it after d_splice_alias.
+
+Yes, I was tempted to do that.
+
+> 
+> > +       }
+> >   out_unlock:
+> >         mutex_unlock(&kernfs_mutex);
+> >         return ret;
+> > diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-
+> > internal.h
+> > index ccc3b44f6306f..1536002584fc4 100644
+> > --- a/fs/kernfs/kernfs-internal.h
+> > +++ b/fs/kernfs/kernfs-internal.h
+> > @@ -81,6 +81,30 @@ static inline struct kernfs_node
+> > *kernfs_dentry_node(struct dentry *dentry)
+> >         return d_inode(dentry)->i_private;
+> >  }
+> >  
+> > +static inline void kernfs_set_rev(struct kernfs_node *kn,
+> > +                                 struct dentry *dentry)
+> > +{
+> > +       if (kernfs_type(kn) == KERNFS_DIR)
+> > +               dentry->d_time = kn->dir.rev;
+> > +}
+> > +
+> > +static inline void kernfs_inc_rev(struct kernfs_node *kn)
+> > +{
+> > +       if (kernfs_type(kn) == KERNFS_DIR)
+> > +               kn->dir.rev++;
+> > +}
+> > +
+> > +static inline bool kernfs_dir_changed(struct kernfs_node *kn,
+> > +                                     struct dentry *dentry)
+> > +{
+> > +       if (kernfs_type(kn) == KERNFS_DIR) {
+> > +               /* Not really a time bit it does what's needed */
+> > +               if (time_after(kn->dir.rev, dentry->d_time))
+> > +                       return true;
+> 
+> Why not simply make this:
+>                 if (kn->dir.rev != dentry->d_time)
+>                         return true;
+> 
+> I don't see what is gained by not counting as changed something in
+> the
+> wrong half of the values.
+
+Yes, it was like that originally and really shouldn't make
+any difference. I'll change it back.
+
+Ian
+> 
+> > +       }
+> > +       return false;
+> > +}
+> > +
+> >  extern const struct super_operations kernfs_sops;
+> >  extern struct kmem_cache *kernfs_node_cache, *kernfs_iattrs_cache;
+> >  
+> > diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
+> > index 9e8ca8743c268..7947acb1163d7 100644
+> > --- a/include/linux/kernfs.h
+> > +++ b/include/linux/kernfs.h
+> > @@ -98,6 +98,11 @@ struct kernfs_elem_dir {
+> >          * better directly in kernfs_node but is here to save
+> > space.
+> >          */
+> >         struct kernfs_root      *root;
+> > +       /*
+> > +        * Monotonic revision counter, used to identify if a
+> > directory
+> > +        * node has changed during revalidation.
+> > +        */
+> > +       unsigned long rev;
+> >  };
+> >  
+> >  struct kernfs_elem_symlink {
+> 
+> Eric
+
+
