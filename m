@@ -2,84 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D745A3A1C7B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jun 2021 20:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 538603A1C7E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jun 2021 20:06:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231919AbhFISHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Jun 2021 14:07:21 -0400
-Received: from mail-pf1-f180.google.com ([209.85.210.180]:46844 "EHLO
-        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbhFISHU (ORCPT
+        id S231961AbhFISIc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Jun 2021 14:08:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229527AbhFISIc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Jun 2021 14:07:20 -0400
-Received: by mail-pf1-f180.google.com with SMTP id u126so15057804pfu.13;
-        Wed, 09 Jun 2021 11:05:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tsG2vaYvQdsKPU22yVSS/01hRddm/EYSOLT0Jl+RAWg=;
-        b=NdIVcZXG1ZTfKccG5eX1Z8CMUwAnfD4ZtJGT71isAQVbHtavoLxmAanMQR6pWdHLSx
-         8U4U0VFaaYZ4KRamr+0vPpjEB5tmwBBY2khpVnMGQjVRNiUPCvA9+SUhp9xipaKsMFLg
-         5NiFoxKBK6wK9Fs3wS6FYyzibOrI8nZ34Vw0FogMf1E/eUTgeP3JBbbUrX1+MHSwUK+1
-         jXdU6s/kY9oKZVMCI72/tKsbWRSJnoE9/vBLctsyHKlQ8h2OojAIIrPvYKKb8tkvl47n
-         8651rVEAiXcEvFD59yejYEif5Povu5WC4kLGGYF4Fr8kNb8LwTzyP9xX71Uq3kch9WeO
-         q5pg==
-X-Gm-Message-State: AOAM530nbp5qbDDuq3macelzFyvHc2lQuAEy3nBYyogZPtwSWW0URtF/
-        h++/zfYyqDH/WK3CDNXPDMtfk+tXU7M=
-X-Google-Smtp-Source: ABdhPJwiyuIter/swQY3pmVDFdPLJluOoHfavogqfTx6tTfv6Cz1YMd5zHC5FpTpzhrMGj7ZqDZ2bg==
-X-Received: by 2002:a63:fc06:: with SMTP id j6mr933048pgi.226.1623261924921;
-        Wed, 09 Jun 2021 11:05:24 -0700 (PDT)
-Received: from [192.168.3.217] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
-        by smtp.gmail.com with ESMTPSA id x20sm219024pfu.205.2021.06.09.11.05.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jun 2021 11:05:24 -0700 (PDT)
-Subject: Re: [LSF/MM/BPF TOPIC] durability vs performance for flash devices
- (especially embedded!)
-To:     Ric Wheeler <ricwheeler@gmail.com>,
-        lsf-pc@lists.linux-foundation.org
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org
-References: <55d3434d-6837-3a56-32b7-7354e73eb258@gmail.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <0e1ed05f-4e83-7c84-dee6-ac0160be8f5c@acm.org>
-Date:   Wed, 9 Jun 2021 11:05:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        Wed, 9 Jun 2021 14:08:32 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9F70C061574;
+        Wed,  9 Jun 2021 11:06:37 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lr2au-006Jht-FM; Wed, 09 Jun 2021 18:06:24 +0000
+Date:   Wed, 9 Jun 2021 18:06:24 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Qian Cai <quic_qiancai@quicinc.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Sterba <dsterba@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH 16/37] iov_iter_gap_alignment(): get rid of
+ iterate_all_kinds()
+Message-ID: <YMEDIBUnZhhLUEXg@zeniv-ca.linux.org.uk>
+References: <YL0dCEVEiVL+NwG6@zeniv-ca.linux.org.uk>
+ <20210606191051.1216821-1-viro@zeniv.linux.org.uk>
+ <20210606191051.1216821-16-viro@zeniv.linux.org.uk>
+ <fc95d524-3e61-208d-52af-8ad0048fd76e@quicinc.com>
 MIME-Version: 1.0
-In-Reply-To: <55d3434d-6837-3a56-32b7-7354e73eb258@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc95d524-3e61-208d-52af-8ad0048fd76e@quicinc.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/9/21 3:53 AM, Ric Wheeler wrote:
-> Consumer devices are pushed to use the highest capacity emmc class
-> devices, but they have horrible write durability.
-> 
-> At the same time, we layer on top of these devices our normal stack -
-> device mapper and ext4 or f2fs are common configurations today - which
-> causes write amplification and can burn out storage even faster. I think
-> it would be useful to discuss how we can minimize the write
-> amplification when we need to run on these low end parts & see where the
-> stack needs updating.
-> 
-> Great background paper which inspired me to spend time tormenting emmc
-> parts is:
-> 
-> http://www.cs.unc.edu/~porter/pubs/hotos17-final29.pdf
+On Wed, Jun 09, 2021 at 09:01:36AM -0400, Qian Cai wrote:
 
-Without having read that paper, has zoned storage been considered? F2FS
-already supports zoned block devices. I'm not aware of a better solution
-to reduce write amplification for flash devices. Maybe I'm missing
-something?
+> On 6/6/2021 3:10 PM, Al Viro wrote:
+> > For one thing, it's only used for iovec (and makes sense only for those).
+                        ^^^^^^^^^^^^^^^^^^^
 
-More information is available in this paper:
-https://dl.acm.org/doi/pdf/10.1145/3458336.3465300.
+[snip]
 
-Thanks,
+> > -	if (unlikely(iov_iter_is_pipe(i) || iov_iter_is_discard(i))) {
+> > +	if (unlikely(iter_is_iovec(i))) {
+                     ^^^^^^^^^^^^^^^^
+This.  A nice demonstration of braino repeatedly overlooked on read-through,
+especially when the change described in commit message is obvious and
+looks similar to the change done in the patch.
 
-Bart.
+Happens without any deliberate attacks involved - as the matter of fact,
+it's easier to spot that kind of crap in somebody else's patch...
+
+Anyway, the obvious fix (
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 3a68f578695f..6569e3f5d01d 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1402,10 +1402,8 @@ unsigned long iov_iter_gap_alignment(const struct iov_iter *i)
+ 	size_t size = i->count;
+ 	unsigned k;
+ 
+-	if (unlikely(iter_is_iovec(i))) {
+-		WARN_ON(1);
++	if (WARN_ON(!iter_is_iovec(i)))
+ 		return ~0U;
+-	}
+ 
+ 	for (k = 0; k < i->nr_segs; k++) {
+ 		if (i->iov[k].iov_len) {
+) folded in and pushed...
