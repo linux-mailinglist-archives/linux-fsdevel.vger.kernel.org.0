@@ -2,104 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB6C03A1F81
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jun 2021 23:56:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9F73A2083
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 01:08:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229963AbhFIV6c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Jun 2021 17:58:32 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:44030 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbhFIV6a (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Jun 2021 17:58:30 -0400
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:51958 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1lr6Bb-0002oY-I6; Wed, 09 Jun 2021 17:56:31 -0400
-Message-ID: <8880aac1e81ac38928f58da2d29057cb69139d8c.camel@trillion01.com>
-Subject: Re: [RFC] coredump: Do not interrupt dump for TIF_NOTIFY_SIGNAL
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Pavel Begunkov>" <asml.silence@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Date:   Wed, 09 Jun 2021 17:56:30 -0400
-In-Reply-To: <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
-References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
-         <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
-         <87h7i694ij.fsf_-_@disp2133>
-         <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
-         <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
-         <87eeda7nqe.fsf@disp2133>
-         <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.2 
+        id S229788AbhFIXK2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Jun 2021 19:10:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229507AbhFIXK2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Jun 2021 19:10:28 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B2931613EA;
+        Wed,  9 Jun 2021 23:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623280113;
+        bh=tncqAXhekNcg8xDknLdW1mBezoLne7Ft/HR5hqS6ka4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=I5Kkbsltd2A+FVZMOEgSypB8g2Bq6Rb6BwYlUzGU2QVNQVcE/slEIIfQTMV9aX6Gh
+         kn7euRVTaBAZX2utmxZ7wTi1Z/Q0WZGJ7SSCDAFl0pcR6QsppXCDZuAr0dO5OVYHUj
+         ztO7bALrLBgBWtQN/R9kHeR1mhQ0tt7HczO9MxdqGUSP1p1msYMAp0kirJW5zKohPG
+         9UOFjXGAx9VdK3TzLi70c+Nm/wd1mTdw8nCtxwm048bROewOrwedhPykY7KCWMMx77
+         H8UTq5BuqwDZfzn2iW0ITgcEG9pBmTv5bQtrfGfd7I2QuQmZF7qMqsAAuSADr5EkCf
+         6w3+Uos88VK6Q==
+Date:   Wed, 9 Jun 2021 16:08:31 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: Re: [PATCH v2] net: do not invoke open_related_ns when NET_NS is
+ disabled
+Message-ID: <20210609160831.16c08894@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+In-Reply-To: <20210609154635.46792-1-changbin.du@gmail.com>
+References: <20210609154635.46792-1-changbin.du@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2021-06-09 at 17:26 -0400, Olivier Langlois wrote:
-> On Wed, 2021-06-09 at 16:05 -0500, Eric W. Biederman wrote:
-> > > 
-> > > So the TIF_NOTIFY_SIGNAL does get set WHILE the core dump is
-> > > written.
-> > 
-> > Did you mean?
-> > 
-> > So the TIF_NOTIFY_SIGNAL does _not_ get set WHILE the core dump is
-> > written.
-> > 
-> > 
-> Absolutely not. I did really mean what I have said. Bear with me
-> that,
-> I am not qualifying myself as an expert kernel dev yet so feel free
-> to
-> correct me if I say some heresy...
+On Wed,  9 Jun 2021 23:46:35 +0800 Changbin Du wrote:
+> When NET_NS is not enabled, socket ioctl cmd SIOCGSKNS should do nothing
+> but acknowledge userspace it is not supported. Otherwise, kernel would
+> panic wherever nsfs trys to access ns->ops since the proc_ns_operations
+> is not implemented in this case.
 > 
-> io_uring is placing my task in my TCP socket wait queue because it
-> wants to read data from it.
+> [7.670023] Unable to handle kernel NULL pointer dereference at virtual address 00000010
+> [7.670268] pgd = 32b54000
+> [7.670544] [00000010] *pgd=00000000
+> [7.671861] Internal error: Oops: 5 [#1] SMP ARM
+> [7.672315] Modules linked in:
+> [7.672918] CPU: 0 PID: 1 Comm: systemd Not tainted 5.13.0-rc3-00375-g6799d4f2da49 #16
+> [7.673309] Hardware name: Generic DT based system
+> [7.673642] PC is at nsfs_evict+0x24/0x30
+> [7.674486] LR is at clear_inode+0x20/0x9c
 > 
-> The task returns to user space and core dump with a SEGV.
+> The same to tun SIOCGSKNS command.
 > 
-> now my understanding is that the code that is waking up tasks, it is
-> the NIC driver interrupt handler which can occur while the core dump
-> is
-> written.
+> Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> Cc: Cong Wang <xiyou.wangcong@gmail.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: David Laight <David.Laight@ACULAB.COM>
+> Cc: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+>  drivers/net/tun.c | 4 ++++
+>  net/socket.c      | 4 ++++
+>  2 files changed, 8 insertions(+)
 > 
-> does that make sense?
-> 
-> my testing is telling me that this is exactly what happens...
-> 
-> 
-Another thing to know is that dump_interrupted() isn't only called from
-do_coredump().
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index 84f832806313..8ec5977d2f34 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -3003,9 +3003,13 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
+>  	} else if (cmd == TUNSETQUEUE) {
+>  		return tun_set_queue(file, &ifr);
+>  	} else if (cmd == SIOCGSKNS) {
+> +#ifdef CONFIG_NET_NS
+>  		if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
+>  			return -EPERM;
+>  		return open_related_ns(&net->ns, get_net_ns);
+> +#else
+> +		return -EOPNOTSUPP;
+> +#endif
 
-At first, I did the mistake to think that if dump_interrupt() was
-returning false when called from do_coredump() all was good.
-
-It is not the case. dump_interrupted() is also called from dump_emit()
-which is called from several places by functions inside binfmt_elf.c
-
-So dump_interrupted() is called several times during the coredump
-generation.
-
-
+... and why are you not adding that check to get_net_ns like 
+I suggested twice and even shared a diff?
