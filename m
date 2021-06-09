@@ -2,99 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CBBD3A0EA4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jun 2021 10:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 440CB3A0EE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jun 2021 10:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237514AbhFIITA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Jun 2021 04:19:00 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:45353 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236085AbhFIIS7 (ORCPT
+        id S237556AbhFIIvd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 9 Jun 2021 04:51:33 -0400
+Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:28958 "EHLO
+        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229740AbhFIIvc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Jun 2021 04:18:59 -0400
-Received: from [192.168.1.155] ([77.9.120.3]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1Md6AP-1lIexq0haV-00aHkm; Wed, 09 Jun 2021 10:16:29 +0200
-Subject: Re: [PATCH v1] proc: Implement /proc/self/meminfo
-To:     Chris Down <chris@chrisdown.name>, legion@kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux.dev>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>
-References: <ac070cd90c0d45b7a554366f235262fa5c566435.1622716926.git.legion@kernel.org>
- <YLi+JoBwfLtqVGiP@chrisdown.name>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <b8c86081-503c-3671-2ea3-dd3a0950ce25@metux.net>
-Date:   Wed, 9 Jun 2021 10:16:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        Wed, 9 Jun 2021 04:51:32 -0400
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-329-JBFnEtmXMAmnbWzYpR0ofw-1; Wed, 09 Jun 2021 04:49:34 -0400
+X-MC-Unique: JBFnEtmXMAmnbWzYpR0ofw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6E73919057A5;
+        Wed,  9 Jun 2021 08:49:32 +0000 (UTC)
+Received: from web.messagingengine.com (ovpn-116-20.sin2.redhat.com [10.67.116.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1EAE45D9E3;
+        Wed,  9 Jun 2021 08:49:16 +0000 (UTC)
+Subject: [PATCH v6 0/7] kernfs: proposed locking and concurrency improvement
+From:   Ian Kent <raven@themaw.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>
+Cc:     Eric Sandeen <sandeen@sandeen.net>, Fox Chen <foxhlchen@gmail.com>,
+        Brice Goglin <brice.goglin@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Wed, 09 Jun 2021 16:49:14 +0800
+Message-ID: <162322846765.361452.17051755721944717990.stgit@web.messagingengine.com>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-In-Reply-To: <YLi+JoBwfLtqVGiP@chrisdown.name>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: tl
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:7koxO5BYDpAqMJLkjAi8sQ3UCPPXcTQYX99ymXS5Xqgz0nlGGuK
- Hxb+ndUGgPuVDZUuZ5nTXtCvHrxWi4iW5JK0j7U974MtjWtMY2aS0VLI/KED+rz6ayZZcA4
- Xx0b/USmKF42nW+OADIYE9NI4u/lRQ5grSAxY4BuHtuBMJUcJGwP8P+bG/xzNZubYSDqN5Y
- CvXBoBECUCVPaja1xu0uw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wo5zd+VdzY0=:WzJo4B1hGsN1c/G3OJ0Xqi
- 6bpG3QrMz5EWv5/XdALXVYgynfY8jHF6cxC7hhR2eU2/KHVsemxVCEraCnDbGV53VFq6EnrN8
- YQpMSx+JVivz86PrADc2V+zC0jT06VAeYEOSKmg8swZ56AkcZDAzVS79YbmHeRB1IJeWW0RXf
- BjRzusAphKr5cqYTAuAFaasm9whF+e8iwijwWttQ92Illd9ID6Y4aessHWfAiYZyECH1RpWrQ
- lyV7Mvu7T0dIuaG4IQKEcRtk0BDd8BI9r90T8R+4kvYa4ZzpV/psMBg9f6+ebwZ+kOdSBHTQR
- hhxk7Qabba6bWe8261ONlT8xDldTIAIMqE5UpWg1nwK4xhZqAoKW477qAeeKDNjDzTw1OXn3r
- vuTDCU5CfxyHcXDFDDPDmBk9tPOe6a8eGXLo5Ei98A+HVdcPrMacgSPaJdcavMwBWqkK/0dOi
- q4XlbR4XfeoLD+0Nv0/QdoQgyq5YpSVeCAdJaI0oPxn+HTLmFszQMLleS73jOaVzWhxpPNWlp
- zWWEXt3f11Y7HY4FlDEUm0=
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=raven@themaw.net
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: themaw.net
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 03.06.21 13:33, Chris Down wrote:
+There have been a few instances of contention on the kernfs_mutex during
+path walks, a case on very large IBM systems seen by myself, a report by
+Brice Goglin and followed up by Fox Chen, and I've since seen a couple
+of other reports by CoreOS users.
 
-Hi folks,
+The common thread is a large number of kernfs path walks leading to
+slowness of path walks due to kernfs_mutex contention.
 
+The problem being that changes to the VFS over some time have increased
+it's concurrency capabilities to an extent that kernfs's use of a mutex
+is no longer appropriate. There's also an issue of walks for non-existent
+paths causing contention if there are quite a few of them which is a less
+common problem.
 
-> Putting stuff in /proc to get around the problem of "some other metric I 
-> need might not be exported to a container" is not a very compelling 
-> argument. If they want it, then export it to the container...
-> 
-> Ultimately, if they're going to have to add support for a new 
-> /proc/self/meminfo file anyway, these use cases should just do it 
-> properly through the already supported APIs.
+This patch series is relatively straight forward.
 
-It's even a bit more complex ...
+All it does is add the ability to take advantage of VFS negative dentry
+caching to avoid needless dentry alloc/free cycles for lookups of paths
+that don't exit and change the kernfs_mutex to a read/write semaphore.
 
-/proc/meminfo always tells what the *machine* has available, not what a
-process can eat up. That has been this way even long before cgroups.
-(eg. ulimits).
+The patch that tried to stay in VFS rcu-walk mode during path walks has
+been dropped for two reasons. First, it doesn't actually give very much
+improvement and, second, if there's a place where mistakes could go
+unnoticed it would be in that path. This makes the patch series simpler
+to review and reduces the likelihood of problems going unnoticed and
+popping up later.
 
-Even if you want a container look more like a VM - /proc/meminfo showing
-what the container (instead of the machine) has available - just looking
-at the calling task's cgroup is also wrong. Because there're cgroups
-outside containers (that really shouldn't be affected) and there're even
-other cgroups inside the container (that further restrict below the
-container's limits).
+Changes since v5:
+- change kernfs_dir_changed() comparison.
+- move negative dentry out from under kernfs node lock in revalidate.
+- only set d_time for negative dentries.
+- add patch to move d_splice_alias() out from under kernfs node lock
+  in lookup.
 
-BTW: applications trying to autotune themselves by looking at
-/proc/meminfo are broken-by-design anyways. This never has been a valid
-metric on how much memory invididual processes can or should eat.
+Changes since v4:
+- fixed kernfs_active() naming.
+- added back kernfs_node revision patch to use for negative dentry
+  validation.
+- minor updates to patch descriptions.
 
+Changes since v3:
+- remove unneeded indirection when referencing the super block.
+- check if inode attribute update is actually needed.
 
---mtx
+Changes since v2:
+- actually fix the inode attribute update locking.
+- drop the patch that tried to stay in rcu-walk mode.
+- drop the use a revision to identify if a directory has changed patch.
 
--- 
+Changes since v1:
+- fix locking in .permission() and .gated() by re-factoring the
+  attribute handling code.
 ---
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+
+Ian Kent (7):
+      kernfs: move revalidate to be near lookup
+      kernfs: add a revision to identify directory node changes
+      kernfs: use VFS negative dentry caching
+      kernfs: switch kernfs to use an rwsem
+      kernfs: use i_lock to protect concurrent inode updates
+      kernfs: add kernfs_need_inode_refresh()
+      kernfs: dont call d_splice_alias() under kernfs node lock
+
+
+ fs/kernfs/dir.c             | 150 +++++++++++++++++++-----------------
+ fs/kernfs/file.c            |   4 +-
+ fs/kernfs/inode.c           |  45 +++++++++--
+ fs/kernfs/kernfs-internal.h |  28 ++++++-
+ fs/kernfs/mount.c           |  12 +--
+ fs/kernfs/symlink.c         |   4 +-
+ include/linux/kernfs.h      |   7 +-
+ 7 files changed, 160 insertions(+), 90 deletions(-)
+
+--
+Ian
+
