@@ -2,82 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C7473A11AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jun 2021 12:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB2443A14F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jun 2021 14:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235586AbhFIKzg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Jun 2021 06:55:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46818 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234882AbhFIKze (ORCPT
+        id S231151AbhFIM4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Jun 2021 08:56:53 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:50281 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230023AbhFIM4w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Jun 2021 06:55:34 -0400
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EA54C061574;
-        Wed,  9 Jun 2021 03:53:31 -0700 (PDT)
-Received: by mail-qv1-xf2a.google.com with SMTP id e18so12509069qvm.10;
-        Wed, 09 Jun 2021 03:53:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=0YVz+Tp9c/+BLdLLg/dEk8hVG2/4HLSUp+VXgepDnM0=;
-        b=pf8nagyssHGUxyRjUvhABlSHergN77+RWaufZevQ2p17UnOXHE69CPPhR31vtc84sw
-         WY5huLOmWveUt3LadLXtF34q/Q1CCQk0Q7x0PIw50J3+KuJUKlg9WGLrCgjVFzq6KIbZ
-         XyuRt523PBVclEE3MKoU67oIXabWh2iGyC2Pm9DOHaOvusEy4LJtcAuQUZ4Yin9dnCeY
-         LbGWTuSz9X5wQkaQZIiLPtpd0+f/vievjZT2nLfHxj7SPgoKQI0TVfRXeWM5BTKuvwWv
-         ixn8BZRxbfGxvR/WZ3iDcC5wsa5yybvAnbzMrhYj1xVTsxbKlubyB0jrU/OBJp7YPuvc
-         8qfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=0YVz+Tp9c/+BLdLLg/dEk8hVG2/4HLSUp+VXgepDnM0=;
-        b=DeeMYR2UTA3UlRVXuWeuy6uVmGOgin+Lu+W/yGyjy8fN8TR04p0Y3jHpQFKtVuqa6o
-         Uvjd4/nTVSstg6Y5f9Ugq1dZKpiL8sTrteJaXo72NB56Kx6IaYDid1m0jivGLCrKSuzr
-         SagrxatjXfNw+pz9JVxqbcy8o5Sm7xKQxj8RKp9aAKvp1F8bx0UHR1AgNyi8RUeBU8Wz
-         r6WdwRCtVPmR4Z21C6TlD/1Vdfp7h6pG6dB/vSLrAcenjaI44GT1GNi6W6aTfSi4rwnX
-         K0e0BipUFmAQoqkZKbcpjxf/7QnLQgWU/J0Ok6EG40jUzAXZVvH1hkVwAv7/6taHeMp7
-         p2QQ==
-X-Gm-Message-State: AOAM530/rzZYLKpus0I7kgp8JYRAtVFrWxHCN3xYYkm7PGoA2cigBXyG
-        wqiFDg+FeAQpetGwMqO7IMzv7fIVSnmwbg==
-X-Google-Smtp-Source: ABdhPJwtZMHelbQEQM4fDC9UawbdbSF72e8Udsuo0J0026QmwPoeJr/GjVYT4nkOd+EDafShg6WIkA==
-X-Received: by 2002:a0c:d784:: with SMTP id z4mr5162868qvi.27.1623236009982;
-        Wed, 09 Jun 2021 03:53:29 -0700 (PDT)
-Received: from localhost.localdomain (pool-173-48-195-35.bstnma.fios.verizon.net. [173.48.195.35])
-        by smtp.gmail.com with ESMTPSA id z2sm4794746qke.23.2021.06.09.03.53.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jun 2021 03:53:29 -0700 (PDT)
-To:     lsf-pc@lists.linux-foundation.org
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org
-From:   Ric Wheeler <ricwheeler@gmail.com>
-Subject: [LSF/MM/BPF TOPIC] durability vs performance for flash devices
- (especially embedded!)
-Message-ID: <55d3434d-6837-3a56-32b7-7354e73eb258@gmail.com>
-Date:   Wed, 9 Jun 2021 06:53:29 -0400
+        Wed, 9 Jun 2021 08:56:52 -0400
+Received: from [192.168.1.155] ([77.9.120.3]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MdNLi-1lHcyo1ej2-00ZQyo; Wed, 09 Jun 2021 14:54:50 +0200
+Subject: Re: [PATCH RFC] fuse: add generic file store
+To:     Peng Tao <bergwolf@gmail.com>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Peng Tao <tao.peng@linux.alibaba.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>
+References: <1622537906-54361-1-git-send-email-tao.peng@linux.alibaba.com>
+ <YLeoucLiMOSPwn4U@google.com>
+ <244309bf-4f2e-342e-dd98-755862c643b8@metux.net>
+ <CA+a=Yy5moy0Bv=mhsrC9FrY+cEYt8+YJL8TvXQ=N7pNyktccRQ@mail.gmail.com>
+ <429fc51b-ece0-b5cb-9540-2e7f5b472d73@metux.net>
+ <CA+a=Yy6k3k2iFb+tBMuBDMs8E8SsBKce9Q=3C2zXTrx3-B7Ztg@mail.gmail.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <295cfc39-a820-3167-1096-d8758074452d@metux.net>
+Date:   Wed, 9 Jun 2021 14:54:48 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+ Thunderbird/78.10.0
 MIME-Version: 1.0
+In-Reply-To: <CA+a=Yy6k3k2iFb+tBMuBDMs8E8SsBKce9Q=3C2zXTrx3-B7Ztg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:8iQzEZshRlVeFdhrivWFvUfm+LbDY2TdSweMOmBNNDN6UntE5Rz
+ 2eW0JGSs7bAUG38J/BRW5MLhv+Tx3kGHh7SNVOtFJeR/wCWkBBbM4YW1vQFZnPfpZfSet/i
+ cznf2S95K3tdwodTg/Kh8XtgnHqMxZ/BzF9ikhjM4PdQFdDoTrnBrvzLM5lW+QvsTOcoGmc
+ mSJdxsXwi6ldDkUgD6oSA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/gZD5zg8qw8=:rkT+S2RGaUMWZApFHpugE+
+ WJNEy9t9YbTB1Z9l2VL2492CTKviD874TuF5qzGNNKUBnF/HzbjdzkaMpWGBl8oOHWXKBUkuC
+ iE5TmlPdL7Mok/A+c9TvMqOk4uWSUgCVG3ZTBO3sbhrVCjRTyUuJPudg5qi+MTJ2YPFF8BSv4
+ TEk6mm1zr8wqOj90MJPCWJ/bxdhOT9xarVFHB8+t46WtwByh/OD/8tek/b+fcAMFtCM0hKlzg
+ XECMHLJcJJwfE1OCMhzdkjs8tX/WjiEL19apoDgDuZywlAqhxBtQvxgHbfre/B9ERPt3iIptU
+ Taq7fAnKmWjaVbY/ibsbcqSWKUxiuzvw0lb+DNLcsHp+RYTs3b481/S1+wC7iVT2QCySahWFl
+ WiRbAnLfqwHQofp00YeGwcxOhyJFETEpQupFQQeUQxN3gbOENRW2ochGoHS8Kss6KBeNFRc6f
+ 6eogao6uI85Dc8dkDw7P5sSnziULDPqs7vuXg5EpkCGsC9XDfGTVln8q60DCnfH3I0SeBEVDI
+ ivyjbhgJjLnJcIZDotL8M8=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 08.06.21 14:41, Peng Tao wrote:
 
-Consumer devices are pushed to use the highest capacity emmc class devices, but 
-they have horrible write durability.
+Hi,
 
-At the same time, we layer on top of these devices our normal stack - device 
-mapper and ext4 or f2fs are common configurations today - which causes write 
-amplification and can burn out storage even faster. I think it would be useful 
-to discuss how we can minimize the write amplification when we need to run on 
-these low end parts & see where the stack needs updating.
+> The initial RFC mail in the thread has a userspace example code. Does
+> it make sense to you?
 
-Great background paper which inspired me to spend time tormenting emmc parts is:
+Sorry, I had missed that, now found it.
 
-http://www.cs.unc.edu/~porter/pubs/hotos17-final29.pdf
+There're some things I don't quite understand:
 
+* it just stores fd's I don't see anything where it is actually returned
+   to some open() operation.
+* the store is machine wide global - everybody uses the same number
+   space, dont see any kind of access conrol ... how about security ?
 
+I don't believe that just storing the fd's somewhere is really helpful
+for that purpose - the fuse server shall be able to reply the open()
+request with an fd, which then is directly transferred to the client.
+
+--mtx
+
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
