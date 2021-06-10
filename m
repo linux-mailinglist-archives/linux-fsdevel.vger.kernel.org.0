@@ -2,54 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBEBC3A345D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 21:55:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B383C3A3471
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 22:02:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230390AbhFJT5h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Jun 2021 15:57:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33736 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230366AbhFJT5g (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Jun 2021 15:57:36 -0400
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B264AC061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jun 2021 12:55:25 -0700 (PDT)
-Received: by mail-il1-x136.google.com with SMTP id b9so3002255ilr.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jun 2021 12:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yThRUwhG7TVMYzDnZQ36xlr9oSGBGPDfSkCu6ZGlYLg=;
-        b=bPBjb3iQyivF7+ujnusT5zb7CgKPA/MPb60wwSSgl0fWJCJFIRsspxS5FLO3i3Db7o
-         QTBIFLfWtoa+OTwkJsl8Od0iL6SjdITaP1KUiA1ZLnO0nbgYzNu8qBP6bqF9wOw6coVS
-         0TZuIt7YeN1EtKC3bKArUXZMWQq1C4xTGVKSk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yThRUwhG7TVMYzDnZQ36xlr9oSGBGPDfSkCu6ZGlYLg=;
-        b=EAGJSQSsVvkf83vPKdnUcrtrvTLB3D/FNox+DfB2frnT75uOvM1+51WZuKl00iA6Pt
-         eHgBrGnJhQjeuMYNOm8R+BQKvonmgA1D1bsPG26VItR9xaP/Eidga9h+YXyHvGNFA0wt
-         f4MtMiVN1S32b8xoWygEcSPUectBRClZzJDFEnybmRl649AMnV83ULulGhSTEXWYs6Kh
-         vwzG7Mn0C0lwQHEbP7M+ZIj89m/QdQFMG/WFjZtSyCvtkCjsVNKhsB0LcMrmY7JKGef3
-         zu/6QqbqHyMnanF6gsjXKutqT1X7/208fpiDqP51CNoa3LJjZo+kai97ThVPOoy3d4Lc
-         JXmQ==
-X-Gm-Message-State: AOAM530hYRbnhrb+oIy16PZ4yldk/SmbLFsfffvEfg75Btpk5XrCYr9r
-        e9qsKMZiDMrQ6R3xq/PA8l1sfN+Iy7SA1g==
-X-Google-Smtp-Source: ABdhPJxrEvwWy3XAmz/7jj02iTalwtXM7UAmJCMJjFJ1UH5U58C7wt3JsSnlbOrDwD06v36kFE802g==
-X-Received: by 2002:a05:6e02:4b0:: with SMTP id e16mr335801ils.71.1623354925138;
-        Thu, 10 Jun 2021 12:55:25 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id u18sm2447941ilb.51.2021.06.10.12.55.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jun 2021 12:55:24 -0700 (PDT)
-Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        id S230331AbhFJUEq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Jun 2021 16:04:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229963AbhFJUEp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 10 Jun 2021 16:04:45 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCB4D6136D;
+        Thu, 10 Jun 2021 20:02:47 +0000 (UTC)
+Date:   Thu, 10 Jun 2021 16:02:46 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
         "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
         David Hildenbrand <david@redhat.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
@@ -58,78 +29,53 @@ Cc:     Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
         ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
+Message-ID: <20210610160246.13722775@oasis.local.home>
+In-Reply-To: <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
 References: <YH2hs6EsPTpDAqXc@mit.edu>
- <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
- <YIx7R6tmcRRCl/az@mit.edu>
- <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de>
- <YK+esqGjKaPb+b/Q@kroah.com>
- <c46dbda64558ab884af060f405e3f067112b9c8a.camel@HansenPartnership.com>
- <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com>
- <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
- <20210610182318.jrxe3avfhkqq7xqn@nitro.local>
- <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
- <20210610152633.7e4a7304@oasis.local.home>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
-Date:   Thu, 10 Jun 2021 13:55:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
+        <YIx7R6tmcRRCl/az@mit.edu>
+        <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de>
+        <YK+esqGjKaPb+b/Q@kroah.com>
+        <c46dbda64558ab884af060f405e3f067112b9c8a.camel@HansenPartnership.com>
+        <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com>
+        <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
+        <20210610182318.jrxe3avfhkqq7xqn@nitro.local>
+        <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
+        <20210610152633.7e4a7304@oasis.local.home>
+        <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20210610152633.7e4a7304@oasis.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/10/21 1:26 PM, Steven Rostedt wrote:
-> On Thu, 10 Jun 2021 21:39:49 +0300
-> Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
-> 
->> There will always be more informal discussions between on-site
->> participants. After all, this is one of the benefits of conferences, by
->> being all together we can easily organize ad-hoc discussions. This is
->> traditionally done by finding a not too noisy corner in the conference
->> center, would it be useful to have more break-out rooms with A/V
->> equipment than usual ?
-> 
-> I've been giving this quite some thought too, and I've come to the
-> understanding (and sure I can be wrong, but I don't think that I am),
-> is that when doing a hybrid event, the remote people will always be
-> "second class citizens" with respect to the communication that is going
-> on. Saying that we can make it the same is not going to happen unless
-> you start restricting what people can do that are present, and that
-> will just destroy the conference IMO.
-> 
-> That said, I think we should add more to make the communication better
-> for those that are not present. Maybe an idea is to have break outs
-> followed by the presentation and evening events that include remote
-> attendees to discuss with those that are there about what they might
-> have missed. Have incentives at these break outs (free stacks and
-> beer?) to encourage the live attendees to attend and have a discussion
-> with the remote attendees.
-> 
-> The presentations would have remote access, where remote attendees can
-> at the very least write in some chat their questions or comments. If
-> video and connectivity is good enough, perhaps have a screen where they
-> can show up and talk, but that may have logistical limitations.
-> 
+On Thu, 10 Jun 2021 13:55:23 -0600
+Shuah Khan <skhan@linuxfoundation.org> wrote:
 
-You are absolutely right that the remote people will have a hard time
-participating and keeping up with in-person participants. I have a
-couple of ideas on how we might be able to improve remote experience
-without restricting in-person experience.
+> You are absolutely right that the remote people will have a hard time
+> participating and keeping up with in-person participants. I have a
+> couple of ideas on how we might be able to improve remote experience
+> without restricting in-person experience.
+> 
+> - Have one or two moderators per session to watch chat and Q&A to enable
+>    remote participants to chime in and participate.
+> - Moderators can make sure remote participation doesn't go unnoticed and
+>    enable taking turns for remote vs. people participating in person.
+> 
+> It will be change in the way we interact in all in-person sessions for
+> sure, however it might enhance the experience for remote attendees.
 
-- Have one or two moderators per session to watch chat and Q&A to enable
-   remote participants to chime in and participate.
-- Moderators can make sure remote participation doesn't go unnoticed and
-   enable taking turns for remote vs. people participating in person.
+I have no problem with the above suggestion, and I envision that this
+may be the norm going forward. What is still missing is the
+interactions of the hallway track and the evening events. I was
+thinking about how we could get the remote folks in on what happened
+there right afterward, which is why I'm suggesting breakout rooms like
+Laurent suggested as well, but at the end of the conference, and
+perhaps the conversations of the previous night could continue with a
+remote presence.
 
-It will be change in the way we interact in all in-person sessions for
-sure, however it might enhance the experience for remote attendees.
-
-thanks,
--- Shuah
+-- Steve
