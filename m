@@ -2,128 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF0E83A240B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 07:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 537463A2476
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 08:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229715AbhFJFjl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Jun 2021 01:39:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40748 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbhFJFjl (ORCPT
+        id S230120AbhFJG0I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Jun 2021 02:26:08 -0400
+Received: from mail.chalver.com.ec ([186.3.12.10]:33994 "EHLO
+        mail.chalver.com.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230118AbhFJG0I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Jun 2021 01:39:41 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7C75C061574;
-        Wed,  9 Jun 2021 22:37:30 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id f10so10947096iok.6;
-        Wed, 09 Jun 2021 22:37:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9dmnYE0y0Gsr+v9rHoqwXPhrGtNSKxuEvOD8vEMF1E4=;
-        b=VOj4VqFXI73NgD0weDnUVSB0mG8K2sARXYmiYAHIeBx4pI6wmMB5p5geyzPSZ2G7NB
-         9m8khL1B1s4Yq5pd0pOClUxGswMKx8O56b1tdIPrEnHDQbX++YATQkOk9fFWZwoNU3RE
-         clkEnLhAEhuyvNg1grCN0+p1LMIPGEiUJwsHoGwvd6GcMNB2bcB+PbSuhvy0nagSfA+N
-         mZ0H6NsKPeN3znaRJV83cmXHbqS7k/IdfwSw/cTrATdKsgZteCqeuWxDyUa45HLf5oAw
-         4G/ws2bn/mslui5PML2AElDYLA0KAEnzcpCUjlvrv+zXI/bcxfwjgY2Luhc1ncCAg1hr
-         kREg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9dmnYE0y0Gsr+v9rHoqwXPhrGtNSKxuEvOD8vEMF1E4=;
-        b=bYtoNXdZXzO4z9X+DbGo+gdBqgRW56dP6/wFXH9OkpHEfTTCL7HW/SIMWJUw5E5qgF
-         KLrO0IkqXK0ayETwmxJQkh/OreJdvGU4PfyGdyYJAKzYLuXI6LSxUVCXK43MRE96Iq4Z
-         xw3fkHJYl00MIQaWUZ8dINtTogIy7LWH0y8UJF1SZ+oeKYbCdjqsTeH86MJYf+NWt2+6
-         dINR1HK9Hh31Yi+BDYodeYgXyH9vntqkrFvOT4ri3755c+4OKAdm7hIEV5qjncwVljYs
-         6GZfJv5BPYE8e6b6Kyc1AoJUsjxryeekOv4cIMvUMnRGO18CPxnF/Z0k6Ai2WxOxCU1o
-         39Pw==
-X-Gm-Message-State: AOAM530ZOl+VhdF4V3/syj+a+IUjNa/nNe4HDAuOAq0i1GiWnev1JQio
-        tA1WWRPsX5kp2X3wdILlrYhbD3CmRhKuzIMip0k=
-X-Google-Smtp-Source: ABdhPJyK0+pwduOBWZaXHCiupK+wY4f+DFwHVRLK3sPF25gDRPwc/khlIGC/HMhXxSl8AiHMUenzI5Jrgdh+Q5CwL6M=
-X-Received: by 2002:a6b:3119:: with SMTP id j25mr2424840ioa.64.1623303450197;
- Wed, 09 Jun 2021 22:37:30 -0700 (PDT)
+        Thu, 10 Jun 2021 02:26:08 -0400
+X-Greylist: delayed 2622 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Jun 2021 02:26:08 EDT
+Received: from mail.chalver.com.ec (localhost.localdomain [127.0.0.1])
+        by mail.chalver.com.ec (Postfix) with ESMTPS id 4715E1F22AFA;
+        Thu, 10 Jun 2021 00:18:33 -0500 (ECT)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.chalver.com.ec (Postfix) with ESMTP id E6BE81F228D0;
+        Thu, 10 Jun 2021 00:11:35 -0500 (ECT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.chalver.com.ec E6BE81F228D0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chalver.com.ec;
+        s=E2A417BC-DDA7-11E6-85F6-38495636B764; t=1623301896;
+        bh=PxMh0SAMbBGlctefOH2OhvTlJNlHw25bONEEE7Ldp0I=;
+        h=MIME-Version:To:From:Date:Message-Id;
+        b=WQNb3DsN5bMvchBtuNCkoN4Ck3i5H5HjcsOuihKALZDemG87R8bUtgioyWk/I1rgj
+         mr60MjlsrLD4N3rJcxJLekSxxHiLPdeNa8fPxaFxVo63ovakjRvYryM+GZu4uROsOE
+         u2RggraxD7B19h4gXRM1xADv9c5Ds/Vqw4bOqU8Qf/XvMf9K3aALSdQnvZ6xV3a/+w
+         D5gBkf5gS/TxjU1k/DKGReh/mMfMGpRc03kThHzNTvLHvz6hkFH1722A91NOLWnjVc
+         yTncV0iWExb+7zxcnwdXPJV1tRAFPby7aWVIc3oO2JunuqaBkf+WXYquM5yXfPDomP
+         ddajK97vTiZhw==
+X-Virus-Scanned: amavisd-new at chalver.com.ec
+Received: from mail.chalver.com.ec ([127.0.0.1])
+        by localhost (mail.chalver.com.ec [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 6qtqz4Pf47Hs; Thu, 10 Jun 2021 00:11:35 -0500 (ECT)
+Received: from cris-PC.wifi (unknown [105.9.120.116])
+        by mail.chalver.com.ec (Postfix) with ESMTPSA id A7F9B1F2284A;
+        Thu, 10 Jun 2021 00:11:26 -0500 (ECT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <cover.1623282854.git.repnop@google.com>
-In-Reply-To: <cover.1623282854.git.repnop@google.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 10 Jun 2021 08:37:19 +0300
-Message-ID: <CAOQ4uxgR1cSsE0JeTGshtyT3qgaTY3XwcxnGne7zuQmq00hv8w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Add pidfd support to the fanotify API
-To:     Matthew Bobrowski <repnop@google.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: =?utf-8?q?Covid_19_Wohlt=C3=A4tigkeitsfonds?=
+To:     Recipients <mpaucar@chalver.com.ec>
+From:   ''Tayeb souami'' <mpaucar@chalver.com.ec>
+Date:   Thu, 10 Jun 2021 07:18:41 +0200
+Reply-To: Tayebsouam.spende@gmail.com
+Message-Id: <20210610051126.A7F9B1F2284A@mail.chalver.com.ec>
+X-Laboratorios-Chalver-MailScanner-Information: Please contact the ISP for more information
+X-Laboratorios-Chalver-MailScanner-ID: A7F9B1F2284A.A28DB
+X-Laboratorios-Chalver-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 10, 2021 at 3:19 AM Matthew Bobrowski <repnop@google.com> wrote:
->
-> Hey Jan/Amir/Christian,
->
-> Sending through v2 of the fanotify pidfd patch series. This series
-> contains the necessary fixes/suggestions that had come out of the
-> previous discussions, which can be found here [0], here [1], and here
-> [3].
->
-> The main difference in this series is that we perform pidfd creation a
-> little earlier on i.e. in copy_event_to_user() so that clean up of the
-> pidfd can be performed nicely in the event of an info
-> generation/copying error. Additionally, we introduce two errors. One
-> being FAN_NOPIDFD, which is supplied to the listener in the event that
-> a pidfd cannot be created due to early process termination. The other
-> being FAN_EPIDFD, which will be supplied in the event that an error
-> was encountered during pidfd creation.
->
-> Please let me know what you think.
->
-> [0]
-> https://lore.kernel.org/linux-fsdevel/48d18055deb4617d97c695a08dca77eb57309\
-> 7e9.1621473846.git.repnop@google.com/
->
-> [1]
-> https://lore.kernel.org/linux-fsdevel/24c761bd0bd1618c911a392d0c310c24da7d8\
-> 941.1621473846.git.repnop@google.com/
->
-> [2]
-> https://lore.kernel.org/linux-fsdevel/48d18055deb4617d97c695a08dca77eb57309\
-> 7e9.1621473846.git.repnop@google.com/
->
->
-> Matthew Bobrowski (5):
->   kernel/pid.c: remove static qualifier from pidfd_create()
->   kernel/pid.c: implement additional checks upon pidfd_create()
->     parameters
->   fanotify/fanotify_user.c: minor cosmetic adjustments to fid labels
->   fanotify/fanotify_user.c: introduce a generic info record copying
->     helper
 
-Above fanotify commits look good to me.
-Please remove /fanotify_user.c from commit titles and use 'pidfd:' for
-the pidfd commit titles.
+Lieber Freund,
 
->   fanotify: add pidfd support to the fanotify API
->
+Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der =
+Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zu=
+f=C3=A4llige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Ma=
+il nach einem Spinball ausgew=C3=A4hlt.Ich habe den gr=C3=B6=C3=9Ften Teil =
+meines Verm=C3=B6gens auf eine Reihe von Wohlt=C3=A4tigkeitsorganisationen =
+und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die =
+Summe von =E2=82=AC 2.000.000,00 an Sie als eine der ausgew=C3=A4hlten 5 zu=
+ spenden, um meine Gewinne zu =C3=BCberpr=C3=BCfen, sehen Sie bitte meine Y=
+ou Tube Seite unten.
 
-This one looks mostly fine. Gave some minor comments.
+UHR MICH HIER: https://www.youtube.com/watch?v=3DZ6ui8ZDQ6Ks
 
-The biggest thing I am missing is a link to an LTP test draft and
-man page update draft.
 
-In general, I think it is good practice to provide a test along with any
-fix, but for UAPI changes we need to hold higher standards - both the
-test and man page draft should be a must before merge IMO.
 
-We already know there is going to be a clause about FAN_NOPIDFD
-and so on... I think it is especially hard for people on linux-api list to
-review a UAPI change without seeing the contract in a user manual
-format. Yes, much of the information is in the commit message, but it
-is not the same thing as reading a user manual and verifying that the
-contract makes sense to a programmer.
+Das ist dein Spendencode: [TS530342018]
 
-Thanks,
-Amir.
+
+
+Antworten Sie mit dem SPENDE-CODE an diese
+
+E-Mail:Tayebsouam.spende@gmail.com
+
+
+Ich hoffe, Sie und Ihre Familie gl=C3=BCcklich zu machen.
+
+Gr=C3=BC=C3=9Fe
+Herr Tayeb Souami
