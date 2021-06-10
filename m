@@ -2,159 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC8513A24DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 08:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D78143A251F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 09:13:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229910AbhFJG7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Jun 2021 02:59:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35033 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229705AbhFJG7U (ORCPT
+        id S229705AbhFJHPO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Jun 2021 03:15:14 -0400
+Received: from mail-io1-f46.google.com ([209.85.166.46]:44954 "EHLO
+        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230055AbhFJHPN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Jun 2021 02:59:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623308244;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2xI9DhwUbPIwsok2RGKHqBDnQZkdygy7sVBmHeixOo0=;
-        b=XS1NRVgI78bKMY/9v0VhbLBo7dESzPx++vlg71gFCbTk0MBKbxuJNjELARKlxqCBOHo9MT
-        5LDgYs004y/1OojEeIiDrea03uG0YjVO2RKm4wZaujs1E9qDo0CcNA3+qFjTb/9KcFCVUI
-        V2fFDzD//WLjjyGsLOlCjHlg6Wh5X8E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-355-K_zC0YpLOs6gHmmqGjcAbg-1; Thu, 10 Jun 2021 02:57:20 -0400
-X-MC-Unique: K_zC0YpLOs6gHmmqGjcAbg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BE5DD100C662;
-        Thu, 10 Jun 2021 06:57:18 +0000 (UTC)
-Received: from T590 (ovpn-13-145.pek2.redhat.com [10.72.13.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7BE5760937;
-        Thu, 10 Jun 2021 06:57:07 +0000 (UTC)
-Date:   Thu, 10 Jun 2021 14:57:03 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>, Dennis Zhou <dennis@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>, cgroups@vger.kernel.org,
-        Jan Kara <jack@suse.com>
-Subject: Re: [PATCH v9 3/8] writeback, cgroup: increment isw_nr_in_flight
- before grabbing an inode
-Message-ID: <YMG3v13caUW5BX8n@T590>
-References: <20210608230225.2078447-1-guro@fb.com>
- <20210608230225.2078447-4-guro@fb.com>
- <YMA2XEnJrHyVLWrD@T590>
- <YMFa+guFw7OFjf3X@carbon.dhcp.thefacebook.com>
+        Thu, 10 Jun 2021 03:15:13 -0400
+Received: by mail-io1-f46.google.com with SMTP id q3so2436280iop.11;
+        Thu, 10 Jun 2021 00:13:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tjDd7Uq7iGzt6/xpzWYUjJJ0G9Qh4pcbxJCp+7rmx/8=;
+        b=BMf0jfbhA5qKTTS7z9TQHqUpWsqaI1kdZAlIztel355FcaFCYRix2J+77M38nLhcFr
+         G6dYBvag/1jg7ATbM+AEdlzpuzieYvQzDZVpwyVvNOC0DXgE34dDTmSJsycQi/IHE3Yf
+         bNPcsLMRzIF5eGRPygkuvIE1PAdK8e7u+mWZ2BWPerZRnnPxhjbFUlmC/FWQF/OcLyp9
+         UkHbATU/R72uikzq5bawND8HgOV5sRQQ7hU8b1XDWkARFcDo6DilLref4ui1FMnER7/h
+         GlPq958UcVMfIFC6O0pluoIeCDqGOScYdasl+K2+VBbDgcm6OwThDZrVLJFOoPg0vxKk
+         vS3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tjDd7Uq7iGzt6/xpzWYUjJJ0G9Qh4pcbxJCp+7rmx/8=;
+        b=nGbWP8mssxc5yaJRbFIkvNqF1X5vOjTj01jAUKE97/bXl/8s/a+3JKXrgOTH2d7t8p
+         oNKgBF1EVdR1G4Qeg2jnGtY2tno44/dl/LcRmxS6Q9Wvm8WFt9iqBfM0Y/ZsZBGwI/zB
+         PCyAWblvWDktncJ4wMQTbkUgLFbWYwyqaV5Vz50dV2D9l99q0+yb/WvVO50dZCz+UXaK
+         KCl93/P5z6QsqJpCI+pUvR2s3MNn+wbMr91anwYCwaUWw0DTvpkpmEdj6IM3GEfStKBC
+         ZPg+y5gfowYYi6fz+s7zTxR9xCPCQL/K5N2cuJbIOIhlR6EqSQOU2fU/+0lqBZCuf/mP
+         GjRg==
+X-Gm-Message-State: AOAM531lyNKm42m+maRRC9lsDeaYw4zZ6tO16/FNvj6zZ+DajzjJgtSX
+        K3FZnI2QRjnC1t/8rG1ePIUbdOjgk8j5DmV1tLQ=
+X-Google-Smtp-Source: ABdhPJzkx+5unvU+XObnz+HmupjYQbGxCSuX5v0IxDSzQPvAXtNp2Cv/hGkEQr2umZEOb3tFJAwvmbsJ9kPLbHE0BN0=
+X-Received: by 2002:a6b:3119:: with SMTP id j25mr2656890ioa.64.1623309122583;
+ Thu, 10 Jun 2021 00:12:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMFa+guFw7OFjf3X@carbon.dhcp.thefacebook.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <cover.1623282854.git.repnop@google.com> <7f9d3b7815e72bfee92945cab51992f9db6533dd.1623282854.git.repnop@google.com>
+ <CAOQ4uxj2t+z1BWimWKKTae3saDbZQ=-h+6JSnr=Vyv1=rGT0Jw@mail.gmail.com> <YMGyrJMwpvqU2kcr@google.com>
+In-Reply-To: <YMGyrJMwpvqU2kcr@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 10 Jun 2021 10:11:51 +0300
+Message-ID: <CAOQ4uxhV32Qbk=uyxNEhUkdqzqspib=5FY_J6N-0HdLizDEAXA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] fanotify: add pidfd support to the fanotify API
+To:     Matthew Bobrowski <repnop@google.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 09, 2021 at 05:21:14PM -0700, Roman Gushchin wrote:
-> On Wed, Jun 09, 2021 at 11:32:44AM +0800, Ming Lei wrote:
-> > On Tue, Jun 08, 2021 at 04:02:20PM -0700, Roman Gushchin wrote:
-> > > isw_nr_in_flight is used do determine whether the inode switch queue
-> > > should be flushed from the umount path. Currently it's increased
-> > > after grabbing an inode and even scheduling the switch work. It means
-> > > the umount path can be walked past cleanup_offline_cgwb() with active
-> > > inode references, which can result in a "Busy inodes after unmount."
-> > > message and use-after-free issues (with inode->i_sb which gets freed).
-> > > 
-> > > Fix it by incrementing isw_nr_in_flight before doing anything with
-> > > the inode and decrementing in the case when switching wasn't scheduled.
-> > > 
-> > > The problem hasn't yet been seen in the real life and was discovered
-> > > by Jan Kara by looking into the code.
-> > > 
-> > > Suggested-by: Jan Kara <jack@suse.com>
-> > > Signed-off-by: Roman Gushchin <guro@fb.com>
-> > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > ---
-> > >  fs/fs-writeback.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > > index b6fc13a4962d..4413e005c28c 100644
-> > > --- a/fs/fs-writeback.c
-> > > +++ b/fs/fs-writeback.c
-> > > @@ -505,6 +505,8 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
-> > >  	if (!isw)
-> > >  		return;
-> > >  
-> > > +	atomic_inc(&isw_nr_in_flight);
-> > 
-> > smp_mb() may be required for ordering the WRITE in 'atomic_inc(&isw_nr_in_flight)'
-> > and the following READ on 'inode->i_sb->s_flags & SB_ACTIVE'. Otherwise,
-> > cgroup_writeback_umount() may observe zero of 'isw_nr_in_flight' because of
-> > re-order of the two OPs, then miss the flush_workqueue().
-> > 
-> > Also this barrier should serve as pair of the one added in cgroup_writeback_umount(),
-> > so maybe this patch should be merged with 2/8.
-> 
-> Hi Ming!
-> 
-> Good point, I agree. How about a patch below?
-> 
-> Thanks!
-> 
-> --
-> 
-> From 282861286074c47907759d80c01419f0d0630dae Mon Sep 17 00:00:00 2001
-> From: Roman Gushchin <guro@fb.com>
-> Date: Wed, 9 Jun 2021 14:14:26 -0700
-> Subject: [PATCH] cgroup, writeback: add smp_mb() to inode_prepare_wbs_switch()
-> 
-> Add a memory barrier between incrementing isw_nr_in_flight
-> and checking the sb's SB_ACTIVE flag and grabbing an inode in
-> inode_prepare_wbs_switch(). It's required to prevent grabbing
-> an inode before incrementing isw_nr_in_flight, otherwise
-> 0 can be obtained as isw_nr_in_flight in cgroup_writeback_umount()
-> and isw_wq will not be flushed, potentially leading to a memory
-> corruption.
-> 
-> Added smp_mb() will work in pair with smp_mb() in
-> cgroup_writeback_umount().
-> 
-> Suggested-by: Ming Lei <ming.lei@redhat.com>
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> ---
->  fs/fs-writeback.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 545fce68e919..6332b86ca4ed 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -513,6 +513,14 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
->  static bool inode_prepare_wbs_switch(struct inode *inode,
->  				     struct bdi_writeback *new_wb)
->  {
-> +	/*
-> +	 * Paired with smp_mb() in cgroup_writeback_umount().
-> +	 * isw_nr_in_flight must be increased before checking SB_ACTIVE and
-> +	 * grabbing an inode, otherwise isw_nr_in_flight can be observed as 0
-> +	 * in cgroup_writeback_umount() and the isw_wq will be not flushed.
-> +	 */
-> +	smp_mb();
-> +
->  	/* while holding I_WB_SWITCH, no one else can update the association */
->  	spin_lock(&inode->i_lock);
->  	if (!(inode->i_sb->s_flags & SB_ACTIVE) ||
+> > > +               ret = copy_info_records_to_user(event, info, info_mode, pidfd,
+> > > +                                               buf, count);
+> > >                 if (ret < 0)
+> > > -                       return ret;
+> > > +                       goto out_close_fd;
+> >
+> > This looks like a bug in upstream.
+>
+> Yes, I'm glad this was picked up and I was actually wondering why it was
+> acceptable to directly return without jumping to the out_close_fd label in
+> the case of an error. I felt like it may have been a burden to raise the
+> question in the first place because I thought that this got picked up in
+> the review already and there was a good reason for having it, despite not
+> really making much sense.
+>
+> > It should have been goto out_close_fd to begin with.
+> > We did already copy metadata.fd to user, but the read() call
+> > returns an error.
+> > You should probably fix it before the refactoring patch, so it
+> > can be applied to stable kernels.
+>
+> Sure, I will send through a patch fixing this before submitting the next
+> version of this series though. How do I tag the patch so that it's picked
+> up an back ported accordingly?
+>
 
-Looks fine, you may have to merge this one with 2/8 & 3/8, so the memory
-barrier use can be correct & intact for avoiding the race between switching
-cgwb and generic_shutdown_super().
+The best option, in case this is a regression (it probably is)
+is the Fixes: tag which is both a clear indication for stale
+candidate patch tells the bots exactly which stable kernel the
+patch should be applied to.
 
+Otherwise, you can Cc: stable (see examples in git)
+and generally any commit title with the right keywords
+'fix' 'regression' 'bug' should be caught but the stable AI bots.
+
+> > >         }
+> > >
+> > >         return metadata.event_len;
+> > > @@ -558,6 +632,10 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+> > >                 put_unused_fd(fd);
+> > >                 fput(f);
+> > >         }
+> > > +
+> > > +       if (pidfd < 0)
+> >
+> > That condition is reversed.
+> > We do not seem to have any test coverage for this error handling
+> > Not so surprising that upstream had a bug...
+>
+> Sorry Amir, I don't quite understand what you mean by "That condition is
+> reversed". Presumably you're referring to the fd != FAN_NOFD check and not
+> pidfd < 0 here.
+>
+
+IDGI, why is the init/cleanup code not as simple as
+
+    int pidfd = FAN_NOPIDFD;
+...
+out_close_fd:
+...
+       if (pidfd >= 0)
+                 put_unused_fd(fd);
+
+What am I missing?
 
 Thanks,
-Ming
-
+Amir.
