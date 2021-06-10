@@ -2,128 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C663A24D9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 08:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC8513A24DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 08:57:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229989AbhFJG6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Jun 2021 02:58:55 -0400
-Received: from mail-pj1-f50.google.com ([209.85.216.50]:46622 "EHLO
-        mail-pj1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbhFJG6y (ORCPT
+        id S229910AbhFJG7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Jun 2021 02:59:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35033 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229705AbhFJG7U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Jun 2021 02:58:54 -0400
-Received: by mail-pj1-f50.google.com with SMTP id pi6-20020a17090b1e46b029015cec51d7cdso3204637pjb.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Jun 2021 23:56:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=2aDtXE7kDwDYcnw1DjmnkRw8CyFdvtQ3yMA1h6IvAQg=;
-        b=mYoNlVCax049SKFZoh13ufk31j20rFC1095QG4YB8JO6fPhjRaFzIsD5C1PtEjqgj+
-         +dL7mbcki5gbyzQXRohncg/8iGGrSrkRNxqm5SgQmoANlkdLfs2zL9J2cKyHrXPCr3i+
-         79LsrQQ6H58GmN0SlP2t9ldB4fWhemWFH6Gq5JTglUvfJPDpmx06d6TWbiQk6UMGny0/
-         TcChl/XMznVzxT9QPDewGv/VpZCQ+ZRHlmerRgJGpfY8wLKp7VTQP6muG7+6/f0auegz
-         82J9obZ9DCo7vXh692fzDcIc+fHRLJI9fyrsX7IU4Wru28Kpf2of5YFvR2EzCXwklKQZ
-         pszQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2aDtXE7kDwDYcnw1DjmnkRw8CyFdvtQ3yMA1h6IvAQg=;
-        b=U6mFCMieSP4rD9yOCmgvjhrlkPjolrVzb9WLTAsn3AFrgaLYeFh4YDd90uGQ8g01OH
-         l+D9rswRHK0qSi5mG3FdtgfZpIxTfVUu05p44OPEf3YZDikYbfL4S1/7JO2xU0Qk57Lv
-         7ISICydruhizY5LkLZIFHNFcjtWRGKuDzsG/PJxzrwZ01nEgPmsQlrdv1YCFzZ5Uoi44
-         FZLgu7O5JQmi+Yb7oWlZzf2yXRhCYOY5fEymqG1TJzTA4XEJzab9eTT1/WXQE8bg8jGt
-         zPr/SQcCLqGg9gnm0WqeIHAhbJQS8pGwluDeJQW1As8wXnHBfXC0moCOUmfoHEQzozCg
-         fZJg==
-X-Gm-Message-State: AOAM530bHjCjDBzAHOJYmF5E6HTqPPsBJIQJKF26BD2xm5jWShoAsUCp
-        /w2OofBcnBawrEFVBJ3wVZMzOQ==
-X-Google-Smtp-Source: ABdhPJwnjY/iRVP5AKb8AM0J04xj7JCoATvoyOAwG+BoREk4gF/66U9HJyirJcaOR+FBsHqGcxCwoQ==
-X-Received: by 2002:a17:902:8a83:b029:10f:45c4:b435 with SMTP id p3-20020a1709028a83b029010f45c4b435mr3361949plo.17.1623308158698;
-        Wed, 09 Jun 2021 23:55:58 -0700 (PDT)
-Received: from google.com ([2401:fa00:9:211:6512:d64a:3615:dcbf])
-        by smtp.gmail.com with ESMTPSA id a11sm1513981pjq.45.2021.06.09.23.55.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jun 2021 23:55:58 -0700 (PDT)
-Date:   Thu, 10 Jun 2021 16:55:46 +1000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v2 0/5] Add pidfd support to the fanotify API
-Message-ID: <YMG3crGB2RYZtVmf@google.com>
-References: <cover.1623282854.git.repnop@google.com>
- <CAOQ4uxgR1cSsE0JeTGshtyT3qgaTY3XwcxnGne7zuQmq00hv8w@mail.gmail.com>
+        Thu, 10 Jun 2021 02:59:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623308244;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2xI9DhwUbPIwsok2RGKHqBDnQZkdygy7sVBmHeixOo0=;
+        b=XS1NRVgI78bKMY/9v0VhbLBo7dESzPx++vlg71gFCbTk0MBKbxuJNjELARKlxqCBOHo9MT
+        5LDgYs004y/1OojEeIiDrea03uG0YjVO2RKm4wZaujs1E9qDo0CcNA3+qFjTb/9KcFCVUI
+        V2fFDzD//WLjjyGsLOlCjHlg6Wh5X8E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-355-K_zC0YpLOs6gHmmqGjcAbg-1; Thu, 10 Jun 2021 02:57:20 -0400
+X-MC-Unique: K_zC0YpLOs6gHmmqGjcAbg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BE5DD100C662;
+        Thu, 10 Jun 2021 06:57:18 +0000 (UTC)
+Received: from T590 (ovpn-13-145.pek2.redhat.com [10.72.13.145])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7BE5760937;
+        Thu, 10 Jun 2021 06:57:07 +0000 (UTC)
+Date:   Thu, 10 Jun 2021 14:57:03 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>, Dennis Zhou <dennis@kernel.org>,
+        Dave Chinner <dchinner@redhat.com>, cgroups@vger.kernel.org,
+        Jan Kara <jack@suse.com>
+Subject: Re: [PATCH v9 3/8] writeback, cgroup: increment isw_nr_in_flight
+ before grabbing an inode
+Message-ID: <YMG3v13caUW5BX8n@T590>
+References: <20210608230225.2078447-1-guro@fb.com>
+ <20210608230225.2078447-4-guro@fb.com>
+ <YMA2XEnJrHyVLWrD@T590>
+ <YMFa+guFw7OFjf3X@carbon.dhcp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgR1cSsE0JeTGshtyT3qgaTY3XwcxnGne7zuQmq00hv8w@mail.gmail.com>
+In-Reply-To: <YMFa+guFw7OFjf3X@carbon.dhcp.thefacebook.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for the review Amir, appreciated as always.
-
-On Thu, Jun 10, 2021 at 08:37:19AM +0300, Amir Goldstein wrote:
-> On Thu, Jun 10, 2021 at 3:19 AM Matthew Bobrowski <repnop@google.com> wrote:
-> >
-> > Hey Jan/Amir/Christian,
-> >
-> > Sending through v2 of the fanotify pidfd patch series. This series
-> > contains the necessary fixes/suggestions that had come out of the
-> > previous discussions, which can be found here [0], here [1], and here
-> > [3].
-> >
-> > The main difference in this series is that we perform pidfd creation a
-> > little earlier on i.e. in copy_event_to_user() so that clean up of the
-> > pidfd can be performed nicely in the event of an info
-> > generation/copying error. Additionally, we introduce two errors. One
-> > being FAN_NOPIDFD, which is supplied to the listener in the event that
-> > a pidfd cannot be created due to early process termination. The other
-> > being FAN_EPIDFD, which will be supplied in the event that an error
-> > was encountered during pidfd creation.
-> >
-> >   kernel/pid.c: remove static qualifier from pidfd_create()
-> >   kernel/pid.c: implement additional checks upon pidfd_create()
-> >     parameters
-> >   fanotify/fanotify_user.c: minor cosmetic adjustments to fid labels
-> >   fanotify/fanotify_user.c: introduce a generic info record copying
-> >     helper
+On Wed, Jun 09, 2021 at 05:21:14PM -0700, Roman Gushchin wrote:
+> On Wed, Jun 09, 2021 at 11:32:44AM +0800, Ming Lei wrote:
+> > On Tue, Jun 08, 2021 at 04:02:20PM -0700, Roman Gushchin wrote:
+> > > isw_nr_in_flight is used do determine whether the inode switch queue
+> > > should be flushed from the umount path. Currently it's increased
+> > > after grabbing an inode and even scheduling the switch work. It means
+> > > the umount path can be walked past cleanup_offline_cgwb() with active
+> > > inode references, which can result in a "Busy inodes after unmount."
+> > > message and use-after-free issues (with inode->i_sb which gets freed).
+> > > 
+> > > Fix it by incrementing isw_nr_in_flight before doing anything with
+> > > the inode and decrementing in the case when switching wasn't scheduled.
+> > > 
+> > > The problem hasn't yet been seen in the real life and was discovered
+> > > by Jan Kara by looking into the code.
+> > > 
+> > > Suggested-by: Jan Kara <jack@suse.com>
+> > > Signed-off-by: Roman Gushchin <guro@fb.com>
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > > ---
+> > >  fs/fs-writeback.c | 5 +++--
+> > >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> > > index b6fc13a4962d..4413e005c28c 100644
+> > > --- a/fs/fs-writeback.c
+> > > +++ b/fs/fs-writeback.c
+> > > @@ -505,6 +505,8 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+> > >  	if (!isw)
+> > >  		return;
+> > >  
+> > > +	atomic_inc(&isw_nr_in_flight);
+> > 
+> > smp_mb() may be required for ordering the WRITE in 'atomic_inc(&isw_nr_in_flight)'
+> > and the following READ on 'inode->i_sb->s_flags & SB_ACTIVE'. Otherwise,
+> > cgroup_writeback_umount() may observe zero of 'isw_nr_in_flight' because of
+> > re-order of the two OPs, then miss the flush_workqueue().
+> > 
+> > Also this barrier should serve as pair of the one added in cgroup_writeback_umount(),
+> > so maybe this patch should be merged with 2/8.
 > 
-> Above fanotify commits look good to me.
-> Please remove /fanotify_user.c from commit titles and use 'pidfd:' for
-> the pidfd commit titles.
-
-OK, noted for the next series. Thanks for the pointers.
-
-> >   fanotify: add pidfd support to the fanotify API
-> >
+> Hi Ming!
 > 
-> This one looks mostly fine. Gave some minor comments.
+> Good point, I agree. How about a patch below?
 > 
-> The biggest thing I am missing is a link to an LTP test draft and
-> man page update draft.
+> Thanks!
+> 
+> --
+> 
+> From 282861286074c47907759d80c01419f0d0630dae Mon Sep 17 00:00:00 2001
+> From: Roman Gushchin <guro@fb.com>
+> Date: Wed, 9 Jun 2021 14:14:26 -0700
+> Subject: [PATCH] cgroup, writeback: add smp_mb() to inode_prepare_wbs_switch()
+> 
+> Add a memory barrier between incrementing isw_nr_in_flight
+> and checking the sb's SB_ACTIVE flag and grabbing an inode in
+> inode_prepare_wbs_switch(). It's required to prevent grabbing
+> an inode before incrementing isw_nr_in_flight, otherwise
+> 0 can be obtained as isw_nr_in_flight in cgroup_writeback_umount()
+> and isw_wq will not be flushed, potentially leading to a memory
+> corruption.
+> 
+> Added smp_mb() will work in pair with smp_mb() in
+> cgroup_writeback_umount().
+> 
+> Suggested-by: Ming Lei <ming.lei@redhat.com>
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> ---
+>  fs/fs-writeback.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 545fce68e919..6332b86ca4ed 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -513,6 +513,14 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
+>  static bool inode_prepare_wbs_switch(struct inode *inode,
+>  				     struct bdi_writeback *new_wb)
+>  {
+> +	/*
+> +	 * Paired with smp_mb() in cgroup_writeback_umount().
+> +	 * isw_nr_in_flight must be increased before checking SB_ACTIVE and
+> +	 * grabbing an inode, otherwise isw_nr_in_flight can be observed as 0
+> +	 * in cgroup_writeback_umount() and the isw_wq will be not flushed.
+> +	 */
+> +	smp_mb();
+> +
+>  	/* while holding I_WB_SWITCH, no one else can update the association */
+>  	spin_lock(&inode->i_lock);
+>  	if (!(inode->i_sb->s_flags & SB_ACTIVE) ||
 
-Fair point, the way I approached it was that I'd get the ACK from all of
-you on the overall implementation and then go ahead with providing
-additional things like LTP and man-pages drafts, before the merge is
-performed.
+Looks fine, you may have to merge this one with 2/8 & 3/8, so the memory
+barrier use can be correct & intact for avoiding the race between switching
+cgwb and generic_shutdown_super().
 
-> In general, I think it is good practice to provide a test along with any
-> fix, but for UAPI changes we need to hold higher standards - both the
-> test and man page draft should be a must before merge IMO.
 
-Agree, moving forward I will take this approach.
+Thanks,
+Ming
 
-> We already know there is going to be a clause about FAN_NOPIDFD
-> and so on... I think it is especially hard for people on linux-api list to
-> review a UAPI change without seeing the contract in a user manual
-> format. Yes, much of the information is in the commit message, but it
-> is not the same thing as reading a user manual and verifying that the
-> contract makes sense to a programmer.
-
-Makes sense.
-
-/M
