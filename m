@@ -2,69 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D55023A35C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 23:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 993A23A360F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jun 2021 23:36:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230349AbhFJVUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Jun 2021 17:20:42 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:50394 "EHLO
-        mail.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229963AbhFJVUl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Jun 2021 17:20:41 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        by mail.monkeyblade.net (Postfix) with ESMTPSA id AFEAA4F7DFB96;
-        Thu, 10 Jun 2021 14:18:43 -0700 (PDT)
-Date:   Thu, 10 Jun 2021 14:18:43 -0700 (PDT)
-Message-Id: <20210610.141843.1491689012491247186.davem@davemloft.net>
-To:     changbin.du@gmail.com
-Cc:     viro@zeniv.linux.org.uk, kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        xiyou.wangcong@gmail.com, David.Laight@ACULAB.COM,
-        christian.brauner@ubuntu.com
-Subject: Re: [PATCH v3] net: make get_net_ns return error if NET_NS is
- disabled
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20210610153941.118945-1-changbin.du@gmail.com>
-References: <20210610153941.118945-1-changbin.du@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 27.1
+        id S230232AbhFJVik (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Jun 2021 17:38:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229963AbhFJVik (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 10 Jun 2021 17:38:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2D848613BC;
+        Thu, 10 Jun 2021 21:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1623361003;
+        bh=VPiu+326ifHN2/G78z3abv1E9z0XDI+YU7cXCgX001Q=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=VuQ4lsOMievNZQblMuF0nRy9ZL10RTvi5MN7JyQqypvCKdIEhj9jf4aH4rvz6Xs8M
+         q51Vhve8nJpZKKqc9WbMyvx6wBKIfjjrFVeb/0uMGjZzlI1XntsrnsCRcNM4BVc98D
+         0hPqj3icMwnfR4HtixvMv5jV+xf/XQ1OHcfD8wm8=
+Date:   Thu, 10 Jun 2021 14:36:42 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Charles Haithcock <chaithco@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        YiFei Zhu <yifeifz2@illinois.edu>,
+        Adrian Reber <areber@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCHv8] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-Id: <20210610143642.e4535dbdc0db0b1bd3ee5367@linux-foundation.org>
+In-Reply-To: <AM8PR10MB4708AFBD838138A84CE89EF8E4359@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+References: <AM8PR10MB4708AFBD838138A84CE89EF8E4359@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail.monkeyblade.net [0.0.0.0]); Thu, 10 Jun 2021 14:18:44 -0700 (PDT)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Changbin Du <changbin.du@gmail.com>
-Date: Thu, 10 Jun 2021 23:39:41 +0800
+On Thu, 10 Jun 2021 09:31:42 +0200 Bernd Edlinger <bernd.edlinger@hotmail.de> wrote:
 
-> There is a panic in socket ioctl cmd SIOCGSKNS when NET_NS is not enabled.
-> The reason is that nsfs tries to access ns->ops but the proc_ns_operations
-> is not implemented in this case.
-> 
-> [7.670023] Unable to handle kernel NULL pointer dereference at virtual address 00000010
-> [7.670268] pgd = 32b54000
-> [7.670544] [00000010] *pgd=00000000
-> [7.671861] Internal error: Oops: 5 [#1] SMP ARM
-> [7.672315] Modules linked in:
-> [7.672918] CPU: 0 PID: 1 Comm: systemd Not tainted 5.13.0-rc3-00375-g6799d4f2da49 #16
-> [7.673309] Hardware name: Generic DT based system
-> [7.673642] PC is at nsfs_evict+0x24/0x30
-> [7.674486] LR is at clear_inode+0x20/0x9c
-> 
-> The same to tun SIOCGSKNS command.
-> 
-> To fix this problem, we make get_net_ns() return -EINVAL when NET_NS is
-> disabled. Meanwhile move it to right place net/core/net_namespace.c.
-> 
-> Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> Cc: Cong Wang <xiyou.wangcong@gmail.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: David Laight <David.Laight@ACULAB.COM>
-> Cc: Christian Brauner <christian.brauner@ubuntu.com>
-> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> This introduces signal->unsafe_execve_in_progress,
+> which is used to fix the case when at least one of the
+> sibling threads is traced, and therefore the trace
+> process may dead-lock in ptrace_attach, but de_thread
+> will need to wait for the tracer to continue execution.
 
-As this is a bug fix please rebase on the 'net' tree and provide a proper Fixes: tag.
+Deadlocks are serious.  Is this exploitable by unprivileged userspace?
 
-Thank you.
+> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+
+Was a -stable backport considered?
+
+
