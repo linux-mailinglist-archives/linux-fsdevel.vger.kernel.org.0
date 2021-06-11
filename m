@@ -2,109 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 608B53A40BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 13:00:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90D3A3A40D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 13:10:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231488AbhFKLBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Jun 2021 07:01:47 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:51773 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231515AbhFKLBS (ORCPT
+        id S231516AbhFKLMQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Jun 2021 07:12:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23199 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231467AbhFKLMM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Jun 2021 07:01:18 -0400
-Received: from [192.168.1.155] ([95.115.52.72]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MPosX-1ldaEj40EF-00Mtt2; Fri, 11 Jun 2021 12:58:51 +0200
-Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
-        Christoph Lameter <cl@gentwo.de>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
+        Fri, 11 Jun 2021 07:12:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623409815;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Dh0bJRcSaHuNu8U4NSShPd3vbPRVolZwKmUYsaTKAQw=;
+        b=f7fh+JcOYIT28CTQM+WJYrDDhgdMS5DukBoNNKYvbXwK05KfC/iMDzlNUJy4fBJ+k7jtMJ
+        wShKBQpsUvieMDS9g/5WIY9O+pFuhxJbgYUsj/zcJbKjTMqRV143J2OXJEeM5bXtpRpzOG
+        6MRrtQQ8d+4zu7p1GugwpwJSs62uvL8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-284-7nA1G_z5PKijruvWiu4UjA-1; Fri, 11 Jun 2021 07:10:13 -0400
+X-MC-Unique: 7nA1G_z5PKijruvWiu4UjA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C87B08BB401;
+        Fri, 11 Jun 2021 11:10:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CCFA81001281;
+        Fri, 11 Jun 2021 11:10:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YLEIKk7IuWu6W4Sy@casper.infradead.org>
+References: <YLEIKk7IuWu6W4Sy@casper.infradead.org> <YH2hs6EsPTpDAqXc@mit.edu> <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm> <YIx7R6tmcRRCl/az@mit.edu> <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de> <YK+esqGjKaPb+b/Q@kroah.com> <c46dbda64558ab884af060f405e3f067112b9c8a.camel@HansenPartnership.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Greg KH <greg@kroah.com>, Christoph Lameter <cl@gentwo.de>,
+        Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
         ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, netdev@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-api@vger.kernel.org
-References: <YH2hs6EsPTpDAqXc@mit.edu>
- <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
- <YIx7R6tmcRRCl/az@mit.edu>
- <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de>
- <YK+esqGjKaPb+b/Q@kroah.com>
- <c46dbda64558ab884af060f405e3f067112b9c8a.camel@HansenPartnership.com>
- <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com>
- <e993d6c84c79d083ecfe5a8c8edabef9e9caa3ce.camel@HansenPartnership.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <6d8299e4-2707-7edf-ebe4-f5ca7b7ee8ca@metux.net>
-Date:   Fri, 11 Jun 2021 12:58:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
 MIME-Version: 1.0
-In-Reply-To: <e993d6c84c79d083ecfe5a8c8edabef9e9caa3ce.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: tl
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:W1CuRBv9b9vfO/cntxLvE7zRNUCd1/dUgLqWvl6KCwi7Sw23ByG
- lxCAe9Q91/0vR2PyBETRIzab+l26EBWvYSHZ0LUnS9cubvCX5xzUC+CV5JjFwPCWXQxaQOo
- 5taiouS8C+FKLJ+dmpW4iHuaNuDY6rfJXKdICti+cmqPwkBEzGu+ypcMKrurkTnsQ34K6rI
- 06GNiokz08qz4bFDbl2SA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Hq+AqsHvTCw=:QA0c4LdeomjvdgpT+WeCnm
- fvybeHcu/cjr4qkbFb37AHeWQkFDtgzJzer94ls3YhCWt+DHTcRYat2Xw0bDzC571L64go0Zn
- S47+PKyO7iqLbN5ux7Q1bobJkmQyzd4AVn+mJY+DPRWcavypMr61kqgdFjuX6IrVfAowwYiyw
- ly4+mDH127ZO25ThonvdPqnoC09zxMXWofSvrJHTIPF4vPxkQXahO8ZHchkVwwHh8tFFS9JUo
- vw0Lc1EfnmgDoFqHS8P6BW62s3Uh3KwIa5lpH9LO079r/sMc5j3UnvF0meS+/OFKTSylXL8pQ
- fF4Yn/2vfs6qyTFzVGrX0PFL6LNgcYXVDEO0NdXW2C5RLxtOyj3d1JvZqKDgzj4z6+zsBCtiK
- +vjMQtcEEILeH+OmBOdGnY90xLmBJgEiytsBww27KXXtF3L8mJhAPmUpYrzB6flKlq1MN5TEr
- gKbkU+qWBdVtrKAW68yo2YXTIZpiR3DPgifLAb24jDy5gkRZPhn17QKUazkuebWViJSbKQTtF
- v7QlP+4xZ/23ZVOX5McNNQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1745325.1623409807.1@warthog.procyon.org.uk>
+Date:   Fri, 11 Jun 2021 12:10:07 +0100
+Message-ID: <1745326.1623409807@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 09.06.21 21:23, James Bottomley wrote:
+Matthew Wilcox <willy@infradead.org> wrote:
 
-> but the US is definitely moving
-> to a regime that says once you're vaccinated it's pretty much over for
+> Umm.  Let's remember that the vaccines are 33-93% effective [1],
+> which means that there's approximately a 100% certainty that at least
+> one person arriving at the event from a trans-atlantic flight has been
+> exposed to someone who has the virus.  I'm not convinced that holding a
+> "more relaxed protocol" event is a great idea.
 
-As far as I see (watching from the other side of the globe), for most
-states it already is over, no matter whether somebody got a shot or not.
-(actually, getting reports of people *with* the shot get increasing
-trouble, eg. kept out of stores, schools, planes, ...).
+One thing that concerns me about flying to the US is going through multiple
+busy international airports - take Heathrow which didn't separate incoming
+travellers from red-listed countries from those of amber- or green- until like
+a week ago.
 
-FL and TX seem to be the most relaxed states in this regard.
-Maybe ask DeStantis and Abbot whether they'd support such a conference
-in their states, maybe they'd even open their cheque books ;-)
+Would it be practical/economical to charter a plane to fly, say, from a less
+busy airport in Europe to a less busy airport in the US and back again if we
+could get enough delegates together to make it worthwhile?
 
-> you and I don't see a problem with taking advantage of that for hybrid
-> style events.  However, even with the best will in the world, I can't
-> see much of a way around the problem that remote people at hybrid
-> events will always be at a disadvantage ... suggestions for improving
-> this are always welcome.
+Chartering seems to be costed on miles flown rather than passenger count, but
+I've only looked into it very briefly.
 
-Looking from a totally different angle, I believe the hybrid approach
-could even be a benefit. For example, longer talks - IMHO - are easier
-to do (and for the audience) when just recorded, so people can listen to
-them any time (and as often one wants to). Spontanous questions right
-after, I guess, are only helpful for a small minority that's already 
-deep in that particular topic - in those cases I'd prefer a more 
-personal conversation. Another scenario are expert working groups, where
-people already involved into certain topic talk closely - IMHO something
-where direct (group) calls are a good medium, and probably working
-better outside the strict time frames of such an event.
+David
 
-Maybe it's good idea to jump back to square one and ask the question,
-what people actually expect from and try to achieve from such an event,
-before going into some actual planning. (I could only express my very
-personal view, but that's probably far from being representative)
-
-
---mtx
-
--- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
