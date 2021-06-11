@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A0C43A4B18
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jun 2021 01:16:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04FA83A4B1B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jun 2021 01:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230350AbhFKXSH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Jun 2021 19:18:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57804 "EHLO mail.kernel.org"
+        id S230409AbhFKXSz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Jun 2021 19:18:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230017AbhFKXSG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Jun 2021 19:18:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4C661613C3;
-        Fri, 11 Jun 2021 23:15:54 +0000 (UTC)
+        id S229976AbhFKXSy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Jun 2021 19:18:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 898A76124C;
+        Fri, 11 Jun 2021 23:16:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1623453355;
-        bh=ldDxd3SAl23LV2xslCIftZCEnnBiXgGRvYqkriYuZPo=;
+        s=korg; t=1623453416;
+        bh=lMxz0DjlyuQqZF5qJPG3f9aj+1mihATa36IM+sjVrMI=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KHIkxEIKe/fnhKal4xXi+ekzeTiz2WRCnK0eQ0kJdiiOGC5NaASFAv/9vwPfxDK8X
-         1A/izIxwGauD8PDuEW6vgeSLYuOWJDxQqHFIgoBziBqCz0XB4qSI5DVCIa7WrmVphl
-         6TGDsI9CxxwRvVVt45mvIpliKMi4nvd6ODgsXffw=
-Date:   Fri, 11 Jun 2021 16:15:53 -0700
+        b=x2P3F19NBmj0X25SPv0T7/C1OWmNI0B4X1G1Smzk/tpOHcskH3da9D5FjsBNJeDGI
+         EgyobsuGaTlfVOxZ29asRHSQ6kwFdc50XducX/Fy+IUTf/cGIG3lRWvOY0X6/DIo8C
+         0fMoyUWvrfwTqbCFl8OmwEAXDYhnje56ZAB3HoZY=
+Date:   Fri, 11 Jun 2021 16:16:55 -0700
 From:   Andrew Morton <akpm@linux-foundation.org>
 To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -44,11 +44,14 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Jens Axboe <axboe@kernel.dk>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCHv8] exec: Fix dead-lock in de_thread with ptrace_attach
-Message-Id: <20210611161553.7dcfa91e494a18e069539193@linux-foundation.org>
-In-Reply-To: <AM8PR10MB4708AFBD838138A84CE89EF8E4359@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+        linux-kselftest@vger.kernel.org,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v9] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-Id: <20210611161655.0a3076495e59add166bac58a@linux-foundation.org>
+In-Reply-To: <AM8PR10MB470896FBC519ABCC20486958E4349@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
 References: <AM8PR10MB4708AFBD838138A84CE89EF8E4359@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+        <20210610143642.e4535dbdc0db0b1bd3ee5367@linux-foundation.org>
+        <AM8PR10MB470896FBC519ABCC20486958E4349@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -57,7 +60,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 10 Jun 2021 09:31:42 +0200 Bernd Edlinger <bernd.edlinger@hotmail.de> wrote:
+On Fri, 11 Jun 2021 17:55:09 +0200 Bernd Edlinger <bernd.edlinger@hotmail.de> wrote:
 
 > This introduces signal->unsafe_execve_in_progress,
 > which is used to fix the case when at least one of the
@@ -103,11 +106,7 @@ On Thu, 10 Jun 2021 09:31:42 +0200 Bernd Edlinger <bernd.edlinger@hotmail.de> wr
 > API to succeed at the first attempt.
 > 
 
-
-Here's the diff from v8.  It's conventional to tell reviewers what
-changed when sending out a new version.
-
-What changed in this version?
+err, sorry.  I replied to the v8 patch, not to v9.
 
 --- a/fs/exec.c~exec-fix-dead-lock-in-de_thread-with-ptrace_attach-v9
 +++ a/fs/exec.c
