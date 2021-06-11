@@ -2,220 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 725B33A4A9B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 23:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 711153A4AA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 23:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230348AbhFKVbQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Jun 2021 17:31:16 -0400
-Received: from mail-ed1-f49.google.com ([209.85.208.49]:35834 "EHLO
-        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbhFKVbQ (ORCPT
+        id S230155AbhFKVfX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Jun 2021 17:35:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51632 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229777AbhFKVfX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Jun 2021 17:31:16 -0400
-Received: by mail-ed1-f49.google.com with SMTP id ba2so36905124edb.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jun 2021 14:29:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Yj/vp7a0ivkIMlD+voHVQNNmuERYkNcOuFUlb3V5+QU=;
-        b=ajiSwjMERGP2Z/iuuXasSqjkJ8BYoaGXsEDLrPGqmodRD89SMCOkxYz/x8/F/ZhuL/
-         dnUA5/b7MkoPeEu+KPcGzPOJ9WZp0F5iunGA8iq1RiGXSXBSPDh5gqdGF6JncWWT/ODj
-         +470G9xNl22BhqGdGKor1/Y5eU0Epq5MuFRuo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Yj/vp7a0ivkIMlD+voHVQNNmuERYkNcOuFUlb3V5+QU=;
-        b=JS9yjsPdgsD15oF1+Vz5KOPJrEimmO173EZEBo7WYPyLNKvwGoyxfp/UiKy71FOOom
-         jW0U3ovaC8BO1YfvL+fFyhMu5j0rQn/YMgxNiYKH2mAEn8oWlB8d/SriAEXiinmYq0ZC
-         fE+lOrzwmszHqfTVqyNWuCLCimM+LffRsEnCejqN8CvJQdxMtTuAWjZTRCEa6WsN7hvZ
-         Ftt7hB6cyftoAekc/thzGPsFo65uyhHeDGdxACY1stdUTi8eXbA85ZbVqYwbOyXigN+5
-         Ss/bBSTF3FwXeP3YCeVanhsljV0Kksvvj2M5GbdpGHOeeTGIjnGeRSbKxYi+KwiaeMQL
-         i9Tw==
-X-Gm-Message-State: AOAM530mrXAP8JgbGRAPP6lQh6c4FJSVIy9o9Faa1txdro/DO5XV8zNM
-        i7GCzYDRqUKwBHDh8vD8uiucPQNsvEIZXw==
-X-Google-Smtp-Source: ABdhPJwq53CQ9eBtPD8hVpIx6faEUJL9Vm6nZO2saTd2fFDa8JKoNUeDVbkS5vRIsoOdUY77vA6TTw==
-X-Received: by 2002:a05:6402:61a:: with SMTP id n26mr5734045edv.220.1623446897185;
-        Fri, 11 Jun 2021 14:28:17 -0700 (PDT)
-Received: from [192.168.1.149] ([80.208.64.110])
-        by smtp.gmail.com with ESMTPSA id f8sm2437137ejw.75.2021.06.11.14.28.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jun 2021 14:28:16 -0700 (PDT)
-Subject: Re: [PATCH RFCv3 2/3] lib/vsprintf.c: make %pD print full path for
- file
-To:     Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210611155953.3010-1-justin.he@arm.com>
- <20210611155953.3010-3-justin.he@arm.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <35c35b55-3c58-59e8-532a-6cad34aff729@rasmusvillemoes.dk>
-Date:   Fri, 11 Jun 2021 23:28:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Fri, 11 Jun 2021 17:35:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623447204;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3bKo5wtaHM4sVh0ddB6M8mNI7mtuAf3dNvgJlkLWktM=;
+        b=HehWaExnBhoV8W5ZFaPmwZ4CRPUjFc0M0HjhilyKrad7Rr1EGbshiFBG+teSMA3MquBk/d
+        m2eD6iab+GjiIGhAYB7LNLT1MOsv6c/T9Wsc0zAT837AQ1QmBhBIj/pO9exRJAMapTLfnA
+        x1UOOBwRPyfZIZl2u/ZrMBDzWSeHamc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-147-wDQfoM4SNXmvim3tgUhIgw-1; Fri, 11 Jun 2021 17:33:23 -0400
+X-MC-Unique: wDQfoM4SNXmvim3tgUhIgw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 242AE1084F43;
+        Fri, 11 Jun 2021 21:33:22 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-174.rdu2.redhat.com [10.10.116.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DAA841007606;
+        Fri, 11 Jun 2021 21:33:21 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 4B55E22054F; Fri, 11 Jun 2021 17:33:21 -0400 (EDT)
+Date:   Fri, 11 Jun 2021 17:33:21 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, Max Reitz <mreitz@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] fuse: fix illegal access to inode with reused nodeid
+Message-ID: <20210611213321.GC767764@redhat.com>
+References: <20210609181158.479781-1-amir73il@gmail.com>
+ <20210611162603.GA747424@redhat.com>
+ <CAOQ4uxjX+EPuScGdL+LY2djaq=4O1dEpg59QyHgP2-eDLs7Y+A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210611155953.3010-3-justin.he@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjX+EPuScGdL+LY2djaq=4O1dEpg59QyHgP2-eDLs7Y+A@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/06/2021 17.59, Jia He wrote:
-> We have '%pD' for printing a filename. It may not be perfect (by
-> default it only prints one component.)
+On Fri, Jun 11, 2021 at 08:44:16PM +0300, Amir Goldstein wrote:
+> On Fri, Jun 11, 2021 at 7:26 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Wed, Jun 09, 2021 at 09:11:58PM +0300, Amir Goldstein wrote:
+> > > Server responds to LOOKUP and other ops (READDIRPLUS/CREATE/MKNOD/...)
+> > > with outarg containing nodeid and generation.
+> > >
+> > > If a fuse inode is found in inode cache with the same nodeid but
+> > > different generation, the existing fuse inode should be unhashed and
+> > > marked "bad" and a new inode with the new generation should be hashed
+> > > instead.
+> > >
+> > > This can happen, for example, with passhrough fuse filesystem that
+> > > returns the real filesystem ino/generation on lookup and where real inode
+> > > numbers can get recycled due to real files being unlinked not via the fuse
+> > > passthrough filesystem.
+> > >
+> > > With current code, this situation will not be detected and an old fuse
+> > > dentry that used to point to an older generation real inode, can be used
+> > > to access a completely new inode, which should be accessed only via the
+> > > new dentry.
+> >
+> > Hi Amir,
+> >
+> > Curious that how server gets access to new inode on host. If server
+> > keeps an fd open to file, then we will continue to refer to old
+> > unlinked file. Well in that case inode number can't be recycled to
+> > begin with, so this situation does not arise to begin with.
+> >
 > 
-> As suggested by Linus at [1]:
-> A dentry has a parent, but at the same time, a dentry really does
-> inherently have "one name" (and given just the dentry pointers, you
-> can't show mount-related parenthood, so in many ways the "show just
-> one name" makes sense for "%pd" in ways it doesn't necessarily for
-> "%pD"). But while a dentry arguably has that "one primary component",
-> a _file_ is certainly not exclusively about that last component.
+> Therefore, none of the example fs in libfuse exhibit the bug.
 > 
-> Hence change the behavior of '%pD' to print full path of that file.
+> > If server is keeping file handles (like Max's patches) and file gets
+> > recycled and inode number recycled, then I am assuming old inode in
+> > server can't resolve that file handle because that file is gone
+> > and a new file/inode is in place. IOW, I am assuming open_by_handle_at()
+> > should fail in this case.
+> >
+> > IOW, IIUC, even if we refer to old inode, server does not have a
+> > way to provide access to new file (with reused inode number). And
+> > will be forced to return -ESTALE or something like that?  Did I
+> > miss the point completely?
+> >
 > 
-> Things become more complicated when spec.precision and spec.field_width
-> is added in. string_truncate() is to handle the small space case for
-> '%pD' precision and field_width.
+> Yes :-) it is much more simple than that.
+> I will explain with an example from the test in link [1]:
 > 
-> [1] https://lore.kernel.org/lkml/CAHk-=wimsMqGdzik187YWLb-ru+iktb4MYbMQG1rnZ81dXYFVg@mail.gmail.com/
+> test_syscalls has ~50 test cases.
+> Each test case (or some) create a file named testfile.$n
+> some test cases truncate the file, some chmod, whatever.
+> At the end of each test case the file is closed and unlinked.
+> This means that the server if run over ext4/xfs very likely reuses
+> the same inode number in many test cases.
 > 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Jia He <justin.he@arm.com>
-> ---
->  Documentation/core-api/printk-formats.rst |  5 ++-
->  lib/vsprintf.c                            | 47 +++++++++++++++++++++--
->  2 files changed, 46 insertions(+), 6 deletions(-)
+> Normally, unlinking the testfile will drop the inode refcount to zero
+> and kernel will evict the inode and send FORGER before the server
+> creates another file with the same inode number.
 > 
-> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-> index f063a384c7c8..95ba14dc529b 100644
-> --- a/Documentation/core-api/printk-formats.rst
-> +++ b/Documentation/core-api/printk-formats.rst
-> @@ -408,12 +408,13 @@ dentry names
->  ::
->  
->  	%pd{,2,3,4}
-> -	%pD{,2,3,4}
-> +	%pD
->  
->  For printing dentry name; if we race with :c:func:`d_move`, the name might
->  be a mix of old and new ones, but it won't oops.  %pd dentry is a safer
->  equivalent of %s dentry->d_name.name we used to use, %pd<n> prints ``n``
-> -last components.  %pD does the same thing for struct file.
-> +last components.  %pD prints full file path together with mount-related
-> +parenthood.
->  
->  Passed by reference.
->  
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index f0c35d9b65bf..317b65280252 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -27,6 +27,7 @@
->  #include <linux/string.h>
->  #include <linux/ctype.h>
->  #include <linux/kernel.h>
-> +#include <linux/dcache.h>
->  #include <linux/kallsyms.h>
->  #include <linux/math64.h>
->  #include <linux/uaccess.h>
-> @@ -601,6 +602,20 @@ char *widen_string(char *buf, int n, char *end, struct printf_spec spec)
->  }
->  
->  /* Handle string from a well known address. */
-> +static char *string_truncate(char *buf, char *end, const char *s,
-> +			     u32 full_len, struct printf_spec spec)
-> +{
-> +	int lim = 0;
-> +
-> +	if (buf < end) {
+> I modified the test to keep an open O_PATH fd of the testfiles
+> around until the end of the test.
+> This does not keep the file open on the server, so the real inode
+> number can and does get reused, but it does keep the inode
+> with elevated refcount in the kernel, so there is no final FORGET
+> to the server.
+> 
+> Now the server gets a CREATE for the next testfile and it happens
+> to find a file with an inode number that already exists in the server
+> with a different generation.
+> 
+> The server has no problem detecting this situation, but what can the
+> server do about it? If server returns success, the existing kernel
+> inode will now refer to the new server object.
+> If the server returns failure, this is a permanent failure.
 
-See below, I think the sole caller guarantees this,
+Hi Amir,
 
-> +		if (spec.precision >= 0)
-> +			lim = strlen(s) - min_t(int, spec.precision, strlen(s));
-> +
-> +		return widen_string(buf + full_len, full_len, end - lim, spec);
-> +	}
-> +
-> +	return buf;
+Thanks for the detailed explanation. I guess I am beginning to understand
+it now.
 
-which is good because this would almost certainly be wrong (violating
-the "always forward buf appropriately regardless of whether you wrote
-something" rule).
+In above example, when CREATE comes along and server detects that
+inode it has in cache has same inode number but different generation,
+then problem can be solved if it creates a new inode and new node
+id) and sends back new inode id instead? But I guess your file
+server is using real inode number as inode id and you can't do
+that and that's why facing the issue?
 
-> +}
->  static char *string_nocheck(char *buf, char *end, const char *s,
->  			    struct printf_spec spec)
->  {
-> @@ -920,13 +935,37 @@ char *dentry_name(char *buf, char *end, const struct dentry *d, struct printf_sp
->  }
->  
->  static noinline_for_stack
-> -char *file_dentry_name(char *buf, char *end, const struct file *f,
-> +char *file_d_path_name(char *buf, char *end, const struct file *f,
->  			struct printf_spec spec, const char *fmt)
->  {
-> +	const struct path *path;
-> +	char *p;
-> +	int prepend_len, reserved_size, dpath_len;
-> +
->  	if (check_pointer(&buf, end, f, spec))
->  		return buf;
->  
-> -	return dentry_name(buf, end, f->f_path.dentry, spec, fmt);
-> +	path = &f->f_path;
-> +	if (check_pointer(&buf, end, path, spec))
-> +		return buf;
-> +
-> +	p = d_path_unsafe(path, buf, end - buf, &prepend_len);
+> 
+> My filesystem used to free the existing inode object and replace it with
+> a new one, but the same ino will keep getting FORGET messages from
+> the old kernel inode, so needed to remember the old nlookup.
+> 
+> The server can send an invalidate command for the inode, but that
+> won't make the kernel inode go away nor be marked "bad".
+> 
+> Eventually, at the end of the test_syscalls, my modification iterates
+> on all the O_PATH fd's, which correspond to different dentries, most
+> of them now pointing at the same inode object and fstat() on most of
+> those fd's return the same ino/size/mode, which is not a match to the
+> file that O_PATH fd used to refer to. IOW, you got to peek at the
+> content of a file that is not yours at all.
 
-If I'm reading this right, you're using buf as scratch space to write
-however much of the path fits. Then [*]
+Got it. So with your invalidation patch, inode (opened with O_PATH)
+will be marked bad and if you do fstat() on this, fuse will return
+-EIO, instead of stats of new file which reused inode number, right?
 
-> +	/* Minus 1 byte for '\0' */
-> +	dpath_len = end - buf - prepend_len - 1;
-> +
-> +	reserved_size = max_t(int, dpath_len, spec.field_width);
-> +
-> +	/* no filling space at all */
-> +	if (buf >= end || !buf)
-> +		return buf + reserved_size;
+What happens in following scenario.
 
-Why the !buf check? The only way we can have that is the snprintf(NULL,
-0, ...) case of asking how much space we'd need to malloc, right? In
-which case end would be NULL+0 == NULL, so buf >= end automatically,
-regardless of how much have been "printed" before %pD.
+- You have file open with O_PATH.
+- Somebody unlinked the file on server and put a new file which
+  reused inode number.
+- Now I do fstat(fd). 
 
-> +
-> +	/* small space for long name */
-> +	if (buf < end && prepend_len < 0)
+I am assuming in this case I will still be able to get stats of new
+file? Or your server implementation detects that its not same
+file anymore and returns an error instead?
 
-So if we did an early return for buf >= end, we now know buf < end and
-hence the first part here is redundant.
+Thanks
+Vivek
 
-Anyway, as for [*]:
+> 
+> > >
+> > > Note that because the FORGET message carries the nodeid w/o generation,
+> > > the server should wait to get FORGET counts for the nlookup counts of
+> > > the old and reused inodes combined, before it can free the resources
+> > > associated to that nodeid.
+> >
+> > This seems like an odd piece. Wondering if it will make sense to enhance
+> > FORGET message to also send generation number so that server does not
+> > have to keep both the inodes around.
+> 
+> The server does not keep both inodes.
+> The server has a single object which is referenced by ino, because
+> all protocol messages identify with only ino.
+> 
+> When the underlying fs reuses an inode number, the server will reuse the
+> inode object as well (freeing all resources that were relevant to the old file),
+> but same as the underlying filesystem keeps a generation in the inode object,
+> so does the server.
+> 
+> Regarding nlookup count, I cannot think of a better way to address this
+> nor do I see any problem with keeping a balance count of LOOKUP/FORGET
+> the balance should work fine per ino, regardless of generation, as long as
+> we make sure the fuse kernel driver has a single "live" inode object per ino
+> at all times (it can have many "bad" inode objects).
+> 
+> Not sure if above is clear, but the result is that fuse driver has several inode
+> objects, one hashed and some unhashed and when all are finally evicted,
+> the server nlookup count per ino will level at 0 and the server can
+> free the inode
+> object.
+> 
+> Thanks,
+> Amir.
+> 
 
-> +		return string_truncate(buf, end, p, dpath_len, spec);
-> +
-> +	/* space is enough */
-> +	return string_nocheck(buf, end, p, spec);
-
-Now you're passing p to string_truncate or string_nocheck, while p
-points somewhere into buf itself. I can't convince myself that would be
-safe. At the very least, it deserves a couple of comments.
-
-Rasmus
