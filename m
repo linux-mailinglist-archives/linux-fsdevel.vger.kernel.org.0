@@ -2,100 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 890883A4261
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 14:48:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6C963A4268
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 14:51:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231342AbhFKMuY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Jun 2021 08:50:24 -0400
-Received: from mail-pj1-f42.google.com ([209.85.216.42]:42952 "EHLO
-        mail-pj1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231423AbhFKMuT (ORCPT
+        id S231362AbhFKMxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Jun 2021 08:53:07 -0400
+Received: from mail-vs1-f49.google.com ([209.85.217.49]:36376 "EHLO
+        mail-vs1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231289AbhFKMxG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Jun 2021 08:50:19 -0400
-Received: by mail-pj1-f42.google.com with SMTP id md2-20020a17090b23c2b029016de4440381so5930651pjb.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jun 2021 05:48:07 -0700 (PDT)
+        Fri, 11 Jun 2021 08:53:06 -0400
+Received: by mail-vs1-f49.google.com with SMTP id z7so3683913vso.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jun 2021 05:50:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kFlFByvy1p9feA/SL91FCXebbZayQ4inesD3pTRuEf8=;
-        b=VvorC3aueDnMkW0WJzcn3o0/VAtQcWegfftCewHkuwx0n8gKV4b3TkF09rVHSmrRga
-         4GoJC9owksKho8oExoYoDnkshn/KRk4ILdi1fd39+UKM7Y/246dQWSW4uA5D4iu3tLUa
-         tBuu8CHO4+OwJhnGcbll3Ie+RbtBb5tfjEhccZxutH9Y3meOp8IXJclOFz6LqIIzIUgD
-         rO04Qh9kx7OJwufFpmbp6DZoG+qy1T3Sfzw95lIy6Kh1JuAwV1yIDQHCAY6Q+eXl4jfK
-         72Ic8FXIhVLm6AXr5Tx4UL0IX2bu8fnCV4vW3He1b5bbOGPSwNZaon79lRZkyKVOhBv7
-         MUrA==
+        bh=zbkj6T3T04z4JtJ0EN+yh0xReBYxOd5BeJrygN3ZyFY=;
+        b=ZfzqvA87eAWrqj09uQ4GZgIXoBXccSg3LsgcMTGU218ej3xJW33GsxTxpHsa+Nmd+g
+         TgP6Gi73TFHtlWaexLEsM/qBkIZ1AAaaKm4CHcjCmd6upG/IJkwmGUyahkzQspo+GD8c
+         GouQVLzFTXA6ABz44/LJySj42I1eSqG5qBcLk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kFlFByvy1p9feA/SL91FCXebbZayQ4inesD3pTRuEf8=;
-        b=CqFaK9PmJPo7sm06HbXdjWOz2okvBriU6alD0F52VK3J2LS43ah53AW1tLY8yUkXCP
-         OjJZjXHWshvjBvXY84qXpKisBCS7SuV6s+00zAhFltUc3+cjyQJvJdOZNS3Qd+SkhKYy
-         WI32ihdVHD/gxdh5P+QRl4fe6p5wewxJVGPBI6rfKJuBLBVf5Vk39ftFGjwtUNBmBvHs
-         mw6gG7enzFpiuFEzabQ9/zyJc2yTm9+VHoOL3VTwWJHafv7EWOAI9Mysf7DFxRZ0kG2E
-         EXmFmZgp0LJaKD5UuNqMHCyn52CMtPVF+i1Cs6otNitMfS54ueXVPwJ47Q+VYKT2Gj2o
-         rVJg==
-X-Gm-Message-State: AOAM5333d6olzzdWPU6o0EJhKJfmSFYGxWGH9REG9mz2iobos8tVr30K
-        VG5C+SYElnENeK+d1gQN8mevTLdlDYC1vqNpI4Y=
-X-Google-Smtp-Source: ABdhPJy2LQfwYBlz/vvqH159Fo1cfOZL/VpY9nvELcGQ/xwOtqP3sZ9kr69eVZCGDrPUhup5CCFNQ0eDp+ybr0ASE8I=
-X-Received: by 2002:a17:90b:1b44:: with SMTP id nv4mr8935890pjb.223.1623415627762;
- Fri, 11 Jun 2021 05:47:07 -0700 (PDT)
+        bh=zbkj6T3T04z4JtJ0EN+yh0xReBYxOd5BeJrygN3ZyFY=;
+        b=oxIkBatXqIgLJvWRuvZub1yYVJqS+CwXAOuCUeTbOWBq5IZtEWKTvBpdmtY4E+vSXG
+         wRSnuqADz3NQnG94LyiEzvlFBQAVMRiDiZQu57quls5+p/t22uVNUylQ//4Uwq4d3IY5
+         hehrV4oPr/uuu6+jeBsLW49E0GhCC8GjUUXTVzAquZ1vguDE2Nzz378t+Nvj/LjLJME1
+         LhSb8/lf42Ycikxe8eh6gzDqCEau5DE0NpCANYvIqPM9njjpCfcDUuI246F0alrtL4Ny
+         xdTEECQcLooxGA9BCBrACJqfKtb6aaHt0dyAkkaHe530kyfw3qpxE6G8RBVBUXQykzQe
+         oMzQ==
+X-Gm-Message-State: AOAM530gjrwN2bfKhxJXCr3kUf/jMo6Z4BR/k7fTmZ1kUT4ikSTshW1K
+        OFwhkCdXw0YKCSFbLeJxeVdsN2mWL0DRB+jnZ/WN/A==
+X-Google-Smtp-Source: ABdhPJw0DFrogEnGKXGUiNWZJkVClfZ9iOeK7L+TRdy022jkFc4LsDLAOKTMDsQKzgM8449FfUWM88Z7NtNavVP17ag=
+X-Received: by 2002:a67:ffcc:: with SMTP id w12mr9555466vsq.47.1623415794229;
+ Fri, 11 Jun 2021 05:49:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <1622537906-54361-1-git-send-email-tao.peng@linux.alibaba.com>
- <YLeoucLiMOSPwn4U@google.com> <244309bf-4f2e-342e-dd98-755862c643b8@metux.net>
- <CA+a=Yy5moy0Bv=mhsrC9FrY+cEYt8+YJL8TvXQ=N7pNyktccRQ@mail.gmail.com>
- <429fc51b-ece0-b5cb-9540-2e7f5b472d73@metux.net> <CA+a=Yy6k3k2iFb+tBMuBDMs8E8SsBKce9Q=3C2zXTrx3-B7Ztg@mail.gmail.com>
- <295cfc39-a820-3167-1096-d8758074452d@metux.net>
-In-Reply-To: <295cfc39-a820-3167-1096-d8758074452d@metux.net>
-From:   Peng Tao <bergwolf@gmail.com>
-Date:   Fri, 11 Jun 2021 20:46:56 +0800
-Message-ID: <CA+a=Yy7DDrMs6R8qRF6JMco0VOBWCKNoX7E-ga9W2Omn=+QUrQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] fuse: add generic file store
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     Alessio Balsini <balsini@android.com>,
-        Peng Tao <tao.peng@linux.alibaba.com>,
+References: <162322846765.361452.17051755721944717990.stgit@web.messagingengine.com>
+ <162322859985.361452.14110524195807923374.stgit@web.messagingengine.com>
+In-Reply-To: <162322859985.361452.14110524195807923374.stgit@web.messagingengine.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 11 Jun 2021 14:49:43 +0200
+Message-ID: <CAJfpeguzPEy+UAcyT4tcpvYxeTwB+64yxRw8Sh7UBROBuafYdw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/7] kernfs: add a revision to identify directory node changes
+To:     Ian Kent <raven@themaw.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>,
+        Fox Chen <foxhlchen@gmail.com>,
+        Brice Goglin <brice.goglin@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 9, 2021 at 11:16 PM Enrico Weigelt, metux IT consult
-<lkml@metux.net> wrote:
+On Wed, 9 Jun 2021 at 10:50, Ian Kent <raven@themaw.net> wrote:
 >
-> On 08.06.21 14:41, Peng Tao wrote:
+> Add a revision counter to kernfs directory nodes so it can be used
+> to detect if a directory node has changed during negative dentry
+> revalidation.
 >
-> Hi,
+> There's an assumption that sizeof(unsigned long) <= sizeof(pointer)
+> on all architectures and as far as I know that assumption holds.
 >
-Hi,
-> > The initial RFC mail in the thread has a userspace example code. Does
-> > it make sense to you?
+> So adding a revision counter to the struct kernfs_elem_dir variant of
+> the kernfs_node type union won't increase the size of the kernfs_node
+> struct. This is because struct kernfs_elem_dir is at least
+> sizeof(pointer) smaller than the largest union variant. It's tempting
+> to make the revision counter a u64 but that would increase the size of
+> kernfs_node on archs where sizeof(pointer) is smaller than the revision
+> counter.
 >
-> Sorry, I had missed that, now found it.
+> Signed-off-by: Ian Kent <raven@themaw.net>
+> ---
+>  fs/kernfs/dir.c             |    2 ++
+>  fs/kernfs/kernfs-internal.h |   23 +++++++++++++++++++++++
+>  include/linux/kernfs.h      |    5 +++++
+>  3 files changed, 30 insertions(+)
 >
-> There're some things I don't quite understand:
+> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+> index 33166ec90a112..b3d1bc0f317d0 100644
+> --- a/fs/kernfs/dir.c
+> +++ b/fs/kernfs/dir.c
+> @@ -372,6 +372,7 @@ static int kernfs_link_sibling(struct kernfs_node *kn)
+>         /* successfully added, account subdir number */
+>         if (kernfs_type(kn) == KERNFS_DIR)
+>                 kn->parent->dir.subdirs++;
+> +       kernfs_inc_rev(kn->parent);
 >
-> * it just stores fd's I don't see anything where it is actually returned
->    to some open() operation.
-The FUSE_DEV_IOC_RESTORE_FD ioctl returns the opened fd to a different process.
+>         return 0;
+>  }
+> @@ -394,6 +395,7 @@ static bool kernfs_unlink_sibling(struct kernfs_node *kn)
+>
+>         if (kernfs_type(kn) == KERNFS_DIR)
+>                 kn->parent->dir.subdirs--;
+> +       kernfs_inc_rev(kn->parent);
+>
+>         rb_erase(&kn->rb, &kn->parent->dir.children);
+>         RB_CLEAR_NODE(&kn->rb);
+> diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
+> index ccc3b44f6306f..b4e7579e04799 100644
+> --- a/fs/kernfs/kernfs-internal.h
+> +++ b/fs/kernfs/kernfs-internal.h
+> @@ -81,6 +81,29 @@ static inline struct kernfs_node *kernfs_dentry_node(struct dentry *dentry)
+>         return d_inode(dentry)->i_private;
+>  }
+>
+> +static inline void kernfs_set_rev(struct kernfs_node *kn,
+> +                                 struct dentry *dentry)
+> +{
+> +       if (kernfs_type(kn) == KERNFS_DIR)
+> +               dentry->d_time = kn->dir.rev;
+> +}
+> +
+> +static inline void kernfs_inc_rev(struct kernfs_node *kn)
+> +{
+> +       if (kernfs_type(kn) == KERNFS_DIR)
+> +               kn->dir.rev++;
+> +}
+> +
+> +static inline bool kernfs_dir_changed(struct kernfs_node *kn,
+> +                                     struct dentry *dentry)
+> +{
+> +       if (kernfs_type(kn) == KERNFS_DIR) {
 
-> * the store is machine wide global - everybody uses the same number
->    space, dont see any kind of access conrol ... how about security ?
->
-The idea is that anyone capable of opening /dev/fuse can retrieve the FD.
+Aren't these always be called on a KERNFS_DIR node?
 
-> I don't believe that just storing the fd's somewhere is really helpful
-> for that purpose - the fuse server shall be able to reply the open()
-> request with an fd, which then is directly transferred to the client.
->
-Could you describe your use case a bit? How does your client talk to
-your server? Through open syscall or through some process-to-process
-RPC calls?
+You could just reduce that to a WARN_ON, or remove the conditions
+altogether then.
 
-Cheers,
-Tao
--- 
-Into Sth. Rich & Strange
+Thanks,
+Miklos
