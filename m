@@ -2,29 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BF483A42BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 15:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 388313A42CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 15:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231269AbhFKNNO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Jun 2021 09:13:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230382AbhFKNNO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Jun 2021 09:13:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9C642613DF;
-        Fri, 11 Jun 2021 13:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1623417076;
-        bh=HjD6ATEHpIBvWwW2dFdI6JGuiSnbs0d11W1EQk87HK4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eEeYxrv2qE/H4pN9gcdAaIU4RGw4zLIA4uJlrOUd/sXlOnYfWL/q3+e+5PGQgxKPa
-         1gjo1t2fUXvd5n7YWrPERdSj0Oan+en01fRDBTVe3/EXLRChsqFYinN5ZyFr0gnp8r
-         fjmKmoEX6ZqT7IfTCsblEK0JEsV9uIaOJ4VHyt9c=
-Date:   Fri, 11 Jun 2021 15:11:13 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        id S231260AbhFKNOR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Jun 2021 09:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37368 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231848AbhFKNOO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Jun 2021 09:14:14 -0400
+Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE0E9C061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jun 2021 06:11:59 -0700 (PDT)
+Received: by mail-vs1-xe29.google.com with SMTP id f21so3728431vsl.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jun 2021 06:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G2mQncfrs7AfFiUrkmQW6cIH8U36siV+Y7SfstDBq4I=;
+        b=YzjcMGP3UQnO1hid52zVsZw/+JgVMd/sqhgVfs3xBOo3bzdZT1WGZorX2pxsstxlb3
+         iFVI7wbbEnZ1b/cR6Dw6q6JOZ6TcCe2M+4onbA89UQr39g/N1fQzaIDeGPDkcp98Unm0
+         CShXp+XTdvNwziAQdxfL58laQ18gC4Q30Z5p0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G2mQncfrs7AfFiUrkmQW6cIH8U36siV+Y7SfstDBq4I=;
+        b=A1uXC8mAH6cxBstj45zRuuHFBA5wP/o9tAeCc8ws19EQ4j6HtRER092uVWeZk/dhQ5
+         umQl7xiEtkG7gQzEM2Dps6tiRriuPQ9q19isWSodEE+Tk2ON85VGYE93lvCcUjyKAzOK
+         zuXstXUGZg3Y3q3xzoqVSNk5RN2CumpGmPJ+huOVV+YDTT3msC6Stsc3++RLCbVWNmMD
+         k9S1ostGgduuuRZae6NXfWMgdLcGZm6Oz6J5W2AntNMmsRyotD/mTtY8CiB1ywZhwYCm
+         wu7aI3uh8rYTgnO4iQkry8/T8eGRcYik/rVr/tKBIo1gzo5xhP+9+LavpQ9HG7G53ia/
+         bxcA==
+X-Gm-Message-State: AOAM530hSAQZBUWl3B/RLTpqN1/aHTBQF84vq1erORAED0VL7Gi9o09S
+        LlE5nW4msWyH6b5WYEb5H3dzq99fsCWkGwiXAEyMPg==
+X-Google-Smtp-Source: ABdhPJxj0V9vxqoFypjA280EKBMwJ2AFeJIrnkSVjOVglthbez6K67JSmvz1TPy2KBfxtjG5A/4uCeX4rTda/o3xcv8=
+X-Received: by 2002:a67:f659:: with SMTP id u25mr4911654vso.9.1623417119022;
+ Fri, 11 Jun 2021 06:11:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <162322846765.361452.17051755721944717990.stgit@web.messagingengine.com>
+ <162322868275.361452.17585267026652222121.stgit@web.messagingengine.com>
+In-Reply-To: <162322868275.361452.17585267026652222121.stgit@web.messagingengine.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 11 Jun 2021 15:11:48 +0200
+Message-ID: <CAJfpegvYeNjWKc_9Aah+8NMicTus1CqqwQqLGUeYiQSKN9=gmQ@mail.gmail.com>
+Subject: Re: [PATCH v6 5/7] kernfs: use i_lock to protect concurrent inode updates
 To:     Ian Kent <raven@themaw.net>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, Tejun Heo <tj@kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>,
         Fox Chen <foxhlchen@gmail.com>,
         Brice Goglin <brice.goglin@gmail.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -35,120 +62,35 @@ Cc:     Miklos Szeredi <miklos@szeredi.hu>, Tejun Heo <tj@kernel.org>,
         Carlos Maiolino <cmaiolino@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 2/7] kernfs: add a revision to identify directory node
- changes
-Message-ID: <YMNg8VD8XlUJGSK9@kroah.com>
-References: <162322846765.361452.17051755721944717990.stgit@web.messagingengine.com>
- <162322859985.361452.14110524195807923374.stgit@web.messagingengine.com>
- <CAJfpeguzPEy+UAcyT4tcpvYxeTwB+64yxRw8Sh7UBROBuafYdw@mail.gmail.com>
- <03f6e366fb4ebb56b15541d53eda461a55d3d38e.camel@themaw.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <03f6e366fb4ebb56b15541d53eda461a55d3d38e.camel@themaw.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 11, 2021 at 08:56:18PM +0800, Ian Kent wrote:
-> On Fri, 2021-06-11 at 14:49 +0200, Miklos Szeredi wrote:
-> > On Wed, 9 Jun 2021 at 10:50, Ian Kent <raven@themaw.net> wrote:
-> > > 
-> > > Add a revision counter to kernfs directory nodes so it can be used
-> > > to detect if a directory node has changed during negative dentry
-> > > revalidation.
-> > > 
-> > > There's an assumption that sizeof(unsigned long) <= sizeof(pointer)
-> > > on all architectures and as far as I know that assumption holds.
-> > > 
-> > > So adding a revision counter to the struct kernfs_elem_dir variant
-> > > of
-> > > the kernfs_node type union won't increase the size of the
-> > > kernfs_node
-> > > struct. This is because struct kernfs_elem_dir is at least
-> > > sizeof(pointer) smaller than the largest union variant. It's
-> > > tempting
-> > > to make the revision counter a u64 but that would increase the size
-> > > of
-> > > kernfs_node on archs where sizeof(pointer) is smaller than the
-> > > revision
-> > > counter.
-> > > 
-> > > Signed-off-by: Ian Kent <raven@themaw.net>
-> > > ---
-> > >  fs/kernfs/dir.c             |    2 ++
-> > >  fs/kernfs/kernfs-internal.h |   23 +++++++++++++++++++++++
-> > >  include/linux/kernfs.h      |    5 +++++
-> > >  3 files changed, 30 insertions(+)
-> > > 
-> > > diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-> > > index 33166ec90a112..b3d1bc0f317d0 100644
-> > > --- a/fs/kernfs/dir.c
-> > > +++ b/fs/kernfs/dir.c
-> > > @@ -372,6 +372,7 @@ static int kernfs_link_sibling(struct
-> > > kernfs_node *kn)
-> > >         /* successfully added, account subdir number */
-> > >         if (kernfs_type(kn) == KERNFS_DIR)
-> > >                 kn->parent->dir.subdirs++;
-> > > +       kernfs_inc_rev(kn->parent);
-> > > 
-> > >         return 0;
-> > >  }
-> > > @@ -394,6 +395,7 @@ static bool kernfs_unlink_sibling(struct
-> > > kernfs_node *kn)
-> > > 
-> > >         if (kernfs_type(kn) == KERNFS_DIR)
-> > >                 kn->parent->dir.subdirs--;
-> > > +       kernfs_inc_rev(kn->parent);
-> > > 
-> > >         rb_erase(&kn->rb, &kn->parent->dir.children);
-> > >         RB_CLEAR_NODE(&kn->rb);
-> > > diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-
-> > > internal.h
-> > > index ccc3b44f6306f..b4e7579e04799 100644
-> > > --- a/fs/kernfs/kernfs-internal.h
-> > > +++ b/fs/kernfs/kernfs-internal.h
-> > > @@ -81,6 +81,29 @@ static inline struct kernfs_node
-> > > *kernfs_dentry_node(struct dentry *dentry)
-> > >         return d_inode(dentry)->i_private;
-> > >  }
-> > > 
-> > > +static inline void kernfs_set_rev(struct kernfs_node *kn,
-> > > +                                 struct dentry *dentry)
-> > > +{
-> > > +       if (kernfs_type(kn) == KERNFS_DIR)
-> > > +               dentry->d_time = kn->dir.rev;
-> > > +}
-> > > +
-> > > +static inline void kernfs_inc_rev(struct kernfs_node *kn)
-> > > +{
-> > > +       if (kernfs_type(kn) == KERNFS_DIR)
-> > > +               kn->dir.rev++;
-> > > +}
-> > > +
-> > > +static inline bool kernfs_dir_changed(struct kernfs_node *kn,
-> > > +                                     struct dentry *dentry)
-> > > +{
-> > > +       if (kernfs_type(kn) == KERNFS_DIR) {
-> > 
-> > Aren't these always be called on a KERNFS_DIR node?
-> 
-> Yes they are.
-> 
-> > 
-> > You could just reduce that to a WARN_ON, or remove the conditions
-> > altogether then.
-> 
-> I was tempted to not use the check, a WARN_ON sounds better than
-> removing the check, I'll do that in a v7.
+On Wed, 9 Jun 2021 at 10:52, Ian Kent <raven@themaw.net> wrote:
+>
+> The inode operations .permission() and .getattr() use the kernfs node
+> write lock but all that's needed is to keep the rb tree stable while
+> updating the inode attributes as well as protecting the update itself
+> against concurrent changes.
+>
+> And .permission() is called frequently during path walks and can cause
+> quite a bit of contention between kernfs node operations and path
+> walks when the number of concurrent walks is high.
+>
+> To change kernfs_iop_getattr() and kernfs_iop_permission() to take
+> the rw sem read lock instead of the write lock an additional lock is
+> needed to protect against multiple processes concurrently updating
+> the inode attributes and link count in kernfs_refresh_inode().
+>
+> The inode i_lock seems like the sensible thing to use to protect these
+> inode attribute updates so use it in kernfs_refresh_inode().
+>
+> The last hunk in the patch, applied to kernfs_fill_super(), is possibly
+> not needed but taking the lock was present originally and I prefer to
+> continue to take it so the rb tree is held stable during the call to
+> kernfs_refresh_inode() made by kernfs_get_inode().
+>
+> Signed-off-by: Ian Kent <raven@themaw.net>
 
-No, WARN_ON is not ok, as systems will crash if panic-on-warn is set.
-
-If these are impossible to hit, great, let's not check this and we can
-just drop the code.  If they can be hit, then the above code is correct
-and it should stay.
-
-thanks,
-
-greg k-h
+Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
