@@ -2,232 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD1283A43E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 16:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50E6E3A4418
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 16:30:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230405AbhFKOSj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Jun 2021 10:18:39 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:48507 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229529AbhFKOSh (ORCPT
+        id S231615AbhFKOcY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Jun 2021 10:32:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54698 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231577AbhFKOcX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Jun 2021 10:18:37 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 0221516C8;
-        Fri, 11 Jun 2021 10:16:37 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 11 Jun 2021 10:16:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        Mx9dRejXKo+uzY/WmJ23mxNclVmdJWRmQVwTjeWAcQ4=; b=VtBpoQcY99bFb7YQ
-        agQsnc/TotjEbNuEG1fo9f2zNuwOMoInnWXo6uIiR7wwTu++NoD+95CKld4kd+Ub
-        pDZfMgvZCIY6KzUrfoQSjRoin0BAbHtdhoVFTu0qfZRJzhPdo5+jmlZnFvQR+v09
-        ADYYguBCNbWCKdosuExzOyDwlYUtXK5GrWYBw1BHaYNLES8m0ARUoRBdQJ0TtcZ0
-        AdTkPa0rksvT3M8CqHLPEDAnqHOZf5f9QxYSClgOpOHcgXR6WJR1+pHIb/QdWFlj
-        Lxwh56b+6e5oOLlAlkNnOkk9wnq8m/U1b39pRdUeMDH9Dc/epPzNzOoerDFxQ0US
-        UUzpfw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=Mx9dRejXKo+uzY/WmJ23mxNclVmdJWRmQVwTjeWAc
-        Q4=; b=RmhA9/Hi3Z2jxSxj8xS/xIjVqmvCp2qaekj93RCaWn7uRmJI2Si02ekFB
-        JDLIkJoqHUtHbSnrtpAFAkbNjuqcCKYGU8ot6RTDT3NgV+jjVqGfHcvK0aurLJg4
-        5OezTYkbvzzdzklaETSmaaFKdBI/SLRzXelhh57/HOeM/CawivUdQ/wlkfE6X1fB
-        k91xRKb5MWatfrIp5MVxt3vmCxdqNa6piBu6Za0O70d9NKPfcR7lj3lsnoINj3On
-        h67vxIor0+RIqAUNzbXYNs+biX/rY8Lz56fPrsBO1wb5F5mv0Qo+uSu6iEB85tz2
-        kYMiIoIR147n/2VuWV/rZU/t+oxWA==
-X-ME-Sender: <xms:RHDDYFwdRGHQumiGHd02QjC7gssxZ1cGsZ7u1Y6tHNC17ACi7qCmmQ>
-    <xme:RHDDYFREJ71Da63O62cYu51tn0sT-0i5TSixqf6TDv-vVBHOeMZCLpab-IySv4d6P
-    4pem5rK9Hwj>
-X-ME-Received: <xmr:RHDDYPXn650ivaRPASQB4qnkW7n4bgUFP4dG1qhMUX5mNORCxU0eC2LUqqy-aZNTSjA0gnR-ucWlvdgNxkSk5DYIfzK4iw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfedujedgjeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    fgleelkeetheelgeehueejueduhfeufffgleehgfevtdehhffhhffhtddugfefheenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:RHDDYHhNl8AOY6H8fn1YNPk1DirDR2kSqNNLjzOO-605-ZiJmDeoBA>
-    <xmx:RHDDYHCQ6abprSo4ad6XfU5NuVOD-BfPVlxAV-RHibG55nEiQTRnVQ>
-    <xmx:RHDDYAK8XbHfQmCHLWkSUAPaoXXXVFF4JvZNLCPn_RHiQfkREpnG4w>
-    <xmx:RXDDYELTwvNyGvqeFRcmto0fwQTVmiYRKGhft82EAGdigxv44FZ8Bl0qatI>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 11 Jun 2021 10:16:31 -0400 (EDT)
-Message-ID: <5b5b8930dd82ceea300c641342f9720b5ba6c0ea.camel@themaw.net>
-Subject: Re: [PATCH v6 2/7] kernfs: add a revision to identify directory
- node changes
-From:   Ian Kent <raven@themaw.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, Tejun Heo <tj@kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Fox Chen <foxhlchen@gmail.com>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Fri, 11 Jun 2021 22:16:27 +0800
-In-Reply-To: <YMNtl9sSwQ9bPENA@kroah.com>
-References: <162322846765.361452.17051755721944717990.stgit@web.messagingengine.com>
-         <162322859985.361452.14110524195807923374.stgit@web.messagingengine.com>
-         <CAJfpeguzPEy+UAcyT4tcpvYxeTwB+64yxRw8Sh7UBROBuafYdw@mail.gmail.com>
-         <03f6e366fb4ebb56b15541d53eda461a55d3d38e.camel@themaw.net>
-         <YMNg8VD8XlUJGSK9@kroah.com>
-         <21ec3ad11c4d0d74f9b51df3c3e43ab9f62c32b4.camel@themaw.net>
-         <YMNtl9sSwQ9bPENA@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        Fri, 11 Jun 2021 10:32:23 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52916C061574;
+        Fri, 11 Jun 2021 07:30:12 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id h12so2924987plf.4;
+        Fri, 11 Jun 2021 07:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aZwUj1oQjzfy8pMKa2YiJLF+wN290SZ2awmanFa5QtE=;
+        b=BzmU0pMKUM/RdSek5uSsg6RDQocaOr9viY4FV2UGYd8hiQ8UB34vrV40M5NbkCusAA
+         uWbS0l4b+ET1JtvtmtdA31D3aqHGJZTVPVoLCYGVIkdWKaTLJEIy3p+OzB/+pXQweLDY
+         tt5oj5CA+9nShrS/X3Tj1BIxeJt6Wozchpe5Shh6MBWbh9G7e797u7mNRZ1YV8irNw1q
+         Tn8jt9Wgl+Kv18ydEsSzYnJjdZGlWSq0Yz64y+uxd9/pKttU9e3XPDbQ9qyr6ba5khQ/
+         k46YAunh1+MdtZunrF1njMd/XADaqfK3S7P7V3h0llG1WrM7uJZgCEz0b7B4kt9YKU/Z
+         LoRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aZwUj1oQjzfy8pMKa2YiJLF+wN290SZ2awmanFa5QtE=;
+        b=StoVDpc9ZrEsqplVEQLliM/FH8ucpUcPE9N0SH0QYwRb1Ri+p7C/Ok8H3AmX/cvcRd
+         jpyMSvaDPFTHqJJHbp8nFOquUH70UsRpW8aQ5osepa1E2y0uhlfE8R6V5SUfg96x4Btm
+         VkUb8/hTNNGdTuOts5trpoZaNySTNRhiAwGwvuLJvFqwfUzgesGUtvySE54b+N67ONCh
+         farI84E5iuTlsJkQrSRP47zg8FNrid4FF4w4aKOkpQ319Zmr9TMpKEzUi3zp0lOpKQ3A
+         FPtirLKHEDQUhnAx2pHFuDBqI1VeyFT8JtysOpt5uJNd8oTyk9NwVbAWyE/AZGZlB7gF
+         8Dbw==
+X-Gm-Message-State: AOAM533ka32CxtLBuz2ltM9Au2NZ2DWcuigtxrWILiabzIdkWMl2bh7C
+        NtmeSzsTfYhmaV1DefVfhY4=
+X-Google-Smtp-Source: ABdhPJxPYEHLuu3n0lBU1WHBYaKa9KGhqVhQ6Y5EPZH947r3xK6aNFGiPQMMK9JOh00+i7Cg+hc8Sg==
+X-Received: by 2002:a17:902:d4c8:b029:102:715b:e3a5 with SMTP id o8-20020a170902d4c8b0290102715be3a5mr4147534plg.83.1623421811748;
+        Fri, 11 Jun 2021 07:30:11 -0700 (PDT)
+Received: from WRT-WX9.. ([141.164.41.4])
+        by smtp.gmail.com with ESMTPSA id z14sm5442218pfn.11.2021.06.11.07.30.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jun 2021 07:30:11 -0700 (PDT)
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jakub Kici nski <kuba@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Changbin Du <changbin.du@gmail.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v4] net: make get_net_ns return error if NET_NS is disabled
+Date:   Fri, 11 Jun 2021 22:29:59 +0800
+Message-Id: <20210611142959.92358-1-changbin.du@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-06-11 at 16:05 +0200, Greg Kroah-Hartman wrote:
-> On Fri, Jun 11, 2021 at 09:31:36PM +0800, Ian Kent wrote:
-> > On Fri, 2021-06-11 at 15:11 +0200, Greg Kroah-Hartman wrote:
-> > > On Fri, Jun 11, 2021 at 08:56:18PM +0800, Ian Kent wrote:
-> > > > On Fri, 2021-06-11 at 14:49 +0200, Miklos Szeredi wrote:
-> > > > > On Wed, 9 Jun 2021 at 10:50, Ian Kent <raven@themaw.net>
-> > > > > wrote:
-> > > > > > 
-> > > > > > Add a revision counter to kernfs directory nodes so it can
-> > > > > > be
-> > > > > > used
-> > > > > > to detect if a directory node has changed during negative
-> > > > > > dentry
-> > > > > > revalidation.
-> > > > > > 
-> > > > > > There's an assumption that sizeof(unsigned long) <=
-> > > > > > sizeof(pointer)
-> > > > > > on all architectures and as far as I know that assumption
-> > > > > > holds.
-> > > > > > 
-> > > > > > So adding a revision counter to the struct kernfs_elem_dir
-> > > > > > variant
-> > > > > > of
-> > > > > > the kernfs_node type union won't increase the size of the
-> > > > > > kernfs_node
-> > > > > > struct. This is because struct kernfs_elem_dir is at least
-> > > > > > sizeof(pointer) smaller than the largest union variant.
-> > > > > > It's
-> > > > > > tempting
-> > > > > > to make the revision counter a u64 but that would increase
-> > > > > > the
-> > > > > > size
-> > > > > > of
-> > > > > > kernfs_node on archs where sizeof(pointer) is smaller than
-> > > > > > the
-> > > > > > revision
-> > > > > > counter.
-> > > > > > 
-> > > > > > Signed-off-by: Ian Kent <raven@themaw.net>
-> > > > > > ---
-> > > > > >  fs/kernfs/dir.c             |    2 ++
-> > > > > >  fs/kernfs/kernfs-internal.h |   23 +++++++++++++++++++++++
-> > > > > >  include/linux/kernfs.h      |    5 +++++
-> > > > > >  3 files changed, 30 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-> > > > > > index 33166ec90a112..b3d1bc0f317d0 100644
-> > > > > > --- a/fs/kernfs/dir.c
-> > > > > > +++ b/fs/kernfs/dir.c
-> > > > > > @@ -372,6 +372,7 @@ static int kernfs_link_sibling(struct
-> > > > > > kernfs_node *kn)
-> > > > > >         /* successfully added, account subdir number */
-> > > > > >         if (kernfs_type(kn) == KERNFS_DIR)
-> > > > > >                 kn->parent->dir.subdirs++;
-> > > > > > +       kernfs_inc_rev(kn->parent);
-> > > > > > 
-> > > > > >         return 0;
-> > > > > >  }
-> > > > > > @@ -394,6 +395,7 @@ static bool
-> > > > > > kernfs_unlink_sibling(struct
-> > > > > > kernfs_node *kn)
-> > > > > > 
-> > > > > >         if (kernfs_type(kn) == KERNFS_DIR)
-> > > > > >                 kn->parent->dir.subdirs--;
-> > > > > > +       kernfs_inc_rev(kn->parent);
-> > > > > > 
-> > > > > >         rb_erase(&kn->rb, &kn->parent->dir.children);
-> > > > > >         RB_CLEAR_NODE(&kn->rb);
-> > > > > > diff --git a/fs/kernfs/kernfs-internal.h
-> > > > > > b/fs/kernfs/kernfs-
-> > > > > > internal.h
-> > > > > > index ccc3b44f6306f..b4e7579e04799 100644
-> > > > > > --- a/fs/kernfs/kernfs-internal.h
-> > > > > > +++ b/fs/kernfs/kernfs-internal.h
-> > > > > > @@ -81,6 +81,29 @@ static inline struct kernfs_node
-> > > > > > *kernfs_dentry_node(struct dentry *dentry)
-> > > > > >         return d_inode(dentry)->i_private;
-> > > > > >  }
-> > > > > > 
-> > > > > > +static inline void kernfs_set_rev(struct kernfs_node *kn,
-> > > > > > +                                 struct dentry *dentry)
-> > > > > > +{
-> > > > > > +       if (kernfs_type(kn) == KERNFS_DIR)
-> > > > > > +               dentry->d_time = kn->dir.rev;
-> > > > > > +}
-> > > > > > +
-> > > > > > +static inline void kernfs_inc_rev(struct kernfs_node *kn)
-> > > > > > +{
-> > > > > > +       if (kernfs_type(kn) == KERNFS_DIR)
-> > > > > > +               kn->dir.rev++;
-> > > > > > +}
-> > > > > > +
-> > > > > > +static inline bool kernfs_dir_changed(struct kernfs_node
-> > > > > > *kn,
-> > > > > > +                                     struct dentry
-> > > > > > *dentry)
-> > > > > > +{
-> > > > > > +       if (kernfs_type(kn) == KERNFS_DIR) {
-> > > > > 
-> > > > > Aren't these always be called on a KERNFS_DIR node?
-> > > > 
-> > > > Yes they are.
-> > > > 
-> > > > > 
-> > > > > You could just reduce that to a WARN_ON, or remove the
-> > > > > conditions
-> > > > > altogether then.
-> > > > 
-> > > > I was tempted to not use the check, a WARN_ON sounds better
-> > > > than
-> > > > removing the check, I'll do that in a v7.
-> > > 
-> > > No, WARN_ON is not ok, as systems will crash if panic-on-warn is
-> > > set.
-> > 
-> > Thanks Greg, understood.
-> > 
-> > > 
-> > > If these are impossible to hit, great, let's not check this and
-> > > we
-> > > can
-> > > just drop the code.  If they can be hit, then the above code is
-> > > correct
-> > > and it should stay.
-> > 
-> > It's a programming mistake to call these on a non-directory node.
-> > 
-> > I can remove the check but do you think there's any value in
-> > passing
-> > the node and updating it's parent to avoid possible misuse?
-> 
-> I do not understand the question here, sorry.  It's a static
-> function,
-> you control the callers, who can "misuse" it?
+There is a panic in socket ioctl cmd SIOCGSKNS when NET_NS is not enabled.
+The reason is that nsfs tries to access ns->ops but the proc_ns_operations
+is not implemented in this case.
 
-Yes, I'll drop the test and name the argument parent to make it
-clear for readers.
+[7.670023] Unable to handle kernel NULL pointer dereference at virtual address 00000010
+[7.670268] pgd = 32b54000
+[7.670544] [00000010] *pgd=00000000
+[7.671861] Internal error: Oops: 5 [#1] SMP ARM
+[7.672315] Modules linked in:
+[7.672918] CPU: 0 PID: 1 Comm: systemd Not tainted 5.13.0-rc3-00375-g6799d4f2da49 #16
+[7.673309] Hardware name: Generic DT based system
+[7.673642] PC is at nsfs_evict+0x24/0x30
+[7.674486] LR is at clear_inode+0x20/0x9c
 
+The same to tun SIOCGSKNS command.
 
-Ian
+To fix this problem, we make get_net_ns() return -EINVAL when NET_NS is
+disabled. Meanwhile move it to right place net/core/net_namespace.c.
+
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
+Fixes: c62cce2caee5 ("net: add an ioctl to get a socket network namespace")
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+
+---
+v4: rebase to net tree.
+---
+ include/linux/socket.h      |  2 --
+ include/net/net_namespace.h |  7 +++++++
+ net/core/net_namespace.c    | 12 ++++++++++++
+ net/socket.c                | 13 -------------
+ 4 files changed, 19 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index b8fc5c53ba6f..0d8e3dcb7f88 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -438,6 +438,4 @@ extern int __sys_socketpair(int family, int type, int protocol,
+ 			    int __user *usockvec);
+ extern int __sys_shutdown_sock(struct socket *sock, int how);
+ extern int __sys_shutdown(int fd, int how);
+-
+-extern struct ns_common *get_net_ns(struct ns_common *ns);
+ #endif /* _LINUX_SOCKET_H */
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index fa5887143f0d..6412d7833d97 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -184,6 +184,8 @@ struct net *copy_net_ns(unsigned long flags, struct user_namespace *user_ns,
+ void net_ns_get_ownership(const struct net *net, kuid_t *uid, kgid_t *gid);
+ 
+ void net_ns_barrier(void);
++
++struct ns_common *get_net_ns(struct ns_common *ns);
+ #else /* CONFIG_NET_NS */
+ #include <linux/sched.h>
+ #include <linux/nsproxy.h>
+@@ -203,6 +205,11 @@ static inline void net_ns_get_ownership(const struct net *net,
+ }
+ 
+ static inline void net_ns_barrier(void) {}
++
++static inline struct ns_common *get_net_ns(struct ns_common *ns)
++{
++	return ERR_PTR(-EINVAL);
++}
+ #endif /* CONFIG_NET_NS */
+ 
+ 
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index 43b6ac4c4439..cc8dafb25d61 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -641,6 +641,18 @@ void __put_net(struct net *net)
+ }
+ EXPORT_SYMBOL_GPL(__put_net);
+ 
++/**
++ * get_net_ns - increment the refcount of the network namespace
++ * @ns: common namespace (net)
++ *
++ * Returns the net's common namespace.
++ */
++struct ns_common *get_net_ns(struct ns_common *ns)
++{
++	return &get_net(container_of(ns, struct net, ns))->ns;
++}
++EXPORT_SYMBOL_GPL(get_net_ns);
++
+ struct net *get_net_ns_by_fd(int fd)
+ {
+ 	struct file *file;
+diff --git a/net/socket.c b/net/socket.c
+index 27e3e7d53f8e..4f2c6d2795d0 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -1072,19 +1072,6 @@ static long sock_do_ioctl(struct net *net, struct socket *sock,
+  *	what to do with it - that's up to the protocol still.
+  */
+ 
+-/**
+- *	get_net_ns - increment the refcount of the network namespace
+- *	@ns: common namespace (net)
+- *
+- *	Returns the net's common namespace.
+- */
+-
+-struct ns_common *get_net_ns(struct ns_common *ns)
+-{
+-	return &get_net(container_of(ns, struct net, ns))->ns;
+-}
+-EXPORT_SYMBOL_GPL(get_net_ns);
+-
+ static long sock_ioctl(struct file *file, unsigned cmd, unsigned long arg)
+ {
+ 	struct socket *sock;
+-- 
+2.30.2
 
