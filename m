@@ -2,65 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90DA83A4285
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 14:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FC1F3A42B4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jun 2021 15:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231665AbhFKM6b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Jun 2021 08:58:31 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:43523 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231482AbhFKM6a (ORCPT
+        id S231150AbhFKNKT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Jun 2021 09:10:19 -0400
+Received: from mail-ua1-f49.google.com ([209.85.222.49]:44782 "EHLO
+        mail-ua1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229633AbhFKNKR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Jun 2021 08:58:30 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id 61F6C1980;
-        Fri, 11 Jun 2021 08:56:28 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Fri, 11 Jun 2021 08:56:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        iW4ZE/BB6PBmS5q7Ee0NyNuhpgtw/+D17L4kdaX9rXU=; b=QJxIZIC4SBtkNphu
-        PvayLa5vSlo4/BTtnda6Z6oE10JTUXdyRr19mj9eNy45JzLdvLnAi5nozX0VzIBl
-        KmuAqf30pHP9s/EbtrxsFmzGcMBAIoBwV0lIB9mwOV4suhr25ulqHs7ZMyhovcNF
-        ShuLnovIefDF6+50uzy9yzsOWYYkA40OkxetniAJFrKWluvxIRVd/OYCBkKvShiC
-        slPqPG2DQboOVmoWwTx6tS/Z/O+KGeJFNbUso4n2q0gRZ3NELYtIAq8J4ai3n/H2
-        XFjbOvfS/D06b29sof5jzfaN26IiUchwx9lmOBv4BeC4cyk7HFbx2UyeEAHHImHS
-        ZNpfQg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=iW4ZE/BB6PBmS5q7Ee0NyNuhpgtw/+D17L4kdaX9r
-        XU=; b=NAWmrgbh+gyOGzG9gi/2WGKBjC84htMyoaPIfhKjRqomhdeErfWGpOA80
-        w5dO2ieyUusayl9SpUlyI20cseCzf19XdHnEAjy3gTrNGsWZX+xbPv9yUoFWPO9a
-        1xsy6rA2k1yKLIx9/gyzc2yylyiEPxclFv6dhOCjnZFO3iwBQdJtCOGrBuH7yXbi
-        0Ba6bxiyAoSIXNIeuZIC1uMVyjFAbUPTc6iJLcRsREhtcWAC1JxVnbv0rw5xo6Mi
-        BJTCzo3Cj0Ay0+w+CcRxnPMr2a/oC75SZZf82024ZdtwqPQCQ/j0+ngUi1GOl27A
-        rnaIMwcoB2DIVzzR2Y/rXlehiUMNw==
-X-ME-Sender: <xms:e13DYKuwDD6Q6-4eNTQ-APOt3lLPoMGw2dZRnK4WEfT7yug_O1uP0Q>
-    <xme:e13DYPf2ukHZJ0ELAwhRI87Ul_8UwRHD3cSxaVzY-6NhBt3lMLtoyY1MT_6lSmdRA
-    -hWroML357A>
-X-ME-Received: <xmr:e13DYFxpkctvLlMZIabZcp5qqiRaej2meDi3gxd2C47MaeAmOYfDK1xyj2i12_sAr24qPo_82Q1Ouqjt7j0vQVNxaf5Fjw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfedujedgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    fgleelkeetheelgeehueejueduhfeufffgleehgfevtdehhffhhffhtddugfefheenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:e13DYFPwRX98fLbhBGC5_Cb7z-sNwfZlqYBVBrIZZnxERuGONHOtgg>
-    <xmx:e13DYK-pecl6MnB0qNnhrzO6qzl-guqBxtbY6_5ih6pqEg0KDPjyzQ>
-    <xmx:e13DYNUVe8en9cpB1IerjMlqUNn_DhqqWeGPcYDllxTe8pV1nG_UvQ>
-    <xmx:e13DYNVHhp8kvrh9klp-38h_HUnfn_aRr8QLfTotM4JgdB6WknQBiLUK0y8>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 11 Jun 2021 08:56:22 -0400 (EDT)
-Message-ID: <03f6e366fb4ebb56b15541d53eda461a55d3d38e.camel@themaw.net>
-Subject: Re: [PATCH v6 2/7] kernfs: add a revision to identify directory
- node changes
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>
+        Fri, 11 Jun 2021 09:10:17 -0400
+Received: by mail-ua1-f49.google.com with SMTP id 68so2537751uao.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jun 2021 06:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dx7GSd7iO7rvrKTCA9ogAPIg0Js8UGiEJvwjK+2gj2E=;
+        b=NUltRQ+kEMueiFZrkAI1RyPxI037UoOyBgAWAd6gcdZ2j+K8v9cJlDMq+yS9UtwnJ3
+         EAKCrAyHcVmEhH+75eyUO4RHk2+ONa9gGNpdTWoeNrtGbHE+L/swWqbccaSUbagssJUz
+         yb3lco4g4ZRvwZK117eTEPuYhtCR/vWKec8pM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dx7GSd7iO7rvrKTCA9ogAPIg0Js8UGiEJvwjK+2gj2E=;
+        b=OMVbzXY+kVQb26rAjSa2jp9pJbi4ueyFyOY8I0IpFoKCB6QWQFzYNkHwsAeclMPfcE
+         807J9zQwj6ADzdxapLw1iw1O1SxCvjwJGYF4053Z+UHlY+8ebEIsYb8aJn5/ORGiv3wz
+         y4ljif/LiW3tf7AhEcj6szrodpIvu0fjpz1eYLh6NqQY3fdobA8BfaTQEzSlMu8K6beA
+         OoWPXwqbmXCEf2UfPwRaEji3E/IjOu33XUw59M+Ugpzlf1I3OAqY+ULHB1dtqoHjVohu
+         IDBlgC5agq7LxkdwfnnGzE1O7zJXDDfirfh3Vewz4c/XpNVkPwI7oF2UkT3OAxxkuyuY
+         P7MQ==
+X-Gm-Message-State: AOAM530lreVHFAOYkJsyAqk4p/vjv8c/9HwaisFoVSO+re4dd9oVpPX+
+        S3CwQjvo4t6o0etJrbQoBi5UkHefjwtKbXa8GqQYTg==
+X-Google-Smtp-Source: ABdhPJxxzILXhrd0KRKpv9gqkYrgqyWPjvEPh6iwM/jASpg6T1gwwSF3HH0OmG0kQdbqBdbVNiqfYEeyEb49pBnO/gM=
+X-Received: by 2002:ab0:6448:: with SMTP id j8mr2871941uap.13.1623416839332;
+ Fri, 11 Jun 2021 06:07:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <162322846765.361452.17051755721944717990.stgit@web.messagingengine.com>
+ <162322862726.361452.10114120072438540655.stgit@web.messagingengine.com>
+In-Reply-To: <162322862726.361452.10114120072438540655.stgit@web.messagingengine.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 11 Jun 2021 15:07:08 +0200
+Message-ID: <CAJfpegunvr-0b1SW2FDNRdaExr=A9OFH1K-g7d0+UiS+9j5V_w@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] kernfs: use VFS negative dentry caching
+To:     Ian Kent <raven@themaw.net>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>,
         Fox Chen <foxhlchen@gmail.com>,
@@ -73,110 +59,57 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Carlos Maiolino <cmaiolino@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Fri, 11 Jun 2021 20:56:18 +0800
-In-Reply-To: <CAJfpeguzPEy+UAcyT4tcpvYxeTwB+64yxRw8Sh7UBROBuafYdw@mail.gmail.com>
-References: <162322846765.361452.17051755721944717990.stgit@web.messagingengine.com>
-         <162322859985.361452.14110524195807923374.stgit@web.messagingengine.com>
-         <CAJfpeguzPEy+UAcyT4tcpvYxeTwB+64yxRw8Sh7UBROBuafYdw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-06-11 at 14:49 +0200, Miklos Szeredi wrote:
-> On Wed, 9 Jun 2021 at 10:50, Ian Kent <raven@themaw.net> wrote:
-> > 
-> > Add a revision counter to kernfs directory nodes so it can be used
-> > to detect if a directory node has changed during negative dentry
-> > revalidation.
-> > 
-> > There's an assumption that sizeof(unsigned long) <= sizeof(pointer)
-> > on all architectures and as far as I know that assumption holds.
-> > 
-> > So adding a revision counter to the struct kernfs_elem_dir variant
-> > of
-> > the kernfs_node type union won't increase the size of the
-> > kernfs_node
-> > struct. This is because struct kernfs_elem_dir is at least
-> > sizeof(pointer) smaller than the largest union variant. It's
-> > tempting
-> > to make the revision counter a u64 but that would increase the size
-> > of
-> > kernfs_node on archs where sizeof(pointer) is smaller than the
-> > revision
-> > counter.
-> > 
-> > Signed-off-by: Ian Kent <raven@themaw.net>
-> > ---
-> >  fs/kernfs/dir.c             |    2 ++
-> >  fs/kernfs/kernfs-internal.h |   23 +++++++++++++++++++++++
-> >  include/linux/kernfs.h      |    5 +++++
-> >  3 files changed, 30 insertions(+)
-> > 
-> > diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-> > index 33166ec90a112..b3d1bc0f317d0 100644
-> > --- a/fs/kernfs/dir.c
-> > +++ b/fs/kernfs/dir.c
-> > @@ -372,6 +372,7 @@ static int kernfs_link_sibling(struct
-> > kernfs_node *kn)
-> >         /* successfully added, account subdir number */
-> >         if (kernfs_type(kn) == KERNFS_DIR)
-> >                 kn->parent->dir.subdirs++;
-> > +       kernfs_inc_rev(kn->parent);
-> > 
-> >         return 0;
-> >  }
-> > @@ -394,6 +395,7 @@ static bool kernfs_unlink_sibling(struct
-> > kernfs_node *kn)
-> > 
-> >         if (kernfs_type(kn) == KERNFS_DIR)
-> >                 kn->parent->dir.subdirs--;
-> > +       kernfs_inc_rev(kn->parent);
-> > 
-> >         rb_erase(&kn->rb, &kn->parent->dir.children);
-> >         RB_CLEAR_NODE(&kn->rb);
-> > diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-
-> > internal.h
-> > index ccc3b44f6306f..b4e7579e04799 100644
-> > --- a/fs/kernfs/kernfs-internal.h
-> > +++ b/fs/kernfs/kernfs-internal.h
-> > @@ -81,6 +81,29 @@ static inline struct kernfs_node
-> > *kernfs_dentry_node(struct dentry *dentry)
-> >         return d_inode(dentry)->i_private;
-> >  }
-> > 
-> > +static inline void kernfs_set_rev(struct kernfs_node *kn,
-> > +                                 struct dentry *dentry)
-> > +{
-> > +       if (kernfs_type(kn) == KERNFS_DIR)
-> > +               dentry->d_time = kn->dir.rev;
-> > +}
-> > +
-> > +static inline void kernfs_inc_rev(struct kernfs_node *kn)
-> > +{
-> > +       if (kernfs_type(kn) == KERNFS_DIR)
-> > +               kn->dir.rev++;
-> > +}
-> > +
-> > +static inline bool kernfs_dir_changed(struct kernfs_node *kn,
-> > +                                     struct dentry *dentry)
-> > +{
-> > +       if (kernfs_type(kn) == KERNFS_DIR) {
-> 
-> Aren't these always be called on a KERNFS_DIR node?
+On Wed, 9 Jun 2021 at 10:50, Ian Kent <raven@themaw.net> wrote:
+>
+> If there are many lookups for non-existent paths these negative lookups
+> can lead to a lot of overhead during path walks.
+>
+> The VFS allows dentries to be created as negative and hashed, and caches
+> them so they can be used to reduce the fairly high overhead alloc/free
+> cycle that occurs during these lookups.
+>
+> Use the kernfs node parent revision to identify if a change has been
+> made to the containing directory so that the negative dentry can be
+> discarded and the lookup redone.
+>
+> Signed-off-by: Ian Kent <raven@themaw.net>
+> ---
+>  fs/kernfs/dir.c |   52 ++++++++++++++++++++++++++++++++--------------------
+>  1 file changed, 32 insertions(+), 20 deletions(-)
+>
+> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+> index b3d1bc0f317d0..4f037456a8e17 100644
+> --- a/fs/kernfs/dir.c
+> +++ b/fs/kernfs/dir.c
+> @@ -1039,9 +1039,28 @@ static int kernfs_dop_revalidate(struct dentry *dentry, unsigned int flags)
+>         if (flags & LOOKUP_RCU)
+>                 return -ECHILD;
+>
+> -       /* Always perform fresh lookup for negatives */
+> -       if (d_really_is_negative(dentry))
+> -               goto out_bad_unlocked;
+> +       /* Negative hashed dentry? */
+> +       if (d_really_is_negative(dentry)) {
+> +               struct dentry *d_parent = dget_parent(dentry);
+> +               struct kernfs_node *parent;
+> +
+> +               /* If the kernfs parent node has changed discard and
+> +                * proceed to ->lookup.
+> +                */
+> +               parent = kernfs_dentry_node(d_parent);
+> +               if (parent) {
+> +                       if (kernfs_dir_changed(parent, dentry)) {
 
-Yes they are.
+Perhaps add a note about this being dependent on parent of a negative
+dentry never changing.
 
-> 
-> You could just reduce that to a WARN_ON, or remove the conditions
-> altogether then.
+If this was backported to a kernel where this assumption doesn't hold,
+there would be a mathematical chance of a false negative.
 
-I was tempted to not use the check, a WARN_ON sounds better than
-removing the check, I'll do that in a v7.
-
-Thanks
-Ian
-
+Thanks,
+Miklos
