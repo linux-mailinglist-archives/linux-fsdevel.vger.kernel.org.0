@@ -2,203 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 649D53A4B15
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jun 2021 01:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A0C43A4B18
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jun 2021 01:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230302AbhFKXQp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Jun 2021 19:16:45 -0400
-Received: from mail-io1-f49.google.com ([209.85.166.49]:40835 "EHLO
-        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230297AbhFKXQo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Jun 2021 19:16:44 -0400
-Received: by mail-io1-f49.google.com with SMTP id l64so11227184ioa.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jun 2021 16:14:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vR/Fdv4On9WhCcoViIG6nshfsqTOHsMhyO/511n7FTE=;
-        b=sO9u8WRLtrcHBsPKEgdu9bKvOYc10XSisKbHdkM1Qs8XYo962ynSJKWRwPA8YwLJUb
-         RqedraNt6bJ+nw6ovQ5nVh7p6DMygmM87jpFmhRAzqS7J1peo/v5fuYj0LcSxSFiWxeW
-         4AIhInWEfrZNUlQUBLpbIHuyV+XBBA/TmdiCn4sOOzmfU1uU/DEnEsTKy7ZWeDY5ERY4
-         Z1L04cmwcweGWJFagP88NWW+/UY2vEh/CyjN0UAV93pWS9rxZrv2WnR3GkvVoZKNG9Nr
-         EDk4eiR71rDmwKMcep4sx6hE5ljfENtvf5q/BFWoiO5saZyVdtfCkkZjObqETm7T5mwy
-         yHaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vR/Fdv4On9WhCcoViIG6nshfsqTOHsMhyO/511n7FTE=;
-        b=CiBjbtbicelNHsFlMM5lN/9x+ND6SqG40R2FOUuVBz6Ou+GW6j6CrUlbQUJIpiJecP
-         /qPa5c7QObSzq0pBdu2MBpUMQ5pGOw9D94HYRIVWsP7DfBqI7mKyMI9EXdnR4KAK+ckh
-         gaqvfbzlrBvdNERLl6FVky78PaKBWkB8ZsTc6g5Sjd1jCHWURfztK5Y5QdnL40ekHyZy
-         8KIcD3TbXTowj7jNGBAvCkIWgJDjS+yfe5+EKUccA05gcclBWIdonuXoKUnbJbIziaRU
-         yUZIYa+dDGAvlgfSeg3bAiMXb1I6XXQiVRtbUMT9Aj76trqzGlknfKSRFS2KVdZevqLX
-         W3Jw==
-X-Gm-Message-State: AOAM533TITb6fAH18BDeshuN29RU3brD5MLzmPz7gQ7bJbrF0yZ3tG/W
-        O32l7BMNfz0s/1vTUHf7nHgkvnn/sVtOGHXzaxHew48X
-X-Google-Smtp-Source: ABdhPJwupHK1qTUVyaTZ0M7MISTo8xTdkVn4WKwZ/DVYaEgEYFkaOF1t+aJY2e+8CBrkZGiLAa6rUk/4OIgPDZggr3E=
-X-Received: by 2002:a6b:3119:: with SMTP id j25mr4815773ioa.64.1623453225741;
- Fri, 11 Jun 2021 16:13:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210609181158.479781-1-amir73il@gmail.com> <20210611162603.GA747424@redhat.com>
- <CAOQ4uxjX+EPuScGdL+LY2djaq=4O1dEpg59QyHgP2-eDLs7Y+A@mail.gmail.com> <20210611213321.GC767764@redhat.com>
-In-Reply-To: <20210611213321.GC767764@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 12 Jun 2021 02:13:34 +0300
-Message-ID: <CAOQ4uxh+qQ88utcgVicKWu28sa5xLv5GEKN+Z_Fc+1epNu-STA@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fix illegal access to inode with reused nodeid
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, Max Reitz <mreitz@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S230350AbhFKXSH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Jun 2021 19:18:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230017AbhFKXSG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Jun 2021 19:18:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4C661613C3;
+        Fri, 11 Jun 2021 23:15:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1623453355;
+        bh=ldDxd3SAl23LV2xslCIftZCEnnBiXgGRvYqkriYuZPo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=KHIkxEIKe/fnhKal4xXi+ekzeTiz2WRCnK0eQ0kJdiiOGC5NaASFAv/9vwPfxDK8X
+         1A/izIxwGauD8PDuEW6vgeSLYuOWJDxQqHFIgoBziBqCz0XB4qSI5DVCIa7WrmVphl
+         6TGDsI9CxxwRvVVt45mvIpliKMi4nvd6ODgsXffw=
+Date:   Fri, 11 Jun 2021 16:15:53 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Charles Haithcock <chaithco@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        YiFei Zhu <yifeifz2@illinois.edu>,
+        Adrian Reber <areber@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCHv8] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-Id: <20210611161553.7dcfa91e494a18e069539193@linux-foundation.org>
+In-Reply-To: <AM8PR10MB4708AFBD838138A84CE89EF8E4359@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+References: <AM8PR10MB4708AFBD838138A84CE89EF8E4359@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 12, 2021 at 12:33 AM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Fri, Jun 11, 2021 at 08:44:16PM +0300, Amir Goldstein wrote:
-> > On Fri, Jun 11, 2021 at 7:26 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Wed, Jun 09, 2021 at 09:11:58PM +0300, Amir Goldstein wrote:
-> > > > Server responds to LOOKUP and other ops (READDIRPLUS/CREATE/MKNOD/...)
-> > > > with outarg containing nodeid and generation.
-> > > >
-> > > > If a fuse inode is found in inode cache with the same nodeid but
-> > > > different generation, the existing fuse inode should be unhashed and
-> > > > marked "bad" and a new inode with the new generation should be hashed
-> > > > instead.
-> > > >
-> > > > This can happen, for example, with passhrough fuse filesystem that
-> > > > returns the real filesystem ino/generation on lookup and where real inode
-> > > > numbers can get recycled due to real files being unlinked not via the fuse
-> > > > passthrough filesystem.
-> > > >
-> > > > With current code, this situation will not be detected and an old fuse
-> > > > dentry that used to point to an older generation real inode, can be used
-> > > > to access a completely new inode, which should be accessed only via the
-> > > > new dentry.
-> > >
-> > > Hi Amir,
-> > >
-> > > Curious that how server gets access to new inode on host. If server
-> > > keeps an fd open to file, then we will continue to refer to old
-> > > unlinked file. Well in that case inode number can't be recycled to
-> > > begin with, so this situation does not arise to begin with.
-> > >
-> >
-> > Therefore, none of the example fs in libfuse exhibit the bug.
-> >
-> > > If server is keeping file handles (like Max's patches) and file gets
-> > > recycled and inode number recycled, then I am assuming old inode in
-> > > server can't resolve that file handle because that file is gone
-> > > and a new file/inode is in place. IOW, I am assuming open_by_handle_at()
-> > > should fail in this case.
-> > >
-> > > IOW, IIUC, even if we refer to old inode, server does not have a
-> > > way to provide access to new file (with reused inode number). And
-> > > will be forced to return -ESTALE or something like that?  Did I
-> > > miss the point completely?
-> > >
-> >
-> > Yes :-) it is much more simple than that.
-> > I will explain with an example from the test in link [1]:
-> >
-> > test_syscalls has ~50 test cases.
-> > Each test case (or some) create a file named testfile.$n
-> > some test cases truncate the file, some chmod, whatever.
-> > At the end of each test case the file is closed and unlinked.
-> > This means that the server if run over ext4/xfs very likely reuses
-> > the same inode number in many test cases.
-> >
-> > Normally, unlinking the testfile will drop the inode refcount to zero
-> > and kernel will evict the inode and send FORGER before the server
-> > creates another file with the same inode number.
-> >
-> > I modified the test to keep an open O_PATH fd of the testfiles
-> > around until the end of the test.
-> > This does not keep the file open on the server, so the real inode
-> > number can and does get reused, but it does keep the inode
-> > with elevated refcount in the kernel, so there is no final FORGET
-> > to the server.
-> >
-> > Now the server gets a CREATE for the next testfile and it happens
-> > to find a file with an inode number that already exists in the server
-> > with a different generation.
-> >
-> > The server has no problem detecting this situation, but what can the
-> > server do about it? If server returns success, the existing kernel
-> > inode will now refer to the new server object.
-> > If the server returns failure, this is a permanent failure.
->
-> Hi Amir,
->
-> Thanks for the detailed explanation. I guess I am beginning to understand
-> it now.
->
-> In above example, when CREATE comes along and server detects that
-> inode it has in cache has same inode number but different generation,
-> then problem can be solved if it creates a new inode and new node
-> id) and sends back new inode id instead? But I guess your file
-> server is using real inode number as inode id and you can't do
-> that and that's why facing the issue?
->
+On Thu, 10 Jun 2021 09:31:42 +0200 Bernd Edlinger <bernd.edlinger@hotmail.de> wrote:
 
-That is correct.
-For fs with 32bit ino (ext4) I encode nodeid from ino+generation
-so there is no nodeid reuse issue.
-Since I need persistent inode numbers it would be impractical to
-keep a persistent mapping of real ino to nodeid in a db.
-And besides, FUSE protocol returns generation in LOOKUP
-response for a reason - this result must not be linked to an existing
-inode with previous generation in the FUSE inode cache.
+> This introduces signal->unsafe_execve_in_progress,
+> which is used to fix the case when at least one of the
+> sibling threads is traced, and therefore the trace
+> process may dead-lock in ptrace_attach, but de_thread
+> will need to wait for the tracer to continue execution.
+> 
+> The solution is to detect this situation and allow
+> ptrace_attach to continue, while de_thread() is still
+> waiting for traced zombies to be eventually released.
+> When the current thread changed the ptrace status from
+> non-traced to traced, we can simply abort the whole
+> execve and restart it by returning -ERESTARTSYS.
+> This needs to be done before changing the thread leader,
+> because the PTRACE_EVENT_EXEC needs to know the old
+> thread pid.
+> 
+> Although it is technically after the point of no return,
+> we just have to reset bprm->point_of_no_return here,
+> since at this time only the other threads have received
+> a fatal signal, not the current thread.
+> 
+> >From the user's point of view the whole execve was
+> simply delayed until after the ptrace_attach.
+> 
+> Other threads die quickly since the cred_guard_mutex
+> is released, but a deadly signal is already pending.
+> In case the mutex_lock_killable misses the signal,
+> ->unsafe_execve_in_progress makes sure they release
+> the mutex immediately and return with -ERESTARTNOINTR.
+> 
+> This means there is no API change, unlike the previous
+> version of this patch which was discussed here:
+> 
+> https://lore.kernel.org/lkml/b6537ae6-31b1-5c50-f32b-8b8332ace882@hotmail.de/
+> 
+> See tools/testing/selftests/ptrace/vmaccess.c
+> for a test case that gets fixed by this change.
+> 
+> Note that since the test case was originally designed to
+> test the ptrace_attach returning an error in this situation,
+> the test expectation needed to be adjusted, to allow the
+> API to succeed at the first attempt.
+> 
 
-> >
-> > My filesystem used to free the existing inode object and replace it with
-> > a new one, but the same ino will keep getting FORGET messages from
-> > the old kernel inode, so needed to remember the old nlookup.
-> >
-> > The server can send an invalidate command for the inode, but that
-> > won't make the kernel inode go away nor be marked "bad".
-> >
-> > Eventually, at the end of the test_syscalls, my modification iterates
-> > on all the O_PATH fd's, which correspond to different dentries, most
-> > of them now pointing at the same inode object and fstat() on most of
-> > those fd's return the same ino/size/mode, which is not a match to the
-> > file that O_PATH fd used to refer to. IOW, you got to peek at the
-> > content of a file that is not yours at all.
->
-> Got it. So with your invalidation patch, inode (opened with O_PATH)
-> will be marked bad and if you do fstat() on this, fuse will return
-> -EIO, instead of stats of new file which reused inode number, right?
->
 
-Yes.
+Here's the diff from v8.  It's conventional to tell reviewers what
+changed when sending out a new version.
 
-> What happens in following scenario.
->
-> - You have file open with O_PATH.
-> - Somebody unlinked the file on server and put a new file which
->   reused inode number.
-> - Now I do fstat(fd).
->
-> I am assuming in this case I will still be able to get stats of new
-> file? Or your server implementation detects that its not same
-> file anymore and returns an error instead?
->
+What changed in this version?
 
-Yes, in that case, the server doesn't know about the reuse yet,
-but when a request comes in with that ino, the server will find
-the Inode object, use the stored file handle to try and get an
-fd on the real file and will not be able to, because it's a stale file
-handle.
+--- a/fs/exec.c~exec-fix-dead-lock-in-de_thread-with-ptrace_attach-v9
++++ a/fs/exec.c
+@@ -1056,29 +1056,31 @@ static int de_thread(struct task_struct
+ 		return -EAGAIN;
+ 	}
+ 
+-	while_each_thread(tsk, t) {
+-		if (unlikely(t->ptrace) && t != tsk->group_leader)
+-			sig->unsafe_execve_in_progress = true;
+-	}
+-
+ 	sig->group_exit_task = tsk;
+ 	sig->notify_count = zap_other_threads(tsk);
+ 	if (!thread_group_leader(tsk))
+ 		sig->notify_count--;
+-	spin_unlock_irq(lock);
+ 
+-	if (unlikely(sig->unsafe_execve_in_progress))
++	while_each_thread(tsk, t) {
++		if (unlikely(t->ptrace) && t != tsk->group_leader)
++			sig->unsafe_execve_in_progress = true;
++	}
++
++	if (unlikely(sig->unsafe_execve_in_progress)) {
++		spin_unlock_irq(lock);
+ 		mutex_unlock(&sig->cred_guard_mutex);
++		spin_lock_irq(lock);
++	}
+ 
+-	for (;;) {
+-		set_current_state(TASK_KILLABLE);
+-		if (!sig->notify_count)
+-			break;
++	while (sig->notify_count) {
++		__set_current_state(TASK_KILLABLE);
++		spin_unlock_irq(lock);
+ 		schedule();
+ 		if (__fatal_signal_pending(tsk))
+ 			goto killed;
++		spin_lock_irq(lock);
+ 	}
+-	__set_current_state(TASK_RUNNING);
++	spin_unlock_irq(lock);
+ 
+ 	if (unlikely(sig->unsafe_execve_in_progress)) {
+ 		if (mutex_lock_killable(&sig->cred_guard_mutex))
+_
 
-The stale Inode object will linger in the server until either:
-- O_PATH fd is closed and kernel inode is evicted OR
-- The location of the reused inode is found by another LOOKUP
-that will reuse the server Inode object with a new file handle
-
-Thanks,
-Amir.
