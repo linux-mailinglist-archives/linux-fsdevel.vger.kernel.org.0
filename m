@@ -2,151 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B5C3A4FC0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jun 2021 18:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E44B53A5069
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jun 2021 21:48:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231390AbhFLQ3y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Jun 2021 12:29:54 -0400
-Received: from mail-pg1-f176.google.com ([209.85.215.176]:34312 "EHLO
-        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230200AbhFLQ3x (ORCPT
+        id S230136AbhFLTtt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Jun 2021 15:49:49 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:58004 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229753AbhFLTts (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Jun 2021 12:29:53 -0400
-Received: by mail-pg1-f176.google.com with SMTP id l1so5082636pgm.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Jun 2021 09:27:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MQ1mPpuRuVxBspdvy6UzAnzpaI1Bxq3sd+5iifYVq6M=;
-        b=X1c1dzhdcdE+0uP5L4BSVnCnYq5Podggz2EG34RYS8+w2Ggp6ZGGj4wzWuoyVVzZnP
-         z69HttbHn0Bx/ntjUOHEwgY1REmy/VrDtHTD0s/N6hu4w3yV3AJ05eAoVZfW7soX10dX
-         asFe552tpzR1D74iZpoxDbDf/x//1LJZkpNQaoAOrDrM2i8hIExDOBXCqxhrjchmXHDC
-         BQS1bqsoLyGLwmukVEilDkksMmP3CCdlMrwo8rIzc1NKJ2tRBw9tnQmFq0qW9z57JcXw
-         2iWjOcdz6e+nVFdSAfl6oecl9h36QWbVak5hYYnZBXCJvNRUTW4YyFQN3/EvQzpJr2CG
-         vLzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MQ1mPpuRuVxBspdvy6UzAnzpaI1Bxq3sd+5iifYVq6M=;
-        b=hIWNwTeovvQkPPuLTgDy++KlFGhDPs2UCgWRrqxG+a6vpGahainJDmVtL1Qpmf4HVA
-         zqc5qpk+DLQTrNvCXfeVx7oCLKvFm3hQZnjrIF3+ZeZ73cwNYSJOBvHzV8hkMwmFRbB8
-         NFGe2sF1vgxPflsX70F61LTaDgQ+6xljoESiuyrAx/k0dsHaSpdlZIwwvvo5OBxiJpQi
-         HX4fGgJ4BN/MZKHj+cyiHgSFH7irMSySZk9Blsw7pRnChzwRdKtbevB6X55wCCGnl+ut
-         QzwcLCM1Ulmhq8VE/7EpqF7hja/QDdg8/Y3CUYgTakcQCGWIlpiM8BHvhcjPqRAppcQW
-         tsXw==
-X-Gm-Message-State: AOAM533bxpwu01TZcNrtUcuOm54Jfnv+kDY3H4JhHLGaOX7bhbaFXh0v
-        m0BgNuJeUzsJ4IZsUeGLgqkEMw==
-X-Google-Smtp-Source: ABdhPJyy1n778pYdAk3+Hs5II6u5ygH2NnqoKQwbqwRgPrpopuaXT7omTPwdMCEDxqfglx6JblgSRQ==
-X-Received: by 2002:aa7:9706:0:b029:2f2:4481:1e17 with SMTP id a6-20020aa797060000b02902f244811e17mr13862002pfg.53.1623515197779;
-        Sat, 12 Jun 2021 09:26:37 -0700 (PDT)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id w79sm8603030pff.21.2021.06.12.09.26.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Jun 2021 09:26:37 -0700 (PDT)
-Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
-To:     Olivier Langlois <olivier@trillion01.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
+        Sat, 12 Jun 2021 15:49:48 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1ls9bd-00B7yK-Dq; Sat, 12 Jun 2021 13:47:45 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=email.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1ls9ba-00839m-4V; Sat, 12 Jun 2021 13:47:44 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Pavel Begunkov>" <asml.silence@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
- <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
- <87h7i694ij.fsf_-_@disp2133>
- <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
- <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
- <87eeda7nqe.fsf@disp2133>
- <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
- <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
- <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
- <87y2bh4jg5.fsf@disp2133>
- <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
- <87sg1p4h0g.fsf_-_@disp2133>
- <9628ac27c07db760415d382e26b5a0ced41f5851.camel@trillion01.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0fce1bd7-172c-84c6-915f-9cc2a45543a9@kernel.dk>
-Date:   Sat, 12 Jun 2021 10:26:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Charles Haithcock <chaithco@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        YiFei Zhu <yifeifz2@illinois.edu>,
+        Adrian Reber <areber@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org
+References: <AM8PR10MB4708AFBD838138A84CE89EF8E4359@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+        <20210610143642.e4535dbdc0db0b1bd3ee5367@linux-foundation.org>
+Date:   Sat, 12 Jun 2021 14:44:05 -0500
+In-Reply-To: <20210610143642.e4535dbdc0db0b1bd3ee5367@linux-foundation.org>
+        (Andrew Morton's message of "Thu, 10 Jun 2021 14:36:42 -0700")
+Message-ID: <87eed6zx4q.fsf@disp2133>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <9628ac27c07db760415d382e26b5a0ced41f5851.camel@trillion01.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1ls9ba-00839m-4V;;;mid=<87eed6zx4q.fsf@disp2133>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+Lb/nnF3A2u0YB7jYNPcnJEbfzC5VPB3M=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Andrew Morton <akpm@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 2478 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 11 (0.5%), b_tie_ro: 10 (0.4%), parse: 1.04
+        (0.0%), extract_message_metadata: 20 (0.8%), get_uri_detail_list: 1.00
+        (0.0%), tests_pri_-1000: 18 (0.7%), tests_pri_-950: 1.29 (0.1%),
+        tests_pri_-900: 1.11 (0.0%), tests_pri_-90: 2229 (89.9%), check_bayes:
+        2217 (89.5%), b_tokenize: 7 (0.3%), b_tok_get_all: 6 (0.3%),
+        b_comp_prob: 2.2 (0.1%), b_tok_touch_all: 2197 (88.7%), b_finish: 1.18
+        (0.0%), tests_pri_0: 181 (7.3%), check_dkim_signature: 0.54 (0.0%),
+        check_dkim_adsp: 3.0 (0.1%), poll_dns_idle: 1.15 (0.0%), tests_pri_10:
+        3.0 (0.1%), tests_pri_500: 9 (0.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCHv8] exec: Fix dead-lock in de_thread with ptrace_attach
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/12/21 8:36 AM, Olivier Langlois wrote:
-> On Thu, 2021-06-10 at 15:11 -0500, Eric W. Biederman wrote:
->>
->> Olivier Langlois has been struggling with coredumps being incompletely
->> written in
->> processes using io_uring.
->>
->> Olivier Langlois <olivier@trillion01.com> writes:
->>> io_uring is a big user of task_work and any event that io_uring made
->>> a
->>> task waiting for that occurs during the core dump generation will
->>> generate a TIF_NOTIFY_SIGNAL.
->>>
->>> Here are the detailed steps of the problem:
->>> 1. io_uring calls vfs_poll() to install a task to a file wait queue
->>>    with io_async_wake() as the wakeup function cb from
->>> io_arm_poll_handler()
->>> 2. wakeup function ends up calling task_work_add() with TWA_SIGNAL
->>> 3. task_work_add() sets the TIF_NOTIFY_SIGNAL bit by calling
->>>    set_notify_signal()
->>
->> The coredump code deliberately supports being interrupted by SIGKILL,
->> and depends upon prepare_signal to filter out all other signals.   Now
->> that signal_pending includes wake ups for TIF_NOTIFY_SIGNAL this hack
->> in dump_emitted by the coredump code no longer works.
->>
->> Make the coredump code more robust by explicitly testing for all of
->> the wakeup conditions the coredump code supports.  This prevents
->> new wakeup conditions from breaking the coredump code, as well
->> as fixing the current issue.
->>
->> The filesystem code that the coredump code uses already limits
->> itself to only aborting on fatal_signal_pending.  So it should
->> not develop surprising wake-up reasons either.
->>
->> v2: Don't remove the now unnecessary code in prepare_signal.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 12db8b690010 ("entry: Add support for TIF_NOTIFY_SIGNAL")
->> Reported-by: Olivier Langlois <olivier@trillion01.com>
->> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> ---
->>  fs/coredump.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/coredump.c b/fs/coredump.c
->> index 2868e3e171ae..c3d8fc14b993 100644
->> --- a/fs/coredump.c
->> +++ b/fs/coredump.c
->> @@ -519,7 +519,7 @@ static bool dump_interrupted(void)
->>          * but then we need to teach dump_write() to restart and clear
->>          * TIF_SIGPENDING.
->>          */
->> -       return signal_pending(current);
->> +       return fatal_signal_pending(current) || freezing(current);
->>  }
->>  
->>  static void wait_for_dump_helpers(struct file *file)
-> 
-> Tested-by: Olivier Langlois <olivier@trillion01.com>
+Andrew Morton <akpm@linux-foundation.org> writes:
 
-Thanks Olivier and Eric for taking care of this. I've been mostly
-offline for more than a week, back at it next week.
+> On Thu, 10 Jun 2021 09:31:42 +0200 Bernd Edlinger <bernd.edlinger@hotmail.de> wrote:
+>
+>> This introduces signal->unsafe_execve_in_progress,
+>> which is used to fix the case when at least one of the
+>> sibling threads is traced, and therefore the trace
+>> process may dead-lock in ptrace_attach, but de_thread
+>> will need to wait for the tracer to continue execution.
+>
+> Deadlocks are serious.  Is this exploitable by unprivileged userspace?
 
--- 
-Jens Axboe
+The processes are killable so I don't think this is the serious in the
+way you mean.  In fact Linus has already said that it is not a deadlock.
 
+Eric
