@@ -2,99 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2143A4F13
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jun 2021 15:17:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C639C3A4F31
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jun 2021 16:10:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231301AbhFLNRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Jun 2021 09:17:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40500 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231281AbhFLNRj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Jun 2021 09:17:39 -0400
-Received: from ustc.edu.cn (email6.ustc.edu.cn [IPv6:2001:da8:d800::8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 85D91C061574;
-        Sat, 12 Jun 2021 06:15:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mail.ustc.edu.cn; s=dkim; h=Received:Date:From:To:Cc:Subject:
-        Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=hpF82FbzK3dvrZKLG58TMGKoVTQlhY9cugq9/lUm9Xo=; b=njZNJngaWiUd/
-        FeUXBIDCYXAWyLT5JK3peJzZjKpfwwV4pmnTNRWkLpcG8DvaDn1P7yzAZMIuCMIE
-        3ycPkVEc6WTW/KpnJvM47yZr4OuJAOdn9GlxfjMObnCCIS+zqy8rrCUd4HIVRlSJ
-        aqnOaau3oRZQaA5dAa8iz89Ws9uApE=
-Received: from xhacker (unknown [101.86.20.15])
-        by newmailweb.ustc.edu.cn (Coremail) with SMTP id LkAmygBHTYlws8RgpwzNAA--.48913S2;
-        Sat, 12 Jun 2021 21:15:28 +0800 (CST)
-Date:   Sat, 12 Jun 2021 21:09:53 +0800
-From:   Jisheng Zhang <jszhang3@mail.ustc.edu.cn>
-To:     Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>
-Cc:     kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs/proc/vmcore: hide mmap_vmcore_fault() and
- vmcore_mmap_ops for nommu
-Message-ID: <20210612210953.34dff323@xhacker>
+        id S231320AbhFLOMJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Jun 2021 10:12:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230191AbhFLOMJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 12 Jun 2021 10:12:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E4FF361376;
+        Sat, 12 Jun 2021 14:10:07 +0000 (UTC)
+Date:   Sat, 12 Jun 2021 16:10:05 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jakub Kici nski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Laight <David.Laight@ACULAB.COM>
+Subject: Re: [PATCH v4] net: make get_net_ns return error if NET_NS is
+ disabled
+Message-ID: <20210612141005.igoy2di6xhbkg7cq@wittgenstein>
+References: <20210611142959.92358-1-changbin.du@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LkAmygBHTYlws8RgpwzNAA--.48913S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFyfCFyDKw45tF48Gw45Wrg_yoW8JFy8pF
-        15tw1UGF17Wrn8W3W8GFs8GFyrGa4DXFWYgrWUGw1ayrsxJwsruw4YgFsYqFyDWFyxKa4f
-        WFWj9rykXay5XrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUy2b7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
-        jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
-        8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E
-        4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGV
-        WUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_
-        Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rV
-        WrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_
-        Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jY6wZUUUUU=
-X-CM-SenderInfo: xmv2xttqjtqzxdloh3xvwfhvlgxou0/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210611142959.92358-1-changbin.du@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jisheng Zhang <jszhang@kernel.org>
+On Fri, Jun 11, 2021 at 10:29:59PM +0800, Changbin Du wrote:
+> There is a panic in socket ioctl cmd SIOCGSKNS when NET_NS is not enabled.
+> The reason is that nsfs tries to access ns->ops but the proc_ns_operations
+> is not implemented in this case.
+> 
+> [7.670023] Unable to handle kernel NULL pointer dereference at virtual address 00000010
+> [7.670268] pgd = 32b54000
+> [7.670544] [00000010] *pgd=00000000
+> [7.671861] Internal error: Oops: 5 [#1] SMP ARM
+> [7.672315] Modules linked in:
+> [7.672918] CPU: 0 PID: 1 Comm: systemd Not tainted 5.13.0-rc3-00375-g6799d4f2da49 #16
+> [7.673309] Hardware name: Generic DT based system
+> [7.673642] PC is at nsfs_evict+0x24/0x30
+> [7.674486] LR is at clear_inode+0x20/0x9c
+> 
+> The same to tun SIOCGSKNS command.
+> 
+> To fix this problem, we make get_net_ns() return -EINVAL when NET_NS is
+> disabled. Meanwhile move it to right place net/core/net_namespace.c.
+> 
+> Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> Fixes: c62cce2caee5 ("net: add an ioctl to get a socket network namespace")
+> Cc: Cong Wang <xiyou.wangcong@gmail.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: David Laight <David.Laight@ACULAB.COM>
+> Cc: Christian Brauner <christian.brauner@ubuntu.com>
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
 
-Without CONFIG_MMU, we get a W=1 build warning:
-
-fs/proc/vmcore.c:443:42: warning: unused variable 'vmcore_mmap_ops' [-Wunused-const-variable]
-static const struct vm_operations_struct vmcore_mmap_ops = {
-
-The vmcore_mmap_ops is only referenced from an #ifdef'ed caller, so
-this uses the same #ifdef around vmcore_mmap_ops and mmap_vmcore_fault().
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- fs/proc/vmcore.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index 9a15334da208..d902a67cc3ea 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -401,6 +401,7 @@ static ssize_t read_vmcore(struct file *file, char __user *buffer,
- 	return __read_vmcore((__force char *) buffer, buflen, fpos, 1);
- }
- 
-+#ifdef CONFIG_MMU
- /*
-  * The vmcore fault handler uses the page cache and fills data using the
-  * standard __vmcore_read() function.
-@@ -443,6 +444,7 @@ static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
- static const struct vm_operations_struct vmcore_mmap_ops = {
- 	.fault = mmap_vmcore_fault,
- };
-+#endif
- 
- /**
-  * vmcore_alloc_buf - allocate buffer in vmalloc memory
--- 
-2.32.0
-
-
+Looks good,
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
