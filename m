@@ -2,107 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F4B83A55FE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jun 2021 03:58:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7F413A5818
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jun 2021 13:56:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231580AbhFMB7W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Jun 2021 21:59:22 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:49119 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229985AbhFMB7V (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Jun 2021 21:59:21 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id 3D3644D0;
-        Sat, 12 Jun 2021 21:57:20 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sat, 12 Jun 2021 21:57:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        Uom0PmQvH9twYv18/8DY+8ughWYvRfkhlllMXqiZF9U=; b=OVUqdN8gDqbMKH0g
-        IlIvGy0J1ex1TF/hXzLNtxTfLsNa4rSJkveblDtecrR9zYUHKgfiZi2GLyQz8khL
-        yd881w21Mb6sfk6IE/KYPowxeh4lqcc+oROudNGRpZjeAHG3I0SyoGaRbaYjVC0q
-        50SaI6zRhbg7ILd3am82bbrnfAmCP74Xb/TgwwMR4b+6jE3YHoxN4AMAHelbDLeU
-        vOnv8/qo1br9kMoxZ/A2S15L61yGXhXnxM1HS0mgpeDsYPJcGb+7vXwK4IKx2Nk7
-        x9wbNylHNp2CFyoBhyjtx556ET2k7pe9Gw5AwTnf51bA26pivVzgN1pgcIIUIqUa
-        e8wpYw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=Uom0PmQvH9twYv18/8DY+8ughWYvRfkhlllMXqiZF
-        9U=; b=HNfZq2tlph76QK1wHJxNX6QbI4L3TFJBIjObPCmEcRhDEw5jUGAi/vz7y
-        DkRRI4+vEj6TviS+s5KeBwcaN65Bl9bAUwQvebCw7IdodA47vAl7866a1bXizA2M
-        p2JKl5jgV03coqHIecWwZx4qYUbTDRupWx+8skwYbR93eX/Y5JAlXloKUSYq9bv/
-        lB2C6LRi4MYTyLgs9V1KAfYeMT6YM/wFM+8dcXUEJFtQXwurUKzwtTu4zoXLwxBw
-        RewV03ncFGxnl7QzafuquIQ6NX2ON35qZQ/SG/sVRVgu3GHqKJW9r2yhZfb9/3CJ
-        qEh1uExBTKXSsas6ohBXJEpB6xe6g==
-X-ME-Sender: <xms:_2XFYAGg2JgsMRq-fp4-I3qvMYXdajSGaLaOA5jai9OUC6zI2bkqOw>
-    <xme:_2XFYJUi31r4Yo8WQsbm9Q6qyxK_RxQJqg4z_IbESvlG9MC1AXf9Hy-Qn7UEydi97
-    pNt_iGqMIfP>
-X-ME-Received: <xmr:_2XFYKLvzzgYfkeJ552w9pGM3fwrjubCFB4eKNGZDEkmwD-5Nta9Q0I4ApMgPsCvkMSH6xsaTYHCgPS2v7Wv7ixJP_Dx_Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfedvuddggeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    fgleelkeetheelgeehueejueduhfeufffgleehgfevtdehhffhhffhtddugfefheenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:_2XFYCEAEKwgBPvgEHemsufSq1urmp73BWLtbDDQeED5s5vQBQm_SQ>
-    <xmx:_2XFYGV4nZva6EZSru6LmOlS5UPBkh8Mes7N9f8Y8UQCz1zcHLCB6w>
-    <xmx:_2XFYFOdOdAUmJKbu7g_b9RQ3vdr8Tk10VWI9U3yLK6o7SlWlFt4Ww>
-    <xmx:_2XFYNOqDfpbim5uFT_jufWJoiEFkyndl7LI6VEcJe5LXakTyhqyqHQTRhs>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 12 Jun 2021 21:57:14 -0400 (EDT)
-Message-ID: <8304e49310b16b865868982802bd2344d076c974.camel@themaw.net>
-Subject: Re: [PATCH v6 3/7] kernfs: use VFS negative dentry caching
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>,
-        Fox Chen <foxhlchen@gmail.com>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
+        id S231731AbhFML6l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Jun 2021 07:58:41 -0400
+Received: from nautica.notk.org ([91.121.71.147]:48587 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231658AbhFML6k (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 13 Jun 2021 07:58:40 -0400
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 78D1CC01C; Sun, 13 Jun 2021 13:56:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1623585397; bh=F3BhzyU8+ZAUVp/ArSoFhHPVCMPYqmG5jjoHGqzU654=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hsHcteU+yTXCmagMp/ZvaR7MOtzeoY42MPWlWePrHFwMvVxzj+NBguPOX3j5IRl0v
+         PvpIbNVbC0qb2P0ISXKZ8vLiepehmhB/q9m14RHid7zqvMPTVtMS0yAN1q2k5xFJNx
+         Mo37imLm7D0oxfmI16wxi1S4hdd06ixKzstZoUW1yZuNvX8FFQ6EWCMJVMGaV9I5wV
+         wBrW/OMwDFpOjGJPaIUj61SeyFJ7PgQprTrD1JW/gP9MeiqJ/0csXBSItWU044vB0C
+         VF61k/p0qiIL4E7GRXDcvwPIoBo254UWXyaVqduzeag4rbZ5I/aZsnhfkkyTA6K62o
+         KnvPCWRqvxQFQ==
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on nautica.notk.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.0 required=5.0 tests=UNPARSEABLE_RELAY
+        autolearn=unavailable version=3.3.2
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id A1F46C01E;
+        Sun, 13 Jun 2021 13:56:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1623585396; bh=F3BhzyU8+ZAUVp/ArSoFhHPVCMPYqmG5jjoHGqzU654=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fS20xlzkSeVSvCIjVgE/luNDX2wo7pgI9R105WOsr5EC+9UCz5uzqxuT0u+mkfQyf
+         UCasP35f8tv9p2dQQDHpzA18y8soqL1LGJxQ77DYVFtrvDlmNqj1sfKAer55nKuCV7
+         VV/7eeZA2ZIT6Failx+p3OItQycI26GEBWf4HJ5rekyNaS3iGlIlfSwSg4X/LXRuMk
+         QzQQe4nuyf/TWhdI75gmZZuGSbgDsufQXtDHQORL7IX3XPZ4B+OwO1mkFSJLsapxpl
+         7tNrBah4+fP4ZBdPDWKlj1LRnswpTxGoLuTnfPiltmWZYTkfKAIBWH2GSbY7TNWzUX
+         6EHSJWw7gfzKg==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id ca0fbf5c;
+        Sun, 13 Jun 2021 11:56:26 +0000 (UTC)
+Date:   Sun, 13 Jun 2021 20:56:11 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        virtio-fs@redhat.com,
+        linux kernel mailing list <linux-kernel@vger.kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Sun, 13 Jun 2021 09:57:10 +0800
-In-Reply-To: <YMQTMnfmOfdv2DpA@zeniv-ca.linux.org.uk>
-References: <162322846765.361452.17051755721944717990.stgit@web.messagingengine.com>
-         <162322862726.361452.10114120072438540655.stgit@web.messagingengine.com>
-         <YMP6topegaTXGNgC@zeniv-ca.linux.org.uk>
-         <2ee74cbed729d66a38a5c7de9c4608d02fb89f26.camel@themaw.net>
-         <ab91ce6f0c1b2e9549fc6e966db7514a988d0bf1.camel@themaw.net>
-         <YMQTMnfmOfdv2DpA@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        dgilbert@redhat.com, v9fs-developer@lists.sourceforge.net,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] init/do_mounts.c: Add root="fstag:<tag>" syntax for root
+ device
+Message-ID: <YMXyW0KXc3HqdUAj@codewreck.org>
+References: <20210608153524.GB504497@redhat.com>
+ <YMCPPCbjbRoPAEcL@stefanha-x1.localdomain>
+ <20210609154543.GA579806@redhat.com>
+ <YMHKZhfT0CUgeLno@stefanha-x1.localdomain>
+ <YMHOXn2cpGh1T9vz@codewreck.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YMHOXn2cpGh1T9vz@codewreck.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 2021-06-12 at 01:51 +0000, Al Viro wrote:
-> On Sat, Jun 12, 2021 at 09:08:05AM +0800, Ian Kent wrote:
+Dominique Martinet wrote on Thu, Jun 10, 2021 at 05:33:34PM +0900:
+> Stefan Hajnoczi wrote on Thu, Jun 10, 2021 at 09:16:38AM +0100:
+> > virtio-9p should be simple. I'm not sure how much additional setup the
+> > other 9p transports require. TCP and RDMA seem doable if there are
+> > kernel parameters to configure things before the root file system is
+> > mounted.
 > 
-> > But if I change to take the read lock to ensure there's no
-> > operation
-> > in progress for the revision check I would need the dget_parent(),
-> > yes?
-> 
-> WTF for?  ->d_parent can change *ONLY* when ->d_lock is held on all
-> dentries involved (including old and new parents).
+> For TCP, we can probably piggyback on what nfs does for this, see the
+> ip= parameter in Documentation/admin-guide/nfs/nfsroot.rst -- it lives
+> in net/ipv4/ipconfig.c so should just work out of the box
 
-Understood, thanks.
+Hm, just tried and it doesn't quite work for some reason -- in this
+stack trace:
+ kthread_should_stop+0x71/0xb0
+ wait_woken+0x182/0x1c0
+ __inet_stream_connect+0x48a/0xc00
+ inet_stream_connect+0x53/0xa0
+ p9_fd_create_tcp+0x2d6/0x420
+ p9_client_create+0x7bc/0x11d0
+ v9fs_session_init+0x1cd/0x1220
+ v9fs_mount+0x8c/0x870
+ legacy_get_tree+0xef/0x1d0
+ vfs_get_tree+0x83/0x240
+ path_mount+0xda3/0x1800
+ init_mount+0x98/0xdd
+ do_mount_root+0xe0/0x255
+ mount_root+0x47/0xd7
+ prepare_namespace+0x136/0x165
+ kernel_init+0xd/0x123
+ ret_from_fork+0x22/0x30
 
-> 
-> And it very definitely does *not* change for negative dentries.  I
-> mean,
-> look at the very beginning of __d_move().
+current->set_child_tid is null, causing a null deref when checking
+&to_kthread(current)->flags
 
+It does work with nfsroot though so even if this doesn't look 9p
+specific I guess I'll need to debug that eventually, but this can
+be done later... I'm guessing they don't use the same connect() function
+as 9p's is ipv4-specific (ugh) and that needs fixing eventually anyway.
+
+For reference this is relevant part of kernel command line I used for
+tcp:
+root=fstag:x.y.z.t rootflags=trans=tcp,aname=rootfs rootfstype=9p ip=dhcp
+
+(and ip=dhcp requires CONFIG_IP_PNP_DHCP=y)
+
+
+
+Virtio does work quite well though and that's good enough for me -- I
+was going to suggest also documenting increasing the msize (setting
+e.g. rootflags=msize=262144) but we really ought to increase the
+default, that came up recently and since no patch was sent I kind of
+forgot... Will do that now.
+
+
+
+@Vivek - I personally don't really care much, but would tend to prefer
+your v2 (without fstag:) from a user perspective the later is definitely
+better but I don't really like the static nobdev_filesystems array --
+I'd bite the bullet and use FS_REQUIRES_DEV (and move this part of the
+code just a bit below after the root_wait check just in case it matters,
+but at that point if something would mount with /dev/root but not with
+the raw root=argument then they probably do require a device!)
+
+It could also be gated by a config option like e.g. CONFIG_ROOT_NFS and
+others all are to make sure it doesn't impact anyone who doesn't want to
+be impacted - I'm sure some people want to make sure their device
+doesn't boot off a weird root if someone manages to change kernel params
+so would want a way of disabling the option...
+
+
+Well, if you keep the array, please add 9p to the list and resend as a
+proper patch so I can reply with tested-by/reviewed-by tags on something
+more final.
+
+
+Also, matter-of-factedly, how is this going to be picked up?
+Is the plan to send it directly to Linus as part of the next virtiofs
+PR? Going through Al Viro?
+
+
+Thanks,
+-- 
+Dominique
