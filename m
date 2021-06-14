@@ -2,70 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD8EA3A68AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 16:05:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D9FB3A68BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 16:10:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234463AbhFNOG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Jun 2021 10:06:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26561 "EHLO
+        id S233180AbhFNOMn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Jun 2021 10:12:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:28448 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233293AbhFNOG6 (ORCPT
+        by vger.kernel.org with ESMTP id S232745AbhFNOMn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Jun 2021 10:06:58 -0400
+        Mon, 14 Jun 2021 10:12:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623679495;
+        s=mimecast20190719; t=1623679839;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=K18SaxL7pqOT5ezBYnXMObDqxTM59sv8KTPuqWaSQpg=;
-        b=Nec6Q2ACmOsB5V4YOv71By30T2oiHFz0Zifet2LJ+3gcubHgbtafRkDCIU7O/sgIKk0T7w
-        ykxPV1nlThmrcQP6TRSvYa7j2117RatafZs6TH+Y6devIaXcfJbleK2Rk1CyAkYhE0mXAy
-        gT5TmzRLdrSxn6wVCHbt8KDs0FWI1tw=
+        bh=5VrGrghkNvFrliY5Q4Xm/jGj5MiDa9nv/G4jvjsxRj0=;
+        b=eoBWSO4oG8YSetxeAfiABQkR5Ya/JL7bMDogsRTTM7Tkn0p09Xs8wKO9rX3f0o5whTuKvv
+        3gARcTjraTG/01x99lGNaKcK84MauNeYM8Xwi4fR7lxtlhBsDQ5eALXnHnLFOKcDNS2mzd
+        JAKibuL/SotEXMqzyCrRnuhRXLyk5co=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-462--Yh-n_SOMT6GoVj9P0XwgA-1; Mon, 14 Jun 2021 10:04:54 -0400
-X-MC-Unique: -Yh-n_SOMT6GoVj9P0XwgA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-336-ZJLCkTrfMUCtFHKrFfLamQ-1; Mon, 14 Jun 2021 10:10:37 -0400
+X-MC-Unique: ZJLCkTrfMUCtFHKrFfLamQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7D1B8015F8;
-        Mon, 14 Jun 2021 14:04:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 795DF5C1A3;
-        Mon, 14 Jun 2021 14:04:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YMddm2P0vD+4edBu@casper.infradead.org>
-References: <YMddm2P0vD+4edBu@casper.infradead.org> <YMdZbsvBNYBtZDC2@casper.infradead.org> <162367681795.460125.11729955608839747375.stgit@warthog.procyon.org.uk> <162367682522.460125.5652091227576721609.stgit@warthog.procyon.org.uk> <466590.1623677832@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        jlayton@kernel.org, linux-afs@lists.infradead.org,
-        ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] afs: Fix afs_write_end() to handle short writes
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 683AECC628;
+        Mon, 14 Jun 2021 14:10:36 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.47])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2A7005D6A8;
+        Mon, 14 Jun 2021 14:10:33 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 14 Jun 2021 16:10:36 +0200 (CEST)
+Date:   Mon, 14 Jun 2021 16:10:33 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Olivier Langlois <olivier@trillion01.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+Message-ID: <20210614141032.GA13677@redhat.com>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+ <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
+ <87eeda7nqe.fsf@disp2133>
+ <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+ <87pmwt6biw.fsf@disp2133>
+ <87czst5yxh.fsf_-_@disp2133>
+ <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+ <87y2bh4jg5.fsf@disp2133>
+ <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+ <87sg1p4h0g.fsf_-_@disp2133>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <468964.1623679490.1@warthog.procyon.org.uk>
-Date:   Mon, 14 Jun 2021 15:04:50 +0100
-Message-ID: <468965.1623679490@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sg1p4h0g.fsf_-_@disp2133>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+Eric, et al, sorry for delay, I didn't read emails several days.
 
-> > Al Viro made such a change for Ceph - and we're writing, not reading.
-> 
-> I'd feel better if you said "xfstests doesn't show any new problems"
-> than arguing to authority.
+On 06/10, Eric W. Biederman wrote:
+>
+> v2: Don't remove the now unnecessary code in prepare_signal.
 
-I'm kind of referring it to Al - I added him to the to: list.  And xfstests
-doesn't show any new problems - but that doesn't mean that this path got
-tested.
+No, that code is still needed. Otherwise any fatal signal will be
+turned into SIGKILL.
 
-David
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -519,7 +519,7 @@ static bool dump_interrupted(void)
+>  	 * but then we need to teach dump_write() to restart and clear
+>  	 * TIF_SIGPENDING.
+>  	 */
+> -	return signal_pending(current);
+> +	return fatal_signal_pending(current) || freezing(current);
+>  }
+
+
+Well yes, this is what the comment says.
+
+But note that there is another reason why dump_interrupted() returns true
+if signal_pending(), it assumes thagt __dump_emit()->__kernel_write() may
+fail anyway if signal_pending() is true. Say, pipe_write(), or iirc nfs,
+perhaps something else...
+
+That is why zap_threads() clears TIF_SIGPENDING. Perhaps it should clear
+TIF_NOTIFY_SIGNAL as well and we should change io-uring to not abuse the
+dumping threads?
+
+Or perhaps we should change __dump_emit() to clear signal_pending() and
+restart __kernel_write() if it fails or returns a short write.
+
+Otherwise the change above doesn't look like a full fix to me.
+
+Oleg.
 
