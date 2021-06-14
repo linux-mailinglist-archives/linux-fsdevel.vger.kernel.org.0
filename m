@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FCB33A7087
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 22:34:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAA353A7089
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 22:35:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233352AbhFNUgk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Jun 2021 16:36:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52194 "EHLO
+        id S234908AbhFNUhc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Jun 2021 16:37:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234068AbhFNUgj (ORCPT
+        with ESMTP id S234068AbhFNUhb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Jun 2021 16:36:39 -0400
+        Mon, 14 Jun 2021 16:37:31 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B35DC061574;
-        Mon, 14 Jun 2021 13:34:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9529C061574;
+        Mon, 14 Jun 2021 13:35:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=YhhdqCDeNTuRvuYjwO2UkWBoy+FnHR5j6otkGU9Qe38=; b=RKoMjV8z3201ng+xDaGAZIFzo5
-        /T0Ba9zsaUK3ExL4XIZ0WoA9CAD6pRKEsDW0eWQZ5fMeRKK5Z2sg+l6y92F5HMC2pEuMpD7uuZIwS
-        rdJqUhCFI3/w1T5pN71FYBM/4A8RYVZTzLR04BxUn7L7BGiNKAR/1mX+8LwSnFp7INlEPbKwZ6AdG
-        ewC1AYl3GBfgs8O+jkCq/ShlBwb/jNd4qrDpRWiOan1cSPjfCAzT2UoAwW+jbOEkU1VYTWH1wuyla
-        HQyThJvrbfeUq3Hi5VDUEb2Xzx59YsZzKnKRjgFAy5L4oGeavKoU2lIYDaRJr5b6HFr3lwYtfQj58
-        fsFmeeIQ==;
+        bh=lTxQlKKo2Z62vJJMBe4n9w4K4vOr4dQqQOMNBTr81G8=; b=TLzQOjzvkNBvflpo7mWH+5e0qX
+        xYWmx564Oc0G5zK3fGl7r9vz4yqYje69DrE49LNYUbCruqAJwqm+LUcxLQux82Dj+qGPNHEP+Zjgy
+        XnxSurbluck9oLrBSqHY6gm4etG3BL39Gz+1freTjvti1tipRh+NKnACS7a/gIqJy7rZXwJvCT4lG
+        mJP85G7WOUUkxiFjorMkTi5I36+/ek9EKuXrXsb8NrvzVGlYHHJtxk04VmQkPNvSEeMaXHrNWPdLp
+        NqE+b+oUcKqb7CONctebFZ2bN7CC80N3z6zW9GUABno4g02XRnNOoPIa+7vAltDGxrOGSzZLNHSDx
+        EGTAptNg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lstGw-005oOA-O7; Mon, 14 Jun 2021 20:33:40 +0000
+        id 1lstHX-005oRL-JQ; Mon, 14 Jun 2021 20:34:18 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     akpm@linux-foundation.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -34,9 +34,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
         William Kucharski <william.kucharski@oracle.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v11 31/33] mm/filemap: Add folio private_2 functions
-Date:   Mon, 14 Jun 2021 21:14:33 +0100
-Message-Id: <20210614201435.1379188-32-willy@infradead.org>
+Subject: [PATCH v11 32/33] fs/netfs: Add folio fscache functions
+Date:   Mon, 14 Jun 2021 21:14:34 +0100
+Message-Id: <20210614201435.1379188-33-willy@infradead.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210614201435.1379188-1-willy@infradead.org>
 References: <20210614201435.1379188-1-willy@infradead.org>
@@ -46,157 +46,178 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-end_page_private_2() becomes folio_end_private_2(),
-wait_on_page_private_2() becomes folio_wait_private_2() and
-wait_on_page_private_2_killable() becomes folio_wait_private_2_killable().
-
-Adjust the fscache equivalents to call page_folio() before calling these
-functions to avoid adding wrappers.  Ends up costing 1 byte of text
-in ceph & netfs, but the core shrinks by three calls to page_folio().
+Match the page writeback functions by adding
+folio_start_fscache(), folio_end_fscache(), folio_wait_fscache() and
+folio_wait_fscache_killable().  Remove set_page_private_2().  Also rewrite
+the kernel-doc to describe when to use the function rather than what the
+function does, and include the kernel-doc in the appropriate rst file.
+Saves 31 bytes of text in netfs_rreq_unlock() due to set_page_fscache()
+calling page_folio() once instead of three times.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/netfs.h   |  6 +++---
- include/linux/pagemap.h |  6 +++---
- mm/filemap.c            | 37 ++++++++++++++++---------------------
- 3 files changed, 22 insertions(+), 27 deletions(-)
+ Documentation/filesystems/netfs_library.rst |  2 +
+ include/linux/netfs.h                       | 75 +++++++++++++--------
+ include/linux/pagemap.h                     | 16 -----
+ 3 files changed, 50 insertions(+), 43 deletions(-)
 
+diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
+index 57a641847818..bb68d39f03b7 100644
+--- a/Documentation/filesystems/netfs_library.rst
++++ b/Documentation/filesystems/netfs_library.rst
+@@ -524,3 +524,5 @@ Note that these methods are passed a pointer to the cache resource structure,
+ not the read request structure as they could be used in other situations where
+ there isn't a read request structure as well, such as writing dirty data to the
+ cache.
++
++.. kernel-doc:: include/linux/netfs.h
 diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 9062adfa2fb9..fad8c6209edd 100644
+index fad8c6209edd..b0bbd343fc98 100644
 --- a/include/linux/netfs.h
 +++ b/include/linux/netfs.h
-@@ -55,7 +55,7 @@ static inline void set_page_fscache(struct page *page)
+@@ -22,6 +22,7 @@
+  * Overload PG_private_2 to give us PG_fscache - this is used to indicate that
+  * a page is currently backed by a local disk cache
   */
- static inline void end_page_fscache(struct page *page)
- {
--	end_page_private_2(page);
-+	folio_end_private_2(page_folio(page));
- }
++#define folio_fscache(folio)		folio_private_2(folio)
+ #define PageFsCache(page)		PagePrivate2((page))
+ #define SetPageFsCache(page)		SetPagePrivate2((page))
+ #define ClearPageFsCache(page)		ClearPagePrivate2((page))
+@@ -29,57 +30,77 @@
+ #define TestClearPageFsCache(page)	TestClearPagePrivate2((page))
  
  /**
-@@ -66,7 +66,7 @@ static inline void end_page_fscache(struct page *page)
-  */
- static inline void wait_on_page_fscache(struct page *page)
- {
--	wait_on_page_private_2(page);
-+	folio_wait_private_2(page_folio(page));
- }
- 
- /**
-@@ -82,7 +82,7 @@ static inline void wait_on_page_fscache(struct page *page)
-  */
- static inline int wait_on_page_fscache_killable(struct page *page)
- {
--	return wait_on_page_private_2_killable(page);
-+	return folio_wait_private_2_killable(page_folio(page));
- }
- 
- enum netfs_read_source {
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 7c7ee538f1cc..f5e2e12b00fa 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -780,9 +780,9 @@ static inline void set_page_private_2(struct page *page)
- 	SetPagePrivate2(page);
- }
- 
--void end_page_private_2(struct page *page);
--void wait_on_page_private_2(struct page *page);
--int wait_on_page_private_2_killable(struct page *page);
-+void folio_end_private_2(struct folio *folio);
-+void folio_wait_private_2(struct folio *folio);
-+int folio_wait_private_2_killable(struct folio *folio);
- 
- /*
-  * Add an arbitrary waiter to a page's wait queue
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 3dda7416845b..877bbd0f33c4 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1451,56 +1451,51 @@ void folio_unlock(struct folio *folio)
- EXPORT_SYMBOL(folio_unlock);
- 
- /**
-- * end_page_private_2 - Clear PG_private_2 and release any waiters
-- * @page: The page
-+ * folio_end_private_2 - Clear PG_private_2 and wake any waiters.
+- * set_page_fscache - Set PG_fscache on a page and take a ref
+- * @page: The page.
++ * folio_start_fscache - Start an fscache operation on a folio.
 + * @folio: The folio.
   *
-- * Clear the PG_private_2 bit on a page and wake up any sleepers waiting for
-- * this.  The page ref held for PG_private_2 being set is released.
-+ * Clear the PG_private_2 bit on a folio and wake up any sleepers waiting for
-+ * it.  The page ref held for PG_private_2 being set is released.
-  *
-  * This is, for example, used when a netfs page is being written to a local
-  * disk cache, thereby allowing writes to the cache for the same page to be
-  * serialised.
+- * Set the PG_fscache (PG_private_2) flag on a page and take the reference
+- * needed for the VM to handle its lifetime correctly.  This sets the flag and
+- * takes the reference unconditionally, so care must be taken not to set the
+- * flag again if it's already set.
++ * Call this function before an fscache operation starts on a folio.
++ * Starting a second fscache operation before the first one finishes is
++ * not allowed.
   */
--void end_page_private_2(struct page *page)
-+void folio_end_private_2(struct folio *folio)
+-static inline void set_page_fscache(struct page *page)
++static inline void folio_start_fscache(struct folio *folio)
  {
--	struct folio *folio = page_folio(page);
--
- 	VM_BUG_ON_FOLIO(!folio_private_2(folio), folio);
- 	clear_bit_unlock(PG_private_2, folio_flags(folio, 0));
- 	folio_wake_bit(folio, PG_private_2);
- 	folio_put(folio);
+-	set_page_private_2(page);
++	VM_BUG_ON_FOLIO(folio_private_2(folio), folio);
++	folio_get(folio);
++	folio_set_private_2_flag(folio);
  }
--EXPORT_SYMBOL(end_page_private_2);
-+EXPORT_SYMBOL(folio_end_private_2);
  
  /**
-- * wait_on_page_private_2 - Wait for PG_private_2 to be cleared on a page
-- * @page: The page to wait on
-+ * folio_wait_private_2 - Wait for PG_private_2 to be cleared on a page.
-+ * @folio: The folio to wait on.
+- * end_page_fscache - Clear PG_fscache and release any waiters
+- * @page: The page
+- *
+- * Clear the PG_fscache (PG_private_2) bit on a page and wake up any sleepers
+- * waiting for this.  The page ref held for PG_private_2 being set is released.
++ * folio_end_fscache - End an fscache operation on a folio.
++ * @folio: The folio.
   *
-- * Wait for PG_private_2 (aka PG_fscache) to be cleared on a page.
-+ * Wait for PG_private_2 (aka PG_fscache) to be cleared on a folio.
+- * This is, for example, used when a netfs page is being written to a local
+- * disk cache, thereby allowing writes to the cache for the same page to be
+- * serialised.
++ * Call this function after an fscache operation has finished.  This will
++ * wake any sleepers waiting on this folio.
   */
--void wait_on_page_private_2(struct page *page)
-+void folio_wait_private_2(struct folio *folio)
+-static inline void end_page_fscache(struct page *page)
++static inline void folio_end_fscache(struct folio *folio)
  {
--	struct folio *folio = page_folio(page);
--
- 	while (folio_private_2(folio))
- 		folio_wait_bit(folio, PG_private_2);
+-	folio_end_private_2(page_folio(page));
++	folio_end_private_2(folio);
  }
--EXPORT_SYMBOL(wait_on_page_private_2);
-+EXPORT_SYMBOL(folio_wait_private_2);
  
  /**
-- * wait_on_page_private_2_killable - Wait for PG_private_2 to be cleared on a page
+- * wait_on_page_fscache - Wait for PG_fscache to be cleared on a page
 - * @page: The page to wait on
-+ * folio_wait_private_2_killable - Wait for PG_private_2 to be cleared on a folio.
-+ * @folio: The folio to wait on.
++ * folio_wait_fscache - Wait for an fscache operation on this folio to end.
++ * @folio: The folio.
   *
-- * Wait for PG_private_2 (aka PG_fscache) to be cleared on a page or until a
-+ * Wait for PG_private_2 (aka PG_fscache) to be cleared on a folio or until a
-  * fatal signal is received by the calling task.
+- * Wait for PG_fscache (aka PG_private_2) to be cleared on a page.
++ * If an fscache operation is in progress on this folio, wait for it to
++ * finish.  Another fscache operation may start after this one finishes,
++ * unless the caller holds the folio lock.
+  */
+-static inline void wait_on_page_fscache(struct page *page)
++static inline void folio_wait_fscache(struct folio *folio)
+ {
+-	folio_wait_private_2(page_folio(page));
++	folio_wait_private_2(folio);
+ }
+ 
+ /**
+- * wait_on_page_fscache_killable - Wait for PG_fscache to be cleared on a page
+- * @page: The page to wait on
++ * folio_wait_fscache_killable - Wait for an fscache operation on this folio to end.
++ * @folio: The folio.
+  *
+- * Wait for PG_fscache (aka PG_private_2) to be cleared on a page or until a
+- * fatal signal is received by the calling task.
++ * If an fscache operation is in progress on this folio, wait for it to
++ * finish or for a fatal signal to be received.  Another fscache operation
++ * may start after this one finishes, unless the caller holds the folio lock.
   *
   * Return:
   * - 0 if successful.
   * - -EINTR if a fatal signal was encountered.
   */
--int wait_on_page_private_2_killable(struct page *page)
-+int folio_wait_private_2_killable(struct folio *folio)
++static inline int folio_wait_fscache_killable(struct folio *folio)
++{
++	return folio_wait_private_2_killable(folio);
++}
++
++static inline void set_page_fscache(struct page *page)
++{
++	folio_start_fscache(page_folio(page));
++}
++
++static inline void end_page_fscache(struct page *page)
++{
++	folio_end_private_2(page_folio(page));
++}
++
++static inline void wait_on_page_fscache(struct page *page)
++{
++	folio_wait_private_2(page_folio(page));
++}
++
+ static inline int wait_on_page_fscache_killable(struct page *page)
  {
--	struct folio *folio = page_folio(page);
- 	int ret = 0;
+ 	return folio_wait_private_2_killable(page_folio(page));
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index f5e2e12b00fa..77e7c5a42733 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -764,22 +764,6 @@ void folio_wait_stable(struct folio *folio);
  
- 	while (folio_private_2(folio)) {
-@@ -1511,7 +1506,7 @@ int wait_on_page_private_2_killable(struct page *page)
+ void page_endio(struct page *page, bool is_write, int err);
  
- 	return ret;
- }
--EXPORT_SYMBOL(wait_on_page_private_2_killable);
-+EXPORT_SYMBOL(folio_wait_private_2_killable);
- 
- /**
-  * folio_end_writeback - End writeback against a folio.
+-/**
+- * set_page_private_2 - Set PG_private_2 on a page and take a ref
+- * @page: The page.
+- *
+- * Set the PG_private_2 flag on a page and take the reference needed for the VM
+- * to handle its lifetime correctly.  This sets the flag and takes the
+- * reference unconditionally, so care must be taken not to set the flag again
+- * if it's already set.
+- */
+-static inline void set_page_private_2(struct page *page)
+-{
+-	page = compound_head(page);
+-	get_page(page);
+-	SetPagePrivate2(page);
+-}
+-
+ void folio_end_private_2(struct folio *folio);
+ void folio_wait_private_2(struct folio *folio);
+ int folio_wait_private_2_killable(struct folio *folio);
 -- 
 2.30.2
 
