@@ -2,135 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BAF23A7187
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 23:47:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 953B53A71AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 23:59:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229676AbhFNVt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Jun 2021 17:49:28 -0400
-Received: from mail-pf1-f177.google.com ([209.85.210.177]:37436 "EHLO
-        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbhFNVt1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Jun 2021 17:49:27 -0400
-Received: by mail-pf1-f177.google.com with SMTP id y15so11634835pfl.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jun 2021 14:47:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=11qshP+zA6nV1VlKwOngkmrT97wBNjMb27p4nx9dPeQ=;
-        b=LUq145VKrQEwE9rgjOGzpPz5r0oSlIPHk/zQwJklsmP/reLr2QhQxs4SzJknhYFcOG
-         QTjaJq3N6SKt3n80XeAs0CwuOkqO4TC378gRzRviXjYGeymf9bYuq0R/ohCGLMe6y766
-         fzykrtMGa4x7NDcNTbP8sn9RCya+ITsJtGozg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=11qshP+zA6nV1VlKwOngkmrT97wBNjMb27p4nx9dPeQ=;
-        b=B+VvyoehWA/pVUXdUzmCJoW17OfFsJD/GgLMhOIfwCm0//SEtLxtpTeoyR+j+x9fWv
-         GT5OWAfIc+/7Zdw2iQwWxH78gBC4pzHxe5iGyZkmQSjtMB4WDMSWyqrNSF+Hckj0zNPB
-         sQgZF75VEHSG1qQi6dl7R7Xg5aMyAlMkjiB2qK3sdiuMw1TkMkCh5dlt1Lo2pp7aWv+b
-         JCTdp54AewYoXY7IdV4Wuaxc5CtdzqI6qqCNOwYa6ePPYQwFtkkx08dHFsAFHJg+dPtJ
-         uR8akytTdyAtEYA3Od3MdNEeFPkzDBGoghpzj99QXLAg/RxrUWFydA/pZJS2PB4xc84S
-         81Gw==
-X-Gm-Message-State: AOAM530uC+e+qewt2P/4dhK5t0NnfoHHi162RtXGpJeyvIhRUUdMWXr8
-        CA31F7J9ixFw/aqSObwfBMZnRA==
-X-Google-Smtp-Source: ABdhPJzKUWUtsQki9KiY6Yxrv339fbByTu4VTpxk9IVUZhA/8Q0tVs97sv/b2UkmGkORRB8NFg1eiQ==
-X-Received: by 2002:a63:e0e:: with SMTP id d14mr18768633pgl.426.1623707184226;
-        Mon, 14 Jun 2021 14:46:24 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id gd3sm380097pjb.39.2021.06.14.14.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 14:46:23 -0700 (PDT)
-Date:   Mon, 14 Jun 2021 14:46:22 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        WeiXiong Liao <gmpy.liaowx@gmail.com>, axboe@kernel.dk,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] pstore/blk: Use the normal block device I/O path
-Message-ID: <202106141436.294D1B2@keescook>
-References: <20210614200421.2702002-1-keescook@chromium.org>
- <YMe3eoodEyT+r1oI@zeniv-ca.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMe3eoodEyT+r1oI@zeniv-ca.linux.org.uk>
+        id S230435AbhFNWBQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Jun 2021 18:01:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38130 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229728AbhFNWBQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Jun 2021 18:01:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 812B0611AB;
+        Mon, 14 Jun 2021 21:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1623707952;
+        bh=pWkuBglv4mJnySzxhM7bwezoUP6TooTYCM8jj9C/mMc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=YwSajIk1y4sYoZY1UBFqXv0/yZ/AiCakTI2i2mjtLiUBMYJ3Nx370PZ08rJnPm7iL
+         rnjeiU+qqZujCFrnI8IKr47zRkSzzon0gjd3rA8tzgplkkxe+ox7gjb4HPbKJPjzD4
+         7p/WfcR9LrREx8ocKOPJeaO+YA9ngbBjiKFSCgYs=
+Date:   Mon, 14 Jun 2021 14:59:12 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Roman Gushchin <guro@fb.com>, Tejun Heo <tj@kernel.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH 4/4] vfs: keep inodes with page cache off the inode
+ shrinker LRU
+Message-Id: <20210614145912.feb751df928f38476048ec15@linux-foundation.org>
+In-Reply-To: <20210614211904.14420-4-hannes@cmpxchg.org>
+References: <20210614211904.14420-1-hannes@cmpxchg.org>
+        <20210614211904.14420-4-hannes@cmpxchg.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 14, 2021 at 08:09:30PM +0000, Al Viro wrote:
-> On Mon, Jun 14, 2021 at 01:04:21PM -0700, Kees Cook wrote:
->   
-> >  static ssize_t psblk_generic_blk_write(const char *buf, size_t bytes,
-> >  		loff_t pos)
-> >  {
+On Mon, 14 Jun 2021 17:19:04 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
+
+> Historically (pre-2.5), the inode shrinker used to reclaim only empty
+> inodes and skip over those that still contained page cache. This
+> caused problems on highmem hosts: struct inode could put fill lowmem
+> zones before the cache was getting reclaimed in the highmem zones.
 > 
-> >  	/* Console/Ftrace backend may handle buffer until flush dirty zones */
-> >  	if (in_interrupt() || irqs_disabled())
-> >  		return -EBUSY;
+> To address this, the inode shrinker started to strip page cache to
+> facilitate reclaiming lowmem. However, this comes with its own set of
+> problems: the shrinkers may drop actively used page cache just because
+> the inodes are not currently open or dirty - think working with a
+> large git tree. It further doesn't respect cgroup memory protection
+> settings and can cause priority inversions between containers.
 > 
-> > +	return kernel_write(psblk_file, buf, bytes, &pos);
+> Nowadays, the page cache also holds non-resident info for evicted
+> cache pages in order to detect refaults. We've come to rely heavily on
+> this data inside reclaim for protecting the cache workingset and
+> driving swap behavior. We also use it to quantify and report workload
+> health through psi. The latter in turn is used for fleet health
+> monitoring, as well as driving automated memory sizing of workloads
+> and containers, proactive reclaim and memory offloading schemes.
 > 
-> In which locking environments could that be called?  The checks above
-> look like that thing could be called from just about any context;
-> could that happen when the caller is holding a page locked?
+> The consequences of dropping page cache prematurely is that we're
+> seeing subtle and not-so-subtle failures in all of the above-mentioned
+> scenarios, with the workload generally entering unexpected thrashing
+> states while losing the ability to reliably detect it.
+> 
+> To fix this on non-highmem systems at least, going back to rotating
+> inodes on the LRU isn't feasible. We've tried (commit a76cf1a474d7
+> ("mm: don't reclaim inodes with many attached pages")) and failed
+> (commit 69056ee6a8a3 ("Revert "mm: don't reclaim inodes with many
+> attached pages"")). The issue is mostly that shrinker pools attract
+> pressure based on their size, and when objects get skipped the
+> shrinkers remember this as deferred reclaim work. This accumulates
+> excessive pressure on the remaining inodes, and we can quickly eat
+> into heavily used ones, or dirty ones that require IO to reclaim, when
+> there potentially is plenty of cold, clean cache around still.
+> 
+> Instead, this patch keeps populated inodes off the inode LRU in the
+> first place - just like an open file or dirty state would. An
+> otherwise clean and unused inode then gets queued when the last cache
+> entry disappears. This solves the problem without reintroducing the
+> reclaim issues, and generally is a bit more scalable than having to
+> wade through potentially hundreds of thousands of busy inodes.
+> 
+> Locking is a bit tricky because the locks protecting the inode state
+> (i_lock) and the inode LRU (lru_list.lock) don't nest inside the
+> irq-safe page cache lock (i_pages.xa_lock). Page cache deletions are
+> serialized through i_lock, taken before the i_pages lock, to make sure
+> depopulated inodes are queued reliably. Additions may race with
+> deletions, but we'll check again in the shrinker. If additions race
+> with the shrinker itself, we're protected by the i_lock: if
+> find_inode() or iput() win, the shrinker will bail on the elevated
+> i_count or I_REFERENCED; if the shrinker wins and goes ahead with the
+> inode, it will set I_FREEING and inhibit further igets(), which will
+> cause the other side to create a new instance of the inode instead.
+> 
 
-The contexts are determined by both each of the pstore "front ends":
+And what hitherto unexpected problems will this one cause, sigh.
 
-
-PSTORE_FLAGS_DMESG:
-static struct kmsg_dumper pstore_dumper = {
-        .dump = pstore_dump,
-...
-kmsg_dump_register(&pstore_dumper);
-
-
-PSTORE_FLAGS_CONSOLE:
-static struct console pstore_console = {
-        .write  = pstore_console_write,
-...
-register_console(&pstore_console);
-
-
-PSTORE_FLAGS_FTRACE:
-static struct ftrace_ops pstore_ftrace_ops __read_mostly = {
-        .func   = pstore_ftrace_call,
-...
-register_ftrace_function(&pstore_ftrace_ops);
-
-
-PSTORE_FLAGS_PMSG:
-static const struct file_operations pmsg_fops = {
-...
-        .write          = write_pmsg,
-...
-pmsg_major = register_chrdev(0, PMSG_NAME, &pmsg_fops);
-
-
-and each of the pstore "back ends". (ram, EFI vars, block, etc.)
-
-
-> IOW, what are those checks really trying to do?
-
-Traditionally, the most restrictive case is kmsg_dump, but that's the
-whole point here of the "best effort" mode: if we can't safely make the
-call and no panic handler has been registered, we must skip the call.
-
-e.g. the RAM pstore backend has all its buffers preallocated, and it'll
-just write directly into them. The handling here has gotten progressive
-weirder, as more back ends landed -- i.e. EFI var writing added some
-limits to the kind of locking pstore could do, etc.
-
-
-It may turn out that the checks above aren't needed. I haven't tried it
-without, but I suspect it's for the kmsg_dump case.
-
--Kees
-
--- 
-Kees Cook
+How exhaustively has this approach been tested?
