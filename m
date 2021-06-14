@@ -2,102 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 447353A70AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 22:44:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36BF13A7108
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 23:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235677AbhFNUqn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Jun 2021 16:46:43 -0400
-Received: from mail-qv1-f49.google.com ([209.85.219.49]:44787 "EHLO
-        mail-qv1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235172AbhFNUqn (ORCPT
+        id S234765AbhFNVNg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Jun 2021 17:13:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34248 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233356AbhFNVNf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Jun 2021 16:46:43 -0400
-Received: by mail-qv1-f49.google.com with SMTP id w4so13748298qvr.11;
-        Mon, 14 Jun 2021 13:44:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=212ymYp7XEu+lKWxduC+83kiaUY3pqkgv+9qi3641iU=;
-        b=ixpntEdyk4n4XpQDDgnK92G2u3+1O1Oz3Fhqal4MiqoQVAoZmarGQIzc1x7iSob77H
-         vNzXG5bd7M3JsZPRBHsXNtIVpqpYxAYq+61TxPuyQ2oIhCrqzlXqISfPCgYra4nCNfqe
-         3ZOn/WS3+/CArQyHi0AV2aVcy9uk70efLQEPWgAhEPlRauDD66xs/Y6hQMIJHKL/WPub
-         zDUT31VW3Eg+meHPP+2TiyzfeRmRBuu7np35feeIqu4XIlmy8etcfa3bgsE6fdmv2EjM
-         i/k4a2r3HqU8po5AySg1+/Ss7DP0P4H6lFmsNslpuivserxT92ZaxeqvB0U+0s1x8iJv
-         qtBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=212ymYp7XEu+lKWxduC+83kiaUY3pqkgv+9qi3641iU=;
-        b=LBOjIf6grfMI7R/vmi3ZqJZ4ZPMfmHVDPLX1PN+Wjt0xtN+ekHNRkV8rBY3SlsWiBu
-         yww4d3DdBPoAEeyrpUqYGgvGYGj88yWvn8pyyzXv/FZs/6C2qKrK7P0DG+yEZ2Sh+Vv/
-         SDJvy9LO1UiwE6+lUDkTozL9uzVdD68k8msFF5fdsQpy3Sv93dFZ1tklDboVeLeMDnYk
-         G0ZYUWWdYgktn776IJJg3Z29+PvfPRaRcMOuz5BCcVW3HxyW5TV5/2X7m0JOZXsYdT4y
-         F6v8VaT3k57A+Sp6mU+6llHn8usoozTyr15wB+3t/oz0uF1JqUOggYokWvxWvLJFTQIS
-         Gjsg==
-X-Gm-Message-State: AOAM533S+khh9UmAQiLB4f1JK0nIBEomqkykKO+otecCsTZItXBMASvs
-        1dmjmg9r5yVyACKQL706ugk=
-X-Google-Smtp-Source: ABdhPJyZiBT2UFA22fxY80PwV97uk8Cilfx14IlToy0lDB7LgmWsIjbP5LulDlyiivN3X3IgnTCUKA==
-X-Received: by 2002:a05:6214:1909:: with SMTP id er9mr1028714qvb.13.1623703410350;
-        Mon, 14 Jun 2021 13:43:30 -0700 (PDT)
-Received: from localhost ([199.192.137.73])
-        by smtp.gmail.com with ESMTPSA id d16sm10271682qtj.69.2021.06.14.13.43.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 13:43:29 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Mon, 14 Jun 2021 16:43:28 -0400
-From:   Tejun Heo <tj@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin <hpa@zytor.com>, Greg Kroah-Hartman
-        <gregkh@linuxfoundation.org>, Rafael J. Wysocki " <rafael@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>, x86@kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/4] cgroup/cpuset: Allow cpuset to bound displayed cpu
- info
-Message-ID: <YMe/cGV4JPbzFRk0@slm.duckdns.org>
-References: <20210614152306.25668-1-longman@redhat.com>
+        Mon, 14 Jun 2021 17:13:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623705091;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0Mn8+GlgrQdOA/I1bTqxQYRGsb/yRw3f+Z55lqaAtNs=;
+        b=aI7rarQHEkwR3LlFDC/VfLKp3WR+jVEuN5XsfZFEaS5KQxbHDO54/9Tty+dObtRaHoiKA/
+        5wScdsCwqB618zZADH/gdhy8/IpDdz/fwWahEWZp1SQGD3VkuDR4wKVP7RMszPOs617TXi
+        nNtiXuqJwzPw3Rc6qZ8uYCilhfNTPqc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-33-3bfqkI24OYSv0GZSCObOOQ-1; Mon, 14 Jun 2021 17:11:30 -0400
+X-MC-Unique: 3bfqkI24OYSv0GZSCObOOQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7B7C1084F42;
+        Mon, 14 Jun 2021 21:11:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A5445D9CA;
+        Mon, 14 Jun 2021 21:11:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YMd5BqIKucO6rW4R@casper.infradead.org>
+References: <YMd5BqIKucO6rW4R@casper.infradead.org> <YMdpxbYafHnE0F8N@casper.infradead.org> <162367681795.460125.11729955608839747375.stgit@warthog.procyon.org.uk> <162367682522.460125.5652091227576721609.stgit@warthog.procyon.org.uk> <475131.1623685101@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, jlayton@kernel.org,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] afs: Fix afs_write_end() to handle short writes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210614152306.25668-1-longman@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <501526.1623705086.1@warthog.procyon.org.uk>
+Date:   Mon, 14 Jun 2021 22:11:26 +0100
+Message-ID: <501527.1623705086@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Matthew Wilcox <willy@infradead.org> wrote:
 
-On Mon, Jun 14, 2021 at 11:23:02AM -0400, Waiman Long wrote:
-> The current container management system is able to create the illusion
-> that applications running within a container have limited resources and
-> devices available for their use. However, one thing that is hard to hide
-> is the number of CPUs available in the system. In fact, the container
-> developers are asking for the kernel to provide such capability.
+> > means you can't get there unless PageUptodate() is true by that point.
 > 
-> There are two places where cpu information are available for the
-> applications to see - /proc/cpuinfo and /sys/devices/system/cpu sysfs
-> directory.
-> 
-> This patchset introduces a new sysctl parameter cpuset_bound_cpuinfo
-> which, when set, will limit the amount of information disclosed by
-> /proc/cpuinfo and /sys/devices/system/cpu.
+> Isn't the point of an assertion to check that this is true?
 
-The goal of cgroup has never been masquerading system information so that
-applications can pretend that they own the whole system and the proposed
-solution requires application changes anyway. The information being provided
-is useful but please do so within the usual cgroup interface - e.g.
-cpuset.stat. The applications (or libraries) that want to determine its
-confined CPU availability can locate the file through /proc/self/cgroup.
+The assertion was meant to check that that it was true given that the page was
+set uptodate somewhere else before this function was even called.  With this
+patch, however, it's now set in this function if it wasn't already right at
+the top - so the assertion should now be redundant.  I can put it back if you
+really insist.
 
-Thanks.
+David
 
--- 
-tejun
