@@ -2,128 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E22463A6B47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 18:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A88953A6B7F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 18:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234471AbhFNQJs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Jun 2021 12:09:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49860 "EHLO
+        id S234548AbhFNQUF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Jun 2021 12:20:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233543AbhFNQJr (ORCPT
+        with ESMTP id S234124AbhFNQUF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Jun 2021 12:09:47 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32264C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jun 2021 09:07:29 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id l1so17481277ejb.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jun 2021 09:07:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=MNFWmm34MZytbVprgUqS0jda1g7ZVugrknZ1TlYtDUQ=;
-        b=dXOpEReFQg7wxCEciDmPS8hg+xqA1WcwdZEuSGxmkOK9XEgFlPkXNXXZgJ/3NJsbMp
-         Wg+q2rExZaTxTDSEzdg7Opcj14+Is2NjQX546+BRiVwbmsFEaiJFFNhyglTnVyRY/lwC
-         4tWZs/2fMAq7L/3T1qKt6XPJdyf5GYyoxdDaHb8emgFi3yJJL/XPq2AkP65Dwt08r0rl
-         W5XLzU1tjknpMp9uXty/svjU1SOX49Ijsb7QjsoVnDLeGenKbIXN2395pr43Nfy7oipD
-         yjfUL9h9dbdlEIPkuZ6jcg+nS8TUv29a5xwP5l2GamHvnFvrB034UC7ajFvq5yaSeyQ4
-         waLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=MNFWmm34MZytbVprgUqS0jda1g7ZVugrknZ1TlYtDUQ=;
-        b=H/hz5oyac1bIDwVa1ya1xZS+YE4BFIf24HKmF9hImsA3Rfovj0QwASBBebRgTJqH7U
-         X0zTIQXaf2+PprTU8s6u6FC4IyL9nUDBjIevMUYYKX4PUOh/c5wvYhCoFT8NnxBmBUbp
-         gGqok6Bt9PsmLh3+MxqZ6R+69Jvb2xlTKKIGSdEVQWZOjnH1BExMsglEaH9uKzOkgWr1
-         qERD+TGOHh9dIZWDNTlOsxB38nlvgxXC4Zrz/BxfxwdnzTlD9divzFci7oe7Yk/LLY3v
-         5alCXa1ZvJLxAg4BAKbDAMexmreclSED/s1L+AacwMS/06YtJyzBRN/WKCgGiDELSVSB
-         fDKg==
-X-Gm-Message-State: AOAM5324BrNeQe+yLmRh7wF0ZQikn23zYiBN5ussjiCvMt+sw04kqDkW
-        kqSLnBhGzel2RfxTsEuyEA==
-X-Google-Smtp-Source: ABdhPJwX3iEKNIeEi0O2uxmQbWz1orJGi2aByHnwYZUCUgIPB6464igySWPOIiWEDysOY7JTQvG9Vw==
-X-Received: by 2002:a17:906:1815:: with SMTP id v21mr15849724eje.376.1623686847826;
-        Mon, 14 Jun 2021 09:07:27 -0700 (PDT)
-Received: from localhost.localdomain ([46.53.252.135])
-        by smtp.gmail.com with ESMTPSA id e22sm9503078edu.35.2021.06.14.09.07.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 09:07:27 -0700 (PDT)
-Date:   Mon, 14 Jun 2021 19:07:25 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     dhowells@redhat.com
-Cc:     linux-afs@lists.infradead.org, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] afs: fix tracepoint string placement with built-in AFS
-Message-ID: <YMd+vR5Z2e24b3VV@localhost.localdomain>
-References: <YLAXfvZ+rObEOdc/@localhost.localdomain>
+        Mon, 14 Jun 2021 12:20:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C0BDC061574;
+        Mon, 14 Jun 2021 09:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5vWKwcu5zXbIS0gqk+gmRAwRmyT4qPUE/hpJYzofpcg=; b=jD8PC2c4jAqYP3BBYSnpaO0JFY
+        FkpdHb8tru56FNbInWWf7nQCM6f/s+sl5xm9SvPduA6+Zn99Ia9kMiYa7Ap/sSiZzc7FrqQKsgird
+        JMVaPlutN5bfhuqP2tGqQRAUdTHhdtEJi1wWMimTsjtMZQULcK7qWmtSdIFJq0UJaX610LWJEQptx
+        tUqkHgSDI7oEZLWLfYq3NAflpVGhL0Z6VHIIxblppLbUDxSNpM6Nm728luSLDLWFbiqoPtYHzUxG5
+        H1Q+K+AgRQw7Ht8HDyzptEMNGD1HjknRQHmO/prS5fT5FeY4BY6iBnga1SHHblvzAS5c7EWG87HVK
+        iIrEk0/A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lspHG-005blJ-Dp; Mon, 14 Jun 2021 16:17:36 +0000
+Date:   Mon, 14 Jun 2021 17:17:30 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: remove the implicit .set_page_dirty default
+Message-ID: <YMeBGiaQUHWeKEFC@casper.infradead.org>
+References: <20210614061512.3966143-1-hch@lst.de>
+ <YMdKOst/Psnlxh8a@casper.infradead.org>
+ <20210614155333.GB2413@lst.de>
+ <20210614155530.GA2563@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YLAXfvZ+rObEOdc/@localhost.localdomain>
+In-Reply-To: <20210614155530.GA2563@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ping!
+On Mon, Jun 14, 2021 at 05:55:30PM +0200, Christoph Hellwig wrote:
+> On Mon, Jun 14, 2021 at 05:53:33PM +0200, Christoph Hellwig wrote:
+> > On Mon, Jun 14, 2021 at 01:23:22PM +0100, Matthew Wilcox wrote:
+> > > i have a somewhat similar series in the works ...
+> > > 
+> > > https://git.infradead.org/users/willy/pagecache.git/commitdiff/1e7e8c2d82666b55690705d5bbe908e31d437edb
+> > > https://git.infradead.org/users/willy/pagecache.git/commitdiff/bf767a4969c0bc6735275ff7457a8082eef4c3fd
+> > > 
+> > > ... the other patches rather depend on the folio work.
+> > 
+> > Yes, these looks useful to me as well.
+> 
+> 
+> And in fact I suspect the code in __set_page_dirty_no_writeback should
+> really be the default if no ->set_page_dirty is set up.  It is the
+> same code as the no-mapping case and really makes sense as the default
+> case..
 
-Currently "perf record -e [tracepoint]" is unusable if AFS is builtin.
-
-On Fri, May 28, 2021 at 01:04:46AM +0300, Alexey Dobriyan wrote:
-> I was adding custom tracepoint to the kernel, grabbed full F34 kernel
-> .config, disabled modules and booted whole shebang as VM kernel.
-> 
-> Then did
-> 
-> 	perf record -a -e ...
-> 
-> It crashed:
-> 
-> 	general protection fault, probably for non-canonical address 0x435f5346592e4243: 0000 [#1] SMP PTI
-> 	CPU: 1 PID: 842 Comm: cat Not tainted 5.12.6+ #26
-> 	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-1.fc33 04/01/2014
-> 	RIP: 0010:t_show+0x22/0xd0
-> 
-> Then reproducer was narrowed to 
-> 
-> 	# cat /sys/kernel/tracing/printk_formats
-> 
-> Original F34 kernel with modules didn't crash.
-> 
-> So I started to disable options and after disabling AFS everything
-> started working again.
-> 
-> The root cause is that AFS was placing char arrays content into a section
-> full of _pointers_ to strings with predictable consequences.
-> 
-> Non canonical address 435f5346592e4243 is "CB.YFS_" which came from
-> CM_NAME macro.
-> 
-> The fix is to create char array and pointer to it separatedly.
-> 
-> Steps to reproduce:
-> 
-> 	CONFIG_AFS=y
-> 	CONFIG_TRACING=y
-> 
-> 	# cat /sys/kernel/tracing/printk_formats
-> 
-> Signed-off-by: Alexey Dobriyan (SK hynix) <adobriyan@gmail.com>
-> ---
-> 
->  fs/afs/cmservice.c |    5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> --- a/fs/afs/cmservice.c
-> +++ b/fs/afs/cmservice.c
-> @@ -30,8 +30,9 @@ static void SRXAFSCB_TellMeAboutYourself(struct work_struct *);
->  static int afs_deliver_yfs_cb_callback(struct afs_call *);
->  
->  #define CM_NAME(name) \
-> -	char afs_SRXCB##name##_name[] __tracepoint_string =	\
-> -		"CB." #name
-> +	const char afs_SRXCB##name##_name[] = "CB." #name;		\
-> +	static const char *_afs_SRXCB##name##_name __tracepoint_string =\
-> +		afs_SRXCB##name##_name
->  
->  /*
->   * CB.CallBack operation type
+yes; i was even wondering if that should be conditional on one of the
+"no writeback" bits in mapping ...
