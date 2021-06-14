@@ -2,141 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B5673A7151
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 23:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE5503A7155
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 23:29:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234771AbhFNVaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Jun 2021 17:30:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42593 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234143AbhFNVaY (ORCPT
+        id S235026AbhFNVbu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Jun 2021 17:31:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35962 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234935AbhFNVbt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Jun 2021 17:30:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623706100;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RYZqV2QcVTGJp+9kQzTUW7d5kpFaSO22gkZ6p67dNno=;
-        b=aLIK3ipvsB3feucopK7neHIbDEKmdVKlwOJDphmfMeW4RBq7XE5a5rTnt5pTdMVFwqr572
-        KQIrARY1kA/XmcE+Tgh1+ioHXPnXhB//iJ3xeaDEPeAXb/9dSeu5UeZokPIQXEeKvf1eQc
-        0ospH1GpoCBKXHtgvnnS9QXcgzDwawc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-424-tK6Rfjv7NXWei7skeaJShA-1; Mon, 14 Jun 2021 17:28:17 -0400
-X-MC-Unique: tK6Rfjv7NXWei7skeaJShA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 368D68015D0;
-        Mon, 14 Jun 2021 21:28:16 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-114-174.rdu2.redhat.com [10.10.114.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 71CF960877;
-        Mon, 14 Jun 2021 21:28:09 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id DA07F22054F; Mon, 14 Jun 2021 17:28:08 -0400 (EDT)
-Date:   Mon, 14 Jun 2021 17:28:08 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Chirantan Ekbote <chirantan@chromium.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>,
-        fuse-devel@lists.sourceforge.net, selinux@vger.kernel.org
-Subject: Re: [RESEND] [PATCHv4 1/2] uapi: fuse: Add FUSE_SECURITY_CTX
-Message-ID: <20210614212808.GD869400@redhat.com>
-References: <20200722090758.3221812-1-chirantan@chromium.org>
+        Mon, 14 Jun 2021 17:31:49 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04DB1C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jun 2021 14:29:40 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id h11-20020a05600c350bb02901b59c28e8b4so334510wmq.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jun 2021 14:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorremedies-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KVw5OLXMEvmuBwfWCuctqzQ+ZxRx+RuP9ph2B+HXvlY=;
+        b=dyK+R0yKyCzuSIEVUzXMmhK3EFLE2JAI4hv/RsGREy8jWtkiE8z/QONejh6XjgsjEp
+         1iV3X0K2wbJ+qorlp6tbXpWbuoqvxZQMgMUcc8wJ41wGiSIq+PHobmyMGGgAdT8a6/vZ
+         qEH3x0Vd+iTBXhVo2ZNSh5KOwmpBKWixZ1N+FJZhz7YmmFHHlPeRIBfE2E7Ps1Amz8/1
+         DutmKB6pxZQdiqSiKtpxNdi37Jmxl0X496H4Cb2DQS/BfUjxCTbKj+lmPQWEW0q93iGf
+         GqZYK02lSngXk1F3/bRoR8LlqCif19gRZLk1kTgvEVDpPjua+g69EIfblbGrB15sfzgt
+         hH+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KVw5OLXMEvmuBwfWCuctqzQ+ZxRx+RuP9ph2B+HXvlY=;
+        b=CEdXA79C/yIDeN1fauT5eOFUju+1K/giYyELUMdzgLoPqwkwnTBOxI4TGUWEcR39+Z
+         QOXDGWAFceuB87E7TdcbhjVh38b6g8AdTlOpT2HRVyuf/i9ZfNSzWURmcif53MzvPyQF
+         HkV5cnSzaUhVnA2OAl03SIh7NFOSzd4QPTmqFsnaN2pXkvpUrmoXTyNt7jygo9RTKhAG
+         0/jm2IK6Xf4Mi1SX4cHZFWfRQKm1pMg5BNxrhLgSXi27dYjXLM8exK1b476MX3A1Fu3M
+         RLqtHzVy5ZXtUqyN2g3+6jtIAA584DbdHkuybya/U7nokcHagG5UZiHuK/9vPH+a/Ata
+         fkYA==
+X-Gm-Message-State: AOAM531DCq8EQ13sm8dQ/yxHmwpAMuXEA0uOgImypTS/5JIUw26VzIRt
+        GbVM8HxP2KLEjwWzaT93tkXmBw5xkcha+pgNonYJvw==
+X-Google-Smtp-Source: ABdhPJwhslZGy31lqM8shtoXAi/hnyEkXnQ7IJJBsCrdPGDuWcd6r8189EE2suGj7Iph5adL9R7+x7QLXggpD65Kb8Y=
+X-Received: by 2002:a05:600c:1d0a:: with SMTP id l10mr1239677wms.124.1623706178579;
+ Mon, 14 Jun 2021 14:29:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200722090758.3221812-1-chirantan@chromium.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <CAJCQCtRQ57=qXo3kygwpwEBOU_CA_eKvdmjP52sU=eFvuVOEGw@mail.gmail.com>
+ <CAL3q7H7iOfFFq_vh80Zwb4jJY8NLq-DFBA4yvj7=EbG0AadOzg@mail.gmail.com>
+ <CAJCQCtSDYJKq7rrjMLyaHVz3ELgM7g8DBGJrFMOkrw7aBQW+kA@mail.gmail.com> <CAL3q7H7kCNs+fbqyHqwpuJvUudeMKOSWewEfCSdTKc1qFkSiJg@mail.gmail.com>
+In-Reply-To: <CAL3q7H7kCNs+fbqyHqwpuJvUudeMKOSWewEfCSdTKc1qFkSiJg@mail.gmail.com>
+From:   Chris Murphy <lists@colorremedies.com>
+Date:   Mon, 14 Jun 2021 15:29:22 -0600
+Message-ID: <CAJCQCtR0AEEkzR=K2eJjeUhm5TnwCUy945LLLUciFw+tOwrSnA@mail.gmail.com>
+Subject: Re: WARNING at asm/kfence.h:44 kfence_protect_page
+To:     Filipe Manana <fdmanana@gmail.com>
+Cc:     Chris Murphy <lists@colorremedies.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 22, 2020 at 06:07:57PM +0900, Chirantan Ekbote wrote:
-> Add the FUSE_SECURITY_CTX flag for the `flags` field of the
-> fuse_init_out struct.  When this flag is set the kernel will append the
-> security context for a newly created inode to the request (create,
-> mkdir, mknod, and symlink).  The server is responsible for ensuring that
-> the inode appears atomically with the requested security context.
-> 
-> For example, if the server is backed by a "real" linux file system then
-> it can write the security context value to
-> /proc/thread-self/attr/fscreate before making the syscall to create the
-> inode.
-> 
-> Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
+On Mon, Jun 14, 2021 at 2:43 PM Filipe Manana <fdmanana@gmail.com> wrote:
+>
+> On Mon, Jun 14, 2021 at 9:07 PM Chris Murphy <lists@colorremedies.com> wrote:
+> > No, but Fedora debug kernels do have it enabled so I can ask the
+> > reporter to use 5.12.10-debug or 5.13-rc6. Any preference?
+>
+> No preference.
+> It's a problem that has been around for several years now, and not
+> something recent.
+>
+> Ok, so it was reported before. Anywhere public, or was it something private?
 
-Hi Chirantan,
+https://bugzilla.redhat.com/show_bug.cgi?id=1971327
 
-I am wondering what's the status of this work now. Looks like it
-was not merged.
 
-We also need the capability to set selinux security xattrs on newly
-created files in virtiofs.  
 
-Will you be interested in reviving this work and send patches again
-and copy the selinux as well as linux security module list
-(linux-security-module@vger.kernel.org) as suggested by casey.
+>
+> >
+> >
+> > > That would trigger an assertion right away:
+> > >
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/fs/btrfs/transaction.c?h=v5.12.10#n584
+> > >
+> > > With assertions disabled, we just cast current->journal_info into a
+> > > transaction handle and dereference it, which is obviously wrong since
+> > > ->jornal_info has a value that is not a pointer to a transaction
+> > > handle, resulting in the crash.
+> > >
+> > > How easy is it to reproduce for you?
+> >
+> > I'm not sure.
+> >
+> > Do you think following this splat we could have somehow been IO
+> > limited or stalled without any other kernel messages appearing? That
+> > would then cause reclaim activity, and high memory and swap usage? I'm
+> > wondering if it's likely or unlikely, because at the moment I think
+> > it's unlikely since /var/log/journal was successfully recording
+> > systemd-journald journals for the 81 minutes between this call trace
+> > and when systemd-oomd started killing things. I'm trying to separate
+> > out what's causing what.
+>
+> Don't know about that. And honestly I don't think that it matters.
+> The send task writes to a pipe and writing to a pipe allocates pages
+> without GFP_NOFS (with GFP_HIGHUSER | __GFP_ACCOUNT to be precise),
+> meaning we can end up evicting an inode, which in turn needs to start
+> a transaction.
+>
+> That patch would be my preferred way to fix it.
+> If it doesn't work for any reason, then we can simply set up a NOFS
+> context surrounding the calls in send to write to the pipe, like this:
+>
+> https://pastebin.com/raw/tTrfAw0m
+> (also attached)
+>
+> I would have to test the first patch in a scenario under heavy memory
+> pressure to see if there isn't anything I might have missed, but I
+> think it should work just fine.
+> I'll test it tomorrow too.
+>
 
-How are you managing in the meantime. Carrying patches in your own
-kernel?
+The system was under heavy swap and memory pressure, but the logs
+don't tell us the contributors or their relative amounts. But logs
+show that Bees continued to make progress for almost an hour and a
+half after the splat, up until the wayland+shell service was killed by
+oomd. I'd expect any blocked tasks to result in warnings about it
+every 2 minutes in the journal.
 
-Thanks
-Vivek
+Swap being on zram during the memory pressure period might be a
+complicating factor, combining IO, CPU and memory pressure.
 
-> ---
-> Changes in v4:
->   * Added signoff to commit message.
-> 
->  include/uapi/linux/fuse.h | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 373cada898159..e2099b45fd44b 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -172,6 +172,10 @@
->   *  - add FUSE_WRITE_KILL_PRIV flag
->   *  - add FUSE_SETUPMAPPING and FUSE_REMOVEMAPPING
->   *  - add map_alignment to fuse_init_out, add FUSE_MAP_ALIGNMENT flag
-> + *
-> + *  7.32
-> + *  - add FUSE_SECURITY_CTX flag for fuse_init_out
-> + *  - add security context to create, mkdir, symlink, and mknod requests
->   */
->  
->  #ifndef _LINUX_FUSE_H
-> @@ -207,7 +211,7 @@
->  #define FUSE_KERNEL_VERSION 7
->  
->  /** Minor version number of this interface */
-> -#define FUSE_KERNEL_MINOR_VERSION 31
-> +#define FUSE_KERNEL_MINOR_VERSION 32
->  
->  /** The node ID of the root inode */
->  #define FUSE_ROOT_ID 1
-> @@ -314,6 +318,7 @@ struct fuse_file_lock {
->   * FUSE_NO_OPENDIR_SUPPORT: kernel supports zero-message opendir
->   * FUSE_EXPLICIT_INVAL_DATA: only invalidate cached pages on explicit request
->   * FUSE_MAP_ALIGNMENT: map_alignment field is valid
-> + * FUSE_SECURITY_CTX: add security context to create, mkdir, symlink, and mknod
->   */
->  #define FUSE_ASYNC_READ		(1 << 0)
->  #define FUSE_POSIX_LOCKS	(1 << 1)
-> @@ -342,6 +347,7 @@ struct fuse_file_lock {
->  #define FUSE_NO_OPENDIR_SUPPORT (1 << 24)
->  #define FUSE_EXPLICIT_INVAL_DATA (1 << 25)
->  #define FUSE_MAP_ALIGNMENT	(1 << 26)
-> +#define FUSE_SECURITY_CTX	(1 << 27)
->  
->  /**
->   * CUSE INIT request/reply flags
-> -- 
-> 2.27.0.383.g050319c2ae-goog
-> 
 
+-- 
+Chris Murphy
