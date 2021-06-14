@@ -2,70 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70D6A3A6851
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 15:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD8EA3A68AA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jun 2021 16:05:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234204AbhFNNsk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Jun 2021 09:48:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46886 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233739AbhFNNsj (ORCPT
+        id S234463AbhFNOG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Jun 2021 10:06:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26561 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233293AbhFNOG6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Jun 2021 09:48:39 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F105C061574;
-        Mon, 14 Jun 2021 06:46:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LPqO+dW9BvhRSiVFc/Fk8YBZ3qqyoUl/xcHNa5bqxIA=; b=ImI6filROaKDnSBRvSEYetlKZC
-        bUUve2305RRRYwBrlH0tw9ftOWT8FmQUSHf9mf8n5I+s49juLH6ZrQAmlz0K8jCljA4Hg+SmhuL5I
-        cgalD/SPq0FDfOWOdBn02y6GhjHbNcINlb6NzQg8hEcLD3yMktcnozf9e0mbXJLuw6X5C6ym7ihqX
-        zudiyoa5YIiiFKgk+5EHwFm2zmNbzwhD0cuER74D56tNGlF9aqC18EmLY25OBNMdQq9JwVyifr37Q
-        P2KwkvZi2uGU+t5tMmB0rDZfYUsoqDF1o1c85uWoiBytEY4GESkLD3SfWmMAkcA2vec4keH55QaLA
-        +REc/jsg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lsmuh-005TjH-T1; Mon, 14 Jun 2021 13:46:13 +0000
-Date:   Mon, 14 Jun 2021 14:46:03 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, jlayton@kernel.org,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+        Mon, 14 Jun 2021 10:06:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623679495;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=K18SaxL7pqOT5ezBYnXMObDqxTM59sv8KTPuqWaSQpg=;
+        b=Nec6Q2ACmOsB5V4YOv71By30T2oiHFz0Zifet2LJ+3gcubHgbtafRkDCIU7O/sgIKk0T7w
+        ykxPV1nlThmrcQP6TRSvYa7j2117RatafZs6TH+Y6devIaXcfJbleK2Rk1CyAkYhE0mXAy
+        gT5TmzRLdrSxn6wVCHbt8KDs0FWI1tw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-462--Yh-n_SOMT6GoVj9P0XwgA-1; Mon, 14 Jun 2021 10:04:54 -0400
+X-MC-Unique: -Yh-n_SOMT6GoVj9P0XwgA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7D1B8015F8;
+        Mon, 14 Jun 2021 14:04:52 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 795DF5C1A3;
+        Mon, 14 Jun 2021 14:04:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YMddm2P0vD+4edBu@casper.infradead.org>
+References: <YMddm2P0vD+4edBu@casper.infradead.org> <YMdZbsvBNYBtZDC2@casper.infradead.org> <162367681795.460125.11729955608839747375.stgit@warthog.procyon.org.uk> <162367682522.460125.5652091227576721609.stgit@warthog.procyon.org.uk> <466590.1623677832@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        jlayton@kernel.org, linux-afs@lists.infradead.org,
+        ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 2/3] afs: Fix afs_write_end() to handle short writes
-Message-ID: <YMddm2P0vD+4edBu@casper.infradead.org>
-References: <YMdZbsvBNYBtZDC2@casper.infradead.org>
- <162367681795.460125.11729955608839747375.stgit@warthog.procyon.org.uk>
- <162367682522.460125.5652091227576721609.stgit@warthog.procyon.org.uk>
- <466590.1623677832@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <466590.1623677832@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <468964.1623679490.1@warthog.procyon.org.uk>
+Date:   Mon, 14 Jun 2021 15:04:50 +0100
+Message-ID: <468965.1623679490@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 14, 2021 at 02:37:12PM +0100, David Howells wrote:
-> Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > >  (1) If the page is not up to date, then we should just return 0
-> > >      (ie. indicating a zero-length copy).  The loop in
-> > >      generic_perform_write() will go around again, possibly breaking up the
-> > >      iterator into discrete chunks.
-> > 
-> > Does this actually work?  What about the situation where you're reading
-> > the last page of a file and thus (almost) always reading fewer bytes
-> > than a PAGE_SIZE?
-> 
-> Al Viro made such a change for Ceph - and we're writing, not reading.
+Matthew Wilcox <willy@infradead.org> wrote:
 
-I'd feel better if you said "xfstests doesn't show any new problems"
-than arguing to authority.
+> > Al Viro made such a change for Ceph - and we're writing, not reading.
+> 
+> I'd feel better if you said "xfstests doesn't show any new problems"
+> than arguing to authority.
 
-I know the operation which triggers this path is a call to write(),
-but if, say, the file is 32 bytes long, not in cache, and you write
-bytes 32-63, the client must READ bytes 0-31 from the server, which
-is less than a full page.
+I'm kind of referring it to Al - I added him to the to: list.  And xfstests
+doesn't show any new problems - but that doesn't mean that this path got
+tested.
+
+David
 
