@@ -2,155 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8DDB3A722C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 00:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A486D3A7265
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 01:15:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231424AbhFNWoM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Jun 2021 18:44:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51744 "EHLO
+        id S229939AbhFNXRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Jun 2021 19:17:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231674AbhFNWoL (ORCPT
+        with ESMTP id S229734AbhFNXRF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Jun 2021 18:44:11 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82226C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jun 2021 15:41:52 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id x6so16442493qvx.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jun 2021 15:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+Ln8aa8N4NkXgGmfhKmW+YOk+ZQP4J2F53dGDWutRYI=;
-        b=BTvt9AQQnZeMgoi8kZ+rpU61FQu7oIAu4pBLZ5r/GsD6sENIQpoQzs+ndGR/K6WAKZ
-         qHJImr2H1AtdDSzcc3TZtyfTdpq0bes1JARrugpd/KUJ2tWxjQ1V9vreICAV7fx2X1u6
-         aRtfU7IuQhAFCv/u//PANv7OV5J2vzkmCgpOZxzIoiaSVZhraKLWOetn+z2Hih5c4hPG
-         dkkrTLKYMAjTsdIy0kLLlJxrp0uro8qMDl6F6G0rt5LnyUDFv2ar8khX9bBW95y8dObH
-         Wl9LkCA9kwiCVTZuNqJ3M0iSrlHQcvNu8MNjaj1IN2RUZ0usAHbZY4QY8Z/n3TO1P0QG
-         vd7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+Ln8aa8N4NkXgGmfhKmW+YOk+ZQP4J2F53dGDWutRYI=;
-        b=qOa91uCrHNDkEE2Id70am71geIPfUWgos7FLrQX3LZAZHKPShCfoCekUscr0vKdwwR
-         wNSgqJVRBX6ID4sSE9l95ig+Xs0s3rNRTxPGSj7WGDPsmuR/6Ud81h7BmkiNkT6EET3p
-         aRm1V0htHvcMV0ouFdG1nQYogAUz6K4q+W+x1OCZrUlYKP8zLX7E5RMPIH+RePa+J/po
-         q8mGZ6n+ExvF9S966jtXSD4bcbLJFnVzXBqkLfIAirUYzsEuiPp9HbB5a3/dBIvCgXuK
-         WKUGNuUBD1AmpXV91AGy65wv2d6iyu6xk7TG3NX/x+TtJRDsXpXCVVAj7Z2ZizNyXnMJ
-         /NCw==
-X-Gm-Message-State: AOAM532W2JFT6+clpaJ6tQIBwZglEu+0qyIIthfBDaJyGYffwfCmKIzb
-        BjUXVweA+dqxMMBNyLR0ujS2ww==
-X-Google-Smtp-Source: ABdhPJyWQrrXQUjJrZcR1DdcwITE7ckgVpPOl79Nc9WscxBEYiYeedtKgqsg2s8LjpIEFtocJ72oSQ==
-X-Received: by 2002:ad4:5042:: with SMTP id m2mr315121qvq.29.1623710510887;
-        Mon, 14 Jun 2021 15:41:50 -0700 (PDT)
-Received: from localhost (70.44.39.90.res-cmts.bus.ptd.net. [70.44.39.90])
-        by smtp.gmail.com with ESMTPSA id g1sm1518745qkd.125.2021.06.14.15.41.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 15:41:50 -0700 (PDT)
-Date:   Mon, 14 Jun 2021 18:41:49 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Roman Gushchin <guro@fb.com>, Tejun Heo <tj@kernel.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 4/4] vfs: keep inodes with page cache off the inode
- shrinker LRU
-Message-ID: <YMfbLQvB+tHk9vAE@cmpxchg.org>
-References: <20210614211904.14420-1-hannes@cmpxchg.org>
- <20210614211904.14420-4-hannes@cmpxchg.org>
- <20210614145912.feb751df928f38476048ec15@linux-foundation.org>
+        Mon, 14 Jun 2021 19:17:05 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07693C061574;
+        Mon, 14 Jun 2021 16:15:02 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 642CCC01E; Tue, 15 Jun 2021 01:15:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1623712500; bh=YNHbzCcTw605EWb92v6BlUcB7/rLkS8l6j0Q1u4Lez0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qB4vMmhW3qrAv6Fks6HEGpbqHF1DtTGAlf40pTNk56BRtTxA0FRdQtqbUixAegtyS
+         bDQZUX5NGsvWZ0vHNq+Jpn5rO2FTtgosIOzicn2wT8aCtDloRkdZ+hXk7P0LqVAJWl
+         87l0dtnJJsvWNuGs9RtUuWLLfJKP1xXZ5MPCQymva6p3Ru/JQyyiTd882xs/KtkBJR
+         OQbvKbp5QbXRT31L2p2ez9KXmPNW+PYCAeuXYNa59jHPm2sEZ8+yeSwKWWAddQ8Fyl
+         cD2OHrZPnvEpFGL8ZeGBD4O2HqFg8vSl8OyFiBkr9Vjy/95iKs5B4hXSS9I92E/65H
+         C6jnfSF395+Qw==
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on nautica.notk.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.0 required=5.0 tests=UNPARSEABLE_RELAY
+        autolearn=unavailable version=3.3.2
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id E8A9DC01B;
+        Tue, 15 Jun 2021 01:14:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1623712499; bh=YNHbzCcTw605EWb92v6BlUcB7/rLkS8l6j0Q1u4Lez0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FCg9F5JYNQdxDgxtDks08ZMoDOu77ORt5v6I7StqGhTaI/pOhMfqOAv5Nq5fM2ew5
+         KtGdBQ5huIKE+Gxqz/tM2AdxUMe+tlmHzVr0OD2efGltKFb8mjukcJou5bI33ek9c7
+         wPuHsXO1QdQInvwelLUbRWyCARg7T7Y7aXSEBnxcnXLVqqeU45UCWO3DZAMjUBDcex
+         XstotTMxgnPx+0uajNHu3x4sHNJ0E47rN4AM5faTXW6NSV3I6nVphqpTTsZYIrwj8+
+         EubW3gjztJZ/zQ+3oMb5OSx9M/fEtp9eq/NxaGzzMZh6abb71DHUIgirNJdPXQs5+j
+         oMPtyYrSAYBiQ==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 9b7c43a8;
+        Mon, 14 Jun 2021 23:14:52 +0000 (UTC)
+Date:   Tue, 15 Jun 2021 08:14:37 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Vivek Goyal <vgoyal@redhat.com>, viro@zeniv.linux.org.uk
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        dgilbert@redhat.com, v9fs-developer@lists.sourceforge.net,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] init/do_mounts.c: Add root="fstag:<tag>" syntax for root
+ device
+Message-ID: <YMfi3Q50b1wV+lDW@codewreck.org>
+References: <20210608153524.GB504497@redhat.com>
+ <YMCPPCbjbRoPAEcL@stefanha-x1.localdomain>
+ <20210609154543.GA579806@redhat.com>
+ <YMHKZhfT0CUgeLno@stefanha-x1.localdomain>
+ <YMHOXn2cpGh1T9vz@codewreck.org>
+ <YMXyW0KXc3HqdUAj@codewreck.org>
+ <20210614142804.GA869400@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210614145912.feb751df928f38476048ec15@linux-foundation.org>
+In-Reply-To: <20210614142804.GA869400@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 14, 2021 at 02:59:12PM -0700, Andrew Morton wrote:
-> On Mon, 14 Jun 2021 17:19:04 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
+Vivek Goyal wrote on Mon, Jun 14, 2021 at 10:28:04AM -0400:
+> I am not a big fan of nobdev_filesystems array but I really don't feel
+> comfortable opening up this code by default to all filesystems having
+> flag FS_REQUIRES_DEV. Use cases of this code path are not well documented
+> and something somewhere will be broken and called regression.
 > 
-> > Historically (pre-2.5), the inode shrinker used to reclaim only empty
-> > inodes and skip over those that still contained page cache. This
-> > caused problems on highmem hosts: struct inode could put fill lowmem
-> > zones before the cache was getting reclaimed in the highmem zones.
-> > 
-> > To address this, the inode shrinker started to strip page cache to
-> > facilitate reclaiming lowmem. However, this comes with its own set of
-> > problems: the shrinkers may drop actively used page cache just because
-> > the inodes are not currently open or dirty - think working with a
-> > large git tree. It further doesn't respect cgroup memory protection
-> > settings and can cause priority inversions between containers.
-> > 
-> > Nowadays, the page cache also holds non-resident info for evicted
-> > cache pages in order to detect refaults. We've come to rely heavily on
-> > this data inside reclaim for protecting the cache workingset and
-> > driving swap behavior. We also use it to quantify and report workload
-> > health through psi. The latter in turn is used for fleet health
-> > monitoring, as well as driving automated memory sizing of workloads
-> > and containers, proactive reclaim and memory offloading schemes.
-> > 
-> > The consequences of dropping page cache prematurely is that we're
-> > seeing subtle and not-so-subtle failures in all of the above-mentioned
-> > scenarios, with the workload generally entering unexpected thrashing
-> > states while losing the ability to reliably detect it.
-> > 
-> > To fix this on non-highmem systems at least, going back to rotating
-> > inodes on the LRU isn't feasible. We've tried (commit a76cf1a474d7
-> > ("mm: don't reclaim inodes with many attached pages")) and failed
-> > (commit 69056ee6a8a3 ("Revert "mm: don't reclaim inodes with many
-> > attached pages"")). The issue is mostly that shrinker pools attract
-> > pressure based on their size, and when objects get skipped the
-> > shrinkers remember this as deferred reclaim work. This accumulates
-> > excessive pressure on the remaining inodes, and we can quickly eat
-> > into heavily used ones, or dirty ones that require IO to reclaim, when
-> > there potentially is plenty of cold, clean cache around still.
-> > 
-> > Instead, this patch keeps populated inodes off the inode LRU in the
-> > first place - just like an open file or dirty state would. An
-> > otherwise clean and unused inode then gets queued when the last cache
-> > entry disappears. This solves the problem without reintroducing the
-> > reclaim issues, and generally is a bit more scalable than having to
-> > wade through potentially hundreds of thousands of busy inodes.
-> > 
-> > Locking is a bit tricky because the locks protecting the inode state
-> > (i_lock) and the inode LRU (lru_list.lock) don't nest inside the
-> > irq-safe page cache lock (i_pages.xa_lock). Page cache deletions are
-> > serialized through i_lock, taken before the i_pages lock, to make sure
-> > depopulated inodes are queued reliably. Additions may race with
-> > deletions, but we'll check again in the shrinker. If additions race
-> > with the shrinker itself, we're protected by the i_lock: if
-> > find_inode() or iput() win, the shrinker will bail on the elevated
-> > i_count or I_REFERENCED; if the shrinker wins and goes ahead with the
-> > inode, it will set I_FREEING and inhibit further igets(), which will
-> > cause the other side to create a new instance of the inode instead.
-> > 
+> I think nobdev_filesystems is sort of a misfit. Even mtd, ubi, cifs
+> and nfs are nobdev filesystems but they are not covered by this.
+
+I think it's fine being able to have these root mounted both ways, then
+eventually removing the old fs-specific options after a period of
+deprecation to have a unique and simple interface.
+
+Maybe it's just a bit of a dream big attitude :-)
+
+> > I'd bite the bullet and use FS_REQUIRES_DEV (and move this part of the
+> > code just a bit below after the root_wait check just in case it matters,
 > 
-> And what hitherto unexpected problems will this one cause, sigh.
+> Problem with moving this below root_wait check is that if user boots
+> with root_wait option for virtiofs/9p, it will loop infitely. Reason
+> being that ROOT_DEV=0 and device will never show up.
 
-Yeah, I wish we could have stuck with simple rotations, but I can see
-how they can become problematic - even though we haven't been able to
-reproduce the issue which led to the revert in the FB fleet.
+Hm, well, then don't use root_wait?! would be my first reaction.
 
-> How exhaustively has this approach been tested?
+The reason I suggested to move below would be that there might be
+filesystems which handle both a block device and no block device, and
+for these we wouldn't want to break root_wait which would become kind of
+a switch saying "this really is a block device usecase even if the fs
+doesn't require dev" -- that's also the reason I was mostly optimistic
+even if we make it generic for all filesystems, there'd be this way out
+even if the thing is compiled in.
 
-This specific patch I've put through various inode / cache loads on my
-local test rig, drgn-inspected the sb inode lists to check for leaked
-inodes etc. - they've held up.
 
-We've had the previous version (which was more complicated) running on
-the entire Facebook fleet for a while. I did switch us back to simple
-rotations in a recent rebase, though, because the one-liner is easier
-to carry out of tree and (luckily) isn't causing problems for us.
+Ultimately if we go through the explicit whitelist that's not required
+anyway, and in that case it's probably better to check before as you've
+said.
 
-It would be good to have a fix upstream that works for everybody,
-though. The above-mentioned containerization and pressure detection
-failures aren't theoretical, we can't run upstream in our fleet.
 
-We're also trying to publish containerization software that showcases
-how the different cgroup controllers play together, how automated
-container sizing works etc, but many of those scenarios are broken in
-the upstream kernel. A kernel patch dependency is a painful one for a
-project like this. Tejun can probably provide more context on this.
+> I am assuming that for out use cases, device will need to be present
+> at the time of boot. We can't have a notion of waiting for device to
+> show up.
+> 
+> > but at that point if something would mount with /dev/root but not with
+> > the raw root=argument then they probably do require a device!)
+> > 
+> > It could also be gated by a config option like e.g. CONFIG_ROOT_NFS and
+> > others all are to make sure it doesn't impact anyone who doesn't want to
+> > be impacted - I'm sure some people want to make sure their device
+> > doesn't boot off a weird root if someone manages to change kernel params
+> > so would want a way of disabling the option...
+> 
+> I guess I could do that. Given more than one filesystem will use this
+> option (virtiofs and 9p to begin with), so we will have to have a 
+> config option name which is little more generic and not filesystem
+> specific like CONFIG_ROOT_NFS or CONFIG_ROOT_CIFS.
+
+Well there's the builtin check you added, and there's the ability to
+root boot from it that's historically always been separated.
+
+The builtin checks you added actually doesn't matter all that much to
+me. I mean, it'll pass this step, but fail as it cannot mount later
+anyway, and it was an explicit request to have this filesystem in the
+command line: you've changed an error that says "I cannot mount 9p!" to
+"I cannot find root-device!" so it's not really a big deal.
+
+
+What I was advocating for is the whole feature being gated by some
+option - my example with an embdedded device having 9p builtin (because
+for some reason they have everything builtin) but not wanting to boot on
+a tcp 9p rootfs still stands even if we're limiting this to a few
+filesystems.
+
+If you're keeping the idea of tags CONFIG_ROOT_TAGS ?
+
+
+> > Also, matter-of-factedly, how is this going to be picked up?
+> > Is the plan to send it directly to Linus as part of the next virtiofs
+> > PR? Going through Al Viro?
+> 
+> I was hoping that this patch can be routed through Al Viro.
+
+Sounds good to me as well - I've upgraded him to To: to get his
+attention.
+(v2 has been sent as "[PATCH v2 0/2] Add support to boot virtiofs and
+9pfs as rootfs"; I'll review/retest in the next few days)
+
+-- 
+Dominique
