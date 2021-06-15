@@ -2,117 +2,282 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B25D93A819E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 16:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C59493A8267
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 16:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230295AbhFOOCG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 10:02:06 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:4922 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230211AbhFOOCF (ORCPT
+        id S230316AbhFOOSI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 10:18:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36962 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230515AbhFOORD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 10:02:05 -0400
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4G48xs0H3gz706r;
-        Tue, 15 Jun 2021 21:56:49 +0800 (CST)
-Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 15 Jun 2021 21:59:58 +0800
-Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
- (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Tue, 15 Jun
- 2021 21:59:57 +0800
-From:   Baokun Li <libaokun1@huawei.com>
-To:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <weiyongjun1@huawei.com>, <yuehaibing@huawei.com>,
-        <yangjihong1@huawei.com>, <yukuai3@huawei.com>,
-        <libaokun1@huawei.com>, "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH] poll: mark racy accesses on pwq->triggered
-Date:   Tue, 15 Jun 2021 22:08:57 +0800
-Message-ID: <20210615140857.3804405-1-libaokun1@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Tue, 15 Jun 2021 10:17:03 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30420C06114B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 07:13:54 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id b12so8522937plg.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 07:13:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/6gpQ02X7gBO8pjc42DY/js8aRctYucdCbW6L6v5kow=;
+        b=dYRwAWKN2A96134398w/mjn2jG0oZvcCX0VtYPA6DYSpi5gkdOjOmluKYziXbhtEx+
+         phKtRTapNBc5jyDIgnmJ70IrlaTujJgoYqwht215PRvRUdSJFR9JvonysplgkLltQBPk
+         Dxo2EMjkKUodP7549wef4eUlVm1SdII1yvodX/AxyZkrOyyXVQ5xfgk0NYSl2uuMbElZ
+         oM9FEtg8Lz31J8gD0vnyDpzhG/Y3AKU5+9af/KleS8Xv6zsM+yH0vEkHxMY+piRe/E79
+         IM/rNEVJbza1Dg3P/oZJlEX3vAA4F0ak1MkFZSRNHMpgaX+zvkm0ibxfVAxTisKdyLCw
+         F6AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/6gpQ02X7gBO8pjc42DY/js8aRctYucdCbW6L6v5kow=;
+        b=K4V6SsFDNfXm6QLNnem7bfDCOHXsQ/VoD+X37GrtpTxxyj0Bcorv2t9uCjZoHtfIws
+         id5c2ljpHJx6dda/VDVNVAcbHrp4eVPJ5Kwr1qL2DUww5aAsfHj+dbPYKhp+skAWScjI
+         t9zHUleLKeZbuqNuicP1J8mNPctW/ZXHzF/+GXIMb3vV+aIDK58e9VN4ZB2yHYWGyvtb
+         IzQFR6xbBDTPdRATgcxfkbE0DC51akXZYd0edspC3iS+IzPSHO9eyXjFvMUIpoxiWups
+         IeXcsFZ6NE/vijaQo9/cTdutrtIsJ/Oo5lhGOmWprhmeuE6o+ZdX+F0XBs3pnUQgzOq5
+         HF3w==
+X-Gm-Message-State: AOAM532TpLbTntDnJXd5J9W3l/rKdwL3CwvjEKttXn7dc/fhNMoVVdFk
+        BNVncOjRQN3yIu2a/AO8mcql
+X-Google-Smtp-Source: ABdhPJwkbgtquzUNz+rnnpPJarAojJTuaVzACvyc0OKWpIjl7r+D5LXQddCqzIPANuxSKCSy8dPI6Q==
+X-Received: by 2002:a17:902:82c9:b029:104:dd1d:9c51 with SMTP id u9-20020a17090282c9b0290104dd1d9c51mr4356933plz.50.1623766433590;
+        Tue, 15 Jun 2021 07:13:53 -0700 (PDT)
+Received: from localhost ([139.177.225.241])
+        by smtp.gmail.com with ESMTPSA id v8sm2817452pff.34.2021.06.15.07.13.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jun 2021 07:13:53 -0700 (PDT)
+From:   Xie Yongji <xieyongji@bytedance.com>
+To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
+        sgarzare@redhat.com, parav@nvidia.com, hch@infradead.org,
+        christian.brauner@canonical.com, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com, joro@8bytes.org,
+        gregkh@linuxfoundation.org
+Cc:     songmuchun@bytedance.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v8 00/10] Introduce VDUSE - vDPA Device in Userspace
+Date:   Tue, 15 Jun 2021 22:13:21 +0800
+Message-Id: <20210615141331.407-1-xieyongji@bytedance.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500020.china.huawei.com (7.185.36.88)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix data races to pwq->triggered by using READ_ONCE and WRITE_ONCE.
-These accesses are expected to be racy per comment.
+This series introduces a framework that makes it possible to implement
+software-emulated vDPA devices in userspace. And to make it simple, the
+emulated vDPA device's control path is handled in the kernel and only the
+data path is implemented in the userspace.
 
-Original KCSAN report:
-==================================================================
-BUG: KCSAN: data-race in do_sys_poll / pollwake
+Since the emuldated vDPA device's control path is handled in the kernel,
+a message mechnism is introduced to make userspace be aware of the data
+path related changes. Userspace can use read()/write() to receive/reply
+the control messages.
 
-write to 0xffffc90000883c70 of 4 bytes by task 9351 on cpu 1:
- __pollwake fs/select.c:197 [inline]
- pollwake+0xa7/0xf0 fs/select.c:217
- __wake_up_common+0xbc/0x130 kernel/sched/wait.c:93
- __wake_up_common_lock kernel/sched/wait.c:123 [inline]
- __wake_up_sync_key+0x83/0xc0 kernel/sched/wait.c:190
- pipe_write+0x88b/0xd20 fs/pipe.c:580
- call_write_iter include/linux/fs.h:1903 [inline]
- new_sync_write fs/read_write.c:518 [inline]
- vfs_write+0x6d2/0x7c0 fs/read_write.c:605
- ksys_write+0xce/0x180 fs/read_write.c:658
- __do_sys_write fs/read_write.c:670 [inline]
- __se_sys_write fs/read_write.c:667 [inline]
- __x64_sys_write+0x3e/0x50 fs/read_write.c:667
- do_syscall_64+0x39/0x80 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+In the data path, the core is mapping dma buffer into VDUSE daemon's
+address space, which can be implemented in different ways depending on
+the vdpa bus to which the vDPA device is attached.
 
-read to 0xffffc90000883c70 of 4 bytes by task 9353 on cpu 3:
- poll_schedule_timeout fs/select.c:242 [inline]
- do_poll fs/select.c:961 [inline]
- do_sys_poll+0x940/0xb80 fs/select.c:1011
- __do_sys_poll fs/select.c:1069 [inline]
- __se_sys_poll+0xce/0x1c0 fs/select.c:1057
- __x64_sys_poll+0x3f/0x50 fs/select.c:1057
- do_syscall_64+0x39/0x80 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+In virtio-vdpa case, we implements a MMU-based on-chip IOMMU driver with
+bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the dma
+buffer is reside in a userspace memory region which can be shared to the
+VDUSE userspace processs via transferring the shmfd.
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 3 PID: 9353 Comm: scp Not tainted 5.10.0-rc5-csan #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), 
-         BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-==================================================================
+The details and our user case is shown below:
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 5f820f648c92a ("poll: allow f_op->poll to sleep")
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
- fs/select.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+------------------------    -------------------------   ----------------------------------------------
+|            Container |    |              QEMU(VM) |   |                               VDUSE daemon |
+|       ---------      |    |  -------------------  |   | ------------------------- ---------------- |
+|       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device emulation | | block driver | |
+------------+-----------     -----------+------------   -------------+----------------------+---------
+            |                           |                            |                      |
+            |                           |                            |                      |
+------------+---------------------------+----------------------------+----------------------+---------
+|    | block device |           |  vhost device |            | vduse driver |          | TCP/IP |    |
+|    -------+--------           --------+--------            -------+--------          -----+----    |
+|           |                           |                           |                       |        |
+| ----------+----------       ----------+-----------         -------+-------                |        |
+| | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa device |                |        |
+| ----------+----------       ----------+-----------         -------+-------                |        |
+|           |      virtio bus           |                           |                       |        |
+|   --------+----+-----------           |                           |                       |        |
+|                |                      |                           |                       |        |
+|      ----------+----------            |                           |                       |        |
+|      | virtio-blk device |            |                           |                       |        |
+|      ----------+----------            |                           |                       |        |
+|                |                      |                           |                       |        |
+|     -----------+-----------           |                           |                       |        |
+|     |  virtio-vdpa driver |           |                           |                       |        |
+|     -----------+-----------           |                           |                       |        |
+|                |                      |                           |    vdpa bus           |        |
+|     -----------+----------------------+---------------------------+------------           |        |
+|                                                                                        ---+---     |
+-----------------------------------------------------------------------------------------| NIC |------
+                                                                                         ---+---
+                                                                                            |
+                                                                                   ---------+---------
+                                                                                   | Remote Storages |
+                                                                                   -------------------
 
-diff --git a/fs/select.c b/fs/select.c
-index 945896d0ac9e..e71b4d1a2606 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -194,7 +194,7 @@ static int __pollwake(wait_queue_entry_t *wait, unsigned mode, int sync, void *k
- 	 * and is paired with smp_store_mb() in poll_schedule_timeout.
- 	 */
- 	smp_wmb();
--	pwq->triggered = 1;
-+	WRITE_ONCE(pwq->triggered, 1);
- 
- 	/*
- 	 * Perform the default wake up operation using a dummy
-@@ -239,7 +239,7 @@ static int poll_schedule_timeout(struct poll_wqueues *pwq, int state,
- 	int rc = -EINTR;
- 
- 	set_current_state(state);
--	if (!pwq->triggered)
-+	if (!READ_ONCE(pwq->triggered))
- 		rc = schedule_hrtimeout_range(expires, slack, HRTIMER_MODE_ABS);
- 	__set_current_state(TASK_RUNNING);
- 
+We make use of it to implement a block device connecting to
+our distributed storage, which can be used both in containers and
+VMs. Thus, we can have an unified technology stack in this two cases.
+
+To test it with null-blk:
+
+  $ qemu-storage-daemon \
+      --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
+      --monitor chardev=charmonitor \
+      --blockdev driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0 \
+      --export type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
+
+The qemu-storage-daemon can be found at https://github.com/bytedance/qemu/tree/vduse
+
+To make the userspace VDUSE processes such as qemu-storage-daemon able to
+be run by an unprivileged user. We did some works on virtio driver to avoid
+trusting device, including:
+
+  - validating the used length: 
+
+    * https://lore.kernel.org/lkml/20210531135852.113-1-xieyongji@bytedance.com/
+    * https://lore.kernel.org/lkml/20210525125622.1203-1-xieyongji@bytedance.com/
+
+  - validating the device config:
+    
+    * https://lore.kernel.org/lkml/20210615104810.151-1-xieyongji@bytedance.com/
+
+  - validating the device response:
+
+    * https://lore.kernel.org/lkml/20210615105218.214-1-xieyongji@bytedance.com/
+
+Since I'm not sure if I missing something during auditing, especially on some
+virtio device drivers that I'm not familiar with, we limit the supported device
+type to virtio block device currently. The support for other device types can be
+added after the security issue of corresponding device driver is clarified or
+fixed in the future.
+
+Future work:
+  - Improve performance
+  - Userspace library (find a way to reuse device emulation code in qemu/rust-vmm)
+  - Support more device types
+
+V7 to V8:
+- Rebased to newest kernel tree
+- Rework VDUSE driver to handle the device's control path in kernel
+- Limit the supported device type to virtio block device
+- Export free_iova_fast()
+- Remove the virtio-blk and virtio-scsi patches (will send them alone)
+- Remove all module parameters
+- Use the same MAJOR for both control device and VDUSE devices
+- Avoid eventfd cleanup in vduse_dev_release()
+
+V6 to V7:
+- Export alloc_iova_fast()
+- Add get_config_size() callback
+- Add some patches to avoid trusting virtio devices
+- Add limited device emulation
+- Add some documents
+- Use workqueue to inject config irq
+- Add parameter on vq irq injecting
+- Rename vduse_domain_get_mapping_page() to vduse_domain_get_coherent_page()
+- Add WARN_ON() to catch message failure
+- Add some padding/reserved fields to uAPI structure
+- Fix some bugs
+- Rebase to vhost.git
+
+V5 to V6:
+- Export receive_fd() instead of __receive_fd()
+- Factor out the unmapping logic of pa and va separatedly
+- Remove the logic of bounce page allocation in page fault handler
+- Use PAGE_SIZE as IOVA allocation granule
+- Add EPOLLOUT support
+- Enable setting API version in userspace
+- Fix some bugs
+
+V4 to V5:
+- Remove the patch for irq binding
+- Use a single IOTLB for all types of mapping
+- Factor out vhost_vdpa_pa_map()
+- Add some sample codes in document
+- Use receice_fd_user() to pass file descriptor
+- Fix some bugs
+
+V3 to V4:
+- Rebase to vhost.git
+- Split some patches
+- Add some documents
+- Use ioctl to inject interrupt rather than eventfd
+- Enable config interrupt support
+- Support binding irq to the specified cpu
+- Add two module parameter to limit bounce/iova size
+- Create char device rather than anon inode per vduse
+- Reuse vhost IOTLB for iova domain
+- Rework the message mechnism in control path
+
+V2 to V3:
+- Rework the MMU-based IOMMU driver
+- Use the iova domain as iova allocator instead of genpool
+- Support transferring vma->vm_file in vhost-vdpa
+- Add SVA support in vhost-vdpa
+- Remove the patches on bounce pages reclaim
+
+V1 to V2:
+- Add vhost-vdpa support
+- Add some documents
+- Based on the vdpa management tool
+- Introduce a workqueue for irq injection
+- Replace interval tree with array map to store the iova_map
+
+Xie Yongji (10):
+  iova: Export alloc_iova_fast() and free_iova_fast();
+  file: Export receive_fd() to modules
+  eventfd: Increase the recursion depth of eventfd_signal()
+  vhost-iotlb: Add an opaque pointer for vhost IOTLB
+  vdpa: Add an opaque pointer for vdpa_config_ops.dma_map()
+  vdpa: factor out vhost_vdpa_pa_map() and vhost_vdpa_pa_unmap()
+  vdpa: Support transferring virtual addressing during DMA mapping
+  vduse: Implement an MMU-based IOMMU driver
+  vduse: Introduce VDUSE - vDPA Device in Userspace
+  Documentation: Add documentation for VDUSE
+
+ Documentation/userspace-api/index.rst              |    1 +
+ Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
+ Documentation/userspace-api/vduse.rst              |  222 +++
+ drivers/iommu/iova.c                               |    2 +
+ drivers/vdpa/Kconfig                               |   10 +
+ drivers/vdpa/Makefile                              |    1 +
+ drivers/vdpa/ifcvf/ifcvf_main.c                    |    2 +-
+ drivers/vdpa/mlx5/net/mlx5_vnet.c                  |    2 +-
+ drivers/vdpa/vdpa.c                                |    9 +-
+ drivers/vdpa/vdpa_sim/vdpa_sim.c                   |    8 +-
+ drivers/vdpa/vdpa_user/Makefile                    |    5 +
+ drivers/vdpa/vdpa_user/iova_domain.c               |  545 ++++++++
+ drivers/vdpa/vdpa_user/iova_domain.h               |   73 +
+ drivers/vdpa/vdpa_user/vduse_dev.c                 | 1453 ++++++++++++++++++++
+ drivers/vdpa/virtio_pci/vp_vdpa.c                  |    2 +-
+ drivers/vhost/iotlb.c                              |   20 +-
+ drivers/vhost/vdpa.c                               |  148 +-
+ fs/eventfd.c                                       |    2 +-
+ fs/file.c                                          |    6 +
+ include/linux/eventfd.h                            |    5 +-
+ include/linux/file.h                               |    7 +-
+ include/linux/vdpa.h                               |   21 +-
+ include/linux/vhost_iotlb.h                        |    3 +
+ include/uapi/linux/vduse.h                         |  143 ++
+ 24 files changed, 2641 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/userspace-api/vduse.rst
+ create mode 100644 drivers/vdpa/vdpa_user/Makefile
+ create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
+ create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
+ create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
+ create mode 100644 include/uapi/linux/vduse.h
+
 -- 
-2.31.1
+2.11.0
 
