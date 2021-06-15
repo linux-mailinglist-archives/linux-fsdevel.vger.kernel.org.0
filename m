@@ -2,121 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DE043A85EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 18:01:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7013E3A8606
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 18:04:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232057AbhFOQDO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 12:03:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32804 "EHLO
+        id S231836AbhFOQG3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 12:06:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231939AbhFOQDJ (ORCPT
+        with ESMTP id S231303AbhFOQG1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 12:03:09 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF88CC061144;
-        Tue, 15 Jun 2021 08:59:27 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id j62so28675310qke.10;
-        Tue, 15 Jun 2021 08:59:27 -0700 (PDT)
+        Tue, 15 Jun 2021 12:06:27 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5262C0617AF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 09:04:21 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id h12so8705313plf.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 09:04:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GL+RU9f1AKmMjTvDhvbMJyhE7RlsIlk2mxWhqIrVH80=;
-        b=jkq8Km4vHTP7xZdrBvuBD4dByJ3zPoS+EImCYNZJ7O2IRlpr0D0e7kKl3ZXrex3iEj
-         EKbrXTLwfwseiGI0RACOJgzGGcn7IRmzsobaa3/g8UYVQgWtCLTeMkK1y45t7JJg7E4G
-         pGUhbQA0ppXUGAcG4qnauwNA3tYW6f1mm/77DyS53+guGLUR+UeaUKC+gvu9a1fxHza7
-         FCR+80zeNEJUhhaYae5sZM+lTC0Lc6xzJrFDbWdadTr8AcOtAcc4ZCyvvVySiWXaTsHv
-         ioDfO+9kBeUDmvBjr4hUmoEjD6wQxXww9KLyipFDbDLCELWSFIPAL0dwTvcAKYYHpOvF
-         KuEA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=gw2oHDXVQvWw8DrWhZyesLBZX3xqY81dz1Mhcj9xl+k=;
+        b=JUj8pZ1qVRjRKHnjaHS6ATWMhYGJXuJFfwnPVcwawU8F2l82PYCA0YXSokUWXzlDYw
+         4Qoeg1yhPj/ROVk2H8Dvdf7baXXiS3XBOnWcwSEHJVrIGuh0QhysI7TuvwVfXq1z2fWR
+         LjwsPmoJ2izkzV0M79i3QbpKU9hNx5rnq/DNg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=GL+RU9f1AKmMjTvDhvbMJyhE7RlsIlk2mxWhqIrVH80=;
-        b=AjE99Dqd7ZjDU+DDU+M3qtXkL45WXG1WonmwQVOglKdxxgMYId72Lwq4SRNyoFB/5+
-         F6zfGmPoF95V879TPLFNpYhOiiBkMyLB3xtsXh7s7ucRFe20fgIVRh76drfd1DLCz95G
-         cOKJUPKM794bRIPzd5TsX7xE2v19p1GNhqcTmqyXhJOYWN9NoLsp95awme/eud+2TF4M
-         +UDy7YxGHm1LxN/RgREvDaQywvfLY2RjguzsUYuweL76z1Q6dq9EenH8UY7PjJ+e5Wr+
-         8cdQDcU0zqitSBtTatC5VneQZ3IYcfgWnZSsEMwhNK23AbYvew+JA+QXd1zeo5+TyeZi
-         kAAQ==
-X-Gm-Message-State: AOAM533xrQmk30N8R1ws75GVPDaUhYh46voa5OypKLGs+w7rtsT4P3Kd
-        pz5/AxCg10fqC4WOjede7BJ4zMA/4gC7Xg==
-X-Google-Smtp-Source: ABdhPJwqJf7MDjwtRrhsG7BsS7Rr+a8TPLjDd3Rn4jgmAZ6wvYAx7YTZW8JCgQHoNuxEHZpWNqBOoQ==
-X-Received: by 2002:a37:3c2:: with SMTP id 185mr343685qkd.140.1623772766962;
-        Tue, 15 Jun 2021 08:59:26 -0700 (PDT)
-Received: from localhost ([199.192.137.73])
-        by smtp.gmail.com with ESMTPSA id 75sm10439412qkm.57.2021.06.15.08.59.26
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=gw2oHDXVQvWw8DrWhZyesLBZX3xqY81dz1Mhcj9xl+k=;
+        b=LuQy9NRnbU0ggFG3mrAwmgbAcpVvNtaoq+5cRKsrb6T74p25XHLlRNnkNPOzHbidHB
+         E7jzDk0gunB1DUwRYA7c/Ok9OmNmDYbQcXLLtPXxOVfKYXOp1+njRqmTtrrKidrkPcHZ
+         5Jm32kazgPtdBj2bjOey+HdtHdCOgx+t9H57Ny/HKDJDw8rDLbCHvcuc1kidW9mkgeqA
+         KxYh8k7ZueZB5P1Cwmm/R54g6mCHax6kROlHU6h++hyNU7EC9Skv6e2s/Jz0FSrZIvTO
+         cAqn/jQDRdF1HFzEt7O9ZzmmdrTnD6sli3ee+AbmTAFFFWMMIFazi0K1RWpj7WQqJBBS
+         k73g==
+X-Gm-Message-State: AOAM531kxwdOzHeHrz0+enBqOvU/+fhtjGmi3hY2waAKI9i44zPgnaV2
+        Kl8OeyvPSBSvfeAPZs89tKXfCw==
+X-Google-Smtp-Source: ABdhPJz2rstwVgeIvxg+8DgWOqz5xdzUNTzL+mT2t2ebQfbCN6I6QmLAsdV7xTYxLJni7w57LHv67A==
+X-Received: by 2002:a17:90a:f013:: with SMTP id bt19mr5421357pjb.201.1623773061310;
+        Tue, 15 Jun 2021 09:04:21 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id ei10sm15551868pjb.8.2021.06.15.09.04.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jun 2021 08:59:26 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 15 Jun 2021 11:59:25 -0400
-From:   Tejun Heo <tj@kernel.org>
-To:     Waiman Long <llong@redhat.com>
-Cc:     Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>, x86@kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/4] cgroup/cpuset: Allow cpuset to bound displayed cpu
- info
-Message-ID: <YMjGXlwQEHFwXZ4/@slm.duckdns.org>
-References: <20210614152306.25668-1-longman@redhat.com>
- <YMe/cGV4JPbzFRk0@slm.duckdns.org>
- <0e21f16d-d91b-7cec-d832-4c401a713b10@redhat.com>
+        Tue, 15 Jun 2021 09:04:20 -0700 (PDT)
+Date:   Tue, 15 Jun 2021 09:04:19 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        WeiXiong Liao <gmpy.liaowx@gmail.com>, axboe@kernel.dk,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] pstore/blk: Use the normal block device I/O path
+Message-ID: <202106150854.30F58015@keescook>
+References: <20210614200421.2702002-1-keescook@chromium.org>
+ <20210615123118.GA14239@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0e21f16d-d91b-7cec-d832-4c401a713b10@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210615123118.GA14239@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello, Waiman.
-
-On Mon, Jun 14, 2021 at 10:53:53PM -0400, Waiman Long wrote:
-> Thanks for your comment. I understand your point making change via cgroup
-> interface files. However, this is not what the customers are asking for.
-
-It's not like we can always follow what specific customers request. If there
-are actual use-cases that can't be achieved with the existing interfaces and
-features, we can look into how to provide those but making interface
-decisions based on specific customer requests tends to lead to long term
-pains.
-
-> They are using tools that look at /proc/cpuinfo and the sysfs files. It is a
-> much bigger effort to make all those tools look at a new cgroup file
-> interface instead. It can be more efficiently done at the kernel level.
-
-Short term, sure, it sure is more painful to adapt, but I don't think longer
-term solution lies in the kernel trying to masquerage existing sytsem-wide
-information interfaces. e.g. cpuset is one thing but what are we gonna do
-about weight control or work-conserving memory controls? Pro-rate cpu count
-and available memory?
-
-> Anyway, I am OK if the consensus is that it is not a kernel problem and have
-> to be handled in userspace.
-
-I'd be happy to provide more information from kernel side as necessary but
-the approach taken here doesn't seem generic or scalable at all.
-
-> BTW, do you have any comment on another cpuset patch that I sent a week
-> earlier?
+On Tue, Jun 15, 2021 at 02:31:18PM +0200, Christoph Hellwig wrote:
+> > -	if (!dev || !dev->total_size || !dev->read || !dev->write)
+> > +	if (!dev || !dev->total_size || !dev->read || !dev->write) {
+> > +		if (!dev)
+> > +			pr_err("NULL device info\n");
+> > +		else {
+> > +			if (!dev->total_size)
+> > +				pr_err("zero sized device\n");
+> > +			if (!dev->read)
+> > +				pr_err("no read handler for device\n");
+> > +			if (!dev->write)
+> > +				pr_err("no write handler for device\n");
+> > +		}
+> >  		return -EINVAL;
+> > +	}
 > 
-> https://lore.kernel.org/lkml/20210603212416.25934-1-longman@redhat.com/
+> This is completely unrelated and should be a separate patch.  And it
+> also looks rather strange, I'd at very least split the dev check out
+> and return early without the weird compound statement, but would probably
+> handle each one separate.  All assuming that we really need all these
+> debug printks.
+
+Agreed -- I've moved it to a separate patch.
+
+> >  /*
+> >   * This takes its configuration only from the module parameters now.
+> >   */
+> >  static int __register_pstore_blk(void)
 > 
-> I am looking forward for your feedback.
+> This needs a __init annotation now.
 
-Sorry about the delay. Will take a look later today.
+Ah yes, good point. I've rearranged things to avoid this.
 
-Thanks.
+> >  {
+> > +	struct pstore_device_info dev = {
+> > +		.read = psblk_generic_blk_read,
+> > +		.write = psblk_generic_blk_write,
+> > +	};
+> 
+> On-stack method tables are a little odd..
+
+struct pstore_device_info is mainly an argument passing structure, not
+an ops structure. There is some weird over-engineering here, which I'll
+fix up in a follow-up patch.
+
+> > +	if (!__is_defined(MODULE)) {
+> 
+> This looks a little weird.  Can we define a rapper for this in config.h
+> that is a little more self-explanatory, e.g. in_module()?
+
+I've adjusted this.
+
+> 
+> > +	if (!psblk_file->f_mapping)
+> > +		pr_err("missing f_mapping\n");
+> 
+> Can't ever be true.
+> 
+> > +	else if (!psblk_file->f_mapping->host)
+> > +		pr_err("missing host\n");
+> 
+> Can't ever be true either.
+> 
+> > +	else if (!I_BDEV(psblk_file->f_mapping->host))
+> > +		pr_err("missing I_BDEV\n");
+> > +	else if (!I_BDEV(psblk_file->f_mapping->host)->bd_inode)
+> > +		pr_err("missing bd_inode\n");
+> 
+> І_BDEV just does pointer arithmetics, so it can't ever return NULL.
+> And there are no block device inodes without bd_inode either.  And
+> all of this is per definition present for open S_ISBLK inodes.
+
+Okay, good. There were a lot of dead-ends in here, and after the removal
+of i_bdev, it wasn't obvious which things were going to exist. I've
+removed all these checks.
+
+One thing I noticed it that it seems we're missing a global helper for
+"->f_mapping->host", which I see repeated a lot. (There is a local
+helper bdev_file_inode().)
+
+$ git grep '\bf_mapping->host\b' | wc -l
+149
+
+
+Thanks for the review! I'll send a v2 series.
 
 -- 
-tejun
+Kees Cook
