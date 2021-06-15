@@ -2,97 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00AC23A7AF8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 11:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED8503A7B56
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 12:01:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231262AbhFOJoA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 05:44:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231238AbhFOJoA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 05:44:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9D6D061209;
-        Tue, 15 Jun 2021 09:41:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1623750116;
-        bh=1wCtGWkPwZYMZRCrMSWmhYOo8bpfpG5fhKivDsxr82Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Fb+N/DjqV9HoU8TednOHKh0AkSgHITcIK2ybjN33caA8RZj7IsUXQGxwwMWDyqLaj
-         RckWOLnRkGGM18p2kt7ftLdtt6P+/EVyauzh6/UfpFiPC/z1itEYBmJBwQqwLz+7PJ
-         11gbIwa7i0i2bN0+SPasE+TmY9UwE39slBfMiw9A=
-Date:   Tue, 15 Jun 2021 11:41:53 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Matthew Bobrowski <repnop@google.com>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] fanotify: fix copy_event_to_user() fid error clean up
-Message-ID: <YMh14THCE3x+lkV9@kroah.com>
-References: <1ef8ae9100101eb1a91763c516c2e9a3a3b112bd.1623376346.git.repnop@google.com>
- <CAOQ4uxjHjXbFwWUnVp6cosDzFEE2ZqDwSvH97bU1eWWFvo99kw@mail.gmail.com>
- <20210614102842.GA29751@quack2.suse.cz>
- <YMhx0CceoqRKBz9D@google.com>
+        id S231362AbhFOKDU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 06:03:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33084 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231308AbhFOKDT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Jun 2021 06:03:19 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06663C061574;
+        Tue, 15 Jun 2021 03:01:15 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id ho18so21578897ejc.8;
+        Tue, 15 Jun 2021 03:01:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6z4408/6oQsiDbv7fByF9r7biAOY0o4N+GInpU23pkI=;
+        b=H06GhBmxY91XwIBiT6QAmQpAftMWvSYiSkZ1ikjQiL/ABWIc6qzGO96hKW2gZMGb8i
+         LPGM6p3HrLH5zBeTr2aFA0tc7/l3iZL3/+l4qB8ZwulLOQD6sIaU1oJA8GKcNaMWsbws
+         lFSjtNYGjK63ptwBFN6XZPDIMY0jwp+KT/8bJMylNwfW3yTyqtzDS4rgcNqti4cqu8hF
+         8F/XzvIhvRLhlw0Jw9BjtkyUHnGGJaIToVlmnZ7F3q3QjBRHXYnfJW4kOUCUtrc4W3nd
+         GZRDASpUW3UpxKzXgTBfVY7kj4UzzdGgjJq/j3NKG1CqGI9Zg0Ql29g3cC7NLxBnJp/+
+         JdPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6z4408/6oQsiDbv7fByF9r7biAOY0o4N+GInpU23pkI=;
+        b=LO6ee3JC4uo0tiYbDDRIKnYnuIseQ4BuJRSgZHtpWgme3KCRm9MzZBmAyHy8TXpJ8Q
+         GGpk4BeYdC71KDdudKBh7iVSP8souO9ZVwpIaf7mwfk5LNQnxDKoC4T/kvItEUQ/wvpN
+         VZYZN4N2mGrna03zJySk1O5AXSRuoKnkG4VuOlvtzHIK/jxGr4+BrhPz9q3U2KavWMQ8
+         RW/P6zVItC9HqPrPJVEAw8O/rV+A9We1Ypu3gc3HP2Ti7wmqGLLly8c+is1MxpM7YYmH
+         /Hs6K/Q4wPFfvZW4ogHd/EiwhKuQknv2NLYDIhGQAtQ3jlFFZ9b/reQbJI9KFixUbOiY
+         Vrhg==
+X-Gm-Message-State: AOAM531L5T8/p2TDAPestyLdZv9kgdzlEqM+XlIiBcrBGyP1X+2PHKHT
+        tPNHXezKoI+iz+2WZSYhfPGsRNX6LNWaSf/orRk=
+X-Google-Smtp-Source: ABdhPJw8+LEtoar+pUf2dCxfuXnKoD7N5HCuiqVYRWxj5aO6xnN+gaJI4iET9GPlCrNM0Q0X32v18zP6Ztg1Aywjybk=
+X-Received: by 2002:a17:906:c293:: with SMTP id r19mr20197055ejz.252.1623751273558;
+ Tue, 15 Jun 2021 03:01:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMhx0CceoqRKBz9D@google.com>
+References: <CAOuPNLi8_PDyxtt+=j8AsX9pwLWcT4LmVWKj+UcyFOnj4RDBzg@mail.gmail.com>
+ <dacd3fd3-faf5-9795-1bf9-92b1a237626b@gmail.com> <CAOuPNLjCB2m7+b9CJxqTr-THggs-kTPp=0AX727QJ5CTs5OC0w@mail.gmail.com>
+In-Reply-To: <CAOuPNLjCB2m7+b9CJxqTr-THggs-kTPp=0AX727QJ5CTs5OC0w@mail.gmail.com>
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Tue, 15 Jun 2021 15:31:01 +0530
+Message-ID: <CAOuPNLio33vrJ_1am-hbgMunUJereC5GOy3QVU6PDDk-3QeneA@mail.gmail.com>
+Subject: Re: Kernel 4.14: SQUASHFS error: xz decompression failed, data
+ probably corrupt
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Sean Nyekjaer <sean@geanix.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 07:24:32PM +1000, Matthew Bobrowski wrote:
-> On Mon, Jun 14, 2021 at 12:28:42PM +0200, Jan Kara wrote:
-> > On Fri 11-06-21 10:04:06, Amir Goldstein wrote:
-> > > On Fri, Jun 11, 2021 at 6:32 AM Matthew Bobrowski <repnop@google.com> wrote:
-> > > Trick question.
-> > > There are two LTS kernels where those fixes are relevant 5.4.y and 5.10.y
-> > > (Patch would be picked up for latest stable anyway)
-> > > The first Fixes: suggests that the patch should be applied to 5.10+
-> > > and the second Fixes: suggests that the patch should be applied to 5.4+
-> > > 
-> > > In theory, you could have split this to two patches, one auto applied to 5.4+
-> > > and the other auto applied to +5.10.
-> > > 
-> > > In practice, this patch would not auto apply to 5.4.y cleanly even if you
-> > > split it and also, it's arguably not that critical to worth the effort,
-> > > so I would keep the first Fixes: tag and drop the second to avoid the
-> > > noise of the stable bots trying to apply the patch.
-> > 
-> > Actually I'd rather keep both Fixes tags. I agree this patch likely won't
-> > apply for older kernels but it still leaves the information which code is
-> > being fixed which is still valid and useful. E.g. we have an
-> > inftrastructure within SUSE that informs us about fixes that could be
-> > applicable to our released kernels (based on Fixes tags) and we then
-> > evaluate whether those fixes make sense for us and backport them.
+On Tue, 15 Jun 2021 at 10:42, Pintu Agarwal <pintu.ping@gmail.com> wrote:
+>
+> On Tue, 15 Jun 2021 at 03:53, Florian Fainelli <f.fainelli@gmail.com> wrote:
 > >
-> > > > Should we also be CC'ing <stable@vger.kernel.org> so this gets backported?
-> > > >
-> > > 
-> > > Yes and no.
-> > > Actually CC-ing the stable list is not needed, so don't do it.
-> > > Cc: tag in the commit message is somewhat redundant to Fixes: tag
-> > > these days, but it doesn't hurt to be explicit about intentions.
-> > > Specifying:
-> > >     Cc: <stable@vger.kernel.org> # v5.10+
-> > > 
-> > > Could help as a hint in case the Fixes: tags is for an old commit, but
-> > > you know that the patch would not apply before 5.10 and you think it
-> > > is not worth the trouble (as in this case).
-> > 
-> > I agree that CC to stable is more or less made redundant by the Fixes tag
-> > these days.
+> >
+> >
+> > On 6/14/2021 3:39 AM, Pintu Agarwal wrote:
+> > > Hi All,
+> > >
+> > > With Kernel 4.14 we are getting squashfs error during bootup resulting
+> > > in kernel panic.
+> > > The details are below:
+> > > Device: ARM-32 board with Cortex-A7 (Single Core)
+> > > Storage: NAND Flash 512MiB
+> > > Kernel Version: 4.14.170 (maybe with some Linaro updates)
+> > > File system: Simple busybox with systemd (without Android)
+> > > File system type: UBIFS + SQUASHFS
+> > > UBI Volumes supported: rootfs (ro), others (rw)
+> > > -------------------
+> > >
+> > > When we try to flash the UBI images and then try to boot the device,
+> > > we observe the below errors:
+> >
+> > Someone in The OpenWrt community seems to have run into this problem,
+> > possibly on the exact same QCOM SoC than you and came up with the following:
+> >
+> > https://forum.openwrt.org/t/patch-squashfs-data-probably-corrupt/70480
+> >
+> Thanks!
+> Yes I have already seen this and even one more.
+> https://www.programmersought.com/article/31513579159/
+>
+> But I think these changes are not yet in the mainline right ?
+>
+> So, I wanted to know which are the exact patches which are already
+> accepted in mainline ?
+> Or, is it already mainlined ?
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/fs/squashfs?h=next-20210611
+> From here, I see that we are only till this:
+> ==> 2018-08-02: Squashfs: Compute expected length from inode size
+> rather than block length
+>
+@Phillip Lougher, do you have any suggestions/comments on these errors ?
+Why do you think these errors occur ?
+Also, I noticed that even if these errors occur, the device may boot normally.
+However, for some people it does not boot at all.
 
-No, it is NOT.
-
-We have to pick up the "Fixes:" stuff because of maintainers and
-developers that forget to use Cc: stable like has been documented.
-
-But we don't always do it as quickly as a cc: stable line will offer.
-And sometimes we don't get to those at all.
-
-So if you know it needs to go to a stable kernel, ALWAYS put a cc:
-stable as the documentation says to do so.  This isn't a new
-requirement, it's been this way for 17 years now!
-
-thanks,
-
-greg k-h
+Thanks,
+Pintu
