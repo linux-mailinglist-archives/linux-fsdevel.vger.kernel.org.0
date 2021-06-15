@@ -2,86 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8F343A866E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 18:26:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F3733A8656
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 18:23:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231147AbhFOQ2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 12:28:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38724 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbhFOQ2r (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 12:28:47 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5640EC061574;
-        Tue, 15 Jun 2021 09:26:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=IgA0ITb/28gqrANhwnQlSfRMlKPHwC4hdag1REm1cwk=; b=C4+E1ozScipA1nQXxbmsIl9YiY
-        PDF4SB9n/FiYOZLed38f+IRi3mr4QkVn+qihvf1cGnDcPebhDWz8DcJVm9SoBdwOrLhlBgTQd13Am
-        Tr830zDOnT7Jrht8UN05LzR54YQEVZ3a2rbgbC8N2CnOSMZCLB5RCxRgyYdrYZ/p4v8kzdjDKFoRr
-        PRFsMrfbLzlz+NLFKx5xc+1auNnwPPKx1iwS8FqhC7aHrO+/ikNJfhMu2SskonY8rwYLKfpbYQLf0
-        HokflAUIUe9+U02OgNmw+XYRBLpsf/cKhTMMq0gyP3n8g6w2qJajlJoJxuc9ohsSYwOH/RYLCgBbA
-        jWulEDrA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ltBsC-0070Po-Rj; Tue, 15 Jun 2021 16:25:15 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 4/6] fs: Remove anon_set_page_dirty()
-Date:   Tue, 15 Jun 2021 17:23:40 +0100
-Message-Id: <20210615162342.1669332-5-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210615162342.1669332-1-willy@infradead.org>
-References: <20210615162342.1669332-1-willy@infradead.org>
+        id S230316AbhFOQZu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 12:25:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230246AbhFOQZs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Jun 2021 12:25:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D2F72616E9;
+        Tue, 15 Jun 2021 16:23:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623774223;
+        bh=b5z+9n+SQFtB1r1+Kvl47vN1hPmjk9XqUBLNxUuYBI8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=tscl1e10bMwK+/E1N5I5r6PT5IGP4BQhW2FDVfFcuJOYRKKX8DiUpflOYISKa+5VV
+         /21/AFOhhHa6xqTQ7emAyXlfbblaLFGSaLGPixt+IhUWRAgSmec0oGY1lEgi1ghGQt
+         AyQJqClFcb7XD0Y5Ib1ALBmyd2AGVazaGG6LVWVZfD+C22+zN9+hd4pOEKt5Ov6y97
+         Ec2Y29SmuzWDD9r5BcC1lhE5lNGGQuHCdgid4YsE2CQj51hpFfsjJMAnlD7wszRPmc
+         6Lkooom0EXE0W3xLQpdFx2EzGVTLgo+VDvBeiSBJ1dWrrJERSQGJ68E/DAnm3fDu8K
+         eg7Xzl9nh010g==
+Message-ID: <46e23dac5a459ece61250d36d3ac1cedb17f9433.camel@kernel.org>
+Subject: Re: [PATCH] netfs: Add MAINTAINERS record
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 15 Jun 2021 12:23:41 -0400
+In-Reply-To: <162377165897.729347.292567369593752239.stgit@warthog.procyon.org.uk>
+References: <162377165897.729347.292567369593752239.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use __set_page_dirty_no_writeback() instead.  This will set the dirty
-bit on the page, which will be used to avoid calling set_page_dirty()
-in the future.  It will have no effect on actually writing the page
-back, as the pages are not on any LRU lists.
+On Tue, 2021-06-15 at 16:40 +0100, David Howells wrote:
+> Add a MAINTAINERS record for the new netfs helper library.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> cc: linux-mm@kvack.org
+> cc: linux-cachefs@redhat.com
+> cc: linux-afs@lists.infradead.org
+> cc: linux-nfs@vger.kernel.org
+> cc: linux-cifs@vger.kernel.org
+> cc: ceph-devel@vger.kernel.org
+> cc: v9fs-developer@lists.sourceforge.net
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+> 
+>  MAINTAINERS |    9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index bc0ceef87b73..364465f20e81 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12878,6 +12878,15 @@ NETWORKING [WIRELESS]
+>  L:	linux-wireless@vger.kernel.org
+>  Q:	http://patchwork.kernel.org/project/linux-wireless/list/
+>  
+> +NETWORK FILESYSTEM HELPER LIBRARY
+> +M:	David Howells <dhowells@redhat.com>
+> +M:	Jeff Layton <jlayton@kernel.org>
+> +L:	linux-cachefs@redhat.com (moderated for non-subscribers)
+> +S:	Supported
+> +F:	Documentation/filesystems/netfs_library.rst
+> +F:	fs/netfs/
+> +F:	include/linux/netfs.h
+> +
+>  NETXEN (1/10) GbE SUPPORT
+>  M:	Manish Chopra <manishc@marvell.com>
+>  M:	Rahul Verma <rahulv@marvell.com>
+> 
+> 
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/libfs.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
-
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 2d7f086b93d6..3fdd89b156d6 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1217,19 +1217,10 @@ void kfree_link(void *p)
- }
- EXPORT_SYMBOL(kfree_link);
- 
--/*
-- * nop .set_page_dirty method so that people can use .page_mkwrite on
-- * anon inodes.
-- */
--static int anon_set_page_dirty(struct page *page)
--{
--	return 0;
--};
--
- struct inode *alloc_anon_inode(struct super_block *s)
- {
- 	static const struct address_space_operations anon_aops = {
--		.set_page_dirty = anon_set_page_dirty,
-+		.set_page_dirty = __set_page_dirty_no_writeback,
- 	};
- 	struct inode *inode = new_inode_pseudo(s);
- 
--- 
-2.30.2
+Acked-by: Jeff Layton <jlayton@kernel.org>
 
