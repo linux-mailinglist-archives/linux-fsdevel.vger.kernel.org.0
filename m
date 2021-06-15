@@ -2,77 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 055C13A7821
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 09:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5C233A7840
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 09:47:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbhFOHmq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 03:42:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57680 "EHLO
+        id S230389AbhFOHtk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 03:49:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230405AbhFOHmq (ORCPT
+        with ESMTP id S229898AbhFOHtj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 03:42:46 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C58C4C0617AF
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 00:40:41 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id d7so1722305edx.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 00:40:41 -0700 (PDT)
+        Tue, 15 Jun 2021 03:49:39 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FACC0617AF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 00:47:34 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id dj8so49783235edb.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 00:47:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bD5A1f3b7vRrP0UeIDZmZfmfv9DJp+EPhy9/duz0b6I=;
-        b=N26Llwd8SrRempOpdtcKBAmy1pvmFxIeRjrv7uJBq+fyQnnstQ8pnLT/Wzbxadlx4G
-         zeWAQ5IOgSsL06m56/+u/nLsoAki7f8EMVhSFqDFiF4VMn3hRC8dt4ldaoqFORGc36i0
-         iaPTXBs9otzBIcyw+VGYCJsDK+XLBaYX3pW4Y=
+        bh=KBRdVIOa/asDmbEumkxjOA8DSurhtMGcGIoG3TYPT2Y=;
+        b=Crcal5RtkkBcDXdj5iAxnD1gvaFJfEwDwRgm8xZ3EAOu4RtYaSVDFtFHKFShRPlhAl
+         npephrwP1CJpcdeyMS//t5/d1phcMaiAJQmWJAdCIIH0UP6ZQqOIwmnPf8VuFtbWJR9B
+         5jD6Ol1iZrpaHrkafsh7V369VJXsflwxQ6TBM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=bD5A1f3b7vRrP0UeIDZmZfmfv9DJp+EPhy9/duz0b6I=;
-        b=bUl/YRlFsrqbd78Kr1OABU/H3HLAx30VMS/d5vZ6JNUhzmnk7eA6Yz2eevjy9KCgx6
-         ajf5B8zExCRD1L4d1u9vmRVOKpCgxs/CrAAV8wRpC5FYKoAZprWoF1vS0VQEvKxHhECu
-         ud5fKhRwE8Iv6hP2R5w32F5KCYULRzsBxOP3wAWYvxbTgI6lsoGlzvlR74DVljLTzc7o
-         wLm1X/k04tRZ2iFSzkG6FOailmG3zFulCJ4oNY5OYVGkZgSE8htzhkFppZlFjEw+UWNa
-         7cFfJxSkky1hyxqz+Jx54bb20SbIvLfcdEUwB8rd66cHsEb5d4LZh6BPs0fQnXgz3wcO
-         ejyA==
-X-Gm-Message-State: AOAM533UEEu38giA4Jf6K5m8//aowUdlkFleCGTP4FDME2v0xXz5BvLt
-        NpkRwDXo7LLq9Qu1DsOuXmFIlimt2BvdfxgN
-X-Google-Smtp-Source: ABdhPJx2vjhd4LwV0XJVM8XQYgW0VgiMdJ+UIchUf/VZ/J2jXsl5B8hBYZ+9Ap7cJYyGZUpqL4jFTA==
-X-Received: by 2002:aa7:c983:: with SMTP id c3mr21227017edt.58.1623742840170;
-        Tue, 15 Jun 2021 00:40:40 -0700 (PDT)
+        bh=KBRdVIOa/asDmbEumkxjOA8DSurhtMGcGIoG3TYPT2Y=;
+        b=TDsP6jgmqwNh+ShRgHsmbff36hh0/NMPhlMmrxIz0wJxPIYUwhhBIlZos78LLZO5r9
+         Axcf5sNb49XtL9b4lREGIbyLrK9xzSoyjItorug7D6Ut67NgirfU4FdtVmiQndXY6iVi
+         PecYXpujDLmd2fQb6bxFyVASexF/+BBOfPGePQ0zP3sGDNYNZ+pb1YdGCiKUVxYUmOoV
+         LxDIwXR7a4g4Jy95Ih0zX2t4D9CGgXp9KPaikDh2OBzHHqYmsK+7EmTfHeIUTzRlev1A
+         hhaMMzkgAe4Le+E+1MNz+84KH64FQA4Co7x7dctGZbtj1Jcu59+F7nEDrenp7Mqj0qeQ
+         Upqg==
+X-Gm-Message-State: AOAM5317EiNZMR2kCNGvsSu9YKULfegwaFIHzEEmy0VlXlLjZbtiP3Xv
+        mEW/LwQg5Ku7cOggXZHzJkO6hetL7p9QnWl5
+X-Google-Smtp-Source: ABdhPJwNMbkXylErvIagkPbri2w/XvfHjlohoakbcrmNIZJjV8B28X6xTCIhWQnNhW0EWElzSW60cw==
+X-Received: by 2002:aa7:c1da:: with SMTP id d26mr21437105edp.92.1623743253307;
+        Tue, 15 Jun 2021 00:47:33 -0700 (PDT)
 Received: from [192.168.1.149] ([80.208.64.110])
-        by smtp.gmail.com with ESMTPSA id ci4sm402545ejc.110.2021.06.15.00.40.39
+        by smtp.gmail.com with ESMTPSA id cf26sm9394124ejb.38.2021.06.15.00.47.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jun 2021 00:40:39 -0700 (PDT)
+        Tue, 15 Jun 2021 00:47:32 -0700 (PDT)
 Subject: Re: [PATCH RFCv3 3/3] lib/test_printf: add test cases for '%pD'
-To:     Justin He <Justin.He@arm.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+To:     Justin He <Justin.He@arm.com>, Petr Mladek <pmladek@suse.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
         Sergey Senozhatsky <senozhatsky@chromium.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Eric Biggers <ebiggers@google.com>,
         "Ahmed S. Darwish" <a.darwish@linutronix.de>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 References: <20210611155953.3010-1-justin.he@arm.com>
- <20210611155953.3010-4-justin.he@arm.com>
- <4fe3621f-f4a0-2a74-e831-dad9e046f392@rasmusvillemoes.dk>
- <AM6PR08MB4376C7D2EEAF19F4CA636369F7309@AM6PR08MB4376.eurprd08.prod.outlook.com>
+ <20210611155953.3010-4-justin.he@arm.com> <YMd5StgkBINLlb8E@alley>
+ <AM6PR08MB4376096643BA02A1AE2BA8F4F7309@AM6PR08MB4376.eurprd08.prod.outlook.com>
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <54b259f2-1dcd-8792-1432-14cd44abb6a5@rasmusvillemoes.dk>
-Date:   Tue, 15 Jun 2021 09:40:38 +0200
+Message-ID: <55513987-4ec5-be80-a458-28f275cb4f72@rasmusvillemoes.dk>
+Date:   Tue, 15 Jun 2021 09:47:32 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <AM6PR08MB4376C7D2EEAF19F4CA636369F7309@AM6PR08MB4376.eurprd08.prod.outlook.com>
+In-Reply-To: <AM6PR08MB4376096643BA02A1AE2BA8F4F7309@AM6PR08MB4376.eurprd08.prod.outlook.com>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -80,84 +77,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 15/06/2021 09.06, Justin He wrote:
-> Hi Rasmus
+On 15/06/2021 09.07, Justin He wrote:
+> Hi Petr
 > 
->> -----Original Message-----
->> From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->> Sent: Saturday, June 12, 2021 5:40 AM
->> To: Justin He <Justin.He@arm.com>; Petr Mladek <pmladek@suse.com>; Steven
->> Rostedt <rostedt@goodmis.org>; Sergey Senozhatsky
->> <senozhatsky@chromium.org>; Andy Shevchenko
->> <andriy.shevchenko@linux.intel.com>; Jonathan Corbet <corbet@lwn.net>;
->> Alexander Viro <viro@zeniv.linux.org.uk>; Linus Torvalds <torvalds@linux-
->> foundation.org>
->> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>; Eric Biggers
->> <ebiggers@google.com>; Ahmed S. Darwish <a.darwish@linutronix.de>; linux-
->> doc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
->> fsdevel@vger.kernel.org
->> Subject: Re: [PATCH RFCv3 3/3] lib/test_printf: add test cases for '%pD'
+
+>>> +static void __init
+>>> +f_d_path(void)
+>>> +{
+>>> +   test("(null)", "%pD", NULL);
+>>> +   test("(efault)", "%pD", PTR_INVALID);
+>>> +
+>>> +   is_prepend_buf = true;
+>>> +   test("/bravo/alfa   |/bravo/alfa   ", "%-14pD|%*pD", &test_file, -14,
+>> &test_file);
+>>> +   test("   /bravo/alfa|   /bravo/alfa", "%14pD|%*pD", &test_file, 14,
+>> &test_file);
+>>> +   test("   /bravo/alfa|/bravo/alfa   ", "%14pD|%-14pD", &test_file,
+>> &test_file);
 >>
->> On 11/06/2021 17.59, Jia He wrote:
->>> After the behaviour of specifier '%pD' is changed to print full path
->>> of struct file, the related test cases are also updated.
->>>
->>> Given the string is prepended from the end of the buffer, the check
->>> of "wrote beyond the nul-terminator" should be skipped.
->>
->> Sorry, that is far from enough justification.
->>
->> I should probably have split the "wrote beyond nul-terminator" check in two:
->>
->> One that checks whether any memory beyond the buffer given to
->> vsnprintf() was touched (including all the padding, but possibly more
->> for the cases where we pass a known-too-short buffer), symmetric to the
->> "wrote before buffer" check.
->>
->> And then another that checks the area between the '\0' and the end of
->> the given buffer - I suppose that it's fair game for vsnprintf to use
->> all of that as scratch space, and for that it could be ok to add that
->> boolean knob.
->>
-> Sorry, I could have thought sth like "write beyond the buffer" had been checked by
-> old test cases, but seems not.
-
-It does. Before each (sub)test, we have (assume PAD_SIZE=4, BUF_SIZE=12)
-
-
-|    <- alloced_buffer ->    |
-|  PAD |  test_buffer | PAD  |
-| **** | ************ | **** |
-
-Then after snprintf(buf, 10, "pizza") we have
-
-|    <- alloced_buffer ->    |
-|  PAD |  test_buffer | PAD  |
-| **** | pizza0****** | **** |
-A      B       C   D         E
-
-(with 0 being the nul character). Then
-
-        if (memchr_inv(alloced_buffer, FILL_CHAR, PAD_SIZE)) {
-
-checks whether snprint wrote anything between A and B, while
-
-        if (memchr_inv(test_buffer + written + 1, FILL_CHAR, BUF_SIZE +
-PAD_SIZE - (written + 1))) {
-
-checks whether there was a write between C and E.
-
-What I'm saying is that I can see it being reasonable for (some helper
-inside) snprintf to actually write something beyond C, but certainly
-never beyond D. So the "wrote beyond" test could be split up, with the
-first half possibly being allowed to be opt-out for certain test cases.
-
-> I will split the "wrote beyond nul-terminator" check into 2 parts. One for
-> Non-%pD case, the other for %pD.
+>> Please, add more test for scenarios when the path does not fit into
+>> the buffer or when there are no limitations, ...
 > 
-> For %pD, it needs to check whether the space beyond test_buffer[] is written
+> Indeed, thanks
 
-No, that's not the right way to do this. Let me cook up a patch you can
-include in your series.
+Doesn't the existing test() helper do this for you automatically?
+
+        /*
+         * Every fmt+args is subjected to four tests: Three where we
+         * tell vsnprintf varying buffer sizes (plenty, not quite
+         * enough and 0), and then we also test that kvasprintf would
+         * be able to print it as expected.
+         */
+
+I don't see why one would need to do anything special for %pD.
 
 Rasmus
