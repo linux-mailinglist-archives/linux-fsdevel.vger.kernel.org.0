@@ -2,243 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD1423A7896
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 09:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 474A13A78B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 10:04:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbhFOH6U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 03:58:20 -0400
-Received: from mail-eopbgr150049.outbound.protection.outlook.com ([40.107.15.49]:8254
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229781AbhFOH6U (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 03:58:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c+Vm+UCzlk6plqw5RPrAPwgg6lj0AJ2gk5QtfIeo5aM=;
- b=HS46X1xsVNb0dPq02GCO8HzM+Vroyl/RiyXSDiAAnH0wzf4JOyP/EryOzpczsN00irFQnBROnN3Pc6MjtvqYi5DjvCoXRZz068X5cHmbRq23wic/IzebqqEz5o0UXm5XdrbLb//DknTKKkdxKhciwPi5VTCj+D6vmBBf15wSRzQ=
-Received: from AS8P251CA0002.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:2f2::15)
- by AM0PR08MB4964.eurprd08.prod.outlook.com (2603:10a6:208:157::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.22; Tue, 15 Jun
- 2021 07:56:13 +0000
-Received: from VE1EUR03FT062.eop-EUR03.prod.protection.outlook.com
- (2603:10a6:20b:2f2:cafe::23) by AS8P251CA0002.outlook.office365.com
- (2603:10a6:20b:2f2::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.15 via Frontend
- Transport; Tue, 15 Jun 2021 07:56:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=pass action=none
- header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- VE1EUR03FT062.mail.protection.outlook.com (10.152.18.252) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4219.21 via Frontend Transport; Tue, 15 Jun 2021 07:56:13 +0000
-Received: ("Tessian outbound cdfb4109116c:v93"); Tue, 15 Jun 2021 07:56:12 +0000
-X-CR-MTA-TID: 64aa7808
-Received: from 50518d7e34b8.1
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id F5C77C70-4559-4432-8785-E30410DA95EF.1;
-        Tue, 15 Jun 2021 07:56:06 +0000
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 50518d7e34b8.1
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Tue, 15 Jun 2021 07:56:06 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HGqL2R5hV6ZCMMoK+pLVwUITVtnoFWXb3l3Cw80eCM6wWG+tiqSRyBqaYdbnjp6Z1XHv7OpoAxocVmE0eWn//gmBLHylE/+4RaXKZ1ICcyk+DLAhaSserre8WeFmaBt+nIV4dfipm8Uxt3iksitcNtMJfmGT9uFZTqyF/+Wkl0AKvvQ0/aEBI+RgyIEPj/MfmSruDh3CKSH+9dsYTfmUS6noKWzLrdeBYJ684WCRMlOzFJwFZFP3eMFXcl5hFjgTSgSNRWDG6mcr30sBYIqQGCiGURN4RUV81WLW2ve9dfOuzsY2+6MTCABRJcD8PmCjYpgSW9dh+DpnmWR6vylxQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c+Vm+UCzlk6plqw5RPrAPwgg6lj0AJ2gk5QtfIeo5aM=;
- b=DgbrrTEKgPwISfLmzFOXGFKSMOMkd1VVCy5dEjECVGjpBTKDbDNR43dZiCbVv8fbcMDrU+82PC+j0kSUjdPVdu/swlECtfPtfdRSQRIaXRf/X1KVj3gNbejm8dX4Avnw9uSYxcc5bdRDE3BfTUNwVxkLfKnafi5aBj/78vq13aHY3qoG+XLCLzb/OoQ78aehNDx8ZJo451LBfQWADC/wdEHBMF/AGZbg8uHheVBAvVODpErAyr+T8yR65LzGmOGXfsANIkRESfgq7jtb5nJHI3JhpyHTGOkpVzc/gFrUIq4M1Af2/h7a48qiQD2PRXuQ1MCPdxwzKoL0xH94FKA8vA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c+Vm+UCzlk6plqw5RPrAPwgg6lj0AJ2gk5QtfIeo5aM=;
- b=HS46X1xsVNb0dPq02GCO8HzM+Vroyl/RiyXSDiAAnH0wzf4JOyP/EryOzpczsN00irFQnBROnN3Pc6MjtvqYi5DjvCoXRZz068X5cHmbRq23wic/IzebqqEz5o0UXm5XdrbLb//DknTKKkdxKhciwPi5VTCj+D6vmBBf15wSRzQ=
-Received: from AM6PR08MB4376.eurprd08.prod.outlook.com (2603:10a6:20b:bb::21)
- by AS8PR08MB6599.eurprd08.prod.outlook.com (2603:10a6:20b:332::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.22; Tue, 15 Jun
- 2021 07:56:02 +0000
-Received: from AM6PR08MB4376.eurprd08.prod.outlook.com
- ([fe80::3452:c711:d09a:d8a1]) by AM6PR08MB4376.eurprd08.prod.outlook.com
- ([fe80::3452:c711:d09a:d8a1%5]) with mapi id 15.20.4219.025; Tue, 15 Jun 2021
- 07:56:02 +0000
-From:   Justin He <Justin.He@arm.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Petr Mladek <pmladek@suse.com>
-CC:     Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH RFCv3 3/3] lib/test_printf: add test cases for '%pD'
-Thread-Topic: [PATCH RFCv3 3/3] lib/test_printf: add test cases for '%pD'
-Thread-Index: AQHXXtr4yj2ZFiynnEqJXnMpAugWBKsTqoYAgAEBowCAAAuGAIAAAUJw
-Date:   Tue, 15 Jun 2021 07:56:01 +0000
-Message-ID: <AM6PR08MB4376DCEC0F689A5736597B40F7309@AM6PR08MB4376.eurprd08.prod.outlook.com>
-References: <20210611155953.3010-1-justin.he@arm.com>
- <20210611155953.3010-4-justin.he@arm.com> <YMd5StgkBINLlb8E@alley>
- <AM6PR08MB4376096643BA02A1AE2BA8F4F7309@AM6PR08MB4376.eurprd08.prod.outlook.com>
- <55513987-4ec5-be80-a458-28f275cb4f72@rasmusvillemoes.dk>
-In-Reply-To: <55513987-4ec5-be80-a458-28f275cb4f72@rasmusvillemoes.dk>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ts-tracking-id: 11C8325FF76C2947A4E32D1F72A0FA9A.0
-x-checkrecipientchecked: true
-Authentication-Results-Original: rasmusvillemoes.dk; dkim=none (message not
- signed) header.d=none;rasmusvillemoes.dk; dmarc=none action=none
- header.from=arm.com;
-x-originating-ip: [203.126.0.111]
-x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: 7295c74d-b721-4905-54d0-08d92fd30bf6
-x-ms-traffictypediagnostic: AS8PR08MB6599:|AM0PR08MB4964:
-X-Microsoft-Antispam-PRVS: <AM0PR08MB496490405BE2938A57D19685F7309@AM0PR08MB4964.eurprd08.prod.outlook.com>
-x-checkrecipientrouted: true
-nodisclaimer: true
-x-ms-oob-tlc-oobclassifiers: OLM:9508;OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: AuZzqLC0abemZgQhz0Tt9WV5x4tHE84YvPE4X7uf0wI+lvDo5zqvLhc/h2rD38FMlEJA/cxlR8uA/hQFcaGONaxsuMW8zth8ED5vLOkW73hdVDXxMVJt5IIlTNekUv3Gpmz6pLvkA90J/r4bcet4j3JOqksovdQdihy7RlsAa2O1j2xH7Maz/h/NuBSNij1o3AXg/FYL7puQMD6cQ1f8KB58ZX+0A+8eYbmEBIxNRP8sHZFeaQRcfFn2oRroFlUTCKGluaix7ZY4FopZL25Qp2JodBHrdfEfqucS6yv2X+5Ul7e/OENPsSdn9xOzcEV1IX0scZegvd4uQHdjOl66hkO1aU5/M3yJJEiQewoCkz+7/iPtaQTBdpwtKna+NyW0QmFroi7skqaZskhfGELDu4ZugRIb5FgWx8fEB96Dr+03UHgq5i9vm/COSsEJtKPpXkcvlC36StasU0NKrjZXvhTbI9DDwYiTOKtbuTzcgLtZWxQposJAMhQlZRy67iR5UKp8wsYnPopKTV1dHRhyCoOpGcYrhjKkjmiIsU21/6GzQt5iFQUDHKAENZecuJR8A8kjOGe6fEGVt0zG6KH2JFeZrHecS3Rz5d3aSKjXL78=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR08MB4376.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(366004)(136003)(376002)(396003)(39850400004)(122000001)(8676002)(38100700002)(55016002)(66946007)(71200400001)(53546011)(66446008)(66476007)(64756008)(66556008)(54906003)(110136005)(52536014)(8936002)(6506007)(76116006)(7696005)(5660300002)(7416002)(316002)(4326008)(26005)(2906002)(186003)(83380400001)(9686003)(478600001)(33656002)(86362001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ffHBHgTGhusOB+wWeEmsrNYDq87O4Me0XJUWn7mVC3kksY5KbqRwUxsjbmkH?=
- =?us-ascii?Q?2/M52AIHrC9rS+XR1+QDFwAbKkm0hXxbGJbbf3GvkF/zTpAzPZ1CNzlxyqRr?=
- =?us-ascii?Q?HHwboXm/PTUF5RI5Ml6cxRKkVM+8E14WQbKzGBUUKHWY4nBm4z/D5f+zUn7n?=
- =?us-ascii?Q?u6d9KwK/ECI3nkoKnMVT+8qYsE2aWpIzq8SVyraXqjdJWeP70nvy2puqDd2C?=
- =?us-ascii?Q?/fn2pkEFx+/cf5TljTb93e3A4rAT+1/wYBIefeoaSbRX9vbmWA5ifVrGUypv?=
- =?us-ascii?Q?UMbR5XQawxuo9ATjSVElNtINomE1slU4pSoOkCxfTfFf+IrDsK0gd9BvMCMr?=
- =?us-ascii?Q?Jpe9bGalD2iRaoD5Ah0da/VY2Rzt++idoWU7MoW942WZZ6x+vh0dlqCSWKba?=
- =?us-ascii?Q?qIzeAN4QdhNocxr2xpJaHh48fNiOTZNaMj6+mT0pGIOHZGirRz98xP8R3D3T?=
- =?us-ascii?Q?Rwmyg6PZWqNFczetS27+zLbj6kd3TZ+HhUpWDYVeQOtOqlKmfIMcoTIPPXUp?=
- =?us-ascii?Q?/5tXp170I9xMlVlS++t24Bw0CJ1iHN/rkh3xy4tgkIqiq58v+UdqtCOjWxyZ?=
- =?us-ascii?Q?V3OAr9jr1Z+kReCtx5tG4S3OA4P+hdYzoSvoHlVqR5LUmTBG1gWppbBYOiUw?=
- =?us-ascii?Q?PEBwi+hE6wU22sDUefcCgSXs1Gn/BkXX/4AHO7Q/r8zijA10RsntrHjPgBUv?=
- =?us-ascii?Q?VSpOg1w/Yi/QjVTAMR0fEdirzV0ClGlwpyBtbAYyMIt1kmhMIXoJAE9Kzlm2?=
- =?us-ascii?Q?cVvgC2FbBZSlUfWNqmgyI4IGrsp5gZQAOcY2bdohtx6QUm6UminJDcvtcgkv?=
- =?us-ascii?Q?Lb+1Ye9M6ITKuB/F4Zo3C1ZGsEg2fkIMXUlbKe9Q3MYtolE5L0TtjlnR+2pE?=
- =?us-ascii?Q?GaV/6oX8sPHXREhiNbaTrv5CbYib6fX3YSKqe5KPZFU472MpRPIk/3QFXnA6?=
- =?us-ascii?Q?n0zizR6ZljTQE66iIgmDcbP3DIfUFYRco9asTDQLfrFmIR3LtlRQE9sbL1UP?=
- =?us-ascii?Q?XEIkdyUuweI0wkO8YVepCkFueLFHBuNH+15cEubtD2LBKoomp17XkD4MaLld?=
- =?us-ascii?Q?N+lvP/Bv6FYQoOu+wMD5HICzvMlTEiwMAtjGFkyzg+MHfjpQ+tkKC66HIfzd?=
- =?us-ascii?Q?qz28p0QMJxETabmbekrrAhTuMBpAbedDTC1YpD6xdInPLen0UJm9EjB8G2lx?=
- =?us-ascii?Q?9ARpM6Db1/bU/hJSu0M0JmaZRHt8c4QzxGEou/X7iZrrrgSKHYUotiWlt4R8?=
- =?us-ascii?Q?CiVQsPxjorr3PmRoK/iFronQrvHaVPEiH8R48IKa19acr+xvrItg5q03+IVQ?=
- =?us-ascii?Q?g63eWZEEgvlXUEzt16EIyoCp?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S230459AbhFOIGz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 04:06:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39451 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230443AbhFOIGy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Jun 2021 04:06:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623744283;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=BQ3dVIBtoSwO39R+hFiZcOjeq+PcftU2mloldEk3r0o=;
+        b=LawVtAQgMB9TZmIKW8G9bVKWPKxB4+5ivjKOA+d8rrEpEpqZDB07EB+D/QwmRW1CBHnrFk
+        QSsyPl2+/777RImEm2cKzZQNI3egd1USeiSj1Mcfo+YOo+66kbrg4OrKVGyJjgskq35SSp
+        NZt0+1uNhVXFHfr69N/Bu7Uiv7p0ktk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-30-6u-erLQQPsesDWm2zsqFqw-1; Tue, 15 Jun 2021 04:04:39 -0400
+X-MC-Unique: 6u-erLQQPsesDWm2zsqFqw-1
+Received: by mail-wm1-f71.google.com with SMTP id g14-20020a05600c4eceb02901b609849650so211257wmq.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 01:04:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=BQ3dVIBtoSwO39R+hFiZcOjeq+PcftU2mloldEk3r0o=;
+        b=OP5NRp2U3PozAQHs7w3XjUtg9mDO125zsVjKQvNY9E0pxj2FzEWk4Dh4GMPm56sODS
+         FExNOK2j7hAUYXTufxNJ5lR4SBKGeAy84hwsCpyxnvHYVJi215kTFhgUTObqvp/wF9cP
+         DhfZN9VZVhVOjOS6+K8i0nFW4UOamOqgiZHpJtMbgdLfJ0IKnZYzfmwSnqbliLSRtKVM
+         uy+gt+CGaRk68x2K4NQDR6EeakZDEO58YaCFk+9w4KNtxrKLUZJ3kpjJPA++Eem776ep
+         4q5y24g9xQDEjJpM8fFg7yVk9y1/bZzUVRE3rdA88HBWputWtpQ28Xby+fO2w0Qjp65L
+         DlWA==
+X-Gm-Message-State: AOAM530RL5IQkHCeN5bgxKil4x6/1Z8SR2KKn52z9Kta1P6p6wr6otpD
+        lDtQ+mAIz/KZPvofCqeMo7z6w+BQRVwZyxNC4YNfF2k5EFu4wB7c84kI5rD+jCVQnNfYj3l5ZF/
+        vMIEQdhDVF6UFGqKMgDEO3nsR/Q==
+X-Received: by 2002:a1c:7c13:: with SMTP id x19mr3705073wmc.96.1623744277939;
+        Tue, 15 Jun 2021 01:04:37 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy8zKcj+0CHWNbpopi15qK/VY149FzjCqfOGVYh24AlZU3SNfDxUiS6IcZoR2LoqC+8dPMiWA==
+X-Received: by 2002:a1c:7c13:: with SMTP id x19mr3705056wmc.96.1623744277769;
+        Tue, 15 Jun 2021 01:04:37 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c6136.dip0.t-ipconnect.de. [91.12.97.54])
+        by smtp.gmail.com with ESMTPSA id s1sm1510041wmj.8.2021.06.15.01.04.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jun 2021 01:04:37 -0700 (PDT)
+Subject: =?UTF-8?B?UmU6IOetlOWkjTogW1BBVENIIHY0XSBtbS9jb21wYWN0aW9uOiBsZXQg?=
+ =?UTF-8?Q?proactive_compaction_order_configurable?=
+To:     "Chu,Kaiping" <chukaiping@baidu.com>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "yzaikin@google.com" <yzaikin@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "nigupta@nvidia.com" <nigupta@nvidia.com>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
+        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
+        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
+        "sh_def@163.com" <sh_def@163.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+References: <1619576901-9531-1-git-send-email-chukaiping@baidu.com>
+ <a3f6628a-8165-429f-0383-c522b4c49197@redhat.com>
+ <af26c999229a4c0dbb8c772ce50f60e4@baidu.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Message-ID: <3d4f59ce-8f83-4892-c210-649780b247f3@redhat.com>
+Date:   Tue, 15 Jun 2021 10:04:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6599
-Original-Authentication-Results: rasmusvillemoes.dk; dkim=none (message not signed)
- header.d=none;rasmusvillemoes.dk; dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT062.eop-EUR03.prod.protection.outlook.com
-X-MS-Office365-Filtering-Correlation-Id-Prvs: dcc36132-df19-4efa-c181-08d92fd30522
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ekvznoEWbXzIW+U9NHIhVM6DRQJsrb6U9GMFkw9QjAsaj1QCPMgiyJHqvwbBX4/6/pJvf0XtoCy0EeqQS/GBbaPup2gNCE8u5mWWDJ9QKEpBrU95I7mslwXVSLZ51xPMj1ZsBAgHu0ZXraynwbL/EKXL+Z9VD+9WZkb0J+5ZtEFqtZ96RkNBbBoT01J6Pimkg+jJNZU/+ExvuT4cvM/GEGnZwtSWrH4mq+It5Y3pjbdKJc8wLa2pJSoOSdYD0oixDNcY8Une6d3ZyYgeMRIo2yxYeLMEVEChTuYCq3iDe/745tO9vCn8BVlyBkX7KsyccBbHtzzIkoDaLEFhy2kq6EoANEtcse+D8Omc/Eb6aJuInkxdRQCBHvwoO9bfJHmaHAbrSaVW+QFyLGflPYo6U40U/gIaNEjgiRCnCQjbEsZSGJztQtKwyjrkD0yVvmc/zVXLYuTc7tjuf3yGi2+kQnWYmdlQMHLhfB79xQlEzJN4199wOkJdHzpcDUMP8fUrhwFVivSCvkaVJvsa173pBcsmp4h/rWG7nDoegbB20rjYY0omqeYf7tV4xG8cMGTbs1G/1pm2R/3sXJvElpW1tbzJ7ZNzqzjx0VyZIr+A1c0wLb0jCnlKaKUh6kVpt7Rj2K1jDGdxInc5FCsygrhW+w==
-X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(4636009)(396003)(376002)(136003)(39840400004)(346002)(36840700001)(46966006)(26005)(52536014)(81166007)(33656002)(8676002)(450100002)(70586007)(356005)(186003)(9686003)(336012)(8936002)(55016002)(70206006)(7696005)(36860700001)(53546011)(2906002)(82310400003)(83380400001)(5660300002)(4326008)(6506007)(54906003)(110136005)(478600001)(316002)(47076005)(86362001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2021 07:56:13.2947
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7295c74d-b721-4905-54d0-08d92fd30bf6
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource: VE1EUR03FT062.eop-EUR03.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB4964
+In-Reply-To: <af26c999229a4c0dbb8c772ce50f60e4@baidu.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 15.06.21 03:11, Chu,Kaiping wrote:
+> 
+> 
+>> -----邮件原件-----
+>> 发件人: David Hildenbrand <david@redhat.com>
+>> 发送时间: 2021年6月9日 18:45
+>> 收件人: Chu,Kaiping <chukaiping@baidu.com>; mcgrof@kernel.org;
+>> keescook@chromium.org; yzaikin@google.com; akpm@linux-foundation.org;
+>> vbabka@suse.cz; nigupta@nvidia.com; bhe@redhat.com;
+>> khalid.aziz@oracle.com; iamjoonsoo.kim@lge.com;
+>> mateusznosek0@gmail.com; sh_def@163.com
+>> 抄送: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+>> linux-mm@kvack.org
+>> 主题: Re: [PATCH v4] mm/compaction: let proactive compaction order
+>> configurable
+>>
+>> On 28.04.21 04:28, chukaiping wrote:
+>>> Currently the proactive compaction order is fixed to
+>>> COMPACTION_HPAGE_ORDER(9), it's OK in most machines with lots of
+>>> normal 4KB memory, but it's too high for the machines with small
+>>> normal memory, for example the machines with most memory configured as
+>>> 1GB hugetlbfs huge pages. In these machines the max order of free
+>>> pages is often below 9, and it's always below 9 even with hard
+>>> compaction. This will lead to proactive compaction be triggered very
+>>> frequently. In these machines we only care about order of 3 or 4.
+>>> This patch export the oder to proc and let it configurable by user,
+>>> and the default value is still COMPACTION_HPAGE_ORDER.
+>>>
+>>> Signed-off-by: chukaiping <chukaiping@baidu.com>
+>>> Reported-by: kernel test robot <lkp@intel.com>
+>>> ---
+>>>
+>>> Changes in v4:
+>>>       - change the sysctl file name to proactive_compation_order
+>>>
+>>> Changes in v3:
+>>>       - change the min value of compaction_order to 1 because the
+>> fragmentation
+>>>         index of order 0 is always 0
+>>>       - move the definition of max_buddy_zone into #ifdef
+>>> CONFIG_COMPACTION
+>>>
+>>> Changes in v2:
+>>>       - fix the compile error in ia64 and powerpc, move the initialization
+>>>         of sysctl_compaction_order to kcompactd_init because
+>>>         COMPACTION_HPAGE_ORDER is a variable in these architectures
+>>>       - change the hard coded max order number from 10 to MAX_ORDER -
+>> 1
+>>>
+>>>    include/linux/compaction.h |    1 +
+>>>    kernel/sysctl.c            |   10 ++++++++++
+>>>    mm/compaction.c            |   12 ++++++++----
+>>>    3 files changed, 19 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+>>> index ed4070e..a0226b1 100644
+>>> --- a/include/linux/compaction.h
+>>> +++ b/include/linux/compaction.h
+>>> @@ -83,6 +83,7 @@ static inline unsigned long compact_gap(unsigned int
+>> order)
+>>>    #ifdef CONFIG_COMPACTION
+>>>    extern int sysctl_compact_memory;
+>>>    extern unsigned int sysctl_compaction_proactiveness;
+>>> +extern unsigned int sysctl_proactive_compaction_order;
+>>>    extern int sysctl_compaction_handler(struct ctl_table *table, int write,
+>>>    			void *buffer, size_t *length, loff_t *ppos);
+>>>    extern int sysctl_extfrag_threshold; diff --git a/kernel/sysctl.c
+>>> b/kernel/sysctl.c index 62fbd09..ed9012e 100644
+>>> --- a/kernel/sysctl.c
+>>> +++ b/kernel/sysctl.c
+>>> @@ -196,6 +196,7 @@ enum sysctl_writes_mode {
+>>>    #endif /* CONFIG_SCHED_DEBUG */
+>>>
+>>>    #ifdef CONFIG_COMPACTION
+>>> +static int max_buddy_zone = MAX_ORDER - 1;
+>>>    static int min_extfrag_threshold;
+>>>    static int max_extfrag_threshold = 1000;
+>>>    #endif
+>>> @@ -2871,6 +2872,15 @@ int proc_do_static_key(struct ctl_table *table,
+>> int write,
+>>>    		.extra2		= &one_hundred,
+>>>    	},
+>>>    	{
+>>> +		.procname       = "proactive_compation_order",
+>>> +		.data           = &sysctl_proactive_compaction_order,
+>>> +		.maxlen         = sizeof(sysctl_proactive_compaction_order),
+>>> +		.mode           = 0644,
+>>> +		.proc_handler   = proc_dointvec_minmax,
+>>> +		.extra1         = SYSCTL_ONE,
+>>> +		.extra2         = &max_buddy_zone,
+>>> +	},
+>>> +	{
+>>>    		.procname	= "extfrag_threshold",
+>>>    		.data		= &sysctl_extfrag_threshold,
+>>>    		.maxlen		= sizeof(int),
+>>> diff --git a/mm/compaction.c b/mm/compaction.c index e04f447..171436e
+>>> 100644
+>>> --- a/mm/compaction.c
+>>> +++ b/mm/compaction.c
+>>> @@ -1925,17 +1925,18 @@ static bool kswapd_is_running(pg_data_t
+>>> *pgdat)
+>>>
+>>>    /*
+>>>     * A zone's fragmentation score is the external fragmentation wrt to
+>>> the
+>>> - * COMPACTION_HPAGE_ORDER. It returns a value in the range [0, 100].
+>>> + * sysctl_proactive_compaction_order. It returns a value in the range
+>>> + * [0, 100].
+>>>     */
+>>>    static unsigned int fragmentation_score_zone(struct zone *zone)
+>>>    {
+>>> -	return extfrag_for_order(zone, COMPACTION_HPAGE_ORDER);
+>>> +	return extfrag_for_order(zone, sysctl_proactive_compaction_order);
+>>>    }
+>>>
+>>>    /*
+>>>     * A weighted zone's fragmentation score is the external
+>>> fragmentation
+>>> - * wrt to the COMPACTION_HPAGE_ORDER scaled by the zone's size. It
+>>> - * returns a value in the range [0, 100].
+>>> + * wrt to the sysctl_proactive_compaction_order scaled by the zone's size.
+>>> + * It returns a value in the range [0, 100].
+>>>     *
+>>>     * The scaling factor ensures that proactive compaction focuses on larger
+>>>     * zones like ZONE_NORMAL, rather than smaller, specialized zones
+>>> like @@ -2666,6 +2667,7 @@ static void compact_nodes(void)
+>>>     * background. It takes values in the range [0, 100].
+>>>     */
+>>>    unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
+>>> +unsigned int __read_mostly sysctl_proactive_compaction_order;
+>>>
+>>>    /*
+>>>     * This is the entry point for compacting all nodes via @@ -2958,6
+>>> +2960,8 @@ static int __init kcompactd_init(void)
+>>>    	int nid;
+>>>    	int ret;
+>>>
+>>> +	sysctl_proactive_compaction_order = COMPACTION_HPAGE_ORDER;
+>>> +
+>>>    	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
+>>>    					"mm/compaction:online",
+>>>    					kcompactd_cpu_online, NULL);
+>>>
+>>
+>> Hm, do we actually want to put an upper limit to the order a user can supply?
+> No，we should allow user to configure the order from 1 to MAX_ORDER - 1.
+
+Ah, I missed that we enforce an upper limit of "MAX_ORDER - 1" -- thanks.
 
 
-> -----Original Message-----
-> From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Sent: Tuesday, June 15, 2021 3:48 PM
-> To: Justin He <Justin.He@arm.com>; Petr Mladek <pmladek@suse.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>; Sergey Senozhatsky
-> <senozhatsky@chromium.org>; Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com>; Jonathan Corbet <corbet@lwn.net>;
-> Alexander Viro <viro@zeniv.linux.org.uk>; Linus Torvalds <torvalds@linux-
-> foundation.org>; Peter Zijlstra (Intel) <peterz@infradead.org>; Eric
-> Biggers <ebiggers@google.com>; Ahmed S. Darwish <a.darwish@linutronix.de>=
-;
-> linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> fsdevel@vger.kernel.org
-> Subject: Re: [PATCH RFCv3 3/3] lib/test_printf: add test cases for '%pD'
->
-> On 15/06/2021 09.07, Justin He wrote:
-> > Hi Petr
-> >
->
-> >>> +static void __init
-> >>> +f_d_path(void)
-> >>> +{
-> >>> +   test("(null)", "%pD", NULL);
-> >>> +   test("(efault)", "%pD", PTR_INVALID);
-> >>> +
-> >>> +   is_prepend_buf =3D true;
-> >>> +   test("/bravo/alfa   |/bravo/alfa   ", "%-14pD|%*pD", &test_file, =
--
-> 14,
-> >> &test_file);
-> >>> +   test("   /bravo/alfa|   /bravo/alfa", "%14pD|%*pD", &test_file, 1=
-4,
-> >> &test_file);
-> >>> +   test("   /bravo/alfa|/bravo/alfa   ", "%14pD|%-14pD", &test_file,
-> >> &test_file);
-> >>
-> >> Please, add more test for scenarios when the path does not fit into
-> >> the buffer or when there are no limitations, ...
-> >
-> > Indeed, thanks
->
-> Doesn't the existing test() helper do this for you automatically?
->
->         /*
->          * Every fmt+args is subjected to four tests: Three where we
->          * tell vsnprintf varying buffer sizes (plenty, not quite
->          * enough and 0), and then we also test that kvasprintf would
->          * be able to print it as expected.
->          */
->
+-- 
+Thanks,
 
-Yes, it had invoked vsnprintf for 3 times in __test()
-vsnprintf(buf,256)
-vsnprintf(buf,random_bytes,...)
-vsnprintf(buf, 0,...);
-seems no need to add more test cases
+David / dhildenb
 
-> I don't see why one would need to do anything special for %pD.
-
-Okay, got it, agree
-
-
---
-Cheers,
-Justin (Jia He)
-
-
-IMPORTANT NOTICE: The contents of this email and any attachments are confid=
-ential and may also be privileged. If you are not the intended recipient, p=
-lease notify the sender immediately and do not disclose the contents to any=
- other person, use it for any purpose, or store or copy the information in =
-any medium. Thank you.
