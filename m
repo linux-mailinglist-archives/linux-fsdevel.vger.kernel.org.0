@@ -2,84 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BC1B3A8851
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 20:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38C233A8882
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 20:24:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230250AbhFOSPo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 14:15:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34760 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbhFOSPo (ORCPT
+        id S231461AbhFOS0k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 14:26:40 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:50967 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231176AbhFOS0k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 14:15:44 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E17CBC061574;
-        Tue, 15 Jun 2021 11:13:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=cmlOH2ygGuqkkEEXUVRYhK6toz49SclSyMHtpe4EPs4=; b=tEw+AvYOLjPVtnh1k27hxPEwjO
-        ntiLTS24P4AI23cJzHtF5Lm1Z7QtbDL9ZYc4WubCvN/vmQP3zLKPEaAi3V9Ys3Rx6Y3bPq5c4M7H9
-        BYuiqTAwClrZbAK59VNSmyE+F6GOaqlD+2/yU78JwaXeJny0O5Kf/j6eLzSb1HgdTccz4EFLRplTE
-        BgeUFow2hiITH+NH/Zvpg9UCmjXk0aETXPeSMRxUt8kFGeuw0I2ynwOgvil84rzIhiEC6Ero/5lG/
-        t+bMeTHe4wUMVw6IVHPqYLcSMgfKarNBjT0ABtWDzUsE5T4a96YOicfA00lJ7HMPzwz4BETVBXVgD
-        PsJ1i6tg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ltDYq-00770E-CH; Tue, 15 Jun 2021 18:13:21 +0000
-Date:   Tue, 15 Jun 2021 19:13:16 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] iomap: Use __set_page_dirty_nobuffers
-Message-ID: <YMjtvLkHQ8sZ/CPS@casper.infradead.org>
-References: <20210615162342.1669332-1-willy@infradead.org>
- <20210615162342.1669332-4-willy@infradead.org>
- <YMjhP+Bk5PY5yqm7@kroah.com>
- <YMjkNd0zapLcooNB@casper.infradead.org>
- <20210615173453.GA2849@lst.de>
+        Tue, 15 Jun 2021 14:26:40 -0400
+Received: from [192.168.1.155] ([95.115.9.120]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MS4WT-1lixGP0g7H-00TTUD; Tue, 15 Jun 2021 20:23:58 +0200
+Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
+To:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Greg KH <greg@kroah.com>, Christoph Lameter <cl@gentwo.de>,
+        Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
+        ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
+References: <YLEIKk7IuWu6W4Sy@casper.infradead.org> <YH2hs6EsPTpDAqXc@mit.edu>
+ <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
+ <YIx7R6tmcRRCl/az@mit.edu>
+ <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de>
+ <YK+esqGjKaPb+b/Q@kroah.com>
+ <c46dbda64558ab884af060f405e3f067112b9c8a.camel@HansenPartnership.com>
+ <1745326.1623409807@warthog.procyon.org.uk>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <e47706ee-3e4b-8f15-963f-292b5e47cb1d@metux.net>
+Date:   Tue, 15 Jun 2021 20:23:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210615173453.GA2849@lst.de>
+In-Reply-To: <1745326.1623409807@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:l1dWw5GINi5d9D6KdR/MfM5/FegWRbfl0vjxnR2yUdW9Vwv9oLT
+ MEAHr8PyP8YcC6o+Yqn4LF4f1dF2zEYvYGt60YROchUahACz9shvV58vHwPsKWuLb8rGm3P
+ IR2CxVWI5mN7CFH8hcq3ue3m5Nn8F7oX0u8tjkhXfP1fB4XQ+9VueDbHjcVaZZ82YsvanSM
+ rftvqMwBTus20ymBQFk4Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Ic+UfAApxeg=:xMi+C1LWXRsimoNEKsnwKG
+ 5mxcU0vHtj9Zm5HEjCy9h9sUq5qPtpjfzWgy0mhHsk86qbr9dJQfN7QAj9Quv1JbUcrcCRzdl
+ bUfQvSEb0KC+9hi+WwMlV38TArCl/DAouSqiCQNao7pvtjN1M9CC8E86nLAHtrAMf6E9XI1dc
+ tCA5UBAou1Z1Dm02ZUCUDV1JdZcL91ADBpOOiJ64NaVXgv2BB42jpmTg8pubJ2MJSkM4dDY1G
+ wrLS0oWdW9mIun9Og6RY3Bg0NUo09Wl5QXxyzpWw8WVYkbSpnHxhumPCGcbJMAJyLToVBeWwi
+ AC8dECaRBRfRBTG4medz4Eow5RSIuY6dBBIXI+dkdb/zBvt60HeWrL9FU76+szy+iBNrtxLYd
+ Du0Z+O4kxMoxbR+xZ9b3KnABes+BV82fRKnWKuHb9E3I6whEmhwV3KVhx3wDjdJwqTyaMePQi
+ zx08rCWC2amopXPxWcwFxvphs2Mox2d2bgIaZWix19xu5b2A6NEeZ9Y/RDvnpxnGWOKM5t0td
+ cE2C39N+fJT2AJRCXYwZLE=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 07:34:53PM +0200, Christoph Hellwig wrote:
-> On Tue, Jun 15, 2021 at 06:32:37PM +0100, Matthew Wilcox wrote:
-> > On Tue, Jun 15, 2021 at 07:19:59PM +0200, Greg Kroah-Hartman wrote:
-> > > On Tue, Jun 15, 2021 at 05:23:39PM +0100, Matthew Wilcox (Oracle) wrote:
-> > > Using __ functions in structures in different modules feels odd to me.
-> > > Why not just have iomap_set_page_dirty be a #define to this function now
-> > > if you want to do this?
-> > > 
-> > > Or take the __ off of the function name?
-> > > 
-> > > Anyway, logic here is fine, but feels odd.
-> > 
-> > heh, that was how I did it the first time.  Then I thought that it was
-> > better to follow Christoph's patch:
-> > 
-> >  static const struct address_space_operations adfs_aops = {
-> > +       .set_page_dirty = __set_page_dirty_buffers,
-> > (etc)
+On 11.06.21 13:10, David Howells wrote:
+
+> One thing that concerns me about flying to the US is going through multiple
+> busy international airports - take Heathrow which didn't separate incoming
+> travellers from red-listed countries from those of amber- or green- until like
+> a week ago.
 > 
-> Eventually everything around set_page_dirty should be changed to operate
-> on folios, and that will be a good time to come up with a sane
-> naming scheme without introducing extra churn.
+> Would it be practical/economical to charter a plane to fly, say, from a less
+> busy airport in Europe to a less busy airport in the US and back again if we
+> could get enough delegates together to make it worthwhile?
 
-The way it currently looks in my tree ...
+Wouldn't just taking prophylatic meds like CDS or HCQ and/or hi-dose
+vitamins (C, D3+K2) be way more cost effective and flexible than to
+charter a whole plane ?
 
-set_page_dirty(page) is a thin wrapper that calls folio_mark_dirty(folio).
-folio_mark_dirty() calls a_ops->dirty_folio(mapping, folio) (which
-	returns bool).
-__set_page_dirty_nobuffers() becomes filemap_dirty_folio()
-__set_page_dirty_buffers() becomes block_dirty_folio()
-__set_page_dirty_no_writeback() becomes dirty_folio_no_writeback()
+Don't have personal experience w/ HCQ yet, but CDS is pretty cheap and
+easy to use (prescription free). Of course, one should dig a bit into
+the specialist literature, before playing around - and take a few days
+for finding the right personal dose. especially when one's cumbered w/ 
+parasites (herxheimer)
 
-Now I look at it, maybe that last should be nowb_dirty_folio().
+
+--mtx
+
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
