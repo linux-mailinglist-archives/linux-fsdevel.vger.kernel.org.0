@@ -2,71 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B2B13A83A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 17:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAF283A8434
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 17:41:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231604AbhFOPIx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 11:08:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60838 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231589AbhFOPIu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 11:08:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8FC2261107;
-        Tue, 15 Jun 2021 15:06:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1623769606;
-        bh=cJWTxsGDRuwIy31V9tXmkrMiXXwbFHDF/rR/uTuaxDk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oSqSxbPHW+0U7cN5XSNYJp3T8mXkT0J9vJIkRzrbdBfR1MZle9Xs67eshW6CgcBer
-         0aoo+XK40/Ut2vxV8yGJH32cBWqivUrLfQB6RzCbKfPmp0vljoKxDD2RyBO6O4zSUh
-         M4iMMxajwSQFDV8q4Xk8keCW8W5jazDDXSrdPNnc=
-Date:   Tue, 15 Jun 2021 17:06:43 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>,
-        Fox Chen <foxhlchen@gmail.com>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 1/6] kernfs: move revalidate to be near lookup
-Message-ID: <YMjCA6sgzOThbt6Z@kroah.com>
-References: <162375263398.232295.14755578426619198534.stgit@web.messagingengine.com>
- <162375275365.232295.8995526416263659926.stgit@web.messagingengine.com>
+        id S231731AbhFOPnL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 11:43:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47463 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231722AbhFOPnK (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Jun 2021 11:43:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623771665;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+FBbMlPbm2yEsz/fG8YH2jekqKDOwBTLfpao5h+P4iE=;
+        b=achTvUJCk9CTMJom2MVNv10T8by8FZE7TDSUvrxFA6Kp6a7Cj9NE+dnURCVVyVVtBR4ouw
+        K8iqTe3mf9SKwT8UOenBNGfsJwhEH7D4Y9k7NlL2QG8LZj2z1ZSATCArVrtmgj3fDGHFs5
+        g1r2ErTgHmIyYWRNfsQpcHy6LOsS+Gw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-123-HYLFvtjLPVmsp_FlL6GAug-1; Tue, 15 Jun 2021 11:41:04 -0400
+X-MC-Unique: HYLFvtjLPVmsp_FlL6GAug-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D3941936B79;
+        Tue, 15 Jun 2021 15:41:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EC15160C13;
+        Tue, 15 Jun 2021 15:40:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] netfs: Add MAINTAINERS record
+From:   David Howells <dhowells@redhat.com>
+To:     jlayton@kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 15 Jun 2021 16:40:59 +0100
+Message-ID: <162377165897.729347.292567369593752239.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <162375275365.232295.8995526416263659926.stgit@web.messagingengine.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 06:25:53PM +0800, Ian Kent wrote:
-> While the dentry operation kernfs_dop_revalidate() is grouped with
-> dentry type functions it also has a strong affinity to the inode
-> operation ->lookup().
-> 
-> It makes sense to locate this function near to kernfs_iop_lookup()
-> because we will be adding VFS negative dentry caching to reduce path
-> lookup overhead for non-existent paths.
-> 
-> There's no functional change from this patch.
-> 
-> Signed-off-by: Ian Kent <raven@themaw.net>
-> Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/kernfs/dir.c |   86 ++++++++++++++++++++++++++++---------------------------
->  1 file changed, 43 insertions(+), 43 deletions(-)
+Add a MAINTAINERS record for the new netfs helper library.
 
-As everyone has agreed this patch does nothing wrong, I've applied this
-one for now while everyone reviews the other ones :)
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+cc: linux-mm@kvack.org
+cc: linux-cachefs@redhat.com
+cc: linux-afs@lists.infradead.org
+cc: linux-nfs@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: ceph-devel@vger.kernel.org
+cc: v9fs-developer@lists.sourceforge.net
+cc: linux-fsdevel@vger.kernel.org
+---
 
-thanks,
+ MAINTAINERS |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-greg k-h
+diff --git a/MAINTAINERS b/MAINTAINERS
+index bc0ceef87b73..364465f20e81 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12878,6 +12878,15 @@ NETWORKING [WIRELESS]
+ L:	linux-wireless@vger.kernel.org
+ Q:	http://patchwork.kernel.org/project/linux-wireless/list/
+ 
++NETWORK FILESYSTEM HELPER LIBRARY
++M:	David Howells <dhowells@redhat.com>
++M:	Jeff Layton <jlayton@kernel.org>
++L:	linux-cachefs@redhat.com (moderated for non-subscribers)
++S:	Supported
++F:	Documentation/filesystems/netfs_library.rst
++F:	fs/netfs/
++F:	include/linux/netfs.h
++
+ NETXEN (1/10) GbE SUPPORT
+ M:	Manish Chopra <manishc@marvell.com>
+ M:	Rahul Verma <rahulv@marvell.com>
+
+
