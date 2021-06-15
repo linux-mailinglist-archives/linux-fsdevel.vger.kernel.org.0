@@ -2,138 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 10F9D3A8D14
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 01:56:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 270833A8D18
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 01:58:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231741AbhFOX7D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 19:59:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54896 "EHLO
+        id S231696AbhFPAAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 20:00:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231694AbhFOX7C (ORCPT
+        with ESMTP id S231189AbhFPAAR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 19:59:02 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39170C061574;
-        Tue, 15 Jun 2021 16:56:57 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id DA8271F43350
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     amir73il@gmail.com
-Cc:     kernel@collabora.com, djwong@kernel.org, tytso@mit.edu,
-        david@fromorbit.com, jack@suse.com, dhowells@redhat.com,
-        khazhy@google.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH v2 14/14] Documentation: Document the FAN_FS_ERROR event
-Date:   Tue, 15 Jun 2021 19:55:56 -0400
-Message-Id: <20210615235556.970928-15-krisman@collabora.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20210615235556.970928-1-krisman@collabora.com>
-References: <20210615235556.970928-1-krisman@collabora.com>
+        Tue, 15 Jun 2021 20:00:17 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F65C061574;
+        Tue, 15 Jun 2021 16:58:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=Ql83LcvTl1dmYyiiDpq5vOZPP/K43XvgGPAif1phT98=; b=P+vl3r2U7Ci4grk1NTj5lyylIL
+        tBM4aTOxbnvYXs9MOD+SxkVpBx5yFGts3MNHRzzyQzFWhTPh0TZADTTO7aTvy5+FEx/FjArEEwo+f
+        l4BuuAu8bJS6EJ2U4t2tjznGOtmH2B6a0fFZMvVi8G4vN3xfDpJatxdwI4ihB08WT+7oENbolgksr
+        hSyi1XF+gYHx0JUr2R+3Ic7brc2+uutM7nELF1Wt40aC31PY5Nw5u/ZoopO4oaLMfYQnfHdXxx7C2
+        hU1YLq4/7EfioKUfn8SpJWrFHvoO4vBmFcO5qxglZ63ttsP74K5fOQgEl/T5YiJK8giv8eeyyEbUZ
+        +ZdxqwPw==;
+Received: from [2601:1c0:6280:3f0::aefb]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ltIwa-00429X-OH; Tue, 15 Jun 2021 23:58:08 +0000
+Subject: Re: [PATCH] afs: fix no return statement in function returning
+ non-void
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Hulk Robot <hulkci@huawei.com>,
+        Zheng Zengkai <zhengzengkai@huawei.com>,
+        Tom Rix <trix@redhat.com>, linux-afs@lists.infradead.org,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <162375813191.653958.11993495571264748407.stgit@warthog.procyon.org.uk>
+ <CAHk-=whARK9gtk0BPo8Y0EQqASNG9SfpF1MRqjxf43OO9F0vag@mail.gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <f2764b10-dd0d-cabf-0264-131ea5829fed@infradead.org>
+Date:   Tue, 15 Jun 2021 16:58:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
+In-Reply-To: <CAHk-=whARK9gtk0BPo8Y0EQqASNG9SfpF1MRqjxf43OO9F0vag@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Document the FAN_FS_ERROR event for user administrators and user space
-developers.
+On 6/15/21 7:49 AM, Linus Torvalds wrote:
+> On Tue, Jun 15, 2021 at 4:55 AM David Howells <dhowells@redhat.com> wrote:
+>>
+>> From: Zheng Zengkai <zhengzengkai@huawei.com>
+>>
+>> Add missing return to fix following compilation issue:
+>>
+>> fs/afs/dir.c: In function ‘afs_dir_set_page_dirty’:
+>> fs/afs/dir.c:51:1: error: no return statement in function
+>> returning non-void [-Werror=return-type]
+> 
+> This warning is actively wrong, and the patch is the wrong thing to do.
+> 
+> What compiler / architecture / config?
+> 
+> Because BUG() should have an "unreachable()", and the compiler should
+> know that a return statement isn't needed (and adding it shouldn't
+> make any difference).
+> 
+> And it's not warning for me when I build that code. So I really think
+> the real bug is entirely somewhere else, and this patch is papering
+> over the real problem.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Hi,
 
----
-Changes since v1:
-  - Drop references to location record
-  - Explain that the inode field is optional
-  - Explain we are reporting only the first error
----
- .../admin-guide/filesystem-monitoring.rst     | 63 +++++++++++++++++++
- Documentation/admin-guide/index.rst           |  1 +
- 2 files changed, 64 insertions(+)
- create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
+Some implementations of BUG() are macros, not functions, so "unreachable"
+is not applicable AFAIK.
 
-diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
-new file mode 100644
-index 000000000000..3710302676af
---- /dev/null
-+++ b/Documentation/admin-guide/filesystem-monitoring.rst
-@@ -0,0 +1,63 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+====================================
-+File system Monitoring with fanotify
-+====================================
-+
-+fanotify supports the FAN_FS_ERROR mark for file system-wide error
-+reporting.  It is meant to be used by file system health monitoring
-+daemons who listen on that interface and take actions (notify sysadmin,
-+start recovery) when a file system problem is detected by the kernel.
-+
-+By design, A FAN_FS_ERROR notification exposes sufficient information for a
-+monitoring tool to know a problem in the file system has happened.  It
-+doesn't necessarily provide a user space application with semantics to
-+verify an IO operation was successfully executed.  That is outside of
-+scope of this feature. Instead, it is only meant as a framework for
-+early file system problem detection and reporting recovery tools.
-+
-+When a file system operation fails, it is common for dozens of kernel
-+errors to cascade after the initial failure, hiding the original failure
-+log, which is usually the most useful debug data to troubleshoot the
-+problem.  For this reason, FAN_FS_ERROR only reports the first error that
-+occurred since the last notification, and it simply counts addition
-+errors.  This ensures that the most important piece of error information
-+is never lost.
-+
-+At the time of this writing, the only file system that emits FAN_FS_ERROR
-+notifications is Ext4.
-+
-+A user space example code is provided at ``samples/fanotify/fs-monitor.c``.
-+
-+Notification structure
-+======================
-+
-+A FAN_FS_ERROR Notification has the following format::
-+
-+  [ Notification Metadata (Mandatory) ]
-+  [ Generic Error Record  (Mandatory) ]
-+
-+Generic error record
-+--------------------
-+
-+The generic error record provides enough information for a file system
-+agnostic tool to learn about a problem in the file system, without
-+providing any additional details about the problem.  This record is
-+identified by ``struct fanotify_event_info_header.info_type`` being set
-+to FAN_EVENT_INFO_TYPE_ERROR.
-+
-+  struct fanotify_event_info_error {
-+	struct fanotify_event_info_header hdr;
-+	int error;
-+	__u32 error_count;
-+	__kernel_fsid_t fsid;
-+	__u64 ino;
-+	__u32 ino_generation;
-+  };
-+
-+The `error` field identifies the type of error.  `fsid` identifies the
-+file system that originated the error, since multiple file systems might
-+be reporting to the same fanotify group.  The `inode` field is optional,
-+as it depends on whether the error is linked to an specific inode.
-+`error_count` count tracks the number of errors that occurred and were
-+suppressed to preserve the original error, since the last notification.
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index dc00afcabb95..1bedab498104 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -82,6 +82,7 @@ configure specific aspects of kernel behavior to your liking.
-    edid
-    efi-stub
-    ext4
-+   filesystem-monitoring
-    nfs/index
-    gpio/index
-    highuid
+
 -- 
-2.31.0
+~Randy
 
