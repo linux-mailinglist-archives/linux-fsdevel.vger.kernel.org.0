@@ -2,123 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6573A8537
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 17:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A85433A85BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 17:56:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232404AbhFOPyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 11:54:05 -0400
-Received: from foss.arm.com ([217.140.110.172]:39130 "EHLO foss.arm.com"
+        id S232058AbhFOP6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 11:58:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231766AbhFOPw3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 11:52:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71922143D;
-        Tue, 15 Jun 2021 08:50:24 -0700 (PDT)
-Received: from entos-ampere-02.shanghai.arm.com (entos-ampere-02.shanghai.arm.com [10.169.214.103])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C1CAC3F694;
-        Tue, 15 Jun 2021 08:50:19 -0700 (PDT)
-From:   Jia He <justin.he@arm.com>
-To:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Jia He <justin.he@arm.com>
-Subject: [PATCH RFCv4 4/4] lib/test_printf.c: add test cases for '%pD'
-Date:   Tue, 15 Jun 2021 23:49:52 +0800
-Message-Id: <20210615154952.2744-5-justin.he@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210615154952.2744-1-justin.he@arm.com>
-References: <20210615154952.2744-1-justin.he@arm.com>
+        id S230076AbhFOP5A (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Jun 2021 11:57:00 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3816560FEE;
+        Tue, 15 Jun 2021 15:54:55 +0000 (UTC)
+Date:   Tue, 15 Jun 2021 11:54:53 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>, akpm@linux-foundation.org,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: fix tracepoint string placement with built-in AFS
+Message-ID: <20210615115453.63bc3a63@oasis.local.home>
+In-Reply-To: <643721.1623754699@warthog.procyon.org.uk>
+References: <YLAXfvZ+rObEOdc/@localhost.localdomain>
+        <643721.1623754699@warthog.procyon.org.uk>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-After the behaviour of specifier '%pD' is changed to print full path
-of struct file, the related test cases are also updated.
+On Tue, 15 Jun 2021 11:58:19 +0100
+David Howells <dhowells@redhat.com> wrote:
 
-Given the string of '%pD' is prepended from the end of the buffer, the
-check of "wrote beyond the nul-terminator" should be skipped.
+> @@ -649,20 +705,21 @@ TRACE_EVENT(afs_cb_call,
+>  
+>  	    TP_STRUCT__entry(
+>  		    __field(unsigned int,		call		)
+> -		    __field(const char *,		name		)
+>  		    __field(u32,			op		)
+> +		    __field(u16,			service_id	)
+>  			     ),
+>  
+>  	    TP_fast_assign(
+>  		    __entry->call	= call->debug_id;
+> -		    __entry->name	= call->type->name;
+>  		    __entry->op		= call->operation_ID;
+> +		    __entry->service_id	= call->service_id;
+>  			   ),
+>  
+> -	    TP_printk("c=%08x %s o=%u",
+> +	    TP_printk("c=%08x %s",
+>  		      __entry->call,
+> -		      __entry->name,
+> -		      __entry->op)
+> +		      __entry->service_id == 2501 ?
+> +		      __print_symbolic(__entry->op, yfs_cm_operations) :
+> +		      __print_symbolic(__entry->op, afs_cm_operations))
+>  	    );
+>  
+>  TRACE_EVENT(afs_call,
 
-Signed-off-by: Jia He <justin.he@arm.com>
----
- lib/test_printf.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+Looks fine to me, and even saves 4 bytes on 64 bit machines (events are
+rounded up to 4 byte increments, so the u16 is no different than a u32
+here).
 
-diff --git a/lib/test_printf.c b/lib/test_printf.c
-index d1d2f898ebae..9f851a82b3af 100644
---- a/lib/test_printf.c
-+++ b/lib/test_printf.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/bitmap.h>
- #include <linux/dcache.h>
-+#include <linux/fs.h>
- #include <linux/socket.h>
- #include <linux/in.h>
- 
-@@ -34,6 +35,7 @@ KSTM_MODULE_GLOBALS();
- 
- static char *test_buffer __initdata;
- static char *alloced_buffer __initdata;
-+static bool is_prepended_buf __initdata;
- 
- extern bool no_hash_pointers;
- 
-@@ -78,7 +80,7 @@ do_test(int bufsize, const char *expect, int elen,
- 		return 1;
- 	}
- 
--	if (memchr_inv(test_buffer + written + 1, FILL_CHAR, bufsize - (written + 1))) {
-+	if (!is_prepended_buf && memchr_inv(test_buffer + written + 1, FILL_CHAR, bufsize - (written + 1))) {
- 		pr_warn("vsnprintf(buf, %d, \"%s\", ...) wrote beyond the nul-terminator\n",
- 			bufsize, fmt);
- 		return 1;
-@@ -501,6 +503,27 @@ dentry(void)
- 	test("  bravo/alfa|  bravo/alfa", "%12pd2|%*pd2", &test_dentry[2], 12, &test_dentry[2]);
- }
- 
-+static struct vfsmount test_vfsmnt __initdata = {};
-+
-+static struct file test_file __initdata = {
-+	.f_path = { .dentry = &test_dentry[2],
-+		    .mnt = &test_vfsmnt,
-+	},
-+};
-+
-+static void __init
-+f_d_path(void)
-+{
-+	test("(null)", "%pD", NULL);
-+	test("(efault)", "%pD", PTR_INVALID);
-+
-+	is_prepended_buf = true;
-+	test("/bravo/alfa   |/bravo/alfa   ", "%-14pD|%*pD", &test_file, -14, &test_file);
-+	test("   /bravo/alfa|   /bravo/alfa", "%14pD|%*pD", &test_file, 14, &test_file);
-+	test("   /bravo/alfa|/bravo/alfa   ", "%14pD|%-14pD", &test_file, &test_file);
-+	is_prepended_buf = false;
-+}
-+
- static void __init
- struct_va_format(void)
- {
-@@ -784,6 +807,7 @@ test_pointer(void)
- 	ip();
- 	uuid();
- 	dentry();
-+	f_d_path();
- 	struct_va_format();
- 	time_and_date();
- 	struct_clk();
--- 
-2.17.1
-
+-- Steve
