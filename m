@@ -2,327 +2,523 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EBEF3A829A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 16:20:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24CFF3A82CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 16:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231871AbhFOOV6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 10:21:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37866 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231639AbhFOOUN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 10:20:13 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29FC6C061226
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 07:14:41 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id e22so11547725pgv.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 07:14:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=muuPBKMMRoHsteALA0MSISB9nQhfFONjAplR9RQm2vE=;
-        b=sOKta2eTgQPAWv0wTtHmLqpmdwrIHlt5ZRIpdf04RP+ckeaFiWPpCYGIl/y/0nsYU3
-         FDsTtObzYTsw3GTNwD3WO1aTiXm5VYeftg9mPbAQITv2T8tQ3QLxQIvYqexXGb2w6+9A
-         NZW9l5yNozQ86OorZ6qzrHXuDdemEmEnd81prOOStAVU1IwEXtRoFXasd36qeq+YLllH
-         Ix9itpjpp2xoITDYSGEpr1MdVIB79PNjoI+xbeY2XQVtHUGRyoqbWd2fs0ffydnymirj
-         CWyfLjTYv9qOJIo4wtZuYQ64PYG08G+9YdX7i2OgKeCDRSFlBOQCieqUuHsreUWwtR+V
-         SFNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=muuPBKMMRoHsteALA0MSISB9nQhfFONjAplR9RQm2vE=;
-        b=lfA7ckSV2oikWbV3JeTAXlpNLK2KK9RZWPssJJKvcBDPHq7/x25IPg1Ogm+c9xbMna
-         AwBxfzAW8OIXf8o06zi7BP/4iykKs7jlW+qCZyDRWW51AFTbXl2Dziq1uog+ewEF2syk
-         TknteRoMiya+Vc2TxRF8cPZjdMP4XcmFiNNbwmXQXd+/ZSiUniQYTq8D6JszwAv4fG7I
-         Vkn+YRZcH6u5Wke6ivXccr8KwKxntK5YU0lEf0z156tVD4Y4IsfIEpPawyRwafkTj37Q
-         ckDv2B7utpGeglwxA7hMJQkH5P2eo3ShzvAWvgCukeeo2sI2I4HDsWSEWc193h/N/afN
-         +Vww==
-X-Gm-Message-State: AOAM531m2iH6tnxyLBvfar9a9LfySdsZ5zgmQ1+MlchQgwSJmGdVIs3S
-        jzCQ94NUiBcQkN0ltxw5Hs4S
-X-Google-Smtp-Source: ABdhPJwe+4++061oAxP5Uk90bQPawN+eFuSh4VWexi1jhoK7flquuoVHZrE/zE0dabo+ZmoZKUoGVw==
-X-Received: by 2002:a63:4465:: with SMTP id t37mr8582231pgk.342.1623766480653;
-        Tue, 15 Jun 2021 07:14:40 -0700 (PDT)
-Received: from localhost ([139.177.225.241])
-        by smtp.gmail.com with ESMTPSA id t1sm14985152pjo.33.2021.06.15.07.14.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jun 2021 07:14:40 -0700 (PDT)
-From:   Xie Yongji <xieyongji@bytedance.com>
-To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
-        sgarzare@redhat.com, parav@nvidia.com, hch@infradead.org,
-        christian.brauner@canonical.com, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
-        dan.carpenter@oracle.com, joro@8bytes.org,
-        gregkh@linuxfoundation.org
-Cc:     songmuchun@bytedance.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 10/10] Documentation: Add documentation for VDUSE
-Date:   Tue, 15 Jun 2021 22:13:31 +0800
-Message-Id: <20210615141331.407-11-xieyongji@bytedance.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210615141331.407-1-xieyongji@bytedance.com>
-References: <20210615141331.407-1-xieyongji@bytedance.com>
+        id S231650AbhFOO2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 10:28:39 -0400
+Received: from mail-oln040092068109.outbound.protection.outlook.com ([40.92.68.109]:46215
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231400AbhFOO2T (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Jun 2021 10:28:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KfmUHBTrFrqoLhvmES0lhhw7+1sNL5SBaGp7EhIUpjq0q8grjtPwlir1SIc1iy9F41ng4VQwZbemOBv+5OCcM2xwhgTcOF2Jon/6dhNxDqt+WE7TiynUPNNo/yDUrl4IQZMoBRhdQmVZDDv3QWbtm+6pEy/aYz++AfNxSWym+m84UHxnKxGkiWukta+UbJx6tIYbK8NFm5G5U8Axqntov5N6Kb5jUp6Irnbp8N473/Djq0CzPhla/stphInJg5zGZzUcOB9FbQE5SpKmrLA1JwWLlRUzG9ldPIa6NWGLxqvV5Wu/n/nHabd1AB96a3DvjtQQEIPOct4uZK3UvuuEDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XtbqfXIudMeA8nFBn7YKrFx4KlWrBXyBFWTvu8GEziw=;
+ b=IG7xMaPcjMNTaGpvBVzPdXPo8gbJnkYv3PDnemLiSfCllzVV+X8GWDbvMa8NeO+kcr+QlnBcCyc5B+oseeyN2QvW6p7FgZ7YACxmIHxGu6q78he6thDsIbZoEDAkdnCqj89iPDtxXEReUIdMpvFvw6D84BD/mgpDiYTLNky8YYpOpSdzFQhs2rUz3wNFRaXdko+ePErNuxodq5pvqLAwbDc2eTuR63PfOleYmueYSXz3D9JtIO4WChzMAG3ok0no4dTTVlivp9Yp7MtweCc50pARu5ynplLy1t2Gpc7HsKsb8HK8eVFpfi6L0rvBktwqf4+Fj/VIwn2JMQriEVkY2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from VE1EUR02FT025.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:e400:7e1e::48) by
+ VE1EUR02HT064.eop-EUR02.prod.protection.outlook.com (2a01:111:e400:7e1e::316)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.21; Tue, 15 Jun
+ 2021 14:26:10 +0000
+Received: from AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM
+ (2a01:111:e400:7e1e::4e) by VE1EUR02FT025.mail.protection.outlook.com
+ (2a01:111:e400:7e1e::109) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.21 via Frontend
+ Transport; Tue, 15 Jun 2021 14:26:10 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:FDAA811DE1E606CCD8A6BC22431B81C771B93894EFD5B453C9A37128DEE99CDD;UpperCasedChecksum:B0162481BB0DC47EC5B9F3133A24F82951FE1072AD713ACD93FEA1C41DDF4FD3;SizeAsReceived:8958;Count:48
+Received: from AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::844c:ffa:7f96:bdc8]) by AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::844c:ffa:7f96:bdc8%5]) with mapi id 15.20.4219.025; Tue, 15 Jun 2021
+ 14:26:10 +0000
+Subject: Re: [PATCH v9] exec: Fix dead-lock in de_thread with ptrace_attach
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Charles Haithcock <chaithco@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        YiFei Zhu <yifeifz2@illinois.edu>,
+        Adrian Reber <areber@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <AM8PR10MB4708AFBD838138A84CE89EF8E4359@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <20210610143642.e4535dbdc0db0b1bd3ee5367@linux-foundation.org>
+ <AM8PR10MB470896FBC519ABCC20486958E4349@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <877diwtn2p.fsf@disp2133>
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+Message-ID: <AS8PR10MB47120E7A195A593C1377172CE4309@AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM>
+Date:   Tue, 15 Jun 2021 16:26:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+In-Reply-To: <877diwtn2p.fsf@disp2133>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TMN:  [o4eA+72NTNCcXTmombcfjuAyRhrLnYJP]
+X-ClientProxiedBy: FR0P281CA0090.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1e::15) To AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:31d::16)
+X-Microsoft-Original-Message-ID: <cd31b4be-97ac-7af9-af51-60ae0f3124d0@hotmail.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.1.101] (84.57.55.161) by FR0P281CA0090.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:1e::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.9 via Frontend Transport; Tue, 15 Jun 2021 14:26:08 +0000
+X-MS-PublicTrafficType: Email
+X-IncomingHeaderCount: 48
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-Correlation-Id: 08ce5f7c-b91e-4aad-e142-08d93009852e
+X-MS-TrafficTypeDiagnostic: VE1EUR02HT064:
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: evTlw+ocPTvu1VDb+Jp5bAXiELOdBPM51BlrWXQgj/5mKf40zsz/8AjFYeglK1L0vzdbGiLeHpEITzbnAnmKK5rDoHIXNfFX9n1fGZ3FXWxbNDqNo804pO587LxVoQBUiiJyIjrv7q3LVN56+atePIneOWKD3+UUndKn/BfgG0wSQld1ayGvWjp8IhyCIJ1eH+3ZnmkRvrzpNE5kPgbcDgUL4EkN9m/U8RkKNqlUysMpiulxicmkr++L1t3YUx4YhK/LAKqseopgCaflkajhdwJiiK0epkTwh/E0t2ECebBJsNKvQxTWaW4A2MqSk4CXUdheL23lV1238MFwft0prBiGJhnNaj9vaQabnOkvFh7l1XmsiUqu84fJ8OaNNAdAJSWgD0u3GkFR84WjHZh+8zzT/B0cJrD3S+MDv3BH9XOTMb2zi9Om6GPlVfVkTUiv7X+Cc0D2o24dn8gN4DsQFtBOWeNYJuc9Hx771DyoGtM=
+X-MS-Exchange-AntiSpam-MessageData: VuiBHywgFkg4j8aMRrGN8SUl8k//meDM2mZaGY6t1fCrr6j+Cvo4qWovnYj5wO9t7nxggHgAdmBte9hcDmRzTB0Cx8Ftr/zM+l3msjFohmlHjTkqj8RXiOOi7MnNbhyLKnxjUpors9/Ge/E+5Edy7w==
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08ce5f7c-b91e-4aad-e142-08d93009852e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2021 14:26:10.5558
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-AuthSource: VE1EUR02FT025.eop-EUR02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR02HT064
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-VDUSE (vDPA Device in Userspace) is a framework to support
-implementing software-emulated vDPA devices in userspace. This
-document is intended to clarify the VDUSE design and usage.
+Thanks for your review.
 
-Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
----
- Documentation/userspace-api/index.rst |   1 +
- Documentation/userspace-api/vduse.rst | 222 ++++++++++++++++++++++++++++++++++
- 2 files changed, 223 insertions(+)
- create mode 100644 Documentation/userspace-api/vduse.rst
+On 6/14/21 6:42 PM, Eric W. Biederman wrote:
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+> 
+>> This introduces signal->unsafe_execve_in_progress,
+>> which is used to fix the case when at least one of the
+>> sibling threads is traced, and therefore the trace
+>> process may dead-lock in ptrace_attach, but de_thread
+>> will need to wait for the tracer to continue execution.
+> 
+> Userspace processes hang waiting for each other.  Not a proper kernel
+> deadlock.  Annoying but not horrible.  Definitely worth fixing if we can.
+> 
 
-diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
-index 0b5eefed027e..c432be070f67 100644
---- a/Documentation/userspace-api/index.rst
-+++ b/Documentation/userspace-api/index.rst
-@@ -27,6 +27,7 @@ place where this information is gathered.
-    iommu
-    media/index
-    sysfs-platform_profile
-+   vduse
+I wonder if I am used a wrong term in the title.
+Do you have a suggestion for better wording?
+
+>> The solution is to detect this situation and allow
+>> ptrace_attach to continue, while de_thread() is still
+>> waiting for traced zombies to be eventually released.
+>> When the current thread changed the ptrace status from
+>> non-traced to traced, we can simply abort the whole
+>> execve and restart it by returning -ERESTARTSYS.
+>> This needs to be done before changing the thread leader,
+>> because the PTRACE_EVENT_EXEC needs to know the old
+>> thread pid.
+> 
+> Except you are not detecting this situation.  Testing for t->ptrace
+> finds tasks that have completed their ptrace attach and no longer need
+> the cred_gaurd_mutex.
+> 
+
+The first phase of de_thread needs co-operation from a user task,
+if and only if any task t except the thread leader has t->ptrace.
+Taking tasks from RUNNING->EXIT_ZOMBIE only needs co-operation from kernel code,
+that is using mutex_wait_killable(&sig->cred_guard_mutex).
+Tasks with !t->ptrace are childs of the thread leader, and are automatically
+sent to EXIT_DEAD, see kernel/exit.c (exit_notify):
+
+        if (unlikely(tsk->ptrace)) {
+                [...]
+        } else if (thread_group_leader(tsk)) {
+                autoreap = thread_group_empty(tsk) &&
+                        do_notify_parent(tsk, tsk->exit_signal);
+        } else {
+                autoreap = true;
+        }
+
+        if (autoreap) {
+                tsk->exit_state = EXIT_DEAD;
+                list_add(&tsk->ptrace_entry, &dead);
+        }
+
+But tasks which are traced have a different parent, and will stay ZOMBIES
+for as long as the tracer does not call waitpid or handle the SIGCHILD.
+
+> You almost discover the related problem that involves PTRACE_EVENT_EXEC.
+> 
+> It will probably help to have a full description of all of the
+> processes and states involved in the hang in your description
+> so you can show how your proposed change avoids the problem.
+> 
+
+Ok, will try to do that.
+
+>> Although it is technically after the point of no return,
+>> we just have to reset bprm->point_of_no_return here,
+>> since at this time only the other threads have received
+>> a fatal signal, not the current thread.
+> 
+> No.  If you have killed other threads we are most definitely past the
+> point where it is at all reasonable to return to userspace.
+> Perfunctorily killing other threads may leave them with locks held and
+> who knows what other problems.  Certainly it leaves the application
+> unable to process a failure from exec and continue on.
+> 
+
+Yeah, I tend to agree.  I had assumed that returning -ERESTARTSYS will always
+bounce-back to the same execve syscall, and that the restarted execve call
+must succeed.  But especially the second assumption is not a given thing.
+
+I wonder if that might work instead?
+
+diff --git a/fs/exec.c b/fs/exec.c
+index c7b1926..4490288 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1956,6 +1956,13 @@ static int do_execveat_common(int fd, struct filename *filename,
+ out_free:
+        free_bprm(bprm);
  
- .. only::  subproject and html
- 
-diff --git a/Documentation/userspace-api/vduse.rst b/Documentation/userspace-api/vduse.rst
-new file mode 100644
-index 000000000000..2f9cd1a4e530
---- /dev/null
-+++ b/Documentation/userspace-api/vduse.rst
-@@ -0,0 +1,222 @@
-+==================================
-+VDUSE - "vDPA Device in Userspace"
-+==================================
++       if (retval == -ERESTARTSYS && !fatal_signal_pending(current)) {
++               retval = do_execveat_common(fd, filename, argv, envp, flags);
++               if (retval < 0 && !fatal_signal_pending(current))
++                       force_sigsegv(SIGSEGV);
++               return retval;
++       }
 +
-+vDPA (virtio data path acceleration) device is a device that uses a
-+datapath which complies with the virtio specifications with vendor
-+specific control path. vDPA devices can be both physically located on
-+the hardware or emulated by software. VDUSE is a framework that makes it
-+possible to implement software-emulated vDPA devices in userspace. And
-+to make it simple, the emulated vDPA device's control path is handled in
-+the kernel and only the data path is implemented in the userspace.
-+
-+Note that only virtio block device is supported by VDUSE framework now,
-+which can reduce security risks when the userspace process that implements
-+the data path is run by an unprivileged user. The Support for other device
-+types can be added after the security issue is clarified or fixed in the future.
-+
-+Start/Stop VDUSE devices
-+------------------------
-+
-+VDUSE devices are started as follows:
-+
-+1. Create a new VDUSE instance with ioctl(VDUSE_CREATE_DEV) on
-+   /dev/vduse/control.
-+
-+2. Begin processing VDUSE messages from /dev/vduse/$NAME. The first
-+   messages will arrive while attaching the VDUSE instance to vDPA bus.
-+
-+3. Send the VDPA_CMD_DEV_NEW netlink message to attach the VDUSE
-+   instance to vDPA bus.
-+
-+VDUSE devices are stopped as follows:
-+
-+1. Send the VDPA_CMD_DEV_DEL netlink message to detach the VDUSE
-+   instance from vDPA bus.
-+
-+2. Close the file descriptor referring to /dev/vduse/$NAME
-+
-+3. Destroy the VDUSE instance with ioctl(VDUSE_DESTROY_DEV) on
-+   /dev/vduse/control
-+
-+The netlink messages metioned above can be sent via vdpa tool in iproute2
-+or use the below sample codes:
-+
-+.. code-block:: c
-+
-+	static int netlink_add_vduse(const char *name, enum vdpa_command cmd)
-+	{
-+		struct nl_sock *nlsock;
-+		struct nl_msg *msg;
-+		int famid;
-+
-+		nlsock = nl_socket_alloc();
-+		if (!nlsock)
-+			return -ENOMEM;
-+
-+		if (genl_connect(nlsock))
-+			goto free_sock;
-+
-+		famid = genl_ctrl_resolve(nlsock, VDPA_GENL_NAME);
-+		if (famid < 0)
-+			goto close_sock;
-+
-+		msg = nlmsg_alloc();
-+		if (!msg)
-+			goto close_sock;
-+
-+		if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, famid, 0, 0, cmd, 0))
-+			goto nla_put_failure;
-+
-+		NLA_PUT_STRING(msg, VDPA_ATTR_DEV_NAME, name);
-+		if (cmd == VDPA_CMD_DEV_NEW)
-+			NLA_PUT_STRING(msg, VDPA_ATTR_MGMTDEV_DEV_NAME, "vduse");
-+
-+		if (nl_send_sync(nlsock, msg))
-+			goto close_sock;
-+
-+		nl_close(nlsock);
-+		nl_socket_free(nlsock);
-+
-+		return 0;
-+	nla_put_failure:
-+		nlmsg_free(msg);
-+	close_sock:
-+		nl_close(nlsock);
-+	free_sock:
-+		nl_socket_free(nlsock);
-+		return -1;
-+	}
-+
-+How VDUSE works
-+---------------
-+
-+Since the emuldated vDPA device's control path is handled in the kernel,
-+a message-based communication protocol and few types of control messages
-+are introduced by VDUSE framework to make userspace be aware of the data
-+path related changes:
-+
-+- VDUSE_GET_VQ_STATE: Get the state for virtqueue from userspace
-+
-+- VDUSE_START_DATAPLANE: Notify userspace to start the dataplane
-+
-+- VDUSE_STOP_DATAPLANE: Notify userspace to stop the dataplane
-+
-+- VDUSE_UPDATE_IOTLB: Notify userspace to update the memory mapping in device IOTLB
-+
-+Userspace needs to read()/write() on /dev/vduse/$NAME to receive/reply
-+those control messages from/to VDUSE kernel module as follows:
-+
-+.. code-block:: c
-+
-+	static int vduse_message_handler(int dev_fd)
-+	{
-+		int len;
-+		struct vduse_dev_request req;
-+		struct vduse_dev_response resp;
-+
-+		len = read(dev_fd, &req, sizeof(req));
-+		if (len != sizeof(req))
-+			return -1;
-+
-+		resp.request_id = req.request_id;
-+
-+		switch (req.type) {
-+
-+		/* handle different types of message */
-+
-+		}
-+
-+		if (req.flags & VDUSE_REQ_FLAGS_NO_REPLY)
-+			return 0;
-+
-+		len = write(dev_fd, &resp, sizeof(resp));
-+		if (len != sizeof(resp))
-+			return -1;
-+
-+		return 0;
-+	}
-+
-+After VDUSE_START_DATAPLANE messages is received, userspace should start the
-+dataplane processing with the help of some ioctls on /dev/vduse/$NAME:
-+
-+- VDUSE_IOTLB_GET_FD: get the file descriptor to the first overlapped iova region.
-+  Userspace can access this iova region by passing fd and corresponding size, offset,
-+  perm to mmap(). For example:
-+
-+.. code-block:: c
-+
-+	static int perm_to_prot(uint8_t perm)
-+	{
-+		int prot = 0;
-+
-+		switch (perm) {
-+		case VDUSE_ACCESS_WO:
-+			prot |= PROT_WRITE;
-+			break;
-+		case VDUSE_ACCESS_RO:
-+			prot |= PROT_READ;
-+			break;
-+		case VDUSE_ACCESS_RW:
-+			prot |= PROT_READ | PROT_WRITE;
-+			break;
-+		}
-+
-+		return prot;
-+	}
-+
-+	static void *iova_to_va(int dev_fd, uint64_t iova, uint64_t *len)
-+	{
-+		int fd;
-+		void *addr;
-+		size_t size;
-+		struct vduse_iotlb_entry entry;
-+
-+		entry.start = iova;
-+		entry.last = iova + 1;
-+		fd = ioctl(dev_fd, VDUSE_IOTLB_GET_FD, &entry);
-+		if (fd < 0)
-+			return NULL;
-+
-+		size = entry.last - entry.start + 1;
-+		*len = entry.last - iova + 1;
-+		addr = mmap(0, size, perm_to_prot(entry.perm), MAP_SHARED,
-+			    fd, entry.offset);
-+		close(fd);
-+		if (addr == MAP_FAILED)
-+			return NULL;
-+
-+		/* do something to cache this iova region */
-+
-+		return addr + iova - entry.start;
-+	}
-+
-+- VDUSE_DEV_GET_FEATURES: Get the negotiated features
-+
-+- VDUSE_DEV_UPDATE_CONFIG: Update the configuration space and inject a config interrupt
-+
-+- VDUSE_VQ_GET_INFO: Get the specified virtqueue's metadata
-+
-+- VDUSE_VQ_SETUP_KICKFD: set the kickfd for virtqueue, this eventfd is used
-+  by VDUSE kernel module to notify userspace to consume the vring.
-+
-+- VDUSE_INJECT_VQ_IRQ: inject an interrupt for specific virtqueue
-+
-+MMU-based IOMMU Driver
-+----------------------
-+
-+VDUSE framework implements an MMU-based on-chip IOMMU driver to support
-+mapping the kernel DMA buffer into the userspace iova region dynamically.
-+This is mainly designed for virtio-vdpa case (kernel virtio drivers).
-+
-+The basic idea behind this driver is treating MMU (VA->PA) as IOMMU (IOVA->PA).
-+The driver will set up MMU mapping instead of IOMMU mapping for the DMA transfer
-+so that the userspace process is able to use its virtual address to access
-+the DMA buffer in kernel.
-+
-+And to avoid security issue, a bounce-buffering mechanism is introduced to
-+prevent userspace accessing the original buffer directly which may contain other
-+kernel data. During the mapping, unmapping, the driver will copy the data from
-+the original buffer to the bounce buffer and back, depending on the direction of
-+the transfer. And the bounce-buffer addresses will be mapped into the user address
-+space instead of the original one.
--- 
-2.11.0
+ out_ret:
+        putname(filename);
+        return retval;
+diff --git a/tools/testing/selftests/ptrace/vmaccess.c b/tools/testing/selftests/ptrace/vmaccess.c
+index c7c2242..3b7d81fb 100644
+--- a/tools/testing/selftests/ptrace/vmaccess.c
++++ b/tools/testing/selftests/ptrace/vmaccess.c
+@@ -74,13 +74,13 @@ static void *thread(void *arg)
+        k = waitpid(-1, &s, 0);
+        ASSERT_EQ(k, pid);
+        ASSERT_EQ(WIFSTOPPED(s), 1);
+-       ASSERT_EQ(WSTOPSIG(s), SIGSTOP);
++       ASSERT_EQ(WSTOPSIG(s), SIGTRAP);
+        k = ptrace(PTRACE_CONT, pid, 0L, 0L);
+        ASSERT_EQ(k, 0);
+        k = waitpid(-1, &s, 0);
+        ASSERT_EQ(k, pid);
+        ASSERT_EQ(WIFSTOPPED(s), 1);
+-       ASSERT_EQ(WSTOPSIG(s), SIGTRAP);
++       ASSERT_EQ(WSTOPSIG(s), SIGSTOP);
+        k = ptrace(PTRACE_CONT, pid, 0L, 0L);
+        ASSERT_EQ(k, 0);
+        k = waitpid(-1, &s, 0);
 
+
+Since the SIGSTOP from the PTRACE_ACCESS is not handled before the restart,
+the SIGSTOP and SIGTRAP events in the test case are in reversed order, but
+that is a possible outcome too.
+
+>> From the user's point of view the whole execve was
+>> simply delayed until after the ptrace_attach.
+> 
+> Conceptually I like what you are trying to detect and do.
+> However your description unfortunately does not match the code.
+> 
+> If you can find a test for another process waiting to ptrace_attach
+> one of our threads before we enter into de_thread that would be a
+> reasonable time to do something, and would potentially make a nice
+> fix.
+> 
+
+No I don't see any way how to do that.
+
+Unfortunately the tracer may or may not decide to do the ptrace_attach
+at any time, and it is usually the same process that is unable to do
+the waitpid because it is hanging in the ptrace_attach.
+
+
+Bernd.
+
+> 
+> Eric
+> 
+>> Other threads die quickly since the cred_guard_mutex
+>> is released, but a deadly signal is already pending.
+>> In case the mutex_lock_killable misses the signal,
+>> ->unsafe_execve_in_progress makes sure they release
+>> the mutex immediately and return with -ERESTARTNOINTR.
+>>
+>> This means there is no API change, unlike the previous
+>> version of this patch which was discussed here:
+>>
+>> https://lore.kernel.org/lkml/b6537ae6-31b1-5c50-f32b-8b8332ace882@hotmail.de/
+>>
+>> See tools/testing/selftests/ptrace/vmaccess.c
+>> for a test case that gets fixed by this change.
+>>
+>> Note that since the test case was originally designed to
+>> test the ptrace_attach returning an error in this situation,
+>> the test expectation needed to be adjusted, to allow the
+>> API to succeed at the first attempt.
+>>
+>> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+>> ---
+>>  fs/exec.c                                 | 37 +++++++++++++++++++++++++++++--
+>>  fs/proc/base.c                            |  6 +++++
+>>  include/linux/sched/signal.h              | 13 +++++++++++
+>>  kernel/ptrace.c                           |  9 ++++++++
+>>  kernel/seccomp.c                          | 12 +++++++---
+>>  tools/testing/selftests/ptrace/vmaccess.c | 25 ++++++++++++++-------
+>>  6 files changed, 89 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index 8344fba..c7b1926 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -1040,6 +1040,8 @@ static int de_thread(struct task_struct *tsk)
+>>  	struct signal_struct *sig = tsk->signal;
+>>  	struct sighand_struct *oldsighand = tsk->sighand;
+>>  	spinlock_t *lock = &oldsighand->siglock;
+>> +	unsigned int prev_ptrace = tsk->ptrace;
+>> +	struct task_struct *t = tsk;
+>>  
+>>  	if (thread_group_empty(tsk))
+>>  		goto no_thread_group;
+>> @@ -1062,6 +1064,17 @@ static int de_thread(struct task_struct *tsk)
+>>  	if (!thread_group_leader(tsk))
+>>  		sig->notify_count--;
+>>  
+>> +	while_each_thread(tsk, t) {
+>> +		if (unlikely(t->ptrace) && t != tsk->group_leader)
+>> +			sig->unsafe_execve_in_progress = true;
+>> +	}
+>> +
+>> +	if (unlikely(sig->unsafe_execve_in_progress)) {
+>> +		spin_unlock_irq(lock);
+>> +		mutex_unlock(&sig->cred_guard_mutex);
+>> +		spin_lock_irq(lock);
+>> +	}
+>> +
+>>  	while (sig->notify_count) {
+>>  		__set_current_state(TASK_KILLABLE);
+>>  		spin_unlock_irq(lock);
+>> @@ -1072,6 +1085,17 @@ static int de_thread(struct task_struct *tsk)
+>>  	}
+>>  	spin_unlock_irq(lock);
+>>  
+>> +	if (unlikely(sig->unsafe_execve_in_progress)) {
+>> +		if (mutex_lock_killable(&sig->cred_guard_mutex))
+>> +			goto killed;
+>> +		sig->unsafe_execve_in_progress = false;
+>> +		if (!prev_ptrace && tsk->ptrace) {
+>> +			sig->group_exit_task = NULL;
+>> +			sig->notify_count = 0;
+>> +			return -ERESTARTSYS;
+>> +		}
+>> +	}
+>> +
+>>  	/*
+>>  	 * At this point all other threads have exited, all we have to
+>>  	 * do is to wait for the thread group leader to become inactive,
+>> @@ -1255,8 +1279,11 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>  	 * Make this the only thread in the thread group.
+>>  	 */
+>>  	retval = de_thread(me);
+>> -	if (retval)
+>> +	if (retval) {
+>> +		if (retval == -ERESTARTSYS)
+>> +			bprm->point_of_no_return = false;
+>>  		goto out;
+>> +	}
+>>  
+>>  	/*
+>>  	 * Cancel any io_uring activity across execve
+>> @@ -1466,6 +1493,11 @@ static int prepare_bprm_creds(struct linux_binprm *bprm)
+>>  	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+>>  		return -ERESTARTNOINTR;
+>>  
+>> +	if (unlikely(current->signal->unsafe_execve_in_progress)) {
+>> +		mutex_unlock(&current->signal->cred_guard_mutex);
+>> +		return -ERESTARTNOINTR;
+>> +	}
+>> +
+>>  	bprm->cred = prepare_exec_creds();
+>>  	if (likely(bprm->cred))
+>>  		return 0;
+>> @@ -1482,7 +1514,8 @@ static void free_bprm(struct linux_binprm *bprm)
+>>  	}
+>>  	free_arg_pages(bprm);
+>>  	if (bprm->cred) {
+>> -		mutex_unlock(&current->signal->cred_guard_mutex);
+>> +		if (!current->signal->unsafe_execve_in_progress)
+>> +			mutex_unlock(&current->signal->cred_guard_mutex);
+>>  		abort_creds(bprm->cred);
+>>  	}
+>>  	if (bprm->file) {
+>> diff --git a/fs/proc/base.c b/fs/proc/base.c
+>> index 3851bfc..3b2a55c 100644
+>> --- a/fs/proc/base.c
+>> +++ b/fs/proc/base.c
+>> @@ -2739,6 +2739,12 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+>>  	if (rv < 0)
+>>  		goto out_free;
+>>  
+>> +	if (unlikely(current->signal->unsafe_execve_in_progress)) {
+>> +		mutex_unlock(&current->signal->cred_guard_mutex);
+>> +		rv = -ERESTARTNOINTR;
+>> +		goto out_free;
+>> +	}
+>> +
+>>  	rv = security_setprocattr(PROC_I(inode)->op.lsm,
+>>  				  file->f_path.dentry->d_name.name, page,
+>>  				  count);
+>> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+>> index 3f6a0fc..220a083 100644
+>> --- a/include/linux/sched/signal.h
+>> +++ b/include/linux/sched/signal.h
+>> @@ -214,6 +214,17 @@ struct signal_struct {
+>>  #endif
+>>  
+>>  	/*
+>> +	 * Set while execve is executing but is *not* holding
+>> +	 * cred_guard_mutex to avoid possible dead-locks.
+>> +	 * The cred_guard_mutex is released *after* de_thread() has
+>> +	 * called zap_other_threads(), therefore a fatal signal is
+>> +	 * guaranteed to be already pending in the unlikely event, that
+>> +	 * current->signal->unsafe_execve_in_progress happens to be
+>> +	 * true after the cred_guard_mutex was acquired.
+>> +	 */
+>> +	bool unsafe_execve_in_progress;
+>> +
+>> +	/*
+>>  	 * Thread is the potential origin of an oom condition; kill first on
+>>  	 * oom
+>>  	 */
+>> @@ -227,6 +238,8 @@ struct signal_struct {
+>>  	struct mutex cred_guard_mutex;	/* guard against foreign influences on
+>>  					 * credential calculations
+>>  					 * (notably. ptrace)
+>> +					 * Held while execve runs, except when
+>> +					 * a sibling thread is being traced.
+>>  					 * Deprecated do not use in new code.
+>>  					 * Use exec_update_lock instead.
+>>  					 */
+>> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+>> index 61db50f..0cbc1eb 100644
+>> --- a/kernel/ptrace.c
+>> +++ b/kernel/ptrace.c
+>> @@ -468,6 +468,14 @@ static int ptrace_traceme(void)
+>>  {
+>>  	int ret = -EPERM;
+>>  
+>> +	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+>> +		return -ERESTARTNOINTR;
+>> +
+>> +	if (unlikely(current->signal->unsafe_execve_in_progress)) {
+>> +		mutex_unlock(&current->signal->cred_guard_mutex);
+>> +		return -ERESTARTNOINTR;
+>> +	}
+>> +
+>>  	write_lock_irq(&tasklist_lock);
+>>  	/* Are we already being traced? */
+>>  	if (!current->ptrace) {
+>> @@ -483,6 +491,7 @@ static int ptrace_traceme(void)
+>>  		}
+>>  	}
+>>  	write_unlock_irq(&tasklist_lock);
+>> +	mutex_unlock(&current->signal->cred_guard_mutex);
+>>  
+>>  	return ret;
+>>  }
+>> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+>> index 1d60fc2..b1389ee 100644
+>> --- a/kernel/seccomp.c
+>> +++ b/kernel/seccomp.c
+>> @@ -1824,9 +1824,15 @@ static long seccomp_set_mode_filter(unsigned int flags,
+>>  	 * Make sure we cannot change seccomp or nnp state via TSYNC
+>>  	 * while another thread is in the middle of calling exec.
+>>  	 */
+>> -	if (flags & SECCOMP_FILTER_FLAG_TSYNC &&
+>> -	    mutex_lock_killable(&current->signal->cred_guard_mutex))
+>> -		goto out_put_fd;
+>> +	if (flags & SECCOMP_FILTER_FLAG_TSYNC) {
+>> +		if (mutex_lock_killable(&current->signal->cred_guard_mutex))
+>> +			goto out_put_fd;
+>> +
+>> +		if (unlikely(current->signal->unsafe_execve_in_progress)) {
+>> +			mutex_unlock(&current->signal->cred_guard_mutex);
+>> +			goto out_put_fd;
+>> +		}
+>> +	}
+>>  
+>>  	spin_lock_irq(&current->sighand->siglock);
+>>  
+>> diff --git a/tools/testing/selftests/ptrace/vmaccess.c b/tools/testing/selftests/ptrace/vmaccess.c
+>> index 4db327b..c7c2242 100644
+>> --- a/tools/testing/selftests/ptrace/vmaccess.c
+>> +++ b/tools/testing/selftests/ptrace/vmaccess.c
+>> @@ -39,8 +39,15 @@ static void *thread(void *arg)
+>>  	f = open(mm, O_RDONLY);
+>>  	ASSERT_GE(f, 0);
+>>  	close(f);
+>> -	f = kill(pid, SIGCONT);
+>> -	ASSERT_EQ(f, 0);
+>> +	f = waitpid(-1, NULL, 0);
+>> +	ASSERT_NE(f, -1);
+>> +	ASSERT_NE(f, 0);
+>> +	ASSERT_NE(f, pid);
+>> +	f = waitpid(-1, NULL, 0);
+>> +	ASSERT_EQ(f, pid);
+>> +	f = waitpid(-1, NULL, 0);
+>> +	ASSERT_EQ(f, -1);
+>> +	ASSERT_EQ(errno, ECHILD);
+>>  }
+>>  
+>>  TEST(attach)
+>> @@ -57,22 +64,24 @@ static void *thread(void *arg)
+>>  
+>>  	sleep(1);
+>>  	k = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
+>> -	ASSERT_EQ(errno, EAGAIN);
+>> -	ASSERT_EQ(k, -1);
+>> +	ASSERT_EQ(k, 0);
+>>  	k = waitpid(-1, &s, WNOHANG);
+>>  	ASSERT_NE(k, -1);
+>>  	ASSERT_NE(k, 0);
+>>  	ASSERT_NE(k, pid);
+>>  	ASSERT_EQ(WIFEXITED(s), 1);
+>>  	ASSERT_EQ(WEXITSTATUS(s), 0);
+>> -	sleep(1);
+>> -	k = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
+>> -	ASSERT_EQ(k, 0);
+>>  	k = waitpid(-1, &s, 0);
+>>  	ASSERT_EQ(k, pid);
+>>  	ASSERT_EQ(WIFSTOPPED(s), 1);
+>>  	ASSERT_EQ(WSTOPSIG(s), SIGSTOP);
+>> -	k = ptrace(PTRACE_DETACH, pid, 0L, 0L);
+>> +	k = ptrace(PTRACE_CONT, pid, 0L, 0L);
+>> +	ASSERT_EQ(k, 0);
+>> +	k = waitpid(-1, &s, 0);
+>> +	ASSERT_EQ(k, pid);
+>> +	ASSERT_EQ(WIFSTOPPED(s), 1);
+>> +	ASSERT_EQ(WSTOPSIG(s), SIGTRAP);
+>> +	k = ptrace(PTRACE_CONT, pid, 0L, 0L);
+>>  	ASSERT_EQ(k, 0);
+>>  	k = waitpid(-1, &s, 0);
+>>  	ASSERT_EQ(k, pid);
