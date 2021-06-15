@@ -2,88 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17AE23A7815
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 09:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 055C13A7821
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 09:40:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230043AbhFOHmC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 03:42:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52459 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229788AbhFOHmB (ORCPT
+        id S230414AbhFOHmq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 03:42:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57680 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230405AbhFOHmq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 03:42:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623742797;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=tf+WxfDAC8RDdxV/HmQmbtlveiKFYYWCFXXFOPqcUcw=;
-        b=hPrKv8J9Ee6WBq0UKYf673B7RYlXQhmNhyNINzDwCRIYNmIzu3q3pECs5xl8yDxY9EZ5it
-        M+5G3K1wxg8wfX9Mk3Ce4iKEI88Cw5PORomgqcOtjlUz9Y7ZwQ9eApln77H1DpPK+ho8Py
-        3ubCYX751FSgF2vq0V717aUKEacP4BM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-494-WOm38uHMNKmiehy_4UyVfg-1; Tue, 15 Jun 2021 03:39:55 -0400
-X-MC-Unique: WOm38uHMNKmiehy_4UyVfg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B82D81084F46;
-        Tue, 15 Jun 2021 07:39:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4DE005D6DC;
-        Tue, 15 Jun 2021 07:39:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix an IS_ERR() vs NULL check
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-afs@lists.infradead.org, dhowells@redhat.com,
-        marc.dionne@auristor.com, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 15 Jun 2021 08:39:52 +0100
-Message-ID: <162374279240.549176.3013926133275425458.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Tue, 15 Jun 2021 03:42:46 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C58C4C0617AF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 00:40:41 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id d7so1722305edx.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 00:40:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bD5A1f3b7vRrP0UeIDZmZfmfv9DJp+EPhy9/duz0b6I=;
+        b=N26Llwd8SrRempOpdtcKBAmy1pvmFxIeRjrv7uJBq+fyQnnstQ8pnLT/Wzbxadlx4G
+         zeWAQ5IOgSsL06m56/+u/nLsoAki7f8EMVhSFqDFiF4VMn3hRC8dt4ldaoqFORGc36i0
+         iaPTXBs9otzBIcyw+VGYCJsDK+XLBaYX3pW4Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bD5A1f3b7vRrP0UeIDZmZfmfv9DJp+EPhy9/duz0b6I=;
+        b=bUl/YRlFsrqbd78Kr1OABU/H3HLAx30VMS/d5vZ6JNUhzmnk7eA6Yz2eevjy9KCgx6
+         ajf5B8zExCRD1L4d1u9vmRVOKpCgxs/CrAAV8wRpC5FYKoAZprWoF1vS0VQEvKxHhECu
+         ud5fKhRwE8Iv6hP2R5w32F5KCYULRzsBxOP3wAWYvxbTgI6lsoGlzvlR74DVljLTzc7o
+         wLm1X/k04tRZ2iFSzkG6FOailmG3zFulCJ4oNY5OYVGkZgSE8htzhkFppZlFjEw+UWNa
+         7cFfJxSkky1hyxqz+Jx54bb20SbIvLfcdEUwB8rd66cHsEb5d4LZh6BPs0fQnXgz3wcO
+         ejyA==
+X-Gm-Message-State: AOAM533UEEu38giA4Jf6K5m8//aowUdlkFleCGTP4FDME2v0xXz5BvLt
+        NpkRwDXo7LLq9Qu1DsOuXmFIlimt2BvdfxgN
+X-Google-Smtp-Source: ABdhPJx2vjhd4LwV0XJVM8XQYgW0VgiMdJ+UIchUf/VZ/J2jXsl5B8hBYZ+9Ap7cJYyGZUpqL4jFTA==
+X-Received: by 2002:aa7:c983:: with SMTP id c3mr21227017edt.58.1623742840170;
+        Tue, 15 Jun 2021 00:40:40 -0700 (PDT)
+Received: from [192.168.1.149] ([80.208.64.110])
+        by smtp.gmail.com with ESMTPSA id ci4sm402545ejc.110.2021.06.15.00.40.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jun 2021 00:40:39 -0700 (PDT)
+Subject: Re: [PATCH RFCv3 3/3] lib/test_printf: add test cases for '%pD'
+To:     Justin He <Justin.He@arm.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20210611155953.3010-1-justin.he@arm.com>
+ <20210611155953.3010-4-justin.he@arm.com>
+ <4fe3621f-f4a0-2a74-e831-dad9e046f392@rasmusvillemoes.dk>
+ <AM6PR08MB4376C7D2EEAF19F4CA636369F7309@AM6PR08MB4376.eurprd08.prod.outlook.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <54b259f2-1dcd-8792-1432-14cd44abb6a5@rasmusvillemoes.dk>
+Date:   Tue, 15 Jun 2021 09:40:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <AM6PR08MB4376C7D2EEAF19F4CA636369F7309@AM6PR08MB4376.eurprd08.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+On 15/06/2021 09.06, Justin He wrote:
+> Hi Rasmus
+> 
+>> -----Original Message-----
+>> From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>> Sent: Saturday, June 12, 2021 5:40 AM
+>> To: Justin He <Justin.He@arm.com>; Petr Mladek <pmladek@suse.com>; Steven
+>> Rostedt <rostedt@goodmis.org>; Sergey Senozhatsky
+>> <senozhatsky@chromium.org>; Andy Shevchenko
+>> <andriy.shevchenko@linux.intel.com>; Jonathan Corbet <corbet@lwn.net>;
+>> Alexander Viro <viro@zeniv.linux.org.uk>; Linus Torvalds <torvalds@linux-
+>> foundation.org>
+>> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>; Eric Biggers
+>> <ebiggers@google.com>; Ahmed S. Darwish <a.darwish@linutronix.de>; linux-
+>> doc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+>> fsdevel@vger.kernel.org
+>> Subject: Re: [PATCH RFCv3 3/3] lib/test_printf: add test cases for '%pD'
+>>
+>> On 11/06/2021 17.59, Jia He wrote:
+>>> After the behaviour of specifier '%pD' is changed to print full path
+>>> of struct file, the related test cases are also updated.
+>>>
+>>> Given the string is prepended from the end of the buffer, the check
+>>> of "wrote beyond the nul-terminator" should be skipped.
+>>
+>> Sorry, that is far from enough justification.
+>>
+>> I should probably have split the "wrote beyond nul-terminator" check in two:
+>>
+>> One that checks whether any memory beyond the buffer given to
+>> vsnprintf() was touched (including all the padding, but possibly more
+>> for the cases where we pass a known-too-short buffer), symmetric to the
+>> "wrote before buffer" check.
+>>
+>> And then another that checks the area between the '\0' and the end of
+>> the given buffer - I suppose that it's fair game for vsnprintf to use
+>> all of that as scratch space, and for that it could be ok to add that
+>> boolean knob.
+>>
+> Sorry, I could have thought sth like "write beyond the buffer" had been checked by
+> old test cases, but seems not.
 
-The proc_symlink() function returns NULL on error, it doesn't return
-error pointers.
-
-Fixes: 5b86d4ff5dce ("afs: Implement network namespacing")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-afs@lists.infradead.org
-Link: https://lore.kernel.org/r/YLjMRKX40pTrJvgf@mwanda/
----
-
- fs/afs/main.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/afs/main.c b/fs/afs/main.c
-index b2975256dadb..179004b15566 100644
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@ -203,8 +203,8 @@ static int __init afs_init(void)
- 		goto error_fs;
- 
- 	afs_proc_symlink = proc_symlink("fs/afs", NULL, "../self/net/afs");
--	if (IS_ERR(afs_proc_symlink)) {
--		ret = PTR_ERR(afs_proc_symlink);
-+	if (!afs_proc_symlink) {
-+		ret = -ENOMEM;
- 		goto error_proc;
- 	}
- 
+It does. Before each (sub)test, we have (assume PAD_SIZE=4, BUF_SIZE=12)
 
 
+|    <- alloced_buffer ->    |
+|  PAD |  test_buffer | PAD  |
+| **** | ************ | **** |
+
+Then after snprintf(buf, 10, "pizza") we have
+
+|    <- alloced_buffer ->    |
+|  PAD |  test_buffer | PAD  |
+| **** | pizza0****** | **** |
+A      B       C   D         E
+
+(with 0 being the nul character). Then
+
+        if (memchr_inv(alloced_buffer, FILL_CHAR, PAD_SIZE)) {
+
+checks whether snprint wrote anything between A and B, while
+
+        if (memchr_inv(test_buffer + written + 1, FILL_CHAR, BUF_SIZE +
+PAD_SIZE - (written + 1))) {
+
+checks whether there was a write between C and E.
+
+What I'm saying is that I can see it being reasonable for (some helper
+inside) snprintf to actually write something beyond C, but certainly
+never beyond D. So the "wrote beyond" test could be split up, with the
+first half possibly being allowed to be opt-out for certain test cases.
+
+> I will split the "wrote beyond nul-terminator" check into 2 parts. One for
+> Non-%pD case, the other for %pD.
+> 
+> For %pD, it needs to check whether the space beyond test_buffer[] is written
+
+No, that's not the right way to do this. Let me cook up a patch you can
+include in your series.
+
+Rasmus
