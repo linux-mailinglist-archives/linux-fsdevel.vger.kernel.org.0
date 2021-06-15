@@ -2,59 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 267513A771E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 08:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E61923A7742
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 08:42:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229937AbhFOGd7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 02:33:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42372 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbhFOGd7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 02:33:59 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2A3C061574;
-        Mon, 14 Jun 2021 23:31:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=l4ap9K14HzLuNaS/BB93x9SBcqR5Jq194sFXikh1T1c=; b=SQOeAsZve6bYiSpkDqA1s4BGBb
-        cdHNM8jiOeoQE5l8DZwdGi7q7WCAtrtYhSiIQtItVydKqfTwUcf3858Up+9zRGBig449sqq8XIUM9
-        v/6MK6fZrAEeG07nsJxyC4SIPh3c7OelDCZAgyMI1WTUuB82SW5CeYS4uiPi62JxY0LHKIw6kb48b
-        /tdFsAGDCVBVRZKoi+V4kw6i3yGfnwxLwJB/Fk5sEc8vpho6eVzrqGqu1jXw7RpM182+Y+qEy9Oz6
-        FG4tXCB1pIEtKySnSQGbDDSHYcDfLe+oqom1cVsFL9BM+K8ftMGY+O/PwwJsRrFTemAJ9/h6K39Yl
-        4tRhj3Ng==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lt2bq-006AUI-HK; Tue, 15 Jun 2021 06:31:40 +0000
-Date:   Tue, 15 Jun 2021 07:31:38 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Vlastimil Babka <vbabka@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH v11 33/33] mm: Add folio_mapped()
-Message-ID: <YMhJSp0dP36zIf0g@infradead.org>
-References: <20210614201435.1379188-1-willy@infradead.org>
- <20210614201435.1379188-34-willy@infradead.org>
+        id S230060AbhFOGoD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 02:44:03 -0400
+Received: from m12-16.163.com ([220.181.12.16]:60471 "EHLO m12-16.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229960AbhFOGoC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Jun 2021 02:44:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=zDFMU
+        pcM0iFsbvJpRwSkNP93HHPNlE4oSqJBlAUDPlk=; b=W6Qruxugt1uG8DvcNRSCh
+        WQkmBaT0craSB2a0kpColyFNZ2weURMjH45I2x9ToB/xxXqPmO2SKH7R8h5Bi/U5
+        ki5eukc3tzyI9YleXFdOY180o6UFpGvN+4mmuEa1fh93WM2kM/vK4rXedkoqeOfk
+        2tP5OAk+96xgWNTUyTGcPk=
+Received: from jiangzhipeng.ccdomain.com (unknown [218.94.48.178])
+        by smtp12 (Coremail) with SMTP id EMCowACHnlqsS8hgqPq7xQ--.51904S2;
+        Tue, 15 Jun 2021 14:41:54 +0800 (CST)
+From:   jzp0409 <jzp0409@163.com>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org,
+        "edison.jiang" <jiangzhipeng@yulong.com>
+Subject: [PATCH] fuse: set limit size
+Date:   Tue, 15 Jun 2021 14:41:55 +0800
+Message-Id: <20210615064155.911-1-jzp0409@163.com>
+X-Mailer: git-send-email 2.30.0.windows.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210614201435.1379188-34-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: EMCowACHnlqsS8hgqPq7xQ--.51904S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZF4rKrykuw4fXr15Cw1DGFg_yoW8Gry5pF
+        nruFWrJrZFqFWxGr1Sgr17Way5K3yFyF4jgFWfZa12vr15Xr9IkF93ZFWkW3y5ur4kZw1Y
+        y3sxKr1rursrt3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U-Vy3UUUUU=
+X-Originating-IP: [218.94.48.178]
+X-CM-SenderInfo: hm2sikiqz6il2tof0z/xtbBiBKyhlaD-TZ0twAAsz
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 14, 2021 at 09:14:35PM +0100, Matthew Wilcox (Oracle) wrote:
-> This function is the equivalent of page_mapped().  It is slightly
-> shorter as we do not need to handle the PageTail() case.  Reimplement
-> page_mapped() as a wrapper around folio_mapped().  folio_mapped()
-> is 13 bytes smaller than page_mapped(), but the page_mapped() wrapper
-> is 30 bytes, for a net increase of 17 bytes of text.
+From: "edison.jiang" <jiangzhipeng@yulong.com>
 
-I'd still prefer the code flow I suggested last time, but that really
-is just style and nothing substantial, so:
+Android-R /sdcard mount FUSE filesystem type,
+use "dd" command to filli up /sdcard dir,
+Android will not boot normal,
+becase this system need at least 128M userspace.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Test: open adb port,
+      adb shell "dd if=dev/zero of=sdcard/ae bs=1024000 count=xxx"
+
+Result: if not limit size,Android system  can not boot normal.
+
+Signed-off-by: edison.jiang <jiangzhipeng@yulong.com>
+---
+ fs/fuse/inode.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index b0e18b4..f4e54505 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -477,6 +477,21 @@ static void convert_fuse_statfs(struct kstatfs *stbuf, struct fuse_kstatfs *attr
+ 	stbuf->f_files   = attr->files;
+ 	stbuf->f_ffree   = attr->ffree;
+ 	stbuf->f_namelen = attr->namelen;
++#ifdef LIMIT_SDCARD_SIZE
++	u32 data_free_size_th = 128*1024*1024;
++
++	stbuf->f_blocks -= (u32)data_free_size_th/attr->bsize;
++
++	if (stbuf->f_bfree < ((u32)data_free_size_th/attr->bsize))
++		stbuf->f_bfree = 0;
++	else
++		stbuf->f_bfree -= (u32)data_free_size_th/attr->bsize;
++
++	if (stbuf->f_bavail < ((u32)data_free_size_th/attr->bsize))
++		stbuf->f_bavail = 0;
++	else
++		stbuf->f_bavail -= (u32)data_free_size_th/attr->bsize;
++#endif
+ 	/* fsid is left zero */
+ }
+ 
+-- 
+1.9.1
+
+
