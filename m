@@ -2,105 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 789C43A88DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 20:51:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E6AF3A8993
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 21:33:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230130AbhFOSxF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 14:53:05 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:36527 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229943AbhFOSxE (ORCPT
+        id S231132AbhFOTfj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 15:35:39 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:41654 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230012AbhFOTfe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 14:53:04 -0400
-Received: from [192.168.1.155] ([95.115.9.120]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MTznO-1lksBB2J4k-00R3HZ; Tue, 15 Jun 2021 20:50:55 +0200
-Subject: Re: [PATCH RFC] fuse: add generic file store
-To:     Peng Tao <bergwolf@gmail.com>
-Cc:     Alessio Balsini <balsini@android.com>,
-        Peng Tao <tao.peng@linux.alibaba.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>
-References: <1622537906-54361-1-git-send-email-tao.peng@linux.alibaba.com>
- <YLeoucLiMOSPwn4U@google.com>
- <244309bf-4f2e-342e-dd98-755862c643b8@metux.net>
- <CA+a=Yy5moy0Bv=mhsrC9FrY+cEYt8+YJL8TvXQ=N7pNyktccRQ@mail.gmail.com>
- <429fc51b-ece0-b5cb-9540-2e7f5b472d73@metux.net>
- <CA+a=Yy6k3k2iFb+tBMuBDMs8E8SsBKce9Q=3C2zXTrx3-B7Ztg@mail.gmail.com>
- <295cfc39-a820-3167-1096-d8758074452d@metux.net>
- <CA+a=Yy7DDrMs6R8qRF6JMco0VOBWCKNoX7E-ga9W2Omn=+QUrQ@mail.gmail.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <e70a444e-4716-1020-4afa-fec6799e4a10@metux.net>
-Date:   Tue, 15 Jun 2021 20:50:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        Tue, 15 Jun 2021 15:35:34 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1ltEoR-00FcZ9-Jh; Tue, 15 Jun 2021 13:33:27 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=email.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1ltEoQ-00FCWx-Iw; Tue, 15 Jun 2021 13:33:27 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org
+References: <20210615162346.16032-1-avagin@gmail.com>
+Date:   Tue, 15 Jun 2021 14:33:20 -0500
+In-Reply-To: <20210615162346.16032-1-avagin@gmail.com> (Andrei Vagin's message
+        of "Tue, 15 Jun 2021 09:23:46 -0700")
+Message-ID: <877diuq5xb.fsf@disp2133>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CA+a=Yy7DDrMs6R8qRF6JMco0VOBWCKNoX7E-ga9W2Omn=+QUrQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: tl
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:9YRIk9kyZASvWP6fGjB5VpsXq+AnpiJFBww/aUeWjMlxt/Mknql
- V4xhYCtaMJcnT7j37x3+FCzLv406ZXq0+aMh5HUsnvSNyAPxaFj7eYe1QWoxybaTRrIUHYK
- 3WoUb8plRGU3wh02a0Sp0dhm3t1cxnGuHYZRGMalSaOdkW8YdtYxz4wia5CvC2gBugSr4OL
- U5RIplJhOZs1WvUQCy1jA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:KPa93BBxVQ8=:Poke6x5P4pnGpZHccSJBte
- pTQXRLRFpveqZmZJXJAOImlc2lDA3ma8/8GSIi1qdQWgMIgPaQljCeD7q5P5F0/2TpA8I+BqA
- 26GU02Xgvkg/pexh1YgICYYQQx0I1Pgu0DPNCi1vO0ifi94jw3X4QMRgAvXDEK84iTAogVx+Y
- HmO6i3nOXd6QbsazPoNUO4wINLXu56rGr/Wc+oroPqKM+wUW8hrMDxsGpRj8KAnU3jswCOWge
- JUhOlmw13gUGmDER6c9H+gr4CqrXn60HhR9gcr+RIgWHeIKfW6pCARnyITSautPRgSeiRJ76r
- 1o2twm3ki4+DMOX6TCze8wqgnrh+6rWVe3+pNeshzGcM8a+3isdGsGZDreu+dfSG7CsqNKXhu
- Wb0Or03qvRaes8vKvzNNTFQIb6D/DJbj52twgU5UhSwHPw5y59BNFm8pIV+aL9EtuZy7/ZsNz
- wpt5/NKqfzmjepWolJlNJ5excYcoU5gOUVwnKCkprgsC/Y7iCysRx3s/EFSIVhBjfRMkeiCC3
- kt7zSH78uKnthJDgiH5BYM=
+Content-Type: text/plain
+X-XM-SPF: eid=1ltEoQ-00FCWx-Iw;;;mid=<877diuq5xb.fsf@disp2133>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18fPznuT9OQnyAy9vxmYnMlBimMoJi+D8s=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4500]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Andrei Vagin <avagin@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 308 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 11 (3.4%), b_tie_ro: 9 (3.0%), parse: 0.77 (0.2%),
+         extract_message_metadata: 11 (3.5%), get_uri_detail_list: 0.99 (0.3%),
+         tests_pri_-1000: 13 (4.3%), tests_pri_-950: 1.18 (0.4%),
+        tests_pri_-900: 1.02 (0.3%), tests_pri_-90: 78 (25.4%), check_bayes:
+        77 (25.0%), b_tokenize: 5 (1.6%), b_tok_get_all: 5 (1.6%),
+        b_comp_prob: 1.68 (0.5%), b_tok_touch_all: 62 (20.2%), b_finish: 0.84
+        (0.3%), tests_pri_0: 181 (58.7%), check_dkim_signature: 0.48 (0.2%),
+        check_dkim_adsp: 2.8 (0.9%), poll_dns_idle: 0.97 (0.3%), tests_pri_10:
+        2.1 (0.7%), tests_pri_500: 7 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] exec/binfmt_script: trip zero bytes from the buffer
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11.06.21 14:46, Peng Tao wrote:
+Andrei Vagin <avagin@gmail.com> writes:
 
->>
->> * it just stores fd's I don't see anything where it is actually returned
->>     to some open() operation.
-> The FUSE_DEV_IOC_RESTORE_FD ioctl returns the opened fd to a different process.
+> Without this fix, if we try to run a script that contains only the
+> interpreter line, the interpreter is executed with one extra empty
+> argument.
+>
+> The code is written so that i_end has to be set to the end of valuable
+> data in the buffer.
 
-So, just open() a file on a fuse fs can't restore the fd directly 
-(instead of opening a new file) ? If that's the case, that would mean,
-userland has to take very special actions in order to get it. Right ?
+Out of curiosity how did you spot this change in behavior?
 
->> * the store is machine wide global - everybody uses the same number
->>     space, dont see any kind of access conrol ... how about security ?
->>
-> The idea is that anyone capable of opening /dev/fuse can retrieve the FD.
-> 
->> I don't believe that just storing the fd's somewhere is really helpful
->> for that purpose - the fuse server shall be able to reply the open()
->> request with an fd, which then is directly transferred to the client.
->>
-> Could you describe your use case a bit? How does your client talk to
-> your server? Through open syscall or through some process-to-process
-> RPC calls?
-
-I'd like to write synthetic file systems (file servers) that allows
-certain unprivileged processes (in some confined environment) directly
-open()ing prepared file descriptors (e.g. devices, sockets, etc) that it
-isn't allowed to open directly (but the server obviously is). Those fds
-could be prepared in any ways (eg. sealed, seek'ed, already connected
-sockets, etc).
-
-The client thinks it just open()'s a normal file, but actually gets some
-fd prepared elsewhere.
-
-
---mtx
-
--- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+> Fixes: ccbb18b67323 ("exec/binfmt_script: Don't modify bprm->buf and then return -ENOEXEC")
+> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+> Signed-off-by: Andrei Vagin <avagin@gmail.com>
+> ---
+>  fs/binfmt_script.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+> index 1b6625e95958..e242680f96e1 100644
+> --- a/fs/binfmt_script.c
+> +++ b/fs/binfmt_script.c
+> @@ -68,6 +68,9 @@ static int load_script(struct linux_binprm *bprm)
+>  		if (!next_terminator(i_end, buf_end))
+>  			return -ENOEXEC;
+>  		i_end = buf_end;
+> +		/* Trim zero bytes from i_end */
+> +		while (i_end[-1] == 0)
+> +			i_end--;
+>  	}
+>  	/* Trim any trailing spaces/tabs from i_end */
+>  	while (spacetab(i_end[-1]))
