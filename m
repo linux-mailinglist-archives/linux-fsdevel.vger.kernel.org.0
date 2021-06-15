@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 931903A7A4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 11:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 189233A7A3D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 11:18:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231615AbhFOJUv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 05:20:51 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:54498 "EHLO
+        id S231535AbhFOJUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 05:20:42 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:54714 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230519AbhFOJUV (ORCPT
+        with ESMTP id S231354AbhFOJUX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 05:20:21 -0400
+        Tue, 15 Jun 2021 05:20:23 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 2CB2D219CE;
+        by smtp-out1.suse.de (Postfix) with ESMTP id 466B1219D7;
         Tue, 15 Jun 2021 09:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1623748695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=jzpVj8JlrB8ydY+vFRnq+G9CoeRUVMlFtm7aKp4N1TU=;
-        b=jIyNAG9KFenh2z2siQJXSnp6wk4j3u0lHvGIRuc95y2Iz7dJphW6jZer7NjmAMG3UAGSi8
-        p2Gypy1k/cSMKrfPUvmpuqqmB51SVvAxH96AQ8OO5vuL4HqNwe5dNHmrQO+7omOhgmDGi+
-        arYs+IWjE2JHjCyb+wNGIIcOkOlby0k=
+        bh=emP2yQ1eljPd1NFX6C4KS1pG2iKhLeUQkNZ2AuwC2+s=;
+        b=Ah4EmbVQ6M39Y6+LU7t5DiCtD8hmTR3/RGkh8tJS5uPiaiUD/ZFzLAf39R9vJhHv1ZFrNg
+        rBVfWnox2lo0wiGuZOyP9FN3z7Ckf/lgG42jhWZz+3BA6qKjAxv25g68m0gAv7zqISGoqY
+        llRqrQ+QCGd6kMX8Rkvq6oLOdVeal2M=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1623748695;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=jzpVj8JlrB8ydY+vFRnq+G9CoeRUVMlFtm7aKp4N1TU=;
-        b=zdbe+wLegF9N6BdAYz21hwpOcpeFQLPCiznBaKEgMFDJgyBhBwUdkS2CCn44d3XZommyI9
-        oXDi/0dmGOrNp2Bg==
+        bh=emP2yQ1eljPd1NFX6C4KS1pG2iKhLeUQkNZ2AuwC2+s=;
+        b=vSYdhpsCRnSXzaqR2+4HccdDgz/dZS4DZTpvxk9nYt/ZMaxbF9lFh/PZNIXU3vyPSMZ5Hn
+        shWE2wmxGojI+MDQ==
 Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 1A965A3B99;
+        by relay2.suse.de (Postfix) with ESMTP id 2375CA3B93;
         Tue, 15 Jun 2021 09:18:15 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 45F9A1F2CC2; Tue, 15 Jun 2021 11:18:14 +0200 (CEST)
+        id 4B42F1F2CC3; Tue, 15 Jun 2021 11:18:14 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -52,155 +52,123 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         linux-f2fs-devel@lists.sourceforge.net, <linux-mm@kvack.org>,
         <linux-xfs@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
         Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: [PATCH 09/14] xfs: Convert double locking of MMAPLOCK to use VFS helpers
-Date:   Tue, 15 Jun 2021 11:17:59 +0200
-Message-Id: <20210615091814.28626-9-jack@suse.cz>
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 10/14] zonefs: Convert to using invalidate_lock
+Date:   Tue, 15 Jun 2021 11:18:00 +0200
+Message-Id: <20210615091814.28626-10-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210615090844.6045-1-jack@suse.cz>
 References: <20210615090844.6045-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4917; h=from:subject; bh=Pt3UjgWOKw5VBXlHinJjhLE0BJn5KyvbzUsgusJoyQ8=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBgyHBHQz7sYYGESLOPUM9je2BwnQMR+94bnROYEA4r PHSnKz2JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYMhwRwAKCRCcnaoHP2RA2ZcrB/ 9gzkntEzMfcOHZzvFBHpOx8w6qa0DVwkTogkJwuD4ehyxoN26RDHjrHkpfGyuWmge5Xcv9Xe5qEzFU DGYDGiBq1WPXUespIfaU645ADMMvxG8mcSLWgoN8D2yaJfdCkNjHckHDbJGPAyg7+suX2Jjc/F6HQO qKDWxh+eH9kUWsv6zTuK/BGNGjb53iH4swqvoVGw29hTwqMA28nYxUM36aRdCe01AVXlq5ruTMiRfg xD0/4Jat8TpArX3qchGrDyDlRz2ff7SrsyOZ5Qf/Lieqn/YbcoQgskaWyXlMUv3LQANbfCq5+zeJ4Q 3ffjlRg4ZpEVIz1Q5fmJeRMUsHUJ9h
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3534; h=from:subject; bh=X1+FAHnRq/hvKiFmSNKc+MwXBtDprJwr7H1BxXLJ9wE=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBgyHBIL5zkdMExsJLTZiQSWW/f9riYmtp7RAK4a4BF P6yR1FuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYMhwSAAKCRCcnaoHP2RA2UjtCA DoGEOo5arbFkmjtyizZRD5fM5r5JrObCwT2t+IQJ3QFCXxSozqyYb8zdpzsUOCM2dt827sgezUBiyD Vu951paF9lgXzwVfR4FN3ipP6AxAoiPXiFOi1wEJKe9v9uz3RxZczz6Bw35QqUkxbSR/8+2jfiGS63 XXrEEZLjtDjyjwMshEgx2uym2/CX0BTl9G844bnsnWrguD8USkL1mj8coFJDG5CQrBiQ906PvCvOtV nUhYdWPV8a4dCwkPsRjykm5JceG862taTZwcqe3kWyUz1oNZ3/OZmLvag09+5UnF5LBUYqVZk29tQ1 yXRMzbLBXY8cwUKqFfjzq+/PVbqkf3
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert places in XFS that take MMAPLOCK for two inodes to use helper
-VFS provides for it (filemap_invalidate_down_write_two()). Note that
-this changes lock ordering for MMAPLOCK from inode number based ordering
-to pointer based ordering VFS generally uses.
+Use invalidate_lock instead of zonefs' private i_mmap_sem. The intended
+purpose is exactly the same.
 
-CC: "Darrick J. Wong" <djwong@kernel.org>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+CC: Damien Le Moal <damien.lemoal@wdc.com>
+CC: Johannes Thumshirn <jth@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>
+Acked-by: Damien Le Moal <damien.lemoal@wdc.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/xfs/xfs_bmap_util.c | 15 ++++++++-------
- fs/xfs/xfs_inode.c     | 37 +++++++++++--------------------------
- 2 files changed, 19 insertions(+), 33 deletions(-)
+ fs/zonefs/super.c  | 23 +++++------------------
+ fs/zonefs/zonefs.h |  7 +++----
+ 2 files changed, 8 insertions(+), 22 deletions(-)
 
-diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
-index 0936f3a96fe6..ef18269ad1f7 100644
---- a/fs/xfs/xfs_bmap_util.c
-+++ b/fs/xfs/xfs_bmap_util.c
-@@ -1626,7 +1626,6 @@ xfs_swap_extents(
- 	struct xfs_bstat	*sbp = &sxp->sx_stat;
- 	int			src_log_flags, target_log_flags;
- 	int			error = 0;
--	int			lock_flags;
- 	uint64_t		f;
- 	int			resblks = 0;
- 	unsigned int		flags = 0;
-@@ -1638,8 +1637,8 @@ xfs_swap_extents(
- 	 * do the rest of the checks.
- 	 */
- 	lock_two_nondirectories(VFS_I(ip), VFS_I(tip));
--	lock_flags = XFS_MMAPLOCK_EXCL;
--	xfs_lock_two_inodes(ip, XFS_MMAPLOCK_EXCL, tip, XFS_MMAPLOCK_EXCL);
-+	filemap_invalidate_lock_two(VFS_I(ip)->i_mapping,
-+				    VFS_I(tip)->i_mapping);
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index cd145d318b17..8931a566038e 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -462,7 +462,7 @@ static int zonefs_file_truncate(struct inode *inode, loff_t isize)
+ 	inode_dio_wait(inode);
  
- 	/* Verify that both files have the same format */
- 	if ((VFS_I(ip)->i_mode & S_IFMT) != (VFS_I(tip)->i_mode & S_IFMT)) {
-@@ -1711,7 +1710,6 @@ xfs_swap_extents(
- 	 * or cancel will unlock the inodes from this point onwards.
- 	 */
- 	xfs_lock_two_inodes(ip, XFS_ILOCK_EXCL, tip, XFS_ILOCK_EXCL);
--	lock_flags |= XFS_ILOCK_EXCL;
- 	xfs_trans_ijoin(tp, ip, 0);
- 	xfs_trans_ijoin(tp, tip, 0);
+ 	/* Serialize against page faults */
+-	down_write(&zi->i_mmap_sem);
++	filemap_invalidate_lock(inode->i_mapping);
  
-@@ -1830,13 +1828,16 @@ xfs_swap_extents(
- 	trace_xfs_swap_extent_after(ip, 0);
- 	trace_xfs_swap_extent_after(tip, 1);
+ 	/* Serialize against zonefs_iomap_begin() */
+ 	mutex_lock(&zi->i_truncate_mutex);
+@@ -500,7 +500,7 @@ static int zonefs_file_truncate(struct inode *inode, loff_t isize)
  
-+out_unlock_ilock:
-+	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-+	xfs_iunlock(tip, XFS_ILOCK_EXCL);
- out_unlock:
--	xfs_iunlock(ip, lock_flags);
--	xfs_iunlock(tip, lock_flags);
-+	filemap_invalidate_unlock_two(VFS_I(ip)->i_mapping,
-+				      VFS_I(tip)->i_mapping);
- 	unlock_two_nondirectories(VFS_I(ip), VFS_I(tip));
- 	return error;
+ unlock:
+ 	mutex_unlock(&zi->i_truncate_mutex);
+-	up_write(&zi->i_mmap_sem);
++	filemap_invalidate_unlock(inode->i_mapping);
  
- out_trans_cancel:
- 	xfs_trans_cancel(tp);
--	goto out_unlock;
-+	goto out_unlock_ilock;
+ 	return ret;
  }
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index da0c3b62dae6..c963b9dc484b 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -551,12 +551,10 @@ xfs_lock_inodes(
+@@ -575,18 +575,6 @@ static int zonefs_file_fsync(struct file *file, loff_t start, loff_t end,
+ 	return ret;
  }
  
- /*
-- * xfs_lock_two_inodes() can only be used to lock one type of lock at a time -
-- * the mmaplock or the ilock, but not more than one type at a time. If we lock
-- * more than one at a time, lockdep will report false positives saying we have
-- * violated locking orders.  The iolock must be double-locked separately since
-- * we use i_rwsem for that.  We now support taking one lock EXCL and the other
-- * SHARED.
-+ * xfs_lock_two_inodes() can only be used to lock ilock. The iolock and
-+ * mmaplock must be double-locked separately since we use i_rwsem and
-+ * invalidate_lock for that. We now support taking one lock EXCL and the
-+ * other SHARED.
-  */
- void
- xfs_lock_two_inodes(
-@@ -574,15 +572,8 @@ xfs_lock_two_inodes(
- 	ASSERT(hweight32(ip1_mode) == 1);
- 	ASSERT(!(ip0_mode & (XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL)));
- 	ASSERT(!(ip1_mode & (XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL)));
--	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
--	       !(ip0_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
--	ASSERT(!(ip1_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
--	       !(ip1_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
--	ASSERT(!(ip1_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
--	       !(ip0_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
--	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
--	       !(ip1_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
+-static vm_fault_t zonefs_filemap_fault(struct vm_fault *vmf)
+-{
+-	struct zonefs_inode_info *zi = ZONEFS_I(file_inode(vmf->vma->vm_file));
+-	vm_fault_t ret;
 -
-+	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)));
-+	ASSERT(!(ip1_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)));
- 	ASSERT(ip0->i_ino != ip1->i_ino);
- 
- 	if (ip0->i_ino > ip1->i_ino) {
-@@ -3774,11 +3765,8 @@ xfs_ilock2_io_mmap(
- 	ret = xfs_iolock_two_inodes_and_break_layout(VFS_I(ip1), VFS_I(ip2));
- 	if (ret)
- 		return ret;
--	if (ip1 == ip2)
--		xfs_ilock(ip1, XFS_MMAPLOCK_EXCL);
--	else
--		xfs_lock_two_inodes(ip1, XFS_MMAPLOCK_EXCL,
--				    ip2, XFS_MMAPLOCK_EXCL);
-+	filemap_invalidate_lock_two(VFS_I(ip1)->i_mapping,
-+				    VFS_I(ip2)->i_mapping);
- 	return 0;
- }
- 
-@@ -3788,12 +3776,9 @@ xfs_iunlock2_io_mmap(
- 	struct xfs_inode	*ip1,
- 	struct xfs_inode	*ip2)
+-	down_read(&zi->i_mmap_sem);
+-	ret = filemap_fault(vmf);
+-	up_read(&zi->i_mmap_sem);
+-
+-	return ret;
+-}
+-
+ static vm_fault_t zonefs_filemap_page_mkwrite(struct vm_fault *vmf)
  {
--	bool			same_inode = (ip1 == ip2);
--
--	xfs_iunlock(ip2, XFS_MMAPLOCK_EXCL);
--	if (!same_inode)
--		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-+	filemap_invalidate_unlock_two(VFS_I(ip1)->i_mapping,
-+				      VFS_I(ip2)->i_mapping);
- 	inode_unlock(VFS_I(ip2));
--	if (!same_inode)
-+	if (ip1 != ip2)
- 		inode_unlock(VFS_I(ip1));
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+@@ -607,16 +595,16 @@ static vm_fault_t zonefs_filemap_page_mkwrite(struct vm_fault *vmf)
+ 	file_update_time(vmf->vma->vm_file);
+ 
+ 	/* Serialize against truncates */
+-	down_read(&zi->i_mmap_sem);
++	filemap_invalidate_lock_shared(inode->i_mapping);
+ 	ret = iomap_page_mkwrite(vmf, &zonefs_iomap_ops);
+-	up_read(&zi->i_mmap_sem);
++	filemap_invalidate_unlock_shared(inode->i_mapping);
+ 
+ 	sb_end_pagefault(inode->i_sb);
+ 	return ret;
  }
+ 
+ static const struct vm_operations_struct zonefs_file_vm_ops = {
+-	.fault		= zonefs_filemap_fault,
++	.fault		= filemap_fault,
+ 	.map_pages	= filemap_map_pages,
+ 	.page_mkwrite	= zonefs_filemap_page_mkwrite,
+ };
+@@ -1158,7 +1146,6 @@ static struct inode *zonefs_alloc_inode(struct super_block *sb)
+ 
+ 	inode_init_once(&zi->i_vnode);
+ 	mutex_init(&zi->i_truncate_mutex);
+-	init_rwsem(&zi->i_mmap_sem);
+ 	zi->i_wr_refcnt = 0;
+ 
+ 	return &zi->i_vnode;
+diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
+index 51141907097c..7b147907c328 100644
+--- a/fs/zonefs/zonefs.h
++++ b/fs/zonefs/zonefs.h
+@@ -70,12 +70,11 @@ struct zonefs_inode_info {
+ 	 * and changes to the inode private data, and in particular changes to
+ 	 * a sequential file size on completion of direct IO writes.
+ 	 * Serialization of mmap read IOs with truncate and syscall IO
+-	 * operations is done with i_mmap_sem in addition to i_truncate_mutex.
+-	 * Only zonefs_seq_file_truncate() takes both lock (i_mmap_sem first,
+-	 * i_truncate_mutex second).
++	 * operations is done with invalidate_lock in addition to
++	 * i_truncate_mutex.  Only zonefs_seq_file_truncate() takes both lock
++	 * (invalidate_lock first, i_truncate_mutex second).
+ 	 */
+ 	struct mutex		i_truncate_mutex;
+-	struct rw_semaphore	i_mmap_sem;
+ 
+ 	/* guarded by i_truncate_mutex */
+ 	unsigned int		i_wr_refcnt;
 -- 
 2.26.2
 
