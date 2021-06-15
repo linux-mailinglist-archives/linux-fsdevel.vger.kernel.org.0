@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5609B3A7EBE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 15:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 629383A7EC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jun 2021 15:12:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230238AbhFONNl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 09:13:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50108 "EHLO
+        id S229943AbhFONOP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 09:14:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230225AbhFONNk (ORCPT
+        with ESMTP id S229983AbhFONOO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 09:13:40 -0400
+        Tue, 15 Jun 2021 09:14:14 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FC7FC061574;
-        Tue, 15 Jun 2021 06:11:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB81C061574;
+        Tue, 15 Jun 2021 06:12:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=UhccBBYCc1ZiWlTYjKkEiiEHgVybsbHZcY8gPohuFNg=; b=Rx/Ht22g1Nhl49WZC4qXze76n9
-        MgctLwG5ZbOfh40lYWZz6u7QVvU/2Ymqrjwx6Pnxru+vzKb0KMzsW/NXyUpowLsI7I4HfHjahQFxQ
-        Rry9JxKz1gCzTguYY6Ua/E7fDNX1xcCi/7K13yrhsMzn+2MFDvGt6+04xysp9cOssSy8yh+EEeZtO
-        ZbzcIIM/u0oW+G3SswwOn1ul0676URkj/Bus9NZxJBODf9PcvGb5bZdssTt8RdEzb4/GeKPCx4s6n
-        e6PynuwBJjsBwd0r4r+wsgDi46Kd5o0GynhiFN1rU6RDOLc3HW12icvloYtPAbgFJpKi8vgPzSYHO
-        NuGXiyKA==;
+        bh=3xdhC5HV7s86FVu+oVp45KGHFi5GFQKoA4ZFHGR+cs0=; b=uFOGRHgEwO8knYHVCTHme6Hucz
+        Xw5HKp0y+S8PmOmA1FJUur6R1NNQwAi3IwoPGwJ9F5VuajTB1McBMuaayWV4aFPjZDUiSS+1DNV33
+        O0mTwk2eXOo9cs952G073rVdgqWakW+gHExJxIC4AAJ/Mw16ju7aq/m9Gz80+BgvVMcwKdNnLWV6e
+        G7DnfWEqaarp1REgtWcoac3A7ge8AUPC3utXyjxKJWb1Pccg8XbBJSGPeGeeyW5CkSnl5eS34ZREO
+        Hcumuhjo4eC+XA4HrpQ8BTxckR2xK6EP5cVMjvdVodu2xFQEsF+trF8UIjCW9sT2hVo8Ldfftr7Zt
+        NhX8vi+g==;
 Received: from [2001:4bb8:19b:fdce:9045:1e63:20f0:ca9] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lt8qP-006n8E-NH; Tue, 15 Jun 2021 13:11:09 +0000
+        id 1lt8qb-006nAu-7W; Tue, 15 Jun 2021 13:11:21 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
@@ -39,9 +39,9 @@ Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
         "Vasudevan, Anil" <anil.vasudevan@intel.com>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-nvme@lists.infradead.org
-Subject: [PATCH 02/16] block: don't try to poll multi-bio I/Os in __blkdev_direct_IO
-Date:   Tue, 15 Jun 2021 15:10:20 +0200
-Message-Id: <20210615131034.752623-3-hch@lst.de>
+Subject: [PATCH 03/16] iomap: don't try to poll multi-bio I/Os in __iomap_dio_rw
+Date:   Tue, 15 Jun 2021 15:10:21 +0200
+Message-Id: <20210615131034.752623-4-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210615131034.752623-1-hch@lst.de>
 References: <20210615131034.752623-1-hch@lst.de>
@@ -56,82 +56,53 @@ If an iocb is split into multiple bios we can't poll for both.  So don't
 bother to even try to poll in that case.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Tested-by: Mark Wunderlich <mark.wunderlich@intel.com>
 ---
- fs/block_dev.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ fs/iomap/direct-io.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index ac9b3c158a77..8600c651b0b0 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -375,7 +375,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	struct blk_plug plug;
- 	struct blkdev_dio *dio;
- 	struct bio *bio;
--	bool is_poll = (iocb->ki_flags & IOCB_HIPRI) != 0;
-+	bool do_poll = (iocb->ki_flags & IOCB_HIPRI);
- 	bool is_read = (iov_iter_rw(iter) == READ), is_sync;
- 	loff_t pos = iocb->ki_pos;
- 	blk_qc_t qc = BLK_QC_T_NONE;
-@@ -404,7 +404,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	 * Don't plug for HIPRI/polled IO, as those should go straight
- 	 * to issue
- 	 */
--	if (!is_poll)
-+	if (!(iocb->ki_flags & IOCB_HIPRI))
- 		blk_start_plug(&plug);
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 9398b8c31323..d5637f467109 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -282,6 +282,13 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 	if (!iov_iter_count(dio->submit.iter))
+ 		goto out;
  
- 	for (;;) {
-@@ -438,20 +438,13 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
++	/*
++	 * We can only poll for single bio I/Os.
++	 */
++	if (need_zeroout ||
++	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
++		dio->iocb->ki_flags &= ~IOCB_HIPRI;
++
+ 	if (need_zeroout) {
+ 		/* zero out from the start of the block to the write offset */
+ 		pad = pos & (fs_block_size - 1);
+@@ -339,6 +346,11 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
  
- 		nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS);
- 		if (!nr_pages) {
--			bool polled = false;
--
--			if (iocb->ki_flags & IOCB_HIPRI) {
-+			if (do_poll)
- 				bio_set_polled(bio, iocb);
--				polled = true;
--			}
--
- 			qc = submit_bio(bio);
--
--			if (polled)
-+			if (do_poll)
- 				WRITE_ONCE(iocb->ki_cookie, qc);
+ 		nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter,
+ 						 BIO_MAX_VECS);
++		/*
++		 * We can only poll for single bio I/Os.
++		 */
++		if (nr_pages)
++			dio->iocb->ki_flags &= ~IOCB_HIPRI;
+ 		iomap_dio_submit_bio(dio, iomap, bio, pos);
+ 		pos += n;
+ 	} while (nr_pages);
+@@ -579,6 +591,11 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 			iov_iter_revert(iter, pos - dio->i_size);
  			break;
  		}
--
- 		if (!dio->multi_bio) {
- 			/*
- 			 * AIO needs an extra reference to ensure the dio
-@@ -462,6 +455,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 				bio_get(bio);
- 			dio->multi_bio = true;
- 			atomic_set(&dio->ref, 2);
-+			do_poll = false;
- 		} else {
- 			atomic_inc(&dio->ref);
- 		}
-@@ -470,7 +464,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 		bio = bio_alloc(GFP_KERNEL, nr_pages);
- 	}
++
++		/*
++		 * We can only poll for single bio I/Os.
++		 */
++		iocb->ki_flags &= ~IOCB_HIPRI;
+ 	} while ((count = iov_iter_count(iter)) > 0);
+ 	blk_finish_plug(&plug);
  
--	if (!is_poll)
-+	if (!(iocb->ki_flags & IOCB_HIPRI))
- 		blk_finish_plug(&plug);
- 
- 	if (!is_sync)
-@@ -481,8 +475,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 		if (!READ_ONCE(dio->waiter))
- 			break;
- 
--		if (!(iocb->ki_flags & IOCB_HIPRI) ||
--		    !blk_poll(bdev_get_queue(bdev), qc, true))
-+		if (!do_poll || !blk_poll(bdev_get_queue(bdev), qc, true))
- 			blk_io_schedule();
- 	}
- 	__set_current_state(TASK_RUNNING);
 -- 
 2.30.2
 
