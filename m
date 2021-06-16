@@ -2,107 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E22A3AA093
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 17:58:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F0623AA0E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 18:09:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234961AbhFPP7y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 11:59:54 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:46732 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234698AbhFPP7X (ORCPT
+        id S234558AbhFPQLL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 12:11:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50663 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229503AbhFPQLK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 11:59:23 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 4D62F21A32;
-        Wed, 16 Jun 2021 15:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1623859034; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MzEXeyUJtYhb/jhKtsstzQNYPYyugeSQ7deyI5/x/eg=;
-        b=QluPc+xaSD6lMsYHFrTXOo9S19BGMh1dPOZCU9V9lAjMlVkbzEPC76NIYkzAlyHL6z0G2X
-        6V1D7RAO4dKfvHWXp9WKGolBz/Xim2qqndj/0aTBqw4NNJ/W710NpTjVSzVtUU+bCo6ztK
-        HR1Cd37auJvcp2UU0GST9EsPQ8ys2k8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1623859034;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MzEXeyUJtYhb/jhKtsstzQNYPYyugeSQ7deyI5/x/eg=;
-        b=jHTUUdWi2cy0yZq6g8W0CohAQJWdKoqUkM3WbwT5QWy5M/vj4YqpLcOCdoKxgHFiAm+6jn
-        h8dOe0bJlFuiCtAw==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 638F1A3BAE;
-        Wed, 16 Jun 2021 15:57:13 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 4FE0F1F2C68; Wed, 16 Jun 2021 17:57:12 +0200 (CEST)
-Date:   Wed, 16 Jun 2021 17:57:12 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pavel Reichl <preichl@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>
-Subject: Re: [PATCH 07/14] xfs: Refactor xfs_isilocked()
-Message-ID: <20210616155712.GC28250@quack2.suse.cz>
-References: <20210615090844.6045-1-jack@suse.cz>
- <20210615091814.28626-7-jack@suse.cz>
- <YMmOCK4wHc9lerEc@infradead.org>
- <20210616085304.GA28250@quack2.suse.cz>
- <20210616154705.GE158209@locust>
+        Wed, 16 Jun 2021 12:11:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623859744;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=n/BEHfEuV5E/ENeWXxNnAnWNEJlsEsSQXbuX7kP6iyU=;
+        b=ZFttEBdkao3Ee4Gy1hZ6OMoOyMH+CQNjjnufok4TPFN+tLpsH86P20vetaVxjFaiSthfOG
+        1d4kZ58T5KRCcGcq024bx2gBENyjphPKMWbRAB4w4ewJ8OyGkxlszhPOZNMZpcAe3+nvBg
+        m4NJvuNx2zOQLE0+T9Vfq6JVyi41aVw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-69-iAG7qi-rNxysk3zKGNnIgA-1; Wed, 16 Jun 2021 12:09:01 -0400
+X-MC-Unique: iAG7qi-rNxysk3zKGNnIgA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B0053A40CF;
+        Wed, 16 Jun 2021 16:09:00 +0000 (UTC)
+Received: from iangelak.remote.csb (ovpn-113-44.rdu2.redhat.com [10.10.113.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 782775C1C5;
+        Wed, 16 Jun 2021 16:08:53 +0000 (UTC)
+From:   Ioannis Angelakopoulos <iangelak@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com
+Cc:     miklos@szeredi.hu, stefanha@redhat.com, vgoyal@redhat.com
+Subject: [PATCH 0/3] Virtiofs: Support for remote blocking posix locks
+Date:   Wed, 16 Jun 2021 12:08:33 -0400
+Message-Id: <20210616160836.590206-1-iangelak@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210616154705.GE158209@locust>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 16-06-21 08:47:05, Darrick J. Wong wrote:
-> On Wed, Jun 16, 2021 at 10:53:04AM +0200, Jan Kara wrote:
-> > On Wed 16-06-21 06:37:12, Christoph Hellwig wrote:
-> > > On Tue, Jun 15, 2021 at 11:17:57AM +0200, Jan Kara wrote:
-> > > > From: Pavel Reichl <preichl@redhat.com>
-> > > > 
-> > > > Refactor xfs_isilocked() to use newly introduced __xfs_rwsem_islocked().
-> > > > __xfs_rwsem_islocked() is a helper function which encapsulates checking
-> > > > state of rw_semaphores hold by inode.
-> > > 
-> > > __xfs_rwsem_islocked doesn't seem to actually existing in any tree I
-> > > checked yet?
-> > 
-> > __xfs_rwsem_islocked is introduced by this patch so I'm not sure what are
-> > you asking about... :)
-> 
-> The sentence structure implies that __xfs_rwsem_islocked was previously
-> introduced.  You might change the commit message to read:
-> 
-> "Introduce a new __xfs_rwsem_islocked predicate to encapsulate checking
-> the state of a rw_semaphore, then refactor xfs_isilocked to use it."
-> 
-> Since it's not quite a straight copy-paste of the old code.
+Adding support for remote blocking locks in virtiofs. Initially linux
+only supported the fcntl(SETLK) option. Now the fcntl(SETLKW) option
+is also supported.
 
-Ah, ok. Sure, I can rephrase the changelog (or we can just update it on
-commit if that's the only problem with this series...). Oh, now I've
-remembered I've promised you a branch to pull :) Here it is with this
-change and Christoph's Reviewed-by tags:
+A guest issuing a fcntl(SETLKW) system call will block if another guest
+has already acquired the lock. Once the lock is available then the
+blocking guest will receive a notification, through the notification
+queue. Then the guest will unblock and acquire the lock.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git hole_punch_fixes
+Vivek Goyal (3):
+  virtiofs: Add an index to keep track of first request queue
+  virtiofs: Add a virtqueue for notifications
+  virtiofs: Support blocking posix locks (fcntl(F_SETLKW))
 
-								Honza
+ fs/fuse/virtio_fs.c            | 290 +++++++++++++++++++++++++++++++--
+ include/uapi/linux/fuse.h      |   7 +
+ include/uapi/linux/virtio_fs.h |   5 +
+ 3 files changed, 288 insertions(+), 14 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.27.0
+
