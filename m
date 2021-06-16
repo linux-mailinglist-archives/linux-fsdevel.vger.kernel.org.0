@@ -2,407 +2,538 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A0683A92A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 08:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2685A3A930E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 08:49:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231638AbhFPGdK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 02:33:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56838 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231396AbhFPGdI (ORCPT
+        id S231309AbhFPGvE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 02:51:04 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:56715 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231168AbhFPGvD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 02:33:08 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E87AC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 23:31:02 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id q15so1117633pgg.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 23:31:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wnVJHvXzTfMwZnd+sO8L8PW13B3KOws+XHBcdC/4riM=;
-        b=Yv9ZQDLD3WsQqlq7yq5aUVVWSQwiUdOZ+qsoDuKBQI0Nt78TlXWAKguiTBzi+qqseo
-         iwsgslAKqajlPYp+T/4wz34FbgnCi4e5ymRKLvdfnU/g12RY76V2hgg8wVE8U4Bj9EIB
-         7UU4wxSC3AU3xrehmS1hDX94RtLkU2sf6KT5uhVFHMCYIGkg0uIlS87Moi+EYx9HUVeO
-         wU8Z41eZfaffLRivuWoFCNg0z/3zRbAf4t3Z3xG5AXyj7PhAHt71XlYt7Nj8FOLCeNIo
-         odc7gI6tMdUmPeT8KxIO+I+9kp6nGKAv576nYrk/Arn7Du74NChCTZvHu04ikY2o6XwZ
-         nFHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wnVJHvXzTfMwZnd+sO8L8PW13B3KOws+XHBcdC/4riM=;
-        b=Yv2F82tHvc7oy1ZlZ9JcJbkyrO/UnsGVNNOkEkof2lwzXz8FNIu41tS9KGQKgX0SCA
-         PAgHPL9ORZVuo4fRgY5Qsz/0mWFm41mT903bmu/SobkqGn/cjplcAFML0OlEZYYj0CyM
-         bIIgV0Uo6PzeohGj3+zHRwBCop/LJ5T/y5Hl3Vw4E+8MRX9GnEf6svPvgVMQ1OzyH9/4
-         Q9SSuW9iOiU33P36aeh3sEfdI02KQcp6vWl8li/xa6UBw1Xc+s1hWBp6V4U6C9YRXpGQ
-         SZgbe9+AAWp//FLXlkYBpyHZ12cqbDiEx8ql03Zy3+KOfIhqiZ5yA5elGbuMAbPz8FRI
-         8A8A==
-X-Gm-Message-State: AOAM5320DEgD0/qenkYuoVfe6RL4ClZ+hUKNJ1oNWudr9juWYKB/jdtv
-        oahqiokM0TY7K1cTnjp1gcwWSOIAtoxCtEwd6UPRNw==
-X-Google-Smtp-Source: ABdhPJxEr9gf18Cdhk1f8EhTHILp6osP6kHcu589GdH0NbQQbUNIN5WvGkClnb9HbcroXzcqyZCUY4XCXkw4wpHlRvc=
-X-Received: by 2002:a63:5c4a:: with SMTP id n10mr3477810pgm.279.1623825061741;
- Tue, 15 Jun 2021 23:31:01 -0700 (PDT)
+        Wed, 16 Jun 2021 02:51:03 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210616064855epoutp04dfa835353eb24aace5a1c3b6e498dc81~I-URSVh6d0366103661epoutp04Y
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 06:48:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210616064855epoutp04dfa835353eb24aace5a1c3b6e498dc81~I-URSVh6d0366103661epoutp04Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1623826135;
+        bh=5VUzp4QPfNBa7NOcRe1Lk7tImGAGi3caiwYRjxR04I4=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=kx4twsJhAduqnI1lZysNcXRBTW0PoTFp4IBiNb6xGacOILoNf5+lrGLrWk1X3jsEw
+         AxGL8H3u5Lk1J0mhIAtx0nWMLDXGyfWcvgtLr3H+Q1hNWZu/gZ7Z7HeDKi0cVJElwf
+         zVg9UqsbHFgP+z6DHz8EI0m3zvpATlWidfpaiWxQ=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210616064854epcas1p2447de00835818a5dd59067e761368d03~I-UQweofm2236422364epcas1p2X;
+        Wed, 16 Jun 2021 06:48:54 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4G4bPd6xmPz4x9Q8; Wed, 16 Jun
+        2021 06:48:53 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        53.9C.09824.5DE99C06; Wed, 16 Jun 2021 15:48:53 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210616064853epcas1p298e462347aee43fee38fb40003b2aba8~I-UPF0flW1876518765epcas1p2c;
+        Wed, 16 Jun 2021 06:48:53 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210616064853epsmtrp25b7a042009ebd0cebac6e486518a1232~I-UPD4Yo13132731327epsmtrp2z;
+        Wed, 16 Jun 2021 06:48:53 +0000 (GMT)
+X-AuditID: b6c32a37-621e9a8000002660-3e-60c99ed5cd04
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1C.D8.08163.4DE99C06; Wed, 16 Jun 2021 15:48:52 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.89.31.77]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210616064852epsmtip19fbaeabf3b588d4c0cac437644734a82~I-UOj6CeV0932709327epsmtip12;
+        Wed, 16 Jun 2021 06:48:52 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Christoph Hellwig'" <hch@infradead.org>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-cifs@vger.kernel.org>, <smfrench@gmail.com>,
+        <stfrench@microsoft.com>, <willy@infradead.org>,
+        <aurelien.aptel@gmail.com>,
+        <linux-cifsd-devel@lists.sourceforge.net>,
+        <senozhatsky@chromium.org>, <sandeen@sandeen.net>,
+        <aaptel@suse.com>, <viro@zeniv.linux.org.uk>,
+        <ronniesahlberg@gmail.com>, <hch@lst.de>,
+        <dan.carpenter@oracle.com>,
+        "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
+        "'Hyunchul Lee'" <hyc.lee@gmail.com>
+In-Reply-To: <YMhpG/sAjO3WKKc3@infradead.org>
+Subject: RE: [PATCH v4 08/10] cifsd: add file operations
+Date:   Wed, 16 Jun 2021 15:48:52 +0900
+Message-ID: <009c01d7627b$ab8d69b0$02a83d10$@samsung.com>
 MIME-Version: 1.0
-References: <20210604011844.1756145-1-ruansy.fnst@fujitsu.com> <20210604011844.1756145-5-ruansy.fnst@fujitsu.com>
-In-Reply-To: <20210604011844.1756145-5-ruansy.fnst@fujitsu.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 15 Jun 2021 23:30:51 -0700
-Message-ID: <CAPcyv4iEuPWs-f+rV=xncbXYKSHkbhuLJ-1hnP9N9ABNzr1VSA@mail.gmail.com>
-Subject: Re: [PATCH v4 04/10] mm, fsdax: Refactor memory-failure handler for
- dax mapping
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        david <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJhIpvEjjDPMdIB0j/UYsSOvpftcQHigYlUAdgsEtICVUebFKnRxsew
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOJsWRmVeSWpSXmKPExsWy7bCmge7VeScTDA48NbVofHuaxeL467/s
+        Fq//TWexOD1hEZPFytVHmSyu3X/PbvHi/y5mi5//vzNa7Nl7ksXi8q45bBa9fZ9YLVqvaFns
+        3riIzWLt58fsFm9eHGazuDVxPpvF+b/HWS1+/5jD5iDkMbvhIovHzll32T02r9Dy2L3gM5PH
+        7psNbB6tO/6ye3x8eovFY8vih0we67dcZfH4vEnOY9OTt0wB3FE5NhmpiSmpRQqpecn5KZl5
+        6bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAnykplCXmlAKFAhKLi5X07WyK8ktL
+        UhUy8otLbJVSC1JyCgwNCvSKE3OLS/PS9ZLzc60MDQyMTIEqE3Iy2hdNZC74HF/x8q5+A2OP
+        VxcjJ4eEgInE0gfzmboYuTiEBHYwSvzfdIIRwvnEKLFyfiMrhPOZUWLj7h6WLkYOsJZ9B4Uh
+        4rsYJU48/gfV8YJRontxNyPIXDYBXYl/f/azgdgiQPbZhS/AipgFGlkkNrw9yQSS4ARKXJ+9
+        hwlkqrCAhcT+Cc4gYRYBVYm9hyazgti8ApYSRzfsZIawBSVOznzCAmIzC8hLbH87hxniBwWJ
+        n0+XsYKMERFwk5i9JBSiRERidmcbM8haCYHJnBILFx9ih3jARWLbVU2IVmGJV8e3sEPYUhKf
+        3+1lg7DLJU6c/MUEYddIbJi3D6rVWKLnRQmIySygKbF+lz5EhaLEzt9zGSG28km8+9rDClHN
+        K9HRJgRRoirRd+kw1EBpia72D+wTGJVmIXlrFpK3ZiG5fxbCsgWMLKsYxVILinPTU4sNC4yR
+        I3oTIzjFa5nvYJz29oPeIUYmDsZDjBIczEoivLrFJxKEeFMSK6tSi/Lji0pzUosPMZoCA3oi
+        s5Rocj4wy+SVxBuaGhkbG1uYmJmbmRorifPuZDuUICSQnliSmp2aWpBaBNPHxMEp1cCUfeVE
+        1iOnuZvvca5LDH7nIuy/UyV/6uWny96kvQoqPVLvMO3T9BOhT/apl4jWun9R+Dzp2nuW6+YP
+        mfXC9BvOWRgXvvdalvrmuOTs+1oHVaQD7/+z/xTkxvBv6+5yq69XlWelMbNfa9KteZnupuHp
+        UVhd5TXNkPdOf5i1U8/TP1YFLFvW1TPuXyztf9tQ+kHVheSqx7ddgop9F5pmKO9p4qw3rpy/
+        hn0+x885T83FgzXrdVapflBtnnCPJz1vU+OiyZZ1ZwwymNgt/vpMDEv6eUzY5Lukd9dlY+Wl
+        Wt8vPv/EFqCYtD1fLeEBn/y6O5f0PnNpnP9y4No7P7/46TsnCXXOOuYVd/+OvYHd9hAlluKM
+        REMt5qLiRABoxK+AegQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsWy7bCSnO7VeScTDE6lWDS+Pc1icfz1X3aL
+        1/+ms1icnrCIyWLl6qNMFtfuv2e3ePF/F7PFz//fGS327D3JYnF51xw2i96+T6wWrVe0LHZv
+        XMRmsfbzY3aLNy8Os1ncmjifzeL83+OsFr9/zGFzEPKY3XCRxWPnrLvsHptXaHnsXvCZyWP3
+        zQY2j9Ydf9k9Pj69xeKxZfFDJo/1W66yeHzeJOex6clbpgDuKC6blNSczLLUIn27BK6M9kUT
+        mQs+x1e8vKvfwNjj1cXIwSEhYCKx76BwFyMXh5DADkaJxs8nmLoYOYHi0hLHTpxhhqgRljh8
+        uBii5hmjxLJF29hBatgEdCX+/dnPBmKLANlnF75gBCliFpjMIrHrN0gRSMc9RonuiT/AOjiB
+        qq7P3sMEMlVYwEJi/wRnkDCLgKrE3kOTWUFsXgFLiaMbdjJD2IISJ2c+YQEpZxbQk2jbyAgS
+        ZhaQl9j+dg4zxJ0KEj+fLmMFKRERcJOYvSQUokREYnZnG/MERuFZSAbNQhg0C8mgWUg6FjCy
+        rGKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECI50La0djHtWfdA7xMjEwXiIUYKDWUmE
+        V7f4RIIQb0piZVVqUX58UWlOavEhRmkOFiVx3gtdJ+OFBNITS1KzU1MLUotgskwcnFINTH55
+        y5g2bpU0nmZy5s/7GokX501CuENjjW2rHPh0Ag7bSO7jeZDDuT9bqehi9L+eG//b45KXhad7
+        8+11t5n2jTFD56tllJHc1sMSl570BOjMzoxpVi1NOZW6e7F3hEd6ft98ZqnlN2Y9iWThN/a+
+        Ffz4546Oa66LxWZ/d1L/s7Ltc8wfVmP1jFOpTza8PqX7++MG0xWqtxIVG3SsqzLv7rJ4eKWU
+        /eTDex1Nn+Qdjjle09xw4o5XqJ1gzL0V7h59331XT8mMauzYftGht+CNnejrYg/RiV8YfjD2
+        rDry1tpYxCdwTV9UsfayD6lXD8sbr/riIMXf/ObA7YTDHdb7/13R2ZL5uibMpjbgDk+fEktx
+        RqKhFnNRcSIAR5102GMDAAA=
+X-CMS-MailID: 20210616064853epcas1p298e462347aee43fee38fb40003b2aba8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210602035820epcas1p3c444b34a6b6a4252c9091e0bf6c0c167
+References: <20210602034847.5371-1-namjae.jeon@samsung.com>
+        <CGME20210602035820epcas1p3c444b34a6b6a4252c9091e0bf6c0c167@epcas1p3.samsung.com>
+        <20210602034847.5371-9-namjae.jeon@samsung.com>
+        <YMhpG/sAjO3WKKc3@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ drop old nvdimm list, add the new one ]
+> On Wed, Jun 02, 2021 at 12:48:45PM +0900, Namjae Jeon wrote:
+> > +#include <linux/rwlock.h>
+> > +
+> > +#include "glob.h"
+> > +#include "buffer_pool.h"
+> > +#include "connection.h"
+> > +#include "mgmt/ksmbd_ida.h"
+> > +
+> > +static struct kmem_cache *filp_cache;
+> > +
+> > +struct wm {
+> > +	struct list_head	list;
+> > +	unsigned int		sz;
+> > +	char			buffer[0];
+> 
+> This should use buffer[];
+Okay.
 
-On Thu, Jun 3, 2021 at 6:19 PM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
->
-> The current memory_failure_dev_pagemap() can only handle single-mapped
-> dax page for fsdax mode.  The dax page could be mapped by multiple files
-> and offsets if we let reflink feature & fsdax mode work together.  So,
-> we refactor current implementation to support handle memory failure on
-> each file and offset.
+> 
+> > +};
+> > +
+> > +struct wm_list {
+> > +	struct list_head	list;
+> > +	unsigned int		sz;
+> > +
+> > +	spinlock_t		wm_lock;
+> > +	int			avail_wm;
+> > +	struct list_head	idle_wm;
+> > +	wait_queue_head_t	wm_wait;
+> > +};
+> 
+> What does wm stand for?
+> 
+> This looks like arbitrary caching of vmalloc buffers.  I thought we decided to just make vmalloc suck
+> less rather than papering over that?
+Today I have checked that vmalloc performance improvement patch for big allocation is merged.
+I will remove it on next version.
 
-I don't understand this organization, perhaps because this patch
-introduces mf_dax_kill_procs() without a user. However, my expectation
-is that memory_failure() is mostly untouched save for an early check
-via pgmap->notify_memory_failure(). If pgmap->notify_memory_failure()
-indicates that the memory failure was handled by the pgmap->owner /
-dax_dev holder stack, then the typical memory failure path is
-short-circuited. Otherwise, for non-reflink filesystems where
-page->mapping() is valid the legacy / existing memory_failure()
-operates as it does currently. If reflink capable filesystems want to
-share a common implementation to map pfns to files they can, but I
-don't think that common code belongs in mm/memory-failure.c.
+> 
+> > +static LIST_HEAD(wm_lists);
+> > +static DEFINE_RWLOCK(wm_lists_lock);
+> 
+> Especially as this isn't going to scale at all using global loists and locks.
+Okay.
 
->
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> ---
->  fs/dax.c            |  21 ++++++++
->  include/linux/dax.h |   1 +
->  include/linux/mm.h  |   9 ++++
->  mm/memory-failure.c | 114 ++++++++++++++++++++++++++++----------------
->  4 files changed, 105 insertions(+), 40 deletions(-)
->
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 62352cbcf0f4..58faca85455a 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -389,6 +389,27 @@ static struct page *dax_busy_page(void *entry)
->         return NULL;
->  }
->
-> +/*
-> + * dax_load_pfn - Load pfn of the DAX entry corresponding to a page
-> + * @mapping: The file whose entry we want to load
-> + * @index:   The offset where the DAX entry located in
-> + *
-> + * Return:   pfn of the DAX entry
-> + */
-> +unsigned long dax_load_pfn(struct address_space *mapping, unsigned long index)
-> +{
-> +       XA_STATE(xas, &mapping->i_pages, index);
-> +       void *entry;
-> +       unsigned long pfn;
-> +
-> +       xas_lock_irq(&xas);
-> +       entry = xas_load(&xas);
-> +       pfn = dax_to_pfn(entry);
-> +       xas_unlock_irq(&xas);
+> 
+> > +void ksmbd_free_file_struct(void *filp) {
+> > +	kmem_cache_free(filp_cache, filp);
+> > +}
+> > +
+> > +void *ksmbd_alloc_file_struct(void)
+> > +{
+> > +	return kmem_cache_zalloc(filp_cache, GFP_KERNEL); }
+> 
+> These are only ued in vfs_cache.c . So I'd suggest to just move filp_cache there and drop these
+> wrappers.
+Okay.
 
-This looks racy, what happened to the locking afforded by dax_lock_page()?
+> 
+> > +}
+> > +
+> > +static void ksmbd_vfs_inherit_owner(struct ksmbd_work *work,
+> > +				    struct inode *parent_inode,
+> > +				    struct inode *inode)
+> > +{
+> > +	if (!test_share_config_flag(work->tcon->share_conf,
+> > +				    KSMBD_SHARE_FLAG_INHERIT_OWNER))
+> > +		return;
+> > +
+> > +	i_uid_write(inode, i_uid_read(parent_inode)); }
+> 
+> Can you explain this a little more?  When do the normal create/mdir fail to inherit the owner?
+The ownership of new files and directories is normally created with effective uid of the connected user.
+There is "inherit owner" parameter(samba also have same one) to inherit the ownership of the parent directory.
 
-> +
-> +       return pfn;
-> +}
-> +
->  /*
->   * dax_lock_mapping_entry - Lock the DAX entry corresponding to a page
->   * @page: The page whose entry we want to lock
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 1ce343a960ab..6e758daa5004 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -158,6 +158,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
->
->  struct page *dax_layout_busy_page(struct address_space *mapping);
->  struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
-> +unsigned long dax_load_pfn(struct address_space *mapping, unsigned long index);
->  dax_entry_t dax_lock_page(struct page *page);
->  void dax_unlock_page(struct page *page, dax_entry_t cookie);
->  #else
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index c274f75efcf9..2b7527e93c77 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1187,6 +1187,14 @@ static inline bool is_device_private_page(const struct page *page)
->                 page->pgmap->type == MEMORY_DEVICE_PRIVATE;
->  }
->
-> +static inline bool is_device_fsdax_page(const struct page *page)
-> +{
-> +       return IS_ENABLED(CONFIG_DEV_PAGEMAP_OPS) &&
-> +               IS_ENABLED(CONFIG_FS_DAX) &&
-> +               is_zone_device_page(page) &&
-> +               page->pgmap->type == MEMORY_DEVICE_FS_DAX;
+> 
+> int ksmbd_vfs_inode_permission(struct dentry *dentry, int acc_mode, bool delete)
+> > +{
+> > +	int mask, ret = 0;
+> > +
+> > +	mask = 0;
+> > +	acc_mode &= O_ACCMODE;
+> > +
+> > +	if (acc_mode == O_RDONLY)
+> > +		mask = MAY_READ;
+> > +	else if (acc_mode == O_WRONLY)
+> > +		mask = MAY_WRITE;
+> > +	else if (acc_mode == O_RDWR)
+> > +		mask = MAY_READ | MAY_WRITE;
+> 
+> How about already setting up the MAY_ flags in smb2_create_open_flags and returning them in extra
+> argument?  That keeps the sm to Linux translation in a single place.
+Right. Will update it.
 
-Why is this necessary? The dax_dev holder is the one that knows the
-nature of the pfn. The common memory_failure() code should not care
-about fsdax vs devdax.
+> 
+> > +
+> > +	if (inode_permission(&init_user_ns, d_inode(dentry), mask | MAY_OPEN))
+> > +		return -EACCES;
+> 
+> And this call can be open coded in the only caller.
+Okay.
 
-> +}
-> +
->  static inline bool is_pci_p2pdma_page(const struct page *page)
->  {
->         return IS_ENABLED(CONFIG_DEV_PAGEMAP_OPS) &&
-> @@ -3078,6 +3086,7 @@ enum mf_flags {
->         MF_MUST_KILL = 1 << 2,
->         MF_SOFT_OFFLINE = 1 << 3,
->  };
-> +int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index, int flags);
->  extern int memory_failure(unsigned long pfn, int flags);
->  extern void memory_failure_queue(unsigned long pfn, int flags);
->  extern void memory_failure_queue_kick(int cpu);
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 85ad98c00fd9..4377e727d478 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -56,6 +56,7 @@
->  #include <linux/kfifo.h>
->  #include <linux/ratelimit.h>
->  #include <linux/page-isolation.h>
-> +#include <linux/dax.h>
->  #include "internal.h"
->  #include "ras/ras_event.h"
->
-> @@ -120,6 +121,13 @@ static int hwpoison_filter_dev(struct page *p)
->         if (PageSlab(p))
->                 return -EINVAL;
->
-> +       if (pfn_valid(page_to_pfn(p))) {
-> +               if (is_device_fsdax_page(p))
+> 
+> > +	if (delete) {
+> 
+> And this block could be split into a nice self-contained helper.
+Okay.
 
-This is racy unless the page is pinned. Also, not clear why this is needed?
+> 
+> > +		struct dentry *child, *parent;
+> > +
+> > +		parent = dget_parent(dentry);
+> > +		inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+> > +		child = lookup_one_len(dentry->d_name.name, parent,
+> > +				       dentry->d_name.len);
+> > +		if (IS_ERR(child)) {
+> > +			ret = PTR_ERR(child);
+> > +			goto out_lock;
+> > +		}
+> > +
+> > +		if (child != dentry) {
+> > +			ret = -ESTALE;
+> > +			dput(child);
+> > +			goto out_lock;
+> > +		}
+> > +		dput(child);
+> 
+> That being said I do not understand the need for this re-lookup at all.
+Al commented parent could be not stable, So checked staleness by re-lookup name under parent lock.
 
-> +                       return 0;
-> +               else
-> +                       return -EINVAL;
-> +       }
-> +
->         mapping = page_mapping(p);
->         if (mapping == NULL || mapping->host == NULL)
->                 return -EINVAL;
-> @@ -290,10 +298,9 @@ void shake_page(struct page *p, int access)
->  }
->  EXPORT_SYMBOL_GPL(shake_page);
->
-> -static unsigned long dev_pagemap_mapping_shift(struct page *page,
-> -               struct vm_area_struct *vma)
-> +static unsigned long dev_pagemap_mapping_shift(struct vm_area_struct *vma,
-> +                                              unsigned long address)
->  {
-> -       unsigned long address = vma_address(page, vma);
->         pgd_t *pgd;
->         p4d_t *p4d;
->         pud_t *pud;
-> @@ -333,9 +340,8 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
->   * Schedule a process for later kill.
->   * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
->   */
-> -static void add_to_kill(struct task_struct *tsk, struct page *p,
-> -                      struct vm_area_struct *vma,
-> -                      struct list_head *to_kill)
-> +static void add_to_kill(struct task_struct *tsk, struct page *p, pgoff_t pgoff,
-> +                       struct vm_area_struct *vma, struct list_head *to_kill)
->  {
->         struct to_kill *tk;
->
-> @@ -346,9 +352,12 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
->         }
->
->         tk->addr = page_address_in_vma(p, vma);
-> -       if (is_zone_device_page(p))
-> -               tk->size_shift = dev_pagemap_mapping_shift(p, vma);
-> -       else
-> +       if (is_zone_device_page(p)) {
-> +               if (is_device_fsdax_page(p))
-> +                       tk->addr = vma->vm_start +
-> +                                       ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
-> +               tk->size_shift = dev_pagemap_mapping_shift(vma, tk->addr);
+> 
+> > +	if (!inode_permission(&init_user_ns, d_inode(dentry), MAY_OPEN |
+> > +MAY_WRITE))
+> 
+> All these inode_permission lines have overly long lines.  It might be worth to pass the user_namespace
+> to this function, not only to shorten the code, but also to prepare for user namespace support.
+Okay, Let me check it.
 
-What was wrong with the original code?
+> 
+> > +	parent = dget_parent(dentry);
+> > +	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+> > +	child = lookup_one_len(dentry->d_name.name, parent,
+> > +			       dentry->d_name.len);
+> > +	if (IS_ERR(child)) {
+> > +		ret = PTR_ERR(child);
+> > +		goto out_lock;
+> > +	}
+> > +
+> > +	if (child != dentry) {
+> > +		ret = -ESTALE;
+> > +		dput(child);
+> > +		goto out_lock;
+> > +	}
+> > +	dput(child);
+> 
+> This is the same weird re-lookup dance as above.  IFF there is a good rationale for it it needs to go
+> into a self-contained and well documented helper.
+Okay.
 
-> +       } else
->                 tk->size_shift = page_shift(compound_head(p));
->
->         /*
-> @@ -496,7 +505,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
->                         if (!page_mapped_in_vma(page, vma))
->                                 continue;
->                         if (vma->vm_mm == t->mm)
-> -                               add_to_kill(t, page, vma, to_kill);
-> +                               add_to_kill(t, page, 0, vma, to_kill);
->                 }
->         }
->         read_unlock(&tasklist_lock);
-> @@ -506,24 +515,19 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
->  /*
->   * Collect processes when the error hit a file mapped page.
->   */
-> -static void collect_procs_file(struct page *page, struct list_head *to_kill,
-> -                               int force_early)
-> +static void collect_procs_file(struct page *page, struct address_space *mapping,
-> +               pgoff_t pgoff, struct list_head *to_kill, int force_early)
->  {
+> 
+> > +int ksmbd_vfs_create(struct ksmbd_work *work, const char *name,
+> > +umode_t mode) {
+> > +	struct path path;
+> > +	struct dentry *dentry;
+> > +	int err;
+> > +
+> > +	dentry = kern_path_create(AT_FDCWD, name, &path, 0);
+> 
+> Curious:  why is this using absolute or CWD based path instead of doing lookups based off the parent
+> as done by e.g. nfsd?  Same also for mkdir and co.
+Because SMB create request is given an absolute path unlike NFS.
 
-collect_procs() and kill_procs() are the only core memory_failure()
-helpers I expect would be exported for a fileystem dax_dev holder to
-call when it is trying to cleanup a memory_failure() on a reflink'd
-mapping.
+> 
+> > +{
+> > +	struct file *filp;
+> > +	ssize_t nbytes = 0;
+> > +	char *rbuf;
+> > +	struct inode *inode;
+> > +
+> > +	rbuf = work->aux_payload_buf;
+> > +	filp = fp->filp;
+> > +	inode = file_inode(filp);
+> 
+> These can be initialized on the declaration lines to make the code a little easier to read.
+Okay.
 
->         struct vm_area_struct *vma;
->         struct task_struct *tsk;
-> -       struct address_space *mapping = page->mapping;
-> -       pgoff_t pgoff;
->
->         i_mmap_lock_read(mapping);
->         read_lock(&tasklist_lock);
-> -       pgoff = page_to_pgoff(page);
->         for_each_process(tsk) {
->                 struct task_struct *t = task_early_kill(tsk, force_early);
-> -
->                 if (!t)
->                         continue;
-> -               vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff,
-> -                                     pgoff) {
-> +               vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
->                         /*
->                          * Send early kill signal to tasks where a vma covers
->                          * the page but the corrupted page is not necessarily
-> @@ -532,7 +536,7 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
->                          * to be informed of all such data corruptions.
->                          */
->                         if (vma->vm_mm == t->mm)
-> -                               add_to_kill(t, page, vma, to_kill);
-> +                               add_to_kill(t, page, pgoff, vma, to_kill);
->                 }
->         }
->         read_unlock(&tasklist_lock);
-> @@ -551,7 +555,8 @@ static void collect_procs(struct page *page, struct list_head *tokill,
->         if (PageAnon(page))
->                 collect_procs_anon(page, tokill, force_early);
->         else
-> -               collect_procs_file(page, tokill, force_early);
-> +               collect_procs_file(page, page_mapping(page), page_to_pgoff(page),
-> +                                  tokill, force_early);
->  }
->
->  static const char *action_name[] = {
-> @@ -1218,6 +1223,51 @@ static int try_to_split_thp_page(struct page *page, const char *msg)
->         return 0;
->  }
->
-> +static void unmap_and_kill(struct list_head *to_kill, unsigned long pfn,
-> +               struct address_space *mapping, pgoff_t index, int flags)
-> +{
-> +       struct to_kill *tk;
-> +       unsigned long size = 0;
-> +       loff_t start;
-> +
-> +       list_for_each_entry(tk, to_kill, nd)
-> +               if (tk->size_shift)
-> +                       size = max(size, 1UL << tk->size_shift);
-> +       if (size) {
-> +               /*
-> +                * Unmap the largest mapping to avoid breaking up
-> +                * device-dax mappings which are constant size. The
-> +                * actual size of the mapping being torn down is
-> +                * communicated in siginfo, see kill_proc()
-> +                */
-> +               start = (index << PAGE_SHIFT) & ~(size - 1);
-> +               unmap_mapping_range(mapping, start, size, 0);
-> +       }
-> +
-> +       kill_procs(to_kill, flags & MF_MUST_KILL, false, pfn, flags);
-> +}
-> +
-> +int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index, int flags)
-> +{
-> +       LIST_HEAD(to_kill);
-> +       /* load the pfn of the dax mapping file */
-> +       unsigned long pfn = dax_load_pfn(mapping, index);
-> +
-> +       /*
-> +        * Unlike System-RAM there is no possibility to swap in a
-> +        * different physical page at a given virtual address, so all
-> +        * userspace consumption of ZONE_DEVICE memory necessitates
-> +        * SIGBUS (i.e. MF_MUST_KILL)
-> +        */
-> +       flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
-> +       collect_procs_file(pfn_to_page(pfn), mapping, index, &to_kill,
-> +                          flags & MF_ACTION_REQUIRED);
-> +
-> +       unmap_and_kill(&to_kill, pfn, mapping, index, flags);
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(mf_dax_kill_procs);
-> +
->  static int memory_failure_hugetlb(unsigned long pfn, int flags)
->  {
->         struct page *p = pfn_to_page(pfn);
-> @@ -1298,12 +1348,8 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->                 struct dev_pagemap *pgmap)
->  {
->         struct page *page = pfn_to_page(pfn);
-> -       const bool unmap_success = true;
-> -       unsigned long size = 0;
-> -       struct to_kill *tk;
-> -       LIST_HEAD(tokill);
-> +       LIST_HEAD(to_kill);
->         int rc = -EBUSY;
-> -       loff_t start;
->         dax_entry_t cookie;
->
->         if (flags & MF_COUNT_INCREASED)
-> @@ -1355,22 +1401,10 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->          * SIGBUS (i.e. MF_MUST_KILL)
->          */
->         flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
-> -       collect_procs(page, &tokill, flags & MF_ACTION_REQUIRED);
-> +       collect_procs_file(page, page->mapping, page->index, &to_kill,
-> +                          flags & MF_ACTION_REQUIRED);
->
-> -       list_for_each_entry(tk, &tokill, nd)
-> -               if (tk->size_shift)
-> -                       size = max(size, 1UL << tk->size_shift);
-> -       if (size) {
-> -               /*
-> -                * Unmap the largest mapping to avoid breaking up
-> -                * device-dax mappings which are constant size. The
-> -                * actual size of the mapping being torn down is
-> -                * communicated in siginfo, see kill_proc()
-> -                */
-> -               start = (page->index << PAGE_SHIFT) & ~(size - 1);
-> -               unmap_mapping_range(page->mapping, start, size, 0);
-> -       }
-> -       kill_procs(&tokill, flags & MF_MUST_KILL, !unmap_success, pfn, flags);
-> +       unmap_and_kill(&to_kill, pfn, page->mapping, page->index, flags);
+> 
+> > +	if (!work->tcon->posix_extensions) {
+> > +		spin_lock(&src_dent->d_lock);
+> > +		list_for_each_entry(dst_dent, &src_dent->d_subdirs, d_child) {
+> > +			struct ksmbd_file *child_fp;
+> > +
+> > +			if (d_really_is_negative(dst_dent))
+> > +				continue;
+> > +
+> > +			child_fp = ksmbd_lookup_fd_inode(d_inode(dst_dent));
+> > +			if (child_fp) {
+> > +				spin_unlock(&src_dent->d_lock);
+> > +				ksmbd_debug(VFS, "Forbid rename, sub file/dir is in use\n");
+> > +				return -EACCES;
+> > +			}
+> > +		}
+> > +		spin_unlock(&src_dent->d_lock);
+> > +	}
+> 
+> This begs for being split into a self-contained helper.
+Okay.
 
-There's just too much change in this patch and not enough
-justification of what is being refactored and why.
+> 
+> > +int ksmbd_vfs_lock(struct file *filp, int cmd, struct file_lock
+> > +*flock) {
+> > +	ksmbd_debug(VFS, "calling vfs_lock_file\n");
+> > +	return vfs_lock_file(filp, cmd, flock, NULL); }
+> > +
+> > +int ksmbd_vfs_readdir(struct file *file, struct ksmbd_readdir_data
+> > +*rdata) {
+> > +	return iterate_dir(file, &rdata->ctx); }
+> > +
+> > +int ksmbd_vfs_alloc_size(struct ksmbd_work *work, struct ksmbd_file *fp,
+> > +			 loff_t len)
+> > +{
+> > +	smb_break_all_levII_oplock(work, fp, 1);
+> > +	return vfs_fallocate(fp->filp, FALLOC_FL_KEEP_SIZE, 0, len); }
+> 
+> Please avoid such trivial wrappers that just make the code hard to follow.
+Okay.
+
+> 
+> > +int ksmbd_vfs_fqar_lseek(struct ksmbd_file *fp, loff_t start, loff_t length,
+> > +			 struct file_allocated_range_buffer *ranges,
+> > +			 int in_count, int *out_count)
+> 
+> What is fqar?
+It is an abbreviation for FSCTL QUERY ALLOCATED RANGES.
+
+> 
+> > +
+> > +/*
+> > + * ksmbd_vfs_get_logical_sector_size() - get logical sector size from
+> > +inode
+> > + * @inode: inode
+> > + *
+> > + * Return: logical sector size
+> > + */
+> > +unsigned short ksmbd_vfs_logical_sector_size(struct inode *inode) {
+> > +	struct request_queue *q;
+> > +	unsigned short ret_val = 512;
+> > +
+> > +	if (!inode->i_sb->s_bdev)
+> > +		return ret_val;
+> > +
+> > +	q = inode->i_sb->s_bdev->bd_disk->queue;
+> > +
+> > +	if (q && q->limits.logical_block_size)
+> > +		ret_val = q->limits.logical_block_size;
+> > +
+> > +	return ret_val;
+> 
+> I don't think a CIFS server has any business poking into the block layer.  What is this trying to do?
+Ah, Yes, We don't need do that. I will change it with statfs->f_bsize.
+
+> 
+> > +struct posix_acl *ksmbd_vfs_posix_acl_alloc(int count, gfp_t flags) {
+> > +#if IS_ENABLED(CONFIG_FS_POSIX_ACL)
+> > +	return posix_acl_alloc(count, flags); #else
+> > +	return NULL;
+> > +#endif
+> > +}
+> > +
+> > +struct posix_acl *ksmbd_vfs_get_acl(struct inode *inode, int type) {
+> > +#if IS_ENABLED(CONFIG_FS_POSIX_ACL)
+> > +	return get_acl(inode, type);
+> > +#else
+> > +	return NULL;
+> > +#endif
+> > +}
+> > +
+> > +int ksmbd_vfs_set_posix_acl(struct inode *inode, int type,
+> > +			    struct posix_acl *acl)
+> > +{
+> > +#if IS_ENABLED(CONFIG_FS_POSIX_ACL)
+> > +	return set_posix_acl(&init_user_ns, inode, type, acl); #else
+> > +	return -EOPNOTSUPP;
+> > +#endif
+> > +}
+> 
+> Please avoid these pointless wrappers and just use large code block ifdefs or IS_ENABLED checks.
+Okay.
+
+> 
+> > +int ksmbd_vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+> > +			      struct file *file_out, loff_t pos_out, size_t len) {
+> > +	struct inode *inode_in = file_inode(file_in);
+> > +	struct inode *inode_out = file_inode(file_out);
+> > +	int ret;
+> > +
+> > +	ret = vfs_copy_file_range(file_in, pos_in, file_out, pos_out, len, 0);
+> > +	/* do splice for the copy between different file systems */
+> > +	if (ret != -EXDEV)
+> > +		return ret;
+> > +
+> > +	if (S_ISDIR(inode_in->i_mode) || S_ISDIR(inode_out->i_mode))
+> > +		return -EISDIR;
+> > +	if (!S_ISREG(inode_in->i_mode) || !S_ISREG(inode_out->i_mode))
+> > +		return -EINVAL;
+> > +
+> > +	if (!(file_in->f_mode & FMODE_READ) ||
+> > +	    !(file_out->f_mode & FMODE_WRITE))
+> > +		return -EBADF;
+> > +
+> > +	if (len == 0)
+> > +		return 0;
+> > +
+> > +	file_start_write(file_out);
+> > +
+> > +	/*
+> > +	 * skip the verification of the range of data. it will be done
+> > +	 * in do_splice_direct
+> > +	 */
+> > +	ret = do_splice_direct(file_in, &pos_in, file_out, &pos_out,
+> > +			       len > MAX_RW_COUNT ? MAX_RW_COUNT : len, 0);
+> 
+> vfs_copy_file_range already does this type of fallback, so this is dead code.
+Okay.
+
+> 
+> > +#define XATTR_NAME_STREAM_LEN		(sizeof(XATTR_NAME_STREAM) - 1)
+> > +
+> > +enum {
+> > +	XATTR_DOSINFO_ATTRIB		= 0x00000001,
+> > +	XATTR_DOSINFO_EA_SIZE		= 0x00000002,
+> > +	XATTR_DOSINFO_SIZE		= 0x00000004,
+> > +	XATTR_DOSINFO_ALLOC_SIZE	= 0x00000008,
+> > +	XATTR_DOSINFO_CREATE_TIME	= 0x00000010,
+> > +	XATTR_DOSINFO_CHANGE_TIME	= 0x00000020,
+> > +	XATTR_DOSINFO_ITIME		= 0x00000040
+> > +};
+> > +
+> > +struct xattr_dos_attrib {
+> > +	__u16	version;
+> > +	__u32	flags;
+> > +	__u32	attr;
+> > +	__u32	ea_size;
+> > +	__u64	size;
+> > +	__u64	alloc_size;
+> > +	__u64	create_time;
+> > +	__u64	change_time;
+> > +	__u64	itime;
+> > +};
+> 
+> These looks like on-disk structures.  Any chance you could re-order the headers so that things like
+> on-disk, on the wire and netlink uapi structures all have a dedicated and well documented header for
+> themselves?
+Okay.
+
+> 
+> > +	read_lock(&ci->m_lock);
+> > +	list_for_each(cur, &ci->m_fp_list) {
+> > +		lfp = list_entry(cur, struct ksmbd_file, node);
+> 
+> Please use list_for_each_entry.  There are very few places left where using list_for_each makes sense.
+Okay.
+
+> 
+> > +		if (inode == FP_INODE(lfp)) {
+> > +			atomic_dec(&ci->m_count);
+> > +			read_unlock(&ci->m_lock);
+> > +			return lfp;
+> > +		}
+> > +	}
+> > +	atomic_dec(&ci->m_count);
+> > +	read_unlock(&ci->m_lock);
+> 
+> So a successful find increments m_count, but a miss decreases it?
+> Isn't this going to create an underflow?
+m_count is increased from ksmbd_inode_lookup_by_vfsinode().
+So m_count should be decreased regardless of finding it.
+
+> 
+> > +	if (!fp->f_ci) {
+> > +		ksmbd_free_file_struct(fp);
+> > +		return ERR_PTR(-ENOMEM);
+> > +	}
+> > +
+> > +	ret = __open_id(&work->sess->file_table, fp, OPEN_ID_TYPE_VOLATILE_ID);
+> > +	if (ret) {
+> > +		ksmbd_inode_put(fp->f_ci);
+> > +		ksmbd_free_file_struct(fp);
+> > +		return ERR_PTR(ret);
+> > +	}
+> > +
+> > +	atomic_inc(&work->conn->stats.open_files_count);
+> > +	return fp;
+> 
+> Please use goto based unwinding instead of duplicating the resoure cleanup.
+Okay.
+> 
+> > +static bool tree_conn_fd_check(struct ksmbd_tree_connect *tcon,
+> > +struct ksmbd_file *fp)
+> 
+> Overly long line.
+Recently, checkpatch.pl has been changed to allow up to 100 character.
+You mean cut it to 80 character if possible?
+> 
+> > +{
+> > +	return fp->tcon != tcon;
+> > +}
+> > +
+> > +static bool session_fd_check(struct ksmbd_tree_connect *tcon, struct
+> > +ksmbd_file *fp)
+> 
+> Same.
+Okay.
+
