@@ -2,126 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 781C83A9BDC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 15:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8743A9C49
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 15:41:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233116AbhFPNYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 09:24:51 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3250 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232611AbhFPNYu (ORCPT
+        id S233162AbhFPNnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 09:43:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:20400 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233065AbhFPNnt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 09:24:50 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4G4lwq6C9Kz6K6NG;
-        Wed, 16 Jun 2021 21:12:59 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 16 Jun 2021 15:22:40 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <viro@zeniv.linux.org.uk>, <zohar@linux.ibm.com>,
-        <paul@paul-moore.com>, <stephen.smalley.work@gmail.com>,
-        <casey@schaufler-ca.com>, <stefanb@linux.ibm.com>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <selinux@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH] fs: Return raw xattr for security.* if there is size disagreement with LSMs
-Date:   Wed, 16 Jun 2021 15:22:27 +0200
-Message-ID: <20210616132227.999256-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <ee75bde9a17f418984186caa70abd33b@huawei.com>
-References: <ee75bde9a17f418984186caa70abd33b@huawei.com>
+        Wed, 16 Jun 2021 09:43:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623850902;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=p8GK50I3KBKc8B6YusjGKlCOchxcM/TeXaVsgxynpE4=;
+        b=g17r4MvaA/NhJ6yc+z6f493nMv9J3Ge6Ez93xeqkBYUEyAa6LL98+tgwm002CJQ3Rhzd+1
+        3X7Fod07l1aICDQgMxCRDyeZ0+AJKJHJWI0JjJM0O3EyajqsmFfFpcRiXCyi9a28sGi//0
+        86tIWLNlSzi99s0Mg7TqAg+5KgCQNlU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-84-PT56Y0xWN_GyKRNQvyK7Zg-1; Wed, 16 Jun 2021 09:41:39 -0400
+X-MC-Unique: PT56Y0xWN_GyKRNQvyK7Zg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0D78319251AD;
+        Wed, 16 Jun 2021 13:41:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1FCBF10016F4;
+        Wed, 16 Jun 2021 13:41:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <200ea6f7-0182-9da1-734c-c49102663ccc@redhat.com>
+References: <200ea6f7-0182-9da1-734c-c49102663ccc@redhat.com> <162375813191.653958.11993495571264748407.stgit@warthog.procyon.org.uk> <CAHk-=whARK9gtk0BPo8Y0EQqASNG9SfpF1MRqjxf43OO9F0vag@mail.gmail.com> <f2764b10-dd0d-cabf-0264-131ea5829fed@infradead.org> <CAHk-=whPPWYXKQv6YjaPQgQCf+78S+0HmAtyzO1cFMdcqQp5-A@mail.gmail.com> <c2002123-795c-20ae-677c-a35ba0e361af@infradead.org> <051421e0-afe8-c6ca-95cd-4dc8cd20a43e@huawei.com>
+To:     Tom Rix <trix@redhat.com>
+Cc:     dhowells@redhat.com, Zheng Zengkai <zhengzengkai@huawei.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Hulk Robot <hulkci@huawei.com>, linux-afs@lists.infradead.org,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] afs: fix no return statement in function returning non-void
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.62.217]
-X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <929459.1623850895.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 16 Jun 2021 14:41:35 +0100
+Message-ID: <929460.1623850895@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-vfs_getxattr() differs from vfs_setxattr() in the way it obtains the xattr
-value. The former gives precedence to the LSMs, and if the LSMs don't
-provide a value, obtains it from the filesystem handler. The latter does
-the opposite, first invokes the filesystem handler, and if the filesystem
-does not support xattrs, passes the xattr value to the LSMs.
+Tom Rix <trix@redhat.com> wrote:
 
-The problem is that not necessarily the user gets the same xattr value that
-he set. For example, if he sets security.selinux with a value not
-terminated with '\0', he gets a value terminated with '\0' because SELinux
-adds it during the translation from xattr to internal representation
-(vfs_setxattr()) and from internal representation to xattr
-(vfs_getxattr()).
+> A fix is to use the __noreturn attribute on this function and not add a =
+return
+> like this
+> =
 
-Normally, this does not have an impact unless the integrity of xattrs is
-verified with EVM. The kernel and the user see different values due to the
-different functions used to obtain them:
+> -static int afs_dir_set_page_dirty(struct page *page)
+> +static int __noreturn afs_dir_set_page_dirty(struct page *page)
+> =
 
-kernel (EVM): uses vfs_getxattr_alloc() which obtains the xattr value from
-              the filesystem handler (raw value);
+> and to the set of ~300 similar functions in these files.
 
-user (ima-evm-utils): uses vfs_getxattr() which obtains the xattr value
-                      from the LSMs (normalized value).
+BUG() really ought to handle it.  Do you have CONFIG_BUG=3Dy?
 
-Given that the difference between the raw value and the normalized value
-should be just the additional '\0' not the rest of the content, this patch
-modifies vfs_getxattr() to compare the size of the xattr value obtained
-from the LSMs to the size of the raw xattr value. If there is a mismatch
-and the filesystem handler does not return an error, vfs_getxattr() returns
-the raw value.
-
-This patch should have a minimal impact on existing systems, because if the
-SELinux label is written with the appropriate tools such as setfiles or
-restorecon, there will not be a mismatch (because the raw value also has
-'\0').
-
-In the case where the SELinux label is written directly with setfattr and
-without '\0', this patch helps to align EVM and ima-evm-utils in terms of
-result provided (due to the fact that they both verify the integrity of
-xattrs from raw values).
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Tested-by: Mimi Zohar <zohar@linux.ibm.com>
----
- fs/xattr.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 5c8c5175b385..412ec875aa07 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -420,12 +420,27 @@ vfs_getxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		const char *suffix = name + XATTR_SECURITY_PREFIX_LEN;
- 		int ret = xattr_getsecurity(mnt_userns, inode, suffix, value,
- 					    size);
-+		int ret_raw;
-+
- 		/*
- 		 * Only overwrite the return value if a security module
- 		 * is actually active.
- 		 */
- 		if (ret == -EOPNOTSUPP)
- 			goto nolsm;
-+
-+		if (ret < 0)
-+			return ret;
-+
-+		/*
-+		 * Read raw xattr if the size from the filesystem handler
-+		 * differs from that returned by xattr_getsecurity() and is
-+		 * equal or greater than zero.
-+		 */
-+		ret_raw = __vfs_getxattr(dentry, inode, name, NULL, 0);
-+		if (ret_raw >= 0 && ret_raw != ret)
-+			goto nolsm;
-+
- 		return ret;
- 	}
- nolsm:
--- 
-2.25.1
+David
 
