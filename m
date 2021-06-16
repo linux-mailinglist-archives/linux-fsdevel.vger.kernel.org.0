@@ -2,106 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB7143AA4E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 22:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CC913AA618
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 23:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232976AbhFPUC2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 16:02:28 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:35090 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231373AbhFPUC1 (ORCPT
+        id S233987AbhFPVYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 17:24:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48414 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233909AbhFPVYl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 16:02:27 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1ltbhz-00ALKF-B8; Wed, 16 Jun 2021 14:00:19 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=email.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1ltbhy-00GzYo-EL; Wed, 16 Jun 2021 14:00:18 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Olivier Langlois <olivier@trillion01.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Pavel Begunkov\>" <asml.silence@gmail.com>
-References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
-        <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
-        <87eeda7nqe.fsf@disp2133>
-        <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
-        <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
-        <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
-        <87y2bh4jg5.fsf@disp2133>
-        <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
-        <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
-        <87pmwmn5m0.fsf@disp2133>
-        <4163ed48afbcb1c288b366fe2745205cd66bea3d.camel@trillion01.com>
-Date:   Wed, 16 Jun 2021 15:00:12 -0500
-In-Reply-To: <4163ed48afbcb1c288b366fe2745205cd66bea3d.camel@trillion01.com>
-        (Olivier Langlois's message of "Wed, 16 Jun 2021 15:23:14 -0400")
-Message-ID: <87v96dd1gz.fsf@disp2133>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 16 Jun 2021 17:24:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623878553;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=GUzVV1RzuS/uejV8gOCi1Hq++h3D2eM6DMUllFfeIsg=;
+        b=Am9PY8HLr42aDk+GutZ8JmawblxL//m9QFtZR5elHnJ90dOK1mn+EZj2LoP+Ran5Q5zv/m
+        ikFwuFe+dpib3NC46k5xxVySzcM72vl+nPyPhHAZ14o2SBI/9pUeTlRhV0nx7lE+cQAPUG
+        WPMLEea22YNlnxgEp8nywpEX69r1VVE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-274-sqaPo7RxOm-kKy-LjM7vgw-1; Wed, 16 Jun 2021 17:22:32 -0400
+X-MC-Unique: sqaPo7RxOm-kKy-LjM7vgw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2A48D18D6A2C;
+        Wed, 16 Jun 2021 21:22:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB5C55C1D0;
+        Wed, 16 Jun 2021 21:22:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Re-enable freezing once a page fault is interrupted
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        marc.dionne@auristor.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 16 Jun 2021 22:22:28 +0100
+Message-ID: <162387854886.1035841.15139736369962171742.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1ltbhy-00GzYo-EL;;;mid=<87v96dd1gz.fsf@disp2133>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/YHsuWebb9sYalsImH4bcCYfwK+jJ/HM8=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4999]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Olivier Langlois <olivier@trillion01.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 362 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 11 (2.9%), b_tie_ro: 9 (2.6%), parse: 1.27 (0.4%),
-         extract_message_metadata: 17 (4.7%), get_uri_detail_list: 1.04 (0.3%),
-         tests_pri_-1000: 17 (4.7%), tests_pri_-950: 1.77 (0.5%),
-        tests_pri_-900: 1.47 (0.4%), tests_pri_-90: 85 (23.4%), check_bayes:
-        81 (22.3%), b_tokenize: 9 (2.4%), b_tok_get_all: 6 (1.6%),
-        b_comp_prob: 2.4 (0.7%), b_tok_touch_all: 60 (16.7%), b_finish: 0.98
-        (0.3%), tests_pri_0: 214 (59.0%), check_dkim_signature: 0.47 (0.1%),
-        check_dkim_adsp: 2.5 (0.7%), poll_dns_idle: 0.47 (0.1%), tests_pri_10:
-        2.3 (0.6%), tests_pri_500: 8 (2.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Olivier Langlois <olivier@trillion01.com> writes:
+From: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-> I redid my test but this time instead of dumping directly into a file,
-> I did let the coredump be piped to the systemd coredump module and the
-> coredump generation isn't working as expected when piping.
->
-> So your code review conclusions are correct.
+If a task is killed during a page fault, it does not currently call
+sb_end_pagefault(), which means that the filesystem cannot be frozen
+at any time thereafter.  This may be reported by lockdep like this:
 
-Thank you for confirming that.
+====================================
+WARNING: fsstress/10757 still has locks held!
+5.13.0-rc4-build4+ #91 Not tainted
+------------------------------------
+1 lock held by fsstress/10757:
+ #0: ffff888104eac530
+ (
+sb_pagefaults
 
-Do you know how your test program is using io_uring?
+as filesystem freezing is modelled as a lock.
 
-I have been trying to put the pieces together on what io_uring is doing
-that stops the coredump.  The fact that it takes a little while before
-it kills the coredump is a little puzzling.  The code looks like all of
-the io_uring operations should have been canceled before the coredump
-starts.
+Fix this by removing all the direct returns from within the function,
+and using 'ret' to indicate whether we were interrupted or successful.
 
-Thanks,
-Eric
+Fixes: 1cf7a1518aef ("afs: Implement shared-writeable mmap")
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-afs@lists.infradead.org
+Link: https://lore.kernel.org/r/20210616154900.1958373-1-willy@infradead.org/
+---
+
+ fs/afs/write.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index f722cb80a594..ff36800a7389 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -848,6 +848,7 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 	struct inode *inode = file_inode(file);
+ 	struct afs_vnode *vnode = AFS_FS_I(inode);
+ 	unsigned long priv;
++	vm_fault_t ret = VM_FAULT_RETRY;
+ 
+ 	_enter("{{%llx:%llu}},{%lx}", vnode->fid.vid, vnode->fid.vnode, page->index);
+ 
+@@ -859,14 +860,14 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ #ifdef CONFIG_AFS_FSCACHE
+ 	if (PageFsCache(page) &&
+ 	    wait_on_page_fscache_killable(page) < 0)
+-		return VM_FAULT_RETRY;
++		goto out;
+ #endif
+ 
+ 	if (wait_on_page_writeback_killable(page))
+-		return VM_FAULT_RETRY;
++		goto out;
+ 
+ 	if (lock_page_killable(page) < 0)
+-		return VM_FAULT_RETRY;
++		goto out;
+ 
+ 	/* We mustn't change page->private until writeback is complete as that
+ 	 * details the portion of the page we need to write back and we might
+@@ -874,7 +875,7 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 	 */
+ 	if (wait_on_page_writeback_killable(page) < 0) {
+ 		unlock_page(page);
+-		return VM_FAULT_RETRY;
++		goto out;
+ 	}
+ 
+ 	priv = afs_page_dirty(page, 0, thp_size(page));
+@@ -888,8 +889,10 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 	}
+ 	file_update_time(file);
+ 
++	ret = VM_FAULT_LOCKED;
++out:
+ 	sb_end_pagefault(inode->i_sb);
+-	return VM_FAULT_LOCKED;
++	return ret;
+ }
+ 
+ /*
+
+
