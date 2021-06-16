@@ -2,79 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C8743A9C49
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 15:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C434B3A9C74
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 15:47:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233162AbhFPNnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 09:43:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:20400 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233065AbhFPNnt (ORCPT
+        id S233363AbhFPNt5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 09:49:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233338AbhFPNt5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 09:43:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623850902;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=p8GK50I3KBKc8B6YusjGKlCOchxcM/TeXaVsgxynpE4=;
-        b=g17r4MvaA/NhJ6yc+z6f493nMv9J3Ge6Ez93xeqkBYUEyAa6LL98+tgwm002CJQ3Rhzd+1
-        3X7Fod07l1aICDQgMxCRDyeZ0+AJKJHJWI0JjJM0O3EyajqsmFfFpcRiXCyi9a28sGi//0
-        86tIWLNlSzi99s0Mg7TqAg+5KgCQNlU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-84-PT56Y0xWN_GyKRNQvyK7Zg-1; Wed, 16 Jun 2021 09:41:39 -0400
-X-MC-Unique: PT56Y0xWN_GyKRNQvyK7Zg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0D78319251AD;
-        Wed, 16 Jun 2021 13:41:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1FCBF10016F4;
-        Wed, 16 Jun 2021 13:41:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <200ea6f7-0182-9da1-734c-c49102663ccc@redhat.com>
-References: <200ea6f7-0182-9da1-734c-c49102663ccc@redhat.com> <162375813191.653958.11993495571264748407.stgit@warthog.procyon.org.uk> <CAHk-=whARK9gtk0BPo8Y0EQqASNG9SfpF1MRqjxf43OO9F0vag@mail.gmail.com> <f2764b10-dd0d-cabf-0264-131ea5829fed@infradead.org> <CAHk-=whPPWYXKQv6YjaPQgQCf+78S+0HmAtyzO1cFMdcqQp5-A@mail.gmail.com> <c2002123-795c-20ae-677c-a35ba0e361af@infradead.org> <051421e0-afe8-c6ca-95cd-4dc8cd20a43e@huawei.com>
-To:     Tom Rix <trix@redhat.com>
-Cc:     dhowells@redhat.com, Zheng Zengkai <zhengzengkai@huawei.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Hulk Robot <hulkci@huawei.com>, linux-afs@lists.infradead.org,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] afs: fix no return statement in function returning non-void
+        Wed, 16 Jun 2021 09:49:57 -0400
+Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17AE0C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 06:47:51 -0700 (PDT)
+Received: by mail-vs1-xe29.google.com with SMTP id j15so1049988vsf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 06:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rzh7jOfPYY3BS7Rth6BMrlZwOex7e90TciQGZWtPoX0=;
+        b=ALzWREQUL8uWIqXU4g/KaqMfoQ/cgY2isuer19rssa3Ngs+WYEZmsh8Qi5kOucaiWM
+         1BBwfAXn8n68F096mX8Q5/Su+wSTtNN1DnSKVnBVzX1227E1qmLkUKLrarUSKj1cLy1g
+         t51q6C5Kg1vnh6XLg78AoDHmAT+HRB/862jfE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rzh7jOfPYY3BS7Rth6BMrlZwOex7e90TciQGZWtPoX0=;
+        b=NBz9RYsp3plRiXVQJPBe8NePW0nDf+yJfZu3vbvG3a6lf7wKZMMCvuoF5JJNbTu8VY
+         BGUj7eaKHJO6FNLtPQ7CmKxvHkSqkVQut+nTLDxwluFHE71OupD5WHBhl88A2TN3AyEQ
+         8Mg71ZY/+1v3tb0NLnELxyOM5OjfsfOxVUFdd+UxC7zP5X9zT+IgTbjitlLULmRCHDpR
+         lxCn/LD3HJFA5YXwoCnSKyAFmwnzq6Dg+E8K2b1or3SG/fOHEDDC3RvjAvwfjQYxklHE
+         IGGVv9uMCAlLe0AYJAgJz9A1cTvMvMnXQ13KVfYelvHgQXR0JOxgRqsS2goAqJPMgHBY
+         JL/A==
+X-Gm-Message-State: AOAM532OPXyWmRTSFHQyjLv/DBRyhA7S5ODVNgdC5ILzlVlXfWVCqw0z
+        K/SKdG2gQNFYerM+M+nPDZhvSuSuzMVDL2tCEAtqRQ==
+X-Google-Smtp-Source: ABdhPJwNthpZJuF5InfK/UVVbfqlCa8mWwZIlSOk9EE2GVKGUfovydc1w9igkiJiwmBG1yGalqwZ/ghjBhT+0QhqmPM=
+X-Received: by 2002:a67:f659:: with SMTP id u25mr10008319vso.9.1623851270260;
+ Wed, 16 Jun 2021 06:47:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <929459.1623850895.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 16 Jun 2021 14:41:35 +0100
-Message-ID: <929460.1623850895@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <016b2fe2-0d52-95c9-c519-40b14480587a@gmail.com>
+ <CAJfpeguzkDQ5VL3m19jrepf1YjFeJ2=q99TurTX6DRpAKz+Omg@mail.gmail.com> <YMn1s19wMQdGDQuQ@casper.infradead.org>
+In-Reply-To: <YMn1s19wMQdGDQuQ@casper.infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 16 Jun 2021 15:47:39 +0200
+Message-ID: <CAJfpegsMNc-deQvdOntZJHU2bW34JF=e0gwxPe19eFXp1t0PFQ@mail.gmail.com>
+Subject: Re: Possible bogus "fuse: trying to steal weird page" warning related
+ to PG_workingset.
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
+        Thomas Lindroth <thomas.lindroth@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Tom Rix <trix@redhat.com> wrote:
+On Wed, 16 Jun 2021 at 14:59, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Wed, Jun 16, 2021 at 02:31:32PM +0200, Miklos Szeredi wrote:
+> > On Mon, 14 Jun 2021 at 11:56, Thomas Lindroth <thomas.lindroth@gmail.com> wrote:
+> > >
+> > > Hi. I recently upgraded to kernel series 5.10 from 4.19 and I now get warnings like
+> > > this in dmesg:
+> > >
+> > > page:00000000e966ec4e refcount:1 mapcount:0 mapping:0000000000000000 index:0xd3414 pfn:0x14914a
+> > > flags: 0x8000000000000077(locked|referenced|uptodate|lru|active|workingset)
+> > > raw: 8000000000000077 ffffdc7f4d312b48 ffffdc7f452452c8 0000000000000000
+> > > raw: 00000000000d3414 0000000000000000 00000001ffffffff ffff8fd080123000
+> > > page dumped because: fuse: trying to steal weird page
+> > >
+> > > The warning in fuse_check_page() doesn't check for PG_workingset which seems to be what
+> > > trips the warning. I'm not entirely sure this is a bogus warning but there used to be
+> > > similar bogus warnings caused by a missing PG_waiters check. The PG_workingset
+> > > page flag was introduced in 4.20 which explains why I get the warning now.
+> > >
+> > > I only get the new warning if I do writes to a fuse fs (mergerfs) and at the same
+> > > time put the system under memory pressure by running many qemu VMs.
+> >
+> > AFAICT fuse is trying to steal a pagecache page from a pipe buffer
+> > created by splice(2).    The page looks okay, but I have no idea what
+> > PG_workingset means in this context.
+> >
+> > Matthew, can you please help?
+>
+> PG_workingset was introduced by Johannes:
+>
+>     mm: workingset: tell cache transitions from workingset thrashing
+>
+>     Refaults happen during transitions between workingsets as well as in-place
+>     thrashing.  Knowing the difference between the two has a range of
+>     applications, including measuring the impact of memory shortage on the
+>     system performance, as well as the ability to smarter balance pressure
+>     between the filesystem cache and the swap-backed workingset.
+>
+>     During workingset transitions, inactive cache refaults and pushes out
+>     established active cache.  When that active cache isn't stale, however,
+>     and also ends up refaulting, that's bonafide thrashing.
+>
+>     Introduce a new page flag that tells on eviction whether the page has been
+>     active or not in its lifetime.  This bit is then stored in the shadow
+>     entry, to classify refaults as transitioning or thrashing.
+>
+> so I think it's fine for you to ignore when stealing a page.
 
-> A fix is to use the __noreturn attribute on this function and not add a =
-return
-> like this
-> =
+I have problem understanding what a workingset is.  Is it related to
+swap?  If so, how can such a page be part of a file mapping?
 
-> -static int afs_dir_set_page_dirty(struct page *page)
-> +static int __noreturn afs_dir_set_page_dirty(struct page *page)
-> =
-
-> and to the set of ~300 similar functions in these files.
-
-BUG() really ought to handle it.  Do you have CONFIG_BUG=3Dy?
-
-David
-
+Thanks,
+Miklos
