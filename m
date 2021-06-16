@@ -2,67 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 918CD3A95EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 11:19:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B42843A9602
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 11:23:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232207AbhFPJVn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 05:21:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22202 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231489AbhFPJVk (ORCPT
+        id S231772AbhFPJZn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 05:25:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40104 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231335AbhFPJZm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 05:21:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623835174;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qumv7jbVw+hxWVCUJgAAifjH3q12vZ4JPKnNlTv8Q/k=;
-        b=EuaTEYPkKLYpFyvhCmkXEKF+dPDZwACys5ibTygW663oV3Bn6rm9IhqDJbAhT9fr6ItGQk
-        /W3XeeMRaTVwtuutSphcADQE5BSBBYuw5Nm7ijGe4lOk223qoQ4N9y80q4Lhtez+Yq2mwb
-        BbFJmeHV5fqF+dt3njdFNoJ/gYpAQbs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-60-J2Uk_XPePa2fVOX2u6zVNw-1; Wed, 16 Jun 2021 05:19:31 -0400
-X-MC-Unique: J2Uk_XPePa2fVOX2u6zVNw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 625741012581;
-        Wed, 16 Jun 2021 09:19:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E61C61094;
-        Wed, 16 Jun 2021 09:19:29 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210614201435.1379188-2-willy@infradead.org>
-References: <20210614201435.1379188-2-willy@infradead.org> <20210614201435.1379188-1-willy@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     dhowells@redhat.com, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 01/33] mm: Convert get_page_unless_zero() to return bool
+        Wed, 16 Jun 2021 05:25:42 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02A26C061574;
+        Wed, 16 Jun 2021 02:23:36 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id s19so2297457ioc.3;
+        Wed, 16 Jun 2021 02:23:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2kVLciPDPeVeRcKFf/sRj4Adpof6AaDamoTAcluhdG8=;
+        b=mUoWcsrTuZOUX086t0rGiPboCUaC3kh2gARt9HxRHhiTRx28G+gTre2cHB4uOXxLvc
+         cQy1tddI6uE1brKPVsLhD6dgwI67ui7g0aubwdw4EMEhF9Yx5e2WjrZlrQXwhzB5wV8g
+         PQSgB2Wpjn0TMUozpoPF1Fe+eb5ILtK55CCQghMEAq0ccUMt/iRXyraqf/rw2kMqv1ff
+         SOdGrZWXoD9lc5bzfvaVjKdF15YcYKMoS/d3ftXS7G+N2RolHJWqfexoygN81Ulgmw7w
+         ZSv92WT6X/WHd6xiZBqUzMT+5umPRUiHUPjYOqejxUhe6nNMirK7upisL6gnph1YQ5Ko
+         cV3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2kVLciPDPeVeRcKFf/sRj4Adpof6AaDamoTAcluhdG8=;
+        b=HzwLYpMB+oey34Ww6EX4ThL1OGAuYNJUj2ykLODjm/SaBuZTKF0s8yiAlMcPTj70He
+         ldXJo1a9TBfisxfptON2/pGSmnBR3rLXIDfLFxyAGXtOk07SIDszN3um6U8TQQB9WxjZ
+         5g8+yAM7naPFEBnqW7D6yvtB7DKrSLmIrbsglU1fYzLTlg7h6NzpD60c6ZCu+B28oAAK
+         OuJT0cKFvJcg2iLK4J8+N342Fs0bKwloyPef5DcuIFEyJRMd6JsFJW2KgWCHq+yT4yev
+         t0OTea6LZfdPW5kMnFymrgxPv0tmIHL/0i0rwbhIwWKVy14mHqlPIlm+fyih9ooq0DOe
+         pEww==
+X-Gm-Message-State: AOAM532ZKeA/JEtva5LCQ7vL4O6D1WnWLMMZvNUrdk3OEUCmj11yvOpi
+        xOl0HuuromGoEbgiBS/ON2b/GkpmRRQsW3WPP9g=
+X-Google-Smtp-Source: ABdhPJxy/ByhjwoswMs6q2WVL/+nf/RAYiITJqrTk2W7vUeUUYt6TJ/xmrOUkaBe91EOWRXP8OMz8rwzuRC3UKEilcw=
+X-Received: by 2002:a02:908a:: with SMTP id x10mr3270285jaf.30.1623835415523;
+ Wed, 16 Jun 2021 02:23:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <810911.1623835168.1@warthog.procyon.org.uk>
-Date:   Wed, 16 Jun 2021 10:19:28 +0100
-Message-ID: <810912.1623835168@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <20210615235556.970928-1-krisman@collabora.com> <20210615235556.970928-7-krisman@collabora.com>
+In-Reply-To: <20210615235556.970928-7-krisman@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 16 Jun 2021 12:23:24 +0300
+Message-ID: <CAOQ4uxh08gJjqi7Opoxp3D4Nf9S6n+81z8ay_UgTRdRB7mmZjw@mail.gmail.com>
+Subject: Re: [PATCH v2 06/14] fsnotify: Add helper to detect overflow_event
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     kernel@collabora.com, "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
+On Wed, Jun 16, 2021 at 2:56 AM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Similarly to fanotify_is_perm_event and friends, provide a helper
+> predicate to say whether a mask is of an overflow event.
+>
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> ---
 
-> atomic_add_unless() returns bool, so remove the widening casts to int
-> in page_ref_add_unless() and get_page_unless_zero().  This causes gcc
-> to produce slightly larger code in isolate_migratepages_block(), but
-> it's not clear that it's worse code.  Net +19 bytes of text.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+Thanks!
 
+>  fs/notify/fanotify/fanotify.h    | 3 ++-
+>  include/linux/fsnotify_backend.h | 5 +++++
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+> index aec05e21d5a9..7e00c05a979a 100644
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -326,7 +326,8 @@ static inline struct path *fanotify_event_path(struct fanotify_event *event)
+>   */
+>  static inline bool fanotify_is_hashed_event(u32 mask)
+>  {
+> -       return !fanotify_is_perm_event(mask) && !(mask & FS_Q_OVERFLOW);
+> +       return !(fanotify_is_perm_event(mask) ||
+> +                fsnotify_is_overflow_event(mask));
+>  }
+>
+>  static inline unsigned int fanotify_event_hash_bucket(
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index c4473b467c28..f9e2c6cd0f7d 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -495,6 +495,11 @@ static inline void fsnotify_queue_overflow(struct fsnotify_group *group)
+>         fsnotify_add_event(group, group->overflow_event, NULL, NULL);
+>  }
+>
+> +static inline bool fsnotify_is_overflow_event(u32 mask)
+> +{
+> +       return mask & FS_Q_OVERFLOW;
+> +}
+> +
+>  static inline bool fsnotify_notify_queue_is_empty(struct fsnotify_group *group)
+>  {
+>         assert_spin_locked(&group->notification_lock);
+> --
+> 2.31.0
+>
