@@ -2,175 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63CDE3A9E6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 17:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C617F3A9E7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 17:03:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234378AbhFPPEO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 11:04:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60964 "EHLO
+        id S234405AbhFPPFv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 11:05:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234368AbhFPPEM (ORCPT
+        with ESMTP id S234367AbhFPPFu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 11:04:12 -0400
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 582EBC061767
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 08:02:06 -0700 (PDT)
-Received: by mail-qv1-xf30.google.com with SMTP id x6so1702716qvx.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 08:02:06 -0700 (PDT)
+        Wed, 16 Jun 2021 11:05:50 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F82C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 08:03:43 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id q15so3374268ioi.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 08:03:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:from:to:cc:subject;
-        bh=VCvQSABjEdEuwxE7dUwxvVJle5680VQCMhFOlxSQ0RU=;
-        b=1JHFKXXWxomTbkugVQMZnpalACfTC8IlhOqgFvXblCYSIV7KNdgtakEsiLHcEej6RT
-         JMoGmH/y0ghKIyrRakbnD9xBFw8SxlZryrGCRT8fl0oiHQetebcqzmfoUogSF9v0kAIW
-         eDJreJOM1uKAxARBQLgDGsmB8eZZl1YTybntm+qGmc+RuZMpi4gM4BhV1qDurg6d0kDD
-         2T97LEdmKUz4vZZ3ssL+4B2CMbb4CCvfPD40tcjIGGkpP0vlqoEis5WjiBG1xhdz25EG
-         n0B94JW6T5shp64W3FCHZibHWYySzxnd9yvc4aK2zyBH0mnbxKxxYVV79CGpyznCfnJq
-         RY3g==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0OsHGcSJEodswIaE0lnccwazjsPx7DhA2l2pVTms8EI=;
+        b=lWlbh0hrsx+YTOwKorAMOB8JD5pekrtpNKWvSP7t48HT+4WnyV65F7FFtVGu649gC+
+         LZjYyTs3/Ny6QLKrHLk7NUc1dxwU+/SYfU8eicynHKapFyAiHsVjeM7rcn8csu+BO7Tv
+         Ac4Cen/bxtjfJszqqAMX5imznbTwX+6SL7dNAOn3II9CEKf/OLYIG9jr8Zq6uGVyfYxl
+         Wcpl3UXCNsZgxkwv6HVpd1N4frMTZrO/sZWN/jhpXJKkJUocPx/OaiIcSgmA+9b7IJz7
+         8WpdXZZGgf4OV17fHop7fQbmfn7IpghOtxceNtJHiC7SpdkshVlhkGSjmN46GM/DNhBt
+         9r0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject;
-        bh=VCvQSABjEdEuwxE7dUwxvVJle5680VQCMhFOlxSQ0RU=;
-        b=UxVaU0Ffxjcu2LRRIyN9jp2YXZ/9V/7Y2/yQJgygX/5Q3Vyx94oiIeq4Y4aClobmF8
-         y9sQ2zhGXrAMm7pdYJR6e6j/TL6zQpHP8i+eLmxSqISnvf3AMnGObpZpR4wOReQCerUk
-         MDsTS3uTTJxZYEdCBgHtdmFFQuYdZM/qrH7HbU0yiHZG2ffV2GkYa39Hc0vesRpIXieT
-         3pEa1uvuwumuTFmjJjqsSnJ1Dvko6VIbOHVH+QqZgNHSw58Q29s2ldgv+5ar7pfNMB/z
-         D5FFYD5+mY5UUhQoXa+0YpnhsM1T682nArzmAqz9bE7K9ySnLqeOB0eHhnL6YoQ3M+Mo
-         UQFQ==
-X-Gm-Message-State: AOAM53254L0EUHFmnimZ1jdnm7D9Ho0uw7+O383HOu7ltYaLBpm4uk7i
-        9y7Bt19VqZTa8wLxRQG+z5aPNA==
-X-Google-Smtp-Source: ABdhPJytC9l/wfvfg7sP8rjAGewkfuTAUH85RNI3r+SM2Ul/Q9EdT8cKP9pkjx6l7tAtOlLX0/G9Rw==
-X-Received: by 2002:a0c:ed46:: with SMTP id v6mr465673qvq.46.1623855724103;
-        Wed, 16 Jun 2021 08:02:04 -0700 (PDT)
-Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id y20sm1390690qtv.64.2021.06.16.08.02.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jun 2021 08:02:03 -0700 (PDT)
-Message-ID: <60ca126b.1c69fb81.90af4.93a7@mx.google.com>
-Date:   Wed, 16 Jun 2021 11:02:02 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     lsf-pc@lists.linuxfoundation.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-nvme@lists.infradead.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [REMINDER] LSF/MM/BPF: 2021: Call for Proposals
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0OsHGcSJEodswIaE0lnccwazjsPx7DhA2l2pVTms8EI=;
+        b=TQSnJKN6E02B/DLeP6ev9qWvIOWBG+7xKwZylqWEl+LuJmWavniFuh/eQxVtxSifZj
+         42LiUa7rstoSTJQVbWWNZhlC3DlRqp0EqKuifQVDv+tvlGxlOA9tH9mYIGOwFTJxxdVv
+         HNQYnvTSq1xGPUTwUWtLog3KR28Ksstc2VTrlNTnMafarFMNf1zoutlWC72fpgKaLM7f
+         3US9bwIom5QHUYZ6YwnNEJletUJy6xZT/wphlZu/Vrzifdk7AOriYFGLp4J2La7KcrJ/
+         V8iyaSZXWMhOYioGGgkPes03/sW+eIGH8i4QYWptA9DHsllFeiv4fqRtTnGSBcURyaMm
+         ar8g==
+X-Gm-Message-State: AOAM530Et/SjFtnvHiZrFy39jXilv9kh2N17NmRxXNCFCIY/nVivlFR2
+        3M/Zmgg/SzREKccyZtD1K1jOtKuWDDVcQWVnF5LHjfkXWIA=
+X-Google-Smtp-Source: ABdhPJxrjgxx6DwBosOMeJAlFJWOLUUbiUwYxH3c6OrW6U00jzkv93WShc9AbOaPk43dS4h9wp5TIEgK5k49abbjDY4=
+X-Received: by 2002:a05:6602:2d83:: with SMTP id k3mr343365iow.5.1623855822988;
+ Wed, 16 Jun 2021 08:03:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210609181158.479781-1-amir73il@gmail.com>
+In-Reply-To: <20210609181158.479781-1-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 16 Jun 2021 18:03:31 +0300
+Message-ID: <CAOQ4uxi3vK1eyWk69asycmo5PTyUE9+o7-Ha17CTXYytQiWPZQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix illegal access to inode with reused nodeid
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Max Reitz <mreitz@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Nikolaus Rath <Nikolaus@rath.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thisi is just a reminder that we're still going ahead with an in person
-LSF/MM/BPF this year.  The Linux Foundation is working out the safety
-guidelines and will update the landing page when that is nailed down.
-In the meantime there is plenty of time to register your interest in
-attending.  Thanks,
+On Wed, Jun 9, 2021 at 9:12 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> Server responds to LOOKUP and other ops (READDIRPLUS/CREATE/MKNOD/...)
+> with outarg containing nodeid and generation.
+>
+> If a fuse inode is found in inode cache with the same nodeid but
+> different generation, the existing fuse inode should be unhashed and
+> marked "bad" and a new inode with the new generation should be hashed
+> instead.
+>
+> This can happen, for example, with passhrough fuse filesystem that
+> returns the real filesystem ino/generation on lookup and where real inode
+> numbers can get recycled due to real files being unlinked not via the fuse
+> passthrough filesystem.
+>
+> With current code, this situation will not be detected and an old fuse
+> dentry that used to point to an older generation real inode, can be used
+> to access a completely new inode, which should be accessed only via the
+> new dentry.
+>
+> Note that because the FORGET message carries the nodeid w/o generation,
+> the server should wait to get FORGET counts for the nlookup counts of
+> the old and reused inodes combined, before it can free the resources
+> associated to that nodeid.
+>
+> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxgDMGUpK35huwqFYGH_idBB8S6eLiz85o0DDKOyDH4Syg@mail.gmail.com/
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>
+> Miklos,
+>
+> I was able to reproduce this issue with a passthrough fs that stored
+> ino+generation and uses then to open fd on lookup.
+>
+> I extended libfuse's test_syscalls [1] program to demonstrate the issue
+> described in commit message.
+>
+> Max, IIUC, you are making a modification to virtiofs-rs that would
+> result is being exposed to this bug.  You are welcome to try out the
+> test and let me know if you can reproduce the issue.
+>
+> Note that some test_syscalls test fail with cache enabled, so libfuse's
+> test_examples.py only runs test_syscalls in cache disabled config.
+>
+> Thanks,
+> Amir.
+>
+> [1] https://github.com/amir73il/libfuse/commits/test-reused-inodes
+>
 
-Josef
+Miklos,
 
----- Original CFP ----
+Not sure if you got to look at this already, but I had noticed that the
+link above is broken because I deleted the branch after Nikolaus
+merged it to upstream libfuse, so here is a new link to the PR [2]
+with some more relevant context.
 
-The annual Linux Storage, Filesystem, Memory Management, and BPF
-(LSF/MM/BPF) Summit for 2021 will be held from December 6 to December 8
-at The Margaritaville Resort Palm Springs in Palm Springs, California.
-LSF/MM/BPF is an invitation-only technical workshop to map out
-improvements to the Linux storage, filesystem, BPF, and memory
-management subsystems that will make their way into the mainline kernel
-within the coming years.
+Per request from Nikolaus, I modified the passthrough_hp example
+to reuse inodes on last close+unlink, so it now hits the failure in the
+new test with upstream kernel and it passes the test with this kernel fix.
 
-COVID is at the front of our minds as we attempt to put together the
-best and safest conference we can arrange.  The logistics of how to hold
-an in person event will change and evolve as we get closer to the actual
-date, but rest assured we will do everything recommended by public
-health officials.
+Thanks,
+Amir.
 
-LSF/MM/BPF 2021 will be a three day, stand-alone conference with four
-subsystem-specific tracks, cross-track discussions, as well as BoF and
-hacking sessions.
+[2] https://github.com/libfuse/libfuse/pull/612
 
-On behalf of the committee I am issuing a call for agenda proposals
-that are suitable for cross-track discussion as well as technical
-subjects for the breakout sessions.
 
-If advance notice is required for visa applications then please point
-that out in your proposal or request to attend, and submit the topic as
-soon as possible.
-
-This years instructions are similar to our 2020 attempt.  We're asking
-that you please let us know you want to be invited by June 15th, 2021.
-We realize that travel is an ever changing target, but it helps us get
-an idea of possible attendance numbers.  Clearly things can and will, so
-consider the request to attend deadline more about planning and less
-about concrete plans.
-
-1) Fill out the following Google form to request attendance and
-suggest any topics
-
-	https://forms.gle/Dms7xYPXLrriFkcXA
-
-In previous years we have accidentally missed people's attendance
-requests because they either didn't cc lsf-pc@ or we simply missed them
-in the flurry of emails we get.  Our community is large and our
-volunteers are busy, filling this out will help us make sure we don't
-miss anybody.
-
-2) Proposals for agenda topics should still be sent to the following
-lists to allow for discussion among your peers.  This will help us
-figure out which topics are important for the agenda.
-
-        lsf-pc@lists.linux-foundation.org
-
-and CC the mailing lists that are relevant for the topic in question:
-
-        FS:     linux-fsdevel@vger.kernel.org
-        MM:     linux-mm@kvack.org
-        Block:  linux-block@vger.kernel.org
-        ATA:    linux-ide@vger.kernel.org
-        SCSI:   linux-scsi@vger.kernel.org
-        NVMe:   linux-nvme@lists.infradead.org
-        BPF:    bpf@vger.kernel.org
-
-Please tag your proposal with [LSF/MM/BPF TOPIC] to make it easier to
-track. In addition, please make sure to start a new thread for each
-topic rather than following up to an existing one. Agenda topics and
-attendees will be selected by the program committee, but the final
-agenda will be formed by consensus of the attendees on the day.
-
-We will try to cap attendance at around 25-30 per track to facilitate
-discussions although the final numbers will depend on the room sizes
-at the venue.
-
-For discussion leaders, slides and visualizations are encouraged to
-outline the subject matter and focus the discussions. Please refrain
-from lengthy presentations and talks; the sessions are supposed to be
-interactive, inclusive discussions.
-
-There will be no recording or audio bridge. However, we expect that
-written minutes will be published as we did in previous years:
-
-2019: https://lwn.net/Articles/lsfmm2019/
-
-2018: https://lwn.net/Articles/lsfmm2018/
-
-2017: https://lwn.net/Articles/lsfmm2017/
-
-2016: https://lwn.net/Articles/lsfmm2016/
-
-2015: https://lwn.net/Articles/lsfmm2015/
-
-2014: http://lwn.net/Articles/LSFMM2014/
-
-3) If you have feedback on last year's meeting that we can use to
-improve this year's, please also send that to:
-
-        lsf-pc@lists.linux-foundation.org
-
-Thank you on behalf of the program committee:
-
-        Josef Bacik (Filesystems)
-        Amir Goldstein (Filesystems)
-        Martin K. Petersen (Storage)
-        Omar Sandoval (Storage)
-        Michal Hocko (MM)
-        Dan Williams (MM)
-        Alexei Starovoitov (BPF)
-        Daniel Borkmann (BPF)
+>  fs/fuse/dir.c     | 3 ++-
+>  fs/fuse/fuse_i.h  | 9 +++++++++
+>  fs/fuse/inode.c   | 4 ++--
+>  fs/fuse/readdir.c | 7 +++++--
+>  4 files changed, 18 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 1b6c001a7dd1..b06628fd7d8e 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -239,7 +239,8 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+>                 if (!ret) {
+>                         fi = get_fuse_inode(inode);
+>                         if (outarg.nodeid != get_node_id(inode) ||
+> -                           (bool) IS_AUTOMOUNT(inode) != (bool) (outarg.attr.flags & FUSE_ATTR_SUBMOUNT)) {
+> +                           fuse_stale_inode(inode, outarg.generation,
+> +                                            &outarg.attr)) {
+>                                 fuse_queue_forget(fm->fc, forget,
+>                                                   outarg.nodeid, 1);
+>                                 goto invalid;
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 7e463e220053..f1bd28c176a9 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -867,6 +867,15 @@ static inline u64 fuse_get_attr_version(struct fuse_conn *fc)
+>         return atomic64_read(&fc->attr_version);
+>  }
+>
+> +static inline bool fuse_stale_inode(const struct inode *inode, int generation,
+> +                                   struct fuse_attr *attr)
+> +{
+> +       return inode->i_generation != generation ||
+> +               inode_wrong_type(inode, attr->mode) ||
+> +               (bool) IS_AUTOMOUNT(inode) !=
+> +               (bool) (attr->flags & FUSE_ATTR_SUBMOUNT);
+> +}
+> +
+>  static inline void fuse_make_bad(struct inode *inode)
+>  {
+>         remove_inode_hash(inode);
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 393e36b74dc4..257bb3e1cac8 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -350,8 +350,8 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+>                 inode->i_generation = generation;
+>                 fuse_init_inode(inode, attr);
+>                 unlock_new_inode(inode);
+> -       } else if (inode_wrong_type(inode, attr->mode)) {
+> -               /* Inode has changed type, any I/O on the old should fail */
+> +       } else if (fuse_stale_inode(inode, generation, attr)) {
+> +               /* nodeid was reused, any I/O on the old inode should fail */
+>                 fuse_make_bad(inode);
+>                 iput(inode);
+>                 goto retry;
+> diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+> index 277f7041d55a..bc267832310c 100644
+> --- a/fs/fuse/readdir.c
+> +++ b/fs/fuse/readdir.c
+> @@ -200,9 +200,12 @@ static int fuse_direntplus_link(struct file *file,
+>         if (!d_in_lookup(dentry)) {
+>                 struct fuse_inode *fi;
+>                 inode = d_inode(dentry);
+> +               if (inode && get_node_id(inode) != o->nodeid)
+> +                       inode = NULL;
+>                 if (!inode ||
+> -                   get_node_id(inode) != o->nodeid ||
+> -                   inode_wrong_type(inode, o->attr.mode)) {
+> +                   fuse_stale_inode(inode, o->generation, &o->attr)) {
+> +                       if (inode)
+> +                               fuse_make_bad(inode);
+>                         d_invalidate(dentry);
+>                         dput(dentry);
+>                         goto retry;
+> --
+> 2.31.1
+>
