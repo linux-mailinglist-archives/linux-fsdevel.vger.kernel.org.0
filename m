@@ -2,182 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F7D3A9DC7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 16:40:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A887A3A9DE0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 16:42:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234005AbhFPOml (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 10:42:41 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52602 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233752AbhFPOmj (ORCPT
+        id S234143AbhFPOoD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 10:44:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56290 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234128AbhFPOoA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 10:42:39 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15GEX8dm038495;
-        Wed, 16 Jun 2021 10:40:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=yiLeMrSrLEesWWLZSuwNrEn49+LwO0E0VWIGiQuRAnY=;
- b=kXuCCZ71RETjmzlGqmrfAO/CSnWU0fOW04SVgjGnv21xYQzfV88ygbORWSmC+s8nbohV
- 9cvxABbU0c7e3UsINUsMrGcf2xW18n+i/KVexY/dOCyf+enOoT/nljkO+r29okP0JpLY
- o2BjazajK4ImhDrkhvSORPtyHhIOi3Cmgy29pxdX5NYpdgQJzmMUjFwan+UXl4WI7amd
- NqK09Q4p1ArDXhwI7FMdI3oyBIDHzdi2tTPznUoPbXu7lPGWvT1AR4aKW8pJunf2iNxs
- xilF7Ny7xcWn0fotnFiNXsdf2ciJu/qFUjLpnoqGy4tFAOTvepDH65oam6J/HFB0E8Lr vg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 397hrxke7a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Jun 2021 10:40:25 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 15GEXaat040276;
-        Wed, 16 Jun 2021 10:40:25 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 397hrxke6y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Jun 2021 10:40:25 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15GEcFbw017445;
-        Wed, 16 Jun 2021 14:40:24 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma04dal.us.ibm.com with ESMTP id 3965ytxkmq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Jun 2021 14:40:24 +0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15GEeN9U36176192
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Jun 2021 14:40:23 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C1711124052;
-        Wed, 16 Jun 2021 14:40:23 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AE6A0124055;
-        Wed, 16 Jun 2021 14:40:23 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 16 Jun 2021 14:40:23 +0000 (GMT)
-Subject: Re: [PATCH] fs: Return raw xattr for security.* if there is size
- disagreement with LSMs
-To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-References: <ee75bde9a17f418984186caa70abd33b@huawei.com>
- <20210616132227.999256-1-roberto.sassu@huawei.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Message-ID: <6e1c9807-d7e8-7c26-e0ee-975afa4b9515@linux.ibm.com>
-Date:   Wed, 16 Jun 2021 10:40:23 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Wed, 16 Jun 2021 10:44:00 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6161C061767
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 07:41:54 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id fy24-20020a17090b0218b029016c5a59021fso4155768pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 07:41:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Xnm+WYpnOqXtkZdMWzoHLGjqCi4LOFWzGjFsrgoSRP0=;
+        b=lrTVnbws/VPuEimwOb3YT0iDmqjnOYczffUh/Kv58vesKqMDTvMYbZJlToeNNPZAhV
+         4Xy6XPsxIik88Qh+qEI8tlkRAALocVx3aaCxZj5FXWVdQADSSsTVrzwdmrKGCmfbwngX
+         VJ19V7sYPzY2FIe5MofHco2b/0JWT0cVUBZV8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Xnm+WYpnOqXtkZdMWzoHLGjqCi4LOFWzGjFsrgoSRP0=;
+        b=CIr/N35Qe+/J8OZijGkBHtr4sFc3FxPxu412XfrOQG1rLtGLb3KTPKBOnriuuo+qtT
+         FJtJxjyBaoxSu6/sS+DSOb5IUpZ4AvWA6cU4rqx9aECd6g9KcInyz4J0+DrOtMHE2aF/
+         RaOcxqLxSL/VHZ2g8wDCjrsJGPVeYiRvoq5Ov5NwgzHu92PQaxy7naklcvDrBX+tLmrc
+         2TnEkabHsqDALhOA7n+5EZ37jq4bTpS99HrghxSAVuQUbVhs8TUmCEdPGkIuVTzrUh8P
+         t7URZ04fMl94j+GB53lMz24Rwjd/PDa4yZ98qOO3eHDWmqNy+H+czmbeEx2WwiAgiXoZ
+         ksMQ==
+X-Gm-Message-State: AOAM530clFgZNtZ/7Kd3C4qkZdu1otwh/vwfwjXkz/nmmXt6GGqf95+V
+        pUSACqTRwSuJqAA05JFzCH6YTA==
+X-Google-Smtp-Source: ABdhPJwwUS8UE4ZeWh9OoJ7tApiFkdOVNzxHHc1QvWSodOw2AyXOFizKKx/GS/9aqBotRNv22WlaBQ==
+X-Received: by 2002:a17:902:22d:b029:11f:2db4:4c01 with SMTP id 42-20020a170902022db029011f2db44c01mr19568plc.29.1623854514214;
+        Wed, 16 Jun 2021 07:41:54 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y6sm2434305pjr.48.2021.06.16.07.41.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jun 2021 07:41:53 -0700 (PDT)
+Date:   Wed, 16 Jun 2021 07:41:52 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        gmpy.liaowx@gmail.com, Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-doc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] pstore/blk: Include zone in pstore_device_info
+Message-ID: <202106160737.B0B8882B@keescook>
+References: <20210615212121.1200820-1-keescook@chromium.org>
+ <20210615212121.1200820-4-keescook@chromium.org>
+ <20210616040247.GD25873@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20210616132227.999256-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: F0eDltfbP4xgfxmxqWSxxuKCNviflELd
-X-Proofpoint-GUID: D7nLuvTheuIzDQKq0leJ7Mh5mKELchNh
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-06-16_07:2021-06-15,2021-06-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- phishscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1011 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2106160084
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210616040247.GD25873@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/16/21 9:22 AM, Roberto Sassu wrote:
-> vfs_getxattr() differs from vfs_setxattr() in the way it obtains the xattr
-> value. The former gives precedence to the LSMs, and if the LSMs don't
-> provide a value, obtains it from the filesystem handler. The latter does
-> the opposite, first invokes the filesystem handler, and if the filesystem
-> does not support xattrs, passes the xattr value to the LSMs.
->
-> The problem is that not necessarily the user gets the same xattr value that
-> he set. For example, if he sets security.selinux with a value not
-> terminated with '\0', he gets a value terminated with '\0' because SELinux
-> adds it during the translation from xattr to internal representation
-> (vfs_setxattr()) and from internal representation to xattr
-> (vfs_getxattr()).
->
-> Normally, this does not have an impact unless the integrity of xattrs is
-> verified with EVM. The kernel and the user see different values due to the
-> different functions used to obtain them:
->
-> kernel (EVM): uses vfs_getxattr_alloc() which obtains the xattr value from
->                the filesystem handler (raw value);
->
-> user (ima-evm-utils): uses vfs_getxattr() which obtains the xattr value
->                        from the LSMs (normalized value).
+On Wed, Jun 16, 2021 at 06:02:47AM +0200, Christoph Hellwig wrote:
+> > +#define verify_size(name, alignsize, enabled) {				\
+> > +		long _##name_;						\
+> > +		if (enabled)						\
+> > +			_##name_ = check_size(name, alignsize);		\
+> > +		else							\
+> > +			_##name_ = 0;					\
+> > +		/* synchronize visible module parameters to result. */	\
+> > +		name = _##name_ / 1024;					\
+> > +		dev->zone.name = _##name_;				\
+> > +	}
+> 
+> The formatting here looks weird between the two-tab indent and the
+> opening brace on the macro definition line.
 
-Maybe there should be another implementation similar to 
-vfs_getxattr_alloc() (or modify it) to behave like vfs_getxattr() but do 
-the memory allocation part so that the kernel sees what user space see 
-rather than modifying it with your patch so that user space now sees 
-something different than what it has been for years (previous 
-NUL-terminated SELinux xattr may not be NUL-terminated anymore)?
+I can adjust that, sure.
 
-     Stefan
+> 
+> > -	if (!dev || !dev->total_size || !dev->read || !dev->write) {
+> > +	if (!dev || !dev->zone.total_size || !dev->zone.read || !dev->zone.write) {
+> >  		if (!dev)
+> > -			pr_err("NULL device info\n");
+> > +			pr_err("NULL pstore_device_info\n");
+> >  		else {
+> > -			if (!dev->total_size)
+> > +			if (!dev->zone.total_size)
+> >  				pr_err("zero sized device\n");
+> > -			if (!dev->read)
+> > +			if (!dev->zone.read)
+> >  				pr_err("no read handler for device\n");
+> > -			if (!dev->write)
+> > +			if (!dev->zone.write)
+> >  				pr_err("no write handler for device\n");
+> >  		}
+> 
+> This still looks odd to me.  Why not the somewhat more verbose but
+> much more obvious:
+> 
+> 	if (!dev) {
+> 		pr_err("NULL pstore_device_info\n");
+> 		return -EINVAL;
+> 	}
+> 	if (!dev->zone.total_size) {
+> 		pr_err("zero sized device\n");
+> 		return -EINVAL;
+> 	}
+> 	...
 
+Will do.
 
+> > -	dev.total_size = i_size_read(I_BDEV(psblk_file->f_mapping->host)->bd_inode);
+> > +	dev->zone.total_size = i_size_read(I_BDEV(psblk_file->f_mapping->host)->bd_inode);
+> 
+> This is starting to be unreadable long.  A local variable for the inode
+> might be nice, as that can also be used in the ISBLK check above.
 
+Fair enough; will change.
 
->
-> Given that the difference between the raw value and the normalized value
-> should be just the additional '\0' not the rest of the content, this patch
-> modifies vfs_getxattr() to compare the size of the xattr value obtained
-> from the LSMs to the size of the raw xattr value. If there is a mismatch
-> and the filesystem handler does not return an error, vfs_getxattr() returns
-> the raw value.
->
-> This patch should have a minimal impact on existing systems, because if the
-> SELinux label is written with the appropriate tools such as setfiles or
-> restorecon, there will not be a mismatch (because the raw value also has
-> '\0').
->
-> In the case where the SELinux label is written directly with setfattr and
-> without '\0', this patch helps to align EVM and ima-evm-utils in terms of
-> result provided (due to the fact that they both verify the integrity of
-> xattrs from raw values).
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Tested-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->   fs/xattr.c | 15 +++++++++++++++
->   1 file changed, 15 insertions(+)
->
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 5c8c5175b385..412ec875aa07 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -420,12 +420,27 @@ vfs_getxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
->   		const char *suffix = name + XATTR_SECURITY_PREFIX_LEN;
->   		int ret = xattr_getsecurity(mnt_userns, inode, suffix, value,
->   					    size);
-> +		int ret_raw;
-> +
->   		/*
->   		 * Only overwrite the return value if a security module
->   		 * is actually active.
->   		 */
->   		if (ret == -EOPNOTSUPP)
->   			goto nolsm;
-> +
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		/*
-> +		 * Read raw xattr if the size from the filesystem handler
-> +		 * differs from that returned by xattr_getsecurity() and is
-> +		 * equal or greater than zero.
-> +		 */
-> +		ret_raw = __vfs_getxattr(dentry, inode, name, NULL, 0);
-> +		if (ret_raw >= 0 && ret_raw != ret)
-> +			goto nolsm;
-> +
->   		return ret;
->   	}
->   nolsm:
+> > +	if (!pstore_device_info && best_effort && blkdev[0]) {
+> > +		struct pstore_device_info *best_effort_dev;
+> > +
+> > +		best_effort_dev = kzalloc(sizeof(*best_effort_dev), GFP_KERNEL);
+> > +		if (!best_effort) {
+> > +			ret = -ENOMEM;
+> > +			goto unlock;
+> > +		}
+> > +		best_effort_dev->zone.read = psblk_generic_blk_read;
+> > +		best_effort_dev->zone.write = psblk_generic_blk_write;
+> > +
+> > +		ret = __register_pstore_blk(best_effort_dev,
+> > +					    early_boot_devpath(blkdev));
+> > +		if (ret)
+> > +			kfree(best_effort_dev);
+> > +		else
+> > +			pr_info("attached %s (%zu) (no dedicated panic_write!)\n",
+> > +				blkdev, best_effort_dev->zone.total_size);
+> 
+> Maybe split this into a little helper?
+> 
+> > +	/* Unregister and free the best_effort device. */
+> > +	if (psblk_file) {
+> > +		struct pstore_device_info *dev = pstore_device_info;
+> > +
+> > +		__unregister_pstore_device(dev);
+> > +		kfree(dev);
+> > +		fput(psblk_file);
+> > +		psblk_file = NULL;
+> >  	}
+> 
+> Same.
+
+I guess? I don't feel strongly one way or another.
+
+> 
+> > +	/* If we've been asked to unload, unregister any registered device. */
+> > +	if (pstore_device_info)
+> > +		__unregister_pstore_device(pstore_device_info);
+> 
+> Won't this double unregister pstore_device_info?
+
+No, __unregister_pstore_device() will NULL pstore_device_info.
+
+> 
+> >  struct pstore_device_info {
+> > -	unsigned long total_size;
+> >  	unsigned int flags;
+> > -	pstore_zone_read_op read;
+> > -	pstore_zone_write_op write;
+> > -	pstore_zone_erase_op erase;
+> > -	pstore_zone_write_op panic_write;
+> > +	struct pstore_zone_info zone;
+> >  };
+> 
+> Given that flags is only used inside of __register_pstore_device
+> why not kill this struct and just pass it explicitly?
+
+Because of the mess pstore's internal APIs used to be. :) It's likely
+other things will get added here in the future, and I don't want to
+have to repeat the kind of argument passing games that used to exist in
+this code.
+
+-- 
+Kees Cook
