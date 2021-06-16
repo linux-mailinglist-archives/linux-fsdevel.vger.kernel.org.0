@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1B193AA199
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 18:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBBF23AA1A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 18:41:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230466AbhFPQm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 12:42:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55096 "EHLO
+        id S230490AbhFPQnG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 12:43:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230383AbhFPQmz (ORCPT
+        with ESMTP id S230331AbhFPQm5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 12:42:55 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34CB7C061767
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 09:40:49 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id t13so2430638pgu.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 09:40:49 -0700 (PDT)
+        Wed, 16 Jun 2021 12:42:57 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D67C2C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 09:40:50 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id mj8-20020a17090b3688b029016ee34fc1b3so2125577pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 09:40:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eSj7QMM867fTBuxD4WinDi+YMzIWmxuOMcHgu40wLvE=;
-        b=DyQz5l7fpg7DJHxBpx+gaUleysT7fIha1KRTi2aysMIVFvhjDQdRTUQTtOQGIJSrO1
-         lsZEUc349QhacNULCXDdTjNE7YPtFtNAJ3AjHV9zZWcr8Pu8c65/NaQtOlsrvg6bV12h
-         lgZaKPCey7DRAYpFzufgp1ZgG7SfxtZxAopKQ=
+        bh=uK58C0QtDNcahqJUODnJkhg6UnfaTIghgCe8Hvo81CM=;
+        b=HLSDT+7wUHY8LpTUjhJI1RoaqvvzJ8CbeGa1mlLDdidW+2R1M1TEhtvYM7yz+eWIrX
+         KvQv9652FaY6AXcLIj1bqdc1ooiiyg/Zrd86bydD6vbzdb3xskLp+KBJcF3FR50cQB6n
+         qKRguDajdMaWHfageonZo7jsoXdZh7+Dy0rD8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eSj7QMM867fTBuxD4WinDi+YMzIWmxuOMcHgu40wLvE=;
-        b=JIcBpAP/9GQIWKUY2B7FnDTjh1cRIVHTavXCXt43AI65J4sodM8feUSs+yQzuqOJMp
-         nzWWFDhXv66QXmfScXbCqzh/z0JH8xnFk1B/kkwkgs6Bx0tuu8WjqL20DuYZJAkm4KhE
-         c/YkB6lEqKMlCTbuC+2+xkSiTnEeiSEp1tkQUTHK6rolLf2PTmRZ4HESPbyq9MpiFo+Y
-         sGnIz2oCcd1Vx2Q44QeYegNkPu7/z2eSyoJLiciZMqWY/guW4PuMnMva03g1DgLsMxA8
-         90Qn4e/UCeBOp1OOtcgqaF3OVllQXt5ZbZAoQKcW2ITn+owYxEgo/FAAY59NhQhsC221
-         ch9w==
-X-Gm-Message-State: AOAM532Ut/LL+tv2W/4f0mdfugeY/qfELk7ymnBw00ktH+DXz1d4o5N1
-        mH1dD+fqMbMDvP/tfiKl5yzjYg==
-X-Google-Smtp-Source: ABdhPJy3MA/bMpIrn8612O4lt2YxXA4tGPu4lGhMOvCNonn/0H42hZku6Xg6BUsLLwaushFAC8dGtw==
-X-Received: by 2002:a05:6a00:b8a:b029:2ec:761e:33e3 with SMTP id g10-20020a056a000b8ab02902ec761e33e3mr555954pfj.35.1623861648707;
-        Wed, 16 Jun 2021 09:40:48 -0700 (PDT)
+        bh=uK58C0QtDNcahqJUODnJkhg6UnfaTIghgCe8Hvo81CM=;
+        b=HA0sQpfnDUhy5l9JlV7GZ6YCJ6xBiMnStsFeyfv8YvSqx9scZRbevjpyAAlVcA+5p7
+         j/gnQSkQHxh6PS98Dc+bbuwNRScLP/Ze5Epcsf5pEGO71DwlutIFgpT+/Nv9e13HvnEg
+         k5i2LVoO22S1tO1GVIaQiD7REG1NR3T8h32BqKLgSH7pULXSTxCDjWu1rNUS8aa8Xysb
+         gLNzlXI6KACs94mTEWnobQSAi0UVEoHdqGLRyBQRPH7ubvg99YVhYp9bStryjs6AtgUU
+         8Vgth1S38sljmoEMoH8J5Nj2OQOa8G3QjlyvFjK3bSZ6QbMfTqDvS/H9Pj+Za62BPPU8
+         vw4A==
+X-Gm-Message-State: AOAM533Vh69VV75zgvq1SrUO+LyNqH+x5S2XrThrrPHBaRN0ZiWN4CO1
+        5rwWkb0f85Bp9cWdld0htMqa/A==
+X-Google-Smtp-Source: ABdhPJwlTj2cDO93OlRliFpEUmheK1SgPnMQrH2UNhETk3H6RxkXF0EXk5NDiMLaXRmE082Rijd1Sw==
+X-Received: by 2002:a17:90b:190a:: with SMTP id mp10mr11930432pjb.145.1623861650375;
+        Wed, 16 Jun 2021 09:40:50 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b21sm2773113pfp.134.2021.06.16.09.40.45
+        by smtp.gmail.com with ESMTPSA id x22sm2748199pjp.37.2021.06.16.09.40.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jun 2021 09:40:46 -0700 (PDT)
+        Wed, 16 Jun 2021 09:40:49 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kees Cook <keescook@chromium.org>, Christoph Hellwig <hch@lst.de>,
@@ -58,91 +58,338 @@ Cc:     Kees Cook <keescook@chromium.org>, Christoph Hellwig <hch@lst.de>,
         Vignesh Raghavendra <vigneshr@ti.com>,
         linux-doc@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 4/5] pstore/blk: Fix kerndoc and redundancy on blkdev param
-Date:   Wed, 16 Jun 2021 09:40:42 -0700
-Message-Id: <20210616164043.1221861-5-keescook@chromium.org>
+Subject: [PATCH v3 5/5] pstore/blk: Include zone in pstore_device_info
+Date:   Wed, 16 Jun 2021 09:40:43 -0700
+Message-Id: <20210616164043.1221861-6-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210616164043.1221861-1-keescook@chromium.org>
 References: <20210616164043.1221861-1-keescook@chromium.org>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; g=0cec17aa50667cf776ad33debd4d5d780669e07f; i=yTEuvN+d2QlI+CgetW2A/mnEULnwbC3Uy5kOoKgmB9Q=; m=nv3cX+zCGZ64OKaS6k3hCuIb776pM3aoPeSdwsW4l+g=; p=USoGnLZwk4a402OJka3HYldDNWjTYcaDbaDrZ+4qeFA=
-X-Patch-Sig: m=pgp; i=keescook@chromium.org; s=0x0x8972F4DFDC6DC026; b=iQIzBAABCgAdFiEEpcP2jyKd1g9yPm4TiXL039xtwCYFAmDKKYoACgkQiXL039xtwCbD5g//WUB YueFZ8I0eRHi1rVMlUFvST6Tou0jUWvjup1L9XYSQ7CObRFMf5whc9+7yjyAXu6d73aH4FI9Hu/6X T7Hyx7yu3/yh08A94+EGmCw3x3tG+u2+YsaXC61syZ655r2Y/5srYaFS3JTBDHr8secOyxNrvqtW7 JacflvvLmBnr/UYiHn65oAFthh8XAzyj1e6eNek3bCJZwYhmf/E2C8yNY6Rns7jD894FG3ce2tVAD 2h+wILUbWcrLNZRoHHosY8ma7rye5JHBtf2/2dhr3zJRHx7CtaMwNn8f8v4B8BdbHN4O039E10Tzi hD7DvJPoow6zrMy39jrThL/RccFIMlzc8EdlmZgcJaixxuIeVgy9TKO4Qzz2Rg/HvCypEKrE2xoal 04ktdhkwTCH7uOI25jkm8dPaDzmrZ5nRLaOW7iT+dMtWYiGnEq1hkqVnV9aQFBzTIE7P7cY1fmqEj Q2kdlcSwWGJRIk9hvj2E1fuM1nvf116U7ERdLjtpHA92XvKoFHEjFNF39MWQJXG3VU5LN3AuuHKc5 nlBMBAlWsbRbQs1Wlj1vv0L+9vIsZ/jHBrc4FAPdsFXMXFzZbD4EDDoDn1e3OEUkqKnd8Dk0QECDY bDtz72/3myeeQVCpSCVqY4O3Glf3Q3SN/eTwLvh2RovIV6uIgkpOHtayxGaGP6GY=
+X-Patch-Hashes: v=1; h=sha256; g=c97831fb0c8399e525140afebf8001d0f40da49a; i=OzHp+/X5c8B1qT+xdnUXKoWwSY89uY95adXbT6Ztj74=; m=WOqt0d4utZlTaiUKpB0qyaFAJBWPe3VuJCNaOBLEDLw=; p=wbFugwaR98gj5F6ZJcTti2VyGOc7eeRpR29pqb1+kEM=
+X-Patch-Sig: m=pgp; i=keescook@chromium.org; s=0x0x8972F4DFDC6DC026; b=iQIzBAABCgAdFiEEpcP2jyKd1g9yPm4TiXL039xtwCYFAmDKKYoACgkQiXL039xtwCYvsA/6ApV 9oqn2tzk1t8uMGJIn3m65c8MwIVr818wTAMFJnW9u82WYoJCWvo32Qh0f3PmX43ZDi40Xi4WgHoU+ DWoUxhSQhUU1j7C7XgrJN41FLiylFLPdPSgFKBl33CeDOOFMsYoB2prcRBpl5mdp+HzsSB+pHH2qZ pnVBhl8YGHq9YdTzQP9WefqTL8DrpbWpOzRQr3YsIpVlkwnbdnk47mnBTOmIrPevoE+HQfJZOsjJh ndvcUnLRCYIUuayQkXi2NuPTS2K61vW4rBMBzoHImcIYMtZbg1uLXTC9D1vJRRWwRh57FvUXXoxak jjaT+0CjnV/Ulq1oMiKmp2PYnrwztj4R0oydjQqtR0jE+Zd4e+GU2kF/YrNTERZCLTOhnM4j/RJjd R+7j5TQtwgppoqNLjWu2Z5+8ouJuKTQW3JSAUHCJGA7+Vrw5xcQSF2/3L4CRwQmS/HyOCrH8Ysan/ jgQMjbFxVXh7o7K83BhbgYIYEtx7zYfshZ5ZRAQU6iccE14L30Gf2rvDf2b68f205OSKQlTS5+S5d WyaDqbN1qIqj98FEQR85QYGg2tdB11VTDSZWOTCXdGAmVOgepD12myNxG/FGm0yboZ/IGx60g2DwC uoGHNT2b4NMHEcO/j2BgYAhKLXy1nAJONBIDpaqy/avuWQlmCio+FEIHEmpJRyb4=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove redundant details of blkdev and fix up resulting kerndoc.
+Information was redundant between struct pstore_zone_info and struct
+pstore_device_info. Use struct pstore_zone_info, with member name "zone".
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Additionally untangle the logic for the "best effort" block device
+instance.
+
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- Documentation/admin-guide/pstore-blk.rst | 11 +++++++----
- fs/pstore/blk.c                          | 24 +-----------------------
- 2 files changed, 8 insertions(+), 27 deletions(-)
+ drivers/mtd/mtdpstore.c    |  10 +--
+ fs/pstore/blk.c            | 143 ++++++++++++++++++++-----------------
+ include/linux/pstore_blk.h |  27 +------
+ 3 files changed, 87 insertions(+), 93 deletions(-)
 
-diff --git a/Documentation/admin-guide/pstore-blk.rst b/Documentation/admin-guide/pstore-blk.rst
-index 79f6d23e8cda..2d22ead9520e 100644
---- a/Documentation/admin-guide/pstore-blk.rst
-+++ b/Documentation/admin-guide/pstore-blk.rst
-@@ -45,15 +45,18 @@ blkdev
- The block device to use. Most of the time, it is a partition of block device.
- It's required for pstore/blk. It is also used for MTD device.
+diff --git a/drivers/mtd/mtdpstore.c b/drivers/mtd/mtdpstore.c
+index a3ae8778f6a9..e13d42c0acb0 100644
+--- a/drivers/mtd/mtdpstore.c
++++ b/drivers/mtd/mtdpstore.c
+@@ -423,13 +423,13 @@ static void mtdpstore_notify_add(struct mtd_info *mtd)
+ 	longcnt = BITS_TO_LONGS(div_u64(mtd->size, mtd->erasesize));
+ 	cxt->badmap = kcalloc(longcnt, sizeof(long), GFP_KERNEL);
  
--It accepts the following variants for block device:
-+When pstore/blk is built as a module, "blkdev" accepts the following variants:
+-	cxt->dev.total_size = mtd->size;
+ 	/* just support dmesg right now */
+ 	cxt->dev.flags = PSTORE_FLAGS_DMESG;
+-	cxt->dev.read = mtdpstore_read;
+-	cxt->dev.write = mtdpstore_write;
+-	cxt->dev.erase = mtdpstore_erase;
+-	cxt->dev.panic_write = mtdpstore_panic_write;
++	cxt->dev.zone.read = mtdpstore_read;
++	cxt->dev.zone.write = mtdpstore_write;
++	cxt->dev.zone.erase = mtdpstore_erase;
++	cxt->dev.zone.panic_write = mtdpstore_panic_write;
++	cxt->dev.zone.total_size = mtd->size;
  
--1. <hex_major><hex_minor> device number in hexadecimal represents itself; no
--   leading 0x, for example b302.
--#. /dev/<disk_name> represents the device number of disk
-+1. /dev/<disk_name> represents the device number of disk
- #. /dev/<disk_name><decimal> represents the device number of partition - device
-    number of disk plus the partition number
- #. /dev/<disk_name>p<decimal> - same as the above; this form is used when disk
-    name of partitioned disk ends with a digit.
-+
-+When pstore/blk is built into the kernel, "blkdev" accepts the following variants:
-+
-+#. <hex_major><hex_minor> device number in hexadecimal representation,
-+   with no leading 0x, for example b302.
- #. PARTUUID=00112233-4455-6677-8899-AABBCCDDEEFF represents the unique id of
-    a partition if the partition table provides it. The UUID may be either an
-    EFI/GPT UUID, or refer to an MSDOS partition using the format SSSSSSSS-PP,
+ 	ret = register_pstore_device(&cxt->dev);
+ 	if (ret) {
 diff --git a/fs/pstore/blk.c b/fs/pstore/blk.c
-index dc5ff763d414..c373e0d73e6c 100644
+index c373e0d73e6c..ccb82bcde7a8 100644
 --- a/fs/pstore/blk.c
 +++ b/fs/pstore/blk.c
-@@ -58,29 +58,7 @@ MODULE_PARM_DESC(best_effort, "use best effort to write (i.e. do not require sto
- 
- /*
-  * blkdev - the block device to use for pstore storage
-- *
-- * Usually, this will be a partition of a block device.
-- *
-- * blkdev accepts the following variants, when built as a module:
-- * 1) /dev/<disk_name> represents the device number of disk
-- * 2) /dev/<disk_name><decimal> represents the device number
-- *    of partition - device number of disk plus the partition number
-- * 3) /dev/<disk_name>p<decimal> - same as the above, that form is
-- *    used when disk name of partitioned disk ends on a digit.
-- *
-- * blkdev accepts the following variants when built into the kernel:
-- * 1) <hex_major><hex_minor> device number in hexadecimal representation,
-- *    with no leading 0x, for example b302.
-- * 2) PARTUUID=00112233-4455-6677-8899-AABBCCDDEEFF representing the
-- *    unique id of a partition if the partition table provides it.
-- *    The UUID may be either an EFI/GPT UUID, or refer to an MSDOS
-- *    partition using the format SSSSSSSS-PP, where SSSSSSSS is a zero-
-- *    filled hex representation of the 32-bit "NT disk signature", and PP
-- *    is a zero-filled hex representation of the 1-based partition number.
-- * 3) PARTUUID=<UUID>/PARTNROFF=<int> to select a partition in relation to
-- *    a partition with a known unique id.
-- * 4) <major>:<minor> major and minor number of the device separated by
-- *    a colon.
-+ * See Documentation/admin-guide/pstore-blk.rst for details.
+@@ -70,7 +70,7 @@ MODULE_PARM_DESC(blkdev, "block device for pstore storage");
   */
- static char blkdev[80] = CONFIG_PSTORE_BLK_BLKDEV;
- module_param_string(blkdev, blkdev, 80, 0400);
+ static DEFINE_MUTEX(pstore_blk_lock);
+ static struct file *psblk_file;
+-static struct pstore_zone_info *pstore_zone_info;
++static struct pstore_device_info *pstore_device_info;
+ 
+ #define check_size(name, alignsize) ({				\
+ 	long _##name_ = (name);					\
+@@ -91,7 +91,7 @@ static struct pstore_zone_info *pstore_zone_info;
+ 		_##name_ = 0;					\
+ 	/* Synchronize module parameters with resuls. */	\
+ 	name = _##name_ / 1024;					\
+-	pstore_zone_info->name = _##name_;			\
++	dev->zone.name = _##name_;				\
+ }
+ 
+ static int __register_pstore_device(struct pstore_device_info *dev)
+@@ -104,50 +104,42 @@ static int __register_pstore_device(struct pstore_device_info *dev)
+ 		pr_err("NULL device info\n");
+ 		return -EINVAL;
+ 	}
+-	if (!dev->total_size) {
++	if (!dev->zone.total_size) {
+ 		pr_err("zero sized device\n");
+ 		return -EINVAL;
+ 	}
+-	if (!dev->read) {
++	if (!dev->zone.read) {
+ 		pr_err("no read handler for device\n");
+ 		return -EINVAL;
+ 	}
+-	if (!dev->write) {
++	if (!dev->zone.write) {
+ 		pr_err("no write handler for device\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	/* someone already registered before */
+-	if (pstore_zone_info)
++	if (pstore_device_info)
+ 		return -EBUSY;
+ 
+-	pstore_zone_info = kzalloc(sizeof(struct pstore_zone_info), GFP_KERNEL);
+-	if (!pstore_zone_info)
+-		return -ENOMEM;
+-
+ 	/* zero means not limit on which backends to attempt to store. */
+ 	if (!dev->flags)
+ 		dev->flags = UINT_MAX;
+ 
++	/* Copy in module parameters. */
+ 	verify_size(kmsg_size, 4096, dev->flags & PSTORE_FLAGS_DMESG);
+ 	verify_size(pmsg_size, 4096, dev->flags & PSTORE_FLAGS_PMSG);
+ 	verify_size(console_size, 4096, dev->flags & PSTORE_FLAGS_CONSOLE);
+ 	verify_size(ftrace_size, 4096, dev->flags & PSTORE_FLAGS_FTRACE);
++	dev->zone.max_reason = max_reason;
++
++	/* Initialize required zone ownership details. */
++	dev->zone.name = KBUILD_MODNAME;
++	dev->zone.owner = THIS_MODULE;
++
++	ret = register_pstore_zone(&dev->zone);
++	if (ret == 0)
++		pstore_device_info = dev;
+ 
+-	pstore_zone_info->total_size = dev->total_size;
+-	pstore_zone_info->max_reason = max_reason;
+-	pstore_zone_info->read = dev->read;
+-	pstore_zone_info->write = dev->write;
+-	pstore_zone_info->erase = dev->erase;
+-	pstore_zone_info->panic_write = dev->panic_write;
+-	pstore_zone_info->name = KBUILD_MODNAME;
+-	pstore_zone_info->owner = THIS_MODULE;
+-
+-	ret = register_pstore_zone(pstore_zone_info);
+-	if (ret) {
+-		kfree(pstore_zone_info);
+-		pstore_zone_info = NULL;
+-	}
+ 	return ret;
+ }
+ /**
+@@ -174,10 +166,9 @@ EXPORT_SYMBOL_GPL(register_pstore_device);
+ static void __unregister_pstore_device(struct pstore_device_info *dev)
+ {
+ 	lockdep_assert_held(&pstore_blk_lock);
+-	if (pstore_zone_info && pstore_zone_info->read == dev->read) {
+-		unregister_pstore_zone(pstore_zone_info);
+-		kfree(pstore_zone_info);
+-		pstore_zone_info = NULL;
++	if (pstore_device_info && pstore_device_info == dev) {
++		unregister_pstore_zone(&dev->zone);
++		pstore_device_info = NULL;
+ 	}
+ }
+ 
+@@ -211,12 +202,9 @@ static ssize_t psblk_generic_blk_write(const char *buf, size_t bytes,
+ /*
+  * This takes its configuration only from the module parameters now.
+  */
+-static int __register_pstore_blk(const char *devpath)
++static int __register_pstore_blk(struct pstore_device_info *dev,
++				 const char *devpath)
+ {
+-	struct pstore_device_info dev = {
+-		.read = psblk_generic_blk_read,
+-		.write = psblk_generic_blk_write,
+-	};
+ 	struct inode *inode;
+ 	int ret = -ENODEV;
+ 
+@@ -236,9 +224,9 @@ static int __register_pstore_blk(const char *devpath)
+ 	}
+ 
+ 	inode = I_BDEV(psblk_file->f_mapping->host)->bd_inode;
+-	dev.total_size = i_size_read(inode);
++	dev->zone.total_size = i_size_read(inode);
+ 
+-	ret = __register_pstore_device(&dev);
++	ret = __register_pstore_device(dev);
+ 	if (ret)
+ 		goto err_fput;
+ 
+@@ -252,18 +240,6 @@ static int __register_pstore_blk(const char *devpath)
+ 	return ret;
+ }
+ 
+-static void __unregister_pstore_blk(struct file *device)
+-{
+-	struct pstore_device_info dev = { .read = psblk_generic_blk_read };
+-
+-	lockdep_assert_held(&pstore_blk_lock);
+-	if (psblk_file && psblk_file == device) {
+-		__unregister_pstore_device(&dev);
+-		fput(psblk_file);
+-		psblk_file = NULL;
+-	}
+-}
+-
+ /* get information of pstore/blk */
+ int pstore_blk_get_config(struct pstore_blk_config *info)
+ {
+@@ -308,18 +284,63 @@ static inline const char *early_boot_devpath(const char *initial_devname)
+ }
+ #endif
+ 
++static int __init __best_effort_init(void)
++{
++	struct pstore_device_info *best_effort_dev;
++	int ret;
++
++	/* No best-effort mode requested. */
++	if (!best_effort)
++		return 0;
++
++	/* Reject an empty blkdev. */
++	if (!blkdev[0]) {
++		pr_err("blkdev empty with best_effort=Y\n");
++		return -EINVAL;
++	}
++
++	best_effort_dev = kzalloc(sizeof(*best_effort_dev), GFP_KERNEL);
++	if (!best_effort)
++		return -ENOMEM;
++
++	best_effort_dev->zone.read = psblk_generic_blk_read;
++	best_effort_dev->zone.write = psblk_generic_blk_write;
++
++	ret = __register_pstore_blk(best_effort_dev,
++				    early_boot_devpath(blkdev));
++	if (ret)
++		kfree(best_effort_dev);
++	else
++		pr_info("attached %s (%zu) (no dedicated panic_write!)\n",
++			blkdev, best_effort_dev->zone.total_size);
++
++	return ret;
++}
++
++static void __exit __best_effort_exit(void)
++{
++	/*
++	 * Currently, the only user of psblk_file is best_effort, so
++	 * we can assume that pstore_device_info is associated with it.
++	 * Once there are "real" blk devices, there will need to be a
++	 * dedicated pstore_blk_info, etc.
++	 */
++	if (psblk_file) {
++		struct pstore_device_info *dev = pstore_device_info;
++
++		__unregister_pstore_device(dev);
++		kfree(dev);
++		fput(psblk_file);
++		psblk_file = NULL;
++	}
++}
++
+ static int __init pstore_blk_init(void)
+ {
+-	int ret = 0;
++	int ret;
+ 
+ 	mutex_lock(&pstore_blk_lock);
+-	if (!pstore_zone_info && best_effort && blkdev[0]) {
+-		ret = __register_pstore_blk(early_boot_devpath(blkdev));
+-		if (ret == 0 && pstore_zone_info)
+-			pr_info("attached %s:%s (%zu) (no dedicated panic_write!)\n",
+-				pstore_zone_info->name, blkdev,
+-				pstore_zone_info->total_size);
+-	}
++	ret = __best_effort_init();
+ 	mutex_unlock(&pstore_blk_lock);
+ 
+ 	return ret;
+@@ -329,15 +350,9 @@ late_initcall(pstore_blk_init);
+ static void __exit pstore_blk_exit(void)
+ {
+ 	mutex_lock(&pstore_blk_lock);
+-	if (psblk_file)
+-		__unregister_pstore_blk(psblk_file);
+-	else {
+-		struct pstore_device_info dev = { };
+-
+-		if (pstore_zone_info)
+-			dev.read = pstore_zone_info->read;
+-		__unregister_pstore_device(&dev);
+-	}
++	__best_effort_exit();
++	/* If we've been asked to unload, unregister any remaining device. */
++	__unregister_pstore_device(pstore_device_info);
+ 	mutex_unlock(&pstore_blk_lock);
+ }
+ module_exit(pstore_blk_exit);
+diff --git a/include/linux/pstore_blk.h b/include/linux/pstore_blk.h
+index 99564f93d774..924ca07aafbd 100644
+--- a/include/linux/pstore_blk.h
++++ b/include/linux/pstore_blk.h
+@@ -10,36 +10,15 @@
+ /**
+  * struct pstore_device_info - back-end pstore/blk driver structure.
+  *
+- * @total_size: The total size in bytes pstore/blk can use. It must be greater
+- *		than 4096 and be multiple of 4096.
+  * @flags:	Refer to macro starting with PSTORE_FLAGS defined in
+  *		linux/pstore.h. It means what front-ends this device support.
+  *		Zero means all backends for compatible.
+- * @read:	The general read operation. Both of the function parameters
+- *		@size and @offset are relative value to bock device (not the
+- *		whole disk).
+- *		On success, the number of bytes should be returned, others
+- *		means error.
+- * @write:	The same as @read, but the following error number:
+- *		-EBUSY means try to write again later.
+- *		-ENOMSG means to try next zone.
+- * @erase:	The general erase operation for device with special removing
+- *		job. Both of the function parameters @size and @offset are
+- *		relative value to storage.
+- *		Return 0 on success and others on failure.
+- * @panic_write:The write operation only used for panic case. It's optional
+- *		if you do not care panic log. The parameters are relative
+- *		value to storage.
+- *		On success, the number of bytes should be returned, others
+- *		excluding -ENOMSG mean error. -ENOMSG means to try next zone.
++ * @zone:	The struct pstore_zone_info details.
++ *
+  */
+ struct pstore_device_info {
+-	unsigned long total_size;
+ 	unsigned int flags;
+-	pstore_zone_read_op read;
+-	pstore_zone_write_op write;
+-	pstore_zone_erase_op erase;
+-	pstore_zone_write_op panic_write;
++	struct pstore_zone_info zone;
+ };
+ 
+ int  register_pstore_device(struct pstore_device_info *dev);
 -- 
 2.25.1
 
