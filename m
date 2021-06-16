@@ -2,104 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 148243AA170
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 18:35:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A83F23AA191
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 18:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbhFPQhQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 12:37:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229673AbhFPQhP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 12:37:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E2766135C;
-        Wed, 16 Jun 2021 16:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1623861309;
-        bh=y/YznPEe6jQnoQXyq4Rh3l3/m6Ej3k4x0E+6ydXUYVo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=onVmsbR/Bm8s78aDBGdm+vdJPMTMQuaMzqHVyTVm99f0KIy4+a+DnBKoj7Lj368Pu
-         P8LRkEFZsbnftDcx8k+q4G56hpORgUnUxFdJ1o9jzpnStqXMUZL7/kqxuFaw7K7o0I
-         pQq7pXPGoBB3ZIgdS8vuv+MJWUdOfdb2+qxyUVV4=
-Date:   Wed, 16 Jun 2021 18:35:07 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] iomap: Use __set_page_dirty_nobuffers
-Message-ID: <YMooO+YwvdFO+z3+@kroah.com>
-References: <20210615162342.1669332-1-willy@infradead.org>
- <20210615162342.1669332-4-willy@infradead.org>
- <YMjhP+Bk5PY5yqm7@kroah.com>
- <YMjkNd0zapLcooNB@casper.infradead.org>
- <20210615173453.GA2849@lst.de>
- <YMjtvLkHQ8sZ/CPS@casper.infradead.org>
- <YMmfQNjExNs3cuyq@kroah.com>
- <YMomnpDT9EQ/5XB9@casper.infradead.org>
+        id S230321AbhFPQmz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 12:42:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55078 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230280AbhFPQmy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Jun 2021 12:42:54 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7BF1C0617A6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 09:40:47 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id q25so2646998pfh.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 09:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=epXDcsa+iB2IdU4Gd981bdI+VgdMiEH3uS5c66pfdMk=;
+        b=GkLCmFh/vzfPIF7v1q7mJc1wazpBYwrpHlrK8VamLK/tdnFXUDt3Jqpo/4zhnIgkB8
+         w2Pa4tHYHF/iTjxBxw7knQzMcGPxxObyF5+9fqOM24ruxemJU2JYyJ4aKfJ6/wO0ElHe
+         T6vfoZDbGX45mQjwQTttWWusehKNnlTA3+E6Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=epXDcsa+iB2IdU4Gd981bdI+VgdMiEH3uS5c66pfdMk=;
+        b=dD5jhN/tiS6brjhx+E5IzeOkmX6EgJzcRf34RYM4H4IS3oBjde6QFmxMzshGBqtPr7
+         vkgQCiJkc5piM9g1eAdbhHX7E6eKXRgU7NvTouFT4Knry9xWBWv/nSX8kvVB0WFGw9az
+         pywO6TdSgrKCrA0fZf76DYKruQMbgEGjFvFK+JBJGAUSQlCErMweT2yMrgFVFP5ziC6z
+         oclLyIRNw+ETgA1oO8L5XD7rIZ9GNeevabJxWO92KZLAjB3xXtauzyjz03d6nuTzT7fa
+         fqxOpfFaL26pIRHhD1hw5Ko02BJfiMc3MIHSWSZMNo8/mYKXNPl7GsFgkrNpcDIFH9R7
+         rcUA==
+X-Gm-Message-State: AOAM5319VzKBZHGIc4xidWtEnn78rJUzm75UtH8nRVqcuKF7Hliu6XdZ
+        me/Lt34rLTDKhmJaUy/XPFob8A==
+X-Google-Smtp-Source: ABdhPJwSppm5irPLhD/8UhbktXBLwwAA5AGV8driRal8NYsxUQyf0Pz+CGSw19WrD/+6GFIZo7Qt8Q==
+X-Received: by 2002:a63:5c04:: with SMTP id q4mr453285pgb.127.1623861647276;
+        Wed, 16 Jun 2021 09:40:47 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c5sm2840547pfn.144.2021.06.16.09.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jun 2021 09:40:46 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kees Cook <keescook@chromium.org>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>, gmpy.liaowx@gmail.com,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-doc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 0/5] Use the normal block device I/O path
+Date:   Wed, 16 Jun 2021 09:40:38 -0700
+Message-Id: <20210616164043.1221861-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMomnpDT9EQ/5XB9@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 16, 2021 at 05:28:14PM +0100, Matthew Wilcox wrote:
-> On Wed, Jun 16, 2021 at 08:50:40AM +0200, Greg Kroah-Hartman wrote:
-> > On Tue, Jun 15, 2021 at 07:13:16PM +0100, Matthew Wilcox wrote:
-> > > On Tue, Jun 15, 2021 at 07:34:53PM +0200, Christoph Hellwig wrote:
-> > > > Eventually everything around set_page_dirty should be changed to operate
-> > > > on folios, and that will be a good time to come up with a sane
-> > > > naming scheme without introducing extra churn.
-> > > 
-> > > The way it currently looks in my tree ...
-> > > 
-> > > set_page_dirty(page) is a thin wrapper that calls folio_mark_dirty(folio).
-> > > folio_mark_dirty() calls a_ops->dirty_folio(mapping, folio) (which
-> > > 	returns bool).
-> > > __set_page_dirty_nobuffers() becomes filemap_dirty_folio()
-> > > __set_page_dirty_buffers() becomes block_dirty_folio()
-> > > __set_page_dirty_no_writeback() becomes dirty_folio_no_writeback()
-> > > 
-> > > Now I look at it, maybe that last should be nowb_dirty_folio().
-> > 
-> > Not to be a pain, but you are mixing "folio" at the front and back of
-> > the api name?  We messed up in the driver core with this for some things
-> > (get_device() being one), I would recommend just sticking with one
-> > naming scheme now as you are getting to pick what you want to use.
-> 
-> That is mostly what I'm doing.  eg,
-> 
-> get_page -> folio_get
-> lock_page -> folio_lock
-> PageUptodate -> folio_uptodate
-> set_page_dirty -> folio_mark_dirty
+Hi,
 
-Nice.
+This fixes up pstore/blk to avoid touching block internals, and includes
+additional fixes and clean-ups.
 
-> What I haven't dealt with yet is the naming of the
-> address_space_operations.  My thinking with those is that they should
-> be verb_folio, since they _aren't_ the functions that get called.
-> ie it looks like this:
-> 
-> folio_mark_dirty()
->   aops->dirty_folio()
->     ext4_dirty_folio()
->       buffer_dirty_folio()
-> 
-> I actually see the inconsistency here as a good thing -- these are
-> implementations of the aop, so foo_verb_folio() means you're doing
-> something weird and internal instead of going through the vfs/mm.
-> 
-> That implies doing things like renaming ->readpage to ->read_folio, but
-> if we're changing the API from passing a struct page to a struct folio,
-> that can all be done at the same time with no additional disruption.
+-Kees
 
-Ok, as long as there's a reason for the naming scheme, I'm happy as
-hopefully it will make sense to others as well.
+v3:
+- split verify_size move into a separate patch
+- several changes suggested by hch from the v2 thread
+- add reviewed-bys
+v2: https://lore.kernel.org/lkml/20210615212121.1200820-1-keescook@chromium.org
+v1: https://lore.kernel.org/lkml/20210614200421.2702002-1-keescook@chromium.org
 
-thanks,
+Kees Cook (5):
+  pstore/blk: Improve failure reporting
+  pstore/blk: Move verify_size() macro out of function
+  pstore/blk: Use the normal block device I/O path
+  pstore/blk: Fix kerndoc and redundancy on blkdev param
+  pstore/blk: Include zone in pstore_device_info
 
-greg k-h
+ Documentation/admin-guide/pstore-blk.rst |  14 +-
+ drivers/mtd/mtdpstore.c                  |  10 +-
+ fs/pstore/blk.c                          | 403 +++++++++--------------
+ include/linux/pstore_blk.h               |  27 +-
+ 4 files changed, 171 insertions(+), 283 deletions(-)
+
+-- 
+2.25.1
+
