@@ -2,87 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 270833A8D18
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 01:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D2F13A8D4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 02:18:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231696AbhFPAAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 20:00:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55168 "EHLO
+        id S231580AbhFPAUg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 20:20:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231189AbhFPAAR (ORCPT
+        with ESMTP id S231372AbhFPAUe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 20:00:17 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F65C061574;
-        Tue, 15 Jun 2021 16:58:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=Ql83LcvTl1dmYyiiDpq5vOZPP/K43XvgGPAif1phT98=; b=P+vl3r2U7Ci4grk1NTj5lyylIL
-        tBM4aTOxbnvYXs9MOD+SxkVpBx5yFGts3MNHRzzyQzFWhTPh0TZADTTO7aTvy5+FEx/FjArEEwo+f
-        l4BuuAu8bJS6EJ2U4t2tjznGOtmH2B6a0fFZMvVi8G4vN3xfDpJatxdwI4ihB08WT+7oENbolgksr
-        hSyi1XF+gYHx0JUr2R+3Ic7brc2+uutM7nELF1Wt40aC31PY5Nw5u/ZoopO4oaLMfYQnfHdXxx7C2
-        hU1YLq4/7EfioKUfn8SpJWrFHvoO4vBmFcO5qxglZ63ttsP74K5fOQgEl/T5YiJK8giv8eeyyEbUZ
-        +ZdxqwPw==;
-Received: from [2601:1c0:6280:3f0::aefb]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ltIwa-00429X-OH; Tue, 15 Jun 2021 23:58:08 +0000
-Subject: Re: [PATCH] afs: fix no return statement in function returning
- non-void
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Hulk Robot <hulkci@huawei.com>,
-        Zheng Zengkai <zhengzengkai@huawei.com>,
-        Tom Rix <trix@redhat.com>, linux-afs@lists.infradead.org,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <162375813191.653958.11993495571264748407.stgit@warthog.procyon.org.uk>
- <CAHk-=whARK9gtk0BPo8Y0EQqASNG9SfpF1MRqjxf43OO9F0vag@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <f2764b10-dd0d-cabf-0264-131ea5829fed@infradead.org>
-Date:   Tue, 15 Jun 2021 16:58:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        Tue, 15 Jun 2021 20:20:34 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70B3DC06175F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 17:18:29 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id k5so669681pjj.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jun 2021 17:18:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U9ut0QO/e/N5V/O+/xxowpWen8UQyCbn6qtxkVe0D8Y=;
+        b=JcupgDdHq+fmTtYahFp9g+jILqxB19u88v4xnoU55fWLv4k3YOt/xNPurkbzegMsAG
+         NNMrQSJN/bCEgjMYNZUC20WGOBAV1diTK74G7f/VHGvqLwYEedYJtJ3nI0833KtrM7kU
+         t9kGTrMECpFStf9TPmnQQJw6nw5sTkNZ2hgie5DWKEimBuk2Ql3jpZVgHKeZscFIfEWT
+         FSm5OEwpwmmecOzudMjp4Rt+2O5WBV1LrdshwyVWQvhqJ4gbyL3GU3vgiXpk/OOtUG+R
+         9SDYxzyZHGzVP/HJP4qSzGSitzNNqYPJe6gGlgIMCb0EV5UH0BYz1vfNwhv1uIyZDqE+
+         Oifw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U9ut0QO/e/N5V/O+/xxowpWen8UQyCbn6qtxkVe0D8Y=;
+        b=SOh/DMfXmgbf6i/3QmUHzui4hd6VDBs9x0iY3e4ODxzDoh69fCclPvKYwytXMh4yQZ
+         d/yikP+uG+RONJl6e8G0WbUvmYFresSOpNO+UsKnU1g3o/rIP1vb1XuGnb2eY6C9xiaY
+         UCcrjralC8YwfUheyVuHuxJ01DMqvLBP2JftLekwZP6Ta+lmiY+BX3RNe669KqcHBLcH
+         v3TLvcckIiwmaK53TNzwdxvr9Dys7vlYKBl0tOPanRL9HCy64rnLJ5B7F0y3pHobuwbK
+         RePZkYVK/T+Gywvd921zexbWU7woTvyCErvl9A5W9O8wvAuZCrK8TuqRthclWQnQqgN+
+         NbRA==
+X-Gm-Message-State: AOAM532CR/SvePirGnxJGcB6VjIjNifPr2bNk292FBu6byLIJpL2Rvsp
+        5GJG6HovTZxJ1YtrS9y4FeYudQDPrDpbnSx8YKCAvw==
+X-Google-Smtp-Source: ABdhPJyDslf/YwZkzYx2Z/IqSadb826GT3g94w753bjCVGDQs7kdVkKXA5TwIzZBSN9veDsTezagh2Bmxl7wkmkaDYQ=
+X-Received: by 2002:a17:90a:ea8c:: with SMTP id h12mr7432919pjz.149.1623802708921;
+ Tue, 15 Jun 2021 17:18:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=whARK9gtk0BPo8Y0EQqASNG9SfpF1MRqjxf43OO9F0vag@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210604011844.1756145-1-ruansy.fnst@fujitsu.com> <20210604011844.1756145-2-ruansy.fnst@fujitsu.com>
+In-Reply-To: <20210604011844.1756145-2-ruansy.fnst@fujitsu.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 15 Jun 2021 17:18:18 -0700
+Message-ID: <CAPcyv4ibuHeQ7o=sTZpQoryv=_3WuBFJhodBnAEVRPmvo=nAeQ@mail.gmail.com>
+Subject: Re: [PATCH v4 01/10] pagemap: Introduce ->memory_failure()
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        david <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/15/21 7:49 AM, Linus Torvalds wrote:
-> On Tue, Jun 15, 2021 at 4:55 AM David Howells <dhowells@redhat.com> wrote:
->>
->> From: Zheng Zengkai <zhengzengkai@huawei.com>
->>
->> Add missing return to fix following compilation issue:
->>
->> fs/afs/dir.c: In function ‘afs_dir_set_page_dirty’:
->> fs/afs/dir.c:51:1: error: no return statement in function
->> returning non-void [-Werror=return-type]
-> 
-> This warning is actively wrong, and the patch is the wrong thing to do.
-> 
-> What compiler / architecture / config?
-> 
-> Because BUG() should have an "unreachable()", and the compiler should
-> know that a return statement isn't needed (and adding it shouldn't
-> make any difference).
-> 
-> And it's not warning for me when I build that code. So I really think
-> the real bug is entirely somewhere else, and this patch is papering
-> over the real problem.
+On Thu, Jun 3, 2021 at 6:19 PM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
 
-Hi,
+Hi Ruan, apologies for the delays circling back to this.
 
-Some implementations of BUG() are macros, not functions, so "unreachable"
-is not applicable AFAIK.
+>
+> When memory-failure occurs, we call this function which is implemented
+> by each kind of devices.  For the fsdax case, pmem device driver
+> implements it.  Pmem device driver will find out the filesystem in which
+> the corrupted page located in.  And finally call filesystem handler to
+> deal with this error.
+>
+> The filesystem will try to recover the corrupted data if possiable.
+>
 
+Let's move this change to the patch that needs it, this patch does not
+do anything on its own.
 
--- 
-~Randy
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>  include/linux/memremap.h | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+> index 45a79da89c5f..473fe18c516a 100644
+> --- a/include/linux/memremap.h
+> +++ b/include/linux/memremap.h
+> @@ -87,6 +87,14 @@ struct dev_pagemap_ops {
+>          * the page back to a CPU accessible page.
+>          */
+>         vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
+> +
+> +       /*
+> +        * Handle the memory failure happens on one page.  Notify the processes
+> +        * who are using this page, and try to recover the data on this page
+> +        * if necessary.
+> +        */
 
+I thought we discussed that this needed to be range based here:
+
+https://lore.kernel.org/r/CAPcyv4jhUU3NVD8HLZnJzir+SugB6LnnrgJZ-jP45BZrbJ1dJQ@mail.gmail.com
+
+...but also incorporate Christoph's feedback to not use notifiers.
+
+> +       int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
+> +                             int flags);
+
+Change this callback to
+
+int (*notify_memory_failure)(struct dev_pagemap *pgmap, unsigned long
+pfn, unsigned long nr_pfns)
+
+...to pass a range and to clarify that this callback is for
+memory_failure() to notify the pgmap, the pgmap notifies the owner via
+the holder callbacks.
