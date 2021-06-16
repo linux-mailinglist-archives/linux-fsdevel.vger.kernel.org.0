@@ -2,102 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CABB83A8EC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 04:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06B973A8ED7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 04:30:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231287AbhFPCVM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Jun 2021 22:21:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58266 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbhFPCVM (ORCPT
+        id S231909AbhFPCcr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Jun 2021 22:32:47 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24505 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231233AbhFPCcq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Jun 2021 22:21:12 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CA7DC061574;
-        Tue, 15 Jun 2021 19:19:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=cAFNJ1/DwVcSuyRvAwvNKZrXlrL9rYgK3W8Ic4ttV/8=; b=h4O7+9VsNWjBMVqH4uGscTf+2E
-        Y+2KszH0xsTNWqZGX0xC9MYUJvqLb2pAiLbdOjKiZVhkzE7tqHF0vX8jqfw/ZijXQeDkKetDqhIt9
-        X+A8Zygmim6WYlRQYj1VwpQQ3d1q8wAb9m9eG50Ili2M+TPLOOfRVqr67mTOkXcT9yZxK8kgXU0kX
-        96Pds4lzKmFayRiubPf8iBDI/Su+E0mBRUD/H5pGxMllnbrWGRrXbvdofgqYfpwuyhAA8dcHunwpr
-        032dR/SFn2X90Y7pRZCexz4bxx1iYdSTIl5eV8nc4YNs1EVkHAD1+EtBZoYc1WD69pGQv8nodJsLC
-        CpOYkazg==;
-Received: from [2601:1c0:6280:3f0::aefb]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ltL8y-004Rdw-GO; Wed, 16 Jun 2021 02:19:04 +0000
-Subject: Re: [PATCH] afs: fix no return statement in function returning
- non-void
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Zheng Zengkai <zhengzengkai@huawei.com>,
-        Tom Rix <trix@redhat.com>, linux-afs@lists.infradead.org,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <162375813191.653958.11993495571264748407.stgit@warthog.procyon.org.uk>
- <CAHk-=whARK9gtk0BPo8Y0EQqASNG9SfpF1MRqjxf43OO9F0vag@mail.gmail.com>
- <f2764b10-dd0d-cabf-0264-131ea5829fed@infradead.org>
- <CAHk-=whPPWYXKQv6YjaPQgQCf+78S+0HmAtyzO1cFMdcqQp5-A@mail.gmail.com>
- <c2002123-795c-20ae-677c-a35ba0e361af@infradead.org>
-Message-ID: <07d62654-15c1-29a4-c671-1669ea92510b@infradead.org>
-Date:   Tue, 15 Jun 2021 19:19:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        Tue, 15 Jun 2021 22:32:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623810640;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=y6D2FLYsK7JeK0vnQ+MjYTD2DRF3ATEwQXscjYAEAPw=;
+        b=ijaDqDGEMH4estfT1ESjjmsz4jWtFBwICllRy3nc3G0P9RmnWqfwwkc2hd/pjfGX25CuTW
+        hzS3xEN8ApjmEUdny36W4ezGLJtmQ5QKbh1YiTTISWIH35PtM0wf8zwNKxSorIe43MpShe
+        4h/4HvlF6nl0fQIJN1Jh98lFEckMhes=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-40-Y5zuCd8_MzeZ5AjSJEsUuQ-1; Tue, 15 Jun 2021 22:30:39 -0400
+X-MC-Unique: Y5zuCd8_MzeZ5AjSJEsUuQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 13ACF81840D;
+        Wed, 16 Jun 2021 02:30:38 +0000 (UTC)
+Received: from T590 (ovpn-12-78.pek2.redhat.com [10.72.12.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7EF9119C66;
+        Wed, 16 Jun 2021 02:30:28 +0000 (UTC)
+Date:   Wed, 16 Jun 2021 10:30:23 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
+        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 13/16] block: switch polling to be bio based
+Message-ID: <YMliP6sFVuPhMbOB@T590>
+References: <20210615131034.752623-1-hch@lst.de>
+ <20210615131034.752623-14-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <c2002123-795c-20ae-677c-a35ba0e361af@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210615131034.752623-14-hch@lst.de>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/15/21 6:38 PM, Randy Dunlap wrote:
-> On 6/15/21 5:32 PM, Linus Torvalds wrote:
->> On Tue, Jun 15, 2021 at 4:58 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->>>
->>> Some implementations of BUG() are macros, not functions,
->>
->> Not "some", I think. Most.
->>
->>> so "unreachable" is not applicable AFAIK.
->>
->> Sure it is. One common pattern is the x86 one:
->>
->>   #define BUG()                                                   \
->>   do {                                                            \
->>           instrumentation_begin();                                \
->>           _BUG_FLAGS(ASM_UD2, 0);                                 \
->>           unreachable();                                          \
->>   } while (0)
+On Tue, Jun 15, 2021 at 03:10:31PM +0200, Christoph Hellwig wrote:
+> Replace the blk_poll interface that requires the caller to keep a queue
+> and cookie from the submissions with polling based on the bio.
 > 
-> duh.
+> Polling for the bio itself leads to a few advantages:
 > 
->> and that "unreachable()" is exactly what I'm talking about.
->>
->> So I repeat: what completely broken compiler / config / architecture
->> is it that needs that "return 0" after a BUG() statement?
+>  - the cookie construction can made entirely private in blk-mq.c
+>  - the caller does not need to remember the request_queue and cookie
+>    separately and thus sidesteps their lifetime issues
+>  - keeping the device and the cookie inside the bio allows to trivially
+>    support polling BIOs remapping by stacking drivers
+>  - a lot of code to propagate the cookie back up the submission path can
+>    be removed entirely.
 > 
-> I have seen it on ia64 -- most likely GCC 9.3.0, but I'll have to
-> double check that.
 
-Nope, I cannot repro that now. I'll check a few more arches...
+...
 
->> Because that environment is broken, and the warning is bogus and wrong.
->>
->> It might not be the compiler. It might be some architecture that does
->> this wrong. It might be some very particular configuration that does
->> something bad and makes the "unreachable()" not work (or not exist).
->>
->> But *that* is the bug that should be fixed. Not adding a pointless and
->> incorrect line that makes no sense, just to hide the real bug.
+> +/**
+> + * bio_poll - poll for BIO completions
+> + * @bio: bio to poll for
+> + * @flags: BLK_POLL_* flags that control the behavior
+> + *
+> + * Poll for completions on queue associated with the bio. Returns number of
+> + * completed entries found.
+> + *
+> + * Note: the caller must either be the context that submitted @bio, or
+> + * be in a RCU critical section to prevent freeing of @bio.
+> + */
+> +int bio_poll(struct bio *bio, unsigned int flags)
+> +{
+> +	struct request_queue *q = bio->bi_bdev->bd_disk->queue;
+> +	blk_qc_t cookie = READ_ONCE(bio->bi_cookie);
+> +	int ret;
+> +
+> +	if (cookie == BLK_QC_T_NONE ||
+> +	    !test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
+> +		return 0;
+> +
+> +	if (current->plug)
+> +		blk_flush_plug_list(current->plug, false);
+> +
+> +	if (blk_queue_enter(q, BLK_MQ_REQ_NOWAIT))
+> +		return 0;
+> +	if (WARN_ON_ONCE(!queue_is_mq(q)))
+> +		ret = 0;	/* not yet implemented, should not happen */
+> +	else
+> +		ret = blk_mq_poll(q, cookie, flags);
+> +	blk_queue_exit(q);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(bio_poll);
+> +
+> +/*
+> + * Helper to implement file_operations.iopoll.  Requires the bio to be stored
+> + * in iocb->private, and cleared before freeing the bio.
+> + */
+> +int iocb_bio_iopoll(struct kiocb *kiocb, unsigned int flags)
+> +{
+> +	struct bio *bio;
+> +	int ret = 0;
+> +
+> +	/*
+> +	 * Note: the bio cache only uses SLAB_TYPESAFE_BY_RCU, so bio can
+> +	 * point to a freshly allocated bio at this point.  If that happens
+> +	 * we have a few cases to consider:
+> +	 *
+> +	 *  1) the bio is beeing initialized and bi_bdev is NULL.  We can just
+> +	 *     simply nothing in this case
+> +	 *  2) the bio points to a not poll enabled device.  bio_poll will catch
+> +	 *     this and return 0
+> +	 *  3) the bio points to a poll capable device, including but not
+> +	 *     limited to the one that the original bio pointed to.  In this
+> +	 *     case we will call into the actual poll method and poll for I/O,
+> +	 *     even if we don't need to, but it won't cause harm either.
+> +	 *
+> +	 * For cases 2) and 3) above the RCU grace period ensures that bi_bdev
+> +	 * is still allocated. Because partitions hold a reference to the whole
+> +	 * device bdev and thus disk, the disk is also still valid.  Grabbing
+> +	 * a reference to the queue in bio_poll() ensures the hctxs and requests
+> +	 * are still valid as well.
+> +	 */
+
+Not sure disk is valid, we only hold the disk when opening a bdev, but
+the bdev can be closed during polling. Also disk always holds one
+reference on request queue, so if disk is valid, no need to grab queue's
+refcnt in bio_poll().
 
 
--- 
-~Randy
+Thanks,
+Ming
 
