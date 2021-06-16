@@ -2,205 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C617F3A9E7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 17:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFB903A9E8B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 17:06:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234405AbhFPPFv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 11:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33128 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234367AbhFPPFu (ORCPT
+        id S234434AbhFPPIT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 11:08:19 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:35332 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S234432AbhFPPIR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 11:05:50 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F82C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 08:03:43 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id q15so3374268ioi.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 08:03:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0OsHGcSJEodswIaE0lnccwazjsPx7DhA2l2pVTms8EI=;
-        b=lWlbh0hrsx+YTOwKorAMOB8JD5pekrtpNKWvSP7t48HT+4WnyV65F7FFtVGu649gC+
-         LZjYyTs3/Ny6QLKrHLk7NUc1dxwU+/SYfU8eicynHKapFyAiHsVjeM7rcn8csu+BO7Tv
-         Ac4Cen/bxtjfJszqqAMX5imznbTwX+6SL7dNAOn3II9CEKf/OLYIG9jr8Zq6uGVyfYxl
-         Wcpl3UXCNsZgxkwv6HVpd1N4frMTZrO/sZWN/jhpXJKkJUocPx/OaiIcSgmA+9b7IJz7
-         8WpdXZZGgf4OV17fHop7fQbmfn7IpghOtxceNtJHiC7SpdkshVlhkGSjmN46GM/DNhBt
-         9r0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0OsHGcSJEodswIaE0lnccwazjsPx7DhA2l2pVTms8EI=;
-        b=TQSnJKN6E02B/DLeP6ev9qWvIOWBG+7xKwZylqWEl+LuJmWavniFuh/eQxVtxSifZj
-         42LiUa7rstoSTJQVbWWNZhlC3DlRqp0EqKuifQVDv+tvlGxlOA9tH9mYIGOwFTJxxdVv
-         HNQYnvTSq1xGPUTwUWtLog3KR28Ksstc2VTrlNTnMafarFMNf1zoutlWC72fpgKaLM7f
-         3US9bwIom5QHUYZ6YwnNEJletUJy6xZT/wphlZu/Vrzifdk7AOriYFGLp4J2La7KcrJ/
-         V8iyaSZXWMhOYioGGgkPes03/sW+eIGH8i4QYWptA9DHsllFeiv4fqRtTnGSBcURyaMm
-         ar8g==
-X-Gm-Message-State: AOAM530Et/SjFtnvHiZrFy39jXilv9kh2N17NmRxXNCFCIY/nVivlFR2
-        3M/Zmgg/SzREKccyZtD1K1jOtKuWDDVcQWVnF5LHjfkXWIA=
-X-Google-Smtp-Source: ABdhPJxrjgxx6DwBosOMeJAlFJWOLUUbiUwYxH3c6OrW6U00jzkv93WShc9AbOaPk43dS4h9wp5TIEgK5k49abbjDY4=
-X-Received: by 2002:a05:6602:2d83:: with SMTP id k3mr343365iow.5.1623855822988;
- Wed, 16 Jun 2021 08:03:42 -0700 (PDT)
+        Wed, 16 Jun 2021 11:08:17 -0400
+X-UUID: 366ce3d2231f4516a17a0529016fd6c6-20210616
+X-UUID: 366ce3d2231f4516a17a0529016fd6c6-20210616
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <yt.chang@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 2027821186; Wed, 16 Jun 2021 23:06:09 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 16 Jun 2021 23:06:02 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 16 Jun 2021 23:06:02 +0800
+From:   YT Chang <yt.chang@mediatek.com>
+To:     YT Chang <yt.chang@mediatek.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Paul Turner <pjt@google.com>,
+        Qais Yousef <qais.yousef@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
+Subject: [PATCH 1/1] sched: Add tunable capacity margin for fis_capacity
+Date:   Wed, 16 Jun 2021 23:05:54 +0800
+Message-ID: <1623855954-6970-1-git-send-email-yt.chang@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <20210609181158.479781-1-amir73il@gmail.com>
-In-Reply-To: <20210609181158.479781-1-amir73il@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 16 Jun 2021 18:03:31 +0300
-Message-ID: <CAOQ4uxi3vK1eyWk69asycmo5PTyUE9+o7-Ha17CTXYytQiWPZQ@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fix illegal access to inode with reused nodeid
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Max Reitz <mreitz@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Nikolaus Rath <Nikolaus@rath.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 9, 2021 at 9:12 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> Server responds to LOOKUP and other ops (READDIRPLUS/CREATE/MKNOD/...)
-> with outarg containing nodeid and generation.
->
-> If a fuse inode is found in inode cache with the same nodeid but
-> different generation, the existing fuse inode should be unhashed and
-> marked "bad" and a new inode with the new generation should be hashed
-> instead.
->
-> This can happen, for example, with passhrough fuse filesystem that
-> returns the real filesystem ino/generation on lookup and where real inode
-> numbers can get recycled due to real files being unlinked not via the fuse
-> passthrough filesystem.
->
-> With current code, this situation will not be detected and an old fuse
-> dentry that used to point to an older generation real inode, can be used
-> to access a completely new inode, which should be accessed only via the
-> new dentry.
->
-> Note that because the FORGET message carries the nodeid w/o generation,
-> the server should wait to get FORGET counts for the nlookup counts of
-> the old and reused inodes combined, before it can free the resources
-> associated to that nodeid.
->
-> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxgDMGUpK35huwqFYGH_idBB8S6eLiz85o0DDKOyDH4Syg@mail.gmail.com/
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->
-> Miklos,
->
-> I was able to reproduce this issue with a passthrough fs that stored
-> ino+generation and uses then to open fd on lookup.
->
-> I extended libfuse's test_syscalls [1] program to demonstrate the issue
-> described in commit message.
->
-> Max, IIUC, you are making a modification to virtiofs-rs that would
-> result is being exposed to this bug.  You are welcome to try out the
-> test and let me know if you can reproduce the issue.
->
-> Note that some test_syscalls test fail with cache enabled, so libfuse's
-> test_examples.py only runs test_syscalls in cache disabled config.
->
-> Thanks,
-> Amir.
->
-> [1] https://github.com/amir73il/libfuse/commits/test-reused-inodes
->
+Currently, the margin of cpu frequency raising and cpu overutilized are
+hard-coded as 25% (1280/1024). Make the margin tunable
+to control the aggressive for placement and frequency control. Such as
+for power tuning framework could adjust smaller margin to slow down
+frequency raising speed and let task stay in smaller cpu.
 
-Miklos,
+For light loading scenarios, like beach buggy blitz and messaging apps,
+the app threads are moved big core with 25% margin and causing
+unnecessary power.
+With 0% capacity margin (1024/1024), the app threads could be kept in
+little core and deliver better power results without any fps drop.
 
-Not sure if you got to look at this already, but I had noticed that the
-link above is broken because I deleted the branch after Nikolaus
-merged it to upstream libfuse, so here is a new link to the PR [2]
-with some more relevant context.
+capacity margin        0%          10%          20%          30%
+                     current        current       current      current
+                  Fps  (mA)    Fps    (mA)   Fps   (mA)    Fps  (mA)
+Beach buggy blitz  60 198.164  60   203.211  60   209.984  60  213.374
+Yahoo browser      60 232.301 59.97 237.52  59.95 248.213  60  262.809
 
-Per request from Nikolaus, I modified the passthrough_hp example
-to reuse inodes on last close+unlink, so it now hits the failure in the
-new test with upstream kernel and it passes the test with this kernel fix.
+Change-Id: Iba48c556ed1b73c9a2699e9e809bc7d9333dc004
+Signed-off-by: YT Chang <yt.chang@mediatek.com>
+---
+ include/linux/sched/cpufreq.h | 19 +++++++++++++++++++
+ include/linux/sched/sysctl.h  |  1 +
+ include/linux/sysctl.h        |  1 +
+ kernel/sched/fair.c           |  4 +++-
+ kernel/sysctl.c               | 15 +++++++++++++++
+ 5 files changed, 39 insertions(+), 1 deletion(-)
 
-Thanks,
-Amir.
+diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
+index 6205578..8a6c23a1 100644
+--- a/include/linux/sched/cpufreq.h
++++ b/include/linux/sched/cpufreq.h
+@@ -23,6 +23,23 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
+ void cpufreq_remove_update_util_hook(int cpu);
+ bool cpufreq_this_cpu_can_update(struct cpufreq_policy *policy);
+ 
++#ifdef CONFIG_SMP
++extern unsigned int sysctl_sched_capacity_margin;
++
++static inline unsigned long map_util_freq(unsigned long util,
++					  unsigned long freq, unsigned long cap)
++{
++	freq = freq * util / cap;
++	freq = freq * sysctl_sched_capacity_margin / SCHED_CAPACITY_SCALE;
++
++	return freq;
++}
++
++static inline unsigned long map_util_perf(unsigned long util)
++{
++	return util * sysctl_sched_capacity_margin / SCHED_CAPACITY_SCALE;
++}
++#else
+ static inline unsigned long map_util_freq(unsigned long util,
+ 					unsigned long freq, unsigned long cap)
+ {
+@@ -33,6 +50,8 @@ static inline unsigned long map_util_perf(unsigned long util)
+ {
+ 	return util + (util >> 2);
+ }
++#endif
++
+ #endif /* CONFIG_CPU_FREQ */
+ 
+ #endif /* _LINUX_SCHED_CPUFREQ_H */
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index db2c0f3..5dee024 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -10,6 +10,7 @@
+ 
+ #ifdef CONFIG_SMP
+ extern unsigned int sysctl_hung_task_all_cpu_backtrace;
++extern unsigned int sysctl_sched_capacity_margin;
+ #else
+ #define sysctl_hung_task_all_cpu_backtrace 0
+ #endif /* CONFIG_SMP */
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index d99ca99..af6d70f 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -41,6 +41,7 @@
+ #define SYSCTL_ZERO	((void *)&sysctl_vals[0])
+ #define SYSCTL_ONE	((void *)&sysctl_vals[1])
+ #define SYSCTL_INT_MAX	((void *)&sysctl_vals[2])
++#define SCHED_CAPACITY_MARGIN_MIN   1024
+ 
+ extern const int sysctl_vals[];
+ 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 20aa234..609b431 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -111,7 +111,9 @@ int __weak arch_asym_cpu_priority(int cpu)
+  *
+  * (default: ~20%)
+  */
+-#define fits_capacity(cap, max)	((cap) * 1280 < (max) * 1024)
++unsigned int sysctl_sched_capacity_margin = 1280;
++EXPORT_SYMBOL_GPL(sysctl_sched_capacity_margin);
++#define fits_capacity(cap, max)	((cap) * sysctl_sched_capacity_margin < (max) * 1024)
+ 
+ /*
+  * The margin used when comparing CPU capacities.
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 14edf84..d6d2b84 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -127,6 +127,11 @@
+ static int six_hundred_forty_kb = 640 * 1024;
+ #endif
+ 
++/* this is needed for the proc of sysctl_sched_capacity_margin */
++#ifdef CONFIG_SMP
++static int min_sched_capacity_margin = 1024;
++#endif /* CONFIG_SMP */
++
+ /* this is needed for the proc_doulongvec_minmax of vm_dirty_bytes */
+ static unsigned long dirty_bytes_min = 2 * PAGE_SIZE;
+ 
+@@ -1716,6 +1721,16 @@ int proc_do_static_key(struct ctl_table *table, int write,
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec,
+ 	},
++#ifdef CONFIG_SMP
++	{
++		.procname	= "sched_capcity_margin",
++		.data		= &sysctl_sched_capacity_margin,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &min_sched_capacity_margin,
++	},
++#endif
+ #ifdef CONFIG_SCHEDSTATS
+ 	{
+ 		.procname	= "sched_schedstats",
+-- 
+1.9.1
 
-[2] https://github.com/libfuse/libfuse/pull/612
-
-
->  fs/fuse/dir.c     | 3 ++-
->  fs/fuse/fuse_i.h  | 9 +++++++++
->  fs/fuse/inode.c   | 4 ++--
->  fs/fuse/readdir.c | 7 +++++--
->  4 files changed, 18 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 1b6c001a7dd1..b06628fd7d8e 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -239,7 +239,8 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
->                 if (!ret) {
->                         fi = get_fuse_inode(inode);
->                         if (outarg.nodeid != get_node_id(inode) ||
-> -                           (bool) IS_AUTOMOUNT(inode) != (bool) (outarg.attr.flags & FUSE_ATTR_SUBMOUNT)) {
-> +                           fuse_stale_inode(inode, outarg.generation,
-> +                                            &outarg.attr)) {
->                                 fuse_queue_forget(fm->fc, forget,
->                                                   outarg.nodeid, 1);
->                                 goto invalid;
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 7e463e220053..f1bd28c176a9 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -867,6 +867,15 @@ static inline u64 fuse_get_attr_version(struct fuse_conn *fc)
->         return atomic64_read(&fc->attr_version);
->  }
->
-> +static inline bool fuse_stale_inode(const struct inode *inode, int generation,
-> +                                   struct fuse_attr *attr)
-> +{
-> +       return inode->i_generation != generation ||
-> +               inode_wrong_type(inode, attr->mode) ||
-> +               (bool) IS_AUTOMOUNT(inode) !=
-> +               (bool) (attr->flags & FUSE_ATTR_SUBMOUNT);
-> +}
-> +
->  static inline void fuse_make_bad(struct inode *inode)
->  {
->         remove_inode_hash(inode);
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 393e36b74dc4..257bb3e1cac8 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -350,8 +350,8 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
->                 inode->i_generation = generation;
->                 fuse_init_inode(inode, attr);
->                 unlock_new_inode(inode);
-> -       } else if (inode_wrong_type(inode, attr->mode)) {
-> -               /* Inode has changed type, any I/O on the old should fail */
-> +       } else if (fuse_stale_inode(inode, generation, attr)) {
-> +               /* nodeid was reused, any I/O on the old inode should fail */
->                 fuse_make_bad(inode);
->                 iput(inode);
->                 goto retry;
-> diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-> index 277f7041d55a..bc267832310c 100644
-> --- a/fs/fuse/readdir.c
-> +++ b/fs/fuse/readdir.c
-> @@ -200,9 +200,12 @@ static int fuse_direntplus_link(struct file *file,
->         if (!d_in_lookup(dentry)) {
->                 struct fuse_inode *fi;
->                 inode = d_inode(dentry);
-> +               if (inode && get_node_id(inode) != o->nodeid)
-> +                       inode = NULL;
->                 if (!inode ||
-> -                   get_node_id(inode) != o->nodeid ||
-> -                   inode_wrong_type(inode, o->attr.mode)) {
-> +                   fuse_stale_inode(inode, o->generation, &o->attr)) {
-> +                       if (inode)
-> +                               fuse_make_bad(inode);
->                         d_invalidate(dentry);
->                         dput(dentry);
->                         goto retry;
-> --
-> 2.31.1
->
