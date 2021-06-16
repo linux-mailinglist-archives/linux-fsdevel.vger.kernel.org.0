@@ -2,82 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 204033A964C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 11:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D5543A9669
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 11:38:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232225AbhFPJir (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 05:38:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46544 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231491AbhFPJiq (ORCPT
+        id S232009AbhFPJk4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 05:40:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43620 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231491AbhFPJk4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 05:38:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623836200;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Pb8rlKDzNwfhkCK0Z8UCi46pV+uHNekULCY4/0U7rpw=;
-        b=GIlrDHbtx+g7CxOye5B0bT+aDzdTA60rSaTQ7BOJFXV4AhjoNhQOAIB6NZ3n9emQYuDnA4
-        PdVUs+GnGDh04hlZfQLDoW3lynqo5Zx9b8GtVDXt8BI4+avrxrJRuVJwVE+MpcJYCbZy2o
-        3UIZGiUkSki4vy16GzrAeDnROVHiRtk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-593-uxWh6hrgNLCWG_BsrcN2BA-1; Wed, 16 Jun 2021 05:36:39 -0400
-X-MC-Unique: uxWh6hrgNLCWG_BsrcN2BA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F1FBC1084F4C;
-        Wed, 16 Jun 2021 09:36:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E92D8E73C;
-        Wed, 16 Jun 2021 09:36:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210614201435.1379188-5-willy@infradead.org>
-References: <20210614201435.1379188-5-willy@infradead.org> <20210614201435.1379188-1-willy@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     dhowells@redhat.com, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH v11 04/33] mm/vmstat: Add functions to account folio statistics
+        Wed, 16 Jun 2021 05:40:56 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6132EC061574;
+        Wed, 16 Jun 2021 02:38:49 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id s26so2308458ioe.9;
+        Wed, 16 Jun 2021 02:38:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2/MvKY4Cc8ZvNy+Agqhh0BnZkqflTNCcNSEyPszszWE=;
+        b=BCxLH9VjmgtjKc9Vp38RV3uJWTkhfVk9L2cN0xGy3I6OnvNbdC18ZPDp7mIb9LDnqG
+         rqG3L30hKMGkLFsgz1ohSkD1GdOnTD39CfqYIEFITXc+7fydUFXw+cRR3eCFsQTMN6lr
+         65qAHMy6EWY5LmaZ9W2Rfbwh5MOwEFW3Y9ZCO8WqqD04RwdC3TtfJJz9EyetqzGHRS6t
+         raL0hZGHTVeE4XUelrG2Trp6XONROtpUQeRMngULXJtpA5FBVNGbZc0hXufWPItapiDk
+         2b0/iFxQljwKmJBVws+7R5rBNecAnR4n9wNrYz5bSggL/tpCNyKE7VLLqkahDENqtG++
+         U8Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2/MvKY4Cc8ZvNy+Agqhh0BnZkqflTNCcNSEyPszszWE=;
+        b=lgBz+ShUUrSLOONxuVSJtCOs17GM+ZQOmUVJ8587Yvbn2GqJVMXA+yEqcsSfPQwugw
+         5YRYqcl55aoYlyg1osbJ8ulv3ZDFLeBJfl4nqEBWtoTe4D2xFrxWUE+05B2BIeFic0Rp
+         OXQZBcWvfB6Y5lzadgOpXScmSoSOLfo1tbikvsBUCJ8opNw1h7eNwaQ+2rkRs2mFf0vU
+         mjjyQlS+8jXLxCPwa8eIs0y1ogBXIIw2U/oL1tGSoY69sBbKZKN+axOMv4o3beqwhygh
+         nyiWT8hI6T9gq4IKr5xj5UpXYKMx/PrrG3Dwjw17Nw6uuIFWa6FvvbC7mBKWwk5Ji4L9
+         mZbg==
+X-Gm-Message-State: AOAM531MZw5k48R91pCrFSrLXLSMrNZwUClClc2TgsoawoOxpUsiyEtM
+        w3yAxkiX0Ia6FIHD2PuOgvy0oMzXCXfljv4q7pc=
+X-Google-Smtp-Source: ABdhPJycEXv3DexAYGjm/B4EuogiJJk7dUEA52DCI6ai2NnexGrddRUZgRoaZlaDzKRBeb5JR9kFZPZqrDdyFG1WjfA=
+X-Received: by 2002:a05:6602:2d83:: with SMTP id k3mr3009500iow.5.1623836328913;
+ Wed, 16 Jun 2021 02:38:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <811827.1623836195.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 16 Jun 2021 10:36:35 +0100
-Message-ID: <811828.1623836195@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20210615235556.970928-1-krisman@collabora.com> <20210615235556.970928-11-krisman@collabora.com>
+In-Reply-To: <20210615235556.970928-11-krisman@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 16 Jun 2021 12:38:38 +0300
+Message-ID: <CAOQ4uxj0K_q5Oaaou73Saan4cuF8jqBu1XmRYGYc+mCKs_Ewkg@mail.gmail.com>
+Subject: Re: [PATCH v2 10/14] fsnotify: Introduce helpers to send error_events
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     kernel@collabora.com, "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
+On Wed, Jun 16, 2021 at 2:56 AM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Introduce helpers for filesystems interested in reporting FS_ERROR
+> events.
+>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>
+> ---
+> Changes since v1:
+>   - Use the inode argument (Amir)
+>   - Protect s_fsnotify_marks with ifdef guard
+> ---
+>  fs/notify/fsnotify.c             |  2 +-
+>  include/linux/fsnotify.h         | 20 ++++++++++++++++++++
+>  include/linux/fsnotify_backend.h |  1 +
+>  3 files changed, 22 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 36205a769dde..ac05eb3fb368 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -491,7 +491,7 @@ int __fsnotify(__u32 mask, const struct fsnotify_event_info *event_info)
+>                  */
+>                 parent = event_info->dir;
+>         }
+> -       sb = inode->i_sb;
+> +       sb = event_info->sb ?: inode->i_sb;
+>
+>         /*
+>          * Optimization: srcu_read_lock() has a memory barrier which can
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index 8c2c681b4495..c0dbc5a65381 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -326,4 +326,24 @@ static inline void fsnotify_change(struct dentry *dentry, unsigned int ia_valid)
+>                 fsnotify_dentry(dentry, mask);
+>  }
+>
+> +static inline int fsnotify_sb_error(struct super_block *sb, struct inode *inode,
+> +                                       int error)
+> +{
+> +#ifdef CONFIG_FSNOTIFY
+> +       if (sb->s_fsnotify_marks) {
 
-> Allow page counters to be more readily modified by callers which have
-> a folio.  Name these wrappers with 'stat' instead of 'state' as requeste=
-d
-> by Linus here:
-> https://lore.kernel.org/linux-mm/CAHk-=3Dwj847SudR-kt+46fT3+xFFgiwpgThvm=
-7DJWGdi4cVrbnQ@mail.gmail.com/
-> No change to generated code.
-> =
+__fsnotify() has this optimization very early
+so you do not need it here and you do not need the ifdef.
+performance of fsnotify_sb_error() is utterly not important.
 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Jeff Layton <jlayton@kernel.org>
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> +               struct fs_error_report report = {
+> +                       .error = error,
+> +                       .inode = inode,
+> +               };
+> +
+> +               return __fsnotify(FS_ERROR, &(struct fsnotify_event_info) {
+> +                               .data = &report,
+> +                               .data_type = FSNOTIFY_EVENT_ERROR,
+> +                               .inode = NULL, .cookie = 0, .sb = sb
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+No need to set members to 0/NULL with this type of initializer.
 
+Thanks,
+Amir.
