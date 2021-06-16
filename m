@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E82783A9462
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 09:49:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 296D93A94BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 10:07:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231489AbhFPHv2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 03:51:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46966 "EHLO
+        id S231761AbhFPIJg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 04:09:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231195AbhFPHv1 (ORCPT
+        with ESMTP id S231376AbhFPIJg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 03:51:27 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0572DC061574;
-        Wed, 16 Jun 2021 00:49:22 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id k16so2022526ios.10;
-        Wed, 16 Jun 2021 00:49:21 -0700 (PDT)
+        Wed, 16 Jun 2021 04:09:36 -0400
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D93C061574;
+        Wed, 16 Jun 2021 01:07:30 -0700 (PDT)
+Received: by mail-io1-xd2e.google.com with SMTP id s19so2104930ioc.3;
+        Wed, 16 Jun 2021 01:07:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ikE/o+HB7qUet0sUVn4IHjdD7oxXYQwPbHytFooRh/U=;
-        b=WNNLbk1yLBUcI9CG/a9fGj1jr0GMakQ61DFFtDScpBVDAOdm4Qp134tqEnKf/eYtVh
-         xsAwjjO2AaYGv6KV0pNlV7JgU8LmQDRRw5QnlEPY9gviKRhnGRQlgEiKvah04fjOItgq
-         PCeeocnplDKTeYkxUtdv62zGRz7DQnGWG6FE48YF//m2034Ds055mKz8AZ+nVOYwzYJJ
-         U7LfGJhWzkYprWycwVzaoWqQIUswroGCaj7ZOEE5WdKj+Nja3P1+fq9jf4doWPUztMvz
-         OAlW8yaJg/dobrS6Vfk9WqSTEpnwHzoq2+p2iWw3PmECEdUIJwgCfcNeJAqtJ6kfAY1Z
-         sU4g==
+        bh=Aawz4KrDSfE1sRyy91mWXvyNZiPbdTlPW10y2Ia3xNQ=;
+        b=VlcerfMUG8fopKETs+lN3ycmkaxddG1zEhvjwIabwPv9dW/kniNkTXDGrPEbmZdjH9
+         KrhSjvtzZjpxmYcbGfslLvtWQao2xVb2x6RUfUoH9YxvWtYOBuCHlwozHKSIGk/FGphK
+         emvzT/FKjmJRVEouqjxePNl4VQdMTAQL8mDN4YNub3bWNZGk4P/boKr/VC5D9ii6HhxR
+         0iCVjm9jWXa4b2QbscRRt+TZ0Sy7gHn9Gh6MRG9rW6kKcwuEn3bHi72HhkzI8X+N7ydZ
+         8JJcTlwIYMgAPktJ6ua/5DSXth2V86R4ejh5bjYnPqbHbARfElzt6u6vgekCVrQcL79c
+         TvzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ikE/o+HB7qUet0sUVn4IHjdD7oxXYQwPbHytFooRh/U=;
-        b=D+gbxiaFmLsIg2t/hR+eLAxBxdU1mw010BsQUp/SFAWdcNOiBZxle3zeQOCxolYtxb
-         +qeu974s7YL0P63KXK26bazYDmsRBs6uoBQWKTuaZ7RMYqcD0t/AQHTYF9dQSUogj0xV
-         Gj5FzuFcEDPhxMej7psluyBY8SWn55FMGf4nZJPokiB97YifuBg8f21FlgcgyUhvQewj
-         czSfRB6bqcvMkLgIQiCSP6P3ye6pcgTvgFMEmmmobYg8B+GQeJMCPJI2syhKBvk2vm3s
-         cZibHCdE9kUgXjm0h586BOW38SppHjgGSigX5suX8fxCEekn6VUpIcMMNQHcL2pHGGiU
-         D0Lw==
-X-Gm-Message-State: AOAM531PHmnzJ3YDZYCZ3uImoAdY+1ofgtb/Veom5m/YuJuj87k5+Hxh
-        PFKS59T/Cm303XBPutO8Vo0ND/8FZ4CTihazgaw=
-X-Google-Smtp-Source: ABdhPJwXrUhXi7U4IriLfkBrif391loRpNV7PNC1ipWHu6QvIAwQ596ZlU+5unZJA/st3dXcgQbgn6Ess4ZvBc0MzUs=
-X-Received: by 2002:a05:6602:2d83:: with SMTP id k3mr2674281iow.5.1623829761493;
- Wed, 16 Jun 2021 00:49:21 -0700 (PDT)
+        bh=Aawz4KrDSfE1sRyy91mWXvyNZiPbdTlPW10y2Ia3xNQ=;
+        b=HGgFXnbVkeE0CvpKhNaX1dtoHBqu9fnoL3COKZ7QzqFDD2zeUa7caeXm/CsLoOSIWw
+         9j+YrciXwy2CTCkmgrycIemOgjHJLKH15q2nzhzK0ETV1Gs4VRhFbPvn/2rs2wuwzETm
+         BsaVHXnRuC1lxPpvdYjWwePtiw56o42zE/248Ftw6JGoKVQm9KenEl54K7VhNMGgorA8
+         OBkE0Krrb0MVPYRy32gRWUcyd0eS5V+ONmAMYUJdTPZwlAAA8Mo/4/m/1hRzekvtBPpP
+         FubJxVWP8DzytJGUmDpoy9QqEcWgAdF/820NHa7bxqyviiuaKOrCYLKT8y1MmDzdmXeR
+         CnXg==
+X-Gm-Message-State: AOAM532ZWRSQ2LDQFCgii0LaVZui4tbzwTJhXl97MhE0P5V3yYorgxwD
+        O02eGjn8JlrncyPi6NaeI5OK9P8tazQdMJUt0wM=
+X-Google-Smtp-Source: ABdhPJzSe2CX8Hrsvr+74sSts1snGMzU2QP7xaexcj1OH5uH7u81JygJ8sTxa+dsBnvF6o/kaInP41UeW8gioR9T5o4=
+X-Received: by 2002:a5d:8b03:: with SMTP id k3mr2601886ion.203.1623830848997;
+ Wed, 16 Jun 2021 01:07:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210615235556.970928-1-krisman@collabora.com> <20210615235556.970928-2-krisman@collabora.com>
-In-Reply-To: <20210615235556.970928-2-krisman@collabora.com>
+References: <20210615235556.970928-1-krisman@collabora.com> <20210615235556.970928-4-krisman@collabora.com>
+In-Reply-To: <20210615235556.970928-4-krisman@collabora.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 16 Jun 2021 10:49:10 +0300
-Message-ID: <CAOQ4uxh-4dRSWQZr0Y7WrVmQc1ZLo=WXhmqD3DDMrWn0CgSC-A@mail.gmail.com>
-Subject: Re: [PATCH v2 01/14] fsnotify: Don't call insert hook for overflow events
+Date:   Wed, 16 Jun 2021 11:07:18 +0300
+Message-ID: <CAOQ4uxhNku-QG8ubKqrTUNFy=FbpwJabFznKOD7tkuxMqxkj9g@mail.gmail.com>
+Subject: Re: [PATCH v2 03/14] fanotify: Split fsid check from other fid mode checks
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     kernel@collabora.com, "Darrick J. Wong" <djwong@kernel.org>,
         Theodore Tso <tytso@mit.edu>,
@@ -67,57 +67,51 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Wed, Jun 16, 2021 at 2:56 AM Gabriel Krisman Bertazi
 <krisman@collabora.com> wrote:
 >
-> Overflow events are not mergeable, so they are not hashed_events.  But,
-> when failing inside fsnotify_add_event, for lack of space,
-> fsnotify_add_event() still calls the insert hook, which adds the
-> overflow event to the merge list.
+> FAN_ERROR will require fsid, but not necessarily require the filesystem
+
+FAN_FS_ERROR
+
+> to expose a file handle.  Split those checks into different functions, so
+> they can be used separately when setting up an event.
 >
-> Avoid calling the insert hook when adding an overflow event.
->
-> Fixes: 94e00d28a680 ("fsnotify: use hash table for faster events merge")
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>
 > ---
->  fs/notify/notification.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> Changes since v1:
+>   (Amir)
+>   - Sort hunks to simplify diff.
+> Changes since RFC:
+>   (Amir)
+>   - Rename fanotify_check_path_fsid -> fanotify_test_fsid.
+>   - Use dentry directly instead of path.
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 27 ++++++++++++++++++---------
+>  1 file changed, 18 insertions(+), 9 deletions(-)
 >
-> diff --git a/fs/notify/notification.c b/fs/notify/notification.c
-> index 32f45543b9c6..033294669e07 100644
-> --- a/fs/notify/notification.c
-> +++ b/fs/notify/notification.c
-> @@ -106,6 +106,11 @@ int fsnotify_add_event(struct fsnotify_group *group,
->                         return ret;
->                 }
->                 event = group->overflow_event;
-> +               /*
-> +                * Since overflow events are not mergeable, don't insert
-> +                * them in the merge hash.
-> +                */
-> +               insert = NULL;
->                 goto queue;
->         }
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 0da4e5dcab0f..af518790a80f 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1192,16 +1192,15 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>         return fd;
+>  }
 >
+> -/* Check if filesystem can encode a unique fid */
+> -static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
+> +static int fanotify_test_fsid(struct dentry *dentry, __kernel_fsid_t *fsid)
+>  {
+>         __kernel_fsid_t root_fsid;
+>         int err;
+>
+>         /*
+> -        * Make sure path is not in filesystem with zero fsid (e.g. tmpfs).
+> +        * Make sure dentry is not of a filesystem with zero fsid (e.g. tmpfs).
 
-Hmm, the fix looks correct, but a bit fragile.
-While it makes sense that @insert is the counterpart of @merge
-there is nothing in the API that mandates it.
-
-Therefore, it would be more robust IMO to add a check
-fanotify_is_hashed_event(mask) in fanotify_insert_event()
-to match fanotify_is_hashed_event(mask)  in get_one_event().
-
-If we do that, we can also simplify:
-
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -779,8 +779,7 @@ static int fanotify_handle_event(struct
-fsnotify_group *group, u32 mask,
-
-        fsn_event = &event->fse;
-        ret = fsnotify_add_event(group, fsn_event, fanotify_merge,
--                                fanotify_is_hashed_event(mask) ?
--                                fanotify_insert_event : NULL);
-+                                fanotify_insert_event);
-
+Sorry.... I forgot to update this comment
+59cda49ecf6c ("shmem: allow reporting fanotify events with file
+handles on tmpfs")
+Not your fault, but best we fix the comment if we change it to be correct.
+It can be changed to (e.g. fuse)
 
 Thanks,
 Amir.
