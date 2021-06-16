@@ -2,170 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9231A3AA12D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 18:23:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 904A53AA14A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 18:29:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235271AbhFPQZP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 12:25:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24332 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235279AbhFPQZO (ORCPT
+        id S235329AbhFPQbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 12:31:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233625AbhFPQbG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 12:25:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623860587;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zx7YyWxObSgQ3AARWzsKqBj+Jwmxzr3yV4ImeZmYiso=;
-        b=GXTW5VByxYLOSHYh9FbpLrKvIpiMekcJHaeg2wHesBxI4xF1wl+0NXd9az2jSGXXcuFh1a
-        33LSJv8dJ7Dka18V+FwRd8f269DUNd45rBrWggtxk4oQepIfPdoS8jhphngz+jjt+GMvHb
-        VXleF+yBbft+6mcUUpr7NA0L+2pbs7M=
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
- [209.85.167.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-405-tcYhNW5bMWqMS-2kF0qRMQ-1; Wed, 16 Jun 2021 12:22:06 -0400
-X-MC-Unique: tcYhNW5bMWqMS-2kF0qRMQ-1
-Received: by mail-oi1-f199.google.com with SMTP id h67-20020aca53460000b02901f9abff7c53so1331943oib.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 09:22:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=zx7YyWxObSgQ3AARWzsKqBj+Jwmxzr3yV4ImeZmYiso=;
-        b=dCJNf9JQ0VaHUayNNnHttK/556obQCkMpbVlDF8bfpfwO/B6MFDHV9ppPDKh4op+kq
-         Vjw/yYEcj5vPInIv/VEobGVLtzJn4DLT+2njtQ1giRuAfgYB1pW4EIQ9pia1CwE5uwr2
-         juhAPpTT9zGQAUFwzoZWHiQ4Pk8XF+OrHDKSzBr+fjFYM9cZIJm79rLQEt0vl0Ag/HGT
-         J38a2GNLQ2e02O2wh+0/XreQ4gqaQV6MrDfP1uuXjnYgdKpmBsF9+ONIbAQWQQ8iDiJ7
-         1Iwkym+IRiU07SII+PDoJpMP4ZMsiX97SB1qPBMae+4ovpth9nmMRCix1LnNq6suTPnW
-         0EfA==
-X-Gm-Message-State: AOAM533TB/UnmRzAsBLlD2jgBM0EtBMbhkpVOtTV9WQp5pqPYEP/cqsn
-        eyzSj8EKtIvG/7O0/AkI61hr1H3rWcLqsyQe8LJSLmu7ekWISrudbWh9aN7KYp7LTZwcm0F7VmD
-        stHzRUUmxW1IXuf4sXKSZJ1PiFw==
-X-Received: by 2002:a05:6830:1bf7:: with SMTP id k23mr634424otb.206.1623860525304;
-        Wed, 16 Jun 2021 09:22:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzOpiMEWLaI9ZVfcTiMnktDFGsastIpKNz5sl9Bmv84fu1NFJcJQvLypehL7oAjbtR9BC6kAA==
-X-Received: by 2002:a05:6830:1bf7:: with SMTP id k23mr634408otb.206.1623860525115;
-        Wed, 16 Jun 2021 09:22:05 -0700 (PDT)
-Received: from localhost.localdomain (075-142-250-213.res.spectrum.com. [75.142.250.213])
-        by smtp.gmail.com with ESMTPSA id y7sm506227oix.36.2021.06.16.09.22.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jun 2021 09:22:04 -0700 (PDT)
-Subject: Re: [PATCH] afs: fix no return statement in function returning
- non-void
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Zheng Zengkai <zhengzengkai@huawei.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Hulk Robot <hulkci@huawei.com>, linux-afs@lists.infradead.org,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <162375813191.653958.11993495571264748407.stgit@warthog.procyon.org.uk>
- <CAHk-=whARK9gtk0BPo8Y0EQqASNG9SfpF1MRqjxf43OO9F0vag@mail.gmail.com>
- <f2764b10-dd0d-cabf-0264-131ea5829fed@infradead.org>
- <CAHk-=whPPWYXKQv6YjaPQgQCf+78S+0HmAtyzO1cFMdcqQp5-A@mail.gmail.com>
- <c2002123-795c-20ae-677c-a35ba0e361af@infradead.org>
- <051421e0-afe8-c6ca-95cd-4dc8cd20a43e@huawei.com>
- <200ea6f7-0182-9da1-734c-c49102663ccc@redhat.com>
- <CAHk-=wjEThm5Kyockk1kJhd_K-P+972t=SnEj-WX9KcKPW0-Qg@mail.gmail.com>
-From:   Tom Rix <trix@redhat.com>
-Message-ID: <9d7873b6-e35c-ae38-9952-a1df443b2aea@redhat.com>
-Date:   Wed, 16 Jun 2021 09:22:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Wed, 16 Jun 2021 12:31:06 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8680C061574;
+        Wed, 16 Jun 2021 09:28:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=P3JM1PR0r8cXkfSpx6oDkANGnRG4SyX1FnBVo8rM8bQ=; b=WkFNMopVIoCUpd6Eqyc/x/e9Cu
+        fGtqjaLTAEaCv2+fGvmJ32Ts/jZ6r7PNwy7GQ4bcxXftK/u5wA58Bp8O3GGvlP486CgGGqCVzvKil
+        f6NddKUR6v9gBJQV08yhXncKu5HVKMVD7nPbvBWLIqf8HA6eIYqkxj4lPUj/BS8a+2RrutyU8n3nR
+        nhFvHOAThn91QcZ52r/220tjI/wqBZtVdMWe+MFXuwTjqbrKT3lIYngmIUaesvNMKTnNClD0c8Rp6
+        Mq6i8EkL8Cz/L8lkH6Lqh9fX75kiW0FVCnwvy0uj4JgE5foyBq5U6In9bRlhoqkVqCjlq1/qrqsIk
+        8E3gKO5g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ltYOk-008Fhq-En; Wed, 16 Jun 2021 16:28:19 +0000
+Date:   Wed, 16 Jun 2021 17:28:14 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] iomap: Use __set_page_dirty_nobuffers
+Message-ID: <YMomnpDT9EQ/5XB9@casper.infradead.org>
+References: <20210615162342.1669332-1-willy@infradead.org>
+ <20210615162342.1669332-4-willy@infradead.org>
+ <YMjhP+Bk5PY5yqm7@kroah.com>
+ <YMjkNd0zapLcooNB@casper.infradead.org>
+ <20210615173453.GA2849@lst.de>
+ <YMjtvLkHQ8sZ/CPS@casper.infradead.org>
+ <YMmfQNjExNs3cuyq@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wjEThm5Kyockk1kJhd_K-P+972t=SnEj-WX9KcKPW0-Qg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YMmfQNjExNs3cuyq@kroah.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jun 16, 2021 at 08:50:40AM +0200, Greg Kroah-Hartman wrote:
+> On Tue, Jun 15, 2021 at 07:13:16PM +0100, Matthew Wilcox wrote:
+> > On Tue, Jun 15, 2021 at 07:34:53PM +0200, Christoph Hellwig wrote:
+> > > Eventually everything around set_page_dirty should be changed to operate
+> > > on folios, and that will be a good time to come up with a sane
+> > > naming scheme without introducing extra churn.
+> > 
+> > The way it currently looks in my tree ...
+> > 
+> > set_page_dirty(page) is a thin wrapper that calls folio_mark_dirty(folio).
+> > folio_mark_dirty() calls a_ops->dirty_folio(mapping, folio) (which
+> > 	returns bool).
+> > __set_page_dirty_nobuffers() becomes filemap_dirty_folio()
+> > __set_page_dirty_buffers() becomes block_dirty_folio()
+> > __set_page_dirty_no_writeback() becomes dirty_folio_no_writeback()
+> > 
+> > Now I look at it, maybe that last should be nowb_dirty_folio().
+> 
+> Not to be a pain, but you are mixing "folio" at the front and back of
+> the api name?  We messed up in the driver core with this for some things
+> (get_device() being one), I would recommend just sticking with one
+> naming scheme now as you are getting to pick what you want to use.
 
-On 6/16/21 7:34 AM, Linus Torvalds wrote:
-> On Wed, Jun 16, 2021 at 5:56 AM Tom Rix <trix@redhat.com> wrote:
->> A fix is to use the __noreturn attribute on this function
-> That's certainly a better thing. It would be better yet to figure out
-> why BUG() didn't do it automatically.
->
-> Without CONFIG_BUG, it looks like powerpc picks up
->
->    #ifndef HAVE_ARCH_BUG
->    #define BUG() do {} while (1)
->
-> which should still make it pointless to have the return.  But I might
-> have missed something.
+That is mostly what I'm doing.  eg,
 
-This looks like a problem the generic BUG().
+get_page -> folio_get
+lock_page -> folio_lock
+PageUptodate -> folio_uptodate
+set_page_dirty -> folio_mark_dirty
 
-with CONFIG_BUG=y, the *.i is
+What I haven't dealt with yet is the naming of the
+address_space_operations.  My thinking with those is that they should
+be verb_folio, since they _aren't_ the functions that get called.
+ie it looks like this:
 
-static int afs_dir_set_page_dirty(struct page *page)
-{
-  do { __asm__ __volatile__( "1:    " "twi 31, 0, 0" "\n" ".section 
-__bug_table,\"aw\"\n" "2:\t.4byte 1b - 2b, %0 - 2b\n" "\t.short %1, 
-%2\n" ".org 2b+%3\n" ".previous\n" : : "i" ("fs/afs/dir.c"), "i" (50), 
-"i" (0), "i" (sizeof(struct bug_entry))); do { ; asm volatile(""); 
-__builtin_unreachable(); } while (0); } while (0);
-}
-BUG() expanded from
-#define BUG() do {                        \
-     BUG_ENTRY("twi 31, 0, 0", 0);                \
-     unreachable();                        \
-} while (0)
+folio_mark_dirty()
+  aops->dirty_folio()
+    ext4_dirty_folio()
+      buffer_dirty_folio()
 
+I actually see the inconsistency here as a good thing -- these are
+implementations of the aop, so foo_verb_folio() means you're doing
+something weird and internal instead of going through the vfs/mm.
 
-with CONFIG_BUG=n, the *.i is
-
-static int afs_dir_set_page_dirty(struct page *page)
-{
-  do {} while (1);
-}
-
-BUG() expanded from
-  do {} while (1)
-
-to fix, add an unreachable() to the generic BUG()
-
-diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
-index f152b9bb916f..b250e06d7de2 100644
---- a/include/asm-generic/bug.h
-+++ b/include/asm-generic/bug.h
-@@ -177,7 +177,10 @@ void __warn(const char *file, int line, void 
-*caller, unsigned taint,
-
-  #else /* !CONFIG_BUG */
-  #ifndef HAVE_ARCH_BUG
--#define BUG() do {} while (1)
-+#define BUG() do {                                             \
-+               do {} while (1);                                \
-+               unreachable();                                  \
-+       } while (0)
-  #endif
-
-the new *.i
-
-static int afs_dir_set_page_dirty(struct page *page)
-{
-  do { do {} while (1); do { ; asm volatile(""); 
-__builtin_unreachable(); } while (0); } while (0);
-}
-
-The assembly is unchanged.
-
-The key being the unreachable builtin
-
-ref: gcc docs https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html
-
-" ... without the __builtin_unreachable, GCC issues a
-   warning that control reaches the end of a non-void function."
-
-Tom
-
->
->               Linus
->
-
+That implies doing things like renaming ->readpage to ->read_folio, but
+if we're changing the API from passing a struct page to a struct folio,
+that can all be done at the same time with no additional disruption.
