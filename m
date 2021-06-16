@@ -2,89 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81EC13A9567
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 10:53:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C1E73A959C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 11:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232171AbhFPIzS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 04:55:18 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:51338 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231335AbhFPIzO (ORCPT
+        id S232013AbhFPJNn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 05:13:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37204 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231336AbhFPJNm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 04:55:14 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 3785121A24;
-        Wed, 16 Jun 2021 08:53:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1623833587; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oxGdDHsozXNdxVBcMTnfRLsug90r69T25ARBDtbntyA=;
-        b=LsIoyQo3y3jZK6iYT6qpOHtEBnsukk3Vi+/RWO+92uZkR0q03c6TBQ0B5CU8KM+QrgFTs3
-        E8iil+lsQ0ADkqJyjlPsKpGDzT7V3B1ZwTbzwok6Utjw25vol8hEatNgGKqz0HDDDpVozi
-        RBw73kTkulONM8nvb2UKyszzcHS4CwU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1623833587;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oxGdDHsozXNdxVBcMTnfRLsug90r69T25ARBDtbntyA=;
-        b=Cd/rE56FeKGW7aufMXqVHJ9XF4xj24JOWYzVHMVZjsuoQRzk9nxMDxtS1jr5muCo1d29ir
-        FblE0OV602i/3qDw==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 687ABA3B9B;
-        Wed, 16 Jun 2021 08:53:06 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D7E651F2C88; Wed, 16 Jun 2021 10:53:04 +0200 (CEST)
-Date:   Wed, 16 Jun 2021 10:53:04 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pavel Reichl <preichl@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>
-Subject: Re: [PATCH 07/14] xfs: Refactor xfs_isilocked()
-Message-ID: <20210616085304.GA28250@quack2.suse.cz>
-References: <20210615090844.6045-1-jack@suse.cz>
- <20210615091814.28626-7-jack@suse.cz>
- <YMmOCK4wHc9lerEc@infradead.org>
+        Wed, 16 Jun 2021 05:13:42 -0400
+Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F01C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 02:11:37 -0700 (PDT)
+Received: by mail-vk1-xa2c.google.com with SMTP id k71so450493vka.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 02:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jiD8Z4XvGnBbwGrshb7UXxHT652dqAyMkCuowMB3MT0=;
+        b=nmmxCvEXPxXX714K3Ah58M3prp7FPXm5e0dbGyXk+UgncTPwPlVXjXsXU08PpM8eus
+         H2zwAYPoDsUexMBqU2+Iaj0cMPUzXmcyCxrPE2ceTieDAjlYVPw7LMj+m5qVLkDvN3fL
+         LrB8P3AMMg1jl0L34uchh+aloIhljQlPmNMUA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jiD8Z4XvGnBbwGrshb7UXxHT652dqAyMkCuowMB3MT0=;
+        b=awY7SyiVnPq+Mn3Ru2xUy2PW4WAvm44yXRs/xlnX0V82NU1wo61BECZb7mR5LbOOV8
+         9dWBtbIYBGW1HGZUVWOqPpbU5/faNwcxCLWXVXJpe+wLySVhgL6xf/xGhVdadhLPkf2l
+         gJpRjqSwUlyr14BC7dT9HI3tdaXl1Qyd/fwzxRPgpuj22HZOSJTrYaFC4dpoySQH82G+
+         KWvECZSmP79msDfoqa05uYUYOG57pB9wwN/VDvsYLnAwngYCOG99vl6jyseXROYuGEi0
+         j2VjwNy8IOeCKqR/zsVsKfZKdeZVx2nPvnS7nagWKYBnpz1Qr8uDYTQVL3FwFW7t0NZ5
+         Eotg==
+X-Gm-Message-State: AOAM532QgwV/IFMIz0H3JMX8W4LuEryeEch7gqQQOfBFeYEUbX/aDrK0
+        3z0O2Po50N0KoQmMrYgq0jHJ8VVuqQlAI+ieuLJtzg==
+X-Google-Smtp-Source: ABdhPJyZ8Fh4vDeTPBSXAyBN+qYc9L8PH55Fh2rEBhC5gLAKhWPXbJkX/QSaqRzQ2faLmW7Rl9wn1UqCRaAbYMplXwo=
+X-Received: by 2002:a1f:90c8:: with SMTP id s191mr8299008vkd.3.1623834695969;
+ Wed, 16 Jun 2021 02:11:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMmOCK4wHc9lerEc@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <162375263398.232295.14755578426619198534.stgit@web.messagingengine.com>
+ <162375276735.232295.14056277248741694521.stgit@web.messagingengine.com>
+In-Reply-To: <162375276735.232295.14056277248741694521.stgit@web.messagingengine.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 16 Jun 2021 11:11:25 +0200
+Message-ID: <CAJfpegtgXvW+vyKQEvQauSXskYiO+GAjViDYo_84sa23eWCjdw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/6] kernfs: add a revision to identify directory node changes
+To:     Ian Kent <raven@themaw.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>,
+        Fox Chen <foxhlchen@gmail.com>,
+        Brice Goglin <brice.goglin@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 16-06-21 06:37:12, Christoph Hellwig wrote:
-> On Tue, Jun 15, 2021 at 11:17:57AM +0200, Jan Kara wrote:
-> > From: Pavel Reichl <preichl@redhat.com>
-> > 
-> > Refactor xfs_isilocked() to use newly introduced __xfs_rwsem_islocked().
-> > __xfs_rwsem_islocked() is a helper function which encapsulates checking
-> > state of rw_semaphores hold by inode.
-> 
-> __xfs_rwsem_islocked doesn't seem to actually existing in any tree I
-> checked yet?
+On Tue, 15 Jun 2021 at 12:26, Ian Kent <raven@themaw.net> wrote:
+>
+> Add a revision counter to kernfs directory nodes so it can be used
+> to detect if a directory node has changed during negative dentry
+> revalidation.
+>
+> There's an assumption that sizeof(unsigned long) <= sizeof(pointer)
+> on all architectures and as far as I know that assumption holds.
+>
+> So adding a revision counter to the struct kernfs_elem_dir variant of
+> the kernfs_node type union won't increase the size of the kernfs_node
+> struct. This is because struct kernfs_elem_dir is at least
+> sizeof(pointer) smaller than the largest union variant. It's tempting
+> to make the revision counter a u64 but that would increase the size of
+> kernfs_node on archs where sizeof(pointer) is smaller than the revision
+> counter.
+>
+> Signed-off-by: Ian Kent <raven@themaw.net>
 
-__xfs_rwsem_islocked is introduced by this patch so I'm not sure what are
-you asking about... :)
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
