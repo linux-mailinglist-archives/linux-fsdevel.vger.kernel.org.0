@@ -2,84 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51DAE3A95A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 11:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9A43A95CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jun 2021 11:16:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232007AbhFPJOy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Jun 2021 05:14:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37488 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231354AbhFPJOx (ORCPT
+        id S232157AbhFPJSM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Jun 2021 05:18:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22235 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231335AbhFPJSM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Jun 2021 05:14:53 -0400
-Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5995AC06175F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 02:12:48 -0700 (PDT)
-Received: by mail-ua1-x934.google.com with SMTP id n61so533337uan.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jun 2021 02:12:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fg+Lwm8bqclQbxxF9nKW4sgpvY121G0MYdrkC/2k1M8=;
-        b=eLGiC8kkhgquOH+uwR66kHv1IPOXh5NS6AtUvw8ENiPjX3MbCqGOFI3kx2g+dx6Tnc
-         o1gP20fNEjAVj2TSPTcBjM2RhiYrf1lr/9RdX6k41CyvK+0LvDzAuF1pNfR8SPDFVnIU
-         UdbGzPAZBwGtCf4UeXvuvKO6AWBy035AlYzcg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fg+Lwm8bqclQbxxF9nKW4sgpvY121G0MYdrkC/2k1M8=;
-        b=hgi5OJcIBl01UOhMG4q4UUvX/VR3hN48uv1EVIRepwYdqpv5APF8iRmtFz92QBMI0v
-         WiYxtaoWLr0BsbQ28CUmSHI+0gT55D6Mof22sfoj+ExCiK9wOGVYATtN3Ch0GC+HjyPk
-         roXbA3IOt3tZXnmjsY2LtM0Dr2WWcSyqqMgMBOwAqT0ZPjmdxRwPVjoYOwY+oQGWvMlo
-         4eTk/+FWxjRNhwKAqNFuEGCFLxWWqKbxp3W3mC5gqgOn51hhzJVAeCn3LoheF7DVhnev
-         8db/nMAoY7FB0wZtpteUgkCNHtP7KN89Tj0j7id8Kt7CottoiIHzMUzM+LO6BptV49Gd
-         LERw==
-X-Gm-Message-State: AOAM533zijfC94EaNNeTaR7adXv9L9RvY5UojHpSfL/ZTkA6RYrg69c2
-        DEnHme+FknYSy7+RcwoP5pOhRKH3o92gSA6yCJBd6ILKfmtRGA==
-X-Google-Smtp-Source: ABdhPJyPqKdYY+BCjGVxp5kVHCSvHJwrxRylVWbgfp624rwp6rN9DLHefYeKSZBh8olnEWhl+VTCJoi+r4cet117ZYM=
-X-Received: by 2002:ab0:6448:: with SMTP id j8mr3590542uap.13.1623834767170;
- Wed, 16 Jun 2021 02:12:47 -0700 (PDT)
+        Wed, 16 Jun 2021 05:18:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623834966;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=T4+c2pc8J0kO0sEZOcAlXdb+PXp9r+TugMlu0OrZfbQ=;
+        b=howEjtXFtd2cxDrHbeBo+wZMo7ZExWSR343XOX/0/Q001lobM8lmAbtohfCQAW8C0Q59Wz
+        A8q+G6j5yydV/QISsjyw8F58TBX90d5C2zO5Bye/k3mpFZ1Jd8i7jwRDcOPPGL7oBVUfNf
+        E2Ngx8h3l/c6Hj8+RugJqVbWX9pWxvM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-153-_HXbBplgNFKDDARh4oc90g-1; Wed, 16 Jun 2021 05:16:04 -0400
+X-MC-Unique: _HXbBplgNFKDDARh4oc90g-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EF662800D55;
+        Wed, 16 Jun 2021 09:16:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 43B485D6AD;
+        Wed, 16 Jun 2021 09:16:01 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210614201435.1379188-33-willy@infradead.org>
+References: <20210614201435.1379188-33-willy@infradead.org> <20210614201435.1379188-1-willy@infradead.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     dhowells@redhat.com, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v11 32/33] fs/netfs: Add folio fscache functions
 MIME-Version: 1.0
-References: <162375263398.232295.14755578426619198534.stgit@web.messagingengine.com>
- <162375278118.232295.14989882873957232796.stgit@web.messagingengine.com>
-In-Reply-To: <162375278118.232295.14989882873957232796.stgit@web.messagingengine.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 16 Jun 2021 11:12:36 +0200
-Message-ID: <CAJfpegttf+kYBCLsUc9eFLc-KNaN=0smdSMoemAK6t52Kb=fEg@mail.gmail.com>
-Subject: Re: [PATCH v7 3/6] kernfs: use VFS negative dentry caching
-To:     Ian Kent <raven@themaw.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>,
-        Fox Chen <foxhlchen@gmail.com>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <810721.1623834960.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 16 Jun 2021 10:16:00 +0100
+Message-ID: <810722.1623834960@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 15 Jun 2021 at 12:26, Ian Kent <raven@themaw.net> wrote:
->
-> If there are many lookups for non-existent paths these negative lookups
-> can lead to a lot of overhead during path walks.
->
-> The VFS allows dentries to be created as negative and hashed, and caches
-> them so they can be used to reduce the fairly high overhead alloc/free
-> cycle that occurs during these lookups.
->
-> Use the kernfs node parent revision to identify if a change has been
-> made to the containing directory so that the negative dentry can be
-> discarded and the lookup redone.
->
-> Signed-off-by: Ian Kent <raven@themaw.net>
+Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
 
-Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
+>  /**
+> - * set_page_fscache - Set PG_fscache on a page and take a ref
+> - * @page: The page.
+> + * folio_start_fscache - Start an fscache operation on a folio.
+> + * @folio: The folio.
+>   *
+> - * Set the PG_fscache (PG_private_2) flag on a page and take the refere=
+nce
+> - * needed for the VM to handle its lifetime correctly.  This sets the f=
+lag and
+> - * takes the reference unconditionally, so care must be taken not to se=
+t the
+> - * flag again if it's already set.
+> + * Call this function before an fscache operation starts on a folio.
+> + * Starting a second fscache operation before the first one finishes is
+> + * not allowed.
+
+That's not correct.  It's only used for operations that write from the pag=
+e to
+disk.  Operations that read into the page are covered by the page lock.
+
+> + * folio_end_fscache - End an fscache operation on a folio.
+> ...
+> + * Call this function after an fscache operation has finished.  This wi=
+ll
+> + * wake any sleepers waiting on this folio.
+
+Ditto.
+
+> + * folio_wait_fscache - Wait for an fscache operation on this folio to =
+end.
+> + * @folio: The folio.
+>   *
+> + * If an fscache operation is in progress on this folio, wait for it to
+> + * finish.  Another fscache operation may start after this one finishes=
+,
+> + * unless the caller holds the folio lock.
+
+Ditto.
+
+Apart from that, it looks okay.
+
+David
+
