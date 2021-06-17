@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6BD73ABFDE
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB3C3ABFDC
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 01:52:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233122AbhFQXyL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Jun 2021 19:54:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48226 "EHLO
+        id S232921AbhFQXyK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Jun 2021 19:54:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233089AbhFQXyJ (ORCPT
+        with ESMTP id S232967AbhFQXyH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Jun 2021 19:54:09 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C72DC061768
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 16:51:57 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id g6so6302615pfq.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 16:51:57 -0700 (PDT)
+        Thu, 17 Jun 2021 19:54:07 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8439C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 16:51:58 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id k6so6251151pfk.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 16:51:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=a/8Mi4MWRZgkY0u4rZsYzQG2S4DFsJtiUjgY33Vo+Iw=;
-        b=FGPDK1dZzcEu85YceQnnkH3o5defK/QeywNN63/mLDWYWRg/3AcZ4PXF03bjfGq0d0
-         InasypZzHLAcNAdiQ0xIpT7G3JptHDCH7W+5MPjZL+m0iFPZq4j/VV6xAvOw9e6VTb/w
-         UTvEV0JpV711E9w1CnSpvzRiD186SY55Jf7kQ5hq3AOjxl0a3wg3tkWxO6i3ua99bljR
-         rWmy5H6M8R8QdOYb121MEOGI/Sdr1iEToLOvogd/Vr+QhZagW9evgXoGSiihjHRL/U7Z
-         SeO6ceNLOQChztPhei5+ZMYj8jRjjJFoJlD4sgLmxgIkDSkPAD+NSCAMASyvKE1+pp+X
-         xeWg==
+        bh=1hEl+k/CgpkbCmgoz0Z6VrunmCbUSie9Hs7liQN+KmI=;
+        b=RE+R2Kh+wGC8/gRfcbikdr3b58NtifT5klMzOvtoQ/sJUYuPi5SRvyJIqgtH1JT7FY
+         z1+BgICCs1X8vNv72ILpkM8XSCViFmv/dPq3dubhkKZt+o+7fXiBditFBbApPwhgGFxr
+         omkT3JNhwz/PbTvAnk8yPQEmX01mCZ002SBKJgRwYMg5FC8Kom+P1MnTtfE0L3vhKWBN
+         v1yB3bLZK47nQhzPomRze2PekD61X4JWjh88b+wvXs0ttAnZ30hd8EAOfJBpGrqhrhvU
+         bFy+Upy2hxHp750gMAkQNbEoTQIXw7LV17HXMYwI1n8H46u5LXOzsHpyJWxhF4eFrXRi
+         Ahyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=a/8Mi4MWRZgkY0u4rZsYzQG2S4DFsJtiUjgY33Vo+Iw=;
-        b=HMDLClzr1OrZc9wQBEHptIQXecvvKKAgMal1VtmiCshUiBD9qchAJD9AsJ2GkH3jF2
-         MsOcSbzIBnaOF9aYwGixRF+QioGeHv0EMiKIV0u7TyWKxQJQGUxaJTNDQsTwOi7RwVhB
-         51U2fk3KC+CBOW/hrvUJJOriveUbgTpnDLcFunKjUv+pKNjDJiAIgK7PSF+srbMkXfUb
-         g/ICTgcZ5m+KQwJ0KVTlDP7wFJp4Qiff9iXf9YRvoioVnS4UlypY5AnMCknisaZrU+Em
-         0MeLx/wLdyQ6O3P9fHSne9EbMg8rwO6nPvCz1l3u5LW5fTLlTH0wHXvjWSLOLPHTZ7m7
-         RlJg==
-X-Gm-Message-State: AOAM533cHwkL6ZfNEBpMy045EqTyFBkMzIbKO5IQez+ctjQdNUfdd9Sb
-        0anmg247K3EFetzTwdayFYU/6j9iTvcUOw==
-X-Google-Smtp-Source: ABdhPJwh1VLrrIMOeweYnMwxqBM/SWij9ags/HZe/DEErrXslpGu0aL5i3pVtIy7LA2n11LDJPZQoQ==
-X-Received: by 2002:a05:6a00:174c:b029:2f0:60c7:62ca with SMTP id j12-20020a056a00174cb02902f060c762camr2347182pfc.81.1623973916347;
-        Thu, 17 Jun 2021 16:51:56 -0700 (PDT)
+        bh=1hEl+k/CgpkbCmgoz0Z6VrunmCbUSie9Hs7liQN+KmI=;
+        b=S4DDh0J0DHt6PGh80UmT73VcFyfgAXjDvT2iG8rlEvtJd7vN6W4FiZ1kjNVUuwlFnb
+         IpKwILauA4qCl6R7w0JT9f8lh2CEApE7aKqR7bbb5a8k8/OVqtdC0FuvO+GMoWNtBCr8
+         B/LzDQkyW7RoyJbNfgEPzLKKXhHe0/zalIDAL/hfJWQUA6lAWqQnu2YgV+2UQ6/IKHaX
+         RpCmKdYAsFBmoaBlPOzhYuang49JIAxPaLWylPAbHhdDkMletKXX+KbtLjKIEvmOVbHg
+         6j3GAe1A4rhSutVo2dbBwhbrjQhAROIXzir+BQE5VKhbyt5tKdGTuz72aowHOn/SdB9L
+         mMcQ==
+X-Gm-Message-State: AOAM530HDt1IjxtpP7L08P18nfDLWUU9k3r06mCEI7d34XD3MwEUAHcF
+        NKXfnHt8UF9CzfIHjcQfm/uvmONpnsAYTg==
+X-Google-Smtp-Source: ABdhPJwWOKK7q2jCgl9X5hdnUlnBsBr9xXdLnGAez2GBOtA/hhhsfyhdTaZ1IWn8f8MUyTklaO02uw==
+X-Received: by 2002:aa7:8810:0:b029:2ea:1b56:3acb with SMTP id c16-20020aa788100000b02902ea1b563acbmr2189345pfo.68.1623973917669;
+        Thu, 17 Jun 2021 16:51:57 -0700 (PDT)
 Received: from relinquished.tfbnw.net ([2620:10d:c090:400::5:2f0e])
-        by smtp.gmail.com with ESMTPSA id a187sm6087517pfb.66.2021.06.17.16.51.55
+        by smtp.gmail.com with ESMTPSA id a187sm6087517pfb.66.2021.06.17.16.51.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jun 2021 16:51:55 -0700 (PDT)
+        Thu, 17 Jun 2021 16:51:57 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-api@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH RESEND x3 v9 6/9] btrfs: support different disk extent size for delalloc
-Date:   Thu, 17 Jun 2021 16:51:29 -0700
-Message-Id: <9667eac5920adab71ac97b3887339d532c46ad58.1623972519.git.osandov@fb.com>
+Subject: [PATCH RESEND x3 v9 7/9] btrfs: optionally extend i_size in cow_file_range_inline()
+Date:   Thu, 17 Jun 2021 16:51:30 -0700
+Message-Id: <5b653492640d42a31febb780a25437844f1af1ed.1623972519.git.osandov@fb.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1623972518.git.osandov@fb.com>
 References: <cover.1623972518.git.osandov@fb.com>
@@ -67,147 +67,230 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-Currently, we always reserve the same extent size in the file and extent
-size on disk for delalloc because the former is the worst case for the
-latter. For RWF_ENCODED writes, we know the exact size of the extent on
-disk, which may be less than or greater than (for bookends) the size in
-the file. Add a disk_num_bytes parameter to
-btrfs_delalloc_reserve_metadata() so that we can reserve the correct
-amount of csum bytes. No functional change.
+Currently, an inline extent is always created after i_size is extended
+from btrfs_dirty_pages(). However, for encoded writes, we only want to
+update i_size after we successfully created the inline extent. Add an
+update_i_size parameter to cow_file_range_inline() and
+insert_inline_extent() and pass in the size of the extent rather than
+determining it from i_size. Since the start parameter is always passed
+as 0, get rid of it and simplify the logic in these two functions. While
+we're here, let's document the requirements for creating an inline
+extent.
 
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- fs/btrfs/ctree.h          |  3 ++-
- fs/btrfs/delalloc-space.c | 18 ++++++++++--------
- fs/btrfs/file.c           |  3 ++-
- fs/btrfs/inode.c          |  2 +-
- fs/btrfs/relocation.c     |  4 ++--
- 5 files changed, 17 insertions(+), 13 deletions(-)
+ fs/btrfs/inode.c | 100 +++++++++++++++++++++++------------------------
+ 1 file changed, 48 insertions(+), 52 deletions(-)
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index dd37ec16f22a..86856889188d 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -2796,7 +2796,8 @@ void btrfs_subvolume_release_metadata(struct btrfs_root *root,
- 				      struct btrfs_block_rsv *rsv);
- void btrfs_delalloc_release_extents(struct btrfs_inode *inode, u64 num_bytes);
- 
--int btrfs_delalloc_reserve_metadata(struct btrfs_inode *inode, u64 num_bytes);
-+int btrfs_delalloc_reserve_metadata(struct btrfs_inode *inode, u64 num_bytes,
-+				    u64 disk_num_bytes);
- u64 btrfs_account_ro_block_groups_free_space(struct btrfs_space_info *sinfo);
- int btrfs_error_unpin_extent_range(struct btrfs_fs_info *fs_info,
- 				   u64 start, u64 end);
-diff --git a/fs/btrfs/delalloc-space.c b/fs/btrfs/delalloc-space.c
-index 2059d1504149..143650004991 100644
---- a/fs/btrfs/delalloc-space.c
-+++ b/fs/btrfs/delalloc-space.c
-@@ -267,11 +267,11 @@ static void btrfs_calculate_inode_block_rsv_size(struct btrfs_fs_info *fs_info,
- }
- 
- static void calc_inode_reservations(struct btrfs_fs_info *fs_info,
--				    u64 num_bytes, u64 *meta_reserve,
--				    u64 *qgroup_reserve)
-+				    u64 num_bytes, u64 disk_num_bytes,
-+				    u64 *meta_reserve, u64 *qgroup_reserve)
- {
- 	u64 nr_extents = count_max_extents(num_bytes);
--	u64 csum_leaves = btrfs_csum_bytes_to_leaves(fs_info, num_bytes);
-+	u64 csum_leaves = btrfs_csum_bytes_to_leaves(fs_info, disk_num_bytes);
- 	u64 inode_update = btrfs_calc_metadata_size(fs_info, 1);
- 
- 	*meta_reserve = btrfs_calc_insert_metadata_size(fs_info,
-@@ -285,7 +285,8 @@ static void calc_inode_reservations(struct btrfs_fs_info *fs_info,
- 	*qgroup_reserve = nr_extents * fs_info->nodesize;
- }
- 
--int btrfs_delalloc_reserve_metadata(struct btrfs_inode *inode, u64 num_bytes)
-+int btrfs_delalloc_reserve_metadata(struct btrfs_inode *inode, u64 num_bytes,
-+				    u64 disk_num_bytes)
- {
- 	struct btrfs_root *root = inode->root;
- 	struct btrfs_fs_info *fs_info = root->fs_info;
-@@ -315,6 +316,7 @@ int btrfs_delalloc_reserve_metadata(struct btrfs_inode *inode, u64 num_bytes)
- 	}
- 
- 	num_bytes = ALIGN(num_bytes, fs_info->sectorsize);
-+	disk_num_bytes = ALIGN(disk_num_bytes, fs_info->sectorsize);
- 
- 	/*
- 	 * We always want to do it this way, every other way is wrong and ends
-@@ -326,8 +328,8 @@ int btrfs_delalloc_reserve_metadata(struct btrfs_inode *inode, u64 num_bytes)
- 	 * everything out and try again, which is bad.  This way we just
- 	 * over-reserve slightly, and clean up the mess when we are done.
- 	 */
--	calc_inode_reservations(fs_info, num_bytes, &meta_reserve,
--				&qgroup_reserve);
-+	calc_inode_reservations(fs_info, num_bytes, disk_num_bytes,
-+				&meta_reserve, &qgroup_reserve);
- 	ret = btrfs_qgroup_reserve_meta_prealloc(root, qgroup_reserve, true);
- 	if (ret)
- 		return ret;
-@@ -346,7 +348,7 @@ int btrfs_delalloc_reserve_metadata(struct btrfs_inode *inode, u64 num_bytes)
- 	spin_lock(&inode->lock);
- 	nr_extents = count_max_extents(num_bytes);
- 	btrfs_mod_outstanding_extents(inode, nr_extents);
--	inode->csum_bytes += num_bytes;
-+	inode->csum_bytes += disk_num_bytes;
- 	btrfs_calculate_inode_block_rsv_size(fs_info, inode);
- 	spin_unlock(&inode->lock);
- 
-@@ -451,7 +453,7 @@ int btrfs_delalloc_reserve_space(struct btrfs_inode *inode,
- 	ret = btrfs_check_data_free_space(inode, reserved, start, len);
- 	if (ret < 0)
- 		return ret;
--	ret = btrfs_delalloc_reserve_metadata(inode, len);
-+	ret = btrfs_delalloc_reserve_metadata(inode, len, len);
- 	if (ret < 0)
- 		btrfs_free_reserved_data_space(inode, *reserved, start, len);
- 	return ret;
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 28a05ba47060..4e13c481b21e 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1730,7 +1730,8 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
- 					 fs_info->sectorsize);
- 		WARN_ON(reserve_bytes == 0);
- 		ret = btrfs_delalloc_reserve_metadata(BTRFS_I(inode),
--				reserve_bytes);
-+						      reserve_bytes,
-+						      reserve_bytes);
- 		if (ret) {
- 			if (!only_release_metadata)
- 				btrfs_free_reserved_data_space(BTRFS_I(inode),
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index f59ad09abb61..fcf685fd4eff 100644
+index fcf685fd4eff..15b06d6ac875 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -4898,7 +4898,7 @@ int btrfs_truncate_block(struct btrfs_inode *inode, loff_t from, loff_t len,
- 			goto out;
- 		}
- 	}
--	ret = btrfs_delalloc_reserve_metadata(inode, blocksize);
-+	ret = btrfs_delalloc_reserve_metadata(inode, blocksize, blocksize);
- 	if (ret < 0) {
- 		if (!only_release_metadata)
- 			btrfs_free_reserved_data_space(inode, data_reserved,
-diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-index 420a89869889..173d426ece30 100644
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -2922,8 +2922,8 @@ static int relocate_file_extent_cluster(struct inode *inode,
- 	index = (cluster->start - offset) >> PAGE_SHIFT;
- 	last_index = (cluster->end - offset) >> PAGE_SHIFT;
- 	while (index <= last_index) {
--		ret = btrfs_delalloc_reserve_metadata(BTRFS_I(inode),
--				PAGE_SIZE);
-+		ret = btrfs_delalloc_reserve_metadata(BTRFS_I(inode), PAGE_SIZE,
-+						      PAGE_SIZE);
- 		if (ret)
- 			goto out;
+@@ -235,9 +235,10 @@ static int btrfs_init_inode_security(struct btrfs_trans_handle *trans,
+ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+ 				struct btrfs_path *path, bool extent_inserted,
+ 				struct btrfs_root *root, struct inode *inode,
+-				u64 start, size_t size, size_t compressed_size,
++				size_t size, size_t compressed_size,
+ 				int compress_type,
+-				struct page **compressed_pages)
++				struct page **compressed_pages,
++				bool update_i_size)
+ {
+ 	struct extent_buffer *leaf;
+ 	struct page *page = NULL;
+@@ -246,7 +247,7 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+ 	struct btrfs_file_extent_item *ei;
+ 	int ret;
+ 	size_t cur_size = size;
+-	unsigned long offset;
++	u64 i_size;
  
+ 	ASSERT((compressed_size > 0 && compressed_pages) ||
+ 	       (compressed_size == 0 && !compressed_pages));
+@@ -259,7 +260,7 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+ 		size_t datasize;
+ 
+ 		key.objectid = btrfs_ino(BTRFS_I(inode));
+-		key.offset = start;
++		key.offset = 0;
+ 		key.type = BTRFS_EXTENT_DATA_KEY;
+ 
+ 		datasize = btrfs_file_extent_calc_inline_size(cur_size);
+@@ -297,12 +298,10 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+ 		btrfs_set_file_extent_compression(leaf, ei,
+ 						  compress_type);
+ 	} else {
+-		page = find_get_page(inode->i_mapping,
+-				     start >> PAGE_SHIFT);
++		page = find_get_page(inode->i_mapping, 0);
+ 		btrfs_set_file_extent_compression(leaf, ei, 0);
+ 		kaddr = kmap_atomic(page);
+-		offset = offset_in_page(start);
+-		write_extent_buffer(leaf, kaddr + offset, ptr, size);
++		write_extent_buffer(leaf, kaddr, ptr, size);
+ 		kunmap_atomic(kaddr);
+ 		put_page(page);
+ 	}
+@@ -313,8 +312,8 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+ 	 * We align size to sectorsize for inline extents just for simplicity
+ 	 * sake.
+ 	 */
+-	size = ALIGN(size, root->fs_info->sectorsize);
+-	ret = btrfs_inode_set_file_extent_range(BTRFS_I(inode), start, size);
++	ret = btrfs_inode_set_file_extent_range(BTRFS_I(inode), 0,
++					ALIGN(size, root->fs_info->sectorsize));
+ 	if (ret)
+ 		goto fail;
+ 
+@@ -327,7 +326,13 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+ 	 * before we unlock the pages.  Otherwise we
+ 	 * could end up racing with unlink.
+ 	 */
+-	BTRFS_I(inode)->disk_i_size = inode->i_size;
++	i_size = i_size_read(inode);
++	if (update_i_size && size > i_size) {
++		i_size_write(inode, size);
++		i_size = size;
++	}
++	BTRFS_I(inode)->disk_i_size = i_size;
++
+ fail:
+ 	return ret;
+ }
+@@ -338,35 +343,31 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+  * does the checks required to make sure the data is small enough
+  * to fit as an inline extent.
+  */
+-static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 start,
+-					  u64 end, size_t compressed_size,
++static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 size,
++					  size_t compressed_size,
+ 					  int compress_type,
+-					  struct page **compressed_pages)
++					  struct page **compressed_pages,
++					  bool update_i_size)
+ {
+ 	struct btrfs_drop_extents_args drop_args = { 0 };
+ 	struct btrfs_root *root = inode->root;
+ 	struct btrfs_fs_info *fs_info = root->fs_info;
+ 	struct btrfs_trans_handle *trans;
+-	u64 isize = i_size_read(&inode->vfs_inode);
+-	u64 actual_end = min(end + 1, isize);
+-	u64 inline_len = actual_end - start;
+-	u64 aligned_end = ALIGN(end, fs_info->sectorsize);
+-	u64 data_len = inline_len;
++	u64 data_len = compressed_size ? compressed_size : size;
+ 	int ret;
+ 	struct btrfs_path *path;
+ 
+-	if (compressed_size)
+-		data_len = compressed_size;
+-
+-	if (start > 0 ||
+-	    actual_end > fs_info->sectorsize ||
++	/*
++	 * We can create an inline extent if it ends at or beyond the current
++	 * i_size, is no larger than a sector (decompressed), and the (possibly
++	 * compressed) data fits in a leaf and the configured maximum inline
++	 * size.
++	 */
++	if (size < i_size_read(&inode->vfs_inode) ||
++	    size > fs_info->sectorsize ||
+ 	    data_len > BTRFS_MAX_INLINE_DATA_SIZE(fs_info) ||
+-	    (!compressed_size &&
+-	    (actual_end & (fs_info->sectorsize - 1)) == 0) ||
+-	    end + 1 < isize ||
+-	    data_len > fs_info->max_inline) {
++	    data_len > fs_info->max_inline)
+ 		return 1;
+-	}
+ 
+ 	path = btrfs_alloc_path();
+ 	if (!path)
+@@ -380,30 +381,21 @@ static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 start,
+ 	trans->block_rsv = &inode->block_rsv;
+ 
+ 	drop_args.path = path;
+-	drop_args.start = start;
+-	drop_args.end = aligned_end;
++	drop_args.start = 0;
++	drop_args.end = fs_info->sectorsize;
+ 	drop_args.drop_cache = true;
+ 	drop_args.replace_extent = true;
+-
+-	if (compressed_size && compressed_pages)
+-		drop_args.extent_item_size = btrfs_file_extent_calc_inline_size(
+-		   compressed_size);
+-	else
+-		drop_args.extent_item_size = btrfs_file_extent_calc_inline_size(
+-		    inline_len);
+-
++	drop_args.extent_item_size = btrfs_file_extent_calc_inline_size(data_len);
+ 	ret = btrfs_drop_extents(trans, root, inode, &drop_args);
+ 	if (ret) {
+ 		btrfs_abort_transaction(trans, ret);
+ 		goto out;
+ 	}
+ 
+-	if (isize > actual_end)
+-		inline_len = min_t(u64, isize, actual_end);
+-	ret = insert_inline_extent(trans, path, drop_args.extent_inserted,
+-				   root, &inode->vfs_inode, start,
+-				   inline_len, compressed_size,
+-				   compress_type, compressed_pages);
++	ret = insert_inline_extent(trans, path, drop_args.extent_inserted, root,
++				   &inode->vfs_inode, size, compressed_size,
++				   compress_type, compressed_pages,
++				   update_i_size);
+ 	if (ret && ret != -ENOSPC) {
+ 		btrfs_abort_transaction(trans, ret);
+ 		goto out;
+@@ -412,7 +404,7 @@ static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 start,
+ 		goto out;
+ 	}
+ 
+-	btrfs_update_inode_bytes(inode, inline_len, drop_args.bytes_found);
++	btrfs_update_inode_bytes(inode, size, drop_args.bytes_found);
+ 	ret = btrfs_update_inode(trans, root, inode);
+ 	if (ret && ret != -ENOSPC) {
+ 		btrfs_abort_transaction(trans, ret);
+@@ -688,14 +680,15 @@ static noinline int compress_file_range(struct async_chunk *async_chunk)
+ 			/* we didn't compress the entire range, try
+ 			 * to make an uncompressed inline extent.
+ 			 */
+-			ret = cow_file_range_inline(BTRFS_I(inode), start, end,
++			ret = cow_file_range_inline(BTRFS_I(inode), actual_end,
+ 						    0, BTRFS_COMPRESS_NONE,
+-						    NULL);
++						    NULL, false);
+ 		} else {
+ 			/* try making a compressed inline extent */
+-			ret = cow_file_range_inline(BTRFS_I(inode), start, end,
++			ret = cow_file_range_inline(BTRFS_I(inode), actual_end,
+ 						    total_compressed,
+-						    compress_type, pages);
++						    compress_type, pages,
++						    false);
+ 		}
+ 		if (ret <= 0) {
+ 			unsigned long clear_flags = EXTENT_DELALLOC |
+@@ -1081,9 +1074,12 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
+ 	inode_should_defrag(inode, start, end, num_bytes, SZ_64K);
+ 
+ 	if (start == 0) {
++		u64 actual_end = min_t(u64, i_size_read(&inode->vfs_inode),
++				       end + 1);
++
+ 		/* lets try to make an inline extent */
+-		ret = cow_file_range_inline(inode, start, end, 0,
+-					    BTRFS_COMPRESS_NONE, NULL);
++		ret = cow_file_range_inline(inode, actual_end, 0,
++					    BTRFS_COMPRESS_NONE, NULL, false);
+ 		if (ret == 0) {
+ 			/*
+ 			 * We use DO_ACCOUNTING here because we need the
 -- 
 2.32.0
 
