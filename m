@@ -2,158 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 957603AB4C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jun 2021 15:31:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCE993AB4E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jun 2021 15:37:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232353AbhFQNdO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Jun 2021 09:33:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25822 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232327AbhFQNdN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Jun 2021 09:33:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623936665;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TMovp/d/024BNKenOEssFH9bGIj4wb2wQ+scwOxwK/o=;
-        b=RnYGCoirfJLXSfbmUxVdJBXIAD/axBjOwi9Fxigui1gVwR48qoMFhT0v4U0/3FiKutDJBm
-        pcm01wEFYDpimV7MqohYhHXpbkSj/Xv+R5ON7Cw3EaIYVjjwpCDoxSLdLsKTqO6T5wZh4N
-        Pdm07HYkczFZu0L7yMIRFgwNGseQa9g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-240-Bpa5gYRbOL-FXBAJ9jWMlw-1; Thu, 17 Jun 2021 09:31:02 -0400
-X-MC-Unique: Bpa5gYRbOL-FXBAJ9jWMlw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S232234AbhFQNjZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Jun 2021 09:39:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231451AbhFQNjW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Jun 2021 09:39:22 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 10775192FDA8;
-        Thu, 17 Jun 2021 13:31:01 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-162.rdu2.redhat.com [10.10.116.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8F58A62462;
-        Thu, 17 Jun 2021 13:30:53 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id E8277220BCF; Thu, 17 Jun 2021 09:30:52 -0400 (EDT)
-Date:   Thu, 17 Jun 2021 09:30:52 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com, viro@zeniv.linux.org.uk, dhowells@redhat.com,
-        richard.weinberger@gmail.com, asmadeus@codewreck.org,
-        v9fs-developer@lists.sourceforge.net
-Subject: Re: [PATCH v2 0/2] Add support to boot virtiofs and 9pfs as rootfs
-Message-ID: <20210617133052.GA1142820@redhat.com>
-References: <20210614174454.903555-1-vgoyal@redhat.com>
- <YMsgaPS90iKIqSvi@infradead.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id D4FA560BD3;
+        Thu, 17 Jun 2021 13:37:13 +0000 (UTC)
+Date:   Thu, 17 Jun 2021 09:37:12 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>, akpm@linux-foundation.org,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: fix tracepoint string placement with built-in AFS
+Message-ID: <20210617093712.25cfa707@gandalf.local.home>
+In-Reply-To: <1192147.1623931489@warthog.procyon.org.uk>
+References: <20210615115453.63bc3a63@oasis.local.home>
+        <YLAXfvZ+rObEOdc/@localhost.localdomain>
+        <643721.1623754699@warthog.procyon.org.uk>
+        <1192147.1623931489@warthog.procyon.org.uk>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMsgaPS90iKIqSvi@infradead.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 11:14:00AM +0100, Christoph Hellwig wrote:
-> Why not something like the version below that should work for all nodev
-> file systems?
+On Thu, 17 Jun 2021 13:04:49 +0100
+David Howells <dhowells@redhat.com> wrote:
 
-Hi Christoph,
-
-Thanks for this patch. It definitely looks much better. I had a fear
-of breaking something if I were to go through this path of using
-FS_REQUIRES_DEV.
-
-This patch works for me with "root=myfs rootfstype=virtiofs rw". Have
-few thoughts inline.
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> diff --git a/init/do_mounts.c b/init/do_mounts.c
-> index 74aede860de7..3c5676603fef 100644
-> --- a/init/do_mounts.c
-> +++ b/init/do_mounts.c
-> @@ -530,6 +530,39 @@ static int __init mount_cifs_root(void)
->  }
->  #endif
->  
-> +static int __init mount_nodev_root(void)
-> +{
-> +	struct file_system_type *fs = get_fs_type(root_fs_names);
-
-get_fs_type() assumes root_fs_names is not null. So if I pass
-"root=myfs rw", it crashes with null pointer dereference.
-
-
-> +	char *fs_names, *p;
-> +	int err = -ENODEV;
-> +
-> +	if (!fs)
-> +		goto out;
-> +	if (fs->fs_flags & FS_REQUIRES_DEV)
-> +		goto out_put_filesystem;
-> +
-> +	fs_names = (void *)__get_free_page(GFP_KERNEL);
-> +	if (!fs_names)
-> +		goto out_put_filesystem;
-> +	get_fs_names(fs_names);
-
-I am wondering what use case we are trying to address by calling
-get_fs_names() and trying do_mount_root() on all filesystems
-returned by get_fs_names(). I am assuming following use cases
-you have in mind.
-
-A. User passes a single filesystem in rootfstype.
-   
-   root=myfs rootfstype=virtiofs rw
-
-B. User passes multiple filesystems in rootfstype and kernel tries all
-   of them one after the other
-
-   root=myfs, rootfstype=9p,virtiofs rw
-
-C. User does not pass a filesystem type at all. And kernel will get a
-   list of in-built filesystems and will try these one after the other.
-
-   root=myfs rw
-
-If that's the thought, will it make sense to call get_fs_names() first
-and then inside the for loop call get_fs_type() and try mounting
-only if FS_REQUIRES_DEV is not set, otherwise skip and move onto th
-next filesystem in the list (fs_names).
-
-Thanks
-Vivek
-
-> +
-> +	for (p = fs_names; *p; p += strlen(p) + 1) {
-> +		err = do_mount_root(root_device_name, p, root_mountflags,
-> +					root_mount_data);
-> +		if (!err)
-> +			break;
-> +		if (err != -EACCES && err != -EINVAL)
-> +			panic("VFS: Unable to mount root \"%s\" (%s), err=%d\n",
-> +				      root_device_name, p, err);
-> +	}
-> +
-> +	free_page((unsigned long)fs_names);
-> +out_put_filesystem:
-> +	put_filesystem(fs);
-> +out:
-> +	return err;
-> +}
-> +
->  void __init mount_root(void)
->  {
->  #ifdef CONFIG_ROOT_NFS
-> @@ -546,6 +579,8 @@ void __init mount_root(void)
->  		return;
->  	}
->  #endif
-> +	if (ROOT_DEV == 0 && mount_nodev_root() == 0)
-> +		return;
->  #ifdef CONFIG_BLOCK
->  	{
->  		int err = create_dev("/dev/root", ROOT_DEV);
+> > Looks fine to me, and even saves 4 bytes on 64 bit machines (events are
+> > rounded up to 4 byte increments, so the u16 is no different than a u32
+> > here).  
 > 
+> Can I put that down as a Reviewed-by?
 
+Sure. I was going to recommend consolidating the mappings a bit more to
+have the enums and numbers defined in a single macro, but then I saw that
+it matches the rest of the header file, and to do the consolidation would
+require modifying the existing code, which I thought wasn't worth the
+effort.
+
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
