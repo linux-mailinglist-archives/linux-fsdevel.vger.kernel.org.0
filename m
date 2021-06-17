@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB3C3ABFDC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 01:52:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C3533ABFE0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 01:52:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232921AbhFQXyK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Jun 2021 19:54:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48236 "EHLO
+        id S233057AbhFQXyM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Jun 2021 19:54:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232967AbhFQXyH (ORCPT
+        with ESMTP id S233085AbhFQXyJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Jun 2021 19:54:07 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8439C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 16:51:58 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id k6so6251151pfk.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 16:51:58 -0700 (PDT)
+        Thu, 17 Jun 2021 19:54:09 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 564E9C061767
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 16:52:00 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id k15so1101118pfp.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 16:52:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1hEl+k/CgpkbCmgoz0Z6VrunmCbUSie9Hs7liQN+KmI=;
-        b=RE+R2Kh+wGC8/gRfcbikdr3b58NtifT5klMzOvtoQ/sJUYuPi5SRvyJIqgtH1JT7FY
-         z1+BgICCs1X8vNv72ILpkM8XSCViFmv/dPq3dubhkKZt+o+7fXiBditFBbApPwhgGFxr
-         omkT3JNhwz/PbTvAnk8yPQEmX01mCZ002SBKJgRwYMg5FC8Kom+P1MnTtfE0L3vhKWBN
-         v1yB3bLZK47nQhzPomRze2PekD61X4JWjh88b+wvXs0ttAnZ30hd8EAOfJBpGrqhrhvU
-         bFy+Upy2hxHp750gMAkQNbEoTQIXw7LV17HXMYwI1n8H46u5LXOzsHpyJWxhF4eFrXRi
-         Ahyw==
+        bh=lOEuwUFuUeUZhmmXE/Cgkj2X2oIPPZlTtQoabGcXJ+0=;
+        b=b8nbRMo1AHl3yc5AqzgBIYyd4PcPOvSOOAWyB4Y79RSDkmqlVgB6hl0I+4LMOLb7ot
+         dt3pMTjjP/oCTt0Ulf1oPgiUyqi+sv0Mt0q8LaRY+5fs4vQUWmOXUsW0VtewUOiPcJvU
+         WXVu2AhhHjdCWS7cAQAqZMR25ES/9RVSmAFaKDL18L/8MO5nSuMPwT6N3+NrPwR4ZXxX
+         fe6qkizAF7MiQY5kjRIyKoQ/cckOzkWiGDZM638HW9WzU1NAnU55RkvTtNIMxbYNRB/x
+         hjuDQl5KAduawAQnot+3fXTSxOyWS//0GM+qa+rSKHQtPY+oIp/VjGBAOhc63+1vZ3Hl
+         a4Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1hEl+k/CgpkbCmgoz0Z6VrunmCbUSie9Hs7liQN+KmI=;
-        b=S4DDh0J0DHt6PGh80UmT73VcFyfgAXjDvT2iG8rlEvtJd7vN6W4FiZ1kjNVUuwlFnb
-         IpKwILauA4qCl6R7w0JT9f8lh2CEApE7aKqR7bbb5a8k8/OVqtdC0FuvO+GMoWNtBCr8
-         B/LzDQkyW7RoyJbNfgEPzLKKXhHe0/zalIDAL/hfJWQUA6lAWqQnu2YgV+2UQ6/IKHaX
-         RpCmKdYAsFBmoaBlPOzhYuang49JIAxPaLWylPAbHhdDkMletKXX+KbtLjKIEvmOVbHg
-         6j3GAe1A4rhSutVo2dbBwhbrjQhAROIXzir+BQE5VKhbyt5tKdGTuz72aowHOn/SdB9L
-         mMcQ==
-X-Gm-Message-State: AOAM530HDt1IjxtpP7L08P18nfDLWUU9k3r06mCEI7d34XD3MwEUAHcF
-        NKXfnHt8UF9CzfIHjcQfm/uvmONpnsAYTg==
-X-Google-Smtp-Source: ABdhPJwWOKK7q2jCgl9X5hdnUlnBsBr9xXdLnGAez2GBOtA/hhhsfyhdTaZ1IWn8f8MUyTklaO02uw==
-X-Received: by 2002:aa7:8810:0:b029:2ea:1b56:3acb with SMTP id c16-20020aa788100000b02902ea1b563acbmr2189345pfo.68.1623973917669;
-        Thu, 17 Jun 2021 16:51:57 -0700 (PDT)
+        bh=lOEuwUFuUeUZhmmXE/Cgkj2X2oIPPZlTtQoabGcXJ+0=;
+        b=GC6T2KbjW1C9J+7uMw3y/LIEnJTv9Py6rxIPonsy+vGjI62WXW1jkYQdl9MeY3wn5f
+         fSnP8DsXW1g39pLcwU4CB5rmamR/CcbApSMQayGRuw6/XlGAy7tcZUjK6zHW3kqhwfvT
+         l65/N/fOojqyrogZ+RHpGVIIO8YkFTr0Lm+uWKnBym1lvbmhAGw3KOdmG6nCuWzE9lAz
+         ddpYMeTaYpPwqcr8W5850iQbdX1o7Sgn617ilztuaHVA4zw+iolOdBnUFiPFRINXo2YU
+         Mak8FdfOItHexrxqR5RGPzMc/WMtgjwNwvLbbrD0nQq4ztzSNwiP9qy8u/9Dfu+bSI8T
+         taug==
+X-Gm-Message-State: AOAM533jTrIXGWhudAoXu23Ec9PEVR/Hadg48hW64aqaSqQ460AMSmS/
+        0MEr2W1X9GNBlrT0mXg7nzZ5riBitobUzQ==
+X-Google-Smtp-Source: ABdhPJz9MSGh0i4cNQJG1NKWMPRHVdsbMzo4Ud9exrKZumoDk72x/JtSb8kiwG4dP7HVjTOMd3lgCA==
+X-Received: by 2002:a62:2bc6:0:b029:2cc:242f:ab69 with SMTP id r189-20020a622bc60000b02902cc242fab69mr2162130pfr.16.1623973919233;
+        Thu, 17 Jun 2021 16:51:59 -0700 (PDT)
 Received: from relinquished.tfbnw.net ([2620:10d:c090:400::5:2f0e])
-        by smtp.gmail.com with ESMTPSA id a187sm6087517pfb.66.2021.06.17.16.51.56
+        by smtp.gmail.com with ESMTPSA id a187sm6087517pfb.66.2021.06.17.16.51.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jun 2021 16:51:57 -0700 (PDT)
+        Thu, 17 Jun 2021 16:51:58 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-api@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH RESEND x3 v9 7/9] btrfs: optionally extend i_size in cow_file_range_inline()
-Date:   Thu, 17 Jun 2021 16:51:30 -0700
-Message-Id: <5b653492640d42a31febb780a25437844f1af1ed.1623972519.git.osandov@fb.com>
+Subject: [PATCH RESEND x3 v9 8/9] btrfs: implement RWF_ENCODED reads
+Date:   Thu, 17 Jun 2021 16:51:31 -0700
+Message-Id: <9aa71adf153f1b71a616de0a1559955defa55c8c.1623972519.git.osandov@fb.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1623972518.git.osandov@fb.com>
 References: <cover.1623972518.git.osandov@fb.com>
@@ -67,230 +67,583 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-Currently, an inline extent is always created after i_size is extended
-from btrfs_dirty_pages(). However, for encoded writes, we only want to
-update i_size after we successfully created the inline extent. Add an
-update_i_size parameter to cow_file_range_inline() and
-insert_inline_extent() and pass in the size of the extent rather than
-determining it from i_size. Since the start parameter is always passed
-as 0, get rid of it and simplify the logic in these two functions. While
-we're here, let's document the requirements for creating an inline
-extent.
+There are 4 main cases:
+
+1. Inline extents: we copy the data straight out of the extent buffer.
+2. Hole/preallocated extents: we fill in zeroes.
+3. Regular, uncompressed extents: we read the sectors we need directly
+   from disk.
+4. Regular, compressed extents: we read the entire compressed extent
+   from disk and indicate what subset of the decompressed extent is in
+   the file.
+
+This initial implementation simplifies a few things that can be improved
+in the future:
+
+- We hold the inode lock during the operation.
+- Cases 1, 3, and 4 allocate temporary memory to read into before
+  copying out to userspace.
+- We don't do read repair, because it turns out that read repair is
+  currently broken for compressed data.
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- fs/btrfs/inode.c | 100 +++++++++++++++++++++++------------------------
- 1 file changed, 48 insertions(+), 52 deletions(-)
+ fs/btrfs/ctree.h |   2 +
+ fs/btrfs/file.c  |   5 +
+ fs/btrfs/inode.c | 503 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 510 insertions(+)
 
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index 86856889188d..cd31dbc2e4a4 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -3201,6 +3201,8 @@ int btrfs_writepage_cow_fixup(struct page *page, u64 start, u64 end);
+ void btrfs_writepage_endio_finish_ordered(struct btrfs_inode *inode,
+ 					  struct page *page, u64 start,
+ 					  u64 end, int uptodate);
++ssize_t btrfs_encoded_read(struct kiocb *iocb, struct iov_iter *iter);
++
+ extern const struct dentry_operations btrfs_dentry_operations;
+ extern const struct iomap_ops btrfs_dio_iomap_ops;
+ extern const struct iomap_dio_ops btrfs_dio_ops;
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 4e13c481b21e..89b3dd3fa9e4 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -3648,6 +3648,11 @@ static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	ssize_t ret = 0;
+ 
++	if (iocb->ki_flags & IOCB_ENCODED) {
++		if (iocb->ki_flags & IOCB_NOWAIT)
++			return -EOPNOTSUPP;
++		return btrfs_encoded_read(iocb, to);
++	}
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+ 		ret = btrfs_direct_read(iocb, to);
+ 		if (ret < 0 || !iov_iter_count(to) ||
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index fcf685fd4eff..15b06d6ac875 100644
+index 15b06d6ac875..e09af2c8083a 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -235,9 +235,10 @@ static int btrfs_init_inode_security(struct btrfs_trans_handle *trans,
- static int insert_inline_extent(struct btrfs_trans_handle *trans,
- 				struct btrfs_path *path, bool extent_inserted,
- 				struct btrfs_root *root, struct inode *inode,
--				u64 start, size_t size, size_t compressed_size,
-+				size_t size, size_t compressed_size,
- 				int compress_type,
--				struct page **compressed_pages)
-+				struct page **compressed_pages,
-+				bool update_i_size)
- {
- 	struct extent_buffer *leaf;
- 	struct page *page = NULL;
-@@ -246,7 +247,7 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
- 	struct btrfs_file_extent_item *ei;
- 	int ret;
- 	size_t cur_size = size;
--	unsigned long offset;
-+	u64 i_size;
- 
- 	ASSERT((compressed_size > 0 && compressed_pages) ||
- 	       (compressed_size == 0 && !compressed_pages));
-@@ -259,7 +260,7 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
- 		size_t datasize;
- 
- 		key.objectid = btrfs_ino(BTRFS_I(inode));
--		key.offset = start;
-+		key.offset = 0;
- 		key.type = BTRFS_EXTENT_DATA_KEY;
- 
- 		datasize = btrfs_file_extent_calc_inline_size(cur_size);
-@@ -297,12 +298,10 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
- 		btrfs_set_file_extent_compression(leaf, ei,
- 						  compress_type);
- 	} else {
--		page = find_get_page(inode->i_mapping,
--				     start >> PAGE_SHIFT);
-+		page = find_get_page(inode->i_mapping, 0);
- 		btrfs_set_file_extent_compression(leaf, ei, 0);
- 		kaddr = kmap_atomic(page);
--		offset = offset_in_page(start);
--		write_extent_buffer(leaf, kaddr + offset, ptr, size);
-+		write_extent_buffer(leaf, kaddr, ptr, size);
- 		kunmap_atomic(kaddr);
- 		put_page(page);
+@@ -6,6 +6,7 @@
+ #include <crypto/hash.h>
+ #include <linux/kernel.h>
+ #include <linux/bio.h>
++#include <linux/encoded_io.h>
+ #include <linux/file.h>
+ #include <linux/fs.h>
+ #include <linux/pagemap.h>
+@@ -10270,6 +10271,508 @@ void btrfs_set_range_writeback(struct btrfs_inode *inode, u64 start, u64 end)
  	}
-@@ -313,8 +312,8 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
- 	 * We align size to sectorsize for inline extents just for simplicity
- 	 * sake.
- 	 */
--	size = ALIGN(size, root->fs_info->sectorsize);
--	ret = btrfs_inode_set_file_extent_range(BTRFS_I(inode), start, size);
-+	ret = btrfs_inode_set_file_extent_range(BTRFS_I(inode), 0,
-+					ALIGN(size, root->fs_info->sectorsize));
- 	if (ret)
- 		goto fail;
- 
-@@ -327,7 +326,13 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
- 	 * before we unlock the pages.  Otherwise we
- 	 * could end up racing with unlink.
- 	 */
--	BTRFS_I(inode)->disk_i_size = inode->i_size;
-+	i_size = i_size_read(inode);
-+	if (update_i_size && size > i_size) {
-+		i_size_write(inode, size);
-+		i_size = size;
-+	}
-+	BTRFS_I(inode)->disk_i_size = i_size;
-+
- fail:
- 	return ret;
  }
-@@ -338,35 +343,31 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
-  * does the checks required to make sure the data is small enough
-  * to fit as an inline extent.
-  */
--static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 start,
--					  u64 end, size_t compressed_size,
-+static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 size,
-+					  size_t compressed_size,
- 					  int compress_type,
--					  struct page **compressed_pages)
-+					  struct page **compressed_pages,
-+					  bool update_i_size)
- {
- 	struct btrfs_drop_extents_args drop_args = { 0 };
- 	struct btrfs_root *root = inode->root;
- 	struct btrfs_fs_info *fs_info = root->fs_info;
- 	struct btrfs_trans_handle *trans;
--	u64 isize = i_size_read(&inode->vfs_inode);
--	u64 actual_end = min(end + 1, isize);
--	u64 inline_len = actual_end - start;
--	u64 aligned_end = ALIGN(end, fs_info->sectorsize);
--	u64 data_len = inline_len;
-+	u64 data_len = compressed_size ? compressed_size : size;
- 	int ret;
- 	struct btrfs_path *path;
  
--	if (compressed_size)
--		data_len = compressed_size;
--
--	if (start > 0 ||
--	    actual_end > fs_info->sectorsize ||
-+	/*
-+	 * We can create an inline extent if it ends at or beyond the current
-+	 * i_size, is no larger than a sector (decompressed), and the (possibly
-+	 * compressed) data fits in a leaf and the configured maximum inline
-+	 * size.
-+	 */
-+	if (size < i_size_read(&inode->vfs_inode) ||
-+	    size > fs_info->sectorsize ||
- 	    data_len > BTRFS_MAX_INLINE_DATA_SIZE(fs_info) ||
--	    (!compressed_size &&
--	    (actual_end & (fs_info->sectorsize - 1)) == 0) ||
--	    end + 1 < isize ||
--	    data_len > fs_info->max_inline) {
-+	    data_len > fs_info->max_inline)
- 		return 1;
--	}
- 
- 	path = btrfs_alloc_path();
- 	if (!path)
-@@ -380,30 +381,21 @@ static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 start,
- 	trans->block_rsv = &inode->block_rsv;
- 
- 	drop_args.path = path;
--	drop_args.start = start;
--	drop_args.end = aligned_end;
-+	drop_args.start = 0;
-+	drop_args.end = fs_info->sectorsize;
- 	drop_args.drop_cache = true;
- 	drop_args.replace_extent = true;
--
--	if (compressed_size && compressed_pages)
--		drop_args.extent_item_size = btrfs_file_extent_calc_inline_size(
--		   compressed_size);
--	else
--		drop_args.extent_item_size = btrfs_file_extent_calc_inline_size(
--		    inline_len);
--
-+	drop_args.extent_item_size = btrfs_file_extent_calc_inline_size(data_len);
- 	ret = btrfs_drop_extents(trans, root, inode, &drop_args);
- 	if (ret) {
- 		btrfs_abort_transaction(trans, ret);
- 		goto out;
- 	}
- 
--	if (isize > actual_end)
--		inline_len = min_t(u64, isize, actual_end);
--	ret = insert_inline_extent(trans, path, drop_args.extent_inserted,
--				   root, &inode->vfs_inode, start,
--				   inline_len, compressed_size,
--				   compress_type, compressed_pages);
-+	ret = insert_inline_extent(trans, path, drop_args.extent_inserted, root,
-+				   &inode->vfs_inode, size, compressed_size,
-+				   compress_type, compressed_pages,
-+				   update_i_size);
- 	if (ret && ret != -ENOSPC) {
- 		btrfs_abort_transaction(trans, ret);
- 		goto out;
-@@ -412,7 +404,7 @@ static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 start,
- 		goto out;
- 	}
- 
--	btrfs_update_inode_bytes(inode, inline_len, drop_args.bytes_found);
-+	btrfs_update_inode_bytes(inode, size, drop_args.bytes_found);
- 	ret = btrfs_update_inode(trans, root, inode);
- 	if (ret && ret != -ENOSPC) {
- 		btrfs_abort_transaction(trans, ret);
-@@ -688,14 +680,15 @@ static noinline int compress_file_range(struct async_chunk *async_chunk)
- 			/* we didn't compress the entire range, try
- 			 * to make an uncompressed inline extent.
- 			 */
--			ret = cow_file_range_inline(BTRFS_I(inode), start, end,
-+			ret = cow_file_range_inline(BTRFS_I(inode), actual_end,
- 						    0, BTRFS_COMPRESS_NONE,
--						    NULL);
-+						    NULL, false);
- 		} else {
- 			/* try making a compressed inline extent */
--			ret = cow_file_range_inline(BTRFS_I(inode), start, end,
-+			ret = cow_file_range_inline(BTRFS_I(inode), actual_end,
- 						    total_compressed,
--						    compress_type, pages);
-+						    compress_type, pages,
-+						    false);
- 		}
- 		if (ret <= 0) {
- 			unsigned long clear_flags = EXTENT_DELALLOC |
-@@ -1081,9 +1074,12 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 	inode_should_defrag(inode, start, end, num_bytes, SZ_64K);
- 
- 	if (start == 0) {
-+		u64 actual_end = min_t(u64, i_size_read(&inode->vfs_inode),
-+				       end + 1);
++static int encoded_iov_compression_from_btrfs(unsigned int compress_type)
++{
++	switch (compress_type) {
++	case BTRFS_COMPRESS_NONE:
++		return ENCODED_IOV_COMPRESSION_NONE;
++	case BTRFS_COMPRESS_ZLIB:
++		return ENCODED_IOV_COMPRESSION_BTRFS_ZLIB;
++	case BTRFS_COMPRESS_LZO:
++		/*
++		 * The LZO format depends on the page size. 64k is the maximum
++		 * sectorsize (and thus page size) that we support.
++		 */
++		if (PAGE_SIZE < SZ_4K || PAGE_SIZE > SZ_64K)
++			return -EINVAL;
++		return ENCODED_IOV_COMPRESSION_BTRFS_LZO_4K + (PAGE_SHIFT - 12);
++	case BTRFS_COMPRESS_ZSTD:
++		return ENCODED_IOV_COMPRESSION_BTRFS_ZSTD;
++	default:
++		return -EUCLEAN;
++	}
++}
 +
- 		/* lets try to make an inline extent */
--		ret = cow_file_range_inline(inode, start, end, 0,
--					    BTRFS_COMPRESS_NONE, NULL);
-+		ret = cow_file_range_inline(inode, actual_end, 0,
-+					    BTRFS_COMPRESS_NONE, NULL, false);
- 		if (ret == 0) {
- 			/*
- 			 * We use DO_ACCOUNTING here because we need the
++static ssize_t btrfs_encoded_read_inline(struct kiocb *iocb,
++					 struct iov_iter *iter, u64 start,
++					 u64 lockend,
++					 struct extent_state **cached_state,
++					 u64 extent_start, size_t count,
++					 struct encoded_iov *encoded,
++					 bool *unlocked)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
++	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
++	struct btrfs_path *path;
++	struct extent_buffer *leaf;
++	struct btrfs_file_extent_item *item;
++	u64 ram_bytes;
++	unsigned long ptr;
++	void *tmp;
++	ssize_t ret;
++
++	path = btrfs_alloc_path();
++	if (!path) {
++		ret = -ENOMEM;
++		goto out;
++	}
++	ret = btrfs_lookup_file_extent(NULL, BTRFS_I(inode)->root, path,
++				       btrfs_ino(BTRFS_I(inode)), extent_start,
++				       0);
++	if (ret) {
++		if (ret > 0) {
++			/* The extent item disappeared? */
++			ret = -EIO;
++		}
++		goto out;
++	}
++	leaf = path->nodes[0];
++	item = btrfs_item_ptr(leaf, path->slots[0],
++			      struct btrfs_file_extent_item);
++
++	ram_bytes = btrfs_file_extent_ram_bytes(leaf, item);
++	ptr = btrfs_file_extent_inline_start(item);
++
++	encoded->len = (min_t(u64, extent_start + ram_bytes, inode->i_size) -
++			iocb->ki_pos);
++	ret = encoded_iov_compression_from_btrfs(
++				 btrfs_file_extent_compression(leaf, item));
++	if (ret < 0)
++		goto out;
++	encoded->compression = ret;
++	if (encoded->compression) {
++		size_t inline_size;
++
++		inline_size = btrfs_file_extent_inline_item_len(leaf,
++						btrfs_item_nr(path->slots[0]));
++		if (inline_size > count) {
++			ret = -ENOBUFS;
++			goto out;
++		}
++		count = inline_size;
++		encoded->unencoded_len = ram_bytes;
++		encoded->unencoded_offset = iocb->ki_pos - extent_start;
++	} else {
++		encoded->len = encoded->unencoded_len = count =
++			min_t(u64, count, encoded->len);
++		ptr += iocb->ki_pos - extent_start;
++	}
++
++	tmp = kmalloc(count, GFP_NOFS);
++	if (!tmp) {
++		ret = -ENOMEM;
++		goto out;
++	}
++	read_extent_buffer(leaf, tmp, ptr, count);
++	btrfs_release_path(path);
++	unlock_extent_cached(io_tree, start, lockend, cached_state);
++	inode_unlock_shared(inode);
++	*unlocked = true;
++
++	ret = copy_encoded_iov_to_iter(encoded, iter);
++	if (ret)
++		goto out_free;
++	ret = copy_to_iter(tmp, count, iter);
++	if (ret != count)
++		ret = -EFAULT;
++out_free:
++	kfree(tmp);
++out:
++	btrfs_free_path(path);
++	return ret;
++}
++
++struct btrfs_encoded_read_private {
++	struct inode *inode;
++	wait_queue_head_t wait;
++	atomic_t pending;
++	blk_status_t status;
++	bool skip_csum;
++};
++
++static blk_status_t submit_encoded_read_bio(struct inode *inode,
++					    struct bio *bio, int mirror_num,
++					    unsigned long bio_flags)
++{
++	struct btrfs_encoded_read_private *priv = bio->bi_private;
++	struct btrfs_io_bio *io_bio = btrfs_io_bio(bio);
++	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
++	blk_status_t ret;
++
++	if (!priv->skip_csum) {
++		ret = btrfs_lookup_bio_sums(inode, bio, NULL);
++		if (ret)
++			return ret;
++	}
++
++	ret = btrfs_bio_wq_end_io(fs_info, bio, BTRFS_WQ_ENDIO_DATA);
++	if (ret) {
++		btrfs_io_bio_free_csum(io_bio);
++		return ret;
++	}
++
++	atomic_inc(&priv->pending);
++	ret = btrfs_map_bio(fs_info, bio, mirror_num);
++	if (ret) {
++		atomic_dec(&priv->pending);
++		btrfs_io_bio_free_csum(io_bio);
++	}
++	return ret;
++}
++
++static blk_status_t btrfs_encoded_read_check_bio(struct btrfs_io_bio *io_bio)
++{
++	const bool uptodate = io_bio->bio.bi_status == BLK_STS_OK;
++	struct btrfs_encoded_read_private *priv = io_bio->bio.bi_private;
++	struct inode *inode = priv->inode;
++	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
++	u32 sectorsize = fs_info->sectorsize;
++	struct bio_vec *bvec;
++	struct bvec_iter_all iter_all;
++	u64 start = io_bio->logical;
++	u32 bio_offset = 0;
++
++	if (priv->skip_csum || !uptodate)
++		return io_bio->bio.bi_status;
++
++	bio_for_each_segment_all(bvec, &io_bio->bio, iter_all) {
++		unsigned int i, nr_sectors, pgoff;
++
++		nr_sectors = BTRFS_BYTES_TO_BLKS(fs_info, bvec->bv_len);
++		pgoff = bvec->bv_offset;
++		for (i = 0; i < nr_sectors; i++) {
++			ASSERT(pgoff < PAGE_SIZE);
++			if (check_data_csum(inode, io_bio, bio_offset,
++					    bvec->bv_page, pgoff, start))
++				return BLK_STS_IOERR;
++			start += sectorsize;
++			bio_offset += sectorsize;
++			pgoff += sectorsize;
++		}
++	}
++	return BLK_STS_OK;
++}
++
++static void btrfs_encoded_read_endio(struct bio *bio)
++{
++	struct btrfs_encoded_read_private *priv = bio->bi_private;
++	struct btrfs_io_bio *io_bio = btrfs_io_bio(bio);
++	blk_status_t status;
++
++	status = btrfs_encoded_read_check_bio(io_bio);
++	if (status) {
++		/*
++		 * The memory barrier implied by the atomic_dec_return() here
++		 * pairs with the memory barrier implied by the
++		 * atomic_dec_return() or io_wait_event() in
++		 * btrfs_encoded_read_regular_fill_pages() to ensure that this
++		 * write is observed before the load of status in
++		 * btrfs_encoded_read_regular_fill_pages().
++		 */
++		WRITE_ONCE(priv->status, status);
++	}
++	if (!atomic_dec_return(&priv->pending))
++		wake_up(&priv->wait);
++	btrfs_io_bio_free_csum(io_bio);
++	bio_put(bio);
++}
++
++static int btrfs_encoded_read_regular_fill_pages(struct inode *inode, u64 offset,
++						 u64 disk_io_size, struct page **pages)
++{
++	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
++	struct btrfs_encoded_read_private priv = {
++		.inode = inode,
++		.pending = ATOMIC_INIT(1),
++		.skip_csum = BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM,
++	};
++	unsigned long i = 0;
++	u64 cur = 0;
++	int ret;
++
++	init_waitqueue_head(&priv.wait);
++	/*
++	 * Submit bios for the extent, splitting due to bio or stripe limits as
++	 * necessary.
++	 */
++	while (cur < disk_io_size) {
++		struct extent_map *em;
++		struct btrfs_io_geometry geom;
++		struct bio *bio = NULL;
++		u64 remaining;
++
++		em = btrfs_get_chunk_map(fs_info, offset + cur,
++					 disk_io_size - cur);
++		if (IS_ERR(em)) {
++			ret = PTR_ERR(em);
++		} else {
++			ret = btrfs_get_io_geometry(fs_info, em, BTRFS_MAP_READ,
++						    offset + cur, &geom);
++		}
++		if (ret) {
++			WRITE_ONCE(priv.status, errno_to_blk_status(ret));
++			break;
++		}
++		remaining = min(geom.len, disk_io_size - cur);
++		while (bio || remaining) {
++			size_t bytes = min_t(u64, remaining, PAGE_SIZE);
++
++			if (!bio) {
++				bio = btrfs_bio_alloc(offset + cur);
++				bio->bi_end_io = btrfs_encoded_read_endio;
++				bio->bi_private = &priv;
++				bio->bi_opf = REQ_OP_READ;
++			}
++
++			if (!bytes ||
++			    bio_add_page(bio, pages[i], bytes, 0) < bytes) {
++				blk_status_t status;
++
++				status = submit_encoded_read_bio(inode, bio, 0,
++								 0);
++				if (status) {
++					WRITE_ONCE(priv.status, status);
++					bio_put(bio);
++					goto out;
++				}
++				bio = NULL;
++				continue;
++			}
++
++			i++;
++			cur += bytes;
++			remaining -= bytes;
++		}
++	}
++
++out:
++	if (atomic_dec_return(&priv.pending))
++		io_wait_event(priv.wait, !atomic_read(&priv.pending));
++	/* See btrfs_encoded_read_endio() for ordering. */
++	return blk_status_to_errno(READ_ONCE(priv.status));
++}
++
++static ssize_t btrfs_encoded_read_regular(struct kiocb *iocb,
++					  struct iov_iter *iter,
++					  u64 start, u64 lockend,
++					  struct extent_state **cached_state,
++					  u64 offset, u64 disk_io_size,
++					  size_t count,
++					  const struct encoded_iov *encoded,
++					  bool *unlocked)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
++	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
++	struct page **pages;
++	unsigned long nr_pages, i;
++	u64 cur;
++	size_t page_offset;
++	ssize_t ret;
++
++	nr_pages = DIV_ROUND_UP(disk_io_size, PAGE_SIZE);
++	pages = kcalloc(nr_pages, sizeof(struct page *), GFP_NOFS);
++	if (!pages)
++		return -ENOMEM;
++	for (i = 0; i < nr_pages; i++) {
++		pages[i] = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
++		if (!pages[i]) {
++			ret = -ENOMEM;
++			goto out;
++		}
++	}
++
++	ret = btrfs_encoded_read_regular_fill_pages(inode, offset, disk_io_size,
++						    pages);
++	if (ret)
++		goto out;
++
++	unlock_extent_cached(io_tree, start, lockend, cached_state);
++	inode_unlock_shared(inode);
++	*unlocked = true;
++
++	ret = copy_encoded_iov_to_iter(encoded, iter);
++	if (ret)
++		goto out;
++	if (encoded->compression) {
++		i = 0;
++		page_offset = 0;
++	} else {
++		i = (iocb->ki_pos - start) >> PAGE_SHIFT;
++		page_offset = (iocb->ki_pos - start) & (PAGE_SIZE - 1);
++	}
++	cur = 0;
++	while (cur < count) {
++		size_t bytes = min_t(size_t, count - cur,
++				     PAGE_SIZE - page_offset);
++
++		if (copy_page_to_iter(pages[i], page_offset, bytes,
++				      iter) != bytes) {
++			ret = -EFAULT;
++			goto out;
++		}
++		i++;
++		cur += bytes;
++		page_offset = 0;
++	}
++	ret = count;
++out:
++	for (i = 0; i < nr_pages; i++) {
++		if (pages[i])
++			__free_page(pages[i]);
++	}
++	kfree(pages);
++	return ret;
++}
++
++ssize_t btrfs_encoded_read(struct kiocb *iocb, struct iov_iter *iter)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
++	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
++	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
++	ssize_t ret;
++	size_t count;
++	u64 start, lockend, offset, disk_io_size;
++	struct extent_state *cached_state = NULL;
++	struct extent_map *em;
++	struct encoded_iov encoded = {};
++	bool unlocked = false;
++
++	ret = generic_encoded_read_checks(iocb, iter);
++	if (ret < 0)
++		return ret;
++	if (ret == 0)
++		return copy_encoded_iov_to_iter(&encoded, iter);
++	count = ret;
++
++	file_accessed(iocb->ki_filp);
++
++	inode_lock_shared(inode);
++
++	if (iocb->ki_pos >= inode->i_size) {
++		inode_unlock_shared(inode);
++		return copy_encoded_iov_to_iter(&encoded, iter);
++	}
++	start = ALIGN_DOWN(iocb->ki_pos, fs_info->sectorsize);
++	/*
++	 * We don't know how long the extent containing iocb->ki_pos is, but if
++	 * it's compressed we know that it won't be longer than this.
++	 */
++	lockend = start + BTRFS_MAX_UNCOMPRESSED - 1;
++
++	for (;;) {
++		struct btrfs_ordered_extent *ordered;
++
++		ret = btrfs_wait_ordered_range(inode, start,
++					       lockend - start + 1);
++		if (ret)
++			goto out_unlock_inode;
++		lock_extent_bits(io_tree, start, lockend, &cached_state);
++		ordered = btrfs_lookup_ordered_range(BTRFS_I(inode), start,
++						     lockend - start + 1);
++		if (!ordered)
++			break;
++		btrfs_put_ordered_extent(ordered);
++		unlock_extent_cached(io_tree, start, lockend, &cached_state);
++		cond_resched();
++	}
++
++	em = btrfs_get_extent(BTRFS_I(inode), NULL, 0, start,
++			      lockend - start + 1);
++	if (IS_ERR(em)) {
++		ret = PTR_ERR(em);
++		goto out_unlock_extent;
++	}
++
++	if (em->block_start == EXTENT_MAP_INLINE) {
++		u64 extent_start = em->start;
++
++		/*
++		 * For inline extents we get everything we need out of the
++		 * extent item.
++		 */
++		free_extent_map(em);
++		em = NULL;
++		ret = btrfs_encoded_read_inline(iocb, iter, start, lockend,
++						&cached_state, extent_start,
++						count, &encoded, &unlocked);
++		goto out;
++	}
++
++	/*
++	 * We only want to return up to EOF even if the extent extends beyond
++	 * that.
++	 */
++	encoded.len = (min_t(u64, extent_map_end(em), inode->i_size) -
++		       iocb->ki_pos);
++	if (em->block_start == EXTENT_MAP_HOLE ||
++	    test_bit(EXTENT_FLAG_PREALLOC, &em->flags)) {
++		offset = EXTENT_MAP_HOLE;
++		encoded.len = encoded.unencoded_len = count =
++			min_t(u64, count, encoded.len);
++	} else if (test_bit(EXTENT_FLAG_COMPRESSED, &em->flags)) {
++		offset = em->block_start;
++		/*
++		 * Bail if the buffer isn't large enough to return the whole
++		 * compressed extent.
++		 */
++		if (em->block_len > count) {
++			ret = -ENOBUFS;
++			goto out_em;
++		}
++		disk_io_size = count = em->block_len;
++		encoded.unencoded_len = em->ram_bytes;
++		encoded.unencoded_offset = iocb->ki_pos - em->orig_start;
++		ret = encoded_iov_compression_from_btrfs(em->compress_type);
++		if (ret < 0)
++			goto out_em;
++		encoded.compression = ret;
++	} else {
++		offset = em->block_start + (start - em->start);
++		if (encoded.len > count)
++			encoded.len = count;
++		/*
++		 * Don't read beyond what we locked. This also limits the page
++		 * allocations that we'll do.
++		 */
++		disk_io_size = min(lockend + 1, iocb->ki_pos + encoded.len) - start;
++		encoded.len = encoded.unencoded_len = count =
++			start + disk_io_size - iocb->ki_pos;
++		disk_io_size = ALIGN(disk_io_size, fs_info->sectorsize);
++	}
++	free_extent_map(em);
++	em = NULL;
++
++	if (offset == EXTENT_MAP_HOLE) {
++		unlock_extent_cached(io_tree, start, lockend, &cached_state);
++		inode_unlock_shared(inode);
++		unlocked = true;
++		ret = copy_encoded_iov_to_iter(&encoded, iter);
++		if (ret)
++			goto out;
++		ret = iov_iter_zero(count, iter);
++		if (ret != count)
++			ret = -EFAULT;
++	} else {
++		ret = btrfs_encoded_read_regular(iocb, iter, start, lockend,
++						 &cached_state, offset,
++						 disk_io_size, count, &encoded,
++						 &unlocked);
++	}
++
++out:
++	if (ret >= 0)
++		iocb->ki_pos += encoded.len;
++out_em:
++	free_extent_map(em);
++out_unlock_extent:
++	if (!unlocked)
++		unlock_extent_cached(io_tree, start, lockend, &cached_state);
++out_unlock_inode:
++	if (!unlocked)
++		inode_unlock_shared(inode);
++	return ret;
++}
++
+ #ifdef CONFIG_SWAP
+ /*
+  * Add an entry indicating a block group or device which is pinned by a
 -- 
 2.32.0
 
