@@ -2,192 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D4683ABE14
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jun 2021 23:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E34C33ABFC7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 01:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233227AbhFQVaV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Jun 2021 17:30:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29548 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233113AbhFQVaN (ORCPT
+        id S231883AbhFQXx6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Jun 2021 19:53:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48160 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231497AbhFQXx5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Jun 2021 17:30:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623965284;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RhJsSVihKBAF9j0RF6gY3Tl2fVYznxop1WZOCSrTXJ4=;
-        b=UpBg0jjDYC0sQ5eFigWt8mYSmQjok+G0rzvifS496wONjxYB2q3fT+sJpY3l5t0NCRhBNn
-        ld9g7AoMb3JGg4eTe+fB+V0ub93YXcNKkDnT5kDjY4vqdDlsMxhFba6sq8oEHssKsqiwhZ
-        GyydsbBvoYhDAUVIuLaMRlxAHv8FE+8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-63-l13QaLpAOw6ZXIaRrGlwug-1; Thu, 17 Jun 2021 17:28:03 -0400
-X-MC-Unique: l13QaLpAOw6ZXIaRrGlwug-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 49F9D100CEC0;
-        Thu, 17 Jun 2021 21:28:02 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-162.rdu2.redhat.com [10.10.116.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0525C5D6DC;
-        Thu, 17 Jun 2021 21:28:02 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 8F923220BCF; Thu, 17 Jun 2021 17:28:01 -0400 (EDT)
-Date:   Thu, 17 Jun 2021 17:28:01 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, Max Reitz <mreitz@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fuse: fix illegal access to inode with reused nodeid
-Message-ID: <20210617212801.GE1142820@redhat.com>
-References: <20210609181158.479781-1-amir73il@gmail.com>
+        Thu, 17 Jun 2021 19:53:57 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54300C061760
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 16:51:48 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id o21so3758169pll.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 16:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kLtan7ZgJ39lAhTwAEL8BRZtTwp/aIezL/TyKBUefV8=;
+        b=CMbZvSZFdRziY2qn+EzuEJyFpb5KZc/g7cglf106+oa8PYPkBH90Vjzm8GS/NgOeJ+
+         yxc+cnRixg44tkVtPCwP7Nj1QHoAx2PgTqvkZl83ye7hBhxdXyjRzcXQN+i9arLDTVlZ
+         u5ZcQbdYqYB2r0tmcEo4NfOxV1zLYTz6NKqZRkeiG4b+Mgm6ORrx2FXBsUT32s5iW5Li
+         3/K1IZmDw76onWKA2uUKE6pX3ig2sp5K7/A8sN9aGSBSWSvLF7m8EDg0Idgy35bNHxnb
+         SpczVRDx7uvMVuM1Dps9nCh3R6B0UsfPp/PiNdu0OpTvIRgLanXcpOJk+tR1Gf5SHFyj
+         hosQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kLtan7ZgJ39lAhTwAEL8BRZtTwp/aIezL/TyKBUefV8=;
+        b=RxSdTYtJHPvaeyVd47y909hupro6Be+PueITkIOIxhKjZz5p15RV/TmKHifUg2S30o
+         pFKkonXfD/eCtJlsxe0bSb8v82vXT91CrehqIxPrG4A7EVa76fyojvNddweTD1FYrxJi
+         xqi4sKL5pGylQ/Mo1KLhQYp7hASKr4P4xd0hPQPqQ+upqp3s1YSkhyChMK8Ez1/qNZYe
+         YdaWr5bq0qTz8nDc5vD7f/1iGtLqD9SWcmS16dMpff3ek1lrOwainyKlK0d9YoCMsqQs
+         BcwRr2DWu5ebl2leVzT8/mf9K5ogtuozbCFN/sf74HzoUJEHFb4BNtdS0vw/Fkb56t0D
+         VCrA==
+X-Gm-Message-State: AOAM530dTPJX6UVERoFinpOXCpKResUFrTEe8ZFlSFtRd8ZGjWCCRLBv
+        4SnnMZJRQLbhqMYtCYf32YwBuVYjAhHpTQ==
+X-Google-Smtp-Source: ABdhPJyA6tXbsmmkly8bTrUXZH/0/TjlUm3khtAowkRsCAeYUZKTslgJojSVEnGBaGDHmX3h6GCLlA==
+X-Received: by 2002:a17:90a:8502:: with SMTP id l2mr7943043pjn.215.1623973907360;
+        Thu, 17 Jun 2021 16:51:47 -0700 (PDT)
+Received: from relinquished.tfbnw.net ([2620:10d:c090:400::5:2f0e])
+        by smtp.gmail.com with ESMTPSA id a187sm6087517pfb.66.2021.06.17.16.51.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jun 2021 16:51:46 -0700 (PDT)
+From:   Omar Sandoval <osandov@osandov.com>
+To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-api@vger.kernel.org, kernel-team@fb.com
+Subject: [PATCH RESEND x3 v9 0/9] fs: interface for directly reading/writing compressed data
+Date:   Thu, 17 Jun 2021 16:51:23 -0700
+Message-Id: <cover.1623972518.git.osandov@fb.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210609181158.479781-1-amir73il@gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 09, 2021 at 09:11:58PM +0300, Amir Goldstein wrote:
-> Server responds to LOOKUP and other ops (READDIRPLUS/CREATE/MKNOD/...)
-> with outarg containing nodeid and generation.
-> 
-> If a fuse inode is found in inode cache with the same nodeid but
-> different generation, the existing fuse inode should be unhashed and
-> marked "bad" and a new inode with the new generation should be hashed
-> instead.
-> 
-> This can happen, for example, with passhrough fuse filesystem that
-> returns the real filesystem ino/generation on lookup and where real inode
-> numbers can get recycled due to real files being unlinked not via the fuse
-> passthrough filesystem.
+From: Omar Sandoval <osandov@fb.com>
 
-Hi Amir,
+This series adds an API for reading compressed data on a filesystem
+without decompressing it as well as support for writing compressed data
+directly to the filesystem. I have test cases (including fsstress
+support) and example programs which I'll send up once the dust settles
+[1].
 
-Is the code for filesystem you have written is public? If yes, can you
-please provide a link. 
+The main use-case is Btrfs send/receive: currently, when sending data
+from one compressed filesystem to another, the sending side decompresses
+the data and the receiving side recompresses it before writing it out.
+This is wasteful and can be avoided if we can just send and write
+compressed extents. The patches implementing the send/receive support
+were sent with the last submission of this series [2].
 
-Is there an API to lookup generation number from host filesystem. Or
-that's something your file server updates based on file handle has
-changed.
+Patches 1-3 add the VFS support, UAPI, and documentation. Patches 4-7
+are Btrfs prep patches. Patch 8 adds Btrfs encoded read support and
+patch 9 adds Btrfs encoded write support.
 
-Thanks
-Vivek
+These patches are based on Dave Sterba's Btrfs misc-next branch [3],
+which is in turn currently based on v5.13-rc6.
 
-> 
-> With current code, this situation will not be detected and an old fuse
-> dentry that used to point to an older generation real inode, can be used
-> to access a completely new inode, which should be accessed only via the
-> new dentry.
-> 
-> Note that because the FORGET message carries the nodeid w/o generation,
-> the server should wait to get FORGET counts for the nlookup counts of
-> the old and reused inodes combined, before it can free the resources
-> associated to that nodeid.
-> 
-> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxgDMGUpK35huwqFYGH_idBB8S6eLiz85o0DDKOyDH4Syg@mail.gmail.com/
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
-> 
-> Miklos,
-> 
-> I was able to reproduce this issue with a passthrough fs that stored
-> ino+generation and uses then to open fd on lookup.
-> 
-> I extended libfuse's test_syscalls [1] program to demonstrate the issue
-> described in commit message.
-> 
-> Max, IIUC, you are making a modification to virtiofs-rs that would
-> result is being exposed to this bug.  You are welcome to try out the
-> test and let me know if you can reproduce the issue.
-> 
-> Note that some test_syscalls test fail with cache enabled, so libfuse's
-> test_examples.py only runs test_syscalls in cache disabled config.
-> 
-> Thanks,
-> Amir.
-> 
-> [1] https://github.com/amir73il/libfuse/commits/test-reused-inodes
-> 
->  fs/fuse/dir.c     | 3 ++-
->  fs/fuse/fuse_i.h  | 9 +++++++++
->  fs/fuse/inode.c   | 4 ++--
->  fs/fuse/readdir.c | 7 +++++--
->  4 files changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 1b6c001a7dd1..b06628fd7d8e 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -239,7 +239,8 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
->  		if (!ret) {
->  			fi = get_fuse_inode(inode);
->  			if (outarg.nodeid != get_node_id(inode) ||
-> -			    (bool) IS_AUTOMOUNT(inode) != (bool) (outarg.attr.flags & FUSE_ATTR_SUBMOUNT)) {
-> +			    fuse_stale_inode(inode, outarg.generation,
-> +					     &outarg.attr)) {
->  				fuse_queue_forget(fm->fc, forget,
->  						  outarg.nodeid, 1);
->  				goto invalid;
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 7e463e220053..f1bd28c176a9 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -867,6 +867,15 @@ static inline u64 fuse_get_attr_version(struct fuse_conn *fc)
->  	return atomic64_read(&fc->attr_version);
->  }
->  
-> +static inline bool fuse_stale_inode(const struct inode *inode, int generation,
-> +				    struct fuse_attr *attr)
-> +{
-> +	return inode->i_generation != generation ||
-> +		inode_wrong_type(inode, attr->mode) ||
-> +		(bool) IS_AUTOMOUNT(inode) !=
-> +		(bool) (attr->flags & FUSE_ATTR_SUBMOUNT);
-> +}
-> +
->  static inline void fuse_make_bad(struct inode *inode)
->  {
->  	remove_inode_hash(inode);
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 393e36b74dc4..257bb3e1cac8 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -350,8 +350,8 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
->  		inode->i_generation = generation;
->  		fuse_init_inode(inode, attr);
->  		unlock_new_inode(inode);
-> -	} else if (inode_wrong_type(inode, attr->mode)) {
-> -		/* Inode has changed type, any I/O on the old should fail */
-> +	} else if (fuse_stale_inode(inode, generation, attr)) {
-> +		/* nodeid was reused, any I/O on the old inode should fail */
->  		fuse_make_bad(inode);
->  		iput(inode);
->  		goto retry;
-> diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-> index 277f7041d55a..bc267832310c 100644
-> --- a/fs/fuse/readdir.c
-> +++ b/fs/fuse/readdir.c
-> @@ -200,9 +200,12 @@ static int fuse_direntplus_link(struct file *file,
->  	if (!d_in_lookup(dentry)) {
->  		struct fuse_inode *fi;
->  		inode = d_inode(dentry);
-> +		if (inode && get_node_id(inode) != o->nodeid)
-> +			inode = NULL;
->  		if (!inode ||
-> -		    get_node_id(inode) != o->nodeid ||
-> -		    inode_wrong_type(inode, o->attr.mode)) {
-> +		    fuse_stale_inode(inode, o->generation, &o->attr)) {
-> +			if (inode)
-> +				fuse_make_bad(inode);
->  			d_invalidate(dentry);
->  			dput(dentry);
->  			goto retry;
-> -- 
-> 2.31.1
-> 
+This is a _resend of a resend of a resend_ of v9 [4], rebased on the
+latest kdave/misc-next branch.
+
+In the last resend, there was some good discussion around how to support
+encryption with this interface in the future. The conclusion was that
+this interface should suffice for file data, and we would need separate
+interface(s) for working with encrypted file names. So, this really just
+needs review on the VFS side.
+
+1: https://github.com/osandov/xfstests/tree/rwf-encoded
+2: https://lore.kernel.org/linux-btrfs/cover.1615922753.git.osandov@fb.com/
+3: https://github.com/kdave/btrfs-devel/tree/misc-next
+4: https://lore.kernel.org/linux-fsdevel/cover.1621276134.git.osandov@fb.com/
+
+Omar Sandoval (9):
+  iov_iter: add copy_struct_from_iter()
+  fs: add O_ALLOW_ENCODED open flag
+  fs: add RWF_ENCODED for reading/writing compressed data
+  btrfs: don't advance offset for compressed bios in
+    btrfs_csum_one_bio()
+  btrfs: add ram_bytes and offset to btrfs_ordered_extent
+  btrfs: support different disk extent size for delalloc
+  btrfs: optionally extend i_size in cow_file_range_inline()
+  btrfs: implement RWF_ENCODED reads
+  btrfs: implement RWF_ENCODED writes
+
+ Documentation/filesystems/encoded_io.rst | 240 ++++++
+ Documentation/filesystems/index.rst      |   1 +
+ arch/alpha/include/uapi/asm/fcntl.h      |   1 +
+ arch/parisc/include/uapi/asm/fcntl.h     |   1 +
+ arch/sparc/include/uapi/asm/fcntl.h      |   1 +
+ fs/btrfs/compression.c                   |  12 +-
+ fs/btrfs/compression.h                   |   6 +-
+ fs/btrfs/ctree.h                         |   9 +-
+ fs/btrfs/delalloc-space.c                |  18 +-
+ fs/btrfs/file-item.c                     |  35 +-
+ fs/btrfs/file.c                          |  46 +-
+ fs/btrfs/inode.c                         | 925 +++++++++++++++++++++--
+ fs/btrfs/ordered-data.c                  | 124 +--
+ fs/btrfs/ordered-data.h                  |  25 +-
+ fs/btrfs/relocation.c                    |   4 +-
+ fs/fcntl.c                               |  10 +-
+ fs/namei.c                               |   4 +
+ fs/read_write.c                          | 168 +++-
+ include/linux/encoded_io.h               |  17 +
+ include/linux/fcntl.h                    |   2 +-
+ include/linux/fs.h                       |  13 +
+ include/linux/uio.h                      |   1 +
+ include/uapi/asm-generic/fcntl.h         |   4 +
+ include/uapi/linux/encoded_io.h          |  30 +
+ include/uapi/linux/fs.h                  |   5 +-
+ lib/iov_iter.c                           |  91 +++
+ 26 files changed, 1559 insertions(+), 234 deletions(-)
+ create mode 100644 Documentation/filesystems/encoded_io.rst
+ create mode 100644 include/linux/encoded_io.h
+ create mode 100644 include/uapi/linux/encoded_io.h
+
+-- 
+2.32.0
 
