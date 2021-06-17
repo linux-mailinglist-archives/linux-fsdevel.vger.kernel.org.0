@@ -2,198 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F15D33AAC6A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jun 2021 08:33:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72D8D3AACBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jun 2021 08:51:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229693AbhFQGfP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Jun 2021 02:35:15 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:50900 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229580AbhFQGfO (ORCPT
+        id S229741AbhFQGxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Jun 2021 02:53:54 -0400
+Received: from esa2.fujitsucc.c3s2.iphmx.com ([68.232.152.246]:22287 "EHLO
+        esa2.fujitsucc.c3s2.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229616AbhFQGxx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Jun 2021 02:35:14 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1623911587; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=R7OPAdEHaxrqtppD6tVdSS7r7R5bUdWeiKBlffdAorI=; b=jhkblW7ksYs8ewYeNJsZB1OoIs5tR8tZq9n5VdLp8a8s6TI5JtGxcY63Tji9Z/0zp+ZwiIWP
- Nofj94HbPlzgH4lHkH58IXsQJzxcelj6g7XkgiYDDrlruVREyVNlL5ErQf9k4r/R6JeYuOVb
- Y8uSZKORbeJeMy99FXSl/1aWYEE=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
- 60caec9eb6ccaab75378f362 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 17 Jun 2021 06:33:02
- GMT
-Sender: faiyazm=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A9916C433D3; Thu, 17 Jun 2021 06:33:02 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        NICE_REPLY_A,SPF_FAIL autolearn=no autolearn_force=no version=3.4.0
-Received: from [192.168.0.100] (unknown [49.204.182.129])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: faiyazm)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4F8ECC433F1;
-        Thu, 17 Jun 2021 06:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F8ECC433F1
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=faiyazm@codeaurora.org
-Subject: Re: [PATCH v12] mm: slub: move sysfs slab alloc/free interfaces to
- debugfs
-To:     Vlastimil Babka <vbabka@suse.cz>,
-        Qian Cai <quic_qiancai@quicinc.com>, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, greg@kroah.com, glittao@gmail.com,
-        andy.shevchenko@gmail.com
-Cc:     vinmenon@codeaurora.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux-FSDevel <linux-fsdevel@vger.kernel.org>
-References: <1623438200-19361-1-git-send-email-faiyazm@codeaurora.org>
- <8c821abf-8fa6-b78b-cea4-b7d3b3b74a69@quicinc.com>
- <ce1b3c14-ec88-c957-0694-834051d4d39e@suse.cz>
- <25d59ad1-4d21-181c-afc2-8f396672bfd1@codeaurora.org>
- <21ccb5c6-2aee-f223-cd45-52b78e1f8640@suse.cz>
-From:   Faiyaz Mohammed <faiyazm@codeaurora.org>
-Message-ID: <042f92b2-041d-b4c4-5419-2c4c4799e6d5@codeaurora.org>
-Date:   Thu, 17 Jun 2021 12:02:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Thu, 17 Jun 2021 02:53:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1623912707; x=1655448707;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=q3SWwtj4qzmFnyMwMbjBILrRVzaGsuXQfK38ahs8v5c=;
+  b=cMDE69pKtzSar0km4H9ZfASbxbOfIfU3WZcf7+mZuoWpIzzUtvhM8uP/
+   n5hhIohfotRzkkHz6G6p8qD4gefNe5GxApbQup9WvO1R552O9homv20Ig
+   keO9qTaq6P+fI7taJc3+xmjwOseveayLvW8vLMDbQhMWWaRDbpoZIDabA
+   QV3+3pDBARjZZdxBLk+1rQ+w2IOh0sD1lub+5stnPWFQUvN2hjf9Gxo1N
+   T88UMee0Qx61LwJC51rI30GW8U5ow926/AfYQz04yaa2sz98KkZ1CJW2y
+   mmGyhxZmwYT9JIcdY80ueTIOPrG01+FcG/8eaKRgBauOEgMhp5qrgy0yJ
+   w==;
+IronPort-SDR: AuDTIrPqhhn5FGoDfRNZPlWCYwFCZt4BlwwM4q/eVoiAurV4LvZRbHGt+HEmRE5RUJBv7kyJbE
+ EO0khuLelaOPhVC9m5BLTHJFbcGXS9AS+2ThY3qDCqOgFrTleHlg5+Ab1QMWcGuFfsDGGUNew8
+ NS7zhuuw5rDF4zM401KmT2UIq1PHvq3URBcqytEcpDco5kxy730/UfkcH2zoxAfYhzU7FnwZNC
+ mDHn1l/PUtYauUu0DkvuGhGEIOOm5Epme9UnGjsGExZLxiVp6GRX1DG2+bi7C1h3ro6WQ+uxre
+ pPI=
+X-IronPort-AV: E=McAfee;i="6200,9189,10017"; a="41442165"
+X-IronPort-AV: E=Sophos;i="5.83,278,1616425200"; 
+   d="scan'208";a="41442165"
+Received: from mail-os2jpn01lp2052.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([104.47.92.52])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2021 15:51:05 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JSU9zVF3PQwGTrGOaKxXB1iqY0y9Jyjyiy6uM3vk6fT0yhqxOzKEd3ODo6GRFo8LR7AGTgaqdw4axWi4WYgVbbDhnkK9CO5gEyfYbcyTRjYdXt3gkYAaQ316D+xVNCLwYVyOc9sDMlAl2O9gr4yMe3g1y8Pz+hdHW0URlZLB9bYl2lX8pBoKO49P3Qs0lQqQp43TSDeG0PxAYV3ouLl70I0icIrMy3/U5zQ69ImTI3RaC7CtPYATBBBKqTJQXRWv3ElPkP4Tb4xAYecra8R31RZOdNKLPR8JzslYuzHwksLe5RHmirLySFBeKafMMZuIcX4gFyV+0o5Go+nmP+o7AQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q3SWwtj4qzmFnyMwMbjBILrRVzaGsuXQfK38ahs8v5c=;
+ b=I0ug9q7tacmymhdMrPpbGP/ydSAv4uC8apqusNPdzszMCysDAwhZFSo7j5D5HYxZ4YdZW/y//2LjYxq+taxzbpY2OPDuzdXVCj4xC7DK3g57zStWPHiZ7TE5FtRQ5Ophaisjejj5JRu3h0WvWyW4Q+s3jnUVJFKFQQEFaSKhNC9N4ee4LpfxLMGQeOi+Ej3sysgelhjKaZGwf66sw6QIroaF7jlAujgQzA0+Drsl1nzDz+F2+BY2y3xxg8jwyxfVjQny5ujLab9rE+349epe7bVq/Hgxb4ZEJ8uhiLsj9wVwSa82jdTc/nJln9ee/aXa92glSdGxk6g0AVQGjAkgAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q3SWwtj4qzmFnyMwMbjBILrRVzaGsuXQfK38ahs8v5c=;
+ b=iWZewIaPt0LIGEgujahZYObTIVKUGoTDf+ZGK4JUk5NbfnBQ/glec5dOcQ9bSBJ5uIZ87nRdCMvhaz+9bo2CvE5xav6bM9JcfdhSw6None7jcXQiOXl4jqqhNFWYy3ZiMJM9KmEw0AQIjw8k1NRcBIJ2RPBrT9s7fbxK0PH5XY8=
+Received: from OSBPR01MB2920.jpnprd01.prod.outlook.com (2603:1096:604:18::16)
+ by OSBPR01MB4856.jpnprd01.prod.outlook.com (2603:1096:604:7c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.16; Thu, 17 Jun
+ 2021 06:51:01 +0000
+Received: from OSBPR01MB2920.jpnprd01.prod.outlook.com
+ ([fe80::b985:8239:6cf0:1228]) by OSBPR01MB2920.jpnprd01.prod.outlook.com
+ ([fe80::b985:8239:6cf0:1228%7]) with mapi id 15.20.4242.019; Thu, 17 Jun 2021
+ 06:51:01 +0000
+From:   "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        david <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>
+Subject: RE: [PATCH v4 03/10] fs: Introduce ->corrupted_range() for superblock
+Thread-Topic: [PATCH v4 03/10] fs: Introduce ->corrupted_range() for
+ superblock
+Thread-Index: AQHXWN/AzVDrjJsgmE+2b5OugDUMoqsV4P2AgAHv3zA=
+Date:   Thu, 17 Jun 2021 06:51:01 +0000
+Message-ID: <OSBPR01MB29203DC17C538F7B1B1C9224F40E9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+References: <20210604011844.1756145-1-ruansy.fnst@fujitsu.com>
+ <20210604011844.1756145-4-ruansy.fnst@fujitsu.com>
+ <CAPcyv4h=bUCgFudKTrW09dzi8MWxg7cBC9m68zX1=HY24ftR-A@mail.gmail.com>
+In-Reply-To: <CAPcyv4h=bUCgFudKTrW09dzi8MWxg7cBC9m68zX1=HY24ftR-A@mail.gmail.com>
+Accept-Language: en-US, zh-CN
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: intel.com; dkim=none (message not signed)
+ header.d=none;intel.com; dmarc=none action=none header.from=fujitsu.com;
+x-originating-ip: [223.111.68.150]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9bc86cc8-d9ee-4736-37ed-08d9315c44f3
+x-ms-traffictypediagnostic: OSBPR01MB4856:
+x-microsoft-antispam-prvs: <OSBPR01MB4856A89FF3579D50D3422FC8F40E9@OSBPR01MB4856.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: tYl0grprqRz+W6fT1QjtUggeWce5+pK/AHly/LYAfJmrvhqlNtcx+JaHfJw2SZmpcfHQFdOw1cegHG4MuYiXaryM10FXIOaRraX8OImoVEbrXWycrCF47gXmSaxEm4Y1xvJ79pHo2sDIHz7b6g7cRj8jw2jMu+x4zCYL61vYVV4lUBHc1nLfLAeIO+nfpRn8SRh0SpEMB6YiGvZHdSl71s3HFtWK3Nwq1AF5rgGJvxhM7R4VXopmcvak7p2B91tWHg/L3GShc2veEpTVt2Bme7omt7wmY6glxBZDtAkgVhBH1WK9DY8uZ38ImosVX4RYNqr/yELO/ldabbPaObjoqunRWedf1Y6OpbMo+HX4y3aEjv91fQDvsKXH+u7iTo/lLcpYrZ17MztZkDHQIC7q1rcybgeJQrcWuuP+qI9IlR0qqobSyiocJAsJeVAuJYSiXogF5Jk+sRaDk6fpwJiDo7AsG16m7s3HGOlsZrd6TpCysN1SO+zDSWB7vzUyouF1ZaoFP6DaWacfIAQQ3LJCglEgA/m29WNZmuKbKJwqWGsC/jTllEjgAXcBJ2tj5/yufN9vES1Cez81oW18/Rxf/yDhdo1WRPKOLX8VYnAI4SQ=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSBPR01MB2920.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(39850400004)(376002)(346002)(366004)(396003)(83380400001)(316002)(7416002)(66476007)(478600001)(38100700002)(5660300002)(86362001)(7696005)(2906002)(8936002)(54906003)(6506007)(186003)(9686003)(66556008)(55016002)(26005)(71200400001)(52536014)(8676002)(6916009)(33656002)(66946007)(66446008)(85182001)(76116006)(4326008)(53546011)(64756008)(122000001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NGNGa1pCek5FR0pNQjZtci8zMWQ2SmRySnJ0NDNjcmxlZUtmcm5EeXkwV0xp?=
+ =?utf-8?B?VjUxZ3dKc0VNa3d5bWtxejczY09DWVlmd1dpYjJIdHpYZ255S0ptcXBMa011?=
+ =?utf-8?B?ekZPeG9hTE1HTlJGQ3BOanVSZmFvbW1KMC9qQUh3cXdQVU5HRU53Sndwc0Jo?=
+ =?utf-8?B?czN3ajdFRjBldE5rZW80VWdqeHY1L0gxRVd0SFErZk50a2hiUm9CZGw3R0dV?=
+ =?utf-8?B?VnE1MHgwTTgrMFFMcmUzR3lwWXJUMUhWeG9jOFR3WkIvWWNEK2ZFOXB0TCsv?=
+ =?utf-8?B?R3MyWmJvR3ppcVA5NWIrZnVabTdzb0FWL0lBTUhFWW0wK0ZYTTlyL29PZi9P?=
+ =?utf-8?B?ek4yeVFwdWJlNlBVSGFjSUpwbDJ2MUVuck5rWitiK2RLekUvYjRCTVBDeWdS?=
+ =?utf-8?B?bWxPZVJwdElaMTJ3Z0JyaEJYclBqZWFxNVo0VGFBcUQ2SXpzL2hxSkFCTTlj?=
+ =?utf-8?B?U092clJ0QjdHK0JBVllGNk1pVlRMN0FHdW80YjFQVzIxWnpjTWEyeHJzRkN3?=
+ =?utf-8?B?cE9OeDQ5RVhaWUttVXBQbjlhQURwTXlKQ0JxNW90VndNZ25OOHhLS09Kc0RN?=
+ =?utf-8?B?aGt3SnhscklLRSt5SndFSFk5SGFwR2FLUm43bUFnVGFQNVRnSm9WU1ZrbG1D?=
+ =?utf-8?B?RTVtMXlnYTJkazFUY2VPOS9tMnJKNTVsWFVQT2pyVzlWdVVpcDZsYi9vcDM4?=
+ =?utf-8?B?L29vNnZtWHF4RW0raUUybnhtNlFkOHd0MEZ4WnZqOUU0R3ltdkgvY2VqcXBU?=
+ =?utf-8?B?Y0VjSW50S3VITGR3WmdNN0VKM1Y2dCs0d0U1ZmI4NHE5aFFnSm5sUXJXa3NQ?=
+ =?utf-8?B?WE5OZDV5cm9RWERFU0dVd0g3S3dXemxHcWxCRUJqOUFLdXRycm03L2VqaEVv?=
+ =?utf-8?B?dDM0cFl3b3VqdVZ4OW5vcHc0MU1sZmZKdElVYjhLZ3NLRStsYjcwaURYYnFy?=
+ =?utf-8?B?ZHBNaGo4NTJTQU5GRzJRTW9EK0pqR2IySDdDUXd1NnpjOWYvYnp2ZVpRNXVu?=
+ =?utf-8?B?ZktGR0w2ZmdySnFLUEdCWDlEZjNHTUxEYjJjQ1ZhU2lWTVNJTThhWTVhLzdF?=
+ =?utf-8?B?bEVOeUJWMUYwNWVUdjRVR1loSWFNdk42K2J0Z2FNNjY5REQwUHRkaUZMdVUv?=
+ =?utf-8?B?ay9RRE12cUJHWjc1NktkZ0FndzVZT0srdGw5QWhpUnBoYjVVdVdWRGk5VDlM?=
+ =?utf-8?B?eFpPOTIyWjFWaG9wRENCWlYraWxwcnNIVzdPQkQ2MzZISzYxdmgwMkRRQlo0?=
+ =?utf-8?B?Smd3WllMdXNVcG4weElXdHFFWE1WZEJmeEcvakVHeGVYYllseFNwY2Mvbzkx?=
+ =?utf-8?B?UW1DczE4OHJKdXY2UHVaUWZlY2tiRkNEbFlhNXpZeEZJYmZES1RrQld6cGZt?=
+ =?utf-8?B?cC9mUnluNHNKZnNGNmtEUkFUdXRnVjkwQi95TU03Z3hqUDV0amdUalVjbFhm?=
+ =?utf-8?B?aDluV0RrVlY0b3cxUWowOWpOV2l0d3IyalFIQVp5VldYMjdFbnEvRXg3NnNm?=
+ =?utf-8?B?SFIzcmZrdEVJZkNyTXlIQnhiMlJkbk5tUW54bXBwbnZocS9CRk91a0lkMTBW?=
+ =?utf-8?B?RFo3b0lMYmpPR2kySk9iYTcwdFVabUxEeDFrcHlUMW5QbHl3OU1ZUVRZbmIy?=
+ =?utf-8?B?aGZja1hPd3dFalYzMEQ0Qno3K1BJZHphT2VkZHJva1ZhRG5iVE9rTk9LREcz?=
+ =?utf-8?B?T0oxd3NxRlBNVldLbGZvZmtZb1VyNW1OdXM4ZFV1czdZREtwSUJ6QVcwYkZX?=
+ =?utf-8?Q?xKgrLvvn98zJ+7/l/E/nlm2QRA0yEYD0ETrBs3y?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <21ccb5c6-2aee-f223-cd45-52b78e1f8640@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2920.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9bc86cc8-d9ee-4736-37ed-08d9315c44f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2021 06:51:01.2138
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZNyeEpxnh2h2NQPVuaOkbKiYSDw2095Z24xBRfNevIfCBaZDaLNG0jLJ2hrGzsmX/it518RqkD7VhyWT6aWFkw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB4856
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 6/16/2021 9:47 PM, Vlastimil Babka wrote:
-> On 6/16/21 5:50 PM, Faiyaz Mohammed wrote:
->>
->>
->> On 6/16/2021 4:35 PM, Vlastimil Babka wrote:
->>> On 6/15/21 5:58 PM, Qian Cai wrote:
->>>>
->>>>
->>>> On 6/11/2021 3:03 PM, Faiyaz Mohammed wrote:
->>>>> alloc_calls and free_calls implementation in sysfs have two issues,
->>>>> one is PAGE_SIZE limitation of sysfs and other is it does not adhere
->>>>> to "one value per file" rule.
->>>>>
->>>>> To overcome this issues, move the alloc_calls and free_calls
->>>>> implementation to debugfs.
->>>>>
->>>>> Debugfs cache will be created if SLAB_STORE_USER flag is set.
->>>>>
->>>>> Rename the alloc_calls/free_calls to alloc_traces/free_traces,
->>>>> to be inline with what it does.
->>>>>
->>>>> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
->>>>> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>> Signed-off-by: Faiyaz Mohammed <faiyazm@codeaurora.org>
->>>>
->>>> Reverting this commit on today's linux-next fixed all leaks (hundreds) reported by kmemleak like below,
->>>>
->>>> unreferenced object 0xffff00091ae1b540 (size 64):
->>>>   comm "lsbug", pid 1607, jiffies 4294958291 (age 1476.340s)
->>>>   hex dump (first 32 bytes):
->>>>     02 00 00 00 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
->>>>     6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
->>>>   backtrace:
->>>>     [<ffff8000106b06b8>] slab_post_alloc_hook+0xa0/0x418
->>>>     [<ffff8000106b5c7c>] kmem_cache_alloc_trace+0x1e4/0x378
->>>>     [<ffff8000106b5e40>] slab_debugfs_start+0x30/0x50
->>>>     slab_debugfs_start at /usr/src/linux-next/mm/slub.c:5831
->>>>     [<ffff8000107b3dbc>] seq_read_iter+0x214/0xd50
->>>>     [<ffff8000107b4b84>] seq_read+0x28c/0x418
->>>>     [<ffff8000109560b4>] full_proxy_read+0xdc/0x148
->>>>     [<ffff800010738f24>] vfs_read+0x104/0x340
->>>>     [<ffff800010739ee0>] ksys_read+0xf8/0x1e0
->>>>     [<ffff80001073a03c>] __arm64_sys_read+0x74/0xa8
->>>>     [<ffff8000100358d4>] invoke_syscall.constprop.0+0xdc/0x1d8
->>>>     [<ffff800010035ab4>] do_el0_svc+0xe4/0x298
->>>>     [<ffff800011138528>] el0_svc+0x20/0x30
->>>>     [<ffff800011138b08>] el0t_64_sync_handler+0xb0/0xb8
->>>>     [<ffff80001001259c>] el0t_64_sync+0x178/0x17c
->>>>
->>>
->>> I think the problem is here:
->>>
->>>>> +static void slab_debugfs_stop(struct seq_file *seq, void *v)
->>>>> +{
->>>>> +	kfree(v);
->>>>> +}
->>>>> +
->>>>> +static void *slab_debugfs_next(struct seq_file *seq, void *v, loff_t *ppos)
->>>>> +{
->>>>> +	loff_t *spos = v;
->>>>> +	struct loc_track *t = seq->private;
->>>>> +
->>>>> +	if (*ppos < t->count) {
->>>>> +		*ppos = ++*spos;
->>>>> +		return spos;
->>>>> +	}
->>>>> +	*ppos = ++*spos;
->>>>> +	return NULL;
->>>>> +}
->>>
->>> If we return NULL, then NULL is passed to slab_debugfs_stop and thus we don't
->>> kfree ppos. kfree(NULL) is silently ignored.
->>>
->> I think yes, if NULL passed to kfree, it simply do return.
->>> I think as we have private struct loc_track, we can add a pos field there and
->>> avoid the kmaloc/kfree altogether.
->>>
->> Hmm, yes we can add pos field "or" we can use argument "v" mean we can
->> update v with pos in ->next() and use in ->show() to avoid the leak
->> (kmalloc/kfree).
-> 
-> Can you explain the "or" part more. It's exactly what we already do, no?I am thinking if we simplly do ppos return from slab_debugfs_start() and
-in slab_debugfs_next() assign ppos to "v", update it and return if
-records are there. something like below (approach 1):
-...
-static void *slab_debugfs_next(struct seq_file *seq, void *v, loff_t *ppos)
-{
-...
-        v = ppos;
-        if (*ppos < t->count) {
-                 ++*ppos;
-                return v;
-        }
-
-        ++*ppos;
-        return NULL;
-}
-...
-static void *slab_debugfs_start(struct seq_file *seq, loff_t *ppos)
-{
-        return ppos;
-}
-...
-
-> "v" as you said. The problem is, if next(); returns NULL, then stop() gets the
-> NULL as "v". It's just what I see in the code of seq_read_iter() and traverse()
-> in fs/seq_file.c. I don't see another way to say there are no more records to
-> print - only to return NULL in next().
-> Ah, ok so we could maybe do the kfree() in next() then before returning NULL,
-> which is the last moment we have the pointer. But really, if we already have a
-> loc_track in private, why kmalloc an additional loff_t.
-> 
-Yes, we can do kfree() before returning NULL, but better to add ppos in
-lock_track. (approach 2)
-
-> Anyway it seems to me also that
-> Documentation/filesystems/seq_file.rst should be updated, as the kfree() in
-> stop() is exactly what it suggests, and it doesn't show how next() indicates
-> that there are no more records by returning NULL, and what to do about kfree() then.
-
-Can you please suggest me which approach would be good to avoid the
-leak?. I will update in next patch version.
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBEYW4gV2lsbGlhbXMgPGRhbi5q
+LndpbGxpYW1zQGludGVsLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NCAwMy8xMF0gZnM6
+IEludHJvZHVjZSAtPmNvcnJ1cHRlZF9yYW5nZSgpIGZvciBzdXBlcmJsb2NrDQo+IA0KPiBbIGRy
+b3Agb2xkIGxpbnV4LW52ZGltbUBsaXN0cy4wMS5vcmcsIGFkZCBudmRpbW1AbGlzdHMubGludXgu
+ZGV2IF0NCj4gDQo+IE9uIFRodSwgSnVuIDMsIDIwMjEgYXQgNjoxOSBQTSBTaGl5YW5nIFJ1YW4g
+PHJ1YW5zeS5mbnN0QGZ1aml0c3UuY29tPiB3cm90ZToNCj4gPg0KPiA+IE1lbW9yeSBmYWlsdXJl
+IG9jY3VycyBpbiBmc2RheCBtb2RlIHdpbGwgZmluYWxseSBiZSBoYW5kbGVkIGluDQo+ID4gZmls
+ZXN5c3RlbS4gIFdlIGludHJvZHVjZSB0aGlzIGludGVyZmFjZSB0byBmaW5kIG91dCBmaWxlcyBv
+ciBtZXRhZGF0YQ0KPiA+IGFmZmVjdGVkIGJ5IHRoZSBjb3JydXB0ZWQgcmFuZ2UsIGFuZCB0cnkg
+dG8gcmVjb3ZlciB0aGUgY29ycnVwdGVkIGRhdGENCj4gPiBpZiBwb3NzaWFibGUuDQo+ID4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBTaGl5YW5nIFJ1YW4gPHJ1YW5zeS5mbnN0QGZ1aml0c3UuY29tPg0K
+PiA+IC0tLQ0KPiA+ICBpbmNsdWRlL2xpbnV4L2ZzLmggfCAyICsrDQo+ID4gIDEgZmlsZSBjaGFu
+Z2VkLCAyIGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4
+L2ZzLmggYi9pbmNsdWRlL2xpbnV4L2ZzLmggaW5kZXgNCj4gPiBjM2M4OGZkYjliMmEuLjkyYWYz
+NmM0MjI1ZiAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2ZzLmgNCj4gPiArKysgYi9p
+bmNsdWRlL2xpbnV4L2ZzLmgNCj4gPiBAQCAtMjE3Niw2ICsyMTc2LDggQEAgc3RydWN0IHN1cGVy
+X29wZXJhdGlvbnMgew0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1
+Y3Qgc2hyaW5rX2NvbnRyb2wgKik7DQo+ID4gICAgICAgICBsb25nICgqZnJlZV9jYWNoZWRfb2Jq
+ZWN0cykoc3RydWN0IHN1cGVyX2Jsb2NrICosDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgc3RydWN0IHNocmlua19jb250cm9sICopOw0KPiA+ICsgICAgICAgaW50ICgq
+Y29ycnVwdGVkX3JhbmdlKShzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLCBzdHJ1Y3QgYmxvY2tfZGV2
+aWNlDQo+ICpiZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsb2ZmX3Qg
+b2Zmc2V0LCBzaXplX3QgbGVuLCB2b2lkICpkYXRhKTsNCj4gDQo+IFdoeSBkb2VzIHRoZSBzdXBl
+cmJsb2NrIG5lZWQgYSBuZXcgb3BlcmF0aW9uPyBXb3VsZG4ndCB3aGF0ZXZlciBmdW5jdGlvbiBp
+cw0KPiBzcGVjaWZpZWQgaGVyZSBqdXN0IGJlIHNwZWNpZmllZCB0byB0aGUgZGF4X2RldiBhcyB0
+aGUNCj4gLT5ub3RpZnlfZmFpbHVyZSgpIGhvbGRlciBjYWxsYmFjaz8NCg0KQmVjYXVzZSB3ZSBu
+ZWVkIHRvIGZpbmQgb3V0IHdoaWNoIGZpbGUgaXMgZWZmZWN0ZWQgYnkgdGhlIGdpdmVuIHBvaXNv
+biBwYWdlIHNvIHRoYXQgbWVtb3J5LWZhaWx1cmUgY29kZSBjYW4gZG8gY29sbGVjdF9wcm9jcygp
+IGFuZCBraWxsX3Byb2NzKCkgam9icy4gIEFuZCBpdCBuZWVkcyBmaWxlc3lzdGVtIHRvIHVzZSBp
+dHMgcm1hcCBmZWF0dXJlIHRvIHNlYXJjaCB0aGUgZmlsZSBmcm9tIGEgZ2l2ZW4gb2Zmc2V0LiAg
+U28sIHdlIG5lZWQgdGhpcyBpbXBsZW1lbnRlZCBieSB0aGUgc3BlY2lmaWVkIGZpbGVzeXN0ZW0g
+YW5kIGNhbGxlZCBieSBkYXhfZGV2aWNlJ3MgaG9sZGVyLg0KDQpUaGlzIGlzIHRoZSBjYWxsIHRy
+YWNlIEkgZGVzY3JpYmVkIGluIGNvdmVyIGxldHRlcjoNCm1lbW9yeV9mYWlsdXJlKCkNCiAqIGZz
+ZGF4IGNhc2UNCiBwZ21hcC0+b3BzLT5tZW1vcnlfZmFpbHVyZSgpICAgICAgPT4gcG1lbV9wZ21h
+cF9tZW1vcnlfZmFpbHVyZSgpDQogIGRheF9kZXZpY2UtPmhvbGRlcl9vcHMtPmNvcnJ1cHRlZF9y
+YW5nZSgpID0+DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0gZnNfZGF4
+X2NvcnJ1cHRlZF9yYW5nZSgpDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IC0gbWRfZGF4X2NvcnJ1cHRlZF9yYW5nZSgpDQogICBzYi0+c19vcHMtPmN1cnJ1cHRlZF9yYW5n
+ZSgpICAgID0+IHhmc19mc19jb3JydXB0ZWRfcmFuZ2UoKSAgPD09ICoqSEVSRSoqDQogICAgeGZz
+X3JtYXBfcXVlcnlfcmFuZ2UoKQ0KICAgICB4ZnNfY3VycnVwdF9oZWxwZXIoKQ0KICAgICAgKiBj
+b3JydXB0ZWQgb24gbWV0YWRhdGENCiAgICAgICAgICB0cnkgdG8gcmVjb3ZlciBkYXRhLCBjYWxs
+IHhmc19mb3JjZV9zaHV0ZG93bigpDQogICAgICAqIGNvcnJ1cHRlZCBvbiBmaWxlIGRhdGENCiAg
+ICAgICAgICB0cnkgdG8gcmVjb3ZlciBkYXRhLCBjYWxsIG1mX2RheF9raWxsX3Byb2NzKCkNCiAq
+IG5vcm1hbCBjYXNlDQogbWZfZ2VuZXJpY19raWxsX3Byb2NzKCkNCg0KQXMgeW91IGNhbiBzZWUs
+IHRoaXMgbmV3IGFkZGVkIG9wZXJhdGlvbiBpcyBhbiBpbXBvcnRhbnQgZm9yIHRoZSB3aG9sZSBw
+cm9ncmVzcy4NCg0KDQotLQ0KVGhhbmtzLA0KUnVhbi4NCg==
