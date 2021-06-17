@@ -2,129 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2F743AB7A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jun 2021 17:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDF4C3AB88D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jun 2021 18:06:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233315AbhFQPkA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Jun 2021 11:40:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51876 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231661AbhFQPkA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Jun 2021 11:40:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A93A9C061574;
-        Thu, 17 Jun 2021 08:37:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=UJ6ZxhI7pFym7PlR0u1lnYbOiSY2JPtqMcPqBO8j2q0=; b=BK05KsYHCXpeyI0F6JM/YUplQU
-        wVe/HymRx2z4x4OxmQIUe+oHOroCwZcyqh5Mx/szwWxJAwZ6D7TMoGzyEAB9NFiDg5xFb8Xi2jzH/
-        7RkPuGbZUIlRJeQJnowTEqkl3PWASCqw/eHsf519z9DHnHIG0FT+XiBAz6IQnoSXizvPR5KqvUAY9
-        fzca3YiGLU/ELLa0NRSfV3t5JX5HQWQkmZxNTR/LUDu1jaHOKKpP/TgvYoTJP0vtv+uGnaT6MDqnA
-        DjPUSREvFVqZycTWJW515GpydyhNnidvEUisHBlPV4IXjasREJaxVpOfnh0qPjtr3SE3yYTvsCixX
-        fcyXeAnA==;
-Received: from [2001:4bb8:19b:fdce:dccf:26cc:e207:71f6] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ltu4w-009Hx9-6P; Thu, 17 Jun 2021 15:37:19 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     viro@zeniv.linux.org.uk
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com
-Subject: [PATCH 2/2] init: allow mounting arbitrary non-blockdevice filesystems as root
-Date:   Thu, 17 Jun 2021 17:36:49 +0200
-Message-Id: <20210617153649.1886693-3-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210617153649.1886693-1-hch@lst.de>
-References: <20210617153649.1886693-1-hch@lst.de>
+        id S231203AbhFQQIy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Jun 2021 12:08:54 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:31366 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233700AbhFQQIX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Jun 2021 12:08:23 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1623945975; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=S/3+eYb013cEoEfSg59q8XR8ipiEIZP75HRjgZgsG1U=; b=uK5BqNJSto+JW/QeIlceFm5Mbkz0gkTe8/EWcDcqd2GnpmENnI3mLV6La/XvG6e/QWo9FyP4
+ hMTgDYOPakcoNUOTepVUhfPwllXUlEZ+6cQAduw2y12nLqQAQjBnW3WyvHUfAJBAcI4Wmlp5
+ pnFLuXBV2i63AummPikSG62Pyq8=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 60cb72ebed59bf69ccf5ba78 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 17 Jun 2021 16:06:03
+ GMT
+Sender: charante=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 507A4C433F1; Thu, 17 Jun 2021 16:06:03 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.2 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        NICE_REPLY_A,SPF_FAIL autolearn=no autolearn_force=no version=3.4.0
+Received: from [192.168.29.110] (unknown [49.37.156.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: charante)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 25F4FC433F1;
+        Thu, 17 Jun 2021 16:05:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 25F4FC433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
+Subject: Re: [PATCH v3 1/2] mm: compaction: support triggering of proactive
+ compaction by user
+To:     Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
+        nigupta@nvidia.com, hannes@cmpxchg.org, corbet@lwn.net,
+        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        aarcange@redhat.com, cl@linux.com, xi.fengfei@h3c.com,
+        mchehab+huawei@kernel.org, andrew.a.klychkov@gmail.com,
+        dave.hansen@linux.intel.com, bhe@redhat.com,
+        iamjoonsoo.kim@lge.com, mateusznosek0@gmail.com, sh_def@163.com,
+        vinmenon@codeaurora.org
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+References: <cover.1622454385.git.charante@codeaurora.org>
+ <7db6a29a64b29d56cde46c713204428a4b95f0ab.1622454385.git.charante@codeaurora.org>
+ <88abfdb6-2c13-b5a6-5b46-742d12d1c910@suse.cz>
+ <0ca491e8-6d3a-6537-dfa0-ece5f3bb6a1e@codeaurora.org>
+ <0d516cfa-f41c-5ccc-26aa-67871f23dcd3@suse.cz>
+From:   Charan Teja Kalla <charante@codeaurora.org>
+Message-ID: <8d91a81b-09f3-e814-c9ce-16ff246ed359@codeaurora.org>
+Date:   Thu, 17 Jun 2021 21:35:52 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <0d516cfa-f41c-5ccc-26aa-67871f23dcd3@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently the only non-blockdevice filesystems that can be used as the
-initial root filesystem are NFS and CIFS, which use the magic
-"root=/dev/nfs" and "root=/dev/cifs" syntax that requires the root
-device file system details to come from filesystem specific kernel
-command line options.
+Thanks Vlastimil !!
 
-Add a little bit of new code that allows to just pass arbitrary
-string mount options to any non-blockdevice filesystems so that it can
-be mounted as the root file system.
+On 6/17/2021 8:07 PM, Vlastimil Babka wrote:
+> On 6/17/21 9:30 AM, Charan Teja Kalla wrote:
+>> Thanks Vlastimil for your inputs!!
+>>
+>> On 6/16/2021 5:29 PM, Vlastimil Babka wrote:
+>>>> This triggering of proactive compaction is done on a write to
+>>>> sysctl.compaction_proactiveness by user.
+>>>>
+>>>> [1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
+>>>>
+>>>> Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
+>>>> ---
+>>>> changes in V2:
+>>> You forgot to also summarize the changes. Please do in next version.
+>>
+>> I think we can get rid off 'proactive_defer' thread variable with the
+>> timeout approach you suggested. But it is still requires to have one
+>> additional variable 'proactive_compact_trigger', which main purpose is
+>> to decide if the kcompactd wakeup is for proactive compaction or not.
+>> Please see below code:
+>>    if (wait_event_freezable_timeout() && !proactive_compact_trigger) {
+>> 	// do the non-proactive work
+>> 	continue
+>>    }
+>>    // do the proactive work
+>>      .................
+>>
+>> Thus I feel that on writing new proactiveness, it is required to do
+>> wakeup_kcomppactd() + set a flag that this wakeup is for proactive work.
+>>
+>> Am I failed to get your point here?
+> 
+> The check whether to do non-proactive work is already guarded by
+> kcompactd_work_requested(), which looks at pgdat->kcompactd_max_order and this
+> is set by wakeup_kcompactd().
+> 
+> So with a plain wakeup where we don't set pgdat->kcompactd_max_order will make
+> it consider proactive work instead and we don't need another trigger variable
+> AFAICS.
 
-For example a virtiofs root file system can be mounted using the
-following syntax:
+The wait_event/freezable_timeout() documentation says that:
+ * Returns:
+ * 0 if the @condition evaluated to %false after the @timeout elapsed,
+			or
+ * 1 if the @condition evaluated to %true after the @timeout elapsed,
+ * or the remaining jiffies (at least 1) if the @condition evaluated
+ * to %true before the @timeout elapsed.
 
-"root=myfs rootfstype=virtiofs rw"
+which means the condition must be evaluated to true or timeout should be
+elapsed for the function wait_event_freezable_timeout() to return.
 
-Based on an earlier patch from Vivek Goyal <vgoyal@redhat.com>.
+Please check the macro implementation of __wait_event, where it will be
+in for(;;) till the condition is evaluated to true or timeout happens.
+#define __wait_event_freezable_timeout(wq_head, condition, timeout)
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- init/do_mounts.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+        ___wait_event(wq_head, ___wait_cond_timeout(condition),
 
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index ec32de3ad52b..64c60cb72ecb 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -534,6 +534,44 @@ static int __init mount_cifs_root(void)
- }
- #endif
- 
-+static int __init try_mount_nodev(char *fstype)
-+{
-+	struct file_system_type *fs = get_fs_type(fstype);
-+	int err = -EINVAL;
-+
-+	if (!fs)
-+		return -EINVAL;
-+	if (!(fs->fs_flags & (FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA)))
-+		err = do_mount_root(root_device_name, fstype, root_mountflags,
-+					root_mount_data);
-+	put_filesystem(fs);
-+
-+	if (err != -EACCES && err != -EINVAL)
-+		panic("VFS: Unable to mount root \"%s\" (%s), err=%d\n",
-+			      root_device_name, fstype, err);
-+	return err;
-+}
-+
-+static int __init mount_nodev_root(void)
-+{
-+	char *fs_names, *p;
-+	int err = -EINVAL;
-+
-+	fs_names = (void *)__get_free_page(GFP_KERNEL);
-+	if (!fs_names)
-+		return -EINVAL;
-+	split_fs_names(fs_names, root_fs_names);
-+
-+	for (p = fs_names; *p; p += strlen(p) + 1) {
-+		err = try_mount_nodev(p);
-+		if (!err)
-+			break;
-+	}
-+
-+	free_page((unsigned long)fs_names);
-+	return err;
-+}
-+
- void __init mount_root(void)
- {
- #ifdef CONFIG_ROOT_NFS
-@@ -550,6 +588,8 @@ void __init mount_root(void)
- 		return;
- 	}
- #endif
-+	if (ROOT_DEV == 0 && mount_nodev_root() == 0)
-+		return;
- #ifdef CONFIG_BLOCK
- 	{
- 		int err = create_dev("/dev/root", ROOT_DEV);
+                      TASK_INTERRUPTIBLE, 0, timeout,
+
+                      __ret = freezable_schedule_timeout(__ret))
+
+Thus the plain wakeup of kcompactd don't do the proactive compact work.
+And so we should identify its wakeup for proactive work with a separate
+flag.
+> 
+
 -- 
-2.30.2
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
+Forum, a Linux Foundation Collaborative Project
