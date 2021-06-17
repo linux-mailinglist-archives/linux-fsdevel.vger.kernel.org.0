@@ -2,154 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 211923AB60C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jun 2021 16:36:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 389D73AB61A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jun 2021 16:37:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232972AbhFQOiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Jun 2021 10:38:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40344 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232911AbhFQOh4 (ORCPT
+        id S232488AbhFQOjb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Jun 2021 10:39:31 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:48302 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230028AbhFQOj3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Jun 2021 10:37:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623940548;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=W5hiIU/behWS8FKO29w+io6DBLqOfDtyZdfD5zHIeYY=;
-        b=N0I7FLIGjGBkjaDODqKXeOHk6APRVjIQDf/qZznrkyL4PcniT5VQeVhoIe6IhJTemsA3fu
-        6dMmvfdg+iC123EpoLm90tH5QfyoHGmB1XduDV4uVt0K+cD4TEzZ4pB7btZcePtApnrnZH
-        5PCkpKY76SAVZsPbXl6ZW1BLr6boc8A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-361-CxDKWIuoPiKXbBAbcfF4Iw-1; Thu, 17 Jun 2021 10:35:44 -0400
-X-MC-Unique: CxDKWIuoPiKXbBAbcfF4Iw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 17 Jun 2021 10:39:29 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 769ED1940921;
-        Thu, 17 Jun 2021 14:35:43 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-162.rdu2.redhat.com [10.10.116.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5E0C75D9E3;
-        Thu, 17 Jun 2021 14:35:32 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id BD103220BCF; Thu, 17 Jun 2021 10:35:31 -0400 (EDT)
-Date:   Thu, 17 Jun 2021 10:35:31 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Luis Henriques <lhenriques@suse.de>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>
-Subject: Re: [PATCH v2 0/2] fuse: Fix clearing SGID when access ACL is set
-Message-ID: <20210617143531.GB1142820@redhat.com>
-References: <20210325151823.572089-1-vgoyal@redhat.com>
- <CAJfpegvU9zjT7qV=Rj4ok4kfYz-9BPhjp+xKz9odfSWaFxshyA@mail.gmail.com>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2072321B0D;
+        Thu, 17 Jun 2021 14:37:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1623940641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=M+fSxa1wG+88od46CsiBngCtNj3W4t4qd32uH/eMCnU=;
+        b=weKQj/4xIvPMP+zMYOKvZZpgRcm9Khkjx3ysroKsxU558oST54zweTWK/lYYRMBzb5cqSW
+        xozR+Ws4SfcfpFigwOSq+yOsMQtKftdtp/BdZLovXhH/wnI+vcXzGcEu7H0GR8AJADC7m3
+        wRYGlfCRqMl5KCxq/XAjDkUXoESPKzY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1623940641;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=M+fSxa1wG+88od46CsiBngCtNj3W4t4qd32uH/eMCnU=;
+        b=S7Wo9IO+n3KLaMYkganyy+Hr/Yo+cHuQ4O/9DsDuC8ArqZdq452lq+AeSxFJ+JHhAPlgYk
+        Og7k7wdHkN2MW7Dw==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id D488C118DD;
+        Thu, 17 Jun 2021 14:37:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1623940641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=M+fSxa1wG+88od46CsiBngCtNj3W4t4qd32uH/eMCnU=;
+        b=weKQj/4xIvPMP+zMYOKvZZpgRcm9Khkjx3ysroKsxU558oST54zweTWK/lYYRMBzb5cqSW
+        xozR+Ws4SfcfpFigwOSq+yOsMQtKftdtp/BdZLovXhH/wnI+vcXzGcEu7H0GR8AJADC7m3
+        wRYGlfCRqMl5KCxq/XAjDkUXoESPKzY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1623940641;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=M+fSxa1wG+88od46CsiBngCtNj3W4t4qd32uH/eMCnU=;
+        b=S7Wo9IO+n3KLaMYkganyy+Hr/Yo+cHuQ4O/9DsDuC8ArqZdq452lq+AeSxFJ+JHhAPlgYk
+        Og7k7wdHkN2MW7Dw==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id zqwmMyBey2AhaQAALh3uQQ
+        (envelope-from <vbabka@suse.cz>); Thu, 17 Jun 2021 14:37:20 +0000
+Subject: Re: [PATCH v3 1/2] mm: compaction: support triggering of proactive
+ compaction by user
+To:     Charan Teja Kalla <charante@codeaurora.org>,
+        akpm@linux-foundation.org, nigupta@nvidia.com, hannes@cmpxchg.org,
+        corbet@lwn.net, mcgrof@kernel.org, keescook@chromium.org,
+        yzaikin@google.com, aarcange@redhat.com, cl@linux.com,
+        xi.fengfei@h3c.com, mchehab+huawei@kernel.org,
+        andrew.a.klychkov@gmail.com, dave.hansen@linux.intel.com,
+        bhe@redhat.com, iamjoonsoo.kim@lge.com, mateusznosek0@gmail.com,
+        sh_def@163.com, vinmenon@codeaurora.org
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+References: <cover.1622454385.git.charante@codeaurora.org>
+ <7db6a29a64b29d56cde46c713204428a4b95f0ab.1622454385.git.charante@codeaurora.org>
+ <88abfdb6-2c13-b5a6-5b46-742d12d1c910@suse.cz>
+ <0ca491e8-6d3a-6537-dfa0-ece5f3bb6a1e@codeaurora.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <0d516cfa-f41c-5ccc-26aa-67871f23dcd3@suse.cz>
+Date:   Thu, 17 Jun 2021 16:37:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegvU9zjT7qV=Rj4ok4kfYz-9BPhjp+xKz9odfSWaFxshyA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <0ca491e8-6d3a-6537-dfa0-ece5f3bb6a1e@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 01:57:01PM +0200, Miklos Szeredi wrote:
-> On Thu, Mar 25, 2021 at 4:19 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> >
-> > Hi,
-> >
-> > This is V2 of the patchset. Posted V1 here.
-> >
-> > https://lore.kernel.org/linux-fsdevel/20210319195547.427371-1-vgoyal@redhat.com/
-> >
-> > Changes since V1:
-> >
-> > - Dropped the helper to determine if SGID should be cleared and open
-> >   coded it instead. I will follow up on helper separately in a different
-> >   patch series. There are few places already which open code this, so
-> >   for now fuse can do the same. Atleast I can make progress on this
-> >   and virtiofs can enable ACL support.
-> >
-> > Luis reported that xfstests generic/375 fails with virtiofs. Little
-> > debugging showed that when posix access acl is set that in some
-> > cases SGID needs to be cleared and that does not happen with virtiofs.
-> >
-> > Setting posix access acl can lead to mode change and it can also lead
-> > to clear of SGID. fuse relies on file server taking care of all
-> > the mode changes. But file server does not have enough information to
-> > determine whether SGID should be cleared or not.
-> >
-> > Hence this patch series add support to send a flag in SETXATTR message
-> > to tell server to clear SGID.
+On 6/17/21 9:30 AM, Charan Teja Kalla wrote:
+> Thanks Vlastimil for your inputs!!
 > 
-> Changed it to have a single extended structure for the request, which
-> is how this has always been handled in the fuse API.
+> On 6/16/2021 5:29 PM, Vlastimil Babka wrote:
+>>> This triggering of proactive compaction is done on a write to
+>>> sysctl.compaction_proactiveness by user.
+>>>
+>>> [1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
+>>>
+>>> Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
+>>> ---
+>>> changes in V2:
+>> You forgot to also summarize the changes. Please do in next version.
 > 
-> The ABI is unchanged, but you'll need to update the userspace part
-> according to the API change.  Otherwise looks good.
+> I think we can get rid off 'proactive_defer' thread variable with the
+> timeout approach you suggested. But it is still requires to have one
+> additional variable 'proactive_compact_trigger', which main purpose is
+> to decide if the kcompactd wakeup is for proactive compaction or not.
+> Please see below code:
+>    if (wait_event_freezable_timeout() && !proactive_compact_trigger) {
+> 	// do the non-proactive work
+> 	continue
+>    }
+>    // do the proactive work
+>      .................
+> 
+> Thus I feel that on writing new proactiveness, it is required to do
+> wakeup_kcomppactd() + set a flag that this wakeup is for proactive work.
+> 
+> Am I failed to get your point here?
 
-Hi Miklos,
+The check whether to do non-proactive work is already guarded by
+kcompactd_work_requested(), which looks at pgdat->kcompactd_max_order and this
+is set by wakeup_kcompactd().
 
-I started looking at ACL patches for virtiofsd again. And realized
-that this SETXATTR_EXT patch, changes API. So if I update kernel
-headers and recompile virtiofsd, setxattr is broken.
-
-# setfattr -n "user.foo" -v "bar" foo.txt
-setfattr: foo.txt: Numerical result out of range
-
-I can fix it using following patch. But I am little concerned that
-all the users of fuse will have to apply similar patch if they update
-kernel headers (including libfuse) and recompile their app.
-
-Is that a concern, or should we rework this so that kernel header
-update does not break users.
-
-Thanks
-Vivek
-
-
----
- tools/virtiofsd/fuse_common.h   |    5 +++++
- tools/virtiofsd/fuse_lowlevel.c |    7 ++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
-Index: rhvgoyal-qemu/tools/virtiofsd/fuse_lowlevel.c
-===================================================================
---- rhvgoyal-qemu.orig/tools/virtiofsd/fuse_lowlevel.c	2021-06-16 17:39:16.387405071 -0400
-+++ rhvgoyal-qemu/tools/virtiofsd/fuse_lowlevel.c	2021-06-17 10:22:04.879150980 -0400
-@@ -1419,8 +1419,13 @@ static void do_setxattr(fuse_req_t req,
-     struct fuse_setxattr_in *arg;
-     const char *name;
-     const char *value;
-+    bool setxattr_ext = req->se->conn.want & FUSE_CAP_SETXATTR_EXT;
-+
-+    if (setxattr_ext)
-+        arg = fuse_mbuf_iter_advance(iter, sizeof(*arg));
-+    else
-+        arg = fuse_mbuf_iter_advance(iter, FUSE_COMPAT_SETXATTR_IN_SIZE);
- 
--    arg = fuse_mbuf_iter_advance(iter, sizeof(*arg));
-     name = fuse_mbuf_iter_advance_str(iter);
-     if (!arg || !name) {
-         fuse_reply_err(req, EINVAL);
-Index: rhvgoyal-qemu/tools/virtiofsd/fuse_common.h
-===================================================================
---- rhvgoyal-qemu.orig/tools/virtiofsd/fuse_common.h	2021-06-16 17:39:16.387405071 -0400
-+++ rhvgoyal-qemu/tools/virtiofsd/fuse_common.h	2021-06-17 10:24:20.905937326 -0400
-@@ -373,6 +373,11 @@ struct fuse_file_info {
- #define FUSE_CAP_HANDLE_KILLPRIV_V2 (1 << 28)
- 
- /**
-+ * Indicates that file server supports extended struct fuse_setxattr_in
-+ */
-+#define FUSE_CAP_SETXATTR_EXT (1 << 29)
-+
-+/**
-  * Ioctl flags
-  *
-  * FUSE_IOCTL_COMPAT: 32bit compat ioctl on 64bit machine
-
+So with a plain wakeup where we don't set pgdat->kcompactd_max_order will make
+it consider proactive work instead and we don't need another trigger variable
+AFAICS.
