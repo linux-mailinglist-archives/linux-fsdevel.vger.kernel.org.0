@@ -2,145 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE283ACC03
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 15:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E6B83ACC50
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 15:34:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232880AbhFRNWu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 09:22:50 -0400
-Received: from verein.lst.de ([213.95.11.211]:34849 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230438AbhFRNWt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 09:22:49 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 7E51368D08; Fri, 18 Jun 2021 15:20:38 +0200 (CEST)
-Date:   Fri, 18 Jun 2021 15:20:38 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com
-Subject: Re: [PATCH 2/2] init: allow mounting arbitrary non-blockdevice
- filesystems as root
-Message-ID: <20210618132038.GA13406@lst.de>
-References: <20210617153649.1886693-1-hch@lst.de> <20210617153649.1886693-3-hch@lst.de> <20210617162610.GC1142820@redhat.com>
+        id S233851AbhFRNgz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 09:36:55 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:52731 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232253AbhFRNgw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Jun 2021 09:36:52 -0400
+Received: from [192.168.1.155] ([77.4.121.131]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MXH3Y-1ln9Tn1L0o-00YfuT; Fri, 18 Jun 2021 15:34:21 +0200
+Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
+To:     David Hildenbrand <david@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Greg KH <greg@kroah.com>, Christoph Lameter <cl@gentwo.de>
+Cc:     Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
+        ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
+References: <YH2hs6EsPTpDAqXc@mit.edu>
+ <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
+ <YIx7R6tmcRRCl/az@mit.edu>
+ <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de>
+ <YK+esqGjKaPb+b/Q@kroah.com>
+ <c46dbda64558ab884af060f405e3f067112b9c8a.camel@HansenPartnership.com>
+ <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <87a0352d-7bd1-94fe-5586-2322c98cae15@metux.net>
+Date:   Fri, 18 Jun 2021 15:34:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210617162610.GC1142820@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:lXlgNZQBNbe/1PCHa9NFfMFVAMYHizpg0dHiP4mDYfild/2Fz/0
+ NK4rSXjwK84RuMdCre0U1oAL00q6B7ydKpimHGybcF5r2NJbTVLVJCas9h96LlCyaQquYJc
+ VWyWO+jOrQxCJmUlewkveLsLM82fyP16BwB8wZm/PCMsDHHbOS+dG9TvVxo7DUEPv6jY1Os
+ 1vksdXo+HUxTL5GPIhujw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1Pbaw9XW4KY=:33uNPw5m/Ml0bAeU0h6qJ7
+ rt8QzEytx1ZkJAoE71JCmsnZ043EOrbxo7Egr9/38t0eFKuy9t7S7FewNVr/7xYmPxF5DNlVq
+ ghdrQRf/VVXhMWCdLpnQJuJ1YtW+8FZL359DWyXe/d6uuFFHreJunpyDHsBrIeY/h3difn8LT
+ iM3XnQ1H3LgcswgVOwczIplmsaLVp9RN/RYtkU1Zj09n0Jp35HgRC2hBXdZ9Fb9UPMilOHdGK
+ YEmesqTDoK8cXb+jiWNG5Vvv6DhIAgdn0GSM8/DwyzMsGT9ksvz+LN+WUPxt1/ldTiQS2hrUf
+ KR1F1Y8aIrzMhPD2y9rc59r6rz4v/7pDT/a0BsA2vXUurWfx5340xKWJlu19jHEAFgwc8bkPi
+ 28fxbqY1HwBahrqUPVOPxnTxJ4qeQCzLdqNUe1iRoxcxTOXTiK0hTy3YznsXKsPHsxLn2xUCq
+ ZaldkCEM9HF1rKhFHtQ7z725Yn+/yHbrMtyuaFD83XC+qXUg1B8yXYODuWwIW+NdPKymtN5hq
+ aEkwHXYn0gorLvybhxGodg=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 12:26:10PM -0400, Vivek Goyal wrote:
-> Not sure what FS_BINARY_MOUNTDATA is why fs should not have that set. nfs
-> seems to set it too. So that means they can't use try_mount_nodev().
+On 09.06.21 12:37, David Hildenbrand wrote:
 
-We can't really pass actual binary mountdata using the string separation
-scheme used by the rootfstype= option.  But given that NFS only uses
-binary mountdata for legacy reasons and people get what they ask for
-using the option I think we can drop the check.
+> Just make sure to not
+> ignore the poor souls that really won't be traveling this year, because
+> "we are not vaccinated".
 
-> In case of success err == 0, but we still panic(). We will need to
-> check for success as well.
+That's NOT correct.
 
-Indeed.
+People can't travel freely because OPPRESSIVE regimes all around the
+world forbid traveling freely - and enforcing that with brute force.
 
-> root_fs_names can be NULL and it crashes with NULL pointer dereference.
+Last year, i've been gunpointed by a cop just for walking over a market
+place in Nuremberg with my family, wearing a shirt with some Tucholsky
+quote and having my hands in the pants pockets !
 
-True.
+It is NOT the unvaxed who are stopping anybody from travel - it is
+nobody else than the GOVERMENT and its compliant abettors.
 
-What do you think of this version?
+US americans should remind themselves of the 2nd amendment.
 
----
-From 141caa79a619b5f5d100eeb8e94ecf8b3b1c9af7 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Fri, 18 Jun 2021 15:10:39 +0200
-Subject: init: allow mounting arbitrary non-blockdevice filesystems as root
 
-Currently the only non-blockdevice filesystems that can be used as the
-initial root filesystem are NFS and CIFS, which use the magic
-"root=/dev/nfs" and "root=/dev/cifs" syntax that requires the root
-device file system details to come from filesystem specific kernel
-command line options.
+--mtx
 
-Add a little bit of new code that allows to just pass arbitrary
-string mount options to any non-blockdevice filesystems so that it can
-be mounted as the root file system.
-
-For example a virtiofs root file system can be mounted using the
-following syntax:
-
-"root=myfs rootfstype=virtiofs rw"
-
-Based on an earlier patch from Vivek Goyal <vgoyal@redhat.com>.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- init/do_mounts.c | 43 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index ec32de3ad52b..66c47193e9ee 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -534,6 +534,45 @@ static int __init mount_cifs_root(void)
- }
- #endif
- 
-+static bool __init fs_is_nodev(char *fstype)
-+{
-+	struct file_system_type *fs = get_fs_type(fstype);
-+	bool ret = false;
-+
-+	if (fs) {
-+		ret = !(fs->fs_flags & FS_REQUIRES_DEV);
-+		put_filesystem(fs);
-+	}
-+
-+	return ret;
-+}
-+
-+static int __init mount_nodev_root(void)
-+{
-+	char *fs_names, *fstype;
-+	int err = -EINVAL;
-+
-+	fs_names = (void *)__get_free_page(GFP_KERNEL);
-+	if (!fs_names)
-+		return -EINVAL;
-+	split_fs_names(fs_names, root_fs_names);
-+
-+	for (fstype = fs_names; *fstype; fstype += strlen(fstype) + 1) {
-+		if (!fs_is_nodev(fstype))
-+			continue;
-+		err = do_mount_root(root_device_name, fstype, root_mountflags,
-+				    root_mount_data);
-+		if (!err)
-+			break;
-+		if (err != -EACCES && err != -EINVAL)
-+			panic("VFS: Unable to mount root \"%s\" (%s), err=%d\n",
-+			      root_device_name, fstype, err);
-+	}
-+
-+	free_page((unsigned long)fs_names);
-+	return err;
-+}
-+
- void __init mount_root(void)
- {
- #ifdef CONFIG_ROOT_NFS
-@@ -550,6 +589,10 @@ void __init mount_root(void)
- 		return;
- 	}
- #endif
-+	if (ROOT_DEV == 0 && root_fs_names) {
-+		if (mount_nodev_root() == 0)
-+			return;
-+	}
- #ifdef CONFIG_BLOCK
- 	{
- 		int err = create_dev("/dev/root", ROOT_DEV);
 -- 
-2.30.2
-
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
