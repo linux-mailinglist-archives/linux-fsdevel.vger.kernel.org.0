@@ -2,69 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A69CE3AD321
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 21:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B38363AD357
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 22:05:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232246AbhFRTwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 15:52:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33358 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbhFRTwO (ORCPT
+        id S232033AbhFRUHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 16:07:51 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:55278 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229768AbhFRUHu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 15:52:14 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3254C061574;
-        Fri, 18 Jun 2021 12:50:04 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1luKUz-009jmj-GB; Fri, 18 Jun 2021 19:49:53 +0000
-Date:   Fri, 18 Jun 2021 19:49:53 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Omar Sandoval <osandov@osandov.com>,
+        Fri, 18 Jun 2021 16:07:50 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:33072 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1luKkD-0008K1-VF; Fri, 18 Jun 2021 16:05:38 -0400
+Message-ID: <b8327afcd3ba1d9a2d2def40343efb2e79c489b7.camel@trillion01.com>
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
-Message-ID: <YMz44XVVIlQw2Z6J@zeniv-ca.linux.org.uk>
-References: <cover.1623972518.git.osandov@fb.com>
- <6caae597eb20da5ea23e53e8e64ce0c4f4d9c6d2.1623972519.git.osandov@fb.com>
- <CAHk-=whRA=54dtO3ha-C2-fV4XQ2nry99BmfancW-16EFGTHVg@mail.gmail.com>
- <YMz3MfgmbtTSQljy@zeniv-ca.linux.org.uk>
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+Date:   Fri, 18 Jun 2021 16:05:36 -0400
+In-Reply-To: <87v96dd1gz.fsf@disp2133>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+         <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
+         <87eeda7nqe.fsf@disp2133>
+         <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+         <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+         <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+         <87y2bh4jg5.fsf@disp2133>
+         <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+         <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+         <87pmwmn5m0.fsf@disp2133>
+         <4163ed48afbcb1c288b366fe2745205cd66bea3d.camel@trillion01.com>
+         <87v96dd1gz.fsf@disp2133>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMz3MfgmbtTSQljy@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 07:42:41PM +0000, Al Viro wrote:
+On Wed, 2021-06-16 at 15:00 -0500, Eric W. Biederman wrote:
+> Olivier Langlois <olivier@trillion01.com> writes:
+> 
+> > I redid my test but this time instead of dumping directly into a
+> > file,
+> > I did let the coredump be piped to the systemd coredump module and
+> > the
+> > coredump generation isn't working as expected when piping.
+> > 
+> > So your code review conclusions are correct.
+> 
+> Thank you for confirming that.
+> 
+> Do you know how your test program is using io_uring?
+> 
+> I have been trying to put the pieces together on what io_uring is
+> doing
+> that stops the coredump.  The fact that it takes a little while
+> before
+> it kills the coredump is a little puzzling.  The code looks like all
+> of
+> the io_uring operations should have been canceled before the coredump
+> starts.
+> 
+> 
+With a very simple setup, I guess that this could easily be
+reproducible. Make a TCP connection with a server that is streaming
+non-stop data and enter a loop where you keep initiating async
+OP_IOURING_READ operations on your TCP fd.
 
-> Pipe ones are strictly destinations - they can't be sources.  So if you
-> see it called for one of those, you've a bug.
-> 
-> Xarray ones are *not* - they can be sources, and that's missing here.
-> 
-> Much more unpleasant, though, is that this thing has hard dependency on
-> nr_seg == 1 *AND* openly suggests the use of iov_iter_single_seg_count(),
-> which is completely wrong.  That sucker has some weird users left (as
-> of #work.iov_iter), but all of them are actually due to API deficiencies
-> and I very much hope to kill that thing off.
-> 
-> Why not simply add iov_iter_check_zeroes(), that would be called after
-> copy_from_iter() and verified that all that's left in the iterator
-> consists of zeroes?  Then this copy_struct_from_...() would be
-> trivial to express through those two.  And check_zeroes would also
-> be trivial, especially on top of #work.iov_iter.  With no calls of
-> iov_iter_advance() at all, while we are at it...
-> 
-> IDGI... Omar, what semantics do you really want from that primitive?
+Once you have that, manually sending a SIG_SEGV is a sure fire way to
+stumble into the problem. This is how I am testing the patches.
 
-And for pity sake, let's not do that EXPORT_SYMBOL_GPL() posturing there.
-If it's a sane general-purpose API, it doesn't matter who uses it;
-if it's not, it shouldn't be exported in the first place.
+IRL, it is possible to call io_uring_enter() to submit operations and
+return from the syscall without waiting on all events to have
+completed. Once the process is back in userspace, if it stumble into a
+bug that triggers a coredump, any remaining pending I/O operations can
+set TIF_SIGNAL_NOTIFY while the coredump is generated.
 
-It can be implemented via the already exported primitives, so it's
-not as if we prevented anyone from doing an equivalent...
+I have read the part of your previous email where you share the result
+of your ongoing investigation. I didn't comment as the definitive
+references in io_uring matters are Jens and Pavel but I am going to
+share my opinion on the matter.
+
+I think that you did put the finger on the code cleaning up the
+io_uring instance in regards to pending operations. It seems to be
+io_uring_release() which is probably called from exit_files() which
+happens to be after the call to exit_mm().
+
+At first, I did entertain the idea of considering if it could be
+possible to duplicate some of the operations performed by
+io_uring_release() related to the infamous TIF_SIGNAL_NOTIFY setting
+into io_uring_files_cancel() which is called before exit_mm().
+
+but the idea is useless as it is not the other threads of the group
+that are causing the TIF_SIGNAL_NOTIFY problem. It is the thread
+calling do_coredump() which is done by the signal handing code even
+before that thread enters do_exit() and start to be cleaned up. That
+thread when it enters do_coredump() is still fully loaded and
+operational in terms of io_uring functionality.
+
+I guess that this io_uring cancel all pending operations hook would
+have to be called from do_coredump or from get_signal() but if it is
+the way to go, I feel that this is a change major enough that wouldn't
+dare going there without the blessing of the maintainers in cause....
+
+
