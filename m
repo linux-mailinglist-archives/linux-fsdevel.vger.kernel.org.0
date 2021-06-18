@@ -2,103 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1C023AD3A4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 22:33:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E00D93AD3C6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 22:42:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233690AbhFRUf0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 16:35:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43080 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232426AbhFRUfZ (ORCPT
+        id S233933AbhFRUox (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 16:44:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:58948 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233702AbhFRUou (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 16:35:25 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11E2EC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 13:33:16 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id i34so3126434pgl.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 13:33:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dBupA0cw4fGlGHNhQTeiFf/7oeykwehM09DA//j5e80=;
-        b=p7YzoDzkMk1aefCeei3yHDw+EPcyoaLrxZant/piLqfdVMyXLD0OUDe1FfO0kP4lBJ
-         6s23x0AdwT0euuDaUP00XlN5ZzdLH2CJF41ICFzwG9UaEXtyOsoLzKQfyORIo4VDTNoi
-         iOLsEH/M7d6uYcJXO1g+z8oR+JMf+otrcMskpBJEfcqDXA5sdwcG4F/iK3HGQ/Gx+/7p
-         MWwgGC73aW9yB1fsqujKxxHv57lcDbWq3rVoaAJdUuTIaaivDnMKL68fnTk4HG4zTQLs
-         oU+5CVBVmmd29TodWdKSTS+DKwJhfqsn+O+Sw1e/TxEMPXwr7tSB8uMrc/bQTunM5Y6o
-         Oz6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dBupA0cw4fGlGHNhQTeiFf/7oeykwehM09DA//j5e80=;
-        b=I9ort1tsSx3TAuMVOimgpGfemvM4ni4vE9eIhCghlU5KvLZ9YBx6ilcObqUKfRWQXT
-         70YKrU5BrYhadT3V2SFeXalcW8Pe268Yg/speMdtQ+BVJ79/e5d93d/ukqjXKDlfXpKp
-         MUqx6wzwGeAUZvQR4QQdSLo4qnxjarr3c25l1cm5nVVhxRnizRvoJ1IFIUjse1VlzAOq
-         /mEIVcK5dWP6/fIlYnbEzJ3WP2uCAIMP1XhI16tlpoN+GqH0Uy01+yIog27+AT7/K9c6
-         JwZZY/z+U4g7UBiV0LebIy/Q6yMgMvxprDY/9eIDNRJftIKGSgyZwP4yBNZpHm4UDwVZ
-         /eag==
-X-Gm-Message-State: AOAM531u5rpa7f8CiI9nmjG82MkKrua1lBuaXsRsv3CyPeaLFyzwu9YL
-        Pc3K2kCvAQtgJbmqcZEdlNNgltc6ZY4vYw==
-X-Google-Smtp-Source: ABdhPJxUpD4js+w4MnYq1QQkw8BD839hhy3h9W1qVAit6f8xvXVDJhrmLqPIcsX8Uj4y4m/n2vmG8Q==
-X-Received: by 2002:a05:6a00:7ca:b029:2fc:daf6:d0f0 with SMTP id n10-20020a056a0007cab02902fcdaf6d0f0mr6832895pfu.15.1624048395531;
-        Fri, 18 Jun 2021 13:33:15 -0700 (PDT)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:41cb])
-        by smtp.gmail.com with ESMTPSA id g17sm2245281pfv.62.2021.06.18.13.33.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jun 2021 13:33:15 -0700 (PDT)
-Date:   Fri, 18 Jun 2021 13:33:13 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
-Message-ID: <YM0DCRMz0dktOvQn@relinquished.localdomain>
-References: <cover.1623972518.git.osandov@fb.com>
- <6caae597eb20da5ea23e53e8e64ce0c4f4d9c6d2.1623972519.git.osandov@fb.com>
- <CAHk-=whRA=54dtO3ha-C2-fV4XQ2nry99BmfancW-16EFGTHVg@mail.gmail.com>
- <YMz3MfgmbtTSQljy@zeniv-ca.linux.org.uk>
- <YMz44XVVIlQw2Z6J@zeniv-ca.linux.org.uk>
+        Fri, 18 Jun 2021 16:44:50 -0400
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1624048959;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=viaF2+vzF8yGuceHiGdcXmR+KhaApSpPdBORO7fsb08=;
+        b=ezsxCMn96b+2rHdzRATVpDVBpAYMddpcAvBC98rFOdITrLchNFKuyjWGTqiD/peJdjfyZo
+        9uA2SACZ7MDy7RW/rBDSPjsl2GGYfeESMBAKGPmDMR4ZLxDMQmS9JRSgoiTdHgKzEYCA7D
+        0fAwkVCTrOBU59v1jzl5McNQQNJ3p/rhehvTGnWJEzlHBUzdoN7aS303gjP3spWP7G5SWh
+        ok/HPjFbxtVYnv1cMLG8UEqBdXEujEWCyqYYoB7pWpTPWqBlc8VdE/cR1EqGjaCBnteb3s
+        iVmZgxZGlmKicLxoqfVSOyzZNaJs/Rs1Ug91LJmtPT/PUyTsAQAPvUaoSq+7Vw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1624048959;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=viaF2+vzF8yGuceHiGdcXmR+KhaApSpPdBORO7fsb08=;
+        b=vMq4tRHu7ixDGl3mtG0JpRgtNMAsZHXhoKJUnNyvBYVWnj1SLFxNFsZoD5kQMCDWRCTerB
+        6JPjgWDDW4WzKbBQ==
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
+        rcu@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org
+Subject: Re: [PATCH 5/6] sched,timer: Use __set_current_state()
+In-Reply-To: <20210602133040.524487671@infradead.org>
+References: <20210602131225.336600299@infradead.org> <20210602133040.524487671@infradead.org>
+Date:   Fri, 18 Jun 2021 22:42:38 +0200
+Message-ID: <87sg1eewg1.ffs@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMz44XVVIlQw2Z6J@zeniv-ca.linux.org.uk>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 07:49:53PM +0000, Al Viro wrote:
-> On Fri, Jun 18, 2021 at 07:42:41PM +0000, Al Viro wrote:
-> 
-> > Pipe ones are strictly destinations - they can't be sources.  So if you
-> > see it called for one of those, you've a bug.
-> > 
-> > Xarray ones are *not* - they can be sources, and that's missing here.
-> > 
-> > Much more unpleasant, though, is that this thing has hard dependency on
-> > nr_seg == 1 *AND* openly suggests the use of iov_iter_single_seg_count(),
-> > which is completely wrong.  That sucker has some weird users left (as
-> > of #work.iov_iter), but all of them are actually due to API deficiencies
-> > and I very much hope to kill that thing off.
-> > 
-> > Why not simply add iov_iter_check_zeroes(), that would be called after
-> > copy_from_iter() and verified that all that's left in the iterator
-> > consists of zeroes?  Then this copy_struct_from_...() would be
-> > trivial to express through those two.  And check_zeroes would also
-> > be trivial, especially on top of #work.iov_iter.  With no calls of
-> > iov_iter_advance() at all, while we are at it...
-> > 
-> > IDGI... Omar, what semantics do you really want from that primitive?
-> 
-> And for pity sake, let's not do that EXPORT_SYMBOL_GPL() posturing there.
-> If it's a sane general-purpose API, it doesn't matter who uses it;
-> if it's not, it shouldn't be exported in the first place.
-> 
-> It can be implemented via the already exported primitives, so it's
-> not as if we prevented anyone from doing an equivalent...
+On Wed, Jun 02 2021 at 15:12, Peter Zijlstra wrote:
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Fair enough, I'll fix that.
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+
