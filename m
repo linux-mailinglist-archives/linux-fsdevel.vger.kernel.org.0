@@ -2,143 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9904F3AC17E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 05:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F38E63AC178
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 05:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232281AbhFRDmx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Jun 2021 23:42:53 -0400
+        id S232214AbhFRDmq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Jun 2021 23:42:46 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229819AbhFRDmr (ORCPT
+        with ESMTP id S232171AbhFRDmq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Jun 2021 23:42:47 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDA1C061574;
-        Thu, 17 Jun 2021 20:40:38 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lu5Ml-009UHM-Ku; Fri, 18 Jun 2021 03:40:23 +0000
-Date:   Fri, 18 Jun 2021 03:40:23 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>, jlayton@kernel.org,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] afs: Fix afs_write_end() to handle short writes
-Message-ID: <YMwVp268KTzTf8cN@zeniv-ca.linux.org.uk>
-References: <YMdZbsvBNYBtZDC2@casper.infradead.org>
- <162367681795.460125.11729955608839747375.stgit@warthog.procyon.org.uk>
- <162367682522.460125.5652091227576721609.stgit@warthog.procyon.org.uk>
- <466590.1623677832@warthog.procyon.org.uk>
- <YMddm2P0vD+4edBu@casper.infradead.org>
+        Thu, 17 Jun 2021 23:42:46 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C0CFC0617AF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 20:40:37 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id df12so4143869edb.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 20:40:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v3U6tSssyiyTmySewt2Ln0yQu0gc7Qdpf16AvD+Xaxk=;
+        b=2IcUlThUD9BpN0YyQAHGmGcQr5S6gOJpFAuAjkTFZTnpzRn9tzKgvjENS7ySkBTDUb
+         WVu8rDNnk4oMaPDWaYfJqGQq5hspjx3UAm8iGpqhN5Tm3s/4JNu9ecnP/aWmJefz9KgA
+         jyaF4PQvWKhcAMY06wY9zLmJ3F3grfHwVu/lTteAZll8NquJe5RM3crl0S/T9nJz4lga
+         qE6I+1oXf+z4XpHgtSakyooDjOifTHlFJYDjvZrRG53E21pvvJVkEQhe7yTOwfRW+SR3
+         lPE0DbuCzB2/MU+0Ln8LRSJFFCt8crMBcGon76/h7fb0x+sFtOdRmHlxhubL8TVLcdkW
+         w8MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v3U6tSssyiyTmySewt2Ln0yQu0gc7Qdpf16AvD+Xaxk=;
+        b=eAGqBQ3BzxgH+Dtxmaz/U32lhjscY2WwvhKfeDnn8EKL8WVNdYFB3I2IZzDlb3zakd
+         Quy+EsirYvce5PtFnSs72g0SPzMcyh3SzCtYuN4ArQmFmgVaXB1Rxu6otb0npd/K905v
+         VwKJh9MXralQRjytS2VcDP8Q95vWUe9dga4ApxGBt97KLAVMbH/s9NvhqZiEXxsxhYnD
+         0cPBFTXapZiSNkkarYj/WU0qXGUa3OHEfcudcyC/EYMQ8uopRHwQkocjGSEhO3NQS0a1
+         +AgOFqrk7gRpZgndVOUSvBA8qB9aqFQ4FQwFtx6kIbw9zDLej18V5Mp7zAMHYOLXjJEu
+         zmLw==
+X-Gm-Message-State: AOAM533BYCs13YM/Ky5a8dWMcorWZjo7mrSMpUvUWKqLAeLkmaSeV0Af
+        jDslWS6zS/UhS2n9hj/gVSc2oSG8qRcS69KvNytELcPfEA==
+X-Google-Smtp-Source: ABdhPJw5b/xZ/eb8rl7JdfhOxmPvL4XDmYW6VYxutA0Sjq6NM72bhKaQUg+rtX3S00r5obIGVrm+f+Zrvy0193ShGoE=
+X-Received: by 2002:a05:6402:1771:: with SMTP id da17mr2074259edb.31.1623987634898;
+ Thu, 17 Jun 2021 20:40:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMddm2P0vD+4edBu@casper.infradead.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20210616085118.1141101-1-omosnace@redhat.com>
+In-Reply-To: <20210616085118.1141101-1-omosnace@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 17 Jun 2021 23:40:24 -0400
+Message-ID: <CAHC9VhSr2KpeBXuyoHR3_hs+qczFUaBx0oCSMfBBA5UNYU+0KA@mail.gmail.com>
+Subject: Re: [PATCH v3] lockdown,selinux: fix wrong subject in some SELinux
+ lockdown checks
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, linux-acpi@vger.kernel.org,
+        linux-cxl@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        bpf@vger.kernel.org, netdev@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 14, 2021 at 02:46:03PM +0100, Matthew Wilcox wrote:
-> On Mon, Jun 14, 2021 at 02:37:12PM +0100, David Howells wrote:
-> > Matthew Wilcox <willy@infradead.org> wrote:
-> > 
-> > > >  (1) If the page is not up to date, then we should just return 0
-> > > >      (ie. indicating a zero-length copy).  The loop in
-> > > >      generic_perform_write() will go around again, possibly breaking up the
-> > > >      iterator into discrete chunks.
-> > > 
-> > > Does this actually work?  What about the situation where you're reading
-> > > the last page of a file and thus (almost) always reading fewer bytes
-> > > than a PAGE_SIZE?
-> > 
-> > Al Viro made such a change for Ceph - and we're writing, not reading.
-> 
-> I'd feel better if you said "xfstests doesn't show any new problems"
-> than arguing to authority.
-> 
-> I know the operation which triggers this path is a call to write(),
-> but if, say, the file is 32 bytes long, not in cache, and you write
-> bytes 32-63, the client must READ bytes 0-31 from the server, which
-> is less than a full page.
+On Wed, Jun 16, 2021 at 4:51 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> lockdown") added an implementation of the locked_down LSM hook to
+> SELinux, with the aim to restrict which domains are allowed to perform
+> operations that would breach lockdown.
+>
+> However, in several places the security_locked_down() hook is called in
+> situations where the current task isn't doing any action that would
+> directly breach lockdown, leading to SELinux checks that are basically
+> bogus.
+>
+> To fix this, add an explicit struct cred pointer argument to
+> security_lockdown() and define NULL as a special value to pass instead
+> of current_cred() in such situations. LSMs that take the subject
+> credentials into account can then fall back to some default or ignore
+> such calls altogether. In the SELinux lockdown hook implementation, use
+> SECINITSID_KERNEL in case the cred argument is NULL.
+>
+> Most of the callers are updated to pass current_cred() as the cred
+> pointer, thus maintaining the same behavior. The following callers are
+> modified to pass NULL as the cred pointer instead:
+> 1. arch/powerpc/xmon/xmon.c
+>      Seems to be some interactive debugging facility. It appears that
+>      the lockdown hook is called from interrupt context here, so it
+>      should be more appropriate to request a global lockdown decision.
+> 2. fs/tracefs/inode.c:tracefs_create_file()
+>      Here the call is used to prevent creating new tracefs entries when
+>      the kernel is locked down. Assumes that locking down is one-way -
+>      i.e. if the hook returns non-zero once, it will never return zero
+>      again, thus no point in creating these files. Also, the hook is
+>      often called by a module's init function when it is loaded by
+>      userspace, where it doesn't make much sense to do a check against
+>      the current task's creds, since the task itself doesn't actually
+>      use the tracing functionality (i.e. doesn't breach lockdown), just
+>      indirectly makes some new tracepoints available to whoever is
+>      authorized to use them.
+> 3. net/xfrm/xfrm_user.c:copy_to_user_*()
+>      Here a cryptographic secret is redacted based on the value returned
+>      from the hook. There are two possible actions that may lead here:
+>      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
+>         task context is relevant, since the dumped data is sent back to
+>         the current task.
+>      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
+>         dumped SA is broadcasted to tasks subscribed to XFRM events -
+>         here the current task context is not relevant as it doesn't
+>         represent the tasks that could potentially see the secret.
+>      It doesn't seem worth it to try to keep using the current task's
+>      context in the a) case, since the eventual data leak can be
+>      circumvented anyway via b), plus there is no way for the task to
+>      indicate that it doesn't care about the actual key value, so the
+>      check could generate a lot of "false alert" denials with SELinux.
+>      Thus, let's pass NULL instead of current_cred() here faute de
+>      mieux.
+>
+> Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+> Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
+> Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 
-[as commented on IRC several days ago]
+This seems reasonable to me, but before I merge it into the SELinux
+tree I think it would be good to get some ACKs from the relevant
+subsystem folks.  I don't believe we ever saw a response to the last
+question for the PPC folks, did we?
 
-Short copy has nothing to do with destination; it's about failures on
-source - e.g. source page we'd prefaulted before locking the destination
-got evicted by the time we got around to copying; we can't afford
-page faults while holding some pages locked, so we do it with
-pagefault_disable() and get a short copy on #PF.
+> ---
+>
+> v3:
+> - add the cred argument to security_locked_down() and adapt all callers
+> - keep using current_cred() in BPF, as the hook calls have been shifted
+>   to program load time (commit ff40e51043af ("bpf, lockdown, audit: Fix
+>   buggy SELinux lockdown permission checks"))
+> - in SELinux, don't ignore hook calls where cred == NULL, but use
+>   SECINITSID_KERNEL as the subject instead
+> - update explanations in the commit message
+>
+> v2: https://lore.kernel.org/lkml/20210517092006.803332-1-omosnace@redhat.com/
+> - change to a single hook based on suggestions by Casey Schaufler
+>
+> v1: https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/
+>
+>  arch/powerpc/xmon/xmon.c             |  4 ++--
+>  arch/x86/kernel/ioport.c             |  4 ++--
+>  arch/x86/kernel/msr.c                |  4 ++--
+>  arch/x86/mm/testmmiotrace.c          |  2 +-
+>  drivers/acpi/acpi_configfs.c         |  2 +-
+>  drivers/acpi/custom_method.c         |  2 +-
+>  drivers/acpi/osl.c                   |  3 ++-
+>  drivers/acpi/tables.c                |  2 +-
+>  drivers/char/mem.c                   |  2 +-
+>  drivers/cxl/mem.c                    |  2 +-
+>  drivers/firmware/efi/efi.c           |  2 +-
+>  drivers/firmware/efi/test/efi_test.c |  2 +-
+>  drivers/pci/pci-sysfs.c              |  6 +++---
+>  drivers/pci/proc.c                   |  6 +++---
+>  drivers/pci/syscall.c                |  2 +-
+>  drivers/pcmcia/cistpl.c              |  2 +-
+>  drivers/tty/serial/serial_core.c     |  2 +-
+>  fs/debugfs/file.c                    |  2 +-
+>  fs/debugfs/inode.c                   |  2 +-
+>  fs/proc/kcore.c                      |  2 +-
+>  fs/tracefs/inode.c                   |  2 +-
+>  include/linux/lsm_hook_defs.h        |  2 +-
+>  include/linux/lsm_hooks.h            |  1 +
+>  include/linux/security.h             |  4 ++--
+>  kernel/bpf/helpers.c                 | 10 ++++++----
+>  kernel/events/core.c                 |  2 +-
+>  kernel/kexec.c                       |  2 +-
+>  kernel/kexec_file.c                  |  2 +-
+>  kernel/module.c                      |  2 +-
+>  kernel/params.c                      |  2 +-
+>  kernel/power/hibernate.c             |  3 ++-
+>  kernel/trace/bpf_trace.c             | 20 ++++++++++++--------
+>  kernel/trace/ftrace.c                |  4 ++--
+>  kernel/trace/ring_buffer.c           |  2 +-
+>  kernel/trace/trace.c                 | 10 +++++-----
+>  kernel/trace/trace_events.c          |  2 +-
+>  kernel/trace/trace_events_hist.c     |  4 ++--
+>  kernel/trace/trace_events_synth.c    |  2 +-
+>  kernel/trace/trace_events_trigger.c  |  2 +-
+>  kernel/trace/trace_kprobe.c          |  6 +++---
+>  kernel/trace/trace_printk.c          |  2 +-
+>  kernel/trace/trace_stack.c           |  2 +-
+>  kernel/trace/trace_stat.c            |  2 +-
+>  kernel/trace/trace_uprobe.c          |  4 ++--
+>  net/xfrm/xfrm_user.c                 | 11 +++++++++--
+>  security/lockdown/lockdown.c         |  3 ++-
+>  security/security.c                  |  4 ++--
+>  security/selinux/hooks.c             |  7 +++++--
+>  48 files changed, 97 insertions(+), 77 deletions(-)
 
-The story with short copies is this:
-	* write() is about to copy the next chunk of data into
-page cache of the file we are writing into.  We have decided what
-part of the destination page will be copied over, faulted the
-source in and locked the destination page.
-
-	* if the page is not uptodate, we might need to read
-some parts before copying new data into it; the work that needs
-to be done depends upon the part of page we are going to overwrite.
-E.g. if we are going to copy over the entire thing, we do
-_not_ want to bother reading anything into it - if copying
-works, we'll destroy the previous contents anyway.
-	That's what ->write_begin() is about - it should
-do whatever's needed in preparation to copying new data.
-
-	* NOW we can copy the data.  Hopefully the copy will
-be successful (i.e. we don't run into evicted source pages,
-memory errors, races with munmap(), etc.), but it might fail
-halfway through - we are doing that part with page faults
-disabled.
-
-	* finally we can do write to disk/server/whatnot.
-That's what ->write_end() is for.  Ideally, it'll just
-send the newly copied data on its way.  However, in case of
-short copy we might have problems.  Consider e.g. a block
-filesystem that has 4 blocks per page; the chunk we were
-going to write went from the middle of the 1st to the
-middle of the 4th block.  ->write_begin() made sure that
-1st and 4th blocks had been uptodate.  It had not bothered
-with the 2nd and the 3rd blocks, since we were going to
-overwrite them anyway.  And had the copy succeeded, we'd
-be fine - page fully uptodate, can write the data to
-disk and be done with that.  However, the copy failed
-halfway through the 3rd block.  What do we have?
-1st block: uptodate, partly old data, partly new one.
-2nd block: uptodate, new data
-3rd block: beginning is filled with new data, garbage in the rest
-4th block: uptodate, old data.
-What to do?  Everything up to the beginning of the 3rd block
-is fine, but the 3rd one is a hopeless mess.  We can't write it
-out - the garbage would end up on disk.  We can't replace the
-garbage with valid data without reading it from disk - and that'll
-lose the new data we'd managed to copy there.
-
-The best we can do in such situation is to treat that as
-having advanced to the beginning of the third block, despite
-having copied more than that.  The caller (generic_perform_write())
-will choose the next chunk starting at that point (beginning of
-the 3rd block) and repeat the whole sequence for that chunk,
-including the fault-in.
-
-So ->write_end() gets 3 numbers - two describing the range we
-prepared for (what ->write_begin() had received) and the third
-telling how much had been actually copied.  Again, "short copy"
-here does not refer to any preparations done by ->write_begin() -
-it's about having told ->write_begin() we would copy over given
-range and only managing to fill a part of that range.
-
-Note that if page is uptodate, we are fine - _everything_
-in that page matches what we want in file, so we can deal with
-sending it to disk/server/whatnot.  If there'd been a short
-copy the caller will obviously need to continue from the point
-where the copy stopped, but that's not our problem.
-
-What to do in case of short copy into non-uptodate page is
-up to filesystem.  Saying "sod it, I'm not taking any of
-that, just repeat the entire thing" is always fine.  We might
-do better than that (see above for one such example), but
-the caller will be OK if we don't.  It's a rare case, and
-you either need something like race with munmap() of part of
-source buffer from another thread or severe memory pressure
-for that to trigger in the first place.
+-- 
+paul moore
+www.paul-moore.com
