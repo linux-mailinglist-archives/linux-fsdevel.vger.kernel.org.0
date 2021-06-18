@@ -2,107 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B3313AD013
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 18:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79F413AD01B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 18:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232148AbhFRQMa convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 12:12:30 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3289 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231455AbhFRQM3 (ORCPT
+        id S235801AbhFRQNM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 12:13:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40278 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232825AbhFRQNL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 12:12:29 -0400
-Received: from fraeml712-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4G63TD4KPRz6GBQh;
-        Fri, 18 Jun 2021 23:57:04 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml712-chm.china.huawei.com (10.206.15.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 18 Jun 2021 18:10:18 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
- Fri, 18 Jun 2021 18:10:18 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
-CC:     Stefan Berger <stefanb@linux.ibm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
-        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Subject: RE: [PATCH] fs: Return raw xattr for security.* if there is size
- disagreement with LSMs
-Thread-Topic: [PATCH] fs: Return raw xattr for security.* if there is size
- disagreement with LSMs
-Thread-Index: AQHXYrKvlTGLZUZH2kigEMb4WxB9T6sWlCeAgAExqRCAAG34gIAAxn6AgADWAICAACLg0A==
-Date:   Fri, 18 Jun 2021 16:10:18 +0000
-Message-ID: <f8de8f604a4c46ea934ce0a67363b7f4@huawei.com>
-References: <ee75bde9a17f418984186caa70abd33b@huawei.com>
-         <20210616132227.999256-1-roberto.sassu@huawei.com>
-         <6e1c9807-d7e8-7c26-e0ee-975afa4b9515@linux.ibm.com>
-         <9cb676de40714d0288f85292c1f1a430@huawei.com>
-         <d822efcc0bb05178057ab2f52293575124cde1fc.camel@linux.ibm.com>
-         <CAHC9VhTv6Zn8gYaB6cG4wPzy_Ty0XjOM-QL4cZ525RnhFY4bTQ@mail.gmail.com>
- <c92d0ac71a8db8bb016a7e94b83c193956d71a26.camel@linux.ibm.com>
-In-Reply-To: <c92d0ac71a8db8bb016a7e94b83c193956d71a26.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 18 Jun 2021 12:13:11 -0400
+Received: from mail-oo1-xc2f.google.com (mail-oo1-xc2f.google.com [IPv6:2607:f8b0:4864:20::c2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8BA9C06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 09:11:01 -0700 (PDT)
+Received: by mail-oo1-xc2f.google.com with SMTP id r9-20020a4a37090000b029024b15d2fef9so2333678oor.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 09:11:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vhESHB2fuprKm8qQn68AEA+GxbpLEhL/mzYCL3E+vDM=;
+        b=R37sfzViltwUXr/gzNQ0xemD+gyVroAIGks6VP6ctNDVs4ruFihGex61iVk2bhg2Gk
+         vcMshC6lM5nqrIbr0RhAQ/Cj7+4oKmybgiOfqWHq2hMpyzpRRPY2pt2G5qOyFLv/kT1P
+         vPJ82s675u49TEW9hLbpy3fms+eDEaiDbQy6IXA0AoCDs+8R/1FWKKpadESxvd8FsTyd
+         5xmWKyw+H6345GVLPM2eiqproimUAfDS0LaEHu0x1wVIcTLWkOhXkqfLDY70qg3Ri8mU
+         LK0rSZRD+5nD0Ny2uoc4mziR7jqqFj1wL7Daq/MlcFKrBcFkicWoL+y4vGRHwR2uJE0i
+         jDXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vhESHB2fuprKm8qQn68AEA+GxbpLEhL/mzYCL3E+vDM=;
+        b=qnN7VeTyHXw1+bu+5sm2q7nTL9isU4qAhTkkwsB5SOfoCUGon+dYHCHiiqqpKRWEot
+         RfhxS/cRJsC8nhWkAKtjRWZLVzqFOGhTShoDob/FTcu8cBrfrph+3ciuzpsUpO6HU9pv
+         v1ZZ8XchU7xQIrIqOJs1IJz1rNdJpZ3hBTDXAeVNqjWeoVK5d6v5HTYWpLQw15M0oAQS
+         6fjIs21imkcgsZHAFZk5FaWK1Fk/9JbshZVEGi+ogV3wKGJCtHiHSQt44iXsxIEbepy/
+         pKkQ42XPiTVw5TZdd4n9FWS0yyex4lF8JxUFtgowTFesWvLBoXvkV0l7bw3j8Umq4c8u
+         9Y+Q==
+X-Gm-Message-State: AOAM530oFonxLfi6V20E1Aw6oa1E7+5Erwxd9nFO/Itaai0uAd4ZDOnb
+        fAr92ujYkvuKc5G1TKW+LtJhDA==
+X-Google-Smtp-Source: ABdhPJzenWHbYw70J0zk1/iySUjenjhRryHqwnndVtlVqnOhDMDQESlZnKUG7ZN2df+M160N9ZJhNQ==
+X-Received: by 2002:a4a:d312:: with SMTP id g18mr4693350oos.7.1624032660987;
+        Fri, 18 Jun 2021 09:11:00 -0700 (PDT)
+Received: from [192.168.1.134] ([198.8.77.61])
+        by smtp.gmail.com with ESMTPSA id t63sm1825354oih.31.2021.06.18.09.11.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jun 2021 09:11:00 -0700 (PDT)
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat
+ support
+To:     Dmitry Kadashev <dkadashev@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+References: <20210603051836.2614535-1-dkadashev@gmail.com>
+ <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2c4d5933-965e-29b5-0c76-3f2e5f518fe8@kernel.dk>
+Date:   Fri, 18 Jun 2021 10:10:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> Sent: Friday, June 18, 2021 6:04 PM
-> On Thu, 2021-06-17 at 23:18 -0400, Paul Moore wrote:
-> > On Thu, Jun 17, 2021 at 11:28 AM Mimi Zohar <zohar@linux.ibm.com>
-> wrote:
-> > > On Thu, 2021-06-17 at 07:09 +0000, Roberto Sassu wrote:
-> >
-> > ...
-> >
-> > > > An alternative would be to do the EVM verification twice if the
-> > > > first time didn't succeed (with vfs_getxattr_alloc() and with the
-> > > > new function that behaves like vfs_getxattr()).
-> > >
-> > > Unfortunately, I don't see an alternative.
-> >
-> > ... and while unfortunate, the impact should be non-existant if you
-> > are using the right tools to label files or ensuring that you are
-> > formatting labels properly if doing it by hand.
-> >
-> > Handling a corner case is good, but I wouldn't add a lot of code
-> > complexity trying to optimize it.
+On 6/18/21 12:24 AM, Dmitry Kadashev wrote:
+> On Thu, Jun 3, 2021 at 12:18 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+>>
+>> This started out as an attempt to add mkdirat support to io_uring which
+>> is heavily based on renameat() / unlinkat() support.
+>>
+>> During the review process more operations were added (linkat, symlinkat,
+>> mknodat) mainly to keep things uniform internally (in namei.c), and
+>> with things changed in namei.c adding support for these operations to
+>> io_uring is trivial, so that was done too. See
+>> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
 > 
-> From userspace it's really difficult to understand the EVM signature
-> verification failure is due to the missing NULL.
-> 
-> Roberto, I just pushed the "evm: output EVM digest calculation info"
-> patch to the next-integrity-testing branch, which includes some
-> debugging.   Instead of this patch, which returns the raw xattr data,
-> how about adding additional debugging info in evm_calc_hmac_or_hash()
-> indicating the size discrepancy between the raw xattr and the LSM
-> returned xattr?
+> Ping. Jens, are we waiting for the audit change to be merged before this
+> can go in?
 
-Good idea. Will do it.
+Not necessarily, as that should go in for 5.14 anyway.
 
-Roberto
+Al, are you OK with the generic changes?
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
-
-> thanks,
-> 
-> Mimi
+-- 
+Jens Axboe
 
