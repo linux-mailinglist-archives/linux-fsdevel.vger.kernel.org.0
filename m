@@ -2,164 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BBB33AC157
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 05:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9904F3AC17E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 05:40:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232109AbhFRDbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Jun 2021 23:31:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38952 "EHLO
+        id S232281AbhFRDmx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Jun 2021 23:42:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232038AbhFRDbl (ORCPT
+        with ESMTP id S229819AbhFRDmr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Jun 2021 23:31:41 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69852C06175F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 20:29:31 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id s15so6564004edt.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 20:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RMJgBEdiibhwSUyvuLKFkBrL4/U8fE/jxx04irYLGbA=;
-        b=av/95B/MiI0xJSuNnIDSIou3GubtAy+v+Cj0IrEJ68VjpsLdRM7w3o1oORGPuxM9E9
-         WcXBTXk69tPR+JRT9pirwPl1i4rEmPN+ROSzO+PpYUb6DGevaUs4cQChuJ9gWp9jybLU
-         337xsWnlSDEFmVS8b9WCf45xojO+ucnKBtO3ThsQgErg6gNQGMsF1NJtWAQTA+IzuLEE
-         lYIbqpRQcPEBixvBPRcSDXBPAnVFOEE11AW5zQ6nXaMHXzougZshHL3HBZOa0i1hhh2b
-         I2Et2SNidVGS73kG8qlrW1IyTkcBNKTv++J6c5+xl/hwwNMONF8NwQMk+WXrJ33LwaNC
-         opBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RMJgBEdiibhwSUyvuLKFkBrL4/U8fE/jxx04irYLGbA=;
-        b=I7H7pq+rSXbNKInbyoFFVR4k44565uzrWyi6vOzOQvZDKHwS0nZg2vBe/tYXrHifdq
-         l6QQcADN0kuDzfUPTFeg1RtjLWqreWXZ+idBj3HlihP1Ro0eaWXcmCawpp6P46ZKYngv
-         Qaicfr6Jq2IemQnkiNeEu0zFNdK3D5vqbJ9Bc/ikChaTMrE73YgDC4OA8gGCW+U2n5eC
-         Fn/M5tLvYNHqbzDbAf8IA9ymW2QJyaeernig0WbYSrZbnkeRhUXUkhE9T0S5bdgHh0E8
-         i0moTWxjleOwUSsWUvKOhKzHfDaF77jLJ+sxCvxIjwNMARxl7/N/tkZDsJfjQghYbVOI
-         PVTg==
-X-Gm-Message-State: AOAM532oXP2v6xVX9TvQZLJFi4pESB+AdwlZHedPdzFIf658InxAdnPC
-        NVUXE9WxIm5ZWlMTrmMxzWlqDBZ4yn+fepdq5jhN
-X-Google-Smtp-Source: ABdhPJykGigJ4CmNJwWRgh5x2T6MNjBJPAc2OA16hTcBQrCjxSZwuj53EmfZdOWUW2UcDeCGl7ONh7uq9+Uou058YZU=
-X-Received: by 2002:aa7:d9d3:: with SMTP id v19mr2042806eds.145.1623986969936;
- Thu, 17 Jun 2021 20:29:29 -0700 (PDT)
+        Thu, 17 Jun 2021 23:42:47 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDA1C061574;
+        Thu, 17 Jun 2021 20:40:38 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lu5Ml-009UHM-Ku; Fri, 18 Jun 2021 03:40:23 +0000
+Date:   Fri, 18 Jun 2021 03:40:23 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>, jlayton@kernel.org,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] afs: Fix afs_write_end() to handle short writes
+Message-ID: <YMwVp268KTzTf8cN@zeniv-ca.linux.org.uk>
+References: <YMdZbsvBNYBtZDC2@casper.infradead.org>
+ <162367681795.460125.11729955608839747375.stgit@warthog.procyon.org.uk>
+ <162367682522.460125.5652091227576721609.stgit@warthog.procyon.org.uk>
+ <466590.1623677832@warthog.procyon.org.uk>
+ <YMddm2P0vD+4edBu@casper.infradead.org>
 MIME-Version: 1.0
-References: <20210615141331.407-1-xieyongji@bytedance.com> <20210615141331.407-4-xieyongji@bytedance.com>
- <8aeac914-7602-7323-31bd-71015a26f74c@windriver.com>
-In-Reply-To: <8aeac914-7602-7323-31bd-71015a26f74c@windriver.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Fri, 18 Jun 2021 11:29:19 +0800
-Message-ID: <CACycT3t1Dgrzsr7LbBrDhRLDa3qZ85ZOgj9H7r1fqPi-kf7r6Q@mail.gmail.com>
-Subject: Re: Re: [PATCH v8 03/10] eventfd: Increase the recursion depth of eventfd_signal()
-To:     He Zhe <zhe.he@windriver.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        qiang.zhang@windriver.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YMddm2P0vD+4edBu@casper.infradead.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 4:34 PM He Zhe <zhe.he@windriver.com> wrote:
->
->
->
-> On 6/15/21 10:13 PM, Xie Yongji wrote:
-> > Increase the recursion depth of eventfd_signal() to 1. This
-> > is the maximum recursion depth we have found so far, which
-> > can be triggered with the following call chain:
-> >
-> >     kvm_io_bus_write                        [kvm]
-> >       --> ioeventfd_write                   [kvm]
-> >         --> eventfd_signal                  [eventfd]
-> >           --> vhost_poll_wakeup             [vhost]
-> >             --> vduse_vdpa_kick_vq          [vduse]
-> >               --> eventfd_signal            [eventfd]
-> >
-> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > Acked-by: Jason Wang <jasowang@redhat.com>
->
-> The fix had been posted one year ago.
->
-> https://lore.kernel.org/lkml/20200410114720.24838-1-zhe.he@windriver.com/
->
+On Mon, Jun 14, 2021 at 02:46:03PM +0100, Matthew Wilcox wrote:
+> On Mon, Jun 14, 2021 at 02:37:12PM +0100, David Howells wrote:
+> > Matthew Wilcox <willy@infradead.org> wrote:
+> > 
+> > > >  (1) If the page is not up to date, then we should just return 0
+> > > >      (ie. indicating a zero-length copy).  The loop in
+> > > >      generic_perform_write() will go around again, possibly breaking up the
+> > > >      iterator into discrete chunks.
+> > > 
+> > > Does this actually work?  What about the situation where you're reading
+> > > the last page of a file and thus (almost) always reading fewer bytes
+> > > than a PAGE_SIZE?
+> > 
+> > Al Viro made such a change for Ceph - and we're writing, not reading.
+> 
+> I'd feel better if you said "xfstests doesn't show any new problems"
+> than arguing to authority.
+> 
+> I know the operation which triggers this path is a call to write(),
+> but if, say, the file is 32 bytes long, not in cache, and you write
+> bytes 32-63, the client must READ bytes 0-31 from the server, which
+> is less than a full page.
 
-OK, so it seems to be a fix for the RT system if my understanding is
-correct? Any reason why it's not merged? I'm happy to rebase my series
-on your patch if you'd like to repost it.
+[as commented on IRC several days ago]
 
-BTW, I also notice another thread for this issue:
+Short copy has nothing to do with destination; it's about failures on
+source - e.g. source page we'd prefaulted before locking the destination
+got evicted by the time we got around to copying; we can't afford
+page faults while holding some pages locked, so we do it with
+pagefault_disable() and get a short copy on #PF.
 
-https://lore.kernel.org/linux-fsdevel/DM6PR11MB420291B550A10853403C7592FF349@DM6PR11MB4202.namprd11.prod.outlook.com/T/
+The story with short copies is this:
+	* write() is about to copy the next chunk of data into
+page cache of the file we are writing into.  We have decided what
+part of the destination page will be copied over, faulted the
+source in and locked the destination page.
 
->
-> > ---
-> >  fs/eventfd.c            | 2 +-
-> >  include/linux/eventfd.h | 5 ++++-
-> >  2 files changed, 5 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/eventfd.c b/fs/eventfd.c
-> > index e265b6dd4f34..cc7cd1dbedd3 100644
-> > --- a/fs/eventfd.c
-> > +++ b/fs/eventfd.c
-> > @@ -71,7 +71,7 @@ __u64 eventfd_signal(struct eventfd_ctx *ctx, __u64 n)
-> >        * it returns true, the eventfd_signal() call should be deferred to a
-> >        * safe context.
-> >        */
-> > -     if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count)))
-> > +     if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count) > EFD_WAKE_DEPTH))
-> >               return 0;
-> >
-> >       spin_lock_irqsave(&ctx->wqh.lock, flags);
-> > diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
-> > index fa0a524baed0..886d99cd38ef 100644
-> > --- a/include/linux/eventfd.h
-> > +++ b/include/linux/eventfd.h
-> > @@ -29,6 +29,9 @@
-> >  #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
-> >  #define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
-> >
-> > +/* Maximum recursion depth */
-> > +#define EFD_WAKE_DEPTH 1
-> > +
-> >  struct eventfd_ctx;
-> >  struct file;
-> >
-> > @@ -47,7 +50,7 @@ DECLARE_PER_CPU(int, eventfd_wake_count);
-> >
-> >  static inline bool eventfd_signal_count(void)
-> >  {
-> > -     return this_cpu_read(eventfd_wake_count);
-> > +     return this_cpu_read(eventfd_wake_count) > EFD_WAKE_DEPTH;
->
-> count is just count. How deep is acceptable should be put
-> where eventfd_signal_count is called.
->
+	* if the page is not uptodate, we might need to read
+some parts before copying new data into it; the work that needs
+to be done depends upon the part of page we are going to overwrite.
+E.g. if we are going to copy over the entire thing, we do
+_not_ want to bother reading anything into it - if copying
+works, we'll destroy the previous contents anyway.
+	That's what ->write_begin() is about - it should
+do whatever's needed in preparation to copying new data.
 
-The return value of this function is boolean rather than integer.
-Please see the comments in eventfd_signal():
+	* NOW we can copy the data.  Hopefully the copy will
+be successful (i.e. we don't run into evicted source pages,
+memory errors, races with munmap(), etc.), but it might fail
+halfway through - we are doing that part with page faults
+disabled.
 
-"then it should check eventfd_signal_count() before calling this
-function. If it returns true, the eventfd_signal() call should be
-deferred to a safe context."
+	* finally we can do write to disk/server/whatnot.
+That's what ->write_end() is for.  Ideally, it'll just
+send the newly copied data on its way.  However, in case of
+short copy we might have problems.  Consider e.g. a block
+filesystem that has 4 blocks per page; the chunk we were
+going to write went from the middle of the 1st to the
+middle of the 4th block.  ->write_begin() made sure that
+1st and 4th blocks had been uptodate.  It had not bothered
+with the 2nd and the 3rd blocks, since we were going to
+overwrite them anyway.  And had the copy succeeded, we'd
+be fine - page fully uptodate, can write the data to
+disk and be done with that.  However, the copy failed
+halfway through the 3rd block.  What do we have?
+1st block: uptodate, partly old data, partly new one.
+2nd block: uptodate, new data
+3rd block: beginning is filled with new data, garbage in the rest
+4th block: uptodate, old data.
+What to do?  Everything up to the beginning of the 3rd block
+is fine, but the 3rd one is a hopeless mess.  We can't write it
+out - the garbage would end up on disk.  We can't replace the
+garbage with valid data without reading it from disk - and that'll
+lose the new data we'd managed to copy there.
 
-Thanks,
-Yongji
+The best we can do in such situation is to treat that as
+having advanced to the beginning of the third block, despite
+having copied more than that.  The caller (generic_perform_write())
+will choose the next chunk starting at that point (beginning of
+the 3rd block) and repeat the whole sequence for that chunk,
+including the fault-in.
+
+So ->write_end() gets 3 numbers - two describing the range we
+prepared for (what ->write_begin() had received) and the third
+telling how much had been actually copied.  Again, "short copy"
+here does not refer to any preparations done by ->write_begin() -
+it's about having told ->write_begin() we would copy over given
+range and only managing to fill a part of that range.
+
+Note that if page is uptodate, we are fine - _everything_
+in that page matches what we want in file, so we can deal with
+sending it to disk/server/whatnot.  If there'd been a short
+copy the caller will obviously need to continue from the point
+where the copy stopped, but that's not our problem.
+
+What to do in case of short copy into non-uptodate page is
+up to filesystem.  Saying "sod it, I'm not taking any of
+that, just repeat the entire thing" is always fine.  We might
+do better than that (see above for one such example), but
+the caller will be OK if we don't.  It's a rare case, and
+you either need something like race with munmap() of part of
+source buffer from another thread or severe memory pressure
+for that to trigger in the first place.
