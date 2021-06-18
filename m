@@ -2,189 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 624C33AC524
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 09:43:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 605393AC58F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 09:59:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230433AbhFRHp6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 03:45:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38292 "EHLO
+        id S232603AbhFRIBo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 04:01:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230315AbhFRHp6 (ORCPT
+        with ESMTP id S232455AbhFRIBm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 03:45:58 -0400
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F77AC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 00:43:48 -0700 (PDT)
-Received: by mail-vs1-xe2c.google.com with SMTP id l25so4473888vsb.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 00:43:48 -0700 (PDT)
+        Fri, 18 Jun 2021 04:01:42 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A363C061574;
+        Fri, 18 Jun 2021 00:59:32 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id e33so7153396pgm.3;
+        Fri, 18 Jun 2021 00:59:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YDAsEaZIbKIIp8KvyivEadpI521aXNzIrVqbLt8a+6M=;
-        b=W3Zwe+ggcNPukjrye6QWgmI1jMrYFTknlvmT0PAsk8U2SmfPWr+w11qxKu60+RqRTj
-         KTcKD2lYwNKBYJ2JmvyRtcM4pjyvykHPLUZVs+JvkUxfzP1924LxyG+FJ2jlpZ0jrlNC
-         SLdnKkoJ3ODP04kxqwymzcbDjIgGR7hib3bfQ=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dO9vd7sYPzUkbEGL9cf5HXTiOWzCKdLCgZPTGvHdqSI=;
+        b=qf3WPuQbi1rO7hQHqHTLHqAPpN4YDpZI4MQmpdNeabsd9uDI+8MRBjKHkqKV9baqxA
+         UjRcsfV5si/2LZrZVEgALCDmdsaQrFMOJNACRjQj+vaIF01Iqd1Q2yZi7QtjhzK4FiTS
+         2FS2OC11ZqzX0eVVOlTO8Ix15oRpHN2wsNxP26BAMvo3dMgS9Y5l75qeb04f8wsd0UvN
+         7Snw/QtYpxmbSR3LQT6Du+1r9ZIguTpvTkh/1X5/zLQfLplXWAaXs37U8r73IYw4m5U2
+         n3THln3WKLX2pZvZvh2kKOJE0WCnIJRZGD2xpnvznjPPgFurNnU4hroCUfARYkkMDRb+
+         AaFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YDAsEaZIbKIIp8KvyivEadpI521aXNzIrVqbLt8a+6M=;
-        b=ppP2B9StCCxpCMAkyVF50wypu8+YZ13pHxqwVOdHPICHP6iFukgGSPdul8oc+ekDlq
-         U0VIsPTB4rNSaxOvTHEmSGbzQ9zMim9v0ft45qGPs7XH2IpjkkvWJIKizmhZ54vfbXL9
-         oZxzUSaQAgBnGT2q/VzCuRBxfVtm/c1UjLnG0a1ZYUblMNQDun3btkLCwVwfuPtpQ7s4
-         su2sBZv0U2Vle5NANJ14wHu3zIRWP3yEY1hlHeWhZmVVbCwaBMmqTaWfrzDGWdcxYLlt
-         +Fni/QB7q25x1gmxrhpTs8L0cODM+oUYeYBAITYoeH/E6LRcF6rrgeKfpweJpl9KDiFD
-         gDtA==
-X-Gm-Message-State: AOAM530caGR45gKV3jnmH2yrSOq/T8dQW6iskBvPojKWi9brDFAUqfkW
-        Z2d8K8IXFX9p5p8ZGORLSXN0aXczbCl9R4h+1HIMNA==
-X-Google-Smtp-Source: ABdhPJxDMtPzfgZZrgejEzYrZHIJA8Cui++ABQGGEyMBwS/zDNAhxvF+vAaK2C3+T8rV5lyvw56YpkGr0JIo8Uz35CU=
-X-Received: by 2002:a67:cd19:: with SMTP id u25mr1757659vsl.47.1624002227373;
- Fri, 18 Jun 2021 00:43:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dO9vd7sYPzUkbEGL9cf5HXTiOWzCKdLCgZPTGvHdqSI=;
+        b=uPqxXsfw8TRQtQvHo7olB29SPh1faJriQGHQ4MPgF+/m9rK7ZJ1a/g1GPQ/Ila7kUt
+         i8ZjuD+G2m62ZyQeOe2/R+se1d48ECy98hS24Nvaq9ocCsX1WUf+zgEIq4McMiobZTM5
+         B7oRsoTkg+Z8Je08fgj7chH2Jpj4cgnlph0pzYXlLp9OtSUj8lF7FHKQVmSR7ztIoPiM
+         OVS4ZY/pYPW9Cp7XWKK93cAmq4HuSODr4pybi3QvtaIOsJvH3LOEynTkA7uWCxDL+B/8
+         khOXoBw3IkwoQEQ8zFSOGCNBlCjPv3a3XpfaWwmX9b76pcbkIz0A3m3rf1lJAiFW9pRY
+         l5Vw==
+X-Gm-Message-State: AOAM533fxf5ypRkztgZzntY+5NsUHG6SwhsdN1HH7w0MBAGKkXI0jzxZ
+        HPvhgiKnXDz157fCPq/Zhjc=
+X-Google-Smtp-Source: ABdhPJz3JwXH7zCmtl+3Mwn2iiW+9nGV+M6hL+pXbQoAcV1YDSC/sGIlPqhT47so8g9ez5/9OElq6w==
+X-Received: by 2002:a05:6a00:1789:b029:2f4:cb41:ec1d with SMTP id s9-20020a056a001789b02902f4cb41ec1dmr3805646pfg.3.1624003171965;
+        Fri, 18 Jun 2021 00:59:31 -0700 (PDT)
+Received: from localhost.localdomain (220-130-175-235.HINET-IP.hinet.net. [220.130.175.235])
+        by smtp.gmail.com with ESMTPSA id 195sm412598pfw.133.2021.06.18.00.59.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jun 2021 00:59:31 -0700 (PDT)
+From:   Chung-Chiang Cheng <shepjeng@gmail.com>
+X-Google-Original-From: Chung-Chiang Cheng <cccheng@synology.com>
+To:     jlbec@evilplan.org, hch@lst.de, pantelis.antoniou@konsulko.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Chung-Chiang Cheng <cccheng@synology.com>
+Subject: [PATCH] configfs: fix memleak in configfs_release_bin_file
+Date:   Fri, 18 Jun 2021 15:59:25 +0800
+Message-Id: <20210618075925.803052-1-cccheng@synology.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210616160836.590206-1-iangelak@redhat.com> <20210616160836.590206-2-iangelak@redhat.com>
-In-Reply-To: <20210616160836.590206-2-iangelak@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 18 Jun 2021 09:43:36 +0200
-Message-ID: <CAJfpeguiZX5zk_JP+h3f_00f5mF0nPqg9QVvmNvQ0TTV__LS-w@mail.gmail.com>
-Subject: Re: [PATCH 1/3] virtiofs: Add an index to keep track of first request queue
-To:     Ioannis Angelakopoulos <iangelak@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 16 Jun 2021 at 18:09, Ioannis Angelakopoulos
-<iangelak@redhat.com> wrote:
->
-> From: Vivek Goyal <vgoyal@redhat.com>
->
-> We have many virtqueues and first queue which carries fuse normal requests
-> (except forget requests) has index pointed to by enum VQ_REQUEST. This
-> works fine as long as number of queues are not dynamic.
->
-> I am about to introduce one more virtqueue, called notification queue,
-> which will be present only if device on host supports it. That means index
-> of request queue will change depending on if notification queue is present
-> or not.
->
-> So, add a variable to keep track of that index and this will help when
-> notification queue is added in next patch.
->
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> Signed-off-by: Ioannis Angelakopoulos <iangelak@redhat.com>
-> ---
->  fs/fuse/virtio_fs.c | 22 ++++++++++++++++------
->  1 file changed, 16 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index bcb8a02e2d8b..a545e31cf1ae 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -61,6 +61,7 @@ struct virtio_fs {
->         unsigned int nvqs;               /* number of virtqueues */
->         unsigned int num_request_queues; /* number of request queues */
->         struct dax_device *dax_dev;
-> +       unsigned int first_reqq_idx;     /* First request queue idx */
->
->         /* DAX memory window where file contents are mapped */
->         void *window_kaddr;
-> @@ -681,7 +682,9 @@ static int virtio_fs_setup_vqs(struct virtio_device *vdev,
->         if (fs->num_request_queues == 0)
->                 return -EINVAL;
->
-> -       fs->nvqs = VQ_REQUEST + fs->num_request_queues;
+When reading binary attributes in progress, buffer->bin_buffer is setup in
+configfs_read_bin_file() but never freed.
 
-Okay, so VQ_REQUEST now completely lost it's meaning as an index into
-fs->vqs[] array, but VQ_HIPRIO is still used that way.  This looks
-confusing.  Let's just get rid of VQ_REQUEST/VQ_HIPRIO completely, and
-add "#define VQ_HIPRIO_IDX 0".
+Fixes: 03607ace807b4 ("configfs: implement binary attributes")
+Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
+---
+ fs/configfs/file.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-> +       /* One hiprio queue and rest are request queues */
-> +       fs->nvqs = 1 + fs->num_request_queues;
-> +       fs->first_reqq_idx = 1;
->         fs->vqs = kcalloc(fs->nvqs, sizeof(fs->vqs[VQ_HIPRIO]), GFP_KERNEL);
->         if (!fs->vqs)
->                 return -ENOMEM;
-> @@ -701,10 +704,11 @@ static int virtio_fs_setup_vqs(struct virtio_device *vdev,
->         names[VQ_HIPRIO] = fs->vqs[VQ_HIPRIO].name;
->
->         /* Initialize the requests virtqueues */
-> -       for (i = VQ_REQUEST; i < fs->nvqs; i++) {
-> +       for (i = fs->first_reqq_idx; i < fs->nvqs; i++) {
->                 char vq_name[VQ_NAME_LEN];
->
-> -               snprintf(vq_name, VQ_NAME_LEN, "requests.%u", i - VQ_REQUEST);
-> +               snprintf(vq_name, VQ_NAME_LEN, "requests.%u",
-> +                        i - fs->first_reqq_idx);
->                 virtio_fs_init_vq(&fs->vqs[i], vq_name, VQ_REQUEST);
->                 callbacks[i] = virtio_fs_vq_done;
->                 names[i] = fs->vqs[i].name;
-> @@ -1225,7 +1229,7 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
->  static void virtio_fs_wake_pending_and_unlock(struct fuse_iqueue *fiq)
->  __releases(fiq->lock)
->  {
-> -       unsigned int queue_id = VQ_REQUEST; /* TODO multiqueue */
-> +       unsigned int queue_id;
->         struct virtio_fs *fs;
->         struct fuse_req *req;
->         struct virtio_fs_vq *fsvq;
-> @@ -1239,6 +1243,7 @@ __releases(fiq->lock)
->         spin_unlock(&fiq->lock);
->
->         fs = fiq->priv;
-> +       queue_id = fs->first_reqq_idx;
->
->         pr_debug("%s: opcode %u unique %#llx nodeid %#llx in.len %u out.len %u\n",
->                   __func__, req->in.h.opcode, req->in.h.unique,
-> @@ -1316,7 +1321,7 @@ static int virtio_fs_fill_super(struct super_block *sb, struct fs_context *fsc)
->
->         err = -ENOMEM;
->         /* Allocate fuse_dev for hiprio and notification queues */
-> -       for (i = 0; i < fs->nvqs; i++) {
-> +       for (i = 0; i < fs->first_reqq_idx; i++) {
+diff --git a/fs/configfs/file.c b/fs/configfs/file.c
+index e26060dae70a..cdd23f4a51c8 100644
+--- a/fs/configfs/file.c
++++ b/fs/configfs/file.c
+@@ -466,9 +466,13 @@ static int configfs_release_bin_file(struct inode *inode, struct file *file)
+ {
+ 	struct configfs_buffer *buffer = file->private_data;
+ 
+-	buffer->read_in_progress = false;
+-
+-	if (buffer->write_in_progress) {
++	if (buffer->read_in_progress) {
++		buffer->read_in_progress = false;
++		vfree(buffer->bin_buffer);
++		buffer->bin_buffer = NULL;
++		buffer->bin_buffer_size = 0;
++		buffer->needs_read_fill = 1;
++	} else if (buffer->write_in_progress) {
+ 		struct configfs_fragment *frag = to_frag(file);
+ 		buffer->write_in_progress = false;
+ 
+-- 
+2.25.1
 
-Previous code didn't seem to do what comment said, while new code
-does.  So while the change seems correct, it should go into a separate
-patch with explanation.
-
->                 struct virtio_fs_vq *fsvq = &fs->vqs[i];
->
->                 fsvq->fud = fuse_dev_alloc();
-> @@ -1325,7 +1330,7 @@ static int virtio_fs_fill_super(struct super_block *sb, struct fs_context *fsc)
->         }
->
->         /* virtiofs allocates and installs its own fuse devices */
-> -       ctx->fudptr = NULL;
-> +       ctx->fudptr = (void **)&fs->vqs[fs->first_reqq_idx].fud;
-
-I don't understand this.
-
->         if (ctx->dax) {
->                 if (!fs->dax_dev) {
->                         err = -EINVAL;
-> @@ -1339,9 +1344,14 @@ static int virtio_fs_fill_super(struct super_block *sb, struct fs_context *fsc)
->         if (err < 0)
->                 goto err_free_fuse_devs;
->
-> +       fc = fs->vqs[fs->first_reqq_idx].fud->fc;
-> +
-
-Nor this.
-
->         for (i = 0; i < fs->nvqs; i++) {
->                 struct virtio_fs_vq *fsvq = &fs->vqs[i];
->
-> +               if (i == fs->first_reqq_idx)
-> +                       continue;
-> +
-
-Nor this.    There's something subtle going on here, that's not
-mentioned in the patch header.
-
-Thanks,
-Miklos
