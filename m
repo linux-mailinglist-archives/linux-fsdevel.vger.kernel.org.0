@@ -2,108 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA9E73AD0F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 19:09:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 038D53AD104
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 19:14:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233233AbhFRRLq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 13:11:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53500 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231478AbhFRRLn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 13:11:43 -0400
-Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43771C06175F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 10:09:33 -0700 (PDT)
-Received: by mail-qt1-x834.google.com with SMTP id l2so5298252qtq.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 10:09:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4NOrwzxRJlcGICPYrhUba54bgGdQ7/VU92/Q3ir7evY=;
-        b=lTO79RcKMGPliGX8pcleoEMngI6k/CwfeVJMXEyzDQKx1czuTjHNBfJjSOyag22fbM
-         cbC6ZH0lwWDpXS3Up2fYwjFAiVdo5tigdUb2bCpdbswuNYk6JtPaiqLk2VNPcOJTTjj3
-         G7GLJDz4zE1mXtTC2rna8924cjBkSJzQ3zM0C3+6T8hHEJu1j9l7KTlNC83+Muo58oqa
-         yWw/SmkPqoWLN8ZWdppvgzxakOB3mx4zxog3eOHeq//GX39iOsZ23S6tcEoJI9GLJsDU
-         pepSvQcBKH1en2jXZGO2E8bOodjc2BJrPUM9cMXAu4I783iWxxhKa0hmSISOzCC2GvF0
-         mOvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4NOrwzxRJlcGICPYrhUba54bgGdQ7/VU92/Q3ir7evY=;
-        b=sztxyv7zQWtunsOxNQjADgk7+t1Jbm1wE9Lxr87Kqa/RL0vJgEyAt+GPxRKjJ+OOC+
-         SHpaQzPoofHwVT62OQwleS60lcqeEQt+wIOMMySsu0lVvt+qlwy0IgEV0trR8gNO/aag
-         CP+v5JB4lF5DVXplvghSF3DcIMVk3GgV4UlqthtHyG/dKq0L4I+FiI2fxpMk1eukDMmH
-         aHFoVLJrR4Z43Sp5X5nGEtO7v06j+2sikNl8VNVbEFwua4gWkKnMa13JCTlz+Tfe3Fin
-         RdD6Pi2745cVkm1JYcMGWaqEhND1KDq36/ZpbfC4AgFD2vy4cXTnqsdj2LbK30qJCSLc
-         5HpQ==
-X-Gm-Message-State: AOAM530OpY7j2N0ZeUUByfUEXSnC8uht0F6Nw6bD1kmr1IzIs3N25tfV
-        1niZayZAdqkk/CPcSVpRcB61oA==
-X-Google-Smtp-Source: ABdhPJw4e+jfpVDo37iUkRBB/jk3NpOfIkAm19e9INoUu3m8YmPekAemW3VXjAuhd7KzOj9bG/XkOw==
-X-Received: by 2002:ac8:6641:: with SMTP id j1mr11458339qtp.103.1624036172483;
-        Fri, 18 Jun 2021 10:09:32 -0700 (PDT)
-Received: from localhost (70.44.39.90.res-cmts.bus.ptd.net. [70.44.39.90])
-        by smtp.gmail.com with ESMTPSA id u18sm5521044qta.38.2021.06.18.10.09.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jun 2021 10:09:31 -0700 (PDT)
-Date:   Fri, 18 Jun 2021 13:09:30 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Roman Gushchin <guro@fb.com>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 4/4] vfs: keep inodes with page cache off the inode
- shrinker LRU
-Message-ID: <YMzTSteDJkZkVziO@cmpxchg.org>
-References: <20210614211904.14420-1-hannes@cmpxchg.org>
- <20210614211904.14420-4-hannes@cmpxchg.org>
- <20210615062640.GD2419729@dread.disaster.area>
- <YMj2YbqJvVh1busC@cmpxchg.org>
- <20210616012008.GE2419729@dread.disaster.area>
- <YMmD9xhBm9wGqYhf@cmpxchg.org>
- <20210616183043.cdd36c5ca6bee8614c609a90@linux-foundation.org>
+        id S236054AbhFRRRG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 13:17:06 -0400
+Received: from foss.arm.com ([217.140.110.172]:44460 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232598AbhFRRRF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Jun 2021 13:17:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA8541424;
+        Fri, 18 Jun 2021 10:14:55 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB7143F70D;
+        Fri, 18 Jun 2021 10:14:52 -0700 (PDT)
+Date:   Fri, 18 Jun 2021 18:14:50 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     YT Chang <yt.chang@mediatek.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Paul Turner <pjt@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+Subject: Re: [PATCH 1/1] sched: Add tunable capacity margin for fis_capacity
+Message-ID: <20210618171450.c5tgggydukcmap5v@e107158-lin.cambridge.arm.com>
+References: <1623855954-6970-1-git-send-email-yt.chang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210616183043.cdd36c5ca6bee8614c609a90@linux-foundation.org>
+In-Reply-To: <1623855954-6970-1-git-send-email-yt.chang@mediatek.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 16, 2021 at 06:30:43PM -0700, Andrew Morton wrote:
-> On Wed, 16 Jun 2021 00:54:15 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > On Wed, Jun 16, 2021 at 11:20:08AM +1000, Dave Chinner wrote:
-> > > On Tue, Jun 15, 2021 at 02:50:09PM -0400, Johannes Weiner wrote:
-> > > > On Tue, Jun 15, 2021 at 04:26:40PM +1000, Dave Chinner wrote:
-> > > > > On Mon, Jun 14, 2021 at 05:19:04PM -0400, Johannes Weiner wrote:
-> > > > > > @@ -1123,6 +1125,9 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
-> > > > > >  			shadow = workingset_eviction(page, target_memcg);
-> > > > > >  		__delete_from_page_cache(page, shadow);
-> > > > > >  		xa_unlock_irq(&mapping->i_pages);
-> > > > > > +		if (mapping_shrinkable(mapping))
-> > > > > > +			inode_add_lru(mapping->host);
-> > > > > > +		spin_unlock(&mapping->host->i_lock);
-> > > > > >  
-> > > > > 
-> > > > > No. Inode locks have absolutely no place serialising core vmscan
-> > > > > algorithms.
-> > > > 
-> > > > What if, and hear me out on this one, core vmscan algorithms change
-> > > > the state of the inode?
-> > > 
-> > > Then the core vmscan algorithm has a layering violation.
-> > 
-> > You're just playing a word game here.
+Hi YT Chang
+
+Thanks for the patch.
+
+On 06/16/21 23:05, YT Chang wrote:
+> Currently, the margin of cpu frequency raising and cpu overutilized are
+> hard-coded as 25% (1280/1024). Make the margin tunable
+
+The way I see cpu overutilized is that we check if we're above the 80% range.
+
+> to control the aggressive for placement and frequency control. Such as
+> for power tuning framework could adjust smaller margin to slow down
+> frequency raising speed and let task stay in smaller cpu.
 > 
-> Don't think so.  David is quite correct in saying that vmscan shouldn't
-> mess with inode state unless it's via address_space_operations?
+> For light loading scenarios, like beach buggy blitz and messaging apps,
+> the app threads are moved big core with 25% margin and causing
+> unnecessary power.
+> With 0% capacity margin (1024/1024), the app threads could be kept in
+> little core and deliver better power results without any fps drop.
+> 
+> capacity margin        0%          10%          20%          30%
+>                      current        current       current      current
+>                   Fps  (mA)    Fps    (mA)   Fps   (mA)    Fps  (mA)
+> Beach buggy blitz  60 198.164  60   203.211  60   209.984  60  213.374
+> Yahoo browser      60 232.301 59.97 237.52  59.95 248.213  60  262.809
+> 
+> Change-Id: Iba48c556ed1b73c9a2699e9e809bc7d9333dc004
+> Signed-off-by: YT Chang <yt.chang@mediatek.com>
+> ---
 
-It seemed to me the complaint was more about vmscan propagating this
-state into the inode in general - effecting fs inode acquisitions and
-LRU manipulations from the page reclaim callstack - regardless of
-whether they are open-coded or indirect through API functions?
+We are aware of the cpu overutilized value not being adequate on some modern
+platforms. But I haven't considered or seen any issues with the frequency one.
+So the latter is an interesting one.
 
-Since I mentioned better encapsulation but received no response...
+I like your patch, but sadly I can't agree with it too.
+
+The dilemma is that there are several options forward based on what we've seen
+vendors do/want:
+
+	1. Modify the margin to be small for high end SoC and larger for lower
+	   end ones. Which is what your patch allows.
+	2. Some vendors have a per cluster (perf domain) value. So within the
+	   same SoC different margins are used for each capacity level.
+	3. Some vendors have asymmetric margin. A margin to move up and a
+	   different margin to go down.
+
+We're still not sure which approach is the best way forward.
+
+Your patch allows 1, but if it turned out options 2 or 3 are better; the ABI
+will make it hard to change.
+
+Have you considered all these options? Do you have any data to help support
+1 is enough for the range of platforms you work with at least?
+
+We were considering also whether we can have a smarter logic to automagically
+set a better value for the platform, but no concrete suggestions yet.
+
+So while I agree the current margin value of one size fits all is no longer
+suitable. But the variation of hardware and the possible approaches we could
+take need more careful thinking and consideration before committing to an ABI.
+
+This patch is a good start for this discussion :)
+
+
+Thanks
+
+--
+Qais Yousef
