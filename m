@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B872D3ACF36
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 17:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74F603ACF43
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 17:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235475AbhFRPhG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 11:37:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60050 "EHLO mail.kernel.org"
+        id S235559AbhFRPiv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 11:38:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229768AbhFRPhF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 11:37:05 -0400
+        id S235536AbhFRPiu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Jun 2021 11:38:50 -0400
 Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B96961205;
-        Fri, 18 Jun 2021 15:34:54 +0000 (UTC)
-Date:   Fri, 18 Jun 2021 11:34:52 -0400
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D26B610A2;
+        Fri, 18 Jun 2021 15:36:39 +0000 (UTC)
+Date:   Fri, 18 Jun 2021 11:36:37 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Matthew Wilcox <willy@infradead.org>,
@@ -36,8 +36,8 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         Linux-Arch <linux-arch@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>
 Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-Message-ID: <20210618113452.7ab0033e@oasis.local.home>
-In-Reply-To: <CAMuHMdWqUkfe7kdBO+eQdXHzhpygH=TivOBNqQJujyqP=wM5cw@mail.gmail.com>
+Message-ID: <20210618113637.5890bbcf@oasis.local.home>
+In-Reply-To: <20210618113452.7ab0033e@oasis.local.home>
 References: <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
         <20210610182318.jrxe3avfhkqq7xqn@nitro.local>
         <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
@@ -50,6 +50,7 @@ References: <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
         <CAMuHMdWK4NPzanF68TMVuihLFdRzxhs0EkbZdaA=BUkZo-k6QQ@mail.gmail.com>
         <YMy4UjWH565ElFtZ@casper.infradead.org>
         <CAMuHMdWqUkfe7kdBO+eQdXHzhpygH=TivOBNqQJujyqP=wM5cw@mail.gmail.com>
+        <20210618113452.7ab0033e@oasis.local.home>
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -58,16 +59,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 18 Jun 2021 17:29:04 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Fri, 18 Jun 2021 11:34:52 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> W.r.t. the other speaker in the room, isn't that similar to the normal mic,
-> and can't that be handled at the receiving side?
-> There will be a bit more delay involved, though.
+> How many times have you been in a conference where the normal mic and
+> speaker caused a nasty feedback loop?
+> 
+> I'm not sure how well phone mics and room speakers will work.
 
-How many times have you been in a conference where the normal mic and
-speaker caused a nasty feedback loop?
-
-I'm not sure how well phone mics and room speakers will work.
+BTW, Don't take these criticisms as a rejection of your idea. I
+actually like the idea. But to implement it, we need to go through all
+the scenarios that will likely go wrong, if we want it to work.
 
 -- Steve
