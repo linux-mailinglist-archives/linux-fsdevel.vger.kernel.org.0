@@ -2,78 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F0CA3AC3CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 08:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 046E63AC3FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 08:34:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbhFRG07 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 02:26:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49006 "EHLO
+        id S231872AbhFRGgk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 02:36:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229768AbhFRG06 (ORCPT
+        with ESMTP id S231168AbhFRGgj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 02:26:58 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A48B4C061574;
-        Thu, 17 Jun 2021 23:24:48 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id g142so8363940qke.4;
-        Thu, 17 Jun 2021 23:24:48 -0700 (PDT)
+        Fri, 18 Jun 2021 02:36:39 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32EC7C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 23:34:30 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id w4so4474383ior.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 23:34:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZDqba+HMo2hjH8VMNmzNS2XYGWojB7LznAwCzaKmjNA=;
-        b=U/v18vCMsQ63p8R8w0WJY9noBW6IndVG/EBdHCCS8NtKGIw+3oOkGNds39312yJ+AL
-         l2y345byLylhgy3L9iTmHmqWvQnl7iotcShqLVtlixsj+9TrUamaEl6yuXZ49gulYwys
-         KdokcyvQguVwnsn8Tr36uxk+mCC1pvSASA+HS+lz8Iw3K5Ff+wEk2EugaG0/QBge2ZD4
-         EvLrUpLMgaxLkXex3JNd4gNkjdY2EIGaOPsDVmsfvfnXV/f2T9YmaVFerOhD5PsxxDvs
-         c/Pww4pVzLlyosL58ny9sy9wchRw6K2IRTacUbZ7xAmnkbhruR0Rmd8s8r/EWTtQ03vn
-         T9Jg==
+        bh=ZvotrOY1+J4zuQC43YmApYUw5++sfgFymUtmcDXqmKc=;
+        b=hY68nO0+2AQR4/R1zXKiWJVzRVvNdIKSMCTlzobEwVVW91J7Ul3zDpbFIwhf7qfkAO
+         eZUboKVF3ZMQEwsZp/PqXXNElDkb+fLOgd3MFFdGaczwuH4TR3kZc9FvlIF185MsOVTB
+         JTQmz7gZYBcrq+rhj54uTwVxwHADKtl2koCbFpYXVSxx2k6fEgC6kqfZ5o8AauhhYtNV
+         N3WE2js+G8OtykXd27Zy1w4EMiyfvkaT2OPtZTJ1F6VD4LrDgwZG1lNOs73pVyqs3F4o
+         8DQRIi0FSTyrLTiAL08nwQptDHSAnA4gtjkGmwjNG30DpX+5xwYpynbGzWFBSMqcB5di
+         EA5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZDqba+HMo2hjH8VMNmzNS2XYGWojB7LznAwCzaKmjNA=;
-        b=dzVeUnGXOaTc2QXes1ejRuny1444XJj2nfDTVsJotoaZ/CY5hz1mGbhi6ZdQ1NKz6q
-         gvhIUMBTv9lNKGRzopUROO8x757Z0WFpkgTVH613OSMj6qm8WxzD0F/IWiXR786GB2T9
-         h6EtxaZJNIXkXmO35O4LEE/KAPVQBuJyX59Z/Yc15mR01ztcupNH+Io6QIOj0c63rYL8
-         KLj18eG9iHJgQcZbp8NIn8aksntm8uF5ZqQfLDCdh3pmBWJUPfLikEadb6qA4cbm++Uo
-         kH44905zIePa7jJsZqDuiKZziuydWx7ynolwJZCV6jdB90cSF3bsoDrAEYwRq5cHtyuP
-         x1tw==
-X-Gm-Message-State: AOAM530bbxMlxutit+8xbWg2AYb9xElC+98OkBFDyrEsxWHDHBzzgm8N
-        nBa37vuVRF4pkHq/rPHzZEZcMZNyqp4fWHZv4gDs4K6dJF6XXQ==
-X-Google-Smtp-Source: ABdhPJx95q0CiJtPFE8oKhtUprF0W2IOD/6djMLJAgeig1lTFp7t7s/w4I1tO06yGzU2KdR57UXqaXmz8UoGrt+i/LI=
-X-Received: by 2002:a25:4d04:: with SMTP id a4mr10863333ybb.311.1623997487912;
- Thu, 17 Jun 2021 23:24:47 -0700 (PDT)
+        bh=ZvotrOY1+J4zuQC43YmApYUw5++sfgFymUtmcDXqmKc=;
+        b=rY49UY3EzYlDvvyJabbiLVDc0hK0GqeYFgUwZrFq1owr4ad8Z63jYVrpUcHGlqmcTv
+         diO4WBbOv5XHpg9fRItUX/zJsWPsAZ644vKB9BO1++H4TOuUIzoKm6jFZPwPsX9kC7L9
+         urCpKxC9Rd9w90q06FVoBOpUNorb3A4THaYdd0o7EHS0AB7zN4w303xDZanxfA9KPI3I
+         RtBVcC8yfrt4FfgGKQdtO+YFdbaHbyCI4ru1ssaEnLT/dQeoS97O5QUW0UWDuqlrb+lt
+         4AKtcfYuOKgZ7tKHYUXxRsdi1gQ1jmZFGy8a66IL8H+nlHi+1F0VraObZnmFh6v6POOi
+         wVIw==
+X-Gm-Message-State: AOAM5312dNgIvIa6hKVW/Aykm/zzCNoe0A4DNK1e5f4oOL0sm+JF5A6d
+        twCZAua4Jm15WlgAqo9M5b68pKvPNERH80RQrws=
+X-Google-Smtp-Source: ABdhPJw2l6MghQr2hZwA5iDBDl81fczJsYlnfAZLwpw5sa4pe8ybfUUSinc8kxecS2d/TMso+GC2fnrlyof4BaDyx3I=
+X-Received: by 2002:a05:6638:358e:: with SMTP id v14mr1912060jal.120.1623998069659;
+ Thu, 17 Jun 2021 23:34:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210603051836.2614535-1-dkadashev@gmail.com>
-In-Reply-To: <20210603051836.2614535-1-dkadashev@gmail.com>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Fri, 18 Jun 2021 13:24:37 +0700
-Message-ID: <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
-Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat support
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+References: <20210609181158.479781-1-amir73il@gmail.com> <20210617212801.GE1142820@redhat.com>
+In-Reply-To: <20210617212801.GE1142820@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 18 Jun 2021 09:34:18 +0300
+Message-ID: <CAOQ4uxiJdqAisS+ShC1+QmXAoUjGG_mrnFPRWHLNKFMoYCfqFA@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix illegal access to inode with reused nodeid
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, Max Reitz <mreitz@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 3, 2021 at 12:18 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+On Fri, Jun 18, 2021 at 12:28 AM Vivek Goyal <vgoyal@redhat.com> wrote:
 >
-> This started out as an attempt to add mkdirat support to io_uring which
-> is heavily based on renameat() / unlinkat() support.
+> On Wed, Jun 09, 2021 at 09:11:58PM +0300, Amir Goldstein wrote:
+> > Server responds to LOOKUP and other ops (READDIRPLUS/CREATE/MKNOD/...)
+> > with outarg containing nodeid and generation.
+> >
+> > If a fuse inode is found in inode cache with the same nodeid but
+> > different generation, the existing fuse inode should be unhashed and
+> > marked "bad" and a new inode with the new generation should be hashed
+> > instead.
+> >
+> > This can happen, for example, with passhrough fuse filesystem that
+> > returns the real filesystem ino/generation on lookup and where real inode
+> > numbers can get recycled due to real files being unlinked not via the fuse
+> > passthrough filesystem.
 >
-> During the review process more operations were added (linkat, symlinkat,
-> mknodat) mainly to keep things uniform internally (in namei.c), and
-> with things changed in namei.c adding support for these operations to
-> io_uring is trivial, so that was done too. See
-> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
+> Hi Amir,
+>
+> Is the code for filesystem you have written is public? If yes, can you
+> please provide a link.
 
-Ping. Jens, are we waiting for the audit change to be merged before this
-can go in?
+Yes, I provided the link in the discussion about the bug:
 
--- 
-Dmitry Kadashev
+[1] https://github.com/amir73il/libfuse/commits/cachegwfs
+
+>
+> Is there an API to lookup generation number from host filesystem. Or
+
+There is FS_IOC_GETVERSION which a few fs implement
+(ext4/xfs/btrfs/f2fs), but I don't use it.
+
+> that's something your file server updates based on file handle has
+> changed.
+>
+
+My filesystem takes ino/gen from file handle.
+The file handle format is filesystem specific - but my filesystem only
+has support for ext4 and xfs, so it makes used of that to extract
+the generation from file handle.
+
+When inode number is 32bit (ext4) the entire file handle is encoded
+into 64bit nodeid.
+
+Thanks,
+Amir.
