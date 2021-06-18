@@ -2,53 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 624063ACD02
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 16:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A2BE3ACD23
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 16:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234010AbhFROEB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 10:04:01 -0400
-Received: from verein.lst.de ([213.95.11.211]:35031 "EHLO verein.lst.de"
+        id S234295AbhFROK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 10:10:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233973AbhFROEA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 10:04:00 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D8BE068D08; Fri, 18 Jun 2021 16:01:47 +0200 (CEST)
-Date:   Fri, 18 Jun 2021 16:01:47 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
-        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
+        id S234277AbhFROKy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Jun 2021 10:10:54 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48652611B0;
+        Fri, 18 Jun 2021 14:08:44 +0000 (UTC)
+Date:   Fri, 18 Jun 2021 10:08:42 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     David Hildenbrand <david@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Greg KH <greg@kroah.com>, Christoph Lameter <cl@gentwo.de>,
+        Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
+        ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 13/16] block: switch polling to be bio based
-Message-ID: <20210618140147.GA16258@lst.de>
-References: <20210615131034.752623-1-hch@lst.de> <20210615131034.752623-14-hch@lst.de> <YMliP6sFVuPhMbOB@T590>
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
+Message-ID: <20210618100842.62b5eff0@gandalf.local.home>
+In-Reply-To: <87a0352d-7bd1-94fe-5586-2322c98cae15@metux.net>
+References: <YH2hs6EsPTpDAqXc@mit.edu>
+        <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
+        <YIx7R6tmcRRCl/az@mit.edu>
+        <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de>
+        <YK+esqGjKaPb+b/Q@kroah.com>
+        <c46dbda64558ab884af060f405e3f067112b9c8a.camel@HansenPartnership.com>
+        <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com>
+        <87a0352d-7bd1-94fe-5586-2322c98cae15@metux.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMliP6sFVuPhMbOB@T590>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 16, 2021 at 10:30:23AM +0800, Ming Lei wrote:
-> Not sure disk is valid, we only hold the disk when opening a bdev, but
-> the bdev can be closed during polling.
+On Fri, 18 Jun 2021 15:34:19 +0200
+"Enrico Weigelt, metux IT consult" <lkml@metux.net> wrote:
 
-How?  On a block device the caller needs to hold the block device open
-to read/write from it.  On a file systems the file systems needs to
-be mounted, which also holds a bdev reference.
+> US americans should remind themselves of the 2nd amendment.
 
-> Also disk always holds one
-> reference on request queue, so if disk is valid, no need to grab queue's
-> refcnt in bio_poll().
+This is not the place to have this discussion. Please stop.
 
-But we need to avoid going into the lowlevel blk-mq polling code to not
-reference the potentially freed hctxs or tags as correctly pointed by
-yourself on the previous iteration.
+You are an active kernel developer, you should know better. Continuing this
+line of conversation will only guarantee that you will be placed in the
+/dev/null folder of many developers procmailrc filters.
+
+You will be for me, if you decide to continue this.
+
+-- Steve
