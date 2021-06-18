@@ -2,106 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F3E3AD07D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 18:33:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D877B3AD088
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 18:35:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235922AbhFRQfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 12:35:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235534AbhFRQfe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 12:35:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 110C8613D5;
-        Fri, 18 Jun 2021 16:33:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624034004;
-        bh=JO2gLgelUahEc1dNQVYz2I/ragI2iCfD3iyf0s0vVmc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gsyLR0OZOilo0EEdP29NRWHxpna2TcpNAh65/OuClP+XuPWLnj9OcMeqeYx7BXQ2X
-         pZDWq3/0VwY1KSWIQKSZ7U+YlmUMx0i8xoW7NWyjgBrNe3L/HnVZi4Ku6LZrsAF2gF
-         1DjKkgbUD46s25gdRbsthB9ZKHcwMD2Kz2hfYjvzp1KNNoJxbqMcNMmhEFO+Gr51pq
-         ecUl9tZOzzQR6w9opI5NTaWVeIYwQYtlMu4LWKFyTF1MqXBW97fMF714JB/oWyeiO5
-         rZxlsOqaJ73tSRcuGelVCZxhBg/fQvl3AVhF0At2f8PTHsdYX9KxL3Zb4UQcpmXyis
-         eLd1k4eZDHnzA==
-Date:   Fri, 18 Jun 2021 18:33:16 +0200
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
-        Christoph Lameter <cl@gentwo.de>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
-        ksummit@lists.linux.dev,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, netdev <netdev@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-Message-ID: <20210618183316.33766f1e@coco.lan>
-In-Reply-To: <20210618113452.7ab0033e@oasis.local.home>
-References: <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
-        <20210610182318.jrxe3avfhkqq7xqn@nitro.local>
-        <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
-        <20210610152633.7e4a7304@oasis.local.home>
-        <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
-        <YMyjryXiAfKgS6BY@pendragon.ideasonboard.com>
-        <cd7ffbe516255c30faab7a3ee3ee48f32e9aa797.camel@HansenPartnership.com>
-        <CAMuHMdVcNfDvpPXHSkdL3VuLXCX5m=M_AQF-P8ZajSdXt8NdQg@mail.gmail.com>
-        <20210618103214.0df292ec@oasis.local.home>
-        <CAMuHMdWK4NPzanF68TMVuihLFdRzxhs0EkbZdaA=BUkZo-k6QQ@mail.gmail.com>
-        <YMy4UjWH565ElFtZ@casper.infradead.org>
-        <CAMuHMdWqUkfe7kdBO+eQdXHzhpygH=TivOBNqQJujyqP=wM5cw@mail.gmail.com>
-        <20210618113452.7ab0033e@oasis.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        id S234346AbhFRQhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 12:37:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232339AbhFRQho (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Jun 2021 12:37:44 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F274C061768
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 09:35:34 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id s15so9418385edt.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 09:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VGe41m1dhvc9F4xTBJF8LWvGPtXlbkSKNbdrcpkCw2c=;
+        b=YqTMsQupJJ/Rqehm1zstN9PSsc9uVZ1jbDVE9FhzNmnhRFqbQdoBELADoXCNnYIV12
+         jxHeaZhwPMN0W4/ael9iuDEgkI+QiR8gzNF0LvnIk7qTK0tPGXpxyzUoget2StZ89uDL
+         lIfS91n+xEOlXiNRB/5dtAGg3tHcF8XlFyKVg6J0+tYyj10781XQNbvX170nyUrM4WM2
+         x+XghRcoOwsGJs1c0ZISS0O+7lynGursFbY5vZf0Z85atER/nv+BdYUnUr2vwfBitevF
+         Iy5+n5VauhgmSdrc+KMdclZASC4ielzA8kN20FfHdZOEnkS1q0tPaSMiq0gTl+YFrzOp
+         Jvkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VGe41m1dhvc9F4xTBJF8LWvGPtXlbkSKNbdrcpkCw2c=;
+        b=rLcIq4p+pAvprK53XWEiJn5HfIeq/6h9MZbQZcvLiUt2yFiNqqZQ2sjCaOMiyI4AxG
+         mx92K4a3Eca2jC1L5P2AxZIOJ08pnagAVE/Z8uRlXO17eo+sdqK1V4EK+tcR8SYRTJeq
+         IMx0/xrHQdcoiGUkFSMeI0UjdBwjVY+DxTWMsMotHOl0qP0kSHBH0fxQQ1H9HbhxL0l6
+         F4g4fLztIArdUX2nVauVlgkMI/IqniAI7oCg0b/wHHWhMC1rWoEyTwVthWdsl8DimVtO
+         Whir3hDJnHPniKgts2da0uM/HTeTBPziA2tu35snwqnDFB0K+QPxb3MvyM4S5JzA0+Ah
+         YyyA==
+X-Gm-Message-State: AOAM533j4UAJYlCz5aP/o42Gr25jfIpa798+VQxEo60S9ciOR4MRYZOP
+        M/1Ml2tttqjJA55I1g9D+NuVs0LHb520gm9OjIrz
+X-Google-Smtp-Source: ABdhPJwwTr61vynpmpeTuVD7iHP9RcUsJA1UzkDCo5K8A+rMW/uXFDAEnX2bTy4S8B0jfm76yIVpOeSx6ENs4l4Szt4=
+X-Received: by 2002:aa7:d892:: with SMTP id u18mr6323002edq.196.1624034132630;
+ Fri, 18 Jun 2021 09:35:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <ee75bde9a17f418984186caa70abd33b@huawei.com> <20210616132227.999256-1-roberto.sassu@huawei.com>
+ <6e1c9807-d7e8-7c26-e0ee-975afa4b9515@linux.ibm.com> <9cb676de40714d0288f85292c1f1a430@huawei.com>
+ <d822efcc0bb05178057ab2f52293575124cde1fc.camel@linux.ibm.com>
+ <CAHC9VhTv6Zn8gYaB6cG4wPzy_Ty0XjOM-QL4cZ525RnhFY4bTQ@mail.gmail.com> <c92d0ac71a8db8bb016a7e94b83c193956d71a26.camel@linux.ibm.com>
+In-Reply-To: <c92d0ac71a8db8bb016a7e94b83c193956d71a26.camel@linux.ibm.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 18 Jun 2021 12:35:22 -0400
+Message-ID: <CAHC9VhRb_Xg11c-qhQUY_KPf6dyHn06NYACigjN4ee+p8NtB6A@mail.gmail.com>
+Subject: Re: [PATCH] fs: Return raw xattr for security.* if there is size
+ disagreement with LSMs
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Em Fri, 18 Jun 2021 11:34:52 -0400
-Steven Rostedt <rostedt@goodmis.org> escreveu:
+On Fri, Jun 18, 2021 at 12:04 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> On Thu, 2021-06-17 at 23:18 -0400, Paul Moore wrote:
+> > On Thu, Jun 17, 2021 at 11:28 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > > On Thu, 2021-06-17 at 07:09 +0000, Roberto Sassu wrote:
+> >
+> > ...
+> >
+> > > > An alternative would be to do the EVM verification twice if the
+> > > > first time didn't succeed (with vfs_getxattr_alloc() and with the
+> > > > new function that behaves like vfs_getxattr()).
+> > >
+> > > Unfortunately, I don't see an alternative.
+> >
+> > ... and while unfortunate, the impact should be non-existant if you
+> > are using the right tools to label files or ensuring that you are
+> > formatting labels properly if doing it by hand.
+> >
+> > Handling a corner case is good, but I wouldn't add a lot of code
+> > complexity trying to optimize it.
+>
+> From userspace it's really difficult to understand the EVM signature
+> verification failure is due to the missing NULL.
 
-> On Fri, 18 Jun 2021 17:29:04 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> 
-> > W.r.t. the other speaker in the room, isn't that similar to the normal mic,
-> > and can't that be handled at the receiving side?
-> > There will be a bit more delay involved, though.  
-> 
-> How many times have you been in a conference where the normal mic and
-> speaker caused a nasty feedback loop?
+I would argue that any signature verification failure, regardless of
+the mechanism, is hard to understand.  It either passes or it fails,
+and if it fails good luck trying to determine what exactly isn't
+matching up; especially if you really don't know the Right Value.
 
-I never used, but there are some devices that can work as automatic feedback 
-suppressors. They basically detect a feedback loop and add notch filter(s) to
-the frequency(ies) that are looping. Some high-end digital mixers have this
-feature embedded (but the operator may need to enable it).
+What I mean by the corner case was the fact that the recommended tools
+should always do the right thing with respect to '\0' termination,
+this should really only be an issue if someone is winging it and doing
+it by hand or with their own tools.
 
-Yet, you may still hear the feedback loop while the algorithm is detecting 
-and correcting the issue, as it takes 100 ms to 400ms to detect and filter
-a single feedback frequency.
-
-> I'm not sure how well phone mics and room speakers will work.
-
-I guess that this depends on how the environment is setup. A good
-digital mixer can be set with a gate threshold. If the volume is below
-the threshold, the mic will be muted. 
-
-They can also be setup to have just one microphone group, where only
-one microphone will have the volume raised on a given time. So, if
-someone speaks on a mic, all the others are muted or attenuated.
-
-Yet, I guess this is not the usual "package" provided by hotels.
-Those setups may require extra devices and technical people that
-knows now to use such features.
-
-Thanks,
-Mauro
+-- 
+paul moore
+www.paul-moore.com
