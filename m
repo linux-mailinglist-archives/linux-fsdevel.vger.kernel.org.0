@@ -2,105 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 046E63AC3FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 08:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 997773AC46C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 09:01:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231872AbhFRGgk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 02:36:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51178 "EHLO
+        id S231732AbhFRHEB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 03:04:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231168AbhFRGgj (ORCPT
+        with ESMTP id S231690AbhFRHEA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 02:36:39 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32EC7C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 23:34:30 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id w4so4474383ior.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jun 2021 23:34:30 -0700 (PDT)
+        Fri, 18 Jun 2021 03:04:00 -0400
+Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA89EC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 00:01:50 -0700 (PDT)
+Received: by mail-vs1-xe2a.google.com with SMTP id x8so4433737vso.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 00:01:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZvotrOY1+J4zuQC43YmApYUw5++sfgFymUtmcDXqmKc=;
-        b=hY68nO0+2AQR4/R1zXKiWJVzRVvNdIKSMCTlzobEwVVW91J7Ul3zDpbFIwhf7qfkAO
-         eZUboKVF3ZMQEwsZp/PqXXNElDkb+fLOgd3MFFdGaczwuH4TR3kZc9FvlIF185MsOVTB
-         JTQmz7gZYBcrq+rhj54uTwVxwHADKtl2koCbFpYXVSxx2k6fEgC6kqfZ5o8AauhhYtNV
-         N3WE2js+G8OtykXd27Zy1w4EMiyfvkaT2OPtZTJ1F6VD4LrDgwZG1lNOs73pVyqs3F4o
-         8DQRIi0FSTyrLTiAL08nwQptDHSAnA4gtjkGmwjNG30DpX+5xwYpynbGzWFBSMqcB5di
-         EA5g==
+        bh=OH59EQaFszbJ3L0jQevna/zcsPt7eeIqoBHNldN0uLk=;
+        b=RQYKJB2jgxRi/Zfa5bMBWe0fok+eeJXe2E+YIRAprXYu6i1q/sRvFlP7B0dcy12i/s
+         5CpI8HMXxFHPznXGW23UZ/dGLVCIOHqzCrtlxPvC3frBINMEIHRvwrMhZiJa4nN3XPQi
+         tuHTOvFUk6OY3SdDp7GkjCETLT0r+I31n9sIM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZvotrOY1+J4zuQC43YmApYUw5++sfgFymUtmcDXqmKc=;
-        b=rY49UY3EzYlDvvyJabbiLVDc0hK0GqeYFgUwZrFq1owr4ad8Z63jYVrpUcHGlqmcTv
-         diO4WBbOv5XHpg9fRItUX/zJsWPsAZ644vKB9BO1++H4TOuUIzoKm6jFZPwPsX9kC7L9
-         urCpKxC9Rd9w90q06FVoBOpUNorb3A4THaYdd0o7EHS0AB7zN4w303xDZanxfA9KPI3I
-         RtBVcC8yfrt4FfgGKQdtO+YFdbaHbyCI4ru1ssaEnLT/dQeoS97O5QUW0UWDuqlrb+lt
-         4AKtcfYuOKgZ7tKHYUXxRsdi1gQ1jmZFGy8a66IL8H+nlHi+1F0VraObZnmFh6v6POOi
-         wVIw==
-X-Gm-Message-State: AOAM5312dNgIvIa6hKVW/Aykm/zzCNoe0A4DNK1e5f4oOL0sm+JF5A6d
-        twCZAua4Jm15WlgAqo9M5b68pKvPNERH80RQrws=
-X-Google-Smtp-Source: ABdhPJw2l6MghQr2hZwA5iDBDl81fczJsYlnfAZLwpw5sa4pe8ybfUUSinc8kxecS2d/TMso+GC2fnrlyof4BaDyx3I=
-X-Received: by 2002:a05:6638:358e:: with SMTP id v14mr1912060jal.120.1623998069659;
- Thu, 17 Jun 2021 23:34:29 -0700 (PDT)
+        bh=OH59EQaFszbJ3L0jQevna/zcsPt7eeIqoBHNldN0uLk=;
+        b=jsU4YS3C6anq1tg2E11UoEoMAjBn23QDZAxCE/aF0YWyxNXl5Y8Bz+ALuISSZxUVVA
+         Yr6OnO8xqeHacRB+k3k06L0k7IO6gBgSYXWohhjtPkyWAb97+e6pZSTmwrUUcQXR5SKK
+         pPeasT669WTVteaXRRUMpjfZBfVRoFa4YA5Fa6ybTxDoyvhbJnO6K1uSi5ToO3JFHZ46
+         jBKD6EB7RHkGvlnCIHpDYIIye2PdtkM1EB33wG6++0RZXFMtAHWeM6bVGGfBgr1n1oRc
+         OQM2N455RkLYGaNGc5mp+xnZWLCvSfmAVrV64VQOkNtpCDZx5In5SiJ2ruoaN9SEMeTE
+         Jg8A==
+X-Gm-Message-State: AOAM531tXovUL1EJJQLJ61nXAecxquaPT8knjMRUler//iRJOWWmMVCg
+        XrDlMhOj5Op2aJDA9PsmfF5i8JudPCmzeYKWBqIrHQ==
+X-Google-Smtp-Source: ABdhPJxdCvJoCiU+FREbCKtRlqIMtB3jntP5kXM8JylnJTGkRVSOqc6HIYuUsOObIJPrd4ckhY1CtrVN5Vnmr1CJiwo=
+X-Received: by 2002:a67:f659:: with SMTP id u25mr5191118vso.9.1623999709975;
+ Fri, 18 Jun 2021 00:01:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210609181158.479781-1-amir73il@gmail.com> <20210617212801.GE1142820@redhat.com>
-In-Reply-To: <20210617212801.GE1142820@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 18 Jun 2021 09:34:18 +0300
-Message-ID: <CAOQ4uxiJdqAisS+ShC1+QmXAoUjGG_mrnFPRWHLNKFMoYCfqFA@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fix illegal access to inode with reused nodeid
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, Max Reitz <mreitz@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20210525172428.3634316-1-ira.weiny@intel.com> <20210525172428.3634316-2-ira.weiny@intel.com>
+ <20210611172301.GA1600546@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20210611172301.GA1600546@iweiny-DESK2.sc.intel.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 18 Jun 2021 09:01:39 +0200
+Message-ID: <CAJfpegv3iZ2pj8Cn0cvhZB0pVa4SC8LSZ9OYx3Qr-BwWmvtGag@mail.gmail.com>
+Subject: Re: [PATCH 1/3] fs/fuse: Remove unneeded kaddr parameter
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        linux-kernel@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-fsdevel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 12:28 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+On Fri, 11 Jun 2021 at 19:23, Ira Weiny <ira.weiny@intel.com> wrote:
 >
-> On Wed, Jun 09, 2021 at 09:11:58PM +0300, Amir Goldstein wrote:
-> > Server responds to LOOKUP and other ops (READDIRPLUS/CREATE/MKNOD/...)
-> > with outarg containing nodeid and generation.
+> On Tue, May 25, 2021 at 10:24:26AM -0700, 'Ira Weiny' wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
 > >
-> > If a fuse inode is found in inode cache with the same nodeid but
-> > different generation, the existing fuse inode should be unhashed and
-> > marked "bad" and a new inode with the new generation should be hashed
-> > instead.
-> >
-> > This can happen, for example, with passhrough fuse filesystem that
-> > returns the real filesystem ino/generation on lookup and where real inode
-> > numbers can get recycled due to real files being unlinked not via the fuse
-> > passthrough filesystem.
+> > fuse_dax_mem_range_init() does not need the address or the pfn of the
+> > memory requested in dax_direct_access().  It is only calling direct
+> > access to get the number of pages.
 >
-> Hi Amir,
+> In looking for feedback on this small series I realize that I failed to email
+> Miklos for the fs/fuse patch.
 >
-> Is the code for filesystem you have written is public? If yes, can you
-> please provide a link.
+> I'm adding Miklos to the To line...
 
-Yes, I provided the link in the discussion about the bug:
-
-[1] https://github.com/amir73il/libfuse/commits/cachegwfs
-
->
-> Is there an API to lookup generation number from host filesystem. Or
-
-There is FS_IOC_GETVERSION which a few fs implement
-(ext4/xfs/btrfs/f2fs), but I don't use it.
-
-> that's something your file server updates based on file handle has
-> changed.
->
-
-My filesystem takes ino/gen from file handle.
-The file handle format is filesystem specific - but my filesystem only
-has support for ext4 and xfs, so it makes used of that to extract
-the generation from file handle.
-
-When inode number is 32bit (ext4) the entire file handle is encoded
-into 64bit nodeid.
+LGTM, but this is Vivek's code, so adding Cc.
 
 Thanks,
-Amir.
+Miklos
+
+
+>
+> For the rest of the series is there any feedback?
+>
+> Ira
+>
+> >
+> > Remove the unused variables and stop requesting the kaddr and pfn from
+> > dax_direct_access().
+> >
+> > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > ---
+> >  fs/fuse/dax.c | 6 ++----
+> >  1 file changed, 2 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+> > index ff99ab2a3c43..34f8a5635c7f 100644
+> > --- a/fs/fuse/dax.c
+> > +++ b/fs/fuse/dax.c
+> > @@ -1234,8 +1234,6 @@ void fuse_dax_conn_free(struct fuse_conn *fc)
+> >  static int fuse_dax_mem_range_init(struct fuse_conn_dax *fcd)
+> >  {
+> >       long nr_pages, nr_ranges;
+> > -     void *kaddr;
+> > -     pfn_t pfn;
+> >       struct fuse_dax_mapping *range;
+> >       int ret, id;
+> >       size_t dax_size = -1;
+> > @@ -1247,8 +1245,8 @@ static int fuse_dax_mem_range_init(struct fuse_conn_dax *fcd)
+> >       INIT_DELAYED_WORK(&fcd->free_work, fuse_dax_free_mem_worker);
+> >
+> >       id = dax_read_lock();
+> > -     nr_pages = dax_direct_access(fcd->dev, 0, PHYS_PFN(dax_size), &kaddr,
+> > -                                  &pfn);
+> > +     nr_pages = dax_direct_access(fcd->dev, 0, PHYS_PFN(dax_size), NULL,
+> > +                                  NULL);
+> >       dax_read_unlock(id);
+> >       if (nr_pages < 0) {
+> >               pr_debug("dax_direct_access() returned %ld\n", nr_pages);
+> > --
+> > 2.28.0.rc0.12.gb6a658bd00c9
+> >
