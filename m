@@ -2,86 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 199E93ACE6D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 17:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF2FD3ACE8C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 17:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbhFRPSt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 11:18:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56184 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbhFRPSq (ORCPT
+        id S235052AbhFRPV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 11:21:57 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:54191 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234985AbhFRPVp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 11:18:46 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D32F9C061574;
-        Fri, 18 Jun 2021 08:16:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=RgVJs2i8tjM9Pp4R41S3t73s45Mwafddh6w7ln+ElM8=; b=R2PFR6jNbhLZQlpmxq/JWMwAr/
-        6/+buuKy5tLGwbjl1+xqZ6b5Z6ZvR8fhu2Z7ZdJqlU7AvMh+P1AXqVDr46MFZvjqPoc7o0lqL5IHK
-        gL69zR2N10yHqOnnBMUfcdqqoIID5L3vUHJBBTZ72+cTTRAl2PV6a+F2jCnS7JxPydBkhq4S5dNwe
-        Cfb6I/g6AncVgs1hDvitkH7bI06nS8CuNX592/uIlTlkm+J6ZTBzY3AL3ImuabxIfasxZoeaU6yNU
-        yFcMrQ/7GT6xdlU35a/Lk9UM6Hq7hjJ8e+RL5PMHITV2nXJuN/4Zwo3Q0ceWQy2EsH8jMKE2pzKun
-        Dbt0dPBA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1luGCQ-00AOje-B9; Fri, 18 Jun 2021 15:14:38 +0000
-Date:   Fri, 18 Jun 2021 16:14:26 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
-        Christoph Lameter <cl@gentwo.de>,
-        Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
-        ksummit@lists.linux.dev,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, netdev <netdev@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-Message-ID: <YMy4UjWH565ElFtZ@casper.infradead.org>
-References: <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
- <20210610182318.jrxe3avfhkqq7xqn@nitro.local>
- <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
- <20210610152633.7e4a7304@oasis.local.home>
- <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
- <YMyjryXiAfKgS6BY@pendragon.ideasonboard.com>
- <cd7ffbe516255c30faab7a3ee3ee48f32e9aa797.camel@HansenPartnership.com>
- <CAMuHMdVcNfDvpPXHSkdL3VuLXCX5m=M_AQF-P8ZajSdXt8NdQg@mail.gmail.com>
- <20210618103214.0df292ec@oasis.local.home>
- <CAMuHMdWK4NPzanF68TMVuihLFdRzxhs0EkbZdaA=BUkZo-k6QQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWK4NPzanF68TMVuihLFdRzxhs0EkbZdaA=BUkZo-k6QQ@mail.gmail.com>
+        Fri, 18 Jun 2021 11:21:45 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1624029576; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=J9yXQ6oRlJ+lpMcEvlTUhkm+Zl/MViuXSRM8imLm6O4=; b=Y2Vp2p+wmIq1+d1dkeQkDrmtHHOC5p0G2xy8cEWpB855rueG2nmXhhWcMt5NBr5kWJAvn7+e
+ JWirZzMmJFsY2odgXMDGnvjBDsaRnkAfgT5hmxBreIz4BLqNzXqd7YDIFQBhXz9VX0Ihxv9b
+ Dhdit3TQ6iZg+BkDfzuUhWcmXyc=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 60ccb979e27c0cc77f914614 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 18 Jun 2021 15:19:21
+ GMT
+Sender: charante=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 67E5BC4323A; Fri, 18 Jun 2021 15:19:20 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,SPF_FAIL
+        autolearn=no autolearn_force=no version=3.4.0
+Received: from hu-charante-hyd.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: charante)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D8E01C4360C;
+        Fri, 18 Jun 2021 15:19:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D8E01C4360C
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
+From:   Charan Teja Reddy <charante@codeaurora.org>
+To:     akpm@linux-foundation.org, vbabka@suse.cz, corbet@lwn.net,
+        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        osalvador@suse.de, rientjes@google.com, mchehab+huawei@kernel.org,
+        lokeshgidra@google.com, andrew.a.klychkov@gmail.com,
+        xi.fengfei@h3c.com, nigupta@nvidia.com,
+        dave.hansen@linux.intel.com, famzheng@amazon.com,
+        mateusznosek0@gmail.com, oleksandr@redhat.com, sh_def@163.com
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Charan Teja Reddy <charante@codeaurora.org>
+Subject: [PATCH V4,0/3] mm: compaction: proactive compaction trigger by user
+Date:   Fri, 18 Jun 2021 20:48:52 +0530
+Message-Id: <cover.1624028025.git.charante@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 04:58:08PM +0200, Geert Uytterhoeven wrote:
-> Hi Steven,
-> 
-> On Fri, Jun 18, 2021 at 4:32 PM Steven Rostedt <rostedt@goodmis.org> wrote:
-> > On Fri, 18 Jun 2021 16:28:02 +0200
-> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> >
-> > > What about letting people use the personal mic they're already
-> > > carrying, i.e. a phone?
-> >
-> > Interesting idea.
-> >
-> > I wonder how well that would work in practice. Are all phones good
-> > enough to prevent echo?
-> 
-> I deliberately didn't say anything about a speaker ;-)
+These patches support triggering of proactive compaction by user on write
+to the /proc/sys/vm/compaction_proactiveness.
 
-There's usually a speaker in the room so everyone can hear the question
-...
+Changes in V4:
+  -- Changed the code as the 'proactive_defer' counter is removed.
+  -- No changes in the logic of triggering the proactive compaction.
+  -- Removed the 'proactive_defer' counter.
+
+Changes in V3:
+  -- Fixed review comments from Vlastimil and others.
+  -- Fixed wake up logic when compaction_proactiveness is zero.
+  -- https://lore.kernel.org/patchwork/patch/1438211/
+
+Changes in V2:
+  -- remove /proc/../proactive_compact_memory interface trigger for proactive compaction
+  -- Intention is same that add a way to trigger proactive compaction by user.
+  -- https://lore.kernel.org/patchwork/patch/1431283/
+
+Changes in V1:
+  -- Created the new /proc/sys/vm/proactive_compact_memory in
+     interface to trigger proactive compaction from user 
+  -- https://lore.kernel.org/lkml/1619098678-8501-1-git-send-email-charante@codeaurora.org/
+
+
+Charan Teja Reddy (3):
+  mm: compaction:  optimize proactive compaction deferrals
+  mm: compaction: support triggering of proactive compaction by user
+  mm: compaction: fix wakeup logic of proactive compaction
+
+ Documentation/admin-guide/sysctl/vm.rst |  3 +-
+ include/linux/compaction.h              |  2 ++
+ include/linux/mmzone.h                  |  1 +
+ kernel/sysctl.c                         |  2 +-
+ mm/compaction.c                         | 61 +++++++++++++++++++++++++++------
+ 5 files changed, 56 insertions(+), 13 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
+member of the Code Aurora Forum, hosted by The Linux Foundation
+
