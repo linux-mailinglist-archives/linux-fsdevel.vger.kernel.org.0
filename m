@@ -2,95 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F413AD01B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 18:11:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F3E3AD07D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 18:33:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235801AbhFRQNM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 12:13:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40278 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232825AbhFRQNL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 12:13:11 -0400
-Received: from mail-oo1-xc2f.google.com (mail-oo1-xc2f.google.com [IPv6:2607:f8b0:4864:20::c2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8BA9C06175F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 09:11:01 -0700 (PDT)
-Received: by mail-oo1-xc2f.google.com with SMTP id r9-20020a4a37090000b029024b15d2fef9so2333678oor.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 09:11:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vhESHB2fuprKm8qQn68AEA+GxbpLEhL/mzYCL3E+vDM=;
-        b=R37sfzViltwUXr/gzNQ0xemD+gyVroAIGks6VP6ctNDVs4ruFihGex61iVk2bhg2Gk
-         vcMshC6lM5nqrIbr0RhAQ/Cj7+4oKmybgiOfqWHq2hMpyzpRRPY2pt2G5qOyFLv/kT1P
-         vPJ82s675u49TEW9hLbpy3fms+eDEaiDbQy6IXA0AoCDs+8R/1FWKKpadESxvd8FsTyd
-         5xmWKyw+H6345GVLPM2eiqproimUAfDS0LaEHu0x1wVIcTLWkOhXkqfLDY70qg3Ri8mU
-         LK0rSZRD+5nD0Ny2uoc4mziR7jqqFj1wL7Daq/MlcFKrBcFkicWoL+y4vGRHwR2uJE0i
-         jDXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vhESHB2fuprKm8qQn68AEA+GxbpLEhL/mzYCL3E+vDM=;
-        b=qnN7VeTyHXw1+bu+5sm2q7nTL9isU4qAhTkkwsB5SOfoCUGon+dYHCHiiqqpKRWEot
-         RfhxS/cRJsC8nhWkAKtjRWZLVzqFOGhTShoDob/FTcu8cBrfrph+3ciuzpsUpO6HU9pv
-         v1ZZ8XchU7xQIrIqOJs1IJz1rNdJpZ3hBTDXAeVNqjWeoVK5d6v5HTYWpLQw15M0oAQS
-         6fjIs21imkcgsZHAFZk5FaWK1Fk/9JbshZVEGi+ogV3wKGJCtHiHSQt44iXsxIEbepy/
-         pKkQ42XPiTVw5TZdd4n9FWS0yyex4lF8JxUFtgowTFesWvLBoXvkV0l7bw3j8Umq4c8u
-         9Y+Q==
-X-Gm-Message-State: AOAM530oFonxLfi6V20E1Aw6oa1E7+5Erwxd9nFO/Itaai0uAd4ZDOnb
-        fAr92ujYkvuKc5G1TKW+LtJhDA==
-X-Google-Smtp-Source: ABdhPJzenWHbYw70J0zk1/iySUjenjhRryHqwnndVtlVqnOhDMDQESlZnKUG7ZN2df+M160N9ZJhNQ==
-X-Received: by 2002:a4a:d312:: with SMTP id g18mr4693350oos.7.1624032660987;
-        Fri, 18 Jun 2021 09:11:00 -0700 (PDT)
-Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id t63sm1825354oih.31.2021.06.18.09.11.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jun 2021 09:11:00 -0700 (PDT)
-Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat
- support
-To:     Dmitry Kadashev <dkadashev@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
-References: <20210603051836.2614535-1-dkadashev@gmail.com>
- <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2c4d5933-965e-29b5-0c76-3f2e5f518fe8@kernel.dk>
-Date:   Fri, 18 Jun 2021 10:10:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S235922AbhFRQfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 12:35:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235534AbhFRQfe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Jun 2021 12:35:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 110C8613D5;
+        Fri, 18 Jun 2021 16:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624034004;
+        bh=JO2gLgelUahEc1dNQVYz2I/ragI2iCfD3iyf0s0vVmc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gsyLR0OZOilo0EEdP29NRWHxpna2TcpNAh65/OuClP+XuPWLnj9OcMeqeYx7BXQ2X
+         pZDWq3/0VwY1KSWIQKSZ7U+YlmUMx0i8xoW7NWyjgBrNe3L/HnVZi4Ku6LZrsAF2gF
+         1DjKkgbUD46s25gdRbsthB9ZKHcwMD2Kz2hfYjvzp1KNNoJxbqMcNMmhEFO+Gr51pq
+         ecUl9tZOzzQR6w9opI5NTaWVeIYwQYtlMu4LWKFyTF1MqXBW97fMF714JB/oWyeiO5
+         rZxlsOqaJ73tSRcuGelVCZxhBg/fQvl3AVhF0At2f8PTHsdYX9KxL3Zb4UQcpmXyis
+         eLd1k4eZDHnzA==
+Date:   Fri, 18 Jun 2021 18:33:16 +0200
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
+        Christoph Lameter <cl@gentwo.de>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
+        ksummit@lists.linux.dev,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, netdev <netdev@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
+Message-ID: <20210618183316.33766f1e@coco.lan>
+In-Reply-To: <20210618113452.7ab0033e@oasis.local.home>
+References: <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
+        <20210610182318.jrxe3avfhkqq7xqn@nitro.local>
+        <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
+        <20210610152633.7e4a7304@oasis.local.home>
+        <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
+        <YMyjryXiAfKgS6BY@pendragon.ideasonboard.com>
+        <cd7ffbe516255c30faab7a3ee3ee48f32e9aa797.camel@HansenPartnership.com>
+        <CAMuHMdVcNfDvpPXHSkdL3VuLXCX5m=M_AQF-P8ZajSdXt8NdQg@mail.gmail.com>
+        <20210618103214.0df292ec@oasis.local.home>
+        <CAMuHMdWK4NPzanF68TMVuihLFdRzxhs0EkbZdaA=BUkZo-k6QQ@mail.gmail.com>
+        <YMy4UjWH565ElFtZ@casper.infradead.org>
+        <CAMuHMdWqUkfe7kdBO+eQdXHzhpygH=TivOBNqQJujyqP=wM5cw@mail.gmail.com>
+        <20210618113452.7ab0033e@oasis.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/18/21 12:24 AM, Dmitry Kadashev wrote:
-> On Thu, Jun 3, 2021 at 12:18 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
->>
->> This started out as an attempt to add mkdirat support to io_uring which
->> is heavily based on renameat() / unlinkat() support.
->>
->> During the review process more operations were added (linkat, symlinkat,
->> mknodat) mainly to keep things uniform internally (in namei.c), and
->> with things changed in namei.c adding support for these operations to
->> io_uring is trivial, so that was done too. See
->> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
+Em Fri, 18 Jun 2021 11:34:52 -0400
+Steven Rostedt <rostedt@goodmis.org> escreveu:
+
+> On Fri, 18 Jun 2021 17:29:04 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > 
-> Ping. Jens, are we waiting for the audit change to be merged before this
-> can go in?
+> > W.r.t. the other speaker in the room, isn't that similar to the normal mic,
+> > and can't that be handled at the receiving side?
+> > There will be a bit more delay involved, though.  
+> 
+> How many times have you been in a conference where the normal mic and
+> speaker caused a nasty feedback loop?
 
-Not necessarily, as that should go in for 5.14 anyway.
+I never used, but there are some devices that can work as automatic feedback 
+suppressors. They basically detect a feedback loop and add notch filter(s) to
+the frequency(ies) that are looping. Some high-end digital mixers have this
+feature embedded (but the operator may need to enable it).
 
-Al, are you OK with the generic changes?
+Yet, you may still hear the feedback loop while the algorithm is detecting 
+and correcting the issue, as it takes 100 ms to 400ms to detect and filter
+a single feedback frequency.
 
--- 
-Jens Axboe
+> I'm not sure how well phone mics and room speakers will work.
 
+I guess that this depends on how the environment is setup. A good
+digital mixer can be set with a gate threshold. If the volume is below
+the threshold, the mic will be muted. 
+
+They can also be setup to have just one microphone group, where only
+one microphone will have the volume raised on a given time. So, if
+someone speaks on a mic, all the others are muted or attenuated.
+
+Yet, I guess this is not the usual "package" provided by hotels.
+Those setups may require extra devices and technical people that
+knows now to use such features.
+
+Thanks,
+Mauro
