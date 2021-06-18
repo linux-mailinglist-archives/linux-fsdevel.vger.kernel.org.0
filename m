@@ -2,118 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DEFB3AD261
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 20:50:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B90B63AD2A1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 21:18:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235428AbhFRSw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 14:52:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48326 "EHLO
+        id S234102AbhFRTUb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 15:20:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235393AbhFRSwy (ORCPT
+        with ESMTP id S232926AbhFRTUa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 14:52:54 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A31C06175F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 11:50:45 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id j2so18227885lfg.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 11:50:44 -0700 (PDT)
+        Fri, 18 Jun 2021 15:20:30 -0400
+Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A73FC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 12:18:19 -0700 (PDT)
+Received: by mail-ua1-x932.google.com with SMTP id v17so3751667uar.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 12:18:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Z9O4pmyP/vSvHJYgWv9Om+E3eGkH5o7mKzQ/WCRHcUE=;
-        b=D/ni6iaZuLdcRoE55isBo9vR44yQpZtJdOHWiLpCJlhn5F7w1t34r2mAAgw5DFrpOd
-         BcbFVIwClkEhZr/tnURZcly1r7HrlRB62reaqLW9r0QujJtk4J5Sm51sK7Ksm0QMIRFE
-         TiSqMXghajOfx722+wfU/dD2HkEa2LGn7+H9g=
+        bh=0eQjQgRVIzfQCCW+6MvJZa2SGNSJvl0nL7v9nL19xDc=;
+        b=VkIlRi6fm14IqdOXdDvq2KLrfZY8tfuQXFEorj9L0NfM8NEQT3diRPzRZw0iNiyz8X
+         iBUwBNI2iytMYs4pouJadHdMyr2DIdrAqfEjN1Uc1erRZDmp+lXuN4jTnr8u72h+vmpW
+         TqYMnniKbZ8XeWAbE6Y1dx8rNNDsfqmXqK/LE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Z9O4pmyP/vSvHJYgWv9Om+E3eGkH5o7mKzQ/WCRHcUE=;
-        b=ehX5WUvzFmcKtyQA9hyh2/uwXTT4mt4m5LMCZI3AOQqp/CsLY7HWYLrNanXJVC+qXi
-         QMRymOqFBQ6KQGEND2F4p37bbSgkrQIV+qqvejwBDrY28nqtBHpg1RQO5RI9i5/qOYVz
-         E0uLkJbeLwyRh5+cmomOJK++DKc+GUAZqbfG2kgvkjjrWZ+18CGkgwaLJLXmNefI8vuA
-         2Ifha6yniKRhH9uJxx3uYkgFLOGMvGfNPSCtQxn9I0M+PXMXq0SMxDIMnbyeKFEgQon/
-         dGH23GtSDs966U4qLRhgMAKHPRotGceBTZa9JYBZgJ5oL6TnrpUqN3gttR6amuvnIqtD
-         TGiQ==
-X-Gm-Message-State: AOAM532Adoa2tkXmSRgXy01C9YnilbCHfD0INz7GzVeWptBjeoRSQu18
-        x1Q5TVLbcvjvTRbiC9Mi4GTQMJb6RSkw9fa3
-X-Google-Smtp-Source: ABdhPJxbua7fYETppYYELkHez5SYxU6PPco4OEhl7mb73bijjrGpELc3qjWBeuJD4Lx0rygPtBnzSw==
-X-Received: by 2002:ac2:4a83:: with SMTP id l3mr4229575lfp.406.1624042242839;
-        Fri, 18 Jun 2021 11:50:42 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id d27sm982410lfv.261.2021.06.18.11.50.42
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jun 2021 11:50:42 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id d2so15313231ljj.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 11:50:42 -0700 (PDT)
-X-Received: by 2002:a2e:9644:: with SMTP id z4mr10545904ljh.507.1624042241910;
- Fri, 18 Jun 2021 11:50:41 -0700 (PDT)
+        bh=0eQjQgRVIzfQCCW+6MvJZa2SGNSJvl0nL7v9nL19xDc=;
+        b=ahOh8mDLcHAw/RTt5fk+57DsBP/Khz9twcK+HpsZtN0cu/QpL9OE4bELxfDDM+pXF5
+         mCe/Nu5U+9aSKsNhiedOZx2YlR9X2AKo4gNjUoh6sAFOWFGa343SwdWdAQUsoZHZi+QM
+         rSmIjcRC5qK0+5hamVQrXAgbVEuFFxM8FAelg06LY+55YzNGKMHl91OAvKcGrxMokcMr
+         dsE4L0kD5MNnjP22/6mOPYJVLfTFoPjer4uO1kShvLpd1JEEZFJxSgnb7rZA/il/5s+e
+         4crx3iTaOjWLgl/nqKlBjIAxh2UDp1rFJonkjDx/hDhehmRBAX7YZ8yMl9MrFwy0rka6
+         g3pg==
+X-Gm-Message-State: AOAM532biEM64fp2I1kByBNPAMU3eP3uITyssAx90g7dQjHQeOxxvByK
+        fkEBVwDFi2GdOSx2+9RbThzq8WVb1uM/AaNsvcj1DQ==
+X-Google-Smtp-Source: ABdhPJyetp96XTdXWE4+B8xZ0O8QGmY/YIFAkOXhfMqtwadNzkHorDZFsGa20ISkIi/gNIKKH1CEjwbaj7GtX7+ZQQ4=
+X-Received: by 2002:ab0:2690:: with SMTP id t16mr14396988uao.9.1624043898903;
+ Fri, 18 Jun 2021 12:18:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1623972518.git.osandov@fb.com> <6caae597eb20da5ea23e53e8e64ce0c4f4d9c6d2.1623972519.git.osandov@fb.com>
-In-Reply-To: <6caae597eb20da5ea23e53e8e64ce0c4f4d9c6d2.1623972519.git.osandov@fb.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 18 Jun 2021 11:50:25 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whRA=54dtO3ha-C2-fV4XQ2nry99BmfancW-16EFGTHVg@mail.gmail.com>
-Message-ID: <CAHk-=whRA=54dtO3ha-C2-fV4XQ2nry99BmfancW-16EFGTHVg@mail.gmail.com>
-Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
+References: <016b2fe2-0d52-95c9-c519-40b14480587a@gmail.com>
+ <CAJfpeguzkDQ5VL3m19jrepf1YjFeJ2=q99TurTX6DRpAKz+Omg@mail.gmail.com>
+ <YMn1s19wMQdGDQuQ@casper.infradead.org> <CAJfpegsMNc-deQvdOntZJHU2bW34JF=e0gwxPe19eFXp1t0PFQ@mail.gmail.com>
+ <029095d9-399a-e323-15f3-b665e9852eb3@suse.cz> <YMzYCCBaUTfzdFff@cmpxchg.org>
+In-Reply-To: <YMzYCCBaUTfzdFff@cmpxchg.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 18 Jun 2021 21:18:08 +0200
+Message-ID: <CAJfpegs_TzszV-4VbfbZLosZMbb+uT9iohxYDqzVPDCizfiFNQ@mail.gmail.com>
+Subject: Re: Possible bogus "fuse: trying to steal weird page" warning related
+ to PG_workingset.
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-mm <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
+        Thomas Lindroth <thomas.lindroth@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 4:51 PM Omar Sandoval <osandov@osandov.com> wrote:
+On Fri, 18 Jun 2021 at 19:29, Johannes Weiner <hannes@cmpxchg.org> wrote:
 >
-> This is essentially copy_struct_from_user() but for an iov_iter.
+> On Wed, Jun 16, 2021 at 06:48:34PM +0200, Vlastimil Babka wrote:
+> > On 6/16/21 3:47 PM, Miklos Szeredi wrote:
+> > > On Wed, 16 Jun 2021 at 14:59, Matthew Wilcox <willy@infradead.org> wrote:
+> > >>
+> > >> > AFAICT fuse is trying to steal a pagecache page from a pipe buffer
+> > >> > created by splice(2).    The page looks okay, but I have no idea what
+> > >> > PG_workingset means in this context.
+> > >> >
+> > >> > Matthew, can you please help?
+> > >>
+> > >> PG_workingset was introduced by Johannes:
+> > >>
+> > >>     mm: workingset: tell cache transitions from workingset thrashing
+> > >>
+> > >>     Refaults happen during transitions between workingsets as well as in-place
+> > >>     thrashing.  Knowing the difference between the two has a range of
+> > >>     applications, including measuring the impact of memory shortage on the
+> > >>     system performance, as well as the ability to smarter balance pressure
+> > >>     between the filesystem cache and the swap-backed workingset.
+> > >>
+> > >>     During workingset transitions, inactive cache refaults and pushes out
+> > >>     established active cache.  When that active cache isn't stale, however,
+> > >>     and also ends up refaulting, that's bonafide thrashing.
+> > >>
+> > >>     Introduce a new page flag that tells on eviction whether the page has been
+> > >>     active or not in its lifetime.  This bit is then stored in the shadow
+> > >>     entry, to classify refaults as transitioning or thrashing.
+> > >>
+> > >> so I think it's fine for you to ignore when stealing a page.
+> > >
+> > > I have problem understanding what a workingset is.  Is it related to
+> >
+> > "working set" is the notion of the set of pages that the workload needs to
+> > access at the moment/relatively short time window, and it would be beneficial if
+> > all of it could fit in the RAM.
+> > PG_workinsgset is part of the mechanism that tries to estimate this ideal set of
+> > pages, and especially when the workload shifts to another set of pages, in order
+> > to guide reclaim better. See the big comment at the top of mm/workingset.c for
+> > details
+> >
+> > > swap?  If so, how can such a page be part of a file mapping?
+> >
+> > Not related to swap. It was actually first implemented only for file pages (page
+> > cache), but then extended to anonymous pages by aae466b0052e ("mm/swap:
+> > implement workingset detection for anonymous LRU")
+>
+> Thanks, yes.
+>
+> Think of it as similar to PG_active. It's just another usage/heat
+> indicator of file and anon pages on the reclaim LRU that, unlike
+> PG_active, persists across deactivation and even reclaim (we store it
+> in the page cache / swapper cache tree until the page refaults).
+>
+> So if fuse accepts pages that can legally have PG_active set,
+> PG_workingset is fine too.
 
-So I continue to think that this series looks fine - if we want this
-interface at all.
+Thanks, fix pushed to:
 
-I do note a few issues with this iov patch, though - partly probably
-because I have been reading Al's cleanup patches that had some
-optimizations in place.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#for-next
 
-And in particular, I now react to this:
-
-> +       iov_iter_advance(i, usize);
-
-at the end of copy_struct_from_iter().
-
-It's very wasteful to use the generic iov_iter_advance() function,
-when you just had special functions for each of the iterator cases.
-
-Because that generic function will now just end up re-testing that
-whole "what kind was it" and then do each kind separately.
-
-So it would actually be a lot simpler and m,ore efficient to just do
-that "advance" part as you go through the cases, iow just do
-
-        iov_iter_iovec_advance(i, usize);
-
-at the end of the iter_is_iovec/iter_is_kvec cases, and
-
-        iov_iter_bvec_advance(i, usize)
-
-for the bvec case.
-
-I think that you may need it to be based on Al's series for that to
-work, which might be inconvenient, though.
-
-One other non-code issue: particularly since you only handle a subset
-of the iov_iter cases, it would be nice to have an explanation for
-_why_ those particular cases.
-
-IOW, have some trivial explanation for each of the cases. "iovec" is
-for regular read/write, what triggers the kvec and bvec cases?
-
-But also, the other way around. Why doesn't the pipe case trigger? No
-splice support?
-
-              Linus
+Miklos
