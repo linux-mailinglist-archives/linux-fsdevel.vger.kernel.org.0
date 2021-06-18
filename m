@@ -2,122 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32A823ACF96
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 17:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97C8D3ACFCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 18:04:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233356AbhFRQBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 12:01:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231697AbhFRQBA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 12:01:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6F87861003;
-        Fri, 18 Jun 2021 15:58:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624031930;
-        bh=Apapoa0ogz+j1ETylMG/djv0vpJmf2hXxs1HUu5smKs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nmXkOJh0glyvoe4C3vhRq3VOaXh+UE85KdrCTJQPn5GFT9bi2pzzFSTtrQ1Htls4G
-         nCSKDUlUvVfV8YpvZ74Y0DeLcMOsHfeLD1+y6XqT5hzwDaIgbiUz47IXs63v5hzt+O
-         HW61APQCAyu9w9EaIF+OnK5LNLTYeUYdiMVK3Ensr6OO4TnZvMIFkov8vJ78pJtOzR
-         y9rbKsii9bfXNnh3cxgbfmHazh4sn5pAeqXsCcYRq9BSJ/t6jkJG69JlQNKxkzt3RF
-         qJ/3J/VvIoqV9DFd7bO2MiuYoq5XNMEo8SoZ6vB/ZsVNSCUr6QGdJROF9Bb0FrKRCx
-         QSK17KzLVHKuQ==
-Date:   Fri, 18 Jun 2021 16:58:29 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
-        Christoph Lameter <cl@gentwo.de>,
-        Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
-        ksummit@lists.linux.dev,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, netdev <netdev@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-Message-ID: <20210618155829.GD4920@sirena.org.uk>
-Mail-Followup-To: Steven Rostedt <rostedt@goodmis.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
-        Christoph Lameter <cl@gentwo.de>, Theodore Ts'o <tytso@mit.edu>,
-        Jiri Kosina <jikos@kernel.org>, ksummit@lists.linux.dev,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, netdev <netdev@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-References: <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com>
- <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
- <20210610182318.jrxe3avfhkqq7xqn@nitro.local>
- <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
- <20210610152633.7e4a7304@oasis.local.home>
- <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
- <YMyjryXiAfKgS6BY@pendragon.ideasonboard.com>
- <cd7ffbe516255c30faab7a3ee3ee48f32e9aa797.camel@HansenPartnership.com>
- <CAMuHMdVcNfDvpPXHSkdL3VuLXCX5m=M_AQF-P8ZajSdXt8NdQg@mail.gmail.com>
- <20210618103214.0df292ec@oasis.local.home>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="KdquIMZPjGJQvRdI"
-Content-Disposition: inline
-In-Reply-To: <20210618103214.0df292ec@oasis.local.home>
-X-Cookie: Are you a turtle?
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S235737AbhFRQG4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 12:06:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:22346 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235724AbhFRQGq (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Jun 2021 12:06:46 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15IG45dr088167;
+        Fri, 18 Jun 2021 12:04:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=f0ceIPiYDxY/booagKQSwOn88XfgJKGtoIutFEB+Cjs=;
+ b=Xh0g8a/JdFKWjh1pa6DJZMSzNkpGOwnVLdQ1kOXceSR4Rh3Vwhzay+YlDMPmA2z3H83A
+ zmu6+dFK+xHyewV9jcr+/g9H/iOpO7Ojz1+3k6gm7YLJyk6FXalRsz04RlWU+mKEl3h+
+ Y641lxUpBOK8czXEBko1/Ml1nqDZ+CpYdbeObvm1HOprUZdrYrZtYzHhB9y2NMXQ8uDG
+ UB6FXJPItSz8MW6iiDV3ViFULSmJmbiNAZzVOc3M2gNoD8D97MgQtVRt/EtvyS8Kp7zg
+ E32poU4B33G/dTUBwurwi5hNSenz1PoHCmAvepIRgqHMG5VGyqDrPQ/OsX24Cn1aCNVj MQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 398xd6gng4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Jun 2021 12:04:30 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 15IG4THq094487;
+        Fri, 18 Jun 2021 12:04:29 -0400
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 398xd6gnem-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Jun 2021 12:04:29 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15IG4QeY015728;
+        Fri, 18 Jun 2021 16:04:26 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06fra.de.ibm.com with ESMTP id 394m6h9vp1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Jun 2021 16:04:26 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15IG4OkL20644140
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Jun 2021 16:04:24 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D393A4064;
+        Fri, 18 Jun 2021 16:04:24 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E6E6A4060;
+        Fri, 18 Jun 2021 16:04:22 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.93.34])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 18 Jun 2021 16:04:22 +0000 (GMT)
+Message-ID: <c92d0ac71a8db8bb016a7e94b83c193956d71a26.camel@linux.ibm.com>
+Subject: Re: [PATCH] fs: Return raw xattr for security.* if there is size
+ disagreement with LSMs
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
+Date:   Fri, 18 Jun 2021 12:04:21 -0400
+In-Reply-To: <CAHC9VhTv6Zn8gYaB6cG4wPzy_Ty0XjOM-QL4cZ525RnhFY4bTQ@mail.gmail.com>
+References: <ee75bde9a17f418984186caa70abd33b@huawei.com>
+         <20210616132227.999256-1-roberto.sassu@huawei.com>
+         <6e1c9807-d7e8-7c26-e0ee-975afa4b9515@linux.ibm.com>
+         <9cb676de40714d0288f85292c1f1a430@huawei.com>
+         <d822efcc0bb05178057ab2f52293575124cde1fc.camel@linux.ibm.com>
+         <CAHC9VhTv6Zn8gYaB6cG4wPzy_Ty0XjOM-QL4cZ525RnhFY4bTQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: AdhDHHaCU3yaVieHCH-VrseouUkXcA_2
+X-Proofpoint-ORIG-GUID: CkEmq2yFkV_GcP0onKt5fShi-ls-1vh3
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-06-18_07:2021-06-18,2021-06-18 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=999 spamscore=0 mlxscore=0 phishscore=0 impostorscore=0
+ bulkscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2106180094
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, 2021-06-17 at 23:18 -0400, Paul Moore wrote:
+> On Thu, Jun 17, 2021 at 11:28 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Thu, 2021-06-17 at 07:09 +0000, Roberto Sassu wrote:
+> 
+> ...
+> 
+> > > An alternative would be to do the EVM verification twice if the
+> > > first time didn't succeed (with vfs_getxattr_alloc() and with the
+> > > new function that behaves like vfs_getxattr()).
+> >
+> > Unfortunately, I don't see an alternative.
+> 
+> ... and while unfortunate, the impact should be non-existant if you
+> are using the right tools to label files or ensuring that you are
+> formatting labels properly if doing it by hand.
+> 
+> Handling a corner case is good, but I wouldn't add a lot of code
+> complexity trying to optimize it.
 
---KdquIMZPjGJQvRdI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From userspace it's really difficult to understand the EVM signature
+verification failure is due to the missing NULL.
 
-On Fri, Jun 18, 2021 at 10:32:14AM -0400, Steven Rostedt wrote:
-> On Fri, 18 Jun 2021 16:28:02 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Roberto, I just pushed the "evm: output EVM digest calculation info"
+patch to the next-integrity-testing branch, which includes some
+debugging.   Instead of this patch, which returns the raw xattr data,
+how about adding additional debugging info in evm_calc_hmac_or_hash()
+indicating the size discrepancy between the raw xattr and the LSM
+returned xattr?
 
-> > What about letting people use the personal mic they're already
-> > carrying, i.e. a phone?
+thanks,
 
-> Interesting idea.
+Mimi
 
-> I wonder how well that would work in practice. Are all phones good
-> enough to prevent echo?
-
-Unless you get the latency for the WebRTC<->in room speaker down lower
-than I'd expect it to be I'd expect echo cancellation to have fun,
-though beam forming might reject a lot of in room noise including that -
-higher end modern phones are astonishingly good at this stuff.  I'd not
-trust it to work reliably for all attendees though, it's the sort of
-thing where you'll get lots of per device variation.
-
---KdquIMZPjGJQvRdI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmDMwqUACgkQJNaLcl1U
-h9Cg1Af5ARxVAXKtGlzoOtDRp3GzESJ+QAXYphyxV7cPGNDckB/qsv28tntr04Bn
-1QJeSujCWn3PVGGTr/AKgLgUIiicysbjbiz2MDuyKmSl/pjhJLGaKNvLb4jH14tp
-My3o3TUioxhdXmwiQAbMuEvfVVJAoccMhpLcF3DfgKGaCfuaeZ7Jrc5miAQsXqbB
-LNgM3ist9ZldXeiemRo41yZ3gQ1qwEadxhRM184rmjcvd4Xl7IyItX85s1CSwvr4
-Bi493dDbTQA3n0kb2bPD0yez6pq0xu2dGDyGTALno6HfjNA/PCxROQRgg/cQ7LUK
-U7mM4yBMrM2+z+akydMtX9us4TX2+g==
-=mrCm
------END PGP SIGNATURE-----
-
---KdquIMZPjGJQvRdI--
