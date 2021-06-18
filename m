@@ -2,99 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA4343ACD74
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 16:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D76433ACD7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 16:28:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234482AbhFRO3s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 10:29:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:34125 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233789AbhFRO3s (ORCPT
+        id S234523AbhFROaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 10:30:25 -0400
+Received: from mail-vs1-f48.google.com ([209.85.217.48]:38644 "EHLO
+        mail-vs1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233642AbhFROaY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 10:29:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624026458;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a/sCBTOwdqNgII3IAySkNB1KoKYpTV/nD9ZDHSFtulM=;
-        b=FtvDhXLzMyaigWBrIVONU/xv4xtvLuN0ulDj9D3UjcT6fityNBBC/4dJAvLI+B+yEPFZba
-        OUcuMMjUZ+485noDAgfdC/NlM7N0DetB/H3xvlK0zhxfyksfMXG8Mm+J5VOvzMk5yV1gf7
-        467PUY1F5KexPaJxxsBGeRMeOWAjdDg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-500-cumL99HCPe6gWJ4U4OdTKw-1; Fri, 18 Jun 2021 10:27:35 -0400
-X-MC-Unique: cumL99HCPe6gWJ4U4OdTKw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7781ABBEE0;
-        Fri, 18 Jun 2021 14:27:33 +0000 (UTC)
-Received: from T590 (ovpn-12-158.pek2.redhat.com [10.72.12.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D2C7B60C4A;
-        Fri, 18 Jun 2021 14:27:24 +0000 (UTC)
-Date:   Fri, 18 Jun 2021 22:27:20 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
-        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 13/16] block: switch polling to be bio based
-Message-ID: <YMytSIBm7k2pqFlc@T590>
-References: <20210615131034.752623-1-hch@lst.de>
- <20210615131034.752623-14-hch@lst.de>
- <YMliP6sFVuPhMbOB@T590>
- <20210618140147.GA16258@lst.de>
+        Fri, 18 Jun 2021 10:30:24 -0400
+Received: by mail-vs1-f48.google.com with SMTP id x8so5054542vso.5;
+        Fri, 18 Jun 2021 07:28:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wpS6QroHuI0Ot0nY6i49aZuPyLqHan9IIfQa2dpKXgY=;
+        b=IfiNQBUzURsf2EszxU+s9Z6Af2EQRwU/yOQq4DeA6pBtwZcYF/9LPjH+/5ZO+7qnaK
+         9x462dUr3+2XeTvKAHui4hf2KBjzJbiMCQZu5IBOrLAAikp4r0mW7LCGT4+P/WLnrzUK
+         7Zd7Ysb+pBw0rBPbdigMW43k+/ZNmSLvVMGiCtqX+m8rhZhIZ5lYfamr8Wzh8M4uRJc7
+         yHh2mfPSHEMblmUnfnU4Xd1vvpHOKxuLkxyPK9DdXiDoAwvxI3reGbHL1wTQZR3FLr4o
+         SncrbexpzyCwGAbUuU6kaLV7k1EzWbqjkyt7meP69jQTwD0ushog3tHwe/qzkNmHyaNZ
+         peBg==
+X-Gm-Message-State: AOAM532h59fhNMmvO5gaXlTTq4o/03EnVcBhJPzoCR5g6pLZYUQtttYU
+        rC7gPYao3bb+Dew7DKi0Kh/VuPiYPPlcFXH+iIE=
+X-Google-Smtp-Source: ABdhPJzdh6L1VpRsrh92eO3uJR1GKWcu3EWNO1w+Ez7YI5z7LoBIg3gSmZF2HB6Pv0YFaCrWrh9wQb1RBGmHtXwjJ0k=
+X-Received: by 2002:a67:7787:: with SMTP id s129mr2392253vsc.40.1624026494097;
+ Fri, 18 Jun 2021 07:28:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210618140147.GA16258@lst.de>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <YIx7R6tmcRRCl/az@mit.edu> <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de>
+ <YK+esqGjKaPb+b/Q@kroah.com> <c46dbda64558ab884af060f405e3f067112b9c8a.camel@HansenPartnership.com>
+ <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com> <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
+ <20210610182318.jrxe3avfhkqq7xqn@nitro.local> <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
+ <20210610152633.7e4a7304@oasis.local.home> <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
+ <YMyjryXiAfKgS6BY@pendragon.ideasonboard.com> <cd7ffbe516255c30faab7a3ee3ee48f32e9aa797.camel@HansenPartnership.com>
+In-Reply-To: <cd7ffbe516255c30faab7a3ee3ee48f32e9aa797.camel@HansenPartnership.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 18 Jun 2021 16:28:02 +0200
+Message-ID: <CAMuHMdVcNfDvpPXHSkdL3VuLXCX5m=M_AQF-P8ZajSdXt8NdQg@mail.gmail.com>
+Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
+        Christoph Lameter <cl@gentwo.de>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
+        ksummit@lists.linux.dev,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, netdev <netdev@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 04:01:47PM +0200, Christoph Hellwig wrote:
-> On Wed, Jun 16, 2021 at 10:30:23AM +0800, Ming Lei wrote:
-> > Not sure disk is valid, we only hold the disk when opening a bdev, but
-> > the bdev can be closed during polling.
-> 
-> How?  On a block device the caller needs to hold the block device open
-> to read/write from it.  On a file systems the file systems needs to
-> be mounted, which also holds a bdev reference.
+On Fri, Jun 18, 2021 at 4:11 PM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+> On Fri, 2021-06-18 at 16:46 +0300, Laurent Pinchart wrote:
+> > For workshop or brainstorming types of sessions, the highest barrier
+> > to participation for remote attendees is local attendees not speaking
+> > in microphones. That's the number one rule that moderators would need
+> > to enforce, I think all the rest depends on it. This may require a
+> > larger number of microphones in the room than usual.
+>
+> Plumbers has been pretty good at that.  Even before remote
+> participation, if people don't speak into the mic, it's not captured on
+> the recording, so we've spent ages developing protocols for this.
+> Mostly centred around having someone in the room to remind everyone to
+> speak into the mic and easily throwable padded mic boxes.  Ironically,
+> this is the detail that meant we couldn't hold Plumbers in person under
+> the current hotel protocols ... the mic needs sanitizing after each
+> throw.
 
-+       rcu_read_lock();
-+       bio = READ_ONCE(kiocb->private);
-+       if (bio && bio->bi_bdev)
+What about letting people use the personal mic they're already
+carrying, i.e. a phone?
 
-The bio may be ended now from another polling job, then the disk is
-closed & deleted, and released. Then request queue & hctxs are released.
+Gr{oetje,eeting}s,
 
-+               ret = bio_poll(bio, flags);
+                        Geert
 
-But disk & request queue & hctx can still be referred in above bio_poll().
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-+       rcu_read_unlock();
-
-> 
-> > Also disk always holds one
-> > reference on request queue, so if disk is valid, no need to grab queue's
-> > refcnt in bio_poll().
-> 
-> But we need to avoid going into the lowlevel blk-mq polling code to not
-> reference the potentially freed hctxs or tags as correctly pointed by
-> yourself on the previous iteration.
-
-If request queue isn't released, hctx won't be freed too. Tagset can be
-freed, but it is supposed to not be touched after request queue is cleanup.
-
-
-Thanks, 
-Ming
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
