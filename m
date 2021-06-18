@@ -2,78 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13CFB3AC4B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 09:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 233503AC4B7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 09:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230438AbhFRHMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 03:12:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59240 "EHLO
+        id S231499AbhFRHPM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 03:15:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbhFRHMr (ORCPT
+        with ESMTP id S231137AbhFRHPL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 03:12:47 -0400
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FBFCC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 00:10:39 -0700 (PDT)
-Received: by mail-vs1-xe29.google.com with SMTP id j15so4437891vsf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 00:10:39 -0700 (PDT)
+        Fri, 18 Jun 2021 03:15:11 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2756C06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 00:13:01 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id t22so1430543uar.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 00:13:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=w/P+/ggAPSr24ov6nRiNVSQ5taQcSMFYDfL5d6r0zMg=;
-        b=cdFtlqQOBKGRRFMuJt2T7KNnJNiiudCPxDc4hIMbbDI5Oj3VVixU0rnC4phphiKlD1
-         joGTwcqMliL3/1JeB3JfPvapBDFboviCEHROvUBGIElJrC/LmTLCbrFL3AfkEZWFac/c
-         qIQFl04jxZO/nql+K5hlwUGs1PkLeClmhxR7I=
+        bh=hTT5ZsIEPC31rh2i5dgbNFLjOHADYWpb81q5A6MltNs=;
+        b=QR982XZHnvKy0kMVowEg8rOWXN3rOElV6H+cTm4PjI9w0oOdLfamzCj9dL/yidpq1X
+         7Xs46nImgGkredeeD9pjVwid8kuLSWEB0mE+k7amBb5nZl7hf9LZ4bd7u+QkgnMhnio4
+         cxn9+gUdcxReUj/ikV9V3irRVGgQkPIh3QQnU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=w/P+/ggAPSr24ov6nRiNVSQ5taQcSMFYDfL5d6r0zMg=;
-        b=jDitpFu/3wep7JXsfd2tB0Ppiin2mOLtgJ3lMjuzfXm8aE1vICwsawvedpICNwL21Q
-         Bo+e2dp+egzdbawhoLg8+PmXZK65VSKX9QK9Qtcx/qGaQxBKE5OwwT7PFt2ILQ0d+cHi
-         fiqzVoRDUkPziYBGQ4EDp2aMS64rt8XiiZWkiS88s12crfdVV/b6KEzgO1kfmE/qM4gg
-         DHAv94GoxEj7/nq0tDJ855/199SbaeP6Ki8ecLQxHMaGbteY4VZgZRx7GBuGegc+dRLw
-         amh6NfNTYfXY8z8ioqpFmkYDnxlm5KTIXAuZYj51iY3SF0/pc0dsK0bC+doDdULunXUF
-         XpRg==
-X-Gm-Message-State: AOAM5319Nbdf71eMLJKn/xZRoQ9gYRz4Vy4XL7hy27enzP/tLCNSjHuw
-        WhnMhvvy08mLyPnjpGDaijSAqY+v9FBjGtjlIXWlXw==
-X-Google-Smtp-Source: ABdhPJx8zijHh9D1B4HhPILz7S2jPJn3Pd7CK8/a+MknvSjR6PEXM3OpFg59RKtSK/xic8OpU4FNFgsqh/RTIobqOT8=
-X-Received: by 2002:a67:cd19:: with SMTP id u25mr1658215vsl.47.1624000238154;
- Fri, 18 Jun 2021 00:10:38 -0700 (PDT)
+        bh=hTT5ZsIEPC31rh2i5dgbNFLjOHADYWpb81q5A6MltNs=;
+        b=Ff9/z5gbyjI9+M+uudPjm3H+JZQ/c7ki952pSr8SkpoamLWESII2zGhIE6cFkhF9QN
+         jfxXApM/avC9ZfzE1W5OhvaZ5wqaB+Gaf8Ygnwd64gr5jNn8+ihMwo5k9KocaoUWHkgQ
+         VT5I5BB6Ok60fLohWbQ10FShDUc1eDWFm/C5qm6XOnJ42m7i8nLSYoy5c8WW1/rFeC/Z
+         l58zF39xn0mxT1fonKN6nswIKyYlFtPOg3VUAmzh4fhw07YnNFinuf0NAmoan9PMCOEH
+         Cb40EAbuWC8OLqUjTlgrGX50G9t+aSYXeWdsGX8tG3D7P0fqgz+V/o0uzIdaJ1oX9cyI
+         z9NQ==
+X-Gm-Message-State: AOAM531FoYLJuyU+g49nfjlVLkyY4Bq8ILaLGh77/TU4vLIBKWpjWVWA
+        vrMQCOY5RyeOWz0Y4qY/t2kF5O5PxU+pLERv1ZSAQQ==
+X-Google-Smtp-Source: ABdhPJxllpxOra45K65lwZpKCY+dEU2zRZr2ziz7XoQ5lV4m+GwBGb6yoVY47QiteupuFAOi00da4FGaGtwVFYv5mB8=
+X-Received: by 2002:ab0:2690:: with SMTP id t16mr10545968uao.9.1624000380770;
+ Fri, 18 Jun 2021 00:13:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210615064155.911-1-jzp0409@163.com>
-In-Reply-To: <20210615064155.911-1-jzp0409@163.com>
+References: <20210512161848.3513818-1-rjones@redhat.com> <20210512161848.3513818-2-rjones@redhat.com>
+ <CAJfpegv=C-tUwbAi+JMWrNb+pai=HiAU8YCDunE5yUZB7qMK1g@mail.gmail.com> <20210615103357.GP26415@redhat.com>
+In-Reply-To: <20210615103357.GP26415@redhat.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 18 Jun 2021 09:10:27 +0200
-Message-ID: <CAJfpegsDP7C_8O5_pPKSwLz20-=JpEMzq7U+kwKGG9Fku==g3Q@mail.gmail.com>
-Subject: Re: [PATCH] fuse: set limit size
-To:     jzp0409 <jzp0409@163.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        "edison.jiang" <jiangzhipeng@yulong.com>
+Date:   Fri, 18 Jun 2021 09:12:49 +0200
+Message-ID: <CAJfpegv6c6xR-ye9hj0AAiw_OsoYpHqTjH=jwAWPj4R2Wb6-1g@mail.gmail.com>
+Subject: Re: [PATCH v4] fuse: Allow fallocate(FALLOC_FL_ZERO_RANGE)
+To:     "Richard W.M. Jones" <rjones@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eblake@redhat.com, libguestfs@redhat.com,
+        Shachar Sharon <synarete@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 15 Jun 2021 at 08:41, jzp0409 <jzp0409@163.com> wrote:
+On Tue, 15 Jun 2021 at 12:34, Richard W.M. Jones <rjones@redhat.com> wrote:
 >
-> From: "edison.jiang" <jiangzhipeng@yulong.com>
+> On Tue, May 18, 2021 at 03:56:25PM +0200, Miklos Szeredi wrote:
+> > On Wed, 12 May 2021 at 18:19, Richard W.M. Jones <rjones@redhat.com> wrote:
+> > >
+> > > The current fuse module filters out fallocate(FALLOC_FL_ZERO_RANGE)
+> > > returning -EOPNOTSUPP.  libnbd's nbdfuse would like to translate
+> > > FALLOC_FL_ZERO_RANGE requests into the NBD command
+> > > NBD_CMD_WRITE_ZEROES which allows NBD servers that support it to do
+> > > zeroing efficiently.
+> > >
+> > > This commit treats this flag exactly like FALLOC_FL_PUNCH_HOLE.
+> >
+> > Thanks, applied.
 >
-> Android-R /sdcard mount FUSE filesystem type,
-> use "dd" command to filli up /sdcard dir,
-> Android will not boot normal,
-> becase this system need at least 128M userspace.
->
-> Test: open adb port,
->       adb shell "dd if=dev/zero of=sdcard/ae bs=1024000 count=xxx"
->
-> Result: if not limit size,Android system  can not boot normal.
+> Hi Miklos, did this patch get forgotten?
 
-Without understanding the specifics, this does not look like a kernel
-issue at all.
-
-Why can't the fuse server do the limiting?
+It's in my internal patch queue.   Will push to fuse.git#for-next in a few days.
 
 Thanks,
 Miklos
