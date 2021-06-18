@@ -2,130 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B38363AD357
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 22:05:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA2333AD3A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 22:32:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232033AbhFRUHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 16:07:51 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:55278 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229768AbhFRUHu (ORCPT
+        id S233657AbhFRUej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 16:34:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232943AbhFRUej (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 16:07:50 -0400
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:33072 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1luKkD-0008K1-VF; Fri, 18 Jun 2021 16:05:38 -0400
-Message-ID: <b8327afcd3ba1d9a2d2def40343efb2e79c489b7.camel@trillion01.com>
-Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fri, 18 Jun 2021 16:34:39 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C042C061760
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 13:32:29 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id v13so5277992ple.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 13:32:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=MP8s4FFElC8WWGcmncEgNlaYxzX8G52AeS2P/QyZhZo=;
+        b=WEZR7yxu3aZtBimEKt/NbIirVN+tze2gPR7BKzmDq5rvITljhzyrpxGS6Cmue71CQu
+         0YTMgoPv6wdS93UGdMwvVaCo0/UhuTqVYBYpfEdEabhzIdOitFwzCyG3gXxKBtZ5xGAJ
+         DMRXOdLF+hgvdPBRi+eAPi5rWPzOVPDmPmGnKA67rQ1I1w6b/efcbXYXdze4tIJYWJ7Q
+         oHC1Zi4GG369KYbIQ6Ii+cTQ1Hp5AgK/NC0rGBxfnsTuCXp7keOuDT4R/oRTMWpEk89O
+         fp25QJo7seajIKzDyfl9SHHT/5f+ujxa/eSVfmgml5yJVjmxIGDuWwdvgKGSIvZxcWHE
+         mQOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=MP8s4FFElC8WWGcmncEgNlaYxzX8G52AeS2P/QyZhZo=;
+        b=KpRYwV2yzIFRujirphthZ0+1Re0z39Fph4wJRIv6mH4IjM7Ut+BWagTuoSz8k0lmHc
+         EQgaFY/eeStpA2REyOlzaxbd2Oz/2O9wIQOFNpm/gqLv5XnozvX1YRibxvgWJpce5o/W
+         0Mq9MZVRUBzUiFQVMz/UBVC+4AF5Kjl0s5Jt24xsNwVIwBErFO32ie3EAr4Y6XnDTgWX
+         gXe9V3b8ZYREFzBvtGuoyEnyFXifhbZNxiXpOM4oezQgxTDtS94MFhkWv5kz2H+qGabv
+         7wHKBEyfa+5VDBVdVpXdj+RYHHx0bS/Hs/UDQoE8Bl+z2mQ4EDumY5yrbIxlvuXr2v3S
+         QOiA==
+X-Gm-Message-State: AOAM532kLcMUYyylWa0+6TYgSRxIx9aIIv/DcUXIN+k/lT5OnOrtEhhn
+        x6/8VUm1HITaSRQBHcpzdLA//ftHBWiUJQ==
+X-Google-Smtp-Source: ABdhPJy743KWZ0d0NbsuiFsT9v7KrOTXq/Ke2PmKXGT90gHHv2K6dl+2AEBChnWHajAm31QwTV/QMQ==
+X-Received: by 2002:a17:902:b409:b029:114:afa6:7f4a with SMTP id x9-20020a170902b409b0290114afa67f4amr6374889plr.56.1624048348764;
+        Fri, 18 Jun 2021 13:32:28 -0700 (PDT)
+Received: from relinquished.localdomain ([2620:10d:c090:400::5:41cb])
+        by smtp.gmail.com with ESMTPSA id 18sm8694174pfx.71.2021.06.18.13.32.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jun 2021 13:32:28 -0700 (PDT)
+Date:   Fri, 18 Jun 2021 13:32:26 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Pavel Begunkov>" <asml.silence@gmail.com>
-Date:   Fri, 18 Jun 2021 16:05:36 -0400
-In-Reply-To: <87v96dd1gz.fsf@disp2133>
-References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
-         <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
-         <87eeda7nqe.fsf@disp2133>
-         <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
-         <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
-         <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
-         <87y2bh4jg5.fsf@disp2133>
-         <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
-         <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
-         <87pmwmn5m0.fsf@disp2133>
-         <4163ed48afbcb1c288b366fe2745205cd66bea3d.camel@trillion01.com>
-         <87v96dd1gz.fsf@disp2133>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.2 
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
+Message-ID: <YM0C2mZfTE0uz3dq@relinquished.localdomain>
+References: <cover.1623972518.git.osandov@fb.com>
+ <6caae597eb20da5ea23e53e8e64ce0c4f4d9c6d2.1623972519.git.osandov@fb.com>
+ <CAHk-=whRA=54dtO3ha-C2-fV4XQ2nry99BmfancW-16EFGTHVg@mail.gmail.com>
+ <YMz3MfgmbtTSQljy@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YMz3MfgmbtTSQljy@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2021-06-16 at 15:00 -0500, Eric W. Biederman wrote:
-> Olivier Langlois <olivier@trillion01.com> writes:
+On Fri, Jun 18, 2021 at 07:42:41PM +0000, Al Viro wrote:
+> On Fri, Jun 18, 2021 at 11:50:25AM -0700, Linus Torvalds wrote:
 > 
-> > I redid my test but this time instead of dumping directly into a
-> > file,
-> > I did let the coredump be piped to the systemd coredump module and
-> > the
-> > coredump generation isn't working as expected when piping.
+> > I think that you may need it to be based on Al's series for that to
+> > work, which might be inconvenient, though.
 > > 
-> > So your code review conclusions are correct.
+> > One other non-code issue: particularly since you only handle a subset
+> > of the iov_iter cases, it would be nice to have an explanation for
+> > _why_ those particular cases.
+> > 
+> > IOW, have some trivial explanation for each of the cases. "iovec" is
+> > for regular read/write, what triggers the kvec and bvec cases?
+> > 
+> > But also, the other way around. Why doesn't the pipe case trigger? No
+> > splice support?
 > 
-> Thank you for confirming that.
+> Pipe ones are strictly destinations - they can't be sources.  So if you
+> see it called for one of those, you've a bug.
 > 
-> Do you know how your test program is using io_uring?
+> Xarray ones are *not* - they can be sources, and that's missing here.
+
+Ah, ITER_XARRAY was added recently so I missed it.
+
+> Much more unpleasant, though, is that this thing has hard dependency on
+> nr_seg == 1 *AND* openly suggests the use of iov_iter_single_seg_count(),
+> which is completely wrong.  That sucker has some weird users left (as
+> of #work.iov_iter), but all of them are actually due to API deficiencies
+> and I very much hope to kill that thing off.
 > 
-> I have been trying to put the pieces together on what io_uring is
-> doing
-> that stops the coredump.  The fact that it takes a little while
-> before
-> it kills the coredump is a little puzzling.  The code looks like all
-> of
-> the io_uring operations should have been canceled before the coredump
-> starts.
+> Why not simply add iov_iter_check_zeroes(), that would be called after
+> copy_from_iter() and verified that all that's left in the iterator
+> consists of zeroes?  Then this copy_struct_from_...() would be
+> trivial to express through those two.  And check_zeroes would also
+> be trivial, especially on top of #work.iov_iter.  With no calls of
+> iov_iter_advance() at all, while we are at it...
 > 
-> 
-With a very simple setup, I guess that this could easily be
-reproducible. Make a TCP connection with a server that is streaming
-non-stop data and enter a loop where you keep initiating async
-OP_IOURING_READ operations on your TCP fd.
+> IDGI... Omar, what semantics do you really want from that primitive?
 
-Once you have that, manually sending a SIG_SEGV is a sure fire way to
-stumble into the problem. This is how I am testing the patches.
+RWF_ENCODED is intended to be used like this:
 
-IRL, it is possible to call io_uring_enter() to submit operations and
-return from the syscall without waiting on all events to have
-completed. Once the process is back in userspace, if it stumble into a
-bug that triggers a coredump, any remaining pending I/O operations can
-set TIF_SIGNAL_NOTIFY while the coredump is generated.
+	struct encoded_iov encoded_iov = {
+		/* compression metadata */ ...
+	};
+	char compressed_data[] = ...;
+	struct iovec iov[] = {
+		{ &encoded_iov, sizeof(encoded_iov) },
+		{ compressed_data, sizeof(compressed_data) },
+	};
+	pwritev2(fd, iov, 2, -1, RWF_ENCODED);
 
-I have read the part of your previous email where you share the result
-of your ongoing investigation. I didn't comment as the definitive
-references in io_uring matters are Jens and Pavel but I am going to
-share my opinion on the matter.
+Basically, we squirrel away the compression metadata in the first
+element of the iovec array, and we use iov[0].iov_len so that we can
+support future extensions of struct encoded_iov in the style of
+copy_struct_from_user().
 
-I think that you did put the finger on the code cleaning up the
-io_uring instance in regards to pending operations. It seems to be
-io_uring_release() which is probably called from exit_files() which
-happens to be after the call to exit_mm().
+So this doesn't require nr_seg == 1. On the contrary, it's expected that
+the rest of the iovec has the compressed payload. And to support the
+copy_struct_from_user()-style versioning, we need to know the size of
+the struct encoded_iov that userspace gave us, which is the reason for
+the iov_iter_single_seg_count().
 
-At first, I did entertain the idea of considering if it could be
-possible to duplicate some of the operations performed by
-io_uring_release() related to the infamous TIF_SIGNAL_NOTIFY setting
-into io_uring_files_cancel() which is called before exit_mm().
+I know this interface isn't the prettiest. It started as a
+Btrfs-specific ioctl, but this approach was suggested as a way to avoid
+having a whole new I/O path:
+https://lore.kernel.org/linux-fsdevel/20190905021012.GL7777@dread.disaster.area/
+The copy_struct_from_iter() thing was proposed as a way to allow future
+extensions here:
+https://lore.kernel.org/linux-btrfs/20191022020215.csdwgi3ky27rfidf@yavin.dot.cyphar.com/
 
-but the idea is useless as it is not the other threads of the group
-that are causing the TIF_SIGNAL_NOTIFY problem. It is the thread
-calling do_coredump() which is done by the signal handing code even
-before that thread enters do_exit() and start to be cleaned up. That
-thread when it enters do_coredump() is still fully loaded and
-operational in terms of io_uring functionality.
+Please let me know if you have any suggestions for how to improve this.
 
-I guess that this io_uring cancel all pending operations hook would
-have to be called from do_coredump or from get_signal() but if it is
-the way to go, I feel that this is a change major enough that wouldn't
-dare going there without the blessing of the maintainers in cause....
-
-
+Thanks,
+Omar
