@@ -2,202 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16EB93ACD32
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 16:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BFC53ACD38
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 16:11:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234280AbhFRONH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 10:13:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37383 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231877AbhFRONE (ORCPT
+        id S234348AbhFRON6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 10:13:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41454 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229782AbhFRON6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 10:13:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624025454;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ajv9GHZqwhwdqHmInEP3t514hzTn+CylcSgzTQPjYrk=;
-        b=LOErCS6Zv1mCHF5RO+Vp8M3ZMzIn2gV00N6DNhzpd+U9KchaneW+g3AwjkEA/LyQL2/lfp
-        Fo43BfYhlDnpngsJ0+evTtYQ2XhwBbitlZwSt9+ZLDCvq0hfha5Bcty3iI39XKeU0W8qsL
-        XXMbu4tZuODfqM892SQACeDaLlj9tQo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-589-ziznzbOoNd6RDq0QxqqqLA-1; Fri, 18 Jun 2021 10:10:45 -0400
-X-MC-Unique: ziznzbOoNd6RDq0QxqqqLA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 18 Jun 2021 10:13:58 -0400
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80566C061574;
+        Fri, 18 Jun 2021 07:11:48 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1B3951280241;
+        Fri, 18 Jun 2021 07:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1624025506;
+        bh=4LBN5ONxoCRCcmkd/3TRY+Leu8+Z6eiVOBBAW6jThCc=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=ZOOaW8e7cDpvpBw4NDkdSQvvjKr3Tv3PpC3/84PPPXnDUohCTNaNIapIEV+QfwMMm
+         MZ+qtKH6hkBXEtHHI9vrWTnL23mrzQhufRG7QTGP+P/f0yKe9SdYAMliHBYKYNy+lW
+         0XkClXMLWyc+4x0i+eb5prohIqKqCYPH/QRUBqdU=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Ef-HQXDtiAdB; Fri, 18 Jun 2021 07:11:46 -0700 (PDT)
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::c447])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C5E8E801B33;
-        Fri, 18 Jun 2021 14:10:43 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-114-2.rdu2.redhat.com [10.10.114.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 93B3060BE5;
-        Fri, 18 Jun 2021 14:10:31 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 2E22722054F; Fri, 18 Jun 2021 10:10:31 -0400 (EDT)
-Date:   Fri, 18 Jun 2021 10:10:31 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        Dominique Martinet <asmadeus@codewreck.org>
-Subject: Re: [PATCH 2/2] init: allow mounting arbitrary non-blockdevice
- filesystems as root
-Message-ID: <20210618141031.GC1234055@redhat.com>
-References: <20210617153649.1886693-1-hch@lst.de>
- <20210617153649.1886693-3-hch@lst.de>
- <20210617162610.GC1142820@redhat.com>
- <20210618132038.GA13406@lst.de>
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 2D3291280021;
+        Fri, 18 Jun 2021 07:11:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1624025505;
+        bh=4LBN5ONxoCRCcmkd/3TRY+Leu8+Z6eiVOBBAW6jThCc=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=v5gjcRptKODpU0+TvxfBTk18Wz6cYOSQVqInEBg1CDw6wSl8BJsxg+4zb6b6L20t5
+         Lf8hlOhryE6RTc778UvZDG1QLVK7TdwD1HsZ151o8S3/idPjYz1589NX7jhpLKl6ND
+         PThgRTXDcqRWz6DK7IMwg9PXztNLVgRtFstqTJCE=
+Message-ID: <cd7ffbe516255c30faab7a3ee3ee48f32e9aa797.camel@HansenPartnership.com>
+Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
+        Christoph Lameter <cl@gentwo.de>,
+        Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
+        ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
+Date:   Fri, 18 Jun 2021 07:11:44 -0700
+In-Reply-To: <YMyjryXiAfKgS6BY@pendragon.ideasonboard.com>
+References: <YIx7R6tmcRRCl/az@mit.edu>
+         <alpine.DEB.2.22.394.2105271522320.172088@gentwo.de>
+         <YK+esqGjKaPb+b/Q@kroah.com>
+         <c46dbda64558ab884af060f405e3f067112b9c8a.camel@HansenPartnership.com>
+         <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com>
+         <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
+         <20210610182318.jrxe3avfhkqq7xqn@nitro.local>
+         <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
+         <20210610152633.7e4a7304@oasis.local.home>
+         <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
+         <YMyjryXiAfKgS6BY@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210618132038.GA13406@lst.de>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 03:20:38PM +0200, Christoph Hellwig wrote:
-> On Thu, Jun 17, 2021 at 12:26:10PM -0400, Vivek Goyal wrote:
-> > Not sure what FS_BINARY_MOUNTDATA is why fs should not have that set. nfs
-> > seems to set it too. So that means they can't use try_mount_nodev().
-> 
-> We can't really pass actual binary mountdata using the string separation
-> scheme used by the rootfstype= option.  But given that NFS only uses
-> binary mountdata for legacy reasons and people get what they ask for
-> using the option I think we can drop the check.
-> 
-> > In case of success err == 0, but we still panic(). We will need to
-> > check for success as well.
-> 
-> Indeed.
-> 
-> > root_fs_names can be NULL and it crashes with NULL pointer dereference.
-> 
-> True.
-> 
-> What do you think of this version?
+On Fri, 2021-06-18 at 16:46 +0300, Laurent Pinchart wrote:
+> For workshop or brainstorming types of sessions, the highest barrier
+> to participation for remote attendees is local attendees not speaking
+> in microphones. That's the number one rule that moderators would need
+> to enforce, I think all the rest depends on it. This may require a
+> larger number of microphones in the room than usual.
 
-[ Cc Dominique Martinet ]
+Plumbers has been pretty good at that.  Even before remote
+participation, if people don't speak into the mic, it's not captured on
+the recording, so we've spent ages developing protocols for this. 
+Mostly centred around having someone in the room to remind everyone to
+speak into the mic and easily throwable padded mic boxes.  Ironically,
+this is the detail that meant we couldn't hold Plumbers in person under
+the current hotel protocols ... the mic needs sanitizing after each
+throw.
 
-Hi Christoph,
+James
 
-This one works well for me. Just one minor nit. root_device_name, can
-be NULL as well if user passes following.
-
-"rootfstype=virtiofs rw".
-
-And currently mount_nodev_root() is assuming root_device_name is not NULL
-and we crash with null pointer dereference.
-
-May be something like this.
-
-        if (ROOT_DEV == 0 && root_device_name && root_fs_names) {
-                if (mount_nodev_root() == 0)
-                        return;
-        }
-
-Strangely people are using "rootfstype=virtiofs rw" to mount virtiofs
-as rootfs. They give their filesystem a tag named "/dev/root". And
-currently it works and they can mount virtiofs as rootfs.
-
-With above change, current hackish way will also continue to work and
-not break existing setups.
-
-Thanks
-Vivek
-
-> 
-> ---
-> From 141caa79a619b5f5d100eeb8e94ecf8b3b1c9af7 Mon Sep 17 00:00:00 2001
-> From: Christoph Hellwig <hch@lst.de>
-> Date: Fri, 18 Jun 2021 15:10:39 +0200
-> Subject: init: allow mounting arbitrary non-blockdevice filesystems as root
-> 
-> Currently the only non-blockdevice filesystems that can be used as the
-> initial root filesystem are NFS and CIFS, which use the magic
-> "root=/dev/nfs" and "root=/dev/cifs" syntax that requires the root
-> device file system details to come from filesystem specific kernel
-> command line options.
-> 
-> Add a little bit of new code that allows to just pass arbitrary
-> string mount options to any non-blockdevice filesystems so that it can
-> be mounted as the root file system.
-> 
-> For example a virtiofs root file system can be mounted using the
-> following syntax:
-> 
-> "root=myfs rootfstype=virtiofs rw"
-> 
-> Based on an earlier patch from Vivek Goyal <vgoyal@redhat.com>.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  init/do_mounts.c | 43 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
-> 
-> diff --git a/init/do_mounts.c b/init/do_mounts.c
-> index ec32de3ad52b..66c47193e9ee 100644
-> --- a/init/do_mounts.c
-> +++ b/init/do_mounts.c
-> @@ -534,6 +534,45 @@ static int __init mount_cifs_root(void)
->  }
->  #endif
->  
-> +static bool __init fs_is_nodev(char *fstype)
-> +{
-> +	struct file_system_type *fs = get_fs_type(fstype);
-> +	bool ret = false;
-> +
-> +	if (fs) {
-> +		ret = !(fs->fs_flags & FS_REQUIRES_DEV);
-> +		put_filesystem(fs);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int __init mount_nodev_root(void)
-> +{
-> +	char *fs_names, *fstype;
-> +	int err = -EINVAL;
-> +
-> +	fs_names = (void *)__get_free_page(GFP_KERNEL);
-> +	if (!fs_names)
-> +		return -EINVAL;
-> +	split_fs_names(fs_names, root_fs_names);
-> +
-> +	for (fstype = fs_names; *fstype; fstype += strlen(fstype) + 1) {
-> +		if (!fs_is_nodev(fstype))
-> +			continue;
-> +		err = do_mount_root(root_device_name, fstype, root_mountflags,
-> +				    root_mount_data);
-> +		if (!err)
-> +			break;
-> +		if (err != -EACCES && err != -EINVAL)
-> +			panic("VFS: Unable to mount root \"%s\" (%s), err=%d\n",
-> +			      root_device_name, fstype, err);
-> +	}
-> +
-> +	free_page((unsigned long)fs_names);
-> +	return err;
-> +}
-> +
->  void __init mount_root(void)
->  {
->  #ifdef CONFIG_ROOT_NFS
-> @@ -550,6 +589,10 @@ void __init mount_root(void)
->  		return;
->  	}
->  #endif
-> +	if (ROOT_DEV == 0 && root_fs_names) {
-> +		if (mount_nodev_root() == 0)
-> +			return;
-> +	}
->  #ifdef CONFIG_BLOCK
->  	{
->  		int err = create_dev("/dev/root", ROOT_DEV);
-> -- 
-> 2.30.2
-> 
 
