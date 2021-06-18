@@ -2,131 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B827B3AD42F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 23:10:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1E513AD46E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 23:32:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234457AbhFRVNI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 17:13:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51764 "EHLO
+        id S233966AbhFRVek (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 17:34:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234443AbhFRVNG (ORCPT
+        with ESMTP id S232997AbhFRVei (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 17:13:06 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4046C06175F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 14:10:55 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id p7so18694701lfg.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 14:10:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IggsOVtZWaDfaAjVQj4i9sjHXM/g9u+SuRPy3G5buhU=;
-        b=IdCDb8XLNd4gSRp6kXJhby/ljjp+PXKky4uW7qFCR1/rkcVRP08toOusxumJVYjA6X
-         kUQdieqI0aumZ0iOyCbaZQ+jH9t0sOwuxFGVbSA2DavBqJkBHAM5Sz5MMTfl4icGYGrK
-         jR9+83dk7r+H/+jzIxFclci70l2r7nrmDRCcc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IggsOVtZWaDfaAjVQj4i9sjHXM/g9u+SuRPy3G5buhU=;
-        b=DngshTrvnece4RS83qtMp4RxTq+GQDIDd/k7MUashoJuTFJpLGqWv1y0CIC9p0Dzr6
-         UFyfPxibhncio8qnSoFlVsgJHTRP6DS0p9xPs1uRqniNyskbjgUpBZn90RQfnUaFq7p9
-         pNkZuJlDUpYfZdnboiiay5Cg+YkykapPR/NGqFy64fF1exwE0qluhWBacRrJkoTtlSof
-         v20kRXDb6m9/Q0iZUso4zY3X5QJj+1A/UWqNPXYePbuUj39rmEd0GKe689B36bdt02jw
-         y6X9RaSDBsZd2N/mGKuoJBOY3Z2CSXJwspgxeKmsafO9d4wIIy2GbxPRgWZyEXhJokiu
-         KuRQ==
-X-Gm-Message-State: AOAM533pYqbyBPRpaoFAt8j/0H3p7onqn7Zh4n+M8cC/4B/KB6KRZL7R
-        lrWHSyq6ZA1STrjBUgDjakopOFedmS+PgK6r
-X-Google-Smtp-Source: ABdhPJxGrq+GysvwcycMmNQGdowu4Iv49trN+15ga/7AxBzuGr13PP8BXg9CTeGDRcXdcqEzn0tw9g==
-X-Received: by 2002:a19:4949:: with SMTP id l9mr4527240lfj.642.1624050654042;
-        Fri, 18 Jun 2021 14:10:54 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id v2sm45767lfd.224.2021.06.18.14.10.52
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jun 2021 14:10:53 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id h15so214615lfv.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 14:10:52 -0700 (PDT)
-X-Received: by 2002:a05:6512:baa:: with SMTP id b42mr4514578lfv.487.1624050652225;
- Fri, 18 Jun 2021 14:10:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1623972518.git.osandov@fb.com> <6caae597eb20da5ea23e53e8e64ce0c4f4d9c6d2.1623972519.git.osandov@fb.com>
- <CAHk-=whRA=54dtO3ha-C2-fV4XQ2nry99BmfancW-16EFGTHVg@mail.gmail.com>
- <YMz3MfgmbtTSQljy@zeniv-ca.linux.org.uk> <YM0C2mZfTE0uz3dq@relinquished.localdomain>
- <YM0I3aQpam7wfDxI@zeniv-ca.linux.org.uk>
-In-Reply-To: <YM0I3aQpam7wfDxI@zeniv-ca.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 18 Jun 2021 14:10:36 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgiO+jG7yFEpL5=cW9AQSV0v1N6MhtfavmGEHwrXHz9pA@mail.gmail.com>
-Message-ID: <CAHk-=wgiO+jG7yFEpL5=cW9AQSV0v1N6MhtfavmGEHwrXHz9pA@mail.gmail.com>
-Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
-To:     Al Viro <viro@zeniv.linux.org.uk>
+        Fri, 18 Jun 2021 17:34:38 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 101F1C061574;
+        Fri, 18 Jun 2021 14:32:28 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1luM6B-009kzH-QZ; Fri, 18 Jun 2021 21:32:24 +0000
+Date:   Fri, 18 Jun 2021 21:32:23 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Omar Sandoval <osandov@osandov.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-btrfs <linux-btrfs@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
         Kernel Team <kernel-team@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
+Message-ID: <YM0Q5/unrL6MFNCb@zeniv-ca.linux.org.uk>
+References: <cover.1623972518.git.osandov@fb.com>
+ <6caae597eb20da5ea23e53e8e64ce0c4f4d9c6d2.1623972519.git.osandov@fb.com>
+ <CAHk-=whRA=54dtO3ha-C2-fV4XQ2nry99BmfancW-16EFGTHVg@mail.gmail.com>
+ <YMz3MfgmbtTSQljy@zeniv-ca.linux.org.uk>
+ <YM0C2mZfTE0uz3dq@relinquished.localdomain>
+ <YM0I3aQpam7wfDxI@zeniv-ca.linux.org.uk>
+ <CAHk-=wgiO+jG7yFEpL5=cW9AQSV0v1N6MhtfavmGEHwrXHz9pA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgiO+jG7yFEpL5=cW9AQSV0v1N6MhtfavmGEHwrXHz9pA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 1:58 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Fri, Jun 18, 2021 at 01:32:26PM -0700, Omar Sandoval wrote:
->
-> > RWF_ENCODED is intended to be used like this:
-> >
-> >       struct encoded_iov encoded_iov = {
-> >               /* compression metadata */ ...
-> >       };
-> >       char compressed_data[] = ...;
-> >       struct iovec iov[] = {
-> >               { &encoded_iov, sizeof(encoded_iov) },
-> >               { compressed_data, sizeof(compressed_data) },
-> >       };
-> >       pwritev2(fd, iov, 2, -1, RWF_ENCODED);
-> >
-> > Basically, we squirrel away the compression metadata in the first
-> > element of the iovec array, and we use iov[0].iov_len so that we can
-> > support future extensions of struct encoded_iov in the style of
-> > copy_struct_from_user().
->
-> Yecchhh...
+On Fri, Jun 18, 2021 at 02:10:36PM -0700, Linus Torvalds wrote:
 
-Al, this has been true since the beginning, and was the whole point of the set.
+> > Just put the size of the encoded part first and be done with that.
+> > Magical effect of the iovec sizes is a bloody bad idea.
+> 
+> That makes everything uglier and more complicated, honestly. Then
+> you'd have to do it in _two_ operations ("get the size, then get the
+> rest"), *AND* you'd have to worry about all the corner-cases (ie
+> people putting the structure in pieces across multiple iov entries.
 
-> Just put the size of the encoded part first and be done with that.
-> Magical effect of the iovec sizes is a bloody bad idea.
+Huh?  All corner cases are already taken care of by copy_from_iter{,_full}().
+What I'm proposing is to have the size as a field in 'encoded' and
+do this
+	if (!copy_from_iter_full(&encoded, sizeof(encoded), &i))
+		return -EFAULT;
+	if (encoded.size > sizeof(encoded)) {
+		// newer than what we expect
+		if (!iov_iter_check_zeroes(&i, encoded.size - sizeof(encoded))
+			return -EINVAL;
+	} else if (encoded.size < sizeof(encoded)) {
+		// older than what we expect
+		iov_iter_revert(&i, sizeof(encoded) - encoded.size);
+		memset((void *)&encoded + encoded.size, 0, sizoef(encoded) - encoded.size);
+	}
 
-That makes everything uglier and more complicated, honestly. Then
-you'd have to do it in _two_ operations ("get the size, then get the
-rest"), *AND* you'd have to worry about all the corner-cases (ie
-people putting the structure in pieces across multiple iov entries.
+I don't think it would be more complex, but that's a matter of taste;
+I *really* doubt it would be any slower or have higher odds of bugs,
+regardless of the corner cases.
 
-So it would be slower, more complex, and much more likely to have bugs.
+And it certainly would be much smaller on the lib/iov_iter.c side -
+implementation of iov_iter_check_zeroes() would be simply this:
 
-So no. Not acceptable. The "in the first iov" is simple, efficient,
-and avoids all the problems.
+bool iov_iter_check_zeroes(struct iov_iter *i, size_t size)
+{
+	bool failed = false;
 
-The size *is* encoded already - in the iov itself. Encoding it
-anywhere else is much worse.
+	iterate_and_advance(i, bytes, base, len, off,
+		failed = (check_zeroed_user(base, len) != 1),
+		failed = (memchr_inv(base, 0, len) != NULL))
+	if (unlikely(failed))
+		iov_iter_revert(i, bytes);
+	return !failed;
+}
 
-The only issue I have is that the issue itself is kind of ugly -
-regardless of any iov issues. And the "encryption" side of it doesn't
-actually seem to be relevant or solvable using this model anyway, so
-that side is questionable.
+And that's it, no need to do anything special for xarray, etc.
+This + EXPORT_SYMBOL + extern in uio.h + snippet above in the
+user...
 
-The alternative would be to have an ioctl rather than make this be
-about the IO operations (and then that encoded data would be
-explicitly separate).
+I could buy an argument that for userland the need to add
+	encoded.size = sizeof(encoded);
+or equivalent when initializing that thing would make life too complex,
+but on the kernel side I'd say that Omar's variant is considerably more
+complex than the above...
 
-Which I suggested originally, but apparently people who want to use
-this had some real reasons not to.
-
-But encoding the structure without having the rule of "first iov only"
-is entirely unacceptable to me. See above. It's objectively much much
-worse.
-
-             Linus
