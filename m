@@ -2,147 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D3E3ACBDC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 15:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDE283ACC03
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 15:20:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230393AbhFRNRi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 09:17:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbhFRNRi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 09:17:38 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53A10C061574;
-        Fri, 18 Jun 2021 06:15:28 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id m2so7787501pgk.7;
-        Fri, 18 Jun 2021 06:15:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Twuar8f1m162HtsR53xfdWJPeS8wU+HnCYEtzd/kDzU=;
-        b=AKX0kcMMvFjzJmYNyo47EZQExEAJf+yPrIVuo6TGfBEcUwYl4fNhCriY/k20JIK0ad
-         h9tdQ0t+SNXkvndqB8KI64u+94DRMjv3+DmrjILrGvaKNdiw9N1wmwyb8YrhJodqtaH7
-         mKEnCulDiPU3f2v3ZNgp/TzXeufjS7GIxJaoD45IjO32u1k8OsALhfkFctz4UKD9Jjc3
-         MS6yqoRcTIM9SXJf1V7ywu415d5WrsYTfiFhf0nOCBMuxioZ2OWrDOWhZkd366fAU13P
-         RXOvAvY5PcADcKwlTzKH84P+hlsvLU9FZZFooubwn+z+kWJ6gKt8HE+lsUVKbTA9fceH
-         cjNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Twuar8f1m162HtsR53xfdWJPeS8wU+HnCYEtzd/kDzU=;
-        b=JUw/GkKYVaehiY0JQ8J7cCDYemsnkkkrC/l8F0a4i7frxnrD1dK4e2CheFVdiE+tuX
-         97zeB7QEvyPBzfwVsyvLaQLX5LgWOaq/tFuTaJFdFsP/bvJuKIUmbGvOWM7NR3CaIhoQ
-         /1MxK78nTY1raIFAvE3z8LyfYx7WrEK47LTqBrAQSYDGy0BtlbOKqPihMfj6vrO/eRQc
-         xe2oIquQ27N7BUuMmajVx4k1UP2Ur5Yb08XwC41/KVTAmQ344Lzi4IrJ6kppVN15SbMI
-         x/wW8rK0ol4RExRSVsR+xuRC09Pdn9LwyBVIaXMoxYXFW5Nc6hxhbGUxIsqKNn2FRXuA
-         9IDw==
-X-Gm-Message-State: AOAM531oZhjP2V3c6P4zs8wTmAIGx7V1de7GpNnOKctMArflA8Er7maV
-        JHa8Z/dzyLtjoNRuq96pnG0RiDBSJaJwnLMD/Nk=
-X-Google-Smtp-Source: ABdhPJyQFLfjGWZTbirdbthO6x+tp600u8Q2ytxfqIv3ETREf+tc28SEiMP3sqX8pv6J4q82AxW8TQe8z6rK8Eq6frs=
-X-Received: by 2002:a63:b00d:: with SMTP id h13mr10126532pgf.74.1624022127826;
- Fri, 18 Jun 2021 06:15:27 -0700 (PDT)
+        id S232880AbhFRNWu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 09:22:50 -0400
+Received: from verein.lst.de ([213.95.11.211]:34849 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230438AbhFRNWt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Jun 2021 09:22:49 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 7E51368D08; Fri, 18 Jun 2021 15:20:38 +0200 (CEST)
+Date:   Fri, 18 Jun 2021 15:20:38 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com
+Subject: Re: [PATCH 2/2] init: allow mounting arbitrary non-blockdevice
+ filesystems as root
+Message-ID: <20210618132038.GA13406@lst.de>
+References: <20210617153649.1886693-1-hch@lst.de> <20210617153649.1886693-3-hch@lst.de> <20210617162610.GC1142820@redhat.com>
 MIME-Version: 1.0
-References: <1624019875-611-1-git-send-email-faiyazm@codeaurora.org>
-In-Reply-To: <1624019875-611-1-git-send-email-faiyazm@codeaurora.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 18 Jun 2021 16:15:11 +0300
-Message-ID: <CAHp75VePzuYwHxA4S8UiUKG1uSqpvnJhfajjJkQi1qS-BhHSdg@mail.gmail.com>
-Subject: Re: [PATCH v1] mm: slub: fix the leak of alloc/free traces debugfs interface
-To:     Faiyaz Mohammed <faiyazm@codeaurora.org>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg KH <greg@kroah.com>, glittao@gmail.com,
-        vinmenon@codeaurora.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210617162610.GC1142820@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 3:38 PM Faiyaz Mohammed <faiyazm@codeaurora.org> wrote:
->
-> fix the leak of alloc/free traces debugfs interface, reported
+On Thu, Jun 17, 2021 at 12:26:10PM -0400, Vivek Goyal wrote:
+> Not sure what FS_BINARY_MOUNTDATA is why fs should not have that set. nfs
+> seems to set it too. So that means they can't use try_mount_nodev().
 
-Fix
+We can't really pass actual binary mountdata using the string separation
+scheme used by the rootfstype= option.  But given that NFS only uses
+binary mountdata for legacy reasons and people get what they ask for
+using the option I think we can drop the check.
 
-> by kmemleak like below,
->
-> unreferenced object 0xffff00091ae1b540 (size 64):
->   comm "lsbug", pid 1607, jiffies 4294958291 (age 1476.340s)
->   hex dump (first 32 bytes):
->     02 00 00 00 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
->     6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
->   backtrace:
->     [<ffff8000106b06b8>] slab_post_alloc_hook+0xa0/0x418
->     [<ffff8000106b5c7c>] kmem_cache_alloc_trace+0x1e4/0x378
->     [<ffff8000106b5e40>] slab_debugfs_start+0x30/0x50
->     slab_debugfs_start at mm/slub.c:5831
->     [<ffff8000107b3dbc>] seq_read_iter+0x214/0xd50
->     [<ffff8000107b4b84>] seq_read+0x28c/0x418
->     [<ffff8000109560b4>] full_proxy_read+0xdc/0x148
->     [<ffff800010738f24>] vfs_read+0x104/0x340
->     [<ffff800010739ee0>] ksys_read+0xf8/0x1e0
->     [<ffff80001073a03c>] __arm64_sys_read+0x74/0xa8
->     [<ffff8000100358d4>] invoke_syscall.constprop.0+0xdc/0x1d8
->     [<ffff800010035ab4>] do_el0_svc+0xe4/0x298
->     [<ffff800011138528>] el0_svc+0x20/0x30
->     [<ffff800011138b08>] el0t_64_sync_handler+0xb0/0xb8
->     [<ffff80001001259c>] el0t_64_sync+0x178/0x17c
+> In case of success err == 0, but we still panic(). We will need to
+> check for success as well.
 
-Can you shrink this a bit?
+Indeed.
 
-> Fixes: 84a2bdb1b458fc968d6d9e07dab388dc679bd747 ("mm: slub: move sysfs slab alloc/free interfaces to debugfs")
+> root_fs_names can be NULL and it crashes with NULL pointer dereference.
 
-We use 12, which is shorter.
+True.
 
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/mm/slub.c?h=next-20210617&id=84a2bdb1b458fc968d6d9e07dab388dc679bd747
+What do you think of this version?
 
->
+---
+From 141caa79a619b5f5d100eeb8e94ecf8b3b1c9af7 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Fri, 18 Jun 2021 15:10:39 +0200
+Subject: init: allow mounting arbitrary non-blockdevice filesystems as root
 
-Must be no blank lines in the tag block.
+Currently the only non-blockdevice filesystems that can be used as the
+initial root filesystem are NFS and CIFS, which use the magic
+"root=/dev/nfs" and "root=/dev/cifs" syntax that requires the root
+device file system details to come from filesystem specific kernel
+command line options.
 
-> Signed-off-by: Faiyaz Mohammed <faiyazm@codeaurora.org>
+Add a little bit of new code that allows to just pass arbitrary
+string mount options to any non-blockdevice filesystems so that it can
+be mounted as the root file system.
 
-...
+For example a virtiofs root file system can be mounted using the
+following syntax:
 
->  static void *slab_debugfs_next(struct seq_file *seq, void *v, loff_t *ppos)
->  {
-> -       loff_t *spos = v;
->         struct loc_track *t = seq->private;
->
-> +       v = ppos;
->         if (*ppos < t->count) {
-> -               *ppos = ++*spos;
-> -               return spos;
-> +               ++*ppos;
-> +               return v;
->         }
-> -       *ppos = ++*spos;
-> +       ++*ppos;
->         return NULL;
+"root=myfs rootfstype=virtiofs rw"
 
-Can it be
+Based on an earlier patch from Vivek Goyal <vgoyal@redhat.com>.
 
-       v = ppos;
-       ++*ppos;
-       if (*ppos <= t->count)
-              return v;
-       return NULL;
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ init/do_mounts.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-?  (basically the question is, is the comparison equivalent in this case or not)
-
->  }
-
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index ec32de3ad52b..66c47193e9ee 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -534,6 +534,45 @@ static int __init mount_cifs_root(void)
+ }
+ #endif
+ 
++static bool __init fs_is_nodev(char *fstype)
++{
++	struct file_system_type *fs = get_fs_type(fstype);
++	bool ret = false;
++
++	if (fs) {
++		ret = !(fs->fs_flags & FS_REQUIRES_DEV);
++		put_filesystem(fs);
++	}
++
++	return ret;
++}
++
++static int __init mount_nodev_root(void)
++{
++	char *fs_names, *fstype;
++	int err = -EINVAL;
++
++	fs_names = (void *)__get_free_page(GFP_KERNEL);
++	if (!fs_names)
++		return -EINVAL;
++	split_fs_names(fs_names, root_fs_names);
++
++	for (fstype = fs_names; *fstype; fstype += strlen(fstype) + 1) {
++		if (!fs_is_nodev(fstype))
++			continue;
++		err = do_mount_root(root_device_name, fstype, root_mountflags,
++				    root_mount_data);
++		if (!err)
++			break;
++		if (err != -EACCES && err != -EINVAL)
++			panic("VFS: Unable to mount root \"%s\" (%s), err=%d\n",
++			      root_device_name, fstype, err);
++	}
++
++	free_page((unsigned long)fs_names);
++	return err;
++}
++
+ void __init mount_root(void)
+ {
+ #ifdef CONFIG_ROOT_NFS
+@@ -550,6 +589,10 @@ void __init mount_root(void)
+ 		return;
+ 	}
+ #endif
++	if (ROOT_DEV == 0 && root_fs_names) {
++		if (mount_nodev_root() == 0)
++			return;
++	}
+ #ifdef CONFIG_BLOCK
+ 	{
+ 		int err = create_dev("/dev/root", ROOT_DEV);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.30.2
+
