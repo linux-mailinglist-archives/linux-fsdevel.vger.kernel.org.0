@@ -2,100 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBBC63AD0B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 18:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABE223AD0E4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 19:04:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235971AbhFRQsF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 12:48:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235740AbhFRQsD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 12:48:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E4FB96127C;
-        Fri, 18 Jun 2021 16:45:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624034753;
-        bh=ZTtwHmqh0rQ3M2ho9c60I0q0eOzXiN2NKnpGl1n9jAs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=R/HYr50FfFMgL8AT6+8hLyRxD/ZSJ4S2xb12SBGX3bFOa3uWO/saYDhlnVh86HZZi
-         OPDTpRuYv/2ZQouGk4fRnlCJgkL18zxi+4aIaD64YAzf49WelDhz2fEAbY0JRP/RbJ
-         VR1FI2PTAT6TbjogpFjK/WPi7QxmCYgwALtjhSbyhztW+Tjo7JUPS5dSdcGLjDT5A1
-         w5OHX7Fe1IquhO1WW9ds+tBjdvFYugD7ejgElqSQwxbbOUSkwwTVmZzxfTyxYEvOV8
-         s/Hgm/YM5MQ5/pN9z0oud2vd0ZPIKafP7cIaWCVfDbFVRZCpOjBzgT0HD4Wi/v2DQ0
-         4WeLullrbJTJg==
-Date:   Fri, 18 Jun 2021 18:45:45 +0200
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
-        Christoph Lameter <cl@gentwo.de>,
-        Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
-        ksummit@lists.linux.dev,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org,
+        id S233927AbhFRRGM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 13:06:12 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:34876 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233581AbhFRRGL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Jun 2021 13:06:11 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 8F91D21B30;
+        Fri, 18 Jun 2021 17:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1624035840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LHiaEznjsNUF4rAZuGixsJoeW9b4ApvWTouIw4rKRH4=;
+        b=tgHGhNEKrHZIfPRywKhTgPlChh7xLffPyPR5uJQIyb2HBLC33ASKcSFidv7iUXQuxGLrdO
+        QdOiHPnVfrHBtcaU5QDujIs7RYUaN384TX7ibRbgCaNtSFWkCsF/3uDa9b3b5Fcwl+Y/mS
+        XOpL0ncJouDsLGkucN3EQci1LHh56bs=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 4EB9CA3BCE;
+        Fri, 18 Jun 2021 17:04:00 +0000 (UTC)
+Date:   Fri, 18 Jun 2021 19:03:59 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Shakeel Butt <shakeelb@google.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux.dev>,
+        Linux Containers <containers@lists.linux-foundation.org>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, netdev <netdev@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-Message-ID: <20210618184545.33ea3d47@coco.lan>
-In-Reply-To: <20210618155829.GD4920@sirena.org.uk>
-References: <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com>
-        <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
-        <20210610182318.jrxe3avfhkqq7xqn@nitro.local>
-        <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
-        <20210610152633.7e4a7304@oasis.local.home>
-        <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
-        <YMyjryXiAfKgS6BY@pendragon.ideasonboard.com>
-        <cd7ffbe516255c30faab7a3ee3ee48f32e9aa797.camel@HansenPartnership.com>
-        <CAMuHMdVcNfDvpPXHSkdL3VuLXCX5m=M_AQF-P8ZajSdXt8NdQg@mail.gmail.com>
-        <20210618103214.0df292ec@oasis.local.home>
-        <20210618155829.GD4920@sirena.org.uk>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Chris Down <chris@chrisdown.name>,
+        Cgroups <cgroups@vger.kernel.org>
+Subject: Re: [PATCH v1] proc: Implement /proc/self/meminfo
+Message-ID: <YMzR/0QyP9BR7DtN@dhcp22.suse.cz>
+References: <ac070cd90c0d45b7a554366f235262fa5c566435.1622716926.git.legion@kernel.org>
+ <20210615113222.edzkaqfvrris4nth@wittgenstein>
+ <20210615124715.nzd5we5tl7xc2n2p@example.org>
+ <CALvZod7po_fK9JpcUNVrN6PyyP9k=hdcyRfZmHjSVE5r_8Laqw@mail.gmail.com>
+ <87zgvpg4wt.fsf@disp2133>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zgvpg4wt.fsf@disp2133>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Em Fri, 18 Jun 2021 16:58:29 +0100
-Mark Brown <broonie@kernel.org> escreveu:
+On Wed 16-06-21 11:17:38, Eric W. Biederman wrote:
+[...]
+> MemAvailable seems to have a good definition.  Roughly the amount of
+> memory that can be allocated without triggering swapping.  Updated
+> to include not trigger memory cgroup based swapping and I sounds good.
 
-> On Fri, Jun 18, 2021 at 10:32:14AM -0400, Steven Rostedt wrote:
-> > On Fri, 18 Jun 2021 16:28:02 +0200
-> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:  
-> 
-> > > What about letting people use the personal mic they're already
-> > > carrying, i.e. a phone?  
-> 
-> > Interesting idea.  
-> 
-> > I wonder how well that would work in practice. Are all phones good
-> > enough to prevent echo?  
-> 
-> Unless you get the latency for the WebRTC<->in room speaker down lower
-> than I'd expect it to be I'd expect echo cancellation to have fun,
-> though beam forming might reject a lot of in room noise including that -
-> higher end modern phones are astonishingly good at this stuff.  I'd not
-> trust it to work reliably for all attendees though, it's the sort of
-> thing where you'll get lots of per device variation.
+yes this definition is at least understandable but how do you want to
+define it in the memcg scope? There are two different source of memory
+pressure when dealing with memcgs. Internal one when a limit is hit and
+and external when the source of the reclaim comes from higher the
+hierarchy (including the global memory pressure). The former one would
+be quite easy to mimic with the global semantic but the later will get
+much more complex very quickly - a) you would need a snapshot of the
+whole cgroup tree and evaluate it against the global memory state b) you
+would have to consider memory reclaim protection c) the external memory
+pressure is distributed proportionaly to the size most of the time which
+is yet another complication. And more other challenges that have been
+already discussed.
 
-The local audience should be listening to the in-room audio, in order
-to avoid echo. Also, all local mics should be muted, if someone is 
-speaking from a remote location. 
-
-Yet, echo is unavoidable if a remote participant is speaking while 
-listening to the audio without headphones. If this ever happens, I
-guess the moderator should cut the remote audio and ask the remote
-participant to lower their speakers or use a headphone.
-
-
-Thanks,
-Mauro
+That being said, this might be possible to implement but I am not really
+sure this is viable and I strongly suspect that it will get unreliable
+in many situations in context of "how much you can allocate without
+swapping".
+-- 
+Michal Hocko
+SUSE Labs
