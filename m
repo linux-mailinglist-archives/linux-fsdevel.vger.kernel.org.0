@@ -2,89 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89BB83AD3EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 22:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 561793AD402
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 22:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234206AbhFRUzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 16:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47582 "EHLO
+        id S234299AbhFRVAT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 17:00:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233832AbhFRUzL (ORCPT
+        with ESMTP id S232431AbhFRVAS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 16:55:11 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBECEC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 13:53:00 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id q23so5257784ljh.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 13:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n7mevbUgr3RCVzXux42b3N2xAphxAT+zbkeqT9c1pc0=;
-        b=QnOg9hEpzwYDkgbeB18VAZPpyaKsXlB8pgO8LGFvc40lkbKeUnvRWKmOpOuu2Dq89C
-         GOA3Dw+cME79YQRp1MTd58mG6Hf9u8y33ysWyJB+KHEcJC+mfKVB/dRPt2ehsxJcJqeP
-         qNhZhmZOPrJf2cbe5gHdGfEyc6X/QX93uk++w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n7mevbUgr3RCVzXux42b3N2xAphxAT+zbkeqT9c1pc0=;
-        b=EcYd9twciChZHqWQdk0vWoDSovGzo7XFhxzA/HCLb1rSDuK8/jqCfOGEIAtdj90H3A
-         rtfj2PqMlk5fVLYjKmo0vmM9BWiaL4q+YvGQ34ClJXWss1pqld5Ox6Dru82e62kSbr3V
-         9IZIuKsNu4cVg3G36QHhXP20jflqpY9HxMFgzVzGC/0/FeStXQ8cv3xHNbYlQaoXxG9J
-         5nF8BJOCHvGvo0ZZNSlBbPx5/eNSDkcD33cvPTYVXygAOko5kioy3B7E0/ADmEpRXLDi
-         P0FTAQ3oZCnFKl8pTm9h42pf+WGmQNuh67USHXEW3Wgmbcd40Pi9MuBz4z2vKnq2xrfg
-         +lGg==
-X-Gm-Message-State: AOAM5328jCcYqM2HKz/svC+cye4zZr4fcFr+mVz+RtmN4XccZnZ65fUU
-        oEbdsjWCRMrrm5JccrYLVjL5ATsK5bFVBsvB
-X-Google-Smtp-Source: ABdhPJxdteQmlub7fAF4iDiKpomaksoZDLVgyZZkIhrm+TU8UyAOdCfXsn2OvZH+KGcEpuoAc77UNQ==
-X-Received: by 2002:a2e:9b10:: with SMTP id u16mr10840038lji.167.1624049579119;
-        Fri, 18 Jun 2021 13:52:59 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id s12sm1109441lfi.40.2021.06.18.13.52.58
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jun 2021 13:52:58 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id g13so5377945ljj.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jun 2021 13:52:58 -0700 (PDT)
-X-Received: by 2002:a2e:9644:: with SMTP id z4mr10901542ljh.507.1624049578156;
- Fri, 18 Jun 2021 13:52:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <162387854886.1035841.15139736369962171742.stgit@warthog.procyon.org.uk>
-In-Reply-To: <162387854886.1035841.15139736369962171742.stgit@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 18 Jun 2021 13:52:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whRiXMUEtyeHVCT7hp0ZZV-VLAG00Osw6qbUEyi7sWpuw@mail.gmail.com>
-Message-ID: <CAHk-=whRiXMUEtyeHVCT7hp0ZZV-VLAG00Osw6qbUEyi7sWpuw@mail.gmail.com>
-Subject: Re: [PATCH] afs: Re-enable freezing once a page fault is interrupted
-To:     David Howells <dhowells@redhat.com>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-afs@lists.infradead.org,
-        Marc Dionne <marc.dionne@auristor.com>,
+        Fri, 18 Jun 2021 17:00:18 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19127C061574;
+        Fri, 18 Jun 2021 13:58:09 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1luLYz-009kX3-Jo; Fri, 18 Jun 2021 20:58:05 +0000
+Date:   Fri, 18 Jun 2021 20:58:05 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
+Message-ID: <YM0I3aQpam7wfDxI@zeniv-ca.linux.org.uk>
+References: <cover.1623972518.git.osandov@fb.com>
+ <6caae597eb20da5ea23e53e8e64ce0c4f4d9c6d2.1623972519.git.osandov@fb.com>
+ <CAHk-=whRA=54dtO3ha-C2-fV4XQ2nry99BmfancW-16EFGTHVg@mail.gmail.com>
+ <YMz3MfgmbtTSQljy@zeniv-ca.linux.org.uk>
+ <YM0C2mZfTE0uz3dq@relinquished.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YM0C2mZfTE0uz3dq@relinquished.localdomain>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 16, 2021 at 2:22 PM David Howells <dhowells@redhat.com> wrote:
->
-> If a task is killed during a page fault, it does not currently call
-> sb_end_pagefault(), which means that the filesystem cannot be frozen
-> at any time thereafter.  This may be reported by lockdep like this:
+On Fri, Jun 18, 2021 at 01:32:26PM -0700, Omar Sandoval wrote:
 
-I've applied this patch.
+> RWF_ENCODED is intended to be used like this:
+> 
+> 	struct encoded_iov encoded_iov = {
+> 		/* compression metadata */ ...
+> 	};
+> 	char compressed_data[] = ...;
+> 	struct iovec iov[] = {
+> 		{ &encoded_iov, sizeof(encoded_iov) },
+> 		{ compressed_data, sizeof(compressed_data) },
+> 	};
+> 	pwritev2(fd, iov, 2, -1, RWF_ENCODED);
+> 
+> Basically, we squirrel away the compression metadata in the first
+> element of the iovec array, and we use iov[0].iov_len so that we can
+> support future extensions of struct encoded_iov in the style of
+> copy_struct_from_user().
 
-Everything in my screams "the sb_start/end_pagefault() code is
-completely broken", but in the meantime this patch fixes the immediate
-bug.
+Yecchhh...
 
-I suspect that the whole sb_start/end_pagefault thing should just go
-away entirely, and the freezer should be re-examined. Alternatively,
-it should just be done by generic code, not by the filesystem.
+> So this doesn't require nr_seg == 1. On the contrary, it's expected that
+> the rest of the iovec has the compressed payload. And to support the
+> copy_struct_from_user()-style versioning, we need to know the size of
+> the struct encoded_iov that userspace gave us, which is the reason for
+> the iov_iter_single_seg_count().
+> 
+> I know this interface isn't the prettiest. It started as a
+> Btrfs-specific ioctl, but this approach was suggested as a way to avoid
+> having a whole new I/O path:
+> https://lore.kernel.org/linux-fsdevel/20190905021012.GL7777@dread.disaster.area/
+> The copy_struct_from_iter() thing was proposed as a way to allow future
+> extensions here:
+> https://lore.kernel.org/linux-btrfs/20191022020215.csdwgi3ky27rfidf@yavin.dot.cyphar.com/
+> 
+> Please let me know if you have any suggestions for how to improve this.
 
-But it is what it is.
+Just put the size of the encoded part first and be done with that.
+Magical effect of the iovec sizes is a bloody bad idea.
 
-           Linus
+And on top of #work.iov_iter something like
+
+bool iov_iter_check_zeroes(struct iov_iter *i, size_t bytes)
+{
+	bool failed = false;
+        iterate_and_advance(i, bytes, base, len, off,
+			failed = (check_zeroed_user(base, len) != 1),
+			failed = (memchr_inv(base, 0, len) != NULL),
+			)
+	if (unlikely(failed))
+		iov_iter_revert(i, bytes);
+	return !failed;
+}
+
+would do "is that chunk all-zeroes?" just fine.  It's that simple...
