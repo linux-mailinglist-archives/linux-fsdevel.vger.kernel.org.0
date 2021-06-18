@@ -2,226 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 088233ACF7A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 17:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A823ACF96
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jun 2021 17:58:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233791AbhFRPy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Jun 2021 11:54:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58384 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233880AbhFRPyZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Jun 2021 11:54:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624031535;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=J0WL+FZk7Yq7sNTCDnuHrQ7U4/u1MoVoo3aB7ASsV6o=;
-        b=Lm1TYJ+25/d0+0esYiVkp059+mKIFAPVzwnVOypNAfWSA4V1VxuKXrgPAMIK81/VyeoAp1
-        th/CS73cq7rxSVMaWyIHARbvrT+6yhDblVGUeLgr8VHm2IOdLIH4AFdnn0FcBzQh6IQATu
-        hKIZFficzBJlyXXAY4bmo8Xv/ag1ZrM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-14-CNALam2nPE2tdxaNLuA81g-1; Fri, 18 Jun 2021 11:52:13 -0400
-X-MC-Unique: CNALam2nPE2tdxaNLuA81g-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B812319611A0;
-        Fri, 18 Jun 2021 15:52:12 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-114-2.rdu2.redhat.com [10.10.114.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E8E935DA2D;
-        Fri, 18 Jun 2021 15:52:05 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 8B57C22054F; Fri, 18 Jun 2021 11:52:05 -0400 (EDT)
-Date:   Fri, 18 Jun 2021 11:52:05 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: Re: [PATCH 1/3] virtiofs: Add an index to keep track of first
- request queue
-Message-ID: <20210618155205.GA1252241@redhat.com>
-References: <20210616160836.590206-1-iangelak@redhat.com>
- <20210616160836.590206-2-iangelak@redhat.com>
- <CAJfpeguiZX5zk_JP+h3f_00f5mF0nPqg9QVvmNvQ0TTV__LS-w@mail.gmail.com>
+        id S233356AbhFRQBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Jun 2021 12:01:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231697AbhFRQBA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Jun 2021 12:01:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6F87861003;
+        Fri, 18 Jun 2021 15:58:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624031930;
+        bh=Apapoa0ogz+j1ETylMG/djv0vpJmf2hXxs1HUu5smKs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nmXkOJh0glyvoe4C3vhRq3VOaXh+UE85KdrCTJQPn5GFT9bi2pzzFSTtrQ1Htls4G
+         nCSKDUlUvVfV8YpvZ74Y0DeLcMOsHfeLD1+y6XqT5hzwDaIgbiUz47IXs63v5hzt+O
+         HW61APQCAyu9w9EaIF+OnK5LNLTYeUYdiMVK3Ensr6OO4TnZvMIFkov8vJ78pJtOzR
+         y9rbKsii9bfXNnh3cxgbfmHazh4sn5pAeqXsCcYRq9BSJ/t6jkJG69JlQNKxkzt3RF
+         qJ/3J/VvIoqV9DFd7bO2MiuYoq5XNMEo8SoZ6vB/ZsVNSCUr6QGdJROF9Bb0FrKRCx
+         QSK17KzLVHKuQ==
+Date:   Fri, 18 Jun 2021 16:58:29 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
+        Christoph Lameter <cl@gentwo.de>,
+        Theodore Ts'o <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
+        ksummit@lists.linux.dev,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, netdev <netdev@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
+Message-ID: <20210618155829.GD4920@sirena.org.uk>
+Mail-Followup-To: Steven Rostedt <rostedt@goodmis.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
+        Christoph Lameter <cl@gentwo.de>, Theodore Ts'o <tytso@mit.edu>,
+        Jiri Kosina <jikos@kernel.org>, ksummit@lists.linux.dev,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, netdev <netdev@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+References: <b32c8672-06ee-bf68-7963-10aeabc0596c@redhat.com>
+ <5038827c-463f-232d-4dec-da56c71089bd@metux.net>
+ <20210610182318.jrxe3avfhkqq7xqn@nitro.local>
+ <YMJcdbRaQYAgI9ER@pendragon.ideasonboard.com>
+ <20210610152633.7e4a7304@oasis.local.home>
+ <37e8d1a5-7c32-8e77-bb05-f851c87a1004@linuxfoundation.org>
+ <YMyjryXiAfKgS6BY@pendragon.ideasonboard.com>
+ <cd7ffbe516255c30faab7a3ee3ee48f32e9aa797.camel@HansenPartnership.com>
+ <CAMuHMdVcNfDvpPXHSkdL3VuLXCX5m=M_AQF-P8ZajSdXt8NdQg@mail.gmail.com>
+ <20210618103214.0df292ec@oasis.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="KdquIMZPjGJQvRdI"
 Content-Disposition: inline
-In-Reply-To: <CAJfpeguiZX5zk_JP+h3f_00f5mF0nPqg9QVvmNvQ0TTV__LS-w@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20210618103214.0df292ec@oasis.local.home>
+X-Cookie: Are you a turtle?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 09:43:36AM +0200, Miklos Szeredi wrote:
-> On Wed, 16 Jun 2021 at 18:09, Ioannis Angelakopoulos
-> <iangelak@redhat.com> wrote:
-> >
-> > From: Vivek Goyal <vgoyal@redhat.com>
-> >
-> > We have many virtqueues and first queue which carries fuse normal requests
-> > (except forget requests) has index pointed to by enum VQ_REQUEST. This
-> > works fine as long as number of queues are not dynamic.
-> >
-> > I am about to introduce one more virtqueue, called notification queue,
-> > which will be present only if device on host supports it. That means index
-> > of request queue will change depending on if notification queue is present
-> > or not.
-> >
-> > So, add a variable to keep track of that index and this will help when
-> > notification queue is added in next patch.
-> >
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > Signed-off-by: Ioannis Angelakopoulos <iangelak@redhat.com>
-> > ---
-> >  fs/fuse/virtio_fs.c | 22 ++++++++++++++++------
-> >  1 file changed, 16 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> > index bcb8a02e2d8b..a545e31cf1ae 100644
-> > --- a/fs/fuse/virtio_fs.c
-> > +++ b/fs/fuse/virtio_fs.c
-> > @@ -61,6 +61,7 @@ struct virtio_fs {
-> >         unsigned int nvqs;               /* number of virtqueues */
-> >         unsigned int num_request_queues; /* number of request queues */
-> >         struct dax_device *dax_dev;
-> > +       unsigned int first_reqq_idx;     /* First request queue idx */
-> >
-> >         /* DAX memory window where file contents are mapped */
-> >         void *window_kaddr;
-> > @@ -681,7 +682,9 @@ static int virtio_fs_setup_vqs(struct virtio_device *vdev,
-> >         if (fs->num_request_queues == 0)
-> >                 return -EINVAL;
-> >
-> > -       fs->nvqs = VQ_REQUEST + fs->num_request_queues;
-> 
-> Okay, so VQ_REQUEST now completely lost it's meaning as an index into
-> fs->vqs[] array, but VQ_HIPRIO is still used that way.  This looks
-> confusing.  Let's just get rid of VQ_REQUEST/VQ_HIPRIO completely, and
-> add "#define VQ_HIPRIO_IDX 0".
 
-Hi Miklos,
+--KdquIMZPjGJQvRdI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Will do.
+On Fri, Jun 18, 2021 at 10:32:14AM -0400, Steven Rostedt wrote:
+> On Fri, 18 Jun 2021 16:28:02 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-> 
-> > +       /* One hiprio queue and rest are request queues */
-> > +       fs->nvqs = 1 + fs->num_request_queues;
-> > +       fs->first_reqq_idx = 1;
-> >         fs->vqs = kcalloc(fs->nvqs, sizeof(fs->vqs[VQ_HIPRIO]), GFP_KERNEL);
-> >         if (!fs->vqs)
-> >                 return -ENOMEM;
-> > @@ -701,10 +704,11 @@ static int virtio_fs_setup_vqs(struct virtio_device *vdev,
-> >         names[VQ_HIPRIO] = fs->vqs[VQ_HIPRIO].name;
-> >
-> >         /* Initialize the requests virtqueues */
-> > -       for (i = VQ_REQUEST; i < fs->nvqs; i++) {
-> > +       for (i = fs->first_reqq_idx; i < fs->nvqs; i++) {
-> >                 char vq_name[VQ_NAME_LEN];
-> >
-> > -               snprintf(vq_name, VQ_NAME_LEN, "requests.%u", i - VQ_REQUEST);
-> > +               snprintf(vq_name, VQ_NAME_LEN, "requests.%u",
-> > +                        i - fs->first_reqq_idx);
-> >                 virtio_fs_init_vq(&fs->vqs[i], vq_name, VQ_REQUEST);
-> >                 callbacks[i] = virtio_fs_vq_done;
-> >                 names[i] = fs->vqs[i].name;
-> > @@ -1225,7 +1229,7 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
-> >  static void virtio_fs_wake_pending_and_unlock(struct fuse_iqueue *fiq)
-> >  __releases(fiq->lock)
-> >  {
-> > -       unsigned int queue_id = VQ_REQUEST; /* TODO multiqueue */
-> > +       unsigned int queue_id;
-> >         struct virtio_fs *fs;
-> >         struct fuse_req *req;
-> >         struct virtio_fs_vq *fsvq;
-> > @@ -1239,6 +1243,7 @@ __releases(fiq->lock)
-> >         spin_unlock(&fiq->lock);
-> >
-> >         fs = fiq->priv;
-> > +       queue_id = fs->first_reqq_idx;
-> >
-> >         pr_debug("%s: opcode %u unique %#llx nodeid %#llx in.len %u out.len %u\n",
-> >                   __func__, req->in.h.opcode, req->in.h.unique,
-> > @@ -1316,7 +1321,7 @@ static int virtio_fs_fill_super(struct super_block *sb, struct fs_context *fsc)
-> >
-> >         err = -ENOMEM;
-> >         /* Allocate fuse_dev for hiprio and notification queues */
-> > -       for (i = 0; i < fs->nvqs; i++) {
-> > +       for (i = 0; i < fs->first_reqq_idx; i++) {
-> 
-> Previous code didn't seem to do what comment said, while new code
-> does.  So while the change seems correct, it should go into a separate
-> patch with explanation.
+> > What about letting people use the personal mic they're already
+> > carrying, i.e. a phone?
 
-I think this patch needs to be updated. It was correct when I had posted
-it back then. But since then we have changed virtiofs code.
+> Interesting idea.
 
-Initially we used to allocate fuse device only for hiprio queue and
-for request queue fuse_fill_super_common() used to allocate the device.
+> I wonder how well that would work in practice. Are all phones good
+> enough to prevent echo?
 
-It was confusing, so I added one patch so that for all virtiofs queues,
-virtiofs will allocate fuse device and fuse common code will not allocate
-fuse device.
+Unless you get the latency for the WebRTC<->in room speaker down lower
+than I'd expect it to be I'd expect echo cancellation to have fun,
+though beam forming might reject a lot of in room noise including that -
+higher end modern phones are astonishingly good at this stuff.  I'd not
+trust it to work reliably for all attendees though, it's the sort of
+thing where you'll get lots of per device variation.
 
-commit 7fd3abfa8dd7c08ecacd25b2f9f9e1d3fb642440
-Author: Vivek Goyal <vgoyal@redhat.com>
-Date:   Mon May 4 14:33:15 2020 -0400
+--KdquIMZPjGJQvRdI
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    virtiofs: do not use fuse_fill_super_common() for device installation
+-----BEGIN PGP SIGNATURE-----
 
-So this patch now needs to be udpated so that it works with current
-code. I will fix it.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmDMwqUACgkQJNaLcl1U
+h9Cg1Af5ARxVAXKtGlzoOtDRp3GzESJ+QAXYphyxV7cPGNDckB/qsv28tntr04Bn
+1QJeSujCWn3PVGGTr/AKgLgUIiicysbjbiz2MDuyKmSl/pjhJLGaKNvLb4jH14tp
+My3o3TUioxhdXmwiQAbMuEvfVVJAoccMhpLcF3DfgKGaCfuaeZ7Jrc5miAQsXqbB
+LNgM3ist9ZldXeiemRo41yZ3gQ1qwEadxhRM184rmjcvd4Xl7IyItX85s1CSwvr4
+Bi493dDbTQA3n0kb2bPD0yez6pq0xu2dGDyGTALno6HfjNA/PCxROQRgg/cQ7LUK
+U7mM4yBMrM2+z+akydMtX9us4TX2+g==
+=mrCm
+-----END PGP SIGNATURE-----
 
-> 
-> >                 struct virtio_fs_vq *fsvq = &fs->vqs[i];
-> >
-> >                 fsvq->fud = fuse_dev_alloc();
-> > @@ -1325,7 +1330,7 @@ static int virtio_fs_fill_super(struct super_block *sb, struct fs_context *fsc)
-> >         }
-> >
-> >         /* virtiofs allocates and installs its own fuse devices */
-> > -       ctx->fudptr = NULL;
-> > +       ctx->fudptr = (void **)&fs->vqs[fs->first_reqq_idx].fud;
-> 
-> I don't understand this.
-
-This is also vestige of old code. We used to pass pointer to the location
-where fuse common code should install fuse device.
-
-ctx.fudptr = (void **)&fs->vqs[VQ_REQUEST].fud;
-
-Now this code should not be needed. I will clean this up.
-
-> 
-> >         if (ctx->dax) {
-> >                 if (!fs->dax_dev) {
-> >                         err = -EINVAL;
-> > @@ -1339,9 +1344,14 @@ static int virtio_fs_fill_super(struct super_block *sb, struct fs_context *fsc)
-> >         if (err < 0)
-> >                 goto err_free_fuse_devs;
-> >
-> > +       fc = fs->vqs[fs->first_reqq_idx].fud->fc;
-> > +
-> 
-> Nor this.
-> 
-> >         for (i = 0; i < fs->nvqs; i++) {
-> >                 struct virtio_fs_vq *fsvq = &fs->vqs[i];
-> >
-> > +               if (i == fs->first_reqq_idx)
-> > +                       continue;
-> > +
-> 
-> Nor this.    There's something subtle going on here, that's not
-> mentioned in the patch header.
-
-Will fix all this. I think all this is due to old code we had about
-fuse device handling.
-
-Thanks
-Vivek
-
+--KdquIMZPjGJQvRdI--
