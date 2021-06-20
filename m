@@ -2,104 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A62E83ADED3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jun 2021 15:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2563B3ADF43
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jun 2021 18:01:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229940AbhFTNjF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Jun 2021 09:39:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbhFTNiy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Jun 2021 09:38:54 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C20D1C0613A4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Jun 2021 06:36:16 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id w4so11216071ior.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Jun 2021 06:36:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=D7l/Y2nU4ivOXB3kYNarWKNDy1SUWuawPt7q4q/Bhv4=;
-        b=uDIEtWfgl91FDet7ZYX1u1ozW0abpKvg4acx3thqXBCDoYcWKg7eyNZSXNk+51VeuJ
-         sYbwx77CCJt/Xl1UBy7P++4/uHOQjQcptGzc4BiJd5A/7x+FLCtsFr6R08yAScCPxE/G
-         ycRitdP5UZQCPHBcljPWiYz9qooX9+o9VlIcE1iBIKjgWFsG58IfpnIZmKh5Mer/et0Q
-         Wvv2McVtUA6rn+iTugaAQulni5t+7gIBWkpgi42U+JEUmcEEUifIxcViVFyKhDEEgfNV
-         A33afccbptAYxVMQ3XRd6cg8QS8Vl2AEYQyihFbFLRpIaiCXlHMQE4BSfPfytvzUMqcd
-         FXMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=D7l/Y2nU4ivOXB3kYNarWKNDy1SUWuawPt7q4q/Bhv4=;
-        b=pVisS0yxt7+Kk46yVGo8twupi0Z8rqZFWZhl9mNB8ZtlPp+p6rg3CvQTyqtFzWOcPv
-         pxxd9wQhitEoYUNPtBKSNVm1ysXNG1P1/pmmYf99yn5+x7ro99uNgFNwS7VjBVtVr8pu
-         4gL/EdKP7uDoFln1C3zBtRynd/ZDbJ+EAgd6Z19UULvnJSwNoAJRMwBhY7MZYI8NU7K9
-         iJKVRB68ngKkqD6bbHmFE5sZiXL47pIqKpWE5YlSKGtNRUd/ddWCJ1PFB9MRwsLRX3yr
-         0QkF/gpQVGN1z6FtlWLjVYcYBow83pKmS00dv3bGKrXHKVaUntEsoGh4yQqH09TVcc6D
-         sK1w==
-X-Gm-Message-State: AOAM531f8M9jmafANOYh4bWCk7WyUg/4OrUeP7fYni9oxbQtanngYHwW
-        39LEQbmIzu1JVH/dycOGi8SyLyxTnXBddv2JOUY=
-X-Google-Smtp-Source: ABdhPJwOQ5lA8oaPxit1UXNypL8Kah2QWj0jtAWNuj5/Z8/Rl7T8YsfxHtOIriCZuXo1tXOWzxp5d5YlbnVjDFRsY5Q=
-X-Received: by 2002:a02:a810:: with SMTP id f16mr12630337jaj.64.1624196175568;
- Sun, 20 Jun 2021 06:36:15 -0700 (PDT)
+        id S229694AbhFTQD7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Jun 2021 12:03:59 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:15995 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229658AbhFTQD6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 20 Jun 2021 12:03:58 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1624204906; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: References: Cc: To:
+ Subject: From: Sender; bh=tBT+9R016OURPd1+oAsunExiWefitK40L6H5apyub1U=;
+ b=J489C/CI6aFNZi9q19ZLKNDlI6lcxjPZqX0EhtkxTc/8uYQ5A5HaG676OFCwAGV5JoXBkBhn
+ NBaQUwNGf1+uOkMSVrVVYYCu9gJMtKOpS9HbrydLSYGHcuGXDrtd+ir3CIVPDISekd+dpCsn
+ LSKok834UZKKNvEVKWv04I6zaOc=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
+ 60cf6662e27c0cc77f49bb72 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 20 Jun 2021 16:01:38
+ GMT
+Sender: faiyazm=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 73BABC43217; Sun, 20 Jun 2021 16:01:37 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        NICE_REPLY_A,SPF_FAIL,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [192.168.0.102] (unknown [49.204.183.187])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: faiyazm)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 75B03C433F1;
+        Sun, 20 Jun 2021 16:01:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75B03C433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=faiyazm@codeaurora.org
+From:   Faiyaz Mohammed <faiyazm@codeaurora.org>
+Subject: Re: [PATCH v1] mm: slub: fix the leak of alloc/free traces debugfs
+ interface
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg KH <greg@kroah.com>, glittao@gmail.com,
+        vinmenon@codeaurora.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <1624019875-611-1-git-send-email-faiyazm@codeaurora.org>
+ <CAHp75VePzuYwHxA4S8UiUKG1uSqpvnJhfajjJkQi1qS-BhHSdg@mail.gmail.com>
+Message-ID: <4ecb4c12-6183-95c5-af59-02fe5da0c17c@codeaurora.org>
+Date:   Sun, 20 Jun 2021 21:31:28 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Received: by 2002:a05:6e02:1baf:0:0:0:0 with HTTP; Sun, 20 Jun 2021 06:36:14
- -0700 (PDT)
-Reply-To: sarahkoffi389@yahoo.co.jp
-From:   Sarah Koffi <sarah.koffi101@gmail.com>
-Date:   Sun, 20 Jun 2021 15:36:14 +0200
-Message-ID: <CA+ifgLE1g7jgi567M2HhZfvRSUF63Hu6stsW+ysX=3U-=qnn6Q@mail.gmail.com>
-Subject: Greetings From Mrs. Sarah Koffi
-To:     sarahkoffi389@yahoo.co.jp
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHp75VePzuYwHxA4S8UiUKG1uSqpvnJhfajjJkQi1qS-BhHSdg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Greetings From Mrs. Sarah Koffi
 
-I'm contacting you based on your good profiles I read and for a good
-reasons, I am in search of a property to buy in your country as I
-intended to come over to your
-country for investment, Though I have not meet with you before but I
-believe that one has to risk confiding in someone to succeed sometimes
-in life.
 
-My name is Mrs. Sarah Koffi. My late husband deals on Crude Oil with
-Federal Government of Sudan and he has a personal Oil firm in Bentiu
-Oil zone town and Upper
-Nile city. What I have experience physically, I don't wish to
-experience it again in my life due to the recent civil Ethnic war
-cause by our President Mr. Salva Kiir
-and the rebel leader Mr Riek Machar, I have been Under United Nation
-refuge camp in chad to save my life and that of my little daughter.
+On 6/18/2021 6:45 PM, Andy Shevchenko wrote:
+> On Fri, Jun 18, 2021 at 3:38 PM Faiyaz Mohammed <faiyazm@codeaurora.org> wrote:
+>>
+>> fix the leak of alloc/free traces debugfs interface, reported
+> 
+> Fix
+> 
+Okay, I will update in next patch version.
 
-Though, I do not know how you will feel to my proposal, but the truth
-is that I sneaked into Chad our neighboring country where I am living
-now as a refugee.
-I escaped with my little daughter when the rebels bust into our house
-and killed my husband as one of the big oil dealers in the country,
-ever since then, I have being on the run.
+>> by kmemleak like below,
+>>
+>> unreferenced object 0xffff00091ae1b540 (size 64):
+>>   comm "lsbug", pid 1607, jiffies 4294958291 (age 1476.340s)
+>>   hex dump (first 32 bytes):
+>>     02 00 00 00 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
+>>     6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
+>>   backtrace:
+>>     [<ffff8000106b06b8>] slab_post_alloc_hook+0xa0/0x418
+>>     [<ffff8000106b5c7c>] kmem_cache_alloc_trace+0x1e4/0x378
+>>     [<ffff8000106b5e40>] slab_debugfs_start+0x30/0x50
+>>     slab_debugfs_start at mm/slub.c:5831
+>>     [<ffff8000107b3dbc>] seq_read_iter+0x214/0xd50
+>>     [<ffff8000107b4b84>] seq_read+0x28c/0x418
+>>     [<ffff8000109560b4>] full_proxy_read+0xdc/0x148
+>>     [<ffff800010738f24>] vfs_read+0x104/0x340
+>>     [<ffff800010739ee0>] ksys_read+0xf8/0x1e0
+>>     [<ffff80001073a03c>] __arm64_sys_read+0x74/0xa8
+>>     [<ffff8000100358d4>] invoke_syscall.constprop.0+0xdc/0x1d8
+>>     [<ffff800010035ab4>] do_el0_svc+0xe4/0x298
+>>     [<ffff800011138528>] el0_svc+0x20/0x30
+>>     [<ffff800011138b08>] el0t_64_sync_handler+0xb0/0xb8
+>>     [<ffff80001001259c>] el0t_64_sync+0x178/0x17c
+> 
+> Can you shrink this a bit?
+>
+Okay
 
-I left my country and move to Chad our neighboring country with the
-little ceasefire we had, due to the face to face peace meeting accord
-coordinated by the US Secretary of State, Mr John Kerry and United
-Nations in Ethiopia (Addis Ababa) between our President Mr Salva Kiir
-and the rebel leader Mr Riek Machar to stop this war.
+>> Fixes: 84a2bdb1b458fc968d6d9e07dab388dc679bd747 ("mm: slub: move sysfs slab alloc/free interfaces to debugfs")
+> 
+> We use 12, which is shorter.
+> 
+>> Link: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/mm/slub.c?h=next-20210617&id=84a2bdb1b458fc968d6d9e07dab388dc679bd747
+> 
+>>
+> 
+> Must be no blank lines in the tag block.
+> >> Signed-off-by: Faiyaz Mohammed <faiyazm@codeaurora.org>
+> 
+Okay
+> ...
+> 
+>>  static void *slab_debugfs_next(struct seq_file *seq, void *v, loff_t *ppos)
+>>  {
+>> -       loff_t *spos = v;
+>>         struct loc_track *t = seq->private;
+>>
+>> +       v = ppos;
+>>         if (*ppos < t->count) {
+>> -               *ppos = ++*spos;
+>> -               return spos;
+>> +               ++*ppos;
+>> +               return v;
+>>         }
+>> -       *ppos = ++*spos;
+>> +       ++*ppos;
+>>         return NULL;
+> 
+> Can it be
+> 
+>        v = ppos;
+>        ++*ppos;
+>        if (*ppos <= t->count>               return v;
+>        return NULL;
+> 
+> ?  (basically the question is, is the comparison equivalent in this case or not)
+> 
+>>  }
+>Yes, we can update it and slab_debugfs_show has the index check as well.
+I will update in next patch version.
 
-I want to solicit for your partnership with trust to invest the $8
-million dollars deposited by my late husband in Bank because my life
-is no longer safe in our country, since the rebels are looking for the
-families of all the oil business men in the country to kill, saying
-that they are they one that is milking the country dry.
-
-I will offer you 20% of the total fund for your help while I will
-partner with you for the investment in your country.
-If I get your reply.
-
-I will wait to hear from you so as to give you details.With love from
-
- i need you to contact me here sarahkoffi389@yahoo.co.jp
-
-Mrs. Sarah Koffi
+Thanks and regards,
+Mohammed Faiyaz
