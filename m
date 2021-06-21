@@ -2,185 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EE143AECAC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 17:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DFF93AECEB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 17:57:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230311AbhFUPm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 11:42:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42767 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229837AbhFUPm7 (ORCPT
+        id S230363AbhFUQAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 12:00:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50846 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229719AbhFUQAE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 11:42:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624290044;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8Go9MX9URt78M8jN2i7z0+0HeUDLUit2ibTF2M8h6Wk=;
-        b=NjnSK2XFoMKHsbnPtpns0/2GfpIFbaER5sjNRu/wiRmCj1ZCxwtSk4K2qOh+xisPPmIoSl
-        sectfmHVRUBDV0IzznSHbxyo8c1jGLfJTUIIi+MhMX6XGMK6RJLKG3r6skoQB3oWEc/lOw
-        Og34AZM0+WhmP+WVYAzQ9RyUasLgbKw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-263-5tRt-NQMPAe3z-m_7VMt0A-1; Mon, 21 Jun 2021 11:40:38 -0400
-X-MC-Unique: 5tRt-NQMPAe3z-m_7VMt0A-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 19094800C78;
-        Mon, 21 Jun 2021 15:40:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E6AB860916;
-        Mon, 21 Jun 2021 15:40:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v3 2/2] netfs: fix test for whether we can skip read when
- writing beyond EOF
-From:   David Howells <dhowells@redhat.com>
-To:     linux-cachefs@redhat.com, linux-afs@lists.infradead.org
-Cc:     Andrew W Elble <aweits@rit.edu>, Jeff Layton <jlayton@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        ceph-devel@vger.kernel.org, dhowells@redhat.com,
-        Jeff Layton <jlayton@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 21 Jun 2021 16:40:31 +0100
-Message-ID: <162429003110.2770648.16870905479999978447.stgit@warthog.procyon.org.uk>
-In-Reply-To: <162429000639.2770648.6368710175435880749.stgit@warthog.procyon.org.uk>
-References: <162429000639.2770648.6368710175435880749.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Mon, 21 Jun 2021 12:00:04 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A319DC061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 08:57:50 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id p66so16379085iod.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 08:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jVYdu/JHdD3DwhMqrGzbw0N2BmX7zM9L4IBZN/tXq4k=;
+        b=lJmqJkiPNEyFyPAbp4D6y1VBZuqm5pleBw65Z/IGXbZACmJQN2qTHhchdJ1nCrRhAn
+         69j4SK0Apv1hr2shIUyGbQTIr/9PBNRkSO4rf/hJ2UJJVHOFcJsElRJUAeUWFIoomHDA
+         EFtDPQHf3FBomAyrBXS0vuIz6JXwK2ykLos79JpxwiDD4IjZjFjJ+uEGw2t6MZLZ5zJZ
+         2hzPjNp53k9UOltyJQ0nzOg8wt6I+q7W3NXaU+qAjFHZO88wvHZKlHr1+53YrAgY9K5A
+         91NvYc4A4Lb2wC6fWojD8xd76ZOmM1ctcMDN2rpjbHDYovTDXzbbuUGwxilierulMgVS
+         E19w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jVYdu/JHdD3DwhMqrGzbw0N2BmX7zM9L4IBZN/tXq4k=;
+        b=GRyEbdgPoDH8cyGAF+bgBUl7auyftfLccu2mKE2VbBOsWF3r92w+Bl9kA5FzunUsEa
+         WQisVxXuuRybITtHMP01MbSuzAq+wNU4GBrjGrOsTHBOnym63VOOVfN0sKXBx174cK+q
+         VbFTVQW+5TPBM/vktdkd1Z1Vwk6Lc7AD7fx219XqKCaGlf6BSTFGZzIdNb6hPd6Q9bVJ
+         1aCzaWvS/0EB3Zy9ibQYDVPg4/aMx/JswZWIdChUwAhJCUCRGSAD4lDsLu5maRdVWZyp
+         H0TAHFyMdrv8e7aBge/gnrztRE0viVdvf0TJ1DHMmY6VUnX/S4udVlDwK7o2ElitZs+G
+         1YDg==
+X-Gm-Message-State: AOAM531y1kO1hyvMYslxDkGSTcR/0rp3GJnvOH3Zl1uZHim+7oVRkTcV
+        RjQTB2c9jc1wGFHxG/JRQjHjSg==
+X-Google-Smtp-Source: ABdhPJxvN6WY08A8+Wl4gxpRvSZQltvzkxQ1N5q3tgRtCRHk0hc1Ehwp44qxs0Em0S+iy45zRwlRig==
+X-Received: by 2002:a5d:9f07:: with SMTP id q7mr19701533iot.169.1624291070033;
+        Mon, 21 Jun 2021 08:57:50 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id l11sm6343017ilo.77.2021.06.21.08.57.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jun 2021 08:57:49 -0700 (PDT)
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat
+ support
+To:     Dmitry Kadashev <dkadashev@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20210603051836.2614535-1-dkadashev@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b6ab44fc-385f-6f96-379d-ce6cbabd7238@kernel.dk>
+Date:   Mon, 21 Jun 2021 09:57:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20210603051836.2614535-1-dkadashev@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+On 6/2/21 11:18 PM, Dmitry Kadashev wrote:
+> This started out as an attempt to add mkdirat support to io_uring which
+> is heavily based on renameat() / unlinkat() support.
+> 
+> During the review process more operations were added (linkat, symlinkat,
+> mknodat) mainly to keep things uniform internally (in namei.c), and
+> with things changed in namei.c adding support for these operations to
+> io_uring is trivial, so that was done too. See
+> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
+> 
+> The first patch is preparation with no functional changes, makes
+> do_mkdirat accept struct filename pointer rather than the user string.
+> 
+> The second one leverages that to implement mkdirat in io_uring.
+> 
+> 3-6 just convert other similar do_* functions in namei.c to accept
+> struct filename, for uniformity with do_mkdirat, do_renameat and
+> do_unlinkat. No functional changes there.
+> 
+> 7 changes do_* helpers in namei.c to return ints rather than some of
+> them returning ints and some longs.
+> 
+> 8-10 add symlinkat, linkat and mknodat support to io_uring
+> (correspondingly).
+> 
+> Based on for-5.14/io_uring.
 
-It's not sufficient to skip reading when the pos is beyond the EOF.
-There may be data at the head of the page that we need to fill in
-before the write.
+Can you send in the liburing tests as well?
 
-Add a new helper function that corrects and clarifies the logic of
-when we can skip reads, and have it only zero out the part of the page
-that won't have data copied in for the write.
-
-Finally, don't set the page Uptodate after zeroing. It's not up to date
-since the write data won't have been copied in yet.
-
-[DH made the following changes:
-
- - Prefixed the new function with "netfs_".
-
- - Don't call zero_user_segments() for a full-page write.
-
- - Altered the beyond-last-page check to avoid a DIV instruction and got
-   rid of then-redundant zero-length file check.
-]
-
-Fixes: e1b1240c1ff5f ("netfs: Add write_begin helper")
-Reported-by: Andrew W Elble <aweits@rit.edu>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-cc: ceph-devel@vger.kernel.org
-Link: https://lore.kernel.org/r/20210613233345.113565-1-jlayton@kernel.org/
-Link: https://lore.kernel.org/r/162367683365.460125.4467036947364047314.stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/162391826758.1173366.11794946719301590013.stgit@warthog.procyon.org.uk/ # v2
----
-
- fs/netfs/read_helper.c |   49 +++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 36 insertions(+), 13 deletions(-)
-
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index 725614625ed4..0b6cd3b8734c 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -1011,12 +1011,42 @@ int netfs_readpage(struct file *file,
- }
- EXPORT_SYMBOL(netfs_readpage);
- 
--static void netfs_clear_thp(struct page *page)
-+/**
-+ * netfs_skip_page_read - prep a page for writing without reading first
-+ * @page: page being prepared
-+ * @pos: starting position for the write
-+ * @len: length of write
-+ *
-+ * In some cases, write_begin doesn't need to read at all:
-+ * - full page write
-+ * - write that lies in a page that is completely beyond EOF
-+ * - write that covers the the page from start to EOF or beyond it
-+ *
-+ * If any of these criteria are met, then zero out the unwritten parts
-+ * of the page and return true. Otherwise, return false.
-+ */
-+static bool netfs_skip_page_read(struct page *page, loff_t pos, size_t len)
- {
--	unsigned int i;
-+	struct inode *inode = page->mapping->host;
-+	loff_t i_size = i_size_read(inode);
-+	size_t offset = offset_in_thp(page, pos);
-+
-+	/* Full page write */
-+	if (offset == 0 && len >= thp_size(page))
-+		return true;
-+
-+	/* pos beyond last page in the file */
-+	if (pos - offset >= i_size)
-+		goto zero_out;
-+
-+	/* Write that covers from the start of the page to EOF or beyond */
-+	if (offset == 0 && (pos + len) >= i_size)
-+		goto zero_out;
- 
--	for (i = 0; i < thp_nr_pages(page); i++)
--		clear_highpage(page + i);
-+	return false;
-+zero_out:
-+	zero_user_segments(page, 0, offset, offset + len, thp_size(page));
-+	return true;
- }
- 
- /**
-@@ -1024,7 +1054,7 @@ static void netfs_clear_thp(struct page *page)
-  * @file: The file to read from
-  * @mapping: The mapping to read from
-  * @pos: File position at which the write will begin
-- * @len: The length of the write in this page
-+ * @len: The length of the write (may extend beyond the end of the page chosen)
-  * @flags: AOP_* flags
-  * @_page: Where to put the resultant page
-  * @_fsdata: Place for the netfs to store a cookie
-@@ -1061,8 +1091,6 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
- 	struct inode *inode = file_inode(file);
- 	unsigned int debug_index = 0;
- 	pgoff_t index = pos >> PAGE_SHIFT;
--	int pos_in_page = pos & ~PAGE_MASK;
--	loff_t size;
- 	int ret;
- 
- 	DEFINE_READAHEAD(ractl, file, NULL, mapping, index);
-@@ -1090,13 +1118,8 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
- 	 * within the cache granule containing the EOF, in which case we need
- 	 * to preload the granule.
- 	 */
--	size = i_size_read(inode);
- 	if (!ops->is_cache_enabled(inode) &&
--	    ((pos_in_page == 0 && len == thp_size(page)) ||
--	     (pos >= size) ||
--	     (pos_in_page == 0 && (pos + len) >= size))) {
--		netfs_clear_thp(page);
--		SetPageUptodate(page);
-+	    netfs_skip_page_read(page, pos, len)) {
- 		netfs_stat(&netfs_n_rh_write_zskip);
- 		goto have_page_no_wait;
- 	}
-
+-- 
+Jens Axboe
 
