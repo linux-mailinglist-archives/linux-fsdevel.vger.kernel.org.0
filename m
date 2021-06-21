@@ -2,83 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E17993AE4BE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 10:27:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F49C3AE4F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 10:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbhFUIaH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 04:30:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60584 "EHLO
+        id S230509AbhFUIfQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 04:35:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbhFUI3w (ORCPT
+        with ESMTP id S230202AbhFUIfJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 04:29:52 -0400
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ABB7C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 01:27:04 -0700 (PDT)
-Received: by mail-ua1-x936.google.com with SMTP id p9so6047028uar.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 01:27:04 -0700 (PDT)
+        Mon, 21 Jun 2021 04:35:09 -0400
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AD30C061756
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 01:32:54 -0700 (PDT)
+Received: by mail-ua1-x92f.google.com with SMTP id v17so6030464uar.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 01:32:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nLuy59A8PMwLhpgDGZXgcrV7ZMJJmmat7Q8wB6T7lcs=;
-        b=VoGeBo628y2FREohTV7mjqkFeTdK5lIrqZn/zJWPIjrRvUmGElbTINfxBxAjVgI3Pu
-         +Km7vM/lPHpFPtnKMiNb6+hYAKFrkbuPqRvDWxk5aGZZCRxf7xg/2Qj5hCQbWl9SlkmW
-         70Y1LxP+pSCugL3BIMwZ0SY1O/7HW+EnP2vpM=
+        bh=AyR5BeTCOPiEzhLXOoP4zgcKDESexLdcdJu4pl65SiY=;
+        b=Ts+cw78rGUGx1mzVOd0XZDx4w2BACVKVIHtmARCSf+GwfAQYzOr67ryufCc/Wx3cTt
+         +FIa+a6iv+cUndApmhERphBKGwytNCLYq9lnfxZxOXH6ah55qdzGVO+70isk8YZhVMoA
+         tNuHswn3UnHCUuKROkp8QWeCmBojXCkhgrb8k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nLuy59A8PMwLhpgDGZXgcrV7ZMJJmmat7Q8wB6T7lcs=;
-        b=YEStixgjw8IVjVkz3RkZjWRrfeRtXEtgDffxhuuq+5FT566mVGOk9ykZ4gltAgC32v
-         88G5SoVwgwg4NvMCVemOYeXO70RkRciDDHfjxlet9aSYvTdL9bqlsI/Md9OT13M71C+e
-         pfu3Cv78+ZWzAydkxMQrK6D2o6bkZ2prkKTejU9e5XbHfRCXouf7rphiEPnML/Lpvb5W
-         Jog0ZRDnMLn4C5vmJn9a2ME0Hp1N1CsA1yVaJ9+qAKsAo0NCZnbN1hzR2+msN0v5sxI8
-         OIxQBF61rswndbXUQzWYdYliu3+hxxLXOxDv7XZ2Xwv/r7kwEngmVB5mNS//XfMcX/4G
-         ghhQ==
-X-Gm-Message-State: AOAM5326aFsSDADqUp4dwOqkwf2ufCQUc4xTrVhpCmMcTICGaRXJ8rSS
-        HiwMpOUfSnfwjjbffM0kyWpsKS2LmQp95QC9Ey45FQ==
-X-Google-Smtp-Source: ABdhPJyCyHjO5agNFI9f6KyDk4d5nVl9SK+W+k1J8lkmwB3vka3xV9O/3exMBXZwkimpRefHNFeMhvmx0fnPbVAX2Fc=
-X-Received: by 2002:ab0:23c3:: with SMTP id c3mr607783uan.11.1624264022971;
- Mon, 21 Jun 2021 01:27:02 -0700 (PDT)
+        bh=AyR5BeTCOPiEzhLXOoP4zgcKDESexLdcdJu4pl65SiY=;
+        b=YqC0HbeSXS8EGKtjPYy7iY/PKY/y0BxNqbKEqD+TJb+TCq7lTCrEovrwg6YudwAkKO
+         BkRClT7LSXgZEIIQ4DRayE9qhftlrXPbLm3kvTYwlh5QWrUDFM1DFCdlt0aCHflfbiNu
+         snhW2OlUMTgJPpE1VYu3Xxf2x8Rw3ImuZCvZOEIUQ2C+qjrosBHByRk6pQ4Uitt72MKx
+         gEOM4mfQzXN6tSzQuguaazlbYa0dpkqc6Q5Zscco15YnS5msw4sss89QgKWporo1w0JX
+         zir4hHSq2Fjsn8K4O5GIK9EYIEVHIksqmVgKygJ1mcIvlvc/5weH3FaeuMHZ/5aCrg8Z
+         vJVA==
+X-Gm-Message-State: AOAM5325vTz5fUQFY3R8OAA2JBTolb4Pm2t5H1OaMtydtELxM/vyVSxk
+        PpYDQw18fDczG4eksDEYipDWBMaVys8VTcF2Fpx/lmvRqR4axQ==
+X-Google-Smtp-Source: ABdhPJyUn9WwHIOZk5yzmppXQ1vDz67GiVGVK8+LZL/EAAcUso75naYtNYNXQIxJbyU4gawA34Q+mmSYUHrwMXsACnA=
+X-Received: by 2002:ab0:6998:: with SMTP id t24mr21315544uaq.72.1624264373720;
+ Mon, 21 Jun 2021 01:32:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210423151919.195033-1-ckuehl@redhat.com>
-In-Reply-To: <20210423151919.195033-1-ckuehl@redhat.com>
+References: <1621928447-456653-1-git-send-email-wubo40@huawei.com>
+In-Reply-To: <1621928447-456653-1-git-send-email-wubo40@huawei.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 21 Jun 2021 10:26:52 +0200
-Message-ID: <CAJfpegsXXGcZDbbtDoXG8sQqHrAS1fs-TsRz5ndQ62sse1Av_w@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Send FUSE_WRITE_KILL_SUIDGID for killpriv v1
-To:     Connor Kuehl <ckuehl@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 21 Jun 2021 10:32:43 +0200
+Message-ID: <CAJfpegtyxmjD9gobfwD6aYwg718MM6dz2JpFtu20aNRU-ChHjA@mail.gmail.com>
+Subject: Re: [PATCH] fuse: use DIV_ROUND_UP helper macro for calculations
+To:     Wu Bo <wubo40@huawei.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linfeilong <linfeilong@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 23 Apr 2021 at 17:19, Connor Kuehl <ckuehl@redhat.com> wrote:
+On Tue, 25 May 2021 at 09:15, Wu Bo <wubo40@huawei.com> wrote:
 >
-> FUSE doesn't seem to be adding the FUSE_WRITE_KILL_SUIDGID flag on write
-> requests for FUSE connections that support FUSE_HANDLE_KILLPRIV but not
-> FUSE_HANDLE_KILLPRIV_V2.
+> From: Wu Bo <wubo40@huawei.com>
 >
-> However, the FUSE userspace header states:
->
->         FUSE_HANDLE_KILLPRIV: fs handles killing suid/sgid/cap on
->         write/chown/trunc
->         ^^^^^
->
-> To improve backwards compatibility with file servers that don't support
-> FUSE_HANDLE_KILLPRIV_V2, add the FUSE_WRITE_KILL_SUIDGID flag to write
-> requests if FUSE_HANDLE_KILLPRIV has been negotiated -OR- if the
-> conditions for FUSE_HANDLE_KILLPRIV_V2 support are met.
+> Replace open coded divisor calculations with the DIV_ROUND_UP kernel
+> macro for better readability.
 
+Applied, thanks.
 
-If server does not support FUSE_HANDLE_KILLPRIV_V2, then it does not
-support FUSE_WRITE_KILL_SUIDGID either.  The two were introduced
-together and the latter is only meaningful if the
-FUSE_HANDLE_KILLPRIV_V2 feature was negotiated.
-
-What am I missing?
-
-Thanks,
 Miklos
