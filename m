@@ -2,57 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC073AEB5E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 16:33:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78DB93AEB5A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 16:32:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230137AbhFUOf6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 10:35:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59624 "EHLO
+        id S229887AbhFUOfE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 10:35:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230082AbhFUOf4 (ORCPT
+        with ESMTP id S229747AbhFUOfD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 10:35:56 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FB0AC061574;
-        Mon, 21 Jun 2021 07:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=NUL0uaOl6BkuzDA85W5PvpTXkrxDHe90LX6oMMLZWA4=; b=ZvD/1038jZdKlZxctK6IFj8j4F
-        qyW7/zfnfg/ZojoUwIhQTqiAI5MI8ZwK0tKJ2qtkMXjUz1HeLq8s0EHzNjH87yYnc+ytbse2FjME2
-        JHcF0FRL80YW74Us6pmAr4Nw5c5pJUy9n3lydIzQ1UdfAN0RohIahrj08sy3SXYyK/w3v2nHEZC87
-        otkeEBIcDjzaQdGxcHnpDjCrLkO8WnNfs4VFBAQaR9LrC8qOyQKXbp5AEC7+4Jo/5ioiK5motN3yu
-        HMk9xbW6lwB/HsuJk5F2jcUcPidM0iMBeX3m7smS0Fe1pL52esYmstkoEf88Kzo9orPSnEHZTjqCP
-        e9BMG7LQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvKyj-00DBPp-0L; Mon, 21 Jun 2021 14:32:56 +0000
-Date:   Mon, 21 Jun 2021 15:32:44 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] afs: Handle len being extending over page end in
- write_begin/write_end
-Message-ID: <YNCjDGXGfewvl8E0@casper.infradead.org>
-References: <162391823192.1173366.9740514875196345746.stgit@warthog.procyon.org.uk>
- <162391824293.1173366.15452474691364794223.stgit@warthog.procyon.org.uk>
+        Mon, 21 Jun 2021 10:35:03 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3A85C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 07:32:49 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lvKyk-00ArF0-Jw; Mon, 21 Jun 2021 14:32:46 +0000
+Date:   Mon, 21 Jun 2021 14:32:46 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [RFC] what to do with IOCB_DSYNC?
+Message-ID: <YNCjDmqeomXagKIe@zeniv-ca.linux.org.uk>
+References: <YM/hZgxPM+2cP+I7@zeniv-ca.linux.org.uk>
+ <20210621135958.GA1013@lst.de>
+ <YNCcG97WwRlSZpoL@casper.infradead.org>
+ <20210621140956.GA1887@lst.de>
+ <YNCfUoaTNyi4xiF+@casper.infradead.org>
+ <20210621142235.GA2391@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <162391824293.1173366.15452474691364794223.stgit@warthog.procyon.org.uk>
+In-Reply-To: <20210621142235.GA2391@lst.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 09:24:02AM +0100, David Howells wrote:
-> With transparent huge pages, in the future, write_begin() and write_end()
-> may be passed a length parameter that, in combination with the offset into
-> the page, exceeds the length of that page.  This allows
-> grab_cache_page_write_begin() to better choose the size of THP to allocate.
+On Mon, Jun 21, 2021 at 04:22:35PM +0200, Christoph Hellwig wrote:
+> On Mon, Jun 21, 2021 at 03:16:50PM +0100, Matthew Wilcox wrote:
+> > On Mon, Jun 21, 2021 at 04:09:56PM +0200, Christoph Hellwig wrote:
+> > > On Mon, Jun 21, 2021 at 03:03:07PM +0100, Matthew Wilcox wrote:
+> > > > i suggested that to viro last night, and he pointed out that ioctl(S_SYNC)
+> > > 
+> > > Where would that S_SYNC ioctl be implemented?
+> > 
+> > xfs_diflags_to_iflags(
+> >         if (xflags & FS_XFLAG_SYNC)
+> >                 flags |= S_SYNC;
+> > 
+> > (mutatis mutandi per filesystem)
+> 
+> 
+> Ok, your description above wasn't very exact.
 
-While this is all true, it's really not necessary at this point in time.
-That change will come with a conversion of these functions to work with
-folios and basically every line you change here will change again.
+Sorry - the relevant part of conversation went
 
+< viro> willy: that's the part that can't be done at open() time
+< willy> because we might mount -o remount,sync after open()?
+< viro> ... as well as setting S_SYNC via ioctl
+
+Should've been phrased better...
+
+> Anyway, that at least doesn't go out to the superblock.  But if Al
+> dislikes it we can also make generic_sync_file and friends check
+> IS_SYNC() again.  Having a single flag is kinda nice as it avoids
+> stupid errors, but if we actually have a performance problem here
+> (do we have any data on that?) just going back to the old way would
+> seem like the simplest fix.
+
+	IIRC, there had been profiling data posted with init_sync_kiocb()
+responsible for large part of new_sync_write()/new_sync_read() overhead.
+Remember the threads about the use of ->read_iter()/->write_iter() being
+slower than having ->read()/->write()?  Back in December or so, I think;
+one surprising part had been that large chunk of overhead sat not in
+suboptimal iov_iter primitives, but right in new_sync_read()/new_sync_write()
+with init_sync_kiocb() being the source of it,
+
+	I'd rather have a single helper for those checks, rather than
+open-coding IS_SYNC() + IOCB_DSYNC in each, for obvious reasons...
