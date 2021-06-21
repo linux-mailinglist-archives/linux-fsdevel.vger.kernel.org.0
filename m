@@ -2,83 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3C8E3AEC0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 17:09:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BC803AEC2F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 17:21:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230206AbhFUPMM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 11:12:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39784 "EHLO
+        id S229876AbhFUPXl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 11:23:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbhFUPML (ORCPT
+        with ESMTP id S229747AbhFUPXj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 11:12:11 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7FB8C061574;
-        Mon, 21 Jun 2021 08:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=D8ph6pAIQDI8O5xX0/bF6rOuV3U8EpQmauqRDOmPVTw=; b=qawH6s/nu6gNZqpAj9pyqEDODz
-        MQb09/vjLbdWiYpA8JVaY4k0zUar9DsoQrWhb4JKAzFeSFiL8GJvX006u8PF9KYUqLByb4Ue/thtk
-        oHUI/3Nk7hR8YH6VY3dXwfhMF49O4GjrUZqiR2UqDLioeOmdpRDR5+HYGq7r0b4NYsZJmUSQB58pZ
-        9yf4A3b8qVaku3GgAnm/HjM5eG8r0S/i5Fd4NtCo1kK+A0m4vcAiTx0LwElKu4AJoz2VA/d7Qug2d
-        C/hQvAxLJwYFquqABYvrY4OBojOVzOzSv3epUm71kfq9jL4BbZdSsIpMvmfIWhangFScMsVdBsb7Y
-        2F22fS4g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvLY4-00DDUo-Ca; Mon, 21 Jun 2021 15:09:25 +0000
-Date:   Mon, 21 Jun 2021 16:09:16 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     viro@zeniv.linux.org.uk, Vivek Goyal <vgoyal@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com
-Subject: Re: [PATCH 1/2] init: split get_fs_names
-Message-ID: <YNCrnCvtlOuZO9jV@casper.infradead.org>
-References: <20210621062657.3641879-1-hch@lst.de>
- <20210621062657.3641879-2-hch@lst.de>
+        Mon, 21 Jun 2021 11:23:39 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D16C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 08:21:25 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id h2so4491023iob.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 08:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FoYVPU+/81/kxRVo//CsqnsQ39sxiglhfi6WXfWMPPw=;
+        b=TczxbmsZ0TBuxNenkEcIPigIGzGo8RDEtowYkwvwjJ/PDoqFY3SHvCtzagmydJPVbf
+         RRxtgIGKUCL7u6VK2l851rMUa5pYWg1jwspH4ne+XY8bhXaHtoJfwUZduPQr+MIjKz9h
+         274UYTlXqM3qamZBUTE4pqKCMFXk8TXj5dVJXxVj+5AhYeH6DNdP0LNjOa1WIhCXKXEN
+         3E3mFyrvJbi3hgvcyy7RxFnlMc1spYh5Xz89xO4xuhg4hSgcMtqpMUPzFuhITNECY5ts
+         GJv9oAExKPPwI0lq0p8arwolZFkdNpll6ESbfC5230lIMVSfyGbSkqm7ngixmb/fRP4h
+         HQNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FoYVPU+/81/kxRVo//CsqnsQ39sxiglhfi6WXfWMPPw=;
+        b=PseoHfDt+sDygImsf7Soi1XqvrD9mUqSMe0ePlOZhzpf0+EF7SLYPJoYHYMtYIntiy
+         yA1j5F0wm+byxp5x2YVBH2oTBueiAKl+CteMRVLDmgVGhqqXmLfyoLEB2n+Yx1HkAX4f
+         jZdU0aGQeCVUh7uRsHnjN9qpxxrYb46LjevhE2EXQJ7SpxLgsbq5lyDDgdt2Tf/yh8wy
+         GtgATMkQkgtPhKMziLIA05EDnA+FIhzjCclvxI8Yq1Lp3YUHAxFSZhcX0DxNJwxpVxHS
+         C524jSSxrXONnpCZp6SC1nLS4Umlp1SL6b4xsoulBMvcPsStphOgY1521mkfLqVzZWQ9
+         QpyA==
+X-Gm-Message-State: AOAM530czslFD9cDDEi0RqIo/1hqMGEAoHa7n5xYGlr5+3eacKzJT2ul
+        kovA9RdvgzVSJI/whXS4S1VIag==
+X-Google-Smtp-Source: ABdhPJyaw4Qwe0FnWYX/+0psK8VaRkjTETHQgSVaDbPZi/8+myH87JO985ENplKf1huFFb8XBhXwmQ==
+X-Received: by 2002:a02:2a07:: with SMTP id w7mr15259305jaw.96.1624288884799;
+        Mon, 21 Jun 2021 08:21:24 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id j4sm9920658iom.28.2021.06.21.08.21.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jun 2021 08:21:24 -0700 (PDT)
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat
+ support
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Dmitry Kadashev <dkadashev@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+References: <20210603051836.2614535-1-dkadashev@gmail.com>
+ <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
+ <2c4d5933-965e-29b5-0c76-3f2e5f518fe8@kernel.dk>
+Message-ID: <a459abe3-b051-ea60-d8d9-412562a255d5@kernel.dk>
+Date:   Mon, 21 Jun 2021 09:21:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210621062657.3641879-2-hch@lst.de>
+In-Reply-To: <2c4d5933-965e-29b5-0c76-3f2e5f518fe8@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 21, 2021 at 08:26:56AM +0200, Christoph Hellwig wrote:
-> -static void __init get_fs_names(char *page)
-> +static void __init split_fs_names(char *page, char *names)
+On 6/18/21 10:10 AM, Jens Axboe wrote:
+> On 6/18/21 12:24 AM, Dmitry Kadashev wrote:
+>> On Thu, Jun 3, 2021 at 12:18 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+>>>
+>>> This started out as an attempt to add mkdirat support to io_uring which
+>>> is heavily based on renameat() / unlinkat() support.
+>>>
+>>> During the review process more operations were added (linkat, symlinkat,
+>>> mknodat) mainly to keep things uniform internally (in namei.c), and
+>>> with things changed in namei.c adding support for these operations to
+>>> io_uring is trivial, so that was done too. See
+>>> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
+>>
+>> Ping. Jens, are we waiting for the audit change to be merged before this
+>> can go in?
+> 
+> Not necessarily, as that should go in for 5.14 anyway.
+> 
+> Al, are you OK with the generic changes?
 
-If you're going to respin it anyway, can you rename 'page' to 'buf'
-or something?  Kind of confusing to have a char * called 'page'.
+I have tentatively queued this up.
 
->  {
-> +	strcpy(page, root_fs_names);
-> +	while (*page++) {
-> +		if (page[-1] == ',')
-> +			page[-1] = '\0';
-> +	}
-> +	*page = '\0';
-> +}
-
-is it really worth doing a strcpy() followed by a custom strtok()?
-would this work better?
-
-	char c;
-
-	do {
-		c =  *root_fs_names++;
-		*buf++ = c;
-		if (c == ',')
-			buf[-1] = '\0';
-	} while (c);
-
-> +static void __init get_all_fs_names(char *page)
-> +{
-> +	int len = get_filesystem_list(page);
-
-it occurs to me that get_filesystem_list() fails silently.  if you build
-every linux filesystem in, and want your root on zonefs (assuming
-they're alphabetical), we'll fail to find it without a message
-indicating that we overflowed the buffer.
+-- 
+Jens Axboe
 
