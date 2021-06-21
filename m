@@ -2,108 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E65D63AECEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 17:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 913273AECF8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 18:01:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230225AbhFUQB4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 12:01:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51258 "EHLO
+        id S230118AbhFUQD7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 12:03:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230161AbhFUQBz (ORCPT
+        with ESMTP id S230170AbhFUQD4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 12:01:55 -0400
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65333C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 08:59:41 -0700 (PDT)
-Received: by mail-il1-x12a.google.com with SMTP id b5so3773881ilc.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 08:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tXUoDruRqw6fm0tJ4U5TxS0H24Nor4c/WCllgD/ekng=;
-        b=ZAA163GYntSyFwpWN8NcRUpdGFTpzOMYug2nYdMcr6M3qeW9TgC1PWIXPbSH8RyQVv
-         2NbApjKRvenz3k8TkWM4OW67hU/0r3ZQOA/FZBmqpDCXwn4ga5GoUd5DE00NUN//VqxF
-         o5nVi7E+RTxL2YupQOhnEfTv3SZvZt4vPIfybxepMsBLmlPbGTBQTAbjdfu1AOY5PcQd
-         7f9NBlHIt1X1bzAEq9mIsLGfPX3sdn4HoyxePTpm1Rtyo4GDBOrZOluQGpeyME36mVMH
-         9dsXRqlTY0LYYnEpeA5b1k+Jy+Jrn/RlSwuriYRRwMtSrc7FOiHFn/CowYJxMmFVTxmt
-         1d9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tXUoDruRqw6fm0tJ4U5TxS0H24Nor4c/WCllgD/ekng=;
-        b=IraRpkedcRSHCEFZbDrws0MQxNGILJN3GgD+f+L2r7hSzjnCN7Pu7iSbrKndO2z7v4
-         GSeWtvYt0NWJ/LOeriDLrWeILcxjtD2EbOSykHOFwLntl75NE4gOQONul18G7Z170hBh
-         yOm06Vaq3eeqvl/3lXdNJr+Qsd0d71mY0uGX9/qMtc2rAw95KnXr6JQcsEFU6cRApGAC
-         ml1Difmv79DPfmawwTQfgDEDjFNsh75naEDRvWcuGyw3dNOwtYWWDTSCuXBXTjBOQy/e
-         TEkqXeOAsDeC0NLNkDruedj5QThdBS4KXtUcCabGaj2iQC5sq0TwNwj4gSE3a5oj/3kf
-         YOrQ==
-X-Gm-Message-State: AOAM533wB4S6H4MObcJBk/8lvmi6MTbLA70gGGFGUqemxTMFChJ3OcKt
-        xeXzwtLvKX+G94Ey1AsgdCFRHiMj/l4wSQ==
-X-Google-Smtp-Source: ABdhPJzIpeqnBFYPefppR8k/Z63jSp8UKaplttn9BkxKxDeigjgqyqj0Zrivb+pEFt7ZYoJUDDC0VA==
-X-Received: by 2002:a05:6e02:14c4:: with SMTP id o4mr9804037ilk.6.1624291180784;
-        Mon, 21 Jun 2021 08:59:40 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id g4sm369749ilk.37.2021.06.21.08.59.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jun 2021 08:59:40 -0700 (PDT)
-Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat
- support
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Dmitry Kadashev <dkadashev@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20210603051836.2614535-1-dkadashev@gmail.com>
- <b6ab44fc-385f-6f96-379d-ce6cbabd7238@kernel.dk>
-Message-ID: <6ea228f7-6be2-712f-01aa-0299e63b3f68@kernel.dk>
-Date:   Mon, 21 Jun 2021 09:59:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 21 Jun 2021 12:03:56 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A6C1C06175F;
+        Mon, 21 Jun 2021 09:01:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=0sCXh9zTGifU/TAqLlM8zHbqptoq8nXnWvN/dnsVTLo=; b=nhRvMcgt8Z0lnw1ZWtAONHxwbW
+        jJrzTtiaP/4lyU459oyai+GDLEFYA/FJf16PRsuTouor/r27tcMYZvBUmD9U2ff9gNjBXzv6K2NPv
+        cQlW6VdDB2W0i4mBHHE0Y8Ez6smH3OaDOUSGRwTQx4AEe1lKTKgWEinyZ2UReUaQR7YB5CJQxT/KZ
+        kIR1BJK/IF96wmUBVBsqjAnT8s5h3993UU5bYwCiJAXyR8oBG9UCy8UqITG5kMEZhkandlDmnTQT1
+        tV0RrdFV6G6cw1IgO3SqZ7kuq+Y/AEy99g7hFhutB9/trAl+vVnK0K6Llg4F7GAUfSKL4Qvj/cnK/
+        vw5PwJmg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lvMM8-00DGcM-F8; Mon, 21 Jun 2021 16:01:04 +0000
+Date:   Mon, 21 Jun 2021 17:01:00 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        Jeff Layton <jlayton@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] afs: Fix afs_write_end() to handle short writes
+Message-ID: <YNC3vP4BKi5l6SfW@casper.infradead.org>
+References: <162429000639.2770648.6368710175435880749.stgit@warthog.procyon.org.uk>
+ <162429001766.2770648.1072619730387446884.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <b6ab44fc-385f-6f96-379d-ce6cbabd7238@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <162429001766.2770648.1072619730387446884.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/21/21 9:57 AM, Jens Axboe wrote:
-> On 6/2/21 11:18 PM, Dmitry Kadashev wrote:
->> This started out as an attempt to add mkdirat support to io_uring which
->> is heavily based on renameat() / unlinkat() support.
->>
->> During the review process more operations were added (linkat, symlinkat,
->> mknodat) mainly to keep things uniform internally (in namei.c), and
->> with things changed in namei.c adding support for these operations to
->> io_uring is trivial, so that was done too. See
->> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
->>
->> The first patch is preparation with no functional changes, makes
->> do_mkdirat accept struct filename pointer rather than the user string.
->>
->> The second one leverages that to implement mkdirat in io_uring.
->>
->> 3-6 just convert other similar do_* functions in namei.c to accept
->> struct filename, for uniformity with do_mkdirat, do_renameat and
->> do_unlinkat. No functional changes there.
->>
->> 7 changes do_* helpers in namei.c to return ints rather than some of
->> them returning ints and some longs.
->>
->> 8-10 add symlinkat, linkat and mknodat support to io_uring
->> (correspondingly).
->>
->> Based on for-5.14/io_uring.
+On Mon, Jun 21, 2021 at 04:40:17PM +0100, David Howells wrote:
+> Fix afs_write_end() to correctly handle a short copy into the intended
+> write region of the page.  Two things are necessary:
 > 
-> Can you send in the liburing tests as well?
+>  (1) If the page is not up to date, then we should just return 0
+>      (ie. indicating a zero-length copy).  The loop in
+>      generic_perform_write() will go around again, possibly breaking up the
+>      iterator into discrete chunks[1].
+> 
+>      This is analogous to commit b9de313cf05fe08fa59efaf19756ec5283af672a
+>      for ceph.
+> 
+>  (2) The page should not have been set uptodate if it wasn't completely set
+>      up by netfs_write_begin() (this will be fixed in the next patch), so
+>      we need to set uptodate here in such a case.
+> 
+> Also remove the assertion that was checking that the page was set uptodate
+> since it's now set uptodate if it wasn't already a few lines above.  The
+> assertion was from when uptodate was set elsewhere.
+> 
+> Changes:
+> v3: Remove the handling of len exceeding the end of the page.
+> 
+> Fixes: 3003bbd0697b ("afs: Use the netfs_write_begin() helper")
+> Reported-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Acked-by: Jeff Layton <jlayton@kernel.org>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: linux-afs@lists.infradead.org
+> Link: https://lore.kernel.org/r/YMwVp268KTzTf8cN@zeniv-ca.linux.org.uk/ [1]
+> Link: https://lore.kernel.org/r/162367682522.460125.5652091227576721609.stgit@warthog.procyon.org.uk/ # v1
+> Link: https://lore.kernel.org/r/162391825688.1173366.3437507255136307904.stgit@warthog.procyon.org.uk/ # v2
 
-Ah nevermind, you already did...
-
--- 
-Jens Axboe
-
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
