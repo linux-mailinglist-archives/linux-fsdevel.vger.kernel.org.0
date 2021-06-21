@@ -2,87 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4259B3AEBA8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 16:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F7BB3AEBC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 16:51:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbhFUOsz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 10:48:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34430 "EHLO
+        id S230157AbhFUOyI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 10:54:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbhFUOsy (ORCPT
+        with ESMTP id S229790AbhFUOyH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 10:48:54 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41B2CC061574;
-        Mon, 21 Jun 2021 07:46:40 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvLC9-00ArRc-HB; Mon, 21 Jun 2021 14:46:37 +0000
-Date:   Mon, 21 Jun 2021 14:46:37 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com
-Subject: Re: [PATCH 1/2] init: split get_fs_names
-Message-ID: <YNCmTSTcubslmj7k@zeniv-ca.linux.org.uk>
-References: <20210621062657.3641879-1-hch@lst.de>
- <20210621062657.3641879-2-hch@lst.de>
+        Mon, 21 Jun 2021 10:54:07 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F9DC061574;
+        Mon, 21 Jun 2021 07:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=E5UtLj3YvE+3pbwbOhdxSbthFE/nQMzXTvlgUtUaz0A=; b=WrgMDakfQkZ2nkppn4qLsDXgC2
+        ZZ/NiJTOlED2t/bDaix2G/7oeu4m9FKk7SX5nJUgArPJrugNDxSVR6MLOwAWHh7fS73gODhiHIRBF
+        ncxXH1nbOMKvToqdsgvHHQEGUPYiLVXpMAflgPpHZtDtCtQVIQwHmRdfMheZcFRjkW7va7RE9GWWZ
+        yJ3Z9NoqOq6JnJjVq6+dFCQFtjjOpIqPV8Xgdz0RZtC2fWGWSidfKkSQHB4oZRW9dZaLcTOUOTfeJ
+        OO7D0Jt2IQkBLiPGPzLNPW7gG2Wpe/j5J8gPTPzp4Xr0VhIzkv8sbJ69jtwpRqSRYGWvRyjD36VXH
+        /mDIem5A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lvLGD-00DCT3-5t; Mon, 21 Jun 2021 14:51:03 +0000
+Date:   Mon, 21 Jun 2021 15:50:49 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        Andrew W Elble <aweits@rit.edu>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] netfs: fix test for whether we can skip read when
+ writing beyond EOF
+Message-ID: <YNCnSQyKWqV8SkRs@casper.infradead.org>
+References: <162391823192.1173366.9740514875196345746.stgit@warthog.procyon.org.uk>
+ <162391826758.1173366.11794946719301590013.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210621062657.3641879-2-hch@lst.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <162391826758.1173366.11794946719301590013.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 21, 2021 at 08:26:56AM +0200, Christoph Hellwig wrote:
-> Split get_fs_names into one function that splits up the command line
-> argument, and one that gets the list of all registered file systems.
+On Thu, Jun 17, 2021 at 09:24:27AM +0100, David Howells wrote:
+> From: Jeff Layton <jlayton@kernel.org>
+> 
+> It's not sufficient to skip reading when the pos is beyond the EOF.
+> There may be data at the head of the page that we need to fill in
+> before the write.
+> 
+> Add a new helper function that corrects and clarifies the logic of
+> when we can skip reads, and have it only zero out the part of the page
+> that won't have data copied in for the write.
+> 
+> Finally, don't set the page Uptodate after zeroing. It's not up to date
+> since the write data won't have been copied in yet.
+> 
+> [DH made the following changes:
+> 
+>  - Prefixed the new function with "netfs_".
+> 
+>  - Don't call zero_user_segments() for a full-page write.
+> 
+>  - Altered the beyond-last-page check to avoid a DIV instruction and got
+>    rid of then-redundant zero-length file check.
+> ]
+> 
+> Fixes: e1b1240c1ff5f ("netfs: Add write_begin helper")
+> Reported-by: Andrew W Elble <aweits@rit.edu>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: ceph-devel@vger.kernel.org
+> Link: https://lore.kernel.org/r/20210613233345.113565-1-jlayton@kernel.org/
+> Link: https://lore.kernel.org/r/162367683365.460125.4467036947364047314.stgit@warthog.procyon.org.uk/ # v1
 
-> +static void __init get_all_fs_names(char *page)
-> +{
-> +	int len = get_filesystem_list(page);
-> +	char *s = page, *p, *next;
-> +
-> +	page[len] = '\0';
-> +	for (p = page - 1; p; p = next) {
-> +		next = strchr(++p, '\n');
-> +		if (*p++ != '\t')
-> +			continue;
-> +		while ((*s++ = *p++) != '\n')
-> +			;
-> +		s[-1] = '\0';
->  	}
-> +
->  	*s = '\0';
->  }
-
-TBH, I would rather take that one into fs/filesystems.c.  Rationale:
-get_filesystem_list(), for all its resemblance to /proc/filesystems
-contents, is used only by init/*.c and it's not a big deal to make
-it
-
-int __init get_filesystem_list(char *buf, bool is_dev)
-{
-	int f = is_dev ? FS_REQUIRES_DEV : 0;
-        int left = PAGE_SIZE, count = 0;
-        struct file_system_type *p;
-
-        read_lock(&file_systems_lock);
-	for (p = file_systems; p; p = p->next) {
-		if ((p->fs_flags & FS_REQUIRES_DEV) == f) {
-			size_t len = strlen(p->name) + 1;
-			if (len > left)
-				break;
-			memcpy(buf, p->name, len);
-			buf += len;
-			left -= len;
-			count++;
-		}
-	}
-        read_unlock(&file_systems_lock);
-	return count;
-}
-
-Generates NUL-separated list, returns the number of list elements,
-the second argument is "what kind do you want"...
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
