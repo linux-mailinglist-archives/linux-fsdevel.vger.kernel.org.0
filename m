@@ -2,97 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB8B53AEA15
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 15:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD13F3AEA87
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 15:54:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229876AbhFUNeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 09:34:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37595 "EHLO
+        id S230075AbhFUN4w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 09:56:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37582 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230021AbhFUNeH (ORCPT
+        by vger.kernel.org with ESMTP id S229876AbhFUN4v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 09:34:07 -0400
+        Mon, 21 Jun 2021 09:56:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624282312;
+        s=mimecast20190719; t=1624283677;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=aRbSdl5QweonziFZCzKBkR/5y5FG2MCCkXcMH71sHgk=;
-        b=St9Ae59J/lKK3pmwGlsmvo6ho3+SIrNt2fjzEI9C42pf79XIRpACFbpYUoyEOIPHZE0RWm
-        49CKXI3071mORXPZUAKfi0+m+ot0tww+Jo3ibsfCQ1zmGTfUJ3JNQJod+Tw+swlIHwjpJJ
-        88BMJA4VbcJVAafhbh17lKr9JPDGvRg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-429-AAHeQQqJNoWPyJst2qT77g-1; Mon, 21 Jun 2021 09:31:49 -0400
-X-MC-Unique: AAHeQQqJNoWPyJst2qT77g-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B1A6319057A6;
-        Mon, 21 Jun 2021 13:31:47 +0000 (UTC)
-Received: from localhost (ovpn-114-233.ams2.redhat.com [10.36.114.233])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 38D2419C46;
-        Mon, 21 Jun 2021 13:31:45 +0000 (UTC)
-Date:   Mon, 21 Jun 2021 14:31:44 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, linux-kernel@vger.kernel.org,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [Virtio-fs] support booting of arbitrary non-blockdevice file
- systems v2
-Message-ID: <YNCUwHn0zfmDEWBN@stefanha-x1.localdomain>
-References: <20210621062657.3641879-1-hch@lst.de>
+        bh=W6MGuavx6twbb/Q17ohA/BfaVJ/Bc9SFHn9Ch8eWwEM=;
+        b=ZTgJRx9OcWTz6nl9MmvBc8RINEwDCwiFHZtQTXXiQMM6nEZt81uMuvMyG0n1RL54WA7VuN
+        7xLla8vCzhvL8ckL+o9S6mG3BXPVQ9RDidgoXO0m2Ycijuq6XHv0ohbL/gKyVLe4C3btsh
+        C3vHRgVYRNm8zr1Bb3G2NtvhOOTyZGA=
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
+ [209.85.167.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-370-NFtChH5MPqCUdVQVJbqZ-Q-1; Mon, 21 Jun 2021 09:54:35 -0400
+X-MC-Unique: NFtChH5MPqCUdVQVJbqZ-Q-1
+Received: by mail-oi1-f198.google.com with SMTP id c193-20020aca4eca0000b02901fccdb83b9eso10726966oib.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 06:54:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=W6MGuavx6twbb/Q17ohA/BfaVJ/Bc9SFHn9Ch8eWwEM=;
+        b=bwauGuFgG2eR6aO+ngPYMGraoWmVMsSE2UZxh6LnOP+MZ0OIcW3xE3vBMlO1RWXZke
+         CvKlNX9Rp5twPrOuxGSosORKw6FQlzZVRyRjHsyH4Rv5odW3yyLpUvbr/El049md9OBe
+         l7nzYoqRqVjU/OG+7uJmsUNPz826PMiW3izVvZBuV3feUYPgjiY5r5r9pdK+l7hFSiE3
+         z8M4UDG9AiA3+qIo4UZBca7f2Zua/lz7tB7z8Bx/tkk1tL5LrS06gvX+NNEx9RpiZu7X
+         txevrdxqcXzJCVGSEIgQk8wjAq9cixVvsKj2DdlPsKFdcKlrjwqKSLM6KRcB+f8pKnLi
+         GcBA==
+X-Gm-Message-State: AOAM530A6phGTVYXlRqkVa1kVVLFoGVLRnkda0PltiEPgnuI1yGBwhq+
+        h4xsz7rYhbjP6Gu7nVD5CvtZkeGTO21YTcLhdStvXWRfTOmfDuFBaKz14HLZCSlH2Ut92b/coDr
+        btLSz+798LxWv80kTT6rhVeqdjg==
+X-Received: by 2002:a9d:6484:: with SMTP id g4mr20666950otl.331.1624283675204;
+        Mon, 21 Jun 2021 06:54:35 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw9gLvrQ1EIeX4G4mLsyuw8nbCdFPUgfViIEUWkdMzDU/6Ta9UolDlhooUW7oL86dB0u0Fp9Q==
+X-Received: by 2002:a9d:6484:: with SMTP id g4mr20666933otl.331.1624283675020;
+        Mon, 21 Jun 2021 06:54:35 -0700 (PDT)
+Received: from [192.168.0.173] (ip68-102-25-99.ks.ok.cox.net. [68.102.25.99])
+        by smtp.gmail.com with ESMTPSA id f12sm1232858ooh.38.2021.06.21.06.54.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jun 2021 06:54:34 -0700 (PDT)
+Subject: Re: [PATCH] fuse: Send FUSE_WRITE_KILL_SUIDGID for killpriv v1
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210423151919.195033-1-ckuehl@redhat.com>
+ <CAJfpegsXXGcZDbbtDoXG8sQqHrAS1fs-TsRz5ndQ62sse1Av_w@mail.gmail.com>
+From:   Connor Kuehl <ckuehl@redhat.com>
+Message-ID: <74f1eff1-570d-03b1-7a27-1ec343c5c3ab@redhat.com>
+Date:   Mon, 21 Jun 2021 08:54:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="H1YdTb2mTDFGvvnD"
-Content-Disposition: inline
-In-Reply-To: <20210621062657.3641879-1-hch@lst.de>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <CAJfpegsXXGcZDbbtDoXG8sQqHrAS1fs-TsRz5ndQ62sse1Av_w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 6/21/21 3:26 AM, Miklos Szeredi wrote:
+> On Fri, 23 Apr 2021 at 17:19, Connor Kuehl <ckuehl@redhat.com> wrote:
+>>
+>> FUSE doesn't seem to be adding the FUSE_WRITE_KILL_SUIDGID flag on write
+>> requests for FUSE connections that support FUSE_HANDLE_KILLPRIV but not
+>> FUSE_HANDLE_KILLPRIV_V2.
+>>
+>> However, the FUSE userspace header states:
+>>
+>>         FUSE_HANDLE_KILLPRIV: fs handles killing suid/sgid/cap on
+>>         write/chown/trunc
+>>         ^^^^^
+>>
+>> To improve backwards compatibility with file servers that don't support
+>> FUSE_HANDLE_KILLPRIV_V2, add the FUSE_WRITE_KILL_SUIDGID flag to write
+>> requests if FUSE_HANDLE_KILLPRIV has been negotiated -OR- if the
+>> conditions for FUSE_HANDLE_KILLPRIV_V2 support are met.
+> 
+> 
+> If server does not support FUSE_HANDLE_KILLPRIV_V2, then it does not
+> support FUSE_WRITE_KILL_SUIDGID either.  The two were introduced
+> together and the latter is only meaningful if the
+> FUSE_HANDLE_KILLPRIV_V2 feature was negotiated.
+> 
+> What am I missing?
 
---H1YdTb2mTDFGvvnD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You're not missing anything, this patch is wrong. Let's nack this.
 
-On Mon, Jun 21, 2021 at 08:26:55AM +0200, Christoph Hellwig wrote:
-> Hi all,
->=20
-> this series adds support to boot off arbitrary non-blockdevice root file
-> systems, based off an earlier patch from Vivek.
->=20
-> Chances since v1:
->  - don't try to mount every registered file system if none is specified
->  - fix various null pointer dereferences when certain kernel paramters are
->    not set
->  - general refactoring.
->=20
-> _______________________________________________
-> Virtio-fs mailing list
-> Virtio-fs@redhat.com
-> https://listman.redhat.com/mailman/listinfo/virtio-fs
->=20
+Thanks!
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---H1YdTb2mTDFGvvnD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmDQlMAACgkQnKSrs4Gr
-c8ganQf/dsU6iKVjBTVUSkTJmH1WTbSid1kpQaMUGfq7OVc3uPC8blsmfBdRwlqv
-e8rCiAH7mdtjXCVYEKB4q7+m9Yf6cKMYnGJ/yd0hgEnSxFEhYhoBWpOdRx/mj5Sy
-JP1xUW110BheBPQrdD786/OHo0plrX7mKOvDA6txgn7sMAmrAtVyjd1dmqqbU/Nu
-mYEf5YDcrqpmHFk8H9LHjK471p6pWUeDNwe687dnRaxvONAmg2stGXihP9Ycd4PM
-avhMfaReTGAzo+ezyOEqtc6YTnKZrmU3TRcIg5MPpfR42yKGOIvazW6lKXpTiUmt
-C8FEVeGCoSRA/kNi4zse1bhi4KpeQw==
-=XrUf
------END PGP SIGNATURE-----
-
---H1YdTb2mTDFGvvnD--
+Connor
 
