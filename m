@@ -2,76 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D09C63AEC32
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 17:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D6533AEC4F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 17:26:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbhFUPZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 11:25:00 -0400
-Received: from verein.lst.de ([213.95.11.211]:42390 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229747AbhFUPZA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 11:25:00 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id ED0E268B05; Mon, 21 Jun 2021 17:22:43 +0200 (CEST)
-Date:   Mon, 21 Jun 2021 17:22:43 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@lst.de>, viro@zeniv.linux.org.uk,
-        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com
-Subject: Re: [PATCH 1/2] init: split get_fs_names
-Message-ID: <20210621152243.GA6392@lst.de>
-References: <20210621062657.3641879-1-hch@lst.de> <20210621062657.3641879-2-hch@lst.de> <YNCrnCvtlOuZO9jV@casper.infradead.org>
+        id S230137AbhFUP21 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 11:28:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230006AbhFUP20 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Jun 2021 11:28:26 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE581C061574;
+        Mon, 21 Jun 2021 08:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=RaL9pjrf6kBrAUekPT/7a9K4DvP40sey65kcV5mPsCo=; b=VYdbV0RgzLNF8yQAFKh5puPdWl
+        /6+0z33lQXYykpsZ1/Fhqb1asNR3TXnoLENhRi+3QkvlaEznl9CuYNalsfLY48Loye50nOe0DNPY9
+        46BdW1S+CG/8s2Ar27y0m91EL+UGwyoEiw5Mj/fr/mYFW2bbn2EVYra5Ie39Tk1gd/4eEbox60nli
+        VgEskBzcKWWl+JuhhrQhKxEJQHNsctyRZ72+guJOqnXPIjNebkWmbCjMGjD7cc7UnTyhlsgsSn4IC
+        soSikO/TTcM2sCCSvkyHYSLfGlXvNmINNdTNtakX/A/HXcidlSpXZaokphBNKA3f5R6FGjdfHGYA4
+        MpjzTkjA==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lvLnV-00DEJ4-9N; Mon, 21 Jun 2021 15:25:18 +0000
+Date:   Mon, 21 Jun 2021 16:25:13 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Zhang Yi <yi.zhang@huawei.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jack@suse.cz, tytso@mit.edu, adilger.kernel@dilger.ca,
+        david@fromorbit.com, hch@infradead.org
+Subject: Re: [RFC PATCH v4 0/8] ext4, jbd2: fix 3 issues about
+ bdev_try_to_free_page()
+Message-ID: <YNCvWfPkauVIz2eP@infradead.org>
+References: <20210610112440.3438139-1-yi.zhang@huawei.com>
+ <YMsagbQqxJo4y2FR@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YNCrnCvtlOuZO9jV@casper.infradead.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <YMsagbQqxJo4y2FR@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 21, 2021 at 04:09:16PM +0100, Matthew Wilcox wrote:
-> On Mon, Jun 21, 2021 at 08:26:56AM +0200, Christoph Hellwig wrote:
-> > -static void __init get_fs_names(char *page)
-> > +static void __init split_fs_names(char *page, char *names)
+On Thu, Jun 17, 2021 at 10:48:49AM +0100, Christoph Hellwig wrote:
+> Looks good:
 > 
-> If you're going to respin it anyway, can you rename 'page' to 'buf'
-> or something?  Kind of confusing to have a char * called 'page'.
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-I was hoping that we did not need a respin.  While Al's suggestion is
-nice, and I've added a variant of it to my local tree it really
-is just incremental improvements.
-
-I actually thing that page name is not too bad, as it implements the
-implicit assumptions that it is a PAGE_SIZE allocation (which is a bad
-idea to start with, but we're digging a deeper and deeper hole here..)
-
-> is it really worth doing a strcpy() followed by a custom strtok()?
-> would this work better?
-> 
-> 	char c;
-> 
-> 	do {
-> 		c =  *root_fs_names++;
-> 		*buf++ = c;
-> 		if (c == ',')
-> 			buf[-1] = '\0';
-> 	} while (c);
-
-Maybe.  Then again all this is age old rarely used code, so it might be
-better to not stirr it too much..
-
-> > +static void __init get_all_fs_names(char *page)
-> > +{
-> > +	int len = get_filesystem_list(page);
-> 
-> it occurs to me that get_filesystem_list() fails silently.  if you build
-> every linux filesystem in, and want your root on zonefs (assuming
-> they're alphabetical), we'll fail to find it without a message
-> indicating that we overflowed the buffer.
-
-Yes.  The only sensible way to fix this would be some kind of cursor.
-We could use an xarray for the file_systems list, but unless we want
-to assume file systems can't go away at init type (which might be an
-ok assumption) we'd then need to get into refcount, and and and..
+Just curious: does anyone plan to pick this up for 5.14?  Getting rid
+of the layering violation on the block device mapping would really help
+with some changes I am working on.
