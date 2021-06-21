@@ -2,153 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 296B43AF580
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 20:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA253AF5CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 21:05:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231441AbhFUSuu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 14:50:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32862 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232058AbhFUStJ (ORCPT
+        id S231361AbhFUTHf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 15:07:35 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:56885 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229897AbhFUTHe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 14:49:09 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDE66C061767
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 11:46:53 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id u18so8997181pfk.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 11:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uL42HY8VlJREjfdLY2mBJzSmeljzMYYYKlWMhT3H0y0=;
-        b=1jwQIzzwBurBAPJ1Q3HQ+QDPPD+Sot5nm9znVTSkxh3auGbJymMdlb+ig/jErsLYNv
-         8Wc8ZGD+Koaekj3tBcBf4gErMvlr58VMb94TA3Lx/2UF+mLOxnNbO+Xy98c8Aq+N6C8v
-         1pqIEXH1NWOC+MVQk9oavvnM3d0RToPw8JyQY5DTfPWQnod0hET8evSCbAZm9sE96pqp
-         ZF81K20Cz52IBidFWuvCTWpssSPVJXJDArLvhvLDSpKBZ/NbPPlTLw3Poi1ZkIk88MZw
-         qrKs6egrR/LpRHr2IxE7nA1SP1SLfsw5ZA72tTv50mBxP9Gl2wQ3pyHxcpfken45dWEB
-         OCZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uL42HY8VlJREjfdLY2mBJzSmeljzMYYYKlWMhT3H0y0=;
-        b=EzqziXinmljCZ+w/GcMp8MKacdmTNKMDOedL8yBz+LVyC2zbpRdn+56rter3cWStRp
-         R0401sOJvDRch95sg4oJoVX1cwu3/bkB102Pp2dmxb4fZnxKGezjt93u9hqFISlzE1t0
-         WHY5dbotYJ8mO9X2cPmpCduKLfNGAVtlruDD2qTnVsF4z+et9G32L2mepbCEed7WAKnC
-         1UWTyOvBk/ruLa199hlnfeYRemCy6JGZeSC5ClTWycImGQ9zr0unqbm3h0b+GspEWt1r
-         AAYnSm1lOrjo0IVVGAJmlk+U2sMEZ6HGitbbcv4Wae7kfwGIcB1SjWERS9U8h2Xps+gs
-         BTBA==
-X-Gm-Message-State: AOAM532/m0TtCAml4KCEV8YtZuwer2dzaV1WLrRL2+5+Mpxlbwz3SSmS
-        mDBUpUA3UlPdTmT0V/LdgfnmLg==
-X-Google-Smtp-Source: ABdhPJz47BBhcenbhytG6OdP+DxO/RsazurFaw70c4fLgUzwa0FzusVvUXFOyWxd2fV57wyngPPOIg==
-X-Received: by 2002:a63:5d5:: with SMTP id 204mr24823530pgf.72.1624301213253;
-        Mon, 21 Jun 2021 11:46:53 -0700 (PDT)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:cc49])
-        by smtp.gmail.com with ESMTPSA id s126sm6762341pfb.164.2021.06.21.11.46.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jun 2021 11:46:52 -0700 (PDT)
-Date:   Mon, 21 Jun 2021 11:46:51 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mon, 21 Jun 2021 15:07:34 -0400
+Received: from [192.168.1.155] ([95.118.106.223]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N4NHS-1lEorF0b5S-011O8n; Mon, 21 Jun 2021 21:05:15 +0200
+Subject: Re: [PATCH RFC] fuse: add generic file store
+To:     Peng Tao <bergwolf@gmail.com>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Peng Tao <tao.peng@linux.alibaba.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
-Message-ID: <YNDem7R6Yh4Wy9po@relinquished.localdomain>
-References: <CAHk-=whRA=54dtO3ha-C2-fV4XQ2nry99BmfancW-16EFGTHVg@mail.gmail.com>
- <YMz3MfgmbtTSQljy@zeniv-ca.linux.org.uk>
- <YM0C2mZfTE0uz3dq@relinquished.localdomain>
- <YM0I3aQpam7wfDxI@zeniv-ca.linux.org.uk>
- <CAHk-=wgiO+jG7yFEpL5=cW9AQSV0v1N6MhtfavmGEHwrXHz9pA@mail.gmail.com>
- <YM0Q5/unrL6MFNCb@zeniv-ca.linux.org.uk>
- <CAHk-=wjDhxnRaO8FU-fOEAF6WeTUsvaoz0+fr1tnJvRCfAaSCQ@mail.gmail.com>
- <YM0Zu3XopJTGMIO5@relinquished.localdomain>
- <YM0fFnMFSFpUb63U@zeniv-ca.linux.org.uk>
- <YM09qaP3qATwoLTJ@relinquished.localdomain>
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>
+References: <1622537906-54361-1-git-send-email-tao.peng@linux.alibaba.com>
+ <YLeoucLiMOSPwn4U@google.com>
+ <244309bf-4f2e-342e-dd98-755862c643b8@metux.net>
+ <CA+a=Yy5moy0Bv=mhsrC9FrY+cEYt8+YJL8TvXQ=N7pNyktccRQ@mail.gmail.com>
+ <429fc51b-ece0-b5cb-9540-2e7f5b472d73@metux.net>
+ <CA+a=Yy6k3k2iFb+tBMuBDMs8E8SsBKce9Q=3C2zXTrx3-B7Ztg@mail.gmail.com>
+ <295cfc39-a820-3167-1096-d8758074452d@metux.net>
+ <CA+a=Yy7DDrMs6R8qRF6JMco0VOBWCKNoX7E-ga9W2Omn=+QUrQ@mail.gmail.com>
+ <e70a444e-4716-1020-4afa-fec6799e4a10@metux.net>
+ <CA+a=Yy4iyMNK=8KxZ2PvB+zs8fbYNchEOyjcreWx4NEYopbtAg@mail.gmail.com>
+ <6d58bd0f-668a-983a-bf7c-13110c02dae0@metux.net>
+ <CA+a=Yy5rnqLqH2iR-ZY6AUkNJy48mroVV3Exmhmt-pfTi82kXA@mail.gmail.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <65fc0313-b01b-9882-d716-d5a2911222b7@metux.net>
+Date:   Mon, 21 Jun 2021 21:05:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YM09qaP3qATwoLTJ@relinquished.localdomain>
+In-Reply-To: <CA+a=Yy5rnqLqH2iR-ZY6AUkNJy48mroVV3Exmhmt-pfTi82kXA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:eLWtupr6NCKIa2Kdgs7Y8G0YhBfhvQIARXIyu/1uCa+I1ZwcSmB
+ IElHIPy/tBmCzg8GbG1mjAewLwklGCKxknQeABrxduD0xAPgx58Mxe5mGhCF8j8XgmK5Kcf
+ SPirsJt3VLyWtp/X5vdfab2mJ/BKb4FTbUEE7r39VAXL3fya1cYm6t8mRi5zuvpn40heNGw
+ rfFRRYDCF9IU0TR1st1eg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Tqv8DbPulr0=:6cTkXfBM3mHKRifENBfpfc
+ dlKM6UcLTirnXZAlW3OCjtNrUoOVVdhvqTYw8BLTc7MKPBvCAWjVjk6S0GaRzsIqygCI9dI9Y
+ WHTF9MogYwadFF9lo/I8hNjQq4eMK+lUST1LIgmnBl00KbJuCb7vFZDAORa+TFwNmdxiRdjZG
+ C1k2CiisITuU3o+sIAL8vt66z/0uhDL9oQI37DZYj2sFqV0rK3dal7yBSDZsExpyfdAufTvCr
+ fTTaQnKIgcT+/awFN8gKwWTqyWmJPK0bitjz5Fi3DT5PilR5XwLejuEzXyS9Ro91Xo96eQOfi
+ jgCZpmxRNyTvIfCrIAHF2H7PXJWnvRMjfjZTBLvdOI5l82mizEu5wqWgX5GW+zJ7tar5DbeXa
+ ZN/x6UBq5MVRWXhuJXNExn1uFgl1Il4UhllaLGPIWseXvEtnfU2t3zBRaDxTStSbGu4nf4+u7
+ y8vzoU5uIUoykt0LT0o6Wi3+0KSQ2Y4eMjb3C7deRYktUAlJY6IUvt7wNtnQcz4NHmKV0hyuZ
+ kc7CF3htiPFzYpaXM8On8Q=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 05:43:21PM -0700, Omar Sandoval wrote:
-> On Fri, Jun 18, 2021 at 10:32:54PM +0000, Al Viro wrote:
-> > On Fri, Jun 18, 2021 at 03:10:03PM -0700, Omar Sandoval wrote:
-> > 
-> > > Or do the same reverting thing that Al did, but with copy_from_iter()
-> > > instead of copy_from_iter_full() and being careful with the copied count
-> > > (which I'm not 100% sure I got correct here):
-> > > 
-> > > 	size_t copied = copy_from_iter(&encoded, sizeof(encoded), &i);
-> > > 	if (copied < offsetofend(struct encoded_iov, size))
-> > > 		return -EFAULT;
-> > > 	if (encoded.size > PAGE_SIZE)
-> > > 		return -E2BIG;
-> > > 	if (encoded.size < ENCODED_IOV_SIZE_VER0)
-> > > 		return -EINVAL;
-> > > 	if (encoded.size > sizeof(encoded)) {
-> > > 		if (copied < sizeof(encoded)
-> > > 			return -EFAULT;
-> > > 		if (!iov_iter_check_zeroes(&i, encoded.size - sizeof(encoded))
-> > > 			return -EINVAL;
-> > > 	} else if (encoded.size < sizeof(encoded)) {
-> > > 		// older than what we expect
-> > > 		if (copied < encoded.size)
-> > > 			return -EFAULT;
-> > > 		iov_iter_revert(&i, copied - encoded.size);
-> > > 		memset((void *)&encoded + encoded.size, 0, sizeof(encoded) - encoded.size);
-> > > 	}    
-> > 
-> > simpler than that, actually -
-> > 
-> > 	copied = copy_from_iter(&encoded, sizeof(encoded), &i);
-> > 	if (unlikely(copied < sizeof(encoded))) {
-> > 		if (copied < offsetofend(struct encoded_iov, size) ||
-> > 		    copied < encoded.size)
-> > 			return iov_iter_count(i) ? -EFAULT : -EINVAL;
-> > 	}
-> > 	if (encoded.size > sizeof(encoded)) {
-> > 		if (!iov_iter_check_zeroes(&i, encoded.size - sizeof(encoded))
-> > 			return -EINVAL;
-> > 	} else if (encoded.size < sizeof(encoded)) {
-> > 		// copied can't be less than encoded.size here - otherwise
-> > 		// we'd have copied < sizeof(encoded) and the check above
-> > 		// would've buggered off
-> > 		iov_iter_revert(&i, copied - encoded.size);
-> > 		memset((void *)&encoded + encoded.size, 0, sizeof(encoded) - encoded.size);
-> > 	}
-> > 
-> > should do it.
+On 17.06.21 15:23, Peng Tao wrote:
+
+>> Just keeping fd's open while a server restarts ?
+>> If that's what you want, I see much wider use far outside of fuse,
+>> and that might call for some more generic approach - something like
+>> Plan9's /srv filesystem.
+>>
+> 1. keeping FDs across userspace restart
+
+if application needs to be rewritten for that anyways, there're other
+ways to achieve this, w/o touching the kernel at all - exec() doesn't
+automatically close fd's (unless they're opened w/ O_CLOEXEC)
+
+> 2. help save FD in the FUSE fd passthrough use case as implemented by
+> Alessio Balsini
+
+you mean this one ?
+
+https://lore.kernel.org/lkml/20210125153057.3623715-1-balsini@android.com
+
+I fail to see why an extra fd store within the fuse device is necessary
+for that - I'd just let the fuse daemon(s) reply the open request with
+the fd it already holds.
+
+I'd hate to run into situations where even killing all processes holding
+some file open leads to a situation where it remains open inside the
+kernel, thus blocking e.g. unmounting. I already see operators getting
+very angy ... :o
+
+by the way: alessio's approach is limited to simple read/write
+operations anyways - other operations like ioctl() don't seem to work
+easily that way.
+
+and for the creds switching: I tend to believe that cases where a fs or
+device looks at the calling process' creds in operations on an already
+open fd, it's most likely a bad implementation.
+
+yes, some legacy drivers actually do check for CAP_SYS_ADMIN e.g. for
+low level hardware configuration (e.g. IO and IRQ on ISA bus), but I
+wonder whether these are use at all in the our use cases and should be
+ever allowed to non-root.
+
+do you have any case where you really need to use the opener's creds ?
+(after the fd is already open)
+
+>> Does FUSE actually manipulate the process' fd table directly, while
+>> in the open() callback ?
 > 
-> Thanks, Al, I'll send an updated version with this approach next week.
+> hmm, you are right. The open() callback cannot install FD from there.
+> So in order for your use case to work, the VFS layer needs to be
+> changed to transparently replace an empty file struct with another
+> file struct that is prepared by the file system somewhere else. It is
+> really beyond the current RFC patch's scope IMHO.
 
-Okay, so this works for the write side of RWF_ENCODED, but it causes
-problems for the read side. That currently works like so:
+Exactly. That's where I'm struggling right now. Yet have to find out
+whether I could just copy from one struct file into another (probably
+some refcnt'ing required). And that still has some drawback: fd state
+like file position won't be shared.
 
-	struct encoded_iov encoded_iov;
-	char compressed_data[...];
-	struct iovec iov[] = {
-		{ &encoded_iov, sizeof(encoded_iov) },
-		{ compressed_data, sizeof(compressed_data) },
-	};
-	preadv2(fd, iov, 2, -1, RWF_ENCODED);
+I've been thinking about changing the vfs_open() chain so that it
+doesn't pass in an existing/prepared struct file, but instead returns
+one, which is allocated further down the chain, right before the fs'
+open operation is called. Then we could add another variant that
+returns struct file. If the new one is present, it will be called,
+otherwise a new struct file is allocated, the old variant is called
+on the newly allocated one, and finally return this one.
 
-The kernel fills in the encoded_iov with the compression metadata and
-the remaining buffers with the compressed data. The kernel needs to know
-how much of the iovec is for the encoded_iov. The backwards
-compatibility is similar to the write side: if the kernel size is less
-than the userspace size, then we can fill in extra zeroes. If the kernel
-size is greater than the userspace size and all of the extra metadata is
-zero, then we can omit it. If the extra metadata is non-zero, then we
-return an error.
+this is a bigger job to do ...
 
-How do we get the userspace size with the encoded_iov.size approach?
-We'd have to read the size from the iov_iter before writing to the rest
-of the iov_iter. Is it okay to mix the iov_iter as a source and
-destination like this? From what I can tell, it's not intended to be
-used like this.
+
+--mtx
+
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
