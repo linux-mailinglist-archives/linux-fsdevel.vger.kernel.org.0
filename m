@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 189733AF7D0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 23:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 079303AF7D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 23:46:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231793AbhFUVsj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 17:48:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32648 "EHLO
+        id S232102AbhFUVsw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 17:48:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52522 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231882AbhFUVsi (ORCPT
+        by vger.kernel.org with ESMTP id S232101AbhFUVsr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 17:48:38 -0400
+        Mon, 21 Jun 2021 17:48:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624311983;
+        s=mimecast20190719; t=1624311992;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fd0eKXWWIFYSj5Goz3J1iPoFFKRbPYrWtc1BpxAgCpY=;
-        b=YBxZDkHnEJUXIg7t8BjNeZ2cRjMIOByPs2IHsaPEsx63vh2okXKD0Bk4hXpxoT0Q+5jYot
-        VW1dzdrqoXz2UpbQoPrPT/dWwW8ZxOjj56X1xTNsgy3XOhCG6zrLu2IYWHXd2LAgOIHCya
-        c5cdFH8P4TUvAj35qXmYGMu2Q1cquNU=
+        bh=VTOLOobucEswi3fCJQ7qjMh+WGxNa1Sji2oxaslCuLU=;
+        b=HZhVJ30TpjipIzLgS7qYrheTPrW+jjSljKb2C5UPklXqgsMrl0n552oBPTtlI/9k2whahL
+        gzN/3N4wmK/nqvZyWyTmnrzoBPAbDJmc5hU2OhdunHdqZHSr45dUyKGPBGL0wY7/UmNxuY
+        JraqMllhG6+We4AUcfHjz6rL79juY6M=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-412-lhWIBs8uMW2zLAtDMy4jMQ-1; Mon, 21 Jun 2021 17:46:19 -0400
-X-MC-Unique: lhWIBs8uMW2zLAtDMy4jMQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-516-2zDFsDF7PgW9B0VT9PKUCQ-1; Mon, 21 Jun 2021 17:46:31 -0400
+X-MC-Unique: 2zDFsDF7PgW9B0VT9PKUCQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1BBE150754;
-        Mon, 21 Jun 2021 21:46:18 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D74C919611A2;
+        Mon, 21 Jun 2021 21:46:29 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 52D68100AE35;
-        Mon, 21 Jun 2021 21:46:00 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 206645F714;
+        Mon, 21 Jun 2021 21:46:23 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 06/12] fscache, cachefiles: Remove the histogram stuff
+Subject: [PATCH 07/12] fscache: Remove the object list procfile
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
 Cc:     dhowells@redhat.com, Anna Schumaker <anna.schumaker@netapp.com>,
@@ -50,662 +50,557 @@ Cc:     dhowells@redhat.com, Anna Schumaker <anna.schumaker@netapp.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 21 Jun 2021 22:45:59 +0100
-Message-ID: <162431195953.2908479.16770977195634296638.stgit@warthog.procyon.org.uk>
+Date:   Mon, 21 Jun 2021 22:46:23 +0100
+Message-ID: <162431198332.2908479.5847286163455099669.stgit@warthog.procyon.org.uk>
 In-Reply-To: <162431188431.2908479.14031376932042135080.stgit@warthog.procyon.org.uk>
 References: <162431188431.2908479.14031376932042135080.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove the histogram stuff as it's mostly going to be outdated.
+Remove the object list procfile from fscache as objects will become
+entirely internal to the cache.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/cachefiles/Kconfig         |   19 -------
- fs/cachefiles/Makefile        |    2 -
- fs/cachefiles/internal.h      |   25 ---------
- fs/cachefiles/main.c          |    7 ---
- fs/cachefiles/namei.c         |   13 -----
- fs/cachefiles/proc.c          |  114 -----------------------------------------
- fs/fscache/Kconfig            |   17 ------
+ fs/fscache/Kconfig            |    7 -
  fs/fscache/Makefile           |    1 
- fs/fscache/histogram.c        |   87 -------------------------------
- fs/fscache/internal.h         |   24 ---------
- fs/fscache/object.c           |    5 --
- fs/fscache/operation.c        |    3 -
- fs/fscache/page.c             |    6 --
- fs/fscache/proc.c             |   13 -----
- include/linux/fscache-cache.h |    1 
- 15 files changed, 337 deletions(-)
- delete mode 100644 fs/cachefiles/proc.c
- delete mode 100644 fs/fscache/histogram.c
+ fs/fscache/cache.c            |    1 
+ fs/fscache/cookie.c           |    2 
+ fs/fscache/internal.h         |   13 -
+ fs/fscache/object-list.c      |  414 -----------------------------------------
+ fs/fscache/object.c           |    2 
+ include/linux/fscache-cache.h |    3 
+ 8 files changed, 443 deletions(-)
+ delete mode 100644 fs/fscache/object-list.c
 
-diff --git a/fs/cachefiles/Kconfig b/fs/cachefiles/Kconfig
-index ff9ca55a9ae9..6827b40f7ddc 100644
---- a/fs/cachefiles/Kconfig
-+++ b/fs/cachefiles/Kconfig
-@@ -19,22 +19,3 @@ config CACHEFILES_DEBUG
- 	  caching on files module.  If this is set, the debugging output may be
- 	  enabled by setting bits in /sys/modules/cachefiles/parameter/debug or
- 	  by including a debugging specifier in /etc/cachefilesd.conf.
--
--config CACHEFILES_HISTOGRAM
--	bool "Gather latency information on CacheFiles"
--	depends on CACHEFILES && PROC_FS
--	help
--
--	  This option causes latency information to be gathered on CacheFiles
--	  operation and exported through file:
--
--		/proc/fs/cachefiles/histogram
--
--	  The generation of this histogram adds a certain amount of overhead to
--	  execution as there are a number of points at which data is gathered,
--	  and on a multi-CPU system these may be on cachelines that keep
--	  bouncing between CPUs.  On the other hand, the histogram may be
--	  useful for debugging purposes.  Saying 'N' here is recommended.
--
--	  See Documentation/filesystems/caching/cachefiles.rst for more
--	  information.
-diff --git a/fs/cachefiles/Makefile b/fs/cachefiles/Makefile
-index 2227dc2d5498..02fd17731769 100644
---- a/fs/cachefiles/Makefile
-+++ b/fs/cachefiles/Makefile
-@@ -15,6 +15,4 @@ cachefiles-y := \
- 	security.o \
- 	xattr.o
- 
--cachefiles-$(CONFIG_CACHEFILES_HISTOGRAM) += proc.o
--
- obj-$(CONFIG_CACHEFILES) := cachefiles.o
-diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-index 4ed83aa5253b..0a511c36dab8 100644
---- a/fs/cachefiles/internal.h
-+++ b/fs/cachefiles/internal.h
-@@ -180,31 +180,6 @@ extern int cachefiles_cull(struct cachefiles_cache *cache, struct dentry *dir,
- extern int cachefiles_check_in_use(struct cachefiles_cache *cache,
- 				   struct dentry *dir, char *filename);
- 
--/*
-- * proc.c
-- */
--#ifdef CONFIG_CACHEFILES_HISTOGRAM
--extern atomic_t cachefiles_lookup_histogram[HZ];
--extern atomic_t cachefiles_mkdir_histogram[HZ];
--extern atomic_t cachefiles_create_histogram[HZ];
--
--extern int __init cachefiles_proc_init(void);
--extern void cachefiles_proc_cleanup(void);
--static inline
--void cachefiles_hist(atomic_t histogram[], unsigned long start_jif)
--{
--	unsigned long jif = jiffies - start_jif;
--	if (jif >= HZ)
--		jif = HZ - 1;
--	atomic_inc(&histogram[jif]);
--}
--
--#else
--#define cachefiles_proc_init()		(0)
--#define cachefiles_proc_cleanup()	do {} while (0)
--#define cachefiles_hist(hist, start_jif) do {} while (0)
--#endif
--
- /*
-  * rdwr.c
-  */
-diff --git a/fs/cachefiles/main.c b/fs/cachefiles/main.c
-index ddf0cd58d60c..9c8d34c49b12 100644
---- a/fs/cachefiles/main.c
-+++ b/fs/cachefiles/main.c
-@@ -69,15 +69,9 @@ static int __init cachefiles_init(void)
- 		goto error_object_jar;
- 	}
- 
--	ret = cachefiles_proc_init();
--	if (ret < 0)
--		goto error_proc;
--
- 	pr_info("Loaded\n");
- 	return 0;
- 
--error_proc:
--	kmem_cache_destroy(cachefiles_object_jar);
- error_object_jar:
- 	misc_deregister(&cachefiles_dev);
- error_dev:
-@@ -94,7 +88,6 @@ static void __exit cachefiles_exit(void)
- {
- 	pr_info("Unloading\n");
- 
--	cachefiles_proc_cleanup();
- 	kmem_cache_destroy(cachefiles_object_jar);
- 	misc_deregister(&cachefiles_dev);
- }
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 7bf0732ae25c..92aa550dae7e 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -496,7 +496,6 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
- 	struct dentry *dir, *next = NULL;
- 	struct inode *inode;
- 	struct path path;
--	unsigned long start;
- 	const char *name;
- 	int ret, nlen;
- 
-@@ -535,9 +534,7 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
- 
- 	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
- 
--	start = jiffies;
- 	next = lookup_one_len(name, dir, nlen);
--	cachefiles_hist(cachefiles_lookup_histogram, start);
- 	if (IS_ERR(next)) {
- 		trace_cachefiles_lookup(object, next, NULL);
- 		goto lookup_error;
-@@ -568,9 +565,7 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
- 			ret = security_path_mkdir(&path, next, 0);
- 			if (ret < 0)
- 				goto create_error;
--			start = jiffies;
- 			ret = vfs_mkdir(&init_user_ns, d_inode(dir), next, 0);
--			cachefiles_hist(cachefiles_mkdir_histogram, start);
- 			if (!key)
- 				trace_cachefiles_mkdir(object, next, ret);
- 			if (ret < 0)
-@@ -604,10 +599,8 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
- 			ret = security_path_mknod(&path, next, S_IFREG, 0);
- 			if (ret < 0)
- 				goto create_error;
--			start = jiffies;
- 			ret = vfs_create(&init_user_ns, d_inode(dir), next,
- 					 S_IFREG, true);
--			cachefiles_hist(cachefiles_create_histogram, start);
- 			trace_cachefiles_create(object, next, ret);
- 			if (ret < 0)
- 				goto create_error;
-@@ -765,7 +758,6 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
- 					const char *dirname)
- {
- 	struct dentry *subdir;
--	unsigned long start;
- 	struct path path;
- 	int ret;
- 
-@@ -775,9 +767,7 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
- 	inode_lock(d_inode(dir));
- 
- retry:
--	start = jiffies;
- 	subdir = lookup_one_len(dirname, dir, strlen(dirname));
--	cachefiles_hist(cachefiles_lookup_histogram, start);
- 	if (IS_ERR(subdir)) {
- 		if (PTR_ERR(subdir) == -ENOMEM)
- 			goto nomem_d_alloc;
-@@ -876,7 +866,6 @@ static struct dentry *cachefiles_check_active(struct cachefiles_cache *cache,
- 	struct cachefiles_object *object;
- 	struct rb_node *_n;
- 	struct dentry *victim;
--	unsigned long start;
- 	int ret;
- 
- 	//_enter(",%pd/,%s",
-@@ -885,9 +874,7 @@ static struct dentry *cachefiles_check_active(struct cachefiles_cache *cache,
- 	/* look up the victim */
- 	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
- 
--	start = jiffies;
- 	victim = lookup_one_len(filename, dir, strlen(filename));
--	cachefiles_hist(cachefiles_lookup_histogram, start);
- 	if (IS_ERR(victim))
- 		goto lookup_error;
- 
-diff --git a/fs/cachefiles/proc.c b/fs/cachefiles/proc.c
-deleted file mode 100644
-index 6e67aea0f24e..000000000000
---- a/fs/cachefiles/proc.c
-+++ /dev/null
-@@ -1,114 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/* CacheFiles statistics
-- *
-- * Copyright (C) 2007 Red Hat, Inc. All Rights Reserved.
-- * Written by David Howells (dhowells@redhat.com)
-- */
--
--#include <linux/module.h>
--#include <linux/proc_fs.h>
--#include <linux/seq_file.h>
--#include "internal.h"
--
--atomic_t cachefiles_lookup_histogram[HZ];
--atomic_t cachefiles_mkdir_histogram[HZ];
--atomic_t cachefiles_create_histogram[HZ];
--
--/*
-- * display the latency histogram
-- */
--static int cachefiles_histogram_show(struct seq_file *m, void *v)
--{
--	unsigned long index;
--	unsigned x, y, z, t;
--
--	switch ((unsigned long) v) {
--	case 1:
--		seq_puts(m, "JIFS  SECS  LOOKUPS   MKDIRS    CREATES\n");
--		return 0;
--	case 2:
--		seq_puts(m, "===== ===== ========= ========= =========\n");
--		return 0;
--	default:
--		index = (unsigned long) v - 3;
--		x = atomic_read(&cachefiles_lookup_histogram[index]);
--		y = atomic_read(&cachefiles_mkdir_histogram[index]);
--		z = atomic_read(&cachefiles_create_histogram[index]);
--		if (x == 0 && y == 0 && z == 0)
--			return 0;
--
--		t = (index * 1000) / HZ;
--
--		seq_printf(m, "%4lu  0.%03u %9u %9u %9u\n", index, t, x, y, z);
--		return 0;
--	}
--}
--
--/*
-- * set up the iterator to start reading from the first line
-- */
--static void *cachefiles_histogram_start(struct seq_file *m, loff_t *_pos)
--{
--	if ((unsigned long long)*_pos >= HZ + 2)
--		return NULL;
--	if (*_pos == 0)
--		*_pos = 1;
--	return (void *)(unsigned long) *_pos;
--}
--
--/*
-- * move to the next line
-- */
--static void *cachefiles_histogram_next(struct seq_file *m, void *v, loff_t *pos)
--{
--	(*pos)++;
--	return (unsigned long long)*pos > HZ + 2 ?
--		NULL : (void *)(unsigned long) *pos;
--}
--
--/*
-- * clean up after reading
-- */
--static void cachefiles_histogram_stop(struct seq_file *m, void *v)
--{
--}
--
--static const struct seq_operations cachefiles_histogram_ops = {
--	.start		= cachefiles_histogram_start,
--	.stop		= cachefiles_histogram_stop,
--	.next		= cachefiles_histogram_next,
--	.show		= cachefiles_histogram_show,
--};
--
--/*
-- * initialise the /proc/fs/cachefiles/ directory
-- */
--int __init cachefiles_proc_init(void)
--{
--	_enter("");
--
--	if (!proc_mkdir("fs/cachefiles", NULL))
--		goto error_dir;
--
--	if (!proc_create_seq("fs/cachefiles/histogram", S_IFREG | 0444, NULL,
--			 &cachefiles_histogram_ops))
--		goto error_histogram;
--
--	_leave(" = 0");
--	return 0;
--
--error_histogram:
--	remove_proc_entry("fs/cachefiles", NULL);
--error_dir:
--	_leave(" = -ENOMEM");
--	return -ENOMEM;
--}
--
--/*
-- * clean up the /proc/fs/cachefiles/ directory
-- */
--void cachefiles_proc_cleanup(void)
--{
--	remove_proc_entry("fs/cachefiles/histogram", NULL);
--	remove_proc_entry("fs/cachefiles", NULL);
--}
 diff --git a/fs/fscache/Kconfig b/fs/fscache/Kconfig
-index 92c87d8e0913..5e3a5b3f950d 100644
+index 5e3a5b3f950d..b313a978ae0a 100644
 --- a/fs/fscache/Kconfig
 +++ b/fs/fscache/Kconfig
-@@ -29,23 +29,6 @@ config FSCACHE_STATS
+@@ -38,10 +38,3 @@ config FSCACHE_DEBUG
+ 	  enabled by setting bits in /sys/modules/fscache/parameter/debug.
  
  	  See Documentation/filesystems/caching/fscache.rst for more information.
- 
--config FSCACHE_HISTOGRAM
--	bool "Gather latency information on local caching"
+-
+-config FSCACHE_OBJECT_LIST
+-	bool "Maintain global object list for debugging purposes"
 -	depends on FSCACHE && PROC_FS
 -	help
--	  This option causes latency information to be gathered on local
--	  caching and exported through file:
--
--		/proc/fs/fscache/histogram
--
--	  The generation of this histogram adds a certain amount of overhead to
--	  execution as there are a number of points at which data is gathered,
--	  and on a multi-CPU system these may be on cachelines that keep
--	  bouncing between CPUs.  On the other hand, the histogram may be
--	  useful for debugging purposes.  Saying 'N' here is recommended.
--
--	  See Documentation/filesystems/caching/fscache.rst for more information.
--
- config FSCACHE_DEBUG
- 	bool "Debug FS-Cache"
- 	depends on FSCACHE
+-	  Maintain a global list of active fscache objects that can be
+-	  retrieved through /proc/fs/fscache/objects for debugging purposes
 diff --git a/fs/fscache/Makefile b/fs/fscache/Makefile
-index 3b2ffa93ac18..45d5235a449b 100644
+index 45d5235a449b..03a871d689bb 100644
 --- a/fs/fscache/Makefile
 +++ b/fs/fscache/Makefile
-@@ -16,7 +16,6 @@ fscache-y := \
+@@ -16,6 +16,5 @@ fscache-y := \
  
  fscache-$(CONFIG_PROC_FS) += proc.o
  fscache-$(CONFIG_FSCACHE_STATS) += stats.o
--fscache-$(CONFIG_FSCACHE_HISTOGRAM) += histogram.o
- fscache-$(CONFIG_FSCACHE_OBJECT_LIST) += object-list.o
+-fscache-$(CONFIG_FSCACHE_OBJECT_LIST) += object-list.o
  
  obj-$(CONFIG_FSCACHE) := fscache.o
-diff --git a/fs/fscache/histogram.c b/fs/fscache/histogram.c
+diff --git a/fs/fscache/cache.c b/fs/fscache/cache.c
+index fcc136361415..8a6ffcac867f 100644
+--- a/fs/fscache/cache.c
++++ b/fs/fscache/cache.c
+@@ -261,7 +261,6 @@ int fscache_add_cache(struct fscache_cache *cache,
+ 	spin_lock(&cache->object_list_lock);
+ 	list_add_tail(&ifsdef->cache_link, &cache->object_list);
+ 	spin_unlock(&cache->object_list_lock);
+-	fscache_objlist_add(ifsdef);
+ 
+ 	/* add the cache's netfs definition index object to the top level index
+ 	 * cookie as a known backing object */
+diff --git a/fs/fscache/cookie.c b/fs/fscache/cookie.c
+index c7047544972b..2f4d5271ad2e 100644
+--- a/fs/fscache/cookie.c
++++ b/fs/fscache/cookie.c
+@@ -620,8 +620,6 @@ static int fscache_attach_object(struct fscache_cookie *cookie,
+ 
+ 	/* Attach to the cookie.  The object already has a ref on it. */
+ 	hlist_add_head(&object->cookie_link, &cookie->backing_objects);
+-
+-	fscache_objlist_add(object);
+ 	ret = 0;
+ 
+ cant_attach_object:
+diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
+index 796678b2b32a..200082cafdda 100644
+--- a/fs/fscache/internal.h
++++ b/fs/fscache/internal.h
+@@ -84,19 +84,6 @@ static inline bool fscache_object_congested(void)
+  */
+ extern void fscache_enqueue_object(struct fscache_object *);
+ 
+-/*
+- * object-list.c
+- */
+-#ifdef CONFIG_FSCACHE_OBJECT_LIST
+-extern const struct proc_ops fscache_objlist_proc_ops;
+-
+-extern void fscache_objlist_add(struct fscache_object *);
+-extern void fscache_objlist_remove(struct fscache_object *);
+-#else
+-#define fscache_objlist_add(object) do {} while(0)
+-#define fscache_objlist_remove(object) do {} while(0)
+-#endif
+-
+ /*
+  * operation.c
+  */
+diff --git a/fs/fscache/object-list.c b/fs/fscache/object-list.c
 deleted file mode 100644
-index 4e5beeaaf454..000000000000
---- a/fs/fscache/histogram.c
+index 1a0dc32c0a33..000000000000
+--- a/fs/fscache/object-list.c
 +++ /dev/null
-@@ -1,87 +0,0 @@
+@@ -1,414 +0,0 @@
 -// SPDX-License-Identifier: GPL-2.0-or-later
--/* FS-Cache latency histogram
+-/* Global fscache object list maintainer and viewer
 - *
-- * Copyright (C) 2008 Red Hat, Inc. All Rights Reserved.
+- * Copyright (C) 2009 Red Hat, Inc. All Rights Reserved.
 - * Written by David Howells (dhowells@redhat.com)
 - */
 -
--#define FSCACHE_DEBUG_LEVEL THREAD
+-#define FSCACHE_DEBUG_LEVEL COOKIE
 -#include <linux/module.h>
 -#include <linux/proc_fs.h>
 -#include <linux/seq_file.h>
+-#include <linux/slab.h>
+-#include <linux/key.h>
+-#include <keys/user-type.h>
 -#include "internal.h"
 -
--atomic_t fscache_obj_instantiate_histogram[HZ];
--atomic_t fscache_objs_histogram[HZ];
--atomic_t fscache_ops_histogram[HZ];
--atomic_t fscache_retrieval_delay_histogram[HZ];
--atomic_t fscache_retrieval_histogram[HZ];
+-static struct rb_root fscache_object_list;
+-static DEFINE_RWLOCK(fscache_object_list_lock);
+-
+-struct fscache_objlist_data {
+-	unsigned long	config;		/* display configuration */
+-#define FSCACHE_OBJLIST_CONFIG_KEY	0x00000001	/* show object keys */
+-#define FSCACHE_OBJLIST_CONFIG_AUX	0x00000002	/* show object auxdata */
+-#define FSCACHE_OBJLIST_CONFIG_COOKIE	0x00000004	/* show objects with cookies */
+-#define FSCACHE_OBJLIST_CONFIG_NOCOOKIE	0x00000008	/* show objects without cookies */
+-#define FSCACHE_OBJLIST_CONFIG_BUSY	0x00000010	/* show busy objects */
+-#define FSCACHE_OBJLIST_CONFIG_IDLE	0x00000020	/* show idle objects */
+-#define FSCACHE_OBJLIST_CONFIG_PENDWR	0x00000040	/* show objects with pending writes */
+-#define FSCACHE_OBJLIST_CONFIG_NOPENDWR	0x00000080	/* show objects without pending writes */
+-#define FSCACHE_OBJLIST_CONFIG_READS	0x00000100	/* show objects with active reads */
+-#define FSCACHE_OBJLIST_CONFIG_NOREADS	0x00000200	/* show objects without active reads */
+-#define FSCACHE_OBJLIST_CONFIG_EVENTS	0x00000400	/* show objects with events */
+-#define FSCACHE_OBJLIST_CONFIG_NOEVENTS	0x00000800	/* show objects without no events */
+-#define FSCACHE_OBJLIST_CONFIG_WORK	0x00001000	/* show objects with work */
+-#define FSCACHE_OBJLIST_CONFIG_NOWORK	0x00002000	/* show objects without work */
+-};
 -
 -/*
-- * display the time-taken histogram
+- * Add an object to the object list
+- * - we use the address of the fscache_object structure as the key into the
+- *   tree
 - */
--static int fscache_histogram_show(struct seq_file *m, void *v)
+-void fscache_objlist_add(struct fscache_object *obj)
 -{
--	unsigned long index;
--	unsigned n[5], t;
+-	struct fscache_object *xobj;
+-	struct rb_node **p = &fscache_object_list.rb_node, *parent = NULL;
 -
--	switch ((unsigned long) v) {
--	case 1:
--		seq_puts(m, "JIFS  SECS  OBJ INST  OP RUNS   OBJ RUNS  RETRV DLY RETRIEVLS\n");
--		return 0;
--	case 2:
--		seq_puts(m, "===== ===== ========= ========= ========= ========= =========\n");
--		return 0;
--	default:
--		index = (unsigned long) v - 3;
--		n[0] = atomic_read(&fscache_obj_instantiate_histogram[index]);
--		n[1] = atomic_read(&fscache_ops_histogram[index]);
--		n[2] = atomic_read(&fscache_objs_histogram[index]);
--		n[3] = atomic_read(&fscache_retrieval_delay_histogram[index]);
--		n[4] = atomic_read(&fscache_retrieval_histogram[index]);
--		if (!(n[0] | n[1] | n[2] | n[3] | n[4]))
--			return 0;
+-	ASSERT(RB_EMPTY_NODE(&obj->objlist_link));
 -
--		t = (index * 1000) / HZ;
+-	write_lock(&fscache_object_list_lock);
 -
--		seq_printf(m, "%4lu  0.%03u %9u %9u %9u %9u %9u\n",
--			   index, t, n[0], n[1], n[2], n[3], n[4]);
--		return 0;
+-	while (*p) {
+-		parent = *p;
+-		xobj = rb_entry(parent, struct fscache_object, objlist_link);
+-
+-		if (obj < xobj)
+-			p = &(*p)->rb_left;
+-		else if (obj > xobj)
+-			p = &(*p)->rb_right;
+-		else
+-			BUG();
 -	}
+-
+-	rb_link_node(&obj->objlist_link, parent, p);
+-	rb_insert_color(&obj->objlist_link, &fscache_object_list);
+-
+-	write_unlock(&fscache_object_list_lock);
+-}
+-
+-/*
+- * Remove an object from the object list.
+- */
+-void fscache_objlist_remove(struct fscache_object *obj)
+-{
+-	if (RB_EMPTY_NODE(&obj->objlist_link))
+-		return;
+-
+-	write_lock(&fscache_object_list_lock);
+-
+-	BUG_ON(RB_EMPTY_ROOT(&fscache_object_list));
+-	rb_erase(&obj->objlist_link, &fscache_object_list);
+-
+-	write_unlock(&fscache_object_list_lock);
+-}
+-
+-/*
+- * find the object in the tree on or after the specified index
+- */
+-static struct fscache_object *fscache_objlist_lookup(loff_t *_pos)
+-{
+-	struct fscache_object *pobj, *obj = NULL, *minobj = NULL;
+-	struct rb_node *p;
+-	unsigned long pos;
+-
+-	if (*_pos >= (unsigned long) ERR_PTR(-ENOENT))
+-		return NULL;
+-	pos = *_pos;
+-
+-	/* banners (can't represent line 0 by pos 0 as that would involve
+-	 * returning a NULL pointer) */
+-	if (pos == 0)
+-		return (struct fscache_object *)(long)++(*_pos);
+-	if (pos < 3)
+-		return (struct fscache_object *)pos;
+-
+-	pobj = (struct fscache_object *)pos;
+-	p = fscache_object_list.rb_node;
+-	while (p) {
+-		obj = rb_entry(p, struct fscache_object, objlist_link);
+-		if (pobj < obj) {
+-			if (!minobj || minobj > obj)
+-				minobj = obj;
+-			p = p->rb_left;
+-		} else if (pobj > obj) {
+-			p = p->rb_right;
+-		} else {
+-			minobj = obj;
+-			break;
+-		}
+-		obj = NULL;
+-	}
+-
+-	if (!minobj)
+-		*_pos = (unsigned long) ERR_PTR(-ENOENT);
+-	else if (minobj != obj)
+-		*_pos = (unsigned long) minobj;
+-	return minobj;
 -}
 -
 -/*
 - * set up the iterator to start reading from the first line
 - */
--static void *fscache_histogram_start(struct seq_file *m, loff_t *_pos)
+-static void *fscache_objlist_start(struct seq_file *m, loff_t *_pos)
+-	__acquires(&fscache_object_list_lock)
 -{
--	if ((unsigned long long)*_pos >= HZ + 2)
--		return NULL;
--	if (*_pos == 0)
--		*_pos = 1;
--	return (void *)(unsigned long) *_pos;
+-	read_lock(&fscache_object_list_lock);
+-	return fscache_objlist_lookup(_pos);
 -}
 -
 -/*
 - * move to the next line
 - */
--static void *fscache_histogram_next(struct seq_file *m, void *v, loff_t *pos)
+-static void *fscache_objlist_next(struct seq_file *m, void *v, loff_t *_pos)
 -{
--	(*pos)++;
--	return (unsigned long long)*pos > HZ + 2 ?
--		NULL : (void *)(unsigned long) *pos;
+-	(*_pos)++;
+-	return fscache_objlist_lookup(_pos);
 -}
 -
 -/*
 - * clean up after reading
 - */
--static void fscache_histogram_stop(struct seq_file *m, void *v)
+-static void fscache_objlist_stop(struct seq_file *m, void *v)
+-	__releases(&fscache_object_list_lock)
 -{
+-	read_unlock(&fscache_object_list_lock);
 -}
 -
--const struct seq_operations fscache_histogram_ops = {
--	.start		= fscache_histogram_start,
--	.stop		= fscache_histogram_stop,
--	.next		= fscache_histogram_next,
--	.show		= fscache_histogram_show,
--};
-diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
-index 207a6bc81ca9..796678b2b32a 100644
---- a/fs/fscache/internal.h
-+++ b/fs/fscache/internal.h
-@@ -63,30 +63,6 @@ extern void fscache_cookie_put(struct fscache_cookie *,
- extern struct fscache_cookie fscache_fsdef_index;
- extern struct fscache_cookie_def fscache_fsdef_netfs_def;
- 
 -/*
-- * histogram.c
+- * display an object
 - */
--#ifdef CONFIG_FSCACHE_HISTOGRAM
--extern atomic_t fscache_obj_instantiate_histogram[HZ];
--extern atomic_t fscache_objs_histogram[HZ];
--extern atomic_t fscache_ops_histogram[HZ];
--extern atomic_t fscache_retrieval_delay_histogram[HZ];
--extern atomic_t fscache_retrieval_histogram[HZ];
--
--static inline void fscache_hist(atomic_t histogram[], unsigned long start_jif)
+-static int fscache_objlist_show(struct seq_file *m, void *v)
 -{
--	unsigned long jif = jiffies - start_jif;
--	if (jif >= HZ)
--		jif = HZ - 1;
--	atomic_inc(&histogram[jif]);
+-	struct fscache_objlist_data *data = m->private;
+-	struct fscache_object *obj = v;
+-	struct fscache_cookie *cookie;
+-	unsigned long config = data->config;
+-	char _type[3], *type;
+-	u8 *p;
+-
+-	if ((unsigned long) v == 1) {
+-		seq_puts(m, "OBJECT   PARENT   STAT CHLDN OPS OOP IPR EX READS"
+-			 " EM EV FL S"
+-			 " | COOKIE   NETFS_COOKIE_DEF TY FL NETFS_DATA");
+-		if (config & (FSCACHE_OBJLIST_CONFIG_KEY |
+-			      FSCACHE_OBJLIST_CONFIG_AUX))
+-			seq_puts(m, "       ");
+-		if (config & FSCACHE_OBJLIST_CONFIG_KEY)
+-			seq_puts(m, "OBJECT_KEY");
+-		if ((config & (FSCACHE_OBJLIST_CONFIG_KEY |
+-			       FSCACHE_OBJLIST_CONFIG_AUX)) ==
+-		    (FSCACHE_OBJLIST_CONFIG_KEY | FSCACHE_OBJLIST_CONFIG_AUX))
+-			seq_puts(m, ", ");
+-		if (config & FSCACHE_OBJLIST_CONFIG_AUX)
+-			seq_puts(m, "AUX_DATA");
+-		seq_puts(m, "\n");
+-		return 0;
+-	}
+-
+-	if ((unsigned long) v == 2) {
+-		seq_puts(m, "======== ======== ==== ===== === === === == ====="
+-			 " == == == ="
+-			 " | ======== ================ == === ================");
+-		if (config & (FSCACHE_OBJLIST_CONFIG_KEY |
+-			      FSCACHE_OBJLIST_CONFIG_AUX))
+-			seq_puts(m, " ================");
+-		seq_puts(m, "\n");
+-		return 0;
+-	}
+-
+-	/* filter out any unwanted objects */
+-#define FILTER(criterion, _yes, _no)					\
+-	do {								\
+-		unsigned long yes = FSCACHE_OBJLIST_CONFIG_##_yes;	\
+-		unsigned long no = FSCACHE_OBJLIST_CONFIG_##_no;	\
+-		if (criterion) {					\
+-			if (!(config & yes))				\
+-				return 0;				\
+-		} else {						\
+-			if (!(config & no))				\
+-				return 0;				\
+-		}							\
+-	} while(0)
+-
+-	cookie = obj->cookie;
+-	if (~config) {
+-		FILTER(cookie->def,
+-		       COOKIE, NOCOOKIE);
+-		FILTER(fscache_object_is_active(obj) ||
+-		       obj->n_ops != 0 ||
+-		       obj->n_obj_ops != 0 ||
+-		       obj->flags ||
+-		       !list_empty(&obj->dependents),
+-		       BUSY, IDLE);
+-		FILTER(test_bit(FSCACHE_OBJECT_PENDING_WRITE, &obj->flags),
+-		       PENDWR, NOPENDWR);
+-		FILTER(atomic_read(&obj->n_reads),
+-		       READS, NOREADS);
+-		FILTER(obj->events & obj->event_mask,
+-		       EVENTS, NOEVENTS);
+-		FILTER(work_busy(&obj->work), WORK, NOWORK);
+-	}
+-
+-	seq_printf(m,
+-		   "%08x %08x %s %5u %3u %3u %3u %2u %5u %2lx %2lx %2lx %1x | ",
+-		   obj->debug_id,
+-		   obj->parent ? obj->parent->debug_id : UINT_MAX,
+-		   obj->state->short_name,
+-		   obj->n_children,
+-		   obj->n_ops,
+-		   obj->n_obj_ops,
+-		   obj->n_in_progress,
+-		   obj->n_exclusive,
+-		   atomic_read(&obj->n_reads),
+-		   obj->event_mask,
+-		   obj->events,
+-		   obj->flags,
+-		   work_busy(&obj->work));
+-
+-	if (obj->cookie) {
+-		uint16_t keylen = 0, auxlen = 0;
+-
+-		switch (cookie->type) {
+-		case 0:
+-			type = "IX";
+-			break;
+-		case 1:
+-			type = "DT";
+-			break;
+-		default:
+-			snprintf(_type, sizeof(_type), "%02u",
+-				 cookie->type);
+-			type = _type;
+-			break;
+-		}
+-
+-		seq_printf(m, "%08x %-16s %s %3lx %16p",
+-			   cookie->debug_id,
+-			   cookie->def->name,
+-			   type,
+-			   cookie->flags,
+-			   cookie->netfs_data);
+-
+-		if (config & FSCACHE_OBJLIST_CONFIG_KEY)
+-			keylen = cookie->key_len;
+-
+-		if (config & FSCACHE_OBJLIST_CONFIG_AUX)
+-			auxlen = cookie->aux_len;
+-
+-		if (keylen > 0 || auxlen > 0) {
+-			seq_puts(m, " ");
+-			p = keylen <= sizeof(cookie->inline_key) ?
+-				cookie->inline_key : cookie->key;
+-			for (; keylen > 0; keylen--)
+-				seq_printf(m, "%02x", *p++);
+-			if (auxlen > 0) {
+-				if (config & FSCACHE_OBJLIST_CONFIG_KEY)
+-					seq_puts(m, ", ");
+-				p = auxlen <= sizeof(cookie->inline_aux) ?
+-					cookie->inline_aux : cookie->aux;
+-				for (; auxlen > 0; auxlen--)
+-					seq_printf(m, "%02x", *p++);
+-			}
+-		}
+-
+-		seq_puts(m, "\n");
+-	} else {
+-		seq_puts(m, "<no_netfs>\n");
+-	}
+-	return 0;
 -}
 -
--extern const struct seq_operations fscache_histogram_ops;
+-static const struct seq_operations fscache_objlist_ops = {
+-	.start		= fscache_objlist_start,
+-	.stop		= fscache_objlist_stop,
+-	.next		= fscache_objlist_next,
+-	.show		= fscache_objlist_show,
+-};
 -
--#else
--#define fscache_hist(hist, start_jif) do {} while (0)
+-/*
+- * get the configuration for filtering the list
+- */
+-static void fscache_objlist_config(struct fscache_objlist_data *data)
+-{
+-#ifdef CONFIG_KEYS
+-	const struct user_key_payload *confkey;
+-	unsigned long config;
+-	struct key *key;
+-	const char *buf;
+-	int len;
+-
+-	key = request_key(&key_type_user, "fscache:objlist", NULL);
+-	if (IS_ERR(key))
+-		goto no_config;
+-
+-	config = 0;
+-	rcu_read_lock();
+-
+-	confkey = user_key_payload_rcu(key);
+-	if (!confkey) {
+-		/* key was revoked */
+-		rcu_read_unlock();
+-		key_put(key);
+-		goto no_config;
+-	}
+-
+-	buf = confkey->data;
+-
+-	for (len = confkey->datalen - 1; len >= 0; len--) {
+-		switch (buf[len]) {
+-		case 'K': config |= FSCACHE_OBJLIST_CONFIG_KEY;		break;
+-		case 'A': config |= FSCACHE_OBJLIST_CONFIG_AUX;		break;
+-		case 'C': config |= FSCACHE_OBJLIST_CONFIG_COOKIE;	break;
+-		case 'c': config |= FSCACHE_OBJLIST_CONFIG_NOCOOKIE;	break;
+-		case 'B': config |= FSCACHE_OBJLIST_CONFIG_BUSY;	break;
+-		case 'b': config |= FSCACHE_OBJLIST_CONFIG_IDLE;	break;
+-		case 'W': config |= FSCACHE_OBJLIST_CONFIG_PENDWR;	break;
+-		case 'w': config |= FSCACHE_OBJLIST_CONFIG_NOPENDWR;	break;
+-		case 'R': config |= FSCACHE_OBJLIST_CONFIG_READS;	break;
+-		case 'r': config |= FSCACHE_OBJLIST_CONFIG_NOREADS;	break;
+-		case 'S': config |= FSCACHE_OBJLIST_CONFIG_WORK;	break;
+-		case 's': config |= FSCACHE_OBJLIST_CONFIG_NOWORK;	break;
+-		}
+-	}
+-
+-	rcu_read_unlock();
+-	key_put(key);
+-
+-	if (!(config & (FSCACHE_OBJLIST_CONFIG_COOKIE | FSCACHE_OBJLIST_CONFIG_NOCOOKIE)))
+-	    config   |= FSCACHE_OBJLIST_CONFIG_COOKIE | FSCACHE_OBJLIST_CONFIG_NOCOOKIE;
+-	if (!(config & (FSCACHE_OBJLIST_CONFIG_BUSY | FSCACHE_OBJLIST_CONFIG_IDLE)))
+-	    config   |= FSCACHE_OBJLIST_CONFIG_BUSY | FSCACHE_OBJLIST_CONFIG_IDLE;
+-	if (!(config & (FSCACHE_OBJLIST_CONFIG_PENDWR | FSCACHE_OBJLIST_CONFIG_NOPENDWR)))
+-	    config   |= FSCACHE_OBJLIST_CONFIG_PENDWR | FSCACHE_OBJLIST_CONFIG_NOPENDWR;
+-	if (!(config & (FSCACHE_OBJLIST_CONFIG_READS | FSCACHE_OBJLIST_CONFIG_NOREADS)))
+-	    config   |= FSCACHE_OBJLIST_CONFIG_READS | FSCACHE_OBJLIST_CONFIG_NOREADS;
+-	if (!(config & (FSCACHE_OBJLIST_CONFIG_EVENTS | FSCACHE_OBJLIST_CONFIG_NOEVENTS)))
+-	    config   |= FSCACHE_OBJLIST_CONFIG_EVENTS | FSCACHE_OBJLIST_CONFIG_NOEVENTS;
+-	if (!(config & (FSCACHE_OBJLIST_CONFIG_WORK | FSCACHE_OBJLIST_CONFIG_NOWORK)))
+-	    config   |= FSCACHE_OBJLIST_CONFIG_WORK | FSCACHE_OBJLIST_CONFIG_NOWORK;
+-
+-	data->config = config;
+-	return;
+-
+-no_config:
 -#endif
+-	data->config = ULONG_MAX;
+-}
 -
- /*
-  * main.c
-  */
+-/*
+- * open "/proc/fs/fscache/objects" to provide a list of active objects
+- * - can be configured by a user-defined key added to the caller's keyrings
+- */
+-static int fscache_objlist_open(struct inode *inode, struct file *file)
+-{
+-	struct fscache_objlist_data *data;
+-
+-	data = __seq_open_private(file, &fscache_objlist_ops, sizeof(*data));
+-	if (!data)
+-		return -ENOMEM;
+-
+-	/* get the configuration key */
+-	fscache_objlist_config(data);
+-
+-	return 0;
+-}
+-
+-/*
+- * clean up on close
+- */
+-static int fscache_objlist_release(struct inode *inode, struct file *file)
+-{
+-	struct seq_file *m = file->private_data;
+-
+-	kfree(m->private);
+-	m->private = NULL;
+-	return seq_release(inode, file);
+-}
+-
+-const struct proc_ops fscache_objlist_proc_ops = {
+-	.proc_open	= fscache_objlist_open,
+-	.proc_read	= seq_read,
+-	.proc_lseek	= seq_lseek,
+-	.proc_release	= fscache_objlist_release,
+-};
 diff --git a/fs/fscache/object.c b/fs/fscache/object.c
-index cb2146e02cd5..5dbaab2e1262 100644
+index 5dbaab2e1262..b3853274733f 100644
 --- a/fs/fscache/object.c
 +++ b/fs/fscache/object.c
-@@ -277,13 +277,10 @@ static void fscache_object_work_func(struct work_struct *work)
- {
- 	struct fscache_object *object =
- 		container_of(work, struct fscache_object, work);
--	unsigned long start;
- 
- 	_enter("{OBJ%x}", object->debug_id);
- 
--	start = jiffies;
- 	fscache_object_sm_dispatcher(object);
--	fscache_hist(fscache_objs_histogram, start);
- 	fscache_put_object(object, fscache_obj_put_work);
- }
- 
-@@ -436,7 +433,6 @@ static const struct fscache_state *fscache_parent_ready(struct fscache_object *o
- 	spin_lock(&parent->lock);
- 	parent->n_ops++;
- 	parent->n_obj_ops++;
--	object->lookup_jif = jiffies;
- 	spin_unlock(&parent->lock);
- 
- 	_leave("");
-@@ -596,7 +592,6 @@ static const struct fscache_state *fscache_object_available(struct fscache_objec
- 	object->cache->ops->lookup_complete(object);
- 	fscache_stat_d(&fscache_n_cop_lookup_complete);
- 
--	fscache_hist(fscache_obj_instantiate_histogram, object->lookup_jif);
- 	fscache_stat(&fscache_n_object_avail);
- 
- 	_leave("");
-diff --git a/fs/fscache/operation.c b/fs/fscache/operation.c
-index 4a5651d4904e..433877107700 100644
---- a/fs/fscache/operation.c
-+++ b/fs/fscache/operation.c
-@@ -616,7 +616,6 @@ void fscache_op_work_func(struct work_struct *work)
- {
- 	struct fscache_operation *op =
- 		container_of(work, struct fscache_operation, work);
--	unsigned long start;
- 
- 	_enter("{OBJ%x OP%x,%d}",
- 	       op->object->debug_id, op->debug_id, atomic_read(&op->usage));
-@@ -624,9 +623,7 @@ void fscache_op_work_func(struct work_struct *work)
- 	trace_fscache_op(op->object->cookie, op, fscache_op_work);
- 
- 	ASSERT(op->processor != NULL);
--	start = jiffies;
- 	op->processor(op);
--	fscache_hist(fscache_ops_histogram, start);
- 	fscache_put_operation(op);
- 
- 	_leave("");
-diff --git a/fs/fscache/page.c b/fs/fscache/page.c
-index 991b0a871744..27df94ef0e0b 100644
---- a/fs/fscache/page.c
-+++ b/fs/fscache/page.c
-@@ -289,7 +289,6 @@ static void fscache_release_retrieval_op(struct fscache_operation *_op)
- 	ASSERTIFCMP(op->op.state != FSCACHE_OP_ST_INITIALISED,
- 		    atomic_read(&op->n_pages), ==, 0);
- 
--	fscache_hist(fscache_retrieval_histogram, op->start_time);
- 	if (op->context)
- 		fscache_put_context(op->cookie, op->context);
- 
-@@ -324,7 +323,6 @@ struct fscache_retrieval *fscache_alloc_retrieval(
- 	op->mapping	= mapping;
- 	op->end_io_func	= end_io_func;
- 	op->context	= context;
--	op->start_time	= jiffies;
- 	INIT_LIST_HEAD(&op->to_do);
- 
- 	/* Pin the netfs read context in case we need to do the actual netfs
-@@ -340,8 +338,6 @@ struct fscache_retrieval *fscache_alloc_retrieval(
+@@ -794,8 +794,6 @@ static void fscache_put_object(struct fscache_object *object,
   */
- int fscache_wait_for_deferred_lookup(struct fscache_cookie *cookie)
+ void fscache_object_destroy(struct fscache_object *object)
  {
--	unsigned long jif;
+-	fscache_objlist_remove(object);
 -
- 	_enter("");
- 
- 	if (!test_bit(FSCACHE_COOKIE_LOOKING_UP, &cookie->flags)) {
-@@ -351,7 +347,6 @@ int fscache_wait_for_deferred_lookup(struct fscache_cookie *cookie)
- 
- 	fscache_stat(&fscache_n_retrievals_wait);
- 
--	jif = jiffies;
- 	if (wait_on_bit(&cookie->flags, FSCACHE_COOKIE_LOOKING_UP,
- 			TASK_INTERRUPTIBLE) != 0) {
- 		fscache_stat(&fscache_n_retrievals_intr);
-@@ -362,7 +357,6 @@ int fscache_wait_for_deferred_lookup(struct fscache_cookie *cookie)
- 	ASSERT(!test_bit(FSCACHE_COOKIE_LOOKING_UP, &cookie->flags));
- 
- 	smp_rmb();
--	fscache_hist(fscache_retrieval_delay_histogram, jif);
- 	_leave(" = 0 [dly]");
- 	return 0;
- }
-diff --git a/fs/fscache/proc.c b/fs/fscache/proc.c
-index da51fdfc8641..061df8f61ffc 100644
---- a/fs/fscache/proc.c
-+++ b/fs/fscache/proc.c
-@@ -31,12 +31,6 @@ int __init fscache_proc_init(void)
- 		goto error_stats;
- #endif
- 
--#ifdef CONFIG_FSCACHE_HISTOGRAM
--	if (!proc_create_seq("fs/fscache/histogram", S_IFREG | 0444, NULL,
--			 &fscache_histogram_ops))
--		goto error_histogram;
--#endif
--
- #ifdef CONFIG_FSCACHE_OBJECT_LIST
- 	if (!proc_create("fs/fscache/objects", S_IFREG | 0444, NULL,
- 			 &fscache_objlist_proc_ops))
-@@ -49,10 +43,6 @@ int __init fscache_proc_init(void)
- #ifdef CONFIG_FSCACHE_OBJECT_LIST
- error_objects:
- #endif
--#ifdef CONFIG_FSCACHE_HISTOGRAM
--	remove_proc_entry("fs/fscache/histogram", NULL);
--error_histogram:
--#endif
- #ifdef CONFIG_FSCACHE_STATS
- 	remove_proc_entry("fs/fscache/stats", NULL);
- error_stats:
-@@ -73,9 +63,6 @@ void fscache_proc_cleanup(void)
- #ifdef CONFIG_FSCACHE_OBJECT_LIST
- 	remove_proc_entry("fs/fscache/objects", NULL);
- #endif
--#ifdef CONFIG_FSCACHE_HISTOGRAM
--	remove_proc_entry("fs/fscache/histogram", NULL);
--#endif
- #ifdef CONFIG_FSCACHE_STATS
- 	remove_proc_entry("fs/fscache/stats", NULL);
- #endif
+ 	/* We can get rid of the cookie now */
+ 	fscache_cookie_put(object->cookie, fscache_cookie_put_object);
+ 	object->cookie = NULL;
 diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index 3235ddbdcc09..fbff0b7e3ef1 100644
+index fbff0b7e3ef1..8d39491c5f9f 100644
 --- a/include/linux/fscache-cache.h
 +++ b/include/linux/fscache-cache.h
-@@ -147,7 +147,6 @@ struct fscache_retrieval {
- 	fscache_rw_complete_t	end_io_func;	/* function to call on I/O completion */
- 	void			*context;	/* netfs read context (pinned) */
- 	struct list_head	to_do;		/* list of things to be done by the backend */
--	unsigned long		start_time;	/* time at which retrieval started */
- 	atomic_t		n_pages;	/* number of pages to be retrieved */
+@@ -384,9 +384,6 @@ struct fscache_object {
+ 	struct list_head	dependents;	/* FIFO of dependent objects */
+ 	struct list_head	dep_link;	/* link in parent's dependents list */
+ 	struct list_head	pending_ops;	/* unstarted operations on this object */
+-#ifdef CONFIG_FSCACHE_OBJECT_LIST
+-	struct rb_node		objlist_link;	/* link in global object list */
+-#endif
+ 	pgoff_t			store_limit;	/* current storage limit */
+ 	loff_t			store_limit_l;	/* current storage limit */
  };
- 
 
 
