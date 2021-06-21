@@ -2,129 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5233F3AECA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 17:40:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EE143AECAC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 17:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230298AbhFUPmq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 11:42:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55107 "EHLO
+        id S230311AbhFUPm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 11:42:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42767 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229837AbhFUPmp (ORCPT
+        by vger.kernel.org with ESMTP id S229837AbhFUPm7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 11:42:45 -0400
+        Mon, 21 Jun 2021 11:42:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624290031;
+        s=mimecast20190719; t=1624290044;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WTd9o0/iIYAJM8en1E5Wd0mT6Cbp04deGv4dp4XSwjk=;
-        b=UROKt5uzDPAMECHe0ixwbssgawGxuFGDNTeIP6TVCCgfpq80hZQXeE/SDma6bL/UJZcoba
-        A56LtKpnUxu4/c7fDFdpJecVqgllJwMNki8kM1ubJ+hp8/hSRYi1JASko1TtacA01Tt0bI
-        Jcl/kqrzNyv4Ka8M/Pv/bOSJVJZWpXk=
+        bh=8Go9MX9URt78M8jN2i7z0+0HeUDLUit2ibTF2M8h6Wk=;
+        b=NjnSK2XFoMKHsbnPtpns0/2GfpIFbaER5sjNRu/wiRmCj1ZCxwtSk4K2qOh+xisPPmIoSl
+        sectfmHVRUBDV0IzznSHbxyo8c1jGLfJTUIIi+MhMX6XGMK6RJLKG3r6skoQB3oWEc/lOw
+        Og34AZM0+WhmP+WVYAzQ9RyUasLgbKw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-285-Ib2u_z81Ma-ZVgxMa4qJ5A-1; Mon, 21 Jun 2021 11:40:27 -0400
-X-MC-Unique: Ib2u_z81Ma-ZVgxMa4qJ5A-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-263-5tRt-NQMPAe3z-m_7VMt0A-1; Mon, 21 Jun 2021 11:40:38 -0400
+X-MC-Unique: 5tRt-NQMPAe3z-m_7VMt0A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DCCC418414A0;
-        Mon, 21 Jun 2021 15:40:25 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 19094800C78;
+        Mon, 21 Jun 2021 15:40:37 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 706ED5D9CA;
-        Mon, 21 Jun 2021 15:40:18 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E6AB860916;
+        Mon, 21 Jun 2021 15:40:31 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v3 1/2] afs: Fix afs_write_end() to handle short writes
+Subject: [PATCH v3 2/2] netfs: fix test for whether we can skip read when
+ writing beyond EOF
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com, linux-afs@lists.infradead.org
-Cc:     Jeff Layton <jlayton@kernel.org>, Jeff Layton <jlayton@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, dhowells@redhat.com,
+Cc:     Andrew W Elble <aweits@rit.edu>, Jeff Layton <jlayton@kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        ceph-devel@vger.kernel.org, dhowells@redhat.com,
         Jeff Layton <jlayton@kernel.org>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 21 Jun 2021 16:40:17 +0100
-Message-ID: <162429001766.2770648.1072619730387446884.stgit@warthog.procyon.org.uk>
+Date:   Mon, 21 Jun 2021 16:40:31 +0100
+Message-ID: <162429003110.2770648.16870905479999978447.stgit@warthog.procyon.org.uk>
 In-Reply-To: <162429000639.2770648.6368710175435880749.stgit@warthog.procyon.org.uk>
 References: <162429000639.2770648.6368710175435880749.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix afs_write_end() to correctly handle a short copy into the intended
-write region of the page.  Two things are necessary:
+From: Jeff Layton <jlayton@kernel.org>
 
- (1) If the page is not up to date, then we should just return 0
-     (ie. indicating a zero-length copy).  The loop in
-     generic_perform_write() will go around again, possibly breaking up the
-     iterator into discrete chunks[1].
+It's not sufficient to skip reading when the pos is beyond the EOF.
+There may be data at the head of the page that we need to fill in
+before the write.
 
-     This is analogous to commit b9de313cf05fe08fa59efaf19756ec5283af672a
-     for ceph.
+Add a new helper function that corrects and clarifies the logic of
+when we can skip reads, and have it only zero out the part of the page
+that won't have data copied in for the write.
 
- (2) The page should not have been set uptodate if it wasn't completely set
-     up by netfs_write_begin() (this will be fixed in the next patch), so
-     we need to set uptodate here in such a case.
+Finally, don't set the page Uptodate after zeroing. It's not up to date
+since the write data won't have been copied in yet.
 
-Also remove the assertion that was checking that the page was set uptodate
-since it's now set uptodate if it wasn't already a few lines above.  The
-assertion was from when uptodate was set elsewhere.
+[DH made the following changes:
 
-Changes:
-v3: Remove the handling of len exceeding the end of the page.
+ - Prefixed the new function with "netfs_".
 
-Fixes: 3003bbd0697b ("afs: Use the netfs_write_begin() helper")
-Reported-by: Jeff Layton <jlayton@kernel.org>
+ - Don't call zero_user_segments() for a full-page write.
+
+ - Altered the beyond-last-page check to avoid a DIV instruction and got
+   rid of then-redundant zero-length file check.
+]
+
+Fixes: e1b1240c1ff5f ("netfs: Add write_begin helper")
+Reported-by: Andrew W Elble <aweits@rit.edu>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Jeff Layton <jlayton@kernel.org>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: linux-afs@lists.infradead.org
-Link: https://lore.kernel.org/r/YMwVp268KTzTf8cN@zeniv-ca.linux.org.uk/ [1]
-Link: https://lore.kernel.org/r/162367682522.460125.5652091227576721609.stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/162391825688.1173366.3437507255136307904.stgit@warthog.procyon.org.uk/ # v2
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+cc: ceph-devel@vger.kernel.org
+Link: https://lore.kernel.org/r/20210613233345.113565-1-jlayton@kernel.org/
+Link: https://lore.kernel.org/r/162367683365.460125.4467036947364047314.stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/162391826758.1173366.11794946719301590013.stgit@warthog.procyon.org.uk/ # v2
 ---
 
- fs/afs/write.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ fs/netfs/read_helper.c |   49 +++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 36 insertions(+), 13 deletions(-)
 
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index a523bb86915d..641c54679399 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -118,6 +118,15 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 	_enter("{%llx:%llu},{%lx}",
- 	       vnode->fid.vid, vnode->fid.vnode, page->index);
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index 725614625ed4..0b6cd3b8734c 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -1011,12 +1011,42 @@ int netfs_readpage(struct file *file,
+ }
+ EXPORT_SYMBOL(netfs_readpage);
  
-+	if (!PageUptodate(page)) {
-+		if (copied < len) {
-+			copied = 0;
-+			goto out;
-+		}
+-static void netfs_clear_thp(struct page *page)
++/**
++ * netfs_skip_page_read - prep a page for writing without reading first
++ * @page: page being prepared
++ * @pos: starting position for the write
++ * @len: length of write
++ *
++ * In some cases, write_begin doesn't need to read at all:
++ * - full page write
++ * - write that lies in a page that is completely beyond EOF
++ * - write that covers the the page from start to EOF or beyond it
++ *
++ * If any of these criteria are met, then zero out the unwritten parts
++ * of the page and return true. Otherwise, return false.
++ */
++static bool netfs_skip_page_read(struct page *page, loff_t pos, size_t len)
+ {
+-	unsigned int i;
++	struct inode *inode = page->mapping->host;
++	loff_t i_size = i_size_read(inode);
++	size_t offset = offset_in_thp(page, pos);
 +
-+		SetPageUptodate(page);
-+	}
++	/* Full page write */
++	if (offset == 0 && len >= thp_size(page))
++		return true;
 +
- 	if (copied == 0)
- 		goto out;
++	/* pos beyond last page in the file */
++	if (pos - offset >= i_size)
++		goto zero_out;
++
++	/* Write that covers from the start of the page to EOF or beyond */
++	if (offset == 0 && (pos + len) >= i_size)
++		goto zero_out;
  
-@@ -132,8 +141,6 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 		write_sequnlock(&vnode->cb_lock);
+-	for (i = 0; i < thp_nr_pages(page); i++)
+-		clear_highpage(page + i);
++	return false;
++zero_out:
++	zero_user_segments(page, 0, offset, offset + len, thp_size(page));
++	return true;
+ }
+ 
+ /**
+@@ -1024,7 +1054,7 @@ static void netfs_clear_thp(struct page *page)
+  * @file: The file to read from
+  * @mapping: The mapping to read from
+  * @pos: File position at which the write will begin
+- * @len: The length of the write in this page
++ * @len: The length of the write (may extend beyond the end of the page chosen)
+  * @flags: AOP_* flags
+  * @_page: Where to put the resultant page
+  * @_fsdata: Place for the netfs to store a cookie
+@@ -1061,8 +1091,6 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
+ 	struct inode *inode = file_inode(file);
+ 	unsigned int debug_index = 0;
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+-	int pos_in_page = pos & ~PAGE_MASK;
+-	loff_t size;
+ 	int ret;
+ 
+ 	DEFINE_READAHEAD(ractl, file, NULL, mapping, index);
+@@ -1090,13 +1118,8 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
+ 	 * within the cache granule containing the EOF, in which case we need
+ 	 * to preload the granule.
+ 	 */
+-	size = i_size_read(inode);
+ 	if (!ops->is_cache_enabled(inode) &&
+-	    ((pos_in_page == 0 && len == thp_size(page)) ||
+-	     (pos >= size) ||
+-	     (pos_in_page == 0 && (pos + len) >= size))) {
+-		netfs_clear_thp(page);
+-		SetPageUptodate(page);
++	    netfs_skip_page_read(page, pos, len)) {
+ 		netfs_stat(&netfs_n_rh_write_zskip);
+ 		goto have_page_no_wait;
  	}
- 
--	ASSERT(PageUptodate(page));
--
- 	if (PagePrivate(page)) {
- 		priv = page_private(page);
- 		f = afs_page_dirty_from(page, priv);
 
 
