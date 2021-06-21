@@ -2,117 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 463533AE45A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 09:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E17993AE4BE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jun 2021 10:27:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230052AbhFUHvF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Jun 2021 03:51:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
+        id S230076AbhFUIaH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Jun 2021 04:30:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229904AbhFUHvE (ORCPT
+        with ESMTP id S229905AbhFUI3w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Jun 2021 03:51:04 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C055C061756
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 00:48:50 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id n7so18473962wri.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 00:48:50 -0700 (PDT)
+        Mon, 21 Jun 2021 04:29:52 -0400
+Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ABB7C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 01:27:04 -0700 (PDT)
+Received: by mail-ua1-x936.google.com with SMTP id p9so6047028uar.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jun 2021 01:27:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=B+3nVzY+A+yS0flLb0aI3OtB+R+qY6lENuass8lUP0s=;
-        b=pCfdWjHBStJoBNJ03nESo/gmOCXuo7I7UpHcNfI+jjdN+mbVNglwqjbQSVwgxiKdgp
-         X1I213X8ek79cNJz9yoYL+R+KBUqL5TVIjSjxpxsMKFOGfmeUkucwoO87ARFDY310HED
-         9loNoUsZ9V+PE+LTNkqHTr0Hwd+Ksde+egOWc=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nLuy59A8PMwLhpgDGZXgcrV7ZMJJmmat7Q8wB6T7lcs=;
+        b=VoGeBo628y2FREohTV7mjqkFeTdK5lIrqZn/zJWPIjrRvUmGElbTINfxBxAjVgI3Pu
+         +Km7vM/lPHpFPtnKMiNb6+hYAKFrkbuPqRvDWxk5aGZZCRxf7xg/2Qj5hCQbWl9SlkmW
+         70Y1LxP+pSCugL3BIMwZ0SY1O/7HW+EnP2vpM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=B+3nVzY+A+yS0flLb0aI3OtB+R+qY6lENuass8lUP0s=;
-        b=ftWLr02ADXeChaZG1mn/iptAv5mbf0c5e4dMdH8dZU12UDJ+LxmF67VlxJMkxaPhE+
-         ee8RnCXkB9m1OgOwQ4mSGrulFqlNAqOgQDPiBeNL+UXW5AeBbjly6tNDjmrhCgT7frLZ
-         zLBKRubkAz6JBBHZKbLU9b0U06fv7K64tQxXXHIUtgkvVm7BXBVy5BQfPW3fAtPbelgA
-         BVmZNsSbbqSpQsqYgIxBVD/9jdvf0Ulu+D5aPoaAcK8bDrMaTQp+3HRT6XTMS2fBhxRX
-         X3m6JeLhAU+kuurNMYizPBV0LECQGqH+agu5RgMhsTWzOylZlAtn1HAoM+Gqmxb//Cyf
-         lRmA==
-X-Gm-Message-State: AOAM530UGCKt97XFeTvgLu2M/HHNZ2haA544pwRBaPpdlhzb2Zso2OOr
-        77cILomQYRjNPhyYRO36MU3kqA==
-X-Google-Smtp-Source: ABdhPJwlmGeWNnu7+LMn0PR5SFRES8r0KS+HkgeAVqct4wQYG19Gp8ttx0vb8rjLnj1si7mags41IA==
-X-Received: by 2002:adf:eb82:: with SMTP id t2mr26701649wrn.337.1624261728564;
-        Mon, 21 Jun 2021 00:48:48 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
-        by smtp.gmail.com with ESMTPSA id h15sm16564269wrq.88.2021.06.21.00.48.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jun 2021 00:48:48 -0700 (PDT)
-Date:   Mon, 21 Jun 2021 09:48:45 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Pradeep P V K <pragalla@codeaurora.org>
-Cc:     stummala@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V1] fuse: Set fuse request error upon fuse abort
- connection
-Message-ID: <YNBEXVUPgqYbraq6@miu.piliscsaba.redhat.com>
-References: <1618582752-26178-1-git-send-email-pragalla@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nLuy59A8PMwLhpgDGZXgcrV7ZMJJmmat7Q8wB6T7lcs=;
+        b=YEStixgjw8IVjVkz3RkZjWRrfeRtXEtgDffxhuuq+5FT566mVGOk9ykZ4gltAgC32v
+         88G5SoVwgwg4NvMCVemOYeXO70RkRciDDHfjxlet9aSYvTdL9bqlsI/Md9OT13M71C+e
+         pfu3Cv78+ZWzAydkxMQrK6D2o6bkZ2prkKTejU9e5XbHfRCXouf7rphiEPnML/Lpvb5W
+         Jog0ZRDnMLn4C5vmJn9a2ME0Hp1N1CsA1yVaJ9+qAKsAo0NCZnbN1hzR2+msN0v5sxI8
+         OIxQBF61rswndbXUQzWYdYliu3+hxxLXOxDv7XZ2Xwv/r7kwEngmVB5mNS//XfMcX/4G
+         ghhQ==
+X-Gm-Message-State: AOAM5326aFsSDADqUp4dwOqkwf2ufCQUc4xTrVhpCmMcTICGaRXJ8rSS
+        HiwMpOUfSnfwjjbffM0kyWpsKS2LmQp95QC9Ey45FQ==
+X-Google-Smtp-Source: ABdhPJyCyHjO5agNFI9f6KyDk4d5nVl9SK+W+k1J8lkmwB3vka3xV9O/3exMBXZwkimpRefHNFeMhvmx0fnPbVAX2Fc=
+X-Received: by 2002:ab0:23c3:: with SMTP id c3mr607783uan.11.1624264022971;
+ Mon, 21 Jun 2021 01:27:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1618582752-26178-1-git-send-email-pragalla@codeaurora.org>
+References: <20210423151919.195033-1-ckuehl@redhat.com>
+In-Reply-To: <20210423151919.195033-1-ckuehl@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 21 Jun 2021 10:26:52 +0200
+Message-ID: <CAJfpegsXXGcZDbbtDoXG8sQqHrAS1fs-TsRz5ndQ62sse1Av_w@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Send FUSE_WRITE_KILL_SUIDGID for killpriv v1
+To:     Connor Kuehl <ckuehl@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 07:49:12PM +0530, Pradeep P V K wrote:
-> There is a minor race in setting the fuse out request error
-> between fuse_abort_conn() and fuse_dev_do_read() as explained
-> below.
-> 
-> Thread-1			  Thread-2
-> ========			  ========
-> ->fuse_simple_request()           ->shutdown
->   ->__fuse_request_send()
->     ->queue_request()		->fuse_abort_conn()
-> ->fuse_dev_do_read()                ->acquire(fpq->lock)
->   ->wait_for(fpq->lock) 	  ->set err to all req's in fpq->io
-> 				  ->release(fpq->lock)
->   ->acquire(fpq->lock)
->   ->add req to fpq->io
-> 
-> The above scenario may cause Thread-1 request to add into
-> fpq->io list after Thread-2 sets -ECONNABORTED err to all
-> its requests in fpq->io list. This leaves Thread-1 request
-> with unset err and this further misleads as a completed
-> request without an err set upon request_end().
-> 
-> Handle this by setting the err appropriately.
+On Fri, 23 Apr 2021 at 17:19, Connor Kuehl <ckuehl@redhat.com> wrote:
+>
+> FUSE doesn't seem to be adding the FUSE_WRITE_KILL_SUIDGID flag on write
+> requests for FUSE connections that support FUSE_HANDLE_KILLPRIV but not
+> FUSE_HANDLE_KILLPRIV_V2.
+>
+> However, the FUSE userspace header states:
+>
+>         FUSE_HANDLE_KILLPRIV: fs handles killing suid/sgid/cap on
+>         write/chown/trunc
+>         ^^^^^
+>
+> To improve backwards compatibility with file servers that don't support
+> FUSE_HANDLE_KILLPRIV_V2, add the FUSE_WRITE_KILL_SUIDGID flag to write
+> requests if FUSE_HANDLE_KILLPRIV has been negotiated -OR- if the
+> conditions for FUSE_HANDLE_KILLPRIV_V2 support are met.
 
-The fix looks good, but still allows the request to block during the copy phase
-after being aborted, which the FR_LOCKED/FR_ABORT bits are meant to prevent.
 
-Here's an updated fix.  It does not allow the request to be queued on the
-fpq->io list after fuse_abort_conn() has aborted requests on that list.
+If server does not support FUSE_HANDLE_KILLPRIV_V2, then it does not
+support FUSE_WRITE_KILL_SUIDGID either.  The two were introduced
+together and the latter is only meaningful if the
+FUSE_HANDLE_KILLPRIV_V2 feature was negotiated.
 
-Can you verify that it fixes the race you reported?
+What am I missing?
 
 Thanks,
 Miklos
-
-
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1272,6 +1272,15 @@ static ssize_t fuse_dev_do_read(struct f
- 		goto restart;
- 	}
- 	spin_lock(&fpq->lock);
-+	/*
-+	 *  Must not put request on fpq->io queue after having been shut down by
-+	 *  fuse_abort_conn()
-+	 */
-+	if (!fpq->connected) {
-+		req->out.h.error = err = -ECONNABORTED;
-+		goto out_end;
-+
-+	}
- 	list_add(&req->list, &fpq->io);
- 	spin_unlock(&fpq->lock);
- 	cs->req = req;
