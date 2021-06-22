@@ -2,91 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ACA03B0C97
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 20:09:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5D73B0CA5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 20:13:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232680AbhFVSMA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 14:12:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39926 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232883AbhFVSLq (ORCPT
+        id S229612AbhFVSPZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 14:15:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22570 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230146AbhFVSPY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 14:11:46 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0827C061280
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 11:08:16 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id h15so18847462lfv.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 11:08:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xqKyH/P85UNiqEHVhnOTWzjeuNjUUBapCv+LJwl/SMM=;
-        b=Pc4u8ARWhKyeoTp1QuUkXBYBsNhLhb50XcDTJAb7BeD9eYAsVHsqvKwGuLk7Y7WXFh
-         sGUzQo5XOG6b7IDfEgtSX4i/xqSSe/y0aDwXDka1ZbLzPxspVFyZB3D6fQnjL8/sEFzR
-         UsXtmOmXBwWLZpOf2Kui9wetdxlAxOLjK9fnM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xqKyH/P85UNiqEHVhnOTWzjeuNjUUBapCv+LJwl/SMM=;
-        b=BboP5U09HmwyzKqq23rNkcX10asyYC3puufz6kSUMvNHGcMy2igPzq14KiqL2xRVbM
-         zHRtJkaQo0BShWOHi9xFtdnRtdUqQBUrg1oLZQ5jJjnE4muhUzpDhYadSrr/pkfyz1cr
-         oUaqf6a1e9rNRyKuIC+a4O8FWnD84aVwLbiZkspgcfoFgODyXnVSlZcNPmZHjtxfBWny
-         wqr+e0ZPzit+UrmfnCcA9yJcQecMwjLGKigkaAIDcbYm5P+UDdNpJSmGYL0m4FUP1GR3
-         S6D4fkLGKRuTKYcdW16JBk9XhTBB1sE2pK1OI0CTRuE21I/M4SYuwjRhEgZOnL9nukaQ
-         Thag==
-X-Gm-Message-State: AOAM533mITzhwrD/LTtGwBrjy/jobYo3uHEJzq3CD5deTTuky+lb3eDc
-        cF9dvPFoKYkYpIR1U1PuGS8uDYtXAzGefTFMnHw=
-X-Google-Smtp-Source: ABdhPJzkTiIZKIfICGLztBOcOf6LsdoYBmtuLYTxLHPVC8wfIMv3p9FIJ/UXZyO53G5IADVSYf4sSw==
-X-Received: by 2002:a05:6512:3f1e:: with SMTP id y30mr3914295lfa.260.1624385295184;
-        Tue, 22 Jun 2021 11:08:15 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id a17sm2283587lfs.59.2021.06.22.11.08.12
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jun 2021 11:08:13 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id p7so37243108lfg.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 11:08:12 -0700 (PDT)
-X-Received: by 2002:a19:7d04:: with SMTP id y4mr3746251lfc.201.1624385292112;
- Tue, 22 Jun 2021 11:08:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHk-=wh=YxjEtTpYyhgypKmPJQ8eVLJ4qowmwbnG1bOU06_4Bg@mail.gmail.com>
- <3221175.1624375240@warthog.procyon.org.uk> <YNIBb5WPrk8nnKKn@zeniv-ca.linux.org.uk>
- <YNIDdgn0m8d2a0P3@zeniv-ca.linux.org.uk> <YNIdJaKrNj5GoT7w@casper.infradead.org>
- <3231150.1624384533@warthog.procyon.org.uk> <YNImEkqizzuStW72@casper.infradead.org>
+        Tue, 22 Jun 2021 14:15:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1624385588;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=miPd5CYvzE+oNS2YKPohgJHcAhxiPdT10XDw8a3tjh8=;
+        b=Og/BgatMQ9BKn5JX5dFbZlln51EgaRnLu/eusRWeeyz2m6pTQ53DsBA54KBFz/8f9/HOiO
+        diygGdxMvflZgnPZ1mWJc5nr2kdtHVfPBqrgPgwgYdZlr6RcSU4ePleU36lFFBU86PX9Vz
+        MFjb4d47abJOi9/K0+kE1WyipI49ilQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-518-Zn3GIKvjNVeF1SIxtLQnQA-1; Tue, 22 Jun 2021 14:13:06 -0400
+X-MC-Unique: Zn3GIKvjNVeF1SIxtLQnQA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 35BBC1084F4C;
+        Tue, 22 Jun 2021 18:13:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0688D6091B;
+        Tue, 22 Jun 2021 18:13:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
 In-Reply-To: <YNImEkqizzuStW72@casper.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 22 Jun 2021 11:07:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wicC9ZTNNH1E-oHebcT3+r4Q4Wf1tXBindXrCdotj20Gg@mail.gmail.com>
-Message-ID: <CAHk-=wicC9ZTNNH1E-oHebcT3+r4Q4Wf1tXBindXrCdotj20Gg@mail.gmail.com>
-Subject: Re: Do we need to unrevert "fs: do not prefault sys_write() user
- buffer pages"?
+References: <YNImEkqizzuStW72@casper.infradead.org> <CAHk-=wh=YxjEtTpYyhgypKmPJQ8eVLJ4qowmwbnG1bOU06_4Bg@mail.gmail.com> <3221175.1624375240@warthog.procyon.org.uk> <YNIBb5WPrk8nnKKn@zeniv-ca.linux.org.uk> <YNIDdgn0m8d2a0P3@zeniv-ca.linux.org.uk> <YNIdJaKrNj5GoT7w@casper.infradead.org> <3231150.1624384533@warthog.procyon.org.uk>
 To:     Matthew Wilcox <willy@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, "Ted Ts'o" <tytso@mit.edu>,
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ted Ts'o <tytso@mit.edu>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linux-MM <linux-mm@kvack.org>,
         Ext4 Developers List <linux-ext4@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: Do we need to unrevert "fs: do not prefault sys_write() user buffer pages"?
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3232237.1624385582.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 22 Jun 2021 19:13:02 +0100
+Message-ID: <3232238.1624385582@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 11:05 AM Matthew Wilcox <willy@infradead.org> wrote:
->
+Matthew Wilcox <willy@infradead.org> wrote:
+
+> > It may also cause the read in to happen in the background whilst write=
+_begin
+> > is being done.
+> =
+
 > Huh?  Last I checked, the fault_in_readable actually read a byte from
 > the page.  It has to wait for the read to complete before that can
 > happen.
 
-Yeah, we don't have any kind of async fault-in model.
+Ah, good point.
 
-I'm not sure how that would even look. I don't think it would
-necessarily be *impossible* (special marker in the exception table to
-let the fault code know that this is a "prepare" fault), but it would
-be pretty challenging.
+David
 
-            Linus
