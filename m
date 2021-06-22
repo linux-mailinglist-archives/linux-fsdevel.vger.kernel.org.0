@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1ABA3B0425
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 703D03B042A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231315AbhFVMWO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 08:22:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43670 "EHLO
+        id S231514AbhFVMXB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 08:23:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbhFVMWN (ORCPT
+        with ESMTP id S231451AbhFVMXB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:22:13 -0400
+        Tue, 22 Jun 2021 08:23:01 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 209B4C061574;
-        Tue, 22 Jun 2021 05:19:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5EA3C061574;
+        Tue, 22 Jun 2021 05:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=OlH0KGbHhTPJjbugF5f8PMcuChJg8zjEmr6+ZuVUzo8=; b=AckjGkmZY/JVhl8SeS0H65BJVS
-        2TWLHxXgvWQfvSYJWPgobkHkwDoeuttH4KahtgiHnwwC51IVDQ6Jzr5qPnt1oF4sJaDqOuiQ/afUj
-        C6FbyHejav+hlHlNyN1bksm89/RH3z0K6paMD3MJ0eBRgJ4ZL86zuCH42clsF+phYPHuJ11etQ18T
-        o+UQNj1qZc79XIv+e89oH9RZYjuoGzJKfz3NdiRmiwYBM59Mr62CJ33BmhqviCzkNpd/X2RQlIqOY
-        p3KNDoyAtkbcGDY+TvpDFJKoznX1htR2V6XT3c0DhIoz/uTA1KN5h0HMyNG9aUZy1KUHXe4PRGlo2
-        fg+NXefg==;
+        bh=p82Ff5dDat6fw/NBmOQCBBhVAE9uyWfLJnpUxsS9pTo=; b=faHbgfKdkPTQpAaAW8pW8Z7lpg
+        8cOV045c4TNJsrXhgj8+ZtOmH9SRGVv1t+NA8e+oapSGx2q4kkqxMJZGef133JUxW3trurBrLuwVc
+        qS5UNznW8JpDtWjj9rYIQvY69oO7gcGNVl2ZYSbmRmWSx6cT1LgVvBP7s6CIa3mxMPhQfNV6hTIOd
+        BgZGxdcySMz2NXBZhBb7uP4cv3tK6JWtIsgMleoTOX1kapf6xB2OEYBjWfilxbO1WwOQpqkXpvtv0
+        FNPLOmtCh5ETLCIKswSwXGhC4Rw/qjm84c99m0Z3nRBzSgzvuzhHQVhM+9rlDck92qdtSm14QxjXc
+        1ZPW442Q==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvfMW-00EGOt-Hx; Tue, 22 Jun 2021 12:18:49 +0000
+        id 1lvfND-00EGSB-B6; Tue, 22 Jun 2021 12:19:46 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     akpm@linux-foundation.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 03/46] mm: Add kmap_local_folio()
-Date:   Tue, 22 Jun 2021 13:15:08 +0100
-Message-Id: <20210622121551.3398730-4-willy@infradead.org>
+Subject: [PATCH v2 04/46] mm: Add flush_dcache_folio()
+Date:   Tue, 22 Jun 2021 13:15:09 +0100
+Message-Id: <20210622121551.3398730-5-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210622121551.3398730-1-willy@infradead.org>
 References: <20210622121551.3398730-1-willy@infradead.org>
@@ -44,93 +44,88 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This allows us to map a portion of a folio.  Callers can only expect
-to access up to the next page boundary.
+This is a default implementation which calls flush_dcache_page() on
+each page in the folio.  If architectures can do better, they should
+implement their own version of it.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/highmem-internal.h | 11 +++++++++
- include/linux/highmem.h          | 38 ++++++++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
+ Documentation/core-api/cachetlb.rst |  6 ++++++
+ arch/nds32/include/asm/cacheflush.h |  1 +
+ include/asm-generic/cacheflush.h    |  6 ++++++
+ mm/util.c                           | 13 +++++++++++++
+ 4 files changed, 26 insertions(+)
 
-diff --git a/include/linux/highmem-internal.h b/include/linux/highmem-internal.h
-index 7902c7d8b55f..d5d6f930ae1d 100644
---- a/include/linux/highmem-internal.h
-+++ b/include/linux/highmem-internal.h
-@@ -73,6 +73,12 @@ static inline void *kmap_local_page(struct page *page)
- 	return __kmap_local_page_prot(page, kmap_prot);
- }
+diff --git a/Documentation/core-api/cachetlb.rst b/Documentation/core-api/cachetlb.rst
+index fe4290e26729..29682f69a915 100644
+--- a/Documentation/core-api/cachetlb.rst
++++ b/Documentation/core-api/cachetlb.rst
+@@ -325,6 +325,12 @@ maps this page at its virtual address.
+ 			dirty.  Again, see sparc64 for examples of how
+ 			to deal with this.
  
-+static inline void *kmap_local_folio(struct folio *folio, size_t offset)
-+{
-+	struct page *page = folio_page(folio, offset / PAGE_SIZE);
-+	return __kmap_local_page_prot(page, kmap_prot) + offset % PAGE_SIZE;
-+}
++  ``void flush_dcache_folio(struct folio *folio)``
++	This function is called under the same circumstances as
++	flush_dcache_page().  It allows the architecture to
++	optimise for flushing the entire folio of pages instead
++	of flushing one page at a time.
 +
- static inline void *kmap_local_page_prot(struct page *page, pgprot_t prot)
+   ``void copy_to_user_page(struct vm_area_struct *vma, struct page *page,
+   unsigned long user_vaddr, void *dst, void *src, int len)``
+   ``void copy_from_user_page(struct vm_area_struct *vma, struct page *page,
+diff --git a/arch/nds32/include/asm/cacheflush.h b/arch/nds32/include/asm/cacheflush.h
+index 7d6824f7c0e8..f10d13af4ae5 100644
+--- a/arch/nds32/include/asm/cacheflush.h
++++ b/arch/nds32/include/asm/cacheflush.h
+@@ -38,6 +38,7 @@ void flush_anon_page(struct vm_area_struct *vma,
+ 
+ #define ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
+ void flush_kernel_dcache_page(struct page *page);
++void flush_dcache_folio(struct folio *folio);
+ void flush_kernel_vmap_range(void *addr, int size);
+ void invalidate_kernel_vmap_range(void *addr, int size);
+ #define flush_dcache_mmap_lock(mapping)   xa_lock_irq(&(mapping)->i_pages)
+diff --git a/include/asm-generic/cacheflush.h b/include/asm-generic/cacheflush.h
+index 4a674db4e1fa..fedc0dfa4877 100644
+--- a/include/asm-generic/cacheflush.h
++++ b/include/asm-generic/cacheflush.h
+@@ -49,9 +49,15 @@ static inline void flush_cache_page(struct vm_area_struct *vma,
+ static inline void flush_dcache_page(struct page *page)
  {
- 	return __kmap_local_page_prot(page, prot);
-@@ -160,6 +166,11 @@ static inline void *kmap_local_page(struct page *page)
- 	return page_address(page);
  }
++
++static inline void flush_dcache_folio(struct folio *folio) { }
+ #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 0
++#define ARCH_IMPLEMENTS_FLUSH_DCACHE_FOLIO
+ #endif
  
-+static inline void *kmap_local_folio(struct folio *folio, size_t offset)
++#ifndef ARCH_IMPLEMENTS_FLUSH_DCACHE_FOLIO
++void flush_dcache_folio(struct folio *folio);
++#endif
+ 
+ #ifndef flush_dcache_mmap_lock
+ static inline void flush_dcache_mmap_lock(struct address_space *mapping)
+diff --git a/mm/util.c b/mm/util.c
+index 0ba3a56c2c90..cae22295c41f 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -1007,3 +1007,16 @@ void mem_dump_obj(void *object)
+ }
+ EXPORT_SYMBOL_GPL(mem_dump_obj);
+ #endif
++
++#ifndef ARCH_IMPLEMENTS_FLUSH_DCACHE_FOLIO
++void flush_dcache_folio(struct folio *folio)
 +{
-+	return page_address(&folio->page) + offset;
++	unsigned int n = folio_nr_pages(folio);
++
++	do {
++		n--;
++		flush_dcache_page(folio_page(folio, n));
++	} while (n);
 +}
-+
- static inline void *kmap_local_page_prot(struct page *page, pgprot_t prot)
- {
- 	return kmap_local_page(page);
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index 832b49b50c7b..c7c664e0315b 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -96,6 +96,44 @@ static inline void kmap_flush_unused(void);
-  */
- static inline void *kmap_local_page(struct page *page);
- 
-+/**
-+ * kmap_local_folio - Map a page in this folio for temporary usage
-+ * @folio:	The folio to be mapped.
-+ * @offset:	The byte offset within the folio.
-+ *
-+ * Returns: The virtual address of the mapping
-+ *
-+ * Can be invoked from any context.
-+ *
-+ * Requires careful handling when nesting multiple mappings because the map
-+ * management is stack based. The unmap has to be in the reverse order of
-+ * the map operation:
-+ *
-+ * addr1 = kmap_local_folio(page1, offset1);
-+ * addr2 = kmap_local_folio(page2, offset2);
-+ * ...
-+ * kunmap_local(addr2);
-+ * kunmap_local(addr1);
-+ *
-+ * Unmapping addr1 before addr2 is invalid and causes malfunction.
-+ *
-+ * Contrary to kmap() mappings the mapping is only valid in the context of
-+ * the caller and cannot be handed to other contexts.
-+ *
-+ * On CONFIG_HIGHMEM=n kernels and for low memory pages this returns the
-+ * virtual address of the direct mapping. Only real highmem pages are
-+ * temporarily mapped.
-+ *
-+ * While it is significantly faster than kmap() for the higmem case it
-+ * comes with restrictions about the pointer validity. Only use when really
-+ * necessary.
-+ *
-+ * On HIGHMEM enabled systems mapping a highmem page has the side effect of
-+ * disabling migration in order to keep the virtual address stable across
-+ * preemption. No caller of kmap_local_folio() can rely on this side effect.
-+ */
-+static inline void *kmap_local_folio(struct folio *folio, size_t offset);
-+
- /**
-  * kmap_atomic - Atomically map a page for temporary usage - Deprecated!
-  * @page:	Pointer to the page to be mapped
++EXPORT_SYMBOL(flush_dcache_folio);
++#endif
 -- 
 2.30.2
 
