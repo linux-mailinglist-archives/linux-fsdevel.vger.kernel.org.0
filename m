@@ -2,134 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B459B3B0B93
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 19:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AC0F3B0B9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 19:41:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232377AbhFVRmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 13:42:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33402 "EHLO
+        id S231726AbhFVRn4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 13:43:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232347AbhFVRmW (ORCPT
+        with ESMTP id S230338AbhFVRnz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 13:42:22 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2203DC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 10:40:05 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id h15so18717183lfv.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 10:40:05 -0700 (PDT)
+        Tue, 22 Jun 2021 13:43:55 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23BC3C061574;
+        Tue, 22 Jun 2021 10:41:39 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id i5so7373193eds.1;
+        Tue, 22 Jun 2021 10:41:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=66ra9JcEZ0eBr3diwYDmK55iDML4YsZIlomivlL4MkM=;
-        b=BN8pfadh6kxcRjOo7eBRIxfB3TqOIMMpU5w6SViYi3IbWgrX9pxyb+0MIPuTThh/Uk
-         UI374oOHBtqpQVOc5/7Wjq62OSZlw+Cs0ZJ9RtNvwUC7DVtrhmo38JY5T8rAYwai72SJ
-         tm4pt9J7lEO2DOp7XU52ViFjgfM4TXiIVDMsU=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UZm3fHNnA/YCIzOCFqws+e7g1P6uWRfgyjBhMsINiF4=;
+        b=a7kgV+FhOcVlDtZnBY+0ze0EdBEwy7CDFOo+Tth0movMxxXydikvKaz2Sqou7sNRdZ
+         TPcau192f8geibSen7HJpcj89XnphvRH6vN/VieD/aDSx8QYekfatCInLvT7NFPP9ayI
+         J6Fzl6l/Z58FdplEJWNqoYQbViTli7eRjnpJMEYDJydLFBYp+vzCov4iM/G43MOiLxiU
+         eAO4Itya631Y/tUUOZJcHQDbtVkoBvFa1DXQWEDHALsHeyPqNkyn6RxqHwwe2mPyIN+P
+         M+D+keG1fULYCUHNzJxfYpSjpccVFQyCDYN7xMyeoZ7JGI30Fiy8+c5s/MzsbagPocf5
+         JKSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=66ra9JcEZ0eBr3diwYDmK55iDML4YsZIlomivlL4MkM=;
-        b=VKXyBUPyBNOdGwcetlOLFzWdYmgovm9YZGdNMzAYXwSiR2wpRVk6jpB6O8b0Tp9sWZ
-         9FSTLt4ZAbfJii+48utrQHy7BZxvHL0BzmbpDGy/Fiy0ha5mbzrDpOvAni682ZDqVKRB
-         KpFq1zbtgPoedBLC3/hUUlqhtRe4MWbF4e4xeu42xQh87bdsoPOkohCAMBu2U+qZy507
-         KnyVAzSeZrRu5nofGY5k4k1QPlD2L+3Khw/xDs04Uf8iHzel1778nzVzg4B5veia0J+y
-         rct8GJKwZnBUg20fKyZc+o2DeHb5E19LKLGXYHsCwSpWd+ecR3SYUr/OVycqPQcHmerV
-         YiCg==
-X-Gm-Message-State: AOAM531CiO1YerUR/YqwP2Gz4n2MiomWtjaTZOyaHewhbpueLjP16yps
-        ATP9BuKbOLLriHyov61r67cESGQ1wj9aqpxQVUk=
-X-Google-Smtp-Source: ABdhPJzoT6eR62enIehY82gtPMQYstSTPj9cs7XyOzqOS970oKwMCszZA5Juzonbo8brJdpRYvU97Q==
-X-Received: by 2002:a05:6512:ba8:: with SMTP id b40mr4054808lfv.588.1624383603177;
-        Tue, 22 Jun 2021 10:40:03 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id n5sm2273695lft.139.2021.06.22.10.40.02
-        for <linux-fsdevel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UZm3fHNnA/YCIzOCFqws+e7g1P6uWRfgyjBhMsINiF4=;
+        b=bJNuOfcmFnQzG34LjnXsg/5HN4UtcC3Bd7HeXhi8DoTLBJ0caISlDPVXru03wzvaZq
+         ekb6oKnRyKZG6fEw/zwCaFGBIqpvqQVjUMXCfgsF7JRTG854xJeFHY5OyFdfbNr6hkKl
+         N6ml+Wv2U4aqtJJRPmoVGPXIi3JCrcATluTJ5BfNUwjmRBPZtBMzswFiwlahZazyYvRI
+         FyKepkd8qJSpguiovWL0XVjbJAG1Up6orsx3ZgO92LpL7yeRw9kiF6pwdZEB6ZZz82HC
+         vuo3iU4tamwvq+nBNQeHYjW1R3S2VZ2+zNUMXtlZ0uGFOSH05FF9v1DoaaexKvr9RYZJ
+         eLIw==
+X-Gm-Message-State: AOAM533FltsAJsKNeLfK88T5DVVryi9Ih3Gr911eu4uSzjxS80GbCMQb
+        shxZDKAjKwk5J8d/Hi3WOi+CuKmMnQbdlWdq
+X-Google-Smtp-Source: ABdhPJwG/04D68AaD6ZeYMr5w5z+ohc/LpyEO1ZuYV5gnJOTo+hvxUkTnZogd4DQ6ywRROHx6Cplrg==
+X-Received: by 2002:a05:6402:b6a:: with SMTP id cb10mr6685479edb.275.1624383697447;
+        Tue, 22 Jun 2021 10:41:37 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c092:600::2:e69])
+        by smtp.gmail.com with ESMTPSA id w1sm81911edr.62.2021.06.22.10.41.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jun 2021 10:40:02 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id r16so31288642ljk.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 10:40:02 -0700 (PDT)
-X-Received: by 2002:a2e:7813:: with SMTP id t19mr4167347ljc.411.1624383601833;
- Tue, 22 Jun 2021 10:40:01 -0700 (PDT)
+        Tue, 22 Jun 2021 10:41:37 -0700 (PDT)
+Subject: Re: [PATCH v5 02/10] io_uring: add support for IORING_OP_MKDIRAT
+To:     Dmitry Kadashev <dkadashev@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20210603051836.2614535-1-dkadashev@gmail.com>
+ <20210603051836.2614535-3-dkadashev@gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <f45781a8-234e-af92-e73d-a6453bd24f16@gmail.com>
+Date:   Tue, 22 Jun 2021 18:41:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <3221175.1624375240@warthog.procyon.org.uk> <YNIBb5WPrk8nnKKn@zeniv-ca.linux.org.uk>
- <YNIDdgn0m8d2a0P3@zeniv-ca.linux.org.uk> <YNIdJaKrNj5GoT7w@casper.infradead.org>
-In-Reply-To: <YNIdJaKrNj5GoT7w@casper.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 22 Jun 2021 10:39:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh=YxjEtTpYyhgypKmPJQ8eVLJ4qowmwbnG1bOU06_4Bg@mail.gmail.com>
-Message-ID: <CAHk-=wh=YxjEtTpYyhgypKmPJQ8eVLJ4qowmwbnG1bOU06_4Bg@mail.gmail.com>
-Subject: Re: Do we need to unrevert "fs: do not prefault sys_write() user
- buffer pages"?
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        "Ted Ts'o" <tytso@mit.edu>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210603051836.2614535-3-dkadashev@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 10:26 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Tue, Jun 22, 2021 at 03:36:22PM +0000, Al Viro wrote:
-> >
-> > Note that the revert you propose is going to do fault-in anyway; we really can't
-> > avoid it.  The only thing it does is optimistically trying without that the
-> > first time around, which is going to be an overall loss exactly in "slow
-> > write_begin" case.  If source pages are absent, you'll get copyin fail;
-> > iov_iter_copy_from_user_atomic() (or its replacement) is disabling pagefaults
-> > itself.
->
-> Let's not overstate the case.  I think for the vast majority of write()
-> calls, the data being written has recently been accessed.  So this
-> userspace access is unnecessary.
+On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
+> IORING_OP_MKDIRAT behaves like mkdirat(2) and takes the same flags
+> and arguments.
 
-Note that the fault_in_readable is very much necessary - the only
-question is whether it happens before the actual access, or after it
-in the "oh, it failed, need to retry" case.
+Jens, a fold-in er discussed, and it will get you
+a conflict at 8/10
 
-There are two cases:
 
- (a) the user page is there and accessible, and fault_in_readable
-isn't necessary
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 4b215e0f8dd8..c0e469ebd22d 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3589,7 +3589,7 @@ static int io_mkdirat(struct io_kiocb *req, int issue_flags)
+ 
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+ 	if (ret < 0)
+-		req_set_fail_links(req);
++		req_set_fail(req);
+ 	io_req_complete(req, ret);
+ 	return 0;
+ }
 
- (b) not
 
-and as you say, case (a) is generally the common one by far, although
-it will depend on the exact load (iow, (b) *could* be the common case:
-you can have situations where you mmap() things only to then write the
-mapping out, and then accesses will fault a lot).
+> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
+> ---
+>  fs/io_uring.c                 | 55 +++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/io_uring.h |  1 +
+>  2 files changed, 56 insertions(+)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index a1ca6badff36..8ab4eb559520 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -665,6 +665,13 @@ struct io_unlink {
+>  	struct filename			*filename;
+>  };
+>  
+> +struct io_mkdir {
+> +	struct file			*file;
+> +	int				dfd;
+> +	umode_t				mode;
+> +	struct filename			*filename;
+> +};
+> +
+>  struct io_completion {
+>  	struct file			*file;
+>  	struct list_head		list;
+> @@ -809,6 +816,7 @@ struct io_kiocb {
+>  		struct io_shutdown	shutdown;
+>  		struct io_rename	rename;
+>  		struct io_unlink	unlink;
+> +		struct io_mkdir		mkdir;
+>  		/* use only after cleaning per-op data, see io_clean_op() */
+>  		struct io_completion	compl;
+>  	};
+> @@ -1021,6 +1029,7 @@ static const struct io_op_def io_op_defs[] = {
+>  	},
+>  	[IORING_OP_RENAMEAT] = {},
+>  	[IORING_OP_UNLINKAT] = {},
+> +	[IORING_OP_MKDIRAT] = {},
+>  };
+>  
+>  static bool io_disarm_next(struct io_kiocb *req);
+> @@ -3530,6 +3539,44 @@ static int io_unlinkat(struct io_kiocb *req, unsigned int issue_flags)
+>  	return 0;
+>  }
+>  
+> +static int io_mkdirat_prep(struct io_kiocb *req,
+> +			    const struct io_uring_sqe *sqe)
+> +{
+> +	struct io_mkdir *mkd = &req->mkdir;
+> +	const char __user *fname;
+> +
+> +	if (unlikely(req->flags & REQ_F_FIXED_FILE))
+> +		return -EBADF;
+> +
+> +	mkd->dfd = READ_ONCE(sqe->fd);
+> +	mkd->mode = READ_ONCE(sqe->len);
+> +
+> +	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
+> +	mkd->filename = getname(fname);
+> +	if (IS_ERR(mkd->filename))
+> +		return PTR_ERR(mkd->filename);
+> +
+> +	req->flags |= REQ_F_NEED_CLEANUP;
+> +	return 0;
+> +}
+> +
+> +static int io_mkdirat(struct io_kiocb *req, int issue_flags)
+> +{
+> +	struct io_mkdir *mkd = &req->mkdir;
+> +	int ret;
+> +
+> +	if (issue_flags & IO_URING_F_NONBLOCK)
+> +		return -EAGAIN;
+> +
+> +	ret = do_mkdirat(mkd->dfd, mkd->filename, mkd->mode);
+> +
+> +	req->flags &= ~REQ_F_NEED_CLEANUP;
+> +	if (ret < 0)
+> +		req_set_fail_links(req);
+> +	io_req_complete(req, ret);
+> +	return 0;
+> +}
+> +
+>  static int io_shutdown_prep(struct io_kiocb *req,
+>  			    const struct io_uring_sqe *sqe)
+>  {
+> @@ -5936,6 +5983,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  		return io_renameat_prep(req, sqe);
+>  	case IORING_OP_UNLINKAT:
+>  		return io_unlinkat_prep(req, sqe);
+> +	case IORING_OP_MKDIRAT:
+> +		return io_mkdirat_prep(req, sqe);
+>  	}
+>  
+>  	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+> @@ -6077,6 +6126,9 @@ static void io_clean_op(struct io_kiocb *req)
+>  		case IORING_OP_UNLINKAT:
+>  			putname(req->unlink.filename);
+>  			break;
+> +		case IORING_OP_MKDIRAT:
+> +			putname(req->mkdir.filename);
+> +			break;
+>  		}
+>  		req->flags &= ~REQ_F_NEED_CLEANUP;
+>  	}
+> @@ -6203,6 +6255,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+>  	case IORING_OP_UNLINKAT:
+>  		ret = io_unlinkat(req, issue_flags);
+>  		break;
+> +	case IORING_OP_MKDIRAT:
+> +		ret = io_mkdirat(req, issue_flags);
+> +		break;
+>  	default:
+>  		ret = -EINVAL;
+>  		break;
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index e1ae46683301..bf9d720d371f 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -137,6 +137,7 @@ enum {
+>  	IORING_OP_SHUTDOWN,
+>  	IORING_OP_RENAMEAT,
+>  	IORING_OP_UNLINKAT,
+> +	IORING_OP_MKDIRAT,
+>  
+>  	/* this goes last, obviously */
+>  	IORING_OP_LAST,
+> 
 
-But if it's case (a), then the fault_in_readable is going to be pretty
-cheap. We're talking "tens of CPU cycles", unlikely to really be an
-issue.
-
-If the case is (b), then the cost is not actually the access at all,
-it's the *fault* and the retry. Now we're talking easily thousands of
-cycles.
-
-And that's where it matters whether the fault_in_readable is before or
-after. If it's before the actual access, then you'll have just _one_
-fault, and it will handle the fault.
-
-If the fault_in_readable is only done in the allegedly unlikely
-faulting case and is _after_ the actual user space atomic access,
-you'll have *two* faults. First the copy_from_user_atomic() will
-fault, and return a partial result. But the page won't actually be
-populated, so then the fault_in_readable will have to fault _again_,
-in order to finally populate the page. And then we retry
-(successfully, except for the unbelievably rare case of racing with
-pageout) the actual copy_from_user_atomic().
-
-End result: doing the fault_in_readable "unnecessarily" at the
-beginning is likely the better optimization. It's basically free when
-it's not necessary, and it avoids an extra fault (and extra
-lock/unlock and retry) when it does end up faulting pages in.
-
-               Linus
+-- 
+Pavel Begunkov
