@@ -2,170 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB223B0464
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F673B046E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:30:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231529AbhFVMcA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 08:32:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45984 "EHLO
+        id S231679AbhFVMcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 08:32:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231445AbhFVMcA (ORCPT
+        with ESMTP id S231668AbhFVMcY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:32:00 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C55F7C061756
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 05:29:44 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id h2so7994190iob.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 05:29:44 -0700 (PDT)
+        Tue, 22 Jun 2021 08:32:24 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCC44C0613A3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 05:30:08 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id i94so23426616wri.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 05:30:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=HLmTmVuuBpaotf6UimooCw0I2x7NRsXSXiyt5vUC6yo=;
-        b=CVBcfjSTzsrzZcOg7yBHG95WzkSzsc9ei7Ds7laJEdW4W6mVhcYgjQtTk059FPoUAN
-         s95UIYRZgvP4jIfJpCNaajkjfcfQj5I23cVGmqF8tD4WosC2L79Q6lsxz8Lx6x4mV7ZV
-         lHLQzNRVvbq+pMNxpfNwDvFDxG9Ao9QECe2AvUkwG0crqiVOTiTu2AFKd6undHoZZL+h
-         Pel4diN4gl/ojs9Wd1/5GAtwHB0t86XK2PXD0RSj5J0iFKy8IlRQm+MGybLyiPCy/Oqr
-         4sM59HYTtYcvClDZYlclZlm9bNDL59PfXEIz7Lsh1U0FUwq0q0fld0SF9apUM72E1epd
-         dxLQ==
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=0eja4Ft9+IhKqhZ+5g9OE9fSmKDzEpLJlLWbkDAUBg0=;
+        b=IJEDprYdBC4k0O57DwT6ozE+TtnVYsKJ8/3y72d2VukcmoPJ7ZxMb4D4Up2QXpE3VL
+         2zXEAGChuMmMVosYsubFpySIDJ9pAdEkd+ZJADLBhlc5P8ALKeCLmfT+hOx+I6OL5u/g
+         0lnx/vBdRd1laZbnF0X4MtW7WU29B4O+0O1Ug=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HLmTmVuuBpaotf6UimooCw0I2x7NRsXSXiyt5vUC6yo=;
-        b=KXNsm0Ua933AKrlsHntjT/ixje/gT5p8fvQDCMC9oTwnW1n+RWSrUhnJvhhAa4Nhbl
-         w654qb9SvFY4wHJ7WLrVBhHRM6aHgkBSc/7v4FkFBEfMw5lQSkwgozpV8vr8K+pfndkC
-         qDpUG5loKjGaZ8IlNokdRanwE+PR8t8k+OL608dY/tpBx+vIR+VFjrri0+v/ZBGkKbhY
-         37l2qIl7rnAziTm6TKab7lxQs5Z60WWnzJiP4OvoSnz6xlIX8oDCMBMcc5m76i7VC+lr
-         6T3Nme9cHbqCVvzhwnWCAIA2x+1JpBpqvcLq+IFot0Ejx/IpnE4Zv/3T0Ks/XM5JBab9
-         FBdg==
-X-Gm-Message-State: AOAM533RBPiNGiGxRjT3lBC3U7yRxeSbhooukda8cu2gBAMyPVrWdEfA
-        oEDxoGnvO8r2lRM8d1OYigo5SEM7tlxgSz8SXyjLOA==
-X-Google-Smtp-Source: ABdhPJyBFnZ/enj0tZDRqDCSnSs4jMGpAl1FO4ZrOEGPE1Kdkl8s+X+/DbqvC3LAwuWmsofe9hBKZhrFj5Fbqz7m7AM=
-X-Received: by 2002:a02:5b45:: with SMTP id g66mr3798144jab.62.1624364983969;
- Tue, 22 Jun 2021 05:29:43 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=0eja4Ft9+IhKqhZ+5g9OE9fSmKDzEpLJlLWbkDAUBg0=;
+        b=ZUDVrK70oJY5jBhI1LRoE2a/oQ5HTlB62Z+jZt/LX5wUbXqOAGr66qlVEQkpC2K6Sq
+         jKPNw0ven8OtOdC+zGF3exmybndRad2M3oCgWBEh16Nf1913XpadLjsSxJF5/AIdAoGz
+         eY2OTu/iAGrlCVTj427m8NTZhNzWwTInh+jBHVF9EQ9BijfvJheaPvueg1VNy1UaW0TF
+         PKR5sHWNkhvOlfc2nwX9R0s5BraRNG4haxNZC3DnY38JlyWFz3HW/auTiToYY+xQUhUE
+         8GokeYrm4ORk4yu3EtoZLAX+XBDFICMzK9W1JF7/Vk3Hif+kpA2CUi8p8DhQ1Oj4zCiz
+         WupA==
+X-Gm-Message-State: AOAM530549wh7UA9DeNp8azOnKR7bz1ws6L6xWad5HBtHawomPNgqPk0
+        AfaeUoaX0SBFTHeBmhHGW8wZ+5Dta5sElJh4
+X-Google-Smtp-Source: ABdhPJwk+a4Um+CD2IMM4W8sfXkD+OlPlmUe6MhNapFLqM3YHogBRctyy6VBAsWvDWoXC/SzSSHN7w==
+X-Received: by 2002:adf:f68a:: with SMTP id v10mr4483160wrp.366.1624365007418;
+        Tue, 22 Jun 2021 05:30:07 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
+        by smtp.gmail.com with ESMTPSA id t9sm2400812wmq.14.2021.06.22.05.30.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jun 2021 05:30:07 -0700 (PDT)
+Date:   Tue, 22 Jun 2021 14:30:04 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     Chengguang Xu <cgxu519@mykernel.net>,
+        Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>,
+        linux-unionfs@vger.kernel.org
+Subject: [PATCH] ovl: fix mmap denywrite
+Message-ID: <YNHXzBgzRrZu1MrD@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-References: <20210617095309.3542373-1-stapelberg+linux@google.com>
- <CAJfpegvpnQMSRU+TW4J5+F+3KiAj8J_m+OjNrnh7f2X9DZp2Ag@mail.gmail.com>
- <CAH9Oa-ZcG0+08d=D5-rbzY-v1cdUcuW0E7D_GcwjDoC1Phf+0g@mail.gmail.com>
- <CAJfpegu0prjjHVhBzwZBVk5N+avHvUcyi4ovhKbf+F7GEuVkmw@mail.gmail.com>
- <CAH9Oa-YxeZ25Vbto3NyUw=RK5vQWv_v7xp3vHS9667iJJ8XV_A@mail.gmail.com> <20210622121205.GG14261@quack2.suse.cz>
-In-Reply-To: <20210622121205.GG14261@quack2.suse.cz>
-From:   Michael Stapelberg <stapelberg+linux@google.com>
-Date:   Tue, 22 Jun 2021 14:29:32 +0200
-Message-ID: <CAH9Oa-YxL1iu_TVn6bL3Nd4qzYSVDPaO9a96sX4u7dhq+ewasA@mail.gmail.com>
-Subject: Re: [PATCH] backing_dev_info: introduce min_bw/max_bw limits
-To:     Jan Kara <jack@suse.cz>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Song Liu <song@kernel.org>, David Sterba <dsterba@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for taking a look! Comments inline:
+Overlayfs did not honor positive i_writecount on realfile for VM_DENYWRITE
+mappings.  Similarly negative i_mmap_writable counts were ignored for
+VM_SHARED mappings.
 
-On Tue, 22 Jun 2021 at 14:12, Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 21-06-21 11:20:10, Michael Stapelberg wrote:
-> > Hey Miklos
-> >
-> > On Fri, 18 Jun 2021 at 16:42, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > >
-> > > On Fri, 18 Jun 2021 at 10:31, Michael Stapelberg
-> > > <stapelberg+linux@google.com> wrote:
-> > >
-> > > > Maybe, but I don=E2=80=99t have the expertise, motivation or time t=
-o
-> > > > investigate this any further, let alone commit to get it done.
-> > > > During our previous discussion I got the impression that nobody els=
-e
-> > > > had any cycles for this either:
-> > > > https://lore.kernel.org/linux-fsdevel/CANnVG6n=3DySfe1gOr=3D0ituQid=
-p56idGARDKHzP0hv=3DERedeMrMA@mail.gmail.com/
-> > > >
-> > > > Have you had a look at the China LSF report at
-> > > > http://bardofschool.blogspot.com/2011/?
-> > > > The author of the heuristic has spent significant effort and time
-> > > > coming up with what we currently have in the kernel:
-> > > >
-> > > > """
-> > > > Fengguang said he draw more than 10K performance graphs and read ev=
-en
-> > > > more in the past year.
-> > > > """
-> > > >
-> > > > This implies that making changes to the heuristic will not be a qui=
-ck fix.
-> > >
-> > > Having a piece of kernel code sitting there that nobody is willing to
-> > > fix is certainly not a great situation to be in.
-> >
-> > Agreed.
-> >
-> > >
-> > > And introducing band aids is not going improve the above situation,
-> > > more likely it will prolong it even further.
-> >
-> > Sounds like =E2=80=9CPerfect is the enemy of good=E2=80=9D to me: you=
-=E2=80=99re looking for a
-> > perfect hypothetical solution,
-> > whereas we have a known-working low risk fix for a real problem.
-> >
-> > Could we find a solution where medium-/long-term, the code in question
-> > is improved,
-> > perhaps via a Summer Of Code project or similar community efforts,
-> > but until then, we apply the patch at hand?
-> >
-> > As I mentioned, I think adding min/max limits can be useful regardless
-> > of how the heuristic itself changes.
-> >
-> > If that turns out to be incorrect or undesired, we can still turn the
-> > knobs into a no-op, if removal isn=E2=80=99t an option.
->
-> Well, removal of added knobs is more or less out of question as it can
-> break some userspace. Similarly making them no-op is problematic unless w=
-e
-> are pretty certain it cannot break some existing setup. That's why we hav=
-e
-> to think twice (or better three times ;) before adding any knobs. Also
-> honestly the knobs you suggest will be pretty hard to tune when there are
-> multiple cgroups with writeback control involved (which can be affected b=
-y
-> the same problems you observe as well). So I agree with Miklos that this =
-is
-> not the right way to go. Speaking of tunables, did you try tuning
-> /sys/devices/virtual/bdi/<fuse-bdi>/min_ratio? I suspect that may
-> workaround your problems...
+Fix by making vma_set_file() switch the temporary counts obtained and
+released by mmap_region().
 
-Back then, I did try the various tunables (vm.dirty_ratio and
-vm.dirty_background_ratio on the global level,
-/sys/class/bdi/<bdi>/{min,max}_ratio on the file system level), and
-they have had no observable effect on the problem at all in my tests.
+Reported-by: Chengguang Xu <cgxu519@mykernel.net>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/overlayfs/file.c |    4 +++-
+ include/linux/mm.h  |    1 +
+ mm/mmap.c           |    2 +-
+ mm/util.c           |   38 +++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 42 insertions(+), 3 deletions(-)
 
->
-> Looking into your original report and tracing you did (thanks for that,
-> really useful), it seems that the problem is that writeback bandwidth is
-> updated at most every 200ms (more frequent calls are just ignored) and ar=
-e
-> triggered only from balance_dirty_pages() (happen when pages are dirtied)=
- and
-> inode writeback code so if the workload tends to have short spikes of act=
-ivity
-> and extended periods of quiet time, then writeback bandwidth may indeed b=
-e
-> seriously miscomputed because we just won't update writeback throughput
-> after most of writeback has happened as you observed.
->
-> I think the fix for this can be relatively simple. We just need to make
-> sure we update writeback bandwidth reasonably quickly after the IO
-> finishes. I'll write a patch and see if it helps.
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -430,7 +430,9 @@ static int ovl_mmap(struct file *file, s
+ 	if (WARN_ON(file != vma->vm_file))
+ 		return -EIO;
+ 
+-	vma_set_file(vma, realfile);
++	ret = vma_set_file_checkwrite(vma, realfile);
++	if (ret)
++		return ret;
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 	ret = call_mmap(vma->vm_file, vma);
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2751,6 +2751,7 @@ static inline void vma_set_page_prot(str
+ #endif
+ 
+ void vma_set_file(struct vm_area_struct *vma, struct file *file);
++int vma_set_file_checkwrite(struct vm_area_struct *vma, struct file *file);
+ 
+ #ifdef CONFIG_NUMA_BALANCING
+ unsigned long change_prot_numa(struct vm_area_struct *vma,
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1809,6 +1809,7 @@ unsigned long mmap_region(struct file *f
+ 		 */
+ 		vma->vm_file = get_file(file);
+ 		error = call_mmap(file, vma);
++		file = vma->vm_file;
+ 		if (error)
+ 			goto unmap_and_free_vma;
+ 
+@@ -1870,7 +1871,6 @@ unsigned long mmap_region(struct file *f
+ 		if (vm_flags & VM_DENYWRITE)
+ 			allow_write_access(file);
+ 	}
+-	file = vma->vm_file;
+ out:
+ 	perf_event_mmap(vma);
+ 
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -314,12 +314,48 @@ int vma_is_stack_for_current(struct vm_a
+ /*
+  * Change backing file, only valid to use during initial VMA setup.
+  */
+-void vma_set_file(struct vm_area_struct *vma, struct file *file)
++int vma_set_file_checkwrite(struct vm_area_struct *vma, struct file *file)
+ {
++	vm_flags_t vm_flags = vma->vm_flags;
++	int err = 0;
++
+ 	/* Changing an anonymous vma with this is illegal */
+ 	get_file(file);
++
++	/* Get temporary denial counts on replacement */
++	if (vm_flags & VM_DENYWRITE) {
++		err = deny_write_access(file);
++		if (err)
++			goto out_put;
++	}
++	if (vm_flags & VM_SHARED) {
++		err = mapping_map_writable(file->f_mapping);
++		if (err)
++			goto out_allow;
++	}
++
+ 	swap(vma->vm_file, file);
++
++	/* Undo temporary denial counts on replaced */
++	if (vm_flags & VM_SHARED)
++		mapping_unmap_writable(file->f_mapping);
++out_allow:
++	if (vm_flags & VM_DENYWRITE)
++		allow_write_access(file);
++out_put:
+ 	fput(file);
++	return err;
++}
++EXPORT_SYMBOL(vma_set_file_checkwrite);
++
++/*
++ * Change backing file, only valid to use during initial VMA setup.
++ */
++void vma_set_file(struct vm_area_struct *vma, struct file *file)
++{
++	int err = vma_set_file_checkwrite(vma, file);
++
++	WARN_ON_ONCE(err);
+ }
+ EXPORT_SYMBOL(vma_set_file);
+ 
 
-Thank you! Please keep us posted.
+
