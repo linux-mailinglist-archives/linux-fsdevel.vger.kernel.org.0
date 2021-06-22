@@ -2,104 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 094513AFE19
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 09:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A07AB3AFE23
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 09:43:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229789AbhFVHmm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 03:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35620 "EHLO
+        id S229853AbhFVHp0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 03:45:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbhFVHmm (ORCPT
+        with ESMTP id S229677AbhFVHpZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 03:42:42 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BECCC061574;
-        Tue, 22 Jun 2021 00:40:26 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id he7so32935414ejc.13;
-        Tue, 22 Jun 2021 00:40:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xQyABpWzE19xRadtudcaP3+NTE2M7E6yiV97ca/yhww=;
-        b=QZvDdaoOkVYQLG8otklFFBe/0ZsEeILKWvXBF3qUOpC2R5PuSHowtJOHv9FApI3o/G
-         OJNMWjLZb16lmrKAz3uL+iX2dPnIzSq+upTI8t7tb0SXLHPKDY4DHQvJPZ7FZRUJa3cg
-         RU+X43a5PZO1baFqI3NF003p6IuuADeFuWosIslZil8GoyIa9akhb+OkxhTD8WxIYNsY
-         k4202UDJX4KGzCosjI1MxXTlbx13XuOFh8Ou2+OPrrkbpuxm9BzBDEhAKRnO1ZCMPGS0
-         7M0B5maG0tUredvMuoEyC7tuGWbdpl+fWHvMLlmmduEFGy4UQUAfOMXmc/+dOD/MnOjp
-         o1nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xQyABpWzE19xRadtudcaP3+NTE2M7E6yiV97ca/yhww=;
-        b=DDLiXHMtKiihhZUtNCceDPfWe7sSj1sAWgdP8MDB+k0X8hEwTvXgUuybyckqDvai6L
-         jiya/QY/cVUbykO2fum71BB8keUNh6dtGBy9NSgyR8/BmS5V+nC+FGGVydu60Sq0qT9X
-         i5CJMQiJtcpLgXlmmxUWCelZA8vb+5k6vN4fOMxXzXXDQwgpCjxMuu3HY8UPTdZb0NGT
-         lEDtz2Qbz8xZf62+VVten1SeHFceAw+98aIBAFRfmTpO8Ul8v/ze9XDo8m6QrfbKmMsx
-         zCu/YKL6Zso7h3AmnidCE0zRLVYXv+wjx6OiK328QocrCNCkMByDxGxbd/Ld3/OeNRKU
-         m2Cg==
-X-Gm-Message-State: AOAM5302cFH8zntZCady19R2cIQVPv1o/POndUFb2dSQBZz0C0oZJC5W
-        7wbnzT1dNdXrfYqsw/vft3ukmx9nbVT+7UYzOYs=
-X-Google-Smtp-Source: ABdhPJz0yuY8/gdW7uMGBdd4+eGP7+3+wPgKIgWYdTdtY008V/0jI8bwYFqoIsHgInuxvN9TxpVDyDkAt5ZusPb3x/M=
-X-Received: by 2002:a17:906:1486:: with SMTP id x6mr2559515ejc.69.1624347624690;
- Tue, 22 Jun 2021 00:40:24 -0700 (PDT)
+        Tue, 22 Jun 2021 03:45:25 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AD70C061574;
+        Tue, 22 Jun 2021 00:43:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zS4zqPMi1aCqswyogLoCQ6ZaMxO27oP51/B7V39AxYY=; b=c3AWKksMMk3CsBzKjPriGRAM6D
+        wHKzH9Xq4VvY5aKljc92invvI/lHfn4wibLiyRrOWwy6suErXBdEYOXkefTw+E8TmdMEQLoPygNUA
+        Esgj4otZElUPeaolLgXYHVvXsP3fgtyVAzsBASJ3K50wxT2IF9ccqT/q+rIFkF3s0Et/IS4tSm+0s
+        ZqytPwdybLlukl6voxA/3/yEJYaPJlgiwcRwCVJ51Rv48GBWxvy+8tPK0717vpplY5ppIcPG8RnKe
+        7ptDAPfBZ9+KmBcmlvs2bfdC5Le3HhIU2CrUEzXhHzU0Rcatena8SNHsUj2KSasHv9wFcQvva5QEZ
+        X7LiIuGg==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lvb2J-00E15T-DR; Tue, 22 Jun 2021 07:41:53 +0000
+Date:   Tue, 22 Jun 2021 08:41:31 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Leif Sahlberg <lsahlber@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-cifsd-devel@lists.sourceforge.net,
+        linux-cifs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 14/15] ksmbd: use ksmbd name instead of cifsd
+Message-ID: <YNGUKx0oLgeVzYmv@infradead.org>
+References: <20210618022645.27307-1-namjae.jeon@samsung.com>
+ <CGME20210618023614epcas1p4f33df1322709076c65a63f5013f9c2cc@epcas1p4.samsung.com>
+ <20210618022645.27307-14-namjae.jeon@samsung.com>
+ <YNBKb2UJQ8D4JhcO@infradead.org>
+ <009301d76677$8b52a6b0$a1f7f410$@samsung.com>
+ <YNF9JB7PrSOpfWIP@infradead.org>
+ <CAGvGhF43zhqkLn0GBjdm28cT_wufJr0CJ4LGZOVV=SFpOr9YyA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210618075925.803052-1-cccheng@synology.com> <20210622060419.GA29360@lst.de>
-In-Reply-To: <20210622060419.GA29360@lst.de>
-From:   Chung-Chiang Cheng <shepjeng@gmail.com>
-Date:   Tue, 22 Jun 2021 15:40:13 +0800
-Message-ID: <CAHuHWt=2ZoQJz1tVpJ7SzqUDwPXthNHksq2-uTFCzHmv+E7qWA@mail.gmail.com>
-Subject: Re: [PATCH] configfs: fix memleak in configfs_release_bin_file
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     jlbec@evilplan.org,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Chung-Chiang Cheng <cccheng@synology.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGvGhF43zhqkLn0GBjdm28cT_wufJr0CJ4LGZOVV=SFpOr9YyA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It works for me. I've verified it with ACPI configfs that is the only
-one using configfs binary attributes so far, and the memleak issue
-is solved.
+On Tue, Jun 22, 2021 at 05:33:50PM +1000, Leif Sahlberg wrote:
+> > Understood.
+>  In that case, what are your thoughts about renaming the current client
+> fs/cifs tree to fs/smb ?
 
-On Tue, Jun 22, 2021 at 2:04 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> Hmm.  The issue looks real, but I think we should just call the vfree
-> unconditionally given that the buffer structure is zeroed on allocation
-> and freed just after, and also remove the pointless clearing of all the
-> flags.  Does something like this work for you?
->
-> diff --git a/fs/configfs/file.c b/fs/configfs/file.c
-> index 53913b84383a..1ab6afb84f04 100644
-> --- a/fs/configfs/file.c
-> +++ b/fs/configfs/file.c
-> @@ -393,11 +393,8 @@ static int configfs_release_bin_file(struct inode *inode, struct file *file)
->  {
->         struct configfs_buffer *buffer = file->private_data;
->
-> -       buffer->read_in_progress = false;
-> -
->         if (buffer->write_in_progress) {
->                 struct configfs_fragment *frag = to_frag(file);
-> -               buffer->write_in_progress = false;
->
->                 down_read(&frag->frag_sem);
->                 if (!frag->frag_dead) {
-> @@ -407,13 +404,9 @@ static int configfs_release_bin_file(struct inode *inode, struct file *file)
->                                         buffer->bin_buffer_size);
->                 }
->                 up_read(&frag->frag_sem);
-> -               /* vfree on NULL is safe */
-> -               vfree(buffer->bin_buffer);
-> -               buffer->bin_buffer = NULL;
-> -               buffer->bin_buffer_size = 0;
-> -               buffer->needs_read_fill = 1;
->         }
->
-> +       vfree(buffer->bin_buffer);
->         configfs_release(inode, file);
->         return 0;
->  }
+If it was newly added I'd be all in favor.  Renaming an existing
+codebase is rather painful, though.  So I'd rather live with the
+historic misnaming (and think of the historic smbfs predating the
+current cifs driver :))
+
