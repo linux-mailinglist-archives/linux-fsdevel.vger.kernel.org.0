@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A65563B0422
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1ABA3B0425
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:19:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231313AbhFVMVk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 08:21:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43546 "EHLO
+        id S231315AbhFVMWO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 08:22:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbhFVMVk (ORCPT
+        with ESMTP id S229912AbhFVMWN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:21:40 -0400
+        Tue, 22 Jun 2021 08:22:13 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4D3DC061574;
-        Tue, 22 Jun 2021 05:19:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 209B4C061574;
+        Tue, 22 Jun 2021 05:19:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=2lIACpBDXhR9UMzEVkRUjHVrgl0kNtJLTDuzoYDq1Tc=; b=jh6uB9KQf3e90PTtC87rtTAsB+
-        kGfKldlqET7gvifMtXeXzG+gEZafJdKXkEglCGs/PbPtAUAcE4w8Ztq9KGb8xDXFc8Aqk4f5Kt0RL
-        oIwJ0Z5K3sxy6LICIVoxHQQwWwdSSQMUflFWFvdBfDF2DpagRSD+y9sJndTvfz1cR1nPIGvx2E0MY
-        jvRgRQq/YozhtcRvcBsIe/0cCuMYcipfogGTxvGyJTpNJpHk6AxM8iMCPz5U300ISKhgsqPsJrfrB
-        56JK8jh7+wPOZxutBbfwm2LQ2ssc5SyjeSeJv5Fh0WSCqh4yPWYEAXAhHVtitDsB91ZniKV5XE/6Q
-        DGEw867g==;
+        bh=OlH0KGbHhTPJjbugF5f8PMcuChJg8zjEmr6+ZuVUzo8=; b=AckjGkmZY/JVhl8SeS0H65BJVS
+        2TWLHxXgvWQfvSYJWPgobkHkwDoeuttH4KahtgiHnwwC51IVDQ6Jzr5qPnt1oF4sJaDqOuiQ/afUj
+        C6FbyHejav+hlHlNyN1bksm89/RH3z0K6paMD3MJ0eBRgJ4ZL86zuCH42clsF+phYPHuJ11etQ18T
+        o+UQNj1qZc79XIv+e89oH9RZYjuoGzJKfz3NdiRmiwYBM59Mr62CJ33BmhqviCzkNpd/X2RQlIqOY
+        p3KNDoyAtkbcGDY+TvpDFJKoznX1htR2V6XT3c0DhIoz/uTA1KN5h0HMyNG9aUZy1KUHXe4PRGlo2
+        fg+NXefg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvfLy-00EGMD-GM; Tue, 22 Jun 2021 12:18:18 +0000
+        id 1lvfMW-00EGOt-Hx; Tue, 22 Jun 2021 12:18:49 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     akpm@linux-foundation.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/46] mm: Add folio_rmapping()
-Date:   Tue, 22 Jun 2021 13:15:07 +0100
-Message-Id: <20210622121551.3398730-3-willy@infradead.org>
+Subject: [PATCH v2 03/46] mm: Add kmap_local_folio()
+Date:   Tue, 22 Jun 2021 13:15:08 +0100
+Message-Id: <20210622121551.3398730-4-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210622121551.3398730-1-willy@infradead.org>
 References: <20210622121551.3398730-1-willy@infradead.org>
@@ -44,79 +44,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert __page_rmapping to folio_rmapping and move it to mm/internal.h.
-It's only a couple of instructions (load and mask), so it's definitely
-going to be cheaper to inline it than call it.  Leave page_rmapping
-out of line.
+This allows us to map a portion of a folio.  Callers can only expect
+to access up to the next page boundary.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/internal.h |  7 +++++++
- mm/util.c     | 20 ++++----------------
- 2 files changed, 11 insertions(+), 16 deletions(-)
+ include/linux/highmem-internal.h | 11 +++++++++
+ include/linux/highmem.h          | 38 ++++++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 76ddcf55012c..3e70121c71c7 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -34,6 +34,13 @@
+diff --git a/include/linux/highmem-internal.h b/include/linux/highmem-internal.h
+index 7902c7d8b55f..d5d6f930ae1d 100644
+--- a/include/linux/highmem-internal.h
++++ b/include/linux/highmem-internal.h
+@@ -73,6 +73,12 @@ static inline void *kmap_local_page(struct page *page)
+ 	return __kmap_local_page_prot(page, kmap_prot);
+ }
  
- void page_writeback_init(void);
- 
-+static inline void *folio_rmapping(struct folio *folio)
++static inline void *kmap_local_folio(struct folio *folio, size_t offset)
 +{
-+	unsigned long mapping = (unsigned long)folio->mapping;
-+
-+	return (void *)(mapping & ~PAGE_MAPPING_FLAGS);
++	struct page *page = folio_page(folio, offset / PAGE_SIZE);
++	return __kmap_local_page_prot(page, kmap_prot) + offset % PAGE_SIZE;
 +}
 +
- vm_fault_t do_swap_page(struct vm_fault *vmf);
- void folio_rotate_reclaimable(struct folio *folio);
- 
-diff --git a/mm/util.c b/mm/util.c
-index a8766e7f1b7f..0ba3a56c2c90 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -635,21 +635,10 @@ void kvfree_sensitive(const void *addr, size_t len)
- }
- EXPORT_SYMBOL(kvfree_sensitive);
- 
--static inline void *__page_rmapping(struct page *page)
--{
--	unsigned long mapping;
--
--	mapping = (unsigned long)page->mapping;
--	mapping &= ~PAGE_MAPPING_FLAGS;
--
--	return (void *)mapping;
--}
--
- /* Neutral page->mapping pointer to address_space or anon_vma or other */
- void *page_rmapping(struct page *page)
+ static inline void *kmap_local_page_prot(struct page *page, pgprot_t prot)
  {
--	page = compound_head(page);
--	return __page_rmapping(page);
-+	return folio_rmapping(page_folio(page));
+ 	return __kmap_local_page_prot(page, prot);
+@@ -160,6 +166,11 @@ static inline void *kmap_local_page(struct page *page)
+ 	return page_address(page);
  }
  
- /**
-@@ -680,13 +669,12 @@ EXPORT_SYMBOL(folio_mapped);
- 
- struct anon_vma *page_anon_vma(struct page *page)
++static inline void *kmap_local_folio(struct folio *folio, size_t offset)
++{
++	return page_address(&folio->page) + offset;
++}
++
+ static inline void *kmap_local_page_prot(struct page *page, pgprot_t prot)
  {
--	unsigned long mapping;
-+	struct folio *folio = page_folio(page);
-+	unsigned long mapping = (unsigned long)folio->mapping;
+ 	return kmap_local_page(page);
+diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+index 832b49b50c7b..c7c664e0315b 100644
+--- a/include/linux/highmem.h
++++ b/include/linux/highmem.h
+@@ -96,6 +96,44 @@ static inline void kmap_flush_unused(void);
+  */
+ static inline void *kmap_local_page(struct page *page);
  
--	page = compound_head(page);
--	mapping = (unsigned long)page->mapping;
- 	if ((mapping & PAGE_MAPPING_FLAGS) != PAGE_MAPPING_ANON)
- 		return NULL;
--	return __page_rmapping(page);
-+	return folio_rmapping(folio);
- }
- 
++/**
++ * kmap_local_folio - Map a page in this folio for temporary usage
++ * @folio:	The folio to be mapped.
++ * @offset:	The byte offset within the folio.
++ *
++ * Returns: The virtual address of the mapping
++ *
++ * Can be invoked from any context.
++ *
++ * Requires careful handling when nesting multiple mappings because the map
++ * management is stack based. The unmap has to be in the reverse order of
++ * the map operation:
++ *
++ * addr1 = kmap_local_folio(page1, offset1);
++ * addr2 = kmap_local_folio(page2, offset2);
++ * ...
++ * kunmap_local(addr2);
++ * kunmap_local(addr1);
++ *
++ * Unmapping addr1 before addr2 is invalid and causes malfunction.
++ *
++ * Contrary to kmap() mappings the mapping is only valid in the context of
++ * the caller and cannot be handed to other contexts.
++ *
++ * On CONFIG_HIGHMEM=n kernels and for low memory pages this returns the
++ * virtual address of the direct mapping. Only real highmem pages are
++ * temporarily mapped.
++ *
++ * While it is significantly faster than kmap() for the higmem case it
++ * comes with restrictions about the pointer validity. Only use when really
++ * necessary.
++ *
++ * On HIGHMEM enabled systems mapping a highmem page has the side effect of
++ * disabling migration in order to keep the virtual address stable across
++ * preemption. No caller of kmap_local_folio() can rely on this side effect.
++ */
++static inline void *kmap_local_folio(struct folio *folio, size_t offset);
++
  /**
+  * kmap_atomic - Atomically map a page for temporary usage - Deprecated!
+  * @page:	Pointer to the page to be mapped
 -- 
 2.30.2
 
