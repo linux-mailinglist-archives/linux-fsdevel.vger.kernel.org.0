@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 82E793B0451
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4B893B0455
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:27:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbhFVM2y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 08:28:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45248 "EHLO
+        id S231531AbhFVM33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 08:29:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230393AbhFVM2y (ORCPT
+        with ESMTP id S230393AbhFVM33 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:28:54 -0400
+        Tue, 22 Jun 2021 08:29:29 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB751C061574;
-        Tue, 22 Jun 2021 05:26:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D594C061574;
+        Tue, 22 Jun 2021 05:27:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=Fnblz5Exlm2MS7V9ban3wbSDxZOMhSnBAHMw8i0wBj8=; b=dBnYlYDT1IQHX8+Ztc9RJdrODX
-        YUqO/6ESh0Ntk1DYahyKY/CMIAi+g6EkoS5EAvK51j7IJDqbLhRhptO2Txxa4m5+WIscEkFSmc4HS
-        p3yCu+p4ML+DrvbsMnYOxsqfn9K6Th/7Kv6d4n4TpwZV7U990mElrOwjTdpbsWxI+JVsUiuY9ZQyM
-        oYzsw0ilyYpohoXZO94+bYtbqzSAEI253LbHmfI10x8h6fV0hH39aF9Mh1l8GcdIvXpxi2a9Yhkrj
-        qf0WKUigJEGG9KHIMfOT8DNWgbIVm/egRGdoQszTD9djNoaCMS0tjgxhDNYz4q2zw6doqUnxl/ttf
-        Ksx9LBKg==;
+        bh=H15Dzff0emYFvByv+Zb4v03CnWOjYvExidotCKaSagE=; b=ohq0pRTh1RpcA9yhAsuUe38uYy
+        NRUdaV7wWbbFGJlNHRjE1J8WdyUqNmOKkfBaKkXwQ3wZKO3PqfY3o8n7F+/kLQxYTl07V58hFGHoo
+        1COt59bmpryRgjtr9kEIMC50XR7UecmK6Nb3ASoUJ/9HpeldofxtXC0FZDAd/LKTwQCn3la/v1ISf
+        SIpEJBy+ulQpw1S2jZEAHm8zStsJfB2jKvAFdtDNViM8fpkbTBOOqRAMUW77MQ3fFqZHZb/GKYnFl
+        scETrYZj7gWVb9qzDF2b8uSfyeZVPdbqwD7eCfMwg2g4RmDlrvDxojrNh1+urRXObjzA4DrU3J0IU
+        UPuk2dGQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvfSw-00EGr2-3z; Tue, 22 Jun 2021 12:25:24 +0000
+        id 1lvfTc-00EGvO-TV; Tue, 22 Jun 2021 12:26:14 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     akpm@linux-foundation.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/46] mm/memcg: Use the node id in mem_cgroup_update_tree()
-Date:   Tue, 22 Jun 2021 13:15:17 +0100
-Message-Id: <20210622121551.3398730-13-willy@infradead.org>
+Subject: [PATCH v2 13/46] mm/memcg: Convert commit_charge() to take a folio
+Date:   Tue, 22 Jun 2021 13:15:18 +0100
+Message-Id: <20210622121551.3398730-14-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210622121551.3398730-1-willy@infradead.org>
 References: <20210622121551.3398730-1-willy@infradead.org>
@@ -44,67 +44,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hoist the page_to_nid() call from mem_cgroup_page_nodeinfo() into
-mem_cgroup_update_tree().  That lets us call soft_limit_tree_node()
-and delete soft_limit_tree_from_page() altogether.  Saves 42
-bytes of kernel text on my config.
+The memcg_data is only set on the head page, so enforce that by
+typing it as a folio.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/memcontrol.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ mm/memcontrol.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 1204c6a0c671..7423cb11eb88 100644
+index 7423cb11eb88..7939e4e9118d 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -453,10 +453,8 @@ ino_t page_cgroup_ino(struct page *page)
+@@ -2700,9 +2700,9 @@ static void cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
  }
+ #endif
  
- static struct mem_cgroup_per_node *
--mem_cgroup_page_nodeinfo(struct mem_cgroup *memcg, struct page *page)
-+mem_cgroup_nodeinfo(struct mem_cgroup *memcg, int nid)
+-static void commit_charge(struct page *page, struct mem_cgroup *memcg)
++static void commit_charge(struct folio *folio, struct mem_cgroup *memcg)
  {
--	int nid = page_to_nid(page);
--
- 	return memcg->nodeinfo[nid];
- }
- 
-@@ -466,14 +464,6 @@ soft_limit_tree_node(int nid)
- 	return soft_limit_tree.rb_tree_per_node[nid];
- }
- 
--static struct mem_cgroup_tree_per_node *
--soft_limit_tree_from_page(struct page *page)
--{
--	int nid = page_to_nid(page);
--
--	return soft_limit_tree.rb_tree_per_node[nid];
--}
--
- static void __mem_cgroup_insert_exceeded(struct mem_cgroup_per_node *mz,
- 					 struct mem_cgroup_tree_per_node *mctz,
- 					 unsigned long new_usage_in_excess)
-@@ -549,8 +539,9 @@ static void mem_cgroup_update_tree(struct mem_cgroup *memcg, struct page *page)
- 	unsigned long excess;
- 	struct mem_cgroup_per_node *mz;
- 	struct mem_cgroup_tree_per_node *mctz;
-+	int nid = page_to_nid(page);
- 
--	mctz = soft_limit_tree_from_page(page);
-+	mctz = soft_limit_tree_node(nid);
- 	if (!mctz)
- 		return;
+-	VM_BUG_ON_PAGE(page_memcg(page), page);
++	VM_BUG_ON_FOLIO(folio_memcg(folio), folio);
  	/*
-@@ -558,7 +549,7 @@ static void mem_cgroup_update_tree(struct mem_cgroup *memcg, struct page *page)
- 	 * because their event counter is not touched.
+ 	 * Any of the following ensures page's memcg stability:
+ 	 *
+@@ -2711,7 +2711,7 @@ static void commit_charge(struct page *page, struct mem_cgroup *memcg)
+ 	 * - lock_page_memcg()
+ 	 * - exclusive reference
  	 */
- 	for (; memcg; memcg = parent_mem_cgroup(memcg)) {
--		mz = mem_cgroup_page_nodeinfo(memcg, page);
-+		mz = mem_cgroup_nodeinfo(memcg, nid);
- 		excess = soft_limit_excess(memcg);
- 		/*
- 		 * We have to update the tree if mz is on RB-tree or
+-	page->memcg_data = (unsigned long)memcg;
++	folio->memcg_data = (unsigned long)memcg;
+ }
+ 
+ static struct mem_cgroup *get_mem_cgroup_from_objcg(struct obj_cgroup *objcg)
+@@ -6506,7 +6506,8 @@ void mem_cgroup_calculate_protection(struct mem_cgroup *root,
+ static int __mem_cgroup_charge(struct page *page, struct mem_cgroup *memcg,
+ 			       gfp_t gfp)
+ {
+-	unsigned int nr_pages = thp_nr_pages(page);
++	struct folio *folio = page_folio(page);
++	unsigned int nr_pages = folio_nr_pages(folio);
+ 	int ret;
+ 
+ 	ret = try_charge(memcg, gfp, nr_pages);
+@@ -6514,7 +6515,7 @@ static int __mem_cgroup_charge(struct page *page, struct mem_cgroup *memcg,
+ 		goto out;
+ 
+ 	css_get(&memcg->css);
+-	commit_charge(page, memcg);
++	commit_charge(folio, memcg);
+ 
+ 	local_irq_disable();
+ 	mem_cgroup_charge_statistics(memcg, nr_pages);
+@@ -6771,21 +6772,21 @@ void mem_cgroup_uncharge_list(struct list_head *page_list)
+  */
+ void mem_cgroup_migrate(struct page *oldpage, struct page *newpage)
+ {
++	struct folio *newfolio = page_folio(newpage);
+ 	struct mem_cgroup *memcg;
+-	unsigned int nr_pages;
++	unsigned int nr_pages = folio_nr_pages(newfolio);
+ 	unsigned long flags;
+ 
+ 	VM_BUG_ON_PAGE(!PageLocked(oldpage), oldpage);
+-	VM_BUG_ON_PAGE(!PageLocked(newpage), newpage);
+-	VM_BUG_ON_PAGE(PageAnon(oldpage) != PageAnon(newpage), newpage);
+-	VM_BUG_ON_PAGE(PageTransHuge(oldpage) != PageTransHuge(newpage),
+-		       newpage);
++	VM_BUG_ON_FOLIO(!folio_locked(newfolio), newfolio);
++	VM_BUG_ON_FOLIO(PageAnon(oldpage) != folio_anon(newfolio), newfolio);
++	VM_BUG_ON_FOLIO(compound_nr(oldpage) != nr_pages, newfolio);
+ 
+ 	if (mem_cgroup_disabled())
+ 		return;
+ 
+ 	/* Page cache replacement: new page already charged? */
+-	if (page_memcg(newpage))
++	if (folio_memcg(newfolio))
+ 		return;
+ 
+ 	memcg = page_memcg(oldpage);
+@@ -6794,14 +6795,12 @@ void mem_cgroup_migrate(struct page *oldpage, struct page *newpage)
+ 		return;
+ 
+ 	/* Force-charge the new page. The old one will be freed soon */
+-	nr_pages = thp_nr_pages(newpage);
+-
+ 	page_counter_charge(&memcg->memory, nr_pages);
+ 	if (do_memsw_account())
+ 		page_counter_charge(&memcg->memsw, nr_pages);
+ 
+ 	css_get(&memcg->css);
+-	commit_charge(newpage, memcg);
++	commit_charge(newfolio, memcg);
+ 
+ 	local_irq_save(flags);
+ 	mem_cgroup_charge_statistics(memcg, nr_pages);
 -- 
 2.30.2
 
