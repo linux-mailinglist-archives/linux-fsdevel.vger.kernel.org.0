@@ -2,74 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B813AFF32
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 10:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 263933AFF3D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 10:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbhFVI0y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 04:26:54 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:58288 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbhFVI0x (ORCPT
+        id S229853AbhFVI3U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 04:29:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46666 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229620AbhFVI3T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 04:26:53 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 6A02E1FD45;
-        Tue, 22 Jun 2021 08:24:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1624350277; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ARvxoAVeDbwGt5PokyDvAZieyTEiRL6VGBAfsGVKb60=;
-        b=b8zytakSjU01aEZDC+Et0pLKO+pbrlWrucvpT8GsEVY91qLNg2rnJKPI9QpnnL4dERSUAl
-        oOec01KN1aVTw/1s6Bd8MsYyzAlrYt5dT2hBN5JcD4oD0t2nSWaUnluMamwkR7sJlHJTK8
-        504PCPbNn95xv9cy+8csSYgCb6tlQ24=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1624350277;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ARvxoAVeDbwGt5PokyDvAZieyTEiRL6VGBAfsGVKb60=;
-        b=cIMSsHITcT8uyBMpFDk+uK3kXpPNm+XO8PMwCu42kZHGeuywi971wJWJ9y+FgzunkG+cj7
-        QoUHLFpqdwoAWQAw==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 9D644A3B84;
-        Tue, 22 Jun 2021 08:24:36 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 383F71E1515; Tue, 22 Jun 2021 10:24:36 +0200 (CEST)
-Date:   Tue, 22 Jun 2021 10:24:36 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Zhang Yi <yi.zhang@huawei.com>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz, tytso@mit.edu,
-        adilger.kernel@dilger.ca, david@fromorbit.com
-Subject: Re: [RFC PATCH v4 0/8] ext4, jbd2: fix 3 issues about
- bdev_try_to_free_page()
-Message-ID: <20210622082436.GB14261@quack2.suse.cz>
-References: <20210610112440.3438139-1-yi.zhang@huawei.com>
- <YMsagbQqxJo4y2FR@infradead.org>
- <YNCvWfPkauVIz2eP@infradead.org>
+        Tue, 22 Jun 2021 04:29:19 -0400
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05981C061574;
+        Tue, 22 Jun 2021 01:27:03 -0700 (PDT)
+Received: by mail-qk1-x72c.google.com with SMTP id f70so37291784qke.13;
+        Tue, 22 Jun 2021 01:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sT2Cvv3I0Bzdmy45ZwysuiyqLCYkLgUgSzCyeBvjj4c=;
+        b=pqOs9hMVFYyx40gUshhtOjjTrKe5OqNTDU0od8LzmIa/EPBrrpycsc4uGffvzK06qH
+         hpiTTQ8BxuOZY7LRMejr/p42/Q0d1r4jQn6PDHo5fZiAnBOt0+c+ytvxOZsDR9GYkUMM
+         hVkZ45eYlxS3djsCAMLssrUpQeNMvJUcVcJCK1OqeF8MFDZnbWkuIpBzUT+inQIaZbNF
+         ORL2DjXybj94XTBVutXQv28TMzhR0R9AOiIpYuMdzO1LRuAQonY4qoGUFJ3MDVXHTFwI
+         hOJJwj84xOXHyFb6Sdneb1LNQvEZXEy1C+9qsz9xljM/105oFGr+XQ809mXmcIMCGxwm
+         le9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sT2Cvv3I0Bzdmy45ZwysuiyqLCYkLgUgSzCyeBvjj4c=;
+        b=YOgDSz7IAfEFSs0v3E1wOYNR0snU8uHl+GAYYKwqjImtTJ4aUDRk8RC4IFmNPZY5Vo
+         c9RZNOeQmup2otAMgS+oBHBuX0mhdlqkptBMTmofNVA6AELR+cT+kbsoRfBQp2PJf4jZ
+         Q9e5TXc3tyvvM3xp0b59N9b3g2TxifrMWE31Vir5v1qDT5UTC53e9LDJrmUbBIkAZYQb
+         4DBnmhFH6K0EzvoCqm55563ooLO3YeQifc9/XjmeKi+iYVioToXNv0pXvNLl3tSVrT92
+         FiOgleCa6/o+oQ+PYfnfKttopfS3jnVFD7x3yegPd5cH60OJIRv5jfFlrAv99Fhd4EN3
+         WKJQ==
+X-Gm-Message-State: AOAM533VyhAIGghxOxetkXOqe1oET/M3GUfPLQY6Fv9ANkWzYkAf6YyV
+        9QovloSWq9ork6TxdgnH9k1RCXBH7CWT2ZsgWJA=
+X-Google-Smtp-Source: ABdhPJwGsv6Uh56dPxTCgPOlMuO45x4LfqDpAkjUZpSmfwqv/yuiy2TOobUVt05LJFdD8/4hyNxWJz3yaapirkaSA/s=
+X-Received: by 2002:a5b:ac1:: with SMTP id a1mr3397432ybr.289.1624350422198;
+ Tue, 22 Jun 2021 01:27:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YNCvWfPkauVIz2eP@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210603051836.2614535-1-dkadashev@gmail.com> <CAOKbgA69B=nnNOaHH239vegj5_dRd=9Y-AcQBCD3viLxcH=LiQ@mail.gmail.com>
+ <2c4d5933-965e-29b5-0c76-3f2e5f518fe8@kernel.dk> <a459abe3-b051-ea60-d8d9-412562a255d5@kernel.dk>
+In-Reply-To: <a459abe3-b051-ea60-d8d9-412562a255d5@kernel.dk>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Tue, 22 Jun 2021 15:26:51 +0700
+Message-ID: <CAOKbgA7uk33+Odq46dO4Mzc0ew0Ui3B39+vtvHUWF+DvjCFMWg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat support
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 21-06-21 16:25:13, Christoph Hellwig wrote:
-> On Thu, Jun 17, 2021 at 10:48:49AM +0100, Christoph Hellwig wrote:
-> > Looks good:
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> Just curious: does anyone plan to pick this up for 5.14?  Getting rid
-> of the layering violation on the block device mapping would really help
-> with some changes I am working on.
+On Mon, Jun 21, 2021 at 10:21 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> I have tentatively queued this up.
 
-AFAIK Ted was planning on picking this up for the merge window...
+Tentative "woohoo!"
 
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Dmitry Kadashev
