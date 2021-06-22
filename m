@@ -2,82 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73A4B3B0CD1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 20:24:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF4EE3B0CCC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 20:23:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232525AbhFVS0Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 14:26:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232453AbhFVS0X (ORCPT
+        id S232416AbhFVS0B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 14:26:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:31000 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230146AbhFVS0B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 14:26:23 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33532C061756;
-        Tue, 22 Jun 2021 11:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1i+51cszTri2Pv6HZYmqCBAao6nBfImeLdZrjWVU9oI=; b=OvqyJ5NT5aiJLaAtcuhODvVx8r
-        2CU8kI2Vq62ueK5dcTXUbqE/rsz+6aovjex2JX/YcAGwyHWKkMbf+eN+AAtPAwKtVms9jefILxXPX
-        9AITgSGMMeXOir+xGZF7Zyz20TzMD+gZ7N4/yvD2wVdAsuo5IgrLsMpBeKzdRTItGNs6LYVSE9qcC
-        F5eM9uw7klgR1l/aBEKY9ufwyqeyqa1hnPDStxhgxAoMEC5meh9Nrc0SCmZJCV9N9Lxzdm54K2/vY
-        jVIgq4huUBENpA7JC6/DLw9CaAhoqhUdJgCGIrwTYzFseT/82ruPWDtAZB49Mrjky7xi6N2sSWrGf
-        oSHaKPtw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvl3H-00EcNm-0Z; Tue, 22 Jun 2021 18:23:17 +0000
-Date:   Tue, 22 Jun 2021 19:23:10 +0100
-From:   Matthew Wilcox <willy@infradead.org>
+        Tue, 22 Jun 2021 14:26:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1624386224;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4wcUku5VYFOIqpjq4OYU4JOlXU8CasqeJwQGFJvPLW0=;
+        b=RneEJtGJ2LlTcXcG9gnmQmSDJZlIUWqHf23uMU6xCuKbTptEmevba1y3Lxv6UqTzIWByL4
+        /jYgvZwAB3J87h/UpBLubhCgKth1rrIRzE3G4gNrdsHOygDEN9uOT7M9gSGguZLoJ9S5NN
+        hKEErNPcI/ciTXYw5uAm6RZlCuBXKqI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-148-ixJxdKnMMziAfh0cKU_bOw-1; Tue, 22 Jun 2021 14:23:28 -0400
+X-MC-Unique: ixJxdKnMMziAfh0cKU_bOw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5CA02804142;
+        Tue, 22 Jun 2021 18:23:27 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9218B69CB4;
+        Tue, 22 Jun 2021 18:23:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wicC9ZTNNH1E-oHebcT3+r4Q4Wf1tXBindXrCdotj20Gg@mail.gmail.com>
+References: <CAHk-=wicC9ZTNNH1E-oHebcT3+r4Q4Wf1tXBindXrCdotj20Gg@mail.gmail.com> <CAHk-=wh=YxjEtTpYyhgypKmPJQ8eVLJ4qowmwbnG1bOU06_4Bg@mail.gmail.com> <3221175.1624375240@warthog.procyon.org.uk> <YNIBb5WPrk8nnKKn@zeniv-ca.linux.org.uk> <YNIDdgn0m8d2a0P3@zeniv-ca.linux.org.uk> <YNIdJaKrNj5GoT7w@casper.infradead.org> <3231150.1624384533@warthog.procyon.org.uk> <YNImEkqizzuStW72@casper.infradead.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ted Ts'o <tytso@mit.edu>,
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, "Ted Ts'o" <tytso@mit.edu>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linux-MM <linux-mm@kvack.org>,
         Ext4 Developers List <linux-ext4@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Do we need to unrevert "fs: do not prefault sys_write() user
- buffer pages"?
-Message-ID: <YNIqjhsvEms6+vk9@casper.infradead.org>
-References: <CAHk-=wh=YxjEtTpYyhgypKmPJQ8eVLJ4qowmwbnG1bOU06_4Bg@mail.gmail.com>
- <3221175.1624375240@warthog.procyon.org.uk>
- <YNIBb5WPrk8nnKKn@zeniv-ca.linux.org.uk>
- <YNIDdgn0m8d2a0P3@zeniv-ca.linux.org.uk>
- <YNIdJaKrNj5GoT7w@casper.infradead.org>
- <3231150.1624384533@warthog.procyon.org.uk>
- <YNImEkqizzuStW72@casper.infradead.org>
- <CAHk-=wicC9ZTNNH1E-oHebcT3+r4Q4Wf1tXBindXrCdotj20Gg@mail.gmail.com>
+Subject: Re: Do we need to unrevert "fs: do not prefault sys_write() user buffer pages"?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wicC9ZTNNH1E-oHebcT3+r4Q4Wf1tXBindXrCdotj20Gg@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3233311.1624386204.1@warthog.procyon.org.uk>
+Date:   Tue, 22 Jun 2021 19:23:24 +0100
+Message-ID: <3233312.1624386204@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 11:07:56AM -0700, Linus Torvalds wrote:
-> On Tue, Jun 22, 2021 at 11:05 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > Huh?  Last I checked, the fault_in_readable actually read a byte from
-> > the page.  It has to wait for the read to complete before that can
-> > happen.
-> 
-> Yeah, we don't have any kind of async fault-in model.
-> 
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
 > I'm not sure how that would even look. I don't think it would
 > necessarily be *impossible* (special marker in the exception table to
 > let the fault code know that this is a "prepare" fault), but it would
 > be pretty challenging.
 
-It wouldn't be _that_ bad necessarily.  filemap_fault:
+Probably the most obvious way would be to set a flag in task_struct saying
+what you're doing and have the point that would otherwise wait for the page to
+become unlocked skip to the fault fixup code if the page is locked after
+->readahead() has been invoked and the flag is set, then use get_user() in
+iov_iter_fault_in_readable().
 
-        page = find_get_page(mapping, offset);
-...
-        } else if (!page) {
-                fpin = do_sync_mmap_readahead(vmf);
+But, as Willy says, there's a reasonable chance that the source page is
+present anyway (presumably you want to write out data you've just constructed
+or modified), in which case it's probably not worth the complexity.
 
-... and we could return at that point if the flag was set.  There'd be
-some more details to fill in (if there's a !uptodate page in the page
-cache, don't wait for it), but it might not be too bad.
+David
+
