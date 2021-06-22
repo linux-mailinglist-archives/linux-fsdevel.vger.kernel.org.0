@@ -2,96 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 457993B09AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 17:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C0563B09BE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 18:00:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232051AbhFVQAv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 12:00:51 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:44741 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231936AbhFVQAv (ORCPT
+        id S232284AbhFVQCj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 12:02:39 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:55158 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231936AbhFVQCi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 12:00:51 -0400
-Received: from [192.168.1.155] ([95.117.21.172]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MAfpQ-1m6kL42Oim-00B6o7 for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun
- 2021 17:58:34 +0200
-To:     linux-fsdevel@vger.kernel.org
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Subject: understanding do_dup2() vs fd_install()
-Message-ID: <674f31a9-eee7-4e4a-29c2-86ff43cd6b76@metux.net>
-Date:   Tue, 22 Jun 2021 17:58:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 22 Jun 2021 12:02:38 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 0D52421969;
+        Tue, 22 Jun 2021 16:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1624377622; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=1W/0v/vQfxGL6eOZngl0+8ELUUoab+oqUZvYfnAJG3o=;
+        b=J2mDgggwCWET9zFUPajfXQgpVIEN1UKRKJJ4LnyI5Eeiys/pPJff+3uzGF9KZFS2e8Y2ME
+        N7NG6ioYOwEgQ7vd6etpFUOBEZPBOYoVyQsDLa92UA/IwDTG0kfm+e1OEFP341DfZbU0Jt
+        KHAe1Jk/YbiJEKhlvp/M2qKwDfMJhtE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1624377622;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=1W/0v/vQfxGL6eOZngl0+8ELUUoab+oqUZvYfnAJG3o=;
+        b=FK2MfB/e/nhp6xkH0s20PWuQiv4eh97FG9a3BNwlTJZC/nfHnaeFfhBdpeRwToSU7tXnnU
+        iuVNLOdiCk8umzDg==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id EA24BA3B8E;
+        Tue, 22 Jun 2021 16:00:21 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id CA2761E1515; Tue, 22 Jun 2021 18:00:21 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
+To:     <linux-fsdevel@vger.kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH] dax: Fix ENOMEM handling in grab_mapping_entry()
+Date:   Tue, 22 Jun 2021 18:00:15 +0200
+Message-Id: <20210622160015.18004-1-jack@suse.cz>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: tl
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1751; h=from:subject; bh=6TMOKHIi6wiBQviWBONJJbsLIW+lhRS/aimVF7mj4HU=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBg0gjuu+bLgSFKbI0kx3Xq820Q9ucmjbhALiWEWF3Y nWT+KcaJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYNII7gAKCRCcnaoHP2RA2Z0aCA CcPg+bzI4tfiFOvHvrUtDFL/qUOhji7n94AEVlb5jAdbnQF3jVGBAXzOAzpR4pCTL3YfUVkg8q83u8 CONxZizZ4srizqkF6DihkOq6clr+Qg6A3mz/qAX2kqEhJpymUZGGU91U3XMg3GLNN+wxPSst5IVqjV OnwTXxKD4mMhG4ycOhL307jj75f5FG6emfRSs6+FUvem/PFWV5bc8aWvXYSLCmq+wPT3ozPMlMkPJw QFGzRqTEi12fzFnZS7uwzh1hvzpra6l+0kZVRBUo2RXE80w9wZgJ3O1dfDYam5dwZqkQudZkNPQyNW KkBGriyobXzyhBMlfPmQTwOSe0OXf9
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ms99ijOPQPGG2t55TXsjwFXxr74K9Goo+W2S7pXMeSv45RI+wpK
- xNxUG4zZ77y7rlJcz36FrcHrDyn1JLjl06eJB1fxyi+1dvRaTEaULWkVhKQxoDMV9zs/5t1
- vqja0l79l7cJlNMWgV98FpBjPcTQtY0gi53xcbzEwu78ljjXM+9xTcPtSf2iHZsZ+AMwX6N
- ujHBuGENbdfPlgZM1mI6A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:unlf1G+LdXw=:m0qPQOeV+geEWselUba6CP
- w11Uon3uL4bVUBSTJT2Mx7TYq83mpr9dpCGSl5SCYcF7ZRrVKXfUu6rsBk3CkfMbjLPsufQN/
- lwUGIvxhraXSO+1fu2E/VpQgtxa2PTV2KJMID2lb2LCejw/gqYrC5YvAod2PCLRNHnmBj5h/N
- kIzHvgg0zi3nRv9ZjBQqw4RpM15Y2IafkA95zaE9x8BRSTdl/Y9qL4D/UYTIh4eYh+ZrKIs2b
- 5kh8FW1Wt1eV8w6SUagDDPLG8KIzE4sidRuEUf/33phHs6UFRO6LWbE0ZLnzseWfHdFg9wzUX
- WaNMfjwQq10eBbM50xdZfFmud4QCnR16+Ubspi63kshSOiN4+dZtckBGY9eYnvBLqaA8wRfeF
- wlk1MS26ub+FfRtzWQiBcxOt6xyGh+E2ywIbnuQpn0e+59tJuSrvi6g2r7jyzME4jq3g3W7/a
- y9DFfRrrUkoXdrvqZDd17cA/wn6pFNYP9qEzVVZHrgAdM7inBU7+7pl5Od2Bn/ffACU8MIWaP
- n/4KBgXroLOisN030Zzegs=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello folks,
+grab_mapping_entry() has a bug in handling of ENOMEM condition. Suppose
+we have a PMD entry at index I which we are downgrading to a PTE entry.
+grab_mapping_entry() will set pmd_downgrade to true, lock the entry,
+clear the entry in xarray, and decrement mapping->nrpages. The it will
+call:
 
+	entry = dax_make_entry(pfn_to_pfn_t(0), flags);
+	dax_lock_entry(xas, entry);
 
-while digging deeper into the fs internals, I began to wonder whether
-there might be some overlap between do_dup2() and fd_install(), that
-might go into a common function.
+which inserts new PTE entry into xarray. However this may fail
+allocating the new node. We handle this by:
 
-If I understood that correctly, both link a struct file* into some
-process' fd table, the difference seems to be:
+	if (xas_nomem(xas, mapping_gfp_mask(mapping) & ~__GFP_HIGHMEM))
+		goto retry;
 
-* fd_install() doesn't need to deref the old file, since callers
-  allocated a fresh fdnum - while dup2() has to (if the fd was used)
-* fd_install() picks the fdtable from the current process, while
-  do_dup2() directly works on a given fdtable.
+however pmd_downgrade stays set to true even though 'entry' returned
+from get_unlocked_entry() will be NULL now. And we will go again through
+the downgrade branch. This is mostly harmless except that
+mapping->nrpages is decremented again and we temporarily have invalid
+entry stored in xarray. Fix the problem by setting pmd_downgrade to
+false each time we lookup the entry we work with so that it matches
+the entry we found.
 
-Oh, and there's also replace_fd(), which calls do_dup2()
+Fixes: b15cd800682f ("dax: Convert page fault handlers to XArray")
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/dax.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
-Just phantasizing: can we put it into something like that ?
-
-int do_assign_fd(struct fdtable *fdtable, int newfd, struct file *fp)
-
-  --> put or replace fp into the fdtable
-  --> if newfd == -1, pick a new slot, otherwise take newfd
-  --> checks (eg. rlimit, etc)
-  --> unref/close the old entry (if non-null)
-
-int fd_install(unsigned int fd, struct file *f)
-{
-    do_assign_fd(current->files, fd, f)
-}
-
-Am I missing something vital here ?
-
-By the way: do_dup2() is always called with "files" parameter being
-current->files -- why do we need that parameter at all ?
-
-
-thanks,
-
---mtx
+diff --git a/fs/dax.c b/fs/dax.c
+index 62352cbcf0f4..da41f9363568 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -488,10 +488,11 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 		struct address_space *mapping, unsigned int order)
+ {
+ 	unsigned long index = xas->xa_index;
+-	bool pmd_downgrade = false; /* splitting PMD entry into PTE entries? */
++	bool pmd_downgrade;	/* splitting PMD entry into PTE entries? */
+ 	void *entry;
+ 
+ retry:
++	pmd_downgrade = false;
+ 	xas_lock_irq(xas);
+ 	entry = get_unlocked_entry(xas, order);
+ 
 -- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.26.2
+
