@@ -2,85 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76E163B0449
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDB223B0464
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:29:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231352AbhFVM1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 08:27:35 -0400
-Received: from mail-m121144.qiye.163.com ([115.236.121.144]:47640 "EHLO
-        mail-m121144.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbhFVM1c (ORCPT
+        id S231529AbhFVMcA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 08:32:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45984 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231445AbhFVMcA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:27:32 -0400
-DKIM-Signature: a=rsa-sha256;
-        b=cvAf4iVjM2lX58rufT0Ljkzs53iairvQFR5fR3PrSoVbG+MxK5bBYHw8BRYAGfhAl5FdhhUkitL1OXAa73VHPPMqzyN0mR4EDyCupbZRQlyjCcxj/jKG5QtB3yCzgL3SE8Smez6NilrvjQGt+wvZ/5SKPZMuH+qahH0XYZv/vuc=;
-        c=relaxed/relaxed; s=default; d=vivo.com; v=1;
-        bh=EU5S1WPiblJSADqUm9fIJBjK6VEkY0WtsaZ1+glDnQM=;
-        h=date:mime-version:subject:message-id:from;
-Received: from [172.25.44.145] (unknown [58.251.74.232])
-        by mail-m121144.qiye.163.com (Hmail) with ESMTPA id 598B9AC020C;
-        Tue, 22 Jun 2021 20:25:12 +0800 (CST)
-Subject: Re: [PATCH v2] fuse: use newer inode info when writeback cache is
- enabled
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org
-References: <20210130085003.1392-1-changfengnan@vivo.com>
- <CAJfpegutK2HGYUtJOjvceULf2H=hoekNxUbcg=6Su6uteVmDLg@mail.gmail.com>
-From:   Fengnan Chang <changfengnan@vivo.com>
-Message-ID: <3e740389-9734-a959-a88a-3b1d54b59e22@vivo.com>
-Date:   Tue, 22 Jun 2021 20:25:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 22 Jun 2021 08:32:00 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C55F7C061756
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 05:29:44 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id h2so7994190iob.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 05:29:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HLmTmVuuBpaotf6UimooCw0I2x7NRsXSXiyt5vUC6yo=;
+        b=CVBcfjSTzsrzZcOg7yBHG95WzkSzsc9ei7Ds7laJEdW4W6mVhcYgjQtTk059FPoUAN
+         s95UIYRZgvP4jIfJpCNaajkjfcfQj5I23cVGmqF8tD4WosC2L79Q6lsxz8Lx6x4mV7ZV
+         lHLQzNRVvbq+pMNxpfNwDvFDxG9Ao9QECe2AvUkwG0crqiVOTiTu2AFKd6undHoZZL+h
+         Pel4diN4gl/ojs9Wd1/5GAtwHB0t86XK2PXD0RSj5J0iFKy8IlRQm+MGybLyiPCy/Oqr
+         4sM59HYTtYcvClDZYlclZlm9bNDL59PfXEIz7Lsh1U0FUwq0q0fld0SF9apUM72E1epd
+         dxLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HLmTmVuuBpaotf6UimooCw0I2x7NRsXSXiyt5vUC6yo=;
+        b=KXNsm0Ua933AKrlsHntjT/ixje/gT5p8fvQDCMC9oTwnW1n+RWSrUhnJvhhAa4Nhbl
+         w654qb9SvFY4wHJ7WLrVBhHRM6aHgkBSc/7v4FkFBEfMw5lQSkwgozpV8vr8K+pfndkC
+         qDpUG5loKjGaZ8IlNokdRanwE+PR8t8k+OL608dY/tpBx+vIR+VFjrri0+v/ZBGkKbhY
+         37l2qIl7rnAziTm6TKab7lxQs5Z60WWnzJiP4OvoSnz6xlIX8oDCMBMcc5m76i7VC+lr
+         6T3Nme9cHbqCVvzhwnWCAIA2x+1JpBpqvcLq+IFot0Ejx/IpnE4Zv/3T0Ks/XM5JBab9
+         FBdg==
+X-Gm-Message-State: AOAM533RBPiNGiGxRjT3lBC3U7yRxeSbhooukda8cu2gBAMyPVrWdEfA
+        oEDxoGnvO8r2lRM8d1OYigo5SEM7tlxgSz8SXyjLOA==
+X-Google-Smtp-Source: ABdhPJyBFnZ/enj0tZDRqDCSnSs4jMGpAl1FO4ZrOEGPE1Kdkl8s+X+/DbqvC3LAwuWmsofe9hBKZhrFj5Fbqz7m7AM=
+X-Received: by 2002:a02:5b45:: with SMTP id g66mr3798144jab.62.1624364983969;
+ Tue, 22 Jun 2021 05:29:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegutK2HGYUtJOjvceULf2H=hoekNxUbcg=6Su6uteVmDLg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
-        oVCBIfWUFZQkJITFZMHUgfTh0aTx4ZGE9VEwETFhoSFyQUDg9ZV1kWGg8SFR0UWUFZT0tIVUpKS0
-        hKTFVLWQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OBw6Dyo5Lz8CTT4vPQ8tTzYx
-        IzVPChNVSlVKTUlPSE1PTEpJTEhDVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
-        WU5DVUlOSlVMT1VJSElZV1kIAVlBSU1MSjcG
-X-HM-Tid: 0a7a33ae81feb039kuuu598b9ac020c
+References: <20210617095309.3542373-1-stapelberg+linux@google.com>
+ <CAJfpegvpnQMSRU+TW4J5+F+3KiAj8J_m+OjNrnh7f2X9DZp2Ag@mail.gmail.com>
+ <CAH9Oa-ZcG0+08d=D5-rbzY-v1cdUcuW0E7D_GcwjDoC1Phf+0g@mail.gmail.com>
+ <CAJfpegu0prjjHVhBzwZBVk5N+avHvUcyi4ovhKbf+F7GEuVkmw@mail.gmail.com>
+ <CAH9Oa-YxeZ25Vbto3NyUw=RK5vQWv_v7xp3vHS9667iJJ8XV_A@mail.gmail.com> <20210622121205.GG14261@quack2.suse.cz>
+In-Reply-To: <20210622121205.GG14261@quack2.suse.cz>
+From:   Michael Stapelberg <stapelberg+linux@google.com>
+Date:   Tue, 22 Jun 2021 14:29:32 +0200
+Message-ID: <CAH9Oa-YxL1iu_TVn6bL3Nd4qzYSVDPaO9a96sX4u7dhq+ewasA@mail.gmail.com>
+Subject: Re: [PATCH] backing_dev_info: introduce min_bw/max_bw limits
+To:     Jan Kara <jack@suse.cz>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Song Liu <song@kernel.org>, David Sterba <dsterba@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Unh, it seems i_writecount not work.
-If we modify file through lowerfs, i_writecount won't change, but the 
-size already changed.
-For example:
-echo "111" > /lowerfs/test
-ls -l /upper/test
-echo "2222" >> /lowerfs/test
-ls -l /upper/test
+Thanks for taking a look! Comments inline:
 
-So, can you describe your test enviroment? including kernel version and 
-fsx parameters, I will check it.
+On Tue, 22 Jun 2021 at 14:12, Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 21-06-21 11:20:10, Michael Stapelberg wrote:
+> > Hey Miklos
+> >
+> > On Fri, 18 Jun 2021 at 16:42, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > >
+> > > On Fri, 18 Jun 2021 at 10:31, Michael Stapelberg
+> > > <stapelberg+linux@google.com> wrote:
+> > >
+> > > > Maybe, but I don=E2=80=99t have the expertise, motivation or time t=
+o
+> > > > investigate this any further, let alone commit to get it done.
+> > > > During our previous discussion I got the impression that nobody els=
+e
+> > > > had any cycles for this either:
+> > > > https://lore.kernel.org/linux-fsdevel/CANnVG6n=3DySfe1gOr=3D0ituQid=
+p56idGARDKHzP0hv=3DERedeMrMA@mail.gmail.com/
+> > > >
+> > > > Have you had a look at the China LSF report at
+> > > > http://bardofschool.blogspot.com/2011/?
+> > > > The author of the heuristic has spent significant effort and time
+> > > > coming up with what we currently have in the kernel:
+> > > >
+> > > > """
+> > > > Fengguang said he draw more than 10K performance graphs and read ev=
+en
+> > > > more in the past year.
+> > > > """
+> > > >
+> > > > This implies that making changes to the heuristic will not be a qui=
+ck fix.
+> > >
+> > > Having a piece of kernel code sitting there that nobody is willing to
+> > > fix is certainly not a great situation to be in.
+> >
+> > Agreed.
+> >
+> > >
+> > > And introducing band aids is not going improve the above situation,
+> > > more likely it will prolong it even further.
+> >
+> > Sounds like =E2=80=9CPerfect is the enemy of good=E2=80=9D to me: you=
+=E2=80=99re looking for a
+> > perfect hypothetical solution,
+> > whereas we have a known-working low risk fix for a real problem.
+> >
+> > Could we find a solution where medium-/long-term, the code in question
+> > is improved,
+> > perhaps via a Summer Of Code project or similar community efforts,
+> > but until then, we apply the patch at hand?
+> >
+> > As I mentioned, I think adding min/max limits can be useful regardless
+> > of how the heuristic itself changes.
+> >
+> > If that turns out to be incorrect or undesired, we can still turn the
+> > knobs into a no-op, if removal isn=E2=80=99t an option.
+>
+> Well, removal of added knobs is more or less out of question as it can
+> break some userspace. Similarly making them no-op is problematic unless w=
+e
+> are pretty certain it cannot break some existing setup. That's why we hav=
+e
+> to think twice (or better three times ;) before adding any knobs. Also
+> honestly the knobs you suggest will be pretty hard to tune when there are
+> multiple cgroups with writeback control involved (which can be affected b=
+y
+> the same problems you observe as well). So I agree with Miklos that this =
+is
+> not the right way to go. Speaking of tunables, did you try tuning
+> /sys/devices/virtual/bdi/<fuse-bdi>/min_ratio? I suspect that may
+> workaround your problems...
 
-Thanks.
+Back then, I did try the various tunables (vm.dirty_ratio and
+vm.dirty_background_ratio on the global level,
+/sys/class/bdi/<bdi>/{min,max}_ratio on the file system level), and
+they have had no observable effect on the problem at all in my tests.
 
-On 2021/6/22 15:59, Miklos Szeredi wrote:
-> On Sat, 30 Jan 2021 at 09:50, Fengnan Chang <changfengnan@vivo.com> wrote:
->>
->> When writeback cache is enabled, the inode information in cached is
->> considered new by default, and the inode information of lowerfs is
->> stale.
->> When a lower fs is mount in a different directory through different
->> connection, for example PATHA and PATHB, since writeback cache is
->> enabled by default, when the file is modified through PATHA, viewing the
->> same file from the PATHB, PATHB will think that cached inode is newer
->> than lowerfs, resulting in file size and time from under PATHA and PATHB
->> is inconsistent.
->> Add a judgment condition to check whether to use the info in the cache
->> according to mtime.
-> 
-> This seems to break the fsx-linux stress test.
-> 
-> I suspect a better direction would be looking at whether the inode has
-> any files open for write (i_writecount > 0)...
-> 
-> Thanks,
-> Miklos
-> 
+>
+> Looking into your original report and tracing you did (thanks for that,
+> really useful), it seems that the problem is that writeback bandwidth is
+> updated at most every 200ms (more frequent calls are just ignored) and ar=
+e
+> triggered only from balance_dirty_pages() (happen when pages are dirtied)=
+ and
+> inode writeback code so if the workload tends to have short spikes of act=
+ivity
+> and extended periods of quiet time, then writeback bandwidth may indeed b=
+e
+> seriously miscomputed because we just won't update writeback throughput
+> after most of writeback has happened as you observed.
+>
+> I think the fix for this can be relatively simple. We just need to make
+> sure we update writeback bandwidth reasonably quickly after the IO
+> finishes. I'll write a patch and see if it helps.
+
+Thank you! Please keep us posted.
