@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 168D93B04DC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:41:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77C4B3B04E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:42:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231610AbhFVMoF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 08:44:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48302 "EHLO
+        id S231724AbhFVMoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 08:44:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231224AbhFVMnE (ORCPT
+        with ESMTP id S231718AbhFVMnv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:43:04 -0400
+        Tue, 22 Jun 2021 08:43:51 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A20FDC0611BD;
-        Tue, 22 Jun 2021 05:40:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B101C06175F;
+        Tue, 22 Jun 2021 05:41:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=SByzKLCr2HAyIscQwMr6ipDt63UoKindwsMjYOw8DUg=; b=XyPp5zDsBBRoirvaEO5l36WAvv
-        2Wwak7yZS/82y0EJEXmhrExylGeWJcUivR5zCRa1lRfS47i0ZSFyJ0GV5QOafZKARE/VToGEShcvR
-        iEmeO5zNgj+cOUkkqtVv48Z2dC+y2VkN8SNUdJKIg0MKFSwdzUljeUZtwTrL5ulse4DGlljRNiSXj
-        8BS1ZuLdgyEp8aLG4EVcYgs1NdcdKzuCEsMjinXryJUg2+FBTLdfaScQGlVvCwbztmFRU0Qih6BKF
-        q4scddPYHU/5FoaZhxqLjm0N0/MShCqUTYFN6O0ilA86KS6lHSbSNpz7CGTke78VVq/0/9AIqXhTh
-        Zsg8Z7UA==;
+        bh=ml6en5WP7nNAZwLT8qOLPbblbdB7QSwp/dTo7kgFCNc=; b=XMv80mAqzfnRawnpGahlkF8+Yh
+        qONgvzw2I/Xp7oGij5GR5dTcyZPm7LAg6r5/p6v8uO65k3DN2SRWX2qmdkiiTSbQtTHxqzTYUCWQa
+        sSYdhsk9njYgHn+BxFwWNgwoHcdcfViUuOZ1DMhrIZSTFXIoN3DzA/dCoIfGBB4GvG9/61Un72P9x
+        uLh78Kb9LxFVvCkm1dgHHQqhX8knpzFwU8FUIUZaGFd1y8dD4lPVdrAI1+ZUiJVNwPkWoDyr4vRWm
+        p+tVfVHaB0H++TGw45xHTK7Zn/JuGqqk204ibsnxIr5DSeoA10+OtESDoJkxt9wXt8klXiCViqzSc
+        IA3sNBpg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvffW-00EHqm-M6; Tue, 22 Jun 2021 12:38:38 +0000
+        id 1lvfgA-00EHwq-Uw; Tue, 22 Jun 2021 12:39:08 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     akpm@linux-foundation.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 27/46] mm/writeback: Add __folio_mark_dirty()
-Date:   Tue, 22 Jun 2021 13:15:32 +0100
-Message-Id: <20210622121551.3398730-28-willy@infradead.org>
+Subject: [PATCH v2 28/46] mm/writeback: Add filemap_dirty_folio()
+Date:   Tue, 22 Jun 2021 13:15:33 +0100
+Message-Id: <20210622121551.3398730-29-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210622121551.3398730-1-willy@infradead.org>
 References: <20210622121551.3398730-1-willy@infradead.org>
@@ -44,142 +44,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Turn __set_page_dirty() into a wrapper around __folio_mark_dirty() (which
-can directly cast from page to folio because we know that set_page_dirty()
-calls filesystems with the head page).  Convert account_page_dirtied()
-into folio_account_dirtied() and account the number of pages in the folio.
+Reimplement __set_page_dirty_nobuffers() as a wrapper around
+filemap_dirty_folio().  This can use a cast to struct folio
+because we know that the ->set_page_dirty address space op
+is always called with a page pointer that happens to also be
+a folio pointer.  Saves 7 bytes of kernel text.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/memcontrol.h |  5 ++---
- include/linux/pagemap.h    |  7 ++++++-
- mm/page-writeback.c        | 41 +++++++++++++++++++-------------------
- 3 files changed, 29 insertions(+), 24 deletions(-)
+ include/linux/writeback.h |  1 +
+ mm/page-writeback.c       | 64 ++++++++++++++++++++++-----------------
+ 2 files changed, 37 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 00693cb48b5d..f9f05724db3b 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1638,10 +1638,9 @@ void mem_cgroup_wb_stats(struct bdi_writeback *wb, unsigned long *pfilepages,
- void mem_cgroup_track_foreign_dirty_slowpath(struct folio *folio,
- 					     struct bdi_writeback *wb);
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index 8e5c5bb16e2d..aa372f6d2b55 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -398,6 +398,7 @@ void writeback_set_ratelimit(void);
+ void tag_pages_for_writeback(struct address_space *mapping,
+ 			     pgoff_t start, pgoff_t end);
  
--static inline void mem_cgroup_track_foreign_dirty(struct page *page,
-+static inline void mem_cgroup_track_foreign_dirty(struct folio *folio,
- 						  struct bdi_writeback *wb)
- {
--	struct folio *folio = page_folio(page);
- 	if (mem_cgroup_disabled())
- 		return;
++bool filemap_dirty_folio(struct address_space *mapping, struct folio *folio);
+ void account_page_redirty(struct page *page);
  
-@@ -1666,7 +1665,7 @@ static inline void mem_cgroup_wb_stats(struct bdi_writeback *wb,
- {
- }
- 
--static inline void mem_cgroup_track_foreign_dirty(struct page *page,
-+static inline void mem_cgroup_track_foreign_dirty(struct folio *folio,
- 						  struct bdi_writeback *wb)
- {
- }
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 22d756d56404..e6a9756293aa 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -772,8 +772,13 @@ void end_page_writeback(struct page *page);
- void folio_end_writeback(struct folio *folio);
- void wait_for_stable_page(struct page *page);
- void folio_wait_stable(struct folio *folio);
-+void __folio_mark_dirty(struct folio *folio, struct address_space *, int warn);
-+static inline void __set_page_dirty(struct page *page,
-+		struct address_space *mapping, int warn)
-+{
-+	__folio_mark_dirty((struct folio *)page, mapping, warn);
-+}
- 
--void __set_page_dirty(struct page *, struct address_space *, int warn);
- int __set_page_dirty_nobuffers(struct page *page);
- int __set_page_dirty_no_writeback(struct page *page);
- 
+ void sb_mark_inode_writeback(struct inode *inode);
 diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 73b937955cc1..a7989870b171 100644
+index a7989870b171..64b989eff9f5 100644
 --- a/mm/page-writeback.c
 +++ b/mm/page-writeback.c
-@@ -2417,29 +2417,30 @@ EXPORT_SYMBOL(__set_page_dirty_no_writeback);
-  *
-  * NOTE: This relies on being atomic wrt interrupts.
-  */
--static void account_page_dirtied(struct page *page,
-+static void folio_account_dirtied(struct folio *folio,
- 		struct address_space *mapping)
- {
- 	struct inode *inode = mapping->host;
- 
--	trace_writeback_dirty_page(page, mapping);
-+	trace_writeback_dirty_page(&folio->page, mapping);
- 
- 	if (mapping_can_writeback(mapping)) {
- 		struct bdi_writeback *wb;
-+		long nr = folio_nr_pages(folio);
- 
--		inode_attach_wb(inode, page);
-+		inode_attach_wb(inode, &folio->page);
- 		wb = inode_to_wb(inode);
- 
--		__inc_lruvec_page_state(page, NR_FILE_DIRTY);
--		__inc_zone_page_state(page, NR_ZONE_WRITE_PENDING);
--		__inc_node_page_state(page, NR_DIRTIED);
--		inc_wb_stat(wb, WB_RECLAIMABLE);
--		inc_wb_stat(wb, WB_DIRTIED);
--		task_io_account_write(PAGE_SIZE);
--		current->nr_dirtied++;
--		this_cpu_inc(bdp_ratelimits);
-+		__lruvec_stat_mod_folio(folio, NR_FILE_DIRTY, nr);
-+		__zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, nr);
-+		__node_stat_mod_folio(folio, NR_DIRTIED, nr);
-+		wb_stat_mod(wb, WB_RECLAIMABLE, nr);
-+		wb_stat_mod(wb, WB_DIRTIED, nr);
-+		task_io_account_write(nr * PAGE_SIZE);
-+		current->nr_dirtied += nr;
-+		__this_cpu_add(bdp_ratelimits, nr);
- 
--		mem_cgroup_track_foreign_dirty(page, wb);
-+		mem_cgroup_track_foreign_dirty(folio, wb);
- 	}
- }
- 
-@@ -2460,24 +2461,24 @@ void account_page_cleaned(struct page *page, struct address_space *mapping,
- }
- 
- /*
-- * Mark the page dirty, and set it dirty in the page cache, and mark the inode
-- * dirty.
-+ * Mark the folio dirty, and set it dirty in the page cache, and mark
-+ * the inode dirty.
-  *
-- * If warn is true, then emit a warning if the page is not uptodate and has
-+ * If warn is true, then emit a warning if the folio is not uptodate and has
-  * not been truncated.
-  *
-  * The caller must hold lock_page_memcg().
-  */
--void __set_page_dirty(struct page *page, struct address_space *mapping,
-+void __folio_mark_dirty(struct folio *folio, struct address_space *mapping,
- 			     int warn)
- {
- 	unsigned long flags;
- 
- 	xa_lock_irqsave(&mapping->i_pages, flags);
--	if (page->mapping) {	/* Race with truncate? */
--		WARN_ON_ONCE(warn && !PageUptodate(page));
--		account_page_dirtied(page, mapping);
--		__xa_set_mark(&mapping->i_pages, page_index(page),
-+	if (folio->mapping) {	/* Race with truncate? */
-+		WARN_ON_ONCE(warn && !folio_uptodate(folio));
-+		folio_account_dirtied(folio, mapping);
-+		__xa_set_mark(&mapping->i_pages, folio_index(folio),
- 				PAGECACHE_TAG_DIRTY);
- 	}
+@@ -2484,39 +2484,47 @@ void __folio_mark_dirty(struct folio *folio, struct address_space *mapping,
  	xa_unlock_irqrestore(&mapping->i_pages, flags);
+ }
+ 
+-/*
+- * For address_spaces which do not use buffers.  Just tag the page as dirty in
+- * the xarray.
+- *
+- * This is also used when a single buffer is being dirtied: we want to set the
+- * page dirty in that case, but not all the buffers.  This is a "bottom-up"
+- * dirtying, whereas __set_page_dirty_buffers() is a "top-down" dirtying.
+- *
+- * The caller must ensure this doesn't race with truncation.  Most will simply
+- * hold the page lock, but e.g. zap_pte_range() calls with the page mapped and
+- * the pte lock held, which also locks out truncation.
++/**
++ * filemap_dirty_folio - Mark a folio dirty for filesystems which do not use buffer_heads.
++ * @mapping: Address space this folio belongs to.
++ * @folio: Folio to be marked as dirty.
++ *
++ * Filesystems which do not use buffer heads should call this function
++ * from their set_page_dirty address space operation.  It ignores the
++ * contents of folio_private(), so if the filesystem marks individual
++ * blocks as dirty, the filesystem should handle that itself.
++ *
++ * This is also sometimes used by filesystems which use buffer_heads when
++ * a single buffer is being dirtied: we want to set the folio dirty in
++ * that case, but not all the buffers.  This is a "bottom-up" dirtying,
++ * whereas __set_page_dirty_buffers() is a "top-down" dirtying.
++ *
++ * The caller must ensure this doesn't race with truncation.  Most will
++ * simply hold the folio lock, but e.g. zap_pte_range() calls with the
++ * folio mapped and the pte lock held, which also locks out truncation.
+  */
+-int __set_page_dirty_nobuffers(struct page *page)
++bool filemap_dirty_folio(struct address_space *mapping, struct folio *folio)
+ {
+-	lock_page_memcg(page);
+-	if (!TestSetPageDirty(page)) {
+-		struct address_space *mapping = page_mapping(page);
++	lock_folio_memcg(folio);
++	if (folio_test_set_dirty_flag(folio)) {
++		unlock_folio_memcg(folio);
++		return false;
++	}
+ 
+-		if (!mapping) {
+-			unlock_page_memcg(page);
+-			return 1;
+-		}
+-		__set_page_dirty(page, mapping, !PagePrivate(page));
+-		unlock_page_memcg(page);
++	__folio_mark_dirty(folio, mapping, !folio_private(folio));
++	unlock_folio_memcg(folio);
+ 
+-		if (mapping->host) {
+-			/* !PageAnon && !swapper_space */
+-			__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+-		}
+-		return 1;
++	if (mapping->host) {
++		/* !PageAnon && !swapper_space */
++		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+ 	}
+-	unlock_page_memcg(page);
+-	return 0;
++	return true;
++}
++EXPORT_SYMBOL(filemap_dirty_folio);
++
++int __set_page_dirty_nobuffers(struct page *page)
++{
++	return filemap_dirty_folio(page_mapping(page), (struct folio *)page);
+ }
+ EXPORT_SYMBOL(__set_page_dirty_nobuffers);
+ 
 -- 
 2.30.2
 
