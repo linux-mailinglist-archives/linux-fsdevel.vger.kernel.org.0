@@ -2,225 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AC0F3B0B9C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 19:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11FF23B0BAD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 19:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231726AbhFVRn4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 13:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33794 "EHLO
+        id S232413AbhFVRrL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 13:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbhFVRnz (ORCPT
+        with ESMTP id S232267AbhFVRrH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 13:43:55 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23BC3C061574;
-        Tue, 22 Jun 2021 10:41:39 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id i5so7373193eds.1;
-        Tue, 22 Jun 2021 10:41:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UZm3fHNnA/YCIzOCFqws+e7g1P6uWRfgyjBhMsINiF4=;
-        b=a7kgV+FhOcVlDtZnBY+0ze0EdBEwy7CDFOo+Tth0movMxxXydikvKaz2Sqou7sNRdZ
-         TPcau192f8geibSen7HJpcj89XnphvRH6vN/VieD/aDSx8QYekfatCInLvT7NFPP9ayI
-         J6Fzl6l/Z58FdplEJWNqoYQbViTli7eRjnpJMEYDJydLFBYp+vzCov4iM/G43MOiLxiU
-         eAO4Itya631Y/tUUOZJcHQDbtVkoBvFa1DXQWEDHALsHeyPqNkyn6RxqHwwe2mPyIN+P
-         M+D+keG1fULYCUHNzJxfYpSjpccVFQyCDYN7xMyeoZ7JGI30Fiy8+c5s/MzsbagPocf5
-         JKSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UZm3fHNnA/YCIzOCFqws+e7g1P6uWRfgyjBhMsINiF4=;
-        b=bJNuOfcmFnQzG34LjnXsg/5HN4UtcC3Bd7HeXhi8DoTLBJ0caISlDPVXru03wzvaZq
-         ekb6oKnRyKZG6fEw/zwCaFGBIqpvqQVjUMXCfgsF7JRTG854xJeFHY5OyFdfbNr6hkKl
-         N6ml+Wv2U4aqtJJRPmoVGPXIi3JCrcATluTJ5BfNUwjmRBPZtBMzswFiwlahZazyYvRI
-         FyKepkd8qJSpguiovWL0XVjbJAG1Up6orsx3ZgO92LpL7yeRw9kiF6pwdZEB6ZZz82HC
-         vuo3iU4tamwvq+nBNQeHYjW1R3S2VZ2+zNUMXtlZ0uGFOSH05FF9v1DoaaexKvr9RYZJ
-         eLIw==
-X-Gm-Message-State: AOAM533FltsAJsKNeLfK88T5DVVryi9Ih3Gr911eu4uSzjxS80GbCMQb
-        shxZDKAjKwk5J8d/Hi3WOi+CuKmMnQbdlWdq
-X-Google-Smtp-Source: ABdhPJwG/04D68AaD6ZeYMr5w5z+ohc/LpyEO1ZuYV5gnJOTo+hvxUkTnZogd4DQ6ywRROHx6Cplrg==
-X-Received: by 2002:a05:6402:b6a:: with SMTP id cb10mr6685479edb.275.1624383697447;
-        Tue, 22 Jun 2021 10:41:37 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c092:600::2:e69])
-        by smtp.gmail.com with ESMTPSA id w1sm81911edr.62.2021.06.22.10.41.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jun 2021 10:41:37 -0700 (PDT)
-Subject: Re: [PATCH v5 02/10] io_uring: add support for IORING_OP_MKDIRAT
-To:     Dmitry Kadashev <dkadashev@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20210603051836.2614535-1-dkadashev@gmail.com>
- <20210603051836.2614535-3-dkadashev@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <f45781a8-234e-af92-e73d-a6453bd24f16@gmail.com>
-Date:   Tue, 22 Jun 2021 18:41:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Tue, 22 Jun 2021 13:47:07 -0400
+Received: from forwardcorp1o.mail.yandex.net (forwardcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::193])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82747C06175F;
+        Tue, 22 Jun 2021 10:44:50 -0700 (PDT)
+Received: from sas1-6b1512233ef6.qloud-c.yandex.net (sas1-6b1512233ef6.qloud-c.yandex.net [IPv6:2a02:6b8:c14:44af:0:640:6b15:1223])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id B0CAD2E1A81;
+        Tue, 22 Jun 2021 20:44:44 +0300 (MSK)
+Received: from sas2-d40aa8807eff.qloud-c.yandex.net (sas2-d40aa8807eff.qloud-c.yandex.net [2a02:6b8:c08:b921:0:640:d40a:a880])
+        by sas1-6b1512233ef6.qloud-c.yandex.net (mxbackcorp/Yandex) with ESMTP id DDAVePy4c6-iiROfo5h;
+        Tue, 22 Jun 2021 20:44:44 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1624383884; bh=ciRTZJfij6cVnqNZqE5x+i0wgdqTt0UNUw4QNl1os3M=;
+        h=Message-Id:References:Date:Subject:To:From:In-Reply-To:Cc;
+        b=DQKjT6Pku0bm7BO0C1crKmLBtMDW8c7lOiNte65YZyyvQa3TxLwd4Mn5t+gBk1jJD
+         gat7wS/dnDjm5S7xws0kOqAtKGnwJUKum9hIg1g40weWJqg+pEnA5aBKmzdfVyPQ2v
+         ajANnAirLHdT3V1cVERPutZL6rrZuRXZaTQHo8CE=
+Authentication-Results: sas1-6b1512233ef6.qloud-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from warwish-linux.sas.yp-c.yandex.net (warwish-linux.sas.yp-c.yandex.net [2a02:6b8:c1b:2920:0:696:cc9e:0])
+        by sas2-d40aa8807eff.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id gVbf2yAtam-ii9mY4ig;
+        Tue, 22 Jun 2021 20:44:44 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Anton Suvorov <warwish@yandex-team.ru>
+To:     willy@infradead.org
+Cc:     dmtrmonakhov@yandex-team.ru, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, warwish@yandex-team.ru
+Subject: [PATCH v2 00/10] reduce stack footprint printing bdev names
+Date:   Tue, 22 Jun 2021 20:44:14 +0300
+Message-Id: <20210622174424.136960-1-warwish@yandex-team.ru>
+In-Reply-To: <YLe9eDbG2c/rVjyu@casper.infradead.org>
+References: <YLe9eDbG2c/rVjyu@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20210603051836.2614535-3-dkadashev@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
-> IORING_OP_MKDIRAT behaves like mkdirat(2) and takes the same flags
-> and arguments.
+Changes from v1:
+Updated formatting according to Matthew Wilcox <willy@infradead.org> advice.
+Some lines may be longer than preferred 80 characters (even 100 in some cases),
+but they still remain easily readable (and could be found via grep).
 
-Jens, a fold-in er discussed, and it will get you
-a conflict at 8/10
+The patchset shows significant reduce of stack footprint:
 
+	./block/blk-core.c	submit_bio_checks	248	112	-136
+	./block/blk-lib.c	__blkdev_issue_discard	240	104	-136
+	./block/blk-settings.c	disk_stack_limits	256	192	-64
+	./block/partitions/amiga.c	amiga_partition	424	368	-56
+	./block/partitions/sgi.c	sgi_partition	352	288	-64
+	./block/partitions/sun.c	sun_partition	392	328	-64
+	./drivers/block/drbd/drbd_req.c	drbd_report_io_error	200	72	-128
+	./drivers/block/pktcdvd.c	pkt_seq_show	288	224	-64
+	./drivers/block/pktcdvd.c	pkt_setup_dev	272	136	-136
+	./drivers/block/pktcdvd.c	pkt_submit_bio	288	224	-64
+	./drivers/dax/super.c	__bdev_dax_supported	192	56	-136
+	./drivers/dax/super.c	__generic_fsdax_supported	344	280	-64
+	./drivers/md/dm-cache-target.c	cache_ctr	392	328	-64
+	./drivers/md/dm-cache-target.c	cache_io_hints	208	72	-136
+	./drivers/md/dm-clone-target.c	clone_ctr	416	352	-64
+	./drivers/md/dm-clone-target.c	clone_io_hints	216	80	-136
+	./drivers/md/dm-crypt.c	crypt_convert_block_aead	408	272	-136
+	./drivers/md/dm-crypt.c	kcryptd_async_done	192	56	-136
+	./drivers/md/dm-integrity.c	integrity_metadata	872	808	-64
+	./drivers/md/dm-mpath.c	parse_priority_group	368	304	-64
+	./drivers/md/dm-table.c	device_area_is_invalid	208	72	-136
+	./drivers/md/dm-table.c	dm_set_device_limits	200	72	-128
+	./drivers/md/dm-thin.c	pool_io_hints	216	80	-136
+	./drivers/md/md-linear.c	linear_make_request	248	112	-136
+	./drivers/md/md-multipath.c	multipath_end_request	232	96	-136
+	./drivers/md/md-multipath.c	multipath_error	208	72	-136
+	./drivers/md/md-multipath.c	multipathd	248	112	-136
+	./drivers/md/md-multipath.c	print_multipath_conf	208	64	-144
+	./drivers/md/md.c	autorun_devices	312	184	-128
+	./drivers/md/md.c	export_rdev	168	32	-136
+	./drivers/md/md.c	md_add_new_disk	280	80	-200
+	./drivers/md/md.c	md_import_device	200	56	-144
+	./drivers/md/md.c	md_integrity_add_rdev	192	56	-136
+	./drivers/md/md.c	md_ioctl	560	496	-64
+	./drivers/md/md.c	md_reload_sb	224	88	-136
+	./drivers/md/md.c	md_run	416	296	-120
+	./drivers/md/md.c	md_seq_show	232	96	-136
+	./drivers/md/md.c	md_update_sb	304	168	-136
+	./drivers/md/md.c	read_disk_sb	184	48	-136
+	./drivers/md/md.c	super_1_load	392	192	-200
+	./drivers/md/md.c	super_90_load	304	112	-192
+	./drivers/md/md.c	unbind_rdev_from_array	200	64	-136
+	./drivers/md/raid0.c	create_strip_zones	400	200	-200
+	./drivers/md/raid0.c	dump_zones	536	464	-72
+	./drivers/md/raid1.c	fix_read_error	352	288	-64
+	./drivers/md/raid1.c	print_conf	224	80	-144
+	./drivers/md/raid1.c	raid1_end_read_request	216	80	-136
+	./drivers/md/raid1.c	raid1_error	216	96	-120
+	./drivers/md/raid1.c	sync_request_write	336	200	-136
+	./drivers/md/raid10.c	fix_read_error	384	312	-72
+	./drivers/md/raid10.c	print_conf	216	72	-144
+	./drivers/md/raid10.c	raid10_end_read_request	216	80	-136
+	./drivers/md/raid10.c	raid10_error	216	80	-136
+	./drivers/md/raid5-cache.c	r5l_init_log	224	88	-136
+	./drivers/md/raid5-ppl.c	ppl_do_flush	256	136	-120
+	./drivers/md/raid5-ppl.c	ppl_flush_endio	192	56	-136
+	./drivers/md/raid5-ppl.c	ppl_modify_log	192	56	-136
+	./drivers/md/raid5-ppl.c	ppl_recover_entry	1296	1232	-64
+	./drivers/md/raid5-ppl.c	ppl_submit_iounit_bio	192	56	-136
+	./drivers/md/raid5-ppl.c	ppl_validate_rdev	184	48	-136
+	./drivers/md/raid5.c	print_raid5_conf	208	64	-144
+	./drivers/md/raid5.c	raid5_end_read_request	272	128	-144
+	./drivers/md/raid5.c	raid5_error	216	80	-136
+	./drivers/md/raid5.c	setup_conf	360	296	-64
+	./drivers/target/target_core_iblock.c	iblock_show_configfs_dev_params	192	56	-136
+	./fs/block_dev.c	blkdev_flush_mapping	200	56	-144
+	./fs/ext4/page-io.c	ext4_end_bio	224	88	-136
+	./security/loadpin/loadpin.c	loadpin_read_file	200	56	-144
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4b215e0f8dd8..c0e469ebd22d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3589,7 +3589,7 @@ static int io_mkdirat(struct io_kiocb *req, int issue_flags)
- 
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
- 	if (ret < 0)
--		req_set_fail_links(req);
-+		req_set_fail(req);
- 	io_req_complete(req, ret);
- 	return 0;
- }
+Patchset was tested with kvm-xfstests -c 4k full using
+https://github.com/tytso/xfstests-bld/blob/master/kernel-configs/x86_64-config-5.10
+kernel config:
+	-------------------- Summary report
+	KERNEL:    kernel 5.13.0-rc6-next-20210618-xfstests-00010-g225cff5e67be #12 SMP Sat Jun 19 00:13:37 MSK 2021 x86_64
+	CMDLINE:   -c 4k full
+	CPUS:      2
+	MEM:       1960.88
+	
+	ext4/4k: 537 tests, 45 skipped, 5381 seconds
+	Totals: 492 tests, 45 skipped, 0 failures, 0 errors, 5327s
+	
+	FSTESTVER: blktests 4bc88ef (Sun, 7 Mar 2021 12:38:37 -0800)
+	FSTESTVER: fio  fio-3.26 (Mon, 8 Mar 2021 17:44:38 -0700)
+	FSTESTVER: fsverity v1.3-2-gcf8fa5e (Wed, 24 Feb 2021 13:32:36 -0800)
+	FSTESTVER: ima-evm-utils v1.3.2 (Wed, 28 Oct 2020 13:18:08 -0400)
+	FSTESTVER: nvme-cli v1.13 (Tue, 20 Oct 2020 16:50:31 -0700)
+	FSTESTVER: quota  v4.05-40-g25f16b1 (Tue, 16 Mar 2021 17:57:19 +0100)
+	FSTESTVER: util-linux v2.36.2 (Fri, 12 Feb 2021 14:59:56 +0100)
+	FSTESTVER: xfsprogs v5.11.0 (Fri, 12 Mar 2021 15:05:13 -0500)
+	FSTESTVER: xfstests linux-v3.8-3068-g4072b9d3 (Mon, 5 Apr 2021 15:44:33 -0400)
+	FSTESTVER: xfstests-bld 4ec07f9 (Mon, 12 Apr 2021 23:49:18 -0400)
+	FSTESTCFG: 4k
+	FSTESTSET: -g auto
+	FSTESTOPT: aex
 
+Anton Suvorov (10):
+  drbd: reduce stack footprint in drbd_report_io_error()
+  dax: reduce stack footprint dealing with block device names
+  raid-md: reduce stack footprint dealing with block device names
+  dm: reduce stack footprint dealing with block device names
+  block: reduce stack footprint dealing with block device names
+  target: reduce stack footprint in iblock_show_configfs_dev_params()
+  vfs: reduce stack footprint in __blkdev_put()
+  ext4: reduce stack footprint in ext4_end_bio()
+  security: reduce stack footprint in loadpin_read_file()
+  block: remove unused symbol bio_devname()
 
-> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
-> ---
->  fs/io_uring.c                 | 55 +++++++++++++++++++++++++++++++++++
->  include/uapi/linux/io_uring.h |  1 +
->  2 files changed, 56 insertions(+)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index a1ca6badff36..8ab4eb559520 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -665,6 +665,13 @@ struct io_unlink {
->  	struct filename			*filename;
->  };
->  
-> +struct io_mkdir {
-> +	struct file			*file;
-> +	int				dfd;
-> +	umode_t				mode;
-> +	struct filename			*filename;
-> +};
-> +
->  struct io_completion {
->  	struct file			*file;
->  	struct list_head		list;
-> @@ -809,6 +816,7 @@ struct io_kiocb {
->  		struct io_shutdown	shutdown;
->  		struct io_rename	rename;
->  		struct io_unlink	unlink;
-> +		struct io_mkdir		mkdir;
->  		/* use only after cleaning per-op data, see io_clean_op() */
->  		struct io_completion	compl;
->  	};
-> @@ -1021,6 +1029,7 @@ static const struct io_op_def io_op_defs[] = {
->  	},
->  	[IORING_OP_RENAMEAT] = {},
->  	[IORING_OP_UNLINKAT] = {},
-> +	[IORING_OP_MKDIRAT] = {},
->  };
->  
->  static bool io_disarm_next(struct io_kiocb *req);
-> @@ -3530,6 +3539,44 @@ static int io_unlinkat(struct io_kiocb *req, unsigned int issue_flags)
->  	return 0;
->  }
->  
-> +static int io_mkdirat_prep(struct io_kiocb *req,
-> +			    const struct io_uring_sqe *sqe)
-> +{
-> +	struct io_mkdir *mkd = &req->mkdir;
-> +	const char __user *fname;
-> +
-> +	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-> +		return -EBADF;
-> +
-> +	mkd->dfd = READ_ONCE(sqe->fd);
-> +	mkd->mode = READ_ONCE(sqe->len);
-> +
-> +	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
-> +	mkd->filename = getname(fname);
-> +	if (IS_ERR(mkd->filename))
-> +		return PTR_ERR(mkd->filename);
-> +
-> +	req->flags |= REQ_F_NEED_CLEANUP;
-> +	return 0;
-> +}
-> +
-> +static int io_mkdirat(struct io_kiocb *req, int issue_flags)
-> +{
-> +	struct io_mkdir *mkd = &req->mkdir;
-> +	int ret;
-> +
-> +	if (issue_flags & IO_URING_F_NONBLOCK)
-> +		return -EAGAIN;
-> +
-> +	ret = do_mkdirat(mkd->dfd, mkd->filename, mkd->mode);
-> +
-> +	req->flags &= ~REQ_F_NEED_CLEANUP;
-> +	if (ret < 0)
-> +		req_set_fail_links(req);
-> +	io_req_complete(req, ret);
-> +	return 0;
-> +}
-> +
->  static int io_shutdown_prep(struct io_kiocb *req,
->  			    const struct io_uring_sqe *sqe)
->  {
-> @@ -5936,6 +5983,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  		return io_renameat_prep(req, sqe);
->  	case IORING_OP_UNLINKAT:
->  		return io_unlinkat_prep(req, sqe);
-> +	case IORING_OP_MKDIRAT:
-> +		return io_mkdirat_prep(req, sqe);
->  	}
->  
->  	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-> @@ -6077,6 +6126,9 @@ static void io_clean_op(struct io_kiocb *req)
->  		case IORING_OP_UNLINKAT:
->  			putname(req->unlink.filename);
->  			break;
-> +		case IORING_OP_MKDIRAT:
-> +			putname(req->mkdir.filename);
-> +			break;
->  		}
->  		req->flags &= ~REQ_F_NEED_CLEANUP;
->  	}
-> @@ -6203,6 +6255,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
->  	case IORING_OP_UNLINKAT:
->  		ret = io_unlinkat(req, issue_flags);
->  		break;
-> +	case IORING_OP_MKDIRAT:
-> +		ret = io_mkdirat(req, issue_flags);
-> +		break;
->  	default:
->  		ret = -EINVAL;
->  		break;
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index e1ae46683301..bf9d720d371f 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -137,6 +137,7 @@ enum {
->  	IORING_OP_SHUTDOWN,
->  	IORING_OP_RENAMEAT,
->  	IORING_OP_UNLINKAT,
-> +	IORING_OP_MKDIRAT,
->  
->  	/* this goes last, obviously */
->  	IORING_OP_LAST,
-> 
+ block/bio.c                         |   6 --
+ block/blk-core.c                    |  12 +--
+ block/blk-lib.c                     |   5 +-
+ block/blk-settings.c                |   7 +-
+ block/partitions/amiga.c            |  10 +--
+ block/partitions/sgi.c              |   4 +-
+ block/partitions/sun.c              |   4 +-
+ drivers/block/drbd/drbd_req.c       |  12 ++-
+ drivers/block/pktcdvd.c             |  13 +--
+ drivers/dax/super.c                 |  27 ++----
+ drivers/md/dm-cache-target.c        |  10 +--
+ drivers/md/dm-clone-target.c        |  10 +--
+ drivers/md/dm-crypt.c               |   6 +-
+ drivers/md/dm-integrity.c           |   4 +-
+ drivers/md/dm-mpath.c               |   5 +-
+ drivers/md/dm-table.c               |  34 ++++---
+ drivers/md/dm-thin.c                |   8 +-
+ drivers/md/md-linear.c              |   5 +-
+ drivers/md/md-multipath.c           |  24 +++--
+ drivers/md/md.c                     | 135 +++++++++++-----------------
+ drivers/md/raid0.c                  |  28 +++---
+ drivers/md/raid1.c                  |  25 +++---
+ drivers/md/raid10.c                 |  65 ++++++--------
+ drivers/md/raid5-cache.c            |   5 +-
+ drivers/md/raid5-ppl.c              |  40 ++++-----
+ drivers/md/raid5.c                  |  39 ++++----
+ drivers/target/target_core_iblock.c |   4 +-
+ fs/block_dev.c                      |   6 +-
+ fs/ext4/page-io.c                   |   5 +-
+ include/linux/bio.h                 |   2 -
+ security/loadpin/loadpin.c          |   5 +-
+ 31 files changed, 212 insertions(+), 353 deletions(-)
 
 -- 
-Pavel Begunkov
+2.25.1
+
