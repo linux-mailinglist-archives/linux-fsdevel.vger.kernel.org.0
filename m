@@ -2,146 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD71F3B03F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:12:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4164B3B0418
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:17:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231567AbhFVMOc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 08:14:32 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:52842 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231651AbhFVMOW (ORCPT
+        id S230422AbhFVMT7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 08:19:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231225AbhFVMT6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:14:22 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 0774D218D6;
-        Tue, 22 Jun 2021 12:12:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1624363926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=P8FU8UVi5nPdDY+zE8FGh4fOpPiQip+w88J/iISrayw=;
-        b=ypU7A5mpbI/uy5MkStBMLsOR+WDc7p78YosCeNjDBnSRUVgWBfv0V2v/pK1iW++XVgJ1rS
-        UkqJVXlbl+Ir0ONRFh8OPhT9hRTFZfZZwOsywOVS1fj61Dqv5GG/OQvVwgzrw9Xrn5wFrA
-        h2+uDzPyJyi8Txsw7PQBPl693bbveZw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1624363926;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=P8FU8UVi5nPdDY+zE8FGh4fOpPiQip+w88J/iISrayw=;
-        b=7OBHe4E1/tMHiC0lrsPWECWykj4GeSeFoh3TBYu8HNoyZQAIlbRuQcXQmSsfREOknhnomI
-        O/U28lFtOhj6+3AA==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id B70A7A3B94;
-        Tue, 22 Jun 2021 12:12:05 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 8E4111E1515; Tue, 22 Jun 2021 14:12:05 +0200 (CEST)
-Date:   Tue, 22 Jun 2021 14:12:05 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Michael Stapelberg <stapelberg+linux@google.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Jan Kara <jack@suse.cz>, Song Liu <song@kernel.org>,
-        David Sterba <dsterba@suse.com>
-Subject: Re: [PATCH] backing_dev_info: introduce min_bw/max_bw limits
-Message-ID: <20210622121205.GG14261@quack2.suse.cz>
-References: <20210617095309.3542373-1-stapelberg+linux@google.com>
- <CAJfpegvpnQMSRU+TW4J5+F+3KiAj8J_m+OjNrnh7f2X9DZp2Ag@mail.gmail.com>
- <CAH9Oa-ZcG0+08d=D5-rbzY-v1cdUcuW0E7D_GcwjDoC1Phf+0g@mail.gmail.com>
- <CAJfpegu0prjjHVhBzwZBVk5N+avHvUcyi4ovhKbf+F7GEuVkmw@mail.gmail.com>
- <CAH9Oa-YxeZ25Vbto3NyUw=RK5vQWv_v7xp3vHS9667iJJ8XV_A@mail.gmail.com>
+        Tue, 22 Jun 2021 08:19:58 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12B81C061574;
+        Tue, 22 Jun 2021 05:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=Bi9mU/y3AgkZqz4pMv+LJds5ZZ5YN/sF3JHkG2XPIRU=; b=vNqAYHTCbmsKnhZGNaz5EB5LTQ
+        LYXNE5jNBz5YQ2zgc9MAq/aMxg8YraTwNmWjNzjcIozk3QnCpFPnYD9GqVw7EE2izuXvw/yjwgE3w
+        gBxlWJEt9WzahbigIBPCJewXqhXRKXtD55nrUXBEkBOy+Z9GlCoJ6soFy8ZIHPE9IjCvO0nxr0thf
+        jdmAQs82OeAVqvmAFbBhTnPoXUj1kufVpzkhpJQK00AIR4J5P6XSsST9Jnf6gbsI++watVhpzi0Cz
+        BSQbs0tNsKhAnRg3kZHBQMFV9+aCmHxmGB1ODBLhg309z1eQs1Y3/UqPDxFKj61e8NduO8KN7l+3J
+        FKhX/ZWg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lvfJs-00EGBW-7m; Tue, 22 Jun 2021 12:16:22 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     akpm@linux-foundation.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/46] Folio-enabling the page cache
+Date:   Tue, 22 Jun 2021 13:15:05 +0100
+Message-Id: <20210622121551.3398730-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH9Oa-YxeZ25Vbto3NyUw=RK5vQWv_v7xp3vHS9667iJJ8XV_A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 21-06-21 11:20:10, Michael Stapelberg wrote:
-> Hey Miklos
-> 
-> On Fri, 18 Jun 2021 at 16:42, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Fri, 18 Jun 2021 at 10:31, Michael Stapelberg
-> > <stapelberg+linux@google.com> wrote:
-> >
-> > > Maybe, but I don’t have the expertise, motivation or time to
-> > > investigate this any further, let alone commit to get it done.
-> > > During our previous discussion I got the impression that nobody else
-> > > had any cycles for this either:
-> > > https://lore.kernel.org/linux-fsdevel/CANnVG6n=ySfe1gOr=0ituQidp56idGARDKHzP0hv=ERedeMrMA@mail.gmail.com/
-> > >
-> > > Have you had a look at the China LSF report at
-> > > http://bardofschool.blogspot.com/2011/?
-> > > The author of the heuristic has spent significant effort and time
-> > > coming up with what we currently have in the kernel:
-> > >
-> > > """
-> > > Fengguang said he draw more than 10K performance graphs and read even
-> > > more in the past year.
-> > > """
-> > >
-> > > This implies that making changes to the heuristic will not be a quick fix.
-> >
-> > Having a piece of kernel code sitting there that nobody is willing to
-> > fix is certainly not a great situation to be in.
-> 
-> Agreed.
-> 
-> >
-> > And introducing band aids is not going improve the above situation,
-> > more likely it will prolong it even further.
-> 
-> Sounds like “Perfect is the enemy of good” to me: you’re looking for a
-> perfect hypothetical solution,
-> whereas we have a known-working low risk fix for a real problem.
-> 
-> Could we find a solution where medium-/long-term, the code in question
-> is improved,
-> perhaps via a Summer Of Code project or similar community efforts,
-> but until then, we apply the patch at hand?
-> 
-> As I mentioned, I think adding min/max limits can be useful regardless
-> of how the heuristic itself changes.
-> 
-> If that turns out to be incorrect or undesired, we can still turn the
-> knobs into a no-op, if removal isn’t an option.
+These are all the patches I've collected to date which enable filesystems
+to be converted to use folios.  After applying these patches (on top of
+folio v12), I have an iomap (ie xfs/zonefs) conversion.  I would expect
+filesystems to convert one-by-one, rather than converting all callers of
+(say) set_page_writeback() to call folio_start_writeback().
 
-Well, removal of added knobs is more or less out of question as it can
-break some userspace. Similarly making them no-op is problematic unless we
-are pretty certain it cannot break some existing setup. That's why we have
-to think twice (or better three times ;) before adding any knobs. Also
-honestly the knobs you suggest will be pretty hard to tune when there are
-multiple cgroups with writeback control involved (which can be affected by
-the same problems you observe as well). So I agree with Miklos that this is
-not the right way to go. Speaking of tunables, did you try tuning
-/sys/devices/virtual/bdi/<fuse-bdi>/min_ratio? I suspect that may
-workaround your problems...
+The biggest chunk of this is teaching the writeback code that folios may
+be larger than a single page, so there's no (or little) code reduction
+from these patches.  Instead it takes us to where we can start preparing
+filesystems to see multi-page folios.
 
-Looking into your original report and tracing you did (thanks for that,
-really useful), it seems that the problem is that writeback bandwidth is
-updated at most every 200ms (more frequent calls are just ignored) and are
-triggered only from balance_dirty_pages() (happen when pages are dirtied) and
-inode writeback code so if the workload tends to have short spikes of activity
-and extended periods of quiet time, then writeback bandwidth may indeed be
-seriously miscomputed because we just won't update writeback throughput
-after most of writeback has happened as you observed.
+Matthew Wilcox (Oracle) (46):
+  mm: Add folio_to_pfn()
+  mm: Add folio_rmapping()
+  mm: Add kmap_local_folio()
+  mm: Add flush_dcache_folio()
+  mm: Add arch_make_folio_accessible()
+  mm: Add folio_young() and folio_idle()
+  mm/workingset: Convert workingset_activation to take a folio
+  mm/swap: Add folio_activate()
+  mm/swap: Add folio_mark_accessed()
+  mm/rmap: Add folio_mkclean()
+  mm/memcg: Remove 'page' parameter to mem_cgroup_charge_statistics()
+  mm/memcg: Use the node id in mem_cgroup_update_tree()
+  mm/memcg: Convert commit_charge() to take a folio
+  mm/memcg: Add folio_charge_cgroup()
+  mm/memcg: Add folio_uncharge_cgroup()
+  mm/memcg: Add folio_migrate_cgroup()
+  mm/memcg: Convert mem_cgroup_track_foreign_dirty_slowpath() to folio
+  mm/migrate: Add folio_migrate_mapping()
+  mm/migrate: Add folio_migrate_flags()
+  mm/migrate: Add folio_migrate_copy()
+  mm/writeback: Rename __add_wb_stat() to wb_stat_mod()
+  flex_proportions: Allow N events instead of 1
+  mm/writeback: Change __wb_writeout_inc() to __wb_writeout_add()
+  mm/writeback: Add __folio_end_writeback()
+  mm/writeback: Add folio_start_writeback()
+  mm/writeback: Add folio_mark_dirty()
+  mm/writeback: Add __folio_mark_dirty()
+  mm/writeback: Add filemap_dirty_folio()
+  mm/writeback: Add folio_account_cleaned()
+  mm/writeback: Add folio_cancel_dirty()
+  mm/writeback: Add folio_clear_dirty_for_io()
+  mm/writeback: Add folio_account_redirty()
+  mm/writeback: Add folio_redirty_for_writepage()
+  mm/filemap: Add i_blocks_per_folio()
+  mm/filemap: Add folio_mkwrite_check_truncate()
+  mm/filemap: Add readahead_folio()
+  mm/workingset: Convert workingset_refault() to take a folio
+  mm: Add folio_evictable()
+  mm/lru: Convert __pagevec_lru_add_fn to take a folio
+  mm/lru: Add folio_add_lru()
+  mm/page_alloc: Add folio allocation functions
+  mm/filemap: Add filemap_alloc_folio
+  mm/filemap: Add filemap_add_folio
+  mm/filemap: Convert mapping_get_entry to return a folio
+  mm/filemap: Add filemap_get_folio
+  mm/filemap: Add FGP_STABLE
 
-I think the fix for this can be relatively simple. We just need to make
-sure we update writeback bandwidth reasonably quickly after the IO
-finishes. I'll write a patch and see if it helps.
+ .../admin-guide/cgroup-v1/memcg_test.rst      |   2 +-
+ Documentation/core-api/cachetlb.rst           |   6 +
+ arch/nds32/include/asm/cacheflush.h           |   1 +
+ fs/jfs/jfs_metapage.c                         |   1 +
+ include/asm-generic/cacheflush.h              |   6 +
+ include/linux/backing-dev.h                   |   6 +-
+ include/linux/flex_proportions.h              |   9 +-
+ include/linux/gfp.h                           |  22 +-
+ include/linux/highmem-internal.h              |  11 +
+ include/linux/highmem.h                       |  38 ++
+ include/linux/ksm.h                           |   4 +-
+ include/linux/memcontrol.h                    |  28 +-
+ include/linux/migrate.h                       |   4 +
+ include/linux/mm.h                            |  51 +--
+ include/linux/page-flags.h                    |  20 +-
+ include/linux/page_idle.h                     |  99 +++--
+ include/linux/page_owner.h                    |   8 +-
+ include/linux/pagemap.h                       | 195 ++++++---
+ include/linux/rmap.h                          |  10 +-
+ include/linux/swap.h                          |  10 +-
+ include/linux/writeback.h                     |   9 +-
+ include/trace/events/writeback.h              |   8 +-
+ kernel/bpf/verifier.c                         |   2 +-
+ lib/flex_proportions.c                        |  28 +-
+ mm/filemap.c                                  | 240 +++++------
+ mm/folio-compat.c                             |  98 +++++
+ mm/internal.h                                 |  35 +-
+ mm/ksm.c                                      |  31 +-
+ mm/memcontrol.c                               | 124 +++---
+ mm/memory.c                                   |   3 +-
+ mm/mempolicy.c                                |  10 +
+ mm/migrate.c                                  | 242 +++++------
+ mm/page-writeback.c                           | 383 ++++++++++--------
+ mm/page_alloc.c                               |  12 +
+ mm/page_owner.c                               |  10 +-
+ mm/rmap.c                                     |  12 +-
+ mm/shmem.c                                    |   5 +-
+ mm/swap.c                                     | 137 ++++---
+ mm/swap_state.c                               |   2 +-
+ mm/util.c                                     |  33 +-
+ mm/workingset.c                               |  44 +-
+ 41 files changed, 1158 insertions(+), 841 deletions(-)
 
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.30.2
+
