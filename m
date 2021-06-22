@@ -2,124 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D29013B03EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:12:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD71F3B03F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:12:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231444AbhFVMOF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 08:14:05 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:58875 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231313AbhFVMOC (ORCPT
+        id S231567AbhFVMOc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 08:14:32 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:52842 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231651AbhFVMOW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:14:02 -0400
-Received: from orion.localdomain ([95.117.21.172]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1N1gac-1lFhgu1jwm-011zHy; Tue, 22 Jun 2021 14:11:44 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-Subject: [RFC PATCH 6/6] fs: f2fs: move fstrim to file_operation
-Date:   Tue, 22 Jun 2021 14:11:36 +0200
-Message-Id: <20210622121136.4394-7-info@metux.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210622121136.4394-1-info@metux.net>
-References: <20210622121136.4394-1-info@metux.net>
+        Tue, 22 Jun 2021 08:14:22 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 0774D218D6;
+        Tue, 22 Jun 2021 12:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1624363926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=P8FU8UVi5nPdDY+zE8FGh4fOpPiQip+w88J/iISrayw=;
+        b=ypU7A5mpbI/uy5MkStBMLsOR+WDc7p78YosCeNjDBnSRUVgWBfv0V2v/pK1iW++XVgJ1rS
+        UkqJVXlbl+Ir0ONRFh8OPhT9hRTFZfZZwOsywOVS1fj61Dqv5GG/OQvVwgzrw9Xrn5wFrA
+        h2+uDzPyJyi8Txsw7PQBPl693bbveZw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1624363926;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=P8FU8UVi5nPdDY+zE8FGh4fOpPiQip+w88J/iISrayw=;
+        b=7OBHe4E1/tMHiC0lrsPWECWykj4GeSeFoh3TBYu8HNoyZQAIlbRuQcXQmSsfREOknhnomI
+        O/U28lFtOhj6+3AA==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id B70A7A3B94;
+        Tue, 22 Jun 2021 12:12:05 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8E4111E1515; Tue, 22 Jun 2021 14:12:05 +0200 (CEST)
+Date:   Tue, 22 Jun 2021 14:12:05 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Michael Stapelberg <stapelberg+linux@google.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Jan Kara <jack@suse.cz>, Song Liu <song@kernel.org>,
+        David Sterba <dsterba@suse.com>
+Subject: Re: [PATCH] backing_dev_info: introduce min_bw/max_bw limits
+Message-ID: <20210622121205.GG14261@quack2.suse.cz>
+References: <20210617095309.3542373-1-stapelberg+linux@google.com>
+ <CAJfpegvpnQMSRU+TW4J5+F+3KiAj8J_m+OjNrnh7f2X9DZp2Ag@mail.gmail.com>
+ <CAH9Oa-ZcG0+08d=D5-rbzY-v1cdUcuW0E7D_GcwjDoC1Phf+0g@mail.gmail.com>
+ <CAJfpegu0prjjHVhBzwZBVk5N+avHvUcyi4ovhKbf+F7GEuVkmw@mail.gmail.com>
+ <CAH9Oa-YxeZ25Vbto3NyUw=RK5vQWv_v7xp3vHS9667iJJ8XV_A@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:KbVZgb+ncrb5PGXtUdzRU4R7/1hoNcz0HKyGrGMscLo4DO2Bs+8
- f+WDGUvYtR7RfZVPOczhz+Pj8NPqgK68MD7iFrZMIJgE43vG1G1aPcyo/w4TyeqJNr1YmO+
- y2upeMAXAQwAjAL5xq48eDoBdsjQPRpLv0v1w11tXyrqn3ElOeV/qwokWtE4Of94mCeGIOn
- RiYumH0F6uZEDOBsP4loA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lWKsG7Xj5rQ=:eU73c2EZQ0fXEjV9nnVANq
- K7A3YrleS4vvDCqcvk3u0nkHKJvKzibi0IQq4vk2Qs0pT92XuY+QH+x3gJA20b1PLZKPvy6O0
- 61EA3c9F1fy1sivfYIbeXL3uTnP93p0PHAzI2OjLWTRHYyFxWE1F/+k3e/nedlkEFNK39qk5j
- QT3Pk+gadLLUjpQpqN7+9O7Cqj+1HsM+RHOzkqqWbgdnBA6JcNCz3AGrkfAS17FUV3o4w9ces
- u6tKliro1BxUhaJV06fUrVR+8umvvHnQwQ3MfhHMdTyE86N0oRrpQcQFdeRGj4z3ZWnlbktCF
- WVf2UzHFKIQT57WWBi+1WsRaJVnhq96sMKBOgpS63SPYYfy8B6s4sM7aalJj7304iIWX7Vqa+
- Vixv4GIJcf03OtU09b+G8dWnqUFKoDqAQiTWjfqMkQ8GmJFnC0dw0yrwZCXU0+EXRFLr5/bhf
- OrmHttCc/HFWRYWQFsYAhykcIy45Ygha+HiPFx5BEQtqLHcIPiEWSkBxCBvkINEgoZWHOsBaL
- CSsf8iRGPX4v4xWdO4pwCE=
+In-Reply-To: <CAH9Oa-YxeZ25Vbto3NyUw=RK5vQWv_v7xp3vHS9667iJJ8XV_A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the newly introduced file_operation callback for FITRIM ioctl.
-This removes some common code, eg. permission check, buffer copying,
-which is now done by generic vfs code.
----
- fs/f2fs/file.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+On Mon 21-06-21 11:20:10, Michael Stapelberg wrote:
+> Hey Miklos
+> 
+> On Fri, 18 Jun 2021 at 16:42, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Fri, 18 Jun 2021 at 10:31, Michael Stapelberg
+> > <stapelberg+linux@google.com> wrote:
+> >
+> > > Maybe, but I don’t have the expertise, motivation or time to
+> > > investigate this any further, let alone commit to get it done.
+> > > During our previous discussion I got the impression that nobody else
+> > > had any cycles for this either:
+> > > https://lore.kernel.org/linux-fsdevel/CANnVG6n=ySfe1gOr=0ituQidp56idGARDKHzP0hv=ERedeMrMA@mail.gmail.com/
+> > >
+> > > Have you had a look at the China LSF report at
+> > > http://bardofschool.blogspot.com/2011/?
+> > > The author of the heuristic has spent significant effort and time
+> > > coming up with what we currently have in the kernel:
+> > >
+> > > """
+> > > Fengguang said he draw more than 10K performance graphs and read even
+> > > more in the past year.
+> > > """
+> > >
+> > > This implies that making changes to the heuristic will not be a quick fix.
+> >
+> > Having a piece of kernel code sitting there that nobody is willing to
+> > fix is certainly not a great situation to be in.
+> 
+> Agreed.
+> 
+> >
+> > And introducing band aids is not going improve the above situation,
+> > more likely it will prolong it even further.
+> 
+> Sounds like “Perfect is the enemy of good” to me: you’re looking for a
+> perfect hypothetical solution,
+> whereas we have a known-working low risk fix for a real problem.
+> 
+> Could we find a solution where medium-/long-term, the code in question
+> is improved,
+> perhaps via a Summer Of Code project or similar community efforts,
+> but until then, we apply the patch at hand?
+> 
+> As I mentioned, I think adding min/max limits can be useful regardless
+> of how the heuristic itself changes.
+> 
+> If that turns out to be incorrect or undesired, we can still turn the
+> knobs into a no-op, if removal isn’t an option.
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ceb575f99048..4c3f5eab22aa 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2252,38 +2252,27 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 	return ret;
- }
- 
--static int f2fs_ioc_fitrim(struct file *filp, unsigned long arg)
-+static long f2fs_ioc_fitrim(struct file *file, struct fstrim_range *range)
- {
- 	struct inode *inode = file_inode(filp);
- 	struct super_block *sb = inode->i_sb;
- 	struct request_queue *q = bdev_get_queue(sb->s_bdev);
--	struct fstrim_range range;
- 	int ret;
- 
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
- 	if (!f2fs_hw_support_discard(F2FS_SB(sb)))
- 		return -EOPNOTSUPP;
- 
--	if (copy_from_user(&range, (struct fstrim_range __user *)arg,
--				sizeof(range)))
--		return -EFAULT;
--
- 	ret = mnt_want_write_file(filp);
- 	if (ret)
- 		return ret;
- 
--	range.minlen = max((unsigned int)range.minlen,
-+	range->minlen = max((unsigned int)range->minlen,
- 				q->limits.discard_granularity);
--	ret = f2fs_trim_fs(F2FS_SB(sb), &range);
-+	ret = f2fs_trim_fs(F2FS_SB(sb), range);
- 	mnt_drop_write_file(filp);
- 	if (ret < 0)
- 		return ret;
- 
--	if (copy_to_user((struct fstrim_range __user *)arg, &range,
--				sizeof(range)))
--		return -EFAULT;
- 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
- 	return 0;
- }
-@@ -4124,8 +4113,6 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_abort_volatile_write(filp);
- 	case F2FS_IOC_SHUTDOWN:
- 		return f2fs_ioc_shutdown(filp, arg);
--	case FITRIM:
--		return f2fs_ioc_fitrim(filp, arg);
- 	case FS_IOC_SET_ENCRYPTION_POLICY:
- 		return f2fs_ioc_set_encryption_policy(filp, arg);
- 	case FS_IOC_GET_ENCRYPTION_POLICY:
-@@ -4405,7 +4392,6 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_RELEASE_VOLATILE_WRITE:
- 	case F2FS_IOC_ABORT_VOLATILE_WRITE:
- 	case F2FS_IOC_SHUTDOWN:
--	case FITRIM:
- 	case FS_IOC_SET_ENCRYPTION_POLICY:
- 	case FS_IOC_GET_ENCRYPTION_PWSALT:
- 	case FS_IOC_GET_ENCRYPTION_POLICY:
-@@ -4461,4 +4447,5 @@ const struct file_operations f2fs_file_operations = {
- #endif
- 	.splice_read	= generic_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
-+	.fitrim		= f2fs_ioc_fitrim,
- };
+Well, removal of added knobs is more or less out of question as it can
+break some userspace. Similarly making them no-op is problematic unless we
+are pretty certain it cannot break some existing setup. That's why we have
+to think twice (or better three times ;) before adding any knobs. Also
+honestly the knobs you suggest will be pretty hard to tune when there are
+multiple cgroups with writeback control involved (which can be affected by
+the same problems you observe as well). So I agree with Miklos that this is
+not the right way to go. Speaking of tunables, did you try tuning
+/sys/devices/virtual/bdi/<fuse-bdi>/min_ratio? I suspect that may
+workaround your problems...
+
+Looking into your original report and tracing you did (thanks for that,
+really useful), it seems that the problem is that writeback bandwidth is
+updated at most every 200ms (more frequent calls are just ignored) and are
+triggered only from balance_dirty_pages() (happen when pages are dirtied) and
+inode writeback code so if the workload tends to have short spikes of activity
+and extended periods of quiet time, then writeback bandwidth may indeed be
+seriously miscomputed because we just won't update writeback throughput
+after most of writeback has happened as you observed.
+
+I think the fix for this can be relatively simple. We just need to make
+sure we update writeback bandwidth reasonably quickly after the IO
+finishes. I'll write a patch and see if it helps.
+
+								Honza
 -- 
-2.20.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
