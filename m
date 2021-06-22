@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 324CE3B0BA4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 19:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0408D3B0BB0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 19:45:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232049AbhFVRrG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 13:47:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34510 "EHLO
+        id S232444AbhFVRrN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 13:47:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbhFVRrF (ORCPT
+        with ESMTP id S232276AbhFVRrH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 13:47:05 -0400
-Received: from forwardcorp1p.mail.yandex.net (forwardcorp1p.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b6:217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A04C061574;
-        Tue, 22 Jun 2021 10:44:49 -0700 (PDT)
-Received: from sas1-ec30c78b6c5b.qloud-c.yandex.net (sas1-ec30c78b6c5b.qloud-c.yandex.net [IPv6:2a02:6b8:c14:2704:0:640:ec30:c78b])
-        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id 6C46A2E1553;
-        Tue, 22 Jun 2021 20:44:47 +0300 (MSK)
+        Tue, 22 Jun 2021 13:47:07 -0400
+Received: from forwardcorp1j.mail.yandex.net (forwardcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::183])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F42C061760;
+        Tue, 22 Jun 2021 10:44:50 -0700 (PDT)
+Received: from sas1-6b1512233ef6.qloud-c.yandex.net (sas1-6b1512233ef6.qloud-c.yandex.net [IPv6:2a02:6b8:c14:44af:0:640:6b15:1223])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 1EB182E15CC;
+        Tue, 22 Jun 2021 20:44:48 +0300 (MSK)
 Received: from sas2-d40aa8807eff.qloud-c.yandex.net (sas2-d40aa8807eff.qloud-c.yandex.net [2a02:6b8:c08:b921:0:640:d40a:a880])
-        by sas1-ec30c78b6c5b.qloud-c.yandex.net (mxbackcorp/Yandex) with ESMTP id goxaxBoq76-ik0i271k;
+        by sas1-6b1512233ef6.qloud-c.yandex.net (mxbackcorp/Yandex) with ESMTP id 0SSY8nu3ji-ilR0adjO;
         Tue, 22 Jun 2021 20:44:47 +0300
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1624383887; bh=+YqxTY7Eo+8LCYybYFqFMIp93s2mcKKzPT9SUzNKvCE=;
+        t=1624383887; bh=ZLHE8QHLxRrL88TRcmUIJH0g8eJWAs/5r4xHoNQKtiw=;
         h=Message-Id:References:Date:Subject:To:From:In-Reply-To:Cc;
-        b=V3GOSBatmT1SuHMKLqDM+cwFaA74rmJ3eMT7+AEEnI8lVphTvRsZ2fn/wnTCilKOm
-         9S8w3ps/BbF0q2vgL0y9DYUQJ+YfLNql4vQHnU8Q0+qVeCiKrveSgJ3DaJQ7PHQme2
-         3Rz/5tFsHfWMFK6bvgxJUyZyrKYxqrzuBpjVuO84=
-Authentication-Results: sas1-ec30c78b6c5b.qloud-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+        b=iK5wrIIYuxA9/9oNjpR33L7ymCPdzBBstvH7owFxq4NxUQpc8dzwNauhKsDb74NoH
+         O/fU9IO4qJxds6wmz19DZKqqRogzrgqZPp2WwqsRqvuxLzTZcrV/Gvmdb8EdXfisgh
+         0YB8yKGHFVrYE3mMKtr0B2RRJjy6nbV5HoyaxFHI=
+Authentication-Results: sas1-6b1512233ef6.qloud-c.yandex.net; dkim=pass header.i=@yandex-team.ru
 Received: from warwish-linux.sas.yp-c.yandex.net (warwish-linux.sas.yp-c.yandex.net [2a02:6b8:c1b:2920:0:696:cc9e:0])
-        by sas2-d40aa8807eff.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id gVbf2yAtam-ik9m1UDE;
-        Tue, 22 Jun 2021 20:44:46 +0300
+        by sas2-d40aa8807eff.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id gVbf2yAtam-il9m3fF1;
+        Tue, 22 Jun 2021 20:44:47 +0300
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (Client certificate not present)
 From:   Anton Suvorov <warwish@yandex-team.ru>
@@ -38,9 +38,9 @@ To:     willy@infradead.org
 Cc:     dmtrmonakhov@yandex-team.ru, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         viro@zeniv.linux.org.uk, warwish@yandex-team.ru
-Subject: [PATCH v2 04/10] dm: reduce stack footprint dealing with block device names
-Date:   Tue, 22 Jun 2021 20:44:18 +0300
-Message-Id: <20210622174424.136960-5-warwish@yandex-team.ru>
+Subject: [PATCH v2 05/10] block: reduce stack footprint dealing with block device names
+Date:   Tue, 22 Jun 2021 20:44:19 +0300
+Message-Id: <20210622174424.136960-6-warwish@yandex-team.ru>
 In-Reply-To: <20210622174424.136960-1-warwish@yandex-team.ru>
 References: <YLe9eDbG2c/rVjyu@casper.infradead.org>
  <20210622174424.136960-1-warwish@yandex-team.ru>
@@ -52,303 +52,244 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Stack usage reduced (measured with allyesconfig):
 
-./drivers/md/dm-cache-target.c	cache_ctr	392	328	-64
-./drivers/md/dm-cache-target.c	cache_io_hints	208	72	-136
-./drivers/md/dm-clone-target.c	clone_ctr	416	352	-64
-./drivers/md/dm-clone-target.c	clone_io_hints	216	80	-136
-./drivers/md/dm-crypt.c	crypt_convert_block_aead	408	272	-136
-./drivers/md/dm-crypt.c	kcryptd_async_done	192	56	-136
-./drivers/md/dm-integrity.c	integrity_metadata	872	808	-64
-./drivers/md/dm-mpath.c	parse_priority_group	368	304	-64
-./drivers/md/dm-table.c	device_area_is_invalid	216	80	-136
-./drivers/md/dm-table.c	dm_set_device_limits	200	72	-128
-./drivers/md/dm-thin.c	pool_io_hints	216	80	-136
+./block/blk-core.c	submit_bio_checks	248	112	-136
+./block/blk-lib.c	__blkdev_issue_discard	240	104	-136
+./block/blk-settings.c	disk_stack_limits	256	192	-64
+./block/partitions/amiga.c	amiga_partition	424	368	-56
+./block/partitions/sgi.c	sgi_partition	352	288	-64
+./block/partitions/sun.c	sun_partition	392	328	-64
+./drivers/block/drbd/drbd_req.c	drbd_report_io_error	200	72	-128
+./drivers/block/pktcdvd.c	pkt_seq_show	288	224	-64
+./drivers/block/pktcdvd.c	pkt_setup_dev	272	136	-136
+./drivers/block/pktcdvd.c	pkt_submit_bio	288	224	-64
 
 Signed-off-by: Anton Suvorov <warwish@yandex-team.ru>
 ---
- drivers/md/dm-cache-target.c | 10 ++++------
- drivers/md/dm-clone-target.c | 10 ++++------
- drivers/md/dm-crypt.c        |  6 ++----
- drivers/md/dm-integrity.c    |  4 ++--
- drivers/md/dm-mpath.c        |  5 +----
- drivers/md/dm-table.c        | 34 ++++++++++++++++------------------
- drivers/md/dm-thin.c         |  8 +++-----
- 7 files changed, 32 insertions(+), 45 deletions(-)
+ block/blk-core.c         | 12 ++++--------
+ block/blk-lib.c          |  5 +----
+ block/blk-settings.c     |  7 ++-----
+ block/partitions/amiga.c | 10 +++-------
+ block/partitions/sgi.c   |  4 +---
+ block/partitions/sun.c   |  4 +---
+ drivers/block/pktcdvd.c  | 13 ++++---------
+ 7 files changed, 16 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
-index 6ab01ff25747..4c0230dcec71 100644
---- a/drivers/md/dm-cache-target.c
-+++ b/drivers/md/dm-cache-target.c
-@@ -2093,7 +2093,6 @@ static int parse_metadata_dev(struct cache_args *ca, struct dm_arg_set *as,
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 514838ccab2d..de71fa115078 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -649,11 +649,9 @@ EXPORT_SYMBOL(blk_put_request);
+ 
+ static void handle_bad_sector(struct bio *bio, sector_t maxsector)
  {
- 	int r;
- 	sector_t metadata_dev_size;
 -	char b[BDEVNAME_SIZE];
- 
- 	if (!at_least_one_arg(as, error))
- 		return -EINVAL;
-@@ -2107,8 +2106,8 @@ static int parse_metadata_dev(struct cache_args *ca, struct dm_arg_set *as,
- 
- 	metadata_dev_size = get_dev_size(ca->metadata_dev);
- 	if (metadata_dev_size > DM_CACHE_METADATA_MAX_SECTORS_WARNING)
--		DMWARN("Metadata device %s is larger than %u sectors: excess space will not be used.",
--		       bdevname(ca->metadata_dev->bdev, b), THIN_METADATA_MAX_SECTORS);
-+		DMWARN("Metadata device %pg is larger than %u sectors: excess space will not be used.",
-+		       ca->metadata_dev->bdev, THIN_METADATA_MAX_SECTORS);
- 
- 	return 0;
- }
-@@ -3399,7 +3398,6 @@ static void disable_passdown_if_not_supported(struct cache *cache)
- 	struct block_device *origin_bdev = cache->origin_dev->bdev;
- 	struct queue_limits *origin_limits = &bdev_get_queue(origin_bdev)->limits;
- 	const char *reason = NULL;
--	char buf[BDEVNAME_SIZE];
- 
- 	if (!cache->features.discard_passdown)
- 		return;
-@@ -3411,8 +3409,8 @@ static void disable_passdown_if_not_supported(struct cache *cache)
- 		reason = "max discard sectors smaller than a block";
- 
- 	if (reason) {
--		DMWARN("Origin device (%s) %s: Disabling discard passdown.",
--		       bdevname(origin_bdev, buf), reason);
-+		DMWARN("Origin device (%pg) %s: Disabling discard passdown.",
-+		       origin_bdev, reason);
- 		cache->features.discard_passdown = false;
- 	}
- }
-diff --git a/drivers/md/dm-clone-target.c b/drivers/md/dm-clone-target.c
-index a90bdf9b2ca6..10e2e8d8fbec 100644
---- a/drivers/md/dm-clone-target.c
-+++ b/drivers/md/dm-clone-target.c
-@@ -1677,7 +1677,6 @@ static int parse_metadata_dev(struct clone *clone, struct dm_arg_set *as, char *
- {
- 	int r;
- 	sector_t metadata_dev_size;
--	char b[BDEVNAME_SIZE];
- 
- 	r = dm_get_device(clone->ti, dm_shift_arg(as), FMODE_READ | FMODE_WRITE,
- 			  &clone->metadata_dev);
-@@ -1688,8 +1687,8 @@ static int parse_metadata_dev(struct clone *clone, struct dm_arg_set *as, char *
- 
- 	metadata_dev_size = get_dev_size(clone->metadata_dev);
- 	if (metadata_dev_size > DM_CLONE_METADATA_MAX_SECTORS_WARNING)
--		DMWARN("Metadata device %s is larger than %u sectors: excess space will not be used.",
--		       bdevname(clone->metadata_dev->bdev, b), DM_CLONE_METADATA_MAX_SECTORS);
-+		DMWARN("Metadata device %pg is larger than %u sectors: excess space will not be used.",
-+		       clone->metadata_dev->bdev, DM_CLONE_METADATA_MAX_SECTORS);
- 
- 	return 0;
- }
-@@ -2028,7 +2027,6 @@ static void disable_passdown_if_not_supported(struct clone *clone)
- 	struct block_device *dest_dev = clone->dest_dev->bdev;
- 	struct queue_limits *dest_limits = &bdev_get_queue(dest_dev)->limits;
- 	const char *reason = NULL;
--	char buf[BDEVNAME_SIZE];
- 
- 	if (!test_bit(DM_CLONE_DISCARD_PASSDOWN, &clone->flags))
- 		return;
-@@ -2039,8 +2037,8 @@ static void disable_passdown_if_not_supported(struct clone *clone)
- 		reason = "max discard sectors smaller than a region";
- 
- 	if (reason) {
--		DMWARN("Destination device (%s) %s: Disabling discard passdown.",
--		       bdevname(dest_dev, buf), reason);
-+		DMWARN("Destination device (%pg) %s: Disabling discard passdown.",
-+		       dest_dev, reason);
- 		clear_bit(DM_CLONE_DISCARD_PASSDOWN, &clone->flags);
- 	}
- }
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index 50f4cbd600d5..719137d41f3d 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -1361,8 +1361,7 @@ static int crypt_convert_block_aead(struct crypt_config *cc,
- 	}
- 
- 	if (r == -EBADMSG) {
--		char b[BDEVNAME_SIZE];
--		DMERR_LIMIT("%s: INTEGRITY AEAD ERROR, sector %llu", bio_devname(ctx->bio_in, b),
-+		DMERR_LIMIT("%pg: INTEGRITY AEAD ERROR, sector %llu", ctx->bio_in->bi_bdev,
- 			    (unsigned long long)le64_to_cpu(*sector));
- 	}
- 
-@@ -2172,8 +2171,7 @@ static void kcryptd_async_done(struct crypto_async_request *async_req,
- 		error = cc->iv_gen_ops->post(cc, org_iv_of_dmreq(cc, dmreq), dmreq);
- 
- 	if (error == -EBADMSG) {
--		char b[BDEVNAME_SIZE];
--		DMERR_LIMIT("%s: INTEGRITY AEAD ERROR, sector %llu", bio_devname(ctx->bio_in, b),
-+		DMERR_LIMIT("%pg: INTEGRITY AEAD ERROR, sector %llu", ctx->bio_in->bi_bdev,
- 			    (unsigned long long)le64_to_cpu(*org_sector_of_dmreq(cc, dmreq)));
- 		io->error = BLK_STS_PROTECTION;
- 	} else if (error < 0)
-diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
-index 20f2510db1f6..d2fec41635ff 100644
---- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -1781,8 +1781,8 @@ static void integrity_metadata(struct work_struct *w)
- 						checksums_ptr - checksums, dio->op == REQ_OP_READ ? TAG_CMP : TAG_WRITE);
- 			if (unlikely(r)) {
- 				if (r > 0) {
--					char b[BDEVNAME_SIZE];
--					DMERR_LIMIT("%s: Checksum failed at sector 0x%llx", bio_devname(bio, b),
-+					DMERR_LIMIT("%pg: Checksum failed at sector 0x%llx",
-+						    bio->bi_bdev,
- 						    (sector - ((r + ic->tag_size - 1) / ic->tag_size)));
- 					r = -EILSEQ;
- 					atomic64_inc(&ic->number_of_mismatches);
-diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
-index bced42f082b0..8d3ec771bb64 100644
---- a/drivers/md/dm-mpath.c
-+++ b/drivers/md/dm-mpath.c
-@@ -900,10 +900,7 @@ static int setup_scsi_dh(struct block_device *bdev, struct multipath *m,
- 	if (m->hw_handler_name) {
- 		r = scsi_dh_attach(q, m->hw_handler_name);
- 		if (r == -EBUSY) {
--			char b[BDEVNAME_SIZE];
 -
--			printk(KERN_INFO "dm-mpath: retaining handler on device %s\n",
--			       bdevname(bdev, b));
-+			pr_info("dm-mpath: retaining handler on device %pg\n", bdev);
- 			goto retain;
- 		}
- 		if (r < 0) {
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 0543cdf89e92..a9ce74b75990 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -230,15 +230,14 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
- 		i_size_read(bdev->bd_inode) >> SECTOR_SHIFT;
- 	unsigned short logical_block_size_sectors =
- 		limits->logical_block_size >> SECTOR_SHIFT;
--	char b[BDEVNAME_SIZE];
- 
- 	if (!dev_size)
- 		return 0;
- 
- 	if ((start >= dev_size) || (start + len > dev_size)) {
--		DMWARN("%s: %s too small for target: "
-+		DMWARN("%s: %pg too small for target: "
- 		       "start=%llu, len=%llu, dev_size=%llu",
--		       dm_device_name(ti->table->md), bdevname(bdev, b),
-+		       dm_device_name(ti->table->md), bdev,
- 		       (unsigned long long)start,
- 		       (unsigned long long)len,
- 		       (unsigned long long)dev_size);
-@@ -253,10 +252,10 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
- 		unsigned int zone_sectors = bdev_zone_sectors(bdev);
- 
- 		if (start & (zone_sectors - 1)) {
--			DMWARN("%s: start=%llu not aligned to h/w zone size %u of %s",
-+			DMWARN("%s: start=%llu not aligned to h/w zone size %u of %pg",
- 			       dm_device_name(ti->table->md),
- 			       (unsigned long long)start,
--			       zone_sectors, bdevname(bdev, b));
-+			       zone_sectors, bdev);
- 			return 1;
- 		}
- 
-@@ -270,10 +269,10 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
- 		 * the sector range.
- 		 */
- 		if (len & (zone_sectors - 1)) {
--			DMWARN("%s: len=%llu not aligned to h/w zone size %u of %s",
-+			DMWARN("%s: len=%llu not aligned to h/w zone size %u of %pg",
- 			       dm_device_name(ti->table->md),
- 			       (unsigned long long)len,
--			       zone_sectors, bdevname(bdev, b));
-+			       zone_sectors, bdev);
- 			return 1;
- 		}
- 	}
-@@ -282,20 +281,20 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
- 		return 0;
- 
- 	if (start & (logical_block_size_sectors - 1)) {
--		DMWARN("%s: start=%llu not aligned to h/w "
--		       "logical block size %u of %s",
-+		DMWARN("%s: start=%llu not aligned to h/w logical block size %u of %pg",
- 		       dm_device_name(ti->table->md),
- 		       (unsigned long long)start,
--		       limits->logical_block_size, bdevname(bdev, b));
-+		       limits->logical_block_size,
-+		       bdev);
- 		return 1;
- 	}
- 
- 	if (len & (logical_block_size_sectors - 1)) {
--		DMWARN("%s: len=%llu not aligned to h/w "
--		       "logical block size %u of %s",
-+		DMWARN("%s: len=%llu not aligned to h/w logical block size %u of %pg",
- 		       dm_device_name(ti->table->md),
- 		       (unsigned long long)len,
--		       limits->logical_block_size, bdevname(bdev, b));
-+		       limits->logical_block_size,
-+		       bdev);
- 		return 1;
- 	}
- 
-@@ -400,20 +399,19 @@ static int dm_set_device_limits(struct dm_target *ti, struct dm_dev *dev,
- 	struct queue_limits *limits = data;
- 	struct block_device *bdev = dev->bdev;
- 	struct request_queue *q = bdev_get_queue(bdev);
--	char b[BDEVNAME_SIZE];
- 
- 	if (unlikely(!q)) {
--		DMWARN("%s: Cannot set limits for nonexistent device %s",
--		       dm_device_name(ti->table->md), bdevname(bdev, b));
-+		DMWARN("%s: Cannot set limits for nonexistent device %pg",
-+		       dm_device_name(ti->table->md), bdev);
- 		return 0;
- 	}
- 
- 	if (blk_stack_limits(limits, &q->limits,
- 			get_start_sect(bdev) + start) < 0)
--		DMWARN("%s: adding target device %s caused an alignment inconsistency: "
-+		DMWARN("%s: adding target device %pg caused an alignment inconsistency: "
- 		       "physical_block_size=%u, logical_block_size=%u, "
- 		       "alignment_offset=%u, start=%llu",
--		       dm_device_name(ti->table->md), bdevname(bdev, b),
-+		       dm_device_name(ti->table->md), bdev,
- 		       q->limits.physical_block_size,
- 		       q->limits.logical_block_size,
- 		       q->limits.alignment_offset,
-diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
-index 985baee3a678..4ffe750341ad 100644
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -2834,7 +2834,6 @@ static void disable_passdown_if_not_supported(struct pool_c *pt)
- 	struct block_device *data_bdev = pt->data_dev->bdev;
- 	struct queue_limits *data_limits = &bdev_get_queue(data_bdev)->limits;
- 	const char *reason = NULL;
--	char buf[BDEVNAME_SIZE];
- 
- 	if (!pt->adjusted_pf.discard_passdown)
- 		return;
-@@ -2846,7 +2845,7 @@ static void disable_passdown_if_not_supported(struct pool_c *pt)
- 		reason = "max discard sectors smaller than a block";
- 
- 	if (reason) {
--		DMWARN("Data device (%s) %s: Disabling discard passdown.", bdevname(data_bdev, buf), reason);
-+		DMWARN("Data device (%pg) %s: Disabling discard passdown.", data_bdev, reason);
- 		pt->adjusted_pf.discard_passdown = false;
- 	}
+ 	pr_info_ratelimited("attempt to access beyond end of device\n"
+-			    "%s: rw=%d, want=%llu, limit=%llu\n",
+-			    bio_devname(bio, b), bio->bi_opf,
++			    "%pg: rw=%d, want=%llu, limit=%llu\n",
++			    bio->bi_bdev, bio->bi_opf,
+ 			    bio_end_sector(bio), maxsector);
  }
-@@ -3218,11 +3217,10 @@ static sector_t get_dev_size(struct block_device *bdev)
- static void warn_if_metadata_device_too_big(struct block_device *bdev)
+ 
+@@ -695,14 +693,12 @@ static inline bool should_fail_request(struct block_device *part,
+ static inline bool bio_check_ro(struct bio *bio)
  {
- 	sector_t metadata_dev_size = get_dev_size(bdev);
--	char buffer[BDEVNAME_SIZE];
+ 	if (op_is_write(bio_op(bio)) && bdev_read_only(bio->bi_bdev)) {
+-		char b[BDEVNAME_SIZE];
+-
+ 		if (op_is_flush(bio->bi_opf) && !bio_sectors(bio))
+ 			return false;
  
- 	if (metadata_dev_size > THIN_METADATA_MAX_SECTORS_WARNING)
--		DMWARN("Metadata device %s is larger than %u sectors: excess space will not be used.",
--		       bdevname(bdev, buffer), THIN_METADATA_MAX_SECTORS);
-+		DMWARN("Metadata device %pg is larger than %u sectors: excess space will not be used.",
-+		       bdev, THIN_METADATA_MAX_SECTORS);
- }
+ 		WARN_ONCE(1,
+-		       "Trying to write to read-only block-device %s (partno %d)\n",
+-			bio_devname(bio, b), bio->bi_bdev->bd_partno);
++		       "Trying to write to read-only block-device %pg (partno %d)\n",
++			bio->bi_bdev, bio->bi_bdev->bd_partno);
+ 		/* Older lvm-tools actually trigger this */
+ 		return false;
+ 	}
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 7b256131b20b..6fe52f7f3f48 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -49,10 +49,7 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
  
- static sector_t get_metadata_dev_size(struct block_device *bdev)
+ 	/* In case the discard granularity isn't set by buggy device driver */
+ 	if (WARN_ON_ONCE(!q->limits.discard_granularity)) {
+-		char dev_name[BDEVNAME_SIZE];
+-
+-		bdevname(bdev, dev_name);
+-		pr_err_ratelimited("%s: Error: discard_granularity is 0.\n", dev_name);
++		pr_err_ratelimited("%pg: Error: discard_granularity is 0.\n", bdev);
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+diff --git a/block/blk-settings.c b/block/blk-settings.c
+index 902c40d67120..01972174b1b9 100644
+--- a/block/blk-settings.c
++++ b/block/blk-settings.c
+@@ -662,13 +662,10 @@ void disk_stack_limits(struct gendisk *disk, struct block_device *bdev,
+ 
+ 	if (blk_stack_limits(&t->limits, &bdev_get_queue(bdev)->limits,
+ 			get_start_sect(bdev) + (offset >> 9)) < 0) {
+-		char top[BDEVNAME_SIZE], bottom[BDEVNAME_SIZE];
++		char top[BDEVNAME_SIZE];
+ 
+ 		disk_name(disk, 0, top);
+-		bdevname(bdev, bottom);
+-
+-		printk(KERN_NOTICE "%s: Warning: Device %s is misaligned\n",
+-		       top, bottom);
++		pr_notice("%s: Warning: Device %pg is misaligned\n", top, bdev);
+ 	}
+ 
+ 	blk_queue_update_readahead(disk->queue);
+diff --git a/block/partitions/amiga.c b/block/partitions/amiga.c
+index 9526491d9aed..2fa9a10a8635 100644
+--- a/block/partitions/amiga.c
++++ b/block/partitions/amiga.c
+@@ -34,15 +34,13 @@ int amiga_partition(struct parsed_partitions *state)
+ 	int start_sect, nr_sects, blk, part, res = 0;
+ 	int blksize = 1;	/* Multiplier for disk block size */
+ 	int slot = 1;
+-	char b[BDEVNAME_SIZE];
+ 
+ 	for (blk = 0; ; blk++, put_dev_sector(sect)) {
+ 		if (blk == RDB_ALLOCATION_LIMIT)
+ 			goto rdb_done;
+ 		data = read_part_sector(state, blk, &sect);
+ 		if (!data) {
+-			pr_err("Dev %s: unable to read RDB block %d\n",
+-			       bdevname(state->bdev, b), blk);
++			pr_err("Dev %pg: unable to read RDB block %d\n", state->bdev, blk);
+ 			res = -1;
+ 			goto rdb_done;
+ 		}
+@@ -63,8 +61,7 @@ int amiga_partition(struct parsed_partitions *state)
+ 			break;
+ 		}
+ 
+-		pr_err("Dev %s: RDB in block %d has bad checksum\n",
+-		       bdevname(state->bdev, b), blk);
++		pr_err("Dev %pg: RDB in block %d has bad checksum\n", state->bdev, blk);
+ 	}
+ 
+ 	/* blksize is blocks per 512 byte standard block */
+@@ -83,8 +80,7 @@ int amiga_partition(struct parsed_partitions *state)
+ 		blk *= blksize;	/* Read in terms partition table understands */
+ 		data = read_part_sector(state, blk, &sect);
+ 		if (!data) {
+-			pr_err("Dev %s: unable to read partition block %d\n",
+-			       bdevname(state->bdev, b), blk);
++			pr_err("Dev %pg: unable to read partition block %d\n", state->bdev, blk);
+ 			res = -1;
+ 			goto rdb_done;
+ 		}
+diff --git a/block/partitions/sgi.c b/block/partitions/sgi.c
+index 4273f1bb0515..9305e0e0bdd9 100644
+--- a/block/partitions/sgi.c
++++ b/block/partitions/sgi.c
+@@ -43,7 +43,6 @@ int sgi_partition(struct parsed_partitions *state)
+ 	Sector sect;
+ 	struct sgi_disklabel *label;
+ 	struct sgi_partition *p;
+-	char b[BDEVNAME_SIZE];
+ 
+ 	label = read_part_sector(state, 0, &sect);
+ 	if (!label)
+@@ -62,8 +61,7 @@ int sgi_partition(struct parsed_partitions *state)
+ 		csum += be32_to_cpu(cs);
+ 	}
+ 	if(csum) {
+-		printk(KERN_WARNING "Dev %s SGI disklabel: csum bad, label corrupted\n",
+-		       bdevname(state->bdev, b));
++		pr_warn("Dev %pg SGI disklabel: csum bad, label corrupted\n", state->bdev);
+ 		put_dev_sector(sect);
+ 		return 0;
+ 	}
+diff --git a/block/partitions/sun.c b/block/partitions/sun.c
+index 47dc53eccf77..2aaa86f95c9f 100644
+--- a/block/partitions/sun.c
++++ b/block/partitions/sun.c
+@@ -65,7 +65,6 @@ int sun_partition(struct parsed_partitions *state)
+ 	} * label;
+ 	struct sun_partition *p;
+ 	unsigned long spc;
+-	char b[BDEVNAME_SIZE];
+ 	int use_vtoc;
+ 	int nparts;
+ 
+@@ -85,8 +84,7 @@ int sun_partition(struct parsed_partitions *state)
+ 	for (csum = 0; ush >= ((__be16 *) label);)
+ 		csum ^= *ush--;
+ 	if (csum) {
+-		printk("Dev %s Sun disklabel: Csum bad, label corrupted\n",
+-		       bdevname(state->bdev, b));
++		pr_info("Dev %pg Sun disklabel: Csum bad, label corrupted\n", state->bdev);
+ 		put_dev_sector(sect);
+ 		return 0;
+ 	}
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index f69b5c69c2a6..6191dbf17fb2 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -2405,14 +2405,13 @@ static void pkt_make_request_write(struct request_queue *q, struct bio *bio)
+ static blk_qc_t pkt_submit_bio(struct bio *bio)
+ {
+ 	struct pktcdvd_device *pd;
+-	char b[BDEVNAME_SIZE];
+ 	struct bio *split;
+ 
+ 	blk_queue_split(&bio);
+ 
+ 	pd = bio->bi_bdev->bd_disk->queue->queuedata;
+ 	if (!pd) {
+-		pr_err("%s incorrect request queue\n", bio_devname(bio, b));
++		pr_err("%pg incorrect request queue\n", bio->bi_bdev);
+ 		goto end_io;
+ 	}
+ 
+@@ -2476,11 +2475,9 @@ static int pkt_seq_show(struct seq_file *m, void *p)
+ {
+ 	struct pktcdvd_device *pd = m->private;
+ 	char *msg;
+-	char bdev_buf[BDEVNAME_SIZE];
+ 	int states[PACKET_NUM_STATES];
+ 
+-	seq_printf(m, "Writer %s mapped to %s:\n", pd->name,
+-		   bdevname(pd->bdev, bdev_buf));
++	seq_printf(m, "Writer %s mapped to %pg:\n", pd->name, pd->bdev);
+ 
+ 	seq_printf(m, "\nSettings:\n");
+ 	seq_printf(m, "\tpacket size:\t\t%dkB\n", pd->settings.size / 2);
+@@ -2537,7 +2534,6 @@ static int pkt_seq_show(struct seq_file *m, void *p)
+ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
+ {
+ 	int i;
+-	char b[BDEVNAME_SIZE];
+ 	struct block_device *bdev;
+ 
+ 	if (pd->pkt_dev == dev) {
+@@ -2549,8 +2545,7 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
+ 		if (!pd2)
+ 			continue;
+ 		if (pd2->bdev->bd_dev == dev) {
+-			pkt_err(pd, "%s already setup\n",
+-				bdevname(pd2->bdev, b));
++			pkt_err(pd, "%pg already setup\n", pd2->bdev);
+ 			return -EBUSY;
+ 		}
+ 		if (pd2->pkt_dev == dev) {
+@@ -2583,7 +2578,7 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
+ 	}
+ 
+ 	proc_create_single_data(pd->name, 0, pkt_proc, pkt_seq_show, pd);
+-	pkt_dbg(1, pd, "writer mapped to %s\n", bdevname(bdev, b));
++	pkt_dbg(1, pd, "writer mapped to %pg\n", bdev);
+ 	return 0;
+ 
+ out_mem:
 -- 
 2.25.1
 
