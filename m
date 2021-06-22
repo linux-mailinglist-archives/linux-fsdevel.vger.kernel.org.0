@@ -2,96 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 267E33B0B89
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 19:37:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B459B3B0B93
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 19:40:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231834AbhFVRjW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 13:39:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60946 "EHLO
+        id S232377AbhFVRmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 13:42:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbhFVRjV (ORCPT
+        with ESMTP id S232347AbhFVRmW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 13:39:21 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 834A0C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 10:37:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=nQCqxnM73V29A4V7UB3NTuQMxcsvROpIgasfOwps6yA=; b=Nf+roimG7RiELIHWIphRFWUdhh
-        wYsDHlEJgHOu3f4lA7gUxnog0VeZluRWY7xdJMMfhYqB2FAKqHBs84dJ2Vf76P8bnt3I+n4dVYeWP
-        thZjey9SYjev//vfllF514H7neiXLkEwlh+93f0cAn7aUwLjXAPsNZZAGZO6poYe1caBKOKhB5sPu
-        t+6KKmkn+PTNBQXrKLLDu8QiPOcOc5o8Zj9XxqxvXe+XbOqtef/c7UzRoMQFmTUGH1WxtQDS1c55H
-        4ZkOKQ8K8kZH/Whlzva/hDrZBuWK5dSWozkRzd4WBBaJXw22OXfPtaUkOgpP7pRA8nOYty7e/srya
-        myQnAeIw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvkKJ-00EYnn-Sp; Tue, 22 Jun 2021 17:36:51 +0000
-Date:   Tue, 22 Jun 2021 18:36:43 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Philipp Falk <philipp.falk@thinkparq.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: Throughput drop and high CPU load on fast NVMe drives
-Message-ID: <YNIfq8dCLEu/Wkc0@casper.infradead.org>
-References: <YNIaztBNK+I5w44w@xps13>
+        Tue, 22 Jun 2021 13:42:22 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2203DC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 10:40:05 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id h15so18717183lfv.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 10:40:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=66ra9JcEZ0eBr3diwYDmK55iDML4YsZIlomivlL4MkM=;
+        b=BN8pfadh6kxcRjOo7eBRIxfB3TqOIMMpU5w6SViYi3IbWgrX9pxyb+0MIPuTThh/Uk
+         UI374oOHBtqpQVOc5/7Wjq62OSZlw+Cs0ZJ9RtNvwUC7DVtrhmo38JY5T8rAYwai72SJ
+         tm4pt9J7lEO2DOp7XU52ViFjgfM4TXiIVDMsU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=66ra9JcEZ0eBr3diwYDmK55iDML4YsZIlomivlL4MkM=;
+        b=VKXyBUPyBNOdGwcetlOLFzWdYmgovm9YZGdNMzAYXwSiR2wpRVk6jpB6O8b0Tp9sWZ
+         9FSTLt4ZAbfJii+48utrQHy7BZxvHL0BzmbpDGy/Fiy0ha5mbzrDpOvAni682ZDqVKRB
+         KpFq1zbtgPoedBLC3/hUUlqhtRe4MWbF4e4xeu42xQh87bdsoPOkohCAMBu2U+qZy507
+         KnyVAzSeZrRu5nofGY5k4k1QPlD2L+3Khw/xDs04Uf8iHzel1778nzVzg4B5veia0J+y
+         rct8GJKwZnBUg20fKyZc+o2DeHb5E19LKLGXYHsCwSpWd+ecR3SYUr/OVycqPQcHmerV
+         YiCg==
+X-Gm-Message-State: AOAM531CiO1YerUR/YqwP2Gz4n2MiomWtjaTZOyaHewhbpueLjP16yps
+        ATP9BuKbOLLriHyov61r67cESGQ1wj9aqpxQVUk=
+X-Google-Smtp-Source: ABdhPJzoT6eR62enIehY82gtPMQYstSTPj9cs7XyOzqOS970oKwMCszZA5Juzonbo8brJdpRYvU97Q==
+X-Received: by 2002:a05:6512:ba8:: with SMTP id b40mr4054808lfv.588.1624383603177;
+        Tue, 22 Jun 2021 10:40:03 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id n5sm2273695lft.139.2021.06.22.10.40.02
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jun 2021 10:40:02 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id r16so31288642ljk.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 10:40:02 -0700 (PDT)
+X-Received: by 2002:a2e:7813:: with SMTP id t19mr4167347ljc.411.1624383601833;
+ Tue, 22 Jun 2021 10:40:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YNIaztBNK+I5w44w@xps13>
+References: <3221175.1624375240@warthog.procyon.org.uk> <YNIBb5WPrk8nnKKn@zeniv-ca.linux.org.uk>
+ <YNIDdgn0m8d2a0P3@zeniv-ca.linux.org.uk> <YNIdJaKrNj5GoT7w@casper.infradead.org>
+In-Reply-To: <YNIdJaKrNj5GoT7w@casper.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 22 Jun 2021 10:39:46 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh=YxjEtTpYyhgypKmPJQ8eVLJ4qowmwbnG1bOU06_4Bg@mail.gmail.com>
+Message-ID: <CAHk-=wh=YxjEtTpYyhgypKmPJQ8eVLJ4qowmwbnG1bOU06_4Bg@mail.gmail.com>
+Subject: Re: Do we need to unrevert "fs: do not prefault sys_write() user
+ buffer pages"?
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        "Ted Ts'o" <tytso@mit.edu>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 07:15:58PM +0200, Philipp Falk wrote:
-> We are facing a performance issue on XFS and other filesystems running on
-> fast NVMe drives when reading large amounts of data through the page cache
-> with fio.
-> 
-> Streaming read performance starts off near the NVMe hardware limit until
-> around the total size of system memory worth of data has been read.
-> Performance then drops to around half the hardware limit and CPU load
-> increases significantly. Using perf, we were able to establish that most of
-> the CPU load is caused by a spin lock in native_queued_spin_lock_slowpath:
-[...]
-> When direct I/O is used, hardware level read throughput is sustained during
-> the entire experiment and CPU load stays low. Threads stay in D state most
-> of the time.
-> 
-> Very similar results are described around half-way through this article
-> [1].
-> 
-> Is this a known issue with the page cache and high throughput I/O? Is there
-> any tuning that can be applied to get around the CPU bottleneck? We have
-> tried disabling readahead on the drives, which lead to very bad throughput
-> (~-90%). Various other scheduler related tuning was tried as well but the
-> results were always similar.
+On Tue, Jun 22, 2021 at 10:26 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Tue, Jun 22, 2021 at 03:36:22PM +0000, Al Viro wrote:
+> >
+> > Note that the revert you propose is going to do fault-in anyway; we really can't
+> > avoid it.  The only thing it does is optimistically trying without that the
+> > first time around, which is going to be an overall loss exactly in "slow
+> > write_begin" case.  If source pages are absent, you'll get copyin fail;
+> > iov_iter_copy_from_user_atomic() (or its replacement) is disabling pagefaults
+> > itself.
+>
+> Let's not overstate the case.  I think for the vast majority of write()
+> calls, the data being written has recently been accessed.  So this
+> userspace access is unnecessary.
 
-Yes, this is a known issue.  Here's what's happening:
+Note that the fault_in_readable is very much necessary - the only
+question is whether it happens before the actual access, or after it
+in the "oh, it failed, need to retry" case.
 
- - The machine hits its low memory watermarks and starts trying to
-   reclaim.  There's one kswapd per node, so both nodes go to work
-   trying to reclaim memory (each kswapd tries to handle the memory
-   attached to its node)
- - But all the memory is allocated to the same file, so both kswapd
-   instances try to remove the pages from the same file, and necessarily
-   contend on the same spinlock.
- - The process trying to stream the file is also trying to acquire this
-   spinlock in order to add its newly-allocated pages to the file.
+There are two cases:
 
-What you can do is force the page cache to only allocate memory from the
-local node.  That means this workload will only use half the memory in
-the machine, but it's a streaming workload, so that shouldn't matter?
+ (a) the user page is there and accessible, and fault_in_readable
+isn't necessary
 
-The only problem is, I'm not sure what the user interface is to make
-that happen.  Here's what it looks like inside the kernel:
+ (b) not
 
-        if (cpuset_do_page_mem_spread()) {
-                unsigned int cpuset_mems_cookie;
-                do {
-                        cpuset_mems_cookie = read_mems_allowed_begin();
-                        n = cpuset_mem_spread_node();
-                        page = __alloc_pages_node(n, gfp, 0);
-                } while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
+and as you say, case (a) is generally the common one by far, although
+it will depend on the exact load (iow, (b) *could* be the common case:
+you can have situations where you mmap() things only to then write the
+mapping out, and then accesses will fault a lot).
 
-so it's something to do with cpusets?
+But if it's case (a), then the fault_in_readable is going to be pretty
+cheap. We're talking "tens of CPU cycles", unlikely to really be an
+issue.
 
+If the case is (b), then the cost is not actually the access at all,
+it's the *fault* and the retry. Now we're talking easily thousands of
+cycles.
+
+And that's where it matters whether the fault_in_readable is before or
+after. If it's before the actual access, then you'll have just _one_
+fault, and it will handle the fault.
+
+If the fault_in_readable is only done in the allegedly unlikely
+faulting case and is _after_ the actual user space atomic access,
+you'll have *two* faults. First the copy_from_user_atomic() will
+fault, and return a partial result. But the page won't actually be
+populated, so then the fault_in_readable will have to fault _again_,
+in order to finally populate the page. And then we retry
+(successfully, except for the unbelievably rare case of racing with
+pageout) the actual copy_from_user_atomic().
+
+End result: doing the fault_in_readable "unnecessarily" at the
+beginning is likely the better optimization. It's basically free when
+it's not necessary, and it avoids an extra fault (and extra
+lock/unlock and retry) when it does end up faulting pages in.
+
+               Linus
