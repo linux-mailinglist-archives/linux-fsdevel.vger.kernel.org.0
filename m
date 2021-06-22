@@ -2,78 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3668F3B089C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 17:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E91223B08A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 17:20:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232101AbhFVPWC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 11:22:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232161AbhFVPWC (ORCPT
+        id S232195AbhFVPXF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 11:23:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57392 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232179AbhFVPXE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 11:22:02 -0400
-Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87923C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 08:19:46 -0700 (PDT)
-Received: by mail-ua1-x931.google.com with SMTP id a14so1048582uan.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 08:19:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+1rMSC6bfyssiBC2lFevCKq4BZR29aW1MU41M50I5as=;
-        b=U4s6uhp+Zsn+MRmOlmTJwRl6LHm4vOPvk1Ua3EyTPpDOxfUSbrx/4gG7pMc4cre7mg
-         cr0+kpyljYl8k+BcGFTS3ojGF+4W0g2TOTrTBGQcrMb1yYYA6v4NureH2QrvG9cI0qzT
-         qug45fKilhH8fZHh/fnHEtIFVZntQLAJFe6IE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+1rMSC6bfyssiBC2lFevCKq4BZR29aW1MU41M50I5as=;
-        b=L0ErVia7h/2oUQJmt0ylxq/TdxY6U0N5NZy8wZ2OYRJN6XuRU9wj3irwFvyyfWR7f/
-         1hhXVvAWJP/PmDEsS7mIfZtqehgf7JOGVIw74eXAcjgSpq7eCXkew/+hxJjvUJ3yyTuc
-         SEWwAaUVN0EqCdp4LVPfom+ZvaxznqOgfu+Y551A1H7XBEPJnZHn4C3JZNbzdVailp1q
-         hR79qX0TLkJOwXHbnPPEMygwdr2QDE5YO7Zy9CshFdf6MzjvCZk8LXqUSXNyUdfaMlMD
-         iGDs+xaV0/IdwpEZz5jRmqCUP4RQ2p262uYdCTJ4z8pJSUZlViGopiCJeoMJ2oKwSqYH
-         OHYA==
-X-Gm-Message-State: AOAM532vNBkZZxd6UGqXfZqJfZDzJNggu26ClFQtTqQGRxWbRcyeqIEA
-        tqSfeqA+7DlJUliConXyBxY43xSXWmRu+j40IltQCw==
-X-Google-Smtp-Source: ABdhPJxjSsFY+ZqSiCzxHg4KHDvzazgJIaykUjwy4KYJDdsjbD8bvHcEWuYzuYwH8Qqd5AZRarScDPBjE5CUo978YIg=
-X-Received: by 2002:ab0:2690:: with SMTP id t16mr4198951uao.9.1624375185694;
- Tue, 22 Jun 2021 08:19:45 -0700 (PDT)
+        Tue, 22 Jun 2021 11:23:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1624375248;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=d4qG1BgL83jc2NobbBwa+FD372Pv9PnyTc1bHAkSk00=;
+        b=KexJYrgOyLE/x9mCXzzX0oVPpax8uNG4x5SkrzWi+P7Ihj6OsQsufK9gTZOqxdmMfsZv2u
+        qBVytmBLlg3YBGMjDU46YdmGcpJzLdOyCEWc+8hZtg4qRGv2zuG+xyTRRfeIXO7S87YLBA
+        exWs4KYynVyM71Du1vv5l3bSowQGuWk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-148-_VBSvZdPObOO47vKxdHgvA-1; Tue, 22 Jun 2021 11:20:45 -0400
+X-MC-Unique: _VBSvZdPObOO47vKxdHgvA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7718591271;
+        Tue, 22 Jun 2021 15:20:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 64F19100F49F;
+        Tue, 22 Jun 2021 15:20:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Ted Ts'o <tytso@mit.edu>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
+        viro@zeniv.linux.org.uk, linux-mm@kvack.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Do we need to unrevert "fs: do not prefault sys_write() user buffer pages"?
 MIME-Version: 1.0
-References: <20210130085003.1392-1-changfengnan@vivo.com> <CAJfpegutK2HGYUtJOjvceULf2H=hoekNxUbcg=6Su6uteVmDLg@mail.gmail.com>
- <3e740389-9734-a959-a88a-3b1d54b59e22@vivo.com>
-In-Reply-To: <3e740389-9734-a959-a88a-3b1d54b59e22@vivo.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 22 Jun 2021 17:19:35 +0200
-Message-ID: <CAJfpegtes4CGM68Vj2GxmvK2S8D5sn4Pv_RKyXb33ye=pC+=cg@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: use newer inode info when writeback cache is enabled
-To:     Fengnan Chang <changfengnan@vivo.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3221174.1624375240.1@warthog.procyon.org.uk>
+Date:   Tue, 22 Jun 2021 16:20:40 +0100
+Message-ID: <3221175.1624375240@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 22 Jun 2021 at 14:25, Fengnan Chang <changfengnan@vivo.com> wrote:
->
-> Unh, it seems i_writecount not work.
-> If we modify file through lowerfs, i_writecount won't change, but the
-> size already changed.
-> For example:
-> echo "111" > /lowerfs/test
-> ls -l /upper/test
-> echo "2222" >> /lowerfs/test
-> ls -l /upper/test
->
-> So, can you describe your test enviroment? including kernel version and
-> fsx parameters, I will check it.
+Hi Linus,
 
-linux-5.13-rc5 + patch
-mkdir /tmp/test
-libfuse/example/passthrough_ll -ocache=always,writeback /mnt/fuse/
-fsx-linux -N 1000000 /mnt/fuse/tmp/test/fsx
+I've been looking at generic_perform_write() with an eye to adapting a version
+for network filesystems in general.  I'm wondering if it's actually safe or
+whether it needs 00a3d660cbac05af34cca149cb80fb611e916935 reverting, which is
+itself a revert of 998ef75ddb5709bbea0bf1506cd2717348a3c647.
 
-Thanks,
-Miklos
+Anyway, I was looking at this bit:
+
+	bytes = min_t(unsigned long, PAGE_SIZE - offset,
+					iov_iter_count(i));
+	...
+	if (unlikely(iov_iter_fault_in_readable(i, bytes))) {
+		status = -EFAULT;
+		break;
+	}
+
+	if (fatal_signal_pending(current)) {
+		status = -EINTR;
+		break;
+	}
+
+	status = a_ops->write_begin(file, mapping, pos, bytes, flags,
+					&page, &fsdata);
+	if (unlikely(status < 0))
+		break;
+
+	if (mapping_writably_mapped(mapping))
+		flush_dcache_page(page);
+
+	copied = iov_iter_copy_from_user_atomic(page, i, offset, bytes);
+
+
+and wondering if the iov_iter_fault_in_readable() is actually effective.  Yes,
+it can make sure that the page we're intending to modify is dragged into the
+pagecache and marked uptodate so that it can be read from, but is it possible
+for the page to then get reclaimed before we get to
+iov_iter_copy_from_user_atomic()?  a_ops->write_begin() could potentially take
+a long time, say if it has to go and get a lock/lease from a server.
+
+Also, I've been thinking about Willy's folio/THP stuff that allows bunches of
+pages to be glued together into single objects for efficiency.  This is
+problematic with the above code because the faultahead is limited to a maximum
+of PAGE_SIZE, but we might be wanting to modify a larger object than that.
+
+David
+
