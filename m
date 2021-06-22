@@ -2,145 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC2C63B047C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:30:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E163B0449
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 14:25:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231678AbhFVMdK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 08:33:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46254 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231848AbhFVMcw (ORCPT
+        id S231352AbhFVM1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 08:27:35 -0400
+Received: from mail-m121144.qiye.163.com ([115.236.121.144]:47640 "EHLO
+        mail-m121144.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229912AbhFVM1c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:32:52 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EEBDC061283;
-        Tue, 22 Jun 2021 05:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=FLBDLU12d7CAxsQeaj9DqiVCtCzlsRwt0+esfPUl8g4=; b=bvXSP1AAgdf7LMoH1Ohkt10WUi
-        kI82W+KPSi5j64NTa3tbBCwlhcWuzOq9/tKaqQZ0yZqwCIlEkLARReCgtIsAUugY47EkgsRIjvQXK
-        GSfE8STY/shX6rWNspv80Ut/pJuV5hWcQt6ndkILN7C3IBSok6GbM4sJn2Ax9Sej49b2hJQQBcHQH
-        C0qe2tErekLxcl7BfxuI4o50IT8x6TcK7gTshmU+rwkYg6sH3ZyHhlvMUCUtvCz4XLqJb/iHpGcBd
-        AEFA3AT/V2pJe4isjS2cWDR/I2JNCRTuiCr6TnE2O5CEQq7yr5Da3SQki8SLlW8doy2trKqdQMK8c
-        DZNC5v8Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvfWE-00EH7V-TJ; Tue, 22 Jun 2021 12:28:55 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     akpm@linux-foundation.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 17/46] mm/memcg: Convert mem_cgroup_track_foreign_dirty_slowpath() to folio
-Date:   Tue, 22 Jun 2021 13:15:22 +0100
-Message-Id: <20210622121551.3398730-18-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210622121551.3398730-1-willy@infradead.org>
-References: <20210622121551.3398730-1-willy@infradead.org>
+        Tue, 22 Jun 2021 08:27:32 -0400
+DKIM-Signature: a=rsa-sha256;
+        b=cvAf4iVjM2lX58rufT0Ljkzs53iairvQFR5fR3PrSoVbG+MxK5bBYHw8BRYAGfhAl5FdhhUkitL1OXAa73VHPPMqzyN0mR4EDyCupbZRQlyjCcxj/jKG5QtB3yCzgL3SE8Smez6NilrvjQGt+wvZ/5SKPZMuH+qahH0XYZv/vuc=;
+        c=relaxed/relaxed; s=default; d=vivo.com; v=1;
+        bh=EU5S1WPiblJSADqUm9fIJBjK6VEkY0WtsaZ1+glDnQM=;
+        h=date:mime-version:subject:message-id:from;
+Received: from [172.25.44.145] (unknown [58.251.74.232])
+        by mail-m121144.qiye.163.com (Hmail) with ESMTPA id 598B9AC020C;
+        Tue, 22 Jun 2021 20:25:12 +0800 (CST)
+Subject: Re: [PATCH v2] fuse: use newer inode info when writeback cache is
+ enabled
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org
+References: <20210130085003.1392-1-changfengnan@vivo.com>
+ <CAJfpegutK2HGYUtJOjvceULf2H=hoekNxUbcg=6Su6uteVmDLg@mail.gmail.com>
+From:   Fengnan Chang <changfengnan@vivo.com>
+Message-ID: <3e740389-9734-a959-a88a-3b1d54b59e22@vivo.com>
+Date:   Tue, 22 Jun 2021 20:25:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJfpegutK2HGYUtJOjvceULf2H=hoekNxUbcg=6Su6uteVmDLg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
+        oVCBIfWUFZQkJITFZMHUgfTh0aTx4ZGE9VEwETFhoSFyQUDg9ZV1kWGg8SFR0UWUFZT0tIVUpKS0
+        hKTFVLWQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OBw6Dyo5Lz8CTT4vPQ8tTzYx
+        IzVPChNVSlVKTUlPSE1PTEpJTEhDVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
+        WU5DVUlOSlVMT1VJSElZV1kIAVlBSU1MSjcG
+X-HM-Tid: 0a7a33ae81feb039kuuu598b9ac020c
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The page was only being used for the memcg and to gather trace
-information, so this is a simple conversion.  The only caller of
-mem_cgroup_track_foreign_dirty() will be converted to folios in a later
-patch, so doing this now makes that patch simpler.
+Unh, it seems i_writecount not work.
+If we modify file through lowerfs, i_writecount won't change, but the 
+size already changed.
+For example:
+echo "111" > /lowerfs/test
+ls -l /upper/test
+echo "2222" >> /lowerfs/test
+ls -l /upper/test
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- include/linux/memcontrol.h       | 7 ++++---
- include/trace/events/writeback.h | 8 ++++----
- mm/memcontrol.c                  | 6 +++---
- 3 files changed, 11 insertions(+), 10 deletions(-)
+So, can you describe your test enviroment? including kernel version and 
+fsx parameters, I will check it.
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 8158c16f8097..00693cb48b5d 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1635,17 +1635,18 @@ void mem_cgroup_wb_stats(struct bdi_writeback *wb, unsigned long *pfilepages,
- 			 unsigned long *pheadroom, unsigned long *pdirty,
- 			 unsigned long *pwriteback);
- 
--void mem_cgroup_track_foreign_dirty_slowpath(struct page *page,
-+void mem_cgroup_track_foreign_dirty_slowpath(struct folio *folio,
- 					     struct bdi_writeback *wb);
- 
- static inline void mem_cgroup_track_foreign_dirty(struct page *page,
- 						  struct bdi_writeback *wb)
- {
-+	struct folio *folio = page_folio(page);
- 	if (mem_cgroup_disabled())
- 		return;
- 
--	if (unlikely(&page_memcg(page)->css != wb->memcg_css))
--		mem_cgroup_track_foreign_dirty_slowpath(page, wb);
-+	if (unlikely(&folio_memcg(folio)->css != wb->memcg_css))
-+		mem_cgroup_track_foreign_dirty_slowpath(folio, wb);
- }
- 
- void mem_cgroup_flush_foreign(struct bdi_writeback *wb);
-diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-index 1efa463c4979..80b24801bbf7 100644
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -235,9 +235,9 @@ TRACE_EVENT(inode_switch_wbs,
- 
- TRACE_EVENT(track_foreign_dirty,
- 
--	TP_PROTO(struct page *page, struct bdi_writeback *wb),
-+	TP_PROTO(struct folio *folio, struct bdi_writeback *wb),
- 
--	TP_ARGS(page, wb),
-+	TP_ARGS(folio, wb),
- 
- 	TP_STRUCT__entry(
- 		__array(char,		name, 32)
-@@ -249,7 +249,7 @@ TRACE_EVENT(track_foreign_dirty,
- 	),
- 
- 	TP_fast_assign(
--		struct address_space *mapping = page_mapping(page);
-+		struct address_space *mapping = folio_mapping(folio);
- 		struct inode *inode = mapping ? mapping->host : NULL;
- 
- 		strscpy_pad(__entry->name, bdi_dev_name(wb->bdi), 32);
-@@ -257,7 +257,7 @@ TRACE_EVENT(track_foreign_dirty,
- 		__entry->ino		= inode ? inode->i_ino : 0;
- 		__entry->memcg_id	= wb->memcg_css->id;
- 		__entry->cgroup_ino	= __trace_wb_assign_cgroup(wb);
--		__entry->page_cgroup_ino = cgroup_ino(page_memcg(page)->css.cgroup);
-+		__entry->page_cgroup_ino = cgroup_ino(folio_memcg(folio)->css.cgroup);
- 	),
- 
- 	TP_printk("bdi %s[%llu]: ino=%lu memcg_id=%u cgroup_ino=%lu page_cgroup_ino=%lu",
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index a9857e091455..64eff07f0c4c 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4394,17 +4394,17 @@ void mem_cgroup_wb_stats(struct bdi_writeback *wb, unsigned long *pfilepages,
-  * As being wrong occasionally doesn't matter, updates and accesses to the
-  * records are lockless and racy.
-  */
--void mem_cgroup_track_foreign_dirty_slowpath(struct page *page,
-+void mem_cgroup_track_foreign_dirty_slowpath(struct folio *folio,
- 					     struct bdi_writeback *wb)
- {
--	struct mem_cgroup *memcg = page_memcg(page);
-+	struct mem_cgroup *memcg = folio_memcg(folio);
- 	struct memcg_cgwb_frn *frn;
- 	u64 now = get_jiffies_64();
- 	u64 oldest_at = now;
- 	int oldest = -1;
- 	int i;
- 
--	trace_track_foreign_dirty(page, wb);
-+	trace_track_foreign_dirty(folio, wb);
- 
- 	/*
- 	 * Pick the slot to use.  If there is already a slot for @wb, keep
--- 
-2.30.2
+Thanks.
 
+On 2021/6/22 15:59, Miklos Szeredi wrote:
+> On Sat, 30 Jan 2021 at 09:50, Fengnan Chang <changfengnan@vivo.com> wrote:
+>>
+>> When writeback cache is enabled, the inode information in cached is
+>> considered new by default, and the inode information of lowerfs is
+>> stale.
+>> When a lower fs is mount in a different directory through different
+>> connection, for example PATHA and PATHB, since writeback cache is
+>> enabled by default, when the file is modified through PATHA, viewing the
+>> same file from the PATHB, PATHB will think that cached inode is newer
+>> than lowerfs, resulting in file size and time from under PATHA and PATHB
+>> is inconsistent.
+>> Add a judgment condition to check whether to use the info in the cache
+>> according to mtime.
+> 
+> This seems to break the fsx-linux stress test.
+> 
+> I suspect a better direction would be looking at whether the inode has
+> any files open for write (i_writecount > 0)...
+> 
+> Thanks,
+> Miklos
+> 
