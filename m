@@ -2,109 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 569E63B02E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 13:37:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66AF43B030C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jun 2021 13:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbhFVLjU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Jun 2021 07:39:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33350 "EHLO
+        id S230062AbhFVLot (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Jun 2021 07:44:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbhFVLjS (ORCPT
+        with ESMTP id S229912AbhFVLos (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Jun 2021 07:39:18 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2301DC061574;
-        Tue, 22 Jun 2021 04:37:02 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id my49so33928853ejc.7;
-        Tue, 22 Jun 2021 04:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LUy/wicadv4c1bqugvMFAWXLLPAGryucoosC9VkaNiA=;
-        b=luviOIIG3VBAxj6wenGVE05nHSbqNjx8AboHEUVqKOQ4oLLLukj1XCq0YLauG3bdq9
-         JcQRRIZWiloXOvGNFQZMoXWsntYqEtL+ShANN35K+3n8rYOZOKNFUJtAqxPeRA7vAN0D
-         ag6yI6hy9zlfPUTJNjy2rfpQpK9lWFg+yWKCsUl8L+lTF6506S38MLJZv0jqQfIpk9MS
-         XTrFBTiopdsm04PEhYUqzZ3LteCUCSUqm+JbwMT6JiFvdmBp0wQ5AERt/+1b8WMz5m5N
-         o63uE/+mq5hRSdI8oeI1Bx0yz2dJlILSAx/okncs7BY6yhWDi7o0xqFJ6fuRKxjHt2xY
-         1MHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LUy/wicadv4c1bqugvMFAWXLLPAGryucoosC9VkaNiA=;
-        b=TigSsVEiGgGcRSnnNGMlESTQft2k+m4Lyrpat8k6iYhsloUCIY0diC64hDcyYh4u3S
-         ziuqAjAPNjTQWxXOQ4AbSVbwvb8aWVXMKkHXLBfFLPS3W0GQIN5VXEOuwq4r7EzHqQW5
-         CHcTUHKl6B8Iy3bPZ4Wf1LOqilMZmWZD/B6yARseydP2Y2liU1TZBHvk63d4MGxdjEgO
-         Da//X6ImeDW/4TY/xz2KV1LMNN6JIYXLoPj7vfKJudBi2wUHcRkjk8cenjyhFUTXJyMw
-         ZRtd2LDuyH0XFbdY8acUgZq+y8SUQ+2jsMPqLzU18JDkSTnSsP4xaYUFe901rlnk7vWA
-         Er1A==
-X-Gm-Message-State: AOAM5319NaOJz+PBapfPjjncSqeWyR2Dsx1k3bQF9bGuR7j4npvcyhfZ
-        KPgHXpUpVW/NI0l7LKXXn4rhA6WXpITqulya
-X-Google-Smtp-Source: ABdhPJzQ2hG+so2QJnW2x7mgDOhQx+IgBMISK36X1YPbixJqm7cVEn5DV2J6myl0QwXR2eSYnORieQ==
-X-Received: by 2002:a17:906:bc2:: with SMTP id y2mr3489518ejg.489.1624361820587;
-        Tue, 22 Jun 2021 04:37:00 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c092:600::2:e69])
-        by smtp.gmail.com with ESMTPSA id t6sm380762edd.3.2021.06.22.04.36.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jun 2021 04:37:00 -0700 (PDT)
-To:     Dmitry Kadashev <dkadashev@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20210603051836.2614535-1-dkadashev@gmail.com>
- <20210603051836.2614535-9-dkadashev@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH v5 08/10] io_uring: add support for IORING_OP_SYMLINKAT
-Message-ID: <14ace9c7-176f-8234-152b-540ea55f695a@gmail.com>
-Date:   Tue, 22 Jun 2021 12:36:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Tue, 22 Jun 2021 07:44:48 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5788AC061574;
+        Tue, 22 Jun 2021 04:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=/7yTQ2Z0i+ebq2ranwWj3EBCmGl3WnMSrkD+yDrJg2w=; b=Z0g0rUKmOuWq2aRD+zKPBwdi/m
+        VklcQMDNpxRnjO+v8rCYNLrXY8oxBoIstDy8AsKwlVdmOWgTRjYtSOXPAw2ylYZn2ibUXCXIPPX66
+        8OSldWXFQudqik1rpr//lv5wkfdUjewwtoQZVa8dVae3jZqevg6fQ6W7+uPp5sw/hWVc0GY6kuROq
+        Zm/zhZ1L8QezHkJ0C6WgsX16n1k5dxTaQtwbFyhtPS3J/joZB5wj2vi8xSheqv1eGjFkH6Yiw1CBS
+        tlupiKLbmT3i0oS2ykVaAl05tqd3p+ZOiDXXJdyGADP0AbNzJY29t4O30CKsXKywLO3HFFFs0SK7o
+        Io+Rk5jw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lvemN-00EDRT-R7; Tue, 22 Jun 2021 11:41:40 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     akpm@linux-foundation.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v12 00/33] Memory folios
+Date:   Tue, 22 Jun 2021 12:40:45 +0100
+Message-Id: <20210622114118.3388190-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210603051836.2614535-9-dkadashev@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
-> IORING_OP_SYMLINKAT behaves like symlinkat(2) and takes the same flags
-> and arguments.
-> 
-> Suggested-by: Christian Brauner <christian.brauner@ubuntu.com>
-> Link: https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
-> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
-> ---
->  fs/internal.h                 |  1 +
->  fs/io_uring.c                 | 64 ++++++++++++++++++++++++++++++++++-
->  fs/namei.c                    |  3 +-
->  include/uapi/linux/io_uring.h |  1 +
->  4 files changed, 66 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 207a455e32d3..3b3954214385 100644
+Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
+benefit from a larger "page size".  As an example, an earlier iteration
+of this idea which used compound pages (and wasn't particularly tuned)
+got a 7% performance boost when compiling the kernel.
 
-[...]
+Using compound pages or THPs exposes a weakness of our type system.
+Functions are often unprepared for compound pages to be passed to them,
+and may only act on PAGE_SIZE chunks.  Even functions which are aware of
+compound pages may expect a head page, and do the wrong thing if passed
+a tail page.
 
->  
->  static bool io_disarm_next(struct io_kiocb *req);
-> @@ -3572,7 +3581,51 @@ static int io_mkdirat(struct io_kiocb *req, int issue_flags)
->  
->  	req->flags &= ~REQ_F_NEED_CLEANUP;
->  	if (ret < 0)
-> -		req_set_fail_links(req);
-> +		req_set_fail(req);
+We also waste a lot of instructions ensuring that we're not looking at
+a tail page.  Almost every call to PageFoo() contains one or more hidden
+calls to compound_head().  This also happens for get_page(), put_page()
+and many more functions.  There does not appear to be a way to tell gcc
+that it can cache the result of compound_head(), nor is there a way to
+tell it that compound_head() is idempotent.
+This patch series uses a new type, the struct folio, to manage memory.
+It provides some basic infrastructure that's worthwhile in its own right,
+shrinking the kernel by about 6kB of text.
 
-This means one of the previous patches doesn't compile. Let's fix it.
+The full patch series is considerably larger (~200 patches),
+and enables XFS to use large pages.  It can be found at
+https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/folio
+(not everything there is in good shape for upstream submission, but
+if you go as far as "mm/readahead: Add multi-page folio readahead",
+it passes xfstests).  An earlier version of this patch set found it was
+worth about a 7% reduction of wall-clock time on kernel compiles.
 
-> +	io_req_complete(req, ret);
-> +	return 0;
-> +}
-> +
+Since v12:
+ - Reworded commit message for folio_rotate_reclaimable (Christoph Hellwig)
+ - Fixed documentation for folio fscache functions (David Howells)
+ - Rebased on set_page_dirty cleanups which are in mmotm
+ - Renamed page_offset() to page_pos() and page_file_offset() to
+   page_file_pos() (David Howells)
+ - Make __folio_lock_or_retry() and lock_page_or_retry() return a bool
+   (David Howells)
+
+v11: https://lore.kernel.org/linux-mm/20210614201435.1379188-1-willy@infradead.org/
+v10: https://lore.kernel.org/linux-mm/20210511214735.1836149-1-willy@infradead.org/
+v9: https://lore.kernel.org/linux-mm/20210505150628.111735-1-willy@infradead.org/
+v8: https://lore.kernel.org/linux-mm/20210430180740.2707166-1-willy@infradead.org/
+
+Matthew Wilcox (Oracle) (33):
+  mm: Convert get_page_unless_zero() to return bool
+  mm: Introduce struct folio
+  mm: Add folio_pgdat(), folio_zone() and folio_zonenum()
+  mm/vmstat: Add functions to account folio statistics
+  mm/debug: Add VM_BUG_ON_FOLIO() and VM_WARN_ON_ONCE_FOLIO()
+  mm: Add folio reference count functions
+  mm: Add folio_put()
+  mm: Add folio_get()
+  mm: Add folio_try_get_rcu()
+  mm: Add folio flag manipulation functions
+  mm/lru: Add folio LRU functions
+  mm: Handle per-folio private data
+  mm/filemap: Add folio_index(), folio_file_page() and folio_contains()
+  mm/filemap: Add folio_next_index()
+  mm/filemap: Add folio_pos() and folio_file_pos()
+  mm/util: Add folio_mapping() and folio_file_mapping()
+  mm/memcg: Add folio wrappers for various functions
+  mm/filemap: Add folio_unlock()
+  mm/filemap: Add folio_lock()
+  mm/filemap: Add folio_lock_killable()
+  mm/filemap: Add __folio_lock_async()
+  mm/filemap: Add folio_wait_locked()
+  mm/filemap: Add __folio_lock_or_retry()
+  mm/swap: Add folio_rotate_reclaimable()
+  mm/filemap: Add folio_end_writeback()
+  mm/writeback: Add folio_wait_writeback()
+  mm/writeback: Add folio_wait_stable()
+  mm/filemap: Add folio_wait_bit()
+  mm/filemap: Add folio_wake_bit()
+  mm/filemap: Convert page wait queues to be folios
+  mm/filemap: Add folio private_2 functions
+  fs/netfs: Add folio fscache functions
+  mm: Add folio_mapped()
+
+ Documentation/core-api/mm-api.rst           |   4 +
+ Documentation/filesystems/netfs_library.rst |   2 +
+ fs/afs/write.c                              |   9 +-
+ fs/cachefiles/rdwr.c                        |  16 +-
+ fs/io_uring.c                               |   2 +-
+ include/linux/huge_mm.h                     |  15 -
+ include/linux/memcontrol.h                  |  72 ++++
+ include/linux/mm.h                          | 165 +++++++--
+ include/linux/mm_inline.h                   |  85 +++--
+ include/linux/mm_types.h                    |  77 ++++
+ include/linux/mmdebug.h                     |  20 +
+ include/linux/netfs.h                       |  77 ++--
+ include/linux/page-flags.h                  | 245 ++++++++----
+ include/linux/page_ref.h                    | 158 +++++++-
+ include/linux/pagemap.h                     | 390 +++++++++++---------
+ include/linux/swap.h                        |   7 +-
+ include/linux/vmstat.h                      | 107 ++++++
+ mm/Makefile                                 |   2 +-
+ mm/filemap.c                                | 329 +++++++++--------
+ mm/folio-compat.c                           |  43 +++
+ mm/internal.h                               |   1 +
+ mm/memory.c                                 |   8 +-
+ mm/page-writeback.c                         |  72 ++--
+ mm/page_io.c                                |   4 +-
+ mm/swap.c                                   |  30 +-
+ mm/swapfile.c                               |   8 +-
+ mm/util.c                                   |  59 +--
+ 27 files changed, 1427 insertions(+), 580 deletions(-)
+ create mode 100644 mm/folio-compat.c
 
 -- 
-Pavel Begunkov
+2.30.2
+
