@@ -2,95 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 345C43B1695
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 11:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DDC93B16AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 11:17:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229833AbhFWJRa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 05:17:30 -0400
-Received: from mga02.intel.com ([134.134.136.20]:10430 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230109AbhFWJR3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 05:17:29 -0400
-IronPort-SDR: pDYcOQpaICIBdF5nXwuMg84KeDntFcDiFTpCv7BdRHBxyJj/f94v2Rv5gzNuETV1NlZpY2++lO
- lZ7lZzrPC0Mg==
-X-IronPort-AV: E=McAfee;i="6200,9189,10023"; a="194365959"
-X-IronPort-AV: E=Sophos;i="5.83,293,1616482800"; 
-   d="scan'208";a="194365959"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2021 02:15:03 -0700
-IronPort-SDR: QTCrY2/uZS/S33R68erMlwME/oA/hQ2PKXj+baFV/MK+DVQU5hA9srQVTcaUNMIY/f8SYRuyp0
- z1hgqEuMoCeg==
-X-IronPort-AV: E=Sophos;i="5.83,293,1616482800"; 
-   d="scan'208";a="556083384"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2021 02:14:59 -0700
-Received: from andy by smile with local (Exim 4.94.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1lvyyF-004hbq-Ag; Wed, 23 Jun 2021 12:14:55 +0300
-Date:   Wed, 23 Jun 2021 12:14:55 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jia He <justin.he@arm.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, nd@arm.com
-Subject: Re: [PATCH v2 2/4] lib/vsprintf.c: make '%pD' print the full path of
- file
-Message-ID: <YNL7j2GfSbUCetZ0@smile.fi.intel.com>
-References: <20210623055011.22916-1-justin.he@arm.com>
- <20210623055011.22916-3-justin.he@arm.com>
+        id S230013AbhFWJTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 05:19:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45080 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229970AbhFWJTc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Jun 2021 05:19:32 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1F73C061574;
+        Wed, 23 Jun 2021 02:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=CL8XQmsLz8MJp1hdhyIHxSeG4lqcBDV8J2aWoqxO7kM=; b=oUU0MJd19YgEIwWB21YP+sbRKv
+        fka7CIUJ+qIA/GRKsOA263HiOQMZ+2OA7l0jC/g0UtqzrdzG5geGoIo2tK+QTwwdnU5QlfD/NqDSv
+        v8JcUU0g8tAmj/FOQO47v6ihpxybQnJaokSBJPuPL4oHhLAgHXrl5VkLL+/MiuapGu0wfyTGqUz+u
+        vBFbaYYGXTbHL2MFJwKTZpKXX0s/rKiuWRZnkag893AMHaCW5ZDm4FkZ5Wh4+GXaG/L4nWiD1Y26s
+        IyBM5Uq6OIzSKl1bJrIxnEGxBv+VVhJspYO9UL9Hb0/zC0BsTIKY2YM3YIkQjgtbSEx/niNM9ppAW
+        k+lrBWPA==;
+Received: from [2001:4bb8:188:3e21:6594:49:139:2b3f] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lvyzE-00FFcA-82; Wed, 23 Jun 2021 09:16:12 +0000
+Date:   Wed, 23 Jun 2021 11:15:55 +0200
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 24/46] mm/writeback: Add __folio_end_writeback()
+Message-ID: <YNL7yxWFqlL7/Fd+@infradead.org>
+References: <20210622121551.3398730-1-willy@infradead.org>
+ <20210622121551.3398730-25-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210623055011.22916-3-justin.he@arm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20210622121551.3398730-25-willy@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 01:50:09PM +0800, Jia He wrote:
-> Previously, the specifier '%pD' is for printing dentry name of struct
-> file. It may not be perfect (by default it only prints one component.)
+On Tue, Jun 22, 2021 at 01:15:29PM +0100, Matthew Wilcox (Oracle) wrote:
+> test_clear_page_writeback() is actually an mm-internal function, although
+> it's named as if it's a pagecache function.  Move it to mm/internal.h,
+> rename it to __folio_end_writeback() and change the return type to bool.
 > 
-> As suggested by Linus [1]:
-> > A dentry has a parent, but at the same time, a dentry really does
-> > inherently have "one name" (and given just the dentry pointers, you
-> > can't show mount-related parenthood, so in many ways the "show just
-> > one name" makes sense for "%pd" in ways it doesn't necessarily for
-> > "%pD"). But while a dentry arguably has that "one primary component",
-> > a _file_ is certainly not exclusively about that last component.
-> 
-> Hence change the behavior of '%pD' to print the full path of that file.
-> 
-> If someone invokes snprintf() with small but positive space,
-> prepend_name_with_len() moves or truncates the string partially. More
-> than that, kasprintf() will pass NULL @buf and @end as the parameters,
-> and @end - @buf can be negative in some case. Hence make it return at
-> the very beginning with false in these cases.
-> 
-> Precision is never going to be used with %p (or any of its kernel
-> extensions) if -Wformat is turned on.
+> The conversion from page to folio is mostly about accounting the number
+> of pages being written back, although it does eliminate a couple of
+> calls to compound_head().
 
-...
+While this looks good, I think the whole abstraction is wrong.  I think
+test_clear_page_writeback should just be merged into it's only caller.
 
-> +	char *p;
-> +	const struct path *path;
-> +	int prepend_len, widen_len, dpath_len;
+But if that is somehow not on the table this change looks ok:
 
-Reversed xmas tree order?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
