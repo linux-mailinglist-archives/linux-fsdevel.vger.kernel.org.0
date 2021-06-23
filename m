@@ -2,128 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAC143B1973
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 13:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 914823B198B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 14:03:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230263AbhFWMAi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 08:00:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230206AbhFWMAh (ORCPT
+        id S230268AbhFWMFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 08:05:46 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:38264 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230019AbhFWMFq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 08:00:37 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79BBDC061574;
-        Wed, 23 Jun 2021 04:58:19 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id nb6so3579732ejc.10;
-        Wed, 23 Jun 2021 04:58:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WK/HISxtTDClzpLnEMoc9YQ1CVO76vHxT1gzzdpEwQU=;
-        b=if1bPksMNeotQxN9zAr7M12E8fRG0Gv+EE46i6NBDXQ2dKFK2iE72I1Lh4oUtPh6dF
-         orQK5MCKMaJ0Z79qLGA8HdDHgbGvYZQp3khOuAj3zeJbeIMr8N3alPPBG81xw11zlaU6
-         Ev4cP10btfb1EhT7SHLuBF+GA8P0IWWmPWfUXTPX+KKjNb+J8TP5cFiiTqZZI1ik4At8
-         SwIiZ9oq/OxM4SuswKX/X1MZm93VrmVKT0cNVjKl6T4r0v3oKB4Nq8lPDqUYc95kEoyA
-         kkKEQ+TGU9Vcd92UUZHWn4OiIxXpd5O/r8fjksuXMYa2RHHitE4egbVXwCpplnxpWRi4
-         KIBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WK/HISxtTDClzpLnEMoc9YQ1CVO76vHxT1gzzdpEwQU=;
-        b=LrpSLa3Tw/jSlg7R/TJk3Zb8ed2gnuLwkHhNf+Nnuu2J7t4+jwq4qziXONSK33HV5a
-         GLsKRSYrcl7xuJmZSSGfVvI5EpUV6+JxV3dN7mpzl1pjfvs7ojYR6j3AOv8MvSz1OKOe
-         bh5VB9OwtUXaQdunxBWMU/TYIbUZOn5LyzTwr6k4CIkRUetjFX0GU1genXlJss7ic7wT
-         xSdu9EADXeN5W3cgSto753JgqRILsChX4o3BuaJqvsVpMc8CfpIeGau0LORS1wSyiQq9
-         8MWzhCEwyv8BgHILoM2+zq5X0YE/ICKT1x3y484KLw0C0FNtfOb0c9CQyRWF4eOaRrbs
-         qG+A==
-X-Gm-Message-State: AOAM531ofc24QUUhrPwSBHxmD/Eo555ON7RCnklxOZSd0ByvB5Y5cRNz
-        VjhKb9krEeUE8R+1sIMuemSh6nqm1benp6oi
-X-Google-Smtp-Source: ABdhPJz83a5s6bIhbPcUB2llURLwCSqlxWx808a4ng9SvOvVQSx4PgJYvgXVaPhp1XcjtS4a/kH2Pg==
-X-Received: by 2002:a17:906:ce4f:: with SMTP id se15mr9699363ejb.232.1624449497745;
-        Wed, 23 Jun 2021 04:58:17 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:310::2410? ([2620:10d:c093:600::2:6d82])
-        by smtp.gmail.com with ESMTPSA id d6sm3280739edq.37.2021.06.23.04.58.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jun 2021 04:58:17 -0700 (PDT)
-Subject: Re: [PATCH v5 10/10] io_uring: add support for IORING_OP_MKNODAT
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+        Wed, 23 Jun 2021 08:05:46 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 081741FD65;
+        Wed, 23 Jun 2021 12:03:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624449808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pTV0UJMvjAlHC0068bqJsxAfZBAJ3v623+Gud9Q+2ok=;
+        b=JEwVwd5lWr59EcR28oxtQoQeflZEtZ6GtvIqFr+3qPap9DIqlIxS16dhKGeD88AdgHhrQK
+        FnaGZl6LUbHmCXqawqEN/CTgAdCZYjbNY2Zq58VJ569soEXfRxCLgg/SnorvXx7d8ZtdW5
+        YHjUElLq6Fyl98xM/jRHIF7FsABnP5E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624449808;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pTV0UJMvjAlHC0068bqJsxAfZBAJ3v623+Gud9Q+2ok=;
+        b=NwoYa3wurxv0LfPJNjQb5ZEd1tVjfIl9pupg76GLbPUHgiC4wWiYX5RAAVvfb5RlyXPytc
+        j4Nna4Tidn/PA9Aw==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id ADCA511A97;
+        Wed, 23 Jun 2021 12:03:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624449807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pTV0UJMvjAlHC0068bqJsxAfZBAJ3v623+Gud9Q+2ok=;
+        b=YF5l59Liz2PwKX7sWBCPjDz8AJ/4dt0uGGV+1XjZDof0eMiBagemhhka4asURm2hQLjPHk
+        pToA+nVJaTwvciMnCOeiYAJllplYa7V3i+WBOd2tbr8Zr07nHtB757209mun/fOjmXwXHB
+        FA7WEn/722VuFam8SwPykndZg7ENp4I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624449807;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pTV0UJMvjAlHC0068bqJsxAfZBAJ3v623+Gud9Q+2ok=;
+        b=phFHobecXngr10YyZGcNi33kkMtxHjkkaAk14F16/Y1M+JRLYUrn+0tW9Bj8hI1yrs1KWX
+        xRKybiw+NIuYoXBA==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id rhDpKA8j02B6DwAALh3uQQ
+        (envelope-from <hare@suse.de>); Wed, 23 Jun 2021 12:03:27 +0000
+Subject: Re: [PATCH v3 0/6] block: add a sequence number to disks
+To:     Matteo Croce <mcroce@linux.microsoft.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Luca Boccassi <bluca@debian.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
-References: <20210603051836.2614535-1-dkadashev@gmail.com>
- <20210603051836.2614535-11-dkadashev@gmail.com>
- <1a3812fe-1e57-a2ad-dc19-9658c0cf613b@gmail.com>
- <CAOKbgA489C=ZS_E6YCBFxo+zYNb5ccE4dfFBntAO=qNH7_Uu=A@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <66153284-5989-00be-7d57-2a4cb75aedc7@gmail.com>
-Date:   Wed, 23 Jun 2021 12:58:02 +0100
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tejun Heo <tj@kernel.org>,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
+        Niklas Cassel <niklas.cassel@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        JeffleXu <jefflexu@linux.alibaba.com>
+References: <20210623105858.6978-1-mcroce@linux.microsoft.com>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <bfdd6f56-ce2b-ef74-27b1-83b922e5f7d9@suse.de>
+Date:   Wed, 23 Jun 2021 14:03:27 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAOKbgA489C=ZS_E6YCBFxo+zYNb5ccE4dfFBntAO=qNH7_Uu=A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210623105858.6978-1-mcroce@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/23/21 7:26 AM, Dmitry Kadashev wrote:
-> On Tue, Jun 22, 2021 at 6:52 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
->>> IORING_OP_MKNODAT behaves like mknodat(2) and takes the same flags and
->>> arguments.
->>>
->>> Suggested-by: Christian Brauner <christian.brauner@ubuntu.com>
->>> Link: https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
->>> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
->>> ---
->>>  fs/internal.h                 |  2 ++
->>>  fs/io_uring.c                 | 56 +++++++++++++++++++++++++++++++++++
->>>  fs/namei.c                    |  2 +-
->>>  include/uapi/linux/io_uring.h |  2 ++
->>>  4 files changed, 61 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/internal.h b/fs/internal.h
->>> index 15a7d210cc67..c6fb9974006f 100644
->>
->> [...]
->>
->>>  static bool io_disarm_next(struct io_kiocb *req);
->>> @@ -3687,6 +3697,44 @@ static int io_linkat(struct io_kiocb *req, int issue_flags)
->>>       io_req_complete(req, ret);
->>>       return 0;
->>>  }
->>> +static int io_mknodat_prep(struct io_kiocb *req,
->>> +                         const struct io_uring_sqe *sqe)
->>> +{
->>> +     struct io_mknod *mkn = &req->mknod;
->>> +     const char __user *fname;
->>> +
->>> +     if (unlikely(req->flags & REQ_F_FIXED_FILE))
->>> +             return -EBADF;
->>
->> IOPOLL won't support it, and the check is missing.
->> Probably for other opcodes as well.
->>
->> if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
->>         return -EINVAL;
+On 6/23/21 12:58 PM, Matteo Croce wrote:
+> From: Matteo Croce <mcroce@microsoft.com>
 > 
-> This change is based on some other similar opcodes (unlinkat, renameat) that
-> were added a while ago. Those lack the check as well. I guess I'll just prepare
-> a patch that adds the checks to all of them. Thanks, Pavel.
+> With this series a monotonically increasing number is added to disks,
+> precisely in the genhd struct, and it's exported in sysfs and uevent.
 > 
-> Jens, separately it's my understanding that you do not want the MKNODAT opcode
-> at all, should I drop this from the subsequent series?
+> This helps the userspace correlate events for devices that reuse the
+> same device, like loop.
+> 
+I'm failing to see the point here.
+Apparently you are assuming that there is a userspace tool tracking 
+events, and has a need to correlate events related to different 
+instances of the disk.
+But if you have an userspace application tracking events, why can't the 
+same application track the 'add' and 'remove' events to track the 
+lifetime of the devices, and implement its own numbering based on that?
 
-I guess that comment was to my note that the patch with it
-doesn't compile, but as it should be already fixed up...
+Why do we need to burden the kernel with this?
 
+Cheers,
+
+Hannes
 -- 
-Pavel Begunkov
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
