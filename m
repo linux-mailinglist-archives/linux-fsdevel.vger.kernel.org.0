@@ -2,62 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DDC93B16AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 11:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F3063B16A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 11:16:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbhFWJTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 05:19:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45080 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229970AbhFWJTc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 05:19:32 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1F73C061574;
-        Wed, 23 Jun 2021 02:17:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CL8XQmsLz8MJp1hdhyIHxSeG4lqcBDV8J2aWoqxO7kM=; b=oUU0MJd19YgEIwWB21YP+sbRKv
-        fka7CIUJ+qIA/GRKsOA263HiOQMZ+2OA7l0jC/g0UtqzrdzG5geGoIo2tK+QTwwdnU5QlfD/NqDSv
-        v8JcUU0g8tAmj/FOQO47v6ihpxybQnJaokSBJPuPL4oHhLAgHXrl5VkLL+/MiuapGu0wfyTGqUz+u
-        vBFbaYYGXTbHL2MFJwKTZpKXX0s/rKiuWRZnkag893AMHaCW5ZDm4FkZ5Wh4+GXaG/L4nWiD1Y26s
-        IyBM5Uq6OIzSKl1bJrIxnEGxBv+VVhJspYO9UL9Hb0/zC0BsTIKY2YM3YIkQjgtbSEx/niNM9ppAW
-        k+lrBWPA==;
-Received: from [2001:4bb8:188:3e21:6594:49:139:2b3f] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvyzE-00FFcA-82; Wed, 23 Jun 2021 09:16:12 +0000
-Date:   Wed, 23 Jun 2021 11:15:55 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 24/46] mm/writeback: Add __folio_end_writeback()
-Message-ID: <YNL7yxWFqlL7/Fd+@infradead.org>
-References: <20210622121551.3398730-1-willy@infradead.org>
- <20210622121551.3398730-25-willy@infradead.org>
+        id S229922AbhFWJSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 05:18:40 -0400
+Received: from mga03.intel.com ([134.134.136.65]:28254 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229833AbhFWJSh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Jun 2021 05:18:37 -0400
+IronPort-SDR: MWDb4sVHSf+/bxn5C2jYdb9SzEXLSMm90pY5gFkQAAhhvvC3+7pqBI6fl4HY4wVbauawivm7kB
+ 0arplk1Rxefw==
+X-IronPort-AV: E=McAfee;i="6200,9189,10023"; a="207267619"
+X-IronPort-AV: E=Sophos;i="5.83,293,1616482800"; 
+   d="scan'208";a="207267619"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2021 02:16:19 -0700
+IronPort-SDR: nR4vg6G/TC9WdS1fhqF0Ckg4oLkq3z69gTz4q9LGfBnQsLskdHMeNGDlGxg3vaY+6IhXzyxg4A
+ RWCLvhwdcCFg==
+X-IronPort-AV: E=Sophos;i="5.83,293,1616482800"; 
+   d="scan'208";a="406623987"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2021 02:16:15 -0700
+Received: from andy by smile with local (Exim 4.94.2)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1lvyzQ-004hcu-Pv; Wed, 23 Jun 2021 12:16:08 +0300
+Date:   Wed, 23 Jun 2021 12:16:08 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jia He <justin.he@arm.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, nd@arm.com
+Subject: Re: [PATCH v2 3/4] lib/test_printf.c: split write-beyond-buffer
+ check in two
+Message-ID: <YNL72KwP8oyNzons@smile.fi.intel.com>
+References: <20210623055011.22916-1-justin.he@arm.com>
+ <20210623055011.22916-4-justin.he@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210622121551.3398730-25-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20210623055011.22916-4-justin.he@arm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 01:15:29PM +0100, Matthew Wilcox (Oracle) wrote:
-> test_clear_page_writeback() is actually an mm-internal function, although
-> it's named as if it's a pagecache function.  Move it to mm/internal.h,
-> rename it to __folio_end_writeback() and change the return type to bool.
+On Wed, Jun 23, 2021 at 01:50:10PM +0800, Jia He wrote:
+> From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 > 
-> The conversion from page to folio is mostly about accounting the number
-> of pages being written back, although it does eliminate a couple of
-> calls to compound_head().
+> Before each invocation of vsnprintf(), do_test() memsets the entire
+> allocated buffer to a sentinel value. That buffer includes leading and
+> trailing padding which is never included in the buffer area handed to
+> vsnprintf (spaces merely for clarity):
+> 
+>   pad  test_buffer      pad
+>   **** **************** ****
+> 
+> Then vsnprintf() is invoked with a bufsize argument <=
+> BUF_SIZE. Suppose bufsize=10, then we'd have e.g.
+> 
+>  |pad |   test_buffer    |pad |
+>   **** pizza0 **** ****** ****
+>  A    B      C    D           E
+> 
+> where vsnprintf() was given the area from B to D.
+> 
+> It is obviously a bug for vsnprintf to touch anything between A and B
+> or between D and E. The former is checked for as one would expect. But
+> for the latter, we are actually a little stricter in that we check the
+> area between C and E.
+> 
+> Split that check in two, providing a clearer error message in case it
+> was a genuine buffer overrun and not merely a write within the
+> provided buffer, but after the end of the generated string.
+> 
+> So far, no part of the vsnprintf() implementation has had any use for
+> using the whole buffer as scratch space, but it's not unreasonable to
+> allow that, as long as the result is properly nul-terminated and the
+> return value is the right one. However, it is somewhat unusual, and
+> most %<something> won't need this, so keep the [C,D] check, but make
+> it easy for a later patch to make that part opt-out for certain tests.
 
-While this looks good, I think the whole abstraction is wrong.  I think
-test_clear_page_writeback should just be merged into it's only caller.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-But if that is somehow not on the table this change looks ok:
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Tested-by: Jia He <justin.he@arm.com>
+> Signed-off-by: Jia He <justin.he@arm.com>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  lib/test_printf.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/test_printf.c b/lib/test_printf.c
+> index ec0d5976bb69..d1d2f898ebae 100644
+> --- a/lib/test_printf.c
+> +++ b/lib/test_printf.c
+> @@ -78,12 +78,17 @@ do_test(int bufsize, const char *expect, int elen,
+>  		return 1;
+>  	}
+>  
+> -	if (memchr_inv(test_buffer + written + 1, FILL_CHAR, BUF_SIZE + PAD_SIZE - (written + 1))) {
+> +	if (memchr_inv(test_buffer + written + 1, FILL_CHAR, bufsize - (written + 1))) {
+>  		pr_warn("vsnprintf(buf, %d, \"%s\", ...) wrote beyond the nul-terminator\n",
+>  			bufsize, fmt);
+>  		return 1;
+>  	}
+>  
+> +	if (memchr_inv(test_buffer + bufsize, FILL_CHAR, BUF_SIZE + PAD_SIZE - bufsize)) {
+> +		pr_warn("vsnprintf(buf, %d, \"%s\", ...) wrote beyond buffer\n", bufsize, fmt);
+> +		return 1;
+> +	}
+> +
+>  	if (memcmp(test_buffer, expect, written)) {
+>  		pr_warn("vsnprintf(buf, %d, \"%s\", ...) wrote '%s', expected '%.*s'\n",
+>  			bufsize, fmt, test_buffer, written, expect);
+> -- 
+> 2.17.1
+> 
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
