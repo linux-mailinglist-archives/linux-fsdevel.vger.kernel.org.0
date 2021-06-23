@@ -2,86 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D80553B1ACE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 15:11:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5523E3B1ADD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 15:13:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230292AbhFWNNQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 09:13:16 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:48892 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbhFWNNP (ORCPT
+        id S230479AbhFWNPz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 09:15:55 -0400
+Received: from mail-wr1-f43.google.com ([209.85.221.43]:43682 "EHLO
+        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230312AbhFWNPw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 09:13:15 -0400
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B430320B6AEE;
-        Wed, 23 Jun 2021 06:10:57 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B430320B6AEE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1624453857;
-        bh=X0fsfcHKZT74HvXRviTlryAaKv2AtX1mjJYmSzENvUc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MiT/3muhlL9+IGywtJkQ2n5Qc/WNSVUoWcjCorFidH/MWy3QWmvIl23/J4G5/Xksj
-         /J6YvXcn5iJzTLaA04sU7h5hGWF2UPoHhSwdHUudQCH5yjI8O3ynqw97vBxgo3RxG7
-         fi+6Y1zPqIcY3IJ5ty7ftNtltnFmaHrCpv7ZF458=
-Received: by mail-pf1-f176.google.com with SMTP id i6so2303935pfq.1;
-        Wed, 23 Jun 2021 06:10:57 -0700 (PDT)
-X-Gm-Message-State: AOAM531ZeHqYFzy9hVmntGjs32cow6pvKpMsFm8nRgJiZG6hTNZ/hp1i
-        DQjMc0wsBKIjjzPAQQlIV5w/GUXRVoeYGGCQBZM=
-X-Google-Smtp-Source: ABdhPJyJo3O9WtPdcoiaPiQCJ9HGOrBerIX/T5tIZdcD7UilkOswt+R/OQZdZqOaDYgDVaHliptWFpGGtVhfdlw62G4=
-X-Received: by 2002:a05:6a00:17a5:b029:305:d4e8:7391 with SMTP id
- s37-20020a056a0017a5b0290305d4e87391mr6751150pfg.0.1624453857011; Wed, 23 Jun
- 2021 06:10:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210623105858.6978-1-mcroce@linux.microsoft.com>
- <20210623105858.6978-2-mcroce@linux.microsoft.com> <YNMffBWvs/Fz2ptK@infradead.org>
-In-Reply-To: <YNMffBWvs/Fz2ptK@infradead.org>
-From:   Matteo Croce <mcroce@linux.microsoft.com>
-Date:   Wed, 23 Jun 2021 15:10:21 +0200
-X-Gmail-Original-Message-ID: <CAFnufp1gdag0rGQ8K4_2oB6_aC+EZgfgwd2eL4-AxpG0mK+_qQ@mail.gmail.com>
-Message-ID: <CAFnufp1gdag0rGQ8K4_2oB6_aC+EZgfgwd2eL4-AxpG0mK+_qQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/6] block: add disk sequence number
-To:     Christoph Hellwig <hch@infradead.org>
+        Wed, 23 Jun 2021 09:15:52 -0400
+Received: by mail-wr1-f43.google.com with SMTP id a13so2589196wrf.10;
+        Wed, 23 Jun 2021 06:13:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version;
+        bh=6aAYleE/LhnzZ0Wq/X+zwnDBTwA+HUGZwD3I6d4qoTk=;
+        b=fhpAjaaGfa72r4otxDFn79NVgaAPX+79cdVPqgEQ9XXEheEy7Onv5qV6R7EHcH6Pbi
+         n4Psu32cJ/PuZkuTrDBMIWQ2aQHB8lQSoJr6FlAKze+3v8INQ9ZKAMI/zn4g7h1A2QIT
+         mEpf9vHSCkE3sM+Lemm2xE2oDbnBtfUUmePeHjezgOqyNCgKTpTIASnR0wKiRh7vwpCP
+         yDU/7oBNX3ayNV3ozc3Jvl3nrK10J3FhrdazPaxZ84y15uDcVN8QPPnRt9Bkp6ykilcF
+         +OosMJTwOuGCKw/vJQevkL189y+wgNY4sUds4qq+iJsfFBODBEjRcALGT7xJiWc8WvC1
+         YlKQ==
+X-Gm-Message-State: AOAM530aHqzKpdPGzOkT4IXnAfpNPY5qjksCJ9Azq3cHAdlFE+JuF4Q5
+        DIuod4y2d4CIaVYVHaTf3a4=
+X-Google-Smtp-Source: ABdhPJzy9a+URsFwwYb7Q3/kcbKTsWPhlFX7NG1Po9O5JEWl97JZ+AcsMcr6N0j7pUdmG6sWxAH26A==
+X-Received: by 2002:adf:db42:: with SMTP id f2mr11413828wrj.410.1624454008140;
+        Wed, 23 Jun 2021 06:13:28 -0700 (PDT)
+Received: from localhost ([137.220.125.106])
+        by smtp.gmail.com with ESMTPSA id o2sm2887007wrp.53.2021.06.23.06.13.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jun 2021 06:13:27 -0700 (PDT)
+Message-ID: <bbd3d100ee997431b2905838575eb4bdec820ad3.camel@debian.org>
+Subject: Re: [PATCH v3 6/6] loop: increment sequence number
+From:   Luca Boccassi <bluca@debian.org>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Matteo Croce <mcroce@linux.microsoft.com>
 Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
         Lennart Poettering <lennart@poettering.net>,
-        Luca Boccassi <bluca@debian.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Damien Le Moal <damien.lemoal@wdc.com>,
         Tejun Heo <tj@kernel.org>,
-        "Javier Gonz??lez" <javier@javigon.com>,
+        Javier Gonz??lez <javier@javigon.com>,
         Niklas Cassel <niklas.cassel@wdc.com>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Hannes Reinecke <hare@suse.de>,
         Matthew Wilcox <willy@infradead.org>,
         JeffleXu <jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 23 Jun 2021 14:13:25 +0100
+In-Reply-To: <YNMhwLMr7DiNdqC/@infradead.org>
+References: <20210623105858.6978-1-mcroce@linux.microsoft.com>
+         <20210623105858.6978-7-mcroce@linux.microsoft.com>
+         <YNMhwLMr7DiNdqC/@infradead.org>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-mxAzQuzzUw5nnkmWVfyT"
+User-Agent: Evolution 3.30.5-1.2 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 1:49 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Wed, Jun 23, 2021 at 12:58:53PM +0200, Matteo Croce wrote:
-> > +void inc_diskseq(struct gendisk *disk)
-> > +{
-> > +     static atomic64_t diskseq;
->
-> Please don't hide file scope variables in functions.
->
 
-I just didn't want to clobber that file namespace, as that is the only
-point where it's used.
+--=-mxAzQuzzUw5nnkmWVfyT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Can you explain a little more why we need a global sequence count vs
-> a per-disk one here?
+On Wed, 2021-06-23 at 12:57 +0100, Christoph Hellwig wrote:
+> On Wed, Jun 23, 2021 at 12:58:58PM +0200, Matteo Croce wrote:
+> > From: Matteo Croce <mcroce@microsoft.com>
+> >=20
+> > On a very loaded system, if there are many events queued up from multip=
+le
+> > attach/detach cycles, it's impossible to match them up with the
+> > LOOP_CONFIGURE or LOOP_SET_FD call, since we don't know where the posit=
+ion
+> > of our own association in the queue is[1].
+> > Not even an empty uevent queue is a reliable indication that we already
+> > received the uevent we were waiting for, since with multi-partition blo=
+ck
+> > devices each partition's event is queued asynchronously and might be
+> > delivered later.
+> >=20
+> > Increment the disk sequence number when setting or changing the backing
+> > file, so the userspace knows which backing file generated the event:
+>=20
+> Instead of manually incrementing the sequence here, can we make loop
+> generate the DISK_EVENT_MEDIA_CHANGE event on a backing device (aka
+> media) change?
 
-The point of the whole series is to have an unique sequence number for
-all the disks.
-Events can arrive to the userspace delayed or out-of-order, so this
-helps to correlate events to the disk.
-It might seem strange, but there isn't a way to do this yet, so I come
-up with a global, monotonically incrementing number.
+Hi,
 
--- 
-per aspera ad upstream
+This was answered in the v1 thread:
+
+https://lore.kernel.org/linux-fsdevel/20210315201331.GA2577561@casper.infra=
+dead.org/t/#m8a677028572e826352cbb1e19d1b9c1f3b6bff4b
+
+The fundamental issue is that we'd be back at trying to correlate
+events to loopdev instances, which does not work reliably - hence this
+patch series. With the new ioctl, we can get the id immediately and
+without delay when we create the device, with no possible races. Then
+we can handle events reliably, as we can correlate correctly in all
+cases.
+
+--=20
+Kind regards,
+Luca Boccassi
+
+--=-mxAzQuzzUw5nnkmWVfyT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCSqx93EIPGOymuRKGv37813JB4FAmDTM3UACgkQKGv37813
+JB4iiBAAh8dDexmraGaO7SQsP46DlEyznJWYgdFAe5nHENVy+whET347gGEt3VeB
+GDJOIHZuZ9q/dNdnqBaXA3Hek8tSdOcyFUVuZ//WDs2w7SDe5DxACdAiHuTcflvG
+pyXvH1MDuxMa0wGCLXZ8qepsqq8mcZzL++jCszmGSCC/wSfHL9t4ALN0ggotUzdW
+EnCdQX7hbpnA+g1CQpdiEffoZzeqBWAijchJ81X8T2HyQzFGh3VTfU3JiszZzprt
+0C1QuMkcfGM+yjItwZlwfg9GTZ3DZXIHdmuFsjngoOn1cdK/VEra1nUk7fdre/PP
+J8fWQ8vgwnxkm/RUq0F6HYreyyVzm/+VIBflZhhQiIafLClnEPgLfcffwlkQ02aW
+fulLRbvLHQeP0WUWi7ciRNIB4ZaX8eCKx+nG9GEWUZzwNDrP0R925NkVe+sD5vId
+e427CftslZIVIy4GNGcwF/M4VbWdXr3kUrqOH+SWGxc2lMaje9U0JJQt12BobfKG
+3Theu+uDi0NqzvUSv6jqZBhyFij1GtJu4VAv4oTpo35N+O84HI5ml2PU7iLKvY0m
+3m3ahx45g/kAZ/ufC4c63QT1lFSpeCma2TagabQXynHnxGwOyERGdaDtb9fXlXNi
+QZR/guYk/TMKfX1N3KrHEAWRyWwWH4IbAnCBZxhr74fEEY02wJs=
+=sy9m
+-----END PGP SIGNATURE-----
+
+--=-mxAzQuzzUw5nnkmWVfyT--
