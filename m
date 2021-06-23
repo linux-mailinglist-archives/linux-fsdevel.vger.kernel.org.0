@@ -2,98 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 156A03B1322
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 07:16:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8F603B1349
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 07:35:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229688AbhFWFSi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 01:18:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47342 "EHLO
+        id S229775AbhFWFhi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 01:37:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbhFWFSh (ORCPT
+        with ESMTP id S229665AbhFWFhh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 01:18:37 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0D73C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 22:16:20 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id i17so1368182ilj.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 22:16:20 -0700 (PDT)
+        Wed, 23 Jun 2021 01:37:37 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB69C061574;
+        Tue, 22 Jun 2021 22:35:20 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id c23so2165093qkc.10;
+        Tue, 22 Jun 2021 22:35:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=RUuzLpPpNaTHGrl9wO5UOlPhFkkQSWrB9EoKffEGYJM=;
-        b=OrQv5gAiuDN3EuYIxbpX5SqxUe2Gk9Kag84zT43Wn9QkW2lAgDIMXyY713cO8EF4eY
-         nWDcCeFoU6gyP6F5Tvh5iKm3cytzQ+q+B87yasJ1JRXFIjl/EdJWfSD5AaGvLq2Phz23
-         GgPxTe4vcGtnBAZ3cVv4Colh3QRlzCPor25qDuP+3duy+hvSmS0ubGa0MkN9offl+1G6
-         fPrFnyWFD5iwKBLV/uH+D7w6mcsn0XWQUoaDlWm7X0JEk0bm4rZmEsLJbc0O1NXI5L36
-         lNcPdHqVUevAAtqqo5eWhoZV9VcK1rzJDLAWM+xSXlPjsnHr5DDxgrSpdrzocka8rgAo
-         GZew==
+        bh=PP5dIDUBMjPRy89Fci0P3cI/PKvVprrPTs2qTlqJFXc=;
+        b=HoqFdq00dI5ZldEZME0+lGg9OntlVW7T5Yk0XX8oHk0U/Etr/3QXtspxcooqoKBso/
+         cEmAgxW50ezLXRGLmhr5+FL33HO5CYVqdIij6EYndQ33HTh2Pz7VK0q5soLR2KDcbAwJ
+         lHPDKc8DnfPkZtwlHIUhNQdyC3DdQW0MjUjD2WImM6D674C+/i/NhM3DHdIHy0AwTSWf
+         4XigdCLBTGGW0/g1tRXN2mhMTnFLQQQgNLYQtFhXLWzWFCvoKILnV7fVVkcbM4ZQdqeU
+         KqXjGWPiFY4iZKDZSccz7xyz7dSZRYRpKMSfY1f/sqrNA4AGBNsLuPF2Q1scKanTttiv
+         5h0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RUuzLpPpNaTHGrl9wO5UOlPhFkkQSWrB9EoKffEGYJM=;
-        b=UIlmRGB1fmwuYxmQfAoStbtOT2512Y51oFcvbCe0qt7SIA36CLTVShHk6hmXWLMa3m
-         +B2idtpzzKAe7e1NoJZUgXJw2o9iZUdthDyJGF1CcPlLVcu4DU1ZUZj4+x9UZIBQcH2J
-         wAP01ua8ShTM6H6eCFgJc/n8o+T+fMeWJ2MKEWluB4qtMYDK0hZbSvv3Z++m9QRyOsxr
-         qXionET1haol/iDXioIoMnxzjQ99SF2q6oLQzTaSfVy8QOiXjgXJGsYT5xvUZcY4zKSB
-         OK/SYNlUInTa/r74lMciL1Mnwdl6l4JPFtQXgaHIKG1JDUoaq+0uMyOABI+yX6TTk7qG
-         zJ0w==
-X-Gm-Message-State: AOAM532P0DNZH74pmFnvhul6noim2irUacf2yyJSFNtUwTjw3VpZ/ljf
-        PdW3Cy6nuC7ENEjMqGgmHQQX+akH8VQWr5KSg0NECjw3TNk=
-X-Google-Smtp-Source: ABdhPJz1q4E+HmeTIaZburxFUW7QyrSrVTB8Y7QbVw+3FUhNJRUq5bBRxV2Yj2N2HpMtbYgXjhh7Mo54JxGE0k24Urk=
-X-Received: by 2002:a92:874b:: with SMTP id d11mr1525904ilm.137.1624425380165;
- Tue, 22 Jun 2021 22:16:20 -0700 (PDT)
+        bh=PP5dIDUBMjPRy89Fci0P3cI/PKvVprrPTs2qTlqJFXc=;
+        b=DyVw/Twpz9MEq9ZhjBcGhZwj2fYLOnyktYTL2TOdCAW9ptIOR8Et1Il2iyx/zRpU+B
+         ctNxgqrqXMhaZ14CCdc65w0tBBm8hNyVAMRzu1p1sFSOqrVuh8nE5jXK5KjXLQkYBido
+         l+Iw6aYg9+y3YO1gEsCIyMNjg7GcLoj+guzMbbWZJdnCd6HdNWkS4N8XKxdgpZn15EkI
+         ks//6tw79aGNXevRdLY1YpzLeNILg7u3ukz/BmTvgE2x/u/Oe48TlW+4oWuP9Xw1u7lo
+         MXlSqzZK7ZvvWmyHLS2r656/24bqIbAH04DM8Vb6v2YWofePvB6zJ9t0t0kVUaYyu9xX
+         jRBw==
+X-Gm-Message-State: AOAM531iV/Fw860YwyvvMbIhxM+TTToaYE7/XVOykKxHVVbSqhjmuRV+
+        NoeQ3KhtBqclnI4dwp9PCX1LrYJlvkbAmUH2Udw=
+X-Google-Smtp-Source: ABdhPJxJaV6tN6VQlIjDfsK1w6kYg2Cspb7beUN/DhrKm7PXJ9dDj13GdccqNYe/b/l5mcVc3LIe1oS3fVRfNwgzfTE=
+X-Received: by 2002:a25:5048:: with SMTP id e69mr9574929ybb.511.1624426519908;
+ Tue, 22 Jun 2021 22:35:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210622194300.2617430-1-kbusch@kernel.org>
-In-Reply-To: <20210622194300.2617430-1-kbusch@kernel.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 23 Jun 2021 08:16:09 +0300
-Message-ID: <CAOQ4uxiCUd3SjThiX31L8JFgRAvemcMgtzfZJY1aXGwANNJ6Mg@mail.gmail.com>
-Subject: Re: [PATCH] vfs: explicitly include fileattr.h dependency
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Jens Axboe :" <axboe@kernel.dk>
+References: <20210603051836.2614535-1-dkadashev@gmail.com> <ee7307f5-75f3-60d7-836e-830c701fe0e5@gmail.com>
+In-Reply-To: <ee7307f5-75f3-60d7-836e-830c701fe0e5@gmail.com>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Wed, 23 Jun 2021 12:35:09 +0700
+Message-ID: <CAOKbgA71euyOxvzg3PwHxsCFqJ3-hZdC8Ms=TogGLyb-KfLkDQ@mail.gmail.com>
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat support
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 10:47 PM Keith Busch <kbusch@kernel.org> wrote:
+On Tue, Jun 22, 2021 at 6:56 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
 >
-> linux/fileattr.h has an implicit requirement that linux/fs.h be included
-> first. Make that dependency explicit.
+> On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
+> > This started out as an attempt to add mkdirat support to io_uring which
+> > is heavily based on renameat() / unlinkat() support.
+> >
+> > During the review process more operations were added (linkat, symlinkat,
+> > mknodat) mainly to keep things uniform internally (in namei.c), and
+> > with things changed in namei.c adding support for these operations to
+> > io_uring is trivial, so that was done too. See
+> > https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
 >
-> Cc: Miklos Szeredi <mszeredi@redhat.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Jens Axboe: <axboe@kernel.dk>
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->  include/linux/fileattr.h | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
-> index 9e37e063ac69..34e153172a85 100644
-> --- a/include/linux/fileattr.h
-> +++ b/include/linux/fileattr.h
-> @@ -3,6 +3,8 @@
->  #ifndef _LINUX_FILEATTR_H
->  #define _LINUX_FILEATTR_H
->
-> +#include <linux/fs.h>
-> +
->  /* Flags shared betwen flags/xflags */
->  #define FS_COMMON_FL \
->         (FS_SYNC_FL | FS_IMMUTABLE_FL | FS_APPEND_FL | \
-> --
+> io_uring part looks good in general, just small comments. However, I
+> believe we should respin it, because there should be build problems
+> in the middle.
 
-Thinking out loud:
-Would it be better to split out the flag definitions to uapi/linux/fileattr.h
-and include it from here and from uapi/linux/fs.h?
+I knew my celebration was premature! :)
 
-Will that cause UAPI pain??
-
-Thanks,
-Amir.
+-- 
+Dmitry Kadashev
