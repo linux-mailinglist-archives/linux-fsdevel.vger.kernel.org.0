@@ -2,175 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CAE53B1C54
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 16:21:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B41FE3B1C69
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 16:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230464AbhFWOXd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 10:23:33 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:54358 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230274AbhFWOXc (ORCPT
+        id S231182AbhFWO3X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 10:29:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59296 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230061AbhFWO3W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 10:23:32 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id D99F11FD65;
-        Wed, 23 Jun 2021 14:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624458073; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tJ3vR/SXh23CLtwZGi8lArXV8NRWnJk2otgFpbBFqJM=;
-        b=bIqFEUPKkWB/VqmvbWuWwqzChviBze5IhGqkCaXcLuWK8cQudyMslpregBBL93rSKT+/dO
-        BGy5NOj6vzNZ2djDCtl/hrW60MWqi48nfPiK1PcOKilKjdFs1KXuwdqs6kldvXV7Plb+2V
-        850cMQ+Gn9ReNMBReRNUBkHYzZ9BDOg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624458073;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tJ3vR/SXh23CLtwZGi8lArXV8NRWnJk2otgFpbBFqJM=;
-        b=vTS60IGlrXOVl8W1c2KVPDg+sOFaY5CZeo0i5N6A3kPTnbPeNGj8sDoKTHY0D54d8MCfns
-        iiXRPylHP1uYD5DA==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 6EAAC11A97;
-        Wed, 23 Jun 2021 14:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624458073; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tJ3vR/SXh23CLtwZGi8lArXV8NRWnJk2otgFpbBFqJM=;
-        b=bIqFEUPKkWB/VqmvbWuWwqzChviBze5IhGqkCaXcLuWK8cQudyMslpregBBL93rSKT+/dO
-        BGy5NOj6vzNZ2djDCtl/hrW60MWqi48nfPiK1PcOKilKjdFs1KXuwdqs6kldvXV7Plb+2V
-        850cMQ+Gn9ReNMBReRNUBkHYzZ9BDOg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624458073;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tJ3vR/SXh23CLtwZGi8lArXV8NRWnJk2otgFpbBFqJM=;
-        b=vTS60IGlrXOVl8W1c2KVPDg+sOFaY5CZeo0i5N6A3kPTnbPeNGj8sDoKTHY0D54d8MCfns
-        iiXRPylHP1uYD5DA==
-Received: from director2.suse.de ([192.168.254.72])
-        by imap3-int with ESMTPSA
-        id YOEyGVlD02DNWQAALh3uQQ
-        (envelope-from <hare@suse.de>); Wed, 23 Jun 2021 14:21:13 +0000
-Subject: Re: [PATCH v3 1/6] block: add disk sequence number
-To:     Luca Boccassi <bluca@debian.org>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        Matteo Croce <mcroce@linux.microsoft.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wed, 23 Jun 2021 10:29:22 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F1F8C061574;
+        Wed, 23 Jun 2021 07:27:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=DDDhkKoOSvn2SSqNME1lq0AiPIJcymhF4xvIun7LjzI=; b=tXCs140TX5Dp/CQfrgnASXfijn
+        78PTLXbWv37XLx1RsZQh3kUkN2I4QGm9SlH7fyJdRRJdFqALd1gUZ4eOd6o7+J03FvMM/2qILobp7
+        +mZgYskd6ChXuoDA5zGCjPiXTXMpI7yJMuaYkK25dNQ5sF3swAXX1ZTijJDfcrt9mllz7XgOq4Rlg
+        WPZZyEaVkreWGJ4vBi7dpRJRrpkumYhDaFZijUS8Dyj+wUiZ8F4cJKqP21BxaWEGYzbFtbcJ/HsIJ
+        wBO8Irhv87qkBTwWW6QTbulmxkMO5Dq7DpguJCdCERlRS2z4fcS17JitCT2Ksy5I1sz3+ZPTa9rYP
+        2+LiLb+w==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lw3pF-00FW9x-Rd; Wed, 23 Jun 2021 14:26:08 +0000
+Date:   Wed, 23 Jun 2021 15:25:57 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Luca Boccassi <bluca@debian.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Matteo Croce <mcroce@linux.microsoft.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Damien Le Moal <damien.lemoal@wdc.com>,
         Tejun Heo <tj@kernel.org>,
         Javier Gonz??lez <javier@javigon.com>,
         Niklas Cassel <niklas.cassel@wdc.com>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Hannes Reinecke <hare@suse.de>,
         Matthew Wilcox <willy@infradead.org>,
         JeffleXu <jefflexu@linux.alibaba.com>
+Subject: Re: [PATCH v3 6/6] loop: increment sequence number
+Message-ID: <YNNEdbr+0p+PzinQ@infradead.org>
 References: <20210623105858.6978-1-mcroce@linux.microsoft.com>
- <20210623105858.6978-2-mcroce@linux.microsoft.com>
- <YNMffBWvs/Fz2ptK@infradead.org>
- <CAFnufp1gdag0rGQ8K4_2oB6_aC+EZgfgwd2eL4-AxpG0mK+_qQ@mail.gmail.com>
- <YNM8T44v5FTViVWM@gardel-login>
- <3be63d9f-d8eb-7657-86dc-8d57187e5940@suse.de>
- <1b55bc67b75e5cf982c0c1e8f45096f2eb6e8590.camel@debian.org>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <f84cab19-fb5c-634b-d1ca-51404907a623@suse.de>
-Date:   Wed, 23 Jun 2021 16:21:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+ <20210623105858.6978-7-mcroce@linux.microsoft.com>
+ <YNMhwLMr7DiNdqC/@infradead.org>
+ <bbd3d100ee997431b2905838575eb4bdec820ad3.camel@debian.org>
 MIME-Version: 1.0
-In-Reply-To: <1b55bc67b75e5cf982c0c1e8f45096f2eb6e8590.camel@debian.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbd3d100ee997431b2905838575eb4bdec820ad3.camel@debian.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/23/21 4:07 PM, Luca Boccassi wrote:
-> On Wed, 2021-06-23 at 16:01 +0200, Hannes Reinecke wrote:
->> On 6/23/21 3:51 PM, Lennart Poettering wrote:
->>> On Mi, 23.06.21 15:10, Matteo Croce (mcroce@linux.microsoft.com) wrote:
->>>
->>>> On Wed, Jun 23, 2021 at 1:49 PM Christoph Hellwig <hch@infradead.org> wrote:
->>>>> On Wed, Jun 23, 2021 at 12:58:53PM +0200, Matteo Croce wrote:
->>>>>> +void inc_diskseq(struct gendisk *disk)
->>>>>> +{
->>>>>> +     static atomic64_t diskseq;
->>>>>
->>>>> Please don't hide file scope variables in functions.
->>>>>
->>>>
->>>> I just didn't want to clobber that file namespace, as that is the only
->>>> point where it's used.
->>>>
->>>>> Can you explain a little more why we need a global sequence count vs
->>>>> a per-disk one here?
->>>>
->>>> The point of the whole series is to have an unique sequence number for
->>>> all the disks.
->>>> Events can arrive to the userspace delayed or out-of-order, so this
->>>> helps to correlate events to the disk.
->>>> It might seem strange, but there isn't a way to do this yet, so I come
->>>> up with a global, monotonically incrementing number.
->>>
->>> To extend on this and given an example why the *global* sequence number
->>> matters:
->>>
->>> Consider you plug in a USB storage key, and it gets named
->>> /dev/sda. You unplug it, the kernel structures for that device all
->>> disappear. Then you plug in a different USB storage key, and since
->>> it's the only one it will too be called /dev/sda.
->>>
->>> With the global sequence number we can still distinguish these two
->>> devices even though otherwise they can look pretty much identical. If
->>> we had per-device counters then this would fall flat because the
->>> counter would be flushed out when the device disappears and when a device
->>> reappears under the same generic name we couldn't assign it a
->>> different sequence number than before.
->>>
->>> Thus: a global instead of local sequence number counter is absolutely
->>> *key* for the problem this is supposed to solve
->>>
->> Well ... except that you'll need to keep track of the numbers (otherwise
->> you wouldn't know if the numbers changed, right?).
->> And if you keep track of the numbers you probably will have to implement
->> an uevent listener to get the events in time.
->> But if you have an uevent listener you will also get the add/remove
->> events for these devices.
->> And if you get add and remove events you can as well implement sequence
->> numbers in your application, seeing that you have all information
->> allowing you to do so.
->> So why burden the kernel with it?
->>
->> Cheers,
->>
->> Hannes
+On Wed, Jun 23, 2021 at 02:13:25PM +0100, Luca Boccassi wrote:
+> On Wed, 2021-06-23 at 12:57 +0100, Christoph Hellwig wrote:
+> > On Wed, Jun 23, 2021 at 12:58:58PM +0200, Matteo Croce wrote:
+> > > From: Matteo Croce <mcroce@microsoft.com>
+> > > 
+> > > On a very loaded system, if there are many events queued up from multiple
+> > > attach/detach cycles, it's impossible to match them up with the
+> > > LOOP_CONFIGURE or LOOP_SET_FD call, since we don't know where the position
+> > > of our own association in the queue is[1].
+> > > Not even an empty uevent queue is a reliable indication that we already
+> > > received the uevent we were waiting for, since with multi-partition block
+> > > devices each partition's event is queued asynchronously and might be
+> > > delivered later.
+> > > 
+> > > Increment the disk sequence number when setting or changing the backing
+> > > file, so the userspace knows which backing file generated the event:
+> > 
+> > Instead of manually incrementing the sequence here, can we make loop
+> > generate the DISK_EVENT_MEDIA_CHANGE event on a backing device (aka
+> > media) change?
 > 
 > Hi,
 > 
-> We need this so that we can reliably correlate events to instances of a
-> device. Events alone cannot solve this problem, because events _are_
-> the problem.
+> This was answered in the v1 thread:
 > 
-In which sense?
-Yes, events can be delayed (if you list to uevents), but if you listen 
-to kernel events there shouldn't be a delay, right?
+> https://lore.kernel.org/linux-fsdevel/20210315201331.GA2577561@casper.infradead.org/t/#m8a677028572e826352cbb1e19d1b9c1f3b6bff4b
+> 
+> The fundamental issue is that we'd be back at trying to correlate
+> events to loopdev instances, which does not work reliably - hence this
+> patch series. With the new ioctl, we can get the id immediately and
+> without delay when we create the device, with no possible races. Then
+> we can handle events reliably, as we can correlate correctly in all
+> cases.
 
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+I very much disagree with your reply there.  The device now points to
+a different media.  Both for the loop device, a floppy or a CD changer
+probably by some kind of user action.  In the last cast it might even
+by done entirely locally through a script just like the loop device.
