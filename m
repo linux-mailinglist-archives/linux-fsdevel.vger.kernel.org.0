@@ -2,129 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 046BD3B1364
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 07:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5428E3B136A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 07:50:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbhFWFwb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 01:52:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54800 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229826AbhFWFwa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 01:52:30 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BECBCC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 22:50:12 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id gt18so2029531ejc.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 22:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4GiuBeValxmP+XXrOzcRmIGN8AohLiEvZ/1N4xkfEsc=;
-        b=1ojgGgahexzFXE9RdNLyeoPjvzgy1FuMSknCgn9K5GwXoXKChPXHlt8RFqJU6xJGuF
-         Cgrqzm5EDspyu9pceCZQxvmPvCVRPYcOLwyyVOaWAFc+/73Sd1ei8PUVLb3hMJg85yGd
-         OoiS+Tom58BzQ4gVjO0sTB3pg1TBBl4FTS0KCFKWgNCJHr3b6clNKWi9sch5PBKWSbC5
-         hdgylXBSI1fEHL65mcL5+HqoUj0DqlN+Vgg5BbVMgsnjT5z5R29YjArWCkkrPQkSQcTP
-         G0euaC5g3D/chfHTH21pgGDle3JiDm7q2fqGYTk+72WN78OHY9b3+JAT5mbt83TyJaUN
-         rngA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4GiuBeValxmP+XXrOzcRmIGN8AohLiEvZ/1N4xkfEsc=;
-        b=NjzMh26Yrs+8FrhZbZOe+Cnu+PDpUQDFbDUav/PEz4zjvOT7mQo/n0CevgezqiHIs5
-         EkswHbwbgVv+ThOLiSZdELc2ZpZdsonm3SBPUp1vuRbROepSQ7GaSWxM1WyJsuCvumsp
-         ZrGjIHHHuySANhLuNkckaiRFREDSdTYMhmvYW0AiGORu28lHrGE0qANDS0yVt5KIkskA
-         V7wVMRTTmM03THlZofnFoimqr6ZAbEE184Rb3xIsGyPg0/k9EhA7sFyqaztIy1rdZmIC
-         EZsQZs9eIioe+SiXAF0dYYMP18eBNQfAGR8annvJsis4MbDnKtm/YZtM95m9dfVpN0Cs
-         L/mw==
-X-Gm-Message-State: AOAM531Nz+St7ChcABZGGfaOD0xJuOGR66pTE32Crwszc4htluFa4E81
-        dq1S1/CLfcmtBkrrmMvae3H+nl56eSojTiSPArM4
-X-Google-Smtp-Source: ABdhPJwbg3yWypQN4cxrZmP3uYn4KoXMLaW0oW+bJJtUlpWP6iDiZd3Hcvf9/eWyaRh10eQQqnKlblyzvYXHH4O6Z7k=
-X-Received: by 2002:a17:906:9a4f:: with SMTP id aj15mr7921850ejc.197.1624427411326;
- Tue, 22 Jun 2021 22:50:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210615141331.407-1-xieyongji@bytedance.com> <20210615141331.407-10-xieyongji@bytedance.com>
- <adfb2be9-9ed9-ca37-ac37-4cd00bdff349@redhat.com> <CACycT3tAON+-qZev+9EqyL2XbgH5HDspOqNt3ohQLQ8GqVK=EA@mail.gmail.com>
- <1bba439f-ffc8-c20e-e8a4-ac73e890c592@redhat.com> <CACycT3uzMJS7vw6MVMOgY4rb=SPfT2srV+8DPdwUVeELEiJgbA@mail.gmail.com>
- <0aeb7cb7-58e5-1a95-d830-68edd7e8ec2e@redhat.com> <CACycT3uuooKLNnpPHewGZ=q46Fap2P4XCFirdxxn=FxK+X1ECg@mail.gmail.com>
- <e4cdee72-b6b4-d055-9aac-3beae0e5e3e1@redhat.com>
-In-Reply-To: <e4cdee72-b6b4-d055-9aac-3beae0e5e3e1@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 23 Jun 2021 13:50:00 +0800
-Message-ID: <CACycT3u8=_D3hCtJR+d5BgeUQMce6S7c_6P3CVfvWfYhCQeXFA@mail.gmail.com>
-Subject: Re: Re: [PATCH v8 09/10] vduse: Introduce VDUSE - vDPA Device in Userspace
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        id S229920AbhFWFwu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 01:52:50 -0400
+Received: from foss.arm.com ([217.140.110.172]:57944 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229726AbhFWFwu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Jun 2021 01:52:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95C2CED1;
+        Tue, 22 Jun 2021 22:50:32 -0700 (PDT)
+Received: from entos-ampere-02.shanghai.arm.com (entos-ampere-02.shanghai.arm.com [10.169.214.103])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 656BF3F694;
+        Tue, 22 Jun 2021 22:50:27 -0700 (PDT)
+From:   Jia He <justin.he@arm.com>
+To:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, nd@arm.com,
+        Jia He <justin.he@arm.com>
+Subject: [PATCH v2 0/4] make '%pD' print the full path of file
+Date:   Wed, 23 Jun 2021 13:50:07 +0800
+Message-Id: <20210623055011.22916-1-justin.he@arm.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 11:31 AM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> =E5=9C=A8 2021/6/22 =E4=B8=8B=E5=8D=884:14, Yongji Xie =E5=86=99=E9=81=93=
-:
-> > On Tue, Jun 22, 2021 at 3:50 PM Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >> =E5=9C=A8 2021/6/22 =E4=B8=8B=E5=8D=883:22, Yongji Xie =E5=86=99=E9=81=
-=93:
-> >>>> We need fix a way to propagate the error to the userspace.
-> >>>>
-> >>>> E.g if we want to stop the deivce, we will delay the status reset un=
-til
-> >>>> we get respose from the userspace?
-> >>>>
-> >>> I didn't get how to delay the status reset. And should it be a DoS
-> >>> that we want to fix if the userspace doesn't give a response forever?
-> >>
-> >> You're right. So let's make set_status() can fail first, then propagat=
-e
-> >> its failure via VHOST_VDPA_SET_STATUS.
-> >>
-> > OK. So we only need to propagate the failure in the vhost-vdpa case, ri=
-ght?
->
->
-> I think not, we need to deal with the reset for virtio as well:
->
-> E.g in register_virtio_devices(), we have:
->
->          /* We always start by resetting the device, in case a previous
->           * driver messed it up.  This also tests that code path a
-> little. */
->        dev->config->reset(dev);
->
-> We probably need to make reset can fail and then fail the
-> register_virtio_device() as well.
->
+Background
+==========
+Linus suggested printing the full path of file instead of printing
+the components as '%pd'.
 
-OK, looks like virtio_add_status() and virtio_device_ready()[1] should
-be also modified if we need to propagate the failure in the
-virtio-vdpa case. Or do we only need to care about the reset case?
+Typically, there is no need for printk specifiers to take any real locks
+(ie mount_lock or rename_lock). So I introduce a new helper
+d_path_unsafe() which is similar to d_path() except it doesn't take any
+seqlock/spinlock.
 
-[1] https://lore.kernel.org/lkml/20210517093428.670-1-xieyongji@bytedance.c=
-om/
+This series is based on Al Viro's d_path() cleanup patches [1] which
+lifted the inner lockless loop into a new helper. 
 
-Thanks,
-Yongji
+Test
+====
+The cases I tested:
+1. print '%pD' with full path of ext4 file
+2. mount a ext4 filesystem upon a ext4 filesystem, and print the file
+   with '%pD'
+3. all test_print selftests, including the new '%14pD' '%-14pD'
+4. kasprintf
+
+TODO
+====
+I plan to do the followup work after '%pD' behavior is changed.
+- s390/hmcdrv: remove the redundant directory path in printing string.
+- fs/iomap: simplify the iomap_swapfile_fail() with '%pD'.
+- simplify the string printing when file_path() is invoked(in some
+  cases, not all).
+- change the previous '%pD[2,3,4]' to '%pD'
+   
+Changelog
+=========
+v2:
+- refine the commit msg/comments (Andy)
+- pass the validator check by "make C=1 W=1"
+- add the R-b for patch 4/4 from Andy
+
+v1: https://lkml.org/lkml/2021/6/22/680
+- remove the RFC tag
+- refine the commit msg/comments(by Petr, Andy)
+- make using_scratch_space a new parameter of the test case 
+
+RFCv4:
+- don't support spec.precision anymore for '%pD'
+- add Rasmus's patch into this series
+ 
+RFCv3:
+- implement new d_path_unsafe to use [buf, end] instead of stack space for
+  filling bytes (by Matthew)
+- add new test cases for '%pD'
+- drop patch "hmcdrv: remove the redundant directory path" before removing rfc.
+
+RFCv2: 
+- implement new d_path_fast based on Al Viro's patches
+- add check_pointer check (by Petr)
+- change the max full path size to 256 in stack space
+
+RFCv1: https://lkml.org/lkml/2021/5/8/122
+
+Link: https://lkml.org/lkml/2021/5/18/1260 [1]
+
+Jia He (3):
+  fs: introduce helper d_path_unsafe()
+  lib/vsprintf.c: make '%pD' print the full path of file
+  lib/test_printf.c: add test cases for '%pD'
+
+Rasmus Villemoes (1):
+  lib/test_printf.c: split write-beyond-buffer check in two
+
+ Documentation/core-api/printk-formats.rst |   5 +-
+ fs/d_path.c                               | 122 ++++++++++++++++++++--
+ include/linux/dcache.h                    |   1 +
+ lib/test_printf.c                         |  54 ++++++++--
+ lib/vsprintf.c                            |  40 ++++++-
+ 5 files changed, 199 insertions(+), 23 deletions(-)
+
+-- 
+2.17.1
+
