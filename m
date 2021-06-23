@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D51E13B184F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 12:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA2EA3B1853
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 13:00:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230182AbhFWLCK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 07:02:10 -0400
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:33385 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230174AbhFWLCJ (ORCPT
+        id S230232AbhFWLCM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 07:02:12 -0400
+Received: from mail-wm1-f46.google.com ([209.85.128.46]:37432 "EHLO
+        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230204AbhFWLCL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 07:02:09 -0400
-Received: by mail-wr1-f48.google.com with SMTP id d11so2200329wrm.0;
-        Wed, 23 Jun 2021 03:59:50 -0700 (PDT)
+        Wed, 23 Jun 2021 07:02:11 -0400
+Received: by mail-wm1-f46.google.com with SMTP id f16-20020a05600c1550b02901b00c1be4abso3712395wmg.2;
+        Wed, 23 Jun 2021 03:59:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=aJu1+YCrkeg1VrMRtE/40B8yQYYhV/BJgPpoTp2RURs=;
-        b=nFvMg7PVYmtnD+YGQLAR7G7X1h+cBy4317unAM44+D/o81afAofnKztFWqlW3FBNNH
-         1HpDpKQ3fsG9jkEnuFy0pqfQt8uLs7xkRvxldHpss2Oa2Svd8XZDHwdVG+NHJFUZYhfQ
-         9+kdvhRKaXLGE2WVtl8Qq7xS8cf4aZKe2QSLLvAe1tFquzSg7eYKNPyu6K4WVOKXfkvV
-         n+xAVUcNkXapsLMMeeoDXIQ+1avx5YpNauJMRGeDNKx41QfvLIQC91UeRvEGx9vFvskO
-         3t27lai2cqac34QrCsPjKdRTpzJkb1mI3eHGxc3zMjvVyI2yxW3JbwUe3x5pdqO/nrJJ
-         /e9Q==
-X-Gm-Message-State: AOAM532ZrWy78A0s4bjYvRLdRgLMP/6yrUx6PmvW6ePJFJyqEPsTjcFe
-        tiHkGEtbBxHRA6h4CO0fL3+M9ZR+dhHaQQ==
-X-Google-Smtp-Source: ABdhPJzPlLp3WHs6yTVEK2Y51Df5ofPOSUEgqWhrBhjrpHROc+LqUnoP+63NfjJzIfbcCZFzogB17A==
-X-Received: by 2002:a05:6000:144b:: with SMTP id v11mr8805568wrx.421.1624445990205;
-        Wed, 23 Jun 2021 03:59:50 -0700 (PDT)
+        bh=dJGFJi2SWlwPX3gSxotAaJdmgPvABu9igSaT3WLpCGg=;
+        b=XXnX7uVTNeUCm7fU8JJk5RB8k/eRheauKRIs6JDVvrKFJj94CYVdtIa7BdVnIhGGt5
+         sHH3hNHwhhpSClRi6dadag5YNqpRajKIenHCFYnfXP9QDIG+Vbc6z0aKOxiDecCgiLuo
+         MkNKH1h/hygZCT5bO2IBLfve2yJs84Jjn8aJUM0db4b1ZaDmKd+UtaOWIx2wePVIjpqN
+         Ap2rFKd1LJ73mfFDloLfmH76uAPI2HdQq8+k4JHl6mKvFButLr3un3mEmFDy35FnIxgv
+         wSTFkZXEtSTjfWmA96eQCpMVZQ5cTdL0mJ0iZFWaPEsT2iAmcxCKuCLealGsLrMgdoiK
+         Af+w==
+X-Gm-Message-State: AOAM531HTlNwT5BGyKwep3PrIBK8/kLgkDOaR7vcPGlDAFfTFq0frAPU
+        xQOTY5eb7DButFW7DcKJskNI+89rVyP8+A==
+X-Google-Smtp-Source: ABdhPJxXAM0wmpLWavin8GYnUa25ByXouTBeczdOFAg+LMqLZ4X874wCN+/F6t9F5NrOmR3x8FaKXQ==
+X-Received: by 2002:a1c:de8a:: with SMTP id v132mr9834645wmg.27.1624445992655;
+        Wed, 23 Jun 2021 03:59:52 -0700 (PDT)
 Received: from msft-t490s.. (mob-176-246-29-26.net.vodafone.it. [176.246.29.26])
-        by smtp.gmail.com with ESMTPSA id r2sm2659458wrv.39.2021.06.23.03.59.47
+        by smtp.gmail.com with ESMTPSA id r2sm2659458wrv.39.2021.06.23.03.59.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jun 2021 03:59:49 -0700 (PDT)
+        Wed, 23 Jun 2021 03:59:52 -0700 (PDT)
 From:   Matteo Croce <mcroce@linux.microsoft.com>
 To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>
@@ -50,9 +50,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Matthew Wilcox <willy@infradead.org>,
         Christoph Hellwig <hch@infradead.org>,
         JeffleXu <jefflexu@linux.alibaba.com>
-Subject: [PATCH v3 2/6] block: add ioctl to read the disk sequence number
-Date:   Wed, 23 Jun 2021 12:58:54 +0200
-Message-Id: <20210623105858.6978-3-mcroce@linux.microsoft.com>
+Subject: [PATCH v3 3/6] block: refactor sysfs code
+Date:   Wed, 23 Jun 2021 12:58:55 +0200
+Message-Id: <20210623105858.6978-4-mcroce@linux.microsoft.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210623105858.6978-1-mcroce@linux.microsoft.com>
 References: <20210623105858.6978-1-mcroce@linux.microsoft.com>
@@ -64,51 +64,74 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Matteo Croce <mcroce@microsoft.com>
 
-Add a new BLKGETDISKSEQ ioctl which retrieves the disk sequence number
-from the genhd structure.
+Move the sysfs register code from a function named disk_add_events() to
+a new function named disk_add_sysfs(). Also, rename the attribute list
+with a more generic name than disk_events_attrs.
 
-    # ./getdiskseq /dev/loop*
-    /dev/loop0:     13
-    /dev/loop0p1:   13
-    /dev/loop0p2:   13
-    /dev/loop0p3:   13
-    /dev/loop1:     14
-    /dev/loop1p1:   14
-    /dev/loop1p2:   14
-    /dev/loop2:     5
-    /dev/loop3:     6
+This is a prerequisite patch to export diskseq in sysfs later.
 
 Signed-off-by: Matteo Croce <mcroce@microsoft.com>
 ---
- block/ioctl.c           | 2 ++
- include/uapi/linux/fs.h | 1 +
- 2 files changed, 3 insertions(+)
+ block/genhd.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index 8ba1ed8defd0..32b339bbaf95 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -469,6 +469,8 @@ static int blkdev_common_ioctl(struct block_device *bdev, fmode_t mode,
- 				BLKDEV_DISCARD_SECURE);
- 	case BLKZEROOUT:
- 		return blk_ioctl_zeroout(bdev, mode, arg);
-+	case BLKGETDISKSEQ:
-+		return put_u64(argp, bdev->bd_disk->diskseq);
- 	case BLKREPORTZONE:
- 		return blkdev_report_zones_ioctl(bdev, mode, cmd, arg);
- 	case BLKRESETZONE:
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 4c32e97dcdf0..bdf7b404b3e7 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -184,6 +184,7 @@ struct fsxattr {
- #define BLKSECDISCARD _IO(0x12,125)
- #define BLKROTATIONAL _IO(0x12,126)
- #define BLKZEROOUT _IO(0x12,127)
-+#define BLKGETDISKSEQ _IOR(0x12,128,__u64)
- /*
-  * A jump here: 130-136 are reserved for zoned block devices
-  * (see uapi/linux/blkzoned.h)
+diff --git a/block/genhd.c b/block/genhd.c
+index c96b667136ee..610dd86fd4b6 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -39,6 +39,7 @@ static void disk_alloc_events(struct gendisk *disk);
+ static void disk_add_events(struct gendisk *disk);
+ static void disk_del_events(struct gendisk *disk);
+ static void disk_release_events(struct gendisk *disk);
++static void disk_add_sysfs(struct gendisk *disk);
+ 
+ void set_capacity(struct gendisk *disk, sector_t sectors)
+ {
+@@ -560,6 +561,7 @@ static void __device_add_disk(struct device *parent, struct gendisk *disk,
+ 	 */
+ 	WARN_ON_ONCE(!blk_get_queue(disk->queue));
+ 
++	disk_add_sysfs(disk);
+ 	disk_add_events(disk);
+ 	blk_integrity_add(disk);
+ }
+@@ -1754,7 +1756,7 @@ static const DEVICE_ATTR(events_poll_msecs, 0644,
+ 			 disk_events_poll_msecs_show,
+ 			 disk_events_poll_msecs_store);
+ 
+-static const struct attribute *disk_events_attrs[] = {
++static const struct attribute *disk_sysfs_attrs[] = {
+ 	&dev_attr_events.attr,
+ 	&dev_attr_events_async.attr,
+ 	&dev_attr_events_poll_msecs.attr,
+@@ -1825,13 +1827,16 @@ static void disk_alloc_events(struct gendisk *disk)
+ 	disk->ev = ev;
+ }
+ 
+-static void disk_add_events(struct gendisk *disk)
++static void disk_add_sysfs(struct gendisk *disk)
+ {
+ 	/* FIXME: error handling */
+-	if (sysfs_create_files(&disk_to_dev(disk)->kobj, disk_events_attrs) < 0)
++	if (sysfs_create_files(&disk_to_dev(disk)->kobj, disk_sysfs_attrs) < 0)
+ 		pr_warn("%s: failed to create sysfs files for events\n",
+ 			disk->disk_name);
++}
+ 
++static void disk_add_events(struct gendisk *disk)
++{
+ 	if (!disk->ev)
+ 		return;
+ 
+@@ -1856,7 +1861,7 @@ static void disk_del_events(struct gendisk *disk)
+ 		mutex_unlock(&disk_events_mutex);
+ 	}
+ 
+-	sysfs_remove_files(&disk_to_dev(disk)->kobj, disk_events_attrs);
++	sysfs_remove_files(&disk_to_dev(disk)->kobj, disk_sysfs_attrs);
+ }
+ 
+ static void disk_release_events(struct gendisk *disk)
 -- 
 2.31.1
 
