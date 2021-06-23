@@ -2,159 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A4663B1D0F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 17:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 552523B1D9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 17:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231264AbhFWPFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 11:05:15 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:41446 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230061AbhFWPFO (ORCPT
+        id S231335AbhFWPbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 11:31:39 -0400
+Received: from gardel.0pointer.net ([85.214.157.71]:53826 "EHLO
+        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229523AbhFWPbh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 11:05:14 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 188FC21978;
-        Wed, 23 Jun 2021 15:02:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624460576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=obh6DR5mQUaGeW8+twsfq9NZCWFJ7UVHnJN6Unj4B50=;
-        b=ru5S6mJesX7ts+46Q0kozXXpii5x5DLinnGzNabivHHrcH9gFwGcUPQRvUVEq/yhzkkglF
-        I90n1LgXteRiF5u7ryO0pjdkb4ZinKYai4qdTNZ7xWwEpGKIjyjqXrYWPCt0jqIfrIdO3W
-        1xmRm/YFLd07PendD1DugjpShcTGN40=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624460576;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=obh6DR5mQUaGeW8+twsfq9NZCWFJ7UVHnJN6Unj4B50=;
-        b=l8OIMDRISqkjUArO6ETApVZUxIJwuG2aFtbHqQWKMw5yNkKwhHKOcTjOQgwPCOFKFoCEPv
-        7Lbw5j8BWqw/L1BQ==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 710C411A97;
-        Wed, 23 Jun 2021 15:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624460576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=obh6DR5mQUaGeW8+twsfq9NZCWFJ7UVHnJN6Unj4B50=;
-        b=ru5S6mJesX7ts+46Q0kozXXpii5x5DLinnGzNabivHHrcH9gFwGcUPQRvUVEq/yhzkkglF
-        I90n1LgXteRiF5u7ryO0pjdkb4ZinKYai4qdTNZ7xWwEpGKIjyjqXrYWPCt0jqIfrIdO3W
-        1xmRm/YFLd07PendD1DugjpShcTGN40=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624460576;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=obh6DR5mQUaGeW8+twsfq9NZCWFJ7UVHnJN6Unj4B50=;
-        b=l8OIMDRISqkjUArO6ETApVZUxIJwuG2aFtbHqQWKMw5yNkKwhHKOcTjOQgwPCOFKFoCEPv
-        7Lbw5j8BWqw/L1BQ==
-Received: from director2.suse.de ([192.168.254.72])
-        by imap3-int with ESMTPSA
-        id QDJpGh9N02C/cQAALh3uQQ
-        (envelope-from <hare@suse.de>); Wed, 23 Jun 2021 15:02:55 +0000
-Subject: Re: [PATCH v3 1/6] block: add disk sequence number
-To:     Lennart Poettering <mzxreary@0pointer.de>
-Cc:     Matteo Croce <mcroce@linux.microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>,
+        Wed, 23 Jun 2021 11:31:37 -0400
+Received: from gardel-login.0pointer.net (gardel-mail [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
+        by gardel.0pointer.net (Postfix) with ESMTP id A6871E8094B;
+        Wed, 23 Jun 2021 17:29:17 +0200 (CEST)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+        id 5CE82160DC0; Wed, 23 Jun 2021 17:29:17 +0200 (CEST)
+Date:   Wed, 23 Jun 2021 17:29:17 +0200
+From:   Lennart Poettering <mzxreary@0pointer.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Luca Boccassi <bluca@debian.org>,
+        Matteo Croce <mcroce@linux.microsoft.com>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luca Boccassi <bluca@debian.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Damien Le Moal <damien.lemoal@wdc.com>,
         Tejun Heo <tj@kernel.org>,
         Javier Gonz??lez <javier@javigon.com>,
         Niklas Cassel <niklas.cassel@wdc.com>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Hannes Reinecke <hare@suse.de>,
         Matthew Wilcox <willy@infradead.org>,
         JeffleXu <jefflexu@linux.alibaba.com>
+Subject: Re: [PATCH v3 6/6] loop: increment sequence number
+Message-ID: <YNNTTUYRlpXDqMgX@gardel-login>
 References: <20210623105858.6978-1-mcroce@linux.microsoft.com>
- <20210623105858.6978-2-mcroce@linux.microsoft.com>
- <YNMffBWvs/Fz2ptK@infradead.org>
- <CAFnufp1gdag0rGQ8K4_2oB6_aC+EZgfgwd2eL4-AxpG0mK+_qQ@mail.gmail.com>
- <YNM8T44v5FTViVWM@gardel-login>
- <3be63d9f-d8eb-7657-86dc-8d57187e5940@suse.de>
- <YNNBOyUiztf2wxDu@gardel-login>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <adeedcd2-15a7-0655-3b3c-85eec719ed37@suse.de>
-Date:   Wed, 23 Jun 2021 17:02:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+ <20210623105858.6978-7-mcroce@linux.microsoft.com>
+ <YNMhwLMr7DiNdqC/@infradead.org>
+ <bbd3d100ee997431b2905838575eb4bdec820ad3.camel@debian.org>
+ <YNNEdbr+0p+PzinQ@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <YNNBOyUiztf2wxDu@gardel-login>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YNNEdbr+0p+PzinQ@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/23/21 4:12 PM, Lennart Poettering wrote:
-> On Mi, 23.06.21 16:01, Hannes Reinecke (hare@suse.de) wrote:
-> 
->>> Thus: a global instead of local sequence number counter is absolutely
->>> *key* for the problem this is supposed to solve
->>>
->> Well ... except that you'll need to keep track of the numbers (otherwise you
->> wouldn't know if the numbers changed, right?).
->> And if you keep track of the numbers you probably will have to implement an
->> uevent listener to get the events in time.
-> 
-> Hmm? This is backwards. The goal here is to be able to safely match up
-> uevents to specific uses of a block device, given that block device
-> names are agressively recycled.
-> 
-> you imply it was easy to know which device use a uevent belongs
-> to. But that's the problem: it is not possible to do so safely. if i
-> see a uevent for a block device "loop0" I cannot tell if it was from
-> my own use of the device or for some previous user of it.
-> 
-> And that's what we'd like to see fixed: i.e. we query the block device
-> for the seqeno now used and then we can use that to filter the uevents
-> and ignore the ones that do not carry the same sequence number as we
-> got assigned for our user.
-> 
+On Mi, 23.06.21 15:25, Christoph Hellwig (hch@infradead.org) wrote:
 
-It is notoriously tricky to monitor the intended use-case for kernel 
-devices, precisely because we do _not_ attach any additional information 
-to it.
-I have send a proposal for LSF to implement block-namespaces, the prime 
-use-case of which is indeed attaching cgroup/namespace information to 
-block devices such that we _can_ match (block) devices to specific contexts.
+> On Wed, Jun 23, 2021 at 02:13:25PM +0100, Luca Boccassi wrote:
+> > On Wed, 2021-06-23 at 12:57 +0100, Christoph Hellwig wrote:
+> > > On Wed, Jun 23, 2021 at 12:58:58PM +0200, Matteo Croce wrote:
+> > > > From: Matteo Croce <mcroce@microsoft.com>
+> > > >
+> > > > On a very loaded system, if there are many events queued up from multiple
+> > > > attach/detach cycles, it's impossible to match them up with the
+> > > > LOOP_CONFIGURE or LOOP_SET_FD call, since we don't know where the position
+> > > > of our own association in the queue is[1].
+> > > > Not even an empty uevent queue is a reliable indication that we already
+> > > > received the uevent we were waiting for, since with multi-partition block
+> > > > devices each partition's event is queued asynchronously and might be
+> > > > delivered later.
+> > > >
+> > > > Increment the disk sequence number when setting or changing the backing
+> > > > file, so the userspace knows which backing file generated the event:
+> > >
+> > > Instead of manually incrementing the sequence here, can we make loop
+> > > generate the DISK_EVENT_MEDIA_CHANGE event on a backing device (aka
+> > > media) change?
+> >
+> > Hi,
+> >
+> > This was answered in the v1 thread:
+> >
+> > https://lore.kernel.org/linux-fsdevel/20210315201331.GA2577561@casper.infradead.org/t/#m8a677028572e826352cbb1e19d1b9c1f3b6bff4b
+> >
+> > The fundamental issue is that we'd be back at trying to correlate
+> > events to loopdev instances, which does not work reliably - hence this
+> > patch series. With the new ioctl, we can get the id immediately and
+> > without delay when we create the device, with no possible races. Then
+> > we can handle events reliably, as we can correlate correctly in all
+> > cases.
+>
+> I very much disagree with your reply there.  The device now points to
+> a different media.  Both for the loop device, a floppy or a CD changer
+> probably by some kind of user action.  In the last cast it might even
+> by done entirely locally through a script just like the loop device.
 
-Which I rather prefer than adding sequence numbers to block devices; 
-incidentally you could solve the same problem by _not_ reusing numbers 
-aggressively but rather allocate the next free one after the most 
-recently allocated one.
-Will give you much the same thing without having to burden others with it.
+I am not sure I grok your point.
 
-The better alternative here would be to extend the loop ioctl to pass in 
-an UUID when allocating the device.
-That way you can easily figure out whether the loop device has been 
-modified.
+but let me try to explain why I think it's better to make media
+changes *also* trigger seqno changes, and not make media change events
+the *only* way to trigger seqno changes.
 
-But in the end, it's the loop driver and I'm not particular bothered 
-with it. I am, though, if you need to touch all drivers just to support 
-one particular use-case in one particular device driver.
+1. First of all, loopback devices currently don't hook into the media
+   change logic (which so far is focussed on time-based polling
+   actually, for both CDs and floppies). Adding this would change
+   semantics visibly to userspace (since userspace would suddenly see
+   another action=change + DISK_MEDIA_CHANGE=1 uevent suddenly that it
+   needs to handle correctly). One can certainly argue that userspace
+   must be ready to get additional uevents like this any time, but
+   knowing userspace a bit I am pretty sure this will confuse some
+   userspace that doesn't expect this. I mean loopback block devices
+   already issue "change" uevents on attachment and detachment, one
+   that userpace typically expects, but adding the media change one
+   probably means sending two (?) of these out for each
+   attachment. One being the old one from the loopback device itself,
+   and then another one for the media change from the mdia change
+   logic. That's not just noisy, but also ugly.
 
-Incidentally, we don't have this problem in SCSI as we _can_ identify 
-devices here. So in the end we couldn't care less on which /dev/sdX 
-device it ends up.
-And I guess that's what we should attempt for loop devices, too.
+2. We want seqnums to be allocated for devices not only when doing
+   media change (e.g. when attaching or detaching a loopback device)
+   but also when allocating a block device, so that even before the
+   first media change event a block device has a sequence number. This
+   means allocating a sequence number for block devices won't be
+   limited to the media change code anyway.
 
-Cheers,
+3. Doing the sequence number bumping in media change code exclusively
+   kinda suggests this was something we could properly abstract away,
+   to be done only there, and that the rest of the block subsystems
+   wouldn#t have to bother much. But I am pretty sure that's not
+   correct: in particular in the loopback block device code (but in
+   other block subsystems too I guess) we really want to be able to
+   atomically attach a loopback block device and return the seqnum of
+   that very attachmnt so that we can focus on uevents for it. Thus,
+   attachment, allocation and returning the seqnum to userspace in the
+   LOOP_CONFIGURE ioctl (or whatever is appropriate) kinda go hand in
+   hand.
 
-Hannes
--- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+4. The media change protocol follows a protocol along with the eject
+   button handling (DISK_EVENT_EJECT_REQUEST), the locking of the tray
+   and the time based polling. i.e. it's specifically focussed on
+   certain hw features, none of which really apply to loopback block
+   devices, which have no trays to lock, but eject buttons to handle,
+   and where media change is always triggered internally by privileged
+   code, never externally by the user. I doubt it makes sense to mix
+   these up. Currently udev+udisks in userspace implement that
+   procotol for cdroms/floppies, and I doubt we would want to bother
+   to extend this for loopback devices in userspace. In fact, if media
+   change events are added to loopback devices, we probably would have
+   to change userspace to ignore them.
+
+TLDR: making loopback block devices generate media is a (probably
+minor, but unclear) API break, probably means duplicating uevent
+traffic for it, won't abstract things away anyway, won't allocate a
+seqnum on device allocation, and won't actually use anything of the
+real media change functionality.
+
+Or to say this differently: if the goal is to make loopback block
+devices to send CDROM compatible media change events to userspace,
+then I think it would probably make more sense to attach the
+DISK_MEDIA_CHANGE=1 property to the attachment/detachment uevents the
+loopback devices *already* generate, rather than to try to shoehorn the
+existing media change infrastructure into the loopback device logic,
+trying to reuse it even though nothing of it is really needed.
+
+But that said, I am not aware of anyone ever asking for CDROM
+compatible EDISK_MEDIA_CHANGE=1 uevents for loopback devices. I really
+wouldn't bother with that. Sounds like nothing anyone want with a
+chance of breaking things everywhere. (i.e. remember the
+"bind"/"unbind" uevent fiasco?)
+
+Lennart
+
+--
+Lennart Poettering, Berlin
