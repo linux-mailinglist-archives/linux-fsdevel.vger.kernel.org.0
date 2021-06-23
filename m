@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E7B3B1755
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 11:57:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 136793B1773
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 11:59:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230170AbhFWJ7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 05:59:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54208 "EHLO
+        id S230490AbhFWKBO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 06:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229987AbhFWJ7e (ORCPT
+        with ESMTP id S230160AbhFWKBM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 05:59:34 -0400
+        Wed, 23 Jun 2021 06:01:12 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E35D5C061574;
-        Wed, 23 Jun 2021 02:57:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64842C061574;
+        Wed, 23 Jun 2021 02:58:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=bIbRJjhhKfu75t8tDhgINmW7gh8eq/IMXLJ3rJlZnPs=; b=IdB68v6jCaq3FDfkoizQaDHqfv
-        LGZhN7uEpyB2HXS00qB8VexZj3dCWoyZPvr+0cq5rHpk4EHqmrIzy5FwBPAcd3MVbFjVKQVhGuvE0
-        i3stacSwsQQrsY8KHdBZcHbgLbTiUyQ9qtT6mcECRFaOeRNl8QsNTOr+2DWY3mJHd46ufrjzMdXCy
-        qCHdgfZcxYUyo3e4ud9i/4uHLZO1EofcePXtlZLtS3FmRgC1Hew0Q3FwaYO0IFptlo2wNxZ/wVSfl
-        3G9igwKZc8KWiclhSr2RE1P90NL9tX7fxHlXdPqvLa9sKO6NZMbR3coCMS9nRR8m7kMs76b3yDzXt
-        eJX+ZsGA==;
+        bh=iH0tpXt8GJfX+4f0kNFBqSwnldGbSut7DrbyCImiM24=; b=rSen0Ki9x6jRV2vUrFJwY10Bs6
+        h+RK02kZENkhklTfkRVFqZ5scaMyoZQJePFTC754jWSNjScqBbNf6V7FTt9FTv3CoS+5N05j3GP9t
+        6MxuPaxWb0BGXqG49m1Sj/JrwFgRrVgTEnybs9MmZmMw90mxP+33Y+hhxjXgxG8Y9BwtSPK8r+XoV
+        YlNPE3IMttoruC7jR+kCZQ648k8KJzBU+QqWxucyO0BosIojhfUyNSrYnO0MTNYSlqU+xz0Ol4FDC
+        NHcKEKti0NMTxeOO/o6BE2Nl1Fk5HJIGrhvRB03oX5XFJ6RhUPUIIF+QDcTndJf2k2HbW9t2FwNto
+        YipIJrDg==;
 Received: from [2001:4bb8:188:3e21:6594:49:139:2b3f] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvzcQ-00FHuI-EM; Wed, 23 Jun 2021 09:56:35 +0000
-Date:   Wed, 23 Jun 2021 11:56:25 +0200
+        id 1lvzdz-00FI2U-Lv; Wed, 23 Jun 2021 09:58:20 +0000
+Date:   Wed, 23 Jun 2021 11:58:02 +0200
 From:   Christoph Hellwig <hch@infradead.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 40/46] mm/lru: Add folio_add_lru()
-Message-ID: <YNMFSW1YIO/zsH7W@infradead.org>
+Subject: Re: [PATCH v2 41/46] mm/page_alloc: Add folio allocation functions
+Message-ID: <YNMFqhRS+GK2YK8h@infradead.org>
 References: <20210622121551.3398730-1-willy@infradead.org>
- <20210622121551.3398730-41-willy@infradead.org>
+ <20210622121551.3398730-42-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210622121551.3398730-41-willy@infradead.org>
+In-Reply-To: <20210622121551.3398730-42-willy@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 01:15:45PM +0100, Matthew Wilcox (Oracle) wrote:
-> Reimplement lru_cache_add() as a wrapper around folio_add_lru().
-> Saves 159 bytes of kernel text due to removing calls to compound_head().
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On Tue, Jun 22, 2021 at 01:15:46PM +0100, Matthew Wilcox (Oracle) wrote:
+> +static inline
+> +struct folio *__alloc_folio_node(gfp_t gfp, unsigned int order, int nid)
 
-Looks good,
+Weirdo prototype formatting.
+
+Otherwise looks good (assuming we grow callers):
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
