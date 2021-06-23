@@ -2,58 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C949F3B17A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 12:01:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD52C3B1849
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 12:59:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230152AbhFWKDh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 06:03:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55222 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230123AbhFWKDg (ORCPT
+        id S230049AbhFWLBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 07:01:36 -0400
+Received: from mail-wr1-f44.google.com ([209.85.221.44]:37683 "EHLO
+        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230030AbhFWLBg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 06:03:36 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE9DC061574;
-        Wed, 23 Jun 2021 03:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2v4uEP++5JJGh/Cecuuj25n5lvEBDUCx9ktcIuPvk0U=; b=DnusiPtDjy8hMd3/kYn5N6DqdJ
-        UpnxrBHQ1VphAoh7HBINUYvyfCVU+UL9Avda7gid1jlkH3CXXOO8BnWbLCYYB3l6l4tKvFRzcvGDw
-        CK8F7boaYvMyBBAkK7bqO6D9/sZvPQ7TgL0nHw2y12TQF44LmoAEBBEwIT8BsjOiZ6xCeuDGPc1Oz
-        IPZCKSV6OgOWRpUpNSjLJ5tqaTrknFom9J0n7fTKE46WzK7bL+EHoREVbRsx1cWMQ7py9vSI+wn4R
-        UQE3NxuigzCWKhS3OKvDoILpQSx73AuY4s+JnyfK1B6UNxGlC1Z7Tkdy9wE56UuXow5TmRhILIfMf
-        +LGQv8vQ==;
-Received: from [2001:4bb8:188:3e21:6594:49:139:2b3f] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvzex-00FI7C-EP; Wed, 23 Jun 2021 09:59:24 +0000
-Date:   Wed, 23 Jun 2021 11:59:02 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 42/46] mm/filemap: Add filemap_alloc_folio
-Message-ID: <YNMF5hJz6ICx3dcu@infradead.org>
-References: <20210622121551.3398730-1-willy@infradead.org>
- <20210622121551.3398730-43-willy@infradead.org>
+        Wed, 23 Jun 2021 07:01:36 -0400
+Received: by mail-wr1-f44.google.com with SMTP id i94so2149443wri.4;
+        Wed, 23 Jun 2021 03:59:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9AlY4fiYgbrXorQsx3xst03zsKqKyrjxSHIbQdEZSgE=;
+        b=EPVJbEpjPZM9ePdJqCAfBXfKlWHOFI99qegabS4EiLfOPGiYLvS+zZVw5fOENkhCGp
+         4Ys0B5QlSYgIo5pJ61tTaf8SfJkfxxPT8hl98Pj6ADTEfnBJLhwUxBuK/jNqRLC5LPDE
+         JrcX5kv5Ufclvu30jm/MT9Vn8VM6hTGThanxjsNQTdYDstXLbZAJ8kYCUdZ7TgTkrkWf
+         /UHtjvZQHtsd9hWYyHuma8EWvuIXr4NmEzMG5h0ZJwYk8SJuj/S27GqRe+6HSR2XmdzB
+         WOSMDxKuR3CfqlvWxLRjZbsLvgZckmGmBpuWBFYbed+I0d7fR1UPT4xJJ+pA7zlv189w
+         5Y5w==
+X-Gm-Message-State: AOAM530G5ILl/QHVlNOfQZBE1+ukCZmEMUiT+MRhLfQ3UfIAJ+7vHtPl
+        ucr59KQ9Ii8vsM0faQWBf2wj6cT1V3xhOw==
+X-Google-Smtp-Source: ABdhPJxMm1yvcS4hPM6aJ7GXE0Kew/P0LFO8c4NCuyHxk20Gk0prI065PGUL0Dhp3O4MIDyeBc84bg==
+X-Received: by 2002:a05:6000:2:: with SMTP id h2mr10621296wrx.347.1624445956594;
+        Wed, 23 Jun 2021 03:59:16 -0700 (PDT)
+Received: from msft-t490s.. (mob-176-246-29-26.net.vodafone.it. [176.246.29.26])
+        by smtp.gmail.com with ESMTPSA id r2sm2659458wrv.39.2021.06.23.03.59.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jun 2021 03:59:16 -0700 (PDT)
+From:   Matteo Croce <mcroce@linux.microsoft.com>
+To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Luca Boccassi <bluca@debian.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tejun Heo <tj@kernel.org>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        Niklas Cassel <niklas.cassel@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        JeffleXu <jefflexu@linux.alibaba.com>
+Subject: [PATCH v3 0/6] block: add a sequence number to disks
+Date:   Wed, 23 Jun 2021 12:58:52 +0200
+Message-Id: <20210623105858.6978-1-mcroce@linux.microsoft.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210622121551.3398730-43-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 01:15:47PM +0100, Matthew Wilcox (Oracle) wrote:
-> Reimplement __page_cache_alloc as a wrapper around filemap_alloc_folio
-> to allow filesystems to be converted at our leisure.  Increases
-> kernel text size by 133 bytes, mostly in cachefiles_read_backing_file().
-> pagecache_get_page() shrinks by 32 bytes, though.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+From: Matteo Croce <mcroce@microsoft.com>
 
-Looks good,
+With this series a monotonically increasing number is added to disks,
+precisely in the genhd struct, and it's exported in sysfs and uevent.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+This helps the userspace correlate events for devices that reuse the
+same device, like loop.
+
+The first patch is the core one, the 2..4 expose the information in
+different ways, the 5th increases the seqnum on media change and
+the last one increases the sequence number for loop devices upon
+attach, detach or reconfigure.
+
+If merged, this feature will immediately used by the userspace:
+https://github.com/systemd/systemd/issues/17469#issuecomment-762919781
+
+v2 -> v3:
+- rebased on top of 5.13-rc7
+- resend because it appeared archived on patchwork
+
+v1 -> v2:
+- increase seqnum on media change
+- increase on loop detach
+
+Matteo Croce (6):
+  block: add disk sequence number
+  block: add ioctl to read the disk sequence number
+  block: refactor sysfs code
+  block: export diskseq in sysfs
+  block: increment sequence number
+  loop: increment sequence number
+
+ Documentation/ABI/testing/sysfs-block | 12 +++++++
+ block/genhd.c                         | 46 ++++++++++++++++++++++++---
+ block/ioctl.c                         |  2 ++
+ drivers/block/loop.c                  |  5 +++
+ include/linux/genhd.h                 |  2 ++
+ include/uapi/linux/fs.h               |  1 +
+ 6 files changed, 64 insertions(+), 4 deletions(-)
+
+-- 
+2.31.1
+
