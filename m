@@ -2,54 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F133B1632
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 10:48:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 009B13B1641
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 10:55:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbhFWIut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 04:50:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38568 "EHLO
+        id S229999AbhFWI5V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 04:57:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230130AbhFWIu3 (ORCPT
+        with ESMTP id S229934AbhFWI5U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 04:50:29 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDEA9C061756;
-        Wed, 23 Jun 2021 01:48:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=M9F8mCIj4S0MvLdVHR7/mG/7dfK1HG/42QHJ9bt57Mw=; b=QgT7SsfZnH11MtnYoWG+JXh1Os
-        vdQeZo22TK21CfDJjWwvMc+YDcoiH4H/YHEnqClzEtN00dP2YeAJub+W4bjQHj40J2G4vTMSeH4JH
-        6LSWbrrcdcGo1z72aQs95PEA1Ur28FLtPb8yX6kwzqnOJa2y0ca65ScwTqAHrOsQ7RuGdzv5SE3m0
-        YLA5n2oydCIHu76H+Z+dTMJy5bd5v5gDLj2ICzKyGTaJGXNXru8IiUDlfuU4WCdrV44VVC2xWiAhT
-        aaQ4q/VYVxWBmVs79lqQd2/toQM8a7/U9mARJ7GHDivgx8vR5pRCw5nPvhAakEprZg/WgQMTjqANN
-        vZ5j60Qg==;
-Received: from 089144193030.atnat0002.highway.a1.net ([89.144.193.30] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lvyXZ-00FEAL-PC; Wed, 23 Jun 2021 08:47:27 +0000
-Date:   Wed, 23 Jun 2021 10:45:11 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 23/46] mm/writeback: Change __wb_writeout_inc() to
- __wb_writeout_add()
-Message-ID: <YNL0l6AOT2RogKS7@infradead.org>
-References: <20210622121551.3398730-1-willy@infradead.org>
- <20210622121551.3398730-24-willy@infradead.org>
+        Wed, 23 Jun 2021 04:57:20 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B92B0C061756
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jun 2021 01:55:02 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id hc16so2764326ejc.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jun 2021 01:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=Y3KUStx0A4jVKAR7a8xL34Lc8keAWBoUl4dKhJUYwUY=;
+        b=DUDkKseaINGvdBiZzs+HIgaKZ2ia/gK4oOhNpp5tyx/AsRR2sMMIcUNxjDQplbnET2
+         G66g/42396+i7V2ytVRjCOZxC/9OJbV+ubkweZq/YUKnkzeyPqyo0MUAo884uOjzsJZc
+         OocMdmJuqn7o30zcB1rYVdcgEpsNvAtUPLKVl3tZIKuoT2ORcv0U0KVisQeefGIvdUVs
+         p/Lqq+JZuAc2PKlQBaFbPbDKAmTtR70N0HTYdAxZkrgXOFmBZ5lnkccqHkxfi/p9sH1E
+         ULAxpGCx/QxLq0xexIsKLPTqFd19VCJddKH7cbpk7VO+Q70MUGOzct1/lG8K1VVJVcsj
+         xZZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=Y3KUStx0A4jVKAR7a8xL34Lc8keAWBoUl4dKhJUYwUY=;
+        b=VaW99fJ/hi7pt5j9tnbSCESQtFdzFalwjm/14OOAfBaoBNI8ZnjiMhNHJGmgEdK70y
+         ZIiDS+GOzT8B94p34O0gtEZsRchDtG3rsqpOnAbQoxD9kz+v1ML/H0JNTZT37oq8wkhY
+         R9BQMlR6zuI9NAShLy1t6S53UImRYl0UKjODTCHixSWbUCaP/2lxb282vwA4eYbzH7GI
+         r7of7n5AHtad2kjaD3Pzy3XFsDI7I4agBy12A4nNxrx1WcYkO07izd/HCHY7HwB8TmHi
+         XVVOXipXfHcjVK94RW3DRkwqs/MKP/P2Fe3tgbNfpApb3ugFRE1W37RzwkhauPP+Vbip
+         VAbQ==
+X-Gm-Message-State: AOAM533NCkJs2nzyZwL1h6svRmon34dppHSur/UPDxzn0MpQjdNA6zzi
+        rI6GINsW6FMaLWA2QyDvSud4jtCDE29YFRb5yw==
+X-Google-Smtp-Source: ABdhPJwic/AY1esAyHR5KYr+gRjyPLnJfYwGh+ax46L9numH2gNGeGi56fU2VV7r9bEepNZmHJZd3CLjD4evOO3FbxQ=
+X-Received: by 2002:a17:906:5ace:: with SMTP id x14mr8701978ejs.507.1624438500740;
+ Wed, 23 Jun 2021 01:55:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210622121551.3398730-24-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Received: by 2002:aa7:de95:0:0:0:0:0 with HTTP; Wed, 23 Jun 2021 01:55:00
+ -0700 (PDT)
+Reply-To: daveli2011@outlook.com
+From:   DAVID ELVIS <davelsms01@gmail.com>
+Date:   Wed, 23 Jun 2021 08:55:00 +0000
+Message-ID: <CAFevh3QcUEMEaDAb740C7XiORbqt+vBLR2b=52dpXW5v0RFnHQ@mail.gmail.com>
+Subject: My Dear friend,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 01:15:28PM +0100, Matthew Wilcox (Oracle) wrote:
-> Allow for accounting N pages at once instead of one page at a time.
+--=20
+My Dear friend,
 
-Looks good,
+I am David ELVIS, the only Son of late Mr. John ELVIS. I need your
+help to retrived a fund deposit made by my late Father with a bank
+here and to transfer the fund my father left for me in the bank before
+he died into your bank account.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+I want to invest the fund in your country and continue my studies. The
+fund is ($ 4.5 million) I will compensate you with 25% of the total
+money for your help. I assure you in the name of the almighty God and
+I will tell you more Once you get back to me and also send you the
+documents of the fund deposit. I am awaiting your reply in my private
+email address for more d=C3=A9tails ( daveli2011@outlook.com )
+
+Thanks and God bless you.
+
+Yours Sincerely
+
+David ELVIS,
