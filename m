@@ -2,181 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B563B21BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 22:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1950C3B2201
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 22:46:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229774AbhFWUXN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 16:23:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54228 "EHLO
+        id S229800AbhFWUtM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 16:49:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbhFWUXM (ORCPT
+        with ESMTP id S229688AbhFWUtM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 16:23:12 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F91C061574;
-        Wed, 23 Jun 2021 13:20:54 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id m15so2109958qvc.9;
-        Wed, 23 Jun 2021 13:20:54 -0700 (PDT)
+        Wed, 23 Jun 2021 16:49:12 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 827FDC061756
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jun 2021 13:46:53 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id w71so3307532pfd.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jun 2021 13:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=azW1zX+eO9gp+O2n94OxE29cfxyxIikc6yBHD+EhJ4A=;
-        b=gf29hBMTVf7L5OOPMDNSJYasFrvwfKfm1PZKGTqPdKNtDPaNwoRQSGcJQKgrxHeLeJ
-         p4H0WfGNvTNtfzVLzUzYtxjfKRGkyowmrZKqMR1yE2z54Zxzl9CBx52zhKRZ7dej2kzm
-         LMaRgIUHtM9R1MTmnyNKK6wZkdxouhQDyNBIwr4qFF1rbZRpwqKM+8aAA1qDSM40gKbx
-         Y2wL4LfZB/u+ofc7I6hKYF97mh87LyHqIZF1mLoU56AVPtmS8xsHAtnOW1jfmR8KGquJ
-         3UUzb1uSgKzjTYVSSU0p9GRfyLc6+Ed99vf2iOFeamhAQtUh8XiBSB+p0dzl5lB1Fbgc
-         6j+A==
+        bh=35fX3b/9KipFW6E3fYUr5lcYBNTVVlADu03Gtygr2Nk=;
+        b=Hk+dH/qK+72QM33k5wW4gKCoofvBG35fBFE/5NSN9cuhFQ+yHUtHo14gwPuBvB5kLS
+         E6q16f1m17kqPZWIR5Z6unziZ6jNGg0lecaDbu/EOB01AT4yko4updWTWuzu3/j8Cp0K
+         YAFsNG5PL9jNw4QzSuNhiJLFiNHr9gXPNlJOJFVchKP7QBJrSVQFsIUSPF+FeTb7AtEa
+         F76qW3ZgBP/1e7hFW/auvpk9BMkPCXa5wT8JCEK2eWcXwJ2JRhyCm0QgqUMcmwgdVVOI
+         PQUwMPVkPN4hgOGpQ3sFI0P/fJEMAK2kqXaTj4te5hrUFsfFOqp3bsBD9XezvotPsgK6
+         CmQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=azW1zX+eO9gp+O2n94OxE29cfxyxIikc6yBHD+EhJ4A=;
-        b=fSep8zVPoUMov4fVEaYavTubI2MCRSRjpGl54TQNCCfnYr6zBc5YxspLPS/O8SpsOn
-         mkszfRjqxkESzVhnTug38jq5BVl/NedE2KdC2hBImDk1coam4Vy41KKhrTd2w2A4EUWo
-         JT1JuECOrNXDmTaAO2VhYkHpaHznGWBgH7IVAXtEaholEXsMuOLfekcV6RhgyI7aVHyU
-         AO4vEdwDK3+QrIXGPG8Qcq0+dnrLoRMdu6czUa++cdaz9SUndmqZLJXIdFzX9g9LVGdc
-         uzE00+HqvWNTmbpSVWEz2f8DnuPjnY9nGkIjaBi9st+lG4gt/fGtLRRLrK8ZxbiTjr/d
-         2/hg==
-X-Gm-Message-State: AOAM5300UA2hw4bCX+CihKwjpEhacEwzr4NHOLfsb85frLGBjLi+npki
-        EvTF0eFgATvIza9sbuAg1lM=
-X-Google-Smtp-Source: ABdhPJzKwsCpj7QvmWKxfyTmwDTTfJJiUhnXokn6nJJjvZbt1g82Lgenaw4lbAPj0tTRsol40A+dWg==
-X-Received: by 2002:a05:6214:5b1:: with SMTP id by17mr1750452qvb.7.1624479654032;
-        Wed, 23 Jun 2021 13:20:54 -0700 (PDT)
-Received: from localhost (pool-68-160-176-52.bstnma.fios.verizon.net. [68.160.176.52])
-        by smtp.gmail.com with ESMTPSA id 206sm697360qke.67.2021.06.23.13.20.53
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=35fX3b/9KipFW6E3fYUr5lcYBNTVVlADu03Gtygr2Nk=;
+        b=VqZKNw0xYx/yOxmiTTA6yQac2loHoXLvNbnPiQtemTrv8tN5pI/2AIZb8SeY2DdGQX
+         ZaNStOTbB1bxebSbKsyO0QeOxFY6qd3Fe3YwoIh5C2A7jSKPqzSSEdHuxZUGznFaBQ6u
+         REfNQ73ylCD1d7KHjRadrCGYobVsqPv6XuY/sv9XS5iHoA9MwQ/YYO7aMXaynekgG7E6
+         M/27x9E3RFc0YRY7ShN4QdqZP23Liu9cxUuXyj3XlWinpf/l6Ivo9AfDnafmCBOjgj2n
+         b7VU4MRdju8YPINmETqYOpipC/cMDBmt8a2UUO2ETuks8z1dralcPprJfHIJ8oVFXpGf
+         JumQ==
+X-Gm-Message-State: AOAM5322+ekfxKrGnIGXkwOWeOU8+anCpAPpEqkthsgTg9YAauB+1WrT
+        w3lPj6jb1a8YpDa5nXB380vjgA==
+X-Google-Smtp-Source: ABdhPJxc5l5DI/3/a0Vr5/trltrw8Ct1u+bkj2q4aYmLeaoJdbHwBVB2e0UdzNnQEvcMXtZUvOQ8aQ==
+X-Received: by 2002:a65:6644:: with SMTP id z4mr1258936pgv.101.1624481212718;
+        Wed, 23 Jun 2021 13:46:52 -0700 (PDT)
+Received: from relinquished.localdomain ([2620:10d:c090:400::5:e167])
+        by smtp.gmail.com with ESMTPSA id p45sm702640pfw.19.2021.06.23.13.46.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jun 2021 13:20:53 -0700 (PDT)
-Sender: Mike Snitzer <snitzer@gmail.com>
-Date:   Wed, 23 Jun 2021 16:20:52 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Anton Suvorov <warwish@yandex-team.ru>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dmtrmonakhov@yandex-team.ru, linux-block@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 04/10] dm: reduce stack footprint dealing with block
- device names
-Message-ID: <YNOXpHyBAD+C3Utt@redhat.com>
-References: <20210602152903.910190-1-warwish@yandex-team.ru>
- <20210602152903.910190-5-warwish@yandex-team.ru>
+        Wed, 23 Jun 2021 13:46:52 -0700 (PDT)
+Date:   Wed, 23 Jun 2021 13:46:50 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
+Message-ID: <YNOdunP+Fvhbsixb@relinquished.localdomain>
+References: <YM0Zu3XopJTGMIO5@relinquished.localdomain>
+ <YM0fFnMFSFpUb63U@zeniv-ca.linux.org.uk>
+ <YM09qaP3qATwoLTJ@relinquished.localdomain>
+ <YNDem7R6Yh4Wy9po@relinquished.localdomain>
+ <CAHk-=wh+-otnW30V7BUuBLF7Dg0mYaBTpdkH90Ov=zwLQorkQw@mail.gmail.com>
+ <YND6jOrku2JDgqjt@relinquished.localdomain>
+ <YND8p7ioQRfoWTOU@relinquished.localdomain>
+ <20210622220639.GH2419729@dread.disaster.area>
+ <YNN0P4KWH+Uj7dTE@relinquished.localdomain>
+ <YNOPdy14My+MHmy8@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210602152903.910190-5-warwish@yandex-team.ru>
+In-Reply-To: <YNOPdy14My+MHmy8@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 02 2021 at 11:28P -0400,
-Anton Suvorov <warwish@yandex-team.ru> wrote:
-
-> Stack usage reduced (measured with allyesconfig):
+On Wed, Jun 23, 2021 at 07:45:59PM +0000, Al Viro wrote:
+> On Wed, Jun 23, 2021 at 10:49:51AM -0700, Omar Sandoval wrote:
 > 
-> ./drivers/md/dm-cache-target.c	cache_ctr	392	328	-64
-> ./drivers/md/dm-cache-target.c	cache_io_hints	208	72	-136
-> ./drivers/md/dm-clone-target.c	clone_ctr	416	352	-64
-> ./drivers/md/dm-clone-target.c	clone_io_hints	216	80	-136
-> ./drivers/md/dm-crypt.c	crypt_convert_block_aead	408	272	-136
-> ./drivers/md/dm-crypt.c	kcryptd_async_done	192	56	-136
-> ./drivers/md/dm-integrity.c	integrity_metadata	872	808	-64
-> ./drivers/md/dm-mpath.c	parse_priority_group	368	304	-64
-> ./drivers/md/dm-table.c	device_area_is_invalid	216	80	-136
-> ./drivers/md/dm-table.c	dm_set_device_limits	200	72	-128
-> ./drivers/md/dm-thin.c	pool_io_hints	216	80	-136
+> > > Fair summary. The only other thing that I'd add is this is an IO
+> > > interface that requires issuing physical IO. So if someone wants
+> > > high throughput for encoded IO, we really need AIO and/or io_uring
+> > > support, and we get that for free if we use readv2/writev2
+> > > interfaces.
+> > > 
+> > > Yes, it could be an ioctl() interface, but I think that this sort of
+> > > functionality is exactly what extensible syscalls like
+> > > preadv2/pwritev2 should be used for. It's a slight variant on normal
+> > > IO, and that's exactly what the RWF_* flags are intended to be used
+> > > for - allowing interesting per-IO variant behaviour without having
+> > > to completely re-implemnt the IO path via custom ioctls every time
+> > > we want slightly different functionality...
+> > 
+> > Al, Linus, what do you think? Is there a path forward for this series as
+> > is? I'd be happy to have this functionality merged in any form, but I do
+> > think that this approach with preadv2/pwritev2 using iov_len is decent
+> > relative to the alternatives.
 > 
-> Signed-off-by: Anton Suvorov <warwish@yandex-team.ru>
-> ---
->  drivers/md/dm-cache-target.c | 10 ++++------
->  drivers/md/dm-clone-target.c | 10 ++++------
->  drivers/md/dm-crypt.c        |  6 ++----
->  drivers/md/dm-integrity.c    |  4 ++--
->  drivers/md/dm-mpath.c        |  6 ++----
->  drivers/md/dm-table.c        | 34 ++++++++++++++++------------------
->  drivers/md/dm-thin.c         |  8 +++-----
->  7 files changed, 33 insertions(+), 45 deletions(-)
+> IMO we might be better off with explicit ioctl - this magical mystery shite
+> with special meaning of the first iovec length is, IMO, more than enough
+> to make it a bad fit for read/write family.
 > 
+> It's *not* just a "slightly different functionality" - it's very different
+> calling conventions.  And the deeper one needs to dig into the interface
+> details to parse what's going on, the less it differs from ioctl() mess.
+> 
+> Said that, why do you need a variable-length header on the read side,
+> in the first place?
 
-<snip>
+Suppose we add a new field representing a new type of encoding to the
+end of encoded_iov. On the write side, the caller might want to specify
+that the data is encoded in that new way, of course. But on the read
+side, if the data is encoded in that new way, then the kernel will want
+to return that. The kernel needs to know if the user's structure
+includes the new field (otherwise when it copies the full struct out, it
+will write into what the user thinks is the data instead).
 
-> diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
-> index 20f2510db1f6..d2fec41635ff 100644
-> --- a/drivers/md/dm-integrity.c
-> +++ b/drivers/md/dm-integrity.c
-> @@ -1781,8 +1781,8 @@ static void integrity_metadata(struct work_struct *w)
->  						checksums_ptr - checksums, dio->op == REQ_OP_READ ? TAG_CMP : TAG_WRITE);
->  			if (unlikely(r)) {
->  				if (r > 0) {
-> -					char b[BDEVNAME_SIZE];
-> -					DMERR_LIMIT("%s: Checksum failed at sector 0x%llx", bio_devname(bio, b),
-> +					DMERR_LIMIT("%pg: Checksum failed at sector 0x%llx",
-> +						    bio->bi_bdev,
->  						    (sector - ((r + ic->tag_size - 1) / ic->tag_size)));
->  					r = -EILSEQ;
->  					atomic64_inc(&ic->number_of_mismatches);
-> diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
-> index bced42f082b0..678e5bb0fa5a 100644
-> --- a/drivers/md/dm-mpath.c
-> +++ b/drivers/md/dm-mpath.c
-> @@ -900,10 +900,8 @@ static int setup_scsi_dh(struct block_device *bdev, struct multipath *m,
->  	if (m->hw_handler_name) {
->  		r = scsi_dh_attach(q, m->hw_handler_name);
->  		if (r == -EBUSY) {
-> -			char b[BDEVNAME_SIZE];
-> -
-> -			printk(KERN_INFO "dm-mpath: retaining handler on device %s\n",
-> -			       bdevname(bdev, b));
-> +			pr_info("dm-mpath: retaining handler on device %pg\n",
-> +				bdev);
->  			goto retain;
->  		}
->  		if (r < 0) {
+As I mentioned in my reply to Linus, maybe we can stick with
+preadv2/pwritev2, but make the struct encoded_iov structure a fixed size
+with some reserved space for future expansion. That makes this a lot
+less special: just copy a fixed size structure, then read/write the
+rest. And then we don't need to reinvent the rest of the
+preadv2/pwritev2 path for an ioctl.
 
-Would appreciate it if you just left the arguments on the same line,
-for this dm-mpath.c change and the dm-integrity.c change, don't worry
-about 80 column.
-
-Also, would prefer you use DMINFO() instead of pr_info().  DMINFO()
-achieves the same but will add "device-mapper: multipath: " prefix for
-you, also you then don't need to add the newline. So use:
-
-     DMINFO("retaining handler on device %pg", bdev);
-
-
-> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-> index 7e88e5e06922..175b9c7b1c48 100644
-> --- a/drivers/md/dm-table.c
-> +++ b/drivers/md/dm-table.c
-> @@ -282,20 +281,20 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
->  		return 0;
->  
->  	if (start & (logical_block_size_sectors - 1)) {
-> -		DMWARN("%s: start=%llu not aligned to h/w "
-> -		       "logical block size %u of %s",
-> +		DMWARN("%s: start=%llu not aligned to h/w logical block size %u of %pg",
->  		       dm_device_name(ti->table->md),
->  		       (unsigned long long)start,
-> -		       limits->logical_block_size, bdevname(bdev, b));
-> +		       limits->logical_block_size,
-> +		       bdev);
->  		return 1;
->  	}
->  
->  	if (len & (logical_block_size_sectors - 1)) {
-> -		DMWARN("%s: len=%llu not aligned to h/w "
-> -		       "logical block size %u of %s",
-> +		DMWARN("%s: len=%llu not aligned to h/w logical block size %u of %pg",
->  		       dm_device_name(ti->table->md),
->  		       (unsigned long long)len,
-> -		       limits->logical_block_size, bdevname(bdev, b));
-> +		       limits->logical_block_size,
-> +		       bdev);
->  		return 1;
->  	}
->  
-
-Again, please just leave 'bdev' on the previous lines.
-
-If you make those few tweaks, please add:
-
-Acked-by: Mike Snitzer <snitzer@redhat.com>
+Between a fixed size structure and an ioctl, what would you prefer?
