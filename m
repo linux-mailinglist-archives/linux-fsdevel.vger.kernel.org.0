@@ -2,101 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8DA13B1363
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 07:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 046BD3B1364
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 07:50:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbhFWFv6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 01:51:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54680 "EHLO
+        id S229920AbhFWFwb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 01:52:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229833AbhFWFv5 (ORCPT
+        with ESMTP id S229826AbhFWFwa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 01:51:57 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B15C061574;
-        Tue, 22 Jun 2021 22:49:39 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id q64so2270829qke.7;
-        Tue, 22 Jun 2021 22:49:39 -0700 (PDT)
+        Wed, 23 Jun 2021 01:52:30 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BECBCC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 22:50:12 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id gt18so2029531ejc.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jun 2021 22:50:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5wLTG4Vp95UI5Q5Z0gkPAGNaWrHWZDHwLFs+T3shnhA=;
-        b=toXJgydzzdke7Xc5dqYBIY81IcXsxA/idZzZPcAg0m0jTTlak4vtEm47a81NcIsl7/
-         cFiDqagqY7bYGH/Bt7pdzfkfm1y46Z7Iyqxh3HRPgOYrwGXcquaR1FX7WKbjYdSvrsDY
-         Y81VpHa2th/xd8sbpzu4xbgBtCX7eVKeRdw7/h8Ci8+F2rf/ikllAT3/mkGHNBvYF5We
-         EpmLWdlYpFZDhS8XH4Oyc4EKNdDBN8F9XKMmOBwgb2xCN2IimireVf+r3dytyKCZPChG
-         bsoHGkEQ3XSn56uIpzpKYz+F488qtYsQIwXwiM90lpCB4PODBzm6t1KbtaNpuL7tvk4e
-         3kww==
+         :cc:content-transfer-encoding;
+        bh=4GiuBeValxmP+XXrOzcRmIGN8AohLiEvZ/1N4xkfEsc=;
+        b=1ojgGgahexzFXE9RdNLyeoPjvzgy1FuMSknCgn9K5GwXoXKChPXHlt8RFqJU6xJGuF
+         Cgrqzm5EDspyu9pceCZQxvmPvCVRPYcOLwyyVOaWAFc+/73Sd1ei8PUVLb3hMJg85yGd
+         OoiS+Tom58BzQ4gVjO0sTB3pg1TBBl4FTS0KCFKWgNCJHr3b6clNKWi9sch5PBKWSbC5
+         hdgylXBSI1fEHL65mcL5+HqoUj0DqlN+Vgg5BbVMgsnjT5z5R29YjArWCkkrPQkSQcTP
+         G0euaC5g3D/chfHTH21pgGDle3JiDm7q2fqGYTk+72WN78OHY9b3+JAT5mbt83TyJaUN
+         rngA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5wLTG4Vp95UI5Q5Z0gkPAGNaWrHWZDHwLFs+T3shnhA=;
-        b=Mhm1zmX/YbG2QAjBTg40wEops5D4YLwGKGIxmJavbamn6v4+2qmTZfz6D/njYpp+RL
-         YTsSyHkpM/iza8xhfUkz/MY8pZniyivKNHRg3nxmXWiz04UwSzf/vpHqcD/dXnvdq98s
-         vgQkixjxf8tQrD8dPDqHGCfJPzlEObL0gPUsRMKK0Pph4MY2EujE9H4wJe2FO5Bdeqee
-         Z6S+RnrtiTyy9TfUdGb+9t0NPPcsLfON8CibL6jB9FT9mUC1fhHxMAM8EOmsF1mRW+AQ
-         1PGLozmZ6BWLxhte4/eURWtXEkrvdctDwBVVKKPAH+7pVyuhSG+k2i++AQebVNLuhyHm
-         lp6Q==
-X-Gm-Message-State: AOAM532EWTqd7H6tV6/UYqP/cOl2wn0mZ4coaju6eBqDQSIVhUYIm714
-        kYW2MolzoJW5gd6kpUxbamSDtghm17k0hNkTVZw=
-X-Google-Smtp-Source: ABdhPJx+/8O1jP8MbFob62aQTGBQd+swB/8+LHEMKc+JhF6yPJxJl0SZeUrTLvJdiJJTFPfBffd7JsSMyXrOon8glkQ=
-X-Received: by 2002:a25:5048:: with SMTP id e69mr9632830ybb.511.1624427378837;
- Tue, 22 Jun 2021 22:49:38 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4GiuBeValxmP+XXrOzcRmIGN8AohLiEvZ/1N4xkfEsc=;
+        b=NjzMh26Yrs+8FrhZbZOe+Cnu+PDpUQDFbDUav/PEz4zjvOT7mQo/n0CevgezqiHIs5
+         EkswHbwbgVv+ThOLiSZdELc2ZpZdsonm3SBPUp1vuRbROepSQ7GaSWxM1WyJsuCvumsp
+         ZrGjIHHHuySANhLuNkckaiRFREDSdTYMhmvYW0AiGORu28lHrGE0qANDS0yVt5KIkskA
+         V7wVMRTTmM03THlZofnFoimqr6ZAbEE184Rb3xIsGyPg0/k9EhA7sFyqaztIy1rdZmIC
+         EZsQZs9eIioe+SiXAF0dYYMP18eBNQfAGR8annvJsis4MbDnKtm/YZtM95m9dfVpN0Cs
+         L/mw==
+X-Gm-Message-State: AOAM531Nz+St7ChcABZGGfaOD0xJuOGR66pTE32Crwszc4htluFa4E81
+        dq1S1/CLfcmtBkrrmMvae3H+nl56eSojTiSPArM4
+X-Google-Smtp-Source: ABdhPJwbg3yWypQN4cxrZmP3uYn4KoXMLaW0oW+bJJtUlpWP6iDiZd3Hcvf9/eWyaRh10eQQqnKlblyzvYXHH4O6Z7k=
+X-Received: by 2002:a17:906:9a4f:: with SMTP id aj15mr7921850ejc.197.1624427411326;
+ Tue, 22 Jun 2021 22:50:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210603051836.2614535-1-dkadashev@gmail.com> <ee7307f5-75f3-60d7-836e-830c701fe0e5@gmail.com>
- <0441443f-3f90-2d6c-20aa-92dc95a3f733@kernel.dk> <b41a9e48-e986-538e-4c21-0e2ad44ccb41@gmail.com>
- <53863cb2-8d58-27a1-a6a4-be41f6f5c606@kernel.dk>
-In-Reply-To: <53863cb2-8d58-27a1-a6a4-be41f6f5c606@kernel.dk>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Wed, 23 Jun 2021 12:49:28 +0700
-Message-ID: <CAOKbgA4POGxPdB02NsCac4p6MtC97q6M3pT09_FWWj41Uf3K2A@mail.gmail.com>
-Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat support
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+References: <20210615141331.407-1-xieyongji@bytedance.com> <20210615141331.407-10-xieyongji@bytedance.com>
+ <adfb2be9-9ed9-ca37-ac37-4cd00bdff349@redhat.com> <CACycT3tAON+-qZev+9EqyL2XbgH5HDspOqNt3ohQLQ8GqVK=EA@mail.gmail.com>
+ <1bba439f-ffc8-c20e-e8a4-ac73e890c592@redhat.com> <CACycT3uzMJS7vw6MVMOgY4rb=SPfT2srV+8DPdwUVeELEiJgbA@mail.gmail.com>
+ <0aeb7cb7-58e5-1a95-d830-68edd7e8ec2e@redhat.com> <CACycT3uuooKLNnpPHewGZ=q46Fap2P4XCFirdxxn=FxK+X1ECg@mail.gmail.com>
+ <e4cdee72-b6b4-d055-9aac-3beae0e5e3e1@redhat.com>
+In-Reply-To: <e4cdee72-b6b4-d055-9aac-3beae0e5e3e1@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Wed, 23 Jun 2021 13:50:00 +0800
+Message-ID: <CACycT3u8=_D3hCtJR+d5BgeUQMce6S7c_6P3CVfvWfYhCQeXFA@mail.gmail.com>
+Subject: Re: Re: [PATCH v8 09/10] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 12:32 AM Jens Axboe <axboe@kernel.dk> wrote:
+On Wed, Jun 23, 2021 at 11:31 AM Jason Wang <jasowang@redhat.com> wrote:
 >
-> On 6/22/21 11:28 AM, Pavel Begunkov wrote:
-> > On 6/22/21 6:26 PM, Jens Axboe wrote:
-> >> On 6/22/21 5:56 AM, Pavel Begunkov wrote:
-> >>> On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
-> >>>> This started out as an attempt to add mkdirat support to io_uring which
-> >>>> is heavily based on renameat() / unlinkat() support.
-> >>>>
-> >>>> During the review process more operations were added (linkat, symlinkat,
-> >>>> mknodat) mainly to keep things uniform internally (in namei.c), and
-> >>>> with things changed in namei.c adding support for these operations to
-> >>>> io_uring is trivial, so that was done too. See
-> >>>> https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
-> >>>
-> >>> io_uring part looks good in general, just small comments. However, I
-> >>> believe we should respin it, because there should be build problems
-> >>> in the middle.
+>
+> =E5=9C=A8 2021/6/22 =E4=B8=8B=E5=8D=884:14, Yongji Xie =E5=86=99=E9=81=93=
+:
+> > On Tue, Jun 22, 2021 at 3:50 PM Jason Wang <jasowang@redhat.com> wrote:
 > >>
-> >> I can drop it, if Dmitry wants to respin. I do think that we could
-> >> easily drop mknodat and not really lose anything there, better to
-> >> reserve the op for something a bit more useful.
-> >
-> > I can try it and send a fold in, if you want.
-> > Other changes may be on top
+> >> =E5=9C=A8 2021/6/22 =E4=B8=8B=E5=8D=883:22, Yongji Xie =E5=86=99=E9=81=
+=93:
+> >>>> We need fix a way to propagate the error to the userspace.
+> >>>>
+> >>>> E.g if we want to stop the deivce, we will delay the status reset un=
+til
+> >>>> we get respose from the userspace?
+> >>>>
+> >>> I didn't get how to delay the status reset. And should it be a DoS
+> >>> that we want to fix if the userspace doesn't give a response forever?
+> >>
+> >> You're right. So let's make set_status() can fail first, then propagat=
+e
+> >> its failure via VHOST_VDPA_SET_STATUS.
+> >>
+> > OK. So we only need to propagate the failure in the vhost-vdpa case, ri=
+ght?
 >
-> Sure that works too, will rebase in any case, and I'd like to add
-> Christian's ack as well. I'll just re-apply with the fold-ins.
+>
+> I think not, we need to deal with the reset for virtio as well:
+>
+> E.g in register_virtio_devices(), we have:
+>
+>          /* We always start by resetting the device, in case a previous
+>           * driver messed it up.  This also tests that code path a
+> little. */
+>        dev->config->reset(dev);
+>
+> We probably need to make reset can fail and then fail the
+> register_virtio_device() as well.
+>
 
-Jens, it seems that during this rebase you've accidentally squashed the
-"fs: update do_*() helpers to return ints" and
-"io_uring: add support for IORING_OP_SYMLINKAT" commits, so there is only the
-former one in your tree, but it actually adds the SYMLINKAT opcode to io uring
-(in addition to changing the helpers return types).
+OK, looks like virtio_add_status() and virtio_device_ready()[1] should
+be also modified if we need to propagate the failure in the
+virtio-vdpa case. Or do we only need to care about the reset case?
 
--- 
-Dmitry Kadashev
+[1] https://lore.kernel.org/lkml/20210517093428.670-1-xieyongji@bytedance.c=
+om/
+
+Thanks,
+Yongji
