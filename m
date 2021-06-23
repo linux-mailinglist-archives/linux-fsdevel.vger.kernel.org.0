@@ -2,76 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09BCA3B1375
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 07:50:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B4003B13E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 08:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbhFWFxK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 01:53:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54994 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbhFWFxI (ORCPT
+        id S229812AbhFWGYC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 02:24:02 -0400
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17251 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229660AbhFWGYB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 01:53:08 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AACEAC061760;
-        Tue, 22 Jun 2021 22:50:50 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id j184so2284338qkd.6;
-        Tue, 22 Jun 2021 22:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Db9qL5zTy0vsw0mjnrEBmE6Fe+DWbh68J6ElSvEbrrU=;
-        b=ZXXoeKVebL472OQjgKRoVEHKKlWImzt2vhsobsy1f7UPobKcKKrCj1LFjffAvN0usu
-         U0402v0CjGco9Lcxk+JrIWYN501JdtZChlbovp78iUK7FAvaSNS9913tiI5KuaHr0L57
-         Azj/w2W/iu2KqzgxVI/1OA08uTu9Jvunxi6dFNC/jYtEdynMKmtvCOXHq0OxZA6WoDFm
-         8APYCPWRgay0Odyn/ik8z6/iEWYiKiVpCImbp/FOs6OfFQCrVBjq+d+5EvQCzCkbjh9k
-         ZTrV8o/FFU/DGk/C1W6mZVMUgpznnrwQUgYL9wdRCVJZisrllaREJaPcIxLe2PRqGEEh
-         miQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Db9qL5zTy0vsw0mjnrEBmE6Fe+DWbh68J6ElSvEbrrU=;
-        b=M40VIuytTQ5iKxoGqtjBL961tck706cIOOZfQW962oSOjd0VWQZcADyjLi9k39LVv1
-         fFcHtSK6cR0NWFVj9FS4nh9JU0jckGGaopPgZXtZf0ADvYATVbQGe6+0Ou/k+n9JT/oC
-         lZDhOO96E8a6iJcj6oi+PRPqIGKS5lrOc/tnNuQf0jIQhMfjRaKIBKZsoV68xNj8jxq2
-         jdAgaj11zUojLD78tFw7opcTpjDPT8RhGwBXkw0vjRcS68ZsZeHrc4puWnAfYXd3Dlr/
-         ZNyNAfBkFuM++UAyM7UGNvg/fYkkPr/+kv3yCwka6cVu0EC/M+zAmSEQn6dgj3cjUk8E
-         vDQw==
-X-Gm-Message-State: AOAM533FCfur/3vIOczRA80uqoGc+1t6fR7KlC+udnFW5r7YhD0OF72h
-        Qjd9Dnl6cdfRv798j6WicHSb3a6EviqPfVxMLFU=
-X-Google-Smtp-Source: ABdhPJzA1PxPe+tOzutMwgPur5Wei4yiGjyczfxCn/IQJSOTIEncYIcACovNKdEQysqpD5wIXpyRzqaN3XjGG+MNQpE=
-X-Received: by 2002:a25:dfd0:: with SMTP id w199mr9969829ybg.337.1624427449954;
- Tue, 22 Jun 2021 22:50:49 -0700 (PDT)
+        Wed, 23 Jun 2021 02:24:01 -0400
+X-Greylist: delayed 907 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Jun 2021 02:24:01 EDT
+ARC-Seal: i=1; a=rsa-sha256; t=1624428374; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=FvwY4Amtbar2mVeWBKKfsiNg34jD7iLLLk+xu8nU9h+gSb1FlePD+poygQxs+zkOquxWfa3PF020TJn9uIdR2Eg1nGnEdd4J6qrh8C+d2RtJ17o3MkfM/dXqvDfAMOZUzulSN80ZJ/BfqG5z/p/8pv8mripcxfwLxueTlwQI1Eg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1624428374; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=LmqJlpoAuCfKzT2jfsIzXSh49imf5u7A6jt8fvymJag=; 
+        b=an6OibPcmLXkoVHvoZ6M/y6b15xxwlmUBrkzNoTAJy4+xdnrKBEhGET8tmD2LRrFeb6D7MDVgi8iaq10yv8NdiLkncJys/tSjLKtms6cpAqBM8iHbKLPBjVw2sDttP+c1gE8u6vSXST+RnWAVws7zLU0e5QZfhWJ7VeridE3mug=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1624428374;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=LmqJlpoAuCfKzT2jfsIzXSh49imf5u7A6jt8fvymJag=;
+        b=ZpNtt9lSKyrpbV47zI4soCxHIP7ioF4V1vPuuIAhSyU/IB3hX6QWNV1zCa/bYTiS
+        p5/lfOSDp2zodxMRSyE4W493/x4pew+CAvXnZcSIQy8hUS9EHh4qP4LYsgR3t9UqULA
+        n0UBUsr9+GJ6+UfRZNmJXAw4DenwXEhZsN6j35us=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1624428373723219.8140028881793; Wed, 23 Jun 2021 14:06:13 +0800 (CST)
+Date:   Wed, 23 Jun 2021 14:06:13 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Miklos Szeredi" <miklos@szeredi.hu>
+Cc:     "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm" <linux-mm@kvack.org>,
+        =?UTF-8?Q?=22Christian_K=C3=B6nig=22?= 
+        <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs" <linux-unionfs@vger.kernel.org>
+Message-ID: <17a3779e6d8.10898dfd28835.4753809433352490949@mykernel.net>
+In-Reply-To: <YNHXzBgzRrZu1MrD@miu.piliscsaba.redhat.com>
+References: <YNHXzBgzRrZu1MrD@miu.piliscsaba.redhat.com>
+Subject: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D:[PATCH]_ovl:_fix_mmap_denywrite?=
 MIME-Version: 1.0
-References: <20210603051836.2614535-1-dkadashev@gmail.com> <20210603051836.2614535-3-dkadashev@gmail.com>
- <f45781a8-234e-af92-e73d-a6453bd24f16@gmail.com>
-In-Reply-To: <f45781a8-234e-af92-e73d-a6453bd24f16@gmail.com>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Wed, 23 Jun 2021 12:50:39 +0700
-Message-ID: <CAOKbgA7VuG9JqgrGeSD_N7GTZBnocSnWCpGrcrodxWPq7+k47g@mail.gmail.com>
-Subject: Re: [PATCH v5 02/10] io_uring: add support for IORING_OP_MKDIRAT
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 12:41 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->
-> On 6/3/21 6:18 AM, Dmitry Kadashev wrote:
-> > IORING_OP_MKDIRAT behaves like mkdirat(2) and takes the same flags
-> > and arguments.
->
-> Jens, a fold-in er discussed, and it will get you
-> a conflict at 8/10
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=8C, 2021-06-22 20:30:04 Miklos Sze=
+redi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
+ > Overlayfs did not honor positive i_writecount on realfile for VM_DENYWRI=
+TE
+ > mappings.  Similarly negative i_mmap_writable counts were ignored for
+ > VM_SHARED mappings.
+ >=20
+ > Fix by making vma_set_file() switch the temporary counts obtained and
+ > released by mmap_region().
+ >=20
+ > Reported-by: Chengguang Xu <cgxu519@mykernel.net>
+ > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+ > ---
+ >  fs/overlayfs/file.c |    4 +++-
+ >  include/linux/mm.h  |    1 +
+ >  mm/mmap.c           |    2 +-
+ >  mm/util.c           |   38 +++++++++++++++++++++++++++++++++++++-
+ >  4 files changed, 42 insertions(+), 3 deletions(-)
+ >=20
+ > --- a/fs/overlayfs/file.c
+ > +++ b/fs/overlayfs/file.c
+ > @@ -430,7 +430,9 @@ static int ovl_mmap(struct file *file, s
+ >      if (WARN_ON(file !=3D vma->vm_file))
+ >          return -EIO;
+ > =20
+ > -    vma_set_file(vma, realfile);
+ > +    ret =3D vma_set_file_checkwrite(vma, realfile);
+ > +    if (ret)
+ > +        return ret;
 
-Thanks, Pavel
+I'm afraid that it may affect other overlayfs instances which share lower l=
+ayers(no upper),
+so could we just check those permissions for upper layer?
 
--- 
-Dmitry Kadashev
+
+
+ > =20
+ >      old_cred =3D ovl_override_creds(file_inode(file)->i_sb);
+ >      ret =3D call_mmap(vma->vm_file, vma);
+ > --- a/include/linux/mm.h
+ > +++ b/include/linux/mm.h
+ > @@ -2751,6 +2751,7 @@ static inline void vma_set_page_prot(str
+ >  #endif
+ > =20
+ >  void vma_set_file(struct vm_area_struct *vma, struct file *file);
+ > +int vma_set_file_checkwrite(struct vm_area_struct *vma, struct file *fi=
+le);
+ > =20
+ >  #ifdef CONFIG_NUMA_BALANCING
+ >  unsigned long change_prot_numa(struct vm_area_struct *vma,
+ > --- a/mm/mmap.c
+ > +++ b/mm/mmap.c
+ > @@ -1809,6 +1809,7 @@ unsigned long mmap_region(struct file *f
+ >           */
+ >          vma->vm_file =3D get_file(file);
+ >          error =3D call_mmap(file, vma);
+ > +        file =3D vma->vm_file;
+
+
+I'm not sure the behavior of changing vma_file is always safe for vma mergi=
+ng case.
+In vma merging case, before go to tag 'unmap_writable' the reference of vma=
+->vm_file will be released by fput().
+For overlayfs, it probably safe because overlayfs file will get another ref=
+erence for lower/upper file.
+
+
+
+Thanks,
+Chengguang Xu
+
+
+
+
+ >          if (error)
+ >              goto unmap_and_free_vma;
+ > =20
+ > @@ -1870,7 +1871,6 @@ unsigned long mmap_region(struct file *f
+ >          if (vm_flags & VM_DENYWRITE)
+ >              allow_write_access(file);
+ >      }
+ > -    file =3D vma->vm_file;
+ >  out:
+ >      perf_event_mmap(vma);
+ > =20
+ > --- a/mm/util.c
+ > +++ b/mm/util.c
+ > @@ -314,12 +314,48 @@ int vma_is_stack_for_current(struct vm_a
+ >  /*
+ >   * Change backing file, only valid to use during initial VMA setup.
+ >   */
+ > -void vma_set_file(struct vm_area_struct *vma, struct file *file)
+ > +int vma_set_file_checkwrite(struct vm_area_struct *vma, struct file *fi=
+le)
+ >  {
+ > +    vm_flags_t vm_flags =3D vma->vm_flags;
+ > +    int err =3D 0;
+ > +
+ >      /* Changing an anonymous vma with this is illegal */
+ >      get_file(file);
+ > +
+ > +    /* Get temporary denial counts on replacement */
+ > +    if (vm_flags & VM_DENYWRITE) {
+ > +        err =3D deny_write_access(file);
+ > +        if (err)
+ > +            goto out_put;
+ > +    }
+ > +    if (vm_flags & VM_SHARED) {
+ > +        err =3D mapping_map_writable(file->f_mapping);
+ > +        if (err)
+ > +            goto out_allow;
+ > +    }
+ > +
+ >      swap(vma->vm_file, file);
+ > +
+ > +    /* Undo temporary denial counts on replaced */
+ > +    if (vm_flags & VM_SHARED)
+ > +        mapping_unmap_writable(file->f_mapping);
+ > +out_allow:
+ > +    if (vm_flags & VM_DENYWRITE)
+ > +        allow_write_access(file);
+ > +out_put:
+ >      fput(file);
+ > +    return err;
+ > +}
+ > +EXPORT_SYMBOL(vma_set_file_checkwrite);
+ > +
+ > +/*
+ > + * Change backing file, only valid to use during initial VMA setup.
+ > + */
+ > +void vma_set_file(struct vm_area_struct *vma, struct file *file)
+ > +{
+ > +    int err =3D vma_set_file_checkwrite(vma, file);
+ > +
+ > +    WARN_ON_ONCE(err);
+ >  }
+ >  EXPORT_SYMBOL(vma_set_file);
+ > =20
+ >=20
+ >=20
+ >=20
