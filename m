@@ -2,122 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F1443B1A8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 14:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D80553B1ACE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jun 2021 15:11:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230225AbhFWM5Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Jun 2021 08:57:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50087 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230202AbhFWM5Z (ORCPT
+        id S230292AbhFWNNQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Jun 2021 09:13:16 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:48892 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230019AbhFWNNP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Jun 2021 08:57:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624452907;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=J+ARJSprpdWf6XucvxKdRp9dZzCJmxljzGlWc6xT4+c=;
-        b=hQ/8Ec8/a06dglRKPIk2VsD26+nP4I0qKgXPMhm66N2Xv7ZjKWbRp2GOzU+AjO8zeLgdh7
-        H6PKXEidi5l9+k185J4YmVlLnmscVh/m6sK2QGO3TYO4MDjteDiwJJIfcJz5iaTSjmnWuZ
-        K1RCmLqRQLgmLOM3v/9xbDZiK79E5O0=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-259-T48xUgLnNfildOb4dqC8HA-1; Wed, 23 Jun 2021 08:55:06 -0400
-X-MC-Unique: T48xUgLnNfildOb4dqC8HA-1
-Received: by mail-ed1-f69.google.com with SMTP id l9-20020a0564022549b0290394bafbfbcaso1267675edb.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jun 2021 05:55:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=J+ARJSprpdWf6XucvxKdRp9dZzCJmxljzGlWc6xT4+c=;
-        b=Z0hit+f/8aGN1e4x4w8SeZEf2FnjJD7QlN7sE/9mqCSeE6FYJjh64aDdB6iSflZ7QY
-         Vf7ibTucy6cCzimRMJZBdq+zuDpZBpOsB0KCUSa7ZAiYf19E+AwrbJdDuB6G8X4ocKWu
-         jT8t7OF09RYfo8GFe3hxrkKej6viQBH3C/1o2rwRzwBBcWIDk8gW1suQqkpHbxKf0O5w
-         AU1erCoSTm2ad4R57GLp37fhmhj76hsfzhKAwps4kDnoPi37q+qIye2pxr/VKS6mt8nN
-         m3rT6IaRg2xajhN4RuvUd6GYT0Wca2RxBeSX9gg79O48ywfNFjI40L/syhlrZlCnwcRo
-         o2uA==
-X-Gm-Message-State: AOAM531kDmP3R7uVxKdd2dUSHsNU+9LDsRPYLHqcderHNc/dWI/hScKJ
-        Xgw4o+cv75tQfNpNQaV3yQcL/3Vc2mqbia95OivzT/UdFG2zYxjVjB+5YYcWbvdbxmkKUU5WtSh
-        QCZr4uu2m0RLYGzhZ1ZTOIu16/IdLjpb/votOy0KOpo/KCh74ZiVbjqBo9cRSBkRzyZ+PE4+HYL
-        QSJA==
-X-Received: by 2002:a17:906:4fc6:: with SMTP id i6mr9862416ejw.472.1624452904811;
-        Wed, 23 Jun 2021 05:55:04 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyQpukU8m4YzG84MyCZruKCIKRGHSJGZnoB1G1wQ8CbOQrELkgxJcQOJae/5Jt/+8BUWcQIhQ==
-X-Received: by 2002:a17:906:4fc6:: with SMTP id i6mr9862402ejw.472.1624452904612;
-        Wed, 23 Jun 2021 05:55:04 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id lu21sm7294158ejb.31.2021.06.23.05.55.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jun 2021 05:55:04 -0700 (PDT)
-From:   Hans de Goede <hdegoede@redhat.com>
-Subject: [GIT PULL] vboxsf fixes for 5.14-1
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org
-Message-ID: <dde4bf6b-121e-909c-60e6-583419106892@redhat.com>
-Date:   Wed, 23 Jun 2021 14:55:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Wed, 23 Jun 2021 09:13:15 -0400
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B430320B6AEE;
+        Wed, 23 Jun 2021 06:10:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B430320B6AEE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1624453857;
+        bh=X0fsfcHKZT74HvXRviTlryAaKv2AtX1mjJYmSzENvUc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=MiT/3muhlL9+IGywtJkQ2n5Qc/WNSVUoWcjCorFidH/MWy3QWmvIl23/J4G5/Xksj
+         /J6YvXcn5iJzTLaA04sU7h5hGWF2UPoHhSwdHUudQCH5yjI8O3ynqw97vBxgo3RxG7
+         fi+6Y1zPqIcY3IJ5ty7ftNtltnFmaHrCpv7ZF458=
+Received: by mail-pf1-f176.google.com with SMTP id i6so2303935pfq.1;
+        Wed, 23 Jun 2021 06:10:57 -0700 (PDT)
+X-Gm-Message-State: AOAM531ZeHqYFzy9hVmntGjs32cow6pvKpMsFm8nRgJiZG6hTNZ/hp1i
+        DQjMc0wsBKIjjzPAQQlIV5w/GUXRVoeYGGCQBZM=
+X-Google-Smtp-Source: ABdhPJyJo3O9WtPdcoiaPiQCJ9HGOrBerIX/T5tIZdcD7UilkOswt+R/OQZdZqOaDYgDVaHliptWFpGGtVhfdlw62G4=
+X-Received: by 2002:a05:6a00:17a5:b029:305:d4e8:7391 with SMTP id
+ s37-20020a056a0017a5b0290305d4e87391mr6751150pfg.0.1624453857011; Wed, 23 Jun
+ 2021 06:10:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210623105858.6978-1-mcroce@linux.microsoft.com>
+ <20210623105858.6978-2-mcroce@linux.microsoft.com> <YNMffBWvs/Fz2ptK@infradead.org>
+In-Reply-To: <YNMffBWvs/Fz2ptK@infradead.org>
+From:   Matteo Croce <mcroce@linux.microsoft.com>
+Date:   Wed, 23 Jun 2021 15:10:21 +0200
+X-Gmail-Original-Message-ID: <CAFnufp1gdag0rGQ8K4_2oB6_aC+EZgfgwd2eL4-AxpG0mK+_qQ@mail.gmail.com>
+Message-ID: <CAFnufp1gdag0rGQ8K4_2oB6_aC+EZgfgwd2eL4-AxpG0mK+_qQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] block: add disk sequence number
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lennart Poettering <lennart@poettering.net>,
+        Luca Boccassi <bluca@debian.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Javier Gonz??lez" <javier@javigon.com>,
+        Niklas Cassel <niklas.cassel@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        JeffleXu <jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al,
+On Wed, Jun 23, 2021 at 1:49 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Wed, Jun 23, 2021 at 12:58:53PM +0200, Matteo Croce wrote:
+> > +void inc_diskseq(struct gendisk *disk)
+> > +{
+> > +     static atomic64_t diskseq;
+>
+> Please don't hide file scope variables in functions.
+>
 
-Here is a pull-req with a set of patches fixing a vboxsf bug for 5.14.
+I just didn't want to clobber that file namespace, as that is the only
+point where it's used.
 
-This patch-set has been posted on the linux-fsdevel several times,
-unfortunately no-one seem to have interest in / time for reviewing
-vboxsf patches.
+> Can you explain a little more why we need a global sequence count vs
+> a per-disk one here?
 
-So as the vboxsf maintainer I'm now sending this pull-req
-(based on a signed tag) directly to you, hoping that you will accept
-it directly from me.
+The point of the whole series is to have an unique sequence number for
+all the disks.
+Events can arrive to the userspace delayed or out-of-order, so this
+helps to correlate events to the disk.
+It might seem strange, but there isn't a way to do this yet, so I come
+up with a global, monotonically incrementing number.
 
-Note this fixes a bug which users have been hitting in the wild,
-so it would be good to get this merged soon.
-
-Regards,
-
-Hans
-
-
-The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
-
-  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/hansg/linux.git tags/vboxsf-v5.14-1
-
-for you to fetch changes up to 52dfd86aa568e433b24357bb5fc725560f1e22d8:
-
-  vboxsf: Add support for the atomic_open directory-inode op (2021-06-23 14:36:52 +0200)
-
-----------------------------------------------------------------
-Signed tag for a set of bugfixes for vboxsf for 5.14
-
-This patch series adds support for the atomic_open
-directory-inode op to vboxsf.
-
-Note this is not just an enhancement this also fixes an actual issue
-which users are hitting, see the commit message of the
-"boxsf: Add support for the atomic_open directory-inode" patch.
-
-----------------------------------------------------------------
-Hans de Goede (4):
-      vboxsf: Honor excl flag to the dir-inode create op
-      vboxsf: Make vboxsf_dir_create() return the handle for the created file
-      vboxsf: Add vboxsf_[create|release]_sf_handle() helpers
-      vboxsf: Add support for the atomic_open directory-inode op
-
- fs/vboxsf/dir.c    | 76 ++++++++++++++++++++++++++++++++++++++++++++++--------
- fs/vboxsf/file.c   | 71 +++++++++++++++++++++++++++++++-------------------
- fs/vboxsf/vfsmod.h |  7 +++++
- 3 files changed, 116 insertions(+), 38 deletions(-)
-
+-- 
+per aspera ad upstream
