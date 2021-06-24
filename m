@@ -2,63 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E87973B345A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jun 2021 19:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69FF03B34E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jun 2021 19:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232390AbhFXRLq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Jun 2021 13:11:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52688 "EHLO
+        id S232077AbhFXRkp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Jun 2021 13:40:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232186AbhFXRLn (ORCPT
+        with ESMTP id S229464AbhFXRko (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Jun 2021 13:11:43 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2ABC06175F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jun 2021 10:09:22 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id s19so7100545ilj.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jun 2021 10:09:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
-         :subject:to;
-        bh=ANhbTggsY3NFhRZExKMwUmb3VzJqye8XLvWVXSvNBkQ=;
-        b=p95plxgcKdT8+TUJCmcKdAyJL6L8C+j3muAeTI6tbvEOMwKUFZvBH22Z3GEGxdnUZH
-         d9XkDasjcz/bUj2n1PkWxPPQL/Sxtf1a7ckN43IkWwU4a9v6DYeOi9Tg8DPYHl700hH/
-         xlmv54Ir2NUVB8zwaX1UsxTzP5GUW3mdywmszCeflzWKbXzDgkMNhx+qVsi3FklHnD5x
-         fSDWvxz3POXOJ/0yZM+F2G99rPMTFJK+bPA5TWYu0VJpvpEjmQwRSgXLB6dx+kXpC0Uz
-         JX+JhI0lSB7VkwJTdkbApCrUx6TGzp99N5mAm/d0lil4hmexz93RFAPSpMzmwkjNchKB
-         rXTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
-         :from:date:message-id:subject:to;
-        bh=ANhbTggsY3NFhRZExKMwUmb3VzJqye8XLvWVXSvNBkQ=;
-        b=DCQrtKzmf7tbjb+eODFlXnuvPXpPJ96kAMDagA02E5u558DtRgfniknFdLDhIc/+Hf
-         I2Xn0ROa4+CxbKq+FVVp0jsxnXJH+umfVvkHSJQJ1wsLCYFOnqAnKUGmNmbaMsojJnOl
-         099JSidwNh72XYomwjddvacwfkrU6Cbdy4NXai5uV0W1cReEvucDTWo6Zu+tvka8LH5u
-         49rBoDQRCoLlb1PEz3dxsIrbhOMxAU0xmD2I1aqsxycv6hoXkCcjOSPVtbXgaGR9Gclo
-         oc8XAt6ExYersYFyzAPrwOGSY5UjCHZ3RBEhw9b2wCoq10x5FiXZhWbyUm9OGJ87Lvo+
-         eW8Q==
-X-Gm-Message-State: AOAM530sPZMpmuV/jHF0K1ltk2fP56qxXgbR+eoXKXedFxi/mt0xRYiT
-        y80igNVvzoRWhY1dOOQqF4sWK4H1g80Aus9wT4w=
-X-Google-Smtp-Source: ABdhPJzkYUuO368jts0QgMQyJe9SHzg0U698qd8KdfojEfYsXnHtwMfPGxVHmw7fwQ64+IhHRhAEJH5nusdeW4BWzcA=
-X-Received: by 2002:a05:6e02:524:: with SMTP id h4mr4098121ils.255.1624554560853;
- Thu, 24 Jun 2021 10:09:20 -0700 (PDT)
+        Thu, 24 Jun 2021 13:40:44 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22EDCC061574;
+        Thu, 24 Jun 2021 10:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=2CrBXZN94UanW7Z9wbxJJ19Ik2XzepvUm7qpu+EStk0=; b=jBQ0NmZKRLHKjDQc9jvD3aDUNp
+        GR1n7RIIEIJxc7aqo9Iey0Z3VDbjtjG+RFJAjM6Rj37cXXF0S/uDHWuh67kp9PoTSTcQAAGHF0qOJ
+        nsEBM6acW7i4XA1lZMSltDK7xft6gXjXGxQB22wfNg/M+Ql1MoBPG2Xj7QXGZXQE9WsHe1lBg2Xc4
+        iYlT21yUploEw+7s5BsHk76qt6G2wKLp5ppjmHOZ0wF/7MYsLjTM0GVod6ADQy9RcDb+HMo148mOq
+        VFndPkGbwHRjm1ZgC++Nr3y/fJNxeVF7B+4nwlEoYsiairK88dsXFpw4jOmAlmKanrxufNAnLxKSX
+        3jbEo0kQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lwTIR-00GpHA-RT; Thu, 24 Jun 2021 17:37:52 +0000
+Date:   Thu, 24 Jun 2021 18:37:47 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 17/46] mm/memcg: Convert
+ mem_cgroup_track_foreign_dirty_slowpath() to folio
+Message-ID: <YNTC67V2192OBiJ2@casper.infradead.org>
+References: <20210622121551.3398730-1-willy@infradead.org>
+ <20210622121551.3398730-18-willy@infradead.org>
+ <YNLvBjx3mqXTjj+b@infradead.org>
 MIME-Version: 1.0
-Received: by 2002:a05:6638:3aa:0:0:0:0 with HTTP; Thu, 24 Jun 2021 10:09:20
- -0700 (PDT)
-Reply-To: tutywoolgar021@gmail.com
-In-Reply-To: <CADB47+4Wa3T59Vq_==GTXEfHrX5x-2vQFxaTBO0dTdyAweCVpw@mail.gmail.com>
-References: <CADB47+4Wa3T59Vq_==GTXEfHrX5x-2vQFxaTBO0dTdyAweCVpw@mail.gmail.com>
-From:   tuty woolgar <faridaamadoubas@gmail.com>
-Date:   Thu, 24 Jun 2021 17:09:20 +0000
-Message-ID: <CADB47+607zNBfYFb4bj0nUhuuYgAdwT=G_wJ9-EeV0ESHe56Jg@mail.gmail.com>
-Subject: greetings,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YNLvBjx3mqXTjj+b@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-My greetings to you my friend i hope you are fine and good please respond
-back to me thanks,
+On Wed, Jun 23, 2021 at 10:21:26AM +0200, Christoph Hellwig wrote:
+> Looks good,
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+> Although I wish we could come up with a shorter name for
+> mem_cgroup_track_foreign_dirty_slowpath somehow..
+
+It is quite grotesque!
+
+How about folio_track_foreign_writeback() as a replacement name for
+mem_cgroup_track_foreign_dirty() and have it call
+__folio_track_foreign_writeback()?
+
+Although 'foreign' tends to be used in MM to mean "wrong NUMA node",
+so maybe that's misleading.  folio_track_dirty_cgroup()?
+folio_mark_dirty_cgroup()?  (the last to be read in context of
+__set_page_dirty() being renamed to __folio_mark_dirty())
