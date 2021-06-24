@@ -2,85 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29FA33B2CE5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jun 2021 12:49:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8134E3B2D0D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jun 2021 12:56:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232284AbhFXKwI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Jun 2021 06:52:08 -0400
-Received: from mga11.intel.com ([192.55.52.93]:35377 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232191AbhFXKwI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Jun 2021 06:52:08 -0400
-IronPort-SDR: w2IF1V6UF0o+iSWS7neQO8zQEvB9dSUnXtYcNzNYMfrlpEuOAXX/UHtdqi1rcc0T+04gJTGNp1
- y8gBkbtQoMxw==
-X-IronPort-AV: E=McAfee;i="6200,9189,10024"; a="204438803"
-X-IronPort-AV: E=Sophos;i="5.83,296,1616482800"; 
-   d="scan'208";a="204438803"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2021 03:49:49 -0700
-IronPort-SDR: bloUs6MTuopNNLA1Xl4hUG6pB2P7g9WQuQTLWQKu4SZmVZ3c4WP5g+1xC3v1QQDtzb2ljbVg9o
- IHTrS/tto6Ug==
-X-IronPort-AV: E=Sophos;i="5.83,296,1616482800"; 
-   d="scan'208";a="487710028"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2021 03:49:43 -0700
-Received: from andy by smile with local (Exim 4.94.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1lwMvT-004yd4-Bm; Thu, 24 Jun 2021 13:49:39 +0300
-Date:   Thu, 24 Jun 2021 13:49:39 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jia He <justin.he@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, nd@arm.com
-Subject: Re: [PATCH v2 2/4] lib/vsprintf.c: make '%pD' print the full path of
- file
-Message-ID: <YNRjQ5dJpSYWbbRP@smile.fi.intel.com>
-References: <20210623055011.22916-1-justin.he@arm.com>
- <20210623055011.22916-3-justin.he@arm.com>
- <YNRJ61m6duXjpGrp@alley>
+        id S232308AbhFXK6U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Jun 2021 06:58:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51762 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232146AbhFXK6T (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Jun 2021 06:58:19 -0400
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55B7FC061574;
+        Thu, 24 Jun 2021 03:56:00 -0700 (PDT)
+Received: by mail-qk1-x72e.google.com with SMTP id j184so13299360qkd.6;
+        Thu, 24 Jun 2021 03:56:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/e/qEaOn8AYiDoFE2tjtFv5KON/qdc3GwFf003F+wGQ=;
+        b=m252wepPDnEzZvnX4Xf0lUdlfC7C08RVGhwrJ6CVaoG3ancv89qBpCT6lEPAZiVPaK
+         niGmfj8DudFylYtNwdkjuxXwxmr1W/uzbZEaJyUTa5MXdxK9b2CthH//dlxorPRChp7/
+         gtKjVvZ0F02kans264BuQgFe42hZNfAmO9x65rBLMa+5rhMX9NKZljJ7pOcXba7zhjsA
+         aHLaa4NOZQY+Z2LOBYKsO1ij/NSE8JBH1O4VLpm661MsH8PgRM0rtIfJk9BgXvRJC2xX
+         xweI7ZX9fQWwlLpZVJfkWQslBxwHvO98YRwCZUxBoDnhLuJ0Xw6WRBSUKv7paJT4/nPb
+         YEcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/e/qEaOn8AYiDoFE2tjtFv5KON/qdc3GwFf003F+wGQ=;
+        b=RTOM6dWNHD+fo2e0cx+tmzQvag9rx1de7TLCd4foiiFL7SLKMRWuNEhxb/0jKFEG/d
+         Eo7fvlO7JkBSTcKlPPCOHcPagG82gN74AlqLU4TC+86931rcVHIjP7GiJ9s2IUF/qX7O
+         s8zwKnNWOxSJICo77mes2LDQd/vscCxZdi1eVFmGhCnDFP50pjNxpb9krVFAh0Vm6RFV
+         EogMJBwC6P4noS7I0yIpEYQBj9c7zaDRPqReNzHWEbQVW3tPD/PHlETaovbC4f1wVr5I
+         3mc3cNL6DhFqIc55Xg5eCxnZWA7FYu/aC7twrI1HwwFsTESMs9VNFRUWVv116EKQshBO
+         zKZQ==
+X-Gm-Message-State: AOAM530yA4W6MRm0F4QsdQ2Zkc+9VftczBhgmORAMMVP3a1w+FtN6/Og
+        fWb32X2uloBUWsKbOG0R+AkRCh3vwHGNz+aePIA=
+X-Google-Smtp-Source: ABdhPJwrUJe7wgwtACcT00yohgNAguLrhFGEvA1SeraQeOrVHfAsqx3lTal2NoO2i8TbFcw024bcIyghh2JwkMc/Wec=
+X-Received: by 2002:a25:360d:: with SMTP id d13mr4063200yba.375.1624532159540;
+ Thu, 24 Jun 2021 03:55:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YNRJ61m6duXjpGrp@alley>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20210603051836.2614535-1-dkadashev@gmail.com> <ee7307f5-75f3-60d7-836e-830c701fe0e5@gmail.com>
+ <0441443f-3f90-2d6c-20aa-92dc95a3f733@kernel.dk> <b41a9e48-e986-538e-4c21-0e2ad44ccb41@gmail.com>
+ <53863cb2-8d58-27a1-a6a4-be41f6f5c606@kernel.dk> <CAOKbgA4POGxPdB02NsCac4p6MtC97q6M3pT09_FWWj41Uf3K2A@mail.gmail.com>
+ <43b17e64-4c56-93d3-1724-2673d5b639f3@kernel.dk>
+In-Reply-To: <43b17e64-4c56-93d3-1724-2673d5b639f3@kernel.dk>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Thu, 24 Jun 2021 17:55:48 +0700
+Message-ID: <CAOKbgA6Ofvf3FuTKUb6PNLZy_eyDxLCouGcqY2GfHfZa_dJuiw@mail.gmail.com>
+Subject: Re: [PATCH v5 00/10] io_uring: add mkdir, [sym]linkat and mknodat support
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 24, 2021 at 11:01:31AM +0200, Petr Mladek wrote:
-> On Wed 2021-06-23 13:50:09, Jia He wrote:
+On Thu, Jun 24, 2021 at 9:37 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 6/22/21 11:49 PM, Dmitry Kadashev wrote:
+> >
+> > Jens, it seems that during this rebase you've accidentally squashed the
+> > "fs: update do_*() helpers to return ints" and
+> > "io_uring: add support for IORING_OP_SYMLINKAT" commits, so there is only the
+> > former one in your tree, but it actually adds the SYMLINKAT opcode to io uring
+> > (in addition to changing the helpers return types).
+>
+> Man, I wonder what happened there. I'll just drop the series, so when you
+> resend this one (hopefully soon if it's for 5.14...), just make it
+> against the current branch.
 
-...
-
-> > If someone invokes snprintf() with small but positive space,
-> > prepend_name_with_len() moves or truncates the string partially.
-> 
-> Does this comment belong to the 1st patch?
-> prepend_name_with_len() is not called in this patch.
-> 
-> > More
-> > than that, kasprintf() will pass NULL @buf and @end as the parameters,
-> > and @end - @buf can be negative in some case. Hence make it return at
-> > the very beginning with false in these cases.
-> 
-> Same here. file_d_path_name() does not return bool.
-
-It was my (apparently unclear) suggestion either to move it here, or be
-rewritten in generic way as you suggested in the other thread.
+Sure, I'll send v6 shortly
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Dmitry Kadashev
