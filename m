@@ -2,121 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 091513B327F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jun 2021 17:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEAAB3B32DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jun 2021 17:52:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232361AbhFXP1l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Jun 2021 11:27:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38083 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232005AbhFXP1j (ORCPT
+        id S232053AbhFXPyd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Jun 2021 11:54:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34974 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231294AbhFXPyd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Jun 2021 11:27:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624548320;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=yv7m1AvCn7O6dTH1q9vdjmlX/RhwF6AeGVa6Oa4+0Qw=;
-        b=hc+MkdR+M9lbcshIxpzaf8acpDNrC3LOd3ZS/LDdnwPvYfmIph+6vLEcnbwcbXiZSVuN3v
-        xNVLSgIBA4ZdwKfH2jPuaMqVYgxsBlBCYNyA8tXNPcloVtUkP4MeGqHnl1wR5AWtUzmt1E
-        2JmQ9+Ta0OrtY0ORPj/lscgUfZzl8Ac=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-532-pxrp5rh7P0Ogm5PrSfFsBg-1; Thu, 24 Jun 2021 11:25:18 -0400
-X-MC-Unique: pxrp5rh7P0Ogm5PrSfFsBg-1
-Received: by mail-ej1-f70.google.com with SMTP id ho42-20020a1709070eaab02904a77ea3380eso2151690ejc.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jun 2021 08:25:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yv7m1AvCn7O6dTH1q9vdjmlX/RhwF6AeGVa6Oa4+0Qw=;
-        b=oXvYTDY+tZPvTIJcbD18kuRkk9/v0a0+6mHhEBY5apgNO4NTFQ0Y7b2+cedZ0hbk8N
-         jcQDnBW9Fin3vxN5LQsV8STmxngaJgEgvLOmrNbJYzUVGg1LorgSIRooencFux4d3iu4
-         wgCIFLdnvN+J/jFdwB0LDBoXVg3w9dPzenhcqT6BXJ2a+pBlznZoYV9K7GxYcsO54Qo7
-         IUjo0xr/Uog2dPyhiTPC75y5C6mQz40cldNIdsk5XiTc8NT33I+4kAXbH6Kakzp8uFwU
-         37DtpnED4XEWTFkISSz2VCygDWkLfT+4GnKQD6OHAsS+t/rcwyfM8ftYOYWN4QCnaPTt
-         jlqg==
-X-Gm-Message-State: AOAM533Kibfdg5CBf/4Swnqnyq5Kvq6nheYXowziS63xNAK7u31cgNHi
-        GqM2CwAcXpIdoPofLLpUF6EOCSfW71heD8nFTtcGbP96hewQK2zwVmvQS4Z8iYfN2lxNVff4kqn
-        E6rQuvxM95H1e3SVFhx85ZRQlHA==
-X-Received: by 2002:a17:906:22c6:: with SMTP id q6mr5836123eja.275.1624548317666;
-        Thu, 24 Jun 2021 08:25:17 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxDFvu9eksuXynDzV/xksZCJe2btC6g1NOCWnVD/di1wd6CsF0Z7byzAfEPlhofKBrJp+8MwA==
-X-Received: by 2002:a17:906:22c6:: with SMTP id q6mr5836107eja.275.1624548317485;
-        Thu, 24 Jun 2021 08:25:17 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8308:b105:dd00:d067:83f0:d612:b70f])
-        by smtp.gmail.com with ESMTPSA id a2sm1399830ejp.1.2021.06.24.08.25.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jun 2021 08:25:17 -0700 (PDT)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Robert O'Callahan <roc@ocallahan.org>
-Subject: [RFC PATCH] userfaultfd: open userfaultfds with O_RDONLY
-Date:   Thu, 24 Jun 2021 17:25:15 +0200
-Message-Id: <20210624152515.1844133-1-omosnace@redhat.com>
-X-Mailer: git-send-email 2.31.1
+        Thu, 24 Jun 2021 11:54:33 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6DDFC061574;
+        Thu, 24 Jun 2021 08:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=RhOughdPQBT8FH1TMb9mE3gkCHTQi+TVzms17GvbwF4=; b=rgTJ5jhkLChatsb8/9DhxRKKlK
+        XqXuAqqgu0z7SI+WEhiWiUDaik6wSA4GU/op+TcncBjx/2cuXPqSOsuYPA1mf4UvEBWh81tWuHIRZ
+        DsMXSjsH3nOuoEuOU/pOMPihqSv7zMZJ9ylt4JfjWd/kb5msg5HIOxQJ4C5GgWoP3Xy8rEeSFcTjU
+        i5haAaP+y/afjxw887oqx8TIsmyxzxu5CJqBZ52B4Qa3SkrfXnZaj15eAUlA3d1v8CSHfla0dYJGh
+        wQlxkX3VfkbHCFIJ9jU8D0MliVK2EWIXq+pActYJoxUhWd8l0izXSTGs0+0p27ihIb48SxXUK8L6A
+        10ohojPQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lwRe3-00GjYi-NI; Thu, 24 Jun 2021 15:52:03 +0000
+Date:   Thu, 24 Jun 2021 16:51:59 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/46] mm: Add folio_rmapping()
+Message-ID: <YNSqHzKM5oi2XSxZ@casper.infradead.org>
+References: <20210622121551.3398730-1-willy@infradead.org>
+ <20210622121551.3398730-3-willy@infradead.org>
+ <YNLpStcUTkcHG0R9@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YNLpStcUTkcHG0R9@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since userfaultfd doesn't implement a write operation, it is more
-appropriate to open it read-only.
+On Wed, Jun 23, 2021 at 09:56:58AM +0200, Christoph Hellwig wrote:
+> > +static inline void *folio_rmapping(struct folio *folio)
+> 
+> This name, just like the old one is not exaclty descriptive.  I guess the
+> r stands for raw somehow?  As a casual contributor to the fringes of the
+> MM I would have no idea when to use it.
+> 
+> All this of course also applies to the existing (__)page_rmapping, but
+> maybe this is a good time to sort it out.
 
-When userfaultfds are opened read-write like it is now, and such fd is
-passed from one process to another, SELinux will check both read and
-write permissions for the target process, even though it can't actually
-do any write operation on the fd later.
+Yes, good point.  I don't like the name rmapping either, since
+we already have rmap which has nothing to do with this.  I'll
+leave page_rmapping() alone for now; no need to add that churn.
+I think they all become calls to folio_raw_mapping() later.
 
-Inspired by the following bug report, which has hit the SELinux scenario
-described above:
-https://bugzilla.redhat.com/show_bug.cgi?id=1974559
+> >  
+> >  struct anon_vma *page_anon_vma(struct page *page)
+> >  {
+> > +	struct folio *folio = page_folio(page);
+> > +	unsigned long mapping = (unsigned long)folio->mapping;
+> >  
+> >  	if ((mapping & PAGE_MAPPING_FLAGS) != PAGE_MAPPING_ANON)
+> >  		return NULL;
+> > +	return folio_rmapping(folio);
+> 
+> It feelds kinda silly to not just open code folio_rmapping here
+> given that we alredy went half the way. 
 
-Reported-by: Robert O'Callahan <roc@ocallahan.org>
-Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
+Yeah, I thought about that too.  Done:
 
-I marked this as RFC, because I'm not sure if this has any unwanted side
-effects. I only ran this patch through selinux-testsuite, which has a
-simple userfaultfd subtest, and a reproducer from the Bugzilla report.
-
-Please tell me whether this makes sense and/or if it passes any
-userfaultfd tests you guys might have.
-
- fs/userfaultfd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 14f92285d04f..24e14c36068f 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -986,7 +986,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *new,
- 	int fd;
- 
- 	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
--			O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
-+			O_RDONLY | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -2088,7 +2088,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	mmgrab(ctx->mm);
- 
- 	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
--			O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
-+			O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
- 	if (fd < 0) {
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
--- 
-2.31.1
+-       return folio_rmapping(folio);
++       return (void *)(mapping - PAGE_MAPPING_ANON);
 
