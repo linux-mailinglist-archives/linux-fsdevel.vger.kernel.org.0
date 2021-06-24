@@ -2,58 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C1B63B341C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jun 2021 18:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E87973B345A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jun 2021 19:09:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232174AbhFXQqD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Jun 2021 12:46:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47038 "EHLO
+        id S232390AbhFXRLq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Jun 2021 13:11:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229928AbhFXQqD (ORCPT
+        with ESMTP id S232186AbhFXRLn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Jun 2021 12:46:03 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF896C061574;
-        Thu, 24 Jun 2021 09:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3OGGZZCSfU1UZW7S8nvXVWevH6pEWWYEGVTlrHA4x9I=; b=N+1PYxjdBAAKCu81TZyucVa43H
-        kTeXGRDZbd2aAC1eH8LVu7E1TdN0Lp9QyyhAi03rH3d8cAkqwyiA3BKd88zgSKnwJrZOM086o6cGf
-        I9vLjUOtYRpWofxXD1+x7kjS3utZCOHjyyHAj2AMSHwOdJKMwNihHl5kojkplp5D13UG6dMApssXm
-        Nv1ymtk7tQLevZDEIvw4GvHdc0CFILfTPyvWAqySd6Oy9FE6VobhgWzgKsZNC7ahDAg1VW4sHctUT
-        ODwjQIW3XAoYBdL78jjmgpxx9YKZpzEEUp38h1pl/7pfXF0SaHdyby6u3KduoykL244QF/cy6bfRj
-        einwniJg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lwSRO-00GmhX-Fk; Thu, 24 Jun 2021 16:43:05 +0000
-Date:   Thu, 24 Jun 2021 17:42:58 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 14/46] mm/memcg: Add folio_charge_cgroup()
-Message-ID: <YNS2EvYub46WdVaq@casper.infradead.org>
-References: <20210622121551.3398730-1-willy@infradead.org>
- <20210622121551.3398730-15-willy@infradead.org>
- <YNLtmC9qd8Xxkxsc@infradead.org>
+        Thu, 24 Jun 2021 13:11:43 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2ABC06175F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jun 2021 10:09:22 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id s19so7100545ilj.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jun 2021 10:09:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
+         :subject:to;
+        bh=ANhbTggsY3NFhRZExKMwUmb3VzJqye8XLvWVXSvNBkQ=;
+        b=p95plxgcKdT8+TUJCmcKdAyJL6L8C+j3muAeTI6tbvEOMwKUFZvBH22Z3GEGxdnUZH
+         d9XkDasjcz/bUj2n1PkWxPPQL/Sxtf1a7ckN43IkWwU4a9v6DYeOi9Tg8DPYHl700hH/
+         xlmv54Ir2NUVB8zwaX1UsxTzP5GUW3mdywmszCeflzWKbXzDgkMNhx+qVsi3FklHnD5x
+         fSDWvxz3POXOJ/0yZM+F2G99rPMTFJK+bPA5TWYu0VJpvpEjmQwRSgXLB6dx+kXpC0Uz
+         JX+JhI0lSB7VkwJTdkbApCrUx6TGzp99N5mAm/d0lil4hmexz93RFAPSpMzmwkjNchKB
+         rXTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
+         :from:date:message-id:subject:to;
+        bh=ANhbTggsY3NFhRZExKMwUmb3VzJqye8XLvWVXSvNBkQ=;
+        b=DCQrtKzmf7tbjb+eODFlXnuvPXpPJ96kAMDagA02E5u558DtRgfniknFdLDhIc/+Hf
+         I2Xn0ROa4+CxbKq+FVVp0jsxnXJH+umfVvkHSJQJ1wsLCYFOnqAnKUGmNmbaMsojJnOl
+         099JSidwNh72XYomwjddvacwfkrU6Cbdy4NXai5uV0W1cReEvucDTWo6Zu+tvka8LH5u
+         49rBoDQRCoLlb1PEz3dxsIrbhOMxAU0xmD2I1aqsxycv6hoXkCcjOSPVtbXgaGR9Gclo
+         oc8XAt6ExYersYFyzAPrwOGSY5UjCHZ3RBEhw9b2wCoq10x5FiXZhWbyUm9OGJ87Lvo+
+         eW8Q==
+X-Gm-Message-State: AOAM530sPZMpmuV/jHF0K1ltk2fP56qxXgbR+eoXKXedFxi/mt0xRYiT
+        y80igNVvzoRWhY1dOOQqF4sWK4H1g80Aus9wT4w=
+X-Google-Smtp-Source: ABdhPJzkYUuO368jts0QgMQyJe9SHzg0U698qd8KdfojEfYsXnHtwMfPGxVHmw7fwQ64+IhHRhAEJH5nusdeW4BWzcA=
+X-Received: by 2002:a05:6e02:524:: with SMTP id h4mr4098121ils.255.1624554560853;
+ Thu, 24 Jun 2021 10:09:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YNLtmC9qd8Xxkxsc@infradead.org>
+Received: by 2002:a05:6638:3aa:0:0:0:0 with HTTP; Thu, 24 Jun 2021 10:09:20
+ -0700 (PDT)
+Reply-To: tutywoolgar021@gmail.com
+In-Reply-To: <CADB47+4Wa3T59Vq_==GTXEfHrX5x-2vQFxaTBO0dTdyAweCVpw@mail.gmail.com>
+References: <CADB47+4Wa3T59Vq_==GTXEfHrX5x-2vQFxaTBO0dTdyAweCVpw@mail.gmail.com>
+From:   tuty woolgar <faridaamadoubas@gmail.com>
+Date:   Thu, 24 Jun 2021 17:09:20 +0000
+Message-ID: <CADB47+607zNBfYFb4bj0nUhuuYgAdwT=G_wJ9-EeV0ESHe56Jg@mail.gmail.com>
+Subject: greetings,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 10:15:20AM +0200, Christoph Hellwig wrote:
-> On Tue, Jun 22, 2021 at 01:15:19PM +0100, Matthew Wilcox (Oracle) wrote:
-> > mem_cgroup_charge() already assumed it was being passed a non-tail
-> > page (and looking at the callers, that's true; it's called for freshly
-> > allocated pages).  The only real change here is that folio_nr_pages()
-> > doesn't compile away like thp_nr_pages() does as folio support
-> > is not conditional on transparent hugepage support.  Reimplement
-> > mem_cgroup_charge() as a wrapper around folio_charge_cgroup().
-> 
-> Maybe rename __mem_cgroup_charge to __folio_charge_cgroup as well?
-
-Oh, yeah, should have done that.  Thanks.
+My greetings to you my friend i hope you are fine and good please respond
+back to me thanks,
