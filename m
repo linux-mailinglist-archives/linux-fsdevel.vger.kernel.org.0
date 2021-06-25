@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91CA93B4509
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 15:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 377C73B450B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 15:58:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232008AbhFYOBQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Jun 2021 10:01:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33732 "EHLO mail.kernel.org"
+        id S231807AbhFYOBR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Jun 2021 10:01:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231807AbhFYOBF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S231818AbhFYOBF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 25 Jun 2021 10:01:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D3E786197C;
-        Fri, 25 Jun 2021 13:58:43 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F1A861973;
+        Fri, 25 Jun 2021 13:58:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624629524;
-        bh=T3qpprX8JX/BDCa6X+vPZ8eJfX0v82bU03EWov8senA=;
+        s=k20201202; t=1624629525;
+        bh=qAOHxnIZk3tSgi3BA+m9G4u0Cp+PHP8aHsxMnlNFgFM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K/D0c5mxb2/8N+LA7yJOYvU2WOwdTxZxVYwMEmfjyIqy3/YeSPN6CQSOMQ3ZlyWXu
-         H8kYyoEX3mSF83mseiQFKDJcQ4d+QgEi2eq9uJeliwBbDya8xSo35BU+uRf5TRABFR
-         An0tRGcy79W9gt9Sxe8GWigOdwrxx7tvRpoaG3peWV8kKOncj8I8I+38GGT/O+vcT7
-         7p6BSkLKhnru3XuGJ5qw7IDx7YiBgxcyXhjDxM/SaiNXgfhWfCrblyb5G5lXEBiGkS
-         FjZ/cD46AGjYvaMRIX+RPh1D8QBzPA3SCu9JKweWInXZ1YOS+720LMFf3SkyotIza5
-         WMzBXRrOfxGmQ==
+        b=aEZQMOgtJdFHsoDWUop6CtteKXdJYw51SDfl9IXFvtQ57aSbKVMu5z9C0KsMfHVwH
+         oXD8zA3P5kPpcaXM0PWmjvsO1+i5XqEQMttptNAOS75ubWTzlZJEhFrEUxSzX/2JRy
+         Obrib0FpISl8ZDOlq7kzqRgW9NQPYQWHXqqpDxdJsb4irRtkRiyd19bszs5JldSFRI
+         +udBX4ts7AeFN4aXLXRwrcuoLJpMXkVribS9Cpu0TNwZy5RKJLTzTDkDp0RkYQpYoD
+         FtP58f4M3Vjm52deDFAX5ezlmnp1EfQ9EfYZTTZ80p/xsecVG5fjdIOpOk/BPNaoRH
+         0dTAIZk1gvefg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     lhenriques@suse.de, xiubli@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
         dhowells@redhat.com
-Subject: [RFC PATCH v7 11/24] ceph: add routine to create fscrypt context prior to RPC
-Date:   Fri, 25 Jun 2021 09:58:21 -0400
-Message-Id: <20210625135834.12934-12-jlayton@kernel.org>
+Subject: [RFC PATCH v7 12/24] ceph: add fscrypt ioctls
+Date:   Fri, 25 Jun 2021 09:58:22 -0400
+Message-Id: <20210625135834.12934-13-jlayton@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210625135834.12934-1-jlayton@kernel.org>
 References: <20210625135834.12934-1-jlayton@kernel.org>
@@ -40,200 +40,129 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-After pre-creating a new inode, do an fscrypt prepare on it, fetch a
-new encryption context and then marshal that into the security context
-to be sent along with the RPC. Call the new function from
-ceph_new_inode.
+We gate most of the ioctls on MDS feature support. The exception is the
+key removal and status functions that we still want to work if the MDS's
+were to (inexplicably) lose the feature.
+
+For the set_policy ioctl, we take Fcx caps to ensure that nothing can
+create files in the directory while the ioctl is running. That should
+be enough to ensure that the "empty_dir" check is reliable.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/crypto.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- fs/ceph/crypto.h | 25 +++++++++++++++++++++++++
- fs/ceph/inode.c  | 10 ++++++++--
- fs/ceph/super.h  |  5 +++++
- fs/ceph/xattr.c  |  3 +++
- 5 files changed, 83 insertions(+), 2 deletions(-)
+ fs/ceph/ioctl.c | 83 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index 997a33e1d59f..675d41fd2eb0 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -4,6 +4,7 @@
- #include <linux/fscrypt.h>
+diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+index 6e061bf62ad4..477ecc667aee 100644
+--- a/fs/ceph/ioctl.c
++++ b/fs/ceph/ioctl.c
+@@ -6,6 +6,7 @@
+ #include "mds_client.h"
+ #include "ioctl.h"
+ #include <linux/ceph/striper.h>
++#include <linux/fscrypt.h>
  
- #include "super.h"
-+#include "mds_client.h"
- #include "crypto.h"
- 
- static int ceph_crypt_get_context(struct inode *inode, void *ctx, size_t len)
-@@ -86,3 +87,44 @@ void ceph_fscrypt_set_ops(struct super_block *sb)
- {
- 	fscrypt_set_ops(sb, &ceph_fscrypt_ops);
+ /*
+  * ioctls
+@@ -268,8 +269,54 @@ static long ceph_ioctl_syncio(struct file *file)
+ 	return 0;
  }
-+
-+int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
-+				 struct ceph_acl_sec_ctx *as)
+ 
++static int vet_mds_for_fscrypt(struct file *file)
 +{
-+	int ret, ctxsize;
-+	bool encrypted = false;
++	int i, ret = -EOPNOTSUPP;
++	struct ceph_mds_client	*mdsc = ceph_sb_to_mdsc(file_inode(file)->i_sb);
++
++	mutex_lock(&mdsc->mutex);
++	for (i = 0; i < mdsc->max_sessions; i++) {
++		struct ceph_mds_session *s = mdsc->sessions[i];
++
++		if (!s)
++			continue;
++		if (test_bit(CEPHFS_FEATURE_ALTERNATE_NAME, &s->s_features))
++			ret = 0;
++		break;
++	}
++	mutex_unlock(&mdsc->mutex);
++	return ret;
++}
++
++static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
++{
++	int ret, got = 0;
++	struct inode *inode = file_inode(file);
 +	struct ceph_inode_info *ci = ceph_inode(inode);
 +
-+	ret = fscrypt_prepare_new_inode(dir, inode, &encrypted);
++	ret = vet_mds_for_fscrypt(file);
 +	if (ret)
 +		return ret;
-+	if (!encrypted)
-+		return 0;
 +
-+	as->fscrypt_auth = kzalloc(sizeof(*as->fscrypt_auth), GFP_KERNEL);
-+	if (!as->fscrypt_auth)
-+		return -ENOMEM;
++	/*
++	 * Ensure we hold these caps so that we _know_ that the rstats check
++	 * in the empty_dir check is reliable.
++	 */
++	ret = ceph_get_caps(file, CEPH_CAP_FILE_SHARED, 0, -1, &got);
++	if (ret)
++		return ret;
 +
-+	ctxsize = fscrypt_context_for_new_inode(as->fscrypt_auth->cfa_blob, inode);
-+	if (ctxsize < 0)
-+		return ctxsize;
++	ret = fscrypt_ioctl_set_policy(file, (const void __user *)arg);
++	if (got)
++		ceph_put_cap_refs(ci, got);
 +
-+	as->fscrypt_auth->cfa_version = cpu_to_le32(CEPH_FSCRYPT_AUTH_VERSION);
-+	as->fscrypt_auth->cfa_blob_len = cpu_to_le32(ctxsize);
-+
-+	WARN_ON_ONCE(ci->fscrypt_auth);
-+	kfree(ci->fscrypt_auth);
-+	ci->fscrypt_auth_len = ceph_fscrypt_auth_size(ctxsize);
-+	ci->fscrypt_auth = kmemdup(as->fscrypt_auth, ci->fscrypt_auth_len, GFP_KERNEL);
-+	if (!ci->fscrypt_auth)
-+		return -ENOMEM;
-+
-+	inode->i_flags |= S_ENCRYPTED;
-+
-+	return 0;
++	return ret;
 +}
 +
-+void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_sec_ctx *as)
-+{
-+	swap(req->r_fscrypt_auth, as->fscrypt_auth);
-+}
-diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-index d2b1f8e7b300..bdf1ba47db16 100644
---- a/fs/ceph/crypto.h
-+++ b/fs/ceph/crypto.h
-@@ -11,6 +11,9 @@
- #define	CEPH_XATTR_NAME_ENCRYPTION_CONTEXT	"encryption.ctx"
- 
- #ifdef CONFIG_FS_ENCRYPTION
-+struct ceph_fs_client;
-+struct ceph_acl_sec_ctx;
-+struct ceph_mds_request;
- 
- #define CEPH_FSCRYPT_AUTH_VERSION	1
- struct ceph_fscrypt_auth {
-@@ -19,10 +22,19 @@ struct ceph_fscrypt_auth {
- 	u8	cfa_blob[FSCRYPT_SET_CONTEXT_MAX_SIZE];
- } __packed;
- 
-+static inline u32 ceph_fscrypt_auth_size(u32 ctxsize)
-+{
-+	return offsetof(struct ceph_fscrypt_auth, cfa_blob) + ctxsize;
-+}
-+
- void ceph_fscrypt_set_ops(struct super_block *sb);
- 
- void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc);
- 
-+int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
-+				 struct ceph_acl_sec_ctx *as);
-+void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_sec_ctx *as);
-+
- #else /* CONFIG_FS_ENCRYPTION */
- 
- static inline void ceph_fscrypt_set_ops(struct super_block *sb)
-@@ -32,6 +44,19 @@ static inline void ceph_fscrypt_set_ops(struct super_block *sb)
- static inline void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
+ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
  {
- }
++	int ret;
 +
-+static inline int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
-+						struct ceph_acl_sec_ctx *as)
-+{
-+	if (IS_ENCRYPTED(dir))
-+		return -EOPNOTSUPP;
-+	return 0;
-+}
-+
-+static inline void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req,
-+						struct ceph_acl_sec_ctx *as_ctx)
-+{
-+}
- #endif /* CONFIG_FS_ENCRYPTION */
+ 	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
+ 	switch (cmd) {
+ 	case CEPH_IOC_GET_LAYOUT:
+@@ -289,6 +336,42 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
  
- #endif
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index fba139a4f57b..a0b311195e80 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -83,12 +83,17 @@ struct inode *ceph_new_inode(struct inode *dir, struct dentry *dentry,
- 			goto out_err;
+ 	case CEPH_IOC_SYNCIO:
+ 		return ceph_ioctl_syncio(file);
++
++	case FS_IOC_SET_ENCRYPTION_POLICY:
++		return ceph_set_encryption_policy(file, arg);
++
++	case FS_IOC_GET_ENCRYPTION_POLICY:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
++
++	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
++
++	case FS_IOC_ADD_ENCRYPTION_KEY:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_add_key(file, (void __user *)arg);
++
++	case FS_IOC_REMOVE_ENCRYPTION_KEY:
++		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
++
++	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
++		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
++
++	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
++		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
++
++	case FS_IOC_GET_ENCRYPTION_NONCE:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
  	}
  
-+	inode->i_state = 0;
-+	inode->i_mode = *mode;
-+
- 	err = ceph_security_init_secctx(dentry, *mode, as_ctx);
- 	if (err < 0)
- 		goto out_err;
- 
--	inode->i_state = 0;
--	inode->i_mode = *mode;
-+	err = ceph_fscrypt_prepare_context(dir, inode, as_ctx);
-+	if (err)
-+		goto out_err;
-+
- 	return inode;
- out_err:
- 	iput(inode);
-@@ -101,6 +106,7 @@ void ceph_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_sec_ctx *a
- 		req->r_pagelist = as_ctx->pagelist;
- 		as_ctx->pagelist = NULL;
- 	}
-+	ceph_fscrypt_as_ctx_to_req(req, as_ctx);
- }
- 
- /**
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 534c2a76562d..651d7909a443 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -26,6 +26,8 @@
- #include <linux/fscache.h>
- #endif
- 
-+#include "crypto.h"
-+
- /* f_type in struct statfs */
- #define CEPH_SUPER_MAGIC 0x00c36400
- 
-@@ -1068,6 +1070,9 @@ struct ceph_acl_sec_ctx {
- #ifdef CONFIG_CEPH_FS_SECURITY_LABEL
- 	void *sec_ctx;
- 	u32 sec_ctxlen;
-+#endif
-+#ifdef CONFIG_FS_ENCRYPTION
-+	struct ceph_fscrypt_auth *fscrypt_auth;
- #endif
- 	struct ceph_pagelist *pagelist;
- };
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 1242db8d3444..16a62a2bd61e 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -1362,6 +1362,9 @@ void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
- #endif
- #ifdef CONFIG_CEPH_FS_SECURITY_LABEL
- 	security_release_secctx(as_ctx->sec_ctx, as_ctx->sec_ctxlen);
-+#endif
-+#ifdef CONFIG_FS_ENCRYPTION
-+	kfree(as_ctx->fscrypt_auth);
- #endif
- 	if (as_ctx->pagelist)
- 		ceph_pagelist_release(as_ctx->pagelist);
+ 	return -ENOTTY;
 -- 
 2.31.1
 
