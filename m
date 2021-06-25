@@ -2,75 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1EA03B429B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 13:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1B003B4450
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 15:21:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbhFYLhs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Jun 2021 07:37:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46616 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbhFYLhr (ORCPT
+        id S231465AbhFYNYE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Jun 2021 09:24:04 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:52366 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229934AbhFYNYE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Jun 2021 07:37:47 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D5A8C061574;
-        Fri, 25 Jun 2021 04:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=nInXZSuW2VLfsBmz2fvP4M1dxeak9S+ryROuH8Jszc4=; b=Y0XxGn8e4SplEkW7jopbVQALv5
-        1t+SwOsekhUmI/ryMnx0OphVPVg6076gaBBUSwUJwzZnwZB2ezzy8IS57OMOSMxejtwLD231MKtVs
-        Oke91rzIc51yQ2QKC4V4tc0QGbUECmpttnfNjucrotZQGwf5wjcxfQpGcudBoMTxee2vIqDj+o06A
-        fvklr4nPbhc1FNg172LrcWqNHWQ/HeMZrSg1r8OUVgxYhhK1VhGHRmrYYzLGBPol6o/5YlwhQn3lt
-        SPzQyFr4tWoq4/F8WBAH9njdgnOdgym9WEtjovPZBqIrRNJ3a4FIMdzD+Qee3Q9nFojgalEHY8lt5
-        PhK+5Odg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lwk6q-0002AW-0u; Fri, 25 Jun 2021 11:35:04 +0000
-Date:   Fri, 25 Jun 2021 12:34:55 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 14/46] mm/memcg: Add folio_charge_cgroup()
-Message-ID: <YNW/Xxv74VlxTm6M@casper.infradead.org>
+        Fri, 25 Jun 2021 09:24:04 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 8DF0721CAF;
+        Fri, 25 Jun 2021 13:21:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1624627302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0CIXN1np/PjZuRJcqW1fcN9Sw5pwXTA4UECMoSVMprk=;
+        b=EoZOuhcDdhuwLzS+Ic4LSJc0dfvm9UZFGcZ5/KY9Zms3XDtZbXW1FxCGiHZ08bJqc3rO95
+        XOR85yoCs5uuJ5vozeHKR8WDqcUBPKLnMbZ+COhNs9/O0cMiFEu/jKrLzsJ2LtN1/5Y3uU
+        2p2Gq8zgsNODVMLxa0CEyfLgvZ2ukus=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 5A285A3C3A;
+        Fri, 25 Jun 2021 13:21:42 +0000 (UTC)
+Date:   Fri, 25 Jun 2021 15:21:41 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 15/46] mm/memcg: Add folio_uncharge_cgroup()
+Message-ID: <YNXYZTAx0JrTPfL2@dhcp22.suse.cz>
 References: <20210622121551.3398730-1-willy@infradead.org>
- <20210622121551.3398730-15-willy@infradead.org>
- <YNLtmC9qd8Xxkxsc@infradead.org>
- <YNS2EvYub46WdVaq@casper.infradead.org>
- <YNWSS/FvuyCpRxej@dhcp22.suse.cz>
+ <20210622121551.3398730-16-willy@infradead.org>
+ <YNWTCG3s910H3to2@dhcp22.suse.cz>
+ <YNW8PLZvX/Od+Ldn@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YNWSS/FvuyCpRxej@dhcp22.suse.cz>
+In-Reply-To: <YNW8PLZvX/Od+Ldn@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 25, 2021 at 10:22:35AM +0200, Michal Hocko wrote:
-> On Thu 24-06-21 17:42:58, Matthew Wilcox wrote:
-> > On Wed, Jun 23, 2021 at 10:15:20AM +0200, Christoph Hellwig wrote:
-> > > On Tue, Jun 22, 2021 at 01:15:19PM +0100, Matthew Wilcox (Oracle) wrote:
-> > > > mem_cgroup_charge() already assumed it was being passed a non-tail
-> > > > page (and looking at the callers, that's true; it's called for freshly
-> > > > allocated pages).  The only real change here is that folio_nr_pages()
-> > > > doesn't compile away like thp_nr_pages() does as folio support
-> > > > is not conditional on transparent hugepage support.  Reimplement
-> > > > mem_cgroup_charge() as a wrapper around folio_charge_cgroup().
+On Fri 25-06-21 12:21:32, Matthew Wilcox wrote:
+> On Fri, Jun 25, 2021 at 10:25:44AM +0200, Michal Hocko wrote:
+> > On Tue 22-06-21 13:15:20, Matthew Wilcox wrote:
+> > > Reimplement mem_cgroup_uncharge() as a wrapper around
+> > > folio_uncharge_cgroup().
 > > > 
-> > > Maybe rename __mem_cgroup_charge to __folio_charge_cgroup as well?
+> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > > 
-> > Oh, yeah, should have done that.  Thanks.
+> > Similar to the previous patch. Is there any reason why we cannot simply
+> > stick with mem_cgroup_{un}charge and only change the parameter to folio?
 > 
-> I would stick with __mem_cgroup_charge here. Not that I would insist but the
-> folio nature is quite obvious from the parameter already.
+> There are a dozen callers of mem_cgroup_charge() and most of them
+> aren't quite ready to convert to folios at this point in the patch
+> series.  So either we need a new name for the variant that takes a
+> folio, or we need to play fun games with _Generic to allow
+> mem_cgroup_charge() to take either a folio or a page, or we convert
+> all callers to open-code their call to page_folio, like this:
 > 
-> Btw. memcg_check_events doesn't really need the page argument. A nid
-> should be sufficient and your earlier patch is already touching the
-> softlimit code so maybe it would be worth changing this page -> folio ->
-> page back and forth.
+> -	if (mem_cgroup_charge(vmf->cow_page, vma->vm_mm, GFP_KERNEL)) {
+> +	if (mem_cgroup_charge(page_folio(vmf->cow_page), vma->vm_mm,
+> +			GFP_KERNEL)) {
+> 
+> I've generally gone with creating compat functions to minimise the
+> merge conflicts when people are adding new callers or changing code near
+> existing ones.  But if you don't like the new name, we have options.
 
-I'm not a huge fan of that 'dummy_page' component of uncharge_gather,
-so replacing that with nid makes sense.  I'll juggle these patches a bit
-and work that in.  Thanks!
+Well, I will not insist because I can see how the conversion is PITA in
+general.
+mem_cgroup_charge should be something to be added very often so if you
+do not mind I would go with your above example of direct usage of
+page_folio() rather than wrappers.
+
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
