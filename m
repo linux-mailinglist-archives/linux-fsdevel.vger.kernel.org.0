@@ -2,67 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 885173B3B32
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 05:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C6593B3B3D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 05:38:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233023AbhFYDcZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Jun 2021 23:32:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50320 "EHLO
+        id S233039AbhFYDkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Jun 2021 23:40:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232917AbhFYDcY (ORCPT
+        with ESMTP id S232996AbhFYDks (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Jun 2021 23:32:24 -0400
+        Thu, 24 Jun 2021 23:40:48 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E81EC061574;
-        Thu, 24 Jun 2021 20:30:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3EBC061574;
+        Thu, 24 Jun 2021 20:38:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=8Vwxl6D+Lu5QRVNKMZe3vjsqCEkLlWvK03dV0gQsJgc=; b=m12G3Jb5Y4Qzg5nzgbooeJEl4s
-        MIMbrukKcUeNXFS1nEC68bFJkME+fS3l8VEZHJ+Vc9S/JeKcG8zmZe8+HEL6ueR8EOgYvSRXA3UVK
-        j9+WiAJUOPGjDmg02FLwGrriME7+WN0IM9rwHc2W/Wm32aDBbZjTPOtG3bLaxPo+COyomyd2kZTCi
-        EZNKP0H/PMSf/9kkGlcnbl9YdujprhtBTRV6C+X0zfMG6rmraM40lZfqqSCaEf6R/w0Ym5SEk290B
-        Mm/kWBbyBojr7NkpnzhMmaKABJ2jrRf/qSEmRVQAJYSB6r4z3/3YVK2kccDva4cHt3i/lM+n8+DU6
-        H3vKQcrw==;
+        bh=0xEoyc03QRzDwm8N8irQEtu2n+8qponPR4uYVpebZvo=; b=gZZt4qXmWPsA24pLdMdyYC7tQX
+        YBe7kptZTgUXk1lY37p1Qvtfr6Oj043pb/Pl2nY8Mt8Hzx/rTbH9z/X+eK3d+v/B0SGIsZeWfmLHs
+        n5F4OX3xivYUQm0y8NPfRnD4wC7zAr5SfNad5PUJ1GJ+jnVRRjAama6HxuHe+xXY+Cl4fUVMO6fkW
+        E3nT9uo1CdPU9aQ5G/765rkcT74N47pE0TxZ7/JbkUDk2MVKh9Kmobyxf1YKVldR1OZIbWMuo3uiP
+        KAobc4EZ+IXIl8lHiaW3y1LJ9/ep9D0cfF+rVMFxyFTKt9DubgZ92zB6/wY4FwLSfgihDw+WIoCQW
+        wR7ILcTA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lwcXL-00HGUW-4U; Fri, 25 Jun 2021 03:29:50 +0000
-Date:   Fri, 25 Jun 2021 04:29:47 +0100
+        id 1lwcfX-00HGr3-3b; Fri, 25 Jun 2021 03:38:16 +0000
+Date:   Fri, 25 Jun 2021 04:38:15 +0100
 From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 44/46] mm/filemap: Convert mapping_get_entry to return
- a folio
-Message-ID: <YNVNq+PgyYzOkNJs@casper.infradead.org>
-References: <20210622121551.3398730-1-willy@infradead.org>
- <20210622121551.3398730-45-willy@infradead.org>
- <YNMb1+0PrD73yCXE@infradead.org>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Omar Sandoval <osandov@osandov.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
+Message-ID: <YNVPp/Pgqshami3U@casper.infradead.org>
+References: <YNOPdy14My+MHmy8@zeniv-ca.linux.org.uk>
+ <YNOdunP+Fvhbsixb@relinquished.localdomain>
+ <YNOqJIto1t13rPYZ@zeniv-ca.linux.org.uk>
+ <YNOuiMfRO51kLcOE@relinquished.localdomain>
+ <YNPnRyasHVq9NF79@casper.infradead.org>
+ <YNQi3vgCLVs/ExiK@relinquished.localdomain>
+ <CAHk-=whmRQWm_gVek32ekPqBi3zAKOsdK6_6Hx8nHp3H5JAMew@mail.gmail.com>
+ <YNTO1T6BEzmG6Uj5@relinquished.localdomain>
+ <CAHk-=wi37_ccWmq1EKTduS8ms_=KpyY2LwJV7roD+s=ZkBkjCw@mail.gmail.com>
+ <yq1tulmoqxf.fsf@ca-mkp.ca.oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YNMb1+0PrD73yCXE@infradead.org>
+In-Reply-To: <yq1tulmoqxf.fsf@ca-mkp.ca.oracle.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 01:32:39PM +0200, Christoph Hellwig wrote:
-> On Tue, Jun 22, 2021 at 01:15:49PM +0100, Matthew Wilcox (Oracle) wrote:
-> > - * Return: The head page or shadow entry, %NULL if nothing is found.
-> > + * Return: The folio, swap or shadow entry, %NULL if nothing is found.
+On Thu, Jun 24, 2021 at 06:41:52PM -0400, Martin K. Petersen wrote:
 > 
-> This (old and new) reads a little weird, given that it returns a
-> struct folio, even if that happens to be a magic entry.
+> Linus,
+> 
+> > I also worry that this "raw compressed data" thing isn't the only
+> > thing people will want to do. I could easily see some kind of
+> > "end-to-end CRC read/write" where the user passes in not just the
+> > data, but also checksums for it to validate it (maybe because you're
+> > doing a file copy and had the original checksums, but also maybe
+> > because user space simply has a known good copy and doesn't want
+> > errors re-introduced due to memory corruption).
+> 
+> We already support passing CRCs down to be validated by the hardware for
+> both NVMe and SCSI. This currently only works from the block layer
+> down. When enabled, the checksums are generated by the block layer for
+> writes and the data is validated against the checksums sent by the
+> storage on reads.
+> 
+> Over the years various attempts at adding support for passing the
+> checksum buffers in from userland have failed for exactly the reasons
+> outlined in this thread (Joel, Darrick, Bob). Would love to have a
+> generic way of passing this kind of information...
 
-Yeah.  How about this?
-
-- * Return: The head page or shadow entry, %NULL if nothing is found.
-+ * Return: The folio, swap or shadow entry, %NULL if nothing is found.
-  */
--static struct page *mapping_get_entry(struct address_space *mapping,
--               pgoff_t index)
-+static void *mapping_get_entry(struct address_space *mapping, pgoff_t index)
- {
-
-I still use a struct folio in mapping_get_entry(), but this means that
-pagecache_get_page() doesn't change in this patch.
+Does it make any kind of sense to talk about doing this for buffered I/O,
+given that we can't generate them for (eg) mmaped files?  Or does this
+only make sense to pass in for O_DIRECT accesses?
