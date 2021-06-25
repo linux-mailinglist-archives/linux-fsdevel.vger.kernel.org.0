@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 330B03B44F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 15:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A7243B44FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 15:58:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231799AbhFYOBD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Jun 2021 10:01:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33266 "EHLO mail.kernel.org"
+        id S231810AbhFYOBF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Jun 2021 10:01:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231668AbhFYOBB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Jun 2021 10:01:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DF34F6135A;
-        Fri, 25 Jun 2021 13:58:39 +0000 (UTC)
+        id S231501AbhFYOBC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 25 Jun 2021 10:01:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AC9EB61973;
+        Fri, 25 Jun 2021 13:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624629520;
-        bh=rUsYrZgKW45RRfGRRPRW4bnzX0ECO0iVaUttgx7dHZs=;
+        s=k20201202; t=1624629521;
+        bh=E1Ygj2N18sPXmr5PIJTtlJ6BNuExsGehd2Xej7gs2eY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QQ29gLJywMo4OfnRGLAxba3kTlIWw9oUSDmkKhsZ6t5yNV/rTAnXmD9pckm1Q0VZf
-         wayvLcU0qf3gtmmje0FP+NWZvBb3dAjjXhcH4hcWtA/VnWtNa/KBH2cQn9BD+cLO7f
-         E5eiim9JjIS849UWBdu2BK4WroP6ghftR6QQF86xUtDAq/PhGjGiONtogplZPPW0Uk
-         kZAu/0sItBypBy8z6qB7JB2rvmTlH3zaMqambsSQsUmzAz6ORaBYeN51ehgu5B23X2
-         kLbtbJ6ECcahTbHtB+exypy8MwnAf0yNwZpTpj/TgAeYJZ+w2wBSAZvYbtvmBjWyBS
-         ASjy31JvBDLWA==
+        b=XsA96QDkel/EVl08COEBWwT3ZxClFLLFvUK0DoJTa5oNPRYxjm6N+GjiK/a0B6qeO
+         FHClVruYPxE06F7D0v5TT99I8W8fvGc1d6Y3RBrkQqyiTzqA04IjJR0wrd8hYUWoe5
+         UWuYCt9As7e2nxLfXvtdPpzGx9pmY8kuwGkbybHDXqSsR0jJ5madiIf6l5pceO6Pyp
+         Kkmma8jUDRlMmT445KT1oEWY9+y6EthxopzqhUvuzG1HuhS/CIFVkElAvGp25wFHeU
+         8hT/LLv1r2Ld8Ot6V4vRQWW9dCg0OL6fOqUJbJjdMQo6Olkjz/xW+o+XPxbQvbGHhn
+         RCIy6rrBqqnQg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     lhenriques@suse.de, xiubli@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
         dhowells@redhat.com
-Subject: [RFC PATCH v7 06/24] ceph: parse new fscrypt_auth and fscrypt_file fields in inode traces
-Date:   Fri, 25 Jun 2021 09:58:16 -0400
-Message-Id: <20210625135834.12934-7-jlayton@kernel.org>
+Subject: [RFC PATCH v7 07/24] ceph: add fscrypt_* handling to caps.c
+Date:   Fri, 25 Jun 2021 09:58:17 -0400
+Message-Id: <20210625135834.12934-8-jlayton@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210625135834.12934-1-jlayton@kernel.org>
 References: <20210625135834.12934-1-jlayton@kernel.org>
@@ -40,169 +40,135 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-...and store them in the ceph_inode_info.
-
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/file.c       |  2 ++
- fs/ceph/inode.c      | 18 ++++++++++++++++++
- fs/ceph/mds_client.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- fs/ceph/mds_client.h |  4 ++++
- fs/ceph/super.h      |  6 ++++++
- 5 files changed, 74 insertions(+)
+ fs/ceph/caps.c | 62 +++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 49 insertions(+), 13 deletions(-)
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 2cda398ba64d..ea0e85075b7b 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -592,6 +592,8 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
- 	iinfo.xattr_data = xattr_buf;
- 	memset(iinfo.xattr_data, 0, iinfo.xattr_len);
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 038f59cc4250..1be6c5148700 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -13,6 +13,7 @@
+ #include "super.h"
+ #include "mds_client.h"
+ #include "cache.h"
++#include "crypto.h"
+ #include <linux/ceph/decode.h>
+ #include <linux/ceph/messenger.h>
  
-+	/* FIXME: set fscrypt_auth and fscrypt_file */
-+
- 	in.ino = cpu_to_le64(vino.ino);
- 	in.snapid = cpu_to_le64(CEPH_NOSNAP);
- 	in.version = cpu_to_le64(1);	// ???
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index f62785e4dbcb..b620281ea65b 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -611,6 +611,13 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
- 
- 	ci->i_meta_err = 0;
- 
-+#ifdef CONFIG_FS_ENCRYPTION
-+	ci->fscrypt_auth = NULL;
-+	ci->fscrypt_auth_len = 0;
-+	ci->fscrypt_file = NULL;
-+	ci->fscrypt_file_len = 0;
-+#endif
-+
- 	return &ci->vfs_inode;
- }
- 
-@@ -619,6 +626,9 @@ void ceph_free_inode(struct inode *inode)
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 
- 	kfree(ci->i_symlink);
-+#ifdef CONFIG_FS_ENCRYPTION
-+	kfree(ci->fscrypt_auth);
-+#endif
- 	kmem_cache_free(ceph_inode_cachep, ci);
- }
- 
-@@ -1021,6 +1031,14 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
- 		xattr_blob = NULL;
- 	}
- 
-+	if (iinfo->fscrypt_auth_len && !ci->fscrypt_auth) {
-+		ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
-+		ci->fscrypt_auth = iinfo->fscrypt_auth;
-+		iinfo->fscrypt_auth = NULL;
-+		iinfo->fscrypt_auth_len = 0;
-+		inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
-+	}
-+
- 	/* finally update i_version */
- 	if (le64_to_cpu(info->version) > ci->i_version)
- 		ci->i_version = le64_to_cpu(info->version);
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 3b3a14024ca0..9c994effc51d 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -183,8 +183,48 @@ static int parse_reply_info_in(void **p, void *end,
- 			info->rsnaps = 0;
- 		}
- 
-+		if (struct_v >= 5) {
-+			u32 alen;
-+
-+			ceph_decode_32_safe(p, end, alen, bad);
-+
-+			while (alen--) {
-+				u32 len;
-+
-+				/* key */
-+				ceph_decode_32_safe(p, end, len, bad);
-+				ceph_decode_skip_n(p, end, len, bad);
-+				/* value */
-+				ceph_decode_32_safe(p, end, len, bad);
-+				ceph_decode_skip_n(p, end, len, bad);
-+			}
-+		}
-+
-+		/* fscrypt flag -- ignore */
-+		if (struct_v >= 6)
-+			ceph_decode_skip_8(p, end, bad);
-+
-+		if (struct_v >= 7) {
-+			ceph_decode_32_safe(p, end, info->fscrypt_auth_len, bad);
-+			if (info->fscrypt_auth_len) {
-+				info->fscrypt_auth = kmalloc(info->fscrypt_auth_len, GFP_KERNEL);
-+				if (!info->fscrypt_auth)
-+					return -ENOMEM;
-+				ceph_decode_copy_safe(p, end, info->fscrypt_auth,
-+						      info->fscrypt_auth_len, bad);
-+			}
-+			ceph_decode_32_safe(p, end, info->fscrypt_file_len, bad);
-+			if (info->fscrypt_file_len) {
-+				info->fscrypt_file = kmalloc(info->fscrypt_file_len, GFP_KERNEL);
-+				if (!info->fscrypt_file)
-+					return -ENOMEM;
-+				ceph_decode_copy_safe(p, end, info->fscrypt_file,
-+						      info->fscrypt_file_len, bad);
-+			}
-+		}
- 		*p = end;
- 	} else {
-+		/* legacy (unversioned) struct */
- 		if (features & CEPH_FEATURE_MDS_INLINE_DATA) {
- 			ceph_decode_64_safe(p, end, info->inline_version, bad);
- 			ceph_decode_32_safe(p, end, info->inline_len, bad);
-@@ -625,6 +665,10 @@ static int parse_reply_info(struct ceph_mds_session *s, struct ceph_msg *msg,
- 
- static void destroy_reply_info(struct ceph_mds_reply_info_parsed *info)
- {
-+	kfree(info->diri.fscrypt_auth);
-+	kfree(info->diri.fscrypt_file);
-+	kfree(info->targeti.fscrypt_auth);
-+	kfree(info->targeti.fscrypt_file);
- 	if (!info->dir_entries)
- 		return;
- 	free_pages((unsigned long)info->dir_entries, get_order(info->dir_buf_size));
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 64ea9d853b8d..0c3cc61fd038 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -88,6 +88,10 @@ struct ceph_mds_reply_info_in {
- 	s32 dir_pin;
- 	struct ceph_timespec btime;
- 	struct ceph_timespec snap_btime;
-+	u8 *fscrypt_auth;
-+	u8 *fscrypt_file;
-+	u32 fscrypt_auth_len;
-+	u32 fscrypt_file_len;
- 	u64 rsnaps;
- 	u64 change_attr;
+@@ -1229,15 +1230,12 @@ struct cap_msg_args {
+ 	umode_t			mode;
+ 	bool			inline_data;
+ 	bool			wake;
++	u32			fscrypt_auth_len;
++	u32			fscrypt_file_len;
++	u8			fscrypt_auth[sizeof(struct ceph_fscrypt_auth)]; // for context
++	u8			fscrypt_file[sizeof(u64)]; // for size
  };
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 0cd94b296f5f..e032737fe472 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -429,6 +429,12 @@ struct ceph_inode_info {
  
- #ifdef CONFIG_CEPH_FSCACHE
- 	struct fscache_cookie *fscache;
-+#endif
-+#ifdef CONFIG_FS_ENCRYPTION
-+	u32 fscrypt_auth_len;
-+	u32 fscrypt_file_len;
-+	u8 *fscrypt_auth;
-+	u8 *fscrypt_file;
- #endif
- 	errseq_t i_meta_err;
+-/*
+- * cap struct size + flock buffer size + inline version + inline data size +
+- * osd_epoch_barrier + oldest_flush_tid
+- */
+-#define CAP_MSG_SIZE (sizeof(struct ceph_mds_caps) + \
+-		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4)
+-
+ /* Marshal up the cap msg to the MDS */
+ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
+ {
+@@ -1253,7 +1251,7 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
+ 	     arg->size, arg->max_size, arg->xattr_version,
+ 	     arg->xattr_buf ? (int)arg->xattr_buf->vec.iov_len : 0);
  
+-	msg->hdr.version = cpu_to_le16(10);
++	msg->hdr.version = cpu_to_le16(12);
+ 	msg->hdr.tid = cpu_to_le64(arg->flush_tid);
+ 
+ 	fc = msg->front.iov_base;
+@@ -1324,6 +1322,16 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
+ 
+ 	/* Advisory flags (version 10) */
+ 	ceph_encode_32(&p, arg->flags);
++
++	/* dirstats (version 11) - these are r/o on the client */
++	ceph_encode_64(&p, 0);
++	ceph_encode_64(&p, 0);
++
++	/* fscrypt_auth and fscrypt_file (version 12) */
++	ceph_encode_32(&p, arg->fscrypt_auth_len);
++	ceph_encode_copy(&p, arg->fscrypt_auth, arg->fscrypt_auth_len);
++	ceph_encode_32(&p, arg->fscrypt_file_len);
++	ceph_encode_copy(&p, arg->fscrypt_file, arg->fscrypt_file_len);
+ }
+ 
+ /*
+@@ -1445,6 +1453,26 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+ 		}
+ 	}
+ 	arg->flags = flags;
++	if (ci->fscrypt_auth_len &&
++	    WARN_ON_ONCE(ci->fscrypt_auth_len != sizeof(struct ceph_fscrypt_auth))) {
++		/* Don't set this if it isn't right size */
++		arg->fscrypt_auth_len = 0;
++	} else {
++		arg->fscrypt_auth_len = ci->fscrypt_auth_len;
++		memcpy(arg->fscrypt_auth, ci->fscrypt_auth,
++			min_t(size_t, ci->fscrypt_auth_len, sizeof(arg->fscrypt_auth)));
++	}
++	/* FIXME: use this to track "real" size */
++	arg->fscrypt_file_len = 0;
++}
++
++#define CAP_MSG_FIXED_FIELDS (sizeof(struct ceph_mds_caps) + \
++		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4 + 8 + 8 + 4 + 4)
++
++static inline int cap_msg_size(struct cap_msg_args *arg)
++{
++	return CAP_MSG_FIXED_FIELDS + arg->fscrypt_auth_len +
++			arg->fscrypt_file_len;
+ }
+ 
+ /*
+@@ -1457,7 +1485,7 @@ static void __send_cap(struct cap_msg_args *arg, struct ceph_inode_info *ci)
+ 	struct ceph_msg *msg;
+ 	struct inode *inode = &ci->vfs_inode;
+ 
+-	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
++	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(arg), GFP_NOFS, false);
+ 	if (!msg) {
+ 		pr_err("error allocating cap msg: ino (%llx.%llx) flushing %s tid %llu, requeuing cap.\n",
+ 		       ceph_vinop(inode), ceph_cap_string(arg->dirty),
+@@ -1483,10 +1511,6 @@ static inline int __send_flush_snap(struct inode *inode,
+ 	struct cap_msg_args	arg;
+ 	struct ceph_msg		*msg;
+ 
+-	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
+-	if (!msg)
+-		return -ENOMEM;
+-
+ 	arg.session = session;
+ 	arg.ino = ceph_vino(inode).ino;
+ 	arg.cid = 0;
+@@ -1524,6 +1548,18 @@ static inline int __send_flush_snap(struct inode *inode,
+ 	arg.flags = 0;
+ 	arg.wake = false;
+ 
++	/*
++	 * No fscrypt_auth changes from a capsnap. It will need
++	 * to update fscrypt_file on size changes (TODO).
++	 */
++	arg.fscrypt_auth_len = 0;
++	arg.fscrypt_file_len = 0;
++
++	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(&arg),
++			   GFP_NOFS, false);
++	if (!msg)
++		return -ENOMEM;
++
+ 	encode_cap_msg(msg, &arg);
+ 	ceph_con_send(&arg.session->s_con, msg);
+ 	return 0;
 -- 
 2.31.1
 
