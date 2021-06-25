@@ -2,86 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C6593B3B3D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 05:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51E523B3B4A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 05:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233039AbhFYDkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Jun 2021 23:40:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52130 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232996AbhFYDks (ORCPT
+        id S233075AbhFYDpF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Jun 2021 23:45:05 -0400
+Received: from mail-m121144.qiye.163.com ([115.236.121.144]:57638 "EHLO
+        mail-m121144.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232996AbhFYDpF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Jun 2021 23:40:48 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3EBC061574;
-        Thu, 24 Jun 2021 20:38:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=0xEoyc03QRzDwm8N8irQEtu2n+8qponPR4uYVpebZvo=; b=gZZt4qXmWPsA24pLdMdyYC7tQX
-        YBe7kptZTgUXk1lY37p1Qvtfr6Oj043pb/Pl2nY8Mt8Hzx/rTbH9z/X+eK3d+v/B0SGIsZeWfmLHs
-        n5F4OX3xivYUQm0y8NPfRnD4wC7zAr5SfNad5PUJ1GJ+jnVRRjAama6HxuHe+xXY+Cl4fUVMO6fkW
-        E3nT9uo1CdPU9aQ5G/765rkcT74N47pE0TxZ7/JbkUDk2MVKh9Kmobyxf1YKVldR1OZIbWMuo3uiP
-        KAobc4EZ+IXIl8lHiaW3y1LJ9/ep9D0cfF+rVMFxyFTKt9DubgZ92zB6/wY4FwLSfgihDw+WIoCQW
-        wR7ILcTA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lwcfX-00HGr3-3b; Fri, 25 Jun 2021 03:38:16 +0000
-Date:   Fri, 25 Jun 2021 04:38:15 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Omar Sandoval <osandov@osandov.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
-Message-ID: <YNVPp/Pgqshami3U@casper.infradead.org>
-References: <YNOPdy14My+MHmy8@zeniv-ca.linux.org.uk>
- <YNOdunP+Fvhbsixb@relinquished.localdomain>
- <YNOqJIto1t13rPYZ@zeniv-ca.linux.org.uk>
- <YNOuiMfRO51kLcOE@relinquished.localdomain>
- <YNPnRyasHVq9NF79@casper.infradead.org>
- <YNQi3vgCLVs/ExiK@relinquished.localdomain>
- <CAHk-=whmRQWm_gVek32ekPqBi3zAKOsdK6_6Hx8nHp3H5JAMew@mail.gmail.com>
- <YNTO1T6BEzmG6Uj5@relinquished.localdomain>
- <CAHk-=wi37_ccWmq1EKTduS8ms_=KpyY2LwJV7roD+s=ZkBkjCw@mail.gmail.com>
- <yq1tulmoqxf.fsf@ca-mkp.ca.oracle.com>
+        Thu, 24 Jun 2021 23:45:05 -0400
+DKIM-Signature: a=rsa-sha256;
+        b=FjNn0Fb7aKSIR601MkG0oeWOmZVvncq980T6C0wNJRKBCUU74lP8OIA/NSXoXniOM9bFIqqGRjVcMQdXT6vsFzsnzZYiiiooAbQPPyF5wuhfL+8hEdzxvoPRPxxLXfHJdokcZdpMtxXWRpptTNPw8cytdo+YKTwltszidi1/xDE=;
+        c=relaxed/relaxed; s=default; d=vivo.com; v=1;
+        bh=sGu7bTgsv5EmJRkR6M9pzmwc4cFpkWX6TPsMI4KaOVY=;
+        h=date:mime-version:subject:message-id:from;
+Received: from [172.25.44.145] (unknown [58.251.74.232])
+        by mail-m121144.qiye.163.com (Hmail) with ESMTPA id 8275EAC0230;
+        Fri, 25 Jun 2021 11:42:43 +0800 (CST)
+Subject: Re: [PATCH v2] fuse: use newer inode info when writeback cache is
+ enabled
+From:   Fengnan Chang <changfengnan@vivo.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org
+References: <20210130085003.1392-1-changfengnan@vivo.com>
+ <CAJfpegutK2HGYUtJOjvceULf2H=hoekNxUbcg=6Su6uteVmDLg@mail.gmail.com>
+ <3e740389-9734-a959-a88a-3b1d54b59e22@vivo.com>
+ <CAJfpegtes4CGM68Vj2GxmvK2S8D5sn4Pv_RKyXb33ye=pC+=cg@mail.gmail.com>
+ <29a3623f-fb4d-2a2b-af28-26f9ef0b0764@vivo.com>
+Message-ID: <7b20f5b0-51d7-7634-a495-f6da83c287e5@vivo.com>
+Date:   Fri, 25 Jun 2021 11:42:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq1tulmoqxf.fsf@ca-mkp.ca.oracle.com>
+In-Reply-To: <29a3623f-fb4d-2a2b-af28-26f9ef0b0764@vivo.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
+        oVCBIfWUFZQkJCTFYfGkxKHUJJSUNDHxlVEwETFhoSFyQUDg9ZV1kWGg8SFR0UWUFZT0tIVUpKS0
+        hKTFVLWQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NBw6Agw6Qz8MDDEMIRY#KTFO
+        EzwwFDBVSlVKTUlPTkJJTk1IQkhIVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
+        WU5DVUlOSlVMT1VJSElZV1kIAVlBT0NIQzcG
+X-HM-Tid: 0a7a41433da0b039kuuu8275eac0230
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 24, 2021 at 06:41:52PM -0400, Martin K. Petersen wrote:
-> 
-> Linus,
-> 
-> > I also worry that this "raw compressed data" thing isn't the only
-> > thing people will want to do. I could easily see some kind of
-> > "end-to-end CRC read/write" where the user passes in not just the
-> > data, but also checksums for it to validate it (maybe because you're
-> > doing a file copy and had the original checksums, but also maybe
-> > because user space simply has a known good copy and doesn't want
-> > errors re-introduced due to memory corruption).
-> 
-> We already support passing CRCs down to be validated by the hardware for
-> both NVMe and SCSI. This currently only works from the block layer
-> down. When enabled, the checksums are generated by the block layer for
-> writes and the data is validated against the checksums sent by the
-> storage on reads.
-> 
-> Over the years various attempts at adding support for passing the
-> checksum buffers in from userland have failed for exactly the reasons
-> outlined in this thread (Joel, Darrick, Bob). Would love to have a
-> generic way of passing this kind of information...
+Hi Miklos:
 
-Does it make any kind of sense to talk about doing this for buffered I/O,
-given that we can't generate them for (eg) mmaped files?  Or does this
-only make sense to pass in for O_DIRECT accesses?
+FYI, I run xfstest on fuse, with linux 5.4.61 + patch, no new failure case.
+
+On 2021/6/24 15:42, Fengnan Chang wrote:
+> Hi Miklos:
+> 
+> Thank you for the information, I have been able to reproduce the problem.
+> 
+> The new version of the patch as below. Previous fsx test is pass now. 
+> Need do more test, Can you help to test new patch? or send me your test 
+> case, I will test this.
+> 
+> Here is my test case, and is the problem this patch is trying to solve.
+> Case A:
+> mkdir /tmp/test
+> passthrough_ll -ocache=always,writeback /mnt/test/
+> echo "11111" > /tmp/test/fsx
+> ls -l /mnt/test/tmp/test/
+> echo "2222" >> /tmp/test/fsx
+> ls -l /mnt/test/tmp/test/
+> 
+> Case B:
+> mkdir /tmp/test
+> passthrough_ll -ocache=always,writeback /mnt/test/
+> passthrough_ll -ocache=always,writeback /mnt/test2/
+> echo "11111" > /tmp/test/fsx
+> ls -l /mnt/test/tmp/test/
+> ls -l /mnt/test2/tmp/test/
+> echo "222" >> /mnt/test/tmp/test/fsx
+> ls -l /mnt/test/tmp/test/
+> ls -l /mnt/test2/tmp/test/
+> 
+> 
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index b9beb39a4a18..8e22a31b55c4 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -60,6 +60,10 @@ MODULE_PARM_DESC(max_user_congthresh,
+>   /** Congestion starts at 75% of maximum */
+>   #define FUSE_DEFAULT_CONGESTION_THRESHOLD (FUSE_DEFAULT_MAX_BACKGROUND 
+> * 3 / 4)
+> 
+> +static inline bool attr_newer_than_local(struct fuse_attr *attr, struct 
+> inode *inode) {
+> +    return (attr->mtime > inode->i_mtime.tv_sec)
+> +               || ((attr->mtime == inode->i_mtime.tv_sec) && 
+> (attr->mtimensec > inode->i_mtime.tv_nsec));
+> +}
+>   #ifdef CONFIG_BLOCK
+>   static struct file_system_type fuseblk_fs_type;
+>   #endif
+> @@ -241,8 +245,10 @@ void fuse_change_attributes(struct inode *inode, 
+> struct fuse_attr *attr,
+>           * extend local i_size without keeping userspace server in 
+> sync. So,
+>           * attr->size coming from server can be stale. We cannot trust it.
+>           */
+> -       if (!is_wb || !S_ISREG(inode->i_mode))
+> +       if (!is_wb || !S_ISREG(inode->i_mode)
+> +               || (attr_newer_than_local(attr, inode) && 
+> !inode_is_open_for_write(inode))) {
+>                  i_size_write(inode, attr->size);
+> +       }
+>          spin_unlock(&fi->lock);
+> 
+>          if (!is_wb && S_ISREG(inode->i_mode)) {
+> 
+> On 2021/6/22 23:19, Miklos Szeredi wrote:
+>> On Tue, 22 Jun 2021 at 14:25, Fengnan Chang <changfengnan@vivo.com> 
+>> wrote:
+>>>
+>>> Unh, it seems i_writecount not work.
+>>> If we modify file through lowerfs, i_writecount won't change, but the
+>>> size already changed.
+>>> For example:
+>>> echo "111" > /lowerfs/test
+>>> ls -l /upper/test
+>>> echo "2222" >> /lowerfs/test
+>>> ls -l /upper/test
+>>>
+>>> So, can you describe your test enviroment? including kernel version and
+>>> fsx parameters, I will check it.
+>>
+>> linux-5.13-rc5 + patch
+>> mkdir /tmp/test
+>> libfuse/example/passthrough_ll -ocache=always,writeback /mnt/fuse/
+>> fsx-linux -N 1000000 /mnt/fuse/tmp/test/fsx
+>>
+>> Thanks,
+>> Miklos
+>>
