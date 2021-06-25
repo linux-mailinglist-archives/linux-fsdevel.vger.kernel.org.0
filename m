@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7BE23B4029
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 11:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B8F13B4099
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 11:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231182AbhFYJVC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Jun 2021 05:21:02 -0400
-Received: from mail-eopbgr130042.outbound.protection.outlook.com ([40.107.13.42]:33547
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S231430AbhFYJfY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Jun 2021 05:35:24 -0400
+Received: from mail-am6eur05on2067.outbound.protection.outlook.com ([40.107.22.67]:56801
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229956AbhFYJVA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Jun 2021 05:21:00 -0400
+        id S231422AbhFYJfX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 25 Jun 2021 05:35:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SF5xR9aHTovVvObF3Jy8ZmXAgoD5efhkCYTImJwslUY=;
- b=e4FCHraC922AI+0X/Itrptg943nZMuGs98ty4yL0moXn75s/x4S+UrvXhjlV+tJ7FLHJj2lhQ2UYEjOC3fDE6OhVlMUhIJganpreG5yAVa/Pmj1L7F9uUq3pbrn/YhvN8Prvhi2QWmFx4WU55EDOb4E+jYr09zAH+0BuTVdkPtw=
-Received: from AM6PR10CA0040.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:209:80::17)
- by DB6PR0802MB2360.eurprd08.prod.outlook.com (2603:10a6:4:8a::12) with
+ bh=ZaHJRIo1RtxE2PWu2WwUpw6k/RI5FuUrWwN5M/mjTKE=;
+ b=pZYA2swpXWwhMaX2mC0cHBp4av5kE0V1aJa5Osxanjogy2xBWvOJUi3uF7rj82pdkpDvjmbQnmiWCvJqciXlgppB95mqfioC2l6HgV2NCsfqKfu7qe5QYPj+PlxDPhYufeUrPrZECEXmCO+n5D6nl1vxXpcHMcxqIGFiWlUorwI=
+Received: from AM6P191CA0091.EURP191.PROD.OUTLOOK.COM (2603:10a6:209:8a::32)
+ by VI1PR0801MB2078.eurprd08.prod.outlook.com (2603:10a6:800:83::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.21; Fri, 25 Jun
- 2021 09:18:34 +0000
-Received: from AM5EUR03FT016.eop-EUR03.prod.protection.outlook.com
- (2603:10a6:209:80:cafe::fa) by AM6PR10CA0040.outlook.office365.com
- (2603:10a6:209:80::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.18; Fri, 25 Jun
+ 2021 09:32:57 +0000
+Received: from VE1EUR03FT021.eop-EUR03.prod.protection.outlook.com
+ (2603:10a6:209:8a:cafe::8d) by AM6P191CA0091.outlook.office365.com
+ (2603:10a6:209:8a::32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.18 via Frontend
- Transport; Fri, 25 Jun 2021 09:18:34 +0000
+ Transport; Fri, 25 Jun 2021 09:32:57 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
  smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
  header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=pass action=none
@@ -35,42 +35,42 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  63.35.35.123 as permitted sender) receiver=protection.outlook.com;
  client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
 Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM5EUR03FT016.mail.protection.outlook.com (10.152.16.142) with Microsoft SMTP
+ VE1EUR03FT021.mail.protection.outlook.com (10.152.18.117) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4264.18 via Frontend Transport; Fri, 25 Jun 2021 09:18:33 +0000
-Received: ("Tessian outbound 41e46b2c3cec:v96"); Fri, 25 Jun 2021 09:18:32 +0000
+ 15.20.4264.18 via Frontend Transport; Fri, 25 Jun 2021 09:32:57 +0000
+Received: ("Tessian outbound 7f55dcc5b33a:v96"); Fri, 25 Jun 2021 09:32:56 +0000
 X-CR-MTA-TID: 64aa7808
-Received: from 85edfa64ca2a.1
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 8B4FAD45-958E-4606-ACBA-51500A3A4926.1;
-        Fri, 25 Jun 2021 09:18:25 +0000
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 85edfa64ca2a.1
+Received: from 1f6792ba1e3e.1
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id C6F8910C-D0CB-40C8-B8C9-E803CCEE7FED.1;
+        Fri, 25 Jun 2021 09:32:49 +0000
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 1f6792ba1e3e.1
     (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Fri, 25 Jun 2021 09:18:25 +0000
+    Fri, 25 Jun 2021 09:32:49 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lDLNL16MOho9s75Xi04wY+gvCPSH36B4tWCShLSZ1HxX/wpTE20fKnLU6ylmIhZT7tB8dufnzi5u6hs1Paw2MckgcNxOvUOpnV7yinZ5n4kc0fVXGXOK+V2yEuVD7wA5q6+8HC0HHKMHVD+ciLYQaPgNH+r3rrf068MofpgBp5zOjqc/qNB4RP4H0jFk2LTeo40OlW56kOePCIbyWIC7MRdTzRX0qD98QaqvilrHKKH4R3COk6kEE925bKTnhCQa8E42h29xZ/zJ2xWFhaVLjw4kWYjtnjGUx0B98S6ozxgU0GaJ2LuVU7p0icqZo+9wDr1CV13hgEqF3fsYcVx2qg==
+ b=crtRuLuI1RG7WoeOTioDznNFGzhkCFSC0d3gZfgSVcXrSFlihMGMZfserQD6pygQmNtG+lbEVNRaOA8cW83DXfy+eLnkHfaeaARC+kg3mBMTNAsQVlTahLiy3o3W3avm5CKIdKzihN5Zjgq189+URJfw+78sWr4WjxAJPcTzq8p7IYuEEdmPyILjfnAhKmPoBNdKqtXnIz3pROJsjFirJf83nemUONzfs6v6VF7LCcXHaIWy1ZPeipTAmInRZYIPc6Z2JLyu5knlNPRK4RBiku62ixiM3H4AscTovJaxKmHfy0Ar2PvhVoXrJRZ5bGxcccfblGoCyzan747b94xrrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SF5xR9aHTovVvObF3Jy8ZmXAgoD5efhkCYTImJwslUY=;
- b=byY4qlaDE8Uw8qGrU0A3m1YedCcjrPsvdFfgj+ts+afeHdV4eyjvjcOfwFCaAuwZFLaXZCHEznT1KAY0vCRfTqTz3W95zjwugixizS+pppNLLXcqfOxrZP6HRICEFDapfoquyPe98BTHzUQmQpel6EXn1oZD4wT+tMVlbFVmap2sF6+AKW3h0FGvB76egzfeE1DevOiqO2p+zkF8Ri7dl1YByd0p5k9hOvoUOcwYBOrvndtB9i+RvPxPSlLHObSN3/fyPK4k90kZGJQO5YYY7Fv0slcvqPwg1ZsnYGqwtHLMI5TjOF7SP+R0pNz/cIiyA0WHUv0TDNx9Vt4AN6jCFA==
+ bh=ZaHJRIo1RtxE2PWu2WwUpw6k/RI5FuUrWwN5M/mjTKE=;
+ b=H3tfiJTccwyOCoqMw9+tIs54KDQOhM9rh/fmWTuV5EItp9s6xejOglBJMqLOxH6WjzA/ZMjLi4Of0tZKvGEOj/926qr/GkngcE/IOy33BNWWulxVg1PnH5wihAlevBb/HbUKkwMkEg5YyTE2ta5SenUpS7YG/YlY4F82Bexf+IrAl5U1f/W+kVYleUgxfSfkmL3Z0qo3Odqyr6f9n3IAK2Wxe7T4+u/O+2WIdXM7Ema/ibMifLGq2FA624k8CywHoUIz0QTyT9Db4GOMi3kFEPTP4tQLs5+m2A7Vrx1ApLOJLHnDWc5ML2pH+Lde+BvHzbA7g4N6ISk3XziCV21cXw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
  header.d=arm.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SF5xR9aHTovVvObF3Jy8ZmXAgoD5efhkCYTImJwslUY=;
- b=e4FCHraC922AI+0X/Itrptg943nZMuGs98ty4yL0moXn75s/x4S+UrvXhjlV+tJ7FLHJj2lhQ2UYEjOC3fDE6OhVlMUhIJganpreG5yAVa/Pmj1L7F9uUq3pbrn/YhvN8Prvhi2QWmFx4WU55EDOb4E+jYr09zAH+0BuTVdkPtw=
+ bh=ZaHJRIo1RtxE2PWu2WwUpw6k/RI5FuUrWwN5M/mjTKE=;
+ b=pZYA2swpXWwhMaX2mC0cHBp4av5kE0V1aJa5Osxanjogy2xBWvOJUi3uF7rj82pdkpDvjmbQnmiWCvJqciXlgppB95mqfioC2l6HgV2NCsfqKfu7qe5QYPj+PlxDPhYufeUrPrZECEXmCO+n5D6nl1vxXpcHMcxqIGFiWlUorwI=
 Received: from AM6PR08MB4376.eurprd08.prod.outlook.com (2603:10a6:20b:bb::21)
- by AM6PR08MB4565.eurprd08.prod.outlook.com (2603:10a6:20b:af::24) with
+ by AS8PR08MB6599.eurprd08.prod.outlook.com (2603:10a6:20b:332::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.23; Fri, 25 Jun
- 2021 09:18:21 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.22; Fri, 25 Jun
+ 2021 09:32:47 +0000
 Received: from AM6PR08MB4376.eurprd08.prod.outlook.com
  ([fe80::3452:c711:d09a:d8a1]) by AM6PR08MB4376.eurprd08.prod.outlook.com
  ([fe80::3452:c711:d09a:d8a1%5]) with mapi id 15.20.4264.023; Fri, 25 Jun 2021
- 09:18:21 +0000
+ 09:32:47 +0000
 From:   Justin He <Justin.He@arm.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
@@ -93,85 +93,85 @@ CC:     Petr Mladek <pmladek@suse.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-s390 <linux-s390@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH 07/14] d_path: lift -ENAMETOOLONG handling into callers of
- prepend_path()
-Thread-Topic: [PATCH 07/14] d_path: lift -ENAMETOOLONG handling into callers
- of prepend_path()
-Thread-Index: AQHXTEjITB/V0362t0GPPyDCrpGmgKskqplg
-Date:   Fri, 25 Jun 2021 09:18:19 +0000
-Message-ID: <AM6PR08MB4376E091A9A84BE1240F3989F7069@AM6PR08MB4376.eurprd08.prod.outlook.com>
+Subject: RE: [PATCH 02/14] d_path: saner calling conventions for
+ __dentry_path()
+Thread-Topic: [PATCH 02/14] d_path: saner calling conventions for
+ __dentry_path()
+Thread-Index: AQHXTEjJBmBJOq2FXUq44gPHBJbVjKsksQ3A
+Date:   Fri, 25 Jun 2021 09:32:46 +0000
+Message-ID: <AM6PR08MB4376D52CD6D690C444918E00F7069@AM6PR08MB4376.eurprd08.prod.outlook.com>
 References: <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
  <20210519004901.3829541-1-viro@zeniv.linux.org.uk>
- <20210519004901.3829541-7-viro@zeniv.linux.org.uk>
-In-Reply-To: <20210519004901.3829541-7-viro@zeniv.linux.org.uk>
+ <20210519004901.3829541-2-viro@zeniv.linux.org.uk>
+In-Reply-To: <20210519004901.3829541-2-viro@zeniv.linux.org.uk>
 Accept-Language: en-US, zh-CN
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ts-tracking-id: B8E9C54692663047B629971C6F77CAEB.0
+x-ts-tracking-id: FFD4E70502FE6049AA6DD5F28543B6E9.0
 x-checkrecipientchecked: true
 Authentication-Results-Original: zeniv.linux.org.uk; dkim=none (message not
  signed) header.d=none;zeniv.linux.org.uk; dmarc=none action=none
  header.from=arm.com;
 x-originating-ip: [203.126.0.112]
 x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: 5d9ca08e-9239-449f-5e47-08d937ba34b0
-x-ms-traffictypediagnostic: AM6PR08MB4565:|DB6PR0802MB2360:
-X-Microsoft-Antispam-PRVS: <DB6PR0802MB2360BC94BA129378B7443339F7069@DB6PR0802MB2360.eurprd08.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 88aec2d6-dca6-427c-c8be-08d937bc378f
+x-ms-traffictypediagnostic: AS8PR08MB6599:|VI1PR0801MB2078:
+X-Microsoft-Antispam-PRVS: <VI1PR0801MB207860295F3D4C6A5B3D0D1DF7069@VI1PR0801MB2078.eurprd08.prod.outlook.com>
 x-checkrecipientrouted: true
 nodisclaimer: true
-x-ms-oob-tlc-oobclassifiers: OLM:4941;OLM:8882;
+x-ms-oob-tlc-oobclassifiers: OLM:3968;OLM:7691;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: LwfaO0dUzWO6oJLmEqECiTPvgWkrBHkCdYsbivycsAWbK7eaJwRuo0ehrbJeJZUQyfaVE20ReIJ+/rOOkOrPhc8A3vu0NVYKh/uUWjD8I1NU/XaRVVCHXlk0RwYx2hPzZk+nnlBL9Eq/aLLIqEIBClwQUlklXbvogkNzl0u7MQucOpS8kyhQ/+Gb/LirwKwet1o97JrbbvS2IZ5NB7ueyXdGrkFcU+kGIR4EUMhM3Aq6N9SwxH56f8cVJ1sQ+i5t8hLTHoq4OSxbAZcAoI/CO01oPFBumAzQMy1+/CGYLBcHhLSLUIVGmJzxo/LLL7MabNusyYm77YfNgzRGyJvlG/ORtBs1IzMfVMk8TN/NFwS5UdaNrOl1SganT0QNLzDHQAv/9ysUoRLiqRtx8Gv5KAac+kGEzxAOENpEFMW625ihFMJQCXmWpS8vvqUUYs0ojkU0Tny+k41Vd+5VKU2qkrszSUBa+yPaucGRt5MOXEYQ4XOTASwrfBQEBSUzHFaA1bQSMwQGF0zI1qjhleMHkfIsQS/W7O5mctLnoW6ZJPDcfz9eo2vDvl3BNdWZTi0KYKYfFvTILocmWQAlOXUJ8HLGXMKBtLgvcBn5dCpuEPWR2YaaoSMppmwjdtHzxjy324HUcMQp5NP9DMVofigy9Q==
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR08MB4376.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(136003)(366004)(396003)(39850400004)(346002)(55016002)(33656002)(76116006)(86362001)(66946007)(186003)(6506007)(5660300002)(53546011)(26005)(66476007)(8936002)(66556008)(478600001)(64756008)(66446008)(122000001)(7696005)(7416002)(38100700002)(2906002)(8676002)(71200400001)(52536014)(83380400001)(4326008)(316002)(9686003)(54906003)(110136005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info-Original: 4LqD4zeeOcPqHvc85h9cvo0XIBxWfT6osLeQWgnKWEn4XiWKw43vyn7bQyVogmx+mSuUHBWnPwAlCAcDZiT+iB2k3jGrw29GMPHvdYfV/UaAUFqx9uRKWr6vhbup6vbKO90XYlC/25DD64KK5sGVTApmSdCP1DhSRxXlb2YgwigF0fxCJtuxSPXhrmztmZYPmLO4M4XDKFRiyBFsvvZ1hYw3WXbuwEIZ7OydFncnGGxGc3dXsArqJoCM6hDkrXfgl8gDmtdWIAvKNZWbqeSQhwAoTRTPHayk/vzCsx6skLRy1kwZKZNceaLEZsNhuUs4Su/tCTntApofcfULGdPQ9TaZgWJ78ErtZomXUZVxloBHeTLdQzF3hzGgzI7vu2sGmwUVfKo8pfL3SWEHtyr4zOdTD5qwQ7ClWxdjGIFjgQoSCUc0LEI6yD4+rIKrpe5g/8f/aMWYZiry/70Hr7E5PACPkgZZkmvFC5H3PERVAS0cnHuaVCquW5WIPlEA+FEglxAwsubJ7+VtvT5uHLdya8pVnU+SHeXeXbEl4geWxnl/ke40O5Nt1uFtb/cbYiPIe5YfngbwQ0moOTKp/54F7YXnlTcDk5vtRwW92XkFiKYxHkfcGAdITWGTfCHgltodW3J5yae2z/VfUgcWos+jRQ==
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR08MB4376.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(39850400004)(376002)(396003)(346002)(366004)(122000001)(38100700002)(26005)(7416002)(53546011)(55016002)(6506007)(86362001)(83380400001)(9686003)(64756008)(66446008)(8936002)(2906002)(5660300002)(8676002)(76116006)(66476007)(66556008)(66946007)(7696005)(52536014)(33656002)(186003)(316002)(478600001)(54906003)(71200400001)(110136005)(4326008);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?4H8xJCuoYC5qBKbJb5+p7x7Bq21ZWLlvgLP9/ROQh0ASmzgN4jqe9WLrBuOm?=
- =?us-ascii?Q?x3t+tSy76Qf1DpJuPv3E0MIbOlG+3DKqANujiJNIRBVZTQZtJI8/xvLLDWV/?=
- =?us-ascii?Q?2/2FhUy+BVb86qWvPPD5CVzVFjHdfWmleU0zYD6UX6/3iONF7PqmC8OtNe6e?=
- =?us-ascii?Q?XZgHvldIw3udVyX4K1sTdriFiSOgsVloy4iWbCzktpCA3EvZEr4VkmP6bkNC?=
- =?us-ascii?Q?hxgoSG1EdS8qPoq1ad1rkemxo4fuWtwhs2sWzYKwccXTUJT7aPHCgGea5zaI?=
- =?us-ascii?Q?LWuCQ5K0p0KPfFBSg2ol9uPuNwFhgxchHyylC5R2lQ+g44fDZuFAfMEYBo2c?=
- =?us-ascii?Q?D4o5M+//WAQDaM02/6U3CbDvB6d90tnBnDnPpN/0vYq6qZltX3MRugPQefrw?=
- =?us-ascii?Q?bzeMjbAOksUdS+fqtLEHxGXK0/TLYaPaJ+7Phfs/P6PErnZL/7n2YdvMch2A?=
- =?us-ascii?Q?C0wu/vKkZ77dA0Ykkv3Ujld+9PqQUDSTCjLSH+x1g9QmnCX+iejUJn8SHPJw?=
- =?us-ascii?Q?M+16/bGs9+BWwIXZ3CTdZ38i6AqH7IHuKMFxKUjvlEfkge6o/LWOQwQkJzTZ?=
- =?us-ascii?Q?LEpKpzTWYdjQYXOjfCHRfY0H4WEkDbaxcNCG+OpFAHyhORrYoTGrwptsc74A?=
- =?us-ascii?Q?wgQ3XRZpePHVOvLz7gLtTBsQ6Occz8MMDS1Fi7oS5+dz+bt+pUdUcNR36jUT?=
- =?us-ascii?Q?oFhRVPXNIZwqdcBCTYg226SgaF7Jqo+gTf3InrcSSxn2XwLOrBm0V+cMi7Mb?=
- =?us-ascii?Q?ma2YW6oGffAK91WraRro1hlabiLs78K9QQRg71WhPl6MJyfZrXdToW22oawo?=
- =?us-ascii?Q?pM8zk+NlRJsGRLBHqociYoB3Tp8tdnu63sqD2iMna+bNUbMgcvletz70KdyK?=
- =?us-ascii?Q?a1+F6PH0hIGCWjrfVqpEccHL5jpEPJ2AmVTiV9ntvx9Ibg5QNfKNzOUDyAcg?=
- =?us-ascii?Q?qV160OE9f50knvBcTLkHM6ZxOD9wGsjGBOaHhrelM7EDn+PDwjji/9c/BgID?=
- =?us-ascii?Q?SCw4Xybvv5KZyGdotqlSLAmW0zP/yARXoRbs01Mq4ARs05PyE3HQIvz6lhNH?=
- =?us-ascii?Q?lEupWQzFmzY8yyzB9/9E5ays/0GhC88777Kur3oo9eSTNSCRR9BJgnIwJbeb?=
- =?us-ascii?Q?wWKws5xiLbfvqKvxwjTxHi9QQoRonWf76bn7niQvSAoJjjTep91/RP1DT6JL?=
- =?us-ascii?Q?f61LwB+XbCpn10Qffn/ahYPpMiWc6y9MRU9mDKMx05Gkf0s7/YbjQ/P0/DNs?=
- =?us-ascii?Q?v8ZKDCZQ5VUaTkl0YQk+DDX2O8zWs3v9USzGca1qPh5sAFDR+qHkz7P0Mvvw?=
- =?us-ascii?Q?TBT6lVFw5sYN51UOO8Xj941M?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0dFcQRC5TM45M5cNVD8MKCL8ezPIn+okYdChxIzKD5iuID1nxcTh42yAjVhC?=
+ =?us-ascii?Q?L1E9RUG45vgV1OXtCIDOvBjO846gVccEmjZj0xKwu/dD7Xe97XfFOSwHRLdr?=
+ =?us-ascii?Q?ifGZ4V39tuaze6Jdy82OWMWi2lo0zqgwz49Cr8AIAn377DweQhttsxY5dcVK?=
+ =?us-ascii?Q?Yqiq+oDeqjazSoa/Yr0FzFQc6KoXJ14HS6p3DpM1OpKoQfMxSHoRjWHQ4H7Z?=
+ =?us-ascii?Q?UPAdpXr2YEjbIN/PDxzQJrvyWUCSFulwAtiybks50iZ/l+vqE3k6kze8+kmz?=
+ =?us-ascii?Q?cU6xX9OMC1qTqrCNDkqRntN+p4n9IMsBJcHlFF0jSlkUDECYUV9EuMzFuCAv?=
+ =?us-ascii?Q?pLfWxmmPtw9zD8klS6DvcW1tJaEqG953TLi7Q+COqeAGCVaR71BN5m0ZqmSi?=
+ =?us-ascii?Q?iLDw9E9YSYiqevg0hBFIzjNgPwbTblpn26/rx5ZwLCegC9GEnA8+iHQ7nlpZ?=
+ =?us-ascii?Q?ZCthjmd1QVZe3E5wvjUTwdhSr8rFANuYRWIz3mvmr5LCVIU2uGeaFOH4CccR?=
+ =?us-ascii?Q?0RX9PITZtwt38h1wK1QKMElB/wP2HS5S8wpaaJTE7kDlLZqcaINpkzA2VHbQ?=
+ =?us-ascii?Q?uJ8PCpCAd/5/M8ywLLtX66c+lbgnnagEEDwjrojiYnFb3HUgDLw0sEEKdkUO?=
+ =?us-ascii?Q?dIqwmtaMaFpPROuKHqm5MeN7EiXPm1H91L/kyjRBwVyAPKEFs4cemVmRATcL?=
+ =?us-ascii?Q?JgWLu1NLaDeIqHiRf4CpFBTyJRF4pFgSxavuGny77x1QE/D0cIsTCSqMWv+f?=
+ =?us-ascii?Q?LVQ8Tez2uHkFL6lzLrjD24TUWKxMgJWVJGgGNGQfQeiUelUa+FwUEyjf6S4l?=
+ =?us-ascii?Q?u0M4qieCxac+xrTm0hObAgvc3JMw77DXKYRaUIT8Paa1lf3+FSwa8w/QXnmZ?=
+ =?us-ascii?Q?DkWaQb0JxI6n6ttQP6t6rAKO4un7Io1I+Nfa+D9oCqgcInLhsdhIAULpe3jw?=
+ =?us-ascii?Q?8Ey5d1ZzIOyWv5DJlLr1RIp5yRMXwDSVNOOHwW4A3Z6Iwq8Lyr4QiPBl0v/d?=
+ =?us-ascii?Q?cbCSLMCYAVvFGXEZwj02RJSVgL8BClJxD8tnOaE6DvGOR+k21ldfJgckYq/y?=
+ =?us-ascii?Q?lW1LWOVsvTJLEEM4SnliYzVxMrMF626OfarBbTZhJyMRNzLB46kiQMXhqP8E?=
+ =?us-ascii?Q?1Q4YRbSHKDDStHLc15d/U7pXeUriuVEpdeWrWa4TnY/yr8lDrzOfA60rC9Zq?=
+ =?us-ascii?Q?77OWD5NYUh0d6u/c8AIJLD3siRdCGS47eKzHyRrYxcvdBc+Q5/IDwmJwdV/r?=
+ =?us-ascii?Q?BYZOhQyLYyfOc0wGsaE60d+cHkf4E6l+fPqeSQmwDaVhFS2Rq4BgEZYsZsb5?=
+ =?us-ascii?Q?flXlq3NUkVg8pU7iylr2e2fa?=
 x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB4565
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6599
 Original-Authentication-Results: zeniv.linux.org.uk; dkim=none (message not signed)
  header.d=none;zeniv.linux.org.uk; dmarc=none action=none header.from=arm.com;
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM5EUR03FT016.eop-EUR03.prod.protection.outlook.com
-X-MS-Office365-Filtering-Correlation-Id-Prvs: a83cc13e-6f8b-4295-ca92-08d937ba2d23
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT021.eop-EUR03.prod.protection.outlook.com
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 7e27f214-b4ca-41ae-33d9-08d937bc316d
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XYXV/pZlDE3w0kdoay6vQMRwzOPWKi2TLdxx9EnVriK1sFSBqmamknqR0fI3ooOkK0s9kVXYYC8WJB9wOLiXGHDxT3taLb8AEqDjQLYgjpvheQOXA30JDTG8xQdBvdpw0H6vtq0uqJvy+RYhsqjipTBENJV8XUu6C81R264yuOymEzwzeL+NbQmMygsUcy+b24AoEbKaNPO9EEc1mzBYQMawPWhHxfgJslz1gixgquZUTTQ+/zD96CN/jYXUi6Gik7ApUuoHfBBwSZmCYTU9N0ikwO82f4FyfZf+R17NguSkNw/P+Pe6zeKuza74tfofHScI04xtt/4TMTmGDvdguwgbsS5jw43rQ0VMw215L9aXj15OtJy5W6nbbtVWg7PvMHRoo1syCII6UCAZLET1RhAjagbImmwQAPY+eoPtvsZO6vDd8Zmg/qe6Uc6TESLUKNf4j1boGx+t+m6BL1xvWTjOsMkXHCycRkdLHCDXjLL1WwsNkbVevolJzjggLPW1ZggBNUA3mfE1jdD2x20h/gpwdlWrtJYSDyTAvr501iblwrKDApojdrm4swK6eTNBJHcnwh8hnfn/HD46C/hQREd8csdgo4Lr0EQ/Qiqj4Fam6zrvFxcDhMq1wGEbMW7eRVs3VOgBmFYArXsElzEPOORGKyJo2dtkr2xXAMTeiScHtGzu6cqPLpCDzZwbGpqqeHnF4LhZ/YsljPY+NDzkwg==
-X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(4636009)(346002)(396003)(376002)(136003)(39850400004)(36840700001)(46966006)(2906002)(70206006)(70586007)(186003)(26005)(316002)(47076005)(54906003)(8676002)(53546011)(110136005)(5660300002)(478600001)(36860700001)(6506007)(7696005)(33656002)(82740400003)(450100002)(8936002)(83380400001)(82310400003)(81166007)(55016002)(86362001)(336012)(52536014)(356005)(4326008)(9686003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: bOK7SglpzVLPaENDce88tgNuoAFxOIeKYvV2zokde9KyNXPkmFMiAV9C35Oq8MVKP6B1/QmYtU7OrdjVgrl/AtAxDS7aZNBe+TNWFrx0TBtScYyKYrj4Dkf0v5YZT+cBIGvwhjqkGN0XkqkeZza+nId5Q6B3C8DJla8zmE0G8QhemBpW2OZXux0h7/+iRVtikLGZ8WNgw28HfGbKeK+qSyggkqFiY1dF6FvsW5RKPBoTnGijdvyUIMvuD8xu/IBCtj+VpAB0y3AUgrK/vP4twLfyNyX9LXn2N7/nS8VBm6OJb6ZOk00b0LHvC/PJ+sRdTbVUzdn3X5DKRWmlVF0I0HDdhWrpImTBlbYeSW4OzjqL7b06IhTU+SeGn7GCm+9nQEZL/EI5BJ4v26EQDOHzL/qSf3cAEqTGIyq6tkF0hP0JK+InrH5CbczN4Cto5XjycoSo3XxYuTrANhcd9SO9hIGQXzpfHXdoQ0F5du8LRQ23sE8FBxq6XnXD5m6PFelI/ZkHO+yTkdBBISbVQyV70SdafqtW/6ZTEbw6NmRrKO2V/v/JHm2SsO/c1dNFnGSU68jbN5XAlVNPeBveLg03XE8PTB4NjC5s6a3sBZ9KARHPMX2DN1B0h3o6eRv5jQxt+DJcgBM7QiNLouOx495yvjbugO2KyOtVuliE6Z6+JCUklKRR5e/nb+qGI5MIWguXaOLFhp1JoQ9rXSMQe+n68A==
+X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(4636009)(39850400004)(346002)(376002)(136003)(396003)(36840700001)(46966006)(356005)(186003)(336012)(450100002)(36860700001)(82740400003)(53546011)(7696005)(4326008)(6506007)(86362001)(47076005)(26005)(83380400001)(33656002)(81166007)(8936002)(52536014)(2906002)(110136005)(54906003)(82310400003)(70206006)(70586007)(55016002)(9686003)(8676002)(478600001)(316002)(5660300002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2021 09:18:33.5674
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2021 09:32:57.2796
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d9ca08e-9239-449f-5e47-08d937ba34b0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88aec2d6-dca6-427c-c8be-08d937bc378f
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource: AM5EUR03FT016.eop-EUR03.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: VE1EUR03FT021.eop-EUR03.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0802MB2360
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB2078
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -197,115 +197,37 @@ n
 > doc@vger.kernel.org>; Linux Kernel Mailing List <linux-
 > kernel@vger.kernel.org>; linux-s390 <linux-s390@vger.kernel.org>; linux-
 > fsdevel <linux-fsdevel@vger.kernel.org>
-> Subject: [PATCH 07/14] d_path: lift -ENAMETOOLONG handling into callers o=
-f
-> prepend_path()
+> Subject: [PATCH 02/14] d_path: saner calling conventions for __dentry_pat=
+h()
 >
-> The only negative value ever returned by prepend_path() is -ENAMETOOLONG
-> and callers can recognize that situation (overflow) by looking at the
-> sign of buflen.  Lift that into the callers; we already have the
-> same logics (buf if buflen is non-negative, ERR_PTR(-ENAMETOOLONG)
-> otherwise)
-> in several places and that'll become a new primitive several commits down
-> the road.
+> 1) lift NUL-termination into the callers
+> 2) pass pointer to the end of buffer instead of that to beginning.
 >
-> Make prepend_path() return 0 instead of -ENAMETOOLONG.  That makes for
-> saner calling conventions (0/1/2/3/-ENAMETOOLONG is obnoxious) and
-> callers actually get simpler, especially once the aforementioned
-> primitive gets added.
+> (1) allows to simplify dentry_path() - we don't need to play silly
+> games with restoring the leading / of "//deleted" after __dentry_path()
+> would've overwritten it with NUL.
 >
-> In prepend_path() itself we switch prepending the / (in case of
-> empty path) to use of prepend() - no need to open-code that, compiler
-> will do the right thing.  It's exactly the same logics as in
-> __dentry_path().
+> We also do not need to check if (either) prepend() in there fails -
+> if the buffer is not large enough, we'll end with negative buflen
+> after prepend() and __dentry_path() will return the right value
+> (ERR_PTR(-ENAMETOOLONG)) just fine.
 >
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
->  fs/d_path.c | 39 +++++++++++----------------------------
->  1 file changed, 11 insertions(+), 28 deletions(-)
+>  fs/d_path.c | 33 +++++++++++++--------------------
+>  1 file changed, 13 insertions(+), 20 deletions(-)
 >
 > diff --git a/fs/d_path.c b/fs/d_path.c
-> index 72b8087aaf9c..327cc3744554 100644
+> index 01df5dfa1f88..1a1cf05e7780 100644
 > --- a/fs/d_path.c
 > +++ b/fs/d_path.c
-> @@ -127,8 +127,7 @@ static int prepend_path(const struct path *path,
->               }
->               parent =3D dentry->d_parent;
->               prefetch(parent);
-> -             error =3D prepend_name(&bptr, &blen, &dentry->d_name);
-> -             if (error)
-> +             if (unlikely(prepend_name(&bptr, &blen, &dentry->d_name) < =
-0))
->                       break;
->
->               dentry =3D parent;
-> @@ -149,12 +148,9 @@ static int prepend_path(const struct path *path,
->       }
->       done_seqretry(&mount_lock, m_seq);
->
-> -     if (error >=3D 0 && bptr =3D=3D *buffer) {
-> -             if (--blen < 0)
-> -                     error =3D -ENAMETOOLONG;
-> -             else
-> -                     *--bptr =3D '/';
-> -     }
-> +     if (blen =3D=3D *buflen)
-> +             prepend(&bptr, &blen, "/", 1);
-> +
->       *buffer =3D bptr;
->       *buflen =3D blen;
->       return error;
-> @@ -181,16 +177,11 @@ char *__d_path(const struct path *path,
->              char *buf, int buflen)
->  {
->       char *res =3D buf + buflen;
-> -     int error;
->
->       prepend(&res, &buflen, "", 1);
-> -     error =3D prepend_path(path, root, &res, &buflen);
-> -
-> -     if (error < 0)
-> -             return ERR_PTR(error);
-> -     if (error > 0)
-> +     if (prepend_path(path, root, &res, &buflen) > 0)
->               return NULL;
-> -     return res;
-> +     return buflen >=3D 0 ? res : ERR_PTR(-ENAMETOOLONG);
->  }
->
->  char *d_absolute_path(const struct path *path,
-> @@ -198,16 +189,11 @@ char *d_absolute_path(const struct path *path,
->  {
->       struct path root =3D {};
->       char *res =3D buf + buflen;
-> -     int error;
->
->       prepend(&res, &buflen, "", 1);
-> -     error =3D prepend_path(path, &root, &res, &buflen);
-> -
-> -     if (error > 1)
-> -             error =3D -EINVAL;
-> -     if (error < 0)
-> -             return ERR_PTR(error);
-> -     return res;
-> +     if (prepend_path(path, &root, &res, &buflen) > 1)
-> +             return ERR_PTR(-EINVAL);
-> +     return buflen >=3D 0 ? res : ERR_PTR(-ENAMETOOLONG);
-
-This patch is *correct*.
-But do you mind changing like:
-if (buflen >=3D 0 || error =3D=3D 1)
-        return res;
-else
-        return ERR_PTR(-ENAMETOOLONG);
-
-The reason why I comment here is that I will change the
-prepend_name in __prepend_path to prepend_name_with_len.
-The latter will go through all the dentries recursively instead
-of returning false if p.len<0.
-So (error =3D=3D 1 && buflen < 0) is possible.
-
-If you disagree, I will change it later in another single patch.
+> @@ -326,22 +326,21 @@ char *simple_dname(struct dentry *dentry, char
+> *buffer, int buflen)
+>  /*
+>   * Write full pathname from the root of the filesystem into the buffer.
+>   */
+I suggest adding the comments to remind NUL terminator should be prepended
+before invoking __dentry_path()
 
 
 --
@@ -313,36 +235,70 @@ Cheers,
 Justin (Jia He)
 
 
->  }
->
->  static void get_fs_root_rcu(struct fs_struct *fs, struct path *root)
-> @@ -240,7 +226,6 @@ char *d_path(const struct path *path, char *buf, int
-> buflen)
+> -static char *__dentry_path(const struct dentry *d, char *buf, int buflen=
+)
+> +static char *__dentry_path(const struct dentry *d, char *p, int buflen)
 >  {
->       char *res =3D buf + buflen;
->       struct path root;
-> -     int error;
+>       const struct dentry *dentry;
+>       char *end, *retval;
+>       int len, seq =3D 0;
+>       int error =3D 0;
 >
->       /*
->        * We have various synthetic filesystems that never get mounted.  O=
-n
-> @@ -263,12 +248,10 @@ char *d_path(const struct path *path, char *buf, in=
-t
-> buflen)
->               prepend(&res, &buflen, " (deleted)", 11);
->       else
->               prepend(&res, &buflen, "", 1);
-> -     error =3D prepend_path(path, &root, &res, &buflen);
-> +     prepend_path(path, &root, &res, &buflen);
->       rcu_read_unlock();
+> -     if (buflen < 2)
+> +     if (buflen < 1)
+>               goto Elong;
 >
-> -     if (error < 0)
-> -             res =3D ERR_PTR(error);
-> -     return res;
-> +     return buflen >=3D 0 ? res : ERR_PTR(-ENAMETOOLONG);
+>       rcu_read_lock();
+>  restart:
+>       dentry =3D d;
+> -     end =3D buf + buflen;
+> +     end =3D p;
+>       len =3D buflen;
+> -     prepend(&end, &len, "", 1);
+>       /* Get '/' right */
+>       retval =3D end-1;
+>       *retval =3D '/';
+> @@ -373,27 +372,21 @@ static char *__dentry_path(const struct dentry *d,
+> char *buf, int buflen)
+>
+>  char *dentry_path_raw(const struct dentry *dentry, char *buf, int buflen=
+)
+>  {
+> -     return __dentry_path(dentry, buf, buflen);
+> +     char *p =3D buf + buflen;
+> +     prepend(&p, &buflen, "", 1);
+> +     return __dentry_path(dentry, p, buflen);
 >  }
->  EXPORT_SYMBOL(d_path);
+>  EXPORT_SYMBOL(dentry_path_raw);
 >
+>  char *dentry_path(const struct dentry *dentry, char *buf, int buflen)
+>  {
+> -     char *p =3D NULL;
+> -     char *retval;
+> -
+> -     if (d_unlinked(dentry)) {
+> -             p =3D buf + buflen;
+> -             if (prepend(&p, &buflen, "//deleted", 10) !=3D 0)
+> -                     goto Elong;
+> -             buflen++;
+> -     }
+> -     retval =3D __dentry_path(dentry, buf, buflen);
+> -     if (!IS_ERR(retval) && p)
+> -             *p =3D '/';       /* restore '/' overriden with '\0' */
+> -     return retval;
+> -Elong:
+> -     return ERR_PTR(-ENAMETOOLONG);
+> +     char *p =3D buf + buflen;
+> +
+> +     if (unlikely(d_unlinked(dentry)))
+> +             prepend(&p, &buflen, "//deleted", 10);
+> +     else
+> +             prepend(&p, &buflen, "", 1);
+> +     return __dentry_path(dentry, p, buflen);
+>  }
+>
+>  static void get_fs_root_and_pwd_rcu(struct fs_struct *fs, struct path
+> *root,
 > --
 > 2.11.0
 
