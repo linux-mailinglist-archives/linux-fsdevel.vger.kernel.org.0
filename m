@@ -2,96 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C1F3B3B0B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 05:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA833B3B0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 05:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233045AbhFYDKI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Jun 2021 23:10:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45428 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232973AbhFYDKI (ORCPT
+        id S233075AbhFYDLX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Jun 2021 23:11:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22561 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232973AbhFYDLW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Jun 2021 23:10:08 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FA4CC061574;
-        Thu, 24 Jun 2021 20:07:47 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id h2so11483245edt.3;
-        Thu, 24 Jun 2021 20:07:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UNvtlF232p3EiZr+6FhxyEqOeV41Uro0zH9H/bylNNo=;
-        b=SVAwkIdCwdivOc7XY80cHuqu4FJ70WVLbDDk24GDxPsaatuF4TZMbIBRHVedJt8FXd
-         daksQyOXqPaZNePIhZj5de5mbH71hqEmH7GSOtoQEq3rF048GV0peiVT3q/XIQcqzIhX
-         4Dg0KFTKKTe2/LHo/ZHAOtuDyarPGAjRDKzOCPkRsNcrRTW8WlVoN6HNxdmlyafsIY3h
-         eZUOhaHbA9w42jFwqLwRVKh0lk3NyNVGTglrh6tcHneOhQ/F0HA7HYm8d7voF5tZJVwj
-         RgQjZ9ilx6f8uC6ulBWS5t2QAEp32E5BlwkzSIFolgAgBSOVchhU01El9VJfoNtf5aT8
-         r6pg==
+        Thu, 24 Jun 2021 23:11:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1624590542;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=x2g9lBasApYrM4QFsD5hgHZyz+dwqoNSSbWrkfNZV2I=;
+        b=iaT02gjDN2MRRtiVAwie2VFaySSMUfhFl+tBDA+4/FUu5gNq8qg0+YApq9MZrzh/jeEPOO
+        5CqTeoMzah7s9OU3gZDHbfY1Ci22uVNAl/rV2Ohi8OsEQHwZPy6JkcgkE7alZH7JMKdsCP
+        VxkAw9vR+uCUstkc2VWs/iEvFWl/xuY=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-470-DTvh95xcPQumrmFtJtB7eA-1; Thu, 24 Jun 2021 23:09:00 -0400
+X-MC-Unique: DTvh95xcPQumrmFtJtB7eA-1
+Received: by mail-pf1-f199.google.com with SMTP id 124-20020a6217820000b02902feebfd791eso5238333pfx.19
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jun 2021 20:08:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UNvtlF232p3EiZr+6FhxyEqOeV41Uro0zH9H/bylNNo=;
-        b=inCCzolHKcW+jAxH37Qt/rBXozMpd9eQ0xfH60NlHi8i5x3MfjBGi/c/56+m9jkjmW
-         YkVhFOolrjbUKzgxdrOHnJ/5i4mR1GWMB8bo/MkuA/EioMGvLQAygTsFnuzkRHF19vcY
-         lYlqURJUVEMZbMp28OAoKgAGrT6laA2pgcDWkTMg6RH8xmQuVp+fSNLsB6kAb/mUDnxI
-         zIJieN/mPeN2kp/wfLETP0dQ5CgiPcJOJGu5JIZthfws+o3TQsKlKO7LnYSE1dbcobvl
-         wLvMIHXc+SAS8SSg1QWBjLCyUgo82iObdcfBvxBPQD8/czSXm9Sdib4WjPIVF0qrxsv/
-         U4Pg==
-X-Gm-Message-State: AOAM5308keQI2hvr0w78gESqAppBsc+zUTAkxVEgTXRd3ixAWF3BwtBv
-        S/y5kJBlDw7L/5obXWr1fixx1TqZygirZPyQPP8=
-X-Google-Smtp-Source: ABdhPJzNFJ9BxTwrfnzesjEqhAYBwOZhnTwAFnVTiM9ixuJG8gELz6vC/e8c5ZB5mm7pDn5Ng+oYslTkv397SD9XTm8=
-X-Received: by 2002:a05:6402:1001:: with SMTP id c1mr11496221edu.26.1624590465724;
- Thu, 24 Jun 2021 20:07:45 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=x2g9lBasApYrM4QFsD5hgHZyz+dwqoNSSbWrkfNZV2I=;
+        b=bzirbiSk7biui1j7KOfPZlR+EAe/tAxxlaxcc4a7x37Zu3ZCzA5/fkvmx2FVaG844Y
+         AODoVABgJmbonvDx3bZCgC5d628cd2OhwtnGVfU3HinT8dmzfovJf8sCLjfY/+8V/act
+         AV5gCASLetmue+ombwKFAPkXs4qT1peF9rPLs3h2nzuv1ronb/66DGMHKIPuCWDi4vwv
+         j+DT6leA7lzMl8EfnNZp0AFJEuNVdypi1k15skjI0CleLZJqe7fnASHS/ZUHGPENaoWu
+         H3lv19nwiUSmP3jXbsjQhWEGWgbkU4i1FZcD9L9Hy5yaoQAyPOwZMNYfnRqdGibVYKaF
+         yDpw==
+X-Gm-Message-State: AOAM530gj+BtMNGJHCSn3c2BE0MCGLC/xQwi36tn3VdqADPOm5YCdI/i
+        uiBjMUAmHZCnh0mj7VmqaXy+Ha8nTbwVUoIGMnb8wqYrd4+T/MVZxsCMMNPrdfrqqvaUCmWlR+b
+        JvbL9SDkaH+hyUKeF9P4LusBczg==
+X-Received: by 2002:a17:90a:d302:: with SMTP id p2mr597042pju.186.1624590535438;
+        Thu, 24 Jun 2021 20:08:55 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwSt2a7irPTEnHB75wt/k1DcVWt+k1ibjJ9B3uVz8Ybl5wVpiHcOLL8vV4fUc+onvCWC2yUZA==
+X-Received: by 2002:a17:90a:d302:: with SMTP id p2mr597003pju.186.1624590535223;
+        Thu, 24 Jun 2021 20:08:55 -0700 (PDT)
+Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id z9sm4301129pfc.101.2021.06.24.20.08.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jun 2021 20:08:54 -0700 (PDT)
+Subject: Re: [PATCH v8 09/10] vduse: Introduce VDUSE - vDPA Device in
+ Userspace
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20210615141331.407-1-xieyongji@bytedance.com>
+ <20210615141331.407-10-xieyongji@bytedance.com>
+ <adfb2be9-9ed9-ca37-ac37-4cd00bdff349@redhat.com>
+ <CACycT3tAON+-qZev+9EqyL2XbgH5HDspOqNt3ohQLQ8GqVK=EA@mail.gmail.com>
+ <1bba439f-ffc8-c20e-e8a4-ac73e890c592@redhat.com>
+ <CACycT3uzMJS7vw6MVMOgY4rb=SPfT2srV+8DPdwUVeELEiJgbA@mail.gmail.com>
+ <0aeb7cb7-58e5-1a95-d830-68edd7e8ec2e@redhat.com>
+ <CACycT3uuooKLNnpPHewGZ=q46Fap2P4XCFirdxxn=FxK+X1ECg@mail.gmail.com>
+ <e4cdee72-b6b4-d055-9aac-3beae0e5e3e1@redhat.com>
+ <CACycT3u8=_D3hCtJR+d5BgeUQMce6S7c_6P3CVfvWfYhCQeXFA@mail.gmail.com>
+ <d2334f66-907c-2e9c-ea4f-f912008e9be8@redhat.com>
+ <CACycT3uCSLUDVpQHdrmuxSuoBDg-4n22t+N-Jm2GoNNp9JYB2w@mail.gmail.com>
+ <48cab125-093b-2299-ff9c-3de8c7c5ed3d@redhat.com>
+ <CACycT3tS=10kcUCNGYm=dUZsK+vrHzDvB3FSwAzuJCu3t+QuUQ@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <b10b3916-74d4-3171-db92-be0afb479a1c@redhat.com>
+Date:   Fri, 25 Jun 2021 11:08:42 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <20210416172147.8736-1-cccheng@synology.com>
-In-Reply-To: <20210416172147.8736-1-cccheng@synology.com>
-From:   Chung-Chiang Cheng <shepjeng@gmail.com>
-Date:   Fri, 25 Jun 2021 11:07:34 +0800
-Message-ID: <CAHuHWtkqMeT3UwKH3zMr5j782U9UcwrdjXdqVHLND2MLi8rQKg@mail.gmail.com>
-Subject: Re: [PATCH] hfsplus: report create_date to kstat.btime
-To:     christian.brauner@ubuntu.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jamorris@linux.microsoft.com,
-        axboe@kernel.dk, dhowells@redhat.com,
-        ernesto.mnd.fernandez@gmail.com, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "Synology/Chung-Chiang Cheng" <cccheng@synology.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACycT3tS=10kcUCNGYm=dUZsK+vrHzDvB3FSwAzuJCu3t+QuUQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Chung-Chiang Cheng <cccheng@synology.com>
 
-There's no HFSPLUS maintainer now. Could anyone help to review this
-patch or give feedback?
+在 2021/6/24 下午5:16, Yongji Xie 写道:
+> On Thu, Jun 24, 2021 at 4:14 PM Jason Wang <jasowang@redhat.com> wrote:
+>>
+>> 在 2021/6/24 下午12:46, Yongji Xie 写道:
+>>>> So we need to deal with both FEATURES_OK and reset, but probably not
+>>>> DRIVER_OK.
+>>>>
+>>> OK, I see. Thanks for the explanation. One more question is how about
+>>> clearing the corresponding status bit in get_status() rather than
+>>> making set_status() fail. Since the spec recommends this way for
+>>> validation which is done in virtio_dev_remove() and
+>>> virtio_finalize_features().
+>>>
+>>> Thanks,
+>>> Yongji
+>>>
+>> I think you can. Or it would be even better that we just don't set the
+>> bit during set_status().
+>>
+> Yes, that's what I mean.
+>
+>> I just realize that in vdpa_reset() we had:
+>>
+>> static inline void vdpa_reset(struct vdpa_device *vdev)
+>> {
+>>           const struct vdpa_config_ops *ops = vdev->config;
+>>
+>>           vdev->features_valid = false;
+>>           ops->set_status(vdev, 0);
+>> }
+>>
+>> We probably need to add the synchronization here. E.g re-read with a
+>> timeout.
+>>
+> Looks like the timeout is already in set_status().
 
-On Sat, Apr 17, 2021 at 1:21 AM Chung-Chiang Cheng <shepjeng@gmail.com> wrote:
+
+Do you mean the VDUSE's implementation?
+
+
+>   Do we really need a
+> duplicated one here?
+
+
+1) this is the timeout at the vDPA layer instead of the VDUSE layer.
+2) it really depends on what's the meaning of the timeout for set_status 
+of VDUSE.
+
+Do we want:
+
+2a) for set_status(): relay the message to userspace and wait for the 
+userspace to quiescence the datapath
+
+or
+
+2b) for set_status(): simply relay the message to userspace, reply is no 
+needed. Userspace will use a command to update the status when the 
+datapath is stop. The the status could be fetched via get_stats().
+
+2b looks more spec complaint.
+
+> And how to handle failure? Adding a return value
+> to virtio_config_ops->reset() and passing the error to the upper
+> layer?
+
+
+Something like this.
+
+Thanks
+
+
 >
-> The create_date field of inode in hfsplus is corresponding to kstat.btime
-> and could be reported in statx.
+> Thanks,
+> Yongji
 >
-> Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
-> ---
->  fs/hfsplus/inode.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-> index 078c5c8a5156..aab3388a0fd7 100644
-> --- a/fs/hfsplus/inode.c
-> +++ b/fs/hfsplus/inode.c
-> @@ -278,6 +278,11 @@ int hfsplus_getattr(struct user_namespace *mnt_userns, const struct path *path,
->         struct inode *inode = d_inode(path->dentry);
->         struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
->
-> +       if (request_mask & STATX_BTIME) {
-> +               stat->result_mask |= STATX_BTIME;
-> +               stat->btime = hfsp_mt2ut(hip->create_date);
-> +       }
-> +
->         if (inode->i_flags & S_APPEND)
->                 stat->attributes |= STATX_ATTR_APPEND;
->         if (inode->i_flags & S_IMMUTABLE)
-> --
-> 2.25.1
->
+
