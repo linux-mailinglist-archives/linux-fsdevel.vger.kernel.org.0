@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E94883B4512
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 15:59:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98CF93B4515
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 15:59:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232036AbhFYOBT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Jun 2021 10:01:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33978 "EHLO mail.kernel.org"
+        id S232054AbhFYOBV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Jun 2021 10:01:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231852AbhFYOBH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Jun 2021 10:01:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3508A6197D;
+        id S231864AbhFYOBI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 25 Jun 2021 10:01:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 005066197F;
         Fri, 25 Jun 2021 13:58:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624629526;
-        bh=Lah9SxJ8NeroeUs7Pj9dfd4oj3gkMKIrcEjOXtoc7fc=;
+        s=k20201202; t=1624629527;
+        bh=BEVkNH48JSEBNR3+P+ZCFFrZASdXEZDHz3zykwF6PIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lYdTsbRjCuLgbjUfZIBoXBPcfOS1Gsf5tkMovgLdBLq59H2ZECztNpFgNFrU3haJ2
-         x0MmTmwd6MvqYG/pHEO7EleQfFmKUKRP3eQhcxjIiYBNMOoWd14/3pu3E1cB0GtDUY
-         pbkjB0FBv/mPMg+2H51Yi/B20b9kcBbTMFk1K7l4bHF+IyQmWLAaRh2Llh2tcBm14I
-         SNszRSbRLaeSkMLXu/bagrzggFwk88MnPHqawQW/BdfUBq4fMHpw188aCdeNYAsJpg
-         nIeockOi4SVDte+MDJhOwUV8U0G/dlwjemTkTLckvXaNQ9KWQ7RzImk2xnKCkd2XBH
-         JkAt8Gv1Ot5qg==
+        b=KvH+e8HNEb2WxmDfRl/qjQZpEfLz/I9uDVrOQ1/nTDcD498hlnooX1J6zdu+1QMvY
+         zHO5vmaS0QK1ieYJIFBKdtpkRi4TTvQBrGMvsBnjrEyEkLYqjpA1w5N6xCEyy2hIlE
+         KpxoF4PLdEP3QD4tmdw4C7ryWJZQUC3d8FbH2BEGaEPwqxRk9wWhgYFvhNYSrrAjPO
+         D845234PLjJRzvX3GdKqMN8fYNLqfl3je62BewFRNqURoGiMoAxVhvBvGUH0XXeV2B
+         H7IyEfOaYQSsnSWdtGY9nY9y0jsQN6YWSNzzjgqP1oQbxbmAtV4UKwvG0LEYeSB9jF
+         ulEFSPbNwruQQ==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     lhenriques@suse.de, xiubli@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
         dhowells@redhat.com
-Subject: [RFC PATCH v7 14/24] ceph: make ceph_msdc_build_path use ref-walk
-Date:   Fri, 25 Jun 2021 09:58:24 -0400
-Message-Id: <20210625135834.12934-15-jlayton@kernel.org>
+Subject: [RFC PATCH v7 15/24] ceph: add encrypted fname handling to ceph_mdsc_build_path
+Date:   Fri, 25 Jun 2021 09:58:25 -0400
+Message-Id: <20210625135834.12934-16-jlayton@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210625135834.12934-1-jlayton@kernel.org>
 References: <20210625135834.12934-1-jlayton@kernel.org>
@@ -40,94 +40,254 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Encryption potentially requires allocation, at which point we'll need to
-be in a non-atomic context. Convert ceph_msdc_build_path to take dentry
-spinlocks and references instead of using rcu_read_lock to walk the
-path.
+Allow ceph_mdsc_build_path to encrypt and base64 encode the filename
+when the parent is encrypted and we're sending the path to the MDS.
 
-This is slightly less efficient, and we may want to eventually allow
-using RCU when the leaf dentry isn't encrypted.
+In most cases, we just encrypt the filenames and base64 encode them,
+but when the name is longer than CEPH_NOHASH_NAME_MAX, we use a similar
+scheme to fscrypt proper, and hash the remaning bits with sha256.
+
+When doing this, we then send along the full crypttext of the name in
+the new alternate_name field of the MClientRequest. The MDS can then
+send that along in readdir responses and traces.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/mds_client.c | 35 +++++++++++++++++++----------------
- 1 file changed, 19 insertions(+), 16 deletions(-)
+ fs/ceph/crypto.h     |  15 +++++
+ fs/ceph/mds_client.c | 138 +++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 135 insertions(+), 18 deletions(-)
 
+diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+index bdf1ba47db16..60cc92f25fed 100644
+--- a/fs/ceph/crypto.h
++++ b/fs/ceph/crypto.h
+@@ -6,6 +6,7 @@
+ #ifndef _CEPH_CRYPTO_H
+ #define _CEPH_CRYPTO_H
+ 
++#include <crypto/sha2.h>
+ #include <linux/fscrypt.h>
+ 
+ #define	CEPH_XATTR_NAME_ENCRYPTION_CONTEXT	"encryption.ctx"
+@@ -27,6 +28,20 @@ static inline u32 ceph_fscrypt_auth_size(u32 ctxsize)
+ 	return offsetof(struct ceph_fscrypt_auth, cfa_blob) + ctxsize;
+ }
+ 
++/*
++ * We want to encrypt filenames when creating them, but the encrypted
++ * versions of those names may have illegal characters in them. To mitigate
++ * that, we base64 encode them, but that gives us a result that can exceed
++ * NAME_MAX.
++ *
++ * Follow a similar scheme to fscrypt itself, and cap the filename to a
++ * smaller size. If the cleartext name is longer than the value below, then
++ * sha256 hash the remaining bytes.
++ *
++ * 189 bytes => 252 bytes base64-encoded, which is <= NAME_MAX (255)
++ */
++#define CEPH_NOHASH_NAME_MAX (189 - SHA256_DIGEST_SIZE)
++
+ void ceph_fscrypt_set_ops(struct super_block *sb);
+ 
+ void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc);
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 08710b347c07..5b7872a61ad7 100644
+index 5b7872a61ad7..2692468d2dc4 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -2396,7 +2396,8 @@ static inline  u64 __get_oldest_tid(struct ceph_mds_client *mdsc)
- char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
- 			   int stop_on_nosnap)
+@@ -13,6 +13,7 @@
+ #include <linux/ktime.h>
+ 
+ #include "super.h"
++#include "crypto.h"
+ #include "mds_client.h"
+ 
+ #include <linux/ceph/ceph_features.h>
+@@ -2383,18 +2384,85 @@ static inline  u64 __get_oldest_tid(struct ceph_mds_client *mdsc)
+ 	return mdsc->oldest_tid;
+ }
+ 
+-/*
+- * Build a dentry's path.  Allocate on heap; caller must kfree.  Based
+- * on build_path_from_dentry in fs/cifs/dir.c.
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
++static int encode_encrypted_fname(const struct inode *parent, struct dentry *dentry, char *buf)
++{
++	u32 len;
++	int elen;
++	int ret;
++	u8 *cryptbuf;
++
++	WARN_ON_ONCE(!fscrypt_has_encryption_key(parent));
++
++	/*
++	 * convert cleartext dentry name to ciphertext
++	 * if result is longer than CEPH_NOKEY_NAME_MAX,
++	 * sha256 the remaining bytes
++	 *
++	 * See: fscrypt_setup_filename
++	 */
++	if (!fscrypt_fname_encrypted_size(parent, dentry->d_name.len, NAME_MAX, &len))
++		return -ENAMETOOLONG;
++
++	/* If we have to hash the end, then we need a full-length buffer */
++	if (len > CEPH_NOHASH_NAME_MAX)
++		len = NAME_MAX;
++
++	cryptbuf = kmalloc(len, GFP_KERNEL);
++	if (!cryptbuf)
++		return -ENOMEM;
++
++	ret = fscrypt_fname_encrypt(parent, &dentry->d_name, cryptbuf, len);
++	if (ret) {
++		kfree(cryptbuf);
++		return ret;
++	}
++
++	/* hash the end if the name is long enough */
++	if (len > CEPH_NOHASH_NAME_MAX) {
++		u8 hash[SHA256_DIGEST_SIZE];
++		u8 *extra = cryptbuf + CEPH_NOHASH_NAME_MAX;
++
++		/* hash the extra bytes and overwrite crypttext beyond that point with it */
++		sha256(extra, len - CEPH_NOHASH_NAME_MAX, hash);
++		memcpy(extra, hash, SHA256_DIGEST_SIZE);
++		len = CEPH_NOHASH_NAME_MAX + SHA256_DIGEST_SIZE;
++	}
++
++	/* base64 encode the encrypted name */
++	elen = fscrypt_base64_encode(cryptbuf, len, buf);
++	kfree(cryptbuf);
++	dout("base64-encoded ciphertext name = %.*s\n", len, buf);
++	return elen;
++}
++#else
++static int encode_encrypted_fname(const struct inode *parent, struct dentry *dentry, char *buf)
++{
++	return -EOPNOTSUPP;
++}
++#endif
++
++/**
++ * ceph_mdsc_build_path - build a path string to a given dentry
++ * @dentry: dentry to which path should be built
++ * @plen: returned length of string
++ * @pbase: returned base inode number
++ * @for_wire: is this path going to be sent to the MDS?
++ *
++ * Build a string that represents the path to the dentry. This is mostly called
++ * for two different purposes:
+  *
+- * If @stop_on_nosnap, generate path relative to the first non-snapped
+- * inode.
++ * 1) we need to build a path string to send to the MDS (for_wire == true)
++ * 2) we need a path string for local presentation (e.g. debugfs) (for_wire == false)
++ *
++ * The path is built in reverse, starting with the dentry. Walk back up toward
++ * the root, building the path until the first non-snapped inode is reached (for_wire)
++ * or the root inode is reached (!for_wire).
+  *
+  * Encode hidden .snap dirs as a double /, i.e.
+  *   foo/.snap/bar -> foo//bar
+  */
+-char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+-			   int stop_on_nosnap)
++char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase, int for_wire)
  {
--	struct dentry *temp;
-+	struct dentry *cur;
-+	struct inode *inode;
- 	char *path;
- 	int pos;
- 	unsigned seq;
-@@ -2413,34 +2414,35 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
- 	path[pos] = '\0';
- 
+ 	struct dentry *cur;
+ 	struct inode *inode;
+@@ -2416,30 +2484,65 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
  	seq = read_seqbegin(&rename_lock);
--	rcu_read_lock();
--	temp = dentry;
-+	cur = dget(dentry);
+ 	cur = dget(dentry);
  	for (;;) {
--		struct inode *inode;
-+		struct dentry *temp;
+-		struct dentry *temp;
++		struct dentry *parent;
  
--		spin_lock(&temp->d_lock);
--		inode = d_inode(temp);
-+		spin_lock(&cur->d_lock);
-+		inode = d_inode(cur);
+ 		spin_lock(&cur->d_lock);
+ 		inode = d_inode(cur);
  		if (inode && ceph_snap(inode) == CEPH_SNAPDIR) {
  			dout("build_path path+%d: %p SNAPDIR\n",
--			     pos, temp);
--		} else if (stop_on_nosnap && inode && dentry != temp &&
-+			     pos, cur);
-+		} else if (stop_on_nosnap && inode && dentry != cur &&
- 			   ceph_snap(inode) == CEPH_NOSNAP) {
--			spin_unlock(&temp->d_lock);
+ 			     pos, cur);
+-		} else if (stop_on_nosnap && inode && dentry != cur &&
+-			   ceph_snap(inode) == CEPH_NOSNAP) {
 +			spin_unlock(&cur->d_lock);
++			parent = dget_parent(cur);
++		} else if (for_wire && inode && dentry != cur && ceph_snap(inode) == CEPH_NOSNAP) {
+ 			spin_unlock(&cur->d_lock);
  			pos++; /* get rid of any prepended '/' */
  			break;
- 		} else {
--			pos -= temp->d_name.len;
-+			pos -= cur->d_name.len;
+-		} else {
++		} else if (!for_wire || !IS_ENCRYPTED(d_inode(cur->d_parent))) {
+ 			pos -= cur->d_name.len;
  			if (pos < 0) {
--				spin_unlock(&temp->d_lock);
-+				spin_unlock(&cur->d_lock);
+ 				spin_unlock(&cur->d_lock);
  				break;
  			}
--			memcpy(path + pos, temp->d_name.name, temp->d_name.len);
-+			memcpy(path + pos, cur->d_name.name, cur->d_name.len);
+ 			memcpy(path + pos, cur->d_name.name, cur->d_name.len);
++			spin_unlock(&cur->d_lock);
++			parent = dget_parent(cur);
++		} else {
++			int len, ret;
++			char buf[FSCRYPT_BASE64_CHARS(NAME_MAX)];
++
++			/*
++			 * Proactively copy name into buf, in case we need to present
++			 * it as-is.
++			 */
++			memcpy(buf, cur->d_name.name, cur->d_name.len);
++			len = cur->d_name.len;
++			spin_unlock(&cur->d_lock);
++			parent = dget_parent(cur);
++
++			ret = __fscrypt_prepare_readdir(d_inode(parent));
++			if (ret < 0) {
++				dput(parent);
++				dput(cur);
++				return ERR_PTR(ret);
++			}
++
++			if (fscrypt_has_encryption_key(d_inode(parent))) {
++				len = encode_encrypted_fname(d_inode(parent), cur, buf);
++				if (len < 0) {
++					dput(parent);
++					dput(cur);
++					return ERR_PTR(len);
++				}
++			}
++			pos -= len;
++			if (pos < 0) {
++				dput(parent);
++				break;
++			}
++			memcpy(path + pos, buf, len);
  		}
-+		temp = cur;
- 		spin_unlock(&temp->d_lock);
--		temp = READ_ONCE(temp->d_parent);
-+		cur = dget_parent(temp);
-+		dput(temp);
+-		temp = cur;
+-		spin_unlock(&temp->d_lock);
+-		cur = dget_parent(temp);
+-		dput(temp);
++		dput(cur);
++		cur = parent;
  
  		/* Are we at the root? */
--		if (IS_ROOT(temp))
-+		if (IS_ROOT(cur))
- 			break;
- 
- 		/* Are we out of buffer? */
-@@ -2449,8 +2451,9 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
- 
- 		path[pos] = '/';
- 	}
--	base = ceph_ino(d_inode(temp));
--	rcu_read_unlock();
-+	inode = d_inode(cur);
-+	base = inode ? ceph_ino(inode) : 0;
-+	dput(cur);
- 
- 	if (read_seqretry(&rename_lock, seq))
+ 		if (IS_ROOT(cur))
+@@ -2463,8 +2566,7 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+ 		 * A rename didn't occur, but somehow we didn't end up where
+ 		 * we thought we would. Throw a warning and try again.
+ 		 */
+-		pr_warn("build_path did not end path lookup where "
+-			"expected, pos is %d\n", pos);
++		pr_warn("build_path did not end path lookup where expected (pos = %d)\n", pos);
  		goto retry;
+ 	}
+ 
+@@ -2484,7 +2586,7 @@ static int build_dentry_path(struct dentry *dentry, struct inode *dir,
+ 	rcu_read_lock();
+ 	if (!dir)
+ 		dir = d_inode_rcu(dentry->d_parent);
+-	if (dir && parent_locked && ceph_snap(dir) == CEPH_NOSNAP) {
++	if (dir && parent_locked && ceph_snap(dir) == CEPH_NOSNAP && !IS_ENCRYPTED(dir)) {
+ 		*pino = ceph_ino(dir);
+ 		rcu_read_unlock();
+ 		*ppath = dentry->d_name.name;
 -- 
 2.31.1
 
