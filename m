@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B68B13B44ED
+	by mail.lfdr.de (Postfix) with ESMTP id C70003B44EE
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jun 2021 15:58:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229573AbhFYOA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Jun 2021 10:00:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60942 "EHLO mail.kernel.org"
+        id S231597AbhFYOBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Jun 2021 10:01:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229890AbhFYOA5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S231215AbhFYOA5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 25 Jun 2021 10:00:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DC2DF61956;
-        Fri, 25 Jun 2021 13:58:35 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BA5B56197C;
+        Fri, 25 Jun 2021 13:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624629516;
-        bh=yCNNKLVqbExFzsrwpKfzckRntYEGnKYJ3zcgAvD6uYE=;
+        s=k20201202; t=1624629517;
+        bh=9ZV+dp80mshXypGX/qNEFhBN7oqDNHcc+7LrhuPBANE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EHf9n+EByZ1REM/3HkUiwFf0CCLnLs+lX2mvC5VPvPCFvSSJ9RSokFPaI0dIrW64W
-         est1bUAqT/hAEwg3W7v2i7nSl4iWpGl+CR4scrhzfHoJNSccn2XOZBAUfO5sWrkgb0
-         kHdXNGjfVnWhiQWedjPMoF42RJ5YIQXXxEStrazKG69V1WGr1dYwBGevO99hoS3hWN
-         WFkRdM0j/YGQkenEe5tPi/4+nSUw5/nkehMIg91czvAN38q+LjVvj225z4saX6lvia
-         DUAhtdSZmtwRulASbf9SSvM0ajGuHdd2ZJGbIHXGntYqb3pJWA+u+u37XcKCjtzODL
-         z50azdah/CIdQ==
+        b=Nssjp0Kry9pdTXU6VrXmcVrK4XxTOzKb5r3ozFUt9Jl0x2rWqT71gS4g3KLXdTCzK
+         K7xxeX0OGgGunz34sgTksoFgWAmqreBpJOPIIXecdaLzyoFKNNfwKSSyH6V98Qaelb
+         YuW146g5i2GWiBykRRS9Mwi9HBG3cVclOx0FoWKMGMfrfxNS/PEr5mDCW0XpS7wkYK
+         xxQaEEyCt5SmVdgP4Jemo7NFCLbqzAZ3cEilLhg6UN2l4AQn0CnqieiTJf87hNTG/P
+         O6kkkjIBqYfxFWQ6pdP6B9ivcLSIvXn9s321TAKqJ6fRy7Zzr0FvPGbsYuGvqJU6Ap
+         yZ1ADd41LP5Lw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     lhenriques@suse.de, xiubli@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [RFC PATCH v7 01/24] vfs: export new_inode_pseudo
-Date:   Fri, 25 Jun 2021 09:58:11 -0400
-Message-Id: <20210625135834.12934-2-jlayton@kernel.org>
+        dhowells@redhat.com
+Subject: [RFC PATCH v7 02/24] fscrypt: export fscrypt_base64_encode and fscrypt_base64_decode
+Date:   Fri, 25 Jun 2021 09:58:12 -0400
+Message-Id: <20210625135834.12934-3-jlayton@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210625135834.12934-1-jlayton@kernel.org>
 References: <20210625135834.12934-1-jlayton@kernel.org>
@@ -40,37 +40,153 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ceph needs to be able to allocate inodes ahead of a create that might
-involve a fscrypt-encrypted inode. new_inode() almost fits the bill,
-but it puts the inode on the sb->s_inodes list and when we go to hash
-it, that might be done again.
+Ceph is going to add fscrypt support, but we still want encrypted
+filenames to be composed of printable characters, so we can maintain
+compatibility with clients that don't support fscrypt.
 
-We could work around that by setting I_CREATING on the new inode, but
-that causes ilookup5 to return -ESTALE if something tries to find it
-before I_NEW is cleared. This is desirable behavior for most
-filesystems, but doesn't work for ceph.
+We could just adopt fscrypt's current nokey name format, but that is
+subject to change in the future, and it also contains dirhash fields
+that we don't need for cephfs. Because of this, we're going to concoct
+our own scheme for encoding encrypted filenames. It's very similar to
+fscrypt's current scheme, but doesn't bother with the dirhash fields.
 
-To work around all of this, just use new_inode_pseudo which doesn't add
-it to the sb->s_inodes list.
+The ceph encoding scheme will use base64 encoding as well, and we also
+want it to avoid characters that are illegal in filenames. Export the
+fscrypt base64 encoding/decoding routines so we can use them in ceph's
+fscrypt implementation.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/inode.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/crypto/fname.c       | 34 ++++++++++++++++++++++++----------
+ include/linux/fscrypt.h |  5 +++++
+ 2 files changed, 29 insertions(+), 10 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index c93500d84264..cf9ea4b260b0 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -941,6 +941,7 @@ struct inode *new_inode_pseudo(struct super_block *sb)
- 	}
- 	return inode;
- }
-+EXPORT_SYMBOL(new_inode_pseudo);
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index 6ca7d16593ff..32b1f50433ba 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -178,10 +178,8 @@ static int fname_decrypt(const struct inode *inode,
+ static const char lookup_table[65] =
+ 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
  
+-#define BASE64_CHARS(nbytes)	DIV_ROUND_UP((nbytes) * 4, 3)
+-
  /**
-  *	new_inode 	- obtain an inode
+- * base64_encode() - base64-encode some bytes
++ * fscrypt_base64_encode() - base64-encode some bytes
+  * @src: the bytes to encode
+  * @len: number of bytes to encode
+  * @dst: (output) the base64-encoded string.  Not NUL-terminated.
+@@ -191,7 +189,7 @@ static const char lookup_table[65] =
+  *
+  * Return: length of the encoded string
+  */
+-static int base64_encode(const u8 *src, int len, char *dst)
++int fscrypt_base64_encode(const u8 *src, int len, char *dst)
+ {
+ 	int i, bits = 0, ac = 0;
+ 	char *cp = dst;
+@@ -209,8 +207,20 @@ static int base64_encode(const u8 *src, int len, char *dst)
+ 		*cp++ = lookup_table[ac & 0x3f];
+ 	return cp - dst;
+ }
++EXPORT_SYMBOL(fscrypt_base64_encode);
+ 
+-static int base64_decode(const char *src, int len, u8 *dst)
++/**
++ * fscrypt_base64_decode() - base64-decode some bytes
++ * @src: the bytes to decode
++ * @len: number of bytes to decode
++ * @dst: (output) decoded binary data
++ *
++ * Decode an input string that was previously encoded using
++ * fscrypt_base64_encode.
++ *
++ * Return: length of the decoded binary data
++ */
++int fscrypt_base64_decode(const char *src, int len, u8 *dst)
+ {
+ 	int i, bits = 0, ac = 0;
+ 	const char *p;
+@@ -232,6 +242,7 @@ static int base64_decode(const char *src, int len, u8 *dst)
+ 		return -1;
+ 	return cp - dst;
+ }
++EXPORT_SYMBOL(fscrypt_base64_decode);
+ 
+ bool fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
+ 				  u32 orig_len, u32 max_len,
+@@ -263,8 +274,9 @@ bool fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
+ int fscrypt_fname_alloc_buffer(u32 max_encrypted_len,
+ 			       struct fscrypt_str *crypto_str)
+ {
+-	const u32 max_encoded_len = BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX);
+ 	u32 max_presented_len;
++	const u32 max_encoded_len =
++		FSCRYPT_BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX);
+ 
+ 	max_presented_len = max(max_encoded_len, max_encrypted_len);
+ 
+@@ -342,7 +354,7 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ 		     offsetof(struct fscrypt_nokey_name, bytes));
+ 	BUILD_BUG_ON(offsetofend(struct fscrypt_nokey_name, bytes) !=
+ 		     offsetof(struct fscrypt_nokey_name, sha256));
+-	BUILD_BUG_ON(BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX) > NAME_MAX);
++	BUILD_BUG_ON(FSCRYPT_BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX) > NAME_MAX);
+ 
+ 	if (hash) {
+ 		nokey_name.dirhash[0] = hash;
+@@ -362,7 +374,8 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ 		       nokey_name.sha256);
+ 		size = FSCRYPT_NOKEY_NAME_MAX;
+ 	}
+-	oname->len = base64_encode((const u8 *)&nokey_name, size, oname->name);
++	oname->len = fscrypt_base64_encode((const u8 *)&nokey_name, size,
++					   oname->name);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(fscrypt_fname_disk_to_usr);
+@@ -436,14 +449,15 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
+ 	 * user-supplied name
+ 	 */
+ 
+-	if (iname->len > BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX))
++	if (iname->len > FSCRYPT_BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX))
+ 		return -ENOENT;
+ 
+ 	fname->crypto_buf.name = kmalloc(FSCRYPT_NOKEY_NAME_MAX, GFP_KERNEL);
+ 	if (fname->crypto_buf.name == NULL)
+ 		return -ENOMEM;
+ 
+-	ret = base64_decode(iname->name, iname->len, fname->crypto_buf.name);
++	ret = fscrypt_base64_decode(iname->name, iname->len,
++				    fname->crypto_buf.name);
+ 	if (ret < (int)offsetof(struct fscrypt_nokey_name, bytes[1]) ||
+ 	    (ret > offsetof(struct fscrypt_nokey_name, sha256) &&
+ 	     ret != FSCRYPT_NOKEY_NAME_MAX)) {
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 2ea1387bb497..e300f6145ddc 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -46,6 +46,9 @@ struct fscrypt_name {
+ /* Maximum value for the third parameter of fscrypt_operations.set_context(). */
+ #define FSCRYPT_SET_CONTEXT_MAX_SIZE	40
+ 
++/* Calculate worst-case base64 encoding inflation */
++#define FSCRYPT_BASE64_CHARS(nbytes)	DIV_ROUND_UP((nbytes) * 4, 3)
++
+ #ifdef CONFIG_FS_ENCRYPTION
+ /*
+  * fscrypt superblock flags
+@@ -207,6 +210,8 @@ void fscrypt_free_inode(struct inode *inode);
+ int fscrypt_drop_inode(struct inode *inode);
+ 
+ /* fname.c */
++int fscrypt_base64_encode(const u8 *src, int len, char *dst);
++int fscrypt_base64_decode(const char *src, int len, u8 *dst);
+ int fscrypt_setup_filename(struct inode *inode, const struct qstr *iname,
+ 			   int lookup, struct fscrypt_name *fname);
+ 
 -- 
 2.31.1
 
