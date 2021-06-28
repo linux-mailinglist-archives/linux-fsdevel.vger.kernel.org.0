@@ -2,62 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B73933B6701
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 18:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CF7B3B671F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 18:56:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231948AbhF1Qxf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Jun 2021 12:53:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39926 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231918AbhF1Qxe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Jun 2021 12:53:34 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68890C061574;
-        Mon, 28 Jun 2021 09:51:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6jOe7QTRNMP5xH4FY0Zc/Ud/5ESHtYwEOMpkxWcLIPc=; b=qhc5oKFc3JSPo9was/RPdC2Jwv
-        WQgI+Eo+NVClb+IhpPEsFI+xMgMkU/HB4iMbwV3CfSWfw66lQjIXMRw2bKH8/pOVmXO/1WVuseokp
-        Aamut+g+x6aNDsPkEWNy2uyNP2/W3mPREsF+Uv701/auYMiRi0cPkyAgBKJtmA5dP6e099I3D0qly
-        3n4IG7/0U83eNyEQqB5mq/LiDphi7w+DHr1K7qFpBWMF0aj00tZVn1JSldqno7S0kQxSJTUQk9gtz
-        MRVc05Oa/cH6N+Fs54lyLifjA43HXHKLqGqDjEwOLHhe1apKxmDUNEjCKYRGB/smhzTrKv3ervrHa
-        9QYbUVew==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lxuSp-003GGO-UR; Mon, 28 Jun 2021 16:50:44 +0000
-Date:   Mon, 28 Jun 2021 17:50:27 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 6/6] btrfs: use the filemap_fdatawrite_wbc helper for
- delalloc shrinking
-Message-ID: <YNn90xi1imSwCDr/@infradead.org>
-References: <cover.1624894102.git.josef@toxicpanda.com>
- <2acb56dd851d31d7b5547099821f0cbf6dfb5d29.1624894102.git.josef@toxicpanda.com>
+        id S232075AbhF1Q7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Jun 2021 12:59:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231848AbhF1Q7L (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 28 Jun 2021 12:59:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DB87B61988;
+        Mon, 28 Jun 2021 16:56:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624899406;
+        bh=JEH9YvkX1tuS2gUabFZ9JaX5r+EudDtnu4dkjX3MpYc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=vNj8RwCa5/BCXX2jdMugsk8BK+T6K04e/v9FzgdrgzJaJ9GUpOdsfeYfV0SOb63iX
+         KL7IPMD4GPZmublCVb4UFA6hyl43mf6EeUErmU0R5DSBZP8BpQQ3r/bi8FSTh4e2gi
+         NczpLPJDkY4I7g5pwR5imkna4VDn+nml2cM8AI54Eaw7VJd9H1CzYcZtqiaY8yuuv4
+         9YSKJ1bXlhjcDEYskWqkVZVg3TCMvoZ2G7Yk1FXZEZsYG9/wJi1HK81jf3n6hopI8B
+         h1HzZaMto30+F+Mb6UVEy/e+wEUaIXQHnMrDpal9oWPMhdeUAJdxfKafRcZMG20Dq6
+         zNbaGKfd6Ai1Q==
+Date:   Mon, 28 Jun 2021 09:56:44 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] fscrypt updates for 5.14
+Message-ID: <YNn/TL5lW44yAx3o@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2acb56dd851d31d7b5547099821f0cbf6dfb5d29.1624894102.git.josef@toxicpanda.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 28, 2021 at 11:37:11AM -0400, Josef Bacik wrote:
-> sync_inode() has some holes that can cause problems if we're under heavy
-> ENOSPC pressure.  If there's writeback running on a separate thread
-> sync_inode() will skip writing the inode altogether.  What we really
-> want is to make sure writeback has been started on all the pages to make
-> sure we can see the ordered extents and wait on them if appropriate.
-> Switch to this new helper which will allow us to accomplish this and
-> avoid ENOSPC'ing early.
+The following changes since commit c4681547bcce777daf576925a966ffa824edd09d:
 
-The only other exported user of sync_inode is in btrfs as well.  What
-is the difference vs this caller?  Mostly I'd like to kill sync_inode
-to reduce the surface of different hooks into the writeback code, and
-for something externally callable your new filemap_fdatawrite_wbc
-helpers looks nassively preferable of sync_inode /
-writeback_single_inode.
+  Linux 5.13-rc3 (2021-05-23 11:42:48 -1000)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
+
+for you to fetch changes up to 2fc2b430f559fdf32d5d1dd5ceaa40e12fb77bdf:
+
+  fscrypt: fix derivation of SipHash keys on big endian CPUs (2021-06-05 00:52:52 -0700)
+
+----------------------------------------------------------------
+
+A couple bug fixes for fs/crypto/:
+
+- Fix handling of major dirhash values that happen to be 0.
+
+- Fix cases where keys were derived differently on big endian systems
+  than on little endian systems (affecting some newer features only).
+
+----------------------------------------------------------------
+Eric Biggers (2):
+      fscrypt: don't ignore minor_hash when hash is 0
+      fscrypt: fix derivation of SipHash keys on big endian CPUs
+
+ fs/crypto/fname.c    | 10 +++-------
+ fs/crypto/keysetup.c | 40 ++++++++++++++++++++++++++++++++--------
+ 2 files changed, 35 insertions(+), 15 deletions(-)
