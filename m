@@ -2,117 +2,252 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 929083B5A5F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 10:17:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 867073B5AE7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 11:06:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232353AbhF1IUG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Jun 2021 04:20:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37760 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232214AbhF1IUF (ORCPT
+        id S232450AbhF1JJH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Jun 2021 05:09:07 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:56948 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232329AbhF1JJG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Jun 2021 04:20:05 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFAC4C061574;
-        Mon, 28 Jun 2021 01:17:39 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id s129so17173956ybf.3;
-        Mon, 28 Jun 2021 01:17:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Yo16IDYfLCJaIiPuLbVJvnGRWIBfolcZOU6h46YyfGQ=;
-        b=esqPMpYcn0FwzcmXMosCraGTbDEEtgLS3Kk+5b3jhRRx2E8yr/l75lhI6XpWf4ufgK
-         PfgX4m5s1L5weoQl07lN9AeIAyUICIR1bYTXPi7mVzpXSyHFg3hoaVYl249/0Y+zpxwe
-         iSre8nHXQBPTxqU7Ti78iu8TaSEZHIvahJEVbpF1GqXODZItqJK/cEHAHTEqOAYs15dG
-         t+v4kW2M8HViSFfjx9ygh0CkbWlBTU/82w3lrmbTt27/S2jcAtXMndiSYDimrYipTSV1
-         Uewsw3dkhHrTUXuvdbXh2FlVanPKHuwCUhyOY2JVhu5LebAYQD1XeO+iYq5M9Lunefi0
-         Zhzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Yo16IDYfLCJaIiPuLbVJvnGRWIBfolcZOU6h46YyfGQ=;
-        b=Q7uZs9Jgjc5YInhkq+NXCzl5fWhy01v6ZfftIxfk8WbvOfyscIjadNeKEZbHhIpN6J
-         3B48r/O+zKMhlz3JCHYBT4M6J1Y0JyUbOqw0F4NSr4H3mFbCGSHEbHXPkxuP7KYyz5n2
-         dFvacvXvgrQkvaWxN4Chl77qze4rBbY8eA17gXgfgWjmfEe50TMJGu1S8qN8SsRzVd3S
-         SQ1jkMMUUZdalIM2NrTjapHfoBU7ciFenflgaLnighQxKHW7hSXBvFpa20JyI+Cl21bZ
-         hxpYJqjaGf0KlVZecstttUI7BELEV3I0R+s5Fxy9oydDj1phTWwPUS1bzNFEM2f/JS9N
-         QO0Q==
-X-Gm-Message-State: AOAM5329cZ8OziO1KLMYKC0A/JGDILFtf6A/H7jY6rxZicwRFwXi31CF
-        N43Iy4tM3nTMkj0fr5fGbzZhWMPtcPYo509Qboc=
-X-Google-Smtp-Source: ABdhPJy2+pxpN9SEIxsnEteIg8UurGygQQUGqTkh4l0imOxBda4al3rNY941xvLqKsPc1C9NqmZDEf0L68RKy74Dbmg=
-X-Received: by 2002:a5b:ac1:: with SMTP id a1mr32397929ybr.289.1624868259191;
- Mon, 28 Jun 2021 01:17:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210603051836.2614535-1-dkadashev@gmail.com> <20210603051836.2614535-3-dkadashev@gmail.com>
- <c079182e-7118-825e-84e5-13227a3b19b9@gmail.com> <4c0344d8-6725-84a6-b0a8-271587d7e604@gmail.com>
- <CAOKbgA4ZwzUxyRxWrF7iC2sNVnEwXXAmrxVSsSxBMQRe2OyYVQ@mail.gmail.com>
- <15a9d84b-61df-e2af-0c79-75b54d4bae8f@gmail.com> <CAOKbgA4DCGANRGfsHw0SqmyRr4A4gYfwZ6WFXpOFdf_bE2b+Yw@mail.gmail.com>
- <b6ae2481-3607-d9f8-b543-bb922b726b3a@gmail.com>
-In-Reply-To: <b6ae2481-3607-d9f8-b543-bb922b726b3a@gmail.com>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Mon, 28 Jun 2021 15:17:28 +0700
-Message-ID: <CAOKbgA6va=89pLayQgC20QvPeTE0Tp-+TmgJLKy+O2KKw8dUBg@mail.gmail.com>
-Subject: Re: [PATCH v5 02/10] io_uring: add support for IORING_OP_MKDIRAT
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+        Mon, 28 Jun 2021 05:09:06 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 210F020237;
+        Mon, 28 Jun 2021 09:06:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1624871200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=BhGvCEpkVZywJS343m5vqWq8ImMUiwm2JU9sNziZH8c=;
+        b=cSEN3S4EIkcrsvwhNFt7a4VDpxjrc8i9FT5YrYxVHEWuk9GaGNPwBD3FtmgWJzYrF6Qmgm
+        /el2dxPFcWB/SGsQaaLbcjDoZZ7LZardysUkSyVXnlG+OUhbPG2nss3TXDEC4NvohvDxTR
+        4cGXoGEO1EfwRFsZFn6Yrx4/DNLko+I=
+Received: from suse.cz (unknown [10.100.224.162])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id A626DA3B8E;
+        Mon, 28 Jun 2021 09:06:39 +0000 (UTC)
+Date:   Mon, 28 Jun 2021 11:06:39 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Justin He <Justin.He@arm.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, nd <nd@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 1/4] fs: introduce helper d_path_unsafe()
+Message-ID: <YNmRH3K4j+ZadHVw@alley>
+References: <20210623055011.22916-1-justin.he@arm.com>
+ <20210623055011.22916-2-justin.he@arm.com>
+ <AM6PR08MB43762FF7E76E4C7A0CD36314F7039@AM6PR08MB4376.eurprd08.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM6PR08MB43762FF7E76E4C7A0CD36314F7039@AM6PR08MB4376.eurprd08.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 24, 2021 at 7:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->
-> On 6/24/21 12:11 PM, Dmitry Kadashev wrote:
-> > On Wed, Jun 23, 2021 at 6:54 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >>
-> >> On 6/23/21 7:41 AM, Dmitry Kadashev wrote:
-> >>> I'd imagine READ_ONCE is to be used in those checks though, isn't it? Some of
-> >>> the existing checks like this lack it too btw. I suppose I can fix those in a
-> >>> separate commit if that makes sense.
-> >>
-> >> When we really use a field there should be a READ_ONCE(),
-> >> but I wouldn't care about those we check for compatibility
-> >> reasons, but that's only my opinion.
-> >
-> > I'm not sure how the compatibility check reads are special. The code is
-> > either correct or not. If a compatibility check has correctness problems
-> > then it's pretty much as bad as any other part of the code having such
-> > problems, no?
->
-> If it reads and verifies a values first, e.g. index into some internal
-> array, and then compiler plays a joke and reloads it, we might be
-> absolutely screwed expecting 'segfaults', kernel data leakages and all
-> the fun stuff.
->
-> If that's a compatibility check, whether it's loaded earlier or later,
-> or whatever, it's not a big deal, the userspace can in any case change
-> the memory at any moment it wishes, even tightly around the moment
-> we're reading it.
+On Mon 2021-06-28 05:13:51, Justin He wrote:
+> Hi Andy, Petr
+> 
+> > -----Original Message-----
+> > From: Jia He <justin.he@arm.com>
+> > Sent: Wednesday, June 23, 2021 1:50 PM
+> > To: Petr Mladek <pmladek@suse.com>; Steven Rostedt <rostedt@goodmis.org>;
+> > Sergey Senozhatsky <senozhatsky@chromium.org>; Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com>; Rasmus Villemoes
+> > <linux@rasmusvillemoes.dk>; Jonathan Corbet <corbet@lwn.net>; Alexander
+> > Viro <viro@zeniv.linux.org.uk>; Linus Torvalds <torvalds@linux-
+> > foundation.org>
+> > Cc: Peter Zijlstra (Intel) <peterz@infradead.org>; Eric Biggers
+> > <ebiggers@google.com>; Ahmed S. Darwish <a.darwish@linutronix.de>; linux-
+> > doc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > fsdevel@vger.kernel.org; Matthew Wilcox <willy@infradead.org>; Christoph
+> > Hellwig <hch@infradead.org>; nd <nd@arm.com>; Justin He <Justin.He@arm.com>
+> > Subject: [PATCH v2 1/4] fs: introduce helper d_path_unsafe()
+> > 
+> > This helper is similar to d_path() except that it doesn't take any
+> > seqlock/spinlock. It is typical for debugging purposes. Besides,
+> > an additional return value *prenpend_len* is used to get the full
+> > path length of the dentry, ingoring the tail '\0'.
+> > the full path length = end - buf - prepend_length - 1.
+> > 
+> > Previously it will skip the prepend_name() loop at once in
+> > __prepen_path() when the buffer length is not enough or even negative.
+> > prepend_name_with_len() will get the full length of dentry name
+> > together with the parent recursively regardless of the buffer length.
+> > 
+> > Suggested-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Jia He <justin.he@arm.com>
+> > ---
+> >  fs/d_path.c            | 122 ++++++++++++++++++++++++++++++++++++++---
+> >  include/linux/dcache.h |   1 +
+> >  2 files changed, 116 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/fs/d_path.c b/fs/d_path.c
+> > index 23a53f7b5c71..7a3ea88f8c5c 100644
+> > --- a/fs/d_path.c
+> > +++ b/fs/d_path.c
+> > @@ -33,9 +33,8 @@ static void prepend(struct prepend_buffer *p, const char
+> > *str, int namelen)
+> > 
+> >  /**
+> >   * prepend_name - prepend a pathname in front of current buffer pointer
+> > - * @buffer: buffer pointer
+> > - * @buflen: allocated length of the buffer
+> > - * @name:   name string and length qstr structure
+> > + * @p: prepend buffer which contains buffer pointer and allocated length
+> > + * @name: name string and length qstr structure
+> >   *
+> >   * With RCU path tracing, it may race with d_move(). Use READ_ONCE() to
+> >   * make sure that either the old or the new name pointer and length are
+> > @@ -68,9 +67,84 @@ static bool prepend_name(struct prepend_buffer *p,
+> > const struct qstr *name)
+> >  	return true;
+> >  }
+> > 
+> > +/**
+> > + * prepend_name_with_len - prepend a pathname in front of current buffer
+> > + * pointer with limited orig_buflen.
+> > + * @p: prepend buffer which contains buffer pointer and allocated length
+> > + * @name: name string and length qstr structure
+> > + * @orig_buflen: original length of the buffer
+> > + *
+> > + * p.ptr is updated each time when prepends dentry name and its parent.
+> > + * Given the orginal buffer length might be less than name string, the
+> > + * dentry name can be moved or truncated. Returns at once if !buf or
+> > + * original length is not positive to avoid memory copy.
+> > + *
+> > + * Load acquire is needed to make sure that we see that terminating NUL,
+> > + * which is similar to prepend_name().
+> > + */
+> > +static bool prepend_name_with_len(struct prepend_buffer *p,
+> > +				  const struct qstr *name, int orig_buflen)
+> > +{
+> > +	const char *dname = smp_load_acquire(&name->name); /* ^^^ */
+> > +	int dlen = READ_ONCE(name->len);
+> > +	char *s;
+> > +	int last_len = p->len;
+> > +
+> > +	p->len -= dlen + 1;
+> > +
+> > +	if (unlikely(!p->buf))
+> > +		return false;
+> > +
+> > +	if (orig_buflen <= 0)
+> > +		return false;
+> > +
+> > +	/*
+> > +	 * The first time we overflow the buffer. Then fill the string
+> > +	 * partially from the beginning
+> > +	 */
+> > +	if (unlikely(p->len < 0)) {
+> > +		int buflen = strlen(p->buf);
+> > +
+> > +		/* memcpy src */
+> > +		s = p->buf;
+> > +
+> > +		/* Still have small space to fill partially */
+> > +		if (last_len > 0) {
+> > +			p->buf -= last_len;
+> > +			buflen += last_len;
+> > +		}
+> > +
+> > +		if (buflen > dlen + 1) {
+> > +			/* Dentry name can be fully filled */
+> > +			memmove(p->buf + dlen + 1, s, buflen - dlen - 1);
+> > +			p->buf[0] = '/';
+> > +			memcpy(p->buf + 1, dname, dlen);
+> > +		} else if (buflen > 0) {
+> > +			/* Can be partially filled, and drop last dentry */
+> > +			p->buf[0] = '/';
+> > +			memcpy(p->buf + 1, dname, buflen - 1);
+> > +		}
+> > +
+> > +		return false;
+> > +	}
+> > +
+> > +	s = p->buf -= dlen + 1;
+> > +	*s++ = '/';
+> > +	while (dlen--) {
+> > +		char c = *dname++;
+> > +
+> > +		if (!c)
+> > +			break;
+> > +		*s++ = c;
+> > +	}
+> > +	return true;
+> > +}
+> > +
+> >  static int __prepend_path(const struct dentry *dentry, const struct mount
+> > *mnt,
+> >  			  const struct path *root, struct prepend_buffer *p)
+> >  {
+> > +	int orig_buflen = p->len;
+> > +
+> >  	while (dentry != root->dentry || &mnt->mnt != root->mnt) {
+> >  		const struct dentry *parent = READ_ONCE(dentry->d_parent);
+> > 
+> > @@ -97,8 +171,7 @@ static int __prepend_path(const struct dentry *dentry,
+> > const struct mount *mnt,
+> >  			return 3;
+> > 
+> >  		prefetch(parent);
+> > -		if (!prepend_name(p, &dentry->d_name))
+> > -			break;
+> > +		prepend_name_with_len(p, &dentry->d_name, orig_buflen);
+> 
+> I have new concern here.
+> Previously,  __prepend_path() would break the loop at once when p.len<0.
+> And the return value of __prepend_path() was 0.
+> The caller of prepend_path() would typically check as follows:
+>   if (prepend_path(...) > 0)
+>   	do_sth();
+> 
+> After I replaced prepend_name() with prepend_name_with_len(),
+> the return value of prepend_path() is possibly positive
+> together with p.len<0. The behavior is different from previous.
 
-Sorry for the slow reply, I have to balance this with my actual job that
-is not directly related to the kernel development :)
+I do not feel qualified to make decision here.I do not have enough
+experience with this code.
 
-I'm no kernel concurrency expert (actually I'm not any kind of kernel
-expert), but my understanding is READ_ONCE does not just mean "do not
-read more than once", but rather "read exactly once" (and more than
-that), and if it's not applied then the compiler is within its rights to
-optimize the read out, so the compatibility check can effectively be
-disabled.
+Anyway, the new behavior looks correct to me. The return values
+1, 2, 3 mean that there was something wrong with the path. The
+new code checks the entire path which looks correct to me.
 
-I don't think it's likely to happen, but "bad things do not happen in
-practice" and "it is technically correct" are two different things :)
+We only need to make sure that all callers handle this correctly.
+Both __prepend_path() and prepend_path() are static so that
+the scope is well defined.
 
-FWIW I'm not arguing it has to be changed, I just want to understand
-things better (and if it helps to spot a bug at some point then great).
-So if my reasoning is wrong then please point out where. And if it's
-just the simplicity / clarity of the code that is the goal here and any
-negative effects are considered to be unlikely then it's OK, I can
-understand that.
+If I did not miss something, all callers handle this correctly:
 
--- 
-Dmitry Kadashev
+   + __d_patch() ignores buf when prepend_patch() > 0
+
+   + d_absolute_path() and d_path() use extract_string(). It ignores
+     the buffer when p->len < 0
+
+   + SYSCALL_DEFINE2(getcwd, char __user *, buf, unsigned long, size)
+     ignores the path as well. It is less obvious because it is done
+     this way:
+
+		len = PATH_MAX - b.len;
+		if (unlikely(len > PATH_MAX))
+			error = -ENAMETOOLONG;
+
+     The condition (len > PATH_MAX) is true when b.len is negative.
+
+
+Best Regards,
+Petr
