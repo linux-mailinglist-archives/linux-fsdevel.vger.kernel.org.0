@@ -2,136 +2,453 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9C7D3B586D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 06:40:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 561F23B5883
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 07:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232141AbhF1Em5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Jun 2021 00:42:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38883 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232134AbhF1Emy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Jun 2021 00:42:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624855229;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AHA+LCiynBinIcwBex84PZFjkFyKiA5ldfw47X4q5zo=;
-        b=BM3l6mJbwMWJ5ITDrjOTFe6NrBUQ6Ui0nGLmzPdE+NXn+M7SjpPPgKhUDgwslOIUiV2x+d
-        dTDZUKAgkB5w3t8OHywv7J8j0Dxfy2xTfceZxXWNO7l+Q9prhfdjQNPoWF08j5zwxnVHIw
-        DR9CQzkr8S8d4Cut1kyTeKIRiRuNJjQ=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-40-FK7AHJVZMa6mJnakr741kA-1; Mon, 28 Jun 2021 00:40:24 -0400
-X-MC-Unique: FK7AHJVZMa6mJnakr741kA-1
-Received: by mail-pj1-f69.google.com with SMTP id om5-20020a17090b3a85b029016eb0b21f1dso11209290pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Jun 2021 21:40:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=AHA+LCiynBinIcwBex84PZFjkFyKiA5ldfw47X4q5zo=;
-        b=fvh7JhhLA053rV172U8wnen/Fq4cjCFrX7fOiyG2+V5SX5KkE8RQwmgNqEdZ+/mg9q
-         Oml2S+EJgPzWHOy6ObPXTZ0A2XEU7G4cuqcQXOZJpPb9aV+1qqK+pgRXCPfi1OjkNpIO
-         roS6vvOCPa/3FgWviqIAnyn7ldFVGgxbj+dNAOwmpW824UMj0HAO6HMOsxK1FcCv0N3u
-         ISjsOSKeXYnyISlGfClDT8GjaY8VqjgaXc25rpDLalz67QikhWmFNHxBg3wu4PPBZB2T
-         5VCERyUWI2q/wYIU4le+gt10ULs0uZ4bapQaiaddRkKekYiFbNl9ejQzIaDNf9yA2MN5
-         XE0g==
-X-Gm-Message-State: AOAM531xF+EFiUSwKMCfpIynRZ0VySoBYsSnPiHsdpuaFZwn1JmKjunS
-        3TXejSHrWmO9G4aABEd1iYy7+IIedcX3y4/Wu7CoVqRLf1+mtCWrXmEbvVZ1Yk4WV/Zlq1tXt/J
-        Z+8PXh7WUlc0A1SrXmeapahMmXA==
-X-Received: by 2002:a17:90a:73ca:: with SMTP id n10mr35061279pjk.16.1624855223792;
-        Sun, 27 Jun 2021 21:40:23 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwo0o1s5KBYLlDLTqUhWl2FmmtFdw3BbxmCq5oGFB7ob0lz6rjRGdc+HVA7kjdSm4QccHUIRQ==
-X-Received: by 2002:a17:90a:73ca:: with SMTP id n10mr35061255pjk.16.1624855223625;
-        Sun, 27 Jun 2021 21:40:23 -0700 (PDT)
-Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id x143sm12654203pfc.6.2021.06.27.21.40.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Jun 2021 21:40:23 -0700 (PDT)
-Subject: Re: [PATCH v8 09/10] vduse: Introduce VDUSE - vDPA Device in
- Userspace
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20210615141331.407-1-xieyongji@bytedance.com>
- <20210615141331.407-10-xieyongji@bytedance.com>
- <adfb2be9-9ed9-ca37-ac37-4cd00bdff349@redhat.com>
- <CACycT3tAON+-qZev+9EqyL2XbgH5HDspOqNt3ohQLQ8GqVK=EA@mail.gmail.com>
- <1bba439f-ffc8-c20e-e8a4-ac73e890c592@redhat.com>
- <CACycT3uzMJS7vw6MVMOgY4rb=SPfT2srV+8DPdwUVeELEiJgbA@mail.gmail.com>
- <0aeb7cb7-58e5-1a95-d830-68edd7e8ec2e@redhat.com>
- <CACycT3uuooKLNnpPHewGZ=q46Fap2P4XCFirdxxn=FxK+X1ECg@mail.gmail.com>
- <e4cdee72-b6b4-d055-9aac-3beae0e5e3e1@redhat.com>
- <CACycT3u8=_D3hCtJR+d5BgeUQMce6S7c_6P3CVfvWfYhCQeXFA@mail.gmail.com>
- <d2334f66-907c-2e9c-ea4f-f912008e9be8@redhat.com>
- <CACycT3uCSLUDVpQHdrmuxSuoBDg-4n22t+N-Jm2GoNNp9JYB2w@mail.gmail.com>
- <48cab125-093b-2299-ff9c-3de8c7c5ed3d@redhat.com>
- <CACycT3tS=10kcUCNGYm=dUZsK+vrHzDvB3FSwAzuJCu3t+QuUQ@mail.gmail.com>
- <b10b3916-74d4-3171-db92-be0afb479a1c@redhat.com>
- <CACycT3vpMFbc9Fzuo9oksMaA-pVb1dEVTEgjNoft16voryPSWQ@mail.gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <d7e42109-0ba6-3e1a-c42a-898b6f33c089@redhat.com>
-Date:   Mon, 28 Jun 2021 12:40:14 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        id S231317AbhF1FLs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Jun 2021 01:11:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229578AbhF1FLr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 28 Jun 2021 01:11:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6CA1B61C17;
+        Mon, 28 Jun 2021 05:09:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624856960;
+        bh=krqwc2EM/28qXJp3WGYZbNJO1CWLVaBWJH9l+Tf5We8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Us7pdgMqxkbfgaPpE02LsBA535dFyWOMnEmp7OfMpzFhhrRJqrpDMQ8vuSjS1ztCX
+         eN46WMbPZQBlhTDWyuNSFrzbULZ/JzpMQzoZcqxECYnCAf+HGgsXGL3QqfPKpWnxOc
+         wcVmQJvp3nrNkSbIaZoWcgbW1xNNvDbEcNrqNLGORgXeiWDLIaqnp86kMotzSACKM9
+         XQ965Tqahu9KDPU03nm5OOX5E8mubnK/bf5IkxvZSZagrlaasIvaUeAgv1v8Esp3sJ
+         AgNZujQrdBXaMkEN8mbPLNIkgdaFRv0u18OkoffkD8Wm+aElKKbTnOvmInLRnAFAVJ
+         HTBUJKcU5OGxA==
+Date:   Sun, 27 Jun 2021 22:09:19 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
+Cc:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "willy@infradead.org" <willy@infradead.org>
+Subject: Re: [PATCH v6.1 6/7] fs/xfs: Handle CoW for fsdax write() path
+Message-ID: <20210628050919.GL13784@locust>
+References: <OSBPR01MB2920A2BCD568364C1363AFA6F4369@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <20210615072147.73852-1-ruansy.fnst@fujitsu.com>
+ <OSBPR01MB2920D2D275EB0DB15C37D079F4079@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <20210625221855.GG13784@locust>
+ <OSBPR01MB2920922639112230407000E9F4039@OSBPR01MB2920.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <CACycT3vpMFbc9Fzuo9oksMaA-pVb1dEVTEgjNoft16voryPSWQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB2920922639112230407000E9F4039@OSBPR01MB2920.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Jun 28, 2021 at 02:55:03AM +0000, ruansy.fnst@fujitsu.com wrote:
+> > -----Original Message-----
+> > Subject: Re: [PATCH v6.1 6/7] fs/xfs: Handle CoW for fsdax write() path
+> > 
+> > On Thu, Jun 24, 2021 at 08:49:17AM +0000, ruansy.fnst@fujitsu.com wrote:
+> > > Hi Darrick,
+> > >
+> > > Do you have any comment on this?
+> > 
+> > Sorry, was on vacation.
+> > 
+> > > Thanks,
+> > > Ruan.
+> > >
+> > > > -----Original Message-----
+> > > > From: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> > > > Subject: [PATCH v6.1 6/7] fs/xfs: Handle CoW for fsdax write() path
+> > > >
+> > > > Hi Darrick,
+> > > >
+> > > > Since other patches looks good, I post this RFC patch singly to
+> > > > hot-fix the problem in xfs_dax_write_iomap_ops->iomap_end() of v6
+> > > > that the error code was ingored. I will split this in two
+> > > > patches(changes in iomap and xfs
+> > > > respectively) in next formal version if it looks ok.
+> > > >
+> > > > ====
+> > > >
+> > > > Introduce a new interface called "iomap_post_actor()" in iomap_ops.
+> > > > And call it between ->actor() and ->iomap_end().  It is mean to
+> > > > handle the error code returned from ->actor().  In this patchset, it
+> > > > is used to remap or cancel the CoW extents according to the error code.
+> > > >
+> > > > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> > > > ---
+> > > >  fs/dax.c               | 27 ++++++++++++++++++---------
+> > > >  fs/iomap/apply.c       |  4 ++++
+> > > >  fs/xfs/xfs_bmap_util.c |  3 +--
+> > > >  fs/xfs/xfs_file.c      |  5 +++--
+> > > >  fs/xfs/xfs_iomap.c     | 33 ++++++++++++++++++++++++++++++++-
+> > > >  fs/xfs/xfs_iomap.h     | 24 ++++++++++++++++++++++++
+> > > >  fs/xfs/xfs_iops.c      |  7 +++----
+> > > >  fs/xfs/xfs_reflink.c   |  3 +--
+> > > >  include/linux/iomap.h  |  8 ++++++++
+> > > >  9 files changed, 94 insertions(+), 20 deletions(-)
+> > > >
+> > > > diff --git a/fs/dax.c b/fs/dax.c
+> > > > index 93f16210847b..0740c2610b6f 100644
+> > > > --- a/fs/dax.c
+> > > > +++ b/fs/dax.c
+> > > > @@ -1537,7 +1537,7 @@ static vm_fault_t dax_iomap_pte_fault(struct
+> > > > vm_fault *vmf, pfn_t *pfnp,
+> > > >  	struct iomap iomap = { .type = IOMAP_HOLE };
+> > > >  	struct iomap srcmap = { .type = IOMAP_HOLE };
+> > > >  	unsigned flags = IOMAP_FAULT;
+> > > > -	int error;
+> > > > +	int error, copied = PAGE_SIZE;
+> > > >  	bool write = vmf->flags & FAULT_FLAG_WRITE;
+> > > >  	vm_fault_t ret = 0, major = 0;
+> > > >  	void *entry;
+> > > > @@ -1598,7 +1598,7 @@ static vm_fault_t dax_iomap_pte_fault(struct
+> > > > vm_fault *vmf, pfn_t *pfnp,
+> > > >  	ret = dax_fault_actor(vmf, pfnp, &xas, &entry, false, flags,
+> > > >  			      &iomap, &srcmap);
+> > > >  	if (ret == VM_FAULT_SIGBUS)
+> > > > -		goto finish_iomap;
+> > > > +		goto finish_iomap_actor;
+> > > >
+> > > >  	/* read/write MAPPED, CoW UNWRITTEN */
+> > > >  	if (iomap.flags & IOMAP_F_NEW) {
+> > > > @@ -1607,10 +1607,16 @@ static vm_fault_t dax_iomap_pte_fault(struct
+> > > > vm_fault *vmf, pfn_t *pfnp,
+> > > >  		major = VM_FAULT_MAJOR;
+> > > >  	}
+> > > >
+> > > > + finish_iomap_actor:
+> > > > +	if (ops->iomap_post_actor) {
+> > > > +		if (ret & VM_FAULT_ERROR)
+> > > > +			copied = 0;
+> > > > +		ops->iomap_post_actor(inode, pos, PMD_SIZE, copied, flags,
+> > > > +				      &iomap, &srcmap);
+> > > > +	}
+> > > > +
+> > > >  finish_iomap:
+> > > >  	if (ops->iomap_end) {
+> > > > -		int copied = PAGE_SIZE;
+> > > > -
+> > > >  		if (ret & VM_FAULT_ERROR)
+> > > >  			copied = 0;
+> > > >  		/*
+> > > > @@ -1677,7 +1683,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct
+> > > > vm_fault *vmf, pfn_t *pfnp,
+> > > >  	pgoff_t max_pgoff;
+> > > >  	void *entry;
+> > > >  	loff_t pos;
+> > > > -	int error;
+> > > > +	int error, copied = PMD_SIZE;
+> > > >
+> > > >  	/*
+> > > >  	 * Check whether offset isn't beyond end of file now. Caller is @@
+> > > > -1736,12
+> > > > +1742,15 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault
+> > > > +*vmf,
+> > > > pfn_t *pfnp,
+> > > >  	ret = dax_fault_actor(vmf, pfnp, &xas, &entry, true, flags,
+> > > >  			      &iomap, &srcmap);
+> > > >
+> > > > +	if (ret == VM_FAULT_FALLBACK)
+> > > > +		copied = 0;
+> > > > +	if (ops->iomap_post_actor) {
+> > > > +		ops->iomap_post_actor(inode, pos, PMD_SIZE, copied, flags,
+> > > > +				      &iomap, &srcmap);
+> > > > +	}
+> > > > +
+> > > >  finish_iomap:
+> > > >  	if (ops->iomap_end) {
+> > > > -		int copied = PMD_SIZE;
+> > > > -
+> > > > -		if (ret == VM_FAULT_FALLBACK)
+> > > > -			copied = 0;
+> > > >  		/*
+> > > >  		 * The fault is done by now and there's no way back (other
+> > > >  		 * thread may be already happily using PMD we have installed).
+> > > > diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c index
+> > > > 0493da5286ad..26a54ded184f 100644
+> > > > --- a/fs/iomap/apply.c
+> > > > +++ b/fs/iomap/apply.c
+> > > > @@ -84,6 +84,10 @@ iomap_apply(struct inode *inode, loff_t pos,
+> > > > loff_t length, unsigned flags,
+> > > >  	written = actor(inode, pos, length, data, &iomap,
+> > > >  			srcmap.type != IOMAP_HOLE ? &srcmap : &iomap);
+> > > >
+> > > > +	if (ops->iomap_post_actor) {
+> > > > +		written = ops->iomap_post_actor(inode, pos, length, written,
+> > > > +						flags, &iomap, &srcmap);
+> > 
+> > How many operations actually need an iomap_post_actor?  It's just the dax
+> > ones, right?  Which is ... iomap_truncate_page, iomap_zero_range,
+> > dax_iomap_fault, and dax_iomap_rw, right?  We don't need a post_actor for
+> > other iomap functionality (like FIEMAP, SEEK_DATA/SEEK_HOLE, etc.) so adding
+> > a new function pointer for all operations feels a bit overbroad.
+> 
+> Yes.
+> 
+> > 
+> > I had imagined that you'd create a struct dax_iomap_ops to wrap all the extra
+> > functionality that you need for dax operations:
+> > 
+> > struct dax_iomap_ops {
+> > 	struct iomap_ops	iomap_ops;
+> > 
+> > 	int			(*end_io)(inode, pos, length...);
+> > };
+> > 
+> > And alter the four functions that you need to take the special dax_iomap_ops.
+> > I guess the downside is that this makes iomap_truncate_page and
+> > iomap_zero_range more complicated, but maybe it's just time to split those into
+> > DAX-specific versions.  Then we'd be rid of the cross-links betwee
+> > fs/iomap/buffered-io.c and fs/dax.c.
+> 
+> This seems to be a better solution.  I'll try in this way.  Thanks for your guidance.
 
-在 2021/6/25 下午12:19, Yongji Xie 写道:
->> 2b) for set_status(): simply relay the message to userspace, reply is no
->> needed. Userspace will use a command to update the status when the
->> datapath is stop. The the status could be fetched via get_stats().
->>
->> 2b looks more spec complaint.
->>
-> Looks good to me. And I think we can use the reply of the message to
-> update the status instead of introducing a new command.
->
+I started writing on Friday a patchset to apply this style cleanup both
+to the directio and dax paths.  The cleanups were pretty straightforward
+until I started reading the dax code paths again and realized that file
+writes still have the weird behavior of mapping extents into a file,
+zeroing them, then issuing the actual write to the extent.  IOWs, a
+double-write to avoid exposing stale contents if crash.
 
-Just notice this part in virtio_finalize_features():
+Apparently the reason for this was that dax (at least 6 years ago) had
+no concept paralleling the page lock, so it was necessary to do that to
+avoid page fault handlers racing to map pfns into the file mapping?
+That would seem to prevent us from doing the more standard behavior of
+allocate unwritten, write data, convert mapping... but is that still the
+case?  Or can we get rid of this bad quirk?
 
-         virtio_add_status(dev, VIRTIO_CONFIG_S_FEATURES_OK);
-         status = dev->config->get_status(dev);
-         if (!(status & VIRTIO_CONFIG_S_FEATURES_OK)) {
+--D
 
-So we no reply doesn't work for FEATURES_OK.
-
-So my understanding is:
-
-1) We must not use noreply for set_status()
-2) We can use noreply for get_status(), but it requires a new ioctl to 
-update the status.
-
-So it looks to me we need synchronize for both get_status() and 
-set_status().
-
-Thanks
-
-
+> 
+> > 
+> > > > +	}
+> > > >  out:
+> > > >  	/*
+> > > >  	 * Now the data has been copied, commit the range we've copied.
+> > > > This diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> > > > index
+> > > > a5e9d7d34023..2a36dc93ff27 100644
+> > > > --- a/fs/xfs/xfs_bmap_util.c
+> > > > +++ b/fs/xfs/xfs_bmap_util.c
+> > > > @@ -965,8 +965,7 @@ xfs_free_file_space(
+> > > >  		return 0;
+> > > >  	if (offset + len > XFS_ISIZE(ip))
+> > > >  		len = XFS_ISIZE(ip) - offset;
+> > > > -	error = iomap_zero_range(VFS_I(ip), offset, len, NULL,
+> > > > -			&xfs_buffered_write_iomap_ops);
+> > > > +	error = xfs_iomap_zero_range(ip, offset, len, NULL);
+> > > >  	if (error)
+> > > >  		return error;
+> > > >
+> > > > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c index
+> > > > 396ef36dcd0a..89406ec6741b
+> > > > 100644
+> > > > --- a/fs/xfs/xfs_file.c
+> > > > +++ b/fs/xfs/xfs_file.c
+> > > > @@ -684,11 +684,12 @@ xfs_file_dax_write(
+> > > >  	pos = iocb->ki_pos;
+> > > >
+> > > >  	trace_xfs_file_dax_write(iocb, from);
+> > > > -	ret = dax_iomap_rw(iocb, from, &xfs_direct_write_iomap_ops);
+> > > > +	ret = dax_iomap_rw(iocb, from, &xfs_dax_write_iomap_ops);
+> > > >  	if (ret > 0 && iocb->ki_pos > i_size_read(inode)) {
+> > > >  		i_size_write(inode, iocb->ki_pos);
+> > > >  		error = xfs_setfilesize(ip, pos, ret);
+> > > >  	}
+> > > > +
+> > > >  out:
+> > > >  	if (iolock)
+> > > >  		xfs_iunlock(ip, iolock);
+> > > > @@ -1309,7 +1310,7 @@ __xfs_filemap_fault(
+> > > >
+> > > >  		ret = dax_iomap_fault(vmf, pe_size, &pfn, NULL,
+> > > >  				(write_fault && !vmf->cow_page) ?
+> > > > -				 &xfs_direct_write_iomap_ops :
+> > > > +				 &xfs_dax_write_iomap_ops :
+> > > >  				 &xfs_read_iomap_ops);
+> > > >  		if (ret & VM_FAULT_NEEDDSYNC)
+> > > >  			ret = dax_finish_sync_fault(vmf, pe_size, pfn); diff --git
+> > > > a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c index
+> > > > d154f42e2dc6..2f322e2f8544
+> > > > 100644
+> > > > --- a/fs/xfs/xfs_iomap.c
+> > > > +++ b/fs/xfs/xfs_iomap.c
+> > > > @@ -761,7 +761,8 @@ xfs_direct_write_iomap_begin(
+> > > >
+> > > >  		/* may drop and re-acquire the ilock */
+> > > >  		error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
+> > > > -				&lockmode, flags & IOMAP_DIRECT);
+> > > > +				&lockmode,
+> > > > +				(flags & IOMAP_DIRECT) || IS_DAX(inode));
+> > > >  		if (error)
+> > > >  			goto out_unlock;
+> > > >  		if (shared)
+> > > > @@ -854,6 +855,36 @@ const struct iomap_ops
+> > > > xfs_direct_write_iomap_ops = {
+> > > >  	.iomap_begin		= xfs_direct_write_iomap_begin,
+> > > >  };
+> > > >
+> > > > +static int
+> > > > +xfs_dax_write_iomap_post_actor(
+> > > > +	struct inode		*inode,
+> > > > +	loff_t			pos,
+> > > > +	loff_t			length,
+> > > > +	ssize_t			written,
+> > > > +	unsigned int		flags,
+> > > > +	struct iomap		*iomap,
+> > > > +	struct iomap		*srcmap)
+> > > > +{
+> > > > +	int			error = 0;
+> > > > +	struct xfs_inode	*ip = XFS_I(inode);
+> > > > +	bool			cow = xfs_is_cow_inode(ip);
+> > > > +
+> > > > +	if (written <= 0) {
+> > > > +		if (cow)
+> > > > +			xfs_reflink_cancel_cow_range(ip, pos, length, true);
+> > > > +		return written;
+> > > > +	}
+> > > > +
+> > > > +	if (cow)
+> > > > +		error = xfs_reflink_end_cow(ip, pos, written);
+> > > > +	return error ?: written;
+> > > > +}
+> > 
+> > This is pretty much the same as what xfs_dio_write_end_io does, right?
+> 
+> It just handles the end part of CoW here.
+> xfs_dio_write_end_io() also updates file size, which is only needed in write() but not in page fault.  And the update file size work is done in xfs_dax_file_write(), it's fine, no need to modify it.
+> 
+> > 
+> > I had imagined that you'd change the function signatures to drop the iocb so
+> > that you could reuse this code instead of creating a whole new callback.
+> > 
+> > Ah well.  Can I send you some prep patches to clean up some of the weird
+> > iomap code as a preparation series for this?
+> 
+> Sure.  Thanks.
+> 
+> 
+> --
+> Ruan.
+> 
+> > 
+> > --D
+> > 
+> > > > +
+> > > > +const struct iomap_ops xfs_dax_write_iomap_ops = {
+> > > > +	.iomap_begin		= xfs_direct_write_iomap_begin,
+> > > > +	.iomap_post_actor	= xfs_dax_write_iomap_post_actor,
+> > > > +};
+> > > > +
+> > > >  static int
+> > > >  xfs_buffered_write_iomap_begin(
+> > > >  	struct inode		*inode,
+> > > > diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h index
+> > > > 7d3703556d0e..fbacf638ab21 100644
+> > > > --- a/fs/xfs/xfs_iomap.h
+> > > > +++ b/fs/xfs/xfs_iomap.h
+> > > > @@ -42,8 +42,32 @@ xfs_aligned_fsb_count(
+> > > >
+> > > >  extern const struct iomap_ops xfs_buffered_write_iomap_ops;  extern
+> > > > const struct iomap_ops xfs_direct_write_iomap_ops;
+> > > > +extern const struct iomap_ops xfs_dax_write_iomap_ops;
+> > > >  extern const struct iomap_ops xfs_read_iomap_ops;  extern const
+> > > > struct iomap_ops xfs_seek_iomap_ops;  extern const struct iomap_ops
+> > > > xfs_xattr_iomap_ops;
+> > > >
+> > > > +static inline int
+> > > > +xfs_iomap_zero_range(
+> > > > +	struct xfs_inode	*ip,
+> > > > +	loff_t			offset,
+> > > > +	loff_t			len,
+> > > > +	bool			*did_zero)
+> > > > +{
+> > > > +	return iomap_zero_range(VFS_I(ip), offset, len, did_zero,
+> > > > +			IS_DAX(VFS_I(ip)) ? &xfs_dax_write_iomap_ops
+> > > > +					  : &xfs_buffered_write_iomap_ops); }
+> > > > +
+> > > > +static inline int
+> > > > +xfs_iomap_truncate_page(
+> > > > +	struct xfs_inode	*ip,
+> > > > +	loff_t			pos,
+> > > > +	bool			*did_zero)
+> > > > +{
+> > > > +	return iomap_truncate_page(VFS_I(ip), pos, did_zero,
+> > > > +			IS_DAX(VFS_I(ip)) ? &xfs_dax_write_iomap_ops
+> > > > +					  : &xfs_buffered_write_iomap_ops); }
+> > > > +
+> > > >  #endif /* __XFS_IOMAP_H__*/
+> > > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c index
+> > > > dfe24b7f26e5..6d936c3e1a6e 100644
+> > > > --- a/fs/xfs/xfs_iops.c
+> > > > +++ b/fs/xfs/xfs_iops.c
+> > > > @@ -911,8 +911,8 @@ xfs_setattr_size(
+> > > >  	 */
+> > > >  	if (newsize > oldsize) {
+> > > >  		trace_xfs_zero_eof(ip, oldsize, newsize - oldsize);
+> > > > -		error = iomap_zero_range(inode, oldsize, newsize - oldsize,
+> > > > -				&did_zeroing, &xfs_buffered_write_iomap_ops);
+> > > > +		error = xfs_iomap_zero_range(ip, oldsize, newsize - oldsize,
+> > > > +				&did_zeroing);
+> > > >  	} else {
+> > > >  		/*
+> > > >  		 * iomap won't detect a dirty page over an unwritten block (or a
+> > > > @@
+> > > > -924,8 +924,7 @@ xfs_setattr_size(
+> > > >  						     newsize);
+> > > >  		if (error)
+> > > >  			return error;
+> > > > -		error = iomap_truncate_page(inode, newsize, &did_zeroing,
+> > > > -				&xfs_buffered_write_iomap_ops);
+> > > > +		error = xfs_iomap_truncate_page(ip, newsize, &did_zeroing);
+> > > >  	}
+> > > >
+> > > >  	if (error)
+> > > > diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c index
+> > > > d25434f93235..9a780948dbd0 100644
+> > > > --- a/fs/xfs/xfs_reflink.c
+> > > > +++ b/fs/xfs/xfs_reflink.c
+> > > > @@ -1266,8 +1266,7 @@ xfs_reflink_zero_posteof(
+> > > >  		return 0;
+> > > >
+> > > >  	trace_xfs_zero_eof(ip, isize, pos - isize);
+> > > > -	return iomap_zero_range(VFS_I(ip), isize, pos - isize, NULL,
+> > > > -			&xfs_buffered_write_iomap_ops);
+> > > > +	return xfs_iomap_zero_range(ip, isize, pos - isize, NULL);
+> > > >  }
+> > > >
+> > > >  /*
+> > > > diff --git a/include/linux/iomap.h b/include/linux/iomap.h index
+> > > > 95562f863ad0..58f2e1c78018 100644
+> > > > --- a/include/linux/iomap.h
+> > > > +++ b/include/linux/iomap.h
+> > > > @@ -135,6 +135,14 @@ struct iomap_ops {
+> > > >  			unsigned flags, struct iomap *iomap,
+> > > >  			struct iomap *srcmap);
+> > > >
+> > > > +	/*
+> > > > +	 * Handle the error code from actor(). Do the finishing jobs for extra
+> > > > +	 * operations, such as CoW, according to whether written is negative.
+> > > > +	 */
+> > > > +	int (*iomap_post_actor)(struct inode *inode, loff_t pos, loff_t length,
+> > > > +			ssize_t written, unsigned flags, struct iomap *iomap,
+> > > > +			struct iomap *srcmap);
+> > > > +
+> > > >  	/*
+> > > >  	 * Commit and/or unreserve space previous allocated using
+> > iomap_begin.
+> > > >  	 * Written indicates the length of the successful write operation
+> > > > which
+> > > > --
+> > > > 2.31.1
+> > >
