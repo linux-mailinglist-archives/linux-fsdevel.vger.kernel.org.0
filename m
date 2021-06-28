@@ -2,91 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 873903B5E25
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 14:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A41CE3B5E27
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 14:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232736AbhF1Mki (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Jun 2021 08:40:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39504 "EHLO
+        id S232762AbhF1MlT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Jun 2021 08:41:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232502AbhF1Mki (ORCPT
+        with ESMTP id S232502AbhF1MlS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Jun 2021 08:40:38 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 978A9C061574;
-        Mon, 28 Jun 2021 05:38:11 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id v12so8851117plo.10;
-        Mon, 28 Jun 2021 05:38:11 -0700 (PDT)
+        Mon, 28 Jun 2021 08:41:18 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E3CC061760
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 05:38:52 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id r16so25420213ljk.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 05:38:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WT6v9uHvNGHnkrWHqw+IXv7PjvRxi0xOsDaWugRiQFY=;
-        b=QBNZk2FzsKVZFkEr2ZWCddj45xygaewHlKrtuogtrs9agXtqPkt9I87Pg8ePtRsK86
-         4KEp6j8xcsOlWbj+fRie+VbcwEsfUlSm8Vsgl2GVEpbNYZ3XrfE8Q6a0TGPq5Yp6wmqt
-         sp8FLOKmtRdqhCAdsdoRPhOzrf8mdLp3v+AG//g5HC9SKt6/KQQtnw9OCXOna1cHHdfm
-         wahn2cLq5XCPwGdTgPwa5L/lzgSbnJq7Fs2dZUKPgxuN6DhvqHaWDS6t2UMfwFVkxEDy
-         o31Lfac7whjlPs3ig1RDDBaBtd2O36KPpwfRPRrFIuS+enwfsX8ut6XBEwlQi1x3ZgMI
-         XYkQ==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ys+RScaibz83CdiYBfay2IdZEjpEuB17QTSkYmwaWUw=;
+        b=oH+4Cd/L51GezleCLUVkNCwz00KpyQZLsFM8Dl22yq0fIQhWNX5J3Gaz4QWyCCbQeA
+         qcyAC4DHJ4/vSwIRQAwct+gFD07lvNc1tOOzcDONALQNDERMomkjayzcfluYfVJba80b
+         1hn1f6PLn44tKpjdge/JHmgk4FedVMlGKk408/z6oCgs8bNiWBdJ/t29WbOeY1DWF2G+
+         9mWFTW5reZhs+QT16JwZmxGtNIjz+1RSfAd8qygPBcylen7Lj3IHYnZG/qN+xkRNoAr7
+         +S5ExmnO2FQRqfrDi1T6/+oGuqIxYIJG5QxVKDHnjRNQy/HwMpCNNZyLXMjB8fHIRu1Z
+         jlvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WT6v9uHvNGHnkrWHqw+IXv7PjvRxi0xOsDaWugRiQFY=;
-        b=JMN4iFmCiB03MDfpjaIBklF44yuws6qIpmFgVTY/ukJfYA0B6wZemWg7D464/31s9H
-         89eNE6JYPlGM1oQmFejW+tanQV+XWcLrwTSZKMRP5NzrtKZD18k/Im9Jvem2lcvZetxl
-         1e94xnTNeMe4HXfZQ/ZgjdTBBfH+CUVR44siwi4ceSIHFzj1ppl4UtwMLot9W3dIgGjR
-         5mUGwNyiqw610jfOPXX2XXdpbFdwvl93IUOXhD1fbi9umwGWkyG4LcTLEYYk0rQ4t3ey
-         6QD0oXn+cG2c2En2flB+lJ2NC0uIbhPRfmP6cWmAUPgrx9JGVNp4k6+HPvTYf+GY4f39
-         Re9w==
-X-Gm-Message-State: AOAM530iI/+4S2nVZwpEdSijqEDptSVAKAMtSk0ik5MwA08KTuYKrSbz
-        X0xZoRjPBFsq5DouxbYmkGVF6axrB8/4mFFU
-X-Google-Smtp-Source: ABdhPJzdkVuvbX+deaYXYvXccVsMs9GcFLfmgAKhU2DOdgfJq1F9YYoem/FHmnOSftHIvwN94oL18A==
-X-Received: by 2002:a17:90a:fd11:: with SMTP id cv17mr5786896pjb.8.1624883890837;
-        Mon, 28 Jun 2021 05:38:10 -0700 (PDT)
-Received: from localhost.localdomain ([36.62.198.29])
-        by smtp.gmail.com with ESMTPSA id gl17sm2822835pjb.13.2021.06.28.05.38.07
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ys+RScaibz83CdiYBfay2IdZEjpEuB17QTSkYmwaWUw=;
+        b=TOU/bhoKfVmwku+CAOMDF5ksYgHoEud9O68z76YSbk/JpnbA0PkKoKWF6b2c/L2OPL
+         TqOfCXpuJEkdCuETFl0ptOzpY1HklV5renf+Rya+67rrPttpOuT04Lncj0N0SIWeXrpZ
+         EL1hSWCy+46UgHQw/lUmsAGA/V04umMiGbUlAVl4mXp8KPBc6Mf9OGhBgVD+4V97Cn5F
+         EWK6p+l1eRtGo5bHSL1eqxGhyWCfqJlu5G+zlUs4wDBvRv5HRRS2S465kBBbyJapjRay
+         V9wZBTmfatV/A1D15xfbZlKOt3f7IWip9Le4/JOy2+doH2+fXLYyjDbJWIMSznsxAP0p
+         RjDQ==
+X-Gm-Message-State: AOAM532T7cLinASmsv3j2kecvPF3rtNKw4NZYMosh7rcai7Gkrn40Kxm
+        nWt+KomTRt+VTyKops9hDx8vxQ==
+X-Google-Smtp-Source: ABdhPJw1VYNm/iuQ8ukJtHgbIPL5tc+jj79qOV9v8hvkVcmikl3nLf5EGnU9qwjyyAShj0CTY0m/ww==
+X-Received: by 2002:a2e:b1d3:: with SMTP id e19mr3906687lja.362.1624883930421;
+        Mon, 28 Jun 2021 05:38:50 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id b15sm1022167lfj.28.2021.06.28.05.38.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jun 2021 05:38:10 -0700 (PDT)
-From:   Wang Shilong <wangshilong1991@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, wangshilong1991@gmail.com
-Subject: [PATCH v2] fs: forbid invalid project ID
-Date:   Mon, 28 Jun 2021 08:38:01 -0400
-Message-Id: <20210628123801.3511-1-wangshilong1991@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        Mon, 28 Jun 2021 05:38:49 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 1982410280E; Mon, 28 Jun 2021 15:38:49 +0300 (+03)
+Date:   Mon, 28 Jun 2021 15:38:49 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Vlastimil Babka <vbabka@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v12 09/33] mm: Add folio_try_get_rcu()
+Message-ID: <20210628123849.4gok3kf43wyjp2ix@box.shutemov.name>
+References: <20210622114118.3388190-1-willy@infradead.org>
+ <20210622114118.3388190-10-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210622114118.3388190-10-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fileattr_set_prepare() should check if project ID
-is valid, otherwise dqget() will return NULL for
-such project ID quota.
+On Tue, Jun 22, 2021 at 12:40:54PM +0100, Matthew Wilcox (Oracle) wrote:
+> This is the equivalent of page_cache_get_speculative().  Also add
+> folio_ref_try_add_rcu (the equivalent of page_cache_add_speculative)
+> and folio_get_unless_zero() (the equivalent of get_page_unless_zero()).
+> 
+> The new kernel-doc attempts to explain from the user's point of view
+> when to use folio_try_get_rcu() and when to use folio_get_unless_zero(),
+> because there seems to be some confusion currently between the users of
+> page_cache_get_speculative() and get_page_unless_zero().
+> 
+> Reimplement page_cache_add_speculative() and page_cache_get_speculative()
+> as wrappers around the folio equivalents, but leave get_page_unless_zero()
+> alone for now.  This commit reduces text size by 3 bytes due to slightly
+> different register allocation & instruction selections.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Signed-off-by: Wang Shilong <wshilong@ddn.com>
----
-v1->v2: try to fix in the VFS
----
- fs/ioctl.c | 3 +++
- 1 file changed, 3 insertions(+)
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 1e2204fa9963..5db5b218637b 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -845,6 +845,9 @@ static int fileattr_set_prepare(struct inode *inode,
- 	if (fa->fsx_cowextsize == 0)
- 		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
- 
-+	if (!projid_valid(KPROJIDT_INIT(fa->fsx_projid)))
-+		return -EINVAL;
-+
- 	return 0;
- }
- 
 -- 
-2.27.0
-
+ Kirill A. Shutemov
