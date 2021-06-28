@@ -2,93 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A41CE3B5E27
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 14:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A58543B5E2C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 14:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232762AbhF1MlT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Jun 2021 08:41:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39650 "EHLO
+        id S232692AbhF1MnT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Jun 2021 08:43:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232502AbhF1MlS (ORCPT
+        with ESMTP id S232624AbhF1MnS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Jun 2021 08:41:18 -0400
+        Mon, 28 Jun 2021 08:43:18 -0400
 Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E3CC061760
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 05:38:52 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id r16so25420213ljk.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 05:38:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B1F1C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 05:40:53 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id a6so1618424ljq.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 05:40:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=ys+RScaibz83CdiYBfay2IdZEjpEuB17QTSkYmwaWUw=;
-        b=oH+4Cd/L51GezleCLUVkNCwz00KpyQZLsFM8Dl22yq0fIQhWNX5J3Gaz4QWyCCbQeA
-         qcyAC4DHJ4/vSwIRQAwct+gFD07lvNc1tOOzcDONALQNDERMomkjayzcfluYfVJba80b
-         1hn1f6PLn44tKpjdge/JHmgk4FedVMlGKk408/z6oCgs8bNiWBdJ/t29WbOeY1DWF2G+
-         9mWFTW5reZhs+QT16JwZmxGtNIjz+1RSfAd8qygPBcylen7Lj3IHYnZG/qN+xkRNoAr7
-         +S5ExmnO2FQRqfrDi1T6/+oGuqIxYIJG5QxVKDHnjRNQy/HwMpCNNZyLXMjB8fHIRu1Z
-         jlvQ==
+        bh=pWlR4YOkd8r6fBXSkgmDPdaUdCNYp8ikvYFMARhlCFg=;
+        b=Oxksn4yKNReeH+KzWlY47KMNb9WTHopjB+tZf0NdYwVRIS3ZcFJ7afYEXXrxkqLIm6
+         67Mss8GReFxB2AAOvKMD2qBQLWA42WpBddsLFYajCpUVv6rptpdC5xPvkW9xNA064UHn
+         HrrPTAORiyHrH2sVlTca3RunbMlqXsTAptOg7u2VKKdMlWbSnLW1GEDRl8a6OwPtjcfL
+         AFMH7JypJL11pG/D0zZ5/BwGTKHk9Js23O7SeQswpmANqyFhKkWOPk7EAdLx0XmC0VCf
+         OUNQgPpdSwmXU4F9JEDMELGGOFoaSrpHkjokPRp51axX5Y1zg5/shsIpG0MPnESiT/0C
+         32yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=ys+RScaibz83CdiYBfay2IdZEjpEuB17QTSkYmwaWUw=;
-        b=TOU/bhoKfVmwku+CAOMDF5ksYgHoEud9O68z76YSbk/JpnbA0PkKoKWF6b2c/L2OPL
-         TqOfCXpuJEkdCuETFl0ptOzpY1HklV5renf+Rya+67rrPttpOuT04Lncj0N0SIWeXrpZ
-         EL1hSWCy+46UgHQw/lUmsAGA/V04umMiGbUlAVl4mXp8KPBc6Mf9OGhBgVD+4V97Cn5F
-         EWK6p+l1eRtGo5bHSL1eqxGhyWCfqJlu5G+zlUs4wDBvRv5HRRS2S465kBBbyJapjRay
-         V9wZBTmfatV/A1D15xfbZlKOt3f7IWip9Le4/JOy2+doH2+fXLYyjDbJWIMSznsxAP0p
-         RjDQ==
-X-Gm-Message-State: AOAM532T7cLinASmsv3j2kecvPF3rtNKw4NZYMosh7rcai7Gkrn40Kxm
-        nWt+KomTRt+VTyKops9hDx8vxQ==
-X-Google-Smtp-Source: ABdhPJw1VYNm/iuQ8ukJtHgbIPL5tc+jj79qOV9v8hvkVcmikl3nLf5EGnU9qwjyyAShj0CTY0m/ww==
-X-Received: by 2002:a2e:b1d3:: with SMTP id e19mr3906687lja.362.1624883930421;
-        Mon, 28 Jun 2021 05:38:50 -0700 (PDT)
+        bh=pWlR4YOkd8r6fBXSkgmDPdaUdCNYp8ikvYFMARhlCFg=;
+        b=qn6hbWr0fbKRzFPAtzW3/X2t/re4gzAFGrvqI2R8qJumoJGoWLji5aO80RLHzxDxxM
+         BS2yugYS8nF+jlzFj6uB5YdMf8u6sCCOKZDyupudCiQlB4qQDE8smKovWhO1/es4jmZx
+         fRGe9z7RcnMKVFPi18FJnciMUeX7zjIYBEpuoWsMkaLAW7uDT3LYjpfjUKKg4HIxeMJB
+         YgpWpLcOBbZSYcEIzTHhqNySUWqiwTvnPfjAj3Fkp4jPbas6NDEDOJiadXonl8khm3zC
+         twCqCW4AkJNYiHCZG3bPAbidrlWPZaLkQCZd0EGcw3F3gdMitXC4Zv9VxUeMURND1g30
+         8Xyw==
+X-Gm-Message-State: AOAM531MlRSyb0FkxkQly/iBTSVXUDsxEgF5u1c6jeaFHLzxvYTCqKLN
+        GhnKuJKZ53IbkgXZuLdea/Ev3A==
+X-Google-Smtp-Source: ABdhPJxqOQLjAKOnhgVMn+Pqls/utX1ohXkGCAy/hp1RrNvoBiG/wi/OXtYdsQObKDfc/fG0tkghRg==
+X-Received: by 2002:a2e:9945:: with SMTP id r5mr20046316ljj.324.1624884051437;
+        Mon, 28 Jun 2021 05:40:51 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id b15sm1022167lfj.28.2021.06.28.05.38.49
+        by smtp.gmail.com with ESMTPSA id m18sm393250lfu.67.2021.06.28.05.40.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jun 2021 05:38:49 -0700 (PDT)
+        Mon, 28 Jun 2021 05:40:50 -0700 (PDT)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 1982410280E; Mon, 28 Jun 2021 15:38:49 +0300 (+03)
-Date:   Mon, 28 Jun 2021 15:38:49 +0300
+        id 2AF8210280E; Mon, 28 Jun 2021 15:40:50 +0300 (+03)
+Date:   Mon, 28 Jun 2021 15:40:50 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Vlastimil Babka <vbabka@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v12 09/33] mm: Add folio_try_get_rcu()
-Message-ID: <20210628123849.4gok3kf43wyjp2ix@box.shutemov.name>
+        Yu Zhao <yuzhao@google.com>, Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH v12 11/33] mm/lru: Add folio LRU functions
+Message-ID: <20210628124050.6xa7m6n362hst2op@box.shutemov.name>
 References: <20210622114118.3388190-1-willy@infradead.org>
- <20210622114118.3388190-10-willy@infradead.org>
+ <20210622114118.3388190-12-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210622114118.3388190-10-willy@infradead.org>
+In-Reply-To: <20210622114118.3388190-12-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 12:40:54PM +0100, Matthew Wilcox (Oracle) wrote:
-> This is the equivalent of page_cache_get_speculative().  Also add
-> folio_ref_try_add_rcu (the equivalent of page_cache_add_speculative)
-> and folio_get_unless_zero() (the equivalent of get_page_unless_zero()).
+On Tue, Jun 22, 2021 at 12:40:56PM +0100, Matthew Wilcox (Oracle) wrote:
+> Handle arbitrary-order folios being added to the LRU.  By definition,
+> all pages being added to the LRU were already head or base pages,
+> so define page wrappers around folio functions where the original
+> page functions involved calling compound_head() to manipulate flags,
+> but define folio wrappers around page functions where there's no need to
+> call compound_head().  The one thing that does change for those functions
+> is calling compound_nr() instead of thp_nr_pages(), in order to handle
+> arbitrary-sized folios.
 > 
-> The new kernel-doc attempts to explain from the user's point of view
-> when to use folio_try_get_rcu() and when to use folio_get_unless_zero(),
-> because there seems to be some confusion currently between the users of
-> page_cache_get_speculative() and get_page_unless_zero().
-> 
-> Reimplement page_cache_add_speculative() and page_cache_get_speculative()
-> as wrappers around the folio equivalents, but leave get_page_unless_zero()
-> alone for now.  This commit reduces text size by 3 bytes due to slightly
-> different register allocation & instruction selections.
+> Saves 783 bytes of kernel text; no functions grow.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> Reviewed-by: Yu Zhao <yuzhao@google.com>
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: David Howells <dhowells@redhat.com>
 
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
