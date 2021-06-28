@@ -2,340 +2,393 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A5F03B5789
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 04:55:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1011E3B579A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 05:02:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232101AbhF1C6B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Jun 2021 22:58:01 -0400
-Received: from mga01.intel.com ([192.55.52.88]:52659 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231984AbhF1C6B (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Jun 2021 22:58:01 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10028"; a="229493910"
-X-IronPort-AV: E=Sophos;i="5.83,304,1616482800"; 
-   d="scan'208";a="229493910"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2021 19:55:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.83,304,1616482800"; 
-   d="scan'208";a="419007818"
-Received: from storage2.sh.intel.com (HELO localhost) ([10.67.110.211])
-  by fmsmga007.fm.intel.com with ESMTP; 27 Jun 2021 19:55:30 -0700
-Date:   Mon, 28 Jun 2021 06:33:09 -0400
-From:   Liu Xiaodong <xiaodong.liu@intel.com>
-To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        jasowang@redhat.com, stefanha@redhat.com, sgarzare@redhat.com,
-        parav@nvidia.com, hch@infradead.org,
-        christian.brauner@canonical.com, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
-        dan.carpenter@oracle.com, joro@8bytes.org,
-        gregkh@linuxfoundation.org, xiaodong.liu@intel.com
-Cc:     songmuchun@bytedance.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 00/10] Introduce VDUSE - vDPA Device in Userspace
-Message-ID: <20210628103309.GA205554@storage2.sh.intel.com>
-References: <20210615141331.407-1-xieyongji@bytedance.com>
+        id S232040AbhF1DEq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Jun 2021 23:04:46 -0400
+Received: from esa17.fujitsucc.c3s2.iphmx.com ([216.71.158.34]:1054 "EHLO
+        esa17.fujitsucc.c3s2.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232032AbhF1DEq (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 27 Jun 2021 23:04:46 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Sun, 27 Jun 2021 23:04:44 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1624849342; x=1656385342;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=/Gdv6ztm7Hcy98YpGwVYkWAio9QFSx/7SQ90ydqmlq0=;
+  b=aovHYDxXW8WHOPLkLU+GwB1PouCcIgFuXkcePS/MQHNxaqDnAkL8wTI5
+   vcCublyj/ZmnEK5eAfDqvaMuWm32f9wuYHxKoPCmUUshGc/pkF5iUqbcj
+   nmH26GDOg2l6SMl+6P5Bcz7YT+3UPZy6w5u5yPPGIeDNGgLDKvn7ueL/O
+   avmmN0Hka2oO7zcpOcLB22q5w5R8c7hvqLVYdl0KE3wk437VNUAu4xuzM
+   iyMAGalRJQlaLHPHmqG+FgEKdWlk0T0++R6le89ILpJGG4QndvnfHOJcU
+   bqipZFamA0p9xw6Nr7ReW/u4+dLbbI/npNy3dp2yW/CHxjxqq6fpFehNq
+   g==;
+IronPort-SDR: 0p0DXreJOvqRllBC1/vlL3W/2g14dvl38lnbvD+pt8fcdwyIKGNA2ZIZ3Gbcv87RZfRymPt7ti
+ iiEU0kZuwvyRuuHypvj9kKpu6ChzzADAE9WBOBou9k36NsMmY0pY+sT+s5WC1GMbGVKbllxDP3
+ acbxZYsGcoNtRRVEyxRK+Xy/dno6SijxIphoxhtVvqA5Fb8al77fvsSz1IUdPLNLdmhOIzFKrw
+ rw6GvpNr+hcHmPk4ERtq8rFuJOvLIQ/bv7oLjjMU3wpNSI/NTXpgIcxDsJMLTTW743JI+mMv9x
+ Cjk=
+X-IronPort-AV: E=McAfee;i="6200,9189,10028"; a="33739867"
+X-IronPort-AV: E=Sophos;i="5.83,304,1616425200"; 
+   d="scan'208";a="33739867"
+Received: from mail-os2jpn01lp2057.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([104.47.92.57])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2021 11:55:07 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Creo3sklUbaOOrvatOD4YgN/DsUAc42Sps+/+toz9NVljB8HKPHy8X9L+aFEbve0T2NeUDn+2obks0Z7PL2sUFa7aYt3a2aS95ARrSj6YR/MnFrlMa1M/RXE86HR4XgTHae0XEQpVPgRcZfQAwVeGWI7mgxLses5s7savA5nPddbuTcK6a5NzhLoeeThy0WBVwONf5uEjE/Z3xX3ZpaY01sjM9CPhP0aMQB68QnRj1W5Xw+fmTucI+vtTZVg2CB57hN1Z66SDAQoDOn1WCgKJ9x4avt/G+J+xrSC10v4HQzq5AkQP1nC+VTCAiRE5KnvYbL/bPn4mL7Mnh7IWzwllw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/Gdv6ztm7Hcy98YpGwVYkWAio9QFSx/7SQ90ydqmlq0=;
+ b=B7FBVzEU0dkpmgMRZhI1JYLyyDc4Sqp+7/ld5R/pMpw1sGig3Y/YKuH1Nl1lNTVrKsBQDapSpbPp7I30f3+lfQ7qzz75NG2YvOZURdD6lnnIw6i8M/bKojwNjXtv5VW1fHF9FYDdlT4Nca0R2HMRoi4ecZ3L0sD2Aey3Uled9U/EPwaw90d15Edamzp55nfbh7c83tOqcXfIn81nP6okQ3EsKNKFlVp06OQSPRlfKDGoSO2LAPqf2p3bdRANz5Oc0MNx6HirYT5RRTs8RtVcAIm+yV/YhwGYfb57m/ttIWm4AvczZoUqtOgA4WkLlcblpXak75U1U63Ru0k7zd61qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/Gdv6ztm7Hcy98YpGwVYkWAio9QFSx/7SQ90ydqmlq0=;
+ b=My6yVtiHqkzmu4S6DScoJ+E36+tqgpX+L+ksFYepvpMZ7UNuq91GzaHqsQH1o1KM0ec1IyM0xmvbAESeruW39ifTuQjJYC0C8hwS1nO2vnyxJCTVmaqwQujGTjKmgHHtagvZezep2iyGv21EnJ065/4WAP76dnugqZmas8X3Pd4=
+Received: from OSBPR01MB2920.jpnprd01.prod.outlook.com (2603:1096:604:18::16)
+ by OSBPR01MB5032.jpnprd01.prod.outlook.com (2603:1096:604:3b::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.22; Mon, 28 Jun
+ 2021 02:55:03 +0000
+Received: from OSBPR01MB2920.jpnprd01.prod.outlook.com
+ ([fe80::b985:8239:6cf0:1228]) by OSBPR01MB2920.jpnprd01.prod.outlook.com
+ ([fe80::b985:8239:6cf0:1228%7]) with mapi id 15.20.4264.023; Mon, 28 Jun 2021
+ 02:55:03 +0000
+From:   "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+CC:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "willy@infradead.org" <willy@infradead.org>
+Subject: RE: [PATCH v6.1 6/7] fs/xfs: Handle CoW for fsdax write() path
+Thread-Topic: [PATCH v6.1 6/7] fs/xfs: Handle CoW for fsdax write() path
+Thread-Index: AQHXYbckY2jHOODaoEahyEINyab63asi57FQgAJ1DICAA2zhUA==
+Date:   Mon, 28 Jun 2021 02:55:03 +0000
+Message-ID: <OSBPR01MB2920922639112230407000E9F4039@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+References: <OSBPR01MB2920A2BCD568364C1363AFA6F4369@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <20210615072147.73852-1-ruansy.fnst@fujitsu.com>
+ <OSBPR01MB2920D2D275EB0DB15C37D079F4079@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <20210625221855.GG13784@locust>
+In-Reply-To: <20210625221855.GG13784@locust>
+Accept-Language: en-US, zh-CN
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=fujitsu.com;
+x-originating-ip: [223.111.68.150]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 370acf3e-3f02-420f-e0ff-08d939e020b5
+x-ms-traffictypediagnostic: OSBPR01MB5032:
+x-microsoft-antispam-prvs: <OSBPR01MB503288A0F7F02C1A048C2368F4039@OSBPR01MB5032.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ZapByM8XOGjxf/jGjFsOj5f6NtpXyKSwqYNE523z0pN8x1jf+O0zk3dpx7HSs8Ds8PPg5Gt8NNVyiFuBwmQFuKb38wsWogHeSMLEvwHTjs8EwjmB6JBjd228m3Zkp29yhfkHMbWV1+ipDm8ddJICPYOiRlqIPsGKrosSCwyqGs73GoarwzHABmJE4SDD9slRu1WciIPzVWOZhcj8YGzupkCAQES10eEUsRqIxTqrS3gf8B05bG9vtzJSE34sPgXmUTY8GGhwyh6HgXN9D5IJj6LLe5GxD6+LRsRjQGLYksPbv+aq8d69NzmFvVf4BQYEhKXyax33ay6Fee9tOTb3X//GhAL3XY/sGMlXUEAD6JaCh/FjMW5VnDKYr0sA88id6Br3kLacitVRkLoKsSn7G+codOL4LTEzfUWb8q+wVUYrdROCFDMve7Wn9PaTVfoN25iWD8VWBu+DVBz4gl57PcZGXVAXjWzODyJUZgsHoB/oajtl1oZ9ByGRD6pfwp/GTJHQtiFp0HdNdndbZgRDaU9On0XqLisImTbmRnX8sDrIDj0/DofwbwKFgOmVjiU91Tm/Lbi+mDyVRMTyoPsOpp6eBtg7uQaaLUEENOruAas=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSBPR01MB2920.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(39860400002)(396003)(346002)(136003)(54906003)(186003)(5660300002)(9686003)(7696005)(8936002)(55016002)(71200400001)(86362001)(316002)(26005)(4326008)(85182001)(83380400001)(6916009)(38100700002)(6506007)(8676002)(66946007)(66446008)(33656002)(7416002)(66556008)(66476007)(478600001)(52536014)(2906002)(122000001)(64756008)(30864003)(76116006);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?gb2312?B?R2Fsd2IxMmpxTGtlUmgwdmJFWnNwN1pPOHd3STJyUnltakY2aG5zSjNEcExj?=
+ =?gb2312?B?dmQ1RFpKS1dFOEFEYXRyTldOcHI4NXdPM2w3aHdJeGlvOGVpR3lwTmY0R293?=
+ =?gb2312?B?R1JvRUdTazF4UEVzQlZMSEcrOVlCeDAzcW5LYWF6RzBzN0NtVWY4QVJJUW1V?=
+ =?gb2312?B?dzNvV2xmU2I4YXB3WUJQVTk2M2dRMkR0aU5FU0M3SUprRUVnZTFZTDhTL3R0?=
+ =?gb2312?B?ckRmUGNIY21CK0hIOE1uMWNiQjllWEVEN0RPTGNqYkhaQnZsWkdiMGN2cEJo?=
+ =?gb2312?B?VWVOVEIzbXlMN2JRTG02TlpGTGZWRU0vS2U4cHozdjJMOFNUZ0JKZXpSZGtv?=
+ =?gb2312?B?Tks2U1UycEs2ZkVEYjJ3U2xma09pNVVkYU9kT3N4cHFXb1pPYy9OYlZETHVy?=
+ =?gb2312?B?c0l0eFhadGJydmpwajJ6MmRxc2k1dTJOdldmODJYMjlhNEsyRjh5akprUk5k?=
+ =?gb2312?B?RWcwbzdwRjZmUmN0bFlqSXdUTVlRdituK0VpU253Kys1MGMrK0h2NHdaY3Zr?=
+ =?gb2312?B?UlIyZzA1aEpNL2J2TElQWmt2elU1L3F4RkNoNzdTL2NkL1VHeUxMbVBDZ3VN?=
+ =?gb2312?B?TGtBZEVhY1lidVpyWEZJd1ZrNXJ6bEFobmx1ZHhqV0Ixa2tGMFJiUlZQSFNu?=
+ =?gb2312?B?UThPSVhuN0FwOENmaTNFTnFMdmVscWZ3bHd3Q1VGMnNkOHNCSlk2SWxSTlBY?=
+ =?gb2312?B?cjhEeGlCQWJBQ1hKVGs2ZmduMkFkMlNuTlAvZ2ZaTzRmeW9lY1dpTWNZVmMz?=
+ =?gb2312?B?UUNQakc0MFQwTGRqdzA1YUtqTE1FSVN0WVQ4NXMrck83RzZtQlIrUXo5a3Vz?=
+ =?gb2312?B?SWdoTnF6K1ZtZFFWcitzOVQxRW41NVZzRytJcndNdm8yRmorNUpGK2RRL1Iy?=
+ =?gb2312?B?MDBRcGFXT2hTNXZ3S2lOKy9CS0VobXA1YjdFYjl4c0FpVDlhSmJXZHAwZ0Ru?=
+ =?gb2312?B?a2dVUmhqUTkralV0YWNiWEdXLzNnbTFmRGZkbk1YcE4zSERGUlJiUk9wVnRl?=
+ =?gb2312?B?UFR5TksrdU5oRThOUjAwMFhSSGlMOWs4TVd2NE1mQkJzRGQxaVE5bmpqci80?=
+ =?gb2312?B?Q05GODZYeXRvVW1sZ0ZQamwvc1ZhSGdnY2NZSzNLMlE3Vml3OTdUQTZpRGgz?=
+ =?gb2312?B?VkJxTmlwZk9ZVUdrbGhJczJUU0pYSUwwUUZSNEFsVUdPSGdCYUtSWW9ZVjZV?=
+ =?gb2312?B?d2t0WWQ3a1NsYzE2YU1wcEdtWVltVmtGNVRaWStUMGh2Y0Vyb1VnZnZ3N0hj?=
+ =?gb2312?B?MVlZZTF4clJ5N3lhSnVjdDcrT3V4NHBnbW1HVW1jRDE3aGU0WUljRzZ3eEpW?=
+ =?gb2312?B?YVZRL2hOM2NxemdISXhCc0VwUVB4OFZTV2VXTnFPZ2RLWUdTd3gzdnJQdzE4?=
+ =?gb2312?B?UlI4Zm10QXJVVDkwcWF2alE4bXAycVVlV3dNTFZYZDZGUWRVRm8wYzVzUHJP?=
+ =?gb2312?B?VWpEY3ZHM1Z6dDRhUVM5dnRWbXIzRDFnSGg0VzFEYjVTaUpra0hDYW9keGtr?=
+ =?gb2312?B?RkV3M2Nod00yN0dCa2xtNkpwZ1NRcTU4OHd4UjNoVStER2F5YXFpSnEyZjY3?=
+ =?gb2312?B?M2Y0UkxuNWtMRCs2R1RQbU8rUEN5YlFVQlhOLzBVRVRVY1N2d1B3MU84ajRa?=
+ =?gb2312?B?ckdFd1FsREJ3SGtmT3JVRU5XVllsVVh4QTNVNjR4d3lVZFFsMVZnSk5sTHJL?=
+ =?gb2312?B?YkY0bXBKcVhQUU1OQzlkdWVqR1hSK0ZQbXlHT0xKdFVGd3I5K3dLUVBwbERO?=
+ =?gb2312?Q?Bob7HnZW8JQqfrW6/3MHPoTC0cDFuIEMGvkB3nU?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210615141331.407-1-xieyongji@bytedance.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2920.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 370acf3e-3f02-420f-e0ff-08d939e020b5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2021 02:55:03.2584
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oQj6iSW1u44qc9SKq04Um98lFbKU1U7EXeTF3TozKzbkdFAX+JGy+jp0RYI5nbw4JOHp7wXisDaMo9VosSgU9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB5032
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 10:13:21PM +0800, Xie Yongji wrote:
-> 
-> This series introduces a framework that makes it possible to implement
-> software-emulated vDPA devices in userspace. And to make it simple, the
-> emulated vDPA device's control path is handled in the kernel and only the
-> data path is implemented in the userspace.
-> 
-> Since the emuldated vDPA device's control path is handled in the kernel,
-> a message mechnism is introduced to make userspace be aware of the data
-> path related changes. Userspace can use read()/write() to receive/reply
-> the control messages.
-> 
-> In the data path, the core is mapping dma buffer into VDUSE daemon's
-> address space, which can be implemented in different ways depending on
-> the vdpa bus to which the vDPA device is attached.
-> 
-> In virtio-vdpa case, we implements a MMU-based on-chip IOMMU driver with
-> bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the dma
-> buffer is reside in a userspace memory region which can be shared to the
-> VDUSE userspace processs via transferring the shmfd.
-> 
-> The details and our user case is shown below:
-> 
-> ------------------------    -------------------------   ----------------------------------------------
-> |            Container |    |              QEMU(VM) |   |                               VDUSE daemon |
-> |       ---------      |    |  -------------------  |   | ------------------------- ---------------- |
-> |       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device emulation | | block driver | |
-> ------------+-----------     -----------+------------   -------------+----------------------+---------
->             |                           |                            |                      |
->             |                           |                            |                      |
-> ------------+---------------------------+----------------------------+----------------------+---------
-> |    | block device |           |  vhost device |            | vduse driver |          | TCP/IP |    |
-> |    -------+--------           --------+--------            -------+--------          -----+----    |
-> |           |                           |                           |                       |        |
-> | ----------+----------       ----------+-----------         -------+-------                |        |
-> | | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa device |                |        |
-> | ----------+----------       ----------+-----------         -------+-------                |        |
-> |           |      virtio bus           |                           |                       |        |
-> |   --------+----+-----------           |                           |                       |        |
-> |                |                      |                           |                       |        |
-> |      ----------+----------            |                           |                       |        |
-> |      | virtio-blk device |            |                           |                       |        |
-> |      ----------+----------            |                           |                       |        |
-> |                |                      |                           |                       |        |
-> |     -----------+-----------           |                           |                       |        |
-> |     |  virtio-vdpa driver |           |                           |                       |        |
-> |     -----------+-----------           |                           |                       |        |
-> |                |                      |                           |    vdpa bus           |        |
-> |     -----------+----------------------+---------------------------+------------           |        |
-> |                                                                                        ---+---     |
-> -----------------------------------------------------------------------------------------| NIC |------
->                                                                                          ---+---
->                                                                                             |
->                                                                                    ---------+---------
->                                                                                    | Remote Storages |
->                                                                                    -------------------
-> 
-> We make use of it to implement a block device connecting to
-> our distributed storage, which can be used both in containers and
-> VMs. Thus, we can have an unified technology stack in this two cases.
-> 
-> To test it with null-blk:
-> 
->   $ qemu-storage-daemon \
->       --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
->       --monitor chardev=charmonitor \
->       --blockdev driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0 \
->       --export type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
-> 
-> The qemu-storage-daemon can be found at https://github.com/bytedance/qemu/tree/vduse
-> 
-> To make the userspace VDUSE processes such as qemu-storage-daemon able to
-> be run by an unprivileged user. We did some works on virtio driver to avoid
-> trusting device, including:
-> 
->   - validating the used length:
-> 
->     * https://lore.kernel.org/lkml/20210531135852.113-1-xieyongji@bytedance.com/
->     * https://lore.kernel.org/lkml/20210525125622.1203-1-xieyongji@bytedance.com/
-> 
->   - validating the device config:
-> 
->     * https://lore.kernel.org/lkml/20210615104810.151-1-xieyongji@bytedance.com/
-> 
->   - validating the device response:
-> 
->     * https://lore.kernel.org/lkml/20210615105218.214-1-xieyongji@bytedance.com/
-> 
-> Since I'm not sure if I missing something during auditing, especially on some
-> virtio device drivers that I'm not familiar with, we limit the supported device
-> type to virtio block device currently. The support for other device types can be
-> added after the security issue of corresponding device driver is clarified or
-> fixed in the future.
-> 
-> Future work:
->   - Improve performance
->   - Userspace library (find a way to reuse device emulation code in qemu/rust-vmm)
->   - Support more device types
-> 
-> V7 to V8:
-> - Rebased to newest kernel tree
-> - Rework VDUSE driver to handle the device's control path in kernel
-> - Limit the supported device type to virtio block device
-> - Export free_iova_fast()
-> - Remove the virtio-blk and virtio-scsi patches (will send them alone)
-> - Remove all module parameters
-> - Use the same MAJOR for both control device and VDUSE devices
-> - Avoid eventfd cleanup in vduse_dev_release()
-> 
-> V6 to V7:
-> - Export alloc_iova_fast()
-> - Add get_config_size() callback
-> - Add some patches to avoid trusting virtio devices
-> - Add limited device emulation
-> - Add some documents
-> - Use workqueue to inject config irq
-> - Add parameter on vq irq injecting
-> - Rename vduse_domain_get_mapping_page() to vduse_domain_get_coherent_page()
-> - Add WARN_ON() to catch message failure
-> - Add some padding/reserved fields to uAPI structure
-> - Fix some bugs
-> - Rebase to vhost.git
-> 
-> V5 to V6:
-> - Export receive_fd() instead of __receive_fd()
-> - Factor out the unmapping logic of pa and va separatedly
-> - Remove the logic of bounce page allocation in page fault handler
-> - Use PAGE_SIZE as IOVA allocation granule
-> - Add EPOLLOUT support
-> - Enable setting API version in userspace
-> - Fix some bugs
-> 
-> V4 to V5:
-> - Remove the patch for irq binding
-> - Use a single IOTLB for all types of mapping
-> - Factor out vhost_vdpa_pa_map()
-> - Add some sample codes in document
-> - Use receice_fd_user() to pass file descriptor
-> - Fix some bugs
-> 
-> V3 to V4:
-> - Rebase to vhost.git
-> - Split some patches
-> - Add some documents
-> - Use ioctl to inject interrupt rather than eventfd
-> - Enable config interrupt support
-> - Support binding irq to the specified cpu
-> - Add two module parameter to limit bounce/iova size
-> - Create char device rather than anon inode per vduse
-> - Reuse vhost IOTLB for iova domain
-> - Rework the message mechnism in control path
-> 
-> V2 to V3:
-> - Rework the MMU-based IOMMU driver
-> - Use the iova domain as iova allocator instead of genpool
-> - Support transferring vma->vm_file in vhost-vdpa
-> - Add SVA support in vhost-vdpa
-> - Remove the patches on bounce pages reclaim
-> 
-> V1 to V2:
-> - Add vhost-vdpa support
-> - Add some documents
-> - Based on the vdpa management tool
-> - Introduce a workqueue for irq injection
-> - Replace interval tree with array map to store the iova_map
-> 
-> Xie Yongji (10):
->   iova: Export alloc_iova_fast() and free_iova_fast();
->   file: Export receive_fd() to modules
->   eventfd: Increase the recursion depth of eventfd_signal()
->   vhost-iotlb: Add an opaque pointer for vhost IOTLB
->   vdpa: Add an opaque pointer for vdpa_config_ops.dma_map()
->   vdpa: factor out vhost_vdpa_pa_map() and vhost_vdpa_pa_unmap()
->   vdpa: Support transferring virtual addressing during DMA mapping
->   vduse: Implement an MMU-based IOMMU driver
->   vduse: Introduce VDUSE - vDPA Device in Userspace
->   Documentation: Add documentation for VDUSE
-> 
->  Documentation/userspace-api/index.rst              |    1 +
->  Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
->  Documentation/userspace-api/vduse.rst              |  222 +++
->  drivers/iommu/iova.c                               |    2 +
->  drivers/vdpa/Kconfig                               |   10 +
->  drivers/vdpa/Makefile                              |    1 +
->  drivers/vdpa/ifcvf/ifcvf_main.c                    |    2 +-
->  drivers/vdpa/mlx5/net/mlx5_vnet.c                  |    2 +-
->  drivers/vdpa/vdpa.c                                |    9 +-
->  drivers/vdpa/vdpa_sim/vdpa_sim.c                   |    8 +-
->  drivers/vdpa/vdpa_user/Makefile                    |    5 +
->  drivers/vdpa/vdpa_user/iova_domain.c               |  545 ++++++++
->  drivers/vdpa/vdpa_user/iova_domain.h               |   73 +
->  drivers/vdpa/vdpa_user/vduse_dev.c                 | 1453 ++++++++++++++++++++
->  drivers/vdpa/virtio_pci/vp_vdpa.c                  |    2 +-
->  drivers/vhost/iotlb.c                              |   20 +-
->  drivers/vhost/vdpa.c                               |  148 +-
->  fs/eventfd.c                                       |    2 +-
->  fs/file.c                                          |    6 +
->  include/linux/eventfd.h                            |    5 +-
->  include/linux/file.h                               |    7 +-
->  include/linux/vdpa.h                               |   21 +-
->  include/linux/vhost_iotlb.h                        |    3 +
->  include/uapi/linux/vduse.h                         |  143 ++
->  24 files changed, 2641 insertions(+), 50 deletions(-)
->  create mode 100644 Documentation/userspace-api/vduse.rst
->  create mode 100644 drivers/vdpa/vdpa_user/Makefile
->  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
->  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
->  create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
->  create mode 100644 include/uapi/linux/vduse.h
-> 
-> --
-> 2.11.0
-
-Hi, Yongji
-
-Great work! your method is really wise that implements a software IOMMU
-so that data path gets processed by userspace application efficiently.
-Sorry, I've just realized your work and patches.
-
-
-I was working on a similar thing aiming to get vhost-user-blk device
-from SPDK vhost-target to be exported as local host kernel block device.
-It's diagram is like this:
-
-
-                                -----------------------------                
-------------------------        |    -----------------      |    ---------------------------------------
-|   <RunC Container>   |     <<<<<<<<| Shared-Memory |>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>        |
-|       ---------      |     v  |    -----------------      |    |                            v        |
-|       |dev/vdx|      |     v  |   <virtio-local-agent>    |    |      <Vhost-user Target>   v        |
-------------+-----------     v  | ------------------------  |    |  --------------------------v------  |
-            |                v  | |/dev/virtio-local-ctrl|  |    |  | unix socket |   |block driver |  |
-            |                v  ------------+----------------    --------+--------------------v---------
-            |                v              |                            |                    v
-------------+----------------v--------------+----------------------------+--------------------v--------|
-|    | block device |        v      |  Misc device |                     |                    v        |
-|    -------+--------        v      --------+-------                     |                    v        |
-|           |                v              |                            |                    v        |
-| ----------+----------      v              |                            |                    v        |
-| | virtio-blk driver |      v              |                            |                    v        |
-| ----------+----------      v              |                            |                    v        |
-|           | virtio bus     v              |                            |                    v        |
-|   --------+---+-------     v              |                            |                    v        |
-|               |            v              |                            |                    v        |
-|               |            v              |                            |                    v        |
-|     ----------+----------  v     ---------+-----------                 |                    v        |
-|     | virtio-blk device |--<----| virtio-local driver |----------------<                    v        |
-|     ----------+----------       ----------+-----------                                      v        |
-|                                                                                    ---------+--------|
--------------------------------------------------------------------------------------| RNIC |--| PCIe |-
-                                                                                     ----+---  | NVMe |
-                                                                                         |     --------
-                                                                                ---------+---------
-                                                                                | Remote Storages |
-                                                                                -------------------
-
-
-I just draft out an initial proof version. When seeing your RFC mail,
-I'm thinking that SPDK target may depends on your work, so I could
-directly drop mine.
-But after a glance of the RFC patches, seems it is not so easy or
-efficient to get vduse leveraged by SPDK.
-(Please correct me, if I get wrong understanding on vduse. :) )
-
-The large barrier is bounce-buffer mapping: SPDK requires hugepages
-for NVMe over PCIe and RDMA, so take some preallcoated hugepages to
-map as bounce buffer is necessary. Or it's hard to avoid an extra
-memcpy from bounce-buffer to hugepage.
-If you can add an option to map hugepages as bounce-buffer,
-then SPDK could also be a potential user of vduse.
-
-It would be better if SPDK vhost-target could leverage the datapath of
-vduse directly and efficiently. Even the control path is vdpa based,
-we may work out one daemon as agent to bridge SPDK vhost-target with vduse.
-Then users who already deployed SPDK vhost-target, can smoothly run
-some agent daemon without code modification on SPDK vhost-target itself.
-(It is only better-to-have for SPDK vhost-target app, not mandatory for SPDK) :)
-At least, some small barrier is there that blocked a vhost-target use vduse
-datapath efficiently:
-- Current IO completion irq of vduse is IOCTL based. If add one option
-to get it eventfd based, then vhost-target can directly notify IO
-completion via negotiated eventfd.
-
-
-Thanks
-From Xiaodong
-
-
-
-
-
-									
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY2LjEg
+Ni83XSBmcy94ZnM6IEhhbmRsZSBDb1cgZm9yIGZzZGF4IHdyaXRlKCkgcGF0aA0KPiANCj4gT24g
+VGh1LCBKdW4gMjQsIDIwMjEgYXQgMDg6NDk6MTdBTSArMDAwMCwgcnVhbnN5LmZuc3RAZnVqaXRz
+dS5jb20gd3JvdGU6DQo+ID4gSGkgRGFycmljaywNCj4gPg0KPiA+IERvIHlvdSBoYXZlIGFueSBj
+b21tZW50IG9uIHRoaXM/DQo+IA0KPiBTb3JyeSwgd2FzIG9uIHZhY2F0aW9uLg0KPiANCj4gPiBU
+aGFua3MsDQo+ID4gUnVhbi4NCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
+Cj4gPiA+IEZyb206IFNoaXlhbmcgUnVhbiA8cnVhbnN5LmZuc3RAZnVqaXRzdS5jb20+DQo+ID4g
+PiBTdWJqZWN0OiBbUEFUQ0ggdjYuMSA2LzddIGZzL3hmczogSGFuZGxlIENvVyBmb3IgZnNkYXgg
+d3JpdGUoKSBwYXRoDQo+ID4gPg0KPiA+ID4gSGkgRGFycmljaywNCj4gPiA+DQo+ID4gPiBTaW5j
+ZSBvdGhlciBwYXRjaGVzIGxvb2tzIGdvb2QsIEkgcG9zdCB0aGlzIFJGQyBwYXRjaCBzaW5nbHkg
+dG8NCj4gPiA+IGhvdC1maXggdGhlIHByb2JsZW0gaW4geGZzX2RheF93cml0ZV9pb21hcF9vcHMt
+PmlvbWFwX2VuZCgpIG9mIHY2DQo+ID4gPiB0aGF0IHRoZSBlcnJvciBjb2RlIHdhcyBpbmdvcmVk
+LiBJIHdpbGwgc3BsaXQgdGhpcyBpbiB0d28NCj4gPiA+IHBhdGNoZXMoY2hhbmdlcyBpbiBpb21h
+cCBhbmQgeGZzDQo+ID4gPiByZXNwZWN0aXZlbHkpIGluIG5leHQgZm9ybWFsIHZlcnNpb24gaWYg
+aXQgbG9va3Mgb2suDQo+ID4gPg0KPiA+ID4gPT09PQ0KPiA+ID4NCj4gPiA+IEludHJvZHVjZSBh
+IG5ldyBpbnRlcmZhY2UgY2FsbGVkICJpb21hcF9wb3N0X2FjdG9yKCkiIGluIGlvbWFwX29wcy4N
+Cj4gPiA+IEFuZCBjYWxsIGl0IGJldHdlZW4gLT5hY3RvcigpIGFuZCAtPmlvbWFwX2VuZCgpLiAg
+SXQgaXMgbWVhbiB0bw0KPiA+ID4gaGFuZGxlIHRoZSBlcnJvciBjb2RlIHJldHVybmVkIGZyb20g
+LT5hY3RvcigpLiAgSW4gdGhpcyBwYXRjaHNldCwgaXQNCj4gPiA+IGlzIHVzZWQgdG8gcmVtYXAg
+b3IgY2FuY2VsIHRoZSBDb1cgZXh0ZW50cyBhY2NvcmRpbmcgdG8gdGhlIGVycm9yIGNvZGUuDQo+
+ID4gPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogU2hpeWFuZyBSdWFuIDxydWFuc3kuZm5zdEBmdWpp
+dHN1LmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4gIGZzL2RheC5jICAgICAgICAgICAgICAgfCAyNyAr
+KysrKysrKysrKysrKysrKystLS0tLS0tLS0NCj4gPiA+ICBmcy9pb21hcC9hcHBseS5jICAgICAg
+IHwgIDQgKysrKw0KPiA+ID4gIGZzL3hmcy94ZnNfYm1hcF91dGlsLmMgfCAgMyArLS0NCj4gPiA+
+ICBmcy94ZnMveGZzX2ZpbGUuYyAgICAgIHwgIDUgKysrLS0NCj4gPiA+ICBmcy94ZnMveGZzX2lv
+bWFwLmMgICAgIHwgMzMgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystDQo+ID4gPiAg
+ZnMveGZzL3hmc19pb21hcC5oICAgICB8IDI0ICsrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+
+ID4gIGZzL3hmcy94ZnNfaW9wcy5jICAgICAgfCAgNyArKystLS0tDQo+ID4gPiAgZnMveGZzL3hm
+c19yZWZsaW5rLmMgICB8ICAzICstLQ0KPiA+ID4gIGluY2x1ZGUvbGludXgvaW9tYXAuaCAgfCAg
+OCArKysrKysrKw0KPiA+ID4gIDkgZmlsZXMgY2hhbmdlZCwgOTQgaW5zZXJ0aW9ucygrKSwgMjAg
+ZGVsZXRpb25zKC0pDQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL2ZzL2RheC5jIGIvZnMvZGF4
+LmMNCj4gPiA+IGluZGV4IDkzZjE2MjEwODQ3Yi4uMDc0MGMyNjEwYjZmIDEwMDY0NA0KPiA+ID4g
+LS0tIGEvZnMvZGF4LmMNCj4gPiA+ICsrKyBiL2ZzL2RheC5jDQo+ID4gPiBAQCAtMTUzNyw3ICsx
+NTM3LDcgQEAgc3RhdGljIHZtX2ZhdWx0X3QgZGF4X2lvbWFwX3B0ZV9mYXVsdChzdHJ1Y3QNCj4g
+PiA+IHZtX2ZhdWx0ICp2bWYsIHBmbl90ICpwZm5wLA0KPiA+ID4gIAlzdHJ1Y3QgaW9tYXAgaW9t
+YXAgPSB7IC50eXBlID0gSU9NQVBfSE9MRSB9Ow0KPiA+ID4gIAlzdHJ1Y3QgaW9tYXAgc3JjbWFw
+ID0geyAudHlwZSA9IElPTUFQX0hPTEUgfTsNCj4gPiA+ICAJdW5zaWduZWQgZmxhZ3MgPSBJT01B
+UF9GQVVMVDsNCj4gPiA+IC0JaW50IGVycm9yOw0KPiA+ID4gKwlpbnQgZXJyb3IsIGNvcGllZCA9
+IFBBR0VfU0laRTsNCj4gPiA+ICAJYm9vbCB3cml0ZSA9IHZtZi0+ZmxhZ3MgJiBGQVVMVF9GTEFH
+X1dSSVRFOw0KPiA+ID4gIAl2bV9mYXVsdF90IHJldCA9IDAsIG1ham9yID0gMDsNCj4gPiA+ICAJ
+dm9pZCAqZW50cnk7DQo+ID4gPiBAQCAtMTU5OCw3ICsxNTk4LDcgQEAgc3RhdGljIHZtX2ZhdWx0
+X3QgZGF4X2lvbWFwX3B0ZV9mYXVsdChzdHJ1Y3QNCj4gPiA+IHZtX2ZhdWx0ICp2bWYsIHBmbl90
+ICpwZm5wLA0KPiA+ID4gIAlyZXQgPSBkYXhfZmF1bHRfYWN0b3Iodm1mLCBwZm5wLCAmeGFzLCAm
+ZW50cnksIGZhbHNlLCBmbGFncywNCj4gPiA+ICAJCQkgICAgICAmaW9tYXAsICZzcmNtYXApOw0K
+PiA+ID4gIAlpZiAocmV0ID09IFZNX0ZBVUxUX1NJR0JVUykNCj4gPiA+IC0JCWdvdG8gZmluaXNo
+X2lvbWFwOw0KPiA+ID4gKwkJZ290byBmaW5pc2hfaW9tYXBfYWN0b3I7DQo+ID4gPg0KPiA+ID4g
+IAkvKiByZWFkL3dyaXRlIE1BUFBFRCwgQ29XIFVOV1JJVFRFTiAqLw0KPiA+ID4gIAlpZiAoaW9t
+YXAuZmxhZ3MgJiBJT01BUF9GX05FVykgew0KPiA+ID4gQEAgLTE2MDcsMTAgKzE2MDcsMTYgQEAg
+c3RhdGljIHZtX2ZhdWx0X3QgZGF4X2lvbWFwX3B0ZV9mYXVsdChzdHJ1Y3QNCj4gPiA+IHZtX2Zh
+dWx0ICp2bWYsIHBmbl90ICpwZm5wLA0KPiA+ID4gIAkJbWFqb3IgPSBWTV9GQVVMVF9NQUpPUjsN
+Cj4gPiA+ICAJfQ0KPiA+ID4NCj4gPiA+ICsgZmluaXNoX2lvbWFwX2FjdG9yOg0KPiA+ID4gKwlp
+ZiAob3BzLT5pb21hcF9wb3N0X2FjdG9yKSB7DQo+ID4gPiArCQlpZiAocmV0ICYgVk1fRkFVTFRf
+RVJST1IpDQo+ID4gPiArCQkJY29waWVkID0gMDsNCj4gPiA+ICsJCW9wcy0+aW9tYXBfcG9zdF9h
+Y3Rvcihpbm9kZSwgcG9zLCBQTURfU0laRSwgY29waWVkLCBmbGFncywNCj4gPiA+ICsJCQkJICAg
+ICAgJmlvbWFwLCAmc3JjbWFwKTsNCj4gPiA+ICsJfQ0KPiA+ID4gKw0KPiA+ID4gIGZpbmlzaF9p
+b21hcDoNCj4gPiA+ICAJaWYgKG9wcy0+aW9tYXBfZW5kKSB7DQo+ID4gPiAtCQlpbnQgY29waWVk
+ID0gUEFHRV9TSVpFOw0KPiA+ID4gLQ0KPiA+ID4gIAkJaWYgKHJldCAmIFZNX0ZBVUxUX0VSUk9S
+KQ0KPiA+ID4gIAkJCWNvcGllZCA9IDA7DQo+ID4gPiAgCQkvKg0KPiA+ID4gQEAgLTE2NzcsNyAr
+MTY4Myw3IEBAIHN0YXRpYyB2bV9mYXVsdF90IGRheF9pb21hcF9wbWRfZmF1bHQoc3RydWN0DQo+
+ID4gPiB2bV9mYXVsdCAqdm1mLCBwZm5fdCAqcGZucCwNCj4gPiA+ICAJcGdvZmZfdCBtYXhfcGdv
+ZmY7DQo+ID4gPiAgCXZvaWQgKmVudHJ5Ow0KPiA+ID4gIAlsb2ZmX3QgcG9zOw0KPiA+ID4gLQlp
+bnQgZXJyb3I7DQo+ID4gPiArCWludCBlcnJvciwgY29waWVkID0gUE1EX1NJWkU7DQo+ID4gPg0K
+PiA+ID4gIAkvKg0KPiA+ID4gIAkgKiBDaGVjayB3aGV0aGVyIG9mZnNldCBpc24ndCBiZXlvbmQg
+ZW5kIG9mIGZpbGUgbm93LiBDYWxsZXIgaXMgQEANCj4gPiA+IC0xNzM2LDEyDQo+ID4gPiArMTc0
+MiwxNSBAQCBzdGF0aWMgdm1fZmF1bHRfdCBkYXhfaW9tYXBfcG1kX2ZhdWx0KHN0cnVjdCB2bV9m
+YXVsdA0KPiA+ID4gKyp2bWYsDQo+ID4gPiBwZm5fdCAqcGZucCwNCj4gPiA+ICAJcmV0ID0gZGF4
+X2ZhdWx0X2FjdG9yKHZtZiwgcGZucCwgJnhhcywgJmVudHJ5LCB0cnVlLCBmbGFncywNCj4gPiA+
+ICAJCQkgICAgICAmaW9tYXAsICZzcmNtYXApOw0KPiA+ID4NCj4gPiA+ICsJaWYgKHJldCA9PSBW
+TV9GQVVMVF9GQUxMQkFDSykNCj4gPiA+ICsJCWNvcGllZCA9IDA7DQo+ID4gPiArCWlmIChvcHMt
+PmlvbWFwX3Bvc3RfYWN0b3IpIHsNCj4gPiA+ICsJCW9wcy0+aW9tYXBfcG9zdF9hY3Rvcihpbm9k
+ZSwgcG9zLCBQTURfU0laRSwgY29waWVkLCBmbGFncywNCj4gPiA+ICsJCQkJICAgICAgJmlvbWFw
+LCAmc3JjbWFwKTsNCj4gPiA+ICsJfQ0KPiA+ID4gKw0KPiA+ID4gIGZpbmlzaF9pb21hcDoNCj4g
+PiA+ICAJaWYgKG9wcy0+aW9tYXBfZW5kKSB7DQo+ID4gPiAtCQlpbnQgY29waWVkID0gUE1EX1NJ
+WkU7DQo+ID4gPiAtDQo+ID4gPiAtCQlpZiAocmV0ID09IFZNX0ZBVUxUX0ZBTExCQUNLKQ0KPiA+
+ID4gLQkJCWNvcGllZCA9IDA7DQo+ID4gPiAgCQkvKg0KPiA+ID4gIAkJICogVGhlIGZhdWx0IGlz
+IGRvbmUgYnkgbm93IGFuZCB0aGVyZSdzIG5vIHdheSBiYWNrIChvdGhlcg0KPiA+ID4gIAkJICog
+dGhyZWFkIG1heSBiZSBhbHJlYWR5IGhhcHBpbHkgdXNpbmcgUE1EIHdlIGhhdmUgaW5zdGFsbGVk
+KS4NCj4gPiA+IGRpZmYgLS1naXQgYS9mcy9pb21hcC9hcHBseS5jIGIvZnMvaW9tYXAvYXBwbHku
+YyBpbmRleA0KPiA+ID4gMDQ5M2RhNTI4NmFkLi4yNmE1NGRlZDE4NGYgMTAwNjQ0DQo+ID4gPiAt
+LS0gYS9mcy9pb21hcC9hcHBseS5jDQo+ID4gPiArKysgYi9mcy9pb21hcC9hcHBseS5jDQo+ID4g
+PiBAQCAtODQsNiArODQsMTAgQEAgaW9tYXBfYXBwbHkoc3RydWN0IGlub2RlICppbm9kZSwgbG9m
+Zl90IHBvcywNCj4gPiA+IGxvZmZfdCBsZW5ndGgsIHVuc2lnbmVkIGZsYWdzLA0KPiA+ID4gIAl3
+cml0dGVuID0gYWN0b3IoaW5vZGUsIHBvcywgbGVuZ3RoLCBkYXRhLCAmaW9tYXAsDQo+ID4gPiAg
+CQkJc3JjbWFwLnR5cGUgIT0gSU9NQVBfSE9MRSA/ICZzcmNtYXAgOiAmaW9tYXApOw0KPiA+ID4N
+Cj4gPiA+ICsJaWYgKG9wcy0+aW9tYXBfcG9zdF9hY3Rvcikgew0KPiA+ID4gKwkJd3JpdHRlbiA9
+IG9wcy0+aW9tYXBfcG9zdF9hY3Rvcihpbm9kZSwgcG9zLCBsZW5ndGgsIHdyaXR0ZW4sDQo+ID4g
+PiArCQkJCQkJZmxhZ3MsICZpb21hcCwgJnNyY21hcCk7DQo+IA0KPiBIb3cgbWFueSBvcGVyYXRp
+b25zIGFjdHVhbGx5IG5lZWQgYW4gaW9tYXBfcG9zdF9hY3Rvcj8gIEl0J3MganVzdCB0aGUgZGF4
+DQo+IG9uZXMsIHJpZ2h0PyAgV2hpY2ggaXMgLi4uIGlvbWFwX3RydW5jYXRlX3BhZ2UsIGlvbWFw
+X3plcm9fcmFuZ2UsDQo+IGRheF9pb21hcF9mYXVsdCwgYW5kIGRheF9pb21hcF9ydywgcmlnaHQ/
+ICBXZSBkb24ndCBuZWVkIGEgcG9zdF9hY3RvciBmb3INCj4gb3RoZXIgaW9tYXAgZnVuY3Rpb25h
+bGl0eSAobGlrZSBGSUVNQVAsIFNFRUtfREFUQS9TRUVLX0hPTEUsIGV0Yy4pIHNvIGFkZGluZw0K
+PiBhIG5ldyBmdW5jdGlvbiBwb2ludGVyIGZvciBhbGwgb3BlcmF0aW9ucyBmZWVscyBhIGJpdCBv
+dmVyYnJvYWQuDQoNClllcy4NCg0KPiANCj4gSSBoYWQgaW1hZ2luZWQgdGhhdCB5b3UnZCBjcmVh
+dGUgYSBzdHJ1Y3QgZGF4X2lvbWFwX29wcyB0byB3cmFwIGFsbCB0aGUgZXh0cmENCj4gZnVuY3Rp
+b25hbGl0eSB0aGF0IHlvdSBuZWVkIGZvciBkYXggb3BlcmF0aW9uczoNCj4gDQo+IHN0cnVjdCBk
+YXhfaW9tYXBfb3BzIHsNCj4gCXN0cnVjdCBpb21hcF9vcHMJaW9tYXBfb3BzOw0KPiANCj4gCWlu
+dAkJCSgqZW5kX2lvKShpbm9kZSwgcG9zLCBsZW5ndGguLi4pOw0KPiB9Ow0KPiANCj4gQW5kIGFs
+dGVyIHRoZSBmb3VyIGZ1bmN0aW9ucyB0aGF0IHlvdSBuZWVkIHRvIHRha2UgdGhlIHNwZWNpYWwg
+ZGF4X2lvbWFwX29wcy4NCj4gSSBndWVzcyB0aGUgZG93bnNpZGUgaXMgdGhhdCB0aGlzIG1ha2Vz
+IGlvbWFwX3RydW5jYXRlX3BhZ2UgYW5kDQo+IGlvbWFwX3plcm9fcmFuZ2UgbW9yZSBjb21wbGlj
+YXRlZCwgYnV0IG1heWJlIGl0J3MganVzdCB0aW1lIHRvIHNwbGl0IHRob3NlIGludG8NCj4gREFY
+LXNwZWNpZmljIHZlcnNpb25zLiAgVGhlbiB3ZSdkIGJlIHJpZCBvZiB0aGUgY3Jvc3MtbGlua3Mg
+YmV0d2VlDQo+IGZzL2lvbWFwL2J1ZmZlcmVkLWlvLmMgYW5kIGZzL2RheC5jLg0KDQpUaGlzIHNl
+ZW1zIHRvIGJlIGEgYmV0dGVyIHNvbHV0aW9uLiAgSSdsbCB0cnkgaW4gdGhpcyB3YXkuICBUaGFu
+a3MgZm9yIHlvdXIgZ3VpZGFuY2UuDQoNCj4gDQo+ID4gPiArCX0NCj4gPiA+ICBvdXQ6DQo+ID4g
+PiAgCS8qDQo+ID4gPiAgCSAqIE5vdyB0aGUgZGF0YSBoYXMgYmVlbiBjb3BpZWQsIGNvbW1pdCB0
+aGUgcmFuZ2Ugd2UndmUgY29waWVkLg0KPiA+ID4gVGhpcyBkaWZmIC0tZ2l0IGEvZnMveGZzL3hm
+c19ibWFwX3V0aWwuYyBiL2ZzL3hmcy94ZnNfYm1hcF91dGlsLmMNCj4gPiA+IGluZGV4DQo+ID4g
+PiBhNWU5ZDdkMzQwMjMuLjJhMzZkYzkzZmYyNyAxMDA2NDQNCj4gPiA+IC0tLSBhL2ZzL3hmcy94
+ZnNfYm1hcF91dGlsLmMNCj4gPiA+ICsrKyBiL2ZzL3hmcy94ZnNfYm1hcF91dGlsLmMNCj4gPiA+
+IEBAIC05NjUsOCArOTY1LDcgQEAgeGZzX2ZyZWVfZmlsZV9zcGFjZSgNCj4gPiA+ICAJCXJldHVy
+biAwOw0KPiA+ID4gIAlpZiAob2Zmc2V0ICsgbGVuID4gWEZTX0lTSVpFKGlwKSkNCj4gPiA+ICAJ
+CWxlbiA9IFhGU19JU0laRShpcCkgLSBvZmZzZXQ7DQo+ID4gPiAtCWVycm9yID0gaW9tYXBfemVy
+b19yYW5nZShWRlNfSShpcCksIG9mZnNldCwgbGVuLCBOVUxMLA0KPiA+ID4gLQkJCSZ4ZnNfYnVm
+ZmVyZWRfd3JpdGVfaW9tYXBfb3BzKTsNCj4gPiA+ICsJZXJyb3IgPSB4ZnNfaW9tYXBfemVyb19y
+YW5nZShpcCwgb2Zmc2V0LCBsZW4sIE5VTEwpOw0KPiA+ID4gIAlpZiAoZXJyb3IpDQo+ID4gPiAg
+CQlyZXR1cm4gZXJyb3I7DQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL2ZzL3hmcy94ZnNfZmls
+ZS5jIGIvZnMveGZzL3hmc19maWxlLmMgaW5kZXgNCj4gPiA+IDM5NmVmMzZkY2QwYS4uODk0MDZl
+YzY3NDFiDQo+ID4gPiAxMDA2NDQNCj4gPiA+IC0tLSBhL2ZzL3hmcy94ZnNfZmlsZS5jDQo+ID4g
+PiArKysgYi9mcy94ZnMveGZzX2ZpbGUuYw0KPiA+ID4gQEAgLTY4NCwxMSArNjg0LDEyIEBAIHhm
+c19maWxlX2RheF93cml0ZSgNCj4gPiA+ICAJcG9zID0gaW9jYi0+a2lfcG9zOw0KPiA+ID4NCj4g
+PiA+ICAJdHJhY2VfeGZzX2ZpbGVfZGF4X3dyaXRlKGlvY2IsIGZyb20pOw0KPiA+ID4gLQlyZXQg
+PSBkYXhfaW9tYXBfcncoaW9jYiwgZnJvbSwgJnhmc19kaXJlY3Rfd3JpdGVfaW9tYXBfb3BzKTsN
+Cj4gPiA+ICsJcmV0ID0gZGF4X2lvbWFwX3J3KGlvY2IsIGZyb20sICZ4ZnNfZGF4X3dyaXRlX2lv
+bWFwX29wcyk7DQo+ID4gPiAgCWlmIChyZXQgPiAwICYmIGlvY2ItPmtpX3BvcyA+IGlfc2l6ZV9y
+ZWFkKGlub2RlKSkgew0KPiA+ID4gIAkJaV9zaXplX3dyaXRlKGlub2RlLCBpb2NiLT5raV9wb3Mp
+Ow0KPiA+ID4gIAkJZXJyb3IgPSB4ZnNfc2V0ZmlsZXNpemUoaXAsIHBvcywgcmV0KTsNCj4gPiA+
+ICAJfQ0KPiA+ID4gKw0KPiA+ID4gIG91dDoNCj4gPiA+ICAJaWYgKGlvbG9jaykNCj4gPiA+ICAJ
+CXhmc19pdW5sb2NrKGlwLCBpb2xvY2spOw0KPiA+ID4gQEAgLTEzMDksNyArMTMxMCw3IEBAIF9f
+eGZzX2ZpbGVtYXBfZmF1bHQoDQo+ID4gPg0KPiA+ID4gIAkJcmV0ID0gZGF4X2lvbWFwX2ZhdWx0
+KHZtZiwgcGVfc2l6ZSwgJnBmbiwgTlVMTCwNCj4gPiA+ICAJCQkJKHdyaXRlX2ZhdWx0ICYmICF2
+bWYtPmNvd19wYWdlKSA/DQo+ID4gPiAtCQkJCSAmeGZzX2RpcmVjdF93cml0ZV9pb21hcF9vcHMg
+Og0KPiA+ID4gKwkJCQkgJnhmc19kYXhfd3JpdGVfaW9tYXBfb3BzIDoNCj4gPiA+ICAJCQkJICZ4
+ZnNfcmVhZF9pb21hcF9vcHMpOw0KPiA+ID4gIAkJaWYgKHJldCAmIFZNX0ZBVUxUX05FRUREU1lO
+QykNCj4gPiA+ICAJCQlyZXQgPSBkYXhfZmluaXNoX3N5bmNfZmF1bHQodm1mLCBwZV9zaXplLCBw
+Zm4pOyBkaWZmIC0tZ2l0DQo+ID4gPiBhL2ZzL3hmcy94ZnNfaW9tYXAuYyBiL2ZzL3hmcy94ZnNf
+aW9tYXAuYyBpbmRleA0KPiA+ID4gZDE1NGY0MmUyZGM2Li4yZjMyMmUyZjg1NDQNCj4gPiA+IDEw
+MDY0NA0KPiA+ID4gLS0tIGEvZnMveGZzL3hmc19pb21hcC5jDQo+ID4gPiArKysgYi9mcy94ZnMv
+eGZzX2lvbWFwLmMNCj4gPiA+IEBAIC03NjEsNyArNzYxLDggQEAgeGZzX2RpcmVjdF93cml0ZV9p
+b21hcF9iZWdpbigNCj4gPiA+DQo+ID4gPiAgCQkvKiBtYXkgZHJvcCBhbmQgcmUtYWNxdWlyZSB0
+aGUgaWxvY2sgKi8NCj4gPiA+ICAJCWVycm9yID0geGZzX3JlZmxpbmtfYWxsb2NhdGVfY293KGlw
+LCAmaW1hcCwgJmNtYXAsICZzaGFyZWQsDQo+ID4gPiAtCQkJCSZsb2NrbW9kZSwgZmxhZ3MgJiBJ
+T01BUF9ESVJFQ1QpOw0KPiA+ID4gKwkJCQkmbG9ja21vZGUsDQo+ID4gPiArCQkJCShmbGFncyAm
+IElPTUFQX0RJUkVDVCkgfHwgSVNfREFYKGlub2RlKSk7DQo+ID4gPiAgCQlpZiAoZXJyb3IpDQo+
+ID4gPiAgCQkJZ290byBvdXRfdW5sb2NrOw0KPiA+ID4gIAkJaWYgKHNoYXJlZCkNCj4gPiA+IEBA
+IC04NTQsNiArODU1LDM2IEBAIGNvbnN0IHN0cnVjdCBpb21hcF9vcHMNCj4gPiA+IHhmc19kaXJl
+Y3Rfd3JpdGVfaW9tYXBfb3BzID0gew0KPiA+ID4gIAkuaW9tYXBfYmVnaW4JCT0geGZzX2RpcmVj
+dF93cml0ZV9pb21hcF9iZWdpbiwNCj4gPiA+ICB9Ow0KPiA+ID4NCj4gPiA+ICtzdGF0aWMgaW50
+DQo+ID4gPiAreGZzX2RheF93cml0ZV9pb21hcF9wb3N0X2FjdG9yKA0KPiA+ID4gKwlzdHJ1Y3Qg
+aW5vZGUJCSppbm9kZSwNCj4gPiA+ICsJbG9mZl90CQkJcG9zLA0KPiA+ID4gKwlsb2ZmX3QJCQls
+ZW5ndGgsDQo+ID4gPiArCXNzaXplX3QJCQl3cml0dGVuLA0KPiA+ID4gKwl1bnNpZ25lZCBpbnQJ
+CWZsYWdzLA0KPiA+ID4gKwlzdHJ1Y3QgaW9tYXAJCSppb21hcCwNCj4gPiA+ICsJc3RydWN0IGlv
+bWFwCQkqc3JjbWFwKQ0KPiA+ID4gK3sNCj4gPiA+ICsJaW50CQkJZXJyb3IgPSAwOw0KPiA+ID4g
+KwlzdHJ1Y3QgeGZzX2lub2RlCSppcCA9IFhGU19JKGlub2RlKTsNCj4gPiA+ICsJYm9vbAkJCWNv
+dyA9IHhmc19pc19jb3dfaW5vZGUoaXApOw0KPiA+ID4gKw0KPiA+ID4gKwlpZiAod3JpdHRlbiA8
+PSAwKSB7DQo+ID4gPiArCQlpZiAoY293KQ0KPiA+ID4gKwkJCXhmc19yZWZsaW5rX2NhbmNlbF9j
+b3dfcmFuZ2UoaXAsIHBvcywgbGVuZ3RoLCB0cnVlKTsNCj4gPiA+ICsJCXJldHVybiB3cml0dGVu
+Ow0KPiA+ID4gKwl9DQo+ID4gPiArDQo+ID4gPiArCWlmIChjb3cpDQo+ID4gPiArCQllcnJvciA9
+IHhmc19yZWZsaW5rX2VuZF9jb3coaXAsIHBvcywgd3JpdHRlbik7DQo+ID4gPiArCXJldHVybiBl
+cnJvciA/OiB3cml0dGVuOw0KPiA+ID4gK30NCj4gDQo+IFRoaXMgaXMgcHJldHR5IG11Y2ggdGhl
+IHNhbWUgYXMgd2hhdCB4ZnNfZGlvX3dyaXRlX2VuZF9pbyBkb2VzLCByaWdodD8NCg0KSXQganVz
+dCBoYW5kbGVzIHRoZSBlbmQgcGFydCBvZiBDb1cgaGVyZS4NCnhmc19kaW9fd3JpdGVfZW5kX2lv
+KCkgYWxzbyB1cGRhdGVzIGZpbGUgc2l6ZSwgd2hpY2ggaXMgb25seSBuZWVkZWQgaW4gd3JpdGUo
+KSBidXQgbm90IGluIHBhZ2UgZmF1bHQuICBBbmQgdGhlIHVwZGF0ZSBmaWxlIHNpemUgd29yayBp
+cyBkb25lIGluIHhmc19kYXhfZmlsZV93cml0ZSgpLCBpdCdzIGZpbmUsIG5vIG5lZWQgdG8gbW9k
+aWZ5IGl0Lg0KDQo+IA0KPiBJIGhhZCBpbWFnaW5lZCB0aGF0IHlvdSdkIGNoYW5nZSB0aGUgZnVu
+Y3Rpb24gc2lnbmF0dXJlcyB0byBkcm9wIHRoZSBpb2NiIHNvDQo+IHRoYXQgeW91IGNvdWxkIHJl
+dXNlIHRoaXMgY29kZSBpbnN0ZWFkIG9mIGNyZWF0aW5nIGEgd2hvbGUgbmV3IGNhbGxiYWNrLg0K
+PiANCj4gQWggd2VsbC4gIENhbiBJIHNlbmQgeW91IHNvbWUgcHJlcCBwYXRjaGVzIHRvIGNsZWFu
+IHVwIHNvbWUgb2YgdGhlIHdlaXJkDQo+IGlvbWFwIGNvZGUgYXMgYSBwcmVwYXJhdGlvbiBzZXJp
+ZXMgZm9yIHRoaXM/DQoNClN1cmUuICBUaGFua3MuDQoNCg0KLS0NClJ1YW4uDQoNCj4gDQo+IC0t
+RA0KPiANCj4gPiA+ICsNCj4gPiA+ICtjb25zdCBzdHJ1Y3QgaW9tYXBfb3BzIHhmc19kYXhfd3Jp
+dGVfaW9tYXBfb3BzID0gew0KPiA+ID4gKwkuaW9tYXBfYmVnaW4JCT0geGZzX2RpcmVjdF93cml0
+ZV9pb21hcF9iZWdpbiwNCj4gPiA+ICsJLmlvbWFwX3Bvc3RfYWN0b3IJPSB4ZnNfZGF4X3dyaXRl
+X2lvbWFwX3Bvc3RfYWN0b3IsDQo+ID4gPiArfTsNCj4gPiA+ICsNCj4gPiA+ICBzdGF0aWMgaW50
+DQo+ID4gPiAgeGZzX2J1ZmZlcmVkX3dyaXRlX2lvbWFwX2JlZ2luKA0KPiA+ID4gIAlzdHJ1Y3Qg
+aW5vZGUJCSppbm9kZSwNCj4gPiA+IGRpZmYgLS1naXQgYS9mcy94ZnMveGZzX2lvbWFwLmggYi9m
+cy94ZnMveGZzX2lvbWFwLmggaW5kZXgNCj4gPiA+IDdkMzcwMzU1NmQwZS4uZmJhY2Y2MzhhYjIx
+IDEwMDY0NA0KPiA+ID4gLS0tIGEvZnMveGZzL3hmc19pb21hcC5oDQo+ID4gPiArKysgYi9mcy94
+ZnMveGZzX2lvbWFwLmgNCj4gPiA+IEBAIC00Miw4ICs0MiwzMiBAQCB4ZnNfYWxpZ25lZF9mc2Jf
+Y291bnQoDQo+ID4gPg0KPiA+ID4gIGV4dGVybiBjb25zdCBzdHJ1Y3QgaW9tYXBfb3BzIHhmc19i
+dWZmZXJlZF93cml0ZV9pb21hcF9vcHM7ICBleHRlcm4NCj4gPiA+IGNvbnN0IHN0cnVjdCBpb21h
+cF9vcHMgeGZzX2RpcmVjdF93cml0ZV9pb21hcF9vcHM7DQo+ID4gPiArZXh0ZXJuIGNvbnN0IHN0
+cnVjdCBpb21hcF9vcHMgeGZzX2RheF93cml0ZV9pb21hcF9vcHM7DQo+ID4gPiAgZXh0ZXJuIGNv
+bnN0IHN0cnVjdCBpb21hcF9vcHMgeGZzX3JlYWRfaW9tYXBfb3BzOyAgZXh0ZXJuIGNvbnN0DQo+
+ID4gPiBzdHJ1Y3QgaW9tYXBfb3BzIHhmc19zZWVrX2lvbWFwX29wczsgIGV4dGVybiBjb25zdCBz
+dHJ1Y3QgaW9tYXBfb3BzDQo+ID4gPiB4ZnNfeGF0dHJfaW9tYXBfb3BzOw0KPiA+ID4NCj4gPiA+
+ICtzdGF0aWMgaW5saW5lIGludA0KPiA+ID4gK3hmc19pb21hcF96ZXJvX3JhbmdlKA0KPiA+ID4g
+KwlzdHJ1Y3QgeGZzX2lub2RlCSppcCwNCj4gPiA+ICsJbG9mZl90CQkJb2Zmc2V0LA0KPiA+ID4g
+Kwlsb2ZmX3QJCQlsZW4sDQo+ID4gPiArCWJvb2wJCQkqZGlkX3plcm8pDQo+ID4gPiArew0KPiA+
+ID4gKwlyZXR1cm4gaW9tYXBfemVyb19yYW5nZShWRlNfSShpcCksIG9mZnNldCwgbGVuLCBkaWRf
+emVybywNCj4gPiA+ICsJCQlJU19EQVgoVkZTX0koaXApKSA/ICZ4ZnNfZGF4X3dyaXRlX2lvbWFw
+X29wcw0KPiA+ID4gKwkJCQkJICA6ICZ4ZnNfYnVmZmVyZWRfd3JpdGVfaW9tYXBfb3BzKTsgfQ0K
+PiA+ID4gKw0KPiA+ID4gK3N0YXRpYyBpbmxpbmUgaW50DQo+ID4gPiAreGZzX2lvbWFwX3RydW5j
+YXRlX3BhZ2UoDQo+ID4gPiArCXN0cnVjdCB4ZnNfaW5vZGUJKmlwLA0KPiA+ID4gKwlsb2ZmX3QJ
+CQlwb3MsDQo+ID4gPiArCWJvb2wJCQkqZGlkX3plcm8pDQo+ID4gPiArew0KPiA+ID4gKwlyZXR1
+cm4gaW9tYXBfdHJ1bmNhdGVfcGFnZShWRlNfSShpcCksIHBvcywgZGlkX3plcm8sDQo+ID4gPiAr
+CQkJSVNfREFYKFZGU19JKGlwKSkgPyAmeGZzX2RheF93cml0ZV9pb21hcF9vcHMNCj4gPiA+ICsJ
+CQkJCSAgOiAmeGZzX2J1ZmZlcmVkX3dyaXRlX2lvbWFwX29wcyk7IH0NCj4gPiA+ICsNCj4gPiA+
+ICAjZW5kaWYgLyogX19YRlNfSU9NQVBfSF9fKi8NCj4gPiA+IGRpZmYgLS1naXQgYS9mcy94ZnMv
+eGZzX2lvcHMuYyBiL2ZzL3hmcy94ZnNfaW9wcy5jIGluZGV4DQo+ID4gPiBkZmUyNGI3ZjI2ZTUu
+LjZkOTM2YzNlMWE2ZSAxMDA2NDQNCj4gPiA+IC0tLSBhL2ZzL3hmcy94ZnNfaW9wcy5jDQo+ID4g
+PiArKysgYi9mcy94ZnMveGZzX2lvcHMuYw0KPiA+ID4gQEAgLTkxMSw4ICs5MTEsOCBAQCB4ZnNf
+c2V0YXR0cl9zaXplKA0KPiA+ID4gIAkgKi8NCj4gPiA+ICAJaWYgKG5ld3NpemUgPiBvbGRzaXpl
+KSB7DQo+ID4gPiAgCQl0cmFjZV94ZnNfemVyb19lb2YoaXAsIG9sZHNpemUsIG5ld3NpemUgLSBv
+bGRzaXplKTsNCj4gPiA+IC0JCWVycm9yID0gaW9tYXBfemVyb19yYW5nZShpbm9kZSwgb2xkc2l6
+ZSwgbmV3c2l6ZSAtIG9sZHNpemUsDQo+ID4gPiAtCQkJCSZkaWRfemVyb2luZywgJnhmc19idWZm
+ZXJlZF93cml0ZV9pb21hcF9vcHMpOw0KPiA+ID4gKwkJZXJyb3IgPSB4ZnNfaW9tYXBfemVyb19y
+YW5nZShpcCwgb2xkc2l6ZSwgbmV3c2l6ZSAtIG9sZHNpemUsDQo+ID4gPiArCQkJCSZkaWRfemVy
+b2luZyk7DQo+ID4gPiAgCX0gZWxzZSB7DQo+ID4gPiAgCQkvKg0KPiA+ID4gIAkJICogaW9tYXAg
+d29uJ3QgZGV0ZWN0IGEgZGlydHkgcGFnZSBvdmVyIGFuIHVud3JpdHRlbiBibG9jayAob3IgYQ0K
+PiA+ID4gQEANCj4gPiA+IC05MjQsOCArOTI0LDcgQEAgeGZzX3NldGF0dHJfc2l6ZSgNCj4gPiA+
+ICAJCQkJCQkgICAgIG5ld3NpemUpOw0KPiA+ID4gIAkJaWYgKGVycm9yKQ0KPiA+ID4gIAkJCXJl
+dHVybiBlcnJvcjsNCj4gPiA+IC0JCWVycm9yID0gaW9tYXBfdHJ1bmNhdGVfcGFnZShpbm9kZSwg
+bmV3c2l6ZSwgJmRpZF96ZXJvaW5nLA0KPiA+ID4gLQkJCQkmeGZzX2J1ZmZlcmVkX3dyaXRlX2lv
+bWFwX29wcyk7DQo+ID4gPiArCQllcnJvciA9IHhmc19pb21hcF90cnVuY2F0ZV9wYWdlKGlwLCBu
+ZXdzaXplLCAmZGlkX3plcm9pbmcpOw0KPiA+ID4gIAl9DQo+ID4gPg0KPiA+ID4gIAlpZiAoZXJy
+b3IpDQo+ID4gPiBkaWZmIC0tZ2l0IGEvZnMveGZzL3hmc19yZWZsaW5rLmMgYi9mcy94ZnMveGZz
+X3JlZmxpbmsuYyBpbmRleA0KPiA+ID4gZDI1NDM0ZjkzMjM1Li45YTc4MDk0OGRiZDAgMTAwNjQ0
+DQo+ID4gPiAtLS0gYS9mcy94ZnMveGZzX3JlZmxpbmsuYw0KPiA+ID4gKysrIGIvZnMveGZzL3hm
+c19yZWZsaW5rLmMNCj4gPiA+IEBAIC0xMjY2LDggKzEyNjYsNyBAQCB4ZnNfcmVmbGlua196ZXJv
+X3Bvc3Rlb2YoDQo+ID4gPiAgCQlyZXR1cm4gMDsNCj4gPiA+DQo+ID4gPiAgCXRyYWNlX3hmc196
+ZXJvX2VvZihpcCwgaXNpemUsIHBvcyAtIGlzaXplKTsNCj4gPiA+IC0JcmV0dXJuIGlvbWFwX3pl
+cm9fcmFuZ2UoVkZTX0koaXApLCBpc2l6ZSwgcG9zIC0gaXNpemUsIE5VTEwsDQo+ID4gPiAtCQkJ
+Jnhmc19idWZmZXJlZF93cml0ZV9pb21hcF9vcHMpOw0KPiA+ID4gKwlyZXR1cm4geGZzX2lvbWFw
+X3plcm9fcmFuZ2UoaXAsIGlzaXplLCBwb3MgLSBpc2l6ZSwgTlVMTCk7DQo+ID4gPiAgfQ0KPiA+
+ID4NCj4gPiA+ICAvKg0KPiA+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvaW9tYXAuaCBi
+L2luY2x1ZGUvbGludXgvaW9tYXAuaCBpbmRleA0KPiA+ID4gOTU1NjJmODYzYWQwLi41OGYyZTFj
+NzgwMTggMTAwNjQ0DQo+ID4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2lvbWFwLmgNCj4gPiA+ICsr
+KyBiL2luY2x1ZGUvbGludXgvaW9tYXAuaA0KPiA+ID4gQEAgLTEzNSw2ICsxMzUsMTQgQEAgc3Ry
+dWN0IGlvbWFwX29wcyB7DQo+ID4gPiAgCQkJdW5zaWduZWQgZmxhZ3MsIHN0cnVjdCBpb21hcCAq
+aW9tYXAsDQo+ID4gPiAgCQkJc3RydWN0IGlvbWFwICpzcmNtYXApOw0KPiA+ID4NCj4gPiA+ICsJ
+LyoNCj4gPiA+ICsJICogSGFuZGxlIHRoZSBlcnJvciBjb2RlIGZyb20gYWN0b3IoKS4gRG8gdGhl
+IGZpbmlzaGluZyBqb2JzIGZvciBleHRyYQ0KPiA+ID4gKwkgKiBvcGVyYXRpb25zLCBzdWNoIGFz
+IENvVywgYWNjb3JkaW5nIHRvIHdoZXRoZXIgd3JpdHRlbiBpcyBuZWdhdGl2ZS4NCj4gPiA+ICsJ
+ICovDQo+ID4gPiArCWludCAoKmlvbWFwX3Bvc3RfYWN0b3IpKHN0cnVjdCBpbm9kZSAqaW5vZGUs
+IGxvZmZfdCBwb3MsIGxvZmZfdCBsZW5ndGgsDQo+ID4gPiArCQkJc3NpemVfdCB3cml0dGVuLCB1
+bnNpZ25lZCBmbGFncywgc3RydWN0IGlvbWFwICppb21hcCwNCj4gPiA+ICsJCQlzdHJ1Y3QgaW9t
+YXAgKnNyY21hcCk7DQo+ID4gPiArDQo+ID4gPiAgCS8qDQo+ID4gPiAgCSAqIENvbW1pdCBhbmQv
+b3IgdW5yZXNlcnZlIHNwYWNlIHByZXZpb3VzIGFsbG9jYXRlZCB1c2luZw0KPiBpb21hcF9iZWdp
+bi4NCj4gPiA+ICAJICogV3JpdHRlbiBpbmRpY2F0ZXMgdGhlIGxlbmd0aCBvZiB0aGUgc3VjY2Vz
+c2Z1bCB3cml0ZSBvcGVyYXRpb24NCj4gPiA+IHdoaWNoDQo+ID4gPiAtLQ0KPiA+ID4gMi4zMS4x
+DQo+ID4NCg==
