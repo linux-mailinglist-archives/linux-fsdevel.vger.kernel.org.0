@@ -2,34 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15DE93B561C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 02:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E46763B5623
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Jun 2021 02:03:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231876AbhF1AFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Jun 2021 20:05:45 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:54538 "EHLO
+        id S231986AbhF1AF4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Jun 2021 20:05:56 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:54586 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231927AbhF1AFm (ORCPT
+        with ESMTP id S231927AbhF1AFz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Jun 2021 20:05:42 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AwNdcXaFyDuleE1rBpLqEDseALOsnbusQ8zAX?=
- =?us-ascii?q?P0AYc31om6uj5rmTdZUgpGfJYVkqKRIdcLy7V5VoBEmskaKdgrNhW4tKPjOW2l?=
- =?us-ascii?q?dARbsKheCJrlHd8m/Fh4lgPMxbE5SWZuefMbEDt7ee3OCnKadd/PC3tLCvmfzF?=
- =?us-ascii?q?z2pgCSVja6Rb5Q9/DQqBe3cGPjVuNN4oEoaG/Mpbq36FcXQTVM6yAX4IRKztvN?=
- =?us-ascii?q?vO/aiWHCIuNlo27hWUlzO05PrfGxic5B0XVDRC2vMD3AH+4nfE2pk=3D?=
+        Sun, 27 Jun 2021 20:05:55 -0400
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AzsiqNai/4NpkHqZpZqe0lXFt43BQXjwji2hC?=
+ =?us-ascii?q?6mlwRA09TySZ//rOoB19726MtN9xYgBZpTnuAtjifZqxz/FICMwqTNOftWrdyQ?=
+ =?us-ascii?q?2VxeNZnOnfKlTbckWUnIMw6U4jSdkYNDSaNzhHZKjBjjVQa+xQpeVv7prY+dv2?=
+ =?us-ascii?q?/jN8Sx1wcaF840NcAgafKEd/Qw5LHvMCZeChz/sCtzy9Ym4Wc8j+InEEWtLIr9?=
+ =?us-ascii?q?rNmImjTgUBA3ccmXSzpALt+LjnCAKZwxtbdztOxI0p+W/Dnxe8xojLiYDB9iPh?=
 X-IronPort-AV: E=Sophos;i="5.83,304,1616428800"; 
-   d="scan'208";a="110256365"
+   d="scan'208";a="110256402"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 28 Jun 2021 08:03:15 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 862014C36A09;
-        Mon, 28 Jun 2021 08:03:11 +0800 (CST)
+  by heian.cn.fujitsu.com with ESMTP; 28 Jun 2021 08:03:28 +0800
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id EC3084D0BA67;
+        Mon, 28 Jun 2021 08:03:22 +0800 (CST)
 Received: from G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Mon, 28 Jun 2021 08:03:12 +0800
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Mon, 28 Jun 2021 08:03:13 +0800
 Received: from irides.mr.mr.mr (10.167.225.141) by
  G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.2 via Frontend Transport; Mon, 28 Jun 2021 08:03:12 +0800
+ id 15.0.1497.2 via Frontend Transport; Mon, 28 Jun 2021 08:03:13 +0800
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
@@ -37,16 +37,16 @@ To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
 CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
         <david@fromorbit.com>, <hch@lst.de>, <agk@redhat.com>,
         <snitzer@redhat.com>, <rgoldwyn@suse.de>
-Subject: [PATCH v5 7/9] dm: Introduce ->rmap() to find bdev offset
-Date:   Mon, 28 Jun 2021 08:02:16 +0800
-Message-ID: <20210628000218.387833-8-ruansy.fnst@fujitsu.com>
+Subject: [PATCH v5 8/9] md: Implement dax_holder_operations
+Date:   Mon, 28 Jun 2021 08:02:17 +0800
+Message-ID: <20210628000218.387833-9-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210628000218.387833-1-ruansy.fnst@fujitsu.com>
 References: <20210628000218.387833-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 862014C36A09.AF525
+X-yoursite-MailScanner-ID: EC3084D0BA67.A17F2
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No
@@ -54,143 +54,194 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pmem device could be a target of mapped device.  In order to find out
-the global location on a mapped device, we introduce this to translate
-offset from target device to mapped device.
+This is the case where the holder represents a mapped device, or a list
+of mapped devices more exactly(because it is possible to create more
+than one mapped device on one pmem device).
 
-Currently, we implement it on linear target, which is easy to do the
-translation.  Other targets will be supported in the future.  However,
-some targets may not support it because of the non-linear mapping.
+Find out which mapped device the offset belongs to, and translate the
+offset from target device to mapped device.  When it is done, call
+dax_corrupted_range() for the holder of this mapped device.
 
 Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 ---
- block/genhd.c                 | 30 ++++++++++++++++++++++++++++++
- drivers/md/dm-linear.c        | 20 ++++++++++++++++++++
- include/linux/device-mapper.h |  5 +++++
- include/linux/genhd.h         |  1 +
- 4 files changed, 56 insertions(+)
+ drivers/md/dm.c | 126 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 125 insertions(+), 1 deletion(-)
 
-diff --git a/block/genhd.c b/block/genhd.c
-index 9f8cb7beaad1..75834bd057df 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -718,6 +718,36 @@ struct block_device *bdget_disk(struct gendisk *disk, int partno)
- 	return bdev;
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index ca2aedd8ee7d..11c9de0eca6d 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -749,7 +749,11 @@ static void dm_put_live_table_fast(struct mapped_device *md) __releases(RCU)
  }
 
-+/**
-+ * bdget_disk_sector - get block device by given sector number
-+ * @disk: gendisk of interest
-+ * @sector: sector number
-+ *
-+ * RETURNS: the found block device where sector locates in
-+ */
-+struct block_device *bdget_disk_sector(struct gendisk *disk, sector_t sector)
-+{
-+	struct block_device *part = NULL, *p;
-+	unsigned long idx;
+ static char *_dm_claim_ptr = "I belong to device-mapper";
+-
++static const struct dax_holder_operations dm_dax_holder_ops;
++struct dm_holder {
++	struct list_head list;
++	struct mapped_device *md;
++};
+ /*
+  * Open a table device so we can use it as a map destination.
+  */
+@@ -757,6 +761,8 @@ static int open_table_device(struct table_device *td, dev_t dev,
+ 			     struct mapped_device *md)
+ {
+ 	struct block_device *bdev;
++	struct list_head *holders;
++	struct dm_holder *holder;
+
+ 	int r;
+
+@@ -774,6 +780,19 @@ static int open_table_device(struct table_device *td, dev_t dev,
+
+ 	td->dm_dev.bdev = bdev;
+ 	td->dm_dev.dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
++	if (!td->dm_dev.dax_dev)
++		return 0;
 +
-+	rcu_read_lock();
-+	xa_for_each(&disk->part_tbl, idx, p) {
-+		if (p->bd_partno == 0)
-+			continue;
-+		if (p->bd_start_sect <= sector &&
-+			sector < p->bd_start_sect + bdev_nr_sectors(p)) {
-+			part = p;
-+			break;
++	holders = dax_get_holder(td->dm_dev.dax_dev);
++	if (!holders) {
++		holders = kmalloc(sizeof(*holders), GFP_KERNEL);
++		INIT_LIST_HEAD(holders);
++		dax_set_holder(td->dm_dev.dax_dev, holders, &dm_dax_holder_ops);
++	}
++	holder = kmalloc(sizeof(*holder), GFP_KERNEL);
++	holder->md = md;
++	list_add_tail(&holder->list, holders);
++
+ 	return 0;
+ }
+
+@@ -782,9 +801,27 @@ static int open_table_device(struct table_device *td, dev_t dev,
+  */
+ static void close_table_device(struct table_device *td, struct mapped_device *md)
+ {
++	struct list_head *holders;
++	struct dm_holder *holder, *n;
++
+ 	if (!td->dm_dev.bdev)
+ 		return;
+
++	holders = dax_get_holder(td->dm_dev.dax_dev);
++	if (holders) {
++		list_for_each_entry_safe(holder, n, holders, list) {
++			if (holder->md == md) {
++				list_del(&holder->list);
++				kfree(holder);
++			}
++		}
++		if (list_empty(holders)) {
++			kfree(holders);
++			/* unset dax_device's holder_data */
++			dax_set_holder(td->dm_dev.dax_dev, NULL, NULL);
 +		}
 +	}
-+	rcu_read_unlock();
-+	if (!part)
-+		part = disk->part0;
 +
-+	return bdget_disk(disk, part->bd_partno);
-+}
-+EXPORT_SYMBOL(bdget_disk_sector);
-+
- /*
-  * print a full list of all partitions - intended for places where the root
-  * filesystem can't be mounted and thus to give the victim some idea of what
-diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
-index 92db0f5e7f28..f9f9bc765ba7 100644
---- a/drivers/md/dm-linear.c
-+++ b/drivers/md/dm-linear.c
-@@ -5,6 +5,7 @@
-  */
-
- #include "dm.h"
-+#include "dm-core.h"
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/blkdev.h>
-@@ -119,6 +120,24 @@ static void linear_status(struct dm_target *ti, status_type_t type,
- 	}
+ 	bd_unlink_disk_holder(td->dm_dev.bdev, dm_disk(md));
+ 	blkdev_put(td->dm_dev.bdev, td->dm_dev.mode | FMODE_EXCL);
+ 	put_dax(td->dm_dev.dax_dev);
+@@ -1235,6 +1272,89 @@ static int dm_dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
+ 	return ret;
  }
 
-+static int linear_rmap(struct dm_target *ti, sector_t offset,
-+		       rmap_callout_fn fn, void *data)
-+{
-+	struct linear_c *lc = (struct linear_c *) ti->private;
-+	struct mapped_device *md = ti->table->md;
-+	struct block_device *bdev;
-+	sector_t disk_sect = offset - dm_target_offset(ti, lc->start);
-+	int rc = -ENODEV;
++#if IS_ENABLED(CONFIG_DAX_DRIVER)
++struct corrupted_hit_info {
++	struct dax_device *dax_dev;
++	sector_t offset;
++};
 +
-+	bdev = bdget_disk_sector(md->disk, offset);
-+	if (!bdev)
++static int dm_blk_corrupted_hit(struct dm_target *ti, struct dm_dev *dev,
++				sector_t start, sector_t count, void *data)
++{
++	struct corrupted_hit_info *bc = data;
++
++	return bc->dax_dev == (void *)dev->dax_dev &&
++			(start <= bc->offset && bc->offset < start + count);
++}
++
++struct corrupted_do_info {
++	size_t length;
++	void *data;
++};
++
++static int dm_blk_corrupted_do(struct dm_target *ti, struct block_device *bdev,
++			       sector_t sector, void *data)
++{
++	struct mapped_device *md = ti->table->md;
++	struct corrupted_do_info *bc = data;
++
++	return dax_holder_notify_failure(md->dax_dev, to_bytes(sector),
++					 bc->length, bc->data);
++}
++
++static int dm_dax_notify_failure_one(struct mapped_device *md,
++				     struct dax_device *dax_dev,
++				     loff_t offset, size_t length, void *data)
++{
++	struct dm_table *map;
++	struct dm_target *ti;
++	sector_t sect = to_sector(offset);
++	struct corrupted_hit_info hi = {dax_dev, sect};
++	struct corrupted_do_info di = {length, data};
++	int srcu_idx, i, rc = -ENODEV;
++
++	map = dm_get_live_table(md, &srcu_idx);
++	if (!map)
 +		return rc;
 +
-+	rc = fn(ti, bdev, disk_sect, data);
-+	bdput(bdev);
++	/*
++	 * find the target device, and then translate the offset of this target
++	 * to the whole mapped device.
++	 */
++	for (i = 0; i < dm_table_get_num_targets(map); i++) {
++		ti = dm_table_get_target(map, i);
++		if (!(ti->type->iterate_devices && ti->type->rmap))
++			continue;
++		if (!ti->type->iterate_devices(ti, dm_blk_corrupted_hit, &hi))
++			continue;
++
++		rc = ti->type->rmap(ti, sect, dm_blk_corrupted_do, &di);
++		break;
++	}
++
++	dm_put_live_table(md, srcu_idx);
 +	return rc;
 +}
 +
- static int linear_prepare_ioctl(struct dm_target *ti, struct block_device **bdev)
- {
- 	struct linear_c *lc = (struct linear_c *) ti->private;
-@@ -236,6 +255,7 @@ static struct target_type linear_target = {
- 	.ctr    = linear_ctr,
- 	.dtr    = linear_dtr,
- 	.map    = linear_map,
-+	.rmap   = linear_rmap,
- 	.status = linear_status,
- 	.prepare_ioctl = linear_prepare_ioctl,
- 	.iterate_devices = linear_iterate_devices,
-diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-index ff700fb6ce1d..89a893565407 100644
---- a/include/linux/device-mapper.h
-+++ b/include/linux/device-mapper.h
-@@ -58,6 +58,10 @@ typedef void (*dm_dtr_fn) (struct dm_target *ti);
-  * = 2: The target wants to push back the io
++static int dm_dax_notify_failure(struct dax_device *dax_dev,
++				 loff_t offset, size_t length, void *data)
++{
++	struct dm_holder *holder;
++	struct list_head *holders = dax_get_holder(dax_dev);
++	int rc = -ENODEV;
++
++	list_for_each_entry(holder, holders, list) {
++		rc = dm_dax_notify_failure_one(holder->md, dax_dev, offset,
++					       length, data);
++		if (rc != -ENODEV)
++			break;
++	}
++	return rc;
++}
++#else
++#define dm_dax_notify_failure NULL
++#endif
++
+ /*
+  * A target may call dm_accept_partial_bio only from the map routine.  It is
+  * allowed for all bio types except REQ_PREFLUSH, REQ_OP_ZONE_RESET,
+@@ -3157,6 +3277,10 @@ static const struct dax_operations dm_dax_ops = {
+ 	.zero_page_range = dm_dax_zero_page_range,
+ };
+
++static const struct dax_holder_operations dm_dax_holder_ops = {
++	.notify_failure = dm_dax_notify_failure,
++};
++
+ /*
+  * module hooks
   */
- typedef int (*dm_map_fn) (struct dm_target *ti, struct bio *bio);
-+typedef int (*rmap_callout_fn) (struct dm_target *ti, struct block_device *bdev,
-+				sector_t sect, void *data);
-+typedef int (*dm_rmap_fn) (struct dm_target *ti, sector_t offset,
-+			   rmap_callout_fn fn, void *data);
- typedef int (*dm_clone_and_map_request_fn) (struct dm_target *ti,
- 					    struct request *rq,
- 					    union map_info *map_context,
-@@ -184,6 +188,7 @@ struct target_type {
- 	dm_ctr_fn ctr;
- 	dm_dtr_fn dtr;
- 	dm_map_fn map;
-+	dm_rmap_fn rmap;
- 	dm_clone_and_map_request_fn clone_and_map_rq;
- 	dm_release_clone_request_fn release_clone_rq;
- 	dm_endio_fn end_io;
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 6fc26f7bdf71..2ad70c02c343 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -219,6 +219,7 @@ static inline void add_disk_no_queue_reg(struct gendisk *disk)
-
- extern void del_gendisk(struct gendisk *gp);
- extern struct block_device *bdget_disk(struct gendisk *disk, int partno);
-+extern struct block_device *bdget_disk_sector(struct gendisk *disk, sector_t sector);
-
- void set_disk_ro(struct gendisk *disk, bool read_only);
-
 --
 2.32.0
 
