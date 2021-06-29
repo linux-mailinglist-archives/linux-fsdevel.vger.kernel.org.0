@@ -2,194 +2,266 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF9FD3B6EFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 09:49:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F31B43B6F06
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 09:56:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232327AbhF2HwB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Jun 2021 03:52:01 -0400
-Received: from esa4.fujitsucc.c3s2.iphmx.com ([68.232.151.214]:13547 "EHLO
-        esa4.fujitsucc.c3s2.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232182AbhF2HwA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Jun 2021 03:52:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1624952975; x=1656488975;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=gbututhmmXu0XiA4nxF78NY8fi5m1RF+SLdydwwvXFk=;
-  b=FD/w/9JBQ0zEj6Oh6AjNTIvawtKsrOKmTNPObjuWhSTY9wbYdcaaSpJ8
-   Fy0qZfijWNui6sTYBfqZboyrguCV98mYeHl5C75onJn4gEP3K9usDhZft
-   hQeP55NjpjuZbPqcw26dP5r1vu8rI9wq2vtNhwE2clqoxBxXeu/f2vIiw
-   Vsrj5cilYXXtiodGpf61Wa+t3JMzY8ftYC26DYoeGu5x5GyD1KnDnNKxC
-   9A0G94eXTT3mU31tUjP4Twas8Y5m0ZS5aY7/T5MdCAdlj6wm+tn/0k6MF
-   9VDRoUBpgX9jysy9LkAwHcyVije8Xb7sLrvT7w/DjdvgHJ45ApPqNlxtz
-   Q==;
-IronPort-SDR: 9ZezAwZbVeAORJ6Qei2ZXxBw4SqY0ZhDJRZdVf8hWP6kcZEQuOQcrbz+bwZ1r9hAuope+kUDHl
- JbHSTtjlpLkrFp6kxlWG6Z9PU5KaRCw8UFXmItGQVucq9MUpqUsqYyJhVMj4p5I+RpQb8cK2js
- V4CJpLbcNiJSPtFWNvUtq3URs2yBX0UDIfxTdfbcxTxHeCvaIl0ZYHDIwlUT+/4J9TcLf6axEJ
- CXzQDaVCy69OFsUD94vxUcdTADcmMVbdA4HUq4sGZ2JgqFSp+oNbSUWeajN8NtjPTAs9yyjfbi
- +yo=
-X-IronPort-AV: E=McAfee;i="6200,9189,10029"; a="41911581"
-X-IronPort-AV: E=Sophos;i="5.83,308,1616425200"; 
-   d="scan'208";a="41911581"
-Received: from mail-ty1jpn01lp2050.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([104.47.93.50])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2021 16:49:28 +0900
+        id S232360AbhF2H6u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Jun 2021 03:58:50 -0400
+Received: from mga14.intel.com ([192.55.52.115]:25575 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232308AbhF2H6u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Jun 2021 03:58:50 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10029"; a="207922252"
+X-IronPort-AV: E=Sophos;i="5.83,308,1616482800"; 
+   d="scan'208";a="207922252"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2021 00:56:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.83,308,1616482800"; 
+   d="scan'208";a="446942264"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orsmga007.jf.intel.com with ESMTP; 29 Jun 2021 00:56:21 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.4; Tue, 29 Jun 2021 00:56:21 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.4; Tue, 29 Jun 2021 00:56:20 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4
+ via Frontend Transport; Tue, 29 Jun 2021 00:56:20 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.176)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2242.4; Tue, 29 Jun 2021 00:56:20 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SQ7L+Va6+rsFNfnKW1uOr2FBB2z2oTHthJqgBbksXKxnR77GTFbMJF3AJnRdhcVwnRYVlYPe2QGilbxsbdLKP3Cx8DfHxOc8M/9vCm+atZ4VoeUsfd9iF6tjScjns8JCk9y7Fv/kKWzsI/NG3kZ0yZhAKoX1gn7PpwG3tDVDqaZ/PVql8JlOYd26DFpWDbTcBPiH/8MyLYP+k04WSqyLOu+f2do7P8VnVWmh3k98BNrlkC5Nj3DcnLScZIxdpwkmHDRetMETCraLTzVGfyuVSVFA92V8YCkA60de65hjkN1SoOi10JlUG7TRXsEVpxt7umVX/MqrR3ZjiBl9X5GBkw==
+ b=lw7By+JOPtTe0xv0M4wLQ+MYX4rB5x/REWPsZMnZa24hX7vS3xrZL6SBxJeblhHWfLVCSpOZv5JB8ZDM/jMae4LSsKdDncGvDrTOdyob9n+fm6kTLR6aEhp2E3L59VVuIoOnUMH1eZ4mKa0JtmophcA8giQB0qIhxbYbtJTQkwzAI771b7ebeuIghFqvqr4ESXpur3WObhdD8BFQtJhGHfh60zXSIuY5xwUsvPcgl+4H1YrH8Ig1+vJkSRCKuiCnCccnOX/kgzBt29kx/Y3omC/YK66qq/ZhY4sik7Wdg6XAVl4tgNTl3I3suHFrmcfYKdcSWOe8+tyJit949nrLGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gbututhmmXu0XiA4nxF78NY8fi5m1RF+SLdydwwvXFk=;
- b=QDnt2b33G3xmK45HiVPmURL+BHQD8yBL43WGbJynEQqM5VklpxL+adlMZioRlYWzPUXH9eKzpwNDOgptJsnc9YDhC7U1X49esb4l042nWqoHC5hKBPzQF09Yudfa+t8FIC6UqufSlb2GAdTUPYGZahNvW2AXbLQOegH91zdpfKOcZWC2Nf5odHE7EM57ZAh1iyExq+s9VltGSKd1vQrl6n82DWmQWx+kOcUaXDnkD5WPAk/fl7XIGJcEbwg0AZIxXiQdUN3gzcNEQDSg1t5hSB41JrdDAG4zGpB7pfj6GpbbZypl8KbYEbp5DqRJ30aA2kpVB6PXFmuPjBTuWCfSlw==
+ bh=G4zsQQscnt4dgZBdtgup/8KxlRd7oRsxRfgkDsd5y+o=;
+ b=Gub3D/u5exJSR3UxPZmGFM08hX7FzbqeheKzbqVx5Q1wFYyWx8OdKk8gLY65WX4x+qvsAL0xHZbPnLRHqQeUrx+Oo2OJZ61ZoK49kGU7j9agCTseGeJkxP+7w9zGl+OPknEteOPCWwmmA9P6j8OAc0iLIjq5WT0Upl1dF/QPMXH+1uDxgFqImm+WTfWJeJ8ecAcYeEk1wNHtPDnmp6JjjKCHGSOB2O3tJOtC0LBZ6Wlu17Cpj4ksyl791t4miCOBBEvrSxIxj9OgCyYg+UbOQVvWy8hMKIvyxVb5EdHRO6uyLghL9bkqJDCGJEiaOKEPWEqZWA4mRxrYrczZ/Dsi/Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
+ s=selector2-intel-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gbututhmmXu0XiA4nxF78NY8fi5m1RF+SLdydwwvXFk=;
- b=ilvjPFiNGYjLae45iDuc2GIz+RST7fKTNmoR2eVZgcINHbv1+9NaAsPMDeSlRB7ywNPlBMoYukg6SWGUzXjiV0HlUGGmUnF6ajELtofh111f+E+Q1V4csrv6Q6jcXHhXsaxp4xRzYVyp2G92cHnnJha5tI5jjklDneOWN5bdHsY=
-Received: from OSBPR01MB2920.jpnprd01.prod.outlook.com (2603:1096:604:18::16)
- by OSBPR01MB1640.jpnprd01.prod.outlook.com (2603:1096:603:1::10) with
+ bh=G4zsQQscnt4dgZBdtgup/8KxlRd7oRsxRfgkDsd5y+o=;
+ b=NUuOZQi9pVUtDmuSxHMxLMfeS1G/ey8dZehFFTQqsGoljAud7rxs33uv7oRq4aMMt0eLI3OHtTYHN5lHCr+4hjU1NiypCKM7iqDaQ7jtEWwxbvhwELp7K18nq4WoXyL8KxoOtNIN8fLtGlW/YD/jSC3YQ4J08uTo4Fn8sT4IQpc=
+Received: from BYAPR11MB2662.namprd11.prod.outlook.com (2603:10b6:a02:c8::24)
+ by BYAPR11MB3592.namprd11.prod.outlook.com (2603:10b6:a03:fb::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.23; Tue, 29 Jun
- 2021 07:49:25 +0000
-Received: from OSBPR01MB2920.jpnprd01.prod.outlook.com
- ([fe80::b985:8239:6cf0:1228]) by OSBPR01MB2920.jpnprd01.prod.outlook.com
- ([fe80::b985:8239:6cf0:1228%7]) with mapi id 15.20.4264.026; Tue, 29 Jun 2021
- 07:49:24 +0000
-From:   "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.18; Tue, 29 Jun
+ 2021 07:56:19 +0000
+Received: from BYAPR11MB2662.namprd11.prod.outlook.com
+ ([fe80::103d:74b9:605e:b05b]) by BYAPR11MB2662.namprd11.prod.outlook.com
+ ([fe80::103d:74b9:605e:b05b%6]) with mapi id 15.20.4264.026; Tue, 29 Jun 2021
+ 07:56:19 +0000
+From:   "Liu, Xiaodong" <xiaodong.liu@intel.com>
+To:     Jason Wang <jasowang@redhat.com>,
+        Xie Yongji <xieyongji@bytedance.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "stefanha@redhat.com" <stefanha@redhat.com>,
+        "sgarzare@redhat.com" <sgarzare@redhat.com>,
+        "parav@nvidia.com" <parav@nvidia.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "christian.brauner@canonical.com" <christian.brauner@canonical.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "bcrl@kvack.org" <bcrl@kvack.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "mika.penttila@nextfour.com" <mika.penttila@nextfour.com>,
+        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@lst.de" <hch@lst.de>, "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>,
-        "rgoldwyn@suse.de" <rgoldwyn@suse.de>
-Subject: RE: [PATCH v5 5/9] mm: Introduce mf_dax_kill_procs() for fsdax case
-Thread-Topic: [PATCH v5 5/9] mm: Introduce mf_dax_kill_procs() for fsdax case
-Thread-Index: AQHXa7EmrHLpSGG2eEOWO38ftnVtTKspT/mAgAFCBXA=
-Date:   Tue, 29 Jun 2021 07:49:24 +0000
-Message-ID: <OSBPR01MB292012F7C264076E9AA645C3F4029@OSBPR01MB2920.jpnprd01.prod.outlook.com>
-References: <20210628000218.387833-1-ruansy.fnst@fujitsu.com>
- <20210628000218.387833-6-ruansy.fnst@fujitsu.com>
- <YNm3VeeWuI0m4Vcx@casper.infradead.org>
-In-Reply-To: <YNm3VeeWuI0m4Vcx@casper.infradead.org>
-Accept-Language: en-US, zh-CN
-Content-Language: zh-CN
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v8 00/10] Introduce VDUSE - vDPA Device in Userspace
+Thread-Topic: [PATCH v8 00/10] Introduce VDUSE - vDPA Device in Userspace
+Thread-Index: AQHXa8kUCtmikoHekUKCGV4xYFF/O6so1l4AgAANryCAAX3fgIAAMcrQ
+Date:   Tue, 29 Jun 2021 07:56:19 +0000
+Message-ID: <BYAPR11MB266276002F42D91FCE6E83CE8C029@BYAPR11MB2662.namprd11.prod.outlook.com>
+References: <20210615141331.407-1-xieyongji@bytedance.com>
+ <20210628103309.GA205554@storage2.sh.intel.com>
+ <bdbe3a79-e5ce-c3a5-4c68-c11c65857377@redhat.com>
+ <BYAPR11MB2662FFF6140A4C634648BB2E8C039@BYAPR11MB2662.namprd11.prod.outlook.com>
+ <41cc419e-48b5-6755-0cb0-9033bd1310e4@redhat.com>
+In-Reply-To: <41cc419e-48b5-6755-0cb0-9033bd1310e4@redhat.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: infradead.org; dkim=none (message not signed)
- header.d=none;infradead.org; dmarc=none action=none header.from=fujitsu.com;
-x-originating-ip: [223.111.68.150]
+dlp-version: 11.5.1.3
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+authentication-results: redhat.com; dkim=none (message not signed)
+ header.d=none;redhat.com; dmarc=none action=none header.from=intel.com;
+x-originating-ip: [192.198.143.21]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 745b76d0-9bf2-40df-b028-08d93ad26a42
-x-ms-traffictypediagnostic: OSBPR01MB1640:
-x-microsoft-antispam-prvs: <OSBPR01MB164009921EE90C9565C9FEC0F4029@OSBPR01MB1640.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-office365-filtering-correlation-id: db28b461-4cfc-4e9b-7ca3-08d93ad36146
+x-ms-traffictypediagnostic: BYAPR11MB3592:
+x-microsoft-antispam-prvs: <BYAPR11MB3592EB5669DD662752044F358C029@BYAPR11MB3592.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2NGk8+wcYfzubbACPAWze6Dtv1Rb86b2Th0qnBGyiWDJ3+P+OjmIQAI/RNYtEB7ipHm/hyYhucz16Visv9tQGL5SMRDdviydfq8Y9j32Yx0fGV3j6ApyUz4X3mPTTW7LkJnGFO0PIU0eJ7RgL0pFwctzixORoB5uMM5HZ2jdkdm4z76EPYiSANTUSwQx9D7OC0u5cXuv18TIMCpOiNOeWxJDi831OyNVE6zXRfutr2PfEtaWKe/BTeMiJpp0QEMndfeZqvSqzAPERAuTs6lwEmI5R8CuetaZoY7YQfEhNwmhLHjbZYVv8qN9IQB5v3ZWKueLV+xIPGX71RikHaZ0aVVx8hfgFDBQB6+xatSiMrUtaHVtDDyKE7IEvh2o0gk9ylKnyVU0yrXR3rKWivxbhNmW9FrE11iIYcy4HTN0ATP7yOmLE2nFfIyHpULijIiwfZKyl81ZVp3h2gOe6g7c6/u1a9jma2hDWbNe7m6Pudc6aSeKzDwKuFWR2QhqHzS3AAjkkvKHPzv3r6LVLJqX1CL4phln9hxLFwHkAK9EyXOqUfFg5asXza099oRTGLvuV4ey+AHAi4yhuJ74ZvUhkQ4mxnF6MGfy9lyWjg1auQT6wicRqMv+q/R1TTLI/uTci2VT0jKBybSquje2vWyTtQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSBPR01MB2920.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(376002)(346002)(39860400002)(366004)(396003)(33656002)(6506007)(54906003)(316002)(5660300002)(26005)(6916009)(83380400001)(186003)(85182001)(122000001)(52536014)(66446008)(7696005)(66946007)(71200400001)(66556008)(64756008)(66476007)(55016002)(2906002)(86362001)(9686003)(478600001)(8676002)(4326008)(76116006)(38100700002)(8936002)(7416002);DIR:OUT;SFP:1101;
+x-microsoft-antispam-message-info: LQYo50OoCRXK+W+qHpMMW+tW6edOL1Gqbrf2VKdLD7lr4zCJ5HXSIsBl24uLW1p1SWZxgCMS3hmODh6hT9wXvXlgLnPuxB+qlLyY4/ZXGvXVSD7/fJpUrnrXyjvLquByyxC4TKsx/e2/PVvsNtWqheU3ozEEIjOEgDpRsUSA2XaxkJJY/MaX2YLw+m79Gj1CMu7eXtnKs8XlZ5IblopJ7GBKNriDQJ8qCY1A9SpsqsYYFgKBhi30u5AoO8ilmFMpXMZqNmAmtM7ANMY2JSJtLvtTN4Vv4Nyw+FG6TiEKOfl7ORx6w7cnvvdZxKvd0OYYurGhMSLFF7D9iLd7lPHdxhh0gZcsoId/DUomfZ4gV2zpFv3uZgYPMGmOx6c6y1S606t1nHvuhHQdcYYLGzl+gtn/giJ8RBfx26UcF2bdhqXAfbN6HDo+v07dWtDgpJC0P5n50ID5YbLL6lIkAqW66S/sSROHf69RfKVTMbgWkzGwQdH/4K0zgQFeyu1kly7w10ENbCGVdwOkOqVCCy3uLTdU2Ty1pb89SD0yVCyLKE22HtEyLl+DnlTHl6HuL8tivyA7m451fk5jI6RxN0lScpBAzkk7bEg8/wDT2lyp5LgCpYIjUts0x5ZdrLD6rw5nciovO5sxONxM4zw4xB1EQ1I/0sjwUVNxhQUoMMVVZ0CYo789lb0cwdL39olcmeCk
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2662.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(376002)(136003)(39860400002)(346002)(366004)(76116006)(6506007)(186003)(55016002)(9686003)(921005)(7416002)(54906003)(122000001)(66946007)(52536014)(26005)(316002)(38100700002)(8936002)(86362001)(66446008)(83380400001)(2906002)(110136005)(33656002)(8676002)(7696005)(5660300002)(478600001)(4326008)(71200400001)(66476007)(64756008)(66556008);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?gb2312?B?Q0xlSXdaOVBGM0QzOXVzREczOFhCWWdseVE5MzYrdTNrMFlrQ2I4QWkzQ1dC?=
- =?gb2312?B?TDNIam1RVzNVWHIvWFpCK0Q5cVV4cEowa2dYVjNHTG44OE5DTnZ0d1V5S3ZM?=
- =?gb2312?B?SWFNekU0b09CR3pSNlhzRmhKR1B6MkJUN1MwSXlzNzVFOEVYR0J0M05WRDJT?=
- =?gb2312?B?MmtER3o5SDBmU0ptRWF0MEZHN3RqaG9nUUdMbmJVYng3WFBCN1lRdWxXbUQ2?=
- =?gb2312?B?TWp4VktlRkVmL3lCem5mbG1uNm5kVEgzWVpzSzRGU0NBanlyWHA2Q2dsUWs0?=
- =?gb2312?B?V3RkVnJlTU9PTjVzVFoyNy9mUUJyeUc2SXpnMnpKamtMWlJUWEpLMXlaS2tO?=
- =?gb2312?B?ajhnUFhiNUdTR1ZtaE4yT1g0OXc4R3dTay9Gcmd2cXVFUkMvVGhnZDVGaFd0?=
- =?gb2312?B?eWtDQ2htZ2dWRmwreVNXbTBhK2daOUVnVTZiR0p1WDNlVm5nd0JZbjF5QlQx?=
- =?gb2312?B?eHRNSFZZSElONUVMOWl6bjlMNjR5SjR6R0xLTFFPeFp2YVE4R2h0NXpqOE9X?=
- =?gb2312?B?emZ4dXBoYXltdjJCUHZXRGRnaG9HdEFRSWZlVDBlcEtaOUUyanZyZ2E1ckxr?=
- =?gb2312?B?aEhYYzhHOFJPSy9ZRmtoOTdrVUJZaVNLd1QrQzg3MFl6K3pKdmNYKzZlNWVm?=
- =?gb2312?B?Ry96S2t1OGNZL01vRmN0RmJtUWNyLzRWMEtCUndkTG1mRUFYYjFEeFNUYTdo?=
- =?gb2312?B?b1dlanQ0RjVycHk3V204VzJFbzZTOElNc0MwdTkxNUxaNTByNzJzeDQxNllq?=
- =?gb2312?B?Z0JDREs1VmU0Zkp0Rk5qL3lMdFZTdUQ4RTg3MWc2WHNJbUllUWZwYWxJdGF1?=
- =?gb2312?B?ZW9TYWlGZFF4eGI3SExZOUlSdnNoVnJFTTUxQkdQWW9GR3JkRkVja3FIVkN5?=
- =?gb2312?B?V3hQT3BrcWVHT0hYazZwTSt4WTBBeXBBNzYvelRsdTRCbmVsUFdWWlhvMFZp?=
- =?gb2312?B?M29Bb3p3SENLVlU0cUlDdllqVmVLOS8wSWo5cllicWkzUEp2bHJSa3FYMHZs?=
- =?gb2312?B?Wk5PYnRxaXZ5cklxSnd6Z1RJU0ZNOHA4L0ViVmtTL3NHNXZ5MFhmU2hlNFRO?=
- =?gb2312?B?VnFVamEzZDhsU3ZNeURKT2ZZWW1CQVJLV3BTK3VXbnd0cjRlRC9mTnkvRDdR?=
- =?gb2312?B?c1B6cUxKQ2FjYkVqR1BVNlA5YW96emhHSUordzhmZmlCWFJmR0dIN3FjQktU?=
- =?gb2312?B?Mnljdm8zQ2JaN1lxb05hdnR3YllRTmg2cFRLR2ZQRmcyK2gwMFA3aUJzKytC?=
- =?gb2312?B?YVZqRVgyMU91emRLVTMwbmJvUnFudVdsYXhKM0U0bHlsLzdnd0xwZi9yK2NI?=
- =?gb2312?B?V0VVb1o1WGEyZkY0SWpMUVpTR1RVZXVNelVlZjBCNXdVNzhidFVRRGdBQTNj?=
- =?gb2312?B?WW0xUlZqUk01dTVtWVYyV1plbVdyTThORGtuLzkwTXM4SnNUeVR2N2JCS0t5?=
- =?gb2312?B?Nmx2TVhQK2NaVmZSVmlBWFkvc2lUT0U3UlZ2QjZwNEZHUys5M2NUaFlrd3E2?=
- =?gb2312?B?S2UxREFMSFlJMFBBMmE1d0pTY0xnemZPbDBTMmlqNUVUR2wvZUJjbzAxMCt3?=
- =?gb2312?B?WlRLSGpkclBkTHB3ZnBNUmhVWFRCMDgrNGZ6YVdxNktjZ2YvVU16RnY0WUxR?=
- =?gb2312?B?Nk5INlhrbElkM3pLN0FweXVPRy9qN1hVMHhkZ3VHRTN6U1V5ak1tZ0FWU1ds?=
- =?gb2312?B?ckYyOVhBZHdVSlZtRkh1aE1Pd3VUTTdXakFiSGRtUmZEL1dBc1hWZnhWalQz?=
- =?gb2312?Q?XvqPbtE6NyVL1vofi1mtM3rBdsL0SDAdm3El/aM?=
+x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?MXZZQWtVNDlndnBtL0JkT1Y1THczU0JjV3hyUVk0VXhIUHUzbGthSlNU?=
+ =?iso-2022-jp?B?VE1RdG9MUVlyc2lOVnJWdTJnaGJKSlp0SG41Y1cvSzBjQVpMTGlCMXRs?=
+ =?iso-2022-jp?B?ZU9RWVBzWmtvSXFOVm9HZUltclRPVDliK3JGc1hsT1ZzaG91bGN5L0p2?=
+ =?iso-2022-jp?B?SXRWWkFpTkJLV0IwTU01TFBKSUd4MUhrNHBLNkgwSFhKU09Xa3R1MHVC?=
+ =?iso-2022-jp?B?cU9RMWpDSFVPMGl5Y1BWRnpuMUhNR2FMenN2d1gwTVpRL0VnWUhXUlBp?=
+ =?iso-2022-jp?B?OEJqeE84UXl4QWFwcGp3WXliRjdJWTJBYkM1cHU5b241RFB3ZkhmazV1?=
+ =?iso-2022-jp?B?SmVxRHhVa0hMSjU5SXhuZnQ3WnpnTDZENFRFVkpxTmZGNWZNTGNwQTRX?=
+ =?iso-2022-jp?B?Qnp6MVoxZUNBUU9DUkRNZ08yRE5sZWpYbE1VQkgrSWpQenlGa1NYaDQ3?=
+ =?iso-2022-jp?B?dS9SZUNLTU9INExTMTN6TGxVT3ZvL1JpZElpSFh1U1BvUFdpQ1F1NUl0?=
+ =?iso-2022-jp?B?OUQwb3cvQWxMaG9Remc1L0pUdFcrSm5TbUR6SnZuOEhHWGlpYnE0WUxy?=
+ =?iso-2022-jp?B?eEthU3FQck1ZbU5nb1FHVzNuUXNkN2k4ZE5HdnRxTytCQWtmYy8wemFJ?=
+ =?iso-2022-jp?B?RXpZaWkwWm5Ob0IxWlRaNFV0bzFXbURnbWRJTVNIUWdLL2hNMjRwNlF2?=
+ =?iso-2022-jp?B?RDdTNy9aQ3NHVlpLSk5vZ21SQmtiVmc4blF5eVVBeWI3aVQxWlBiWjVX?=
+ =?iso-2022-jp?B?WVdnMXhaKzhYTmtFN0c3Z21GZ0xRRXZMV2dlV21ISEpaajdrVjV2RG9O?=
+ =?iso-2022-jp?B?Q04rNFVsOHJNL3BuS3hzVHIwMDQzM2RndWNuSmszRU9PcXJCMnZQQ0VZ?=
+ =?iso-2022-jp?B?bWU4MUJpVGgzNXh4TjI4OG1FMTFiTDE3MUN0L0FFWmFnYTRlZG5tVlV5?=
+ =?iso-2022-jp?B?MEJKZXBhN2plckZRYmxqd0kyVml6K2pkdmdqS2lBb1hpeFBMdGRvaWk1?=
+ =?iso-2022-jp?B?WTBUeFVMMWo2S2ZXcHp6QW92RGV1cE04ZDdhalc0UVY3Y0JqdEZMTkt0?=
+ =?iso-2022-jp?B?K2VkdjRVM0FqVURDaE41YVA4ampwZ2tBVnRlUTVTbUl2U3llTDdUMCtv?=
+ =?iso-2022-jp?B?S2s3TU5FVHJRVWRERHg0TWorS1JRSThxZDUyVjlrTHRRaVdvREdVRU1a?=
+ =?iso-2022-jp?B?UVl2T1E5NkhjN1N3d3NEMk5vdjBjK2VwbWwxak9JVlV3RWdPbDhvVERl?=
+ =?iso-2022-jp?B?d0ZKaVBMUDhleFQ4ZW53Y25xckExMGVIb2lLWnR2ZDVCRVQwY1hUMEpR?=
+ =?iso-2022-jp?B?dzRsd2t3S1dJL1lISlVub0lSazdESjBIRG1zY003MlhidUJ2N0FWd0I5?=
+ =?iso-2022-jp?B?S1FHS0V0NTBLajlhRUFQYXAyMC95SGtjUTkxcS9FZ0c3emdJdUdqSlJl?=
+ =?iso-2022-jp?B?RUxUV2kyYnBHb1ljUWVVTXg1R0JmWHdmcEVYb3B0V3QrNEwwanhOZU5M?=
+ =?iso-2022-jp?B?enRHYitmMUlsVDlMbmU3Mkk0bklCdEtnMGN0cUxqS0Y1SXU5ZVNYNzB4?=
+ =?iso-2022-jp?B?b2o3Yjl5bmNjNVdrNmFBMnB6QStWY3pPekFFMDhGc3lzb1lIQlFNNWlB?=
+ =?iso-2022-jp?B?UU5YRlB6MWl3a2g3SkZtZm9xcTFIb240S2grcVJ2ME5hMGxqTk5uZVhL?=
+ =?iso-2022-jp?B?SVlWOEVzL3NSS1c1aHVvL1A2ZmIrUFRwTHVpek8xckNkYlJoblRPcTNn?=
+ =?iso-2022-jp?B?NjFDa254NWw4cWZWblI5UGhVTTEyVGNUL2dpY2J4bUhXMjBVWm53Tkts?=
+ =?iso-2022-jp?B?aGVTZHF6OHUwQUFwek5UYmFZU0dHZkJVUnd6TEtiOGVuclFsekJORUtZ?=
+ =?iso-2022-jp?B?S0hxUHhDUUo4RkZXbStKRUtER014OVA0RkJQcHI0aTV5S0VzSmdid1Y2?=
 x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: fujitsu.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2920.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 745b76d0-9bf2-40df-b028-08d93ad26a42
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2021 07:49:24.8825
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2662.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db28b461-4cfc-4e9b-7ca3-08d93ad36146
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2021 07:56:19.2306
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ze499s5y02PyM2AZlb3Le/sYwzLrlzeDQ1HsmmTLNQXiXwoGMKr8s+RPR6QHS2GK20x267NmkiChwfzjmSAnuA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1640
+X-MS-Exchange-CrossTenant-userprincipalname: vNMzDxVXr/DTa46hyW6s2ZMMYzNVwbmcBHNvyjR13vHuyg74TmN9T4L1J5SuYyJBzs0Zvbck8/sopvZM9AgSOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3592
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE1hdHRoZXcgV2lsY294IDx3
-aWxseUBpbmZyYWRlYWQub3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY1IDUvOV0gbW06IElu
-dHJvZHVjZSBtZl9kYXhfa2lsbF9wcm9jcygpIGZvciBmc2RheCBjYXNlDQo+IA0KPiBPbiBNb24s
-IEp1biAyOCwgMjAyMSBhdCAwODowMjoxNEFNICswODAwLCBTaGl5YW5nIFJ1YW4gd3JvdGU6DQo+
-ID4gKy8qDQo+ID4gKyAqIGRheF9sb2FkX3BmbiAtIExvYWQgcGZuIG9mIHRoZSBEQVggZW50cnkg
-Y29ycmVzcG9uZGluZyB0byBhIHBhZ2UNCj4gPiArICogQG1hcHBpbmc6CVRoZSBmaWxlIHdob3Nl
-IGVudHJ5IHdlIHdhbnQgdG8gbG9hZA0KPiA+ICsgKiBAaW5kZXg6CW9mZnNldCB3aGVyZSB0aGUg
-REFYIGVudHJ5IGxvY2F0ZWQgaW4NCj4gPiArICoNCj4gPiArICogUmV0dXJuOglwZm4gbnVtYmVy
-IG9mIHRoZSBEQVggZW50cnkNCj4gPiArICovDQo+IA0KPiBUaGlzIGlzIGFuIGV4dGVybmFsbHkg
-dmlzaWJsZSBmdW5jdGlvbjsgd2h5IG5vdCBhZGQgdGhlIHNlY29uZCAnKicgYW5kIG1ha2UgdGhp
-cw0KPiBrZXJuZWwtZG9jPw0KDQpJJ2xsIGZpeCB0aGlzIGFuZCBhZGQga2VybmVsLWRvYy4NCg0K
-PiANCj4gPiArdW5zaWduZWQgbG9uZyBkYXhfbG9hZF9wZm4oc3RydWN0IGFkZHJlc3Nfc3BhY2Ug
-Km1hcHBpbmcsIHVuc2lnbmVkDQo+ID4gK2xvbmcgaW5kZXgpIHsNCj4gPiArCVhBX1NUQVRFKHhh
-cywgJm1hcHBpbmctPmlfcGFnZXMsIGluZGV4KTsNCj4gPiArCXZvaWQgKmVudHJ5Ow0KPiA+ICsJ
-dW5zaWduZWQgbG9uZyBwZm47DQo+ID4gKw0KPiA+ICsJeGFzX2xvY2tfaXJxKCZ4YXMpOw0KPiA+
-ICsJZW50cnkgPSB4YXNfbG9hZCgmeGFzKTsNCj4gPiArCXBmbiA9IGRheF90b19wZm4oZW50cnkp
-Ow0KPiA+ICsJeGFzX3VubG9ja19pcnEoJnhhcyk7DQo+IA0KPiBXaHkgZG8geW91IG5lZWQgdGhl
-IGlfcGFnZXMgbG9jayB0byBkbyB0aGlzPyAgaXMgdGhlIHJjdV9yZWFkX2xvY2soKSBpbnN1ZmZp
-Y2llbnQ/DQoNCkkgd2FzIG1pc3VzaW5nIHRoZXNlIGxvY2tzLCBub3QgdmVyeSBmaWxtaWVyIHdp
-dGggdGhlbS4uLg0KDQpTbywgSSB0aGluayBJIHNob3VsZCBsZWFybiBmcm9tIGRheF9sb2NrX3Bh
-Z2UoKTogcmN1X3JlYWRfbG9jaygpLCB4YXNfbG9hZCgmeGFzLCBpbmRleCksIGFuZCB0aGVuIHdh
-aXRfZW50cnlfdW5sb2NrZWQoKSwgZmluYWxseSBnZXQgYW4gdW5sb2NrZWQgZW50cnksIHRyYW5z
-bGF0ZSB0byBQRk4gYW5kIHJldHVybi4NCg0KPiBGb3IgdGhhdCBtYXR0ZXIsIHdoeSB1c2UgdGhl
-IHhhcyBmdW5jdGlvbnM/ICBXaHkgbm90DQo+IHNpbXBseToNCj4gDQo+IAl2b2lkICplbnRyeSA9
-IHhhX2xvYWQoJm1hcHBpbmctPmlfcGFnZXMsIGluZGV4KTsNCj4gCXJldHVybiBkYXhfdG9fcGZu
-KGVudHJ5KTsNCj4gDQo+IExvb2tpbmcgYXQgaXQgbW9yZSB0aG91Z2gsIGhvdyBkbyB5b3Uga25v
-dyB0aGlzIGlzIGEgUEZOIGVudHJ5Pw0KPiBJdCBjb3VsZCBiZSBsb2NrZWQsIGZvciBleGFtcGxl
-LiAgT3IgdGhlIHplcm8gcGFnZSwgb3IgZW1wdHkuDQoNClllcywgSSBkaWRuJ3QgdGFrZSB0aGVz
-ZSBpbiBjb25zaWRlcmF0aW9uLiAgSWYgdGhpcyBmaWxlIGhhc24ndCBiZWVuIG1tYXBwZWQgYW5k
-IGFjY2Vzc2VkLCBJIGNhbid0IGdldCBpdHMgUEZOIHJpZ2h0bHkuDQoNCj4gDQo+IEJ1dCBJIHRo
-aW5rIHRoaXMgaXMgdW5uZWNlc3Nhcnk7IHdoeSBub3QganVzdCBwYXNzIHRoZSBQRk4gaW50byBt
-Zl9kYXhfa2lsbF9wcm9jcz8NCg0KQmVjYXVzZSB0aGUgbWZfZGF4X2tpbGxfcHJvY3MoKSBpcyBj
-YWxsZWQgaW4gZmlsZXN5c3RlbSByZWNvdmVyeSBmdW5jdGlvbiwgd2hpY2ggaXMgYXQgdGhlIGVu
-ZCBvZiB0aGUgUk1BUCByb3V0aW5lLiAgQW5kIHRoZSBQRk4gaGFzIGJlZW4gdHJhbnNsYXRlZCB0
-byBkaXNrIG9mZnNldCBpbiBwbWVtIGRyaXZlciBpbiBvcmRlciB0byBkbyBSTUFQIHNlYXJjaCBp
-biBmaWxlc3lzdGVtLiAgU28sIGlmIHdlIGhhdmUgdG8gcGFzcyBpdCwgZXZlcnkgZnVuY3Rpb24g
-aW4gdGhpcyByb3V0aW5lIG5lZWRzIHRvIGFkZCBhbiBhcmd1bWVudCBmb3IgdGhpcyBQRk4uICBJ
-IHdhcyBob3BpbmcgSSBjYW4gYXZvaWQgcGFzc2luZyBQRk4gdGhyb3VnaCB0aGUgd2hvbGUgc3Rh
-Y2sgd2l0aCB0aGUgaGVscCBvZiB0aGlzIGRheF9sb2FkX3BmbigpLg0KDQpTbywgYmFzZWQgb24g
-dGhlIGFib3ZlLCBpZiBhIGZpbGUgaGFzbid0IGJlZW4gbW1hcHBlZCBhbmQgYWNjZXNzZWQsIHdl
-IGNhbid0IGdldCB0aGUgcmlnaHQgUEZOIG51bWJlciwgd2hpY2ggYWxzbyBtZWFucyBubyBwcm9j
-ZXNzIGlzIGFzc29jaWF0ZWQgd2l0aCB0aGlzIFBGTi4gIFRoZW4gd2UgZG9uJ3QgaGF2ZSB0byBr
-aWxsIGFueSBwcm9jZXNzIGFueSBtb3JlLiAgSnVzdCByZXR1cm4gd2l0aCBhbiBlcnJvciBjb2Rl
-LiAgbWZfZGF4X2tpbGxfcG9yY2VzcygpIGNhbiBhbHNvIHJldHVybiBpbW1lZGlhdGVseS4gIEhv
-dyBkbyB5b3UgdGhpbms/DQoNCg0KLS0NClRoYW5rcywNClJ1YW4uDQoNCg==
+
+
+>-----Original Message-----
+>From: Jason Wang <jasowang@redhat.com>
+>Sent: Tuesday, June 29, 2021 12:11 PM
+>To: Liu, Xiaodong <xiaodong.liu@intel.com>; Xie Yongji
+><xieyongji@bytedance.com>; mst@redhat.com; stefanha@redhat.com;
+>sgarzare@redhat.com; parav@nvidia.com; hch@infradead.org;
+>christian.brauner@canonical.com; rdunlap@infradead.org; willy@infradead.or=
+g;
+>viro@zeniv.linux.org.uk; axboe@kernel.dk; bcrl@kvack.org; corbet@lwn.net;
+>mika.penttila@nextfour.com; dan.carpenter@oracle.com; joro@8bytes.org;
+>gregkh@linuxfoundation.org
+>Cc: songmuchun@bytedance.com; virtualization@lists.linux-foundation.org;
+>netdev@vger.kernel.org; kvm@vger.kernel.org; linux-fsdevel@vger.kernel.org=
+;
+>iommu@lists.linux-foundation.org; linux-kernel@vger.kernel.org
+>Subject: Re: [PATCH v8 00/10] Introduce VDUSE - vDPA Device in Userspace
+>
+>
+>=1B$B:_=1B(B 2021/6/28 =1B$B2<8a=1B(B1:54, Liu, Xiaodong =1B$B<LF;=1B(B:
+>>> Several issues:
+>>>
+>>> - VDUSE needs to limit the total size of the bounce buffers (64M if I w=
+as not
+>>> wrong). Does it work for SPDK?
+>> Yes, Jason. It is enough and works for SPDK.
+>> Since it's a kind of bounce buffer mainly for in-flight IO, so limited s=
+ize like
+>> 64MB is enough.
+>
+>
+>Ok.
+>
+>
+>>
+>>> - VDUSE can use hugepages but I'm not sure we can mandate hugepages (or
+>we
+>>> need introduce new flags for supporting this)
+>> Same with your worry, I'm afraid too that it is a hard for a kernel modu=
+le
+>> to directly preallocate hugepage internal.
+>> What I tried is that:
+>> 1. A simple agent daemon (represents for one device)  `preallocates` and=
+ maps
+>>      dozens of 2MB hugepages (like 64MB) for one device.
+>> 2. The daemon passes its mapping addr&len and hugepage fd to kernel
+>>      module through created IOCTL.
+>> 3. Kernel module remaps the hugepages inside kernel.
+>
+>
+>Such model should work, but the main "issue" is that it introduce
+>overheads in the case of vhost-vDPA.
+>
+>Note that in the case of vhost-vDPA, we don't use bounce buffer, the
+>userspace pages were shared directly.
+>
+>And since DMA is not done per page, it prevents us from using tricks
+>like vm_insert_page() in those cases.
+>
+
+Yes, really, it's a problem to handle vhost-vDPA case.
+But there are already several solutions to get VM served, like vhost-user,
+vfio-user, so at least for SPDK, it won't serve VM through VDUSE. If a user
+still want to do that, then the user should tolerate Introduced overhead.
+
+In other words, software backend like SPDK, will appreciate the virtio
+datapath of VDUSE to serve local host instead of VM. That's why I also draf=
+ted
+a "virtio-local" to bridge vhost-user target and local host kernel virtio-b=
+lk.
+
+>
+>> 4. Vhost user target gets and maps hugepage fd from kernel module
+>>      in vhost-user msg through Unix Domain Socket cmsg.
+>> Then kernel module and target map on the same hugepage based
+>> bounce buffer for in-flight IO.
+>>
+>> If there is one option in VDUSE to map userspace preallocated memory, th=
+en
+>> VDUSE should be able to mandate it even it is hugepage based.
+>>
+>
+>As above, this requires some kind of re-design since VDUSE depends on
+>the model of mmap(MAP_SHARED) instead of umem registering.
+
+Got it, Jason, this may be hard for current version of VDUSE.
+Maybe we can consider these options after VDUSE merged later.
+
+Since if VDUSE datapath could be directly leveraged by vhost-user target,
+its value will be propagated immediately.
+
+>
+>Thanks
+
