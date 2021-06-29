@@ -2,66 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4618A3B6C75
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 04:26:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 826503B6CB4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 05:00:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231680AbhF2C3T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Jun 2021 22:29:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54732 "EHLO
+        id S231810AbhF2DCd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Jun 2021 23:02:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231194AbhF2C3T (ORCPT
+        with ESMTP id S231717AbhF2DCb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Jun 2021 22:29:19 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73936C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 19:26:52 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id hz1so33482025ejc.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 19:26:52 -0700 (PDT)
+        Mon, 28 Jun 2021 23:02:31 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D5AC061766
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 20:00:04 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id w17so13588706edd.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 20:00:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=436iowW5G+3AhfaQeY6hf4XjL/XjrpmKBydXgJfyA5c=;
-        b=ZgaNzCWSgvDCp3W0+7M7fWukxNa4zA3fTXV1kaarlE9zTzD1fKf8iVqwLsF89vugIC
-         9dcjxKh/qW9PROxd2BblzqndRgBWoyP5PWT7Ca0ICMXU2kOiD9nPC5NZCH7Nma3nK2os
-         2K/GV+jZyxe0vUCCbu/qFMoo7E6Bazc+6seVNiXIzEemn9BPky8X1/7asxp/mTgIzD1W
-         CT63JHVJQej9lyEXcyVFIWegTp3xYHaOiWsZmD4lzu37ZCa2EQox0aV1EIgVm7S2D+fg
-         fPQiuXCDISqeRNxnowY3Ocd+N0XVi3/L5afCqOsq3fxqaVRCugUmPevg2EzrnSIm+lMT
-         GKVg==
+         :cc;
+        bh=tC8+eycXVZtpiOsN/AMjjNqu/G/aFD3wjzDfuO22bFA=;
+        b=bh0RUiARewsKN3Hk1A5XuOHjErIfF3IJybc5hLJYfbWfR4avSK5I7hdl76VNLcFu7q
+         8088kCiIqV50Zrxug6TOBHKzv4OP9W7BbMhVTNhAk6ocCnWhAIqqnTT10FM8YaafrMCS
+         fobCNy4GG347XSHq5u7Sf803O0qFzJMLrz+vnGfYFFr/klFuR3RPi3Iak6Rw9TnxzkvS
+         jm4cY1IhMqRmgfKwUNeapZTIbX9ZLISiGEUmAI75ltfyEpKq4cYArVE4ODOc/u0hrevV
+         InesZfRLmS4f95S2/JcbikR32ocp9dRZ0Fyc+5Csa59s/feSzPNRPU4jOKrG7kq+cB/e
+         t+nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=436iowW5G+3AhfaQeY6hf4XjL/XjrpmKBydXgJfyA5c=;
-        b=nko70AnqNQGhpKQRGiaSDX1U2LzUm5xgIs3BYIWLeqszhSSuoXZuyzH2UQCRb8C8SW
-         ZE91IFCg5ruuGt7XHpbHf7xi+gYjiKeYU7BzoRbSQFmK29oMuVu1sp9b/Mvcu9/PlcI8
-         hl+7RwHWL1D8yyG+bQxKXVWNro/5qS8K4cM7Wu9jITlVFbu7f/rI2hhP8vr3JwnoZZzY
-         Yi62+mxYUDO1h2EUhvknOQlXjaaN4jvGYWVq7g5KW1dNdfrDJAqkotm3FtKHFgr1QULD
-         SA5Ii6KGvzoIFVZC0R/Q9JjTllkeNF2ze+6d5XZ3HG8gRGPsbZ6k2dlVgYRVFKRpWqEq
-         SHsw==
-X-Gm-Message-State: AOAM533aJH6nl3ToUCzjYLO6I7uMjXZVUJPyoA6E3ZfR1fosXyS7EY5p
-        BMnLIaLkhCw9ZhnsiAnxavZWwCdhjpuf0Mg3rhV3
-X-Google-Smtp-Source: ABdhPJxZ3odiQnt9cl8KrT87lSdpmglQti+N9ZByUxEwzMT+zjXAVbmRXZy8vuZGeYWwod7YWLY2hOoSJaOTu2UwbQo=
-X-Received: by 2002:a17:906:a28e:: with SMTP id i14mr26931454ejz.395.1624933611032;
- Mon, 28 Jun 2021 19:26:51 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=tC8+eycXVZtpiOsN/AMjjNqu/G/aFD3wjzDfuO22bFA=;
+        b=a+7nh+X4Rm1vXEbnBh3wPtfnBKNhb/ro9aQkkW/NfxwocOusahUEZfLYcdISQJy6d1
+         IdTDqkpr12XZh8GNyJrKX+5l45WcGbM0iIxrI25jpWySydkK+WWz+6ciSpK9t92QIzL7
+         55tjU0zHgqmnknSdxBO1m9W60l2SgSefeMJMt1V2hCpm8oU2iFi8uZIWrOSb7k5bUOQh
+         cOpQtYFHdfRU9a6Uw0C3plHDDB4+TudBkZZc0/cP5sjYMvOO1aDzyTk4tk01U32toJD+
+         lq06dzCqtp9xPswoT/bT4rK6fcltorTv7PoYSbFI6Ad4sYOJgAUAsR3pOHi4NcIk3at2
+         Tj2A==
+X-Gm-Message-State: AOAM5323n7u+v1cxCigtnpIcCZ5pohDfuTkHgbY8sXY2OjtRglx9OTca
+        jD2QvuSSHml6qbh6YCGVE410L2vXWHFEJwFkRtDI
+X-Google-Smtp-Source: ABdhPJzg96tWiFpzAbCVxt+xiS/U5xotludj60TImfwJQUK2KdEwY2E/dV2mAC5D/i1Omtd+LCI76RG3K5V1lZFzRC8=
+X-Received: by 2002:a50:ff01:: with SMTP id a1mr36653348edu.253.1624935602535;
+ Mon, 28 Jun 2021 20:00:02 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210615141331.407-1-xieyongji@bytedance.com> <20210615141331.407-10-xieyongji@bytedance.com>
- <adfb2be9-9ed9-ca37-ac37-4cd00bdff349@redhat.com> <CACycT3tAON+-qZev+9EqyL2XbgH5HDspOqNt3ohQLQ8GqVK=EA@mail.gmail.com>
- <1bba439f-ffc8-c20e-e8a4-ac73e890c592@redhat.com> <CACycT3uzMJS7vw6MVMOgY4rb=SPfT2srV+8DPdwUVeELEiJgbA@mail.gmail.com>
- <0aeb7cb7-58e5-1a95-d830-68edd7e8ec2e@redhat.com> <CACycT3uuooKLNnpPHewGZ=q46Fap2P4XCFirdxxn=FxK+X1ECg@mail.gmail.com>
- <e4cdee72-b6b4-d055-9aac-3beae0e5e3e1@redhat.com> <CACycT3u8=_D3hCtJR+d5BgeUQMce6S7c_6P3CVfvWfYhCQeXFA@mail.gmail.com>
- <d2334f66-907c-2e9c-ea4f-f912008e9be8@redhat.com> <CACycT3uCSLUDVpQHdrmuxSuoBDg-4n22t+N-Jm2GoNNp9JYB2w@mail.gmail.com>
- <48cab125-093b-2299-ff9c-3de8c7c5ed3d@redhat.com> <CACycT3tS=10kcUCNGYm=dUZsK+vrHzDvB3FSwAzuJCu3t+QuUQ@mail.gmail.com>
- <b10b3916-74d4-3171-db92-be0afb479a1c@redhat.com> <CACycT3vpMFbc9Fzuo9oksMaA-pVb1dEVTEgjNoft16voryPSWQ@mail.gmail.com>
- <d7e42109-0ba6-3e1a-c42a-898b6f33c089@redhat.com>
-In-Reply-To: <d7e42109-0ba6-3e1a-c42a-898b6f33c089@redhat.com>
+ <YNSatrDFsg+4VvH4@stefanha-x1.localdomain>
+In-Reply-To: <YNSatrDFsg+4VvH4@stefanha-x1.localdomain>
 From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 29 Jun 2021 10:26:40 +0800
-Message-ID: <CACycT3u9-id2DxPpuVLtyg4tzrUF9xCAGr7nBm=21HfUJJasaQ@mail.gmail.com>
+Date:   Tue, 29 Jun 2021 10:59:51 +0800
+Message-ID: <CACycT3vaXQ4dxC9QUzXXJs7og6TVqqVGa8uHZnTStacsYAiFwQ@mail.gmail.com>
 Subject: Re: Re: [PATCH v8 09/10] vduse: Introduce VDUSE - vDPA Device in Userspace
-To:     Jason Wang <jasowang@redhat.com>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
         Stefano Garzarella <sgarzare@redhat.com>,
         Parav Pandit <parav@nvidia.com>,
         Christoph Hellwig <hch@infradead.org>,
@@ -79,47 +72,206 @@ Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 28, 2021 at 12:40 PM Jason Wang <jasowang@redhat.com> wrote:
+On Mon, Jun 28, 2021 at 9:02 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
 >
+> On Tue, Jun 15, 2021 at 10:13:30PM +0800, Xie Yongji wrote:
+> > diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
+> > new file mode 100644
+> > index 000000000000..f21b2e51b5c8
+> > --- /dev/null
+> > +++ b/include/uapi/linux/vduse.h
+> > @@ -0,0 +1,143 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > +#ifndef _UAPI_VDUSE_H_
+> > +#define _UAPI_VDUSE_H_
+> > +
+> > +#include <linux/types.h>
+> > +
+> > +#define VDUSE_API_VERSION    0
+> > +
+> > +#define VDUSE_NAME_MAX       256
+> > +
+> > +/* the control messages definition for read/write */
+> > +
+> > +enum vduse_req_type {
+> > +     /* Get the state for virtqueue from userspace */
+> > +     VDUSE_GET_VQ_STATE,
+> > +     /* Notify userspace to start the dataplane, no reply */
+> > +     VDUSE_START_DATAPLANE,
+> > +     /* Notify userspace to stop the dataplane, no reply */
+> > +     VDUSE_STOP_DATAPLANE,
+> > +     /* Notify userspace to update the memory mapping in device IOTLB */
+> > +     VDUSE_UPDATE_IOTLB,
+> > +};
+> > +
+> > +struct vduse_vq_state {
+> > +     __u32 index; /* virtqueue index */
+> > +     __u32 avail_idx; /* virtqueue state (last_avail_idx) */
+> > +};
+> > +
+> > +struct vduse_iova_range {
+> > +     __u64 start; /* start of the IOVA range */
+> > +     __u64 last; /* end of the IOVA range */
 >
-> =E5=9C=A8 2021/6/25 =E4=B8=8B=E5=8D=8812:19, Yongji Xie =E5=86=99=E9=81=
-=93:
-> >> 2b) for set_status(): simply relay the message to userspace, reply is =
-no
-> >> needed. Userspace will use a command to update the status when the
-> >> datapath is stop. The the status could be fetched via get_stats().
-> >>
-> >> 2b looks more spec complaint.
-> >>
-> > Looks good to me. And I think we can use the reply of the message to
-> > update the status instead of introducing a new command.
-> >
->
-> Just notice this part in virtio_finalize_features():
->
->          virtio_add_status(dev, VIRTIO_CONFIG_S_FEATURES_OK);
->          status =3D dev->config->get_status(dev);
->          if (!(status & VIRTIO_CONFIG_S_FEATURES_OK)) {
->
-> So we no reply doesn't work for FEATURES_OK.
->
-> So my understanding is:
->
-> 1) We must not use noreply for set_status()
-> 2) We can use noreply for get_status(), but it requires a new ioctl to
-> update the status.
->
-> So it looks to me we need synchronize for both get_status() and
-> set_status().
+> Please clarify whether this describes a closed range [start, last] or an
+> open range [start, last).
 >
 
-We should not send messages to userspace in the FEATURES_OK case. So
-the synchronization is not necessary.
+OK.
+
+> > +};
+> > +
+> > +struct vduse_dev_request {
+> > +     __u32 type; /* request type */
+> > +     __u32 request_id; /* request id */
+> > +#define VDUSE_REQ_FLAGS_NO_REPLY     (1 << 0) /* No need to reply */
+> > +     __u32 flags; /* request flags */
+> > +     __u32 reserved; /* for future use */
+> > +     union {
+> > +             struct vduse_vq_state vq_state; /* virtqueue state */
+> > +             struct vduse_iova_range iova; /* iova range for updating */
+> > +             __u32 padding[16]; /* padding */
+> > +     };
+> > +};
+> > +
+> > +struct vduse_dev_response {
+> > +     __u32 request_id; /* corresponding request id */
+> > +#define VDUSE_REQ_RESULT_OK  0x00
+> > +#define VDUSE_REQ_RESULT_FAILED      0x01
+> > +     __u32 result; /* the result of request */
+> > +     __u32 reserved[2]; /* for future use */
+> > +     union {
+> > +             struct vduse_vq_state vq_state; /* virtqueue state */
+> > +             __u32 padding[16]; /* padding */
+> > +     };
+> > +};
+> > +
+> > +/* ioctls */
+> > +
+> > +struct vduse_dev_config {
+> > +     char name[VDUSE_NAME_MAX]; /* vduse device name */
+> > +     __u32 vendor_id; /* virtio vendor id */
+> > +     __u32 device_id; /* virtio device id */
+> > +     __u64 features; /* device features */
+> > +     __u64 bounce_size; /* bounce buffer size for iommu */
+> > +     __u16 vq_size_max; /* the max size of virtqueue */
+>
+> The VIRTIO specification allows per-virtqueue sizes. A device can have
+> two virtqueues, where the first one allows up to 1024 descriptors and
+> the second one allows only 128 descriptors, for example.
+>
+
+Good point! But it looks like virtio-vdpa/virtio-pci doesn't support
+that now. All virtqueues have the same maximum size.
+
+> This constant seems to impose the constraint that all virtqueues have
+> the same maximum size. Is this really necessary?
+>
+
+This will be used by vring_create_virtqueue(). We need to specify the
+maximum queue size supported by the device.
+
+> > +     __u16 padding; /* padding */
+> > +     __u32 vq_num; /* the number of virtqueues */
+> > +     __u32 vq_align; /* the allocation alignment of virtqueue's metadata */
+>
+> I'm not sure what this is?
+>
+
+ This will be used by vring_create_virtqueue() too.
+
+> > +     __u32 config_size; /* the size of the configuration space */
+> > +     __u32 reserved[15]; /* for future use */
+> > +     __u8 config[0]; /* the buffer of the configuration space */
+> > +};
+> > +
+> > +struct vduse_iotlb_entry {
+> > +     __u64 offset; /* the mmap offset on fd */
+> > +     __u64 start; /* start of the IOVA range */
+> > +     __u64 last; /* last of the IOVA range */
+>
+> Same here, please specify whether this is an open range or a closed
+> range.
+>
+
+Sure.
+
+> > +#define VDUSE_ACCESS_RO 0x1
+> > +#define VDUSE_ACCESS_WO 0x2
+> > +#define VDUSE_ACCESS_RW 0x3
+> > +     __u8 perm; /* access permission of this range */
+> > +};
+> > +
+> > +struct vduse_config_update {
+> > +     __u32 offset; /* offset from the beginning of configuration space */
+> > +     __u32 length; /* the length to write to configuration space */
+> > +     __u8 buffer[0]; /* buffer used to write from */
+> > +};
+> > +
+> > +struct vduse_vq_info {
+> > +     __u32 index; /* virtqueue index */
+> > +     __u32 avail_idx; /* virtqueue state (last_avail_idx) */
+> > +     __u64 desc_addr; /* address of desc area */
+> > +     __u64 driver_addr; /* address of driver area */
+> > +     __u64 device_addr; /* address of device area */
+> > +     __u32 num; /* the size of virtqueue */
+> > +     __u8 ready; /* ready status of virtqueue */
+> > +};
+> > +
+> > +struct vduse_vq_eventfd {
+> > +     __u32 index; /* virtqueue index */
+> > +#define VDUSE_EVENTFD_DEASSIGN -1
+> > +     int fd; /* eventfd, -1 means de-assigning the eventfd */
+> > +};
+> > +
+> > +#define VDUSE_BASE   0x81
+> > +
+> > +/* Get the version of VDUSE API. This is used for future extension */
+> > +#define VDUSE_GET_API_VERSION        _IOR(VDUSE_BASE, 0x00, __u64)
+> > +
+> > +/* Set the version of VDUSE API. */
+> > +#define VDUSE_SET_API_VERSION        _IOW(VDUSE_BASE, 0x01, __u64)
+> > +
+> > +/* Create a vduse device which is represented by a char device (/dev/vduse/<name>) */
+> > +#define VDUSE_CREATE_DEV     _IOW(VDUSE_BASE, 0x02, struct vduse_dev_config)
+> > +
+> > +/* Destroy a vduse device. Make sure there are no references to the char device */
+> > +#define VDUSE_DESTROY_DEV    _IOW(VDUSE_BASE, 0x03, char[VDUSE_NAME_MAX])
+> > +
+> > +/*
+> > + * Get a file descriptor for the first overlapped iova region,
+> > + * -EINVAL means the iova region doesn't exist.
+> > + */
+> > +#define VDUSE_IOTLB_GET_FD   _IOWR(VDUSE_BASE, 0x04, struct vduse_iotlb_entry)
+> > +
+> > +/* Get the negotiated features */
+> > +#define VDUSE_DEV_GET_FEATURES       _IOR(VDUSE_BASE, 0x05, __u64)
+> > +
+> > +/* Update the configuration space */
+> > +#define VDUSE_DEV_UPDATE_CONFIG      _IOW(VDUSE_BASE, 0x06, struct vduse_config_update)
+> > +
+> > +/* Get the specified virtqueue's information */
+> > +#define VDUSE_VQ_GET_INFO    _IOWR(VDUSE_BASE, 0x07, struct vduse_vq_info)
+> > +
+> > +/* Setup an eventfd to receive kick for virtqueue */
+> > +#define VDUSE_VQ_SETUP_KICKFD        _IOW(VDUSE_BASE, 0x08, struct vduse_vq_eventfd)
+> > +
+> > +/* Inject an interrupt for specific virtqueue */
+> > +#define VDUSE_VQ_INJECT_IRQ  _IOW(VDUSE_BASE, 0x09, __u32)
+>
+> There is not enough documentation to use this header file. For example,
+> which ioctls are used with /dev/vduse and which are used with
+> /dev/vduse/<name>?
+>
+> Please document that ioctl API fully. It will not only help userspace
+> developers but also define what is part of the interface and what is an
+> implementation detail that can change in the future.
+
+OK, I will try to add more details.
 
 Thanks,
 Yongji
