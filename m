@@ -2,162 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B5F53B6D40
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 06:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C5F3B6D42
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 06:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229562AbhF2EGP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Jun 2021 00:06:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:60681 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229638AbhF2EGK (ORCPT
+        id S229598AbhF2EK1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Jun 2021 00:10:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48848 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229480AbhF2EK0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Jun 2021 00:06:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624939423;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=v+g48Xk6aSFcuGIkt+/DaIL+8u6+RW2FB0ohInQkXMo=;
-        b=N/kWuJ9pALnFjAebPxvDYNPT7Ryq6QldUcVo8UT++4pGcHq/bJSclHk33zqT2frczX3F8O
-        tPhA558HdqfArUd1FmH3dqD9lCOSsqNot0fkCVvP29F777cxrCI9xciC18X7VOuR1Y+gsv
-        kVw61734oKEJt+cv8QxmeTyO5PhHlLc=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-590-SVfNKJxYNYC9cx0jjAY09A-1; Tue, 29 Jun 2021 00:03:39 -0400
-X-MC-Unique: SVfNKJxYNYC9cx0jjAY09A-1
-Received: by mail-pl1-f197.google.com with SMTP id l10-20020a17090270cab029011dbfb3981aso6672515plt.22
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 21:03:39 -0700 (PDT)
+        Tue, 29 Jun 2021 00:10:26 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A1CC061574;
+        Mon, 28 Jun 2021 21:07:59 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id l5so8885404iok.7;
+        Mon, 28 Jun 2021 21:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2OLpHQcLUDzz8wANdYkE5PCGVg+CpMUGu9tDBaii+8w=;
+        b=DTabtqMwxTdt10+cOAgeCLbWdx0H5Nzpsk55Yxg1CFAX3eS5ceEwv5l48LcR1SVuu3
+         6NztnR91VyCuvVkxDbBG4UKKGnJJXEvJObrXGKMsvMaLqM7aET+e8e/jaEEvONMVF7Hb
+         diaipTgsDjwMyX8Ny2biBRlFcL8dSqO6zcda/oEnqAXX6vzd/jxr0eUMm7TNAdCB4FWV
+         LLBVmnusi/tr39kCQza9k0mUCKKV+dsSPoJ/0HKB0mLkumjOQdlrUOGrsA324MtqMGyR
+         2fSQLZdRouASDMGJZd3NnmlDiWTThTUcvEFnTvc1kHdMQyKstbgeWI2U3DBps2UMqP06
+         6idg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=v+g48Xk6aSFcuGIkt+/DaIL+8u6+RW2FB0ohInQkXMo=;
-        b=HWs8ZO15zvBVxqCgzsjl4G5o4YC7V6aqSKq5irrP0A/MLDbdCWkX482fFGBgUYiQy3
-         joazyzcqEuCorIQAIywLREZYNi819/nbXl6daOiLrZq91USIlu8gqCAS7AZfsfbL0GqO
-         RCEfsd6LDRBVbXPmeVNL+1T36BnrzB9u9kc5EhSat2CB73VQrIi2oq3imAR3EEPwnnrk
-         DuzVuXUhQT2GUK10yD5csoCoLA8qepf1f9LfU8aQXhyRrAEwhnZGzD9LcjhB69FAPakE
-         wMd5lAxpvb384rnGGD2Pn1nedVOe1Sf/XbbJmhRqoQRFQQVfMA16seL5ZsGLXIfRAM5n
-         OJZQ==
-X-Gm-Message-State: AOAM532St1NXAoZehTGnWKdW0GqDOferqZJqXuKrFXH2YJERRyd2AIL6
-        IiPc9K10zVkULMufZ8WqCSraQ5PJaZj6DPDIe7Df9PD8C3UUj2IYVeS3F1+qVxktAFfnBMsnteM
-        UfwhEZk/hc7DMOhYKV8L6h4rC2Q==
-X-Received: by 2002:a17:90a:3d47:: with SMTP id o7mr41873351pjf.68.1624939418457;
-        Mon, 28 Jun 2021 21:03:38 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxKtTxOUZyWPHTglSm78/VChBvM+Z/ZClGizEzsTPbjS/HVYSHDloQPPNl7gVZByIo2yALsfw==
-X-Received: by 2002:a17:90a:3d47:: with SMTP id o7mr41873326pjf.68.1624939418245;
-        Mon, 28 Jun 2021 21:03:38 -0700 (PDT)
-Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id e2sm16252405pgh.5.2021.06.28.21.03.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jun 2021 21:03:37 -0700 (PDT)
-Subject: Re: [PATCH v8 09/10] vduse: Introduce VDUSE - vDPA Device in
- Userspace
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20210615141331.407-1-xieyongji@bytedance.com>
- <CACycT3uzMJS7vw6MVMOgY4rb=SPfT2srV+8DPdwUVeELEiJgbA@mail.gmail.com>
- <0aeb7cb7-58e5-1a95-d830-68edd7e8ec2e@redhat.com>
- <CACycT3uuooKLNnpPHewGZ=q46Fap2P4XCFirdxxn=FxK+X1ECg@mail.gmail.com>
- <e4cdee72-b6b4-d055-9aac-3beae0e5e3e1@redhat.com>
- <CACycT3u8=_D3hCtJR+d5BgeUQMce6S7c_6P3CVfvWfYhCQeXFA@mail.gmail.com>
- <d2334f66-907c-2e9c-ea4f-f912008e9be8@redhat.com>
- <CACycT3uCSLUDVpQHdrmuxSuoBDg-4n22t+N-Jm2GoNNp9JYB2w@mail.gmail.com>
- <48cab125-093b-2299-ff9c-3de8c7c5ed3d@redhat.com>
- <CACycT3tS=10kcUCNGYm=dUZsK+vrHzDvB3FSwAzuJCu3t+QuUQ@mail.gmail.com>
- <b10b3916-74d4-3171-db92-be0afb479a1c@redhat.com>
- <CACycT3vpMFbc9Fzuo9oksMaA-pVb1dEVTEgjNoft16voryPSWQ@mail.gmail.com>
- <d7e42109-0ba6-3e1a-c42a-898b6f33c089@redhat.com>
- <CACycT3u9-id2DxPpuVLtyg4tzrUF9xCAGr7nBm=21HfUJJasaQ@mail.gmail.com>
- <e82766ff-dc6b-2cbb-3504-0ef618d538e2@redhat.com>
- <CACycT3ucVz3D4Tcr1C6uzWyApZy7Xk4o17VH2gvLO3w1Ra+skg@mail.gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <d30e391f-a900-5182-f732-e7c0089b7cbd@redhat.com>
-Date:   Tue, 29 Jun 2021 12:03:25 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2OLpHQcLUDzz8wANdYkE5PCGVg+CpMUGu9tDBaii+8w=;
+        b=o6AO603GNkg3FHTN7Lne+eHelG2LjWD+wg23VdW5vTcCyqnGk/yi17rJ2ABVOPLEFE
+         hxO3K9z/xxmDy8uBtgNB2erx8a3gxGWDpZCrywxkZkIrbSzGbl5yJBGDcI1JodeteD1I
+         vaZb/GyN9T3WN7HyWUy9cYZcXsTwAupv9ZLGkXbeqhw+zNAwBJvh/G+BEiDnnBuyqkEX
+         7NEdf7PVInvYF3xOypvThMRygP0tVvYXbzFtjHUUUb+VyNYbTa6lv25LGEmj2sLoCkXA
+         W8k246QgtC7KaILedZ798QV/6dIKMqs6TuvAVI+GKu/iY+17gcli3/t4Adxpe6/QAu1L
+         ERZA==
+X-Gm-Message-State: AOAM533bvjCjdM09DsHYCnhOKjzGeTBPeWLVvBQ0JqsOWeOqkE8d+pbu
+        iao8G+SJjTppwU5uXABDVj2WOEaT73ZmNq+yXKI=
+X-Google-Smtp-Source: ABdhPJxrbyuclkmfiV3y9eCwhl8v6C76MdgBau7qRukywfJeUKurL8ITzrL1nQlI+Gk897OQLCMDe8ETjmWzwWL76/w=
+X-Received: by 2002:a5d:8b03:: with SMTP id k3mr2191134ion.203.1624939678673;
+ Mon, 28 Jun 2021 21:07:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CACycT3ucVz3D4Tcr1C6uzWyApZy7Xk4o17VH2gvLO3w1Ra+skg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20210628194908.GB6776@fieldses.org> <9f1263b46d5c38b9590db1e2a04133a83772bc50.camel@hammerspace.com>
+ <20210629011200.GA14733@fieldses.org> <162493102550.7211.15170485925982544813@noble.neil.brown.name>
+In-Reply-To: <162493102550.7211.15170485925982544813@noble.neil.brown.name>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 29 Jun 2021 07:07:47 +0300
+Message-ID: <CAOQ4uxj-YLrsvCE1d8+OEYQpfZeENK71OWR02G3JtLoZx92H1g@mail.gmail.com>
+Subject: Re: automatic freeing of space on ENOSPC
+To:     NeilBrown <neilb@suse.de>
+Cc:     "bfields@fieldses.org" <bfields@fieldses.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "dai.ngo@oracle.com" <dai.ngo@oracle.com>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-在 2021/6/29 上午11:56, Yongji Xie 写道:
-> On Tue, Jun 29, 2021 at 11:29 AM Jason Wang <jasowang@redhat.com> wrote:
->>
->> 在 2021/6/29 上午10:26, Yongji Xie 写道:
->>> On Mon, Jun 28, 2021 at 12:40 PM Jason Wang <jasowang@redhat.com> wrote:
->>>> 在 2021/6/25 下午12:19, Yongji Xie 写道:
->>>>>> 2b) for set_status(): simply relay the message to userspace, reply is no
->>>>>> needed. Userspace will use a command to update the status when the
->>>>>> datapath is stop. The the status could be fetched via get_stats().
->>>>>>
->>>>>> 2b looks more spec complaint.
->>>>>>
->>>>> Looks good to me. And I think we can use the reply of the message to
->>>>> update the status instead of introducing a new command.
->>>>>
->>>> Just notice this part in virtio_finalize_features():
->>>>
->>>>            virtio_add_status(dev, VIRTIO_CONFIG_S_FEATURES_OK);
->>>>            status = dev->config->get_status(dev);
->>>>            if (!(status & VIRTIO_CONFIG_S_FEATURES_OK)) {
->>>>
->>>> So we no reply doesn't work for FEATURES_OK.
->>>>
->>>> So my understanding is:
->>>>
->>>> 1) We must not use noreply for set_status()
->>>> 2) We can use noreply for get_status(), but it requires a new ioctl to
->>>> update the status.
->>>>
->>>> So it looks to me we need synchronize for both get_status() and
->>>> set_status().
->>>>
->>> We should not send messages to userspace in the FEATURES_OK case. So
->>> the synchronization is not necessary.
->>
->> As discussed previously, there could be a device that mandates some
->> features (VIRTIO_F_RING_PACKED). So it can choose to not accept
->> FEATURES_OK is packed virtqueue is not negotiated.
->>
->> In this case we need to relay the message to userspace.
->>
-> OK, I see. If so, I prefer to only use noreply for set_status(). We do
-> not set the status bit if the message is failed. In this way, we don't
-> need to change lots of virtio core codes to handle the failure of
-> set_status()/get_status().
-
-
-It should work.
-
-Thanks
-
-
+On Tue, Jun 29, 2021 at 4:45 AM NeilBrown <neilb@suse.de> wrote:
 >
-> Thanks,
-> Yongji
+> On Tue, 29 Jun 2021, bfields@fieldses.org wrote:
+> > On Tue, Jun 29, 2021 at 12:43:14AM +0000, Trond Myklebust wrote:
+> > > How about just setting up a notification for unlink on those files, the
+> > > same way we set up notifications for close with the NFSv3 filecache in
+> > > nfsd?
+> >
+> > Yes, that'd probably work.  It'd be better if we didn't have to throw
+> > away unlinked files when the client expires, but it'd still be an
+> > incremental improvement over what we do now.
+>
+> I wonder how important this is.  If an NFS client unlinks a file that it
+> has open, it will be silly_renamed, and if the client then goes silent,
+> it might never be removed.  So we already theoretically have a
+> possibilty of ENOSPC due to silent clients.  Have we heard of this
+> becoming a problem?
+> Is there reason to think that the Courteous server changes will make
+> this problem more likely?
 >
 
+To me, stale silly renamed files sounds like a problem worth fixing
+not as an excuse to create another similar problem.
+
+w.r.t pre-ENOSPC notification, I don't know of such notification
+in filesystems. It exists for some thin-provisioned storage devices
+(thinp as well I think), but that is not very useful for nfsd.
+
+OTOH, ENOSPC is rarely a surprising event.
+I believe you can get away with tunable for nfsd, such as
+% of available storage space that may consumed for
+"opportunistic caching".
+
+Polling for available storage space every least time or so
+in case there are possibly forgotten unlinked files should be
+sufficient for any practical purpose IMO.
+
+Thanks,
+Amir.
