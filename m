@@ -2,22 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE0A43B7869
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 21:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FD833B786B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 21:13:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235534AbhF2TPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Jun 2021 15:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53190 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235503AbhF2TPj (ORCPT
+        id S235538AbhF2TPq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Jun 2021 15:15:46 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35022 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233926AbhF2TPn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Jun 2021 15:15:39 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FEFC061760;
-        Tue, 29 Jun 2021 12:13:12 -0700 (PDT)
+        Tue, 29 Jun 2021 15:15:43 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id C6B781F431AF
+        with ESMTPSA id 4ECFF1F431AF
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
@@ -25,9 +22,9 @@ Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH v3 14/15] samples: Add fs error monitoring example
-Date:   Tue, 29 Jun 2021 15:10:34 -0400
-Message-Id: <20210629191035.681913-15-krisman@collabora.com>
+Subject: [PATCH v3 15/15] docs: Document the FAN_FS_ERROR event
+Date:   Tue, 29 Jun 2021 15:10:35 -0400
+Message-Id: <20210629191035.681913-16-krisman@collabora.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210629191035.681913-1-krisman@collabora.com>
 References: <20210629191035.681913-1-krisman@collabora.com>
@@ -37,204 +34,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce an example of a FAN_FS_ERROR fanotify user to track filesystem
-errors.
+Document the FAN_FS_ERROR event for user administrators and user space
+developers.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
 ---
 Changes since v1:
-  - minor fixes
+  - Drop references to location record
+  - Explain that the inode field is optional
+  - Explain we are reporting only the first error
 ---
- samples/Kconfig               |   9 +++
- samples/Makefile              |   1 +
- samples/fanotify/Makefile     |   3 +
- samples/fanotify/fs-monitor.c | 134 ++++++++++++++++++++++++++++++++++
- 4 files changed, 147 insertions(+)
- create mode 100644 samples/fanotify/Makefile
- create mode 100644 samples/fanotify/fs-monitor.c
+ .../admin-guide/filesystem-monitoring.rst     | 70 +++++++++++++++++++
+ Documentation/admin-guide/index.rst           |  1 +
+ 2 files changed, 71 insertions(+)
+ create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index b5a1a7aa7e23..f2f9c939035f 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -120,6 +120,15 @@ config SAMPLE_CONNECTOR
- 	  with it.
- 	  See also Documentation/driver-api/connector.rst
- 
-+config SAMPLE_FANOTIFY_ERROR
-+	bool "Build fanotify error monitoring sample"
-+	depends on FANOTIFY
-+	help
-+	  When enabled, this builds an example code that uses the
-+	  FAN_FS_ERROR fanotify mechanism to monitor filesystem
-+	  errors.
-+	  See also Documentation/admin-guide/filesystem-monitoring.rst.
-+
- config SAMPLE_HIDRAW
- 	bool "hidraw sample"
- 	depends on CC_CAN_LINK && HEADERS_INSTALL
-diff --git a/samples/Makefile b/samples/Makefile
-index 087e0988ccc5..931a81847c48 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -5,6 +5,7 @@ subdir-$(CONFIG_SAMPLE_AUXDISPLAY)	+= auxdisplay
- subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) += binderfs
- obj-$(CONFIG_SAMPLE_CONFIGFS)		+= configfs/
- obj-$(CONFIG_SAMPLE_CONNECTOR)		+= connector/
-+obj-$(CONFIG_SAMPLE_FANOTIFY_ERROR)	+= fanotify/
- subdir-$(CONFIG_SAMPLE_HIDRAW)		+= hidraw
- obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)	+= hw_breakpoint/
- obj-$(CONFIG_SAMPLE_KDB)		+= kdb/
-diff --git a/samples/fanotify/Makefile b/samples/fanotify/Makefile
+diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
 new file mode 100644
-index 000000000000..b3d5cc826e6f
+index 000000000000..c0ab1ad268b8
 --- /dev/null
-+++ b/samples/fanotify/Makefile
-@@ -0,0 +1,3 @@
-+userprogs-always-y += fs-monitor
++++ b/Documentation/admin-guide/filesystem-monitoring.rst
+@@ -0,0 +1,70 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+userccflags += -I usr/include
-diff --git a/samples/fanotify/fs-monitor.c b/samples/fanotify/fs-monitor.c
-new file mode 100644
-index 000000000000..f949ea00271d
---- /dev/null
-+++ b/samples/fanotify/fs-monitor.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2021, Collabora Ltd.
-+ */
++====================================
++File system Monitoring with fanotify
++====================================
 +
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <err.h>
-+#include <stdlib.h>
-+#include <stdio.h>
-+#include <fcntl.h>
-+#include <sys/fanotify.h>
-+#include <sys/types.h>
-+#include <unistd.h>
-+#include <sys/stat.h>
-+#include <sys/types.h>
++fanotify supports the FAN_FS_ERROR mark for file system-wide error
++reporting.  It is meant to be used by file system health monitoring
++daemons who listen on that interface and take actions (notify sysadmin,
++start recovery) when a file system problem is detected by the kernel.
 +
-+#ifndef FAN_FS_ERROR
-+#define FAN_FS_ERROR		0x00008000
-+#define FAN_EVENT_INFO_TYPE_ERROR	4
++By design, A FAN_FS_ERROR notification exposes sufficient information for a
++monitoring tool to know a problem in the file system has happened.  It
++doesn't necessarily provide a user space application with semantics to
++verify an IO operation was successfully executed.  That is outside of
++scope of this feature. Instead, it is only meant as a framework for
++early file system problem detection and reporting recovery tools.
 +
-+int mount_fd;
++When a file system operation fails, it is common for dozens of kernel
++errors to cascade after the initial failure, hiding the original failure
++log, which is usually the most useful debug data to troubleshoot the
++problem.  For this reason, FAN_FS_ERROR only reports the first error that
++occurred since the last notification, and it simply counts addition
++errors.  This ensures that the most important piece of error information
++is never lost.
 +
-+struct fanotify_event_info_error {
++FAN_FS_ERROR requires the fanotify group to be setup with the
++FAN_REPORT_FID flag.
++
++At the time of this writing, the only file system that emits FAN_FS_ERROR
++notifications is Ext4.
++
++A user space example code is provided at ``samples/fanotify/fs-monitor.c``.
++
++Notification structure
++======================
++
++A FAN_FS_ERROR Notification has the following format::
++
++  [ Notification Metadata (Mandatory) ]
++  [ Generic Error Record  (Mandatory) ]
++  [ FID record            (Mandatory) ]
++
++Generic error record
++--------------------
++
++The generic error record provides enough information for a file system
++agnostic tool to learn about a problem in the file system, without
++providing any additional details about the problem.  This record is
++identified by ``struct fanotify_event_info_header.info_type`` being set
++to FAN_EVENT_INFO_TYPE_ERROR.
++
++  struct fanotify_event_info_error {
 +	struct fanotify_event_info_header hdr;
 +	__s32 error;
 +	__u32 error_count;
-+};
-+#endif
++  };
 +
-+static void handle_notifications(char *buffer, int len)
-+{
-+	struct fanotify_event_metadata *metadata;
-+	struct fanotify_event_info_error *error;
-+	struct fanotify_event_info_fid *fid;
-+	struct file_handle *file_handle;
-+	int bad_file;
-+	int ret;
-+	struct stat stat;
-+	char *next;
++The `error` field identifies the type of error. `error_count` count
++tracks the number of errors that occurred and were suppressed to
++preserve the original error, since the last notification.
 +
-+	for (metadata = (struct fanotify_event_metadata *) buffer;
-+	     FAN_EVENT_OK(metadata, len);
-+	     metadata = FAN_EVENT_NEXT(metadata, len)) {
-+		next = (char *)metadata + metadata->event_len;
-+		if (metadata->mask != FAN_FS_ERROR) {
-+			printf("unexpected FAN MARK: %llx\n", metadata->mask);
-+			goto next_event;
-+		} else if (metadata->fd != FAN_NOFD) {
-+			printf("Unexpected fd (!= FAN_NOFD)\n");
-+			goto next_event;
-+		}
++FID record
++----------
 +
-+		printf("FAN_FS_ERROR found len=%d\n", metadata->event_len);
-+
-+		error = (struct fanotify_event_info_error *) (metadata+1);
-+		if (error->hdr.info_type != FAN_EVENT_INFO_TYPE_ERROR) {
-+			printf("unknown record: %d (Expecting TYPE_ERROR)\n",
-+			       error->hdr.info_type);
-+			goto next_event;
-+		}
-+
-+		printf("\tGeneric Error Record: len=%d\n", error->hdr.len);
-+		printf("\terror: %d\n", error->error);
-+		printf("\terror_count: %d\n", error->error_count);
-+
-+		fid = (struct fanotify_event_info_fid *) (error + 1);
-+
-+		if ((char *) fid >= next) {
-+			printf("Event doesn't have FID\n");
-+			goto next_event;
-+		}
-+		printf("FID record found\n");
-+
-+		if (fid->hdr.info_type != FAN_EVENT_INFO_TYPE_FID) {
-+			printf("unknown record: %d (Expecting TYPE_FID)\n",
-+			       fid->hdr.info_type);
-+			goto next_event;
-+		}
-+		printf("\tfsid: %x%x\n", fid->fsid.val[0], fid->fsid.val[1]);
-+
-+
-+		file_handle = (struct file_handle *) &fid->handle;
-+		bad_file = open_by_handle_at(mount_fd, file_handle,  O_PATH);
-+		if (bad_file < 0) {
-+			printf("open_by_handle_at %d\n", errno);
-+			goto next_event;
-+		}
-+
-+		ret = fstat(bad_file, &stat);
-+		if (ret < 0)
-+			printf("fstat %d\n", errno);
-+
-+		printf("\tinode=%ld\n", stat.st_ino);
-+
-+next_event:
-+		printf("---\n\n");
-+	}
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	int fd;
-+	char buffer[BUFSIZ];
-+
-+	if (argc < 2) {
-+		printf("Missing path argument\n");
-+		return 1;
-+	}
-+
-+	mount_fd = open(argv[1], O_RDONLY);
-+	if (mount_fd < 0)
-+		errx(1, "mount_fd");
-+
-+	fd = fanotify_init(FAN_CLASS_NOTIF|FAN_REPORT_FID, O_RDONLY);
-+	if (fd < 0)
-+		errx(1, "fanotify_init");
-+
-+	if (fanotify_mark(fd, FAN_MARK_ADD|FAN_MARK_FILESYSTEM,
-+			  FAN_FS_ERROR, AT_FDCWD, argv[1])) {
-+		errx(1, "fanotify_mark");
-+	}
-+
-+	while (1) {
-+		int n = read(fd, buffer, BUFSIZ);
-+
-+		if (n < 0)
-+			errx(1, "read");
-+
-+		handle_notifications(buffer, n);
-+	}
-+
-+	return 0;
-+}
++The FID record can be used to uniquely identify the inode that triggered
++the error through the combination of fsid and file handler.  A
++filesystem specific handler can use that information to attempt a
++recovery procedure.  Errors that are not related to an inode are
++reported against the root inode.
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index dc00afcabb95..1bedab498104 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -82,6 +82,7 @@ configure specific aspects of kernel behavior to your liking.
+    edid
+    efi-stub
+    ext4
++   filesystem-monitoring
+    nfs/index
+    gpio/index
+    highuid
 -- 
 2.32.0
 
