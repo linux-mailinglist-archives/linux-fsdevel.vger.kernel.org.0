@@ -2,67 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 573123B78B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 21:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5023B78B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 21:33:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234174AbhF2Tee (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Jun 2021 15:34:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57330 "EHLO
+        id S234343AbhF2TgW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Jun 2021 15:36:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233670AbhF2Tec (ORCPT
+        with ESMTP id S232618AbhF2TgV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Jun 2021 15:34:32 -0400
-Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6841C061760
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jun 2021 12:32:04 -0700 (PDT)
-Received: by mail-oo1-xc2c.google.com with SMTP id r14-20020a4ad4ce0000b029024b4146e2f5so5980867oos.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jun 2021 12:32:04 -0700 (PDT)
+        Tue, 29 Jun 2021 15:36:21 -0400
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D20DC061760
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jun 2021 12:33:53 -0700 (PDT)
+Received: by mail-ot1-x32e.google.com with SMTP id 59-20020a9d0ac10000b0290462f0ab0800so15949154otq.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jun 2021 12:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=NnGqF5i8LvWI4EhF9coOqefPqY2kcPhPYW+PqMZT3MI=;
-        b=AkbnlocjnC9D/sMNkHUTlQe2l961wltIILRlW75VEZby9nkNErd0f3GilLrcB4o+Xk
-         NBA8dsUIamjOMhh6JLoGP5/zQij1UUSqR5lFQeV2ICN6dPG2Bxm3k57/sHOwePkibIO3
-         /9rwK3EHtYDgS7hmGQPnBHCqXOKlHAmNTF9yQEo7WmlbVpx9woJZWT/P6fAJmrpWfo5b
-         Ha4kXdOtZQiI3Ypk4oiT1ZIT1/iFKA4FUoJjY9AgehKKSr++Ek5AE1DySFmlB6RBxW1k
-         nk5xBbj0eqMZMWcMAXpPWxmkHJn8TSgfMRvirHiSPigg58hqE1Wsu86A8Mo9AmURbS+L
-         QYyQ==
+        bh=YS2WgG+tm1E7PR+z7d8KIk2kzEbs0O6AT9o1/tVCqkY=;
+        b=U3n9RwRXoJqysAEH+Lfdr+UguX2OEsKtMAF/USgVtXNCVreoTQim2CLR48JS18vska
+         bmE3ofHMYRmRtU2YxWA9svI8OJEeXbMSFtzB30Em5xtphQiqf7tHqUhySlMIJpoMojXd
+         lrqsit/Htx+PTQ3nIqybve/hPT8sLVk6/hKIRqfeCH/wnokzkTM40qjAWKY0EuRaNbsI
+         BPQsAinHpb1RNDB7M9nIth2ZnP8R5rG3ctapDXz3T8wI2mzlWuH/XCjByQtLr+RTbUoc
+         jbKbyqTrrIGw1OOn/z7r2Y95BDm3KRZNtB9M8+esbS2W4NgZpHncaaR+iqEhGjxX2WSr
+         g/Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=NnGqF5i8LvWI4EhF9coOqefPqY2kcPhPYW+PqMZT3MI=;
-        b=tKuhJo5F8mAAbF+i+jxDi8xXMvrIz9rTpTUNDeESpB9oWhG4M1G5kVdhBkYLNc+vHC
-         twYDi2zfqlDIRCVoqs5DVsyh/JwWDO8045+49HNGs7J/knZkBF7K+cqZPFUXD0kPEeD1
-         a5fRCdg0I4UaJLK1QWeaa1yYiEp/5oZ2pCiTREx+hYmmNCnhkBGadGW9iJfdQWg8ob6C
-         th4ze4GHbsdSBEuIF2IVfaKJHB1cOoHZdSI6YyYdrk9ljDg389KP8DOYYht2Ijsc2xOl
-         SagijVkgDRFL1rkcb3+sTHNOzOQOYEhm6Is5Q4HGjYBivALdMZnqwpQof4D7XZm4Ezir
-         RUMw==
-X-Gm-Message-State: AOAM530YfaRSehLlrqmz6Qm22uqpJ9enfTcJdEh+tUoXm7eRBvHbs26V
-        4ZM0MZX7gU5I+2pmFVudyqcJ2g==
-X-Google-Smtp-Source: ABdhPJzMAoJNlT4cn96farSb/2+ZZVyAAujQ8xgfMZFGEYPL43QFmc07ld1kFpq0GFHajFV/ZsdXyA==
-X-Received: by 2002:a4a:956f:: with SMTP id n44mr5400466ooi.54.1624995124003;
-        Tue, 29 Jun 2021 12:32:04 -0700 (PDT)
+        bh=YS2WgG+tm1E7PR+z7d8KIk2kzEbs0O6AT9o1/tVCqkY=;
+        b=nd68kFh5qieyOAnHzmqmKZJ/GMY6i0grquetAl07GuF4dr+3vzDwSOSwvfnNFBFwvH
+         W4WluJBJ0WWyhf8MzbmjvxHIwnmMWAhfy3Op0l4x67Q2gFzjKDoBhAy5FrT0YGuflNz5
+         eXP4cuAoKGAipC2O0TDKdLp7juobjhIvocu/BZzYoF2zzBh2UCT1qgjoGbH8NYjWJRPC
+         WEJugzN51KCWNo0dhHUoVnXgaqawP7nOZrmnHad56uztD8FKWEkbWNPUO4Vktgzon1Nv
+         D18UKRagfplSwsfxzF4XRyRn2WhK9C84nJt1OITbH+rlUiQTB2vuAjKBJfE0fqabe5zY
+         TAFw==
+X-Gm-Message-State: AOAM533eTF2V5A6HqHVns9G7WPBUFRizoXs25ysrFXbLkz0s3QFLQKJL
+        I8VFz5WfHcCFz0U4w3SWmxeakg==
+X-Google-Smtp-Source: ABdhPJwzuGWcwChFeYdw7UOh8XgXDPZE3DrYTHwi1cKl8VKgs4RjCo48nSOMn6uoYe1M6Ba66k+ZLw==
+X-Received: by 2002:a05:6830:1f51:: with SMTP id u17mr5919112oth.25.1624995232643;
+        Tue, 29 Jun 2021 12:33:52 -0700 (PDT)
 Received: from smtpclient.apple ([2600:1700:42f0:6600:f8e3:a853:8646:6bc8])
-        by smtp.gmail.com with ESMTPSA id k14sm2522483oon.5.2021.06.29.12.32.03
+        by smtp.gmail.com with ESMTPSA id 35sm4374415oth.49.2021.06.29.12.33.51
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jun 2021 12:32:03 -0700 (PDT)
+        Tue, 29 Jun 2021 12:33:52 -0700 (PDT)
 Content-Type: text/plain;
-        charset=utf-8
+        charset=us-ascii
 Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.100.0.2.22\))
-Subject: Re: [PATCH 2/3] hfs: fix high memory mapping in hfs_bnode_read
+Subject: Re: [PATCH 3/3] hfs: add lock nesting notation to hfs_find_init
 From:   Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <20210629144803.62541-3-desmondcheongzx@gmail.com>
-Date:   Tue, 29 Jun 2021 12:31:58 -0700
+In-Reply-To: <20210629144803.62541-4-desmondcheongzx@gmail.com>
+Date:   Tue, 29 Jun 2021 12:33:46 -0700
 Cc:     gustavoars@kernel.org, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         skhan@linuxfoundation.org, gregkh@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+b718ec84a87b7e73ade4@syzkaller.appspotmail.com
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <4E2B2BE9-3C0F-4D99-A099-601A780E0CED@dubeyko.com>
+Message-Id: <763B3E9F-1D48-4D0E-830C-8260D2329627@dubeyko.com>
 References: <20210629144803.62541-1-desmondcheongzx@gmail.com>
- <20210629144803.62541-3-desmondcheongzx@gmail.com>
+ <20210629144803.62541-4-desmondcheongzx@gmail.com>
 To:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
 X-Mailer: Apple Mail (2.3654.100.0.2.22)
 Precedence: bulk
@@ -74,149 +75,90 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 > On Jun 29, 2021, at 7:48 AM, Desmond Cheong Zhi Xi =
 <desmondcheongzx@gmail.com> wrote:
 >=20
-> Pages that we read in hfs_bnode_read need to be kmapped into kernel
-> address space. However, currently only the 0th page is kmapped. If the
-> given offset + length exceeds this 0th page, then we have an invalid
-> memory access.
+> Syzbot reports a possible recursive lock:
+> =
+https://syzkaller.appspot.com/bug?id=3Df007ef1d7a31a469e3be7aeb0fde0769b18=
+585db
 >=20
-> To fix this, we use the same logic used  in hfsplus' version of
-> hfs_bnode_read to kmap each page of relevant data that we copy.
+> This happens due to missing lock nesting information. =46rom the logs,
+> we see that a call to hfs_fill_super is made to mount the hfs
+> filesystem. While searching for the root inode, the lock on the
+> catalog btree is grabbed. Then, when the parent of the root isn't
+> found, a call to __hfs_bnode_create is made to create the parent of
+> the root. This eventually leads to a call to hfs_ext_read_extent which
+> grabs a lock on the extents btree.
 >=20
-> An example of invalid memory access occurring without this fix can be
-> seen in the following crash report:
+> Since the order of locking is catalog btree -> extents btree, this
+> lock hierarchy does not lead to a deadlock.
 >=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: use-after-free in memcpy =
-include/linux/fortify-string.h:191 [inline]
-> BUG: KASAN: use-after-free in hfs_bnode_read+0xc4/0xe0 =
-fs/hfs/bnode.c:26
-> Read of size 2 at addr ffff888125fdcffe by task syz-executor5/4634
+> To tell lockdep that this locking is safe, we add nesting notation to
+> distinguish between catalog btrees, extents btrees, and attributes
+> btrees (for HFS+). This has already been done in hfsplus.
 >=20
-> CPU: 0 PID: 4634 Comm: syz-executor5 Not tainted 5.13.0-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, =
-BIOS Google 01/01/2011
-> Call Trace:
-> __dump_stack lib/dump_stack.c:79 [inline]
-> dump_stack+0x195/0x1f8 lib/dump_stack.c:120
-> print_address_description.constprop.0+0x1d/0x110 mm/kasan/report.c:233
-> __kasan_report mm/kasan/report.c:419 [inline]
-> kasan_report.cold+0x7b/0xd4 mm/kasan/report.c:436
-> check_region_inline mm/kasan/generic.c:180 [inline]
-> kasan_check_range+0x154/0x1b0 mm/kasan/generic.c:186
-> memcpy+0x24/0x60 mm/kasan/shadow.c:65
-> memcpy include/linux/fortify-string.h:191 [inline]
-> hfs_bnode_read+0xc4/0xe0 fs/hfs/bnode.c:26
-> hfs_bnode_read_u16 fs/hfs/bnode.c:34 [inline]
-> hfs_bnode_find+0x880/0xcc0 fs/hfs/bnode.c:365
-> hfs_brec_find+0x2d8/0x540 fs/hfs/bfind.c:126
-> hfs_brec_read+0x27/0x120 fs/hfs/bfind.c:165
-> hfs_cat_find_brec+0x19a/0x3b0 fs/hfs/catalog.c:194
-> hfs_fill_super+0xc13/0x1460 fs/hfs/super.c:419
-> mount_bdev+0x331/0x3f0 fs/super.c:1368
-> hfs_mount+0x35/0x40 fs/hfs/super.c:457
-> legacy_get_tree+0x10c/0x220 fs/fs_context.c:592
-> vfs_get_tree+0x93/0x300 fs/super.c:1498
-> do_new_mount fs/namespace.c:2905 [inline]
-> path_mount+0x13f5/0x20e0 fs/namespace.c:3235
-> do_mount fs/namespace.c:3248 [inline]
-> __do_sys_mount fs/namespace.c:3456 [inline]
-> __se_sys_mount fs/namespace.c:3433 [inline]
-> __x64_sys_mount+0x2b8/0x340 fs/namespace.c:3433
-> do_syscall_64+0x37/0xc0 arch/x86/entry/common.c:47
-> entry_SYSCALL_64_after_hwframe+0x44/0xae
-> RIP: 0033:0x45e63a
-> Code: 48 c7 c2 bc ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 88 =
-04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d =
-01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f9404d410d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000000020000248 RCX: 000000000045e63a
-> RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f9404d41120
-> RBP: 00007f9404d41120 R08: 00000000200002c0 R09: 0000000020000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-> R13: 0000000000000003 R14: 00000000004ad5d8 R15: 0000000000000000
->=20
-> The buggy address belongs to the page:
-> page:00000000dadbcf3e refcount:0 mapcount:0 mapping:0000000000000000 =
-index:0x1 pfn:0x125fdc
-> flags: 0x2fffc0000000000(node=3D0|zone=3D2|lastcpupid=3D0x3fff)
-> raw: 02fffc0000000000 ffffea000497f748 ffffea000497f6c8 =
-0000000000000000
-> raw: 0000000000000001 0000000000000000 00000000ffffffff =
-0000000000000000
-> page dumped because: kasan: bad access detected
->=20
-> Memory state around the buggy address:
-> ffff888125fdce80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ffff888125fdcf00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->> ffff888125fdcf80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->                                                                ^
-> ffff888125fdd000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ffff888125fdd080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
+> Reported-and-tested-by: =
+syzbot+b718ec84a87b7e73ade4@syzkaller.appspotmail.com
 > Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
 > ---
-> fs/hfs/bnode.c | 18 ++++++++++++++----
-> 1 file changed, 14 insertions(+), 4 deletions(-)
+> fs/hfs/bfind.c | 14 +++++++++++++-
+> fs/hfs/btree.h |  7 +++++++
+> 2 files changed, 20 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-> index b63a4df7327b..936cfa763224 100644
-> --- a/fs/hfs/bnode.c
-> +++ b/fs/hfs/bnode.c
-> @@ -18,13 +18,23 @@
-> void hfs_bnode_read(struct hfs_bnode *node, void *buf,
-> 		int off, int len)
-> {
-> -	struct page *page;
-> +	struct page **pagep;
-> +	int l;
+> diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
+> index 4af318fbda77..ef9498a6e88a 100644
+> --- a/fs/hfs/bfind.c
+> +++ b/fs/hfs/bfind.c
+> @@ -25,7 +25,19 @@ int hfs_find_init(struct hfs_btree *tree, struct =
+hfs_find_data *fd)
+> 	fd->key =3D ptr + tree->max_key_len + 2;
+> 	hfs_dbg(BNODE_REFS, "find_init: %d (%p)\n",
+> 		tree->cnid, __builtin_return_address(0));
+> -	mutex_lock(&tree->tree_lock);
+> +	switch (tree->cnid) {
+> +	case HFS_CAT_CNID:
+> +		mutex_lock_nested(&tree->tree_lock, =
+CATALOG_BTREE_MUTEX);
+> +		break;
+> +	case HFS_EXT_CNID:
+> +		mutex_lock_nested(&tree->tree_lock, =
+EXTENTS_BTREE_MUTEX);
+> +		break;
+> +	case HFS_ATTR_CNID:
+> +		mutex_lock_nested(&tree->tree_lock, ATTR_BTREE_MUTEX);
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> 	return 0;
+> }
 >=20
-> 	off +=3D node->page_offset;
-> -	page =3D node->page[0];
-> +	pagep =3D node->page + (off >> PAGE_SHIFT);
-
-I would like to have a check here that we are not out of the page array. =
-Could you add this check?
-
-Also, maybe, node->page[index] could look much safer here. What do you =
-think?
-
-> +	off &=3D ~PAGE_MASK;
+> diff --git a/fs/hfs/btree.h b/fs/hfs/btree.h
+> index 4ba45caf5939..0e6baee93245 100644
+> --- a/fs/hfs/btree.h
+> +++ b/fs/hfs/btree.h
+> @@ -13,6 +13,13 @@ typedef int (*btree_keycmp)(const btree_key *, =
+const btree_key *);
 >=20
-> -	memcpy(buf, kmap(page) + off, len);
-> -	kunmap(page);
-> +	l =3D min_t(int, len, PAGE_SIZE - off);
+> #define NODE_HASH_SIZE  256
+>=20
+> +/* B-tree mutex nested subclasses */
+> +enum hfs_btree_mutex_classes {
+> +	CATALOG_BTREE_MUTEX,
+> +	EXTENTS_BTREE_MUTEX,
+> +	ATTR_BTREE_MUTEX,
+> +};
+> +
+> /* A HFS BTree held in memory */
+> struct hfs_btree {
+> 	struct super_block *sb;
+> --=20
+> 2.25.1
+>=20
 
-Maybe, it makes sense to use more informative name of the variable =
-instead of =E2=80=9Cl=E2=80=9D?
+Looks good to me.
 
-> +	memcpy(buf, kmap(*pagep) + off, l);
-
-I suppose that it could be good to have a check that we do not overflow =
-the buffer. How do you feel about it?
-
-> +	kunmap(*pagep);
-
-What=E2=80=99s about kmap_atomic/kunmap_atomic in this function?
+Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
 
 Thanks,
 Slava.
 
-> +
-> +	while ((len -=3D l) !=3D 0) {
-> +		buf +=3D l;
-> +		l =3D min_t(int, len, PAGE_SIZE);
-> +		memcpy(buf, kmap(*++pagep), l);
-> +		kunmap(*pagep);
-> +	}
-> }
->=20
-> u16 hfs_bnode_read_u16(struct hfs_bnode *node, int off)
-> --=20
-> 2.25.1
->=20
 
