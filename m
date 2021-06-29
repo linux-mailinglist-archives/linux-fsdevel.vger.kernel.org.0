@@ -2,54 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A71A03B72F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 15:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E923B735A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 15:40:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233692AbhF2NLv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Jun 2021 09:11:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55814 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233482AbhF2NLs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Jun 2021 09:11:48 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 485C7C061760
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Jun 2021 06:09:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+l1C73jR7x+wDr88mhrVJCLsQff2oAHfgh27HOG8hWA=; b=rUhvIHlDe9jFoong0Xr9s8ok0H
-        jJrUV/1Yb6diR1kDT4ElTEZgu/mKBiLwT8yyVaA0zIqYTvUHi17YOIo++kC7xtp+kueObq8TKireB
-        NNAQrMXtXAeUZCfbSCK/SOVeF7pjgGVEdxdj+qPC/J9+NEJSaQFKi9knvdo4u8EywP0f70p9uNzuj
-        KTMLm0Ef1JfWDCsC0qMzjHp68VTrdCAc66jkhDD0qpte+Iyli8CmBwYwzIiU16EY98LgOLIqvMdCQ
-        GnAPCnJwYHWU+ueul2bee55wmBSKNxyR5xLzUQRPq/DlEiQqvx0bOvqbEPk0Twrq9vRN1aGL5iUKk
-        tuQRomTw==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1lyDTB-0048Jo-9N; Tue, 29 Jun 2021 13:08:19 +0000
-Date:   Tue, 29 Jun 2021 14:08:05 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     hch@infradead.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] iomap: Break build if io_inline_bio is not last in
- iomap_ioend
-Message-ID: <YNsbNctGHDW1DA3A@infradead.org>
-References: <20210629072051.2875413-1-nborisov@suse.com>
+        id S233626AbhF2Nmm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Jun 2021 09:42:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58596 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232535AbhF2Nmj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Jun 2021 09:42:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2006161DC2;
+        Tue, 29 Jun 2021 13:40:09 +0000 (UTC)
+Date:   Tue, 29 Jun 2021 15:40:07 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     yang.yang29@zte.com.cn
+Cc:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        menglong8.dong@gmail.com
+Subject: Re: [PATCH] sysctl: fix permission check while owner isn't
+ GLOBAL_ROOT_UID
+Message-ID: <20210629134007.6edxcohqmlffsoip@wittgenstein>
+References: <20210628121729.xsbm63b5lxpsvhbu@wittgenstein>
+ <202106282114107052565@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210629072051.2875413-1-nborisov@suse.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <202106282114107052565@zte.com.cn>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 29, 2021 at 10:20:51AM +0300, Nikolay Borisov wrote:
-> Comments are good but unfortunately they can't effectively enforce
-> certain invariants, to that effect let's break the build in case
-> io_inline_bio is, for whatever reason, not the last member of
-> iomap_ioend.
+On Mon, Jun 28, 2021 at 09:14:10PM +0800, yang.yang29@zte.com.cn wrote:
+> > I'm confused about what the actual problem is tbh:
+> > 
+> > root@h3:~# stat -c "%A %a %n" /proc/sys/net/ipv4/ip_forward
+> > -rw-r--r-- 644 /proc/sys/net/ipv4/ip_forward
+> > 
+> > root@h3:~# echo 0 > /proc/sys/net/ipv4/ip_forward
+> > 
+> > root@h3:~# cat /proc/sys/net/ipv4/ip_forward
+> > 0
+> > 
+> > root@h3:~# cat /proc/self/uid_map  
+> >          0     100000 1000000000
+> 
+> Sorry to describe too simple. More specific:
+> 1.Run dockerd with user namespace enbled
+> echo dockremap:296608:65536 >  /etc/subuid;echo dockremap:296608:65536 >  /etc/subgid
+> dockerd ... --userns-remap=default
+> 2.Create a container
+> docker run -it ... sh
+> 
+> Then root account in the container is 296608 account in the host:
+> / # cat /proc/self/uid_map
+>          0     296608      65536
+> 
+> In the container, /proc/sys/net/ipv4/ip_forward's owner is root, but root can't modify it:
+> / # whoami
+> root
+> / # ls -l /proc/sys/net/ipv4/ip_forward
+> -rw-r--r--    1 root     root             0 Jun 28 12:46 /proc/sys/net/ipv4/ip_forward
+> / # cat /proc/sys/net/ipv4/ip_forward
+> 1
+> / # echo 0 > /proc/sys/net/ipv4/ip_forward
+> sh: can't create /proc/sys/net/ipv4/ip_forward: Permission denied
+> 
+> And /proc/sys/net/ipv4/ip_forward has considerd about net namespace, 
+> see net_ctl_set_ownership() in net\sysctl_net.c.
+> So root in container should be able to modify /proc/sys/net/ipv4/ip_forward.
+> This doesn't impact /proc/sys/net/ipv4/ip_forward in the host or other container with other net namespace.
 
-Looks good,
+Sorry to resort to "It works on my machine" but I just pasted you the
+exact same setup and showed you that this works as expected.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+So the reason here is likely that you're lacking capabilities
+specifically CAP_NET_ADMIN. If I reproduce with your setup I can't even
+create a dummy network device:
+
+/ #  ip link add bla type dummy
+ip: RTNETLINK answers: Operation not permitted
+
+whereas on any unprivileged container that reatins CAP_NET_ADMIN that
+just works fine.
+
+So I would think that if you retain CAP_NET_ADMIN things will work out
+just fine. Take a look at net_ctl_permissions.
+
+There's really no reason to drop CAP_NET_ADMIN in a network namespace
+that is owned by a non-initial user namespace anyway.
+
+Christian
