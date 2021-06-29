@@ -2,19 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 281D43B7867
+	by mail.lfdr.de (Postfix) with ESMTP id DE0A43B7869
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 21:13:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235527AbhF2TPe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Jun 2021 15:15:34 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34990 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235503AbhF2TPd (ORCPT
+        id S235534AbhF2TPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Jun 2021 15:15:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53190 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235503AbhF2TPj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Jun 2021 15:15:33 -0400
+        Tue, 29 Jun 2021 15:15:39 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FEFC061760;
+        Tue, 29 Jun 2021 12:13:12 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id A45CC1F431AF
+        with ESMTPSA id C6B781F431AF
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
@@ -22,9 +25,9 @@ Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH v3 13/15] ext4: Send notifications on error
-Date:   Tue, 29 Jun 2021 15:10:33 -0400
-Message-Id: <20210629191035.681913-14-krisman@collabora.com>
+Subject: [PATCH v3 14/15] samples: Add fs error monitoring example
+Date:   Tue, 29 Jun 2021 15:10:34 -0400
+Message-Id: <20210629191035.681913-15-krisman@collabora.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210629191035.681913-1-krisman@collabora.com>
 References: <20210629191035.681913-1-krisman@collabora.com>
@@ -34,71 +37,204 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Send a FS_ERROR message via fsnotify to a userspace monitoring tool
-whenever a ext4 error condition is triggered.  This follows the existing
-error conditions in ext4, so it is hooked to the ext4_error* functions.
-
-It also follows the current dmesg reporting in the format.  The
-filesystem message is composed mostly by the string that would be
-otherwise printed in dmesg.
-
-A new ext4 specific record format is exposed in the uapi, such that a
-monitoring tool knows what to expect when listening errors of an ext4
-filesystem.
+Introduce an example of a FAN_FS_ERROR fanotify user to track filesystem
+errors.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/ext4/super.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index d29f6aa7d96e..b5a8c4bab3ab 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -46,6 +46,7 @@
- #include <linux/part_stat.h>
- #include <linux/kthread.h>
- #include <linux/freezer.h>
-+#include <linux/fsnotify.h>
+---
+Changes since v1:
+  - minor fixes
+---
+ samples/Kconfig               |   9 +++
+ samples/Makefile              |   1 +
+ samples/fanotify/Makefile     |   3 +
+ samples/fanotify/fs-monitor.c | 134 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 147 insertions(+)
+ create mode 100644 samples/fanotify/Makefile
+ create mode 100644 samples/fanotify/fs-monitor.c
+
+diff --git a/samples/Kconfig b/samples/Kconfig
+index b5a1a7aa7e23..f2f9c939035f 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -120,6 +120,15 @@ config SAMPLE_CONNECTOR
+ 	  with it.
+ 	  See also Documentation/driver-api/connector.rst
  
- #include "ext4.h"
- #include "ext4_extents.h"	/* Needed for trace points definition */
-@@ -752,6 +753,8 @@ void __ext4_error(struct super_block *sb, const char *function,
- 		       sb->s_id, function, line, current->comm, &vaf);
- 		va_end(args);
- 	}
-+	fsnotify_sb_error(sb, NULL, error);
++config SAMPLE_FANOTIFY_ERROR
++	bool "Build fanotify error monitoring sample"
++	depends on FANOTIFY
++	help
++	  When enabled, this builds an example code that uses the
++	  FAN_FS_ERROR fanotify mechanism to monitor filesystem
++	  errors.
++	  See also Documentation/admin-guide/filesystem-monitoring.rst.
 +
- 	ext4_handle_error(sb, force_ro, error, 0, block, function, line);
- }
- 
-@@ -782,6 +785,8 @@ void __ext4_error_inode(struct inode *inode, const char *function,
- 			       current->comm, &vaf);
- 		va_end(args);
- 	}
-+	fsnotify_sb_error(inode->i_sb, inode, error);
+ config SAMPLE_HIDRAW
+ 	bool "hidraw sample"
+ 	depends on CC_CAN_LINK && HEADERS_INSTALL
+diff --git a/samples/Makefile b/samples/Makefile
+index 087e0988ccc5..931a81847c48 100644
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -5,6 +5,7 @@ subdir-$(CONFIG_SAMPLE_AUXDISPLAY)	+= auxdisplay
+ subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) += binderfs
+ obj-$(CONFIG_SAMPLE_CONFIGFS)		+= configfs/
+ obj-$(CONFIG_SAMPLE_CONNECTOR)		+= connector/
++obj-$(CONFIG_SAMPLE_FANOTIFY_ERROR)	+= fanotify/
+ subdir-$(CONFIG_SAMPLE_HIDRAW)		+= hidraw
+ obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)	+= hw_breakpoint/
+ obj-$(CONFIG_SAMPLE_KDB)		+= kdb/
+diff --git a/samples/fanotify/Makefile b/samples/fanotify/Makefile
+new file mode 100644
+index 000000000000..b3d5cc826e6f
+--- /dev/null
++++ b/samples/fanotify/Makefile
+@@ -0,0 +1,3 @@
++userprogs-always-y += fs-monitor
 +
- 	ext4_handle_error(inode->i_sb, false, error, inode->i_ino, block,
- 			  function, line);
- }
-@@ -820,6 +825,8 @@ void __ext4_error_file(struct file *file, const char *function,
- 			       current->comm, path, &vaf);
- 		va_end(args);
- 	}
-+	fsnotify_sb_error(inode->i_sb, inode, EFSCORRUPTED);
++userccflags += -I usr/include
+diff --git a/samples/fanotify/fs-monitor.c b/samples/fanotify/fs-monitor.c
+new file mode 100644
+index 000000000000..f949ea00271d
+--- /dev/null
++++ b/samples/fanotify/fs-monitor.c
+@@ -0,0 +1,134 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2021, Collabora Ltd.
++ */
 +
- 	ext4_handle_error(inode->i_sb, false, EFSCORRUPTED, inode->i_ino, block,
- 			  function, line);
- }
-@@ -887,6 +894,7 @@ void __ext4_std_error(struct super_block *sb, const char *function,
- 		printk(KERN_CRIT "EXT4-fs error (device %s) in %s:%d: %s\n",
- 		       sb->s_id, function, line, errstr);
- 	}
-+	fsnotify_sb_error(sb, sb->s_root->d_inode, errno);
- 
- 	ext4_handle_error(sb, false, -errno, 0, 0, function, line);
- }
++#define _GNU_SOURCE
++#include <errno.h>
++#include <err.h>
++#include <stdlib.h>
++#include <stdio.h>
++#include <fcntl.h>
++#include <sys/fanotify.h>
++#include <sys/types.h>
++#include <unistd.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++
++#ifndef FAN_FS_ERROR
++#define FAN_FS_ERROR		0x00008000
++#define FAN_EVENT_INFO_TYPE_ERROR	4
++
++int mount_fd;
++
++struct fanotify_event_info_error {
++	struct fanotify_event_info_header hdr;
++	__s32 error;
++	__u32 error_count;
++};
++#endif
++
++static void handle_notifications(char *buffer, int len)
++{
++	struct fanotify_event_metadata *metadata;
++	struct fanotify_event_info_error *error;
++	struct fanotify_event_info_fid *fid;
++	struct file_handle *file_handle;
++	int bad_file;
++	int ret;
++	struct stat stat;
++	char *next;
++
++	for (metadata = (struct fanotify_event_metadata *) buffer;
++	     FAN_EVENT_OK(metadata, len);
++	     metadata = FAN_EVENT_NEXT(metadata, len)) {
++		next = (char *)metadata + metadata->event_len;
++		if (metadata->mask != FAN_FS_ERROR) {
++			printf("unexpected FAN MARK: %llx\n", metadata->mask);
++			goto next_event;
++		} else if (metadata->fd != FAN_NOFD) {
++			printf("Unexpected fd (!= FAN_NOFD)\n");
++			goto next_event;
++		}
++
++		printf("FAN_FS_ERROR found len=%d\n", metadata->event_len);
++
++		error = (struct fanotify_event_info_error *) (metadata+1);
++		if (error->hdr.info_type != FAN_EVENT_INFO_TYPE_ERROR) {
++			printf("unknown record: %d (Expecting TYPE_ERROR)\n",
++			       error->hdr.info_type);
++			goto next_event;
++		}
++
++		printf("\tGeneric Error Record: len=%d\n", error->hdr.len);
++		printf("\terror: %d\n", error->error);
++		printf("\terror_count: %d\n", error->error_count);
++
++		fid = (struct fanotify_event_info_fid *) (error + 1);
++
++		if ((char *) fid >= next) {
++			printf("Event doesn't have FID\n");
++			goto next_event;
++		}
++		printf("FID record found\n");
++
++		if (fid->hdr.info_type != FAN_EVENT_INFO_TYPE_FID) {
++			printf("unknown record: %d (Expecting TYPE_FID)\n",
++			       fid->hdr.info_type);
++			goto next_event;
++		}
++		printf("\tfsid: %x%x\n", fid->fsid.val[0], fid->fsid.val[1]);
++
++
++		file_handle = (struct file_handle *) &fid->handle;
++		bad_file = open_by_handle_at(mount_fd, file_handle,  O_PATH);
++		if (bad_file < 0) {
++			printf("open_by_handle_at %d\n", errno);
++			goto next_event;
++		}
++
++		ret = fstat(bad_file, &stat);
++		if (ret < 0)
++			printf("fstat %d\n", errno);
++
++		printf("\tinode=%ld\n", stat.st_ino);
++
++next_event:
++		printf("---\n\n");
++	}
++}
++
++int main(int argc, char **argv)
++{
++	int fd;
++	char buffer[BUFSIZ];
++
++	if (argc < 2) {
++		printf("Missing path argument\n");
++		return 1;
++	}
++
++	mount_fd = open(argv[1], O_RDONLY);
++	if (mount_fd < 0)
++		errx(1, "mount_fd");
++
++	fd = fanotify_init(FAN_CLASS_NOTIF|FAN_REPORT_FID, O_RDONLY);
++	if (fd < 0)
++		errx(1, "fanotify_init");
++
++	if (fanotify_mark(fd, FAN_MARK_ADD|FAN_MARK_FILESYSTEM,
++			  FAN_FS_ERROR, AT_FDCWD, argv[1])) {
++		errx(1, "fanotify_mark");
++	}
++
++	while (1) {
++		int n = read(fd, buffer, BUFSIZ);
++
++		if (n < 0)
++			errx(1, "read");
++
++		handle_notifications(buffer, n);
++	}
++
++	return 0;
++}
 -- 
 2.32.0
 
