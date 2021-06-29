@@ -2,100 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 289713B6C1A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 03:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4618A3B6C75
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 04:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229933AbhF2BqS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Jun 2021 21:46:18 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:46070 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbhF2BqS (ORCPT
+        id S231680AbhF2C3T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Jun 2021 22:29:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54732 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231194AbhF2C3T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Jun 2021 21:46:18 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B066522591;
-        Tue, 29 Jun 2021 01:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624931030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=N/v6ruOskTZuNS5Lf75yej846j0Xxi6IjfLJtdl9E1M=;
-        b=eoAZTuDzpADThpozHNbWzs6nZxCo4Q1CCyJG4ME5G2/j8U27KIW3aGKYer2s4yFIxZRS3r
-        ODQwPvTKFBdBV3PeBKG48VEPfns3p/hCSxIu7bE6WJ76Yhb2AQh1G9MXPPdZJleC0FDRNn
-        goUPup2A3r8134dfHUFluCUdj5XjcM0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624931030;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=N/v6ruOskTZuNS5Lf75yej846j0Xxi6IjfLJtdl9E1M=;
-        b=oM/32IpeFXaHG0UD49i84X+L5ymFJlfC1AErQNZFb1DEss4Tre2xuKWH5vE/y1qoua3iim
-        wRG0b/gVPvCD8xAA==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id BA82A11906;
-        Tue, 29 Jun 2021 01:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624931030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=N/v6ruOskTZuNS5Lf75yej846j0Xxi6IjfLJtdl9E1M=;
-        b=eoAZTuDzpADThpozHNbWzs6nZxCo4Q1CCyJG4ME5G2/j8U27KIW3aGKYer2s4yFIxZRS3r
-        ODQwPvTKFBdBV3PeBKG48VEPfns3p/hCSxIu7bE6WJ76Yhb2AQh1G9MXPPdZJleC0FDRNn
-        goUPup2A3r8134dfHUFluCUdj5XjcM0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624931030;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=N/v6ruOskTZuNS5Lf75yej846j0Xxi6IjfLJtdl9E1M=;
-        b=oM/32IpeFXaHG0UD49i84X+L5ymFJlfC1AErQNZFb1DEss4Tre2xuKWH5vE/y1qoua3iim
-        wRG0b/gVPvCD8xAA==
-Received: from director2.suse.de ([192.168.254.72])
-        by imap3-int with ESMTPSA
-        id FFhvGtR62mANHgAALh3uQQ
-        (envelope-from <neilb@suse.de>); Tue, 29 Jun 2021 01:43:48 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 28 Jun 2021 22:29:19 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73936C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 19:26:52 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id hz1so33482025ejc.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Jun 2021 19:26:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=436iowW5G+3AhfaQeY6hf4XjL/XjrpmKBydXgJfyA5c=;
+        b=ZgaNzCWSgvDCp3W0+7M7fWukxNa4zA3fTXV1kaarlE9zTzD1fKf8iVqwLsF89vugIC
+         9dcjxKh/qW9PROxd2BblzqndRgBWoyP5PWT7Ca0ICMXU2kOiD9nPC5NZCH7Nma3nK2os
+         2K/GV+jZyxe0vUCCbu/qFMoo7E6Bazc+6seVNiXIzEemn9BPky8X1/7asxp/mTgIzD1W
+         CT63JHVJQej9lyEXcyVFIWegTp3xYHaOiWsZmD4lzu37ZCa2EQox0aV1EIgVm7S2D+fg
+         fPQiuXCDISqeRNxnowY3Ocd+N0XVi3/L5afCqOsq3fxqaVRCugUmPevg2EzrnSIm+lMT
+         GKVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=436iowW5G+3AhfaQeY6hf4XjL/XjrpmKBydXgJfyA5c=;
+        b=nko70AnqNQGhpKQRGiaSDX1U2LzUm5xgIs3BYIWLeqszhSSuoXZuyzH2UQCRb8C8SW
+         ZE91IFCg5ruuGt7XHpbHf7xi+gYjiKeYU7BzoRbSQFmK29oMuVu1sp9b/Mvcu9/PlcI8
+         hl+7RwHWL1D8yyG+bQxKXVWNro/5qS8K4cM7Wu9jITlVFbu7f/rI2hhP8vr3JwnoZZzY
+         Yi62+mxYUDO1h2EUhvknOQlXjaaN4jvGYWVq7g5KW1dNdfrDJAqkotm3FtKHFgr1QULD
+         SA5Ii6KGvzoIFVZC0R/Q9JjTllkeNF2ze+6d5XZ3HG8gRGPsbZ6k2dlVgYRVFKRpWqEq
+         SHsw==
+X-Gm-Message-State: AOAM533aJH6nl3ToUCzjYLO6I7uMjXZVUJPyoA6E3ZfR1fosXyS7EY5p
+        BMnLIaLkhCw9ZhnsiAnxavZWwCdhjpuf0Mg3rhV3
+X-Google-Smtp-Source: ABdhPJxZ3odiQnt9cl8KrT87lSdpmglQti+N9ZByUxEwzMT+zjXAVbmRXZy8vuZGeYWwod7YWLY2hOoSJaOTu2UwbQo=
+X-Received: by 2002:a17:906:a28e:: with SMTP id i14mr26931454ejz.395.1624933611032;
+ Mon, 28 Jun 2021 19:26:51 -0700 (PDT)
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "bfields@fieldses.org" <bfields@fieldses.org>
-Cc:     "Trond Myklebust" <trondmy@hammerspace.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "dai.ngo@oracle.com" <dai.ngo@oracle.com>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: automatic freeing of space on ENOSPC
-In-reply-to: <20210629011200.GA14733@fieldses.org>
-References: <20210628194908.GB6776@fieldses.org>,
- <9f1263b46d5c38b9590db1e2a04133a83772bc50.camel@hammerspace.com>,
- <20210629011200.GA14733@fieldses.org>
-Date:   Tue, 29 Jun 2021 11:43:45 +1000
-Message-id: <162493102550.7211.15170485925982544813@noble.neil.brown.name>
+References: <20210615141331.407-1-xieyongji@bytedance.com> <20210615141331.407-10-xieyongji@bytedance.com>
+ <adfb2be9-9ed9-ca37-ac37-4cd00bdff349@redhat.com> <CACycT3tAON+-qZev+9EqyL2XbgH5HDspOqNt3ohQLQ8GqVK=EA@mail.gmail.com>
+ <1bba439f-ffc8-c20e-e8a4-ac73e890c592@redhat.com> <CACycT3uzMJS7vw6MVMOgY4rb=SPfT2srV+8DPdwUVeELEiJgbA@mail.gmail.com>
+ <0aeb7cb7-58e5-1a95-d830-68edd7e8ec2e@redhat.com> <CACycT3uuooKLNnpPHewGZ=q46Fap2P4XCFirdxxn=FxK+X1ECg@mail.gmail.com>
+ <e4cdee72-b6b4-d055-9aac-3beae0e5e3e1@redhat.com> <CACycT3u8=_D3hCtJR+d5BgeUQMce6S7c_6P3CVfvWfYhCQeXFA@mail.gmail.com>
+ <d2334f66-907c-2e9c-ea4f-f912008e9be8@redhat.com> <CACycT3uCSLUDVpQHdrmuxSuoBDg-4n22t+N-Jm2GoNNp9JYB2w@mail.gmail.com>
+ <48cab125-093b-2299-ff9c-3de8c7c5ed3d@redhat.com> <CACycT3tS=10kcUCNGYm=dUZsK+vrHzDvB3FSwAzuJCu3t+QuUQ@mail.gmail.com>
+ <b10b3916-74d4-3171-db92-be0afb479a1c@redhat.com> <CACycT3vpMFbc9Fzuo9oksMaA-pVb1dEVTEgjNoft16voryPSWQ@mail.gmail.com>
+ <d7e42109-0ba6-3e1a-c42a-898b6f33c089@redhat.com>
+In-Reply-To: <d7e42109-0ba6-3e1a-c42a-898b6f33c089@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Tue, 29 Jun 2021 10:26:40 +0800
+Message-ID: <CACycT3u9-id2DxPpuVLtyg4tzrUF9xCAGr7nBm=21HfUJJasaQ@mail.gmail.com>
+Subject: Re: Re: [PATCH v8 09/10] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 29 Jun 2021, bfields@fieldses.org wrote:
-> On Tue, Jun 29, 2021 at 12:43:14AM +0000, Trond Myklebust wrote:
-> > How about just setting up a notification for unlink on those files, the
-> > same way we set up notifications for close with the NFSv3 filecache in
-> > nfsd?
-> 
-> Yes, that'd probably work.  It'd be better if we didn't have to throw
-> away unlinked files when the client expires, but it'd still be an
-> incremental improvement over what we do now.
+On Mon, Jun 28, 2021 at 12:40 PM Jason Wang <jasowang@redhat.com> wrote:
+>
+>
+> =E5=9C=A8 2021/6/25 =E4=B8=8B=E5=8D=8812:19, Yongji Xie =E5=86=99=E9=81=
+=93:
+> >> 2b) for set_status(): simply relay the message to userspace, reply is =
+no
+> >> needed. Userspace will use a command to update the status when the
+> >> datapath is stop. The the status could be fetched via get_stats().
+> >>
+> >> 2b looks more spec complaint.
+> >>
+> > Looks good to me. And I think we can use the reply of the message to
+> > update the status instead of introducing a new command.
+> >
+>
+> Just notice this part in virtio_finalize_features():
+>
+>          virtio_add_status(dev, VIRTIO_CONFIG_S_FEATURES_OK);
+>          status =3D dev->config->get_status(dev);
+>          if (!(status & VIRTIO_CONFIG_S_FEATURES_OK)) {
+>
+> So we no reply doesn't work for FEATURES_OK.
+>
+> So my understanding is:
+>
+> 1) We must not use noreply for set_status()
+> 2) We can use noreply for get_status(), but it requires a new ioctl to
+> update the status.
+>
+> So it looks to me we need synchronize for both get_status() and
+> set_status().
+>
 
-I wonder how important this is.  If an NFS client unlinks a file that it
-has open, it will be silly_renamed, and if the client then goes silent,
-it might never be removed.  So we already theoretically have a
-possibilty of ENOSPC due to silent clients.  Have we heard of this
-becoming a problem?
-Is there reason to think that the Courteous server changes will make
-this problem more likely? 
+We should not send messages to userspace in the FEATURES_OK case. So
+the synchronization is not necessary.
 
-NeilBrown
+Thanks,
+Yongji
