@@ -2,54 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98DE13B724D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 14:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F10133B722D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Jun 2021 14:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233739AbhF2Mvw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Jun 2021 08:51:52 -0400
-Received: from [218.75.92.58] ([218.75.92.58]:65062 "EHLO WIN-VTPUBHNS72V"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232685AbhF2Mvv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Jun 2021 08:51:51 -0400
-Received: from [192.168.43.47] (Unknown [197.210.85.75])
-        by WIN-VTPUBHNS72V with ESMTPA
-        ; Thu, 24 Jun 2021 20:46:26 +0800
-Message-ID: <480BE1B6-0979-42C8-AB15-2653D044DE7D@WIN-VTPUBHNS72V>
-Content-Type: text/plain; charset="iso-8859-1"
+        id S233670AbhF2Mhs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Jun 2021 08:37:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37374 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233626AbhF2Mhr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Jun 2021 08:37:47 -0400
+Received: from ip5f5bf01b.dynamic.kabel-deutschland.de ([95.91.240.27] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1lyCxR-0008Ad-S6; Tue, 29 Jun 2021 12:35:17 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] mount_setattr updates
+Date:   Tue, 29 Jun 2021 14:35:11 +0200
+Message-Id: <20210629123511.1191153-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: URGENT ATTENTION
-To:     Recipients <wjjt@wjjt.cn>
-From:   "Andres Auchincloss" <wjjt@wjjt.cn>
-Date:   Thu, 24 Jun 2021 14:45:54 +0200
-Reply-To: andresauchincloss926@gmail.com
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hi Linus,
 
-I will like to use this opportunity to wish you a productive time in 2021 and also confide in you to finalize this transaction of mutual benefits. It may seem strange to you, but it is real. This is a transaction that has no risk at all, due process shall be followed and it shall be carried out under the ambit of the financial laws. Being the Chief Financial Officer, BP Plc. I want to trust and put in your care Eighteen Million British Pounds Sterling, The funds were acquired from an over-invoiced payment from a past contract executed in one of my departments.
+/* Summary */
+A few releases ago the old mount API gained support for a mount options which
+prevents following symlinks on a given mount. This adds support for it in the
+new mount api through the MOUNT_ATTR_NOSYMFOLLOW flag via mount_setattr() and
+fsmount(). With mount_setattr() that flag can even be applied recursively.
 
-I can't successfully achieve this transaction without presenting you as foreign contractor who will provide a bank account to receive the funds.
+There's an additional ack from Ross Zwisler who originally authored the
+nosymfollow patch. As I've already had the patches in my for-next I didn't add
+his ack explicitly.
 
-Documentation for the claim of the funds will be legally processed and documented, so I will need your full cooperation on this matter for our mutual benefits. We will discuss details if you are interested to work with me to secure this funds. I will appreciate your prompt response in every bit of our communication. Stay Blessed and Stay Safe.
+/* Testing */
+All patches are based on v5.13-rc4 and have been sitting in linux-next. No
+build failures or warnings were observed. All old and new tests are passing.
 
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with current
+mainline.
 
+The following changes since commit 8124c8a6b35386f73523d27eacb71b5364a68c4c:
 
-Best Regards
+  Linux 5.13-rc4 (2021-05-30 11:58:25 -1000)
 
+are available in the Git repository at:
 
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/fs.mount_setattr.nosymfollow.v5.14
 
+for you to fetch changes up to 5990b5d770cbfe2b4254d870240e9863aca421e3:
 
-Tel: +1 (587) 770-0485
-Andres .B. Auchincloss
-Chief financial officerBP Petroleum p.l.c.
+  tests: test MOUNT_ATTR_NOSYMFOLLOW with mount_setattr() (2021-06-01 15:06:51 +0200)
 
+Please consider pulling these changes from the signed fs.mount_setattr.nosymfollow.v5.14 tag.
 
+Thanks!
+Christian
 
+----------------------------------------------------------------
+fs.mount_setattr.nosymfollow.v5.14
 
-                                  Copyright ©? 1996-2021
+----------------------------------------------------------------
+Christian Brauner (2):
+      mount: Support "nosymfollow" in new mount api
+      tests: test MOUNT_ATTR_NOSYMFOLLOW with mount_setattr()
 
+ fs/namespace.c                                     |  9 ++-
+ include/uapi/linux/mount.h                         |  1 +
+ .../selftests/mount_setattr/mount_setattr_test.c   | 88 +++++++++++++++++++++-
+ 3 files changed, 92 insertions(+), 6 deletions(-)
