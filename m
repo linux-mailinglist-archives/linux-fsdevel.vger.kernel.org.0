@@ -2,155 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D6733B7EB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 10:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 145CC3B7EBC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 10:12:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233442AbhF3IKe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Jun 2021 04:10:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33456 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233304AbhF3IKb (ORCPT
+        id S233219AbhF3IPI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Jun 2021 04:15:08 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:29198 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232954AbhF3IPI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Jun 2021 04:10:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625040482;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=spXMVCuw6N13xLjcZGemYJM/fS6G+xh95O5x4vR27TA=;
-        b=OWR0TFQKbwRRrRFQdmmtbq6QQrvoe53uEI+PzplIStXMHP1/mnI59qEQX0SAFdX1dXoJ76
-        DLqMZ0IItq4d9RNkZusg2qMIKcF+FGYWprAoYJexTl4qA15v4WA0nt4hdIMoBCXDDd06rm
-        FlV+l+r8Hn7YKQdvHX/VfaJQWqeRO2U=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-89-wjrGa7ciPlyAMenaoWb-TA-1; Wed, 30 Jun 2021 04:08:00 -0400
-X-MC-Unique: wjrGa7ciPlyAMenaoWb-TA-1
-Received: by mail-wr1-f70.google.com with SMTP id l12-20020a5d410c0000b029012b4f055c9bso335840wrp.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jun 2021 01:08:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=spXMVCuw6N13xLjcZGemYJM/fS6G+xh95O5x4vR27TA=;
-        b=m/33tW7pwytcojxGuMt3bK0/uk4fekLe7UM+gQHqGTXACYPmfmo6FSrhiCVtv6gaTL
-         ni4N70IcH2bVdSb26QlXwAYj0ghGVUGfy2uS9meAZSIlTj8dB2+5fb8OTRD8u8tvd8i4
-         TVDO8JYz3mCCl7Ww8pamaKNA9kSQztJag0slBsDVOuYgXkc9mLH5f7Ks1k4DhUvH9Y/M
-         wQ3AKXefRdo3szRb2c/Lln9ICpX6orQWRCYU8TmnzMOFqVbuXg9V7uExTHHb4vX4HHD7
-         SZopc/a5boOU1vpKjeHDWf5AIweNn8sK0ekwwjP+KBF1DpPAPuxMi94AurQwVugptXhz
-         Gfaw==
-X-Gm-Message-State: AOAM533QeWGAO/J4mr1RtovAfQsJE1bTWJ1tWHNGB0RIhhEHgExLF9E5
-        buCJH4i06SmUizEq8BD7BU4bP+0hQ7CFXBnFnekez31BkjKdmrCSyLADDeX1okS379f3cpiTd9d
-        YC0hiaJZFwyq1n+YJe7vmd1JjqQ==
-X-Received: by 2002:a05:600c:4f8a:: with SMTP id n10mr3045902wmq.11.1625040479418;
-        Wed, 30 Jun 2021 01:07:59 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxhZXi0exlmVWXNW1b1HA6azTiENG2juGHvNPkDsRCdeTCmLeynlOmWabasKRpCJAXel/C2Tw==
-X-Received: by 2002:a05:600c:4f8a:: with SMTP id n10mr3045884wmq.11.1625040479197;
-        Wed, 30 Jun 2021 01:07:59 -0700 (PDT)
-Received: from work-vm (cpc109021-salf6-2-0-cust453.10-2.cable.virginm.net. [82.29.237.198])
-        by smtp.gmail.com with ESMTPSA id m7sm22064425wrv.35.2021.06.30.01.07.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jun 2021 01:07:58 -0700 (PDT)
-Date:   Wed, 30 Jun 2021 09:07:56 +0100
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Daniel Walsh <dwalsh@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
- files if caller has CAP_SYS_RESOURCE
-Message-ID: <YNwmXOqT7LgbeVPn@work-vm>
-References: <5d8f033c-eba2-7a8b-f19a-1005bbb615ea@schaufler-ca.com>
- <YNn4p+Zn444Sc4V+@work-vm>
- <a13f2861-7786-09f4-99a8-f0a5216d0fb1@schaufler-ca.com>
- <YNrhQ9XfcHTtM6QA@work-vm>
- <e6f9ed0d-c101-01df-3dff-85c1b38f9714@schaufler-ca.com>
- <20210629152007.GC5231@redhat.com>
- <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
- <20210629173530.GD5231@redhat.com>
- <f4992b3a-a939-5bc4-a5da-0ce8913bd569@redhat.com>
- <YNvvLIv16jY8mfP8@mit.edu>
+        Wed, 30 Jun 2021 04:15:08 -0400
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15U89Bfm008665;
+        Wed, 30 Jun 2021 08:12:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2020-01-29; bh=WtCBfM90EFGfs1Onij8J9qiG9Y4Zmp28mqOADCVrkrk=;
+ b=eOeOIWL1qJDsbQzbQguZOEJA3aakOr68rSnzohrBzz2/H0RYS2NILS4YsbZnKUxdS6dQ
+ 4zB4RTYBZJxUtkXvchZGoT7RJQ7jKd6FscdShTzaO8yv05lwwNCrQnxXyhXd5vD0CmN5
+ 3MCeX3iAiikwZnWKHmFmI/dmRbm3Sz62r00M9CdoPr/r74rIjzkmXohuHrogjDncdJXK
+ PmYnfSGYnVcSuEnMXJSr/SkOqPilFjCp7bZohUCwm307zR2NUo94G0Lr7C+Gtwdjpthb
+ tBWPjX39g20/exw9Y2U5FUuYxg85lHRA1vkp7F3lD8x02XzfBSenjnglvfzmRevsWSNv Kg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39f6y3ncck-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jun 2021 08:12:21 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15U8C75n061977;
+        Wed, 30 Jun 2021 08:12:20 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 39dsc0uy90-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jun 2021 08:12:20 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15U8CEGA062577;
+        Wed, 30 Jun 2021 08:12:14 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 39dsc0uxmy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jun 2021 08:12:14 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15U8BYEE002006;
+        Wed, 30 Jun 2021 08:11:34 GMT
+Received: from kadam (/102.222.70.252)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Jun 2021 01:11:33 -0700
+Date:   Wed, 30 Jun 2021 11:11:24 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@lists.01.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        amir73il@gmail.com
+Cc:     lkp@intel.com, kbuild-all@lists.01.org, djwong@kernel.org,
+        tytso@mit.edu, david@fromorbit.com, jack@suse.com,
+        dhowells@redhat.com, khazhy@google.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v3 07/15] fsnotify: pass arguments of fsnotify() in
+ struct fsnotify_event_info
+Message-ID: <202106300707.Xg0LaEwy-lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YNvvLIv16jY8mfP8@mit.edu>
-User-Agent: Mutt/2.0.7 (2021-05-04)
+In-Reply-To: <20210629191035.681913-8-krisman@collabora.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-GUID: SWQuY9bg46nwWIdk6jNSyXqz3-THUKLJ
+X-Proofpoint-ORIG-GUID: SWQuY9bg46nwWIdk6jNSyXqz3-THUKLJ
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Theodore Ts'o (tytso@mit.edu) wrote:
-> On Tue, Jun 29, 2021 at 04:28:24PM -0400, Daniel Walsh wrote:
-> > All this conversation is great, and I look forward to a better solution, but
-> > if we go back to the patch, it was to fix an issue where the kernel is
-> > requiring CAP_SYS_ADMIN for writing user Xattrs on link files and other
-> > special files.
-> > 
-> > The documented reason for this is to prevent the users from using XATTRS to
-> > avoid quota.
-> 
-> Huh?  Where is it so documented?
+Hi Gabriel,
 
-man xattr(7):
+url:    https://github.com/0day-ci/linux/commits/Gabriel-Krisman-Bertazi/File-system-wide-monitoring/20210630-031347
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
+config: x86_64-randconfig-m001-20210628 (attached as .config)
+compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
 
-       The  file permission bits of regular files and directories are
-       interpreted differently from the file permission bits of special
-       files and symbolic links.  For regular files and directories the
-       file permission bits define ac‐ cess to the file's contents,
-       while for device special files they define access to the device
-       described by the special file.  The file permissions of symbolic
-       links are not used in access checks. *** These differences would
-       al‐ low users to consume filesystem resources in a way not
-       controllable by disk quotas for group or world writable special
-       files and directories.****
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-       ***For  this reason, user extended attributes are allowed only
-       for regular files and directories ***, and access to user extended
-       attributes is restricted to the owner and to users with appropriate
-       capabilities for directories with the sticky bit set (see the
-       chmod(1) manual page for an explanation of the sticky bit).
+smatch warnings:
+fs/notify/fsnotify.c:505 __fsnotify() warn: variable dereferenced before check 'inode' (see line 494)
 
-(***'s my addition)
+vim +/inode +505 fs/notify/fsnotify.c
 
+dca640915c7b84 Amir Goldstein         2021-06-29  470  int __fsnotify(__u32 mask, const struct fsnotify_event_info *event_info)
+90586523eb4b34 Eric Paris             2009-05-21  471  {
+dca640915c7b84 Amir Goldstein         2021-06-29  472  	const struct path *path = fsnotify_event_info_path(event_info);
+dca640915c7b84 Amir Goldstein         2021-06-29  473  	struct inode *inode = event_info->inode;
+3427ce71554123 Miklos Szeredi         2017-10-30  474  	struct fsnotify_iter_info iter_info = {};
+40a100d3adc1ad Amir Goldstein         2020-07-22  475  	struct super_block *sb;
+60f7ed8c7c4d06 Amir Goldstein         2018-09-01  476  	struct mount *mnt = NULL;
+fecc4559780d52 Amir Goldstein         2020-12-02  477  	struct inode *parent = NULL;
+9385a84d7e1f65 Jan Kara               2016-11-10  478  	int ret = 0;
+71d734103edfa2 Mel Gorman             2020-07-08  479  	__u32 test_mask, marks_mask;
+90586523eb4b34 Eric Paris             2009-05-21  480  
+71d734103edfa2 Mel Gorman             2020-07-08  481  	if (path)
+aa93bdc5500cc9 Amir Goldstein         2020-03-19  482  		mnt = real_mount(path->mnt);
+3a9fb89f4cd04c Eric Paris             2009-12-17  483  
+40a100d3adc1ad Amir Goldstein         2020-07-22  484  	if (!inode) {
+40a100d3adc1ad Amir Goldstein         2020-07-22  485  		/* Dirent event - report on TYPE_INODE to dir */
+dca640915c7b84 Amir Goldstein         2021-06-29  486  		inode = event_info->dir;
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^
+Presumably this is non-NULL
 
-Dave
+40a100d3adc1ad Amir Goldstein         2020-07-22  487  	} else if (mask & FS_EVENT_ON_CHILD) {
+40a100d3adc1ad Amir Goldstein         2020-07-22  488  		/*
+fecc4559780d52 Amir Goldstein         2020-12-02  489  		 * Event on child - report on TYPE_PARENT to dir if it is
+fecc4559780d52 Amir Goldstein         2020-12-02  490  		 * watching children and on TYPE_INODE to child.
+40a100d3adc1ad Amir Goldstein         2020-07-22  491  		 */
+dca640915c7b84 Amir Goldstein         2021-06-29  492  		parent = event_info->dir;
+40a100d3adc1ad Amir Goldstein         2020-07-22  493  	}
+40a100d3adc1ad Amir Goldstein         2020-07-22 @494  	sb = inode->i_sb;
+                                                             ^^^^^^^^^^^^
+Dereference
 
->  How file systems store and account
-> for space used by extended attributes is a file-system specific
-> question, but presumably any way that xattr's on regular files are
-> accounted could also be used for xattr's on special files.
-> 
-> Also, xattr's are limited to 32k, so it's not like users can evade
-> _that_ much quota space, at least not without it being pretty painful.
-> (Assuming that quota is even enabled, which most of the time, it
-> isn't.)
-> 
-> 						- Ted
-> 
-> P.S.  I'll note that if ext4's ea_in_inode is enabled, for large
-> xattr's, if you have 2 million files that all have the same 12k
-> windows SID stored as an xattr, ext4 will store that xattr only once.
-> Those two million files might be owned by different uids, so we made
-> an explicit design choice not to worry about accounting for the quota
-> for said 12k xattr value.  After all, if you can save the space and
-> access cost of 2M * 12k if each file had to store its own copy of that
-> xattr, perhaps not including it in the quota calculation isn't that
-> bad.  :-)
-> 
-> We also don't account for the disk space used by symbolic links (since
-> sometimes they can be stored in the inode as fast symlinks, and
-> sometimes they might consume a data block).  But again, that's a file
-> system specific implementation question.
-> 
--- 
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+497b0c5a7c0688 Amir Goldstein         2020-07-16  495  
+7c49b8616460eb Dave Hansen            2015-09-04  496  	/*
+7c49b8616460eb Dave Hansen            2015-09-04  497  	 * Optimization: srcu_read_lock() has a memory barrier which can
+7c49b8616460eb Dave Hansen            2015-09-04  498  	 * be expensive.  It protects walking the *_fsnotify_marks lists.
+7c49b8616460eb Dave Hansen            2015-09-04  499  	 * However, if we do not walk the lists, we do not have to do
+7c49b8616460eb Dave Hansen            2015-09-04  500  	 * SRCU because we have no references to any objects and do not
+7c49b8616460eb Dave Hansen            2015-09-04  501  	 * need SRCU to keep them "alive".
+7c49b8616460eb Dave Hansen            2015-09-04  502  	 */
+9b93f33105f5f9 Amir Goldstein         2020-07-16  503  	if (!sb->s_fsnotify_marks &&
+497b0c5a7c0688 Amir Goldstein         2020-07-16  504  	    (!mnt || !mnt->mnt_fsnotify_marks) &&
+9b93f33105f5f9 Amir Goldstein         2020-07-16 @505  	    (!inode || !inode->i_fsnotify_marks) &&
+                                                             ^^^^^^
+Unnecessary check for NULL
+
+fecc4559780d52 Amir Goldstein         2020-12-02  506  	    (!parent || !parent->i_fsnotify_marks))
+7c49b8616460eb Dave Hansen            2015-09-04  507  		return 0;
+71d734103edfa2 Mel Gorman             2020-07-08  508  
+9b93f33105f5f9 Amir Goldstein         2020-07-16  509  	marks_mask = sb->s_fsnotify_mask;
+71d734103edfa2 Mel Gorman             2020-07-08  510  	if (mnt)
+71d734103edfa2 Mel Gorman             2020-07-08  511  		marks_mask |= mnt->mnt_fsnotify_mask;
+9b93f33105f5f9 Amir Goldstein         2020-07-16  512  	if (inode)
+                                                            ^^^^^^
+
+9b93f33105f5f9 Amir Goldstein         2020-07-16  513  		marks_mask |= inode->i_fsnotify_mask;
+fecc4559780d52 Amir Goldstein         2020-12-02  514  	if (parent)
+fecc4559780d52 Amir Goldstein         2020-12-02  515  		marks_mask |= parent->i_fsnotify_mask;
+497b0c5a7c0688 Amir Goldstein         2020-07-16  516  
+71d734103edfa2 Mel Gorman             2020-07-08  517  
+613a807fe7c793 Eric Paris             2010-07-28  518  	/*
+613a807fe7c793 Eric Paris             2010-07-28  519  	 * if this is a modify event we may need to clear the ignored masks
+497b0c5a7c0688 Amir Goldstein         2020-07-16  520  	 * otherwise return if none of the marks care about this type of event.
+613a807fe7c793 Eric Paris             2010-07-28  521  	 */
+71d734103edfa2 Mel Gorman             2020-07-08  522  	test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+71d734103edfa2 Mel Gorman             2020-07-08  523  	if (!(mask & FS_MODIFY) && !(test_mask & marks_mask))
+613a807fe7c793 Eric Paris             2010-07-28  524  		return 0;
+75c1be487a690d Eric Paris             2010-07-28  525  
+9385a84d7e1f65 Jan Kara               2016-11-10  526  	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
+75c1be487a690d Eric Paris             2010-07-28  527  
+45a9fb3725d886 Amir Goldstein         2019-01-10  528  	iter_info.marks[FSNOTIFY_OBJ_TYPE_SB] =
+45a9fb3725d886 Amir Goldstein         2019-01-10  529  		fsnotify_first_mark(&sb->s_fsnotify_marks);
+9bdda4e9cf2dce Amir Goldstein         2018-09-01  530  	if (mnt) {
+47d9c7cc457adc Amir Goldstein         2018-04-20  531  		iter_info.marks[FSNOTIFY_OBJ_TYPE_VFSMOUNT] =
+3427ce71554123 Miklos Szeredi         2017-10-30  532  			fsnotify_first_mark(&mnt->mnt_fsnotify_marks);
+7131485a93679f Eric Paris             2009-12-17  533  	}
+9b93f33105f5f9 Amir Goldstein         2020-07-16  534  	if (inode) {
+                                                            ^^^^^
+Lots of checking...  Maybe this is really NULL?
+
+9b93f33105f5f9 Amir Goldstein         2020-07-16  535  		iter_info.marks[FSNOTIFY_OBJ_TYPE_INODE] =
+9b93f33105f5f9 Amir Goldstein         2020-07-16  536  			fsnotify_first_mark(&inode->i_fsnotify_marks);
+9b93f33105f5f9 Amir Goldstein         2020-07-16  537  	}
+fecc4559780d52 Amir Goldstein         2020-12-02  538  	if (parent) {
+fecc4559780d52 Amir Goldstein         2020-12-02  539  		iter_info.marks[FSNOTIFY_OBJ_TYPE_PARENT] =
+fecc4559780d52 Amir Goldstein         2020-12-02  540  			fsnotify_first_mark(&parent->i_fsnotify_marks);
+497b0c5a7c0688 Amir Goldstein         2020-07-16  541  	}
+75c1be487a690d Eric Paris             2010-07-28  542  
+8edc6e1688fc8f Jan Kara               2014-11-13  543  	/*
+60f7ed8c7c4d06 Amir Goldstein         2018-09-01  544  	 * We need to merge inode/vfsmount/sb mark lists so that e.g. inode mark
+60f7ed8c7c4d06 Amir Goldstein         2018-09-01  545  	 * ignore masks are properly reflected for mount/sb mark notifications.
+8edc6e1688fc8f Jan Kara               2014-11-13  546  	 * That's why this traversal is so complicated...
+8edc6e1688fc8f Jan Kara               2014-11-13  547  	 */
+d9a6f30bb89309 Amir Goldstein         2018-04-20  548  	while (fsnotify_iter_select_report_types(&iter_info)) {
+dca640915c7b84 Amir Goldstein         2021-06-29  549  		ret = send_to_group(mask, event_info, &iter_info);
+613a807fe7c793 Eric Paris             2010-07-28  550  
+ff8bcbd03da881 Eric Paris             2010-10-28  551  		if (ret && (mask & ALL_FSNOTIFY_PERM_EVENTS))
+ff8bcbd03da881 Eric Paris             2010-10-28  552  			goto out;
+ff8bcbd03da881 Eric Paris             2010-10-28  553  
+d9a6f30bb89309 Amir Goldstein         2018-04-20  554  		fsnotify_iter_next(&iter_info);
+90586523eb4b34 Eric Paris             2009-05-21  555  	}
+ff8bcbd03da881 Eric Paris             2010-10-28  556  	ret = 0;
+ff8bcbd03da881 Eric Paris             2010-10-28  557  out:
+9385a84d7e1f65 Jan Kara               2016-11-10  558  	srcu_read_unlock(&fsnotify_mark_srcu, iter_info.srcu_idx);
+c4ec54b40d33f8 Eric Paris             2009-12-17  559  
+98b5c10d320adf Jean-Christophe Dubois 2010-03-23  560  	return ret;
+90586523eb4b34 Eric Paris             2009-05-21  561  }
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
