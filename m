@@ -2,100 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D5E43B8828
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 20:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEE8D3B88D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 20:59:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232929AbhF3SJy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Jun 2021 14:09:54 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:52123 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232663AbhF3SJx (ORCPT
+        id S233030AbhF3TBe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Jun 2021 15:01:34 -0400
+Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17467 "EHLO
+        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232851AbhF3TBd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Jun 2021 14:09:53 -0400
-Received: by mail-io1-f70.google.com with SMTP id x21-20020a5d99150000b02904e00bb129f0so2423716iol.18
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jun 2021 11:07:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=/N0igB5XioROVmxu3rw/cYh2TT/weJAfNRahEGQcMnQ=;
-        b=DZEIZEPWhTsqFyu61ms/yueGCmD7rDQZnKiKXC2HI0Y+TSkAiDI5NotgplT1hGNo4D
-         LOco8dODw/ng8hasHtFWwxu51ViYQvpqkGezV61GuBhruPZ46KQVvRwJ6f9LrdLbCk0g
-         B2HbLN6zrbk6snE7LpKyjxipQiY/muf3bL3U631uGJqpxj6FAsJOTNOvPDnt5prTqYbK
-         YeXRKEQHNPKyh0DDfh3G3mDEL4zjtmIBX9RCgAHm97U9QZm3zCRUbUdGaJb0X2Yh0aoI
-         mgbph2V3iY7mNX2RX9apoQXCngbfGt41BMyDHDhIpgXEi8RK+AEuIp6ACRpq3Pzep3Zs
-         nvvQ==
-X-Gm-Message-State: AOAM530fVYJGZNh8o9TJs7FdMlKW5C+keSUpp3Wh/L8LG56x2LMzvSXi
-        W9exMEWrI4Kind37Sn2IL5skdB9fWElmhfCKuxabBoPRXiLH
-X-Google-Smtp-Source: ABdhPJx+LDRN4fObwmGBMTJ4FmR6AnmqocOdfB6/ETiVPpW6p+R0iJjEYhjCLfFFAg68UCjGuCO7j4M8E8o723Z1LyYn7GI5MyVb
+        Wed, 30 Jun 2021 15:01:33 -0400
+X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Wed, 30 Jun 2021 15:01:33 EDT
+ARC-Seal: i=1; a=rsa-sha256; t=1625078637; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=Wy+4g0wLKmmjjpZfdyNsSDLqP2H0Hxfzq+0KVJzka23oVEc8wZIZRtW/S4NuvRAM8QzqgRWUc6XQxEcEOewB6Z+RqydX4K1WFLJfO1E/gcEvd0f7dRCTzqPCaMmXKzO5n4DF/GXb9MRVDej158y4ejmrB2hMtZ3lyg8sRlauzxY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1625078637; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=6x1NkxpRZsiaFxx7Ph5K9AF96LxiYqWgnR2JhyGMcFI=; 
+        b=HXaw/0OCRKumHq/YCnQtx+zUHurTkw0G/ujUisSajgZRbmCbGHunwTyw5MbOZevNqkQSchRc409fMkAorRpge7SPgItx1TpmnmNpckeGC9SsbWWXBGkP3ZZpuDZPMXaioh5324KguzND4MH3IvvJxosU8F648mELEw0DTGk5rck=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com>
+Received: from dlrobertson.com (pool-108-51-207-71.washdc.fios.verizon.net [108.51.207.71]) by mx.zohomail.com
+        with SMTPS id 1625078635564291.4883579327469; Wed, 30 Jun 2021 11:43:55 -0700 (PDT)
+Date:   Wed, 30 Jun 2021 18:18:14 +0000
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] bcachefs
+Message-ID: <YNy1Zhm+W6rODPBq@dlrobertson.com>
+References: <YLgPSZ9LB/LErNw2@moria.home.lan>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2433:: with SMTP id g19mr8930362iob.100.1625076444401;
- Wed, 30 Jun 2021 11:07:24 -0700 (PDT)
-Date:   Wed, 30 Jun 2021 11:07:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000033930805c5ff98b5@google.com>
-Subject: [syzbot] BUG: sleeping function called from invalid context in __fput
-From:   syzbot <syzbot+ecdd08539833605a9399@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="p9/18pF7m2xJ3a9h"
+Content-Disposition: inline
+In-Reply-To: <YLgPSZ9LB/LErNw2@moria.home.lan>
+X-Zoho-Virus-Status: 1
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
 
-syzbot found the following issue on:
+--p9/18pF7m2xJ3a9h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-HEAD commit:    ff8744b5 Merge branch '100GbE' of git://git.kernel.org/pub..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1338e88c300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7cf9abab1592f017
-dashboard link: https://syzkaller.appspot.com/bug?extid=ecdd08539833605a9399
+On Wed, Jun 02, 2021 at 07:07:53PM -0400, Kent Overstreet wrote:
+> bcachefs is coming along nicely :) I'd like to give a talk about where things
+> are at, and get comments and feedback on the roadmap.
+>
+> The short of it is, things are stabilizing nicely and snapshots are right around
+> the corner - snapshots are largely complete and from initial
+> testing/benchmarking it's looking really nice, better than I anticipated, and
+> I'm hoping to (finally!) merge bcachefs upstream sometime after snapshots are
+> merged.
+>
+> I've recently been working on the roadmap, it goes into some detail about work
+> that still needs to be done:
+>
+> https://bcachefs.org/Roadmap/
 
-Unfortunately, I don't have any reproducer for this issue yet.
+As someone still new to the bcachefs code, I'd be very interested in this topic.
+I'd be really interested in the testing roadmap as well as the feature roadmap.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ecdd08539833605a9399@syzkaller.appspotmail.com
+Cheers,
 
-BUG: sleeping function called from invalid context at fs/file_table.c:264
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 8392, name: syz-executor.2
-no locks held by syz-executor.2/8392.
-Preemption disabled at:
-[<ffffffff812aa3e4>] kernel_fpu_begin_mask+0x64/0x260 arch/x86/kernel/fpu/core.c:126
-CPU: 1 PID: 8392 Comm: syz-executor.2 Not tainted 5.13.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x141/0x1d7 lib/dump_stack.c:120
- ___might_sleep.cold+0x1f1/0x237 kernel/sched/core.c:8337
- __fput+0xf9/0x920 fs/file_table.c:264
- task_work_run+0xdd/0x1a0 kernel/task_work.c:164
- get_signal+0x1ba2/0x2150 kernel/signal.c:2608
- arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:789
- handle_signal_work kernel/entry/common.c:148 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
- exit_to_user_mode_prepare+0x180/0x290 kernel/entry/common.c:209
- __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
- do_syscall_64+0x47/0xb0 arch/x86/entry/common.c:57
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x4665d9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff928e9e188 EFLAGS: 00000246 ORIG_RAX: 000000000000012b
-RAX: fffffffffffffff4 RBX: 000000000056bf80 RCX: 00000000004665d9
-RDX: 0000000000000001 RSI: 0000000020001f40 RDI: 0000000000000004
-RBP: 00007ff928e9e1d0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffdfbf7c36f R14: 00007ff928e9e300 R15: 0000000000022000
-note: syz-executor.2[8392] exited with preempt_count 1
+ - Dan
 
+--p9/18pF7m2xJ3a9h
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-----BEGIN PGP SIGNATURE-----
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+iQIzBAABCAAdFiEEF5dO2RaKc5C+SCJ9RcSmUsR+QqUFAmDctWYACgkQRcSmUsR+
+QqUt5w//fujl6Z6TrpHtVyxcxYLWdBVGTtWcYIm6/5+0eABsJH1gEtnvfC8KEr8u
+R+SfH8+LCYJsyebn+UxCQYpWGtEg/3dDFqH2se+AIWgBdCF5YB7+nhygNEYqBX1F
+93ZOajY0iSDxbEEd0s7DtMTGJVh0pxmOoQMTQhfaP1cQ7jy6fE0m0wT5BgpwmBjv
+wtipm56gmU/RaRRmJNVDiJvJXQX/iQixuRJ492o9Fawzk1Yw+9yotgkr8HkWgDjl
+McFo6+lFg1QeZtfu0KngdHO9WgczqkqOk+RG//UE4JOCgULrDcLExBQ1aTaT90G0
+nSMU5TnHV1SjVVb6hgLDhsbhoyZMvAeQfOO3xE4UEs029P1Eilo3KzWS7KL0ujRu
+SG4l3PJtTn95OlktDFB8561dqMClKc0FJH3d1Hl4AcAyps7yz9/uuufZkzwS+ixc
+BxZgWZcvDe0OwhG2a1LRe+/rsT3/0uhzqdoVh6MMZdMSeRS2HkdtVQbPsHKexVd1
+DYhZYxt8MsxsStFT+buv7LvxGcNyyw/BVus1+9tHV4mmhUGPVPa5hRQufwXDqIsU
+VLBFzWvdg+7bZ+8vDKQhGxLqUFZpGktyQYEGOrmBtgmBPFQp3ahR58aPF5WrqlmN
+XWWsRdhofiqCQtmgdniNR7CVpRz6Zsvor68KZTd0IybpotWA9dA=
+=nlG9
+-----END PGP SIGNATURE-----
+
+--p9/18pF7m2xJ3a9h--
