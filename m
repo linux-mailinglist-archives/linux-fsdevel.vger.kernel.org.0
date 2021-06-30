@@ -2,252 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C537D3B86E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 18:13:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E02A63B86F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 18:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229753AbhF3QPx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Jun 2021 12:15:53 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:42492 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbhF3QPw (ORCPT
+        id S229540AbhF3QWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Jun 2021 12:22:18 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:60180 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229510AbhF3QWS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Jun 2021 12:15:52 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 0F2B41FEC3;
-        Wed, 30 Jun 2021 16:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1625069603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=yD2GvFI9lAZx9DdInSThCY/ul+clyC+0KRKni1cHlWA=;
-        b=Me27T7a6xoz/jj9WqnSumHhFuJpl1ROn25cHtSDoNtywbWxsqA2DypAZeeViV8nyrFoysI
-        abbHCKeoCj8wPOGamqC2JaCs66oMLbakVXubZHbRvP5kSGSog91/SDJBkkOeixfwPaYhry
-        GntVryip8dHpaz02kVb7IgG2Fi4SwgQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1625069603;
+        Wed, 30 Jun 2021 12:22:18 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id BA600227B7;
+        Wed, 30 Jun 2021 16:19:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1625069988; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type;
+        bh=Y8hBuCt9RhY04I0RPOpnWVG2MmUp0bAnv0DpNSzTN1Q=;
+        b=UKn/6i+vH2GB9Yd+XxW+TRDR/+npaiYvqXqXNvvAxBA6cRGEyrXl2JyEhXKa4vzonH6+B2
+        rDDHKQIwejdw4W/70vHwDjB5b1pjIVsEIoQgQPOw0DrQHm180XS5zGMlhNeIbMmzrnZKrz
+        NRSTbZ2gPmPWglGoDIiQKs7ACkT97no=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1625069988;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=yD2GvFI9lAZx9DdInSThCY/ul+clyC+0KRKni1cHlWA=;
-        b=OYrm06ORQcxM4t2nk4de0YvlMoiWAugiZnLsm1HcdEvmPkCF0W6YPkycxwYvtlXSShbUou
-        grvscT7BsxjXyHDQ==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 7FE68118DD;
-        Wed, 30 Jun 2021 16:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1625069603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=yD2GvFI9lAZx9DdInSThCY/ul+clyC+0KRKni1cHlWA=;
-        b=Me27T7a6xoz/jj9WqnSumHhFuJpl1ROn25cHtSDoNtywbWxsqA2DypAZeeViV8nyrFoysI
-        abbHCKeoCj8wPOGamqC2JaCs66oMLbakVXubZHbRvP5kSGSog91/SDJBkkOeixfwPaYhry
-        GntVryip8dHpaz02kVb7IgG2Fi4SwgQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1625069603;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=yD2GvFI9lAZx9DdInSThCY/ul+clyC+0KRKni1cHlWA=;
-        b=OYrm06ORQcxM4t2nk4de0YvlMoiWAugiZnLsm1HcdEvmPkCF0W6YPkycxwYvtlXSShbUou
-        grvscT7BsxjXyHDQ==
-Received: from director2.suse.de ([192.168.254.72])
-        by imap3-int with ESMTPSA
-        id S/2EHCKY3GCUXAAALh3uQQ
-        (envelope-from <lhenriques@suse.de>); Wed, 30 Jun 2021 16:13:22 +0000
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 9ff4b454;
-        Wed, 30 Jun 2021 16:13:21 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        Petr Vorel <pvorel@suse.cz>,
-        kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH v11] vfs: fix copy_file_range regression in cross-fs copies
-Date:   Wed, 30 Jun 2021 17:13:20 +0100
-Message-Id: <20210630161320.29006-1-lhenriques@suse.de>
+         mime-version:mime-version:content-type:content-type;
+        bh=Y8hBuCt9RhY04I0RPOpnWVG2MmUp0bAnv0DpNSzTN1Q=;
+        b=W5Tq0mvyAuWaQ06w9V4VmUkxAMgS6/qfsXGxLz8t9TLOAVk1hgqrWz2lgeirRif/zhVNiZ
+        YKsytx/ZuTfGhJCQ==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id AF6BBA3B8A;
+        Wed, 30 Jun 2021 16:19:48 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8DB0B1F2CC3; Wed, 30 Jun 2021 18:19:48 +0200 (CEST)
+Date:   Wed, 30 Jun 2021 18:19:48 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] Quota, udf, isofs, reiserfs, writeback changes for
+ 5.14-rc1
+Message-ID: <20210630161948.GA13951@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A regression has been reported by Nicolas Boichat, found while using the
-copy_file_range syscall to copy a tracefs file.  Before commit
-5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
-kernel would return -EXDEV to userspace when trying to copy a file across
-different filesystems.  After this commit, the syscall doesn't fail anymore
-and instead returns zero (zero bytes copied), as this file's content is
-generated on-the-fly and thus reports a size of zero.
+  Hello Linus,
 
-This patch restores some cross-filesystem copy restrictions that existed
-prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-devices").  Filesystems are still allowed to fall-back to the VFS
-generic_copy_file_range() implementation, but that has now to be done
-explicitly.
+  could you please pull from
 
-nfsd is also modified to fall-back into generic_copy_file_range() in case
-vfs_copy_file_range() fails with -EOPNOTSUPP or -EXDEV.
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.14-rc1
 
-Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
-Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
-Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
-Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
-Reported-by: Nicolas Boichat <drinkcat@chromium.org>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Luis Henriques <lhenriques@suse.de>
----
-Changes since v10
-- simply remove the "if (len == 0)" short-circuit instead of checking if
-  the filesystem implements the syscall.  This is because a filesystem may
-  implement it but a particular instance (hint: overlayfs!) may not.
-Changes since v9
-- the early return from the syscall when len is zero now checks if the
-  filesystem is implemented, returning -EOPNOTSUPP if it is not and 0
-  otherwise.  Issue reported by test robot.
-  (obviously, dropped Amir's Reviewed-by and Olga's Tested-by tags)
-Changes since v8
-- Simply added Amir's Reviewed-by and Olga's Tested-by
-Changes since v7
-- set 'ret' to '-EOPNOTSUPP' before the clone 'if' statement so that the
-  error returned is always related to the 'copy' operation
-Changes since v6
-- restored i_sb checks for the clone operation
-Changes since v5
-- check if ->copy_file_range is NULL before calling it
-Changes since v4
-- nfsd falls-back to generic_copy_file_range() only *if* it gets -EOPNOTSUPP
-  or -EXDEV.
-Changes since v3
-- dropped the COPY_FILE_SPLICE flag
-- kept the f_op's checks early in generic_copy_file_checks, implementing
-  Amir's suggestions
-- modified nfsd to use generic_copy_file_range()
-Changes since v2
-- do all the required checks earlier, in generic_copy_file_checks(),
-  adding new checks for ->remap_file_range
-- new COPY_FILE_SPLICE flag
-- don't remove filesystem's fallback to generic_copy_file_range()
-- updated commit changelog (and subject)
-Changes since v1 (after Amir review)
-- restored do_copy_file_range() helper
-- return -EOPNOTSUPP if fs doesn't implement CFR
-- updated commit description
+to get implementation of the new quotactl_fd() syscall (remake of
+quotactl_path() syscall that got introduced & disabled in 5.13 cycle),
+and couple of udf, reiserfs, isofs, and writeback fixes and cleanups.
 
- fs/nfsd/vfs.c   |  8 +++++++-
- fs/read_write.c | 52 +++++++++++++++++++++++--------------------------
- 2 files changed, 31 insertions(+), 29 deletions(-)
+Top of the tree is 8b0ed8443ae6. The full shortlog is:
 
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 15adf1f6ab21..f54a88b3b4a2 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -569,6 +569,7 @@ __be32 nfsd4_clone_file_range(struct nfsd_file *nf_src, u64 src_pos,
- ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
- 			     u64 dst_pos, u64 count)
- {
-+	ssize_t ret;
- 
- 	/*
- 	 * Limit copy to 4MB to prevent indefinitely blocking an nfsd
-@@ -579,7 +580,12 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
- 	 * limit like this and pipeline multiple COPY requests.
- 	 */
- 	count = min_t(u64, count, 1 << 22);
--	return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
-+	ret = vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
-+
-+	if (ret == -EOPNOTSUPP || ret == -EXDEV)
-+		ret = generic_copy_file_range(src, src_pos, dst, dst_pos,
-+					      count, 0);
-+	return ret;
- }
- 
- __be32 nfsd4_vfs_fallocate(struct svc_rqst *rqstp, struct svc_fh *fhp,
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 9db7adf160d2..049a2dda29f7 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1395,28 +1395,6 @@ ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
- }
- EXPORT_SYMBOL(generic_copy_file_range);
- 
--static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
--				  struct file *file_out, loff_t pos_out,
--				  size_t len, unsigned int flags)
--{
--	/*
--	 * Although we now allow filesystems to handle cross sb copy, passing
--	 * a file of the wrong filesystem type to filesystem driver can result
--	 * in an attempt to dereference the wrong type of ->private_data, so
--	 * avoid doing that until we really have a good reason.  NFS defines
--	 * several different file_system_type structures, but they all end up
--	 * using the same ->copy_file_range() function pointer.
--	 */
--	if (file_out->f_op->copy_file_range &&
--	    file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
--		return file_out->f_op->copy_file_range(file_in, pos_in,
--						       file_out, pos_out,
--						       len, flags);
--
--	return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
--				       flags);
--}
--
- /*
-  * Performs necessary checks before doing a file copy
-  *
-@@ -1434,6 +1412,25 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
- 	loff_t size_in;
- 	int ret;
- 
-+	/*
-+	 * Although we now allow filesystems to handle cross sb copy, passing
-+	 * a file of the wrong filesystem type to filesystem driver can result
-+	 * in an attempt to dereference the wrong type of ->private_data, so
-+	 * avoid doing that until we really have a good reason.  NFS defines
-+	 * several different file_system_type structures, but they all end up
-+	 * using the same ->copy_file_range() function pointer.
-+	 */
-+	if (file_out->f_op->copy_file_range) {
-+		if (file_in->f_op->copy_file_range !=
-+		    file_out->f_op->copy_file_range)
-+			return -EXDEV;
-+	} else if (file_in->f_op->remap_file_range) {
-+		if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-+			return -EXDEV;
-+	} else {
-+                return -EOPNOTSUPP;
-+	}
-+
- 	ret = generic_file_rw_checks(file_in, file_out);
- 	if (ret)
- 		return ret;
-@@ -1497,11 +1494,9 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- 	if (unlikely(ret))
- 		return ret;
- 
--	if (len == 0)
--		return 0;
--
- 	file_start_write(file_out);
- 
-+	ret = -EOPNOTSUPP;
- 	/*
- 	 * Try cloning first, this is supported by more file systems, and
- 	 * more efficient if both clone and copy are supported (e.g. NFS).
-@@ -1520,9 +1515,10 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- 		}
- 	}
- 
--	ret = do_copy_file_range(file_in, pos_in, file_out, pos_out, len,
--				flags);
--	WARN_ON_ONCE(ret == -EOPNOTSUPP);
-+	if (file_out->f_op->copy_file_range)
-+		ret = file_out->f_op->copy_file_range(file_in, pos_in,
-+						      file_out, pos_out,
-+						      len, flags);
- done:
- 	if (ret > 0) {
- 		fsnotify_access(file_in);
+Arturo Giusti (1):
+      udf: Fix NULL pointer dereference in udf_symlink function
+
+Colin Ian King (1):
+      isofs: remove redundant continue statement
+
+Jan Kara (2):
+      quota: Change quotactl_path() systcall to an fd-based one
+      quota: Wire up quotactl_fd syscall
+
+Muchun Song (1):
+      writeback: fix obtain a reference to a freeing memcg css
+
+Pavel Skripkin (1):
+      reiserfs: add check for invalid 1st journal block
+
+YueHaibing (1):
+      reiserfs: Remove unneed check in reiserfs_write_full_page()
+
+Zhen Lei (1):
+      quota: remove unnecessary oom message
+
+The diffstat is
+
+ arch/alpha/kernel/syscalls/syscall.tbl      |  2 +-
+ arch/arm/tools/syscall.tbl                  |  2 +-
+ arch/arm64/include/asm/unistd32.h           |  3 ++-
+ arch/ia64/kernel/syscalls/syscall.tbl       |  2 +-
+ arch/m68k/kernel/syscalls/syscall.tbl       |  2 +-
+ arch/microblaze/kernel/syscalls/syscall.tbl |  2 +-
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |  2 +-
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |  2 +-
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |  2 +-
+ arch/parisc/kernel/syscalls/syscall.tbl     |  2 +-
+ arch/powerpc/kernel/syscalls/syscall.tbl    |  2 +-
+ arch/s390/kernel/syscalls/syscall.tbl       |  2 +-
+ arch/sh/kernel/syscalls/syscall.tbl         |  2 +-
+ arch/sparc/kernel/syscalls/syscall.tbl      |  2 +-
+ arch/x86/entry/syscalls/syscall_32.tbl      |  2 +-
+ arch/x86/entry/syscalls/syscall_64.tbl      |  2 +-
+ arch/xtensa/kernel/syscalls/syscall.tbl     |  2 +-
+ fs/fs-writeback.c                           |  9 ++++++--
+ fs/isofs/dir.c                              |  2 --
+ fs/quota/quota.c                            | 28 ++++++++++++------------
+ fs/quota/quota_tree.c                       | 33 +++++++++++------------------
+ fs/reiserfs/inode.c                         |  4 +---
+ fs/reiserfs/journal.c                       | 14 ++++++++++++
+ fs/udf/namei.c                              |  4 ++++
+ include/linux/syscalls.h                    |  4 ++--
+ include/uapi/asm-generic/unistd.h           |  4 ++--
+ kernel/sys_ni.c                             |  2 +-
+ 27 files changed, 74 insertions(+), 65 deletions(-)
+
+							Thanks
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
