@@ -2,101 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D38CF3B8270
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 14:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0022F3B8349
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 15:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234667AbhF3Mxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Jun 2021 08:53:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32784 "EHLO
+        id S234768AbhF3Njk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Jun 2021 09:39:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234481AbhF3Mxx (ORCPT
+        with ESMTP id S234931AbhF3Njk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Jun 2021 08:53:53 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96E0AC061756;
-        Wed, 30 Jun 2021 05:51:23 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id g22so3014999iom.1;
-        Wed, 30 Jun 2021 05:51:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2Z1Sr0ZZ3Eaq33xdrYwzRNUibLuxnwUA0miK9swTaYI=;
-        b=cJwlQR0PDO16mUnge992zKP+NwR6BBGtWFmFC9sJW7wkgtUHU9isQIg74HVWOqx2FA
-         1+oO596YYhUJRvGn/tvHFEah1egYALLUM6emh91+SiBZL4fk7JB1mmxCQ5WO4Or4posA
-         gYuFpmZkm5kzlswRgM5CxOxVAXWXAWYHgXsrjQhzu60Ixp/NAbO0dLma9NXcjWjIZKmc
-         7l6CI12Y7yMA4igg/XxP6wqAxSVHsdAc7OQ58TxNF4UHA7JA5X61pYDUUJ2JDN+DCoYw
-         yc9ofwvKGsN0LuKrbdrw4F1mdw5X+qor/GhoxLk5ZN5gMt1HiI/2JIsyooMJTBmVRGvY
-         QxsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2Z1Sr0ZZ3Eaq33xdrYwzRNUibLuxnwUA0miK9swTaYI=;
-        b=T/AiKUUT2fUfyKF/KoAX8J5TUlEX+RYiILJWHcIDx1JDCjr2W67BDt6zTWWHkrl0A4
-         sCtslvXn5xqt9182/l+LMkQmT7k9dwPopHD1yisE/u4Vn5SB7SW9mH7FpvQoIfKLHTOw
-         9lgLp/bCj/uVIKB49WrO9zy+RB2ajOP+ad7SE2mfKbXzSJAfxBsXpMyb7t/wdsq1178H
-         zWIqo3wj2DC4VuSphRGWtztmAPkN6O/NiujN/Z4twxH0HwxAjCj+eJDXaFyRmbUv/GfT
-         vpP55h7vvbduJ+vuvREY2TBgC4sBZuj7kKRTnPYA25pakhc93yMbaFbFYnGUlWnuN/xR
-         PUwA==
-X-Gm-Message-State: AOAM532JSYoG9TYdXaRpUQozrk6JBVTKedPypiWAihV2aavmZ++icFz7
-        4ha5otzbrUvpvADPSDm8HSWrKnzyLtxJnH5/950=
-X-Google-Smtp-Source: ABdhPJzVZkc+LfDp6m557XKzYHLSlNrC3wMCjCrF2Kio441WtDXxumEaJN/tR6q0H0NUP/LaWjOguV37sQwlQ0T1XiM=
-X-Received: by 2002:a02:9109:: with SMTP id a9mr8752667jag.93.1625057483032;
- Wed, 30 Jun 2021 05:51:23 -0700 (PDT)
+        Wed, 30 Jun 2021 09:39:40 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7A9C061756;
+        Wed, 30 Jun 2021 06:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=fwxAe5Jj4nUADGQ3NnZuU6s3gb4g0NHrvfY343FArro=; b=wBXbhN9bolWpPd/0O5AcbOMwl3
+        eH8G40RWYk4EUOxl/3O2HuBFmrrDBoEhAuVeXobOqWw31yzwJOblUvyB03dh7LD4GLsoaBtJN9bem
+        cpxNzqOFizQLTuXo1imD3hGoXBsUn3ddnjKbWPIv6Xvg3WXnUXeq60KAs66jLf2sJ/UzlFm441ikP
+        1eXps7onJv/674Bylhe3cT7Mq1hYSFbdyW274t29dWyBjSK3W0CZO4og5VtcGJKPh7atOr7Yoy/Iw
+        6cv2kzihbRl6XCCbossxXRTPMs8fH/sFLdqefVE/B2fKOryj3BVjZnJ2s2ByCPWK3OPaAucb2iSRy
+        COoYedcg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lyaNe-005OGB-1L; Wed, 30 Jun 2021 13:36:02 +0000
+Date:   Wed, 30 Jun 2021 14:35:54 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com
+Subject: Re: [PATCH 1/2] iomap: Don't create iomap_page objects for inline
+ files
+Message-ID: <YNxzOkOifYIIR0HW@casper.infradead.org>
+References: <20210628172727.1894503-1-agruenba@redhat.com>
+ <20210628172727.1894503-2-agruenba@redhat.com>
 MIME-Version: 1.0
-References: <20210629191035.681913-8-krisman@collabora.com>
- <202106300707.Xg0LaEwy-lkp@intel.com> <CAOQ4uxgRbpzo-AvvBxLQ5ARdFuX53RG+JpPOG8CDoEM2MdsWQQ@mail.gmail.com>
- <20210630084555.GH1983@kadam> <CAOQ4uxiCYBL2-FVMbn2RWcQnueueVoAd5sBtte+twLoU9eyFgA@mail.gmail.com>
- <20210630104904.GS2040@kadam>
-In-Reply-To: <20210630104904.GS2040@kadam>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 30 Jun 2021 15:51:11 +0300
-Message-ID: <CAOQ4uxg063mwwdLnM7vooJSB38HvPF5jkSck6MunEL+K4oHArA@mail.gmail.com>
-Subject: Re: [PATCH v3 07/15] fsnotify: pass arguments of fsnotify() in struct fsnotify_event_info
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kbuild@lists.01.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210628172727.1894503-2-agruenba@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 30, 2021 at 1:49 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> I think my bug report was not clear...  :/  The code looks like this:
->
->         sb = inode->i_sb;
->
->         if (inode) ...
->
-> The NULL check cannot be false because if "inode" is NULL we would have
-> already crashed when we dereference it on the line before.
->
-> In this case, based on last years discussion, the "inode" pointer can't
-> be NULL.  The debate is only whether the unnecessary NULL checks help
-> readability or hurt readability.
->
+On Mon, Jun 28, 2021 at 07:27:26PM +0200, Andreas Gruenbacher wrote:
+> In iomap_readpage_actor, don't create iop objects for inline inodes.
+> Otherwise, iomap_read_inline_data will set PageUptodate without setting
+> iop->uptodate, and iomap_page_release will eventually complain.
+> 
+> To prevent this kind of bug from occurring in the future, make sure the
+> page doesn't have private data attached in iomap_read_inline_data.
+> 
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-Right. Sorry, I forgot.
-
-Anyway, patch 11/15 of the same series changes this code to:
-
- sb = event_info->sb ?: inode->i_sb;
-
-So inode can and will be NULL coming from the caller of
-fsnotify_sb_error(sb, NULL).
-
-I think that should make smach happy?
-You can try to run it after patch 11/15 of this series.
-
-Thanks,
-Amir.
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
