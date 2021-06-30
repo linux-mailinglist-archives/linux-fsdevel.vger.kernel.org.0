@@ -2,124 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A4023B850B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 16:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B4B3B851A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 16:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235162AbhF3OaA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Jun 2021 10:30:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:28140 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234913AbhF3O37 (ORCPT
+        id S234913AbhF3Ogn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Jun 2021 10:36:43 -0400
+Received: from m15112.mail.126.com ([220.181.15.112]:50519 "EHLO
+        m15112.mail.126.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234882AbhF3Ogm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Jun 2021 10:29:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625063250;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1d2Jt0MNjAao88bTvZMUVLETujlEaYGrDFgnkx5mKjs=;
-        b=XsZySUiHrOdq/3U0aUKyL9byqUdWqDCuKda3m7MzqANSFOIzzOKo5xtNX6f+7ntsfOSPgU
-        xxg7sIRQRH/sZ6x3ortWbVea19X21pgW/Dcp9q0P4fiU5g0T0Sf3gQ36UJH4+Ze8gypurc
-        Xr7NvyuItMnAypOlPx88uWkspuecTvk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-512-Pi9JRAE1PY6TXLuC1uOyNw-1; Wed, 30 Jun 2021 10:27:22 -0400
-X-MC-Unique: Pi9JRAE1PY6TXLuC1uOyNw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EE3D110C1ADC;
-        Wed, 30 Jun 2021 14:27:19 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-222.rdu2.redhat.com [10.10.115.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 398F660854;
-        Wed, 30 Jun 2021 14:27:16 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id B0B8222054F; Wed, 30 Jun 2021 10:27:15 -0400 (EDT)
-Date:   Wed, 30 Jun 2021 10:27:15 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Daniel Walsh <dwalsh@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
- files if caller has CAP_SYS_RESOURCE
-Message-ID: <20210630142715.GB75386@redhat.com>
-References: <5d8f033c-eba2-7a8b-f19a-1005bbb615ea@schaufler-ca.com>
- <YNn4p+Zn444Sc4V+@work-vm>
- <a13f2861-7786-09f4-99a8-f0a5216d0fb1@schaufler-ca.com>
- <YNrhQ9XfcHTtM6QA@work-vm>
- <e6f9ed0d-c101-01df-3dff-85c1b38f9714@schaufler-ca.com>
- <20210629152007.GC5231@redhat.com>
- <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
- <20210629173530.GD5231@redhat.com>
- <f4992b3a-a939-5bc4-a5da-0ce8913bd569@redhat.com>
- <YNvvLIv16jY8mfP8@mit.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YNvvLIv16jY8mfP8@mit.edu>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        Wed, 30 Jun 2021 10:36:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=yYZx7OJCN/9Q00hcQp
+        F22VIKH/8bsew3VKwL0pMebUs=; b=j4HcDOFS4qudeFtIG63tbPCVso/nQ+jv0s
+        jwOr+0qsLh3PgshpNUv0ULGkbcHjZyaj8AuNAaSDVAdD/EOslPd3Vpeoe0AWof5z
+        nh/6hDDESwT6tq63/VPTEX+fBWupBySpwiQODe6ZYbvGvWC4F6/lt70+8yvjvFHf
+        y4BAoGFaU=
+Received: from 192.168.137.133 (unknown [112.10.75.196])
+        by smtp2 (Coremail) with SMTP id DMmowAAnFKLdgNxg3RjqCg--.15597S3;
+        Wed, 30 Jun 2021 22:34:07 +0800 (CST)
+From:   Xianting Tian <xianting_tian@126.com>
+To:     damien.lemoal@wdc.com, naohiro.aota@wdc.com, jth@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xianting Tian <xianting.tian@linux.alibaba.com>
+Subject: [PATCH] zonefs: remove redundant null bio check
+Date:   Wed, 30 Jun 2021 10:33:36 -0400
+Message-Id: <1625063616-8467-1-git-send-email-xianting_tian@126.com>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID: DMmowAAnFKLdgNxg3RjqCg--.15597S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWruF18tw4DtFW3ury7uF43Awb_yoW3Wwc_J3
+        yIqa97WrWUJrnIk3y2g3yFvryF93WY93WUWF1Fy3W3XF4Dtws5Cw1qvw1fZw15Za1SvFZ8
+        Ja10grW29r40gjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0wNVDUUUUU==
+X-Originating-IP: [112.10.75.196]
+X-CM-SenderInfo: h0ld03plqjs3xldqqiyswou0bp/1tbi5h-BpFpEBONwPgAAsr
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 30, 2021 at 12:12:28AM -0400, Theodore Ts'o wrote:
-> On Tue, Jun 29, 2021 at 04:28:24PM -0400, Daniel Walsh wrote:
-> > All this conversation is great, and I look forward to a better solution, but
-> > if we go back to the patch, it was to fix an issue where the kernel is
-> > requiring CAP_SYS_ADMIN for writing user Xattrs on link files and other
-> > special files.
-> > 
-> > The documented reason for this is to prevent the users from using XATTRS to
-> > avoid quota.
-> 
-> Huh?  Where is it so documented?
+From: Xianting Tian <xianting.tian@linux.alibaba.com>
 
-Its in "man xattr". David already copied pasted the relevant section in
-another email, so I am not doing it.
+bio_alloc() with __GFP_DIRECT_RECLAIM, which is included in
+GFP_NOFS, never fails, see comments in bio_alloc_bioset().
 
-> How file systems store and account
-> for space used by extended attributes is a file-system specific
-> question,
+Signed-off-by: Xianting Tian <xianting.tian@linux.alibaba.com>
+---
+ fs/zonefs/super.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> but presumably any way that xattr's on regular files are
-> accounted could also be used for xattr's on special files.
-
-That will be nice. I don't know enough about quota, but I am wondering
-why quota limits can't be enforced (if needed) for symlinks and special
-file xattrs.
-
-Thanks
-Vivek
-> 
-> Also, xattr's are limited to 32k, so it's not like users can evade
-> _that_ much quota space, at least not without it being pretty painful.
-> (Assuming that quota is even enabled, which most of the time, it
-> isn't.)
-> 
-> 						- Ted
-> 
-> P.S.  I'll note that if ext4's ea_in_inode is enabled, for large
-> xattr's, if you have 2 million files that all have the same 12k
-> windows SID stored as an xattr, ext4 will store that xattr only once.
-> Those two million files might be owned by different uids, so we made
-> an explicit design choice not to worry about accounting for the quota
-> for said 12k xattr value.  After all, if you can save the space and
-> access cost of 2M * 12k if each file had to store its own copy of that
-> xattr, perhaps not including it in the quota calculation isn't that
-> bad.  :-)
-> 
-> We also don't account for the disk space used by symbolic links (since
-> sometimes they can be stored in the inode as fast symlinks, and
-> sometimes they might consume a data block).  But again, that's a file
-> system specific implementation question.
-> 
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index cd145d3..d6d08da 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -705,9 +705,6 @@ static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
+ 		return 0;
+ 
+ 	bio = bio_alloc(GFP_NOFS, nr_pages);
+-	if (!bio)
+-		return -ENOMEM;
+-
+ 	bio_set_dev(bio, bdev);
+ 	bio->bi_iter.bi_sector = zi->i_zsector;
+ 	bio->bi_write_hint = iocb->ki_hint;
+-- 
+1.8.3.1
 
