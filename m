@@ -2,284 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C60633B86C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 18:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 108773B86D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 18:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232018AbhF3QI7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Jun 2021 12:08:59 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:41580 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229753AbhF3QI6 (ORCPT
+        id S229540AbhF3QMK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Jun 2021 12:12:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52359 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230200AbhF3QMJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Jun 2021 12:08:58 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 30 Jun 2021 12:12:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625069380;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=52V6002QO3cX0YhTEgm8sdsHZhDo4SqxSLMck++RLBo=;
+        b=WFjDn4fOcEtkuToNJXwysAGS0Fl3c4TOj2z1lbVsPG/XjsOsPbhHPWgu2pDEtNSNAev2cL
+        l7hUWMXv0dZ1XXIEKdyxvG+RYld0SQePpACwgsfxm54zt6V56pDOgwxg6QxZ60Tcpha+jj
+        7y0eF4BEywE2VGyox6IGpQF/zN4gUTI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-122-AQW-WcG6PSq609UJqweyuA-1; Wed, 30 Jun 2021 12:09:38 -0400
+X-MC-Unique: AQW-WcG6PSq609UJqweyuA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A088B20483;
-        Wed, 30 Jun 2021 16:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1625069188; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=R+/U4JehVX0FhkBlOkfzWo0x8lCwrBaeOESsSdyk28Y=;
-        b=Rjn+2hiBLWwyjfFNPxIHwptzno1cJItH37TEtJuQ8SvCUwv/dPVYwPrLNtPJ8zH+RmmBRT
-        Hfr9wvdi+cCUR8+PUehJ30loQWlQ/tiNXO/is7shMoXM+T9V4u1KBtsSvmnynRrsAryjIH
-        HdvzUCXxB9cU/hmnz19T2cZTJ+ATZVA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1625069188;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=R+/U4JehVX0FhkBlOkfzWo0x8lCwrBaeOESsSdyk28Y=;
-        b=s6m1jYejOk8yfoCaOzESlebrkrRGXExFJI4rTp5M34pM7Y3gmd9fgSqL9E2txte6IAu9+7
-        qMlYMdhuVZ3kMIAw==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 1AA4D118DD;
-        Wed, 30 Jun 2021 16:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1625069188; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=R+/U4JehVX0FhkBlOkfzWo0x8lCwrBaeOESsSdyk28Y=;
-        b=Rjn+2hiBLWwyjfFNPxIHwptzno1cJItH37TEtJuQ8SvCUwv/dPVYwPrLNtPJ8zH+RmmBRT
-        Hfr9wvdi+cCUR8+PUehJ30loQWlQ/tiNXO/is7shMoXM+T9V4u1KBtsSvmnynRrsAryjIH
-        HdvzUCXxB9cU/hmnz19T2cZTJ+ATZVA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1625069188;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=R+/U4JehVX0FhkBlOkfzWo0x8lCwrBaeOESsSdyk28Y=;
-        b=s6m1jYejOk8yfoCaOzESlebrkrRGXExFJI4rTp5M34pM7Y3gmd9fgSqL9E2txte6IAu9+7
-        qMlYMdhuVZ3kMIAw==
-Received: from director2.suse.de ([192.168.254.72])
-        by imap3-int with ESMTPSA
-        id Uui7A4SW3GDZWAAALh3uQQ
-        (envelope-from <lhenriques@suse.de>); Wed, 30 Jun 2021 16:06:28 +0000
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 578c595a;
-        Wed, 30 Jun 2021 16:06:27 +0000 (UTC)
-Date:   Wed, 30 Jun 2021 17:06:27 +0100
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     kernel test robot <oliver.sang@intel.com>,
-        0day robot <lkp@intel.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [vfs] 94a4dd06a6: xfstests.generic.263.fail
-Message-ID: <YNyWgxlX4xoQ8itu@suse.de>
-References: <20210513135644.GE20142@xsang-OptiPlex-9020>
- <877dk1zibo.fsf@suse.de>
- <CAOQ4uxgde72YDADffihj1P-Kse_P6zkhrjBb1DhwVUC+yRJooQ@mail.gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 542EB18414A2;
+        Wed, 30 Jun 2021 16:09:37 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-115-222.rdu2.redhat.com [10.10.115.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A7E2E5C1A3;
+        Wed, 30 Jun 2021 16:09:33 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 4052122054F; Wed, 30 Jun 2021 12:09:33 -0400 (EDT)
+Date:   Wed, 30 Jun 2021 12:09:33 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Daniel Walsh <dwalsh@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
+        "berrange@redhat.com" <berrange@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
+ files if caller has CAP_SYS_RESOURCE
+Message-ID: <20210630160933.GC75386@redhat.com>
+References: <a13f2861-7786-09f4-99a8-f0a5216d0fb1@schaufler-ca.com>
+ <YNrhQ9XfcHTtM6QA@work-vm>
+ <e6f9ed0d-c101-01df-3dff-85c1b38f9714@schaufler-ca.com>
+ <20210629152007.GC5231@redhat.com>
+ <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
+ <20210629173530.GD5231@redhat.com>
+ <f4992b3a-a939-5bc4-a5da-0ce8913bd569@redhat.com>
+ <YNvvLIv16jY8mfP8@mit.edu>
+ <YNwmXOqT7LgbeVPn@work-vm>
+ <YNyECw/1FzDCW3G8@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgde72YDADffihj1P-Kse_P6zkhrjBb1DhwVUC+yRJooQ@mail.gmail.com>
+In-Reply-To: <YNyECw/1FzDCW3G8@mit.edu>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 30, 2021 at 06:46:22PM +0300, Amir Goldstein wrote:
-> On Fri, May 14, 2021 at 2:03 PM Luis Henriques <lhenriques@suse.de> wrote:
-> >
-> > kernel test robot <oliver.sang@intel.com> writes:
-> >
-> > > Greeting,
-> > >
-> > > FYI, we noticed the following commit (built with gcc-9):
-> > >
-> > > commit: 94a4dd06a6bbf3978b0bb1dddc2d8ec4e5bcad26 ("[PATCH v9] vfs: fix copy_file_range regression in cross-fs copies")
-> > > url: https://github.com/0day-ci/linux/commits/Luis-Henriques/vfs-fix-copy_file_range-regression-in-cross-fs-copies/20210510-170804
-> > > base: https://git.kernel.org/cgit/linux/kernel/git/viro/vfs.git for-next
-> > >
-> > > in testcase: xfstests
-> > > version: xfstests-x86_64-73c0871-1_20210401
-> > > with following parameters:
-> > >
-> > >       disk: 4HDD
-> > >       fs: xfs
-> > >       test: generic-group-13
-> > >       ucode: 0x21
-> > >
-> > > test-description: xfstests is a regression test suite for xfs and other files ystems.
-> > > test-url: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
-> > >
-> > >
-> > > on test machine: 4 threads 1 sockets Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz with 8G memory
-> > >
-> > > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> > >
-> > >
-> > >
-> > >
-> > > If you fix the issue, kindly add following tag
-> > > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > >
-> > > 2021-05-11 11:28:23 export TEST_DIR=/fs/sda1
-> > > 2021-05-11 11:28:23 export TEST_DEV=/dev/sda1
-> > > 2021-05-11 11:28:23 export FSTYP=xfs
-> > > 2021-05-11 11:28:23 export SCRATCH_MNT=/fs/scratch
-> > > 2021-05-11 11:28:23 mkdir /fs/scratch -p
-> > > 2021-05-11 11:28:23 export SCRATCH_DEV=/dev/sda4
-> > > 2021-05-11 11:28:23 export SCRATCH_LOGDEV=/dev/sda2
-> > > 2021-05-11 11:28:23 sed "s:^:generic/:" //lkp/benchmarks/xfstests/tests/generic-group-13
-> > > 2021-05-11 11:28:23 ./check generic/260 generic/261 generic/262 generic/263 generic/264 generic/265 generic/266 generic/267 generic/268 generic/269 generic/270 generic/271 generic/272 generic/273 generic/274 generic/275 generic/276 generic/277 generic/278 generic/279
-> > > FSTYP         -- xfs (debug)
-> > > PLATFORM      -- Linux/x86_64 lkp-ivb-d02 5.12.0-rc6-00061-g94a4dd06a6bb #1 SMP Tue May 11 00:58:17 CST 2021
-> > > MKFS_OPTIONS  -- -f -bsize=4096 /dev/sda4
-> > > MOUNT_OPTIONS -- /dev/sda4 /fs/scratch
-> > >
-> > > generic/260   [not run] FITRIM not supported on /fs/scratch
-> > > generic/261   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/262   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/263   [failed, exit status 1]- output mismatch (see /lkp/benchmarks/xfstests/results//generic/263.out.bad)
-> > >     --- tests/generic/263.out 2021-04-01 03:07:08.000000000 +0000
-> > >     +++ /lkp/benchmarks/xfstests/results//generic/263.out.bad 2021-05-11 11:28:29.773460096 +0000
-> > >     @@ -1,3 +1,32 @@
-> > >      QA output created by 263
-> > >      fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z
-> > >     -fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z
-> > >     +Seed set to 1
-> > >     +main: filesystem does not support clone range, disabling!
-> > >     +main: filesystem does not support dedupe range, disabling!
-> > >     +skipping zero size read
-> > >     ...
-> > >     (Run 'diff -u /lkp/benchmarks/xfstests/tests/generic/263.out /lkp/benchmarks/xfstests/results//generic/263.out.bad'  to see the entire diff)
-> > > generic/264   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/265   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/266   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/267   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/268   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/269    48s
-> > > generic/270    61s
-> > > generic/271   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/272   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/273    17s
-> > > generic/274    14s
-> > > generic/275    11s
-> > > generic/276   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/277    3s
-> > > generic/278   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > generic/279   [not run] Reflink not supported by scratch filesystem type: xfs
-> > > Ran: generic/260 generic/261 generic/262 generic/263 generic/264 generic/265 generic/266 generic/267 generic/268 generic/269 generic/270 generic/271 generic/272 generic/273 generic/274 generic/275 generic/276 generic/277 generic/278 generic/279
-> > > Not run: generic/260 generic/261 generic/262 generic/264 generic/265 generic/266 generic/267 generic/268 generic/271 generic/272 generic/276 generic/278 generic/279
-> > > Failures: generic/263
-> > > Failed 1 of 20 tests
-> >
-> > OK, I see what's going on.  There are 2 issues: one with patch and another
-> > one with the test itself.
-> >
-> > The CFR syscall should have been disabled in this test but it isn't
-> > because the test tries to copy 1 byte from a zero-sized file:
-> >
-> > int
-> > test_copy_range(void)
-> > {
-> >         loff_t o1 = 0, o2 = 1;
-> >
-> >         if (syscall(__NR_copy_file_range, fd, &o1, fd, &o2, 1, 0) == -1 &&
-> >             (errno == ENOSYS || errno == EOPNOTSUPP || errno == ENOTTY)) {
-> >                 if (!quiet)
-> >                         fprintf(stderr,
-> >                                 "main: filesystem does not support "
-> >                                 "copy range, disabling!\n");
-> >                 return 0;
-> >         }
-> >
-> >         return 1;
-> > }
-> >
-> > The syscall is doing an early '0' return because the file size is < len.
-> >
-> > Fixing the kernel should probably be as easy as removing the
-> > short-circuiting check in vfs_copy_file_range():
-> >
-> >         if (len == 0)
-> >                 return 0;
-> >
-> > This will force the filesystems code to handle '0' size copies but will
-> > also make sure -EOPNOTSUPP is returned in this case.
-> >
+On Wed, Jun 30, 2021 at 10:47:39AM -0400, Theodore Ts'o wrote:
+> On Wed, Jun 30, 2021 at 09:07:56AM +0100, Dr. David Alan Gilbert wrote:
+> > * Theodore Ts'o (tytso@mit.edu) wrote:
+> > > On Tue, Jun 29, 2021 at 04:28:24PM -0400, Daniel Walsh wrote:
+> > > > All this conversation is great, and I look forward to a better solution, but
+> > > > if we go back to the patch, it was to fix an issue where the kernel is
+> > > > requiring CAP_SYS_ADMIN for writing user Xattrs on link files and other
+> > > > special files.
+> > > > 
+> > > > The documented reason for this is to prevent the users from using XATTRS to
+> > > > avoid quota.
+> > > 
+> > > Huh?  Where is it so documented?
+> > 
+> > man xattr(7):
+> >        The  file permission bits of regular files and directories are
+> >        interpreted differently from the file permission bits of special
+> >        files and symbolic links.  For regular files and directories the
+> >        file permission bits define access to the file's contents,
+> >        while for device special files they define access to the device
+> >        described by the special file.  The file permissions of symbolic
+> >        links are not used in access checks.
 > 
-> Sorry for the late reply.
-> The solution above is correct.
-> That is aligned with the behavior of vfs_clone_file_range().
-> Need to call into the filesystem method also with 0 length
-> in order to learn about CFR support of this filesystem instance.
+> All of this is true...
+> 
+> >         *** These differences would
+> >        allow users to consume filesystem resources in a way not
+> >        controllable by disk quotas for group or world writable special
+> >        files and directories.****
+> 
+> Anyone with group write access to a regular file can append to the
+> file, and the blocks written will be charged the owner of the file.
+> So it's perfectly "controllable" by the quota system; if you have
+> group write access to a file, you can charge against the user's quota.
+> This is Working As Intended.
+> 
+> And the creation of device special files take the umask into account,
+> just like regular files, so if you have a umask that allows newly
+> created files to be group writeable, the same issue would occur for
+> regular files as device files.  Given that most users have a umask of
+> 0077 or 0022, this is generally Not A Problem.
+> 
+> I think I see the issue which drove the above text, though, which is
+> that Linux's syscall(2) is creating symlinks which do not take umask
+> into account; that is, the permissions are always mode ST_IFLNK|0777.
 
-Yep, this makes sense (I've seen you're detailed explanation in the other
-thread -- thanks!).  I'll send out v11 in a sec.
+IIUC, idea is to use permission bits on symlink to decide whether caller
+can read/write user.* xattrs (like regular file). Hence create symlinks
+while honoring umask (or default posix acl on dir) and modify relevant
+code for file creation. Also that possibly will require changing chmod
+to allow chaging mode on chmod. 
 
-Cheers,
---
-Luís
+Vivek
 
-> > Alternatively, we could have something like:
-> >
-> >         if (len == 0) {
-> >                 if (file_out->f_op->copy_file_range)
-> >                         return 0;
-> >                 else
-> >                         return -EOPNOTSUPP;
-> >         }
-> >
 > 
-> This does not catch the case of a filesystem driver that has
-> CFR method but a filesystem instance does not support CFR.
-> For example, overlayfs with ext4 as upper fs.
+> Hence, it might be that the right answer is to remove this fairly
+> arbitrary restriction entirely, and change symlink(2) so that it
+> creates files which respects the umask.  Posix and SUS doesn't specify
+> what the permissions are that are used, and historically (before the
+> advent of xattrs) I suspect since it didn't matter, no one cared about
+> whether or not umask was applied.
 > 
-> > What do you guys think is the right thing to do?
-> >
-> > Additionally, the test should also be fixed with something as the patch
-> > bellow.  By making sure we have 1 byte to copy we also ensure the syscall
-> > will return -EOPNOTSUPP, even with the current version of the patch.
-> >
+> Some people might object to such a change arguing that with
+> pre-existing file systems where there are symlinks which
+> world-writeable, this might cause people to be able to charge up to
+> 32k (or whatever the maximum size of the xattr supported by the file
+> system) for each symlink.  However, (a) very few people actually use
+> quotas, and this would only be an issue for those users, and (b) the
+> amount of quota "abuse" that could be carried out this way is small
+> enough that I'm not sure it matters.
 > 
-> I don't think that the test should be fixed.
+>      	    	  	      	  - Ted
 > 
-> Thanks,
-> Amir.
-> 
-> > Cheers,
-> > --
-> > Luis
-> >
-> > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > index cd0bae55aeb8..97db594ae142 100644
-> > --- a/ltp/fsx.c
-> > +++ b/ltp/fsx.c
-> > @@ -1596,6 +1596,10 @@ int
-> >  test_copy_range(void)
-> >  {
-> >         loff_t o1 = 0, o2 = 1;
-> > +       int ret = 1;
-> > +
-> > +       /* Make sure we have 1 byte to copy */
-> > +       ftruncate(fd, 1);
-> >
-> >         if (syscall(__NR_copy_file_range, fd, &o1, fd, &o2, 1, 0) == -1 &&
-> >             (errno == ENOSYS || errno == EOPNOTSUPP || errno == ENOTTY)) {
-> > @@ -1603,10 +1607,13 @@ test_copy_range(void)
-> >                         fprintf(stderr,
-> >                                 "main: filesystem does not support "
-> >                                 "copy range, disabling!\n");
-> > -               return 0;
-> > +               ret = 0;
-> >         }
-> >
-> > -       return 1;
-> > +       /* Restore file size */
-> > +       ftruncate(fd, 0);
-> > +
-> > +       return ret;
-> >  }
-> >
-> >  void
+
