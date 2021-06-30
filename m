@@ -2,94 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3DF23B8226
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 14:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D38CF3B8270
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 14:51:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234583AbhF3Mch (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Jun 2021 08:32:37 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35826 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234560AbhF3Mch (ORCPT
+        id S234667AbhF3Mxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Jun 2021 08:53:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32784 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234481AbhF3Mxx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Jun 2021 08:32:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625056207;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RQZ34p00W47EK/M00vu4N1h6gunJeEQ5RDsJI1DSqqg=;
-        b=PQYg6WwCwLIUgJ943ElHUVaRIE1A4ryge7Qr8Vj2aadYCVvGG5RFKAUsaPl/8k/Yby3PKI
-        Jt/YExo96AMkQiV9Ix2Ooru9pjgAyTkMKo6xbNnm9ZRNqpllszU7H+r1QQSDbN+l4OExT7
-        VblfF5X3Gy2g3M6d8oA6Cg6YrX/44vU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-393-EHJeNNEuM2aGM03HYRDRLw-1; Wed, 30 Jun 2021 08:30:05 -0400
-X-MC-Unique: EHJeNNEuM2aGM03HYRDRLw-1
-Received: by mail-wm1-f71.google.com with SMTP id y129-20020a1c32870000b029016920cc7087so443363wmy.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jun 2021 05:30:05 -0700 (PDT)
+        Wed, 30 Jun 2021 08:53:53 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96E0AC061756;
+        Wed, 30 Jun 2021 05:51:23 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id g22so3014999iom.1;
+        Wed, 30 Jun 2021 05:51:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2Z1Sr0ZZ3Eaq33xdrYwzRNUibLuxnwUA0miK9swTaYI=;
+        b=cJwlQR0PDO16mUnge992zKP+NwR6BBGtWFmFC9sJW7wkgtUHU9isQIg74HVWOqx2FA
+         1+oO596YYhUJRvGn/tvHFEah1egYALLUM6emh91+SiBZL4fk7JB1mmxCQ5WO4Or4posA
+         gYuFpmZkm5kzlswRgM5CxOxVAXWXAWYHgXsrjQhzu60Ixp/NAbO0dLma9NXcjWjIZKmc
+         7l6CI12Y7yMA4igg/XxP6wqAxSVHsdAc7OQ58TxNF4UHA7JA5X61pYDUUJ2JDN+DCoYw
+         yc9ofwvKGsN0LuKrbdrw4F1mdw5X+qor/GhoxLk5ZN5gMt1HiI/2JIsyooMJTBmVRGvY
+         QxsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RQZ34p00W47EK/M00vu4N1h6gunJeEQ5RDsJI1DSqqg=;
-        b=WmPl+Y3V3CY4LeJb8I1I2xQJoKDuNiMs0fdeZQoFcQB1lMXX+ZBJm5ahk8AktyFGH4
-         wGQtEA+5khwQJFN0dMQMcEr4AaOuMZnOyezp85P0FOtWZF6PJryUKntN1OKVyMmtVQJd
-         +oQqRYz5asACfra30FegO6hLDEPBNhLdG1QwCajPfXSFqhSu5rJU8RWYAhHbEhlMKnbz
-         atxS0vzLEjpLkPlzymYgUjykVtUHW13DX/eFxNusZonzTQ76hSTuW+++q5Wjl0Sq4CpD
-         FyPw3mHXmJN9RpSuFwTEd5bjjqtphT0JE9XL01VQ3RJa+8LKmNQ9lH1SYmbtY4u2L+bu
-         h50g==
-X-Gm-Message-State: AOAM533Spp/EPUsd/cXOXcqUWJpgwQrTsNK0N4D374QzBlbUPKHFLGhv
-        VZdGPdMQE3WH1NvOn3bBHttSVsOzf3JC7CgclJq1JQ1oGS0cW7zdH+AZAd3lzBU8hU9w0BziyHv
-        KoxJ3aOIfH4tHepOzE56JaXRZvs5vSwstzw9PGOKGDQ==
-X-Received: by 2002:a5d:64a1:: with SMTP id m1mr38417844wrp.377.1625056204780;
-        Wed, 30 Jun 2021 05:30:04 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyiKZD8yv7AFvQByvy6FrFUeDUZiI9d4+EOWLz8GJb+ib2SSR1Xzbba+opGBb3gRXer0OrDHoNpt28PzPvCzZU=
-X-Received: by 2002:a5d:64a1:: with SMTP id m1mr38417829wrp.377.1625056204627;
- Wed, 30 Jun 2021 05:30:04 -0700 (PDT)
+        bh=2Z1Sr0ZZ3Eaq33xdrYwzRNUibLuxnwUA0miK9swTaYI=;
+        b=T/AiKUUT2fUfyKF/KoAX8J5TUlEX+RYiILJWHcIDx1JDCjr2W67BDt6zTWWHkrl0A4
+         sCtslvXn5xqt9182/l+LMkQmT7k9dwPopHD1yisE/u4Vn5SB7SW9mH7FpvQoIfKLHTOw
+         9lgLp/bCj/uVIKB49WrO9zy+RB2ajOP+ad7SE2mfKbXzSJAfxBsXpMyb7t/wdsq1178H
+         zWIqo3wj2DC4VuSphRGWtztmAPkN6O/NiujN/Z4twxH0HwxAjCj+eJDXaFyRmbUv/GfT
+         vpP55h7vvbduJ+vuvREY2TBgC4sBZuj7kKRTnPYA25pakhc93yMbaFbFYnGUlWnuN/xR
+         PUwA==
+X-Gm-Message-State: AOAM532JSYoG9TYdXaRpUQozrk6JBVTKedPypiWAihV2aavmZ++icFz7
+        4ha5otzbrUvpvADPSDm8HSWrKnzyLtxJnH5/950=
+X-Google-Smtp-Source: ABdhPJzVZkc+LfDp6m557XKzYHLSlNrC3wMCjCrF2Kio441WtDXxumEaJN/tR6q0H0NUP/LaWjOguV37sQwlQ0T1XiM=
+X-Received: by 2002:a02:9109:: with SMTP id a9mr8752667jag.93.1625057483032;
+ Wed, 30 Jun 2021 05:51:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210628172727.1894503-1-agruenba@redhat.com> <YNoJPZ4NWiqok/by@casper.infradead.org>
- <YNoLTl602RrckQND@infradead.org> <YNpGW2KNMF9f77bk@casper.infradead.org> <YNqvzNd+7+YtXfQj@infradead.org>
-In-Reply-To: <YNqvzNd+7+YtXfQj@infradead.org>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Wed, 30 Jun 2021 14:29:53 +0200
-Message-ID: <CAHc6FU7+Q0D_pnjUbLXseeHfVQZ2nHTKMzH+0ppLh9cpX-UaPg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] iomap: small block problems
-To:     "Darrick J . Wong" <djwong@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
+References: <20210629191035.681913-8-krisman@collabora.com>
+ <202106300707.Xg0LaEwy-lkp@intel.com> <CAOQ4uxgRbpzo-AvvBxLQ5ARdFuX53RG+JpPOG8CDoEM2MdsWQQ@mail.gmail.com>
+ <20210630084555.GH1983@kadam> <CAOQ4uxiCYBL2-FVMbn2RWcQnueueVoAd5sBtte+twLoU9eyFgA@mail.gmail.com>
+ <20210630104904.GS2040@kadam>
+In-Reply-To: <20210630104904.GS2040@kadam>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 30 Jun 2021 15:51:11 +0300
+Message-ID: <CAOQ4uxg063mwwdLnM7vooJSB38HvPF5jkSck6MunEL+K4oHArA@mail.gmail.com>
+Subject: Re: [PATCH v3 07/15] fsnotify: pass arguments of fsnotify() in struct fsnotify_event_info
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     kbuild@lists.01.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>
+        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Darrick,
-
-On Tue, Jun 29, 2021 at 7:47 AM Christoph Hellwig <hch@infradead.org> wrote:
-> On Mon, Jun 28, 2021 at 10:59:55PM +0100, Matthew Wilcox wrote:
-> > > > so permit pages without an iop to enter writeback and create an iop
-> > > > *then*.  Would that solve your problem?
-> > >
-> > > It is the right thing to do, especially when combined with a feature
-> > > patch to not bother to create the iomap_page structure on small
-> > > block size file systems when the extent covers the whole page.
-> >
-> > We don't know the extent layout at the point where *this* patch creates
-> > iomap_pages during writeback.  I imagine we can delay creating one until
-> > we find out what our destination layout will be?
+On Wed, Jun 30, 2021 at 1:49 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >
-> Hmm.  Actually ->page_mkwrite is always is always called on an uptodate
-> page and we even assert that.  I should have remembered the whole page
-> fault path better.
+> I think my bug report was not clear...  :/  The code looks like this:
 >
-> So yeah, I think we should take patch 1 from Andreas, then a non-folio
-> version of your patch as a start.
+>         sb = inode->i_sb;
+>
+>         if (inode) ...
+>
+> The NULL check cannot be false because if "inode" is NULL we would have
+> already crashed when we dereference it on the line before.
+>
+> In this case, based on last years discussion, the "inode" pointer can't
+> be NULL.  The debate is only whether the unnecessary NULL checks help
+> readability or hurt readability.
+>
 
-will you pick up those two patches and push them to Linus? They both
-seem pretty safe.
+Right. Sorry, I forgot.
+
+Anyway, patch 11/15 of the same series changes this code to:
+
+ sb = event_info->sb ?: inode->i_sb;
+
+So inode can and will be NULL coming from the caller of
+fsnotify_sb_error(sb, NULL).
+
+I think that should make smach happy?
+You can try to run it after patch 11/15 of this series.
 
 Thanks,
-Andreas
-
+Amir.
