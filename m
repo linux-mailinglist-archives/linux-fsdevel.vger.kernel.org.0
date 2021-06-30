@@ -2,91 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 993753B7C77
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 06:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29EC43B7C87
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Jun 2021 06:19:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233038AbhF3EPJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Jun 2021 00:15:09 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49810 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229446AbhF3EPI (ORCPT
+        id S233325AbhF3EVo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Jun 2021 00:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59852 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230200AbhF3EVk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Jun 2021 00:15:08 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 15U4CT7S009691
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Jun 2021 00:12:29 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 0BBE815C3C8E; Wed, 30 Jun 2021 00:12:28 -0400 (EDT)
-Date:   Wed, 30 Jun 2021 00:12:28 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Daniel Walsh <dwalsh@redhat.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
- files if caller has CAP_SYS_RESOURCE
-Message-ID: <YNvvLIv16jY8mfP8@mit.edu>
-References: <1b446468-dcf8-9e21-58d3-c032686eeee5@redhat.com>
- <5d8f033c-eba2-7a8b-f19a-1005bbb615ea@schaufler-ca.com>
- <YNn4p+Zn444Sc4V+@work-vm>
- <a13f2861-7786-09f4-99a8-f0a5216d0fb1@schaufler-ca.com>
- <YNrhQ9XfcHTtM6QA@work-vm>
- <e6f9ed0d-c101-01df-3dff-85c1b38f9714@schaufler-ca.com>
- <20210629152007.GC5231@redhat.com>
- <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
- <20210629173530.GD5231@redhat.com>
- <f4992b3a-a939-5bc4-a5da-0ce8913bd569@redhat.com>
+        Wed, 30 Jun 2021 00:21:40 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9019FC061760;
+        Tue, 29 Jun 2021 21:19:11 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id i189so1532628ioa.8;
+        Tue, 29 Jun 2021 21:19:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rx8A797G1YBpPMe7byH4D0TVQJIokYuVRNbWX9cvnco=;
+        b=Z8y5OGy7Er5yazYRAliRflePcje/Er1l8rzJ7wHxJSJg6XoRi1D9KyPUr7vDiWwDil
+         bJSZsXGPPHMAzyzVtmArvvLmbP2rC8a968DCpqLgH9H1Zh1/O1uZq3j+M//lZVZd1Hs1
+         MjC4WYD7ZcDVpWc5jD5qZ/anJpXgnAyit7gAISLXm/5asxDX7CNYRaZZxwd3wCWih7H0
+         h/dVIUBkK654QsVriKYgpp8IzVRuOUqpQlYeQnfm175qqSd1jfktR5tnDxa0z2Iy/S5D
+         /MtlPqZdyl5L/qheW4MnNHUdmgQQTaT7EWgd+ffk2kgjNi2RhKb/ViGMfImhZEz2ajMZ
+         tJ1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rx8A797G1YBpPMe7byH4D0TVQJIokYuVRNbWX9cvnco=;
+        b=otRPFrZTbzbOY0BGEmLroMh+Qgs86YOIoZlBbejre1bimRZ4yEhN3qC+GDig8/pyhV
+         YPZYto+GiNMswK/xzhy2IrFJWi3Al8fhNOlIi1W1tJUon7+MtXUlCojS662MHT1u4BWR
+         nVKebHFs/ZJhMdeh/pPAwb2dcnOIyIC9vBgt8guunYnHC288H0dM1fqK5ZQOs/NRLniQ
+         ecYCXzzdg7LyD2AknPWSkOuFVcCiVg+8t1cWkrECrjDO8tX13lgiF80SVxclYBaQt01L
+         jTEU4zFDag+0E0x5ct9eMUjv6bPYUHYhJtb7/sK1/XtfyjqSba+3geU4GZPBaqPUNv/z
+         wPEg==
+X-Gm-Message-State: AOAM533wDEZHcJCwB0CuaKA6pF7lnQVZx3kYzHXU54UdMHPrqpaztSC2
+        kzdeM8Nh5PnLO+NvtixzAUxuTdINwu4SnqHMAD8=
+X-Google-Smtp-Source: ABdhPJyYVFgpyttLNp4z81d1/u3emYEyD+aMYZgk2hYw5mpMcie1UMJdLqyJfGHehrwLLUDhJjz3gaNlOijoiy2e4h0=
+X-Received: by 2002:a05:6602:146:: with SMTP id v6mr6472057iot.5.1625026750922;
+ Tue, 29 Jun 2021 21:19:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f4992b3a-a939-5bc4-a5da-0ce8913bd569@redhat.com>
+References: <20210629191035.681913-1-krisman@collabora.com> <20210629191035.681913-16-krisman@collabora.com>
+In-Reply-To: <20210629191035.681913-16-krisman@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 30 Jun 2021 07:18:59 +0300
+Message-ID: <CAOQ4uxiOJDQc3nw8sxXD9yO8MSTgMbsqhCP9Xc-x8wnn2mJ0=Q@mail.gmail.com>
+Subject: Re: [PATCH v3 15/15] docs: Document the FAN_FS_ERROR event
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com,
+        Matthew Bobrowski <repnop@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 29, 2021 at 04:28:24PM -0400, Daniel Walsh wrote:
-> All this conversation is great, and I look forward to a better solution, but
-> if we go back to the patch, it was to fix an issue where the kernel is
-> requiring CAP_SYS_ADMIN for writing user Xattrs on link files and other
-> special files.
-> 
-> The documented reason for this is to prevent the users from using XATTRS to
-> avoid quota.
+On Tue, Jun 29, 2021 at 10:13 PM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Document the FAN_FS_ERROR event for user administrators and user space
+> developers.
+>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>
+> ---
+> Changes since v1:
+>   - Drop references to location record
+>   - Explain that the inode field is optional
+>   - Explain we are reporting only the first error
+> ---
+>  .../admin-guide/filesystem-monitoring.rst     | 70 +++++++++++++++++++
+>  Documentation/admin-guide/index.rst           |  1 +
+>  2 files changed, 71 insertions(+)
+>  create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
+>
+> diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
+> new file mode 100644
+> index 000000000000..c0ab1ad268b8
+> --- /dev/null
+> +++ b/Documentation/admin-guide/filesystem-monitoring.rst
+> @@ -0,0 +1,70 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +====================================
+> +File system Monitoring with fanotify
+> +====================================
 
-Huh?  Where is it so documented?  How file systems store and account
-for space used by extended attributes is a file-system specific
-question, but presumably any way that xattr's on regular files are
-accounted could also be used for xattr's on special files.
+It is great that you are adding an admin-guide book and it is surely
+not your fault that there is no existing admin-guide for fanotify to add to.
+However, the name of the book as well as this title are more generic than
+what you describe.
 
-Also, xattr's are limited to 32k, so it's not like users can evade
-_that_ much quota space, at least not without it being pretty painful.
-(Assuming that quota is even enabled, which most of the time, it
-isn't.)
+You see, watching all the deleted files in a filesystem or all modified files
+in a mount may also be considered as "filesystem monitoring" by some.
 
-						- Ted
+So my only request is that you keep the book name and title as is,
+but place your content under a chapter about "filesystem error monitoring".
 
-P.S.  I'll note that if ext4's ea_in_inode is enabled, for large
-xattr's, if you have 2 million files that all have the same 12k
-windows SID stored as an xattr, ext4 will store that xattr only once.
-Those two million files might be owned by different uids, so we made
-an explicit design choice not to worry about accounting for the quota
-for said 12k xattr value.  After all, if you can save the space and
-access cost of 2M * 12k if each file had to store its own copy of that
-xattr, perhaps not including it in the quota calculation isn't that
-bad.  :-)
+This way, other people can later fill the gaps.
+(CC Matthew Borowski who indicated his interest in doing so)
 
-We also don't account for the disk space used by symbolic links (since
-sometimes they can be stored in the inode as fast symlinks, and
-sometimes they might consume a data block).  But again, that's a file
-system specific implementation question.
+Thanks,
+Amir.
