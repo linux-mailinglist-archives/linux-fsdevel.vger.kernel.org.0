@@ -2,141 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D43733B8C90
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 05:09:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF2D83B8DCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 08:37:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238756AbhGADLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Jun 2021 23:11:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52924 "EHLO
+        id S234300AbhGAGkJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jul 2021 02:40:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238728AbhGADLj (ORCPT
+        with ESMTP id S233294AbhGAGkJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Jun 2021 23:11:39 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C4FC061756;
-        Wed, 30 Jun 2021 20:09:10 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id a14so2635067pls.4;
-        Wed, 30 Jun 2021 20:09:10 -0700 (PDT)
+        Thu, 1 Jul 2021 02:40:09 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24BBBC061756;
+        Wed, 30 Jun 2021 23:37:38 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id v3so6204836ioq.9;
+        Wed, 30 Jun 2021 23:37:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=if2bnw03Mu18gRjTYl4E6k8rtPnZizNZqXxBx0h9PIw=;
-        b=HOtemOj4Mf15W/3DOjhKWvrtyjA3aZ+zMbAY7cK0r0hLoltzyF9Bv+xPjfHtsqzUQ1
-         N2gohog5NbYXL0yRwKbNd4akreHkQwzN49Q07N2zGoQY+M0qhL8LU1gw6u8AqGFQtjSM
-         1EO0hGH4dmcwBrjz+zcHbI/lJUfi/FcdgODH41P8o1CLELgQP9cyqYAFx+/ESxO2P6hC
-         S6vFNl2Nx6TLWF7+DvUSpEZW6d5w9g8iwKcBMhqmhGqk2AeXI1bd4s6/+N5AWz+2tTgj
-         1+lyXiFnK1NIiB0uzUUXOIHhOkHwSG8RyEkVGGXUBGYDrgdvW4Ue7tfj/LsZihKhovle
-         aVxQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X3BOvpSFJuWPMMlKwpXq/9OQlZ1wmuvt8Dv+rwudvr4=;
+        b=nMdjG/iCZeYAL97LQzmcYlULHTFWRe5Zx/oeJgtSWzvFz7eGfhibK+65/Y8P6Plp/M
+         HfcF5/ET0r8eWJ7kT/zUrhA731G/az1ItckWNF4Fm25vMwebsfsqJxcBW+UakZykN3j7
+         Sgo3OYYaHM/rrZueJf3cV30aw9VCO31HgQKAsMzNZ22RBUDtwoMW2IKAuQtKIpoLDUTj
+         Y9fqmQHRl+bAIV2xVEuAdYCYKuFFv7gymW7Qfv3oSMeRcHpGVFUGCMuUGSs7x5TFG3zS
+         d/WCKOhv2CyFgeT4VyOu4KE4keSq2pC58nRlK96WMGOfRSZbaUq/f9WDZTD8hR2G3/W4
+         SlaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=if2bnw03Mu18gRjTYl4E6k8rtPnZizNZqXxBx0h9PIw=;
-        b=JptCThR/vkA8fXLTS0kDk+O21OjLzWpadAsk0kFa02H0hQ2YiJN5BBwx69lCbpb1A8
-         Tjv6dSDerQ9rT6lt+wGGkCo5u+a1XJ2EGt8lh9q/UtfUxFDcTRricrRlJfG7CBm/FGDH
-         nCX9k+DSg1iLPUIcOGjUJK5NBYndy3xZJKJ4hwmsamtCZkY/feqN943aExk7mMVqxSOD
-         M4FiveL19t01tF2dQshhxOSw/DrNa1QGR/j01+4SsITmCGVGhhRjxEuEKmCSEOrN23Uv
-         lm9Vs4bJpztETdcaVobDZgxiYS6EoJ8yQixPnLGxnv267kFPaUQEE/TPw+49PdCqmi9I
-         OffQ==
-X-Gm-Message-State: AOAM530DyzaNrvLiYB4cx/rNWC5cGJ6EWHTMYYMiMoFAoyRHqeoBqNkF
-        JAHLsplclTbW9C8CBFT5anM=
-X-Google-Smtp-Source: ABdhPJxTByK+P+JhJSoMlHQ1WX8c2iVJgwDRLr2gdIKy8yj7rZGcShTonHm/9tHa2D6U6ZJKDQ4wcg==
-X-Received: by 2002:a17:90a:f02:: with SMTP id 2mr4225720pjy.75.1625108949793;
-        Wed, 30 Jun 2021 20:09:09 -0700 (PDT)
-Received: from localhost.localdomain ([118.200.190.93])
-        by smtp.gmail.com with ESMTPSA id g10sm4568568pjv.46.2021.06.30.20.09.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jun 2021 20:09:09 -0700 (PDT)
-From:   Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
-To:     gustavoars@kernel.org, viro@zeniv.linux.org.uk
-Cc:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        slava@dubeyko.com, skhan@linuxfoundation.org,
-        gregkh@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzbot+b718ec84a87b7e73ade4@syzkaller.appspotmail.com
-Subject: [PATCH v2 3/3] hfs: add lock nesting notation to hfs_find_init
-Date:   Thu,  1 Jul 2021 11:07:56 +0800
-Message-Id: <20210701030756.58760-4-desmondcheongzx@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210701030756.58760-1-desmondcheongzx@gmail.com>
-References: <20210701030756.58760-1-desmondcheongzx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X3BOvpSFJuWPMMlKwpXq/9OQlZ1wmuvt8Dv+rwudvr4=;
+        b=lcc3lSoFxqwHSFhRKodJv9WzgMqJl69vjCHWZ0ZS1q2IuSVrxDvFhQfC8QNCclsRhC
+         b9HcDzGpodIrrf4FmfCcXAa9tItnKOn1PYtXtwMQ2aukpcnCxIpFCJDrZgl7ofD5zKvv
+         zZlb8Gk8hMGhq1/lNu/ThSFwN3DY2vl2zq8ERVKghytv4FgrlG3ERrC16V0HjzYFOl7V
+         cNEKDRtCXDXNlAygRpx7TsE4N4nWtNte+CKBCgZCLKtplBdL44HI6i0KqlEUCFNm3fNy
+         DBOXRRpNGUecl1iAfxR6arX5SZGOvaM4AXEfPt7Xk2PsBLtffHebrixb6JulNfYQDV83
+         /3mQ==
+X-Gm-Message-State: AOAM531T406oFZM6NsQQrRtnEWOi+FBdgKCqInyp4yO1pxI7VCZ9NaXd
+        WNmEeGSFks5VCzRVh5418wy6zHb3+BS/MEGNKPoX8CUtC68=
+X-Google-Smtp-Source: ABdhPJy8xjBXxLjA9k0bdyXJHM22ZDqwIMMeWlAU53EmAX8kqwxELWBTvATPFoweKSLNb7rVZWiMRw6szGvuYgkvk8o=
+X-Received: by 2002:a02:8790:: with SMTP id t16mr12276381jai.81.1625121457510;
+ Wed, 30 Jun 2021 23:37:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210629191035.681913-1-krisman@collabora.com>
+ <20210629191035.681913-13-krisman@collabora.com> <CAOQ4uxiUYAwj561=ap_Hq6AwRdAdZFY1yQ99Y9_ahsd82-qFug@mail.gmail.com>
+ <87v95vgsey.fsf@collabora.com>
+In-Reply-To: <87v95vgsey.fsf@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 1 Jul 2021 09:37:26 +0300
+Message-ID: <CAOQ4uxjPHQdsPcKY-WL-WE7tWGzaTmF3gzDEhCEPxW2-U3zjcg@mail.gmail.com>
+Subject: Re: [PATCH v3 12/15] fanotify: Introduce FAN_FS_ERROR event
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Syzbot reports a possible recursive lock:
-https://syzkaller.appspot.com/bug?id=f007ef1d7a31a469e3be7aeb0fde0769b18585db
+On Wed, Jun 30, 2021 at 8:43 PM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Amir Goldstein <amir73il@gmail.com> writes:
+>
+> >> +       fee->fsid = fee->mark->connector->fsid;
+> >> +
+> >> +       fsnotify_get_mark(fee->mark);
+> >> +
+> >> +       /*
+> >> +        * Error reporting needs to happen in atomic context.  If this
+> >> +        * inode's file handler is more than we initially predicted,
+> >> +        * there is nothing better we can do than report the error with
+> >> +        * a bad FH.
+> >> +        */
+> >> +       fh_len = fanotify_encode_fh_len(inode);
+> >> +       if (WARN_ON(fh_len > fee->max_fh_len))
+> >
+> > WARN_ON() is not acceptable for things that can logically happen
+> > if you think this is important you could use pr_warn_ratelimited()
+> > like we do in fanotify_encode_fh(),
+> > but since fs-monitor will observe the lack of FID anyway, I think
+> > there is little point in reporting this to kmsg.
+>
+> Hi Amir,
+>
+> Thanks for all the review so far.
+>
+> Consider that fh_len > max_fh_len can happen only if the filesystem
+> requires a longer handler for the failed inode than it requires for the
+> root inode.  Looking at the FH types, I don't think this would be
+> possible to happen currently, but this WARN_ON is trying to catch future
+> problems.
+>
 
-This happens due to missing lock nesting information. From the logs,
-we see that a call to hfs_fill_super is made to mount the hfs
-filesystem. While searching for the root inode, the lock on the
-catalog btree is grabbed. Then, when the parent of the root isn't
-found, a call to __hfs_bnode_create is made to create the parent of
-the root. This eventually leads to a call to hfs_ext_read_extent which
-grabs a lock on the extents btree.
+Don't get confused by FH types. A filesystem is not obliged to
+return a uniform and single handle_type nor uniform handle_size.
+Overlayfs FH size depends on the FH size of the fs in the layer
+the file is on, which may be different for different files.
 
-Since the order of locking is catalog btree -> extents btree, this
-lock hierarchy does not lead to a deadlock.
+> Notice this would not be a fs-monitor misuse of the uAPI,  but an actual
+> kernel bug. The FH size we predicted when allocating the static error
+> slot is not large enough for at least one FH of this filesystem.  So I
+> think a WARN_ON or a pr_warn is desired.  I will change it to a
+> pr_warn_ratelimited as you suggested.
+>
 
-To tell lockdep that this locking is safe, we add nesting notation to
-distinguish between catalog btrees, extents btrees, and attributes
-btrees (for HFS+). This has already been done in hfsplus.
+It would be a very minor kernel bug.
+It would mean that there is a filesystem that matters in practice
+for error reporting with different sizes of FH which you did not
+take into account.
 
-Reported-and-tested-by: syzbot+b718ec84a87b7e73ade4@syzkaller.appspotmail.com
-Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
----
- fs/hfs/bfind.c | 14 +++++++++++++-
- fs/hfs/btree.h |  7 +++++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
+There is also a solution, but I think it is an overkill -
+If you follow my suggestion to recreate the mark error event
+on dequeue, you can update max_fh_len and re-created the
+next event with larger buffer size.
 
-diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-index 4af318fbda77..ef9498a6e88a 100644
---- a/fs/hfs/bfind.c
-+++ b/fs/hfs/bfind.c
-@@ -25,7 +25,19 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
- 	fd->key = ptr + tree->max_key_len + 2;
- 	hfs_dbg(BNODE_REFS, "find_init: %d (%p)\n",
- 		tree->cnid, __builtin_return_address(0));
--	mutex_lock(&tree->tree_lock);
-+	switch (tree->cnid) {
-+	case HFS_CAT_CNID:
-+		mutex_lock_nested(&tree->tree_lock, CATALOG_BTREE_MUTEX);
-+		break;
-+	case HFS_EXT_CNID:
-+		mutex_lock_nested(&tree->tree_lock, EXTENTS_BTREE_MUTEX);
-+		break;
-+	case HFS_ATTR_CNID:
-+		mutex_lock_nested(&tree->tree_lock, ATTR_BTREE_MUTEX);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
- 	return 0;
- }
- 
-diff --git a/fs/hfs/btree.h b/fs/hfs/btree.h
-index 4ba45caf5939..0e6baee93245 100644
---- a/fs/hfs/btree.h
-+++ b/fs/hfs/btree.h
-@@ -13,6 +13,13 @@ typedef int (*btree_keycmp)(const btree_key *, const btree_key *);
- 
- #define NODE_HASH_SIZE  256
- 
-+/* B-tree mutex nested subclasses */
-+enum hfs_btree_mutex_classes {
-+	CATALOG_BTREE_MUTEX,
-+	EXTENTS_BTREE_MUTEX,
-+	ATTR_BTREE_MUTEX,
-+};
-+
- /* A HFS BTree held in memory */
- struct hfs_btree {
- 	struct super_block *sb;
--- 
-2.25.1
+In that case, admin will only see a few  pr_warn_ratelimited()
+messages until fs-monitors reads the overflowed error event.
 
+Also, I think it would be wise to use the NULL-FID convention
+with different handle_types to report the different cases of:
+- Failed encode (FILEID_INVALID)
+- No inode (FILEID_ROOT)
+
+Also, better use FANOTIFY_INLINE_FH_LEN as mimimum
+for error event buffer size.
+
+Thanks,
+Amir.
