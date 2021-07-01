@@ -2,183 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DC9C3B8DF4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 08:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20C883B8E6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 09:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234529AbhGAHAq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jul 2021 03:00:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45948 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234250AbhGAHAp (ORCPT
+        id S234945AbhGAH60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jul 2021 03:58:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42535 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234882AbhGAH6Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jul 2021 03:00:45 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00FA0C061756
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jun 2021 23:58:15 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id i6so5095011pfq.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jun 2021 23:58:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2j5sHj4fTNFiJ0fEg2DaZPxjU5FE/29m/UxTOq2+cJM=;
-        b=CWBvumUIFSBprc0SSVVgKWGcMqWbl49LahF1J1JVggc05hYvBuWhIlldpUGWT7s985
-         zmcvvtazHjkIgCQJMS3CfoAAV/6g77nz76Zkim3nyeYcnd9scK86qpJSyq/IJ2bdAfba
-         XnNkaPBEnKL0rX1J++ZL0soChZCeL0SNzNzw8gLwelobKlheWyHNasm7Xz+jZy9ETWCz
-         Tc5uMYfjWSruQCdEj7BgxsabRFecR56Tvgv+6UIjarCXf4Lu1EvqHHQf61QcIIQuF8ew
-         s89e5xiJ7ynoKKnonMnmcs6KzV6bGm4bDwWmGS+ndEElLlUXwkJHgCTyU4zg6DXNFcXo
-         sLzg==
+        Thu, 1 Jul 2021 03:58:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625126154;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3kkO+UX+kTqcYTfctkZezZWjIyhRJe4+TF27ND409mQ=;
+        b=XAxmP6rgEnkAVVoev6TINLe9Hb2LYQRiqsuRieWTd2NthRD185l7OpW0Ij2ctEoia5UvDQ
+        zspI+ZFTKZXOSNX85vdRfNUWwoQAxtqLA8ZF4vTtMOb5outdilQrtKrz9lGdh6tGqPi2w4
+        YoaeaO9gyOURFYNa+IohLnkBOTNs9zo=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-392-hu7bGW5wMu2RGJoSN7XwoQ-1; Thu, 01 Jul 2021 03:55:52 -0400
+X-MC-Unique: hu7bGW5wMu2RGJoSN7XwoQ-1
+Received: by mail-pg1-f198.google.com with SMTP id p14-20020a63fe0e0000b0290223af1026abso3578644pgh.20
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Jul 2021 00:55:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2j5sHj4fTNFiJ0fEg2DaZPxjU5FE/29m/UxTOq2+cJM=;
-        b=RfgX5e13M3f1JdsVwoq82KarBu0/SNYPh89f+j21V73qBHBr+EtsXt+JkBSWdM6psh
-         pavBTblMs2UyHDeuVEBPEKcolp2cx7liDdRCEVL2Y3hDCozXAWX90kvawpEqk5vieYRC
-         9++247eDVccVnw4EhJrfC3+zRaGsYQ1fUMnL5p9z9t3KQu+hjK+HjaRQmwW9cwkEeKla
-         6O/5IMJFpdiXXquJrPzBjt8Y6GR+MJCsJPxywP7kuLhketEwRXvB+PH3vHBPoph7VEO3
-         va2x8CvnFyqTqSy+Wsf7PblpY4vgXyeIgQ3wyXnHFfWtbZGvYx8i7G08XnvMNTabANgz
-         o8wQ==
-X-Gm-Message-State: AOAM532jWOQTfNDj1ly+nMJzCm3McjW53JwHcZg6x1JB6B/ZaA4wlAH7
-        S6uj2pR1luj3c3/9tA77G8Y=
-X-Google-Smtp-Source: ABdhPJyKLbRIxKJhQBEwxQfBoIoyPUL9iSq25qDD7BID9eWLaLpzoHugBkSEfGVf554bCOPTu5UdgQ==
-X-Received: by 2002:aa7:81d8:0:b029:308:1d33:a5fa with SMTP id c24-20020aa781d80000b02903081d33a5famr37531090pfn.55.1625122694574;
-        Wed, 30 Jun 2021 23:58:14 -0700 (PDT)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id 75sm1064024pfb.159.2021.06.30.23.58.12
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jun 2021 23:58:14 -0700 (PDT)
-From:   lijiazi <jqqlijiazi@gmail.com>
-X-Google-Original-From: lijiazi <lijiazi@xiaomi.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     lijiazi <lijiazi@xiaomi.com>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fuse: fix use-after-free issue in fuse_read_interrupt()
-Date:   Thu,  1 Jul 2021 14:58:07 +0800
-Message-Id: <1625122687-30115-1-git-send-email-lijiazi@xiaomi.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=3kkO+UX+kTqcYTfctkZezZWjIyhRJe4+TF27ND409mQ=;
+        b=uJb+ypZHZ4oJ0271WIiXdSel13/iTrIQfPdKUfAeAKgev9ytM6IqZ8WuTYTVP0K/H9
+         WMLUTrIkdiEMSA/NYZ7DYpVP2cNEo3w7uBE30ldoIcaJ7E6LU0gWN3RKucPn8kynGt+d
+         AbF824lWo9LsDnPdoISpHuKTYACHxufRpSeIO5K1VnkZqeh+k8sydLBs5CYH3Y9EdqCN
+         lkrRDpCTMwZNaxWaQSFlomWzJOYgFC00DLap3hg9ay3d97ad0GEd9KKHHqjnIVMrfbsp
+         2KcjX4wIRmZ2U/waJLb0sCWn9l4ZmeyaKQgt8P4UBTdUKC8itl3MhqtpO0gnJZDmM9HU
+         BvKQ==
+X-Gm-Message-State: AOAM530TqZ/BPtOt3dvhie0owQsFEK6+Cs9UJIgYaQZwvm7RltJWoHri
+        f3eHCUqMbinZGXiBypEL0jL3ZzyZIo1uHFy/WLGQmmY3QZ1nrgtlocxSEhLgDVlU6os7O3a0FyZ
+        VwwPzS1Ifd7QDk8WnqVV+vGHM8w==
+X-Received: by 2002:a63:794:: with SMTP id 142mr6983314pgh.198.1625126151673;
+        Thu, 01 Jul 2021 00:55:51 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx+FJQkpNj2SGJqmkRE0B+JqnTbGGKE300PtWwx2ZJ5+wT2j2YuZ2VlEIodQZCrR0j2AFzwoQ==
+X-Received: by 2002:a63:794:: with SMTP id 142mr6983291pgh.198.1625126151412;
+        Thu, 01 Jul 2021 00:55:51 -0700 (PDT)
+Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id a6sm23966070pfo.212.2021.07.01.00.55.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Jul 2021 00:55:50 -0700 (PDT)
+Subject: Re: [PATCH v8 09/10] vduse: Introduce VDUSE - vDPA Device in
+ Userspace
+To:     Yongji Xie <xieyongji@bytedance.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20210615141331.407-1-xieyongji@bytedance.com>
+ <20210615141331.407-10-xieyongji@bytedance.com>
+ <YNSatrDFsg+4VvH4@stefanha-x1.localdomain>
+ <CACycT3vaXQ4dxC9QUzXXJs7og6TVqqVGa8uHZnTStacsYAiFwQ@mail.gmail.com>
+ <YNw+q/ADMPviZi6S@stefanha-x1.localdomain>
+ <CACycT3t6M5i0gznABm52v=rdmeeLZu8smXAOLg+WsM3WY1fgTw@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <7264cb0b-7072-098e-3d22-2b7e89216545@redhat.com>
+Date:   Thu, 1 Jul 2021 15:55:36 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <CACycT3t6M5i0gznABm52v=rdmeeLZu8smXAOLg+WsM3WY1fgTw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is a potential race between fuse_read_interrupt and
-fuse_dev_do_write contexts as shown below:
 
-TASK1:
-fuse_dev_do_write:
-                               TASK2:
-                               fuse_dev_do_read:
-				 spin_lock(&fiq->lock);
-				 fuse_read_interrupt();
-				   list_del_init(&req->intr_entry);
-  fuse_request_end()//now req->intr_entry
-	            //is empty so put this req
-TASK3:
-fuse_flash:
-  fuse_simple_request();
-  fuse_put_request();
-  kmem_cache_free();//free req
+在 2021/7/1 下午2:50, Yongji Xie 写道:
+> On Wed, Jun 30, 2021 at 5:51 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>> On Tue, Jun 29, 2021 at 10:59:51AM +0800, Yongji Xie wrote:
+>>> On Mon, Jun 28, 2021 at 9:02 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>>>> On Tue, Jun 15, 2021 at 10:13:30PM +0800, Xie Yongji wrote:
+>>>>> +/* ioctls */
+>>>>> +
+>>>>> +struct vduse_dev_config {
+>>>>> +     char name[VDUSE_NAME_MAX]; /* vduse device name */
+>>>>> +     __u32 vendor_id; /* virtio vendor id */
+>>>>> +     __u32 device_id; /* virtio device id */
+>>>>> +     __u64 features; /* device features */
+>>>>> +     __u64 bounce_size; /* bounce buffer size for iommu */
+>>>>> +     __u16 vq_size_max; /* the max size of virtqueue */
+>>>> The VIRTIO specification allows per-virtqueue sizes. A device can have
+>>>> two virtqueues, where the first one allows up to 1024 descriptors and
+>>>> the second one allows only 128 descriptors, for example.
+>>>>
+>>> Good point! But it looks like virtio-vdpa/virtio-pci doesn't support
+>>> that now. All virtqueues have the same maximum size.
+>> I see struct vpda_config_ops only supports a per-device max vq size:
+>> u16 (*get_vq_num_max)(struct vdpa_device *vdev);
+>>
+>> virtio-pci supports per-virtqueue sizes because the struct
+>> virtio_pci_common_cfg->queue_size register is per-queue (controlled by
+>> queue_select).
+>>
+> Oh, yes. I miss queue_select.
+>
+>> I guess this is a question for Jason: will vdpa will keep this limitation?
+>> If yes, then VDUSE can stick to it too without running into problems in
+>> the future.
 
-After TASK3 free req, TASK2 access this req in fuse_read_interrupt
-and gets below crash:
-==================================================================
-[   63.712079] BUG: KASAN: use-after-free in
-fuse_read_interrupt+0x18c/0x948
-[   63.712084] Read of size 8 at addr ffffff8049797d50 by task
-Thread-5/5508
-[   63.712093] CPU: 4 PID: 5508 Comm: Thread-5 Tainted: G S         O
-5.4.86-qgki-debug-ge1de60c2024c #1
-[   63.712096] Call trace:
-[   63.712100]  dump_backtrace+0x0/0x2cc
-[   63.712102]  show_stack+0x18/0x24
-[   63.712106]  dump_stack+0x134/0x1c4
-[   63.712109]  print_address_description+0x88/0x578
-[   63.712111]  __kasan_report+0x1c4/0x1e0
-[   63.712113]  kasan_report+0x14/0x20
-[   63.712115]  __asan_report_load8_noabort+0x1c/0x28
-[   63.712117]  fuse_read_interrupt+0x18c/0x948
-[   63.712119]  fuse_dev_do_read+0x678/0x11a0
-[   63.712121]  fuse_dev_read+0x108/0x17c
-[   63.712124]  __vfs_read+0x408/0x544
-[   63.712126]  vfs_read+0x114/0x2a8
-[   63.712127]  ksys_read+0xd8/0x18c
-[   63.712129]  __arm64_sys_read+0x78/0x8c
-[   63.712132]  el0_svc_common+0x134/0x2cc
-[   63.712134]  el0_svc_handler+0xd0/0xe0
-[   63.712136]  el0_svc+0x8/0xc
-[   63.712137]
-[   63.712141] Allocated by task 5535:
-[   63.712146]  __kasan_kmalloc+0x100/0x1c0
-[   63.712148]  kasan_slab_alloc+0x18/0x24
-[   63.712150]  kmem_cache_alloc+0x320/0x3c4
-[   63.712152]  fuse_get_req+0x1f0/0x6a4
-[   63.712154]  fuse_simple_request+0x5c/0xb90
-[   63.712156]  fuse_flush_times+0x340/0x474
-[   63.712158]  fuse_write_inode+0x90/0xc4
-[   63.712160]  write_inode+0x1ec/0x478
-[   63.712162]  __writeback_single_inode+0x420/0x838
-[   63.712165]  writeback_single_inode+0x128/0x708
-[   63.712167]  write_inode_now+0x2b0/0x370
-[   63.712169]  fuse_release+0x9c/0x100
-[   63.712171]  __fput+0x18c/0x4a8
-[   63.712173]  ____fput+0x10/0x1c
-[   63.712176]  task_work_run+0x118/0x1ec
-[   63.712178]  do_exit+0x500/0x1810
-[   63.712179]  do_group_exit+0x1c8/0x200
-[   63.712182]  get_signal+0xc44/0x1194
-[   63.712183]  do_signal+0x134/0x464
-[   63.712185]  do_notify_resume+0x110/0x1c4
-[   63.712187]  work_pending+0x8/0x14
-[   63.712188]
-[   63.712191] Freed by task 5535:
-[   63.712194]  __kasan_slab_free+0x168/0x238
-[   63.712196]  kasan_slab_free+0x14/0x24
-[   63.712198]  slab_free_freelist_hook+0xe0/0x164
-[   63.712201]  kmem_cache_free+0xfc/0x358
-[   63.712202]  fuse_put_request+0x148/0x1a4
-[   63.712204]  fuse_simple_request+0x810/0xb90
-[   63.712206]  fuse_flush_times+0x340/0x474
-[   63.712208]  fuse_write_inode+0x90/0xc4
-[   63.712210]  write_inode+0x1ec/0x478
-[   63.712212]  __writeback_single_inode+0x420/0x838
-[   63.712214]  writeback_single_inode+0x128/0x708
-[   63.712217]  write_inode_now+0x2b0/0x370
-[   63.712219]  fuse_release+0x9c/0x100
-[   63.712221]  __fput+0x18c/0x4a8
-[   63.712222]  ____fput+0x10/0x1c
-[   63.712224]  task_work_run+0x118/0x1ec
-[   63.712226]  do_exit+0x500/0x1810
-[   63.712228]  do_group_exit+0x1c8/0x200
-[   63.712229]  get_signal+0xc44/0x1194
-[   63.712231]  do_signal+0x134/0x464
-[   63.712233]  do_notify_resume+0x110/0x1c4
-[   63.712235]  work_pending+0x8/0x14
 
-Put list_del_init after the code access req, if intr_entry not
-empty, fuse_request_end will wait for fiq->lock, req will not
-free before TASK2 unlock fiq->lock.
+I think it's better to extend the get_vq_num_max() per virtqueue.
 
-Signed-off-by: lijiazi <lijiazi@xiaomi.com>
----
- fs/fuse/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Currently, vDPA assumes the parent to have a global max size. This seems 
+to work on most of the parents but not vp-vDPA (which could be backed by 
+QEMU, in that case cvq's size is smaller).
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 817a0b1..bef21b2 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1045,13 +1045,13 @@ __releases(fiq->lock)
- 	unsigned reqsize = sizeof(ih) + sizeof(arg);
- 	int err;
- 
--	list_del_init(&req->intr_entry);
- 	memset(&ih, 0, sizeof(ih));
- 	memset(&arg, 0, sizeof(arg));
- 	ih.len = reqsize;
- 	ih.opcode = FUSE_INTERRUPT;
- 	ih.unique = (req->in.h.unique | FUSE_INT_REQ_BIT);
- 	arg.unique = req->in.h.unique;
-+	list_del_init(&req->intr_entry);
- 
- 	spin_unlock(&fiq->lock);
- 	if (nbytes < reqsize)
--- 
-2.7.4
+Fortunately, we haven't enabled had cvq support in the userspace now.
+
+I can post the fixes.
+
+
+>>
+>>>>> +     __u16 padding; /* padding */
+>>>>> +     __u32 vq_num; /* the number of virtqueues */
+>>>>> +     __u32 vq_align; /* the allocation alignment of virtqueue's metadata */
+>>>> I'm not sure what this is?
+>>>>
+>>>   This will be used by vring_create_virtqueue() too.
+>> If there is no official definition for the meaning of this value then
+>> "/* same as vring_create_virtqueue()'s vring_align parameter */" would
+>> be clearer. That way the reader knows what to research in order to
+>> understand how this field works.
+>>
+> OK.
+>
+>> I don't remember but maybe it was used to support vrings when the
+>> host/guest have non-4KB page sizes. I wonder if anyone has an official
+>> definition for this value?
+> Not sure. Maybe we might need some alignment which is less than
+> PAGE_SIZE sometimes.
+
+
+So I see CCW always use 4096, but I'm not sure whether or not it's 
+smaller than PAGE_SIZE.
+
+Thanks
+
+
+>
+> Thanks,
+> Yongji
+>
 
