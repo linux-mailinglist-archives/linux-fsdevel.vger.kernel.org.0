@@ -2,128 +2,283 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7A743B920C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 15:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 285DD3B921F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 15:16:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236589AbhGANNN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jul 2021 09:13:13 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39072 "EHLO
+        id S236674AbhGANS2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jul 2021 09:18:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48347 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236614AbhGANNN (ORCPT
+        by vger.kernel.org with ESMTP id S236637AbhGANS1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jul 2021 09:13:13 -0400
+        Thu, 1 Jul 2021 09:18:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625145042;
+        s=mimecast20190719; t=1625145356;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=D1mka1MCqXkPMDnOJSpZhf+XXpeG/R7ugnhLphP29nc=;
-        b=gyj3jmsY+RIBYFT3yduRG4lqo9MYEcm9EOVIkjAUg9KmBS3PFL9rCWMVWh6W2GnydhZ+Dr
-        huHtV5oVvU9smRGPvvDXRpcfcUD8g+zlOjYDkWPhJVZoCuUQ11Xjek07NsI+P+qPi33q7R
-        mk9/uSwlRPAM4+jeIoSxCl81c0Q8AF4=
+        bh=2FzcUtZnWf2crS3Iy4vIMzI/4b5Wprx4OSu15nOYlXM=;
+        b=ehniGOxNRm/tr4eLMn7RDJR4D+rdwuQOBOxbqwwiWuKX3ukt4i7VwUFbRI0m4urbzsDn1m
+        naXufjalAjmwbHVNNYj2a7DhwxLa75+vVSWxxtqj/TilkH76k90RsDG0JI5++s3E4iOgNR
+        6je/NwCNgpwfY+2VAgUNWOgV9Zt9QrI=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-150-Hdamh4NqM0i13Qq9_7jUYA-1; Thu, 01 Jul 2021 09:10:41 -0400
-X-MC-Unique: Hdamh4NqM0i13Qq9_7jUYA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-300-pE_8q3jJN4uiIjQ-fSeD2Q-1; Thu, 01 Jul 2021 09:15:55 -0400
+X-MC-Unique: pE_8q3jJN4uiIjQ-fSeD2Q-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2992A80292A;
-        Thu,  1 Jul 2021 13:10:39 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-113-118.rdu2.redhat.com [10.10.113.118])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E524F60C13;
-        Thu,  1 Jul 2021 13:10:30 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 372C822054F; Thu,  1 Jul 2021 09:10:30 -0400 (EDT)
-Date:   Thu, 1 Jul 2021 09:10:30 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Daniel Walsh <dwalsh@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
- files if caller has CAP_SYS_RESOURCE
-Message-ID: <20210701131030.GB159380@redhat.com>
-References: <20210629152007.GC5231@redhat.com>
- <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
- <20210629173530.GD5231@redhat.com>
- <f4992b3a-a939-5bc4-a5da-0ce8913bd569@redhat.com>
- <YNvvLIv16jY8mfP8@mit.edu>
- <YNwmXOqT7LgbeVPn@work-vm>
- <YNyECw/1FzDCW3G8@mit.edu>
- <YNyHVhGPe1bFAt+C@work-vm>
- <YNzNLTxflKbDi8W2@mit.edu>
- <YN2BYXv79PswrN2E@work-vm>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D40EF802E66;
+        Thu,  1 Jul 2021 13:15:52 +0000 (UTC)
+Received: from localhost (ovpn-115-84.ams2.redhat.com [10.36.115.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A06C60862;
+        Thu,  1 Jul 2021 13:15:51 +0000 (UTC)
+Date:   Thu, 1 Jul 2021 14:15:50 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Re: Re: [PATCH v8 10/10] Documentation: Add documentation for
+ VDUSE
+Message-ID: <YN3ABqCMLQf7ejOm@stefanha-x1.localdomain>
+References: <20210615141331.407-1-xieyongji@bytedance.com>
+ <20210615141331.407-11-xieyongji@bytedance.com>
+ <YNSCH6l31zwPxBjL@stefanha-x1.localdomain>
+ <CACycT3uxnQmXWsgmNVxQtiRhz1UXXTAJFY3OiAJqokbJH6ifMA@mail.gmail.com>
+ <YNxCDpM3bO5cPjqi@stefanha-x1.localdomain>
+ <CACycT3taKhf1cWp3Jd0aSVekAZvpbR-_fkyPLQ=B+jZBB5H=8Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IKAacefjibf5YNdD"
 Content-Disposition: inline
-In-Reply-To: <YN2BYXv79PswrN2E@work-vm>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <CACycT3taKhf1cWp3Jd0aSVekAZvpbR-_fkyPLQ=B+jZBB5H=8Q@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 01, 2021 at 09:48:33AM +0100, Dr. David Alan Gilbert wrote:
-> * Theodore Ts'o (tytso@mit.edu) wrote:
-> > On Wed, Jun 30, 2021 at 04:01:42PM +0100, Dr. David Alan Gilbert wrote:
-> > > 
-> > > Even if you fix symlinks, I don't think it fixes device nodes or
-> > > anything else where the permissions bitmap isn't purely used as the
-> > > permissions on the inode.
-> > 
-> > I think we're making a mountain out of a molehill.  Again, very few
-> > people are using quota these days.  And if you give someone write
-> > access to a 8TB disk, do you really care if they can "steal" 32k worth
-> > of space (which is the maximum size of an xattr, enforced by the VFS).
-> > 
-> > OK, but what about character mode devices?  First of all, most users
-> > don't have access to huge number of devices, but let's assume
-> > something absurd.  Let's say that a user has write access to *1024*
-> > devices.  (My /dev has 233 character mode devices, and I have write
-> > access to well under a dozen.)
-> > 
-> > An 8TB disk costs about $200.  So how much of the "stolen" quota space
-> > are we talking about, assuming the user has access to 1024 devices,
-> > and the file system actually supports a 32k xattr.
-> > 
-> >     32k * 1024 * $200 / 8TB / (1024*1024*1024) = $0.000763 = 0.0763 cents
-> > 
-> > A 2TB SSD is less around $180, so even if we calculate the prices
-> > based on SSD space, we're still talking about a quarter of a penny.
-> > 
-> > Why are we worrying about this?
-> 
-> I'm not worrying about storage cost, but we would need to define what
-> the rules are on who can write and change a user.* xattr on a device
-> node.  It doesn't feel sane to make it anyone who can write to the
-> device; then everyone can start leaving droppings on /dev/null.
-> 
-> The other evilness I can imagine, is if there's a 32k limit on xattrs on
-> a node, an evil user could write almost 32k of junk to the node
-> and then break the next login that tries to add an acl or breaks the
-> next relabel.
 
-I guess 64k is per xattr VFS size limit.
+--IKAacefjibf5YNdD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-#define XATTR_SIZE_MAX 65536
+On Thu, Jul 01, 2021 at 06:00:48PM +0800, Yongji Xie wrote:
+> On Wed, Jun 30, 2021 at 6:06 PM Stefan Hajnoczi <stefanha@redhat.com> wro=
+te:
+> >
+> > On Tue, Jun 29, 2021 at 01:43:11PM +0800, Yongji Xie wrote:
+> > > On Mon, Jun 28, 2021 at 9:02 PM Stefan Hajnoczi <stefanha@redhat.com>=
+ wrote:
+> > > > On Tue, Jun 15, 2021 at 10:13:31PM +0800, Xie Yongji wrote:
+> > > > > +     static void *iova_to_va(int dev_fd, uint64_t iova, uint64_t=
+ *len)
+> > > > > +     {
+> > > > > +             int fd;
+> > > > > +             void *addr;
+> > > > > +             size_t size;
+> > > > > +             struct vduse_iotlb_entry entry;
+> > > > > +
+> > > > > +             entry.start =3D iova;
+> > > > > +             entry.last =3D iova + 1;
+> > > >
+> > > > Why +1?
+> > > >
+> > > > I expected the request to include *len so that VDUSE can create a b=
+ounce
+> > > > buffer for the full iova range, if necessary.
+> > > >
+> > >
+> > > The function is used to translate iova to va. And the *len is not
+> > > specified by the caller. Instead, it's used to tell the caller the
+> > > length of the contiguous iova region from the specified iova. And the
+> > > ioctl VDUSE_IOTLB_GET_FD will get the file descriptor to the first
+> > > overlapped iova region. So using iova + 1 should be enough here.
+> >
+> > Does the entry.last field have any purpose with VDUSE_IOTLB_GET_FD? I
+> > wonder why userspace needs to assign a value at all if it's always +1.
+> >
+>=20
+> If we need to get some iova regions in the specified range, we need
+> the entry.last field. For example, we can use [0, ULONG_MAX] to get
+> the first overlapped iova region which might be [4096, 8192]. But in
+> this function, we don't use VDUSE_IOTLB_GET_FD like this. We need to
+> get the iova region including the specified iova.
 
-I just wrote a simple program to write "user.<N>" xattrs of size 1K
-each and could easily write 1M xattrs. So that 1G worth data right
-there. I did not try to push it further.
+I see, thanks for explaining!
 
-So a user can write lot of data in the form of user.* xattrs on
-symlinks and device nodes if were to open it unconditionally. Hence
-permission semantics will probably will have to defined properly.
+> > > > > +             return addr + iova - entry.start;
+> > > > > +     }
+> > > > > +
+> > > > > +- VDUSE_DEV_GET_FEATURES: Get the negotiated features
+> > > >
+> > > > Are these VIRTIO feature bits? Please explain how feature negotiati=
+on
+> > > > works. There must be a way for userspace to report the device's
+> > > > supported feature bits to the kernel.
+> > > >
+> > >
+> > > Yes, these are VIRTIO feature bits. Userspace will specify the
+> > > device's supported feature bits when creating a new VDUSE device with
+> > > ioctl(VDUSE_CREATE_DEV).
+> >
+> > Can the VDUSE device influence feature bit negotiation? For example, if
+> > the VDUSE virtio-blk device does not implement discard/write-zeroes, how
+> > does QEMU or the guest find out about this?
+> >
+>=20
+> There is a "features" field in struct vduse_dev_config which is used
+> to do feature negotiation.
 
-I am wondering will it be alright if owner of the file (or CAP_FOWNER),
-is allowed to write user.* xattrs on symlinks and special files.
+This approach is more restrictive than required by the VIRTIO
+specification:
 
-Vivek
+  "The device SHOULD accept any valid subset of features the driver
+  accepts, otherwise it MUST fail to set the FEATURES_OK device status
+  bit when the driver writes it."
+
+  https://docs.oasis-open.org/virtio/virtio/v1.1/cs01/virtio-v1.1-cs01.html=
+#x1-130002
+
+The spec allows a device to reject certain subsets of features. For
+example, if feature B depends on feature A and can only be enabled when
+feature A is also enabled.
+
+=46rom your description I think VDUSE would accept feature B without
+feature A since the device implementation has no opportunity to fail
+negotiation with custom logic.
+
+Ideally VDUSE would send a SET_FEATURES message to userspace, allowing
+the device implementation full flexibility in which subsets of features
+to accept.
+
+This is a corner case. Many or maybe even all existing VIRTIO devices
+don't need this flexibility, but I want to point out this limitation in
+the VDUSE interface because it may cause issues in the future.
+
+> > > > > +- VDUSE_DEV_UPDATE_CONFIG: Update the configuration space and in=
+ject a config interrupt
+> > > >
+> > > > Does this mean the contents of the configuration space are cached by
+> > > > VDUSE?
+> > >
+> > > Yes, but the kernel will also store the same contents.
+> > >
+> > > > The downside is that the userspace code cannot generate the
+> > > > contents on demand. Most devices doin't need to generate the conten=
+ts
+> > > > on demand, so I think this is okay but I had expected a different
+> > > > interface:
+> > > >
+> > > > kernel->userspace VDUSE_DEV_GET_CONFIG
+> > > > userspace->kernel VDUSE_DEV_INJECT_CONFIG_IRQ
+> > > >
+> > >
+> > > The problem is how to handle the failure of VDUSE_DEV_GET_CONFIG. We
+> > > will need lots of modification of virtio codes to support that. So to
+> > > make it simple, we choose this way:
+> > >
+> > > userspace -> kernel VDUSE_DEV_SET_CONFIG
+> > > userspace -> kernel VDUSE_DEV_INJECT_CONFIG_IRQ
+> > >
+> > > > I think you can leave it the way it is, but I wanted to mention thi=
+s in
+> > > > case someone thinks it's important to support generating the conten=
+ts of
+> > > > the configuration space on demand.
+> > > >
+> > >
+> > > Sorry, I didn't get you here. Can't VDUSE_DEV_SET_CONFIG and
+> > > VDUSE_DEV_INJECT_CONFIG_IRQ achieve that?
+> >
+> > If the contents of the configuration space change continuously, then the
+> > VDUSE_DEV_SET_CONFIG approach is inefficient and might have race
+> > conditions. For example, imagine a device where the driver can read a
+> > timer from the configuration space. I think the VIRTIO device model
+> > allows that although I'm not aware of any devices that do something like
+> > it today. The problem is that VDUSE_DEV_SET_CONFIG would have to be
+> > called frequently to keep the timer value updated even though the guest
+> > driver probably isn't accessing it.
+> >
+>=20
+> OK, I get you now. Since the VIRTIO specification says "Device
+> configuration space is generally used for rarely-changing or
+> initialization-time parameters". I assume the VDUSE_DEV_SET_CONFIG
+> ioctl should not be called frequently.
+
+The spec uses MUST and other terms to define the precise requirements.
+Here the language (especially the word "generally") is weaker and means
+there may be exceptions.
+
+Another type of access that doesn't work with the VDUSE_DEV_SET_CONFIG
+approach is reads that have side-effects. For example, imagine a field
+containing an error code if the device encounters a problem unrelated to
+a specific virtqueue request. Reading from this field resets the error
+code to 0, saving the driver an extra configuration space write access
+and possibly race conditions. It isn't possible to implement those
+semantics suing VDUSE_DEV_SET_CONFIG. It's another corner case, but it
+makes me think that the interface does not allow full VIRTIO semantics.
+
+> > What's worse is that there might be race conditions where other
+> > driver->device operations are supposed to update the configuration space
+> > but VDUSE_DEV_SET_CONFIG means that the VDUSE kernel code is caching an
+> > outdated copy.
+> >
+>=20
+> I'm not sure. Should the device and driver be able to access the same
+> fields concurrently?
+
+Yes. The VIRTIO spec has a generation count to handle multi-field
+accesses so that consistency can be ensured:
+https://docs.oasis-open.org/virtio/virtio/v1.1/cs01/virtio-v1.1-cs01.html#x=
+1-180004
+
+>=20
+> > Again, I don't think it's a problem for existing devices in the VIRTIO
+> > specification. But I'm not 100% sure and future devices might require
+> > what I've described, so the VDUSE_DEV_SET_CONFIG interface could become
+> > a problem.
+> >
+>=20
+> If so, maybe a new interface can be added at that time. The
+> VDUSE_DEV_GET_CONFIG might be better, but I still did not find a good
+> way for failure handling.
+
+I'm not aware of the details of why the current approach was necessary,
+so I don't have any concrete suggestions. Sorry!
+
+Stefan
+
+--IKAacefjibf5YNdD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmDdwAYACgkQnKSrs4Gr
+c8jehAgAnluXJzRbFUuK89b8dvdKf3FY6Lv1D9Kt6Wr/asGLoWxeorzLE3QiA8Ao
+x24ZIi8kSiLVTJ79hVdtkQAKeRbL8KXzRiCdxWmVRI6dTik6VCuewC2tjjJi1i0w
+yryJff3u3EimSMmxAnAkjP5mL5ed821qmydnLX4oxSXjvoBPF10g4rX4pORIfGva
+3iDlvFNbXQPGZS/J+LXE6QDTg52QaVExKwRWcZVyO/6ZF4CKud3QVHTrPjnNS4ny
+3ZubmWb2U0byyX+dqox47Ldq5B5arWwxDdO80KP4IqqG+PItumN36tm/KqTI6+89
+cmt6ky4mmI9qrVLmYo2+MOGwCUEisA==
+=ktns
+-----END PGP SIGNATURE-----
+
+--IKAacefjibf5YNdD--
 
