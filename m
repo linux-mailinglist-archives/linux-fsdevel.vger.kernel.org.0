@@ -2,98 +2,250 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 176FE3B9007
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 11:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A7563B9035
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 12:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235813AbhGAJxP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jul 2021 05:53:15 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:60214 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235300AbhGAJxP (ORCPT
+        id S235952AbhGAKDf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jul 2021 06:03:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58198 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235933AbhGAKDe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jul 2021 05:53:15 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 5CA2C1FD29;
-        Thu,  1 Jul 2021 09:50:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1625133044;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cTB9nVM4uA6qiO0zlpVYuohcq0FJKgfhWvwgxn4CuCE=;
-        b=kIdeRxepWU8Ec/pgwqEnXjkdL0VFul/miZ+keEBCmPH25PLu/Uhizd7O1S68/zOY34wt6P
-        2mT9U+6YcyipYAAhm8M0s85fPmRAzYkSaJ0wncqR5vvKZZjdkyl6kO/skJCaMBRQp3h7aK
-        FfN9oya/CtETQy67HrFtzNZuT/zGX4g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1625133044;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cTB9nVM4uA6qiO0zlpVYuohcq0FJKgfhWvwgxn4CuCE=;
-        b=ZRu8U95A1GAgEC3fioffJpFavaOFkYze5RFRdGtgq2/C+bNTS/TF5srioMS511UYK7yUhK
-        ChgP1uwP+uLiuRCQ==
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
-        by relay2.suse.de (Postfix) with ESMTP id 400E3A3B87;
-        Thu,  1 Jul 2021 09:50:44 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id C7474DA6FD; Thu,  1 Jul 2021 11:48:13 +0200 (CEST)
-Date:   Thu, 1 Jul 2021 11:48:13 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     Arthur Williams <taaparthur@gmail.com>, 0day robot <lkp@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [fs]  87f196bed3: xfstests.generic.157.fail
-Message-ID: <20210701094813.GV2610@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        kernel test robot <oliver.sang@intel.com>,
-        Arthur Williams <taaparthur@gmail.com>, 0day robot <lkp@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20210619110148.30412-1-taaparthur@gmail.com>
- <20210701021928.GB21279@xsang-OptiPlex-9020>
+        Thu, 1 Jul 2021 06:03:34 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D3FFC0617A8
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jul 2021 03:01:02 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id w17so7537330edd.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Jul 2021 03:01:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qOYZNd8tzTZWQQ3iE/sKulUoLJ+DUUAeTlRapzbCzyo=;
+        b=QSYlrD/MVr22v17jK2LXYkFKyNvXa0YtIYF3RTHJJ96XgQMn9ZdBpDSuIl776nTqDj
+         ZZ8IuDUT4n9Ep52Xzk0RDkyrkzxv3JwMWXoKleEDDWHooUD5W5822cyOIET5JiCXulby
+         JAjhI5jYtXrjjcp7gfS8T373fXHVCkGeU9EobRUUj9OfU40q1cl2Q1oOhWyFLAgM613K
+         LgaOz8L+f1U86RJx/r7kggiyvlkMSVmZFE1SGzCnUuy3ZklwPNDYuX2wEZH7rwrej/td
+         gwQZCuONr9oVPSL91ymdqJ9VOd2kslHupYAZuuskcnLB8gL++4dMAPNKxhu/UG51UU5U
+         4xPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qOYZNd8tzTZWQQ3iE/sKulUoLJ+DUUAeTlRapzbCzyo=;
+        b=d0fZQNg3VYl0ioAvOILarigj5XgcZa3nfRCfa/7fR4DRagbPRbyzy43FiM/qIdkx9w
+         hGNjXtEQdxQwdxDEirw5VDSBVZk6ilzXAsQZ1m1bh4y91HBa5bRT3Jp8C0/P3BQ43hdk
+         fWRg0XGBheS8PKwBHDdSxsSUDI7SUVeDZBUDsunTMBLuBydZ5xlpmbkvOedtVqXUlq7T
+         y5Ff/lqhCmEgnD4CskIeQAywq/12xLcHvlVy50e3wWhhS5VrdZZiizVY2WZMWVYGnFvv
+         g6Op32kqjsFU5G/Hw6KZELECyc8RBGiM74Do1WkMD0x/tyGEU87In1vtGf4ky2yM5Z6J
+         FAkA==
+X-Gm-Message-State: AOAM530k1JIfj1AEhuDHxhTihueCtdl/jzNxH7zibiDoMWwhlgk9rz6D
+        pPpQoz+pDkrR5ABVhSzZD/98CxMBgyImMfJ0QZmt
+X-Google-Smtp-Source: ABdhPJyVuZAS/8fRhn8JfTgP4stvjkAYWDbtWQVryrBZd8Z2Eh+Eo9sdOMWCKMsJZJcpoIcUAu683H7RRLEbnF1GDBs=
+X-Received: by 2002:a05:6402:4243:: with SMTP id g3mr35275741edb.118.1625133660893;
+ Thu, 01 Jul 2021 03:01:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210701021928.GB21279@xsang-OptiPlex-9020>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+References: <20210615141331.407-1-xieyongji@bytedance.com> <20210615141331.407-11-xieyongji@bytedance.com>
+ <YNSCH6l31zwPxBjL@stefanha-x1.localdomain> <CACycT3uxnQmXWsgmNVxQtiRhz1UXXTAJFY3OiAJqokbJH6ifMA@mail.gmail.com>
+ <YNxCDpM3bO5cPjqi@stefanha-x1.localdomain>
+In-Reply-To: <YNxCDpM3bO5cPjqi@stefanha-x1.localdomain>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Thu, 1 Jul 2021 18:00:48 +0800
+Message-ID: <CACycT3taKhf1cWp3Jd0aSVekAZvpbR-_fkyPLQ=B+jZBB5H=8Q@mail.gmail.com>
+Subject: Re: Re: Re: [PATCH v8 10/10] Documentation: Add documentation for VDUSE
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 01, 2021 at 10:19:28AM +0800, kernel test robot wrote:
-> generic/156	[not run] xfs_io funshare  failed (old kernel/wrong fs?)
-> generic/157	- output mismatch (see /lkp/benchmarks/xfstests/results//generic/157.out.bad)
->     --- tests/generic/157.out	2021-06-28 16:41:45.000000000 +0000
->     +++ /lkp/benchmarks/xfstests/results//generic/157.out.bad	2021-12-01 20:44:35.949001218 +0000
->     @@ -14,7 +14,7 @@
->      Try to reflink a device
->      XFS_IOC_CLONE_RANGE: Invalid argument
->      Try to reflink to a dir
->     -TEST_DIR/test-157/dir1: Is a directory
->     +XFS_IOC_CLONE_RANGE: Is a directory
+On Wed, Jun 30, 2021 at 6:06 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>
+> On Tue, Jun 29, 2021 at 01:43:11PM +0800, Yongji Xie wrote:
+> > On Mon, Jun 28, 2021 at 9:02 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+> > > On Tue, Jun 15, 2021 at 10:13:31PM +0800, Xie Yongji wrote:
+> > > > +     static void *iova_to_va(int dev_fd, uint64_t iova, uint64_t *len)
+> > > > +     {
+> > > > +             int fd;
+> > > > +             void *addr;
+> > > > +             size_t size;
+> > > > +             struct vduse_iotlb_entry entry;
+> > > > +
+> > > > +             entry.start = iova;
+> > > > +             entry.last = iova + 1;
+> > >
+> > > Why +1?
+> > >
+> > > I expected the request to include *len so that VDUSE can create a bounce
+> > > buffer for the full iova range, if necessary.
+> > >
+> >
+> > The function is used to translate iova to va. And the *len is not
+> > specified by the caller. Instead, it's used to tell the caller the
+> > length of the contiguous iova region from the specified iova. And the
+> > ioctl VDUSE_IOTLB_GET_FD will get the file descriptor to the first
+> > overlapped iova region. So using iova + 1 should be enough here.
+>
+> Does the entry.last field have any purpose with VDUSE_IOTLB_GET_FD? I
+> wonder why userspace needs to assign a value at all if it's always +1.
+>
 
-The sense of the error hasn't changed but the output is different so
-it needs some filter again.
+If we need to get some iova regions in the specified range, we need
+the entry.last field. For example, we can use [0, ULONG_MAX] to get
+the first overlapped iova region which might be [4096, 8192]. But in
+this function, we don't use VDUSE_IOTLB_GET_FD like this. We need to
+get the iova region including the specified iova.
 
->      Try to reflink to a device
->      XFS_IOC_CLONE_RANGE: Invalid argument
->     ...
->     (Run 'diff -u /lkp/benchmarks/xfstests/tests/generic/157.out /lkp/benchmarks/xfstests/results//generic/157.out.bad'  to see the entire diff)
-> generic/158	- output mismatch (see /lkp/benchmarks/xfstests/results//generic/158.out.bad)
->     --- tests/generic/158.out	2021-06-28 16:41:45.000000000 +0000
->     +++ /lkp/benchmarks/xfstests/results//generic/158.out.bad	2021-12-01 20:44:37.783001265 +0000
->     @@ -18,7 +18,7 @@
->      Try to dedupe a device
->      XFS_IOC_FILE_EXTENT_SAME: Invalid argument
->      Try to dedupe to a dir
->     -TEST_DIR/test-158/dir1: Is a directory
->     +XFS_IOC_FILE_EXTENT_SAME: Is a directory
+> >
+> > > > +             fd = ioctl(dev_fd, VDUSE_IOTLB_GET_FD, &entry);
+> > > > +             if (fd < 0)
+> > > > +                     return NULL;
+> > > > +
+> > > > +             size = entry.last - entry.start + 1;
+> > > > +             *len = entry.last - iova + 1;
+> > > > +             addr = mmap(0, size, perm_to_prot(entry.perm), MAP_SHARED,
+> > > > +                         fd, entry.offset);
+> > > > +             close(fd);
+> > > > +             if (addr == MAP_FAILED)
+> > > > +                     return NULL;
+> > > > +
+> > > > +             /* do something to cache this iova region */
+> > >
+> > > How is userspace expected to manage iotlb mmaps? When should munmap(2)
+> > > be called?
+> > >
+> >
+> > The simple way is using a list to store the iotlb mappings. And we
+> > should call the munmap(2) for the old mappings when VDUSE_UPDATE_IOTLB
+> > or VDUSE_STOP_DATAPLANE message is received.
+>
+> Thanks for explaining. It would be helpful to have a description of
+> IOTLB operation in this document.
+>
 
-Same.
+Sure.
 
->      Try to dedupe to a device
->      XFS_IOC_FILE_EXTENT_SAME: Invalid argument
->     ...
->     (Run 'diff -u /lkp/benchmarks/xfstests/tests/generic/158.out /lkp/benchmarks/xfstests/results//generic/158.out.bad'  to see the entire diff)
+> > > Should userspace expect VDUSE_IOTLB_GET_FD to return a full chunk of
+> > > guest RAM (e.g. multiple gigabytes) that can be cached permanently or
+> > > will it return just enough pages to cover [start, last)?
+> > >
+> >
+> > It should return one iotlb mapping that covers [start, last). In
+> > vhost-vdpa cases, it might be a full chunk of guest RAM. In
+> > virtio-vdpa cases, it might be the whole bounce buffer or one coherent
+> > mapping (produced by dma_alloc_coherent()).
+>
+> Great, thanks. Adding something about this to the documentation would
+> help others implementing VDUSE devices or libraries.
+>
+
+OK.
+
+> > > > +
+> > > > +             return addr + iova - entry.start;
+> > > > +     }
+> > > > +
+> > > > +- VDUSE_DEV_GET_FEATURES: Get the negotiated features
+> > >
+> > > Are these VIRTIO feature bits? Please explain how feature negotiation
+> > > works. There must be a way for userspace to report the device's
+> > > supported feature bits to the kernel.
+> > >
+> >
+> > Yes, these are VIRTIO feature bits. Userspace will specify the
+> > device's supported feature bits when creating a new VDUSE device with
+> > ioctl(VDUSE_CREATE_DEV).
+>
+> Can the VDUSE device influence feature bit negotiation? For example, if
+> the VDUSE virtio-blk device does not implement discard/write-zeroes, how
+> does QEMU or the guest find out about this?
+>
+
+There is a "features" field in struct vduse_dev_config which is used
+to do feature negotiation.
+
+> > > > +- VDUSE_DEV_UPDATE_CONFIG: Update the configuration space and inject a config interrupt
+> > >
+> > > Does this mean the contents of the configuration space are cached by
+> > > VDUSE?
+> >
+> > Yes, but the kernel will also store the same contents.
+> >
+> > > The downside is that the userspace code cannot generate the
+> > > contents on demand. Most devices doin't need to generate the contents
+> > > on demand, so I think this is okay but I had expected a different
+> > > interface:
+> > >
+> > > kernel->userspace VDUSE_DEV_GET_CONFIG
+> > > userspace->kernel VDUSE_DEV_INJECT_CONFIG_IRQ
+> > >
+> >
+> > The problem is how to handle the failure of VDUSE_DEV_GET_CONFIG. We
+> > will need lots of modification of virtio codes to support that. So to
+> > make it simple, we choose this way:
+> >
+> > userspace -> kernel VDUSE_DEV_SET_CONFIG
+> > userspace -> kernel VDUSE_DEV_INJECT_CONFIG_IRQ
+> >
+> > > I think you can leave it the way it is, but I wanted to mention this in
+> > > case someone thinks it's important to support generating the contents of
+> > > the configuration space on demand.
+> > >
+> >
+> > Sorry, I didn't get you here. Can't VDUSE_DEV_SET_CONFIG and
+> > VDUSE_DEV_INJECT_CONFIG_IRQ achieve that?
+>
+> If the contents of the configuration space change continuously, then the
+> VDUSE_DEV_SET_CONFIG approach is inefficient and might have race
+> conditions. For example, imagine a device where the driver can read a
+> timer from the configuration space. I think the VIRTIO device model
+> allows that although I'm not aware of any devices that do something like
+> it today. The problem is that VDUSE_DEV_SET_CONFIG would have to be
+> called frequently to keep the timer value updated even though the guest
+> driver probably isn't accessing it.
+>
+
+OK, I get you now. Since the VIRTIO specification says "Device
+configuration space is generally used for rarely-changing or
+initialization-time parameters". I assume the VDUSE_DEV_SET_CONFIG
+ioctl should not be called frequently.
+
+> What's worse is that there might be race conditions where other
+> driver->device operations are supposed to update the configuration space
+> but VDUSE_DEV_SET_CONFIG means that the VDUSE kernel code is caching an
+> outdated copy.
+>
+
+I'm not sure. Should the device and driver be able to access the same
+fields concurrently?
+
+> Again, I don't think it's a problem for existing devices in the VIRTIO
+> specification. But I'm not 100% sure and future devices might require
+> what I've described, so the VDUSE_DEV_SET_CONFIG interface could become
+> a problem.
+>
+
+If so, maybe a new interface can be added at that time. The
+VDUSE_DEV_GET_CONFIG might be better, but I still did not find a good
+way for failure handling.
+
+Thanks,
+Yongji
