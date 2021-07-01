@@ -2,103 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EBEA3B9410
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 17:37:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A15123B949B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 18:19:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233421AbhGAPkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jul 2021 11:40:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48492 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233064AbhGAPkQ (ORCPT
+        id S231902AbhGAQWM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jul 2021 12:22:12 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:57018 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229664AbhGAQWM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jul 2021 11:40:16 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14259C061762;
-        Thu,  1 Jul 2021 08:37:46 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id o33-20020a05600c5121b02901e360c98c08so7106813wms.5;
-        Thu, 01 Jul 2021 08:37:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4AawkGCXS8076zqa2ceQS9Q+T6ktDkZLlSiDG0RFEDc=;
-        b=MJKdeO/ZRwo92yK/m4HDNEVwfcJnNgUjgPXa0GIXoXtxhcFf2eduSinBeG2lfRf7N8
-         arfHhzmKJc6OjgZ3u80Wnav/tMMO/PvDQ64/1bltYZ4fbwjhOruxijD9bekyyEMA5k2+
-         VHEDfg3BaTZO7tHm6DhTfiALkkBlE7c1wphVoiYiNW/EtgTYQjOBynRZRb3eygsNhTYz
-         /fzYMkpljjvNMTswP5ouLQ4uY6vi1GEuPlUHb8mIRzwqEYvfGm160rmdE/pBHP5fTeG+
-         FO+LVWd6kmajhXkRpUmPxx+F4Ff7lAoKkynlmf7lVimZAJtUlm06XjxAXqsieNzldK9C
-         hn0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4AawkGCXS8076zqa2ceQS9Q+T6ktDkZLlSiDG0RFEDc=;
-        b=NEPyQj12qRdnvQBhqfJFaGXzjUl1yLc/90KdBWik6o+ToTsNsLw/4Iwuzl5azSjlb1
-         QP4PN3vZ1L48Ic4jRJlZPzauYyaZ4hJ/1SZaX35cWohrfxd3RjNT1WeyEqSxB8WLjavk
-         2f5+x07Hd6clUb3cUCvzH9O04IE95RLXTBNTrUqagyj63LsZxExBAer9IkOkifBazjXa
-         ZaI2ZCrua0AHq2bZvmCasEAJa88WfsXn8xXNN4vbE8G7a9uwxRauRxm2ziQ+jdbMr7jt
-         AdewF5OoO+PGRlDpHPnl/Ut5RGpthH9FP/HC2MXv6+yjsInd8paDch6crDm+ru5A6kqN
-         Kf3A==
-X-Gm-Message-State: AOAM531Fy445228CEZfCDf/Qdpt6PnhTzBh+u4wLyGKN6/J8/mOcoQlp
-        2CefJ+YPznC5/jDFDD/HgRhbbkW1EuNayec/y4oS/i9lcG0w6iz7
-X-Google-Smtp-Source: ABdhPJw83WgbDLafRLinqmNHcEfgEMwgPJTNgx2lfoPjuMO6IZwQYVdVB2s5O0sbbb4w6nVh2gP6BADr/5Fvpd4lOgU=
-X-Received: by 2002:a05:600c:21c8:: with SMTP id x8mr11345208wmj.167.1625153864584;
- Thu, 01 Jul 2021 08:37:44 -0700 (PDT)
+        Thu, 1 Jul 2021 12:22:12 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 55B7C22776;
+        Thu,  1 Jul 2021 16:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1625156381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NI411+lZVg/kfY6i+HxzJiLtUW34MQ0s71hOf+u+/S8=;
+        b=wkw1P57w+QixXUxD+pYzvOdAPtb/ZrxaTY7DDfvGhtfycU342KS/dY83DR1HXbk4n6A7Ng
+        ACj8G863QvMf07sRrDuzh/qBjBR5TRre8DKeNfLfAsgBiNEW0BaIo7NV4Lc1Huzko93thf
+        9s3DXyUfHh5snLACXVjN97RLfvZjFiA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1625156381;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NI411+lZVg/kfY6i+HxzJiLtUW34MQ0s71hOf+u+/S8=;
+        b=fixFcNwTUYcuB2UJ9d4N805WDxyvRm9CbqEgOEl0sqjL0DQp1rKmDrU4aNCn7PQG9CNbZa
+        Xa8b0tvl/8wWa0CA==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 47512A3B8C;
+        Thu,  1 Jul 2021 16:19:41 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 2C5881F2CCE; Thu,  1 Jul 2021 18:19:41 +0200 (CEST)
+Date:   Thu, 1 Jul 2021 18:19:41 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [GIT PULL] Hole puch vs page cache filling races fixes for
+ 5.14-rc1
+Message-ID: <20210701161941.GA29014@quack2.suse.cz>
+References: <20210630172529.GB13951@quack2.suse.cz>
+ <CAHk-=whuUxfoYj=dRnzRybg_sOdFPMDx_t06Lz936Pgnh6QCTQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210628123801.3511-1-wangshilong1991@gmail.com> <20210628223403.GE664593@dread.disaster.area>
-In-Reply-To: <20210628223403.GE664593@dread.disaster.area>
-From:   Wang Shilong <wangshilong1991@gmail.com>
-Date:   Thu, 1 Jul 2021 23:37:33 +0800
-Message-ID: <CAP9B-QnCjz4UTALx0W4QA=7qTcEHTVOVid+kJW8Te-dgJoobHg@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: forbid invalid project ID
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whuUxfoYj=dRnzRybg_sOdFPMDx_t06Lz936Pgnh6QCTQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 29, 2021 at 6:34 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Mon, Jun 28, 2021 at 08:38:01AM -0400, Wang Shilong wrote:
-> > fileattr_set_prepare() should check if project ID
-> > is valid, otherwise dqget() will return NULL for
-> > such project ID quota.
+On Wed 30-06-21 18:15:09, Linus Torvalds wrote:
+> On Wed, Jun 30, 2021 at 10:25 AM Jan Kara <jack@suse.cz> wrote:
 > >
-> > Signed-off-by: Wang Shilong <wshilong@ddn.com>
-> > ---
-> > v1->v2: try to fix in the VFS
-> > ---
-> >  fs/ioctl.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > index 1e2204fa9963..5db5b218637b 100644
-> > --- a/fs/ioctl.c
-> > +++ b/fs/ioctl.c
-> > @@ -845,6 +845,9 @@ static int fileattr_set_prepare(struct inode *inode,
-> >       if (fa->fsx_cowextsize == 0)
-> >               fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
-> >
-> > +     if (!projid_valid(KPROJIDT_INIT(fa->fsx_projid)))
-> > +             return -EINVAL;
->
-> This needs to go further up in this function in the section where
-> project IDs passed into this function are validated. Projids are
-> only allowed to be changed when current_user_ns() == &init_user_ns,
-> so this needs to be associated with that verification context.
->
-> This check should also use make_kprojid(), please, not open code
-> KPROJIDT_INIT.
+> >   could you please pull from
+> 
+> No.
+> 
+> There is no way I'll merge something this broken.
+> 
+> Looking up a page in the page cache is just about the most critical
+> thing there is, and this introduces a completely pointless lock for
+> that situation.
+> 
+> Does it take the lock only when it creates the page? No. It takes the
+> lock in filemap_fault() even if it found a valid page in the page
+> cache.
 
-You are right, let me send a V3
+Hum, fair point. I did filemap_fault() the way it is because I was mostly
+just lifting fs-private lock into the VFS one in that code path and
+ext4/xfs/f2fs and others grabbed this lock unconditionally in their fault
+paths (before calling into filemap_fault()). But you are right that now
+that we have the lock in VFS, we can actually do better and have a fast
+path when everything is cached and uptodate where we can avoid grabbing the
+lock. That being said I don't expect the optimization to matter too much
+because in do_read_fault() we first call do_fault_around() which will
+exactly map pages that are already in cache and uptodate so we usually get
+into filemap_fault() only for pages that are not present or not uptodate.
+So do you think the optimization is still worth it despite
+do_fault_around()? I guess I can try to see how many times I can see a page
+that would benefit from this optimization in filemap_fault() on my test
+machine - there are also write faults that don't call do_fault_around() -
+and if it's noticeable fraction reorganize filemap_fault() so that we don't
+take the lock if the page is present and uptodate...
 
->
-> Cheers,
->
-> Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
