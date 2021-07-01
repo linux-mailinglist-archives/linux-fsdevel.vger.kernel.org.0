@@ -2,137 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF2D83B8DCC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 08:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D65573B8DDB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jul 2021 08:50:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234300AbhGAGkJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jul 2021 02:40:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41394 "EHLO
+        id S234376AbhGAGwr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jul 2021 02:52:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233294AbhGAGkJ (ORCPT
+        with ESMTP id S234209AbhGAGwq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jul 2021 02:40:09 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24BBBC061756;
-        Wed, 30 Jun 2021 23:37:38 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id v3so6204836ioq.9;
-        Wed, 30 Jun 2021 23:37:38 -0700 (PDT)
+        Thu, 1 Jul 2021 02:52:46 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F23D3C0617A8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jun 2021 23:50:15 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id v20so8596030eji.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Jun 2021 23:50:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=X3BOvpSFJuWPMMlKwpXq/9OQlZ1wmuvt8Dv+rwudvr4=;
-        b=nMdjG/iCZeYAL97LQzmcYlULHTFWRe5Zx/oeJgtSWzvFz7eGfhibK+65/Y8P6Plp/M
-         HfcF5/ET0r8eWJ7kT/zUrhA731G/az1ItckWNF4Fm25vMwebsfsqJxcBW+UakZykN3j7
-         Sgo3OYYaHM/rrZueJf3cV30aw9VCO31HgQKAsMzNZ22RBUDtwoMW2IKAuQtKIpoLDUTj
-         Y9fqmQHRl+bAIV2xVEuAdYCYKuFFv7gymW7Qfv3oSMeRcHpGVFUGCMuUGSs7x5TFG3zS
-         d/WCKOhv2CyFgeT4VyOu4KE4keSq2pC58nRlK96WMGOfRSZbaUq/f9WDZTD8hR2G3/W4
-         SlaA==
+        bh=j02ToljqO7cRBUGAX2kOb5odUf1+MulKZRF56vB9XJw=;
+        b=szPt3yjQkK/eOHnZmjZxK4k+ezfPy7N6CPhm+x7EICOpDhKGVX0SiYPkZ71JWWvZoa
+         8pTmz5fIarGaEdAOZPXlqb3Ft+IEB/7WrLziKTUMgfJwbxqKu7WpgOrDt2jDUDrJtIWr
+         cbeLlyv90jBAQgkaG5PcPMpKIESF32ydtpd5t9BVRkR/UxOzB7/03fJbEeEofSeS0xm4
+         nBRhtXHTm/IybqaRL0yZyrTa8PU3gB2gMQ79/soCsEBZSt5m98thaMV4L8/9brwhRN7o
+         B363iYyE78ClSv8CfWaatXdNXexk42WbsmRlR9FUB8yp+pkqine3MzByepxq/Xp9WTk6
+         QDZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=X3BOvpSFJuWPMMlKwpXq/9OQlZ1wmuvt8Dv+rwudvr4=;
-        b=lcc3lSoFxqwHSFhRKodJv9WzgMqJl69vjCHWZ0ZS1q2IuSVrxDvFhQfC8QNCclsRhC
-         b9HcDzGpodIrrf4FmfCcXAa9tItnKOn1PYtXtwMQ2aukpcnCxIpFCJDrZgl7ofD5zKvv
-         zZlb8Gk8hMGhq1/lNu/ThSFwN3DY2vl2zq8ERVKghytv4FgrlG3ERrC16V0HjzYFOl7V
-         cNEKDRtCXDXNlAygRpx7TsE4N4nWtNte+CKBCgZCLKtplBdL44HI6i0KqlEUCFNm3fNy
-         DBOXRRpNGUecl1iAfxR6arX5SZGOvaM4AXEfPt7Xk2PsBLtffHebrixb6JulNfYQDV83
-         /3mQ==
-X-Gm-Message-State: AOAM531T406oFZM6NsQQrRtnEWOi+FBdgKCqInyp4yO1pxI7VCZ9NaXd
-        WNmEeGSFks5VCzRVh5418wy6zHb3+BS/MEGNKPoX8CUtC68=
-X-Google-Smtp-Source: ABdhPJy8xjBXxLjA9k0bdyXJHM22ZDqwIMMeWlAU53EmAX8kqwxELWBTvATPFoweKSLNb7rVZWiMRw6szGvuYgkvk8o=
-X-Received: by 2002:a02:8790:: with SMTP id t16mr12276381jai.81.1625121457510;
- Wed, 30 Jun 2021 23:37:37 -0700 (PDT)
+        bh=j02ToljqO7cRBUGAX2kOb5odUf1+MulKZRF56vB9XJw=;
+        b=DaSoEXEhGi32RMaac7gl6XHUiRToMLJ19Q4N/2tNMAFOC6Dlk2Ltr60uwzD2S6Fy5+
+         ZDG0TfzO+e8NMvVG6DO9o5nuxn9HtFwE7++JbXkuck63nUKncuvwULslMeURE72kfFrL
+         uz9I9Nl4ClnFsj0JYH+zUrP5QOy0gBtsj3+pOdWyAw2l5S0SIQM+TUHMIP0Akre297lF
+         rIpK8szuVyYkfYf3LJSLqXEpr0OUvFqACXtbTJ/RdKliAr4cADzFTOJUvCVFIXGPwato
+         V7KLrqfA/p+f+UbJFdJUyfNuqcfSaPexK78CiG5N6rMxGwHOuGNYUgk6X3x9PsEtEcX+
+         eiUw==
+X-Gm-Message-State: AOAM530Dzqc1OeeUeRvnPC+53M5JLIaQYRsBywYwME91wnyVmRL6ai2I
+        xq+cXIaT9uWnqbZ5opxPO1O2ES11+jmDxjeD5NYM
+X-Google-Smtp-Source: ABdhPJw5rO5qehXjBGvgudrN3VY1PB04pXHwf1f+BSEDIJShRRuy3gy/c2hvero6OzD/zDnU0PCg34TMpYMSKS1otIo=
+X-Received: by 2002:a17:907:1b11:: with SMTP id mp17mr39880031ejc.1.1625122214373;
+ Wed, 30 Jun 2021 23:50:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210629191035.681913-1-krisman@collabora.com>
- <20210629191035.681913-13-krisman@collabora.com> <CAOQ4uxiUYAwj561=ap_Hq6AwRdAdZFY1yQ99Y9_ahsd82-qFug@mail.gmail.com>
- <87v95vgsey.fsf@collabora.com>
-In-Reply-To: <87v95vgsey.fsf@collabora.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 1 Jul 2021 09:37:26 +0300
-Message-ID: <CAOQ4uxjPHQdsPcKY-WL-WE7tWGzaTmF3gzDEhCEPxW2-U3zjcg@mail.gmail.com>
-Subject: Re: [PATCH v3 12/15] fanotify: Introduce FAN_FS_ERROR event
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
+References: <20210615141331.407-1-xieyongji@bytedance.com> <20210615141331.407-10-xieyongji@bytedance.com>
+ <YNSatrDFsg+4VvH4@stefanha-x1.localdomain> <CACycT3vaXQ4dxC9QUzXXJs7og6TVqqVGa8uHZnTStacsYAiFwQ@mail.gmail.com>
+ <YNw+q/ADMPviZi6S@stefanha-x1.localdomain>
+In-Reply-To: <YNw+q/ADMPviZi6S@stefanha-x1.localdomain>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Thu, 1 Jul 2021 14:50:03 +0800
+Message-ID: <CACycT3t6M5i0gznABm52v=rdmeeLZu8smXAOLg+WsM3WY1fgTw@mail.gmail.com>
+Subject: Re: Re: Re: [PATCH v8 09/10] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 30, 2021 at 8:43 PM Gabriel Krisman Bertazi
-<krisman@collabora.com> wrote:
+On Wed, Jun 30, 2021 at 5:51 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
 >
-> Amir Goldstein <amir73il@gmail.com> writes:
->
-> >> +       fee->fsid = fee->mark->connector->fsid;
-> >> +
-> >> +       fsnotify_get_mark(fee->mark);
-> >> +
-> >> +       /*
-> >> +        * Error reporting needs to happen in atomic context.  If this
-> >> +        * inode's file handler is more than we initially predicted,
-> >> +        * there is nothing better we can do than report the error with
-> >> +        * a bad FH.
-> >> +        */
-> >> +       fh_len = fanotify_encode_fh_len(inode);
-> >> +       if (WARN_ON(fh_len > fee->max_fh_len))
+> On Tue, Jun 29, 2021 at 10:59:51AM +0800, Yongji Xie wrote:
+> > On Mon, Jun 28, 2021 at 9:02 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+> > >
+> > > On Tue, Jun 15, 2021 at 10:13:30PM +0800, Xie Yongji wrote:
+> > > > +/* ioctls */
+> > > > +
+> > > > +struct vduse_dev_config {
+> > > > +     char name[VDUSE_NAME_MAX]; /* vduse device name */
+> > > > +     __u32 vendor_id; /* virtio vendor id */
+> > > > +     __u32 device_id; /* virtio device id */
+> > > > +     __u64 features; /* device features */
+> > > > +     __u64 bounce_size; /* bounce buffer size for iommu */
+> > > > +     __u16 vq_size_max; /* the max size of virtqueue */
+> > >
+> > > The VIRTIO specification allows per-virtqueue sizes. A device can have
+> > > two virtqueues, where the first one allows up to 1024 descriptors and
+> > > the second one allows only 128 descriptors, for example.
+> > >
 > >
-> > WARN_ON() is not acceptable for things that can logically happen
-> > if you think this is important you could use pr_warn_ratelimited()
-> > like we do in fanotify_encode_fh(),
-> > but since fs-monitor will observe the lack of FID anyway, I think
-> > there is little point in reporting this to kmsg.
+> > Good point! But it looks like virtio-vdpa/virtio-pci doesn't support
+> > that now. All virtqueues have the same maximum size.
 >
-> Hi Amir,
+> I see struct vpda_config_ops only supports a per-device max vq size:
+> u16 (*get_vq_num_max)(struct vdpa_device *vdev);
 >
-> Thanks for all the review so far.
->
-> Consider that fh_len > max_fh_len can happen only if the filesystem
-> requires a longer handler for the failed inode than it requires for the
-> root inode.  Looking at the FH types, I don't think this would be
-> possible to happen currently, but this WARN_ON is trying to catch future
-> problems.
+> virtio-pci supports per-virtqueue sizes because the struct
+> virtio_pci_common_cfg->queue_size register is per-queue (controlled by
+> queue_select).
 >
 
-Don't get confused by FH types. A filesystem is not obliged to
-return a uniform and single handle_type nor uniform handle_size.
-Overlayfs FH size depends on the FH size of the fs in the layer
-the file is on, which may be different for different files.
+Oh, yes. I miss queue_select.
 
-> Notice this would not be a fs-monitor misuse of the uAPI,  but an actual
-> kernel bug. The FH size we predicted when allocating the static error
-> slot is not large enough for at least one FH of this filesystem.  So I
-> think a WARN_ON or a pr_warn is desired.  I will change it to a
-> pr_warn_ratelimited as you suggested.
+> I guess this is a question for Jason: will vdpa will keep this limitation?
+> If yes, then VDUSE can stick to it too without running into problems in
+> the future.
+>
+> > > > +     __u16 padding; /* padding */
+> > > > +     __u32 vq_num; /* the number of virtqueues */
+> > > > +     __u32 vq_align; /* the allocation alignment of virtqueue's metadata */
+> > >
+> > > I'm not sure what this is?
+> > >
+> >
+> >  This will be used by vring_create_virtqueue() too.
+>
+> If there is no official definition for the meaning of this value then
+> "/* same as vring_create_virtqueue()'s vring_align parameter */" would
+> be clearer. That way the reader knows what to research in order to
+> understand how this field works.
 >
 
-It would be a very minor kernel bug.
-It would mean that there is a filesystem that matters in practice
-for error reporting with different sizes of FH which you did not
-take into account.
+OK.
 
-There is also a solution, but I think it is an overkill -
-If you follow my suggestion to recreate the mark error event
-on dequeue, you can update max_fh_len and re-created the
-next event with larger buffer size.
+> I don't remember but maybe it was used to support vrings when the
+> host/guest have non-4KB page sizes. I wonder if anyone has an official
+> definition for this value?
 
-In that case, admin will only see a few  pr_warn_ratelimited()
-messages until fs-monitors reads the overflowed error event.
-
-Also, I think it would be wise to use the NULL-FID convention
-with different handle_types to report the different cases of:
-- Failed encode (FILEID_INVALID)
-- No inode (FILEID_ROOT)
-
-Also, better use FANOTIFY_INLINE_FH_LEN as mimimum
-for error event buffer size.
+Not sure. Maybe we might need some alignment which is less than
+PAGE_SIZE sometimes.
 
 Thanks,
-Amir.
+Yongji
