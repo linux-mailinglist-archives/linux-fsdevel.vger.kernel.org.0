@@ -2,142 +2,255 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 580E83B9E67
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jul 2021 11:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C39B3B9F8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jul 2021 13:12:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231417AbhGBJkz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Jul 2021 05:40:55 -0400
-Received: from out0.migadu.com ([94.23.1.103]:27231 "EHLO out0.migadu.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231422AbhGBJku (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Jul 2021 05:40:50 -0400
-Subject: Re: [powerpc][5.13.0-next-20210701] Kernel crash while running
- ltp(chdir01) tests
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1625218696;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UWJ+pqDT0mb1en6A52Tk3LmCoscuU9h3+MdS6wNnXpo=;
-        b=S7UNFDqRBtCV1Vxrghz/uh4InvwBHSoL4HrpnjdG/E0/OWehVxGnuShbynzAYCW8UshBo+
-        oAgJ97xfFZqaHUcHDLxz2NNb41KNgT9t/mpQTmksr0/BXG0qrgJnSaBLRTiMy1awaFMM1K
-        7vTS7yhxz0Kct+8REfCeEIMsNp3693A=
-To:     Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     linuxppc-dev@lists.ozlabs.org, yi.zhang@huawei.com, jack@suse.cz
-References: <26ACA75D-E13D-405B-9BFC-691B5FB64243@linux.vnet.ibm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Guoqing Jiang <guoqing.jiang@linux.dev>
-Message-ID: <bf1c5b38-92f1-65db-e210-a97a199718ba@linux.dev>
-Date:   Fri, 2 Jul 2021 17:38:10 +0800
+        id S231755AbhGBLPN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Jul 2021 07:15:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54052 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231130AbhGBLPM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Jul 2021 07:15:12 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A0CBC061762;
+        Fri,  2 Jul 2021 04:12:41 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id y76so11159049iof.6;
+        Fri, 02 Jul 2021 04:12:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=29mqB4d/0JGo1jbK5BbrdHh+6Rbk+2mvbm3FjqAEBQg=;
+        b=pV9cy2OfhtSEXcuGY1aqZLuCiqd112B3UHzcR/m2fa90m1CjCXH5RgKzQLyMu6BpFH
+         yjvjtuqG0BijGIl8pBD8ukLJUpp3aROvkdpWi3WX3tJSlI60uI5u6011QpJCuaXfZSR8
+         cEV1Bm1PotU5ePgpC+3X3xSh1Ehzfr7HS3qvkRmG2t5F2dJQnA2K/3FLMdcXQdhlU+e7
+         yDa8x6P+ROyyadwYuTR8LimkM64mkZY67c8bEqGEpYYqFYt/0NEgKnVy409dzBIvpRcL
+         4W2963B1d9My2BT/3wRb/dHVzfDk7ZIlBgyhsm5K1GTwwNHK4JJP5X8XuBwAXwDoJ8lW
+         Dskg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=29mqB4d/0JGo1jbK5BbrdHh+6Rbk+2mvbm3FjqAEBQg=;
+        b=nEHkbRZGqbfBFwxxDjDV0SthXjqnR7TI+zk0d20VMTGAJsG+xUOQSt2tRQGC7IoVo/
+         mUo3H2PYFUF86UdocTswovKrSs0+2UD5+qftwbjlgCqT2IJILRgeyqbRCKP0ByhV7Xzk
+         aWhLSj2/BPHED5XLw3EAuqkn2hoVjygpg9p5Fs7on4stUqVLxbNSZQJfoZoOfOOxZJK3
+         myGOYfZ6rtQ/3P2470s2upeVd/WqgIDBGD9onF7mnNsudTeTR9x1qLDoEwQxLH9+XklC
+         kO5+Kqbq/FDm0n3ZlsWMC9FVws279JELjZs5zCQjomgrlrvE1DhLG5Pu1ufTXP+7IkNE
+         bX7w==
+X-Gm-Message-State: AOAM532mwpIRwICx0HHR8ueGwPeujUDNjpIjQWYtzheHq4D99IFigJW1
+        SspD3dj5bf4a2xL6sb8+Omn4PFdTOujzKzAOtk0=
+X-Google-Smtp-Source: ABdhPJwcPcrxy04I1LZUe45F2SYG/h6tMc1rGytBq1rxZ1KLGESeiK1+ugbpX5DHmJb5VMvoiPdpqDMIJ2Y8RnrQx4g=
+X-Received: by 2002:a5d:8b03:: with SMTP id k3mr393471ion.203.1625224360491;
+ Fri, 02 Jul 2021 04:12:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <26ACA75D-E13D-405B-9BFC-691B5FB64243@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: guoqing.jiang@linux.dev
+References: <20210702090012.28458-1-lhenriques@suse.de>
+In-Reply-To: <20210702090012.28458-1-lhenriques@suse.de>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 2 Jul 2021 14:12:29 +0300
+Message-ID: <CAOQ4uxhQciJ=r5E2yvM2zafhnBO4nZNVzUfEU9-tj9SAKAYwGg@mail.gmail.com>
+Subject: Re: [PATCH v12] vfs: fix copy_file_range regression in cross-fs copies
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Olga Kornievskaia <aglo@umich.edu>,
+        Petr Vorel <pvorel@suse.cz>, Steve French <sfrench@samba.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 7/2/21 4:51 PM, Sachin Sant wrote:
-> While running LTP tests (chdir01) against 5.13.0-next20210701 booted on a Power server,
-> following crash is encountered.
+On Fri, Jul 2, 2021 at 12:00 PM Luis Henriques <lhenriques@suse.de> wrote:
 >
-> [ 3051.182992] ext2 filesystem being mounted at /var/tmp/avocado_oau90dri/ltp-W0cFB5HtCy/lKhal5/mntpoint supports timestamps until 2038 (0x7fffffff)
-> [ 3051.621341] EXT4-fs (loop0): mounting ext3 file system using the ext4 subsystem
-> [ 3051.624645] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null). Quota mode: none.
-> [ 3051.624682] ext3 filesystem being mounted at /var/tmp/avocado_oau90dri/ltp-W0cFB5HtCy/lKhal5/mntpoint supports timestamps until 2038 (0x7fffffff)
-> [ 3051.629026] Kernel attempted to read user page (13fda70000) - exploit attempt? (uid: 0)
-> [ 3051.629074] BUG: Unable to handle kernel data access on read at 0x13fda70000
-> [ 3051.629103] Faulting instruction address: 0xc0000000006fa5cc
-> [ 3051.629118] Oops: Kernel access of bad area, sig: 11 [#1]
-> [ 3051.629130] LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA pSeries
-> [ 3051.629148] Modules linked in: vfat fat btrfs blake2b_generic xor zstd_compress raid6_pq xfs loop sctp ip6_udp_tunnel udp_tunnel libcrc32c rpadlpar_io rpaphp dm_mod bonding rfkill sunrpc pseries_rng xts vmx_crypto uio_pdrv_genirq uio sch_fq_codel ip_tables ext4 mbcache jbd2 sd_mod t10_pi sg ibmvscsi ibmveth scsi_transport_srp fuse [last unloaded: test_cpuidle_latency]
-> [ 3051.629270] CPU: 10 PID: 274044 Comm: chdir01 Tainted: G        W  OE     5.13.0-next-20210701 #1
-> [ 3051.629289] NIP:  c0000000006fa5cc LR: c008000006949bc4 CTR: c0000000006fa5a0
-> [ 3051.629300] REGS: c000000f74de3660 TRAP: 0300   Tainted: G        W  OE      (5.13.0-next-20210701)
-> [ 3051.629314] MSR:  800000000280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24000288  XER: 20040000
-> [ 3051.629342] CFAR: c008000006957564 DAR: 00000013fda70000 DSISR: 40000000 IRQMASK: 0
-> [ 3051.629342] GPR00: c008000006949bc4 c000000f74de3900 c0000000029bc800 c000000f88f0ab80
-> [ 3051.629342] GPR04: ffffffffffffffff 0000000000000020 0000000024000282 0000000000000000
-> [ 3051.629342] GPR08: c00000110628c828 0000000000000000 00000013fda70000 c008000006957550
-> [ 3051.629342] GPR12: c0000000006fa5a0 c0000013ffffbe80 0000000000000000 0000000000000000
-> [ 3051.629342] GPR16: 0000000000000000 0000000000000000 00000000100555f8 0000000010050d40
-> [ 3051.629342] GPR20: 0000000000000000 0000000010026188 0000000010026160 c000000f88f0ac08
-> [ 3051.629342] GPR24: 0000000000000000 c000000f88f0a920 0000000000000000 0000000000000002
-> [ 3051.629342] GPR28: c000000f88f0ac50 c000000f88f0a800 c000000fc5577d00 c000000f88f0ab80
-> [ 3051.629468] NIP [c0000000006fa5cc] percpu_counter_add_batch+0x2c/0xf0
-> [ 3051.629493] LR [c008000006949bc4] __jbd2_journal_remove_checkpoint+0x9c/0x280 [jbd2]
-> [ 3051.629526] Call Trace:
-> [ 3051.629532] [c000000f74de3900] [c000000f88f0a84c] 0xc000000f88f0a84c (unreliable)
-> [ 3051.629547] [c000000f74de3940] [c008000006949bc4] __jbd2_journal_remove_checkpoint+0x9c/0x280 [jbd2]
-> [ 3051.629577] [c000000f74de3980] [c008000006949eb4] jbd2_log_do_checkpoint+0x10c/0x630 [jbd2]
-> [ 3051.629605] [c000000f74de3a40] [c0080000069547dc] jbd2_journal_destroy+0x1b4/0x4e0 [jbd2]
-> [ 3051.629636] [c000000f74de3ad0] [c00800000735d72c] ext4_put_super+0xb4/0x560 [ext4]
-> [ 3051.629703] [c000000f74de3b60] [c000000000484d64] generic_shutdown_super+0xc4/0x1d0
-> [ 3051.629720] [c000000f74de3bd0] [c000000000484f48] kill_block_super+0x38/0x90
-> [ 3051.629736] [c000000f74de3c00] [c000000000485120] deactivate_locked_super+0x80/0x100
-> [ 3051.629752] [c000000f74de3c30] [c0000000004bec1c] cleanup_mnt+0x10c/0x1d0
-> [ 3051.629767] [c000000f74de3c80] [c000000000188b08] task_work_run+0xf8/0x170
-> [ 3051.629783] [c000000f74de3cd0] [c000000000021a24] do_notify_resume+0x434/0x480
-> [ 3051.629800] [c000000f74de3d80] [c000000000032910] interrupt_exit_user_prepare_main+0x1a0/0x260
-> [ 3051.629816] [c000000f74de3de0] [c000000000032d08] syscall_exit_prepare+0x68/0x150
-> [ 3051.629830] [c000000f74de3e10] [c00000000000c770] system_call_common+0x100/0x258
-> [ 3051.629846] --- interrupt: c00 at 0x7fffa2b92ffc
-> [ 3051.629855] NIP:  00007fffa2b92ffc LR: 00007fffa2b92fcc CTR: 0000000000000000
-> [ 3051.629867] REGS: c000000f74de3e80 TRAP: 0c00   Tainted: G        W  OE      (5.13.0-next-20210701)
-> [ 3051.629880] MSR:  800000000280f033 <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 24000474  XER: 00000000
-> [ 3051.629908] IRQMASK: 0
-> [ 3051.629908] GPR00: 0000000000000034 00007fffc0242e20 00007fffa2c77100 0000000000000000
-> [ 3051.629908] GPR04: 0000000000000000 0000000000000078 0000000000000000 0000000000000020
-> [ 3051.629908] GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> [ 3051.629908] GPR12: 0000000000000000 00007fffa2d1a310 0000000000000000 0000000000000000
-> [ 3051.629908] GPR16: 0000000000000000 0000000000000000 00000000100555f8 0000000010050d40
-> [ 3051.629908] GPR20: 0000000000000000 0000000010026188 0000000010026160 00000000100288f0
-> [ 3051.629908] GPR24: 00007fffa2d13320 00000000000186a0 0000000010025dd8 0000000010055688
-> [ 3051.629908] GPR28: 0000000010024bb8 0000000000000001 0000000000000001 0000000000000000
-> [ 3051.630022] NIP [00007fffa2b92ffc] 0x7fffa2b92ffc
-> [ 3051.630032] LR [00007fffa2b92fcc] 0x7fffa2b92fcc
-> [ 3051.630041] --- interrupt: c00
-> [ 3051.630048] Instruction dump:
-> [ 3051.630057] 60000000 3c4c022c 38422260 7c0802a6 fbe1fff8 fba1ffe8 7c7f1b78 fbc1fff0
-> [ 3051.630078] f8010010 f821ffc1 e94d0030 e9230020 <7fca4aaa> 7fbe2214 7fa9fe76 7d2aea78
-> [ 3051.630102] ---[ end trace 83afe3a19212c333 ]---
-> [ 3051.633656]
-> [ 3052.633681] Kernel panic - not syncing: Fatal exception
+> A regression has been reported by Nicolas Boichat, found while using the
+> copy_file_range syscall to copy a tracefs file.  Before commit
+> 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
+> kernel would return -EXDEV to userspace when trying to copy a file across
+> different filesystems.  After this commit, the syscall doesn't fail anymore
+> and instead returns zero (zero bytes copied), as this file's content is
+> generated on-the-fly and thus reports a size of zero.
 >
-> 5.13.0-next-20210630 was good. Bisect points to following patch:
+> This patch restores some cross-filesystem copy restrictions that existed
+> prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
+> devices").  Filesystems are still allowed to fall-back to the VFS
+> generic_copy_file_range() implementation, but that has now to be done
+> explicitly.
 >
-> commit 4ba3fcdde7e3
->           jbd2,ext4: add a shrinker to release checkpointed buffers
+> The short-circuit code for the case where the copy length is zero has also
+> been dropped from the VFS code.  This is because a zero size copy between
+> two files shall provide a clear indication on whether or not the
+> filesystem supports non-zero copies.
 >
-> Reverting this patch allows the test to run successfully.
+> nfsd is also modified to fall-back into generic_copy_file_range() in case
+> vfs_copy_file_range() fails with -EOPNOTSUPP or -EXDEV.
+>
+> Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
+> Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
+> Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
+> Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
+> Link: https://lore.kernel.org/linux-fsdevel/20210630161320.29006-1-lhenriques@suse.de/
+> Reported-by: Nicolas Boichat <drinkcat@chromium.org>
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Luis Henriques <lhenriques@suse.de>
+> ---
+> Changes since v11
+> - added note about zero-size copies and a link to the corresponding
+>   mailing-list discussion
+> Changes since v10
+> - simply remove the "if (len == 0)" short-circuit instead of checking if
+>   the filesystem implements the syscall.  This is because a filesystem may
+>   implement it but a particular instance (hint: overlayfs!) may not.
+> Changes since v9
+> - the early return from the syscall when len is zero now checks if the
+>   filesystem is implemented, returning -EOPNOTSUPP if it is not and 0
+>   otherwise.  Issue reported by test robot.
+>   (obviously, dropped Amir's Reviewed-by and Olga's Tested-by tags)
+> Changes since v8
+> - Simply added Amir's Reviewed-by and Olga's Tested-by
+> Changes since v7
+> - set 'ret' to '-EOPNOTSUPP' before the clone 'if' statement so that the
+>   error returned is always related to the 'copy' operation
+> Changes since v6
+> - restored i_sb checks for the clone operation
+> Changes since v5
+> - check if ->copy_file_range is NULL before calling it
+> Changes since v4
+> - nfsd falls-back to generic_copy_file_range() only *if* it gets -EOPNOTSUPP
+>   or -EXDEV.
+> Changes since v3
+> - dropped the COPY_FILE_SPLICE flag
+> - kept the f_op's checks early in generic_copy_file_checks, implementing
+>   Amir's suggestions
+> - modified nfsd to use generic_copy_file_range()
+> Changes since v2
+> - do all the required checks earlier, in generic_copy_file_checks(),
+>   adding new checks for ->remap_file_range
+> - new COPY_FILE_SPLICE flag
+> - don't remove filesystem's fallback to generic_copy_file_range()
+> - updated commit changelog (and subject)
+> Changes since v1 (after Amir review)
+> - restored do_copy_file_range() helper
+> - return -EOPNOTSUPP if fs doesn't implement CFR
+> - updated commit description
+>
+>  fs/nfsd/vfs.c   |  8 +++++++-
+>  fs/read_write.c | 52 +++++++++++++++++++++++--------------------------
+>  2 files changed, 31 insertions(+), 29 deletions(-)
+>
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 15adf1f6ab21..f54a88b3b4a2 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -569,6 +569,7 @@ __be32 nfsd4_clone_file_range(struct nfsd_file *nf_src, u64 src_pos,
+>  ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
+>                              u64 dst_pos, u64 count)
+>  {
+> +       ssize_t ret;
+>
+>         /*
+>          * Limit copy to 4MB to prevent indefinitely blocking an nfsd
+> @@ -579,7 +580,12 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
+>          * limit like this and pipeline multiple COPY requests.
+>          */
+>         count = min_t(u64, count, 1 << 22);
+> -       return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
+> +       ret = vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
+> +
+> +       if (ret == -EOPNOTSUPP || ret == -EXDEV)
+> +               ret = generic_copy_file_range(src, src_pos, dst, dst_pos,
+> +                                             count, 0);
+> +       return ret;
+>  }
+>
+>  __be32 nfsd4_vfs_fallocate(struct svc_rqst *rqstp, struct svc_fh *fhp,
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 9db7adf160d2..049a2dda29f7 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1395,28 +1395,6 @@ ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
+>  }
+>  EXPORT_SYMBOL(generic_copy_file_range);
+>
+> -static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+> -                                 struct file *file_out, loff_t pos_out,
+> -                                 size_t len, unsigned int flags)
+> -{
+> -       /*
+> -        * Although we now allow filesystems to handle cross sb copy, passing
+> -        * a file of the wrong filesystem type to filesystem driver can result
+> -        * in an attempt to dereference the wrong type of ->private_data, so
+> -        * avoid doing that until we really have a good reason.  NFS defines
+> -        * several different file_system_type structures, but they all end up
+> -        * using the same ->copy_file_range() function pointer.
+> -        */
+> -       if (file_out->f_op->copy_file_range &&
+> -           file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
+> -               return file_out->f_op->copy_file_range(file_in, pos_in,
+> -                                                      file_out, pos_out,
+> -                                                      len, flags);
+> -
+> -       return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+> -                                      flags);
+> -}
+> -
+>  /*
+>   * Performs necessary checks before doing a file copy
+>   *
+> @@ -1434,6 +1412,25 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
+>         loff_t size_in;
+>         int ret;
+>
+> +       /*
+> +        * Although we now allow filesystems to handle cross sb copy, passing
+> +        * a file of the wrong filesystem type to filesystem driver can result
+> +        * in an attempt to dereference the wrong type of ->private_data, so
+> +        * avoid doing that until we really have a good reason.  NFS defines
+> +        * several different file_system_type structures, but they all end up
+> +        * using the same ->copy_file_range() function pointer.
+> +        */
+> +       if (file_out->f_op->copy_file_range) {
+> +               if (file_in->f_op->copy_file_range !=
+> +                   file_out->f_op->copy_file_range)
+> +                       return -EXDEV;
+> +       } else if (file_in->f_op->remap_file_range) {
+> +               if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
+> +                       return -EXDEV;
+> +       } else {
+> +                return -EOPNOTSUPP;
+> +       }
+> +
+>         ret = generic_file_rw_checks(file_in, file_out);
+>         if (ret)
+>                 return ret;
+> @@ -1497,11 +1494,9 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>         if (unlikely(ret))
+>                 return ret;
+>
+> -       if (len == 0)
+> -               return 0;
+> -
 
-I guess the problem is j_jh_shrink_count was destroyed in ext4_put_super 
-_>  jbd2_journal_unregister_shrinker
-which is before the path ext4_put_super -> jbd2_journal_destroy -> 
-jbd2_log_do_checkpoint to call
-percpu_counter_dec(&journal->j_jh_shrink_count).
+I guess there was miscommunication
 
-And since jbd2_journal_unregister_shrinker is already called inside 
-jbd2_journal_destroy, does it make sense
-to do this?
+As Olga wrote, you have to place this short-circuit in
+nfs4_copy_file_range() if you remove it from here.
+It is NOT SAFE to pass zero length to nfs4_copy_file_range().
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1176,7 +1176,6 @@ static void ext4_put_super(struct super_block *sb)
-         ext4_unregister_sysfs(sb);
+I apologize if you inferred from my response that you don't need to
+do that.
 
-         if (sbi->s_journal) {
--               jbd2_journal_unregister_shrinker(sbi->s_journal);
-                 aborted = is_journal_aborted(sbi->s_journal);
-                 err = jbd2_journal_destroy(sbi->s_journal);
-                 sbi->s_journal = NULL;
+My intention was, not knowing if and when your patch will be picked up,
+(a volunteer to pick it pick never showed up...)
+I think that nfs client developers should make sure that the zero length
+check is added to nfs code as fail safety, because the semantics
+of the vfs method and the NFS protocol command do not match.
 
 Thanks,
-Guoqing
+Amir.
