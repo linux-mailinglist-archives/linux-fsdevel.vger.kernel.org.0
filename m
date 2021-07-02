@@ -2,249 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CA83BA1BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jul 2021 15:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01C023BA1C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jul 2021 15:55:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232918AbhGBNyu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Jul 2021 09:54:50 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:9448 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232381AbhGBNyt (ORCPT
+        id S232678AbhGBN5s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Jul 2021 09:57:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34290 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232614AbhGBN5s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Jul 2021 09:54:49 -0400
-Received: from dggeme752-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GGbz60mcMzZjqJ;
-        Fri,  2 Jul 2021 21:49:06 +0800 (CST)
-Received: from [10.174.178.134] (10.174.178.134) by
- dggeme752-chm.china.huawei.com (10.3.19.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Fri, 2 Jul 2021 21:52:13 +0800
-Subject: Re: [powerpc][5.13.0-next-20210701] Kernel crash while running
- ltp(chdir01) tests
-From:   Zhang Yi <yi.zhang@huawei.com>
-To:     Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>
-CC:     <linuxppc-dev@lists.ozlabs.org>,
-        Guoqing Jiang <guoqing.jiang@linux.dev>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <26ACA75D-E13D-405B-9BFC-691B5FB64243@linux.vnet.ibm.com>
- <bf1c5b38-92f1-65db-e210-a97a199718ba@linux.dev>
- <4cc87ab3-aaa6-ed87-b690-5e5b99de8380@huawei.com>
-Message-ID: <03f734bd-f36e-f55b-0448-485b8a0d5b75@huawei.com>
-Date:   Fri, 2 Jul 2021 21:52:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Fri, 2 Jul 2021 09:57:48 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28241C061762;
+        Fri,  2 Jul 2021 06:55:14 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id g21so8973289pfc.11;
+        Fri, 02 Jul 2021 06:55:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=y1GrXpdOcfyCNCbPpQ3waA8nmkYo8TWFbUh8sBdrK/4=;
+        b=sf/i4cznLCXWBiLYReZOSVCHY19hOYot1Xv0AAjsNyHvnYyo2/lVEKcknapj4ZTD4n
+         8YA+RB1+kWccambkyl/U3j2zSBLZH+T/Lp5ifI5RS1+Mzkdg6+P5OtTW1KQyKpFKsrHR
+         TJbpO5VgOBYu+HMXLtTwH+ZmZ3a5K4IT5WRdZzWwnfnNi9cb0jnqiPNZ9/SOL1cM1wL8
+         7FjaIN1xlUhvdDPHRk2763ulS62fnOBiettbzvrFkqcMWVGti2SUwVMgFYJ59Ow3pDip
+         f2o1IqwuRxc0+10cYOM1qIdBeHlDWlITY+B2sMzJihkhfFHc2pqAM5qtfb71OKaJmA1/
+         l2HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=y1GrXpdOcfyCNCbPpQ3waA8nmkYo8TWFbUh8sBdrK/4=;
+        b=XeySpXgY9elsfJmqgguvSmtMOLLB5mVwEdQh69au/Q4gCQohF5Lmwa7k+jxBhs7L+o
+         HPrR2LM13iCU2bZ3RkvqxGjKb5wmKshyRc5GsAo3pKZUPsKcDp4/2gaaGSiFTMr3L1lt
+         L6mzxTj9xh2YO3r1DSfcABnq/IUnz6NW4bfUnbZUKUtPpAAcwhPygF5W32cb+N5an19f
+         omACro4UDNz15oEEDSm7WPjVcm9XwdhoCanVfqj+Fz0yc2Ok9TGpsxfJyVriWwoq3UWo
+         Ur0K4Ky5FXockBgPiqJzudgtQ2x84VyiUh91V6B5jQoOyGFSXMhQAzpjhpRnvOKfkqPU
+         42mA==
+X-Gm-Message-State: AOAM533Q3FdXV2ekOjWfSORZB8VLIKUeWWI3tMWxhCmzrYdH8eeYkeiu
+        8PtrMA6ECFfWUny81z+hutU=
+X-Google-Smtp-Source: ABdhPJyAc0yNfhesT3vGh5PgKByRO+ThuNWBHLOuWpZuGmqv8XeB8MWbmBT3EPt3fPOvA6jcfFG+Zg==
+X-Received: by 2002:a63:1d41:: with SMTP id d1mr133093pgm.199.1625234113630;
+        Fri, 02 Jul 2021 06:55:13 -0700 (PDT)
+Received: from [192.168.1.237] ([118.200.190.93])
+        by smtp.gmail.com with ESMTPSA id x17sm3680658pfa.26.2021.07.02.06.55.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Jul 2021 06:55:13 -0700 (PDT)
+Subject: Re: [PATCH 1/2] fcntl: fix potential deadlocks for &fown_struct.lock
+To:     Jeff Layton <jlayton@kernel.org>, bfields@fieldses.org,
+        viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org, gregkh@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+References: <20210702091831.615042-1-desmondcheongzx@gmail.com>
+ <20210702091831.615042-2-desmondcheongzx@gmail.com>
+ <43b5f2c7e7e5e5ed35c8e3de2eafeb960f267836.camel@kernel.org>
+From:   Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+Message-ID: <9e2a46b9-5735-d73b-d35e-f88dc994f6b4@gmail.com>
+Date:   Fri, 2 Jul 2021 21:55:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <4cc87ab3-aaa6-ed87-b690-5e5b99de8380@huawei.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <43b5f2c7e7e5e5ed35c8e3de2eafeb960f267836.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.178.134]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggeme752-chm.china.huawei.com (10.3.19.98)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/7/2 21:23, Zhang Yi wrote:
-> On 2021/7/2 17:38, Guoqing Jiang wrote:
+On 2/7/21 7:44 pm, Jeff Layton wrote:
+> On Fri, 2021-07-02 at 17:18 +0800, Desmond Cheong Zhi Xi wrote:
+>> Syzbot reports a potential deadlock in do_fcntl:
 >>
+>> ========================================================
+>> WARNING: possible irq lock inversion dependency detected
+>> 5.12.0-syzkaller #0 Not tainted
+>> --------------------------------------------------------
+>> syz-executor132/8391 just changed the state of lock:
+>> ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: f_getown_ex fs/fcntl.c:211 [inline]
+>> ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: do_fcntl+0x8b4/0x1200 fs/fcntl.c:395
+>> but this lock was taken by another, HARDIRQ-safe lock in the past:
+>>   (&dev->event_lock){-...}-{2:2}
 >>
->> On 7/2/21 4:51 PM, Sachin Sant wrote:
->>> While running LTP tests (chdir01) against 5.13.0-next20210701 booted on a Power server,
->>> following crash is encountered.
->>>
->>> [ 3051.182992] ext2 filesystem being mounted at /var/tmp/avocado_oau90dri/ltp-W0cFB5HtCy/lKhal5/mntpoint supports timestamps until 2038 (0x7fffffff)
->>> [ 3051.621341] EXT4-fs (loop0): mounting ext3 file system using the ext4 subsystem
->>> [ 3051.624645] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null). Quota mode: none.
->>> [ 3051.624682] ext3 filesystem being mounted at /var/tmp/avocado_oau90dri/ltp-W0cFB5HtCy/lKhal5/mntpoint supports timestamps until 2038 (0x7fffffff)
->>> [ 3051.629026] Kernel attempted to read user page (13fda70000) - exploit attempt? (uid: 0)
->>> [ 3051.629074] BUG: Unable to handle kernel data access on read at 0x13fda70000
->>> [ 3051.629103] Faulting instruction address: 0xc0000000006fa5cc
->>> [ 3051.629118] Oops: Kernel access of bad area, sig: 11 [#1]
->>> [ 3051.629130] LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA pSeries
->>> [ 3051.629148] Modules linked in: vfat fat btrfs blake2b_generic xor zstd_compress raid6_pq xfs loop sctp ip6_udp_tunnel udp_tunnel libcrc32c rpadlpar_io rpaphp dm_mod bonding rfkill sunrpc pseries_rng xts vmx_crypto uio_pdrv_genirq uio sch_fq_codel ip_tables ext4 mbcache jbd2 sd_mod t10_pi sg ibmvscsi ibmveth scsi_transport_srp fuse [last unloaded: test_cpuidle_latency]
->>> [ 3051.629270] CPU: 10 PID: 274044 Comm: chdir01 Tainted: G        W  OE     5.13.0-next-20210701 #1
->>> [ 3051.629289] NIP:  c0000000006fa5cc LR: c008000006949bc4 CTR: c0000000006fa5a0
->>> [ 3051.629300] REGS: c000000f74de3660 TRAP: 0300   Tainted: G        W  OE      (5.13.0-next-20210701)
->>> [ 3051.629314] MSR:  800000000280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24000288  XER: 20040000
->>> [ 3051.629342] CFAR: c008000006957564 DAR: 00000013fda70000 DSISR: 40000000 IRQMASK: 0
->>> [ 3051.629342] GPR00: c008000006949bc4 c000000f74de3900 c0000000029bc800 c000000f88f0ab80
->>> [ 3051.629342] GPR04: ffffffffffffffff 0000000000000020 0000000024000282 0000000000000000
->>> [ 3051.629342] GPR08: c00000110628c828 0000000000000000 00000013fda70000 c008000006957550
->>> [ 3051.629342] GPR12: c0000000006fa5a0 c0000013ffffbe80 0000000000000000 0000000000000000
->>> [ 3051.629342] GPR16: 0000000000000000 0000000000000000 00000000100555f8 0000000010050d40
->>> [ 3051.629342] GPR20: 0000000000000000 0000000010026188 0000000010026160 c000000f88f0ac08
->>> [ 3051.629342] GPR24: 0000000000000000 c000000f88f0a920 0000000000000000 0000000000000002
->>> [ 3051.629342] GPR28: c000000f88f0ac50 c000000f88f0a800 c000000fc5577d00 c000000f88f0ab80
->>> [ 3051.629468] NIP [c0000000006fa5cc] percpu_counter_add_batch+0x2c/0xf0
->>> [ 3051.629493] LR [c008000006949bc4] __jbd2_journal_remove_checkpoint+0x9c/0x280 [jbd2]
->>> [ 3051.629526] Call Trace:
->>> [ 3051.629532] [c000000f74de3900] [c000000f88f0a84c] 0xc000000f88f0a84c (unreliable)
->>> [ 3051.629547] [c000000f74de3940] [c008000006949bc4] __jbd2_journal_remove_checkpoint+0x9c/0x280 [jbd2]
->>> [ 3051.629577] [c000000f74de3980] [c008000006949eb4] jbd2_log_do_checkpoint+0x10c/0x630 [jbd2]
->>> [ 3051.629605] [c000000f74de3a40] [c0080000069547dc] jbd2_journal_destroy+0x1b4/0x4e0 [jbd2]
->>> [ 3051.629636] [c000000f74de3ad0] [c00800000735d72c] ext4_put_super+0xb4/0x560 [ext4]
->>> [ 3051.629703] [c000000f74de3b60] [c000000000484d64] generic_shutdown_super+0xc4/0x1d0
->>> [ 3051.629720] [c000000f74de3bd0] [c000000000484f48] kill_block_super+0x38/0x90
->>> [ 3051.629736] [c000000f74de3c00] [c000000000485120] deactivate_locked_super+0x80/0x100
->>> [ 3051.629752] [c000000f74de3c30] [c0000000004bec1c] cleanup_mnt+0x10c/0x1d0
->>> [ 3051.629767] [c000000f74de3c80] [c000000000188b08] task_work_run+0xf8/0x170
->>> [ 3051.629783] [c000000f74de3cd0] [c000000000021a24] do_notify_resume+0x434/0x480
->>> [ 3051.629800] [c000000f74de3d80] [c000000000032910] interrupt_exit_user_prepare_main+0x1a0/0x260
->>> [ 3051.629816] [c000000f74de3de0] [c000000000032d08] syscall_exit_prepare+0x68/0x150
->>> [ 3051.629830] [c000000f74de3e10] [c00000000000c770] system_call_common+0x100/0x258
->>> [ 3051.629846] --- interrupt: c00 at 0x7fffa2b92ffc
->>> [ 3051.629855] NIP:  00007fffa2b92ffc LR: 00007fffa2b92fcc CTR: 0000000000000000
->>> [ 3051.629867] REGS: c000000f74de3e80 TRAP: 0c00   Tainted: G        W  OE      (5.13.0-next-20210701)
->>> [ 3051.629880] MSR:  800000000280f033 <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 24000474  XER: 00000000
->>> [ 3051.629908] IRQMASK: 0
->>> [ 3051.629908] GPR00: 0000000000000034 00007fffc0242e20 00007fffa2c77100 0000000000000000
->>> [ 3051.629908] GPR04: 0000000000000000 0000000000000078 0000000000000000 0000000000000020
->>> [ 3051.629908] GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
->>> [ 3051.629908] GPR12: 0000000000000000 00007fffa2d1a310 0000000000000000 0000000000000000
->>> [ 3051.629908] GPR16: 0000000000000000 0000000000000000 00000000100555f8 0000000010050d40
->>> [ 3051.629908] GPR20: 0000000000000000 0000000010026188 0000000010026160 00000000100288f0
->>> [ 3051.629908] GPR24: 00007fffa2d13320 00000000000186a0 0000000010025dd8 0000000010055688
->>> [ 3051.629908] GPR28: 0000000010024bb8 0000000000000001 0000000000000001 0000000000000000
->>> [ 3051.630022] NIP [00007fffa2b92ffc] 0x7fffa2b92ffc
->>> [ 3051.630032] LR [00007fffa2b92fcc] 0x7fffa2b92fcc
->>> [ 3051.630041] --- interrupt: c00
->>> [ 3051.630048] Instruction dump:
->>> [ 3051.630057] 60000000 3c4c022c 38422260 7c0802a6 fbe1fff8 fba1ffe8 7c7f1b78 fbc1fff0
->>> [ 3051.630078] f8010010 f821ffc1 e94d0030 e9230020 <7fca4aaa> 7fbe2214 7fa9fe76 7d2aea78
->>> [ 3051.630102] ---[ end trace 83afe3a19212c333 ]---
->>> [ 3051.633656]
->>> [ 3052.633681] Kernel panic - not syncing: Fatal exception
->>>
->>> 5.13.0-next-20210630 was good. Bisect points to following patch:
->>>
->>> commit 4ba3fcdde7e3
->>>           jbd2,ext4: add a shrinker to release checkpointed buffers
->>>
->>> Reverting this patch allows the test to run successfully.
+>> and interrupts could create inverse lock ordering between them.
 >>
->> I guess the problem is j_jh_shrink_count was destroyed in ext4_put_super _>  jbd2_journal_unregister_shrinker
->> which is before the path ext4_put_super -> jbd2_journal_destroy -> jbd2_log_do_checkpoint to call
->> percpu_counter_dec(&journal->j_jh_shrink_count).
+>> other info that might help us debug this:
+>> Chain exists of:
+>>    &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
 >>
->> And since jbd2_journal_unregister_shrinker is already called inside jbd2_journal_destroy, does it make sense
->> to do this?
+>>   Possible interrupt unsafe locking scenario:
 >>
->> --- a/fs/ext4/super.c
->> +++ b/fs/ext4/super.c
->> @@ -1176,7 +1176,6 @@ static void ext4_put_super(struct super_block  *sb)
->>         ext4_unregister_sysfs(sb);
+>>         CPU0                    CPU1
+>>         ----                    ----
+>>    lock(&f->f_owner.lock);
+>>                                 local_irq_disable();
+>>                                 lock(&dev->event_lock);
+>>                                 lock(&new->fa_lock);
+>>    <Interrupt>
+>>      lock(&dev->event_lock);
 >>
->>         if (sbi->s_journal) {
->> -               jbd2_journal_unregister_shrinker(sbi->s_journal);
->>                 aborted = is_journal_aborted(sbi->s_journal);
->>                 err = jbd2_journal_destroy(sbi->s_journal);
->>                 sbi->s_journal = NULL;
+>>   *** DEADLOCK ***
+>>
+>> This happens because there is a lock hierarchy of
+>> &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
+>> from the following call chain:
+>>
+>>    input_inject_event():
+>>      spin_lock_irqsave(&dev->event_lock,...);
+>>      input_handle_event():
+>>        input_pass_values():
+>>          input_to_handler():
+>>            evdev_events():
+>>              evdev_pass_values():
+>>                spin_lock(&client->buffer_lock);
+>>                __pass_event():
+>>                  kill_fasync():
+>>                    kill_fasync_rcu():
+>>                      read_lock(&fa->fa_lock);
+>>                      send_sigio():
+>>                        read_lock_irqsave(&fown->lock,...);
+>>
+>> However, since &dev->event_lock is HARDIRQ-safe, interrupts have to be
+>> disabled while grabbing &f->f_owner.lock, otherwise we invert the lock
+>> hierarchy.
+>>
+>> Hence, we replace calls to read_lock/read_unlock on &f->f_owner.lock,
+>> with read_lock_irq/read_unlock_irq.
 >>
 > 
-> Hi Guoqing,
+> Patches look reasonable overall, but why does this one use read_lock_irq
+> and the other one use read_lock_irqsave? Don't we need to *_irqsasve in
+> both patches?
 > 
-> Thanks for your analyze. This problem cannot reproduce on x86_64 but 100% reproduce on arm64,
-> it depends on the percpu counter code on different architecture.
-> 
-> Indeed, as you said, the real problem is invoke percpu_counter_dec(&journal->j_jh_shrink_count)
-> after it was destroyed during umount, and I'm afraid that it may also affect ocfs2
-> because it doesn't initialize the percpu counter before doing add/sub in
-> __jbd2_journal_[insert|remove]_checkpoint().
-> 
-> I think the quick fix could be:
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 152880c298ca..48c7e5d17b38 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -1352,17 +1352,23 @@ static journal_t *journal_init_common(struct block_device *bdev,
->         if (!journal->j_wbuf)
->                 goto err_cleanup;
-> 
-> +       err = percpu_counter_init(&journal->j_jh_shrink_count, 0, GFP_KERNEL);
-> +       if (err)
-> +               goto err_cleanup;
-> +
->         bh = getblk_unmovable(journal->j_dev, start, journal->j_blocksize);
->         if (!bh) {
->                 pr_err("%s: Cannot get buffer for journal superblock\n",
->                         __func__);
-> -               goto err_cleanup;
-> +               goto err_cleanup_cnt;
->         }
->         journal->j_sb_buffer = bh;
->         journal->j_superblock = (journal_superblock_t *)bh->b_data;
-> 
->         return journal;
-> 
-> +err_cleanup_cnt:
-> +       percpu_counter_destroy(&journal->j_jh_shrink_count);
->  err_cleanup:
->         kfree(journal->j_wbuf);
->         jbd2_journal_destroy_revoke(journal);
-> @@ -2101,26 +2107,13 @@ static unsigned long jbd2_journal_shrink_count(struct shrinker *shrink,
->   */
->  int jbd2_journal_register_shrinker(journal_t *journal)
->  {
-> -       int err;
-> -
->         journal->j_shrink_transaction = NULL;
-> -
-> -       err = percpu_counter_init(&journal->j_jh_shrink_count, 0, GFP_KERNEL);
-> -       if (err)
-> -               return err;
-> -
->         journal->j_shrinker.scan_objects = jbd2_journal_shrink_scan;
->         journal->j_shrinker.count_objects = jbd2_journal_shrink_count;
->         journal->j_shrinker.seeks = DEFAULT_SEEKS;
->         journal->j_shrinker.batch = journal->j_max_transaction_buffers;
-> 
-> -       err = register_shrinker(&journal->j_shrinker);
-> -       if (err) {
-> -               percpu_counter_destroy(&journal->j_jh_shrink_count);
-> -               return err;
-> -       }
-> -
-> -       return 0;
-> +       return register_shrinker(&journal->j_shrinker);
->  }
->  EXPORT_SYMBOL(jbd2_journal_register_shrinker);
-> 
-> @@ -2132,7 +2125,6 @@ EXPORT_SYMBOL(jbd2_journal_register_shrinker);
->   */
->  void jbd2_journal_unregister_shrinker(journal_t *journal)
->  {
-> -       percpu_counter_destroy(&journal->j_jh_shrink_count);
->         unregister_shrinker(&journal->j_shrinker);
->  }
->  EXPORT_SYMBOL(jbd2_journal_unregister_shrinker);
-> @@ -2209,8 +2201,6 @@ int jbd2_journal_destroy(journal_t *journal)
->                 brelse(journal->j_sb_buffer);
->         }
-> 
-> -       jbd2_journal_unregister_shrinker(journal);
-> -
->         if (journal->j_proc_entry)
->                 jbd2_stats_proc_exit(journal);
->         iput(journal->j_inode);
-> @@ -2220,6 +2210,7 @@ int jbd2_journal_destroy(journal_t *journal)
->                 crypto_free_shash(journal->j_chksum_driver);
->         kfree(journal->j_fc_wbuf);
->         kfree(journal->j_wbuf);
-> +       percpu_counter_destroy(&journal->j_jh_shrink_count);
->         kfree(journal);
-> 
->         return err;
 > 
 
-Hi, Ted,
+My thinking was that the functions f_getown_ex and f_getowner_uids are 
+only called from do_fcntl, and f_getown is only called from do_fnctl and 
+sock_ioctl. do_fnctl itself is only called from syscalls.
 
-Sorry about not catching this problem, this fix is not format corrected,
-if you think this fix is OK, I can send a patch after test.
+For sock_ioctl, the chain is
+   compat_sock_ioctl():
+     compat_sock_ioctl_trans():
+       sock_ioctl()
 
-Thanks,
-Yi.
+For both paths, it doesn't seem that interrupts are disabled, so I used 
+the *irq variants.
+
+But of course, I might be very mistaken on this, and I'd be happy to 
+make the change to *_irqsave.
+
+Also, on further inspection, if these calls should be changed to 
+*_irqsave, then I believe the call to write_lock_irq in f_modown (called 
+from do_fcntl() --> f_setown() --> __f_setown() --> f_modown()) should 
+also be changed to *_irqsave.
+
+There's also a call to write_lock_irq(&fa->fa_lock) in 
+fasync_remove_entry and fasync_insert_entry. Whether these should be 
+changed as well isn't as clear to me, but since it's safe to do, perhaps 
+it makes sense to use *_irqsave for them too. Thoughts?
+
+>> Reported-and-tested-by: syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+>> Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+>> ---
+>>   fs/fcntl.c | 13 +++++++------
+>>   1 file changed, 7 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/fcntl.c b/fs/fcntl.c
+>> index dfc72f15be7f..cf9e81dfa615 100644
+>> --- a/fs/fcntl.c
+>> +++ b/fs/fcntl.c
+>> @@ -150,7 +150,8 @@ void f_delown(struct file *filp)
+>>   pid_t f_getown(struct file *filp)
+>>   {
+>>   	pid_t pid = 0;
+>> -	read_lock(&filp->f_owner.lock);
+>> +
+>> +	read_lock_irq(&filp->f_owner.lock);
+>>   	rcu_read_lock();
+>>   	if (pid_task(filp->f_owner.pid, filp->f_owner.pid_type)) {
+>>   		pid = pid_vnr(filp->f_owner.pid);
+>> @@ -158,7 +159,7 @@ pid_t f_getown(struct file *filp)
+>>   			pid = -pid;
+>>   	}
+>>   	rcu_read_unlock();
+>> -	read_unlock(&filp->f_owner.lock);
+>> +	read_unlock_irq(&filp->f_owner.lock);
+>>   	return pid;
+>>   }
+>>   
+>> @@ -208,7 +209,7 @@ static int f_getown_ex(struct file *filp, unsigned long arg)
+>>   	struct f_owner_ex owner = {};
+>>   	int ret = 0;
+>>   
+>> -	read_lock(&filp->f_owner.lock);
+>> +	read_lock_irq(&filp->f_owner.lock);
+>>   	rcu_read_lock();
+>>   	if (pid_task(filp->f_owner.pid, filp->f_owner.pid_type))
+>>   		owner.pid = pid_vnr(filp->f_owner.pid);
+>> @@ -231,7 +232,7 @@ static int f_getown_ex(struct file *filp, unsigned long arg)
+>>   		ret = -EINVAL;
+>>   		break;
+>>   	}
+>> -	read_unlock(&filp->f_owner.lock);
+>> +	read_unlock_irq(&filp->f_owner.lock);
+>>   
+>>   	if (!ret) {
+>>   		ret = copy_to_user(owner_p, &owner, sizeof(owner));
+>> @@ -249,10 +250,10 @@ static int f_getowner_uids(struct file *filp, unsigned long arg)
+>>   	uid_t src[2];
+>>   	int err;
+>>   
+>> -	read_lock(&filp->f_owner.lock);
+>> +	read_lock_irq(&filp->f_owner.lock);
+>>   	src[0] = from_kuid(user_ns, filp->f_owner.uid);
+>>   	src[1] = from_kuid(user_ns, filp->f_owner.euid);
+>> -	read_unlock(&filp->f_owner.lock);
+>> +	read_unlock_irq(&filp->f_owner.lock);
+>>   
+>>   	err  = put_user(src[0], &dst[0]);
+>>   	err |= put_user(src[1], &dst[1]);
+> 
+
