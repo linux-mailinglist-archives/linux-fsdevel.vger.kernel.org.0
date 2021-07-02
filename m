@@ -2,188 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FB663B9972
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jul 2021 01:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00ACB3B99E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jul 2021 02:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234260AbhGAXhG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jul 2021 19:37:06 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:25509 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234163AbhGAXhF (ORCPT
+        id S234306AbhGBAIc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jul 2021 20:08:32 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:38655 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234063AbhGBAIc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jul 2021 19:37:05 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210701233433epoutp01197843a89617a6c120492d91534c0472~NztlBUrK82456624566epoutp016
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jul 2021 23:34:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210701233433epoutp01197843a89617a6c120492d91534c0472~NztlBUrK82456624566epoutp016
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1625182473;
-        bh=MR6i795Z9h2ZYoQAPlWh6TEORJYNBnsE5kTXALfg9uw=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=aeo9Xiesv//ZKRV9AEXbEf3TSK9Tb6O+FmLt0aWc/DCqtNn+ejewLcQ6yBgTKrA2l
-         Bb0sGGiE4LpuT90xlkhN3H+/kFiYK2wjJVaXN2aDWxGNUPtdkX0CsHVyVYAteUPwZ9
-         zriulDrQZUOkwfQKlbp2QUiwrHeOrWw/W74OCyFM=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20210701233432epcas1p4871c75658a01c84d37c9e659ab2390c5~NztkpdhEr2277322773epcas1p4t;
-        Thu,  1 Jul 2021 23:34:32 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4GGF1358wfz4x9Pw; Thu,  1 Jul
-        2021 23:34:31 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        75.64.09952.7015ED06; Fri,  2 Jul 2021 08:34:31 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210701233430epcas1p1dd9e84341c510b430d8d630ebd84551c~Nzti4zKA82257722577epcas1p1K;
-        Thu,  1 Jul 2021 23:34:30 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210701233430epsmtrp14f57b7e9ef1eb892ba7e062188b35235~Nzti4RWY23002130021epsmtrp1P;
-        Thu,  1 Jul 2021 23:34:30 +0000 (GMT)
-X-AuditID: b6c32a35-45dff700000026e0-15-60de5107fe49
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BE.96.08394.6015ED06; Fri,  2 Jul 2021 08:34:30 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.89.31.77]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210701233430epsmtip1d5139340da171a7eb06d83a27798e9de~NztinLQOI0863508635epsmtip14;
-        Thu,  1 Jul 2021 23:34:30 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Chris Down'" <chris@chrisdown.name>
-Cc:     <linux-fsdevel@vger.kernel.org>, <flrncrmr@gmail.com>,
-        <stable@vger.kernel.org>
-In-Reply-To: <YN4RoCAWq5SMXmaN@chrisdown.name>
-Subject: RE: [PATCH] exfat: handle wrong stream entry size in
- exfat_readdir()
-Date:   Fri, 2 Jul 2021 08:34:30 +0900
-Message-ID: <014f01d76ed1$a3c843f0$eb58cbd0$@samsung.com>
+        Thu, 1 Jul 2021 20:08:32 -0400
+Received: from dread.disaster.area (pa49-179-138-183.pa.nsw.optusnet.com.au [49.179.138.183])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 3A27610451FC;
+        Fri,  2 Jul 2021 10:05:58 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lz6gv-001hPP-7o; Fri, 02 Jul 2021 10:05:57 +1000
+Date:   Fri, 2 Jul 2021 10:05:57 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Bruno Goncalves <bgoncalv@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, fstests@vger.kernel.org,
+        CKI Project <cki-project@redhat.com>
+Subject: Re: 1 lock held by xfs_repair/276634
+Message-ID: <20210702000557.GA219491@dread.disaster.area>
+References: <CA+QYu4pPRr-KQB2b1YsZSYfAb11_hnL+UH8WTj3N5_x9yX8WnA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHtYa6HDZ3zKB0Tzc4hP4i9K19tVAGye6HqApO4bbaq4KexkA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDKsWRmVeSWpSXmKPExsWy7bCmri574L0Egw+nZC0uzPvLbNG7dgGb
-        xZ69J1ksFmx8xOjA4rHm2nVWj52z7rJ7fN4kF8AclWOTkZqYklqkkJqXnJ+SmZduq+QdHO8c
-        b2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA7RNSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKr
-        lFqQklNgaFCgV5yYW1yal66XnJ9rZWhgYGQKVJmQk3F5YgdzwULJikn9S5gbGA+JdDFyckgI
-        mEjMPrmXpYuRi0NIYAejxN+bzcwQzidGid63c9ggnG+MEtfOtLLCtEw5+p0RIrGXUaLv+BFW
-        COcFo8SOc89ZQKrYBHQl/v3ZzwZiiwhoSjw/Mg+og4ODWSBUYnNzPUiYU0BPYm7PViYQW1jA
-        X+LI6/OMIDaLgIrE1rlfWUDKeQUsJbrfs4OEeQUEJU7OfAI2nVlAXmL72znMEPcoSPx8uowV
-        YpOTxKtdj6BqRCRmd7ZB1Xxll+i8qAZhu0iser6FEcIWlnh1fAs7hC0l8bK/Dcoulzhx8hcT
-        hF0jsWHePnaQcyQEjCV6XpRAPKIpsX6XPkSFosTO33MZIbbySbz72sMKUc0r0dEmBFGiKtF3
-        6TDUQGmJrvYP7BMYlWYh+WsWkr9mIbl/FsKyBYwsqxjFUguKc9NTiw0LDJFjehMjOBlqme5g
-        nPj2g94hRiYOxkOMEhzMSiK8E6bfTRDiTUmsrEotyo8vKs1JLT7EaAoM6InMUqLJ+cB0nFcS
-        b2hqZGxsbGFiZm5maqwkzruT7VCCkEB6YklqdmpqQWoRTB8TB6dUA9P+ZdWOz73mO+3wmL0u
-        86BQg9uMsw8nGn4SPDqPI6jnzaG3NzU4s3x80jnP+6Q/zu1OP6q7typcb/mRKJu22NyzCZMZ
-        nLd0R79aU7x/042ll8x3F23ove23au2Lp698P6TOkz7IkiKt9eXM9Ikpd9xusCpwtzH6al+P
-        vXxHJPjySwMVYRnZXzfK0iXr72zdKbr71v01aWc58k0Zq+5GSf5vZVvMlbHRzcD7pGX/tqud
-        m5NfXQ5oO7hCXTF8Kd+0GP2lwXN25O/6Iqg2d9qjNV5Plzx1emhS5PHg3Z/8AlM14ydGu9e7
-        aZSeLFggcmnO356qitAVH8LjF4ma3zxn5vVL8pGfw72DH9W6Vxu+Ll2uxFKckWioxVxUnAgA
-        8rbOVQ8EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOLMWRmVeSWpSXmKPExsWy7bCSnC5b4L0Eg6/7lS0uzPvLbNG7dgGb
-        xZ69J1ksFmx8xOjA4rHm2nVWj52z7rJ7fN4kF8AcxWWTkpqTWZZapG+XwJVxeWIHc8FCyYpJ
-        /UuYGxgPiXQxcnJICJhITDn6nbGLkYtDSGA3o8SEj/1MEAlpiWMnzjB3MXIA2cIShw8XQ9Q8
-        Y5Q4vmcjO0gNm4CuxL8/+9lAbBEBTYnnR+YxgtjMAuESbdffsEI0rGeUOHdrJliCU0BPYm7P
-        VrAFwgK+Eo9OfgOLswioSGyd+5UFZBmvgKVE93uw+bwCghInZz4BCzMDtbZthBovL7H97Rxm
-        iDMVJH4+XcYKcYKTxKtdj1ggakQkZne2MU9gFJ6FZNIshEmzkEyahaRjASPLKkbJ1ILi3PTc
-        YsMCw7zUcr3ixNzi0rx0veT83E2M4LjQ0tzBuH3VB71DjEwcjIcYJTiYlUR4J0y/myDEm5JY
-        WZValB9fVJqTWnyIUZqDRUmc90LXyXghgfTEktTs1NSC1CKYLBMHp1QD07pz5e636xwnOGkK
-        Vazb5cHqbVQ4l0tD6dfR3fOjagQuuZzz2euXMLVlQsOsALXF933K/uzXfVBun7tW8moZ46Y+
-        fWOJ0om6C+qS9nadOXjm29sn2f37d6yvCnTgXPNh7et13xbvmLZ7qrRie41/ENudfdk9H3Ja
-        38Ud1njFm/bFqLXyUV79/8bVjFo8VXu3T/niHecj72g03XHimg1/y20lZ5h/2bth1gJOmcyp
-        c35/YNxfqj33v1qEOcNKr8b75229VlqsWLZ8at/tdeZN3Vf+qMdNMtvPJCEq94O3ftvSG4p3
-        3FY2XX6bwPx1Q+W2OVqMHAt+cXour2PUWFxa92LCsRe6UasO9cx/oPi+fb0SS3FGoqEWc1Fx
-        IgBNLPk4+gIAAA==
-X-CMS-MailID: 20210701233430epcas1p1dd9e84341c510b430d8d630ebd84551c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210611004956epcas1p262dc7907165782173692d7cf9e571dfe
-References: <CGME20210611004956epcas1p262dc7907165782173692d7cf9e571dfe@epcas1p2.samsung.com>
-        <20210611004024.2925-1-namjae.jeon@samsung.com>
-        <YN4RoCAWq5SMXmaN@chrisdown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+QYu4pPRr-KQB2b1YsZSYfAb11_hnL+UH8WTj3N5_x9yX8WnA@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
+        a=MnllW2CieawZLw/OcHE/Ng==:117 a=MnllW2CieawZLw/OcHE/Ng==:17
+        a=kj9zAlcOel0A:10 a=e_q4qTt1xDgA:10 a=VwQbUJbxAAAA:8 a=CFcHuH0UAAAA:20
+        a=vfzsticYAAAA:8 a=7-415B0cAAAA:8 a=xKs6jjFv48UruDLS-AEA:9
+        a=CjuIK1q_8ugA:10 a=lxpmHu_XA5BgEnvxp0EM:22 a=NWVoK91CQySWRX1oVYDe:22
+        a=AjGcO6oz07-iQ99wixmX:22 a=yVpCJ3KIzPkIoG9xwaWi:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Namjae Jeon writes:
-> >The compatibility issue between linux exfat and exfat of some camera
-> >company was reported from Florian. In their exfat, if the number of
-> >files exceeds any limit, the DataLength in stream entry of the
-> >directory is no longer updated. So some files created from camera does
-> >not show in linux exfat. because linux exfat doesn't allow that cpos
-> >becomes larger than DataLength of stream entry. This patch check
-> >DataLength in stream entry only if the type is ALLOC_NO_FAT_CHAIN and
-> >add the check ensure that dentry offset does not exceed max dentries
-> >size(256 MB) to avoid the circular FAT chain issue.
-> >
-> >Fixes: ca06197382bd ("exfat: add directory operations")
-> >Cc: stable@vger.kernel.org # v5.9
-> >Reported-by: Florian Cramer <flrncrmr@gmail.com>
-> >Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-> >Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+On Thu, Jul 01, 2021 at 12:44:30PM +0200, Bruno Goncalves wrote:
+> Hello,
 > 
-> Tested-by: Chris Down <chris@chrisdown.name>
-Thanks for your test!
-> 
-> Thanks, I came across this while debugging why directories produced on my Fuji
-> X-T4 were truncated at 2^12 dentries.
-> 
-> If the other report was also Fuji, maybe this is worth asking them to fix in firmware?
-Well, I am not sure that they will respond to your report well. If you can
-reproduce same issue even when plugging your exfat into windows, I think
-that it is worth reporting to them.
+> We have hit this lock problem during xfstest [1] on aarch64. The whole
+> console.log is available on [2].
 
-> >---
-> > fs/exfat/dir.c | 8 +++++---
-> > 1 file changed, 5 insertions(+), 3 deletions(-)
-> >
-> >diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c index
-> >c4523648472a..f4e4d8d9894d 100644
-> >--- a/fs/exfat/dir.c
-> >+++ b/fs/exfat/dir.c
-> >@@ -63,7 +63,7 @@ static void exfat_get_uniname_from_ext_entry(struct
-> >super_block *sb,  static int exfat_readdir(struct inode *inode, loff_t
-> >*cpos, struct exfat_dir_entry *dir_entry)  {
-> > 	int i, dentries_per_clu, dentries_per_clu_bits = 0, num_ext;
-> >-	unsigned int type, clu_offset;
-> >+	unsigned int type, clu_offset, max_dentries;
-> > 	sector_t sector;
-> > 	struct exfat_chain dir, clu;
-> > 	struct exfat_uni_name uni_name;
-> >@@ -86,6 +86,8 @@ static int exfat_readdir(struct inode *inode, loff_t
-> >*cpos, struct exfat_dir_ent
-> >
-> > 	dentries_per_clu = sbi->dentries_per_clu;
-> > 	dentries_per_clu_bits = ilog2(dentries_per_clu);
-> >+	max_dentries = (unsigned int)min_t(u64, MAX_EXFAT_DENTRIES,
-> >+					   (u64)sbi->num_clusters << dentries_per_clu_bits);
-> >
-> > 	clu_offset = dentry >> dentries_per_clu_bits;
-> > 	exfat_chain_dup(&clu, &dir);
-> >@@ -109,7 +111,7 @@ static int exfat_readdir(struct inode *inode, loff_t *cpos, struct exfat_dir_ent
-> > 		}
-> > 	}
-> >
-> >-	while (clu.dir != EXFAT_EOF_CLUSTER) {
-> >+	while (clu.dir != EXFAT_EOF_CLUSTER && dentry < max_dentries) {
-> > 		i = dentry & (dentries_per_clu - 1);
-> >
-> > 		for ( ; i < dentries_per_clu; i++, dentry++) { @@ -245,7 +247,7 @@
-> >static int exfat_iterate(struct file *filp, struct dir_context *ctx)
-> > 	if (err)
-> > 		goto unlock;
-> > get_new:
-> >-	if (cpos >= i_size_read(inode))
-> >+	if (ei->flags == ALLOC_NO_FAT_CHAIN && cpos >= i_size_read(inode))
-> > 		goto end_of_dir;
-> >
-> > 	err = exfat_readdir(inode, &cpos, &de);
-> >--
-> >2.17.1
-> >
+fstests is not the place to report test failures. They should be
+directed to the list for the subsystem that failed. In this case,
+probably linux-xfs@vger.kernel.org. I haven't cc'd that list
+because....
 
+> 
+> 10847.013727] run fstests generic/023 at 2021-05-15 17:21:46
+> [10863.635560] XFS (sda4): Unmounting Filesystem
+> [10865.095328] BUG: sleeping function called from invalid context at (null):3550
+> [10865.102695] in_atomic(): 0, irqs_disabled(): 128, non_block: 0,
+> pid: 276634, name: xfs_repair
+> [10865.111223] 1 lock held by xfs_repair/276634:
+> [10865.115579]  #0: ffff000168f654d0
+> (&tsk->futex_exit_mutex){+.+.}-{3:3}, at: futex_exit_release+0x40/0xe4
+> [10865.125091] irq event stamp: 150
+> [10865.128314] hardirqs last  enabled at (149): [<ffff8000101a2778>]
+> uaccess_ttbr0_enable+0xa8/0xc0
+> [10865.137096] hardirqs last disabled at (150): [<ffff8000101a2838>]
+> uaccess_ttbr0_disable+0xa8/0xb4
+> [10865.145964] softirqs last  enabled at (132): [<ffff800010016490>]
+> put_cpu_fpsimd_context+0x30/0x70
+> [10865.154921] softirqs last disabled at (130): [<ffff800010016408>]
+> get_cpu_fpsimd_context+0x8/0x60
+> [10865.163792] CPU: 31 PID: 276634 Comm: xfs_repair Not tainted 5.13.0-rc1 #1
+> [10865.170663] Hardware name: GIGABYTE R120-T34-00/MT30-GS2-00, BIOS
+> F02 08/06/2019
+> [10865.178054] Call trace:
+> [10865.180496]  dump_backtrace+0x0/0x1c0
+> [10865.184156]  show_stack+0x24/0x30
+> [10865.187467]  dump_stack+0xf8/0x164
+> [10865.190867]  ___might_sleep+0x174/0x250
+> [10865.194700]  __might_sleep+0x60/0xa0
+> [10865.198272]  __might_fault+0x3c/0x90
+> [10865.201847]  exit_robust_list+0xac/0x36c
+> [10865.205767]  exit_robust_list+0x9c/0x36c
+> [10865.209686]  futex_exit_release+0xa8/0xe4
+> [10865.213692]  exit_mm_release+0x28/0x44
+> [10865.217438]  exit_mm+0x2c/0x27c
+> [10865.220579]  do_exit+0x1f0/0x454
+> [10865.223804]  __arm64_sys_exit+0x24/0x2c
+> [10865.227638]  invoke_syscall+0x50/0x120
+> [10865.231384]  el0_svc_common.constprop.0+0x68/0x104
+> [10865.236172]  do_el0_svc+0x30/0x9c
+> [10865.239483]  el0_svc+0x2c/0x54
+> [10865.242538]  el0_sync_handler+0x1a4/0x1b0
+> [10865.246544]  el0_sync+0x19c/0x1c0
+
+... this is likely a futex bug or some other platform kernel
+bug.  xfs_repair is just the userspace application that is tripping
+over it.
+
+> We don't reproduce this often, but the first time I've seen it was
+> with 'Commit: f36edc5533b2 - Merge tag 'arc-5.13-rc2' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc'
+> 
+> [1] https://gitlab.com/cki-project/kernel-tests/-/tree/main/filesystems/xfs/xfstests
+> [2] https://arr-cki-prod-datawarehouse-public.s3.amazonaws.com/datawarehouse-public/2021/05/15/303402899/build_aarch64_redhat%3A1264727321/tests/9991652_aarch64_2_console.log
+
+Yup, there's a second occurrence of this same "sleeping in
+invalid context" bug from something called "stress-ng" on a rwsem:
+
+[ 2277.799926] BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1352 
+[ 2277.808464] in_atomic(): 0, irqs_disabled(): 128, non_block: 0, pid: 125191, name: stress-ng 
+[ 2277.816908] no locks held by stress-ng/125191. 
+[ 2277.821356] irq event stamp: 2482 
+[ 2277.824682] hardirqs last  enabled at (2481): [<ffff800010341e0c>] __uaccess_ttbr0_enable+0x7c/0x90 
+[ 2277.833742] hardirqs last disabled at (2482): [<ffff800010342130>] __do_sys_mincore+0x310/0x354 
+[ 2277.842448] softirqs last  enabled at (30): [<ffff800010016490>] put_cpu_fpsimd_context+0x30/0x70 
+[ 2277.851329] softirqs last disabled at (28): [<ffff800010016408>] get_cpu_fpsimd_context+0x8/0x60 
+[ 2277.860125] CPU: 11 PID: 125191 Comm: stress-ng Not tainted 5.13.0-rc1 #1 
+[ 2277.866919] Hardware name: GIGABYTE R120-T34-00/MT30-GS2-00, BIOS F02 08/06/2019 
+[ 2277.874319] Call trace: 
+[ 2277.876772]  dump_backtrace+0x0/0x1c0 
+[ 2277.880443]  show_stack+0x24/0x30 
+[ 2277.883765]  dump_stack+0xf8/0x164 
+[ 2277.887170]  ___might_sleep+0x174/0x250 
+[ 2277.891003]  __might_sleep+0x60/0xa0 
+[ 2277.894575]  down_read+0x38/0xa0 
+[ 2277.897802]  __do_sys_mincore+0xe0/0x354 
+[ 2277.901723]  __arm64_sys_mincore+0x28/0x8c 
+[ 2277.905816]  invoke_syscall+0x50/0x120 
+[ 2277.909563]  el0_svc_common.constprop.0+0x68/0x104 
+[ 2277.914350]  do_el0_svc+0x30/0x9c 
+[ 2277.917661]  el0_svc+0x2c/0x54 
+[ 2277.920716]  el0_sync_handler+0x1a4/0x1b0 
+[ 2277.924722]  el0_sync+0x19c/0x1c0 
+
+There are also RCU lock warnings immediately after this:
+
+"kernel/sched/core.c:8304 Illegal context switch in RCU-sched read-side critical section!"
+
+occuring in core memory allocation code, followed by other
+interleaved warning mess.
+
+So, really, this looks like a platform bug or unbalanced irq
+enable/disable somewhere in the kernel and has nothing to do with
+the xfs_repair process that triggered it...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
