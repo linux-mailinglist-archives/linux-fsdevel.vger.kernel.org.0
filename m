@@ -2,97 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50FF23BA099
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jul 2021 14:38:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD11D3BA0D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jul 2021 15:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232196AbhGBMlP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Jul 2021 08:41:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45222 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232167AbhGBMlP (ORCPT
+        id S232446AbhGBNEp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Jul 2021 09:04:45 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:57574 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232250AbhGBNEn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Jul 2021 08:41:15 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E61BC061762
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Jul 2021 05:38:43 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id v20so15864748eji.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Jul 2021 05:38:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TejoEZ6PvhDR6/vKnlCgTBQKFLG9ws1K525Cz+uqRss=;
-        b=q+VryZfZlPZSEnfM22oyE1OsMkDXFLAqmpiBkUk4KIQVMvhqdnRnPfoMzd08w9/GVw
-         WVBztUsXpOFNtS3JeBQ1ey6GxnWnP2/aR/T2KZiJ6Ja3GW+DkKj+8b1OybetowjhzO0J
-         uKFnX1Up/FLl4aaCtxd1XCytVJrI0fxUgWirqajKIN8kaYtQ+S067CIN15z/RoBhT+ha
-         gZ2GS1vV/v57wrM2KVO+i6Xmcbe7cZSlY6/Bw4V0zGY8EYHRGroYx5xYGtK+ML7aKzAa
-         1sG6DEOCx9j+YIe257IAp8sKsZbIdeEnZQcPG3vy6uWursqKg9xKxON/EXCg6VkePNqv
-         QRJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TejoEZ6PvhDR6/vKnlCgTBQKFLG9ws1K525Cz+uqRss=;
-        b=i3nb20XFBhifowp7OBzXkVT+iZNLre5Bn1avECkvs7K0TBzUOm1nhE0EbAP7HMFdid
-         AyKfJU0WcO6o28eB3T09mKF0e/VeUpB1kXhjzj/1as6Eh9Dr5CP9/5afpzl/jMXtbjXP
-         ehL34TQ9XmLBRbMDsEXuOSKfXoAW5HESL0ntUggEFXODnNmuVsqqV2Rdm8uo5KgFKREc
-         6F5elP5/Y/eOEYRbKCZOP7Ltl0TmK67ZXDMKhpAqdfyLRJOjryY+lk3xRSx8OXwn+LeH
-         Rs2ya/vc+HSj5AyuqxHBaM2LkAgQFVzaQiqh+Ume5rqfPPNgFfus/IbUYunbNBqzwCQr
-         yTmQ==
-X-Gm-Message-State: AOAM532rJ6tYSO6jcgOessVSznx/uLYkLMbMFk9u3QsuNOQpbgzdLeVE
-        tT6TDOmVe4d/LOiG6mR5RbMuvwf+VLAIBw8engMKYA==
-X-Google-Smtp-Source: ABdhPJy2T5F8l8QmzzJ7o24iwSWZG5I9WgE9TfFMy/4Nq1nG7PIA5FfoGfDfCtgp1rNasiTAHaL+DPKH9xoGnEFyIB0=
-X-Received: by 2002:a17:906:25db:: with SMTP id n27mr4989541ejb.170.1625229521558;
- Fri, 02 Jul 2021 05:38:41 -0700 (PDT)
+        Fri, 2 Jul 2021 09:04:43 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 2FB8320560;
+        Fri,  2 Jul 2021 13:02:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1625230930; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3d1yKJRwIM3/3JhL7UHi0GBB49k8bfYaL1isHtBjNiU=;
+        b=cR4n9AZzeh+F2V6p9n+sHtf+6fHRppgsvSuFgaB5/1EN9C3rwJ3XOd6z1DpCJrTKIlOPuS
+        CaU9IXxxODIbUXf/5/LVXXP9ZqW3E9mybx5FqVIjtCgH1L9KguvGIZAMSBgQcpB6HY73CK
+        R4V+UTr82OHyU4CnTKxfaYvRvWvaLDc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1625230930;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3d1yKJRwIM3/3JhL7UHi0GBB49k8bfYaL1isHtBjNiU=;
+        b=YZNQrLbP7OiucHCEciIGA1VY7OqUhjIgOpRHnyIHA+E7RVUWocP3FCBXTSYYjH4S8FQM1R
+        xboihQsmW00MYQDA==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 7EFC411C84;
+        Fri,  2 Jul 2021 13:02:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1625230930; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3d1yKJRwIM3/3JhL7UHi0GBB49k8bfYaL1isHtBjNiU=;
+        b=cR4n9AZzeh+F2V6p9n+sHtf+6fHRppgsvSuFgaB5/1EN9C3rwJ3XOd6z1DpCJrTKIlOPuS
+        CaU9IXxxODIbUXf/5/LVXXP9ZqW3E9mybx5FqVIjtCgH1L9KguvGIZAMSBgQcpB6HY73CK
+        R4V+UTr82OHyU4CnTKxfaYvRvWvaLDc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1625230930;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3d1yKJRwIM3/3JhL7UHi0GBB49k8bfYaL1isHtBjNiU=;
+        b=YZNQrLbP7OiucHCEciIGA1VY7OqUhjIgOpRHnyIHA+E7RVUWocP3FCBXTSYYjH4S8FQM1R
+        xboihQsmW00MYQDA==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id eBAbHFEO32CzNAAALh3uQQ
+        (envelope-from <lhenriques@suse.de>); Fri, 02 Jul 2021 13:02:09 +0000
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 1d835cb7;
+        Fri, 2 Jul 2021 13:02:08 +0000 (UTC)
+Date:   Fri, 2 Jul 2021 14:02:08 +0100
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Olga Kornievskaia <aglo@umich.edu>,
+        Petr Vorel <pvorel@suse.cz>, Steve French <sfrench@samba.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH v12] vfs: fix copy_file_range regression in cross-fs
+ copies
+Message-ID: <YN8OUJvdRXAuNXSk@suse.de>
+References: <20210702090012.28458-1-lhenriques@suse.de>
+ <CAOQ4uxhQciJ=r5E2yvM2zafhnBO4nZNVzUfEU9-tj9SAKAYwGg@mail.gmail.com>
 MIME-Version: 1.0
-References: <CA+G9fYuBvh-H8Vqp58j-coXUD8p1A6h2it_aZdRiYcN2soGNdg@mail.gmail.com>
-In-Reply-To: <CA+G9fYuBvh-H8Vqp58j-coXUD8p1A6h2it_aZdRiYcN2soGNdg@mail.gmail.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 2 Jul 2021 18:08:29 +0530
-Message-ID: <CA+G9fYszTVESKbiORBj=bvZX3qco474yYhWDV3ccveScqt41YA@mail.gmail.com>
-Subject: Re: [mainline] [arm64] Internal error: Oops - percpu_counter_add_batch
-To:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        regressions@lists.linux.dev,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>
-Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        Theodore Tso <tytso@mit.edu>, lkft-triage@lists.linaro.org,
-        linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jens Axboe <axboe@kernel.dk>, Zhang Yi <yi.zhang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxhQciJ=r5E2yvM2zafhnBO4nZNVzUfEU9-tj9SAKAYwGg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2 Jul 2021 at 13:54, Naresh Kamboju <naresh.kamboju@linaro.org> wro=
-te:
->
-> Results from Linaro=E2=80=99s test farm.
-> Regression found on arm64 on Linux mainline tree.
+On Fri, Jul 02, 2021 at 02:12:29PM +0300, Amir Goldstein wrote:
+<snip>
+> I guess there was miscommunication
+> 
+> As Olga wrote, you have to place this short-circuit in
+> nfs4_copy_file_range() if you remove it from here.
+> It is NOT SAFE to pass zero length to nfs4_copy_file_range().
+> 
+> I apologize if you inferred from my response that you don't need to
+> do that.
 
-Regression found on arm64, arm and i386 on Linux mainline tree.
-But x86_64 tests PASS.
+Yeah, I totally misread your email.  But yeah I understand the issue and
+I'll take a look into that.  Although this will need to go back to my TODO
+pile for next week.
 
->
-> The following kernel crash was noticed while running LTP fs_fill test cas=
-e on
-> arm64 devices Linus ' mainline tree (this is not yet tagged / released).
->
-> This regression  / crash is easy to reproduce.
->
-> fs_fill.c:53: TINFO: Unlinking mntpoint/thread6/file2
-> fs_fill.c:87: TPASS: Got 6 ENOSPC runtime 3847ms
-> [ 1140.055715] Unable to handle kernel paging request at virtual
-> address ffff76a8a6b59000
+> My intention was, not knowing if and when your patch will be picked up,
+> (a volunteer to pick it pick never showed up...)
 
-ref;
-https://lore.kernel.org/regressions/CA+G9fYuBvh-H8Vqp58j-coXUD8p1A6h2it_aZd=
-RiYcN2soGNdg@mail.gmail.com/T/#u
+Right, and this brings the question that this has been dragging already
+for a while now.  And I feel like I'm approaching my last attempt before
+giving up.  If no one is picking this patch there's no point continue
+wasting more time with it (mine and all the other people helping with
+reviews and testing).
 
-- Naresh
+Anyway... I'll try to get back to this during next week.
+
+Cheers,
+--
+Luís
+
+> I think that nfs client developers should make sure that the zero length
+> check is added to nfs code as fail safety, because the semantics
+> of the vfs method and the NFS protocol command do not match.
+> 
+> Thanks,
+> Amir.
