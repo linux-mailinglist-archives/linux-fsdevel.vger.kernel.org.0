@@ -2,153 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00ACB3B99E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jul 2021 02:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8884E3B9B01
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jul 2021 05:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234306AbhGBAIc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jul 2021 20:08:32 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:38655 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234063AbhGBAIc (ORCPT
+        id S234874AbhGBD17 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jul 2021 23:27:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51615 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234848AbhGBD16 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jul 2021 20:08:32 -0400
-Received: from dread.disaster.area (pa49-179-138-183.pa.nsw.optusnet.com.au [49.179.138.183])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 3A27610451FC;
-        Fri,  2 Jul 2021 10:05:58 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lz6gv-001hPP-7o; Fri, 02 Jul 2021 10:05:57 +1000
-Date:   Fri, 2 Jul 2021 10:05:57 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Bruno Goncalves <bgoncalv@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, fstests@vger.kernel.org,
-        CKI Project <cki-project@redhat.com>
-Subject: Re: 1 lock held by xfs_repair/276634
-Message-ID: <20210702000557.GA219491@dread.disaster.area>
-References: <CA+QYu4pPRr-KQB2b1YsZSYfAb11_hnL+UH8WTj3N5_x9yX8WnA@mail.gmail.com>
+        Thu, 1 Jul 2021 23:27:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625196327;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KnDTUBO/qel2LJGKzNIBMBJoNluIIwfxXdRX1zb5ugw=;
+        b=BwKbchlaUmuikYl4oojjCU4TUBykBYIj94wm8Id2MfOokQ1awVY7JBjvziP5icaTabCvMT
+        CgrBAzf5Si9GkWvfOm5RgaEvrc1mH7pZnNipIyX+XnrrIAFUkVaKIepqxKuNnDmMBzZ6IF
+        S5Cw+ulDyFrUAQGMoCgH6A7Yt8YIRe8=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-344-euWw4gr8NBSvz6Y7napqNw-1; Thu, 01 Jul 2021 23:25:26 -0400
+X-MC-Unique: euWw4gr8NBSvz6Y7napqNw-1
+Received: by mail-pg1-f199.google.com with SMTP id i189-20020a6387c60000b0290228552e3ac7so1523675pge.20
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Jul 2021 20:25:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=KnDTUBO/qel2LJGKzNIBMBJoNluIIwfxXdRX1zb5ugw=;
+        b=E0hIr1loWrPlmT9SM1IcIh2r2vx+vrn+JCBccWFfiOfUusM7jhZZc7/vp/LYhHFBQs
+         yezeWPZ6DXeSdxifGbLqJDFc74FbwGrEg1TJ7Q7MKuHbQHC+LrgtqJHrNsfpkN01WO3Q
+         TUaBvauaeCj4Kz/kjndIVNOQRPUqzNuggy90yRGXKdmNkHJ1udGqGrxHJ34MxBxczmNJ
+         hLSymMyS4v68SuTZ0l9HmP0h7ipI7RrB/F30n4zJt8M9OGpBwOAJBEixXnBffmo0qY7W
+         /ZtGyXyalo+ljfOPwCZSvqwHeLsEewOh5vignlYJmM9uhzgiDVyp2gQOSDf5Qx4lV6s4
+         wuLA==
+X-Gm-Message-State: AOAM530XEozhU3PohBjvzl9WYJ/ANCdEn7pU5nAyhWLa46uYOZo81ZwZ
+        Yqkvc5QsmLT2t2pA37/u8ggNKQksS2zaiCbiX/tfUc7T1Ea1AECFNWKJZPrH2LTT0309T7aV0Rk
+        Sc3tK3SKfyDQFXEa7VjfuFGKqRQ==
+X-Received: by 2002:a05:6a00:174e:b029:308:35eb:4593 with SMTP id j14-20020a056a00174eb029030835eb4593mr3353623pfc.8.1625196324986;
+        Thu, 01 Jul 2021 20:25:24 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyKMQl/tw5Kx6FHOmk54WvFeYF610dbfRRBBaUlCrS6TkxAlUSkb5jlHy46VzHh0+l9ZFtiag==
+X-Received: by 2002:a05:6a00:174e:b029:308:35eb:4593 with SMTP id j14-20020a056a00174eb029030835eb4593mr3353600pfc.8.1625196324718;
+        Thu, 01 Jul 2021 20:25:24 -0700 (PDT)
+Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id p17sm11147627pjg.54.2021.07.01.20.25.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Jul 2021 20:25:23 -0700 (PDT)
+Subject: Re: [PATCH v8 09/10] vduse: Introduce VDUSE - vDPA Device in
+ Userspace
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20210615141331.407-1-xieyongji@bytedance.com>
+ <20210615141331.407-10-xieyongji@bytedance.com>
+ <YNSatrDFsg+4VvH4@stefanha-x1.localdomain>
+ <CACycT3vaXQ4dxC9QUzXXJs7og6TVqqVGa8uHZnTStacsYAiFwQ@mail.gmail.com>
+ <YNw+q/ADMPviZi6S@stefanha-x1.localdomain>
+ <CACycT3t6M5i0gznABm52v=rdmeeLZu8smXAOLg+WsM3WY1fgTw@mail.gmail.com>
+ <7264cb0b-7072-098e-3d22-2b7e89216545@redhat.com>
+ <CACycT3v7pYXAFtijPgWCMZ2WXxjT2Y-DUwS3hN_T7dhfE5o_6g@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <c7d3473c-f855-166b-f4da-47be5a329859@redhat.com>
+Date:   Fri, 2 Jul 2021 11:25:15 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+QYu4pPRr-KQB2b1YsZSYfAb11_hnL+UH8WTj3N5_x9yX8WnA@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
-        a=MnllW2CieawZLw/OcHE/Ng==:117 a=MnllW2CieawZLw/OcHE/Ng==:17
-        a=kj9zAlcOel0A:10 a=e_q4qTt1xDgA:10 a=VwQbUJbxAAAA:8 a=CFcHuH0UAAAA:20
-        a=vfzsticYAAAA:8 a=7-415B0cAAAA:8 a=xKs6jjFv48UruDLS-AEA:9
-        a=CjuIK1q_8ugA:10 a=lxpmHu_XA5BgEnvxp0EM:22 a=NWVoK91CQySWRX1oVYDe:22
-        a=AjGcO6oz07-iQ99wixmX:22 a=yVpCJ3KIzPkIoG9xwaWi:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <CACycT3v7pYXAFtijPgWCMZ2WXxjT2Y-DUwS3hN_T7dhfE5o_6g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 01, 2021 at 12:44:30PM +0200, Bruno Goncalves wrote:
-> Hello,
-> 
-> We have hit this lock problem during xfstest [1] on aarch64. The whole
-> console.log is available on [2].
 
-fstests is not the place to report test failures. They should be
-directed to the list for the subsystem that failed. In this case,
-probably linux-xfs@vger.kernel.org. I haven't cc'd that list
-because....
+在 2021/7/1 下午6:26, Yongji Xie 写道:
+> On Thu, Jul 1, 2021 at 3:55 PM Jason Wang <jasowang@redhat.com> wrote:
+>>
+>> 在 2021/7/1 下午2:50, Yongji Xie 写道:
+>>> On Wed, Jun 30, 2021 at 5:51 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>>>> On Tue, Jun 29, 2021 at 10:59:51AM +0800, Yongji Xie wrote:
+>>>>> On Mon, Jun 28, 2021 at 9:02 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>>>>>> On Tue, Jun 15, 2021 at 10:13:30PM +0800, Xie Yongji wrote:
+>>>>>>> +/* ioctls */
+>>>>>>> +
+>>>>>>> +struct vduse_dev_config {
+>>>>>>> +     char name[VDUSE_NAME_MAX]; /* vduse device name */
+>>>>>>> +     __u32 vendor_id; /* virtio vendor id */
+>>>>>>> +     __u32 device_id; /* virtio device id */
+>>>>>>> +     __u64 features; /* device features */
+>>>>>>> +     __u64 bounce_size; /* bounce buffer size for iommu */
+>>>>>>> +     __u16 vq_size_max; /* the max size of virtqueue */
+>>>>>> The VIRTIO specification allows per-virtqueue sizes. A device can have
+>>>>>> two virtqueues, where the first one allows up to 1024 descriptors and
+>>>>>> the second one allows only 128 descriptors, for example.
+>>>>>>
+>>>>> Good point! But it looks like virtio-vdpa/virtio-pci doesn't support
+>>>>> that now. All virtqueues have the same maximum size.
+>>>> I see struct vpda_config_ops only supports a per-device max vq size:
+>>>> u16 (*get_vq_num_max)(struct vdpa_device *vdev);
+>>>>
+>>>> virtio-pci supports per-virtqueue sizes because the struct
+>>>> virtio_pci_common_cfg->queue_size register is per-queue (controlled by
+>>>> queue_select).
+>>>>
+>>> Oh, yes. I miss queue_select.
+>>>
+>>>> I guess this is a question for Jason: will vdpa will keep this limitation?
+>>>> If yes, then VDUSE can stick to it too without running into problems in
+>>>> the future.
+>>
+>> I think it's better to extend the get_vq_num_max() per virtqueue.
+>>
+>> Currently, vDPA assumes the parent to have a global max size. This seems
+>> to work on most of the parents but not vp-vDPA (which could be backed by
+>> QEMU, in that case cvq's size is smaller).
+>>
+>> Fortunately, we haven't enabled had cvq support in the userspace now.
+>>
+>> I can post the fixes.
+>>
+> OK. If so, it looks like we need to support the per-vq configuration.
+> I wonder if it's better to use something like: VDUSE_CREATE_DEVICE ->
+> VDUSE_SETUP_VQ -> VDUSE_SETUP_VQ -> ... -> VDUSE_ENABLE_DEVICE to do
+> initialization rather than only use VDUSE_CREATE_DEVICE.
 
-> 
-> 10847.013727] run fstests generic/023 at 2021-05-15 17:21:46
-> [10863.635560] XFS (sda4): Unmounting Filesystem
-> [10865.095328] BUG: sleeping function called from invalid context at (null):3550
-> [10865.102695] in_atomic(): 0, irqs_disabled(): 128, non_block: 0,
-> pid: 276634, name: xfs_repair
-> [10865.111223] 1 lock held by xfs_repair/276634:
-> [10865.115579]  #0: ffff000168f654d0
-> (&tsk->futex_exit_mutex){+.+.}-{3:3}, at: futex_exit_release+0x40/0xe4
-> [10865.125091] irq event stamp: 150
-> [10865.128314] hardirqs last  enabled at (149): [<ffff8000101a2778>]
-> uaccess_ttbr0_enable+0xa8/0xc0
-> [10865.137096] hardirqs last disabled at (150): [<ffff8000101a2838>]
-> uaccess_ttbr0_disable+0xa8/0xb4
-> [10865.145964] softirqs last  enabled at (132): [<ffff800010016490>]
-> put_cpu_fpsimd_context+0x30/0x70
-> [10865.154921] softirqs last disabled at (130): [<ffff800010016408>]
-> get_cpu_fpsimd_context+0x8/0x60
-> [10865.163792] CPU: 31 PID: 276634 Comm: xfs_repair Not tainted 5.13.0-rc1 #1
-> [10865.170663] Hardware name: GIGABYTE R120-T34-00/MT30-GS2-00, BIOS
-> F02 08/06/2019
-> [10865.178054] Call trace:
-> [10865.180496]  dump_backtrace+0x0/0x1c0
-> [10865.184156]  show_stack+0x24/0x30
-> [10865.187467]  dump_stack+0xf8/0x164
-> [10865.190867]  ___might_sleep+0x174/0x250
-> [10865.194700]  __might_sleep+0x60/0xa0
-> [10865.198272]  __might_fault+0x3c/0x90
-> [10865.201847]  exit_robust_list+0xac/0x36c
-> [10865.205767]  exit_robust_list+0x9c/0x36c
-> [10865.209686]  futex_exit_release+0xa8/0xe4
-> [10865.213692]  exit_mm_release+0x28/0x44
-> [10865.217438]  exit_mm+0x2c/0x27c
-> [10865.220579]  do_exit+0x1f0/0x454
-> [10865.223804]  __arm64_sys_exit+0x24/0x2c
-> [10865.227638]  invoke_syscall+0x50/0x120
-> [10865.231384]  el0_svc_common.constprop.0+0x68/0x104
-> [10865.236172]  do_el0_svc+0x30/0x9c
-> [10865.239483]  el0_svc+0x2c/0x54
-> [10865.242538]  el0_sync_handler+0x1a4/0x1b0
-> [10865.246544]  el0_sync+0x19c/0x1c0
 
-... this is likely a futex bug or some other platform kernel
-bug.  xfs_repair is just the userspace application that is tripping
-over it.
+This should be fine.
 
-> We don't reproduce this often, but the first time I've seen it was
-> with 'Commit: f36edc5533b2 - Merge tag 'arc-5.13-rc2' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc'
-> 
-> [1] https://gitlab.com/cki-project/kernel-tests/-/tree/main/filesystems/xfs/xfstests
-> [2] https://arr-cki-prod-datawarehouse-public.s3.amazonaws.com/datawarehouse-public/2021/05/15/303402899/build_aarch64_redhat%3A1264727321/tests/9991652_aarch64_2_console.log
+Thanks
 
-Yup, there's a second occurrence of this same "sleeping in
-invalid context" bug from something called "stress-ng" on a rwsem:
 
-[ 2277.799926] BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1352 
-[ 2277.808464] in_atomic(): 0, irqs_disabled(): 128, non_block: 0, pid: 125191, name: stress-ng 
-[ 2277.816908] no locks held by stress-ng/125191. 
-[ 2277.821356] irq event stamp: 2482 
-[ 2277.824682] hardirqs last  enabled at (2481): [<ffff800010341e0c>] __uaccess_ttbr0_enable+0x7c/0x90 
-[ 2277.833742] hardirqs last disabled at (2482): [<ffff800010342130>] __do_sys_mincore+0x310/0x354 
-[ 2277.842448] softirqs last  enabled at (30): [<ffff800010016490>] put_cpu_fpsimd_context+0x30/0x70 
-[ 2277.851329] softirqs last disabled at (28): [<ffff800010016408>] get_cpu_fpsimd_context+0x8/0x60 
-[ 2277.860125] CPU: 11 PID: 125191 Comm: stress-ng Not tainted 5.13.0-rc1 #1 
-[ 2277.866919] Hardware name: GIGABYTE R120-T34-00/MT30-GS2-00, BIOS F02 08/06/2019 
-[ 2277.874319] Call trace: 
-[ 2277.876772]  dump_backtrace+0x0/0x1c0 
-[ 2277.880443]  show_stack+0x24/0x30 
-[ 2277.883765]  dump_stack+0xf8/0x164 
-[ 2277.887170]  ___might_sleep+0x174/0x250 
-[ 2277.891003]  __might_sleep+0x60/0xa0 
-[ 2277.894575]  down_read+0x38/0xa0 
-[ 2277.897802]  __do_sys_mincore+0xe0/0x354 
-[ 2277.901723]  __arm64_sys_mincore+0x28/0x8c 
-[ 2277.905816]  invoke_syscall+0x50/0x120 
-[ 2277.909563]  el0_svc_common.constprop.0+0x68/0x104 
-[ 2277.914350]  do_el0_svc+0x30/0x9c 
-[ 2277.917661]  el0_svc+0x2c/0x54 
-[ 2277.920716]  el0_sync_handler+0x1a4/0x1b0 
-[ 2277.924722]  el0_sync+0x19c/0x1c0 
+>
+> Thanks,
+> Yongji
+>
 
-There are also RCU lock warnings immediately after this:
-
-"kernel/sched/core.c:8304 Illegal context switch in RCU-sched read-side critical section!"
-
-occuring in core memory allocation code, followed by other
-interleaved warning mess.
-
-So, really, this looks like a platform bug or unbalanced irq
-enable/disable somewhere in the kernel and has nothing to do with
-the xfs_repair process that triggered it...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
