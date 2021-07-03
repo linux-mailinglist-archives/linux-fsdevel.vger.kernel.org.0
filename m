@@ -2,56 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C8953BA6B0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Jul 2021 04:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 415CD3BA6B9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Jul 2021 04:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230095AbhGCCUj convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 2 Jul 2021 22:20:39 -0400
-Received: from 151-0-195-85.ip282.fastwebnet.it ([151.0.195.85]:56923 "EHLO
-        S510.gigasys" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230051AbhGCCUi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Jul 2021 22:20:38 -0400
-X-Greylist: delayed 58495 seconds by postgrey-1.27 at vger.kernel.org; Fri, 02 Jul 2021 22:20:38 EDT
-Received: from [192.168.1.105] ([156.0.214.24])
-        (authenticated bits=0)
-        by S510.gigasys (9.0.0) with ESMTP id 162A0wgP029894
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 sabrina@S510.gigasys verify=NOT);
-        Fri, 2 Jul 2021 12:02:36 +0200
-Message-Id: <202107021002.162A0wgP029894@S510.gigasys>
-Content-Type: text/plain; charset="utf-8"
+        id S230127AbhGCC6B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Jul 2021 22:58:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230051AbhGCC6B (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Jul 2021 22:58:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C34F5613EB;
+        Sat,  3 Jul 2021 02:55:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625280927;
+        bh=KdTK+UeMQf79HP2aYkDeRCjrJpwTJT0tuqEScdh1Yms=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i0DvuIfc2CWeLzJnhJgtO/TkH0/iuO295xgSwcGSDwn4NJzhYqOy9QTEXv9CHGQn0
+         M1Uwt7L6RnsyrW9qIw77JalPZIYAwvl//HhSfD2YP1R4iZCsWKCvTd9Xn5qgJf7sDW
+         Y7lIsmVyVwkupymn2BUXj+pyeI7ew5Rqy1PuMBraTP9zBVjaNyJoOj/ivzriEFhuNC
+         oS9lijNK5Yl1PZ8mp4GvsybLdcuEwV7/JmTYGnFRztako5k6GtO4Stx0cKV2BTOIZm
+         yVHtOfkjUk/1bzKaRGk915UhCHq8JyOwYy/wTwEw/5YuZ3OOEfWl0v26UtG2JJ1ET1
+         VX+B3Pc5iSxGQ==
+Date:   Fri, 2 Jul 2021 19:55:27 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [GIT PULL] xfs: new code for 5.14
+Message-ID: <20210703025527.GA24788@locust>
+References: <20210702201643.GA13765@locust>
+ <CAHk-=wjaCmLbgtSXjVA19HZO6RS8rNePjUf6HuMa3PoDS9VuSQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Your Attention Is Needed.
-To:     Recipients <marialpaton@online.ee>
-From:   "David Dossou" <marialpaton@online.ee>
-Date:   Fri, 02 Jul 2021 11:02:27 +0100
-Reply-To: revdaviddossou@gmail.com
-X-Antivirus: verificato in 0.009sec su S510.gigasys ([192.168.1.2])
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjaCmLbgtSXjVA19HZO6RS8rNePjUf6HuMa3PoDS9VuSQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Your Attention Is Needed
+On Fri, Jul 02, 2021 at 02:39:46PM -0700, Linus Torvalds wrote:
+> On Fri, Jul 2, 2021 at 1:16 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > Please let me know if anything else strange happens during the merge
+> > process.  The merge commits I made seem stable enough, but as it's the
+> > first time I've ever accepted a pull request, we'd all be open to
+> > feedback for improvements for next time.
+> 
+> It looks fine to me.
+> 
+> I *would* suggest editing the merge commit messages a bit when doing
+> pull requests from other people.
+> 
+> It's by no means a big deal, but it looks a bit odd to see things like
+> 
+>     Hi all,
+> 
+>    ...
+> 
+>     Questions, comment and feedback appreciated!
+> 
+>     Thanks all!
+>     Allison
+> 
+> in the merge message. All that text made a ton of sense in Allison's
+> pull request, but as you actually then merge it, it doesn't make a lot
+> of sense in the commit log, if you see what I mean..
 
-I write to inform you that we have already sent you $5,200.00 dollars through Western Union as we have been given the mandate to transfer your full compensation payment total sum of USD950,000.00 via western Union by this government.
+Yep, got it.  I'll strip those out next time, thanks for helping me
+figure these things out. :)
 
-I was calling your telephone number to give you the information through the phone but you did not pick up my calls throughout yesterday, even this morning. Now, I decided to email you the MTCN and sender name so that you will pick up this $5,200.00 to enable us to send another $5,200.00 today as you know we will be sending you only $5,200.00 per day.
+--D
 
-Please pick up this information and run to western union to pick up the $5,200.00 and call me back to send you another payment today, My direct phone line is +229-61380-625 once you picked up this $5,200.00 today. 
-
-Here is the western union information to pick up the $5,200.00,
-
-Sender’s First Name____David 
-Senders Second Name____Dossou
-Senders Country Benin Republic
-Text question___When
-Answer__45Minutes
-Amount$5,200.00
-MTCN Number___ 4420429799
-
-I am waiting for your call once you pick up this $5,200.00. Please email me your direct telephone number because I need to be calling you once we send any payment for the information
-
-Thanks
-
-Rev. David Dossou.
+> 
+> But it's not a problem for this pull request, and I've merged it in my
+> tree (pending my usual build tests etc, and I don't expect any
+> issues).
+> 
+>             Linus
