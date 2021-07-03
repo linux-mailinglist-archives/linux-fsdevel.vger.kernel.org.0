@@ -2,92 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1083BA745
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Jul 2021 06:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81D3E3BA76D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Jul 2021 07:41:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbhGCE5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Jul 2021 00:57:45 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:9450 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbhGCE5p (ORCPT
+        id S229823AbhGCFnx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Jul 2021 01:43:53 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:46728 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229797AbhGCFnu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Jul 2021 00:57:45 -0400
-Received: from dggeme752-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GH00x4FJmzZpPy;
-        Sat,  3 Jul 2021 12:52:01 +0800 (CST)
-Received: from [10.174.178.134] (10.174.178.134) by
- dggeme752-chm.china.huawei.com (10.3.19.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Sat, 3 Jul 2021 12:55:09 +0800
-Subject: Re: [powerpc][5.13.0-next-20210701] Kernel crash while running
- ltp(chdir01) tests
-To:     Theodore Ts'o <tytso@mit.edu>
-CC:     Jan Kara <jack@suse.cz>, <linuxppc-dev@lists.ozlabs.org>,
-        Guoqing Jiang <guoqing.jiang@linux.dev>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <26ACA75D-E13D-405B-9BFC-691B5FB64243@linux.vnet.ibm.com>
- <bf1c5b38-92f1-65db-e210-a97a199718ba@linux.dev>
- <4cc87ab3-aaa6-ed87-b690-5e5b99de8380@huawei.com>
- <03f734bd-f36e-f55b-0448-485b8a0d5b75@huawei.com> <YN86yl5kgVaRixxQ@mit.edu>
- <36778615-86fd-9a19-9bc9-f93a6f2d5817@huawei.com> <YN/a70ucYXu0DqGf@mit.edu>
-From:   Zhang Yi <yi.zhang@huawei.com>
-Message-ID: <66fb56cd-f1ff-c592-0202-0691372e32f5@huawei.com>
-Date:   Sat, 3 Jul 2021 12:55:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Sat, 3 Jul 2021 01:43:50 -0400
+Received: by mail-io1-f71.google.com with SMTP id a24-20020a5d95580000b029044cbcdddd23so8518604ios.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Jul 2021 22:41:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Xjufe8/uupoFVmY21qWlSTgp8wySY2FRac9z3X1dg2M=;
+        b=gtQptB+M+n+ceXbomD543FzyxobaAp8iUvv2RxQdXgjQe9r8zIZA9Fh/YSMBhT5NGr
+         XGdYeyxxtFb7tQHhHsY37KRxnLnTtimNVCwBMcX64h2hBTHCQ948PWHej9sXB4eQocAN
+         RDNZgw0hf8DAnJI1dgg3BPoeaRxF9O5hP5iKnXFMz+8NrhW0FbjxwHbVj7lx5ZW49QZz
+         NLx6uJwv44/Abfkdw3qZg8Y0hdeyRoSa4AMZpaqkzlAtSHsmrz2rZiXaz+oJThdMJhCA
+         VlJK30LGxdxpF7ai6RuNz1a2upq3eR4i/VyaN5txDMrdYw7QEdH5AU2H5NVvqXuTUC/Z
+         h9kw==
+X-Gm-Message-State: AOAM532myX6nRtVCTc9cWHAwX/xaZZdJv4nmzc7d0Zv48rHp34x2ZPp/
+        8eA3YxKDf5IITxXp6wfaztNuZU7lOLdhtXjL3p7KLiULGpTR
+X-Google-Smtp-Source: ABdhPJyBRnciPv1NG7xfwO9BqI/DpEyU8Cq8H8+tMFgcY3CRTskWYCOzaqpOwJKI6155yjxPsscpSXoMOZrf0hHU1tI8KdgREr35
 MIME-Version: 1.0
-In-Reply-To: <YN/a70ucYXu0DqGf@mit.edu>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.178.134]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggeme752-chm.china.huawei.com (10.3.19.98)
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a92:de05:: with SMTP id x5mr2293951ilm.260.1625290875752;
+ Fri, 02 Jul 2021 22:41:15 -0700 (PDT)
+Date:   Fri, 02 Jul 2021 22:41:15 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004e5ec705c6318557@google.com>
+Subject: [syzbot] general protection fault in legacy_parse_param
+From:   syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/7/3 11:35, Theodore Ts'o wrote:
-> On Sat, Jul 03, 2021 at 11:05:07AM +0800, Zhang Yi wrote:
->>
->> Originally, I want to add this shrinker as a optional feature for jbd2 because
->> only ext4 use it now and I'm not sure does ocfs2 needs this feature. So I export
->> jbd2_journal_[un]register_shrinker(), ext4 could invoke them individually.
-> 
-> The reason why bdev_try_to_free_page() callback was needed for ext4
-> --- namely so there was a way to release checkpointed buffers under
-> memory pressure --- also exists for ocfs2.  It was probably true that
-> in most deployments of ocfs2, they weren't running with super-tight
-> memory availability, so it may not have been necessary the same way
-> that it might be necessary, say, if ext4 was being used on a Rasberry
-> Pi.  :-)
-> 
->> And one more thing we to could do is rename the 'j_jh_shrink_count' to something
->> like 'j_checkpoint_jh_count' because we always init it no matter we register the
->> shrinker or not later.
-> 
-> That makes sense.
-> 
-> In fact, unless I'm mistaken, I don't think it's legal to call
-> percpu_counter_{inc,dec} if the shrinker isn't initialized.  So for
-> ocfs2, if we didn't initialize percpu_counter, when
-> __jbd2_journal_insert_checkpoint() tries to call percpu_counter_inc(),
-> I believe things would potentially go *boom* on some implementations
-> of the percpu counter (e.g., on Power and ARM).  So not only would it
-> not hurt to register the shrinker for ocfs2, I think it's required.
-> 
-> So yeah, let's rename it to something like j_checkpoint_jh_count, and
-> then let's inline jbd2_journal_[un]register_shrinker() in
-> journal_init_common() and jbd2_journal_unregister_shrinker().
-> 
-> What do you think?
-> 
+Hello,
 
-Yeah, it sounds good to me. Do you want me to send the fix patch, or you
-modify your commit 8f9e16badb8fd in another email directly?
+syzbot found the following issue on:
 
-Thanks,
-Yi.
+HEAD commit:    62fb9874 Linux 5.13
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12ffa118300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=19404adbea015a58
+dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
+compiler:       Debian clang version 11.0.1-2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+
+general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 PID: 20300 Comm: syz-executor.1 Not tainted 5.13.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:memchr+0x2f/0x70 lib/string.c:1054
+Code: 41 54 53 48 89 d3 41 89 f7 45 31 f6 49 bc 00 00 00 00 00 fc ff df 0f 1f 44 00 00 48 85 db 74 3b 48 89 fd 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 75 0f 48 ff cb 48 8d 7d 01 44 38 7d 00 75 db
+RSP: 0018:ffffc90001dafd00 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000013 RCX: dffffc0000000000
+RDX: 0000000000000013 RSI: 000000000000002c RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff81e171bf R09: ffffffff81e16f95
+R10: 0000000000000002 R11: ffff88807e96b880 R12: dffffc0000000000
+R13: ffff888020894000 R14: 0000000000000000 R15: 000000000000002c
+FS:  00007fe01ae27700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000005645a8 CR3: 0000000018afc000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ legacy_parse_param+0x461/0x7e0 fs/fs_context.c:537
+ vfs_parse_fs_param+0x1e5/0x460 fs/fs_context.c:117
+ vfs_fsconfig_locked fs/fsopen.c:265 [inline]
+ __do_sys_fsconfig fs/fsopen.c:439 [inline]
+ __se_sys_fsconfig+0xba9/0xff0 fs/fsopen.c:314
+ do_syscall_64+0x3f/0xb0 arch/x86/entry/common.c:47
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x4665d9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe01ae27188 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+RAX: ffffffffffffffda RBX: 000000000056bf80 RCX: 00000000004665d9
+RDX: 00000000200002c0 RSI: 0000000000000001 RDI: 0000000000000003
+RBP: 00000000004bfcb9 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000020000300 R11: 0000000000000246 R12: 000000000056bf80
+R13: 00007ffd4bb7c5bf R14: 00007fe01ae27300 R15: 0000000000022000
+Modules linked in:
+---[ end trace 5d7119165725bd63 ]---
+RIP: 0010:memchr+0x2f/0x70 lib/string.c:1054
+Code: 41 54 53 48 89 d3 41 89 f7 45 31 f6 49 bc 00 00 00 00 00 fc ff df 0f 1f 44 00 00 48 85 db 74 3b 48 89 fd 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 75 0f 48 ff cb 48 8d 7d 01 44 38 7d 00 75 db
+RSP: 0018:ffffc90001dafd00 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000013 RCX: dffffc0000000000
+RDX: 0000000000000013 RSI: 000000000000002c RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff81e171bf R09: ffffffff81e16f95
+R10: 0000000000000002 R11: ffff88807e96b880 R12: dffffc0000000000
+R13: ffff888020894000 R14: 0000000000000000 R15: 000000000000002c
+FS:  00007fe01ae27700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004e4da0 CR3: 0000000018afc000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
