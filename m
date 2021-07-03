@@ -2,75 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E65D3BA8B1
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Jul 2021 14:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD633BAA29
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Jul 2021 21:41:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230288AbhGCM2A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Jul 2021 08:28:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46410 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230209AbhGCM17 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Jul 2021 08:27:59 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71897C061762;
-        Sat,  3 Jul 2021 05:25:24 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id bq39so10733584lfb.12;
-        Sat, 03 Jul 2021 05:25:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=cy0BjY4SGsOtD+0aYuKWWBuuDcZGS8pdU5MZL4LzLB0=;
-        b=sWL0mVP0TmLKdMiSa7irAG8Hh1PzaUupZXcWvFYoxHPjW1KlAAaCc8U6nhV5Rdf7Et
-         7Z9GY/nHjC1MiJjVeOT/owlAZD9BBBChicPBZ+rK/J4OPlK2nHw9CurpnQIcvbgg5Hfl
-         4ytMlFQGTU5QwjGuK6PYTaduUK0gjfaCBUV4EGHtyUiWXzLStBH1V4hMbCJfuB0U3GLA
-         qpK7kpihvUerVzf40L+kpkam7TzO6uNIFjoNHONsc6C9vWpqMpQkZ/1x4CuAcHmZWxN+
-         rYyOMzuUOepCWoFv9nEvqdh4wGUgsxh2q5Ota90AZqu3uPZorWTx2bB7ocdH13qihyOB
-         f+5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=cy0BjY4SGsOtD+0aYuKWWBuuDcZGS8pdU5MZL4LzLB0=;
-        b=kpRUnZBhomG4OcPXPgXVJqdXfj4cNsg1sGflauTz410tIerU3doeIyUi1zKPZlILHi
-         OxTss/LkH5NvvsMbTP6qPPqVqp3r7zjFaJemqTEBnr2vVPERpIeUhUVnAaR/OKSqkoGI
-         mM6dAWRWmZ8LUcKEceLEv6PXhlHK/bQ5/3z22mM6BQNyUJU74/kUL9hTwFC1YGUIgJcj
-         iXmPWj6OpTMwuG7zon3e+WhgSwj6sGUyVB/u+nlagXG57FooK3apFHbCcK69enESKK7V
-         l4baAK63pLpA/l2vzOHYaNBs5o7Sc8vvvTgImPQBf69s+y4mO6PqbDMoohptQLaYpaJB
-         eEhA==
-X-Gm-Message-State: AOAM530xHR7ugQingLol/R/QFfqRnC8hfuvEhpzSykvorKAehnjIuxbj
-        /j+cLD0HpcZUgWLRcq5UzNmLa27+n/Ug7X/zMIk=
-X-Google-Smtp-Source: ABdhPJyvh5/4xIn2I/ri8OhG3KgLGIRYtbGrdkx6hh4a/zypOoMhXu8t8U7jLo4q5k0xRPRp/9WdgvHChbhL4gSa2Nk=
-X-Received: by 2002:ac2:5149:: with SMTP id q9mr3498019lfd.313.1625315122445;
- Sat, 03 Jul 2021 05:25:22 -0700 (PDT)
-MIME-Version: 1.0
-From:   Steve French <smfrench@gmail.com>
-Date:   Sat, 3 Jul 2021 07:25:10 -0500
-Message-ID: <CAH2r5mu4qE+BPdLkVz=JvUPrbU2D7cUS15S_PBEgbr17VxgaYA@mail.gmail.com>
-Subject: Test results on latest ksmbd
-To:     COMMON INTERNET FILE SYSTEM SERVER 
-        <linux-cifsd-devel@lists.sourceforge.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S229818AbhGCTn1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Jul 2021 15:43:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57106 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229749AbhGCTnY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 3 Jul 2021 15:43:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id E905C61930;
+        Sat,  3 Jul 2021 19:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625341249;
+        bh=SONY1NmyAMoPE6DQ/LRxW/7HZ/G/ATxVs0+eSkgUXqE=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=TB7CXp1xOh97H2jCRjjBUgZcdyvUGBTa9BguxAOmWe1aEkczGOYwtp9I/Y0Em4Wft
+         U6lZvzGEMwpQQKc/X2rGNuqVL56HRCZ29IdyjplVYJ5SaBXSkuIzigP5OT+NbBYdcv
+         R7yyGS0ihPfWTVDkR0jivl5pwYY7qWNQbTQqMkWofPvfsxMA9kTwLsjx12zKx67BKr
+         kEnq0KZ0NFL+aSvJ3cYmZWc8Yqvc5vBAokA0c8+LGBvPQbWgAd1f5DTzYmkb0vQVuV
+         mnO/00yUVK2RtInAVb11/pORXTdqV9JFGcxBxkBPDUkFeTA2A845DOfpCq7h59B80r
+         brqycisjOsJug==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id E434160283;
+        Sat,  3 Jul 2021 19:40:49 +0000 (UTC)
+Subject: Re: [git pull] vfs.git d_path series
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <YN/RxStDmizrFH/m@zeniv-ca.linux.org.uk>
+References: <YN/RxStDmizrFH/m@zeniv-ca.linux.org.uk>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <YN/RxStDmizrFH/m@zeniv-ca.linux.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.d_path
+X-PR-Tracked-Commit-Id: e4b275531887fef7f7d8a7284bfc32f0fbbd4208
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f92a322a63517a798f2da57d56b483a6ae8f45a1
+Message-Id: <162534124992.29280.39169687474801309.pr-tracker-bot@kernel.org>
+Date:   Sat, 03 Jul 2021 19:40:49 +0000
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I ran the buildbot (SMB3 regression tests from Linux) against the
-kernel server with the recent updates from Namjae et al.  All tests
-continue to pass.  Good news.  ksmbd seems to be making good progress.
+The pull request you sent on Sat, 3 Jul 2021 02:56:05 +0000:
 
-http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/8/builds/49
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.d_path
 
-FYI - An earlier run hit an intermittent problem in mainline (5.14-rc)
-in the scheduler (not a problem with the server, the client side was
-running on very current mainline which appears to have this
-intermittent problem which I have also seen running unrelated tests):
-       [ 4826.261325] RIP: 0010:cfs_rq_is_decayed.part.93+0x13/0x18
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f92a322a63517a798f2da57d56b483a6ae8f45a1
 
-
+Thank you!
 
 -- 
-Thanks,
-
-Steve
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
