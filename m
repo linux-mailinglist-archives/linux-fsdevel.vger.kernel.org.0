@@ -2,248 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 996333BAD2C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jul 2021 15:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 294AB3BAD34
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jul 2021 15:52:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229734AbhGDNxt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jul 2021 09:53:49 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:2047 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229728AbhGDNxp (ORCPT
+        id S229785AbhGDNzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jul 2021 09:55:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37960 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229502AbhGDNzM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jul 2021 09:53:45 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UeeMavo_1625406659;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UeeMavo_1625406659)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 04 Jul 2021 21:51:08 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     linux-erofs@lists.ozlabs.org
-Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        nvdimm@lists.linux.dev, "Darrick J. Wong" <djwong@kernel.org>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [RFC PATCH 2/2] erofs: dax support for non-tailpacking regular file
-Date:   Sun,  4 Jul 2021 21:50:56 +0800
-Message-Id: <20210704135056.42723-3-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
-In-Reply-To: <20210704135056.42723-1-hsiangkao@linux.alibaba.com>
-References: <20210704135056.42723-1-hsiangkao@linux.alibaba.com>
+        Sun, 4 Jul 2021 09:55:12 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04BB3C061574;
+        Sun,  4 Jul 2021 06:52:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=13OzY+8k/62uCzBeEBMYh/0RrObpn1HoAPOblb6GAXI=; b=MsjA9kCQf/Aox4TEnjsAFZBxFJ
+        gilAT4NgjLMJ+uNAD9wK2j7rEQSj4oXu/K/gV/MTlgxqj7fSFdOPsLsWFEtsXULGLliFCt2jWeGFN
+        DJKyLlVAaqwo1dKGd7u9Q6JoOa+lQMi25UL4Is19hqwcxndivFCUpyzZyRz6Ua9jJ1yfVWvf8e9yT
+        ELoAwMYTjNblMbjtkUNRxXfKqEwqROoMIRZQwAOZZDoXvJu2hr0MpnmrIRrIZHYfBHtnkZ35gS3xc
+        eMTdIJXM8hY6VdVIY2rr5H4wNIFqTb+LUzgYF6FUWxQGotEKCJTYZYFq1TWK/VLNigmYK3r84Tbdo
+        jUX6j8sg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m02XB-009LXI-FR; Sun, 04 Jul 2021 13:51:55 +0000
+Date:   Sun, 4 Jul 2021 14:51:45 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Zhen Lei <thunder.leizhen@huawei.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next 1/1] iomap: Fix a false positive of UBSAN in
+ iomap_seek_data()
+Message-ID: <YOG88dhjfH5PdIfo@casper.infradead.org>
+References: <20210702092109.2601-1-thunder.leizhen@huawei.com>
+ <YN7dn08eeUXfixJ7@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YN7dn08eeUXfixJ7@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DAX is quite useful for some VM use cases in order to save guest
-memory extremely with minimal lightweight EROFS.
+On Fri, Jul 02, 2021 at 10:34:23AM +0100, Christoph Hellwig wrote:
+> We might as well just kill off the length variable while we're at it:
 
-In order to prepare for such use cases, add preliminary dax support
-for non-tailpacking regular files for now.
+Acked-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Tested with the DRAM-emulated PMEM and the EROFS image generated by
-"mkfs.erofs -Enoinline_data enwik9.fsdax.img enwik9"
-
-Cc: nvdimm@lists.linux.dev
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/data.c     | 41 ++++++++++++++++++++++++++++++++++++++++-
- fs/erofs/inode.c    |  5 +++++
- fs/erofs/internal.h |  2 ++
- fs/erofs/super.c    | 20 ++++++++++++++++++--
- 4 files changed, 65 insertions(+), 3 deletions(-)
-
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 38e9439c2510..edeee8ccb22a 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -6,7 +6,7 @@
- #include "internal.h"
- #include <linux/prefetch.h>
- #include <linux/iomap.h>
--
-+#include <linux/dax.h>
- #include <trace/events/erofs.h>
- 
- static void erofs_readendio(struct bio *bio)
-@@ -323,6 +323,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 		return ret;
- 
- 	iomap->bdev = inode->i_sb->s_bdev;
-+	iomap->dax_dev = EROFS_I_SB(inode)->dax_dev;
- 	iomap->offset = map.m_la;
- 	iomap->length = map.m_llen;
- 
-@@ -382,6 +383,11 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	if (!iov_iter_count(to))
- 		return 0;
- 
-+#ifdef CONFIG_FS_DAX
-+	if (IS_DAX(iocb->ki_filp->f_mapping->host))
-+		return dax_iomap_rw(iocb, to, &erofs_iomap_ops);
-+#endif
-+
- 	if (iocb->ki_flags & IOCB_DIRECT) {
- 		int err = erofs_prepare_dio(iocb, to);
- 
-@@ -410,6 +416,39 @@ const struct address_space_operations erofs_raw_access_aops = {
- 	.direct_IO = noop_direct_IO,
- };
- 
-+#ifdef CONFIG_FS_DAX
-+static vm_fault_t erofs_dax_huge_fault(struct vm_fault *vmf,
-+		enum page_entry_size pe_size)
-+{
-+	return dax_iomap_fault(vmf, pe_size, NULL, NULL, &erofs_iomap_ops);
-+}
-+
-+static vm_fault_t erofs_dax_fault(struct vm_fault *vmf)
-+{
-+	return erofs_dax_huge_fault(vmf, PE_SIZE_PTE);
-+}
-+
-+static const struct vm_operations_struct erofs_dax_vm_ops = {
-+	.fault		= erofs_dax_fault,
-+	.huge_fault	= erofs_dax_huge_fault,
-+};
-+
-+int erofs_file_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	if (!IS_DAX(file_inode(file)))
-+		return generic_file_readonly_mmap(file, vma);
-+
-+	if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_MAYWRITE))
-+		return -EINVAL;
-+
-+	vma->vm_ops = &erofs_dax_vm_ops;
-+	vma->vm_flags |= VM_HUGEPAGE;
-+	return 0;
-+}
-+#else
-+#define erofs_file_mmap	generic_file_readonly_mmap
-+#endif
-+
- const struct file_operations erofs_file_fops = {
- 	.llseek		= generic_file_llseek,
- 	.read_iter	= erofs_file_read_iter,
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 00edb7562fea..695b97acb9a6 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -174,6 +174,11 @@ static struct page *erofs_read_inode(struct inode *inode,
- 	inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec;
- 	inode->i_atime.tv_nsec = inode->i_ctime.tv_nsec;
- 
-+	inode->i_flags &= ~S_DAX;
-+	if (test_opt(&sbi->ctx, DAX) && S_ISREG(inode->i_mode) &&
-+	    vi->datalayout == EROFS_INODE_FLAT_PLAIN)
-+		inode->i_flags |= S_DAX;
-+
- 	if (!nblks)
- 		/* measure inode.i_blocks as generic filesystems */
- 		inode->i_blocks = roundup(inode->i_size, EROFS_BLKSIZ) >> 9;
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 2669c785d548..8b0542d35148 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -83,6 +83,7 @@ struct erofs_sb_info {
- 
- 	struct erofs_sb_lz4_info lz4;
- #endif	/* CONFIG_EROFS_FS_ZIP */
-+	struct dax_device *dax_dev;
- 	u32 blocks;
- 	u32 meta_blkaddr;
- #ifdef CONFIG_EROFS_FS_XATTR
-@@ -115,6 +116,7 @@ struct erofs_sb_info {
- /* Mount flags set via mount options or defaults */
- #define EROFS_MOUNT_XATTR_USER		0x00000010
- #define EROFS_MOUNT_POSIX_ACL		0x00000020
-+#define EROFS_MOUNT_DAX			0x00000040
- 
- #define clear_opt(ctx, option)	((ctx)->mount_opt &= ~EROFS_MOUNT_##option)
- #define set_opt(ctx, option)	((ctx)->mount_opt |= EROFS_MOUNT_##option)
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 8fc6c04b54f4..9aa385e22e1a 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -11,6 +11,7 @@
- #include <linux/crc32c.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/dax.h>
- #include "xattr.h"
- 
- #define CREATE_TRACE_POINTS
-@@ -355,6 +356,7 @@ enum {
- 	Opt_user_xattr,
- 	Opt_acl,
- 	Opt_cache_strategy,
-+	Opt_dax,
- 	Opt_err
- };
- 
-@@ -370,6 +372,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
- 	fsparam_flag_no("acl",		Opt_acl),
- 	fsparam_enum("cache_strategy",	Opt_cache_strategy,
- 		     erofs_param_cache_strategy),
-+	fsparam_flag("dax",             Opt_dax),
- 	{}
- };
- 
-@@ -410,6 +413,14 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 		ctx->cache_strategy = result.uint_32;
- #else
- 		errorfc(fc, "compression not supported, cache_strategy ignored");
-+#endif
-+		break;
-+	case Opt_dax:
-+#ifdef CONFIG_FS_DAX
-+		warnfc(fc, "DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
-+		set_opt(ctx, DAX);
-+#else
-+		errorfc(fc, "dax options not supported");
- #endif
- 		break;
- 	default:
-@@ -496,6 +507,7 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 		return -ENOMEM;
- 
- 	sb->s_fs_info = sbi;
-+	sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev);
- 	err = erofs_read_superblock(sb);
- 	if (err)
- 		return err;
-@@ -609,6 +621,8 @@ static void erofs_kill_sb(struct super_block *sb)
- 	sbi = EROFS_SB(sb);
- 	if (!sbi)
- 		return;
-+	if (sbi->dax_dev)
-+		fs_put_dax(sbi->dax_dev);
- 	kfree(sbi);
- 	sb->s_fs_info = NULL;
- }
-@@ -711,8 +725,8 @@ static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 
- static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- {
--	struct erofs_sb_info *sbi __maybe_unused = EROFS_SB(root->d_sb);
--	struct erofs_fs_context *ctx __maybe_unused = &sbi->ctx;
-+	struct erofs_sb_info *sbi = EROFS_SB(root->d_sb);
-+	struct erofs_fs_context *ctx = &sbi->ctx;
- 
- #ifdef CONFIG_EROFS_FS_XATTR
- 	if (test_opt(ctx, XATTR_USER))
-@@ -734,6 +748,8 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- 	else if (ctx->cache_strategy == EROFS_ZIP_CACHE_READAROUND)
- 		seq_puts(seq, ",cache_strategy=readaround");
- #endif
-+	if (test_opt(ctx, DAX))
-+		seq_puts(seq, ",dax");
- 	return 0;
- }
- 
--- 
-2.24.4
-
+> diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
+> index dab1b02eba5b7f..942e354e9e13e6 100644
+> --- a/fs/iomap/seek.c
+> +++ b/fs/iomap/seek.c
+> @@ -35,23 +35,21 @@ loff_t
+>  iomap_seek_hole(struct inode *inode, loff_t offset, const struct iomap_ops *ops)
+>  {
+>  	loff_t size = i_size_read(inode);
+> -	loff_t length = size - offset;
+>  	loff_t ret;
+>  
+>  	/* Nothing to be found before or beyond the end of the file. */
+>  	if (offset < 0 || offset >= size)
+>  		return -ENXIO;
+>  
+> -	while (length > 0) {
+> -		ret = iomap_apply(inode, offset, length, IOMAP_REPORT, ops,
+> -				  &offset, iomap_seek_hole_actor);
+> +	while (offset < size) {
+> +		ret = iomap_apply(inode, offset, size - offset, IOMAP_REPORT,
+> +				  ops, &offset, iomap_seek_hole_actor);
+>  		if (ret < 0)
+>  			return ret;
+>  		if (ret == 0)
+>  			break;
+>  
+>  		offset += ret;
+> -		length -= ret;
+>  	}
+>  
+>  	return offset;
