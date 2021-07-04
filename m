@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4FD3BAFB8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 01:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C953BB0B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 01:09:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229733AbhGDXHA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jul 2021 19:07:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44766 "EHLO mail.kernel.org"
+        id S231516AbhGDXJV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jul 2021 19:09:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229728AbhGDXHA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jul 2021 19:07:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 907B86144E;
-        Sun,  4 Jul 2021 23:04:23 +0000 (UTC)
+        id S231301AbhGDXIz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 4 Jul 2021 19:08:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 102EC6135A;
+        Sun,  4 Jul 2021 23:06:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625439864;
-        bh=IRahy8Wid1WMEgo0OYOhuwHB3w43NqKCswQBYR0jPLQ=;
+        s=k20201202; t=1625439979;
+        bh=MsmU/akBDyMblJhOEdQ9PaI3/QHHaB01jR2V5BrFC9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AZhh/p6lz84HwabiGBr8FGCea1KkMPUqRRDxBkuf7R80BaTyk1eouKrkdzXFzDasX
-         i+GlINTyOhXNWiUVvvoTDTYYH+0gt9TQkK9rH8QK2GhqGr5Jt1YjNigYLVd2J1mD0B
-         f+Kj4iWGSun0umgRey9oNikj58dCQIV0ik6K1nJVysLxmFM4SZUYyhU3iCJ4NaoGje
-         9/rYkPbel5LiVXqvePKd8qepwjiVmPOXdTlM+qyc4hHdAt1EJ1/B3d6zqI1QAZND6+
-         kDd90ctkyYFNTC8SivRiR59ZcboCH//8MAYfN+G/JDTbCY543/LCASFxu68aQyN0rG
-         na5cQ+pFx4ikw==
+        b=qi+s1TPlifRgrB91atvrjXK/ZZnDgrzFvxDNDwrQ/DtURuNsi37w88gvKlNfZh9Rj
+         Hh4VyHyedf7r+BlQIldXqJtsWNxXxIAc950X8ARTdieDl/bgazJI0EALimX9PZEah9
+         DHz3OPPsu0wF4yfEH8XIEVRRQVO5X5EbBQhY3n2Qb6k67DFASGfe6qe9jlqp2cg2Mh
+         lLK298ZmBgJj1ubUrjVDuBV8Brir8XPX31GNWicBP55/7XkJqnl0/NqzSsGKekrXlp
+         U7hssOK2yaxF31YfJ2y/yaVM0AbpIN4qNlkgzv3KGqDZqhId/W8dhmLrhPhj/910YF
+         HDNxb9USgs1eg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Alexey Gladkov <legion@kernel.org>,
         kernel test robot <oliver.sang@intel.com>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.13 02/85] Add a reference to ucounts for each cred
-Date:   Sun,  4 Jul 2021 19:02:57 -0400
-Message-Id: <20210704230420.1488358-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.12 02/80] Add a reference to ucounts for each cred
+Date:   Sun,  4 Jul 2021 19:04:58 -0400
+Message-Id: <20210704230616.1489200-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210704230420.1488358-1-sashal@kernel.org>
-References: <20210704230420.1488358-1-sashal@kernel.org>
+In-Reply-To: <20210704230616.1489200-1-sashal@kernel.org>
+References: <20210704230616.1489200-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -97,10 +97,10 @@ index 18594f11c31f..d7c4187ca023 100644
  	 * install the new credentials for this executable
  	 */
 diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 14971322e1a0..65014e50d5fa 100644
+index 4c6350503697..66436e655032 100644
 --- a/include/linux/cred.h
 +++ b/include/linux/cred.h
-@@ -143,6 +143,7 @@ struct cred {
+@@ -144,6 +144,7 @@ struct cred {
  #endif
  	struct user_struct *user;	/* real user ID subscription */
  	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
@@ -108,7 +108,7 @@ index 14971322e1a0..65014e50d5fa 100644
  	struct group_info *group_info;	/* supplementary groups for euid/fsgid */
  	/* RCU deletion */
  	union {
-@@ -169,6 +170,7 @@ extern int set_security_override_from_ctx(struct cred *, const char *);
+@@ -170,6 +171,7 @@ extern int set_security_override_from_ctx(struct cred *, const char *);
  extern int set_create_files_as(struct cred *, struct inode *);
  extern int cred_fscmp(const struct cred *, const struct cred *);
  extern void __init cred_init(void);
@@ -117,10 +117,10 @@ index 14971322e1a0..65014e50d5fa 100644
  /*
   * check for validity of credentials
 diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index 1d08dbbcfe32..bfa6463f8a95 100644
+index f6c5f784be5a..604cf6a5dc2d 100644
 --- a/include/linux/user_namespace.h
 +++ b/include/linux/user_namespace.h
-@@ -104,11 +104,15 @@ struct ucounts {
+@@ -100,11 +100,15 @@ struct ucounts {
  };
  
  extern struct user_namespace init_user_ns;
@@ -137,7 +137,7 @@ index 1d08dbbcfe32..bfa6463f8a95 100644
  #ifdef CONFIG_USER_NS
  
 diff --git a/kernel/cred.c b/kernel/cred.c
-index e1d274cd741b..642d62f7b46d 100644
+index 421b1149c651..58a8a9e24347 100644
 --- a/kernel/cred.c
 +++ b/kernel/cred.c
 @@ -60,6 +60,7 @@ struct cred init_cred = {
@@ -230,10 +230,10 @@ index e1d274cd741b..642d62f7b46d 100644
  	validate_creds(new);
  	return new;
 diff --git a/kernel/fork.c b/kernel/fork.c
-index a070caed5c8e..24a689df61c9 100644
+index 426cd0c51f9e..321a5e31d817 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -2997,6 +2997,12 @@ int ksys_unshare(unsigned long unshare_flags)
+@@ -2995,6 +2995,12 @@ int ksys_unshare(unsigned long unshare_flags)
  	if (err)
  		goto bad_unshare_cleanup_cred;
  
@@ -247,10 +247,10 @@ index a070caed5c8e..24a689df61c9 100644
  		if (do_sysvsem) {
  			/*
 diff --git a/kernel/sys.c b/kernel/sys.c
-index 3a583a29815f..142ee040f573 100644
+index 2e2e3f378d97..cabfc5b86175 100644
 --- a/kernel/sys.c
 +++ b/kernel/sys.c
-@@ -558,6 +558,10 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
+@@ -552,6 +552,10 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
  	if (retval < 0)
  		goto error;
  
@@ -261,7 +261,7 @@ index 3a583a29815f..142ee040f573 100644
  	return commit_creds(new);
  
  error:
-@@ -616,6 +620,10 @@ long __sys_setuid(uid_t uid)
+@@ -610,6 +614,10 @@ long __sys_setuid(uid_t uid)
  	if (retval < 0)
  		goto error;
  
@@ -272,7 +272,7 @@ index 3a583a29815f..142ee040f573 100644
  	return commit_creds(new);
  
  error:
-@@ -691,6 +699,10 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
+@@ -685,6 +693,10 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
  	if (retval < 0)
  		goto error;
  
@@ -284,7 +284,7 @@ index 3a583a29815f..142ee040f573 100644
  
  error:
 diff --git a/kernel/ucount.c b/kernel/ucount.c
-index 8d8874f1c35e..1f4455874aa0 100644
+index 11b1596e2542..9894795043c4 100644
 --- a/kernel/ucount.c
 +++ b/kernel/ucount.c
 @@ -8,6 +8,12 @@
@@ -300,7 +300,7 @@ index 8d8874f1c35e..1f4455874aa0 100644
  #define UCOUNTS_HASHTABLE_BITS 10
  static struct hlist_head ucounts_hashtable[(1 << UCOUNTS_HASHTABLE_BITS)];
  static DEFINE_SPINLOCK(ucounts_lock);
-@@ -129,7 +135,15 @@ static struct ucounts *find_ucounts(struct user_namespace *ns, kuid_t uid, struc
+@@ -125,7 +131,15 @@ static struct ucounts *find_ucounts(struct user_namespace *ns, kuid_t uid, struc
  	return NULL;
  }
  
@@ -317,7 +317,7 @@ index 8d8874f1c35e..1f4455874aa0 100644
  {
  	struct hlist_head *hashent = ucounts_hashentry(ns, uid);
  	struct ucounts *ucounts, *new;
-@@ -164,7 +178,26 @@ static struct ucounts *get_ucounts(struct user_namespace *ns, kuid_t uid)
+@@ -160,7 +174,26 @@ static struct ucounts *get_ucounts(struct user_namespace *ns, kuid_t uid)
  	return ucounts;
  }
  
@@ -345,7 +345,7 @@ index 8d8874f1c35e..1f4455874aa0 100644
  {
  	unsigned long flags;
  
-@@ -198,7 +231,7 @@ struct ucounts *inc_ucount(struct user_namespace *ns, kuid_t uid,
+@@ -194,7 +227,7 @@ struct ucounts *inc_ucount(struct user_namespace *ns, kuid_t uid,
  {
  	struct ucounts *ucounts, *iter, *bad;
  	struct user_namespace *tns;
@@ -354,7 +354,7 @@ index 8d8874f1c35e..1f4455874aa0 100644
  	for (iter = ucounts; iter; iter = tns->ucounts) {
  		int max;
  		tns = iter->ns;
-@@ -241,6 +274,7 @@ static __init int user_namespace_sysctl_init(void)
+@@ -237,6 +270,7 @@ static __init int user_namespace_sysctl_init(void)
  	BUG_ON(!user_header);
  	BUG_ON(!setup_userns_sysctls(&init_user_ns));
  #endif
@@ -363,7 +363,7 @@ index 8d8874f1c35e..1f4455874aa0 100644
  }
  subsys_initcall(user_namespace_sysctl_init);
 diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index 8d62863721b0..27670ab7a4ed 100644
+index 9a4b980d695b..f1b7b4b8ffa2 100644
 --- a/kernel/user_namespace.c
 +++ b/kernel/user_namespace.c
 @@ -1340,6 +1340,9 @@ static int userns_install(struct nsset *nsset, struct ns_common *ns)
