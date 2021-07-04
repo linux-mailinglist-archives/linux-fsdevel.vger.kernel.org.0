@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9C953BB0B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 01:09:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C54E3BB183
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 01:10:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231516AbhGDXJV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jul 2021 19:09:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46340 "EHLO mail.kernel.org"
+        id S231340AbhGDXMP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jul 2021 19:12:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231301AbhGDXIz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jul 2021 19:08:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 102EC6135A;
-        Sun,  4 Jul 2021 23:06:18 +0000 (UTC)
+        id S229614AbhGDXLN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 4 Jul 2021 19:11:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B712861955;
+        Sun,  4 Jul 2021 23:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625439979;
-        bh=MsmU/akBDyMblJhOEdQ9PaI3/QHHaB01jR2V5BrFC9U=;
+        s=k20201202; t=1625440087;
+        bh=lgAXBht+XD+pMjOsNre1GLNzkiz4Eaa702AWq63w1wU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qi+s1TPlifRgrB91atvrjXK/ZZnDgrzFvxDNDwrQ/DtURuNsi37w88gvKlNfZh9Rj
-         Hh4VyHyedf7r+BlQIldXqJtsWNxXxIAc950X8ARTdieDl/bgazJI0EALimX9PZEah9
-         DHz3OPPsu0wF4yfEH8XIEVRRQVO5X5EbBQhY3n2Qb6k67DFASGfe6qe9jlqp2cg2Mh
-         lLK298ZmBgJj1ubUrjVDuBV8Brir8XPX31GNWicBP55/7XkJqnl0/NqzSsGKekrXlp
-         U7hssOK2yaxF31YfJ2y/yaVM0AbpIN4qNlkgzv3KGqDZqhId/W8dhmLrhPhj/910YF
-         HDNxb9USgs1eg==
+        b=sJQfuThuZoGnkt8vjYRmFHCBeAt7fvYztEoY/OBYPgzSD2bPprl7BBYRCpwbmXrPm
+         reMAu53QwSKyjL1GG01ftQB4Y349+xXPE8j+1pwZHI18CpmDmuzD503Z8FwAFgpmqI
+         qBZL2aqf7x8LIqFTdwjZEILKEbuals2W4wVz/NXX2XV0pxLBJlppZVHoPbbX8Io9lB
+         9nnfXPAD0f6oEk1eY7U5uXD6szaA3DTRKQVoRHxIOR6BoZaEDWo30uNqAwQ8RR0iKe
+         QyxgJ8ZqcwFrU+o8VlnzFoQctrC+3wBDHUKNSd9NeplRVGyxcC4QiTyTBl7zIr3ybm
+         9bh3zaCmgdkjQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Alexey Gladkov <legion@kernel.org>,
         kernel test robot <oliver.sang@intel.com>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 02/80] Add a reference to ucounts for each cred
-Date:   Sun,  4 Jul 2021 19:04:58 -0400
-Message-Id: <20210704230616.1489200-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 02/70] Add a reference to ucounts for each cred
+Date:   Sun,  4 Jul 2021 19:06:55 -0400
+Message-Id: <20210704230804.1490078-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210704230616.1489200-1-sashal@kernel.org>
-References: <20210704230616.1489200-1-sashal@kernel.org>
+In-Reply-To: <20210704230804.1490078-1-sashal@kernel.org>
+References: <20210704230804.1490078-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -82,10 +82,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  8 files changed, 108 insertions(+), 3 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 18594f11c31f..d7c4187ca023 100644
+index ca89e0e3ef10..c7a4ef8df305 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1360,6 +1360,10 @@ int begin_new_exec(struct linux_binprm * bprm)
+@@ -1347,6 +1347,10 @@ int begin_new_exec(struct linux_binprm * bprm)
  	WRITE_ONCE(me->self_exec_id, me->self_exec_id + 1);
  	flush_signal_handlers(me, 0);
  
@@ -97,7 +97,7 @@ index 18594f11c31f..d7c4187ca023 100644
  	 * install the new credentials for this executable
  	 */
 diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 4c6350503697..66436e655032 100644
+index 18639c069263..ad160e5fe5c6 100644
 --- a/include/linux/cred.h
 +++ b/include/linux/cred.h
 @@ -144,6 +144,7 @@ struct cred {
@@ -117,10 +117,10 @@ index 4c6350503697..66436e655032 100644
  /*
   * check for validity of credentials
 diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index f6c5f784be5a..604cf6a5dc2d 100644
+index 7616c7bf4b24..e1bd560da1cd 100644
 --- a/include/linux/user_namespace.h
 +++ b/include/linux/user_namespace.h
-@@ -100,11 +100,15 @@ struct ucounts {
+@@ -101,11 +101,15 @@ struct ucounts {
  };
  
  extern struct user_namespace init_user_ns;
@@ -230,10 +230,10 @@ index 421b1149c651..58a8a9e24347 100644
  	validate_creds(new);
  	return new;
 diff --git a/kernel/fork.c b/kernel/fork.c
-index 426cd0c51f9e..321a5e31d817 100644
+index 7c044d377926..281addb694df 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -2995,6 +2995,12 @@ int ksys_unshare(unsigned long unshare_flags)
+@@ -2960,6 +2960,12 @@ int ksys_unshare(unsigned long unshare_flags)
  	if (err)
  		goto bad_unshare_cleanup_cred;
  
@@ -247,7 +247,7 @@ index 426cd0c51f9e..321a5e31d817 100644
  		if (do_sysvsem) {
  			/*
 diff --git a/kernel/sys.c b/kernel/sys.c
-index 2e2e3f378d97..cabfc5b86175 100644
+index a730c03ee607..0670e824e019 100644
 --- a/kernel/sys.c
 +++ b/kernel/sys.c
 @@ -552,6 +552,10 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
@@ -363,7 +363,7 @@ index 11b1596e2542..9894795043c4 100644
  }
  subsys_initcall(user_namespace_sysctl_init);
 diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index 9a4b980d695b..f1b7b4b8ffa2 100644
+index ce396ea4de60..8206a13c81eb 100644
 --- a/kernel/user_namespace.c
 +++ b/kernel/user_namespace.c
 @@ -1340,6 +1340,9 @@ static int userns_install(struct nsset *nsset, struct ns_common *ns)
