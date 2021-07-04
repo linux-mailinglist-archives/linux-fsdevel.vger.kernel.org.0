@@ -2,261 +2,250 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EB753BAC8F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jul 2021 11:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41FF83BACF6
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jul 2021 13:51:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbhGDJwE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jul 2021 05:52:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbhGDJwD (ORCPT
+        id S229698AbhGDLyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jul 2021 07:54:05 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:55832 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229700AbhGDLx4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jul 2021 05:52:03 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4767C061762
-        for <linux-fsdevel@vger.kernel.org>; Sun,  4 Jul 2021 02:49:27 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id v20so24195655eji.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Jul 2021 02:49:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qzAkMSP1FVlaF7igte07rNyxkup5fEZ5Kcb9vm7Jix8=;
-        b=SMZguhe0gCeK+K4fpWOBc4ZZOnMdsFi7GKjeWwau3BD+++plq8ypU2RwuzRKIlFwVo
-         EGstmcx5t98kTfUG9bhwv7ljPdHJ1Ls/qe95Asrjrtk1uCd4NQCBIIh0EKmHqhRoEYol
-         hldjt8N2LAzTyoYWQYZ2JlXUJXARXI1msbzhZKzCTFr69fWdoeJSsY/Sjn4i8pXkFpIo
-         YjRAzIAXBf6AhnVeSqz4sTXfeQB3jlvLSRpBgcbieZielxBSuw+ikxw+y8aApqvhW7Pn
-         QNM7ylmDgZqeNb+fgsjdZgKC1v3EleI+8SmZhbsCtEMJIhKligBSReCYfqRjdsfmjyH1
-         YajQ==
+        Sun, 4 Jul 2021 07:53:56 -0400
+Received: by mail-io1-f71.google.com with SMTP id i13-20020a5d88cd0000b02904e5ab8bdc6cso11192305iol.22
+        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Jul 2021 04:51:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qzAkMSP1FVlaF7igte07rNyxkup5fEZ5Kcb9vm7Jix8=;
-        b=gSXXagkZWVx7KMheL0gQdxUxUYeoWpAw40NAud4tmQZsPIwetosSRFFLKbTGRETGs8
-         4EReqNA4hEVZjcziVqKRNbRJIiEvJQbjzmx8tbV8fYYbvasMEq6kzADUkQqCs8NmuGxr
-         vumr4CHw+Kvj4BblZhMZV8mPbzH9u0n3RJT/PJAQb+ho7BpaheYmrb8z7mUFI66DPJPK
-         GzdgFDlwopqG9iUi2ECCRBhWeVcWq95IUJUrfWCGPVXWWBcTaPQ1gO8Cd9ad1jzkoUBg
-         h4CayaJ2AFkCkf03CpvVON9l9+daUvynCwSq19bv3cI6dy7ZGnlAOW1yjch9Q7/dlYba
-         Ey5w==
-X-Gm-Message-State: AOAM5320xrgCvP9t5ENo4y90BZzJOLtMAmxOmA3LmBYSWkffW47hg+ic
-        JPoToFYTE+lk7fD1crBR/Ti28updHgPl7n4w5TKH
-X-Google-Smtp-Source: ABdhPJxvRtQJIj/yqZPkvbZHD8DNlSHEoDvhzkPyPsAyedq1EVF9bW4cXHVy5LeU0C2sRpYjWJqArcNlZLkm0IT3QiI=
-X-Received: by 2002:a17:907:1690:: with SMTP id hc16mr8249257ejc.247.1625392166205;
- Sun, 04 Jul 2021 02:49:26 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=9UY5DKEEmLfXsXziPoXaMFmZp4udBip2uaq/1L6U9RI=;
+        b=keczhasiHLaOcr3Bgg8ev7QmB9E34/WNKu+z4S+UisuucrJXqMXFKnrBtX/Ty8jYkM
+         nrCvC92reG81P5Azthp6dLA1o/6ETBYcBz9jwdIom5cQOkzaupLSobOt2DrCy9Yw7ZPD
+         4eupHi3EzNKljJQiq6LOKuC61+I2on2rZgREbSMU8kCR5QD065WYTaq7tmwTJRqf6wli
+         bAk1dp18LUrLUuOeY0iz7xh8JRKYB3CfyBgVotOs0Lhg9tlyyihQ7Iveos3+m2kCwlom
+         dhI2Q9iyZpKGIxrOC6DYGkyYQCz++d4aNYBQnCUZQiW27SHGLtEegj4rF5y2e7FQE6hn
+         IADw==
+X-Gm-Message-State: AOAM533h1K5zG++LGFBy9LnxjdXv3Fsvm7UKP5HiG6x/udIhtgTwQdTr
+        sqbPqEREtqh4jwELA/kwNNJMux+C0xFeSUcuHNMpFXg0VJUz
+X-Google-Smtp-Source: ABdhPJxgG1Zmk2Hb/OM312E6Ut3E+4dfoWWP62/Aybr62+dtODt08SDlleLZkyvhD/yxvFVOjL3ZZp2WzC/nj01fgCYqiwT7Ej7+
 MIME-Version: 1.0
-References: <20210615141331.407-1-xieyongji@bytedance.com> <20210615141331.407-11-xieyongji@bytedance.com>
- <YNSCH6l31zwPxBjL@stefanha-x1.localdomain> <CACycT3uxnQmXWsgmNVxQtiRhz1UXXTAJFY3OiAJqokbJH6ifMA@mail.gmail.com>
- <YNxCDpM3bO5cPjqi@stefanha-x1.localdomain> <CACycT3taKhf1cWp3Jd0aSVekAZvpbR-_fkyPLQ=B+jZBB5H=8Q@mail.gmail.com>
- <YN3ABqCMLQf7ejOm@stefanha-x1.localdomain>
-In-Reply-To: <YN3ABqCMLQf7ejOm@stefanha-x1.localdomain>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Sun, 4 Jul 2021 17:49:15 +0800
-Message-ID: <CACycT3vo-diHgTSLw_FS2E+5ia5VjihE3qw7JmZR7JT55P-wQA@mail.gmail.com>
-Subject: Re: Re: Re: [PATCH v8 10/10] Documentation: Add documentation for VDUSE
-To:     Stefan Hajnoczi <stefanha@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6602:19:: with SMTP id b25mr7536575ioa.93.1625399480372;
+ Sun, 04 Jul 2021 04:51:20 -0700 (PDT)
+Date:   Sun, 04 Jul 2021 04:51:20 -0700
+In-Reply-To: <0000000000002054ab05c6486083@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a5532d05c64ace69@google.com>
+Subject: Re: [syzbot] possible deadlock in __fs_reclaim_acquire
+From:   syzbot <syzbot+127fd7828d6eeb611703@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, andrii@kernel.org, ast@kernel.org,
+        axboe@kernel.dk, bpf@vger.kernel.org, christian@brauner.io,
+        daniel@iogearbox.net, ebiederm@xmission.com,
+        john.fastabend@gmail.com, kafai@fb.com, kpsingh@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, peterz@infradead.org, shakeelb@google.com,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, yhs@fb.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 1, 2021 at 9:15 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->
-> On Thu, Jul 01, 2021 at 06:00:48PM +0800, Yongji Xie wrote:
-> > On Wed, Jun 30, 2021 at 6:06 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
-> > >
-> > > On Tue, Jun 29, 2021 at 01:43:11PM +0800, Yongji Xie wrote:
-> > > > On Mon, Jun 28, 2021 at 9:02 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
-> > > > > On Tue, Jun 15, 2021 at 10:13:31PM +0800, Xie Yongji wrote:
-> > > > > > +     static void *iova_to_va(int dev_fd, uint64_t iova, uint64_t *len)
-> > > > > > +     {
-> > > > > > +             int fd;
-> > > > > > +             void *addr;
-> > > > > > +             size_t size;
-> > > > > > +             struct vduse_iotlb_entry entry;
-> > > > > > +
-> > > > > > +             entry.start = iova;
-> > > > > > +             entry.last = iova + 1;
-> > > > >
-> > > > > Why +1?
-> > > > >
-> > > > > I expected the request to include *len so that VDUSE can create a bounce
-> > > > > buffer for the full iova range, if necessary.
-> > > > >
-> > > >
-> > > > The function is used to translate iova to va. And the *len is not
-> > > > specified by the caller. Instead, it's used to tell the caller the
-> > > > length of the contiguous iova region from the specified iova. And the
-> > > > ioctl VDUSE_IOTLB_GET_FD will get the file descriptor to the first
-> > > > overlapped iova region. So using iova + 1 should be enough here.
-> > >
-> > > Does the entry.last field have any purpose with VDUSE_IOTLB_GET_FD? I
-> > > wonder why userspace needs to assign a value at all if it's always +1.
-> > >
-> >
-> > If we need to get some iova regions in the specified range, we need
-> > the entry.last field. For example, we can use [0, ULONG_MAX] to get
-> > the first overlapped iova region which might be [4096, 8192]. But in
-> > this function, we don't use VDUSE_IOTLB_GET_FD like this. We need to
-> > get the iova region including the specified iova.
->
-> I see, thanks for explaining!
->
-> > > > > > +             return addr + iova - entry.start;
-> > > > > > +     }
-> > > > > > +
-> > > > > > +- VDUSE_DEV_GET_FEATURES: Get the negotiated features
-> > > > >
-> > > > > Are these VIRTIO feature bits? Please explain how feature negotiation
-> > > > > works. There must be a way for userspace to report the device's
-> > > > > supported feature bits to the kernel.
-> > > > >
-> > > >
-> > > > Yes, these are VIRTIO feature bits. Userspace will specify the
-> > > > device's supported feature bits when creating a new VDUSE device with
-> > > > ioctl(VDUSE_CREATE_DEV).
-> > >
-> > > Can the VDUSE device influence feature bit negotiation? For example, if
-> > > the VDUSE virtio-blk device does not implement discard/write-zeroes, how
-> > > does QEMU or the guest find out about this?
-> > >
-> >
-> > There is a "features" field in struct vduse_dev_config which is used
-> > to do feature negotiation.
->
-> This approach is more restrictive than required by the VIRTIO
-> specification:
->
->   "The device SHOULD accept any valid subset of features the driver
->   accepts, otherwise it MUST fail to set the FEATURES_OK device status
->   bit when the driver writes it."
->
->   https://docs.oasis-open.org/virtio/virtio/v1.1/cs01/virtio-v1.1-cs01.html#x1-130002
->
-> The spec allows a device to reject certain subsets of features. For
-> example, if feature B depends on feature A and can only be enabled when
-> feature A is also enabled.
->
-> From your description I think VDUSE would accept feature B without
-> feature A since the device implementation has no opportunity to fail
-> negotiation with custom logic.
->
+syzbot has found a reproducer for the following issue on:
 
-Yes, we discussed it [1] before. So I'd like to re-introduce
-SET_STATUS messages so that the userspace can fail feature negotiation
-during setting FEATURES_OK status bit.
+HEAD commit:    3dbdb38e Merge branch 'for-5.14' of git://git.kernel.org/p..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e0b9d8300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1700b0b2b41cd52c
+dashboard link: https://syzkaller.appspot.com/bug?extid=127fd7828d6eeb611703
+compiler:       Debian clang version 11.0.1-2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10542f52300000
 
-[1]  https://lkml.org/lkml/2021/6/28/1587
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+127fd7828d6eeb611703@syzkaller.appspotmail.com
 
-> Ideally VDUSE would send a SET_FEATURES message to userspace, allowing
-> the device implementation full flexibility in which subsets of features
-> to accept.
->
-> This is a corner case. Many or maybe even all existing VIRTIO devices
-> don't need this flexibility, but I want to point out this limitation in
-> the VDUSE interface because it may cause issues in the future.
->
-> > > > > > +- VDUSE_DEV_UPDATE_CONFIG: Update the configuration space and inject a config interrupt
-> > > > >
-> > > > > Does this mean the contents of the configuration space are cached by
-> > > > > VDUSE?
-> > > >
-> > > > Yes, but the kernel will also store the same contents.
-> > > >
-> > > > > The downside is that the userspace code cannot generate the
-> > > > > contents on demand. Most devices doin't need to generate the contents
-> > > > > on demand, so I think this is okay but I had expected a different
-> > > > > interface:
-> > > > >
-> > > > > kernel->userspace VDUSE_DEV_GET_CONFIG
-> > > > > userspace->kernel VDUSE_DEV_INJECT_CONFIG_IRQ
-> > > > >
-> > > >
-> > > > The problem is how to handle the failure of VDUSE_DEV_GET_CONFIG. We
-> > > > will need lots of modification of virtio codes to support that. So to
-> > > > make it simple, we choose this way:
-> > > >
-> > > > userspace -> kernel VDUSE_DEV_SET_CONFIG
-> > > > userspace -> kernel VDUSE_DEV_INJECT_CONFIG_IRQ
-> > > >
-> > > > > I think you can leave it the way it is, but I wanted to mention this in
-> > > > > case someone thinks it's important to support generating the contents of
-> > > > > the configuration space on demand.
-> > > > >
-> > > >
-> > > > Sorry, I didn't get you here. Can't VDUSE_DEV_SET_CONFIG and
-> > > > VDUSE_DEV_INJECT_CONFIG_IRQ achieve that?
-> > >
-> > > If the contents of the configuration space change continuously, then the
-> > > VDUSE_DEV_SET_CONFIG approach is inefficient and might have race
-> > > conditions. For example, imagine a device where the driver can read a
-> > > timer from the configuration space. I think the VIRTIO device model
-> > > allows that although I'm not aware of any devices that do something like
-> > > it today. The problem is that VDUSE_DEV_SET_CONFIG would have to be
-> > > called frequently to keep the timer value updated even though the guest
-> > > driver probably isn't accessing it.
-> > >
-> >
-> > OK, I get you now. Since the VIRTIO specification says "Device
-> > configuration space is generally used for rarely-changing or
-> > initialization-time parameters". I assume the VDUSE_DEV_SET_CONFIG
-> > ioctl should not be called frequently.
->
-> The spec uses MUST and other terms to define the precise requirements.
-> Here the language (especially the word "generally") is weaker and means
-> there may be exceptions.
->
-> Another type of access that doesn't work with the VDUSE_DEV_SET_CONFIG
-> approach is reads that have side-effects. For example, imagine a field
-> containing an error code if the device encounters a problem unrelated to
-> a specific virtqueue request. Reading from this field resets the error
-> code to 0, saving the driver an extra configuration space write access
-> and possibly race conditions. It isn't possible to implement those
-> semantics suing VDUSE_DEV_SET_CONFIG. It's another corner case, but it
-> makes me think that the interface does not allow full VIRTIO semantics.
->
+======================================================
+WARNING: possible circular locking dependency detected
+5.13.0-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-execprog/8416 is trying to acquire lock:
+ffffffff8cfd6720 (fs_reclaim){+.+.}-{0:0}, at: __fs_reclaim_acquire+0x0/0x30 mm/page_alloc.c:4222
 
-Agreed. I will use VDUSE_DEV_GET_CONFIG in the next version. And to
-handle the message failure, I'm going to add a return value to
-virtio_config_ops.get() and virtio_cread_* API so that the error can
-be propagated to the virtio device driver. Then the virtio-blk device
-driver can be modified to handle that.
+but task is already holding lock:
+ffff8880b9b31088 (lock#2){-.-.}-{2:2}, at: local_lock_acquire+0x7/0x130 include/linux/local_lock_internal.h:41
 
-Jason and Stefan, what do you think of this way?
+which lock already depends on the new lock.
 
-> > > What's worse is that there might be race conditions where other
-> > > driver->device operations are supposed to update the configuration space
-> > > but VDUSE_DEV_SET_CONFIG means that the VDUSE kernel code is caching an
-> > > outdated copy.
-> > >
-> >
-> > I'm not sure. Should the device and driver be able to access the same
-> > fields concurrently?
->
-> Yes. The VIRTIO spec has a generation count to handle multi-field
-> accesses so that consistency can be ensured:
-> https://docs.oasis-open.org/virtio/virtio/v1.1/cs01/virtio-v1.1-cs01.html#x1-180004
->
 
-I see.
+the existing dependency chain (in reverse order) is:
 
-Thanks,
-Yongji
+-> #1 (lock#2){-.-.}-{2:2}:
+       lock_acquire+0x182/0x4a0 kernel/locking/lockdep.c:5625
+       local_lock_acquire+0x23/0x130 include/linux/local_lock_internal.h:42
+       free_unref_page+0x242/0x550 mm/page_alloc.c:3439
+       mm_free_pgd kernel/fork.c:636 [inline]
+       __mmdrop+0xae/0x3f0 kernel/fork.c:687
+       mmdrop include/linux/sched/mm.h:49 [inline]
+       finish_task_switch+0x221/0x630 kernel/sched/core.c:4582
+       context_switch kernel/sched/core.c:4686 [inline]
+       __schedule+0xc0f/0x11f0 kernel/sched/core.c:5940
+       preempt_schedule_notrace+0x12c/0x170 kernel/sched/core.c:6179
+       preempt_schedule_notrace_thunk+0x16/0x18 arch/x86/entry/thunk_64.S:36
+       rcu_read_unlock_sched_notrace include/linux/rcupdate.h:809 [inline]
+       trace_lock_release+0x9f/0x140 include/trace/events/lock.h:58
+       lock_release+0x81/0x7b0 kernel/locking/lockdep.c:5636
+       might_alloc include/linux/sched/mm.h:199 [inline]
+       slab_pre_alloc_hook mm/slab.h:485 [inline]
+       slab_alloc_node mm/slub.c:2891 [inline]
+       slab_alloc mm/slub.c:2978 [inline]
+       kmem_cache_alloc+0x41/0x340 mm/slub.c:2983
+       kmem_cache_zalloc include/linux/slab.h:711 [inline]
+       attach_epitem fs/eventpoll.c:1414 [inline]
+       ep_insert fs/eventpoll.c:1468 [inline]
+       do_epoll_ctl+0x13a7/0x2f70 fs/eventpoll.c:2133
+       __do_sys_epoll_ctl fs/eventpoll.c:2184 [inline]
+       __se_sys_epoll_ctl fs/eventpoll.c:2175 [inline]
+       __x64_sys_epoll_ctl+0x14e/0x190 fs/eventpoll.c:2175
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+-> #0 (fs_reclaim){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3051 [inline]
+       check_prevs_add+0x4f9/0x5b30 kernel/locking/lockdep.c:3174
+       validate_chain kernel/locking/lockdep.c:3789 [inline]
+       __lock_acquire+0x4476/0x6100 kernel/locking/lockdep.c:5015
+       lock_acquire+0x182/0x4a0 kernel/locking/lockdep.c:5625
+       __fs_reclaim_acquire+0x20/0x30 mm/page_alloc.c:4564
+       fs_reclaim_acquire+0x59/0xf0 mm/page_alloc.c:4578
+       prepare_alloc_pages+0x151/0x5a0 mm/page_alloc.c:5176
+       __alloc_pages+0x14d/0x5f0 mm/page_alloc.c:5375
+       stack_depot_save+0x361/0x490 lib/stackdepot.c:303
+       save_stack+0xf9/0x1f0 mm/page_owner.c:120
+       __set_page_owner+0x42/0x2f0 mm/page_owner.c:181
+       prep_new_page mm/page_alloc.c:2445 [inline]
+       __alloc_pages_bulk+0x9f2/0x1090 mm/page_alloc.c:5313
+       alloc_pages_bulk_array_node include/linux/gfp.h:557 [inline]
+       vm_area_alloc_pages mm/vmalloc.c:2775 [inline]
+       __vmalloc_area_node mm/vmalloc.c:2845 [inline]
+       __vmalloc_node_range+0x3ad/0x7f0 mm/vmalloc.c:2947
+       vmalloc_user+0x70/0x80 mm/vmalloc.c:3082
+       kcov_mmap+0x28/0x130 kernel/kcov.c:465
+       call_mmap include/linux/fs.h:2119 [inline]
+       mmap_region+0x1410/0x1df0 mm/mmap.c:1809
+       do_mmap+0x930/0x11a0 mm/mmap.c:1585
+       vm_mmap_pgoff+0x19e/0x2b0 mm/util.c:519
+       ksys_mmap_pgoff+0x504/0x7b0 mm/mmap.c:1636
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(lock#2);
+                               lock(fs_reclaim);
+                               lock(lock#2);
+  lock(fs_reclaim);
+
+ *** DEADLOCK ***
+
+2 locks held by syz-execprog/8416:
+ #0: ffff8880161e0128 (&mm->mmap_lock#2){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:87 [inline]
+ #0: ffff8880161e0128 (&mm->mmap_lock#2){++++}-{3:3}, at: vm_mmap_pgoff+0x14d/0x2b0 mm/util.c:517
+ #1: ffff8880b9b31088 (lock#2){-.-.}-{2:2}, at: local_lock_acquire+0x7/0x130 include/linux/local_lock_internal.h:41
+
+stack backtrace:
+CPU: 1 PID: 8416 Comm: syz-execprog Not tainted 5.13.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack_lvl+0x1ae/0x29f lib/dump_stack.c:96
+ print_circular_bug+0xb17/0xdc0 kernel/locking/lockdep.c:2009
+ check_noncircular+0x2cc/0x390 kernel/locking/lockdep.c:2131
+ check_prev_add kernel/locking/lockdep.c:3051 [inline]
+ check_prevs_add+0x4f9/0x5b30 kernel/locking/lockdep.c:3174
+ validate_chain kernel/locking/lockdep.c:3789 [inline]
+ __lock_acquire+0x4476/0x6100 kernel/locking/lockdep.c:5015
+ lock_acquire+0x182/0x4a0 kernel/locking/lockdep.c:5625
+ __fs_reclaim_acquire+0x20/0x30 mm/page_alloc.c:4564
+ fs_reclaim_acquire+0x59/0xf0 mm/page_alloc.c:4578
+ prepare_alloc_pages+0x151/0x5a0 mm/page_alloc.c:5176
+ __alloc_pages+0x14d/0x5f0 mm/page_alloc.c:5375
+ stack_depot_save+0x361/0x490 lib/stackdepot.c:303
+ save_stack+0xf9/0x1f0 mm/page_owner.c:120
+ __set_page_owner+0x42/0x2f0 mm/page_owner.c:181
+ prep_new_page mm/page_alloc.c:2445 [inline]
+ __alloc_pages_bulk+0x9f2/0x1090 mm/page_alloc.c:5313
+ alloc_pages_bulk_array_node include/linux/gfp.h:557 [inline]
+ vm_area_alloc_pages mm/vmalloc.c:2775 [inline]
+ __vmalloc_area_node mm/vmalloc.c:2845 [inline]
+ __vmalloc_node_range+0x3ad/0x7f0 mm/vmalloc.c:2947
+ vmalloc_user+0x70/0x80 mm/vmalloc.c:3082
+ kcov_mmap+0x28/0x130 kernel/kcov.c:465
+ call_mmap include/linux/fs.h:2119 [inline]
+ mmap_region+0x1410/0x1df0 mm/mmap.c:1809
+ do_mmap+0x930/0x11a0 mm/mmap.c:1585
+ vm_mmap_pgoff+0x19e/0x2b0 mm/util.c:519
+ ksys_mmap_pgoff+0x504/0x7b0 mm/mmap.c:1636
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x4b132a
+Code: e8 db 57 fb ff 48 8b 7c 24 10 48 8b 74 24 18 48 8b 54 24 20 4c 8b 54 24 28 4c 8b 44 24 30 4c 8b 4c 24 38 48 8b 44 24 08 0f 05 <48> 3d 01 f0 ff ff 76 20 48 c7 44 24 40 ff ff ff ff 48 c7 44 24 48
+RSP: 002b:000000c000173a10 EFLAGS: 00000202 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 000000c000020800 RCX: 00000000004b132a
+RDX: 0000000000000003 RSI: 0000000000080000 RDI: 0000000000000000
+RBP: 000000c000173a70 R08: 0000000000000006 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000202 R12: 0000000000727f1a
+R13: 00000000000001f6 R14: 0000000000000200 R15: 0000000000000100
+BUG: sleeping function called from invalid context at mm/page_alloc.c:5179
+in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 8416, name: syz-execprog
+INFO: lockdep is turned off.
+irq event stamp: 70646
+hardirqs last  enabled at (70645): [<ffffffff89cf038b>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
+hardirqs last  enabled at (70645): [<ffffffff89cf038b>] _raw_spin_unlock_irqrestore+0x8b/0x120 kernel/locking/spinlock.c:191
+hardirqs last disabled at (70646): [<ffffffff81be4351>] __alloc_pages_bulk+0x801/0x1090 mm/page_alloc.c:5291
+softirqs last  enabled at (69738): [<ffffffff814d4fbb>] invoke_softirq kernel/softirq.c:432 [inline]
+softirqs last  enabled at (69738): [<ffffffff814d4fbb>] __irq_exit_rcu+0x21b/0x260 kernel/softirq.c:636
+softirqs last disabled at (69687): [<ffffffff814d4fbb>] invoke_softirq kernel/softirq.c:432 [inline]
+softirqs last disabled at (69687): [<ffffffff814d4fbb>] __irq_exit_rcu+0x21b/0x260 kernel/softirq.c:636
+CPU: 1 PID: 8416 Comm: syz-execprog Not tainted 5.13.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack_lvl+0x1ae/0x29f lib/dump_stack.c:96
+ ___might_sleep+0x4e5/0x6b0 kernel/sched/core.c:9153
+ prepare_alloc_pages+0x1c0/0x5a0 mm/page_alloc.c:5179
+ __alloc_pages+0x14d/0x5f0 mm/page_alloc.c:5375
+ stack_depot_save+0x361/0x490 lib/stackdepot.c:303
+ save_stack+0xf9/0x1f0 mm/page_owner.c:120
+ __set_page_owner+0x42/0x2f0 mm/page_owner.c:181
+ prep_new_page mm/page_alloc.c:2445 [inline]
+ __alloc_pages_bulk+0x9f2/0x1090 mm/page_alloc.c:5313
+ alloc_pages_bulk_array_node include/linux/gfp.h:557 [inline]
+ vm_area_alloc_pages mm/vmalloc.c:2775 [inline]
+ __vmalloc_area_node mm/vmalloc.c:2845 [inline]
+ __vmalloc_node_range+0x3ad/0x7f0 mm/vmalloc.c:2947
+ vmalloc_user+0x70/0x80 mm/vmalloc.c:3082
+ kcov_mmap+0x28/0x130 kernel/kcov.c:465
+ call_mmap include/linux/fs.h:2119 [inline]
+ mmap_region+0x1410/0x1df0 mm/mmap.c:1809
+ do_mmap+0x930/0x11a0 mm/mmap.c:1585
+ vm_mmap_pgoff+0x19e/0x2b0 mm/util.c:519
+ ksys_mmap_pgoff+0x504/0x7b0 mm/mmap.c:1636
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x4b132a
+Code: e8 db 57 fb ff 48 8b 7c 24 10 48 8b 74 24 18 48 8b 54 24 20 4c 8b 54 24 28 4c 8b 44 24 30 4c 8b 4c 24 38 48 8b 44 24 08 0f 05 <48> 3d 01 f0 ff ff 76 20 48 c7 44 24 40 ff ff ff ff 48 c7 44 24 48
+RSP: 002b:000000c000173a10 EFLAGS: 00000202 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 000000c000020800 RCX: 00000000004b132a
+RDX: 0000000000000003 RSI: 0000000000080000 RDI: 0000000000000000
+RBP: 000000c000173a70 R08: 0000000000000006 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000202 R12: 0000000000727f1a
+R13: 00000000000001f6 R14: 0000000000000200 R15: 0000000000000100
+
