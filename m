@@ -2,354 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C30083BAD54
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jul 2021 16:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 825553BAD58
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jul 2021 16:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbhGDOHa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jul 2021 10:07:30 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:32884 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229492AbhGDOHa (ORCPT
+        id S229575AbhGDORB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jul 2021 10:17:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42708 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229557AbhGDOQ6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jul 2021 10:07:30 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 164E4L5N015602
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 4 Jul 2021 10:04:22 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id C388115C3C96; Sun,  4 Jul 2021 10:04:21 -0400 (EDT)
-Date:   Sun, 4 Jul 2021 10:04:21 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Zhang Yi <yi.zhang@huawei.com>
-Cc:     Jan Kara <jack@suse.cz>, linuxppc-dev@lists.ozlabs.org,
-        Guoqing Jiang <guoqing.jiang@linux.dev>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [powerpc][5.13.0-next-20210701] Kernel crash while running
- ltp(chdir01) tests
-Message-ID: <YOG/5ZY1AL05jumi@mit.edu>
-References: <26ACA75D-E13D-405B-9BFC-691B5FB64243@linux.vnet.ibm.com>
- <bf1c5b38-92f1-65db-e210-a97a199718ba@linux.dev>
- <4cc87ab3-aaa6-ed87-b690-5e5b99de8380@huawei.com>
- <03f734bd-f36e-f55b-0448-485b8a0d5b75@huawei.com>
- <YN86yl5kgVaRixxQ@mit.edu>
- <36778615-86fd-9a19-9bc9-f93a6f2d5817@huawei.com>
- <YN/a70ucYXu0DqGf@mit.edu>
- <66fb56cd-f1ff-c592-0202-0691372e32f5@huawei.com>
+        Sun, 4 Jul 2021 10:16:58 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A3A9C061574
+        for <linux-fsdevel@vger.kernel.org>; Sun,  4 Jul 2021 07:14:22 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id n25so20145171edw.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Jul 2021 07:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OWUB7H3BCNRAb41AhtBYLajPiiUTO0WN0NPEqMgBCxc=;
+        b=bu95bYt2cziitAFIVzzAxLWWp3Jlrg36qS1KZAQvj04w7fV0NnTM4etfMni69+NLCp
+         qzESxN95dWclDHkSmLBp18cHQMiIm9PHgFWn0kJEuvViGbDKKlO/XwdtZ8+hqq388PCW
+         AHgy9MVJ/8TrXAD3OWTTQtjykhlx0CZShNY7f6A7svueO/nNNom17U4CUPOPQbYv/xUo
+         r9ob2JAjkRiiUddeO1H0KOSfLSbx09LMcbpt29Vb+udzg2/vwybkS9jXOHwnDzNB+9hd
+         NOPFgV6uP0r5fThqZoGiAQUpggFvFDkQk9Omi1eBZslyWpHkzQM9hol2U7i7c2webaMQ
+         HEWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OWUB7H3BCNRAb41AhtBYLajPiiUTO0WN0NPEqMgBCxc=;
+        b=Vr3tTJbKQm3S0ljIy0C7sSu/OY9/wrvjZy8tSeb3bbKVFI+d/o6vwY1zONqrIRqcng
+         f9kSyzw0WLqi/OQiQC6YVMT0KH6tsrDMyRTdWU0/lmcdxXhDXH9pd08EIwHSmKi6wkVI
+         ZcCuKFtn6vHAai3O3qqOEU8mP/4196b9EIyQk69Zawe7DhZGja6Rbk9s+nxTC/Ws9PA2
+         jPIZA6+3ZWz4vGVYAoEz58iUWW/NzP+SmBo7utPRctByQgieGlih44fwoGTOR308yqFS
+         GQfGHRbHoXudoboGl3ogjyAuaF93ZtjPC1wuPpqkNPGNQxgPzOL4OD6i1VqrdG7xld4/
+         l45w==
+X-Gm-Message-State: AOAM530x/f9U8hS22cFJ8eSQUzbIqc/Fft73daz2pFtryCt3tTvnP0wZ
+        FOQhD3Bgyfy5DmlDdmEbAyqsj7k8cQfbkcGxS3z7
+X-Google-Smtp-Source: ABdhPJxS/tv9ZNncQiVJbYZ1lI2y7MX210R7yigYAvxj9PXgRTnOKTuiXnRbhnnJETWs34cQr5P4OuGPs/RyiaLnI7Q=
+X-Received: by 2002:a05:6402:3581:: with SMTP id y1mr10714014edc.31.1625408060419;
+ Sun, 04 Jul 2021 07:14:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66fb56cd-f1ff-c592-0202-0691372e32f5@huawei.com>
+References: <0000000000004e5ec705c6318557@google.com> <CACT4Y+YysFa1UzT6zw9GGns69WSFgqrL6P_LjUju6ujcJRTaeA@mail.gmail.com>
+ <d11c276d-65a0-5273-d797-1092e1e2692a@schaufler-ca.com>
+In-Reply-To: <d11c276d-65a0-5273-d797-1092e1e2692a@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 4 Jul 2021 10:14:09 -0400
+Message-ID: <CAHC9VhSq88YjA-VGSTKkc4hkc_KOK=mnoAYiX1us6O6U0gFzAQ@mail.gmail.com>
+Subject: Re: [syzbot] general protection fault in legacy_parse_param
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 03, 2021 at 12:55:09PM +0800, Zhang Yi wrote:
-> Yeah, it sounds good to me. Do you want me to send the fix patch, or you
-> modify your commit 8f9e16badb8fd in another email directly?
+On Sat, Jul 3, 2021 at 6:16 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 7/2/2021 10:51 PM, Dmitry Vyukov wrote:
+> > On Sat, Jul 3, 2021 at 7:41 AM syzbot
+> > <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com> wrote:
+> >> Hello,
+> >>
+> >> syzbot found the following issue on:
+> >>
+> >> HEAD commit:    62fb9874 Linux 5.13
+> >> git tree:       upstream
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=12ffa118300000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=19404adbea015a58
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
+> >> compiler:       Debian clang version 11.0.1-2
+> >>
+> >> Unfortunately, I don't have any reproducer for this issue yet.
+> >>
+> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> > +Casey for what looks like a smackfs issue
+>
+> This is from the new mount infrastructure introduced by
+> David Howells in November 2018. It makes sense that there
+> may be a problem in SELinux as well, as the code was introduced
+> by the same developer at the same time for the same purpose.
+>
+> > The crash was triggered by this test case:
+> >
+> > 21:55:33 executing program 1:
+> > r0 = fsopen(&(0x7f0000000040)='ext3\x00', 0x1)
+> > fsconfig$FSCONFIG_SET_STRING(r0, 0x1, &(0x7f00000002c0)='smackfsroot',
+> > &(0x7f0000000300)='default_permissions', 0x0)
+> >
+> > And I think the issue is in smack_fs_context_parse_param():
+> > https://elixir.bootlin.com/linux/latest/source/security/smack/smack_lsm.c#L691
+> >
+> > But it seems that selinux_fs_context_parse_param() contains the same issue:
+> > https://elixir.bootlin.com/linux/latest/source/security/selinux/hooks.c#L2919
+> > +So selinux maintainers as well.
+> >
+> >> general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
+> >> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> >> CPU: 0 PID: 20300 Comm: syz-executor.1 Not tainted 5.13.0-syzkaller #0
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> >> RIP: 0010:memchr+0x2f/0x70 lib/string.c:1054
+> >> Code: 41 54 53 48 89 d3 41 89 f7 45 31 f6 49 bc 00 00 00 00 00 fc ff df 0f 1f 44 00 00 48 85 db 74 3b 48 89 fd 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 75 0f 48 ff cb 48 8d 7d 01 44 38 7d 00 75 db
+> >> RSP: 0018:ffffc90001dafd00 EFLAGS: 00010246
+> >> RAX: 0000000000000000 RBX: 0000000000000013 RCX: dffffc0000000000
+> >> RDX: 0000000000000013 RSI: 000000000000002c RDI: 0000000000000000
+> >> RBP: 0000000000000000 R08: ffffffff81e171bf R09: ffffffff81e16f95
+> >> R10: 0000000000000002 R11: ffff88807e96b880 R12: dffffc0000000000
+> >> R13: ffff888020894000 R14: 0000000000000000 R15: 000000000000002c
+> >> FS:  00007fe01ae27700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> CR2: 00000000005645a8 CR3: 0000000018afc000 CR4: 00000000001506f0
+> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >> Call Trace:
+> >>  legacy_parse_param+0x461/0x7e0 fs/fs_context.c:537
+> >>  vfs_parse_fs_param+0x1e5/0x460 fs/fs_context.c:117
 
-I've gone ahead and made the changes; what do you think?
+It's Sunday morning and perhaps my mind is not yet in a "hey, let's
+look at VFS kernel code!" mindset, but I'm not convinced the problem
+is the 'param->string = NULL' assignment in the LSM hooks.  In both
+the case of SELinux and Smack that code ends up returning either a 0
+(Smack) or a 1 (SELinux) - that's a little odd in it's own way, but I
+don't believe it is relevant here - either way these return values are
+not equal to -ENOPARAM so we should end up returning early from
+vfs_parse_fs_param before it calls down into legacy_parse_param():
 
-I like how it also removes 40 lines of code.  :-)
+Taken from https://elixir.bootlin.com/linux/latest/source/fs/fs_context.c#L109 :
 
-     	  	    	     	      	   - Ted
+  ret = security_fs_context_parse_param(fc, param);
+  if (ret != -ENOPARAM)
+    /* Param belongs to the LSM or is disallowed by the LSM; so
+     * don't pass to the FS.
+     */
+    return ret;
 
-From ef3130d1b0b8ca769252d6a722a2e59a00141383 Mon Sep 17 00:00:00 2001
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Fri, 2 Jul 2021 18:05:03 -0400
-Subject: [PATCH] ext4: inline jbd2_journal_[un]register_shrinker()
+  if (fc->ops->parse_param) {
+    ret = fc->ops->parse_param(fc, param);
+    if (ret != -ENOPARAM)
+      return ret;
+  }
 
-The function jbd2_journal_unregister_shrinker() was getting called
-twice when the file system was getting unmounted.  On Power and ARM
-platforms this was causing kernel crash when unmounting the file
-system, when a percpu_counter was destroyed twice.
+> >>  vfs_fsconfig_locked fs/fsopen.c:265 [inline]
+> >>  __do_sys_fsconfig fs/fsopen.c:439 [inline]
+> >>  __se_sys_fsconfig+0xba9/0xff0 fs/fsopen.c:314
+> >>  do_syscall_64+0x3f/0xb0 arch/x86/entry/common.c:47
+> >>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> >> RIP: 0033:0x4665d9
+> >> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+> >> RSP: 002b:00007fe01ae27188 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+> >> RAX: ffffffffffffffda RBX: 000000000056bf80 RCX: 00000000004665d9
+> >> RDX: 00000000200002c0 RSI: 0000000000000001 RDI: 0000000000000003
+> >> RBP: 00000000004bfcb9 R08: 0000000000000000 R09: 0000000000000000
+> >> R10: 0000000020000300 R11: 0000000000000246 R12: 000000000056bf80
+> >> R13: 00007ffd4bb7c5bf R14: 00007fe01ae27300 R15: 0000000000022000
+> >> Modules linked in:
+> >> ---[ end trace 5d7119165725bd63 ]---
 
-Fix this by removing jbd2_journal_[un]register_shrinker() functions,
-and inlining the shrinker setup and teardown into
-journal_init_common() and jbd2_journal_destroy().  This means that
-ext4 and ocfs2 now no longer need to know about registering and
-unregistering jbd2's shrinker.
-
-Also, while we're at it, rename the percpu counter from
-j_jh_shrink_count to j_checkpoint_jh_count, since this makes it
-clearer what this counter is intended to track.
-
-Fixes: 4ba3fcdde7e3 ("jbd2,ext4: add a shrinker to release checkpointed buffers")
-Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
----
- fs/ext4/super.c      |   8 ---
- fs/jbd2/checkpoint.c |   4 +-
- fs/jbd2/journal.c    | 148 +++++++++++++++++--------------------------
- include/linux/jbd2.h |   6 +-
- 4 files changed, 63 insertions(+), 103 deletions(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index b8ff0399e171..dfa09a277b56 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1184,7 +1184,6 @@ static void ext4_put_super(struct super_block *sb)
- 	ext4_unregister_sysfs(sb);
- 
- 	if (sbi->s_journal) {
--		jbd2_journal_unregister_shrinker(sbi->s_journal);
- 		aborted = is_journal_aborted(sbi->s_journal);
- 		err = jbd2_journal_destroy(sbi->s_journal);
- 		sbi->s_journal = NULL;
-@@ -5176,7 +5175,6 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 	sbi->s_ea_block_cache = NULL;
- 
- 	if (sbi->s_journal) {
--		jbd2_journal_unregister_shrinker(sbi->s_journal);
- 		jbd2_journal_destroy(sbi->s_journal);
- 		sbi->s_journal = NULL;
- 	}
-@@ -5502,12 +5500,6 @@ static int ext4_load_journal(struct super_block *sb,
- 		ext4_commit_super(sb);
- 	}
- 
--	err = jbd2_journal_register_shrinker(journal);
--	if (err) {
--		EXT4_SB(sb)->s_journal = NULL;
--		goto err_out;
--	}
--
- 	return 0;
- 
- err_out:
-diff --git a/fs/jbd2/checkpoint.c b/fs/jbd2/checkpoint.c
-index 51d1eb2ffeb9..746132998c57 100644
---- a/fs/jbd2/checkpoint.c
-+++ b/fs/jbd2/checkpoint.c
-@@ -701,7 +701,7 @@ int __jbd2_journal_remove_checkpoint(struct journal_head *jh)
- 
- 	__buffer_unlink(jh);
- 	jh->b_cp_transaction = NULL;
--	percpu_counter_dec(&journal->j_jh_shrink_count);
-+	percpu_counter_dec(&journal->j_checkpoint_jh_count);
- 	jbd2_journal_put_journal_head(jh);
- 
- 	/* Is this transaction empty? */
-@@ -764,7 +764,7 @@ void __jbd2_journal_insert_checkpoint(struct journal_head *jh,
- 		jh->b_cpnext->b_cpprev = jh;
- 	}
- 	transaction->t_checkpoint_list = jh;
--	percpu_counter_inc(&transaction->t_journal->j_jh_shrink_count);
-+	percpu_counter_inc(&transaction->t_journal->j_checkpoint_jh_count);
- }
- 
- /*
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 152880c298ca..8a9c94dd3599 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1283,6 +1283,48 @@ static int jbd2_min_tag_size(void)
- 	return sizeof(journal_block_tag_t) - 4;
- }
- 
-+/**
-+ * jbd2_journal_shrink_scan()
-+ *
-+ * Scan the checkpointed buffer on the checkpoint list and release the
-+ * journal_head.
-+ */
-+static unsigned long jbd2_journal_shrink_scan(struct shrinker *shrink,
-+					      struct shrink_control *sc)
-+{
-+	journal_t *journal = container_of(shrink, journal_t, j_shrinker);
-+	unsigned long nr_to_scan = sc->nr_to_scan;
-+	unsigned long nr_shrunk;
-+	unsigned long count;
-+
-+	count = percpu_counter_read_positive(&journal->j_checkpoint_jh_count);
-+	trace_jbd2_shrink_scan_enter(journal, sc->nr_to_scan, count);
-+
-+	nr_shrunk = jbd2_journal_shrink_checkpoint_list(journal, &nr_to_scan);
-+
-+	count = percpu_counter_read_positive(&journal->j_checkpoint_jh_count);
-+	trace_jbd2_shrink_scan_exit(journal, nr_to_scan, nr_shrunk, count);
-+
-+	return nr_shrunk;
-+}
-+
-+/**
-+ * jbd2_journal_shrink_count()
-+ *
-+ * Count the number of checkpoint buffers on the checkpoint list.
-+ */
-+static unsigned long jbd2_journal_shrink_count(struct shrinker *shrink,
-+					       struct shrink_control *sc)
-+{
-+	journal_t *journal = container_of(shrink, journal_t, j_shrinker);
-+	unsigned long count;
-+
-+	count = percpu_counter_read_positive(&journal->j_checkpoint_jh_count);
-+	trace_jbd2_shrink_count(journal, sc->nr_to_scan, count);
-+
-+	return count;
-+}
-+
- /*
-  * Management for journal control blocks: functions to create and
-  * destroy journal_t structures, and to initialise and read existing
-@@ -1361,6 +1403,19 @@ static journal_t *journal_init_common(struct block_device *bdev,
- 	journal->j_sb_buffer = bh;
- 	journal->j_superblock = (journal_superblock_t *)bh->b_data;
- 
-+	journal->j_shrink_transaction = NULL;
-+	journal->j_shrinker.scan_objects = jbd2_journal_shrink_scan;
-+	journal->j_shrinker.count_objects = jbd2_journal_shrink_count;
-+	journal->j_shrinker.seeks = DEFAULT_SEEKS;
-+	journal->j_shrinker.batch = journal->j_max_transaction_buffers;
-+
-+	if (percpu_counter_init(&journal->j_checkpoint_jh_count, 0, GFP_KERNEL))
-+		goto err_cleanup;
-+
-+	if (register_shrinker(&journal->j_shrinker)) {
-+		percpu_counter_destroy(&journal->j_checkpoint_jh_count);
-+		goto err_cleanup;
-+	}
- 	return journal;
- 
- err_cleanup:
-@@ -2050,93 +2105,6 @@ int jbd2_journal_load(journal_t *journal)
- 	return -EIO;
- }
- 
--/**
-- * jbd2_journal_shrink_scan()
-- *
-- * Scan the checkpointed buffer on the checkpoint list and release the
-- * journal_head.
-- */
--static unsigned long jbd2_journal_shrink_scan(struct shrinker *shrink,
--					      struct shrink_control *sc)
--{
--	journal_t *journal = container_of(shrink, journal_t, j_shrinker);
--	unsigned long nr_to_scan = sc->nr_to_scan;
--	unsigned long nr_shrunk;
--	unsigned long count;
--
--	count = percpu_counter_read_positive(&journal->j_jh_shrink_count);
--	trace_jbd2_shrink_scan_enter(journal, sc->nr_to_scan, count);
--
--	nr_shrunk = jbd2_journal_shrink_checkpoint_list(journal, &nr_to_scan);
--
--	count = percpu_counter_read_positive(&journal->j_jh_shrink_count);
--	trace_jbd2_shrink_scan_exit(journal, nr_to_scan, nr_shrunk, count);
--
--	return nr_shrunk;
--}
--
--/**
-- * jbd2_journal_shrink_count()
-- *
-- * Count the number of checkpoint buffers on the checkpoint list.
-- */
--static unsigned long jbd2_journal_shrink_count(struct shrinker *shrink,
--					       struct shrink_control *sc)
--{
--	journal_t *journal = container_of(shrink, journal_t, j_shrinker);
--	unsigned long count;
--
--	count = percpu_counter_read_positive(&journal->j_jh_shrink_count);
--	trace_jbd2_shrink_count(journal, sc->nr_to_scan, count);
--
--	return count;
--}
--
--/**
-- * jbd2_journal_register_shrinker()
-- * @journal: Journal to act on.
-- *
-- * Init a percpu counter to record the checkpointed buffers on the checkpoint
-- * list and register a shrinker to release their journal_head.
-- */
--int jbd2_journal_register_shrinker(journal_t *journal)
--{
--	int err;
--
--	journal->j_shrink_transaction = NULL;
--
--	err = percpu_counter_init(&journal->j_jh_shrink_count, 0, GFP_KERNEL);
--	if (err)
--		return err;
--
--	journal->j_shrinker.scan_objects = jbd2_journal_shrink_scan;
--	journal->j_shrinker.count_objects = jbd2_journal_shrink_count;
--	journal->j_shrinker.seeks = DEFAULT_SEEKS;
--	journal->j_shrinker.batch = journal->j_max_transaction_buffers;
--
--	err = register_shrinker(&journal->j_shrinker);
--	if (err) {
--		percpu_counter_destroy(&journal->j_jh_shrink_count);
--		return err;
--	}
--
--	return 0;
--}
--EXPORT_SYMBOL(jbd2_journal_register_shrinker);
--
--/**
-- * jbd2_journal_unregister_shrinker()
-- * @journal: Journal to act on.
-- *
-- * Unregister the checkpointed buffer shrinker and destroy the percpu counter.
-- */
--void jbd2_journal_unregister_shrinker(journal_t *journal)
--{
--	percpu_counter_destroy(&journal->j_jh_shrink_count);
--	unregister_shrinker(&journal->j_shrinker);
--}
--EXPORT_SYMBOL(jbd2_journal_unregister_shrinker);
--
- /**
-  * jbd2_journal_destroy() - Release a journal_t structure.
-  * @journal: Journal to act on.
-@@ -2209,8 +2177,10 @@ int jbd2_journal_destroy(journal_t *journal)
- 		brelse(journal->j_sb_buffer);
- 	}
- 
--	jbd2_journal_unregister_shrinker(journal);
--
-+	if (journal->j_shrinker.flags & SHRINKER_REGISTERED) {
-+		percpu_counter_destroy(&journal->j_checkpoint_jh_count);
-+		unregister_shrinker(&journal->j_shrinker);
-+	}
- 	if (journal->j_proc_entry)
- 		jbd2_stats_proc_exit(journal);
- 	iput(journal->j_inode);
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 6cc035321562..fd933c45281a 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -918,11 +918,11 @@ struct journal_s
- 	struct shrinker		j_shrinker;
- 
- 	/**
--	 * @j_jh_shrink_count:
-+	 * @j_checkpoint_jh_count:
- 	 *
- 	 * Number of journal buffers on the checkpoint list. [j_list_lock]
- 	 */
--	struct percpu_counter	j_jh_shrink_count;
-+	struct percpu_counter	j_checkpoint_jh_count;
- 
- 	/**
- 	 * @j_shrink_transaction:
-@@ -1556,8 +1556,6 @@ extern int	   jbd2_journal_set_features
- 		   (journal_t *, unsigned long, unsigned long, unsigned long);
- extern void	   jbd2_journal_clear_features
- 		   (journal_t *, unsigned long, unsigned long, unsigned long);
--extern int	   jbd2_journal_register_shrinker(journal_t *journal);
--extern void	   jbd2_journal_unregister_shrinker(journal_t *journal);
- extern int	   jbd2_journal_load       (journal_t *journal);
- extern int	   jbd2_journal_destroy    (journal_t *);
- extern int	   jbd2_journal_recover    (journal_t *journal);
 -- 
-2.31.0
-
+paul moore
+www.paul-moore.com
