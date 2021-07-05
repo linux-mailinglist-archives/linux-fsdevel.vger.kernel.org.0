@@ -2,137 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBBB93BBC30
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 13:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86B393BBD18
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 14:50:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231134AbhGELa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jul 2021 07:30:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43874 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S230459AbhGELa0 (ORCPT
+        id S231310AbhGEMwt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jul 2021 08:52:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29490 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231234AbhGEMwr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jul 2021 07:30:26 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 165B4Nvs083690;
-        Mon, 5 Jul 2021 07:27:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to; s=pp1;
- bh=iozgYz3WDzDVrFAs/2BY4dE1AB02jqYMzRcCZKwkBvU=;
- b=B5k2BjWUOD+d3arlmW8C1qT5g+VvoAJSfJebll0IwS0dusJSUtAfo9TjivCVN5tMcWY5
- lh0pcDSXBXjRVTr14a55uTeakRnQEnIzcng89eT4pfb0n3AbLFJ48icZF3cf62+EDq+r
- om5iQbX5oErCX9m4qJQCtGsoK4DjRXw7z1meIYvoiobYlBHPaUYjxKbazYMetD54hBfZ
- LDY3NtrEP+Lh6ajdjhcjH7zidmPGb6E8i5J7CBRl9b07ZKY7iLfhZ/gd2Xq7We1BcPFI
- BIh3UZmi3HMTBSWrSn0Qjl09YmxEzm36jm52Knx5/BR6vaGzA8cgkrT2IbeAtdqHCJYz qg== 
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 39ky9d35ht-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 05 Jul 2021 07:27:33 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 165BO4hV022245;
-        Mon, 5 Jul 2021 11:27:31 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma05fra.de.ibm.com with ESMTP id 39jfh8gdh0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 05 Jul 2021 11:27:31 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 165BRTdg30277962
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Jul 2021 11:27:29 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5DB542045;
-        Mon,  5 Jul 2021 11:27:28 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B6D054204D;
-        Mon,  5 Jul 2021 11:27:27 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.85.74.100])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  5 Jul 2021 11:27:27 +0000 (GMT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.100.0.2.22\))
-Subject: Re: [powerpc][5.13.0-next-20210701] Kernel crash while running
- ltp(chdir01) tests
-From:   Sachin Sant <sachinp@linux.vnet.ibm.com>
-In-Reply-To: <YOG/5ZY1AL05jumi@mit.edu>
-Date:   Mon, 5 Jul 2021 16:57:26 +0530
-Cc:     Zhang Yi <yi.zhang@huawei.com>, Jan Kara <jack@suse.cz>,
-        linuxppc-dev@lists.ozlabs.org,
-        Guoqing Jiang <guoqing.jiang@linux.dev>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <42CECCCE-A338-408A-B392-F4E25E629D2A@linux.vnet.ibm.com>
-References: <26ACA75D-E13D-405B-9BFC-691B5FB64243@linux.vnet.ibm.com>
- <bf1c5b38-92f1-65db-e210-a97a199718ba@linux.dev>
- <4cc87ab3-aaa6-ed87-b690-5e5b99de8380@huawei.com>
- <03f734bd-f36e-f55b-0448-485b8a0d5b75@huawei.com> <YN86yl5kgVaRixxQ@mit.edu>
- <36778615-86fd-9a19-9bc9-f93a6f2d5817@huawei.com> <YN/a70ucYXu0DqGf@mit.edu>
- <66fb56cd-f1ff-c592-0202-0691372e32f5@huawei.com> <YOG/5ZY1AL05jumi@mit.edu>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-X-Mailer: Apple Mail (2.3654.100.0.2.22)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Bf6gHb7P31BL35PpU7G_EfT05lKk5aY7
-X-Proofpoint-ORIG-GUID: Bf6gHb7P31BL35PpU7G_EfT05lKk5aY7
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-05_05:2021-07-02,2021-07-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1011
- spamscore=0 mlxlogscore=999 adultscore=0 priorityscore=1501 bulkscore=0
- suspectscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2107050059
+        Mon, 5 Jul 2021 08:52:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625489410;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W8G/JsyH47bF0khJGv25MPY6jNei9NxXk5kKt2MzRCU=;
+        b=WG/IDJw9zwQK88YZqshvNZRs+Ku1Vb1nWMw7ut/7X2nnkHhYXeJR0PAZJrCNqehz5okyd7
+        N0M3Mffc0o+nojO72ybSCg0rLJArvlPEE2jiiL7fM1ZYz3f9yHgksPj3RftXXrbOkupGZk
+        C6F21M9FQ5gnqbR6hc6L/bGK8rmhVJc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-145-ugf42SHOMTOwWKHm8Kh2QQ-1; Mon, 05 Jul 2021 08:50:09 -0400
+X-MC-Unique: ugf42SHOMTOwWKHm8Kh2QQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EA3EB1023F40;
+        Mon,  5 Jul 2021 12:50:05 +0000 (UTC)
+Received: from localhost (ovpn-114-164.ams2.redhat.com [10.36.114.164])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5985260C0F;
+        Mon,  5 Jul 2021 12:49:59 +0000 (UTC)
+Date:   Mon, 5 Jul 2021 13:49:58 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Yongji Xie <xieyongji@bytedance.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 10/10] Documentation: Add documentation for VDUSE
+Message-ID: <YOL/9mxkJaokKDHc@stefanha-x1.localdomain>
+References: <20210615141331.407-1-xieyongji@bytedance.com>
+ <20210615141331.407-11-xieyongji@bytedance.com>
+ <YNSCH6l31zwPxBjL@stefanha-x1.localdomain>
+ <CACycT3uxnQmXWsgmNVxQtiRhz1UXXTAJFY3OiAJqokbJH6ifMA@mail.gmail.com>
+ <YNxCDpM3bO5cPjqi@stefanha-x1.localdomain>
+ <CACycT3taKhf1cWp3Jd0aSVekAZvpbR-_fkyPLQ=B+jZBB5H=8Q@mail.gmail.com>
+ <YN3ABqCMLQf7ejOm@stefanha-x1.localdomain>
+ <CACycT3vo-diHgTSLw_FS2E+5ia5VjihE3qw7JmZR7JT55P-wQA@mail.gmail.com>
+ <8320d26d-6637-85c6-8773-49553dfa502d@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nJZEr38ROGX7NVP+"
+Content-Disposition: inline
+In-Reply-To: <8320d26d-6637-85c6-8773-49553dfa502d@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+--nJZEr38ROGX7NVP+
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 04-Jul-2021, at 7:34 PM, Theodore Ts'o <tytso@mit.edu> wrote:
+On Mon, Jul 05, 2021 at 11:36:15AM +0800, Jason Wang wrote:
 >=20
-> On Sat, Jul 03, 2021 at 12:55:09PM +0800, Zhang Yi wrote:
->> Yeah, it sounds good to me. Do you want me to send the fix patch, or =
-you
->> modify your commit 8f9e16badb8fd in another email directly?
+> =E5=9C=A8 2021/7/4 =E4=B8=8B=E5=8D=885:49, Yongji Xie =E5=86=99=E9=81=93:
+> > > > OK, I get you now. Since the VIRTIO specification says "Device
+> > > > configuration space is generally used for rarely-changing or
+> > > > initialization-time parameters". I assume the VDUSE_DEV_SET_CONFIG
+> > > > ioctl should not be called frequently.
+> > > The spec uses MUST and other terms to define the precise requirements.
+> > > Here the language (especially the word "generally") is weaker and mea=
+ns
+> > > there may be exceptions.
+> > >=20
+> > > Another type of access that doesn't work with the VDUSE_DEV_SET_CONFIG
+> > > approach is reads that have side-effects. For example, imagine a field
+> > > containing an error code if the device encounters a problem unrelated=
+ to
+> > > a specific virtqueue request. Reading from this field resets the error
+> > > code to 0, saving the driver an extra configuration space write access
+> > > and possibly race conditions. It isn't possible to implement those
+> > > semantics suing VDUSE_DEV_SET_CONFIG. It's another corner case, but it
+> > > makes me think that the interface does not allow full VIRTIO semantic=
+s.
 >=20
-> I've gone ahead and made the changes; what do you think?
 >=20
-> I like how it also removes 40 lines of code.  :-)
+> Note that though you're correct, my understanding is that config space is
+> not suitable for this kind of error propagating. And it would be very hard
+> to implement such kind of semantic in some transports.=C2=A0 Virtqueue sh=
+ould be
+> much better. As Yong Ji quoted, the config space is used for
+> "rarely-changing or intialization-time parameters".
 >=20
->     	  	    	     	      	   - Ted
 >=20
-> =46rom ef3130d1b0b8ca769252d6a722a2e59a00141383 Mon Sep 17 00:00:00 =
-2001
-> From: Theodore Ts'o <tytso@mit.edu>
-> Date: Fri, 2 Jul 2021 18:05:03 -0400
-> Subject: [PATCH] ext4: inline jbd2_journal_[un]register_shrinker()
->=20
-> The function jbd2_journal_unregister_shrinker() was getting called
-> twice when the file system was getting unmounted.  On Power and ARM
-> platforms this was causing kernel crash when unmounting the file
-> system, when a percpu_counter was destroyed twice.
->=20
-> Fix this by removing jbd2_journal_[un]register_shrinker() functions,
-> and inlining the shrinker setup and teardown into
-> journal_init_common() and jbd2_journal_destroy().  This means that
-> ext4 and ocfs2 now no longer need to know about registering and
-> unregistering jbd2's shrinker.
->=20
-> Also, while we're at it, rename the percpu counter from
-> j_jh_shrink_count to j_checkpoint_jh_count, since this makes it
-> clearer what this counter is intended to track.
->=20
-> Fixes: 4ba3fcdde7e3 ("jbd2,ext4: add a shrinker to release =
-checkpointed buffers")
-> Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> ---
+> > Agreed. I will use VDUSE_DEV_GET_CONFIG in the next version. And to
+> > handle the message failure, I'm going to add a return value to
+> > virtio_config_ops.get() and virtio_cread_* API so that the error can
+> > be propagated to the virtio device driver. Then the virtio-blk device
+> > driver can be modified to handle that.
+> >=20
+> > Jason and Stefan, what do you think of this way?
 
-This patch fixes the reported problem. Test ran to completion
-without any crash.
+Why does VDUSE_DEV_GET_CONFIG need to support an error return value?
 
-Tested-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
+The VIRTIO spec provides no way for the device to report errors from
+config space accesses.
 
--Sachin
+The QEMU virtio-pci implementation returns -1 from invalid
+virtio_config_read*() and silently discards virtio_config_write*()
+accesses.
 
+VDUSE can take the same approach with
+VDUSE_DEV_GET_CONFIG/VDUSE_DEV_SET_CONFIG.
+
+> I'd like to stick to the current assumption thich get_config won't fail.
+> That is to say,
+>=20
+> 1) maintain a config in the kernel, make sure the config space read can
+> always succeed
+> 2) introduce an ioctl for the vduse usersapce to update the config space.
+> 3) we can synchronize with the vduse userspace during set_config
+>=20
+> Does this work?
+
+I noticed that caching is also allowed by the vhost-user protocol
+messages (QEMU's docs/interop/vhost-user.rst), but the device doesn't
+know whether or not caching is in effect. The interface you outlined
+above requires caching.
+
+Is there a reason why the host kernel vDPA code needs to cache the
+configuration space?
+
+Here are the vhost-user protocol messages:
+
+  Virtio device config space
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  +--------+------+-------+---------+
+  | offset | size | flags | payload |
+  +--------+------+-------+---------+
+
+  :offset: a 32-bit offset of virtio device's configuration space
+
+  :size: a 32-bit configuration space access size in bytes
+
+  :flags: a 32-bit value:
+    - 0: Vhost master messages used for writeable fields
+    - 1: Vhost master messages used for live migration
+
+  :payload: Size bytes array holding the contents of the virtio
+            device's configuration space
+
+  ...
+
+  ``VHOST_USER_GET_CONFIG``
+    :id: 24
+    :equivalent ioctl: N/A
+    :master payload: virtio device config space
+    :slave payload: virtio device config space
+
+    When ``VHOST_USER_PROTOCOL_F_CONFIG`` is negotiated, this message is
+    submitted by the vhost-user master to fetch the contents of the
+    virtio device configuration space, vhost-user slave's payload size
+    MUST match master's request, vhost-user slave uses zero length of
+    payload to indicate an error to vhost-user master. The vhost-user
+    master may cache the contents to avoid repeated
+    ``VHOST_USER_GET_CONFIG`` calls.
+
+  ``VHOST_USER_SET_CONFIG``
+    :id: 25
+    :equivalent ioctl: N/A
+    :master payload: virtio device config space
+    :slave payload: N/A
+
+    When ``VHOST_USER_PROTOCOL_F_CONFIG`` is negotiated, this message is
+    submitted by the vhost-user master when the Guest changes the virtio
+    device configuration space and also can be used for live migration
+    on the destination host. The vhost-user slave must check the flags
+    field, and slaves MUST NOT accept SET_CONFIG for read-only
+    configuration space fields unless the live migration bit is set.
+
+Stefan
+
+--nJZEr38ROGX7NVP+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmDi//YACgkQnKSrs4Gr
+c8jgKwf/S3jEpQ3OvcO2LwK0GDdjhgQBhsendLEbARZ7hCRFfpQT9NfPYYUu6ct/
+WLxxofULohkENWZgImWB7p0JD3XhfXusVRbY8gy70ZjrQ9LuTglcJHd0ZBOdW9nI
+ZE/AWB6ltdKTSFUmiEh+rQ2KyLB55l8VPpNhEL/KhztpGM3ZqpStVNwgpGJE4D53
+7/tXKbqCMBLdVenAetRVOdbi+/DXXgCpPVutcTKEirfkJqZaum8PqPQUoT4rh1j9
+vHVvnKRGLLsdLxCSa5Jw2jF9Ting+CbCV38QKdYTv8nWX7LFwIRd+xYkSkUea3i3
+aRvxtciBZWCajqsu/TEsHsk1sQn4Sg==
+=GVfM
+-----END PGP SIGNATURE-----
+
+--nJZEr38ROGX7NVP+--
 
