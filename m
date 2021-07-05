@@ -2,122 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34DC33BC0F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 17:40:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53CFD3BC138
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 17:51:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232772AbhGEPi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jul 2021 11:38:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233383AbhGEPg7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jul 2021 11:36:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 88AE1619AB;
-        Mon,  5 Jul 2021 15:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625499131;
-        bh=gr2AjwOJy09BK0r/GGkhmm7RiwA0/bLVB1ctv1SAVSo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GHu8fxFt/Kzs6CLx4Pa42cFp1blfJiOr/BEZWyqNfaJz1UqyxGk9AIueCGgSoffz3
-         kBwYr6esAqo8ym/KW9u3NKJU5g4+Q7ME+RWU/f+1pSjlzndGnMYx3Wc12IEeWmE8m6
-         jqccbBwKpLQnerBxBrUpZDsLKMssb7cvWk6Is+sYaZdokADJz4UaxNaTqUcnKCh3eG
-         MPiCjYeJPNjj23DtEWaP6O80JxcJtIwH6Hu/Zvf4IRClMx31f1EZveqwlSuydNnpBB
-         NAEAtkKRU1fkCOrzjsuXFqDbRubmqto0OU1ldPJus5vZSCH747HG3oKLXV4UbAb4ea
-         51NnswYwpQ+UA==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "zhangyi (F)" <yi.zhang@huawei.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 2/7] block_dump: remove block_dump feature in mark_inode_dirty()
-Date:   Mon,  5 Jul 2021 11:32:02 -0400
-Message-Id: <20210705153208.1522553-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210705153208.1522553-1-sashal@kernel.org>
-References: <20210705153208.1522553-1-sashal@kernel.org>
+        id S231877AbhGEPyO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jul 2021 11:54:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24073 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231806AbhGEPyN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Jul 2021 11:54:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625500296;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=94h8HuvsNXIPuzkfFYVmJcfX+faEonOANTvfeqnyEF4=;
+        b=JUpWFTtjWzZuJmj2kCNsjR1MOInldBo2sgQPJK9dLAQBMDz4NoXTb1HY2JeFsjzi7SbTi+
+        kFKxCQwQlak+muf0mjA2JLInXLLGkHeZhQ+Xznv9AwlfAtJmbz6ToDlImK7zkg8ur1FPK5
+        r9tTiDHuXGLSgm8raryTjmabax8tiQg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-123-Ks4lYaqcNDa02Z3Qkh-VYw-1; Mon, 05 Jul 2021 11:51:34 -0400
+X-MC-Unique: Ks4lYaqcNDa02Z3Qkh-VYw-1
+Received: by mail-wm1-f70.google.com with SMTP id n17-20020a05600c4f91b0290209ebf81aabso129854wmq.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Jul 2021 08:51:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=94h8HuvsNXIPuzkfFYVmJcfX+faEonOANTvfeqnyEF4=;
+        b=gKnjzIdh4Rlz1YTv8gWAT0+TOnmzBj/DOK0Kxv9hP5kK0aCRqE64ETLrrZ7k6T6kIK
+         59r8sYXCZ5VgUN3vA2OnnAbI+6Udk1kVRI2YjjEi4e0NbRiLytAw2JpY0Q9toZUrlN0n
+         TzUJUZ1hEfc5PovfXjtdBHPpGW7s1q7G8gm+PTuiS6T+IF+nV86OKJYwFYfg7sA/O1TJ
+         jOsJ1EIosWg5QwnFDJvDRv3B9HNYSW4QcqMCeIU7wY40JXi9VO2ojTRRBVPQYHpQxVW9
+         51/jYYzHjjQ+hrN/e1iCdt3K0STJW2yuW7RH2PwQHg2EnobZ9N3Hmtj13QkLWSA01ZJB
+         izIA==
+X-Gm-Message-State: AOAM530NZFF4QxGR2Yd2Npcsha2nq5kyuryZgyRNv5U/DREBUc0z3FNA
+        7Ans1p8Z9KuwYrfwSjxWk1A0RhNOfGLBwjO2krrDte/1R+SzWXUgKAIUjAXgQa2gE35hmoja3fI
+        CXSmzdZIsgB2DTqvNZz87b++0WRSHf4jprugN02UjsQ==
+X-Received: by 2002:a7b:c40d:: with SMTP id k13mr15673000wmi.97.1625500293822;
+        Mon, 05 Jul 2021 08:51:33 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwt0xgTY8Fc/m6wSLIkQmnvuBGTo0ib6uAwtg1dnYqClFwZpSqUixG70VxfLezXErN7AKL1pIfnEj+ourL3X3M=
+X-Received: by 2002:a7b:c40d:: with SMTP id k13mr15672989wmi.97.1625500293712;
+ Mon, 05 Jul 2021 08:51:33 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20210628172727.1894503-1-agruenba@redhat.com> <YNoJPZ4NWiqok/by@casper.infradead.org>
+ <YNoLTl602RrckQND@infradead.org> <YNpGW2KNMF9f77bk@casper.infradead.org>
+ <YNqvzNd+7+YtXfQj@infradead.org> <CAHc6FU7+Q0D_pnjUbLXseeHfVQZ2nHTKMzH+0ppLh9cpX-UaPg@mail.gmail.com>
+In-Reply-To: <CAHc6FU7+Q0D_pnjUbLXseeHfVQZ2nHTKMzH+0ppLh9cpX-UaPg@mail.gmail.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Mon, 5 Jul 2021 17:51:22 +0200
+Message-ID: <CAHc6FU6NWgVGPkvLM_mb+TpK3aM2BK+RrLgKgfS20kCLVV=ECg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] iomap: small block problems
+To:     "Darrick J . Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "zhangyi (F)" <yi.zhang@huawei.com>
+On Wed, Jun 30, 2021 at 2:29 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+> Darrick,
+>
+> will you pick up those two patches and push them to Linus? They both
+> seem pretty safe.
 
-[ Upstream commit 12e0613715e1cf305fffafaf0e89d810d9a85cc0 ]
+Hello, is there anybody out there?
 
-block_dump is an old debugging interface, one of it's functions is used
-to print the information about who write which file on disk. If we
-enable block_dump through /proc/sys/vm/block_dump and turn on debug log
-level, we can gather information about write process name, target file
-name and disk from kernel message. This feature is realized in
-block_dump___mark_inode_dirty(), it print above information into kernel
-message directly when marking inode dirty, so it is noisy and can easily
-trigger log storm. At the same time, get the dentry refcount is also not
-safe, we found it will lead to deadlock on ext4 file system with
-data=journal mode.
+I've put the two patches here with the sign-offs they've received:
 
-After tracepoints has been introduced into the kernel, we got a
-tracepoint in __mark_inode_dirty(), which is a better replacement of
-block_dump___mark_inode_dirty(). The only downside is that it only trace
-the inode number and not a file name, but it probably doesn't matter
-because the original printed file name in block_dump is not accurate in
-some cases, and we can still find it through the inode number and device
-id. So this patch delete the dirting inode part of block_dump feature.
+https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git/log/?h=for-next.iomap
 
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Link: https://lore.kernel.org/r/20210313030146.2882027-2-yi.zhang@huawei.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/fs-writeback.c | 25 -------------------------
- 1 file changed, 25 deletions(-)
-
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 7f068330edb6..958a1bd0b5fc 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2040,28 +2040,6 @@ int dirtytime_interval_handler(struct ctl_table *table, int write,
- 	return ret;
- }
- 
--static noinline void block_dump___mark_inode_dirty(struct inode *inode)
--{
--	if (inode->i_ino || strcmp(inode->i_sb->s_id, "bdev")) {
--		struct dentry *dentry;
--		const char *name = "?";
--
--		dentry = d_find_alias(inode);
--		if (dentry) {
--			spin_lock(&dentry->d_lock);
--			name = (const char *) dentry->d_name.name;
--		}
--		printk(KERN_DEBUG
--		       "%s(%d): dirtied inode %lu (%s) on %s\n",
--		       current->comm, task_pid_nr(current), inode->i_ino,
--		       name, inode->i_sb->s_id);
--		if (dentry) {
--			spin_unlock(&dentry->d_lock);
--			dput(dentry);
--		}
--	}
--}
--
- /**
-  *	__mark_inode_dirty -	internal function
-  *	@inode: inode to mark
-@@ -2120,9 +2098,6 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- 	    (dirtytime && (inode->i_state & I_DIRTY_INODE)))
- 		return;
- 
--	if (unlikely(block_dump))
--		block_dump___mark_inode_dirty(inode);
--
- 	spin_lock(&inode->i_lock);
- 	if (dirtytime && (inode->i_state & I_DIRTY_INODE))
- 		goto out_unlock_inode;
--- 
-2.30.2
+Thanks,
+Andreas
 
