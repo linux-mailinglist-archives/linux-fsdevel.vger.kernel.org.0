@@ -2,35 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 769763BBF03
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 17:29:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D9403BBF13
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 17:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231934AbhGEPbM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jul 2021 11:31:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55562 "EHLO mail.kernel.org"
+        id S232013AbhGEPbV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jul 2021 11:31:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231887AbhGEPbJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jul 2021 11:31:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1B57C6196C;
-        Mon,  5 Jul 2021 15:28:31 +0000 (UTC)
+        id S231991AbhGEPbT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Jul 2021 11:31:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BAF2A61985;
+        Mon,  5 Jul 2021 15:28:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625498912;
-        bh=B0DvBAqVP+ysxUu6tNDj1gixOBu2/0w7/ABJ/hWfbsw=;
+        s=k20201202; t=1625498922;
+        bh=xrZQXGqRJvGdNcdItfEotkKMXNf9hOca8ma1npbSJYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NJD7wSJ+M9w8tvKnsrCPLfhzDj8hmxec91FZMhUeOZG7lTOBfcKaVNokkmq3w39oU
-         uZz3feTIgLTz/xqBZ7Kt8VRJjdahMfpjCDXnlUyaq344BZzGMTy6Fg9zEEMljYeR86
-         A4Fqoohl9b8QMKdAKBXNUy3emNINBVOHjP1alLdSZTIBuHlFGgrRSUvTT3gfQiBlOW
-         LdWCGJ/nteSzEnKkmG0r/gbeR1QkaNkt/cBgBM3s3XwTcuFhtn3tSl9e9zDAENcm5t
-         i96yhwm4cdWcVj6TDr3aWX1R1YfF0KHQXk41KT0Dn7n0n18m/TBiSlpTgd4aOZ6s7s
-         di55GRRelrZmg==
+        b=ISTTlFUvJUmfQ6/yuTOpFg1PFYPL8eyO91SnzZ2To8TGWG1vIcnRbNpf2Em8YB4eg
+         qk74Hfw7OT6pge+dtIp2jTkjzLk7Yo6gBBf1dv7foTJ/12Ka1gm5dn43Tn4rB/Z5nP
+         TaAmLsGl/sNHuMHYn1sgsr6Kog9XqW2F8un2VQlQeIY1Byrtu45ERomsAEUlZhCFYe
+         E7NGiTUcPCKnALpH8fQuoqhBDgBIR02Y6b0TKCBEeVe5bhJBNDufowNiv5bKggIBJV
+         oLa7ZkqoDOlMuBnKyH1LWb/38o0/2KrIzC3XhHTzMu7uuiA13bHcbVIOgGY2wH82HF
+         iRE7yWcyhc2Sg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "zhangyi (F)" <yi.zhang@huawei.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.13 12/59] block_dump: remove block_dump feature in mark_inode_dirty()
-Date:   Mon,  5 Jul 2021 11:27:28 -0400
-Message-Id: <20210705152815.1520546-12-sashal@kernel.org>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.13 20/59] open: don't silently ignore unknown O-flags in openat2()
+Date:   Mon,  5 Jul 2021 11:27:36 -0400
+Message-Id: <20210705152815.1520546-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210705152815.1520546-1-sashal@kernel.org>
 References: <20210705152815.1520546-1-sashal@kernel.org>
@@ -42,82 +45,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "zhangyi (F)" <yi.zhang@huawei.com>
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-[ Upstream commit 12e0613715e1cf305fffafaf0e89d810d9a85cc0 ]
+[ Upstream commit cfe80306a0dd6d363934913e47c3f30d71b721e5 ]
 
-block_dump is an old debugging interface, one of it's functions is used
-to print the information about who write which file on disk. If we
-enable block_dump through /proc/sys/vm/block_dump and turn on debug log
-level, we can gather information about write process name, target file
-name and disk from kernel message. This feature is realized in
-block_dump___mark_inode_dirty(), it print above information into kernel
-message directly when marking inode dirty, so it is noisy and can easily
-trigger log storm. At the same time, get the dentry refcount is also not
-safe, we found it will lead to deadlock on ext4 file system with
-data=journal mode.
+The new openat2() syscall verifies that no unknown O-flag values are
+set and returns an error to userspace if they are while the older open
+syscalls like open() and openat() simply ignore unknown flag values:
 
-After tracepoints has been introduced into the kernel, we got a
-tracepoint in __mark_inode_dirty(), which is a better replacement of
-block_dump___mark_inode_dirty(). The only downside is that it only trace
-the inode number and not a file name, but it probably doesn't matter
-because the original printed file name in block_dump is not accurate in
-some cases, and we can still find it through the inode number and device
-id. So this patch delete the dirting inode part of block_dump feature.
+  #define O_FLAG_CURRENTLY_INVALID (1 << 31)
+  struct open_how how = {
+          .flags = O_RDONLY | O_FLAG_CURRENTLY_INVALID,
+          .resolve = 0,
+  };
 
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
+  /* fails */
+  fd = openat2(-EBADF, "/dev/null", &how, sizeof(how));
+
+  /* succeeds */
+  fd = openat(-EBADF, "/dev/null", O_RDONLY | O_FLAG_CURRENTLY_INVALID);
+
+However, openat2() silently truncates the upper 32 bits meaning:
+
+  #define O_FLAG_CURRENTLY_INVALID_LOWER32 (1 << 31)
+  #define O_FLAG_CURRENTLY_INVALID_UPPER32 (1 << 40)
+
+  struct open_how how_lowe32 = {
+          .flags = O_RDONLY | O_FLAG_CURRENTLY_INVALID_LOWER32,
+  };
+
+  struct open_how how_upper32 = {
+          .flags = O_RDONLY | O_FLAG_CURRENTLY_INVALID_UPPER32,
+  };
+
+  /* fails */
+  fd = openat2(-EBADF, "/dev/null", &how_lower32, sizeof(how_lower32));
+
+  /* succeeds */
+  fd = openat2(-EBADF, "/dev/null", &how_upper32, sizeof(how_upper32));
+
+Fix this by preventing the immediate truncation in build_open_flags().
+
+There's a snafu here though stripping FMODE_* directly from flags would
+cause the upper 32 bits to be truncated as well due to integer promotion
+rules since FMODE_* is unsigned int, O_* are signed ints (yuck).
+
+In addition, struct open_flags currently defines flags to be 32 bit
+which is reasonable. If we simply were to bump it to 64 bit we would
+need to change a lot of code preemptively which doesn't seem worth it.
+So simply add a compile-time check verifying that all currently known
+O_* flags are within the 32 bit range and fail to build if they aren't
+anymore.
+
+This change shouldn't regress old open syscalls since they silently
+truncate any unknown values anyway. It is a tiny semantic change for
+openat2() but it is very unlikely people pass ing > 32 bit unknown flags
+and the syscall is relatively new too.
+
+Link: https://lore.kernel.org/r/20210528092417.3942079-3-brauner@kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Reported-by: Richard Guy Briggs <rgb@redhat.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Link: https://lore.kernel.org/r/20210313030146.2882027-2-yi.zhang@huawei.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
+Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fs-writeback.c | 25 -------------------------
- 1 file changed, 25 deletions(-)
+ fs/open.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index e91980f49388..7c46d1588a19 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2205,28 +2205,6 @@ int dirtytime_interval_handler(struct ctl_table *table, int write,
- 	return ret;
- }
+diff --git a/fs/open.c b/fs/open.c
+index e53af13b5835..53bc0573c0ec 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1002,12 +1002,20 @@ inline struct open_how build_open_how(int flags, umode_t mode)
  
--static noinline void block_dump___mark_inode_dirty(struct inode *inode)
--{
--	if (inode->i_ino || strcmp(inode->i_sb->s_id, "bdev")) {
--		struct dentry *dentry;
--		const char *name = "?";
--
--		dentry = d_find_alias(inode);
--		if (dentry) {
--			spin_lock(&dentry->d_lock);
--			name = (const char *) dentry->d_name.name;
--		}
--		printk(KERN_DEBUG
--		       "%s(%d): dirtied inode %lu (%s) on %s\n",
--		       current->comm, task_pid_nr(current), inode->i_ino,
--		       name, inode->i_sb->s_id);
--		if (dentry) {
--			spin_unlock(&dentry->d_lock);
--			dput(dentry);
--		}
--	}
--}
--
- /**
-  * __mark_inode_dirty -	internal function to mark an inode dirty
-  *
-@@ -2296,9 +2274,6 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- 	    (dirtytime && (inode->i_state & I_DIRTY_INODE)))
- 		return;
+ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ {
+-	int flags = how->flags;
++	u64 flags = how->flags;
++	u64 strip = FMODE_NONOTIFY | O_CLOEXEC;
+ 	int lookup_flags = 0;
+ 	int acc_mode = ACC_MODE(flags);
  
--	if (unlikely(block_dump))
--		block_dump___mark_inode_dirty(inode);
--
- 	spin_lock(&inode->i_lock);
- 	if (dirtytime && (inode->i_state & I_DIRTY_INODE))
- 		goto out_unlock_inode;
+-	/* Must never be set by userspace */
+-	flags &= ~(FMODE_NONOTIFY | O_CLOEXEC);
++	BUILD_BUG_ON_MSG(upper_32_bits(VALID_OPEN_FLAGS),
++			 "struct open_flags doesn't yet handle flags > 32 bits");
++
++	/*
++	 * Strip flags that either shouldn't be set by userspace like
++	 * FMODE_NONOTIFY or that aren't relevant in determining struct
++	 * open_flags like O_CLOEXEC.
++	 */
++	flags &= ~strip;
+ 
+ 	/*
+ 	 * Older syscalls implicitly clear all of the invalid flags or argument
 -- 
 2.30.2
 
