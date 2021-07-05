@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 583623BC0C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 17:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34DC33BC0F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 17:40:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232641AbhGEPhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jul 2021 11:37:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58642 "EHLO mail.kernel.org"
+        id S232772AbhGEPi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jul 2021 11:38:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233223AbhGEPgO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jul 2021 11:36:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 52E9561A33;
-        Mon,  5 Jul 2021 15:31:58 +0000 (UTC)
+        id S233383AbhGEPg7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Jul 2021 11:36:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 88AE1619AB;
+        Mon,  5 Jul 2021 15:32:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625499119;
-        bh=Kx3Ul7vE07T9voQzegLiIMG1+6PGNHMHhQfhPd3p5+0=;
+        s=k20201202; t=1625499131;
+        bh=gr2AjwOJy09BK0r/GGkhmm7RiwA0/bLVB1ctv1SAVSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lgz1b1P3UcPdXpT/ZQgb4LmkGx79C5L0nJiHg+EnyI21L5L8/DEA5PwKQariAcmjX
-         lLTPs9riZgrqljzD85bCcaq0KCfFTYxJsFTwxVO1wGIKv1o09iAEDGZ5ifbWJE3Sew
-         8EE+WjOQlEIRh2AWxn/PE9LNLVhhKIN7RZZz8QuJtXML8alXGv8S4g/H2PwWagq0I8
-         Afi/XtXQUG4qZIZ43y87io5KklMI08o3xiM/h+W0O32QKg4QkGZPnY/j6y1yVkUvu5
-         2rqoGIDxV0DtZ8dP/xdfEVJeawg1YwfbzJ7pv8y0w4un00F3FoTinHZSknRPZsnbTJ
-         hSzvAGcq6dP8w==
+        b=GHu8fxFt/Kzs6CLx4Pa42cFp1blfJiOr/BEZWyqNfaJz1UqyxGk9AIueCGgSoffz3
+         kBwYr6esAqo8ym/KW9u3NKJU5g4+Q7ME+RWU/f+1pSjlzndGnMYx3Wc12IEeWmE8m6
+         jqccbBwKpLQnerBxBrUpZDsLKMssb7cvWk6Is+sYaZdokADJz4UaxNaTqUcnKCh3eG
+         MPiCjYeJPNjj23DtEWaP6O80JxcJtIwH6Hu/Zvf4IRClMx31f1EZveqwlSuydNnpBB
+         NAEAtkKRU1fkCOrzjsuXFqDbRubmqto0OU1ldPJus5vZSCH747HG3oKLXV4UbAb4ea
+         51NnswYwpQ+UA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     "zhangyi (F)" <yi.zhang@huawei.com>, Jan Kara <jack@suse.cz>,
         Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 2/9] block_dump: remove block_dump feature in mark_inode_dirty()
-Date:   Mon,  5 Jul 2021 11:31:48 -0400
-Message-Id: <20210705153155.1522423-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 2/7] block_dump: remove block_dump feature in mark_inode_dirty()
+Date:   Mon,  5 Jul 2021 11:32:02 -0400
+Message-Id: <20210705153208.1522553-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210705153155.1522423-1-sashal@kernel.org>
-References: <20210705153155.1522423-1-sashal@kernel.org>
+In-Reply-To: <20210705153208.1522553-1-sashal@kernel.org>
+References: <20210705153208.1522553-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -76,10 +76,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 25 deletions(-)
 
 diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 2de656ecc48b..008710314240 100644
+index 7f068330edb6..958a1bd0b5fc 100644
 --- a/fs/fs-writeback.c
 +++ b/fs/fs-writeback.c
-@@ -2088,28 +2088,6 @@ int dirtytime_interval_handler(struct ctl_table *table, int write,
+@@ -2040,28 +2040,6 @@ int dirtytime_interval_handler(struct ctl_table *table, int write,
  	return ret;
  }
  
@@ -108,7 +108,7 @@ index 2de656ecc48b..008710314240 100644
  /**
   *	__mark_inode_dirty -	internal function
   *	@inode: inode to mark
-@@ -2168,9 +2146,6 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+@@ -2120,9 +2098,6 @@ void __mark_inode_dirty(struct inode *inode, int flags)
  	    (dirtytime && (inode->i_state & I_DIRTY_INODE)))
  		return;
  
