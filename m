@@ -2,220 +2,267 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 86B393BBD18
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 14:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5169B3BBD6F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 15:22:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231310AbhGEMwt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jul 2021 08:52:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29490 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231234AbhGEMwr (ORCPT
+        id S231253AbhGENY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jul 2021 09:24:57 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:16233 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230188AbhGENY4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jul 2021 08:52:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625489410;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=W8G/JsyH47bF0khJGv25MPY6jNei9NxXk5kKt2MzRCU=;
-        b=WG/IDJw9zwQK88YZqshvNZRs+Ku1Vb1nWMw7ut/7X2nnkHhYXeJR0PAZJrCNqehz5okyd7
-        N0M3Mffc0o+nojO72ybSCg0rLJArvlPEE2jiiL7fM1ZYz3f9yHgksPj3RftXXrbOkupGZk
-        C6F21M9FQ5gnqbR6hc6L/bGK8rmhVJc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-145-ugf42SHOMTOwWKHm8Kh2QQ-1; Mon, 05 Jul 2021 08:50:09 -0400
-X-MC-Unique: ugf42SHOMTOwWKHm8Kh2QQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EA3EB1023F40;
-        Mon,  5 Jul 2021 12:50:05 +0000 (UTC)
-Received: from localhost (ovpn-114-164.ams2.redhat.com [10.36.114.164])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5985260C0F;
-        Mon,  5 Jul 2021 12:49:59 +0000 (UTC)
-Date:   Mon, 5 Jul 2021 13:49:58 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Yongji Xie <xieyongji@bytedance.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 10/10] Documentation: Add documentation for VDUSE
-Message-ID: <YOL/9mxkJaokKDHc@stefanha-x1.localdomain>
-References: <20210615141331.407-1-xieyongji@bytedance.com>
- <20210615141331.407-11-xieyongji@bytedance.com>
- <YNSCH6l31zwPxBjL@stefanha-x1.localdomain>
- <CACycT3uxnQmXWsgmNVxQtiRhz1UXXTAJFY3OiAJqokbJH6ifMA@mail.gmail.com>
- <YNxCDpM3bO5cPjqi@stefanha-x1.localdomain>
- <CACycT3taKhf1cWp3Jd0aSVekAZvpbR-_fkyPLQ=B+jZBB5H=8Q@mail.gmail.com>
- <YN3ABqCMLQf7ejOm@stefanha-x1.localdomain>
- <CACycT3vo-diHgTSLw_FS2E+5ia5VjihE3qw7JmZR7JT55P-wQA@mail.gmail.com>
- <8320d26d-6637-85c6-8773-49553dfa502d@redhat.com>
+        Mon, 5 Jul 2021 09:24:56 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Ueo5Qe6_1625491332;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Ueo5Qe6_1625491332)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 05 Jul 2021 21:22:17 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     linux-erofs@lists.ozlabs.org
+Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        nvdimm@lists.linux.dev, Liu Bo <bo.liu@linux.alibaba.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Joseqh Qi <joseph.qi@linux.alibaba.com>,
+        Liu Jiang <gerry@linux.alibaba.com>,
+        Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [RFC PATCH v1.1 2/2] erofs: dax support for non-tailpacking regular file
+Date:   Mon,  5 Jul 2021 21:21:53 +0800
+Message-Id: <20210705132153.223839-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.4
+In-Reply-To: <20210704135056.42723-3-hsiangkao@linux.alibaba.com>
+References: <20210704135056.42723-3-hsiangkao@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nJZEr38ROGX7NVP+"
-Content-Disposition: inline
-In-Reply-To: <8320d26d-6637-85c6-8773-49553dfa502d@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+DAX is quite useful for some VM use cases in order to save guest
+memory extremely with minimal lightweight EROFS.
 
---nJZEr38ROGX7NVP+
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In order to prepare for such use cases, add preliminary dax support
+for non-tailpacking regular files for now.
 
-On Mon, Jul 05, 2021 at 11:36:15AM +0800, Jason Wang wrote:
->=20
-> =E5=9C=A8 2021/7/4 =E4=B8=8B=E5=8D=885:49, Yongji Xie =E5=86=99=E9=81=93:
-> > > > OK, I get you now. Since the VIRTIO specification says "Device
-> > > > configuration space is generally used for rarely-changing or
-> > > > initialization-time parameters". I assume the VDUSE_DEV_SET_CONFIG
-> > > > ioctl should not be called frequently.
-> > > The spec uses MUST and other terms to define the precise requirements.
-> > > Here the language (especially the word "generally") is weaker and mea=
-ns
-> > > there may be exceptions.
-> > >=20
-> > > Another type of access that doesn't work with the VDUSE_DEV_SET_CONFIG
-> > > approach is reads that have side-effects. For example, imagine a field
-> > > containing an error code if the device encounters a problem unrelated=
- to
-> > > a specific virtqueue request. Reading from this field resets the error
-> > > code to 0, saving the driver an extra configuration space write access
-> > > and possibly race conditions. It isn't possible to implement those
-> > > semantics suing VDUSE_DEV_SET_CONFIG. It's another corner case, but it
-> > > makes me think that the interface does not allow full VIRTIO semantic=
-s.
->=20
->=20
-> Note that though you're correct, my understanding is that config space is
-> not suitable for this kind of error propagating. And it would be very hard
-> to implement such kind of semantic in some transports.=C2=A0 Virtqueue sh=
-ould be
-> much better. As Yong Ji quoted, the config space is used for
-> "rarely-changing or intialization-time parameters".
->=20
->=20
-> > Agreed. I will use VDUSE_DEV_GET_CONFIG in the next version. And to
-> > handle the message failure, I'm going to add a return value to
-> > virtio_config_ops.get() and virtio_cread_* API so that the error can
-> > be propagated to the virtio device driver. Then the virtio-blk device
-> > driver can be modified to handle that.
-> >=20
-> > Jason and Stefan, what do you think of this way?
+Tested with the DRAM-emulated PMEM and the EROFS image generated by
+"mkfs.erofs -Enoinline_data enwik9.fsdax.img enwik9"
 
-Why does VDUSE_DEV_GET_CONFIG need to support an error return value?
+Cc: nvdimm@lists.linux.dev
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+change since v1:
+ - update missing hunks due to patch spliting...
+    bdev_dax_supported(...)
+    erofs_file_mmap(...)   
 
-The VIRTIO spec provides no way for the device to report errors from
-config space accesses.
+ fs/erofs/data.c     | 43 +++++++++++++++++++++++++++++++++++++++++--
+ fs/erofs/inode.c    |  5 +++++
+ fs/erofs/internal.h |  2 ++
+ fs/erofs/super.c    | 26 ++++++++++++++++++++++++--
+ 4 files changed, 72 insertions(+), 4 deletions(-)
 
-The QEMU virtio-pci implementation returns -1 from invalid
-virtio_config_read*() and silently discards virtio_config_write*()
-accesses.
-
-VDUSE can take the same approach with
-VDUSE_DEV_GET_CONFIG/VDUSE_DEV_SET_CONFIG.
-
-> I'd like to stick to the current assumption thich get_config won't fail.
-> That is to say,
->=20
-> 1) maintain a config in the kernel, make sure the config space read can
-> always succeed
-> 2) introduce an ioctl for the vduse usersapce to update the config space.
-> 3) we can synchronize with the vduse userspace during set_config
->=20
-> Does this work?
-
-I noticed that caching is also allowed by the vhost-user protocol
-messages (QEMU's docs/interop/vhost-user.rst), but the device doesn't
-know whether or not caching is in effect. The interface you outlined
-above requires caching.
-
-Is there a reason why the host kernel vDPA code needs to cache the
-configuration space?
-
-Here are the vhost-user protocol messages:
-
-  Virtio device config space
-  ^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  +--------+------+-------+---------+
-  | offset | size | flags | payload |
-  +--------+------+-------+---------+
-
-  :offset: a 32-bit offset of virtio device's configuration space
-
-  :size: a 32-bit configuration space access size in bytes
-
-  :flags: a 32-bit value:
-    - 0: Vhost master messages used for writeable fields
-    - 1: Vhost master messages used for live migration
-
-  :payload: Size bytes array holding the contents of the virtio
-            device's configuration space
-
-  ...
-
-  ``VHOST_USER_GET_CONFIG``
-    :id: 24
-    :equivalent ioctl: N/A
-    :master payload: virtio device config space
-    :slave payload: virtio device config space
-
-    When ``VHOST_USER_PROTOCOL_F_CONFIG`` is negotiated, this message is
-    submitted by the vhost-user master to fetch the contents of the
-    virtio device configuration space, vhost-user slave's payload size
-    MUST match master's request, vhost-user slave uses zero length of
-    payload to indicate an error to vhost-user master. The vhost-user
-    master may cache the contents to avoid repeated
-    ``VHOST_USER_GET_CONFIG`` calls.
-
-  ``VHOST_USER_SET_CONFIG``
-    :id: 25
-    :equivalent ioctl: N/A
-    :master payload: virtio device config space
-    :slave payload: N/A
-
-    When ``VHOST_USER_PROTOCOL_F_CONFIG`` is negotiated, this message is
-    submitted by the vhost-user master when the Guest changes the virtio
-    device configuration space and also can be used for live migration
-    on the destination host. The vhost-user slave must check the flags
-    field, and slaves MUST NOT accept SET_CONFIG for read-only
-    configuration space fields unless the live migration bit is set.
-
-Stefan
-
---nJZEr38ROGX7NVP+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmDi//YACgkQnKSrs4Gr
-c8jgKwf/S3jEpQ3OvcO2LwK0GDdjhgQBhsendLEbARZ7hCRFfpQT9NfPYYUu6ct/
-WLxxofULohkENWZgImWB7p0JD3XhfXusVRbY8gy70ZjrQ9LuTglcJHd0ZBOdW9nI
-ZE/AWB6ltdKTSFUmiEh+rQ2KyLB55l8VPpNhEL/KhztpGM3ZqpStVNwgpGJE4D53
-7/tXKbqCMBLdVenAetRVOdbi+/DXXgCpPVutcTKEirfkJqZaum8PqPQUoT4rh1j9
-vHVvnKRGLLsdLxCSa5Jw2jF9Ting+CbCV38QKdYTv8nWX7LFwIRd+xYkSkUea3i3
-aRvxtciBZWCajqsu/TEsHsk1sQn4Sg==
-=GVfM
------END PGP SIGNATURE-----
-
---nJZEr38ROGX7NVP+--
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 0f82b4cb474c..c188c629be45 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -6,7 +6,7 @@
+ #include "internal.h"
+ #include <linux/prefetch.h>
+ #include <linux/iomap.h>
+-
++#include <linux/dax.h>
+ #include <trace/events/erofs.h>
+ 
+ static void erofs_readendio(struct bio *bio)
+@@ -323,6 +323,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 		return ret;
+ 
+ 	iomap->bdev = inode->i_sb->s_bdev;
++	iomap->dax_dev = EROFS_I_SB(inode)->dax_dev;
+ 	iomap->offset = map.m_la;
+ 	iomap->length = map.m_llen;
+ 
+@@ -382,6 +383,11 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	if (!iov_iter_count(to))
+ 		return 0;
+ 
++#ifdef CONFIG_FS_DAX
++	if (IS_DAX(iocb->ki_filp->f_mapping->host))
++		return dax_iomap_rw(iocb, to, &erofs_iomap_ops);
++#endif
++
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+ 		int err = erofs_prepare_dio(iocb, to);
+ 
+@@ -410,9 +416,42 @@ const struct address_space_operations erofs_raw_access_aops = {
+ 	.direct_IO = noop_direct_IO,
+ };
+ 
++#ifdef CONFIG_FS_DAX
++static vm_fault_t erofs_dax_huge_fault(struct vm_fault *vmf,
++		enum page_entry_size pe_size)
++{
++	return dax_iomap_fault(vmf, pe_size, NULL, NULL, &erofs_iomap_ops);
++}
++
++static vm_fault_t erofs_dax_fault(struct vm_fault *vmf)
++{
++	return erofs_dax_huge_fault(vmf, PE_SIZE_PTE);
++}
++
++static const struct vm_operations_struct erofs_dax_vm_ops = {
++	.fault		= erofs_dax_fault,
++	.huge_fault	= erofs_dax_huge_fault,
++};
++
++static int erofs_file_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	if (!IS_DAX(file_inode(file)))
++		return generic_file_readonly_mmap(file, vma);
++
++	if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_MAYWRITE))
++		return -EINVAL;
++
++	vma->vm_ops = &erofs_dax_vm_ops;
++	vma->vm_flags |= VM_HUGEPAGE;
++	return 0;
++}
++#else
++#define erofs_file_mmap	generic_file_readonly_mmap
++#endif
++
+ const struct file_operations erofs_file_fops = {
+ 	.llseek		= generic_file_llseek,
+ 	.read_iter	= erofs_file_read_iter,
+-	.mmap		= generic_file_readonly_mmap,
++	.mmap		= erofs_file_mmap,
+ 	.splice_read	= generic_file_splice_read,
+ };
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 00edb7562fea..695b97acb9a6 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -174,6 +174,11 @@ static struct page *erofs_read_inode(struct inode *inode,
+ 	inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec;
+ 	inode->i_atime.tv_nsec = inode->i_ctime.tv_nsec;
+ 
++	inode->i_flags &= ~S_DAX;
++	if (test_opt(&sbi->ctx, DAX) && S_ISREG(inode->i_mode) &&
++	    vi->datalayout == EROFS_INODE_FLAT_PLAIN)
++		inode->i_flags |= S_DAX;
++
+ 	if (!nblks)
+ 		/* measure inode.i_blocks as generic filesystems */
+ 		inode->i_blocks = roundup(inode->i_size, EROFS_BLKSIZ) >> 9;
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 2669c785d548..8b0542d35148 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -83,6 +83,7 @@ struct erofs_sb_info {
+ 
+ 	struct erofs_sb_lz4_info lz4;
+ #endif	/* CONFIG_EROFS_FS_ZIP */
++	struct dax_device *dax_dev;
+ 	u32 blocks;
+ 	u32 meta_blkaddr;
+ #ifdef CONFIG_EROFS_FS_XATTR
+@@ -115,6 +116,7 @@ struct erofs_sb_info {
+ /* Mount flags set via mount options or defaults */
+ #define EROFS_MOUNT_XATTR_USER		0x00000010
+ #define EROFS_MOUNT_POSIX_ACL		0x00000020
++#define EROFS_MOUNT_DAX			0x00000040
+ 
+ #define clear_opt(ctx, option)	((ctx)->mount_opt &= ~EROFS_MOUNT_##option)
+ #define set_opt(ctx, option)	((ctx)->mount_opt |= EROFS_MOUNT_##option)
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 8fc6c04b54f4..b44a964ab24f 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -11,6 +11,7 @@
+ #include <linux/crc32c.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
++#include <linux/dax.h>
+ #include "xattr.h"
+ 
+ #define CREATE_TRACE_POINTS
+@@ -355,6 +356,7 @@ enum {
+ 	Opt_user_xattr,
+ 	Opt_acl,
+ 	Opt_cache_strategy,
++	Opt_dax,
+ 	Opt_err
+ };
+ 
+@@ -370,6 +372,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
+ 	fsparam_flag_no("acl",		Opt_acl),
+ 	fsparam_enum("cache_strategy",	Opt_cache_strategy,
+ 		     erofs_param_cache_strategy),
++	fsparam_flag("dax",             Opt_dax),
+ 	{}
+ };
+ 
+@@ -410,6 +413,14 @@ static int erofs_fc_parse_param(struct fs_context *fc,
+ 		ctx->cache_strategy = result.uint_32;
+ #else
+ 		errorfc(fc, "compression not supported, cache_strategy ignored");
++#endif
++		break;
++	case Opt_dax:
++#ifdef CONFIG_FS_DAX
++		warnfc(fc, "DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
++		set_opt(ctx, DAX);
++#else
++		errorfc(fc, "dax options not supported");
+ #endif
+ 		break;
+ 	default:
+@@ -496,10 +507,17 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		return -ENOMEM;
+ 
+ 	sb->s_fs_info = sbi;
++	sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev);
+ 	err = erofs_read_superblock(sb);
+ 	if (err)
+ 		return err;
+ 
++	if (test_opt(ctx, DAX) &&
++	    !bdev_dax_supported(sb->s_bdev, EROFS_BLKSIZ)) {
++		errorfc(fc, "DAX unsupported by block device. Turning off DAX.");
++		clear_opt(ctx, DAX);
++	}
++
+ 	sb->s_flags |= SB_RDONLY | SB_NOATIME;
+ 	sb->s_maxbytes = MAX_LFS_FILESIZE;
+ 	sb->s_time_gran = 1;
+@@ -609,6 +627,8 @@ static void erofs_kill_sb(struct super_block *sb)
+ 	sbi = EROFS_SB(sb);
+ 	if (!sbi)
+ 		return;
++	if (sbi->dax_dev)
++		fs_put_dax(sbi->dax_dev);
+ 	kfree(sbi);
+ 	sb->s_fs_info = NULL;
+ }
+@@ -711,8 +731,8 @@ static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 
+ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
+ {
+-	struct erofs_sb_info *sbi __maybe_unused = EROFS_SB(root->d_sb);
+-	struct erofs_fs_context *ctx __maybe_unused = &sbi->ctx;
++	struct erofs_sb_info *sbi = EROFS_SB(root->d_sb);
++	struct erofs_fs_context *ctx = &sbi->ctx;
+ 
+ #ifdef CONFIG_EROFS_FS_XATTR
+ 	if (test_opt(ctx, XATTR_USER))
+@@ -734,6 +754,8 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
+ 	else if (ctx->cache_strategy == EROFS_ZIP_CACHE_READAROUND)
+ 		seq_puts(seq, ",cache_strategy=readaround");
+ #endif
++	if (test_opt(ctx, DAX))
++		seq_puts(seq, ",dax");
+ 	return 0;
+ }
+ 
+-- 
+2.24.4
 
