@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BA6C53BB574
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 05:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BB533BB57D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 05:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229997AbhGEDUZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jul 2021 23:20:25 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:48116 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229935AbhGEDUN (ORCPT
+        id S230029AbhGEDUa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jul 2021 23:20:30 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:26114 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229956AbhGEDUQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jul 2021 23:20:13 -0400
+        Sun, 4 Jul 2021 23:20:16 -0400
 Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210705031735epoutp013fa905a18224a796dee8a1819c40175d~OxsLk08Wa0684306843epoutp01G
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jul 2021 03:17:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210705031735epoutp013fa905a18224a796dee8a1819c40175d~OxsLk08Wa0684306843epoutp01G
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210705031737epoutp02de2e55e1f2f9f43ba4fdd30daa9f1eb9~OxsNDye7r0869208692epoutp022
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jul 2021 03:17:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210705031737epoutp02de2e55e1f2f9f43ba4fdd30daa9f1eb9~OxsNDye7r0869208692epoutp022
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1625455055;
-        bh=E8zXyfZrE3G57CVmFE+4hkPLffjZiEjineGKYUfCids=;
+        s=mail20170921; t=1625455057;
+        bh=//z18A8yEe6HZaQDVeR7zO5jUtfPzAs2XyKlKaZ7lDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tC8ilJprccfTrYy07Zv4A19hYL4Cx4uSiYIrDhgu1eeafd/1muYuRGepFFp1brj3w
-         2L59IBuo0ZUAHfstBPUeMCufoI+9J+J8BSXA9yiR7JYksSbBUZedK3KRBbQqk9/ZWz
-         YfDxv6C96lhph6lqoGWDY+c6fFoIhJQEwrrPQo4g=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210705031735epcas1p24205522cf2e4cdaa0e2ed4b379312f41~OxsLE2wyB1374013740epcas1p2l;
-        Mon,  5 Jul 2021 03:17:35 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4GJ9q22sW3z4x9Q0; Mon,  5 Jul
-        2021 03:17:34 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        14.5E.10119.EC972E06; Mon,  5 Jul 2021 12:17:34 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20210705031733epcas1p48c95e5d2f8edcaa0860b1eb83fc4f8f8~OxsJzJsgl0813108131epcas1p4G;
-        Mon,  5 Jul 2021 03:17:33 +0000 (GMT)
+        b=LiVCRILLDvFm2mqOCR+x8BPGAYZeamyUiGjxJ8BMhkW4fdZD0jQf9khK4K2CaBVf7
+         JVmc+YYDTwoNg0K/yyab8uOu8OqN+v7Kn2/iydaV5DIW8LgBHpLqDMwpSg9D4QkERo
+         C8RhThSegRGgt8Op2NIRGfYZbm0I353dlTIztgIo=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20210705031736epcas1p4fb3b739056ef2f94447d893d19f08c25~OxsMTx0ZC0813108131epcas1p4R;
+        Mon,  5 Jul 2021 03:17:36 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.160]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4GJ9q34VdHz4x9Q1; Mon,  5 Jul
+        2021 03:17:35 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9C.9F.09551.FC972E06; Mon,  5 Jul 2021 12:17:35 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210705031734epcas1p232641a646669d8c52307471903ad7904~OxsKpPYxD1374013740epcas1p2k;
+        Mon,  5 Jul 2021 03:17:34 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210705031733epsmtrp1388509b678e1a08ebb6f28ee94e24039~OxsJyZo_U0836508365epsmtrp1I;
-        Mon,  5 Jul 2021 03:17:33 +0000 (GMT)
-X-AuditID: b6c32a38-965ff70000002787-14-60e279ce55b4
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210705031734epsmtrp287a06064ab64cb7af81a76549c58b7d6~OxsKoeakV1726817268epsmtrp2G;
+        Mon,  5 Jul 2021 03:17:34 +0000 (GMT)
+X-AuditID: b6c32a36-2b3ff7000000254f-9c-60e279cf2bcf
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F5.BB.08394.DC972E06; Mon,  5 Jul 2021 12:17:33 +0900 (KST)
+        77.BB.08394.EC972E06; Mon,  5 Jul 2021 12:17:34 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.89.31.111]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210705031733epsmtip226aa900f3fe3258758b00a1e2bde3ebd~OxsJhtaE42370723707epsmtip2R;
-        Mon,  5 Jul 2021 03:17:33 +0000 (GMT)
+        20210705031734epsmtip2eea6e64fbeeab95856abd1fd4952b740~OxsKWMF-X2672126721epsmtip2U;
+        Mon,  5 Jul 2021 03:17:34 +0000 (GMT)
 From:   Namjae Jeon <namjae.jeon@samsung.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-cifs@vger.kernel.org
@@ -59,60 +59,61 @@ Cc:     linux-cifsd-devel@lists.sourceforge.net, aurelien.aptel@gmail.com,
         christian@brauner.io, smfrench@gmail.com, hyc.lee@gmail.com,
         Namjae Jeon <namjae.jeon@samsung.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH v5 12/13] ksmbd: add Kconfig and Makefile
-Date:   Mon,  5 Jul 2021 12:07:28 +0900
-Message-Id: <20210705030729.10292-13-namjae.jeon@samsung.com>
+Subject: [PATCH v5 13/13] MAINTAINERS: add ksmbd kernel server
+Date:   Mon,  5 Jul 2021 12:07:29 +0900
+Message-Id: <20210705030729.10292-14-namjae.jeon@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210705030729.10292-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmru65ykcJBgdfc1k0vj3NYnH89V92
-        i8Z3yhav/01nsTg9YRGTxcrVR5ksrt1/z27x4v8uZouf/78zWuzZe5LF4vKuOWwWP6bXW/T2
-        fWK1aL2iZbF74yI2izcvDrNZ3Jo4n83i/N/jrBa/f8xhcxD2+Dv3I7PH7IaLLB47Z91l99i8
-        Qstj94LPTB67bzawebTu+Mvu8fHpLRaPvi2rGD22LH7I5LF+y1UWj8+b5Dw2PXnLFMAblWOT
-        kZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA/SmkkJZYk4p
-        UCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafA0KBArzgxt7g0L10vOT/XytDAwMgUqDIhJ+Pv
-        mUOsBS9UK96928XWwHhOvouRg0NCwETixj6NLkYuDiGBHYwSN5+/ZINwPjFKTDnYwArhfGOU
-        +LF1C1CGE6zjfetUqMReRonVsyYzw7WsXb2fBWQum4C2xJ8toiANIgKxEjd2vAarYRaYzSxx
-        a+cWVpCEsIClxITbPxhB6lkEVCVe9muDmLwCthKzLwtA7JKXWL3hADOIzQkU3tt1lRUifoND
-        4u06TgjbReLQqnnMELawxKvjW9ghbCmgiW1QdrnEiZO/mCDsGokN8/axQ3xvLNHzogTEZBbQ
-        lFi/Sx+iQlFi5++5jCA2swCfxLuvPawQ1bwSHW1CECWqEn2XDkMNlJboav8AtchDYs/CjyyQ
-        8JjAKHH33X3GCYxysxA2LGBkXMUollpQnJueWmxYYIIcW5sYwWlYy2IH49y3H/QOMTJxMB5i
-        lOBgVhLhDZ13L0GINyWxsiq1KD++qDQntfgQoykw4CYyS4km5wMzQV5JvKGpkbGxsYWJmbmZ
-        qbGSOO9OtkMJQgLpiSWp2ampBalFMH1MHJxSDUx6MjbRE37Z/mcofevaxnlk4WofiRkdHH9P
-        yysfvSF/T6b7zBdGn9rfpxoPJdsI33r6zGnawSWX19bmcu/Z414g41a+6qJb6rr0nkdx57iP
-        3P02f9G5lfdfFZ2b+lm8+4BYJsu03riFVy7tyo3bqq/5eiNrV2cSr4+2yNtfPmbrHh796+Jk
-        xW0sVmsq/rz7kNCzo+Ku6vXL4/cs7LondIyXacMRa7bcUwY9G5faXF+x4Iigfqrei8YV6x8q
-        bLYKL6x0DOLoUJ1asv+SS53t9gfvrKM0677nx63+ExB/+dnLXewhyyblPWHazf3hyMI7qYUP
-        Gnxuqu8w2TU5v/L3yrNblz5dJCD0Pd0twr449baNEktxRqKhFnNRcSIACO1la0wEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCLMWRmVeSWpSXmKPExsWy7bCSvO7ZykcJBnunGVo0vj3NYnH89V92
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmge75ykcJBnMaxS0a355msTj++i+7
+        ReM7ZYvX/6azWJyesIjJYuXqo0wW1+6/Z7d48X8Xs8XP/98ZLfbsPclicXnXHDaLH9PrLXr7
+        PrFatF7Rsti9cRGbxZsXh9ksbk2cz2Zx/u9xVovfP+awOQh7/J37kdljdsNFFo+ds+6ye2xe
+        oeWxe8FnJo/dNxvYPFp3/GX3+Pj0FotH35ZVjB5bFj9k8li/5SqLx+dNch6bnrxlCuCNyrHJ
+        SE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAXpTSaEsMacU
+        KBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgaFCgV5yYW1yal66XnJ9rZWhgYGQKVJmQk9E+
+        8SRrwVOOiuurVzM2MJ5l72Lk5JAQMJGY+rmHtYuRi0NIYAejxKKl55khnE+MEh9Pv2WHcL4x
+        Sny/fIwFpqXn7zcWiMReRonVTb8QWu49nwbkcHCwCWhL/NkiCtIgIhArcWPHa7AaZoHZzBK3
+        dm5hBUkIC9hJnJ8xhwnEZhFQlZjV/BrM5hWwlZjy5yfUgfISqzccYAaxOYHie7uuskLEb3BI
+        bD1vB2G7SHw/uReqXlji1fEtULaUxOd3e9kg7HKJEyd/MUHYNRIb5u1jB7lTQsBYoudFCYjJ
+        LKApsX6XPkSFosTO33MZQWxmAT6Jd19BQQRSzSvR0SYEUaIq0XfpMNRAaYmu9g9QSz0kJmze
+        Bw23CaBAnMY0gVFuFsKGBYyMqxjFUguKc9NTiw0LjJAjbBMjOBlrme1gnPT2g94hRiYOxkOM
+        EhzMSiK8ofPuJQjxpiRWVqUW5ccXleakFh9iNAUG3URmKdHkfGA+yCuJNzQ1MjY2tjAxMzcz
+        NVYS593JdihBSCA9sSQ1OzW1ILUIpo+Jg1OqgWlFxIfN27ymHH/jt/3FJ9ONvMEsRhxT737l
+        6l779mFabvHuO5s7dONmBO88s1bdj3dnEq/s4nMP/EKO3j6iOU3GYve+58sTz2lW7NXhvvC9
+        43tL+gTlHs+n+z4crb4kdeGiuaBTxiSlQ5Hrpk72usawRSOuXTnk6Nu9BoInru4VTXN+t+Vr
+        IsM2i9TE225Cj/fFHlqSfu38kaO6Xx98NmlZxzLv/HVWXcvlUkuKZFOfTcpc1/z+yL+m1Qo6
+        k/4Lf7V8ZLFkFUtep8KBm8/e3pgfoFYicrTw5K9rOx+d21qqZfZk7TKh3XcN2bhVXlevC/Fy
+        sLHf3B96a1fZwf8tZVkG1yct41dqF/yV6sw/ketIphJLcUaioRZzUXEiAIH2nChPBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGLMWRmVeSWpSXmKPExsWy7bCSvO65ykcJBp92aVs0vj3NYnH89V92
         i8Z3yhav/01nsTg9YRGTxcrVR5ksrt1/z27x4v8uZouf/78zWuzZe5LF4vKuOWwWP6bXW/T2
         fWK1aL2iZbF74yI2izcvDrNZ3Jo4n83i/N/jrBa/f8xhcxD2+Dv3I7PH7IaLLB47Z91l99i8
         Qstj94LPTB67bzawebTu+Mvu8fHpLRaPvi2rGD22LH7I5LF+y1UWj8+b5Dw2PXnLFMAbxWWT
-        kpqTWZZapG+XwJXx98wh1oIXqhXv3u1ia2A8J9/FyMkhIWAi8b51KmsXIxeHkMBuRomP60+z
-        QSSkJY6dOMPcxcgBZAtLHD5cDFHzgVFifssuVpA4m4C2xJ8toiDlIgLxEjcbbrOA1DALrGeW
-        eDP1FwtIQljAUmLC7R+MIPUsAqoSL/u1QUxeAVuJ2ZcFIDbJS6zecIAZxOYECu/tusoKYgsJ
-        2Eh0//zBOoGRbwEjwypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOCI0dLcwbh91Qe9
-        Q4xMHIyHGCU4mJVEeEPn3UsQ4k1JrKxKLcqPLyrNSS0+xCjNwaIkznuh62S8kEB6Yklqdmpq
-        QWoRTJaJg1OqgSnpyvfDTOxPChkrpJ0dObM/2P7+lGuw7JtSnGxp4wzl2ydXFBvOL+JnmqZz
-        cWvq3otVW1aEP1EIbZi2ozlWcsGUU+uUuIJz3DTSl3i4tt6wW9DIeP6t1067i3HnRK0u5G/z
-        4DERCmbO9t5hmntj1+4LTDklKz4e4V8zdf7JOpeQR0f31O/06HgWFFE/1+kW03vvp2uX3bfj
-        2XLtUsu9pBlzbm183JHSN0kyPUQreMIaxTecbPUtr95Hb2h3FNUS+CDoX3drhlDE9TeZSjmd
-        MdbZH/IYnv5xt7+9t+k60/8JhjLrzdstF7BPlCiRnnUmgf/Yl21Czo+6Xyrb1SeVz1xdMe2T
-        cEnaW/e6br6pukosxRmJhlrMRcWJAMW19BEHAwAA
-X-CMS-MailID: 20210705031733epcas1p48c95e5d2f8edcaa0860b1eb83fc4f8f8
+        kpqTWZZapG+XwJXRPvEka8FTjorrq1czNjCeZe9i5OSQEDCR6Pn7jaWLkYtDSGA3o8Skts+s
+        EAlpiWMnzjB3MXIA2cIShw8XQ9R8YJR4NWMeWJxNQFvizxZRkHIRgXiJmw23weYwC6xnlngz
+        9RcLSEJYwE7i/Iw5TCA2i4CqxKzm12A2r4CtxJQ/P6GOkJdYveEAM4jNCRTf23UV7AYhARuJ
+        7p8/WCcw8i1gZFjFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREcNVqaOxi3r/qgd4iR
+        iYPxEKMEB7OSCG/ovHsJQrwpiZVVqUX58UWlOanFhxilOViUxHkvdJ2MFxJITyxJzU5NLUgt
+        gskycXBKNTAZn5/ppSqzT/fE7NSaC+IH+G6erTnH+2FD0TIhjrh/xy4Zln1xc+PY17n4nUfb
+        uvt5N8wz2mZ2tPGYzUtK8ePIO8fU8/z3x3t2k0M1Ez2dLM7ujO0/9mZLq24+D8ss9xldz462
+        Pph4JbWxYEHConm+k+55TF2uo84iYCI85ZuYwWtfAy2zoGkHGz91FnloTZ+Tvzbbtjp0ofr1
+        i0s7XrZ69fK5Vu3pfNGmrGnaYehy4sHuP3/jFOVk3/7pZFkttVnmyc67CmFfF6/9N2/RgX+f
+        9nx/EMDIpRFrns5R8G6Cm93a4NYrb3cJTT16wW7CD6lpB/2X502ZpJ540PnXhc2zE/5p8XCu
+        0Yv4t/rQqV2WSizFGYmGWsxFxYkAPhy3+QkDAAA=
+X-CMS-MailID: 20210705031734epcas1p232641a646669d8c52307471903ad7904
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210705031733epcas1p48c95e5d2f8edcaa0860b1eb83fc4f8f8
+X-CMS-RootMailID: 20210705031734epcas1p232641a646669d8c52307471903ad7904
 References: <20210705030729.10292-1-namjae.jeon@samsung.com>
-        <CGME20210705031733epcas1p48c95e5d2f8edcaa0860b1eb83fc4f8f8@epcas1p4.samsung.com>
+        <CGME20210705031734epcas1p232641a646669d8c52307471903ad7904@epcas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds the Kconfig and Makefile for ksmbd.
+Add myself, Steve French, Sergey Senozhatsky and Hyunchul Lee
+as ksmbd maintainer.
 
 Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
@@ -120,139 +121,29 @@ Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
 Acked-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
 ---
- fs/Kconfig        |  1 +
- fs/Makefile       |  1 +
- fs/ksmbd/Kconfig  | 69 +++++++++++++++++++++++++++++++++++++++++++++++
- fs/ksmbd/Makefile | 20 ++++++++++++++
- 4 files changed, 91 insertions(+)
- create mode 100644 fs/ksmbd/Kconfig
- create mode 100644 fs/ksmbd/Makefile
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 141a856c50e7..720c38f484c6 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -344,6 +344,7 @@ config NFS_V4_2_SSC_HELPER
- source "net/sunrpc/Kconfig"
- source "fs/ceph/Kconfig"
- source "fs/cifs/Kconfig"
-+source "fs/ksmbd/Kconfig"
- source "fs/coda/Kconfig"
- source "fs/afs/Kconfig"
- source "fs/9p/Kconfig"
-diff --git a/fs/Makefile b/fs/Makefile
-index 9c708e1fbe8f..e03a048b2cd8 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -98,6 +98,7 @@ obj-$(CONFIG_NLS)		+= nls/
- obj-$(CONFIG_UNICODE)		+= unicode/
- obj-$(CONFIG_SYSV_FS)		+= sysv/
- obj-$(CONFIG_CIFS)		+= cifs/
-+obj-$(CONFIG_SMB_SERVER)	+= ksmbd/
- obj-$(CONFIG_HPFS_FS)		+= hpfs/
- obj-$(CONFIG_NTFS_FS)		+= ntfs/
- obj-$(CONFIG_UFS_FS)		+= ufs/
-diff --git a/fs/ksmbd/Kconfig b/fs/ksmbd/Kconfig
-new file mode 100644
-index 000000000000..e9a5ac01b6e0
---- /dev/null
-+++ b/fs/ksmbd/Kconfig
-@@ -0,0 +1,69 @@
-+config SMB_SERVER
-+	tristate "SMB3 server support (EXPERIMENTAL)"
-+	depends on INET
-+	depends on MULTIUSER
-+	depends on FILE_LOCKING
-+	select NLS
-+	select NLS_UTF8
-+	select CRYPTO
-+	select CRYPTO_MD4
-+	select CRYPTO_MD5
-+	select CRYPTO_HMAC
-+	select CRYPTO_ECB
-+	select CRYPTO_LIB_DES
-+	select CRYPTO_SHA256
-+	select CRYPTO_CMAC
-+	select CRYPTO_SHA512
-+	select CRYPTO_AEAD2
-+	select CRYPTO_CCM
-+	select CRYPTO_GCM
-+	select ASN1
-+	select OID_REGISTRY
-+	select FS_POSIX_ACL
-+	default n
-+	help
-+	  Choose Y here if you want to allow SMB3 compliant clients
-+	  to access files residing on this system using SMB3 protocol.
-+	  To compile the SMB3 server support as a module,
-+	  choose M here: the module will be called ksmbd.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index bd7aff0c120f..73b2f896a2ff 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9938,6 +9938,15 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
+ F:	Documentation/dev-tools/kselftest*
+ F:	tools/testing/selftests/
+ 
++KERNEL SMB3 SERVER (KSMBD)
++M:	Namjae Jeon <namjae.jeon@samsung.com>
++M:	Sergey Senozhatsky <senozhatsky@chromium.org>
++M:	Steve French <sfrench@samba.org>
++M:	Hyunchul Lee <hyc.lee@gmail.com>
++L:	linux-cifs@vger.kernel.org
++S:	Maintained
++F:	fs/ksmbd/
 +
-+	  You may choose to use a samba server instead, in which
-+	  case you can choose N here.
-+
-+	  You also need to install user space programs which can be found
-+	  in ksmbd-tools, available from
-+	  https://github.com/cifsd-team/ksmbd-tools.
-+	  More detail about how to run the ksmbd kernel server is
-+	  available via README file
-+	  (https://github.com/cifsd-team/ksmbd-tools/blob/master/README).
-+
-+	  ksmbd kernel server includes support for auto-negotiation,
-+	  Secure negotiate, Pre-authentication integrity, oplock/lease,
-+	  compound requests, multi-credit, packet signing, RDMA(smbdirect),
-+	  smb3 encryption, copy-offload, secure per-user session
-+	  establishment via NTLM or NTLMv2.
-+
-+config SMB_SERVER_SMBDIRECT
-+	bool "Support for SMB Direct protocol"
-+	depends on SMB_SERVER=m && INFINIBAND && INFINIBAND_ADDR_TRANS || SMB_SERVER=y && INFINIBAND=y && INFINIBAND_ADDR_TRANS=y
-+	select SG_POOL
-+	default n
-+
-+	help
-+	  Enables SMB Direct support for SMB 3.0, 3.02 and 3.1.1.
-+
-+	  SMB Direct allows transferring SMB packets over RDMA. If unsure,
-+	  say N.
-+
-+config SMB_SERVER_CHECK_CAP_NET_ADMIN
-+	bool "Enable check network administration capability"
-+	depends on SMB_SERVER
-+	default y
-+
-+	help
-+	  Prevent unprivileged processes to start the ksmbd kernel server.
-+
-+config SMB_SERVER_KERBEROS5
-+	bool "Support for Kerberos 5"
-+	depends on SMB_SERVER
-+	default n
-diff --git a/fs/ksmbd/Makefile b/fs/ksmbd/Makefile
-new file mode 100644
-index 000000000000..7d6337a7dee4
---- /dev/null
-+++ b/fs/ksmbd/Makefile
-@@ -0,0 +1,20 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Makefile for Linux SMB3 kernel server
-+#
-+obj-$(CONFIG_SMB_SERVER) += ksmbd.o
-+
-+ksmbd-y :=	unicode.o auth.o vfs.o vfs_cache.o server.o ndr.o \
-+		misc.o oplock.o connection.o ksmbd_work.o crypto_ctx.o \
-+		mgmt/ksmbd_ida.o mgmt/user_config.o mgmt/share_config.o \
-+		mgmt/tree_connect.o mgmt/user_session.o smb_common.o \
-+		transport_tcp.o transport_ipc.o smbacl.o smb2pdu.o \
-+		smb2ops.o smb2misc.o ksmbd_spnego_negtokeninit.asn1.o \
-+		ksmbd_spnego_negtokentarg.asn1.o asn1.o
-+
-+$(obj)/asn1.o: $(obj)/ksmbd_spnego_negtokeninit.asn1.h $(obj)/ksmbd_spnego_negtokentarg.asn1.h
-+
-+$(obj)/ksmbd_spnego_negtokeninit.asn1.o: $(obj)/ksmbd_spnego_negtokeninit.asn1.c $(obj)/ksmbd_spnego_negtokeninit.asn1.h
-+$(obj)/ksmbd_spnego_negtokentarg.asn1.o: $(obj)/ksmbd_spnego_negtokentarg.asn1.c $(obj)/ksmbd_spnego_negtokentarg.asn1.h
-+
-+ksmbd-$(CONFIG_SMB_SERVER_SMBDIRECT) += transport_rdma.o
+ KERNEL UNIT TESTING FRAMEWORK (KUnit)
+ M:	Brendan Higgins <brendanhiggins@google.com>
+ L:	linux-kselftest@vger.kernel.org
 -- 
 2.17.1
 
