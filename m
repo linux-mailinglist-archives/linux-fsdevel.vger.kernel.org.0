@@ -2,267 +2,446 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5169B3BBD6F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 15:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B830C3BBEC5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 17:17:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231253AbhGENY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jul 2021 09:24:57 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:16233 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230188AbhGENY4 (ORCPT
+        id S231569AbhGEPUY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jul 2021 11:20:24 -0400
+Received: from esa1.hc324-48.eu.iphmx.com ([207.54.68.119]:45134 "EHLO
+        esa1.hc324-48.eu.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231477AbhGEPUY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jul 2021 09:24:56 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Ueo5Qe6_1625491332;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Ueo5Qe6_1625491332)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 05 Jul 2021 21:22:17 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     linux-erofs@lists.ozlabs.org
-Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        nvdimm@lists.linux.dev, Liu Bo <bo.liu@linux.alibaba.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Joseqh Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [RFC PATCH v1.1 2/2] erofs: dax support for non-tailpacking regular file
-Date:   Mon,  5 Jul 2021 21:21:53 +0800
-Message-Id: <20210705132153.223839-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
-In-Reply-To: <20210704135056.42723-3-hsiangkao@linux.alibaba.com>
-References: <20210704135056.42723-3-hsiangkao@linux.alibaba.com>
+        Mon, 5 Jul 2021 11:20:24 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Jul 2021 11:20:23 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=bmw.de; i=@bmw.de; q=dns/txt; s=mailing1;
+  t=1625498266; x=1657034266;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5Fv4GFMwYhb4ep+MHmeVtDCo6iMucTolv6inuiaafz4=;
+  b=eVu+VR5t0mA0bAEmLvDTi5uRz7BRU7BQ7dkcOuoDAVvyLSgq4fHFYY5N
+   WQexuuRZ5ZakCr525yOelEOQ3rMZO0KHTW+P6ca4DzeLvtgK2zEzHz42c
+   T1nE7irDVKTg7S2TWQyQb7XnQ0SsWqVrsJoPyKzOCht/PgVMlHPTmszto
+   4=;
+Received: from esagw5.bmwgroup.com (HELO esagw5.muc) ([160.46.252.46]) by
+ esa1.hc324-48.eu.iphmx.com with ESMTP/TLS; 05 Jul 2021 17:10:36 +0200
+Received: from esabb5.muc ([160.50.100.47])  by esagw5.muc with ESMTP/TLS;
+ 05 Jul 2021 17:10:35 +0200
+Received: from smucm08j.bmwgroup.net (HELO smucm08j.europe.bmw.corp) ([160.48.96.38])
+ by esabb5.muc with ESMTP/TLS; 05 Jul 2021 17:10:35 +0200
+Received: from cmucw916504.de-cci.bmwgroup.net (192.168.221.43) by
+ smucm08j.europe.bmw.corp (160.48.96.38) with Microsoft SMTP Server (TLS;
+ Mon, 5 Jul 2021 17:10:35 +0200
+From:   Vladimir Divjak <vladimir.divjak@bmw.de>
+To:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <viro@zeniv.linux.org.uk>, <mcgrof@kernel.org>, <oleg@redhat.com>,
+        <akpm@linux-foundation.org>
+CC:     Vladimir Divjak <vladimir.divjak@bmw.de>
+Subject: [PATCH] coredump: allow PTRACE_ATTACH to coredump user mode helper
+Date:   Mon, 5 Jul 2021 17:10:19 +0200
+Message-ID: <20210705151019.989929-1-vladimir.divjak@bmw.de>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: smucm17l.europe.bmw.corp (160.48.96.76) To
+ smucm08j.europe.bmw.corp (160.48.96.38)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DAX is quite useful for some VM use cases in order to save guest
-memory extremely with minimal lightweight EROFS.
+This patch allows the coredump user mode helper process,
+if one is configured (in core_pattern),
+to perform ptrace operations on the dying process
+whose cordump it's handling.
 
-In order to prepare for such use cases, add preliminary dax support
-for non-tailpacking regular files for now.
+The user mode helper process is expected to do so
+before consuming the coredump data from the pipe,
+and thereby, before the dying process is reaped by kernel.
 
-Tested with the DRAM-emulated PMEM and the EROFS image generated by
-"mkfs.erofs -Enoinline_data enwik9.fsdax.img enwik9"
+Issuing a PTRACE_ATTACH request will pause the coredumping
+for that task until ptrace operation is finished.
 
-Cc: nvdimm@lists.linux.dev
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+The user mode helper process is also expected to
+issue a PTRACE_CONT request to the dying process,
+when it is done ptracing it, signaling the dying process
+coredumping can be resumed.
+
+* Problem description / Rationale:
+In automotive and/or embedded environments,
+the storage capacity to store, and/or
+network capabilities to upload
+a complete core file can easily be a limiting factor,
+making offline issue analysis difficult.
+
+* Solution:
+Allow the user mode coredump helper process
+to perform ptrace on the dying process in order to obtain
+useful information such as user mode stacktrace, and
+thereby greatly improve the offline debugging possibilities
+for such environments.
+
+* Impact / Risk:
+The user mode helper process is already entrusted
+with handling the coredump data, so allowing it to read or even change
+the dying process memory should not pose an additional risk.
+
+Furthermore, this change makes coredump emission somewhat slower
+due to the additional step of iterating over the core dump helper list
+and checking if ptrace completion needs to be awaited,
+during coredump emission.
+
+Signed-off-by: Vladimir Divjak <vladimir.divjak@bmw.de>
 ---
-change since v1:
- - update missing hunks due to patch spliting...
-    bdev_dax_supported(...)
-    erofs_file_mmap(...)   
+ fs/coredump.c            | 150 ++++++++++++++++++++++++++++++++++++++-
+ include/linux/coredump.h |  35 +++++++++
+ include/linux/umh.h      |   1 +
+ kernel/ptrace.c          |  19 +++++
+ kernel/umh.c             |   7 +-
+ 5 files changed, 209 insertions(+), 3 deletions(-)
 
- fs/erofs/data.c     | 43 +++++++++++++++++++++++++++++++++++++++++--
- fs/erofs/inode.c    |  5 +++++
- fs/erofs/internal.h |  2 ++
- fs/erofs/super.c    | 26 ++++++++++++++++++++++++--
- 4 files changed, 72 insertions(+), 4 deletions(-)
-
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 0f82b4cb474c..c188c629be45 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -6,7 +6,7 @@
- #include "internal.h"
- #include <linux/prefetch.h>
- #include <linux/iomap.h>
--
-+#include <linux/dax.h>
- #include <trace/events/erofs.h>
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 2868e3e171ae..ee8f816cc643 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -41,6 +41,7 @@
+ #include <linux/fs.h>
+ #include <linux/path.h>
+ #include <linux/timekeeping.h>
++#include <linux/jiffies.h>
  
- static void erofs_readendio(struct bio *bio)
-@@ -323,6 +323,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 		return ret;
- 
- 	iomap->bdev = inode->i_sb->s_bdev;
-+	iomap->dax_dev = EROFS_I_SB(inode)->dax_dev;
- 	iomap->offset = map.m_la;
- 	iomap->length = map.m_llen;
- 
-@@ -382,6 +383,11 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	if (!iov_iter_count(to))
- 		return 0;
- 
-+#ifdef CONFIG_FS_DAX
-+	if (IS_DAX(iocb->ki_filp->f_mapping->host))
-+		return dax_iomap_rw(iocb, to, &erofs_iomap_ops);
-+#endif
-+
- 	if (iocb->ki_flags & IOCB_DIRECT) {
- 		int err = erofs_prepare_dio(iocb, to);
- 
-@@ -410,9 +416,42 @@ const struct address_space_operations erofs_raw_access_aops = {
- 	.direct_IO = noop_direct_IO,
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -62,6 +63,64 @@ struct core_name {
+ 	int used, size;
  };
  
-+#ifdef CONFIG_FS_DAX
-+static vm_fault_t erofs_dax_huge_fault(struct vm_fault *vmf,
-+		enum page_entry_size pe_size)
-+{
-+	return dax_iomap_fault(vmf, pe_size, NULL, NULL, &erofs_iomap_ops);
-+}
++DEFINE_MUTEX(cdh_mutex);
++LIST_HEAD(cdh_list);
 +
-+static vm_fault_t erofs_dax_fault(struct vm_fault *vmf)
-+{
-+	return erofs_dax_huge_fault(vmf, PE_SIZE_PTE);
-+}
-+
-+static const struct vm_operations_struct erofs_dax_vm_ops = {
-+	.fault		= erofs_dax_fault,
-+	.huge_fault	= erofs_dax_huge_fault,
++/**
++ * struct cdh_entry - core dump helper (cdh) entry
++ * @cdh_list_link: cdh linked list reference
++ * @task_being_dumped: pointer to a task being core-dumped
++ * @ptrace_done: completion used to wait for ptrace operation by cdh to be done
++ * @helper_pid: PID of the core dump user-space helper process
++ */
++struct cdh_entry {
++	struct list_head cdh_list_link;
++	struct task_struct *task_being_dumped;
++	struct completion ptrace_done;
++	pid_t helper_pid;
 +};
 +
-+static int erofs_file_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	if (!IS_DAX(file_inode(file)))
-+		return generic_file_readonly_mmap(file, vma);
++/**
++ * cdh_link_current_locked() - Adds a new entry for the current task
++ *                             to the cdh linked list.
++ * @pid: PID of the core dump user-space helper process.
++ *
++ * If a core dump user-space helper process is configured in core_pattern,
++ * a cdh_entry, used to track the user-space helper PID,
++ * so it can be allowed to ptrace the task being core-dumped,
++ * and enable the task being core-dumped to await a potential ptrace operation
++ * by the user-space helper to finish,
++ * is created when the user-space helper process is started by kernel.
++ *
++ * Context: Expects the cdh_mutex to be held when called.
++ */
++static void cdh_link_current_locked(pid_t pid);
 +
-+	if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_MAYWRITE))
-+		return -EINVAL;
++/**
++ * cdh_unlink_current() - Removes the current task's cdh_entry from the list.
++ *
++ * When the core dump of the current task is finished,
++ * its corresponding cdh_entry is removed by calling this function.
++ *
++ * Context: Takes and releases the cdh_mutex.
++ */
++static void cdh_unlink_current(void);
 +
-+	vma->vm_ops = &erofs_dax_vm_ops;
-+	vma->vm_flags |= VM_HUGEPAGE;
-+	return 0;
-+}
-+#else
-+#define erofs_file_mmap	generic_file_readonly_mmap
-+#endif
++/**
++ * cdh_get_entry_for_current() - Returns a pointer to the cdh_entry
++ *                               for the current task.
++ *
++ * Called by __dump_emit to get the current task's cdh_entry
++ * and sleep on the ptrace_done completion object therein,
++ * waiting for ptrace to complete, if ptrace operation for it
++ * was started by the core dump user-space helper tracer.
++ *
++ * Context: Iterates over cdh_entry list without taking the cdh_mutex,
++ *          as it is safe to assume the cdh_entry it will return, if any,
++ *          is stably in the list at the time of calling.
++ */
++static struct cdh_entry *cdh_get_entry_for_current(void);
 +
- const struct file_operations erofs_file_fops = {
- 	.llseek		= generic_file_llseek,
- 	.read_iter	= erofs_file_read_iter,
--	.mmap		= generic_file_readonly_mmap,
-+	.mmap		= erofs_file_mmap,
- 	.splice_read	= generic_file_splice_read,
- };
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 00edb7562fea..695b97acb9a6 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -174,6 +174,11 @@ static struct page *erofs_read_inode(struct inode *inode,
- 	inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec;
- 	inode->i_atime.tv_nsec = inode->i_ctime.tv_nsec;
+ /* The maximal length of core_pattern is also specified in sysctl.c */
  
-+	inode->i_flags &= ~S_DAX;
-+	if (test_opt(&sbi->ctx, DAX) && S_ISREG(inode->i_mode) &&
-+	    vi->datalayout == EROFS_INODE_FLAT_PLAIN)
-+		inode->i_flags |= S_DAX;
+ static int expand_corename(struct core_name *cn, int size)
+@@ -692,9 +751,14 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 		sub_info = call_usermodehelper_setup(helper_argv[0],
+ 						helper_argv, NULL, GFP_KERNEL,
+ 						umh_pipe_setup, NULL, &cprm);
+-		if (sub_info)
++		if (sub_info) {
++			mutex_lock(&cdh_mutex);
+ 			retval = call_usermodehelper_exec(sub_info,
+ 							  UMH_WAIT_EXEC);
++			if (!retval)
++				cdh_link_current_locked(sub_info->pid);
++			mutex_unlock(&cdh_mutex);
++		}
+ 
+ 		kfree(helper_argv);
+ 		if (retval) {
+@@ -833,6 +897,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 	kfree(argv);
+ 	kfree(cn.corename);
+ 	coredump_finish(mm, core_dumped);
++	cdh_unlink_current();
+ 	revert_creds(old_cred);
+ fail_creds:
+ 	put_cred(cred);
+@@ -850,6 +915,11 @@ static int __dump_emit(struct coredump_params *cprm, const void *addr, int nr)
+ 	struct file *file = cprm->file;
+ 	loff_t pos = file->f_pos;
+ 	ssize_t n;
++	struct cdh_entry *entry;
 +
- 	if (!nblks)
- 		/* measure inode.i_blocks as generic filesystems */
- 		inode->i_blocks = roundup(inode->i_size, EROFS_BLKSIZ) >> 9;
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 2669c785d548..8b0542d35148 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -83,6 +83,7 @@ struct erofs_sb_info {
++	entry = cdh_get_entry_for_current();
++	if (entry)
++		wait_for_completion_timeout(&(entry->ptrace_done, msecs_to_jiffies(5 * 60 * 1000));
+ 	if (cprm->written + nr > cprm->limit)
+ 		return 0;
  
- 	struct erofs_sb_lz4_info lz4;
- #endif	/* CONFIG_EROFS_FS_ZIP */
-+	struct dax_device *dax_dev;
- 	u32 blocks;
- 	u32 meta_blkaddr;
- #ifdef CONFIG_EROFS_FS_XATTR
-@@ -115,6 +116,7 @@ struct erofs_sb_info {
- /* Mount flags set via mount options or defaults */
- #define EROFS_MOUNT_XATTR_USER		0x00000010
- #define EROFS_MOUNT_POSIX_ACL		0x00000020
-+#define EROFS_MOUNT_DAX			0x00000040
- 
- #define clear_opt(ctx, option)	((ctx)->mount_opt &= ~EROFS_MOUNT_##option)
- #define set_opt(ctx, option)	((ctx)->mount_opt |= EROFS_MOUNT_##option)
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 8fc6c04b54f4..b44a964ab24f 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -11,6 +11,7 @@
- #include <linux/crc32c.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/dax.h>
- #include "xattr.h"
- 
- #define CREATE_TRACE_POINTS
-@@ -355,6 +356,7 @@ enum {
- 	Opt_user_xattr,
- 	Opt_acl,
- 	Opt_cache_strategy,
-+	Opt_dax,
- 	Opt_err
- };
- 
-@@ -370,6 +372,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
- 	fsparam_flag_no("acl",		Opt_acl),
- 	fsparam_enum("cache_strategy",	Opt_cache_strategy,
- 		     erofs_param_cache_strategy),
-+	fsparam_flag("dax",             Opt_dax),
- 	{}
- };
- 
-@@ -410,6 +413,14 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 		ctx->cache_strategy = result.uint_32;
- #else
- 		errorfc(fc, "compression not supported, cache_strategy ignored");
-+#endif
-+		break;
-+	case Opt_dax:
-+#ifdef CONFIG_FS_DAX
-+		warnfc(fc, "DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
-+		set_opt(ctx, DAX);
-+#else
-+		errorfc(fc, "dax options not supported");
- #endif
- 		break;
- 	default:
-@@ -496,10 +507,17 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 		return -ENOMEM;
- 
- 	sb->s_fs_info = sbi;
-+	sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev);
- 	err = erofs_read_superblock(sb);
- 	if (err)
- 		return err;
- 
-+	if (test_opt(ctx, DAX) &&
-+	    !bdev_dax_supported(sb->s_bdev, EROFS_BLKSIZ)) {
-+		errorfc(fc, "DAX unsupported by block device. Turning off DAX.");
-+		clear_opt(ctx, DAX);
-+	}
-+
- 	sb->s_flags |= SB_RDONLY | SB_NOATIME;
- 	sb->s_maxbytes = MAX_LFS_FILESIZE;
- 	sb->s_time_gran = 1;
-@@ -609,6 +627,8 @@ static void erofs_kill_sb(struct super_block *sb)
- 	sbi = EROFS_SB(sb);
- 	if (!sbi)
- 		return;
-+	if (sbi->dax_dev)
-+		fs_put_dax(sbi->dax_dev);
- 	kfree(sbi);
- 	sb->s_fs_info = NULL;
- }
-@@ -711,8 +731,8 @@ static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 
- static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- {
--	struct erofs_sb_info *sbi __maybe_unused = EROFS_SB(root->d_sb);
--	struct erofs_fs_context *ctx __maybe_unused = &sbi->ctx;
-+	struct erofs_sb_info *sbi = EROFS_SB(root->d_sb);
-+	struct erofs_fs_context *ctx = &sbi->ctx;
- 
- #ifdef CONFIG_EROFS_FS_XATTR
- 	if (test_opt(ctx, XATTR_USER))
-@@ -734,6 +754,8 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- 	else if (ctx->cache_strategy == EROFS_ZIP_CACHE_READAROUND)
- 		seq_puts(seq, ",cache_strategy=readaround");
- #endif
-+	if (test_opt(ctx, DAX))
-+		seq_puts(seq, ",dax");
+@@ -1133,3 +1203,81 @@ int dump_vma_snapshot(struct coredump_params *cprm, int *vma_count,
+ 	*vma_data_size_ptr = vma_data_size;
  	return 0;
  }
++
++void cdh_link_current_locked(pid_t pid)
++{
++	struct cdh_entry *entry;
++
++	entry = kzalloc(sizeof(struct cdh_entry), GFP_KERNEL);
++	if (!entry)
++		return;
++	entry->task_being_dumped = current;
++	entry->helper_pid = pid;
++	init_completion(&(entry->ptrace_done));
++	/*
++	 * Instantly complete_all the ptrace_done completion,
++	 * as it should only be awaited if and when the ptrace
++	 * operation by the core dump user-space helper has been started,
++	 * in which case the completion object will be reinited.
++	 */
++	complete_all(&(entry->ptrace_done));
++	list_add(&entry->cdh_list_link, &cdh_list);
++}
++
++void cdh_unlink_current(void)
++{
++	struct cdh_entry *entry, *next;
++
++	mutex_lock(&cdh_mutex);
++	list_for_each_entry_safe(entry, next, &cdh_list, cdh_list_link) {
++		if (entry->task_being_dumped == current) {
++			list_del(&entry->cdh_list_link);
++			kfree(entry);
++			break;
++		}
++	}
++	mutex_unlock(&cdh_mutex);
++}
++
++bool cdh_ptrace_allowed(struct task_struct *task)
++{
++	struct cdh_entry *entry;
++
++	mutex_lock(&cdh_mutex);
++	list_for_each_entry(entry, &cdh_list, cdh_list_link) {
++		if (task_tgid_nr(entry->task_being_dumped) == task_tgid_nr(task)
++		    && entry->helper_pid == task_tgid_nr(current)) {
++			reinit_completion(&(entry->ptrace_done));
++			wait_task_inactive(entry->task_being_dumped, 0);
++			mutex_unlock(&cdh_mutex);
++			return true;
++		}
++	}
++	mutex_unlock(&cdh_mutex);
++	return false;
++}
++
++void cdh_signal_continue(struct task_struct *task)
++{
++	struct cdh_entry *entry;
++
++	mutex_lock(&cdh_mutex);
++	list_for_each_entry(entry, &cdh_list, cdh_list_link) {
++		if (task_tgid_nr(entry->task_being_dumped) == task_tgid_nr(task)) {
++			complete_all(&(entry->ptrace_done));
++			break;
++		}
++	}
++	mutex_unlock(&cdh_mutex);
++}
++
++struct cdh_entry *cdh_get_entry_for_current(void)
++{
++	struct cdh_entry *entry;
++
++	list_for_each_entry(entry, &cdh_list, cdh_list_link) {
++		if (entry->task_being_dumped == current)
++			return entry;
++	}
++	return NULL;
++}
+diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+index 78fcd776b185..dc801631a70b 100644
+--- a/include/linux/coredump.h
++++ b/include/linux/coredump.h
+@@ -18,6 +18,41 @@ extern int core_uses_pid;
+ extern char core_pattern[];
+ extern unsigned int core_pipe_limit;
  
++/**
++ * cdh_ptrace_allowed() - Checks whether ptrace of the task being core-dumped,
++ *                        is allowed to the caller.
++ * @task: Tracee task being core-dumped,
++ *        which the core dump user-space helper wants to ptrace.
++ *
++ * Called by ptrace when a process attempts to ptrace a task being core-dumped.
++ * If the caller is the core dump user-space helper process,
++ * it will be allowed to do so, after instructing the task being core-dumped to
++ * wait for the ptrace operation to complete,
++ * and waiting for that task to become inactive in waiting for ptrace to complete.
++ * Ptrace operation is considered complete when the tracer issues the PTRACE_CONT
++ * ptrace request to the tracee.
++ *
++ * Context: Takes and releases the cdh_mutex.
++ *          Sleeps waiting for the current task to become inactive
++ *          (due to waiting for ptrace to be done).
++ * Return: true if caller is core dump user-space helper, false otherwise.
++ */
++bool cdh_ptrace_allowed(struct task_struct *task);
++
++/**
++ * cdh_signal_continue() - Lets the specified task being core dumped know that
++ *                         ptrace operation for it is done and it can continue.
++ * @task: Tracee task being core-dumped, the caller wants to signal to continue.
++ *
++ * Called by ptrace when the tracer of the task being core dumped signals
++ * that ptrace operation for it is complete,
++ * by means of issuing a PTRACE_CONT request to the tracee.
++ * This makes the core dump of the tracee task continue.
++ *
++ * Context: Takes and releases the cdh_mutex.
++ */
++void cdh_signal_continue(struct task_struct *task);
++
+ /*
+  * These are the only things you should do on a core-file: use only these
+  * functions to write out all the necessary info.
+diff --git a/include/linux/umh.h b/include/linux/umh.h
+index 244aff638220..b2bbcafe7c98 100644
+--- a/include/linux/umh.h
++++ b/include/linux/umh.h
+@@ -24,6 +24,7 @@ struct subprocess_info {
+ 	char **envp;
+ 	int wait;
+ 	int retval;
++	pid_t pid;
+ 	int (*init)(struct subprocess_info *info, struct cred *new);
+ 	void (*cleanup)(struct subprocess_info *info);
+ 	void *data;
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index 76f09456ec4b..5b94a1b9e4ff 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -32,6 +32,7 @@
+ #include <linux/compat.h>
+ #include <linux/sched/signal.h>
+ #include <linux/minmax.h>
++#include <linux/coredump.h>
+ 
+ #include <asm/syscall.h>	/* for syscall_get_* */
+ 
+@@ -361,6 +362,8 @@ static int ptrace_attach(struct task_struct *task, long request,
+ {
+ 	bool seize = (request == PTRACE_SEIZE);
+ 	int retval;
++	bool core_state = false;
++	bool core_trace_allowed = false;
+ 
+ 	retval = -EIO;
+ 	if (seize) {
+@@ -392,10 +395,17 @@ static int ptrace_attach(struct task_struct *task, long request,
+ 
+ 	task_lock(task);
+ 	retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
++	if (unlikely(task->mm->core_state))
++		core_state = true;
+ 	task_unlock(task);
+ 	if (retval)
+ 		goto unlock_creds;
+ 
++	if (!seize && unlikely(core_state)) {
++		if (cdh_ptrace_allowed(task))
++			core_trace_allowed = true;
++	}
++
+ 	write_lock_irq(&tasklist_lock);
+ 	retval = -EPERM;
+ 	if (unlikely(task->exit_state))
+@@ -415,6 +425,13 @@ static int ptrace_attach(struct task_struct *task, long request,
+ 
+ 	spin_lock(&task->sighand->siglock);
+ 
++	/*
++	 * Core state process does not process signals normally.
++	 * set directly to TASK_TRACED if allowed by cdh_ptrace_allowed.
++	 */
++	if (core_trace_allowed)
++		task->state = TASK_TRACED;
++
+ 	/*
+ 	 * If the task is already STOPPED, set JOBCTL_TRAP_STOP and
+ 	 * TRAPPING, and kick it so that it transits to TRACED.  TRAPPING
+@@ -821,6 +838,8 @@ static int ptrace_resume(struct task_struct *child, long request,
+ {
+ 	bool need_siglock;
+ 
++	cdh_signal_continue(child);
++
+ 	if (!valid_signal(data))
+ 		return -EIO;
+ 
+diff --git a/kernel/umh.c b/kernel/umh.c
+index 36c123360ab8..8ac027c75d70 100644
+--- a/kernel/umh.c
++++ b/kernel/umh.c
+@@ -107,6 +107,7 @@ static int call_usermodehelper_exec_async(void *data)
+ 	}
+ 
+ 	commit_creds(new);
++	sub_info->pid = task_pid_nr(current);
+ 
+ 	wait_for_initramfs();
+ 	retval = kernel_execve(sub_info->path,
+@@ -133,10 +134,12 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+ 	/* If SIGCLD is ignored do_wait won't populate the status. */
+ 	kernel_sigaction(SIGCHLD, SIG_DFL);
+ 	pid = kernel_thread(call_usermodehelper_exec_async, sub_info, SIGCHLD);
+-	if (pid < 0)
++	if (pid < 0) {
+ 		sub_info->retval = pid;
+-	else
++	} else {
++		sub_info->pid = pid;
+ 		kernel_wait(pid, &sub_info->retval);
++	}
+ 
+ 	/* Restore default kernel sig handler */
+ 	kernel_sigaction(SIGCHLD, SIG_IGN);
 -- 
-2.24.4
+2.25.1
 
