@@ -2,163 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAF4C3BB7A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 09:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07E973BB7F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 09:35:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbhGEHTo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jul 2021 03:19:44 -0400
-Received: from mx05.melco.co.jp ([192.218.140.145]:33610 "EHLO
-        mx05.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbhGEHTo (ORCPT
+        id S229975AbhGEHi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jul 2021 03:38:27 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:33346 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229947AbhGEHi0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jul 2021 03:19:44 -0400
-X-Greylist: delayed 643 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Jul 2021 03:19:43 EDT
-Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
-        by mx05.melco.co.jp (Postfix) with ESMTP id 4GJGv12mqYzMsrJy;
-        Mon,  5 Jul 2021 16:06:21 +0900 (JST)
-Received: from mr05.melco.co.jp (unknown [127.0.0.1])
-        by mr05.imss (Postfix) with ESMTP id 4GJGv12NFlzMryJZ;
-        Mon,  5 Jul 2021 16:06:21 +0900 (JST)
-Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
-        by mr05.melco.co.jp (Postfix) with ESMTP id 4GJGv123WJzMvCm5;
-        Mon,  5 Jul 2021 16:06:21 +0900 (JST)
-Received: from mf04.melco.co.jp (unknown [133.141.98.184])
-        by mf04_second.melco.co.jp (Postfix) with ESMTP id 4GJGv121PpzMqytD;
-        Mon,  5 Jul 2021 16:06:21 +0900 (JST)
-Received: from JPN01-TY1-obe.outbound.protection.outlook.com (unknown [104.47.93.55])
-        by mf04.melco.co.jp (Postfix) with ESMTP id 4GJGv11pFwzMqysw;
-        Mon,  5 Jul 2021 16:06:21 +0900 (JST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RWyhxaWr+eK5vX3ZFSJO9wIszudVboWV5A4DNnB42GN/5ZtcnP3bBKqcnPGWUb4dDlpsQ3ii+fJ3TKSuhCbn+K6BvsixGlxOzNRIOUs9l5n7wtlzm4ONxM8NJekE0MHeXQfq1Nym6YOb6HN1+JUm/lhHa8s+x0TQuc0kZNFOk5YjsiaLjAbU31j60cl4kQvC6XG5SHyJXKWevLq2olkQLOrMMvtOWYczVgcJK69JBGu8FFViv3403EvMjvE34hQ2v8EihQBweGIH/7h+Ju8fdTETsiZsazGP0X537CfSRQ74jhIwvDdUYjlBz6QOLILnu5H+kxuahvgTAlCKJW2AZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WY7SBiKv+QhAxPVIpOtyIxs+g9Nl0tYX7zDVV6Pkmlw=;
- b=Xnd3cUK55sbefJjo5L70DZj7lobW3FrFKlvIdAyzswtFP7kGp++RCcnsR7u+cMh79V7r6ehETVo8HTNg8PrP2jpvPTlHUXXxWUWHlSZ7+1pVTxfWvj6bX+3cm9d68dNCJgzbRvAIDPc2GkFt0D1mBuzciiOR/Cf8cbK12Bh0YJLsC8FpCzJiZpEylaI5C1Wwt+UULICRQUCpNk5oqV0xNj4ybKxxpxFLn9/CK5e49SgrHmdXsqSe5wRnYwmYGRzX3mEUnh1bk1vuJTT+AyaGX63xuIpVlZiykkiaKosNmN5I4wXC25BfMzk047ILfsTH+qpBHNToW1MRF1aSTHGx/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
- header.from=dc.mitsubishielectric.co.jp; dkim=pass
- header.d=dc.mitsubishielectric.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mitsubishielectricgroup.onmicrosoft.com;
- s=selector2-mitsubishielectricgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WY7SBiKv+QhAxPVIpOtyIxs+g9Nl0tYX7zDVV6Pkmlw=;
- b=GZIquf/ZuJX4SegC4vZvXUKrp3NY+3NaeR+CQH+J8QbLO4Tmn3C2iPtekxqTZ4Gq6Ax1KTOGIfFem8p39AR58NhIm3rzqPobVsR4cp8wy56Yiy+oAPKEujnxf+Q3RZI/yr3MhOBoQcIdhzmePPuPBVyzO8j6Bz8eV9F9CcoLHAA=
-Received: from OSAPR01MB4531.jpnprd01.prod.outlook.com (2603:1096:604:6b::18)
- by OS0PR01MB5346.jpnprd01.prod.outlook.com (2603:1096:604:a3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.23; Mon, 5 Jul
- 2021 07:06:20 +0000
-Received: from OSAPR01MB4531.jpnprd01.prod.outlook.com
- ([fe80::4889:6c34:b25a:867f]) by OSAPR01MB4531.jpnprd01.prod.outlook.com
- ([fe80::4889:6c34:b25a:867f%7]) with mapi id 15.20.4287.033; Mon, 5 Jul 2021
- 07:06:20 +0000
-From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
-        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     "'namjae.jeon@samsung.com'" <namjae.jeon@samsung.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "flrncrmr@gmail.com" <flrncrmr@gmail.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] exfat: handle wrong stream entry size in exfat_readdir()
-Thread-Topic: [PATCH] exfat: handle wrong stream entry size in exfat_readdir()
-Thread-Index: AQHXXlu4ZPuuUBCNZkORJfcd+Jgt4qs0Gf4w
-Date:   Mon, 5 Jul 2021 07:04:24 +0000
-Deferred-Delivery: Mon, 5 Jul 2021 07:06:00 +0000
-Message-ID: <OSAPR01MB45311389DB35CA9CEFEDCEF6901C9@OSAPR01MB4531.jpnprd01.prod.outlook.com>
-References: <CGME20210611004956epcas1p262dc7907165782173692d7cf9e571dfe@epcas1p2.samsung.com>
- <20210611004024.2925-1-namjae.jeon@samsung.com>
-In-Reply-To: <20210611004024.2925-1-namjae.jeon@samsung.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-melpop: 1
-authentication-results: samsung.com; dkim=none (message not signed)
- header.d=none;samsung.com; dmarc=none action=none
- header.from=dc.MitsubishiElectric.co.jp;
-x-originating-ip: [203.178.75.37]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 35b5f5be-4694-4b25-014c-08d93f836470
-x-ms-traffictypediagnostic: OS0PR01MB5346:
-x-microsoft-antispam-prvs: <OS0PR01MB5346EF50F227382C514EE651901C9@OS0PR01MB5346.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ygdck3ddky0lZpSkQruRYZWNbE6z6AX1qYMkL7j/m3rxPtA5oX4Y+TwZydBsxEDpcwWahB9mNMzkf5g08BCxRtqdrJexJ9ax5uIquKBzCADJngWUB7QIxApMaFZebh35u3sxX8ifY3/x8WBGHTxSwTov/K3a3V0q8fzHTuRFOSz2S9IWsVrXLbIFlAxBjli2V8a0UKbTGRPO6+ofSwHeTmaW61uPT2S9S8aMVxHFuQC9Gf2ziUESBTGgTmeqs3+Gi9TjgT5erc+qpJ64f+vlhQDhGBgbi/BwIXE86UqJMe5sIs2TnbGKeL5TZKlRttvV6JxkL0DJ7cGhe1qNOzPVj5JO5qFyiU5DAzk7xr3pCknCpcTLeBGy1TSBKkwODYXKSwypRxb7T48gY0+I3sRNMQqTQIUvGEBF3ez5bf4Ud7GmHS7Hk81l87Gtknk9IL6Xnuekw6RXZDXrbp4Khj7cQEnmBWSyO4vQ/a46Zd1a4Qm4mHuE0BfbrIprxDlh9rxfoL1f9kWnc71LB2KrzANl0HjZN4UHYRPye4DGyTWvE9Wh4cMyz8ezvYZDYY2dVOeQ05nQXYGtV740Ywg9d/5QEGQKZdcUSy1yhGOjjNl+SmB7gEcf3SNTalGsKvNgxIH/OJSPN45sNF63wbdVAnRHpJIuw407JldMjhLXmjtbYxv5Cr3iDkOADcbXBdwdNbdn
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSAPR01MB4531.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(39860400002)(346002)(366004)(136003)(376002)(86362001)(316002)(9686003)(71200400001)(2906002)(26005)(55016002)(4326008)(38100700002)(5660300002)(110136005)(76116006)(6506007)(186003)(478600001)(66946007)(122000001)(52536014)(8936002)(66476007)(66556008)(8676002)(83380400001)(7696005)(54906003)(33656002)(66446008)(64756008)(491001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Z05mNFp3RWYyNFIxUUZxak1MRFFpSWdCMFdyejBla2tNZkdyaDU3Y3E1emRo?=
- =?utf-8?B?K1hkZ2d2RnN0Mlp4aTUxU1ArYVRXQ2Z1bUJxY1dBd1B6bmpwVEpONExVWWdQ?=
- =?utf-8?B?ek05WlY0TDkzdUZmWGwyN3FaT1g0QVQ5MUE0cHJkNkd2ZE9vR055YXZnN2NP?=
- =?utf-8?B?NnYxNy9ISkVnb0lPMFR1QWxTL0wxcDU0bm1MaC8rbTI4bWE4UERqK2wzaUJU?=
- =?utf-8?B?T0Rkem5XWXhXc25hd0RBbkw5V1l0Ukk5dCtNb3lyUWdXOGh1Tk5vVFhDbjYy?=
- =?utf-8?B?RmNJdnFxeVVUbUtKUGJmYUlaTU1ZYmdETTdHUGkyVVg1djF3bUZBZEE3cmNa?=
- =?utf-8?B?YTl3amdHbHE4VHBpZXBwek84aHoyS0pZWXdpNThrcG5HZzdFS3pKZ2hRUUt1?=
- =?utf-8?B?cTNPUWxNZy9YeHQ4cERoU3lPQU5CUXhSL3NNWmE1ekZKL0ZBSEk3WE9TM2t5?=
- =?utf-8?B?OTJ4L2dJQndmbUVYa0pxVnJQek1abi9mcDhLTW1YOFFWL0JRcmRDSjFsVWFG?=
- =?utf-8?B?aDQ3bFNKRTIydEZsbUJERFZXbFpNT1ZhVTRXT1lrV2dkZVBvclVleW96WXZq?=
- =?utf-8?B?MXpjRm9taGtEaG5CZnUwSHY0OGdsTTNObGZPcG1uZXBxSlBKK0t0RUNMTjJW?=
- =?utf-8?B?Vnd1SE5JbVAxRDBoNk9BYmJLdkVOeFVDb2k5dE1VeGpNSisrSWJXR0tzWEd5?=
- =?utf-8?B?NE4ycmhjY0FLTSt0eVBzMnJIaXZTRnhCSmNzNjVURXVZWGxhdE5sTmxkc1dI?=
- =?utf-8?B?NitnU0tlemtDa25jTG1DN2hnbmd6SEVnMUx4SzQvVTBodHg3bUFBL0pwZlVa?=
- =?utf-8?B?ZFh4SVJ1TXhmb2pWRm5BbWpyRFJkTWlsV3I4b1UyQ2pvL3prc29keG0vZmhx?=
- =?utf-8?B?MWFXMjh1TWdEaTlGR1ZBVDZBWEFBMDFyVWNJQ00xcFdVYS8yVHR1MjErZlc0?=
- =?utf-8?B?eXFRRTc5NFlobWY3R25ndDg0TitaNUN3NUdndU1RODljSEJLczFGNXZvVUhC?=
- =?utf-8?B?ZDJCQ3B4dEU1S2ZReUhpbVNjdXFjeW02K0RxemM2L3M5bm1Wc3N2LzZxYWhv?=
- =?utf-8?B?Y1R5Zk5ZZ01ZMXFNYmE4UFA3UjZhSnFsL3hWRHlmVm1iTkxUTFdxWXpYLzBn?=
- =?utf-8?B?dW1ySjRaNW9OS2NqRVJuZ3lzNkpkNVJ2NTZJejJORWtpVDZ1QnZ0NFA3cGZm?=
- =?utf-8?B?d1hMUi9IZ2lrOHhkaUJ1clBlM0ZqcUVzR3RFM2tiUG0vS0lHdUlpY1RRSk1q?=
- =?utf-8?B?eEl2SFVORk1abDhlSis2TXhnVnRDTG1aRGNFSDVUOTVZZjBKdXduTGFuOXJS?=
- =?utf-8?B?Q3BvR05vbHZ3c3dHczl1QUFPUStPUzdZR2Q4cGhINWRRUVNOcE9RZ09MWTFJ?=
- =?utf-8?B?dmxxVmRnWmhYTUlUdTUzeEtEOEN0RG1RR3VzT2QxbjlhOWc5anBnZFBSRk5P?=
- =?utf-8?B?cGJIZmV1L2paK1A0ZDJKN3B2eXB5S2dGdVJLOEpFMlluNkxCRDBtdkFpdksy?=
- =?utf-8?B?VnRFSnUzM1ZYQkRaMlFFM044MXl5YWJwOGhBZlA4RlA5NGdLZ25WQ0lYcXlS?=
- =?utf-8?B?Z1BGMFZjcTBrMnpIajYwK2wySE9JVnNLMUJsRUhaZHBSdHhtSmlONE9XRWFY?=
- =?utf-8?B?NXBHSHlSVXlOblV0MElGc0tNclVDVjlnaHB6MGluK2htMmZBQklKb2JVRW9M?=
- =?utf-8?B?bVVQTENwcU5JbUdSeFlpTkxyZ3lqS05RQWVPNER2SEpzRURiQkxZVzJQZzd2?=
- =?utf-8?Q?jVYyT2m/mI31VQE1cquwE+pJaMVO6WwTG+quvwO?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 5 Jul 2021 03:38:26 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210705073548epoutp040fabcd8c75a31a402c2ffe5529a9ecfe~O1NoW0frM2567025670epoutp04N
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jul 2021 07:35:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210705073548epoutp040fabcd8c75a31a402c2ffe5529a9ecfe~O1NoW0frM2567025670epoutp04N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1625470548;
+        bh=hQJBm6ojB/Vzv0nm/brX3rSemYL+JBpJ+gImaVxgmCg=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=GGa/SQUmqqaH38/KYs8HzcPCwxLkuUk6HdjDjPH1j+7OmYdV4KnF3GpYD1M9IrI1G
+         KnCAkuHlp4IrHo4UjP8SciskJHh8IJOiBBTGsLBFR3k6afctLuaoD3ssSbBl8E5tGh
+         lxKE2VQ/k0hfhD2+0lYYNbEHNuHJq8IHqXBETxkY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20210705073548epcas1p45298f3db1c624805fd9fd4b78af61833~O1NoCXj8g1028510285epcas1p42;
+        Mon,  5 Jul 2021 07:35:48 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.160]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4GJHXz2pYqz4x9Pp; Mon,  5 Jul
+        2021 07:35:47 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4E.B2.09551.356B2E06; Mon,  5 Jul 2021 16:35:47 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210705073546epcas1p31117b33407359cb3ecb40c7070d27687~O1Nmyl3-52398823988epcas1p3v;
+        Mon,  5 Jul 2021 07:35:46 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210705073546epsmtrp197160defa898a8bf6eb15728d93168c5~O1NmxPFyO3247032470epsmtrp1f;
+        Mon,  5 Jul 2021 07:35:46 +0000 (GMT)
+X-AuditID: b6c32a36-2b3ff7000000254f-2b-60e2b65372f0
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9D.0C.08289.256B2E06; Mon,  5 Jul 2021 16:35:46 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.89.31.77]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210705073546epsmtip16c3b785c8a2b4973a4f7e9970935c728~O1NmohETf1023210232epsmtip1G;
+        Mon,  5 Jul 2021 07:35:46 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+Cc:     <flrncrmr@gmail.com>, <stable@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <OSAPR01MB45311389DB35CA9CEFEDCEF6901C9@OSAPR01MB4531.jpnprd01.prod.outlook.com>
+Subject: RE: [PATCH] exfat: handle wrong stream entry size in
+ exfat_readdir()
+Date:   Mon, 5 Jul 2021 16:35:46 +0900
+Message-ID: <004201d77170$5e9d6c50$1bd844f0$@samsung.com>
 MIME-Version: 1.0
-X-OriginatorOrg: dc.MitsubishiElectric.co.jp
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSAPR01MB4531.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35b5f5be-4694-4b25-014c-08d93f836470
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2021 07:06:16.9995
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vdMtg0ocVZmEXDTMkBytEiXhX0DI7TD3hMbftGtnbIEU/oLa9GpQqlR/F8ZeQB6F+wH9Vzq514VN9j9o5znpHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5346
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHtYa6HDZ3zKB0Tzc4hP4i9K19tVAGye6HqAnn5ClWq5rSZ0A==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLKsWRmVeSWpSXmKPExsWy7bCmvm7wtkcJBte6hSx61y5gs3hzciqL
+        xZ69J1ksFmx8xOjA4tF8bCWbx85Zd9k9Pm+SC2COyrHJSE1MSS1SSM1Lzk/JzEu3VfIOjneO
+        NzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAdqmpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFV
+        Si1IySkwNCjQK07MLS7NS9dLzs+1MjQwMDIFqkzIybh2cSNTwWGBiobNj1kaGD/wdjFyckgI
+        mEi0rp3I1sXIxSEksINR4tOl3YwQzidGiUOtG5ggnM+MEq9/n2aDaek7NYkZxBYS2MUocfB8
+        PUTRC0aJLVM72EESbAK6Ev/+7Adq4OAQETCSeHqyECTMLBAqMbthK1gvp0CsxMVlq1lAbGEB
+        f4kjr88zgtgsAioSs5f/BIvzClhKHLn/hh3CFpQ4OfMJC8QcbYllC18zQ9yjIPHz6TJWEFtE
+        wEmit2k6G0SNiMTszjZmkNskBL6ySyy5tpIVosFF4uKd4ywQtrDEq+Nb2CFsKYmX/W1QdrnE
+        iZO/mCDsGokN8/axg/wiIWAs0fOiBMRkFtCUWL9LH6JCUWLn77mMEGv5JN597WGFqOaV6GgT
+        gihRlei7dBhqoLREV/sH9gmMSrOQPDYLyWOzkDwwC2HZAkaWVYxiqQXFuempxYYFRshRvYkR
+        nA61zHYwTnr7Qe8QIxMH4yFGCQ5mJRFekSmPEoR4UxIrq1KL8uOLSnNSiw8xmgKDeiKzlGhy
+        PjAh55XEG5oaGRsbW5iYmZuZGiuJ8+5kO5QgJJCeWJKanZpakFoE08fEwSnVwNS95tLXVu31
+        7wpyH7zf9mwyd5XJE6cKOWlTfvU36WmmpzsiNTWLZfx/PrkgqMYj/e6vV9fdzPDAxVwzEkX2
+        TjvMNd1uBfviykZuB/vIiVJz7S4y/7gdMPO+2q5J8paOl7gdb8z4r5D16Ov1nhvpty67WO9N
+        /dH4pPpJ4Yc/d/bfzKyeZ8IQ5KbJdkYmZoH361KntdkWW1hcFXeHdszturB0wa4H/DXxj3b3
+        dc739nB2fjt/wr+fm+5rub/o3lwd0D7xtoD4+p5vj6xV/t2cZph9IXvK0UunpYLq7vCfD75S
+        mPdE1DVkOkf0aW8Jw2eSm241/2s3a3yYEJMUeFNA8KbL7EMSv2JVVlkFGfIsna7EUpyRaKjF
+        XFScCABueMylEAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnG7QtkcJBus+mlj0rl3AZvHm5FQW
+        iz17T7JYLNj4iNGBxaP52Eo2j52z7rJ7fN4kF8AcxWWTkpqTWZZapG+XwJUx//FCloLt/BWL
+        Z9xma2BcxdPFyMkhIWAi0XdqEnMXIxeHkMAORonGGTOZIBLSEsdOnAFKcADZwhKHDxdD1Dxj
+        lGiY3sgGUsMmoCvx789+NpAaEQEjiacnC0HCzALhEreOPmOCqL/HKLFl2UNmkASnQKzExWWr
+        WUBsYQFfiUcnvzGC2CwCKhKzl/8Ei/MKWEocuf+GHcIWlDg58wkLxFBtiac3n8LZyxa+Zoa4
+        U0Hi59NlrCC2iICTRG/TdDaIGhGJ2Z1tzBMYhWchGTULyahZSEbNQtKygJFlFaNkakFxbnpu
+        sWGBUV5quV5xYm5xaV66XnJ+7iZGcGxoae1g3LPqg94hRiYOxkOMEhzMSiK8IlMeJQjxpiRW
+        VqUW5ccXleakFh9ilOZgURLnvdB1Ml5IID2xJDU7NbUgtQgmy8TBKdXAFMwrvOjeAfP3fis+
+        2vlvedXiKBx86NmrRVk3Fk3y2jz5fLzyBa6vJVpBzr8frNLMvPE47oDpZiXW8x2XZzX3bX57
+        k/ew/POT2VGN5XLHj3rfmlO8yLFGdeNG2wblie99WZbfTco8sWXTis97Lu1LXMt0aOe2BRG2
+        M+9+rNt8ehHzzYoEL53nJ5XM/wZ4TSpTZ7WKVTjzLfzp53MWVxNnaORZtl67xWq0KJ/fn+f5
+        G9bK+PvzPqZMdn3d/MF5Xea5k3wNZ6NNvkuKFmlPnft+XnCHs8qlc/HNB1KuPQzeXCW788J2
+        9sqwtIeXpiimH3aT2bBi7+LDMZcFYzS8z0TH27MEm8xN/160YlX0w8IvnVpKLMUZiYZazEXF
+        iQDH92ui/AIAAA==
+X-CMS-MailID: 20210705073546epcas1p31117b33407359cb3ecb40c7070d27687
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210611004956epcas1p262dc7907165782173692d7cf9e571dfe
+References: <CGME20210611004956epcas1p262dc7907165782173692d7cf9e571dfe@epcas1p2.samsung.com>
+        <20210611004024.2925-1-namjae.jeon@samsung.com>
+        <OSAPR01MB45311389DB35CA9CEFEDCEF6901C9@OSAPR01MB4531.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBUaGUgY29tcGF0aWJpbGl0eSBpc3N1ZSBiZXR3ZWVuIGxpbnV4IGV4ZmF0IGFuZCBleGZhdCBv
-ZiBzb21lIGNhbWVyYSBjb21wYW55IHdhcyByZXBvcnRlZCBmcm9tIEZsb3JpYW4uIEluIHRoZWly
-IGV4ZmF0LA0KPiBpZiB0aGUgbnVtYmVyIG9mIGZpbGVzIGV4Y2VlZHMgYW55IGxpbWl0LCB0aGUg
-RGF0YUxlbmd0aCBpbiBzdHJlYW0gZW50cnkgb2YgdGhlIGRpcmVjdG9yeSBpcyBubyBsb25nZXIg
-dXBkYXRlZC4gU28gc29tZSBmaWxlcw0KPiBjcmVhdGVkIGZyb20gY2FtZXJhIGRvZXMgbm90IHNo
-b3cgaW4gbGludXggZXhmYXQuIGJlY2F1c2UgbGludXggZXhmYXQgZG9lc24ndCBhbGxvdyB0aGF0
-IGNwb3MgYmVjb21lcyBsYXJnZXIgdGhhbg0KPiBEYXRhTGVuZ3RoIG9mIHN0cmVhbSBlbnRyeS4g
-VGhpcyBwYXRjaCBjaGVjayBEYXRhTGVuZ3RoIGluIHN0cmVhbSBlbnRyeSBvbmx5IGlmIHRoZSB0
-eXBlIGlzIEFMTE9DX05PX0ZBVF9DSEFJTiBhbmQNCj4gYWRkIHRoZSBjaGVjayBlbnN1cmUgdGhh
-dCBkZW50cnkgb2Zmc2V0IGRvZXMgbm90IGV4Y2VlZCBtYXggZGVudHJpZXMgc2l6ZSgyNTYgTUIp
-IHRvIGF2b2lkIHRoZSBjaXJjdWxhciBGQVQgY2hhaW4gaXNzdWUuDQoNCkluc3RlYWQgb2YgdXNp
-bmcgZnNkIHRvIGhhbmRsZSB0aGlzLCBzaG91bGRuJ3QgaXQgYmUgbGVmdCB0byBmc2NrPw0KDQpJ
-biB0aGUgZXhmYXQgc3BlY2lmaWNhdGlvbiBzYXlzLCB0aGUgRGF0YUxlbmd0aCBGaWVsZCBvZiB0
-aGUgZGlyZWN0b3J5LXN0cmVhbSBpcyB0aGUgZW50aXJlIHNpemUgb2YgdGhlIGFzc29jaWF0ZWQg
-YWxsb2NhdGlvbi4NCklmIHRoZSBEYXRhTGVuZ3RoIEZpZWxkIGRvZXMgbm90IG1hdGNoIHRoZSBz
-aXplIGluIHRoZSBGQVQtY2hhaW4sIGl0IG1lYW5zIHRoYXQgaXQgaXMgY29ycnVwdGVkLg0KDQpB
-cyB5b3Uga25vdywgdGhlIEZBVC1jaGFpbiBzdHJ1Y3R1cmUgaXMgZnJhZ2lsZS4NCkF0IHJ1bnRp
-bWUsIG9uZSB3YXkgdG8gZGV0ZWN0IGEgYnJva2VuIEZBVC1jaGFpbiBpcyB0byBjb21wYXJlIGl0
-IHdpdGggRGF0YUxlbmd0aC4NCihEZXRhaWxlZCB2ZXJpZmljYXRpb24gaXMgdGhlIHJvbGUgb2Yg
-ZnNjaykuDQpJZ25vcmluZyBEYXRhTGVuZ3RoIGR1cmluZyBkaXItc2NhbiBpcyB1bnNhZmUgYmVj
-YXVzZSB3ZSBsb3NlIGEgd2F5IHRvIGRldGVjdCBhIGJyb2tlbiBGQVQtY2hhaW4uDQoNCkkgdGhp
-bmsgZnNkIHNob3VsZCBjaGVjayBEYXRhTGVuZ3RoLCBhbmQgZnNjayBzaG91bGQgcmVwYWlyIERh
-dGFMZW5ndGguDQoNCkFzIGZvciB0aGUgMjU2TUIgY2hlY2ssIEkgdGhpbmsgaXQgd291bGQgYmUg
-YmV0dGVyIHRvIGhhdmUgaXQuDQoNCkJSDQotLS0NCktvaGFkYSBUZXRzdWhpcm8gPEtvaGFkYS5U
-ZXRzdWhpcm9AZGMuTWl0c3ViaXNoaUVsZWN0cmljLmNvLmpwPg0K
+> > The compatibility issue between linux exfat and exfat of some camera
+> > company was reported from Florian. In their exfat, if the number of
+> > files exceeds any limit, the DataLength in stream entry of the
+> > directory is no longer updated. So some files created from camera does
+> > not show in linux exfat. because linux exfat doesn't allow that cpos be=
+comes larger than DataLength
+> of stream entry. This patch check DataLength in stream entry only if the =
+type is ALLOC_NO_FAT_CHAIN
+> and add the check ensure that dentry offset does not exceed max dentries =
+size(256 MB) to avoid the
+> circular FAT chain issue.
+>=20
+> Instead of using fsd to handle this, shouldn't it be left to fsck?
+Yes, That's what I thought at first. And fsck.exfat in exfatprogs can detec=
+t it like this.
+
+=24 fsck.exfat /dev/sdb1
+exfatprogs version : 1.1.1
+ERROR: /DCIM/344_FUJI: more clusters are allocated. truncate to 524288 byte=
+s. Truncate (y/N)? n
+
+>=20
+> In the exfat specification says, the DataLength Field of the directory-st=
+ream is the entire size of
+> the associated allocation.
+> If the DataLength Field does not match the size in the FAT-chain, it mean=
+s that it is corrupted.
+Yes. I have checked it.
+>=20
+> As you know, the FAT-chain structure is fragile.
+> At runtime, one way to detect a broken FAT-chain is to compare it with Da=
+taLength.
+> (Detailed verification is the role of fsck).
+> Ignoring DataLength during dir-scan is unsafe because we lose a way to de=
+tect a broken FAT-chain.
+>=20
+> I think fsd should check DataLength, and fsck should repair DataLength.
+But Windows fsck doesn=E2=80=99t=20detect=20it=20and=20it=20shows=20the=20a=
+ll=20files=20normally=20without=20any=20missing=20ones.=0D=0AIt=20means=20W=
+indows=20exfat=20doesn't=20also=20check=20it=20in=20case=20type=20is=20ALLO=
+C_FAT_CHAIN.=0D=0A=0D=0A>=20=0D=0A>=20As=20for=20the=20256MB=20check,=20I=
+=20think=20it=20would=20be=20better=20to=20have=20it.=0D=0A>=20=0D=0A>=20BR=
+=0D=0A>=20---=0D=0A>=20Kohada=20Tetsuhiro=20<Kohada.Tetsuhiro=40dc.Mitsubis=
+hiElectric.co.jp>=0D=0A=0D=0A
