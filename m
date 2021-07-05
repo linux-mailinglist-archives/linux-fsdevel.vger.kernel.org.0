@@ -2,155 +2,388 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07E973BB7F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 09:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24D2D3BBAA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jul 2021 11:59:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229975AbhGEHi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jul 2021 03:38:27 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:33346 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbhGEHi0 (ORCPT
+        id S230450AbhGEKBh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jul 2021 06:01:37 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:41924 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230050AbhGEKBg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jul 2021 03:38:26 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210705073548epoutp040fabcd8c75a31a402c2ffe5529a9ecfe~O1NoW0frM2567025670epoutp04N
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jul 2021 07:35:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210705073548epoutp040fabcd8c75a31a402c2ffe5529a9ecfe~O1NoW0frM2567025670epoutp04N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1625470548;
-        bh=hQJBm6ojB/Vzv0nm/brX3rSemYL+JBpJ+gImaVxgmCg=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=GGa/SQUmqqaH38/KYs8HzcPCwxLkuUk6HdjDjPH1j+7OmYdV4KnF3GpYD1M9IrI1G
-         KnCAkuHlp4IrHo4UjP8SciskJHh8IJOiBBTGsLBFR3k6afctLuaoD3ssSbBl8E5tGh
-         lxKE2VQ/k0hfhD2+0lYYNbEHNuHJq8IHqXBETxkY=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20210705073548epcas1p45298f3db1c624805fd9fd4b78af61833~O1NoCXj8g1028510285epcas1p42;
-        Mon,  5 Jul 2021 07:35:48 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.160]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4GJHXz2pYqz4x9Pp; Mon,  5 Jul
-        2021 07:35:47 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4E.B2.09551.356B2E06; Mon,  5 Jul 2021 16:35:47 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20210705073546epcas1p31117b33407359cb3ecb40c7070d27687~O1Nmyl3-52398823988epcas1p3v;
-        Mon,  5 Jul 2021 07:35:46 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210705073546epsmtrp197160defa898a8bf6eb15728d93168c5~O1NmxPFyO3247032470epsmtrp1f;
-        Mon,  5 Jul 2021 07:35:46 +0000 (GMT)
-X-AuditID: b6c32a36-2b3ff7000000254f-2b-60e2b65372f0
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9D.0C.08289.256B2E06; Mon,  5 Jul 2021 16:35:46 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.89.31.77]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210705073546epsmtip16c3b785c8a2b4973a4f7e9970935c728~O1NmohETf1023210232epsmtip1G;
-        Mon,  5 Jul 2021 07:35:46 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-Cc:     <flrncrmr@gmail.com>, <stable@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-In-Reply-To: <OSAPR01MB45311389DB35CA9CEFEDCEF6901C9@OSAPR01MB4531.jpnprd01.prod.outlook.com>
-Subject: RE: [PATCH] exfat: handle wrong stream entry size in
- exfat_readdir()
-Date:   Mon, 5 Jul 2021 16:35:46 +0900
-Message-ID: <004201d77170$5e9d6c50$1bd844f0$@samsung.com>
+        Mon, 5 Jul 2021 06:01:36 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 5BFDF22667;
+        Mon,  5 Jul 2021 09:58:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1625479139; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=JURz8cTHFUcitamF477u1DRonwG3FVDJaV2V9oytrAU=;
+        b=dgt+T8jKpZooIm0VAFwjrxADCR2sdhMHBm7UC/BMS1kx0ZoQF1bc+dawUaOrH+bdkXu5uG
+        1OFfkZEwem7kNOAHIAUiayRKItOMY2Gu6Kyq9uooR4EkKl6i5KGVcIYwglgd5sydhwf6ap
+        URy/YI8+oI4Fbrnrn/pGvnAzrn3HdIo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1625479139;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=JURz8cTHFUcitamF477u1DRonwG3FVDJaV2V9oytrAU=;
+        b=MVtxSL0toIKNMQ+DjszyIpNU2N43r3KytBsnZ4Uq/IuUHwcewh96YcG06cjWkOVyQvNzvs
+        DuHvCfH6OHi4x1DA==
+Received: from quack2.suse.cz (unknown [10.163.43.118])
+        by relay2.suse.de (Postfix) with ESMTP id 3DEC9A3B93;
+        Mon,  5 Jul 2021 09:58:59 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 1035B1E1139; Mon,  5 Jul 2021 11:58:59 +0200 (CEST)
+Date:   Mon, 5 Jul 2021 11:58:59 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Zhang Yi <yi.zhang@huawei.com>, Jan Kara <jack@suse.cz>,
+        linuxppc-dev@lists.ozlabs.org,
+        Guoqing Jiang <guoqing.jiang@linux.dev>,
+        Sachin Sant <sachinp@linux.vnet.ibm.com>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [powerpc][5.13.0-next-20210701] Kernel crash while running
+ ltp(chdir01) tests
+Message-ID: <20210705095859.GB15373@quack2.suse.cz>
+References: <26ACA75D-E13D-405B-9BFC-691B5FB64243@linux.vnet.ibm.com>
+ <bf1c5b38-92f1-65db-e210-a97a199718ba@linux.dev>
+ <4cc87ab3-aaa6-ed87-b690-5e5b99de8380@huawei.com>
+ <03f734bd-f36e-f55b-0448-485b8a0d5b75@huawei.com>
+ <YN86yl5kgVaRixxQ@mit.edu>
+ <36778615-86fd-9a19-9bc9-f93a6f2d5817@huawei.com>
+ <YN/a70ucYXu0DqGf@mit.edu>
+ <66fb56cd-f1ff-c592-0202-0691372e32f5@huawei.com>
+ <YOG/5ZY1AL05jumi@mit.edu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHtYa6HDZ3zKB0Tzc4hP4i9K19tVAGye6HqAnn5ClWq5rSZ0A==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLKsWRmVeSWpSXmKPExsWy7bCmvm7wtkcJBte6hSx61y5gs3hzciqL
-        xZ69J1ksFmx8xOjA4tF8bCWbx85Zd9k9Pm+SC2COyrHJSE1MSS1SSM1Lzk/JzEu3VfIOjneO
-        NzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAdqmpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFV
-        Si1IySkwNCjQK07MLS7NS9dLzs+1MjQwMDIFqkzIybh2cSNTwWGBiobNj1kaGD/wdjFyckgI
-        mEi0rp3I1sXIxSEksINR4tOl3YwQzidGiUOtG5ggnM+MEq9/n2aDaek7NYkZxBYS2MUocfB8
-        PUTRC0aJLVM72EESbAK6Ev/+7Adq4OAQETCSeHqyECTMLBAqMbthK1gvp0CsxMVlq1lAbGEB
-        f4kjr88zgtgsAioSs5f/BIvzClhKHLn/hh3CFpQ4OfMJC8QcbYllC18zQ9yjIPHz6TJWEFtE
-        wEmit2k6G0SNiMTszjZmkNskBL6ySyy5tpIVosFF4uKd4ywQtrDEq+Nb2CFsKYmX/W1QdrnE
-        iZO/mCDsGokN8/axg/wiIWAs0fOiBMRkFtCUWL9LH6JCUWLn77mMEGv5JN597WGFqOaV6GgT
-        gihRlei7dBhqoLREV/sH9gmMSrOQPDYLyWOzkDwwC2HZAkaWVYxiqQXFuempxYYFRshRvYkR
-        nA61zHYwTnr7Qe8QIxMH4yFGCQ5mJRFekSmPEoR4UxIrq1KL8uOLSnNSiw8xmgKDeiKzlGhy
-        PjAh55XEG5oaGRsbW5iYmZuZGiuJ8+5kO5QgJJCeWJKanZpakFoE08fEwSnVwNS95tLXVu31
-        7wpyH7zf9mwyd5XJE6cKOWlTfvU36WmmpzsiNTWLZfx/PrkgqMYj/e6vV9fdzPDAxVwzEkX2
-        TjvMNd1uBfviykZuB/vIiVJz7S4y/7gdMPO+2q5J8paOl7gdb8z4r5D16Ov1nhvpty67WO9N
-        /dH4pPpJ4Yc/d/bfzKyeZ8IQ5KbJdkYmZoH361KntdkWW1hcFXeHdszturB0wa4H/DXxj3b3
-        dc739nB2fjt/wr+fm+5rub/o3lwd0D7xtoD4+p5vj6xV/t2cZph9IXvK0UunpYLq7vCfD75S
-        mPdE1DVkOkf0aW8Jw2eSm241/2s3a3yYEJMUeFNA8KbL7EMSv2JVVlkFGfIsna7EUpyRaKjF
-        XFScCABueMylEAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnG7QtkcJBus+mlj0rl3AZvHm5FQW
-        iz17T7JYLNj4iNGBxaP52Eo2j52z7rJ7fN4kF8AcxWWTkpqTWZZapG+XwJUx//FCloLt/BWL
-        Z9xma2BcxdPFyMkhIWAi0XdqEnMXIxeHkMAORonGGTOZIBLSEsdOnAFKcADZwhKHDxdD1Dxj
-        lGiY3sgGUsMmoCvx789+NpAaEQEjiacnC0HCzALhEreOPmOCqL/HKLFl2UNmkASnQKzExWWr
-        WUBsYQFfiUcnvzGC2CwCKhKzl/8Ei/MKWEocuf+GHcIWlDg58wkLxFBtiac3n8LZyxa+Zoa4
-        U0Hi59NlrCC2iICTRG/TdDaIGhGJ2Z1tzBMYhWchGTULyahZSEbNQtKygJFlFaNkakFxbnpu
-        sWGBUV5quV5xYm5xaV66XnJ+7iZGcGxoae1g3LPqg94hRiYOxkOMEhzMSiK8IlMeJQjxpiRW
-        VqUW5ccXleakFh9ilOZgURLnvdB1Ml5IID2xJDU7NbUgtQgmy8TBKdXAFMwrvOjeAfP3fis+
-        2vlvedXiKBx86NmrRVk3Fk3y2jz5fLzyBa6vJVpBzr8frNLMvPE47oDpZiXW8x2XZzX3bX57
-        k/ew/POT2VGN5XLHj3rfmlO8yLFGdeNG2wblie99WZbfTco8sWXTis97Lu1LXMt0aOe2BRG2
-        M+9+rNt8ehHzzYoEL53nJ5XM/wZ4TSpTZ7WKVTjzLfzp53MWVxNnaORZtl67xWq0KJ/fn+f5
-        G9bK+PvzPqZMdn3d/MF5Xea5k3wNZ6NNvkuKFmlPnft+XnCHs8qlc/HNB1KuPQzeXCW788J2
-        9sqwtIeXpiimH3aT2bBi7+LDMZcFYzS8z0TH27MEm8xN/160YlX0w8IvnVpKLMUZiYZazEXF
-        iQDH92ui/AIAAA==
-X-CMS-MailID: 20210705073546epcas1p31117b33407359cb3ecb40c7070d27687
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210611004956epcas1p262dc7907165782173692d7cf9e571dfe
-References: <CGME20210611004956epcas1p262dc7907165782173692d7cf9e571dfe@epcas1p2.samsung.com>
-        <20210611004024.2925-1-namjae.jeon@samsung.com>
-        <OSAPR01MB45311389DB35CA9CEFEDCEF6901C9@OSAPR01MB4531.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YOG/5ZY1AL05jumi@mit.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > The compatibility issue between linux exfat and exfat of some camera
-> > company was reported from Florian. In their exfat, if the number of
-> > files exceeds any limit, the DataLength in stream entry of the
-> > directory is no longer updated. So some files created from camera does
-> > not show in linux exfat. because linux exfat doesn't allow that cpos be=
-comes larger than DataLength
-> of stream entry. This patch check DataLength in stream entry only if the =
-type is ALLOC_NO_FAT_CHAIN
-> and add the check ensure that dentry offset does not exceed max dentries =
-size(256 MB) to avoid the
-> circular FAT chain issue.
->=20
-> Instead of using fsd to handle this, shouldn't it be left to fsck?
-Yes, That's what I thought at first. And fsck.exfat in exfatprogs can detec=
-t it like this.
+On Sun 04-07-21 10:04:21, Theodore Ts'o wrote:
+> On Sat, Jul 03, 2021 at 12:55:09PM +0800, Zhang Yi wrote:
+> > Yeah, it sounds good to me. Do you want me to send the fix patch, or you
+> > modify your commit 8f9e16badb8fd in another email directly?
+> 
+> I've gone ahead and made the changes; what do you think?
+> 
+> I like how it also removes 40 lines of code.  :-)
+> 
+>      	  	    	     	      	   - Ted
+> 
+> From ef3130d1b0b8ca769252d6a722a2e59a00141383 Mon Sep 17 00:00:00 2001
+> From: Theodore Ts'o <tytso@mit.edu>
+> Date: Fri, 2 Jul 2021 18:05:03 -0400
+> Subject: [PATCH] ext4: inline jbd2_journal_[un]register_shrinker()
+> 
+> The function jbd2_journal_unregister_shrinker() was getting called
+> twice when the file system was getting unmounted.  On Power and ARM
+> platforms this was causing kernel crash when unmounting the file
+> system, when a percpu_counter was destroyed twice.
+> 
+> Fix this by removing jbd2_journal_[un]register_shrinker() functions,
+> and inlining the shrinker setup and teardown into
+> journal_init_common() and jbd2_journal_destroy().  This means that
+> ext4 and ocfs2 now no longer need to know about registering and
+> unregistering jbd2's shrinker.
+> 
+> Also, while we're at it, rename the percpu counter from
+> j_jh_shrink_count to j_checkpoint_jh_count, since this makes it
+> clearer what this counter is intended to track.
+> 
+> Fixes: 4ba3fcdde7e3 ("jbd2,ext4: add a shrinker to release checkpointed buffers")
+> Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 
-=24 fsck.exfat /dev/sdb1
-exfatprogs version : 1.1.1
-ERROR: /DCIM/344_FUJI: more clusters are allocated. truncate to 524288 byte=
-s. Truncate (y/N)? n
+Except for the bug Zhang Yi noticed the patch looks good to me. Feel free
+to add:
 
->=20
-> In the exfat specification says, the DataLength Field of the directory-st=
-ream is the entire size of
-> the associated allocation.
-> If the DataLength Field does not match the size in the FAT-chain, it mean=
-s that it is corrupted.
-Yes. I have checked it.
->=20
-> As you know, the FAT-chain structure is fragile.
-> At runtime, one way to detect a broken FAT-chain is to compare it with Da=
-taLength.
-> (Detailed verification is the role of fsck).
-> Ignoring DataLength during dir-scan is unsafe because we lose a way to de=
-tect a broken FAT-chain.
->=20
-> I think fsd should check DataLength, and fsck should repair DataLength.
-But Windows fsck doesn=E2=80=99t=20detect=20it=20and=20it=20shows=20the=20a=
-ll=20files=20normally=20without=20any=20missing=20ones.=0D=0AIt=20means=20W=
-indows=20exfat=20doesn't=20also=20check=20it=20in=20case=20type=20is=20ALLO=
-C_FAT_CHAIN.=0D=0A=0D=0A>=20=0D=0A>=20As=20for=20the=20256MB=20check,=20I=
-=20think=20it=20would=20be=20better=20to=20have=20it.=0D=0A>=20=0D=0A>=20BR=
-=0D=0A>=20---=0D=0A>=20Kohada=20Tetsuhiro=20<Kohada.Tetsuhiro=40dc.Mitsubis=
-hiElectric.co.jp>=0D=0A=0D=0A
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+after fixing that.
+
+								Honza
+
+
+> ---
+>  fs/ext4/super.c      |   8 ---
+>  fs/jbd2/checkpoint.c |   4 +-
+>  fs/jbd2/journal.c    | 148 +++++++++++++++++--------------------------
+>  include/linux/jbd2.h |   6 +-
+>  4 files changed, 63 insertions(+), 103 deletions(-)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index b8ff0399e171..dfa09a277b56 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1184,7 +1184,6 @@ static void ext4_put_super(struct super_block *sb)
+>  	ext4_unregister_sysfs(sb);
+>  
+>  	if (sbi->s_journal) {
+> -		jbd2_journal_unregister_shrinker(sbi->s_journal);
+>  		aborted = is_journal_aborted(sbi->s_journal);
+>  		err = jbd2_journal_destroy(sbi->s_journal);
+>  		sbi->s_journal = NULL;
+> @@ -5176,7 +5175,6 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+>  	sbi->s_ea_block_cache = NULL;
+>  
+>  	if (sbi->s_journal) {
+> -		jbd2_journal_unregister_shrinker(sbi->s_journal);
+>  		jbd2_journal_destroy(sbi->s_journal);
+>  		sbi->s_journal = NULL;
+>  	}
+> @@ -5502,12 +5500,6 @@ static int ext4_load_journal(struct super_block *sb,
+>  		ext4_commit_super(sb);
+>  	}
+>  
+> -	err = jbd2_journal_register_shrinker(journal);
+> -	if (err) {
+> -		EXT4_SB(sb)->s_journal = NULL;
+> -		goto err_out;
+> -	}
+> -
+>  	return 0;
+>  
+>  err_out:
+> diff --git a/fs/jbd2/checkpoint.c b/fs/jbd2/checkpoint.c
+> index 51d1eb2ffeb9..746132998c57 100644
+> --- a/fs/jbd2/checkpoint.c
+> +++ b/fs/jbd2/checkpoint.c
+> @@ -701,7 +701,7 @@ int __jbd2_journal_remove_checkpoint(struct journal_head *jh)
+>  
+>  	__buffer_unlink(jh);
+>  	jh->b_cp_transaction = NULL;
+> -	percpu_counter_dec(&journal->j_jh_shrink_count);
+> +	percpu_counter_dec(&journal->j_checkpoint_jh_count);
+>  	jbd2_journal_put_journal_head(jh);
+>  
+>  	/* Is this transaction empty? */
+> @@ -764,7 +764,7 @@ void __jbd2_journal_insert_checkpoint(struct journal_head *jh,
+>  		jh->b_cpnext->b_cpprev = jh;
+>  	}
+>  	transaction->t_checkpoint_list = jh;
+> -	percpu_counter_inc(&transaction->t_journal->j_jh_shrink_count);
+> +	percpu_counter_inc(&transaction->t_journal->j_checkpoint_jh_count);
+>  }
+>  
+>  /*
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 152880c298ca..8a9c94dd3599 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -1283,6 +1283,48 @@ static int jbd2_min_tag_size(void)
+>  	return sizeof(journal_block_tag_t) - 4;
+>  }
+>  
+> +/**
+> + * jbd2_journal_shrink_scan()
+> + *
+> + * Scan the checkpointed buffer on the checkpoint list and release the
+> + * journal_head.
+> + */
+> +static unsigned long jbd2_journal_shrink_scan(struct shrinker *shrink,
+> +					      struct shrink_control *sc)
+> +{
+> +	journal_t *journal = container_of(shrink, journal_t, j_shrinker);
+> +	unsigned long nr_to_scan = sc->nr_to_scan;
+> +	unsigned long nr_shrunk;
+> +	unsigned long count;
+> +
+> +	count = percpu_counter_read_positive(&journal->j_checkpoint_jh_count);
+> +	trace_jbd2_shrink_scan_enter(journal, sc->nr_to_scan, count);
+> +
+> +	nr_shrunk = jbd2_journal_shrink_checkpoint_list(journal, &nr_to_scan);
+> +
+> +	count = percpu_counter_read_positive(&journal->j_checkpoint_jh_count);
+> +	trace_jbd2_shrink_scan_exit(journal, nr_to_scan, nr_shrunk, count);
+> +
+> +	return nr_shrunk;
+> +}
+> +
+> +/**
+> + * jbd2_journal_shrink_count()
+> + *
+> + * Count the number of checkpoint buffers on the checkpoint list.
+> + */
+> +static unsigned long jbd2_journal_shrink_count(struct shrinker *shrink,
+> +					       struct shrink_control *sc)
+> +{
+> +	journal_t *journal = container_of(shrink, journal_t, j_shrinker);
+> +	unsigned long count;
+> +
+> +	count = percpu_counter_read_positive(&journal->j_checkpoint_jh_count);
+> +	trace_jbd2_shrink_count(journal, sc->nr_to_scan, count);
+> +
+> +	return count;
+> +}
+> +
+>  /*
+>   * Management for journal control blocks: functions to create and
+>   * destroy journal_t structures, and to initialise and read existing
+> @@ -1361,6 +1403,19 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>  	journal->j_sb_buffer = bh;
+>  	journal->j_superblock = (journal_superblock_t *)bh->b_data;
+>  
+> +	journal->j_shrink_transaction = NULL;
+> +	journal->j_shrinker.scan_objects = jbd2_journal_shrink_scan;
+> +	journal->j_shrinker.count_objects = jbd2_journal_shrink_count;
+> +	journal->j_shrinker.seeks = DEFAULT_SEEKS;
+> +	journal->j_shrinker.batch = journal->j_max_transaction_buffers;
+> +
+> +	if (percpu_counter_init(&journal->j_checkpoint_jh_count, 0, GFP_KERNEL))
+> +		goto err_cleanup;
+> +
+> +	if (register_shrinker(&journal->j_shrinker)) {
+> +		percpu_counter_destroy(&journal->j_checkpoint_jh_count);
+> +		goto err_cleanup;
+> +	}
+>  	return journal;
+>  
+>  err_cleanup:
+> @@ -2050,93 +2105,6 @@ int jbd2_journal_load(journal_t *journal)
+>  	return -EIO;
+>  }
+>  
+> -/**
+> - * jbd2_journal_shrink_scan()
+> - *
+> - * Scan the checkpointed buffer on the checkpoint list and release the
+> - * journal_head.
+> - */
+> -static unsigned long jbd2_journal_shrink_scan(struct shrinker *shrink,
+> -					      struct shrink_control *sc)
+> -{
+> -	journal_t *journal = container_of(shrink, journal_t, j_shrinker);
+> -	unsigned long nr_to_scan = sc->nr_to_scan;
+> -	unsigned long nr_shrunk;
+> -	unsigned long count;
+> -
+> -	count = percpu_counter_read_positive(&journal->j_jh_shrink_count);
+> -	trace_jbd2_shrink_scan_enter(journal, sc->nr_to_scan, count);
+> -
+> -	nr_shrunk = jbd2_journal_shrink_checkpoint_list(journal, &nr_to_scan);
+> -
+> -	count = percpu_counter_read_positive(&journal->j_jh_shrink_count);
+> -	trace_jbd2_shrink_scan_exit(journal, nr_to_scan, nr_shrunk, count);
+> -
+> -	return nr_shrunk;
+> -}
+> -
+> -/**
+> - * jbd2_journal_shrink_count()
+> - *
+> - * Count the number of checkpoint buffers on the checkpoint list.
+> - */
+> -static unsigned long jbd2_journal_shrink_count(struct shrinker *shrink,
+> -					       struct shrink_control *sc)
+> -{
+> -	journal_t *journal = container_of(shrink, journal_t, j_shrinker);
+> -	unsigned long count;
+> -
+> -	count = percpu_counter_read_positive(&journal->j_jh_shrink_count);
+> -	trace_jbd2_shrink_count(journal, sc->nr_to_scan, count);
+> -
+> -	return count;
+> -}
+> -
+> -/**
+> - * jbd2_journal_register_shrinker()
+> - * @journal: Journal to act on.
+> - *
+> - * Init a percpu counter to record the checkpointed buffers on the checkpoint
+> - * list and register a shrinker to release their journal_head.
+> - */
+> -int jbd2_journal_register_shrinker(journal_t *journal)
+> -{
+> -	int err;
+> -
+> -	journal->j_shrink_transaction = NULL;
+> -
+> -	err = percpu_counter_init(&journal->j_jh_shrink_count, 0, GFP_KERNEL);
+> -	if (err)
+> -		return err;
+> -
+> -	journal->j_shrinker.scan_objects = jbd2_journal_shrink_scan;
+> -	journal->j_shrinker.count_objects = jbd2_journal_shrink_count;
+> -	journal->j_shrinker.seeks = DEFAULT_SEEKS;
+> -	journal->j_shrinker.batch = journal->j_max_transaction_buffers;
+> -
+> -	err = register_shrinker(&journal->j_shrinker);
+> -	if (err) {
+> -		percpu_counter_destroy(&journal->j_jh_shrink_count);
+> -		return err;
+> -	}
+> -
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL(jbd2_journal_register_shrinker);
+> -
+> -/**
+> - * jbd2_journal_unregister_shrinker()
+> - * @journal: Journal to act on.
+> - *
+> - * Unregister the checkpointed buffer shrinker and destroy the percpu counter.
+> - */
+> -void jbd2_journal_unregister_shrinker(journal_t *journal)
+> -{
+> -	percpu_counter_destroy(&journal->j_jh_shrink_count);
+> -	unregister_shrinker(&journal->j_shrinker);
+> -}
+> -EXPORT_SYMBOL(jbd2_journal_unregister_shrinker);
+> -
+>  /**
+>   * jbd2_journal_destroy() - Release a journal_t structure.
+>   * @journal: Journal to act on.
+> @@ -2209,8 +2177,10 @@ int jbd2_journal_destroy(journal_t *journal)
+>  		brelse(journal->j_sb_buffer);
+>  	}
+>  
+> -	jbd2_journal_unregister_shrinker(journal);
+> -
+> +	if (journal->j_shrinker.flags & SHRINKER_REGISTERED) {
+> +		percpu_counter_destroy(&journal->j_checkpoint_jh_count);
+> +		unregister_shrinker(&journal->j_shrinker);
+> +	}
+>  	if (journal->j_proc_entry)
+>  		jbd2_stats_proc_exit(journal);
+>  	iput(journal->j_inode);
+> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+> index 6cc035321562..fd933c45281a 100644
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -918,11 +918,11 @@ struct journal_s
+>  	struct shrinker		j_shrinker;
+>  
+>  	/**
+> -	 * @j_jh_shrink_count:
+> +	 * @j_checkpoint_jh_count:
+>  	 *
+>  	 * Number of journal buffers on the checkpoint list. [j_list_lock]
+>  	 */
+> -	struct percpu_counter	j_jh_shrink_count;
+> +	struct percpu_counter	j_checkpoint_jh_count;
+>  
+>  	/**
+>  	 * @j_shrink_transaction:
+> @@ -1556,8 +1556,6 @@ extern int	   jbd2_journal_set_features
+>  		   (journal_t *, unsigned long, unsigned long, unsigned long);
+>  extern void	   jbd2_journal_clear_features
+>  		   (journal_t *, unsigned long, unsigned long, unsigned long);
+> -extern int	   jbd2_journal_register_shrinker(journal_t *journal);
+> -extern void	   jbd2_journal_unregister_shrinker(journal_t *journal);
+>  extern int	   jbd2_journal_load       (journal_t *journal);
+>  extern int	   jbd2_journal_destroy    (journal_t *);
+>  extern int	   jbd2_journal_recover    (journal_t *journal);
+> -- 
+> 2.31.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
