@@ -2,89 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAEBF3BC5EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jul 2021 07:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C99B73BC948
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jul 2021 12:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230048AbhGFFI7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jul 2021 01:08:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229963AbhGFFI7 (ORCPT
+        id S231266AbhGFKRl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jul 2021 06:17:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31251 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231235AbhGFKRl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jul 2021 01:08:59 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 851F3C061574;
-        Mon,  5 Jul 2021 22:06:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=Hrqanaoi/RtO507Oge3AIMRHlYs9d/SsknmqOE9P7tA=; b=l21KwPDhzlExodbHVqnTawkwH7
-        NqTUFWWg/GeGZe9ecrfPxJPtuPaCerNakx8unMN4CrOrzej4pUN3SzYUxaR91MnLEng/YD45LXnyu
-        S5XgvPJn5pOSTWWGYSytVmjRQIQFfwlHQhayRu505Iko6GQaHOxAqaQvHrCsHBJ8vHdduEbsp43Xt
-        M06zsgf7GXV3xT6Cjj4dGVMBNmd6rBLiQfz8bXRIHMiAJkG72zEqIYaiKbfCfZh21Qn2bs4m5CJjc
-        9z+KYVEZkmaPaqnQsyD+ewLr4cuVaFCk1gI5T6Iv7THNOcz5Vgoxr/Lbg4yUpvlPZanDeqvksMLRl
-        STeCVmpQ==;
-Received: from p4fdb05cb.dip0.t-ipconnect.de ([79.219.5.203] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m0dHb-00Aqrv-AW; Tue, 06 Jul 2021 05:06:11 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     linux-xfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Leizhen <thunder.leizhen@huawei.com>
-Subject: [PATCH 2/2] iomap: remove the length variable in iomap_seek_hole
-Date:   Tue,  6 Jul 2021 07:05:41 +0200
-Message-Id: <20210706050541.1974618-2-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706050541.1974618-1-hch@lst.de>
-References: <20210706050541.1974618-1-hch@lst.de>
+        Tue, 6 Jul 2021 06:17:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625566502;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EbtKyQLHeXyAf7XTeEVWB1Q3nM607AfNrt9n7XkxYzw=;
+        b=LnrxZknS5z6ZvGq4UBhhvPzlWnZrbpIGIVSE7WhefxX7iX8SPhiyC0QO8ENGSR2ROAkqL8
+        PozpkywowT4Tlu9PfZ/o0WUMC5Uh90TyGXBzft26n/fTaw6vL2Nfkcy00s6ZdgaBt2LQUI
+        OaVRu6BeRN76s2sFNkj7g6YATHVPfC0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-441-McPLJZCxOI-QDg_bHt4FDw-1; Tue, 06 Jul 2021 06:15:00 -0400
+X-MC-Unique: McPLJZCxOI-QDg_bHt4FDw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ECA2F9126B;
+        Tue,  6 Jul 2021 10:14:56 +0000 (UTC)
+Received: from localhost (ovpn-115-23.ams2.redhat.com [10.36.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F76610074F8;
+        Tue,  6 Jul 2021 10:14:51 +0000 (UTC)
+Date:   Tue, 6 Jul 2021 11:14:51 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Yongji Xie <xieyongji@bytedance.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 10/10] Documentation: Add documentation for VDUSE
+Message-ID: <YOQtG3gDOhHDO5CQ@stefanha-x1.localdomain>
+References: <20210615141331.407-11-xieyongji@bytedance.com>
+ <YNSCH6l31zwPxBjL@stefanha-x1.localdomain>
+ <CACycT3uxnQmXWsgmNVxQtiRhz1UXXTAJFY3OiAJqokbJH6ifMA@mail.gmail.com>
+ <YNxCDpM3bO5cPjqi@stefanha-x1.localdomain>
+ <CACycT3taKhf1cWp3Jd0aSVekAZvpbR-_fkyPLQ=B+jZBB5H=8Q@mail.gmail.com>
+ <YN3ABqCMLQf7ejOm@stefanha-x1.localdomain>
+ <CACycT3vo-diHgTSLw_FS2E+5ia5VjihE3qw7JmZR7JT55P-wQA@mail.gmail.com>
+ <8320d26d-6637-85c6-8773-49553dfa502d@redhat.com>
+ <YOL/9mxkJaokKDHc@stefanha-x1.localdomain>
+ <5b5107fa-3b32-8a3b-720d-eee6b2a84ace@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bGDTE9bI8S9vsB/T"
+Content-Disposition: inline
+In-Reply-To: <5b5107fa-3b32-8a3b-720d-eee6b2a84ace@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The length variable is rather pointless given that it can be trivially
-deduced from offset and size.  Also the initial calculation can lead
-to KASAN warnings.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reported-by: Leizhen (ThunderTown) <thunder.leizhen@huawei.com>
----
- fs/iomap/seek.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+--bGDTE9bI8S9vsB/T
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
-index 50b8f1418f2668..ce6fb810854fec 100644
---- a/fs/iomap/seek.c
-+++ b/fs/iomap/seek.c
-@@ -35,23 +35,20 @@ loff_t
- iomap_seek_hole(struct inode *inode, loff_t offset, const struct iomap_ops *ops)
- {
- 	loff_t size = i_size_read(inode);
--	loff_t length = size - offset;
- 	loff_t ret;
- 
- 	/* Nothing to be found before or beyond the end of the file. */
- 	if (offset < 0 || offset >= size)
- 		return -ENXIO;
- 
--	while (length > 0) {
--		ret = iomap_apply(inode, offset, length, IOMAP_REPORT, ops,
--				  &offset, iomap_seek_hole_actor);
-+	while (offset < size) {
-+		ret = iomap_apply(inode, offset, size - offset, IOMAP_REPORT,
-+				  ops, &offset, iomap_seek_hole_actor);
- 		if (ret < 0)
- 			return ret;
- 		if (ret == 0)
- 			break;
--
- 		offset += ret;
--		length -= ret;
- 	}
- 
- 	return offset;
--- 
-2.30.2
+On Tue, Jul 06, 2021 at 10:34:33AM +0800, Jason Wang wrote:
+>=20
+> =E5=9C=A8 2021/7/5 =E4=B8=8B=E5=8D=888:49, Stefan Hajnoczi =E5=86=99=E9=
+=81=93:
+> > On Mon, Jul 05, 2021 at 11:36:15AM +0800, Jason Wang wrote:
+> > > =E5=9C=A8 2021/7/4 =E4=B8=8B=E5=8D=885:49, Yongji Xie =E5=86=99=E9=81=
+=93:
+> > > > > > OK, I get you now. Since the VIRTIO specification says "Device
+> > > > > > configuration space is generally used for rarely-changing or
+> > > > > > initialization-time parameters". I assume the VDUSE_DEV_SET_CON=
+FIG
+> > > > > > ioctl should not be called frequently.
+> > > > > The spec uses MUST and other terms to define the precise requirem=
+ents.
+> > > > > Here the language (especially the word "generally") is weaker and=
+ means
+> > > > > there may be exceptions.
+> > > > >=20
+> > > > > Another type of access that doesn't work with the VDUSE_DEV_SET_C=
+ONFIG
+> > > > > approach is reads that have side-effects. For example, imagine a =
+field
+> > > > > containing an error code if the device encounters a problem unrel=
+ated to
+> > > > > a specific virtqueue request. Reading from this field resets the =
+error
+> > > > > code to 0, saving the driver an extra configuration space write a=
+ccess
+> > > > > and possibly race conditions. It isn't possible to implement those
+> > > > > semantics suing VDUSE_DEV_SET_CONFIG. It's another corner case, b=
+ut it
+> > > > > makes me think that the interface does not allow full VIRTIO sema=
+ntics.
+> > >=20
+> > > Note that though you're correct, my understanding is that config spac=
+e is
+> > > not suitable for this kind of error propagating. And it would be very=
+ hard
+> > > to implement such kind of semantic in some transports.=C2=A0 Virtqueu=
+e should be
+> > > much better. As Yong Ji quoted, the config space is used for
+> > > "rarely-changing or intialization-time parameters".
+> > >=20
+> > >=20
+> > > > Agreed. I will use VDUSE_DEV_GET_CONFIG in the next version. And to
+> > > > handle the message failure, I'm going to add a return value to
+> > > > virtio_config_ops.get() and virtio_cread_* API so that the error can
+> > > > be propagated to the virtio device driver. Then the virtio-blk devi=
+ce
+> > > > driver can be modified to handle that.
+> > > >=20
+> > > > Jason and Stefan, what do you think of this way?
+> > Why does VDUSE_DEV_GET_CONFIG need to support an error return value?
+> >=20
+> > The VIRTIO spec provides no way for the device to report errors from
+> > config space accesses.
+> >=20
+> > The QEMU virtio-pci implementation returns -1 from invalid
+> > virtio_config_read*() and silently discards virtio_config_write*()
+> > accesses.
+> >=20
+> > VDUSE can take the same approach with
+> > VDUSE_DEV_GET_CONFIG/VDUSE_DEV_SET_CONFIG.
+> >=20
+> > > I'd like to stick to the current assumption thich get_config won't fa=
+il.
+> > > That is to say,
+> > >=20
+> > > 1) maintain a config in the kernel, make sure the config space read c=
+an
+> > > always succeed
+> > > 2) introduce an ioctl for the vduse usersapce to update the config sp=
+ace.
+> > > 3) we can synchronize with the vduse userspace during set_config
+> > >=20
+> > > Does this work?
+> > I noticed that caching is also allowed by the vhost-user protocol
+> > messages (QEMU's docs/interop/vhost-user.rst), but the device doesn't
+> > know whether or not caching is in effect. The interface you outlined
+> > above requires caching.
+> >=20
+> > Is there a reason why the host kernel vDPA code needs to cache the
+> > configuration space?
+>=20
+>=20
+> Because:
+>=20
+> 1) Kernel can not wait forever in get_config(), this is the major differe=
+nce
+> with vhost-user.
+
+virtio_cread() can sleep:
+
+  #define virtio_cread(vdev, structname, member, ptr)                     \
+          do {                                                            \
+                  typeof(((structname*)0)->member) virtio_cread_v;        \
+                                                                          \
+                  might_sleep();                                          \
+                  ^^^^^^^^^^^^^^
+
+Which code path cannot sleep?
+
+> 2) Stick to the current assumption that virtio_cread() should always
+> succeed.
+
+That can be done by reading -1 (like QEMU does) when the read fails.
+
+Stefan
+
+--bGDTE9bI8S9vsB/T
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmDkLRoACgkQnKSrs4Gr
+c8g5rQf/dEn1vwdw9gb5jvAShRGnaCqMAiYL94qRkH44VSSYFNUpuWuei42cVzk5
+PXleyCcoPY4o1g1xBwL6ddvi0qziAyjlTDw4BkflDiLyDqRk4cryoGSdxBe9mNoq
+mOiwWONGbv2EHefjW2PLq5MpuVf2XYEJlSyIpJPSfEpaClH8tF16GhcHofMePvnS
+d4etvc/M6x7ZiX8mV+lTVK/+5VRYPpcBTmLLkHObS0Dk4utsosMBRj0n+26ZsLCu
+O7Hifgw0DrW0IQCYB5GNnKNYYPdeSNvXv7I6mqaI9W/xLPsP5Ze2IPDITeMmAtWS
+ppMaw40ExhBaIt4ViPFG//Va5Me2rQ==
+=TOAU
+-----END PGP SIGNATURE-----
+
+--bGDTE9bI8S9vsB/T--
 
