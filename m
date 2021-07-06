@@ -2,110 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAB143BD95A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jul 2021 17:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B46E3BDAD2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jul 2021 18:01:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231975AbhGFPHY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jul 2021 11:07:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231460AbhGFPHY (ORCPT
+        id S229753AbhGFQE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jul 2021 12:04:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37664 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229770AbhGFQE2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jul 2021 11:07:24 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A4CAC06178A
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jul 2021 08:04:45 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id i8so13574308wrp.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jul 2021 08:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=JCBMF9vHR/Rrjh5BrR+kMlczFWACyGKUHset9TNb2Zk=;
-        b=ELLUQ3fuq0cj/exlOl0M3y+CWWAtqQYzs0TPqxhInL2IZQylEw5X6bBu7flm6JozP3
-         ZRfn1JBS1RxtXe7wm3ib2OpSO1UakQe6+nlHzbYaRFE4q2daDZQIFGQ1fc+sbBPq5toU
-         r0qz5zs+OKZCokpsm7fWWp6Tubbcn69diWK0Y=
+        Tue, 6 Jul 2021 12:04:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625587309;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2yfndmR2iaMQIWMAd4edCOEQikxHqB5a5e0OL47C4zE=;
+        b=EF9EEslqO6cIJ/on/wqLaJPz+5Y20hxn4dKBOnyEyq44pPNuHEcl/f9oDhoKKl13QcBeq2
+        G408+mZYF9h+4D1F4yspP75VbCMfjUMGqJ2jzzoWuxxjde7+wtka3unSoD1ITsS0KefDms
+        iMjgBXFWDPrk6EUjzlEnjq0Yrqxuf2Q=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-351-HzWhSeOPNJOWoGPAG1iWJw-1; Tue, 06 Jul 2021 12:01:48 -0400
+X-MC-Unique: HzWhSeOPNJOWoGPAG1iWJw-1
+Received: by mail-wm1-f71.google.com with SMTP id a129-20020a1ce3870000b02901f050bc61d2so1113030wmh.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jul 2021 09:01:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=JCBMF9vHR/Rrjh5BrR+kMlczFWACyGKUHset9TNb2Zk=;
-        b=jkIwado+3eNDU54emd09RWlNlmQwBYgyZYIbeJvFJh1NU6scR7G97ZD70bFpsa5/jc
-         +9J/Gcd367Vk1kkvCSsbBXajuLJBjNe7Kz7oU1LcTRvruQu4SFWYbLOL3artraNTKcOW
-         ynCS2KNPc5Ld6LYRwQMu1tH/wcm4wABlZjxhxBU2DkfosNq7+hSBrzKBY5PwBWmLr7NN
-         ICnpezDsS1CgMoLo+8b7kqtRKUWZ0UgOOSbSS2rDAaPfog62g1O79/EID9oU4cTa/S+G
-         wDRYX2cPBNnCQVYu6Ym7zkjiD/y1XsX5y9SpqTidLjybU/61YEvf6NlFbKY0NBCXqzog
-         Xs2g==
-X-Gm-Message-State: AOAM532IBJVVWTQic2L4yTJekovC3x7LPoqpeLJcmaueRgyMwz5nk40F
-        MUMeY7cWKIzbFU/QRfip1N3Lag==
-X-Google-Smtp-Source: ABdhPJwkBKOJn9nMEw8deIdTSXyDiTErmXI4RJQ4JASn+VY6niIGSxa/y0Qo+GW9fgNfhmTRNKNkVw==
-X-Received: by 2002:a05:6000:1acb:: with SMTP id i11mr22026300wry.120.1625583883741;
-        Tue, 06 Jul 2021 08:04:43 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
-        by smtp.gmail.com with ESMTPSA id 12sm3425491wme.28.2021.07.06.08.04.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jul 2021 08:04:43 -0700 (PDT)
-Date:   Tue, 6 Jul 2021 17:04:35 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] fuse update for 5.14
-Message-ID: <YORxA9+DVLqNlH99@miu.piliscsaba.redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2yfndmR2iaMQIWMAd4edCOEQikxHqB5a5e0OL47C4zE=;
+        b=mZ4vLkjC77jcqCt7+agxZ2D9PPv28XtcTRcmPduN2Y41oXQvz47soSW97dqBpX3soT
+         +65B5tiGQDwTeFclJsIWAzFJe8BB6B8hloWm0QL4ZMmhrd0vyx8luRrHrjH/XxwDz61I
+         j9+YAhbqeJXvTZDn5rQRBIf7UCprO7iExGjkVbgCBoZoSVwObshPW4E9DQL5T42GGGlK
+         CpxeYQVY23fl7qZe/6BYrQsw4dShsUSL7IcDwVfWBMXgm0NuoKoFT2A8kgcL/9SkqueQ
+         LnoEU4NBzlHlz4ftb50JoJFKKLx5p6+LhQ1IJOj6/nyYD3cpZtH2Z5a/k+xoiJZGqufE
+         xjYg==
+X-Gm-Message-State: AOAM533cx6N9P7Q334OH/PeWCaxyEPYN87cRdkjcDjfarOt+4ShNW5sW
+        V+GroL81+Pz3JA+UGsItubi/COolWb2bcG4Y4i3auEDqYFvgEbGvda8f2w64fETnShPn0qzYqww
+        OUNeb8AJlBugzmQhlaAnJQiXn9ECL4TENAE0GX67hKg==
+X-Received: by 2002:a1c:62c4:: with SMTP id w187mr4794456wmb.27.1625587306932;
+        Tue, 06 Jul 2021 09:01:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyf3SIjPzhBrTlg9BxLb8FhE5zoAaVaW0K9FFwNlBnAnkxzzGcrUqGlsbeH3InUge2TgjqNc6VPAXHKHt/Xe4Y=
+X-Received: by 2002:a1c:62c4:: with SMTP id w187mr4794417wmb.27.1625587306675;
+ Tue, 06 Jul 2021 09:01:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20210705181824.2174165-1-agruenba@redhat.com> <20210705181824.2174165-2-agruenba@redhat.com>
+ <YOPkNnQ34vRiVYs6@infradead.org>
+In-Reply-To: <YOPkNnQ34vRiVYs6@infradead.org>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Tue, 6 Jul 2021 18:01:35 +0200
+Message-ID: <CAHc6FU5j7T31OknUk+_WejRw_1s9NCuq=59YExAHY2iWHCgZZA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] iomap: Don't create iomap_page objects for inline files
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Tue, Jul 6, 2021 at 7:07 AM Christoph Hellwig <hch@infradead.org> wrote:
+> On Mon, Jul 05, 2021 at 08:18:23PM +0200, Andreas Gruenbacher wrote:
+> > In iomap_readpage_actor, don't create iop objects for inline inodes.
+> > Otherwise, iomap_read_inline_data will set PageUptodate without setting
+> > iop->uptodate, and iomap_page_release will eventually complain.
+> >
+> > To prevent this kind of bug from occurring in the future, make sure the
+> > page doesn't have private data attached in iomap_read_inline_data.
+> >
+> > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> > Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>
+> As mentioned last round I'd prefer to simply not create the iomap_page
+> at all in the readpage/readpages path.
 
-Please pull from:
+I've tried that by replacing the iomap_page_create with to_iomap_page
+in iomap_readpage_actor and with that, I'm getting a
+VM_BUG_ON_PAGE(!PageLocked(page)) in iomap_read_end_io -> unlock_page
+with generic/029. So there's obviously more to it than just not
+creating the iomap_page in iomap_readpage_actor.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-5.14
+Getting rid of the iomap_page_create in iomap_readpage_actor
+completely isn't a necessary part of the bug fix. So can we focus on
+the bug fix for now, and worry about the improvement later?
 
-- Fixes for virtiofs submounts
+> Also this patch needs to go after the current patch 2 to be bisection clean.
 
-- Misc fixes and cleanups
+Yes, makes sense.
 
 Thanks,
-Miklos
+Andreas
 
----
-Amir Goldstein (1):
-      fuse: fix illegal access to inode with reused nodeid
-
-Greg Kurz (8):
-      fuse: Fix crash in fuse_dentry_automount() error path
-      fuse: Fix crash if superblock of submount gets killed early
-      fuse: Fix infinite loop in sget_fc()
-      virtiofs: propagate sync() to file server
-      fuse: add dedicated filesystem context ops for submounts
-      fuse: Call vfs_get_tree() for submounts
-      fuse: Switch to fc_mount() for submounts
-      fuse: Make fuse_fill_super_submount() static
-
-Miklos Szeredi (3):
-      fuse: ignore PG_workingset after stealing
-      fuse: check connected before queueing on fpq->io
-      fuse: reject internal errno
-
-Richard W.M. Jones (1):
-      fuse: allow fallocate(FALLOC_FL_ZERO_RANGE)
-
-Wu Bo (1):
-      fuse: use DIV_ROUND_UP helper macro for calculations
-
-Zheng Yongjun (1):
-      virtiofs: Fix spelling mistakes
-
----
- fs/fuse/dax.c             |   6 +--
- fs/fuse/dev.c             |  14 ++++++-
- fs/fuse/dir.c             |  63 +++++------------------------
- fs/fuse/file.c            |  14 ++++---
- fs/fuse/fuse_i.h          |  24 ++++++-----
- fs/fuse/inode.c           | 100 ++++++++++++++++++++++++++++++++++++++++++++--
- fs/fuse/readdir.c         |   7 +++-
- fs/fuse/virtio_fs.c       |   4 ++
- include/uapi/linux/fuse.h |  10 ++++-
- 9 files changed, 161 insertions(+), 81 deletions(-)
