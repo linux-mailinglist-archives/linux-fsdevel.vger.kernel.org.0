@@ -2,261 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37F003BD728
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jul 2021 14:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FAC43BD72E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jul 2021 14:51:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235594AbhGFMwm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jul 2021 08:52:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35870 "EHLO
+        id S235388AbhGFMxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jul 2021 08:53:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241836AbhGFMwN (ORCPT
+        with ESMTP id S237590AbhGFMxf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jul 2021 08:52:13 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA02EC061760;
-        Tue,  6 Jul 2021 05:49:33 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id b40so9158808ljf.12;
-        Tue, 06 Jul 2021 05:49:33 -0700 (PDT)
+        Tue, 6 Jul 2021 08:53:35 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22DEEC061762
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jul 2021 05:50:57 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id b2so33973233ejg.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jul 2021 05:50:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gJq2iRTwHGrfYDqYL7yzYFbXyEbtL7aWF6AFG6qJkmM=;
-        b=u/KpHxWOeVMb9ymxDIWlZff+1dnE91bMiUZB+giivR0IZAWcowsj1FrfVUlT2QEoNS
-         xHQY3CUYTYUcIEscxdlrZ0MKl4muZ1y0tZCt1nITf2oeb87uVvOmlkmskXHbE/B1Xpx9
-         HDHtFx5sNQbwVkJ3m3cXnCJbRcJ1y1JROgi9Tbu2Hl89XGtCQWrTwIYoBzRVEt77SXg2
-         1fEa+GOae914uJ0qqF8wCrdw1PQ2vQY1q0KP3RKKA34sjDFB1i45OJbgtqhbDF8AIGtY
-         dNp3kbImNT7GoGbPNPYVwcmO/b3tj2ldeB8qDfPmU/Zhk7bb1Yx6ZZEnV+crkMPysuTX
-         FDoQ==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T4j1RX/4vxQmgSfWiJVIbkm3BekbD4J1+8zX+K8GVHA=;
+        b=WU/h2d84gwLmZE0PbbvGiG50douLmYVV5vrIcXRSV0wto/x0xQ8gTyNbUDw044mqQJ
+         0MiHY1UlEcdksNDY+HJ+8uCUFDy3qYyTfZLT3LV7ZHnUOfd/VW31CTHNv2E/p/lbpMfN
+         BaG2JAz2sM8CCX/pzy9k/dc+yiC4Gixrd8/maBGCOMYokl1gF84qbzZLeItKIHBonmMU
+         pzxuzhaa9J03k22JxwRDPnU+s8hFl8QI1b4swolMQLDd8HBjlM9HBpF0YkgSVKWgtfIA
+         QECgbxSlEYaycZfGTVvY4jc9gO+NpPOsNQV6A/hggJ4JOc4KYd18vDQzL+uPEp79WOgz
+         Q8mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gJq2iRTwHGrfYDqYL7yzYFbXyEbtL7aWF6AFG6qJkmM=;
-        b=HJdQta7oUvd5VGiNRax+N+rwpcDVBhknf0jkiPGn90qZZ/Tg4WRGmn8js09c3e6sH2
-         Y5Q41ysLHwL9InyK50KuW6nTC8YhiejuhfH4XoYTbyGUr24G/67i7v/x7SGag0j3Orq6
-         qnSwdsDOahmsQkaxcTJ8al5NHk+72vfXZyiUDuSZoVQBVdnVwO4ZiJEv5Je/7mTfKiIU
-         JcMDH6SxGvFYBKGR+pg2ZjqpAtBRuhP+dv7mN8mO+I2H6GE0km85R91DqsqpPem0G6wI
-         NJER3/9q/O5MhHkPIE/2DaW7yhM/yPubtW0xwPZaZavRVdhoII1sQ+TN7ekJL5HojO8m
-         V12g==
-X-Gm-Message-State: AOAM532v4oI/O23wHi3WGfoFtM8lkpX7OEuYF0ZsoVqi4MSssDLEZu/1
-        0VS3uyV7VXH+9ToNwf0jwys=
-X-Google-Smtp-Source: ABdhPJyfaqlQ2gRvLlXcTzEcltO5/3XD2JQtdTCWyONqCZFhG22PpOjkgkcz0aCdfoFikKKto/iSsg==
-X-Received: by 2002:a2e:9e8e:: with SMTP id f14mr15154861ljk.468.1625575772041;
-        Tue, 06 Jul 2021 05:49:32 -0700 (PDT)
-Received: from carbon.v ([94.143.149.146])
-        by smtp.googlemail.com with ESMTPSA id r18sm139519ljc.120.2021.07.06.05.49.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jul 2021 05:49:31 -0700 (PDT)
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v7 10/10] io_uring: add support for IORING_OP_LINKAT
-Date:   Tue,  6 Jul 2021 19:49:01 +0700
-Message-Id: <20210706124901.1360377-11-dkadashev@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706124901.1360377-1-dkadashev@gmail.com>
-References: <20210706124901.1360377-1-dkadashev@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T4j1RX/4vxQmgSfWiJVIbkm3BekbD4J1+8zX+K8GVHA=;
+        b=cX2neN+Ei78d3M3/UHGbSql0XqzGmoU0OOvp3WYGjzRcRbyYQePyXPDfwDPxHvxLuw
+         CBShoOF+29pBZ/EGFHtQpogVHSstiv6P/BBrcM/NscfgKZSxcolytglsKMtYMqxL8JCI
+         1OxktHMegbSNEGdtwThrbADq2u5V+7wRxO2MCUdTh6HDipzG7voH4krINr7hpVTBI7XP
+         2yM/31+fcxash7V8K3ploOcj6bYAg7JcP5GDciZZ982uyKbGCOjuZEqkEVd7OQVMvuQr
+         AGejlDc0Y9d1pQ0pDLZw2ybnsIYK07ygTA2WiHADNixvU7iMK22yE1z0u3HtUWxbL9aO
+         PQ2g==
+X-Gm-Message-State: AOAM533r0CKM2L/tjxIGe0dTaJrHC9TZRQ/1DKIMM2v6xr6YJmDmip/j
+        cmIkYhlZGCXtmsrTWFIjQvlM+QswE8ZFwKZrI3TX
+X-Google-Smtp-Source: ABdhPJxb5ymVgv/EPwejbN2/uGp8bQsc3v8V3IPMaTZlLQQ7amZy2CayzGiVgUsfD7rJOTFn6HYIr3bnLREGEKC4j3Q=
+X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr17992943ejb.542.1625575855534;
+ Tue, 06 Jul 2021 05:50:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <0000000000004e5ec705c6318557@google.com> <CACT4Y+YysFa1UzT6zw9GGns69WSFgqrL6P_LjUju6ujcJRTaeA@mail.gmail.com>
+ <d11c276d-65a0-5273-d797-1092e1e2692a@schaufler-ca.com> <CAHC9VhSq88YjA-VGSTKkc4hkc_KOK=mnoAYiX1us6O6U0gFzAQ@mail.gmail.com>
+ <CACT4Y+bj4epytaY4hhEx5GF+Z2xcMnS4AEg=JcrTEnWvXWFuGQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+bj4epytaY4hhEx5GF+Z2xcMnS4AEg=JcrTEnWvXWFuGQ@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 6 Jul 2021 08:50:44 -0400
+Message-ID: <CAHC9VhQLi+1r3BmSeQre+EEtEyvhSmmT-ABLjvzk0J-J9v9URw@mail.gmail.com>
+Subject: Re: [syzbot] general protection fault in legacy_parse_param
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-IORING_OP_LINKAT behaves like linkat(2) and takes the same flags and
-arguments.
+On Mon, Jul 5, 2021 at 1:52 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Sun, Jul 4, 2021 at 4:14 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Sat, Jul 3, 2021 at 6:16 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > On 7/2/2021 10:51 PM, Dmitry Vyukov wrote:
+> > > > On Sat, Jul 3, 2021 at 7:41 AM syzbot
+> > > > <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com> wrote:
+> > > >> Hello,
+> > > >>
+> > > >> syzbot found the following issue on:
+> > > >>
+> > > >> HEAD commit:    62fb9874 Linux 5.13
+> > > >> git tree:       upstream
+> > > >> console output: https://syzkaller.appspot.com/x/log.txt?x=12ffa118300000
+> > > >> kernel config:  https://syzkaller.appspot.com/x/.config?x=19404adbea015a58
+> > > >> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
+> > > >> compiler:       Debian clang version 11.0.1-2
+> > > >>
+> > > >> Unfortunately, I don't have any reproducer for this issue yet.
+> > > >>
+> > > >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > >> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> > > > +Casey for what looks like a smackfs issue
+> > >
+> > > This is from the new mount infrastructure introduced by
+> > > David Howells in November 2018. It makes sense that there
+> > > may be a problem in SELinux as well, as the code was introduced
+> > > by the same developer at the same time for the same purpose.
+> > >
+> > > > The crash was triggered by this test case:
+> > > >
+> > > > 21:55:33 executing program 1:
+> > > > r0 = fsopen(&(0x7f0000000040)='ext3\x00', 0x1)
+> > > > fsconfig$FSCONFIG_SET_STRING(r0, 0x1, &(0x7f00000002c0)='smackfsroot',
+> > > > &(0x7f0000000300)='default_permissions', 0x0)
+> > > >
+> > > > And I think the issue is in smack_fs_context_parse_param():
+> > > > https://elixir.bootlin.com/linux/latest/source/security/smack/smack_lsm.c#L691
+> > > >
+> > > > But it seems that selinux_fs_context_parse_param() contains the same issue:
+> > > > https://elixir.bootlin.com/linux/latest/source/security/selinux/hooks.c#L2919
+> > > > +So selinux maintainers as well.
+> > > >
+> > > >> general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
+> > > >> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> > > >> CPU: 0 PID: 20300 Comm: syz-executor.1 Not tainted 5.13.0-syzkaller #0
+> > > >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> > > >> RIP: 0010:memchr+0x2f/0x70 lib/string.c:1054
+> > > >> Code: 41 54 53 48 89 d3 41 89 f7 45 31 f6 49 bc 00 00 00 00 00 fc ff df 0f 1f 44 00 00 48 85 db 74 3b 48 89 fd 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 75 0f 48 ff cb 48 8d 7d 01 44 38 7d 00 75 db
+> > > >> RSP: 0018:ffffc90001dafd00 EFLAGS: 00010246
+> > > >> RAX: 0000000000000000 RBX: 0000000000000013 RCX: dffffc0000000000
+> > > >> RDX: 0000000000000013 RSI: 000000000000002c RDI: 0000000000000000
+> > > >> RBP: 0000000000000000 R08: ffffffff81e171bf R09: ffffffff81e16f95
+> > > >> R10: 0000000000000002 R11: ffff88807e96b880 R12: dffffc0000000000
+> > > >> R13: ffff888020894000 R14: 0000000000000000 R15: 000000000000002c
+> > > >> FS:  00007fe01ae27700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+> > > >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > >> CR2: 00000000005645a8 CR3: 0000000018afc000 CR4: 00000000001506f0
+> > > >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > >> Call Trace:
+> > > >>  legacy_parse_param+0x461/0x7e0 fs/fs_context.c:537
+> > > >>  vfs_parse_fs_param+0x1e5/0x460 fs/fs_context.c:117
+> >
+> > It's Sunday morning and perhaps my mind is not yet in a "hey, let's
+> > look at VFS kernel code!" mindset, but I'm not convinced the problem
+> > is the 'param->string = NULL' assignment in the LSM hooks.  In both
+> > the case of SELinux and Smack that code ends up returning either a 0
+> > (Smack) or a 1 (SELinux) - that's a little odd in it's own way, but I
+> > don't believe it is relevant here - either way these return values are
+> > not equal to -ENOPARAM so we should end up returning early from
+> > vfs_parse_fs_param before it calls down into legacy_parse_param():
+> >
+> > Taken from https://elixir.bootlin.com/linux/latest/source/fs/fs_context.c#L109 :
+> >
+> >   ret = security_fs_context_parse_param(fc, param);
+> >   if (ret != -ENOPARAM)
+> >     /* Param belongs to the LSM or is disallowed by the LSM; so
+> >      * don't pass to the FS.
+> >      */
+> >     return ret;
+> >
+> >   if (fc->ops->parse_param) {
+> >     ret = fc->ops->parse_param(fc, param);
+> >     if (ret != -ENOPARAM)
+> >       return ret;
+> >   }
+>
+> Hi Paul,
+>
+> You are right.
+> I almost connected the dots, but not exactly.
+> Now that I read more code around, setting "param->string = NULL" in
+> smack_fs_context_parse_param() looks correct to me (the fs copies and
+> takes ownership of the string).
+>
+> I don't see how the crash happened...
 
-In some internal places 'hardlink' is used instead of 'link' to avoid
-confusion with the SQE links. Name 'link' conflicts with the existing
-'link' member of io_kiocb.
+FWIW, I poked around a bit too and couldn't see anything obvious
+either, but I can't pretend to know as much about the VFS layer as the
+VFS folks.  Hopefully they might have better luck.
 
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Suggested-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
-Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/internal.h                 |  2 +
- fs/io_uring.c                 | 71 +++++++++++++++++++++++++++++++++++
- fs/namei.c                    |  2 +-
- include/uapi/linux/io_uring.h |  2 +
- 4 files changed, 76 insertions(+), 1 deletion(-)
-
-diff --git a/fs/internal.h b/fs/internal.h
-index 3b3954214385..15a7d210cc67 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -79,6 +79,8 @@ int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
- 		 struct filename *newname, unsigned int flags);
- int do_mkdirat(int dfd, struct filename *name, umode_t mode);
- int do_symlinkat(struct filename *from, int newdfd, struct filename *to);
-+int do_linkat(int olddfd, struct filename *old, int newdfd,
-+			struct filename *new, int flags);
- 
- /*
-  * namespace.c
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a0f681ec25bb..d18ca8afd1fb 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -688,6 +688,15 @@ struct io_symlink {
- 	struct filename			*newpath;
- };
- 
-+struct io_hardlink {
-+	struct file			*file;
-+	int				old_dfd;
-+	int				new_dfd;
-+	struct filename			*oldpath;
-+	struct filename			*newpath;
-+	int				flags;
-+};
-+
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -847,6 +856,7 @@ struct io_kiocb {
- 		struct io_unlink	unlink;
- 		struct io_mkdir		mkdir;
- 		struct io_symlink	symlink;
-+		struct io_hardlink	hardlink;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -1060,6 +1070,7 @@ static const struct io_op_def io_op_defs[] = {
- 	[IORING_OP_UNLINKAT] = {},
- 	[IORING_OP_MKDIRAT] = {},
- 	[IORING_OP_SYMLINKAT] = {},
-+	[IORING_OP_LINKAT] = {},
- };
- 
- static bool io_disarm_next(struct io_kiocb *req);
-@@ -3653,6 +3664,57 @@ static int io_symlinkat(struct io_kiocb *req, int issue_flags)
- 	return 0;
- }
- 
-+static int io_linkat_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	struct io_hardlink *lnk = &req->hardlink;
-+	const char __user *oldf, *newf;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
-+		return -EINVAL;
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
-+	lnk->old_dfd = READ_ONCE(sqe->fd);
-+	lnk->new_dfd = READ_ONCE(sqe->len);
-+	oldf = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	newf = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-+	lnk->flags = READ_ONCE(sqe->hardlink_flags);
-+
-+	lnk->oldpath = getname(oldf);
-+	if (IS_ERR(lnk->oldpath))
-+		return PTR_ERR(lnk->oldpath);
-+
-+	lnk->newpath = getname(newf);
-+	if (IS_ERR(lnk->newpath)) {
-+		putname(lnk->oldpath);
-+		return PTR_ERR(lnk->newpath);
-+	}
-+
-+	req->flags |= REQ_F_NEED_CLEANUP;
-+	return 0;
-+}
-+
-+static int io_linkat(struct io_kiocb *req, int issue_flags)
-+{
-+	struct io_hardlink *lnk = &req->hardlink;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	ret = do_linkat(lnk->old_dfd, lnk->oldpath, lnk->new_dfd,
-+				lnk->newpath, lnk->flags);
-+
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
- {
-@@ -6065,6 +6127,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_mkdirat_prep(req, sqe);
- 	case IORING_OP_SYMLINKAT:
- 		return io_symlinkat_prep(req, sqe);
-+	case IORING_OP_LINKAT:
-+		return io_linkat_prep(req, sqe);
- 	}
- 
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6233,6 +6297,10 @@ static void io_clean_op(struct io_kiocb *req)
- 			putname(req->symlink.oldpath);
- 			putname(req->symlink.newpath);
- 			break;
-+		case IORING_OP_LINKAT:
-+			putname(req->hardlink.oldpath);
-+			putname(req->hardlink.newpath);
-+			break;
- 		}
- 	}
- 	if ((req->flags & REQ_F_POLLED) && req->apoll) {
-@@ -6367,6 +6435,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_SYMLINKAT:
- 		ret = io_symlinkat(req, issue_flags);
- 		break;
-+	case IORING_OP_LINKAT:
-+		ret = io_linkat(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/fs/namei.c b/fs/namei.c
-index 3cf8f5e3b155..99d315462c42 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4356,7 +4356,7 @@ EXPORT_SYMBOL(vfs_link);
-  * with linux 2.0, and to avoid hard-linking to directories
-  * and other special files.  --ADM
-  */
--static int do_linkat(int olddfd, struct filename *old, int newdfd,
-+int do_linkat(int olddfd, struct filename *old, int newdfd,
- 	      struct filename *new, int flags)
- {
- 	struct user_namespace *mnt_userns;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 61fd347ab176..10eb38d2864f 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -44,6 +44,7 @@ struct io_uring_sqe {
- 		__u32		splice_flags;
- 		__u32		rename_flags;
- 		__u32		unlink_flags;
-+		__u32		hardlink_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	/* pack this to avoid bogus arm OABI complaints */
-@@ -135,6 +136,7 @@ enum {
- 	IORING_OP_UNLINKAT,
- 	IORING_OP_MKDIRAT,
- 	IORING_OP_SYMLINKAT,
-+	IORING_OP_LINKAT,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
 -- 
-2.30.2
-
+paul moore
+www.paul-moore.com
