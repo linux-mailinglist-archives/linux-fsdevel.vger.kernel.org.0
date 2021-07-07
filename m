@@ -2,87 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 683873BEA5C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 17:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1F1F3BEA6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 17:09:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232167AbhGGPJa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 11:09:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232084AbhGGPJa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 11:09:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6909F61CC0;
-        Wed,  7 Jul 2021 15:06:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1625670409;
-        bh=meAqswieIwvglWxHVG7o8tCUh+PaGXqIKM7610mdBRE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ifbyG30kR+elhqc/M7He0RvljFsanuwgzukhqgOpYhpFwIv6TlI3xLqSyR8zlzOhe
-         ikdopdgkXRGXAyM6+aoYSirbsi5uysEeK53V+65DvNbMd+Zr181AfBVyMJ8F5IbL33
-         oWCITkCkZT4ZbHdhBbxw7htM3HIjzS9QJ8mtY7ow=
-Date:   Wed, 7 Jul 2021 17:06:45 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 1/2] fcntl: fix potential deadlocks for
- &fown_struct.lock
-Message-ID: <YOXDBZR2RSfiM+A3@kroah.com>
-References: <20210707023548.15872-1-desmondcheongzx@gmail.com>
- <20210707023548.15872-2-desmondcheongzx@gmail.com>
- <YOVENb3X/m/pNrYt@kroah.com>
- <14633c3be87286d811263892375f2dfa9a8ed40a.camel@kernel.org>
- <YOWHKk6Nq8bazYjB@kroah.com>
- <4dda1cad6348fced5fcfcb6140186795ed07d948.camel@kernel.org>
- <20210707135129.GA9446@fieldses.org>
+        id S232269AbhGGPMT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 11:12:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49682 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232233AbhGGPMO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 11:12:14 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E2F8C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jul 2021 08:09:33 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id p21so4573667lfj.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 08:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=vct2bf/Df45LtJ8h+yLbO5LtETmr552t+vio+cdjjQs=;
+        b=gnPBHqWp0mxaKMHE7t3NAtkDN2wlzks8Hm5Tc1pdtwcOxsTwnKdOihhEhhzyO1YDgp
+         kfa/YcBffhH04lc2zl1SYMzw3ukhcEgC4ShKTulUKePez4yI7imzeqBOceEG3A3C+lyl
+         fjKv4r0kdFpR6SZmig+g6WrmIi/xnoxXC7f5keif2k9bquAW6ykKiJiCFjXCiFj+Y8ST
+         zF4ujvfeErkwBMCzvf+VTkWgVUbyL9oYWbE7T7NSsc5I6clY/bKRSAPz14yw1muAl4oj
+         FUbfFQwInABaen78iN0Dg621qtaiQgfHnqhz3VdhyfJ529ihokBqaaBotHWTFwvuXouM
+         etDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=vct2bf/Df45LtJ8h+yLbO5LtETmr552t+vio+cdjjQs=;
+        b=joK9yJv5QHIlF99Bd66pz/INQIyaX9HV3jq0aD9Pmf3GJP8sTEk4H+su99S+IqJ2wG
+         T7uQKGIdghnWdRql8oA/dqlp82KFzv+4jbUBTwCe2wtmUGCwrMGS383eSlWMAI8/msBI
+         PiKT/IHGdNnN7IJ2AGklGYiEcG10rCDucUuQxT42Pu6/Us6JnULsQImYiugQpbINoU0X
+         BDKI25fmJh4TsMxBV5PQgfXNnMz3wqnGijx4zHj4ouJ2FLuOAFaUqEhO7++D68P3GYKP
+         /x9y8J9cyfb2l2tXjg0dDO1VjmDV9CM3LrdL7D6T38mtDT8UrA6er8VtWtK+hVl0vjEV
+         uHkg==
+X-Gm-Message-State: AOAM532kRoFWS82RQmX5Ob4guqedqOT7rZrHn6J/yaAGkxFo9xZ9vN2i
+        hdc67s5BfVJLZ389Y8NzPSc1xSU9hphpIjF1mtg=
+X-Google-Smtp-Source: ABdhPJxMgpgaImgzR8lTMeAGc+NhZ9OSqYsxwTxhQ25+1TKVh7o/DjfwLXgR6/qC0fENSIWqrkMazy+Qk3q+yHfxgWA=
+X-Received: by 2002:ac2:53aa:: with SMTP id j10mr515060lfh.184.1625670571382;
+ Wed, 07 Jul 2021 08:09:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210707135129.GA9446@fieldses.org>
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 7 Jul 2021 10:09:18 -0500
+Message-ID: <CAH2r5mupFZHQFM+aYgCMQ9Whh67LfnSLg-Dsu4jasvtz1Ap0oA@mail.gmail.com>
+Subject: dead code in ceph
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 07, 2021 at 09:51:29AM -0400, J. Bruce Fields wrote:
-> On Wed, Jul 07, 2021 at 07:40:47AM -0400, Jeff Layton wrote:
-> > On Wed, 2021-07-07 at 12:51 +0200, Greg KH wrote:
-> > > On Wed, Jul 07, 2021 at 06:44:42AM -0400, Jeff Layton wrote:
-> > > > On Wed, 2021-07-07 at 08:05 +0200, Greg KH wrote:
-> > > > > On Wed, Jul 07, 2021 at 10:35:47AM +0800, Desmond Cheong Zhi Xi wrote:
-> > > > > > +	WARN_ON_ONCE(irqs_disabled());
-> > > > > 
-> > > > > If this triggers, you just rebooted the box :(
-> > > > > 
-> > > > > Please never do this, either properly handle the problem and return an
-> > > > > error, or do not check for this.  It is not any type of "fix" at all,
-> > > > > and at most, a debugging aid while you work on the root problem.
-> > > > > 
-> > > > > thanks,
-> > > > > 
-> > > > > greg k-h
-> > > > 
-> > > > Wait, what? Why would testing for irqs being disabled and throwing a
-> > > > WARN_ON in that case crash the box?
-> > > 
-> > > If panic-on-warn is enabled, which is a common setting for systems these
-> > > days.
-> > 
-> > Ok, that makes some sense.
-> 
-> Wait, I don't get it.
-> 
-> How are we supposed to decide when to use WARN, when to use BUG, and
-> when to panic?  Do we really want to treat them all as equivalent?  And
-> who exactly is turning on panic-on-warn?
+Noticed that with the netfs changes to Ceph (removing readpages eg)
+looks like some minor things weren't removed from headers e.g.
 
-You never use WARN or BUG, unless the system is so messed up that you
-can not possibly recover from the issue.  Don't be lazy, handle the
-error properly and report it upwards.
+# git grep readpages fs/ceph
+cache.h:int ceph_readpages_from_fscache(struct inode *inode,
+-- 
+Thanks,
 
-thanks,
-
-greg k-h
+Steve
