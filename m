@@ -2,94 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25F843BE0E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 04:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BDEB3BE0E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 04:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229987AbhGGCjH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jul 2021 22:39:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51228 "EHLO
+        id S230006AbhGGCjM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jul 2021 22:39:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229894AbhGGCjG (ORCPT
+        with ESMTP id S229894AbhGGCjL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jul 2021 22:39:06 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03F78C061574;
-        Tue,  6 Jul 2021 19:36:26 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id p9so645147pjl.3;
-        Tue, 06 Jul 2021 19:36:25 -0700 (PDT)
+        Tue, 6 Jul 2021 22:39:11 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A81AC061760;
+        Tue,  6 Jul 2021 19:36:31 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id s13so224628plg.12;
+        Tue, 06 Jul 2021 19:36:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xCxCbJlJiqNeiIjObMW1i82bs2z6LZMv7wXyXYhR9UY=;
-        b=sKCXnleWWkjorBPJdQcv0RhDEn8XoGWzLD7XBRZ4y+PfdPegQ5aF0qGHwm8gP0hRPN
-         wt1vKhublUX1mPP4zyjlltWW9rxInI0ztJsSMtIJ/AfQ18bu6kV1qow29SZCPxSU4y57
-         BKyt0JwxRpZ5uYhELLv5Dfzb3tOQLg6b6rDsxUk0bSDSpR+8ksVZQyFRcDJEbc2gTRmt
-         +UhiKP9EzL/jvBBAchlv/i8EekT/OZ0+zf5qL0CECX/fOh1CXZJxKg2tJFyiT/Wnma8Z
-         Br/Ak3G8K6oKWXJDAbHt1YO3mQ/5vhcR2Xwgch8g0KGDHHOsyyB7SWgE8dnMP8nItVSz
-         caTw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=56B++SYcNkGDLySJ62AZWIU2HnskBoJwEPVYnQNmO+k=;
+        b=GKET/NY1Nx2Y5xu+oDqx0/TbbJiMtBTMgoBUSBbsMBHh9ds59E661pkGTnSp7zFS+j
+         km54h2aSpXdZOjEWrlVBj1sC94cDVYW3MfTckbHWXhW1aWUEvSWZ73msF5FPwXv0Y5Gx
+         yPfV8xYFMV5aeQb31xdtXeylWm+7PCDoQS1gh9pgdwpAZch4pJeAapTLu7w/tg2VMO5E
+         OplE+SaYd9ZbzUBqDL/Bdtg0hdADpRJRHN9qYk9P56chRIKr1bVrYpeua826UXZBreBE
+         hG0T5Yg5d8D2MTVSJBRMpjUFU8uru4qhvDa8P4nPzrDesmk5jtP9m5wnFx0MYfZTZ7d2
+         cdlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xCxCbJlJiqNeiIjObMW1i82bs2z6LZMv7wXyXYhR9UY=;
-        b=jtzibEmnzC+jNtWyfzqjUe0okNUcikcZhM/oQvbk7dezhHYSJ0r4VlOLmCzJEokIOi
-         YLiD6TkDxj/ka4eB5Yo9Ewm2hkFKL3EPs+W8QfN0zGDIGNTRVgek89Fc5F8PjVOCwZ14
-         aHsfywipOSBZ+0jjWZKu5uYTdtOPV7Wiz1gHW8Nyk2Jlp9uXTIQ86VuTM/q+i2SY+97V
-         zZRk9SQyVrMkPDqzD+9yd/vc1mQJVvVNgMEAXTjNJf0u/FueDJlp2LUhqCQtWPiCJSuh
-         L5f43FuDK/jldouAaOw3wOfNWwSWqZrbK3IXFDfVHnuwTSlzwgMzA3B4PIH5h+y+lRSZ
-         MH8w==
-X-Gm-Message-State: AOAM530/baI8V7KHUDH9M7T40W+EwsfyQ9FmJTSFG13t1lf9ZXZz2vGq
-        +nhBVgD9OotOTchyE8OM3lg=
-X-Google-Smtp-Source: ABdhPJzhZho7v0iBKzVWkaCF+D5/fnmu0nCJ1sZyZl+vvZighIoY9emIsRGfaHg7xD4w97d7jSMMDA==
-X-Received: by 2002:a17:902:ff13:b029:129:9a0b:c2dc with SMTP id f19-20020a170902ff13b02901299a0bc2dcmr8341242plj.45.1625625385504;
-        Tue, 06 Jul 2021 19:36:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=56B++SYcNkGDLySJ62AZWIU2HnskBoJwEPVYnQNmO+k=;
+        b=KfexMjeypb3nfMa+4y9qi8/Z/NSz4tzzbmo/5UzEyEpC0LHkaqCEVLpe70ZoSCW1CG
+         wm6rRd2orS7DhM3KhiQaD3y2cnJ5Wp/RaBmmSbTHcw4i0IjZJHjXW8bg5GMp0w2bETzz
+         czWsnXa4Z9qeGUIaFiS+K4Cuv0bWwaD1D4zXrdNyRM8Fehvm+kfMxBX81G7w4IT8vYaV
+         OyFNrh1+5MOW1BRYkJPcQAZXv3IxLFFMTP7kUw5/nDmD3IkXztKYen8ZXkpiml2tAzmf
+         sZTxtGrcBbCj+RizhvFQXPEOzorClYIV1cuX+CxBdXflsinmNzUhc+DOvv/fwR1zCw1A
+         HbSA==
+X-Gm-Message-State: AOAM531CQR6PfNql79TgqI6/DtXUOt0yCuY5wMiMEMbblOiZ6nwsPR+D
+        UCttjZmntvrkPp8m5FK+nZc=
+X-Google-Smtp-Source: ABdhPJx91RGsxB/41s0UAlUUMFfVC1qmfXCDkYuvwC8M76HoaZ3YwNp9zJJkMJ8Ghg0pyrj39cUb3A==
+X-Received: by 2002:a17:902:d213:b029:127:9520:7649 with SMTP id t19-20020a170902d213b029012795207649mr19497260ply.10.1625625390833;
+        Tue, 06 Jul 2021 19:36:30 -0700 (PDT)
 Received: from localhost.localdomain ([118.200.190.93])
-        by smtp.gmail.com with ESMTPSA id r14sm20589446pgm.28.2021.07.06.19.36.22
+        by smtp.gmail.com with ESMTPSA id r14sm20589446pgm.28.2021.07.06.19.36.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jul 2021 19:36:25 -0700 (PDT)
+        Tue, 06 Jul 2021 19:36:30 -0700 (PDT)
 From:   Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
 To:     jlayton@kernel.org, bfields@fieldses.org, viro@zeniv.linux.org.uk
 Cc:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         skhan@linuxfoundation.org, gregkh@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH v2 0/2] fcntl: fix potential deadlocks
-Date:   Wed,  7 Jul 2021 10:35:46 +0800
-Message-Id: <20210707023548.15872-1-desmondcheongzx@gmail.com>
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+Subject: [PATCH v2 1/2] fcntl: fix potential deadlocks for &fown_struct.lock
+Date:   Wed,  7 Jul 2021 10:35:47 +0800
+Message-Id: <20210707023548.15872-2-desmondcheongzx@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210707023548.15872-1-desmondcheongzx@gmail.com>
+References: <20210707023548.15872-1-desmondcheongzx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Syzbot reports a potential deadlock in do_fcntl:
 
-Sorry for the delay between v1 and v2, there was an unrelated issue with Syzbot testing.
+========================================================
+WARNING: possible irq lock inversion dependency detected
+5.12.0-syzkaller #0 Not tainted
+--------------------------------------------------------
+syz-executor132/8391 just changed the state of lock:
+ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: f_getown_ex fs/fcntl.c:211 [inline]
+ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: do_fcntl+0x8b4/0x1200 fs/fcntl.c:395
+but this lock was taken by another, HARDIRQ-safe lock in the past:
+ (&dev->event_lock){-...}-{2:2}
 
-Syzbot reports a possible irq lock inversion dependency:
-https://syzkaller.appspot.com/bug?id=923cfc6c6348963f99886a0176ef11dcc429547b
+and interrupts could create inverse lock ordering between them.
 
-While investigating this error, I discovered that multiple similar lock inversion scenarios can occur. Hence, this series addresses potential deadlocks for two classes of locks, one in each patch:
+other info that might help us debug this:
+Chain exists of:
+  &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
 
-1. Fix potential deadlocks for &fown_struct.lock
+ Possible interrupt unsafe locking scenario:
 
-2. Fix potential deadlock for &fasync_struct.fa_lock
+       CPU0                    CPU1
+       ----                    ----
+  lock(&f->f_owner.lock);
+                               local_irq_disable();
+                               lock(&dev->event_lock);
+                               lock(&new->fa_lock);
+  <Interrupt>
+    lock(&dev->event_lock);
 
-v1 -> v2:
-- Added WARN_ON_ONCE(irqs_disabled()) before calls to read_lock_irq, with elaboration in the commit message, as suggested by Jeff Layton.
+ *** DEADLOCK ***
 
-Best wishes,
-Desmond
+This happens because there is a lock hierarchy of
+&dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
+from the following call chain:
 
-Desmond Cheong Zhi Xi (2):
-  fcntl: fix potential deadlocks for &fown_struct.lock
-  fcntl: fix potential deadlock for &fasync_struct.fa_lock
+  input_inject_event():
+    spin_lock_irqsave(&dev->event_lock,...);
+    input_handle_event():
+      input_pass_values():
+        input_to_handler():
+          evdev_events():
+            evdev_pass_values():
+              spin_lock(&client->buffer_lock);
+              __pass_event():
+                kill_fasync():
+                  kill_fasync_rcu():
+                    read_lock(&fa->fa_lock);
+                    send_sigio():
+                      read_lock_irqsave(&fown->lock,...);
 
- fs/fcntl.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+However, since &dev->event_lock is HARDIRQ-safe, interrupts have to be
+disabled while grabbing &f->f_owner.lock, otherwise we invert the lock
+hierarchy.
 
+Hence, we replace calls to read_lock/read_unlock on &f->f_owner.lock,
+with read_lock_irq/read_unlock_irq.
+
+Here read_lock_irq/read_unlock_irq should be safe to use because the
+functions f_getown_ex and f_getowner_uids are only called from
+do_fcntl, and f_getown is only called from do_fnctl and
+sock_ioctl. do_fnctl itself is only called from syscalls.
+
+For sock_ioctl, the chain is
+  compat_sock_ioctl():
+    compat_sock_ioctl_trans():
+      sock_ioctl()
+
+And interrupts are not disabled on either path. We assert this
+assumption with WARN_ON_ONCE(irqs_disabled()). This check is also
+inserted into another use of write_lock_irq in f_modown.
+
+Reported-and-tested-by: syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+---
+ fs/fcntl.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index dfc72f15be7f..262235e02c4b 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -88,6 +88,7 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
+ static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+                      int force)
+ {
++	WARN_ON_ONCE(irqs_disabled());
+ 	write_lock_irq(&filp->f_owner.lock);
+ 	if (force || !filp->f_owner.pid) {
+ 		put_pid(filp->f_owner.pid);
+@@ -150,7 +151,9 @@ void f_delown(struct file *filp)
+ pid_t f_getown(struct file *filp)
+ {
+ 	pid_t pid = 0;
+-	read_lock(&filp->f_owner.lock);
++
++	WARN_ON_ONCE(irqs_disabled());
++	read_lock_irq(&filp->f_owner.lock);
+ 	rcu_read_lock();
+ 	if (pid_task(filp->f_owner.pid, filp->f_owner.pid_type)) {
+ 		pid = pid_vnr(filp->f_owner.pid);
+@@ -158,7 +161,7 @@ pid_t f_getown(struct file *filp)
+ 			pid = -pid;
+ 	}
+ 	rcu_read_unlock();
+-	read_unlock(&filp->f_owner.lock);
++	read_unlock_irq(&filp->f_owner.lock);
+ 	return pid;
+ }
+ 
+@@ -208,7 +211,8 @@ static int f_getown_ex(struct file *filp, unsigned long arg)
+ 	struct f_owner_ex owner = {};
+ 	int ret = 0;
+ 
+-	read_lock(&filp->f_owner.lock);
++	WARN_ON_ONCE(irqs_disabled());
++	read_lock_irq(&filp->f_owner.lock);
+ 	rcu_read_lock();
+ 	if (pid_task(filp->f_owner.pid, filp->f_owner.pid_type))
+ 		owner.pid = pid_vnr(filp->f_owner.pid);
+@@ -231,7 +235,7 @@ static int f_getown_ex(struct file *filp, unsigned long arg)
+ 		ret = -EINVAL;
+ 		break;
+ 	}
+-	read_unlock(&filp->f_owner.lock);
++	read_unlock_irq(&filp->f_owner.lock);
+ 
+ 	if (!ret) {
+ 		ret = copy_to_user(owner_p, &owner, sizeof(owner));
+@@ -249,10 +253,11 @@ static int f_getowner_uids(struct file *filp, unsigned long arg)
+ 	uid_t src[2];
+ 	int err;
+ 
+-	read_lock(&filp->f_owner.lock);
++	WARN_ON_ONCE(irqs_disabled());
++	read_lock_irq(&filp->f_owner.lock);
+ 	src[0] = from_kuid(user_ns, filp->f_owner.uid);
+ 	src[1] = from_kuid(user_ns, filp->f_owner.euid);
+-	read_unlock(&filp->f_owner.lock);
++	read_unlock_irq(&filp->f_owner.lock);
+ 
+ 	err  = put_user(src[0], &dst[0]);
+ 	err |= put_user(src[1], &dst[1]);
 -- 
 2.25.1
 
