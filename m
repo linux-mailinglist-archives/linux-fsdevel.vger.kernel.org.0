@@ -2,97 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3470F3BE3D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 09:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E04803BE3D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 09:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230418AbhGGHrR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 03:47:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34190 "EHLO
+        id S230508AbhGGHrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 03:47:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230356AbhGGHrR (ORCPT
+        with ESMTP id S230356AbhGGHrY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 03:47:17 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D70C061574;
-        Wed,  7 Jul 2021 00:44:36 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id d9-20020a17090ae289b0290172f971883bso2582666pjz.1;
-        Wed, 07 Jul 2021 00:44:36 -0700 (PDT)
+        Wed, 7 Jul 2021 03:47:24 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4889BC061574;
+        Wed,  7 Jul 2021 00:44:44 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id h1-20020a17090a3d01b0290172d33bb8bcso3197840pjc.0;
+        Wed, 07 Jul 2021 00:44:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0e4qh6X8hZkaKgvTuHVOL+IOiL/w9aZMRgfdARHgzGg=;
-        b=ipg1ciMSTf3kZZeE3mit0qFPsgj5zRjOR2AAwJfN5WZKv1ahL65eSQjZ569rW4XTeG
-         vEuIZFmAjcpJWUNPmmjCm2dFKQK6+QJJtef09DFQg4r5aNVhXcSYjUm77flhsTdLPgzw
-         OY6QRYdT6Xr33aSGymEhrAH2FhWO4/kgigTLsrNVV8wzV8WLoSEyTsAGzPFOnhT2npNk
-         jZovhsjgSqh01v8Y9HVHTktl30cxZrGpuhva6wOJFJmRSWZOotJMkyxLp5MP4VLMgnxE
-         yDLhd6I3S5QqwV7ncB/VFQBhOJob+KsYUFUpWK4YQrPS3q3D05xFlyBYB6C46XDGs6zZ
-         ZaSw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mnaKooiXJs6zXYO5+MRv0r+1pvlB1aCOce0LmiWEYEQ=;
+        b=gV9bJFmoma8pntKDpIj40dn6InHYTtTt98wAIjVmMtj+3PAZQVAghhOixxM87Xai/e
+         xopDw7TLWc3rVWyJWXvWP652wWT2Z/y7yf3OLHtBGK+FRg/kih02RPBj3IdVnlMVhAPj
+         yUu7ebtwsMQfAtATIYFIlUrzmgJOOouydyF7VGzLImEENlUbRsa1zuw5RdJflesOvHjh
+         PlSdsJTvLDMf4yP3OyaI+oLbnhQBBsd1+W+ZqdFqhHz18MD7VC1SOdSynXMI+Hukpre4
+         IyGTi50k/co14g7Sk620psXXd3gzNv6Gz03C4fXm3qLzishZxMYbpn1pREvq0WLtwuQ8
+         1D2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0e4qh6X8hZkaKgvTuHVOL+IOiL/w9aZMRgfdARHgzGg=;
-        b=WYZqQObmEvzvPsiGR8NeR/MUJo7255smlfwceFR7kMrQffB+r76zy8sV6qqNgn/7hb
-         dBkA5IWkMidZYJO/XIjQjCxpuvYTDg7zUH9yQmKSIaegZDKrhmqn15Nh7hf3KGbBGK8P
-         x7C6xuVTfkuvxtIo8cupNnbi5coKUI0Ve6AInI56aDt9onA9Sael4ZMUft4ty2vTcvMo
-         ZfIamBZrsq1trOuFv34KKjBjc3E1fKBX+qb1VVQI2U7PBExCWmtfJ+TP4cQMCHxjEh+6
-         dMT0jhtoOO4g+rwIewjP4bCvoPd5mnbhY20SYQCr+U8ysHzzUUKmZFRSOn/zmR5lPv7X
-         87HA==
-X-Gm-Message-State: AOAM531hMExIuSDod13RZGBmDa6jsavtJJIcgfrMUbZMO9Oj7xmQWrAn
-        GBklEHj7HIpxFIOnPHwBOxA=
-X-Google-Smtp-Source: ABdhPJxjcafVG9vCtOFem9f9EdWv9fquVaqtgUXMF5rhxabs65uETaTz0miKRCt5ZMpkLc7tKHGM5Q==
-X-Received: by 2002:a17:902:6b47:b029:129:ab4e:6407 with SMTP id g7-20020a1709026b47b0290129ab4e6407mr6345192plt.20.1625643876011;
-        Wed, 07 Jul 2021 00:44:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mnaKooiXJs6zXYO5+MRv0r+1pvlB1aCOce0LmiWEYEQ=;
+        b=KwhY1jHOXl8asBrl+eU5d0RYBzpbHCgd+ZhZTaIWnxx0mtrf7Fy1U3gTH7pITxjbof
+         ElKLBRSftsYM0/lYPRKIWQbZqjbjJMQ8zLi6OmvLnuf/+WB9xY1ONaZWADLtVyBYGwM3
+         GLjHoWm0xRyl9C0CHxHk49cc6D9yOxHe4Ubc4TDWzh0JU+K9nMmGBsjC7xJU7pPX8Pz+
+         Uu4+Oh5zfzMdkjcmIfMsZCx8l+6H7+gLkA9/lCSirPlcRbFxFsGrmgeE0HAXUjd5GwBe
+         jZIxiRbSWkbiVCgNWSQmFnSxP3IuYb2l6vqX1CzRYm60U3i4lFla2Yfp3iEQ6oB3gbMz
+         +JOA==
+X-Gm-Message-State: AOAM530UMcU3XP2neVQ4Xl0Q4FdmNkc3lfCtxpqJiNuUnpae+TMmRYlS
+        L+u9dgLA+AO0HI4McD5auEc=
+X-Google-Smtp-Source: ABdhPJzeDWM2Gk6BNldI1iz00CBhgRtOpmFH3MyLkzFrwILjwCiXlBgjkIPZNr1pkhd+RFIj13efWw==
+X-Received: by 2002:a17:902:8c83:b029:129:17e5:a1cc with SMTP id t3-20020a1709028c83b029012917e5a1ccmr20378088plo.49.1625643883878;
+        Wed, 07 Jul 2021 00:44:43 -0700 (PDT)
 Received: from localhost.localdomain ([118.200.190.93])
-        by smtp.gmail.com with ESMTPSA id x39sm12958519pfu.81.2021.07.07.00.44.33
+        by smtp.gmail.com with ESMTPSA id x39sm12958519pfu.81.2021.07.07.00.44.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 00:44:35 -0700 (PDT)
+        Wed, 07 Jul 2021 00:44:43 -0700 (PDT)
 From:   Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
 To:     jlayton@kernel.org, bfields@fieldses.org, viro@zeniv.linux.org.uk
 Cc:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         skhan@linuxfoundation.org, gregkh@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH v3 0/2] fcntl: fix potential deadlocks
-Date:   Wed,  7 Jul 2021 15:43:59 +0800
-Message-Id: <20210707074401.447952-1-desmondcheongzx@gmail.com>
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+Subject: [PATCH v3 1/2] fcntl: fix potential deadlocks for &fown_struct.lock
+Date:   Wed,  7 Jul 2021 15:44:00 +0800
+Message-Id: <20210707074401.447952-2-desmondcheongzx@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210707074401.447952-1-desmondcheongzx@gmail.com>
+References: <20210707074401.447952-1-desmondcheongzx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Syzbot reports a potential deadlock in do_fcntl:
 
-Sorry for the delay between v1 and v2, there was an unrelated issue with Syzbot testing.
+========================================================
+WARNING: possible irq lock inversion dependency detected
+5.12.0-syzkaller #0 Not tainted
+--------------------------------------------------------
+syz-executor132/8391 just changed the state of lock:
+ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: f_getown_ex fs/fcntl.c:211 [inline]
+ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: do_fcntl+0x8b4/0x1200 fs/fcntl.c:395
+but this lock was taken by another, HARDIRQ-safe lock in the past:
+ (&dev->event_lock){-...}-{2:2}
 
-Syzbot reports a possible irq lock inversion dependency:
-https://syzkaller.appspot.com/bug?id=923cfc6c6348963f99886a0176ef11dcc429547b
+and interrupts could create inverse lock ordering between them.
 
-While investigating this error, I discovered that multiple similar lock inversion scenarios can occur. Hence, this series addresses potential deadlocks for two classes of locks, one in each patch:
+other info that might help us debug this:
+Chain exists of:
+  &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
 
-1. Fix potential deadlocks for &fown_struct.lock
+ Possible interrupt unsafe locking scenario:
 
-2. Fix potential deadlock for &fasync_struct.fa_lock
+       CPU0                    CPU1
+       ----                    ----
+  lock(&f->f_owner.lock);
+                               local_irq_disable();
+                               lock(&dev->event_lock);
+                               lock(&new->fa_lock);
+  <Interrupt>
+    lock(&dev->event_lock);
 
-v2 -> v3:
-- Removed WARN_ON_ONCE, keeping elaboration for why read_lock_irq is safe to use in the commit message. As suggested by Greg KH.
+ *** DEADLOCK ***
 
-v1 -> v2:
-- Added WARN_ON_ONCE(irqs_disabled()) before calls to read_lock_irq, and added elaboration in the commit message. As suggested by Jeff Layton.
+This happens because there is a lock hierarchy of
+&dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
+from the following call chain:
 
-Best wishes,
-Desmond
+  input_inject_event():
+    spin_lock_irqsave(&dev->event_lock,...);
+    input_handle_event():
+      input_pass_values():
+        input_to_handler():
+          evdev_events():
+            evdev_pass_values():
+              spin_lock(&client->buffer_lock);
+              __pass_event():
+                kill_fasync():
+                  kill_fasync_rcu():
+                    read_lock(&fa->fa_lock);
+                    send_sigio():
+                      read_lock_irqsave(&fown->lock,...);
 
-Desmond Cheong Zhi Xi (2):
-  fcntl: fix potential deadlocks for &fown_struct.lock
-  fcntl: fix potential deadlock for &fasync_struct.fa_lock
+However, since &dev->event_lock is HARDIRQ-safe, interrupts have to be
+disabled while grabbing &f->f_owner.lock, otherwise we invert the lock
+hierarchy.
 
- fs/fcntl.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+Hence, we replace calls to read_lock/read_unlock on &f->f_owner.lock,
+with read_lock_irq/read_unlock_irq.
 
+Here read_lock_irq/read_unlock_irq are safe to use because the
+functions f_getown_ex and f_getowner_uids are only called from
+do_fcntl, and f_getown is only called from do_fnctl and
+sock_ioctl. do_fnctl itself is only called from syscalls.
+
+For sock_ioctl, the chain is
+  compat_sock_ioctl():
+    compat_sock_ioctl_trans():
+      sock_ioctl()
+
+Interrupts are not disabled on either path.
+
+Reported-and-tested-by: syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+---
+ fs/fcntl.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index dfc72f15be7f..cf9e81dfa615 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -150,7 +150,8 @@ void f_delown(struct file *filp)
+ pid_t f_getown(struct file *filp)
+ {
+ 	pid_t pid = 0;
+-	read_lock(&filp->f_owner.lock);
++
++	read_lock_irq(&filp->f_owner.lock);
+ 	rcu_read_lock();
+ 	if (pid_task(filp->f_owner.pid, filp->f_owner.pid_type)) {
+ 		pid = pid_vnr(filp->f_owner.pid);
+@@ -158,7 +159,7 @@ pid_t f_getown(struct file *filp)
+ 			pid = -pid;
+ 	}
+ 	rcu_read_unlock();
+-	read_unlock(&filp->f_owner.lock);
++	read_unlock_irq(&filp->f_owner.lock);
+ 	return pid;
+ }
+ 
+@@ -208,7 +209,7 @@ static int f_getown_ex(struct file *filp, unsigned long arg)
+ 	struct f_owner_ex owner = {};
+ 	int ret = 0;
+ 
+-	read_lock(&filp->f_owner.lock);
++	read_lock_irq(&filp->f_owner.lock);
+ 	rcu_read_lock();
+ 	if (pid_task(filp->f_owner.pid, filp->f_owner.pid_type))
+ 		owner.pid = pid_vnr(filp->f_owner.pid);
+@@ -231,7 +232,7 @@ static int f_getown_ex(struct file *filp, unsigned long arg)
+ 		ret = -EINVAL;
+ 		break;
+ 	}
+-	read_unlock(&filp->f_owner.lock);
++	read_unlock_irq(&filp->f_owner.lock);
+ 
+ 	if (!ret) {
+ 		ret = copy_to_user(owner_p, &owner, sizeof(owner));
+@@ -249,10 +250,10 @@ static int f_getowner_uids(struct file *filp, unsigned long arg)
+ 	uid_t src[2];
+ 	int err;
+ 
+-	read_lock(&filp->f_owner.lock);
++	read_lock_irq(&filp->f_owner.lock);
+ 	src[0] = from_kuid(user_ns, filp->f_owner.uid);
+ 	src[1] = from_kuid(user_ns, filp->f_owner.euid);
+-	read_unlock(&filp->f_owner.lock);
++	read_unlock_irq(&filp->f_owner.lock);
+ 
+ 	err  = put_user(src[0], &dst[0]);
+ 	err |= put_user(src[1], &dst[1]);
 -- 
 2.25.1
 
