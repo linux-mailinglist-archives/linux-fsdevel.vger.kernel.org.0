@@ -2,171 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC1B3BEA4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 17:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 683873BEA5C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 17:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232132AbhGGPH1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 11:07:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232283AbhGGPH0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 11:07:26 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35020C061574;
-        Wed,  7 Jul 2021 08:04:46 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 1F93E50A1; Wed,  7 Jul 2021 11:04:45 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 1F93E50A1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1625670285;
-        bh=QAOyrzJPOcE2SXamHMXvVsksmrY457V7ch3ClTSWyUY=;
-        h=Date:To:Cc:Subject:From:From;
-        b=lv0zPNdSNDQ4OLI9sV6ZeMd2gpJkhj9zkbUEH2CSfjeVfX0vKTiQlA2cb947bhqyX
-         S9jJ1XEvX9xYBPZnCDxWfFwNNMbkP6iEjL6tf3KKIC86p8gX8xQvyEUamxVamZboin
-         yWuilPwxT4fQQgwP9bw2zsFThr6BvOFlpCCVEgmE=
-Date:   Wed, 7 Jul 2021 11:04:45 -0400
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>
-Subject: [GIT PULL] nfsd changes for 5.14
-Message-ID: <20210707150445.GA9911@fieldses.org>
+        id S232167AbhGGPJa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 11:09:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232084AbhGGPJa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 11:09:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6909F61CC0;
+        Wed,  7 Jul 2021 15:06:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1625670409;
+        bh=meAqswieIwvglWxHVG7o8tCUh+PaGXqIKM7610mdBRE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ifbyG30kR+elhqc/M7He0RvljFsanuwgzukhqgOpYhpFwIv6TlI3xLqSyR8zlzOhe
+         ikdopdgkXRGXAyM6+aoYSirbsi5uysEeK53V+65DvNbMd+Zr181AfBVyMJ8F5IbL33
+         oWCITkCkZT4ZbHdhBbxw7htM3HIjzS9QJ8mtY7ow=
+Date:   Wed, 7 Jul 2021 17:06:45 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2 1/2] fcntl: fix potential deadlocks for
+ &fown_struct.lock
+Message-ID: <YOXDBZR2RSfiM+A3@kroah.com>
+References: <20210707023548.15872-1-desmondcheongzx@gmail.com>
+ <20210707023548.15872-2-desmondcheongzx@gmail.com>
+ <YOVENb3X/m/pNrYt@kroah.com>
+ <14633c3be87286d811263892375f2dfa9a8ed40a.camel@kernel.org>
+ <YOWHKk6Nq8bazYjB@kroah.com>
+ <4dda1cad6348fced5fcfcb6140186795ed07d948.camel@kernel.org>
+ <20210707135129.GA9446@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
+In-Reply-To: <20210707135129.GA9446@fieldses.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Please pull:
+On Wed, Jul 07, 2021 at 09:51:29AM -0400, J. Bruce Fields wrote:
+> On Wed, Jul 07, 2021 at 07:40:47AM -0400, Jeff Layton wrote:
+> > On Wed, 2021-07-07 at 12:51 +0200, Greg KH wrote:
+> > > On Wed, Jul 07, 2021 at 06:44:42AM -0400, Jeff Layton wrote:
+> > > > On Wed, 2021-07-07 at 08:05 +0200, Greg KH wrote:
+> > > > > On Wed, Jul 07, 2021 at 10:35:47AM +0800, Desmond Cheong Zhi Xi wrote:
+> > > > > > +	WARN_ON_ONCE(irqs_disabled());
+> > > > > 
+> > > > > If this triggers, you just rebooted the box :(
+> > > > > 
+> > > > > Please never do this, either properly handle the problem and return an
+> > > > > error, or do not check for this.  It is not any type of "fix" at all,
+> > > > > and at most, a debugging aid while you work on the root problem.
+> > > > > 
+> > > > > thanks,
+> > > > > 
+> > > > > greg k-h
+> > > > 
+> > > > Wait, what? Why would testing for irqs being disabled and throwing a
+> > > > WARN_ON in that case crash the box?
+> > > 
+> > > If panic-on-warn is enabled, which is a common setting for systems these
+> > > days.
+> > 
+> > Ok, that makes some sense.
+> 
+> Wait, I don't get it.
+> 
+> How are we supposed to decide when to use WARN, when to use BUG, and
+> when to panic?  Do we really want to treat them all as equivalent?  And
+> who exactly is turning on panic-on-warn?
 
-  git://linux-nfs.org/~bfields/linux.git tags/nfsd-5.14
+You never use WARN or BUG, unless the system is so messed up that you
+can not possibly recover from the issue.  Don't be lazy, handle the
+error properly and report it upwards.
 
-for 5.14 nfsd changes.
+thanks,
 
-Some highlights:
-	- add tracepoints for callbacks and for client creation and
-	  destruction
-	- cache the mounts used for server-to-server copies
-	- expose callback information in /proc/fs/nfsd/clients/*/info
-	- don't hold locks unnecessarily while waiting for commits
-	- update NLM to use xdr_stream, as we have for NFSv2/v3/v4
-
---b.
-
-ChenXiaoSong (1):
-      nfs_common: fix doc warning
-
-Chuck Lever (54):
-      NFSD: Fix TP_printk() format specifier in nfsd_clid_class
-      NFSD: Add an RPC authflavor tracepoint display helper
-      NFSD: Add nfsd_clid_cred_mismatch tracepoint
-      NFSD: Add nfsd_clid_verf_mismatch tracepoint
-      NFSD: Remove trace_nfsd_clid_inuse_err
-      NFSD: Add nfsd_clid_confirmed tracepoint
-      NFSD: Add nfsd_clid_reclaim_complete tracepoint
-      NFSD: Add nfsd_clid_destroyed tracepoint
-      NFSD: Add a couple more nfsd_clid_expired call sites
-      NFSD: Add tracepoints for SETCLIENTID edge cases
-      NFSD: Add tracepoints for EXCHANGEID edge cases
-      NFSD: Constify @fh argument of knfsd_fh_hash()
-      NFSD: Capture every CB state transition
-      NFSD: Drop TRACE_DEFINE_ENUM for NFSD4_CB_<state> macros
-      NFSD: Add cb_lost tracepoint
-      NFSD: Adjust cb_shutdown tracepoint
-      NFSD: Remove spurious cb_setup_err tracepoint
-      NFSD: Enhance the nfsd_cb_setup tracepoint
-      NFSD: Add an nfsd_cb_lm_notify tracepoint
-      NFSD: Add an nfsd_cb_offload tracepoint
-      NFSD: Replace the nfsd_deleg_break tracepoint
-      NFSD: Add an nfsd_cb_probe tracepoint
-      NFSD: Remove the nfsd_cb_work and nfsd_cb_done tracepoints
-      NFSD: Update nfsd_cb_args tracepoint
-      lockd: Remove stale comments
-      lockd: Create a simplified .vs_dispatch method for NLM requests
-      lockd: Common NLM XDR helpers
-      lockd: Update the NLMv1 void argument decoder to use struct xdr_stream
-      lockd: Update the NLMv1 TEST arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv1 LOCK arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv1 CANCEL arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv1 UNLOCK arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv1 nlm_res arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv1 SM_NOTIFY arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv1 SHARE arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv1 FREE_ALL arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv1 void results encoder to use struct xdr_stream
-      lockd: Update the NLMv1 TEST results encoder to use struct xdr_stream
-      lockd: Update the NLMv1 nlm_res results encoder to use struct xdr_stream
-      lockd: Update the NLMv1 SHARE results encoder to use struct xdr_stream
-      lockd: Update the NLMv4 void arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv4 TEST arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv4 LOCK arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv4 CANCEL arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv4 UNLOCK arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv4 nlm_res arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv4 SM_NOTIFY arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv4 SHARE arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv4 FREE_ALL arguments decoder to use struct xdr_stream
-      lockd: Update the NLMv4 void results encoder to use struct xdr_stream
-      lockd: Update the NLMv4 TEST results encoder to use struct xdr_stream
-      lockd: Update the NLMv4 nlm_res results encoder to use struct xdr_stream
-      lockd: Update the NLMv4 SHARE results encoder to use struct xdr_stream
-      NFSD: Prevent a possible oops in the nfs_dirent() tracepoint
-
-Colin Ian King (2):
-      rpc: remove redundant initialization of variable status
-      nfsd: remove redundant assignment to pointer 'this'
-
-Dai Ngo (2):
-      NFSD: delay unmount source's export after inter-server copy completed.
-      nfsd: fix kernel test robot warning in SSC code
-
-Dave Wysochanski (1):
-      nfsd4: Expose the callback address and state of each NFS4 client
-
-J. Bruce Fields (4):
-      nfsd: move some commit_metadata()s outside the inode lock
-      nfsd: move fsnotify on client creation outside spinlock
-      nfsd: rpc_peeraddr2str needs rcu lock
-      nfsd: fix NULL dereference in nfs3svc_encode_getaclres
-
-Olga Kornievskaia (1):
-      NFSD add vfs_fsync after async copy is done
-
-Trond Myklebust (1):
-      nfsd: Reduce contention for the nfsd_file nf_rwsem
-
-Wei Yongjun (1):
-      NFSD: Fix error return code in nfsd4_interssc_connect()
-
-Yu Hsiang Huang (1):
-      nfsd: Prevent truncation of an unlinked inode from blocking access to its directory
-
-Zheng Yongjun (1):
-      xprtrdma: Fix spelling mistakes
-
- fs/lockd/svc.c                    |  43 ++++
- fs/lockd/svcxdr.h                 | 151 ++++++++++++++
- fs/lockd/xdr.c                    | 402 +++++++++++++++++++------------------
- fs/lockd/xdr4.c                   | 403 ++++++++++++++++++++------------------
- fs/nfs_common/grace.c             |   1 +
- fs/nfsd/netns.h                   |   6 +
- fs/nfsd/nfs3acl.c                 |   3 +-
- fs/nfsd/nfs4callback.c            |  47 ++---
- fs/nfsd/nfs4proc.c                | 154 ++++++++++++++-
- fs/nfsd/nfs4state.c               | 177 +++++++++++++----
- fs/nfsd/nfsd.h                    |   4 +
- fs/nfsd/nfsfh.h                   |   7 +-
- fs/nfsd/nfssvc.c                  |   3 +
- fs/nfsd/trace.h                   | 250 +++++++++++++++++------
- fs/nfsd/vfs.c                     |  26 ++-
- fs/nfsd/xdr4.h                    |   1 +
- include/linux/lockd/xdr.h         |   6 -
- include/linux/lockd/xdr4.h        |   7 +-
- include/linux/nfs_ssc.h           |  14 ++
- net/sunrpc/auth_gss/svcauth_gss.c |   2 +-
- net/sunrpc/xprtrdma/svc_rdma_rw.c |   6 +-
- 21 files changed, 1175 insertions(+), 538 deletions(-)
- create mode 100644 fs/lockd/svcxdr.h
+greg k-h
