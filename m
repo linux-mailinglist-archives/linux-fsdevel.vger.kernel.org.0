@@ -2,82 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E43093BF033
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 21:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E27283BF035
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 21:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231438AbhGGTZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 15:25:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230456AbhGGTZG (ORCPT
+        id S231587AbhGGTZ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 15:25:29 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:46632 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229519AbhGGTZ3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 15:25:06 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDDFAC061574
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jul 2021 12:22:24 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id q18so6926999lfc.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 12:22:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QWz6j7aQDicZF+8YuVqNXjaVMSD+f6gQ3hDARWuwoZw=;
-        b=Vo43/qNbhMYCKn8reADLJoDDeEmatxkzxuMGmzH36T18+UunKRPkZXhu7Onj0iGd1m
-         DyhjmfsKcNwvaEw9wj0bn5veD9VgTj37YFXTnQRqjNu+7E0+d/h1IdSaFWgJo+WXaxPt
-         n9iKdaXWHIyihVRQYNxdY2/my8u598J8vlEng=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QWz6j7aQDicZF+8YuVqNXjaVMSD+f6gQ3hDARWuwoZw=;
-        b=KxKn+aBDBlU2hQDBjcj7qPvO535d4tSa19IfjI5Pw5aMcaRUXHOuRK+yCp/QF4foMd
-         JmI1kHGhiOgLrlsGDaQyF0M8wnwYxYypPeM5V40Uur+EWd2GrieIln72cXC6GSUtbfq0
-         AURm6OMd8hk3JoAmK+LtEGqD8jLT+jT/ScwQrqCgANSVf658CxZjxznkdWLHsaF+cvaz
-         cB90nNKthftuPDghw/ZN6DJiirlc5oVwFU6ZElskA7Xww2xqaTPNeMXG4WYtM3xc6XOb
-         oFLbRZnmEYClvELens6D+JUnpd7BVcTRE7Q67CQc+51PY7MhGmKTaxEAjosXb9s0xTuB
-         5+HA==
-X-Gm-Message-State: AOAM530OWUNziVRvn18C19wHDCJ4/i4Gzg97DSA5KzBXUE2KT1PH3Stq
-        qOgdkFEt184Ab3HJPTFwniNjJi2ZTldDPZD1wok=
-X-Google-Smtp-Source: ABdhPJxBzY/pEDbz2qzEnu3L18/1H3K3omOmYws/HirhXNsbkn+HjF/e2eTICPE4upTS4BMMyK/hGA==
-X-Received: by 2002:ac2:5f70:: with SMTP id c16mr19025183lfc.114.1625685742882;
-        Wed, 07 Jul 2021 12:22:22 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id p17sm4965lfu.192.2021.07.07.12.22.22
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jul 2021 12:22:22 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id p21so6872353lfj.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 12:22:22 -0700 (PDT)
-X-Received: by 2002:a2e:50b:: with SMTP id 11mr21108241ljf.220.1625685742103;
- Wed, 07 Jul 2021 12:22:22 -0700 (PDT)
+        Wed, 7 Jul 2021 15:25:29 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 9CA49200F3;
+        Wed,  7 Jul 2021 19:22:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1625685767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XNkwqsKgcTxXDmIyDwiv4itkoXQyBCYGIUT+cv7WsGs=;
+        b=uyMABBkSfPgVbsSVfuyUhUQdPVkK6pKhytrHDkXS8vgvcpYSju6iFUUk5KEZoGMpPzZjIf
+        5uUPVMUto60EBSRqriSeElAdl615BNsmdSpVn6kJZ3SW5Wu5iBC9Q+yEU05W1Y+o7htbZY
+        brTlvfJB9y2P5p/tUIqOyn+uRp57f2k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1625685767;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XNkwqsKgcTxXDmIyDwiv4itkoXQyBCYGIUT+cv7WsGs=;
+        b=fQaCtZXMj/HEWlwiM8jQ+ABRikgLAoiQ1VlicA3hrxAmZq5yHl1Msikf37SsHQex4audO0
+        n/rQhwYlalv/GRDw==
+Received: from quack2.suse.cz (unknown [10.163.43.118])
+        by relay2.suse.de (Postfix) with ESMTP id 8C1A4A3BB0;
+        Wed,  7 Jul 2021 19:22:47 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 702991F2CD7; Wed,  7 Jul 2021 21:22:47 +0200 (CEST)
+Date:   Wed, 7 Jul 2021 21:22:47 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     amir73il@gmail.com, djwong@kernel.org, tytso@mit.edu,
+        david@fromorbit.com, jack@suse.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v3 02/15] fanotify: Fold event size calculation to its
+ own function
+Message-ID: <20210707192247.GD18396@quack2.suse.cz>
+References: <20210629191035.681913-1-krisman@collabora.com>
+ <20210629191035.681913-3-krisman@collabora.com>
 MIME-Version: 1.0
-References: <20210707122747.3292388-1-dkadashev@gmail.com> <20210707122747.3292388-6-dkadashev@gmail.com>
-In-Reply-To: <20210707122747.3292388-6-dkadashev@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 7 Jul 2021 12:22:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiG+sN+2zSoAOggKCGue2kOJvw3rQySvQXsZstRQFTN+g@mail.gmail.com>
-Message-ID: <CAHk-=wiG+sN+2zSoAOggKCGue2kOJvw3rQySvQXsZstRQFTN+g@mail.gmail.com>
-Subject: Re: [PATCH v8 05/11] fs: make do_mknodat() take struct filename
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210629191035.681913-3-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 7, 2021 at 5:28 AM Dmitry Kadashev <dkadashev@gmail.com> wrote:
->
-> Pass in the struct filename pointers instead of the user string, for
-> uniformity with the recently converted do_unlinkat(), do_renameat(),
-> do_mkdirat().
+On Tue 29-06-21 15:10:22, Gabriel Krisman Bertazi wrote:
+> Every time this function is invoked, it is immediately added to
+> FAN_EVENT_METADATA_LEN, since there is no need to just calculate the
+> length of info records. This minor clean up folds the rest of the
+> calculation into the function, which now operates in terms of events,
+> returning the size of the entire event, including metadata.
+> 
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-Yup. And the uniformity continues with that "we could avoid the goto
-retry/out1 with a mknodat_helper() function for the inner meat of the
-function.
+Looks good. Feel free to add:
 
-               Linus
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> 
+> ---
+> Changes since v1:
+>   - rebased on top of hashing patches
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 33 +++++++++++++++++-------------
+>  1 file changed, 19 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 64864fb40b40..68a53d3534f8 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -117,17 +117,24 @@ static int fanotify_fid_info_len(int fh_len, int name_len)
+>  	return roundup(FANOTIFY_INFO_HDR_LEN + info_len, FANOTIFY_EVENT_ALIGN);
+>  }
+>  
+> -static int fanotify_event_info_len(unsigned int fid_mode,
+> -				   struct fanotify_event *event)
+> +static size_t fanotify_event_len(struct fanotify_event *event,
+> +				 unsigned int fid_mode)
+>  {
+> -	struct fanotify_info *info = fanotify_event_info(event);
+> -	int dir_fh_len = fanotify_event_dir_fh_len(event);
+> -	int fh_len = fanotify_event_object_fh_len(event);
+> -	int info_len = 0;
+> +	size_t event_len = FAN_EVENT_METADATA_LEN;
+> +	struct fanotify_info *info;
+> +	int dir_fh_len;
+> +	int fh_len;
+>  	int dot_len = 0;
+>  
+> +	if (!fid_mode)
+> +		return event_len;
+> +
+> +	info = fanotify_event_info(event);
+> +	dir_fh_len = fanotify_event_dir_fh_len(event);
+> +	fh_len = fanotify_event_object_fh_len(event);
+> +
+>  	if (dir_fh_len) {
+> -		info_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
+> +		event_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
+>  	} else if ((fid_mode & FAN_REPORT_NAME) && (event->mask & FAN_ONDIR)) {
+>  		/*
+>  		 * With group flag FAN_REPORT_NAME, if name was not recorded in
+> @@ -137,9 +144,9 @@ static int fanotify_event_info_len(unsigned int fid_mode,
+>  	}
+>  
+>  	if (fh_len)
+> -		info_len += fanotify_fid_info_len(fh_len, dot_len);
+> +		event_len += fanotify_fid_info_len(fh_len, dot_len);
+>  
+> -	return info_len;
+> +	return event_len;
+>  }
+>  
+>  /*
+> @@ -168,7 +175,7 @@ static void fanotify_unhash_event(struct fsnotify_group *group,
+>  static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+>  					    size_t count)
+>  {
+> -	size_t event_size = FAN_EVENT_METADATA_LEN;
+> +	size_t event_size;
+>  	struct fanotify_event *event = NULL;
+>  	struct fsnotify_event *fsn_event;
+>  	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+> @@ -181,8 +188,7 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+>  		goto out;
+>  
+>  	event = FANOTIFY_E(fsn_event);
+> -	if (fid_mode)
+> -		event_size += fanotify_event_info_len(fid_mode, event);
+> +	event_size = fanotify_event_len(event, fid_mode);
+>  
+>  	if (event_size > count) {
+>  		event = ERR_PTR(-EINVAL);
+> @@ -412,8 +418,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>  
+>  	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+>  
+> -	metadata.event_len = FAN_EVENT_METADATA_LEN +
+> -				fanotify_event_info_len(fid_mode, event);
+> +	metadata.event_len = fanotify_event_len(event, fid_mode);
+>  	metadata.metadata_len = FAN_EVENT_METADATA_LEN;
+>  	metadata.vers = FANOTIFY_METADATA_VERSION;
+>  	metadata.reserved = 0;
+> -- 
+> 2.32.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
