@@ -2,70 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 006933BECAC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 18:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 976613BECCB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 19:06:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230404AbhGGRBF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 13:01:05 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:50852 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230376AbhGGRBE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 13:01:04 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 167Gw96L029559
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 7 Jul 2021 12:58:10 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id CA98E15C3CC6; Wed,  7 Jul 2021 12:58:09 -0400 (EDT)
-Date:   Wed, 7 Jul 2021 12:58:09 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     leah.rumancik@gmail.com, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: Re: [PATCH] ext4: fix EXT4_IOC_CHECKPOINT
-Message-ID: <YOXdIZARJ0Rwtfbd@mit.edu>
-References: <20210707085644.3041867-1-hch@lst.de>
+        id S230428AbhGGRIt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 13:08:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230109AbhGGRIt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 13:08:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4A06A61C7F;
+        Wed,  7 Jul 2021 17:06:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625677569;
+        bh=Q3PwKU2MWriiez/7uEGY76FwByXF51elK2MPyqH+BDw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=aJxD8e5bZAU/ArkUH8mQlC6pi/cl6Ipfk4qd3l960Fvc9I+ZdcvoFvwuOCeyMZZO5
+         0P2YAlLy5+acaD1nXZWuFQpZaBhWkISZq5DILzu3pClnr1OzG78QZxvARoWltS23A6
+         PV5m/dgpvj5cndgNGYFPIJVcYgJjuvoKn2zj3m0wtVV+oxkxwCteNRDTOK6KH8GejO
+         kgO/OweukSzwSFYYyA6AUrfR6Pub0zht27FcD5NVnxoUkUsXE/OS9zw5ne4eTAZBxm
+         P7ZJOa6oz6WJHk4i63O+pM0jeQGz94g9CvbHUFpLqDcTENi6b1B/WnHMLSJ96r3KrV
+         FvK5oT8v5eg2g==
+Message-ID: <15fbc55a3b983c4962e9ad2d96eeebd77aad3be6.camel@kernel.org>
+Subject: Re: [PATCH v3 0/2] fcntl: fix potential deadlocks
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
+        bfields@fieldses.org, viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org, gregkh@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Date:   Wed, 07 Jul 2021 13:06:07 -0400
+In-Reply-To: <20210707074401.447952-1-desmondcheongzx@gmail.com>
+References: <20210707074401.447952-1-desmondcheongzx@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210707085644.3041867-1-hch@lst.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 07, 2021 at 10:56:44AM +0200, Christoph Hellwig wrote:
-> Issuing a discard for any kind of "contention deletion SLO" is highly
-> dangerous as discard as defined by Linux (as well the underlying NVMe,
-> SCSI, ATA, eMMC and virtio primitivies) are defined to not guarantee
-> erasing of data but just allow optional and nondeterministic reclamation
-> of space.  Instead issuing write zeroes is the only think to perform
-> such an operation.  Remove the highly dangerous and misleading discard
-> mode for EXT4_IOC_CHECKPOINT and only support the write zeroes based
-> on, and clean up the resulting mess including the dry run mode.
+On Wed, 2021-07-07 at 15:43 +0800, Desmond Cheong Zhi Xi wrote:
+> Hi,
+> 
+> Sorry for the delay between v1 and v2, there was an unrelated issue with Syzbot testing.
+> 
+> Syzbot reports a possible irq lock inversion dependency:
+> https://syzkaller.appspot.com/bug?id=923cfc6c6348963f99886a0176ef11dcc429547b
+> 
+> While investigating this error, I discovered that multiple similar lock inversion scenarios can occur. Hence, this series addresses potential deadlocks for two classes of locks, one in each patch:
+> 
+> 1. Fix potential deadlocks for &fown_struct.lock
+> 
+> 2. Fix potential deadlock for &fasync_struct.fa_lock
+> 
+> v2 -> v3:
+> - Removed WARN_ON_ONCE, keeping elaboration for why read_lock_irq is safe to use in the commit message. As suggested by Greg KH.
+> 
+> v1 -> v2:
+> - Added WARN_ON_ONCE(irqs_disabled()) before calls to read_lock_irq, and added elaboration in the commit message. As suggested by Jeff Layton.
+> 
+> Best wishes,
+> Desmond
+> 
+> Desmond Cheong Zhi Xi (2):
+>   fcntl: fix potential deadlocks for &fown_struct.lock
+>   fcntl: fix potential deadlock for &fasync_struct.fa_lock
+> 
+>  fs/fcntl.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+> 
 
-A discard is not "dangerous"; how it behaves is simply not necessarily
-guaranteed by the standards specification.  The userspace which uses
-the ioctl simply needs to know how a particular block device might
-react when it is given a discard.
+Looks like these patches are identical to the v1 set, so I'm just going
+to leave those in place since linux-next already has them. Let me know
+if I've missed something though.
 
-I'll note that there is a similar issue with "WRITE SAME" or "ZEROOUT.
-A WRITE SAME might take a fraction of a second --- or it might take
-days --- depending on how the storage device is implemented.  It is
-similarly unspecified by the various standards specification.  Hence,
-userspace needs to know something about the block device before
-deciding whether or not it would be good idea to issue a "WRITE SAME"
-operation for large number of blocks.
+Thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-This is why the API is implemented in terms of what command will be
-issued to the block device, and not what the semantic meaning is for
-that particular command.  That's up to the userspace application to
-know out of band, and we should be able to give the privileged
-application the freedom to decide which command makes the most amount
-of sense.
-
-	 	      	  	    		   - Ted
