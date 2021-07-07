@@ -2,160 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F14F13BE32A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 08:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F2763BE34E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 08:54:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230284AbhGGGcK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 02:32:10 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:6438 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230263AbhGGGcK (ORCPT
+        id S230351AbhGGG5B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 02:57:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51164 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230263AbhGGG4r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 02:32:10 -0400
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GKTvX24r4z78hl;
-        Wed,  7 Jul 2021 14:26:00 +0800 (CST)
-Received: from dggpeml500025.china.huawei.com (7.185.36.35) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 7 Jul 2021 14:29:27 +0800
-Received: from [10.174.176.117] (10.174.176.117) by
- dggpeml500025.china.huawei.com (7.185.36.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 7 Jul 2021 14:29:27 +0800
-Subject: Re: [PATCH] block: ensure the memory order between bi_private and
- bi_status
-To:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>
-CC:     <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <yukuai3@huawei.com>
-References: <20210701113537.582120-1-houtao1@huawei.com>
-From:   Hou Tao <houtao1@huawei.com>
-Message-ID: <0fde8c5a-2c1d-4439-7c75-71fa120d3b62@huawei.com>
-Date:   Wed, 7 Jul 2021 14:29:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Wed, 7 Jul 2021 02:56:47 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B3FFC061574;
+        Tue,  6 Jul 2021 23:54:08 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id c15so510017pls.13;
+        Tue, 06 Jul 2021 23:54:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=29KlgInZ2jmDSdyaEuadEo1RRyP0XOU3F3wxMJ4gF08=;
+        b=PIYRoDp9e45o2tqbnJDez56Ho6obbPuxHHPEF/IatZSzIYPH0i+N2/b1x4X+XWreCZ
+         9yAcfanBPwYXOv47Y0ypjZMuNVkc6gIP3QVLTvmCLhJrpL4tjqaHHFAAtv/tuP9+vRg0
+         yVMQObvdG80Sg1cFsxPq2XdWMT5zLd8HZHKkLT4zxIXKUd+NeHYuv4wtB41u92BjBjfv
+         vQXM/2Qln3DCNdrCrj1Y9pHxvwwYucGYgTX2vpwjwhkyiKdoNchesCny/zptsAEggYRQ
+         Vg8xLrkV3xwBoNpejL5cGxSA3Y0W+V+I9d8RYWMVJQT61W9EnZNusopKuBBXn5GrBcK5
+         1kqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=29KlgInZ2jmDSdyaEuadEo1RRyP0XOU3F3wxMJ4gF08=;
+        b=ryzPP5TSSvwnS3bQg6C43gik5iGFcDQVO6Yp2osQBEeBfoARHLa3BD5n6SE3FufgHC
+         KuvUUTOFp9kpog4vY1CUAsla098zbMKBc1g/cueVymI6FBBCrBQ+9PJa9DuOjj9jLtDq
+         xPwbb8Od+6LRdQ+WThKXL+QOYmS3jJr3s5ar0Tro7t6WmyvUrBOWc4ipfjug6N4LWXyK
+         1DnIRL+CmBOGqbIOMS/IEWJsPgqhDbkTQBY/ZC5TK1ChjTTpOAtl8Cf1DzJVGJm9i3de
+         5355hbaPjXpnp8aCaEBppJKHhDbrA6Zzrf9awQiHnPpIXOKg2Yf2PAfxCPdhHjDeAXAR
+         7i6Q==
+X-Gm-Message-State: AOAM530MklQCBlW3n8lHDkyufOPWIeee4toi4BRK+bwzde8dr9LRfHNY
+        tGpwDBKhhBtjVMeXxSyRFmE=
+X-Google-Smtp-Source: ABdhPJxZ1zdoUYOr/tVPvI2iKEfjV06YlGwS0CcDb679eyGv3+xgPB6ouNFj5g4/DI/XO9X/+SOqBQ==
+X-Received: by 2002:a17:902:c981:b029:129:afe:8e30 with SMTP id g1-20020a170902c981b02901290afe8e30mr19863712plc.73.1625640847825;
+        Tue, 06 Jul 2021 23:54:07 -0700 (PDT)
+Received: from [192.168.1.237] ([118.200.190.93])
+        by smtp.gmail.com with ESMTPSA id q17sm7934444pfk.186.2021.07.06.23.54.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Jul 2021 23:54:07 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] fcntl: fix potential deadlocks for
+ &fown_struct.lock
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     jlayton@kernel.org, bfields@fieldses.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+References: <20210707023548.15872-1-desmondcheongzx@gmail.com>
+ <20210707023548.15872-2-desmondcheongzx@gmail.com>
+ <YOVENb3X/m/pNrYt@kroah.com>
+From:   Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+Message-ID: <6bc70605-2ed3-98e8-cc48-9bb565cb05bd@gmail.com>
+Date:   Wed, 7 Jul 2021 14:54:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20210701113537.582120-1-houtao1@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <YOVENb3X/m/pNrYt@kroah.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-X-Originating-IP: [10.174.176.117]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500025.china.huawei.com (7.185.36.35)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ping ?
+On 7/7/21 2:05 pm, Greg KH wrote:
+> On Wed, Jul 07, 2021 at 10:35:47AM +0800, Desmond Cheong Zhi Xi wrote:
+>> Syzbot reports a potential deadlock in do_fcntl:
+>>
+>> ========================================================
+>> WARNING: possible irq lock inversion dependency detected
+>> 5.12.0-syzkaller #0 Not tainted
+>> --------------------------------------------------------
+>> syz-executor132/8391 just changed the state of lock:
+>> ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: f_getown_ex fs/fcntl.c:211 [inline]
+>> ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: do_fcntl+0x8b4/0x1200 fs/fcntl.c:395
+>> but this lock was taken by another, HARDIRQ-safe lock in the past:
+>>   (&dev->event_lock){-...}-{2:2}
+>>
+>> and interrupts could create inverse lock ordering between them.
+>>
+>> other info that might help us debug this:
+>> Chain exists of:
+>>    &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
+>>
+>>   Possible interrupt unsafe locking scenario:
+>>
+>>         CPU0                    CPU1
+>>         ----                    ----
+>>    lock(&f->f_owner.lock);
+>>                                 local_irq_disable();
+>>                                 lock(&dev->event_lock);
+>>                                 lock(&new->fa_lock);
+>>    <Interrupt>
+>>      lock(&dev->event_lock);
+>>
+>>   *** DEADLOCK ***
+>>
+>> This happens because there is a lock hierarchy of
+>> &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
+>> from the following call chain:
+>>
+>>    input_inject_event():
+>>      spin_lock_irqsave(&dev->event_lock,...);
+>>      input_handle_event():
+>>        input_pass_values():
+>>          input_to_handler():
+>>            evdev_events():
+>>              evdev_pass_values():
+>>                spin_lock(&client->buffer_lock);
+>>                __pass_event():
+>>                  kill_fasync():
+>>                    kill_fasync_rcu():
+>>                      read_lock(&fa->fa_lock);
+>>                      send_sigio():
+>>                        read_lock_irqsave(&fown->lock,...);
+>>
+>> However, since &dev->event_lock is HARDIRQ-safe, interrupts have to be
+>> disabled while grabbing &f->f_owner.lock, otherwise we invert the lock
+>> hierarchy.
+>>
+>> Hence, we replace calls to read_lock/read_unlock on &f->f_owner.lock,
+>> with read_lock_irq/read_unlock_irq.
+>>
+>> Here read_lock_irq/read_unlock_irq should be safe to use because the
+>> functions f_getown_ex and f_getowner_uids are only called from
+>> do_fcntl, and f_getown is only called from do_fnctl and
+>> sock_ioctl. do_fnctl itself is only called from syscalls.
+>>
+>> For sock_ioctl, the chain is
+>>    compat_sock_ioctl():
+>>      compat_sock_ioctl_trans():
+>>        sock_ioctl()
+>>
+>> And interrupts are not disabled on either path. We assert this
+>> assumption with WARN_ON_ONCE(irqs_disabled()). This check is also
+>> inserted into another use of write_lock_irq in f_modown.
+>>
+>> Reported-and-tested-by: syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+>> Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+>> ---
+>>   fs/fcntl.c | 17 +++++++++++------
+>>   1 file changed, 11 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/fcntl.c b/fs/fcntl.c
+>> index dfc72f15be7f..262235e02c4b 100644
+>> --- a/fs/fcntl.c
+>> +++ b/fs/fcntl.c
+>> @@ -88,6 +88,7 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
+>>   static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+>>                        int force)
+>>   {
+>> +	WARN_ON_ONCE(irqs_disabled());
+> 
+> If this triggers, you just rebooted the box :(
+> 
+> Please never do this, either properly handle the problem and return an
+> error, or do not check for this.  It is not any type of "fix" at all,
+> and at most, a debugging aid while you work on the root problem.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-On 7/1/2021 7:35 PM, Hou Tao wrote:
-> When running stress test on null_blk under linux-4.19.y, the following
-> warning is reported:
->
->   percpu_ref_switch_to_atomic_rcu: percpu ref (css_release) <= 0 (-3) after switching to atomic
->
-> The cause is that css_put() is invoked twice on the same bio as shown below:
->
-> CPU 1:                         CPU 2:
->
-> // IO completion kworker       // IO submit thread
->                                __blkdev_direct_IO_simple
->                                  submit_bio
->
-> bio_endio
->   bio_uninit(bio)
->     css_put(bi_css)
->     bi_css = NULL
->                                set_current_state(TASK_UNINTERRUPTIBLE)
->   bio->bi_end_io
->     blkdev_bio_end_io_simple
->       bio->bi_private = NULL
->                                // bi_private is NULL
->                                READ_ONCE(bio->bi_private)
->         wake_up_process
->           smp_mb__after_spinlock
->
->                                bio_unint(bio)
->                                  // read bi_css as no-NULL
->                                  // so call css_put() again
->                                  css_put(bi_css)
->
-> Because there is no memory barriers between the reading and the writing of
-> bi_private and bi_css, so reading bi_private as NULL can not guarantee
-> bi_css will also be NULL on weak-memory model host (e.g, ARM64).
->
-> For the latest kernel source, css_put() has been removed from bio_unint(),
-> but the memory-order problem still exists, because the order between
-> bio->bi_private and {bi_status|bi_blkg} is also assumed in
-> __blkdev_direct_IO_simple(). It is reproducible that
-> __blkdev_direct_IO_simple() may read bi_status as 0 event if
-> bi_status is set as an errno in req_bio_endio().
->
-> In __blkdev_direct_IO(), the memory order between dio->waiter and
-> dio->bio.bi_status is not guaranteed neither. Until now it is unable to
-> reproduce it, maybe because dio->waiter and dio->bio.bi_status are
-> in the same cache-line. But it is better to add guarantee for memory
-> order.
->
-> Fixing it by using smp_load_acquire() & smp_store_release() to guarantee
-> the order between {bio->bi_private|dio->waiter} and {bi_status|bi_blkg}.
->
-> Fixes: 189ce2b9dcc3 ("block: fast-path for small and simple direct I/O requests")
-> Signed-off-by: Hou Tao <houtao1@huawei.com>
-> ---
->  fs/block_dev.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index eb34f5c357cf..a602c6315b0b 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -224,7 +224,11 @@ static void blkdev_bio_end_io_simple(struct bio *bio)
->  {
->  	struct task_struct *waiter = bio->bi_private;
->  
-> -	WRITE_ONCE(bio->bi_private, NULL);
-> +	/*
-> +	 * Paired with smp_load_acquire in __blkdev_direct_IO_simple()
-> +	 * to ensure the order between bi_private and bi_xxx
-> +	 */
-> +	smp_store_release(&bio->bi_private, NULL);
->  	blk_wake_io_task(waiter);
->  }
->  
-> @@ -283,7 +287,8 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
->  	qc = submit_bio(&bio);
->  	for (;;) {
->  		set_current_state(TASK_UNINTERRUPTIBLE);
-> -		if (!READ_ONCE(bio.bi_private))
-> +		/* Refer to comments in blkdev_bio_end_io_simple() */
-> +		if (!smp_load_acquire(&bio.bi_private))
->  			break;
->  		if (!(iocb->ki_flags & IOCB_HIPRI) ||
->  		    !blk_poll(bdev_get_queue(bdev), qc, true))
-> @@ -353,7 +358,12 @@ static void blkdev_bio_end_io(struct bio *bio)
->  		} else {
->  			struct task_struct *waiter = dio->waiter;
->  
-> -			WRITE_ONCE(dio->waiter, NULL);
-> +			/*
-> +			 * Paired with smp_load_acquire() in
-> +			 * __blkdev_direct_IO() to ensure the order between
-> +			 * dio->waiter and bio->bi_xxx
-> +			 */
-> +			smp_store_release(&dio->waiter, NULL);
->  			blk_wake_io_task(waiter);
->  		}
->  	}
-> @@ -478,7 +488,8 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
->  
->  	for (;;) {
->  		set_current_state(TASK_UNINTERRUPTIBLE);
-> -		if (!READ_ONCE(dio->waiter))
-> +		/* Refer to comments in blkdev_bio_end_io */
-> +		if (!smp_load_acquire(&dio->waiter))
->  			break;
->  
->  		if (!(iocb->ki_flags & IOCB_HIPRI) ||
+Hi Greg,
+
+Thanks for the feedback. My bad, I was under the impression that 
+WARN_ON_ONCE could be used to document assumptions for other developers, 
+but I'll stick to using it for debugging in the future.
+
+I think then in this case it would be best to keep the reasoning for why 
+the *_irq() locks are safe to use in the commit message. I'll update the 
+patch accordingly.
+
+Best wishes,
+Desmond
