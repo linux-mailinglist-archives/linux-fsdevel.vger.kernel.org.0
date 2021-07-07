@@ -2,227 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 721F73BE78C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 14:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F1EE3BE798
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 14:05:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231455AbhGGMF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 08:05:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43922 "EHLO mail.kernel.org"
+        id S231544AbhGGMHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 08:07:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231358AbhGGMF3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 08:05:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BB29A61C78;
-        Wed,  7 Jul 2021 12:02:48 +0000 (UTC)
+        id S231462AbhGGMHv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 08:07:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7C50761C9A;
+        Wed,  7 Jul 2021 12:05:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625659369;
-        bh=HKZL+nmXnPrxOIYxOI03sCRYYEwSOhLdHp4JOzx4j08=;
+        s=k20201202; t=1625659511;
+        bh=ZeEK/ANtvXr8EHIm8i6aKLUByrXcuhCmz28gAy3bRRA=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=vNoiGbeuTKwb+Vpu4aUliBS0AP9femLDSVbLKa42P4r83mRqrOeXEFv9D07POXrdt
-         P8yPpefIMcH6e2SErzoiGRghhW2QBSehsxRY9mNmYLI/gToLbx6Fhris1sotSHfqxh
-         SxadSAmlJoKbxlZ3LQ++Vv3+69YaB+LFtOKzjwx64zQ6yEGp3o6wUWTv7FoVH6eLHR
-         i+LDFd92u+o5zdjF86/uJ7oE9wHHnNdWwB4JhATMZDh5lFn+EgSN0b68SX2BpZykqa
-         IDIMiwuIXKJApeRd7t3heK/Hn0ld9dk2ZLH6ORYD4yO6VkHSoswTpPR6QgXcNTXkG4
-         1GQapXrWwZBug==
-Message-ID: <82a5c4dbcb9ccc131ab426490484334b02627691.camel@kernel.org>
-Subject: Re: [RFC PATCH v7 07/24] ceph: add fscrypt_* handling to caps.c
+        b=JmICjisPm4NaoBdFpON77MdX4Eqy2ypLmKJ75mCIW7LkJNfMYj8TstFSN/j7NBmzg
+         /X5BGd3hURpWc2wwIyk92IRVRBgwgELh2iCHwdHI5mCI2YIYAzAOzF31usVnQHWruf
+         ym0NCdZC/1QzNiN07RGsCKRV8l2IA5TWqeJ0iO6QWZlp+P0DSYIxuOsPH5Pwq9ABMD
+         HONbG4hhcfr/FoCKlYGGMzb1wlSbvegMUCd1K5SejjBMznEUNb3ROKVaz2b0TP44xu
+         8pLimX4Ws19o9Iq6YMDDjPXGHNztzZRJqNVnM4SryAY+CtC7EHBDKDVkvhLXhlyB/0
+         B7JNZX8JQLbqg==
+Message-ID: <dc1145b9cf18cc0996d9e47d69ebbc51294c93d9.camel@kernel.org>
+Subject: Re: [RFC PATCH v7 05/24] ceph: preallocate inode for ops that may
+ create one
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
 Cc:     lhenriques@suse.de, linux-fsdevel@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, dhowells@redhat.com
-Date:   Wed, 07 Jul 2021 08:02:47 -0400
-In-Reply-To: <f8c7dc0f-49ee-2c25-8e41-e47557db80e4@redhat.com>
+Date:   Wed, 07 Jul 2021 08:05:09 -0400
+In-Reply-To: <83dcbc5c-7a87-b6cd-b364-2ca4aa5bd440@redhat.com>
 References: <20210625135834.12934-1-jlayton@kernel.org>
-         <20210625135834.12934-8-jlayton@kernel.org>
-         <f8c7dc0f-49ee-2c25-8e41-e47557db80e4@redhat.com>
+         <20210625135834.12934-6-jlayton@kernel.org>
+         <83dcbc5c-7a87-b6cd-b364-2ca4aa5bd440@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2021-07-07 at 15:20 +0800, Xiubo Li wrote:
-> Hi Jeff,
-> 
-> There has some following patches in your "fscrypt" branch, which is not 
-> posted yet, the commit is:
-> 
-> "3161d2f549db ceph: size handling for encrypted inodes in cap updates"
-> 
-> It seems buggy.
-> 
-
-Yes. Those are still quite rough. If I haven't posted them, then YMMV. I
-often push them to -experimental branches just for backup purposes. You
-may want to wait on reviewing those until I've had a chance to clean
-them up and post them.
-
-> In the encode_cap_msg() you have removed the 'fscrypt_file_len' and and 
-> added a new 8 bytes' data encoding:
-> 
->          ceph_encode_32(&p, arg->fscrypt_auth_len);
->          ceph_encode_copy(&p, arg->fscrypt_auth, arg->fscrypt_auth_len);
-> -       ceph_encode_32(&p, arg->fscrypt_file_len);
-> -       ceph_encode_copy(&p, arg->fscrypt_file, arg->fscrypt_file_len);
-> +       ceph_encode_32(&p, sizeof(__le64));
-> +       ceph_encode_64(&p, fc->size);
-> 
-> That means no matter the 'arg->encrypted' is true or not, here it will 
-> always encode extra 8 bytes' data ?
-> 
-> 
-> But in cap_msg_size(), you are making it optional:
-> 
-> 
->   static inline int cap_msg_size(struct cap_msg_args *arg)
->   {
->          return CAP_MSG_FIXED_FIELDS + arg->fscrypt_auth_len +
-> -                       arg->fscrypt_file_len;
-> +                       arg->encrypted ? sizeof(__le64) : 0;
->   }
-> 
-> 
-> Have I missed something important here ?
-> 
-> Thanks
-> 
-
-Nope, you're right. I had fixed that one in my local branch already, and
-just hadn't yet pushed it to the repo. I'll plan to clean this up a bit
-later today and push an updated branch.
-
-> 
+On Wed, 2021-07-07 at 11:37 +0800, Xiubo Li wrote:
 > On 6/25/21 9:58 PM, Jeff Layton wrote:
+> > When creating a new inode, we need to determine the crypto context
+> > before we can transmit the RPC. The fscrypt API has a routine for getting
+> > a crypto context before a create occurs, but it requires an inode.
+> > 
+> > Change the ceph code to preallocate an inode in advance of a create of
+> > any sort (open(), mknod(), symlink(), etc). Move the existing code that
+> > generates the ACL and SELinux blobs into this routine since that's
+> > mostly common across all the different codepaths.
+> > 
+> > In most cases, we just want to allow ceph_fill_trace to use that inode
+> > after the reply comes in, so add a new field to the MDS request for it
+> > (r_new_inode).
+> > 
+> > The async create codepath is a bit different though. In that case, we
+> > want to hash the inode in advance of the RPC so that it can be used
+> > before the reply comes in. If the call subsequently fails with
+> > -EJUKEBOX, then just put the references and clean up the as_ctx. Note
+> > that with this change, we now need to regenerate the as_ctx when this
+> > occurs, but it's quite rare for it to happen.
+> > 
 > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > > ---
-> >   fs/ceph/caps.c | 62 +++++++++++++++++++++++++++++++++++++++-----------
-> >   1 file changed, 49 insertions(+), 13 deletions(-)
+> >   fs/ceph/dir.c        | 70 ++++++++++++++++++++-----------------
+> >   fs/ceph/file.c       | 62 ++++++++++++++++++++-------------
+> >   fs/ceph/inode.c      | 82 ++++++++++++++++++++++++++++++++++++++++----
+> >   fs/ceph/mds_client.c |  3 +-
+> >   fs/ceph/mds_client.h |  1 +
+> >   fs/ceph/super.h      |  7 +++-
+> >   6 files changed, 160 insertions(+), 65 deletions(-)
 > > 
-> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index 038f59cc4250..1be6c5148700 100644
-> > --- a/fs/ceph/caps.c
-> > +++ b/fs/ceph/caps.c
-> > @@ -13,6 +13,7 @@
-> >   #include "super.h"
-> >   #include "mds_client.h"
-> >   #include "cache.h"
-> > +#include "crypto.h"
-> >   #include <linux/ceph/decode.h>
-> >   #include <linux/ceph/messenger.h>
-> >   
-> > @@ -1229,15 +1230,12 @@ struct cap_msg_args {
-> >   	umode_t			mode;
-> >   	bool			inline_data;
-> >   	bool			wake;
-> > +	u32			fscrypt_auth_len;
-> > +	u32			fscrypt_file_len;
-> > +	u8			fscrypt_auth[sizeof(struct ceph_fscrypt_auth)]; // for context
-> > +	u8			fscrypt_file[sizeof(u64)]; // for size
-> >   };
-> >   
-> > -/*
-> > - * cap struct size + flock buffer size + inline version + inline data size +
-> > - * osd_epoch_barrier + oldest_flush_tid
-> > - */
-> > -#define CAP_MSG_SIZE (sizeof(struct ceph_mds_caps) + \
-> > -		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4)
-> > -
-> >   /* Marshal up the cap msg to the MDS */
-> >   static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
-> >   {
-> > @@ -1253,7 +1251,7 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
-> >   	     arg->size, arg->max_size, arg->xattr_version,
-> >   	     arg->xattr_buf ? (int)arg->xattr_buf->vec.iov_len : 0);
-> >   
-> > -	msg->hdr.version = cpu_to_le16(10);
-> > +	msg->hdr.version = cpu_to_le16(12);
-> >   	msg->hdr.tid = cpu_to_le64(arg->flush_tid);
-> >   
-> >   	fc = msg->front.iov_base;
-> > @@ -1324,6 +1322,16 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
-> >   
-> >   	/* Advisory flags (version 10) */
-> >   	ceph_encode_32(&p, arg->flags);
-> > +
-> > +	/* dirstats (version 11) - these are r/o on the client */
-> > +	ceph_encode_64(&p, 0);
-> > +	ceph_encode_64(&p, 0);
-> > +
-> > +	/* fscrypt_auth and fscrypt_file (version 12) */
-> > +	ceph_encode_32(&p, arg->fscrypt_auth_len);
-> > +	ceph_encode_copy(&p, arg->fscrypt_auth, arg->fscrypt_auth_len);
-> > +	ceph_encode_32(&p, arg->fscrypt_file_len);
-> > +	ceph_encode_copy(&p, arg->fscrypt_file, arg->fscrypt_file_len);
+> [...]
+> 
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index eb562e259347..f62785e4dbcb 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -52,17 +52,85 @@ static int ceph_set_ino_cb(struct inode *inode, void *data)
+> >   	return 0;
 > >   }
 > >   
-> >   /*
-> > @@ -1445,6 +1453,26 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
-> >   		}
-> >   	}
-> >   	arg->flags = flags;
-> > +	if (ci->fscrypt_auth_len &&
-> > +	    WARN_ON_ONCE(ci->fscrypt_auth_len != sizeof(struct ceph_fscrypt_auth))) {
-> > +		/* Don't set this if it isn't right size */
-> > +		arg->fscrypt_auth_len = 0;
-> > +	} else {
-> > +		arg->fscrypt_auth_len = ci->fscrypt_auth_len;
-> > +		memcpy(arg->fscrypt_auth, ci->fscrypt_auth,
-> > +			min_t(size_t, ci->fscrypt_auth_len, sizeof(arg->fscrypt_auth)));
+> > -struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino)
+> > +/**
+> > + * ceph_new_inode - allocate a new inode in advance of an expected create
+> > + * @dir: parent directory for new inode
+> > + * @dentry: dentry that may eventually point to new inode
+> > + * @mode: mode of new inode
+> > + * @as_ctx: pointer to inherited security context
+> > + *
+> > + * Allocate a new inode in advance of an operation to create a new inode.
+> > + * This allocates the inode and sets up the acl_sec_ctx with appropriate
+> > + * info for the new inode.
+> > + *
+> > + * Returns a pointer to the new inode or an ERR_PTR.
+> > + */
+> > +struct inode *ceph_new_inode(struct inode *dir, struct dentry *dentry,
+> > +			     umode_t *mode, struct ceph_acl_sec_ctx *as_ctx)
+> > +{
+> > +	int err;
+> > +	struct inode *inode;
+> > +
+> > +	inode = new_inode_pseudo(dir->i_sb);
+> > +	if (!inode)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	if (!S_ISLNK(*mode)) {
+> > +		err = ceph_pre_init_acls(dir, mode, as_ctx);
+> > +		if (err < 0)
+> > +			goto out_err;
 > > +	}
-> > +	/* FIXME: use this to track "real" size */
-> > +	arg->fscrypt_file_len = 0;
+> > +
+> > +	err = ceph_security_init_secctx(dentry, *mode, as_ctx);
+> > +	if (err < 0)
+> > +		goto out_err;
+> > +
+> > +	inode->i_state = 0;
+> > +	inode->i_mode = *mode;
+> > +	return inode;
+> > +out_err:
+> > +	iput(inode);
+> > +	return ERR_PTR(err);
 > > +}
 > > +
-> > +#define CAP_MSG_FIXED_FIELDS (sizeof(struct ceph_mds_caps) + \
-> > +		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4 + 8 + 8 + 4 + 4)
-> > +
-> > +static inline int cap_msg_size(struct cap_msg_args *arg)
+> > +void ceph_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_sec_ctx *as_ctx)
 > > +{
-> > +	return CAP_MSG_FIXED_FIELDS + arg->fscrypt_auth_len +
-> > +			arg->fscrypt_file_len;
-> >   }
-> >   
-> >   /*
-> > @@ -1457,7 +1485,7 @@ static void __send_cap(struct cap_msg_args *arg, struct ceph_inode_info *ci)
-> >   	struct ceph_msg *msg;
-> >   	struct inode *inode = &ci->vfs_inode;
-> >   
-> > -	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
-> > +	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(arg), GFP_NOFS, false);
-> >   	if (!msg) {
-> >   		pr_err("error allocating cap msg: ino (%llx.%llx) flushing %s tid %llu, requeuing cap.\n",
-> >   		       ceph_vinop(inode), ceph_cap_string(arg->dirty),
-> > @@ -1483,10 +1511,6 @@ static inline int __send_flush_snap(struct inode *inode,
-> >   	struct cap_msg_args	arg;
-> >   	struct ceph_msg		*msg;
-> >   
-> > -	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
-> > -	if (!msg)
-> > -		return -ENOMEM;
-> > -
-> >   	arg.session = session;
-> >   	arg.ino = ceph_vino(inode).ino;
-> >   	arg.cid = 0;
-> > @@ -1524,6 +1548,18 @@ static inline int __send_flush_snap(struct inode *inode,
-> >   	arg.flags = 0;
-> >   	arg.wake = false;
-> >   
-> > +	/*
-> > +	 * No fscrypt_auth changes from a capsnap. It will need
-> > +	 * to update fscrypt_file on size changes (TODO).
-> > +	 */
-> > +	arg.fscrypt_auth_len = 0;
-> > +	arg.fscrypt_file_len = 0;
+> > +	if (as_ctx->pagelist) {
+> > +		req->r_pagelist = as_ctx->pagelist;
+> > +		as_ctx->pagelist = NULL;
+> > +	}
+> > +}
 > > +
-> > +	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(&arg),
-> > +			   GFP_NOFS, false);
-> > +	if (!msg)
-> > +		return -ENOMEM;
+> > +/**
+> > + * ceph_get_inode - find or create/hash a new inode
+> > + * @sb: superblock to search and allocate in
+> > + * @vino: vino to search for
+> > + * @newino: optional new inode to insert if one isn't found (may be NULL)
+> > + *
+> > + * Search for or insert a new inode into the hash for the given vino, and return a
+> > + * reference to it. If new is non-NULL, its reference is consumed.
+> > + */
+> > +struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino, struct inode *newino)
+> >   {
+> >   	struct inode *inode;
+> >   
+> >   	if (ceph_vino_is_reserved(vino))
+> >   		return ERR_PTR(-EREMOTEIO);
+> >   
+> > -	inode = iget5_locked(sb, (unsigned long)vino.ino, ceph_ino_compare,
+> > -			     ceph_set_ino_cb, &vino);
+> > -	if (!inode)
+> > +	if (newino) {
+> > +		inode = inode_insert5(newino, (unsigned long)vino.ino, ceph_ino_compare,
+> > +					ceph_set_ino_cb, &vino);
+> > +		if (inode != newino)
+> > +			iput(newino);
+> > +	} else {
+> > +		inode = iget5_locked(sb, (unsigned long)vino.ino, ceph_ino_compare,
+> > +				     ceph_set_ino_cb, &vino);
+> > +	}
 > > +
-> >   	encode_cap_msg(msg, &arg);
-> >   	ceph_con_send(&arg.session->s_con, msg);
-> >   	return 0;
+> > +	if (!inode) {
+> > +		dout("No inode found for %llx.%llx\n", vino.ino, vino.snap);
+> >   		return ERR_PTR(-ENOMEM);
+> > +	}
+> >   
+> >   	dout("get_inode on %llu=%llx.%llx got %p new %d\n", ceph_present_inode(inode),
+> >   	     ceph_vinop(inode), inode, !!(inode->i_state & I_NEW));
+> > @@ -78,7 +146,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+> >   		.ino = ceph_ino(parent),
+> >   		.snap = CEPH_SNAPDIR,
+> >   	};
+> > -	struct inode *inode = ceph_get_inode(parent->i_sb, vino);
+> > +	struct inode *inode = ceph_get_inode(parent->i_sb, vino, NULL);
+> >   	struct ceph_inode_info *ci = ceph_inode(inode);
+> >   
+> >   	if (IS_ERR(inode))
+> 
+> Should we always check this just before using it before 'struct 
+> ceph_inode_info *ci = ceph_inode(inode);' ?
+> 
+> But it seems the 'ceph_inode()' won't introduce any issue here.
+> 
+> Thanks,
+> 
+
+Yeah, it's just doing pointer math. If it turns out to be an error,
+it'll exit before it ever dereferences "ci".
+
+
+> > @@ -1546,7 +1614,7 @@ static int readdir_prepopulate_inodes_only(struct ceph_mds_request *req,
+> >   		vino.ino = le64_to_cpu(rde->inode.in->ino);
+> >   		vino.snap = le64_to_cpu(rde->inode.in->snapid);
+> >   
+> > -		in = ceph_get_inode(req->r_dentry->d_sb, vino);
+> > +		in = ceph_get_inode(req->r_dentry->d_sb, vino, NULL);
+> >   		if (IS_ERR(in)) {
+> >   			err = PTR_ERR(in);
+> >   			dout("new_inode badness got %d\n", err);
+> > @@ -1748,7 +1816,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+> >   		if (d_really_is_positive(dn)) {
+> >   			in = d_inode(dn);
+> >   		} else {
+> > -			in = ceph_get_inode(parent->d_sb, tvino);
+> > +			in = ceph_get_inode(parent->d_sb, tvino, NULL);
+> >   			if (IS_ERR(in)) {
+> >   				dout("new_inode badness\n");
+> >   				d_drop(dn);
+> [...]
 > 
 
 -- 
