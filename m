@@ -2,295 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3C603BE58D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 11:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09E573BE5F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 11:51:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231248AbhGGJ1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 05:27:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55493 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230429AbhGGJ1G (ORCPT
+        id S231173AbhGGJyZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 05:54:25 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:52548 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231362AbhGGJyU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 05:27:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625649865;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Wed, 7 Jul 2021 05:54:20 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 7FA2020041;
+        Wed,  7 Jul 2021 09:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1625651499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=6o/7kaTqPTYt2A7Z0zjqMN0nvm6hpJh6BNtPQwdwRLU=;
-        b=FItZTbmcMZHkWreQUZuurxv8W63dsBctQVZQZcHB4yMb3NFkodMWT6U8kIr4hmNGc4+2Eb
-        BotDAW93ZvlpndlBtLGfk8zSC8itL5dEzKBpHO3MhKkiCx5OvCdVtLJhfi/1PN848WmLGx
-        DVx5nLy4dYlAoN3Kn7WorKqdr2+KR4c=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-542-WA1aOXBgNhaZwXANFHCA_A-1; Wed, 07 Jul 2021 05:24:24 -0400
-X-MC-Unique: WA1aOXBgNhaZwXANFHCA_A-1
-Received: by mail-pg1-f197.google.com with SMTP id j17-20020a63cf110000b0290226eb0c27acso1270066pgg.23
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 02:24:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=6o/7kaTqPTYt2A7Z0zjqMN0nvm6hpJh6BNtPQwdwRLU=;
-        b=Ue4F9BmRX7AB6IbpxEx26R9PXv69cTMbnY1T/BOJd0ucDNsLMgZ38tgeAAFv7weLgU
-         X7ACKGYvMXf8icslOpGhkUZb6/urhpgLyUd0c8FAqjRjh+gEr27NGgcUwAiACq+SZNRf
-         9tfmCjM/Rl4lrRc2YYuHeufiySmZt3MhzOC0DqNFRrEWgPjJf7lSS3JPzHdxNMLee2tS
-         WlNd3BnIN5swkFXLmCFQJHoQfOfsCJZNS0UcahGarBYkGBrU7rWPAisFv4ZAw2SGmQm/
-         ifhXN/FXqSraD5RW2m91S57NKLnUbtEfYlkLSk+n+hJ8RIuVZRZy2SBbG4JMS2uinA/B
-         CIsw==
-X-Gm-Message-State: AOAM530jwNBlIP81ORp9ZpS2dd/4jLV54tKI5ZYXjygYCWuvxgwTQB5I
-        w263obH928hYI35maVdI3WjD5VS31Vffw49nVfk28Y/ipnfoE2176/YiMVeMadXSMbS7b5jmcq9
-        JaXLFAtQc4+oOyiQEjW0SVrnQAg==
-X-Received: by 2002:a63:d908:: with SMTP id r8mr25178211pgg.414.1625649863834;
-        Wed, 07 Jul 2021 02:24:23 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzhom9V3zcwokImKdubLhhEYAw1OEUfXMki4J5NNqR0Ed07VLuH+WgHu4YOpQSJUGm/lh1JIQ==
-X-Received: by 2002:a63:d908:: with SMTP id r8mr25178193pgg.414.1625649863513;
-        Wed, 07 Jul 2021 02:24:23 -0700 (PDT)
-Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id md15sm5946056pjb.30.2021.07.07.02.24.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jul 2021 02:24:23 -0700 (PDT)
-Subject: Re: [PATCH v8 10/10] Documentation: Add documentation for VDUSE
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-References: <CACycT3taKhf1cWp3Jd0aSVekAZvpbR-_fkyPLQ=B+jZBB5H=8Q@mail.gmail.com>
- <YN3ABqCMLQf7ejOm@stefanha-x1.localdomain>
- <CACycT3vo-diHgTSLw_FS2E+5ia5VjihE3qw7JmZR7JT55P-wQA@mail.gmail.com>
- <8320d26d-6637-85c6-8773-49553dfa502d@redhat.com>
- <YOL/9mxkJaokKDHc@stefanha-x1.localdomain>
- <5b5107fa-3b32-8a3b-720d-eee6b2a84ace@redhat.com>
- <YOQtG3gDOhHDO5CQ@stefanha-x1.localdomain>
- <CACGkMEs2HHbUfarum8uQ6wuXoDwLQUSXTsa-huJFiqr__4cwRg@mail.gmail.com>
- <YOSOsrQWySr0andk@stefanha-x1.localdomain>
- <100e6788-7fdf-1505-d69c-bc28a8bc7a78@redhat.com>
- <YOVr801d01YOPzLL@stefanha-x1.localdomain>
-Cc:     Xie Yongji <xieyongji@bytedance.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        gregkh@linuxfoundation.org,
-        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <a03c8627-7dac-2255-a2d9-603fc623b618@redhat.com>
-Date:   Wed, 7 Jul 2021 17:24:08 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        bh=Ot6CAR92JLdLil0GFznAKUtvkMkMuuMo8NYA4KiY+BM=;
+        b=jyINxxpG88xsl6q+H7L3kaRyYFJiM1ZY/59Is9Gv38oo5Fcwtat811E+xJbADcmP/HAJ0c
+        UAq3nHGaNZftpbWOiV2SGAzJ0sR8tjkULUlWkKgjVbW3kmId0lG7fxhnDEmsaQYIXu1dHI
+        0EgK/DwOR9k6ukLF0tqGIKywo2sm6d8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1625651499;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ot6CAR92JLdLil0GFznAKUtvkMkMuuMo8NYA4KiY+BM=;
+        b=Jm7j/8ZFGGoGhFUrO/mHe8cXb7XLaOrol+GxY4Sh496/p6Qw9UIGYWL69cToubZWQpccwO
+        6hwkWmhb46guN8DA==
+Received: from quack2.suse.cz (unknown [10.163.43.118])
+        by relay2.suse.de (Postfix) with ESMTP id 2B985A3BA3;
+        Wed,  7 Jul 2021 09:51:39 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 684221F2CD7; Wed,  7 Jul 2021 11:51:38 +0200 (CEST)
+Date:   Wed, 7 Jul 2021 11:51:38 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org,
+        Michael Stapelberg <stapelberg+linux@google.com>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 3/5] writeback: Fix bandwidth estimate for spiky workload
+Message-ID: <20210707095138.GC5335@quack2.suse.cz>
+References: <20210705161610.19406-1-jack@suse.cz>
+ <20210707074017.2195-1-hdanton@sina.com>
 MIME-Version: 1.0
-In-Reply-To: <YOVr801d01YOPzLL@stefanha-x1.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210707074017.2195-1-hdanton@sina.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed 07-07-21 15:40:17, Hillf Danton wrote:
+> On Mon,  5 Jul 2021 18:23:17 +0200 Jan Kara wrote:
+> >
+> >Michael Stapelberg has reported that for workload with short big spikes
+> >of writes (GCC linker seem to trigger this frequently) the write
+> >throughput is heavily underestimated and tends to steadily sink until it
+> >reaches zero. This has rather bad impact on writeback throttling
+> >(causing stalls). The problem is that writeback throughput estimate gets
+> >updated at most once per 200 ms. One update happens early after we
+> >submit pages for writeback (at that point writeout of only small
+> >fraction of pages is completed and thus observed throughput is tiny).
+> >Next update happens only during the next write spike (updates happen
+> >only from inode writeback and dirty throttling code) and if that is
+> >more than 1s after previous spike, we decide system was idle and just
+> >ignore whatever was written until this moment.
+> >
+> >Fix the problem by making sure writeback throughput estimate is also
+> >updated shortly after writeback completes to get reasonable estimate of
+> >throughput for spiky workloads.
+> >
+> >Link: https://lore.kernel.org/lkml/20210617095309.3542373-1-stapelberg+li>nux@google.com
+> >Reported-by: Michael Stapelberg <stapelberg+linux@google.com>
+> >Signed-off-by: Jan Kara <jack@suse.cz>
+...
+> >diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> >index 1fecf8ebadb0..6a99ddca95c0 100644
+> >--- a/mm/page-writeback.c
+> >+++ b/mm/page-writeback.c
+> >@@ -1346,14 +1346,7 @@ static void __wb_update_bandwidth(struct dirty_thr>ottle_control *gdtc,
+> > 	unsigned long dirtied;
+> > 	unsigned long written;
+> >
+> >-	lockdep_assert_held(&wb->list_lock);
+> >-
+> >-	/*
+> >-	 * rate-limit, only update once every 200ms.
+> >-	 */
+> >-	if (elapsed < BANDWIDTH_INTERVAL)
+> >-		return;
+> 
+> Please leave it as it is if you are not dumping the 200ms rule.
 
-在 2021/7/7 下午4:55, Stefan Hajnoczi 写道:
-> On Wed, Jul 07, 2021 at 11:43:28AM +0800, Jason Wang wrote:
->> 在 2021/7/7 上午1:11, Stefan Hajnoczi 写道:
->>> On Tue, Jul 06, 2021 at 09:08:26PM +0800, Jason Wang wrote:
->>>> On Tue, Jul 6, 2021 at 6:15 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->>>>> On Tue, Jul 06, 2021 at 10:34:33AM +0800, Jason Wang wrote:
->>>>>> 在 2021/7/5 下午8:49, Stefan Hajnoczi 写道:
->>>>>>> On Mon, Jul 05, 2021 at 11:36:15AM +0800, Jason Wang wrote:
->>>>>>>> 在 2021/7/4 下午5:49, Yongji Xie 写道:
->>>>>>>>>>> OK, I get you now. Since the VIRTIO specification says "Device
->>>>>>>>>>> configuration space is generally used for rarely-changing or
->>>>>>>>>>> initialization-time parameters". I assume the VDUSE_DEV_SET_CONFIG
->>>>>>>>>>> ioctl should not be called frequently.
->>>>>>>>>> The spec uses MUST and other terms to define the precise requirements.
->>>>>>>>>> Here the language (especially the word "generally") is weaker and means
->>>>>>>>>> there may be exceptions.
->>>>>>>>>>
->>>>>>>>>> Another type of access that doesn't work with the VDUSE_DEV_SET_CONFIG
->>>>>>>>>> approach is reads that have side-effects. For example, imagine a field
->>>>>>>>>> containing an error code if the device encounters a problem unrelated to
->>>>>>>>>> a specific virtqueue request. Reading from this field resets the error
->>>>>>>>>> code to 0, saving the driver an extra configuration space write access
->>>>>>>>>> and possibly race conditions. It isn't possible to implement those
->>>>>>>>>> semantics suing VDUSE_DEV_SET_CONFIG. It's another corner case, but it
->>>>>>>>>> makes me think that the interface does not allow full VIRTIO semantics.
->>>>>>>> Note that though you're correct, my understanding is that config space is
->>>>>>>> not suitable for this kind of error propagating. And it would be very hard
->>>>>>>> to implement such kind of semantic in some transports.  Virtqueue should be
->>>>>>>> much better. As Yong Ji quoted, the config space is used for
->>>>>>>> "rarely-changing or intialization-time parameters".
->>>>>>>>
->>>>>>>>
->>>>>>>>> Agreed. I will use VDUSE_DEV_GET_CONFIG in the next version. And to
->>>>>>>>> handle the message failure, I'm going to add a return value to
->>>>>>>>> virtio_config_ops.get() and virtio_cread_* API so that the error can
->>>>>>>>> be propagated to the virtio device driver. Then the virtio-blk device
->>>>>>>>> driver can be modified to handle that.
->>>>>>>>>
->>>>>>>>> Jason and Stefan, what do you think of this way?
->>>>>>> Why does VDUSE_DEV_GET_CONFIG need to support an error return value?
->>>>>>>
->>>>>>> The VIRTIO spec provides no way for the device to report errors from
->>>>>>> config space accesses.
->>>>>>>
->>>>>>> The QEMU virtio-pci implementation returns -1 from invalid
->>>>>>> virtio_config_read*() and silently discards virtio_config_write*()
->>>>>>> accesses.
->>>>>>>
->>>>>>> VDUSE can take the same approach with
->>>>>>> VDUSE_DEV_GET_CONFIG/VDUSE_DEV_SET_CONFIG.
->>>>>>>
->>>>>>>> I'd like to stick to the current assumption thich get_config won't fail.
->>>>>>>> That is to say,
->>>>>>>>
->>>>>>>> 1) maintain a config in the kernel, make sure the config space read can
->>>>>>>> always succeed
->>>>>>>> 2) introduce an ioctl for the vduse usersapce to update the config space.
->>>>>>>> 3) we can synchronize with the vduse userspace during set_config
->>>>>>>>
->>>>>>>> Does this work?
->>>>>>> I noticed that caching is also allowed by the vhost-user protocol
->>>>>>> messages (QEMU's docs/interop/vhost-user.rst), but the device doesn't
->>>>>>> know whether or not caching is in effect. The interface you outlined
->>>>>>> above requires caching.
->>>>>>>
->>>>>>> Is there a reason why the host kernel vDPA code needs to cache the
->>>>>>> configuration space?
->>>>>> Because:
->>>>>>
->>>>>> 1) Kernel can not wait forever in get_config(), this is the major difference
->>>>>> with vhost-user.
->>>>> virtio_cread() can sleep:
->>>>>
->>>>>     #define virtio_cread(vdev, structname, member, ptr)                     \
->>>>>             do {                                                            \
->>>>>                     typeof(((structname*)0)->member) virtio_cread_v;        \
->>>>>                                                                             \
->>>>>                     might_sleep();                                          \
->>>>>                     ^^^^^^^^^^^^^^
->>>>>
->>>>> Which code path cannot sleep?
->>>> Well, it can sleep but it can't sleep forever. For VDUSE, a
->>>> buggy/malicious userspace may refuse to respond to the get_config.
->>>>
->>>> It looks to me the ideal case, with the current virtio spec, for VDUSE is to
->>>>
->>>> 1) maintain the device and its state in the kernel, userspace may sync
->>>> with the kernel device via ioctls
->>>> 2) offload the datapath (virtqueue) to the userspace
->>>>
->>>> This seems more robust and safe than simply relaying everything to
->>>> userspace and waiting for its response.
->>>>
->>>> And we know for sure this model can work, an example is TUN/TAP:
->>>> netdevice is abstracted in the kernel and datapath is done via
->>>> sendmsg()/recvmsg().
->>>>
->>>> Maintaining the config in the kernel follows this model and it can
->>>> simplify the device generation implementation.
->>>>
->>>> For config space write, it requires more thought but fortunately it's
->>>> not commonly used. So VDUSE can choose to filter out the
->>>> device/features that depends on the config write.
->>> This is the problem. There are other messages like SET_FEATURES where I
->>> guess we'll face the same challenge.
->>
->> Probably not, userspace device can tell the kernel about the device_features
->> and mandated_features during creation, and the feature negotiation could be
->> done purely in the kernel without bothering the userspace.
+Well, that could break the delayed updated scheduled after the end of
+writeback and for no good reason. The problematic ordering is like:
 
+end writeback on inode1
+  queue_delayed_work() - queues delayed work after BANDWIDTH_INTERVAL
 
-(For some reason I drop the list accidentally, adding them back, sorry)
+__wb_update_bandwidth() called e.g. from balance_dirty_pages()
+  wb->bw_time_stamp = now;
 
+end writeback on inode2
+  queue_delayed_work() - does nothing since work is already queued
 
-> Sorry, I confused the messages. I meant SET_STATUS. It's a synchronous
-> interface where the driver waits for the device.
+delayed work calls __wb_update_bandwidth() - nothing is done since elapsed
+< BANDWIDTH_INTERVAL and we may thus miss reflecting writeback of inode2 in
+our estimates.
 
+> >@@ -2742,6 +2737,11 @@ static void wb_inode_writeback_start(struct bdi_wr>iteback *wb)
+> > static void wb_inode_writeback_end(struct bdi_writeback *wb)
+> > {
+> > 	atomic_dec(&wb->writeback_inodes);
+> >+	/*
+> >+	 * Make sure estimate of writeback throughput gets
+> >+	 * updated after writeback completed.
+> >+	 */
+> >+	queue_delayed_work(bdi_wq, &wb->bw_dwork, BANDWIDTH_INTERVAL);
+> > }
+> 
+> This is a bogus estimate - it does not break the 200ms rule but walks
+> around it without specifying why 300ms is not good.
 
-It depends on how we define "synchronous" here. If I understand 
-correctly, the spec doesn't expect there will be any kind of failure for 
-the operation of set_status itself.
+Well, you're right that BANDWIDTH_INTERVAL is somewhat arbitrary here. We
+do want some batching of bandwidth updates after writeback completes for
+the cases where lots of inodes end their writeback in a quick succession.
+I've picked BANDWIDTH_INTERVAL here as that's the batching of other
+bandwidth updates as well so it kind of makes sense. I'll add a comment why
+BANDWIDTH_INTERVAL is picked here.
 
-Instead, anytime it want any synchronization, it should be done via 
-get_status():
-
-1) re-read device status to make sure FEATURES_OK is set during feature 
-negotiation
-2) re-read device status to be 0 to make sure the device has finish the 
-reset
-
-
->
-> VDUSE currently doesn't wait for the device emulation process to handle
-> this message (no reply is needed) but I think this is a mistake because
-> VDUSE is not following the VIRTIO device model.
-
-
-With the trick that is done for FEATURES_OK above, I think we don't need 
-to wait for the reply.
-
-If userspace takes too long to respond, it can be detected since 
-get_status() doesn't return the expected value for long time.
-
-And for the case that needs a timeout, we probably can use NEEDS_RESET.
-
-
->
-> I strongly suggest designing the VDUSE interface to match the VIRTIO
-> device model (or at least the vDPA interface).
-
-
-I fully agree with you and that is what we want to achieve in this series.
-
-
-> Defining a custom
-> interface for VDUSE avoids some implementation complexity and makes it
-> easier to deal with untrusted userspace, but it's impossible to
-> implement certain VIRTIO features or devices. It also fragments VIRTIO
-> more than necessary; we have a standard, let's stick to it.
-
-
-Yes.
-
-
->
->>> I agree that caching the contents of configuration space in the kernel
->>> helps, but if there are other VDUSE messages with the same problem then
->>> an attacker will exploit them instead.
->>>
->>> I think a systematic solution is needed. It would be necessary to
->>> enumerate the virtio_vdpa and vhost_vdpa cases separately to figure out
->>> where VDUSE messages are synchronous/time-sensitive.
->>
->> This is the case of reset and needs more thought. We should stick a
->> consistent uAPI for the userspace.
->>
->> For vhost-vDPA, it needs synchronzied with the userspace and we can wait for
->> ever.
-> The VMM should still be able to handle signals when a vhost_vdpa ioctl
-> is waiting for a reply from the VDUSE userspace process. Or if that's
-> not possible then there needs to be a way to force disconnection from
-> VDUSE so the VMM can be killed.
-
-
-Note that VDUSE works under vDPA bus, so vhost should be transport to VDUSE.
-
-But we can detect this via whether or not the bounce buffer is used.
-
-Thanks
-
-
->
-> Stefan
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
