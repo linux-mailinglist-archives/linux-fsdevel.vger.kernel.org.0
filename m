@@ -2,106 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 519B33BE6A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 12:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A6963BE6A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 12:51:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231421AbhGGKyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 06:54:03 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:49308 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231407AbhGGKyD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 06:54:03 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 5396D2254C;
-        Wed,  7 Jul 2021 10:51:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1625655082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=maXdKleP7ggLLf4xPqbd0Jt6mHBylI9hk0czqeagS6Y=;
-        b=QVCJkPfF/pVVYGpNrec+nx7VGlLpuLrmC0wPfAEWuyPxWyBAs8dlIT0QXYFhK4OAf0CZXm
-        kYgfzPGsE2AtEVsLeugk0XXT43Gc2EX2VkWEwQ7mouQ2P/XV5OIvDs9bDyA6wF2yqntizu
-        nX9I/Yo2UqWa1rWd+cyywoRQDHSCcmw=
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 1252213966;
-        Wed,  7 Jul 2021 10:51:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id ORupASqH5WDJWgAAGKfGzw
-        (envelope-from <nborisov@suse.com>); Wed, 07 Jul 2021 10:51:22 +0000
-Subject: Re: [PATCH v2 1/8] btrfs: enable a tracepoint when we fail tickets
-To:     Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org,
-        kernel-team@fb.com, linux-fsdevel@vger.kernel.org
-References: <cover.1624974951.git.josef@toxicpanda.com>
- <196e7895350732ab509b4003427c95fce89b0d9c.1624974951.git.josef@toxicpanda.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Message-ID: <a19d404e-a6e0-5f16-6bb0-7780f230a605@suse.com>
-Date:   Wed, 7 Jul 2021 13:51:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S231443AbhGGKyG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 06:54:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231407AbhGGKyF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 06:54:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E58661A25;
+        Wed,  7 Jul 2021 10:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1625655085;
+        bh=5tv33vbesA5XsXJmvcXF6XM5sIZTb6hOhIY0nvhVBcM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Oug4EGmUF/JnhCZvrfevMpU5rUC/EUY0vsuPedqFh8dXk6jNyYSRwWluMiNlvriua
+         I2tX6nGQsjlkwTdrrqZ9lGntA68ZdldQIiteUcIiP1e9LjoqEkRLW5JXzXvkJ5guHo
+         70gJb/f0P48nUOmFFvkrajDKvXBDdtUIdk8qeOTE=
+Date:   Wed, 7 Jul 2021 12:51:22 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
+        bfields@fieldses.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2 1/2] fcntl: fix potential deadlocks for
+ &fown_struct.lock
+Message-ID: <YOWHKk6Nq8bazYjB@kroah.com>
+References: <20210707023548.15872-1-desmondcheongzx@gmail.com>
+ <20210707023548.15872-2-desmondcheongzx@gmail.com>
+ <YOVENb3X/m/pNrYt@kroah.com>
+ <14633c3be87286d811263892375f2dfa9a8ed40a.camel@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <196e7895350732ab509b4003427c95fce89b0d9c.1624974951.git.josef@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14633c3be87286d811263892375f2dfa9a8ed40a.camel@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 29.06.21 г. 16:59, Josef Bacik wrote:
-> When debugging early enospc problems it was useful to have a tracepoint
-> where we failed all tickets so I could check the state of the enospc
-> counters at failure time to validate my fixes.  This adds the tracpoint
-> so you can easily get that information.
+On Wed, Jul 07, 2021 at 06:44:42AM -0400, Jeff Layton wrote:
+> On Wed, 2021-07-07 at 08:05 +0200, Greg KH wrote:
+> > On Wed, Jul 07, 2021 at 10:35:47AM +0800, Desmond Cheong Zhi Xi wrote:
+> > > Syzbot reports a potential deadlock in do_fcntl:
+> > > 
+> > > ========================================================
+> > > WARNING: possible irq lock inversion dependency detected
+> > > 5.12.0-syzkaller #0 Not tainted
+> > > --------------------------------------------------------
+> > > syz-executor132/8391 just changed the state of lock:
+> > > ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: f_getown_ex fs/fcntl.c:211 [inline]
+> > > ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: do_fcntl+0x8b4/0x1200 fs/fcntl.c:395
+> > > but this lock was taken by another, HARDIRQ-safe lock in the past:
+> > >  (&dev->event_lock){-...}-{2:2}
+> > > 
+> > > and interrupts could create inverse lock ordering between them.
+> > > 
+> > > other info that might help us debug this:
+> > > Chain exists of:
+> > >   &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
+> > > 
+> > >  Possible interrupt unsafe locking scenario:
+> > > 
+> > >        CPU0                    CPU1
+> > >        ----                    ----
+> > >   lock(&f->f_owner.lock);
+> > >                                local_irq_disable();
+> > >                                lock(&dev->event_lock);
+> > >                                lock(&new->fa_lock);
+> > >   <Interrupt>
+> > >     lock(&dev->event_lock);
+> > > 
+> > >  *** DEADLOCK ***
+> > > 
+> > > This happens because there is a lock hierarchy of
+> > > &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
+> > > from the following call chain:
+> > > 
+> > >   input_inject_event():
+> > >     spin_lock_irqsave(&dev->event_lock,...);
+> > >     input_handle_event():
+> > >       input_pass_values():
+> > >         input_to_handler():
+> > >           evdev_events():
+> > >             evdev_pass_values():
+> > >               spin_lock(&client->buffer_lock);
+> > >               __pass_event():
+> > >                 kill_fasync():
+> > >                   kill_fasync_rcu():
+> > >                     read_lock(&fa->fa_lock);
+> > >                     send_sigio():
+> > >                       read_lock_irqsave(&fown->lock,...);
+> > > 
+> > > However, since &dev->event_lock is HARDIRQ-safe, interrupts have to be
+> > > disabled while grabbing &f->f_owner.lock, otherwise we invert the lock
+> > > hierarchy.
+> > > 
+> > > Hence, we replace calls to read_lock/read_unlock on &f->f_owner.lock,
+> > > with read_lock_irq/read_unlock_irq.
+> > > 
+> > > Here read_lock_irq/read_unlock_irq should be safe to use because the
+> > > functions f_getown_ex and f_getowner_uids are only called from
+> > > do_fcntl, and f_getown is only called from do_fnctl and
+> > > sock_ioctl. do_fnctl itself is only called from syscalls.
+> > > 
+> > > For sock_ioctl, the chain is
+> > >   compat_sock_ioctl():
+> > >     compat_sock_ioctl_trans():
+> > >       sock_ioctl()
+> > > 
+> > > And interrupts are not disabled on either path. We assert this
+> > > assumption with WARN_ON_ONCE(irqs_disabled()). This check is also
+> > > inserted into another use of write_lock_irq in f_modown.
+> > > 
+> > > Reported-and-tested-by: syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+> > > Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+> > > ---
+> > >  fs/fcntl.c | 17 +++++++++++------
+> > >  1 file changed, 11 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > > index dfc72f15be7f..262235e02c4b 100644
+> > > --- a/fs/fcntl.c
+> > > +++ b/fs/fcntl.c
+> > > @@ -88,6 +88,7 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
+> > >  static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+> > >                       int force)
+> > >  {
+> > > +	WARN_ON_ONCE(irqs_disabled());
+> > 
+> > If this triggers, you just rebooted the box :(
+> > 
+> > Please never do this, either properly handle the problem and return an
+> > error, or do not check for this.  It is not any type of "fix" at all,
+> > and at most, a debugging aid while you work on the root problem.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  fs/btrfs/space-info.c        | 2 ++
->  include/trace/events/btrfs.h | 6 ++++++
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/fs/btrfs/space-info.c b/fs/btrfs/space-info.c
-> index 392997376a1c..af161eb808a2 100644
-> --- a/fs/btrfs/space-info.c
-> +++ b/fs/btrfs/space-info.c
-> @@ -825,6 +825,8 @@ static bool maybe_fail_all_tickets(struct btrfs_fs_info *fs_info,
->  	struct reserve_ticket *ticket;
->  	u64 tickets_id = space_info->tickets_id;
->  
-> +	trace_btrfs_fail_all_tickets(fs_info, space_info);
-> +
->  	if (btrfs_test_opt(fs_info, ENOSPC_DEBUG)) {
->  		btrfs_info(fs_info, "cannot satisfy tickets, dumping space info");
->  		__btrfs_dump_space_info(fs_info, space_info);
-> diff --git a/include/trace/events/btrfs.h b/include/trace/events/btrfs.h
-> index c7237317a8b9..3d81ba8c37b9 100644
-> --- a/include/trace/events/btrfs.h
-> +++ b/include/trace/events/btrfs.h
-> @@ -2098,6 +2098,12 @@ DEFINE_EVENT(btrfs_dump_space_info, btrfs_done_preemptive_reclaim,
->  	TP_ARGS(fs_info, sinfo)
->  );
->  
-> +DEFINE_EVENT(btrfs_dump_space_info, btrfs_fail_all_tickets,
-> +	TP_PROTO(const struct btrfs_fs_info *fs_info,
-> +		 const struct btrfs_space_info *sinfo),
-> +	TP_ARGS(fs_info, sinfo)
-> +);
+> Wait, what? Why would testing for irqs being disabled and throwing a
+> WARN_ON in that case crash the box?
 
-General suggestion for the dump_space_info - it would be good if
-ordered_bytes and delalloc_bytes is also dumped in the tracepoint.
-
-> +
->  TRACE_EVENT(btrfs_reserve_ticket,
->  	TP_PROTO(const struct btrfs_fs_info *fs_info, u64 flags, u64 bytes,
->  		 u64 start_ns, int flush, int error),
-> 
+If panic-on-warn is enabled, which is a common setting for systems these
+days.
