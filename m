@@ -2,261 +2,261 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5F53BE7EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 14:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF9D3BE7F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 14:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231698AbhGGMbB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 08:31:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41464 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231630AbhGGMa6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 08:30:58 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38702C061574;
-        Wed,  7 Jul 2021 05:28:18 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id hc16so2942311ejc.12;
-        Wed, 07 Jul 2021 05:28:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gYlonjHEqq+ciO9uXQTdjBC9hqLlNtpIxlPjlB/koR0=;
-        b=YROoudLM21q5MuNyCiUuu5tCfzZ8g0aDJXjG9WJL+c0Qee6Rm+Q7JrQ7CPuhK2wWRi
-         kNVEvJgpL1sNK8OS4LnDfIkL5AdT18NNpBoIVUKiUewvjKe8xaerAj9xZEy+fO81PRke
-         /T5vZG9phZDg2xxgvWYSJRUyAzBQ1dmfqgTpU1ihkoJ/eoMggfgzOZgN3iGIXxH71jgk
-         c6jmy/kygu56LW86S2rD5r711pYcklAFBUes2nWGbNLWcC8Dkr5MOxmWV/tIOZl2iwv7
-         UqOc9ZE/3dhV1cW9C37GJe9+wZQRmbX3BQKhJPLc/j16MvqdjKVS/R3yMJAtAoDwqYQW
-         gbUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gYlonjHEqq+ciO9uXQTdjBC9hqLlNtpIxlPjlB/koR0=;
-        b=emrFOey9ds5xAZ6E03jXWDH77le2wqQlIfPPoI1Dozdjt1D1fy4OaTvOvom8jh4UFT
-         6ldI8c7iVhx/CLiDOHxyOW5FVVQH2QN/1uPy2QRwyMwS+zymngc/IzF403G7ryQm1oMb
-         COgPaWRI57zur+E3SkvO2ze7AJCFWNZX3BkguXClUl8MhOjbn6WvuSSiUPt/jtZDtIL+
-         aBJiLds5aEkSSbtCbnpFz9vwfcTh/wXAsOSMHTFchqXrcswkb8xqcypHbIy2SXrcEaxb
-         P77ST+JluzhpFWN82jck8Gs0PTlONoZE5zGqWcW3/vytJ8B5xc549XWqX8tdcp4u4JwT
-         o+3A==
-X-Gm-Message-State: AOAM5324Q7kxy4rdAtzqy8+Ts1hlITdJ4W522OvwDW7Mha/k94mc61Zc
-        NXkKFNBQIvR3ow5GUzHUTNk=
-X-Google-Smtp-Source: ABdhPJzBeGM6H5FI9aSMOoxBk7ae3kyJriE7AyjlYO2b+N2WL+2Ac6H+PxzVSaCqjvWmttQQmf/RUg==
-X-Received: by 2002:a17:906:3a53:: with SMTP id a19mr23855526ejf.88.1625660896865;
-        Wed, 07 Jul 2021 05:28:16 -0700 (PDT)
-Received: from carbon.v ([108.61.166.58])
-        by smtp.googlemail.com with ESMTPSA id ze15sm7019821ejb.79.2021.07.07.05.28.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 05:28:16 -0700 (PDT)
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v8 11/11] io_uring: add support for IORING_OP_LINKAT
-Date:   Wed,  7 Jul 2021 19:27:47 +0700
-Message-Id: <20210707122747.3292388-12-dkadashev@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210707122747.3292388-1-dkadashev@gmail.com>
-References: <20210707122747.3292388-1-dkadashev@gmail.com>
+        id S231585AbhGGMb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 08:31:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231485AbhGGMb7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 08:31:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5651061C7C;
+        Wed,  7 Jul 2021 12:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625660958;
+        bh=IKwRYIgA9sblB4R6sPs+wSgkx2PZqDnqDhyFwot+gIs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Fx3e4dU6YX7emse9QIppWA9EwFbjmFFkFSGGwJmVi/oULMOF/t7HuYpGhLGuZg2ZR
+         sGXRPZyjVVimjxeSwj747va5rs4YD1zvIlk51dIQw6i/2n39ojLX5zvb+ZJulXG4Rt
+         p3izcIJvLZhd1TYKHnvsO7tmAIDPX0ma7Ahjrs70GJ4bvtGeXInBtshp6WipfEBW4r
+         K4cdQRbLT6wX9rxENJsibYfzY1oyXX5k6+/kxvHEU0j9LpcfldxUd8YXIE/cb/NcyT
+         H0o0wHwvo6FoLXURrvthvIUsqqAti9v8VEsbQZbMKnoCc4EllZyGxMNcYJgXD7iPxQ
+         ZUx+JSKrfe9wA==
+Message-ID: <793c1277c2f04eff1537407f873583bc26c5b848.camel@kernel.org>
+Subject: Re: [RFC PATCH v7 11/24] ceph: add routine to create fscrypt
+ context prior to RPC
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     ceph-devel@vger.kernel.org, xiubli@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        dhowells@redhat.com
+Date:   Wed, 07 Jul 2021 08:29:17 -0400
+In-Reply-To: <YOWGZgcdx/6KcHsx@suse.de>
+References: <20210625135834.12934-1-jlayton@kernel.org>
+         <20210625135834.12934-12-jlayton@kernel.org> <YOWGZgcdx/6KcHsx@suse.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-IORING_OP_LINKAT behaves like linkat(2) and takes the same flags and
-arguments.
+On Wed, 2021-07-07 at 11:48 +0100, Luis Henriques wrote:
+> On Fri, Jun 25, 2021 at 09:58:21AM -0400, Jeff Layton wrote:
+> > After pre-creating a new inode, do an fscrypt prepare on it, fetch a
+> > new encryption context and then marshal that into the security context
+> > to be sent along with the RPC. Call the new function from
+> > ceph_new_inode.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/crypto.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+> >  fs/ceph/crypto.h | 25 +++++++++++++++++++++++++
+> >  fs/ceph/inode.c  | 10 ++++++++--
+> >  fs/ceph/super.h  |  5 +++++
+> >  fs/ceph/xattr.c  |  3 +++
+> >  5 files changed, 83 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+> > index 997a33e1d59f..675d41fd2eb0 100644
+> > --- a/fs/ceph/crypto.c
+> > +++ b/fs/ceph/crypto.c
+> > @@ -4,6 +4,7 @@
+> >  #include <linux/fscrypt.h>
+> >  
+> >  #include "super.h"
+> > +#include "mds_client.h"
+> >  #include "crypto.h"
+> >  
+> >  static int ceph_crypt_get_context(struct inode *inode, void *ctx, size_t len)
+> > @@ -86,3 +87,44 @@ void ceph_fscrypt_set_ops(struct super_block *sb)
+> >  {
+> >  	fscrypt_set_ops(sb, &ceph_fscrypt_ops);
+> >  }
+> > +
+> > +int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+> > +				 struct ceph_acl_sec_ctx *as)
+> > +{
+> > +	int ret, ctxsize;
+> > +	bool encrypted = false;
+> > +	struct ceph_inode_info *ci = ceph_inode(inode);
+> > +
+> > +	ret = fscrypt_prepare_new_inode(dir, inode, &encrypted);
+> > +	if (ret)
+> > +		return ret;
+> > +	if (!encrypted)
+> > +		return 0;
+> > +
+> > +	as->fscrypt_auth = kzalloc(sizeof(*as->fscrypt_auth), GFP_KERNEL);
+> > +	if (!as->fscrypt_auth)
+> > +		return -ENOMEM;
+> > +
+> > +	ctxsize = fscrypt_context_for_new_inode(as->fscrypt_auth->cfa_blob, inode);
+> > +	if (ctxsize < 0)
+> > +		return ctxsize;
+> > +
+> > +	as->fscrypt_auth->cfa_version = cpu_to_le32(CEPH_FSCRYPT_AUTH_VERSION);
+> > +	as->fscrypt_auth->cfa_blob_len = cpu_to_le32(ctxsize);
+> > +
+> > +	WARN_ON_ONCE(ci->fscrypt_auth);
+> > +	kfree(ci->fscrypt_auth);
+> 
+> It's odd to have again a kfree() after a WARN_ON_ONCE() :-)
+> 
 
-In some internal places 'hardlink' is used instead of 'link' to avoid
-confusion with the SQE links. Name 'link' conflicts with the existing
-'link' member of io_kiocb.
+Throw a warning but handle the case sanely? That seems normal to me :)
 
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Suggested-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
-Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/internal.h                 |  2 +
- fs/io_uring.c                 | 71 +++++++++++++++++++++++++++++++++++
- fs/namei.c                    |  2 +-
- include/uapi/linux/io_uring.h |  2 +
- 4 files changed, 76 insertions(+), 1 deletion(-)
+> > +	ci->fscrypt_auth_len = ceph_fscrypt_auth_size(ctxsize);
+> > +	ci->fscrypt_auth = kmemdup(as->fscrypt_auth, ci->fscrypt_auth_len, GFP_KERNEL);
+> > +	if (!ci->fscrypt_auth)
+> > +		return -ENOMEM;
+> > +
+> > +	inode->i_flags |= S_ENCRYPTED;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_sec_ctx *as)
+> > +{
+> > +	swap(req->r_fscrypt_auth, as->fscrypt_auth);
+> > +}
+> 
+> This means that req->r_fscrypt_auth will need to be freed in
+> ceph_mdsc_release_request().  (I believe you've moved this function to
+> some other commit in your experimental branch).
+> 
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 3b3954214385..15a7d210cc67 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -79,6 +79,8 @@ int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
- 		 struct filename *newname, unsigned int flags);
- int do_mkdirat(int dfd, struct filename *name, umode_t mode);
- int do_symlinkat(struct filename *from, int newdfd, struct filename *to);
-+int do_linkat(int olddfd, struct filename *old, int newdfd,
-+			struct filename *new, int flags);
- 
- /*
-  * namespace.c
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a0f681ec25bb..d18ca8afd1fb 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -688,6 +688,15 @@ struct io_symlink {
- 	struct filename			*newpath;
- };
- 
-+struct io_hardlink {
-+	struct file			*file;
-+	int				old_dfd;
-+	int				new_dfd;
-+	struct filename			*oldpath;
-+	struct filename			*newpath;
-+	int				flags;
-+};
-+
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -847,6 +856,7 @@ struct io_kiocb {
- 		struct io_unlink	unlink;
- 		struct io_mkdir		mkdir;
- 		struct io_symlink	symlink;
-+		struct io_hardlink	hardlink;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -1060,6 +1070,7 @@ static const struct io_op_def io_op_defs[] = {
- 	[IORING_OP_UNLINKAT] = {},
- 	[IORING_OP_MKDIRAT] = {},
- 	[IORING_OP_SYMLINKAT] = {},
-+	[IORING_OP_LINKAT] = {},
- };
- 
- static bool io_disarm_next(struct io_kiocb *req);
-@@ -3653,6 +3664,57 @@ static int io_symlinkat(struct io_kiocb *req, int issue_flags)
- 	return 0;
- }
- 
-+static int io_linkat_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	struct io_hardlink *lnk = &req->hardlink;
-+	const char __user *oldf, *newf;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
-+		return -EINVAL;
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
-+	lnk->old_dfd = READ_ONCE(sqe->fd);
-+	lnk->new_dfd = READ_ONCE(sqe->len);
-+	oldf = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	newf = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-+	lnk->flags = READ_ONCE(sqe->hardlink_flags);
-+
-+	lnk->oldpath = getname(oldf);
-+	if (IS_ERR(lnk->oldpath))
-+		return PTR_ERR(lnk->oldpath);
-+
-+	lnk->newpath = getname(newf);
-+	if (IS_ERR(lnk->newpath)) {
-+		putname(lnk->oldpath);
-+		return PTR_ERR(lnk->newpath);
-+	}
-+
-+	req->flags |= REQ_F_NEED_CLEANUP;
-+	return 0;
-+}
-+
-+static int io_linkat(struct io_kiocb *req, int issue_flags)
-+{
-+	struct io_hardlink *lnk = &req->hardlink;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	ret = do_linkat(lnk->old_dfd, lnk->oldpath, lnk->new_dfd,
-+				lnk->newpath, lnk->flags);
-+
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
- {
-@@ -6065,6 +6127,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_mkdirat_prep(req, sqe);
- 	case IORING_OP_SYMLINKAT:
- 		return io_symlinkat_prep(req, sqe);
-+	case IORING_OP_LINKAT:
-+		return io_linkat_prep(req, sqe);
- 	}
- 
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6233,6 +6297,10 @@ static void io_clean_op(struct io_kiocb *req)
- 			putname(req->symlink.oldpath);
- 			putname(req->symlink.newpath);
- 			break;
-+		case IORING_OP_LINKAT:
-+			putname(req->hardlink.oldpath);
-+			putname(req->hardlink.newpath);
-+			break;
- 		}
- 	}
- 	if ((req->flags & REQ_F_POLLED) && req->apoll) {
-@@ -6367,6 +6435,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_SYMLINKAT:
- 		ret = io_symlinkat(req, issue_flags);
- 		break;
-+	case IORING_OP_LINKAT:
-+		ret = io_linkat(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/fs/namei.c b/fs/namei.c
-index f241348e64f4..b5adfd4f7de6 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4358,7 +4358,7 @@ EXPORT_SYMBOL(vfs_link);
-  * with linux 2.0, and to avoid hard-linking to directories
-  * and other special files.  --ADM
-  */
--static int do_linkat(int olddfd, struct filename *old, int newdfd,
-+int do_linkat(int olddfd, struct filename *old, int newdfd,
- 	      struct filename *new, int flags)
- {
- 	struct user_namespace *mnt_userns;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 61fd347ab176..10eb38d2864f 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -44,6 +44,7 @@ struct io_uring_sqe {
- 		__u32		splice_flags;
- 		__u32		rename_flags;
- 		__u32		unlink_flags;
-+		__u32		hardlink_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	/* pack this to avoid bogus arm OABI complaints */
-@@ -135,6 +136,7 @@ enum {
- 	IORING_OP_UNLINKAT,
- 	IORING_OP_MKDIRAT,
- 	IORING_OP_SYMLINKAT,
-+	IORING_OP_LINKAT,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
+Ahh yes. Good catch. I'll fix that up too.
+
+> > diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+> > index d2b1f8e7b300..bdf1ba47db16 100644
+> > --- a/fs/ceph/crypto.h
+> > +++ b/fs/ceph/crypto.h
+> > @@ -11,6 +11,9 @@
+> >  #define	CEPH_XATTR_NAME_ENCRYPTION_CONTEXT	"encryption.ctx"
+> >  
+> >  #ifdef CONFIG_FS_ENCRYPTION
+> > +struct ceph_fs_client;
+> > +struct ceph_acl_sec_ctx;
+> > +struct ceph_mds_request;
+> >  
+> >  #define CEPH_FSCRYPT_AUTH_VERSION	1
+> >  struct ceph_fscrypt_auth {
+> > @@ -19,10 +22,19 @@ struct ceph_fscrypt_auth {
+> >  	u8	cfa_blob[FSCRYPT_SET_CONTEXT_MAX_SIZE];
+> >  } __packed;
+> >  
+> > +static inline u32 ceph_fscrypt_auth_size(u32 ctxsize)
+> > +{
+> > +	return offsetof(struct ceph_fscrypt_auth, cfa_blob) + ctxsize;
+> > +}
+> > +
+> >  void ceph_fscrypt_set_ops(struct super_block *sb);
+> >  
+> >  void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc);
+> >  
+> > +int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+> > +				 struct ceph_acl_sec_ctx *as);
+> > +void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_sec_ctx *as);
+> > +
+> >  #else /* CONFIG_FS_ENCRYPTION */
+> >  
+> >  static inline void ceph_fscrypt_set_ops(struct super_block *sb)
+> > @@ -32,6 +44,19 @@ static inline void ceph_fscrypt_set_ops(struct super_block *sb)
+> >  static inline void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
+> >  {
+> >  }
+> > +
+> > +static inline int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+> > +						struct ceph_acl_sec_ctx *as)
+> > +{
+> > +	if (IS_ENCRYPTED(dir))
+> > +		return -EOPNOTSUPP;
+> > +	return 0;
+> > +}
+> > +
+> > +static inline void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req,
+> > +						struct ceph_acl_sec_ctx *as_ctx)
+> > +{
+> > +}
+> >  #endif /* CONFIG_FS_ENCRYPTION */
+> >  
+> >  #endif
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index fba139a4f57b..a0b311195e80 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -83,12 +83,17 @@ struct inode *ceph_new_inode(struct inode *dir, struct dentry *dentry,
+> >  			goto out_err;
+> >  	}
+> >  
+> > +	inode->i_state = 0;
+> > +	inode->i_mode = *mode;
+> > +
+> >  	err = ceph_security_init_secctx(dentry, *mode, as_ctx);
+> >  	if (err < 0)
+> >  		goto out_err;
+> >  
+> > -	inode->i_state = 0;
+> > -	inode->i_mode = *mode;
+> > +	err = ceph_fscrypt_prepare_context(dir, inode, as_ctx);
+> > +	if (err)
+> > +		goto out_err;
+> > +
+> >  	return inode;
+> >  out_err:
+> >  	iput(inode);
+> > @@ -101,6 +106,7 @@ void ceph_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_sec_ctx *a
+> >  		req->r_pagelist = as_ctx->pagelist;
+> >  		as_ctx->pagelist = NULL;
+> >  	}
+> > +	ceph_fscrypt_as_ctx_to_req(req, as_ctx);
+> >  }
+> >  
+> >  /**
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index 534c2a76562d..651d7909a443 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -26,6 +26,8 @@
+> >  #include <linux/fscache.h>
+> >  #endif
+> > 
+> > +#include "crypto.h"
+> > +
+> >  /* f_type in struct statfs */
+> >  #define CEPH_SUPER_MAGIC 0x00c36400
+> >  
+> > @@ -1068,6 +1070,9 @@ struct ceph_acl_sec_ctx {
+> >  #ifdef CONFIG_CEPH_FS_SECURITY_LABEL
+> >  	void *sec_ctx;
+> >  	u32 sec_ctxlen;
+> > +#endif
+> > +#ifdef CONFIG_FS_ENCRYPTION
+> > +	struct ceph_fscrypt_auth *fscrypt_auth;
+> >  #endif
+> >  	struct ceph_pagelist *pagelist;
+> >  };
+> > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> > index 1242db8d3444..16a62a2bd61e 100644
+> > --- a/fs/ceph/xattr.c
+> > +++ b/fs/ceph/xattr.c
+> > @@ -1362,6 +1362,9 @@ void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
+> >  #endif
+> >  #ifdef CONFIG_CEPH_FS_SECURITY_LABEL
+> >  	security_release_secctx(as_ctx->sec_ctx, as_ctx->sec_ctxlen);
+> > +#endif
+> > +#ifdef CONFIG_FS_ENCRYPTION
+> > +	kfree(as_ctx->fscrypt_auth);
+> >  #endif
+> >  	if (as_ctx->pagelist)
+> >  		ceph_pagelist_release(as_ctx->pagelist);
+> > -- 
+> > 2.31.1
+> > 
+
 -- 
-2.30.2
+Jeff Layton <jlayton@kernel.org>
 
