@@ -2,248 +2,238 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E553BE1A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 05:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F341B3BE231
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 06:50:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbhGGD4T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jul 2021 23:56:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28410 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230019AbhGGD4T (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jul 2021 23:56:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625630019;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=aW5zpXaFmNpnV5x7Sfss91jfyOF2qazIxL6RE+5ePV4=;
-        b=Wpt0DnPKGaKfVuC+wMmrpS+2hwHzdfLAcNq4JYJPr/kkviymV3M1eQB9WW3AMQVTusnZA3
-        XyDfO6Jnn41UlbcumI4qWn/bg/MSrAWhHw1ZmVQGTc0D4+dp7ijjm3N3MKB+V+jECM2GGQ
-        zGxGsezEpoEOvgTagwwCpHddNXY9HgQ=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-177-4q3lU2XjOCCBT1KxqkgfDQ-1; Tue, 06 Jul 2021 23:53:37 -0400
-X-MC-Unique: 4q3lU2XjOCCBT1KxqkgfDQ-1
-Received: by mail-pl1-f200.google.com with SMTP id x15-20020a170902e04fb02900f5295925dbso324787plx.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jul 2021 20:53:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=aW5zpXaFmNpnV5x7Sfss91jfyOF2qazIxL6RE+5ePV4=;
-        b=TZ0DJP4ICsna2rzPoUaDOoWUO96HMBzHearCsBngTMc5B33cwqkRa/KKBfko8CiPRp
-         fSo1puaaK0gf+grD6JdirWsAaPMjYyeKe03VfbEfbmn1RkfIcL/lsnrVExxr473KNW95
-         ANcxrD1lG8lMkH19H8mnYFONj1UJkU0DemO3SSg/8oNkN9np/YyM2T5R5FBXBRJG6FYK
-         2bsrUBhdCBQObBESZlmEb988kjtCea2MX2lv2VzTDd6pVhpmhjym2lKaLKoj2WX93R/A
-         RobwJMAh8XWhwEHTsBZ+x4SMYKhFWs5gTgdtkpKltuxW8+WaQK12b5tcQiSVeHLzphZH
-         70dw==
-X-Gm-Message-State: AOAM532d94VCUUW47z8pvVc+s6Kv/o5GpGTxJBm/3mWS6KIUB0WvTdV6
-        eI6u7cao8ZleRrLChF8yOCFseUB/QmQxwxh6hOjIR4gkuhoy5FHGwYVKVo8x3v8Uhako+ZjdmDa
-        un+0jkENsD6/jobvYHQ/Y2fE5dw==
-X-Received: by 2002:aa7:959d:0:b029:31a:8c2c:e91d with SMTP id z29-20020aa7959d0000b029031a8c2ce91dmr20335764pfj.64.1625630016513;
-        Tue, 06 Jul 2021 20:53:36 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwd5uGuLGXkPUtLvYJ78IiWsaRrR1/WuNAJQcD4sCmCQ2iF1ZWyCT1k/EMpWh8RWm5nvC5o/w==
-X-Received: by 2002:aa7:959d:0:b029:31a:8c2c:e91d with SMTP id z29-20020aa7959d0000b029031a8c2ce91dmr20335750pfj.64.1625630016285;
-        Tue, 06 Jul 2021 20:53:36 -0700 (PDT)
-Received: from [10.72.13.191] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id k10sm3915932pfc.169.2021.07.06.20.53.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Jul 2021 20:53:35 -0700 (PDT)
-Subject: Re: [RFC PATCH v7 06/24] ceph: parse new fscrypt_auth and
- fscrypt_file fields in inode traces
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     lhenriques@suse.de, linux-fsdevel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, dhowells@redhat.com
-References: <20210625135834.12934-1-jlayton@kernel.org>
- <20210625135834.12934-7-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <fbf80709-e87a-9334-45d7-9cca5726b037@redhat.com>
-Date:   Wed, 7 Jul 2021 11:53:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <20210625135834.12934-7-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S230192AbhGGEx3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 00:53:29 -0400
+Received: from mail-am6eur05on2056.outbound.protection.outlook.com ([40.107.22.56]:38506
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229989AbhGGEx2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 00:53:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7CF1slwiDkalXwfRs1Z8DupZBNxhfZEd2qyoS2z0zW4=;
+ b=xqxa0gvPIk0LcI7QIdZYGSpZhv8mQchDIApQ+UuLN12TuNA2qSEiDBztst2fXQHIbRb2ZT5DOUSwHag0TVnutNeMnblBUolqrTpnj0wtJoEdry/dAx/l4d2n/FZaMkbDyJtqozO4v2XougWm69y5d+vaHwuSZwzckImiqprju5c=
+Received: from DB6P193CA0021.EURP193.PROD.OUTLOOK.COM (2603:10a6:6:29::31) by
+ AM6PR08MB3735.eurprd08.prod.outlook.com (2603:10a6:20b:81::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4287.23; Wed, 7 Jul 2021 04:50:47 +0000
+Received: from DB5EUR03FT018.eop-EUR03.prod.protection.outlook.com
+ (2603:10a6:6:29:cafe::ac) by DB6P193CA0021.outlook.office365.com
+ (2603:10a6:6:29::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20 via Frontend
+ Transport; Wed, 7 Jul 2021 04:50:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=pass action=none
+ header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ DB5EUR03FT018.mail.protection.outlook.com (10.152.20.69) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4308.20 via Frontend Transport; Wed, 7 Jul 2021 04:50:46 +0000
+Received: ("Tessian outbound c836dc7aad98:v97"); Wed, 07 Jul 2021 04:50:46 +0000
+X-CR-MTA-TID: 64aa7808
+Received: from e0d2e8363e55.1
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 1B6FAC8B-B3D3-4D9D-881A-D636123C7AE1.1;
+        Wed, 07 Jul 2021 04:50:39 +0000
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id e0d2e8363e55.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Wed, 07 Jul 2021 04:50:39 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Iu0mnAR9P6johRMQ3/8CU/fTdI5v8V3nG3DKocLF5AcDCwGljkgmNIi2Vfod+qlGbqszVdNAcQ/4T6A9t1ygkvUpgV0qyWQCt7qAPmP1y7vubk6dRQIFhH2BhVz6Tbvip4KkpYp2RHglt3lLLZjXd1KRbskX9iUsVd7KiTAyTh0gG24o3uif4m9Z+/vtHEgdHV6NJL5MCQajKZT/eIeUsUd19ool7W0tPIvw6nsvbbSPKjx4Jdmj2UcCcv0FV32xi603Ur6ZddHw1BftmIF+rlSygjnNaIHfeTCU4eMLCINXeOHaQy8HmtSWhxrdpmMzjnRWzBvkUhZN6mXDwtoKLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7CF1slwiDkalXwfRs1Z8DupZBNxhfZEd2qyoS2z0zW4=;
+ b=aym2OPbi1+8gYA/8i0MOrNK1s56d4fGOBJO7GlYoJOBGyRavdHCa8Ys/zZq7Kx+sjJ3RlbBOMCRapaGmUtFZhbEvSnspP/x0tppo+hTafNoezEFsxqFRaoQtmRv8XDfEbIfUEWcN0GhQ/fGE2EovL0sRHaxrSHcehUGhHX5yrvpVNxgB7KJM9rSil7B1hfXb0yV0c07Uk+wg1ijif+VYox6YLsH6G+jHGvfAdfVTHBOgMUfxwBwdBOZuG0UsyXIknasIfFU1rXPGJiWuyO3Q96LvZDM7XR0sjfGHWzCXXBnMQ0O+Q0ejy1hhSI76Xf1TAYFlCPZASglEZm4OkYt2ww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7CF1slwiDkalXwfRs1Z8DupZBNxhfZEd2qyoS2z0zW4=;
+ b=xqxa0gvPIk0LcI7QIdZYGSpZhv8mQchDIApQ+UuLN12TuNA2qSEiDBztst2fXQHIbRb2ZT5DOUSwHag0TVnutNeMnblBUolqrTpnj0wtJoEdry/dAx/l4d2n/FZaMkbDyJtqozO4v2XougWm69y5d+vaHwuSZwzckImiqprju5c=
+Received: from AM6PR08MB4376.eurprd08.prod.outlook.com (2603:10a6:20b:bb::21)
+ by AS8PR08MB6994.eurprd08.prod.outlook.com (2603:10a6:20b:34c::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20; Wed, 7 Jul
+ 2021 04:50:30 +0000
+Received: from AM6PR08MB4376.eurprd08.prod.outlook.com
+ ([fe80::3452:c711:d09a:d8a1]) by AM6PR08MB4376.eurprd08.prod.outlook.com
+ ([fe80::3452:c711:d09a:d8a1%5]) with mapi id 15.20.4287.033; Wed, 7 Jul 2021
+ 04:50:30 +0000
+From:   Justin He <Justin.He@arm.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH 03/14] d_path: regularize handling of root dentry in
+ __dentry_path()
+Thread-Topic: [PATCH 03/14] d_path: regularize handling of root dentry in
+ __dentry_path()
+Thread-Index: AQHXTEjIzjkc7s5AukulO5MhE2mNX6s3PmiA
+Date:   Wed, 7 Jul 2021 04:50:30 +0000
+Message-ID: <AM6PR08MB43768C8B3857136097ACAAFDF71A9@AM6PR08MB4376.eurprd08.prod.outlook.com>
+References: <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
+ <20210519004901.3829541-1-viro@zeniv.linux.org.uk>
+ <20210519004901.3829541-3-viro@zeniv.linux.org.uk>
+In-Reply-To: <20210519004901.3829541-3-viro@zeniv.linux.org.uk>
+Accept-Language: en-US, zh-CN
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ts-tracking-id: AFC7988C2CEEC74C9236971C6538A288.0
+x-checkrecipientchecked: true
+Authentication-Results-Original: zeniv.linux.org.uk; dkim=none (message not
+ signed) header.d=none;zeniv.linux.org.uk; dmarc=none action=none
+ header.from=arm.com;
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: 17aa982e-cf98-43fe-2e6a-08d94102c935
+x-ms-traffictypediagnostic: AS8PR08MB6994:|AM6PR08MB3735:
+X-Microsoft-Antispam-PRVS: <AM6PR08MB37355AB73007507BE544EAEAF71A9@AM6PR08MB3735.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+nodisclaimer: true
+x-ms-oob-tlc-oobclassifiers: OLM:7219;OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: S2yO+YCOiccRADhtR32gDATOnyjPccvlYohQJjLgl4uHM2poIaVKhqWruPlMDc2ixnLWlw1zi+QUqZh6GFGyOah3px1afzT51h+1uZ3wvYd+76nDYXk6PEyPN/vyN9y+EAXIaKn9eMX8Ma/tzpAFRhMxTNaH7zrXE/zVkLPz3pxaWo5qo/R2NPFI4m9HT7DeowV9ZnnkHxD5VtqMUQRw7OqRAQahkMUIL2fNPosfAXF2HQMvXp/HLjlndxtVallyfwNBIxr8TyIC20AMtZsB9RUkzlZr1yQyBaD2Z0GZj1A5W4nBe3BTxceV1F7EjPZBUA53fUGrJIp2I/80wArUJIY6C+NCJ6VoWb3eTWyd9hfk6/2evAeI7ZG4iiKEmD4Xw7670CBY2OISosP95ZQyQ25utau8MTW5vGi1W+R3SXUsHCmwwfY0V+HU3+8xw/hmoU5oXwwZOVFWRh3XhaqtorKe6GDiO6tNI9u3C7MZ7usSW6h/iIvqWkPUqKbsaiaV6juShTxEeLxNmM426icXsuGH/rscrAFg5WXLIu9tYrYQOFDWg5H2fsMlAxr1MTHHMUc26osph6KhPJRAK5EPftrElbEBQS+1XNFFmYQqwFAvgt8R7foSldwyV4ac5gFAdnK3mvqR/XC71Kh0UyAXZw==
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR08MB4376.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(39850400004)(136003)(366004)(376002)(346002)(53546011)(66946007)(66476007)(6506007)(52536014)(76116006)(83380400001)(38100700002)(26005)(66446008)(86362001)(66556008)(64756008)(186003)(9686003)(110136005)(122000001)(478600001)(316002)(54906003)(4326008)(7696005)(8676002)(2906002)(7416002)(71200400001)(33656002)(5660300002)(8936002)(55016002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?CCZ8quxOzeNJFfnZM4pILfvHv8hxUSxsYmGqwRjMjtgm0fjgWp1dESRwSX29?=
+ =?us-ascii?Q?023E/o4rRbnbTFk5nFX9qFAt79zbDi8vDNe7xjT7oP9ULNm3u5O84OPSIeGG?=
+ =?us-ascii?Q?x0LBMv4RuSzXwSo7O+c8acJGG/+JNS2cBR4WGdOHwaWM+fJcvDQc5qkZlVbI?=
+ =?us-ascii?Q?DgZWEM1HBVMCrR4L4oykPSPxQJkzTnAvtr3vAuqPFoSXxW5Pl7Jetd0m5UqJ?=
+ =?us-ascii?Q?P5ibGQ5oVJRmvbxebkYWT4PmsqMnENhEKmqKqdD9oY9+dG8gm/5KECciBylM?=
+ =?us-ascii?Q?B2NaYylY7GtYpBOyy1K0F13sR2PgiRcqt2j/RvzQsu2QMALudzjbjMCW4bvJ?=
+ =?us-ascii?Q?4X+3/AvVVX6hWcRax6GxR82VV+1vIJg5Vh4JYT+ChUr6/49ulFKS0sW2Iuzr?=
+ =?us-ascii?Q?xSfNzN/JQExo65SPGo2/ORzjyYycdgtBg9kVmwBljUpK1wTacAoAfB/xBA5C?=
+ =?us-ascii?Q?PNnUxV+cNTaRAz+PBs3wCeV+C3907wd/y8bKAVioLdVevQKB7T0NXuBuims5?=
+ =?us-ascii?Q?xD4H7GITDqDlu3lCjE1mLbQvYcFSsMbJHjpH5IcOLhMLCOcTYaTFFrwA/QJF?=
+ =?us-ascii?Q?Bfk8qwHHsO7w5oWWJIkejIuweYXuTA/Qu683+2dzNTT3X61zxLkeqS4/UxDE?=
+ =?us-ascii?Q?io7iVPIbNMt9qPWCz+SrDJmyJBM95BsvikiJo44R7YPi1ApRT/kpYjKblFmp?=
+ =?us-ascii?Q?Okag5lZFGJ+697zjEtsQbVP9N5+/gi+snf56QjcI1+Cxy1Kghhem0Gf2gJxS?=
+ =?us-ascii?Q?n9ynVjGXeLkFZFd1p2WSv9crt4aK0oDD+4qHWhIUjosmclmXDP0XAijvqOdF?=
+ =?us-ascii?Q?sqezaSvz1pOCIfN46IeXvRuhnqEmTllq/d02hWHjW6nfeFcmvGwVJu58mW9o?=
+ =?us-ascii?Q?6K64kpy6DnHVYJPcg+IPeHyIzSCaclzxiu7/LiuxQhKXS0B/iyi5XVb8E0R7?=
+ =?us-ascii?Q?5gEyMqYU76KaRkt5NEXIAgXBdqfTqFWvVtmpt3mEo/H9PLN3B7z2G6fSCuui?=
+ =?us-ascii?Q?m0mNc6MarfOvknhB3+Pr7e8xnUSzvA6UJNNV9EzL/LmytduqcK9G/N3mDojL?=
+ =?us-ascii?Q?azv9+0CVqAmf7KgofcdB6GfKree23P07namTgvwzh0pVGDTcBAjls3RWYGH8?=
+ =?us-ascii?Q?RPf4iLnFudp/U2AcIBZsZQfqFqZmYNiwU/97EAavNvP370Vw3WRbvy5ljiDB?=
+ =?us-ascii?Q?+2dBWqjWkrL6p81ybk28RHEkId85pqvhmlHAW1H2a33vNNoy6bhE8pAnKNf1?=
+ =?us-ascii?Q?jrilfb4+FD6FIr8RPRAZ/hepdyBT+VruHVpHrNA//UDsFiI7hLBqStgXFoGn?=
+ =?us-ascii?Q?t6R7AZWOUiMIOCoAzPwCClma?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6994
+Original-Authentication-Results: zeniv.linux.org.uk; dkim=none (message not signed)
+ header.d=none;zeniv.linux.org.uk; dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT018.eop-EUR03.prod.protection.outlook.com
+X-MS-Office365-Filtering-Correlation-Id-Prvs: b2db6d39-3056-40be-9c73-08d94102bf7c
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Civy3l5ql/MGXmImmtMMnuohGE8U/qcwpPq/KErY5vBQpAwG2+tkcYVSVcAY7ADx5mGitlhxE/hl/5tSWzZzZpW4bR/XkVOdrlfB/1jEtxUB3ksTNuaf2ihYzov4DoM5WT+EWQkSIxqO9tUl5B7m+o6x0+3l9B+GOuyilIx1gPhRg2FqY8wpmIqB0yyb6E769Hhdigew0l8/TIcd195Uh58DW/iSH/xqVdMV6KBC3H1GluILfyeMzJK1TiYQrO6uFs0fZ9rmRuN3V8D4pluVowO7o/vFE+Qhq9qyT4sHwLhYw4T0BLc35/P2eBvPuS9FjYjhRAMYcjssK9x4G2nqUWdpyQ4qTYV8Sz0j1pMCTDIB0p5XXTGnF6cOHUw5KwfW4cHcMFCuz9UjPYKn6O5AVSuSqHVU2Fbqi8mBgA6zfzE2j1QzytmU4gIErnPYyn0r8RgcOxtZn3YFtRjR2GrJdZ9z3tnMHQES9E0zFZpaS6xbNBkNtEu0wH6EY8LACgHBWxMsB95xZjkeAMWOvZpyMgsC0GkIjiZsQEwVzMuHt6sva/oF/jOQT6pMkmMSRsvU7LxAvoM6zjoiyqOOWT1AWkIcykJ6SdtiZvJ0Jq3WOW0G7QK5R/nLwp0NVGW2w93b4zQvs89nVRcCUSl4t+S3jIw6POR3szAIfsda95SBmEQEXydu7G0YQkGUoXJA5HRa+CnjOExsICRBbVe5UwjtSQ==
+X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(4636009)(346002)(39850400004)(376002)(136003)(396003)(46966006)(36840700001)(110136005)(26005)(55016002)(356005)(316002)(53546011)(336012)(478600001)(54906003)(186003)(33656002)(86362001)(70206006)(9686003)(81166007)(82740400003)(6506007)(7696005)(47076005)(8676002)(2906002)(83380400001)(82310400003)(36860700001)(5660300002)(52536014)(4326008)(450100002)(70586007)(8936002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2021 04:50:46.9963
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17aa982e-cf98-43fe-2e6a-08d94102c935
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource: DB5EUR03FT018.eop-EUR03.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3735
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 6/25/21 9:58 PM, Jeff Layton wrote:
-> ...and store them in the ceph_inode_info.
+
+> -----Original Message-----
+> From: Al Viro <viro@ftp.linux.org.uk> On Behalf Of Al Viro
+> Sent: Wednesday, May 19, 2021 8:49 AM
+> To: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Justin He <Justin.He@arm.com>; Petr Mladek <pmladek@suse.com>; Steven
+> Rostedt <rostedt@goodmis.org>; Sergey Senozhatsky
+> <senozhatsky@chromium.org>; Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com>; Rasmus Villemoes
+> <linux@rasmusvillemoes.dk>; Jonathan Corbet <corbet@lwn.net>; Heiko
+> Carstens <hca@linux.ibm.com>; Vasily Gorbik <gor@linux.ibm.com>; Christia=
+n
+> Borntraeger <borntraeger@de.ibm.com>; Eric W . Biederman
+> <ebiederm@xmission.com>; Darrick J. Wong <darrick.wong@oracle.com>; Peter
+> Zijlstra (Intel) <peterz@infradead.org>; Ira Weiny <ira.weiny@intel.com>;
+> Eric Biggers <ebiggers@google.com>; Ahmed S. Darwish
+> <a.darwish@linutronix.de>; open list:DOCUMENTATION <linux-
+> doc@vger.kernel.org>; Linux Kernel Mailing List <linux-
+> kernel@vger.kernel.org>; linux-s390 <linux-s390@vger.kernel.org>; linux-
+> fsdevel <linux-fsdevel@vger.kernel.org>
+> Subject: [PATCH 03/14] d_path: regularize handling of root dentry in
+> __dentry_path()
 >
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/file.c       |  2 ++
->   fs/ceph/inode.c      | 18 ++++++++++++++++++
->   fs/ceph/mds_client.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
->   fs/ceph/mds_client.h |  4 ++++
->   fs/ceph/super.h      |  6 ++++++
->   5 files changed, 74 insertions(+)
+> All path-forming primitives boil down to sequence of prepend_name()
+> on dentries encountered along the way toward root.  Each time we prepend
+> / + dentry name to the buffer.  Normally that does exactly what we want,
+> but there's a corner case when we don't call prepend_name() at all (in ca=
+se
+> of __dentry_path() that happens if we are given root dentry).  We obvious=
+ly
+> want to end up with "/", rather than "", so this corner case needs to be
+> handled.
 >
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 2cda398ba64d..ea0e85075b7b 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -592,6 +592,8 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
->   	iinfo.xattr_data = xattr_buf;
->   	memset(iinfo.xattr_data, 0, iinfo.xattr_len);
->   
-> +	/* FIXME: set fscrypt_auth and fscrypt_file */
-> +
->   	in.ino = cpu_to_le64(vino.ino);
->   	in.snapid = cpu_to_le64(CEPH_NOSNAP);
->   	in.version = cpu_to_le64(1);	// ???
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index f62785e4dbcb..b620281ea65b 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -611,6 +611,13 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
->   
->   	ci->i_meta_err = 0;
->   
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	ci->fscrypt_auth = NULL;
-> +	ci->fscrypt_auth_len = 0;
-> +	ci->fscrypt_file = NULL;
-> +	ci->fscrypt_file_len = 0;
-> +#endif
-> +
->   	return &ci->vfs_inode;
->   }
->   
-> @@ -619,6 +626,9 @@ void ceph_free_inode(struct inode *inode)
->   	struct ceph_inode_info *ci = ceph_inode(inode);
->   
->   	kfree(ci->i_symlink);
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	kfree(ci->fscrypt_auth);
-> +#endif
->   	kmem_cache_free(ceph_inode_cachep, ci);
->   }
->   
-> @@ -1021,6 +1031,14 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
->   		xattr_blob = NULL;
->   	}
->   
-> +	if (iinfo->fscrypt_auth_len && !ci->fscrypt_auth) {
-> +		ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
-> +		ci->fscrypt_auth = iinfo->fscrypt_auth;
-> +		iinfo->fscrypt_auth = NULL;
-> +		iinfo->fscrypt_auth_len = 0;
-> +		inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
-> +	}
-> +
->   	/* finally update i_version */
->   	if (le64_to_cpu(info->version) > ci->i_version)
->   		ci->i_version = le64_to_cpu(info->version);
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 3b3a14024ca0..9c994effc51d 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -183,8 +183,48 @@ static int parse_reply_info_in(void **p, void *end,
->   			info->rsnaps = 0;
->   		}
->   
-> +		if (struct_v >= 5) {
-> +			u32 alen;
-> +
-> +			ceph_decode_32_safe(p, end, alen, bad);
-> +
-> +			while (alen--) {
-> +				u32 len;
-> +
-> +				/* key */
-> +				ceph_decode_32_safe(p, end, len, bad);
-> +				ceph_decode_skip_n(p, end, len, bad);
-> +				/* value */
-> +				ceph_decode_32_safe(p, end, len, bad);
-> +				ceph_decode_skip_n(p, end, len, bad);
-> +			}
-> +		}
-> +
-> +		/* fscrypt flag -- ignore */
-> +		if (struct_v >= 6)
-> +			ceph_decode_skip_8(p, end, bad);
-> +
-> +		if (struct_v >= 7) {
-> +			ceph_decode_32_safe(p, end, info->fscrypt_auth_len, bad);
-> +			if (info->fscrypt_auth_len) {
-> +				info->fscrypt_auth = kmalloc(info->fscrypt_auth_len, GFP_KERNEL);
-> +				if (!info->fscrypt_auth)
-> +					return -ENOMEM;
-> +				ceph_decode_copy_safe(p, end, info->fscrypt_auth,
-> +						      info->fscrypt_auth_len, bad);
-> +			}
-> +			ceph_decode_32_safe(p, end, info->fscrypt_file_len, bad);
-> +			if (info->fscrypt_file_len) {
-> +				info->fscrypt_file = kmalloc(info->fscrypt_file_len, GFP_KERNEL);
-> +				if (!info->fscrypt_file)
-> +					return -ENOMEM;
-
-Should we kfree(info->fscrypt_auth) before return ?
-
-I didn't anywhere is freeing it.
-
-Thanks.
+> __dentry_path() used to manually put '/' in the end of buffer before
+> doing anything else, to be overwritten by the first call of prepend_name(=
+)
+> if one happens and to be left in place if we don't call prepend_name() at
+> all.  That required manually checking that we had space in the buffer
+> (prepend_name() and prepend() take care of such checks themselves) and le=
+ad
+> to clumsy keeping track of return value.
+>
+> A better approach is to check if the main loop has added anything
+> into the buffer and prepend "/" if it hasn't.  A side benefit of using
+> prepend()
+> is that it does the right thing if we'd already run out of buffer, making
+> the overflow-handling logics simpler.
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Reviewed-by: Jia He <justin.he@arm.com>
 
 
-> +				ceph_decode_copy_safe(p, end, info->fscrypt_file,
-> +						      info->fscrypt_file_len, bad);
-> +			}
-> +		}
->   		*p = end;
->   	} else {
-> +		/* legacy (unversioned) struct */
->   		if (features & CEPH_FEATURE_MDS_INLINE_DATA) {
->   			ceph_decode_64_safe(p, end, info->inline_version, bad);
->   			ceph_decode_32_safe(p, end, info->inline_len, bad);
-> @@ -625,6 +665,10 @@ static int parse_reply_info(struct ceph_mds_session *s, struct ceph_msg *msg,
->   
->   static void destroy_reply_info(struct ceph_mds_reply_info_parsed *info)
->   {
-> +	kfree(info->diri.fscrypt_auth);
-> +	kfree(info->diri.fscrypt_file);
-> +	kfree(info->targeti.fscrypt_auth);
-> +	kfree(info->targeti.fscrypt_file);
->   	if (!info->dir_entries)
->   		return;
->   	free_pages((unsigned long)info->dir_entries, get_order(info->dir_buf_size));
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index 64ea9d853b8d..0c3cc61fd038 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -88,6 +88,10 @@ struct ceph_mds_reply_info_in {
->   	s32 dir_pin;
->   	struct ceph_timespec btime;
->   	struct ceph_timespec snap_btime;
-> +	u8 *fscrypt_auth;
-> +	u8 *fscrypt_file;
-> +	u32 fscrypt_auth_len;
-> +	u32 fscrypt_file_len;
->   	u64 rsnaps;
->   	u64 change_attr;
->   };
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 0cd94b296f5f..e032737fe472 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -429,6 +429,12 @@ struct ceph_inode_info {
->   
->   #ifdef CONFIG_CEPH_FSCACHE
->   	struct fscache_cookie *fscache;
-> +#endif
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	u32 fscrypt_auth_len;
-> +	u32 fscrypt_file_len;
-> +	u8 *fscrypt_auth;
-> +	u8 *fscrypt_file;
->   #endif
->   	errseq_t i_meta_err;
->   
+--
+Cheers,
+Justin (Jia He)
 
+
+IMPORTANT NOTICE: The contents of this email and any attachments are confid=
+ential and may also be privileged. If you are not the intended recipient, p=
+lease notify the sender immediately and do not disclose the contents to any=
+ other person, use it for any purpose, or store or copy the information in =
+any medium. Thank you.
