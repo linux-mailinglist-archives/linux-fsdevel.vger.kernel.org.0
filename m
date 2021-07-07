@@ -2,266 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC0FF3BE4D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 10:57:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 246B53BE555
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 11:09:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231195AbhGGI7o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 04:59:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50452 "EHLO
+        id S231562AbhGGJMH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 05:12:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231216AbhGGI7n (ORCPT
+        with ESMTP id S231547AbhGGJMG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 04:59:43 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDCB7C061574;
-        Wed,  7 Jul 2021 01:57:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=MWrityohNuEWkJE2rGPEDtPEPbcWb3iMvUvhJ/UoPDM=; b=Svm8P0TWiGRuGyDIL1qa99qXCj
-        gVcHUNRLON+iHulZ0p/rd1ca/w1dTJ+8quUR/8TLYeGG2jl3y0nBgeJQfBxbpUJ23rra8koK/yC1u
-        ne9D1qGbp2/OzC9cmh9nA+A00/Ru1+ttdSGAQd54RjeYMf/JmujWVTFQI7W2IN/yqNjAuhp8AAEji
-        CyVsDlAVEEoVtPgo6YNf+bL7ecPda1Ml/Noc+83fvC3Q49TQP5D0DsQxvBbC6xxw6HpC1VR/auYf2
-        E7KC9Fesz9VmplPIgF9IcbGPv9NKEq7KAhfxHteOIAPOnwiBDF0OOY/YOKNiLfn/s/CaCZNQf55FK
-        ivUyVpQQ==;
-Received: from p4fdb05cb.dip0.t-ipconnect.de ([79.219.5.203] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m13MO-00CEHi-Kb; Wed, 07 Jul 2021 08:56:51 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     tytso@mit.edu, leah.rumancik@gmail.com
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: [PATCH] ext4: fix EXT4_IOC_CHECKPOINT
-Date:   Wed,  7 Jul 2021 10:56:44 +0200
-Message-Id: <20210707085644.3041867-1-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
+        Wed, 7 Jul 2021 05:12:06 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB27C061762
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jul 2021 02:09:26 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id x12so2455447eds.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 02:09:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FtdRj0uqhbWYJv1fXc78UI5Oym+NbdH9ODlpZg+9HZI=;
+        b=UP2gxo7E+OXts94W4XG8ov25acIgy16F7Xuv5WNUryBRLvnB1SUdOumUACfAPoJmFS
+         52RE8R7P3qzg1tarx6KjKAKEHb0Dj5puUCLSt4CliZJpugu/J1PeSwvG09Sv8SfFplGU
+         DBap5eLBxTmFKW9K2PAgbKQ4UW5jIafViUeCgIHHk0GQV9Tv4AoOXsa2pQcvvdtk0UEk
+         qzg8jcE6bFOHgPnYLfHRZZTw0XzS/1JMmDSF7Xh2WYY8wHkQJK4LhvVclPWJCWFgWaoK
+         6TQcVcEEhAqleM8ofZK+PMsZBBDsQDwSyML/MSyfSeinKDg97GhQwRNlPXflVJHElUst
+         mqKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FtdRj0uqhbWYJv1fXc78UI5Oym+NbdH9ODlpZg+9HZI=;
+        b=Rzyyd8Il0QfqEvZTA2ofobPDlmBlXkUc9dScnriCeN4pHN+MEzAwR++rbBemnejIga
+         aeQ0jzf2fgUFmEJPyuJxhF1LJQ4NxnXAnYrLvDN3d6dujjfgSl9wId4cqOX4A4lnmalt
+         XttcKQhIZEV/qRyC652nNBxfGfvO9cQ3omKE2rsX4QVF2vCfM7hdHi4WFORno3x9z+cq
+         Hq3hWwV/O47DxuFXrEsP+DM5j7ZTlrnz6fG3GOsxCdAmdLRsrucluRnJ/S5lyqLoIF0T
+         s+9ylwTZf0YTv9zJB3UfKEnNv/y8ZRXCEUV6zy7062A28qnkh1FZ8JUw1KGlQjS03TvD
+         n+Kw==
+X-Gm-Message-State: AOAM5306DqgdRBQLvKhjRXpHhcnEbzndmqDm+SaQY8BgRCtcCGUsFNNI
+        fL8PNvNL2TCW8wpWuzblithvvJ+1IEtZpXiOyDGX
+X-Google-Smtp-Source: ABdhPJwtLvo0kWOr3LJJHVAL2cWB4hYaaS7KjefICks1FsWVhmQrnAQXN0teABT1P1UQsj+keI5UW3/FiAWPPwjYY38=
+X-Received: by 2002:a05:6402:31ae:: with SMTP id dj14mr23195138edb.145.1625648964822;
+ Wed, 07 Jul 2021 02:09:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <20210615141331.407-11-xieyongji@bytedance.com>
+ <YNSCH6l31zwPxBjL@stefanha-x1.localdomain> <CACycT3uxnQmXWsgmNVxQtiRhz1UXXTAJFY3OiAJqokbJH6ifMA@mail.gmail.com>
+ <YNxCDpM3bO5cPjqi@stefanha-x1.localdomain> <CACycT3taKhf1cWp3Jd0aSVekAZvpbR-_fkyPLQ=B+jZBB5H=8Q@mail.gmail.com>
+ <YN3ABqCMLQf7ejOm@stefanha-x1.localdomain> <CACycT3vo-diHgTSLw_FS2E+5ia5VjihE3qw7JmZR7JT55P-wQA@mail.gmail.com>
+ <8320d26d-6637-85c6-8773-49553dfa502d@redhat.com> <YOL/9mxkJaokKDHc@stefanha-x1.localdomain>
+ <CACycT3t-BTMrpNTwBUfbvaxTh6tLthxbo3OJwMk_iuiSpMuZPg@mail.gmail.com> <YOQu8dB6tlb9juNz@stefanha-x1.localdomain>
+In-Reply-To: <YOQu8dB6tlb9juNz@stefanha-x1.localdomain>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Wed, 7 Jul 2021 17:09:13 +0800
+Message-ID: <CACycT3t=V-VV7LYDda8mt=QxN_Ay-N+3dgWp382TObkeei9MOg@mail.gmail.com>
+Subject: Re: [PATCH v8 10/10] Documentation: Add documentation for VDUSE
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Issuing a discard for any kind of "contention deletion SLO" is highly
-dangerous as discard as defined by Linux (as well the underlying NVMe,
-SCSI, ATA, eMMC and virtio primitivies) are defined to not guarantee
-erasing of data but just allow optional and nondeterministic reclamation
-of space.  Instead issuing write zeroes is the only think to perform
-such an operation.  Remove the highly dangerous and misleading discard
-mode for EXT4_IOC_CHECKPOINT and only support the write zeroes based
-on, and clean up the resulting mess including the dry run mode.
+On Tue, Jul 6, 2021 at 6:22 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>
+> On Tue, Jul 06, 2021 at 11:04:18AM +0800, Yongji Xie wrote:
+> > On Mon, Jul 5, 2021 at 8:50 PM Stefan Hajnoczi <stefanha@redhat.com> wr=
+ote:
+> > >
+> > > On Mon, Jul 05, 2021 at 11:36:15AM +0800, Jason Wang wrote:
+> > > >
+> > > > =E5=9C=A8 2021/7/4 =E4=B8=8B=E5=8D=885:49, Yongji Xie =E5=86=99=E9=
+=81=93:
+> > > > > > > OK, I get you now. Since the VIRTIO specification says "Devic=
+e
+> > > > > > > configuration space is generally used for rarely-changing or
+> > > > > > > initialization-time parameters". I assume the VDUSE_DEV_SET_C=
+ONFIG
+> > > > > > > ioctl should not be called frequently.
+> > > > > > The spec uses MUST and other terms to define the precise requir=
+ements.
+> > > > > > Here the language (especially the word "generally") is weaker a=
+nd means
+> > > > > > there may be exceptions.
+> > > > > >
+> > > > > > Another type of access that doesn't work with the VDUSE_DEV_SET=
+_CONFIG
+> > > > > > approach is reads that have side-effects. For example, imagine =
+a field
+> > > > > > containing an error code if the device encounters a problem unr=
+elated to
+> > > > > > a specific virtqueue request. Reading from this field resets th=
+e error
+> > > > > > code to 0, saving the driver an extra configuration space write=
+ access
+> > > > > > and possibly race conditions. It isn't possible to implement th=
+ose
+> > > > > > semantics suing VDUSE_DEV_SET_CONFIG. It's another corner case,=
+ but it
+> > > > > > makes me think that the interface does not allow full VIRTIO se=
+mantics.
+> > > >
+> > > >
+> > > > Note that though you're correct, my understanding is that config sp=
+ace is
+> > > > not suitable for this kind of error propagating. And it would be ve=
+ry hard
+> > > > to implement such kind of semantic in some transports.  Virtqueue s=
+hould be
+> > > > much better. As Yong Ji quoted, the config space is used for
+> > > > "rarely-changing or intialization-time parameters".
+> > > >
+> > > >
+> > > > > Agreed. I will use VDUSE_DEV_GET_CONFIG in the next version. And =
+to
+> > > > > handle the message failure, I'm going to add a return value to
+> > > > > virtio_config_ops.get() and virtio_cread_* API so that the error =
+can
+> > > > > be propagated to the virtio device driver. Then the virtio-blk de=
+vice
+> > > > > driver can be modified to handle that.
+> > > > >
+> > > > > Jason and Stefan, what do you think of this way?
+> > >
+> > > Why does VDUSE_DEV_GET_CONFIG need to support an error return value?
+> > >
+> >
+> > We add a timeout and return error in case userspace never replies to
+> > the message.
+> >
+> > > The VIRTIO spec provides no way for the device to report errors from
+> > > config space accesses.
+> > >
+> > > The QEMU virtio-pci implementation returns -1 from invalid
+> > > virtio_config_read*() and silently discards virtio_config_write*()
+> > > accesses.
+> > >
+> > > VDUSE can take the same approach with
+> > > VDUSE_DEV_GET_CONFIG/VDUSE_DEV_SET_CONFIG.
+> > >
+> >
+> > I noticed that virtio_config_read*() only returns -1 when we access a
+> > invalid field. But in the VDUSE case, VDUSE_DEV_GET_CONFIG might fail
+> > when we access a valid field. Not sure if it's ok to silently ignore
+> > this kind of error.
+>
+> That's a good point but it's a general VIRTIO issue. Any device
+> implementation (QEMU userspace, hardware vDPA, etc) can fail, so the
+> VIRTIO specification needs to provide a way for the driver to detect
+> this.
+>
+> If userspace violates the contract then VDUSE needs to mark the device
+> broken. QEMU's device emulation does something similar with the
+> vdev->broken flag.
+>
+> The VIRTIO Device Status field DEVICE_NEEDS_RESET bit can be set by
+> vDPA/VDUSE to indicate that the device is not operational and must be
+> reset.
+>
 
-This is an ABI change and must go into Linus' tree before 5.14 is
-released or the offending commits need to be reverted.
+It might be a solution. But DEVICE_NEEDS_RESET  is not implemented
+currently. So I'm thinking whether it's ok to add a check of
+DEVICE_NEEDS_RESET status bit in probe function of virtio device
+driver (e.g. virtio-blk driver). Then VDUSE can make use of it to fail
+device initailization when configuration space access failed.
 
-Fixes: 351a0a3fbc35 ("ext4: add ioctl EXT4_IOC_CHECKPOINT")
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- Documentation/filesystems/ext4/journal.rst | 17 +++-----
- fs/ext4/ext4.h                             |  7 +---
- fs/ext4/ioctl.c                            | 26 ++----------
- fs/jbd2/journal.c                          | 47 +++++-----------------
- include/linux/jbd2.h                       |  6 +--
- 5 files changed, 22 insertions(+), 81 deletions(-)
-
-diff --git a/Documentation/filesystems/ext4/journal.rst b/Documentation/filesystems/ext4/journal.rst
-index 5fad38860f17..d18b18f9e053 100644
---- a/Documentation/filesystems/ext4/journal.rst
-+++ b/Documentation/filesystems/ext4/journal.rst
-@@ -742,15 +742,8 @@ the filesystem including journal recovery, filesystem resizing, and freeing of
- the journal_t structure.
- 
- A journal checkpoint can be triggered from userspace via the ioctl
--EXT4_IOC_CHECKPOINT. This ioctl takes a single, u64 argument for flags.
--Currently, three flags are supported. First, EXT4_IOC_CHECKPOINT_FLAG_DRY_RUN
--can be used to verify input to the ioctl. It returns error if there is any
--invalid input, otherwise it returns success without performing
--any checkpointing. This can be used to check whether the ioctl exists on a
--system and to verify there are no issues with arguments or flags. The
--other two flags are EXT4_IOC_CHECKPOINT_FLAG_DISCARD and
--EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT. These flags cause the journal blocks to be
--discarded or zero-filled, respectively, after the journal checkpoint is
--complete. EXT4_IOC_CHECKPOINT_FLAG_DISCARD and EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT
--cannot both be set. The ioctl may be useful when snapshotting a system or for
--complying with content deletion SLOs.
-+EXT4_IOC_CHECKPOINT. This ioctl takes a u64 argument for flags.
-+The only supported flags is EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT. This flag cause
-+the journal blocks to be zero-filled after the journal checkpoint is complete.
-+The ioctl may be useful when snapshotting a system or for complying with
-+content deletion SLOs.
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 3c51e243450d..c2650b31bed2 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -743,12 +743,7 @@ enum {
- #define EXT4_STATE_FLAG_DA_ALLOC_CLOSE	0x00000008
- 
- /* flags for ioctl EXT4_IOC_CHECKPOINT */
--#define EXT4_IOC_CHECKPOINT_FLAG_DISCARD	0x1
--#define EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT	0x2
--#define EXT4_IOC_CHECKPOINT_FLAG_DRY_RUN	0x4
--#define EXT4_IOC_CHECKPOINT_FLAG_VALID		(EXT4_IOC_CHECKPOINT_FLAG_DISCARD | \
--						EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT | \
--						EXT4_IOC_CHECKPOINT_FLAG_DRY_RUN)
-+#define EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT	0x1
- 
- #if defined(__KERNEL__) && defined(CONFIG_COMPAT)
- /*
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index e27f34bceb8d..981670303733 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -798,42 +798,24 @@ static int ext4_ioctl_checkpoint(struct file *filp, unsigned long arg)
- 	__u32 flags = 0;
- 	unsigned int flush_flags = 0;
- 	struct super_block *sb = file_inode(filp)->i_sb;
--	struct request_queue *q;
- 
--	if (copy_from_user(&flags, (__u32 __user *)arg,
--				sizeof(__u32)))
-+	if (copy_from_user(&flags, (__u32 __user *)arg, sizeof(__u32)))
- 		return -EFAULT;
- 
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	/* check for invalid bits set */
--	if ((flags & ~EXT4_IOC_CHECKPOINT_FLAG_VALID) ||
--				((flags & JBD2_JOURNAL_FLUSH_DISCARD) &&
--				(flags & JBD2_JOURNAL_FLUSH_ZEROOUT)))
-+	if (flags & ~EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT)
- 		return -EINVAL;
- 
- 	if (!EXT4_SB(sb)->s_journal)
- 		return -ENODEV;
- 
--	if (flags & ~JBD2_JOURNAL_FLUSH_VALID)
--		return -EINVAL;
--
--	q = bdev_get_queue(EXT4_SB(sb)->s_journal->j_dev);
--	if (!q)
--		return -ENXIO;
--	if ((flags & JBD2_JOURNAL_FLUSH_DISCARD) && !blk_queue_discard(q))
--		return -EOPNOTSUPP;
--
--	if (flags & EXT4_IOC_CHECKPOINT_FLAG_DRY_RUN)
--		return 0;
--
--	if (flags & EXT4_IOC_CHECKPOINT_FLAG_DISCARD)
--		flush_flags |= JBD2_JOURNAL_FLUSH_DISCARD;
--
- 	if (flags & EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT) {
- 		flush_flags |= JBD2_JOURNAL_FLUSH_ZEROOUT;
--		pr_info_ratelimited("warning: checkpointing journal with EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT can be slow");
-+		if (!bdev_write_zeroes_sectors(EXT4_SB(sb)->s_journal->j_dev))
-+			pr_info_ratelimited("warning: checkpointing journal with EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT can be slow");
- 	}
- 
- 	jbd2_journal_lock_updates(EXT4_SB(sb)->s_journal);
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 152880c298ca..3256d8528c43 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1685,34 +1685,16 @@ static void jbd2_mark_journal_empty(journal_t *journal, int write_op)
- /**
-  * __jbd2_journal_erase() - Discard or zeroout journal blocks (excluding superblock)
-  * @journal: The journal to erase.
-- * @flags: A discard/zeroout request is sent for each physically contigous
-- *	region of the journal. Either JBD2_JOURNAL_FLUSH_DISCARD or
-- *	JBD2_JOURNAL_FLUSH_ZEROOUT must be set to determine which operation
-- *	to perform.
-- *
-- * Note: JBD2_JOURNAL_FLUSH_ZEROOUT attempts to use hardware offload. Zeroes
-- * will be explicitly written if no hardware offload is available, see
-- * blkdev_issue_zeroout for more details.
-+ *
-+ * Note: Attempts to use hardware offload. Zeroes will be explicitly written if
-+ * no hardware offload is available, see blkdev_issue_zeroout for more details.
-  */
--static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
-+static int __jbd2_journal_erase(journal_t *journal)
- {
- 	int err = 0;
- 	unsigned long block, log_offset; /* logical */
- 	unsigned long long phys_block, block_start, block_stop; /* physical */
- 	loff_t byte_start, byte_stop, byte_count;
--	struct request_queue *q = bdev_get_queue(journal->j_dev);
--
--	/* flags must be set to either discard or zeroout */
--	if ((flags & ~JBD2_JOURNAL_FLUSH_VALID) || !flags ||
--			((flags & JBD2_JOURNAL_FLUSH_DISCARD) &&
--			(flags & JBD2_JOURNAL_FLUSH_ZEROOUT)))
--		return -EINVAL;
--
--	if (!q)
--		return -ENXIO;
--
--	if ((flags & JBD2_JOURNAL_FLUSH_DISCARD) && !blk_queue_discard(q))
--		return -EOPNOTSUPP;
- 
- 	/*
- 	 * lookup block mapping and issue discard/zeroout for each
-@@ -1762,18 +1744,10 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
- 		truncate_inode_pages_range(journal->j_dev->bd_inode->i_mapping,
- 				byte_start, byte_stop);
- 
--		if (flags & JBD2_JOURNAL_FLUSH_DISCARD) {
--			err = blkdev_issue_discard(journal->j_dev,
--					byte_start >> SECTOR_SHIFT,
--					byte_count >> SECTOR_SHIFT,
--					GFP_NOFS, 0);
--		} else if (flags & JBD2_JOURNAL_FLUSH_ZEROOUT) {
--			err = blkdev_issue_zeroout(journal->j_dev,
--					byte_start >> SECTOR_SHIFT,
--					byte_count >> SECTOR_SHIFT,
--					GFP_NOFS, 0);
--		}
--
-+		err = blkdev_issue_zeroout(journal->j_dev,
-+				byte_start >> SECTOR_SHIFT,
-+				byte_count >> SECTOR_SHIFT,
-+				GFP_NOFS, 0);
- 		if (unlikely(err != 0)) {
- 			pr_err("JBD2: (error %d) unable to wipe journal at physical blocks %llu - %llu",
- 					err, block_start, block_stop);
-@@ -2453,7 +2427,6 @@ EXPORT_SYMBOL(jbd2_journal_clear_features);
-  * can be issued on the journal blocks after flushing.
-  *
-  * flags:
-- *	JBD2_JOURNAL_FLUSH_DISCARD: issues discards for the journal blocks
-  *	JBD2_JOURNAL_FLUSH_ZEROOUT: issues zeroouts for the journal blocks
-  */
- int jbd2_journal_flush(journal_t *journal, unsigned int flags)
-@@ -2511,8 +2484,8 @@ int jbd2_journal_flush(journal_t *journal, unsigned int flags)
- 	 * s_start value. */
- 	jbd2_mark_journal_empty(journal, REQ_SYNC | REQ_FUA);
- 
--	if (flags)
--		err = __jbd2_journal_erase(journal, flags);
-+	if (flags & JBD2_JOURNAL_FLUSH_ZEROOUT)
-+		err = __jbd2_journal_erase(journal);
- 
- 	mutex_unlock(&journal->j_checkpoint_mutex);
- 	write_lock(&journal->j_state_lock);
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 6cc035321562..ad7f2defbc8f 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1398,10 +1398,8 @@ JBD2_FEATURE_INCOMPAT_FUNCS(fast_commit,	FAST_COMMIT)
- 						 * mode */
- #define JBD2_FAST_COMMIT_ONGOING	0x100	/* Fast commit is ongoing */
- #define JBD2_FULL_COMMIT_ONGOING	0x200	/* Full commit is ongoing */
--#define JBD2_JOURNAL_FLUSH_DISCARD	0x0001
--#define JBD2_JOURNAL_FLUSH_ZEROOUT	0x0002
--#define JBD2_JOURNAL_FLUSH_VALID	(JBD2_JOURNAL_FLUSH_DISCARD | \
--					JBD2_JOURNAL_FLUSH_ZEROOUT)
-+
-+#define JBD2_JOURNAL_FLUSH_ZEROOUT	0x0001	/* Zero log on flush */
- 
- /*
-  * Journal atomic flag definitions
--- 
-2.30.2
-
+Thanks,
+Yongji
