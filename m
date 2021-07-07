@@ -2,171 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F81A3BF03B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 21:24:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 081223BF03E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 21:26:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232187AbhGGT1K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 15:27:10 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:55992 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbhGGT1I (ORCPT
+        id S231548AbhGGT32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 15:29:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229519AbhGGT31 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 15:27:08 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id D168322046;
-        Wed,  7 Jul 2021 19:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1625685866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1/jzQ4eougwpQsFFhw7UoJdFuHPsU9zjSMn7cH0iGQA=;
-        b=h9PqXGjW5MCF7Dc7VRT4BzUj2/od+pz3dF4CSW3fX5a039yRhyzPFEsFfh+kMz+rDbnlad
-        QbUcIqe5lX1I2KjZQ/QdANNx1ahm6jsoJOHL8bwQosYeBHVem7ywDAFadNg7izKq4dP5Ed
-        /DxPJ5wJPOPQztGyblSBwITyYmTft8Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1625685866;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1/jzQ4eougwpQsFFhw7UoJdFuHPsU9zjSMn7cH0iGQA=;
-        b=MDc8jJB4060Qbei30xTgBl4eLiSpqcTAaFMHJouLfK2VnNS0Et+OseU0DdWeJYRtVT2QcG
-        cxA3cR9RtOQxYXCg==
-Received: from quack2.suse.cz (unknown [10.163.43.118])
-        by relay2.suse.de (Postfix) with ESMTP id B7DE0A3BA3;
-        Wed,  7 Jul 2021 19:24:26 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 924701F2CD7; Wed,  7 Jul 2021 21:24:26 +0200 (CEST)
-Date:   Wed, 7 Jul 2021 21:24:26 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     amir73il@gmail.com, djwong@kernel.org, tytso@mit.edu,
-        david@fromorbit.com, jack@suse.com, dhowells@redhat.com,
-        khazhy@google.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v3 03/15] fanotify: Split fsid check from other fid mode
- checks
-Message-ID: <20210707192426.GE18396@quack2.suse.cz>
-References: <20210629191035.681913-1-krisman@collabora.com>
- <20210629191035.681913-4-krisman@collabora.com>
+        Wed, 7 Jul 2021 15:29:27 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA37C06175F
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jul 2021 12:26:47 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id n14so6936444lfu.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 12:26:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gurR/owSQDFNH0OSkKWy8rQ2chdbL863tihhAYffiok=;
+        b=O4/ZeTQT6f+jFfZaJgO+nGN0TZllql6sOHLJC1MBLS2yfZlJJcV/LJ42OCqfaRFj+7
+         xHL/olvJE3nX1wrc1P0N+TbWFBWePWgpKUGg4WF51rybJYdE0TI6byFY3xd+e93K9VNS
+         CWTXY/c3bxrDm3ItM0cXM5enPAWo3dakT/0VA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gurR/owSQDFNH0OSkKWy8rQ2chdbL863tihhAYffiok=;
+        b=bCFQIFTz30TjHHW1WMH8zwneU3rWl6zvFkudWRmsn/CJLN7IZw3tG6y+zf4VfQewlt
+         4Pmyx89Q+zjFjjXDSW/3oq8Raz4isZrH6KM9lDn9ozKxKKPEfk5yET7lBV+fFp/Lr04q
+         ylvB9iGRmceZ4j1CrTb1fB7rXUeLY3TBmozUxep+DjPtl5FV6/tOo6BrZmA6er2g6yGy
+         YiDJcvnkVtZopDRmtJpT6Nts04nVNqG6//1dRADvjtB3vOUCv8aUP69Ro/3zSc+VJ4oD
+         G7GqpLURI2Yz286UKrNCkwHaJxPAsoflEpYr3+gU2wk6FluNTkYUQAHC80XTq2+p8OE9
+         XMZw==
+X-Gm-Message-State: AOAM530GWPsYOeUcAs/WphekI/0orFF4KsTYI5WeAbV1XIHFDNeWnGCH
+        elMXJKvduFzI2bEvq4Fz7DxK3Hw8zh5I+udfvGA=
+X-Google-Smtp-Source: ABdhPJzS8JBCMhFVQ2graCNqBlgMHOYWfzyS9Q4Fj50l8Po7V/aojrre5p1YYcko7NY8qgdptwPS0Q==
+X-Received: by 2002:a2e:9e04:: with SMTP id e4mr20193374ljk.431.1625686004612;
+        Wed, 07 Jul 2021 12:26:44 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id o7sm1790322lfo.196.2021.07.07.12.26.43
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jul 2021 12:26:44 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id y42so7007184lfa.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 12:26:43 -0700 (PDT)
+X-Received: by 2002:a2e:9c58:: with SMTP id t24mr19950330ljj.411.1625686003546;
+ Wed, 07 Jul 2021 12:26:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210629191035.681913-4-krisman@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210707122747.3292388-1-dkadashev@gmail.com>
+In-Reply-To: <20210707122747.3292388-1-dkadashev@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 7 Jul 2021 12:26:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiTyxUt61NxeMXb2Zn2stDBC7eG82RKj+3jXUORdYQtpg@mail.gmail.com>
+Message-ID: <CAHk-=wiTyxUt61NxeMXb2Zn2stDBC7eG82RKj+3jXUORdYQtpg@mail.gmail.com>
+Subject: Re: [PATCH v8 00/11] io_uring: add mkdir and [sym]linkat support
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 29-06-21 15:10:23, Gabriel Krisman Bertazi wrote:
-> FAN_FS_ERROR will require fsid, but not necessarily require the
-> filesystem to expose a file handle.  Split those checks into different
-> functions, so they can be used separately when setting up an event.
-> 
-> While there, update a comment about tmpfs having 0 fsid, which is no
-> longer true.
-> 
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+On Wed, Jul 7, 2021 at 5:28 AM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+>
+> This started out as an attempt to add mkdirat support to io_uring which
+> is heavily based on renameat() / unlinkat() support.
 
-Looks good. Feel free to add:
+Ok, sorry for having made you go through all the different versions,
+but I like the new series and think it's a marked improvement.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+I did send out a few comments to the individual patches that I think
+it can all now be made to be even more legible by avoiding some of the
+goto spaghetti, but I think that would be a series on top.
 
-								Honza
+(And I'd like to note again that I based all that on just reading the
+patches, so there may be something there that makes it not work well).
 
-> 
-> ---
-> Changes since v2:
->   - FAN_ERROR -> FAN_FS_ERROR (Amir)
->   - Update comment (Amir)
-> 
-> Changes since v1:
->   (Amir)
->   - Sort hunks to simplify diff.
-> Changes since RFC:
->   (Amir)
->   - Rename fanotify_check_path_fsid -> fanotify_test_fsid.
->   - Use dentry directly instead of path.
-> ---
->  fs/notify/fanotify/fanotify_user.c | 27 ++++++++++++++++++---------
->  1 file changed, 18 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 68a53d3534f8..67b18dfe0025 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -1192,16 +1192,15 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
->  	return fd;
->  }
->  
-> -/* Check if filesystem can encode a unique fid */
-> -static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
-> +static int fanotify_test_fsid(struct dentry *dentry, __kernel_fsid_t *fsid)
->  {
->  	__kernel_fsid_t root_fsid;
->  	int err;
->  
->  	/*
-> -	 * Make sure path is not in filesystem with zero fsid (e.g. tmpfs).
-> +	 * Make sure dentry is not of a filesystem with zero fsid (e.g. fuse).
->  	 */
-> -	err = vfs_get_fsid(path->dentry, fsid);
-> +	err = vfs_get_fsid(dentry, fsid);
->  	if (err)
->  		return err;
->  
-> @@ -1209,10 +1208,10 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
->  		return -ENODEV;
->  
->  	/*
-> -	 * Make sure path is not inside a filesystem subvolume (e.g. btrfs)
-> +	 * Make sure dentry is not of a filesystem subvolume (e.g. btrfs)
->  	 * which uses a different fsid than sb root.
->  	 */
-> -	err = vfs_get_fsid(path->dentry->d_sb->s_root, &root_fsid);
-> +	err = vfs_get_fsid(dentry->d_sb->s_root, &root_fsid);
->  	if (err)
->  		return err;
->  
-> @@ -1220,6 +1219,12 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
->  	    root_fsid.val[1] != fsid->val[1])
->  		return -EXDEV;
->  
-> +	return 0;
-> +}
-> +
-> +/* Check if filesystem can encode a unique fid */
-> +static int fanotify_test_fid(struct dentry *dentry)
-> +{
->  	/*
->  	 * We need to make sure that the file system supports at least
->  	 * encoding a file handle so user can use name_to_handle_at() to
-> @@ -1227,8 +1232,8 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
->  	 * objects. However, name_to_handle_at() requires that the
->  	 * filesystem also supports decoding file handles.
->  	 */
-> -	if (!path->dentry->d_sb->s_export_op ||
-> -	    !path->dentry->d_sb->s_export_op->fh_to_dentry)
-> +	if (!dentry->d_sb->s_export_op ||
-> +	    !dentry->d_sb->s_export_op->fh_to_dentry)
->  		return -EOPNOTSUPP;
->  
->  	return 0;
-> @@ -1379,7 +1384,11 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  	}
->  
->  	if (fid_mode) {
-> -		ret = fanotify_test_fid(&path, &__fsid);
-> +		ret = fanotify_test_fsid(path.dentry, &__fsid);
-> +		if (ret)
-> +			goto path_put_and_out;
-> +
-> +		ret = fanotify_test_fid(path.dentry);
->  		if (ret)
->  			goto path_put_and_out;
->  
-> -- 
-> 2.32.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+One final request: can you keep the fs/namei.c patches as one entirely
+separate series, and then do the io_uring parts at the end, rather
+than intermixing them?
+
+But at least I am generally happy with this version.
+
+Al - please holler now if you see any issues.
+
+               Linus
