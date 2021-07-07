@@ -2,85 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 847073BE90B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 15:51:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D66C63BE94B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 16:04:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231827AbhGGNyL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 09:54:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60168 "EHLO
+        id S231978AbhGGOHO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 10:07:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229633AbhGGNyL (ORCPT
+        with ESMTP id S231720AbhGGOHO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 09:54:11 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D4B9C061574;
-        Wed,  7 Jul 2021 06:51:30 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id B9C216830; Wed,  7 Jul 2021 09:51:29 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org B9C216830
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1625665889;
-        bh=gPeRkpFOKLgol1iXgNjO2sQ0E29J+JaZmTVNPoXkTRg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jod3VyGB4DhCJ+ICEBNzHaBiknO3C7zMEnZQxrc/ZyshSnI1azu8Jh3xQnRFlipuj
-         eR+qgYiI0+vGTgH8Xb8eLUH4XMWmI/sN5jqPPlWTVKuDy5O0oOHIgQ8MD1naUe/Bes
-         pbR2I2qCyVrFFtcEFK4qe4dIzAbxSHnGFEFhyTJw=
-Date:   Wed, 7 Jul 2021 09:51:29 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 1/2] fcntl: fix potential deadlocks for
- &fown_struct.lock
-Message-ID: <20210707135129.GA9446@fieldses.org>
-References: <20210707023548.15872-1-desmondcheongzx@gmail.com>
- <20210707023548.15872-2-desmondcheongzx@gmail.com>
- <YOVENb3X/m/pNrYt@kroah.com>
- <14633c3be87286d811263892375f2dfa9a8ed40a.camel@kernel.org>
- <YOWHKk6Nq8bazYjB@kroah.com>
- <4dda1cad6348fced5fcfcb6140186795ed07d948.camel@kernel.org>
+        Wed, 7 Jul 2021 10:07:14 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 711FCC061574;
+        Wed,  7 Jul 2021 07:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gzml0XG5yWOMd0LHz5lwYo4suZ+MYJh1kfg9zvF/qmg=; b=EkJdw3Ab2u/2OlU9wvZFKXB/+H
+        1XdJavrd1c97XJhr3jvfVUMaTN20IONLhT8VuBx/KwzYbcD484prcklBROve4gYg3Xg2jelPW1ICR
+        BZgmYfuy4yHG96zfkMHZcZwfy7uMMHzikS4SchXZttidsmkvC54Rd8iR5Up6od8a1mFGnvtO3rBnw
+        ZvE/xjAB53U3U0qxAcPVi04K9Ui+9SxUWUg9yCwXCDaJjeLuU8cEKGbLgwFYKL/pwnJKo/YfeA5oZ
+        sFl0igr2qjgymQe7ETr9JjgUWXjGA3ReJJ8Lzt5G/o1fQELUFKghhk+3OkHE3ORSHSU5PK36USb1d
+        KBhhKlRg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m189X-00CScZ-Ct; Wed, 07 Jul 2021 14:03:57 +0000
+Date:   Wed, 7 Jul 2021 15:03:51 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com
+Subject: Re: [PATCH v3 3/3] iomap: Don't create iomap_page objects in
+ iomap_page_mkwrite_actor
+Message-ID: <YOW0R5y8QPqTdnmj@casper.infradead.org>
+References: <20210707115524.2242151-1-agruenba@redhat.com>
+ <20210707115524.2242151-4-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4dda1cad6348fced5fcfcb6140186795ed07d948.camel@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20210707115524.2242151-4-agruenba@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 07, 2021 at 07:40:47AM -0400, Jeff Layton wrote:
-> On Wed, 2021-07-07 at 12:51 +0200, Greg KH wrote:
-> > On Wed, Jul 07, 2021 at 06:44:42AM -0400, Jeff Layton wrote:
-> > > On Wed, 2021-07-07 at 08:05 +0200, Greg KH wrote:
-> > > > On Wed, Jul 07, 2021 at 10:35:47AM +0800, Desmond Cheong Zhi Xi wrote:
-> > > > > +	WARN_ON_ONCE(irqs_disabled());
-> > > > 
-> > > > If this triggers, you just rebooted the box :(
-> > > > 
-> > > > Please never do this, either properly handle the problem and return an
-> > > > error, or do not check for this.  It is not any type of "fix" at all,
-> > > > and at most, a debugging aid while you work on the root problem.
-> > > > 
-> > > > thanks,
-> > > > 
-> > > > greg k-h
-> > > 
-> > > Wait, what? Why would testing for irqs being disabled and throwing a
-> > > WARN_ON in that case crash the box?
-> > 
-> > If panic-on-warn is enabled, which is a common setting for systems these
-> > days.
+On Wed, Jul 07, 2021 at 01:55:24PM +0200, Andreas Gruenbacher wrote:
+> Now that we create those objects in iomap_writepage_map when needed,
+> there's no need to pre-create them in iomap_page_mkwrite_actor anymore.
 > 
-> Ok, that makes some sense.
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-Wait, I don't get it.
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-How are we supposed to decide when to use WARN, when to use BUG, and
-when to panic?  Do we really want to treat them all as equivalent?  And
-who exactly is turning on panic-on-warn?
-
---b.
+Thanks for sticking with this.  It looks like a nice cleanup now
+rather than "argh, a bug, burn it with fire".
