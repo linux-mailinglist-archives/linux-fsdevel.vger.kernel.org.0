@@ -2,150 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A6963BE6A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 12:51:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C71333BE6CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 13:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231443AbhGGKyG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 06:54:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231407AbhGGKyF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 06:54:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E58661A25;
-        Wed,  7 Jul 2021 10:51:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1625655085;
-        bh=5tv33vbesA5XsXJmvcXF6XM5sIZTb6hOhIY0nvhVBcM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Oug4EGmUF/JnhCZvrfevMpU5rUC/EUY0vsuPedqFh8dXk6jNyYSRwWluMiNlvriua
-         I2tX6nGQsjlkwTdrrqZ9lGntA68ZdldQIiteUcIiP1e9LjoqEkRLW5JXzXvkJ5guHo
-         70gJb/f0P48nUOmFFvkrajDKvXBDdtUIdk8qeOTE=
-Date:   Wed, 7 Jul 2021 12:51:22 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
-        bfields@fieldses.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 1/2] fcntl: fix potential deadlocks for
- &fown_struct.lock
-Message-ID: <YOWHKk6Nq8bazYjB@kroah.com>
-References: <20210707023548.15872-1-desmondcheongzx@gmail.com>
- <20210707023548.15872-2-desmondcheongzx@gmail.com>
- <YOVENb3X/m/pNrYt@kroah.com>
- <14633c3be87286d811263892375f2dfa9a8ed40a.camel@kernel.org>
+        id S231248AbhGGLDl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 07:03:41 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:53206 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231220AbhGGLDl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 07:03:41 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 42D88220A9;
+        Wed,  7 Jul 2021 11:01:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1625655660; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ThdkegO6OD+QtZGzvDhNi0tqQQng2bLgOAuF61PJbnk=;
+        b=mQS8mhGcVkV6xpZh81nxcm3iTaH0RuMIrrJsUryc8nMnBW0DbrgA28nrGpxMlN1hRYLHPL
+        2gcEbTxaaGvp6FnC2ekra56ALT2gIK5nB7ofwQpI0SUYSIdK5V9XC2IDfXVz2hvYDKWBat
+        2dSBpfSaQ9ywicDH7JE/1Iu4luLhxl4=
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id F3AFF13998;
+        Wed,  7 Jul 2021 11:00:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id UISLOGuJ5WAQXgAAGKfGzw
+        (envelope-from <nborisov@suse.com>); Wed, 07 Jul 2021 11:00:59 +0000
+Subject: Re: [PATCH v2 7/8] 9p: migrate from sync_inode to
+ filemap_fdatawrite_wbc
+To:     Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org,
+        kernel-team@fb.com, linux-fsdevel@vger.kernel.org
+References: <cover.1624974951.git.josef@toxicpanda.com>
+ <16ad65c145645b0ade200b45ecbf1b14f3e8c1c0.1624974951.git.josef@toxicpanda.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Message-ID: <b5fe9373-2ad1-7ba7-7e9a-cdf2e0c84433@suse.com>
+Date:   Wed, 7 Jul 2021 14:00:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14633c3be87286d811263892375f2dfa9a8ed40a.camel@kernel.org>
+In-Reply-To: <16ad65c145645b0ade200b45ecbf1b14f3e8c1c0.1624974951.git.josef@toxicpanda.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 07, 2021 at 06:44:42AM -0400, Jeff Layton wrote:
-> On Wed, 2021-07-07 at 08:05 +0200, Greg KH wrote:
-> > On Wed, Jul 07, 2021 at 10:35:47AM +0800, Desmond Cheong Zhi Xi wrote:
-> > > Syzbot reports a potential deadlock in do_fcntl:
-> > > 
-> > > ========================================================
-> > > WARNING: possible irq lock inversion dependency detected
-> > > 5.12.0-syzkaller #0 Not tainted
-> > > --------------------------------------------------------
-> > > syz-executor132/8391 just changed the state of lock:
-> > > ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: f_getown_ex fs/fcntl.c:211 [inline]
-> > > ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: do_fcntl+0x8b4/0x1200 fs/fcntl.c:395
-> > > but this lock was taken by another, HARDIRQ-safe lock in the past:
-> > >  (&dev->event_lock){-...}-{2:2}
-> > > 
-> > > and interrupts could create inverse lock ordering between them.
-> > > 
-> > > other info that might help us debug this:
-> > > Chain exists of:
-> > >   &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
-> > > 
-> > >  Possible interrupt unsafe locking scenario:
-> > > 
-> > >        CPU0                    CPU1
-> > >        ----                    ----
-> > >   lock(&f->f_owner.lock);
-> > >                                local_irq_disable();
-> > >                                lock(&dev->event_lock);
-> > >                                lock(&new->fa_lock);
-> > >   <Interrupt>
-> > >     lock(&dev->event_lock);
-> > > 
-> > >  *** DEADLOCK ***
-> > > 
-> > > This happens because there is a lock hierarchy of
-> > > &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
-> > > from the following call chain:
-> > > 
-> > >   input_inject_event():
-> > >     spin_lock_irqsave(&dev->event_lock,...);
-> > >     input_handle_event():
-> > >       input_pass_values():
-> > >         input_to_handler():
-> > >           evdev_events():
-> > >             evdev_pass_values():
-> > >               spin_lock(&client->buffer_lock);
-> > >               __pass_event():
-> > >                 kill_fasync():
-> > >                   kill_fasync_rcu():
-> > >                     read_lock(&fa->fa_lock);
-> > >                     send_sigio():
-> > >                       read_lock_irqsave(&fown->lock,...);
-> > > 
-> > > However, since &dev->event_lock is HARDIRQ-safe, interrupts have to be
-> > > disabled while grabbing &f->f_owner.lock, otherwise we invert the lock
-> > > hierarchy.
-> > > 
-> > > Hence, we replace calls to read_lock/read_unlock on &f->f_owner.lock,
-> > > with read_lock_irq/read_unlock_irq.
-> > > 
-> > > Here read_lock_irq/read_unlock_irq should be safe to use because the
-> > > functions f_getown_ex and f_getowner_uids are only called from
-> > > do_fcntl, and f_getown is only called from do_fnctl and
-> > > sock_ioctl. do_fnctl itself is only called from syscalls.
-> > > 
-> > > For sock_ioctl, the chain is
-> > >   compat_sock_ioctl():
-> > >     compat_sock_ioctl_trans():
-> > >       sock_ioctl()
-> > > 
-> > > And interrupts are not disabled on either path. We assert this
-> > > assumption with WARN_ON_ONCE(irqs_disabled()). This check is also
-> > > inserted into another use of write_lock_irq in f_modown.
-> > > 
-> > > Reported-and-tested-by: syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
-> > > Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
-> > > ---
-> > >  fs/fcntl.c | 17 +++++++++++------
-> > >  1 file changed, 11 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/fs/fcntl.c b/fs/fcntl.c
-> > > index dfc72f15be7f..262235e02c4b 100644
-> > > --- a/fs/fcntl.c
-> > > +++ b/fs/fcntl.c
-> > > @@ -88,6 +88,7 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
-> > >  static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
-> > >                       int force)
-> > >  {
-> > > +	WARN_ON_ONCE(irqs_disabled());
-> > 
-> > If this triggers, you just rebooted the box :(
-> > 
-> > Please never do this, either properly handle the problem and return an
-> > error, or do not check for this.  It is not any type of "fix" at all,
-> > and at most, a debugging aid while you work on the root problem.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> Wait, what? Why would testing for irqs being disabled and throwing a
-> WARN_ON in that case crash the box?
 
-If panic-on-warn is enabled, which is a common setting for systems these
-days.
+
+On 29.06.21 г. 16:59, Josef Bacik wrote:
+> We're going to remove sync_inode, so migrate to filemap_fdatawrite_wbc
+> instead.
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> ---
+>  fs/9p/vfs_file.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+> index 59c32c9b799f..6b64e8391f30 100644
+> --- a/fs/9p/vfs_file.c
+> +++ b/fs/9p/vfs_file.c
+> @@ -625,12 +625,7 @@ static void v9fs_mmap_vm_close(struct vm_area_struct *vma)
+>  	p9_debug(P9_DEBUG_VFS, "9p VMA close, %p, flushing", vma);
+>  
+>  	inode = file_inode(vma->vm_file);
+> -
+> -	if (!mapping_can_writeback(inode->i_mapping))
+> -		wbc.nr_to_write = 0;
+> -
+> -	might_sleep();
+
+Not a 9p expert but we are losing the might_sleep check and
+do_writepages can sleep due to cond_resched or congestion_wait
+
+> -	sync_inode(inode, &wbc);
+> +	filemap_fdatawrite_wbc(inode->i_mapping, &wbc);
+>  }
+>  
+>  
+> 
