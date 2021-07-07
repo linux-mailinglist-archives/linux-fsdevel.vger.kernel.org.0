@@ -2,142 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B90033BED9F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 19:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3BF13BF022
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 21:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231149AbhGGSCh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 14:02:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59732 "EHLO
+        id S231255AbhGGTV0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 15:21:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbhGGSCh (ORCPT
+        with ESMTP id S229987AbhGGTV0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 14:02:37 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1912C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jul 2021 10:59:56 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id h4so3087019pgp.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 10:59:56 -0700 (PDT)
+        Wed, 7 Jul 2021 15:21:26 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4405C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jul 2021 12:18:44 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id p21so6833968lfj.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 12:18:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=UuByXwl/ZggLuZLxjRPi2ENFNnrGhzIfjH6PqbhGc+Q=;
-        b=WoDkouFglcxUePWvEApdKmxPTVFS96FsfNYDMIzyLfghU4aZ6c7z7QJxehINkONY/e
-         b2ZQKf22q1y/84DTaOWCrv8BhYbGRbkNDgzBungaIZ0yBqUaJtdLNK9q/Dp5Gf6BAMsA
-         6YmGH3RpqmJCRGlJW5cUIqEHH+S72md0kk8NGot8RPSp+IndPM0sECgifngGpGdrdzeq
-         22A5152QisRl9Sw7iWZMv8JZbSofqlYb9FX0YYrRZAWxBQjQJC42iqGNmQ2DzhXo9RVQ
-         7fZnUhwgtVjxxjTr6Q+v+tzUhRAN7XLQ4NyhsaY0gObww7s/UAc/ROihXllf0NdJSnqN
-         TuAw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R9wzw9s9pccPViWEsY8sbnSaeYn/7vUWP9xwygDqDs4=;
+        b=NoQPLrxQZk8EoEOlUUZVRXosJonGrxSLGFu6xFMxPMvCMMHac26nrUcjXYBrBwBeDl
+         RJ8UMhLlU8cSMxee2WzlEXd823HKA65OloAIEzwETJYP70FbfPa7c5mL6sCfFzu26LXc
+         7nF+arBFr7IB5+xtcwxmfpfZMr85NGyBjfFWs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=UuByXwl/ZggLuZLxjRPi2ENFNnrGhzIfjH6PqbhGc+Q=;
-        b=hZy3o4FD+gKMNnmCLWcLzkAQhNeosRejhEJaQMkKtQ2lclvUHQug+IUf3ve5EooKhT
-         nZpUMOzLakOh4kCtyMpbcqCEbXsexvuaY0e21tTbT30di5TePOK/Czsc0UX3ZLNXUQWA
-         gfkHOZYcs+PIyRW9H1SalFUgkxaKfosjHnYfYi1C8yRk+5MH6s3PtKvIbJMpHtlT+uB9
-         id3l488hYWdj1U8YUoqejNsiHyl14BCgZ3TVkAdKO+pWKUPwUjUSfBO0kCeqfIZRXVIr
-         Lqn4z17Fmg57quQUQt9xGRVZyEcrSB6PABanGEn5MBq457Owim+cNxhp2ILWspQ0C9DV
-         5dTw==
-X-Gm-Message-State: AOAM531Rt1XMQD11JlirMnMd4T4MtBEMoIMtHrxLCUV5r2qie8htYAqW
-        3tLmfvZ7cPI1IxQakK8DBJWxng==
-X-Google-Smtp-Source: ABdhPJw2Ny6eY+qM9e9CB9jKdPUq2ELTuNxLaXr9A0ujWoYKCkdnJO9JcDw/ctABKjNsgpFUktehog==
-X-Received: by 2002:a63:580a:: with SMTP id m10mr16481833pgb.254.1625680796038;
-        Wed, 07 Jul 2021 10:59:56 -0700 (PDT)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:e1b5])
-        by smtp.gmail.com with ESMTPSA id u16sm10571142pfh.205.2021.07.07.10.59.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 10:59:55 -0700 (PDT)
-Date:   Wed, 7 Jul 2021 10:59:53 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH RESEND x3 v9 1/9] iov_iter: add copy_struct_from_iter()
-Message-ID: <YOXrmbi81Fr14fUV@relinquished.localdomain>
-References: <YNOuiMfRO51kLcOE@relinquished.localdomain>
- <YNPnRyasHVq9NF79@casper.infradead.org>
- <YNQi3vgCLVs/ExiK@relinquished.localdomain>
- <CAHk-=whmRQWm_gVek32ekPqBi3zAKOsdK6_6Hx8nHp3H5JAMew@mail.gmail.com>
- <YNTO1T6BEzmG6Uj5@relinquished.localdomain>
- <CAHk-=wi37_ccWmq1EKTduS8ms_=KpyY2LwJV7roD+s=ZkBkjCw@mail.gmail.com>
- <yq1tulmoqxf.fsf@ca-mkp.ca.oracle.com>
- <YNVPp/Pgqshami3U@casper.infradead.org>
- <CAHk-=wgH5pUbrL7CM5v6TWyNzDYpVM9k1qYCEgmY+b3Gx9nEAA@mail.gmail.com>
- <YNZFr7oJj1nkrwJY@relinquished.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R9wzw9s9pccPViWEsY8sbnSaeYn/7vUWP9xwygDqDs4=;
+        b=oIg8a9MYBoxVQeoTKRWhMC8XO2M3mTGenfiNHV6e5OZaZHnkgRma51d9zPeUC+lscZ
+         N6GbSHnHmNOL4VsaqxKs+3MQLyuXoHP6QDBnTgPX7QdMGd+eSZ31xPvky99zDV3V2U21
+         iHif/HAVogCly/EibSDFn7+VC/lqmuGNI4iYDII2j4H8cCrxa4z/96naSSje0N7JltNA
+         OkhyUVdN5wIklHgmdag32xOrWsqOoo2NVCV41ZQ6eamkuVFTzr0Yzm31oj9UQPKjuiGf
+         cMpXpZmPpO7EoiyFdDNFbx/XxYriXSENCvhEf5bEhISmfTsWd2CUCb/kyOoX1AielFsm
+         AbLg==
+X-Gm-Message-State: AOAM5305KUJ3ukdWTfDebMxpAkAd5w4Rr2sVAPo/ZEihB04BAj5YhaNo
+        6yxqg2iYQ3okX6syDnevN7TP5nqt3o1/1F/IRME=
+X-Google-Smtp-Source: ABdhPJwKiWX5ZcuvrcLGi/VqTF1696NidknYHM+BoP/Djfaxe14N0JOAIoN7No+bo87Wxs1OORcrMA==
+X-Received: by 2002:a05:6512:1303:: with SMTP id x3mr19929447lfu.276.1625685522907;
+        Wed, 07 Jul 2021 12:18:42 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id s13sm1705554ljp.8.2021.07.07.12.18.42
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jul 2021 12:18:42 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id q18so6890874lfc.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 12:18:42 -0700 (PDT)
+X-Received: by 2002:a05:6512:374b:: with SMTP id a11mr19869786lfs.377.1625685522128;
+ Wed, 07 Jul 2021 12:18:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YNZFr7oJj1nkrwJY@relinquished.localdomain>
+References: <20210707122747.3292388-1-dkadashev@gmail.com> <20210707122747.3292388-3-dkadashev@gmail.com>
+In-Reply-To: <20210707122747.3292388-3-dkadashev@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 7 Jul 2021 12:18:26 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh=cpt_tQCirzFZRPawRpbuFTZ2MxNpXiyUF+eBXF=+sw@mail.gmail.com>
+Message-ID: <CAHk-=wh=cpt_tQCirzFZRPawRpbuFTZ2MxNpXiyUF+eBXF=+sw@mail.gmail.com>
+Subject: Re: [PATCH v8 02/11] namei: change filename_parentat() calling conventions
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 25, 2021 at 02:07:59PM -0700, Omar Sandoval wrote:
-> On Fri, Jun 25, 2021 at 09:16:15AM -0700, Linus Torvalds wrote:
-> > On Thu, Jun 24, 2021 at 8:38 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > Does it make any kind of sense to talk about doing this for buffered I/O,
-> > > given that we can't generate them for (eg) mmaped files?
-> > 
-> > Sure we can.
-> > 
-> > Or rather, some people might very well like to do it even for mutable
-> > data. In fact, _especially_ for mutable data.
-> > 
-> > You might want to do things like "write out the state I verified just
-> > a moment ago", and if it has changed since then, you *want* the result
-> > to be invalid because the checksums no longer match - in case somebody
-> > else changed the data you used for the state calculation and
-> > verification in the meantime. It's very much why you'd want a separate
-> > checksum in the first place.
-> > 
-> > Yeah, yeah,  you can - and people do - just do things like this with a
-> > separate checksum. But if you know that the filesystem has internal
-> > checksumming support _anyway_, you might want to use it, and basically
-> > say "use this checksum, if the data doesn't match when I read it back
-> > I want to get an IO error".
-> > 
-> > (The "data doesn't match" _could_ be just due to DRAM corruption etc,
-> > of course. Some people care about things like that. You want
-> > "verified" filesystem contents - it might not be about security, it
-> > might simply be about "I have validated this data and if it's not the
-> > same data any more it's useless and I need to re-generate it").
-> > 
-> > Am I a big believer in this model? No. Portability concerns (across
-> > OS'es, across filesystems, even just across backups on the same exact
-> > system) means that even if we did this, very few people would use it.
-> > 
-> > People who want this end up using an external checksum instead and do
-> > it outside of and separately from the actual IO, because then they can
-> > do it on existing systems.
-> > 
-> > So my argument is not "we want this". My argument is purely that some
-> > buffered filesystem IO case isn't actually any different from the
-> > traditional "I want access to the low-level sector hardware checksum
-> > data". The use cases are basically exactly the same.
-> > 
-> > Of course, basically nobody does that hw sector checksum either, for
-> > all the same reasons, even if it's been around for decades.
-> > 
-> > So my "checksum metadata interface" is not something I'm a big
-> > believer in, but I really don't think it's really all _that_ different
-> > from the whole "compressed format interface" that this whole patch
-> > series is about. They are pretty much the same thing in many ways.
-> 
-> I see the similarity in the sense that we basically want to pass some
-> extra metadata down with the read or write. So then do we want to add
-> preadv3/pwritev3 for encoded I/O now so that checksums can use it in the
-> future? The encoding metadata could go in this "struct io_how", either
-> directly or in a separate structure with a pointer in "struct io_how".
-> It could get messy with compat syscalls.
+On Wed, Jul 7, 2021 at 5:28 AM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+>
+> Hence this preparation change splits filename_parentat() into two: one
+> that always consumes the name and another that never consumes the name.
+> This will allow to implement two filename_create() variants in the same
+> way, and is a consistent and hopefully easier to reason about approach.
 
-Ping. What's the path forward here? At this point, it seems like an
-ioctl is the path of least resistance.
+I like it.
+
+The patch itself is a bit hard to read, but the end result seems to make sense.
+
+My main reaction is that this could have probably done a bit more
+cleanup by avoiding some of the "goto exit1" kind of things.
+
+Just as an example, now the rule is that "do_rmdir()" always does that
+
+>         putname(name);
+>         return error;
+
+at the end, and I think this means that this whole function could be
+split into a few trivial helper functions instead, and we'd have
+
+   long do_rmdir(int dfd, struct filename *name)
+  {
+        int error;
+
+        error = rmdir_helper(...)
+        if (!retry_estale(error, lookup_flags)) {
+                lookup_flags |= LOOKUP_REVAL;
+                error = rmdir_helper(...);
+        }
+        putname(name);
+        return error;
+  }
+
+which gets rid of both the "goto retry" and the "goto exit1".
+
+With the meat of "do_rmdir()" done in that "rmdir_helper()" function.
+
+I think the same is basically true of "do_unlinkat()" too.
+
+But I wouldn't mind that cleanup as a separate patch. My point is that
+I think this new rule for when the name is consumed is better and can
+result in further cleanups.
+
+(NOTE! This is from just reading the patch, I might have missed some case).
+
+            Linus
