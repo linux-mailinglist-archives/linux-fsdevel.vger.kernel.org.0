@@ -2,95 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 081223BF03E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 21:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F12413BF059
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 21:37:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231548AbhGGT32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 15:29:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51514 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbhGGT31 (ORCPT
+        id S232426AbhGGTjs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 15:39:48 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:49162 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230388AbhGGTjr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 15:29:27 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA37C06175F
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jul 2021 12:26:47 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id n14so6936444lfu.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 12:26:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gurR/owSQDFNH0OSkKWy8rQ2chdbL863tihhAYffiok=;
-        b=O4/ZeTQT6f+jFfZaJgO+nGN0TZllql6sOHLJC1MBLS2yfZlJJcV/LJ42OCqfaRFj+7
-         xHL/olvJE3nX1wrc1P0N+TbWFBWePWgpKUGg4WF51rybJYdE0TI6byFY3xd+e93K9VNS
-         CWTXY/c3bxrDm3ItM0cXM5enPAWo3dakT/0VA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gurR/owSQDFNH0OSkKWy8rQ2chdbL863tihhAYffiok=;
-        b=bCFQIFTz30TjHHW1WMH8zwneU3rWl6zvFkudWRmsn/CJLN7IZw3tG6y+zf4VfQewlt
-         4Pmyx89Q+zjFjjXDSW/3oq8Raz4isZrH6KM9lDn9ozKxKKPEfk5yET7lBV+fFp/Lr04q
-         ylvB9iGRmceZ4j1CrTb1fB7rXUeLY3TBmozUxep+DjPtl5FV6/tOo6BrZmA6er2g6yGy
-         YiDJcvnkVtZopDRmtJpT6Nts04nVNqG6//1dRADvjtB3vOUCv8aUP69Ro/3zSc+VJ4oD
-         G7GqpLURI2Yz286UKrNCkwHaJxPAsoflEpYr3+gU2wk6FluNTkYUQAHC80XTq2+p8OE9
-         XMZw==
-X-Gm-Message-State: AOAM530GWPsYOeUcAs/WphekI/0orFF4KsTYI5WeAbV1XIHFDNeWnGCH
-        elMXJKvduFzI2bEvq4Fz7DxK3Hw8zh5I+udfvGA=
-X-Google-Smtp-Source: ABdhPJzS8JBCMhFVQ2graCNqBlgMHOYWfzyS9Q4Fj50l8Po7V/aojrre5p1YYcko7NY8qgdptwPS0Q==
-X-Received: by 2002:a2e:9e04:: with SMTP id e4mr20193374ljk.431.1625686004612;
-        Wed, 07 Jul 2021 12:26:44 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id o7sm1790322lfo.196.2021.07.07.12.26.43
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jul 2021 12:26:44 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id y42so7007184lfa.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 12:26:43 -0700 (PDT)
-X-Received: by 2002:a2e:9c58:: with SMTP id t24mr19950330ljj.411.1625686003546;
- Wed, 07 Jul 2021 12:26:43 -0700 (PDT)
+        Wed, 7 Jul 2021 15:39:47 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 16AA920013;
+        Wed,  7 Jul 2021 19:37:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1625686626; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5l7XC8r9s3s3KUS8ZgIFU2KXa80s6gaafOlF4TeGHlw=;
+        b=vajHy4ar4U/jCEKtShtrSj/pBP+a/TCvBdnZ3pMQg8DUqx4tGABQJfIQAG+p9dlmJ+gfSM
+        kDNleC6fy/Av/XGfZpbqnFEJz0SdsqmJv+28pRL5yCkksh4U8rX59emB9BYaASp23t17Xm
+        sntEfb9c6YXpiWkY3e6kcy0aPfTvyXI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1625686626;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5l7XC8r9s3s3KUS8ZgIFU2KXa80s6gaafOlF4TeGHlw=;
+        b=/HG97lnqZVEiRQGwVCaAvI5upkJhj0je0UKPF4sw0Cc+w5N1VkzstMtQC56a0QClZNkKK+
+        0SlHu6lGGiSiTmDw==
+Received: from quack2.suse.cz (unknown [10.163.43.118])
+        by relay2.suse.de (Postfix) with ESMTP id F3857A3B9C;
+        Wed,  7 Jul 2021 19:37:05 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id CC2541F2CD7; Wed,  7 Jul 2021 21:37:05 +0200 (CEST)
+Date:   Wed, 7 Jul 2021 21:37:05 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     amir73il@gmail.com, djwong@kernel.org, tytso@mit.edu,
+        david@fromorbit.com, jack@suse.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v3 05/15] inotify: Don't force FS_IN_IGNORED
+Message-ID: <20210707193705.GF18396@quack2.suse.cz>
+References: <20210629191035.681913-1-krisman@collabora.com>
+ <20210629191035.681913-6-krisman@collabora.com>
 MIME-Version: 1.0
-References: <20210707122747.3292388-1-dkadashev@gmail.com>
-In-Reply-To: <20210707122747.3292388-1-dkadashev@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 7 Jul 2021 12:26:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiTyxUt61NxeMXb2Zn2stDBC7eG82RKj+3jXUORdYQtpg@mail.gmail.com>
-Message-ID: <CAHk-=wiTyxUt61NxeMXb2Zn2stDBC7eG82RKj+3jXUORdYQtpg@mail.gmail.com>
-Subject: Re: [PATCH v8 00/11] io_uring: add mkdir and [sym]linkat support
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210629191035.681913-6-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 7, 2021 at 5:28 AM Dmitry Kadashev <dkadashev@gmail.com> wrote:
->
-> This started out as an attempt to add mkdirat support to io_uring which
-> is heavily based on renameat() / unlinkat() support.
+On Tue 29-06-21 15:10:25, Gabriel Krisman Bertazi wrote:
+> According to Amir:
+> 
+> "FS_IN_IGNORED is completely internal to inotify and there is no need
+> to set it in i_fsnotify_mask at all, so if we remove the bit from the
+> output of inotify_arg_to_mask() no functionality will change and we will
+> be able to overload the event bit for FS_ERROR."
+> 
+> This is done in preparation to overload FS_ERROR with the notification
+> mechanism in fanotify.
+> 
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-Ok, sorry for having made you go through all the different versions,
-but I like the new series and think it's a marked improvement.
+Looks good. Feel free to add:
 
-I did send out a few comments to the individual patches that I think
-it can all now be made to be even more legible by avoiding some of the
-goto spaghetti, but I think that would be a series on top.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-(And I'd like to note again that I based all that on just reading the
-patches, so there may be something there that makes it not work well).
+								Honza
 
-One final request: can you keep the fs/namei.c patches as one entirely
-separate series, and then do the io_uring parts at the end, rather
-than intermixing them?
-
-But at least I am generally happy with this version.
-
-Al - please holler now if you see any issues.
-
-               Linus
+> ---
+>  fs/notify/inotify/inotify_user.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index 98f61b31745a..4d17be6dd58d 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -89,10 +89,10 @@ static inline __u32 inotify_arg_to_mask(struct inode *inode, u32 arg)
+>  	__u32 mask;
+>  
+>  	/*
+> -	 * Everything should accept their own ignored and should receive events
+> -	 * when the inode is unmounted.  All directories care about children.
+> +	 * Everything should receive events when the inode is unmounted.
+> +	 * All directories care about children.
+>  	 */
+> -	mask = (FS_IN_IGNORED | FS_UNMOUNT);
+> +	mask = (FS_UNMOUNT);
+>  	if (S_ISDIR(inode->i_mode))
+>  		mask |= FS_EVENT_ON_CHILD;
+>  
+> -- 
+> 2.32.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
