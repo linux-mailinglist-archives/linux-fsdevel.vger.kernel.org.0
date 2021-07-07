@@ -2,193 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1E2E3BEA28
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 16:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC1B3BEA4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 17:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232132AbhGGO7a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 10:59:30 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:39552 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232167AbhGGO7U (ORCPT
+        id S232132AbhGGPH1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 11:07:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48542 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232283AbhGGPH0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 10:59:20 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 6D418222C9;
-        Wed,  7 Jul 2021 14:56:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1625669797; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XWAEaANJCor9YlEH49opkCvnBmAIArEUd8NKv+U+sMY=;
-        b=XAGkRDyohwLceVwhig+V32Z7YyqrAirmJDiPqhvU0glhvtM54AYZ/RY4CMKk9mRfDoKw1l
-        oiy0lQUURCmcOQgNl+lMHh630PlrUMnU/We5zbYLPDG/ECv2vriRXDzKQApxweRgvws8bQ
-        NjRBPFVzpQ0W2sqdRXibiRsw20F/NS0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1625669797;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XWAEaANJCor9YlEH49opkCvnBmAIArEUd8NKv+U+sMY=;
-        b=nWZRkNi6Sh89Twx8TrmALp2XnCGFIM2eCOODgHnXDOTgEsL+VwBucGYky6cZMQtdjbCmQC
-        VAo/Nkh6o3LRcrDA==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id F172413645;
-        Wed,  7 Jul 2021 14:56:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id O+UCOKTA5WCtLwAAGKfGzw
-        (envelope-from <lhenriques@suse.de>); Wed, 07 Jul 2021 14:56:36 +0000
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 32267431;
-        Wed, 7 Jul 2021 14:56:36 +0000 (UTC)
-Date:   Wed, 7 Jul 2021 15:56:35 +0100
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        dhowells@redhat.com
-Subject: Re: [RFC PATCH v7 06/24] ceph: parse new fscrypt_auth and
- fscrypt_file fields in inode traces
-Message-ID: <YOXAo8Q0GQoWaAQE@suse.de>
-References: <20210625135834.12934-1-jlayton@kernel.org>
- <20210625135834.12934-7-jlayton@kernel.org>
- <YOWGPv099N7EsMVA@suse.de>
- <14d96eb9-c9b5-d854-d87a-65c1ab3be57e@redhat.com>
- <d9a56cc0d568bbf59cc76ad618b4d0f92c021fed.camel@kernel.org>
- <YOW67YA8e6vivdkh@suse.de>
+        Wed, 7 Jul 2021 11:07:26 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35020C061574;
+        Wed,  7 Jul 2021 08:04:46 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 1F93E50A1; Wed,  7 Jul 2021 11:04:45 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 1F93E50A1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1625670285;
+        bh=QAOyrzJPOcE2SXamHMXvVsksmrY457V7ch3ClTSWyUY=;
+        h=Date:To:Cc:Subject:From:From;
+        b=lv0zPNdSNDQ4OLI9sV6ZeMd2gpJkhj9zkbUEH2CSfjeVfX0vKTiQlA2cb947bhqyX
+         S9jJ1XEvX9xYBPZnCDxWfFwNNMbkP6iEjL6tf3KKIC86p8gX8xQvyEUamxVamZboin
+         yWuilPwxT4fQQgwP9bw2zsFThr6BvOFlpCCVEgmE=
+Date:   Wed, 7 Jul 2021 11:04:45 -0400
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>
+Subject: [GIT PULL] nfsd changes for 5.14
+Message-ID: <20210707150445.GA9911@fieldses.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YOW67YA8e6vivdkh@suse.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   bfields@fieldses.org (J. Bruce Fields)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 07, 2021 at 03:32:13PM +0100, Luis Henriques wrote:
-> On Wed, Jul 07, 2021 at 08:19:25AM -0400, Jeff Layton wrote:
-> > On Wed, 2021-07-07 at 19:19 +0800, Xiubo Li wrote:
-> > > On 7/7/21 6:47 PM, Luis Henriques wrote:
-> > > > On Fri, Jun 25, 2021 at 09:58:16AM -0400, Jeff Layton wrote:
-> > > > > ...and store them in the ceph_inode_info.
-> > > > > 
-> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > > ---
-> > > > >   fs/ceph/file.c       |  2 ++
-> > > > >   fs/ceph/inode.c      | 18 ++++++++++++++++++
-> > > > >   fs/ceph/mds_client.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
-> > > > >   fs/ceph/mds_client.h |  4 ++++
-> > > > >   fs/ceph/super.h      |  6 ++++++
-> > > > >   5 files changed, 74 insertions(+)
-> > > > > 
-> > > > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > > > > index 2cda398ba64d..ea0e85075b7b 100644
-> > > > > --- a/fs/ceph/file.c
-> > > > > +++ b/fs/ceph/file.c
-> > > > > @@ -592,6 +592,8 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
-> > > > >   	iinfo.xattr_data = xattr_buf;
-> > > > >   	memset(iinfo.xattr_data, 0, iinfo.xattr_len);
-> > > > >   
-> > > > > +	/* FIXME: set fscrypt_auth and fscrypt_file */
-> > > > > +
-> > > > >   	in.ino = cpu_to_le64(vino.ino);
-> > > > >   	in.snapid = cpu_to_le64(CEPH_NOSNAP);
-> > > > >   	in.version = cpu_to_le64(1);	// ???
-> > > > > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > > > > index f62785e4dbcb..b620281ea65b 100644
-> > > > > --- a/fs/ceph/inode.c
-> > > > > +++ b/fs/ceph/inode.c
-> > > > > @@ -611,6 +611,13 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
-> > > > >   
-> > > > >   	ci->i_meta_err = 0;
-> > > > >   
-> > > > > +#ifdef CONFIG_FS_ENCRYPTION
-> > > > > +	ci->fscrypt_auth = NULL;
-> > > > > +	ci->fscrypt_auth_len = 0;
-> > > > > +	ci->fscrypt_file = NULL;
-> > > > > +	ci->fscrypt_file_len = 0;
-> > > > > +#endif
-> > > > > +
-> > > > >   	return &ci->vfs_inode;
-> > > > >   }
-> > > > >   
-> > > > > @@ -619,6 +626,9 @@ void ceph_free_inode(struct inode *inode)
-> > > > >   	struct ceph_inode_info *ci = ceph_inode(inode);
-> > > > >   
-> > > > >   	kfree(ci->i_symlink);
-> > > > > +#ifdef CONFIG_FS_ENCRYPTION
-> > > > > +	kfree(ci->fscrypt_auth);
-> > > > > +#endif
-> > > > >   	kmem_cache_free(ceph_inode_cachep, ci);
-> > > > >   }
-> > > > >   
-> > > > > @@ -1021,6 +1031,14 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
-> > > > >   		xattr_blob = NULL;
-> > > > >   	}
-> > > > >   
-> > > > > +	if (iinfo->fscrypt_auth_len && !ci->fscrypt_auth) {
-> > > > > +		ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
-> > > > > +		ci->fscrypt_auth = iinfo->fscrypt_auth;
-> > > > > +		iinfo->fscrypt_auth = NULL;
-> > > > > +		iinfo->fscrypt_auth_len = 0;
-> > > > > +		inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
-> > > > > +	}
-> > > > I think we also need to free iinfo->fscrypt_auth here if ci->fscrypt_auth
-> > > > is already set.  Something like:
-> > > > 
-> > > > 	if (iinfo->fscrypt_auth_len) {
-> > > > 		if (!ci->fscrypt_auth) {
-> > > > 			...
-> > > > 		} else {
-> > > > 			kfree(iinfo->fscrypt_auth);
-> > > > 			iinfo->fscrypt_auth = NULL;
-> > > > 		}
-> > > > 	}
-> > > > 
-> > > IMO, this should be okay because it will be freed in 
-> > > destroy_reply_info() when putting the request.
-> > > 
-> > > 
-> > 
-> > Yes. All of that should get cleaned up with the request.
-> 
-> Hmm... ok, so maybe I missed something because I *did* saw kmemleak
-> complaining.  Maybe it was on the READDIR path.  /me goes look again.
+Please pull:
 
-Ah, that was indeed the problem.  So, here's a quick hack to fix
-destroy_reply_info() so that it also frees the extra memory from READDIR:
+  git://linux-nfs.org/~bfields/linux.git tags/nfsd-5.14
 
-@@ -686,12 +686,23 @@ static int parse_reply_info(struct ceph_mds_session *s, struct ceph_msg *msg,
- 
- static void destroy_reply_info(struct ceph_mds_reply_info_parsed *info)
- {
-+	int i = 0;
-+
- 	kfree(info->diri.fscrypt_auth);
- 	kfree(info->diri.fscrypt_file);
- 	kfree(info->targeti.fscrypt_auth);
- 	kfree(info->targeti.fscrypt_file);
- 	if (!info->dir_entries)
- 		return;
-+
-+	for (i = 0; i < info->dir_nr; i++) {
-+		struct ceph_mds_reply_dir_entry *rde = info->dir_entries + i;
-+		if (rde->inode.fscrypt_auth_len)
-+			kfree(rde->inode.fscrypt_auth);
-+	}
-+	       
- 	free_pages((unsigned long)info->dir_entries, get_order(info->dir_buf_size));
- }
- 
+for 5.14 nfsd changes.
 
-Cheers,
---
-Luís
+Some highlights:
+	- add tracepoints for callbacks and for client creation and
+	  destruction
+	- cache the mounts used for server-to-server copies
+	- expose callback information in /proc/fs/nfsd/clients/*/info
+	- don't hold locks unnecessarily while waiting for commits
+	- update NLM to use xdr_stream, as we have for NFSv2/v3/v4
+
+--b.
+
+ChenXiaoSong (1):
+      nfs_common: fix doc warning
+
+Chuck Lever (54):
+      NFSD: Fix TP_printk() format specifier in nfsd_clid_class
+      NFSD: Add an RPC authflavor tracepoint display helper
+      NFSD: Add nfsd_clid_cred_mismatch tracepoint
+      NFSD: Add nfsd_clid_verf_mismatch tracepoint
+      NFSD: Remove trace_nfsd_clid_inuse_err
+      NFSD: Add nfsd_clid_confirmed tracepoint
+      NFSD: Add nfsd_clid_reclaim_complete tracepoint
+      NFSD: Add nfsd_clid_destroyed tracepoint
+      NFSD: Add a couple more nfsd_clid_expired call sites
+      NFSD: Add tracepoints for SETCLIENTID edge cases
+      NFSD: Add tracepoints for EXCHANGEID edge cases
+      NFSD: Constify @fh argument of knfsd_fh_hash()
+      NFSD: Capture every CB state transition
+      NFSD: Drop TRACE_DEFINE_ENUM for NFSD4_CB_<state> macros
+      NFSD: Add cb_lost tracepoint
+      NFSD: Adjust cb_shutdown tracepoint
+      NFSD: Remove spurious cb_setup_err tracepoint
+      NFSD: Enhance the nfsd_cb_setup tracepoint
+      NFSD: Add an nfsd_cb_lm_notify tracepoint
+      NFSD: Add an nfsd_cb_offload tracepoint
+      NFSD: Replace the nfsd_deleg_break tracepoint
+      NFSD: Add an nfsd_cb_probe tracepoint
+      NFSD: Remove the nfsd_cb_work and nfsd_cb_done tracepoints
+      NFSD: Update nfsd_cb_args tracepoint
+      lockd: Remove stale comments
+      lockd: Create a simplified .vs_dispatch method for NLM requests
+      lockd: Common NLM XDR helpers
+      lockd: Update the NLMv1 void argument decoder to use struct xdr_stream
+      lockd: Update the NLMv1 TEST arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv1 LOCK arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv1 CANCEL arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv1 UNLOCK arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv1 nlm_res arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv1 SM_NOTIFY arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv1 SHARE arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv1 FREE_ALL arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv1 void results encoder to use struct xdr_stream
+      lockd: Update the NLMv1 TEST results encoder to use struct xdr_stream
+      lockd: Update the NLMv1 nlm_res results encoder to use struct xdr_stream
+      lockd: Update the NLMv1 SHARE results encoder to use struct xdr_stream
+      lockd: Update the NLMv4 void arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv4 TEST arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv4 LOCK arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv4 CANCEL arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv4 UNLOCK arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv4 nlm_res arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv4 SM_NOTIFY arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv4 SHARE arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv4 FREE_ALL arguments decoder to use struct xdr_stream
+      lockd: Update the NLMv4 void results encoder to use struct xdr_stream
+      lockd: Update the NLMv4 TEST results encoder to use struct xdr_stream
+      lockd: Update the NLMv4 nlm_res results encoder to use struct xdr_stream
+      lockd: Update the NLMv4 SHARE results encoder to use struct xdr_stream
+      NFSD: Prevent a possible oops in the nfs_dirent() tracepoint
+
+Colin Ian King (2):
+      rpc: remove redundant initialization of variable status
+      nfsd: remove redundant assignment to pointer 'this'
+
+Dai Ngo (2):
+      NFSD: delay unmount source's export after inter-server copy completed.
+      nfsd: fix kernel test robot warning in SSC code
+
+Dave Wysochanski (1):
+      nfsd4: Expose the callback address and state of each NFS4 client
+
+J. Bruce Fields (4):
+      nfsd: move some commit_metadata()s outside the inode lock
+      nfsd: move fsnotify on client creation outside spinlock
+      nfsd: rpc_peeraddr2str needs rcu lock
+      nfsd: fix NULL dereference in nfs3svc_encode_getaclres
+
+Olga Kornievskaia (1):
+      NFSD add vfs_fsync after async copy is done
+
+Trond Myklebust (1):
+      nfsd: Reduce contention for the nfsd_file nf_rwsem
+
+Wei Yongjun (1):
+      NFSD: Fix error return code in nfsd4_interssc_connect()
+
+Yu Hsiang Huang (1):
+      nfsd: Prevent truncation of an unlinked inode from blocking access to its directory
+
+Zheng Yongjun (1):
+      xprtrdma: Fix spelling mistakes
+
+ fs/lockd/svc.c                    |  43 ++++
+ fs/lockd/svcxdr.h                 | 151 ++++++++++++++
+ fs/lockd/xdr.c                    | 402 +++++++++++++++++++------------------
+ fs/lockd/xdr4.c                   | 403 ++++++++++++++++++++------------------
+ fs/nfs_common/grace.c             |   1 +
+ fs/nfsd/netns.h                   |   6 +
+ fs/nfsd/nfs3acl.c                 |   3 +-
+ fs/nfsd/nfs4callback.c            |  47 ++---
+ fs/nfsd/nfs4proc.c                | 154 ++++++++++++++-
+ fs/nfsd/nfs4state.c               | 177 +++++++++++++----
+ fs/nfsd/nfsd.h                    |   4 +
+ fs/nfsd/nfsfh.h                   |   7 +-
+ fs/nfsd/nfssvc.c                  |   3 +
+ fs/nfsd/trace.h                   | 250 +++++++++++++++++------
+ fs/nfsd/vfs.c                     |  26 ++-
+ fs/nfsd/xdr4.h                    |   1 +
+ include/linux/lockd/xdr.h         |   6 -
+ include/linux/lockd/xdr4.h        |   7 +-
+ include/linux/nfs_ssc.h           |  14 ++
+ net/sunrpc/auth_gss/svcauth_gss.c |   2 +-
+ net/sunrpc/xprtrdma/svc_rdma_rw.c |   6 +-
+ 21 files changed, 1175 insertions(+), 538 deletions(-)
+ create mode 100644 fs/lockd/svcxdr.h
