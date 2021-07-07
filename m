@@ -2,140 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09E573BE5F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 11:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D603BE679
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 12:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231173AbhGGJyZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 05:54:25 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:52548 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231362AbhGGJyU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 05:54:20 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 7FA2020041;
-        Wed,  7 Jul 2021 09:51:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1625651499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ot6CAR92JLdLil0GFznAKUtvkMkMuuMo8NYA4KiY+BM=;
-        b=jyINxxpG88xsl6q+H7L3kaRyYFJiM1ZY/59Is9Gv38oo5Fcwtat811E+xJbADcmP/HAJ0c
-        UAq3nHGaNZftpbWOiV2SGAzJ0sR8tjkULUlWkKgjVbW3kmId0lG7fxhnDEmsaQYIXu1dHI
-        0EgK/DwOR9k6ukLF0tqGIKywo2sm6d8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1625651499;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ot6CAR92JLdLil0GFznAKUtvkMkMuuMo8NYA4KiY+BM=;
-        b=Jm7j/8ZFGGoGhFUrO/mHe8cXb7XLaOrol+GxY4Sh496/p6Qw9UIGYWL69cToubZWQpccwO
-        6hwkWmhb46guN8DA==
-Received: from quack2.suse.cz (unknown [10.163.43.118])
-        by relay2.suse.de (Postfix) with ESMTP id 2B985A3BA3;
-        Wed,  7 Jul 2021 09:51:39 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 684221F2CD7; Wed,  7 Jul 2021 11:51:38 +0200 (CEST)
-Date:   Wed, 7 Jul 2021 11:51:38 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org,
-        Michael Stapelberg <stapelberg+linux@google.com>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 3/5] writeback: Fix bandwidth estimate for spiky workload
-Message-ID: <20210707095138.GC5335@quack2.suse.cz>
-References: <20210705161610.19406-1-jack@suse.cz>
- <20210707074017.2195-1-hdanton@sina.com>
+        id S231361AbhGGKrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 06:47:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231293AbhGGKrY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 06:47:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C775C61C73;
+        Wed,  7 Jul 2021 10:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625654684;
+        bh=7f9dZVhWz4se7QaY6DgXUfM9sIf/lWr1syPBf9l2uDQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=hgVGouA9JG5lxQBoMcH9bvjeep23ujsB7djODoFVdIuEgKzRdfQ9tbll/Pxh0D28f
+         P+64IeA7RqnylzMbruOUZrNz3gc6/VUrs9LzSX/yyEn3lossOGIVmiRCqSdewV9Jv6
+         sC30BRmvwWQdNHMwfd3NGSnG9ZiSBe8qeL/sW2FkYdRdcvzeLM6cQ7sVAgobYIMUEa
+         l1LISOcUYRNDgCvUhaNnNMX5adNwld/FxJ1VfBNxTsFSuMUp3V4TIy/tiEiJXtwnbe
+         aw7oS2AkSjzxk1e2he8X/Y1uPWIwWizNfHZXMKgljrmrX602owjreyOSDUqQpbfitE
+         T0jjbvxsNmz9g==
+Message-ID: <14633c3be87286d811263892375f2dfa9a8ed40a.camel@kernel.org>
+Subject: Re: [PATCH v2 1/2] fcntl: fix potential deadlocks for
+ &fown_struct.lock
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+Cc:     bfields@fieldses.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+Date:   Wed, 07 Jul 2021 06:44:42 -0400
+In-Reply-To: <YOVENb3X/m/pNrYt@kroah.com>
+References: <20210707023548.15872-1-desmondcheongzx@gmail.com>
+         <20210707023548.15872-2-desmondcheongzx@gmail.com>
+         <YOVENb3X/m/pNrYt@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210707074017.2195-1-hdanton@sina.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 07-07-21 15:40:17, Hillf Danton wrote:
-> On Mon,  5 Jul 2021 18:23:17 +0200 Jan Kara wrote:
-> >
-> >Michael Stapelberg has reported that for workload with short big spikes
-> >of writes (GCC linker seem to trigger this frequently) the write
-> >throughput is heavily underestimated and tends to steadily sink until it
-> >reaches zero. This has rather bad impact on writeback throttling
-> >(causing stalls). The problem is that writeback throughput estimate gets
-> >updated at most once per 200 ms. One update happens early after we
-> >submit pages for writeback (at that point writeout of only small
-> >fraction of pages is completed and thus observed throughput is tiny).
-> >Next update happens only during the next write spike (updates happen
-> >only from inode writeback and dirty throttling code) and if that is
-> >more than 1s after previous spike, we decide system was idle and just
-> >ignore whatever was written until this moment.
-> >
-> >Fix the problem by making sure writeback throughput estimate is also
-> >updated shortly after writeback completes to get reasonable estimate of
-> >throughput for spiky workloads.
-> >
-> >Link: https://lore.kernel.org/lkml/20210617095309.3542373-1-stapelberg+li>nux@google.com
-> >Reported-by: Michael Stapelberg <stapelberg+linux@google.com>
-> >Signed-off-by: Jan Kara <jack@suse.cz>
-...
-> >diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> >index 1fecf8ebadb0..6a99ddca95c0 100644
-> >--- a/mm/page-writeback.c
-> >+++ b/mm/page-writeback.c
-> >@@ -1346,14 +1346,7 @@ static void __wb_update_bandwidth(struct dirty_thr>ottle_control *gdtc,
-> > 	unsigned long dirtied;
-> > 	unsigned long written;
-> >
-> >-	lockdep_assert_held(&wb->list_lock);
-> >-
-> >-	/*
-> >-	 * rate-limit, only update once every 200ms.
-> >-	 */
-> >-	if (elapsed < BANDWIDTH_INTERVAL)
-> >-		return;
+On Wed, 2021-07-07 at 08:05 +0200, Greg KH wrote:
+> On Wed, Jul 07, 2021 at 10:35:47AM +0800, Desmond Cheong Zhi Xi wrote:
+> > Syzbot reports a potential deadlock in do_fcntl:
+> > 
+> > ========================================================
+> > WARNING: possible irq lock inversion dependency detected
+> > 5.12.0-syzkaller #0 Not tainted
+> > --------------------------------------------------------
+> > syz-executor132/8391 just changed the state of lock:
+> > ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: f_getown_ex fs/fcntl.c:211 [inline]
+> > ffff888015967bf8 (&f->f_owner.lock){.+..}-{2:2}, at: do_fcntl+0x8b4/0x1200 fs/fcntl.c:395
+> > but this lock was taken by another, HARDIRQ-safe lock in the past:
+> >  (&dev->event_lock){-...}-{2:2}
+> > 
+> > and interrupts could create inverse lock ordering between them.
+> > 
+> > other info that might help us debug this:
+> > Chain exists of:
+> >   &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
+> > 
+> >  Possible interrupt unsafe locking scenario:
+> > 
+> >        CPU0                    CPU1
+> >        ----                    ----
+> >   lock(&f->f_owner.lock);
+> >                                local_irq_disable();
+> >                                lock(&dev->event_lock);
+> >                                lock(&new->fa_lock);
+> >   <Interrupt>
+> >     lock(&dev->event_lock);
+> > 
+> >  *** DEADLOCK ***
+> > 
+> > This happens because there is a lock hierarchy of
+> > &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
+> > from the following call chain:
+> > 
+> >   input_inject_event():
+> >     spin_lock_irqsave(&dev->event_lock,...);
+> >     input_handle_event():
+> >       input_pass_values():
+> >         input_to_handler():
+> >           evdev_events():
+> >             evdev_pass_values():
+> >               spin_lock(&client->buffer_lock);
+> >               __pass_event():
+> >                 kill_fasync():
+> >                   kill_fasync_rcu():
+> >                     read_lock(&fa->fa_lock);
+> >                     send_sigio():
+> >                       read_lock_irqsave(&fown->lock,...);
+> > 
+> > However, since &dev->event_lock is HARDIRQ-safe, interrupts have to be
+> > disabled while grabbing &f->f_owner.lock, otherwise we invert the lock
+> > hierarchy.
+> > 
+> > Hence, we replace calls to read_lock/read_unlock on &f->f_owner.lock,
+> > with read_lock_irq/read_unlock_irq.
+> > 
+> > Here read_lock_irq/read_unlock_irq should be safe to use because the
+> > functions f_getown_ex and f_getowner_uids are only called from
+> > do_fcntl, and f_getown is only called from do_fnctl and
+> > sock_ioctl. do_fnctl itself is only called from syscalls.
+> > 
+> > For sock_ioctl, the chain is
+> >   compat_sock_ioctl():
+> >     compat_sock_ioctl_trans():
+> >       sock_ioctl()
+> > 
+> > And interrupts are not disabled on either path. We assert this
+> > assumption with WARN_ON_ONCE(irqs_disabled()). This check is also
+> > inserted into another use of write_lock_irq in f_modown.
+> > 
+> > Reported-and-tested-by: syzbot+e6d5398a02c516ce5e70@syzkaller.appspotmail.com
+> > Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+> > ---
+> >  fs/fcntl.c | 17 +++++++++++------
+> >  1 file changed, 11 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > index dfc72f15be7f..262235e02c4b 100644
+> > --- a/fs/fcntl.c
+> > +++ b/fs/fcntl.c
+> > @@ -88,6 +88,7 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
+> >  static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+> >                       int force)
+> >  {
+> > +	WARN_ON_ONCE(irqs_disabled());
 > 
-> Please leave it as it is if you are not dumping the 200ms rule.
-
-Well, that could break the delayed updated scheduled after the end of
-writeback and for no good reason. The problematic ordering is like:
-
-end writeback on inode1
-  queue_delayed_work() - queues delayed work after BANDWIDTH_INTERVAL
-
-__wb_update_bandwidth() called e.g. from balance_dirty_pages()
-  wb->bw_time_stamp = now;
-
-end writeback on inode2
-  queue_delayed_work() - does nothing since work is already queued
-
-delayed work calls __wb_update_bandwidth() - nothing is done since elapsed
-< BANDWIDTH_INTERVAL and we may thus miss reflecting writeback of inode2 in
-our estimates.
-
-> >@@ -2742,6 +2737,11 @@ static void wb_inode_writeback_start(struct bdi_wr>iteback *wb)
-> > static void wb_inode_writeback_end(struct bdi_writeback *wb)
-> > {
-> > 	atomic_dec(&wb->writeback_inodes);
-> >+	/*
-> >+	 * Make sure estimate of writeback throughput gets
-> >+	 * updated after writeback completed.
-> >+	 */
-> >+	queue_delayed_work(bdi_wq, &wb->bw_dwork, BANDWIDTH_INTERVAL);
-> > }
+> If this triggers, you just rebooted the box :(
 > 
-> This is a bogus estimate - it does not break the 200ms rule but walks
-> around it without specifying why 300ms is not good.
+> Please never do this, either properly handle the problem and return an
+> error, or do not check for this.  It is not any type of "fix" at all,
+> and at most, a debugging aid while you work on the root problem.
+> 
+> thanks,
+> 
+> greg k-h
 
-Well, you're right that BANDWIDTH_INTERVAL is somewhat arbitrary here. We
-do want some batching of bandwidth updates after writeback completes for
-the cases where lots of inodes end their writeback in a quick succession.
-I've picked BANDWIDTH_INTERVAL here as that's the batching of other
-bandwidth updates as well so it kind of makes sense. I'll add a comment why
-BANDWIDTH_INTERVAL is picked here.
-
-								Honza
+Wait, what? Why would testing for irqs being disabled and throwing a
+WARN_ON in that case crash the box?
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jeff Layton <jlayton@kernel.org>
+
