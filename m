@@ -2,183 +2,316 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A0A13BE415
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 10:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CD913BE421
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 10:11:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230472AbhGGIGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 04:06:03 -0400
-Received: from mail-am6eur05on2053.outbound.protection.outlook.com ([40.107.22.53]:17121
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230438AbhGGIGC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 04:06:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DcYC5cBym5GQkUNaVALgfEj6BV5bjesBqeRoKeYfkyE=;
- b=8GzA3vdFU9F9fuR80DRY3+7zfqrQ5Ft5txzKgRXJ1yuSxxAwlGzpztCqnxWdKTpY2uxrF6M9umjU4UeSvYYl1iUJhVCXuYEquzErkL5E6LVOS3Im3XwAdqWrKi35Ly3Msetvap+TnnyF+DGd966wfcV8ePDa7iwj3yoV7e8Df34=
-Received: from AM9P192CA0005.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:21d::10)
- by DB6PR08MB2789.eurprd08.prod.outlook.com (2603:10a6:6:20::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20; Wed, 7 Jul
- 2021 08:03:18 +0000
-Received: from VE1EUR03FT062.eop-EUR03.prod.protection.outlook.com
- (2603:10a6:20b:21d:cafe::44) by AM9P192CA0005.outlook.office365.com
- (2603:10a6:20b:21d::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.22 via Frontend
- Transport; Wed, 7 Jul 2021 08:03:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=pass action=none
- header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- VE1EUR03FT062.mail.protection.outlook.com (10.152.18.252) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4308.20 via Frontend Transport; Wed, 7 Jul 2021 08:03:18 +0000
-Received: ("Tessian outbound 71a9bd19c2b9:v97"); Wed, 07 Jul 2021 08:03:17 +0000
-X-CR-MTA-TID: 64aa7808
-Received: from d79dbf58031a.1
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id D7BEA32E-B19F-4C9C-8A87-3F85D5472BD6.1;
-        Wed, 07 Jul 2021 08:03:11 +0000
-Received: from EUR01-HE1-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id d79dbf58031a.1
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Wed, 07 Jul 2021 08:03:11 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ND3k/CATt/TX+cGbPOSzVv54Wlv500MCWqwUawfbxZGexgGNQGdDsoYx+jifVl6gsRlslMyaY0UhMkzftZ5yyTeWUyMmyEEPNDXWQ9GnHf467k3DwCsgdNd3uprGzoZPvnEaA9h+QGwcC5GgcfO6Pcf3stYCFvAQPL8pNQBN3CAuqxY32b1W6WWRQc3EG4gPkySm0UnuO+bB7nuW2+MkjN0Qe9hGw3gMgwG7jKcrQ0jfyXTIAivySWlkXZO93/SjhNcWiKs3r2Htnl/GhOpFgFSz/J+cJVbdQvFDEGFfnmxhYeHoWhWBl3dJvrIp9m2EiTZ1kEmcvFscCRgnkA9xaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DcYC5cBym5GQkUNaVALgfEj6BV5bjesBqeRoKeYfkyE=;
- b=MrnrRFQxKPTXGF7vSh3D+lLVQdxoDOcynV4OkwPY+17QURQv5rH8Q8V6er0wKEUolTKPXC9h058ld1r4W7fGSS07+E3IHjIYoxGX5eSi9DEmNfwrJWX+KJJGvYVWtJCAQuF1HE4Cd3xK3Wa0lz4loitrggqadlwORBkg7jri+qoieG6/+Ye0p/z2RU4Dg28x5Dk4hnZH+bJFHM7mYEFlpPDvwY4IOcgXDBrFPjCpf8woGcPDS3lZ4hg/Wvxv1clNu640ehUil5wPmfqMRVYOL7LVLgcMKjPHFqQSx4TZEPqG5SaW+ct8TeA5WSFXkUM0+8PxssOSi+kqDecgEM5gnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DcYC5cBym5GQkUNaVALgfEj6BV5bjesBqeRoKeYfkyE=;
- b=8GzA3vdFU9F9fuR80DRY3+7zfqrQ5Ft5txzKgRXJ1yuSxxAwlGzpztCqnxWdKTpY2uxrF6M9umjU4UeSvYYl1iUJhVCXuYEquzErkL5E6LVOS3Im3XwAdqWrKi35Ly3Msetvap+TnnyF+DGd966wfcV8ePDa7iwj3yoV7e8Df34=
-Received: from AM6PR08MB4376.eurprd08.prod.outlook.com (2603:10a6:20b:bb::21)
- by AM6PR08MB4820.eurprd08.prod.outlook.com (2603:10a6:20b:d0::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.21; Wed, 7 Jul
- 2021 08:03:08 +0000
-Received: from AM6PR08MB4376.eurprd08.prod.outlook.com
- ([fe80::3452:c711:d09a:d8a1]) by AM6PR08MB4376.eurprd08.prod.outlook.com
- ([fe80::3452:c711:d09a:d8a1%5]) with mapi id 15.20.4287.033; Wed, 7 Jul 2021
- 08:03:08 +0000
-From:   Justin He <Justin.He@arm.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, nd <nd@arm.com>
-Subject: RE: [PATCH 14/14] getcwd(2): clean up error handling
-Thread-Topic: [PATCH 14/14] getcwd(2): clean up error handling
-Thread-Index: AQHXTEjJAj7h27rt3Eik//EOepGs96s3dFYw
-Date:   Wed, 7 Jul 2021 08:03:08 +0000
-Message-ID: <AM6PR08MB437677A0DE106C4A241BDA1CF71A9@AM6PR08MB4376.eurprd08.prod.outlook.com>
-References: <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
- <20210519004901.3829541-1-viro@zeniv.linux.org.uk>
- <20210519004901.3829541-14-viro@zeniv.linux.org.uk>
-In-Reply-To: <20210519004901.3829541-14-viro@zeniv.linux.org.uk>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ts-tracking-id: 0731D9DE48A4654DA8C4366DA349AA2C.0
-x-checkrecipientchecked: true
-Authentication-Results-Original: zeniv.linux.org.uk; dkim=none (message not
- signed) header.d=none;zeniv.linux.org.uk; dmarc=none action=none
- header.from=arm.com;
-x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: 11eb6ecb-bdc2-4a08-0896-08d9411dae86
-x-ms-traffictypediagnostic: AM6PR08MB4820:|DB6PR08MB2789:
-X-Microsoft-Antispam-PRVS: <DB6PR08MB27890E745363C21803F85C3CF71A9@DB6PR08MB2789.eurprd08.prod.outlook.com>
-x-checkrecipientrouted: true
-nodisclaimer: true
-x-ms-oob-tlc-oobclassifiers: OLM:147;OLM:147;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: R+FJzWEo7LiwIfj6yCRVlA1PseFz39+lP6QYFOgIzSvzA6BVAnmOdAWV9wSaRUgIEnBwnH4/4Vr3TlBvWsJFIZ7EUX/4fa8CCIeySwm1L8QPv1+nPS4yY8PnsSfGhMcPQtjgti99rqHWz5Hztx2JN+pUN9+9vF8wsy9eY0/OKy8KR6dKz683oTW9ULxB4g6FeeHw5eaCmK0amYNi8O498SIfzyVEXbYq4AxQrJp5CTdRPMPZAbz52r8tsh9TWlw8XyHHMMokTjHdJH6i2VhjAoxEDK/viNp2QKNPqb0by2oMp/N+RWOAhea0GKsR4DK+B9C9WR9SRm1y10JyULEwKwt51SwIuwNm4RcxV0s8fDf90gWa50KPC8Z2Z1Y52I92Q39lNKOc1VtmGhsuKonTERY2zMfDgT6IcBShDeMzD8GSI6aag9cUZuhjXo+BPYXl771CrVbadlcw2jyvTdEcd1w19Qcu09xmzw7ALoz+buwDKwcwOtxnRSz2KXzXNrViy/b0DCw+JBS9/SOnMEW8KekO45jYQFYD7VD1NkoOy6LInsZk0SytiyV3xG02kKeZ4Yl/DpSvTF7VmcFmfxEWJn3aDJUsBVJAKkfBbg/4VJaxoN57gsVGBEMX8dP/2zBnD90c5C28Bs8ycrx/L84K8w==
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR08MB4376.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(376002)(396003)(39850400004)(136003)(366004)(2906002)(86362001)(5660300002)(8936002)(9686003)(4744005)(26005)(110136005)(478600001)(83380400001)(54906003)(316002)(76116006)(33656002)(8676002)(122000001)(66476007)(7696005)(38100700002)(64756008)(55016002)(66946007)(6506007)(186003)(71200400001)(7416002)(66446008)(52536014)(4326008)(66556008)(53546011);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: F9gSbP5nwaOQni4b9r71VsQWdFEwK6zGvTe6/fuMHYzRfaAFcFHsfPQK4QnnaRG2xzJomZzJd/vPcdBPVqPcXxGOAecnUuYVJtqELRPLLhfKq3uzo4Av6/iGSigpXV7XcYNx2xETcbWmYAzt+mjlEps+udL+PARDc8OtKpQWI3Jx0aQ6Id/CmU0TbdgjIQ/vTbxAO3LnDpZfdWFDTYkGLXZMvVGfWHArKKLB9v5XIzJmMN4mtNSuI35KkK0yJS771dBfHXx25/KkoglnHc1VhCOz9ZA2UU23mZtBDfgtPUP2EIs5E+zuFWVxqYXmK7kn9LmZSwNFCDeTn6dr81ulBhd0nmVkCBMaitUSI9TPEoSKcGCEG/YNtpNditggzfU6SChAdBVKaFs/ZiA1Djm1BNrYzGczRGu3e+DRdviwHrypHSwTaEReqFcUt+IwcjVPSgC18PBH8qYQYk3NIveqI6yYiArOJtKnwoPjmNrRSfrjop9XfJsIc6ZkldgQmUBR57/4u4hKOiB09REf9hHC/S5YlgWJaUUOE10CBM+3wz6XhydfL9kCeoLxM9pSfjE8M6kjxbL6lJZNnxdU5X8re9q9fFpaEoXeknxbKXTyPWArkx5vCQnO7PbnwCepVPrzzksdyqb84zEsjBAuR6PIaSztGVSdEFx/H5iHfxyONexdxY00uwtjF1tN2RnCMhlnYMpvr8DPNCKDT5GytlOlm0zJudtCTKKwf3KQq7ecECk=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S230476AbhGGIO3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 04:14:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21282 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230446AbhGGIO3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 04:14:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625645508;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7IxHHhOiV8+sZ6LpLjgjNcv26IJ9eZSvwO6Xt1AmHis=;
+        b=gyIrlS/KWGqZ/LxB2BEhi7DQ7Y/+pXT3CDeLeJ2Y5TclNSHwDHrfPiP+E9FFXvoxn6eHuh
+        msls2dYqAHKxdCzH7vnwlKZQjKW5kjm4p0BJSHKoM5shyvvKh2E6LNpUePTCPbeUE0JIHI
+        Sk3E6T9dub3lrjSSdeBIjUbQI26Sv60=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-81-tLtprZqcM5-bJdyiMs3rFA-1; Wed, 07 Jul 2021 04:11:47 -0400
+X-MC-Unique: tLtprZqcM5-bJdyiMs3rFA-1
+Received: by mail-pl1-f199.google.com with SMTP id v7-20020a1709028d87b029012945cac72fso588571plo.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 01:11:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=7IxHHhOiV8+sZ6LpLjgjNcv26IJ9eZSvwO6Xt1AmHis=;
+        b=MUBO/rvlwxDPO70emMEsOw3YL2oBu9oW0J4Be0tRDC4T2yx1S05TQVI1rNR0Ouh8L8
+         c1uHOjscAb2RPcFbazNI9clIv/jXlLs7K58p6vHQ9JS1xZwJHt32UT9Wd62beYUwhJxJ
+         /4iz25Hrvle5zQBhn168czN3Aj71z/hmsJWDOqyeywMY6+W2S5UDQNOlCv3cXT3YKIiV
+         YkPcc1JV2ojYGrf3WLvwvD/Kadu2IaoeikeelbP3zF/UADO806F1hpgWpKW66Usuir9L
+         eJYW0yh/aDwUd70Japvx67lREEI/1KO9QDoNhuTbkSk+d8egtqk+8/eVaSGRcfg9SKIE
+         y+OQ==
+X-Gm-Message-State: AOAM531Yn1K8s6u5psYniutDCn452Bcvep65ZaV4CoxF8Q0UDK6S+o1l
+        wi1cG0Zd0P8hGid8RLeDViVHJiYIKHe5pMJ88GDlrjIBLil6+yrJgooAzRYzMdH29XUB+pw3BZR
+        XdrelR8DLUWfOmoasCigxrmJJfA==
+X-Received: by 2002:a17:90a:c89:: with SMTP id v9mr25474364pja.175.1625645506059;
+        Wed, 07 Jul 2021 01:11:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxMNU4SB0teOHT6v93uRcHhLg04FB4deO8vIy0u0Uh1kyBSJ87unh7MGpThF7r/GIoLDW/Mqg==
+X-Received: by 2002:a17:90a:c89:: with SMTP id v9mr25474351pja.175.1625645505799;
+        Wed, 07 Jul 2021 01:11:45 -0700 (PDT)
+Received: from [10.72.12.117] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id r33sm22714853pgk.51.2021.07.07.01.11.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jul 2021 01:11:45 -0700 (PDT)
+Subject: Re: [RFC PATCH v7 08/24] ceph: add ability to set fscrypt_auth via
+ setattr
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     lhenriques@suse.de, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, dhowells@redhat.com
+References: <20210625135834.12934-1-jlayton@kernel.org>
+ <20210625135834.12934-9-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <4bb32761-93b5-16fb-b8ab-36897d469a39@redhat.com>
+Date:   Wed, 7 Jul 2021 16:11:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB4820
-Original-Authentication-Results: zeniv.linux.org.uk; dkim=none (message not signed)
- header.d=none;zeniv.linux.org.uk; dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT062.eop-EUR03.prod.protection.outlook.com
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 089c6d87-7bba-4608-0184-08d9411da888
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tdpQh/zZkOzbLOXk0uos3NBF5umbvwRhefwf4dBKd1LVEFzQ0l2dH5VoAMVW0+S5S7UL9RvslMoAw21tnjvFU2RkojqLO5qtZgqSv6r1kB1ekF+SLynXpPOfY38WS0ABT7bj1+swOBrs5utVko8d8+Rm+scMSyacJPhDPj+goMIxiD2374KRd12CjHL5Wq35LpI0MqgleWy5cwHygLBc5xsYcuemxZe+vF+Ha8ckNGAhKQqzPhf80jHtHhiJogQR2BtULhuEyJy910ToP5V6JO3ZIkrooN1bXWw2phqKWfCKnj4kutCP8FjD5vcHpGGzckZj7D8aooi5mx1zZAunPIxrcJj4ZMvRgwohwdIX5WYHRFFlW3YOcTpeswQh47b7r2034c4xv88MQNMHa+1d83nwLVkVYOzl4VvSjUysRfL1q7VFTLTS3DtXx+swaqpfpXZyOPTL6Ds1b61RXjRcbUnT4THfmtenSXP5o3+rlGSgH312ehKkpeF8lXkNd01M97xPpm2EF7w6Bki3D/aEsWBVwJUt9K2tGwz/QQgDl/Kd6n1cgo1t633w8T2z4GWeQuPH8QtvYjJs02yM/5ImJq1SBGI2bNvUEhaV+tN3128eQJ98VpHx8OWUGyu4MlkSoCi+YmfiuR3SdiJeRbBSxaq+tfIsOmH3z8GF+mrxZM0n0qwGLsbXbTnSPKyW72uF6H+1iQzuGSnsRoutYdSzMA==
-X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(4636009)(346002)(39850400004)(136003)(396003)(376002)(46966006)(36840700001)(478600001)(110136005)(26005)(336012)(55016002)(7696005)(186003)(4326008)(47076005)(83380400001)(9686003)(54906003)(33656002)(8676002)(82740400003)(8936002)(5660300002)(316002)(53546011)(356005)(36860700001)(70586007)(70206006)(82310400003)(86362001)(52536014)(81166007)(2906002)(450100002)(6506007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2021 08:03:18.5243
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11eb6ecb-bdc2-4a08-0896-08d9411dae86
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource: VE1EUR03FT062.eop-EUR03.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR08MB2789
+In-Reply-To: <20210625135834.12934-9-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-
-> -----Original Message-----
-> From: Al Viro <viro@ftp.linux.org.uk> On Behalf Of Al Viro
-> Sent: Wednesday, May 19, 2021 8:49 AM
-> To: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Justin He <Justin.He@arm.com>; Petr Mladek <pmladek@suse.com>; Steven
-> Rostedt <rostedt@goodmis.org>; Sergey Senozhatsky
-> <senozhatsky@chromium.org>; Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com>; Rasmus Villemoes
-> <linux@rasmusvillemoes.dk>; Jonathan Corbet <corbet@lwn.net>; Heiko
-> Carstens <hca@linux.ibm.com>; Vasily Gorbik <gor@linux.ibm.com>; Christia=
-n
-> Borntraeger <borntraeger@de.ibm.com>; Eric W . Biederman
-> <ebiederm@xmission.com>; Darrick J. Wong <darrick.wong@oracle.com>; Peter
-> Zijlstra (Intel) <peterz@infradead.org>; Ira Weiny <ira.weiny@intel.com>;
-> Eric Biggers <ebiggers@google.com>; Ahmed S. Darwish
-> <a.darwish@linutronix.de>; open list:DOCUMENTATION <linux-
-> doc@vger.kernel.org>; Linux Kernel Mailing List <linux-
-> kernel@vger.kernel.org>; linux-s390 <linux-s390@vger.kernel.org>; linux-
-> fsdevel <linux-fsdevel@vger.kernel.org>
-> Subject: [PATCH 14/14] getcwd(2): clean up error handling
->=20
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+On 6/25/21 9:58 PM, Jeff Layton wrote:
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
+>   fs/ceph/acl.c                |  4 ++--
+>   fs/ceph/inode.c              | 30 ++++++++++++++++++++++++++++--
+>   fs/ceph/mds_client.c         | 31 ++++++++++++++++++++++++++-----
+>   fs/ceph/mds_client.h         |  3 +++
+>   fs/ceph/super.h              |  7 ++++++-
+>   include/linux/ceph/ceph_fs.h | 21 +++++++++++++--------
+>   6 files changed, 78 insertions(+), 18 deletions(-)
+>
+> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+> index 529af59d9fd3..6e716f142022 100644
+> --- a/fs/ceph/acl.c
+> +++ b/fs/ceph/acl.c
+> @@ -136,7 +136,7 @@ int ceph_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
+>   		newattrs.ia_ctime = current_time(inode);
+>   		newattrs.ia_mode = new_mode;
+>   		newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
+> -		ret = __ceph_setattr(inode, &newattrs);
+> +		ret = __ceph_setattr(inode, &newattrs, NULL);
+>   		if (ret)
+>   			goto out_free;
+>   	}
+> @@ -147,7 +147,7 @@ int ceph_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
+>   			newattrs.ia_ctime = old_ctime;
+>   			newattrs.ia_mode = old_mode;
+>   			newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
+> -			__ceph_setattr(inode, &newattrs);
+> +			__ceph_setattr(inode, &newattrs, NULL);
+>   		}
+>   		goto out_free;
+>   	}
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index b620281ea65b..7821ba04eef3 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -2086,7 +2086,7 @@ static const struct inode_operations ceph_symlink_iops = {
+>   	.listxattr = ceph_listxattr,
+>   };
+>   
+> -int __ceph_setattr(struct inode *inode, struct iattr *attr)
+> +int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *cia)
+>   {
+>   	struct ceph_inode_info *ci = ceph_inode(inode);
+>   	unsigned int ia_valid = attr->ia_valid;
+> @@ -2127,6 +2127,32 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
+>   
+>   	dout("setattr %p issued %s\n", inode, ceph_cap_string(issued));
+>   
+> +	if (cia && cia->fscrypt_auth) {
+> +		u32 len = offsetof(struct ceph_fscrypt_auth, cfa_blob) +
+> +			  le32_to_cpu(cia->fscrypt_auth->cfa_blob_len);
+> +
+> +		if (len > sizeof(*cia->fscrypt_auth))
+> +			return -EINVAL;
+> +
 
-Reviewed-by: Jia He <justin.he@arm.com>
+Possibly we can remove this check here since in the patch followed will 
+make sure the 'cia' is valid.
 
---
-Cheers,
-Justin (Jia He)
+
+
+> +		dout("setattr %llx:%llx fscrypt_auth len %u to %u)\n",
+> +			ceph_vinop(inode), ci->fscrypt_auth_len, len);
+> +
+> +		/* It should never be re-set once set */
+> +		WARN_ON_ONCE(ci->fscrypt_auth);
+> +
+> +		if (issued & CEPH_CAP_AUTH_EXCL) {
+> +			dirtied |= CEPH_CAP_AUTH_EXCL;
+> +			kfree(ci->fscrypt_auth);
+> +			ci->fscrypt_auth = (u8 *)cia->fscrypt_auth;
+> +			ci->fscrypt_auth_len = len;
+> +		} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0) {
+> +			req->r_fscrypt_auth = cia->fscrypt_auth;
+> +			mask |= CEPH_SETATTR_FSCRYPT_AUTH;
+> +			release |= CEPH_CAP_AUTH_SHARED;
+> +		}
+> +		cia->fscrypt_auth = NULL;
+> +	}
+> +
+>   	if (ia_valid & ATTR_UID) {
+>   		dout("setattr %p uid %d -> %d\n", inode,
+>   		     from_kuid(&init_user_ns, inode->i_uid),
+> @@ -2324,7 +2350,7 @@ int ceph_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>   	    ceph_quota_is_max_bytes_exceeded(inode, attr->ia_size))
+>   		return -EDQUOT;
+>   
+> -	err = __ceph_setattr(inode, attr);
+> +	err = __ceph_setattr(inode, attr, NULL);
+>   
+>   	if (err >= 0 && (attr->ia_valid & ATTR_MODE))
+>   		err = posix_acl_chmod(&init_user_ns, inode, attr->ia_mode);
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 9c994effc51d..4aca8ce1c135 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2529,8 +2529,7 @@ static int set_request_path_attr(struct inode *rinode, struct dentry *rdentry,
+>   	return r;
+>   }
+>   
+> -static void encode_timestamp_and_gids(void **p,
+> -				      const struct ceph_mds_request *req)
+> +static void encode_mclientrequest_tail(void **p, const struct ceph_mds_request *req)
+>   {
+>   	struct ceph_timespec ts;
+>   	int i;
+> @@ -2543,6 +2542,21 @@ static void encode_timestamp_and_gids(void **p,
+>   	for (i = 0; i < req->r_cred->group_info->ngroups; i++)
+>   		ceph_encode_64(p, from_kgid(&init_user_ns,
+>   					    req->r_cred->group_info->gid[i]));
+> +
+> +	/* v5: altname (TODO: skip for now) */
+> +	ceph_encode_32(p, 0);
+> +
+> +	/* v6: fscrypt_auth and fscrypt_file */
+> +	if (req->r_fscrypt_auth) {
+> +		u32 authlen = le32_to_cpu(req->r_fscrypt_auth->cfa_blob_len);
+> +
+> +		authlen += offsetof(struct ceph_fscrypt_auth, cfa_blob);
+
+For the authlen calculating, maybe we could add one helper ? I found 
+there have some other places are also doing this.
+
+
+> +		ceph_encode_32(p, authlen);
+> +		ceph_encode_copy(p, req->r_fscrypt_auth, authlen);
+> +	} else {
+> +		ceph_encode_32(p, 0);
+> +	}
+> +	ceph_encode_32(p, 0); // fscrypt_file for now
+>   }
+>   
+>   /*
+> @@ -2591,6 +2605,13 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   	len += pathlen1 + pathlen2 + 2*(1 + sizeof(u32) + sizeof(u64)) +
+>   		sizeof(struct ceph_timespec);
+>   	len += sizeof(u32) + (sizeof(u64) * req->r_cred->group_info->ngroups);
+> +	len += sizeof(u32); // altname
+> +	len += sizeof(u32); // fscrypt_auth
+> +	if (req->r_fscrypt_auth) {
+> +		len += offsetof(struct ceph_fscrypt_auth, cfa_blob);
+> +		len += le32_to_cpu(req->r_fscrypt_auth->cfa_blob_len);
+> +	}
+> +	len += sizeof(u32); // fscrypt_file
+>   
+>   	/* calculate (max) length for cap releases */
+>   	len += sizeof(struct ceph_mds_request_release) *
+> @@ -2621,7 +2642,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   	} else {
+>   		struct ceph_mds_request_head *new_head = msg->front.iov_base;
+>   
+> -		msg->hdr.version = cpu_to_le16(4);
+> +		msg->hdr.version = cpu_to_le16(6);
+>   		new_head->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
+>   		head = (struct ceph_mds_request_head_old *)&new_head->oldest_client_tid;
+>   		p = msg->front.iov_base + sizeof(*new_head);
+> @@ -2672,7 +2693,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   
+>   	head->num_releases = cpu_to_le16(releases);
+>   
+> -	encode_timestamp_and_gids(&p, req);
+> +	encode_mclientrequest_tail(&p, req);
+>   
+>   	if (WARN_ON_ONCE(p > end)) {
+>   		ceph_msg_put(msg);
+> @@ -2781,7 +2802,7 @@ static int __prepare_send_request(struct ceph_mds_session *session,
+>   		rhead->num_releases = 0;
+>   
+>   		p = msg->front.iov_base + req->r_request_release_offset;
+> -		encode_timestamp_and_gids(&p, req);
+> +		encode_mclientrequest_tail(&p, req);
+>   
+>   		msg->front.iov_len = p - msg->front.iov_base;
+>   		msg->hdr.front_len = cpu_to_le32(msg->front.iov_len);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 0c3cc61fd038..800eed49c2fd 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -278,6 +278,9 @@ struct ceph_mds_request {
+>   	struct mutex r_fill_mutex;
+>   
+>   	union ceph_mds_request_args r_args;
+> +
+> +	struct ceph_fscrypt_auth *r_fscrypt_auth;
+> +
+>   	int r_fmode;        /* file mode, if expecting cap */
+>   	const struct cred *r_cred;
+>   	int r_request_release_offset;
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index e032737fe472..ad62cde30e0b 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1035,7 +1035,12 @@ static inline int ceph_do_getattr(struct inode *inode, int mask, bool force)
+>   }
+>   extern int ceph_permission(struct user_namespace *mnt_userns,
+>   			   struct inode *inode, int mask);
+> -extern int __ceph_setattr(struct inode *inode, struct iattr *attr);
+> +
+> +struct ceph_iattr {
+> +	struct ceph_fscrypt_auth	*fscrypt_auth;
+> +};
+> +
+> +extern int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *cia);
+>   extern int ceph_setattr(struct user_namespace *mnt_userns,
+>   			struct dentry *dentry, struct iattr *attr);
+>   extern int ceph_getattr(struct user_namespace *mnt_userns,
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index e41a811026f6..a45a82c7d432 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -355,14 +355,19 @@ enum {
+>   
+>   extern const char *ceph_mds_op_name(int op);
+>   
+> -
+> -#define CEPH_SETATTR_MODE   1
+> -#define CEPH_SETATTR_UID    2
+> -#define CEPH_SETATTR_GID    4
+> -#define CEPH_SETATTR_MTIME  8
+> -#define CEPH_SETATTR_ATIME 16
+> -#define CEPH_SETATTR_SIZE  32
+> -#define CEPH_SETATTR_CTIME 64
+> +#define CEPH_SETATTR_MODE              (1 << 0)
+> +#define CEPH_SETATTR_UID               (1 << 1)
+> +#define CEPH_SETATTR_GID               (1 << 2)
+> +#define CEPH_SETATTR_MTIME             (1 << 3)
+> +#define CEPH_SETATTR_ATIME             (1 << 4)
+> +#define CEPH_SETATTR_SIZE              (1 << 5)
+> +#define CEPH_SETATTR_CTIME             (1 << 6)
+> +#define CEPH_SETATTR_MTIME_NOW         (1 << 7)
+> +#define CEPH_SETATTR_ATIME_NOW         (1 << 8)
+> +#define CEPH_SETATTR_BTIME             (1 << 9)
+> +#define CEPH_SETATTR_KILL_SGUID        (1 << 10)
+> +#define CEPH_SETATTR_FSCRYPT_AUTH      (1 << 11)
+> +#define CEPH_SETATTR_FSCRYPT_FILE      (1 << 12)
+>   
+>   /*
+>    * Ceph setxattr request flags.
+
