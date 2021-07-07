@@ -2,60 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51BD73BF0D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 22:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D883BF103
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 22:48:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232540AbhGGUmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 16:42:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230497AbhGGUms (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 16:42:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id AA09D61C53;
-        Wed,  7 Jul 2021 20:40:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625690407;
-        bh=EvPfewQ3bogl0nmQe5DXceBHzrsx18RNDyqSrI77E3E=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=eGwNO4SNAE5IEP9mOEXYuiFcWmTvgCvQ0FHsZHwQ1kCVDcwTlg9Ah80SsooOfmn9q
-         TRBybF+PJPlF97ZhdAAiZK7Fu4Ld7JUhnMoCqoQP88Vqnz0cnN0haoGDqZKG2HRxrl
-         0utynQHeCTcv+4Nxe1kQ9bedL95RBNwkL4hb/Lw420PFqHVzT2iCdWl6ROBInwrwWv
-         gmSAfZHfCcneQyCX5eWSRie//hVC70u4MPbWsy7TOO9LdiU6xC0QhL6WsKetqkghaj
-         68lUVw8scx+KXIEMLFOe8J7Shw+qXeBC33MyZWC4e6CjPh6OtNAnykDvoMP5meaNh1
-         F+dUWAkVUDxnw==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 96E7A609BA;
-        Wed,  7 Jul 2021 20:40:07 +0000 (UTC)
-Subject: Re: [GIT PULL] nfsd changes for 5.14
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210707150445.GA9911@fieldses.org>
-References: <20210707150445.GA9911@fieldses.org>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210707150445.GA9911@fieldses.org>
-X-PR-Tracked-Remote: git://linux-nfs.org/~bfields/linux.git tags/nfsd-5.14
-X-PR-Tracked-Commit-Id: ab1016d39cc052064e32f25ad18ef8767a0ee3b8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0cc2ea8cebe909203f994e9113dc1f1b3907d03c
-Message-Id: <162569040755.28460.3385871028017375381.pr-tracker-bot@kernel.org>
-Date:   Wed, 07 Jul 2021 20:40:07 +0000
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>
+        id S230197AbhGGUv2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 16:51:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41180 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229519AbhGGUv0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Jul 2021 16:51:26 -0400
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FA0C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jul 2021 13:48:45 -0700 (PDT)
+Received: by mail-qt1-x82c.google.com with SMTP id y9so3096374qtx.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jul 2021 13:48:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version;
+        bh=zBNfbXpBNmhb98xHVWiDj3Sr7g66ZNi5yrexACG3dvg=;
+        b=jCJGhylBGo9mRXeanuHxRZhhCCj3FSkm/awSCUEKQKqMx9tVfHNnBrsbeHDlwt/nmi
+         E68+XL2JLUjHozPXu3hkUm4K88OTTEtvtr0xDMn7cXcBK8ubwJyUUgN9VaE5kh7FdYi4
+         nzsGwi8A+4ipjXOujnZToWdksv5Nsji/eT12341ovf7AtqB369rG+kRIrMhAgM1qdaIz
+         vg0bWF4bKZbsGvU5fOgpRcHEnTHA3tvREGHW+Dz04OGfdMD1ty6N7RkiLpP7L6rh9RG0
+         gUBjj7exxUDQvJpp7TMC65MsqL8IgpxhQK7eLnwshBcl5SdrzMPjPoxyeyvxXbozjTv4
+         KXlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version;
+        bh=zBNfbXpBNmhb98xHVWiDj3Sr7g66ZNi5yrexACG3dvg=;
+        b=llUa1lNZq4A0yXGtmF9E97vevI99ZW0Rg1/aABvmu/cRySCfTwh2Uv2yb7wihlyBhE
+         lp8n6td0m/pUj5V9xGG1lrXK7flUo1Uine94ufR8uztwttuT1Ns/UfL4dnFFeSC8eoYE
+         BQspcCOKlcOeTCOJUKlpSQuO157CAfahOPxvTMIHtJa6QAxZMjEyEYXG4OY+06/tTPb+
+         K3wcoRGMhZW7c433pIaIorWELKstQnzYM4vn8epQhCtekrN4MUdq6gPiLmOvDIFIikRE
+         Foz0kMscbF9uxeqZ/F9ZoPHP90cHGPyOtugUMR5eWBVf3psvjyqnJopUpWj0LpewXfrj
+         yrIg==
+X-Gm-Message-State: AOAM530jSzdb7ncAfiMteJPor4PaaY9rjllYNv7AaaCOOVg8rDS9lBHS
+        SGV3SxoFIzRRFpwictKtYvDAwoRGXxhXxQ==
+X-Google-Smtp-Source: ABdhPJx4A07Csj2ry9jMLONbnNINO+ORK8G+nJ7+AShhJQcQbVe8WLzFRsKq468qlWKfpXJrK2VaDQ==
+X-Received: by 2002:ac8:59d5:: with SMTP id f21mr24231595qtf.126.1625690924098;
+        Wed, 07 Jul 2021 13:48:44 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 6sm34991qkn.83.2021.07.07.13.48.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Jul 2021 13:48:43 -0700 (PDT)
+Date:   Wed, 7 Jul 2021 13:48:31 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.anvils
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Hugh Dickins <hughd@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, Willy Tarreau <w@1wt.eu>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH] fs, mm: fix race in unlinking swapfile
+Message-ID: <e17b91ad-a578-9a15-5e3-4989e0f999b5@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Wed, 7 Jul 2021 11:04:45 -0400:
+We had a recurring situation in which admin procedures setting up
+swapfiles would race with test preparation clearing away swapfiles;
+and just occasionally that got stuck on a swapfile "(deleted)" which
+could never be swapped off.  That is not supposed to be possible.
 
-> git://linux-nfs.org/~bfields/linux.git tags/nfsd-5.14
+2.6.28 commit f9454548e17c ("don't unlink an active swapfile") admitted
+that it was leaving a race window open: now close it.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0cc2ea8cebe909203f994e9113dc1f1b3907d03c
+may_delete() makes the IS_SWAPFILE check (amongst many others) before
+inode_lock has been taken on target: now repeat just that simple check
+in vfs_unlink() and vfs_rename(), after taking inode_lock.
 
-Thank you!
+Which goes most of the way to fixing the race, but swapon() must also
+check after it acquires inode_lock, that the file just opened has not
+already been unlinked.
 
+Fixes: f9454548e17c ("don't unlink an active swapfile")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+ fs/namei.c    | 8 +++++++-
+ mm/swapfile.c | 6 ++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index bf6d8a738c59..ff866c07f4d2 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4024,7 +4024,9 @@ int vfs_unlink(struct user_namespace *mnt_userns, struct inode *dir,
+ 		return -EPERM;
+ 
+ 	inode_lock(target);
+-	if (is_local_mountpoint(dentry))
++	if (IS_SWAPFILE(target))
++		error = -EPERM;
++	else if (is_local_mountpoint(dentry))
+ 		error = -EBUSY;
+ 	else {
+ 		error = security_inode_unlink(dir, dentry);
+@@ -4526,6 +4528,10 @@ int vfs_rename(struct renamedata *rd)
+ 	else if (target)
+ 		inode_lock(target);
+ 
++	error = -EPERM;
++	if (IS_SWAPFILE(source) || (target && IS_SWAPFILE(target)))
++		goto out;
++
+ 	error = -EBUSY;
+ 	if (is_local_mountpoint(old_dentry) || is_local_mountpoint(new_dentry))
+ 		goto out;
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 1e07d1c776f2..7527afd95284 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -3130,6 +3130,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 	struct filename *name;
+ 	struct file *swap_file = NULL;
+ 	struct address_space *mapping;
++	struct dentry *dentry;
+ 	int prio;
+ 	int error;
+ 	union swap_header *swap_header;
+@@ -3173,6 +3174,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 
+ 	p->swap_file = swap_file;
+ 	mapping = swap_file->f_mapping;
++	dentry = swap_file->f_path.dentry;
+ 	inode = mapping->host;
+ 
+ 	error = claim_swapfile(p, inode);
+@@ -3180,6 +3182,10 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 		goto bad_swap;
+ 
+ 	inode_lock(inode);
++	if (d_unlinked(dentry) || cant_mount(dentry)) {
++		error = -ENOENT;
++		goto bad_swap_unlock_inode;
++	}
+ 	if (IS_SWAPFILE(inode)) {
+ 		error = -EBUSY;
+ 		goto bad_swap_unlock_inode;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.26.2
+
