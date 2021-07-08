@@ -2,209 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 61B9D3BF741
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 11:07:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E11E3BF7CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 11:52:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231299AbhGHJKF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jul 2021 05:10:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51538 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231248AbhGHJKF (ORCPT
+        id S231415AbhGHJzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jul 2021 05:55:03 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:10432 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231360AbhGHJzC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jul 2021 05:10:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625735243;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=yKsQQhdebDXEx1+61ELONXUK6wL4wa5lTwMISxD88g0=;
-        b=KFcOCA8RlhjrxyHy9L/WQ8f3CmLI4df3SgFlkgU4ks12Pa3YDFYSBnmCyBrfrFnoAR7LYp
-        YMx54NDRpa/N6mRUOeHUNR7st2D0zZUo/PNurqLYTudRgla6Y43KgIILCzFixp3bX+R052
-        UOZgri5W4kuGwdeZ/zRtp1VP8MsKDV0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-8-11uk5Y45N-SljR8RLm1AGw-1; Thu, 08 Jul 2021 05:07:21 -0400
-X-MC-Unique: 11uk5Y45N-SljR8RLm1AGw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7189719200C0;
-        Thu,  8 Jul 2021 09:07:19 +0000 (UTC)
-Received: from localhost (ovpn-114-141.ams2.redhat.com [10.36.114.141])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2ED2D10372C0;
-        Thu,  8 Jul 2021 09:07:15 +0000 (UTC)
-Date:   Thu, 8 Jul 2021 10:07:14 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 10/10] Documentation: Add documentation for VDUSE
-Message-ID: <YObAQsmJjKWxuO/C@stefanha-x1.localdomain>
-References: <CACycT3uxnQmXWsgmNVxQtiRhz1UXXTAJFY3OiAJqokbJH6ifMA@mail.gmail.com>
- <YNxCDpM3bO5cPjqi@stefanha-x1.localdomain>
- <CACycT3taKhf1cWp3Jd0aSVekAZvpbR-_fkyPLQ=B+jZBB5H=8Q@mail.gmail.com>
- <YN3ABqCMLQf7ejOm@stefanha-x1.localdomain>
- <CACycT3vo-diHgTSLw_FS2E+5ia5VjihE3qw7JmZR7JT55P-wQA@mail.gmail.com>
- <8320d26d-6637-85c6-8773-49553dfa502d@redhat.com>
- <YOL/9mxkJaokKDHc@stefanha-x1.localdomain>
- <CACycT3t-BTMrpNTwBUfbvaxTh6tLthxbo3OJwMk_iuiSpMuZPg@mail.gmail.com>
- <YOQu8dB6tlb9juNz@stefanha-x1.localdomain>
- <CACycT3t=V-VV7LYDda8mt=QxN_Ay-N+3dgWp382TObkeei9MOg@mail.gmail.com>
+        Thu, 8 Jul 2021 05:55:02 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GLBMP60LjzZpW0;
+        Thu,  8 Jul 2021 17:49:05 +0800 (CST)
+Received: from dggpeml500016.china.huawei.com (7.185.36.70) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 8 Jul 2021 17:52:18 +0800
+Received: from [10.174.148.223] (10.174.148.223) by
+ dggpeml500016.china.huawei.com (7.185.36.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 8 Jul 2021 17:52:17 +0800
+Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
+To:     Anthony Yznaga <anthony.yznaga@oracle.com>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-arch@vger.kernel.org>
+CC:     <mhocko@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+        <bp@alien8.de>, <x86@kernel.org>, <hpa@zytor.com>,
+        <viro@zeniv.linux.org.uk>, <akpm@linux-foundation.org>,
+        <arnd@arndb.de>, <ebiederm@xmission.com>, <keescook@chromium.org>,
+        <gerg@linux-m68k.org>, <ktkhai@virtuozzo.com>,
+        <christian.brauner@ubuntu.com>, <peterz@infradead.org>,
+        <esyr@redhat.com>, <jgg@ziepe.ca>, <christian@kellner.me>,
+        <areber@redhat.com>, <cyphar@cyphar.com>,
+        <steven.sistare@oracle.com>,
+        "Gonglei (Arei)" <arei.gonglei@huawei.com>
+References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+From:   "Longpeng (Mike, Cloud Infrastructure Service Product Dept.)" 
+        <longpeng2@huawei.com>
+Message-ID: <cc714571-4461-c9e0-7b24-e213664caa54@huawei.com>
+Date:   Thu, 8 Jul 2021 17:52:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="JRfIoP81GtaBg/o+"
-Content-Disposition: inline
-In-Reply-To: <CACycT3t=V-VV7LYDda8mt=QxN_Ay-N+3dgWp382TObkeei9MOg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.148.223]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500016.china.huawei.com (7.185.36.70)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Anthony and Steven,
 
---JRfIoP81GtaBg/o+
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ÔÚ 2020/7/28 1:11, Anthony Yznaga Ð´µÀ:
+> This patchset adds support for preserving an anonymous memory range across
+> exec(3) using a new madvise MADV_DOEXEC argument.  The primary benefit for
+> sharing memory in this manner, as opposed to re-attaching to a named shared
+> memory segment, is to ensure it is mapped at the same virtual address in
+> the new process as it was in the old one.  An intended use for this is to
+> preserve guest memory for guests using vfio while qemu exec's an updated
+> version of itself.  By ensuring the memory is preserved at a fixed address,
+> vfio mappings and their associated kernel data structures can remain valid.
+> In addition, for the qemu use case, qemu instances that back guest RAM with
+> anonymous memory can be updated.
+> 
 
-On Wed, Jul 07, 2021 at 05:09:13PM +0800, Yongji Xie wrote:
-> On Tue, Jul 6, 2021 at 6:22 PM Stefan Hajnoczi <stefanha@redhat.com> wrot=
-e:
-> >
-> > On Tue, Jul 06, 2021 at 11:04:18AM +0800, Yongji Xie wrote:
-> > > On Mon, Jul 5, 2021 at 8:50 PM Stefan Hajnoczi <stefanha@redhat.com> =
-wrote:
-> > > >
-> > > > On Mon, Jul 05, 2021 at 11:36:15AM +0800, Jason Wang wrote:
-> > > > >
-> > > > > =E5=9C=A8 2021/7/4 =E4=B8=8B=E5=8D=885:49, Yongji Xie =E5=86=99=
-=E9=81=93:
-> > > > > > > > OK, I get you now. Since the VIRTIO specification says "Dev=
-ice
-> > > > > > > > configuration space is generally used for rarely-changing or
-> > > > > > > > initialization-time parameters". I assume the VDUSE_DEV_SET=
-_CONFIG
-> > > > > > > > ioctl should not be called frequently.
-> > > > > > > The spec uses MUST and other terms to define the precise requ=
-irements.
-> > > > > > > Here the language (especially the word "generally") is weaker=
- and means
-> > > > > > > there may be exceptions.
-> > > > > > >
-> > > > > > > Another type of access that doesn't work with the VDUSE_DEV_S=
-ET_CONFIG
-> > > > > > > approach is reads that have side-effects. For example, imagin=
-e a field
-> > > > > > > containing an error code if the device encounters a problem u=
-nrelated to
-> > > > > > > a specific virtqueue request. Reading from this field resets =
-the error
-> > > > > > > code to 0, saving the driver an extra configuration space wri=
-te access
-> > > > > > > and possibly race conditions. It isn't possible to implement =
-those
-> > > > > > > semantics suing VDUSE_DEV_SET_CONFIG. It's another corner cas=
-e, but it
-> > > > > > > makes me think that the interface does not allow full VIRTIO =
-semantics.
-> > > > >
-> > > > >
-> > > > > Note that though you're correct, my understanding is that config =
-space is
-> > > > > not suitable for this kind of error propagating. And it would be =
-very hard
-> > > > > to implement such kind of semantic in some transports.  Virtqueue=
- should be
-> > > > > much better. As Yong Ji quoted, the config space is used for
-> > > > > "rarely-changing or intialization-time parameters".
-> > > > >
-> > > > >
-> > > > > > Agreed. I will use VDUSE_DEV_GET_CONFIG in the next version. An=
-d to
-> > > > > > handle the message failure, I'm going to add a return value to
-> > > > > > virtio_config_ops.get() and virtio_cread_* API so that the erro=
-r can
-> > > > > > be propagated to the virtio device driver. Then the virtio-blk =
-device
-> > > > > > driver can be modified to handle that.
-> > > > > >
-> > > > > > Jason and Stefan, what do you think of this way?
-> > > >
-> > > > Why does VDUSE_DEV_GET_CONFIG need to support an error return value?
-> > > >
-> > >
-> > > We add a timeout and return error in case userspace never replies to
-> > > the message.
-> > >
-> > > > The VIRTIO spec provides no way for the device to report errors from
-> > > > config space accesses.
-> > > >
-> > > > The QEMU virtio-pci implementation returns -1 from invalid
-> > > > virtio_config_read*() and silently discards virtio_config_write*()
-> > > > accesses.
-> > > >
-> > > > VDUSE can take the same approach with
-> > > > VDUSE_DEV_GET_CONFIG/VDUSE_DEV_SET_CONFIG.
-> > > >
-> > >
-> > > I noticed that virtio_config_read*() only returns -1 when we access a
-> > > invalid field. But in the VDUSE case, VDUSE_DEV_GET_CONFIG might fail
-> > > when we access a valid field. Not sure if it's ok to silently ignore
-> > > this kind of error.
-> >
-> > That's a good point but it's a general VIRTIO issue. Any device
-> > implementation (QEMU userspace, hardware vDPA, etc) can fail, so the
-> > VIRTIO specification needs to provide a way for the driver to detect
-> > this.
-> >
-> > If userspace violates the contract then VDUSE needs to mark the device
-> > broken. QEMU's device emulation does something similar with the
-> > vdev->broken flag.
-> >
-> > The VIRTIO Device Status field DEVICE_NEEDS_RESET bit can be set by
-> > vDPA/VDUSE to indicate that the device is not operational and must be
-> > reset.
-> >
->=20
-> It might be a solution. But DEVICE_NEEDS_RESET  is not implemented
-> currently. So I'm thinking whether it's ok to add a check of
-> DEVICE_NEEDS_RESET status bit in probe function of virtio device
-> driver (e.g. virtio-blk driver). Then VDUSE can make use of it to fail
-> device initailization when configuration space access failed.
+We have a requirement like yours, but ours seems more complex. We want to
+isolate some memory regions from the VM's memory space and the start a child
+process who will using these memory regions.
 
-Okay.
+I've wrote a draft to support this feature, but I just find that my draft is
+pretty like yours.
 
-Stefan
+It seems that you've already abandoned this patchset, why ?
 
---JRfIoP81GtaBg/o+
-Content-Type: application/pgp-signature; name="signature.asc"
+> Patches 1 and 2 ensure that loading of ELF load segments does not silently
+> clobber existing VMAS, and remove assumptions that the stack is the only
+> VMA in the mm when the stack is set up.  Patch 1 re-introduces the use of
+> MAP_FIXED_NOREPLACE to load ELF binaries that addresses the previous issues
+> and could be considered on its own.
+> 
+> Patches 3, 4, and 5 introduce the feature and an opt-in method for its use
+> using an ELF note.
+> 
+> Anthony Yznaga (5):
+>   elf: reintroduce using MAP_FIXED_NOREPLACE for elf executable mappings
+>   mm: do not assume only the stack vma exists in setup_arg_pages()
+>   mm: introduce VM_EXEC_KEEP
+>   exec, elf: require opt-in for accepting preserved mem
+>   mm: introduce MADV_DOEXEC
+> 
+>  arch/x86/Kconfig                       |   1 +
+>  fs/binfmt_elf.c                        | 196 +++++++++++++++++++++++++--------
+>  fs/exec.c                              |  33 +++++-
+>  include/linux/binfmts.h                |   7 +-
+>  include/linux/mm.h                     |   5 +
+>  include/uapi/asm-generic/mman-common.h |   3 +
+>  kernel/fork.c                          |   2 +-
+>  mm/madvise.c                           |  25 +++++
+>  mm/mmap.c                              |  47 ++++++++
+>  9 files changed, 266 insertions(+), 53 deletions(-)
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmDmwEIACgkQnKSrs4Gr
-c8h1Uwf/V57anfkJGNBdE/1nvE9TLQ0SZ4PD1vU4fyfrXmi1FuC/T0RDPx2KpjhM
-pTZtL/+8qsT68q4dLuI3vRpys19JEXe5G6qtKeJp6Hj2gWhq5fcIQE40rwjI2Q0M
-r7hKT/3JCtuQMcv8XDUOU7QRg32V/uP7DABqOqHvhEU0D3nK07bLS2J5g035Tn6X
-munQgDzLg0BPKTntfz1CUooXjcF6l9HOuBnRBPIldlavndT3KKMnWW9atAf9Tofl
-2N1is88HX38huzt8UCnp57cdjFNtA59nfH3Au3mZ4s1NDKmwtAwGLRc0yJch4+cG
-M+8mdGvmL3lc/0owKY8YpOtgyL4xIg==
-=kNcQ
------END PGP SIGNATURE-----
-
---JRfIoP81GtaBg/o+--
-
+-- 
+Sincerely yours,
+Longpeng(Mike)
