@@ -2,261 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C9CC3BF5AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 08:35:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 500363BF648
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 09:30:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230463AbhGHGiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jul 2021 02:38:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230447AbhGHGiJ (ORCPT
+        id S229877AbhGHHdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jul 2021 03:33:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51831 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229845AbhGHHdi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jul 2021 02:38:09 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9E30C061574;
-        Wed,  7 Jul 2021 23:35:27 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id gb6so7596364ejc.5;
-        Wed, 07 Jul 2021 23:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gYlonjHEqq+ciO9uXQTdjBC9hqLlNtpIxlPjlB/koR0=;
-        b=G3ZckjUACjE4bjxSM0aVHwZ+/dOxUXcShlR94lZTxRC71/rfakEcUJhiCuIbxh/2PN
-         MFbhEOpYNEzIaFx9YF2JnmPBut2MtMAKstwBjMuwEimOcimFaHWEb8MEAw/LdFaEAJ8K
-         phXTihF2KY33vRjNapkURa6ubE7DNfsjpoZtanngG8EoUALhSZT5D3X57fzgYwl1Gbqk
-         RdfzP0UmJzaPpP3F+GdTpgK7K0KUljZ/Rn8tJhkoKQgzsYmjTNufTKQa4GjmYzqKxzI2
-         x68jaxfSxA+pCmtnHg32xeziTa8KMBbpw/vXGc7/E+PnRsByfKSkkFb4rWh6v7g15Dtf
-         Hb+g==
+        Thu, 8 Jul 2021 03:33:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625729456;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iQ3j7II9/cxdFOZoPulB4KXTYjcgvmPvQ6tfrIkSS+Y=;
+        b=N4arayoummB9lfmncktAfToYHgOVh3gxqIl8iWlYRI0wWhexzqds4jKQ7YVaaolpdnjLUM
+        bIsrL6a4yJyG8QBIvG4Ig/Uw4tpHmAXaS5vo1AP92XhBsDbfhhEvRzpzIhN7m6BC9JOvIU
+        Wyn9+jZtrzSoSwToVGZwXp/xv+n1+8w=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-467-EhfZlwK8O5iQhP8JyIDGwA-1; Thu, 08 Jul 2021 03:30:55 -0400
+X-MC-Unique: EhfZlwK8O5iQhP8JyIDGwA-1
+Received: by mail-pj1-f71.google.com with SMTP id v4-20020a17090a4ec4b02901731757d1a2so3039869pjl.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jul 2021 00:30:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gYlonjHEqq+ciO9uXQTdjBC9hqLlNtpIxlPjlB/koR0=;
-        b=B8EWIkjq+jUZS7WAShNIdAUg2sV7ENk6la+iNtSqYCCF9ojFnzXCvxuVf1u3rusHvN
-         IKpj8upMoEeKBNupXHg8BRHI/cZvjhSHfbhWzxb4hiirdS0KvXT0k+wqCNsL5RjnJtOY
-         OUIBt1vyXwAa6QemkC/F6LQ3R6wwAUY3RGZYiMzUPKYoS8J970X4VRrEa/ZSqRzitypl
-         pYH3QjYjghAdPeyHt2sgTUWU+uRRPkWFEspfKxXudZNPskpyGQEJk/88hzZVWIkL8wTu
-         ohXsW+C05WU8JJF8BPv6bBBxN6AKDLrlUm9Hx9Wzkn0HzkZRZ022Ln6HNSF5XkRd9/kO
-         a0gQ==
-X-Gm-Message-State: AOAM530JmJ2KwKbG/+DLpgJ+shfOilNIHC5pQ6XSxeVjEJG9B2nnOU8o
-        xmQ9vIvSZMrlYsfTNqmfUG0=
-X-Google-Smtp-Source: ABdhPJxXZWesmc/DxB+dQsqyC2iaU+1r1JqJUWaJGIKUeBkWu/4ybf2ielgsN6jNAoUK6Tz/UBumNw==
-X-Received: by 2002:a17:907:3e9c:: with SMTP id hs28mr15407063ejc.473.1625726126280;
-        Wed, 07 Jul 2021 23:35:26 -0700 (PDT)
-Received: from carbon.v ([108.61.166.58])
-        by smtp.googlemail.com with ESMTPSA id u21sm410260eja.59.2021.07.07.23.35.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 23:35:26 -0700 (PDT)
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v9 11/11] io_uring: add support for IORING_OP_LINKAT
-Date:   Thu,  8 Jul 2021 13:34:47 +0700
-Message-Id: <20210708063447.3556403-12-dkadashev@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210708063447.3556403-1-dkadashev@gmail.com>
-References: <20210708063447.3556403-1-dkadashev@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=iQ3j7II9/cxdFOZoPulB4KXTYjcgvmPvQ6tfrIkSS+Y=;
+        b=plCD8sWv7xinz6CPpTKtwU97ICII9q8DVMb2h8dNYMK1CRNTwTkgy3B6LiogXAp2n3
+         NpyLB0aXK5mulRQ8MkCYOhI6ae806gO3VCmjFbFQ0m97/Ps+ehBbIv2ctgkmBdZT31H7
+         DwK7T5IX7Wv1dx1GirQc7O3UlGH60uKku0JCUS0KVLtbuwmJitPP2x5X/sHHjmPU0Upk
+         C8YP7TGccOY5KmXmjhlh2opxL2zTd0mr7UcRMImwfByT+vyUyC0yMhlS1FVT0JyitEam
+         s0MV4inNamkf3TlFBqQe45jx/fFqXYzHbP1Xo35uoJUhv8iI+zFqjjal6oMTy3KCB5zQ
+         c2EQ==
+X-Gm-Message-State: AOAM533EXc+1pf9jFaT1FyYcVs2phGZFTtNWoJ3ss4N/MjfBgyr9+z0T
+        QCGiI95fb+jb7wynNtr3rEGsckojrDxp3HhrTf8Xl8WYJNnNH2ptSOPaCNH4NOFIQsqB+xCqUN0
+        aYbJ5Qe41vuo//QEedJEqvlu+NA==
+X-Received: by 2002:a17:90b:374d:: with SMTP id ne13mr8961543pjb.124.1625729454496;
+        Thu, 08 Jul 2021 00:30:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzYQxYqScYWNkafWNecBlMJH7knSCGhaLBW9SRe+1fl7qwUIe/FuKgzmVT/Z/z3BHM6V/mpaQ==
+X-Received: by 2002:a17:90b:374d:: with SMTP id ne13mr8961516pjb.124.1625729454189;
+        Thu, 08 Jul 2021 00:30:54 -0700 (PDT)
+Received: from [10.72.12.159] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id y3sm1891619pga.72.2021.07.08.00.30.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Jul 2021 00:30:53 -0700 (PDT)
+Subject: Re: [RFC PATCH v7 12/24] ceph: add fscrypt ioctls
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     lhenriques@suse.de, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, dhowells@redhat.com
+References: <20210625135834.12934-1-jlayton@kernel.org>
+ <20210625135834.12934-13-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <912b5949-ae85-f093-0f23-0650aad606fc@redhat.com>
+Date:   Thu, 8 Jul 2021 15:30:47 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210625135834.12934-13-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-IORING_OP_LINKAT behaves like linkat(2) and takes the same flags and
-arguments.
 
-In some internal places 'hardlink' is used instead of 'link' to avoid
-confusion with the SQE links. Name 'link' conflicts with the existing
-'link' member of io_kiocb.
+On 6/25/21 9:58 PM, Jeff Layton wrote:
+> We gate most of the ioctls on MDS feature support. The exception is the
+> key removal and status functions that we still want to work if the MDS's
+> were to (inexplicably) lose the feature.
+>
+> For the set_policy ioctl, we take Fcx caps to ensure that nothing can
+> create files in the directory while the ioctl is running. That should
+> be enough to ensure that the "empty_dir" check is reliable.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/ioctl.c | 83 +++++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 83 insertions(+)
+>
+> diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+> index 6e061bf62ad4..477ecc667aee 100644
+> --- a/fs/ceph/ioctl.c
+> +++ b/fs/ceph/ioctl.c
+> @@ -6,6 +6,7 @@
+>   #include "mds_client.h"
+>   #include "ioctl.h"
+>   #include <linux/ceph/striper.h>
+> +#include <linux/fscrypt.h>
+>   
+>   /*
+>    * ioctls
+> @@ -268,8 +269,54 @@ static long ceph_ioctl_syncio(struct file *file)
+>   	return 0;
+>   }
+>   
+> +static int vet_mds_for_fscrypt(struct file *file)
+> +{
+> +	int i, ret = -EOPNOTSUPP;
+> +	struct ceph_mds_client	*mdsc = ceph_sb_to_mdsc(file_inode(file)->i_sb);
+> +
+> +	mutex_lock(&mdsc->mutex);
+> +	for (i = 0; i < mdsc->max_sessions; i++) {
+> +		struct ceph_mds_session *s = mdsc->sessions[i];
+> +
+> +		if (!s)
+> +			continue;
+> +		if (test_bit(CEPHFS_FEATURE_ALTERNATE_NAME, &s->s_features))
+> +			ret = 0;
+> +		break;
+> +	}
+> +	mutex_unlock(&mdsc->mutex);
+> +	return ret;
+> +}
+> +
+> +static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
+> +{
+> +	int ret, got = 0;
+> +	struct inode *inode = file_inode(file);
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
+> +
+> +	ret = vet_mds_for_fscrypt(file);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Ensure we hold these caps so that we _know_ that the rstats check
+> +	 * in the empty_dir check is reliable.
+> +	 */
+> +	ret = ceph_get_caps(file, CEPH_CAP_FILE_SHARED, 0, -1, &got);
 
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Suggested-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/io-uring/20210514145259.wtl4xcsp52woi6ab@wittgenstein/
-Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/internal.h                 |  2 +
- fs/io_uring.c                 | 71 +++++++++++++++++++++++++++++++++++
- fs/namei.c                    |  2 +-
- include/uapi/linux/io_uring.h |  2 +
- 4 files changed, 76 insertions(+), 1 deletion(-)
+In the commit comment said it will host the Fsx, but here it is only 
+trying to hold the Fs. Will the Fx really needed ?
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 3b3954214385..15a7d210cc67 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -79,6 +79,8 @@ int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
- 		 struct filename *newname, unsigned int flags);
- int do_mkdirat(int dfd, struct filename *name, umode_t mode);
- int do_symlinkat(struct filename *from, int newdfd, struct filename *to);
-+int do_linkat(int olddfd, struct filename *old, int newdfd,
-+			struct filename *new, int flags);
- 
- /*
-  * namespace.c
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a0f681ec25bb..d18ca8afd1fb 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -688,6 +688,15 @@ struct io_symlink {
- 	struct filename			*newpath;
- };
- 
-+struct io_hardlink {
-+	struct file			*file;
-+	int				old_dfd;
-+	int				new_dfd;
-+	struct filename			*oldpath;
-+	struct filename			*newpath;
-+	int				flags;
-+};
-+
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -847,6 +856,7 @@ struct io_kiocb {
- 		struct io_unlink	unlink;
- 		struct io_mkdir		mkdir;
- 		struct io_symlink	symlink;
-+		struct io_hardlink	hardlink;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -1060,6 +1070,7 @@ static const struct io_op_def io_op_defs[] = {
- 	[IORING_OP_UNLINKAT] = {},
- 	[IORING_OP_MKDIRAT] = {},
- 	[IORING_OP_SYMLINKAT] = {},
-+	[IORING_OP_LINKAT] = {},
- };
- 
- static bool io_disarm_next(struct io_kiocb *req);
-@@ -3653,6 +3664,57 @@ static int io_symlinkat(struct io_kiocb *req, int issue_flags)
- 	return 0;
- }
- 
-+static int io_linkat_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	struct io_hardlink *lnk = &req->hardlink;
-+	const char __user *oldf, *newf;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
-+		return -EINVAL;
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
-+	lnk->old_dfd = READ_ONCE(sqe->fd);
-+	lnk->new_dfd = READ_ONCE(sqe->len);
-+	oldf = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	newf = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-+	lnk->flags = READ_ONCE(sqe->hardlink_flags);
-+
-+	lnk->oldpath = getname(oldf);
-+	if (IS_ERR(lnk->oldpath))
-+		return PTR_ERR(lnk->oldpath);
-+
-+	lnk->newpath = getname(newf);
-+	if (IS_ERR(lnk->newpath)) {
-+		putname(lnk->oldpath);
-+		return PTR_ERR(lnk->newpath);
-+	}
-+
-+	req->flags |= REQ_F_NEED_CLEANUP;
-+	return 0;
-+}
-+
-+static int io_linkat(struct io_kiocb *req, int issue_flags)
-+{
-+	struct io_hardlink *lnk = &req->hardlink;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	ret = do_linkat(lnk->old_dfd, lnk->oldpath, lnk->new_dfd,
-+				lnk->newpath, lnk->flags);
-+
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
- {
-@@ -6065,6 +6127,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_mkdirat_prep(req, sqe);
- 	case IORING_OP_SYMLINKAT:
- 		return io_symlinkat_prep(req, sqe);
-+	case IORING_OP_LINKAT:
-+		return io_linkat_prep(req, sqe);
- 	}
- 
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6233,6 +6297,10 @@ static void io_clean_op(struct io_kiocb *req)
- 			putname(req->symlink.oldpath);
- 			putname(req->symlink.newpath);
- 			break;
-+		case IORING_OP_LINKAT:
-+			putname(req->hardlink.oldpath);
-+			putname(req->hardlink.newpath);
-+			break;
- 		}
- 	}
- 	if ((req->flags & REQ_F_POLLED) && req->apoll) {
-@@ -6367,6 +6435,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_SYMLINKAT:
- 		ret = io_symlinkat(req, issue_flags);
- 		break;
-+	case IORING_OP_LINKAT:
-+		ret = io_linkat(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/fs/namei.c b/fs/namei.c
-index f241348e64f4..b5adfd4f7de6 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4358,7 +4358,7 @@ EXPORT_SYMBOL(vfs_link);
-  * with linux 2.0, and to avoid hard-linking to directories
-  * and other special files.  --ADM
-  */
--static int do_linkat(int olddfd, struct filename *old, int newdfd,
-+int do_linkat(int olddfd, struct filename *old, int newdfd,
- 	      struct filename *new, int flags)
- {
- 	struct user_namespace *mnt_userns;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 61fd347ab176..10eb38d2864f 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -44,6 +44,7 @@ struct io_uring_sqe {
- 		__u32		splice_flags;
- 		__u32		rename_flags;
- 		__u32		unlink_flags;
-+		__u32		hardlink_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	/* pack this to avoid bogus arm OABI complaints */
-@@ -135,6 +136,7 @@ enum {
- 	IORING_OP_UNLINKAT,
- 	IORING_OP_MKDIRAT,
- 	IORING_OP_SYMLINKAT,
-+	IORING_OP_LINKAT,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-2.30.2
+Thanks
+
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = fscrypt_ioctl_set_policy(file, (const void __user *)arg);
+> +	if (got)
+> +		ceph_put_cap_refs(ci, got);
+> +
+> +	return ret;
+> +}
+> +
+>   long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>   {
+> +	int ret;
+> +
+>   	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
+>   	switch (cmd) {
+>   	case CEPH_IOC_GET_LAYOUT:
+> @@ -289,6 +336,42 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>   
+>   	case CEPH_IOC_SYNCIO:
+>   		return ceph_ioctl_syncio(file);
+> +
+> +	case FS_IOC_SET_ENCRYPTION_POLICY:
+> +		return ceph_set_encryption_policy(file, arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_POLICY:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
+> +
+> +	case FS_IOC_ADD_ENCRYPTION_KEY:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_add_key(file, (void __user *)arg);
+> +
+> +	case FS_IOC_REMOVE_ENCRYPTION_KEY:
+> +		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
+> +
+> +	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
+> +		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
+> +		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_NONCE:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
+>   	}
+>   
+>   	return -ENOTTY;
 
