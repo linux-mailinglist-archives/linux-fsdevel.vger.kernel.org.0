@@ -2,112 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E11E3BF7CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 11:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FA343BF888
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 12:43:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231415AbhGHJzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jul 2021 05:55:03 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:10432 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231360AbhGHJzC (ORCPT
+        id S231543AbhGHKpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jul 2021 06:45:50 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:48804 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231483AbhGHKpu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jul 2021 05:55:02 -0400
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GLBMP60LjzZpW0;
-        Thu,  8 Jul 2021 17:49:05 +0800 (CST)
-Received: from dggpeml500016.china.huawei.com (7.185.36.70) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 8 Jul 2021 17:52:18 +0800
-Received: from [10.174.148.223] (10.174.148.223) by
- dggpeml500016.china.huawei.com (7.185.36.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 8 Jul 2021 17:52:17 +0800
-Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
-To:     Anthony Yznaga <anthony.yznaga@oracle.com>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-arch@vger.kernel.org>
-CC:     <mhocko@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <bp@alien8.de>, <x86@kernel.org>, <hpa@zytor.com>,
-        <viro@zeniv.linux.org.uk>, <akpm@linux-foundation.org>,
-        <arnd@arndb.de>, <ebiederm@xmission.com>, <keescook@chromium.org>,
-        <gerg@linux-m68k.org>, <ktkhai@virtuozzo.com>,
-        <christian.brauner@ubuntu.com>, <peterz@infradead.org>,
-        <esyr@redhat.com>, <jgg@ziepe.ca>, <christian@kellner.me>,
-        <areber@redhat.com>, <cyphar@cyphar.com>,
-        <steven.sistare@oracle.com>,
-        "Gonglei (Arei)" <arei.gonglei@huawei.com>
-References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
-From:   "Longpeng (Mike, Cloud Infrastructure Service Product Dept.)" 
-        <longpeng2@huawei.com>
-Message-ID: <cc714571-4461-c9e0-7b24-e213664caa54@huawei.com>
-Date:   Thu, 8 Jul 2021 17:52:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 8 Jul 2021 06:45:50 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 9DDBF22093;
+        Thu,  8 Jul 2021 10:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1625740987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EJ1HsFHAAfuSfErssxtfv8nLSrzDHxYtuYvwU40BOaE=;
+        b=TfwGZXcRwOOYhQKpddWlAvoyMgSl8PoBCt+Za4uoikhnKM8Y14sxxWVJAxToKpSrCjKats
+        tMgXyOqQe0WwGxiY2pHYIi5gRGe+2SNgUpea2tbwQZ2ZmnQBQjqUh47p5tAXudxM0gVJpx
+        kNuVzpGCdQhBhmuah6DSfQimUv0klwc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1625740987;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EJ1HsFHAAfuSfErssxtfv8nLSrzDHxYtuYvwU40BOaE=;
+        b=82tiE2FgNh75xHjaoPtqomIHk5BJNp45e1KhOE7pvO1z2EUfGq4fs0p2n0Dp+dwwVFOH2F
+        JknqYTT0M7xLkhBQ==
+Received: from quack2.suse.cz (unknown [10.163.43.118])
+        by relay2.suse.de (Postfix) with ESMTP id 819A6A3B85;
+        Thu,  8 Jul 2021 10:43:07 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 62EB91E62E4; Thu,  8 Jul 2021 12:43:07 +0200 (CEST)
+Date:   Thu, 8 Jul 2021 12:43:07 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     amir73il@gmail.com, djwong@kernel.org, tytso@mit.edu,
+        david@fromorbit.com, jack@suse.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v3 07/15] fsnotify: pass arguments of fsnotify() in
+ struct fsnotify_event_info
+Message-ID: <20210708104307.GA1656@quack2.suse.cz>
+References: <20210629191035.681913-1-krisman@collabora.com>
+ <20210629191035.681913-8-krisman@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.148.223]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500016.china.huawei.com (7.185.36.70)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210629191035.681913-8-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Anthony and Steven,
-
-ÔÚ 2020/7/28 1:11, Anthony Yznaga Ð´µÀ:
-> This patchset adds support for preserving an anonymous memory range across
-> exec(3) using a new madvise MADV_DOEXEC argument.  The primary benefit for
-> sharing memory in this manner, as opposed to re-attaching to a named shared
-> memory segment, is to ensure it is mapped at the same virtual address in
-> the new process as it was in the old one.  An intended use for this is to
-> preserve guest memory for guests using vfio while qemu exec's an updated
-> version of itself.  By ensuring the memory is preserved at a fixed address,
-> vfio mappings and their associated kernel data structures can remain valid.
-> In addition, for the qemu use case, qemu instances that back guest RAM with
-> anonymous memory can be updated.
+On Tue 29-06-21 15:10:27, Gabriel Krisman Bertazi wrote:
+> From: Amir Goldstein <amir73il@gmail.com>
 > 
-
-We have a requirement like yours, but ours seems more complex. We want to
-isolate some memory regions from the VM's memory space and the start a child
-process who will using these memory regions.
-
-I've wrote a draft to support this feature, but I just find that my draft is
-pretty like yours.
-
-It seems that you've already abandoned this patchset, why ?
-
-> Patches 1 and 2 ensure that loading of ELF load segments does not silently
-> clobber existing VMAS, and remove assumptions that the stack is the only
-> VMA in the mm when the stack is set up.  Patch 1 re-introduces the use of
-> MAP_FIXED_NOREPLACE to load ELF binaries that addresses the previous issues
-> and could be considered on its own.
+> There are a lot of arguments to fsnotify() and the handle_event() method.
+> Pass them in a const struct instead of on the argument list.
 > 
-> Patches 3, 4, and 5 introduce the feature and an opt-in method for its use
-> using an ELF note.
+> Apart from being more tidy, this helps with passing error reports to the
+> backend.  __fsnotify_parent() argument list was intentionally left
+> untouched, because its argument list is still short enough and because
+> most of the event info arguments are initialized inside
+> __fsnotify_parent().
 > 
-> Anthony Yznaga (5):
->   elf: reintroduce using MAP_FIXED_NOREPLACE for elf executable mappings
->   mm: do not assume only the stack vma exists in setup_arg_pages()
->   mm: introduce VM_EXEC_KEEP
->   exec, elf: require opt-in for accepting preserved mem
->   mm: introduce MADV_DOEXEC
-> 
->  arch/x86/Kconfig                       |   1 +
->  fs/binfmt_elf.c                        | 196 +++++++++++++++++++++++++--------
->  fs/exec.c                              |  33 +++++-
->  include/linux/binfmts.h                |   7 +-
->  include/linux/mm.h                     |   5 +
->  include/uapi/asm-generic/mman-common.h |   3 +
->  kernel/fork.c                          |   2 +-
->  mm/madvise.c                           |  25 +++++
->  mm/mmap.c                              |  47 ++++++++
->  9 files changed, 266 insertions(+), 53 deletions(-)
-> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> ---
+>  fs/notify/fanotify/fanotify.c    | 59 +++++++++++------------
+>  fs/notify/fsnotify.c             | 83 +++++++++++++++++---------------
+>  include/linux/fsnotify.h         | 15 ++++--
+>  include/linux/fsnotify_backend.h | 73 +++++++++++++++++++++-------
+>  4 files changed, 140 insertions(+), 90 deletions(-)
 
+Besides the noop function issue Amir has already pointed out I have just a
+few nits:
+
+> @@ -229,7 +229,11 @@ int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+>  	}
+>  
+>  notify:
+> -	ret = fsnotify(mask, data, data_type, p_inode, file_name, inode, 0);
+> +	ret = __fsnotify(mask, &(struct fsnotify_event_info) {
+> +				.data = data, .data_type = data_type,
+> +				.dir = p_inode, .name = file_name,
+> +				.inode = inode,
+> +				});
+
+What's the advantage of using __fsnotify() here instead of fsnotify()? In
+terms of readability the fewer places with these initializers the better
+I'd say...
+
+>  static int fsnotify_handle_event(struct fsnotify_group *group, __u32 mask,
+> -				 const void *data, int data_type,
+> -				 struct inode *dir, const struct qstr *name,
+> -				 u32 cookie, struct fsnotify_iter_info *iter_info)
+> +				 const struct fsnotify_event_info *event_info,
+> +				 struct fsnotify_iter_info *iter_info)
+>  {
+>  	struct fsnotify_mark *inode_mark = fsnotify_iter_inode_mark(iter_info);
+>  	struct fsnotify_mark *parent_mark = fsnotify_iter_parent_mark(iter_info);
+> +	struct fsnotify_event_info child_event_info = { };
+>  	int ret;
+
+No need to init child_event_info. It is fully rewritten if it gets used...
+
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index f8acddcf54fb..8c2c681b4495 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -30,7 +30,10 @@ static inline void fsnotify_name(struct inode *dir, __u32 mask,
+>  				 struct inode *child,
+>  				 const struct qstr *name, u32 cookie)
+>  {
+> -	fsnotify(mask, child, FSNOTIFY_EVENT_INODE, dir, name, NULL, cookie);
+> +	__fsnotify(mask, &(struct fsnotify_event_info) {
+> +			.data = child, .data_type = FSNOTIFY_EVENT_INODE,
+> +			.dir = dir, .name = name, .cookie = cookie,
+> +			});
+>  }
+
+Hmm, maybe we could have a macro initializer like:
+
+#define FSNOTIFY_EVENT_INFO(data, data_type, dir, name, inode, cookie)	\
+	(struct fsnotify_event_info) {					\
+		.data = (data), .data_type = (data_type), .dir = (dir), \
+		.name = (name), .inode = (inode), .cookie = (cookie)}
+
+Then we'd have:
+	__fsnotify(mask, &FSNOTIFY_EVENT_INFO(child, FSNOTIFY_EVENT_INODE,
+				dir, name, NULL, cookie));
+
+Which looks a bit nicer to me. What do you think guys?
+
+								Honza
 -- 
-Sincerely yours,
-Longpeng(Mike)
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
