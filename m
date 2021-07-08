@@ -2,69 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 960023BF4F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 07:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7213BF562
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 08:05:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbhGHFPo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jul 2021 01:15:44 -0400
-Received: from verein.lst.de ([213.95.11.211]:39221 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229541AbhGHFPo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jul 2021 01:15:44 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 60C4D68C4E; Thu,  8 Jul 2021 07:13:00 +0200 (CEST)
-Date:   Thu, 8 Jul 2021 07:13:00 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Christoph Hellwig <hch@lst.de>, leah.rumancik@gmail.com,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH] ext4: fix EXT4_IOC_CHECKPOINT
-Message-ID: <20210708051300.GA18564@lst.de>
-References: <20210707085644.3041867-1-hch@lst.de> <YOXdIZARJ0Rwtfbd@mit.edu>
+        id S229669AbhGHGIV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jul 2021 02:08:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49744 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229608AbhGHGIU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Jul 2021 02:08:20 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA66C061574;
+        Wed,  7 Jul 2021 23:05:38 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id a16so7127909ybt.8;
+        Wed, 07 Jul 2021 23:05:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mlf3iRZ72+39U7Ow36yxaKTO/ydFaCcKjJcQ3DPlKVk=;
+        b=vFKGV7DaP1rn8takaF5L5Rb7WjGO3ASU2IE4auSfbeGJb8nJdqqyvFSnUE4bu7gZR2
+         8LIxZWUPjGYjShNXMKJWjuYRQyJNKnRshiK8HAj6oirvVor8QooyCR50GtqDPqqLbITl
+         m4hmXRLTWa8NVUY2coAmo+4FMvBCH926dzHuKw4WDDKNcfAqBhBRC1F9dXMx2q0rpAl1
+         IiHFpSmZs0WVniZ4RFmkuGqCDMhj0PKxfVYDDCCu30L+rDr6VyuvxL4X0V7xiEZfXSaJ
+         QSCCpS7jJtB5nUGJ+zpjwu2K1jAORPqWkMuiveZSOm2oqp29Ikh74vUiTCRTPmfAbq++
+         Z5OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mlf3iRZ72+39U7Ow36yxaKTO/ydFaCcKjJcQ3DPlKVk=;
+        b=VpHLeD5ZsrrV/W8OWPdek1Z0ZjqoQh6mDKDWtOczAOIdsFr+bKT/0nEUUz+OI73Her
+         RlIuc5mzLb0MzJ6VH6NOnR5h1uTF0spQDHS2WxPZn9uslZ0c8BYJjFw+XHrA12JxDBUm
+         +McX13qMMBtsfDmtubORHIzonT0U4/j1B+dAMSrMUJGZErobtv+o7THK+xPYdG/UAvhV
+         bc4aicVsFGFcCIMdSM/t0+ogDLlG77VzCiRKEp/0/lT1qJcQJFOsaFYQjBRheCW769ze
+         XrxE6JJKsKmQcjm9aF25YZNiVPWYqvAjCJhVlwkENqBwc4UeEQFhn1fpQb+iWv/3xNai
+         PwCQ==
+X-Gm-Message-State: AOAM533FpHmel+cn4+lvYZ5F4h8s+p3ECrSm+ToH0NJupfBnaqkFvUkZ
+        xwm8FxQF89c/Rk/4zVCVknm2TiHk5zizLoLmYhQ=
+X-Google-Smtp-Source: ABdhPJwgtkiiiuPsB83bKudZvXtPVUeGCFUISRz4Gr7kmPks5hAvgDmUN5yZGB3se1SvXJEW2HwPA0YYX39/tdX40nc=
+X-Received: by 2002:a25:9bc4:: with SMTP id w4mr34461308ybo.168.1625724337630;
+ Wed, 07 Jul 2021 23:05:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YOXdIZARJ0Rwtfbd@mit.edu>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20210707122747.3292388-1-dkadashev@gmail.com> <CAHk-=wiTyxUt61NxeMXb2Zn2stDBC7eG82RKj+3jXUORdYQtpg@mail.gmail.com>
+In-Reply-To: <CAHk-=wiTyxUt61NxeMXb2Zn2stDBC7eG82RKj+3jXUORdYQtpg@mail.gmail.com>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Thu, 8 Jul 2021 13:05:26 +0700
+Message-ID: <CAOKbgA6_eF_jwNHOSXGsSX+WhqKWwfxeYpiSjKvCjqsGiScyOg@mail.gmail.com>
+Subject: Re: [PATCH v8 00/11] io_uring: add mkdir and [sym]linkat support
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 07, 2021 at 12:58:09PM -0400, Theodore Ts'o wrote:
-> A discard is not "dangerous"; how it behaves is simply not necessarily
-> guaranteed by the standards specification.  The userspace which uses
-> the ioctl simply needs to know how a particular block device might
-> react when it is given a discard.
+On Thu, Jul 8, 2021 at 2:26 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, Jul 7, 2021 at 5:28 AM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+> >
+> > This started out as an attempt to add mkdirat support to io_uring which
+> > is heavily based on renameat() / unlinkat() support.
+>
+> Ok, sorry for having made you go through all the different versions,
+> but I like the new series and think it's a marked improvement.
 
-A discard itself is indeed not dangerous at all.  Using it to imply
-any kind of data erasure OTOH is extremely dangerous, and that is
-what this interface does.
+No worries at all!
 
-> I'll note that there is a similar issue with "WRITE SAME" or "ZEROOUT.
-> A WRITE SAME might take a fraction of a second --- or it might take
-> days --- depending on how the storage device is implemented.  It is
-> similarly unspecified by the various standards specification.  Hence,
-> userspace needs to know something about the block device before
-> deciding whether or not it would be good idea to issue a "WRITE SAME"
-> operation for large number of blocks.
+> I did send out a few comments to the individual patches that I think
+> it can all now be made to be even more legible by avoiding some of the
+> goto spaghetti, but I think that would be a series on top.
+>
+> (And I'd like to note again that I based all that on just reading the
+> patches, so there may be something there that makes it not work well).
 
-The same is true of discard.  There are plenty of devices where
-discards are horrible slow.  There also are plenty of devices where
-discard is a complete no-op.  Especially on NVMe where the discard
-command (DSM deallocate) is mandatory to implement.
+I'm happy to do that. I suppose it will have to go through Al's tree
+rather than Jens' one?
 
-> This is why the API is implemented in terms of what command will be
-> issued to the block device, and not what the semantic meaning is for
-> that particular command.  That's up to the userspace application to
-> know out of band, and we should be able to give the privileged
-> application the freedom to decide which command makes the most amount
-> of sense.
+> One final request: can you keep the fs/namei.c patches as one entirely
+> separate series, and then do the io_uring parts at the end, rather
+> than intermixing them?
 
-Stop claiming you actively misleading users with broken interfaces
-freedom.
+Sure. I'm a bit confused if you mean splitting the series into two or
+just moving io_uring bits to the end though. I'll send a v9 with
+io_uring bits moved to the end of the series and if you prefer it to be
+a completely separate series then let me know.
 
-> 
-> 	 	      	  	    		   - Ted
----end quoted text---
+Thank you for the help again, Linus!
+
+-- 
+Dmitry Kadashev
