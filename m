@@ -2,350 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D73A3BFA52
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 14:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EB803BFA9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 14:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231404AbhGHMh7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jul 2021 08:37:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51608 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230433AbhGHMh6 (ORCPT
+        id S231376AbhGHMvx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jul 2021 08:51:53 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:62296 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229659AbhGHMvw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jul 2021 08:37:58 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0652C061762
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jul 2021 05:35:16 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id x12so8295948eds.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jul 2021 05:35:16 -0700 (PDT)
+        Thu, 8 Jul 2021 08:51:52 -0400
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 168CgdrD001761;
+        Thu, 8 Jul 2021 12:48:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=VRUFYsMd0FPpWrz6g5RTo9ra+BrWkXz4S09+sR2p0kQ=;
+ b=w3HrA5EbBl1YlwfjJ1Yl/KvKEOc2/VRKxwjP97JJ/x2dfW27TJPDntApISHMUIR274pt
+ At9FLfXSSb2uCmoyS3ynOdAFkf80oBstmm5K08qgZDbbLkGcmwwcWt7kCQmT9OgGHTLv
+ nvTcpkLkPTUxLsWhBzslrw1H+8lSSCVheB4QESLLD3LxYR4MXymFn5tAxtiFtYNFlbi4
+ NHyQjV8F2TS+GjF0EkvTDNm2A2JQj3BxAcbrzfGMiJ7kaNYuJAHB7XIlFphTt+2Bkk3T
+ gTV7eWjkAgalNtEe2aq4bhZq0TmeMR63dcdIE/8AAPw9LycXgHywlqEmNCz473YIrkW3 UQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39nbsxtd2c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 08 Jul 2021 12:48:10 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 168CicwL098474;
+        Thu, 8 Jul 2021 12:48:09 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2043.outbound.protection.outlook.com [104.47.66.43])
+        by aserp3030.oracle.com with ESMTP id 39nbg47gjr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 08 Jul 2021 12:48:09 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eVsf1IHOoi13fv6bwKAbgR2YOFxKXWm9MQ5WlC4d2S88xBokNLPBnZv9/8pU9ufL0S491ZRisKKXJeID5ToXWUJ5X7Fjtt39BJjTqAwbDJqf6CTmueJEbEWmpGBKXiwkef3Ck1V+DWwA0p9hMWSaftGRzsqExtXbJVB36CXcM+O+3sJKi4X63g0CM4DWWzgaILDzDtFNUYa8BXV6Ut7L7gWMl0zrmBWk+qZpeJWQ0Pn3As1HwBdqRl0/B5JbRUaLdyTAEYSFzdBP2kepO+joJcL2bZjam7UIv3yMxV+g4lur8H+tywv+6Krxgo8lH6tYtpmzQtwNoweB9cErzaBPxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k6D+1iE6BBJCy3s6qoddiTii2ouCZ37lzfbhfCMG5ak=;
+ b=Oi7uLvmOSUgwrD4ovR07F5OV4FjIfx1YKUUo1XaCqPQojKZYW6W3YQ+hH4CLDxSHuz/ItUEMBIvuwPWunLGE0oQgbJ3LUfrkFf//cZ/S1rRgOnL6gVKfhYrsVTd4F5DArXDfsfFmuoLZCkefwNn2YmW1zCVDciheOaYt51Q05gxcxirKCIcXeyDJ+z/tTRqGPQhefrNwLUywILsgg3mK8hNhHQe99LwXl4RnTHHs3L/jWkeiNI2qMUw+AztJw6UythY0Gl+pB+E+/LTeDI6TQSrubrWcsUX7poWMv1XMR7AFRrvFwD78NooZXHRHJGg+eJMG62srywQjI6zLra/8lA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Wu6CLUxv00p31WZM28ChgDvx5SJMPCO2QmCIwyWG3PM=;
-        b=U6cZtcKmsyh3H/V2n0Xzxvx7qb056VzwlcQctTwvLMUMF7slkyJ+u2HRsbCriFsE5h
-         SUlDNjw1DCRmDR9shjVBsYFZOliEE/j+TPhM+DIXwfPFBF4nh1YzjjoRUjw9PkkSo8+1
-         6ZQYklNc4VZwisy/3BW9hZsTz9E7w3aZJnIxE+m6PtL7D0WHhFDDMJpQKG5ewMF5TJ4k
-         oI5r664mikBWgjRcp6x0xUf2wlg9TVu8XFB8xm7C1bTAR/E6U9rpvAx6Px60jaeP2WJg
-         4+vxqTNbnUTzTp1ZuP7MIKav4u/N7a/hD83TcfqjElty1g7ECTCGbeQwaXefgo+8cvLP
-         lxfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Wu6CLUxv00p31WZM28ChgDvx5SJMPCO2QmCIwyWG3PM=;
-        b=VNz7IsoqkkI0gVln3sgAPQuEWzZNVHFbzQih+A4DKHW48tCwE3GVTd/kE2gAP7ttKX
-         tjYzyP3S8xR+NtwjDxzwn6YwWHwXs6p7P64QwsUK8+RHV1mXPJOjYTwHxIgKHBNd+rSl
-         APl4xhF0WwlfluVeqMv+2x5QctPvyknfvXsFMvMPaQahNWHCzZ7hwwXPVzlE9KP9lruO
-         We7cdqG5v0m/+YxQtmPMBIE9EwqX87femLi1ekmNp6XCwEgw87X0BLkDA7A8jnOJMwAM
-         HtuhUjX4R2y/DEZb7ATvPEHoItdy0N5zwVxpTpfdGW6jrz1Xn0yL8fh89OAF8e5UY22m
-         QLkA==
-X-Gm-Message-State: AOAM531NyUYM3EXbVGOLrnGL6OU+XyAqrtBwypcKiT06lcpxmhh7uqB5
-        ANQhCLCeGzp8HIH7oR67caMHQdJxEzc4iv9nbh06
-X-Google-Smtp-Source: ABdhPJxtQ9nu8TipqE3lXJxniWvpUcll2vH4zQXpuoPPvUTARTfDciLs1Ig+iG69XhWR8Dem3ACTnQ/cxZeiJpV2hy8=
-X-Received: by 2002:a05:6402:26d4:: with SMTP id x20mr24692796edd.118.1625747715313;
- Thu, 08 Jul 2021 05:35:15 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k6D+1iE6BBJCy3s6qoddiTii2ouCZ37lzfbhfCMG5ak=;
+ b=AhmpPjnEYL4G0/JwQIAgyDjVVt8d9QAPDP2wycetSFr7b5NrqNI6XtNZ3k6pRzmLGYS4oUU0JxiTf7bPIpLwAC7O29iM5XMo5mT0/hUau4QcNdr6Q2nyElKDCbclDhV1/okqWj7kNQdtSDCDoCl3k7oQsTKylt+DL6QfoHvlHrg=
+Authentication-Results: oracle.com; dkim=none (message not signed)
+ header.d=none;oracle.com; dmarc=none action=none header.from=oracle.com;
+Received: from BYAPR10MB3240.namprd10.prod.outlook.com (2603:10b6:a03:155::17)
+ by BY5PR10MB3939.namprd10.prod.outlook.com (2603:10b6:a03:1f7::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20; Thu, 8 Jul
+ 2021 12:48:06 +0000
+Received: from BYAPR10MB3240.namprd10.prod.outlook.com
+ ([fe80::59e7:5c8c:71fb:a6ba]) by BYAPR10MB3240.namprd10.prod.outlook.com
+ ([fe80::59e7:5c8c:71fb:a6ba%7]) with mapi id 15.20.4287.034; Thu, 8 Jul 2021
+ 12:48:06 +0000
+Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
+To:     "Longpeng (Mike, Cloud Infrastructure Service Product Dept.)" 
+        <longpeng2@huawei.com>, Anthony Yznaga <anthony.yznaga@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org
+Cc:     mhocko@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org, arnd@arndb.de,
+        ebiederm@xmission.com, keescook@chromium.org, gerg@linux-m68k.org,
+        ktkhai@virtuozzo.com, christian.brauner@ubuntu.com,
+        peterz@infradead.org, esyr@redhat.com, jgg@ziepe.ca,
+        christian@kellner.me, areber@redhat.com, cyphar@cyphar.com,
+        "Gonglei (Arei)" <arei.gonglei@huawei.com>
+References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+ <cc714571-4461-c9e0-7b24-e213664caa54@huawei.com>
+From:   Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <43471cbb-67c6-f189-ef12-0f8302e81b06@oracle.com>
+Date:   Thu, 8 Jul 2021 08:48:01 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+In-Reply-To: <cc714571-4461-c9e0-7b24-e213664caa54@huawei.com>
+Content-Type: text/plain; charset=gbk
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN4PR0701CA0004.namprd07.prod.outlook.com
+ (2603:10b6:803:28::14) To BYAPR10MB3240.namprd10.prod.outlook.com
+ (2603:10b6:a03:155::17)
 MIME-Version: 1.0
-References: <YOL/9mxkJaokKDHc@stefanha-x1.localdomain> <5b5107fa-3b32-8a3b-720d-eee6b2a84ace@redhat.com>
- <YOQtG3gDOhHDO5CQ@stefanha-x1.localdomain> <CACGkMEs2HHbUfarum8uQ6wuXoDwLQUSXTsa-huJFiqr__4cwRg@mail.gmail.com>
- <YOSOsrQWySr0andk@stefanha-x1.localdomain> <100e6788-7fdf-1505-d69c-bc28a8bc7a78@redhat.com>
- <YOVr801d01YOPzLL@stefanha-x1.localdomain> <a03c8627-7dac-2255-a2d9-603fc623b618@redhat.com>
- <YOXOMiPl7mKd7FoM@stefanha-x1.localdomain> <d5aef112-0828-6b79-4bce-753d3cd496c1@redhat.com>
- <YObAAkabn+nr3taJ@stefanha-x1.localdomain>
-In-Reply-To: <YObAAkabn+nr3taJ@stefanha-x1.localdomain>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 8 Jul 2021 20:35:04 +0800
-Message-ID: <CACycT3tOFXU=zfP2qKO3Cy8Ytof3q8Osos3LE+CwMvqnjMkhJg@mail.gmail.com>
-Subject: Re: [PATCH v8 10/10] Documentation: Add documentation for VDUSE
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.1.92] (24.62.106.7) by SN4PR0701CA0004.namprd07.prod.outlook.com (2603:10b6:803:28::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.19 via Frontend Transport; Thu, 8 Jul 2021 12:48:03 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 15a722fa-63c0-464e-05ef-08d9420ea1ac
+X-MS-TrafficTypeDiagnostic: BY5PR10MB3939:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BY5PR10MB3939C2069B6806DD58B23846F9199@BY5PR10MB3939.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: WLCu6ICqMrvAY0Wu6SsiWg7yyNloGLbS8s8ElRn7aSev7aJ2dGqkGJ4qYAZ/GJ8bAmrUdBK/2OvdIE5RGd71kdzJnza0f3RlRIA7mVOe0jnqGjLCaNtrobXmcP82za0S7dYrnMZdknleiMlMEDTBlWASpe+3GjZ+Nmfi5lTVJ50/R5KELIVZS+c4Ed+x0Vph64SWL5FvgmVYzVUDLdChCMKZKjTqodrJfWSD2K7J3YZ6AXG7VVNl2Y8bXpJnck9Ro8DHdRqwhMiFbQ7lIM5x5A2yTFYL86I+idV9LJXybfu4WBIRRwPDXagNXV7B0/R+YR2eGk0DDrTi+eZ3HiEmj/Ngny+iqweTh30BMK7Q5HVT8gIutBv4pBLiKq1A5n+X0hAbkNN3SM4jzYU8ZUxIfnS0gAafMckRtMnrf+Jh5RPns7kJA8EFbr2KuGIS4+L+YvHFbAk0SISzZntmIVM6QF5aBBu5cXeUGzIiDZWp6FK1GlEmec5zXrSUxbqX101NdBfKm6TrhSNcFgKIS4tEowG+S+rpoTxiVKkZZzTjNcBdtd/ZlmmjoLr0tQDM/dAJEZAUpS00EuHNqPpaiQRw4gw+GBxVOrBVPjMjUB+/vDJlaxA2XwSpSmDkKvmyokiYCAdpUkTMUcmpSDhE1231V7JdPk2dYbpV3D+Sag8soWvwJO5cHQkzeywmeeFMmmFVk5ccKWZ0zkCQwLcUyVE4xQMq9L1VJJ9uCv710b+67cY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3240.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(39860400002)(136003)(366004)(346002)(396003)(83380400001)(53546011)(16576012)(4326008)(31696002)(86362001)(316002)(7416002)(110136005)(5660300002)(36756003)(478600001)(36916002)(6486002)(8676002)(186003)(26005)(2616005)(956004)(31686004)(38100700002)(2906002)(8936002)(66946007)(66556008)(44832011)(66476007)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?gb2312?B?bWxwV01yU3dBN0d4VG1mNGZtYXlyOHJiNDNReGRiK0c4WVBZRDVlQmFtL3Vj?=
+ =?gb2312?B?SEVOdXdFaUNEak5JNDZTcU5CNStHak02YklmcVFHd1FRN1ZKREtpYkpMMGYz?=
+ =?gb2312?B?djdwdm55YW5UTHRMb2J0S2J5ZEtrTDBNZDJieXAxZE1PZjZzQVJ1dmp1RXdl?=
+ =?gb2312?B?MDJqZC9WSkZUM2F5RjQvN0d2SHpIMjRidHlFM1RuYTA0eUczRVFRR2pZOHdo?=
+ =?gb2312?B?WXBDYXpKYlBJTEZFNm5Qb1V2a0NPK3c1UXBtYlJrSnNYWWRINTNlcXE5TVJs?=
+ =?gb2312?B?OVM3V0EzSzhoeWFZcG9LeXhqVWtpdWd3RFRpclJzalN1Vjdibzh1YlZzbEIr?=
+ =?gb2312?B?SGRUUDZvSlRqNE1rS1pZNHBvZTU3S2NYNTd4MEZVZEJCRmVXaUdJek5WQ0JR?=
+ =?gb2312?B?UTc3SlpHajZSWnhlVEdkditBNWhuU3JXVEIvY0M4bG9MNkw4cWdpQUF5cWRl?=
+ =?gb2312?B?eEpCNU9ETU1NampZc29pT3Vrck1IQW9TSXAxQlVKQnRqUXFpY1hCU2V6WCts?=
+ =?gb2312?B?dDZ4VHFpa2xqa1lDU2llZFgyVXdKaVBsbDNmbEtFVDQwM0c5eGRXaHFqVm4y?=
+ =?gb2312?B?emZjNjRvL2FnMEFPQ3lnb1UybVpWSENnenRJaW5aRDIwa29kSDJCZkd2VGg2?=
+ =?gb2312?B?d2NRaCtRcVh0VzIwcnJNK1NBckkyMFcxd2ZjVUN3aG9jRGJPRHQ1NCtacUhk?=
+ =?gb2312?B?Wm9HaC9oTS9Dd0txQUlBcm9nYWJrQlNkMkpJRlRpcmZTbWlUUUhsdkx4L0V4?=
+ =?gb2312?B?OTlERmlNT01VQVYvbCs5Y3RmcUQrWEVRL2dPdUVzNFl3Umt2dlhkN3h3cnd1?=
+ =?gb2312?B?SndiVGY4VVF2aTMvMUdHVGJXNmlvVHNTTy8zVWVvVTR1OWQ5RFpFTERCaC96?=
+ =?gb2312?B?WEk4SDVjUHpJTG0xSjlWZ29sWHBSb1ZnMlA5WVpGMTdpMGpPS1BCZEtXcEdW?=
+ =?gb2312?B?N0NWUlZFd1NNT2ROQXFpTkhPcTVEQjN4cmVKa29Cb0ovelNaejB4ZlFHa2ZG?=
+ =?gb2312?B?TDJucVpGS0tKZEtjM1NLMnozUnhSd2s0akJYUXExZTdwbklMcU5aNXZwM3Zl?=
+ =?gb2312?B?UnZseFI3SktzaXlEV254NGJhT1Q5Vko2aktmMXJyNkRsbDJzNmJKVE5QRkl5?=
+ =?gb2312?B?UitvUGlYVXRrTzZnb1FUMHNJN0d2dWExSVN1NER3cml3NjR5VXU2c1hoRkNu?=
+ =?gb2312?B?bVFjai91OEprczl5VGxYa1ZDYTZFRmpqYU1WaWdQWVNuUkRiK2hZVStpWGhN?=
+ =?gb2312?B?RE1qVTRpRkt4ZDNTVzE2M3Yvbks0U1VwQjN6QWJCVW5Ld1I4OHdXSWsyc2ta?=
+ =?gb2312?B?Q3lkb240SkU0QlUwVUdnNkpERkk5cEpTdVlSemRaRzRoSmtDeHNlMkZtZTlN?=
+ =?gb2312?B?bHZ6cEx4OXc4MDJlTElLdGQxMmEvTnZxaFJjQ3V4WGJUOU5Qc0tZb2NwM2s0?=
+ =?gb2312?B?TnhYUDAxQlB2US9EOExZVmg3d1c4bW1rNVhpbUlZVW45YUNPaEVuYXdBUDk5?=
+ =?gb2312?B?ektBaXZNNm4vQlJxRW1jM3dIRklMVWFrQlQ2RkJ0b3IyeUZGOHdQemE3QzJz?=
+ =?gb2312?B?VE5palpaamV3K21mS0hVdnZwcHBpdkFIQTZGUVlLYmdGN0g5bzVNa2k5alMz?=
+ =?gb2312?B?WFpMeGtwZjlmaFhuRCtJWEJ1dThqRHQwYStGRDBWQ2c2Qm5pdmM4NUxraXkz?=
+ =?gb2312?B?dTljbGNFYkNkUEp1RUVDK2IwR0RzRzRuQytwWGxscnJrV0l3cE53R2JVdlpG?=
+ =?gb2312?Q?OZc/xEfNfwhXrwv9bo4iCfK37YLiSOssTB/s808?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15a722fa-63c0-464e-05ef-08d9420ea1ac
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3240.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2021 12:48:06.3474
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8A/CkzU7VSn4UxEQiZQ7edIyF9r76lr/4yuJlq5OWIVJsbI/InqOmEXVEJ/cJczF/Px24eEcOd4dRgjxiKCd5znBkHy3fBZkzokyYfXZuWc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB3939
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10038 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
+ phishscore=0 adultscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2107080071
+X-Proofpoint-ORIG-GUID: omFRdClSznxRcEgac497l4JIB_6bwinC
+X-Proofpoint-GUID: omFRdClSznxRcEgac497l4JIB_6bwinC
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 8, 2021 at 5:06 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->
-> On Thu, Jul 08, 2021 at 12:17:56PM +0800, Jason Wang wrote:
-> >
-> > =E5=9C=A8 2021/7/7 =E4=B8=8B=E5=8D=8811:54, Stefan Hajnoczi =E5=86=99=
-=E9=81=93:
-> > > On Wed, Jul 07, 2021 at 05:24:08PM +0800, Jason Wang wrote:
-> > > > =E5=9C=A8 2021/7/7 =E4=B8=8B=E5=8D=884:55, Stefan Hajnoczi =E5=86=
-=99=E9=81=93:
-> > > > > On Wed, Jul 07, 2021 at 11:43:28AM +0800, Jason Wang wrote:
-> > > > > > =E5=9C=A8 2021/7/7 =E4=B8=8A=E5=8D=881:11, Stefan Hajnoczi =E5=
-=86=99=E9=81=93:
-> > > > > > > On Tue, Jul 06, 2021 at 09:08:26PM +0800, Jason Wang wrote:
-> > > > > > > > On Tue, Jul 6, 2021 at 6:15 PM Stefan Hajnoczi <stefanha@re=
-dhat.com> wrote:
-> > > > > > > > > On Tue, Jul 06, 2021 at 10:34:33AM +0800, Jason Wang wrot=
-e:
-> > > > > > > > > > =E5=9C=A8 2021/7/5 =E4=B8=8B=E5=8D=888:49, Stefan Hajno=
-czi =E5=86=99=E9=81=93:
-> > > > > > > > > > > On Mon, Jul 05, 2021 at 11:36:15AM +0800, Jason Wang =
-wrote:
-> > > > > > > > > > > > =E5=9C=A8 2021/7/4 =E4=B8=8B=E5=8D=885:49, Yongji X=
-ie =E5=86=99=E9=81=93:
-> > > > > > > > > > > > > > > OK, I get you now. Since the VIRTIO specifica=
-tion says "Device
-> > > > > > > > > > > > > > > configuration space is generally used for rar=
-ely-changing or
-> > > > > > > > > > > > > > > initialization-time parameters". I assume the=
- VDUSE_DEV_SET_CONFIG
-> > > > > > > > > > > > > > > ioctl should not be called frequently.
-> > > > > > > > > > > > > > The spec uses MUST and other terms to define th=
-e precise requirements.
-> > > > > > > > > > > > > > Here the language (especially the word "general=
-ly") is weaker and means
-> > > > > > > > > > > > > > there may be exceptions.
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > Another type of access that doesn't work with t=
-he VDUSE_DEV_SET_CONFIG
-> > > > > > > > > > > > > > approach is reads that have side-effects. For e=
-xample, imagine a field
-> > > > > > > > > > > > > > containing an error code if the device encounte=
-rs a problem unrelated to
-> > > > > > > > > > > > > > a specific virtqueue request. Reading from this=
- field resets the error
-> > > > > > > > > > > > > > code to 0, saving the driver an extra configura=
-tion space write access
-> > > > > > > > > > > > > > and possibly race conditions. It isn't possible=
- to implement those
-> > > > > > > > > > > > > > semantics suing VDUSE_DEV_SET_CONFIG. It's anot=
-her corner case, but it
-> > > > > > > > > > > > > > makes me think that the interface does not allo=
-w full VIRTIO semantics.
-> > > > > > > > > > > > Note that though you're correct, my understanding i=
-s that config space is
-> > > > > > > > > > > > not suitable for this kind of error propagating. An=
-d it would be very hard
-> > > > > > > > > > > > to implement such kind of semantic in some transpor=
-ts.  Virtqueue should be
-> > > > > > > > > > > > much better. As Yong Ji quoted, the config space is=
- used for
-> > > > > > > > > > > > "rarely-changing or intialization-time parameters".
-> > > > > > > > > > > >
-> > > > > > > > > > > >
-> > > > > > > > > > > > > Agreed. I will use VDUSE_DEV_GET_CONFIG in the ne=
-xt version. And to
-> > > > > > > > > > > > > handle the message failure, I'm going to add a re=
-turn value to
-> > > > > > > > > > > > > virtio_config_ops.get() and virtio_cread_* API so=
- that the error can
-> > > > > > > > > > > > > be propagated to the virtio device driver. Then t=
-he virtio-blk device
-> > > > > > > > > > > > > driver can be modified to handle that.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Jason and Stefan, what do you think of this way?
-> > > > > > > > > > > Why does VDUSE_DEV_GET_CONFIG need to support an erro=
-r return value?
-> > > > > > > > > > >
-> > > > > > > > > > > The VIRTIO spec provides no way for the device to rep=
-ort errors from
-> > > > > > > > > > > config space accesses.
-> > > > > > > > > > >
-> > > > > > > > > > > The QEMU virtio-pci implementation returns -1 from in=
-valid
-> > > > > > > > > > > virtio_config_read*() and silently discards virtio_co=
-nfig_write*()
-> > > > > > > > > > > accesses.
-> > > > > > > > > > >
-> > > > > > > > > > > VDUSE can take the same approach with
-> > > > > > > > > > > VDUSE_DEV_GET_CONFIG/VDUSE_DEV_SET_CONFIG.
-> > > > > > > > > > >
-> > > > > > > > > > > > I'd like to stick to the current assumption thich g=
-et_config won't fail.
-> > > > > > > > > > > > That is to say,
-> > > > > > > > > > > >
-> > > > > > > > > > > > 1) maintain a config in the kernel, make sure the c=
-onfig space read can
-> > > > > > > > > > > > always succeed
-> > > > > > > > > > > > 2) introduce an ioctl for the vduse usersapce to up=
-date the config space.
-> > > > > > > > > > > > 3) we can synchronize with the vduse userspace duri=
-ng set_config
-> > > > > > > > > > > >
-> > > > > > > > > > > > Does this work?
-> > > > > > > > > > > I noticed that caching is also allowed by the vhost-u=
-ser protocol
-> > > > > > > > > > > messages (QEMU's docs/interop/vhost-user.rst), but th=
-e device doesn't
-> > > > > > > > > > > know whether or not caching is in effect. The interfa=
-ce you outlined
-> > > > > > > > > > > above requires caching.
-> > > > > > > > > > >
-> > > > > > > > > > > Is there a reason why the host kernel vDPA code needs=
- to cache the
-> > > > > > > > > > > configuration space?
-> > > > > > > > > > Because:
-> > > > > > > > > >
-> > > > > > > > > > 1) Kernel can not wait forever in get_config(), this is=
- the major difference
-> > > > > > > > > > with vhost-user.
-> > > > > > > > > virtio_cread() can sleep:
-> > > > > > > > >
-> > > > > > > > >      #define virtio_cread(vdev, structname, member, ptr) =
-                    \
-> > > > > > > > >              do {                                        =
-                    \
-> > > > > > > > >                      typeof(((structname*)0)->member) vir=
-tio_cread_v;        \
-> > > > > > > > >                                                          =
-                    \
-> > > > > > > > >                      might_sleep();                      =
-                    \
-> > > > > > > > >                      ^^^^^^^^^^^^^^
-> > > > > > > > >
-> > > > > > > > > Which code path cannot sleep?
-> > > > > > > > Well, it can sleep but it can't sleep forever. For VDUSE, a
-> > > > > > > > buggy/malicious userspace may refuse to respond to the get_=
-config.
-> > > > > > > >
-> > > > > > > > It looks to me the ideal case, with the current virtio spec=
-, for VDUSE is to
-> > > > > > > >
-> > > > > > > > 1) maintain the device and its state in the kernel, userspa=
-ce may sync
-> > > > > > > > with the kernel device via ioctls
-> > > > > > > > 2) offload the datapath (virtqueue) to the userspace
-> > > > > > > >
-> > > > > > > > This seems more robust and safe than simply relaying everyt=
-hing to
-> > > > > > > > userspace and waiting for its response.
-> > > > > > > >
-> > > > > > > > And we know for sure this model can work, an example is TUN=
-/TAP:
-> > > > > > > > netdevice is abstracted in the kernel and datapath is done =
-via
-> > > > > > > > sendmsg()/recvmsg().
-> > > > > > > >
-> > > > > > > > Maintaining the config in the kernel follows this model and=
- it can
-> > > > > > > > simplify the device generation implementation.
-> > > > > > > >
-> > > > > > > > For config space write, it requires more thought but fortun=
-ately it's
-> > > > > > > > not commonly used. So VDUSE can choose to filter out the
-> > > > > > > > device/features that depends on the config write.
-> > > > > > > This is the problem. There are other messages like SET_FEATUR=
-ES where I
-> > > > > > > guess we'll face the same challenge.
-> > > > > > Probably not, userspace device can tell the kernel about the de=
-vice_features
-> > > > > > and mandated_features during creation, and the feature negotiat=
-ion could be
-> > > > > > done purely in the kernel without bothering the userspace.
-> > > >
-> > > > (For some reason I drop the list accidentally, adding them back, so=
-rry)
-> > > >
-> > > >
-> > > > > Sorry, I confused the messages. I meant SET_STATUS. It's a synchr=
-onous
-> > > > > interface where the driver waits for the device.
-> > > >
-> > > > It depends on how we define "synchronous" here. If I understand cor=
-rectly,
-> > > > the spec doesn't expect there will be any kind of failure for the o=
-peration
-> > > > of set_status itself.
-> > > >
-> > > > Instead, anytime it want any synchronization, it should be done via
-> > > > get_status():
-> > > >
-> > > > 1) re-read device status to make sure FEATURES_OK is set during fea=
-ture
-> > > > negotiation
-> > > > 2) re-read device status to be 0 to make sure the device has finish=
- the
-> > > > reset
-> > > >
-> > > >
-> > > > > VDUSE currently doesn't wait for the device emulation process to =
-handle
-> > > > > this message (no reply is needed) but I think this is a mistake b=
-ecause
-> > > > > VDUSE is not following the VIRTIO device model.
-> > > >
-> > > > With the trick that is done for FEATURES_OK above, I think we don't=
- need to
-> > > > wait for the reply.
-> > > >
-> > > > If userspace takes too long to respond, it can be detected since
-> > > > get_status() doesn't return the expected value for long time.
-> > > >
-> > > > And for the case that needs a timeout, we probably can use NEEDS_RE=
-SET.
-> > > I think you're right. get_status is the synchronization point, not
-> > > set_status.
-> > >
-> > > Currently there is no VDUSE GET_STATUS message. The
-> > > VDUSE_START/STOP_DATAPLANE messages could be changed to SET_STATUS so
-> > > that the device emulation program can participate in emulating the
-> > > Device Status field.
-> >
-> >
-> > I'm not sure I get this, but it is what has been done?
-> >
-> > +static void vduse_vdpa_set_status(struct vdpa_device *vdpa, u8 status)
-> > +{
-> > +    struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > +    bool started =3D !!(status & VIRTIO_CONFIG_S_DRIVER_OK);
-> > +
-> > +    dev->status =3D status;
-> > +
-> > +    if (dev->started =3D=3D started)
-> > +        return;
-> > +
-> > +    dev->started =3D started;
-> > +    if (dev->started) {
-> > +        vduse_dev_start_dataplane(dev);
-> > +    } else {
-> > +        vduse_dev_reset(dev);
-> > +        vduse_dev_stop_dataplane(dev);
-> > +    }
-> > +}
-> >
-> >
-> > But the looks not correct:
-> >
-> > 1) !DRIVER_OK doesn't means a reset?
-> > 2) Need to deal with FEATURES_OK
->
-> I'm not sure if this reply was to me or to Yongji Xie?
->
-> Currently vduse_vdpa_set_status() does not allow the device emulation
-> program to participate fully in Device Status field changes. It hides
-> the status bits and only sends VDUSE_START/STOP_DATAPLANE.
->
-> I suggest having GET_STATUS/SET_STATUS messages instead, allowing the
-> device emulation program to handle these parts of the VIRTIO device
-> model (e.g. rejecting combinations of features that are mutually
-> exclusive).
->
+On 7/8/2021 5:52 AM, Longpeng (Mike, Cloud Infrastructure Service Product Dept.) wrote:
+> Hi Anthony and Steven,
+> 
+> ÔÚ 2020/7/28 1:11, Anthony Yznaga Ð´µÀ:
+>> This patchset adds support for preserving an anonymous memory range across
+>> exec(3) using a new madvise MADV_DOEXEC argument.  The primary benefit for
+>> sharing memory in this manner, as opposed to re-attaching to a named shared
+>> memory segment, is to ensure it is mapped at the same virtual address in
+>> the new process as it was in the old one.  An intended use for this is to
+>> preserve guest memory for guests using vfio while qemu exec's an updated
+>> version of itself.  By ensuring the memory is preserved at a fixed address,
+>> vfio mappings and their associated kernel data structures can remain valid.
+>> In addition, for the qemu use case, qemu instances that back guest RAM with
+>> anonymous memory can be updated.
+> 
+> We have a requirement like yours, but ours seems more complex. We want to
+> isolate some memory regions from the VM's memory space and the start a child
+> process who will using these memory regions.
+> 
+> I've wrote a draft to support this feature, but I just find that my draft is
+> pretty like yours.
+> 
+> It seems that you've already abandoned this patchset, why ?
 
-Yes, I will do this in the next version.
+Hi Longpeng,
+  The reviewers did not like the proposal for several reasons, but the showstopper
+was that they did not want to add complexity to the exec path in the kernel.  You
+can read the email archive for details.
 
-Thanks,
-Yongi
+We solved part of our problem by adding new vfio interfaces: VFIO_DMA_UNMAP_FLAG_VADDR
+and VFIO_DMA_MAP_FLAG_VADDR.  That solves the vfio problem for shared memory, but not
+for mmap MAP_ANON memory.
+
+- Steve
+
+>> Patches 1 and 2 ensure that loading of ELF load segments does not silently
+>> clobber existing VMAS, and remove assumptions that the stack is the only
+>> VMA in the mm when the stack is set up.  Patch 1 re-introduces the use of
+>> MAP_FIXED_NOREPLACE to load ELF binaries that addresses the previous issues
+>> and could be considered on its own.
+>>
+>> Patches 3, 4, and 5 introduce the feature and an opt-in method for its use
+>> using an ELF note.
+>>
+>> Anthony Yznaga (5):
+>>   elf: reintroduce using MAP_FIXED_NOREPLACE for elf executable mappings
+>>   mm: do not assume only the stack vma exists in setup_arg_pages()
+>>   mm: introduce VM_EXEC_KEEP
+>>   exec, elf: require opt-in for accepting preserved mem
+>>   mm: introduce MADV_DOEXEC
+>>
+>>  arch/x86/Kconfig                       |   1 +
+>>  fs/binfmt_elf.c                        | 196 +++++++++++++++++++++++++--------
+>>  fs/exec.c                              |  33 +++++-
+>>  include/linux/binfmts.h                |   7 +-
+>>  include/linux/mm.h                     |   5 +
+>>  include/uapi/asm-generic/mman-common.h |   3 +
+>>  kernel/fork.c                          |   2 +-
+>>  mm/madvise.c                           |  25 +++++
+>>  mm/mmap.c                              |  47 ++++++++
+>>  9 files changed, 266 insertions(+), 53 deletions(-)
+>>
+> 
