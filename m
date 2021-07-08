@@ -2,186 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FC733BF135
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jul 2021 23:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E17ED3BF3AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 03:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232521AbhGGVJb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jul 2021 17:09:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:47039 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230500AbhGGVJa (ORCPT
+        id S230173AbhGHBzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jul 2021 21:55:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51442 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230123AbhGHBzF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jul 2021 17:09:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625692009;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+7m/eIRlnZBYcjDw1k2mlaQoBa6NNsCMDSwIdGed5BM=;
-        b=Rso6/edC2GhT0wlGQ/FQft0gTRyeU8rj6MUFhEinOXyIJuMOwtmKmHiBs6o5NaR5vf77/D
-        BsjVfu1LsVRr9JYMgBJpPwdkLUHB6i7uHaP9B7MpyYopYVpycnPWirV/9hLV6MNSUvEQa3
-        mGRd+dapSvitF4ks1oG0vwRPYJCK6CY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-202-l2kfGnpAOr-A8Ox8VlWyDQ-1; Wed, 07 Jul 2021 17:06:48 -0400
-X-MC-Unique: l2kfGnpAOr-A8Ox8VlWyDQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0DE6D100C610;
-        Wed,  7 Jul 2021 21:06:47 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-221.rdu2.redhat.com [10.10.115.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8AC3560C05;
-        Wed,  7 Jul 2021 21:06:36 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 23F3522054F; Wed,  7 Jul 2021 17:06:36 -0400 (EDT)
-Date:   Wed, 7 Jul 2021 17:06:36 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Virtio-fs] [PATCH 3/2] fs: simplify get_filesystem_list /
- get_all_fs_names
-Message-ID: <20210707210636.GC244500@redhat.com>
-References: <20210621062657.3641879-1-hch@lst.de>
- <20210622081217.GA2975@lst.de>
- <YNGhERcnLuzjn8j9@stefanha-x1.localdomain>
- <20210629205048.GE5231@redhat.com>
- <20210630053601.GA29241@lst.de>
- <20210707210404.GB244500@redhat.com>
+        Wed, 7 Jul 2021 21:55:05 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A602DC061574;
+        Wed,  7 Jul 2021 18:52:23 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id b5so2116540plg.2;
+        Wed, 07 Jul 2021 18:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LpL7qx90kO/NgJfcn2pzZvgiawADIWqcEOHPJQejQw0=;
+        b=ED2uT3QB1HhsWxq1L45xwQou5AP4Y9WzFSN7zd9p3D1IF3z4fKaxHBfgzMtKaGl8kB
+         wYCq5bstM1hSbqb0JUlCcIjSpFgugdwjJQ/YJFt5+lgApZCzYWAjkaryJTGM6w27n0uN
+         TxT2ow0e00/iPygqFBfSESLftaH0KoyCj8Y+7AeANXFXHxwZfgiDqP1kr9kbV8z4AUEn
+         dWOEIcoxRjuVj2KZ7PVn9BxSvF4gdsa7bSypTxCkLCrxGxG94neeAg6KE4XYWvkg6IdN
+         6CFjTqkgCQnmbCm4IaJ3CuX3wp6rjMGtvpz3Tmk+Rk/cu4dORuidAIcGq6lZ59eqHAWD
+         KGmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LpL7qx90kO/NgJfcn2pzZvgiawADIWqcEOHPJQejQw0=;
+        b=K1o5B0kU6ZeDQOxq7SmL7v/N43U/2U0h1QyoUkSGG9OdbhgREI7T8XYIIFp2fKaPk6
+         KDMg2nsDon54t1EdO1xOVOvdxVeOX/R9cz6euUv0YY7cpIz66xrSvXz703B02YhAMQwO
+         QiRjkH1tYk1o3OwgW64TFXiFYypDJnMBRKSuuccvJKuLipHNF5DWBfoyNWyVEteJ49mW
+         ronPZCi85KCHCOuM9v8MjC58EfbM+M1FpOVKmzA7vRUoX0vg7ENyTB5kFM8ovDR9DzI0
+         FbVzvzGc3Ue2IZa91UEu6+Hm69why+sns8k1mL+cjH01Us0FvAbwv1hQ6P2X485rPWEb
+         OQ4Q==
+X-Gm-Message-State: AOAM530v+R6ZNQ/ErPonHwhpCs5jIK+pFX1SYATBclt//42bTT9WxqPZ
+        CXbsWxeCrTtrneu8LBgzc1o=
+X-Google-Smtp-Source: ABdhPJyCISuCbgDROL/gqJ0JBv5xppQzbfXoTRY1Of4YmEnuf7J/NnVqeEWvz0Q6P6hvE1E01bB4JA==
+X-Received: by 2002:a17:90b:4b52:: with SMTP id mi18mr12177096pjb.37.1625709143189;
+        Wed, 07 Jul 2021 18:52:23 -0700 (PDT)
+Received: from [192.168.1.237] ([118.200.190.93])
+        by smtp.gmail.com with ESMTPSA id f2sm491957pfe.23.2021.07.07.18.52.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jul 2021 18:52:22 -0700 (PDT)
+Subject: Re: [PATCH v3 0/2] fcntl: fix potential deadlocks
+To:     Jeff Layton <jlayton@kernel.org>, bfields@fieldses.org,
+        viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org, gregkh@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+References: <20210707074401.447952-1-desmondcheongzx@gmail.com>
+ <15fbc55a3b983c4962e9ad2d96eeebd77aad3be6.camel@kernel.org>
+From:   Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+Message-ID: <12c41697-e9ea-3326-b906-bf15a0a4dece@gmail.com>
+Date:   Thu, 8 Jul 2021 09:52:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210707210404.GB244500@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <15fbc55a3b983c4962e9ad2d96eeebd77aad3be6.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 07, 2021 at 05:04:04PM -0400, Vivek Goyal wrote:
-> On Wed, Jun 30, 2021 at 07:36:01AM +0200, Christoph Hellwig wrote:
-> > On Tue, Jun 29, 2021 at 04:50:48PM -0400, Vivek Goyal wrote:
-> > > May be we should modify mount_block_root() code so that it does not
-> > > require that extra "\0". Possibly zero initialize page and that should
-> > > make sure list_bdev_fs_names() does not have to worry about it.
-> > > 
-> > > It is possible that a page gets full from the list of filesystems, and
-> > > last byte on page is terminating null. In that case just zeroing page
-> > > will not help. We can keep track of some sort of end pointer and make
-> > > sure we are not searching beyond that for valid filesystem types.
-> > > 
-> > > end = page + PAGE_SIZE - 1;
-> > > 
-> > > mount_block_root()
-> > > {
-> > > 	for (p = fs_names; p < end && *p; p += strlen(p)+1) {
-> > > 	}
-> > > }
-> > 
-> > Maybe.  To honest I'd prefer to not even touch this unrelated code given
-> > how full of landmines it is :)
+On 8/7/21 1:06 am, Jeff Layton wrote:
+> On Wed, 2021-07-07 at 15:43 +0800, Desmond Cheong Zhi Xi wrote:
+>> Hi,
+>>
+>> Sorry for the delay between v1 and v2, there was an unrelated issue with Syzbot testing.
+>>
+>> Syzbot reports a possible irq lock inversion dependency:
+>> https://syzkaller.appspot.com/bug?id=923cfc6c6348963f99886a0176ef11dcc429547b
+>>
+>> While investigating this error, I discovered that multiple similar lock inversion scenarios can occur. Hence, this series addresses potential deadlocks for two classes of locks, one in each patch:
+>>
+>> 1. Fix potential deadlocks for &fown_struct.lock
+>>
+>> 2. Fix potential deadlock for &fasync_struct.fa_lock
+>>
+>> v2 -> v3:
+>> - Removed WARN_ON_ONCE, keeping elaboration for why read_lock_irq is safe to use in the commit message. As suggested by Greg KH.
+>>
+>> v1 -> v2:
+>> - Added WARN_ON_ONCE(irqs_disabled()) before calls to read_lock_irq, and added elaboration in the commit message. As suggested by Jeff Layton.
+>>
+>> Best wishes,
+>> Desmond
+>>
+>> Desmond Cheong Zhi Xi (2):
+>>    fcntl: fix potential deadlocks for &fown_struct.lock
+>>    fcntl: fix potential deadlock for &fasync_struct.fa_lock
+>>
+>>   fs/fcntl.c | 18 ++++++++++--------
+>>   1 file changed, 10 insertions(+), 8 deletions(-)
+>>
 > 
-> Hi Christoph,
+> Looks like these patches are identical to the v1 set, so I'm just going
+> to leave those in place since linux-next already has them. Let me know
+> if I've missed something though.
 > 
-> How about following patch. This applies on top of your patches. I noticed
-> that Al had suggested to return number of filesystems from helper
-> functions. I just did that and used that to iterate in the loop.
-> 
-> I tested it with a virtual block device (root=/dev/vda1) and it works.
-> I also filled page with garbage after allocation to make sure natually
-> occurring null is not there in the middle of page to terminate string.
-> 
-> If you like it, can you please incorporate it in your patches.
-
-I noticed this will break with "root_fs_names=". Sorry, will have to
-fix split_fs_names() as well. Will do.
-
-Vivek
-
-> 
-> Thanks
-> Vivek
-> 
-> ---
->  fs/filesystems.c   |    5 ++++-
->  include/linux/fs.h |    2 +-
->  init/do_mounts.c   |    7 ++++---
->  3 files changed, 9 insertions(+), 5 deletions(-)
-> 
-> Index: redhat-linux/fs/filesystems.c
-> ===================================================================
-> --- redhat-linux.orig/fs/filesystems.c	2021-07-07 16:12:08.890562576 -0400
-> +++ redhat-linux/fs/filesystems.c	2021-07-07 16:27:51.197620063 -0400
-> @@ -209,10 +209,11 @@ SYSCALL_DEFINE3(sysfs, int, option, unsi
->  }
->  #endif
->  
-> -void __init list_bdev_fs_names(char *buf, size_t size)
-> +int __init list_bdev_fs_names(char *buf, size_t size)
->  {
->  	struct file_system_type *p;
->  	size_t len;
-> +	int count = 0;
->  
->  	read_lock(&file_systems_lock);
->  	for (p = file_systems; p; p = p->next) {
-> @@ -226,8 +227,10 @@ void __init list_bdev_fs_names(char *buf
->  		memcpy(buf, p->name, len);
->  		buf += len;
->  		size -= len;
-> +		count++;
->  	}
->  	read_unlock(&file_systems_lock);
-> +	return count;
->  }
->  
->  #ifdef CONFIG_PROC_FS
-> Index: redhat-linux/include/linux/fs.h
-> ===================================================================
-> --- redhat-linux.orig/include/linux/fs.h	2021-07-07 15:36:43.224418935 -0400
-> +++ redhat-linux/include/linux/fs.h	2021-07-07 16:12:18.232949807 -0400
-> @@ -3622,7 +3622,7 @@ int proc_nr_dentry(struct ctl_table *tab
->  		  void *buffer, size_t *lenp, loff_t *ppos);
->  int proc_nr_inodes(struct ctl_table *table, int write,
->  		   void *buffer, size_t *lenp, loff_t *ppos);
-> -void __init list_bdev_fs_names(char *buf, size_t size);
-> +int __init list_bdev_fs_names(char *buf, size_t size);
->  
->  #define __FMODE_EXEC		((__force int) FMODE_EXEC)
->  #define __FMODE_NONOTIFY	((__force int) FMODE_NONOTIFY)
-> Index: redhat-linux/init/do_mounts.c
-> ===================================================================
-> --- redhat-linux.orig/init/do_mounts.c	2021-07-07 16:12:08.890562576 -0400
-> +++ redhat-linux/init/do_mounts.c	2021-07-07 16:23:32.308889444 -0400
-> @@ -391,15 +391,16 @@ void __init mount_block_root(char *name,
->  	char *fs_names = page_address(page);
->  	char *p;
->  	char b[BDEVNAME_SIZE];
-> +	int num_fs, i;
->  
->  	scnprintf(b, BDEVNAME_SIZE, "unknown-block(%u,%u)",
->  		  MAJOR(ROOT_DEV), MINOR(ROOT_DEV));
->  	if (root_fs_names)
->  		split_fs_names(fs_names, root_fs_names);
->  	else
-> -		list_bdev_fs_names(fs_names, PAGE_SIZE);
-> +		num_fs = list_bdev_fs_names(fs_names, PAGE_SIZE);
->  retry:
-> -	for (p = fs_names; *p; p += strlen(p)+1) {
-> +	for (p = fs_names, i = 0; i < num_fs; p += strlen(p)+1, i++) {
->  		int err = do_mount_root(name, p, flags, root_mount_data);
->  		switch (err) {
->  			case 0:
-> @@ -432,7 +433,7 @@ retry:
->  	printk("List of all partitions:\n");
->  	printk_all_partitions();
->  	printk("No filesystem could mount root, tried: ");
-> -	for (p = fs_names; *p; p += strlen(p)+1)
-> +	for (p = fs_names, i = 0; i < num_fs; p += strlen(p)+1, i++)
->  		printk(" %s", p);
->  	printk("\n");
->  	panic("VFS: Unable to mount root fs on %s", b);
-> 
+> Thanks!
 > 
 
+Yep, there's no change outside of the commit message. But I think after 
+the discussion and with config DEBUG_IRQFLAGS, that is fine.
+
+Thanks again, Jeff!
