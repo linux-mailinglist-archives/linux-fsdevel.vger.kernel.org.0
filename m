@@ -2,95 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B803C193B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 20:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBC2E3C19C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 21:25:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbhGHShU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jul 2021 14:37:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48008 "EHLO
+        id S230191AbhGHT2e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jul 2021 15:28:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbhGHShT (ORCPT
+        with ESMTP id S229566AbhGHT2d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jul 2021 14:37:19 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8784EC061574
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jul 2021 11:34:36 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id n14so18068954lfu.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jul 2021 11:34:36 -0700 (PDT)
+        Thu, 8 Jul 2021 15:28:33 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CBE2C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jul 2021 12:25:50 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id g22so9652339iom.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jul 2021 12:25:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o2ASoGiHcKvlol6jVeSQSpIyIFc5g3r9dX0y3Fr3Zgc=;
-        b=gE2ilK7h886+WToRooDIY8/bXblwfYQrTzKDQ7q/OgvAeCfHMqkjTTJqCH3ejPJm9X
-         IRyUa6pi3KuJLLlpYE7CrnIdEa8Ih/7GxWt55xPvATc2Wbe5muIqzEsr+kDxql3PxIO/
-         9esjBbLtbdr2ajX5MQM608F7ujW97xtnU0uec=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6S7YAMaQ5hfgByK0Q7Ny9TcwwQexuIxF/Xc0CIcaWLA=;
+        b=Ry4SqUX9x7mHYKMfgGodpI0I3kZbGYMpXAFQYKMRCRxS7maDwMC5Ge1QxXI+vaVQ8e
+         aFGJBj4sdBl4t7fyHgOxy9617DiPMW6hF92k1YlsGdINHrfZy39iZplY3KUT/EJTLWIo
+         B8292tosNeCRuJnDfdWRiqfCw7kNAVna5QTDbfMRVhyXuXseL0ZXQuRQhdN+/NuxYhQx
+         yW24yHr3x3w3Y4+BeeutYB0XZOERGvoNaj9SBZaWT3W4Vb5gEeGa2B8UkAX9ZYkKt/Qz
+         phQduBU6lSt2+8PAgG+BnoiNp+38wWnfmeq80hri1/6bqJcAMKGGR5F5BaTYGQQ+BPSE
+         Ae/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o2ASoGiHcKvlol6jVeSQSpIyIFc5g3r9dX0y3Fr3Zgc=;
-        b=WDtYURq9af5on2dQDw23g9oU6z+RRFmWpNql2ehhv7aHbMaD7I4cjjRS2bIwUlLOOX
-         x0CVIN+fboUMxdlYtrq07ekTRWnKqjzuDXgw+sIJ4pUypdUjD6AZGXWu7D+YQy5hPmCB
-         dBh+1COkA08BuUJ+hiPXM0KVsWmAINteNsePCOu+Z3ASspbXNliU6RmoRdNZFclnY/yD
-         uoG9wy8pxA54NvNf5CeHocdH7FJfg8dI6k/ZYZl8+CEaqsOAFVS2B9ztJJIuCATMqnyZ
-         iZ0nxsU7QgyMMIuR9WGAJ23AfsbKXe4wjut997ZN+yU3RhSWZTKmTl8OI55NKTcaqnI0
-         Wn/g==
-X-Gm-Message-State: AOAM5317VzpwKZzoB/8+epA7HNvAIY9VkjvJP1Vhw+fStHSzQgSz24fb
-        Cc29rSuDJXWhsO4SVE+LlE3MIoNoZql+acI1f0w=
-X-Google-Smtp-Source: ABdhPJwjNlumshOU8sJpy5b6AmixesbDszpsp3s4txDDHRk0s0vOTCEHQ8DLGZh2KLjm0o4iLNphBA==
-X-Received: by 2002:a19:6f0b:: with SMTP id k11mr21014357lfc.401.1625769274373;
-        Thu, 08 Jul 2021 11:34:34 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id f23sm316716ljn.98.2021.07.08.11.34.33
-        for <linux-fsdevel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6S7YAMaQ5hfgByK0Q7Ny9TcwwQexuIxF/Xc0CIcaWLA=;
+        b=fz5cgwIERCGdRtn0Wy9y37sZ4b6WOUC7NS2CRwwqRTzwdwwJ87ag4Ulo8emR+/HqR5
+         c6uv9Zr6KgH4yFYv5o1z8hLbnT50VpjVX+0eGJwFSZkVaLTYIE+SNbi9dOkSAc5PMFQY
+         8itGBryqnz3/qU0cYb9pCDpSLzUiTVXgsPgz+bXIVC/xM6Z9TVQQoI8gkVm/BxODcWkD
+         leHA4weRLWJkD+WKvERSlXTSOxnTOn+Zxpnh8YelgnUb1vfwiKZgQ6cctbNck4uTf0p7
+         MDSviOUrh8ULVDoZbEey93Dd/GUmwgVMhY/ZQAVwlAJx9IodV99EXnzsZmXFv1HZ103B
+         sl4w==
+X-Gm-Message-State: AOAM532PhLy461tIaECVLHHtEn2a2WJS82EgFNkiydvWuIu1Y2+B+jfg
+        YU7KYgohVW4AQBpPCTNMESNEeQ==
+X-Google-Smtp-Source: ABdhPJzwWROlk8K1InwDLGCBXKS/2celn8lsHzD2mOOW7DMAqYUycHyX7FhjHXMYwvyTr+ThMW2w1Q==
+X-Received: by 2002:a05:6638:d93:: with SMTP id l19mr14887413jaj.46.1625772349716;
+        Thu, 08 Jul 2021 12:25:49 -0700 (PDT)
+Received: from [192.168.1.134] ([198.8.77.61])
+        by smtp.gmail.com with ESMTPSA id p8sm1541773iln.83.2021.07.08.12.25.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jul 2021 11:34:34 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id a18so3934033ljk.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jul 2021 11:34:33 -0700 (PDT)
-X-Received: by 2002:a2e:9c58:: with SMTP id t24mr24720298ljj.411.1625769273393;
- Thu, 08 Jul 2021 11:34:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210708063447.3556403-1-dkadashev@gmail.com>
-In-Reply-To: <20210708063447.3556403-1-dkadashev@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 8 Jul 2021 11:34:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
-Message-ID: <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
+        Thu, 08 Jul 2021 12:25:49 -0700 (PDT)
 Subject: Re: [PATCH v9 00/11] io_uring: add mkdir and [sym]linkat support
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20210708063447.3556403-1-dkadashev@gmail.com>
+ <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <cbddca99-d9b1-d545-e2eb-a243ce38270b@kernel.dk>
+Date:   Thu, 8 Jul 2021 13:25:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 7, 2021 at 11:35 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
->
-> v9:
-> - reorder commits to keep io_uring ones nicely grouped at the end
-> - change 'fs:' to 'namei:' in related commit subjects, since this is
->   what seems to be usually used in such cases
+On 7/8/21 12:34 PM, Linus Torvalds wrote:
+> On Wed, Jul 7, 2021 at 11:35 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+>>
+>> v9:
+>> - reorder commits to keep io_uring ones nicely grouped at the end
+>> - change 'fs:' to 'namei:' in related commit subjects, since this is
+>>   what seems to be usually used in such cases
+> 
+> Ok, ack from me on this series, and as far as I'm concerned it can go
+> through the io_uring branch.
 
-Ok, ack from me on this series, and as far as I'm concerned it can go
-through the io_uring branch.
+I'll queue it up in a separate branch. I'm assuming we're talking 5.15
+at this point.
 
-Al, please holler if you have any concerns.
+> Al, please holler if you have any concerns.
 
-I do see a few cleanups - the ones I've already mentioned to try to
-remove some of the goto spaghetti, and I think we end up with just two
-users of filename_create(), and we might just make those convert to
-the new world order, and get rid of the __filename_create() vs
-filename_creat() distinction.
+Indeed.
 
-But those cleanups might as well be left for later, so I don't think
-that needs to hold the series up.
+-- 
+Jens Axboe
 
-Al - one last chance to speak up..
-
-           Linus
