@@ -2,95 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC2E3C19C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 21:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0AE73C1BCD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 01:16:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230191AbhGHT2e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jul 2021 15:28:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59338 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbhGHT2d (ORCPT
+        id S230508AbhGHXT3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jul 2021 19:19:29 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:52532 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229631AbhGHXT3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jul 2021 15:28:33 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CBE2C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jul 2021 12:25:50 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id g22so9652339iom.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jul 2021 12:25:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6S7YAMaQ5hfgByK0Q7Ny9TcwwQexuIxF/Xc0CIcaWLA=;
-        b=Ry4SqUX9x7mHYKMfgGodpI0I3kZbGYMpXAFQYKMRCRxS7maDwMC5Ge1QxXI+vaVQ8e
-         aFGJBj4sdBl4t7fyHgOxy9617DiPMW6hF92k1YlsGdINHrfZy39iZplY3KUT/EJTLWIo
-         B8292tosNeCRuJnDfdWRiqfCw7kNAVna5QTDbfMRVhyXuXseL0ZXQuRQhdN+/NuxYhQx
-         yW24yHr3x3w3Y4+BeeutYB0XZOERGvoNaj9SBZaWT3W4Vb5gEeGa2B8UkAX9ZYkKt/Qz
-         phQduBU6lSt2+8PAgG+BnoiNp+38wWnfmeq80hri1/6bqJcAMKGGR5F5BaTYGQQ+BPSE
-         Ae/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6S7YAMaQ5hfgByK0Q7Ny9TcwwQexuIxF/Xc0CIcaWLA=;
-        b=fz5cgwIERCGdRtn0Wy9y37sZ4b6WOUC7NS2CRwwqRTzwdwwJ87ag4Ulo8emR+/HqR5
-         c6uv9Zr6KgH4yFYv5o1z8hLbnT50VpjVX+0eGJwFSZkVaLTYIE+SNbi9dOkSAc5PMFQY
-         8itGBryqnz3/qU0cYb9pCDpSLzUiTVXgsPgz+bXIVC/xM6Z9TVQQoI8gkVm/BxODcWkD
-         leHA4weRLWJkD+WKvERSlXTSOxnTOn+Zxpnh8YelgnUb1vfwiKZgQ6cctbNck4uTf0p7
-         MDSviOUrh8ULVDoZbEey93Dd/GUmwgVMhY/ZQAVwlAJx9IodV99EXnzsZmXFv1HZ103B
-         sl4w==
-X-Gm-Message-State: AOAM532PhLy461tIaECVLHHtEn2a2WJS82EgFNkiydvWuIu1Y2+B+jfg
-        YU7KYgohVW4AQBpPCTNMESNEeQ==
-X-Google-Smtp-Source: ABdhPJzwWROlk8K1InwDLGCBXKS/2celn8lsHzD2mOOW7DMAqYUycHyX7FhjHXMYwvyTr+ThMW2w1Q==
-X-Received: by 2002:a05:6638:d93:: with SMTP id l19mr14887413jaj.46.1625772349716;
-        Thu, 08 Jul 2021 12:25:49 -0700 (PDT)
-Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id p8sm1541773iln.83.2021.07.08.12.25.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jul 2021 12:25:49 -0700 (PDT)
-Subject: Re: [PATCH v9 00/11] io_uring: add mkdir and [sym]linkat support
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-References: <20210708063447.3556403-1-dkadashev@gmail.com>
- <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cbddca99-d9b1-d545-e2eb-a243ce38270b@kernel.dk>
-Date:   Thu, 8 Jul 2021 13:25:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 8 Jul 2021 19:19:29 -0400
+Received: from dread.disaster.area (pa49-181-34-10.pa.nsw.optusnet.com.au [49.181.34.10])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 077191044DD7;
+        Fri,  9 Jul 2021 09:16:42 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1m1dG5-004Kod-Un; Fri, 09 Jul 2021 09:16:41 +1000
+Date:   Fri, 9 Jul 2021 09:16:41 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "willy@infradead.org" <willy@infradead.org>
+Subject: Re: [PATCH v6.1 6/7] fs/xfs: Handle CoW for fsdax write() path
+Message-ID: <20210708231641.GQ664593@dread.disaster.area>
+References: <OSBPR01MB2920A2BCD568364C1363AFA6F4369@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <20210615072147.73852-1-ruansy.fnst@fujitsu.com>
+ <OSBPR01MB2920D2D275EB0DB15C37D079F4079@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <20210625221855.GG13784@locust>
+ <OSBPR01MB2920922639112230407000E9F4039@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <20210628050919.GL13784@locust>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210628050919.GL13784@locust>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0
+        a=hdaoRb6WoHYrV466vVKEyw==:117 a=hdaoRb6WoHYrV466vVKEyw==:17
+        a=kj9zAlcOel0A:10 a=e_q4qTt1xDgA:10 a=7-415B0cAAAA:8
+        a=_EmLEX5E1_FSfXe-uIgA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/8/21 12:34 PM, Linus Torvalds wrote:
-> On Wed, Jul 7, 2021 at 11:35 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
->>
->> v9:
->> - reorder commits to keep io_uring ones nicely grouped at the end
->> - change 'fs:' to 'namei:' in related commit subjects, since this is
->>   what seems to be usually used in such cases
+On Sun, Jun 27, 2021 at 10:09:19PM -0700, Darrick J. Wong wrote:
+> > > I had imagined that you'd create a struct dax_iomap_ops to wrap all the extra
+> > > functionality that you need for dax operations:
+> > > 
+> > > struct dax_iomap_ops {
+> > > 	struct iomap_ops	iomap_ops;
+> > > 
+> > > 	int			(*end_io)(inode, pos, length...);
+> > > };
+> > > 
+> > > And alter the four functions that you need to take the special dax_iomap_ops.
+> > > I guess the downside is that this makes iomap_truncate_page and
+> > > iomap_zero_range more complicated, but maybe it's just time to split those into
+> > > DAX-specific versions.  Then we'd be rid of the cross-links betwee
+> > > fs/iomap/buffered-io.c and fs/dax.c.
+> > 
+> > This seems to be a better solution.  I'll try in this way.  Thanks for your guidance.
 > 
-> Ok, ack from me on this series, and as far as I'm concerned it can go
-> through the io_uring branch.
+> I started writing on Friday a patchset to apply this style cleanup both
+> to the directio and dax paths.  The cleanups were pretty straightforward
+> until I started reading the dax code paths again and realized that file
+> writes still have the weird behavior of mapping extents into a file,
+> zeroing them, then issuing the actual write to the extent.  IOWs, a
+> double-write to avoid exposing stale contents if crash.
+> 
+> Apparently the reason for this was that dax (at least 6 years ago) had
+> no concept paralleling the page lock, so it was necessary to do that to
+> avoid page fault handlers racing to map pfns into the file mapping?
+> That would seem to prevent us from doing the more standard behavior of
+> allocate unwritten, write data, convert mapping... but is that still the
+> case?  Or can we get rid of this bad quirk?
 
-I'll queue it up in a separate branch. I'm assuming we're talking 5.15
-at this point.
+Yeah, so that was the deciding factor in getting rid of unwritten
+extent allocation in DAX similar to the DIO path. However, we were
+already considering getting rid of it for another reason: write
+performance.
 
-> Al, please holler if you have any concerns.
+That is, doing two extent tree manipulation transactions per write
+is way more expensive than the double memory write for small IOs.
+IIRC, for small writes (4kB) the double memroy write version we now
+have was 2-3x faster than the {unwritten allocation, write, convert}
+algorithm we had originally.
 
-Indeed.
+I don't think we want to go back to the unwritten allocation
+behaviour - it sucked when it was first done because all DAX write
+IO is synchronous, and it will still suck now because DAX writes are
+still synchronous. What we really want to do here is copy the data
+into the new extent before we commit the allocation transaction....
 
+Cheers,
+
+Dave.
 -- 
-Jens Axboe
-
+Dave Chinner
+david@fromorbit.com
