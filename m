@@ -2,157 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1617B3BF8B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 13:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F4813BF8F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 13:26:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231574AbhGHLMh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jul 2021 07:12:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231522AbhGHLMh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jul 2021 07:12:37 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB7EC061574;
-        Thu,  8 Jul 2021 04:09:55 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id w1so4232771ilg.10;
-        Thu, 08 Jul 2021 04:09:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zfAXaVLlEDvAAyz5Va+Gv8wCd6VdqhbJnOTraHfxGSM=;
-        b=OttF/ZqTd3lL0V2CNP7dtfclx4RaVpCmyDLYlcbxEq4J4qeBbnZO2zbgSJ6YRh22Kq
-         2TZphATVXukLb6zTJqNpFmgbGkVOboz88NRl0aadLg++EXeT9mUVMn8DGnvzh226ucNj
-         6vofSop9pLNKMHrb5p0OPMGl4AEfw4jxeTuAOhO0099Em+4HfBfLDN/gtligOlEGe/dF
-         Dx/GbCjCfRZnrrxs/MK+0+38+GtC6XA354bGLLi1uKR28Sm8jPGQUYfjfSnr9idXF/X7
-         0bGTzuFH2IU5JAeU7yAGP+ulyprb58S2RS+IgqAxfS54SJKoLlS9yxSV16DwXx+LeJKH
-         9uSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zfAXaVLlEDvAAyz5Va+Gv8wCd6VdqhbJnOTraHfxGSM=;
-        b=iMpDRHUZcMKYTPUozKqWuSbXZR4VL0UNnlDsJqWSif9fEqDzamR+5WGzjgOrfGmxVo
-         d5qTEmO7m96H8sIQnC/q74T1Jli/th4Tkk9EBj2uVmkzl3oeYLlfGj6hq13gDVCXl8Yk
-         92XM8Jb1TvRgq2w0GUFbYpoAxLy+Kp/Ol+ovpz8s1mnetArJmxioldYpUzWwWOkS97TU
-         ds9YDoQ6SpGWGzHRvNighx/ipEXVgbM3dYimfrBisR+vwx2hSFjiu9tX7B4tMpdBQNxJ
-         p/gqnRWHX85cewhN2wIaxAQYKa54AQ+N2rS4MGS18bfSeWG01/3M5FkOme4FDTjjRkEk
-         43dQ==
-X-Gm-Message-State: AOAM530j2/4LJfoHUqX9XMwy5HjL/NgTo9tN0d8lLb+L2ejSCdCzPsX4
-        3k1CvLHB8kJJ6ebIyyksEat3QvGQZOfbNs3/K6s=
-X-Google-Smtp-Source: ABdhPJwsJ7POncmJV1ftt16cscxO6V9Ki3Y2ukfc69NS/cvFAVPDA6FKKGSSn28H50+D42SXs876CsdPnpWp6JNv8LM=
-X-Received: by 2002:a05:6e02:1074:: with SMTP id q20mr5546458ilj.137.1625742594528;
- Thu, 08 Jul 2021 04:09:54 -0700 (PDT)
+        id S231779AbhGHL3J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jul 2021 07:29:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36908 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231764AbhGHL2y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Jul 2021 07:28:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B803C6141E;
+        Thu,  8 Jul 2021 11:26:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625743573;
+        bh=xAx1YGMu4YepmaoVRDQ4NU8vgJe/tqaV87Kx3kL9RSU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=TDzWm+rfaN0AF+41PeDd4P9lsPTkz8RMcnVajrc8LcMLs7tgDUoYAfkRID/QE7BtL
+         Qw5xQ1zUha0+KxJ4dZ+Sdz4yei5VRJQdcurc5ns/2vqk6pI0c5nwymg8kMF7h430gX
+         fAET0TWeN6i8g1zEYGyWay8CbUEOBtTI9xAXxs1+tBaq0Gy6AGF8wSJve9nUs4NzoH
+         uqN40sKwnN/QKbdIk5GGuAsIqbrFYtm4SRWoDYYXkY0VR+L5Pq9ByNPEiDe5o0TuB3
+         qh/a++n3dch65u/ABwU4nIcBULkONM7bqH54nhLOBzA4q4W/3ctAdEU8zqSHjk8MvK
+         /27JPR6qUQkIw==
+Message-ID: <63ed309073c0d57cdb1a02ea43c566fd3d4116b9.camel@kernel.org>
+Subject: Re: [RFC PATCH v7 12/24] ceph: add fscrypt ioctls
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
+Cc:     lhenriques@suse.de, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, dhowells@redhat.com
+Date:   Thu, 08 Jul 2021 07:26:11 -0400
+In-Reply-To: <912b5949-ae85-f093-0f23-0650aad606fc@redhat.com>
+References: <20210625135834.12934-1-jlayton@kernel.org>
+         <20210625135834.12934-13-jlayton@kernel.org>
+         <912b5949-ae85-f093-0f23-0650aad606fc@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-References: <20210629191035.681913-1-krisman@collabora.com>
- <20210629191035.681913-8-krisman@collabora.com> <20210708104307.GA1656@quack2.suse.cz>
-In-Reply-To: <20210708104307.GA1656@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 8 Jul 2021 14:09:43 +0300
-Message-ID: <CAOQ4uxh2_vEiaPy1PQ-++Lpze90uUfNh6ymkE-SMYMVuN5_F1w@mail.gmail.com>
-Subject: Re: [PATCH v3 07/15] fsnotify: pass arguments of fsnotify() in struct fsnotify_event_info
-To:     Jan Kara <jack@suse.cz>
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 8, 2021 at 1:43 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 29-06-21 15:10:27, Gabriel Krisman Bertazi wrote:
-> > From: Amir Goldstein <amir73il@gmail.com>
-> >
-> > There are a lot of arguments to fsnotify() and the handle_event() method.
-> > Pass them in a const struct instead of on the argument list.
-> >
-> > Apart from being more tidy, this helps with passing error reports to the
-> > backend.  __fsnotify_parent() argument list was intentionally left
-> > untouched, because its argument list is still short enough and because
-> > most of the event info arguments are initialized inside
-> > __fsnotify_parent().
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+On Thu, 2021-07-08 at 15:30 +0800, Xiubo Li wrote:
+> On 6/25/21 9:58 PM, Jeff Layton wrote:
+> > We gate most of the ioctls on MDS feature support. The exception is the
+> > key removal and status functions that we still want to work if the MDS's
+> > were to (inexplicably) lose the feature.
+> > 
+> > For the set_policy ioctl, we take Fcx caps to ensure that nothing can
+> > create files in the directory while the ioctl is running. That should
+> > be enough to ensure that the "empty_dir" check is reliable.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > > ---
-> >  fs/notify/fanotify/fanotify.c    | 59 +++++++++++------------
-> >  fs/notify/fsnotify.c             | 83 +++++++++++++++++---------------
-> >  include/linux/fsnotify.h         | 15 ++++--
-> >  include/linux/fsnotify_backend.h | 73 +++++++++++++++++++++-------
-> >  4 files changed, 140 insertions(+), 90 deletions(-)
->
-> Besides the noop function issue Amir has already pointed out I have just a
-> few nits:
->
-> > @@ -229,7 +229,11 @@ int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
-> >       }
-> >
-> >  notify:
-> > -     ret = fsnotify(mask, data, data_type, p_inode, file_name, inode, 0);
-> > +     ret = __fsnotify(mask, &(struct fsnotify_event_info) {
-> > +                             .data = data, .data_type = data_type,
-> > +                             .dir = p_inode, .name = file_name,
-> > +                             .inode = inode,
-> > +                             });
->
-> What's the advantage of using __fsnotify() here instead of fsnotify()? In
-> terms of readability the fewer places with these initializers the better
-> I'd say...
->
-> >  static int fsnotify_handle_event(struct fsnotify_group *group, __u32 mask,
-> > -                              const void *data, int data_type,
-> > -                              struct inode *dir, const struct qstr *name,
-> > -                              u32 cookie, struct fsnotify_iter_info *iter_info)
-> > +                              const struct fsnotify_event_info *event_info,
-> > +                              struct fsnotify_iter_info *iter_info)
-> >  {
-> >       struct fsnotify_mark *inode_mark = fsnotify_iter_inode_mark(iter_info);
-> >       struct fsnotify_mark *parent_mark = fsnotify_iter_parent_mark(iter_info);
-> > +     struct fsnotify_event_info child_event_info = { };
-> >       int ret;
->
-> No need to init child_event_info. It is fully rewritten if it gets used...
->
-> > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> > index f8acddcf54fb..8c2c681b4495 100644
-> > --- a/include/linux/fsnotify.h
-> > +++ b/include/linux/fsnotify.h
-> > @@ -30,7 +30,10 @@ static inline void fsnotify_name(struct inode *dir, __u32 mask,
-> >                                struct inode *child,
-> >                                const struct qstr *name, u32 cookie)
-> >  {
-> > -     fsnotify(mask, child, FSNOTIFY_EVENT_INODE, dir, name, NULL, cookie);
-> > +     __fsnotify(mask, &(struct fsnotify_event_info) {
-> > +                     .data = child, .data_type = FSNOTIFY_EVENT_INODE,
-> > +                     .dir = dir, .name = name, .cookie = cookie,
-> > +                     });
-> >  }
->
-> Hmm, maybe we could have a macro initializer like:
->
-> #define FSNOTIFY_EVENT_INFO(data, data_type, dir, name, inode, cookie)  \
->         (struct fsnotify_event_info) {                                  \
->                 .data = (data), .data_type = (data_type), .dir = (dir), \
->                 .name = (name), .inode = (inode), .cookie = (cookie)}
->
-> Then we'd have:
->         __fsnotify(mask, &FSNOTIFY_EVENT_INFO(child, FSNOTIFY_EVENT_INODE,
->                                 dir, name, NULL, cookie));
->
-> Which looks a bit nicer to me. What do you think guys?
->
+> >   fs/ceph/ioctl.c | 83 +++++++++++++++++++++++++++++++++++++++++++++++++
+> >   1 file changed, 83 insertions(+)
+> > 
+> > diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+> > index 6e061bf62ad4..477ecc667aee 100644
+> > --- a/fs/ceph/ioctl.c
+> > +++ b/fs/ceph/ioctl.c
+> > @@ -6,6 +6,7 @@
+> >   #include "mds_client.h"
+> >   #include "ioctl.h"
+> >   #include <linux/ceph/striper.h>
+> > +#include <linux/fscrypt.h>
+> >   
+> >   /*
+> >    * ioctls
+> > @@ -268,8 +269,54 @@ static long ceph_ioctl_syncio(struct file *file)
+> >   	return 0;
+> >   }
+> >   
+> > +static int vet_mds_for_fscrypt(struct file *file)
+> > +{
+> > +	int i, ret = -EOPNOTSUPP;
+> > +	struct ceph_mds_client	*mdsc = ceph_sb_to_mdsc(file_inode(file)->i_sb);
+> > +
+> > +	mutex_lock(&mdsc->mutex);
+> > +	for (i = 0; i < mdsc->max_sessions; i++) {
+> > +		struct ceph_mds_session *s = mdsc->sessions[i];
+> > +
+> > +		if (!s)
+> > +			continue;
+> > +		if (test_bit(CEPHFS_FEATURE_ALTERNATE_NAME, &s->s_features))
+> > +			ret = 0;
+> > +		break;
+> > +	}
+> > +	mutex_unlock(&mdsc->mutex);
+> > +	return ret;
+> > +}
+> > +
+> > +static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
+> > +{
+> > +	int ret, got = 0;
+> > +	struct inode *inode = file_inode(file);
+> > +	struct ceph_inode_info *ci = ceph_inode(inode);
+> > +
+> > +	ret = vet_mds_for_fscrypt(file);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/*
+> > +	 * Ensure we hold these caps so that we _know_ that the rstats check
+> > +	 * in the empty_dir check is reliable.
+> > +	 */
+> > +	ret = ceph_get_caps(file, CEPH_CAP_FILE_SHARED, 0, -1, &got);
+> 
+> In the commit comment said it will host the Fsx, but here it is only 
+> trying to hold the Fs. Will the Fx really needed ?
+> 
 
-Sure, looks good.
-But I think it would be even better to have different "wrapper defines" like
-FSNOTIFY_NAME_EVENT_INFO() will less irrelevant arguments.
+No. What we're interested in here is that the directory remains empty
+while we're encrypting it. If we hold Fs caps, then no one else can
+modify the directory, so this is enough to ensure that.
 
-Thanks,
-Amir.
+> 
+> 
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = fscrypt_ioctl_set_policy(file, (const void __user *)arg);
+> > +	if (got)
+> > +		ceph_put_cap_refs(ci, got);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >   long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> >   {
+> > +	int ret;
+> > +
+> >   	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
+> >   	switch (cmd) {
+> >   	case CEPH_IOC_GET_LAYOUT:
+> > @@ -289,6 +336,42 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> >   
+> >   	case CEPH_IOC_SYNCIO:
+> >   		return ceph_ioctl_syncio(file);
+> > +
+> > +	case FS_IOC_SET_ENCRYPTION_POLICY:
+> > +		return ceph_set_encryption_policy(file, arg);
+> > +
+> > +	case FS_IOC_GET_ENCRYPTION_POLICY:
+> > +		ret = vet_mds_for_fscrypt(file);
+> > +		if (ret)
+> > +			return ret;
+> > +		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
+> > +
+> > +	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
+> > +		ret = vet_mds_for_fscrypt(file);
+> > +		if (ret)
+> > +			return ret;
+> > +		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
+> > +
+> > +	case FS_IOC_ADD_ENCRYPTION_KEY:
+> > +		ret = vet_mds_for_fscrypt(file);
+> > +		if (ret)
+> > +			return ret;
+> > +		return fscrypt_ioctl_add_key(file, (void __user *)arg);
+> > +
+> > +	case FS_IOC_REMOVE_ENCRYPTION_KEY:
+> > +		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
+> > +
+> > +	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
+> > +		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
+> > +
+> > +	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
+> > +		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
+> > +
+> > +	case FS_IOC_GET_ENCRYPTION_NONCE:
+> > +		ret = vet_mds_for_fscrypt(file);
+> > +		if (ret)
+> > +			return ret;
+> > +		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
+> >   	}
+> >   
+> >   	return -ENOTTY;
+> 
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
