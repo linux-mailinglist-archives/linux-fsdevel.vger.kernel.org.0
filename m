@@ -2,147 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A0043C1738
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 18:43:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8392C3C18C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jul 2021 20:00:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbhGHQpp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jul 2021 12:45:45 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:53866 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbhGHQpo (ORCPT
+        id S230115AbhGHSDH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jul 2021 14:03:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:29435 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229842AbhGHSDD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jul 2021 12:45:44 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 0547922171;
-        Thu,  8 Jul 2021 16:43:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1625762582; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=no7T263x2p7KR8vDwP0iS2RVpaZtN46cYVsdxB2U64w=;
-        b=KMFO8GjgJWHlQ6KKphAP8qHGpiaId1K9k5BtD9WuY9K4592J7WR36qtRlewyPY7O9CKgg/
-        7sW+ntdNOySOiG7jZBva15JAfbY8brvgRWfpLziDJwnawbhVV2p+D6ohxP8cQ/3iR1lzka
-        orZyvFsVa5fZJtL0V9Ds3A0asaElDwo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1625762582;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=no7T263x2p7KR8vDwP0iS2RVpaZtN46cYVsdxB2U64w=;
-        b=68G6CrjSGz2U0JPSDHHMejaBUm598V/Ferref4jJZ4u/yZMcbVo+hLnSbeF2uL/i5GiCVV
-        nJHDshYyGMCjLIDQ==
-Received: from quack2.suse.cz (unknown [10.163.43.118])
-        by relay2.suse.de (Postfix) with ESMTP id B34BCA3B8B;
-        Thu,  8 Jul 2021 16:43:01 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 8CE1A1E62E4; Thu,  8 Jul 2021 18:43:01 +0200 (CEST)
-Date:   Thu, 8 Jul 2021 18:43:01 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org,
-        Michael Stapelberg <stapelberg+linux@google.com>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 3/5] writeback: Fix bandwidth estimate for spiky workload
-Message-ID: <20210708164301.GA11179@quack2.suse.cz>
-References: <20210705161610.19406-1-jack@suse.cz>
- <20210707074017.2195-1-hdanton@sina.com>
- <20210708121751.327-1-hdanton@sina.com>
+        Thu, 8 Jul 2021 14:03:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625767221;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=18KcAbQHHQOnGgyLTPniNq5bLdf4iPeZS1lA1UFZF18=;
+        b=Nma7ybUC7uMUDoynrurZxQD3nxZkLOS5C/MXdvX51owxKjkFtET9w5VNk9tdIe82kGGsF8
+        hO2MJS8H8Ru/JjOn819u1AhmlVIZu5N9EwQlnKVkXk0Xa4i361rG3P8FMdcNhgge7OyO+G
+        A39ddpqNBh52uanPmrJOizTX4IxkcWA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-394-fuS_scvrM2uTDXA43gZdNg-1; Thu, 08 Jul 2021 14:00:17 -0400
+X-MC-Unique: fuS_scvrM2uTDXA43gZdNg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3690F1B18BC0;
+        Thu,  8 Jul 2021 18:00:16 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-175.rdu2.redhat.com [10.10.114.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5AAB91383B;
+        Thu,  8 Jul 2021 18:00:10 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 9AE5E22054F; Thu,  8 Jul 2021 14:00:09 -0400 (EDT)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk
+Cc:     virtio-fs@redhat.com, dwalsh@redhat.com, dgilbert@redhat.com,
+        vgoyal@redhat.com, christian.brauner@ubuntu.com,
+        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, tytso@mit.edu, miklos@szeredi.hu,
+        gscrivan@redhat.com, jack@suse.cz
+Subject: [RFC PATCH v2 0/1] Relax restrictions on user.* xattr
+Date:   Thu,  8 Jul 2021 13:57:37 -0400
+Message-Id: <20210708175738.360757-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210708121751.327-1-hdanton@sina.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 08-07-21 20:17:51, Hillf Danton wrote:
-> On Wed, 7 Jul 2021 11:51:38 +0200 Jan Kara wrote:
-> >On Wed 07-07-21 15:40:17, Hillf Danton wrote:
-> >> On Mon,  5 Jul 2021 18:23:17 +0200 Jan Kara wrote:
-> >> >
-> >> >Michael Stapelberg has reported that for workload with short big spikes
-> >> >of writes (GCC linker seem to trigger this frequently) the write
-> >> >throughput is heavily underestimated and tends to steadily sink until it
-> >> >reaches zero. This has rather bad impact on writeback throttling
-> >> >(causing stalls). The problem is that writeback throughput estimate gets
-> >> >updated at most once per 200 ms. One update happens early after we
-> >> >submit pages for writeback (at that point writeout of only small
-> >> >fraction of pages is completed and thus observed throughput is tiny).
-> >> >Next update happens only during the next write spike (updates happen
-> >> >only from inode writeback and dirty throttling code) and if that is
-> >> >more than 1s after previous spike, we decide system was idle and just
-> >> >ignore whatever was written until this moment.
-> >> >
-> >> >Fix the problem by making sure writeback throughput estimate is also
-> >> >updated shortly after writeback completes to get reasonable estimate of
-> >> >throughput for spiky workloads.
-> >> >
-> >> >Link: https://lore.kernel.org/lkml/20210617095309.3542373-1-stapelberg+li>nux@google.com
-> >> >Reported-by: Michael Stapelberg <stapelberg+linux@google.com>
-> >> >Signed-off-by: Jan Kara <jack@suse.cz>
-> >...
-> >> >diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> >> >index 1fecf8ebadb0..6a99ddca95c0 100644
-> >> >--- a/mm/page-writeback.c
-> >> >+++ b/mm/page-writeback.c
-> >> >@@ -1346,14 +1346,7 @@ static void __wb_update_bandwidth(struct dirty_thr>ottle_control *gdtc,
-> >> > 	unsigned long dirtied;
-> >> > 	unsigned long written;
-> >> >
-> >> >-	lockdep_assert_held(&wb->list_lock);
-> >> >-
-> >> >-	/*
-> >> >-	 * rate-limit, only update once every 200ms.
-> >> >-	 */
-> >> >-	if (elapsed < BANDWIDTH_INTERVAL)
-> >> >-		return;
-> >> 
-> >> Please leave it as it is if you are not dumping the 200ms rule.
-> >
-> >Well, that could break the delayed updated scheduled after the end of
-> >writeback and for no good reason. The problematic ordering is like:
-> 
-> After another look at 2/5, you are cutting the rule, which is worth a
-> seperate patch.
+Hi,
 
-The only update that can break the 200ms rule are the updates added in this
-patch. I don't think separating the removal of 200ms check for that one
-case really brings much clarity. It would rather bring "what if questions"
-to this patch...
+This is V2 of the patch. Posted V1 here.
 
-> >end writeback on inode1
-> >  queue_delayed_work() - queues delayed work after BANDWIDTH_INTERVAL
-> >
-> >__wb_update_bandwidth() called e.g. from balance_dirty_pages()
-> >  wb->bw_time_stamp = now;
-> >
-> >end writeback on inode2
-> >  queue_delayed_work() - does nothing since work is already queued
-> >
-> >delayed work calls __wb_update_bandwidth() - nothing is done since elapsed
-> >< BANDWIDTH_INTERVAL and we may thus miss reflecting writeback of inode2 in
-> >our estimates.
-> 
-> Your example says the estimate based on inode2 is torpedoed by a random
-> update, and you are looking to make that estimate meaningful at the cost
-> of breaking the rule - how differet is it to the current one if the
-> estimate is derived from 20ms-elapsed interval at inode2? Is it likely to
-> see another palpablely different result at inode3 from 50ms-elapsed interval?
+https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
 
-I'm not sure I understand your question correctly but updates after shorter
-than 200ms interval should not disturb the estimates much.
-wb_update_write_bandwidth() effectively uses formula:
+Right now we don't allow setting user.* xattrs on symlinks and special
+files at all. Initially I thought that real reason behind this
+restriction is quota limitations but from last conversation it seemed
+that real reason is that permission bits on symlink and special files
+are special and different from regular files and directories, hence
+this restriction is in place.
 
-	bandwidth = (written + bandwidth * (period - elapsed)) / period
+Given it probably is not a quota issue (I tested with xfs user quota
+enabled and quota restrictions kicked in on symlink), I dropped the
+idea of allowing user.* xattr if process has CAP_SYS_RESOURCE.
 
-where 'period' is 3 seconds. So we compute average bandwidth over last 3
-seconds where amount written in 'elapsed' interval is 'written' pages. If
-'elapsed' is small, the influence of current sample on reducing estimated
-bandwidth is going to be small as well.
+Instead this version of patch allows reading/writing user.* xattr
+on symlink and special files if caller is owner or priviliged (has
+CAP_FOWNER) w.r.t inode.
 
-								Honza
+We need this for virtiofs daemon. I also found one more user. Giuseppe,
+seems to set user.* xattr attrs on unpriviliged fuse-overlay as well
+and he ran into similar issue. So fuse-overlay should benefit from
+this change as well.
+
+Who wants to set user.* xattr on symlink/special files
+-----------------------------------------------------
+
+In virtiofs, actual file server is virtiosd daemon running on host.
+There we have a mode where xattrs can be remapped to something else.
+For example security.selinux can be remapped to
+user.virtiofsd.securit.selinux on the host.
+
+This remapping is useful when SELinux is enabled in guest and virtiofs
+as being used as rootfs. Guest and host SELinux policy might not match
+and host policy might deny security.selinux xattr setting by guest
+onto host. Or host might have SELinux disabled and in that case to
+be able to set security.selinux xattr, virtiofsd will need to have
+CAP_SYS_ADMIN (which we are trying to avoid). Being able to remap
+guest security.selinux (or other xattrs) on host to something else
+is also better from security point of view.
+
+But when we try this, we noticed that SELinux relabeling in guest
+is failing on some symlinks. When I debugged a little more, I 
+came to know that "user.*" xattrs are not allowed on symlinks
+or special files.
+
+So if we allow owner (or CAP_FOWNER) to set user.* xattr, it will
+allow virtiofs to arbitrarily remap guests's xattrs to something
+else on host and that solves this SELinux issue nicely and provides
+two SELinux policies (host and guest) to co-exist nicely without
+interfering with each other.
+
+Thanks
+Vivek
+
+
+Vivek Goyal (1):
+  xattr: Allow user.* xattr on symlink and special files
+
+ fs/xattr.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.4
+
