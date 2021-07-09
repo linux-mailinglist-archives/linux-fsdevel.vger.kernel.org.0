@@ -2,100 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C0A73C2158
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 11:19:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4D53C2290
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 13:07:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231771AbhGIJWF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jul 2021 05:22:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229559AbhGIJWF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jul 2021 05:22:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F17B613CC;
-        Fri,  9 Jul 2021 09:19:18 +0000 (UTC)
-Date:   Fri, 9 Jul 2021 11:19:15 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
-        dgilbert@redhat.com, casey.schaufler@intel.com,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
-        jack@suse.cz, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
- files
-Message-ID: <20210709091915.2bd4snyfjndexw2b@wittgenstein>
-References: <20210708175738.360757-1-vgoyal@redhat.com>
- <20210708175738.360757-2-vgoyal@redhat.com>
+        id S229779AbhGILKb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jul 2021 07:10:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:29118 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230180AbhGILKb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Jul 2021 07:10:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625828867;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xYve4Fb1ntFTWux0G1qTIZ2JxizD+hkq0PRHg0flbPs=;
+        b=ZCZWZCrWv1yAxCY9bHdyE8f85aLrt7cKyRoouPa1p0QuV0G+mATcgWkrLrPgQN0jODZwUk
+        ygV0ir5i2mFkpfshXQ6b/hSanmMiac6e2zm6deJnjPJ2EreWRPxjNtyvokLc37FhgVASOR
+        pldTzBME05yvBORKGlfBBVBVw2lco0U=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-596-GyF4vTlZPwWtCC76Rag3hg-1; Fri, 09 Jul 2021 07:07:46 -0400
+X-MC-Unique: GyF4vTlZPwWtCC76Rag3hg-1
+Received: by mail-wr1-f70.google.com with SMTP id i10-20020a5d55ca0000b029013b976502b6so1323099wrw.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jul 2021 04:07:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xYve4Fb1ntFTWux0G1qTIZ2JxizD+hkq0PRHg0flbPs=;
+        b=I5FiiblteoSudhAFrKYPY7E+qKNroAKaW30Q1Ltu9HlKpw7AKJUB2F7SeYrU8qVYxN
+         G5SvI+FWtob/avgLSftPW/Q552N7mlF24MfXJBmwSEkO4I45CuHksw4Pq0BD3Xx+umzA
+         mFAQOb7Og0d9lcRXHuaZQtwOWvi/Y5/Oihan4o9ObCUxTlZB9dDiLVZEXzDeMW25LEps
+         rr7f3dJyXcSlzlPTZWDpoByjuaaWBc4+xpy35rJs7rCewc7Etyong56uDabODTFAVibg
+         9pvplmGWUpZNZEz8+WSZfdMsDeV1w1OTV4jfPCw+HofYAgFJVvTSY5bMlG4osaSUp/f5
+         PMTA==
+X-Gm-Message-State: AOAM530FFFAQoX3ydCTjBP2hmvlySVZmJIsW8qq7Se0w1GJxTmou9Nwn
+        urRrRzAd6yCFHe79lNKlQUthwY3G5AoqBaLAiVov9RNzrV2L3NJQ0k2xk+W88zn0I1Lv1UVpWfQ
+        xQHuzXIQSwIiBW0XmngYLpNgEgNRbRV2VTa34B4HSrg==
+X-Received: by 2002:a5d:64e4:: with SMTP id g4mr34081966wri.377.1625828865437;
+        Fri, 09 Jul 2021 04:07:45 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxzZtBvY49sytJNLAgopkmB9OwR4IxiUX+hELjXilJXJ1NRRzW3Ct/VhrnDt5ViyteCotEe0E+oTQmh13qeHuc=
+X-Received: by 2002:a5d:64e4:: with SMTP id g4mr34081948wri.377.1625828865289;
+ Fri, 09 Jul 2021 04:07:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210708175738.360757-2-vgoyal@redhat.com>
+References: <20210707115524.2242151-1-agruenba@redhat.com> <20210707115524.2242151-4-agruenba@redhat.com>
+ <20210709042934.GV11588@locust>
+In-Reply-To: <20210709042934.GV11588@locust>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Fri, 9 Jul 2021 13:07:34 +0200
+Message-ID: <CAHc6FU5xLZvZ94XTxGeobZ7qebG+tsGd7qkJxnfpvF17YTUSbA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] iomap: Don't create iomap_page objects in iomap_page_mkwrite_actor
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 08, 2021 at 01:57:38PM -0400, Vivek Goyal wrote:
-> Currently user.* xattr are not allowed on symlink and special files.
-> 
-> man xattr and recent discussion suggested that primary reason for this
-> restriction is how file permissions for symlinks and special files
-> are little different from regular files and directories.
-> 
-> For symlinks, they are world readable/writable and if user xattr were
-> to be permitted, it will allow unpriviliged users to dump a huge amount
-> of user.* xattrs on symlinks without any control.
-> 
-> For special files, permissions typically control capability to read/write
-> from devices (and not necessarily from filesystem). So if a user can
-> write to device (/dev/null), does not necessarily mean it should be allowed
-> to write large number of user.* xattrs on the filesystem device node is
-> residing in.
-> 
-> This patch proposes to relax the restrictions a bit and allow file owner
-> or priviliged user (CAP_FOWNER), to be able to read/write user.* xattrs
-> on symlink and special files.
-> 
-> virtiofs daemon has a need to store user.* xatrrs on all the files
-> (including symlinks and special files), and currently that fails. This
-> patch should help.
-> 
-> Link: https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
+On Fri, Jul 9, 2021 at 6:29 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> On Wed, Jul 07, 2021 at 01:55:24PM +0200, Andreas Gruenbacher wrote:
+> > Now that we create those objects in iomap_writepage_map when needed,
+> > there's no need to pre-create them in iomap_page_mkwrite_actor anymore.
+> >
+> > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+>
+> I'd like to stage this series as a bugfix branch against -rc1 next week,
+> if there are no other objections?
 
-Seems reasonable and useful.
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Yes, that would help a lot, thanks.
 
-One question, do all filesystem supporting xattrs deal with setting them
-on symlinks/device files correctly?
+Andreas
 
->  fs/xattr.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 5c8c5175b385..2f1855c8b620 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -120,12 +120,14 @@ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
->  	}
->  
->  	/*
-> -	 * In the user.* namespace, only regular files and directories can have
-> -	 * extended attributes. For sticky directories, only the owner and
-> -	 * privileged users can write attributes.
-> +	 * In the user.* namespace, for symlinks and special files, only
-> +	 * the owner and priviliged users can read/write attributes.
-> +	 * For sticky directories, only the owner and privileged users can
-> +	 * write attributes.
->  	 */
->  	if (!strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN)) {
-> -		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
-> +		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode) &&
-> +		    !inode_owner_or_capable(mnt_userns, inode))
->  			return (mask & MAY_WRITE) ? -EPERM : -ENODATA;
->  		if (S_ISDIR(inode->i_mode) && (inode->i_mode & S_ISVTX) &&
->  		    (mask & MAY_WRITE) &&
-> -- 
-> 2.25.4
-> 
