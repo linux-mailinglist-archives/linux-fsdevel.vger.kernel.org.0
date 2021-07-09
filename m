@@ -2,146 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 908003C1D7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 04:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE1653C1E11
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 06:23:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230389AbhGICbP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jul 2021 22:31:15 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:36003 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230235AbhGICbO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jul 2021 22:31:14 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Uf9kTmr_1625797708;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Uf9kTmr_1625797708)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 09 Jul 2021 10:28:30 +0800
-Date:   Fri, 9 Jul 2021 10:28:27 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, nvdimm@lists.linux.dev,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Joseqh Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>
-Subject: Re: [RFC PATCH v1.1 2/2] erofs: dax support for non-tailpacking
- regular file
-Message-ID: <YOe0S+NKUrBi5YZC@B-P7TQMD6M-0146.local>
-Mail-Followup-To: "Darrick J. Wong" <djwong@kernel.org>,
-        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, nvdimm@lists.linux.dev,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Joseqh Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>
-References: <20210704135056.42723-3-hsiangkao@linux.alibaba.com>
- <20210705132153.223839-1-hsiangkao@linux.alibaba.com>
- <20210709014719.GD11634@locust>
+        id S229597AbhGIE03 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jul 2021 00:26:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45252 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229441AbhGIE03 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Jul 2021 00:26:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 305BC600CC;
+        Fri,  9 Jul 2021 04:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625804626;
+        bh=zYrYpFHh+ic5c2t7VCTpfDE8HIyIp+/BUqxPvGY2Cbo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KtCQFOQ9u0XYPxWT39weq7fdDimGEtFMBjAYLrmGy584OogHWqJPQejDlZoHhMV00
+         JLP3OWa1ZTUCWs5sgkGILugxppB1C7YvTv1kfDnyU57l+LkXcoG+mbYR+1kLrUVV51
+         eWmESLu8XC8mrDR0ItD2V/cyQSZBw2p6mex5z1i6W1sqZDrmqCaLs0Jt2EgGhJKG3y
+         7HXoaD5Tuk9XgGQk1O9AZq6DaCLAihJnXtH1EukCSj12M8hQhTVYGG4Zf3XH6f7CaB
+         z6eaWYUD+NByveiENSG+fmlIWjoJZrpzheiTu8yKTIuo9vV33VE4iJeGgo0dC5q5zp
+         vRBj3nArCQiOA==
+Date:   Thu, 8 Jul 2021 21:23:45 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cluster-devel@redhat.com, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v3 1/3] iomap: Permit pages without an iop to enter
+ writeback
+Message-ID: <20210709042345.GS11588@locust>
+References: <20210707115524.2242151-1-agruenba@redhat.com>
+ <20210707115524.2242151-2-agruenba@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210709014719.GD11634@locust>
+In-Reply-To: <20210707115524.2242151-2-agruenba@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Darrick,
-
-On Thu, Jul 08, 2021 at 06:47:19PM -0700, Darrick J. Wong wrote:
-> On Mon, Jul 05, 2021 at 09:21:53PM +0800, Gao Xiang wrote:
-
-...
-
-> >  	Opt_cache_strategy,
-> > +	Opt_dax,
-> >  	Opt_err
-> >  };
-> >  
-> > @@ -370,6 +372,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
-> >  	fsparam_flag_no("acl",		Opt_acl),
-> >  	fsparam_enum("cache_strategy",	Opt_cache_strategy,
-> >  		     erofs_param_cache_strategy),
-> > +	fsparam_flag("dax",             Opt_dax),
-> >  	{}
-> >  };
-> >  
-> > @@ -410,6 +413,14 @@ static int erofs_fc_parse_param(struct fs_context *fc,
-> >  		ctx->cache_strategy = result.uint_32;
-> >  #else
-> >  		errorfc(fc, "compression not supported, cache_strategy ignored");
-> > +#endif
-> > +		break;
-> > +	case Opt_dax:
-> > +#ifdef CONFIG_FS_DAX
-> > +		warnfc(fc, "DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
-> > +		set_opt(ctx, DAX);
+On Wed, Jul 07, 2021 at 01:55:22PM +0200, Andreas Gruenbacher wrote:
+> Create an iop in the writeback path if one doesn't exist.  This allows us
+> to avoid creating the iop in some cases.  We'll initially do that for pages
+> with inline data, but it can be extended to pages which are entirely within
+> an extent.  It also allows for an iop to be removed from pages in the
+> future (eg page split).
 > 
-> You might want to allow 'dax=always' and 'dax=never' to maintain parity
-> with xfs/ext4's mount options...
+> Co-developed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Yeah, thanks for your suggestion. Will revise in the next version..
+Seems simple enough...
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-(Also, more use case details and development status about this scenario
- will be shown in the following months...)
+--D
 
-Thanks,
-Gao Xiang
-
-
+> ---
+>  fs/iomap/buffered-io.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> --D
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 9023717c5188..598fcfabc337 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1334,14 +1334,13 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>  		struct writeback_control *wbc, struct inode *inode,
+>  		struct page *page, u64 end_offset)
+>  {
+> -	struct iomap_page *iop = to_iomap_page(page);
+> +	struct iomap_page *iop = iomap_page_create(inode, page);
+>  	struct iomap_ioend *ioend, *next;
+>  	unsigned len = i_blocksize(inode);
+>  	u64 file_offset; /* file offset of page */
+>  	int error = 0, count = 0, i;
+>  	LIST_HEAD(submit_list);
+>  
+> -	WARN_ON_ONCE(i_blocks_per_page(inode, page) > 1 && !iop);
+>  	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) != 0);
+>  
+>  	/*
+> -- 
+> 2.26.3
 > 
-> > +#else
-> > +		errorfc(fc, "dax options not supported");
-> >  #endif
-> >  		break;
-> >  	default:
-> > @@ -496,10 +507,17 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
-> >  		return -ENOMEM;
-> >  
-> >  	sb->s_fs_info = sbi;
-> > +	sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev);
-> >  	err = erofs_read_superblock(sb);
-> >  	if (err)
-> >  		return err;
-> >  
-> > +	if (test_opt(ctx, DAX) &&
-> > +	    !bdev_dax_supported(sb->s_bdev, EROFS_BLKSIZ)) {
-> > +		errorfc(fc, "DAX unsupported by block device. Turning off DAX.");
-> > +		clear_opt(ctx, DAX);
-> > +	}
-> > +
-> >  	sb->s_flags |= SB_RDONLY | SB_NOATIME;
-> >  	sb->s_maxbytes = MAX_LFS_FILESIZE;
-> >  	sb->s_time_gran = 1;
-> > @@ -609,6 +627,8 @@ static void erofs_kill_sb(struct super_block *sb)
-> >  	sbi = EROFS_SB(sb);
-> >  	if (!sbi)
-> >  		return;
-> > +	if (sbi->dax_dev)
-> > +		fs_put_dax(sbi->dax_dev);
-> >  	kfree(sbi);
-> >  	sb->s_fs_info = NULL;
-> >  }
-> > @@ -711,8 +731,8 @@ static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
-> >  
-> >  static int erofs_show_options(struct seq_file *seq, struct dentry *root)
-> >  {
-> > -	struct erofs_sb_info *sbi __maybe_unused = EROFS_SB(root->d_sb);
-> > -	struct erofs_fs_context *ctx __maybe_unused = &sbi->ctx;
-> > +	struct erofs_sb_info *sbi = EROFS_SB(root->d_sb);
-> > +	struct erofs_fs_context *ctx = &sbi->ctx;
-> >  
-> >  #ifdef CONFIG_EROFS_FS_XATTR
-> >  	if (test_opt(ctx, XATTR_USER))
-> > @@ -734,6 +754,8 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
-> >  	else if (ctx->cache_strategy == EROFS_ZIP_CACHE_READAROUND)
-> >  		seq_puts(seq, ",cache_strategy=readaround");
-> >  #endif
-> > +	if (test_opt(ctx, DAX))
-> > +		seq_puts(seq, ",dax");
-> >  	return 0;
-> >  }
-> >  
-> > -- 
-> > 2.24.4
-> > 
