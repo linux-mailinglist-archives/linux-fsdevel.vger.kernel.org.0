@@ -2,59 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DBBB3C1F45
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 08:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C0A73C2158
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 11:19:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbhGIGZy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jul 2021 02:25:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34384 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbhGIGZy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jul 2021 02:25:54 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32DA2C0613DD;
-        Thu,  8 Jul 2021 23:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=gcaPJR/4ZOOQGcy6fMULIQ4pZUsPloc0zoNnWdhQIOw=; b=v9bPUv83zCzPX6tc3JEJwNdxin
-        ttYdeUKkQUzZVjUkQXlel8M9xC0dtHbA1guI+qwE3QIVuK6FTJa3cH+W4qnKMkruUGLD78jaw62Gi
-        zzqJQkNVYJjES7iRxaQ2kXpNHal+QhPvUsBIT8yEbxWLe4FWN8PV6nt2nzMSfY4tMrY7LBcgp1Pfw
-        HCQsA8uDKhtJyILVeljz2+CY1ZsXewHCDtQxOzjwwYuLvSghzZd5JagG5rlC+UDo6uAHft9EE7OBS
-        5LMKn+XY6Qj8aYrPUYVcZUUdORF2IVh5R91GHAt0uqNIvtGG6pXT8gP2q8wNNz2AhR/WVBkiXhJnF
-        Dum2BYrQ==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m1juA-00EDYY-EJ; Fri, 09 Jul 2021 06:22:36 +0000
-Date:   Fri, 9 Jul 2021 07:22:30 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com
-Subject: Re: [PATCH v3 3/3] iomap: Don't create iomap_page objects in
- iomap_page_mkwrite_actor
-Message-ID: <YOfrJoqZVyB6F7Z1@infradead.org>
-References: <20210707115524.2242151-1-agruenba@redhat.com>
- <20210707115524.2242151-4-agruenba@redhat.com>
+        id S231771AbhGIJWF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jul 2021 05:22:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229559AbhGIJWF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Jul 2021 05:22:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F17B613CC;
+        Fri,  9 Jul 2021 09:19:18 +0000 (UTC)
+Date:   Fri, 9 Jul 2021 11:19:15 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
+        dgilbert@redhat.com, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
+        jack@suse.cz, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
+ files
+Message-ID: <20210709091915.2bd4snyfjndexw2b@wittgenstein>
+References: <20210708175738.360757-1-vgoyal@redhat.com>
+ <20210708175738.360757-2-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210707115524.2242151-4-agruenba@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20210708175738.360757-2-vgoyal@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 07, 2021 at 01:55:24PM +0200, Andreas Gruenbacher wrote:
-> Now that we create those objects in iomap_writepage_map when needed,
-> there's no need to pre-create them in iomap_page_mkwrite_actor anymore.
+On Thu, Jul 08, 2021 at 01:57:38PM -0400, Vivek Goyal wrote:
+> Currently user.* xattr are not allowed on symlink and special files.
 > 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> man xattr and recent discussion suggested that primary reason for this
+> restriction is how file permissions for symlinks and special files
+> are little different from regular files and directories.
+> 
+> For symlinks, they are world readable/writable and if user xattr were
+> to be permitted, it will allow unpriviliged users to dump a huge amount
+> of user.* xattrs on symlinks without any control.
+> 
+> For special files, permissions typically control capability to read/write
+> from devices (and not necessarily from filesystem). So if a user can
+> write to device (/dev/null), does not necessarily mean it should be allowed
+> to write large number of user.* xattrs on the filesystem device node is
+> residing in.
+> 
+> This patch proposes to relax the restrictions a bit and allow file owner
+> or priviliged user (CAP_FOWNER), to be able to read/write user.* xattrs
+> on symlink and special files.
+> 
+> virtiofs daemon has a need to store user.* xatrrs on all the files
+> (including symlinks and special files), and currently that fails. This
+> patch should help.
+> 
+> Link: https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
 
-Looks good,
+Seems reasonable and useful.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+One question, do all filesystem supporting xattrs deal with setting them
+on symlinks/device files correctly?
+
+>  fs/xattr.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 5c8c5175b385..2f1855c8b620 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -120,12 +120,14 @@ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
+>  	}
+>  
+>  	/*
+> -	 * In the user.* namespace, only regular files and directories can have
+> -	 * extended attributes. For sticky directories, only the owner and
+> -	 * privileged users can write attributes.
+> +	 * In the user.* namespace, for symlinks and special files, only
+> +	 * the owner and priviliged users can read/write attributes.
+> +	 * For sticky directories, only the owner and privileged users can
+> +	 * write attributes.
+>  	 */
+>  	if (!strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN)) {
+> -		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
+> +		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode) &&
+> +		    !inode_owner_or_capable(mnt_userns, inode))
+>  			return (mask & MAY_WRITE) ? -EPERM : -ENODATA;
+>  		if (S_ISDIR(inode->i_mode) && (inode->i_mode & S_ISVTX) &&
+>  		    (mask & MAY_WRITE) &&
+> -- 
+> 2.25.4
+> 
