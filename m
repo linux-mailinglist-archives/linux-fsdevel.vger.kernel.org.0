@@ -2,96 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4028B3C2334
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 13:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A243C233A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 14:02:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231137AbhGIMBY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jul 2021 08:01:24 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:60757 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230230AbhGIMBY (ORCPT
+        id S231137AbhGIMEm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jul 2021 08:04:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54500 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230209AbhGIMEm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jul 2021 08:01:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625831920;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FuFxCjGxNh1s//8/+rvZWuY1XbBWxr4LXzkXcXPHOes=;
-        b=aRcQvZpdVKV+UY7Dnc/6LW3X1zWkUtBtmIoxMzhySfkju8a5iew36H1bFUdgU2nih+TQA3
-        uvfFiTb01SipvqUZml+ioiUhkdwUzKVasIOKsEIvLzZXePck8PMn1gQxt29ykDZrtH8xix
-        W1Jx/Xptkjf1YbAvwAoOwvnQBLBQ0gE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-22-9zd5Z9DzMUeA_74Nhe8WoQ-1; Fri, 09 Jul 2021 07:58:39 -0400
-X-MC-Unique: 9zd5Z9DzMUeA_74Nhe8WoQ-1
-Received: by mail-wr1-f70.google.com with SMTP id l21-20020a0560000235b029013564642c78so2752870wrz.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jul 2021 04:58:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=FuFxCjGxNh1s//8/+rvZWuY1XbBWxr4LXzkXcXPHOes=;
-        b=kW9ckySjoXUDHeMFhhw4UCyIxTomju/bigfIy3JkaoZAUfpJdegzRPHV941dZvqwUV
-         4EFsyvjet/pZYJzOGGFUr7H6rb9YbeLi8nBD9wiIr27BB4vFHALqDUbqloU8RNv5fAZ/
-         7AOI9o2N+xNihiS+Z+qSdqp6aAgYdf5zAsC4PtW1VtnWUFCvAaSMSntLE7JT1bbSY4/Z
-         zlvQ2BLVIw4yOrzG07URq4T0KtakHCmUmDhsTR8Ve/5ZapUvhXrqADIuIcvwq470Pz8R
-         JQjqDHMhqVEdKN5SsPcf8g82moIS4AzuTcqRRdsWJ+wb17lqIckZ3VeH6/KpNuknXaI2
-         qe7Q==
-X-Gm-Message-State: AOAM531hA81A5Qv3Gv6PdiiZElaeougW0OoSFU94oAb6IeFJvAHxKdCn
-        g9Pu4KE9udtBuWNGCYvd/3h1CRyBnErAga25J232FUWSAggj7IQ4Bv/JK3bMBPMfgUl+bIWqqh/
-        Za6CjwGQHzvAbPhNUwKF12nymYA==
-X-Received: by 2002:adf:f68c:: with SMTP id v12mr3128763wrp.360.1625831918049;
-        Fri, 09 Jul 2021 04:58:38 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyim5N1USaxYaocYdwzdDVk3Pi1SzoUm517PhIHt2LlW5hZerMhCXi5JonII8cQ1eauGxo3+A==
-X-Received: by 2002:adf:f68c:: with SMTP id v12mr3128752wrp.360.1625831917915;
-        Fri, 09 Jul 2021 04:58:37 -0700 (PDT)
-Received: from [192.168.3.132] (p4ff23a45.dip0.t-ipconnect.de. [79.242.58.69])
-        by smtp.gmail.com with ESMTPSA id s9sm5066131wrn.87.2021.07.09.04.58.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Jul 2021 04:58:37 -0700 (PDT)
-Subject: Re: [PATCH v1] binfmt: remove support for em86 (alpha only)
-To:     Matt Turner <mattst88@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-alpha <linux-alpha@vger.kernel.org>
-References: <20210420175631.46923-1-david@redhat.com>
- <CAEdQ38FOJdZxB7OGd569Lkn+RGPyjoukriwDfBEf2QKHvYguXQ@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <8d3e3257-860a-6766-f598-0d94582db523@redhat.com>
-Date:   Fri, 9 Jul 2021 13:58:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Fri, 9 Jul 2021 08:04:42 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34213C0613DD;
+        Fri,  9 Jul 2021 05:01:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=V2q4GBgvapBkUtONrRhHvOxMo42HXY3kTYClqLepHos=; b=VDvt/2mc4DStW94xQ6Y3W7pIML
+        DRDik9Avp8HHHpkHUuhgQfIBNddzWJRTnTgl2SifTdE4qDeSxy839guoFqJip+ry+EuCpMDCna0ri
+        X2bk+VQkZqGm6jw1ccpUv7If27HUzqC5DwHOqFNs+hkVFeWYfTSYvJQi5OGUvCm81eizPV/OOsZiM
+        3bQTWTdS3kOZ598HBDOO9boAyepwaBhdyiRcm7tb7SaKp0OnYlM4yLeRUT3CzVSvWERk5fERewVY4
+        6N87j+Oqf0g7hlOyPQXVbU2JaAmtuSJamlow1dhUUvCwYuAj2MF1h6jhuNRAzG9uDOgjZmM2Y756x
+        lVEeLRUA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m1pCR-00ETWy-P5; Fri, 09 Jul 2021 12:01:45 +0000
+Date:   Fri, 9 Jul 2021 13:01:43 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cluster-devel@redhat.com
+Subject: Re: [PATCH v3 2/3] iomap: Don't create iomap_page objects for inline
+ files
+Message-ID: <YOg6p6zzGHdyiIvt@casper.infradead.org>
+References: <20210707115524.2242151-1-agruenba@redhat.com>
+ <20210707115524.2242151-3-agruenba@redhat.com>
+ <YOW6Hz0/FgQkQDgm@casper.infradead.org>
+ <20210709042737.GT11588@locust>
 MIME-Version: 1.0
-In-Reply-To: <CAEdQ38FOJdZxB7OGd569Lkn+RGPyjoukriwDfBEf2QKHvYguXQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210709042737.GT11588@locust>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29.04.21 04:36, Matt Turner wrote:
-> This seems very reasonable, and I'll merge it through my tree unless
-> someone beats me to it.
+On Thu, Jul 08, 2021 at 09:27:37PM -0700, Darrick J. Wong wrote:
+> On Wed, Jul 07, 2021 at 03:28:47PM +0100, Matthew Wilcox wrote:
+> > On Wed, Jul 07, 2021 at 01:55:23PM +0200, Andreas Gruenbacher wrote:
+> > > @@ -252,6 +253,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> > >  	}
+> > >  
+> > >  	/* zero post-eof blocks as the page may be mapped */
+> > > +	iop = iomap_page_create(inode, page);
+> > >  	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
+> > >  	if (plen == 0)
+> > >  		goto done;
+> > 
+> > I /think/ a subsequent patch would look like this:
+> > 
+> > +	/* No need to create an iop if the page is within an extent */
+> > +	loff_t page_pos = page_offset(page);
+> > +	if (pos > page_pos || pos + length < page_pos + page_size(page))
+> > +		iop = iomap_page_create(inode, page);
+> > 
+> > but that might miss some other reasons to create an iop.
 > 
+> I was under the impression that for blksize<pagesize filesystems, the
+> page always had to have an iop attached.  In principle I think you're
+> right that we don't need one if all i_blocks_per_page blocks have the
+> same uptodate state, but someone would have to perform a close reading
+> of buffered-io.c to make it drop them when unnecessary and re-add them
+> if it becomes necessary.  That might be more cycling through kmem_alloc
+> than we like, but as I said, I have never studied this idea.
 
-Hi Matt,
+I wouldn't free them unnecessarily; that is, once we've determined that
+we need an iop, we should just keep it, even once the entire page is
+Uptodate (because we'll need it for write-out eventually anyway).
 
-looks like this patch hasn't found its way upstream yet.
-
--- 
-Thanks,
-
-David / dhildenb
-
+I haven't noticed any ill-effects from discarding iops while running
+xfstests on the THP/multipage folio patches.  That will discard iops
+when splitting a page (the page must be entirely uptodate at that point).
