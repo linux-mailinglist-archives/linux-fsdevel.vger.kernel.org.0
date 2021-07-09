@@ -2,76 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EDFD3C1E49
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 06:29:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 071D23C1F3F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 08:20:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbhGIEcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jul 2021 00:32:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33708 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229441AbhGIEcR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jul 2021 00:32:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 93C086141A;
-        Fri,  9 Jul 2021 04:29:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625804974;
-        bh=3HNn/xpvrZs3tcQEA38VgCXMxppLux+mv+RaiGJT62o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S8NikfcmWmLYq+Tm7M1Flyuykyp8G4aXyYNFZ23Y3tc1Pf3ug0qhLUbg4M4dLRean
-         HdJunqhcBJdDXtvC+KE+k+8JkROEg2rSz7V85mnyzGfFLEHrBrCV9Q8tYTg3cBNrWh
-         P9yOKB/LhfnOzq7yosXNV78BgTCRLqi8apDFYOVv6B48lCeGGDSVACjBfHS4XTkZYW
-         jeaIz8iH+QRf+3vigvmOI+ptxeCHMQCswbxSw79r5WesKlakxE4uWlz6q9AezL6KVX
-         eA/RpHdViYBfh3o+ID6wSgWDfkmfLah98oEF/uS6WVmJubh3sUuyUaUU5w4yDNsr2r
-         lzamKJX/hCMqg==
-Date:   Thu, 8 Jul 2021 21:29:34 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
+        id S230121AbhGIGXX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jul 2021 02:23:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33840 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229494AbhGIGXX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Jul 2021 02:23:23 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C874C0613DD;
+        Thu,  8 Jul 2021 23:20:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=HT//2LQAI8VE3MBPY2Os3p78rwK+p3/pXCdflg7T7Xo=; b=U6Rgv0Ltf9nxaWCae3o6ATg1Lh
+        ZEE+MJ8z4k/7hk+LvWO9PiUgFhv6OG4QgcFD7xyAkjy3+XRXhApXDllupQNUo749sUSiYnQng4QOd
+        337BfjmBCFPwnWxuPfKjAuo6CY1sabmNXa9pgsS5j0Za3z1AmH1+RPlflIXLZFMsJ1KQobDql1l1h
+        8By1EQ8f9ENo2108BYfv8xh2Df1ZzVgEU70wbKI0ODdoQSCMiu3a7VUZMS4iTZNoFH1yEOKG+tQOK
+        9nVepP8X60Gft4AysMwxVvjRdeZ+uxSIsTASzUS5EcVoAfLPOL08AsG3H9RhU1VJjBrULxiZvJhao
+        yPgIWk1A==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m1jrt-00EDRr-6w; Fri, 09 Jul 2021 06:20:12 +0000
+Date:   Fri, 9 Jul 2021 07:20:09 +0100
+From:   Christoph Hellwig <hch@infradead.org>
 To:     Andreas Gruenbacher <agruenba@redhat.com>
 Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         cluster-devel@redhat.com
-Subject: Re: [PATCH v3 3/3] iomap: Don't create iomap_page objects in
- iomap_page_mkwrite_actor
-Message-ID: <20210709042934.GV11588@locust>
+Subject: Re: [PATCH v3 2/3] iomap: Don't create iomap_page objects for inline
+ files
+Message-ID: <YOfqmXtSI2qJHhtB@infradead.org>
 References: <20210707115524.2242151-1-agruenba@redhat.com>
- <20210707115524.2242151-4-agruenba@redhat.com>
+ <20210707115524.2242151-3-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210707115524.2242151-4-agruenba@redhat.com>
+In-Reply-To: <20210707115524.2242151-3-agruenba@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 07, 2021 at 01:55:24PM +0200, Andreas Gruenbacher wrote:
-> Now that we create those objects in iomap_writepage_map when needed,
-> there's no need to pre-create them in iomap_page_mkwrite_actor anymore.
+On Wed, Jul 07, 2021 at 01:55:23PM +0200, Andreas Gruenbacher wrote:
+> In iomap_readpage_actor, don't create iop objects for inline inodes.
+> Otherwise, iomap_read_inline_data will set PageUptodate without setting
+> iop->uptodate, and iomap_page_release will eventually complain.
+> 
+> To prevent this kind of bug from occurring in the future, make sure the
+> page doesn't have private data attached in iomap_read_inline_data.
 > 
 > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-I'd like to stage this series as a bugfix branch against -rc1 next week,
-if there are no other objections?
+Ok, given that you want a quick fix this looks good for now:
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> ---
->  fs/iomap/buffered-io.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 6330dabc451e..9f45050b61dd 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -999,7 +999,6 @@ iomap_page_mkwrite_actor(struct inode *inode, loff_t pos, loff_t length,
->  		block_commit_write(page, 0, length);
->  	} else {
->  		WARN_ON_ONCE(!PageUptodate(page));
-> -		iomap_page_create(inode, page);
->  		set_page_dirty(page);
->  	}
->  
-> -- 
-> 2.26.3
-> 
+Reviewed-by: Christoph Hellwig <hch@lst.de>
