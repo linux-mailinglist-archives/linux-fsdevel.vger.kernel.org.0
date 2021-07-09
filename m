@@ -2,173 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D39A3C26EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 17:34:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C66303C2736
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jul 2021 18:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232460AbhGIPhb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jul 2021 11:37:31 -0400
-Received: from sonic309-26.consmr.mail.ne1.yahoo.com ([66.163.184.152]:46413
-        "EHLO sonic309-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232447AbhGIPha (ORCPT
+        id S232527AbhGIQDC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jul 2021 12:03:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50213 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232426AbhGIQC4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jul 2021 11:37:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1625844886; bh=SieMPENr+iK+KcL0G0K1VanNrw7E+LW+qUB6eyubrdo=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=UuX+QspsKgTMINOVauXpYiuLxilbJf32GPqpPVnR7OqR1p3SrmlqPhtqPwwDcigK80r3nYqlR1cD7Y5DDkt+rUuI6rmzrGhymE3hcpneYHawyt3ftny+vLj18NfKzfxipH+JBRCtASckJVjGLU1YOaQuhrs/alOLtkSh5vbs0le+YSBoX2eeXD7aYqaLfYI3EgCOlc5DztXLfUggLSfbDe+o+LozlXmXaa5d9THTB5mIH5lnKlfsudbm9bxmy3L9PKlyPaHqzM6mizXHeLDCqYNlWT8+y7YwzamoPF+WPw9BxxJH5vijrLRa3vJVkWMWxOAtaGODSNFr0hFs/1Rldg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1625844886; bh=mFmCAD28WeyvJQBm/mNfGv4I8WQoQthHHUy4+NATfeN=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=IRoy1m3Ty/VHzNf9JaBTP1CUZ3WmhA4A0eW/ZtTKJLz5qTHMKK4ATrk1OnvmTKn7jMJtotcGCmMjaYMXI9zANOB2/TWLCzA74vOeir/xsjSQgJT60MVhF3bzXhvI8YC4ov3YxYDVX0SB/XjechvI7OllNh52sGuf3Ri6I/N1bDxuiv/a4xqj2xDFVjFwuYDPP9PKYxJzzloycD3tE18CfK5XqwRl+xirM7Sg0GFywE620yAGknf092e3v3g+b7IllWg2lXhk72S6Hlznmj3db6sTuAsdRjtfSqMAG/FWk+5jY9SKrx2IqKO8QU4O3dxINxZ5CCodQeccJFfvy9Ea2Q==
-X-YMail-OSG: rqR4j5cVM1njfSUn3IfET96wE8x7NO1OkKqbMToAtk71vKCPYA.EPNcRw8iiiCl
- t6ji2zmTRnI1Zzy0g1B0EYA.y0GpBCoGNw0mC3sF2LBxdSO2YVMIM74of01IOM1l6PRuldIhRz6Z
- hxEMZUDLyKPZ6B2K7IXDpre41wnqjRk9USdzBjrs4cXTWwebeB2yreYUx5SNWGj12nhY_fAkq98v
- yC8WbLv6fYKl1Smfa1O6Cz8LS67gMPKAlMFv.ZcypWau15JkSoUU_FRh5sVDl02WigY2BRZ6aHcl
- uYeV62zhVvjFTZOgbqzJdoKx1TiVWOiI9Oku8IzeyoK5ClFO3eAvx0wGWCn9DTcSCojPa6LnLpFM
- 7P6KA_aXkhMWgaJpMuwqeq9D1V7Pi2BCIUk7P.xvAmA5kREzRHh3VvtAfo7bSg3TqlEk0Pkp7LOa
- NJFd2_dmDIl9i9YxZ.Grk4ffKCDzcxOWbwRmgwIFLjHiTiUDRgDxJQEAF2qW3YWOds6Qq3LdHOO4
- dabQiRDXg_X3sA93QLohvllEqFQh4QEahwBBSw25yZfDIS_CRq9WUs0xPl.hCYwMgBT9.OAD3w5G
- JoFxDXDR13uZZJbTbZW8Nacfxw0qubeFqRkFVHypRMPg4xc3d.zEWmE8py1UPuBJmZ8OmIJMQfCA
- 6IbqrB_2jolI3RaQkswKEVUaMHfKNSzqKNPkw8eMZqjwIw_vZb2KhpSHjg.5GSabNSMz5wvhZ4Rp
- bdL_KQ1xxQ9pjQ36QV81d1sQUI15YthsGLAV8Y.6ruqlORn7GwalOhT.qF0sZFNbzzwsJshc.cwv
- _mIZ5xocWEb2Q1gNxhqGbgcZcZHNEpg1l7PdYCvzCKuFATDYmrh71iGkuGP.F5g0fLMB6A9l4uew
- 1_edi__Ru9k.YGiwpSNjz_1teZ3T4Kce5a0gjfbS4JZCcuAHMd1xQCGDsG5q4rWGJfYYdFOSs4Q4
- oCOXW7tflzffurUwLzZYME2HJ1omm0gQyw9ICcukMwNdrgZ573MA155MOc35gAF88cYYWRhNx34v
- zOLuEq5BNMbEZecAyYv8Qbn8BAFLz4NOKAyuqEvtNtGdV.yMJ6w_31QMn8d_SwymZsKeX7yewydu
- xum1sOmUooix_h9PsTJ_ZKEHTxV_wAYmGXOChj4E8DAHcJLPuTMxjA0E0ehqpcmMf0s1fdoy5D06
- NJ48yenLP5ZHTwYqDbV4H7qSjyiYu4vaiZ8nO89xdhbsUJv74XhcENz5zprVAr.UDfBnEWrTT3sl
- IIwGvZcA1O9RQFwctjdtLDPTrcY0J67QQY12xHj4p1_5ks1tpE5qbCXyIv.l.J6__ExjwpGKObhK
- gvd6d0h5ebZ123NO0hOR3wWZf6_gpVbKGxdCsbnqmmajL9yJuddMhFO7iumXI6Q7N63mZnXyULs5
- cPEXA08i79juiVmd8qpGVakw36nMl1oWBb_KLJpjGLtg9sIfhtVCPcgtB95JLouX70VekTBIdFPz
- PMHsjD2.0.zXhFAIGZULKbvJhAqapgL.JW2hfGL0MyyvodcQz4W7H7Q36bDL4FPsZT88FnxI2s8i
- k9EswSlYCdl8U.ffGQATJJgioz2Tx3YLUJJs4B0vANWzJVd1fIIDrQBPCIbxn2mgiRYX23LWf77q
- I.Sh.MGjDowsq7sJy7wWtmCIZlNuvAjceSDkhnbB8mr8wcYhBYnXQ_00qNLo5oGTt0dtPa_e4H91
- 8N9pVmO.5ROOx8Rz9VHUmSy2prGhr70hRoUc0jElhBovORgRkvZRiZ5HShvUyyEfMU1SGzqP3wKH
- yYdFH.UcZdus5T.B8HAWfWuhFK.yJ.GBPOjbUYlcj7Z8pWkHPX_nTCldGmOh_7AruyYjekSIQsqq
- IgVVFMP2YHVBuwIV5VG1MCfJlguWbvIb9BFZTZEYMvCj.11DPd.gkxE5ZsNwbs16FNKsrIOcxiUO
- t3SYnxyR2vpXFim5j3HU0awnSbCUdiA1Oldkj30Ikl5z0RQSQlixU1GbvxemDt76T2GnKBg4BM7s
- e3G00SyqikYLnqAekt.dhHiVqJRLPW3K7QDjjcts3uNELNqAnl.HmJ4kmxIKn0Yh9DVCBgNCxzTT
- yXD_EpKZvX9DuwiETLnzTGN11MRghma401r0xoltxeRraJGVJ4idk7s7wVZEgymaQdKrnLLyDvjp
- hhVCO36OUJcIGyH3VUSYBhfFKKGYIAAvNcRc8q49zN4dTHiO124GTEQ4NNFs1XBJ0ZgelHoGRd7V
- r.V4Ucgh9LqiiWRuUDRAwCn5vkg8BMko01pui76697VwWdNDbV_eAEMhzIgHds9cJVG875nE1.8J
- 7fTync39Pg87NaIHYluXTGAzvdWm57DNv.TVq5dffVvzowkpGU8p7P6TPAhAECmnp3rIm242Ea_K
- bmzBt.FxM5strzrs3Jjqm2wrz_hE3.yY_O3sLGCA81.sB46GG5K1kJSKjaVdZm66itN3d9YBnozc
- fNV.IZ5YpeCgIyYGR_mcKhq_03oWviqFVVFthJLPT4JZ0sdmxAkgGBy.x3oNj0GGCEl6vC_XM66X
- Z0U7WpdG2UYjaZXrW4uMEZ_OAfU7eEE23wCqqzyp27M6U_G63_WQZcgR4AWzBAmyuGBy9R_DY81p
- CakJanov71_PEzfMGcv7.m7fj0F6_FBpVQWMN5pejI5H8F.szCW94.2sxb8LpRVVx2x9sXLDc4jn
- Qmv707Jx2xvBmPSTiQrFLTKxb5hFI.fTa0KdLUZHZ8CNLQpBPpj__906YkICBXQ_Kl2JlBdHchah
- 2gjCRkIDSGf8j71w.TpYWowCt33edyirYmf3YCh78Aa7yoT36RudERYRU1kaxvzRzHODxgWY3h0I
- kqcagtjYrcqYmrcs90z.PatWZFYETTKjM5AWOCDFOZGLQGLRMRx2qC62sZnInMexNxeVAZrADANZ
- QxFqfGL6TqFLktItkhv9vf4Ace31bppJdcVctDwTWuj0iejysT7u9R.jGsvFcEv4JVo_LybXwyvB
- 0QpBcM.PUShNdRG7mzL5VLLoMr8biFESUh75rcFw5Tx7eAq112bKkrYiKwvSzx9Sq9XxcUcmB1Df
- ysB0VkswtFyE4kXxUeExmlzSwyTtCp8Y3_GCOCwW6kX4dHR3h6j0O.d1w.lLI.dJ8uOn3_LhjBch
- 4_hqiD7jAP85vXDb4f96FMvoYSh5EJmhnjX2bk4VxaWnSBstNVv.TeJSJ_UnP_7O6kHCvW2S87HX
- LvSg8XSXN36eIl7RMSbJm_NEPaGn7ppFIQX1QdPAeJFo6XhPYRl13WuYsdf4rX4gbqc4nr5o6oEQ
- ZzchkxtVPd3kqIo381wvT4r_z3IJkvLG4gCJyJu4LVucvJ.QpbfgxXc.w1pQL7UdPK6dvVZwTQte
- gwNMNJxOgtAp1IZIkMc_7pYCkgnmY6NeCvzvRqm1a4UchEySQ23ca4oKlSf9p1qL0.fQn3YRNe7u
- LWG5p0TuQF.uXzJIRTIg16JDqvnC0Wv021PaTpx8HM8Y1lLGOvWA2RRopUg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 9 Jul 2021 15:34:46 +0000
-Received: by kubenode518.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID dc43f1ea77d9eed1d0348d0ea29f1fd6;
-          Fri, 09 Jul 2021 15:34:43 +0000 (UTC)
-Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
- files
-To:     Vivek Goyal <vgoyal@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
-        dgilbert@redhat.com, casey.schaufler@intel.com,
+        Fri, 9 Jul 2021 12:02:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625846412;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=W8zd5CeolMZZOgiP9R7Wu16S5BIqDudS+X6cBxCBcfY=;
+        b=RizSOjPjleoSqQuUY7a/ZEMmPeloeeMwExo87ac4cVRAyE/lVPHsgFKa0Km+IMSVuL8vAP
+        cbuufqHPc2oNH3Jy0EMlHum6tOFD/oBVF8P3jQFHvnE+/ZxAUF6Z7YHjcyS+xhzSs7uVb9
+        vRWqXsqqzMrPkT+UWwHRJ52zpiVDgmg=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-10-FfBcYcKWPMKcu8X-Lsls2Q-1; Fri, 09 Jul 2021 12:00:11 -0400
+X-MC-Unique: FfBcYcKWPMKcu8X-Lsls2Q-1
+Received: by mail-qv1-f71.google.com with SMTP id q10-20020a056214018ab029027751ec9742so6652732qvr.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jul 2021 09:00:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=W8zd5CeolMZZOgiP9R7Wu16S5BIqDudS+X6cBxCBcfY=;
+        b=aHCzqDEDGRR/W/ZeQ+gUjpC/D2H+OejQRcCUwH+NTJHZQ9ldc7TBRLFq+wwKDl5qHZ
+         veBNRC5rKaQrZbfVns/TImQ/qSWAhwdKcQntWa9ygduv9EyAbqR7Qvlq0rbYONdR2Tny
+         +NWPlUoaLpKJXY8m0iFHqNmH30VCMILBe7Soykxn5VGxI5CtrUdAonxXukmKpGq6JqD3
+         kA0Y5FYx141mZoshKIa9lXv0Y1u7rkyrX8u00Tq+s6wViK7I2ligm/ezNSTbIapnF32W
+         XBdbYA/naNuDpuA3gH38p9BriEnENKvbJy07yKFCM6rEwsDjLkGWveCMnCfteRzBtKLL
+         R0Jg==
+X-Gm-Message-State: AOAM532DwIGC2naoIYlnQh+UMFCGquZ2I0RNzIU0q3xzDcvpfc6Snz02
+        nfLez9+bUBKRsINTqcuK2z05xBIDdCpzfsdoSkHu5z4Ai+XAgv+9CkFGDbxFEOn42i2KCSGemhw
+        UR4Y9wjShBnjpblR6L7QPHz79Ow==
+X-Received: by 2002:a05:620a:14b5:: with SMTP id x21mr1253982qkj.148.1625846410605;
+        Fri, 09 Jul 2021 09:00:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy7fgfym/vObH9dS3BXtTYjPpC0DOawx2XrMA8j/rEnnVa/GS7s/gG7r6kSkkmhMgMhzYecxw==
+X-Received: by 2002:a05:620a:14b5:: with SMTP id x21mr1253860qkj.148.1625846409623;
+        Fri, 09 Jul 2021 09:00:09 -0700 (PDT)
+Received: from localhost.localdomain (cpe-74-65-150-180.maine.res.rr.com. [74.65.150.180])
+        by smtp.gmail.com with ESMTPSA id d8sm2623910qkk.119.2021.07.09.09.00.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Jul 2021 09:00:09 -0700 (PDT)
+Reply-To: dwalsh@redhat.com
+Subject: Re: [RFC PATCH v2 0/1] Relax restrictions on user.* xattr
+To:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+Cc:     virtio-fs@redhat.com, dgilbert@redhat.com,
+        christian.brauner@ubuntu.com, casey.schaufler@intel.com,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
-        jack@suse.cz, Christoph Hellwig <hch@infradead.org>
+        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com, jack@suse.cz
 References: <20210708175738.360757-1-vgoyal@redhat.com>
- <20210708175738.360757-2-vgoyal@redhat.com>
- <20210709091915.2bd4snyfjndexw2b@wittgenstein>
- <20210709152737.GA398382@redhat.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
-Date:   Fri, 9 Jul 2021 08:34:41 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+From:   Daniel Walsh <dwalsh@redhat.com>
+Organization: Red Hat
+Message-ID: <76d4a0ed-7582-cc73-a447-5f2d133c3c24@redhat.com>
+Date:   Fri, 9 Jul 2021 12:00:07 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20210709152737.GA398382@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20210708175738.360757-1-vgoyal@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Mailer: WebService/1.1.18469 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/9/2021 8:27 AM, Vivek Goyal wrote:
-> On Fri, Jul 09, 2021 at 11:19:15AM +0200, Christian Brauner wrote:
->> On Thu, Jul 08, 2021 at 01:57:38PM -0400, Vivek Goyal wrote:
->>> Currently user.* xattr are not allowed on symlink and special files.
->>>
->>> man xattr and recent discussion suggested that primary reason for this
->>> restriction is how file permissions for symlinks and special files
->>> are little different from regular files and directories.
->>>
->>> For symlinks, they are world readable/writable and if user xattr were
->>> to be permitted, it will allow unpriviliged users to dump a huge amount
->>> of user.* xattrs on symlinks without any control.
->>>
->>> For special files, permissions typically control capability to read/write
->>> from devices (and not necessarily from filesystem). So if a user can
->>> write to device (/dev/null), does not necessarily mean it should be allowed
->>> to write large number of user.* xattrs on the filesystem device node is
->>> residing in.
->>>
->>> This patch proposes to relax the restrictions a bit and allow file owner
->>> or priviliged user (CAP_FOWNER), to be able to read/write user.* xattrs
->>> on symlink and special files.
->>>
->>> virtiofs daemon has a need to store user.* xatrrs on all the files
->>> (including symlinks and special files), and currently that fails. This
->>> patch should help.
->>>
->>> Link: https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
->>> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
->>> ---
->> Seems reasonable and useful.
->> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
->>
->> One question, do all filesystem supporting xattrs deal with setting them
->> on symlinks/device files correctly?
-> Wrote a simple bash script to do setfattr/getfattr user.foo xattr on
-> symlink and device node on ext4, xfs and btrfs and it works fine.
-
-How about nfs, tmpfs, overlayfs and/or some of the other less conventional
-filesystems?
-
+On 7/8/21 13:57, Vivek Goyal wrote:
+> Hi,
 >
-> https://github.com/rhvgoyal/misc/blob/master/generic-programs/user-xattr-special-files.sh
+> This is V2 of the patch. Posted V1 here.
 >
-> I probably can add some more filesystems to test.
+> https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
+>
+> Right now we don't allow setting user.* xattrs on symlinks and special
+> files at all. Initially I thought that real reason behind this
+> restriction is quota limitations but from last conversation it seemed
+> that real reason is that permission bits on symlink and special files
+> are special and different from regular files and directories, hence
+> this restriction is in place.
+>
+> Given it probably is not a quota issue (I tested with xfs user quota
+> enabled and quota restrictions kicked in on symlink), I dropped the
+> idea of allowing user.* xattr if process has CAP_SYS_RESOURCE.
+>
+> Instead this version of patch allows reading/writing user.* xattr
+> on symlink and special files if caller is owner or priviliged (has
+> CAP_FOWNER) w.r.t inode.
+>
+> We need this for virtiofs daemon. I also found one more user. Giuseppe,
+> seems to set user.* xattr attrs on unpriviliged fuse-overlay as well
+> and he ran into similar issue. So fuse-overlay should benefit from
+> this change as well.
+>
+> Who wants to set user.* xattr on symlink/special files
+> -----------------------------------------------------
+>
+> In virtiofs, actual file server is virtiosd daemon running on host.
+> There we have a mode where xattrs can be remapped to something else.
+> For example security.selinux can be remapped to
+> user.virtiofsd.securit.selinux on the host.
+>
+> This remapping is useful when SELinux is enabled in guest and virtiofs
+> as being used as rootfs. Guest and host SELinux policy might not match
+> and host policy might deny security.selinux xattr setting by guest
+> onto host. Or host might have SELinux disabled and in that case to
+> be able to set security.selinux xattr, virtiofsd will need to have
+> CAP_SYS_ADMIN (which we are trying to avoid). Being able to remap
+> guest security.selinux (or other xattrs) on host to something else
+> is also better from security point of view.
+>
+> But when we try this, we noticed that SELinux relabeling in guest
+> is failing on some symlinks. When I debugged a little more, I
+> came to know that "user.*" xattrs are not allowed on symlinks
+> or special files.
+>
+> So if we allow owner (or CAP_FOWNER) to set user.* xattr, it will
+> allow virtiofs to arbitrarily remap guests's xattrs to something
+> else on host and that solves this SELinux issue nicely and provides
+> two SELinux policies (host and guest) to co-exist nicely without
+> interfering with each other.
 >
 > Thanks
 > Vivek
 >
->>>  fs/xattr.c | 10 ++++++----
->>>  1 file changed, 6 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/fs/xattr.c b/fs/xattr.c
->>> index 5c8c5175b385..2f1855c8b620 100644
->>> --- a/fs/xattr.c
->>> +++ b/fs/xattr.c
->>> @@ -120,12 +120,14 @@ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
->>>  	}
->>>  
->>>  	/*
->>> -	 * In the user.* namespace, only regular files and directories can have
->>> -	 * extended attributes. For sticky directories, only the owner and
->>> -	 * privileged users can write attributes.
->>> +	 * In the user.* namespace, for symlinks and special files, only
->>> +	 * the owner and priviliged users can read/write attributes.
->>> +	 * For sticky directories, only the owner and privileged users can
->>> +	 * write attributes.
->>>  	 */
->>>  	if (!strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN)) {
->>> -		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
->>> +		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode) &&
->>> +		    !inode_owner_or_capable(mnt_userns, inode))
->>>  			return (mask & MAY_WRITE) ? -EPERM : -ENODATA;
->>>  		if (S_ISDIR(inode->i_mode) && (inode->i_mode & S_ISVTX) &&
->>>  		    (mask & MAY_WRITE) &&
->>> -- 
->>> 2.25.4
->>>
+>
+> Vivek Goyal (1):
+>    xattr: Allow user.* xattr on symlink and special files
+>
+>   fs/xattr.c | 10 ++++++----
+>   1 file changed, 6 insertions(+), 4 deletions(-)
+>
+I just wanted to point out that the work Giuseppe is doing is to support 
+nfs homedirs with container runtimes like Rootless Podman.
+
+
+Basically fuse-overlayfs on top of NFS homedir needs to be able to use 
+user xattrs to set file permissions and ownership fields to be 
+represented to containers.
+
+Currently NFS Servers do not understand User Namespace and seeing a 
+client user attempting to chown to a different user, is blocked on the 
+server, even though user namespace on the client allows it.  
+fuse-overlay intercepts the chown from the container and writes out the 
+user.Xattr the permissions and owner/group as user.Xattrs.  And all the 
+server sees is the user modifying the xattrs now chowning the real UID 
+of the file.
+
+
