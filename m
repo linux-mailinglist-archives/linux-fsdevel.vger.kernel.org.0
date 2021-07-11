@@ -2,100 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0283C3E2B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jul 2021 19:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E44533C3E6F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jul 2021 19:40:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231276AbhGKRF1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jul 2021 13:05:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48010 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbhGKRF1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jul 2021 13:05:27 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6EEDC0613DD
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jul 2021 10:02:40 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id y6so15651069ilj.13
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jul 2021 10:02:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=ycphfoQKCsCAdoOFrkRu7loWS/EG+Tels9jdvoZAcm0=;
-        b=iwQpnAFMmZthF6SUcUCtCm1vs3ZtyJLuhIaSWpLKqwnWz5IzhdzGBgcv57xzU9VZAR
-         8n4GlMKnD9qem41+ZhC0mSVDmlrifgk03trCzHCI/B5M4KALIn310fEMJKEClqhvYb7D
-         fum7YGVwc2X5EAvRLBuyKC1pV5OwZ+wW0UOpgu03ljt58pyGkEKZykiWC5QpHdGAlGQw
-         e93xwwv175jDjWUlfdZdXIUXTKqaMDItSJm/xhnAwP5JEiQ4Do+YQ0/7fthS7s3FHaFt
-         2vkY1D8yAT575BjTH9o3tXn4Gn5q+e7gs43JubBcpA2abuQjCcr0rCbFcs5bBnzcT2fM
-         wHPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=ycphfoQKCsCAdoOFrkRu7loWS/EG+Tels9jdvoZAcm0=;
-        b=PdrF366F0aJL6j8nu6Hrvjfxwsu+IGzrAU/pUxeDIvyQukjdZQuJ/VKWdxA1C2Tj/L
-         6RokxDT/R1Lx9e7Pzr1o8U5ZeH+SBHXLwMCKk0PAIhCnBEvMYBzDDM4s/JvYKHaEhYdZ
-         GqWuRddezslHGgYL8Yzs3K5iyuEFeWaFM5RZlwY1v4I4qEr7+fSvvivYDvgbU1aICbU4
-         VmiPvjEESGfSFKfG5szSRiWIQxi/qs8eF0OWC2RhjHL/Zd8E+vqXG3lv1B0ZYUXHm/eQ
-         wn9Yd1pJmjvcUyXHxzwaqHLna+RvpapwY8p4RWE8mQl7G5fXhdcFD5v3IOEBn8BMQUT4
-         4gJw==
-X-Gm-Message-State: AOAM531urc6jFk4iK2wsNxgo64mH141k+Z+fWxSAyDYcsI0J8jaxZuy/
-        75wrxD/X9h7uou1n3lXszlxseLcL6BnAnCirjC9TQn9KtT0=
-X-Google-Smtp-Source: ABdhPJybapWHP9OyLAl6IhJ90C84BU/WXdEWlMf49CUnJQsmbpbhzqa8WWMs9bcI5TpBXVQge5JNzUFDjCht8+QKQes=
-X-Received: by 2002:a05:6e02:1c2d:: with SMTP id m13mr1385721ilh.137.1626022960202;
- Sun, 11 Jul 2021 10:02:40 -0700 (PDT)
+        id S232305AbhGKRn1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jul 2021 13:43:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229801AbhGKRn1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 11 Jul 2021 13:43:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7D42C61151;
+        Sun, 11 Jul 2021 17:40:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626025240;
+        bh=NBQt4/AAMQwuEgZTeJmoGVfPbOmrc43fMa2uIXWVWDg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hLsrOOvLAlsTDP7BKuhpeSU6DVdOdrngiUS0DRrc6unP7AR1Lx/WsZ80tRPiiA3ey
+         G3Ck62wU1CARtg7r6gmMPyEufFPGlc8IdOJIKUAKYyjKcz4KGB0q6TmhOKgzzr8wo5
+         we9U4t0tClhS1fRxSD+0DTFbz8UqW1hpamkVlcdxecjOy/iIdX4VtWyxdoNT/yvZMJ
+         NOn3LOpA/7qAvjws3G3jb6/wW4dxvVM0dm+eWIe/PvNh/s+vbYUvSFonvKfpK2ux6z
+         uQVbC24Xoa1nVQIXclIKUPmnZlqnEhGEfNmbtmpKazEezXwuoE+3C5zf259YU7konW
+         eqO+QZ7lACj4A==
+Date:   Sun, 11 Jul 2021 12:40:37 -0500
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, lhenriques@suse.de, xiubli@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        dhowells@redhat.com
+Subject: Re: [RFC PATCH v7 02/24] fscrypt: export fscrypt_base64_encode and
+ fscrypt_base64_decode
+Message-ID: <YOstFfnzitZrAlLZ@quark.localdomain>
+References: <20210625135834.12934-1-jlayton@kernel.org>
+ <20210625135834.12934-3-jlayton@kernel.org>
 MIME-Version: 1.0
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 11 Jul 2021 20:02:29 +0300
-Message-ID: <CAOQ4uxgckzeRuiKSe7D=TVaJGTYwy4cbCFDpdWMQr1R_xXkJig@mail.gmail.com>
-Subject: FAN_REPORT_CHILD_FID
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Matthew Bobrowski <repnop@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210625135834.12934-3-jlayton@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jan,
+Some nits about comments:
 
-I am struggling with an attempt to extend the fanotify API and
-I wanted to ask your opinion before I go too far in the wrong direction.
+On Fri, Jun 25, 2021 at 09:58:12AM -0400, Jeff Layton wrote:
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 6ca7d16593ff..32b1f50433ba 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -178,10 +178,8 @@ static int fname_decrypt(const struct inode *inode,
+>  static const char lookup_table[65] =
+>  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
+>  
+> -#define BASE64_CHARS(nbytes)	DIV_ROUND_UP((nbytes) * 4, 3)
+> -
+>  /**
+> - * base64_encode() - base64-encode some bytes
+> + * fscrypt_base64_encode() - base64-encode some bytes
+>   * @src: the bytes to encode
+>   * @len: number of bytes to encode
+>   * @dst: (output) the base64-encoded string.  Not NUL-terminated.
+>   *
+>   * Encodes the input string using characters from the set [A-Za-z0-9+,].
+>   * The encoded string is roughly 4/3 times the size of the input string.
+>   *
+>   * Return: length of the encoded string
+>   */
+> -static int base64_encode(const u8 *src, int len, char *dst)
+> +int fscrypt_base64_encode(const u8 *src, int len, char *dst)
 
-I am working with an application that used to use inotify rename
-cookies to match MOVED_FROM/MOVED_TO events.
-The application was converted to use fanotify name events, but
-the rename cookie functionality was missing, so I am carrying
-a small patch for FAN_REPORT_COOKIE.
+As this function will be used more widely, this comment should be fixed to be
+more precise.  "Roughly 4/3" isn't precise; it's actually exactly
+FSCRYPT_BASE64_CHARS(len), right?  The following would be better:
 
-I do not want to propose this patch for upstream, because I do
-not like this API.
+ * Encode the input bytes using characters from the set [A-Za-z0-9+,].
+ *
+ * Return: length of the encoded string.  This will be equal to
+ *         FSCRYPT_BASE64_CHARS(len).
 
-What I thought was that instead of a "cookie" I would like to
-use the child fid as a way to pair up move events.
-This requires that the move events will never be merged and
-therefore not re-ordered (as is the case with inotify move events).
+> +/**
+> + * fscrypt_base64_decode() - base64-decode some bytes
+> + * @src: the bytes to decode
+> + * @len: number of bytes to decode
+> + * @dst: (output) decoded binary data
 
-My thinking was to generalize this concept and introduce
-FAN_REPORT_CHILD_FID flag. With that flag, dirent events
-will report additional FID records, like events on a non-dir child
-(but also for dirent events on subdirs).
+It's a bit confusing to talk about decoding "bytes"; it's really a string.
+How about:
 
-Either FAN_REPORT_CHILD_FID would also prevent dirent events
-from being merged or we could use another flag for that purpose,
-but I wasn't able to come up with an idea for a name for this flag :-/
+ * fscrypt_base64_decode() - base64-decode a string
+ * @src: the string to decode
+ * @len: length of the source string, in bytes
+ * @dst: (output) decoded binary data
+ *
+ * Decode a string that was previously encoded using fscrypt_base64_encode().
+ * The string doesn't need to be NUL-terminated.
 
-I sketched this patch [1] to implement the flag and to document
-the desired semantics. It's only build tested and I did not even
-implement the merge rules listed in the commit message.
+> + * Return: length of the decoded binary data
 
-[1] https://github.com/amir73il/linux/commits/fanotify_child_fid
+Also the error return values should be documented, e.g.:
 
-There are other benefits from FAN_REPORT_CHILD_FID which are
-not related to matching move event pairs, such as the case described
-in this discussion [2], where I believe you suggested something along
-the lines of FAN_REPORT_CHILD_FID.
+ * Return: length of the decoded binary data, or a negative number if the source
+ *         string isn't a valid base64-encoded string.
 
-[2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhEsbfA5+sW4XPnUKgCkXtwoDA-BR3iRO34Nx5c4y7Nug@mail.gmail.com/
-
-Thoughts?
-
-Amir.
+- Eric
