@@ -2,128 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 408353C3D8B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jul 2021 17:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0283C3E2B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jul 2021 19:02:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234880AbhGKPNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jul 2021 11:13:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51310 "EHLO
+        id S231276AbhGKRF1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jul 2021 13:05:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234887AbhGKPNF (ORCPT
+        with ESMTP id S229688AbhGKRF1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jul 2021 11:13:05 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB1DC0613DD;
-        Sun, 11 Jul 2021 08:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=855AUMnreo1HN0f6x88VXU6uE3rYZIQf/z+jfpkStV8=; b=oVIZqa/cHJZKqXZURbCu4vT/My
-        3BjLnO4TkSqsT9gs6iXSZs8ludP41KEhRV5E8IsEhnliSztIFL3IpFtnoF5KLgWKKfArUBzubosmE
-        rQN6FVFqnPpMJ0Gugb4rkaj3RbStL+V1/TJ0mQApGauvjMrAquxmHATfaodvJgGXrWNZvJ9WiAsdn
-        q2N2nAdWb5ocKFZWL3YUhMKvAdc9wJCjCmKdubSAdWA1/JuiyBzqKMroaxPxefQW/vsiKTLWHbjKB
-        otXyUSBk3qGPfV5NMqMT5cszCvX9w4DzRRsJW7zTEOdB7GtuzQhCXOwbyw9cnCcs6WUzArF6RaBjt
-        ZU1FuerA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m2b5b-00GMAM-0h; Sun, 11 Jul 2021 15:09:54 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        io-uring@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org
-Subject: [PATCH 2/2] mm/filemap: Prevent waiting for memory for NOWAIT reads
-Date:   Sun, 11 Jul 2021 16:09:27 +0100
-Message-Id: <20210711150927.3898403-3-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210711150927.3898403-1-willy@infradead.org>
-References: <20210711150927.3898403-1-willy@infradead.org>
+        Sun, 11 Jul 2021 13:05:27 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6EEDC0613DD
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jul 2021 10:02:40 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id y6so15651069ilj.13
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jul 2021 10:02:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=ycphfoQKCsCAdoOFrkRu7loWS/EG+Tels9jdvoZAcm0=;
+        b=iwQpnAFMmZthF6SUcUCtCm1vs3ZtyJLuhIaSWpLKqwnWz5IzhdzGBgcv57xzU9VZAR
+         8n4GlMKnD9qem41+ZhC0mSVDmlrifgk03trCzHCI/B5M4KALIn310fEMJKEClqhvYb7D
+         fum7YGVwc2X5EAvRLBuyKC1pV5OwZ+wW0UOpgu03ljt58pyGkEKZykiWC5QpHdGAlGQw
+         e93xwwv175jDjWUlfdZdXIUXTKqaMDItSJm/xhnAwP5JEiQ4Do+YQ0/7fthS7s3FHaFt
+         2vkY1D8yAT575BjTH9o3tXn4Gn5q+e7gs43JubBcpA2abuQjCcr0rCbFcs5bBnzcT2fM
+         wHPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=ycphfoQKCsCAdoOFrkRu7loWS/EG+Tels9jdvoZAcm0=;
+        b=PdrF366F0aJL6j8nu6Hrvjfxwsu+IGzrAU/pUxeDIvyQukjdZQuJ/VKWdxA1C2Tj/L
+         6RokxDT/R1Lx9e7Pzr1o8U5ZeH+SBHXLwMCKk0PAIhCnBEvMYBzDDM4s/JvYKHaEhYdZ
+         GqWuRddezslHGgYL8Yzs3K5iyuEFeWaFM5RZlwY1v4I4qEr7+fSvvivYDvgbU1aICbU4
+         VmiPvjEESGfSFKfG5szSRiWIQxi/qs8eF0OWC2RhjHL/Zd8E+vqXG3lv1B0ZYUXHm/eQ
+         wn9Yd1pJmjvcUyXHxzwaqHLna+RvpapwY8p4RWE8mQl7G5fXhdcFD5v3IOEBn8BMQUT4
+         4gJw==
+X-Gm-Message-State: AOAM531urc6jFk4iK2wsNxgo64mH141k+Z+fWxSAyDYcsI0J8jaxZuy/
+        75wrxD/X9h7uou1n3lXszlxseLcL6BnAnCirjC9TQn9KtT0=
+X-Google-Smtp-Source: ABdhPJybapWHP9OyLAl6IhJ90C84BU/WXdEWlMf49CUnJQsmbpbhzqa8WWMs9bcI5TpBXVQge5JNzUFDjCht8+QKQes=
+X-Received: by 2002:a05:6e02:1c2d:: with SMTP id m13mr1385721ilh.137.1626022960202;
+ Sun, 11 Jul 2021 10:02:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 11 Jul 2021 20:02:29 +0300
+Message-ID: <CAOQ4uxgckzeRuiKSe7D=TVaJGTYwy4cbCFDpdWMQr1R_xXkJig@mail.gmail.com>
+Subject: FAN_REPORT_CHILD_FID
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Bobrowski <repnop@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Readahead memory allocations won't block for much today, as they're
-already marked as NOFS and NORETRY, but they can still sleep, and
-they shouldn't if the read is marked as IOCB_NOWAIT.  Clearing the
-DIRECT_RECLAIM flag will prevent sleeping.
+Jan,
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- mm/filemap.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+I am struggling with an attempt to extend the fanotify API and
+I wanted to ask your opinion before I go too far in the wrong direction.
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d1458ecf2f51..2be27b686518 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2435,21 +2435,27 @@ static int filemap_create_page(struct file *file,
- 
- static int filemap_readahead(struct kiocb *iocb, struct file *file,
- 		struct address_space *mapping, struct page *page,
--		pgoff_t last_index)
-+		pgoff_t index, pgoff_t last_index)
- {
-+	DEFINE_READAHEAD(ractl, file, &file->f_ra, mapping, index);
-+
- 	if (iocb->ki_flags & IOCB_NOIO)
- 		return -EAGAIN;
--	page_cache_async_readahead(mapping, &file->f_ra, file, page,
--			page->index, last_index - page->index);
-+	if (iocb->ki_flags & IOCB_NOWAIT)
-+		ractl.gfp_flags &= ~__GFP_DIRECT_RECLAIM;
-+
-+	if (page)
-+		page_cache_async_ra(&ractl, page, last_index - index);
-+	else
-+		page_cache_sync_ra(&ractl, last_index - index);
- 	return 0;
- }
- 
- static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
- 		struct pagevec *pvec)
- {
--	struct file *filp = iocb->ki_filp;
--	struct address_space *mapping = filp->f_mapping;
--	struct file_ra_state *ra = &filp->f_ra;
-+	struct file *file = iocb->ki_filp;
-+	struct address_space *mapping = file->f_mapping;
- 	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
- 	pgoff_t last_index;
- 	struct page *page;
-@@ -2462,16 +2468,16 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
- 
- 	filemap_get_read_batch(mapping, index, last_index, pvec);
- 	if (!pagevec_count(pvec)) {
--		if (iocb->ki_flags & IOCB_NOIO)
--			return -EAGAIN;
--		page_cache_sync_readahead(mapping, ra, filp, index,
--				last_index - index);
-+		err = filemap_readahead(iocb, file, mapping, NULL, index,
-+					last_index);
-+		if (err)
-+			return err;
- 		filemap_get_read_batch(mapping, index, last_index, pvec);
- 	}
- 	if (!pagevec_count(pvec)) {
- 		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
- 			return -EAGAIN;
--		err = filemap_create_page(filp, mapping,
-+		err = filemap_create_page(file, mapping,
- 				iocb->ki_pos >> PAGE_SHIFT, pvec);
- 		if (err == AOP_TRUNCATED_PAGE)
- 			goto retry;
-@@ -2480,7 +2486,8 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
- 
- 	page = pvec->pages[pagevec_count(pvec) - 1];
- 	if (PageReadahead(page)) {
--		err = filemap_readahead(iocb, filp, mapping, page, last_index);
-+		err = filemap_readahead(iocb, file, mapping, page, page->index,
-+					last_index);
- 		if (err)
- 			goto err;
- 	}
--- 
-2.30.2
+I am working with an application that used to use inotify rename
+cookies to match MOVED_FROM/MOVED_TO events.
+The application was converted to use fanotify name events, but
+the rename cookie functionality was missing, so I am carrying
+a small patch for FAN_REPORT_COOKIE.
 
+I do not want to propose this patch for upstream, because I do
+not like this API.
+
+What I thought was that instead of a "cookie" I would like to
+use the child fid as a way to pair up move events.
+This requires that the move events will never be merged and
+therefore not re-ordered (as is the case with inotify move events).
+
+My thinking was to generalize this concept and introduce
+FAN_REPORT_CHILD_FID flag. With that flag, dirent events
+will report additional FID records, like events on a non-dir child
+(but also for dirent events on subdirs).
+
+Either FAN_REPORT_CHILD_FID would also prevent dirent events
+from being merged or we could use another flag for that purpose,
+but I wasn't able to come up with an idea for a name for this flag :-/
+
+I sketched this patch [1] to implement the flag and to document
+the desired semantics. It's only build tested and I did not even
+implement the merge rules listed in the commit message.
+
+[1] https://github.com/amir73il/linux/commits/fanotify_child_fid
+
+There are other benefits from FAN_REPORT_CHILD_FID which are
+not related to matching move event pairs, such as the case described
+in this discussion [2], where I believe you suggested something along
+the lines of FAN_REPORT_CHILD_FID.
+
+[2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhEsbfA5+sW4XPnUKgCkXtwoDA-BR3iRO34Nx5c4y7Nug@mail.gmail.com/
+
+Thoughts?
+
+Amir.
