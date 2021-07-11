@@ -2,128 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AAF83C3FD3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 00:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 011C23C3FD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 00:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230435AbhGKW41 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jul 2021 18:56:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55468 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229544AbhGKW41 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jul 2021 18:56:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 52C3A61008;
-        Sun, 11 Jul 2021 22:53:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626044019;
-        bh=fNZh4l5+lAvcCs6wrBgsew6D+ISP6YlpA4DG02ZWRkw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wx7JTfKZGIPThCFJw8Ei4ATDdjzdA+nYsMArQrxUhTlwXjFKkjpFK70Yx/s0MX3om
-         1ITY545roAcS2LyFicZC/86EPCKBMvCWPiSagzSYxx4lh/rZ4bbdC6boGlQEKD0vxw
-         qsYb2OSRRlfU9TmmH2KR/I6Z+sYZ31fQPex1la6MQ150KQMEkW/GpnDZ6tCRig0kw+
-         HEg/G1PkisJoCjddPGd3El5HVwnISmwP0N3bkapjKxn7VVJdtycL9K1xyL4HtWwhSE
-         Bzq147OClDBlyIc89AsW7qUxXLyTuEwG2nis6oQovNucnmYVizFW0QDKOvaGzgiqdj
-         nl0cWU/mUcUZQ==
-Date:   Sun, 11 Jul 2021 17:53:37 -0500
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, lhenriques@suse.de, xiubli@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        dhowells@redhat.com
-Subject: Re: [RFC PATCH v7 15/24] ceph: add encrypted fname handling to
- ceph_mdsc_build_path
-Message-ID: <YOt2cVJLEXt88SVJ@quark.localdomain>
-References: <20210625135834.12934-1-jlayton@kernel.org>
- <20210625135834.12934-16-jlayton@kernel.org>
+        id S229793AbhGKXBt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jul 2021 19:01:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229544AbhGKXBs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 11 Jul 2021 19:01:48 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 576D7C0613DD
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jul 2021 15:59:00 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id ca14so7763440edb.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jul 2021 15:59:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=PsAPRNJNdMUklI3cf6AEQ9UEKr4LzMM5xdd7UnVYmmU=;
+        b=qM+Vgks02xZ7ZQ1NZLakieqVbKfKGhExnM+wUeNHaTvcYwAXuWJD6uiusFPuKZ3WsN
+         PivhrJ403ZWrssUi7Es+xMxJ1LvbS4w7CjK3Ht5zRCC+7IpMxRg5mN5HQs4IIoQPrsr8
+         PVjgnR+UO9SbTssCmv3L4dBkZsV3/pWpcAcOSlPYhy0pYMQJ0Yq9X6jlLSP6MW96eHtG
+         bWN75k8tjR4weZ5wmUy5ma4caitxCUKqWfDn8waDlrrBKFH4NlppHVaTY0gh0r8SQ6Dm
+         gAZwI+ZXzSdGZZr0iaq1RoiqQ29g1Sr8EY9kJbhv0dczBryIdMg6eiTQ9zAbgOc/1O9M
+         n2vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=PsAPRNJNdMUklI3cf6AEQ9UEKr4LzMM5xdd7UnVYmmU=;
+        b=In4gpPLBm+J5Ok4t0Dh4g3ZWPBs40zFipkqrJRsLNzwy7EEahCeQ4z8wDUqbcqNZxJ
+         FO2dNw790RQc84UiQutd2MDK3jPCXNm2ugTqdylkptF2pW7KE/C7IVQf3dMonzUX+zzH
+         KjU0x1uX3ePX3bzkzogWPM4p4ompODIbCL/Mz0zmUOJmn03OHkqWBxBn/b4uIxUvr7TL
+         eZhvS6Wap0mWlxxSHA6yQBDSSjBu+gq70tzft82zR5a/gCc33yh/qSs3/MO7hzXAiPNb
+         SfF2Wqsnl5q2h1ur+qJKBe2GX0XUCsXt33GMsPRfugrTa2YXo05T/FeA0cFir1NQ+25M
+         uWjw==
+X-Gm-Message-State: AOAM530urf8IF++1hHUKI4Lwm1TwSGUWOcC8SV86KIFJelNoOKeEnVu0
+        ZZpTSPh/4yBa2zQNCsipAg6A0Tqd6KLk47E2CHg=
+X-Google-Smtp-Source: ABdhPJz0bWPYtri7JF/DKyBj8X8SMo9q2JdS2yKIt8ia5pmr7r6yKJKSgttQ/ByAHhkayoswflcpTEnESpta9tgvrqk=
+X-Received: by 2002:a05:6402:5114:: with SMTP id m20mr61959730edd.174.1626044338860;
+ Sun, 11 Jul 2021 15:58:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210625135834.12934-16-jlayton@kernel.org>
+Received: by 2002:a17:906:f84b:0:0:0:0 with HTTP; Sun, 11 Jul 2021 15:58:58
+ -0700 (PDT)
+Reply-To: veroniquebigots001@gmail.com
+From:   Veronique Bigots <laetitiafinancecredit@gmail.com>
+Date:   Mon, 12 Jul 2021 06:58:58 +0800
+Message-ID: <CAN84TV1apdifasmG=np+rGwhngqZXAEVPwwMDuVDQZBtfzBAFg@mail.gmail.com>
+Subject: BONJOUR
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 25, 2021 at 09:58:25AM -0400, Jeff Layton wrote:
-> +/*
-> + * We want to encrypt filenames when creating them, but the encrypted
-> + * versions of those names may have illegal characters in them. To mitigate
-> + * that, we base64 encode them, but that gives us a result that can exceed
-> + * NAME_MAX.
-> + *
-> + * Follow a similar scheme to fscrypt itself, and cap the filename to a
-> + * smaller size. If the cleartext name is longer than the value below, then
-> + * sha256 hash the remaining bytes.
-> + *
-> + * 189 bytes => 252 bytes base64-encoded, which is <= NAME_MAX (255)
-> + */
-> +#define CEPH_NOHASH_NAME_MAX (189 - SHA256_DIGEST_SIZE)
+Bonjour
 
-Shouldn't this say "If the ciphertext name is longer than the value below", not
-"If the cleartext name is longer than the value below"?
+Je me nomme Bigots Veronique veuve =C3=A2g=C3=A9e de 52 ans
+Actuellement =C3=A0 Londres en Angleterre pour l'analyse de ma sant=C3=A9 c=
+ar je
+Souffre du
+Cancer de la gorge en phase terminal. Je vous contacte en ce moment
+car je voudrais faire un don =C3=A0 l'endroit des =C3=A2mes sensibles. En e=
+ffet,
+je suis =C3=A9conomiste sans enfant et je souhaiterais faire un don d'une
+somme 353.500 euros  et des bijoux pr=C3=A9cieux  =C3=A0 une
+personne qui en fera bon usage.
+Je vous prie de prendre contact avec mon avocat pour les formalit=C3=A9s
+pour recevoir les fonds voici son adresse mail :
+maitre.robertdurand@gmail.com
 
-It would also be helpful if the above comment mentioned that when the hashing is
-done, the real encrypted name is stored separately.
-
-> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
-> +static int encode_encrypted_fname(const struct inode *parent, struct dentry *dentry, char *buf)
-> +{
-> +	u32 len;
-> +	int elen;
-> +	int ret;
-> +	u8 *cryptbuf;
-> +
-> +	WARN_ON_ONCE(!fscrypt_has_encryption_key(parent));
-> +
-> +	/*
-> +	 * convert cleartext dentry name to ciphertext
-> +	 * if result is longer than CEPH_NOKEY_NAME_MAX,
-> +	 * sha256 the remaining bytes
-> +	 *
-> +	 * See: fscrypt_setup_filename
-> +	 */
-> +	if (!fscrypt_fname_encrypted_size(parent, dentry->d_name.len, NAME_MAX, &len))
-> +		return -ENAMETOOLONG;
-> +
-> +	/* If we have to hash the end, then we need a full-length buffer */
-> +	if (len > CEPH_NOHASH_NAME_MAX)
-> +		len = NAME_MAX;
-> +
-> +	cryptbuf = kmalloc(len, GFP_KERNEL);
-> +	if (!cryptbuf)
-> +		return -ENOMEM;
-> +
-> +	ret = fscrypt_fname_encrypt(parent, &dentry->d_name, cryptbuf, len);
-> +	if (ret) {
-> +		kfree(cryptbuf);
-> +		return ret;
-> +	}
-> +
-> +	/* hash the end if the name is long enough */
-> +	if (len > CEPH_NOHASH_NAME_MAX) {
-> +		u8 hash[SHA256_DIGEST_SIZE];
-> +		u8 *extra = cryptbuf + CEPH_NOHASH_NAME_MAX;
-> +
-> +		/* hash the extra bytes and overwrite crypttext beyond that point with it */
-> +		sha256(extra, len - CEPH_NOHASH_NAME_MAX, hash);
-> +		memcpy(extra, hash, SHA256_DIGEST_SIZE);
-> +		len = CEPH_NOHASH_NAME_MAX + SHA256_DIGEST_SIZE;
-> +	}
-
-When the ciphertext name is longer than CEPH_NOHASH_NAME_MAX, why is the
-filename being padded all the way to NAME_MAX?  That can produce a totally
-different ciphertext from that produced by get_fscrypt_altname() in the next
-patch.
-
-The logical thing to do would be to do the encryption in the same way as
-get_fscrypt_altname(), and then replace any bytes beyond CEPH_NOHASH_NAME_MAX
-with their hash.
-
-> +
-> +	/* base64 encode the encrypted name */
-> +	elen = fscrypt_base64_encode(cryptbuf, len, buf);
-> +	kfree(cryptbuf);
-> +	dout("base64-encoded ciphertext name = %.*s\n", len, buf);
-> +	return elen;
-
-The argument to dout() should be elen, not len.
-
-- Eric
+cordialement
