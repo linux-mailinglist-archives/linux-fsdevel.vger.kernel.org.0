@@ -2,58 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FEAF3C3C4B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jul 2021 14:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B32263C3D87
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jul 2021 17:09:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232798AbhGKM2j convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jul 2021 08:28:39 -0400
-Received: from mail.07d05.mspz7.gob.ec ([186.46.59.139]:44532 "EHLO
-        mail.07d05.mspz7.gob.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232554AbhGKM2j (ORCPT
+        id S234857AbhGKPMh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jul 2021 11:12:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51200 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234839AbhGKPMh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jul 2021 08:28:39 -0400
-X-Greylist: delayed 675 seconds by postgrey-1.27 at vger.kernel.org; Sun, 11 Jul 2021 08:28:39 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.07d05.mspz7.gob.ec (Postfix) with ESMTP id DF1481821CB3;
-        Sun, 11 Jul 2021 07:08:07 -0500 (-05)
-Received: from mail.07d05.mspz7.gob.ec ([127.0.0.1])
-        by localhost (mail.07d05.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id eftcz6DlgjzU; Sun, 11 Jul 2021 07:08:07 -0500 (-05)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.07d05.mspz7.gob.ec (Postfix) with ESMTP id 8A51E1821DD0;
-        Sun, 11 Jul 2021 07:08:07 -0500 (-05)
-X-Virus-Scanned: amavisd-new at 07d05.mspz7.gob.ec
-Received: from mail.07d05.mspz7.gob.ec ([127.0.0.1])
-        by localhost (mail.07d05.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 0ZPI49sCXbFY; Sun, 11 Jul 2021 07:08:07 -0500 (-05)
-Received: from cris-PC.wifi (unknown [105.9.79.139])
-        by mail.07d05.mspz7.gob.ec (Postfix) with ESMTPSA id A86DB1821D21;
-        Sun, 11 Jul 2021 07:07:59 -0500 (-05)
-Content-Type: text/plain; charset="iso-8859-1"
+        Sun, 11 Jul 2021 11:12:37 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F61DC0613DD;
+        Sun, 11 Jul 2021 08:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=mFET4wlpyMvzyMW7HkmA29k1HmKwX0U1eDivwHbrr+U=; b=VCr2df8yqu2zVRqOpJTbARGRit
+        m1hfTIschAfZdFGQu4LnvIcIUO3N5p0BFwvwWzKBk3Ly/j3XXlqG7HATwEgY42F+Vg5rtXhntewAq
+        C9BQ+Yc3jOcSzXPjMmnXGoobEDiv/zJHVDzisf6wupdsDXfSn5aCKN6Wd0MO0RTiLb6VIE8TAcJWt
+        FOgklAIb1p/IF5boPz5DC0CWvGQI5rieNHcJA8SON1BvfnOu/rtUXsmqBduX0x2W+L/cUI9WZBRE7
+        lUjLHF/q31ydFwtmatpKVtOeiUI2sruVWuk9n1XOnpldVDnSpPjrT10wM4brR4ZhyR6YnDLEHN6+g
+        f827VVMA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m2b5G-00GMAD-Sr; Sun, 11 Jul 2021 15:09:34 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        io-uring@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org
+Subject: [PATCH 0/2] Close a hole where IOCB_NOWAIT reads could sleep
+Date:   Sun, 11 Jul 2021 16:09:25 +0100
+Message-Id: <20210711150927.3898403-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: spende von 2,000,000 euro
-To:     Recipients <maria.coronel@07d05.mspz7.gob.ec>
-From:   ''Tayeb souami'' <maria.coronel@07d05.mspz7.gob.ec>
-Date:   Sun, 11 Jul 2021 14:07:45 +0200
-Reply-To: Tayebsouam.spende@gmail.com
-Message-Id: <20210711120759.A86DB1821D21@mail.07d05.mspz7.gob.ec>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hallo mein lieber Freund
-Mein Name ist Tayeb Souami aus New Jersey in Amerika und ich habe den America Lottery Jackpot von 315 Millionen Euro gewonnen. Ich habe mich entschlossen, die Summe von 2.000.000 Euro an fünf glückliche Personen zu spenden, und Sie wurden als einer der Begünstigten ausgewählt. Bitte klicken Sie auf diesen Link, um mehr über meinen Gewinn zu erfahren.
+I noticed a theoretical case where an IOCB_NOWAIT read could sleep:
 
+filemap_get_pages
+  filemap_get_read_batch
+  page_cache_sync_readahead
+    page_cache_sync_ra
+      ondemand_readahead
+        do_page_cache_ra
+        page_cache_ra_unbounded
+          gfp_t gfp_mask = readahead_gfp_mask(mapping);
+          memalloc_nofs_save()
+          __page_cache_alloc(gfp_mask);
 
-UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
+We're in a nofs context, so we're not going to start new IO, but we might
+wait for writeback to complete.  We generally don't want to sleep for IO,
+particularly not for IO that isn't related to us.
 
-Bitte kontaktieren Sie mich über diese E-Mail:Tayebsouam.spende@gmail.com
+Jens, can you run this through your test rig and see if it makes any
+practical difference?
 
+Matthew Wilcox (Oracle) (2):
+  mm/readahead: Add gfp_flags to ractl
+  mm/filemap: Prevent waiting for memory for NOWAIT reads
 
-Ich hoffe, Sie und Ihre Familie glücklich zu machen.
+ include/linux/pagemap.h |  3 +++
+ mm/filemap.c            | 31 +++++++++++++++++++------------
+ mm/readahead.c          | 16 ++++++++--------
+ 3 files changed, 30 insertions(+), 20 deletions(-)
 
-Grüße
-Herr Tayeb Souami
+-- 
+2.30.2
+
