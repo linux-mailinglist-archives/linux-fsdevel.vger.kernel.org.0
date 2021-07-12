@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F433C6376
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 21:15:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4763C6378
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 21:15:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236317AbhGLTRy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 15:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38242 "EHLO
+        id S236096AbhGLTS0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 15:18:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236311AbhGLTRx (ORCPT
+        with ESMTP id S233504AbhGLTSZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 15:17:53 -0400
+        Mon, 12 Jul 2021 15:18:25 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C942AC0613DD;
-        Mon, 12 Jul 2021 12:15:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4428C0613DD;
+        Mon, 12 Jul 2021 12:15:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=eCc2Tilw2P6T97s6X38SdvZwPMco5QYfMeWuWguXjm4=; b=CIkqabbgMi7x9YMUX8+CRrOzsi
-        RsGUSX03IwT9l1u3RRGUJ0XY9cm0AVxew2BYWJRpn0aDi2nKNiCyClGT+eExdXBW6LS/mNvwbgyXd
-        n9EJeHIJWAy7PuZiaiVaJGdFSzPV2b/sENUFPEjqAEvk8sCLt/SZF4l1oyY+ptD3xb3Jbr8GUcD2d
-        pwCsgIhotjQf5x5jix0hOMNh2Y8NaWOlHN/sNhpsYb9OcgafSUFM87M6uXAzHr9sLgB9fAzFO0Gv5
-        ZRlEshFylqayvlf9MlXqMaIFl4kgt92HqNTFMwAQzoqx+NVcK5A9jhE0ZT7AaX6Z/e9pja1OAT/Av
-        QjwQ5ROQ==;
+        bh=MF9cJKHQBJ7VX6QBixo2fN+nsHDVzREOlcD95FD4PtA=; b=X/Vfi1T3xlo/12P0FM0+T6k/XR
+        y8mAjbb8Lyc6rTayFug2YbQNvL/wGdwywP2aFmGm/SJK39ccTpecwfegbmV1bMCvT5BVs6XIv8+F5
+        0WkH+a9JvMWglpnfjPA08kfJIRyJtEXTnMQBWyLPSj1wwf7/0/XYb1OqaTst4rbJFiEdjHt3CJ33L
+        X5lerjkKYkqzBwsr/b/lVRWGG4FodaQ6OmtC5MVzrtHkXnppBMvjgHCaLeL9wbC9lYeNMVaEOLynT
+        lhVSByvXrjMApTeua+ZYZEOcV5wPFzqAO+nzzNt/y4vy04GVwQk3iGfM44v/uaagDWzXb5u2b7e34
+        5v9MUkTg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m31NQ-000M7I-9J; Mon, 12 Jul 2021 19:14:08 +0000
+        id 1m31Np-000MAg-RO; Mon, 12 Jul 2021 19:14:40 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     akpm@linux-foundation.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: [PATCH v13 22/32] mm/filemap: Add __folio_lock_or_retry()
-Date:   Mon, 12 Jul 2021 20:01:54 +0100
-Message-Id: <20210712190204.80979-23-willy@infradead.org>
+        linux-fsdevel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH v13 23/32] mm/swap: Add folio_rotate_reclaimable()
+Date:   Mon, 12 Jul 2021 20:01:55 +0100
+Message-Id: <20210712190204.80979-24-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210712190204.80979-1-willy@infradead.org>
 References: <20210712190204.80979-1-willy@infradead.org>
@@ -47,158 +47,144 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert __lock_page_or_retry() to __folio_lock_or_retry().  This actually
-saves 4 bytes in the only caller of lock_page_or_retry() (due to better
-register allocation) and saves the 14 byte cost of calling page_folio()
-in __folio_lock_or_retry() for a total saving of 18 bytes.  Also use
-a bool for the return type.
+Convert rotate_reclaimable_page() to folio_rotate_reclaimable().  This
+eliminates all five of the calls to compound_head() in this function,
+saving 75 bytes at the cost of adding 15 bytes to its one caller,
+end_page_writeback().  We also save 36 bytes from pagevec_move_tail_fn()
+due to using folios there.  Net 96 bytes savings.
+
+Also move its declaration to mm/internal.h as it's only used by filemap.c.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Jeff Layton <jlayton@kernel.org>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- include/linux/pagemap.h | 11 +++++++----
- mm/filemap.c            | 20 +++++++++-----------
- mm/memory.c             |  8 ++++----
- 3 files changed, 20 insertions(+), 19 deletions(-)
+ include/linux/swap.h |  1 -
+ mm/filemap.c         |  3 ++-
+ mm/internal.h        |  1 +
+ mm/page_io.c         |  4 ++--
+ mm/swap.c            | 30 ++++++++++++++++--------------
+ 5 files changed, 21 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 7994b497d505..2e0a949a2b20 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -655,7 +655,7 @@ static inline bool wake_page_match(struct wait_page_queue *wait_page,
- 
- void __folio_lock(struct folio *folio);
- int __folio_lock_killable(struct folio *folio);
--extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
-+bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
- 				unsigned int flags);
- void unlock_page(struct page *page);
- void folio_unlock(struct folio *folio);
-@@ -716,13 +716,16 @@ static inline int lock_page_killable(struct page *page)
-  * caller indicated that it can handle a retry.
-  *
-  * Return value and mmap_lock implications depend on flags; see
-- * __lock_page_or_retry().
-+ * __folio_lock_or_retry().
-  */
--static inline int lock_page_or_retry(struct page *page, struct mm_struct *mm,
-+static inline bool lock_page_or_retry(struct page *page, struct mm_struct *mm,
- 				     unsigned int flags)
- {
-+	struct folio *folio;
- 	might_sleep();
--	return trylock_page(page) || __lock_page_or_retry(page, mm, flags);
-+
-+	folio = page_folio(page);
-+	return folio_trylock(folio) || __folio_lock_or_retry(folio, mm, flags);
- }
- 
- /*
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 3d3d85354026..8394716a002b 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -371,7 +371,6 @@ extern void lru_add_drain(void);
+ extern void lru_add_drain_cpu(int cpu);
+ extern void lru_add_drain_cpu_zone(struct zone *zone);
+ extern void lru_add_drain_all(void);
+-extern void rotate_reclaimable_page(struct page *page);
+ extern void deactivate_file_page(struct page *page);
+ extern void deactivate_page(struct page *page);
+ extern void mark_page_lazyfree(struct page *page);
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 018fad19146e..1dab6c126c7a 100644
+index 1dab6c126c7a..3ebccf9dd7e8 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1625,48 +1625,46 @@ static int __folio_lock_async(struct folio *folio, struct wait_page_queue *wait)
+@@ -1529,8 +1529,9 @@ void end_page_writeback(struct page *page)
+ 	 * ever page writeback.
+ 	 */
+ 	if (PageReclaim(page)) {
++		struct folio *folio = page_folio(page);
+ 		ClearPageReclaim(page);
+-		rotate_reclaimable_page(page);
++		folio_rotate_reclaimable(folio);
+ 	}
  
- /*
-  * Return values:
-- * 1 - page is locked; mmap_lock is still held.
-- * 0 - page is not locked.
-+ * true - folio is locked; mmap_lock is still held.
-+ * false - folio is not locked.
-  *     mmap_lock has been released (mmap_read_unlock(), unless flags had both
-  *     FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_RETRY_NOWAIT set, in
-  *     which case mmap_lock is still held.
-  *
-  * If neither ALLOW_RETRY nor KILLABLE are set, will always return 1
-- * with the page locked and the mmap_lock unperturbed.
-+ * with the folio locked and the mmap_lock unperturbed.
-  */
--int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
-+bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
- 			 unsigned int flags)
- {
--	struct folio *folio = page_folio(page);
--
- 	if (fault_flag_allow_retry_first(flags)) {
- 		/*
- 		 * CAUTION! In this case, mmap_lock is not released
- 		 * even though return 0.
+ 	/*
+diff --git a/mm/internal.h b/mm/internal.h
+index 31ff935b2547..1a8851b73031 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -35,6 +35,7 @@
+ void page_writeback_init(void);
+ 
+ vm_fault_t do_swap_page(struct vm_fault *vmf);
++void folio_rotate_reclaimable(struct folio *folio);
+ 
+ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
+ 		unsigned long floor, unsigned long ceiling);
+diff --git a/mm/page_io.c b/mm/page_io.c
+index c493ce9ebcf5..d597bc6e6e45 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -38,7 +38,7 @@ void end_swap_bio_write(struct bio *bio)
+ 		 * Also print a dire warning that things will go BAD (tm)
+ 		 * very quickly.
+ 		 *
+-		 * Also clear PG_reclaim to avoid rotate_reclaimable_page()
++		 * Also clear PG_reclaim to avoid folio_rotate_reclaimable()
  		 */
- 		if (flags & FAULT_FLAG_RETRY_NOWAIT)
--			return 0;
-+			return false;
+ 		set_page_dirty(page);
+ 		pr_alert_ratelimited("Write-error on swap-device (%u:%u:%llu)\n",
+@@ -317,7 +317,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
+ 			 * temporary failure if the system has limited
+ 			 * memory for allocating transmit buffers.
+ 			 * Mark the page dirty and avoid
+-			 * rotate_reclaimable_page but rate-limit the
++			 * folio_rotate_reclaimable but rate-limit the
+ 			 * messages but do not flag PageError like
+ 			 * the normal direct-to-bio case as it could
+ 			 * be temporary.
+diff --git a/mm/swap.c b/mm/swap.c
+index 19600430e536..6d4696eb2d43 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -228,11 +228,13 @@ static void pagevec_lru_move_fn(struct pagevec *pvec,
  
- 		mmap_read_unlock(mm);
- 		if (flags & FAULT_FLAG_KILLABLE)
- 			folio_wait_locked_killable(folio);
- 		else
- 			folio_wait_locked(folio);
--		return 0;
-+		return false;
+ static void pagevec_move_tail_fn(struct page *page, struct lruvec *lruvec)
+ {
+-	if (!PageUnevictable(page)) {
+-		del_page_from_lru_list(page, lruvec);
+-		ClearPageActive(page);
+-		add_page_to_lru_list_tail(page, lruvec);
+-		__count_vm_events(PGROTATED, thp_nr_pages(page));
++	struct folio *folio = page_folio(page);
++
++	if (!folio_unevictable(folio)) {
++		folio_del_from_lru_list(folio, lruvec);
++		folio_clear_active_flag(folio);
++		folio_add_to_lru_list_tail(folio, lruvec);
++		__count_vm_events(PGROTATED, folio_nr_pages(folio));
  	}
- 	if (flags & FAULT_FLAG_KILLABLE) {
--		int ret;
-+		bool ret;
- 
- 		ret = __folio_lock_killable(folio);
- 		if (ret) {
- 			mmap_read_unlock(mm);
--			return 0;
-+			return false;
- 		}
- 	} else {
- 		__folio_lock(folio);
- 	}
- 
--	return 1;
-+	return true;
  }
  
- /**
-diff --git a/mm/memory.c b/mm/memory.c
-index 747a01d495f2..2f111f9b3dbc 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4248,7 +4248,7 @@ static vm_fault_t do_shared_fault(struct vm_fault *vmf)
-  * We enter with non-exclusive mmap_lock (to exclude vma changes,
-  * but allow concurrent faults).
-  * The mmap_lock may have been released depending on flags and our
-- * return value.  See filemap_fault() and __lock_page_or_retry().
-+ * return value.  See filemap_fault() and __folio_lock_or_retry().
-  * If mmap_lock is released, vma may become invalid (for example
-  * by other thread calling munmap()).
-  */
-@@ -4489,7 +4489,7 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
-  * concurrent faults).
+@@ -249,23 +251,23 @@ static bool pagevec_add_and_need_flush(struct pagevec *pvec, struct page *page)
+ }
+ 
+ /*
+- * Writeback is about to end against a page which has been marked for immediate
+- * reclaim.  If it still appears to be reclaimable, move it to the tail of the
+- * inactive list.
++ * Writeback is about to end against a folio which has been marked for
++ * immediate reclaim.  If it still appears to be reclaimable, move it
++ * to the tail of the inactive list.
   *
-  * The mmap_lock may have been released depending on flags and our return value.
-- * See filemap_fault() and __lock_page_or_retry().
-+ * See filemap_fault() and __folio_lock_or_retry().
+- * rotate_reclaimable_page() must disable IRQs, to prevent nasty races.
++ * folio_rotate_reclaimable() must disable IRQs, to prevent nasty races.
   */
- static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
+-void rotate_reclaimable_page(struct page *page)
++void folio_rotate_reclaimable(struct folio *folio)
  {
-@@ -4593,7 +4593,7 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
-  * By the time we get here, we already hold the mm semaphore
-  *
-  * The mmap_lock may have been released depending on flags and our
-- * return value.  See filemap_fault() and __lock_page_or_retry().
-+ * return value.  See filemap_fault() and __folio_lock_or_retry().
-  */
- static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 		unsigned long address, unsigned int flags)
-@@ -4749,7 +4749,7 @@ static inline void mm_account_fault(struct pt_regs *regs,
-  * By the time we get here, we already hold the mm semaphore
-  *
-  * The mmap_lock may have been released depending on flags and our
-- * return value.  See filemap_fault() and __lock_page_or_retry().
-+ * return value.  See filemap_fault() and __folio_lock_or_retry().
-  */
- vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 			   unsigned int flags, struct pt_regs *regs)
+-	if (!PageLocked(page) && !PageDirty(page) &&
+-	    !PageUnevictable(page) && PageLRU(page)) {
++	if (!folio_locked(folio) && !folio_dirty(folio) &&
++	    !folio_unevictable(folio) && folio_lru(folio)) {
+ 		struct pagevec *pvec;
+ 		unsigned long flags;
+ 
+-		get_page(page);
++		folio_get(folio);
+ 		local_lock_irqsave(&lru_rotate.lock, flags);
+ 		pvec = this_cpu_ptr(&lru_rotate.pvec);
+-		if (pagevec_add_and_need_flush(pvec, page))
++		if (pagevec_add_and_need_flush(pvec, &folio->page))
+ 			pagevec_lru_move_fn(pvec, pagevec_move_tail_fn);
+ 		local_unlock_irqrestore(&lru_rotate.lock, flags);
+ 	}
 -- 
 2.30.2
 
