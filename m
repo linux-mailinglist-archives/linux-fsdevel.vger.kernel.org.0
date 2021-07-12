@@ -2,44 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D4A23C6321
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 21:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83DE53C6326
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 21:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236093AbhGLTH2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 15:07:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35634 "EHLO
+        id S236115AbhGLTIE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 15:08:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236056AbhGLTH2 (ORCPT
+        with ESMTP id S236037AbhGLTIE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 15:07:28 -0400
+        Mon, 12 Jul 2021 15:08:04 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2181C0613DD;
-        Mon, 12 Jul 2021 12:04:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD536C0613DD;
+        Mon, 12 Jul 2021 12:05:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=oho32fb4EndS/uwM41GnXhOxiT41S3Jw0vCTyJbW2Cc=; b=FXKbSqcLZ/h1W4RPnHritQS78D
-        L/uVLDMBjZ2Pd73VUu2/6nolZizgyaOluT9YYX6SPc/Kgd3vi296mDeHRKEuSrfl+VUHYP9a7c8PH
-        H0FP4+gEMPLb+Ai3/8mQYtNpuSVQQswtFZkyEtMEW7IFEdIt+LYqz/zx+8RG0PeoNKUtoDDp0fN8u
-        xWo9PH8b2+3n+fS6d67zhttNJAdQKvNcrufZ6jG09wgbNOphXVGtG7qktGXVBnnWsOtxb7Ci0HunX
-        j3XUJXRELSQBG3F+lYqDdk1IAlKxF1XnWYfyNYU6xNO8tE1iD9u7b9WX+UVYkcPPTxzBKo+1nDZwz
-        Ikb/KafA==;
+        bh=eRg3ak94wgijDr1AzRTG+e7qA9plHYcT37M29iDpI7Y=; b=boylf1eMX14NwhQ+Bp4nbkfBCh
+        LWIKIIcEu74w7eyn+KlJyQ1rmSbGvINLhaVsUd/9KeWx4WGQeA2sH5tMylaYwszAAfR2z56WUft1L
+        AMojaODsw2wWxqEB3RrFhEnCXKlcO74QLd1LA5GZY4pLm4SrmYFbPp7iUK7mFUdsPeq7WVqT3Pgpw
+        03e7L7hQl1CJkQCuvp2FahkiQghwqZPrXHokkNR611saaQVQPJGrYuGdmApvptLkNc0llHSg/Dghi
+        dw9Gzmjxm044+RT3PWb2wB1tCxDHu40TslOUzLmybbaPwenn5n58Yo79EFFPXZEXPwl2gGyH5mS1F
+        DA9ZTHRQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m31Dc-000LEv-97; Mon, 12 Jul 2021 19:03:56 +0000
+        id 1m31ED-000LGt-HX; Mon, 12 Jul 2021 19:04:33 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     akpm@linux-foundation.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
         Jeff Layton <jlayton@kernel.org>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         Vlastimil Babka <vbabka@suse.cz>,
         William Kucharski <william.kucharski@oracle.com>,
         David Howells <dhowells@redhat.com>
-Subject: [PATCH v13 04/32] mm/vmstat: Add functions to account folio statistics
-Date:   Mon, 12 Jul 2021 20:01:36 +0100
-Message-Id: <20210712190204.80979-5-willy@infradead.org>
+Subject: [PATCH v13 05/32] mm/debug: Add VM_BUG_ON_FOLIO() and VM_WARN_ON_ONCE_FOLIO()
+Date:   Mon, 12 Jul 2021 20:01:37 +0100
+Message-Id: <20210712190204.80979-6-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210712190204.80979-1-willy@infradead.org>
 References: <20210712190204.80979-1-willy@infradead.org>
@@ -49,13 +50,11 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allow page counters to be more readily modified by callers which have
-a folio.  Name these wrappers with 'stat' instead of 'state' as requested
-by Linus here:
-https://lore.kernel.org/linux-mm/CAHk-=wj847SudR-kt+46fT3+xFFgiwpgThvm7DJWGdi4cVrbnQ@mail.gmail.com/
-No change to generated code.
+These are the folio equivalents of VM_BUG_ON_PAGE and
+VM_WARN_ON_ONCE_PAGE.  No change to generated code.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Zi Yan <ziy@nvidia.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Jeff Layton <jlayton@kernel.org>
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
@@ -63,139 +62,59 @@ Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 Reviewed-by: David Howells <dhowells@redhat.com>
 ---
- include/linux/vmstat.h | 107 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 107 insertions(+)
+ include/linux/mmdebug.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-index d6a6cf53b127..241bd0f53fb9 100644
---- a/include/linux/vmstat.h
-+++ b/include/linux/vmstat.h
-@@ -415,6 +415,78 @@ static inline void drain_zonestat(struct zone *zone,
- 			struct per_cpu_zonestat *pzstats) { }
- #endif		/* CONFIG_SMP */
+diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
+index 1935d4c72d10..d7285f8148a3 100644
+--- a/include/linux/mmdebug.h
++++ b/include/linux/mmdebug.h
+@@ -22,6 +22,13 @@ void dump_mm(const struct mm_struct *mm);
+ 			BUG();						\
+ 		}							\
+ 	} while (0)
++#define VM_BUG_ON_FOLIO(cond, folio)					\
++	do {								\
++		if (unlikely(cond)) {					\
++			dump_page(&folio->page, "VM_BUG_ON_FOLIO(" __stringify(cond)")");\
++			BUG();						\
++		}							\
++	} while (0)
+ #define VM_BUG_ON_VMA(cond, vma)					\
+ 	do {								\
+ 		if (unlikely(cond)) {					\
+@@ -47,6 +54,17 @@ void dump_mm(const struct mm_struct *mm);
+ 	}								\
+ 	unlikely(__ret_warn_once);					\
+ })
++#define VM_WARN_ON_ONCE_FOLIO(cond, folio)	({			\
++	static bool __section(".data.once") __warned;			\
++	int __ret_warn_once = !!(cond);					\
++									\
++	if (unlikely(__ret_warn_once && !__warned)) {			\
++		dump_page(&folio->page, "VM_WARN_ON_ONCE_FOLIO(" __stringify(cond)")");\
++		__warned = true;					\
++		WARN_ON(1);						\
++	}								\
++	unlikely(__ret_warn_once);					\
++})
  
-+static inline void __zone_stat_mod_folio(struct folio *folio,
-+		enum zone_stat_item item, long nr)
-+{
-+	__mod_zone_page_state(folio_zone(folio), item, nr);
-+}
-+
-+static inline void __zone_stat_add_folio(struct folio *folio,
-+		enum zone_stat_item item)
-+{
-+	__mod_zone_page_state(folio_zone(folio), item, folio_nr_pages(folio));
-+}
-+
-+static inline void __zone_stat_sub_folio(struct folio *folio,
-+		enum zone_stat_item item)
-+{
-+	__mod_zone_page_state(folio_zone(folio), item, -folio_nr_pages(folio));
-+}
-+
-+static inline void zone_stat_mod_folio(struct folio *folio,
-+		enum zone_stat_item item, long nr)
-+{
-+	mod_zone_page_state(folio_zone(folio), item, nr);
-+}
-+
-+static inline void zone_stat_add_folio(struct folio *folio,
-+		enum zone_stat_item item)
-+{
-+	mod_zone_page_state(folio_zone(folio), item, folio_nr_pages(folio));
-+}
-+
-+static inline void zone_stat_sub_folio(struct folio *folio,
-+		enum zone_stat_item item)
-+{
-+	mod_zone_page_state(folio_zone(folio), item, -folio_nr_pages(folio));
-+}
-+
-+static inline void __node_stat_mod_folio(struct folio *folio,
-+		enum node_stat_item item, long nr)
-+{
-+	__mod_node_page_state(folio_pgdat(folio), item, nr);
-+}
-+
-+static inline void __node_stat_add_folio(struct folio *folio,
-+		enum node_stat_item item)
-+{
-+	__mod_node_page_state(folio_pgdat(folio), item, folio_nr_pages(folio));
-+}
-+
-+static inline void __node_stat_sub_folio(struct folio *folio,
-+		enum node_stat_item item)
-+{
-+	__mod_node_page_state(folio_pgdat(folio), item, -folio_nr_pages(folio));
-+}
-+
-+static inline void node_stat_mod_folio(struct folio *folio,
-+		enum node_stat_item item, long nr)
-+{
-+	mod_node_page_state(folio_pgdat(folio), item, nr);
-+}
-+
-+static inline void node_stat_add_folio(struct folio *folio,
-+		enum node_stat_item item)
-+{
-+	mod_node_page_state(folio_pgdat(folio), item, folio_nr_pages(folio));
-+}
-+
-+static inline void node_stat_sub_folio(struct folio *folio,
-+		enum node_stat_item item)
-+{
-+	mod_node_page_state(folio_pgdat(folio), item, -folio_nr_pages(folio));
-+}
-+
- static inline void __mod_zone_freepage_state(struct zone *zone, int nr_pages,
- 					     int migratetype)
- {
-@@ -543,6 +615,24 @@ static inline void __dec_lruvec_page_state(struct page *page,
- 	__mod_lruvec_page_state(page, idx, -1);
- }
- 
-+static inline void __lruvec_stat_mod_folio(struct folio *folio,
-+					   enum node_stat_item idx, int val)
-+{
-+	__mod_lruvec_page_state(&folio->page, idx, val);
-+}
-+
-+static inline void __lruvec_stat_add_folio(struct folio *folio,
-+					   enum node_stat_item idx)
-+{
-+	__lruvec_stat_mod_folio(folio, idx, folio_nr_pages(folio));
-+}
-+
-+static inline void __lruvec_stat_sub_folio(struct folio *folio,
-+					   enum node_stat_item idx)
-+{
-+	__lruvec_stat_mod_folio(folio, idx, -folio_nr_pages(folio));
-+}
-+
- static inline void inc_lruvec_page_state(struct page *page,
- 					 enum node_stat_item idx)
- {
-@@ -555,4 +645,21 @@ static inline void dec_lruvec_page_state(struct page *page,
- 	mod_lruvec_page_state(page, idx, -1);
- }
- 
-+static inline void lruvec_stat_mod_folio(struct folio *folio,
-+					 enum node_stat_item idx, int val)
-+{
-+	mod_lruvec_page_state(&folio->page, idx, val);
-+}
-+
-+static inline void lruvec_stat_add_folio(struct folio *folio,
-+					 enum node_stat_item idx)
-+{
-+	lruvec_stat_mod_folio(folio, idx, folio_nr_pages(folio));
-+}
-+
-+static inline void lruvec_stat_sub_folio(struct folio *folio,
-+					 enum node_stat_item idx)
-+{
-+	lruvec_stat_mod_folio(folio, idx, -folio_nr_pages(folio));
-+}
- #endif /* _LINUX_VMSTAT_H */
+ #define VM_WARN_ON(cond) (void)WARN_ON(cond)
+ #define VM_WARN_ON_ONCE(cond) (void)WARN_ON_ONCE(cond)
+@@ -55,11 +73,13 @@ void dump_mm(const struct mm_struct *mm);
+ #else
+ #define VM_BUG_ON(cond) BUILD_BUG_ON_INVALID(cond)
+ #define VM_BUG_ON_PAGE(cond, page) VM_BUG_ON(cond)
++#define VM_BUG_ON_FOLIO(cond, folio) VM_BUG_ON(cond)
+ #define VM_BUG_ON_VMA(cond, vma) VM_BUG_ON(cond)
+ #define VM_BUG_ON_MM(cond, mm) VM_BUG_ON(cond)
+ #define VM_WARN_ON(cond) BUILD_BUG_ON_INVALID(cond)
+ #define VM_WARN_ON_ONCE(cond) BUILD_BUG_ON_INVALID(cond)
+ #define VM_WARN_ON_ONCE_PAGE(cond, page)  BUILD_BUG_ON_INVALID(cond)
++#define VM_WARN_ON_ONCE_FOLIO(cond, folio)  BUILD_BUG_ON_INVALID(cond)
+ #define VM_WARN_ONCE(cond, format...) BUILD_BUG_ON_INVALID(cond)
+ #define VM_WARN(cond, format...) BUILD_BUG_ON_INVALID(cond)
+ #endif
 -- 
 2.30.2
 
