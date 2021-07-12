@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 464D73C66B6
+	by mail.lfdr.de (Postfix) with ESMTP id E70B63C66B8
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 01:07:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232878AbhGLXKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 19:10:32 -0400
-Received: from mail-ed1-f44.google.com ([209.85.208.44]:39901 "EHLO
-        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232724AbhGLXKc (ORCPT
+        id S233068AbhGLXKe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 19:10:34 -0400
+Received: from mail-ej1-f52.google.com ([209.85.218.52]:40750 "EHLO
+        mail-ej1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232911AbhGLXKe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 19:10:32 -0400
-Received: by mail-ed1-f44.google.com with SMTP id v1so30439901edt.6;
-        Mon, 12 Jul 2021 16:07:41 -0700 (PDT)
+        Mon, 12 Jul 2021 19:10:34 -0400
+Received: by mail-ej1-f52.google.com with SMTP id o5so37814174ejy.7;
+        Mon, 12 Jul 2021 16:07:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DWKRBp3AChwDUw/Y1iiOPEb3yfZHMHAFp5fo3Bbvlxw=;
-        b=uiFLVBKVC6AuAiVljPf3WoK2Oe5OJ54g0h8o4kkbfPy76BfDjqxR2k/rUAO8HtDvLu
-         tcqLhr54Tzo09y7uSQkdgO9Kt++0O/ut34Ts6YM228k8I1KobbPJmq9ASIph+WncrzJZ
-         B9OCJ2/BbfC0NUznx5wuslZD9jTVqlr4TWPBFxYDNalT1B27p+B5mmE7+YXjfc8i99iD
-         /IFn8pNxM4LbnHWtJC/D7fnkbD6Ne+iSNUr2zMyDgnznM5CNKyrbK6DBMKdWXNd1eUNr
-         +d6Jb4xVwTBuLk1o0LCvhXno91KEFrMcrSq1hu6sLpnsCZ8P4lewJSVC4W1Y7MkvM4vL
-         Fo2Q==
-X-Gm-Message-State: AOAM5326ivdwZ8najb67YZdclfupOU5eCLv9WFpjJ9HfnPSfJ5LXDpfF
-        XFcmRqX0ZiUhvW4H57HppdqfzNILv3c3PQ==
-X-Google-Smtp-Source: ABdhPJymSzPj+Az1K63HfDN4fcrNSw5JyvoykWC+eG/BdMBuhVKvQumZLxfBdQqx0D3ct1cde4ePpA==
-X-Received: by 2002:a05:6402:2044:: with SMTP id bc4mr1568620edb.307.1626131260968;
-        Mon, 12 Jul 2021 16:07:40 -0700 (PDT)
+        bh=Y3koryDaOA6/9bcI8unsx1MLaBEFywHb4rwejNyG6tE=;
+        b=odebTodqIjSudgZ0wWn8mRhvv5EVtcwMGyLnxA+BsQFqG8z+uyz+x7KJWGag9AAgpW
+         qyZn+WaC9Hwvpb6pR7fCLaH++Q4Vv5mBIogvpVq+ol3DPLaWUajFlj0OgBc+DmlNI2VR
+         2eizfAbjAs3J0K+IT7sc3ev9kX5fu26mGHPtbzcrWfe0Sq1063EQWvRCuAWR9uYKL5Mr
+         uDo2OX2cpyMuIhNl272O5hIGLmBtHxU6mwV8e3oRwNqsGnfTAnvNg3t0CHXF6kdrnX2g
+         OsDNyw+QNbkE5RAcAm11GZinZLs0xLlvRxlGlVodwBwmZiAAVQ464awq053fhfL9pctL
+         6y3w==
+X-Gm-Message-State: AOAM531JtsunR/NIcqWW7idFutKXHhx/9if4OCfDZ9XOzORhy32N20S7
+        DLR71t9jD/LF/rE1AfYbRbgUsmrj40CvGg==
+X-Google-Smtp-Source: ABdhPJy4+ONUDQ4nc4RpW8p+lt4JGKTRBN+97WTCckeOjf7aHhhjhSKQulegxLC/YoP1FRZxBqzTEA==
+X-Received: by 2002:a17:907:7d8b:: with SMTP id oz11mr1714569ejc.143.1626131262696;
+        Mon, 12 Jul 2021 16:07:42 -0700 (PDT)
 Received: from msft-t490s.fritz.box (host-95-250-115-52.retail.telecomitalia.it. [95.250.115.52])
-        by smtp.gmail.com with ESMTPSA id h3sm5494111ejf.53.2021.07.12.16.07.39
+        by smtp.gmail.com with ESMTPSA id h3sm5494111ejf.53.2021.07.12.16.07.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jul 2021 16:07:40 -0700 (PDT)
+        Mon, 12 Jul 2021 16:07:42 -0700 (PDT)
 From:   Matteo Croce <mcroce@linux.microsoft.com>
 To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
@@ -50,9 +50,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Hannes Reinecke <hare@suse.de>,
         Matthew Wilcox <willy@infradead.org>,
         JeffleXu <jefflexu@linux.alibaba.com>
-Subject: [PATCH v5 2/6] block: export the diskseq in uevents
-Date:   Tue, 13 Jul 2021 01:05:26 +0200
-Message-Id: <20210712230530.29323-3-mcroce@linux.microsoft.com>
+Subject: [PATCH v5 3/6] block: add ioctl to read the disk sequence number
+Date:   Tue, 13 Jul 2021 01:05:27 +0200
+Message-Id: <20210712230530.29323-4-mcroce@linux.microsoft.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210712230530.29323-1-mcroce@linux.microsoft.com>
 References: <20210712230530.29323-1-mcroce@linux.microsoft.com>
@@ -64,72 +64,52 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Matteo Croce <mcroce@microsoft.com>
 
-Export the newly introduced diskseq in uevents:
+Add a new BLKGETDISKSEQ ioctl which retrieves the disk sequence number
+from the genhd structure.
 
-    $ udevadm info /sys/class/block/* |grep -e DEVNAME -e DISKSEQ
-    E: DEVNAME=/dev/loop0
-    E: DISKSEQ=1
-    E: DEVNAME=/dev/loop1
-    E: DISKSEQ=2
-    E: DEVNAME=/dev/loop2
-    E: DISKSEQ=3
-    E: DEVNAME=/dev/loop3
-    E: DISKSEQ=4
-    E: DEVNAME=/dev/loop4
-    E: DISKSEQ=5
-    E: DEVNAME=/dev/loop5
-    E: DISKSEQ=6
-    E: DEVNAME=/dev/loop6
-    E: DISKSEQ=7
-    E: DEVNAME=/dev/loop7
-    E: DISKSEQ=8
-    E: DEVNAME=/dev/nvme0n1
-    E: DISKSEQ=9
-    E: DEVNAME=/dev/nvme0n1p1
-    E: DISKSEQ=9
-    E: DEVNAME=/dev/nvme0n1p2
-    E: DISKSEQ=9
-    E: DEVNAME=/dev/nvme0n1p3
-    E: DISKSEQ=9
-    E: DEVNAME=/dev/nvme0n1p4
-    E: DISKSEQ=9
-    E: DEVNAME=/dev/nvme0n1p5
-    E: DISKSEQ=9
-    E: DEVNAME=/dev/sda
-    E: DISKSEQ=10
-    E: DEVNAME=/dev/sda1
-    E: DISKSEQ=10
-    E: DEVNAME=/dev/sda2
-    E: DISKSEQ=10
+    # ./getdiskseq /dev/loop*
+    /dev/loop0:     13
+    /dev/loop0p1:   13
+    /dev/loop0p2:   13
+    /dev/loop0p3:   13
+    /dev/loop1:     14
+    /dev/loop1p1:   14
+    /dev/loop1p2:   14
+    /dev/loop2:     5
+    /dev/loop3:     6
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Matteo Croce <mcroce@microsoft.com>
 ---
- block/genhd.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ block/ioctl.c           | 2 ++
+ include/uapi/linux/fs.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/block/genhd.c b/block/genhd.c
-index 0be32dbe97bb..3126f8afe3b8 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -1101,8 +1101,17 @@ static void disk_release(struct device *dev)
- 		blk_put_queue(disk->queue);
- 	kfree(disk);
- }
-+
-+static int block_uevent(struct device *dev, struct kobj_uevent_env *env)
-+{
-+	struct gendisk *disk = dev_to_disk(dev);
-+
-+	return add_uevent_var(env, "DISKSEQ=%llu", disk->diskseq);
-+}
-+
- struct class block_class = {
- 	.name		= "block",
-+	.dev_uevent	= block_uevent,
- };
- 
- static char *block_devnode(struct device *dev, umode_t *mode,
+diff --git a/block/ioctl.c b/block/ioctl.c
+index 24beec9ca9c9..0c3a4a53fa11 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -469,6 +469,8 @@ static int blkdev_common_ioctl(struct block_device *bdev, fmode_t mode,
+ 				BLKDEV_DISCARD_SECURE);
+ 	case BLKZEROOUT:
+ 		return blk_ioctl_zeroout(bdev, mode, arg);
++	case BLKGETDISKSEQ:
++		return put_u64(argp, bdev->bd_disk->diskseq);
+ 	case BLKREPORTZONE:
+ 		return blkdev_report_zones_ioctl(bdev, mode, cmd, arg);
+ 	case BLKRESETZONE:
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 4c32e97dcdf0..bdf7b404b3e7 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -184,6 +184,7 @@ struct fsxattr {
+ #define BLKSECDISCARD _IO(0x12,125)
+ #define BLKROTATIONAL _IO(0x12,126)
+ #define BLKZEROOUT _IO(0x12,127)
++#define BLKGETDISKSEQ _IOR(0x12,128,__u64)
+ /*
+  * A jump here: 130-136 are reserved for zoned block devices
+  * (see uapi/linux/blkzoned.h)
 -- 
 2.31.1
 
