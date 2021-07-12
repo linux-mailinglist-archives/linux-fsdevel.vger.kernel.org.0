@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89DE33C6123
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 18:56:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C8E3C612A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 18:56:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234179AbhGLQ7V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 12:59:21 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:34632 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234800AbhGLQ7E (ORCPT
+        id S235711AbhGLQ7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 12:59:23 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:54492 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234782AbhGLQ7D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 12:59:04 -0400
+        Mon, 12 Jul 2021 12:59:03 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 76F6422132;
+        by smtp-out2.suse.de (Postfix) with ESMTP id 42F6E1FFD7;
         Mon, 12 Jul 2021 16:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1626108970; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MAwH8p8fifiQg27/Bml9bQG8rBDFikpquMFbXnFLpF0=;
-        b=L/QMoNGBpYdqEpBvsdY56xoCYHT30hbEA3843gNUJpE9gn/NgcEOSaZTp3cIOHVy+9oWgH
-        c7VwAt1EW45hisH4TYG3wJiDS+brS94D3ZxkV+qB/YEo+8mme4KzcIusI6t0M9pgp5Q/Yf
-        ZlrnAmkOSl8hC0FiiN0G3DVhXm0+wYA=
+        bh=5kdSAKsBJX05O6PW1p3o6TYA39W8qYt2DGkkk4S4/kQ=;
+        b=zHO7pneKLjxfmZYFTrwUaNdBfdBC/euyolnzAYAHXesb9DH5CZTu5CCwdWIcG9tBojU0Xo
+        xlt1V+DjgjbcoMrNNVxIo92ocM5we+hRvXeI3J6rTI7dfRpmVQlSGCxxh9u5Qnu/ufCLnn
+        yzD9zWDfbimvpZPgKSCTfiq2Y44giek=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1626108970;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MAwH8p8fifiQg27/Bml9bQG8rBDFikpquMFbXnFLpF0=;
-        b=vrg5KVVtlTXSBiGPenyWxwsfKb7GQI4/kOV7J6mrpQmQ2pLBweAPny3pCTknKH0n0vpT7n
-        vlMmsVDL0+CBzZDw==
+        bh=5kdSAKsBJX05O6PW1p3o6TYA39W8qYt2DGkkk4S4/kQ=;
+        b=VebPR3M7famao5P32oMuWgF+xqkcl9M0bVZABPh6V8fizffjVxjshbUFvjCRavSVm1wbcK
+        cOrLzwgK8untq7Dg==
 Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 23EEEA3B89;
+        by relay2.suse.de (Postfix) with ESMTP id 27912A3B94;
         Mon, 12 Jul 2021 16:56:10 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DE1A81F2CDF; Mon, 12 Jul 2021 18:56:09 +0200 (CEST)
+        id E230D1F2CE0; Mon, 12 Jul 2021 18:56:09 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     <linux-ext4@vger.kernel.org>,
@@ -48,349 +48,311 @@ Cc:     <linux-ext4@vger.kernel.org>,
         <linux-xfs@vger.kernel.org>,
         linux-f2fs-devel@lists.sourceforge.net, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 11/14] f2fs: Convert to using invalidate_lock
-Date:   Mon, 12 Jul 2021 18:56:02 +0200
-Message-Id: <20210712165609.13215-11-jack@suse.cz>
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 12/14] fuse: Convert to using invalidate_lock
+Date:   Mon, 12 Jul 2021 18:56:03 +0200
+Message-Id: <20210712165609.13215-12-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210712163901.29514-1-jack@suse.cz>
 References: <20210712163901.29514-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12344; h=from:subject; bh=ugTzdnQ5fwj65SlrJvAh5LPvP/ZLlo/IqJfGP2n6gZ0=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBg7HQiIPcXwZZYwK4J88o6DMh61busWv3ks1R0FhPw fmLfaECJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYOx0IgAKCRCcnaoHP2RA2WpKB/ 49XQyCwcs1oeWmIMv6Kr4+0fDZ51OKk/B6aL+kE1d4K5wXBJAppUP0InMssyFr1NxzVCLii1O5fvlZ 7s6JJgl31XQHmowVKC12kuhPMUuPOTFT/UKmAHB9KaydTlbxMhZzYGTvnDy3Hqe0DKz1oQ7535Wbqf 9UCuMXFiqQLpE9mFf4NpU0L1CbwmoC5f9Lou9zhquCJcUgSyWCv4SEMacDLlfDk+pqmLHth5lVLW6G l1pvIsdEyzDzC9LgYMfV5iJ4g6u/yFPEBqIoLrmnUVOeNVQnpbGkkWmDmNiYbmnDy6BhkjaSiWznCo R3zBEtgM1zV1k3T+AvJled9OekLdwu
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11364; h=from:subject; bh=qKqrDpSCySAmtBk8soUR3MiHRWNda/DcWPoF/c1NqFg=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBg7HQj+GKb68GT3PotXniFusnpGhisHoCXVE8B8x+T nFB1o5SJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYOx0IwAKCRCcnaoHP2RA2fbACA C3ASxaPofOHYLYxjsK2z/bBjE/3zD38Hqk6VTgWewfNlZofz9H6yr+QUFipB4y0mkG2Wzw+iQ+IRH/ xaH2Ko1EPfPJ9nd1EGy53Y/l9NDrZEyqkNq8alHPWdTrnTfWvtfLt7fIFmCWxceWxhdhXYA6EXG1I5 m1zG4sM07zTXBjRt2YeJVLddw4AeNR3CWgPOLh8ZHszMTSlvhcmvvyeCc0bpxx0R+7c66ljUJPlGk2 wGrt452zS6iy4y0YS/lyyNUJFmuTxW0ugI+LmtFKPQHTfxMC5RSias3mJJNJV4Y747a7UdDGhH6sxK dXdTSieEY4zgLc0a/du0Bmx4ht/a/u
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use invalidate_lock instead of f2fs' private i_mmap_sem. The intended
+Use invalidate_lock instead of fuse's private i_mmap_sem. The intended
 purpose is exactly the same. By this conversion we fix a long standing
 race between hole punching and read(2) / readahead(2) paths that can
 lead to stale page cache contents.
 
-CC: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: Chao Yu <yuchao0@huawei.com>
-CC: linux-f2fs-devel@lists.sourceforge.net
-Acked-by: Chao Yu <yuchao0@huawei.com>
+CC: Miklos Szeredi <miklos@szeredi.hu>
+Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/f2fs/data.c  |  8 +++----
- fs/f2fs/f2fs.h  |  1 -
- fs/f2fs/file.c  | 62 ++++++++++++++++++++++++-------------------------
- fs/f2fs/super.c |  1 -
- 4 files changed, 34 insertions(+), 38 deletions(-)
+ fs/fuse/dax.c    | 50 +++++++++++++++++++++++-------------------------
+ fs/fuse/dir.c    | 11 ++++++-----
+ fs/fuse/file.c   | 10 +++++-----
+ fs/fuse/fuse_i.h |  7 -------
+ fs/fuse/inode.c  |  1 -
+ 5 files changed, 35 insertions(+), 44 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d2cf48c5a2e4..eb222b35edef 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3187,12 +3187,12 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
- 	/* In the fs-verity case, f2fs_end_enable_verity() does the truncate */
- 	if (to > i_size && !f2fs_verity_in_progress(inode)) {
- 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--		down_write(&F2FS_I(inode)->i_mmap_sem);
-+		filemap_invalidate_lock(mapping);
+diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+index e55723744f58..fc05ce59579d 100644
+--- a/fs/fuse/dax.c
++++ b/fs/fuse/dax.c
+@@ -444,12 +444,12 @@ static int fuse_setup_new_dax_mapping(struct inode *inode, loff_t pos,
+ 	/*
+ 	 * Can't do inline reclaim in fault path. We call
+ 	 * dax_layout_busy_page() before we free a range. And
+-	 * fuse_wait_dax_page() drops fi->i_mmap_sem lock and requires it.
+-	 * In fault path we enter with fi->i_mmap_sem held and can't drop
+-	 * it. Also in fault path we hold fi->i_mmap_sem shared and not
+-	 * exclusive, so that creates further issues with fuse_wait_dax_page().
+-	 * Hence return -EAGAIN and fuse_dax_fault() will wait for a memory
+-	 * range to become free and retry.
++	 * fuse_wait_dax_page() drops mapping->invalidate_lock and requires it.
++	 * In fault path we enter with mapping->invalidate_lock held and can't
++	 * drop it. Also in fault path we hold mapping->invalidate_lock shared
++	 * and not exclusive, so that creates further issues with
++	 * fuse_wait_dax_page().  Hence return -EAGAIN and fuse_dax_fault()
++	 * will wait for a memory range to become free and retry.
+ 	 */
+ 	if (flags & IOMAP_FAULT) {
+ 		alloc_dmap = alloc_dax_mapping(fcd);
+@@ -513,7 +513,7 @@ static int fuse_upgrade_dax_mapping(struct inode *inode, loff_t pos,
+ 	down_write(&fi->dax->sem);
+ 	node = interval_tree_iter_first(&fi->dax->tree, idx, idx);
  
- 		truncate_pagecache(inode, i_size);
- 		f2fs_truncate_blocks(inode, i_size, true);
+-	/* We are holding either inode lock or i_mmap_sem, and that should
++	/* We are holding either inode lock or invalidate_lock, and that should
+ 	 * ensure that dmap can't be truncated. We are holding a reference
+ 	 * on dmap and that should make sure it can't be reclaimed. So dmap
+ 	 * should still be there in tree despite the fact we dropped and
+@@ -660,14 +660,12 @@ static const struct iomap_ops fuse_iomap_ops = {
  
--		up_write(&F2FS_I(inode)->i_mmap_sem);
-+		filemap_invalidate_unlock(mapping);
- 		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 	}
- }
-@@ -3852,7 +3852,7 @@ static int f2fs_migrate_blocks(struct inode *inode, block_t start_blk,
- 	int ret = 0;
- 
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--	down_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(inode->i_mapping);
- 
- 	set_inode_flag(inode, FI_ALIGNED_WRITE);
- 
-@@ -3894,7 +3894,7 @@ static int f2fs_migrate_blocks(struct inode *inode, block_t start_blk,
- 	clear_inode_flag(inode, FI_DO_DEFRAG);
- 	clear_inode_flag(inode, FI_ALIGNED_WRITE);
- 
--	up_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(inode->i_mapping);
- 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 
- 	return ret;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ee8eb33e2c25..906b2c4b50e7 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -754,7 +754,6 @@ struct f2fs_inode_info {
- 
- 	/* avoid racing between foreground op and gc */
- 	struct rw_semaphore i_gc_rwsem[2];
--	struct rw_semaphore i_mmap_sem;
- 	struct rw_semaphore i_xattr_sem; /* avoid racing between reading and changing EAs */
- 
- 	int i_extra_isize;		/* size of extra space located in i_addr */
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6afd4562335f..1ff333755721 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -38,10 +38,7 @@ static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
- 	vm_fault_t ret;
- 
--	down_read(&F2FS_I(inode)->i_mmap_sem);
- 	ret = filemap_fault(vmf);
--	up_read(&F2FS_I(inode)->i_mmap_sem);
+ static void fuse_wait_dax_page(struct inode *inode)
+ {
+-	struct fuse_inode *fi = get_fuse_inode(inode);
 -
- 	if (!ret)
- 		f2fs_update_iostat(F2FS_I_SB(inode), APP_MAPPED_READ_IO,
- 							F2FS_BLKSIZE);
-@@ -101,7 +98,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
+-	up_write(&fi->i_mmap_sem);
++	filemap_invalidate_unlock(inode->i_mapping);
+ 	schedule();
+-	down_write(&fi->i_mmap_sem);
++	filemap_invalidate_lock(inode->i_mapping);
+ }
  
- 	file_update_time(vmf->vma->vm_file);
--	down_read(&F2FS_I(inode)->i_mmap_sem);
+-/* Should be called with fi->i_mmap_sem lock held exclusively */
++/* Should be called with mapping->invalidate_lock held exclusively */
+ static int __fuse_dax_break_layouts(struct inode *inode, bool *retry,
+ 				    loff_t start, loff_t end)
+ {
+@@ -813,18 +811,18 @@ static vm_fault_t __fuse_dax_fault(struct vm_fault *vmf,
+ 	 * we do not want any read/write/mmap to make progress and try
+ 	 * to populate page cache or access memory we are trying to free.
+ 	 */
+-	down_read(&get_fuse_inode(inode)->i_mmap_sem);
 +	filemap_invalidate_lock_shared(inode->i_mapping);
- 	lock_page(page);
- 	if (unlikely(page->mapping != inode->i_mapping ||
- 			page_offset(page) > i_size_read(inode) ||
-@@ -159,7 +156,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	ret = dax_iomap_fault(vmf, pe_size, &pfn, &error, &fuse_iomap_ops);
+ 	if ((ret & VM_FAULT_ERROR) && error == -EAGAIN) {
+ 		error = 0;
+ 		retry = true;
+-		up_read(&get_fuse_inode(inode)->i_mmap_sem);
++		filemap_invalidate_unlock_shared(inode->i_mapping);
+ 		goto retry;
+ 	}
  
- 	trace_f2fs_vm_page_mkwrite(page, DATA);
- out_sem:
--	up_read(&F2FS_I(inode)->i_mmap_sem);
+ 	if (ret & VM_FAULT_NEEDDSYNC)
+ 		ret = dax_finish_sync_fault(vmf, pe_size, pfn);
+-	up_read(&get_fuse_inode(inode)->i_mmap_sem);
 +	filemap_invalidate_unlock_shared(inode->i_mapping);
  
- 	sb_end_pagefault(inode->i_sb);
- err:
-@@ -940,7 +937,7 @@ int f2fs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		}
+ 	if (write)
+ 		sb_end_pagefault(sb);
+@@ -960,7 +958,7 @@ inode_inline_reclaim_one_dmap(struct fuse_conn_dax *fcd, struct inode *inode,
+ 	int ret;
+ 	struct interval_tree_node *node;
  
- 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--		down_write(&F2FS_I(inode)->i_mmap_sem);
-+		filemap_invalidate_lock(inode->i_mapping);
- 
- 		truncate_setsize(inode, attr->ia_size);
- 
-@@ -950,7 +947,7 @@ int f2fs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		 * do not trim all blocks after i_size if target size is
- 		 * larger than i_size.
- 		 */
--		up_write(&F2FS_I(inode)->i_mmap_sem);
-+		filemap_invalidate_unlock(inode->i_mapping);
- 		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 		if (err)
- 			return err;
-@@ -1095,7 +1092,7 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 			blk_end = (loff_t)pg_end << PAGE_SHIFT;
- 
- 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--			down_write(&F2FS_I(inode)->i_mmap_sem);
-+			filemap_invalidate_lock(mapping);
- 
- 			truncate_inode_pages_range(mapping, blk_start,
- 					blk_end - 1);
-@@ -1104,7 +1101,7 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 			ret = f2fs_truncate_hole(inode, pg_start, pg_end);
- 			f2fs_unlock_op(sbi);
- 
--			up_write(&F2FS_I(inode)->i_mmap_sem);
-+			filemap_invalidate_unlock(mapping);
- 			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 		}
- 	}
-@@ -1339,7 +1336,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
- 
- 	/* avoid gc operation during block exchange */
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--	down_write(&F2FS_I(inode)->i_mmap_sem);
+-	down_write(&fi->i_mmap_sem);
 +	filemap_invalidate_lock(inode->i_mapping);
  
- 	f2fs_lock_op(sbi);
- 	f2fs_drop_extent_tree(inode);
-@@ -1347,7 +1344,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
- 	ret = __exchange_data_block(inode, inode, end, start, nrpages - end, true);
- 	f2fs_unlock_op(sbi);
- 
--	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	/* Lookup a dmap and corresponding file offset to reclaim. */
+ 	down_read(&fi->dax->sem);
+@@ -1021,7 +1019,7 @@ inode_inline_reclaim_one_dmap(struct fuse_conn_dax *fcd, struct inode *inode,
+ out_write_dmap_sem:
+ 	up_write(&fi->dax->sem);
+ out_mmap_sem:
+-	up_write(&fi->i_mmap_sem);
 +	filemap_invalidate_unlock(inode->i_mapping);
- 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	return dmap;
+ }
+ 
+@@ -1050,10 +1048,10 @@ alloc_dax_mapping_reclaim(struct fuse_conn_dax *fcd, struct inode *inode)
+ 		 * had a reference or some other temporary failure,
+ 		 * Try again. We want to give up inline reclaim only
+ 		 * if there is no range assigned to this node. Otherwise
+-		 * if a deadlock is possible if we sleep with fi->i_mmap_sem
+-		 * held and worker to free memory can't make progress due
+-		 * to unavailability of fi->i_mmap_sem lock. So sleep
+-		 * only if fi->dax->nr=0
++		 * if a deadlock is possible if we sleep with
++		 * mapping->invalidate_lock held and worker to free memory
++		 * can't make progress due to unavailability of
++		 * mapping->invalidate_lock.  So sleep only if fi->dax->nr=0
+ 		 */
+ 		if (retry)
+ 			continue;
+@@ -1061,8 +1059,8 @@ alloc_dax_mapping_reclaim(struct fuse_conn_dax *fcd, struct inode *inode)
+ 		 * There are no mappings which can be reclaimed. Wait for one.
+ 		 * We are not holding fi->dax->sem. So it is possible
+ 		 * that range gets added now. But as we are not holding
+-		 * fi->i_mmap_sem, worker should still be able to free up
+-		 * a range and wake us up.
++		 * mapping->invalidate_lock, worker should still be able to
++		 * free up a range and wake us up.
+ 		 */
+ 		if (!fi->dax->nr && !(fcd->nr_free_ranges > 0)) {
+ 			if (wait_event_killable_exclusive(fcd->range_waitq,
+@@ -1108,7 +1106,7 @@ static int lookup_and_reclaim_dmap_locked(struct fuse_conn_dax *fcd,
+ /*
+  * Free a range of memory.
+  * Locking:
+- * 1. Take fi->i_mmap_sem to block dax faults.
++ * 1. Take mapping->invalidate_lock to block dax faults.
+  * 2. Take fi->dax->sem to protect interval tree and also to make sure
+  *    read/write can not reuse a dmap which we might be freeing.
+  */
+@@ -1122,7 +1120,7 @@ static int lookup_and_reclaim_dmap(struct fuse_conn_dax *fcd,
+ 	loff_t dmap_start = start_idx << FUSE_DAX_SHIFT;
+ 	loff_t dmap_end = (dmap_start + FUSE_DAX_SZ) - 1;
+ 
+-	down_write(&fi->i_mmap_sem);
++	filemap_invalidate_lock(inode->i_mapping);
+ 	ret = fuse_dax_break_layouts(inode, dmap_start, dmap_end);
+ 	if (ret) {
+ 		pr_debug("virtio_fs: fuse_dax_break_layouts() failed. err=%d\n",
+@@ -1134,7 +1132,7 @@ static int lookup_and_reclaim_dmap(struct fuse_conn_dax *fcd,
+ 	ret = lookup_and_reclaim_dmap_locked(fcd, inode, start_idx);
+ 	up_write(&fi->dax->sem);
+ out_mmap_sem:
+-	up_write(&fi->i_mmap_sem);
++	filemap_invalidate_unlock(inode->i_mapping);
  	return ret;
  }
-@@ -1378,13 +1375,13 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 		return ret;
  
- 	/* write out all moved pages, if possible */
--	down_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(inode->i_mapping);
- 	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
- 	truncate_pagecache(inode, offset);
- 
- 	new_size = i_size_read(inode) - len;
- 	ret = f2fs_truncate_blocks(inode, new_size, true);
--	up_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(inode->i_mapping);
- 	if (!ret)
- 		f2fs_i_size_write(inode, new_size);
- 	return ret;
-@@ -1484,7 +1481,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			pgoff_t end;
- 
- 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--			down_write(&F2FS_I(inode)->i_mmap_sem);
-+			filemap_invalidate_lock(mapping);
- 
- 			truncate_pagecache_range(inode,
- 				(loff_t)index << PAGE_SHIFT,
-@@ -1496,7 +1493,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			ret = f2fs_get_dnode_of_data(&dn, index, ALLOC_NODE);
- 			if (ret) {
- 				f2fs_unlock_op(sbi);
--				up_write(&F2FS_I(inode)->i_mmap_sem);
-+				filemap_invalidate_unlock(mapping);
- 				up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 				goto out;
- 			}
-@@ -1508,7 +1505,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			f2fs_put_dnode(&dn);
- 
- 			f2fs_unlock_op(sbi);
--			up_write(&F2FS_I(inode)->i_mmap_sem);
-+			filemap_invalidate_unlock(mapping);
- 			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 
- 			f2fs_balance_fs(sbi, dn.node_changed);
-@@ -1543,6 +1540,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index eade6f965b2e..d9b977c0f38d 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1556,6 +1556,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+ 	struct fuse_mount *fm = get_fuse_mount(inode);
+ 	struct fuse_conn *fc = fm->fc;
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
 +	struct address_space *mapping = inode->i_mapping;
- 	pgoff_t nr, pg_start, pg_end, delta, idx;
- 	loff_t new_size;
- 	int ret = 0;
-@@ -1565,14 +1563,14 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 
- 	f2fs_balance_fs(sbi, true);
- 
--	down_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(mapping);
- 	ret = f2fs_truncate_blocks(inode, i_size_read(inode), true);
--	up_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(mapping);
- 	if (ret)
- 		return ret;
- 
- 	/* write out all dirty pages from offset */
--	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
-+	ret = filemap_write_and_wait_range(mapping, offset, LLONG_MAX);
- 	if (ret)
- 		return ret;
- 
-@@ -1583,7 +1581,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 
- 	/* avoid gc operation during block exchange */
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--	down_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(mapping);
- 	truncate_pagecache(inode, offset);
- 
- 	while (!ret && idx > pg_start) {
-@@ -1599,14 +1597,14 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 					idx + delta, nr, false);
- 		f2fs_unlock_op(sbi);
- 	}
--	up_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(mapping);
- 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 
- 	/* write out all moved pages, if possible */
--	down_write(&F2FS_I(inode)->i_mmap_sem);
--	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
-+	filemap_invalidate_lock(mapping);
-+	filemap_write_and_wait_range(mapping, offset, LLONG_MAX);
- 	truncate_pagecache(inode, offset);
--	up_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(mapping);
- 
- 	if (!ret)
- 		f2fs_i_size_write(inode, new_size);
-@@ -3440,7 +3438,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
- 		goto out;
- 
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--	down_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(inode->i_mapping);
- 
- 	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
- 
-@@ -3476,7 +3474,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
+ 	FUSE_ARGS(args);
+ 	struct fuse_setattr_in inarg;
+ 	struct fuse_attr_out outarg;
+@@ -1580,11 +1581,11 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
  	}
  
- 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--	up_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(inode->i_mapping);
- out:
- 	inode_unlock(inode);
- 
-@@ -3593,7 +3591,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
- 	}
- 
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--	down_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(inode->i_mapping);
- 
- 	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
- 
-@@ -3629,7 +3627,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
- 	}
- 
- 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--	up_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(inode->i_mapping);
- 
- 	if (ret >= 0) {
- 		clear_inode_flag(inode, FI_COMPRESS_RELEASED);
-@@ -3748,7 +3746,7 @@ static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
- 		goto err;
- 
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--	down_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(mapping);
- 
- 	ret = filemap_write_and_wait_range(mapping, range.start,
- 			to_end ? LLONG_MAX : end_addr - 1);
-@@ -3835,7 +3833,7 @@ static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
- 		ret = f2fs_secure_erase(prev_bdev, inode, prev_index,
- 				prev_block, len, range.flags);
- out:
--	up_write(&F2FS_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(mapping);
- 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- err:
- 	inode_unlock(inode);
-@@ -4313,9 +4311,9 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		/* if we couldn't write data, we should deallocate blocks. */
- 		if (preallocated && i_size_read(inode) < target_size) {
- 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--			down_write(&F2FS_I(inode)->i_mmap_sem);
-+			filemap_invalidate_lock(inode->i_mapping);
- 			f2fs_truncate(inode);
--			up_write(&F2FS_I(inode)->i_mmap_sem);
-+			filemap_invalidate_unlock(inode->i_mapping);
- 			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	if (FUSE_IS_DAX(inode) && is_truncate) {
+-		down_write(&fi->i_mmap_sem);
++		filemap_invalidate_lock(mapping);
+ 		fault_blocked = true;
+ 		err = fuse_dax_break_layouts(inode, 0, 0);
+ 		if (err) {
+-			up_write(&fi->i_mmap_sem);
++			filemap_invalidate_unlock(mapping);
+ 			return err;
  		}
+ 	}
+@@ -1694,13 +1695,13 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+ 	if ((is_truncate || !is_wb) &&
+ 	    S_ISREG(inode->i_mode) && oldsize != outarg.attr.size) {
+ 		truncate_pagecache(inode, outarg.attr.size);
+-		invalidate_inode_pages2(inode->i_mapping);
++		invalidate_inode_pages2(mapping);
+ 	}
  
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8fecd3050ccd..ce2ab1b85c11 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1289,7 +1289,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	mutex_init(&fi->inmem_lock);
- 	init_rwsem(&fi->i_gc_rwsem[READ]);
- 	init_rwsem(&fi->i_gc_rwsem[WRITE]);
+ 	clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
+ out:
+ 	if (fault_blocked)
+-		up_write(&fi->i_mmap_sem);
++		filemap_invalidate_unlock(mapping);
+ 
+ 	return 0;
+ 
+@@ -1711,7 +1712,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+ 	clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
+ 
+ 	if (fault_blocked)
+-		up_write(&fi->i_mmap_sem);
++		filemap_invalidate_unlock(mapping);
+ 	return err;
+ }
+ 
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 97f860cfc195..621a662c19fb 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -243,7 +243,7 @@ int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
+ 	}
+ 
+ 	if (dax_truncate) {
+-		down_write(&get_fuse_inode(inode)->i_mmap_sem);
++		filemap_invalidate_lock(inode->i_mapping);
+ 		err = fuse_dax_break_layouts(inode, 0, 0);
+ 		if (err)
+ 			goto out;
+@@ -255,7 +255,7 @@ int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
+ 
+ out:
+ 	if (dax_truncate)
+-		up_write(&get_fuse_inode(inode)->i_mmap_sem);
++		filemap_invalidate_unlock(inode->i_mapping);
+ 
+ 	if (is_wb_truncate | dax_truncate) {
+ 		fuse_release_nowrite(inode);
+@@ -2920,7 +2920,7 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+ 	if (lock_inode) {
+ 		inode_lock(inode);
+ 		if (block_faults) {
+-			down_write(&fi->i_mmap_sem);
++			filemap_invalidate_lock(inode->i_mapping);
+ 			err = fuse_dax_break_layouts(inode, 0, 0);
+ 			if (err)
+ 				goto out;
+@@ -2976,7 +2976,7 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+ 		clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
+ 
+ 	if (block_faults)
+-		up_write(&fi->i_mmap_sem);
++		filemap_invalidate_unlock(inode->i_mapping);
+ 
+ 	if (lock_inode)
+ 		inode_unlock(inode);
+@@ -3045,7 +3045,7 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+ 	 * modifications.  Yet this does give less guarantees than if the
+ 	 * copying was performed with write(2).
+ 	 *
+-	 * To fix this a i_mmap_sem style lock could be used to prevent new
++	 * To fix this a mapping->invalidate_lock could be used to prevent new
+ 	 * faults while the copy is ongoing.
+ 	 */
+ 	err = fuse_writeback_range(inode_out, pos_out, pos_out + len - 1);
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 07829ce78695..6fb639b97ea8 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -149,13 +149,6 @@ struct fuse_inode {
+ 	/** Lock to protect write related fields */
+ 	spinlock_t lock;
+ 
+-	/**
+-	 * Can't take inode lock in fault path (leads to circular dependency).
+-	 * Introduce another semaphore which can be taken in fault path and
+-	 * then other filesystem paths can take this to block faults.
+-	 */
+-	struct rw_semaphore i_mmap_sem;
+-
+ #ifdef CONFIG_FUSE_DAX
+ 	/*
+ 	 * Dax specific inode data
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index b9beb39a4a18..e07e429f32e1 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -85,7 +85,6 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
+ 	fi->orig_ino = 0;
+ 	fi->state = 0;
+ 	mutex_init(&fi->mutex);
 -	init_rwsem(&fi->i_mmap_sem);
- 	init_rwsem(&fi->i_xattr_sem);
- 
- 	/* Will be used by directory only */
+ 	spin_lock_init(&fi->lock);
+ 	fi->forget = fuse_alloc_forget();
+ 	if (!fi->forget)
 -- 
 2.26.2
 
