@@ -2,38 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ED923C420C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 05:39:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A54E93C420F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 05:40:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232832AbhGLDmN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jul 2021 23:42:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46108 "EHLO
+        id S233038AbhGLDmr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jul 2021 23:42:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbhGLDmM (ORCPT
+        with ESMTP id S229660AbhGLDmq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jul 2021 23:42:12 -0400
+        Sun, 11 Jul 2021 23:42:46 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B492EC0613DD;
-        Sun, 11 Jul 2021 20:39:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D83CAC0613DD;
+        Sun, 11 Jul 2021 20:39:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=nqXwHrGW5fkYuF2j97j08SczEABbmY2HqwB4/BmmJqo=; b=lH7OfgxVZ5U0fpJT0j8/ojM7Vg
-        gvmMmBt0301CoNYmec/EJxHxf8gM+d4hHJhRpNyhNmqAA95LcuY9NQs7JmzKMEzboj8+I2HlPNTnM
-        eXbjboi3nOCTLck+pkBAJMHFd7YkuiM6KugTfv/bjjcKP8+CDfhVDudEBOHTUSaB5rXoO+Btcenbv
-        12y39sFO+ftX4NmQX+/OvjHm33e8zuTDFmC32+2wN+whb0/LnkJ/fbdmEc390sCA/eEZtrR2hR/cC
-        saEfWCYX4hMH7YLAIl9eqfLmIVKANMJIC4HR0CSVPaXpw50s4+9SX+7F09Kpckb7tv2YpQ++bytbE
-        0AFBegyA==;
+        bh=TVBeCZfJX9vXwdXAf7Q6a1YNLrz1mwLp1VqdUdHyQs0=; b=BGsXOadRZfIC9R/hFFvR5/b4La
+        kEW30NK4r5+oSora3B4Zk+g8FK1uEqdPPTreBlMHU17KC5FfXbnqsyDWUx6hyWCKEzQVk/vh5+1E9
+        ihl0hiuZ5uSCbVnY8a4L7Ke3SHXre1NkPdlua3srfSKjn5b7vMVT5bwOgB4ahvrkxibv7WgV/73LE
+        7/qKQhRTq7c6DdDeRAM0ZGrDhRhzxJss1WLAdKIy6y8o4ZCdQGaoxrsxfWw4JKTH0/JTYYAMiCWQr
+        D/+juDWwtpqv0WVcw9fz9OsF1aJ6Rm20/AhtkRo9oGjZ8FnDdbTkCAGbM/ARm0zwZBRe+2xqQLAHA
+        fuK9kaAA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m2mlk-00Goz9-07; Mon, 12 Jul 2021 03:38:34 +0000
+        id 1m2mmP-00Gp0k-B7; Mon, 12 Jul 2021 03:38:56 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v13 058/137] mm/swap: Add folio_mark_accessed()
-Date:   Mon, 12 Jul 2021 04:05:42 +0100
-Message-Id: <20210712030701.4000097-59-willy@infradead.org>
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v13 059/137] mm/rmap: Add folio_mkclean()
+Date:   Mon, 12 Jul 2021 04:05:43 +0100
+Message-Id: <20210712030701.4000097-60-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210712030701.4000097-1-willy@infradead.org>
 References: <20210712030701.4000097-1-willy@infradead.org>
@@ -43,130 +44,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert mark_page_accessed() to folio_mark_accessed().  It already
-operated on the entire compound page, but now we can avoid calling
-compound_head quite so many times.  Shrinks the function from 424 bytes
-to 295 bytes (shrinking by 129 bytes).  The compatibility wrapper is 30
-bytes, plus the 8 bytes for the exported symbol means the kernel shrinks
-by 91 bytes.
+Transform page_mkclean() into folio_mkclean() and add a page_mkclean()
+wrapper around folio_mkclean().
+
+folio_mkclean is 15 bytes smaller than page_mkclean, but the kernel
+is enlarged by 33 bytes due to inlining page_folio() into each caller.
+This will go away once the callers are converted to use folio_mkclean().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/swap.h |  3 ++-
- mm/folio-compat.c    |  7 +++++++
- mm/swap.c            | 34 ++++++++++++++++------------------
- 3 files changed, 25 insertions(+), 19 deletions(-)
+ include/linux/rmap.h | 10 ++++++----
+ mm/rmap.c            | 12 ++++++------
+ 2 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 989d8f78c256..c7a4c0a5863d 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -352,7 +352,8 @@ extern void lru_note_cost(struct lruvec *lruvec, bool file,
- 			  unsigned int nr_pages);
- extern void lru_note_cost_page(struct page *);
- extern void lru_cache_add(struct page *);
--extern void mark_page_accessed(struct page *);
-+void mark_page_accessed(struct page *);
-+void folio_mark_accessed(struct folio *);
- 
- extern atomic_t lru_disable_count;
- 
-diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index 7044fcc8a8aa..a374747ae1c6 100644
---- a/mm/folio-compat.c
-+++ b/mm/folio-compat.c
-@@ -5,6 +5,7 @@
+diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+index 83fb86133fe1..d45584310cde 100644
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -235,7 +235,7 @@ unsigned long page_address_in_vma(struct page *, struct vm_area_struct *);
+  *
+  * returns the number of cleaned PTEs.
   */
+-int page_mkclean(struct page *);
++int folio_mkclean(struct folio *);
  
- #include <linux/pagemap.h>
-+#include <linux/swap.h>
+ /*
+  * called in munlock()/munmap() path to check for other vmas holding
+@@ -293,12 +293,14 @@ static inline int page_referenced(struct page *page, int is_locked,
  
- struct address_space *page_mapping(struct page *page)
+ #define try_to_unmap(page, refs) false
+ 
+-static inline int page_mkclean(struct page *page)
++static inline int folio_mkclean(struct folio *folio)
  {
-@@ -41,3 +42,9 @@ bool page_mapped(struct page *page)
- 	return folio_mapped(page_folio(page));
+ 	return 0;
  }
- EXPORT_SYMBOL(page_mapped);
-+
-+void mark_page_accessed(struct page *page)
-+{
-+	folio_mark_accessed(page_folio(page));
-+}
-+EXPORT_SYMBOL(mark_page_accessed);
-diff --git a/mm/swap.c b/mm/swap.c
-index 253ac77792dc..b49e10e75af5 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -390,7 +390,7 @@ static void folio_activate(struct folio *folio)
- }
- #endif
- 
--static void __lru_cache_activate_page(struct page *page)
-+static void __lru_cache_activate_folio(struct folio *folio)
- {
- 	struct pagevec *pvec;
- 	int i;
-@@ -411,8 +411,8 @@ static void __lru_cache_activate_page(struct page *page)
- 	for (i = pagevec_count(pvec) - 1; i >= 0; i--) {
- 		struct page *pagevec_page = pvec->pages[i];
- 
--		if (pagevec_page == page) {
--			SetPageActive(page);
-+		if (pagevec_page == &folio->page) {
-+			folio_set_active_flag(folio);
- 			break;
- 		}
- 	}
-@@ -430,36 +430,34 @@ static void __lru_cache_activate_page(struct page *page)
-  * When a newly allocated page is not yet visible, so safe for non-atomic ops,
-  * __SetPageReferenced(page) may be substituted for mark_page_accessed(page).
-  */
--void mark_page_accessed(struct page *page)
-+void folio_mark_accessed(struct folio *folio)
- {
--	page = compound_head(page);
 -
--	if (!PageReferenced(page)) {
--		SetPageReferenced(page);
--	} else if (PageUnevictable(page)) {
-+	if (!folio_referenced(folio)) {
-+		folio_set_referenced_flag(folio);
-+	} else if (folio_unevictable(folio)) {
- 		/*
- 		 * Unevictable pages are on the "LRU_UNEVICTABLE" list. But,
- 		 * this list is never rotated or maintained, so marking an
- 		 * evictable page accessed has no effect.
- 		 */
--	} else if (!PageActive(page)) {
-+	} else if (!folio_active(folio)) {
- 		/*
- 		 * If the page is on the LRU, queue it for activation via
- 		 * lru_pvecs.activate_page. Otherwise, assume the page is on a
- 		 * pagevec, mark it active and it'll be moved to the active
- 		 * LRU on the next drain.
- 		 */
--		if (PageLRU(page))
--			folio_activate(page_folio(page));
-+		if (folio_lru(folio))
-+			folio_activate(folio);
- 		else
--			__lru_cache_activate_page(page);
--		ClearPageReferenced(page);
--		workingset_activation(page_folio(page));
-+			__lru_cache_activate_folio(folio);
-+		folio_clear_referenced_flag(folio);
-+		workingset_activation(folio);
- 	}
--	if (page_is_idle(page))
--		clear_page_idle(page);
-+	if (folio_idle(folio))
-+		folio_clear_idle_flag(folio);
+-
+ #endif	/* CONFIG_MMU */
+ 
++static inline int page_mkclean(struct page *page)
++{
++	return folio_mkclean(page_folio(page));
++}
+ #endif	/* _LINUX_RMAP_H */
+diff --git a/mm/rmap.c b/mm/rmap.c
+index b416af486812..f92018a5a616 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -980,7 +980,7 @@ static bool invalid_mkclean_vma(struct vm_area_struct *vma, void *arg)
+ 	return true;
  }
--EXPORT_SYMBOL(mark_page_accessed);
-+EXPORT_SYMBOL(folio_mark_accessed);
+ 
+-int page_mkclean(struct page *page)
++int folio_mkclean(struct folio *folio)
+ {
+ 	int cleaned = 0;
+ 	struct address_space *mapping;
+@@ -990,20 +990,20 @@ int page_mkclean(struct page *page)
+ 		.invalid_vma = invalid_mkclean_vma,
+ 	};
+ 
+-	BUG_ON(!PageLocked(page));
++	BUG_ON(!folio_locked(folio));
+ 
+-	if (!page_mapped(page))
++	if (!folio_mapped(folio))
+ 		return 0;
+ 
+-	mapping = page_mapping(page);
++	mapping = folio_mapping(folio);
+ 	if (!mapping)
+ 		return 0;
+ 
+-	rmap_walk(page, &rwc);
++	rmap_walk(&folio->page, &rwc);
+ 
+ 	return cleaned;
+ }
+-EXPORT_SYMBOL_GPL(page_mkclean);
++EXPORT_SYMBOL_GPL(folio_mkclean);
  
  /**
-  * lru_cache_add - add a page to a page list
+  * page_move_anon_rmap - move a page to our anon_vma
 -- 
 2.30.2
 
