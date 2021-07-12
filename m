@@ -2,243 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8A483C5CE5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 15:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 569503C5D06
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 15:14:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234254AbhGLNDz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 09:03:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36218 "EHLO
+        id S231365AbhGLNRR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 09:17:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbhGLNDy (ORCPT
+        with ESMTP id S229479AbhGLNRQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 09:03:54 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3746FC0613DD
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 06:01:06 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id g22so22559929iom.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 06:01:06 -0700 (PDT)
+        Mon, 12 Jul 2021 09:17:16 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94F1BC0613DD;
+        Mon, 12 Jul 2021 06:14:27 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id w13so11390447wmc.3;
+        Mon, 12 Jul 2021 06:14:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=M34RACrH/vlbfAhPkuhQxNCZjCzm+HDNofPObtniYvw=;
-        b=htSzRYV54oUJvFl1d4IopuB27V2pUNEKmNgqOIJEJ3mmmPXVadMOxcqA8ip+2T0TP3
-         hYi7J2nI9DoFSVgILOKntnGWGd9UrshvwBH9oGpj9qv4eV7KPI/xXtEk9On2txTDJuF9
-         ND27Jwz9hlJB3XtlZ/uBvkaeMDOcSjcszSv18sEI5SusnmFdDuA7XcaUu+KvNRWI2Fse
-         6BC9DjKJXRjbYQY3A8wOgjyr3eQrE7N+7INBXOrCqWyiAdIqL/fbBHxmJO+tvzhQp/1/
-         XK8ihOEBZbbBXXCeUFQeEVv3OQfxUOsltkpYbonkPO4H3vNt+24/Usx8zbdU/G+UjRT1
-         WxEg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3fEtIjBDPY2EjbWooFxk2PV3R4iK8JzyCJ370we96T0=;
+        b=Wb8/539HhtBGisYRa2W1Xot1Yl3hVDzKygKDuAmfhGEFB3nWe982hDy5bSoNIbxkPx
+         u3BJTtxVqk+ss3yb2zkS1fPVjvfmw0FD/7egxQy/jF/38vOIsE7U/Mmc7dAhHd24uksP
+         EhY3BFF+DG6E8G5FKfBPhNKfcZ+U26m+7nQ2WEtr/fxtBJcBcLrj+3asyAUy5DCyW2bZ
+         XdY1rlSGwGlCTHJ+Aw3n+sONa5ys/qK5CEWvUJuRhv+zpfPQMPmKZeQFE4/Ygzziolki
+         /nP9b3BznEN2nPpUKvOv15mFWLeDO3cKZKnZOlkoKHtK7GngTl0+b8uw4ls9EP+JHfFU
+         lE+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M34RACrH/vlbfAhPkuhQxNCZjCzm+HDNofPObtniYvw=;
-        b=jehtNlx3AWqZWILjp1TVzwUB2z+Wu+a524b4O6yoN8OpXpra9F2IgqO0cj+wq5r6EL
-         4Rg78q4mv+ITUc1HPnswPaIeESoSQ7Ynr9D/RRv6tjLnoCo03KkRUF8Fo8mFyt9dtCsv
-         RKpDYKxdconziRLvd1xjYaYUnY+xKlKj1ZsvGupt3f1u95AVZt38p5BnfJyWGlwtwFZg
-         MpqweZaGkfiRy1myhii6/RfLBfo9vcYuiEAAFG8DDC8zu69kmaODBjc+sv4gc0cNdzgj
-         IGnxekOCZ/Ih9aXy8NjTNkcMP41cSuo86JhiUM83QATfl5dany1sQvhj/09Q9AdUAvJN
-         GMUw==
-X-Gm-Message-State: AOAM531hlxopXWe9oSH68m1JTrHZPsMwYLsYxdz/qrfRmX7CKB5M78/A
-        k4uYm5AUVw2kbe9JMZ1b5ai950LsTCsF7gCRrqM=
-X-Google-Smtp-Source: ABdhPJyLYJcXclzCY+hMscNr0D6hPFI25gRcfBw3AKNuDtCJN/4yCaR+l7kimuMW5azsfBxDvkViOdm3ZTtlme6uXiA=
-X-Received: by 2002:a5e:dc44:: with SMTP id s4mr18346270iop.186.1626094865625;
- Mon, 12 Jul 2021 06:01:05 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3fEtIjBDPY2EjbWooFxk2PV3R4iK8JzyCJ370we96T0=;
+        b=fqypgzJwZvOtPv8e3zi4bMZj9LZYfSNceY01As8qxEIyO2qKbZ82FlPqOPey0E4sTC
+         pxCPEGFj1IZuew7q5+uTWc6NjknF1GMhfJUlww4dwZvhtXIgCHrbl1Z1Rb3exgT2d9rO
+         YaNPahM2QmNIAgQcP4arqnJspW9xvZDS3UpQc+l8cFgpxR0tQvSED1FAUwWfibs73Fzx
+         KHlMdwx/OUXkiB6FMGqO18Mdh9AnlJcaN92atyfEzJVo+TRQWyHOjS6eXnJSLDmJ+ev4
+         PWyvzNkKC3sWDvPX94UV8YUOl8VHiwmFCroBnpn0BuBFraN1n+r90I2mZwF7AbKruKtQ
+         7m8g==
+X-Gm-Message-State: AOAM531cnOxf+/Qn1EzCP8Vkj7KLVR8nchTMJqZJFmYGssspUIlqKX1j
+        pVVDdVt4yA6fufZhrmcRyeIUCNjvP2w=
+X-Google-Smtp-Source: ABdhPJwYle9kapxe77XLkIBgriJCfmI1wbba++qp7w624EJJHvy0Z0+Y8htQe0EE0rL+MTVgSwsBAw==
+X-Received: by 2002:a7b:ca43:: with SMTP id m3mr55004396wml.74.1626095666078;
+        Mon, 12 Jul 2021 06:14:26 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.233.168])
+        by smtp.gmail.com with ESMTPSA id g7sm1328033wmq.22.2021.07.12.06.14.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jul 2021 06:14:25 -0700 (PDT)
+Subject: Re: [PATCH v5 02/10] io_uring: add support for IORING_OP_MKDIRAT
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+References: <20210603051836.2614535-1-dkadashev@gmail.com>
+ <20210603051836.2614535-3-dkadashev@gmail.com>
+ <c079182e-7118-825e-84e5-13227a3b19b9@gmail.com>
+ <4c0344d8-6725-84a6-b0a8-271587d7e604@gmail.com>
+ <CAOKbgA4ZwzUxyRxWrF7iC2sNVnEwXXAmrxVSsSxBMQRe2OyYVQ@mail.gmail.com>
+ <15a9d84b-61df-e2af-0c79-75b54d4bae8f@gmail.com>
+ <CAOKbgA4DCGANRGfsHw0SqmyRr4A4gYfwZ6WFXpOFdf_bE2b+Yw@mail.gmail.com>
+ <b6ae2481-3607-d9f8-b543-bb922b726b3a@gmail.com>
+ <CAOKbgA6va=89pLayQgC20QvPeTE0Tp-+TmgJLKy+O2KKw8dUBg@mail.gmail.com>
+ <5a6e1315-4034-0494-878a-a417e8294519@gmail.com>
+ <CAOKbgA4XirCKFxC8EzURBJsEVXRmVTeqza0Rf5PW=ifB2H80_A@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <4a0bad22-8072-41d1-0f72-dc3afb6a91db@gmail.com>
+Date:   Mon, 12 Jul 2021 14:14:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <CAOQ4uxgckzeRuiKSe7D=TVaJGTYwy4cbCFDpdWMQr1R_xXkJig@mail.gmail.com>
- <20210712111016.GC26530@quack2.suse.cz>
-In-Reply-To: <20210712111016.GC26530@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 12 Jul 2021 16:00:54 +0300
-Message-ID: <CAOQ4uxgnbirvr-KSMQyz-PL+Q_FmBF_OfSmWFEu6B0TYN-w1tg@mail.gmail.com>
-Subject: Re: FAN_REPORT_CHILD_FID
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Matthew Bobrowski <repnop@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAOKbgA4XirCKFxC8EzURBJsEVXRmVTeqza0Rf5PW=ifB2H80_A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 12, 2021 at 2:10 PM Jan Kara <jack@suse.cz> wrote:
->
-> Hi Amir!
->
-> On Sun 11-07-21 20:02:29, Amir Goldstein wrote:
-> > I am struggling with an attempt to extend the fanotify API and
-> > I wanted to ask your opinion before I go too far in the wrong direction.
-> >
-> > I am working with an application that used to use inotify rename
-> > cookies to match MOVED_FROM/MOVED_TO events.
-> > The application was converted to use fanotify name events, but
-> > the rename cookie functionality was missing, so I am carrying
-> > a small patch for FAN_REPORT_COOKIE.
-> >
-> > I do not want to propose this patch for upstream, because I do
-> > not like this API.
-> >
-> > What I thought was that instead of a "cookie" I would like to
-> > use the child fid as a way to pair up move events.
-> > This requires that the move events will never be merged and
-> > therefore not re-ordered (as is the case with inotify move events).
-> >
-> > My thinking was to generalize this concept and introduce
-> > FAN_REPORT_CHILD_FID flag. With that flag, dirent events
-> > will report additional FID records, like events on a non-dir child
-> > (but also for dirent events on subdirs).
->
-> I'm starting to get lost in what reports what so let me draw a table here:
->
-> Non-directories
->                                 DFID    FID     CHILD_FID
-> ACCESS/MODIFY/OPEN/CLOSE/ATTRIB parent  self    self
-> CREATE/DELETE/MOVE              -       -       -
-> DELETE_SELF/MOVE_SELF           x       self    self
-> ('-' means cannot happen, 'x' means not generated)
->
-> Directories
->                                 DFID    FID     CHILD_FID
-> ACCESS/MODIFY/OPEN/CLOSE/ATTRIB self    self    self
-> CREATE/DELETE/MOVE              self    self    target
-> DELETE_SELF/MOVE_SELF           x       self    self
->
-> Did I get this right?
+On 7/12/21 1:44 PM, Dmitry Kadashev wrote:
+> On Wed, Jul 7, 2021 at 9:06 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>> On 6/28/21 9:17 AM, Dmitry Kadashev wrote:
+>>> On Thu, Jun 24, 2021 at 7:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>> On 6/24/21 12:11 PM, Dmitry Kadashev wrote:
+>>>>> On Wed, Jun 23, 2021 at 6:54 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>>> On 6/23/21 7:41 AM, Dmitry Kadashev wrote:
+>>>>>>> I'd imagine READ_ONCE is to be used in those checks though, isn't it? Some of
+>>>>>>> the existing checks like this lack it too btw. I suppose I can fix those in a
+>>>>>>> separate commit if that makes sense.
+>>>>>>
+>>>>>> When we really use a field there should be a READ_ONCE(),
+>>>>>> but I wouldn't care about those we check for compatibility
+>>>>>> reasons, but that's only my opinion.
+>>>>>
+>>>>> I'm not sure how the compatibility check reads are special. The code is
+>>>>> either correct or not. If a compatibility check has correctness problems
+>>>>> then it's pretty much as bad as any other part of the code having such
+>>>>> problems, no?
+>>>>
+>>>> If it reads and verifies a values first, e.g. index into some internal
+>>>> array, and then compiler plays a joke and reloads it, we might be
+>>>> absolutely screwed expecting 'segfaults', kernel data leakages and all
+>>>> the fun stuff.
+>>>>
+>>>> If that's a compatibility check, whether it's loaded earlier or later,
+>>>> or whatever, it's not a big deal, the userspace can in any case change
+>>>> the memory at any moment it wishes, even tightly around the moment
+>>>> we're reading it.
+>>>
+>>> Sorry for the slow reply, I have to balance this with my actual job that
+>>> is not directly related to the kernel development :)
+>>>
+>>> I'm no kernel concurrency expert (actually I'm not any kind of kernel
+>>> expert), but my understanding is READ_ONCE does not just mean "do not
+>>> read more than once", but rather "read exactly once" (and more than
+>>> that), and if it's not applied then the compiler is within its rights to
+>>> optimize the read out, so the compatibility check can effectively be
+>>> disabled.
+>>
+>> Yep, as they say it's about all the "inventive" transformations
+>> compilers can do, double read is just one of those that may turn very
+>> nasty for us.
+>>
+>> One big difference for me is whether it have a potential to crash the
+>> kernel or not, though it's just one side.
+> 
+> Ah, that makes sense.
+> 
+>> Compilers can't drop the check just because, it first should be proven
+>> to be safe to do, and there are all sorts barriers around and
+>> limitations on how CQEs and SQEs are used, making impossible to alias
+>> memory. E.g. CQEs and SQEs can't be reused in a single syscall, they're
+>> only written and read respectively, and so on. Maybe, the only one I'd
+>> worry about is the call to io_commit_sqring(), i.e. for SQE reads not
+>> happening after it, but we need to take a look whether it's
+>> theoretically possible.
+> 
+> Thanks for the explanation, Pavel!
 
-I am not sure if the columns in your table refer to group flags
-or to info records types? or a little bit of both, but I did not
-mean for CHILD_FID to be a different record type.
+btw, that was for why we were rather reluctant about that. It could
+be a good idea to add READ_ONCE as you mentioned, at least would be
+less confusing. 
 
-Anyway, the only complexity missing from the table is that
-for events reporting a single record with fid of a directory,
-(i.e. self event on dir or dirent event) the record type depends
-on the group flags.
-
-FAN_REPORT_FID => FAN_EVENT_INFO_TYPE_FID
-FAN_REPORT_DIR_FID => FAN_EVENT_INFO_TYPE_DFID
-
->
-> I guess "CHILD_FID" seems somewhat confusing as it isn't immediately clear
-> from the name what it would report e.g. for open of a non-directory.
-
-I agree it is a bit confusing. FWIW for events on a non-dir child (not dirent)
-FAN_REPORT_FID and FAN_REPORT_CHILD_FID flags yield the exact
-same event info.
-
-> Maybe
-> we could call it "TARGET_FID"? Also I'm not sure it needs to be exclusive
-> with FID. Sure it doesn't make much sense to report both FID and CHILD_FID
-> but does the exclusivity buy us anything? I guess I don't have strong
-> opinion either way, I'm just curious.
->
-
-FAN_REPORT_TARGET_FID sounds good to me.
-You are right. I don't think that exclusivity buys us anything.
-
-> > There are other benefits from FAN_REPORT_CHILD_FID which are
-> > not related to matching move event pairs, such as the case described
-> > in this discussion [2], where I believe you suggested something along
-> > the lines of FAN_REPORT_CHILD_FID.
-> >
-> > [2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhEsbfA5+sW4XPnUKgCkXtwoDA-BR3iRO34Nx5c4y7Nug@mail.gmail.com/
->
-> Yes, I can see FAN_REPORT_CHILD_FID (or however we call it) can be useful
-> at times (in fact I think we made a mistake that we didn't make reported
-> FID to always be what you now suggest as CHILD_FID, but we found that out
-> only when DFID+NAME implementation settled so that train was long gone).
-
-Yes, we did. FAN_REPORT_TARGET_FID is also about trying to make amends.
-We could have just as well called it FAN_REPORT_FID_V2, but no ;-)
-
-> So I have no problem with that functionality as such.
->
-
-Good, so I will try to see that I can come up with sane semantics that
-also result in a sane man page.
-
-> > Either FAN_REPORT_CHILD_FID would also prevent dirent events
-> > from being merged or we could use another flag for that purpose,
-> > but I wasn't able to come up with an idea for a name for this flag :-/
-> >
-> > I sketched this patch [1] to implement the flag and to document
-> > the desired semantics. It's only build tested and I did not even
-> > implement the merge rules listed in the commit message.
-> >
-> > [1] https://github.com/amir73il/linux/commits/fanotify_child_fid
->
-> WRT changes to merging: Whenever some application wants to depend on the
-> ordering of events I'm starting to get suspicious.
-
-I completely agree with that sentiment.
-
-But note that the application does NOT require event ordering.
-
-I was proposing the strict ordering of MOVE_ events as a method
-to allow for matching of MOVE_ pairs of the same target as
-a *replacement* for the inotify rename cookie method.
-
-> What is it using these events for?
-
-The application is trying to match MOVE_ event pairs.
-It's a best effort situation - when local file has been renamed,
-a remote rename can also be attempted while verifying that the
-recorded fid of the source (in remote file) matches the fid of the
-local target.
-
-> How is renaming different from linking a file into a new dir
-> and unlinking it from the previous one which is a series of events that
-> could be merged?
-
-It is different because renames are common operations that actual people
-often do and link+unlink are less common so we do not care to optimize
-them. Anyway, as many other applications, our application does not
-support syncing hardlinks to remote location, so link+unlink would be
-handled as plain copy+delete and dedup of copied file is handled
-is handled by the remote sync protocol.
-
-As a matter of fact, a rename could also be (and sometimes is) handled
-as copy+delete. In that case, the remote content would be fine but the
-logs and change history would be inaccurate.
-
-BTW, in my sketch commit message I offer to prevent merge of all dirent
-events, not only MOVE_, because I claim that there is not much to be
-gained from merging the CREATE/DELETE of a specific TARGET_FID
-event with other events as there are normally very few of those events.
-
-However, while I can argue why it is useful to avoid merge of dirent events,
-it's not as easy for me to come up with a name for that flag not to
-easily explain the semantics in man page :-/
-so any help with coming up with simplified semantics would be appreciated.
-
-> Also fanotify could still be merging events happening
-> after rename to events before rename. Can the application tolerate that?
-
-Yes. The application treats the name of the file as a property that
-can be synced regardless of the file's data and metadata and it doesn't
-need to be synced to remote in the same order that changes happened.
-The destination is "eventually consistent" with the source.
-
-> Inotify didn't do this because it is always merging only to the last event
-> in the queue.
->
-> When we were talking about FID events in the past (in the context of
-> directory events) we always talked about application just maintaining a set
-> of dirs (plus names) to look into. And that is safe and sound. But what you
-> talk about now seems rather fragile at least from the limited information I
-> have about your usecase...
->
-
-It's true. The application uses the DFID as the main key for tracking changes -
-i.e. which directories need to be synced.
-Rename between directories is a case where syncing individual directories
-looses information. It does not loose data, only the accuracy of reported
-change history - IOW, its a minor functionality gap, but one that product
-people will not be willing to waiver.
-
-P.S. unlike rename of non-dir, rename of directories and large directory
-trees specifically must be identified and handled as a remote rename,
-but that is easy to achieve with MOVE_SELF, because as I wrote, the
-application uses DFID as the key for tracking changes, so MOVE_SELF
-of directory will carry a DFID whose "remote path" is stored in a db.
-
-Thanks,
-Amir.
+-- 
+Pavel Begunkov
