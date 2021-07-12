@@ -2,132 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 736413C5C8E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 14:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B15793C5CA1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 14:52:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233685AbhGLMrM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 08:47:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60570 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231373AbhGLMrI (ORCPT
+        id S230292AbhGLMwf convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 08:52:35 -0400
+Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:56727 "EHLO
+        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234011AbhGLMwe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 08:47:08 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB38C0613DD;
-        Mon, 12 Jul 2021 05:44:18 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id b13so28726205ybk.4;
-        Mon, 12 Jul 2021 05:44:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DX832C1ORCmgy/UOcPCcG0r1je+DNmKGQEEfCl2H8To=;
-        b=SsMCziO9nKi00fbPUQs6Ov1CBkeYVO159tUPDhZ9pv1Cu62AwGS+iWscrQvxbwEAhX
-         CHcMoixXvxiPmci+qJZxx2x7NFBtsGxxLaRfwJn3yApL7brEO8Hl+eEWcNR/OXBbXHo/
-         NnQt+dJWgeWbsEJ73o9QTWPrPJA/zGt+SelUsUctRYUe45Pi2gfySwqW5KnTCmf2s8r+
-         TaTY+NvhDNaThwf8dOtFnEiR/cSaGDHkyXSVAqenDLnYQ8t52QtxG9uBf0qSgbirtq0z
-         ZmuFSLaxoKIbrap6V+4GFh8R3lVF4V6vla7ZmayFqQ2BKZRarockeby0bBgX7vYXat/Q
-         RaLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DX832C1ORCmgy/UOcPCcG0r1je+DNmKGQEEfCl2H8To=;
-        b=dgn4QorHDy+azu9OnpodigEEkX6xY1kQL9Zlhgk7UMiUPGqrm3LoJLeneYhQwDYGW+
-         x8aHrvIOsLfm08cqUW+vSL4HyB47uDjNPIvyHFXwCEHGIw112vK7IMB3WP/SkJnhS8SZ
-         bj1GOOrszTnqc1FOn6KpVDYcfg/Xq57ZSbrSV+Usf/BR76Ixjry+rHqkbIcmETbtkHF/
-         ULIOCJtrEFFTWQGwTtwIiQcnWmD3JZFbF3y4KtVNTrNesiOFBWykCd5Y76Vu7jsaADaP
-         wD9j11xcS+Z2LQzMunN1AuLjVvvTppA+35EG53PVqCU8zkGJd+gR3ZnscbaVbRR56O2h
-         clGg==
-X-Gm-Message-State: AOAM530KX3ct54Fcxk2N00Gs6Eduz8zCruigMcGszkzgBHfoxoN1aSoA
-        hu0enSFQJpkbklG7dV3tJ90PvUbAGwuPiY+wU7k=
-X-Google-Smtp-Source: ABdhPJwVkRHoGSNY7CuN4dpeI2RE4XDEmHpMYIQMUjcpQNUv0J87tkif+R87M/P1uaxwmc6QZLVc4UFCDpy6y5zRNmU=
-X-Received: by 2002:a25:9bc4:: with SMTP id w4mr60758616ybo.168.1626093858256;
- Mon, 12 Jul 2021 05:44:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210603051836.2614535-1-dkadashev@gmail.com> <20210603051836.2614535-3-dkadashev@gmail.com>
- <c079182e-7118-825e-84e5-13227a3b19b9@gmail.com> <4c0344d8-6725-84a6-b0a8-271587d7e604@gmail.com>
- <CAOKbgA4ZwzUxyRxWrF7iC2sNVnEwXXAmrxVSsSxBMQRe2OyYVQ@mail.gmail.com>
- <15a9d84b-61df-e2af-0c79-75b54d4bae8f@gmail.com> <CAOKbgA4DCGANRGfsHw0SqmyRr4A4gYfwZ6WFXpOFdf_bE2b+Yw@mail.gmail.com>
- <b6ae2481-3607-d9f8-b543-bb922b726b3a@gmail.com> <CAOKbgA6va=89pLayQgC20QvPeTE0Tp-+TmgJLKy+O2KKw8dUBg@mail.gmail.com>
- <5a6e1315-4034-0494-878a-a417e8294519@gmail.com>
-In-Reply-To: <5a6e1315-4034-0494-878a-a417e8294519@gmail.com>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Mon, 12 Jul 2021 19:44:07 +0700
-Message-ID: <CAOKbgA4XirCKFxC8EzURBJsEVXRmVTeqza0Rf5PW=ifB2H80_A@mail.gmail.com>
-Subject: Re: [PATCH v5 02/10] io_uring: add support for IORING_OP_MKDIRAT
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mon, 12 Jul 2021 08:52:34 -0400
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-205-qiylMb6tME2iJBU66RxWTw-1; Mon, 12 Jul 2021 08:49:42 -0400
+X-MC-Unique: qiylMb6tME2iJBU66RxWTw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 69A1C804319;
+        Mon, 12 Jul 2021 12:49:39 +0000 (UTC)
+Received: from bahia.lan (ovpn-114-183.ams2.redhat.com [10.36.114.183])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3530961093;
+        Mon, 12 Jul 2021 12:49:31 +0000 (UTC)
+Date:   Mon, 12 Jul 2021 14:49:30 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        <gscrivan@redhat.com>, <tytso@mit.edu>, <miklos@szeredi.hu>,
+        <selinux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <virtio-fs@redhat.com>, <casey.schaufler@intel.com>,
+        <linux-security-module@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        <linux-fsdevel@vger.kernel.org>, <jack@suse.cz>
+Subject: Re: [Virtio-fs] [PATCH v2 1/1] xattr: Allow user.* xattr on symlink
+ and special files
+Message-ID: <20210712144849.121c948c@bahia.lan>
+In-Reply-To: <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+References: <20210708175738.360757-1-vgoyal@redhat.com>
+        <20210708175738.360757-2-vgoyal@redhat.com>
+        <20210709091915.2bd4snyfjndexw2b@wittgenstein>
+        <20210709152737.GA398382@redhat.com>
+        <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=groug@kaod.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: kaod.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 7, 2021 at 9:06 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->
-> On 6/28/21 9:17 AM, Dmitry Kadashev wrote:
-> > On Thu, Jun 24, 2021 at 7:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >>
-> >> On 6/24/21 12:11 PM, Dmitry Kadashev wrote:
-> >>> On Wed, Jun 23, 2021 at 6:54 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >>>>
-> >>>> On 6/23/21 7:41 AM, Dmitry Kadashev wrote:
-> >>>>> I'd imagine READ_ONCE is to be used in those checks though, isn't it? Some of
-> >>>>> the existing checks like this lack it too btw. I suppose I can fix those in a
-> >>>>> separate commit if that makes sense.
-> >>>>
-> >>>> When we really use a field there should be a READ_ONCE(),
-> >>>> but I wouldn't care about those we check for compatibility
-> >>>> reasons, but that's only my opinion.
+On Fri, 9 Jul 2021 08:34:41 -0700
+Casey Schaufler <casey@schaufler-ca.com> wrote:
+
+> On 7/9/2021 8:27 AM, Vivek Goyal wrote:
+> > On Fri, Jul 09, 2021 at 11:19:15AM +0200, Christian Brauner wrote:
+> >> On Thu, Jul 08, 2021 at 01:57:38PM -0400, Vivek Goyal wrote:
+> >>> Currently user.* xattr are not allowed on symlink and special files.
 > >>>
-> >>> I'm not sure how the compatibility check reads are special. The code is
-> >>> either correct or not. If a compatibility check has correctness problems
-> >>> then it's pretty much as bad as any other part of the code having such
-> >>> problems, no?
+> >>> man xattr and recent discussion suggested that primary reason for this
+> >>> restriction is how file permissions for symlinks and special files
+> >>> are little different from regular files and directories.
+> >>>
+> >>> For symlinks, they are world readable/writable and if user xattr were
+> >>> to be permitted, it will allow unpriviliged users to dump a huge amount
+> >>> of user.* xattrs on symlinks without any control.
+> >>>
+> >>> For special files, permissions typically control capability to read/write
+> >>> from devices (and not necessarily from filesystem). So if a user can
+> >>> write to device (/dev/null), does not necessarily mean it should be allowed
+> >>> to write large number of user.* xattrs on the filesystem device node is
+> >>> residing in.
+> >>>
+> >>> This patch proposes to relax the restrictions a bit and allow file owner
+> >>> or priviliged user (CAP_FOWNER), to be able to read/write user.* xattrs
+> >>> on symlink and special files.
+> >>>
+> >>> virtiofs daemon has a need to store user.* xatrrs on all the files
+> >>> (including symlinks and special files), and currently that fails. This
+> >>> patch should help.
+> >>>
+> >>> Link: https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
+> >>> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> >>> ---
+> >> Seems reasonable and useful.
+> >> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 > >>
-> >> If it reads and verifies a values first, e.g. index into some internal
-> >> array, and then compiler plays a joke and reloads it, we might be
-> >> absolutely screwed expecting 'segfaults', kernel data leakages and all
-> >> the fun stuff.
-> >>
-> >> If that's a compatibility check, whether it's loaded earlier or later,
-> >> or whatever, it's not a big deal, the userspace can in any case change
-> >> the memory at any moment it wishes, even tightly around the moment
-> >> we're reading it.
+> >> One question, do all filesystem supporting xattrs deal with setting them
+> >> on symlinks/device files correctly?
+> > Wrote a simple bash script to do setfattr/getfattr user.foo xattr on
+> > symlink and device node on ext4, xfs and btrfs and it works fine.
+> 
+> How about nfs, tmpfs, overlayfs and/or some of the other less conventional
+> filesystems?
+> 
+
+How about virtiofs then ? :-)
+
 > >
-> > Sorry for the slow reply, I have to balance this with my actual job that
-> > is not directly related to the kernel development :)
+> > https://github.com/rhvgoyal/misc/blob/master/generic-programs/user-xattr-special-files.sh
 > >
-> > I'm no kernel concurrency expert (actually I'm not any kind of kernel
-> > expert), but my understanding is READ_ONCE does not just mean "do not
-> > read more than once", but rather "read exactly once" (and more than
-> > that), and if it's not applied then the compiler is within its rights to
-> > optimize the read out, so the compatibility check can effectively be
-> > disabled.
->
-> Yep, as they say it's about all the "inventive" transformations
-> compilers can do, double read is just one of those that may turn very
-> nasty for us.
->
-> One big difference for me is whether it have a potential to crash the
-> kernel or not, though it's just one side.
+> > I probably can add some more filesystems to test.
+> >
+> > Thanks
+> > Vivek
+> >
+> >>>  fs/xattr.c | 10 ++++++----
+> >>>  1 file changed, 6 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/fs/xattr.c b/fs/xattr.c
+> >>> index 5c8c5175b385..2f1855c8b620 100644
+> >>> --- a/fs/xattr.c
+> >>> +++ b/fs/xattr.c
+> >>> @@ -120,12 +120,14 @@ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
+> >>>  	}
+> >>>  
+> >>>  	/*
+> >>> -	 * In the user.* namespace, only regular files and directories can have
+> >>> -	 * extended attributes. For sticky directories, only the owner and
+> >>> -	 * privileged users can write attributes.
+> >>> +	 * In the user.* namespace, for symlinks and special files, only
+> >>> +	 * the owner and priviliged users can read/write attributes.
+> >>> +	 * For sticky directories, only the owner and privileged users can
+> >>> +	 * write attributes.
+> >>>  	 */
+> >>>  	if (!strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN)) {
+> >>> -		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
+> >>> +		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode) &&
+> >>> +		    !inode_owner_or_capable(mnt_userns, inode))
+> >>>  			return (mask & MAY_WRITE) ? -EPERM : -ENODATA;
+> >>>  		if (S_ISDIR(inode->i_mode) && (inode->i_mode & S_ISVTX) &&
+> >>>  		    (mask & MAY_WRITE) &&
+> >>> -- 
+> >>> 2.25.4
+> >>>
+> 
+> _______________________________________________
+> Virtio-fs mailing list
+> Virtio-fs@redhat.com
+> https://listman.redhat.com/mailman/listinfo/virtio-fs
+> 
 
-Ah, that makes sense.
-
-> Compilers can't drop the check just because, it first should be proven
-> to be safe to do, and there are all sorts barriers around and
-> limitations on how CQEs and SQEs are used, making impossible to alias
-> memory. E.g. CQEs and SQEs can't be reused in a single syscall, they're
-> only written and read respectively, and so on. Maybe, the only one I'd
-> worry about is the call to io_commit_sqring(), i.e. for SQE reads not
-> happening after it, but we need to take a look whether it's
-> theoretically possible.
-
-Thanks for the explanation, Pavel!
-
--- 
-Dmitry Kadashev
