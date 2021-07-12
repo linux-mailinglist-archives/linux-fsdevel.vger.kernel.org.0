@@ -2,249 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D49F3C6284
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 20:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C2823C62E8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 20:46:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235760AbhGLSYa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 14:24:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:56017 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230486AbhGLSY3 (ORCPT
+        id S235496AbhGLSt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 14:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235009AbhGLSt1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 14:24:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626114100;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iBcVkDvKJUcpSWfS1OGM7iDUYY1I1Z8V1aL86DTsiBY=;
-        b=Ol7mPRnEs20OCAPG3YgcVsSzBIMurWAC/ktwlnsfcy98tu6EUt5iKpiEv45ed88IC+fr7L
-        j4HNPq82VkvCrcjFSUbUzn+0siWUH0padD/70ZAxbci8pz8md69hGwCUlcNtDN9nenmPn2
-        Di6UlaTSTeFV8TyuyBV3GqpJv/j7k5I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-262-t8XrEjjCNKC4cb2W_00D1A-1; Mon, 12 Jul 2021 14:21:39 -0400
-X-MC-Unique: t8XrEjjCNKC4cb2W_00D1A-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7992936254;
-        Mon, 12 Jul 2021 18:21:38 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-114-176.rdu2.redhat.com [10.10.114.176])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BF09560871;
-        Mon, 12 Jul 2021 18:21:30 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 3464222054F; Mon, 12 Jul 2021 14:21:30 -0400 (EDT)
-Date:   Mon, 12 Jul 2021 14:21:30 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Virtio-fs] [PATCH 3/2] fs: simplify get_filesystem_list /
- get_all_fs_names
-Message-ID: <20210712182130.GC502004@redhat.com>
-References: <20210621062657.3641879-1-hch@lst.de>
- <20210622081217.GA2975@lst.de>
- <YNGhERcnLuzjn8j9@stefanha-x1.localdomain>
- <20210629205048.GE5231@redhat.com>
- <20210630053601.GA29241@lst.de>
- <20210707210404.GB244500@redhat.com>
- <20210707210636.GC244500@redhat.com>
- <20210708125936.GA319010@redhat.com>
+        Mon, 12 Jul 2021 14:49:27 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFB8C0613DD
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 11:46:39 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id u13so5996760lfs.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 11:46:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bxXQRushEcGK/228boQLTeFcixL6JKTeFr1JKo01BZI=;
+        b=Tlry1eux2Hcx7MU+4zkcbNM31M5MIL6ev1CDwVobZ3dmqyxD3CRbq9n+R5zIeW+f5E
+         /pUYGRPccuQmHytw6FAT+URWZgGdXjTk6awgcXP7GMrcm9GkHbXFoDXc3j+725y1Ro9c
+         pyL0qYs9udnU+Sg+L7d/g+PVS2NZad3eOsddY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bxXQRushEcGK/228boQLTeFcixL6JKTeFr1JKo01BZI=;
+        b=J3l7ejHtGIvLvGInnOhOyRqX7mZqbqqsWqImEPzxtNMdjNrIJjDUXUHamQ8qsGDO9L
+         97YjUrY1HRPJYE3xuMBROfnQQbhaerIa++QxQSXV4+YmgL5wszSfIwP/QIIJ9Fy4gK5r
+         qPRyoSUEbsGelQcwHQjvq9dsIaQQF7jN3kjBPm2hl1oI1GMkky9l7Ddha9oiqyQr4GzK
+         VGKxZWVNWGmUm3dnPwUo+vTmTb9B2O626+sIslHphdgUqHXwquOaLhBdMFouv8Z1jTwd
+         9tNXxT4uXiN0pf5QEKdvT1LynlldXUUcemvPNKJ0NaSYBp2+nWSapcSl4Pkz34X7Toji
+         aHjQ==
+X-Gm-Message-State: AOAM531lNVZF6UJ9bfwuzyLz8BGWUNtAbkGtHejr1pG6q6MIdLMb6F/j
+        b6csUgWPWe+v2rt0kE8JKUxEFXI2+/GeAUXP
+X-Google-Smtp-Source: ABdhPJwRQUPZ1gU1pMx3O7d6uF63iTl9E6yEDY9l0uwxxZhYcZWzP27MtC+JV93FZRtau+YkuB/pfg==
+X-Received: by 2002:a05:6512:3b0c:: with SMTP id f12mr159410lfv.22.1626115597177;
+        Mon, 12 Jul 2021 11:46:37 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id a15sm1648971ljn.26.2021.07.12.11.46.36
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jul 2021 11:46:36 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id e20so25828095ljn.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 11:46:36 -0700 (PDT)
+X-Received: by 2002:a2e:9241:: with SMTP id v1mr515604ljg.48.1626115595994;
+ Mon, 12 Jul 2021 11:46:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210708125936.GA319010@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20210712123649.1102392-1-dkadashev@gmail.com> <20210712123649.1102392-5-dkadashev@gmail.com>
+In-Reply-To: <20210712123649.1102392-5-dkadashev@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 12 Jul 2021 11:46:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjFd0qn6asio=zg7zUTRmSty_TpAEhnwym1Qb=wFgCKzA@mail.gmail.com>
+Message-ID: <CAHk-=wjFd0qn6asio=zg7zUTRmSty_TpAEhnwym1Qb=wFgCKzA@mail.gmail.com>
+Subject: Re: [PATCH 4/7] namei: clean up do_mknodat retry logic
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 08, 2021 at 08:59:36AM -0400, Vivek Goyal wrote:
-> On Wed, Jul 07, 2021 at 05:06:36PM -0400, Vivek Goyal wrote:
-> > On Wed, Jul 07, 2021 at 05:04:04PM -0400, Vivek Goyal wrote:
-> > > On Wed, Jun 30, 2021 at 07:36:01AM +0200, Christoph Hellwig wrote:
-> > > > On Tue, Jun 29, 2021 at 04:50:48PM -0400, Vivek Goyal wrote:
-> > > > > May be we should modify mount_block_root() code so that it does not
-> > > > > require that extra "\0". Possibly zero initialize page and that should
-> > > > > make sure list_bdev_fs_names() does not have to worry about it.
-> > > > > 
-> > > > > It is possible that a page gets full from the list of filesystems, and
-> > > > > last byte on page is terminating null. In that case just zeroing page
-> > > > > will not help. We can keep track of some sort of end pointer and make
-> > > > > sure we are not searching beyond that for valid filesystem types.
-> > > > > 
-> > > > > end = page + PAGE_SIZE - 1;
-> > > > > 
-> > > > > mount_block_root()
-> > > > > {
-> > > > > 	for (p = fs_names; p < end && *p; p += strlen(p)+1) {
-> > > > > 	}
-> > > > > }
-> > > > 
-> > > > Maybe.  To honest I'd prefer to not even touch this unrelated code given
-> > > > how full of landmines it is :)
-> > > 
-> > > Hi Christoph,
-> > > 
-> > > How about following patch. This applies on top of your patches. I noticed
-> > > that Al had suggested to return number of filesystems from helper
-> > > functions. I just did that and used that to iterate in the loop.
-> > > 
-> > > I tested it with a virtual block device (root=/dev/vda1) and it works.
-> > > I also filled page with garbage after allocation to make sure natually
-> > > occurring null is not there in the middle of page to terminate string.
-> > > 
-> > > If you like it, can you please incorporate it in your patches.
-> > 
-> > I noticed this will break with "root_fs_names=". Sorry, will have to
-> > fix split_fs_names() as well. Will do.
-> 
-> Hi Christoph,
-> 
-> I fixed it. Now both split_fs_names() and list_bdev_fs_names() return
-> count of fstype strings it placed in the buffer. And callers now
-> use that count to loop (instead of relying on extra null byte at the
-> end of the buffer).
-> 
-> I tested both nodev (virtiofs, 9p) and block dev rootfs (ext4) and
-> it works for me. Please have a look.
+On Mon, Jul 12, 2021 at 5:37 AM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+>
+> Moving the main logic to a helper function makes the whole thing much
+> easier to follow.
 
-Hi Christoph,
+This patch works, but the conversion is not one-to-one.
 
-In case you are finding it hard to spend some time on these patches, I 
-can take those patches, merge my changes and repost them.
-
-Vivek
-
-> 
-> 
-> ---
->  fs/filesystems.c   |    5 ++++-
->  include/linux/fs.h |    2 +-
->  init/do_mounts.c   |   35 +++++++++++++++++++++++------------
->  3 files changed, 28 insertions(+), 14 deletions(-)
-> 
-> Index: redhat-linux/fs/filesystems.c
-> ===================================================================
-> --- redhat-linux.orig/fs/filesystems.c	2021-07-08 08:02:09.772766786 -0400
-> +++ redhat-linux/fs/filesystems.c	2021-07-08 08:02:12.044860918 -0400
-> @@ -209,10 +209,11 @@ SYSCALL_DEFINE3(sysfs, int, option, unsi
->  }
->  #endif
->  
-> -void __init list_bdev_fs_names(char *buf, size_t size)
-> +int __init list_bdev_fs_names(char *buf, size_t size)
+> -static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+> -               unsigned int dev)
+> +static int mknodat_helper(int dfd, struct filename *name, umode_t mode,
+> +                         unsigned int dev, unsigned int lookup_flags)
 >  {
->  	struct file_system_type *p;
->  	size_t len;
-> +	int count = 0;
->  
->  	read_lock(&file_systems_lock);
->  	for (p = file_systems; p; p = p->next) {
-> @@ -226,8 +227,10 @@ void __init list_bdev_fs_names(char *buf
->  		memcpy(buf, p->name, len);
->  		buf += len;
->  		size -= len;
-> +		count++;
->  	}
->  	read_unlock(&file_systems_lock);
-> +	return count;
->  }
->  
->  #ifdef CONFIG_PROC_FS
-> Index: redhat-linux/include/linux/fs.h
-> ===================================================================
-> --- redhat-linux.orig/include/linux/fs.h	2021-07-08 08:02:09.774766869 -0400
-> +++ redhat-linux/include/linux/fs.h	2021-07-08 08:02:12.046861001 -0400
-> @@ -3622,7 +3622,7 @@ int proc_nr_dentry(struct ctl_table *tab
->  		  void *buffer, size_t *lenp, loff_t *ppos);
->  int proc_nr_inodes(struct ctl_table *table, int write,
->  		   void *buffer, size_t *lenp, loff_t *ppos);
-> -void __init list_bdev_fs_names(char *buf, size_t size);
-> +int __init list_bdev_fs_names(char *buf, size_t size);
->  
->  #define __FMODE_EXEC		((__force int) FMODE_EXEC)
->  #define __FMODE_NONOTIFY	((__force int) FMODE_NONOTIFY)
-> Index: redhat-linux/init/do_mounts.c
-> ===================================================================
-> --- redhat-linux.orig/init/do_mounts.c	2021-07-08 08:02:09.774766869 -0400
-> +++ redhat-linux/init/do_mounts.c	2021-07-08 08:02:12.046861001 -0400
-> @@ -338,14 +338,22 @@ __setup("rootflags=", root_data_setup);
->  __setup("rootfstype=", fs_names_setup);
->  __setup("rootdelay=", root_delay_setup);
->  
-> -static void __init split_fs_names(char *page, char *names)
-> +static int __init split_fs_names(char *page, char *names)
->  {
-> -	strcpy(page, root_fs_names);
-> -	while (*page++) {
-> -		if (page[-1] == ',')
-> -			page[-1] = '\0';
-> +	int count = 0;
-> +	char *p = page;
-> +
-> +	strcpy(p, root_fs_names);
-> +	while (*p++) {
-> +		if (p[-1] == ',')
-> +			p[-1] = '\0';
->  	}
-> -	*page = '\0';
-> +	*p = '\0';
-> +
-> +	for (p = page; *p; p += strlen(p)+1)
-> +		count++;
-> +
-> +	return count;
->  }
->  
->  static int __init do_mount_root(const char *name, const char *fs,
-> @@ -391,15 +399,16 @@ void __init mount_block_root(char *name,
->  	char *fs_names = page_address(page);
->  	char *p;
->  	char b[BDEVNAME_SIZE];
-> +	int num_fs, i;
->  
->  	scnprintf(b, BDEVNAME_SIZE, "unknown-block(%u,%u)",
->  		  MAJOR(ROOT_DEV), MINOR(ROOT_DEV));
->  	if (root_fs_names)
-> -		split_fs_names(fs_names, root_fs_names);
-> +		num_fs = split_fs_names(fs_names, root_fs_names);
->  	else
-> -		list_bdev_fs_names(fs_names, PAGE_SIZE);
-> +		num_fs = list_bdev_fs_names(fs_names, PAGE_SIZE);
->  retry:
-> -	for (p = fs_names; *p; p += strlen(p)+1) {
-> +	for (p = fs_names, i = 0; i < num_fs; p += strlen(p)+1, i++) {
->  		int err = do_mount_root(name, p, flags, root_mount_data);
->  		switch (err) {
->  			case 0:
-> @@ -432,7 +441,7 @@ retry:
->  	printk("List of all partitions:\n");
->  	printk_all_partitions();
->  	printk("No filesystem could mount root, tried: ");
-> -	for (p = fs_names; *p; p += strlen(p)+1)
-> +	for (p = fs_names, i = 0; i < num_fs; p += strlen(p)+1, i++)
->  		printk(" %s", p);
->  	printk("\n");
->  	panic("VFS: Unable to mount root fs on %s", b);
-> @@ -533,13 +542,15 @@ static int __init mount_nodev_root(void)
->  {
->  	char *fs_names, *fstype;
->  	int err = -EINVAL;
-> +	int num_fs, i;
->  
->  	fs_names = (void *)__get_free_page(GFP_KERNEL);
->  	if (!fs_names)
->  		return -EINVAL;
-> -	split_fs_names(fs_names, root_fs_names);
-> +	num_fs = split_fs_names(fs_names, root_fs_names);
->  
-> -	for (fstype = fs_names; *fstype; fstype += strlen(fstype) + 1) {
-> +	for (fstype = fs_names, i = 0; i < num_fs;
-> +	     fstype += strlen(fstype) + 1, i++) {
->  		if (!fs_is_nodev(fstype))
->  			continue;
->  		err = do_mount_root(root_device_name, fstype, root_mountflags,
+>         struct user_namespace *mnt_userns;
+>         struct dentry *dentry;
+>         struct path path;
+>         int error;
+> -       unsigned int lookup_flags = 0;
+>
+>         error = may_mknod(mode);
+>         if (error)
+> -               goto out1;
+> -retry:
 
+Note how "may_mknod()" was _outside_ the retry before, and now it's inside:
+
+> +static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+> +               unsigned int dev)
+> +{
+> +       int error;
+> +
+> +       error = mknodat_helper(dfd, name, mode, dev, 0);
+> +       if (retry_estale(error, 0))
+> +               error = mknodat_helper(dfd, name, mode, dev, LOOKUP_REVAL);
+> +
+>         putname(name);
+>         return error;
+
+which happens to not be fatal - doing the may_mknod() twice will not
+break anything - but it doesn't match what it used to do.
+
+A few options options:
+
+ (a) a separate patch to move the "may_mknod()" to the two callers first
+
+ (b) a separate patch to move the "may_mknod()" first into the repeat
+loop, with the comment being that it's ok.
+
+ (c) keep the logic the same, with the code something like
+
+  static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+                unsigned int dev)
+  {
+        int error;
+
+        error = may_mknod(mode);
+        if (!error) {
+                error = mknodat_helper(dfd, name, mode, dev, 0);
+                if (retry_estale(error, 0))
+                        error = mknodat_helper(dfd, name, mode, dev,
+LOOKUP_REVAL);
+        }
+
+        putname(name);
+        return error;
+  }
+
+or
+
+ (d) keep the patch as-is, but with an added commit message note about
+how it's not one-to-one and why it's ok.
+
+Hmm?
+
+So this patch could be fine, but it really wants to note how it
+changes the logic and why that's fine. Or, the patch should be
+modified.
+
+                Linus
