@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E85653C420A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 05:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED923C420C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 05:39:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232893AbhGLDlh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jul 2021 23:41:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45972 "EHLO
+        id S232832AbhGLDmN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jul 2021 23:42:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbhGLDlg (ORCPT
+        with ESMTP id S230022AbhGLDmM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jul 2021 23:41:36 -0400
+        Sun, 11 Jul 2021 23:42:12 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A46C0613DD;
-        Sun, 11 Jul 2021 20:38:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B492EC0613DD;
+        Sun, 11 Jul 2021 20:39:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=07NC3255VH/NlGdDowpnSzvZFseSJjGe0n/+yF1BoH0=; b=Dp4iifR0vpgNb92FbF2CKjDxzx
-        DZ59JJQEXUY/yfv0ZMl0jyEIf45lK0IP4sQkBmIPnI/iAYc3tMV1f1pJ/90wkPNxOY00efdxYQFkH
-        Cygn86rAdNW84BezlFiKrr1ogNnNHm3LodAOk/KHTWpo//LD+/7+l48d+nyg9PHy0r0nz/T6j5o0r
-        LEmKpNTCz2ZR5E6LCaxpL0IAL4+8x5Q0UHESoyAIC+NiN0VY4WWCgyW5mSoIcCVKa4eZWjjWfGGvo
-        9A+VtTeAnhvlTZOPrW1MXX0MLL7+ArhcgXY7p7RxYlAgxhwkpE6mcPcAANZC/rYrXfNeFXOpekIhl
-        qOklvisw==;
+        bh=nqXwHrGW5fkYuF2j97j08SczEABbmY2HqwB4/BmmJqo=; b=lH7OfgxVZ5U0fpJT0j8/ojM7Vg
+        gvmMmBt0301CoNYmec/EJxHxf8gM+d4hHJhRpNyhNmqAA95LcuY9NQs7JmzKMEzboj8+I2HlPNTnM
+        eXbjboi3nOCTLck+pkBAJMHFd7YkuiM6KugTfv/bjjcKP8+CDfhVDudEBOHTUSaB5rXoO+Btcenbv
+        12y39sFO+ftX4NmQX+/OvjHm33e8zuTDFmC32+2wN+whb0/LnkJ/fbdmEc390sCA/eEZtrR2hR/cC
+        saEfWCYX4hMH7YLAIl9eqfLmIVKANMJIC4HR0CSVPaXpw50s4+9SX+7F09Kpckb7tv2YpQ++bytbE
+        0AFBegyA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m2mky-00GowF-Kx; Mon, 12 Jul 2021 03:37:36 +0000
+        id 1m2mlk-00Goz9-07; Mon, 12 Jul 2021 03:38:34 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v13 057/137] mm/swap: Add folio_activate()
-Date:   Mon, 12 Jul 2021 04:05:41 +0100
-Message-Id: <20210712030701.4000097-58-willy@infradead.org>
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v13 058/137] mm/swap: Add folio_mark_accessed()
+Date:   Mon, 12 Jul 2021 04:05:42 +0100
+Message-Id: <20210712030701.4000097-59-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210712030701.4000097-1-willy@infradead.org>
 References: <20210712030701.4000097-1-willy@infradead.org>
@@ -44,110 +43,130 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This replaces activate_page() and eliminates lots of calls to
-compound_head().  Saves net 118 bytes of kernel text.  There are still
-some redundant calls to page_folio() here which will be removed when
-pagevec_lru_move_fn() is converted to use folios.
+Convert mark_page_accessed() to folio_mark_accessed().  It already
+operated on the entire compound page, but now we can avoid calling
+compound_head quite so many times.  Shrinks the function from 424 bytes
+to 295 bytes (shrinking by 129 bytes).  The compatibility wrapper is 30
+bytes, plus the 8 bytes for the exported symbol means the kernel shrinks
+by 91 bytes.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- mm/swap.c | 43 +++++++++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 20 deletions(-)
+ include/linux/swap.h |  3 ++-
+ mm/folio-compat.c    |  7 +++++++
+ mm/swap.c            | 34 ++++++++++++++++------------------
+ 3 files changed, 25 insertions(+), 19 deletions(-)
 
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 989d8f78c256..c7a4c0a5863d 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -352,7 +352,8 @@ extern void lru_note_cost(struct lruvec *lruvec, bool file,
+ 			  unsigned int nr_pages);
+ extern void lru_note_cost_page(struct page *);
+ extern void lru_cache_add(struct page *);
+-extern void mark_page_accessed(struct page *);
++void mark_page_accessed(struct page *);
++void folio_mark_accessed(struct folio *);
+ 
+ extern atomic_t lru_disable_count;
+ 
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index 7044fcc8a8aa..a374747ae1c6 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/pagemap.h>
++#include <linux/swap.h>
+ 
+ struct address_space *page_mapping(struct page *page)
+ {
+@@ -41,3 +42,9 @@ bool page_mapped(struct page *page)
+ 	return folio_mapped(page_folio(page));
+ }
+ EXPORT_SYMBOL(page_mapped);
++
++void mark_page_accessed(struct page *page)
++{
++	folio_mark_accessed(page_folio(page));
++}
++EXPORT_SYMBOL(mark_page_accessed);
 diff --git a/mm/swap.c b/mm/swap.c
-index 5c681c01e3fa..253ac77792dc 100644
+index 253ac77792dc..b49e10e75af5 100644
 --- a/mm/swap.c
 +++ b/mm/swap.c
-@@ -322,15 +322,15 @@ void lru_note_cost_page(struct page *page)
- 		      page_is_file_lru(page), thp_nr_pages(page));
- }
- 
--static void __activate_page(struct page *page, struct lruvec *lruvec)
-+static void __folio_activate(struct folio *folio, struct lruvec *lruvec)
- {
--	if (!PageActive(page) && !PageUnevictable(page)) {
--		int nr_pages = thp_nr_pages(page);
-+	if (!folio_active(folio) && !folio_unevictable(folio)) {
-+		int nr_pages = folio_nr_pages(folio);
- 
--		del_page_from_lru_list(page, lruvec);
--		SetPageActive(page);
--		add_page_to_lru_list(page, lruvec);
--		trace_mm_lru_activate(page);
-+		folio_del_from_lru_list(folio, lruvec);
-+		folio_set_active_flag(folio);
-+		folio_add_to_lru_list(folio, lruvec);
-+		trace_mm_lru_activate(&folio->page);
- 
- 		__count_vm_events(PGACTIVATE, nr_pages);
- 		__count_memcg_events(lruvec_memcg(lruvec), PGACTIVATE,
-@@ -339,6 +339,11 @@ static void __activate_page(struct page *page, struct lruvec *lruvec)
- }
- 
- #ifdef CONFIG_SMP
-+static void __activate_page(struct page *page, struct lruvec *lruvec)
-+{
-+	return __folio_activate(page_folio(page), lruvec);
-+}
-+
- static void activate_page_drain(int cpu)
- {
- 	struct pagevec *pvec = &per_cpu(lru_pvecs.activate_page, cpu);
-@@ -352,16 +357,16 @@ static bool need_activate_page_drain(int cpu)
- 	return pagevec_count(&per_cpu(lru_pvecs.activate_page, cpu)) != 0;
- }
- 
--static void activate_page(struct page *page)
-+static void folio_activate(struct folio *folio)
- {
--	page = compound_head(page);
--	if (PageLRU(page) && !PageActive(page) && !PageUnevictable(page)) {
-+	if (folio_lru(folio) && !folio_active(folio) &&
-+	    !folio_unevictable(folio)) {
- 		struct pagevec *pvec;
- 
-+		folio_get(folio);
- 		local_lock(&lru_pvecs.lock);
- 		pvec = this_cpu_ptr(&lru_pvecs.activate_page);
--		get_page(page);
--		if (pagevec_add_and_need_flush(pvec, page))
-+		if (pagevec_add_and_need_flush(pvec, &folio->page))
- 			pagevec_lru_move_fn(pvec, __activate_page);
- 		local_unlock(&lru_pvecs.lock);
- 	}
-@@ -372,17 +377,15 @@ static inline void activate_page_drain(int cpu)
- {
- }
- 
--static void activate_page(struct page *page)
-+static void folio_activate(struct folio *folio)
- {
--	struct folio *folio = page_folio(page);
- 	struct lruvec *lruvec;
- 
--	page = &folio->page;
--	if (TestClearPageLRU(page)) {
--		lruvec = folio_lruvec_lock_irq(folio);
--		__activate_page(page, lruvec);
-+	if (folio_test_clear_lru_flag(folio)) {
-+		lruvec = folio_lock_lruvec_irq(folio);
-+		__folio_activate(folio, lruvec);
- 		unlock_page_lruvec_irq(lruvec);
--		SetPageLRU(page);
-+		folio_set_lru_flag(folio);
- 	}
+@@ -390,7 +390,7 @@ static void folio_activate(struct folio *folio)
  }
  #endif
-@@ -447,7 +450,7 @@ void mark_page_accessed(struct page *page)
+ 
+-static void __lru_cache_activate_page(struct page *page)
++static void __lru_cache_activate_folio(struct folio *folio)
+ {
+ 	struct pagevec *pvec;
+ 	int i;
+@@ -411,8 +411,8 @@ static void __lru_cache_activate_page(struct page *page)
+ 	for (i = pagevec_count(pvec) - 1; i >= 0; i--) {
+ 		struct page *pagevec_page = pvec->pages[i];
+ 
+-		if (pagevec_page == page) {
+-			SetPageActive(page);
++		if (pagevec_page == &folio->page) {
++			folio_set_active_flag(folio);
+ 			break;
+ 		}
+ 	}
+@@ -430,36 +430,34 @@ static void __lru_cache_activate_page(struct page *page)
+  * When a newly allocated page is not yet visible, so safe for non-atomic ops,
+  * __SetPageReferenced(page) may be substituted for mark_page_accessed(page).
+  */
+-void mark_page_accessed(struct page *page)
++void folio_mark_accessed(struct folio *folio)
+ {
+-	page = compound_head(page);
+-
+-	if (!PageReferenced(page)) {
+-		SetPageReferenced(page);
+-	} else if (PageUnevictable(page)) {
++	if (!folio_referenced(folio)) {
++		folio_set_referenced_flag(folio);
++	} else if (folio_unevictable(folio)) {
+ 		/*
+ 		 * Unevictable pages are on the "LRU_UNEVICTABLE" list. But,
+ 		 * this list is never rotated or maintained, so marking an
+ 		 * evictable page accessed has no effect.
+ 		 */
+-	} else if (!PageActive(page)) {
++	} else if (!folio_active(folio)) {
+ 		/*
+ 		 * If the page is on the LRU, queue it for activation via
+ 		 * lru_pvecs.activate_page. Otherwise, assume the page is on a
+ 		 * pagevec, mark it active and it'll be moved to the active
  		 * LRU on the next drain.
  		 */
- 		if (PageLRU(page))
--			activate_page(page);
-+			folio_activate(page_folio(page));
+-		if (PageLRU(page))
+-			folio_activate(page_folio(page));
++		if (folio_lru(folio))
++			folio_activate(folio);
  		else
- 			__lru_cache_activate_page(page);
- 		ClearPageReferenced(page);
+-			__lru_cache_activate_page(page);
+-		ClearPageReferenced(page);
+-		workingset_activation(page_folio(page));
++			__lru_cache_activate_folio(folio);
++		folio_clear_referenced_flag(folio);
++		workingset_activation(folio);
+ 	}
+-	if (page_is_idle(page))
+-		clear_page_idle(page);
++	if (folio_idle(folio))
++		folio_clear_idle_flag(folio);
+ }
+-EXPORT_SYMBOL(mark_page_accessed);
++EXPORT_SYMBOL(folio_mark_accessed);
+ 
+ /**
+  * lru_cache_add - add a page to a page list
 -- 
 2.30.2
 
