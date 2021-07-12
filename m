@@ -2,60 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 349DA3C5DEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 16:04:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D0713C5E45
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 16:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233866AbhGLOHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 10:07:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50822 "EHLO
+        id S234869AbhGLOXt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 10:23:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230292AbhGLOHH (ORCPT
+        with ESMTP id S233949AbhGLOXs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 10:07:07 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2825C0613DD;
-        Mon, 12 Jul 2021 07:04:18 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id a5-20020a7bc1c50000b02901e3bbe0939bso98824wmj.0;
-        Mon, 12 Jul 2021 07:04:18 -0700 (PDT)
+        Mon, 12 Jul 2021 10:23:48 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43BADC0613DD;
+        Mon, 12 Jul 2021 07:20:59 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id v5so25878354wrt.3;
+        Mon, 12 Jul 2021 07:20:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+ksfKW9jBcttAT71ywTdCDgVvdhPuwAAMHVVHi6ziTk=;
-        b=qv17XwXNn+D+FlRVdPXxv69USzKfsqymUNz3eJtpzZsGJkI7GwNBjXGJwNqMWAbvB3
-         JsrmbyVam2Pm0CeE6RTF5WN2++O6bno8IGyIhYMauMUjJOOdfr4wQQGMa1y7YFq2LPA9
-         6rJbjoeNbVL9ZouKhGkob1FjD1BdarvauJmKDw7aqU4+2zOYWX3llvL3v6x50KrLwVbj
-         rPeeOmKw2i/B40ABgk60ZTZuPE7Ic3Arbr4f9hg6CFKtl3A/ZetvwUuIMvRhXWp1LYT/
-         Kn299THwvY+ApUkwvNrTqYhcd/UnUi7tIjPkft9W57odiWzDcGbWU6bSkvXtzAagzyMQ
-         vKLw==
+        bh=McfcRUwTJvvEYnGyx2zdV84R9Ua8X5MJL0mSzDDl3X4=;
+        b=CWROun1CdjvGboSFTQkv6sAppvuuPS7f/l3PB0E3owikaOeqb3QUYdUA8EKGraNI40
+         sGpwFUAQad1jcHO8OpB04og6pmdgnkYlGL9JvgR5MXlLbjNXFOi2U1p+EtMfBCKoh6SU
+         bWYI8AH/ki/7khGQD1zCeWfVwMoghgNmaOOHyTki8ALhdPtYuWiKGK8zK+pFoqN8OFop
+         yHWyshAjGPkFswLS1uYoO29xmFNEDepggh1QBrEw/Azz283rLG7S0H6RCDeuIDrPjs07
+         KZ2y9ISe4n+tRS4jlsiDQWyzhiCt7ZgyO+2AZ08obLfQ8e2iSTEp7XhS51tX6XGclKa/
+         1ETA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+ksfKW9jBcttAT71ywTdCDgVvdhPuwAAMHVVHi6ziTk=;
-        b=UQh7hAoO7SDjJCQF3denpatCcWYbxnlbgT/mkDJasNdEAjlUdGXjmwvvifczAUisgU
-         c8hjba73Pj74wJ2mY5bDB2Bb6laObsxE5LJmKUjVxfkcLHh5NPmiWcJ0nGB2+mZ9fImR
-         S5USvEBeY59SYYDvfoqcdthgEILcRl+UKdaogzSTKMFapDedYPZNXD4j8PhWDngStlpT
-         neHT+sSXB8ATSJdf/5k8AIvf5Ohi1HiUZQVNimrd5Io+T3JXU333z2BSEUlyxithf4z6
-         7UPHppCEHs+hergVtP+fbc2xP8qhb4zF6GmLzuNbCDZxr9kA/f88UdwD7j4pI0/CmgIw
-         khXg==
-X-Gm-Message-State: AOAM533D0hx/vFHcBHkRZbqbwh94TsJn9emtjWPjxhQkjSSwyDzZrHH3
-        +26rYdG7y8UPY0ErN1QQhyWg69TeBB5NbFfFcAE=
-X-Google-Smtp-Source: ABdhPJyqjVxz3mZxKxpLTTVUCFpnt5ove+iY6K5nqdu8NPYwjBv6T2SUORoSj6HqVzngfY1mJgNyf1g22yp5AFuhA8M=
-X-Received: by 2002:a05:600c:2197:: with SMTP id e23mr30283710wme.101.1626098657324;
- Mon, 12 Jul 2021 07:04:17 -0700 (PDT)
+        bh=McfcRUwTJvvEYnGyx2zdV84R9Ua8X5MJL0mSzDDl3X4=;
+        b=GKooTqY4zj/YN03ZPbcDdzQ8XpcjLZN5QQLJ5xuTPA20zXabMZbbhg84aWih1q1wPz
+         +k7Q6x2aqEb//v6f0BrIGnPiaSndQUb4HIyo8u1LAnJ073K7RPa/boWkLga2CaeRoiKB
+         rr5dMz8Ke4urjOltiaXQiypFl6Nyj2HAmwghXJC7P/PhU33I3zrZ1sNH5WK3/mozPiay
+         8wea57+K8Z7RnpFFBZ9bU/TvkCBw6l2TUb1o9Nxrexo7bm8KFabY2H5XtwkNJwAjCldO
+         RHbTSN4PUJkaSowWBrb6Cq4N3ddWZXYSULKjC2l0bdWFpoSKhdGpDBL3tHqoGOFkawXJ
+         Uynw==
+X-Gm-Message-State: AOAM532B+Ozujqcla8om1Vgxv2ulQqVZ1gCQ3XllaZZ/lgc4mo0LLyik
+        TdYqGDI1f9tfBb4TrF8bhXvqyvRvAp1IgSC3Qrw=
+X-Google-Smtp-Source: ABdhPJyYd9ZGZO8Zy9KQ4TQfI1VbC3hvQCkAR0yvDXiUTY27zHOidGVlcOMRfd35ZqGKgtbYnT8ZTmVl+s+zu16wlMc=
+X-Received: by 2002:a5d:420b:: with SMTP id n11mr15661968wrq.395.1626099657917;
+ Mon, 12 Jul 2021 07:20:57 -0700 (PDT)
 MIME-Version: 1.0
 References: <162609463116.3133237.11899334298425929820.stgit@warthog.procyon.org.uk>
- <162609465444.3133237.7562832521724298900.stgit@warthog.procyon.org.uk>
-In-Reply-To: <162609465444.3133237.7562832521724298900.stgit@warthog.procyon.org.uk>
+ <162609464716.3133237.10354897554363093252.stgit@warthog.procyon.org.uk>
+In-Reply-To: <162609464716.3133237.10354897554363093252.stgit@warthog.procyon.org.uk>
 From:   Marc Dionne <marc.c.dionne@gmail.com>
-Date:   Mon, 12 Jul 2021 11:04:06 -0300
-Message-ID: <CAB9dFdvV-gEfRY_bsF_hBDErWW=9WUCVsGSmkv6XLE=Y-Lh-Hw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] afs: Remove redundant assignment to ret
+Date:   Mon, 12 Jul 2021 11:20:47 -0300
+Message-ID: <CAB9dFdvHsLsw7CMnB+4cgciWDSqVjuij4mH3TaXnHQB8sz5rHw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] afs: check function return
 To:     David Howells <dhowells@redhat.com>
-Cc:     linux-afs@lists.infradead.org,
-        Abaci Robot <abaci@linux.alibaba.com>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+Cc:     linux-afs@lists.infradead.org, Tom Rix <trix@redhat.com>,
         linux-fsdevel@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -65,84 +63,46 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, Jul 12, 2021 at 9:57 AM David Howells <dhowells@redhat.com> wrote:
 >
-> From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> From: Tom Rix <trix@redhat.com>
 >
-> Variable ret is set to -ENOENT and -ENOMEM but this value is never
-> read as it is overwritten or not used later on, hence it is a
-> redundant assignment and can be removed.
+> Static analysis reports this problem
 >
-> Cleans up the following clang-analyzer warning:
+> write.c:773:29: warning: Assigned value is garbage or undefined
+>   mapping->writeback_index = next;
+>                            ^ ~~~~
+> The call to afs_writepages_region() can return without setting
+> next.  So check the function return before using next.
 >
-> fs/afs/dir.c:2014:4: warning: Value stored to 'ret' is never read
-> [clang-analyzer-deadcode.DeadStores].
->
-> fs/afs/dir.c:659:2: warning: Value stored to 'ret' is never read
-> [clang-analyzer-deadcode.DeadStores].
->
-> [DH made the following modifications:
->
->  - In afs_rename(), -ENOMEM should be placed in op->error instead of ret,
->    rather than the assignment being removed entirely.  afs_put_operation()
->    will pick it up from there and return it.
->
->  - If afs_sillyrename() fails, its error code should be placed in op->error
->    rather than in ret also.
-> ]
->
-> Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" concept")
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> Fixes: e87b03f5830e ("afs: Prepare for use of THPs")
+> Signed-off-by: Tom Rix <trix@redhat.com>
 > Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: linux-afs@lists.infradead.org
-> Link: https://lore.kernel.org/r/1619691492-83866-1-git-send-email-jiapeng.chong@linux.alibaba.com
+> Link: https://lore.kernel.org/r/20210430155031.3287870-1-trix@redhat.com
 > ---
 >
->  fs/afs/dir.c |   10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+>  fs/afs/write.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-> index 78719f2f567e..ac829e63c570 100644
-> --- a/fs/afs/dir.c
-> +++ b/fs/afs/dir.c
-> @@ -656,7 +656,6 @@ static int afs_do_lookup_one(struct inode *dir, struct dentry *dentry,
->                 return ret;
->         }
->
-> -       ret = -ENOENT;
->         if (!cookie.found) {
->                 _leave(" = -ENOENT [not found]");
->                 return -ENOENT;
-> @@ -2020,17 +2019,20 @@ static int afs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
->
->                 if (d_count(new_dentry) > 2) {
->                         /* copy the target dentry's name */
-> -                       ret = -ENOMEM;
->                         op->rename.tmp = d_alloc(new_dentry->d_parent,
->                                                  &new_dentry->d_name);
-> -                       if (!op->rename.tmp)
-> +                       if (!op->rename.tmp) {
-> +                               op->error = -ENOMEM;
->                                 goto error;
-> +                       }
->
->                         ret = afs_sillyrename(new_dvnode,
->                                               AFS_FS_I(d_inode(new_dentry)),
->                                               new_dentry, op->key);
-> -                       if (ret)
-> +                       if (ret) {
-> +                               op->error = ret;
->                                 goto error;
-> +                       }
->
->                         op->dentry_2 = op->rename.tmp;
->                         op->rename.rehash = NULL;
->
->
->
-> _______________________________________________
-> linux-afs mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-afs
+> diff --git a/fs/afs/write.c b/fs/afs/write.c
+> index 3104b62c2082..2794147f82ff 100644
+> --- a/fs/afs/write.c
+> +++ b/fs/afs/write.c
+> @@ -777,7 +777,7 @@ int afs_writepages(struct address_space *mapping,
+>                 mapping->writeback_index = next / PAGE_SIZE;
 
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+Isn't there the same issue with the use of next here.
+
+>         } else if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX) {
+>                 ret = afs_writepages_region(mapping, wbc, 0, LLONG_MAX, &next);
+> -               if (wbc->nr_to_write > 0)
+> +               if (wbc->nr_to_write > 0 && ret == 0)
+>                         mapping->writeback_index = next;
+
+Unrelated to this patch, but since next is a byte offset, should this
+also divide by PAGE_SIZE as above.
+
+>         } else {
+>                 ret = afs_writepages_region(mapping, wbc,
+>
+>
 
 Marc
