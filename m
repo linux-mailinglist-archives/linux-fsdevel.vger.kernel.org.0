@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 320C13C42C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 06:15:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C2BB3C42C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 06:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231699AbhGLESN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 00:18:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54884 "EHLO
+        id S230114AbhGLETA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 00:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229848AbhGLESN (ORCPT
+        with ESMTP id S229848AbhGLETA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 00:18:13 -0400
+        Mon, 12 Jul 2021 00:19:00 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 916CFC0613DD;
-        Sun, 11 Jul 2021 21:15:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB69C0613DD;
+        Sun, 11 Jul 2021 21:16:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=sS8g2PR33XQsHKDwgj6ow7dv71dRAvcFyk/+foTy130=; b=J7cupigrWwkPGff/jNyNUO2Qbo
-        DSAgBpiXEZV2PxA5UngMVJ3KDrHkOXx1zR88TGqiMaz60Hj4u8OD7F3QJZ9LGKXaam+1KflD53eCv
-        RGdVdgvxX9FROaiICmjFB7pAwqiYcVDgocF27ImPmZ3nHDNmch4JCTyCTQIrl8KUjrPYMlfV1ePdj
-        zjFEOfuylq3dvPhfsoaSJdyOv6+i+unEhjdK/ciCKlllBKK+Q91xc0rEUPnCtfG0KFBRHoaZ+jtsG
-        w5+XpjLLw6QfF3L4PBXXdw8v54cuEbpy+BOx0LSjVZRJLkzK0NSkN1HWSmj43GlEdGo5jNhNP75Yh
-        nkstVz6A==;
+        bh=OEayz0vZXxwwb3sWZ+SAgeiLQoq44uIs+KhQN0qQl24=; b=Rp9yMScEt68IGGHILwaVcB11he
+        tEr51zQ7OKh17g75hHAtgNjnH9U/aw+nvSx1yM7ufe6qbcfzyh0GLjshoJaHA1wUmc8ulR9m+FUTC
+        VEHS/WBxbHdGJpj5SC/3aScmVMRF4t8fs1uIKbyNZgMNVW3eCLfp9mlmttpT4r7HhkAu5xhI5GBK8
+        kemXqbOBPGZbq8hE/R1XWlJx8rPufeVGEtqTcVsnT2ofr7feU2DyRnKPASTdSWn2qyivJIoiKIpim
+        Uk0YmhdGMWlnlHOZ5ft6SLAaBMliXZmijQmQfxumHHK/X3nWaVgZn+H4vFgK/Id/eNwLZDtDmYJSq
+        qqwrbfsQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m2nKn-00GrVg-1o; Mon, 12 Jul 2021 04:14:27 +0000
+        id 1m2nLJ-00GrXi-QL; Mon, 12 Jul 2021 04:14:59 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v13 127/137] iomap: Support multi-page folios in invalidatepage
-Date:   Mon, 12 Jul 2021 04:06:51 +0100
-Message-Id: <20210712030701.4000097-128-willy@infradead.org>
+Subject: [PATCH v13 128/137] xfs: Support THPs
+Date:   Mon, 12 Jul 2021 04:06:52 +0100
+Message-Id: <20210712030701.4000097-129-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210712030701.4000097-1-willy@infradead.org>
 References: <20210712030701.4000097-1-willy@infradead.org>
@@ -43,58 +43,64 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If we're punching a hole in a multi-page folio, we need to remove the
-per-page iomap data as the folio is about to be split and each page will
-need its own.  This means that writepage can now come across a page with
-no iop allocated, so remove the assertion that there is already one,
-and just create one (with the uptodate bits set) if there isn't one.
+There is one place which assumes the size of a page; fix it.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/iomap/buffered-io.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ fs/xfs/xfs_aops.c  | 11 ++++++-----
+ fs/xfs/xfs_super.c |  3 ++-
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index bd811b3dbe86..18a683cc5c2b 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -474,13 +474,17 @@ iomap_invalidatepage(struct page *page, unsigned int offset, unsigned int len)
- 	trace_iomap_invalidatepage(folio->mapping->host, offset, len);
- 
- 	/*
--	 * If we are invalidating the entire page, clear the dirty state from it
--	 * and release it to avoid unnecessary buildup of the LRU.
-+	 * If we are invalidating the entire folio, clear the dirty state
-+	 * from it and release it to avoid unnecessary buildup of the LRU.
- 	 */
- 	if (offset == 0 && len == folio_size(folio)) {
- 		WARN_ON_ONCE(folio_writeback(folio));
- 		folio_cancel_dirty(folio);
- 		iomap_page_release(folio);
-+	} else if (folio_multi(folio)) {
-+		/* Must release the iop so the page can be split */
-+		WARN_ON_ONCE(!folio_uptodate(folio) && folio_dirty(folio));
-+		iomap_page_release(folio);
- 	}
- }
- EXPORT_SYMBOL_GPL(iomap_invalidatepage);
-@@ -1300,7 +1304,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct inode *inode,
- 		struct folio *folio, loff_t end_pos)
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index cb4e0fcf4c76..9ffbd116592a 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -432,10 +432,11 @@ xfs_discard_page(
+ 	struct page		*page,
+ 	loff_t			fileoff)
  {
--	struct iomap_page *iop = to_iomap_page(folio);
-+	struct iomap_page *iop = iomap_page_create(inode, folio);
- 	struct iomap_ioend *ioend, *next;
- 	unsigned len = i_blocksize(inode);
- 	unsigned nblocks = i_blocks_per_folio(inode, folio);
-@@ -1308,7 +1312,6 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	int error = 0, count = 0, i;
- 	LIST_HEAD(submit_list);
+-	struct inode		*inode = page->mapping->host;
++	struct folio		*folio = page_folio(page);
++	struct inode		*inode = folio->mapping->host;
+ 	struct xfs_inode	*ip = XFS_I(inode);
+ 	struct xfs_mount	*mp = ip->i_mount;
+-	unsigned int		pageoff = offset_in_page(fileoff);
++	size_t			pageoff = offset_in_folio(folio, fileoff);
+ 	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, fileoff);
+ 	xfs_fileoff_t		pageoff_fsb = XFS_B_TO_FSBT(mp, pageoff);
+ 	int			error;
+@@ -445,14 +446,14 @@ xfs_discard_page(
  
--	WARN_ON_ONCE(nblocks > 1 && !iop);
- 	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) != 0);
+ 	xfs_alert_ratelimited(mp,
+ 		"page discard on page "PTR_FMT", inode 0x%llx, offset %llu.",
+-			page, ip->i_ino, fileoff);
++			folio, ip->i_ino, fileoff);
  
- 	/*
+ 	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
+-			i_blocks_per_page(inode, page) - pageoff_fsb);
++			i_blocks_per_folio(inode, folio) - pageoff_fsb);
+ 	if (error && !XFS_FORCED_SHUTDOWN(mp))
+ 		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
+ out_invalidate:
+-	iomap_invalidatepage(page, pageoff, PAGE_SIZE - pageoff);
++	iomap_invalidatepage(&folio->page, pageoff, folio_size(folio) - pageoff);
+ }
+ 
+ static const struct iomap_writeback_ops xfs_writeback_ops = {
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 2c9e26a44546..24adea02b887 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1891,7 +1891,8 @@ static struct file_system_type xfs_fs_type = {
+ 	.init_fs_context	= xfs_init_fs_context,
+ 	.parameters		= xfs_fs_parameters,
+ 	.kill_sb		= kill_block_super,
+-	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
++	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | \
++				  FS_THP_SUPPORT,
+ };
+ MODULE_ALIAS_FS("xfs");
+ 
 -- 
 2.30.2
 
