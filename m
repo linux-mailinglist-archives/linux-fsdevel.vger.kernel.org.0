@@ -2,172 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 260873C63FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 21:46:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C67E43C645C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 21:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234124AbhGLTsw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 15:48:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45480 "EHLO
+        id S236674AbhGLT7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 15:59:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233242AbhGLTsw (ORCPT
+        with ESMTP id S236692AbhGLT7B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 15:48:52 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9FB8C0613E5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 12:46:03 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id a127so17393805pfa.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 12:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=izReUsFSnW2KAtNEGF3f28+bNVRxftAoovKaDAlS05k=;
-        b=ccvnfNHi8QwmLN8NpuKKeAFBp5bauedhz6K5/rZ+hane5/bRL/zrYGMd1imY49TqSB
-         b0h3VdHa1NmYZQ2/knGSMexYzzzpBuCI1MrGKl4I2bvB9kGxa6NsVxhzz+VG1tqc3aSA
-         XGJ/7GkJGRtsF7GayEfIAm6OLEzsDH3QL2FFFa/grJy4XK6ud1V6mZIDurZTHuKaA2HN
-         7J44aesiNPBSc9yvo8LO/TZn45e1gPpN1+Gr5DM0zd3ZyHjQfKQt16McOSzWUyjcfQ9E
-         H2BoM3K9oqUCR/gqFbkIJcF2LkX7rwp3QFSwaSMzxPzN4+BS0HinQ+dgxWv+CZXwnJ3e
-         6aHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=izReUsFSnW2KAtNEGF3f28+bNVRxftAoovKaDAlS05k=;
-        b=AP7xctu1d2AlNxruKSzQingjQq4qt6khIUWlGuz/S3ppYmDSTu8AaXaE5aFMzkC47A
-         pWON4JUz2jfTATFbXG5O+sw7zgQ9ClfIb+PUZJd4/ZWdFlLAPoIFcjAzRqLKuS3hfrkS
-         JHk4IgNsusbGql6n9qspBDsHyzjZfnBhlNRt8/vdB3b+rRyKcOAknpWZYLDm8ooEtoAU
-         wZrd0CH0CW17HUXbalFqBkZfvj+1V+EK5nY9D2a0I5FqbFp5yffeo/x+leoVPU44nOYv
-         IozXcPDka0wT4YIOn+YA2HRxpaUzGYTAbiuU+uR2jbWq3bXwp3DnGrdhihVhNHNfWrzl
-         HIAQ==
-X-Gm-Message-State: AOAM532vetuR1GgMJZtnUI5hxxJxymv8YMCiQqQMgQqn5TljttuLbJmY
-        TS9dpbXKYbD2TXhSGAo+zXwS/Gm6uz9WzM0GxKmZfQ==
-X-Google-Smtp-Source: ABdhPJzaU7hq7i25/r9ogvTlHBE+8LCgSumyTj16i0E+PKcsefNqt87b4cbEppQaDhI76H7OHWrkqQTIM/JKg7EwKbI=
-X-Received: by 2002:a65:6412:: with SMTP id a18mr654516pgv.445.1626119162849;
- Mon, 12 Jul 2021 12:46:02 -0700 (PDT)
+        Mon, 12 Jul 2021 15:59:01 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36488C0613E5;
+        Mon, 12 Jul 2021 12:56:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=2vhZlOdcq3zLt9VVVyRnzOfxOMomDSCQmvA/+EiX9RM=; b=pu4bHcfKYW/p+k6tiF66YjhDlv
+        A8qYhBxb35CW8IfbOXkRD637p2/zyosc9e7iR/ddFxYLG3Ng0h9ZGrlMRmuJzPz8BlESXoZNkyiXA
+        DTVzKuv3jSCYPt/uV2cfIV/E/ytVJawbYELn3grtMSUlsiapP+rStYWWOhv3vDCcg74ZTLNSuEJxD
+        puiSDKUuhrcFFNa2tnaaNnAirptVxn0uhfWIUupKJb9EUIlfqWCVkmQ01FuBsrhz9nrVYaamLPCBT
+        R8pDqHM3H5wDFsy7zMbQszA6TKLkvfgJkZcSPksh3s1mD+iJNmWikLYUkSapAClHgqxqyRv5Zh445
+        6S9Ww6Bw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m3213-000ObY-N3; Mon, 12 Jul 2021 19:55:13 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     akpm@linux-foundation.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v13 18/18] mm/workingset: Convert workingset_activation to take a folio
+Date:   Mon, 12 Jul 2021 20:45:51 +0100
+Message-Id: <20210712194551.91920-19-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210712194551.91920-1-willy@infradead.org>
+References: <20210712194551.91920-1-willy@infradead.org>
 MIME-Version: 1.0
-References: <20210708155647.44208-1-kaleshsingh@google.com> <CAHk-=whDkekE8n2LdPiKHeTdRnV--ys0V0nPZ76oPaE0fn-d+g@mail.gmail.com>
-In-Reply-To: <CAHk-=whDkekE8n2LdPiKHeTdRnV--ys0V0nPZ76oPaE0fn-d+g@mail.gmail.com>
-From:   Kalesh Singh <kaleshsingh@google.com>
-Date:   Mon, 12 Jul 2021 12:45:51 -0700
-Message-ID: <CAC_TJvfAsaM3AbK+P5PnYeNhKE-gXK6iL0WLURcJ0QSTGuYhwQ@mail.gmail.com>
-Subject: Re: [PATCH] procfs: Prevent unpriveleged processes accessing fdinfo
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 10, 2021 at 11:21 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, Jul 8, 2021 at 8:57 AM Kalesh Singh <kaleshsingh@google.com> wrot=
-e:
-> >
-> > The file permissions on the fdinfo dir from were changed from
-> > S_IRUSR|S_IXUSR to S_IRUGO|S_IXUGO, and a PTRACE_MODE_READ check was
-> > added for opening the fdinfo files [1]. However, the ptrace permission
-> > check was not added to the directory, allowing anyone to get the open F=
-D
-> > numbers by reading the fdinfo directory.
-> >
-> > Add the missing ptrace permission check for opening the fdinfo director=
-y.
->
-> The more I look at this, the more I feel like we should look at
-> instead changing how "get_proc_task()" works.
->
-> That's one of the core functions for /proc, and I wonder if we
-> couldn't just make it refuse to look up a task that has gone through a
-> suid execve() since the proc inode was opened.
->
-> I don't think it's basically ever ok to open something for one thread,
-> and then use it after the thread has gone through a suid thing.
->
-> In fact, I wonder if we could make it even stricter, and go "any exec
-> at all", but I think a suid exec might be the minimum we should do.
->
-> Then the logic really becomes very simple: we did the permission
-> checks at open time (like UNIX permission checks should be done), and
-> "get_proc_task()" basically verifies that "yeah, that open-time
-> decision is still valid".
->
-> Wouldn't that make a lot of sense?
+This function already assumed it was being passed a head page.  No real
+change here, except that thp_nr_pages() compiles away on kernels with
+THP compiled out while folio_nr_pages() is always present.  Also convert
+page_memcg_rcu() to folio_memcg_rcu().
 
-I think checking that the last open is after the last exec works, but
-there are a few cases I=E2=80=99m not clear on:
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ include/linux/memcontrol.h | 18 +++++++++---------
+ include/linux/swap.h       |  2 +-
+ mm/swap.c                  |  2 +-
+ mm/workingset.c            | 11 ++++-------
+ 4 files changed, 15 insertions(+), 18 deletions(-)
 
-Process A opens /proc/A/*/<file>. (Given it has the required
-permissions - checked in open())
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 469e5473bdfb..42fec3af745d 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -461,19 +461,19 @@ static inline struct mem_cgroup *page_memcg(struct page *page)
+ }
+ 
+ /*
+- * page_memcg_rcu - locklessly get the memory cgroup associated with a page
+- * @page: a pointer to the page struct
++ * folio_memcg_rcu - Locklessly get the memory cgroup associated with a folio.
++ * @folio: Pointer to the folio.
+  *
+- * Returns a pointer to the memory cgroup associated with the page,
+- * or NULL. This function assumes that the page is known to have a
++ * Returns a pointer to the memory cgroup associated with the folio,
++ * or NULL. This function assumes that the folio is known to have a
+  * proper memory cgroup pointer. It's not safe to call this function
+- * against some type of pages, e.g. slab pages or ex-slab pages.
++ * against some type of folios, e.g. slab folios or ex-slab folios.
+  */
+-static inline struct mem_cgroup *page_memcg_rcu(struct page *page)
++static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
+ {
+-	unsigned long memcg_data = READ_ONCE(page->memcg_data);
++	unsigned long memcg_data = READ_ONCE(folio->memcg_data);
+ 
+-	VM_BUG_ON_PAGE(PageSlab(page), page);
++	VM_BUG_ON_FOLIO(folio_slab(folio), folio);
+ 	WARN_ON_ONCE(!rcu_read_lock_held());
+ 
+ 	if (memcg_data & MEMCG_DATA_KMEM) {
+@@ -1129,7 +1129,7 @@ static inline struct mem_cgroup *page_memcg(struct page *page)
+ 	return NULL;
+ }
+ 
+-static inline struct mem_cgroup *page_memcg_rcu(struct page *page)
++static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
+ {
+ 	WARN_ON_ONCE(!rcu_read_lock_held());
+ 	return NULL;
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 8394716a002b..989d8f78c256 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -330,7 +330,7 @@ static inline swp_entry_t folio_swap_entry(struct folio *folio)
+ void workingset_age_nonresident(struct lruvec *lruvec, unsigned long nr_pages);
+ void *workingset_eviction(struct page *page, struct mem_cgroup *target_memcg);
+ void workingset_refault(struct page *page, void *shadow);
+-void workingset_activation(struct page *page);
++void workingset_activation(struct folio *folio);
+ 
+ /* Only track the nodes of mappings with shadow entries */
+ void workingset_update_node(struct xa_node *node);
+diff --git a/mm/swap.c b/mm/swap.c
+index 42222653e6ef..5c681c01e3fa 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -451,7 +451,7 @@ void mark_page_accessed(struct page *page)
+ 		else
+ 			__lru_cache_activate_page(page);
+ 		ClearPageReferenced(page);
+-		workingset_activation(page);
++		workingset_activation(page_folio(page));
+ 	}
+ 	if (page_is_idle(page))
+ 		clear_page_idle(page);
+diff --git a/mm/workingset.c b/mm/workingset.c
+index e62c0f2084a2..39bb60d50217 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -392,13 +392,11 @@ void workingset_refault(struct page *page, void *shadow)
+ 
+ /**
+  * workingset_activation - note a page activation
+- * @page: page that is being activated
++ * @folio: Folio that is being activated.
+  */
+-void workingset_activation(struct page *page)
++void workingset_activation(struct folio *folio)
+ {
+-	struct folio *folio = page_folio(page);
+ 	struct mem_cgroup *memcg;
+-	struct lruvec *lruvec;
+ 
+ 	rcu_read_lock();
+ 	/*
+@@ -408,11 +406,10 @@ void workingset_activation(struct page *page)
+ 	 * XXX: See workingset_refault() - this should return
+ 	 * root_mem_cgroup even for !CONFIG_MEMCG.
+ 	 */
+-	memcg = page_memcg_rcu(page);
++	memcg = folio_memcg_rcu(folio);
+ 	if (!mem_cgroup_disabled() && !memcg)
+ 		goto out;
+-	lruvec = folio_lruvec(folio);
+-	workingset_age_nonresident(lruvec, thp_nr_pages(page));
++	workingset_age_nonresident(folio_lruvec(folio), folio_nr_pages(folio));
+ out:
+ 	rcu_read_unlock();
+ }
+-- 
+2.30.2
 
-        Process A Start exec time =3D T1
-        Proc inode open time /proc/A/*/<file>  =3D T2
-
-T2 > T1: --> Process A can access /proc/A/*/<file> (FD 4)  -- OK
-
-
-Process A does a fork and exec Process B
-
-        Process B Start exec time =3D T3
-        Proc inode open time /proc/A/*/<file>  =3D T2
-
-T2 < T3: --> Process B can=E2=80=99t access /proc/A/*/<file> (by the copied=
- FD 4) -- OK
-
-
-Process B opens /proc/B/*/<file> (Given it has the required
-permissions - checked in open())
-
-        Process B Start exec time =3D T3
-        Proc inode open time /proc/B/*/<file>  =3D T4.
-
-T4 > T3: --> Process B can access /proc/B/*/<file> (FD 5)  -- OK
-
-
-Process A opens /proc/A/*/<file> (Given it has the required
-permissions - checked in open())
-
-        Process A Start exec time =3D T1
-        Proc inode open time /proc/A/*/<file>  =3D T5.
-
-T5 > T1: --> Process A can access /proc/A/*/<file> (FD 5) -- OK
-
-But,
-
-        Process B Start exec time =3D T3
-        Proc inode open time /proc/A/*/<file>  =3D T5.
-
-T5 > T3: --> Process B can access /proc/A/*/<file> (by the copied FD
-4) -- NOT OK
-
-
-I think for the case above we could add a map to track the inode open
-times per task at the cost of some added complexity.
-
-For tracking the last exec times, I thought we could maybe reuse the
-task_struct -> struct sched_entity se -> u64 exec_start /
-sum_exec_runtime as indicators. These are relative to the task and set
-to 0 on fork. But the inode open time needs to be comparable across
-tasks in the case of a fork-exec as above. As I understand, we may
-need a per-task field like last_exec_time, but I=E2=80=99m not sure we want=
- to
-incur the extra memory overhead for adding more fields to task_struct?
-
-Please let me know if my understanding is not correct or if there is
-something I overlooked here.
-
-Thanks,
-Kalesh
-
->
->              Linus
