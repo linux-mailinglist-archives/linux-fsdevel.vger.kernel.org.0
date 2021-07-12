@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17DE63C66BF
+	by mail.lfdr.de (Postfix) with ESMTP id 58B4C3C66C1
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 01:07:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233376AbhGLXKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 19:10:37 -0400
-Received: from mail-ed1-f47.google.com ([209.85.208.47]:33614 "EHLO
-        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233172AbhGLXKg (ORCPT
+        id S233401AbhGLXKj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 19:10:39 -0400
+Received: from mail-ej1-f41.google.com ([209.85.218.41]:37559 "EHLO
+        mail-ej1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233227AbhGLXKi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 19:10:36 -0400
-Received: by mail-ed1-f47.google.com with SMTP id dj21so10585481edb.0;
-        Mon, 12 Jul 2021 16:07:46 -0700 (PDT)
+        Mon, 12 Jul 2021 19:10:38 -0400
+Received: by mail-ej1-f41.google.com with SMTP id i20so37789247ejw.4;
+        Mon, 12 Jul 2021 16:07:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ML00JtYVZe2p5B4UKUBPuWY2pChVUASw+imUnUQ2KK0=;
-        b=EsIY/wXXWxiHnRUDSwGxSYUvW9DtOJphpy/RoiVBplRnCmZg4JPhF23rOO6thkSHQL
-         QeDLQWIPJ4swgWj/IYqhyrdW7Dppv7I9i0cgK3stM99EADJoQMwDyfXbH1jyV7+PVBNF
-         Ndgqos9ot7iP/VZ19xp0BOLjg2GXA2ZILx+cvHc4tnby2QQuTVj82g+vk1YTzlObnKqG
-         NVH/Ob5AMselD50b6+oofuXICXg7SEXak7i7KPrxyPH1gkeeN68XgHzYYvw0dRXswcFE
-         QAmVxJ+UboX6kFXOJWnPNWkTOPHWvh4RTW++08mXJ+EesXs2sZtAwUfTr5nYmWABWwjf
-         avIA==
-X-Gm-Message-State: AOAM5310tUoXdtyl5Rg7HFP3dWrDDdJQxCmPgYQWGEEAhPU1Owqjz+X/
-        ASG+Kgo3JNa1QoNZH5YrwRcnPihyudHsZw==
-X-Google-Smtp-Source: ABdhPJww3SzAjyJFWMF5nuYDt8E0J6plzstysO66PJdByEdsTKphpgwbCfxRtBfp/K4GEbFnf4yKJw==
-X-Received: by 2002:aa7:cd5a:: with SMTP id v26mr1512917edw.287.1626131266117;
-        Mon, 12 Jul 2021 16:07:46 -0700 (PDT)
+        bh=yDu7kpWtoefW5J8ZIKzJkCaSnNc2E9IfezCix3rW6U0=;
+        b=P6QAbFR5ecW3UgzPTh86y657LQzeb4DvEaO+z0iH9BWnvUElPHelfP0aZnMNU6hS0k
+         +TpqaQm5tneQZoNXwW2qzk3zcicAnGW8P7GC0lcK2UazEkhGefv79JEQpgOj+kHSiET+
+         pqmBacw3ma2+87JxzqS6XQZPhmSmyTRE4e0HOUG0TunQWZzpZQlIvfKzEjDOo8ExePkB
+         pkIemog3s9O4cLLJf3nSm+VZVjhU32tMkUWsUhD0js4YCrRK3HE/rRjDcmDzYMK2jDbo
+         05MEOS/OWdjFGb6dkSo0w2ck7tQE8Hd6L1QeiJwNp0F1DtZLRunc0bPvAn/tVYX+YXVi
+         owuw==
+X-Gm-Message-State: AOAM530a7Pn5VQ6yLBa30Iaqx9Ia7ABEM9jTVjv9rZsh9nH0W0nI8oOz
+        Ze3UesvBU0KqiP0vnSXOoysdYG2rAr+mBA==
+X-Google-Smtp-Source: ABdhPJzuwVlDk6fjItU6Bzwexmhey6CpWcb7GumzRR2SX43H76HUPpDoB99GJj1ZCYhtsLJ27mLTxg==
+X-Received: by 2002:a17:907:d89:: with SMTP id go9mr1713628ejc.165.1626131267691;
+        Mon, 12 Jul 2021 16:07:47 -0700 (PDT)
 Received: from msft-t490s.fritz.box (host-95-250-115-52.retail.telecomitalia.it. [95.250.115.52])
-        by smtp.gmail.com with ESMTPSA id h3sm5494111ejf.53.2021.07.12.16.07.44
+        by smtp.gmail.com with ESMTPSA id h3sm5494111ejf.53.2021.07.12.16.07.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jul 2021 16:07:45 -0700 (PDT)
+        Mon, 12 Jul 2021 16:07:47 -0700 (PDT)
 From:   Matteo Croce <mcroce@linux.microsoft.com>
 To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
@@ -50,9 +50,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Hannes Reinecke <hare@suse.de>,
         Matthew Wilcox <willy@infradead.org>,
         JeffleXu <jefflexu@linux.alibaba.com>
-Subject: [PATCH v5 5/6] block: add a helper to raise a media changed event
-Date:   Tue, 13 Jul 2021 01:05:29 +0200
-Message-Id: <20210712230530.29323-6-mcroce@linux.microsoft.com>
+Subject: [PATCH v5 6/6] loop: raise media_change event
+Date:   Tue, 13 Jul 2021 01:05:30 +0200
+Message-Id: <20210712230530.29323-7-mcroce@linux.microsoft.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210712230530.29323-1-mcroce@linux.microsoft.com>
 References: <20210712230530.29323-1-mcroce@linux.microsoft.com>
@@ -64,123 +64,83 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Matteo Croce <mcroce@microsoft.com>
 
-Refactor disk_check_events() and move some code into disk_event_uevent().
-Then add disk_force_media_change(), a helper which will be used by
-devices to force issuing a DISK_EVENT_MEDIA_CHANGE event.
+Make the loop device raise a DISK_MEDIA_CHANGE event on attach or detach.
 
-Co-developed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+	# udevadm monitor -up |grep -e DISK_MEDIA_CHANGE -e DEVNAME &
+
+	# losetup -f zero
+	[    7.454235] loop0: detected capacity change from 0 to 16384
+	DISK_MEDIA_CHANGE=1
+	DEVNAME=/dev/loop0
+	DEVNAME=/dev/loop0
+	DEVNAME=/dev/loop0
+
+	# losetup -f zero
+	[   10.205245] loop1: detected capacity change from 0 to 16384
+	DISK_MEDIA_CHANGE=1
+	DEVNAME=/dev/loop1
+	DEVNAME=/dev/loop1
+	DEVNAME=/dev/loop1
+
+	# losetup -f zero2
+	[   13.532368] loop2: detected capacity change from 0 to 40960
+	DISK_MEDIA_CHANGE=1
+	DEVNAME=/dev/loop2
+	DEVNAME=/dev/loop2
+
+	# losetup -D
+	DEVNAME=/dev/loop1
+	DISK_MEDIA_CHANGE=1
+	DEVNAME=/dev/loop1
+	DEVNAME=/dev/loop2
+	DISK_MEDIA_CHANGE=1
+	DEVNAME=/dev/loop2
+	DEVNAME=/dev/loop0
+	DISK_MEDIA_CHANGE=1
+	DEVNAME=/dev/loop0
+
 Signed-off-by: Matteo Croce <mcroce@microsoft.com>
 ---
- block/disk-events.c   | 61 ++++++++++++++++++++++++++++++++-----------
- include/linux/genhd.h |  1 +
- 2 files changed, 47 insertions(+), 15 deletions(-)
+ drivers/block/loop.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/block/disk-events.c b/block/disk-events.c
-index 04c52f3992ed..7445b8ff2775 100644
---- a/block/disk-events.c
-+++ b/block/disk-events.c
-@@ -163,15 +163,31 @@ void disk_flush_events(struct gendisk *disk, unsigned int mask)
- 	spin_unlock_irq(&ev->lock);
- }
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index f37b9e3d833c..f562609b6d53 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -731,6 +731,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+ 		goto out_err;
  
-+/*
-+ * Tell userland about new events.  Only the events listed in @disk->events are
-+ * reported, and only if DISK_EVENT_FLAG_UEVENT is set.  Otherwise, events are
-+ * processed internally but never get reported to userland.
-+ */
-+static void disk_event_uevent(struct gendisk *disk, unsigned int events)
-+{
-+	char *envp[ARRAY_SIZE(disk_uevents) + 1] = { };
-+	int nr_events = 0, i;
-+
-+	for (i = 0; i < ARRAY_SIZE(disk_uevents); i++)
-+		if (events & disk->events & (1 << i))
-+			envp[nr_events++] = disk_uevents[i];
-+
-+	if (nr_events)
-+		kobject_uevent_env(&disk_to_dev(disk)->kobj, KOBJ_CHANGE, envp);
-+}
-+
- static void disk_check_events(struct disk_events *ev,
- 			      unsigned int *clearing_ptr)
- {
- 	struct gendisk *disk = ev->disk;
--	char *envp[ARRAY_SIZE(disk_uevents) + 1] = { };
- 	unsigned int clearing = *clearing_ptr;
- 	unsigned int events;
- 	unsigned long intv;
--	int nr_events = 0, i;
+ 	/* and ... switch */
++	disk_force_media_change(lo->lo_disk, DISK_EVENT_MEDIA_CHANGE);
+ 	blk_mq_freeze_queue(lo->lo_queue);
+ 	mapping_set_gfp_mask(old_file->f_mapping, lo->old_gfp_mask);
+ 	lo->lo_backing_file = file;
+@@ -1205,6 +1206,7 @@ static int loop_configure(struct loop_device *lo, fmode_t mode,
+ 		goto out_unlock;
+ 	}
  
- 	/* check events */
- 	events = disk->fops->check_events(disk, clearing);
-@@ -193,19 +209,8 @@ static void disk_check_events(struct disk_events *ev,
- 	if (events & DISK_EVENT_MEDIA_CHANGE)
- 		inc_diskseq(disk);
++	disk_force_media_change(lo->lo_disk, DISK_EVENT_MEDIA_CHANGE);
+ 	set_disk_ro(lo->lo_disk, (lo->lo_flags & LO_FLAGS_READ_ONLY) != 0);
  
--	/*
--	 * Tell userland about new events.  Only the events listed in
--	 * @disk->events are reported, and only if DISK_EVENT_FLAG_UEVENT
--	 * is set. Otherwise, events are processed internally but never
--	 * get reported to userland.
--	 */
--	for (i = 0; i < ARRAY_SIZE(disk_uevents); i++)
--		if ((events & disk->events & (1 << i)) &&
--		    (disk->event_flags & DISK_EVENT_FLAG_UEVENT))
--			envp[nr_events++] = disk_uevents[i];
--
--	if (nr_events)
--		kobject_uevent_env(&disk_to_dev(disk)->kobj, KOBJ_CHANGE, envp);
-+	if (disk->event_flags & DISK_EVENT_FLAG_UEVENT)
-+		disk_event_uevent(disk, events);
- }
+ 	INIT_WORK(&lo->rootcg_work, loop_rootcg_workfn);
+@@ -1349,6 +1351,7 @@ static int __loop_clr_fd(struct loop_device *lo, bool release)
  
- /**
-@@ -284,6 +289,32 @@ bool bdev_check_media_change(struct block_device *bdev)
- }
- EXPORT_SYMBOL(bdev_check_media_change);
- 
-+/**
-+ * disk_force_media_change - force a media change event
-+ * @disk: the disk which will raise the event
-+ * @events: the events to raise
-+ *
-+ * Generate uevents for the disk. If DISK_EVENT_MEDIA_CHANGE is present,
-+ * attempt to free all dentries and inodes and invalidates all block
-+ * device page cache entries in that case.
-+ *
-+ * Returns %true if DISK_EVENT_MEDIA_CHANGE was raised, or %false if not.
-+ */
-+bool disk_force_media_change(struct gendisk *disk, unsigned int events)
-+{
-+	disk_event_uevent(disk, events);
-+
-+	if (!(events & DISK_EVENT_MEDIA_CHANGE))
-+		return false;
-+
-+	if (__invalidate_device(disk->part0, true))
-+		pr_warn("VFS: busy inodes on changed media %s\n",
-+			disk->disk_name);
-+	set_bit(GD_NEED_PART_SCAN, &disk->state);
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(disk_force_media_change);
-+
- /*
-  * Separate this part out so that a different pointer for clearing_ptr can be
-  * passed in for disk_clear_events.
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 140c028845af..849486de81c6 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -237,6 +237,7 @@ extern void disk_block_events(struct gendisk *disk);
- extern void disk_unblock_events(struct gendisk *disk);
- extern void disk_flush_events(struct gendisk *disk, unsigned int mask);
- bool set_capacity_and_notify(struct gendisk *disk, sector_t size);
-+bool disk_force_media_change(struct gendisk *disk, unsigned int events);
- 
- /* drivers/char/random.c */
- extern void add_disk_randomness(struct gendisk *disk) __latent_entropy;
+ 	partscan = lo->lo_flags & LO_FLAGS_PARTSCAN && bdev;
+ 	lo_number = lo->lo_number;
++	disk_force_media_change(lo->lo_disk, DISK_EVENT_MEDIA_CHANGE);
+ out_unlock:
+ 	mutex_unlock(&lo->lo_mutex);
+ 	if (partscan) {
+@@ -2325,6 +2328,8 @@ static int loop_add(int i)
+ 	disk->fops		= &lo_fops;
+ 	disk->private_data	= lo;
+ 	disk->queue		= lo->lo_queue;
++	disk->events		= DISK_EVENT_MEDIA_CHANGE;
++	disk->event_flags	= DISK_EVENT_FLAG_UEVENT;
+ 	sprintf(disk->disk_name, "loop%d", i);
+ 	add_disk(disk);
+ 	mutex_unlock(&loop_ctl_mutex);
 -- 
 2.31.1
 
