@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C2533C4281
+	by mail.lfdr.de (Postfix) with ESMTP id CF5243C4282
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 06:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230212AbhGLEEn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 00:04:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51462 "EHLO
+        id S231370AbhGLEEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 00:04:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229589AbhGLEEP (ORCPT
+        with ESMTP id S231463AbhGLEEl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 00:04:15 -0400
+        Mon, 12 Jul 2021 00:04:41 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08563C0613DD;
-        Sun, 11 Jul 2021 21:01:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBF61C0613DD;
+        Sun, 11 Jul 2021 21:01:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=OpsrDskQVPpS0BkHDicCTzWJoQS0ylyfH34jui332Wo=; b=gdQ5dleVd7V1HB5hFPWiUVSlvs
-        Fuf/2ouBbyKmMHDl2+6J4a0qkg9t7NFSIXFY0u9Tg5mXjsTt+M90DqASRfOTuhY1lVzXodymszpEs
-        JVNAzfzwdTB/9UUzn3TI6ac/4Eyhq3PcchU38moAu8VP5dPAKFkfKbcZE0mfLeCZwcjHE/Qudhh5e
-        Wpo4iCAUsDFa2HyVv4s08q5tkgStyFVFnVSBmlXefeW8aGiyazSr75xGmLfnzRyXS6ptcEECW+Rmm
-        wTkO4W2q/J9/lO/c51/7My4hf6RiRt/jsH2JA1yNUCrt7R6ZPlsh9EPwo1cPPeEWzv2pXbcuXRAA/
-        Ieu0+oRA==;
+        bh=Ud7uvERwf05cBeuZnmOzMd1BoGSxpK6LFLaDstq02qE=; b=DrmUpeCzrVeUlu2U/1exLipbYh
+        abMSjYsEjdku3fH0pdoHSBDZ8GwnAFirdSEqCeFOkuvPeb88PK+bONm7WpprNMGBGzCI40AsdctYa
+        mhrDcIdbXKtg9UqwRVZNeDGFRFauk3hGxOMlye9+7maNSLQh/rvTnJZoobjIaayOCYU1W8G9hCt1b
+        yTwJnp5Sx4nKmj5jmiTmycMvrMB4LqSoMZs/OMqQUn4o49S/SEjr6zKpIxn5IGMWmkSBxIuEYNtwb
+        uULJaAbXN42XEOoK1rPby75DlIqmWt2Sqds7JltsM+dxlp18ZHNZv5KgIP2VREp7/nZNSF9evE4xT
+        qVb+CzmQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m2n70-00GqXS-6F; Mon, 12 Jul 2021 04:00:16 +0000
+        id 1m2n7T-00GqZR-Bi; Mon, 12 Jul 2021 04:00:50 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v13 101/137] iomap: Convert iomap_write_begin and iomap_write_end to folios
-Date:   Mon, 12 Jul 2021 04:06:25 +0100
-Message-Id: <20210712030701.4000097-102-willy@infradead.org>
+Subject: [PATCH v13 102/137] iomap: Convert iomap_read_inline_data to take a folio
+Date:   Mon, 12 Jul 2021 04:06:26 +0100
+Message-Id: <20210712030701.4000097-103-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210712030701.4000097-1-willy@infradead.org>
 References: <20210712030701.4000097-1-willy@infradead.org>
@@ -43,224 +43,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These functions still only work in PAGE_SIZE chunks, but there are
-fewer conversions from head to tail pages as a result of this patch.
+Inline data is restricted to being less than a page in size, so we
+don't need to handle multi-page folios.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/iomap/buffered-io.c | 68 ++++++++++++++++++++++--------------------
- 1 file changed, 36 insertions(+), 32 deletions(-)
+ fs/iomap/buffered-io.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 2ecfebdd1f4f..1df401c6e55a 100644
+index 1df401c6e55a..aec28781c773 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -541,9 +541,8 @@ static int iomap_read_folio_sync(loff_t block_start, struct folio *folio,
+@@ -194,24 +194,24 @@ struct iomap_readpage_ctx {
+ 	struct readahead_control *rac;
+ };
  
- static int
- __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
--		struct page *page, struct iomap *srcmap)
-+		struct folio *folio, struct iomap *srcmap)
+-static void
+-iomap_read_inline_data(struct inode *inode, struct page *page,
++static void iomap_read_inline_data(struct inode *inode, struct folio *folio,
+ 		struct iomap *iomap)
  {
--	struct folio *folio = page_folio(page);
- 	struct iomap_page *iop = iomap_page_create(inode, folio);
- 	loff_t block_size = i_blocksize(inode);
- 	loff_t block_start = round_down(pos, block_size);
-@@ -583,12 +582,14 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
- 	return 0;
+ 	size_t size = i_size_read(inode);
+ 	void *addr;
+ 
+-	if (PageUptodate(page))
++	if (folio_uptodate(folio))
+ 		return;
+ 
+-	BUG_ON(page->index);
++	BUG_ON(folio->index);
++	BUG_ON(folio_multi(folio));
+ 	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+ 
+-	addr = kmap_atomic(page);
++	addr = kmap_local_folio(folio, 0);
+ 	memcpy(addr, iomap->inline_data, size);
+ 	memset(addr + size, 0, PAGE_SIZE - size);
+-	kunmap_atomic(addr);
+-	SetPageUptodate(page);
++	kunmap_local(addr);
++	folio_mark_uptodate(folio);
  }
  
--static int
--iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
--		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
-+static int iomap_write_begin(struct inode *inode, loff_t pos, size_t len,
-+		unsigned flags, struct folio **foliop, struct iomap *iomap,
-+		struct iomap *srcmap)
- {
- 	const struct iomap_page_ops *page_ops = iomap->page_ops;
-+	struct folio *folio;
- 	struct page *page;
-+	unsigned fgp = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE | FGP_NOFS;
- 	int status = 0;
+ static inline bool iomap_block_needs_zeroing(struct inode *inode,
+@@ -236,7 +236,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
  
- 	BUG_ON(pos + len > iomap->offset + iomap->length);
-@@ -604,30 +605,31 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
- 			return status;
+ 	if (iomap->type == IOMAP_INLINE) {
+ 		WARN_ON_ONCE(pos);
+-		iomap_read_inline_data(inode, &folio->page, iomap);
++		iomap_read_inline_data(inode, folio, iomap);
+ 		return PAGE_SIZE;
  	}
  
--	page = grab_cache_page_write_begin(inode->i_mapping, pos >> PAGE_SHIFT,
--			AOP_FLAG_NOFS);
--	if (!page) {
-+	folio = __filemap_get_folio(inode->i_mapping, pos >> PAGE_SHIFT, fgp,
-+			mapping_gfp_mask(inode->i_mapping));
-+	if (!folio) {
- 		status = -ENOMEM;
- 		goto out_no_page;
- 	}
+@@ -614,7 +614,7 @@ static int iomap_write_begin(struct inode *inode, loff_t pos, size_t len,
  
-+	page = folio_file_page(folio, pos >> PAGE_SHIFT);
+ 	page = folio_file_page(folio, pos >> PAGE_SHIFT);
  	if (srcmap->type == IOMAP_INLINE)
- 		iomap_read_inline_data(inode, page, srcmap);
+-		iomap_read_inline_data(inode, page, srcmap);
++		iomap_read_inline_data(inode, folio, srcmap);
  	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
  		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
  	else
--		status = __iomap_write_begin(inode, pos, len, flags, page,
-+		status = __iomap_write_begin(inode, pos, len, flags, folio,
- 				srcmap);
- 
- 	if (unlikely(status))
- 		goto out_unlock;
- 
--	*pagep = page;
-+	*foliop = folio;
- 	return 0;
- 
- out_unlock:
--	unlock_page(page);
--	put_page(page);
-+	folio_unlock(folio);
-+	folio_put(folio);
- 	iomap_write_failed(inode, pos, len);
- 
- out_no_page:
-@@ -637,11 +639,10 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
- }
- 
- static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
--		size_t copied, struct page *page)
-+		size_t copied, struct folio *folio)
- {
--	struct folio *folio = page_folio(page);
- 	struct iomap_page *iop = to_iomap_page(folio);
--	flush_dcache_page(page);
-+	flush_dcache_folio(folio);
- 
- 	/*
- 	 * The blocks that were entirely written will now be uptodate, so we
-@@ -654,10 +655,10 @@ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 	 * uptodate page as a zero-length write, and force the caller to redo
- 	 * the whole thing.
- 	 */
--	if (unlikely(copied < len && !PageUptodate(page)))
-+	if (unlikely(copied < len && !folio_uptodate(folio)))
- 		return 0;
- 	iomap_set_range_uptodate(folio, iop, offset_in_folio(folio, pos), len);
--	__set_page_dirty_nobuffers(page);
-+	filemap_dirty_folio(inode->i_mapping, folio);
- 	return copied;
- }
- 
-@@ -680,9 +681,10 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
- 
- /* Returns the number of bytes copied.  May be 0.  Cannot be an errno. */
- static size_t iomap_write_end(struct inode *inode, loff_t pos, size_t len,
--		size_t copied, struct page *page, struct iomap *iomap,
-+		size_t copied, struct folio *folio, struct iomap *iomap,
- 		struct iomap *srcmap)
- {
-+	struct page *page = folio_file_page(folio, pos / PAGE_SIZE);
- 	const struct iomap_page_ops *page_ops = iomap->page_ops;
- 	loff_t old_size = inode->i_size;
- 	size_t ret;
-@@ -693,7 +695,7 @@ static size_t iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 		ret = block_write_end(NULL, inode->i_mapping, pos, len, copied,
- 				page, NULL);
- 	} else {
--		ret = __iomap_write_end(inode, pos, len, copied, page);
-+		ret = __iomap_write_end(inode, pos, len, copied, folio);
- 	}
- 
- 	/*
-@@ -705,13 +707,13 @@ static size_t iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 		i_size_write(inode, pos + ret);
- 		iomap->flags |= IOMAP_F_SIZE_CHANGED;
- 	}
--	unlock_page(page);
-+	folio_unlock(folio);
- 
- 	if (old_size < pos)
- 		pagecache_isize_extended(inode, old_size, pos);
- 	if (page_ops && page_ops->page_done)
- 		page_ops->page_done(inode, pos, ret, page, iomap);
--	put_page(page);
-+	folio_put(folio);
- 
- 	if (ret < len)
- 		iomap_write_failed(inode, pos, len);
-@@ -727,6 +729,7 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 	ssize_t written = 0;
- 
- 	do {
-+		struct folio *folio;
- 		struct page *page;
- 		unsigned long offset;	/* Offset into pagecache page */
- 		unsigned long bytes;	/* Bytes to write to page */
-@@ -750,18 +753,19 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 			break;
- 		}
- 
--		status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap,
-+		status = iomap_write_begin(inode, pos, bytes, 0, &folio, iomap,
- 				srcmap);
- 		if (unlikely(status))
- 			break;
- 
-+		page = folio_file_page(folio, pos / PAGE_SIZE);
- 		if (mapping_writably_mapped(inode->i_mapping))
- 			flush_dcache_page(page);
- 
- 		copied = copy_page_from_iter_atomic(page, offset, bytes, i);
- 
--		status = iomap_write_end(inode, pos, bytes, copied, page, iomap,
--				srcmap);
-+		status = iomap_write_end(inode, pos, bytes, copied, folio,
-+				iomap, srcmap);
- 
- 		if (unlikely(copied != status))
- 			iov_iter_revert(i, copied - status);
-@@ -825,14 +829,14 @@ iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 	do {
- 		unsigned long offset = offset_in_page(pos);
- 		unsigned long bytes = min_t(loff_t, PAGE_SIZE - offset, length);
--		struct page *page;
-+		struct folio *folio;
- 
- 		status = iomap_write_begin(inode, pos, bytes,
--				IOMAP_WRITE_F_UNSHARE, &page, iomap, srcmap);
-+				IOMAP_WRITE_F_UNSHARE, &folio, iomap, srcmap);
- 		if (unlikely(status))
- 			return status;
- 
--		status = iomap_write_end(inode, pos, bytes, bytes, page, iomap,
-+		status = iomap_write_end(inode, pos, bytes, bytes, folio, iomap,
- 				srcmap);
- 		if (WARN_ON_ONCE(status == 0))
- 			return -EIO;
-@@ -871,19 +875,19 @@ EXPORT_SYMBOL_GPL(iomap_file_unshare);
- static s64 iomap_zero(struct inode *inode, loff_t pos, u64 length,
- 		struct iomap *iomap, struct iomap *srcmap)
- {
--	struct page *page;
-+	struct folio *folio;
- 	int status;
- 	unsigned offset = offset_in_page(pos);
- 	unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
- 
--	status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap, srcmap);
-+	status = iomap_write_begin(inode, pos, bytes, 0, &folio, iomap, srcmap);
- 	if (status)
- 		return status;
- 
--	zero_user(page, offset, bytes);
--	mark_page_accessed(page);
-+	zero_user(folio_file_page(folio, pos / PAGE_SIZE), offset, bytes);
-+	folio_mark_accessed(folio);
- 
--	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
-+	return iomap_write_end(inode, pos, bytes, bytes, folio, iomap, srcmap);
- }
- 
- static loff_t iomap_zero_range_actor(struct inode *inode, loff_t pos,
 -- 
 2.30.2
 
