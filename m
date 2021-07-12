@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2D23C4257
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 05:53:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9927F3C4259
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 05:54:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233397AbhGLD4T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jul 2021 23:56:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49536 "EHLO
+        id S233015AbhGLD4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jul 2021 23:56:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233361AbhGLD4O (ORCPT
+        with ESMTP id S232507AbhGLD4w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jul 2021 23:56:14 -0400
+        Sun, 11 Jul 2021 23:56:52 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42375C0613DD;
-        Sun, 11 Jul 2021 20:53:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB658C0613DD;
+        Sun, 11 Jul 2021 20:54:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=DTgsfkcB+KmoY5/60sn/DAF372G/0oDSg1qUz0IFxnY=; b=DxWtKE3K34UYwkyGJkScJTrUHm
-        PzEsmy96YW/bVDXMpfjyx2tQU6bSahht1r/n9QVTjrCgEDxkVkE1Ad5OORDsKI+bZMtpFlulwAbLB
-        6lbykMISncStiJvZFEltZMcU1tW9dT6qVai34uBsIY1pvVjeYgXxrv0X4dVYzOzTOKmTNH5L4p91T
-        iKP00v13i5LznIfH4M5jix76gwyTHFli9bayVCY4bxDSa1Mz+4xJ/CH5M2gf4w8adMC0nusBXwpV6
-        j7EohlW5F3gYcFwcPL1+XqFWQ9uuA0EJJ77ZjRj9Sy1vJ5rc7IVFqsBPDcdP9gmJ9br9MAgxPoo7f
-        myZDEmvw==;
+        bh=GTVEcZ4QwGQFkh1sqzNQwhEsuPZ0+bDNquiUFeTbRBE=; b=qa/oR4+1Bjn+Al44GIXZ8ju91R
+        xQhOarcOImCiuclpRhMfdo4fk60SGnToZLGnqkoo6RfuuYP8mw5//xUblqSo0oscLAnm9WBibms7W
+        ArG6L2Sv5dIxbubKds/+4aLFfuuo0RRl8dre3JK30xWt/rQKQ0XI2229FP4lkP9JEMgrFFbqcjmRA
+        YtSwLUI0V1Vy730Ry7aKkvG+0PxzhhDAyewAO8kSNlg6PC0yj/R/cCkrp1goSrQ5AGaKAbmVrzREQ
+        u8q7w4UFevR0bcPGcEhPTVaL9VDJrdxVev5z/aLg7/j6xXe/bfOF3r5X/A6jRU24IqwmPYi1md13k
+        HrJDX+MA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m2mzu-00GpzD-Hp; Mon, 12 Jul 2021 03:52:52 +0000
+        id 1m2n0K-00Gq0a-UE; Mon, 12 Jul 2021 03:53:17 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v13 086/137] mm/filemap: Convert mapping_get_entry to return a folio
-Date:   Mon, 12 Jul 2021 04:06:10 +0100
-Message-Id: <20210712030701.4000097-87-willy@infradead.org>
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v13 087/137] mm/filemap: Add filemap_get_folio
+Date:   Mon, 12 Jul 2021 04:06:11 +0100
+Message-Id: <20210712030701.4000097-88-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210712030701.4000097-1-willy@infradead.org>
 References: <20210712030701.4000097-1-willy@infradead.org>
@@ -44,85 +43,271 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pagecache only contains folios, so indicate that this is definitely
-not a tail page.  Shrinks mapping_get_entry() by 56 bytes, but grows
-pagecache_get_page() by 21 bytes as gcc makes slightly different hot/cold
-code decisions.  A net reduction of 35 bytes of text.
+filemap_get_folio() is a replacement for find_get_page().
+Turn pagecache_get_page() into a wrapper around __filemap_get_folio().
+Remove find_lock_head() as this use case is now covered by
+filemap_get_folio().
+
+Reduces overall kernel size by 209 bytes.  __filemap_get_folio() is
+316 bytes shorter than pagecache_get_page() was, but the new
+pagecache_get_page() is 99 bytes.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- mm/filemap.c | 35 ++++++++++++++---------------------
- 1 file changed, 14 insertions(+), 21 deletions(-)
+ include/linux/pagemap.h | 41 +++++++++---------
+ mm/filemap.c            | 92 ++++++++++++++++++++---------------------
+ mm/folio-compat.c       | 12 ++++++
+ 3 files changed, 76 insertions(+), 69 deletions(-)
 
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 5a2ac2fc6dfa..5183e371e80f 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -302,8 +302,26 @@ pgoff_t page_cache_prev_miss(struct address_space *mapping,
+ #define FGP_HEAD		0x00000080
+ #define FGP_ENTRY		0x00000100
+ 
+-struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
+-		int fgp_flags, gfp_t cache_gfp_mask);
++struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
++		int fgp_flags, gfp_t gfp);
++struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
++		int fgp_flags, gfp_t gfp);
++
++/**
++ * filemap_get_folio - Find and get a folio.
++ * @mapping: The address_space to search.
++ * @index: The page index.
++ *
++ * Looks up the page cache entry at @mapping & @index.  If a folio is
++ * present, it is returned with an increased refcount.
++ *
++ * Otherwise, %NULL is returned.
++ */
++static inline struct folio *filemap_get_folio(struct address_space *mapping,
++					pgoff_t index)
++{
++	return __filemap_get_folio(mapping, index, 0, 0);
++}
+ 
+ /**
+  * find_get_page - find and get a page reference
+@@ -346,25 +364,6 @@ static inline struct page *find_lock_page(struct address_space *mapping,
+ 	return pagecache_get_page(mapping, index, FGP_LOCK, 0);
+ }
+ 
+-/**
+- * find_lock_head - Locate, pin and lock a pagecache page.
+- * @mapping: The address_space to search.
+- * @index: The page index.
+- *
+- * Looks up the page cache entry at @mapping & @index.  If there is a
+- * page cache page, its head page is returned locked and with an increased
+- * refcount.
+- *
+- * Context: May sleep.
+- * Return: A struct page which is !PageTail, or %NULL if there is no page
+- * in the cache for this index.
+- */
+-static inline struct page *find_lock_head(struct address_space *mapping,
+-					pgoff_t index)
+-{
+-	return pagecache_get_page(mapping, index, FGP_LOCK | FGP_HEAD, 0);
+-}
+-
+ /**
+  * find_or_create_page - locate or add a pagecache page
+  * @mapping: the page's address_space
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 8e102505da11..5e1e357ec43f 100644
+index 5e1e357ec43f..3487153c2630 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1755,49 +1755,42 @@ EXPORT_SYMBOL(page_cache_prev_miss);
-  * @mapping: the address_space to search
-  * @index: The page cache index.
+@@ -1794,93 +1794,89 @@ static void *mapping_get_entry(struct address_space *mapping, pgoff_t index)
+ }
+ 
+ /**
+- * pagecache_get_page - Find and get a reference to a page.
++ * __filemap_get_folio - Find and get a reference to a folio.
+  * @mapping: The address_space to search.
+  * @index: The page index.
+- * @fgp_flags: %FGP flags modify how the page is returned.
+- * @gfp_mask: Memory allocation flags to use if %FGP_CREAT is specified.
++ * @fgp_flags: %FGP flags modify how the folio is returned.
++ * @gfp: Memory allocation flags to use if %FGP_CREAT is specified.
   *
-- * Looks up the page cache slot at @mapping & @index.  If there is a
-- * page cache page, the head page is returned with an increased refcount.
-+ * Looks up the page cache entry at @mapping & @index.  If it is a folio,
-+ * it is returned with an increased refcount.  If it is a shadow entry
-+ * of a previously evicted folio, or a swap entry from shmem/tmpfs,
-+ * it is returned without further action.
+  * Looks up the page cache entry at @mapping & @index.
   *
-- * If the slot holds a shadow entry of a previously evicted page, or a
-- * swap entry from shmem/tmpfs, it is returned.
-- *
-- * Return: The head page or shadow entry, %NULL if nothing is found.
-+ * Return: The folio, swap or shadow entry, %NULL if nothing is found.
+  * @fgp_flags can be zero or more of these flags:
+  *
+- * * %FGP_ACCESSED - The page will be marked accessed.
+- * * %FGP_LOCK - The page is returned locked.
+- * * %FGP_HEAD - If the page is present and a THP, return the head page
+- *   rather than the exact page specified by the index.
++ * * %FGP_ACCESSED - The folio will be marked accessed.
++ * * %FGP_LOCK - The folio is returned locked.
+  * * %FGP_ENTRY - If there is a shadow / swap / DAX entry, return it
+- *   instead of allocating a new page to replace it.
++ *   instead of allocating a new folio to replace it.
+  * * %FGP_CREAT - If no page is present then a new page is allocated using
+- *   @gfp_mask and added to the page cache and the VM's LRU list.
++ *   @gfp and added to the page cache and the VM's LRU list.
+  *   The page is returned locked and with an increased refcount.
+  * * %FGP_FOR_MMAP - The caller wants to do its own locking dance if the
+  *   page is already in cache.  If the page was allocated, unlock it before
+  *   returning so the caller can do the same dance.
+- * * %FGP_WRITE - The page will be written
+- * * %FGP_NOFS - __GFP_FS will get cleared in gfp mask
+- * * %FGP_NOWAIT - Don't get blocked by page lock
++ * * %FGP_WRITE - The page will be written to by the caller.
++ * * %FGP_NOFS - __GFP_FS will get cleared in gfp.
++ * * %FGP_NOWAIT - Don't get blocked by page lock.
+  *
+  * If %FGP_LOCK or %FGP_CREAT are specified then the function may sleep even
+  * if the %GFP flags specified for %FGP_CREAT are atomic.
+  *
+  * If there is a page cache page, it is returned with an increased refcount.
+  *
+- * Return: The found page or %NULL otherwise.
++ * Return: The found folio or %NULL otherwise.
   */
--static struct page *mapping_get_entry(struct address_space *mapping,
--		pgoff_t index)
-+static void *mapping_get_entry(struct address_space *mapping, pgoff_t index)
+-struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
+-		int fgp_flags, gfp_t gfp_mask)
++struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
++		int fgp_flags, gfp_t gfp)
  {
- 	XA_STATE(xas, &mapping->i_pages, index);
 -	struct page *page;
 +	struct folio *folio;
  
- 	rcu_read_lock();
  repeat:
- 	xas_reset(&xas);
--	page = xas_load(&xas);
--	if (xas_retry(&xas, page))
-+	folio = xas_load(&xas);
-+	if (xas_retry(&xas, folio))
- 		goto repeat;
- 	/*
- 	 * A shadow entry of a recently evicted page, or a swap entry from
- 	 * shmem/tmpfs.  Return it without attempting to raise page count.
- 	 */
--	if (!page || xa_is_value(page))
-+	if (!folio || xa_is_value(folio))
- 		goto out;
- 
--	if (!page_cache_get_speculative(page))
-+	if (!folio_try_get_rcu(folio))
- 		goto repeat;
- 
--	/*
--	 * Has the page moved or been split?
--	 * This is part of the lockless pagecache protocol. See
--	 * include/linux/pagemap.h for details.
--	 */
--	if (unlikely(page != xas_reload(&xas))) {
--		put_page(page);
-+	if (unlikely(folio != xas_reload(&xas))) {
-+		folio_put(folio);
- 		goto repeat;
+-	page = mapping_get_entry(mapping, index);
+-	if (xa_is_value(page)) {
++	folio = mapping_get_entry(mapping, index);
++	if (xa_is_value(folio)) {
+ 		if (fgp_flags & FGP_ENTRY)
+-			return page;
+-		page = NULL;
++			return folio;
++		folio = NULL;
  	}
- out:
- 	rcu_read_unlock();
+-	if (!page)
++	if (!folio)
+ 		goto no_page;
+ 
+ 	if (fgp_flags & FGP_LOCK) {
+ 		if (fgp_flags & FGP_NOWAIT) {
+-			if (!trylock_page(page)) {
+-				put_page(page);
++			if (!folio_trylock(folio)) {
++				folio_put(folio);
+ 				return NULL;
+ 			}
+ 		} else {
+-			lock_page(page);
++			folio_lock(folio);
+ 		}
+ 
+ 		/* Has the page been truncated? */
+-		if (unlikely(page->mapping != mapping)) {
+-			unlock_page(page);
+-			put_page(page);
++		if (unlikely(folio->mapping != mapping)) {
++			folio_unlock(folio);
++			folio_put(folio);
+ 			goto repeat;
+ 		}
+-		VM_BUG_ON_PAGE(!thp_contains(page, index), page);
++		VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
+ 	}
+ 
+ 	if (fgp_flags & FGP_ACCESSED)
+-		mark_page_accessed(page);
++		folio_mark_accessed(folio);
+ 	else if (fgp_flags & FGP_WRITE) {
+ 		/* Clear idle flag for buffer write */
+-		if (page_is_idle(page))
+-			clear_page_idle(page);
++		if (folio_idle(folio))
++			folio_clear_idle_flag(folio);
+ 	}
+-	if (!(fgp_flags & FGP_HEAD))
+-		page = find_subpage(page, index);
+ 
+ no_page:
+-	if (!page && (fgp_flags & FGP_CREAT)) {
++	if (!folio && (fgp_flags & FGP_CREAT)) {
+ 		int err;
+ 		if ((fgp_flags & FGP_WRITE) && mapping_can_writeback(mapping))
+-			gfp_mask |= __GFP_WRITE;
++			gfp |= __GFP_WRITE;
+ 		if (fgp_flags & FGP_NOFS)
+-			gfp_mask &= ~__GFP_FS;
++			gfp &= ~__GFP_FS;
+ 
+-		page = __page_cache_alloc(gfp_mask);
+-		if (!page)
++		folio = filemap_alloc_folio(gfp, 0);
++		if (!folio)
+ 			return NULL;
+ 
+ 		if (WARN_ON_ONCE(!(fgp_flags & (FGP_LOCK | FGP_FOR_MMAP))))
+@@ -1888,27 +1884,27 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
+ 
+ 		/* Init accessed so avoid atomic mark_page_accessed later */
+ 		if (fgp_flags & FGP_ACCESSED)
+-			__SetPageReferenced(page);
++			__folio_set_referenced_flag(folio);
+ 
+-		err = add_to_page_cache_lru(page, mapping, index, gfp_mask);
++		err = filemap_add_folio(mapping, folio, index, gfp);
+ 		if (unlikely(err)) {
+-			put_page(page);
+-			page = NULL;
++			folio_put(folio);
++			folio = NULL;
+ 			if (err == -EEXIST)
+ 				goto repeat;
+ 		}
+ 
+ 		/*
+-		 * add_to_page_cache_lru locks the page, and for mmap we expect
+-		 * an unlocked page.
++		 * filemap_add_folio locks the page, and for mmap
++		 * we expect an unlocked page.
+ 		 */
+-		if (page && (fgp_flags & FGP_FOR_MMAP))
+-			unlock_page(page);
++		if (folio && (fgp_flags & FGP_FOR_MMAP))
++			folio_unlock(folio);
+ 	}
  
 -	return page;
 +	return folio;
  }
+-EXPORT_SYMBOL(pagecache_get_page);
++EXPORT_SYMBOL(__filemap_get_folio);
  
- /**
+ static inline struct page *find_get_entry(struct xa_state *xas, pgoff_t max,
+ 		xa_mark_t mark)
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index 6b19bc4ed6b0..e833e680e944 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -115,3 +115,15 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
+ 	return filemap_add_folio(mapping, page_folio(page), index, gfp);
+ }
+ EXPORT_SYMBOL(add_to_page_cache_lru);
++
++struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
++		int fgp_flags, gfp_t gfp)
++{
++	struct folio *folio;
++
++	folio = __filemap_get_folio(mapping, index, fgp_flags, gfp);
++	if ((fgp_flags & FGP_HEAD) || !folio || xa_is_value(folio))
++		return &folio->page;
++	return folio_file_page(folio, index);
++}
++EXPORT_SYMBOL(pagecache_get_page);
 -- 
 2.30.2
 
