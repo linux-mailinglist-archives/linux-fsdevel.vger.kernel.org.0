@@ -2,103 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E583C5E64
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 16:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 596723C5E7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 16:38:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235154AbhGLOfL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 10:35:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35478 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234869AbhGLOfL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 10:35:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B0E461156;
-        Mon, 12 Jul 2021 14:32:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626100343;
-        bh=kzAMr6x9W8QB1Mb/Dxfqkufi1FLyAx2wvP2lKj/OtbM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=uT88ec0RVq7O0WmUsaf/pDnqatVPTufZvRgveNXec+id6893SYFDjvo+5b7jiEawR
-         E2a0JhHDG9kIclR1GMVc9CEaBqER8UhqYr/mHBGxdWsSZOkJhXmH71HKatGIQbPT6F
-         wx6jRRBvugfuCoVXSZGC40PSpRoOtgDnZcqWIRJGA1QWn9+zk/CuxptioWpNlcN/Xq
-         XvH8fItmyrX9JvaDaJMJsEupSXzCu5Uc8s6Y3dIuLztOdaURZ49w8Iu92nXYGObyBV
-         SKd75fn/Fdt0APTGPVimythpLa48NEfJX4VxYDw8Ue9k+8AhHkT2LUREPag+Ug5Kc8
-         alcsSqRFcFGhA==
-Message-ID: <48fd676431f1589e8fc1cbc27c8ec011498de6c5.camel@kernel.org>
-Subject: Re: [RFC PATCH v7 02/24] fscrypt: export fscrypt_base64_encode and
- fscrypt_base64_decode
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, lhenriques@suse.de, xiubli@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        dhowells@redhat.com
-Date:   Mon, 12 Jul 2021 10:32:21 -0400
-In-Reply-To: <YOxQKyZtWgFZ85YK@quark.localdomain>
-References: <20210625135834.12934-1-jlayton@kernel.org>
-         <20210625135834.12934-3-jlayton@kernel.org>
-         <YOstFfnzitZrAlLZ@quark.localdomain>
-         <6b701c8dfc9e16964718f2b4c1e52fda954ed26b.camel@kernel.org>
-         <YOxQKyZtWgFZ85YK@quark.localdomain>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
+        id S235151AbhGLOlU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 10:41:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58716 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231194AbhGLOlU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Jul 2021 10:41:20 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE908C0613DD;
+        Mon, 12 Jul 2021 07:38:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Zi6WvyUoRpg2h8P9u2NqZlcgTX1hCKKGUHrSN74lVfY=; b=ctN8+h0TXRH6w4a8PvJ0G554pM
+        P0I+WXOy/gAJ0Kro6EZwZjr3GHXEuZyNTMzV6rpjI7s6BCCTLPyj2iMhxjIiargWCLPVsz5MnWOfj
+        dqJxG2XFhuWWnug9x2ZC2/C/jidp5WIoC9M19NIzVZojsmLcQmbJocT/zopAdCI2D9OC5w4iAxnR9
+        Iq3sKs+iEtMqRLUKBXkaXigQ+qfAzasspLGs1O6ObsDNvhak+sqA6R/VerdWgj7We/TLHIgxkhE5a
+        JXg5hXT2yPL2fIvQA46PzkbGC7af8kym/ZASLyNAkEASfykDnj1u6/vNjDt2h0AaRvgwqzFpyNj/o
+        qZ2FfYBQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m2x43-0007lL-H9; Mon, 12 Jul 2021 14:37:52 +0000
+Date:   Mon, 12 Jul 2021 15:37:43 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org
+Subject: Re: [PATCH 1/2] mm/readahead: Add gfp_flags to ractl
+Message-ID: <YOxTt4nMFP+uFIM3@casper.infradead.org>
+References: <20210711150927.3898403-1-willy@infradead.org>
+ <20210711150927.3898403-2-willy@infradead.org>
+ <YOwov+dVx5RxIyFw@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YOwov+dVx5RxIyFw@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2021-07-12 at 09:22 -0500, Eric Biggers wrote:
-> On Mon, Jul 12, 2021 at 07:55:37AM -0400, Jeff Layton wrote:
-> > On Sun, 2021-07-11 at 12:40 -0500, Eric Biggers wrote:
-> > > Some nits about comments:
-> > > 
-> > > On Fri, Jun 25, 2021 at 09:58:12AM -0400, Jeff Layton wrote:
-> > > > diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-> > > > index 6ca7d16593ff..32b1f50433ba 100644
-> > > > --- a/fs/crypto/fname.c
-> > > > +++ b/fs/crypto/fname.c
-> > > > @@ -178,10 +178,8 @@ static int fname_decrypt(const struct inode *inode,
-> > > >  static const char lookup_table[65] =
-> > > >  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
-> > > >  
-> > > > -#define BASE64_CHARS(nbytes)	DIV_ROUND_UP((nbytes) * 4, 3)
-> > > > -
-> > > >  /**
-> > > > - * base64_encode() - base64-encode some bytes
-> > > > + * fscrypt_base64_encode() - base64-encode some bytes
-> > > >   * @src: the bytes to encode
-> > > >   * @len: number of bytes to encode
-> > > >   * @dst: (output) the base64-encoded string.  Not NUL-terminated.
-> > > >   *
-> > > >   * Encodes the input string using characters from the set [A-Za-z0-9+,].
-> > > >   * The encoded string is roughly 4/3 times the size of the input string.
-> > > >   *
-> > > >   * Return: length of the encoded string
-> > > >   */
-> > > > -static int base64_encode(const u8 *src, int len, char *dst)
-> > > > +int fscrypt_base64_encode(const u8 *src, int len, char *dst)
-> > > 
-> > > As this function will be used more widely, this comment should be fixed to be
-> > > more precise.  "Roughly 4/3" isn't precise; it's actually exactly
-> > > FSCRYPT_BASE64_CHARS(len), right?  The following would be better:
-> > > 
-> > >  * Encode the input bytes using characters from the set [A-Za-z0-9+,].
-> > >  *
-> > >  * Return: length of the encoded string.  This will be equal to
-> > >  *         FSCRYPT_BASE64_CHARS(len).
-> > > 
-> > 
-> > I'm not certain, but I thought that FSCRYPT_BASE64_CHARS gave you a
-> > worst-case estimate of the inflation. This returns the actual length of
-> > the resulting encoded string, which may be less than
-> > FSCRYPT_BASE64_CHARS(len).
-> > 
+On Mon, Jul 12, 2021 at 12:34:23PM +0100, Christoph Hellwig wrote:
+> On Sun, Jul 11, 2021 at 04:09:26PM +0100, Matthew Wilcox (Oracle) wrote:
+> > It is currently possible for an I/O request that specifies IOCB_NOWAIT
+> > to sleep waiting for I/O to complete in order to allocate pages for
+> > readahead.  In order to fix that, we need the caller to be able to
+> > specify the GFP flags to use for memory allocation in the rest of the
+> > readahead path.
 > 
-> As far as I can tell, it's the exact amount.
+> The file systems also need to respect it for their bio or private
+> data allocation.  And be able to cope with failure, which they currently
+> don't have to for sleeping bio allocations.
 
-Yeah, now that I went back and re-read the code, I think you're right.
-I'll fix the comment.
-
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Yes, they should.  This patch doesn't make that problem worse than it is
+today, and gets the desired GFP flags down to the file systems, which is
+needed for the full fix.
