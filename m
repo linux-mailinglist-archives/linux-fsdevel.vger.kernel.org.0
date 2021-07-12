@@ -2,99 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 621453C5D24
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 15:22:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54DD03C5DE8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 16:03:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231420AbhGLNY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 09:24:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229978AbhGLNY4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 09:24:56 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D140E60FE3;
-        Mon, 12 Jul 2021 13:22:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626096128;
-        bh=2n+/KxcQvGM7mFI1P39IHXxYavZRDtXP5ygdwdIhhM0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=IewmfISieYz+qgFvJQ/sBBzPI2rLrn7HTBRgb8wWGgrnLgyMT7MRkJpheeVOqfNnR
-         AZYea+PMuyUx9zzGpsjj+5f1vUZzZC9OxiomwLlj2b3NeNDFqUzXHf6WO+7cQF0ptF
-         Q74LgiuFMQuJTGPrWb3CTfvQpEdpy8n6kOCqvyeST27Fsh94ub4cAhOZ9EikC8oiu0
-         26PTeXKgdmsh+bpJblpejlp2wA41D9xF2o4jOpIEfG2Gd0ZAOuIkcVqwWkTRT7Jotp
-         OQPqRshpd7MwO0nrWSdLjuYJZXDHPjyNpPGSnGbfHwia5xKG+n8wjays+FK9A/HGol
-         iPiC+4OJJz4XQ==
-Message-ID: <1e16ba2b69dd03c61e7c9db6ee124aa53ce60f3b.camel@kernel.org>
-Subject: Re: [RFC PATCH v7 07/24] ceph: add fscrypt_* handling to caps.c
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, lhenriques@suse.de, xiubli@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        dhowells@redhat.com
-Date:   Mon, 12 Jul 2021 09:22:06 -0400
-In-Reply-To: <YOt38ayEMpECKQeP@quark.localdomain>
-References: <20210625135834.12934-1-jlayton@kernel.org>
-         <20210625135834.12934-8-jlayton@kernel.org>
-         <YOt38ayEMpECKQeP@quark.localdomain>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
+        id S231734AbhGLOFz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 10:05:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41632 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230181AbhGLOFy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Jul 2021 10:05:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626098586;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6QZTkpToWndbC/JY1O8MzhhwkItgB1oCt3LUvlhk+js=;
+        b=NbB31piU9rOSePeduFeIQGvFXqcotfXDHwagXe2Icf4/S4MDF7/vBs7cIbSYnmmys1aFUg
+        5B9loNMyP/jlUMxyO/OjZknhYg0S52Nu+mqp2OkBbnJ+eDcClVeS01Y65s1ZLB4zIk0N9p
+        uMuTC9OxIPp/9SEVNDma3JRSA1C65j4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-18-9z529XwbMaij_RCHZvvi3A-1; Mon, 12 Jul 2021 10:03:02 -0400
+X-MC-Unique: 9z529XwbMaij_RCHZvvi3A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 99D93101F7C4;
+        Mon, 12 Jul 2021 14:03:00 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-176.rdu2.redhat.com [10.10.114.176])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C6C005DF56;
+        Mon, 12 Jul 2021 14:02:47 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 5751522054F; Mon, 12 Jul 2021 10:02:47 -0400 (EDT)
+Date:   Mon, 12 Jul 2021 10:02:47 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Bruce Fields <bfields@redhat.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
+        dgilbert@redhat.com, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
+        jack@suse.cz, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
+ files
+Message-ID: <20210712140247.GA486376@redhat.com>
+References: <20210708175738.360757-1-vgoyal@redhat.com>
+ <20210708175738.360757-2-vgoyal@redhat.com>
+ <20210709091915.2bd4snyfjndexw2b@wittgenstein>
+ <20210709152737.GA398382@redhat.com>
+ <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+ <20210709175947.GB398382@redhat.com>
+ <CAPL3RVGKg4G5qiiHo7KYPcsWWgeoW=qNPOSQpd3Sv329jrWrLQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPL3RVGKg4G5qiiHo7KYPcsWWgeoW=qNPOSQpd3Sv329jrWrLQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2021-07-11 at 18:00 -0500, Eric Biggers wrote:
-> On Fri, Jun 25, 2021 at 09:58:17AM -0400, Jeff Layton wrote:
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/caps.c | 62 +++++++++++++++++++++++++++++++++++++++-----------
-> >  1 file changed, 49 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index 038f59cc4250..1be6c5148700 100644
-> > --- a/fs/ceph/caps.c
-> > +++ b/fs/ceph/caps.c
-> > @@ -13,6 +13,7 @@
-> >  #include "super.h"
-> >  #include "mds_client.h"
-> >  #include "cache.h"
-> > +#include "crypto.h"
-> >  #include <linux/ceph/decode.h>
-> >  #include <linux/ceph/messenger.h>
-> >  
-> > @@ -1229,15 +1230,12 @@ struct cap_msg_args {
-> >  	umode_t			mode;
-> >  	bool			inline_data;
-> >  	bool			wake;
-> > +	u32			fscrypt_auth_len;
-> > +	u32			fscrypt_file_len;
-> > +	u8			fscrypt_auth[sizeof(struct ceph_fscrypt_auth)]; // for context
-> > +	u8			fscrypt_file[sizeof(u64)]; // for size
-> >  };
+On Fri, Jul 09, 2021 at 04:10:16PM -0400, Bruce Fields wrote:
+> On Fri, Jul 9, 2021 at 1:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > nfs seems to have some issues.
 > 
-> The naming of these is confusing to me.  If these are the fscrypt context and
-> the original file size, why aren't they called something like fscrypt_context
-> and fscrypt_file_size?
+> I'm not sure what the expected behavior is for nfs.  All I have for
+> now is some generic troubleshooting ideas, sorry:
 > 
-> Also does the file size really need to be variable-length, or could it just be a
-> 64-bit integer?
+> > - I can set user.foo xattr on symlink and query it back using xattr name.
+> >
+> >   getfattr -h -n user.foo foo-link.txt
+> >
+> >   But when I try to dump all xattrs on this file, user.foo is being
+> >   filtered out it looks like. Not sure why.
 > 
+> Logging into the server and seeing what's set there could help confirm
+> whether it's the client or server that's at fault.  (Or watching the
+> traffic in wireshark; there are GET/SET/LISTXATTR ops that should be
+> easy to spot.)
+> 
+> > - I can't set "user.foo" xattr on a device node on nfs and I get
+> >   "Permission denied". I am assuming nfs server is returning this.
+> 
+> Wireshark should tell you whether it's the server or client doing that.
+> 
+> The RFC is https://datatracker.ietf.org/doc/html/rfc8276, and I don't
+> see any explicit statement about what the server should do in the case
+> of symlinks or device nodes, but I do see "Any regular file or
+> directory may have a set of extended attributes", so that was clearly
+> the assumption.  Also, NFS4ERR_WRONG_TYPE is listed as a possible
+> error return for the xattr ops.  But on a quick skim I don't see any
+> explicit checks in the nfsd code, so I *think* it's just relying on
+> the vfs for any file type checks.
 
-Fscrypt is really a kernel client-side feature. Both of these new fields
-are treated as opaque by the MDS and are wholly managed by the client.
+Hi Bruce,
 
-We need two fields because they are governed by different cephfs
-capabilities (aka "caps"). AUTH caps for the context and FILE caps for
-the size. So we have two new fields -- fscrypt_file and fscrypt_auth. 
+Thanks for the response. I am just trying to do set a user.foo xattr on
+a device node on nfs.
 
-The size could be a __le64 or something, but I think it makes sense to
-allow it to be opaque as we aren't certain what other info we might want
-to keep in there. We might also want to encrypt the fscrypt_file field
-to cloak the true size of a file from anyone without the key.
+setfattr -n "user.foo" -v "bar" /mnt/nfs/test-dev
 
-Now, all that said, the fact that the MDS largely handles truncation
-poses some special challenges for the content encryption piece. We may
-ultimately end up making this more special-purpose than it is now.
--- 
-Jeff Layton <jlayton@kernel.org>
+and I get -EACCESS.
+
+I put some printk() statements and EACCESS is being returned from here.
+
+nfs4_xattr_set_nfs4_user() {
+        if (!nfs_access_get_cached(inode, current_cred(), &cache, true)) {
+                if (!(cache.mask & NFS_ACCESS_XAWRITE)) {
+                        return -EACCES;
+                }
+        }
+}
+
+Value of cache.mask=0xd at the time of error.
+
+Thanks
+Vivek
 
