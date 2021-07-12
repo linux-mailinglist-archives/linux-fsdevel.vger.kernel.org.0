@@ -2,86 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7D473C6085
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 18:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA5E83C6087
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 18:27:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234062AbhGLQaW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 12:30:22 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:48846 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234121AbhGLQaW (ORCPT
+        id S234266AbhGLQaj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 12:30:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51740 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234284AbhGLQah (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 12:30:22 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 473C41FFC4;
-        Mon, 12 Jul 2021 16:27:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1626107253; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7kkMZjDRMj7KWtoreRqtMLkkZUCsdAlZuYuLwTsZNPg=;
-        b=ANKcOJtZRrdncXCMYHeYRXJDZW7pZTXGHqeAeKUkQ/vNO2NdII3cOnrZinqVGKY8l6Zpg9
-        PjZQ1Kc14uBK3/uJddNYCzf9ae0x6BfaXaFI5Z8WtHgKUtFnacdwjvHZJLgygDuoqzuPnR
-        37AqK0IGI0a7lnKAddWIW/kLnofoSNE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1626107253;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7kkMZjDRMj7KWtoreRqtMLkkZUCsdAlZuYuLwTsZNPg=;
-        b=YALKMdjwp8L1vj3davMADw80cpNi32AL4IDzihl3Dx6/aEQMpWtp4Yc1cn0VdJZN9yO0IS
-        WGDniz8wZ+uQPHCw==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 375E0A3BDF;
-        Mon, 12 Jul 2021 16:27:33 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 2805B1F2AA9; Mon, 12 Jul 2021 18:27:33 +0200 (CEST)
-Date:   Mon, 12 Jul 2021 18:27:33 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Michael Stapelberg <stapelberg+linux@google.com>
-Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
-Subject: Re: [PATCH 0/5] writeback: Fix bandwidth estimates
-Message-ID: <20210712162733.GB9804@quack2.suse.cz>
-References: <20210705161610.19406-1-jack@suse.cz>
- <CAH9Oa-ba0Y4BxzM6=7fDN09zmetd3EUSfSPNu3EcFbdGV+KDvg@mail.gmail.com>
+        Mon, 12 Jul 2021 12:30:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626107268;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Y7Db03HN3MeqSERix8FpAWv0C58s26YC1WHrC0xCtdw=;
+        b=cqf+OPVXzHSZselPoGc/39Yh7FORkLI38dzJVVKWL6rhtiO6c8aKeXpKk4YkkzRODT1e2O
+        W7ZeSiZ0elTwZCjV5qtoG+pn92jTIEZUNkFGs5z798gv0yfOM0nkA8LemgwrEWT46OWrCj
+        f5LFqzpBhwSo7bIbRS1WCa8HvW+7Du8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-167-Kb_glMI-NayIU06b3rxf2w-1; Mon, 12 Jul 2021 12:27:45 -0400
+X-MC-Unique: Kb_glMI-NayIU06b3rxf2w-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5D5BD801107;
+        Mon, 12 Jul 2021 16:27:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-19.rdu2.redhat.com [10.10.118.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AA241970E;
+        Mon, 12 Jul 2021 16:27:40 +0000 (UTC)
+Subject: [PATCH v2 0/4] afs: Miscellaneous fixes
+From:   David Howells <dhowells@redhat.com>
+To:     linux-afs@lists.infradead.org
+Cc:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Tom Rix <trix@redhat.com>,
+        Abaci Robot <abaci@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        "Alexey Dobriyan (SK hynix)" <adobriyan@gmail.com>,
+        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 12 Jul 2021 17:27:40 +0100
+Message-ID: <162610726011.3408253.2771348573083023654.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH9Oa-ba0Y4BxzM6=7fDN09zmetd3EUSfSPNu3EcFbdGV+KDvg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 09-07-21 15:19:17, Michael Stapelberg wrote:
-> Thanks for sending this patch series!
-> 
-> I have used the mmap.c reproducer as before, with the following parameters:
-> * mkdir /tmp/mnt
-> * fusermount -u /tmp/mnt; /root/fuse-2.9.9/example/fusexmp_fh -f /tmp/mnt
-> * dd if=/dev/urandom of=/tmp/was bs=1M count=99
-> * while :; do grep ^Bdi /sys/kernel/debug/bdi/0:44/stats; sleep 0.1; done
-> * while :; do time WORKAROUND=1 ~/mmap /tmp/was
-> /tmp/mnt/tmp/stapelberg.1; sleep 5; done
-> 
-> Previously, after a few iterations, the BdiWriteBandwidth measure
-> would gradually approach 0.
-> 
-> With your patch series applied, the BdiWriteBandwidth is updated much
-> more quickly, and converges to ≈16000 kBps.
-> When I start copying more quickly, the bandwidth measure rises quickly.
-> 
-> As far as I understand, this should fix the problem (provided 16000
-> kBps is an okay value).
-> Certainly, I don’t see the downward spiral either with your patches :)
 
-Thanks for testing! Can I add your Tested-by tag?
+Here are some fixes for AFS:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+ (1) Fix a tracepoint that causes one of the tracing subsystem query files
+     to crash if the module is loaded[1].
+
+ (2) Fix afs_writepages() to take account of whether the storage rpc
+     actually succeeded when updating the cyclic writeback counter[2].
+
+ (3) Fix some error code propagation/handling[3].
+
+ (4) Fix place where afs_writepages() was setting writeback_index to a file
+     position rather than a page index[4].
+
+The patches can be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-fixes
+
+Changes
+=======
+
+ver #2:
+   - Fix an additional case of afs_writepages() setting writeback_index on
+     error[4].
+   - Fix afs_writepages() setting writeback_index to a file pos[4].
+
+David
+
+Link: https://lore.kernel.org/r/162430903582.2896199.6098150063997983353.stgit@warthog.procyon.org.uk/ [1]
+Link: https://lore.kernel.org/r/20210430155031.3287870-1-trix@redhat.com [2]
+Link: https://lore.kernel.org/r/1619691492-83866-1-git-send-email-jiapeng.chong@linux.alibaba.com [3]
+Link: https://lore.kernel.org/r/CAB9dFdvHsLsw7CMnB+4cgciWDSqVjuij4mH3TaXnHQB8sz5rHw@mail.gmail.com/ [4]
+
+---
+David Howells (2):
+      afs: Fix tracepoint string placement with built-in AFS
+      afs: Fix setting of writeback_index
+
+Jiapeng Chong (1):
+      afs: Remove redundant assignment to ret
+
+Tom Rix (1):
+      afs: check function return
+
+
+ fs/afs/dir.c   | 10 ++++++----
+ fs/afs/write.c | 18 ++++++++++++------
+ 2 files changed, 18 insertions(+), 10 deletions(-)
+
+
