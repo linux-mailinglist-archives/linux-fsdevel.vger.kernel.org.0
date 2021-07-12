@@ -2,130 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8ECC3C603D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 18:15:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE65C3C6074
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 18:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233227AbhGLQRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 12:17:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229848AbhGLQRw (ORCPT
+        id S232122AbhGLQ3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 12:29:13 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:58196 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233417AbhGLQ3M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 12:17:52 -0400
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E211C0613DD
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 09:15:04 -0700 (PDT)
-Received: by mail-oi1-x22f.google.com with SMTP id l26so25053062oic.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 09:15:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nQBfcP6oCKq0X5PB40wsxkaY2AyI2mZMPM6ogzszKIQ=;
-        b=AbpB9NFkivLNuosYIWvKL71WOfuPwi8YqR7L8+G4VIKzwgw0I0TZzvktCDfen0QAk4
-         b6S6jvJu20o1MOKm38nzot3ALqyqfbf4T5qQ421/2iNWqN16E2KzlznryHqFZzZqDhkd
-         MK3LM9ULwa+hjaLJsqTSUh0y3qh2FXEA+otUK2pfqnlvMjUSziU8e8kIU1CsqqxsrtNW
-         HMq6L55484zxw4NAnGspGoB6DmwVXXdNwbDoYUNpw8C4SVHiIT4OjNDaRzXW4Jcu0CLS
-         DQzMXSpmQwszFg/DWghgxEt5MYq5eFh+ULV90B+oPIvp6cvx2l8SguSbo7qEo+jvfi+O
-         8obQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nQBfcP6oCKq0X5PB40wsxkaY2AyI2mZMPM6ogzszKIQ=;
-        b=Q135M3Wne4PZmViR+pG/FCgug0b8ESGqaeGYKqumkB10celImK7GIfk91r1OjicLEp
-         YhW5W0MJD5XIGXc0qRetWGgRJ0b5883sRZjgWGCUTm1AOCHBcPPId3frzI5VODuH+fF6
-         50j8hpy5Rgw1fFRthtdt1Z83nTe7k6pUR6qRQ2hhDbPtoufRH/BFCkBvXZHw8i4vAk1c
-         zrG2MwvJ+J5NEy0Tcy45xyfXrmAM31/TCGQGaBMu27dhIYKJUxS0XEiHhGtOF113X0ti
-         N66LK5TPWAxpJ6x8MUUTBTg3qWRGy/TtKpC2aDUMudx52QLghVZWXUD3vfsIbo8HQIU8
-         Oxjw==
-X-Gm-Message-State: AOAM533L3h3MZi9MQs6K8e7u0BgKUxNw19BKRDAjCIZ08RlbdnLGx19Z
-        hqyPiDSSmXS2O+eeHPKQ7QofmpigTMZZh8ktQ0WiJw==
-X-Google-Smtp-Source: ABdhPJyLF+HJKYz9ORQ3Boka9gZdd71uRQq9T6PQLP7dSPLRKMAB1YdJqaaUiHwCFm6SnBVl0V43xixkVYB1KdKJYWE=
-X-Received: by 2002:a05:6808:284:: with SMTP id z4mr5073375oic.70.1626106503239;
- Mon, 12 Jul 2021 09:15:03 -0700 (PDT)
+        Mon, 12 Jul 2021 12:29:12 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 8FF7F21FAF;
+        Mon, 12 Jul 2021 16:26:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1626107183; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+3uRNTP1vCi9i90yuaaIRydXBPWq4dc9r6dmPEdVUgI=;
+        b=XUz/jCxZz6zN0mw8QE2GWcbn288WwXuiqy/i4/bz8XLRfbxBwnbA2rHFp+Bg6hnxTbI89Q
+        HQ3yNJKkN3/DjRiy2qEu7LAeaX14RjPmKugOEbJw9vjcWYxhwBMi3I9Jos7eV08ToR1vci
+        zU+kLTm5Bhnkv63gcNrhSKbdK2WIFtQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1626107183;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+3uRNTP1vCi9i90yuaaIRydXBPWq4dc9r6dmPEdVUgI=;
+        b=qhDUBppMOsrdMhWoS0TArMvCakpg97Pppi7q9Zeef7V2E9jElelxNYxDNZC7IajklVuaOq
+        oik6c3lrCaquL4AQ==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 7FEE8A3B8D;
+        Mon, 12 Jul 2021 16:26:23 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 632F81F2AA9; Mon, 12 Jul 2021 18:26:23 +0200 (CEST)
+Date:   Mon, 12 Jul 2021 18:26:23 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Bobrowski <repnop@google.com>
+Subject: Re: FAN_REPORT_CHILD_FID
+Message-ID: <20210712162623.GA9804@quack2.suse.cz>
+References: <CAOQ4uxgckzeRuiKSe7D=TVaJGTYwy4cbCFDpdWMQr1R_xXkJig@mail.gmail.com>
+ <20210712111016.GC26530@quack2.suse.cz>
+ <CAOQ4uxgnbirvr-KSMQyz-PL+Q_FmBF_OfSmWFEu6B0TYN-w1tg@mail.gmail.com>
 MIME-Version: 1.0
-References: <00000000000080403805c6ef586d@google.com>
-In-Reply-To: <00000000000080403805c6ef586d@google.com>
-From:   Marco Elver <elver@google.com>
-Date:   Mon, 12 Jul 2021 18:14:37 +0200
-Message-ID: <CANpmjNPx2b+W2OZxNROTWfGcU92bwqyDe-=vxgnV9MEurjyqzQ@mail.gmail.com>
-Subject: Re: [syzbot] KCSAN: data-race in call_rcu / rcu_gp_kthread
-To:     syzbot <syzbot+e08a83a1940ec3846cd5@syzkaller.appspotmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgnbirvr-KSMQyz-PL+Q_FmBF_OfSmWFEu6B0TYN-w1tg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[-Bcc: fsdevel]
-[+Cc: Paul, rcu@vger.kernel.org]
+On Mon 12-07-21 16:00:54, Amir Goldstein wrote:
+> On Mon, Jul 12, 2021 at 2:10 PM Jan Kara <jack@suse.cz> wrote:
+> > On Sun 11-07-21 20:02:29, Amir Goldstein wrote:
+> > > I am struggling with an attempt to extend the fanotify API and
+> > > I wanted to ask your opinion before I go too far in the wrong direction.
+> > >
+> > > I am working with an application that used to use inotify rename
+> > > cookies to match MOVED_FROM/MOVED_TO events.
+> > > The application was converted to use fanotify name events, but
+> > > the rename cookie functionality was missing, so I am carrying
+> > > a small patch for FAN_REPORT_COOKIE.
+> > >
+> > > I do not want to propose this patch for upstream, because I do
+> > > not like this API.
+> > >
+> > > What I thought was that instead of a "cookie" I would like to
+> > > use the child fid as a way to pair up move events.
+> > > This requires that the move events will never be merged and
+> > > therefore not re-ordered (as is the case with inotify move events).
+> > >
+> > > My thinking was to generalize this concept and introduce
+> > > FAN_REPORT_CHILD_FID flag. With that flag, dirent events
+> > > will report additional FID records, like events on a non-dir child
+> > > (but also for dirent events on subdirs).
+> >
+> > I'm starting to get lost in what reports what so let me draw a table here:
+> >
+> > Non-directories
+> >                                 DFID    FID     CHILD_FID
+> > ACCESS/MODIFY/OPEN/CLOSE/ATTRIB parent  self    self
+> > CREATE/DELETE/MOVE              -       -       -
+> > DELETE_SELF/MOVE_SELF           x       self    self
+> > ('-' means cannot happen, 'x' means not generated)
+> >
+> > Directories
+> >                                 DFID    FID     CHILD_FID
+> > ACCESS/MODIFY/OPEN/CLOSE/ATTRIB self    self    self
+> > CREATE/DELETE/MOVE              self    self    target
+> > DELETE_SELF/MOVE_SELF           x       self    self
+> >
+> > Did I get this right?
+> 
+> I am not sure if the columns in your table refer to group flags
+> or to info records types? or a little bit of both, but I did not
+> mean for CHILD_FID to be a different record type.
 
-On Mon, 12 Jul 2021 at 18:09, syzbot
-<syzbot+e08a83a1940ec3846cd5@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    e73f0f0e Linux 5.14-rc1
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=172196d2300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f5e73542d774430b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e08a83a1940ec3846cd5
-> compiler:       Debian clang version 11.0.1-2
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+e08a83a1940ec3846cd5@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KCSAN: data-race in call_rcu / rcu_gp_kthread
->
-> write to 0xffffffff837328a0 of 8 bytes by task 11 on cpu 0:
->  rcu_gp_fqs kernel/rcu/tree.c:1949 [inline]
->  rcu_gp_fqs_loop kernel/rcu/tree.c:2010 [inline]
->  rcu_gp_kthread+0xd78/0xec0 kernel/rcu/tree.c:2169
->  kthread+0x262/0x280 kernel/kthread.c:319
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
->
-> read to 0xffffffff837328a0 of 8 bytes by task 30193 on cpu 1:
->  __call_rcu_core kernel/rcu/tree.c:2946 [inline]
->  __call_rcu kernel/rcu/tree.c:3062 [inline]
->  call_rcu+0x4b0/0x6c0 kernel/rcu/tree.c:3109
->  file_free fs/file_table.c:58 [inline]
->  __fput+0x43e/0x4e0 fs/file_table.c:298
->  ____fput+0x11/0x20 fs/file_table.c:313
->  task_work_run+0xae/0x130 kernel/task_work.c:164
->  get_signal+0x156c/0x15e0 kernel/signal.c:2581
->  arch_do_signal_or_restart+0x2a/0x220 arch/x86/kernel/signal.c:865
->  handle_signal_work kernel/entry/common.c:148 [inline]
->  exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
->  exit_to_user_mode_prepare+0x109/0x190 kernel/entry/common.c:209
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
->  syscall_exit_to_user_mode+0x20/0x40 kernel/entry/common.c:302
->  do_syscall_64+0x49/0x90 arch/x86/entry/common.c:86
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
->
-> value changed: 0x0000000000000f57 -> 0x0000000000000f58
->
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 1 PID: 30193 Comm: syz-executor.5 Tainted: G        W         5.14.0-rc1-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> ==================================================================
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000080403805c6ef586d%40google.com.
+Yeah, a bit of both.
+
+> Anyway, the only complexity missing from the table is that
+> for events reporting a single record with fid of a directory,
+> (i.e. self event on dir or dirent event) the record type depends
+> on the group flags.
+> 
+> FAN_REPORT_FID => FAN_EVENT_INFO_TYPE_FID
+> FAN_REPORT_DIR_FID => FAN_EVENT_INFO_TYPE_DFID
+
+Right, I didn't realize this.
+
+> > I guess "CHILD_FID" seems somewhat confusing as it isn't immediately clear
+> > from the name what it would report e.g. for open of a non-directory.
+> 
+> I agree it is a bit confusing. FWIW for events on a non-dir child (not dirent)
+> FAN_REPORT_FID and FAN_REPORT_CHILD_FID flags yield the exact
+> same event info.
+> 
+> > Maybe
+> > we could call it "TARGET_FID"? Also I'm not sure it needs to be exclusive
+> > with FID. Sure it doesn't make much sense to report both FID and CHILD_FID
+> > but does the exclusivity buy us anything? I guess I don't have strong
+> > opinion either way, I'm just curious.
+> >
+> 
+> FAN_REPORT_TARGET_FID sounds good to me.
+> You are right. I don't think that exclusivity buys us anything.
+
+OK. I've realized that the exclusivity is needed if we want to report info
+enabled by FAN_REPORT_TARGET_FID as FAN_EVENT_INFO_TYPE_FID. Because
+otherwise it would not be well defined what information is contained in
+FAN_EVENT_INFO_TYPE_FID. So either we have to go for exclusivity or for new
+type of event information.
+
+> > > There are other benefits from FAN_REPORT_CHILD_FID which are
+> > > not related to matching move event pairs, such as the case described
+> > > in this discussion [2], where I believe you suggested something along
+> > > the lines of FAN_REPORT_CHILD_FID.
+> > >
+> > > [2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhEsbfA5+sW4XPnUKgCkXtwoDA-BR3iRO34Nx5c4y7Nug@mail.gmail.com/
+> >
+> > Yes, I can see FAN_REPORT_CHILD_FID (or however we call it) can be useful
+> > at times (in fact I think we made a mistake that we didn't make reported
+> > FID to always be what you now suggest as CHILD_FID, but we found that out
+> > only when DFID+NAME implementation settled so that train was long gone).
+> 
+> Yes, we did. FAN_REPORT_TARGET_FID is also about trying to make amends.
+> We could have just as well called it FAN_REPORT_FID_V2, but no ;-)
+
+OK, I was suspecting that but wasn't sure :). I guess that's another reason
+why exclusivity makes more sense.
+
+> > > Either FAN_REPORT_CHILD_FID would also prevent dirent events
+> > > from being merged or we could use another flag for that purpose,
+> > > but I wasn't able to come up with an idea for a name for this flag :-/
+> > >
+> > > I sketched this patch [1] to implement the flag and to document
+> > > the desired semantics. It's only build tested and I did not even
+> > > implement the merge rules listed in the commit message.
+> > >
+> > > [1] https://github.com/amir73il/linux/commits/fanotify_child_fid
+> >
+> > WRT changes to merging: Whenever some application wants to depend on the
+> > ordering of events I'm starting to get suspicious.
+> 
+> I completely agree with that sentiment.
+> 
+> But note that the application does NOT require event ordering.
+> 
+> I was proposing the strict ordering of MOVE_ events as a method
+> to allow for matching of MOVE_ pairs of the same target as
+> a *replacement* for the inotify rename cookie method.
+
+Aha, I see I got confused a bit. Sorry about that.
+
+> > What is it using these events for?
+> 
+> The application is trying to match MOVE_ event pairs.
+> It's a best effort situation - when local file has been renamed,
+> a remote rename can also be attempted while verifying that the
+> recorded fid of the source (in remote file) matches the fid of the
+> local target.
+> 
+> > How is renaming different from linking a file into a new dir
+> > and unlinking it from the previous one which is a series of events that
+> > could be merged?
+> 
+> It is different because renames are common operations that actual people
+> often do and link+unlink are less common so we do not care to optimize
+> them. Anyway, as many other applications, our application does not
+> support syncing hardlinks to remote location, so link+unlink would be
+> handled as plain copy+delete and dedup of copied file is handled
+> is handled by the remote sync protocol.
+> 
+> As a matter of fact, a rename could also be (and sometimes is) handled
+> as copy+delete. In that case, the remote content would be fine but the
+> logs and change history would be inaccurate.
+> 
+> BTW, in my sketch commit message I offer to prevent merge of all dirent
+> events, not only MOVE_, because I claim that there is not much to be
+> gained from merging the CREATE/DELETE of a specific TARGET_FID
+> event with other events as there are normally very few of those events.
+> 
+> However, while I can argue why it is useful to avoid merge of dirent events,
+> it's not as easy for me to come up with a name for that flag not to
+> easily explain the semantics in man page :-/
+> so any help with coming up with simplified semantics would be appreciated.
+
+Just a brainstorming idea: How about creating new event FAN_RENAME that
+would report two DFIDs (if it is cross directory rename)? On the uAPI side
+it is very straightforward I think (unlike inotify where this could not be
+easily done because of fixed sized event + name). On the kernel API side we
+need to somehow feed the second directory into fsnotify() but with the
+changes Gabriel is doing it should not be that painful anymore... And then
+we can just avoid any problems with event matching, event merging etc.
+Thoughts?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
