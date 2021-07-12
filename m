@@ -2,24 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6C423C4D46
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 12:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A77A3C48D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 12:31:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242100AbhGLHMb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 03:12:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40688 "EHLO mail.kernel.org"
+        id S235843AbhGLGlD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 02:41:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243924AbhGLHGC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 03:06:02 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 19E2E6121F;
-        Mon, 12 Jul 2021 07:02:50 +0000 (UTC)
+        id S237335AbhGLGjY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Jul 2021 02:39:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 87D9C60FE3;
+        Mon, 12 Jul 2021 06:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1626073371;
-        bh=xrZQXGqRJvGdNcdItfEotkKMXNf9hOca8ma1npbSJYY=;
+        s=korg; t=1626071701;
+        bh=Qdwvlvloc+EY50CgHCAEUBF3NINQSruHvX/lPYGFb/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GUso0b4EeD7bDR92VuALk+c2uUzA5f4j7/xOeXFCSi4nXZw8HzXwGLTGy0L+tY1gr
-         DphROvRMP7dLPvErxi5NjXRPCaDceK8Jy0zpGwGoSobb/zdwZZbK8crYbeAAhIp9tT
-         pY8jVtfu8vOawH90aAeCToF87a8U9qNDdnkvQKt8=
+        b=G4/ykco5lmqfHZeAsWKt0iGx3uJoaavcPm4L2krVirB17md2wYMYyZuBGmxdAzq4/
+         7yzWSbvYQil/etLy4GCwUK4IoWrSBwOQM166CfBGhGhKAUdtnOhjtFNU6aDQ+dzCZv
+         F18Qp+r0A+In99kgG0zmqfXjP2PK0lxubO0gSnho=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -29,12 +29,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-fsdevel@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.12 212/700] open: dont silently ignore unknown O-flags in openat2()
-Date:   Mon, 12 Jul 2021 08:04:55 +0200
-Message-Id: <20210712060956.842360849@linuxfoundation.org>
+Subject: [PATCH 5.10 182/593] open: dont silently ignore unknown O-flags in openat2()
+Date:   Mon, 12 Jul 2021 08:05:42 +0200
+Message-Id: <20210712060903.043923805@linuxfoundation.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210712060924.797321836@linuxfoundation.org>
-References: <20210712060924.797321836@linuxfoundation.org>
+In-Reply-To: <20210712060843.180606720@linuxfoundation.org>
+References: <20210712060843.180606720@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -116,10 +116,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/fs/open.c b/fs/open.c
-index e53af13b5835..53bc0573c0ec 100644
+index 4d7537ae59df..3aaaad47d9ca 100644
 --- a/fs/open.c
 +++ b/fs/open.c
-@@ -1002,12 +1002,20 @@ inline struct open_how build_open_how(int flags, umode_t mode)
+@@ -993,12 +993,20 @@ inline struct open_how build_open_how(int flags, umode_t mode)
  
  inline int build_open_flags(const struct open_how *how, struct open_flags *op)
  {
