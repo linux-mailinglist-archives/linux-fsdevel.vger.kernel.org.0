@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B57F3C424D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 05:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57EDC3C424F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 05:51:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233149AbhGLDy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jul 2021 23:54:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49108 "EHLO
+        id S233248AbhGLDyk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jul 2021 23:54:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233366AbhGLDyZ (ORCPT
+        with ESMTP id S232717AbhGLDyk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jul 2021 23:54:25 -0400
+        Sun, 11 Jul 2021 23:54:40 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BCA1C0613E9;
-        Sun, 11 Jul 2021 20:51:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E15CC0613DD;
+        Sun, 11 Jul 2021 20:51:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=hCPsVqXxjm0N/FU0q9P/FrCS5OJdQGJhzhL+7mb+OQo=; b=Qth0IQe7Yh7frQmyKCuou98xqR
-        LodHIIl2qD0cd46WhfEFDM5UJzkwJjCEfsYReT1BPXEkWPbsAKt9fnmYO1IN6U0SypihCMtTaMsDE
-        Ynt3rUpo8uVkFf+GKxhFioPb3Q8sPgNb18cCDEkiBNyApoYhsvuLraXsoPAsUVSNN3zLbriQkLzQK
-        eO62NVJ2KzDKt8iVTmuR6kwLLCkACn1Cz4ImY4yH39+ZssLNtA0wOsCbnGMwyaej/kUTucRvLyrOM
-        hvETOgmcQ/Eo+iGZDwUQ67Iz2uTHH7LMTmAfhUuA4A9+paVZMD2rTjeHlgFPMWx5HGyBy83T01ruS
-        u5tsb+Cg==;
+        bh=5B9NLcbtY2KqatsUIEqn/NN7jlbYHuTY05ohZE/JpZc=; b=SJgvEDxmd+PpkTZtoazvtO/5RJ
+        8/f0Yg7XR3wTQktPHMOmshTBYjX2iL81NwVFz4cq8Grm/UNQjjReEogbsew3oXm67vuSfVIroJaej
+        VJH01rucgUCm0aclFQwaNW3ElymYs0cyBp53Yz6OjxPqreMYMcvrMi0lGTrFof+Tol525lFLuBV1l
+        H9+uHtWqlUKSHjrftrdtYkbSo5JJ3gYXNFoGJAdU15E6ypDqizt0KsOrFxVTrnW+8c+3jSOsvf3ge
+        lX2sAYOPD1q2iP5/qYu73RLqEpTFAKW+iWP7ZVKlZP8ihjEFXBJ/s4YiPyzXImIoL812MhXvk+iyo
+        ILASZUFQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m2mxl-00GpqW-Lo; Mon, 12 Jul 2021 03:50:42 +0000
+        id 1m2myF-00Gps6-8Y; Mon, 12 Jul 2021 03:51:11 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v13 081/137] mm/lru: Convert __pagevec_lru_add_fn to take a folio
-Date:   Mon, 12 Jul 2021 04:06:05 +0100
-Message-Id: <20210712030701.4000097-82-willy@infradead.org>
+Subject: [PATCH v13 082/137] mm/lru: Add folio_add_lru()
+Date:   Mon, 12 Jul 2021 04:06:06 +0100
+Message-Id: <20210712030701.4000097-83-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210712030701.4000097-1-willy@infradead.org>
 References: <20210712030701.4000097-1-willy@infradead.org>
@@ -44,98 +44,88 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This saves five calls to compound_head(), totalling 60 bytes of text.
+Reimplement lru_cache_add() as a wrapper around folio_add_lru().
+Saves 159 bytes of kernel text due to removing calls to compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- mm/swap.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ include/linux/swap.h |  1 +
+ mm/folio-compat.c    |  6 ++++++
+ mm/swap.c            | 22 +++++++++++-----------
+ 3 files changed, 18 insertions(+), 11 deletions(-)
 
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 5e01675af7ab..81801ba78b1e 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -351,6 +351,7 @@ extern unsigned long nr_free_buffer_pages(void);
+ extern void lru_note_cost(struct lruvec *lruvec, bool file,
+ 			  unsigned int nr_pages);
+ extern void lru_note_cost_folio(struct folio *);
++extern void folio_add_lru(struct folio *);
+ extern void lru_cache_add(struct page *);
+ void mark_page_accessed(struct page *);
+ void folio_mark_accessed(struct folio *);
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index c1e01bc36d32..6de3cd78a4ae 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -102,3 +102,9 @@ bool redirty_page_for_writepage(struct writeback_control *wbc,
+ 	return folio_redirty_for_writepage(wbc, page_folio(page));
+ }
+ EXPORT_SYMBOL(redirty_page_for_writepage);
++
++void lru_cache_add(struct page *page)
++{
++	folio_add_lru(page_folio(page));
++}
++EXPORT_SYMBOL(lru_cache_add);
 diff --git a/mm/swap.c b/mm/swap.c
-index fe177a16de84..42851b9d6316 100644
+index 42851b9d6316..bf1b90d1c2f0 100644
 --- a/mm/swap.c
 +++ b/mm/swap.c
-@@ -1001,17 +1001,18 @@ void __pagevec_release(struct pagevec *pvec)
- }
- EXPORT_SYMBOL(__pagevec_release);
+@@ -459,29 +459,29 @@ void folio_mark_accessed(struct folio *folio)
+ EXPORT_SYMBOL(folio_mark_accessed);
  
--static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec)
-+static void __pagevec_lru_add_fn(struct folio *folio, struct lruvec *lruvec)
+ /**
+- * lru_cache_add - add a page to a page list
+- * @page: the page to be added to the LRU.
++ * folio_add_lru - Add a folio to an LRU list.
++ * @folio: The folio to be added to the LRU.
+  *
+- * Queue the page for addition to the LRU via pagevec. The decision on whether
++ * Queue the folio for addition to the LRU. The decision on whether
+  * to add the page to the [in]active [file|anon] list is deferred until the
+- * pagevec is drained. This gives a chance for the caller of lru_cache_add()
+- * have the page added to the active list using mark_page_accessed().
++ * pagevec is drained. This gives a chance for the caller of folio_add_lru()
++ * have the folio added to the active list using folio_mark_accessed().
+  */
+-void lru_cache_add(struct page *page)
++void folio_add_lru(struct folio *folio)
  {
--	int was_unevictable = TestClearPageUnevictable(page);
--	int nr_pages = thp_nr_pages(page);
-+	int was_unevictable = folio_test_clear_unevictable_flag(folio);
-+	int nr_pages = folio_nr_pages(folio);
+ 	struct pagevec *pvec;
  
+-	VM_BUG_ON_PAGE(PageActive(page) && PageUnevictable(page), page);
 -	VM_BUG_ON_PAGE(PageLRU(page), page);
++	VM_BUG_ON_FOLIO(folio_active(folio) && folio_unevictable(folio), folio);
 +	VM_BUG_ON_FOLIO(folio_lru(folio), folio);
  
- 	/*
--	 * Page becomes evictable in two ways:
-+	 * Folio becomes evictable in two ways:
- 	 * 1) Within LRU lock [munlock_vma_page() and __munlock_pagevec()].
--	 * 2) Before acquiring LRU lock to put the page to correct LRU and then
-+	 * 2) Before acquiring LRU lock to put the folio on the correct LRU
-+	 *    and then
- 	 *   a) do PageLRU check with lock [check_move_unevictable_pages]
- 	 *   b) do PageLRU check before lock [clear_page_mlock]
- 	 *
-@@ -1020,10 +1021,10 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec)
- 	 *
- 	 * #0: __pagevec_lru_add_fn		#1: clear_page_mlock
- 	 *
--	 * SetPageLRU()				TestClearPageMlocked()
-+	 * folio_set_lru_flag()			folio_test_clear_mlocked_flag()
- 	 * smp_mb() // explicit ordering	// above provides strict
- 	 *					// ordering
--	 * PageMlocked()			PageLRU()
-+	 * folio_mlocked()			folio_lru()
- 	 *
- 	 *
- 	 * if '#1' does not observe setting of PG_lru by '#0' and fails
-@@ -1034,21 +1035,21 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec)
- 	 * looking at the same page) and the evictable page will be stranded
- 	 * in an unevictable LRU.
- 	 */
--	SetPageLRU(page);
-+	folio_set_lru_flag(folio);
- 	smp_mb__after_atomic();
- 
--	if (page_evictable(page)) {
-+	if (folio_evictable(folio)) {
- 		if (was_unevictable)
- 			__count_vm_events(UNEVICTABLE_PGRESCUED, nr_pages);
- 	} else {
--		ClearPageActive(page);
--		SetPageUnevictable(page);
-+		folio_clear_active_flag(folio);
-+		folio_set_unevictable_flag(folio);
- 		if (!was_unevictable)
- 			__count_vm_events(UNEVICTABLE_PGCULLED, nr_pages);
- 	}
- 
--	add_page_to_lru_list(page, lruvec);
--	trace_mm_lru_insertion(page);
-+	folio_add_to_lru_list(folio, lruvec);
-+	trace_mm_lru_insertion(&folio->page);
+-	get_page(page);
++	folio_get(folio);
+ 	local_lock(&lru_pvecs.lock);
+ 	pvec = this_cpu_ptr(&lru_pvecs.lru_add);
+-	if (pagevec_add_and_need_flush(pvec, page))
++	if (pagevec_add_and_need_flush(pvec, &folio->page))
+ 		__pagevec_lru_add(pvec);
+ 	local_unlock(&lru_pvecs.lock);
  }
+-EXPORT_SYMBOL(lru_cache_add);
++EXPORT_SYMBOL(folio_add_lru);
  
- /*
-@@ -1062,11 +1063,10 @@ void __pagevec_lru_add(struct pagevec *pvec)
- 	unsigned long flags = 0;
- 
- 	for (i = 0; i < pagevec_count(pvec); i++) {
--		struct page *page = pvec->pages[i];
--		struct folio *folio = page_folio(page);
-+		struct folio *folio = page_folio(pvec->pages[i]);
- 
- 		lruvec = folio_lruvec_relock_irqsave(folio, lruvec, &flags);
--		__pagevec_lru_add_fn(page, lruvec);
-+		__pagevec_lru_add_fn(folio, lruvec);
- 	}
- 	if (lruvec)
- 		unlock_page_lruvec_irqrestore(lruvec, flags);
+ /**
+  * lru_cache_add_inactive_or_unevictable
 -- 
 2.30.2
 
