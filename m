@@ -2,72 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDFAF3C652D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 22:53:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBCD53C6567
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 23:22:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhGLUy4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 16:54:56 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:48460 "EHLO
-        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229910AbhGLUyz (ORCPT
+        id S234716AbhGLVZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 17:25:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56442 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234689AbhGLVZA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 16:54:55 -0400
-X-Greylist: delayed 1311 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Jul 2021 16:54:55 EDT
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m32Uv-0007dJ-Hn; Mon, 12 Jul 2021 20:25:49 +0000
-Date:   Mon, 12 Jul 2021 20:25:49 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Dmitry Kadashev <dkadashev@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        Mon, 12 Jul 2021 17:25:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626124931;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NqyKWbYzvJesNMAyFevO8Qmaq3myoLJAWjEns6F9EMg=;
+        b=aL6z+Dt38T4ZM42TEUGOTmSjID2Y4AhSUnHp62yRs1OaPKORrBngIHbE/gebie3Ktr+byU
+        A5F3Wxgw89sxNzzeZ+celYzjIiPVjOAV9D4NKl37JttDzY2gSfUw0g7r4wbdZD8t/keb7X
+        Rap6eEmZ9UrJk/jvf49LP2Ryq4XiKv8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-325-iiQpJbZiMg2bmALGrPHg3A-1; Mon, 12 Jul 2021 17:22:09 -0400
+X-MC-Unique: iiQpJbZiMg2bmALGrPHg3A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D649A8042DE;
+        Mon, 12 Jul 2021 21:22:07 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-176.rdu2.redhat.com [10.10.114.176])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0469E5D9CA;
+        Mon, 12 Jul 2021 21:22:01 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 6A25522054F; Mon, 12 Jul 2021 17:22:01 -0400 (EDT)
+Date:   Mon, 12 Jul 2021 17:22:01 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     Bruce Fields <bfields@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-Subject: Re: [PATCH 0/7] namei: clean up retry logic in various do_* functions
-Message-ID: <YOylTZ3u0AVidHe2@zeniv-ca.linux.org.uk>
-References: <20210712123649.1102392-1-dkadashev@gmail.com>
- <CAOKbgA4EqwLa3WDK_JcxFAU92pBw4hS8vjQ9p7B-w+5y7yX5Eg@mail.gmail.com>
- <CAHk-=wiGH-bYqLvjMOv2i48Wb1FQaAj8ukegSMLNbW0yri05rA@mail.gmail.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
+        dgilbert@redhat.com, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
+        jack@suse.cz, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
+ files
+Message-ID: <20210712212201.GD502004@redhat.com>
+References: <20210708175738.360757-2-vgoyal@redhat.com>
+ <20210709091915.2bd4snyfjndexw2b@wittgenstein>
+ <20210709152737.GA398382@redhat.com>
+ <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+ <20210709175947.GB398382@redhat.com>
+ <CAPL3RVGKg4G5qiiHo7KYPcsWWgeoW=qNPOSQpd3Sv329jrWrLQ@mail.gmail.com>
+ <20210712140247.GA486376@redhat.com>
+ <20210712154106.GB18679@fieldses.org>
+ <20210712174759.GA502004@redhat.com>
+ <20210712193139.GA22997@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiGH-bYqLvjMOv2i48Wb1FQaAj8ukegSMLNbW0yri05rA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20210712193139.GA22997@fieldses.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 12, 2021 at 12:01:52PM -0700, Linus Torvalds wrote:
-> On Mon, Jul 12, 2021 at 5:41 AM Dmitry Kadashev <dkadashev@gmail.com> wrote:
-> >
-> > Since this is on top of the stuff that is going to be in the Jens' tree
-> > only until the 5.15 merge window, I'm assuming this series should go
-> > there as well.
+On Mon, Jul 12, 2021 at 03:31:39PM -0400, J. Bruce Fields wrote:
+> On Mon, Jul 12, 2021 at 01:47:59PM -0400, Vivek Goyal wrote:
+> > On Mon, Jul 12, 2021 at 11:41:06AM -0400, J. Bruce Fields wrote:
+> > > Looks like 0xd is what the server returns to access on a device node
+> > > with mode bits rw- for the caller.
+> > > 
+> > > Commit c11d7fd1b317 "nfsd: take xattr bits into account for permission
+> > > checks" added the ACCESS_X* bits for regular files and directories but
+> > > not others.
+> > > 
+> > > But you don't want to determine permission from the mode bits anyway,
+> > > you want it to depend on the owner,
+> > 
+> > Thinking more about this part. Current implementation of my patch is
+> > effectively doing both the checks. It checks that you are owner or
+> > have CAP_FOWNER in xattr_permission() and then goes on to call
+> > inode_permission(). And that means file mode bits will also play a
+> > role. If caller does not have write permission on the file, it will
+> > be denied setxattr().
+> > 
+> > If I don't call inode_permission(), and just return 0 right away for
+> > file owner (for symlinks and special files), then just being owner
+> > is enough to write user.* xattr. And then even security modules will
+> > not get a chance to block that operation. IOW, if you are owner of
+> > a symlink or special file, you can write as many user.* xattr as you
+> > like and except quota does not look like anything else can block
+> > it. I am wondering if this approach is ok?
 > 
-> Yeah. Unless Al wants to pick this whole series up.
+> Yeah, I'd expect security modules to get a say, and I wouldn't expect
+> mode bits on device nodes to be useful for deciding whether it makes
+> sense for xattrs to be readable or writeable.
+
+Actually, calling inode_permission() for symlinks probably should be
+fine.
+
+Its the device node which is problematic. Because we started with the
+assumption that mode bits there represent access writes for read/writing
+to device (and not to the filesystem). 
+
 > 
-> See my comments about the individual patches - some of them change
-> code flow, others do. And I think changing code flow as part of
-> cleanup is ok, but it at the very least needs to be mentioned (and it
-> might be good to do the "move code that is idempotent inside the
-> retry" as a separate patch from documentation purposes)
+> But, I don't really know.
 
-TBH, my main problem with this is that ESTALE retry logics had never
-felt right.  We ask e.g. filename_create() to get us the parent.  We
-tell it whether we want it to be maximally suspicious or not.  It
-still does the same RCU-normal-LOOKUP_REVAL sequence, only for "trust
-no one" variant it's RCU-LOOKUP_REVAL-LOOKUP_REVAL instead.  We are
-*not* told how far in that sequence did it have to get.  What's more,
-even if we had to get all way up to LOOKUP_REVAL, we ignore that
-when we do dcache lookup for the last component - only the argument
-of filename_create() is looked at.
+> 
+> Do we have any other use cases besides this case of storing security
+> labels in user xattrs?
 
-It really smells like the calling conventions are wrong.  I agree that
-all of that is, by definition, a very slow path - it's just that the
-logics makes me go "WTF?" every time I see it... ;-/
+Storing security label was one example. In case of virtiofs, there is
+a good chance that we will end up remapping all the guest xattrs and
+prefix these with "user.virtiofsd".
 
-Hell knows - perhaps the lookup_flags thing wants to be passed by
-reference (all the way into path_parentat()) and have the "we had
-to go for LOOKUP_REVAL" returned that way.  Not sure...
+fuse-overlay is another use case. They are storing real uid/gid in 
+user.* xattrs for files over NFS.
 
-Al, still crawling out of the bloody ptrace/asm glue horrors at the moment...
+I think overlayfs can be another benefeciary in some form. Now there
+is support for unpriviliged mouting of overlayfs from inside a user
+namespace. And that uses xattrs "user.overlay" on upper files for
+overlayfs specific metadata. Device nodes are not copied up. But
+they might have an issue with symlinks. Miklos, will know more.
+
+Thanks
+Vivek
+
