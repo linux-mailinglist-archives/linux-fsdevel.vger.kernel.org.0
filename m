@@ -2,96 +2,284 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 961823C4112
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 03:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF3273C4162
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 05:08:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232527AbhGLBqs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jul 2021 21:46:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48478 "EHLO
+        id S232540AbhGLDLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jul 2021 23:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbhGLBqr (ORCPT
+        with ESMTP id S229982AbhGLDLh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jul 2021 21:46:47 -0400
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E93E5C0613E5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jul 2021 18:43:59 -0700 (PDT)
-Received: by mail-il1-x12a.google.com with SMTP id y6so16686362ilj.13
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jul 2021 18:43:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RTuDL6SVYCLI423vVccxizGVyS3rt2KIcAV15XDzGzI=;
-        b=Iy8gHot3nMTszekx8HnQtH7Fk2icBirqlwxpvVx7UYeOpMxIEGYDRWAuD+2NaE3can
-         rdmJFl6LPl96vBiUQExYVaha3L1/RTPQdJwRBOkVgwjac3v6ZHPLBzs0qHpZ0BT5F7Ja
-         qCBobAy4u3jVyNYEln4WJ6fYBH7UGzkjZ6PpvJqe9scP7ZLVX5HXqD3h39W0zr6Z+m3B
-         kjx4FetoDtwALrU4q5a9abnZduhJvXMDbPPyWkE7lkJuiCEWVOyFREdWJHKGmNNI/xiu
-         T/ncI7Pk4UhCWzCe4kDFuJqcN2GzzztaF4WDBVd1v3QjUv8L/ophJzqlbCZxNlAhN8vs
-         Qjfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RTuDL6SVYCLI423vVccxizGVyS3rt2KIcAV15XDzGzI=;
-        b=TivNOLkg+MFWADYGkDt0/edD45y+nfZxlzkfYa8C+JAc/ODTvjE2XQFBwska7Zi0pN
-         rLuPfHG9w7NaqPPH4WWhvbVsXpUpSmcr+gsoO0XI72rMloC0hTmnZKjCTieGEv5+dbgb
-         uYdpVlo0TJe+AtAVbGhnb37BMBik5Sokhagw4/NQwpXdYjgZmT6g5YTWvGOeFE4USG4J
-         XWSpTbwXwfyLH8+TVqt0MDdfGTzfsmXyJIXetLpZ5YcYNTGe3n2afUtuZx5WSHV/ITun
-         1D38Yrs3a7C33y1Q2T1RfrreVdHWBW5ngJD9Qse1ElqPHhTSpUK4nRmTBFQzxbD3yBPW
-         ZpmA==
-X-Gm-Message-State: AOAM530FRDvTp5eMDf4nFLb8Zb4vdcCMa/8nZ+fas2r3zwx8ROdUBjbe
-        lO30ikkpbKthtUitL3cbaM0xZQ==
-X-Google-Smtp-Source: ABdhPJxSo6fiS2R0gzDEECzHhrjn/3TAJv4OPfzafzxwq3RYA5hFlUIGf6ylmSyNjZdQKyu21ePNoQ==
-X-Received: by 2002:a92:c8c3:: with SMTP id c3mr19234399ilq.153.1626054239327;
-        Sun, 11 Jul 2021 18:43:59 -0700 (PDT)
-Received: from [192.168.1.134] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id z6sm1110473ilz.54.2021.07.11.18.43.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Jul 2021 18:43:58 -0700 (PDT)
-Subject: Re: [PATCH 0/2] Close a hole where IOCB_NOWAIT reads could sleep
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     io-uring@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org
-References: <20210711150927.3898403-1-willy@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a3d0f8da-ffb4-25a3-07a1-79987ce788c5@kernel.dk>
-Date:   Sun, 11 Jul 2021 19:44:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sun, 11 Jul 2021 23:11:37 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07488C0613DD;
+        Sun, 11 Jul 2021 20:08:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=TuysaMqfIyyA1Tf9HvG5ZxdBPdLcfB6d6RZ0+hsPhw4=; b=eVQWDK94po14Sq9n9dvIA264iA
+        ZyjYrf7EZkCrrI9LYAJ7ByM9z7F1h3cl+9+fbo9ASjMxrTj75SNM/dY5xNqvI1zYgDyxkYWsIwvEf
+        QKWODgx8rqwL5EIh89c/tRjxiwCyK2+iL7eMp7y6Ar3PHzAZcq02wYJR9k9mz+ZsqzdYXPtMqd/qk
+        BLMvBfLRoFFmkMgLu48TD+2YsAGhc6lr246p8N2w+BhkIA51uX2yAJH7jYRKhZovWH2Hlvvk832by
+        rX0o/BZfshmsBNqVs/oAyXdoHdA2A79jxF0vSKi3ucBPf2lF1QY+5wp4lFWuo7B0tMn66Vi2kAknJ
+        SBUQQ02A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m2mIg-00Gmjg-NV; Mon, 12 Jul 2021 03:08:10 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v13 000/137] Memory folios
+Date:   Mon, 12 Jul 2021 04:04:44 +0100
+Message-Id: <20210712030701.4000097-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210711150927.3898403-1-willy@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/11/21 9:09 AM, Matthew Wilcox (Oracle) wrote:
-> I noticed a theoretical case where an IOCB_NOWAIT read could sleep:
-> 
-> filemap_get_pages
->   filemap_get_read_batch
->   page_cache_sync_readahead
->     page_cache_sync_ra
->       ondemand_readahead
->         do_page_cache_ra
->         page_cache_ra_unbounded
->           gfp_t gfp_mask = readahead_gfp_mask(mapping);
->           memalloc_nofs_save()
->           __page_cache_alloc(gfp_mask);
-> 
-> We're in a nofs context, so we're not going to start new IO, but we might
-> wait for writeback to complete.  We generally don't want to sleep for IO,
-> particularly not for IO that isn't related to us.
-> 
-> Jens, can you run this through your test rig and see if it makes any
-> practical difference?
+Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
+benefit from a larger "page size".  As an example, an earlier iteration
+of this idea which used compound pages (and wasn't particularly tuned)
+got a 7% performance boost when compiling the kernel.
 
-You bet, I'll see if I can trigger this condition and verify we're no
-longer blocking on writeback. Thanks for hacking this up.
+Using compound pages or THPs exposes a weakness of our type system.
+Functions are often unprepared for compound pages to be passed to them,
+and may only act on PAGE_SIZE chunks.  Even functions which are aware of
+compound pages may expect a head page, and do the wrong thing if passed
+a tail page.
+
+We also waste a lot of instructions ensuring that we're not looking at
+a tail page.  Almost every call to PageFoo() contains one or more hidden
+calls to compound_head().  This also happens for get_page(), put_page()
+and many more functions.
+
+This patch series uses a new type, the struct folio, to manage memory.
+It converts enough of the page cache, iomap and XFS to use folios instead
+of pages, and then adds support for multi-page folios.  It passes xfstests
+(running on XFS) with no regressions compared to v5.14-rc1.
+
+Git: https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/tags/folio_13
+
+Matthew Wilcox (Oracle) (137):
+  mm: Convert get_page_unless_zero() to return bool
+  mm: Introduce struct folio
+  mm: Add folio_pgdat(), folio_zone() and folio_zonenum()
+  mm/vmstat: Add functions to account folio statistics
+  mm/debug: Add VM_BUG_ON_FOLIO() and VM_WARN_ON_ONCE_FOLIO()
+  mm: Add folio reference count functions
+  mm: Add folio_put()
+  mm: Add folio_get()
+  mm: Add folio_try_get_rcu()
+  mm: Add folio flag manipulation functions
+  mm/lru: Add folio LRU functions
+  mm: Handle per-folio private data
+  mm/filemap: Add folio_index(), folio_file_page() and folio_contains()
+  mm/filemap: Add folio_next_index()
+  mm/filemap: Add folio_pos() and folio_file_pos()
+  mm/util: Add folio_mapping() and folio_file_mapping()
+  mm/filemap: Add folio_unlock()
+  mm/filemap: Add folio_lock()
+  mm/filemap: Add folio_lock_killable()
+  mm/filemap: Add __folio_lock_async()
+  mm/filemap: Add folio_wait_locked()
+  mm/filemap: Add __folio_lock_or_retry()
+  mm/swap: Add folio_rotate_reclaimable()
+  mm/filemap: Add folio_end_writeback()
+  mm/writeback: Add folio_wait_writeback()
+  mm/writeback: Add folio_wait_stable()
+  mm/filemap: Add folio_wait_bit()
+  mm/filemap: Add folio_wake_bit()
+  mm/filemap: Convert page wait queues to be folios
+  mm/filemap: Add folio private_2 functions
+  fs/netfs: Add folio fscache functions
+  mm: Add folio_mapped()
+  mm: Add folio_nid()
+  mm/memcg: Remove 'page' parameter to mem_cgroup_charge_statistics()
+  mm/memcg: Use the node id in mem_cgroup_update_tree()
+  mm/memcg: Remove soft_limit_tree_node()
+  mm/memcg: Convert memcg_check_events to take a node ID
+  mm/memcg: Add folio_memcg() and related functions
+  mm/memcg: Convert commit_charge() to take a folio
+  mm/memcg: Convert mem_cgroup_charge() to take a folio
+  mm/memcg: Convert uncharge_page() to uncharge_folio()
+  mm/memcg: Convert mem_cgroup_uncharge() to take a folio
+  mm/memcg: Convert mem_cgroup_migrate() to take folios
+  mm/memcg: Convert mem_cgroup_track_foreign_dirty_slowpath() to folio
+  mm/memcg: Add folio_memcg_lock() and folio_memcg_unlock()
+  mm/memcg: Convert mem_cgroup_move_account() to use a folio
+  mm/memcg: Add folio_lruvec()
+  mm/memcg: Add folio_lruvec_lock() and similar functions
+  mm/memcg: Add folio_lruvec_relock_irq() and
+    folio_lruvec_relock_irqsave()
+  mm/workingset: Convert workingset_activation to take a folio
+  mm: Add folio_pfn()
+  mm: Add folio_raw_mapping()
+  mm: Add flush_dcache_folio()
+  mm: Add kmap_local_folio()
+  mm: Add arch_make_folio_accessible()
+  mm: Add folio_young() and folio_idle()
+  mm/swap: Add folio_activate()
+  mm/swap: Add folio_mark_accessed()
+  mm/rmap: Add folio_mkclean()
+  mm/migrate: Add folio_migrate_mapping()
+  mm/migrate: Add folio_migrate_flags()
+  mm/migrate: Add folio_migrate_copy()
+  mm/writeback: Rename __add_wb_stat() to wb_stat_mod()
+  flex_proportions: Allow N events instead of 1
+  mm/writeback: Change __wb_writeout_inc() to __wb_writeout_add()
+  mm/writeback: Add __folio_end_writeback()
+  mm/writeback: Add folio_start_writeback()
+  mm/writeback: Add folio_mark_dirty()
+  mm/writeback: Add __folio_mark_dirty()
+  mm/writeback: Add filemap_dirty_folio()
+  mm/writeback: Add folio_account_cleaned()
+  mm/writeback: Add folio_cancel_dirty()
+  mm/writeback: Add folio_clear_dirty_for_io()
+  mm/writeback: Add folio_account_redirty()
+  mm/writeback: Add folio_redirty_for_writepage()
+  mm/filemap: Add i_blocks_per_folio()
+  mm/filemap: Add folio_mkwrite_check_truncate()
+  mm/filemap: Add readahead_folio()
+  mm/workingset: Convert workingset_refault() to take a folio
+  mm: Add folio_evictable()
+  mm/lru: Convert __pagevec_lru_add_fn to take a folio
+  mm/lru: Add folio_add_lru()
+  mm/page_alloc: Add folio allocation functions
+  mm/filemap: Add filemap_alloc_folio
+  mm/filemap: Add filemap_add_folio()
+  mm/filemap: Convert mapping_get_entry to return a folio
+  mm/filemap: Add filemap_get_folio
+  mm/filemap: Add FGP_STABLE
+  block: Add bio_add_folio()
+  block: Add bio_for_each_folio_all()
+  iomap: Convert to_iomap_page to take a folio
+  iomap: Convert iomap_page_create to take a folio
+  iomap: Convert iomap_page_release to take a folio
+  iomap: Convert iomap_releasepage to use a folio
+  iomap: Convert iomap_invalidatepage to use a folio
+  iomap: Pass the iomap_page into iomap_set_range_uptodate
+  iomap: Use folio offsets instead of page offsets
+  iomap: Convert bio completions to use folios
+  iomap: Convert readahead and readpage to use a folio
+  iomap: Convert iomap_page_mkwrite to use a folio
+  iomap: Convert iomap_write_begin and iomap_write_end to folios
+  iomap: Convert iomap_read_inline_data to take a folio
+  iomap: Convert iomap_write_end_inline to take a folio
+  iomap: Convert iomap_add_to_ioend to take a folio
+  iomap: Convert iomap_do_writepage to use a folio
+  iomap: Convert iomap_migrate_page to use folios
+  mm/filemap: Convert page_cache_delete to take a folio
+  mm/filemap: Convert unaccount_page_cache_page to
+    filemap_unaccount_folio
+  mm/filemap: Add filemap_remove_folio and __filemap_remove_folio
+  mm/filemap: Convert find_get_entry to return a folio
+  mm/filemap: Convert filemap_get_read_batch to use folios
+  mm/filemap: Convert find_get_pages_contig to folios
+  mm/filemap: Convert filemap_read_page to take a folio
+  mm/filemap: Convert filemap_create_page to folio
+  mm/filemap: Convert filemap_range_uptodate to folios
+  mm/filemap: Convert filemap_fault to folio
+  mm/filemap: Add read_cache_folio and read_mapping_folio
+  mm/filemap: Convert filemap_get_pages to use folios
+  mm/filemap: Convert page_cache_delete_batch to folios
+  mm/filemap: Remove PageHWPoison check from next_uptodate_page()
+  mm/filemap: Use folios in next_uptodate_page
+  mm/filemap: Use a folio in filemap_map_pages
+  fs: Convert vfs_dedupe_file_range_compare to folios
+  mm/truncate,shmem: Handle truncates that split THPs
+  mm/filemap: Return only head pages from find_get_entries
+  mm: Use multi-index entries in the page cache
+  iomap: Support multi-page folios in invalidatepage
+  xfs: Support THPs
+  mm/truncate: Convert invalidate_inode_pages2_range to folios
+  mm/truncate: Fix invalidate_complete_page2 for THPs
+  mm/vmscan: Free non-shmem THPs without splitting them
+  mm: Fix READ_ONLY_THP warning
+  mm: Support arbitrary THP sizes
+  mm/filemap: Allow multi-page folios to be added to the page cache
+  mm/vmscan: Optimise shrink_page_list for smaller THPs
+  mm/readahead: Convert page_cache_async_ra() to take a folio
+  mm/readahead: Add multi-page folio readahead
+
+ Documentation/core-api/cachetlb.rst         |    6 +
+ Documentation/core-api/mm-api.rst           |    4 +
+ Documentation/filesystems/netfs_library.rst |    2 +
+ arch/nds32/include/asm/cacheflush.h         |    1 +
+ block/bio.c                                 |   21 +
+ fs/afs/write.c                              |    9 +-
+ fs/cachefiles/rdwr.c                        |   16 +-
+ fs/io_uring.c                               |    2 +-
+ fs/iomap/buffered-io.c                      |  524 ++++----
+ fs/jfs/jfs_metapage.c                       |    1 +
+ fs/remap_range.c                            |  116 +-
+ fs/xfs/xfs_aops.c                           |   11 +-
+ fs/xfs/xfs_super.c                          |    3 +-
+ include/asm-generic/cacheflush.h            |    6 +
+ include/linux/backing-dev.h                 |    6 +-
+ include/linux/bio.h                         |   46 +-
+ include/linux/flex_proportions.h            |    9 +-
+ include/linux/gfp.h                         |   22 +-
+ include/linux/highmem-internal.h            |   11 +
+ include/linux/highmem.h                     |   38 +
+ include/linux/huge_mm.h                     |   23 +-
+ include/linux/ksm.h                         |    4 +-
+ include/linux/memcontrol.h                  |  218 ++--
+ include/linux/migrate.h                     |    4 +
+ include/linux/mm.h                          |  266 +++-
+ include/linux/mm_inline.h                   |   85 +-
+ include/linux/mm_types.h                    |   77 ++
+ include/linux/mmdebug.h                     |   20 +
+ include/linux/netfs.h                       |   77 +-
+ include/linux/page-flags.h                  |  267 ++--
+ include/linux/page_idle.h                   |   99 +-
+ include/linux/page_owner.h                  |    8 +-
+ include/linux/page_ref.h                    |  158 ++-
+ include/linux/pagemap.h                     |  615 +++++----
+ include/linux/rmap.h                        |   10 +-
+ include/linux/swap.h                        |   17 +-
+ include/linux/vmstat.h                      |  107 ++
+ include/linux/writeback.h                   |    9 +-
+ include/trace/events/writeback.h            |    8 +-
+ kernel/bpf/verifier.c                       |    2 +-
+ kernel/events/uprobes.c                     |    3 +-
+ lib/flex_proportions.c                      |   28 +-
+ mm/Makefile                                 |    2 +-
+ mm/compaction.c                             |    4 +-
+ mm/filemap.c                                | 1285 +++++++++----------
+ mm/folio-compat.c                           |  147 +++
+ mm/huge_memory.c                            |   27 +-
+ mm/internal.h                               |   40 +-
+ mm/khugepaged.c                             |   20 +-
+ mm/ksm.c                                    |   34 +-
+ mm/memcontrol.c                             |  323 +++--
+ mm/memory-failure.c                         |    2 +-
+ mm/memory.c                                 |   20 +-
+ mm/mempolicy.c                              |   10 +
+ mm/memremap.c                               |    2 +-
+ mm/migrate.c                                |  246 ++--
+ mm/mlock.c                                  |    3 +-
+ mm/page-writeback.c                         |  447 ++++---
+ mm/page_alloc.c                             |   14 +-
+ mm/page_io.c                                |    4 +-
+ mm/page_owner.c                             |   10 +-
+ mm/readahead.c                              |  108 +-
+ mm/rmap.c                                   |   14 +-
+ mm/shmem.c                                  |  115 +-
+ mm/swap.c                                   |  180 +--
+ mm/swap_state.c                             |    2 +-
+ mm/swapfile.c                               |    8 +-
+ mm/truncate.c                               |  193 +--
+ mm/userfaultfd.c                            |    2 +-
+ mm/util.c                                   |   92 +-
+ mm/vmscan.c                                 |   15 +-
+ mm/workingset.c                             |   44 +-
+ 72 files changed, 3822 insertions(+), 2550 deletions(-)
+ create mode 100644 mm/folio-compat.c
 
 -- 
-Jens Axboe
+2.30.2
 
