@@ -2,88 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A9DAA3C5B83
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 13:44:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B889C3C5BCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jul 2021 14:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230456AbhGLLjH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 07:39:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45112 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbhGLLjG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 07:39:06 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F55CC0613DD;
-        Mon, 12 Jul 2021 04:36:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=D5qx3dVKgrH7eIQyjcDlzzDy7QOQdnxbowoXaJPlgMg=; b=iblrGfKdeb6Ro1mum0SxNGam0d
-        omVYWRsSb97CvbeOIJvvAlaDSBTMePy5R9s/R4m5pUq4MFYqa+WPxpSHStpTmiCaWOQUpmJL2FrlT
-        d8yEVAcmAeiik2gIVICzs+BMVab1AVPku6G1jjkYwF3Az6+bjtrGfjbDV4ICBtV0Lh3DNv/29dPnH
-        nofbAeZ+HSKFzkDxOAy9OcN7uyjGm3LN7WukrdmYul2G5ed44zzN/ucmvq65RG2hz2SH7WaHYKJ9U
-        SBv8crZhOC4WA0PjOPwOY+j3oud3NG4H0QgW+wZYzAk5rgBpesPt2Xc3ErC8eN7BnD6CpRCZ046w5
-        oyPCjVxQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m2uE7-00HYKa-C6; Mon, 12 Jul 2021 11:36:01 +0000
-Date:   Mon, 12 Jul 2021 12:35:55 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v13 000/137] Memory folios
-Message-ID: <YOwpG1fuEJt8hS+U@casper.infradead.org>
-References: <20210712030701.4000097-1-willy@infradead.org>
- <YOvXHZ7tCxV2Ex2m@infradead.org>
+        id S231448AbhGLL62 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 07:58:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230457AbhGLL61 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Jul 2021 07:58:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D359F610E6;
+        Mon, 12 Jul 2021 11:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626090939;
+        bh=agbXnkI+d1pZleZ1eNq+cwaIbUmy13yPymXoqaO/PXc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Am9xiyRURyzgvn5W9WwkMZoaPwFb29Qhxa7mPCu9OWKimRdSFBVs2jc5ovBYBsV0H
+         tN7natS3Ln5yhPQDkstDHOb/SM+7sflTqebeNxRnSf7VhXW8KEJKdQuYiKfulAtTR5
+         KnuCNvAh4uoBvloqF+n/9/m8HDliwVGSgr25RlKULVt6yL8MfXIDOvn6+Y9+S0BSPI
+         m42R6wkJpBQ/4XYaR/UrFaLVBW84hJbQLFYHVieqJQEqaq7Rt2Mo2OxwKiZrbTwdep
+         piCGCjqzk2KJsjn5EU9iD9I6vc3Uten+6s/zmhw5QobxCXTWjhk0ZvLB4ivaIOyQj6
+         //cek6y4Hx8pg==
+Message-ID: <6b701c8dfc9e16964718f2b4c1e52fda954ed26b.camel@kernel.org>
+Subject: Re: [RFC PATCH v7 02/24] fscrypt: export fscrypt_base64_encode and
+ fscrypt_base64_decode
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, lhenriques@suse.de, xiubli@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        dhowells@redhat.com
+Date:   Mon, 12 Jul 2021 07:55:37 -0400
+In-Reply-To: <YOstFfnzitZrAlLZ@quark.localdomain>
+References: <20210625135834.12934-1-jlayton@kernel.org>
+         <20210625135834.12934-3-jlayton@kernel.org>
+         <YOstFfnzitZrAlLZ@quark.localdomain>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YOvXHZ7tCxV2Ex2m@infradead.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 12, 2021 at 06:46:05AM +0100, Christoph Hellwig wrote:
-> On Mon, Jul 12, 2021 at 04:04:44AM +0100, Matthew Wilcox (Oracle) wrote:
-> > Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
-> > benefit from a larger "page size".  As an example, an earlier iteration
-> > of this idea which used compound pages (and wasn't particularly tuned)
-> > got a 7% performance boost when compiling the kernel.
-> > 
-> > Using compound pages or THPs exposes a weakness of our type system.
-> > Functions are often unprepared for compound pages to be passed to them,
-> > and may only act on PAGE_SIZE chunks.  Even functions which are aware of
-> > compound pages may expect a head page, and do the wrong thing if passed
-> > a tail page.
-> > 
-> > We also waste a lot of instructions ensuring that we're not looking at
-> > a tail page.  Almost every call to PageFoo() contains one or more hidden
-> > calls to compound_head().  This also happens for get_page(), put_page()
-> > and many more functions.
-> > 
-> > This patch series uses a new type, the struct folio, to manage memory.
-> > It converts enough of the page cache, iomap and XFS to use folios instead
-> > of pages, and then adds support for multi-page folios.  It passes xfstests
-> > (running on XFS) with no regressions compared to v5.14-rc1.
+On Sun, 2021-07-11 at 12:40 -0500, Eric Biggers wrote:
+> Some nits about comments:
 > 
-> This seems to miss a changelog vs the previous version.  It also
-> includes a lot of the follow ups.  I think reviewing a series gets
-> rather hard at more than 30-ish patches, so chunking it up a little
-> more would be useful.
+> On Fri, Jun 25, 2021 at 09:58:12AM -0400, Jeff Layton wrote:
+> > diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> > index 6ca7d16593ff..32b1f50433ba 100644
+> > --- a/fs/crypto/fname.c
+> > +++ b/fs/crypto/fname.c
+> > @@ -178,10 +178,8 @@ static int fname_decrypt(const struct inode *inode,
+> >  static const char lookup_table[65] =
+> >  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
+> >  
+> > -#define BASE64_CHARS(nbytes)	DIV_ROUND_UP((nbytes) * 4, 3)
+> > -
+> >  /**
+> > - * base64_encode() - base64-encode some bytes
+> > + * fscrypt_base64_encode() - base64-encode some bytes
+> >   * @src: the bytes to encode
+> >   * @len: number of bytes to encode
+> >   * @dst: (output) the base64-encoded string.  Not NUL-terminated.
+> >   *
+> >   * Encodes the input string using characters from the set [A-Za-z0-9+,].
+> >   * The encoded string is roughly 4/3 times the size of the input string.
+> >   *
+> >   * Return: length of the encoded string
+> >   */
+> > -static int base64_encode(const u8 *src, int len, char *dst)
+> > +int fscrypt_base64_encode(const u8 *src, int len, char *dst)
+> 
+> As this function will be used more widely, this comment should be fixed to be
+> more precise.  "Roughly 4/3" isn't precise; it's actually exactly
+> FSCRYPT_BASE64_CHARS(len), right?  The following would be better:
+> 
+>  * Encode the input bytes using characters from the set [A-Za-z0-9+,].
+>  *
+>  * Return: length of the encoded string.  This will be equal to
+>  *         FSCRYPT_BASE64_CHARS(len).
+> 
 
-I'm not seriously expecting anybody to review 137 patches.  It's more
-for the bots to chew on (which they have done and I'm about to look
-at their output).  I'll be sending mergable subsets (three rounds; the
-base code, the memcg series and the pagecache series) later this week,
-once I've addressed the build bot complaints.  You've seen all those
-patches individually by now.
+I'm not certain, but I thought that FSCRYPT_BASE64_CHARS gave you a
+worst-case estimate of the inflation. This returns the actual length of
+the resulting encoded string, which may be less than
+FSCRYPT_BASE64_CHARS(len).
 
-My plan is that once those are merged, the rest can proceed in parallel.
-The block + iomap series is independent, then there's the second pagecache
-series.  The last dozen or so patches still need a bit of work as they
-were pulled across from the THP tree and at least need better changelogs.
+> > +/**
+> > + * fscrypt_base64_decode() - base64-decode some bytes
+> > + * @src: the bytes to decode
+> > + * @len: number of bytes to decode
+> > + * @dst: (output) decoded binary data
+> 
+> It's a bit confusing to talk about decoding "bytes"; it's really a string.
+> How about:
+> 
+>  * fscrypt_base64_decode() - base64-decode a string
+>  * @src: the string to decode
+>  * @len: length of the source string, in bytes
+>  * @dst: (output) decoded binary data
+>  *
+>  * Decode a string that was previously encoded using fscrypt_base64_encode().
+>  * The string doesn't need to be NUL-terminated.
+> 
+> > + * Return: length of the decoded binary data
+> 
+> Also the error return values should be documented, e.g.:
+> 
+>  * Return: length of the decoded binary data, or a negative number if the source
+>  *         string isn't a valid base64-encoded string.
+> 
 
-Since this works for me, I'm hoping some people will also test and
-confirm it works for them, and maybe post their own performance numbers
-to justify all this.
+That update looks reasonable.
+
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
