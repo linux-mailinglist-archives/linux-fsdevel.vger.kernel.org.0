@@ -2,145 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58B4C3C66C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 01:07:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B42233C66ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 01:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233401AbhGLXKj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 19:10:39 -0400
-Received: from mail-ej1-f41.google.com ([209.85.218.41]:37559 "EHLO
+        id S231922AbhGLX2S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 19:28:18 -0400
+Received: from mail-ej1-f41.google.com ([209.85.218.41]:35475 "EHLO
         mail-ej1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233227AbhGLXKi (ORCPT
+        with ESMTP id S231205AbhGLX2R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 19:10:38 -0400
-Received: by mail-ej1-f41.google.com with SMTP id i20so37789247ejw.4;
-        Mon, 12 Jul 2021 16:07:48 -0700 (PDT)
+        Mon, 12 Jul 2021 19:28:17 -0400
+Received: by mail-ej1-f41.google.com with SMTP id gn32so37901460ejc.2;
+        Mon, 12 Jul 2021 16:25:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yDu7kpWtoefW5J8ZIKzJkCaSnNc2E9IfezCix3rW6U0=;
-        b=P6QAbFR5ecW3UgzPTh86y657LQzeb4DvEaO+z0iH9BWnvUElPHelfP0aZnMNU6hS0k
-         +TpqaQm5tneQZoNXwW2qzk3zcicAnGW8P7GC0lcK2UazEkhGefv79JEQpgOj+kHSiET+
-         pqmBacw3ma2+87JxzqS6XQZPhmSmyTRE4e0HOUG0TunQWZzpZQlIvfKzEjDOo8ExePkB
-         pkIemog3s9O4cLLJf3nSm+VZVjhU32tMkUWsUhD0js4YCrRK3HE/rRjDcmDzYMK2jDbo
-         05MEOS/OWdjFGb6dkSo0w2ck7tQE8Hd6L1QeiJwNp0F1DtZLRunc0bPvAn/tVYX+YXVi
-         owuw==
-X-Gm-Message-State: AOAM530a7Pn5VQ6yLBa30Iaqx9Ia7ABEM9jTVjv9rZsh9nH0W0nI8oOz
-        Ze3UesvBU0KqiP0vnSXOoysdYG2rAr+mBA==
-X-Google-Smtp-Source: ABdhPJzuwVlDk6fjItU6Bzwexmhey6CpWcb7GumzRR2SX43H76HUPpDoB99GJj1ZCYhtsLJ27mLTxg==
-X-Received: by 2002:a17:907:d89:: with SMTP id go9mr1713628ejc.165.1626131267691;
-        Mon, 12 Jul 2021 16:07:47 -0700 (PDT)
-Received: from msft-t490s.fritz.box (host-95-250-115-52.retail.telecomitalia.it. [95.250.115.52])
-        by smtp.gmail.com with ESMTPSA id h3sm5494111ejf.53.2021.07.12.16.07.46
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=H563yEm0J6K2K6xru5IzDuO+9clWz/y4OULndG63lZQ=;
+        b=n3MNN9LgrB6upN2PCZ08rT18zBbSrAtu0LV3s6pRBSkNAPPS1ykZlZ+G6NlhUwc2g5
+         JxHEhHYCI/HUk9iMHjtPIW8NogqQ2ZY0gonBF7kEhRWZTZWmrbfjZTRRR9lPJ1TShZ+2
+         aH1L2vCk7OF+k5SWgfFs9oGtCvmLgzYPTscqY1hWyl4vgsqAa+MOkeDCpOBzXwIEdqA6
+         14/qEyyhqzKB1iBgqHKBv7bJ06W9bh5elcx5Vt+KsViRdlKgsqeL/Vm/3mGngHp+sccU
+         hUreb142lSZOuKgT+6asjUtD4H3ajVJUeyDDlYgwi16Ljc8dU95NC62sH474MoigEbeW
+         dgYg==
+X-Gm-Message-State: AOAM5318u2xfy53AY/hqBrB9SA20cYmWyGZmPjTJNSZ2xHbRvfAsjWk4
+        lzLvby3wXVJr/LZZZDaw/r0=
+X-Google-Smtp-Source: ABdhPJzOxmMx2OGBYBjWUtpT596k9B7h1Eu/IV82RZK7jMwhWkMSvM5AZYmuqHZnWd0REitXiUH1RQ==
+X-Received: by 2002:a17:906:2dc4:: with SMTP id h4mr1727419eji.528.1626132327523;
+        Mon, 12 Jul 2021 16:25:27 -0700 (PDT)
+Received: from localhost (host-95-250-115-52.retail.telecomitalia.it. [95.250.115.52])
+        by smtp.gmail.com with ESMTPSA id p23sm8910919edw.94.2021.07.12.16.25.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jul 2021 16:07:47 -0700 (PDT)
+        Mon, 12 Jul 2021 16:25:26 -0700 (PDT)
+Date:   Tue, 13 Jul 2021 01:25:22 +0200
 From:   Matteo Croce <mcroce@linux.microsoft.com>
-To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+To:     "Elliott, Robert (Servers)" <elliott@hpe.com>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Lennart Poettering <lennart@poettering.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Lennart Poettering" <lennart@poettering.net>,
         Luca Boccassi <bluca@debian.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Damien Le Moal <damien.lemoal@wdc.com>,
         Tejun Heo <tj@kernel.org>,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        Javier =?UTF-8?B?R29uesOhbGV6?= <javier@javigon.com>,
         Niklas Cassel <niklas.cassel@wdc.com>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Hannes Reinecke <hare@suse.de>,
         Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
         JeffleXu <jefflexu@linux.alibaba.com>
-Subject: [PATCH v5 6/6] loop: raise media_change event
-Date:   Tue, 13 Jul 2021 01:05:30 +0200
-Message-Id: <20210712230530.29323-7-mcroce@linux.microsoft.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210712230530.29323-1-mcroce@linux.microsoft.com>
-References: <20210712230530.29323-1-mcroce@linux.microsoft.com>
+Subject: Re: [PATCH v4 3/5] block: add ioctl to read the disk sequence
+ number
+Message-ID: <20210713012522.70abe32e@linux.microsoft.com>
+In-Reply-To: <TU4PR8401MB10558BB52D2F37CFC96FB8B8AB159@TU4PR8401MB1055.NAMPRD84.PROD.OUTLOOK.COM>
+References: <20210711175415.80173-1-mcroce@linux.microsoft.com>
+        <20210711175415.80173-4-mcroce@linux.microsoft.com>
+        <TU4PR8401MB10558BB52D2F37CFC96FB8B8AB159@TU4PR8401MB1055.NAMPRD84.PROD.OUTLOOK.COM>
+Organization: Microsoft
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Matteo Croce <mcroce@microsoft.com>
+On Mon, 12 Jul 2021 19:22:43 +0000
+"Elliott, Robert (Servers)" <elliott@hpe.com> wrote:
 
-Make the loop device raise a DISK_MEDIA_CHANGE event on attach or detach.
+> 
+> 
+> > -----Original Message-----
+> > From: Matteo Croce <mcroce@linux.microsoft.com>
+> > Sent: Sunday, July 11, 2021 12:54 PM
+> ...
+> > Subject: [PATCH v4 3/5] block: add ioctl to read the disk sequence
+> > number
+> > 
+> > From: Matteo Croce <mcroce@microsoft.com>
+> > 
+> > Add a new BLKGETDISKSEQ ioctl which retrieves the disk sequence
+> > number from the genhd structure.
+> ...
+> 
+> 
+> Given:
+>     static int put_u64(u64 __user *argp, u64 val)
+>     {
+>         return put_user(val, argp);
+>     }
+> 
+> > diff --git a/block/ioctl.c b/block/ioctl.c
+> > index 24beec9ca9c9..0c3a4a53fa11 100644
+> > --- a/block/ioctl.c
+> > +++ b/block/ioctl.c
+> > @@ -469,6 +469,8 @@ static int blkdev_common_ioctl(struct
+> > block_device *bdev, fmode_t mode,
+> >  				BLKDEV_DISCARD_SECURE);
+> ...
+> 
+> > +	case BLKGETDISKSEQ:
+> > +		return put_u64(argp, bdev->bd_disk->diskseq);
+> 
+> How does that work on a system in which int is 32 bits?
+> 
+> 
 
-	# udevadm monitor -up |grep -e DISK_MEDIA_CHANGE -e DEVNAME &
+Hi,
 
-	# losetup -f zero
-	[    7.454235] loop0: detected capacity change from 0 to 16384
-	DISK_MEDIA_CHANGE=1
-	DEVNAME=/dev/loop0
-	DEVNAME=/dev/loop0
-	DEVNAME=/dev/loop0
+what's the difference with this?
 
-	# losetup -f zero
-	[   10.205245] loop1: detected capacity change from 0 to 16384
-	DISK_MEDIA_CHANGE=1
-	DEVNAME=/dev/loop1
-	DEVNAME=/dev/loop1
-	DEVNAME=/dev/loop1
+	case BLKGETSIZE64:
+		return put_u64(argp, i_size_read(bdev->bd_inode));
 
-	# losetup -f zero2
-	[   13.532368] loop2: detected capacity change from 0 to 40960
-	DISK_MEDIA_CHANGE=1
-	DEVNAME=/dev/loop2
-	DEVNAME=/dev/loop2
+The returned int is an error code, not the diskseq value itself, e.g.
 
-	# losetup -D
-	DEVNAME=/dev/loop1
-	DISK_MEDIA_CHANGE=1
-	DEVNAME=/dev/loop1
-	DEVNAME=/dev/loop2
-	DISK_MEDIA_CHANGE=1
-	DEVNAME=/dev/loop2
-	DEVNAME=/dev/loop0
-	DISK_MEDIA_CHANGE=1
-	DEVNAME=/dev/loop0
+	case BLKFRAGET:
+		if (!argp)
+			return -EINVAL;
 
-Signed-off-by: Matteo Croce <mcroce@microsoft.com>
----
- drivers/block/loop.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index f37b9e3d833c..f562609b6d53 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -731,6 +731,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
- 		goto out_err;
- 
- 	/* and ... switch */
-+	disk_force_media_change(lo->lo_disk, DISK_EVENT_MEDIA_CHANGE);
- 	blk_mq_freeze_queue(lo->lo_queue);
- 	mapping_set_gfp_mask(old_file->f_mapping, lo->old_gfp_mask);
- 	lo->lo_backing_file = file;
-@@ -1205,6 +1206,7 @@ static int loop_configure(struct loop_device *lo, fmode_t mode,
- 		goto out_unlock;
- 	}
- 
-+	disk_force_media_change(lo->lo_disk, DISK_EVENT_MEDIA_CHANGE);
- 	set_disk_ro(lo->lo_disk, (lo->lo_flags & LO_FLAGS_READ_ONLY) != 0);
- 
- 	INIT_WORK(&lo->rootcg_work, loop_rootcg_workfn);
-@@ -1349,6 +1351,7 @@ static int __loop_clr_fd(struct loop_device *lo, bool release)
- 
- 	partscan = lo->lo_flags & LO_FLAGS_PARTSCAN && bdev;
- 	lo_number = lo->lo_number;
-+	disk_force_media_change(lo->lo_disk, DISK_EVENT_MEDIA_CHANGE);
- out_unlock:
- 	mutex_unlock(&lo->lo_mutex);
- 	if (partscan) {
-@@ -2325,6 +2328,8 @@ static int loop_add(int i)
- 	disk->fops		= &lo_fops;
- 	disk->private_data	= lo;
- 	disk->queue		= lo->lo_queue;
-+	disk->events		= DISK_EVENT_MEDIA_CHANGE;
-+	disk->event_flags	= DISK_EVENT_FLAG_UEVENT;
- 	sprintf(disk->disk_name, "loop%d", i);
- 	add_disk(disk);
- 	mutex_unlock(&loop_ctl_mutex);
+Regards,
 -- 
-2.31.1
-
+per aspera ad upstream
