@@ -2,158 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DDFF93C759E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 19:18:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A08703C76B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 20:49:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229944AbhGMRVj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jul 2021 13:21:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55540 "EHLO
+        id S230145AbhGMSwY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jul 2021 14:52:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbhGMRVi (ORCPT
+        with ESMTP id S229500AbhGMSwY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jul 2021 13:21:38 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5061C0613EE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 10:18:47 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id oj10-20020a17090b4d8ab0290172f77377ebso2576647pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 10:18:47 -0700 (PDT)
+        Tue, 13 Jul 2021 14:52:24 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA0FBC0613DD
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 11:49:33 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id e20so31459478ljn.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 11:49:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=KmC9PqGKr2ILpbVQwV9g2D6L3OtYrbn8qOnUplZx+iI=;
-        b=njNA0I+6hz9Jfn4Njkxrc7DMg7EOtHvBkOByo6Hzsc/Z80XxlQnso8vAuNJ62cKoUf
-         Aci0lxEMSHBDebLw+3dhkbHEuai798pjsRMiU+c6WeqY2sM9l+gOrGzKw/KQPCILACFc
-         H8m6GVahUKIYz7LQZhITjX7WfbHTp1NGH8GVSwhvGi+6nv+aBEGKjiRqs16vMmpzEqRb
-         nldsSwyhXMVbIEy0F8Q2W89QSQLbQUI647eSp4qUiVWkGTJXWgS86BXQJulwjmFbGWdi
-         dwE/vqIe/2u/NrbYw1G/g8uRL97X+lbMxtIvfVKyPK8dl2WHVmn7zOVD0Mx6JjfMTmT+
-         wPNw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wRjP314M1GpUJgRSbgMGoaSYR4Jg4jHqUSa68YgJXO4=;
+        b=e4sNa/Sg9kxdAqw8spcbO5TswTuu+YuZY4qDNyyT4dhSXDPimR6bb2lWnbbuTInGqB
+         vYUg38sUbSqtZrcvWZKELF4PIlu5pb7g5GNPYB2a3PjVTtamIQpdhfHkcPbrrm/2URQS
+         WJcBQQ/7EzRD+zl/dWIaXSSXiQFQ87HU4XNVI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=KmC9PqGKr2ILpbVQwV9g2D6L3OtYrbn8qOnUplZx+iI=;
-        b=I7eR7M1Rfr5VbIKHYWYvBY8m7XsOWYkX2boE/ZUH9Zg7+6hg9R6IziUIaiqA/yEJfK
-         nfY6Z38jwveTC7X7rYHcMMCBti+PK9jmusi6YT821wp9Jtkiz1BI0Lul2g7Ak0u1wCHK
-         vVH1ykqCV4o5gbbKFHOqPSApWrlGwTTOPrz5rIcd0/M6t9EgCHmE9BwXD1maH5L0bq1i
-         yRWLIjCy40r6kldEJlyETuq3C5uerFfo4PBvIlgpNx2KTdKa2Hmrjv4K/68lXY48AHQ/
-         qrjrFwjYYCrpt/Tv2W09m1LbdWXJ8xn7+5mPxSZW5ssHuj3RFb4xVk/mrE+uARhOIEof
-         FO6g==
-X-Gm-Message-State: AOAM533lYN/fh4tkNmfiKxWLV728SI5GMudyqe4QQtuWZY/rgIwWuKon
-        +eyVBcbM6/7sjvE26V+msBk/Tg==
-X-Google-Smtp-Source: ABdhPJzd0wJV/9j7yMcch7NlugW+6N+rCME1YUBxhvoZ01nsstAJVXqNTfhO4oIK1aNIgcUVaw9FDA==
-X-Received: by 2002:a17:90a:688f:: with SMTP id a15mr5367425pjd.84.1626196727189;
-        Tue, 13 Jul 2021 10:18:47 -0700 (PDT)
-Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id t5sm23656606pgb.58.2021.07.13.10.18.45
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Jul 2021 10:18:46 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <F9C8FA1E-89ED-4FC5-B343-465459EBD3A0@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_F61A0383-2348-46C0-B7AD-5E1448A97355";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v4] fs: forbid invalid project ID
-Date:   Tue, 13 Jul 2021 11:19:11 -0600
-In-Reply-To: <20210710143959.58077-1-wangshilong1991@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Wang Shilong <wshilong@ddn.com>
-To:     Wang Shilong <wangshilong1991@gmail.com>
-References: <20210710143959.58077-1-wangshilong1991@gmail.com>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wRjP314M1GpUJgRSbgMGoaSYR4Jg4jHqUSa68YgJXO4=;
+        b=A7tiUIrsmDFvhmwDOxSjNqTJdUFJgKVdUsK1Q0vi6FFAZ1N4hxnfcoRiFLysJNCqte
+         0gxCfWiHWajrnr0ykCgb3/ABb7Odm6PqZ9RWG3mL1TMbDRyWKgvVVm4Wipk7hoW6h8TY
+         Hv/PiT2VTtNPwUjC+L4E4MaAv7OMobgBVuHVQ1ufNNY8QGSwLS1ZV6H6wz6dfEO9F9pU
+         qc0WJfJxBgTNW0J1zCGbh4ZySh94k3W5WifB+R7Q0bxnE1TcBywW3ycP+O4C3QEj8x+2
+         fmoEx1cJitzStSRr/9MdgpsYfAGVG9XbCQ3+mWVEVBIT7PGIrGuGstOxb6YAlDH5tQmf
+         45rw==
+X-Gm-Message-State: AOAM530zGYbnXjls0muiE4qQ6j0PB0LsnFOQ0hickFRZJWmmB6VlCcUR
+        rbVKgXgh4OAUW325Jlxc/r/aTwrbuKGmM2K4iXE=
+X-Google-Smtp-Source: ABdhPJweVek1JNs2U6lZpOH5SUBpApomAuD8BKd7wo0DwQQq18Gtz0xzbSMrOzYlgqrrN3KkmOdzxg==
+X-Received: by 2002:a2e:8e81:: with SMTP id z1mr5383010ljk.104.1626202171799;
+        Tue, 13 Jul 2021 11:49:31 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id u4sm296983lje.128.2021.07.13.11.49.30
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Jul 2021 11:49:31 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id b40so31447862ljf.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 11:49:30 -0700 (PDT)
+X-Received: by 2002:a2e:a276:: with SMTP id k22mr5215151ljm.465.1626202170413;
+ Tue, 13 Jul 2021 11:49:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <00000000000069c40405be6bdad4@google.com> <000000000000b00c1105c6f971b2@google.com>
+In-Reply-To: <000000000000b00c1105c6f971b2@google.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 13 Jul 2021 11:49:14 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgWv1s1FbTxS+T7kbF-7LLm9Nz1eC+WBn+kr1WdYGtisA@mail.gmail.com>
+Message-ID: <CAHk-=wgWv1s1FbTxS+T7kbF-7LLm9Nz1eC+WBn+kr1WdYGtisA@mail.gmail.com>
+Subject: Re: [syzbot] KASAN: null-ptr-deref Read in filp_close (2)
+To:     syzbot <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com>
+Cc:     brauner@kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        gscrivan@redhat.com, Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable-commits@vger.kernel.org, stable <stable@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Jul 12, 2021 at 9:12 PM syzbot
+<syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has found a reproducer for the following issue on:
 
---Apple-Mail=_F61A0383-2348-46C0-B7AD-5E1448A97355
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+Hmm.
 
-On Jul 10, 2021, at 8:39 AM, Wang Shilong <wangshilong1991@gmail.com> wrote:
-> 
-> From: Wang Shilong <wshilong@ddn.com>
-> 
-> fileattr_set_prepare() should check if project ID
-> is valid, otherwise dqget() will return NULL for
-> such project ID quota.
-> 
-> Signed-off-by: Wang Shilong <wshilong@ddn.com>
+This issue is reported to have been already fixed:
 
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+    Fix commit: 9b5b8722 file: fix close_range() for unshare+cloexec
 
-> ---
-> v3->v3:
-> only check project Id if caller is allowed
-> to change and being changed.
-> 
-> v2->v3: move check before @fsx_projid is accessed
-> and use make_kprojid() helper.
-> 
-> v1->v2: try to fix in the VFS
-> fs/ioctl.c | 8 ++++++++
-> 1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 1e2204fa9963..d4fabb5421cd 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -817,6 +817,14 @@ static int fileattr_set_prepare(struct inode *inode,
-> 		if ((old_ma->fsx_xflags ^ fa->fsx_xflags) &
-> 				FS_XFLAG_PROJINHERIT)
-> 			return -EINVAL;
-> +	} else {
-> +		/*
-> +		 * Caller is allowed to change the project ID. If it is being
-> +		 * changed, make sure that the new value is valid.
-> +		 */
-> +		if (old_ma->fsx_projid != fa->fsx_projid &&
-> +		    !projid_valid(make_kprojid(&init_user_ns, fa->fsx_projid)))
-> +			return -EINVAL;
-> 	}
-> 
-> 	/* Check extent size hints. */
-> --
-> 2.27.0
-> 
+and that fix is already in the reported HEAD commit:
 
+> HEAD commit:    7fef2edf sd: don't mess with SD_MINORS for CONFIG_DEBUG_BL..
 
-Cheers, Andreas
+and the oops report clearly is from that:
 
+> CPU: 1 PID: 8445 Comm: syz-executor493 Not tainted 5.14.0-rc1-syzkaller #0
 
+so the alleged fix is already there.
 
+So clearly commit 9b5b872215fe ("file: fix close_range() for
+unshare+cloexec") does *NOT* fix the issue.
 
+This was originally bisected to that 582f1fb6b721 ("fs, close_range:
+add flag CLOSE_RANGE_CLOEXEC") in
 
+     https://syzkaller.appspot.com/bug?id=1bef50bdd9622a1969608d1090b2b4a588d0c6ac
 
---Apple-Mail=_F61A0383-2348-46C0-B7AD-5E1448A97355
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+which is where the "fix" is from.
 
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
+It would probably be good if sysbot made this kind of "hey, it was
+reported fixed, but it's not" very clear.
 
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmDtyxAACgkQcqXauRfM
-H+CTzg/+JZyNRieQ1mPAKlUt+HGoz9ZeEvCD+OuorOAxhYFmVoyOVKKpeXzkBDbr
-cTt3eplnVEgwp5qLxX9CHoetTTEiZMv3r6HOG9qv2yYImkYP8vg0FxfvdGVI6uzL
-sYin7lxfjCySdra6CQQ1NWKRVMzDUfQShxf6vAWnK1ltWs9tfBTxri0cuVMawC2T
-y0dzyuGqmu+ALrqgl2bKw+vFR/igLBNKzUrpCF5KwV+VdFGrqgoL7VKbJwToZ8T5
-AxPNUblB98CitSKOoIUL/cygq5IOo6IAAoUtJku18bmhzSwUxb19A/jPpsk35xy5
-XC3dpEadhw0XA8+JefthWWucW7nGcOwUevFB2zHafSyFIdR+JpssFa+1sMHwek8X
-7CYCZiEbj4bv/qmCIKd2W61veKacnD1i2ZLzyTrHbyA0CjmlYolstl3SQS3jLoKC
-RQdkOW5uRU1WpEbT/OMnXnhMKg4oyZFReBMAsL8sSBOYitOHAkTTgxlXj3tLqyKl
-kc6Lmy1cY6y9jrRfiFDcn+648exNDrP/WhzhEQt8RYDns3Sww3hapcye/vC8ksrv
-7I4+pux8Mu1NYrJJ9XOZ5FLDaypGlTA3Uds+HzE5RGXe3wHF19Wb7KlAnoHMOeG2
-A+ArrSOlbMhbPVx+P+5TPyIf4FYbZ691eyzNGde7yPRqT/e1qSc=
-=aEGA
------END PGP SIGNATURE-----
+The KASAN report looks like a use-after-free, and that "use" is
+actually the sanity check that the file count is non-zero, so it's
+really a "struct file *" that has already been free'd.
 
---Apple-Mail=_F61A0383-2348-46C0-B7AD-5E1448A97355--
+That bogus free is a regular close() system call
+
+>  filp_close+0x22/0x170 fs/open.c:1306
+>  close_fd+0x5c/0x80 fs/file.c:628
+>  __do_sys_close fs/open.c:1331 [inline]
+>  __se_sys_close fs/open.c:1329 [inline]
+
+And it was opened by a "creat()" system call:
+
+> Allocated by task 8445:
+>  __alloc_file+0x21/0x280 fs/file_table.c:101
+>  alloc_empty_file+0x6d/0x170 fs/file_table.c:150
+>  path_openat+0xde/0x27f0 fs/namei.c:3493
+>  do_filp_open+0x1aa/0x400 fs/namei.c:3534
+>  do_sys_openat2+0x16d/0x420 fs/open.c:1204
+>  do_sys_open fs/open.c:1220 [inline]
+>  __do_sys_creat fs/open.c:1294 [inline]
+>  __se_sys_creat fs/open.c:1288 [inline]
+>  __x64_sys_creat+0xc9/0x120 fs/open.c:1288
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+But it has apparently already been closed from a workqueue:
+
+> Freed by task 8445:
+>  __fput+0x288/0x920 fs/file_table.c:280
+>  task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+
+So it's some kind of confusion and re-use of a struct file pointer.
+
+Which is certainly consistent with the "fix" in 9b5b872215fe ("file:
+fix close_range() for unshare+cloexec"), but it very much looks like
+that fix was incomplete and not the full story.
+
+Some fdtable got re-allocated? The fix that wasn't a fix ends up
+re-checking the maximum file number under the file_lock, but there's
+clearly something else going on too.
+
+Christian?
+
+                Linus
