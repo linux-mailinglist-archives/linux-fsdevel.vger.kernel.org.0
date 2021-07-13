@@ -2,139 +2,325 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A13813C72A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 16:53:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 146DE3C73AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 17:55:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236888AbhGMO4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jul 2021 10:56:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236763AbhGMO4g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jul 2021 10:56:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 60F236128B;
-        Tue, 13 Jul 2021 14:53:44 +0000 (UTC)
-Date:   Tue, 13 Jul 2021 16:53:41 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S237245AbhGMP56 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jul 2021 11:57:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35538 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237225AbhGMP55 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Jul 2021 11:57:57 -0400
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14C48C0613E9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 08:55:07 -0700 (PDT)
+Received: by mail-qk1-x736.google.com with SMTP id s6so19223049qkc.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 08:55:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=KBFRLopOdezb0UodrUpCebJmhvmovia/B4lLwnoHdLs=;
+        b=XfUWsOz2BlkOg4tqZ8lqZuw2GWoctad4pFmKtYmW6w9ehY4KId6tuv/fzvnWG3zadx
+         EJ9W/ux7JMpySOCL4YrYTwtNiBj4N2dXZCHw90P4AlCB0IkfliWPEYz3IPjqV2mwu13U
+         bZ6h/3Cpt/yEQzmLR8gqsAwxzN3tU+Iqnq4Yd00LvDUfGXIKuHVQPzrq21mVy/HJLI6x
+         To1M2Bek3aHsIGSBR4uPfLQmkUpJRdDEV8L5v/5sJDadtiDEVI29Ql0cYZWBPgmpglOd
+         JUws1x8z4tEsBFuIIFoP0jHl+8DuZyn/AU3oafVmztY/lJ47pK5nNWjOzqg7TbLWwgYI
+         GlBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KBFRLopOdezb0UodrUpCebJmhvmovia/B4lLwnoHdLs=;
+        b=RtsZ8m/Tx0bvWnnnMibVLMevjVTWxp/uCQnec+EcrdZN76JRxmaaeIs5GSmZpTNrGX
+         a84GoFDY1HsyVxnJxpWwN3itYMwl+y6WsZJOzXphflOFDYkgeUj/5OvcAVL8oxvJBXKT
+         qOsANWZtuDX1qcJliT+Hw53UVcewAh8TBTH0zewB6Oa6aEfzK9Cbk72MU/0dw8SlHq4j
+         FYGUvFsZYH1tGGV6AoVFmOKqIjJt85tv3kj1HLF58Q7gHFTbX3eVHqjWHVbcyaTpN+HX
+         4j0LA3LDwuBT6PMkwxQV2ZrfVv0Gu5UCkCaSQ2SdoZ69eZXxf/qWmgre6iF2I8ZQc96B
+         1oYA==
+X-Gm-Message-State: AOAM532VWvLIovfrX1q2NK19GkRr6l0WZrOb/E+wu+jWCTFQsWrnMb1P
+        JYdjV4WV2e6cY7Mw6HeAaAANEMmFEK4Fig==
+X-Google-Smtp-Source: ABdhPJz4LFRXvnxpqoLZjllpt8vO0c01aPHVzWSD7Ce1uuRsz3kfMNluQNuHRmIkteK1dervFMGYeQ==
+X-Received: by 2002:a05:620a:1235:: with SMTP id v21mr4805593qkj.360.1626191706116;
+        Tue, 13 Jul 2021 08:55:06 -0700 (PDT)
+Received: from localhost (70.44.39.90.res-cmts.bus.ptd.net. [70.44.39.90])
+        by smtp.gmail.com with ESMTPSA id m6sm6950347qtx.9.2021.07.13.08.55.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Jul 2021 08:55:05 -0700 (PDT)
+Date:   Tue, 13 Jul 2021 11:55:04 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH  1/7] namei: clean up do_rmdir retry logic
-Message-ID: <20210713145341.lngtd5g3p6zf5eoo@wittgenstein>
-References: <20210712123649.1102392-1-dkadashev@gmail.com>
- <20210712123649.1102392-2-dkadashev@gmail.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v13 010/137] mm: Add folio flag manipulation functions
+Message-ID: <YO23WOUhhZtL6Gtn@cmpxchg.org>
+References: <20210712030701.4000097-1-willy@infradead.org>
+ <20210712030701.4000097-11-willy@infradead.org>
+ <YOzdKYejOEUbjvMj@cmpxchg.org>
+ <YOz3Lms9pcsHPKLt@casper.infradead.org>
+ <20210713091533.GB4132@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210712123649.1102392-2-dkadashev@gmail.com>
+In-Reply-To: <20210713091533.GB4132@worktop.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 12, 2021 at 07:36:43PM +0700, Dmitry Kadashev wrote:
-> Moving the main logic to a helper function makes the whole thing much
-> easier to follow.
+On Tue, Jul 13, 2021 at 11:15:33AM +0200, Peter Zijlstra wrote:
+> On Tue, Jul 13, 2021 at 03:15:10AM +0100, Matthew Wilcox wrote:
+> > On Mon, Jul 12, 2021 at 08:24:09PM -0400, Johannes Weiner wrote:
+> > > On Mon, Jul 12, 2021 at 04:04:54AM +0100, Matthew Wilcox (Oracle) wrote:
+> > > > +/* Whether there are one or multiple pages in a folio */
+> > > > +static inline bool folio_single(struct folio *folio)
+> > > > +{
+> > > > +	return !folio_head(folio);
+> > > > +}
+> > > 
+> > > Reading more converted code in the series, I keep tripping over the
+> > > new non-camelcased flag testers.
+> > 
+> > Added PeterZ as he asked for it.
+> > 
+> > https://lore.kernel.org/linux-mm/20210419135528.GC2531743@casper.infradead.org/
 > 
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <christian.brauner@ubuntu.com>
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Link: https://lore.kernel.org/io-uring/CAHk-=wh=cpt_tQCirzFZRPawRpbuFTZ2MxNpXiyUF+eBXF=+sw@mail.gmail.com/
-> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
-> ---
->  fs/namei.c | 44 +++++++++++++++++++++++++-------------------
->  1 file changed, 25 insertions(+), 19 deletions(-)
+> Aye; I hate me some Camels with a passion. And Linux Coding style
+> explicitly not having Camels these things were always a sore spot. I'm
+> very glad to see them go.
 > 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index b5adfd4f7de6..ae6cde7dc91e 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3947,7 +3947,8 @@ int vfs_rmdir(struct user_namespace *mnt_userns, struct inode *dir,
->  }
->  EXPORT_SYMBOL(vfs_rmdir);
->  
-> -int do_rmdir(int dfd, struct filename *name)
-> +static int rmdir_helper(int dfd, struct filename *name,
-> +			unsigned int lookup_flags)
->  {
->  	struct user_namespace *mnt_userns;
->  	int error;
-> @@ -3955,54 +3956,59 @@ int do_rmdir(int dfd, struct filename *name)
->  	struct path path;
->  	struct qstr last;
->  	int type;
-> -	unsigned int lookup_flags = 0;
-> -retry:
-> +
->  	error = __filename_parentat(dfd, name, lookup_flags, &path, &last, &type);
->  	if (error)
-> -		goto exit1;
-> +		return error;
->  
->  	switch (type) {
->  	case LAST_DOTDOT:
->  		error = -ENOTEMPTY;
-> -		goto exit2;
-> +		goto exit1;
->  	case LAST_DOT:
->  		error = -EINVAL;
-> -		goto exit2;
-> +		goto exit1;
->  	case LAST_ROOT:
->  		error = -EBUSY;
-> -		goto exit2;
-> +		goto exit1;
->  	}
->  
->  	error = mnt_want_write(path.mnt);
->  	if (error)
-> -		goto exit2;
-> +		goto exit1;
->  
->  	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
->  	dentry = __lookup_hash(&last, path.dentry, lookup_flags);
->  	error = PTR_ERR(dentry);
->  	if (IS_ERR(dentry))
-> -		goto exit3;
-> +		goto exit2;
->  	if (!dentry->d_inode) {
->  		error = -ENOENT;
-> -		goto exit4;
-> +		goto exit3;
->  	}
->  	error = security_path_rmdir(&path, dentry);
->  	if (error)
-> -		goto exit4;
-> +		goto exit3;
->  	mnt_userns = mnt_user_ns(path.mnt);
->  	error = vfs_rmdir(mnt_userns, path.dentry->d_inode, dentry);
-> -exit4:
-> -	dput(dentry);
->  exit3:
-> +	dput(dentry);
-> +exit2:
->  	inode_unlock(path.dentry->d_inode);
->  	mnt_drop_write(path.mnt);
-> -exit2:
-> -	path_put(&path);
-> -	if (retry_estale(error, lookup_flags)) {
-> -		lookup_flags |= LOOKUP_REVAL;
-> -		goto retry;
-> -	}
->  exit1:
-> +	path_put(&path);
-> +	return error;
-> +}
-> +
-> +int do_rmdir(int dfd, struct filename *name)
-> +{
-> +	int error;
-> +
-> +	error = rmdir_helper(dfd, name, 0);
-> +	if (retry_estale(error, 0))
-> +		error = rmdir_helper(dfd, name, LOOKUP_REVAL);
+> > > It's not an issue when it's adjectives: folio_uptodate(),
+> > > folio_referenced(), folio_locked() etc. - those are obvious. But nouns
+> > > and words that overlap with struct member names can easily be confused
+> > > with non-bool accessors and lookups. Pop quiz: flag test or accessor?
+> > > 
+> > > folio_private()
+> > > folio_lru()
+> > > folio_nid()
+> > > folio_head()
+> > > folio_mapping()
+> > > folio_slab()
+> > > folio_waiters()
+> > 
+> > I know the answers to each of those, but your point is valid.  So what's
+> > your preferred alternative?  folio_is_lru(), folio_is_uptodate(),
+> > folio_is_slab(), etc?  I've seen suggestions for folio_test_lru(),
+> > folio_test_uptodate(), and I don't much care for that alternative.
+> 
+> Either _is_ or _test_ works for me, with a slight preference to _is_ on
+> account it of being shorter.
 
-Instead of naming all these $something_helper I would follow the
-underscore naming pattern we usually do, i.e. instead of e.g.
-rmdir_helper do __rmdir() or __do_rmdir().
+I agree that _is_ reads nicer by itself, but paired with other ops
+such as testset, _test_ might be better.
+
+For example, in __set_page_dirty_no_writeback()
+
+	if (folio_is_dirty())
+		return !folio_testset_dirty()
+
+is less clear about what's going on than would be:
+
+	if (folio_test_dirty())
+		return !folio_testset_dirty()
+
+My other example wasn't quoted, but IMO set and clear naming should
+also match testing to not cause confusion. I.e. the current:
+
+	if (folio_idle())
+		folio_clear_idle_flag()
+
+can make you think two different things are being tested and modified
+(as in if (page_evictable()) ClearPageUnevictable()). IMO easier:
+
+	if (folio_test_idle())
+		folio_clear_idle()
+
+Non-atomics would have the __ modifier in front of folio rather than
+read __clear or __set, which works I suppose?
+
+	__folio_clear_dirty()
+
+With all that, we'd have something like:
+
+	folio_test_foo()
+	folio_set_foo()
+	folio_clear_foo()
+	folio_testset_foo()
+	folio_testclear_foo()
+
+	__folio_test_foo()
+	__folio_set_foo()
+	__folio_clear_foo()
+
+Would that be a workable compromise for everybody?
+
+> > > Now, is anybody going to mistake folio_lock() for an accessor? Not
+> > > once they think about it. Can you figure out and remember what
+> > > folio_head() returns? Probably. What about all the examples above at
+> > > the same time? Personally, I'm starting to struggle. It certainly
+> > > eliminates syntactic help and pattern matching, and puts much more
+> > > weight on semantic analysis and remembering API definitions.
+> > 
+> > Other people have given the opposite advice.  For example,
+> > https://lore.kernel.org/linux-mm/YMmfQNjExNs3cuyq@kroah.com/
+> 
+> Yes, we -tip folk tend to also prefer consistent prefix_ naming, and
+> every time something big gets refactorered we make sure to make it so.
+> 
+> Look at it like a namespace; you can read it like
+> folio::del_from_lru_list() if you want. Obviously there's nothing like
+> 'using folio' for this being C and not C++.
+
+Yeah the lack of `using` is my concern.
+
+Namespacing is nice for more contained APIs. Classic class + method
+type deals, with non-namespaced private helpers implementing public
+methods, and public methods not layered past trivial stuff like
+foo_insert() calling __foo_insert() with a lock held.
+
+memcg, vmalloc, kobject, you name it.
+
+But the page api is pretty sprawling with sizable overlaps between
+interface and implementation, and heavy layering in both. `using`
+would be great to avoid excessive repetition where file or function
+context already does plenty of namespacing. Alas, it's not an option.
+
+So IMO we're taking a concept of more stringent object-oriented
+encapsulation to a large, heavily layered public API without having
+the tools e.g. C++ provides to manage exactly such situations.
+
+If everybody agrees we'll be fine, I won't stand in the way. But I do
+think the page API is a bit unusual in that regard. And while it is
+nice for the outward-facing filesystem interface - and I can see why
+fs people love it - the cost of it seems to be carried by the MM
+implementation code.
+
+> > > What about functions like shrink_page_list() which are long sequences
+> > > of page queries and manipulations? Many lines would be folio_<foo>
+> > > with no further cue whether you're looking at tests, accessors, or a
+> > > high-level state change that is being tested for success. There are
+> > > fewer visual anchors to orient yourself when you page up and down. It
+> > > quite literally turns some code into blah_(), blah_(), blah_():
+> > > 
+> > >        if (!folio_active(folio) && !folio_unevictable(folio)) {
+> > > 	       folio_del_from_lru_list(folio, lruvec);
+> > > 	       folio_set_active_flag(folio);
+> > > 	       folio_add_to_lru_list(folio, lruvec);
+> > > 	       trace_mm_lru_activate(&folio->page);
+> > > 	}
+> > 
+> > I actually like the way that looks (other than the trace_mm_lru_activate()
+> > which is pending a conversion from page to folio).  But I have my head
+> > completely down in it, and I can't tell what works for someone who's
+> > fresh to it.  I do know that it's hard to change from an API you're
+> > used to (and that's part of the cost of changing an API), and I don't
+> > know how to balance that against making a more discoverable API.
+> 
+> Yeah, I don't particularly have a problem with the repeated folio_ thing
+> either, it's something you'll get used to.
+
+Yeah I won't stand in the way if everybody agrees this is fine.
+
+Although I will say, folio_del_from_lru_list() reads a bit like
+'a'.append_to(string) to me. lruvec_add_folio() would match more
+conventional object hierarchy for container/collection/list/array
+interactions, like with list_add, xa_store, rb_insert, etc.
+
+Taking all of the above, we'd have:
+
+	if (!folio_test_active(folio) && !folio_test_unevictable(folio)) {
+		lruvec_del_folio(folio, lruvec);
+		folio_set_active(folio);
+		lruvec_add_folio(folio, lruvec);
+		trace_mm_lru_activate(&folio->page);
+	}
+
+which reads a little better overall, IMO.
+
+Is that a direction we could agree on?
+
+
+It still loses the visual anchoring of page state changes. These are
+often the "commit" part of multi-step transactions, and having those
+cut through the procedural grind a bit is nice - to see more easily
+what the code is fundamentally about, what is prerequisite for the
+transaction, and what is post-transactional housekeeping noise:
+
+	if (!PageActive(page) && !PageUnevictable(page)) {
+		del_page_from_lru_list(page, lruvec);
+		SetPageActive(page);
+		add_page_to_lru_list(page, lruvec);
+		trace_mm_lru_activate(page);
+	}
+
+Similar for isolation clearing PG_lru (empties, comments, locals
+removed):
+
+		if (page_zonenum(page) > sc->reclaim_idx) {
+			list_move(&page->lru, &pages_skipped);
+			nr_skipped[page_zonenum(page)] += nr_pages;
+			continue;
+		}
+		scan += nr_pages;
+		if (!__isolate_lru_page_prepare(page, mode)) {
+			list_move(&page->lru, src);
+			continue;
+		}
+		if (unlikely(!get_page_unless_zero(page))) {
+			list_move(&page->lru, src);
+			continue;
+		}
+		if (!TestClearPageLRU(page)) {
+			put_page(page);
+			list_move(&page->lru, src);
+			continue;
+		}
+		nr_taken += nr_pages;
+		nr_zone_taken[page_zonenum(page)] += nr_pages;
+		list_move(&page->lru, dst);
+
+Or writeback clearing PG_writeback:
+
+	lock_page_memcg(page);
+	if (mapping && mapping_use_writeback_tags(mapping)) {
+		xa_lock_irqsave(&mapping->i_pages, flags);
+		ret = TestClearPageWriteback(page);
+		if (ret) {
+			__xa_clear_mark(&mapping->i_pages, page_index(page),
+						PAGECACHE_TAG_WRITEBACK);
+			if (bdi->capabilities & BDI_CAP_WRITEBACK_ACCT) {
+				dec_wb_stat(wb, WB_WRITEBACK);
+				__wb_writeout_inc(wb);
+			}
+		}
+		if (mapping->host && !mapping_tagged(mapping,
+						     PAGECACHE_TAG_WRITEBACK))
+			sb_clear_inode_writeback(mapping->host);
+		xa_unlock_irqrestore(&mapping->i_pages, flags);
+	} else {
+		ret = TestClearPageWriteback(page);
+	}
+	if (ret) {
+		dec_lruvec_page_state(page, NR_WRITEBACK);
+		dec_zone_page_state(page, NR_ZONE_WRITE_PENDING);
+		inc_node_page_state(page, NR_WRITTEN);
+	}
+	unlock_page_memcg(page);
+
+It's somewhat unfortunate to lose that bit of extra help when
+navigating the code, but I suppose we can live without it.
+
+> I agree that significantly changing the naming of things is a majoy
+> PITA, but given the level of refactoring at that, I think folio_ beats
+> pageymcpageface_. Give it some time to get used to it...
+
+I'll try ;-)
