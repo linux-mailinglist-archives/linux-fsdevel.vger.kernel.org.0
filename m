@@ -2,117 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EDFA3C6889
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 04:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 688E13C68A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 04:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230105AbhGMChr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 22:37:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51934 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbhGMChr (ORCPT
+        id S233898AbhGMCpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 22:45:03 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56374 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S233444AbhGMCpD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 22:37:47 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB9B3C06178C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 19:34:57 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id c17so38484454ejk.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 19:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RBPu6xYIBS0viB5UZS492p6zHqYEhcALtpbidr1sCrU=;
-        b=hAqQVpiv52aQMiILfGaILA7UZ3Vb7hpAEZl5MSyT4Y9giLdF8ZWBqgareVlSQUHWpR
-         ZUrim0on5dre3bqN5EGAiRzVWG6nVeaiF+s6JaGu2Q+54HjtAgU1AvqcqlU5GALyqPc8
-         J59ZdfyvvWc0CNOaKSGrAuHZon7DtT9jG9x1ueo2PbGCXBvXV9LCEYmPz0NJvuwLKCb4
-         e5swfb54jlYSJ49YcMdOKdIhN3CYIP2f7H6ObIehgsT00rpoEugEWTcwjWsk6Ijx/OB+
-         sziXashjbhIgbQwAsqKXq8JHPkE9kbOMVO58+jj4MNa7U/Fp8vQxUrXCiR8DuABY3fmZ
-         DToA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RBPu6xYIBS0viB5UZS492p6zHqYEhcALtpbidr1sCrU=;
-        b=GHnMqzhTL3JJr9eucNnmeYDaAJ5BzIUiZUZo9wlC78oIVkCKPxQH9KNlhi+yfqzMF+
-         t/U6eiawifqarH14c1ACd9u76Td8k/FFID086LxyoCMGczNT2CSYSPreSaTVo6eEvoNJ
-         WQ3ieizlGzFcD8W0D8zQZXg6jLcG5JHMHBirW9D0Czooj3CFpxUbr9cU2pTvLSd26AgP
-         vDjaZRZK80xSEKr2sQkVGI9o0CtSuVEuA2KgC5cYGv9gNoLQ86NdGgRQYqZepDkqeHec
-         UgQQUya3GHACH59p5pIj1HstFBqVPYinEo14lSHodRbsg/d+3dhMMs+x1HOVFLNw8Wdw
-         2q1w==
-X-Gm-Message-State: AOAM531gW6hC0oBi6vQCLzQA0jh4nHp7K8dMn6uz7MrCG6SGN3WYx44w
-        YaEigFSabFKPapwaTdFdrqw+PcrUHOighK+RpWVo
-X-Google-Smtp-Source: ABdhPJyytdq/CE/wkitIkFTYSvvbb5T4D4KC4bniBQLIKEAC15BXF2YMkUTZuWQQktrfljWaz21U9sH3mGdCEuV7T/M=
-X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr2673354ejb.542.1626143695922;
- Mon, 12 Jul 2021 19:34:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210616085118.1141101-1-omosnace@redhat.com> <8735tdiyc1.ffs@nanos.tec.linutronix.de>
-In-Reply-To: <8735tdiyc1.ffs@nanos.tec.linutronix.de>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 12 Jul 2021 22:34:45 -0400
-Message-ID: <CAHC9VhRAN4RS2c3cwpr=DQ_45MDqn2QV7nL4J3ZWXKfUNLcjdQ@mail.gmail.com>
-Subject: Re: [PATCH v3] lockdown,selinux: fix wrong subject in some SELinux
- lockdown checks
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org, linux-acpi@vger.kernel.org,
-        linux-cxl@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
+        Mon, 12 Jul 2021 22:45:03 -0400
+X-UUID: d346211ecf4a4bbdb4686e1c9680087b-20210713
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=q802Vv2CMSQW17WNtOwOhY0YLtlaJIPW7BobIkTXRD8=;
+        b=hx90P2w5iFarKf38iFgJqSy0FW8RKT3/GWSsc6BIiS0gIrdB98DfcfZD5LiK2h+3xv++0BsBZ4JumK0I1l4NLrdeLyZqMKMvmPVHDxINR0cpZ8F7l/DLfP2lfeYr6Rdgs6zkXkbbLl/FvsxZxMl34rc2FvfUCYlrcQsk6S95cFI=;
+X-UUID: d346211ecf4a4bbdb4686e1c9680087b-20210713
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <ed.tsai@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1800056760; Tue, 13 Jul 2021 10:42:10 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 13 Jul 2021 10:42:08 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 13 Jul 2021 10:42:09 +0800
+Message-ID: <1fabb91167a86990f4723e9036a0e006293518f4.camel@mediatek.com>
+Subject: Re: [PATCH] [fuse] alloc_page nofs avoid deadlock
+From:   Ed Tsai <ed.tsai@mediatek.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        chenguanyou <chenguanyou@xiaomi.com>,
+        chenguanyou <chenguanyou9338@gmail.com>,
+        <stanley.chu@mediatek.com>
+Date:   Tue, 13 Jul 2021 10:42:09 +0800
+In-Reply-To: <CAJfpegsEkRnU26Vvo4BTQUmx89Hahp6=RTuyEcPm=rqz8icwUQ@mail.gmail.com>
+References: <20210603125242.31699-1-chenguanyou@xiaomi.com>
+         <CAJfpegsEkRnU26Vvo4BTQUmx89Hahp6=RTuyEcPm=rqz8icwUQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 19, 2021 at 1:00 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Wed, Jun 16 2021 at 10:51, Ondrej Mosnacek wrote:
-> > diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-> > index bda73cb7a044..c43a13241ae8 100644
-> > --- a/arch/x86/mm/testmmiotrace.c
-> > +++ b/arch/x86/mm/testmmiotrace.c
-> > @@ -116,7 +116,7 @@ static void do_test_bulk_ioremapping(void)
-> >  static int __init init(void)
-> >  {
-> >       unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
-> > -     int ret = security_locked_down(LOCKDOWN_MMIOTRACE);
-> > +     int ret = security_locked_down(current_cred(), LOCKDOWN_MMIOTRACE);
->
-> I have no real objection to those patches, but it strikes me odd that
-> out of the 62 changed places 58 have 'current_cred()' and 4 have NULL as
-> argument.
->
-> I can't see why this would ever end up with anything else than
-> current_cred() or NULL and NULL being the 'special' case. So why not
-> having security_locked_down_no_cred() and make current_cred() implicit
-> for security_locked_down() which avoids most of the churn and just makes
-> the special cases special. I might be missing something though.
+T24gVHVlLCAyMDIxLTA2LTA4IGF0IDE3OjMwICswMjAwLCBNaWtsb3MgU3plcmVkaSB3cm90ZToN
+Cj4gT24gVGh1LCAzIEp1biAyMDIxIGF0IDE0OjUyLCBjaGVuZ3VhbnlvdSA8Y2hlbmd1YW55b3U5
+MzM4QGdtYWlsLmNvbT4NCj4gd3JvdGU6DQo+ID4gDQo+ID4gQUJBIGRlYWRsb2NrDQo+ID4gDQo+
+ID4gUElEOiAxNzE3MiBUQVNLOiBmZmZmZmZjMGMxNjJjMDAwIENQVTogNiBDT01NQU5EOiAiVGhy
+ZWFkLTIxIg0KPiA+IDAgW2ZmZmZmZjgwMmQxNmI0MDBdIF9fc3dpdGNoX3RvIGF0IGZmZmZmZjgw
+MDgwODZhNGMNCj4gPiAxIFtmZmZmZmY4MDJkMTZiNDcwXSBfX3NjaGVkdWxlIGF0IGZmZmZmZjgw
+MDkxZmZlNTgNCj4gPiAyIFtmZmZmZmY4MDJkMTZiNGQwXSBzY2hlZHVsZSBhdCBmZmZmZmY4MDA5
+MjAwMzQ4DQo+ID4gMyBbZmZmZmZmODAyZDE2YjRmMF0gYml0X3dhaXQgYXQgZmZmZmZmODAwOTIw
+MTA5OA0KPiA+IDQgW2ZmZmZmZjgwMmQxNmI1MTBdIF9fd2FpdF9vbl9iaXQgYXQgZmZmZmZmODAw
+OTIwMGEzNA0KPiA+IDUgW2ZmZmZmZjgwMmQxNmI1YjBdIGlub2RlX3dhaXRfZm9yX3dyaXRlYmFj
+ayBhdCBmZmZmZmY4MDA4MzBlMWU4DQo+ID4gNiBbZmZmZmZmODAyZDE2YjVlMF0gZXZpY3QgYXQg
+ZmZmZmZmODAwODJmYjE1Yw0KPiA+IDcgW2ZmZmZmZjgwMmQxNmI2MjBdIGlwdXQgYXQgZmZmZmZm
+ODAwODJmOTI3MA0KPiA+IDggW2ZmZmZmZjgwMmQxNmI2ODBdIGRlbnRyeV91bmxpbmtfaW5vZGUg
+YXQgZmZmZmZmODAwODJmNGM5MA0KPiA+IDkgW2ZmZmZmZjgwMmQxNmI2YTBdIF9fZGVudHJ5X2tp
+bGwgYXQgZmZmZmZmODAwODJmMTcxMA0KPiA+IDEwIFtmZmZmZmY4MDJkMTZiNmQwXSBzaHJpbmtf
+ZGVudHJ5X2xpc3QgYXQgZmZmZmZmODAwODJmMWMzNA0KPiA+IDExIFtmZmZmZmY4MDJkMTZiNzUw
+XSBwcnVuZV9kY2FjaGVfc2IgYXQgZmZmZmZmODAwODJmMThhOA0KPiA+IDEyIFtmZmZmZmY4MDJk
+MTZiNzcwXSBzdXBlcl9jYWNoZV9zY2FuIGF0IGZmZmZmZjgwMDgyZDU1YWMNCj4gPiAxMyBbZmZm
+ZmZmODAyZDE2Yjg2MF0gc2hyaW5rX3NsYWIgYXQgZmZmZmZmODAwODI2NjE3MA0KPiA+IDE0IFtm
+ZmZmZmY4MDJkMTZiOTAwXSBzaHJpbmtfbm9kZSBhdCBmZmZmZmY4MDA4MjZiNDIwDQo+ID4gMTUg
+W2ZmZmZmZjgwMmQxNmI5ODBdIGRvX3RyeV90b19mcmVlX3BhZ2VzIGF0IGZmZmZmZjgwMDgyNjg0
+NjANCj4gPiAxNiBbZmZmZmZmODAyZDE2YmE2MF0gdHJ5X3RvX2ZyZWVfcGFnZXMgYXQgZmZmZmZm
+ODAwODI2ODBkMA0KPiA+IDE3IFtmZmZmZmY4MDJkMTZiYmUwXSBfX2FsbG9jX3BhZ2VzX25vZGVt
+YXNrIGF0IGZmZmZmZjgwMDgyNTY1MTQNCj4gPiAxOCBbZmZmZmZmODAyZDE2YmM2MF0gZnVzZV9j
+b3B5X2ZpbGwgYXQgZmZmZmZmODAwODQzODI2OA0KPiA+IDE5IFtmZmZmZmY4MDJkMTZiZDAwXSBm
+dXNlX2Rldl9kb19yZWFkIGF0IGZmZmZmZjgwMDg0Mzc2NTQNCj4gPiAyMCBbZmZmZmZmODAyZDE2
+YmRjMF0gZnVzZV9kZXZfc3BsaWNlX3JlYWQgYXQgZmZmZmZmODAwODQzNmY0MA0KPiA+IDIxIFtm
+ZmZmZmY4MDJkMTZiZTYwXSBzeXNfc3BsaWNlIGF0IGZmZmZmZjgwMDgzMTVkMTgNCj4gPiAyMiBb
+ZmZmZmZmODAyZDE2YmZmMF0gX19zeXNfdHJhY2UgYXQgZmZmZmZmODAwODA4NDAxNA0KPiA+IA0K
+PiA+IFBJRDogOTY1MiBUQVNLOiBmZmZmZmZjMGM5Y2UwMDAwIENQVTogNCBDT01NQU5EOiAia3dv
+cmtlci91MTY6OCINCj4gPiAwIFtmZmZmZmY4MDJlNzkzNjUwXSBfX3N3aXRjaF90byBhdCBmZmZm
+ZmY4MDA4MDg2YTRjDQo+ID4gMSBbZmZmZmZmODAyZTc5MzZjMF0gX19zY2hlZHVsZSBhdCBmZmZm
+ZmY4MDA5MWZmZTU4DQo+ID4gMiBbZmZmZmZmODAyZTc5MzcyMF0gc2NoZWR1bGUgYXQgZmZmZmZm
+ODAwOTIwMDM0OA0KPiA+IDMgW2ZmZmZmZjgwMmU3OTM3NzBdIF9fZnVzZV9yZXF1ZXN0X3NlbmQg
+YXQgZmZmZmZmODAwODQzNTc2MA0KPiA+IDQgW2ZmZmZmZjgwMmU3OTM3YjBdIGZ1c2Vfc2ltcGxl
+X3JlcXVlc3QgYXQgZmZmZmZmODAwODQzNWIxNA0KPiA+IDUgW2ZmZmZmZjgwMmU3OTM5MzBdIGZ1
+c2VfZmx1c2hfdGltZXMgYXQgZmZmZmZmODAwODQzYTdhMA0KPiA+IDYgW2ZmZmZmZjgwMmU3OTM5
+NTBdIGZ1c2Vfd3JpdGVfaW5vZGUgYXQgZmZmZmZmODAwODQzZTRkYw0KPiA+IDcgW2ZmZmZmZjgw
+MmU3OTM5ODBdIF9fd3JpdGViYWNrX3NpbmdsZV9pbm9kZSBhdCBmZmZmZmY4MDA4MzEyNzQwDQo+
+ID4gOCBbZmZmZmZmODAyZTc5M2FhMF0gd3JpdGViYWNrX3NiX2lub2RlcyBhdCBmZmZmZmY4MDA4
+MzExN2U0DQo+ID4gOSBbZmZmZmZmODAyZTc5M2IwMF0gX193cml0ZWJhY2tfaW5vZGVzX3diIGF0
+IGZmZmZmZjgwMDgzMTFkOTgNCj4gPiAxMCBbZmZmZmZmODAyZTc5M2MwMF0gd2Jfd3JpdGViYWNr
+IGF0IGZmZmZmZjgwMDgzMTBjZmMNCj4gPiAxMSBbZmZmZmZmODAyZTc5M2QwMF0gd2Jfd29ya2Zu
+IGF0IGZmZmZmZjgwMDgzMGU0YTgNCj4gPiAxMiBbZmZmZmZmODAyZTc5M2Q5MF0gcHJvY2Vzc19v
+bmVfd29yayBhdCBmZmZmZmY4MDA4MGU0ZmFjDQo+ID4gMTMgW2ZmZmZmZjgwMmU3OTNlMDBdIHdv
+cmtlcl90aHJlYWQgYXQgZmZmZmZmODAwODBlNTY3MA0KPiA+IDE0IFtmZmZmZmY4MDJlNzkzZTYw
+XSBrdGhyZWFkIGF0IGZmZmZmZjgwMDgwZWI2NTANCj4gDQo+IFRoZSBpc3N1ZSBpcyByZWFsLg0K
+PiANCj4gVGhlIGZpeCwgaG93ZXZlciwgaXMgbm90IHRoZSByaWdodCBvbmUuICBUaGUgZnVuZGFt
+ZW50YWwgcHJvYmxlbSBpcw0KPiB0aGF0IGZ1c2Vfd3JpdGVfaW5vZGUoKSBibG9ja3Mgb24gYSBy
+ZXF1ZXN0IHRvIHVzZXJzcGFjZS4NCj4gDQo+IFRoaXMgaXMgdGhlIHNhbWUgaXNzdWUgdGhhdCBm
+dXNlX3dyaXRlcGFnZS9mdXNlX3dyaXRlcGFnZXMgZmFjZS4gIEluDQo+IHRoYXQgY2FzZSB0aGUg
+c29sdXRpb24gd2FzIHRvIGNvcHkgdGhlIHBhZ2UgY29udGVudHMgdG8gYSB0ZW1wb3JhcnkNCj4g
+YnVmZmVyIGFuZCByZXR1cm4gaW1tZWRpYXRlbHkgYXMgaWYgdGhlIHdyaXRlYmFjayBhbHJlYWR5
+IGNvbXBsZXRlZC4NCj4gDQo+IFNvbWV0aGluZyBzaW1pbGFyIG5lZWRzIHRvIGJlIGRvbmUgaGVy
+ZTogc2VuZCB0aGUgRlVTRV9TRVRBVFRSDQo+IHJlcXVlc3QNCj4gYXN5bmNocm9ub3VzbHkgYW5k
+IHJldHVybiBpbW1lZGlhdGVseSBmcm9tIGZ1c2Vfd3JpdGVfaW5vZGUoKS4gIFRoZQ0KPiB0cmlj
+a3kgcGFydCBpcyB0byBtYWtlIHN1cmUgdGhhdCBtdWx0aXBsZSB0aW1lIHVwZGF0ZXMgZm9yIHRo
+ZSBzYW1lDQo+IGlub2RlIGFyZW4ndCBtaXhlZCB1cC4uLg0KPiANCj4gVGhhbmtzLA0KPiBNaWts
+b3MNCg0KRGVhciBTemVyZWRpLA0KDQpXcml0ZWJhY2sgdGhyZWFkIGNhbGxzIGZ1c2Vfd3JpdGVf
+aW5vZGUoKSBhbmQgd2FpdCBmb3IgdXNlciBEYWVtb24gdG8NCmNvbXBsZXRlIHRoaXMgd3JpdGUg
+aW5vZGUgcmVxdWVzdC4gVGhlIHVzZXIgZGFlbW9uIHdpbGwgYWxsb2NfcGFnZSgpDQphZnRlciB0
+YWtpbmcgdGhpcyByZXF1ZXN0LCBhbmQgYSBkZWFkbG9jayBjb3VsZCBoYXBwZW4gd2hlbiB3ZSB0
+cnkgdG8NCnNocmluayBkZW50cnkgbGlzdCB1bmRlciBtZW1vcnkgcHJlc3N1cmUuDQoNCldlIChN
+ZWRpYXRlaykgZ2xhZCB0byB3b3JrIG9uIHRoaXMgaXNzdWUgZm9yIG1haW5saW5lIGFuZCBhbHNv
+IExUUy4gU28NCmFub3RoZXIgcHJvYmxlbSBpcyB0aGF0IHdlIHNob3VsZCBub3QgY2hhbmdlIHRo
+ZSBwcm90b2NvbCBvciBmZWF0dXJlDQpmb3Igc3RhYmxlIGtlcm5lbC4NCg0KVXNlIEdGUF9OT0ZT
+IHwgX19HRlBfSElHSE1FTSBjYW4gcmVhbGx5IGF2b2lkIHRoaXMgYnkgc2tpcCB0aGUgZGVudHJ5
+DQpzaGlybmtlci4gSXQgd29ya3MgYnV0IGRlZ3JhZGUgdGhlIGFsbG9jX3BhZ2Ugc3VjY2VzcyBy
+YXRlLiBJbiBhIG1vcmUNCmZ1bmRhbWVudGFsIHdheSwgd2UgY291bGQgY2FjaGUgdGhlIGNvbnRl
+bnRzIGFuZCByZXR1cm4gaW1tZWRpYXRlbHkuDQpCdXQgaG93IHRvIGVuc3VyZSB0aGUgcmVxdWVz
+dCB3aWxsIGJlIGRvbmUgc3VjY2Vzc2Z1bGx5LCBlLmcuLCBhbHdheXMNCnJldHJ5IGlmIGl0IGZh
+aWxzIGZyb20gZGFlbW9uLg0KDQoNCg==
 
-Unfortunately it is not uncommon for kernel subsystems to add, move,
-or otherwise play around with LSM hooks without checking with the LSM
-folks; generally this is okay, but there have been a few problems in
-the past and I try to keep that in mind when we are introducing new
-hooks or modifying existing ones.  If we have two LSM hooks for
-roughly the same control point it has the potential to cause
-confusion, e.g. do I use the "normal" or the "no_cred" version?  What
-if I don't want to pass a credential, can I just use "no_cred"?  My
-thinking with the single, always-pass-a-cred function is that callers
-don't have to worry about choosing from multiple, similar hooks and
-they know they need to pass a cred which hopefully gets them thinking
-about what cred is appropriate.  It's not foolproof, but I believe the
-single hook approach will be less prone to accidents ... or so I hope
-:)
-
--- 
-paul moore
-www.paul-moore.com
