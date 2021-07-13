@@ -2,159 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F4263C6F1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 13:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54F523C6F2C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 13:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235671AbhGMLGQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jul 2021 07:06:16 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:12380 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229784AbhGMLGP (ORCPT
+        id S235722AbhGMLOb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jul 2021 07:14:31 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:35626 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235390AbhGMLOa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jul 2021 07:06:15 -0400
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16DB1Qvx007979;
-        Tue, 13 Jul 2021 11:02:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2020-01-29;
- bh=bJjYanza1S94svd51N3qTB5JtzOYaZZJ17wynlJ79pY=;
- b=zH1fyTFGq6F7TV0dZQsDZmG7PLx6w+F79mxiqymAWv5WvnbZminL/KtweL5OZ1asQeG9
- fr7Pf+PaZryMCoyqSmyrJ3NNv3XdxypeJyiRHIoXd35IkVRdAPc2YJBZ9gFxIgH5GY41
- Kwpj8JbSlbdyB9TQ6VGcl+K2f+xbKXdEki/ofRg6zxkTXkhyBamhT+AooLBe6Ell0Amk
- OfXANXFe9XsC8zefyboDX49DQm/uUU++BKIYg4mrg14r1WZsObodll0UQjnxulGQazNj
- qSZvHqJ42SNN90zA3t4VRhCSGu9gcB74ZG/J3p2I6J4kikGDhheS9oDxvJKpB5zH/AU4 7Q== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39r9hckb9n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Jul 2021 11:02:45 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 16DAsfLe140212;
-        Tue, 13 Jul 2021 11:02:44 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2172.outbound.protection.outlook.com [104.47.59.172])
-        by aserp3020.oracle.com with ESMTP id 39q3cas8qc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Jul 2021 11:02:44 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JxFqVzQUJVmeYxsJHe7j0XS9EusKlvb2s53l3S20rDpcWiAfPfY1bahr5fv/BiCZCSW2nXmhUGp7AZXZaAKktnumAMaFOX1UNh0qVVuqW/KAH/Cp1OCJjb00+QdEdAwjVPxPPremkYW9zTd685JSazlHBtUm5XddqnlBtgf8CBX0jI/OniUEBcfqcBnmEl6gKc2sKKmQVQd4mWX9cDx07VHjjCePGgTU98Gkae0f58NrEqJ+NGfCEdT2nbyxVt3LxGuIMjDOvDH2cuJcfTxXgXz0bHKX9+KTeE1WQbc7fAg8ysZUG5IGVBLIQsaRjBlb+/X6XhvTkbfGiatRWzm+Qw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bJjYanza1S94svd51N3qTB5JtzOYaZZJ17wynlJ79pY=;
- b=dBbHUf7ieShb2GSGLTmImPIxvaioM7MzDDzZGyX+b8oppNvO27tgplELmYKJZJ1ruKHb1BBE7sJIpvBHchUBu1Q3yAHzl8DS+/b6Z0CnbM+UNLfxThaVryfanQrr/8DbSz3QtbAZXnh48641s3o/vfH1A+y1QaTIpo3p703bokirOB83S0Dalr4DyeU+jBDhn98eMyNwqyU1T5d4sUj9ROTS8eMGIGhlduET4P8YALeRBya9XJLvl13oca8Ow+Xf3tJuBjUI1sFMDZMASyKmK/PvpOVn+md0tOA1T5K0dKyT99uAwMhLL+VLiQ1dFXOFoaxRwoX3GIb/BcDLQOQlEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bJjYanza1S94svd51N3qTB5JtzOYaZZJ17wynlJ79pY=;
- b=mj84pwQEKcharaCiHQD0nItI2ZMd1yjs+B8gJJnKQC19FCWX2wjpOmy7vzrfHiVRYjKN6dc/smzCVH5Ju7hZK+pjnxwCpxIhscTjCRGvE50/KhmJZxqOTOck8nmow31MH1C96dHcWgFMAPDE87NQsSqSNm1p6J1TtKKHYOhx8G0=
-Authentication-Results: bytedance.com; dkim=none (message not signed)
- header.d=none;bytedance.com; dmarc=none action=none header.from=oracle.com;
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by CO1PR10MB4706.namprd10.prod.outlook.com
- (2603:10b6:303:9d::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20; Tue, 13 Jul
- 2021 11:02:42 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::3413:3c61:5067:ba73]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::3413:3c61:5067:ba73%5]) with mapi id 15.20.4308.027; Tue, 13 Jul 2021
- 11:02:42 +0000
-Date:   Tue, 13 Jul 2021 14:02:11 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Xie Yongji <xieyongji@bytedance.com>
-Cc:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
-        sgarzare@redhat.com, parav@nvidia.com, hch@infradead.org,
-        christian.brauner@canonical.com, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
-        joro@8bytes.org, gregkh@linuxfoundation.org, zhe.he@windriver.com,
-        xiaodong.liu@intel.com, songmuchun@bytedance.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 07/17] virtio: Don't set FAILED status bit on device
- index allocation failure
-Message-ID: <20210713110211.GK1954@kadam>
-References: <20210713084656.232-1-xieyongji@bytedance.com>
- <20210713084656.232-8-xieyongji@bytedance.com>
+        Tue, 13 Jul 2021 07:14:30 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 661E4200A3;
+        Tue, 13 Jul 2021 11:11:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1626174699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fyfxSkHG6hwIFaTZZwzH64axAQ9uhCZWiMEIgFfPd5w=;
+        b=SvCFB6+vDIf8Ufi+U+qCl/kMdXbumeGBaEqoXR+GZBRxhR4IDKqpE2c0zcGl+N6cCDC8KF
+        gaoB2/+tuPOuB8ZdBQipnidL3m7Mjc9y7S9C1no9auhbaKrKdlQwuGXrskdgVasTkAXr73
+        p1Bfi16wJBCyfh0qV9V2mtnDcHciz5o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1626174699;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fyfxSkHG6hwIFaTZZwzH64axAQ9uhCZWiMEIgFfPd5w=;
+        b=/S4tY5hsn1E8XhBz1UlPg/4OtMs32QpnHfCCGCeNU93DxE2frczkRaUERn0Wm77094ed5w
+        9YjLrvb5LCzD1LBQ==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 39890A3B85;
+        Tue, 13 Jul 2021 11:11:39 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 159D21E0BBC; Tue, 13 Jul 2021 13:11:39 +0200 (CEST)
+Date:   Tue, 13 Jul 2021 13:11:39 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Ted Tso <tytso@mit.edu>, Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 03/14] mm: Protect operations adding pages to page cache
+ with invalidate_lock
+Message-ID: <20210713111139.GG12142@quack2.suse.cz>
+References: <20210712163901.29514-1-jack@suse.cz>
+ <20210712165609.13215-3-jack@suse.cz>
+ <20210713012514.GB22402@magnolia>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210713084656.232-8-xieyongji@bytedance.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: JN2P275CA0018.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:3::30)
- To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from kadam (102.222.70.252) by JN2P275CA0018.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:3::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.19 via Frontend Transport; Tue, 13 Jul 2021 11:02:27 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ea0f191e-4339-4e89-4adf-08d945edbc55
-X-MS-TrafficTypeDiagnostic: CO1PR10MB4706:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CO1PR10MB4706A0B2FFFE16DE7AD48D3C8E149@CO1PR10MB4706.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1728;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rpdNG6Y+TZgpyuFZA7SVbUDQheP54Pam3v1gDqisOyRoU9EDqfPKzZEw209umAW+FJOSeuDjm2MgGq0BRc4py8uoBTBrutu384grdYgid2RI7sUOWv9Q4/43oKoo4oj0NIFlTuaSS1Q7vStWelr5pOsvNESB3GA3n/0vVRDWU28+PBCy6FP7MGAuKH8RUZJ4riQyUmKaEaEObReMT+/iIjAomKqW8OE8W4K0Epf9EZDVgDFGpJDwPOYUEqJxLdSKeBz4Urm9d7JvaaMpq5FNsQdJGE91Inx3gXvtmstG7v3Ybq9EJ32708XjjOtggKrO600Lj8DUBmdc1aeTa9o9w93366pDbbfszin5nVwpjqqrkEMsdFFuiJ0kZY6Lijhh1BP/32LxsXwobxVtLQWDH2yqHgZLBrY9RQ6QhuU1cnyvkEBgzdC2Z4xFpmnDnH6JYAZbFhgxkW0f5u8slLvVCMjMlTwr6xTps/XTgjGG/3sW3GTsw0UonsBUlzf+hR6qUt6B18moGkWa0MTbiHcb/ukuV4ADBufonPPTwnJivPKqCdTOMvdFD37b2ukaIoc0aTE1fUf3uf7ge3ainhI1IvgDgcnSeYTtJNnZu227AXy5JEy6JEPWQICYUEibct8LHNdK7iZjtAvzBkZO3VfmCLVcjst3cIySlZUV61G0gnO48ZBCObE7hfq1apm7H7FjvGemJxTHVP2Au5NtY2GnEQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(136003)(366004)(39860400002)(396003)(346002)(86362001)(6496006)(316002)(55016002)(66476007)(4326008)(33716001)(66946007)(1076003)(44832011)(66556008)(6916009)(83380400001)(52116002)(5660300002)(26005)(33656002)(38350700002)(8676002)(186003)(478600001)(6666004)(8936002)(956004)(38100700002)(9576002)(4744005)(7416002)(9686003)(2906002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?WboQdJFAps6YvlryAunlFrzyZD0UU79y8FhIPmZr7Ah8/9fAioLTAMIbl9Kr?=
- =?us-ascii?Q?6Fk8A2nH5Hjpi7ZxnOD3FHFosd9SO2Vqa3mwmN+Ckdqj/0s6JHEkKpcmbWR1?=
- =?us-ascii?Q?h24Tgf0VO+p+IP2+qz/+zI6UHGyiiMXgAXwuvNJOpfTD5zyS6dE86KNlsXt/?=
- =?us-ascii?Q?GdLnrN2YyW9AfwmnoTmApeS322qlDLfVcEQWhi55engwZl40jfOs+upycPrM?=
- =?us-ascii?Q?yySZdZe3EIwtwtk83rJuvOmFT2nTZXbLKp5Lspy5iFBA40n7/xIHpD0jSA+L?=
- =?us-ascii?Q?gR5/JIOMaXJK2yYHOO4DN142GzSad8fe2AoJadhAdw5Ty/9PRIH8in+s4esz?=
- =?us-ascii?Q?lg9QODu3TeVEiXkQ6UW0xkJ8KbLYXxT1IIrcZqe6fxgabwBwrcQlL6WmG5tv?=
- =?us-ascii?Q?WDERjZeyC9SPBcsIUl85db3x4buGRWXCAb0rV1w9I8otWA12qm2yLTxlqLo+?=
- =?us-ascii?Q?ONbLBl260bZnu8cQf7ONSLYN72mWn6/S8HJ9d1P4tqfkvaK44Q3+RSMwPzk0?=
- =?us-ascii?Q?V9Ix8KWPrUdodNfjfCOgJRwCz0wCbeco+ND1YrUzOOoFZyB+1vteoA/cYacU?=
- =?us-ascii?Q?ozmkh3EORNcGKxplck1zq16wZZb3Oscxv2qZUKTjY1/81qXZ1t7IcBcjSfvZ?=
- =?us-ascii?Q?1D6gfZn1zs76r8qCjYHOZuOE5v6p+7YuTHGXSpZSadQ2JYo7m6L7iHhTLiaF?=
- =?us-ascii?Q?QHK+RRfN712z8fbxtJfI75dFAmMlIPyoLdHHe3IUvpWH7jrYlVjsCbDETo7h?=
- =?us-ascii?Q?FSNKNkw7lgoE7CwPxTlCQRkRRZ50gb/z3d4r2hJAP4x+0j82CTEDT+nsfVOX?=
- =?us-ascii?Q?jrLWTOWkaaGOiv5L6bPCz74DnrN1A91pas/Cj5bups6GyXNyI13+Rb3aUm3f?=
- =?us-ascii?Q?y6kidH8sB/jsxu7lXbsXfuPcMg7avE5OyfingsZkq55k5bR5WkatVmn4t4Ya?=
- =?us-ascii?Q?4jdndSftT2TMmDg8MS73GVs5othSWLK2BVD6SkUg701xzEozt/KntdSlJZAK?=
- =?us-ascii?Q?0PbRzC1jRM7ZnW/vRnNkOvs4i6/5YbH3dS1wtPjZg9FnOvchLBDnW0xT7nb5?=
- =?us-ascii?Q?/MwuGe+TEqKoRPaL2IdaITSIlP98xRl6+CpZt9kJfMXEAjTIQZwJ5qPrqHlS?=
- =?us-ascii?Q?2UHTq4WAOpvqVK+zo+6lM3nkGwdKdRSkllV7hyTaF1eVzGASUZK2FnLY04UT?=
- =?us-ascii?Q?zepItgOH8EC+wMfcLDF8Bw6s2gg21DAI2lnl/icYUaAwoeza3E1rwIbIOUO5?=
- =?us-ascii?Q?0a5FgWz20gwttJUGteKEhfTmIMaZfgptHEdCOlGbrVnfVKPEJ1PWDZUyEhmi?=
- =?us-ascii?Q?xy306PM8XOFuqohYG/BF5bEa?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea0f191e-4339-4e89-4adf-08d945edbc55
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2021 11:02:42.1126
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XpJCTAcd9jqhz8kFdygfGjEpvo5kDivkdYwPBDtzGykHuiTSw+z6+Rcgw+KBgEj9LDIiQ05qPQ9+GieqHclmHENvIPPo/BP7FtuxH5dfl5I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4706
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10043 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
- suspectscore=0 phishscore=0 adultscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2107130070
-X-Proofpoint-ORIG-GUID: DFUk50LmBfb8Xb2NUJqW4oISIaKeSfxW
-X-Proofpoint-GUID: DFUk50LmBfb8Xb2NUJqW4oISIaKeSfxW
+In-Reply-To: <20210713012514.GB22402@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 13, 2021 at 04:46:46PM +0800, Xie Yongji wrote:
-> We don't need to set FAILED status bit on device index allocation
-> failure since the device initialization hasn't been started yet.
+On Mon 12-07-21 18:25:14, Darrick J. Wong wrote:
+> On Mon, Jul 12, 2021 at 06:55:54PM +0200, Jan Kara wrote:
+> > @@ -2967,6 +2992,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+> >  	pgoff_t max_off;
+> >  	struct page *page;
+> >  	vm_fault_t ret = 0;
+> > +	bool mapping_locked = false;
+> >  
+> >  	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> >  	if (unlikely(offset >= max_off))
+> > @@ -2988,15 +3014,30 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+> >  		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
+> >  		ret = VM_FAULT_MAJOR;
+> >  		fpin = do_sync_mmap_readahead(vmf);
+> > +	}
+> > +
+> > +	if (!page) {
+> 
+> Is it still necessary to re-evaluate !page here?
 
-The commit message should say what the effect of this change is to the
-user.  Is this a bugfix?  Will it have any effect on runtime at all?
+No, you are right it is not necessary. I'll remove it.
 
-To me, hearing your thoughts on this is valuable even if you have to
-guess.  "I noticed this mistake during review and I don't think it will
-affect runtime."
+> >  retry_find:
+> > +		/*
+> > +		 * See comment in filemap_create_page() why we need
+> > +		 * invalidate_lock
+> > +		 */
+> > +		if (!mapping_locked) {
+> > +			filemap_invalidate_lock_shared(mapping);
+> > +			mapping_locked = true;
+> > +		}
+> >  		page = pagecache_get_page(mapping, offset,
+> >  					  FGP_CREAT|FGP_FOR_MMAP,
+> >  					  vmf->gfp_mask);
+> >  		if (!page) {
+> >  			if (fpin)
+> >  				goto out_retry;
+> > +			filemap_invalidate_unlock_shared(mapping);
+> >  			return VM_FAULT_OOM;
+> >  		}
+> > +	} else if (unlikely(!PageUptodate(page))) {
+> > +		filemap_invalidate_lock_shared(mapping);
+> > +		mapping_locked = true;
+> >  	}
+> >  
+> >  	if (!lock_page_maybe_drop_mmap(vmf, page, &fpin))
+> > @@ -3014,8 +3055,20 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+> >  	 * We have a locked page in the page cache, now we need to check
+> >  	 * that it's up-to-date. If not, it is going to be due to an error.
+> >  	 */
+> > -	if (unlikely(!PageUptodate(page)))
+> > +	if (unlikely(!PageUptodate(page))) {
+> > +		/*
+> > +		 * The page was in cache and uptodate and now it is not.
+> > +		 * Strange but possible since we didn't hold the page lock all
+> > +		 * the time. Let's drop everything get the invalidate lock and
+> > +		 * try again.
+> > +		 */
+> > +		if (!mapping_locked) {
+> > +			unlock_page(page);
+> > +			put_page(page);
+> > +			goto retry_find;
+> > +		}
+> >  		goto page_not_uptodate;
+> > +	}
+> >  
+> >  	/*
+> >  	 * We've made it this far and we had to drop our mmap_lock, now is the
+> > @@ -3026,6 +3079,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+> >  		unlock_page(page);
+> >  		goto out_retry;
+> >  	}
+> > +	if (mapping_locked)
+> > +		filemap_invalidate_unlock_shared(mapping);
+> >  
+> >  	/*
+> >  	 * Found the page and have a reference on it.
+> > @@ -3056,6 +3111,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+> >  
+> >  	if (!error || error == AOP_TRUNCATED_PAGE)
+> >  		goto retry_find;
+> > +	filemap_invalidate_unlock_shared(mapping);
+> 
+> Hm.  I /think/ it's the case that mapping_locked==true always holds here
+> because the new "The page was in cache and uptodate and now it is not."
+> block above will take the invalidate_lock and retry pagecache_get_page,
+> right?
 
-regards,
-dan carpenter
+Yes. page_not_uptodate block can only be entered with mapping_locked ==
+true - the only place that can enter this block is:
 
+        if (unlikely(!PageUptodate(page))) {
+                /*
+                 * The page was in cache and uptodate and now it is not.
+                 * Strange but possible since we didn't hold the page lock all
+                 * the time. Let's drop everything get the invalidate lock and
+                 * try again.
+                 */
+                if (!mapping_locked) {
+                        unlock_page(page);
+                        put_page(page);
+                        goto retry_find;
+                }
+                goto page_not_uptodate;
+        }
+
+> >  
+> >  	return VM_FAULT_SIGBUS;
+> >  
+> > @@ -3067,6 +3123,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+> >  	 */
+> >  	if (page)
+> >  		put_page(page);
+> > +	if (mapping_locked)
+> > +		filemap_invalidate_unlock_shared(mapping);
+> 
+> Hm.  I think this looks ok, even though this patch now contains the
+> subtlety that we've both hoisted the xfs mmaplock to page cache /and/
+> reduced the scope of the invalidate_lock.
+> 
+> As for fancy things like remap_range, I think they're still safe with
+> this latest iteration because those functions grab the invalidate_lock
+> in exclusive mode and invalidate the mappings before proceeding, which
+> means that other programs will never find the lockless path (i.e. page
+> locked, uptodate, and attached to the mapping) and will instead block on
+> the invalidate lock until the remap operation completes.   Is that
+> right?
+
+Correct. For operations such as hole punch or destination of remap_range,
+we lock invalidate_lock exclusively and invalidate pagecache in the
+involved range. No new pages can be created in that range until you drop
+invalidate_lock (places creating pages without holding i_rwsem are read,
+readahead, fault and all those take invalidate_lock when they should create
+the page).
+
+There's also the case someone pointed out that *source* of remap_range
+needs to be protected (but only from modifications through mmap). This is
+achieved by having invalidate_lock taken in .page_mkwrite handlers and
+thus not impacted by these changes to filemap_fault().
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
