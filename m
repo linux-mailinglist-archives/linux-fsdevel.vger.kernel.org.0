@@ -2,127 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B42233C66ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 01:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24A343C676A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 02:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231922AbhGLX2S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jul 2021 19:28:18 -0400
-Received: from mail-ej1-f41.google.com ([209.85.218.41]:35475 "EHLO
-        mail-ej1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231205AbhGLX2R (ORCPT
+        id S233701AbhGMA1B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jul 2021 20:27:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51260 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233479AbhGMA1B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jul 2021 19:28:17 -0400
-Received: by mail-ej1-f41.google.com with SMTP id gn32so37901460ejc.2;
-        Mon, 12 Jul 2021 16:25:28 -0700 (PDT)
+        Mon, 12 Jul 2021 20:27:01 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 660D2C0613E9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 17:24:12 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id e14so19851248qkl.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jul 2021 17:24:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=yB5qAIs9Fc7CEvMMJ8HjSEc+CJeHsMb3Z3r28kd1YEE=;
+        b=01/+1PeyYqpCfkWSPiQzQ1/4ZzPCpTK75chfxFtWF7xgFFxO8o4Rb6MeI8H1ivl+R1
+         1ebZc2s7qCJgIHtRRFKwbcgLSUa4zIa4Kn6y6NMGTV1QlR87DV9iAeYNqMq5bDoBrrmC
+         XSi53W67knvsyOnZ1i+6YWyZWQNWcAk+m6zx/QRcYOJTWpZRpKDsnGM0zk4Tqb3GXrN3
+         beKx5CGDrwhitiApD8OyX43Jrc3VFvy31lLfrNz0N5XDSD7AxLj9gFkWp+qDmeu0p9Yb
+         o+evI0jqah2VbXE5Lt/o15HtAEE+yZjiMaIPwdVonhgkYelnStKJwaS/TWNSzoI3xkZq
+         sQ3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=H563yEm0J6K2K6xru5IzDuO+9clWz/y4OULndG63lZQ=;
-        b=n3MNN9LgrB6upN2PCZ08rT18zBbSrAtu0LV3s6pRBSkNAPPS1ykZlZ+G6NlhUwc2g5
-         JxHEhHYCI/HUk9iMHjtPIW8NogqQ2ZY0gonBF7kEhRWZTZWmrbfjZTRRR9lPJ1TShZ+2
-         aH1L2vCk7OF+k5SWgfFs9oGtCvmLgzYPTscqY1hWyl4vgsqAa+MOkeDCpOBzXwIEdqA6
-         14/qEyyhqzKB1iBgqHKBv7bJ06W9bh5elcx5Vt+KsViRdlKgsqeL/Vm/3mGngHp+sccU
-         hUreb142lSZOuKgT+6asjUtD4H3ajVJUeyDDlYgwi16Ljc8dU95NC62sH474MoigEbeW
-         dgYg==
-X-Gm-Message-State: AOAM5318u2xfy53AY/hqBrB9SA20cYmWyGZmPjTJNSZ2xHbRvfAsjWk4
-        lzLvby3wXVJr/LZZZDaw/r0=
-X-Google-Smtp-Source: ABdhPJzOxmMx2OGBYBjWUtpT596k9B7h1Eu/IV82RZK7jMwhWkMSvM5AZYmuqHZnWd0REitXiUH1RQ==
-X-Received: by 2002:a17:906:2dc4:: with SMTP id h4mr1727419eji.528.1626132327523;
-        Mon, 12 Jul 2021 16:25:27 -0700 (PDT)
-Received: from localhost (host-95-250-115-52.retail.telecomitalia.it. [95.250.115.52])
-        by smtp.gmail.com with ESMTPSA id p23sm8910919edw.94.2021.07.12.16.25.25
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=yB5qAIs9Fc7CEvMMJ8HjSEc+CJeHsMb3Z3r28kd1YEE=;
+        b=ldlxVpq/GKSFZ7Uq0XsinkK125JGWPt+UupcvvlA8uO2BcpmFBnN/PJ5Ctg+28r7jZ
+         9OCneGE82A8OSUtEWg9yEf7EKi2C04O8VJ8Z/kE8guPIYlUvtyOH7DeBkA4aksXTjhVj
+         n03lm77XXzI5fnaCudR4wx/EHmPoHNg2rBfJsUTXL1pRRKqxPAaFgYJMuUs/iuqmLBzf
+         XgYYEk856EB9sYY7PyZnkwIzt6L8L4G6S0U2SHDdR/Ssbh3+RYHNpZ2Az7oExxGO4EZv
+         vORCNZHe7UZUGFeIQdz2MWJ221/9AodIfAPwjH8QMNFYfCeTRJ+Z2CEGGBnJv+1YzC/7
+         NnZw==
+X-Gm-Message-State: AOAM530bhGZqjiwpO6f8fSmutqBouCVH6JX9FdVYTklKoUo0n2OW5IUi
+        JI4JTmilAUUjMIKpAPJnjIyksQ==
+X-Google-Smtp-Source: ABdhPJyNS88bT9lchdE/k2l0s9hF0E9K9iY57Ozrhl0XABc1zYmIZo6n9Z6iN5rSiOntQZCXbF+IQw==
+X-Received: by 2002:ae9:dd06:: with SMTP id r6mr1467355qkf.74.1626135851341;
+        Mon, 12 Jul 2021 17:24:11 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::1:a40c])
+        by smtp.gmail.com with ESMTPSA id x20sm7394463qkp.15.2021.07.12.17.24.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jul 2021 16:25:26 -0700 (PDT)
-Date:   Tue, 13 Jul 2021 01:25:22 +0200
-From:   Matteo Croce <mcroce@linux.microsoft.com>
-To:     "Elliott, Robert (Servers)" <elliott@hpe.com>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Lennart Poettering" <lennart@poettering.net>,
-        Luca Boccassi <bluca@debian.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tejun Heo <tj@kernel.org>,
-        Javier =?UTF-8?B?R29uesOhbGV6?= <javier@javigon.com>,
-        Niklas Cassel <niklas.cassel@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        JeffleXu <jefflexu@linux.alibaba.com>
-Subject: Re: [PATCH v4 3/5] block: add ioctl to read the disk sequence
- number
-Message-ID: <20210713012522.70abe32e@linux.microsoft.com>
-In-Reply-To: <TU4PR8401MB10558BB52D2F37CFC96FB8B8AB159@TU4PR8401MB1055.NAMPRD84.PROD.OUTLOOK.COM>
-References: <20210711175415.80173-1-mcroce@linux.microsoft.com>
-        <20210711175415.80173-4-mcroce@linux.microsoft.com>
-        <TU4PR8401MB10558BB52D2F37CFC96FB8B8AB159@TU4PR8401MB1055.NAMPRD84.PROD.OUTLOOK.COM>
-Organization: Microsoft
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        Mon, 12 Jul 2021 17:24:10 -0700 (PDT)
+Date:   Mon, 12 Jul 2021 20:24:09 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v13 010/137] mm: Add folio flag manipulation functions
+Message-ID: <YOzdKYejOEUbjvMj@cmpxchg.org>
+References: <20210712030701.4000097-1-willy@infradead.org>
+ <20210712030701.4000097-11-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210712030701.4000097-11-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 12 Jul 2021 19:22:43 +0000
-"Elliott, Robert (Servers)" <elliott@hpe.com> wrote:
+On Mon, Jul 12, 2021 at 04:04:54AM +0100, Matthew Wilcox (Oracle) wrote:
+> +/* Whether there are one or multiple pages in a folio */
+> +static inline bool folio_single(struct folio *folio)
+> +{
+> +	return !folio_head(folio);
+> +}
 
-> 
-> 
-> > -----Original Message-----
-> > From: Matteo Croce <mcroce@linux.microsoft.com>
-> > Sent: Sunday, July 11, 2021 12:54 PM
-> ...
-> > Subject: [PATCH v4 3/5] block: add ioctl to read the disk sequence
-> > number
-> > 
-> > From: Matteo Croce <mcroce@microsoft.com>
-> > 
-> > Add a new BLKGETDISKSEQ ioctl which retrieves the disk sequence
-> > number from the genhd structure.
-> ...
-> 
-> 
-> Given:
->     static int put_u64(u64 __user *argp, u64 val)
->     {
->         return put_user(val, argp);
->     }
-> 
-> > diff --git a/block/ioctl.c b/block/ioctl.c
-> > index 24beec9ca9c9..0c3a4a53fa11 100644
-> > --- a/block/ioctl.c
-> > +++ b/block/ioctl.c
-> > @@ -469,6 +469,8 @@ static int blkdev_common_ioctl(struct
-> > block_device *bdev, fmode_t mode,
-> >  				BLKDEV_DISCARD_SECURE);
-> ...
-> 
-> > +	case BLKGETDISKSEQ:
-> > +		return put_u64(argp, bdev->bd_disk->diskseq);
-> 
-> How does that work on a system in which int is 32 bits?
-> 
-> 
+Reading more converted code in the series, I keep tripping over the
+new non-camelcased flag testers.
 
-Hi,
+It's not an issue when it's adjectives: folio_uptodate(),
+folio_referenced(), folio_locked() etc. - those are obvious. But nouns
+and words that overlap with struct member names can easily be confused
+with non-bool accessors and lookups. Pop quiz: flag test or accessor?
 
-what's the difference with this?
+folio_private()
+folio_lru()
+folio_nid()
+folio_head()
+folio_mapping()
+folio_slab()
+folio_waiters()
 
-	case BLKGETSIZE64:
-		return put_u64(argp, i_size_read(bdev->bd_inode));
+This requires a lot of double-taking on what is actually being
+queried. Bool types, ! etc. don't help, since we test pointers for
+NULL/non-NULL all the time.
 
-The returned int is an error code, not the diskseq value itself, e.g.
+I see in a later patch you changed the existing page_lru() (which
+returns an enum) to folio_lru_list() to avoid the obvious collision
+with the PG_lru flag test. page_private() has the same problem but it
+changed into folio_get_private() (no refcounting involved). There
+doesn't seem to be a consistent, future-proof scheme to avoid this new
+class of collisions between flag testing and member accessors.
 
-	case BLKFRAGET:
-		if (!argp)
-			return -EINVAL;
+There is also an inconsistency between flag test and set that makes me
+pause to think if they're actually testing and setting the same thing:
 
-Regards,
--- 
-per aspera ad upstream
+	if (folio_idle(folio))
+		folio_clear_idle_flag(folio);
+
+Compare this to check_move_unevictable_pages(), where we do
+
+	if (page_evictable(page))
+		ClearPageUnevictable(page);
+
+where one queries a more complex, contextual userpage state and the
+other updates the corresponding pageframe bit flag.
+
+The camelcase stuff we use for page flag testing is unusual for kernel
+code. But the page API is also unusually rich and sprawling. What
+would actually come close? task? inode? Having those multiple
+namespaces to structure and organize the API has been quite helpful.
+
+On top of losing the flagops namespacing, this series also disappears
+many <verb>_page() operations (which currently optically distinguish
+themselves from page_<noun>() accessors) into the shared folio_
+namespace. This further increases the opportunities for collisions,
+which force undesirable naming compromises and/or ambiguity.
+
+More double-taking when the verb can be read as a noun: lock_folio()
+vs folio_lock().
+
+Now, is anybody going to mistake folio_lock() for an accessor? Not
+once they think about it. Can you figure out and remember what
+folio_head() returns? Probably. What about all the examples above at
+the same time? Personally, I'm starting to struggle. It certainly
+eliminates syntactic help and pattern matching, and puts much more
+weight on semantic analysis and remembering API definitions.
+
+What about functions like shrink_page_list() which are long sequences
+of page queries and manipulations? Many lines would be folio_<foo>
+with no further cue whether you're looking at tests, accessors, or a
+high-level state change that is being tested for success. There are
+fewer visual anchors to orient yourself when you page up and down. It
+quite literally turns some code into blah_(), blah_(), blah_():
+
+       if (!folio_active(folio) && !folio_unevictable(folio)) {
+	       folio_del_from_lru_list(folio, lruvec);
+	       folio_set_active_flag(folio);
+	       folio_add_to_lru_list(folio, lruvec);
+	       trace_mm_lru_activate(&folio->page);
+	}
+
+Think about the mental strain of reading and writing complicated
+memory management code with such a degree of syntactic parsimony, let
+alone the repetetive monotony.
+
+In those few lines of example code alone, readers will pause on things
+that should be obvious, and miss grave errors that should stand out.
+
+Add compatible return types to similarly named functions and we'll
+provoke subtle bugs that the compiler won't catch either.
+
+There are warts and inconsistencies in our naming patterns that could
+use cleanups. But I think this compresses a vast API into one template
+that isn't nearly expressive enough to adequately communicate and
+manage the complexity of the underlying structure and its operations.
