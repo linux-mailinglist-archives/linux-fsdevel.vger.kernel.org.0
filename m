@@ -2,149 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 562673C722A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 16:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A954F3C7263
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 16:39:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236800AbhGMObe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jul 2021 10:31:34 -0400
-Received: from sonic308-14.consmr.mail.ne1.yahoo.com ([66.163.187.37]:40499
-        "EHLO sonic308-14.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236757AbhGMObe (ORCPT
+        id S236820AbhGMOml (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jul 2021 10:42:41 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:34544 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236636AbhGMOml (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jul 2021 10:31:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1626186524; bh=18BmMZkvH2tBvb+UvZGjk8mOAMpg1SXeFmAfTWxjld4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=ArUFeu3bkk7ikJdPTPJueCjsUsNpbGnjxSwelS9i7L/DrB4KXJUz/dqYE4JNW35+D6XK3AzgXY+0g7f7ArO3au+2ICbCxgoNRLuXQLxKmL6iScdccq84epNmKjLHIqZoaKGzgQW36CUMZ8oCPA4U5xEOtBiQPsNg2qe0Ny3GuKelz5R+eliIXOzLmYf+FYxxW5ZnBbPi+3idbcFMVhwK+YSharzRMuBkrtBFzRtXZmPpzyPrueYtkB9smlRaWVuyMTpUor75bkva50w4v2TcSVperlwbVoqsHW79Hanqeqa5J9W20jJ5WqJGgkAs4g0Ef/JkdmLtvTUz6e0eEBtniQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1626186524; bh=j3tFSHKLFo40tIKO5gPl4ZZ91xtSXbDy2j9mtTOrboP=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=GsnTiNKqjtE98dUWkrt2NEpTX4mDJsjL/CiwEkNbUWAEAFS+umgM5BhJyej5xarrnN00/RIXb3B88ziecXBOQ1iqAGtxax2ks9f1kMpqFtpQmUE9UPbmwmtdbVcEdqEcj0DYJN2+7ytDhc6dYTgSCBTrlj+3d+hparrOEKkQwqRDez+WnQUCa70f8RnU0zaxdPeit9E2jrsuxi3fXgFRKsqdnmQuEFB3V8hSYphp+E1qmj6p1yVrD2UmXSyWgI9jWT7GmUMlZz+cWN0s06oKh3ECAfjuIOvZSimd0qCZgRZ2vvhyTWGvY8/3ppNF3weUXH0Uh6XR+sLc6PJDanhe3g==
-X-YMail-OSG: 19SWruUVM1m4X.taiD7Xf0lhV_qfh0BPVbtnr0_MlTlwNusH.C6ayqqU6UbtfeE
- F7RpVgEmS9cJDJFEMd.TBt2dhfx6AUn2fhFPsSSrCuRw8l7XxwrTQvnGL0yw5p0Zc81C20WRcfl3
- CWQlxgNsjHyVmJ7IFOJwo2H.65TuP4DF_erhcWaNd8gj6MJJSTxkSS9kfIA7ptz5mAqTRCjhI6Xy
- AzxA8OThnqQoIAVHFAK3qpC7sqC0ri.GGGDqvSvYbrCr27dlK72i9VndIMJlT6W.OrXMvBrzi6Fm
- 7Yq.Ck9fKR3P8Bczbs3l3m7EyynzBw8IMcVBPXv3rfgAPTK0.RcFk07YjEazx971vBpya70M_dUC
- Yjc9JwfKgtUZUCCOjQx6vTKmd..PSv0f_q8jH3NfVbx0mFvsX72HcrglomXmFtaE2JW0Rth92ljA
- mxw8Dmv.eUlREwUWg7m35xbkkSzFp9Guf0fyQwQaTClh8NkUgIXhxCRPS26S_P5lh2q2g76Jyx2M
- 1h9DqxFmMkF3f0oI6L3rLlu2wvpMIbc3kGk0OlTzpnMnNcD87up8b9ByksVC_y5ygifOHB_5LTMh
- ZFT4JxiyYm7dYUcnyOv8xtSeSyBPF_9wmgHAIJpyyFzwgnK6fgejhk5lS_CsD06avov5Yv5B5eo7
- IOpgrERI3v13aASzxI.Dt1s23fI_azr3.8ejY777VcqhCBzDyPcPc6EoIlJLBXMNuVEq.ZJEZIEi
- PNLV_aitQAW43k4zeDQt4aAyEVyuHTmLYUItfrJLxhIvVdLAp_K0nw12jc.L5w37RfttK0ZnfjW_
- Fkys6YpieRvz_mn_xsAsosfVzmj9viCC6m93VUOIbq20LFziE4vj.puqzQfr7a.8CBfOyCsrhKB2
- FGU9u2BnAS0pLKX6vth8L28Mvu6IC5J9HQzlusTkL6y7lgnWhNRLfiW9ARv.S9ehZ81olCAM0SyL
- .eHYUOBteXY5jQO3UQhXetBO6bTR5V_7zbQWDXOSQVyuYGx1j_2OGY47BCPihPqaMso0dZXQvJcF
- Mdu5JeQCq8senDEZ2rK1rBJgfUwY.VopNhrL55ISFSaggGHm40ybBVN4.v.6shbA941EwCL94Dfn
- kpm2BMYnM6vPSrVQAix8biC3J0wIkkE0.hYd4svqwMEQdXKBBZ3UiMcnZBDkANHDvIYOEhvaV61c
- pEapMO7KxwqPTI4hkGNYSKV3faX5PtgkiEOMT_UdoBpRsmZkP0ni8B0oMNTCfQQ3DQP9CxUMWh.7
- X7rSFTFgfgWnrSiJOiLJNoPLomOz9hIMv14C2fS7JpHRIUB1bKSQJSGG9CfZRtX0RDh6xEh.Ey97
- z4AWw_1wEiX0nQSyCaKL94DoHPukqwhmVknWtkBG7CH81aFc90s_9irIYqfP_beFMl0mfWUqzYAQ
- KSU0GO5b8P4hKUA3RKzlZevryeqaW6p4yvuawhQVKNaIbHxrE38oqacIS596bKl8jYX7qk8xzgsZ
- xGtV.g6a0yjg.FmgbIVXxluUeVzEauCzmAyMaYACtydcgZpY53SNfbWLREeHA8xRH5hPM9Gnvyvv
- 2pWZWpN7P2lKlPJBQ47NcFH1B23k01MEfkm5lgz7jjLue2Pglm__bPxOx.QRkazeJNiV6qOLpyXA
- EadBfEPo0YqtJb45tl9bLTL6MiqjMdWwn1d64_KwJ0Xw9udo3jY2TvBT3OFNdTFE43exNznkPi5i
- T2eCcM5Tpjnh6vwg2.AjzggSDpAY6nIc_sZorP8MJQyn29EoB2qqsNasF67CfYUD4BOz_yiLi.zh
- nJZWFJ0x.oU27Exkv9xMkC9ojrJpYgZR1KOn6vslXov1k9Mdb.7CsXTrOHYdtH_fjYPXrRW1qAz2
- np44GsTnr5VGQZSI5cluHiBZOXhQo35swS92eRMe51FCVMP74bagVHxSg9RbAwuO7MOyCQVb_MF3
- OBNpto1v_rKABfxQ1dEBvEpOLx4eC74.RHmTfNmIsvGTQ1vpa93o82BB_mVruP9NBP_783NZdAYL
- E5RApal2B9g5lMtBc81iPGBLbM7taBz7uE9q4jm6hzsNGDkufWMlsN8dI13VHL0PUOXtd5yY_QFg
- .q7fpUISxsy9Du7nQF2.usvqo6_TxKdFom0qGX9CCIPJm.OFBmh9vYwcqjgeBgVPxemkKhfm6Jfz
- aYBjaFI2fSISYxkAWzRE9RIJsOAH.lAFSODjXBjg6CYVQbdz7ZdjpTJxxFUjaz1w8W3.bYsvvoaN
- Pq3DMm25T4DUJf5Yp13D.Ekz9p9eItVnTFhS7OyXVoKafsOY2Ov0kz7Zlg2otRGkXcEzaM5_5UxR
- bEMVFxu373lDJsSnz3RITxE6iBJiv.IBrlW6lHWAcdor4ZLPgZvSS.K3bMRLmEqSg0m6SdGgVKUB
- YYQIoEix7BpLRCX9pbXfFnxoyBJdb4ibtvUBJVlT76BB6o6SsO7Npfkd2fPrF7WMLKdHV4eXqAwg
- I.Q66mCta5HdnnuiidorGiIsxCWkqH3MAjyP3jIzTLKXMlSwHKviWO8VS_l2knzFp6t1t44Yn58g
- 9.2UXgh5dko9ZXwGgMfqEEv3_jVBVL4PbyuLmEugxQNlZaJshuJlQQRl2Y74Bb4IUCRU76Uihn_x
- PY9lw.7G7BAe8v.AIxqzRizeL00ZYP2XYU2PJHoV5d7ZbyCHkU0Oa4f0tS7ktx97ckiZtlsAYMT6
- lUr23OTd8GdIIUlld2SP_yEdFwygspQR6Z0D34UnNWy4_RYMNyPXvujZHyt4BVgSh681zkRni8lO
- F9xRYJMa1uEB8lmaDYmDtqzMZ__AWcaf8HQQbU5I7H1S8cUdX1HOC1L9GsnRFZshh5vWSBP6j8Me
- nTwDtq.5FXwY21jfOc4lv6GyfZURLNef4iuG.N6dZrbS6xan5AjJrAlDqpW1Iy2iaS9sUCiGBjfZ
- t4WOjFhWZRFrhVX09Ue9ksqgiZI0T3Zx2mMd3yW1BQI6cEAfre4y8paN9PEWXOov3kRLBgXkwDPj
- 2QV7UGRsLGSB99mCj4i0bB8XN3CMxAXgllST5ZSqgXrBYa1dHoaKyVUctJHp8Cda1VTVKi7ikFIS
- sN2L8ROSYgZN0YnQZQ4c0uiIu10faz2uM9oS2wLMKMLKundpTdHPVqKPz_RlmeNpAKjPTN.dUxXF
- 0dPyMTo2preTy5mD_.eYeGYBYxbSKwRwJXJRneYCYN1hPreuNyejbWlXKnY8bGA_ICA8H4bwwYIq
- bxN3aUtt.XSilNh7MaSydXjqOoMMGL2WCYkmRs7MjFix3ZUA.OFReE3py8ooLR0rbU6nXb_24k5x
- gxaUByUJ3kEPFtfHocm2qekG3HgmeVYRva6pZGj.hBOb5KhGoGhVXEBVFFOaeW7AbKQXIMiDjd3h
- OZ84GRVKdk0UZW3kNbgqkG5Af6wCRdT6Xl7Flq2j5fEZUrUe6QJrPkdlXZ_yCKxmSIEdqRvhIx4T
- tPJQw65d.k5BaTbfrG.dB1WWrjSv36UaA8LuNnc7Pgmf3CbwFyK30FcEcL5X3ujb_5a0wULBQ0gi
- xgQbvLn0Y4roma4DjaT0_SmUUvbqfFYza
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 13 Jul 2021 14:28:44 +0000
-Received: by kubenode518.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 59e6becde9cf1fc6afb901009309f8fb;
-          Tue, 13 Jul 2021 14:28:39 +0000 (UTC)
-Subject: Re: [Virtio-fs] [PATCH v2 1/1] xattr: Allow user.* xattr on symlink
- and special files
-To:     Greg Kurz <groug@kaod.org>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        gscrivan@redhat.com, tytso@mit.edu, miklos@szeredi.hu,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, casey.schaufler@intel.com,
-        linux-security-module@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20210708175738.360757-1-vgoyal@redhat.com>
- <20210708175738.360757-2-vgoyal@redhat.com>
- <20210709091915.2bd4snyfjndexw2b@wittgenstein>
- <20210709152737.GA398382@redhat.com>
- <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
- <20210712144849.121c948c@bahia.lan>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <cea2f545-ab2d-e9a8-0258-9c8bb443784f@schaufler-ca.com>
-Date:   Tue, 13 Jul 2021 07:28:38 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 13 Jul 2021 10:42:41 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id EE114201E5;
+        Tue, 13 Jul 2021 14:39:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1626187189; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zJgth62e6DRwxuE1p4QeibZRXKh6lnd/FGpb00zXtco=;
+        b=O68ObX8MG6BlpUhu/xBv9j7G1mYqUdqLnRyV03xbqEujXuAfy0gpOA9lJ/F4bdBCKke3Lk
+        a/MXrhFnAh+ZWYWAl3kgsN5DvQbJlWQV8LmNxkZMvNL2ViqzuUBDde0tvQuoR/1YT88dFm
+        1AYwhHBSkTc0TaS/25XfTyoazBgd9JM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1626187189;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zJgth62e6DRwxuE1p4QeibZRXKh6lnd/FGpb00zXtco=;
+        b=8I2ejwrN0kq14Tnws/o7U/fah1Jw9rBREUuBXF5M68+gOMotjQpjh0qFRfO0R5JN5U1NiW
+        veZxhd2s1RXuuSCQ==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id E1AB2A3B85;
+        Tue, 13 Jul 2021 14:39:49 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id BE9F11E0BBE; Tue, 13 Jul 2021 16:39:49 +0200 (CEST)
+Date:   Tue, 13 Jul 2021 16:39:49 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v13 064/137] flex_proportions: Allow N events instead of 1
+Message-ID: <20210713143949.GB24271@quack2.suse.cz>
+References: <20210712030701.4000097-1-willy@infradead.org>
+ <20210712030701.4000097-65-willy@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20210712144849.121c948c@bahia.lan>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.18469 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210712030701.4000097-65-willy@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/12/2021 5:49 AM, Greg Kurz wrote:
-> On Fri, 9 Jul 2021 08:34:41 -0700
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
->
->> On 7/9/2021 8:27 AM, Vivek Goyal wrote:
->>> On Fri, Jul 09, 2021 at 11:19:15AM +0200, Christian Brauner wrote:
->>>> On Thu, Jul 08, 2021 at 01:57:38PM -0400, Vivek Goyal wrote:
->>>>> Currently user.* xattr are not allowed on symlink and special files.
->>>>>
->>>>> man xattr and recent discussion suggested that primary reason for this
->>>>> restriction is how file permissions for symlinks and special files
->>>>> are little different from regular files and directories.
->>>>>
->>>>> For symlinks, they are world readable/writable and if user xattr were
->>>>> to be permitted, it will allow unpriviliged users to dump a huge amount
->>>>> of user.* xattrs on symlinks without any control.
->>>>>
->>>>> For special files, permissions typically control capability to read/write
->>>>> from devices (and not necessarily from filesystem). So if a user can
->>>>> write to device (/dev/null), does not necessarily mean it should be allowed
->>>>> to write large number of user.* xattrs on the filesystem device node is
->>>>> residing in.
->>>>>
->>>>> This patch proposes to relax the restrictions a bit and allow file owner
->>>>> or priviliged user (CAP_FOWNER), to be able to read/write user.* xattrs
->>>>> on symlink and special files.
->>>>>
->>>>> virtiofs daemon has a need to store user.* xatrrs on all the files
->>>>> (including symlinks and special files), and currently that fails. This
->>>>> patch should help.
->>>>>
->>>>> Link: https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
->>>>> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
->>>>> ---
->>>> Seems reasonable and useful.
->>>> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
->>>>
->>>> One question, do all filesystem supporting xattrs deal with setting them
->>>> on symlinks/device files correctly?
->>> Wrote a simple bash script to do setfattr/getfattr user.foo xattr on
->>> symlink and device node on ext4, xfs and btrfs and it works fine.
->> How about nfs, tmpfs, overlayfs and/or some of the other less conventional
->> filesystems?
->>
-> How about virtiofs then ? :-)
+On Mon 12-07-21 04:05:48, Matthew Wilcox (Oracle) wrote:
+> When batching events (such as writing back N pages in a single I/O), it
+> is better to do one flex_proportion operation instead of N.  There is
+> only one caller of __fprop_inc_percpu_max(), and it's the one we're
+> going to change in the next patch, so rename it instead of adding a
+> compatibility wrapper.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-One of the "less conventional filesystems", surely.
-�
+Looks good. You can add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  include/linux/flex_proportions.h |  9 +++++----
+>  lib/flex_proportions.c           | 28 +++++++++++++++++++---------
+>  mm/page-writeback.c              |  4 ++--
+>  3 files changed, 26 insertions(+), 15 deletions(-)
+> 
+> diff --git a/include/linux/flex_proportions.h b/include/linux/flex_proportions.h
+> index c12df59d3f5f..3e378b1fb0bc 100644
+> --- a/include/linux/flex_proportions.h
+> +++ b/include/linux/flex_proportions.h
+> @@ -83,9 +83,10 @@ struct fprop_local_percpu {
+>  
+>  int fprop_local_init_percpu(struct fprop_local_percpu *pl, gfp_t gfp);
+>  void fprop_local_destroy_percpu(struct fprop_local_percpu *pl);
+> -void __fprop_inc_percpu(struct fprop_global *p, struct fprop_local_percpu *pl);
+> -void __fprop_inc_percpu_max(struct fprop_global *p, struct fprop_local_percpu *pl,
+> -			    int max_frac);
+> +void __fprop_add_percpu(struct fprop_global *p, struct fprop_local_percpu *pl,
+> +		long nr);
+> +void __fprop_add_percpu_max(struct fprop_global *p,
+> +		struct fprop_local_percpu *pl, int max_frac, long nr);
+>  void fprop_fraction_percpu(struct fprop_global *p,
+>  	struct fprop_local_percpu *pl, unsigned long *numerator,
+>  	unsigned long *denominator);
+> @@ -96,7 +97,7 @@ void fprop_inc_percpu(struct fprop_global *p, struct fprop_local_percpu *pl)
+>  	unsigned long flags;
+>  
+>  	local_irq_save(flags);
+> -	__fprop_inc_percpu(p, pl);
+> +	__fprop_add_percpu(p, pl, 1);
+>  	local_irq_restore(flags);
+>  }
+>  
+> diff --git a/lib/flex_proportions.c b/lib/flex_proportions.c
+> index 451543937524..53e7eb1dd76c 100644
+> --- a/lib/flex_proportions.c
+> +++ b/lib/flex_proportions.c
+> @@ -217,11 +217,12 @@ static void fprop_reflect_period_percpu(struct fprop_global *p,
+>  }
+>  
+>  /* Event of type pl happened */
+> -void __fprop_inc_percpu(struct fprop_global *p, struct fprop_local_percpu *pl)
+> +void __fprop_add_percpu(struct fprop_global *p, struct fprop_local_percpu *pl,
+> +		long nr)
+>  {
+>  	fprop_reflect_period_percpu(p, pl);
+> -	percpu_counter_add_batch(&pl->events, 1, PROP_BATCH);
+> -	percpu_counter_add(&p->events, 1);
+> +	percpu_counter_add_batch(&pl->events, nr, PROP_BATCH);
+> +	percpu_counter_add(&p->events, nr);
+>  }
+>  
+>  void fprop_fraction_percpu(struct fprop_global *p,
+> @@ -253,20 +254,29 @@ void fprop_fraction_percpu(struct fprop_global *p,
+>  }
+>  
+>  /*
+> - * Like __fprop_inc_percpu() except that event is counted only if the given
+> + * Like __fprop_add_percpu() except that event is counted only if the given
+>   * type has fraction smaller than @max_frac/FPROP_FRAC_BASE
+>   */
+> -void __fprop_inc_percpu_max(struct fprop_global *p,
+> -			    struct fprop_local_percpu *pl, int max_frac)
+> +void __fprop_add_percpu_max(struct fprop_global *p,
+> +		struct fprop_local_percpu *pl, int max_frac, long nr)
+>  {
+>  	if (unlikely(max_frac < FPROP_FRAC_BASE)) {
+>  		unsigned long numerator, denominator;
+> +		s64 tmp;
+>  
+>  		fprop_fraction_percpu(p, pl, &numerator, &denominator);
+> -		if (numerator >
+> -		    (((u64)denominator) * max_frac) >> FPROP_FRAC_SHIFT)
+> +		/* Adding 'nr' to fraction exceeds max_frac/FPROP_FRAC_BASE? */
+> +		tmp = (u64)denominator * max_frac -
+> +					((u64)numerator << FPROP_FRAC_SHIFT);
+> +		if (tmp < 0) {
+> +			/* Maximum fraction already exceeded? */
+>  			return;
+> +		} else if (tmp < nr * (FPROP_FRAC_BASE - max_frac)) {
+> +			/* Add just enough for the fraction to saturate */
+> +			nr = div_u64(tmp + FPROP_FRAC_BASE - max_frac - 1,
+> +					FPROP_FRAC_BASE - max_frac);
+> +		}
+>  	}
+>  
+> -	__fprop_inc_percpu(p, pl);
+> +	__fprop_add_percpu(p, pl, nr);
+>  }
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index e677e79c7b9b..63c0dd9f8bf7 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -566,8 +566,8 @@ static void wb_domain_writeout_inc(struct wb_domain *dom,
+>  				   struct fprop_local_percpu *completions,
+>  				   unsigned int max_prop_frac)
+>  {
+> -	__fprop_inc_percpu_max(&dom->completions, completions,
+> -			       max_prop_frac);
+> +	__fprop_add_percpu_max(&dom->completions, completions,
+> +			       max_prop_frac, 1);
+>  	/* First event after period switching was turned off? */
+>  	if (unlikely(!dom->period_time)) {
+>  		/*
+> -- 
+> 2.30.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
