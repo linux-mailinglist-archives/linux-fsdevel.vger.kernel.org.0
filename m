@@ -2,96 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F08303C7562
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 18:58:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDFF93C759E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 19:18:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229666AbhGMRAx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jul 2021 13:00:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50770 "EHLO
+        id S229944AbhGMRVj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jul 2021 13:21:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbhGMRAx (ORCPT
+        with ESMTP id S229454AbhGMRVi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jul 2021 13:00:53 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EDE9C0613DD
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 09:58:01 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 141so14468993ljj.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 09:58:01 -0700 (PDT)
+        Tue, 13 Jul 2021 13:21:38 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5061C0613EE
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 10:18:47 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id oj10-20020a17090b4d8ab0290172f77377ebso2576647pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 10:18:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Yhm8DTXMwGH3edDwo8fP2AUueUVOXSOluzUis4TeCEM=;
-        b=IouJxuG5ed7uAGJwLWz05WTIl3EyMHKLbOeZ/figWyyseOX1vqRylnWkg9X/sDBjjh
-         6pRMGIxq99s6Lcm7Cc6a1DP+lO+eTYQP1SmjxNrY9YgOxxVm/OGSkQg5LBNWmcbLY/9e
-         lqi5l7xqvWJEepIBLkDtBnHKIIRMeYnt4R2Sg=
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=KmC9PqGKr2ILpbVQwV9g2D6L3OtYrbn8qOnUplZx+iI=;
+        b=njNA0I+6hz9Jfn4Njkxrc7DMg7EOtHvBkOByo6Hzsc/Z80XxlQnso8vAuNJ62cKoUf
+         Aci0lxEMSHBDebLw+3dhkbHEuai798pjsRMiU+c6WeqY2sM9l+gOrGzKw/KQPCILACFc
+         H8m6GVahUKIYz7LQZhITjX7WfbHTp1NGH8GVSwhvGi+6nv+aBEGKjiRqs16vMmpzEqRb
+         nldsSwyhXMVbIEy0F8Q2W89QSQLbQUI647eSp4qUiVWkGTJXWgS86BXQJulwjmFbGWdi
+         dwE/vqIe/2u/NrbYw1G/g8uRL97X+lbMxtIvfVKyPK8dl2WHVmn7zOVD0Mx6JjfMTmT+
+         wPNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Yhm8DTXMwGH3edDwo8fP2AUueUVOXSOluzUis4TeCEM=;
-        b=OThoRdW3TJz7nQjEdzH03RKIaJSDIELEyybF+7tQBYjc5fJB4KoSu4IJfONaoqMDvA
-         PXShou4cld0xrtmiHmQvf4NxQQMU/WaY22AQqReC6pEUVZuxwJbcNgsIjWOfvZFEo1aP
-         DAfOaBzJ7UIbYv7DJNh0KD2ICHdo/gId9CHNW0hlUnhyGqMSn7Kv7VH0odCHSUn11n5J
-         YtwfXc7ZlYoxsLcgqtZ83huwXEQSPaohYmBiw3sv5XBWW2BCVKJ8nrZlUu51485MiNqm
-         kFM8giZTZm0V+hAL+BdS4qQlvYTBVYyoct4f4p4YqcmqiYaJo0THzvachUc/ygto2vj4
-         7Hdg==
-X-Gm-Message-State: AOAM532iGyrXr64QYJimE5FJihMIWHwyIUqjYHp+/rq4Fl412HMpcW3h
-        4OsAQbu4C56gxekRhKPryUGOdA4UeAeoygJ3FCc=
-X-Google-Smtp-Source: ABdhPJxaZ6Y7MHDH+Gi/4ViBffBqMk2pNTJdE1wrQblh/9crADs24UyzGYzjdxbPR46HufGEshGgOw==
-X-Received: by 2002:a2e:8e96:: with SMTP id z22mr5137379ljk.75.1626195479280;
-        Tue, 13 Jul 2021 09:57:59 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id k8sm285640ljn.18.2021.07.13.09.57.58
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jul 2021 09:57:58 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id x25so38722273lfu.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 09:57:58 -0700 (PDT)
-X-Received: by 2002:a05:6512:3f82:: with SMTP id x2mr3985242lfa.421.1626195478340;
- Tue, 13 Jul 2021 09:57:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210712123649.1102392-1-dkadashev@gmail.com> <20210712123649.1102392-2-dkadashev@gmail.com>
- <20210713145341.lngtd5g3p6zf5eoo@wittgenstein>
-In-Reply-To: <20210713145341.lngtd5g3p6zf5eoo@wittgenstein>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 13 Jul 2021 09:57:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjJeGY0FAs+WLaz-cxjhYcYvF1UXtZVmqoLbZH0jqn0Qg@mail.gmail.com>
-Message-ID: <CAHk-=wjJeGY0FAs+WLaz-cxjhYcYvF1UXtZVmqoLbZH0jqn0Qg@mail.gmail.com>
-Subject: Re: [PATCH 1/7] namei: clean up do_rmdir retry logic
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Dmitry Kadashev <dkadashev@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=KmC9PqGKr2ILpbVQwV9g2D6L3OtYrbn8qOnUplZx+iI=;
+        b=I7eR7M1Rfr5VbIKHYWYvBY8m7XsOWYkX2boE/ZUH9Zg7+6hg9R6IziUIaiqA/yEJfK
+         nfY6Z38jwveTC7X7rYHcMMCBti+PK9jmusi6YT821wp9Jtkiz1BI0Lul2g7Ak0u1wCHK
+         vVH1ykqCV4o5gbbKFHOqPSApWrlGwTTOPrz5rIcd0/M6t9EgCHmE9BwXD1maH5L0bq1i
+         yRWLIjCy40r6kldEJlyETuq3C5uerFfo4PBvIlgpNx2KTdKa2Hmrjv4K/68lXY48AHQ/
+         qrjrFwjYYCrpt/Tv2W09m1LbdWXJ8xn7+5mPxSZW5ssHuj3RFb4xVk/mrE+uARhOIEof
+         FO6g==
+X-Gm-Message-State: AOAM533lYN/fh4tkNmfiKxWLV728SI5GMudyqe4QQtuWZY/rgIwWuKon
+        +eyVBcbM6/7sjvE26V+msBk/Tg==
+X-Google-Smtp-Source: ABdhPJzd0wJV/9j7yMcch7NlugW+6N+rCME1YUBxhvoZ01nsstAJVXqNTfhO4oIK1aNIgcUVaw9FDA==
+X-Received: by 2002:a17:90a:688f:: with SMTP id a15mr5367425pjd.84.1626196727189;
+        Tue, 13 Jul 2021 10:18:47 -0700 (PDT)
+Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id t5sm23656606pgb.58.2021.07.13.10.18.45
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Jul 2021 10:18:46 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <F9C8FA1E-89ED-4FC5-B343-465459EBD3A0@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_F61A0383-2348-46C0-B7AD-5E1448A97355";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v4] fs: forbid invalid project ID
+Date:   Tue, 13 Jul 2021 11:19:11 -0600
+In-Reply-To: <20210710143959.58077-1-wangshilong1991@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Wang Shilong <wshilong@ddn.com>
+To:     Wang Shilong <wangshilong1991@gmail.com>
+References: <20210710143959.58077-1-wangshilong1991@gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 13, 2021 at 7:53 AM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> Instead of naming all these $something_helper I would follow the
-> underscore naming pattern we usually do, i.e. instead of e.g.
-> rmdir_helper do __rmdir() or __do_rmdir().
 
-That's certainly a pattern we have, but I don't necessarily love it.
+--Apple-Mail=_F61A0383-2348-46C0-B7AD-5E1448A97355
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
 
-It would be even better if we'd have names that actually explain
-what/why the abstraction exists. In this case, it's the "possibly
-retry due to ESTALE", but I have no idea how to sanely name that.
-Making it "try_rmdir()" or something like that is the best I can come
-up with right now.
+On Jul 10, 2021, at 8:39 AM, Wang Shilong <wangshilong1991@gmail.com> wrote:
+> 
+> From: Wang Shilong <wshilong@ddn.com>
+> 
+> fileattr_set_prepare() should check if project ID
+> is valid, otherwise dqget() will return NULL for
+> such project ID quota.
+> 
+> Signed-off-by: Wang Shilong <wshilong@ddn.com>
 
-On  a similar note, the existing "do_rmdir()" and friends aren't
-wonderful names either, but we expose that name out so changing it is
-probably not worth it. But right now we have "vfs_rmdir()" and
-"do_rmdir()", and they are just different levels of the "rmdir stack",
-without the name really describing where in the stack they are.
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
-Naming is hard, and I don't think the double underscores have been
-wonderful either.
+> ---
+> v3->v3:
+> only check project Id if caller is allowed
+> to change and being changed.
+> 
+> v2->v3: move check before @fsx_projid is accessed
+> and use make_kprojid() helper.
+> 
+> v1->v2: try to fix in the VFS
+> fs/ioctl.c | 8 ++++++++
+> 1 file changed, 8 insertions(+)
+> 
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 1e2204fa9963..d4fabb5421cd 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -817,6 +817,14 @@ static int fileattr_set_prepare(struct inode *inode,
+> 		if ((old_ma->fsx_xflags ^ fa->fsx_xflags) &
+> 				FS_XFLAG_PROJINHERIT)
+> 			return -EINVAL;
+> +	} else {
+> +		/*
+> +		 * Caller is allowed to change the project ID. If it is being
+> +		 * changed, make sure that the new value is valid.
+> +		 */
+> +		if (old_ma->fsx_projid != fa->fsx_projid &&
+> +		    !projid_valid(make_kprojid(&init_user_ns, fa->fsx_projid)))
+> +			return -EINVAL;
+> 	}
+> 
+> 	/* Check extent size hints. */
+> --
+> 2.27.0
+> 
 
-            Linus
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_F61A0383-2348-46C0-B7AD-5E1448A97355
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmDtyxAACgkQcqXauRfM
+H+CTzg/+JZyNRieQ1mPAKlUt+HGoz9ZeEvCD+OuorOAxhYFmVoyOVKKpeXzkBDbr
+cTt3eplnVEgwp5qLxX9CHoetTTEiZMv3r6HOG9qv2yYImkYP8vg0FxfvdGVI6uzL
+sYin7lxfjCySdra6CQQ1NWKRVMzDUfQShxf6vAWnK1ltWs9tfBTxri0cuVMawC2T
+y0dzyuGqmu+ALrqgl2bKw+vFR/igLBNKzUrpCF5KwV+VdFGrqgoL7VKbJwToZ8T5
+AxPNUblB98CitSKOoIUL/cygq5IOo6IAAoUtJku18bmhzSwUxb19A/jPpsk35xy5
+XC3dpEadhw0XA8+JefthWWucW7nGcOwUevFB2zHafSyFIdR+JpssFa+1sMHwek8X
+7CYCZiEbj4bv/qmCIKd2W61veKacnD1i2ZLzyTrHbyA0CjmlYolstl3SQS3jLoKC
+RQdkOW5uRU1WpEbT/OMnXnhMKg4oyZFReBMAsL8sSBOYitOHAkTTgxlXj3tLqyKl
+kc6Lmy1cY6y9jrRfiFDcn+648exNDrP/WhzhEQt8RYDns3Sww3hapcye/vC8ksrv
+7I4+pux8Mu1NYrJJ9XOZ5FLDaypGlTA3Uds+HzE5RGXe3wHF19Wb7KlAnoHMOeG2
+A+ArrSOlbMhbPVx+P+5TPyIf4FYbZ691eyzNGde7yPRqT/e1qSc=
+=aEGA
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_F61A0383-2348-46C0-B7AD-5E1448A97355--
