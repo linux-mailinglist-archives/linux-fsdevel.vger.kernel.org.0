@@ -2,61 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AA133C76DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 21:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA8343C77B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 22:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234642AbhGMTUK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jul 2021 15:20:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234356AbhGMTUI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jul 2021 15:20:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 80CFE61183;
-        Tue, 13 Jul 2021 19:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626203838;
-        bh=WVO04aJNM7JGpGtpTtM4WJVSo3sDuIPCHBiQZr6JPIc=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=VTRMmCAYNSbtPsHbPGHXQ9SMyAAMwca0vr5gS9jZ5gS4n3FOySjKvQ+J0ZHV01iE3
-         cjRtSDL1JqfXLL/y9mjR0Efsy4EG14YCMTLgy7MStFGCXVMpdATwTVRMhBOoyXRTbl
-         JA1GAPVo+N4V1UWuz5nhaQaulo1g/zJupAQpha8jCP12FH01aR5ZYICs1heODdsHv9
-         A0VTSov5e55AeFekFzjZhNPRScf4LExRYnGoBvTTdc5MuO2yoablmoD8BfHesQLts7
-         K1qJX/ZLq+ryY2tOsrLqHe9ZkBUoExR+K/2gP4FVRMWXHK/Fd6Hu59ht2BeuNC+PaD
-         9KHJ9fXeOtZSA==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 7A40E609CD;
-        Tue, 13 Jul 2021 19:17:18 +0000 (UTC)
-Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <30c7ec73-4ad5-3c4e-4745-061eb22f2c8a@redhat.com>
-References: <30c7ec73-4ad5-3c4e-4745-061eb22f2c8a@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <30c7ec73-4ad5-3c4e-4745-061eb22f2c8a@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hansg/linux.git tags/vboxsf-v5.14-1
-X-PR-Tracked-Commit-Id: 52dfd86aa568e433b24357bb5fc725560f1e22d8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 40226a3d96ef8ab8980f032681c8bfd46d63874e
-Message-Id: <162620383849.18788.16593954436474336431.pr-tracker-bot@kernel.org>
-Date:   Tue, 13 Jul 2021 19:17:18 +0000
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S234394AbhGMUQ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jul 2021 16:16:59 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:33028 "EHLO
+        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230376AbhGMUQ7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Jul 2021 16:16:59 -0400
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m3On6-000NOk-R0; Tue, 13 Jul 2021 20:14:04 +0000
+Date:   Tue, 13 Jul 2021 20:14:04 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
+Message-ID: <YO30DKw5FKLz4QuF@zeniv-ca.linux.org.uk>
+References: <30c7ec73-4ad5-3c4e-4745-061eb22f2c8a@redhat.com>
+ <CAHk-=wjW7Up3KD-2EqVg7+ca8Av0-rC5Kd7yK+=m6Dwk3D4Q+A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjW7Up3KD-2EqVg7+ca8Av0-rC5Kd7yK+=m6Dwk3D4Q+A@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Tue, 13 Jul 2021 12:45:19 +0200:
+On Tue, Jul 13, 2021 at 12:15:13PM -0700, Linus Torvalds wrote:
+> On Tue, Jul 13, 2021 at 3:45 AM Hans de Goede <hdegoede@redhat.com> wrote:
+> >
+> > Linus, sorry for sending this directly through you, instead of going
+> > through some other tree, but trying to get this upstream through the
+> > linux-fsdevel list / patch-review simply is not working.
+> 
+> Well, the filesystem maintainer sending their patches to me as a pull
+> request is actually the norm rather than the exception when it comes
+> to filesystems.
+> 
+> It's a bit different for drivers, but that's because while we have
+> multiple filesystems, we have multiple _thousand_ drivers, so on the
+> driver side I really don't want individual driver maintainers to all
+> send me their individual pull requests - that just wouldn't scale.
+> 
+> So for individual drivers, we have subsystem maintainers, but for
+> individual filesystems we generally don't.
+> 
+> (When something then touches the *common* vfs code, that's a different
+> thing - but something like this vboxsf thing this pull request looks
+> normal to me).
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hansg/linux.git tags/vboxsf-v5.14-1
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/40226a3d96ef8ab8980f032681c8bfd46d63874e
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+To elaborate a bit - there's one case when I want it to go through
+vfs.git, and that's when there's an interference between something
+going on in vfs.git and the work done in filesystem.  Other than
+that, I'm perfectly fine with maintainer sending pull request directly
+to Linus (provided that I hadn't spotted something obviously wrong
+in the series, of course, but that's not "I want it to go through
+vfs.git" - that's "I don't want it in mainline until such and such
+bug is resolved").
