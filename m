@@ -2,206 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F523C6F2C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 13:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6358D3C6F37
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jul 2021 13:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235722AbhGMLOb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jul 2021 07:14:31 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:35626 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235390AbhGMLOa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jul 2021 07:14:30 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 661E4200A3;
-        Tue, 13 Jul 2021 11:11:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1626174699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fyfxSkHG6hwIFaTZZwzH64axAQ9uhCZWiMEIgFfPd5w=;
-        b=SvCFB6+vDIf8Ufi+U+qCl/kMdXbumeGBaEqoXR+GZBRxhR4IDKqpE2c0zcGl+N6cCDC8KF
-        gaoB2/+tuPOuB8ZdBQipnidL3m7Mjc9y7S9C1no9auhbaKrKdlQwuGXrskdgVasTkAXr73
-        p1Bfi16wJBCyfh0qV9V2mtnDcHciz5o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1626174699;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fyfxSkHG6hwIFaTZZwzH64axAQ9uhCZWiMEIgFfPd5w=;
-        b=/S4tY5hsn1E8XhBz1UlPg/4OtMs32QpnHfCCGCeNU93DxE2frczkRaUERn0Wm77094ed5w
-        9YjLrvb5LCzD1LBQ==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 39890A3B85;
-        Tue, 13 Jul 2021 11:11:39 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 159D21E0BBC; Tue, 13 Jul 2021 13:11:39 +0200 (CEST)
-Date:   Tue, 13 Jul 2021 13:11:39 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Ted Tso <tytso@mit.edu>, Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 03/14] mm: Protect operations adding pages to page cache
- with invalidate_lock
-Message-ID: <20210713111139.GG12142@quack2.suse.cz>
-References: <20210712163901.29514-1-jack@suse.cz>
- <20210712165609.13215-3-jack@suse.cz>
- <20210713012514.GB22402@magnolia>
+        id S235709AbhGMLSH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jul 2021 07:18:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235390AbhGMLSH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Jul 2021 07:18:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 534B56023F;
+        Tue, 13 Jul 2021 11:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626174917;
+        bh=zLRIz5p5ourrK1LiN61koDqQ3x8/edeGXrFSrIxyOGs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Y+p/jMdydLbpPOIa6w6s0vQ1875AjmoVTlyYQl8qZxs8FsLWO0lDmcVkrxnMM6sKI
+         U8NItXF49aJ1Wf4ER4hs7v/Pgq1bp4klfiNizlYqIj1KpzrpB1FZ4WIf3+EVKzd62c
+         j6wo26AkItMCMt2pV1EUmQiMGLoGDlVYDxHoPTIMPGjT0qlyq1VTNGoN2vlrAac8Br
+         OnctXgEKzAekP7RcxdP73Y9YYFJgbZwsR/X0xpazfMXYdhXmKl7GTBec5CfYWCCmAL
+         izX7rMu1sf/BOeX6tb1MKox1UjUxE04UL5ZavUX1wyR6QbyuF8GN5y/Ubb9+fWzrCv
+         RFiLbsgIkyd8A==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 00/24] btrfs: support idmapped mounts
+Date:   Tue, 13 Jul 2021 13:13:20 +0200
+Message-Id: <20210713111344.1149376-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210713012514.GB22402@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5722; h=from:subject; bh=sdqEN4uw+nlUNPCZNK8c16q/IAiwG0V4khK6UQee5KU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSS8LQ1/OdP5mvPtuTLLq0KuTXy6MshEc83NxmVV096ziv78 Wv8vu6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiMQcZ/uewMVUkvP2Varj8N1/Em7 tNglW79fvqtp66vYTXLebij50M/8t1LYS3S3DyBfN/57ivmbY56M9hl627Z+uvsrRg7b2xghEA
+X-Developer-Key: i=christian.brauner@ubuntu.com; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 12-07-21 18:25:14, Darrick J. Wong wrote:
-> On Mon, Jul 12, 2021 at 06:55:54PM +0200, Jan Kara wrote:
-> > @@ -2967,6 +2992,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
-> >  	pgoff_t max_off;
-> >  	struct page *page;
-> >  	vm_fault_t ret = 0;
-> > +	bool mapping_locked = false;
-> >  
-> >  	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-> >  	if (unlikely(offset >= max_off))
-> > @@ -2988,15 +3014,30 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
-> >  		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
-> >  		ret = VM_FAULT_MAJOR;
-> >  		fpin = do_sync_mmap_readahead(vmf);
-> > +	}
-> > +
-> > +	if (!page) {
-> 
-> Is it still necessary to re-evaluate !page here?
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-No, you are right it is not necessary. I'll remove it.
+Hey everyone,
 
-> >  retry_find:
-> > +		/*
-> > +		 * See comment in filemap_create_page() why we need
-> > +		 * invalidate_lock
-> > +		 */
-> > +		if (!mapping_locked) {
-> > +			filemap_invalidate_lock_shared(mapping);
-> > +			mapping_locked = true;
-> > +		}
-> >  		page = pagecache_get_page(mapping, offset,
-> >  					  FGP_CREAT|FGP_FOR_MMAP,
-> >  					  vmf->gfp_mask);
-> >  		if (!page) {
-> >  			if (fpin)
-> >  				goto out_retry;
-> > +			filemap_invalidate_unlock_shared(mapping);
-> >  			return VM_FAULT_OOM;
-> >  		}
-> > +	} else if (unlikely(!PageUptodate(page))) {
-> > +		filemap_invalidate_lock_shared(mapping);
-> > +		mapping_locked = true;
-> >  	}
-> >  
-> >  	if (!lock_page_maybe_drop_mmap(vmf, page, &fpin))
-> > @@ -3014,8 +3055,20 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
-> >  	 * We have a locked page in the page cache, now we need to check
-> >  	 * that it's up-to-date. If not, it is going to be due to an error.
-> >  	 */
-> > -	if (unlikely(!PageUptodate(page)))
-> > +	if (unlikely(!PageUptodate(page))) {
-> > +		/*
-> > +		 * The page was in cache and uptodate and now it is not.
-> > +		 * Strange but possible since we didn't hold the page lock all
-> > +		 * the time. Let's drop everything get the invalidate lock and
-> > +		 * try again.
-> > +		 */
-> > +		if (!mapping_locked) {
-> > +			unlock_page(page);
-> > +			put_page(page);
-> > +			goto retry_find;
-> > +		}
-> >  		goto page_not_uptodate;
-> > +	}
-> >  
-> >  	/*
-> >  	 * We've made it this far and we had to drop our mmap_lock, now is the
-> > @@ -3026,6 +3079,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
-> >  		unlock_page(page);
-> >  		goto out_retry;
-> >  	}
-> > +	if (mapping_locked)
-> > +		filemap_invalidate_unlock_shared(mapping);
-> >  
-> >  	/*
-> >  	 * Found the page and have a reference on it.
-> > @@ -3056,6 +3111,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
-> >  
-> >  	if (!error || error == AOP_TRUNCATED_PAGE)
-> >  		goto retry_find;
-> > +	filemap_invalidate_unlock_shared(mapping);
-> 
-> Hm.  I /think/ it's the case that mapping_locked==true always holds here
-> because the new "The page was in cache and uptodate and now it is not."
-> block above will take the invalidate_lock and retry pagecache_get_page,
-> right?
+This series enables the creation of idmapped mounts on btrfs. On the list of
+filesystems btrfs was pretty high-up and requested quite often from userspace
+(cf. [1]). This series requires just a few changes to the vfs for specific
+lookup helpers that btrfs relies on to perform permission checking when looking
+up an inode. The changes are required to port some other filesystem as well.
 
-Yes. page_not_uptodate block can only be entered with mapping_locked ==
-true - the only place that can enter this block is:
+The conversion of the necessary btrfs internals was fairly straightforward. No
+invasive changes were needed. I've decided to split up the patchset into very
+small individual patches. This hopefully makes the series more readable and
+fairly easy to review. The overall changeset is quite small.
 
-        if (unlikely(!PageUptodate(page))) {
-                /*
-                 * The page was in cache and uptodate and now it is not.
-                 * Strange but possible since we didn't hold the page lock all
-                 * the time. Let's drop everything get the invalidate lock and
-                 * try again.
-                 */
-                if (!mapping_locked) {
-                        unlock_page(page);
-                        put_page(page);
-                        goto retry_find;
-                }
-                goto page_not_uptodate;
-        }
+All non-filesystem wide ioctls that peform permission checking based on inodes
+can be supported on idmapped mounts. There are really just a few restrictions.
+This should really only affect the deletion of subvolumes by subvolume id which
+can be used to delete any subvolume in the filesystem even though the caller
+might not even be able to see the subvolume under their mount. Other than that
+behavior on idmapped and non-idmapped mounts is identical for all enabled
+ioctls.
 
-> >  
-> >  	return VM_FAULT_SIGBUS;
-> >  
-> > @@ -3067,6 +3123,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
-> >  	 */
-> >  	if (page)
-> >  		put_page(page);
-> > +	if (mapping_locked)
-> > +		filemap_invalidate_unlock_shared(mapping);
-> 
-> Hm.  I think this looks ok, even though this patch now contains the
-> subtlety that we've both hoisted the xfs mmaplock to page cache /and/
-> reduced the scope of the invalidate_lock.
-> 
-> As for fancy things like remap_range, I think they're still safe with
-> this latest iteration because those functions grab the invalidate_lock
-> in exclusive mode and invalidate the mappings before proceeding, which
-> means that other programs will never find the lockless path (i.e. page
-> locked, uptodate, and attached to the mapping) and will instead block on
-> the invalidate lock until the remap operation completes.   Is that
-> right?
+The changeset has an associated new testsuite specific to btrfs. The
+core vfs operations that btrfs implements are covered by the generic
+idmapped mount testsuite. For the ioctls a new testsuite was added. It
+is sent alongside this patchset for ease of review but will very likely
+be merged independent of it.
 
-Correct. For operations such as hole punch or destination of remap_range,
-we lock invalidate_lock exclusively and invalidate pagecache in the
-involved range. No new pages can be created in that range until you drop
-invalidate_lock (places creating pages without holding i_rwsem are read,
-readahead, fault and all those take invalidate_lock when they should create
-the page).
+All patches are based on v5.14-rc1.
 
-There's also the case someone pointed out that *source* of remap_range
-needs to be protected (but only from modifications through mmap). This is
-achieved by having invalidate_lock taken in .page_mkwrite handlers and
-thus not impacted by these changes to filemap_fault().
+The series can be pulled from:
+https://git.kernel.org/brauner/h/fs.idmapped.btrfs
+https://github.com/brauner/linux/tree/fs.idmapped.btrfs
 
-								Honza
+The xfstests can be pulled from:
+https://git.kernel.org/brauner/xfstests-dev/h/fs.idmapped.btrfs
+https://github.com/brauner/xfstests/tree/fs.idmapped.btrfs
+
+Note, the new btrfs xfstests patch is on top of a branch of mine
+containing a few more preliminary patches. So if you want to run the
+tests, please simply pull the branch and build from there. It's based on
+latest xfstests master.
+
+The series has been tested with xfstests including the newly added btrfs
+specific test. All tests pass.
+There were three unrelated failures that I observed: btrfs/219,
+btrfs/2020 and btrfs/235. All three also fail on earlier kernels
+without the patch series applied.
+
+Thanks!
+Christian
+
+[1]: https://github.com/systemd/systemd/pull/19438#discussion_r622807165
+
+Christian Brauner (23):
+  namei: handle mappings in lookup_one_len()
+  namei: handle mappings in lookup_one_len_unlocked()
+  namei: handle mappings in lookup_positive_unlocked()
+  namei: handle mappings in try_lookup_one_len()
+  btrfs/inode: handle idmaps in btrfs_new_inode()
+  btrfs/inode: allow idmapped rename iop
+  btrfs/inode: allow idmapped getattr iop
+  btrfs/inode: allow idmapped mknod iop
+  btrfs/inode: allow idmapped create iop
+  btrfs/inode: allow idmapped mkdir iop
+  btrfs/inode: allow idmapped symlink iop
+  btrfs/inode: allow idmapped tmpfile iop
+  btrfs/inode: allow idmapped setattr iop
+  btrfs/inode: allow idmapped permission iop
+  btrfs/ioctl: check whether fs{g,u}id are mapped during subvolume
+    creation
+  btrfs/inode: allow idmapped BTRFS_IOC_{SNAP,SUBVOL}_CREATE{_V2} ioctl
+  btrfs/ioctl: allow idmapped BTRFS_IOC_SNAP_DESTROY{_V2} ioctl
+  btrfs/ioctl: relax restrictions for BTRFS_IOC_SNAP_DESTROY_V2 with
+    subvolids
+  btrfs/ioctl: allow idmapped BTRFS_IOC_SET_RECEIVED_SUBVOL{_32} ioctl
+  btrfs/ioctl: allow idmapped BTRFS_IOC_SUBVOL_SETFLAGS ioctl
+  btrfs/ioctl: allow idmapped BTRFS_IOC_INO_LOOKUP_USER ioctl
+  btrfs/acl: handle idmapped mounts
+  btrfs/super: allow idmapped btrfs
+
+ arch/s390/hypfs/inode.c            |  2 +-
+ drivers/android/binderfs.c         |  4 +-
+ drivers/infiniband/hw/qib/qib_fs.c |  5 +-
+ fs/afs/dir.c                       |  2 +-
+ fs/afs/dir_silly.c                 |  2 +-
+ fs/afs/dynroot.c                   |  6 +-
+ fs/binfmt_misc.c                   |  2 +-
+ fs/btrfs/acl.c                     | 13 +++--
+ fs/btrfs/ctree.h                   |  3 +-
+ fs/btrfs/inode.c                   | 62 +++++++++++---------
+ fs/btrfs/ioctl.c                   | 94 ++++++++++++++++++++----------
+ fs/btrfs/super.c                   |  2 +-
+ fs/cachefiles/namei.c              |  9 +--
+ fs/cifs/cifsfs.c                   |  3 +-
+ fs/debugfs/inode.c                 |  9 ++-
+ fs/ecryptfs/inode.c                |  3 +-
+ fs/exportfs/expfs.c                |  6 +-
+ fs/kernfs/mount.c                  |  4 +-
+ fs/namei.c                         | 32 ++++++----
+ fs/nfs/unlink.c                    |  3 +-
+ fs/nfsd/nfs3xdr.c                  |  3 +-
+ fs/nfsd/nfs4recover.c              |  7 ++-
+ fs/nfsd/nfs4xdr.c                  |  3 +-
+ fs/nfsd/nfsproc.c                  |  3 +-
+ fs/nfsd/vfs.c                      | 19 +++---
+ fs/overlayfs/copy_up.c             | 10 ++--
+ fs/overlayfs/dir.c                 | 23 ++++----
+ fs/overlayfs/export.c              |  3 +-
+ fs/overlayfs/namei.c               | 13 +++--
+ fs/overlayfs/readdir.c             | 12 ++--
+ fs/overlayfs/super.c               |  8 ++-
+ fs/overlayfs/util.c                |  2 +-
+ fs/quota/dquot.c                   |  3 +-
+ fs/reiserfs/xattr.c                | 14 ++---
+ fs/tracefs/inode.c                 |  3 +-
+ include/linux/namei.h              | 12 ++--
+ ipc/mqueue.c                       |  5 +-
+ kernel/bpf/inode.c                 |  2 +-
+ security/apparmor/apparmorfs.c     |  5 +-
+ security/inode.c                   |  2 +-
+ 40 files changed, 250 insertions(+), 168 deletions(-)
+
+
+base-commit: e73f0f0ee7541171d89f2e2491130c7771ba58d3
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.30.2
+
