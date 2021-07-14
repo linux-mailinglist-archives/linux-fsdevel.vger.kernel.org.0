@@ -2,44 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A96D3C859A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 15:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB3B33C859F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 15:55:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232732AbhGNN4B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 09:56:01 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:35782 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232727AbhGNN4A (ORCPT
+        id S232065AbhGNN5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 09:57:00 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:39536 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231561AbhGNN5A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 09:56:00 -0400
-Received: by mail-io1-f72.google.com with SMTP id n13-20020a5ed90d0000b02904f43c8bffc4so1279219iop.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 06:53:07 -0700 (PDT)
+        Wed, 14 Jul 2021 09:57:00 -0400
+Received: by mail-io1-f71.google.com with SMTP id v2-20020a5d94020000b02905058dc6c376so1272141ion.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 06:54:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:cc;
-        bh=N/ycyVbAKypvr4aBP5b55WvZDTbuQtOis8h6IsI4I8Y=;
-        b=DhJWRJnaWq0dBYnniGMtbeX8KTyezYl5BPByMC4Zcb1qKUeDb8WGjgMn8r/CM2nxVr
-         6i01cCY/IyBDUlJBMjz4LtjB4wJHz1YuB3ygFnugqDgbKXQJX8MDopHhQ7M8XjMI1GZv
-         vKJKfilGHX2TYSFZ4V1hhuwNdt8OszuBrs766ZWbpFb5VZuxqfEMDp14mBL+uEbb5PMB
-         W7tSEyHl+o+G/by0rJL/+MIAaMJqPsJ4vFExgalFmqH7KUjZir/v5pMkBw2gar0uv9Pe
-         ZUzgh8SYwSNT4EwtnrbiIC/J7mqj6lNnybossjFI9rrjLb/EpAHSwtUPqMSt+JsfEXpG
-         k9gA==
-X-Gm-Message-State: AOAM531RduJqbl0jhV8ttfA3TSod5deh0FEovVVuXEr7mH6TfoKxgwer
-        PGUdMTwJ0WM5XFp2t9XNtqvYG+bh5FPhCvnKFbBUfcJRcLB5
-X-Google-Smtp-Source: ABdhPJwQdxjhrMVlfTQyNZM+LDXFnlq95h5YyTDBNso5mIVX03pNd6lV7JZTvGSZTr60tx1ZMBXA8WcmrMx8Kqoljbod+w0Q8tc6
+         :from:to;
+        bh=5iBy0lYSGa09oNnLjcIT0TpubGTNL6rsWEE+k4WZlK0=;
+        b=bSKaDMZYpHNjEQ2INc1CMLfWfI6hI2xj7Tho+/JVsYfZqjujaahBARO8w1FqBnCyno
+         LGcB7lWXs3ZCxvIHMH9ZyO8dSurzJ6V/4CAHJEAZempJ8BlkbX7WizZ5XZteEcHjc1RV
+         tytFeJm91Wm3F6gsbv9EfBrFcdP76mQ/wmk+OnhlfmEUsBfakB/n83sxWxlLRVfAcu53
+         qVGv4fvSzpLHt7KHAKHbj8WqW1bU/VesGkzq4nJ6ieHuT0KH5RsHjupBVHHxW8dFrbv4
+         otF0yHGT8UJz+h+g2uky+TJjXhMnWXaZhQDABVEvMkL5EGQi0UpsX1DOIJOP/97h462B
+         5d5g==
+X-Gm-Message-State: AOAM531DQxTCdCu5ERulEXOxoX712Jvr0Hbl3ipIe2Cf+/0joVHJ0sQ8
+        GvrhG1zMpGdRUye69uDE0/7sTyuBQitLrYpL2BS2cWIn3heQ
+X-Google-Smtp-Source: ABdhPJxdriFY6cRso6foqyHhWvZJZlr8sMQZFvXXGupXDK0NKiVdeKKS73K8wdaZOOY5jX5ldI66/IVlGmnDFv2tDrcjXqj1djd6
 MIME-Version: 1.0
-X-Received: by 2002:a92:9509:: with SMTP id y9mr6815314ilh.18.1626270787271;
- Wed, 14 Jul 2021 06:53:07 -0700 (PDT)
-Date:   Wed, 14 Jul 2021 06:53:07 -0700
-In-Reply-To: <20210714135300.hrssd4d6ydvvytgb@wittgenstein>
+X-Received: by 2002:a92:360b:: with SMTP id d11mr6696974ila.111.1626270848535;
+ Wed, 14 Jul 2021 06:54:08 -0700 (PDT)
+Date:   Wed, 14 Jul 2021 06:54:08 -0700
+In-Reply-To: <20210714135157.mz7utfhctbja4ilo@wittgenstein>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009584d605c715ac7e@google.com>
+Message-ID: <0000000000003c529d05c715b0e3@google.com>
 Subject: Re: [syzbot] KASAN: null-ptr-deref Read in filp_close (2)
 From:   syzbot <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     brauner@kernel.org, christian.brauner@ubuntu.com,
+To:     brauner@kernel.org, christian.brauner@ubuntu.com,
         dvyukov@google.com, gregkh@linuxfoundation.org,
         gscrivan@redhat.com, hch@lst.de, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, stable-commits@vger.kernel.org,
@@ -50,21 +49,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Mon, Jul 12, 2021 at 09:12:20PM -0700, syzbot wrote:
->> syzbot has found a reproducer for the following issue on:
->> 
->> HEAD commit:    7fef2edf sd: don't mess with SD_MINORS for CONFIG_DEBUG_BL..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=178919b0300000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=20276914ec6ad813
->> dashboard link: https://syzkaller.appspot.com/bug?extid=283ce5a46486d6acdbaf
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120220f2300000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115f37b4300000
->> 
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com
->
-> #syz test: https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/ syzbot+283ce5a46486d6acdbaf 
+Hello,
 
-"syzbot+283ce5a46486d6acdbaf" does not look like a valid git branch or commit.
+syzbot tried to test the proposed patch but the build/boot failed:
+
+failed to checkout kernel repo https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/ on commit 595fac5cecba71935450ec431eb8dfa963cf45fe: failed to run ["git" "checkout" "595fac5cecba71935450ec431eb8dfa963cf45fe"]: exit status 128
+fatal: reference is not a tree: 595fac5cecba71935450ec431eb8dfa963cf45fe
+
+
+
+Tested on:
+
+commit:         [unknown 
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/ 595fac5cecba71935450ec431eb8dfa963cf45fe
+dashboard link: https://syzkaller.appspot.com/bug?extid=283ce5a46486d6acdbaf
+compiler:       
 
