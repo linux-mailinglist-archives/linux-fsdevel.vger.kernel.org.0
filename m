@@ -2,89 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B888F3C7D40
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 06:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51F5D3C7D8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 06:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229923AbhGNETd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 00:19:33 -0400
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:47526 "EHLO
-        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229518AbhGNETc (ORCPT
+        id S229946AbhGNEbu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 00:31:50 -0400
+Received: from smtprelay0082.hostedemail.com ([216.40.44.82]:51852 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229451AbhGNEbu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 00:19:32 -0400
-Received: from dread.disaster.area (pa49-181-34-10.pa.nsw.optusnet.com.au [49.181.34.10])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 8FB031B0FF6;
-        Wed, 14 Jul 2021 14:16:38 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1m3WK5-006JHL-OG; Wed, 14 Jul 2021 14:16:37 +1000
-Date:   Wed, 14 Jul 2021 14:16:37 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Wang Shilong <wangshilong1991@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        Wang Shilong <wshilong@ddn.com>
-Subject: Re: [PATCH v4] fs: forbid invalid project ID
-Message-ID: <20210714041637.GW664593@dread.disaster.area>
-References: <20210710143959.58077-1-wangshilong1991@gmail.com>
+        Wed, 14 Jul 2021 00:31:50 -0400
+X-Greylist: delayed 520 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Jul 2021 00:31:49 EDT
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave05.hostedemail.com (Postfix) with ESMTP id 06D6418479F3A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 04:20:19 +0000 (UTC)
+Received: from omf20.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 8829C1844C6AC;
+        Wed, 14 Jul 2021 04:20:17 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf20.hostedemail.com (Postfix) with ESMTPA id A90B018A600;
+        Wed, 14 Jul 2021 04:20:10 +0000 (UTC)
+Message-ID: <8aa028a0117ecb51d209861f926a84ce74fe0c46.camel@perches.com>
+Subject: Re: [PATCH v9 03/17] vdpa: Fix code indentation
+From:   Joe Perches <joe@perches.com>
+To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
+        jasowang@redhat.com, stefanha@redhat.com, sgarzare@redhat.com,
+        parav@nvidia.com, hch@infradead.org,
+        christian.brauner@canonical.com, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com, joro@8bytes.org,
+        gregkh@linuxfoundation.org, zhe.he@windriver.com,
+        xiaodong.liu@intel.com
+Cc:     songmuchun@bytedance.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Date:   Tue, 13 Jul 2021 21:20:09 -0700
+In-Reply-To: <20210713084656.232-4-xieyongji@bytedance.com>
+References: <20210713084656.232-1-xieyongji@bytedance.com>
+         <20210713084656.232-4-xieyongji@bytedance.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.0-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210710143959.58077-1-wangshilong1991@gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
-        a=hdaoRb6WoHYrV466vVKEyw==:117 a=hdaoRb6WoHYrV466vVKEyw==:17
-        a=kj9zAlcOel0A:10 a=e_q4qTt1xDgA:10 a=lB0dNpNiAAAA:8 a=20KFwNOVAAAA:8
-        a=7-415B0cAAAA:8 a=tKE4i-voY_5ZeL1wqn4A:9 a=CjuIK1q_8ugA:10
-        a=c-ZiYqmG3AbHTdtsH08C:22 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: A90B018A600
+X-Spam-Status: No, score=-2.29
+X-Stat-Signature: w8c8skx4hq53kyxkkcs5f64b7rox7x57
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19IxVK6JNPE/co+tp8AToMXmxFv5EZRX50=
+X-HE-Tag: 1626236410-955187
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 10, 2021 at 10:39:59PM +0800, Wang Shilong wrote:
-> From: Wang Shilong <wshilong@ddn.com>
-> 
-> fileattr_set_prepare() should check if project ID
-> is valid, otherwise dqget() will return NULL for
-> such project ID quota.
-> 
-> Signed-off-by: Wang Shilong <wshilong@ddn.com>
-> ---
-> v3->v3:
-> only check project Id if caller is allowed
-> to change and being changed.
-> 
-> v2->v3: move check before @fsx_projid is accessed
-> and use make_kprojid() helper.
-> 
-> v1->v2: try to fix in the VFS
->  fs/ioctl.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 1e2204fa9963..d4fabb5421cd 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -817,6 +817,14 @@ static int fileattr_set_prepare(struct inode *inode,
->  		if ((old_ma->fsx_xflags ^ fa->fsx_xflags) &
->  				FS_XFLAG_PROJINHERIT)
->  			return -EINVAL;
-> +	} else {
-> +		/*
-> +		 * Caller is allowed to change the project ID. If it is being
-> +		 * changed, make sure that the new value is valid.
-> +		 */
-> +		if (old_ma->fsx_projid != fa->fsx_projid &&
-> +		    !projid_valid(make_kprojid(&init_user_ns, fa->fsx_projid)))
-> +			return -EINVAL;
->  	}
->  
->  	/* Check extent size hints. */
+On Tue, 2021-07-13 at 16:46 +0800, Xie Yongji wrote:
+> Use tabs to indent the code instead of spaces.
 
-Looks good. Thanks!
+There are a lot more of these in this file.
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+$ ./scripts/checkpatch.pl --fix-inplace --strict include/linux/vdpa.h
 
--- 
-Dave Chinner
-david@fromorbit.com
+and a little typing gives:
+---
+ include/linux/vdpa.h | 50 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
+
+diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+index 3357ac98878d4..14cd4248e59fd 100644
+--- a/include/linux/vdpa.h
++++ b/include/linux/vdpa.h
+@@ -43,17 +43,17 @@ struct vdpa_vq_state_split {
+  * @last_used_idx: used index
+  */
+ struct vdpa_vq_state_packed {
+-        u16	last_avail_counter:1;
+-        u16	last_avail_idx:15;
+-        u16	last_used_counter:1;
+-        u16	last_used_idx:15;
++	u16	last_avail_counter:1;
++	u16	last_avail_idx:15;
++	u16	last_used_counter:1;
++	u16	last_used_idx:15;
+ };
+ 
+ struct vdpa_vq_state {
+-     union {
+-          struct vdpa_vq_state_split split;
+-          struct vdpa_vq_state_packed packed;
+-     };
++	union {
++		struct vdpa_vq_state_split split;
++		struct vdpa_vq_state_packed packed;
++	};
+ };
+ 
+ struct vdpa_mgmt_dev;
+@@ -131,7 +131,7 @@ struct vdpa_iova_range {
+  *				@vdev: vdpa device
+  *				@idx: virtqueue index
+  *				@state: pointer to returned state (last_avail_idx)
+- * @get_vq_notification: 	Get the notification area for a virtqueue
++ * @get_vq_notification:	Get the notification area for a virtqueue
+  *				@vdev: vdpa device
+  *				@idx: virtqueue index
+  *				Returns the notifcation area
+@@ -277,13 +277,13 @@ struct vdpa_device *__vdpa_alloc_device(struct device *parent,
+ 					const struct vdpa_config_ops *config,
+ 					size_t size, const char *name);
+ 
+-#define vdpa_alloc_device(dev_struct, member, parent, config, name)   \
+-			  container_of(__vdpa_alloc_device( \
+-				       parent, config, \
+-				       sizeof(dev_struct) + \
+-				       BUILD_BUG_ON_ZERO(offsetof( \
+-				       dev_struct, member)), name), \
+-				       dev_struct, member)
++#define vdpa_alloc_device(dev_struct, member, parent, config, name)	\
++	container_of(__vdpa_alloc_device(parent, config,		\
++					 sizeof(dev_struct) +		\
++					 BUILD_BUG_ON_ZERO(offsetof(dev_struct,	\
++								    member)), \
++					 name),				\
++		     dev_struct, member)
+ 
+ int vdpa_register_device(struct vdpa_device *vdev, int nvqs);
+ void vdpa_unregister_device(struct vdpa_device *vdev);
+@@ -308,8 +308,8 @@ struct vdpa_driver {
+ int __vdpa_register_driver(struct vdpa_driver *drv, struct module *owner);
+ void vdpa_unregister_driver(struct vdpa_driver *drv);
+ 
+-#define module_vdpa_driver(__vdpa_driver) \
+-	module_driver(__vdpa_driver, vdpa_register_driver,	\
++#define module_vdpa_driver(__vdpa_driver)				\
++	module_driver(__vdpa_driver, vdpa_register_driver,		\
+ 		      vdpa_unregister_driver)
+ 
+ static inline struct vdpa_driver *drv_to_vdpa(struct device_driver *driver)
+@@ -339,25 +339,25 @@ static inline struct device *vdpa_get_dma_dev(struct vdpa_device *vdev)
+ 
+ static inline void vdpa_reset(struct vdpa_device *vdev)
+ {
+-        const struct vdpa_config_ops *ops = vdev->config;
++	const struct vdpa_config_ops *ops = vdev->config;
+ 
+ 	vdev->features_valid = false;
+-        ops->set_status(vdev, 0);
++	ops->set_status(vdev, 0);
+ }
+ 
+ static inline int vdpa_set_features(struct vdpa_device *vdev, u64 features)
+ {
+-        const struct vdpa_config_ops *ops = vdev->config;
++	const struct vdpa_config_ops *ops = vdev->config;
+ 
+ 	vdev->features_valid = true;
+-        return ops->set_features(vdev, features);
++	return ops->set_features(vdev, features);
+ }
+ 
+-
+-static inline void vdpa_get_config(struct vdpa_device *vdev, unsigned offset,
++static inline void vdpa_get_config(struct vdpa_device *vdev,
++				   unsigned int offset,
+ 				   void *buf, unsigned int len)
+ {
+-        const struct vdpa_config_ops *ops = vdev->config;
++	const struct vdpa_config_ops *ops = vdev->config;
+ 
+ 	/*
+ 	 * Config accesses aren't supposed to trigger before features are set.
+
+
