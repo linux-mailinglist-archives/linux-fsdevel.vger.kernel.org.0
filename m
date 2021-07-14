@@ -2,207 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9543C8409
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 13:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D2D73C844A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 14:10:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239278AbhGNLsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 07:48:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51878 "EHLO
+        id S231258AbhGNMNA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 08:13:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239269AbhGNLsH (ORCPT
+        with ESMTP id S231193AbhGNMNA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 07:48:07 -0400
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08230C061764
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 04:45:14 -0700 (PDT)
-Received: by mail-qk1-x72e.google.com with SMTP id m3so1203910qkm.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 04:45:13 -0700 (PDT)
+        Wed, 14 Jul 2021 08:13:00 -0400
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B8F6C06175F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 05:10:08 -0700 (PDT)
+Received: by mail-il1-x12c.google.com with SMTP id z1so1352620ils.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 05:10:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zxPicnNj0mGB/tmcGMwmXnv6kKv9n+OZmDAsE0BpNOI=;
-        b=of51A5jV+4EsLMz/6UFrjhy6Fwu4/1Y9uszSSFtCb/0Qf58qKPNHTrHLxzR3i9kl5H
-         4I3px+9vaeR0DpcF+Rcaa67LSUOsU0K7T/QnSGObafY4CCAkzABBHffef050xhPDGRKx
-         nCJDI7Qbg4uz8zgkEugfNkFTLdDxsgEwItPs0NXLRLZFfnHIPTTQe+eBnc68wmHgFgIS
-         wMi5zaOO+Bp6SD/m8tSFmnr0jmBPm8suupTM9sIdOee2oI4YCcFQgvJOUdi6+omxx7Ag
-         m/oLtkyE5+30VLvSlYLKT3kGbUhm1R5pQ44wQF7tn0XU7tKsW9fm7jN+kdH8WV4BgkUg
-         c5fA==
+        bh=KLA88FGwDHelg/MRWPOHcNy0wg+Widk2W0PnpZpHQLU=;
+        b=YynHlgN/kzjHami01EOfxBsYNXc9lUeS75NeGSlpsGKY5/hyzzGt1UoXNOys60Q9mM
+         KwIrwIoUAK9IhxUe8Tj1GYM6l9sk/atpsU/0yeWYfPKmhY/V0Ij40oZ7dHl/TuZem/f7
+         QiDAVHzMvRKj4JMjEWonUDi1TX46cZJy4JID8ZxWUvGX6ZSplY4RjFD4r82jDUjIeYdR
+         naYnUYQySAnS5W2wogVmXvbPOZROruleQWGd403ngsdUPmKa6IzDrAdTXCkrwdCeUj77
+         W5nzkuazq0oX/0fu23esvwHdyNa3eohMMNeZp3ExxCTJFRMykZnFmhyicUOKZD7UQSvf
+         y29A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zxPicnNj0mGB/tmcGMwmXnv6kKv9n+OZmDAsE0BpNOI=;
-        b=mSn3PLj2O6AAxhJlvfAm/jNBpmMTFD7+66pQfISGTpmk3dUOC60Lp1QeZ7/+CFstAX
-         FGdjuxj2Z1yRr/lpSWU93pZiVxBceYTIXETaKJ4wZbTSguKKMktwTBHdF/oaSM3RLC2V
-         Gzk9A4FUitfdndQUGybnY16p6j9hKcyYQRUg0xDXHI23ToQIzUAWtD7dV8Qs2cZYHKHB
-         MfD3xQa0LMkKzNiA+jJ9YNqvYK3VoIMyIPN9iujjKTLUsgr85SkrXb0YaHpIXdWB3q92
-         6bUOBfPQ84iWvjqgWkS8/pHUxedan+vaOldjZ+pTHxO1A3Agd9H1bke5afRBY2QdmHy0
-         g+eA==
-X-Gm-Message-State: AOAM533LuurG6MGhhZXFk43XYMszs8u5eL1TKknX22n4XqrsVZt6WOSg
-        pgolEYvSAp2k9Pl4ulGJm3qSFgItc71GQa2Rll59cA==
-X-Google-Smtp-Source: ABdhPJyx4laym9+h+45Vgrl9Y94NJBp3NLiQdaymRY5O2zbiPKn0HRhbZyM0RydO2WGGv8kkyoHL4Glcouyagw3soG4=
-X-Received: by 2002:a05:620a:2091:: with SMTP id e17mr844903qka.265.1626263112836;
- Wed, 14 Jul 2021 04:45:12 -0700 (PDT)
+        bh=KLA88FGwDHelg/MRWPOHcNy0wg+Widk2W0PnpZpHQLU=;
+        b=XWiR9cKK4HBFsvGvwB+8j27TIaecc1sPQU6p+qMP0TkS9vonwRuG79gHP4mMx7eX9j
+         DleRCpKBORLIA6ZRL3X0YAygwRoqhcuAFtw0CTUt3/VSyKO/Rol9ao8N0wfIa9M9+Ske
+         3BBist4ZrEFOzwLEkuBAvjfriA8EzufieXyUjO3czHAXdw0djbp5IjSltlS0c9FWHYrx
+         mSOoQH/dh97rmYCxbWJ4BwsoAKVJwHlyVtIftXj5Sm013HdyMDYg7poH+QFNpFKjoMY9
+         AAjacOMdtMxgurhwDd0NXuPDWs2wKQcj22NoJ3HltT8Ry2otOi20hpqxpFw4n337OR66
+         gN1Q==
+X-Gm-Message-State: AOAM532zaY+Qh4qG7KzdRZLPufNq26h45NXyq2wXQWah17O+53e3kMax
+        Odrv1enzIxpWpBOAQaCC2rgZaw53rjdnSoMuKfo=
+X-Google-Smtp-Source: ABdhPJw3GcSqRMZtuwNhfPEiBaHNCMSGiJ1kf5AAB5Jbk2ENJX77/1JbJljlKQIqXftH1+jIdd7dv9W8Tpkwetwp+Tw=
+X-Received: by 2002:a92:d28b:: with SMTP id p11mr6795871ilp.250.1626264607340;
+ Wed, 14 Jul 2021 05:10:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <00000000000069c40405be6bdad4@google.com> <000000000000b00c1105c6f971b2@google.com>
- <CAHk-=wgWv1s1FbTxS+T7kbF-7LLm9Nz1eC+WBn+kr1WdYGtisA@mail.gmail.com> <20210714075925.jtlfrhhuj4bzff3m@wittgenstein>
-In-Reply-To: <20210714075925.jtlfrhhuj4bzff3m@wittgenstein>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 14 Jul 2021 13:45:01 +0200
-Message-ID: <CACT4Y+bMWpKPjwaRg0L1x=db20qZc1F-F0DkmDw=-EHVKU8UuA@mail.gmail.com>
-Subject: Re: [syzbot] KASAN: null-ptr-deref Read in filp_close (2)
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        syzbot <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com>,
-        brauner@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        gscrivan@redhat.com, Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable-commits@vger.kernel.org, stable <stable@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
+References: <CAOQ4uxgckzeRuiKSe7D=TVaJGTYwy4cbCFDpdWMQr1R_xXkJig@mail.gmail.com>
+ <20210712111016.GC26530@quack2.suse.cz> <CAOQ4uxgnbirvr-KSMQyz-PL+Q_FmBF_OfSmWFEu6B0TYN-w1tg@mail.gmail.com>
+ <20210712162623.GA9804@quack2.suse.cz> <CAOQ4uxgHeX3r4eJ=4OgksDnkddPqOs0a8JxP5VDFjEddmRcorA@mail.gmail.com>
+ <YO469q9T7h0LBlIT@google.com>
+In-Reply-To: <YO469q9T7h0LBlIT@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 14 Jul 2021 15:09:56 +0300
+Message-ID: <CAOQ4uxgkMrMiNNA=Y2OKP4XYoiDMMZLZshzyviirmRzwQvjr2w@mail.gmail.com>
+Subject: Re: FAN_REPORT_CHILD_FID
+To:     Matthew Bobrowski <repnop@google.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 14 Jul 2021 at 09:59, Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
+On Wed, Jul 14, 2021 at 4:16 AM Matthew Bobrowski <repnop@google.com> wrote:
 >
-> On Tue, Jul 13, 2021 at 11:49:14AM -0700, Linus Torvalds wrote:
-> > On Mon, Jul 12, 2021 at 9:12 PM syzbot
-> > <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com> wrote:
-> > >
-> > > syzbot has found a reproducer for the following issue on:
+> On Mon, Jul 12, 2021 at 09:08:18PM +0300, Amir Goldstein wrote:
+> > On Mon, Jul 12, 2021 at 7:26 PM Jan Kara <jack@suse.cz> wrote:
+> > > On Mon 12-07-21 16:00:54, Amir Goldstein wrote:
+> > > Just a brainstorming idea: How about creating new event FAN_RENAME that
+> > > would report two DFIDs (if it is cross directory rename)?
 > >
-> > Hmm.
-> >
-> > This issue is reported to have been already fixed:
-> >
-> >     Fix commit: 9b5b8722 file: fix close_range() for unshare+cloexec
-> >
-> > and that fix is already in the reported HEAD commit:
-> >
-> > > HEAD commit:    7fef2edf sd: don't mess with SD_MINORS for CONFIG_DEBUG_BL..
-> >
-> > and the oops report clearly is from that:
-> >
-> > > CPU: 1 PID: 8445 Comm: syz-executor493 Not tainted 5.14.0-rc1-syzkaller #0
-> >
-> > so the alleged fix is already there.
-> >
-> > So clearly commit 9b5b872215fe ("file: fix close_range() for
-> > unshare+cloexec") does *NOT* fix the issue.
-> >
-> > This was originally bisected to that 582f1fb6b721 ("fs, close_range:
-> > add flag CLOSE_RANGE_CLOEXEC") in
-> >
-> >      https://syzkaller.appspot.com/bug?id=1bef50bdd9622a1969608d1090b2b4a588d0c6ac
-> >
-> > which is where the "fix" is from.
-> >
-> > It would probably be good if sysbot made this kind of "hey, it was
-> > reported fixed, but it's not" very clear.
-> >
-> > The KASAN report looks like a use-after-free, and that "use" is
-> > actually the sanity check that the file count is non-zero, so it's
-> > really a "struct file *" that has already been free'd.
-> >
-> > That bogus free is a regular close() system call
-> >
-> > >  filp_close+0x22/0x170 fs/open.c:1306
-> > >  close_fd+0x5c/0x80 fs/file.c:628
-> > >  __do_sys_close fs/open.c:1331 [inline]
-> > >  __se_sys_close fs/open.c:1329 [inline]
-> >
-> > And it was opened by a "creat()" system call:
-> >
-> > > Allocated by task 8445:
-> > >  __alloc_file+0x21/0x280 fs/file_table.c:101
-> > >  alloc_empty_file+0x6d/0x170 fs/file_table.c:150
-> > >  path_openat+0xde/0x27f0 fs/namei.c:3493
-> > >  do_filp_open+0x1aa/0x400 fs/namei.c:3534
-> > >  do_sys_openat2+0x16d/0x420 fs/open.c:1204
-> > >  do_sys_open fs/open.c:1220 [inline]
-> > >  __do_sys_creat fs/open.c:1294 [inline]
-> > >  __se_sys_creat fs/open.c:1288 [inline]
-> > >  __x64_sys_creat+0xc9/0x120 fs/open.c:1288
-> > >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> > >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-> > >  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> >
-> > But it has apparently already been closed from a workqueue:
-> >
-> > > Freed by task 8445:
-> > >  __fput+0x288/0x920 fs/file_table.c:280
-> > >  task_work_run+0xdd/0x1a0 kernel/task_work.c:164
-> >
-> > So it's some kind of confusion and re-use of a struct file pointer.
-> >
-> > Which is certainly consistent with the "fix" in 9b5b872215fe ("file:
-> > fix close_range() for unshare+cloexec"), but it very much looks like
-> > that fix was incomplete and not the full story.
-> >
-> > Some fdtable got re-allocated? The fix that wasn't a fix ends up
-> > re-checking the maximum file number under the file_lock, but there's
-> > clearly something else going on too.
-> >
-> > Christian?
+> > I like the idea, but it would have to be two DFID_NAME is case of
+> > FAN_REPORT_DFID_NAME and also for same parent rename
+> > to be consistent.
 >
-> Looking into this now.
+> I don't have much to add to this conversation, but I'm just curious here.
 >
-> I have to say I'm very confused by the syzkaller report here.
+> If we do require two separate DFID_NAME record objects in the case of cross
+> directory rename operations, how does an event listener distinguish the
+> difference between which is which i.e. moved_{from/to}?  To me, this
+> implies that the event listener is expected to rely on specific
+> supplemental information object ordering, which to my knowledge is a
+> contract that we had always wanted to avoid drawing.
 >
-> If I go to
->
-> https://syzkaller.appspot.com/bug?extid=283ce5a46486d6acdbaf
->
-> which is the original link in the report it shows me
->
-> android-54      KASAN: use-after-free Read in filp_close        C                       2       183d    183d    0/1     upstream: reported C repro on 2021/01/11 12:38
->
-> which seems to indicate that this happened on an Android specific 5.4
-> kernel?
 
-Hi Christian,
+I think the records should not rely on ordering, but on self describing types,
+such as FAN_EVENT_INFO_TYPE_DFID_NAME_{FROM,TO}
+but I am trying to think of better names.
 
-That's "similar bugs" section. In this section syzbot shows previous
-similar bugs and similar bugs on other kernels (lts, android).
+I am still debating with myself between adding a new event type
+(FAN_RENAME), adding a new report flag (FAN_REPORT_TARGET_FID)
+that adds info records to existing MOVE_ events or some combination.
 
-"KASAN: use-after-free Read in filp_close" also happened on Android
-tree, if you click on the link, you can see crashes and reproducers on
-the android tree:
-https://syzkaller.appspot.com/bug?id=255edc9d4f00a881d3bf68b87d09a8b7843409e7
+My goal is to minimize the man page size and complexity.
 
-If you are interested only in upstream crashes/reproducers, then
-ignore the "similar bugs" section.
-
-
-> But ok, so I click on the link "upstream: reported C repro on 2021/01/11 12:38"
-> which takes me to a google group
->
-> https://groups.google.com/g/syzkaller-android-bugs/c/FQj0qcRSy_M/m/wrY70QFzBAAJ
->
-> which again strongly indicates that this is an Android specific kernel?
->
-> HEAD commit: c9951e5d Merge 5.4.88 into android12-5.4
-> git tree: android12-5.4
->
-> but then I can click on the dashboard link for that crash report and it
-> takes me to:
->
-> https://syzkaller.appspot.com/bug?extid=53897bcb31b82c7a08fe
->
-> which seems to be the upstream report?
->
-> So I'm a bit confused whether I'm even looking at the correct bug report
-> but I'll just give the repro a try and see what's going on.
->
-> Christian
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20210714075925.jtlfrhhuj4bzff3m%40wittgenstein.
+Thanks,
+Amir.
