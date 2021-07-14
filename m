@@ -2,173 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4044F3C8099
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 10:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9175E3C80D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 10:57:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238628AbhGNIrj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 04:47:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36317 "EHLO
+        id S238709AbhGNI77 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 04:59:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39511 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238597AbhGNIrj (ORCPT
+        by vger.kernel.org with ESMTP id S238681AbhGNI77 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 04:47:39 -0400
+        Wed, 14 Jul 2021 04:59:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626252287;
+        s=mimecast20190719; t=1626253027;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PDIhQYO2pmfAw1yw1pQlYSKRZZrPG4WTDkKfh53KhyE=;
-        b=infyA88DMroeL8vGLY8QgYIZip11uqWT/hQYYjLdMLH8EC4QOXEH560uCKWXPvNZ+iCHVg
-        b8aEETXPwwo4g4qFZCgWyRpOlH3CcZi/muVuzkrzpoaaEcOSYf/OSu2G9Nua2EK4ZUNWsZ
-        tciqc7+Rqfrr0RG2Sx76yUWgH8Qlid8=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-269-QXFxSquFOgWs7N9nYAYC8g-1; Wed, 14 Jul 2021 04:44:46 -0400
-X-MC-Unique: QXFxSquFOgWs7N9nYAYC8g-1
-Received: by mail-pg1-f197.google.com with SMTP id k9-20020a63d1090000b029021091ebb84cso1038393pgg.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 01:44:46 -0700 (PDT)
+        bh=b67pj1XjCFcb4vjOC6L9gEcYmcQccLEDJzYb3n+c66I=;
+        b=NbM7RsWJIkcbd7Zf5cmO5p7jU5A/21B5nXMLmMABf2kzFBvklDuZeVVCndeSpoPxUfe/QZ
+        iu6ZRkJiVpc/afy5fVIVMD4+qqAe008dFOJV9uW6MyXqTj16gc5cL45GSZyjxGq4fZoCr+
+        c7NOxY6Tmua2w6uieEJKMkk4qz1OLHg=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-249-VmXBWbZKMF6a5OMR93MiDg-1; Wed, 14 Jul 2021 04:57:06 -0400
+X-MC-Unique: VmXBWbZKMF6a5OMR93MiDg-1
+Received: by mail-pj1-f70.google.com with SMTP id p22-20020a17090a9316b029016a0aced749so876406pjo.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 01:57:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PDIhQYO2pmfAw1yw1pQlYSKRZZrPG4WTDkKfh53KhyE=;
-        b=nF3cYBaPNYTkBc1sEDOeVBk87BHAwAfm3PYtWtLDvqv1Xbrn08GTw6uuFKzNwfwhW/
-         HjpeaQjzba1fOrW2hZ8c17SIiH4T99cOp7olU0Zs9BJVunnOzkn61hxxa5xYeL6Vnohm
-         2v79m9iLf549lHEWcL+05YRSuPko71vKoz5uw10P+tCbJ+futqehgFgISvAattNDXqcj
-         /IAjs2YfRPnddp0SKib7Kn/YCia7NzvjUrzUJ9cqRZ9orFcR0TidLXHmN3WBdIuPCtUI
-         +KoAUz0uBjIwVrKfcnyTY+FK0CUWoBGFxQaErFLzVu8hPRUICsP7cy0F5fUYdFKCEEjb
-         0MVQ==
-X-Gm-Message-State: AOAM530l11F6Nt1sUd5KaaTW54CJqK8E7RNXNJj0qjdC3ZvadjLJTZ6H
-        czllMrMbv0HQDieXx/zdWNoReYsXqqsNdaQcyceMUw6Ine3qBX1Ey4lbQK6VGRnW0dkMEkiUehM
-        kfLvjgcHAn571mMCk80TlM8Q+tM9vW4we5N/w7v4WRA==
-X-Received: by 2002:a17:902:bf45:b029:129:8147:3a93 with SMTP id u5-20020a170902bf45b029012981473a93mr6985435pls.84.1626252284960;
-        Wed, 14 Jul 2021 01:44:44 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz82NUK3/u4KIzP5Fbyw488whisvjCfa2Oma0+CrkKWscEaWbYqp0EY1eYk/RnoJLj7tgYsHGC96okIdGWjwP4=
-X-Received: by 2002:a17:902:bf45:b029:129:8147:3a93 with SMTP id
- u5-20020a170902bf45b029012981473a93mr6985425pls.84.1626252284590; Wed, 14 Jul
- 2021 01:44:44 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=b67pj1XjCFcb4vjOC6L9gEcYmcQccLEDJzYb3n+c66I=;
+        b=YBP2WjLAAvdr9Hg+MN8ke911Pez/1PTl92E3CqNV9UwAe+HoKhIG0beo1ldu6QQQZ8
+         3i6Gr7Rw8qDrljAlwPYemN+tALmbbdvAyHgreXaKqxIhw3QWXcptZrnjMk3wStsGq0JS
+         70yK36Zlg7BUPZIeeb5WFDcCALN92SJbes14lcUcp5bCXvUk1HGEs0SLNwg8Di2fzREC
+         FET6jfse3ObtFw9G6yQXrmUSbnrpAA3WyG+bbJTFqa8ptqc/U/V9rrQ+5vzjlkABwA14
+         OAETeGR43Km2dih5oUUKVClg5TlASTm/Kxn0f55o612ASdqTqJMyqkZooAIVUPfD7QUS
+         vWJg==
+X-Gm-Message-State: AOAM530s+T1w/lkEuqQUhv2unZ93lSnvOI7+VPy3ooBNkkacz9hZQvid
+        ri9S3nT4xdoNadKK7xBlD48/JEq5KVzrYC8g8o2/XScL3f40pDaHCWOLLOYVVicEyBoTdrg1aVW
+        FhCqQ9BcJW0YcBZDr5q7USiqU9g==
+X-Received: by 2002:a17:90a:af90:: with SMTP id w16mr2814487pjq.129.1626253025290;
+        Wed, 14 Jul 2021 01:57:05 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzI/UxSDMVXZBsCbO/ysTuOL+td5Krg49S3x+yII+Nt1pi43Zbgr08iKwIXB4LRw/hvEMwy1w==
+X-Received: by 2002:a17:90a:af90:: with SMTP id w16mr2814452pjq.129.1626253024987;
+        Wed, 14 Jul 2021 01:57:04 -0700 (PDT)
+Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id d2sm2127796pgh.59.2021.07.14.01.56.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Jul 2021 01:57:04 -0700 (PDT)
+Subject: Re: [PATCH v9 16/17] vduse: Introduce VDUSE - vDPA Device in
+ Userspace
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Xie Yongji <xieyongji@bytedance.com>, stefanha@redhat.com,
+        sgarzare@redhat.com, parav@nvidia.com, hch@infradead.org,
+        christian.brauner@canonical.com, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com, joro@8bytes.org, zhe.he@windriver.com,
+        xiaodong.liu@intel.com, songmuchun@bytedance.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20210713084656.232-1-xieyongji@bytedance.com>
+ <20210713084656.232-17-xieyongji@bytedance.com>
+ <26116714-f485-eeab-4939-71c4c10c30de@redhat.com>
+ <20210714014817-mutt-send-email-mst@kernel.org>
+ <0565ed6c-88e2-6d93-7cc6-7b4afaab599c@redhat.com>
+ <YO6IiDIMUjQsA2LS@kroah.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <a493bc51-9a5c-05f1-2eac-54cb9e6c9d9b@redhat.com>
+Date:   Wed, 14 Jul 2021 16:56:55 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <CAHLe9YZ1_0p_rn+fbXFxU3ySJ_XU=QdSKJAu2j3WD8qmDuNTaQ@mail.gmail.com>
- <YO5kCzI133B/fHiS@carbon.dhcp.thefacebook.com>
-In-Reply-To: <YO5kCzI133B/fHiS@carbon.dhcp.thefacebook.com>
-From:   Boyang Xue <bxue@redhat.com>
-Date:   Wed, 14 Jul 2021 16:44:33 +0800
-Message-ID: <CAHLe9YYiNnbyYGHoArJxvCEsqaqt2rwp5OHCSy+gWH+D8OFLQA@mail.gmail.com>
-Subject: Re: Patch 'writeback, cgroup: release dying cgwbs by switching
- attached inodes' leads to kernel crash
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YO6IiDIMUjQsA2LS@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Roman,
 
-On Wed, Jul 14, 2021 at 12:12 PM Roman Gushchin <guro@fb.com> wrote:
+在 2021/7/14 下午2:47, Greg KH 写道:
+> On Wed, Jul 14, 2021 at 02:02:50PM +0800, Jason Wang wrote:
+>> 在 2021/7/14 下午1:54, Michael S. Tsirkin 写道:
+>>> On Wed, Jul 14, 2021 at 01:45:39PM +0800, Jason Wang wrote:
+>>>>> +static int vduse_dev_msg_sync(struct vduse_dev *dev,
+>>>>> +			      struct vduse_dev_msg *msg)
+>>>>> +{
+>>>>> +	int ret;
+>>>>> +
+>>>>> +	init_waitqueue_head(&msg->waitq);
+>>>>> +	spin_lock(&dev->msg_lock);
+>>>>> +	msg->req.request_id = dev->msg_unique++;
+>>>>> +	vduse_enqueue_msg(&dev->send_list, msg);
+>>>>> +	wake_up(&dev->waitq);
+>>>>> +	spin_unlock(&dev->msg_lock);
+>>>>> +
+>>>>> +	wait_event_killable_timeout(msg->waitq, msg->completed,
+>>>>> +				    VDUSE_REQUEST_TIMEOUT * HZ);
+>>>>> +	spin_lock(&dev->msg_lock);
+>>>>> +	if (!msg->completed) {
+>>>>> +		list_del(&msg->list);
+>>>>> +		msg->resp.result = VDUSE_REQ_RESULT_FAILED;
+>>>>> +	}
+>>>>> +	ret = (msg->resp.result == VDUSE_REQ_RESULT_OK) ? 0 : -EIO;
+>>>> I think we should mark the device as malfunction when there is a timeout and
+>>>> forbid any userspace operations except for the destroy aftwards for safety.
+>>> This looks like if one tried to run gdb on the program the behaviour
+>>> will change completely because kernel wants it to respond within
+>>> specific time. Looks like a receipe for heisenbugs.
+>>>
+>>> Let's not build interfaces with arbitrary timeouts like that.
+>>> Interruptible wait exists for this very reason.
+>>
+>> The problem is. Do we want userspace program like modprobe to be stuck for
+>> indefinite time and expect the administrator to kill that?
+> Why would modprobe be stuck for forever?
 >
-> On Wed, Jul 14, 2021 at 11:21:12AM +0800, Boyang Xue wrote:
-> > Hello,
-> >
-> > I'm not sure if this is the right place to report this bug, please
-> > correct me if I'm wrong.
-> >
-> > I found kernel-5.14.0-rc1 (built from the Linus tree) crash when it's
-> > running xfstests generic/256 on ext4 [1]. Looking at the call trace,
-> > it looks like the bug had been introduced by the commit
-> >
-> > c22d70a162d3 writeback, cgroup: release dying cgwbs by switching attached inodes
-> >
-> > It only happens on aarch64, not on x86_64, ppc64le and s390x. Testing
-> > was performed with the latest xfstests, and the bug can be reproduced
-> > on ext{2, 3, 4} with {1k, 2k, 4k} block sizes.
->
-> Hello Boyang,
->
-> thank you for the report!
->
-> Do you know on which line the oops happens?
+> Is this on the module probe path?
 
-I was trying to inspect the vmcore with crash utility, but
-unfortunately it doesn't work.
 
-```
-# crash /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux vmcore
-...
-crash: invalid structure member offset: task_struct_state
-       FILE: task.c  LINE: 5929  FUNCTION: task_state()
+Yes, it is called in the device probing path where the kernel forwards 
+the device configuration request to userspace and wait for its response.
 
-     [/usr/bin/crash] error trace: aaaae238b080 => aaaae238aff0 =>
-aaaae23ff4e8 => aaaae23ff440
-...
-```
-Could you suggest other ways to know "the line the oops happens"?
+If it turns out to be tricky, we can implement the whole device inside 
+the kernel and leave only the datapath in the userspace (as what TUN did).
 
-> I'll try to reproduce the problem. Do you mind sharing your .config, kvm options
-> and any other meaningful details?
+Thanks
 
-I can't access the VM host, so sorry I can't provide the kvm
-configuration for now. Please check the following other info:
 
-xfstests local.config
-```
-# cat local.config
-FSTYP="ext4"
-TEST_DIR="/test"
-TEST_DEV="/dev/vda3"
-SCRATCH_MNT="/scratch"
-SCRATCH_DEV="/dev/vda4"
-LOGWRITES_MNT="/logwrites"
-LOGWRITES_DEV="/dev/vda6"
-MKFS_OPTIONS="-b 4096"
-MOUNT_OPTIONS="-o rw,relatime,seclabel"
-TEST_FS_MOUNT_OPTS="-o rw,relatime,seclabel"
-```
-
-# lscpu
-Architecture:            aarch64
-  CPU op-mode(s):        64-bit
-  Byte Order:            Little Endian
-CPU(s):                  4
-  On-line CPU(s) list:   0-3
-Vendor ID:               Cavium
-  BIOS Vendor ID:        QEMU
-  Model name:            ThunderX2 99xx
-    BIOS Model name:     virt-rhel7.6.0
-    Model:               1
-    Thread(s) per core:  1
-    Core(s) per cluster: 4
-    Socket(s):           4
-    Cluster(s):          1
-    Stepping:            0x1
-    BogoMIPS:            400.00
-    Flags:               fp asimd evtstrm aes pmull sha1 sha2 crc32
-atomics cpuid asimdrdm
-NUMA:
-  NUMA node(s):          1
-  NUMA node0 CPU(s):     0-3
-Vulnerabilities:
-  Itlb multihit:         Not affected
-  L1tf:                  Not affected
-  Mds:                   Not affected
-  Meltdown:              Not affected
-  Spec store bypass:     Mitigation; Speculative Store Bypass disabled via prctl
-  Spectre v1:            Mitigation; __user pointer sanitization
-  Spectre v2:            Mitigation; Branch predictor hardening
-  Srbds:                 Not affected
-  Tsx async abort:       Not affected
-
-# getconf PAGESIZE
-65536
-
-Please let me know if there's other useful info I can provide.
-
-Thanks,
-Boyang
-
->
-> Thank you!
->
-> Roman
 >
 
