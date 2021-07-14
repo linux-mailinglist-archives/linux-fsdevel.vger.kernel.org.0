@@ -2,100 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 402E23C8888
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 18:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD7F33C888F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 18:22:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232086AbhGNQVW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 12:21:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58292 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229897AbhGNQVW (ORCPT
+        id S229897AbhGNQZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 12:25:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46999 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229554AbhGNQZe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 12:21:22 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B688C06175F;
-        Wed, 14 Jul 2021 09:18:29 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id b40so4203319ljf.12;
-        Wed, 14 Jul 2021 09:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4dmyFudmqM35M4fxUjbwxzi8D3gpd+2jW5SdToDO008=;
-        b=Lrp3yue8taTSFoHaZno0VXwcfHyJVAa9j97nmENM2H20rzINkjXZxclFrL2JfHCRdN
-         3l2Jn1WjcsaUWSLmScjkV69B3MAXiZ2lCFngdPOTvOm6XZvLEJqJ6MckCLQNY9Klp/gJ
-         +yxJGgjc+AJPEaGmCqNYNPB1QDdr/Hlb03bYrScjY7mDh0S5QBU7QgcMlYNwCdroGCqE
-         faB/8E32xq/BHxd4aCRAevDovZw8t8Qs4f3WMIhdNQr84l8MK+0HkUra066lpTp9Izk/
-         0dD1PGoAtxxCpw5jWOxPrWJDsfw9AskcmpxTB2FxRDhJhp3YPStHj8eJhWzd/kLbUz6B
-         hhHw==
+        Wed, 14 Jul 2021 12:25:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626279762;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=oLqGODqKuzoiI61BizAG+5GlJB1wI5HyMpgzIXPtLhs=;
+        b=J1B1AwlhRRBTNfPp8luPAYg53E5HxDVgpY6+4usb6Fqs4mezZGBKGc5jBJbBmSyKRAXubR
+        AOLtWN24y3VCs2+RMCLI7NdfT3mNiAiRLKhFn4zrijypF9wVPyewYMo899ENmBgXUTUjIQ
+        T33OvCkFBNY0EGQ9GQQyBQDiV2xlmng=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-115-IitFh_BjNESSzxWN6lkiSA-1; Wed, 14 Jul 2021 12:22:41 -0400
+X-MC-Unique: IitFh_BjNESSzxWN6lkiSA-1
+Received: by mail-pg1-f197.google.com with SMTP id u190-20020a6379c70000b029022ceb8c8831so492099pgc.22
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 09:22:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4dmyFudmqM35M4fxUjbwxzi8D3gpd+2jW5SdToDO008=;
-        b=Zh+KdWAmWFS6jG2IarrubBcoZ8+q0i/ra9ZAFQFElQH+vrVkdJjjHYDdybohoTJbRA
-         bug1Etm00Ji8poguLOpGqg1rFcQfiDpns3uwaZm54WNjRWhimqmGFBiCemIgXBeOHapb
-         fVAAcFIQLKBytMJbuDD8wlWiCTbqBSzY7uc1iZxgD+5c38lpgQdqwnq2T5HGRroyQiGK
-         YhuB6Ipn1c9qtCaJyzZpjG7iC6FC3kwudpVGRLds5+lXdG225+NNpKQDtgeE0sLeB2Wj
-         ovdFYiwa16LvN48IXZIFSp3Dlxwwvf4LOP+uAYMp270gncKxgp38bXewFPmTNXSpn4gL
-         Wu+g==
-X-Gm-Message-State: AOAM531fi94IodW8wWIKPkRm8tI8bF8Ezof72wzl9WAzrnEXOchivTW9
-        Ge5le6e7ZvUyldKcYhyVHRA=
-X-Google-Smtp-Source: ABdhPJye5vz+hvuPkKfHD19KQ6U212f6Tl2NLMdLr8lUm1SAJc+P8hb6ID6nHkMKz57A6kN2vEukaA==
-X-Received: by 2002:a2e:b548:: with SMTP id a8mr10206515ljn.346.1626279507951;
-        Wed, 14 Jul 2021 09:18:27 -0700 (PDT)
-Received: from localhost.localdomain (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
-        by smtp.googlemail.com with ESMTPSA id v16sm285386ljn.93.2021.07.14.09.18.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jul 2021 09:18:27 -0700 (PDT)
-Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-References: <30c7ec73-4ad5-3c4e-4745-061eb22f2c8a@redhat.com>
- <CAHk-=wjW7Up3KD-2EqVg7+ca8Av0-rC5Kd7yK+=m6Dwk3D4Q+A@mail.gmail.com>
- <YO30DKw5FKLz4QuF@zeniv-ca.linux.org.uk>
- <bea2bcf2-02f6-f247-9e06-7b9ec154377a@gmail.com> <YO755O8JnxG44YaT@kroah.com>
- <7f4a96bc-3912-dfb6-4a32-f0c6487d977b@gmail.com>
- <YO8LOKR/vRUgggTx@casper.infradead.org>
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Message-ID: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
-Date:   Wed, 14 Jul 2021 18:18:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oLqGODqKuzoiI61BizAG+5GlJB1wI5HyMpgzIXPtLhs=;
+        b=IQufqJqwOGHxkma2iepgjyK1+hliS6Hy/4r1BUdCdGonT7pWvjCFrWGP0q9tQn9vZ2
+         usyR4INqr5DPN3xgyDXpVUeRh/dVVn9mfTnaMUeRU5orzq2/IP1aHpiyyM8A/waNPciJ
+         weErgFqknBB8Is3+Ibj/Q/BhBCFvQDAtSUUTqn2T+2sdkZBqnVfpNrn60NLKxUiIAn7d
+         PzlwiuSefdCpwfT7u4SW3PziEeGl3J9XPz+3bKFUlV2bJ+bpM6aCZkYgtD8FKOqdG8OJ
+         6jGuhp9F9uwWBoaLBWUip3a2k4FoTmshOD/g+Jc3WMIte+SOlJ8rWV2rnedBLK/Mb9ro
+         lfyg==
+X-Gm-Message-State: AOAM533HnsrY51i+BHPuMqdRVLmhrumoxXEKCxlwtGaKuOqKDpwaqBN4
+        ZGWIrMAGUJozgoQusfvJk2tXjaKSbxP0j3ShFvF1AQbM56DQhNEVSh4aNGbmhFQmTTgDcN0e/MK
+        rrtSu0yvJPbDPFMfAlBO12f/TpzJ6xnmIfuxeWQDDlg==
+X-Received: by 2002:aa7:810b:0:b029:2fe:decd:c044 with SMTP id b11-20020aa7810b0000b02902fedecdc044mr10849488pfi.15.1626279760183;
+        Wed, 14 Jul 2021 09:22:40 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzrt7doYkiVPjqmf9/NUldd9k267ZW03LHK48ffy6XpvnP7EaOGju6v+lvA1rPA7UdQg/NDUWuiGGQDDJ22ofA=
+X-Received: by 2002:aa7:810b:0:b029:2fe:decd:c044 with SMTP id
+ b11-20020aa7810b0000b02902fedecdc044mr10849457pfi.15.1626279759815; Wed, 14
+ Jul 2021 09:22:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YO8LOKR/vRUgggTx@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CAHLe9YZ1_0p_rn+fbXFxU3ySJ_XU=QdSKJAu2j3WD8qmDuNTaQ@mail.gmail.com>
+ <YO5kCzI133B/fHiS@carbon.dhcp.thefacebook.com> <CAHLe9YYiNnbyYGHoArJxvCEsqaqt2rwp5OHCSy+gWH+D8OFLQA@mail.gmail.com>
+ <20210714092639.GB9457@quack2.suse.cz>
+In-Reply-To: <20210714092639.GB9457@quack2.suse.cz>
+From:   Boyang Xue <bxue@redhat.com>
+Date:   Thu, 15 Jul 2021 00:22:28 +0800
+Message-ID: <CAHLe9YbKXcF1mkSeK0Fo7wAUN02-_LfLD+2hdmVMJY_-gNq=-A@mail.gmail.com>
+Subject: Re: Patch 'writeback, cgroup: release dying cgwbs by switching
+ attached inodes' leads to kernel crash
+To:     Jan Kara <jack@suse.cz>
+Cc:     Roman Gushchin <guro@fb.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14.07.2021 18:05, Matthew Wilcox wrote:
-> On Wed, Jul 14, 2021 at 05:59:19PM +0200, Rafał Miłecki wrote:
->> In short I'd say: missing feedback.
-> 
-> Uh, with all due respect: Fuck you.
-> 
-> I've provided feedback, and Paragon have done a fantastic job of
-> responding to it.  Pretending that the filesystem has simply been
-> ignored is hugely disrespectful of my time and those at Paragon.
-> 
-> I'm supportive of ntfs3 being included, FWIW.  It looks to be
-> in much better shape than the existing fs/ntfs.
+Hi Jan,
 
-Thanks you for kind words before even trying to clarify the situation.
+On Wed, Jul 14, 2021 at 5:26 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 14-07-21 16:44:33, Boyang Xue wrote:
+> > Hi Roman,
+> >
+> > On Wed, Jul 14, 2021 at 12:12 PM Roman Gushchin <guro@fb.com> wrote:
+> > >
+> > > On Wed, Jul 14, 2021 at 11:21:12AM +0800, Boyang Xue wrote:
+> > > > Hello,
+> > > >
+> > > > I'm not sure if this is the right place to report this bug, please
+> > > > correct me if I'm wrong.
+> > > >
+> > > > I found kernel-5.14.0-rc1 (built from the Linus tree) crash when it's
+> > > > running xfstests generic/256 on ext4 [1]. Looking at the call trace,
+> > > > it looks like the bug had been introduced by the commit
+> > > >
+> > > > c22d70a162d3 writeback, cgroup: release dying cgwbs by switching attached inodes
+> > > >
+> > > > It only happens on aarch64, not on x86_64, ppc64le and s390x. Testing
+> > > > was performed with the latest xfstests, and the bug can be reproduced
+> > > > on ext{2, 3, 4} with {1k, 2k, 4k} block sizes.
+> > >
+> > > Hello Boyang,
+> > >
+> > > thank you for the report!
+> > >
+> > > Do you know on which line the oops happens?
+> >
+> > I was trying to inspect the vmcore with crash utility, but
+> > unfortunately it doesn't work.
+>
+> Thanks for report!  Have you tried addr2line utility? Looking at the oops I
+> can see:
 
-What I meant (but failed to write clearly) is missing feedback on *the
-latest* patchset.
+Thanks for the tips!
 
-I highly appreciate everyone who took time and helped polishing that
-filesystem to its latest form.
+It's unclear to me that where to find the required address in the
+addr2line command line, i.e.
+
+addr2line -e /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
+<what address here?>
+
+But I have tried gdb like this,
+
+# gdb /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
+GNU gdb (GDB) Red Hat Enterprise Linux 10.1-14.el9
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "aarch64-redhat-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from
+/usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux...
+(gdb) list *(cleanup_offline_cgwbs_workfn+0x320)
+0xffff8000102d6ddc is in cleanup_offline_cgwbs_workfn
+(./arch/arm64/include/asm/jump_label.h:38).
+33      }
+34
+35      static __always_inline bool arch_static_branch_jump(struct
+static_key *key,
+36                                                          bool branch)
+37      {
+38              asm_volatile_goto(
+39                      "1:     b               %l[l_yes]               \n\t"
+40                       "      .pushsection    __jump_table, \"aw\"    \n\t"
+41                       "      .align          3                       \n\t"
+42                       "      .long           1b - ., %l[l_yes] - .   \n\t"
+(gdb)
+
+I'm not sure is it meaningful?
+
+>
+> [ 4371.307867] pc : cleanup_offline_cgwbs_workfn+0x320/0x394
+>
+> Which means there's probably heavy inlining going on (do you use LTO by
+> any chance?) because I don't think cleanup_offline_cgwbs_workfn() itself
+> would compile into ~1k of code (but I don't have much experience with
+> aarch64). Anyway, add2line should tell us.
+
+Actually I built the kernel on an internal build service, so I don't
+know much of the build details, like LTO.
+
+>
+> Also pasting oops into scripts/decodecode on aarch64 machine should tell
+> us more about where and why the kernel crashed.
+
+The output is:
+
+# echo "Code: d63f0020 97f99963 17ffffa6 f8588263 (f9400061)" |
+/usr/src/kernels/5.14.0-0.rc1.15.bx.el9.aarch64/scripts/decodecode
+Code: d63f0020 97f99963 17ffffa6 f8588263 (f9400061)
+All code
+========
+   0:   d63f0020        blr     x1
+   4:   97f99963        bl      0xffffffffffe66590
+   8:   17ffffa6        b       0xfffffffffffffea0
+   c:   f8588263        ldur    x3, [x19, #-120]
+  10:*  f9400061        ldr     x1, [x3]                <-- trapping instruction
+
+Code starting with the faulting instruction
+===========================================
+   0:   f9400061        ldr     x1, [x3]
+
+>
+>                                                                 Honza
+>
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+>
+
+Thanks,
+Boyang
+
