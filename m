@@ -2,162 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B3CA3C884B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 18:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B2733C8858
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 18:06:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235503AbhGNQE5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 12:04:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44013 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239855AbhGNQE4 (ORCPT
+        id S232280AbhGNQIw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 12:08:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230427AbhGNQIw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 12:04:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626278524;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iDdwf1XmUeNAele69YuflW7I8JQTNLYYUbHmho8CJjk=;
-        b=DKrs4HEqOo975A+FhE5W4ahJ9PHRlgEUOkoVh54op3k3wg4B5RayVVM4xEDfdE2QPbnrhZ
-        5ujDZ4HnBpeneXBaOGJONOJBNbCS+WEYOXpDhIy/wmughrXGI695YJlZkYOdSlK1vi7P9b
-        vKN0U230QchlyvQaLIEBoRmVaxWSn3Q=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-596-2EKKgoD8PteuDKMel4RT_g-1; Wed, 14 Jul 2021 12:02:03 -0400
-X-MC-Unique: 2EKKgoD8PteuDKMel4RT_g-1
-Received: by mail-qt1-f199.google.com with SMTP id t6-20020ac80dc60000b029024e988e8277so2143175qti.23
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 09:02:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iDdwf1XmUeNAele69YuflW7I8JQTNLYYUbHmho8CJjk=;
-        b=PK1bNqbNRAWRj/xgGtXW4gXZNW669IuVHhLEblHMLrxXjT9UeSMpOmFCT/rolZjoFA
-         rS+VaGmpHM+3zNKcNzxUVc5Mt4VDRGFztGEMGo5RSDVF6yqEdyJrzA2Ls0LFJOSU6Rp8
-         FbmayxUtaCTNVZY9J8gGGmBl1Xvz2HHOOrMnQENRA15aadowdvQljdQpv9YaqeOrnyCl
-         oXMNNc1pGrdJ1ipRVZoEbA/9wBLDXqv6n31VCePxZ+jz5aHoezoRBXMWA97shK0xyS85
-         oSMhpRhoGZMCzltfketOQU9FcbxZ/AiyCi9ltMBKFQRfUmhPFVgA+WuMsH1sK/j0t4kw
-         1cJw==
-X-Gm-Message-State: AOAM530EosXQVx8Cuq9T+oO3imUuF0O7QqNVIIbtPzr/I9Eg63G2C0F3
-        DKvT9+5PQC/1oC68LaFuxLE3nHrSvow4szEf3BtEFQu+/b3lFSqFJpw9FWulM0/gKPDUf8xhTyr
-        U1sz246NpGC5QNXkZFlfmLIslOA==
-X-Received: by 2002:a05:622a:d1:: with SMTP id p17mr9872832qtw.141.1626278519914;
-        Wed, 14 Jul 2021 09:01:59 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxmBx7ehtHLFv1+6C/w89oUyoBrHdc2FU7lSB7HgqiXueL1nKb1EkEmByVFXTV9sw1ZSVVFYA==
-X-Received: by 2002:a05:622a:d1:: with SMTP id p17mr9872799qtw.141.1626278519654;
-        Wed, 14 Jul 2021 09:01:59 -0700 (PDT)
-Received: from t490s (bras-base-toroon474qw-grc-65-184-144-111-238.dsl.bell.ca. [184.144.111.238])
-        by smtp.gmail.com with ESMTPSA id y4sm1227470qkc.27.2021.07.14.09.01.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jul 2021 09:01:58 -0700 (PDT)
-Date:   Wed, 14 Jul 2021 12:01:57 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Tiberiu Georgescu <tiberiu.georgescu@nutanix.com>
-Cc:     akpm@linux-foundation.org, catalin.marinas@arm.com,
-        peterz@infradead.org, chinwen.chang@mediatek.com,
-        linmiaohe@huawei.com, jannh@google.com, apopple@nvidia.com,
-        christian.brauner@ubuntu.com, ebiederm@xmission.com,
-        adobriyan@gmail.com, songmuchun@bytedance.com, axboe@kernel.dk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, ivan.teterevkov@nutanix.com,
-        florian.schmidt@nutanix.com, carl.waldspurger@nutanix.com,
-        Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [RFC PATCH 0/1] pagemap: report swap location for shared pages
-Message-ID: <YO8KdQYp4tNhci6o@t490s>
-References: <20210714152426.216217-1-tiberiu.georgescu@nutanix.com>
+        Wed, 14 Jul 2021 12:08:52 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA2A0C06175F;
+        Wed, 14 Jul 2021 09:06:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=BiCvi+xpFl7gJwbD11pdFh8bwy+RGhUE6mwJAV6RuBs=; b=MKcP9PsKXStlDCEAvJPRgO9MQ8
+        HHiw5y/9ONALDl4oitZS30Ao2KS4tq0lR9CMcOigv3X4aNUru20oAFZhsC8Ra4KbODj4TCojRx/sN
+        IM3wAL+c/rbC/zHgNzw85sHSfiYDaCCB3FB9jqkzrBpJVomc46MB/SV+rUhpoukwiqYWk7TihdNaX
+        KbJDluP9xzECqjUUZ2Hb/hwyxYhzt+fSe7uGMB4OQuIvVcHkaqzwUQnM3NZ0Ge2vQARKmlG8K3zCV
+        JCWP9loK19HCfIzoEz2yPhtNU08zBlxqvNXz1fBvIzKV5/lOHAgxzjCkzv/sPjlMraDVpR8LT9hjl
+        j9PfzGeA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m3hNo-002M1J-Ql; Wed, 14 Jul 2021 16:05:19 +0000
+Date:   Wed, 14 Jul 2021 17:05:12 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
+Message-ID: <YO8LOKR/vRUgggTx@casper.infradead.org>
+References: <30c7ec73-4ad5-3c4e-4745-061eb22f2c8a@redhat.com>
+ <CAHk-=wjW7Up3KD-2EqVg7+ca8Av0-rC5Kd7yK+=m6Dwk3D4Q+A@mail.gmail.com>
+ <YO30DKw5FKLz4QuF@zeniv-ca.linux.org.uk>
+ <bea2bcf2-02f6-f247-9e06-7b9ec154377a@gmail.com>
+ <YO755O8JnxG44YaT@kroah.com>
+ <7f4a96bc-3912-dfb6-4a32-f0c6487d977b@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210714152426.216217-1-tiberiu.georgescu@nutanix.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7f4a96bc-3912-dfb6-4a32-f0c6487d977b@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 14, 2021 at 03:24:25PM +0000, Tiberiu Georgescu wrote:
-> When a page allocated using the MAP_SHARED flag is swapped out, its pagemap
-> entry is cleared. In many cases, there is no difference between swapped-out
-> shared pages and newly allocated, non-dirty pages in the pagemap interface.
-> 
-> Example pagemap-test code (Tested on Kernel Version 5.14-rc1):
-> 
-> 	#define NPAGES (256)
-> 	/* map 1MiB shared memory */
-> 	size_t pagesize = getpagesize();
-> 	char *p = mmap(NULL, pagesize * NPAGES, PROT_READ | PROT_WRITE,
-> 			   MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-> 	/* Dirty new pages. */
-> 	for (i = 0; i < PAGES; i++)
-> 		p[i * pagesize] = i;
-> 
-> Run the above program in a small cgroup, which allows swapping:
-> 
-> 	/* Initialise cgroup & run a program */
-> 	$ echo 512K > foo/memory.limit_in_bytes
-> 	$ echo 60 > foo/memory.swappiness
-> 	$ cgexec -g memory:foo ./pagemap-test
-> 
-> Check the pagemap report. This is an example of the current expected output:
-> 
-> 	$ dd if=/proc/$PID/pagemap ibs=8 skip=$(($VADDR / $PAGESIZE)) count=$COUNT | hexdump -C
-> 	00000000  00 00 00 00 00 00 80 00  00 00 00 00 00 00 80 00  |................|
-> 	*
-> 	00000710  e1 6b 06 00 00 00 80 a1  9e eb 06 00 00 00 80 a1  |.k..............|
-> 	00000720  6b ee 06 00 00 00 80 a1  a5 a4 05 00 00 00 80 a1  |k...............|
-> 	00000730  5c bf 06 00 00 00 80 a1  90 b6 06 00 00 00 80 a1  |\...............|
-> 
-> The first pagemap entries are reported as zeroes, indicating the pages have
-> never been allocated while they have actually been swapped out. It is
-> possible for bit 55 (PTE is Soft-Dirty) to be set on all pages of the
-> shared VMA, indicating some access to the page, but nothing else (frame
-> location, presence in swap or otherwise).
-> 
-> This patch addresses the behaviour and modifies pte_to_pagemap_entry() to
-> make use of the XArray associated with the virtual memory area struct
-> passed as an argument. The XArray contains the location of virtual pages in
-> the page cache, swap cache or on disk. If they are on either of the caches,
-> then the original implementation still works. If not, then the missing
-> information will be retrieved from the XArray.
-> 
-> The root cause of the missing functionality is that the PTE for the page
-> itself is cleared when a swap out occurs on a shared page.  Please take a
-> look at the proposed patch. I would appreciate it if you could verify a
-> couple of points:
-> 
-> 1. Why do swappable and non-syncable shared pages have their PTEs cleared
->    when they are swapped out ? Why does the behaviour differ so much
->    between MAP_SHARED and MAP_PRIVATE pages? What are the origins of the
->    approach?
+On Wed, Jul 14, 2021 at 05:59:19PM +0200, Rafał Miłecki wrote:
+> In short I'd say: missing feedback.
 
-My understanding is linux mm treat this differently for file-backed memories,
-MAP_SHARED is one of this kind.  For these memories, ptes can be dropped at any
-time because it can be reloaded from page cache when faulted again.
+Uh, with all due respect: Fuck you.
 
-Anonymous private memories cannot do that, so anonymous private memories keep
-all things within ptes, including swap entry.
+I've provided feedback, and Paragon have done a fantastic job of
+responding to it.  Pretending that the filesystem has simply been
+ignored is hugely disrespectful of my time and those at Paragon.
 
-> 
-> 2. PM_SOFT_DIRTY and PM_UFFD_WP are two flags that seem to get lost once
->    the shared page is swapped out. Is there any other way to retrieve
->    their value in the proposed patch, other than ensuring these flags are
->    set, when necessary, in the PTE?
-
-uffd-wp has no problem on dropping them because uffd-wp does not yet support
-shmem.  Shmem support is posted upstream but still during review:
-
-https://lore.kernel.org/lkml/20210527201927.29586-1-peterx@redhat.com/
-
-After that work they'll persist, then we won't have an issue using uffd-wp with
-shmem swapping; the pagemap part is done in patch 25 of 27:
-
-https://lore.kernel.org/lkml/20210527202340.32306-1-peterx@redhat.com/
-
-However I agree soft-dirty seems to be still broken with it.
-
-(Cc Hugh and Andrea too)
-
-Thanks,
-
--- 
-Peter Xu
-
+I'm supportive of ntfs3 being included, FWIW.  It looks to be
+in much better shape than the existing fs/ntfs.
