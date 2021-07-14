@@ -2,116 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 067D53C833D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 12:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE9543C8409
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 13:45:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238368AbhGNKxG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 06:53:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39330 "EHLO
+        id S239278AbhGNLsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 07:48:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232138AbhGNKxF (ORCPT
+        with ESMTP id S239269AbhGNLsH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 06:53:05 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2E97C06175F;
-        Wed, 14 Jul 2021 03:50:12 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id n14so2842613lfu.8;
-        Wed, 14 Jul 2021 03:50:12 -0700 (PDT)
+        Wed, 14 Jul 2021 07:48:07 -0400
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08230C061764
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 04:45:14 -0700 (PDT)
+Received: by mail-qk1-x72e.google.com with SMTP id m3so1203910qkm.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 04:45:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ydJrW4zIZfpmcsGuzesK/aUPaVGvU/zLXj9XHjifBxY=;
-        b=IG/XvgWJtHCXeK76Potz7Lfi2KPs0IPnN1Tp98jH01Ev40LnnaRLU7u9CU3Hd8wza+
-         K7CdbROLwk/aUeM/l+ChAFTJLD1PBWLZxFDgs7o98kHOii0hz2eKy4+phujLC0cpOVvF
-         khOWmNP2+2rUFcvt0hUchmt8mx7tpcYYKMTMkKnqN7ctrKvY5vHuQGYglGWXqYCzCE1v
-         x/qjU7hF5knBrGr1FmmwMeyccKWuM9M1TksEL0vyEGdx8Hy0V1d3K+/AAN4mlN4CRJqf
-         9C0TwvTMnS/o9FoH0OVW/EVOq2W5v+k2a6uyLj6sYM2MOeqVU2tkUST6K5FFhgzUCtSd
-         0yGQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zxPicnNj0mGB/tmcGMwmXnv6kKv9n+OZmDAsE0BpNOI=;
+        b=of51A5jV+4EsLMz/6UFrjhy6Fwu4/1Y9uszSSFtCb/0Qf58qKPNHTrHLxzR3i9kl5H
+         4I3px+9vaeR0DpcF+Rcaa67LSUOsU0K7T/QnSGObafY4CCAkzABBHffef050xhPDGRKx
+         nCJDI7Qbg4uz8zgkEugfNkFTLdDxsgEwItPs0NXLRLZFfnHIPTTQe+eBnc68wmHgFgIS
+         wMi5zaOO+Bp6SD/m8tSFmnr0jmBPm8suupTM9sIdOee2oI4YCcFQgvJOUdi6+omxx7Ag
+         m/oLtkyE5+30VLvSlYLKT3kGbUhm1R5pQ44wQF7tn0XU7tKsW9fm7jN+kdH8WV4BgkUg
+         c5fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ydJrW4zIZfpmcsGuzesK/aUPaVGvU/zLXj9XHjifBxY=;
-        b=lEQljl9yzAQhMfkPGgzgxd7MK/hfUraNec5cCViLKyp+hHgB+KGFj6tuK+k71KQI4Z
-         oFLdjzttLu/hp27t+2B7YXFeEiaRe1LFuJZ6vRY+8eGf16Ngqcp25u/6MCkFjbULDZ7R
-         dcnkHVaUv3LsGoRtRtYSIGR5dTXHvYS1FS2mjNXcfYKUqrE79LpM3wDHOGMciDBkMDmj
-         jjvhys4u1gsM8v6XpNtQ5Vw/Q6tMm/It3qORU5pQb4WmJ7FV+/QNSvDvKo7LlA8Auivb
-         D3tB4d0Byo1nMnZRNbis2WOm6ktUCz8XsJ0qfKMoKtP9qFTRH8J2sPdtcI+9QqMHP9Q8
-         u1EA==
-X-Gm-Message-State: AOAM5316k/HzQvv/7WMYiQTPCzdVk4G0hnx/LGFWl7SMfDqW9O/o+zXo
-        +ywjoO+3y/7tIABijCN1kUKMBXtWeCU=
-X-Google-Smtp-Source: ABdhPJxMyDS1zlR0PPsl+Gz2STqLAbgoHT71r8MiHltMCYUL+2PeDKDqDmRtS64mViFQ10fqDRTMWA==
-X-Received: by 2002:ac2:410a:: with SMTP id b10mr7149090lfi.376.1626259811267;
-        Wed, 14 Jul 2021 03:50:11 -0700 (PDT)
-Received: from localhost.localdomain (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
-        by smtp.googlemail.com with ESMTPSA id n27sm136523lfh.99.2021.07.14.03.50.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jul 2021 03:50:10 -0700 (PDT)
-Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <30c7ec73-4ad5-3c4e-4745-061eb22f2c8a@redhat.com>
- <CAHk-=wjW7Up3KD-2EqVg7+ca8Av0-rC5Kd7yK+=m6Dwk3D4Q+A@mail.gmail.com>
- <YO30DKw5FKLz4QuF@zeniv-ca.linux.org.uk>
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Message-ID: <bea2bcf2-02f6-f247-9e06-7b9ec154377a@gmail.com>
-Date:   Wed, 14 Jul 2021 12:50:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zxPicnNj0mGB/tmcGMwmXnv6kKv9n+OZmDAsE0BpNOI=;
+        b=mSn3PLj2O6AAxhJlvfAm/jNBpmMTFD7+66pQfISGTpmk3dUOC60Lp1QeZ7/+CFstAX
+         FGdjuxj2Z1yRr/lpSWU93pZiVxBceYTIXETaKJ4wZbTSguKKMktwTBHdF/oaSM3RLC2V
+         Gzk9A4FUitfdndQUGybnY16p6j9hKcyYQRUg0xDXHI23ToQIzUAWtD7dV8Qs2cZYHKHB
+         MfD3xQa0LMkKzNiA+jJ9YNqvYK3VoIMyIPN9iujjKTLUsgr85SkrXb0YaHpIXdWB3q92
+         6bUOBfPQ84iWvjqgWkS8/pHUxedan+vaOldjZ+pTHxO1A3Agd9H1bke5afRBY2QdmHy0
+         g+eA==
+X-Gm-Message-State: AOAM533LuurG6MGhhZXFk43XYMszs8u5eL1TKknX22n4XqrsVZt6WOSg
+        pgolEYvSAp2k9Pl4ulGJm3qSFgItc71GQa2Rll59cA==
+X-Google-Smtp-Source: ABdhPJyx4laym9+h+45Vgrl9Y94NJBp3NLiQdaymRY5O2zbiPKn0HRhbZyM0RydO2WGGv8kkyoHL4Glcouyagw3soG4=
+X-Received: by 2002:a05:620a:2091:: with SMTP id e17mr844903qka.265.1626263112836;
+ Wed, 14 Jul 2021 04:45:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YO30DKw5FKLz4QuF@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <00000000000069c40405be6bdad4@google.com> <000000000000b00c1105c6f971b2@google.com>
+ <CAHk-=wgWv1s1FbTxS+T7kbF-7LLm9Nz1eC+WBn+kr1WdYGtisA@mail.gmail.com> <20210714075925.jtlfrhhuj4bzff3m@wittgenstein>
+In-Reply-To: <20210714075925.jtlfrhhuj4bzff3m@wittgenstein>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 14 Jul 2021 13:45:01 +0200
+Message-ID: <CACT4Y+bMWpKPjwaRg0L1x=db20qZc1F-F0DkmDw=-EHVKU8UuA@mail.gmail.com>
+Subject: Re: [syzbot] KASAN: null-ptr-deref Read in filp_close (2)
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        syzbot <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com>,
+        brauner@kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        gscrivan@redhat.com, Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable-commits@vger.kernel.org, stable <stable@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Alexander,
+On Wed, 14 Jul 2021 at 09:59, Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Tue, Jul 13, 2021 at 11:49:14AM -0700, Linus Torvalds wrote:
+> > On Mon, Jul 12, 2021 at 9:12 PM syzbot
+> > <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com> wrote:
+> > >
+> > > syzbot has found a reproducer for the following issue on:
+> >
+> > Hmm.
+> >
+> > This issue is reported to have been already fixed:
+> >
+> >     Fix commit: 9b5b8722 file: fix close_range() for unshare+cloexec
+> >
+> > and that fix is already in the reported HEAD commit:
+> >
+> > > HEAD commit:    7fef2edf sd: don't mess with SD_MINORS for CONFIG_DEBUG_BL..
+> >
+> > and the oops report clearly is from that:
+> >
+> > > CPU: 1 PID: 8445 Comm: syz-executor493 Not tainted 5.14.0-rc1-syzkaller #0
+> >
+> > so the alleged fix is already there.
+> >
+> > So clearly commit 9b5b872215fe ("file: fix close_range() for
+> > unshare+cloexec") does *NOT* fix the issue.
+> >
+> > This was originally bisected to that 582f1fb6b721 ("fs, close_range:
+> > add flag CLOSE_RANGE_CLOEXEC") in
+> >
+> >      https://syzkaller.appspot.com/bug?id=1bef50bdd9622a1969608d1090b2b4a588d0c6ac
+> >
+> > which is where the "fix" is from.
+> >
+> > It would probably be good if sysbot made this kind of "hey, it was
+> > reported fixed, but it's not" very clear.
+> >
+> > The KASAN report looks like a use-after-free, and that "use" is
+> > actually the sanity check that the file count is non-zero, so it's
+> > really a "struct file *" that has already been free'd.
+> >
+> > That bogus free is a regular close() system call
+> >
+> > >  filp_close+0x22/0x170 fs/open.c:1306
+> > >  close_fd+0x5c/0x80 fs/file.c:628
+> > >  __do_sys_close fs/open.c:1331 [inline]
+> > >  __se_sys_close fs/open.c:1329 [inline]
+> >
+> > And it was opened by a "creat()" system call:
+> >
+> > > Allocated by task 8445:
+> > >  __alloc_file+0x21/0x280 fs/file_table.c:101
+> > >  alloc_empty_file+0x6d/0x170 fs/file_table.c:150
+> > >  path_openat+0xde/0x27f0 fs/namei.c:3493
+> > >  do_filp_open+0x1aa/0x400 fs/namei.c:3534
+> > >  do_sys_openat2+0x16d/0x420 fs/open.c:1204
+> > >  do_sys_open fs/open.c:1220 [inline]
+> > >  __do_sys_creat fs/open.c:1294 [inline]
+> > >  __se_sys_creat fs/open.c:1288 [inline]
+> > >  __x64_sys_creat+0xc9/0x120 fs/open.c:1288
+> > >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> > >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+> > >  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> >
+> > But it has apparently already been closed from a workqueue:
+> >
+> > > Freed by task 8445:
+> > >  __fput+0x288/0x920 fs/file_table.c:280
+> > >  task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+> >
+> > So it's some kind of confusion and re-use of a struct file pointer.
+> >
+> > Which is certainly consistent with the "fix" in 9b5b872215fe ("file:
+> > fix close_range() for unshare+cloexec"), but it very much looks like
+> > that fix was incomplete and not the full story.
+> >
+> > Some fdtable got re-allocated? The fix that wasn't a fix ends up
+> > re-checking the maximum file number under the file_lock, but there's
+> > clearly something else going on too.
+> >
+> > Christian?
+>
+> Looking into this now.
+>
+> I have to say I'm very confused by the syzkaller report here.
+>
+> If I go to
+>
+> https://syzkaller.appspot.com/bug?extid=283ce5a46486d6acdbaf
+>
+> which is the original link in the report it shows me
+>
+> android-54      KASAN: use-after-free Read in filp_close        C                       2       183d    183d    0/1     upstream: reported C repro on 2021/01/11 12:38
+>
+> which seems to indicate that this happened on an Android specific 5.4
+> kernel?
 
-On 13.07.2021 22:14, Al Viro wrote:
-> To elaborate a bit - there's one case when I want it to go through
-> vfs.git, and that's when there's an interference between something
-> going on in vfs.git and the work done in filesystem.  Other than
-> that, I'm perfectly fine with maintainer sending pull request directly
-> to Linus (provided that I hadn't spotted something obviously wrong
-> in the series, of course, but that's not "I want it to go through
-> vfs.git" - that's "I don't want it in mainline until such and such
-> bug is resolved").
+Hi Christian,
 
-let me take this opportunity to ask about another filesystem.
+That's "similar bugs" section. In this section syzbot shows previous
+similar bugs and similar bugs on other kernels (lts, android).
 
-Would you advise to send pull req for the fs/ntfs3 directly to Linus?
+"KASAN: use-after-free Read in filp_close" also happened on Android
+tree, if you click on the link, you can see crashes and reproducers on
+the android tree:
+https://syzkaller.appspot.com/bug?id=255edc9d4f00a881d3bf68b87d09a8b7843409e7
 
-That is a pending filesystem that happens to be highly expected by many
-Linux focused communities.
+If you are interested only in upstream crashes/reproducers, then
+ignore the "similar bugs" section.
 
 
-Paragon Software GmbH proved it's commitment by sending as many as 26
-versions on it's patchset. The last set was send early April:
-
-[PATCH v26 00/10] NTFS read-write driver GPL implementation by Paragon Software
-https://marc.info/?l=linux-fsdevel&m=161738417018673&q=mbox
-https://patchwork.kernel.org/project/linux-fsdevel/list/?series=460291
-
-
-I'd say there weren't any serious issues raised since then.
-
-One Tested-by, one maintenance question, one remainder, one clang-12
-issue [0] [1].
-
-It seems this filesystem only needs:
-1. [Requirement] Adjusting to the meanwhile changed iov API [2]
-2. [Clean up] Using fs/iomap/ helpers [3]
-
-
-[0] https://marc.info/?t=161738428400012&r=1&w=2
-[1] https://marc.info/?t=162143182800001&r=1&w=2
-[2] https://marc.info/?l=linux-fsdevel&m=162607857810008&w=2
-[3] https://marc.info/?l=linux-fsdevel&m=162152950315047&w=2
+> But ok, so I click on the link "upstream: reported C repro on 2021/01/11 12:38"
+> which takes me to a google group
+>
+> https://groups.google.com/g/syzkaller-android-bugs/c/FQj0qcRSy_M/m/wrY70QFzBAAJ
+>
+> which again strongly indicates that this is an Android specific kernel?
+>
+> HEAD commit: c9951e5d Merge 5.4.88 into android12-5.4
+> git tree: android12-5.4
+>
+> but then I can click on the dashboard link for that crash report and it
+> takes me to:
+>
+> https://syzkaller.appspot.com/bug?extid=53897bcb31b82c7a08fe
+>
+> which seems to be the upstream report?
+>
+> So I'm a bit confused whether I'm even looking at the correct bug report
+> but I'll just give the repro a try and see what's going on.
+>
+> Christian
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20210714075925.jtlfrhhuj4bzff3m%40wittgenstein.
