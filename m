@@ -2,62 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1EC93C85B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 15:59:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 384533C85BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 16:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231892AbhGNOAy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 10:00:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231478AbhGNOAx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 10:00:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B2F1B61374;
-        Wed, 14 Jul 2021 13:57:58 +0000 (UTC)
-Date:   Wed, 14 Jul 2021 15:57:56 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     syzbot <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com>
-Cc:     brauner@kernel.org, dvyukov@google.com, gregkh@linuxfoundation.org,
-        gscrivan@redhat.com, hch@lst.de, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable-commits@vger.kernel.org,
-        stable@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] KASAN: null-ptr-deref Read in filp_close (2)
-Message-ID: <20210714135756.ammzl2vfiepzg3ve@wittgenstein>
-References: <00000000000069c40405be6bdad4@google.com>
- <000000000000b00c1105c6f971b2@google.com>
- <20210714135157.mz7utfhctbja4ilo@wittgenstein>
+        id S239399AbhGNOHF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 10:07:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55350 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231543AbhGNOHF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Jul 2021 10:07:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97C67C06175F;
+        Wed, 14 Jul 2021 07:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=WOmlUxJ/fNDV743IUVs9ki0OfQCNwpCeAeNQZqslUxs=; b=JdFOgclV2hYdDuLhl/7tmnxIFu
+        Yp5ZTizwqbUY0ckDTQPlYCtnyqBsO3MjWmPfkjKm+Npgjro/enXyebDYDa9dlqu3NMlJgwWI2XvpR
+        0u3z1aZXDyCY4TdYOWutI2Jus3QPdOUwzDKRbTJd8WCEvDGSmwtH3rQtyYwo8BBdqAAveyQU3/rE0
+        HeXBJXKEJQ5V4qU1XExMKVeneNZEio4D66+f98O2u8nq5Y51mnpGl767Ulz23xswqEftIVEYK2QoC
+        T4vsnvwyCxinQzcFv9Luugqi4hlmlyW/m7WBfamRk+mkJq0EV2LuBivg/g6jg0hcmloUSpNnhmfb1
+        zULYF3tA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m3fUF-002GdH-Vh; Wed, 14 Jul 2021 14:03:48 +0000
+Date:   Wed, 14 Jul 2021 15:03:43 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v13 010/137] mm: Add folio flag manipulation functions
+Message-ID: <YO7uv8tBI7yQiLb/@casper.infradead.org>
+References: <20210712030701.4000097-1-willy@infradead.org>
+ <20210712030701.4000097-11-willy@infradead.org>
+ <YOzdKYejOEUbjvMj@cmpxchg.org>
+ <YOz3Lms9pcsHPKLt@casper.infradead.org>
+ <20210713091533.GB4132@worktop.programming.kicks-ass.net>
+ <YO23WOUhhZtL6Gtn@cmpxchg.org>
+ <20210713185628.9962f4ce987fd952515c83fa@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210714135157.mz7utfhctbja4ilo@wittgenstein>
+In-Reply-To: <20210713185628.9962f4ce987fd952515c83fa@linux-foundation.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 14, 2021 at 03:51:57PM +0200, Christian Brauner wrote:
-> On Mon, Jul 12, 2021 at 09:12:20PM -0700, syzbot wrote:
-> > syzbot has found a reproducer for the following issue on:
+On Tue, Jul 13, 2021 at 06:56:28PM -0700, Andrew Morton wrote:
+> On Tue, 13 Jul 2021 11:55:04 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > I agree that _is_ reads nicer by itself, but paired with other ops
+> > such as testset, _test_ might be better.
 > > 
-> > HEAD commit:    7fef2edf sd: don't mess with SD_MINORS for CONFIG_DEBUG_BL..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=178919b0300000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=20276914ec6ad813
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=283ce5a46486d6acdbaf
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120220f2300000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115f37b4300000
+> > For example, in __set_page_dirty_no_writeback()
 > > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com
+> > 	if (folio_is_dirty())
+> > 		return !folio_testset_dirty()
 > > 
-> > ==================================================================
-> > BUG: KASAN: use-after-free in instrument_atomic_read include/linux/instrumented.h:71 [inline]
-> > BUG: KASAN: use-after-free in atomic64_read include/asm-generic/atomic-instrumented.h:605 [inline]
-> > BUG: KASAN: use-after-free in atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
-> > BUG: KASAN: use-after-free in filp_close+0x22/0x170 fs/open.c:1306
-> > Read of size 8 at addr ffff888025a40a78 by task syz-executor493/8445
+> > is less clear about what's going on than would be:
+> > 
+> > 	if (folio_test_dirty())
+> > 		return !folio_testset_dirty()
 > 
-> #syz test: https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/ 595fac5cecba71935450ec431eb8dfa963cf45fe 
+> I like folio_is_foo().  As long as it is used consistently, we'll get
+> used to it quickly.
 
-Hm, git.kernel.org doesn't seem to have caught up. Let's try:
+I'm not sure that folio_is_private(), folio_is_lru(),
+folio_is_waiters(), or folio_is_reclaim() really work.
 
-#syz test: https://gitlab.com/brauner/linux.git 595fac5cecba71935450ec431eb8dfa963cf45fe 
+> Some GNU tools are careful about appending "_p" to
+> functions-which-test-something (stands for "predicate").  Having spent
+> a lot of time a long time ago with my nose in this stuff, I found the
+> convention to be very useful.  I think foo_is_bar() is as good as
+> foo_bar_p() in this regard.
+
+I just wish C let us put '?' on the end of a function name, but I
+recognise the ambiguity with foo?bar:baz;
+
+> And sure, the CaMeLcAsE is fugly, but it sure is useful. 
+> set_page_dirty() is very different from SetPageDirty() and boy that
+> visual differentiation is a relief.
+
+Oh, I'm glad you brought that up </sarcasm>
+
+In folios, here's how that ends up looking:
+
+SetPageDirty() -> folio_set_dirty_flag()
+		 (johannes proposes folio_set_dirty instead)
+set_page_dirty() -> folio_mark_dirty()
+aops->set_page_dirty() -> aops->dirty_folio()
+__set_page_dirty() -> __folio_mark_dirty()
+__set_page_dirty_buffers() -> block_dirty_folio()
+__set_page_dirty_nobuffers() -> filemap_dirty_folio()
+__set_page_dirty_no_writeback() -> dirty_folio_no_writeback()
+
+I kind of feel that last one should be nowb_dirty_folio(), but I'm also
+hoping to eliminate it; if the filesystem sets AS_NO_WRITEBACK_TAGS
+in mapping->flags, then we just inline the no-writeback case into
+folio_mark_dirty() (which already has it for the !mapping case).
