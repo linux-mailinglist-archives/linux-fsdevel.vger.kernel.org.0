@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79B1B3C7DE9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 07:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D57FD3C7E0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 07:45:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237918AbhGNF1K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 01:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49326 "EHLO
+        id S237903AbhGNFsP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 01:48:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237911AbhGNF1I (ORCPT
+        with ESMTP id S237802AbhGNFsO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 01:27:08 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83DD3C0613EE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 22:24:15 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id hd33so1249423ejc.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 22:24:15 -0700 (PDT)
+        Wed, 14 Jul 2021 01:48:14 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3733C0613DD
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 22:45:22 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id h8so1491996eds.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jul 2021 22:45:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IR3H7P/Qqdz0+z7mAz+4BcJc0mjzsggsr8mNH8312vk=;
-        b=J2IDtTc5DxsvAMq/DAkPuYqj0Y7dNpRgm5w+Q5Mo3F1Au3zIy957DexG4xM3ot9TeB
-         gz7qUXOBffxs7ZJq8NwJJx3+F2yWdVty637g3WtUU13nzkMXjdWWulrIly/TOJxD+Hyy
-         /NqXLpxJ8/rX9zvF4onj7kuKA/hY855NC/q2nDjsHgyYw3/sSLkn4POQUtEcySzhEGrh
-         CDn9h5b45a/ov20IIHnvFDOFr1x5Vomj6Ve9ZjPNFGa6QG+3p9U0VzK3a00J7z6C/fWK
-         eWV/SVtA1pGWD7wh4Q6+tQY/Bv7Ble6R8AihTwasCDJOPdVPj+NAufXpshOEW+KCfFKO
-         W7Lg==
+         :cc:content-transfer-encoding;
+        bh=CHZPSlSYGfv/SLrxAM/jOzUDS1kn5mU0G7/MnH+av7w=;
+        b=TFIXYmOj7xWCYyEiL8IfX/z7XfVUXzphq5lOB8eXolpRNkYjOSMo0nDnxvLCmz0v0P
+         4eGMqbLigvSrkWD5Ktxv46HxIXTFcGk13cG3kVrsNbQzLREMK2CU0ptM1QqPqXW9BxdS
+         yI4oyRP0mP48+7gXh6dqlj0high4D9cExctbn2AE52uoOqBY9Swobwxv+2it40H4ayu7
+         w3w1GZTkgOOUrnt/2hwL0W/gWDo4Pi9Ue3FoX1Gqies4/s5dcU7t+zv44Y6s1Srs86AZ
+         4j0nZgRECcfTY+He18dAroizi7KMqRIvXRIBJ9g/s8NvMcfm0xZ4ZqsIQ2184Hh5NyoU
+         dwow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IR3H7P/Qqdz0+z7mAz+4BcJc0mjzsggsr8mNH8312vk=;
-        b=G6IG5P/Hm5LBlHVWf7RexqU2neaffLSMXUnyM/OKCDRM0UGcqo8tq6D3EX5HlDTzoy
-         Vywmz+s9gqKAfJu97FflgVIrcuN85N0qE6atzV+zMC2iYUZQvKidqObaBhNeoTdAQKeO
-         tOinxyOqT9pDeEc9/G9A8rPfWAe/3GByAWMnJEwk3gGeO92O+Y8vbIfGUk/0QhhjerVH
-         a8DQ/aH7XkTmc2B+g3Ru3HYnyKtkXd5H4M+vpj+P2XqraUp0LHtKNwG6+5UghuXmUapb
-         zbQZ/Svcj2dN8+NdjaQg6/hnbGCwHdN5vouFCXdvge6lP2wksqVyK7Yod2uXrFT97IJn
-         m79Q==
-X-Gm-Message-State: AOAM533pkIOgD8kK/4uCxZEyD1scXlWKAkw0vr8A0ECqS0HfLZNM0ALd
-        93EaruSmnKhGdQf33Xh7ZTpDVHi/w9Ds6a0oqtMG
-X-Google-Smtp-Source: ABdhPJwiVScNvW759FNHFZbUm6bF1Hh8xD+5SHXF+XpeC6RBKLMlly39eCK/TlQciP+Rhit5f+SlsKPq8Beb+93M0R0=
-X-Received: by 2002:a17:906:4b46:: with SMTP id j6mr10270164ejv.247.1626240253024;
- Tue, 13 Jul 2021 22:24:13 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CHZPSlSYGfv/SLrxAM/jOzUDS1kn5mU0G7/MnH+av7w=;
+        b=as/Y2KIhR4s7+o0D0TC/zymDr/H7ppkpLnDeEa/e31rVtxbv39sA9yY7S8dmSkGiL4
+         WpCHjApqvi+dncb8vfwfp+f3BDNrZp4GkdTF9Adzx+LnHhu7y9VFw6NwuMbRWp3ecX1i
+         YJUpzJq+EsAAXYW+q84kzhjvg56cfEGcMmwxifliwIG7WYt/bkC5R3bFWdb3iBSRrY3T
+         mGjKMwDJJMYQ5O59y3GWTxL+q0GgZCui9YFrh+1el7y8UIJuj1yKqbOsB7CLwLmUccxS
+         kSNBZBuXGqpOv4ZYOynUfHIWSaI6K6MXAVwVdvTYyUzChlx28U6vaJrtdB3RqPHA0UqG
+         Ad4g==
+X-Gm-Message-State: AOAM531fX+8SHecNl3N+SXRHSXRTWV/2QYJ2iIKB7GlWO+3AE01hlcGm
+        uPQuIzNZg3u3cT4QQyoNLXpnjStlkLu0yvTkUeBj
+X-Google-Smtp-Source: ABdhPJxB+DrOBDXuwclE4BqKnRj6flob2oW8SNccGw0iEXIiLGhLEqaAkjs4n04tANFRLCsq6H5lMvNd7tbeRCpkn8s=
+X-Received: by 2002:a50:ff01:: with SMTP id a1mr10874200edu.253.1626241521339;
+ Tue, 13 Jul 2021 22:45:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210713084656.232-1-xieyongji@bytedance.com> <20210713084656.232-14-xieyongji@bytedance.com>
- <20210713113114.GL1954@kadam>
-In-Reply-To: <20210713113114.GL1954@kadam>
+References: <20210713084656.232-1-xieyongji@bytedance.com> <20210713084656.232-17-xieyongji@bytedance.com>
+ <20210713132741.GM1954@kadam> <c42979dd-331f-4af5-fda6-18d80f22be2d@redhat.com>
+In-Reply-To: <c42979dd-331f-4af5-fda6-18d80f22be2d@redhat.com>
 From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 14 Jul 2021 13:24:02 +0800
-Message-ID: <CACycT3uKwu5xzj2ynWH5njCKHaYyOPkDb8BVLTHE5NJ-qpD3xQ@mail.gmail.com>
-Subject: Re: [PATCH v9 13/17] vdpa: factor out vhost_vdpa_pa_map() and vhost_vdpa_pa_unmap()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
+Date:   Wed, 14 Jul 2021 13:45:10 +0800
+Message-ID: <CACycT3vNiAdOLVRhjqUjZGBfPnCti+_5+vdkgtbJ4XyRsYfrPg@mail.gmail.com>
+Subject: Re: [PATCH v9 16/17] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
         Stefano Garzarella <sgarzare@redhat.com>,
         Parav Pandit <parav@nvidia.com>,
@@ -75,63 +75,53 @@ Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 13, 2021 at 7:31 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Wed, Jul 14, 2021 at 10:54 AM Jason Wang <jasowang@redhat.com> wrote:
 >
-> On Tue, Jul 13, 2021 at 04:46:52PM +0800, Xie Yongji wrote:
-> > @@ -613,37 +618,28 @@ static void vhost_vdpa_unmap(struct vhost_vdpa *v, u64 iova, u64 size)
-> >       }
-> >  }
+>
+> =E5=9C=A8 2021/7/13 =E4=B8=8B=E5=8D=889:27, Dan Carpenter =E5=86=99=E9=81=
+=93:
+> > On Tue, Jul 13, 2021 at 04:46:55PM +0800, Xie Yongji wrote:
+> >> +static int vduse_dev_init_vdpa(struct vduse_dev *dev, const char *nam=
+e)
+> >> +{
+> >> +    struct vduse_vdpa *vdev;
+> >> +    int ret;
+> >> +
+> >> +    if (dev->vdev)
+> >> +            return -EEXIST;
+> >> +
+> >> +    vdev =3D vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
+> >> +                             &vduse_vdpa_config_ops, name, true);
+> >> +    if (!vdev)
+> >> +            return -ENOMEM;
+> > This should be an IS_ERR() check instead of a NULL check.
+>
+>
+> Yes.
+>
+>
 > >
-> > -static int vhost_vdpa_process_iotlb_update(struct vhost_vdpa *v,
-> > -                                        struct vhost_iotlb_msg *msg)
-> > +static int vhost_vdpa_pa_map(struct vhost_vdpa *v,
-> > +                          u64 iova, u64 size, u64 uaddr, u32 perm)
-> >  {
-> >       struct vhost_dev *dev = &v->vdev;
-> > -     struct vhost_iotlb *iotlb = dev->iotlb;
-> >       struct page **page_list;
-> >       unsigned long list_size = PAGE_SIZE / sizeof(struct page *);
-> >       unsigned int gup_flags = FOLL_LONGTERM;
-> >       unsigned long npages, cur_base, map_pfn, last_pfn = 0;
-> >       unsigned long lock_limit, sz2pin, nchunks, i;
-> > -     u64 iova = msg->iova;
-> > +     u64 start = iova;
-> >       long pinned;
-> >       int ret = 0;
+> > The vdpa_alloc_device() macro is doing something very complicated but
+> > I'm not sure what.  It calls container_of() and that looks buggy until
+> > you spot the BUILD_BUG_ON_ZERO() compile time assert which ensures that
+> > the container_of() is a no-op.
 > >
-> > -     if (msg->iova < v->range.first ||
-> > -         msg->iova + msg->size - 1 > v->range.last)
-> > -             return -EINVAL;
+> > Only one of the callers checks for error pointers correctly so maybe
+> > it's too complicated or maybe there should be better documentation.
 >
-> This is not related to your patch, but can the "msg->iova + msg->size"
-> addition can have an integer overflow.  From looking at the callers it
-> seems like it can.  msg comes from:
->   vhost_chr_write_iter()
->   --> dev->msg_handler(dev, &msg);
->       --> vhost_vdpa_process_iotlb_msg()
->          --> vhost_vdpa_process_iotlb_update()
 >
-> If I'm thinking of the right thing then these are allowed to overflow to
-> 0 because of the " - 1" but not further than that.  I believe the check
-> needs to be something like:
+> We need better documentation for this macro and fix all the buggy callers=
+.
 >
->         if (msg->iova < v->range.first ||
->             msg->iova - 1 > U64_MAX - msg->size ||
->             msg->iova + msg->size - 1 > v->range.last)
+> Yong Ji, want to do that?
 >
 
-Make sense.
-
-> But writing integer overflow check correctly is notoriously difficult.
-> Do you think you could send a fix for that which is separate from the
-> patcheset?  We'd want to backport it to stable.
->
-
-OK, I will send a patch to fix it.
+Sure, I will send the fix soon.
 
 Thanks,
 Yongji
