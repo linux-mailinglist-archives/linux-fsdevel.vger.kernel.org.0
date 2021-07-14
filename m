@@ -2,61 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 952853C85D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 16:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7DFF3C85E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 16:16:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231892AbhGNORn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 10:17:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231543AbhGNORn (ORCPT
+        id S239518AbhGNOTG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 10:19:06 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:52058 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239513AbhGNOTF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 10:17:43 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67869C06175F;
-        Wed, 14 Jul 2021 07:14:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=vP330DcWRoBPONMHv7xhBbT8B1efYkRrKax3eUHZM4A=; b=rsNZezzekFswEgJ5dQBrdI3TLU
-        0vrpaL3VlVXSxVgF7qdmL6YsoINs6QfNMtUIDc6HuyuHlou+L0GxA9SPyFpEcjZ3o5hbELF7tktrv
-        wkj50LbEVz7Z4Rr1QbktYkyOAKXtQTboDzRl3ETu2ORUA+8+5hRORjYKBUOQ6/+ix5KP//NeqOM/1
-        4vSQnNweMh/R41XaYj2lPy1a8ejSRJDh7XWMfjIaraFloG/bKqjco4VRoWvIqiJNtv+r6Wv15QONT
-        vAiGmNEfqkFKURrkn7FjkE7qW+KUhRTZbrFTQ6KcLLR/V2pGggyChB+aavknG6J1nvomvTXny1eqv
-        7edhXz7g==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m3fe7-002Gz7-Ok; Wed, 14 Jul 2021 14:13:58 +0000
-Date:   Wed, 14 Jul 2021 15:13:55 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Rafa?? Mi??ecki <zajec5@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
-Message-ID: <YO7xIzYvEKalFhfm@infradead.org>
-References: <30c7ec73-4ad5-3c4e-4745-061eb22f2c8a@redhat.com>
- <CAHk-=wjW7Up3KD-2EqVg7+ca8Av0-rC5Kd7yK+=m6Dwk3D4Q+A@mail.gmail.com>
- <YO30DKw5FKLz4QuF@zeniv-ca.linux.org.uk>
- <bea2bcf2-02f6-f247-9e06-7b9ec154377a@gmail.com>
+        Wed, 14 Jul 2021 10:19:05 -0400
+Received: by mail-il1-f200.google.com with SMTP id g9-20020a92cda90000b029020cc3319a86so1184892ild.18
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 07:16:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=o7vzzn8Fdqo6mJv/pLO3d3/VK2CXYs/bZovvWQfPikg=;
+        b=KzCSCSMN+crwLkz593v4j/McVDiLItupJ527b3js324Ib5Ucy6Aj6lxg7B3shtWhbP
+         UsQy9hc4XTNaZIvMeq+TR53Z+wvbQPVwnshIqnP+scgyEc++Pvm5pkkYXZ9V+6IPX1xn
+         YIQRB0FpI8/DSsRzd1dTviybs0Qgxcd9FISfcbfHfVXJZMmIs8Fcb1LNVsVZeMlQPOSi
+         51F2GaRdvK97R3xhTtXDK/S8OTqSNTrCk0yh8tiVMY1oBj6kQ2RJ2b3GNBfOvx3C5mbh
+         /z3QXYhdnbjTpWxaVts/EO7vlQ713w2jRTF2zKQkzS/l2KaujCqHGJBcd4vVsMqKvOX/
+         s79Q==
+X-Gm-Message-State: AOAM530BLFkoV55I5LjAiuCbb24Zc2ZSt92U7FPtxoB4aBEDFOMWyRcn
+        gkAc4ZPe7sKr1JGozViWeMurHFM1JqUPx3/pnc0t38tlpM3V
+X-Google-Smtp-Source: ABdhPJyn5tnlHP/kmIUxY05yxnh++4KY2h8hZkCs4WMGvpSLvMoszqGmE7eJ+eEIVEap1ROsNTlb3lNO/a43b+1kLs7gtu5pRZC4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bea2bcf2-02f6-f247-9e06-7b9ec154377a@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+X-Received: by 2002:a92:d3d1:: with SMTP id c17mr6620254ilh.86.1626272172775;
+ Wed, 14 Jul 2021 07:16:12 -0700 (PDT)
+Date:   Wed, 14 Jul 2021 07:16:12 -0700
+In-Reply-To: <20210714135756.ammzl2vfiepzg3ve@wittgenstein>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002aa03b05c715ff73@google.com>
+Subject: Re: [syzbot] KASAN: null-ptr-deref Read in filp_close (2)
+From:   syzbot <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com>
+To:     brauner@kernel.org, christian.brauner@ubuntu.com,
+        dvyukov@google.com, gregkh@linuxfoundation.org,
+        gscrivan@redhat.com, hch@lst.de, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable-commits@vger.kernel.org,
+        stable@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> That is a pending filesystem that happens to be highly expected by many
-> Linux focused communities.
+Hello,
 
-This sounds like generated by a markov chain fed all kinds of marketeer
-BS..
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Independent of that resending a more than 3 month old page set usually
-really helps to get some reviewer attention.
+Reported-and-tested-by: syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         595fac5c cgroup: verify that source is a string
+git tree:       https://gitlab.com/brauner/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=20276914ec6ad813
+dashboard link: https://syzkaller.appspot.com/bug?extid=283ce5a46486d6acdbaf
+compiler:       
+
+Note: testing is done by a robot and is best-effort only.
