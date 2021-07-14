@@ -2,58 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D023C8B32
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 20:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 070043C8B34
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jul 2021 20:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240093AbhGNSu0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 14:50:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36258 "EHLO
+        id S240041AbhGNSu1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 14:50:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240075AbhGNSuY (ORCPT
+        with ESMTP id S230075AbhGNSuZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 14:50:24 -0400
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 655E8C061762
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 11:47:32 -0700 (PDT)
-Received: by mail-qt1-x836.google.com with SMTP id z12so2619754qtj.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 11:47:32 -0700 (PDT)
+        Wed, 14 Jul 2021 14:50:25 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FD6C061767
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 11:47:33 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id t185so2638225qkd.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 11:47:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=EpdgEcRiBqQsZrOSnIk/qayn286ESnYWwrM6gnsT55M=;
-        b=vdlXEiXebSuhkKjwBpAIpgZ3LlMhHVhskWGVr159+4cRz0cwgUPfSWGu3ECkOSOKfF
-         bCDl3gbl9GP1t8J8GPIdWpRF/Zj0DWZEQrvnMrZe1X21bHjd9wCBZVvt3uH34Imos7No
-         49w0BZYuxupZOO/auWGB5z8YbREYpqtWAE/55WQFbPjTMxT/sSEcZPSp8fXrf/JPxBnq
-         uR8Ubag1J4XqHY79BKiz6YDoe4k7+pyhV+xAwQ1fjiBR4yB1q5PuZ8Sp7X5TgRIeWBjP
-         0xfWnHUv7xsLd6bud3cYYEBxOCv6f71cAzfKn7ZIOKdl+NzLjxBLziuIg1uYWBsfcPcy
-         qaDA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nfMkZOCop8rCTuWPUwcOk31VcZ9PT/ircxMz2xSNZAU=;
+        b=IwiHhNV3l/UEgD9whti5lVVACGaczf1jo57Ss1JEf3gSmq0fhgqReJcT3LMVOP1a9L
+         lumz/2SOxWy7+pAU7AVONMuRzgBkU+qpEpFp336RHsjA705cFqCsObOJxJNG4WORfCzI
+         Y9Jd3+ZP7rCivrNHg0SW7cgYuijke9k5I01AqBITHKHOU9WW0ZwgZ71XRZA1a1qq2okP
+         Q+UUjI9aLsqQeM1wcafqZMHApQS1YxcqZiq9qpoVMWjijKYcHhRtokCWppuSpTMe4Xwb
+         v1Juv5gZdvWte8tjA2dgMMwlMdQOcSTlptb9sSE0Td2TkI0DrRq+0xsgAJ8U2JUAVTAV
+         rdjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EpdgEcRiBqQsZrOSnIk/qayn286ESnYWwrM6gnsT55M=;
-        b=j20tMRirWlqhP2O3PdGElfyyGMq+duBaxpio93CUw4Z49snAL185UpO+q9m289m7Mg
-         Y19IbgyE5eQEJtkhiZmOwIIhjXG9C+Cch9P5wyS08HyZlPD64ZD0cDhr+qzZitXtrAqn
-         07A/olCALJfsLmQtIWSZ/JKnEUBOgL2nZwXyu9JuW0U+1af+rBRAmnhvN15Aa6sbr+C6
-         VllaNVBadAFqibLKQMC3YMU/3q8amNHtJWTe3vEjbBP0hjzJbta64emhouJvk71mwkTv
-         Cp0kFlzDHOtvkvUuB5SG6ErBf9wpoF1s4PaNGIwlIsHI7fSMLU64aJ5iiLuJXGUa95g2
-         leHA==
-X-Gm-Message-State: AOAM530Cb8lvtaCZLUFEH9Sv2ntoa2s/uB/vunv8A4gQAq1PfZCGSQD3
-        a0I8526K4XWY43DaJlNsZVkP+w==
-X-Google-Smtp-Source: ABdhPJzMXWWzEW1xNgRG2YJ6Ri2c+pRxiSkNfTQbuAUVeuozGxwrmS5brLLpNVP4YFy5tTOkSmvteA==
-X-Received: by 2002:ac8:1347:: with SMTP id f7mr1455871qtj.70.1626288451514;
-        Wed, 14 Jul 2021 11:47:31 -0700 (PDT)
+        bh=nfMkZOCop8rCTuWPUwcOk31VcZ9PT/ircxMz2xSNZAU=;
+        b=XEWroIUTns32cz2HK4mCxNuRqjp0G/J8dGkTCGCrYhk6mBpVDGgnBRVLeMr1dvcRQD
+         M0t8FqbkAU/Kjizdxqg8hpq9rPPvY5QOJBjlijY+ukRHLAtOAglBzrtH6vEvd1XO6Ng3
+         hYKU4UUp7eYbwRpZXRs7CkkeRLLtkJ7V8IUWktVhCqo8fnKVZ2kN2JyLNWe/TtkeIAsI
+         3M7ozo6CXKE6ahRsJuqv+644SKM6YeBMBdIip7OIVuYusUVJOxe3TKooHT6lvCBiSEY3
+         pqkjWdMfdo+sa5Ovy5v7gZPb/Ncxb/86zwR4l/g9he9/FbdZyhUCb6807+Velfabg2tU
+         U7Jg==
+X-Gm-Message-State: AOAM530idgOKZopP6NfBspVBqaX1kSwffuXAuTUADJnVClGkrMMZGUUB
+        j+7H/scDYVDV9wvY/758z7UJCasUpujPDcIq
+X-Google-Smtp-Source: ABdhPJyhvidQvC8DnXNrL68MUooA9iRV9+8wJnjGK5T+vZpH7D5dEeEfPxYsoYVtQ73vues3H30gqQ==
+X-Received: by 2002:a37:4685:: with SMTP id t127mr11397515qka.384.1626288452995;
+        Wed, 14 Jul 2021 11:47:32 -0700 (PDT)
 Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id s3sm1406472qke.85.2021.07.14.11.47.31
+        by smtp.gmail.com with ESMTPSA id k24sm1397062qkk.25.2021.07.14.11.47.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jul 2021 11:47:31 -0700 (PDT)
+        Wed, 14 Jul 2021 11:47:32 -0700 (PDT)
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     linux-btrfs@vger.kernel.org, kernel-team@fb.com,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 3/9] btrfs: enable a tracepoint when we fail tickets
-Date:   Wed, 14 Jul 2021 14:47:19 -0400
-Message-Id: <e8840708de6be39bf0f34c5c3da2b52271546e37.1626288241.git.josef@toxicpanda.com>
+Cc:     stable@vger.kernel.org
+Subject: [PATCH v3 4/9] btrfs: handle shrink_delalloc pages calculation differently
+Date:   Wed, 14 Jul 2021 14:47:20 -0400
+Message-Id: <725c04f4a0f9d495e0ba56b7fe1276c6bc4bc9a1.1626288241.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.26.3
 In-Reply-To: <cover.1626288241.git.josef@toxicpanda.com>
 References: <cover.1626288241.git.josef@toxicpanda.com>
@@ -63,47 +64,176 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When debugging early enospc problems it was useful to have a tracepoint
-where we failed all tickets so I could check the state of the enospc
-counters at failure time to validate my fixes.  This adds the tracpoint
-so you can easily get that information.
+We have been hitting some early ENOSPC issues in production with more
+recent kernels, and I tracked it down to us simply not flushing delalloc
+as aggressively as we should be.  With tracing I was seeing us failing
+all tickets with all of the block rsvs at or around 0, with very little
+pinned space, but still around 120MiB of outstanding bytes_may_used.
+Upon further investigation I saw that we were flushing around 14 pages
+per shrink call for delalloc, despite having around 2GiB of delalloc
+outstanding.
 
+Consider the example of a 8 way machine, all CPUs trying to create a
+file in parallel, which at the time of this commit requires 5 items to
+do.  Assuming a 16k leaf size, we have 10MiB of total metadata reclaim
+size waiting on reservations.  Now assume we have 128MiB of delalloc
+outstanding.  With our current math we would set items to 20, and then
+set to_reclaim to 20 * 256k, or 5MiB.
+
+Assuming that we went through this loop all 3 times, for both
+FLUSH_DELALLOC and FLUSH_DELALLOC_WAIT, and then did the full loop
+twice, we'd only flush 60MiB of the 128MiB delalloc space.  This could
+leave a fair bit of delalloc reservations still hanging around by the
+time we go to ENOSPC out all the remaining tickets.
+
+Fix this two ways.  First, change the calculations to be a fraction of
+the total delalloc bytes on the system.  Prior to this change we were
+calculating based on dirty inodes so our math made more sense, now it's
+just completely unrelated to what we're actually doing.
+
+Second add a FLUSH_DELALLOC_FULL state, that we hold off until we've
+gone through the flush states at least once.  This will empty the system
+of all delalloc so we're sure to be truly out of space when we start
+failing tickets.
+
+I'm tagging stable 5.10 and forward, because this is where we started
+using the page stuff heavily again.  This affects earlier kernel
+versions as well, but would be a pain to backport to them as the
+flushing mechanisms aren't the same.
+
+CC: stable@vger.kernel.org # 5.10+
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/btrfs/space-info.c        | 2 ++
- include/trace/events/btrfs.h | 6 ++++++
- 2 files changed, 8 insertions(+)
+ fs/btrfs/ctree.h             |  9 ++++----
+ fs/btrfs/space-info.c        | 40 +++++++++++++++++++++++++-----------
+ include/trace/events/btrfs.h |  1 +
+ 3 files changed, 34 insertions(+), 16 deletions(-)
 
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index d7ef4d7d2c1a..232ff1a49ca6 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -2783,10 +2783,11 @@ enum btrfs_flush_state {
+ 	FLUSH_DELAYED_REFS	=	4,
+ 	FLUSH_DELALLOC		=	5,
+ 	FLUSH_DELALLOC_WAIT	=	6,
+-	ALLOC_CHUNK		=	7,
+-	ALLOC_CHUNK_FORCE	=	8,
+-	RUN_DELAYED_IPUTS	=	9,
+-	COMMIT_TRANS		=	10,
++	FLUSH_DELALLOC_FULL	=	7,
++	ALLOC_CHUNK		=	8,
++	ALLOC_CHUNK_FORCE	=	9,
++	RUN_DELAYED_IPUTS	=	10,
++	COMMIT_TRANS		=	11,
+ };
+ 
+ int btrfs_subvolume_reserve_metadata(struct btrfs_root *root,
 diff --git a/fs/btrfs/space-info.c b/fs/btrfs/space-info.c
-index 392997376a1c..af161eb808a2 100644
+index af161eb808a2..1a7e44dd0ba7 100644
 --- a/fs/btrfs/space-info.c
 +++ b/fs/btrfs/space-info.c
-@@ -825,6 +825,8 @@ static bool maybe_fail_all_tickets(struct btrfs_fs_info *fs_info,
- 	struct reserve_ticket *ticket;
- 	u64 tickets_id = space_info->tickets_id;
+@@ -494,6 +494,11 @@ static void shrink_delalloc(struct btrfs_fs_info *fs_info,
+ 	long time_left;
+ 	int loops;
  
-+	trace_btrfs_fail_all_tickets(fs_info, space_info);
++	delalloc_bytes = percpu_counter_sum_positive(&fs_info->delalloc_bytes);
++	ordered_bytes = percpu_counter_sum_positive(&fs_info->ordered_bytes);
++	if (delalloc_bytes == 0 && ordered_bytes == 0)
++		return;
 +
- 	if (btrfs_test_opt(fs_info, ENOSPC_DEBUG)) {
- 		btrfs_info(fs_info, "cannot satisfy tickets, dumping space info");
- 		__btrfs_dump_space_info(fs_info, space_info);
+ 	/* Calc the number of the pages we need flush for space reservation */
+ 	if (to_reclaim == U64_MAX) {
+ 		items = U64_MAX;
+@@ -501,22 +506,21 @@ static void shrink_delalloc(struct btrfs_fs_info *fs_info,
+ 		/*
+ 		 * to_reclaim is set to however much metadata we need to
+ 		 * reclaim, but reclaiming that much data doesn't really track
+-		 * exactly, so increase the amount to reclaim by 2x in order to
+-		 * make sure we're flushing enough delalloc to hopefully reclaim
+-		 * some metadata reservations.
++		 * exactly.  What we really want to do is reclaim full inode's
++		 * worth of reservations, however that's not available to us
++		 * here.  We will take a fraction of the delalloc bytes for our
++		 * flushing loops and hope for the best.  Delalloc will expand
++		 * the amount we write to cover an entire dirty extent, which
++		 * will reclaim the metadata reservation for that range.  If
++		 * it's not enough subsequent flush stages will be more
++		 * aggressive.
+ 		 */
++		to_reclaim = max(to_reclaim, delalloc_bytes >> 3);
+ 		items = calc_reclaim_items_nr(fs_info, to_reclaim) * 2;
+-		to_reclaim = items * EXTENT_SIZE_PER_ITEM;
+ 	}
+ 
+ 	trans = (struct btrfs_trans_handle *)current->journal_info;
+ 
+-	delalloc_bytes = percpu_counter_sum_positive(
+-						&fs_info->delalloc_bytes);
+-	ordered_bytes = percpu_counter_sum_positive(&fs_info->ordered_bytes);
+-	if (delalloc_bytes == 0 && ordered_bytes == 0)
+-		return;
+-
+ 	/*
+ 	 * If we are doing more ordered than delalloc we need to just wait on
+ 	 * ordered extents, otherwise we'll waste time trying to flush delalloc
+@@ -596,8 +600,11 @@ static void flush_space(struct btrfs_fs_info *fs_info,
+ 		break;
+ 	case FLUSH_DELALLOC:
+ 	case FLUSH_DELALLOC_WAIT:
++	case FLUSH_DELALLOC_FULL:
++		if (state == FLUSH_DELALLOC_FULL)
++			num_bytes = U64_MAX;
+ 		shrink_delalloc(fs_info, space_info, num_bytes,
+-				state == FLUSH_DELALLOC_WAIT, for_preempt);
++				state != FLUSH_DELALLOC, for_preempt);
+ 		break;
+ 	case FLUSH_DELAYED_REFS_NR:
+ 	case FLUSH_DELAYED_REFS:
+@@ -907,6 +914,14 @@ static void btrfs_async_reclaim_metadata_space(struct work_struct *work)
+ 				commit_cycles--;
+ 		}
+ 
++		/*
++		 * We do not want to empty the system of delalloc unless we're
++		 * under heavy pressure, so allow one trip through the flushing
++		 * logic before we start doing a FLUSH_DELALLOC_FULL.
++		 */
++		if (flush_state == FLUSH_DELALLOC_FULL && !commit_cycles)
++			flush_state++;
++
+ 		/*
+ 		 * We don't want to force a chunk allocation until we've tried
+ 		 * pretty hard to reclaim space.  Think of the case where we
+@@ -1070,7 +1085,7 @@ static void btrfs_preempt_reclaim_metadata_space(struct work_struct *work)
+  *   so if we now have space to allocate do the force chunk allocation.
+  */
+ static const enum btrfs_flush_state data_flush_states[] = {
+-	FLUSH_DELALLOC_WAIT,
++	FLUSH_DELALLOC_FULL,
+ 	RUN_DELAYED_IPUTS,
+ 	COMMIT_TRANS,
+ 	ALLOC_CHUNK_FORCE,
+@@ -1159,6 +1174,7 @@ static const enum btrfs_flush_state evict_flush_states[] = {
+ 	FLUSH_DELAYED_REFS,
+ 	FLUSH_DELALLOC,
+ 	FLUSH_DELALLOC_WAIT,
++	FLUSH_DELALLOC_FULL,
+ 	ALLOC_CHUNK,
+ 	COMMIT_TRANS,
+ };
 diff --git a/include/trace/events/btrfs.h b/include/trace/events/btrfs.h
-index a87953e74573..d754c6ec1797 100644
+index d754c6ec1797..e21744a3cdb6 100644
 --- a/include/trace/events/btrfs.h
 +++ b/include/trace/events/btrfs.h
-@@ -2104,6 +2104,12 @@ DEFINE_EVENT(btrfs_dump_space_info, btrfs_done_preemptive_reclaim,
- 	TP_ARGS(fs_info, sinfo)
- );
- 
-+DEFINE_EVENT(btrfs_dump_space_info, btrfs_fail_all_tickets,
-+	TP_PROTO(struct btrfs_fs_info *fs_info,
-+		 const struct btrfs_space_info *sinfo),
-+	TP_ARGS(fs_info, sinfo)
-+);
-+
- TRACE_EVENT(btrfs_reserve_ticket,
- 	TP_PROTO(const struct btrfs_fs_info *fs_info, u64 flags, u64 bytes,
- 		 u64 start_ns, int flush, int error),
+@@ -94,6 +94,7 @@ struct btrfs_space_info;
+ 	EM( FLUSH_DELAYED_ITEMS,	"FLUSH_DELAYED_ITEMS")		\
+ 	EM( FLUSH_DELALLOC,		"FLUSH_DELALLOC")		\
+ 	EM( FLUSH_DELALLOC_WAIT,	"FLUSH_DELALLOC_WAIT")		\
++	EM( FLUSH_DELALLOC_FULL,	"FLUSH_DELALLOC_FULL")		\
+ 	EM( FLUSH_DELAYED_REFS_NR,	"FLUSH_DELAYED_REFS_NR")	\
+ 	EM( FLUSH_DELAYED_REFS,		"FLUSH_ELAYED_REFS")		\
+ 	EM( ALLOC_CHUNK,		"ALLOC_CHUNK")			\
 -- 
 2.26.3
 
