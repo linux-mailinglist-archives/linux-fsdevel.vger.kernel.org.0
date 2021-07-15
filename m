@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 623483CADCA
+	by mail.lfdr.de (Postfix) with ESMTP id CF7233CADCB
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 22:21:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231990AbhGOUXp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S231991AbhGOUXp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 15 Jul 2021 16:23:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50536 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231808AbhGOUXo (ORCPT
+        with ESMTP id S230209AbhGOUXo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 15 Jul 2021 16:23:44 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C67DC061760
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A0FDC06175F
         for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jul 2021 13:20:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=upWaP5V9owO0LbXy+PsmNxmwvLdkP8m88iqnEAk7sDI=; b=lqyuoOgTrgjWLVuji1TJB86a48
-        yx+a6gJk6eQG+rscpZf+bkjG/3MeZWKYL/s1TJtBBppYmlDbfmcU6pvBnstgX7TCPWEjYDl1AGvBJ
-        26SGiT3GkLkX1LCb4iKRSsBGbjSAi1iRyvZgaT8i+wV//hJsiOECeeEgfEzM/E/ZPiK9V6tiZm/rX
-        IcsB/yIscgdmdoAXWkGFUTLWmvdXHvRmElv7sOjv9Ys+H76LUgzDILDiBp1zKiDc/gSS00X1Ik2VW
-        b90NQ5pO/x/CMxSKihzMXFG1vAgHX49jBqymLyzikZeSd4m1C5SOOE4LYGb6mphaiWslV/x2cT8U+
-        zkgO9vNA==;
+        bh=xQjoI7gQK9ZaPd2yc5A5rXOJHMJVziT90rkS1B75TtQ=; b=ocSBEvnBqaUr3GZLP1G6xrgb56
+        Sktw/G069Z0IHgXVmi7yZ77xaOtoKzop5Q+iJErlhtTPXdcDmUyOCurvOOGRvV3RHuuLtdcXeCLTw
+        jcgNFoWvUquKzExkxx1hERDj4czTfsBoBtKtCswVJNez8dAtj1glJblM8P4BShNie6ZK7RrXIN3ig
+        OxG3CF4cL4ag1sfv06KOCGKe59vf4Vvqz+60tYZAf65VzuKs72gUk2BqwLqyzKxktfm+5biKZ/24y
+        xlrMngn0lT9JfTKofrCJ/j/2KNmUo9bNqCqXjnhMkE9DotoOoFYdjkTmWDDXCwuCPdrRAgojP/JCn
+        YaSmZD/A==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m47mz-003oJP-Kc; Thu, 15 Jul 2021 20:17:24 +0000
+        id 1m47oU-003oUH-Ug; Thu, 15 Jul 2021 20:18:52 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v14 17/39] mm/writeback: Add folio_start_writeback()
-Date:   Thu, 15 Jul 2021 21:00:08 +0100
-Message-Id: <20210715200030.899216-18-willy@infradead.org>
+Subject: [PATCH v14 18/39] mm/writeback: Add folio_mark_dirty()
+Date:   Thu, 15 Jul 2021 21:00:09 +0100
+Message-Id: <20210715200030.899216-19-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210715200030.899216-1-willy@infradead.org>
 References: <20210715200030.899216-1-willy@infradead.org>
@@ -43,161 +43,112 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rename set_page_writeback() to folio_start_writeback() to match
-folio_end_writeback().  Do not bother with wrappers that return void;
-callers are perfectly capable of ignoring return values.
+Reimplement set_page_dirty() as a wrapper around folio_mark_dirty().
+There is no change to filesystems as they were already being called
+with the compound_head of the page being marked dirty.  We avoid
+several calls to compound_head(), both statically (through
+using folio_test_dirty() instead of PageDirty() and dynamically by
+calling folio_mapping() instead of page_mapping().
 
-Add wrappers for set_page_writeback(), set_page_writeback_keepwrite() and
-test_set_page_writeback() for compatibililty with existing filesystems.
-The main advantage of this patch is getting the statistics right,
-although it does eliminate a couple of calls to compound_head().
+Also return bool instead of int to show the range of values actually
+returned, and add kernel-doc.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/page-flags.h | 19 +++++++++---------
- mm/folio-compat.c          |  6 ++++++
- mm/page-writeback.c        | 40 ++++++++++++++++++++------------------
- 3 files changed, 37 insertions(+), 28 deletions(-)
+ include/linux/mm.h  |  3 ++-
+ mm/folio-compat.c   |  6 ++++++
+ mm/page-writeback.c | 35 +++++++++++++++++++----------------
+ 3 files changed, 27 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 6f9d1f26b1ef..54c4af35c628 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -655,21 +655,22 @@ static __always_inline void SetPageUptodate(struct page *page)
- 
- CLEARPAGEFLAG(Uptodate, uptodate, PF_NO_TAIL)
- 
--int __test_set_page_writeback(struct page *page, bool keep_write);
-+bool __folio_start_writeback(struct folio *folio, bool keep_write);
-+bool set_page_writeback(struct page *page);
- 
--#define test_set_page_writeback(page)			\
--	__test_set_page_writeback(page, false)
--#define test_set_page_writeback_keepwrite(page)	\
--	__test_set_page_writeback(page, true)
-+#define folio_start_writeback(folio)			\
-+	__folio_start_writeback(folio, false)
-+#define folio_start_writeback_keepwrite(folio)	\
-+	__folio_start_writeback(folio, true)
- 
--static inline void set_page_writeback(struct page *page)
-+static inline void set_page_writeback_keepwrite(struct page *page)
- {
--	test_set_page_writeback(page);
-+	folio_start_writeback_keepwrite(page_folio(page));
- }
- 
--static inline void set_page_writeback_keepwrite(struct page *page)
-+static inline bool test_set_page_writeback(struct page *page)
- {
--	test_set_page_writeback_keepwrite(page);
-+	return set_page_writeback(page);
- }
- 
- __PAGEFLAG(Head, head, PF_ANY) CLEARPAGEFLAG(Head, head, PF_ANY)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 23276330ef4f..43c1b5731c7f 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2005,7 +2005,8 @@ int redirty_page_for_writepage(struct writeback_control *wbc,
+ 				struct page *page);
+ void account_page_cleaned(struct page *page, struct address_space *mapping,
+ 			  struct bdi_writeback *wb);
+-int set_page_dirty(struct page *page);
++bool folio_mark_dirty(struct folio *folio);
++bool set_page_dirty(struct page *page);
+ int set_page_dirty_lock(struct page *page);
+ void __cancel_dirty_page(struct page *page);
+ static inline void cancel_dirty_page(struct page *page)
 diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index 2ccd8f213fc4..10ce5582d869 100644
+index 10ce5582d869..2c2b3917b5dc 100644
 --- a/mm/folio-compat.c
 +++ b/mm/folio-compat.c
-@@ -71,3 +71,9 @@ void migrate_page_copy(struct page *newpage, struct page *page)
+@@ -77,3 +77,9 @@ bool set_page_writeback(struct page *page)
+ 	return folio_start_writeback(page_folio(page));
  }
- EXPORT_SYMBOL(migrate_page_copy);
- #endif
+ EXPORT_SYMBOL(set_page_writeback);
 +
-+bool set_page_writeback(struct page *page)
++bool set_page_dirty(struct page *page)
 +{
-+	return folio_start_writeback(page_folio(page));
++	return folio_mark_dirty(page_folio(page));
 +}
-+EXPORT_SYMBOL(set_page_writeback);
++EXPORT_SYMBOL(set_page_dirty);
 diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 8d5d7921b157..0336273154fb 100644
+index 0336273154fb..d7c0cad6a57f 100644
 --- a/mm/page-writeback.c
 +++ b/mm/page-writeback.c
-@@ -2773,21 +2773,23 @@ bool __folio_end_writeback(struct folio *folio)
- 	return ret;
+@@ -2564,18 +2564,21 @@ int redirty_page_for_writepage(struct writeback_control *wbc, struct page *page)
  }
+ EXPORT_SYMBOL(redirty_page_for_writepage);
  
--int __test_set_page_writeback(struct page *page, bool keep_write)
-+bool __folio_start_writeback(struct folio *folio, bool keep_write)
+-/*
+- * Dirty a page.
++/**
++ * folio_mark_dirty - Mark a folio as being modified.
++ * @folio: The folio.
++ *
++ * For folios with a mapping this should be done under the page lock
++ * for the benefit of asynchronous memory errors who prefer a consistent
++ * dirty state. This rule can be broken in some special cases,
++ * but should be better not to.
+  *
+- * For pages with a mapping this should be done under the page lock for the
+- * benefit of asynchronous memory errors who prefer a consistent dirty state.
+- * This rule can be broken in some special cases, but should be better not to.
++ * Return: True if the folio was newly dirtied, false if it was already dirty.
+  */
+-int set_page_dirty(struct page *page)
++bool folio_mark_dirty(struct folio *folio)
  {
 -	struct address_space *mapping = page_mapping(page);
--	int ret, access_ret;
-+	long nr = folio_nr_pages(folio);
 +	struct address_space *mapping = folio_mapping(folio);
-+	bool ret;
-+	int access_ret;
  
--	lock_page_memcg(page);
-+	folio_memcg_lock(folio);
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
--		XA_STATE(xas, &mapping->i_pages, page_index(page));
-+		XA_STATE(xas, &mapping->i_pages, folio_index(folio));
- 		struct inode *inode = mapping->host;
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
- 		unsigned long flags;
- 
- 		xas_lock_irqsave(&xas, flags);
- 		xas_load(&xas);
--		ret = TestSetPageWriteback(page);
-+		ret = folio_test_set_writeback(folio);
- 		if (!ret) {
- 			bool on_wblist;
- 
-@@ -2796,40 +2798,40 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
- 
- 			xas_set_mark(&xas, PAGECACHE_TAG_WRITEBACK);
- 			if (bdi->capabilities & BDI_CAP_WRITEBACK_ACCT)
--				inc_wb_stat(inode_to_wb(inode), WB_WRITEBACK);
-+				wb_stat_mod(inode_to_wb(inode), WB_WRITEBACK,
-+						nr);
- 
- 			/*
--			 * We can come through here when swapping anonymous
--			 * pages, so we don't necessarily have an inode to track
--			 * for sync.
-+			 * We can come through here when swapping
-+			 * anonymous folios, so we don't necessarily
-+			 * have an inode to track for sync.
- 			 */
- 			if (mapping->host && !on_wblist)
- 				sb_mark_inode_writeback(mapping->host);
- 		}
--		if (!PageDirty(page))
-+		if (!folio_test_dirty(folio))
- 			xas_clear_mark(&xas, PAGECACHE_TAG_DIRTY);
- 		if (!keep_write)
- 			xas_clear_mark(&xas, PAGECACHE_TAG_TOWRITE);
- 		xas_unlock_irqrestore(&xas, flags);
- 	} else {
--		ret = TestSetPageWriteback(page);
-+		ret = folio_test_set_writeback(folio);
+-	page = compound_head(page);
+ 	if (likely(mapping)) {
+ 		/*
+ 		 * readahead/lru_deactivate_page could remain
+@@ -2587,17 +2590,17 @@ int set_page_dirty(struct page *page)
+ 		 * it will confuse readahead and make it restart the size rampup
+ 		 * process. But it's a trivial problem.
+ 		 */
+-		if (PageReclaim(page))
+-			ClearPageReclaim(page);
+-		return mapping->a_ops->set_page_dirty(page);
++		if (folio_test_reclaim(folio))
++			folio_clear_reclaim(folio);
++		return mapping->a_ops->set_page_dirty(&folio->page);
  	}
- 	if (!ret) {
--		inc_lruvec_page_state(page, NR_WRITEBACK);
--		inc_zone_page_state(page, NR_ZONE_WRITE_PENDING);
-+		lruvec_stat_mod_folio(folio, NR_WRITEBACK, nr);
-+		zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, nr);
+-	if (!PageDirty(page)) {
+-		if (!TestSetPageDirty(page))
+-			return 1;
++	if (!folio_test_dirty(folio)) {
++		if (!folio_test_set_dirty(folio))
++			return true;
  	}
--	unlock_page_memcg(page);
--	access_ret = arch_make_page_accessible(page);
-+	folio_memcg_unlock(folio);
-+	access_ret = arch_make_folio_accessible(folio);
- 	/*
- 	 * If writeback has been triggered on a page that cannot be made
- 	 * accessible, it is too late to recover here.
- 	 */
--	VM_BUG_ON_PAGE(access_ret != 0, page);
-+	VM_BUG_ON_FOLIO(access_ret != 0, folio);
- 
- 	return ret;
--
+-	return 0;
++	return false;
  }
--EXPORT_SYMBOL(__test_set_page_writeback);
-+EXPORT_SYMBOL(__folio_start_writeback);
+-EXPORT_SYMBOL(set_page_dirty);
++EXPORT_SYMBOL(folio_mark_dirty);
  
- /**
-  * folio_wait_writeback - Wait for a folio to finish writeback.
+ /*
+  * set_page_dirty() is racy if the caller has no reference against
 -- 
 2.30.2
 
