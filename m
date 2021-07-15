@@ -2,111 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A1D43CAEF6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 00:11:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C5313CAF07
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 00:14:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231871AbhGOWOT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 18:14:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51746 "EHLO mail.kernel.org"
+        id S231871AbhGOWRq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 18:17:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229927AbhGOWOT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 18:14:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 49D436117A;
-        Thu, 15 Jul 2021 22:11:25 +0000 (UTC)
+        id S231547AbhGOWRq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Jul 2021 18:17:46 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A3BDD61278;
+        Thu, 15 Jul 2021 22:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626387085;
-        bh=mU8IxQLXIJVg/zkRJqgrYqRpoPatjq8fJe0GfF1JrvE=;
+        s=k20201202; t=1626387292;
+        bh=SgJELlTSAdq220KSsy6qE+TbsJwWUUb96DSopClSFYM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IPKe3q105/TOxOYPtJTTOwkQ2S2H8ZphuTtkriYun61+2wdi0Mzgz4vXxxe7Suy2j
-         DpetdcbMIUT/px8vmMx5FzwTD8FNWp8kKVPKQe6jyJ66oDBw/1zyOL0Y1NxV1m3vt0
-         mNMLwq81F5fFiRYstSfU3z9HxuKIF+tEcYONMMyCl0c3IofjC6DzOkEhkj0kuR3whn
-         jufl3KN1egpswiqxexvZEo53XdGzhrEBNTullMAIokX6cOxaEjuiFqrMEji6Yc0XT2
-         kux9DD8+4mue5DltD1KKbi2WWp1hdBXnCmL4ufRrJ+xcX4wmOa6uWEO4ttmOcIwv+n
-         GvPpwOyxgZE4Q==
-Date:   Thu, 15 Jul 2021 15:11:25 -0700
+        b=Vnk5/oYWXUI/6cpJAgYt98kt4SzyXbJMneQjY2ew/BfFVdkPChfq84AFBxhUxztLa
+         LmnXMGZuEGWvOv01yIXMoquwTWXbZDFFNgRvHj95kM33/Hp39hHzAtxDSCmCY/m9vx
+         1Y9YslFNvIRzyBUgGlEziqb4mjcsck7HgPDO3GUr/inpugLYG6yA4vhHskDytv2BCL
+         N5gMO/1m98G79oyynsT9xNb8BuhO3Gb8qj3RxV5DKwgdCKhNX4PhezbxzAEgG6tPpv
+         Dppsi59MqDp8PGiR1JO9uBSWaqWApKfwDWh4XBZHvPDVlLr0NBb1h65PPoFZZgMo7E
+         /itUmX6ILFy/A==
+Date:   Thu, 15 Jul 2021 15:14:52 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 129/138] xfs: Support THPs
-Message-ID: <20210715221125.GU22357@magnolia>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-130-willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Rafa?? Mi??ecki <zajec5@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
+Message-ID: <20210715221452.GV22357@magnolia>
+References: <30c7ec73-4ad5-3c4e-4745-061eb22f2c8a@redhat.com>
+ <CAHk-=wjW7Up3KD-2EqVg7+ca8Av0-rC5Kd7yK+=m6Dwk3D4Q+A@mail.gmail.com>
+ <YO30DKw5FKLz4QuF@zeniv-ca.linux.org.uk>
+ <bea2bcf2-02f6-f247-9e06-7b9ec154377a@gmail.com>
+ <YO755O8JnxG44YaT@kroah.com>
+ <7f4a96bc-3912-dfb6-4a32-f0c6487d977b@gmail.com>
+ <20210714161352.GA22357@magnolia>
+ <YO8OP7vzHIuKvO6X@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210715033704.692967-130-willy@infradead.org>
+In-Reply-To: <YO8OP7vzHIuKvO6X@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 04:36:55AM +0100, Matthew Wilcox (Oracle) wrote:
-> There is one place which assumes the size of a page; fix it.
+On Wed, Jul 14, 2021 at 05:18:07PM +0100, Christoph Hellwig wrote:
+> On Wed, Jul 14, 2021 at 09:13:52AM -0700, Darrick J. Wong wrote:
+> > Porting to fs/iomap can be done after merge, so long as the ntfs3
+> > driver doesn't depend on crazy reworking of buffer heads or whatever.
+> > AFAICT it didn't, so ... yes, my earlier statements still apply: "later
+> > as a clean up".
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/xfs/xfs_aops.c  | 11 ++++++-----
->  fs/xfs/xfs_super.c |  3 ++-
->  2 files changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index cb4e0fcf4c76..9ffbd116592a 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -432,10 +432,11 @@ xfs_discard_page(
->  	struct page		*page,
->  	loff_t			fileoff)
+> I on the other hand hate piling up mor of this legacy stuff, as it tends
+> to not be cleaned up by the submitted.  Example: erofs still hasn't
+> switched to iomap despite broad claims,
 
-/me wonders if this parameter ought to become pos like most other
-places, but as a straight-up conversion it looks fine to me.
+<shrug> I was letting that one go while willy tries to land all the
+folio surgery on the iomap code.
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> also we still have a huge backlog in the switch to the new mount API.
+
+That's true, though having /read/ the xfs conversion series, I'm not
+surprised that most maintainers don't want to do the heavy lift
+themselves.
 
 --D
-
->  {
-> -	struct inode		*inode = page->mapping->host;
-> +	struct folio		*folio = page_folio(page);
-> +	struct inode		*inode = folio->mapping->host;
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
-> -	unsigned int		pageoff = offset_in_page(fileoff);
-> +	size_t			pageoff = offset_in_folio(folio, fileoff);
->  	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, fileoff);
->  	xfs_fileoff_t		pageoff_fsb = XFS_B_TO_FSBT(mp, pageoff);
->  	int			error;
-> @@ -445,14 +446,14 @@ xfs_discard_page(
->  
->  	xfs_alert_ratelimited(mp,
->  		"page discard on page "PTR_FMT", inode 0x%llx, offset %llu.",
-> -			page, ip->i_ino, fileoff);
-> +			folio, ip->i_ino, fileoff);
->  
->  	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
-> -			i_blocks_per_page(inode, page) - pageoff_fsb);
-> +			i_blocks_per_folio(inode, folio) - pageoff_fsb);
->  	if (error && !XFS_FORCED_SHUTDOWN(mp))
->  		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
->  out_invalidate:
-> -	iomap_invalidatepage(page, pageoff, PAGE_SIZE - pageoff);
-> +	iomap_invalidatepage(&folio->page, pageoff, folio_size(folio) - pageoff);
->  }
->  
->  static const struct iomap_writeback_ops xfs_writeback_ops = {
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 2c9e26a44546..24adea02b887 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1891,7 +1891,8 @@ static struct file_system_type xfs_fs_type = {
->  	.init_fs_context	= xfs_init_fs_context,
->  	.parameters		= xfs_fs_parameters,
->  	.kill_sb		= kill_block_super,
-> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | \
-> +				  FS_THP_SUPPORT,
->  };
->  MODULE_ALIAS_FS("xfs");
->  
-> -- 
-> 2.30.2
-> 
