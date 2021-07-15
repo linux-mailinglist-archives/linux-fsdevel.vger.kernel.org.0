@@ -2,346 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 191193C96CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 06:00:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E87CB3C96B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 05:52:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231459AbhGOEDJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 00:03:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50084 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbhGOEDI (ORCPT
+        id S233786AbhGODy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 23:54:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:33248 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231378AbhGODy4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 00:03:08 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D21CC06175F;
-        Wed, 14 Jul 2021 21:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=32CNIpiU8NZS3vYPiHzP/+47yNy0tCS/bqcbwVuEEAk=; b=XVS9N2Nk8FhRkoWmFmtin+srdx
-        FxYAJpnjwQdhGTX67K3kyVJKBxQH8UtuW8PcdT+oxzLMy3PHzvs7an/kLf/D5ouHLp9HElY0O9WpU
-        qUEuOSgrZe4yTgZ7gdv9XaEzei9NrDx1zSlurTCv6PKAQgqRPhWVvaRfCPKdTcBJxDcLU9oGszULP
-        BLcZmRN8can73pxQbtGdUNR9UTjjDDoSZnN9ttbaULzLfbhDXSDNjEWi52htWJwfjP9Ceg8mrm1Nn
-        mK8kE0SmPkHtBPOH7Cl0cK6VmpWvOi4TPEvpSaIFvInmb/YJP1XWS2NgMO2gs5q/WctXGcnpZgAgh
-        OMw1RqeQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m3sWY-002vZw-4E; Thu, 15 Jul 2021 03:59:11 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>,
-        David Howells <dhowells@redhat.com>
-Subject: [PATCH v14 027/138] mm/filemap: Add folio_wait_bit()
-Date:   Thu, 15 Jul 2021 04:35:13 +0100
-Message-Id: <20210715033704.692967-28-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210715033704.692967-1-willy@infradead.org>
-References: <20210715033704.692967-1-willy@infradead.org>
+        Wed, 14 Jul 2021 23:54:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626321123;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1fOE/VG2Jpms0RzmQLl6gbrGAPQgBFskN6IIEj8J1iA=;
+        b=b1hS/Mr7gAIu1LiTa2y02dxriy8Aqk2AqiABMzLun/ZHzX4AVVNJ1H5f3XyxiFddMtXIqJ
+        4g8kQ37Pxz/EMBftayUvWIzyyPqVVuW1nU0UkXQr+HRpShYbSu17Curg+0C+/JJYiIy4vG
+        sKbm2GslfBoeiUtroU0EB1vWhkwa6PM=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-120-u4C7NjQ4O76FX0YHQHzIhg-1; Wed, 14 Jul 2021 23:52:02 -0400
+X-MC-Unique: u4C7NjQ4O76FX0YHQHzIhg-1
+Received: by mail-pj1-f72.google.com with SMTP id u12-20020a17090abb0cb029016ee12ec9a1so2526002pjr.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 20:52:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1fOE/VG2Jpms0RzmQLl6gbrGAPQgBFskN6IIEj8J1iA=;
+        b=MOqyHnGCWN9dUos+HgancspNK+agNAprrY8ZkSY4+f0lRlUm7IIZCyvyUt3IPfAwew
+         BmwdckuN7Rdq+hsryC9JQKFZpvIW/MnoC34gIZlAFxuYEcJiMyUpRTjex2eA0hlri5ZE
+         ojU9MZUxIu+mHkUeuig5MvLddRApXk32TmXkQrxK9zPCTd518LhiXA9JR6Nj8iyGDs/V
+         dEPyLmHmnrGb4HotMM+kVoF/iqne5MRu/7gb/DvxwmSYWW8mmqwVnTKngdLJLhsc+76m
+         VLOl7jQhSCiUkZMxUayZAztadRGEb1GGxbReQRsMCwapMx4KxD1WptvG/1ubTWAMK3mk
+         ct7w==
+X-Gm-Message-State: AOAM533CPa0RrqpbClJ7/+gLKlyc17G8J+8ydK7ee3/N1g3pCXWDVu1/
+        k9hu7ftUhN6RJJ523N6xy3xSMoqlZMvwBEdFwR50j5OZanGo1+ShLh89Y7J+DiJ2oRwSoW8mGLW
+        Ici248tHztv/BiNEGzTnYU9QKm7AgSZcob8KthEcJNg==
+X-Received: by 2002:aa7:810b:0:b029:2fe:decd:c044 with SMTP id b11-20020aa7810b0000b02902fedecdc044mr1891859pfi.15.1626321121579;
+        Wed, 14 Jul 2021 20:52:01 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzPXjcCsvMW55pekpqJVp9KXYj0zT1+ZSWAnzwkTGswgY0xvMdeSSsx08t8DBTKiIxsMy+KENfcsoJGEdz6ZgU=
+X-Received: by 2002:aa7:810b:0:b029:2fe:decd:c044 with SMTP id
+ b11-20020aa7810b0000b02902fedecdc044mr1891829pfi.15.1626321121269; Wed, 14
+ Jul 2021 20:52:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAHLe9YZ1_0p_rn+fbXFxU3ySJ_XU=QdSKJAu2j3WD8qmDuNTaQ@mail.gmail.com>
+ <YO5kCzI133B/fHiS@carbon.dhcp.thefacebook.com> <CAHLe9YYiNnbyYGHoArJxvCEsqaqt2rwp5OHCSy+gWH+D8OFLQA@mail.gmail.com>
+ <20210714092639.GB9457@quack2.suse.cz> <CAHLe9YbKXcF1mkSeK0Fo7wAUN02-_LfLD+2hdmVMJY_-gNq=-A@mail.gmail.com>
+ <YO+e8UrCbzp2pfvj@casper.infradead.org>
+In-Reply-To: <YO+e8UrCbzp2pfvj@casper.infradead.org>
+From:   Boyang Xue <bxue@redhat.com>
+Date:   Thu, 15 Jul 2021 11:51:50 +0800
+Message-ID: <CAHLe9YZnLGnJp-8RpkUCHDrH=5Vrj-8-t5Yf0y_w0Sf6zhNfTQ@mail.gmail.com>
+Subject: Re: Patch 'writeback, cgroup: release dying cgwbs by switching
+ attached inodes' leads to kernel crash
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, Roman Gushchin <guro@fb.com>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rename wait_on_page_bit() to folio_wait_bit().  We must always wait on
-the folio, otherwise we won't be woken up due to the tail page hashing
-to a different bucket from the head page.
+On Thu, Jul 15, 2021 at 10:36 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Jul 15, 2021 at 12:22:28AM +0800, Boyang Xue wrote:
+> > It's unclear to me that where to find the required address in the
+> > addr2line command line, i.e.
+> >
+> > addr2line -e /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
+> > <what address here?>
+>
+> ./scripts/faddr2line /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux cleanup_offline_cgwbs_workfn+0x320/0x394
+>
 
-This commit shrinks the kernel by 770 bytes, mostly due to moving
-the page waitqueue lookup into folio_wait_bit_common().
+Thanks! The result is the same as the
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Jeff Layton <jlayton@kernel.org>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-Reviewed-by: David Howells <dhowells@redhat.com>
----
- include/linux/pagemap.h | 10 +++---
- mm/filemap.c            | 77 +++++++++++++++++++----------------------
- mm/page-writeback.c     |  4 +--
- 3 files changed, 43 insertions(+), 48 deletions(-)
+addr2line -i -e
+/usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
+FFFF8000102D6DD0
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 96b62a2331fb..7eb02baf6f9f 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -729,11 +729,11 @@ static inline bool lock_page_or_retry(struct page *page, struct mm_struct *mm,
- }
- 
- /*
-- * This is exported only for wait_on_page_locked/wait_on_page_writeback, etc.,
-+ * This is exported only for folio_wait_locked/folio_wait_writeback, etc.,
-  * and should not be used directly.
-  */
--extern void wait_on_page_bit(struct page *page, int bit_nr);
--extern int wait_on_page_bit_killable(struct page *page, int bit_nr);
-+void folio_wait_bit(struct folio *folio, int bit_nr);
-+int folio_wait_bit_killable(struct folio *folio, int bit_nr);
- 
- /* 
-  * Wait for a folio to be unlocked.
-@@ -745,14 +745,14 @@ extern int wait_on_page_bit_killable(struct page *page, int bit_nr);
- static inline void folio_wait_locked(struct folio *folio)
- {
- 	if (folio_test_locked(folio))
--		wait_on_page_bit(&folio->page, PG_locked);
-+		folio_wait_bit(folio, PG_locked);
- }
- 
- static inline int folio_wait_locked_killable(struct folio *folio)
- {
- 	if (!folio_test_locked(folio))
- 		return 0;
--	return wait_on_page_bit_killable(&folio->page, PG_locked);
-+	return folio_wait_bit_killable(folio, PG_locked);
- }
- 
- static inline void wait_on_page_locked(struct page *page)
-diff --git a/mm/filemap.c b/mm/filemap.c
-index b5a0d546e436..b55c89d7997f 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1102,7 +1102,7 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
- 	 *
- 	 * So update the flags atomically, and wake up the waiter
- 	 * afterwards to avoid any races. This store-release pairs
--	 * with the load-acquire in wait_on_page_bit_common().
-+	 * with the load-acquire in folio_wait_bit_common().
- 	 */
- 	smp_store_release(&wait->flags, flags | WQ_FLAG_WOKEN);
- 	wake_up_state(wait->private, mode);
-@@ -1183,7 +1183,7 @@ static void folio_wake(struct folio *folio, int bit)
- }
- 
- /*
-- * A choice of three behaviors for wait_on_page_bit_common():
-+ * A choice of three behaviors for folio_wait_bit_common():
-  */
- enum behavior {
- 	EXCLUSIVE,	/* Hold ref to page and take the bit when woken, like
-@@ -1198,16 +1198,16 @@ enum behavior {
- };
- 
- /*
-- * Attempt to check (or get) the page bit, and mark us done
-+ * Attempt to check (or get) the folio flag, and mark us done
-  * if successful.
-  */
--static inline bool trylock_page_bit_common(struct page *page, int bit_nr,
-+static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
- 					struct wait_queue_entry *wait)
- {
- 	if (wait->flags & WQ_FLAG_EXCLUSIVE) {
--		if (test_and_set_bit(bit_nr, &page->flags))
-+		if (test_and_set_bit(bit_nr, &folio->flags))
- 			return false;
--	} else if (test_bit(bit_nr, &page->flags))
-+	} else if (test_bit(bit_nr, &folio->flags))
- 		return false;
- 
- 	wait->flags |= WQ_FLAG_WOKEN | WQ_FLAG_DONE;
-@@ -1217,9 +1217,10 @@ static inline bool trylock_page_bit_common(struct page *page, int bit_nr,
- /* How many times do we accept lock stealing from under a waiter? */
- int sysctl_page_lock_unfairness = 5;
- 
--static inline int wait_on_page_bit_common(wait_queue_head_t *q,
--	struct page *page, int bit_nr, int state, enum behavior behavior)
-+static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
-+		int state, enum behavior behavior)
- {
-+	wait_queue_head_t *q = page_waitqueue(&folio->page);
- 	int unfairness = sysctl_page_lock_unfairness;
- 	struct wait_page_queue wait_page;
- 	wait_queue_entry_t *wait = &wait_page.wait;
-@@ -1228,8 +1229,8 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 	unsigned long pflags;
- 
- 	if (bit_nr == PG_locked &&
--	    !PageUptodate(page) && PageWorkingset(page)) {
--		if (!PageSwapBacked(page)) {
-+	    !folio_test_uptodate(folio) && folio_test_workingset(folio)) {
-+		if (!folio_test_swapbacked(folio)) {
- 			delayacct_thrashing_start();
- 			delayacct = true;
- 		}
-@@ -1239,7 +1240,7 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 
- 	init_wait(wait);
- 	wait->func = wake_page_function;
--	wait_page.page = page;
-+	wait_page.page = &folio->page;
- 	wait_page.bit_nr = bit_nr;
- 
- repeat:
-@@ -1254,7 +1255,7 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 	 * Do one last check whether we can get the
- 	 * page bit synchronously.
- 	 *
--	 * Do the SetPageWaiters() marking before that
-+	 * Do the folio_set_waiters() marking before that
- 	 * to let any waker we _just_ missed know they
- 	 * need to wake us up (otherwise they'll never
- 	 * even go to the slow case that looks at the
-@@ -1265,8 +1266,8 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 	 * lock to avoid races.
- 	 */
- 	spin_lock_irq(&q->lock);
--	SetPageWaiters(page);
--	if (!trylock_page_bit_common(page, bit_nr, wait))
-+	folio_set_waiters(folio);
-+	if (!folio_trylock_flag(folio, bit_nr, wait))
- 		__add_wait_queue_entry_tail(q, wait);
- 	spin_unlock_irq(&q->lock);
- 
-@@ -1276,10 +1277,10 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 	 * see whether the page bit testing has already
- 	 * been done by the wake function.
- 	 *
--	 * We can drop our reference to the page.
-+	 * We can drop our reference to the folio.
- 	 */
- 	if (behavior == DROP)
--		put_page(page);
-+		folio_put(folio);
- 
- 	/*
- 	 * Note that until the "finish_wait()", or until
-@@ -1316,7 +1317,7 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 		 *
- 		 * And if that fails, we'll have to retry this all.
- 		 */
--		if (unlikely(test_and_set_bit(bit_nr, &page->flags)))
-+		if (unlikely(test_and_set_bit(bit_nr, folio_flags(folio, 0))))
- 			goto repeat;
- 
- 		wait->flags |= WQ_FLAG_DONE;
-@@ -1325,7 +1326,7 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 
- 	/*
- 	 * If a signal happened, this 'finish_wait()' may remove the last
--	 * waiter from the wait-queues, but the PageWaiters bit will remain
-+	 * waiter from the wait-queues, but the folio waiters bit will remain
- 	 * set. That's ok. The next wakeup will take care of it, and trying
- 	 * to do it here would be difficult and prone to races.
- 	 */
-@@ -1356,19 +1357,17 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 	return wait->flags & WQ_FLAG_WOKEN ? 0 : -EINTR;
- }
- 
--void wait_on_page_bit(struct page *page, int bit_nr)
-+void folio_wait_bit(struct folio *folio, int bit_nr)
- {
--	wait_queue_head_t *q = page_waitqueue(page);
--	wait_on_page_bit_common(q, page, bit_nr, TASK_UNINTERRUPTIBLE, SHARED);
-+	folio_wait_bit_common(folio, bit_nr, TASK_UNINTERRUPTIBLE, SHARED);
- }
--EXPORT_SYMBOL(wait_on_page_bit);
-+EXPORT_SYMBOL(folio_wait_bit);
- 
--int wait_on_page_bit_killable(struct page *page, int bit_nr)
-+int folio_wait_bit_killable(struct folio *folio, int bit_nr)
- {
--	wait_queue_head_t *q = page_waitqueue(page);
--	return wait_on_page_bit_common(q, page, bit_nr, TASK_KILLABLE, SHARED);
-+	return folio_wait_bit_common(folio, bit_nr, TASK_KILLABLE, SHARED);
- }
--EXPORT_SYMBOL(wait_on_page_bit_killable);
-+EXPORT_SYMBOL(folio_wait_bit_killable);
- 
- /**
-  * put_and_wait_on_page_locked - Drop a reference and wait for it to be unlocked
-@@ -1385,11 +1384,8 @@ EXPORT_SYMBOL(wait_on_page_bit_killable);
-  */
- int put_and_wait_on_page_locked(struct page *page, int state)
- {
--	wait_queue_head_t *q;
--
--	page = compound_head(page);
--	q = page_waitqueue(page);
--	return wait_on_page_bit_common(q, page, PG_locked, state, DROP);
-+	return folio_wait_bit_common(page_folio(page), PG_locked, state,
-+			DROP);
- }
- 
- /**
-@@ -1483,9 +1479,10 @@ EXPORT_SYMBOL(end_page_private_2);
-  */
- void wait_on_page_private_2(struct page *page)
- {
--	page = compound_head(page);
--	while (PagePrivate2(page))
--		wait_on_page_bit(page, PG_private_2);
-+	struct folio *folio = page_folio(page);
-+
-+	while (folio_test_private_2(folio))
-+		folio_wait_bit(folio, PG_private_2);
- }
- EXPORT_SYMBOL(wait_on_page_private_2);
- 
-@@ -1502,11 +1499,11 @@ EXPORT_SYMBOL(wait_on_page_private_2);
-  */
- int wait_on_page_private_2_killable(struct page *page)
- {
-+	struct folio *folio = page_folio(page);
- 	int ret = 0;
- 
--	page = compound_head(page);
--	while (PagePrivate2(page)) {
--		ret = wait_on_page_bit_killable(page, PG_private_2);
-+	while (folio_test_private_2(folio)) {
-+		ret = folio_wait_bit_killable(folio, PG_private_2);
- 		if (ret < 0)
- 			break;
- 	}
-@@ -1583,16 +1580,14 @@ EXPORT_SYMBOL_GPL(page_endio);
-  */
- void __folio_lock(struct folio *folio)
- {
--	wait_queue_head_t *q = page_waitqueue(&folio->page);
--	wait_on_page_bit_common(q, &folio->page, PG_locked, TASK_UNINTERRUPTIBLE,
-+	folio_wait_bit_common(folio, PG_locked, TASK_UNINTERRUPTIBLE,
- 				EXCLUSIVE);
- }
- EXPORT_SYMBOL(__folio_lock);
- 
- int __folio_lock_killable(struct folio *folio)
- {
--	wait_queue_head_t *q = page_waitqueue(&folio->page);
--	return wait_on_page_bit_common(q, &folio->page, PG_locked, TASK_KILLABLE,
-+	return folio_wait_bit_common(folio, PG_locked, TASK_KILLABLE,
- 					EXCLUSIVE);
- }
- EXPORT_SYMBOL_GPL(__folio_lock_killable);
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index a078e9786cc4..b34278d05395 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2846,7 +2846,7 @@ void folio_wait_writeback(struct folio *folio)
- {
- 	while (folio_test_writeback(folio)) {
- 		trace_wait_on_page_writeback(&folio->page, folio_mapping(folio));
--		wait_on_page_bit(&folio->page, PG_writeback);
-+		folio_wait_bit(folio, PG_writeback);
- 	}
- }
- EXPORT_SYMBOL_GPL(folio_wait_writeback);
-@@ -2868,7 +2868,7 @@ int folio_wait_writeback_killable(struct folio *folio)
- {
- 	while (folio_test_writeback(folio)) {
- 		trace_wait_on_page_writeback(&folio->page, folio_mapping(folio));
--		if (wait_on_page_bit_killable(&folio->page, PG_writeback))
-+		if (folio_wait_bit_killable(folio, PG_writeback))
- 			return -EINTR;
- 	}
- 
--- 
-2.30.2
+But this script is very handy.
+
+# /usr/src/kernels/5.14.0-0.rc1.15.bx.el9.aarch64/scripts/faddr2line
+/usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
+cleanup_offlin
+e_cgwbs_workfn+0x320/0x394
+cleanup_offline_cgwbs_workfn+0x320/0x394:
+arch_atomic64_fetch_add_unless at
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/atomic-arch-fallback.h:2265
+(inlined by) arch_atomic64_add_unless at
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/atomic-arch-fallback.h:2290
+(inlined by) atomic64_add_unless at
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/asm-generic/atomic-instrumented.h:1149
+(inlined by) atomic_long_add_unless at
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/asm-generic/atomic-long.h:491
+(inlined by) percpu_ref_tryget_many at
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/percpu-refcount.h:247
+(inlined by) percpu_ref_tryget at
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/percpu-refcount.h:266
+(inlined by) wb_tryget at
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/backing-dev-defs.h:227
+(inlined by) wb_tryget at
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/backing-dev-defs.h:224
+(inlined by) cleanup_offline_cgwbs_workfn at
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/mm/backing-dev.c:679
+
+# vi /usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/mm/backing-dev.c
+```
+static void cleanup_offline_cgwbs_workfn(struct work_struct *work)
+{
+        struct bdi_writeback *wb;
+        LIST_HEAD(processed);
+
+        spin_lock_irq(&cgwb_lock);
+
+        while (!list_empty(&offline_cgwbs)) {
+                wb = list_first_entry(&offline_cgwbs, struct bdi_writeback,
+                                      offline_node);
+                list_move(&wb->offline_node, &processed);
+
+                /*
+                 * If wb is dirty, cleaning up the writeback by switching
+                 * attached inodes will result in an effective removal of any
+                 * bandwidth restrictions, which isn't the goal.  Instead,
+                 * it can be postponed until the next time, when all io
+                 * will be likely completed.  If in the meantime some inodes
+                 * will get re-dirtied, they should be eventually switched to
+                 * a new cgwb.
+                 */
+                if (wb_has_dirty_io(wb))
+                        continue;
+
+                if (!wb_tryget(wb))  <=== line#679
+                        continue;
+
+                spin_unlock_irq(&cgwb_lock);
+                while (cleanup_offline_cgwb(wb))
+                        cond_resched();
+                spin_lock_irq(&cgwb_lock);
+
+                wb_put(wb);
+        }
+
+        if (!list_empty(&processed))
+                list_splice_tail(&processed, &offline_cgwbs);
+
+        spin_unlock_irq(&cgwb_lock);
+}
+```
+
+BTW, this bug can be only reproduced on a non-debug production built
+kernel (a.k.a kernel rpm package), it's not reproducible on a debug
+build with various debug configuration enabled (a.k.a kernel-debug rpm
+package)
 
