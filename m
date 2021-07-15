@@ -2,162 +2,257 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 028E83C9C0B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 11:39:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8B913C9C1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 11:48:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232422AbhGOJmB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 05:42:01 -0400
-Received: from mx04.melco.co.jp ([192.218.140.144]:34990 "EHLO
-        mx04.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231655AbhGOJmA (ORCPT
+        id S239340AbhGOJvo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 05:51:44 -0400
+Received: from mx0b-002c1b01.pphosted.com ([148.163.155.12]:36730 "EHLO
+        mx0b-002c1b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231177AbhGOJvn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 05:42:00 -0400
-Received: from mr04.melco.co.jp (mr04 [133.141.98.166])
-        by mx04.melco.co.jp (Postfix) with ESMTP id 4GQTpg1MhqzMsLtF;
-        Thu, 15 Jul 2021 18:39:07 +0900 (JST)
-Received: from mr04.melco.co.jp (unknown [127.0.0.1])
-        by mr04.imss (Postfix) with ESMTP id 4GQTpg0yZzzMr9SZ;
-        Thu, 15 Jul 2021 18:39:07 +0900 (JST)
-Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
-        by mr04.melco.co.jp (Postfix) with ESMTP id 4GQTpg0fMvzMr9SV;
-        Thu, 15 Jul 2021 18:39:07 +0900 (JST)
-Received: from mf04.melco.co.jp (unknown [133.141.98.184])
-        by mf04_second.melco.co.jp (Postfix) with ESMTP id 4GQTpg0cSjzN0rZp;
-        Thu, 15 Jul 2021 18:39:07 +0900 (JST)
-Received: from JPN01-OS2-obe.outbound.protection.outlook.com (unknown [104.47.92.59])
-        by mf04.melco.co.jp (Postfix) with ESMTP id 4GQTpg0PW1zN0rZn;
-        Thu, 15 Jul 2021 18:39:07 +0900 (JST)
+        Thu, 15 Jul 2021 05:51:43 -0400
+Received: from pps.filterd (m0127841.ppops.net [127.0.0.1])
+        by mx0b-002c1b01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16F9hn4k017686;
+        Thu, 15 Jul 2021 02:48:31 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version;
+ s=proofpoint20171006; bh=qR9qCxxwC5CNB3KL5+uqj1GGlBAIpS+l0KXqqdm4NqI=;
+ b=MgWtQhwOvYzui2m4E1Sih00cc7UWf8JOkaoKNB+96JdOQ28UkgCEX0VoKFrd0WYvJExz
+ S7eWbGaAKN93hG+9SkLC4zCS7wt+FpDRH8hjFYumkpkex1jU4bPhzOwdy6OE9FCn/T/J
+ sFsw9IlnAbfFY/ybqp2Kxrf+rLL4k3Qax1ZMnT0OkFzRCUQPobh9B26b7ffwsuO2xG+g
+ KueDdoyr9Gk/sUbPXJ19rv1HMXeU3uUsvvAstLtepHP1tSw5ME4qQ2RvNqI8yVdAqbO6
+ 6zKd/wKdA7FuzVrlw95eASYVdyaMMe6LaLawh7ISanBlYA7wDbl/sDTU1OMa6XH2B1Y4 RA== 
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
+        by mx0b-002c1b01.pphosted.com with ESMTP id 39spmwu7hb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Jul 2021 02:48:31 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mj4sjYbotxOLxQ4cIK/eO5KeA1NyFZDpjxNaZD/fKg5fm9NmECmyFD6UXj2R/3NBlWjAenIPZvQ6tZWZkYbNU/zYwamdtqrZlBzDrpq1voBk6FS1bj0gSVVuq9ONhzaXgz+uE/DJzO2N+ZJSgLaFf4Mptw2/LrXfV6DsNCWOC2Z+sOV5swUXionzVu+z0XfGcrTKq9s1xQSs6F4DDmHtBe6wvv8cIFbd7GiMProyp+NKo7lvNJykdLpuwqxK2UaozLfnKKDpZg5AS9zoKIVmUKucIS2bkfxY0xQwL3E8UY4qRpUmZXdipP8W6VnBVlRM1Ms0Bfj77Qo8lpZ+to5cxg==
+ b=JYTqb7gdp79uBoFlXDHLda3VG8f0rgmfDXAllJX3fUcdkcqtIJDQq44ghimR4HU6DjriWG1sHrA+qbRJpQGxPnmmWylQjErUykWIW779IwXYtz05H/WgottN8GRRT2oG180JzKHs7+oTpkU0zH8qUIK6/1AwG9HEiSZKcGGWzrA9YoRu0YEysoV7c+SRzaq/5WULneyTK0IklIKtO6TXWANAA4hkZ3YUQGBXKT1uv7mKzEvSxO3ZpjHWGVhQzNayEg6slLODVoHFWl/5XMzBQXFmV2hg5nEvMidQcPcm31Igk0bR54njoMpL8aXzVbNQTT6SJ/JeZoikJr96vHZKKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+/ZQBLmGt4iuJaiI3UtMXVjbBQNNthNdAGCYbd4x4mo=;
- b=ETA1J88ay58hzIfHBN0bxo6T40/0C/8AQ0g3RtyDwOrNyFmKYzjrP/dBdCXIHn5dt2B83H6x35Sk9bwWeAAFtHVBcmIy45dO8tGr7LR3wiKkJ9LtJx4lqiCAsDEJnHGByqni8FCG7t/q6i7TxYQX6/Nu7SWZihaxasyJK64QifOYBF9YexVHrbjSqsPPerOPHue22M+aIE4HKkQHH0qsVdIIvUXf+FGFG/lPZpL0R6TruWWgcqL9ucrL0eqRl6IK8fMGYrxriHW8Uarq0K1JGkgWuWERyp08wO5vdUEYwksNUVvDNCuR3BzdTsZefcZZGEe4SJ4oWshbBEO8ynyCPA==
+ bh=qR9qCxxwC5CNB3KL5+uqj1GGlBAIpS+l0KXqqdm4NqI=;
+ b=JG/ALHS9lGRSiY2TKhI2T+0WBJ+D9yNEnJ99+k/lri34L57k8zDtTjgUsUysgVAnwWVMrDSe7HRzkHCqOLqkPzq8hZRKXF7GUArY8vnUAHQaAWWagZpvefzIlYcEvGTSQslb7hJ7M24DwoE55409W1lFy+xN/cUKhPdE0y2HdIgl6Gq+/EJu8nm2I4DtPqoscxNv79RFJ6/QxRGSt4ulZ7zlCiUS12DhIXgAC5WOSIHnPif87nXVC5jvDEde9W+Kxe7DNBQPykjNkYiN2n4ESZvM1I/X3N/bGr4KQMcK1YNBume8g6YtPpdbKHsOgD+9/implFXtKxWnGoaLa+7Qhg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
- header.from=dc.mitsubishielectric.co.jp; dkim=pass
- header.d=dc.mitsubishielectric.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mitsubishielectricgroup.onmicrosoft.com;
- s=selector2-mitsubishielectricgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+/ZQBLmGt4iuJaiI3UtMXVjbBQNNthNdAGCYbd4x4mo=;
- b=gvqSBjmf2ecXk6TPQLkGw5kbIMlglq3aYjstRTVtHitzA6pyDFPChkiQq+m6VXz4LQXWNvlEh2VHFyBiFEx1o0Nyy4CxduuHeAr36eD2WkbtuTvkElFwkupQ6wDNA0wgDv6aoOn5v8GHN54AFuVWofaB7eP6MH4PqPsNFxGbPxw=
-Received: from OSBPR01MB4535.jpnprd01.prod.outlook.com (2603:1096:604:76::20)
- by OSAPR01MB2020.jpnprd01.prod.outlook.com (2603:1096:603:19::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.23; Thu, 15 Jul
- 2021 09:39:06 +0000
-Received: from OSBPR01MB4535.jpnprd01.prod.outlook.com
- ([fe80::389f:1ae4:77c1:a9a9]) by OSBPR01MB4535.jpnprd01.prod.outlook.com
- ([fe80::389f:1ae4:77c1:a9a9%7]) with mapi id 15.20.4331.024; Thu, 15 Jul 2021
- 09:39:06 +0000
-From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
-        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     "'namjae.jeon@samsung.com'" <namjae.jeon@samsung.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "flrncrmr@gmail.com" <flrncrmr@gmail.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] exfat: handle wrong stream entry size in exfat_readdir()
-Thread-Topic: [PATCH] exfat: handle wrong stream entry size in exfat_readdir()
-Thread-Index: AQHXXlu4ZPuuUBCNZkORJfcd+Jgt4qtD/TJd
-Date:   Thu, 15 Jul 2021 09:39:06 +0000
-Message-ID: <OSBPR01MB45357B200F44AF64D446D42790129@OSBPR01MB4535.jpnprd01.prod.outlook.com>
-References: <CGME20210611004956epcas1p262dc7907165782173692d7cf9e571dfe@epcas1p2.samsung.com>,<20210611004024.2925-1-namjae.jeon@samsung.com>
-In-Reply-To: <20210611004024.2925-1-namjae.jeon@samsung.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
+ smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
+ dkim=pass header.d=nutanix.com; arc=none
+Received: from DM6PR02MB5578.namprd02.prod.outlook.com (2603:10b6:5:79::13) by
+ DM6PR02MB6379.namprd02.prod.outlook.com (2603:10b6:5:1d4::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4331.21; Thu, 15 Jul 2021 09:48:30 +0000
+Received: from DM6PR02MB5578.namprd02.prod.outlook.com
+ ([fe80::159:22bc:800a:52b8]) by DM6PR02MB5578.namprd02.prod.outlook.com
+ ([fe80::159:22bc:800a:52b8%6]) with mapi id 15.20.4308.027; Thu, 15 Jul 2021
+ 09:48:30 +0000
+From:   Tiberiu Georgescu <tiberiu.georgescu@nutanix.com>
+To:     Peter Xu <peterx@redhat.com>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "chinwen.chang@mediatek.com" <chinwen.chang@mediatek.com>,
+        "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "apopple@nvidia.com" <apopple@nvidia.com>,
+        "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Florian Schmidt <flosch@nutanix.com>,
+        "Carl Waldspurger [C]" <carl.waldspurger@nutanix.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [RFC PATCH 1/1] pagemap: report swap location for shared pages
+Thread-Topic: [RFC PATCH 1/1] pagemap: report swap location for shared pages
+Thread-Index: AQHXeMRl21VMVRbyvE6e8ETg8oYttqtCo1EAgAEoR4A=
+Date:   Thu, 15 Jul 2021 09:48:30 +0000
+Message-ID: <D41075C7-B9FF-4C95-8613-5ECE75E8C3EE@nutanix.com>
+References: <20210714152426.216217-1-tiberiu.georgescu@nutanix.com>
+ <20210714152426.216217-2-tiberiu.georgescu@nutanix.com>
+ <YO8L5PTdAs+vPeIx@t490s>
+In-Reply-To: <YO8L5PTdAs+vPeIx@t490s>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: samsung.com; dkim=none (message not signed)
- header.d=none;samsung.com; dmarc=none action=none
- header.from=dc.MitsubishiElectric.co.jp;
+authentication-results: redhat.com; dkim=none (message not signed)
+ header.d=none;redhat.com; dmarc=none action=none header.from=nutanix.com;
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3f33014b-e7f4-4544-a8e3-08d947746396
-x-ms-traffictypediagnostic: OSAPR01MB2020:
-x-microsoft-antispam-prvs: <OSAPR01MB2020F27977BE818D1E3A8E2A90129@OSAPR01MB2020.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3173;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: tA/8KK8yZDR+w1PWn5wJeO8hhz0ekx3HsWkGVhKTT+bv8YsTdqv1LM7jIaFd9MazZ3in0506j2W+uO7ha4IUDAoodQAg1tBsP0+7cB+pTG/vMjEGe0inPi2df+vjaBIw4eLyIoBj33AJxsAc5deszhLLYdN/2n9kT8gwkV4AhTkKjTP3R2N/IsAQKoYSfJd4snzEJ5VIrkAuSo1thBTY8BsJeo6YLnaIGK2KpCdL3xQvur7V2adbWYMiT/bMsNHdWLWKwL1QnSuR6ZeQKExCx34w77WJ83N0PdgQaN0bdGq8rUITbQyESN7eYcm8seShAAY9gt0von3MuQysVp2tnR1EU6QBxtsrlIl4/mnfh7n+K8oP4OeEP6h4HFBaN/IWEtEIfKJFao3dmV32XWpZfuY+Fcfgg1ufs/cdsPtdXtuQx+pRpWSH0546lptt08/Wij90n04osDVJ93eT3dNZniKjOYse2gBd4QbwswexXSRm/poJIhm3Qpw19Rh0gh3b9mlMAQ3ySt7zIFCrDy8O+msjr3yOjbhNdkiDocBrojE9uNfzBI9FjMWsZmFFJdmtAn0i+iEHixTwBvu2a9HKCC55k+Yg7OHVi2CGPd2Vv2a055se7FgXDfH2R3gUFpfwApOWGK1Rh4lpvvsas+raLGAfQqtEZaRtbKX8mg+krmWQyg7zP4PboQuf8u7/mjQijFhWWAZzL9Zc5k8R5/1PoHI+ens6O6u+AtNMjyXuucGVFb5bfsVmaTXeEiTk/lak
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSBPR01MB4535.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(39860400002)(376002)(136003)(366004)(396003)(8936002)(55016002)(110136005)(38100700002)(54906003)(316002)(66476007)(66556008)(66946007)(76116006)(186003)(66446008)(8676002)(4326008)(2906002)(64756008)(86362001)(9686003)(71200400001)(52536014)(478600001)(83380400001)(6506007)(5660300002)(4744005)(33656002)(7696005)(122000001)(38070700004)(95630200002)(491001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?eTBXZWxWK2RSRlBSakxXa3ZuUFdQQ3phNVdzbG9jNXpucnBZU2tKTDY2?=
- =?iso-2022-jp?B?cW9RVkQ3SjJlMkMwMTNKc3dxVU94VVg0anZ1N2tjbHZoWGlTYjBPaTMr?=
- =?iso-2022-jp?B?V2JwRTZONUtWSmNyY3ZpOVNwUFJ4aHVyL2pNQUJ3bTljOGMzajJhamFK?=
- =?iso-2022-jp?B?M0g3ZjlYVG5Fa3pmZDl1TjBVSnJzOEpENmFmUUpWRUJwQ0pKcWRpZVJu?=
- =?iso-2022-jp?B?QzN2aVJnSGhWTzhmNCtEc1U5M0QybGFwRzE3QmRWVElmRHliUTRMQm1H?=
- =?iso-2022-jp?B?SE9SclJLMk1YTDNJQ0VGUlUwNDhFOERLQmkwcmZvYWhyRGZpb29kWHJS?=
- =?iso-2022-jp?B?dHFxYUdsejhnOUlYaUMzNnBpNXgwSkhvZjh5ZU1jUkx1aTJ1S0lYdHJk?=
- =?iso-2022-jp?B?aEVjRHYzU1d3aHMvTnV6MGp5YllDb0UwVHl4S0g5cWhpaFk1bmNFMCtR?=
- =?iso-2022-jp?B?emVVdmZWVlhMd085SHVMdHdjaHNLcG9DamxiSyt6bFBGZE12bG9ITnBj?=
- =?iso-2022-jp?B?Y0M1Y1lISTJoemlkb21IM05zK2ovY3JQY0FpVEZQZDJsOWFyRGRCdkhx?=
- =?iso-2022-jp?B?QVJrWGdjalg1OWp3UDh5NGUxcjdxZlRKVUJOTnhTQ0Y4eVdDZzR0TEg0?=
- =?iso-2022-jp?B?UVUxL1hEdTZlSmwrTlZ1a25CQWQvNWQreEpFbUJFZEQ0cG9HVUM4N1da?=
- =?iso-2022-jp?B?Z1E0T24ydktYRUZSMU1MVGEyQ1Fzb3JuRnFmZXdLT1N5UlFodlZ3OUMr?=
- =?iso-2022-jp?B?WTNzd1BCK0Voak8vNVZzeDRGUkZaenV3bWhlU0FTTExkRE1xb21PMERu?=
- =?iso-2022-jp?B?SWVtRzU0UmlVU1ROVDFJRk1NeFE4ZWd2d1ZFcjJJUkxCbE1QSXlWVmhz?=
- =?iso-2022-jp?B?Y2M5R1BvWDlNeHJtNTRjdUh2NFZaSmNvdytzTFk0NEJxL2pZaWIrVjY2?=
- =?iso-2022-jp?B?SkN2Q3FoTXB4TCtJVHdmZy94KzNBVXpWMmE3K1pQaHF0aTZxQzIzZVQ0?=
- =?iso-2022-jp?B?cTE4RTFZWnpNc2JCTVBKMzJzOUpXbVMxSVRnVUtJZTA2MnUwbjlaZVdQ?=
- =?iso-2022-jp?B?L290S2FCYlUzeHlIbW1EdURBMFZoSU1TWHNWMm5qNkhQaXo0WW1GSjR4?=
- =?iso-2022-jp?B?WDJVa1FjQ25MNXdzSTBERkx1NlhpL294amtWbThteHhuai9keU01eDJv?=
- =?iso-2022-jp?B?aXc0aUxFN1VIYWY0RG1OMTBpWkcyK0RPUUlIR1FrL1RqeDRpMGZBOGtu?=
- =?iso-2022-jp?B?ZE1yVWtBdmt2eFpsN2g4b3k0cUp1MDk0TGdDTzF5U2JEMUlWVzBoLzJi?=
- =?iso-2022-jp?B?bWNlVE94a1drR3ZOdHF6VGNBQjlkVDFVQ0lpZWN0cHp3czhYWUwxSExh?=
- =?iso-2022-jp?B?bWtaWHJoaFpVa0JkeCtpWkN6Z2FiSGxuVUpka05WKy9EQVMvRFg2NDhD?=
- =?iso-2022-jp?B?WlhxRHFiaDFhamwrVWg5QlpjSnNCK1FyZ2xYMUkwQ1pNOFl3b2NwaG1s?=
- =?iso-2022-jp?B?eVJUNEZFZGErZ3RCR05lZlJZREpWSDNkWUx1MGZiRFd2ck9iVlliL01B?=
- =?iso-2022-jp?B?aGRpWXVJelVBSWpUUVBEM1dkSGZyeG1WemRRS0JlTCtSWERXUEp5d081?=
- =?iso-2022-jp?B?bFoyMExJTHBpczltL1M5c3ZrZjhCdk5lYzYvSllJZ1ZQMlVkalc5cEVa?=
- =?iso-2022-jp?B?bHZwblZkL09lZmkrK1FwZytGTVZleWkvSG90eExBTFE2ZUFwQ1NlN0h2?=
- =?iso-2022-jp?B?MUxoenhqbERBZjExMzV1YjVMUWRPWGxDV1NEVEt3dytDYjFkV0Vab2xN?=
- =?iso-2022-jp?B?eS9JL3kvYU9CaFcybGFqZVE5RVlSRU15VjNHak5qOW4wU2QyS3o0YTVn?=
- =?iso-2022-jp?B?VnBBNTdWSURjdVBiSnh3VVp2WW9nV085Z2JUdHhhbWNoK0Y5VGN2Rk5Y?=
- =?iso-2022-jp?B?Z0xhYjJVK2RTcHIrdCt0MU9xbHhWTW1vdC9HNE1HR2tPREgxc0JvM1lL?=
- =?iso-2022-jp?B?QT0=?=
+x-ms-office365-filtering-correlation-id: e58d864f-7fec-454d-19f1-08d94775b3bc
+x-ms-traffictypediagnostic: DM6PR02MB6379:
 x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-2022-jp"
+x-microsoft-antispam-prvs: <DM6PR02MB63792C304F9078EFD6C936EDE6129@DM6PR02MB6379.namprd02.prod.outlook.com>
+x-proofpoint-crosstenant: true
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: iz2/I2eYT9BRZcmnqW8B1fe7DuHHvDF0L95LrbXNC4/yFHmYQamAZTLLYWD2FIJyYv+dN6Jzfqh/fc4Ynx8Agz2uQXEvL19GlXtuIpKoKXAbN3S8P6oUnj902latioF4BIeMFztlzk+d7++ddfIhYIeCwGPfdll59REaQYVlFu1MmKvyuyb0BFeXhMxb1uiUrBnfvv8MBXxN/oIyVmcWjuSWOdFGjY3PSsWFz/7svI4zHBgdAm8STrg+KxWOcHfBnG4/LgXyHNCe/hEo+F44jgmBZgD7yAMNTLcbz04JfXWMq3JIMq5ePW7n4sONdBDbsgoIyHOWuqxsH+Aehbaes2dyjYBHqaxYxhFX2j7dkIp1B+EXewC4KnYvZcbRNGbnq+6EnrSTHLYOCrUvxJeiyaRjBHQwA1YAvv3tTAJBT0gABL6iZANZQJhHtOra/XFjZbbFNPEpismBGs5OB9s1u9KQo61lKSiNiovs3vc49If45C93unLnX4NbRAECk3j6tIt5inpte/D4poRuppzzDw+DfHbcx85Q31m30VwADV6v26gSui6ZL3anH1pQyGPTTXKtNgrtJNnIlKSeqyeFIr0HiXsbLuLGc49VkiQ8ShtyI9OMfBIB8paZpHhtgrMA98LwfKOJYMmi9sRsVYZUN26bpd63jH1Bx+jDfwRANfTLddyFz3MjhdS/fjBd1c0wXbJfl2bKZPp5TMHUkxwI4IWBYwJCIXxyPp3zpUOl+4ws6rY22CbZNW1v80hThem7ubKNT4X3Mv6C4A//nwZdgjs715uyPXZImCcJQCCjRPJPh51OilozeMEeqW2oPt5/
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR02MB5578.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(396003)(39860400002)(136003)(366004)(376002)(478600001)(36756003)(66476007)(66446008)(64756008)(66556008)(2616005)(4326008)(186003)(6506007)(53546011)(38100700002)(122000001)(86362001)(6512007)(6916009)(5660300002)(2906002)(71200400001)(91956017)(76116006)(33656002)(6486002)(7416002)(66946007)(8676002)(44832011)(8936002)(316002)(54906003)(38070700004)(45980500001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?xGmbsM+9gSI1anXURexzSOsczEkLSgR4caA37YS+tt/C89XHrPFVvBxCllnF?=
+ =?us-ascii?Q?Jk0cMEDKh/UB1bP5wx4AbKX7F7kb+YKzsK1LOQ/XLpdMnL9fyOHW25NynKQi?=
+ =?us-ascii?Q?Et8utBt7fVIiWuQvFzSqBF4bpnfgi5pj2wYcTHO1gWSiSr+wken8WgZc4tpY?=
+ =?us-ascii?Q?h/tKGL2L3RedmwvLWvPvTsD22gTOBRBf9w12PVqQUpIJtu7EeSDQdXtbDGsP?=
+ =?us-ascii?Q?7Q8HgNPEOLFqbjXCXH6GyuxDvQ/RF/EFh34JDvzLLaXwgT8k5pkUWph2IDrc?=
+ =?us-ascii?Q?Dv2AqeRZEMcvQlGa20EPhNUVPsEKxKuq3xooGCsl/BMoEkYuvcALHOLChELO?=
+ =?us-ascii?Q?aszjjkLER9yTVBYh9CMe1QknG7dI0fx5V3eOKTPGpsvIP7ewik973jbB/Fkk?=
+ =?us-ascii?Q?fH+XzMu5pTLUKJpVa7GH8tW5Y+vJrxN3bK98cvGtRUYrgDPz7B4Oz7YajXvz?=
+ =?us-ascii?Q?2VvCVDDTouTfVqBbgKp8FAsUDdShURVoAOXnnNDhRyxejt01qrX+gN8xtwxB?=
+ =?us-ascii?Q?OmiKt2v1nNQOdS20eytfq76HIMTAP7rN27pNwLqTyubU5k5fVjWJBkBxpPPH?=
+ =?us-ascii?Q?bKeCDoShGgyoCyn+5IqMCrVYMraY8GjbXoulXodDp9nSfsZZW8n4JycC5nX6?=
+ =?us-ascii?Q?Qmsm58+tvOw5/qGDQCkk9Q/zInM5LQXrnS+a+Hv25EDtORDyaWLyuPgv90Dc?=
+ =?us-ascii?Q?90m5vSjk5y4SAJ2I9Tfvht+/EIWP2NxbB3eU7LsbeaIF9BHZW2eQHSh0ldzu?=
+ =?us-ascii?Q?DLNdpgXUAPTlQwx0fTSZHRoMopeOcvFh9TRbyCfvbZ1u81yHSqvKlsYu0IXp?=
+ =?us-ascii?Q?diGAMKFlFuZf7mUymdkNGiBqtzz18LBFXIRACzQ92y466NR6yLY8VGlPNA4f?=
+ =?us-ascii?Q?W0RsTFvFAsqMZgNXnbTodG54QRolOdpAexSWz0OrOwkiBDn9Dq5kfmVZpMym?=
+ =?us-ascii?Q?KNTeBFJ0uMD15djvgt4pBRcSTABP45lSiGmMQ76zsSzOJ+060sCikjiSGQi6?=
+ =?us-ascii?Q?kcIcho0R2oOmsoLELLh5X+YoSc1A4gvmanMMTy+NGF37vEbQisrgDqI9mxGd?=
+ =?us-ascii?Q?N5uEsAYL1vtcyB+lUqA9MfGuRF+vpC0nez+YyRLM9ksHYuuXAY3+idX8czu5?=
+ =?us-ascii?Q?VJYMLqRRAvQBUmafrSYsxNzddni1ZspzyFJFznQbtXUC8iboMr7ef/lpcH0z?=
+ =?us-ascii?Q?OXnwQ+qmz5G2eZEpCCf4IsS2pGLTNFOY5jxL419ghZN/OvfWfm1hf3e+a+cJ?=
+ =?us-ascii?Q?b2XZ4k2HNa9agjDdmkMK73xIApiREE9eShAKTgCOEuXnrlG4hMkDBSDEcKah?=
+ =?us-ascii?Q?gtXRwJ5G2AbuuK6WwilnmvmwgA3VyLkXYEflIWa+EnNx4T60/vBY67eSW2cV?=
+ =?us-ascii?Q?G8ucyvBMQWtAiEFAUPfz8WZOPMDd?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3BF6AED871150C4CB5679C66A4A3776F@namprd02.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-OriginatorOrg: nutanix.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB4535.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f33014b-e7f4-4544-a8e3-08d947746396
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2021 09:39:06.1092
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR02MB5578.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e58d864f-7fec-454d-19f1-08d94775b3bc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2021 09:48:30.1250
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tOjjFJMzfPtahz8jFzRgSMpdADCCFumP2CVnwHs7E5Yu4jZcvvrG8CP/Ren2kOJvF0dtExJS1QLS40qmAo0EZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2020
+X-MS-Exchange-CrossTenant-userprincipalname: 9unIgEOA6lN2Sy9UUUMsIbeBfSkJ128P18cMlkSqWqO6ZkwO09IxmvEx7Fk4zVVurrIvbjl8O6ldPPSGqYPl9C77I3fUVrTA5aRERwQZMW0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB6379
+X-Proofpoint-GUID: gZtAo8I8tiuILA0ySyo5BoJHwsBLYEni
+X-Proofpoint-ORIG-GUID: gZtAo8I8tiuILA0ySyo5BoJHwsBLYEni
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-15_07:2021-07-14,2021-07-15 signatures=0
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> This patch check DataLength in stream=0A=
-> entry only if the type is ALLOC_NO_FAT_CHAIN and add the check ensure=0A=
-> that dentry offset does not exceed max dentries size(256 MB) to avoid=0A=
-> the circular FAT chain issue.=0A=
-=0A=
-I think it's preferable to add a 256MB check during dir-scan.(as I said in =
-the previous)=0A=
-If you want to solve "the circular FAT chain issue", you should add it to o=
-ther dir-scan loops.=0A=
-(exfat_search_empty_slot, exfat_check_dir_empty, exfat_count_dir_entries, e=
-tc ...).=0A=
-=0A=
-Also, the dir-scan loop may not terminate when TYPE_UNUSED is detected.=0A=
-Even if TYPE_UNUSED is detected, just break the inner for-loop will continu=
-e the outer while-loop,=0A=
-so the next cluster will be accessed.=0A=
-If we can't use DataLength for checking, we should check the contents more =
-strictly instead.=0A=
-=0A=
-The current implementation has several similar dir-scan loops.=0A=
-These are similar logics and should be abstracted, if possible.=0A=
-=0A=
-BR=0A=
-Kohada Tetsuhiro <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>=0A=
-=0A=
+
+> On 14 Jul 2021, at 17:08, Peter Xu <peterx@redhat.com> wrote:
+>=20
+> On Wed, Jul 14, 2021 at 03:24:26PM +0000, Tiberiu Georgescu wrote:
+>>=20
+>> static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
+>> 		struct vm_area_struct *vma, unsigned long addr, pte_t pte)
+>> {
+>> 	u64 frame =3D 0, flags =3D 0;
+>> 	struct page *page =3D NULL;
+>>=20
+>> +	if (vma->vm_flags & VM_SOFTDIRTY)
+>> +		flags |=3D PM_SOFT_DIRTY;
+>> +
+>> 	if (pte_present(pte)) {
+>> 		if (pm->show_pfn)
+>> 			frame =3D pte_pfn(pte);
+>> @@ -1374,13 +1387,22 @@ static pagemap_entry_t pte_to_pagemap_entry(stru=
+ct pagemapread *pm,
+>> 			flags |=3D PM_SOFT_DIRTY;
+>> 		if (pte_uffd_wp(pte))
+>> 			flags |=3D PM_UFFD_WP;
+>> -	} else if (is_swap_pte(pte)) {
+>> +	} else if (is_swap_pte(pte) || shmem_file(vma->vm_file)) {
+>> 		swp_entry_t entry;
+>> -		if (pte_swp_soft_dirty(pte))
+>> -			flags |=3D PM_SOFT_DIRTY;
+>> -		if (pte_swp_uffd_wp(pte))
+>> -			flags |=3D PM_UFFD_WP;
+>> -		entry =3D pte_to_swp_entry(pte);
+>> +		if (is_swap_pte(pte)) {
+>> +			entry =3D pte_to_swp_entry(pte);
+>> +			if (pte_swp_soft_dirty(pte))
+>> +				flags |=3D PM_SOFT_DIRTY;
+>> +			if (pte_swp_uffd_wp(pte))
+>> +				flags |=3D PM_UFFD_WP;
+>> +		} else {
+>> +			void *xa_entry =3D get_xa_entry_at_vma_addr(vma, addr);
+>> +
+>> +			if (xa_is_value(xa_entry))
+>> +				entry =3D radix_to_swp_entry(xa_entry);
+>> +			else
+>> +				goto out;
+>> +		}
+>> 		if (pm->show_pfn)
+>> 			frame =3D swp_type(entry) |
+>> 				(swp_offset(entry) << MAX_SWAPFILES_SHIFT);
+>> @@ -1393,9 +1415,8 @@ static pagemap_entry_t pte_to_pagemap_entry(struct=
+ pagemapread *pm,
+>> 		flags |=3D PM_FILE;
+>> 	if (page && page_mapcount(page) =3D=3D 1)
+>> 		flags |=3D PM_MMAP_EXCLUSIVE;
+>> -	if (vma->vm_flags & VM_SOFTDIRTY)
+>> -		flags |=3D PM_SOFT_DIRTY;
+>=20
+> IMHO moving this to the entry will only work for the initial iteration, h=
+owever
+> it won't really help anything, as soft-dirty should always be used in pai=
+r with
+> clear_refs written with value "4" first otherwise all pages will be marke=
+d
+> soft-dirty then the pagemap data is meaningless.
+>=20
+> After the "write 4" op VM_SOFTDIRTY will be cleared and I expect the test=
+ case
+> to see all zeros again even with the patch.
+
+Indeed, the SOFT_DIRTY bit gets cleared and does not get set when we dirty =
+the
+page and swap it out again. However, the pagemap entries are not completely=
+=20
+zeroed out. The patch mostly deals with adding the swap frame offset on the=
+=20
+pagemap entries of swappable, non-syncable pages, even if they are MAP_SHAR=
+ED.
+
+Example output post-patch, after writing 4 to clear_refs and dirtying the p=
+ages:
+       =20
+        $ dd if=3D/proc/$PID/pagemap ibs=3D8 skip=3D$(($VADDR / $PAGESIZE))=
+ count=3D256 | hexdump -C
+        00000000  80 13 01 00 00 00 00 40  a0 13 01 00 00 00 00 40  |......=
+.@.......@|
+        ...........more swapped-out entries............
+        000005e0  e0 2a 01 00 00 00 00 40  00 2b 01 00 00 00 00 40  |.*....=
+.@.+.....@|
+        000005f0  20 2b 01 00 00 00 00 40  40 2b 01 00 00 00 00 40  | +....=
+.@@+.....@|
+        00000600  72 6c 1d 00 00 00 80 a1  c1 34 12 00 00 00 80 a1  |rl....=
+...4......|
+        ...........more in-memory entries............
+        000007f0  3c 21 18 00 00 00 80 a1  69 ec 17 00 00 00 80 a1  |<!....=
+..i.......|
+
+You may find the pre-patch example output on the RFC cover letter, for refe=
+rence:
+https://lkml.org/lkml/2021/7/14/594
+
+> I think one way to fix this is to do something similar to uffd-wp: we lea=
+ve a
+> marker in pte showing that this is soft-dirtied pte even if swapped out.
+> However we don't have a mechanism for that yet in current linux, and the
+> uffd-wp series is the first one trying to introduce something like that.
+
+I am taking a look at the uffd-wp patch today. Hope it gets upstreamed soon=
+, so I can
+adapt one of the mechanisms in there to keep track of the SOFT_DIRTY bit on=
+ the
+PTE after swap.
+
+Kind regards,
+Tibi=
