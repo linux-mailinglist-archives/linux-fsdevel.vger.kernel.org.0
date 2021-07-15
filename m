@@ -2,74 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C5313CAF07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 00:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4233CAF14
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 00:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231871AbhGOWRq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 18:17:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52346 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231547AbhGOWRq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 18:17:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A3BDD61278;
-        Thu, 15 Jul 2021 22:14:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626387292;
-        bh=SgJELlTSAdq220KSsy6qE+TbsJwWUUb96DSopClSFYM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Vnk5/oYWXUI/6cpJAgYt98kt4SzyXbJMneQjY2ew/BfFVdkPChfq84AFBxhUxztLa
-         LmnXMGZuEGWvOv01yIXMoquwTWXbZDFFNgRvHj95kM33/Hp39hHzAtxDSCmCY/m9vx
-         1Y9YslFNvIRzyBUgGlEziqb4mjcsck7HgPDO3GUr/inpugLYG6yA4vhHskDytv2BCL
-         N5gMO/1m98G79oyynsT9xNb8BuhO3Gb8qj3RxV5DKwgdCKhNX4PhezbxzAEgG6tPpv
-         Dppsi59MqDp8PGiR1JO9uBSWaqWApKfwDWh4XBZHvPDVlLr0NBb1h65PPoFZZgMo7E
-         /itUmX6ILFy/A==
-Date:   Thu, 15 Jul 2021 15:14:52 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Rafa?? Mi??ecki <zajec5@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
-Message-ID: <20210715221452.GV22357@magnolia>
-References: <30c7ec73-4ad5-3c4e-4745-061eb22f2c8a@redhat.com>
- <CAHk-=wjW7Up3KD-2EqVg7+ca8Av0-rC5Kd7yK+=m6Dwk3D4Q+A@mail.gmail.com>
- <YO30DKw5FKLz4QuF@zeniv-ca.linux.org.uk>
- <bea2bcf2-02f6-f247-9e06-7b9ec154377a@gmail.com>
- <YO755O8JnxG44YaT@kroah.com>
- <7f4a96bc-3912-dfb6-4a32-f0c6487d977b@gmail.com>
- <20210714161352.GA22357@magnolia>
- <YO8OP7vzHIuKvO6X@infradead.org>
+        id S232021AbhGOWXl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 18:23:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50450 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231547AbhGOWXl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Jul 2021 18:23:41 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C2BC06175F;
+        Thu, 15 Jul 2021 15:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=XyOzjVd5xv9UTPCfq0G+15JQNVxKW8TyYTiG0nAPA8w=; b=FMQVRor86Nwv/OQ7Smz3KjErMl
+        artn8SEfy3MRpb7yjC91QDQHpjYi5BXFE6mZr5wW/mWmDfxfdPY9iGTi0bi9jWEw/fX5ltVJLAZTB
+        1GUWL/CiVhhYoOz20bQt7iDwZmjmT6xkF7tOVsqFvZGIoid77ypDOP8M3PUykMUzb2BVGqligwQK7
+        RMUW+xOYgM3CFpXIzwwTHmG/ZddpdZRI7JwKTqqBCxogbZ1E610ljj3wHyvvUSj4H0wfrg3MCPBLk
+        QYodRw4Oa8WnlbxqHFRhAsdlRXTXk2N3uwCAtkJt3q07Vtoe/sREFEPjfn6T57YY/raIh52a5Eg17
+        CfDup3sQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m49iL-003vpR-Tj; Thu, 15 Jul 2021 22:20:26 +0000
+Date:   Thu, 15 Jul 2021 23:20:17 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v14 124/138] fs: Convert vfs_dedupe_file_range_compare to
+ folios
+Message-ID: <YPC0oYG/fsnPXcac@casper.infradead.org>
+References: <20210715033704.692967-1-willy@infradead.org>
+ <20210715033704.692967-125-willy@infradead.org>
+ <20210715220840.GS22357@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YO8OP7vzHIuKvO6X@infradead.org>
+In-Reply-To: <20210715220840.GS22357@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 14, 2021 at 05:18:07PM +0100, Christoph Hellwig wrote:
-> On Wed, Jul 14, 2021 at 09:13:52AM -0700, Darrick J. Wong wrote:
-> > Porting to fs/iomap can be done after merge, so long as the ntfs3
-> > driver doesn't depend on crazy reworking of buffer heads or whatever.
-> > AFAICT it didn't, so ... yes, my earlier statements still apply: "later
-> > as a clean up".
+On Thu, Jul 15, 2021 at 03:08:40PM -0700, Darrick J. Wong wrote:
+> On Thu, Jul 15, 2021 at 04:36:50AM +0100, Matthew Wilcox (Oracle) wrote:
+> > We still only operate on a single page of data at a time due to using
+> > kmap().  A more complex implementation would work on each page in a folio,
+> > but it's not clear that such a complex implementation would be worthwhile.
 > 
-> I on the other hand hate piling up mor of this legacy stuff, as it tends
-> to not be cleaned up by the submitted.  Example: erofs still hasn't
-> switched to iomap despite broad claims,
+> Does this break up a compound folio into smaller pages?
 
-<shrug> I was letting that one go while willy tries to land all the
-folio surgery on the iomap code.
+No.  We just operate on each page in turn.  Splitting a folio is an
+expensive and unrealiable thing to do, so we avoid it unless necessary.
 
-> also we still have a huge backlog in the switch to the new mount API.
+> > +/* Unlock two folios, being careful not to unlock the same folio twice. */
+> > +static void vfs_unlock_two_folios(struct folio *folio1, struct folio *folio2)
+> >  {
+> > -	unlock_page(page1);
+> > -	if (page1 != page2)
+> > -		unlock_page(page2);
+> > +	folio_unlock(folio1);
+> > +	if (folio1 != folio2)
+> > +		folio_unlock(folio2);
+> 
+> This could result in a lot of folio lock cycling.  Do you think it's
+> worth the effort to minimize this by keeping the folio locked if the
+> next page is going to be from the same one?
 
-That's true, though having /read/ the xfs conversion series, I'm not
-surprised that most maintainers don't want to do the heavy lift
-themselves.
-
---D
+I think that might well be a worthwhile optimisation.  I'd like to do
+that as a separate patch, though (and maybe somebody other than me could
+do it ;-)
