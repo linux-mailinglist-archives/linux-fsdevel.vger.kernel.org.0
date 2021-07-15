@@ -2,91 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 545D03CAEEB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 00:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 216B93CAEF2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 00:08:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231863AbhGOWIY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 18:08:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
+        id S231736AbhGOWLe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 18:11:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229810AbhGOWIY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 18:08:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7260161289;
-        Thu, 15 Jul 2021 22:05:30 +0000 (UTC)
+        id S230314AbhGOWLe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Jul 2021 18:11:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7BC8461289;
+        Thu, 15 Jul 2021 22:08:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626386730;
-        bh=2DNiy/SAZIn85u0H7EsbVIpErwFNqQieQxrkYGH9t9I=;
+        s=k20201202; t=1626386920;
+        bh=ALJUHE+C9LUrPDDnGfrCa1mLT5eVC712CTidE2c7xI8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F/JwXa5sm9OQeE5U+7V2hYUt9LKnsW5tCFuUYSUgeIZ1WeWoEp1GkDg1nVAsShw+i
-         +C09GkLHMp1kYDcC4zjphMJ3aLEx6MiLWyL6+2ZEU/W/1oUhKreN+Cf3h4oXyI5b8Y
-         Q/VURNDNpFUzhtIUrlxAgoIG+3ezWW4dmpzSiBFU9s/0P7gjXbG4uGPClZiWotBLhY
-         S4b39BjsrIHSlPafmPeIOoQLNJX9ZaMFq22PSiMvsLbXKl2As5glV5gzn7PPPm+Rxs
-         tPDwZXIxyze4wJF1XfXFGtZ7/OozPsDkxh5Oal/GqvizsX0PB2Is06VrcTlHjXEBXp
-         mvFyRWuR07HMw==
-Date:   Thu, 15 Jul 2021 15:05:30 -0700
+        b=jroFG37bLH/2wJqwRblZtf2WXYIWF117yiK7yRaLE41bLF4snqJz4UH3r+2gVsVnr
+         Hiemg0cRc2p6dmcBJNr+mtjHRKZKyqXdl8OlpsCFt9pNa8ZJGa4PWCfkXx5jik/2u9
+         8kkj0ebwqvIm5cB/ANkIUVbEvUpT/nt6YgDBuPPfe+cN5fdyTr6II681gGetcK2f59
+         mHOBROuy9zFgyYsQ9DYU4xLpYpKQlpi/A+Dhf7HPuQVSUMz01zfNiojtnK+X6DX3fn
+         GUXJXDb0u4ANWkp3ZPkAniQxLYJ9SWbZgzlZlEgpdelfigthrLEunNtHYGHxpphS7I
+         sSkdKx0e/oHjQ==
+Date:   Thu, 15 Jul 2021 15:08:40 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 107/138] iomap: Convert iomap_migrate_page to use
+Subject: Re: [PATCH v14 124/138] fs: Convert vfs_dedupe_file_range_compare to
  folios
-Message-ID: <20210715220530.GR22357@magnolia>
+Message-ID: <20210715220840.GS22357@magnolia>
 References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-108-willy@infradead.org>
+ <20210715033704.692967-125-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210715033704.692967-108-willy@infradead.org>
+In-Reply-To: <20210715033704.692967-125-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 04:36:33AM +0100, Matthew Wilcox (Oracle) wrote:
-> The arguments are still pages for now, but we can use folios internally
-> and cut out a lot of calls to compound_head().
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On Thu, Jul 15, 2021 at 04:36:50AM +0100, Matthew Wilcox (Oracle) wrote:
+> We still only operate on a single page of data at a time due to using
+> kmap().  A more complex implementation would work on each page in a folio,
+> but it's not clear that such a complex implementation would be worthwhile.
 
-Pretty straightforward conversion.
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Does this break up a compound folio into smaller pages?
+
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/remap_range.c | 116 ++++++++++++++++++++++-------------------------
+>  1 file changed, 55 insertions(+), 61 deletions(-)
+> 
+> diff --git a/fs/remap_range.c b/fs/remap_range.c
+> index e4a5fdd7ad7b..886e6ed2c6c2 100644
+> --- a/fs/remap_range.c
+> +++ b/fs/remap_range.c
+> @@ -158,41 +158,41 @@ static int generic_remap_check_len(struct inode *inode_in,
+>  }
+>  
+>  /* Read a page's worth of file data into the page cache. */
+> -static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
+> +static struct folio *vfs_dedupe_get_folio(struct inode *inode, loff_t pos)
+>  {
+> -	struct page *page;
+> +	struct folio *folio;
+>  
+> -	page = read_mapping_page(inode->i_mapping, offset >> PAGE_SHIFT, NULL);
+> -	if (IS_ERR(page))
+> -		return page;
+> -	if (!PageUptodate(page)) {
+> -		put_page(page);
+> +	folio = read_mapping_folio(inode->i_mapping, pos >> PAGE_SHIFT, NULL);
+> +	if (IS_ERR(folio))
+> +		return folio;
+> +	if (!folio_test_uptodate(folio)) {
+> +		folio_put(folio);
+>  		return ERR_PTR(-EIO);
+>  	}
+> -	return page;
+> +	return folio;
+>  }
+>  
+>  /*
+> - * Lock two pages, ensuring that we lock in offset order if the pages are from
+> - * the same file.
+> + * Lock two folios, ensuring that we lock in offset order if the folios
+> + * are from the same file.
+>   */
+> -static void vfs_lock_two_pages(struct page *page1, struct page *page2)
+> +static void vfs_lock_two_folios(struct folio *folio1, struct folio *folio2)
+>  {
+>  	/* Always lock in order of increasing index. */
+> -	if (page1->index > page2->index)
+> -		swap(page1, page2);
+> +	if (folio1->index > folio2->index)
+> +		swap(folio1, folio2);
+>  
+> -	lock_page(page1);
+> -	if (page1 != page2)
+> -		lock_page(page2);
+> +	folio_lock(folio1);
+> +	if (folio1 != folio2)
+> +		folio_lock(folio2);
+>  }
+>  
+> -/* Unlock two pages, being careful not to unlock the same page twice. */
+> -static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
+> +/* Unlock two folios, being careful not to unlock the same folio twice. */
+> +static void vfs_unlock_two_folios(struct folio *folio1, struct folio *folio2)
+>  {
+> -	unlock_page(page1);
+> -	if (page1 != page2)
+> -		unlock_page(page2);
+> +	folio_unlock(folio1);
+> +	if (folio1 != folio2)
+> +		folio_unlock(folio2);
+
+This could result in a lot of folio lock cycling.  Do you think it's
+worth the effort to minimize this by keeping the folio locked if the
+next page is going to be from the same one?
 
 --D
 
-> ---
->  fs/iomap/buffered-io.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 0731e2c3f44b..48de198c5603 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -490,19 +490,21 @@ int
->  iomap_migrate_page(struct address_space *mapping, struct page *newpage,
->  		struct page *page, enum migrate_mode mode)
->  {
-> +	struct folio *folio = page_folio(page);
-> +	struct folio *newfolio = page_folio(newpage);
->  	int ret;
->  
-> -	ret = migrate_page_move_mapping(mapping, newpage, page, 0);
-> +	ret = folio_migrate_mapping(mapping, newfolio, folio, 0);
->  	if (ret != MIGRATEPAGE_SUCCESS)
->  		return ret;
->  
-> -	if (page_has_private(page))
-> -		attach_page_private(newpage, detach_page_private(page));
-> +	if (folio_test_private(folio))
-> +		folio_attach_private(newfolio, folio_detach_private(folio));
->  
->  	if (mode != MIGRATE_SYNC_NO_COPY)
-> -		migrate_page_copy(newpage, page);
-> +		folio_migrate_copy(newfolio, folio);
->  	else
-> -		migrate_page_states(newpage, page);
-> +		folio_migrate_flags(newfolio, folio);
->  	return MIGRATEPAGE_SUCCESS;
 >  }
->  EXPORT_SYMBOL_GPL(iomap_migrate_page);
+>  
+>  /*
+> @@ -200,77 +200,71 @@ static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
+>   * Caller must have locked both inodes to prevent write races.
+>   */
+>  static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+> -					 struct inode *dest, loff_t destoff,
+> +					 struct inode *dest, loff_t dstoff,
+>  					 loff_t len, bool *is_same)
+>  {
+> -	loff_t src_poff;
+> -	loff_t dest_poff;
+> -	void *src_addr;
+> -	void *dest_addr;
+> -	struct page *src_page;
+> -	struct page *dest_page;
+> -	loff_t cmp_len;
+> -	bool same;
+> -	int error;
+> -
+> -	error = -EINVAL;
+> -	same = true;
+> +	bool same = true;
+> +	int error = -EINVAL;
+> +
+>  	while (len) {
+> -		src_poff = srcoff & (PAGE_SIZE - 1);
+> -		dest_poff = destoff & (PAGE_SIZE - 1);
+> -		cmp_len = min(PAGE_SIZE - src_poff,
+> -			      PAGE_SIZE - dest_poff);
+> +		struct folio *src_folio, *dst_folio;
+> +		void *src_addr, *dst_addr;
+> +		loff_t cmp_len = min(PAGE_SIZE - offset_in_page(srcoff),
+> +				     PAGE_SIZE - offset_in_page(dstoff));
+> +
+>  		cmp_len = min(cmp_len, len);
+>  		if (cmp_len <= 0)
+>  			goto out_error;
+>  
+> -		src_page = vfs_dedupe_get_page(src, srcoff);
+> -		if (IS_ERR(src_page)) {
+> -			error = PTR_ERR(src_page);
+> +		src_folio = vfs_dedupe_get_folio(src, srcoff);
+> +		if (IS_ERR(src_folio)) {
+> +			error = PTR_ERR(src_folio);
+>  			goto out_error;
+>  		}
+> -		dest_page = vfs_dedupe_get_page(dest, destoff);
+> -		if (IS_ERR(dest_page)) {
+> -			error = PTR_ERR(dest_page);
+> -			put_page(src_page);
+> +		dst_folio = vfs_dedupe_get_folio(dest, dstoff);
+> +		if (IS_ERR(dst_folio)) {
+> +			error = PTR_ERR(dst_folio);
+> +			folio_put(src_folio);
+>  			goto out_error;
+>  		}
+>  
+> -		vfs_lock_two_pages(src_page, dest_page);
+> +		vfs_lock_two_folios(src_folio, dst_folio);
+>  
+>  		/*
+> -		 * Now that we've locked both pages, make sure they're still
+> +		 * Now that we've locked both folios, make sure they're still
+>  		 * mapped to the file data we're interested in.  If not,
+>  		 * someone is invalidating pages on us and we lose.
+>  		 */
+> -		if (!PageUptodate(src_page) || !PageUptodate(dest_page) ||
+> -		    src_page->mapping != src->i_mapping ||
+> -		    dest_page->mapping != dest->i_mapping) {
+> +		if (!folio_test_uptodate(src_folio) || !folio_test_uptodate(dst_folio) ||
+> +		    src_folio->mapping != src->i_mapping ||
+> +		    dst_folio->mapping != dest->i_mapping) {
+>  			same = false;
+>  			goto unlock;
+>  		}
+>  
+> -		src_addr = kmap_atomic(src_page);
+> -		dest_addr = kmap_atomic(dest_page);
+> +		src_addr = kmap_local_folio(src_folio,
+> +					offset_in_folio(src_folio, srcoff));
+> +		dst_addr = kmap_local_folio(dst_folio,
+> +					offset_in_folio(dst_folio, dstoff));
+>  
+> -		flush_dcache_page(src_page);
+> -		flush_dcache_page(dest_page);
+> +		flush_dcache_folio(src_folio);
+> +		flush_dcache_folio(dst_folio);
+>  
+> -		if (memcmp(src_addr + src_poff, dest_addr + dest_poff, cmp_len))
+> +		if (memcmp(src_addr, dst_addr, cmp_len))
+>  			same = false;
+>  
+> -		kunmap_atomic(dest_addr);
+> -		kunmap_atomic(src_addr);
+> +		kunmap_local(dst_addr);
+> +		kunmap_local(src_addr);
+>  unlock:
+> -		vfs_unlock_two_pages(src_page, dest_page);
+> -		put_page(dest_page);
+> -		put_page(src_page);
+> +		vfs_unlock_two_folios(src_folio, dst_folio);
+> +		folio_put(dst_folio);
+> +		folio_put(src_folio);
+>  
+>  		if (!same)
+>  			break;
+>  
+>  		srcoff += cmp_len;
+> -		destoff += cmp_len;
+> +		dstoff += cmp_len;
+>  		len -= cmp_len;
+>  	}
+>  
 > -- 
 > 2.30.2
 > 
