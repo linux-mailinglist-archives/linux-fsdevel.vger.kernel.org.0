@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 364BE3C980C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 07:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9450E3C980E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 07:07:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239035AbhGOFKM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 01:10:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37566 "EHLO
+        id S239070AbhGOFKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 01:10:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233239AbhGOFKL (ORCPT
+        with ESMTP id S233239AbhGOFKg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 01:10:11 -0400
+        Thu, 15 Jul 2021 01:10:36 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10B6DC06175F;
-        Wed, 14 Jul 2021 22:07:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D3E0C06175F;
+        Wed, 14 Jul 2021 22:07:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=rvTEmkdIr5f6LLESFOwDOAEdh30d4SNN6vwFx0IhGis=; b=XuEKhBf3eFELCw4F5wXteSTCxG
-        1jIIBkJfEGyJT10SVbrL+vFAi8IOQ91QCCy7bl8OVATIKjHqeiraaWpWdf/aWPpcc1y/KAUDAzl1J
-        G2ozbJeZNJWmacacGLMNjtt6nk9MI6fJMae6AOQFY6CKv+BWxwfOomvpTbCaiBNuQ1ci3XMeFWvC9
-        VlOwq+sXlnnShFTKPy+tQ6tgBsoP+t3ETx8BtA8NNDYay3I5nrLLqmB9aMS7yElz3op1MUbEv8JbF
-        uI8p245a3LXl+OUeLwJg5uslsguNdMwiEsr+DsqJS2BoEUSned4sYVVkXUWuc4xCgKcuxI/cGdG+t
-        eeRSdt+g==;
+        bh=FGRQxEUJ6p7lAjmMrwkwbOhtlThDd4ZGqnuMn7lRPjw=; b=Twu+i2VIXdsztOcHuYD/zyamT+
+        CG6mZCrrZ9MhOz+mP5Sh2denNSlnJdLuoMS6x6Baa52aeeCI6fyJ7kFJPM+zr0hfFGdLAy3sB+yB4
+        P8w2gonxmwKk6hc22LQ9Qr2X0OkJ8vX3stalQTYZIWqJQiPBMXw3J//b+Wddd9NtrfJUlKDLe1FND
+        HJrQGg+ynAC78GcRjg+UopPTP5cG791NI9GcT0E10Q/X3VxaNfQnoo/rVGmNayZgmEQfXzWI5ywgN
+        MLQhA91Pq9pnF9YqNw8WrXqQiwah5fvFAhsPXJ9CTEuF/kw49V/m1kAUoakH5BWQPzOCrfBupbr3U
+        MvBf3IBg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m3tZE-002zuf-P2; Thu, 15 Jul 2021 05:06:04 +0000
+        id 1m3ta0-002zwc-VF; Thu, 15 Jul 2021 05:06:45 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v14 109/138] mm/filemap: Convert unaccount_page_cache_page to filemap_unaccount_folio
-Date:   Thu, 15 Jul 2021 04:36:35 +0100
-Message-Id: <20210715033704.692967-110-willy@infradead.org>
+Subject: [PATCH v14 110/138] mm/filemap: Add filemap_remove_folio and __filemap_remove_folio
+Date:   Thu, 15 Jul 2021 04:36:36 +0100
+Message-Id: <20210715033704.692967-111-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210715033704.692967-1-willy@infradead.org>
 References: <20210715033704.692967-1-willy@infradead.org>
@@ -43,160 +43,141 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use folios throughout filemap_unaccount_folio(), except for the bug
-handling path which would need to use total_mapcount(), which is currently
-only defined for builds with THP enabled.
+Reimplement __delete_from_page_cache() as a wrapper around
+__filemap_remove_folio() and delete_from_page_cache() as a wrapper
+around filemap_remove_folio().  Remove the EXPORT_SYMBOL as
+delete_from_page_cache() was not used by any in-tree modules.
+Convert page_cache_free_page() into filemap_free_folio().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/pagemap.h |  5 ---
- mm/filemap.c            | 68 ++++++++++++++++++++---------------------
- 2 files changed, 34 insertions(+), 39 deletions(-)
+ include/linux/pagemap.h |  9 +++++++--
+ mm/filemap.c            | 44 ++++++++++++++++++++---------------------
+ mm/folio-compat.c       |  5 +++++
+ 3 files changed, 33 insertions(+), 25 deletions(-)
 
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 83c1a798265f..f6a2a2589009 100644
+index f6a2a2589009..245554ce6b12 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
-@@ -786,11 +786,6 @@ static inline void __set_page_dirty(struct page *page,
- }
- void folio_account_cleaned(struct folio *folio, struct address_space *mapping,
- 			  struct bdi_writeback *wb);
--static inline void account_page_cleaned(struct page *page,
--		struct address_space *mapping, struct bdi_writeback *wb)
--{
--	return folio_account_cleaned(page_folio(page), mapping, wb);
--}
- void __folio_cancel_dirty(struct folio *folio);
- static inline void folio_cancel_dirty(struct folio *folio)
- {
+@@ -877,8 +877,13 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
+ 		pgoff_t index, gfp_t gfp);
+ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
+ 		pgoff_t index, gfp_t gfp);
+-extern void delete_from_page_cache(struct page *page);
+-extern void __delete_from_page_cache(struct page *page, void *shadow);
++void filemap_remove_folio(struct folio *folio);
++void delete_from_page_cache(struct page *page);
++void __filemap_remove_folio(struct folio *folio, void *shadow);
++static inline void __delete_from_page_cache(struct page *page, void *shadow)
++{
++	__filemap_remove_folio(page_folio(page), shadow);
++}
+ void replace_page_cache_page(struct page *old, struct page *new);
+ void delete_from_page_cache_batch(struct address_space *mapping,
+ 				  struct pagevec *pvec);
 diff --git a/mm/filemap.c b/mm/filemap.c
-index c96febad32fc..6e8b195edf19 100644
+index 6e8b195edf19..4a81eaff363e 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -144,8 +144,8 @@ static void page_cache_delete(struct address_space *mapping,
- 	mapping->nrpages -= nr;
- }
- 
--static void unaccount_page_cache_page(struct address_space *mapping,
--				      struct page *page)
-+static void filemap_unaccount_folio(struct address_space *mapping,
-+		struct folio *folio)
+@@ -219,55 +219,53 @@ static void filemap_unaccount_folio(struct address_space *mapping,
+  * sure the page is locked and that nobody else uses it - or that usage
+  * is safe.  The caller must hold the i_pages lock.
+  */
+-void __delete_from_page_cache(struct page *page, void *shadow)
++void __filemap_remove_folio(struct folio *folio, void *shadow)
  {
- 	int nr;
+-	struct folio *folio = page_folio(page);
+-	struct address_space *mapping = page->mapping;
++	struct address_space *mapping = folio->mapping;
  
-@@ -154,64 +154,64 @@ static void unaccount_page_cache_page(struct address_space *mapping,
- 	 * invalidate any existing cleancache entries.  We can't leave
- 	 * stale data around in the cleancache once our page is gone
- 	 */
--	if (PageUptodate(page) && PageMappedToDisk(page))
--		cleancache_put_page(page);
-+	if (folio_test_uptodate(folio) && folio_test_mappedtodisk(folio))
-+		cleancache_put_page(&folio->page);
- 	else
--		cleancache_invalidate_page(mapping, page);
-+		cleancache_invalidate_page(mapping, &folio->page);
+-	trace_mm_filemap_delete_from_page_cache(page);
++	trace_mm_filemap_delete_from_page_cache(&folio->page);
  
--	VM_BUG_ON_PAGE(PageTail(page), page);
--	VM_BUG_ON_PAGE(page_mapped(page), page);
--	if (!IS_ENABLED(CONFIG_DEBUG_VM) && unlikely(page_mapped(page))) {
-+	VM_BUG_ON_FOLIO(folio_mapped(folio), folio);
-+	if (!IS_ENABLED(CONFIG_DEBUG_VM) && unlikely(folio_mapped(folio))) {
- 		int mapcount;
- 
- 		pr_alert("BUG: Bad page cache in process %s  pfn:%05lx\n",
--			 current->comm, page_to_pfn(page));
--		dump_page(page, "still mapped when deleted");
-+			 current->comm, folio_pfn(folio));
-+		dump_page(&folio->page, "still mapped when deleted");
- 		dump_stack();
- 		add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
- 
--		mapcount = page_mapcount(page);
-+		mapcount = page_mapcount(&folio->page);
- 		if (mapping_exiting(mapping) &&
--		    page_count(page) >= mapcount + 2) {
-+		    folio_ref_count(folio) >= mapcount + 2) {
- 			/*
- 			 * All vmas have already been torn down, so it's
--			 * a good bet that actually the page is unmapped,
-+			 * a good bet that actually the folio is unmapped,
- 			 * and we'd prefer not to leak it: if we're wrong,
- 			 * some other bad page check should catch it later.
- 			 */
--			page_mapcount_reset(page);
--			page_ref_sub(page, mapcount);
-+			page_mapcount_reset(&folio->page);
-+			folio_ref_sub(folio, mapcount);
- 		}
- 	}
- 
--	/* hugetlb pages do not participate in page cache accounting. */
--	if (PageHuge(page))
-+	/* hugetlb folios do not participate in page cache accounting. */
-+	if (folio_test_hugetlb(folio))
- 		return;
- 
--	nr = thp_nr_pages(page);
-+	nr = folio_nr_pages(folio);
- 
--	__mod_lruvec_page_state(page, NR_FILE_PAGES, -nr);
--	if (PageSwapBacked(page)) {
--		__mod_lruvec_page_state(page, NR_SHMEM, -nr);
--		if (PageTransHuge(page))
--			__mod_lruvec_page_state(page, NR_SHMEM_THPS, -nr);
--	} else if (PageTransHuge(page)) {
--		__mod_lruvec_page_state(page, NR_FILE_THPS, -nr);
-+	__lruvec_stat_mod_folio(folio, NR_FILE_PAGES, -nr);
-+	if (folio_test_swapbacked(folio)) {
-+		__lruvec_stat_mod_folio(folio, NR_SHMEM, -nr);
-+		if (folio_multi(folio))
-+			__lruvec_stat_mod_folio(folio, NR_SHMEM_THPS, -nr);
-+	} else if (folio_multi(folio)) {
-+		__lruvec_stat_mod_folio(folio, NR_FILE_THPS, -nr);
- 		filemap_nr_thps_dec(mapping);
- 	}
- 
- 	/*
--	 * At this point page must be either written or cleaned by
--	 * truncate.  Dirty page here signals a bug and loss of
-+	 * At this point folio must be either written or cleaned by
-+	 * truncate.  Dirty folio here signals a bug and loss of
- 	 * unwritten data.
- 	 *
--	 * This fixes dirty accounting after removing the page entirely
--	 * but leaves PageDirty set: it has no effect for truncated
--	 * page and anyway will be cleared before returning page into
-+	 * This fixes dirty accounting after removing the folio entirely
-+	 * but leaves the dirty flag set: it has no effect for truncated
-+	 * folio and anyway will be cleared before returning folio to
- 	 * buddy allocator.
- 	 */
--	if (WARN_ON_ONCE(PageDirty(page)))
--		account_page_cleaned(page, mapping, inode_to_wb(mapping->host));
-+	if (WARN_ON_ONCE(folio_test_dirty(folio)))
-+		folio_account_cleaned(folio, mapping,
-+					inode_to_wb(mapping->host));
- }
- 
- /*
-@@ -226,7 +226,7 @@ void __delete_from_page_cache(struct page *page, void *shadow)
- 
- 	trace_mm_filemap_delete_from_page_cache(page);
- 
--	unaccount_page_cache_page(mapping, page);
-+	filemap_unaccount_folio(mapping, folio);
+ 	filemap_unaccount_folio(mapping, folio);
  	page_cache_delete(mapping, folio, shadow);
  }
  
-@@ -344,7 +344,7 @@ void delete_from_page_cache_batch(struct address_space *mapping,
- 	for (i = 0; i < pagevec_count(pvec); i++) {
- 		trace_mm_filemap_delete_from_page_cache(pvec->pages[i]);
+-static void page_cache_free_page(struct address_space *mapping,
+-				struct page *page)
++static void filemap_free_folio(struct address_space *mapping,
++				struct folio *folio)
+ {
+ 	void (*freepage)(struct page *);
  
--		unaccount_page_cache_page(mapping, pvec->pages[i]);
-+		filemap_unaccount_folio(mapping, page_folio(pvec->pages[i]));
+ 	freepage = mapping->a_ops->freepage;
+ 	if (freepage)
+-		freepage(page);
++		freepage(&folio->page);
+ 
+-	if (PageTransHuge(page) && !PageHuge(page)) {
+-		page_ref_sub(page, thp_nr_pages(page));
+-		VM_BUG_ON_PAGE(page_count(page) <= 0, page);
++	if (folio_multi(folio) && !folio_test_hugetlb(folio)) {
++		folio_ref_sub(folio, folio_nr_pages(folio));
++		VM_BUG_ON_FOLIO(folio_ref_count(folio) <= 0, folio);
+ 	} else {
+-		put_page(page);
++		folio_put(folio);
  	}
- 	page_cache_delete_batch(mapping, pvec);
+ }
+ 
+ /**
+- * delete_from_page_cache - delete page from page cache
+- * @page: the page which the kernel is trying to remove from page cache
++ * filemap_remove_folio - Remove folio from page cache.
++ * @folio: The folio.
+  *
+- * This must be called only on pages that have been verified to be in the page
+- * cache and locked.  It will never put the page into the free list, the caller
+- * has a reference on the page.
++ * This must be called only on folios that are locked and have been
++ * verified to be in the page cache.  It will never put the folio into
++ * the free list because the caller has a reference on the page.
+  */
+-void delete_from_page_cache(struct page *page)
++void filemap_remove_folio(struct folio *folio)
+ {
+-	struct address_space *mapping = page_mapping(page);
++	struct address_space *mapping = folio->mapping;
+ 	unsigned long flags;
+ 
+-	BUG_ON(!PageLocked(page));
++	BUG_ON(!folio_test_locked(folio));
+ 	xa_lock_irqsave(&mapping->i_pages, flags);
+-	__delete_from_page_cache(page, NULL);
++	__filemap_remove_folio(folio, NULL);
  	xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 
+-	page_cache_free_page(mapping, page);
++	filemap_free_folio(mapping, folio);
+ }
+-EXPORT_SYMBOL(delete_from_page_cache);
+ 
+ /*
+  * page_cache_delete_batch - delete several pages from page cache
+@@ -350,7 +348,7 @@ void delete_from_page_cache_batch(struct address_space *mapping,
+ 	xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 
+ 	for (i = 0; i < pagevec_count(pvec); i++)
+-		page_cache_free_page(mapping, pvec->pages[i]);
++		filemap_free_folio(mapping, page_folio(pvec->pages[i]));
+ }
+ 
+ int filemap_check_errors(struct address_space *mapping)
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index 5b6ae1da314e..749a695b4217 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -140,3 +140,8 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
+ 			mapping_gfp_mask(mapping));
+ }
+ EXPORT_SYMBOL(grab_cache_page_write_begin);
++
++void delete_from_page_cache(struct page *page)
++{
++	return filemap_remove_folio(page_folio(page));
++}
 -- 
 2.30.2
 
