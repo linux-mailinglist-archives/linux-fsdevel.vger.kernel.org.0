@@ -2,96 +2,274 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3805C3CAEC2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 23:51:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBEE23CAEC0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 23:51:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230120AbhGOVye (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 17:54:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43850 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbhGOVyd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 17:54:33 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5447FC06175F;
-        Thu, 15 Jul 2021 14:51:38 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id z9so6731153qkg.5;
-        Thu, 15 Jul 2021 14:51:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=v1n2ZYwzMuZNMvNqzk665faAainJCiBnpaZMHk7Kax4=;
-        b=nUmelEKOHP5f+EQ/v//lf76rXKgIlC6jqwGLHInzNIkYKLgTPwZlOcaXr+2NrBZtyV
-         duZ7AsWHRm81s5lurt0XSuXFkvET4YviTLpvwGlXsPObnumavUelk6OIfx3HK8dnwM52
-         yU3fmXSsrZbevi9/lgIStipOGQkEo+NPeSEm/wk/reR5tBR/qFrk0+k5ZznAozjGQfly
-         9DG/uVL2UpMXg2mtO4JI1b766KcJ9DGDnuP+E9MnOHxQPwcNMoZ6v4GQ4dYw4BWuOVQf
-         5BjpzVNaRwvkMZ++EaiAgVoLv1KMW/nARzcJFU/Mat05dkmXiu3LvnQWJUI/l5CO4jvZ
-         TujQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=v1n2ZYwzMuZNMvNqzk665faAainJCiBnpaZMHk7Kax4=;
-        b=Y+35CIiysoGx2d2h06VAJROQvOqmgVkRyPtMzwk3fCX8n+m7aosgBSgq3uboSkVozK
-         QqXXyYMQ6bSm95xXxPgdOgwSzxsPfC7tkDSDF8eVdxcX+kbX8I6wYmkUuTL+CwyyEIOD
-         8ko+K/jBP47JWwlhKVqhfD8xKCNfzXsDZnikwpCbmjvSsGdWz+VlX5/fTWZJZOV1Tz9F
-         x59lFMTaFnzQr0AMETP8eSPConioo2wMlfFuFmzB2lTJa6+sOB+pZbI5YFGKktSI5RLN
-         Yoe3Fbo9aAPV4j4DYqC5oAQvrImHbjv3cvkxBPwQR0iZdTGm+cca+yTC2x2TC9lUA5Ci
-         blqg==
-X-Gm-Message-State: AOAM533f0wk3PQPVlT2Zjo5MCq3CT8jGarfJNeWfaDC3LiLq9pKyaERu
-        7ScmVxp0A2ngaTT88D/NLzE=
-X-Google-Smtp-Source: ABdhPJw9jhVO4UZJqEeqx3kDcU/l2VOXRO2oBmNMpANS3M/swvB1fxLSF90WDdDBm7OAY6KmUjdwEg==
-X-Received: by 2002:a05:620a:a91:: with SMTP id v17mr6074043qkg.437.1626385893054;
-        Thu, 15 Jul 2021 14:51:33 -0700 (PDT)
-Received: from Belldandy-Slimbook.datto.net (ool-18e49371.dyn.optonline.net. [24.228.147.113])
-        by smtp.gmail.com with ESMTPSA id az37sm3044729qkb.91.2021.07.15.14.51.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jul 2021 14:51:32 -0700 (PDT)
-From:   Neal Gompa <ngompa13@gmail.com>
-To:     zajec5@gmail.com
-Cc:     almaz.alexandrovich@paragon-software.com, djwong@kernel.org,
-        gregkh@linuxfoundation.org, hdegoede@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        willy@infradead.org, Neal Gompa <ngompa13@gmail.com>
-Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
-Date:   Thu, 15 Jul 2021 17:50:30 -0400
-Message-Id: <20210715215029.2689112-1-ngompa13@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
-References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
+        id S230388AbhGOVyA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 17:54:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44578 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229597AbhGOVx7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Jul 2021 17:53:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5AD65613D2;
+        Thu, 15 Jul 2021 21:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626385865;
+        bh=C377cI/FYmnPpSlquiD6gH6gxIG8ukjLXAKL0kiIGIE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hiDjoVsFtj3CtW0AitkEbK7BsZVBEZaww1lq9PhM7T6XSc+v6InbUh4zoYPnXPT80
+         jCze4xXEK6QHFjQYmSW7qj0g5Mci/Enz84p5d0cxTmWCx/oWsmkcJxKSP1KlRrT9KQ
+         onF/gn2vhuXI+oifK1ia0uU0LhGlzUcvZEFdSjwqhkZbAeleokKHL5V18gF9p2z/2c
+         M8xn0CbycsalrldSZ1tDy5P4fzz4eDvF+0q6kXDxUMc7fzDWhV2WQCWWMuVI5hW/Ji
+         WgjxkiPcNy4BtPfrI17bLYYOpw2ggHa2/2gIgVi+3etnjV66xSPoPkfS4A+6dI/v4T
+         +p9MYTWxHv+gw==
+Date:   Thu, 15 Jul 2021 14:51:05 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v14 102/138] iomap: Convert iomap_write_begin and
+ iomap_write_end to folios
+Message-ID: <20210715215105.GM22357@magnolia>
+References: <20210715033704.692967-1-willy@infradead.org>
+ <20210715033704.692967-103-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210715033704.692967-103-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 15, 2021 at 12:18 PM "Rafał Miłecki" <zajec5@gmail.com> wrote:
->
-> What I meant (but failed to write clearly) is missing feedback on *the
-> latest* patchset.
+On Thu, Jul 15, 2021 at 04:36:28AM +0100, Matthew Wilcox (Oracle) wrote:
+> These functions still only work in PAGE_SIZE chunks, but there are
+> fewer conversions from head to tail pages as a result of this patch.
 > 
-> I highly appreciate everyone who took time and helped polishing that
-> filesystem to its latest form.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/iomap/buffered-io.c | 68 ++++++++++++++++++++++--------------------
+>  1 file changed, 36 insertions(+), 32 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index a3fe0d36c739..5e0aa23d4693 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -541,9 +541,8 @@ static int iomap_read_folio_sync(loff_t block_start, struct folio *folio,
+>  
+>  static int
+>  __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+> -		struct page *page, struct iomap *srcmap)
+> +		struct folio *folio, struct iomap *srcmap)
+>  {
+> -	struct folio *folio = page_folio(page);
+>  	struct iomap_page *iop = iomap_page_create(inode, folio);
+>  	loff_t block_size = i_blocksize(inode);
+>  	loff_t block_start = round_down(pos, block_size);
+> @@ -583,12 +582,14 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+>  	return 0;
+>  }
+>  
+> -static int
+> -iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+> -		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
+> +static int iomap_write_begin(struct inode *inode, loff_t pos, size_t len,
+> +		unsigned flags, struct folio **foliop, struct iomap *iomap,
+> +		struct iomap *srcmap)
+>  {
+>  	const struct iomap_page_ops *page_ops = iomap->page_ops;
+> +	struct folio *folio;
+>  	struct page *page;
+> +	unsigned fgp = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE | FGP_NOFS;
+>  	int status = 0;
+>  
+>  	BUG_ON(pos + len > iomap->offset + iomap->length);
+> @@ -604,30 +605,31 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  			return status;
+>  	}
+>  
+> -	page = grab_cache_page_write_begin(inode->i_mapping, pos >> PAGE_SHIFT,
+> -			AOP_FLAG_NOFS);
+> -	if (!page) {
+> +	folio = __filemap_get_folio(inode->i_mapping, pos >> PAGE_SHIFT, fgp,
 
-As the person who tested the latest ntfs3 patchset, and had tested
-many of those iterations in the past, I would really like to see
-this *finally* land in Linux 5.14.
+Ah, ok, so we're moving the file_get_pages flags up to iomap now.
 
-However, I get the feeling it's not going to make it for 5.14 *or*
-5.15, and it seems like Paragon became discouraged by the lack of
-feedback on the latest revision.
+> +			mapping_gfp_mask(inode->i_mapping));
+> +	if (!folio) {
+>  		status = -ENOMEM;
+>  		goto out_no_page;
+>  	}
+>  
+> +	page = folio_file_page(folio, pos >> PAGE_SHIFT);
+>  	if (srcmap->type == IOMAP_INLINE)
+>  		iomap_read_inline_data(inode, page, srcmap);
+>  	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
+>  		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
+>  	else
+> -		status = __iomap_write_begin(inode, pos, len, flags, page,
+> +		status = __iomap_write_begin(inode, pos, len, flags, folio,
+>  				srcmap);
+>  
+>  	if (unlikely(status))
+>  		goto out_unlock;
+>  
+> -	*pagep = page;
+> +	*foliop = folio;
+>  	return 0;
+>  
+>  out_unlock:
+> -	unlock_page(page);
+> -	put_page(page);
+> +	folio_unlock(folio);
+> +	folio_put(folio);
+>  	iomap_write_failed(inode, pos, len);
+>  
+>  out_no_page:
+> @@ -637,11 +639,10 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  }
+>  
+>  static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+> -		size_t copied, struct page *page)
+> +		size_t copied, struct folio *folio)
+>  {
+> -	struct folio *folio = page_folio(page);
+>  	struct iomap_page *iop = to_iomap_page(folio);
+> -	flush_dcache_page(page);
+> +	flush_dcache_folio(folio);
+>  
+>  	/*
+>  	 * The blocks that were entirely written will now be uptodate, so we
+> @@ -654,10 +655,10 @@ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  	 * uptodate page as a zero-length write, and force the caller to redo
+>  	 * the whole thing.
+>  	 */
+> -	if (unlikely(copied < len && !PageUptodate(page)))
+> +	if (unlikely(copied < len && !folio_test_uptodate(folio)))
+>  		return 0;
+>  	iomap_set_range_uptodate(folio, iop, offset_in_folio(folio, pos), len);
+> -	__set_page_dirty_nobuffers(page);
+> +	filemap_dirty_folio(inode->i_mapping, folio);
+>  	return copied;
+>  }
+>  
+> @@ -680,9 +681,10 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
+>  
+>  /* Returns the number of bytes copied.  May be 0.  Cannot be an errno. */
+>  static size_t iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+> -		size_t copied, struct page *page, struct iomap *iomap,
+> +		size_t copied, struct folio *folio, struct iomap *iomap,
+>  		struct iomap *srcmap)
+>  {
+> +	struct page *page = folio_file_page(folio, pos / PAGE_SIZE);
 
-I know that compared to all you awesome folks, I'm just a lowly
-user, but it's been frustrating to see nothing happen for months
-with something that has a seriously high impact for a lot of people.
+pos >> PAGE_SHIFT ?
 
-It's a shame, because the ntfs3 driver is miles better than the
-current ntfs one, and is a solid replacement for the unmaintained
-ntfs-3g FUSE implementation.
+(There's a few more of these elsewhere...)
 
+--D
 
--- 
-真実はいつも一つ！/ Always, there's only one truth!
+>  	const struct iomap_page_ops *page_ops = iomap->page_ops;
+>  	loff_t old_size = inode->i_size;
+>  	size_t ret;
+> @@ -693,7 +695,7 @@ static size_t iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  		ret = block_write_end(NULL, inode->i_mapping, pos, len, copied,
+>  				page, NULL);
+>  	} else {
+> -		ret = __iomap_write_end(inode, pos, len, copied, page);
+> +		ret = __iomap_write_end(inode, pos, len, copied, folio);
+>  	}
+>  
+>  	/*
+> @@ -705,13 +707,13 @@ static size_t iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  		i_size_write(inode, pos + ret);
+>  		iomap->flags |= IOMAP_F_SIZE_CHANGED;
+>  	}
+> -	unlock_page(page);
+> +	folio_unlock(folio);
+>  
+>  	if (old_size < pos)
+>  		pagecache_isize_extended(inode, old_size, pos);
+>  	if (page_ops && page_ops->page_done)
+>  		page_ops->page_done(inode, pos, ret, page, iomap);
+> -	put_page(page);
+> +	folio_put(folio);
+>  
+>  	if (ret < len)
+>  		iomap_write_failed(inode, pos, len);
+> @@ -727,6 +729,7 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	ssize_t written = 0;
+>  
+>  	do {
+> +		struct folio *folio;
+>  		struct page *page;
+>  		unsigned long offset;	/* Offset into pagecache page */
+>  		unsigned long bytes;	/* Bytes to write to page */
+> @@ -750,18 +753,19 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  			break;
+>  		}
+>  
+> -		status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap,
+> +		status = iomap_write_begin(inode, pos, bytes, 0, &folio, iomap,
+>  				srcmap);
+>  		if (unlikely(status))
+>  			break;
+>  
+> +		page = folio_file_page(folio, pos / PAGE_SIZE);
+>  		if (mapping_writably_mapped(inode->i_mapping))
+>  			flush_dcache_page(page);
+>  
+>  		copied = copy_page_from_iter_atomic(page, offset, bytes, i);
+>  
+> -		status = iomap_write_end(inode, pos, bytes, copied, page, iomap,
+> -				srcmap);
+> +		status = iomap_write_end(inode, pos, bytes, copied, folio,
+> +				iomap, srcmap);
+>  
+>  		if (unlikely(copied != status))
+>  			iov_iter_revert(i, copied - status);
+> @@ -825,14 +829,14 @@ iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	do {
+>  		unsigned long offset = offset_in_page(pos);
+>  		unsigned long bytes = min_t(loff_t, PAGE_SIZE - offset, length);
+> -		struct page *page;
+> +		struct folio *folio;
+>  
+>  		status = iomap_write_begin(inode, pos, bytes,
+> -				IOMAP_WRITE_F_UNSHARE, &page, iomap, srcmap);
+> +				IOMAP_WRITE_F_UNSHARE, &folio, iomap, srcmap);
+>  		if (unlikely(status))
+>  			return status;
+>  
+> -		status = iomap_write_end(inode, pos, bytes, bytes, page, iomap,
+> +		status = iomap_write_end(inode, pos, bytes, bytes, folio, iomap,
+>  				srcmap);
+>  		if (WARN_ON_ONCE(status == 0))
+>  			return -EIO;
+> @@ -871,19 +875,19 @@ EXPORT_SYMBOL_GPL(iomap_file_unshare);
+>  static s64 iomap_zero(struct inode *inode, loff_t pos, u64 length,
+>  		struct iomap *iomap, struct iomap *srcmap)
+>  {
+> -	struct page *page;
+> +	struct folio *folio;
+>  	int status;
+>  	unsigned offset = offset_in_page(pos);
+>  	unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
+>  
+> -	status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap, srcmap);
+> +	status = iomap_write_begin(inode, pos, bytes, 0, &folio, iomap, srcmap);
+>  	if (status)
+>  		return status;
+>  
+> -	zero_user(page, offset, bytes);
+> -	mark_page_accessed(page);
+> +	zero_user(folio_file_page(folio, pos / PAGE_SIZE), offset, bytes);
+> +	folio_mark_accessed(folio);
+>  
+> -	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
+> +	return iomap_write_end(inode, pos, bytes, bytes, folio, iomap, srcmap);
+>  }
+>  
+>  static loff_t iomap_zero_range_actor(struct inode *inode, loff_t pos,
+> -- 
+> 2.30.2
+> 
