@@ -2,75 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC0263CAF75
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 00:55:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 367963CAFCC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 01:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229966AbhGOW6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 18:58:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59674 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229624AbhGOW6e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 18:58:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4976E613AF;
-        Thu, 15 Jul 2021 22:55:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626389740;
-        bh=P9uyzQH7V/Vu5iTQd3DZbraQ8Ej5+Fm7bfjvma3F+c4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=n2jY8kpWCk9OuIFpx7Sbt4ugXyih8DxDDZo9X87C+6a6klH0p3PEjKLEhlpNsihmv
-         dIVA1Sx5t2FNXUM5+lTvl+3ZqN48p7pvqjA0EsBTnRytiZ6qbfW+8KCW81SijAsRrY
-         riWkplRp/TzC32evC0K1O7aaDw2BL2B792GvYA/VhmhJP+CxtQqNtLsq5VhOxji6gr
-         E12NqYxl1ujJN1J+M/RJOQaOhexuFlBWuVfIpEiYxPUqgsXH9I4KSMTUjQph9xZTJD
-         ppzOrtguGGUm96LDyB0+E4zoJgNCzQgPw9GF1eC35VuySBJfCyMkcMZ8ktdO6osWUM
-         LYtqCC0m/qhJw==
-Date:   Thu, 15 Jul 2021 15:55:39 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 098/138] iomap: Use folio offsets instead of page
- offsets
-Message-ID: <20210715225539.GX22357@magnolia>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-99-willy@infradead.org>
- <20210715212657.GI22357@magnolia>
- <YPC7ILHEYv1JKKJW@casper.infradead.org>
+        id S231474AbhGOX4V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 19:56:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42826 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231131AbhGOX4V (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Jul 2021 19:56:21 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9128C06175F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jul 2021 16:53:27 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id p22so7186202pfh.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jul 2021 16:53:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=QkVHVo0TjyGhherk0gO6fRpU+Zs9TVxvFrpPJDqJibk=;
+        b=hsTejQBqQSTsZoGaQTxaeGIOB3mdtHIh5IsnYs9BRzt722UovbzFZufmfKqlMlNczm
+         5kQSKma5PWINtsko6lJQncTPEXPHpTvTpaoS0OEG835Y080vurEosl0Q9eQtRJRPxTTM
+         /zIiJx2Ei/gkjk2umiwfrEFHEQI4quq5cSc7BfEKyqxzxQpBbha6YGCSgVOOFF9amJj8
+         pIV+k8F2Jq8b7L7leNMjPJ93zKhasYgwNSIEpWZjRSZaUcHs3dXmut80F6d7NctxRl5U
+         yVrS5hgo7nYn8zndAyY04WabCpTFA78zasiiApJGDKjFG9wPMPEPM2EA6VGrLMSWfv/p
+         2cdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QkVHVo0TjyGhherk0gO6fRpU+Zs9TVxvFrpPJDqJibk=;
+        b=suSP9iRGAOsQknwNrxBwPFi16iF/TP2q/gqYekk4vBvxY8aXT4p/EL/+TMsrtz87Ok
+         SXUF9Aakvci5GfrmXBsMCMShVHYz3pcDqwlCz8zEm3jS/Yk4yM/DaY7qIk1tLA8VxKti
+         e3ZvnruK/W+oAl29TAmz/ewE1D6NmG5TFzBDQyw3punbtPkpL+mtv4MbGc81eCuKkWE6
+         ABavq+I+9jN9WwqsqlX9WEK66oTOEzRj/kyCN1oAYv4pgz47SM34rrXSsYWTRbRY365m
+         67eJ/ExByHmMG9Owa1S+xDQm3eZ7xuck421U1yK4LkDdf1fe4gqTdVcwfVG0tZQrGoB6
+         RJVA==
+X-Gm-Message-State: AOAM532M8EQBclHUm9Oi7RPN8MOqjQGM1eAxR1AsSE3IyBTRQ4fATbEV
+        oXzlrxQPRDnJ5ALg/13atbkUqQ==
+X-Google-Smtp-Source: ABdhPJxujZd7Q2x9S3y2uK0ZEKcrdUpwH9QUlNAkdwfvlmpeh7pO1udE7SznyFYD9XOtbp00D47vFQ==
+X-Received: by 2002:a63:770c:: with SMTP id s12mr2266967pgc.339.1626393207167;
+        Thu, 15 Jul 2021 16:53:27 -0700 (PDT)
+Received: from google.com ([2401:fa00:9:211:333f:3c28:f69:7ba4])
+        by smtp.gmail.com with ESMTPSA id k25sm7531946pfa.213.2021.07.15.16.53.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jul 2021 16:53:26 -0700 (PDT)
+Date:   Fri, 16 Jul 2021 09:53:15 +1000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: FAN_REPORT_CHILD_FID
+Message-ID: <YPDKa0tZ+kIoT8Um@google.com>
+References: <CAOQ4uxgckzeRuiKSe7D=TVaJGTYwy4cbCFDpdWMQr1R_xXkJig@mail.gmail.com>
+ <20210712111016.GC26530@quack2.suse.cz>
+ <CAOQ4uxgnbirvr-KSMQyz-PL+Q_FmBF_OfSmWFEu6B0TYN-w1tg@mail.gmail.com>
+ <20210712162623.GA9804@quack2.suse.cz>
+ <CAOQ4uxgHeX3r4eJ=4OgksDnkddPqOs0a8JxP5VDFjEddmRcorA@mail.gmail.com>
+ <YO469q9T7h0LBlIT@google.com>
+ <CAOQ4uxgkMrMiNNA=Y2OKP4XYoiDMMZLZshzyviirmRzwQvjr2w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPC7ILHEYv1JKKJW@casper.infradead.org>
+In-Reply-To: <CAOQ4uxgkMrMiNNA=Y2OKP4XYoiDMMZLZshzyviirmRzwQvjr2w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 11:48:00PM +0100, Matthew Wilcox wrote:
-> On Thu, Jul 15, 2021 at 02:26:57PM -0700, Darrick J. Wong wrote:
-> > > +	size_t poff = offset_in_folio(folio, *pos);
-> > > +	size_t plen = min_t(loff_t, folio_size(folio) - poff, length);
-> > 
-> > I'm confused about 'size_t poff' here vs. 'unsigned end' later -- why do
-> > we need a 64-bit quantity for poff?  I suppose some day we might want to
-> > have folios larger than 4GB or so, but so far we don't need that large
-> > of a byte offset within a page/folio, right?
-> > 
-> > Or are you merely moving the codebase towards using size_t for all byte
-> > offsets?
+On Wed, Jul 14, 2021 at 03:09:56PM +0300, Amir Goldstein wrote:
+> On Wed, Jul 14, 2021 at 4:16 AM Matthew Bobrowski <repnop@google.com> wrote:
+> > On Mon, Jul 12, 2021 at 09:08:18PM +0300, Amir Goldstein wrote:
+> > > On Mon, Jul 12, 2021 at 7:26 PM Jan Kara <jack@suse.cz> wrote:
+> > > > On Mon 12-07-21 16:00:54, Amir Goldstein wrote:
+> > > > Just a brainstorming idea: How about creating new event FAN_RENAME that
+> > > > would report two DFIDs (if it is cross directory rename)?
+> > >
+> > > I like the idea, but it would have to be two DFID_NAME is case of
+> > > FAN_REPORT_DFID_NAME and also for same parent rename
+> > > to be consistent.
+> >
+> > I don't have much to add to this conversation, but I'm just curious here.
+> >
+> > If we do require two separate DFID_NAME record objects in the case of cross
+> > directory rename operations, how does an event listener distinguish the
+> > difference between which is which i.e. moved_{from/to}?  To me, this
+> > implies that the event listener is expected to rely on specific
+> > supplemental information object ordering, which to my knowledge is a
+> > contract that we had always wanted to avoid drawing.
+> >
 > 
-> Both.  'end' isn't a byte count -- it's a block count.
-> 
-> > >  	if (orig_pos <= isize && orig_pos + length > isize) {
-> > > -		unsigned end = offset_in_page(isize - 1) >> block_bits;
-> > > +		unsigned end = offset_in_folio(folio, isize - 1) >> block_bits;
-> 
-> That right shift makes it not-a-byte-count.
-> 
-> I don't especially want to do all the work needed to support folios >2GB,
-> but I do like using size_t to represent a byte count.
+> I think the records should not rely on ordering, but on self describing types,
+> such as FAN_EVENT_INFO_TYPE_DFID_NAME_{FROM,TO}
+> but I am trying to think of better names.
 
-DOH.  Yes, I just noticed that.
+Right, having such information types would work nicely IMO. I had something
+like that in mind, but I just wanted to make sure that we weren't building
+some reliance on the ordering of these information records as we recently
+discussed not doing exactly that.
 
-TBH I doubt anyone's really going to care about 4GB folios anyway.
+As far as the naming goes, FAN_EVENT_INFO_TYPE_DFID_NAME_{FROM,TO} is a
+little bit of a mouth full IMO, but at this stage I haven't thought of any
+better alternatives.
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> I am still debating with myself between adding a new event type
+> (FAN_RENAME), adding a new report flag (FAN_REPORT_TARGET_FID)
+> that adds info records to existing MOVE_ events or some combination.
 
---D
+Well, if we went with adding a new event FAN_RENAME and specifying that
+resulted in the generation of additional
+FAN_EVENT_INFO_TYPE_DFID_NAME_{FROM,TO} information record types for an
+event, wouldn't it be weird as it doesn't follow the conventional mechanism
+of a listener asking for additional information records? As in,
+traditionally we'd intialize the notification group with a flag and then
+that flag controls whether or not one is permitted to receive events of a
+particular type that may or may not include information records?
+
+Maybe a combination approach is needed in this instance, but this doesn't
+necessarily simplify things when attempting to document the API semantics
+IMO.
+
+> My goal is to minimize the man page size and complexity.
+
+Either approach, I think they'll be significant documentation changes that
+are needed. :)
+
+/M
