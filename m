@@ -2,165 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE2CF3CA1C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 17:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECA013CA1D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 18:05:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239611AbhGOQBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 12:01:36 -0400
-Received: from mail-dm6nam10on2065.outbound.protection.outlook.com ([40.107.93.65]:32352
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S239415AbhGOQBg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 12:01:36 -0400
+        id S239715AbhGOQIA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 12:08:00 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:48356 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239679AbhGOQH7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Jul 2021 12:07:59 -0400
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16FFtqFs001562;
+        Thu, 15 Jul 2021 09:05:01 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=SJUytFywaT4G4TkEeYkufHasi1NXM4eKmvYa98h6cdw=;
+ b=EXYx4FmPQUiaT/19QrIMxVXjKob4emihhfp8JQqnys7VA2gWzqC3UrqYv1tmvFFf5FnO
+ lZbh0NjfNZrfTb3vFnLJ/XOfBJgZq04TKgeWcMtaapUOgiQqzprO6BdRo/oseRVEcPYc
+ Tfc/c/Do87SIeSrUeSrFLUimXJ3rZiL4sRs= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 39sx7f903s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 15 Jul 2021 09:05:01 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 15 Jul 2021 09:04:59 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SuhDOU4ob2qBhuDTatFXAeOO9yNma0PAZe4WxiwJz9FrRS+z7DOitrq2FRWLqH/xQmBC/cy7XcIEODgKqzGM91LsTU+Ckc3e3rhdXsfaRb2kFxttrK6/GGYO6cs3AXnPrA3sDJtzv5L+AqNq+GpfXeAxd8RQgL9CnohSGrXxMQOVDh7GbPWAzNtsmKaTuEnM8V3HJqvPhExbUJ5qW5kAFN2sgyAba+ga/NEzcg0V4zifcPYEW0/SR6lEMOnlEuMvR1Ydc2Yl10krRDklXGsIyU+d0THDDOoMUFNKoP4e84pQi1uxq4X6hmnT/TvE5XGLPtfZjAwvWhIFcY1eg7uQQw==
+ b=R9U77T/To+HaszRjNjSxloDeeUK7Gd9wnEByfnWcDwEEo/0OqDjMvjnmDvVykIc6IWoA346eKztt1iSpzV+vG8fsZhG1jQjvuaXJ59Xkjm0VHzJQrMQzBiKS8WvSBMjF2kwrFLVp0zjgcFUA/LHI0b0/bhMHIRPdmSU4qLnL82HgsyBx8wLedP/UrEj5XKWzVc4U60MY2kt4Jb9wUGe0QJvqsqx3ZFuTAIQQAZhVV0lk3jjwqWl45avtY6QqwL+mb5BG75V7CLgfRQouUFSlWH9yuQMPgO0nUZJqQVi4W5n+6Jg0/L2Qb29LLtTdYFVRRxHLpItuoTDzorKV3WC/0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9lXDK3FrFmvmGj+at8/lmpCZPLMWoEYhkhXIVLh/yTI=;
- b=Mxg6ABoCOUbxmMdNSag0LIQGdb92yytrd9qho9/b5b4Pt41be6EXBQ6h77WfddsFjPris47s9PZowFgOqFks9Rh2kzim9rtWQHeDvZAbAvbFQDukxtgFIKQGvhcZSMXxrJcsFNxen/EJTn5uewfjs1giz39nMbf7ls28y8siuLYqxxhCv+K531mXYNJaz3giLZt6DDHCRHgFSb9/KfioT+VwJW9y+i5SI6dIYCNiRTZDcKwO9QFbLLaJYc3DxTLSqTsn8SYLKfFRfyx+6hBSAElU29mmiCyOnY6Ax1KkjOzzRb/zAEIWaTljZnf773okXGREq+s9CDcrQg7BSLODiQ==
+ bh=SJUytFywaT4G4TkEeYkufHasi1NXM4eKmvYa98h6cdw=;
+ b=CaqqWvzXRYFGMVRExguMKKZvFm5gcDQ+GSDn2KDx/cqWWXcZoC0t6B3JhgNtr4Wo2M26KWjajYlBQTCsamfIJa7yonzz8LHiAFrveLM8U9UGktYdNqHSx9NPThIQMDHnjGxdb0fyDSz7DXBGWgDdGOiJOcmHO8y+/ZMZ/qAsnRw2E7MGRwUJVlLSkjW76GiNrLrtxZfSc+oc+SaY+pCVULECWkcVU/gQxBoKt1HNBCNCdJ7Fm9b+7UCaGE8NTMG55VSl7KIRY9ytGEsdB7ZrYQcv7lkAhC0jEhgOZVeh45Iib3YUXI/2Bz1WM1wYSqDkr3XL7JNfv/tXrezvTMnu2w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9lXDK3FrFmvmGj+at8/lmpCZPLMWoEYhkhXIVLh/yTI=;
- b=ecorZfE25mNb0KIvVbf8vLwpf8cq8uS77ty1b1uHEXznvVX9M4I2pEy7QpTEWaXu/lx73iP0UxqXGujJdeUCjEfk2B6GvKlB22oxlnqHC11e9yGCyG5Alya4RjZUzq5y4tqkUwfMGzLJ8pVjGJ+1iQnEfl7IzxGXpVF4yF4lzeVo+m9jJa2kZemY9EnV7UTN3DpP+IlW4ehcJsJEnqDPTdbY2tUdiGi0YSoZQR3tJyYHQOCyYWNo9NBIhSZB0APwqX3kemjGuikREy+Dc9gaJPLc9TFfaMUIDt+sMKHABeQqoLKqbvGB0MYTeyVeNIS8OcY2dNKBE1AXJkl5koc5+g==
-Authentication-Results: infradead.org; dkim=none (message not signed)
- header.d=none;infradead.org; dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3823.namprd12.prod.outlook.com (2603:10b6:208:168::26)
- by MN2PR12MB3983.namprd12.prod.outlook.com (2603:10b6:208:169::20) with
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+Authentication-Results: suse.cz; dkim=none (message not signed)
+ header.d=none;suse.cz; dmarc=none action=none header.from=fb.com;
+Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
+ by SJ0PR15MB4407.namprd15.prod.outlook.com (2603:10b6:a03:370::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.21; Thu, 15 Jul
- 2021 15:58:41 +0000
-Received: from MN2PR12MB3823.namprd12.prod.outlook.com
- ([fe80::dcee:535c:30e:95f4]) by MN2PR12MB3823.namprd12.prod.outlook.com
- ([fe80::dcee:535c:30e:95f4%6]) with mapi id 15.20.4331.023; Thu, 15 Jul 2021
- 15:58:41 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 062/138] mm/migrate: Add folio_migrate_copy()
-Date:   Thu, 15 Jul 2021 11:58:36 -0400
-X-Mailer: MailMate (1.14r5812)
-Message-ID: <2FEB3FE6-38C0-43E0-9C0A-27839F029BEA@nvidia.com>
-In-Reply-To: <20210715033704.692967-63-willy@infradead.org>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-63-willy@infradead.org>
-Content-Type: multipart/signed;
- boundary="=_MailMate_5EF0C679-0D14-4BE4-A995-A8ABDD56B992_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
-X-ClientProxiedBy: BL1P223CA0010.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:208:2c4::15) To MN2PR12MB3823.namprd12.prod.outlook.com
- (2603:10b6:208:168::26)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21; Thu, 15 Jul
+ 2021 16:04:58 +0000
+Received: from BYAPR15MB4136.namprd15.prod.outlook.com
+ ([fe80::9520:2bcd:e6fd:1dc7]) by BYAPR15MB4136.namprd15.prod.outlook.com
+ ([fe80::9520:2bcd:e6fd:1dc7%6]) with mapi id 15.20.4308.027; Thu, 15 Jul 2021
+ 16:04:58 +0000
+Date:   Thu, 15 Jul 2021 09:04:56 -0700
+From:   Roman Gushchin <guro@fb.com>
+To:     Jan Kara <jack@suse.cz>, Boyang Xue <bxue@redhat.com>
+CC:     <linux-fsdevel@vger.kernel.org>
+Subject: Re: Patch 'writeback, cgroup: release dying cgwbs by switching
+ attached inodes' leads to kernel crash
+Message-ID: <YPBcqIAjaGtTAskK@carbon.dhcp.thefacebook.com>
+References: <CAHLe9YZ1_0p_rn+fbXFxU3ySJ_XU=QdSKJAu2j3WD8qmDuNTaQ@mail.gmail.com>
+ <YO5kCzI133B/fHiS@carbon.dhcp.thefacebook.com>
+ <CAHLe9YYiNnbyYGHoArJxvCEsqaqt2rwp5OHCSy+gWH+D8OFLQA@mail.gmail.com>
+ <20210714092639.GB9457@quack2.suse.cz>
+ <CAHLe9YbKXcF1mkSeK0Fo7wAUN02-_LfLD+2hdmVMJY_-gNq=-A@mail.gmail.com>
+ <YO93VTcLDNisdHRf@carbon.dhcp.thefacebook.com>
+ <CAHLe9YaNtmJ8xx=A+6Ki+Fc2Kx=5jL745NJ8PL+w95-WhJrG3g@mail.gmail.com>
+ <20210715093117.GD9457@quack2.suse.cz>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20210715093117.GD9457@quack2.suse.cz>
+X-ClientProxiedBy: SJ0PR03CA0356.namprd03.prod.outlook.com
+ (2603:10b6:a03:39c::31) To BYAPR15MB4136.namprd15.prod.outlook.com
+ (2603:10b6:a03:96::24)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [169.254.198.0] (216.228.112.22) by BL1P223CA0010.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Thu, 15 Jul 2021 15:58:39 +0000
+Received: from carbon.dhcp.thefacebook.com (2620:10d:c090:400::5:1f92) by SJ0PR03CA0356.namprd03.prod.outlook.com (2603:10b6:a03:39c::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Thu, 15 Jul 2021 16:04:58 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 01a7b20f-a580-4cce-304e-08d947a96ab2
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3983:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR12MB3983A87798C5B11AA5A90100C2129@MN2PR12MB3983.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
+X-MS-Office365-Filtering-Correlation-Id: 60b50dd4-b706-403b-251a-08d947aa4b75
+X-MS-TrafficTypeDiagnostic: SJ0PR15MB4407:
+X-Microsoft-Antispam-PRVS: <SJ0PR15MB4407EA1BD9A223AF445D1EF3BE129@SJ0PR15MB4407.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
 X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: LUkILwhbXjaBHA3OvCFJIHDoRYqjc3V9Z7AqwdrsTqZrJYVb4fleJrOrLmHzt+Wn4Ap6+VcLiU0nc2e2n8yyYP3+7EyMuOOv61nC/TyAN05rZ8MFp52elINmT4OVB+DK9kCokULMx3Rz2S4cbqLrTKwD+bX5EAA+0dgN+mUoiYpNT/mTkG6kY05NEEaZUEhj3jxFTG/tPQwFuwgBfJA9rN5Xve0K74w0BlWFK3Y65ZuPp4S71wWsVQ7P7C09CLORGlnHy/eEoK2ZDDVAeka2GzsEE73oBrIQhfkgiFiz4zjrHYr+5udkRwiuTeNmHauGYjEsfKL6MF7fdSAenWR2MLoHP8NqiaYASmtTsBe4w/kCLRtJWULrxUM2YPyRS6twlY17AoF02/ZYpQjcJjNSP915NKIwEPuSTuzhu/csAzFX44bq+KrZ6q/vFlo1TzXL3AmyXOf1xbx5tBquAMs+v48dwEV5I25wu0x2usBC+sDdm55+c+wW2ylAhQtwGKAGAdBAPxohGH9yFXVJ9BJ1nFCrjTGMDOcFfmLLbuHAa5UV5qBlWJidbmSQ1ORqKSsN/ml7xwEMXSvvaR1xviRmw6j4Y9LSd6sPSQnOSgMZ4Okwa/n9GqXGprf/jSSYRZr2VzSMia+dgrvZ0/q9o1tupe5VRDcW5Y6OT9yKxCu5Vy3NSLrYnCBesXtjZ9gdJXCf1qEvpFQm5b2rbwGm6N+2HXLzuDomcXTMVg4Xm+AdWTHMDh2rK0gpwQeoBpWj0NCs
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3823.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(366004)(39860400002)(346002)(396003)(376002)(38100700002)(33656002)(16576012)(316002)(478600001)(2906002)(66946007)(6916009)(21480400003)(86362001)(26005)(235185007)(6486002)(5660300002)(6666004)(8676002)(33964004)(8936002)(83380400001)(4326008)(53546011)(36756003)(66476007)(66556008)(956004)(186003)(2616005)(78286007)(72826004)(45980500001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: Z2ooaPNHm+9b+NycqHW0+THoIhrkgAKSmRI0Gilmg9ZaHGK+H//iUOt5hOm3q+wXoxXbWcopP9AwshqD0i9YnSeE3gWqEXFDh5oxnc+JHSwhQYxuyomZYwUMDrP8auWzdjpi4VvYnyThSukmD+u9pWSl2nxujiAjcF5P8drnOJYsGszdk3/LAo/Wt+y8zD/lOIk+pc+5joye5DfpvnkgOBQ6JfnVowR0SLE+P1LYWI6ulB4wJF8DMW6oLl4ocDoz6HURrRlK/dBvuWfwmZmLEShGqD3NyVmilFrRk7sOyOKcQf0ZT+2E4puXJj3CtULxHB+KkQcNb7iM9/2doMMTGp68yuF7bojbtF1zFh6pV3vWtvTzvuzbtGwNuXVNTsVkncAFuv9FDV2M+Cq8dfVPZpbB0BSh5CfPQi8arRiTXMuK0uvGmOB5EZCF2cwwzpWEly3Q5HUnWTjl8C0FGLwMg3dZqHjUq/JZ+GYy3s2PNhwnmYhL6eDv7fTNA8QEBHM8E3pS/Eq8E9DuZNXHkmAVxcEu+Ex0Z+U/CgHEdydzfkvDrnkqLcDJ837sDr/o+t3L1ZzxUxfUVwsAcSq33k084uFcL9IjVQM4bO2MnvN4vPM5RNEzeYBbIqhFpsvlUu1XMpCsMlpD/rD//93sFTsk0Q==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(186003)(38100700002)(5660300002)(83380400001)(52116002)(86362001)(4326008)(8936002)(110136005)(478600001)(2906002)(55016002)(7696005)(66946007)(316002)(66556008)(66476007)(9686003)(6506007)(8676002)(53546011);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VFE3N28zTkt5QXQyeTJHWlgwQVBHUlpxYyt4SzhTQkN6K0gzREc5cXlrUVFF?=
- =?utf-8?B?RmI3SVB5ZXRvcnd6STBWWnZsU2UwblA0Y045cmRmd2VzNVVISEs1YzMwNVBN?=
- =?utf-8?B?djJvMWkza2RURUpWOXNnbk5qejZaV2Z5YllKR1UyMDNlVzdNTkc2aEhkK1lZ?=
- =?utf-8?B?aVhRSnYxOGJ0Vko0d1lPeFUvanAzZWxTcHFUK1RvUGV4bkg3Q1lZR1N0MkZz?=
- =?utf-8?B?QmdSUzRRUmplN0FzM00wQ2JyVGx0ZzExQnZlQjBwOWQ4SWxuYThuOE0wdTND?=
- =?utf-8?B?d2N4cVBIaUl6MFVtMHlWKzdGbzVyNkhqbm03ZmVna0lwRnpSRXRNL0w5NEtO?=
- =?utf-8?B?R29oNGI5bVQ1SUxPN0FETFNsWXFRNTR6QVBwdE1LTHFQVHEyM2JqZ01KRzBD?=
- =?utf-8?B?RkdudTFJcGhwOHoyWXRRaHNVckhtZG9sWDlUZTBUazRBbTg0bkRzcUlmWEpl?=
- =?utf-8?B?UXhPalc3eWV3bTFRTjlZRGNGZVhlZUdkam5ZUlpod1FsTk1NcWRuR2FjMU9L?=
- =?utf-8?B?Qzl2c2dWZjJWdFJWY2tEM2tnaXhKR0xZWXB0TFRSbDk3K1E3VStoTWw0aU96?=
- =?utf-8?B?RVZaMTl2SmVhOTc5L05SMEZEazlHTGNlQmJCTUtTdnhuZ05pNWRmbHlkam9Q?=
- =?utf-8?B?MVUxVCtBeGcrZWZBOWkweWlDZ3RZVEdUOGN3TXRnUldITEdzNDVTNjRhcVR0?=
- =?utf-8?B?czRCRDJYM3NSRTd2am8rcUt6R2VUb1gzRi9CUnFjMTd0c2hRcGtwWVcxNHlv?=
- =?utf-8?B?NmRFT1VvOFZTQlRpczNoNmFaRkJlRk9oN2hLb3dtQ3JsanlvT1RTbktHQWN5?=
- =?utf-8?B?VVBIbDd2S2s0L0lQMVpXUUt4T2M2cmdlVnVkazNtL1dmcGx6clVQNnlGVkM4?=
- =?utf-8?B?U1NSV25yTEFnenVrVy9EYS9BTWF5RDhMdXNjRDhFWWt0c0t5TERGb0oyN1o1?=
- =?utf-8?B?WVMwSHhWM3pnR1A4MUIvWGVaR3Y5T1ZRdFV5aDFPamdiNStMTWZsOGRFMTc3?=
- =?utf-8?B?TGdYUDQzWWxJSFRtV3VKb2UvL1IyM2ZLT0R5QkQ1c2hOdTUyL1J1YWM2cXFX?=
- =?utf-8?B?ZHRUd1c0UkFaR0w0ckVJVzl5OWNjVThRZ0F6Y0ZOMm9JbHYrMHRjckg1REZI?=
- =?utf-8?B?dW81bzVyZDQ0T3c3OWlXa0dXbXJ6UGM2OUpjdHBFSUdzVUV2KzUrUTFEL0ZI?=
- =?utf-8?B?T294UFUzWldweWtHM3kvbmJmYUF5NkFJSVdydWJyYS8rYksrUGl2eTZHV1NL?=
- =?utf-8?B?cjRCbXl5bjlKSDd2QmF5c1pPb3d0MFFqc05BN29TbmFKRGIyQTZMOWI4SUZ0?=
- =?utf-8?B?K3VGK1Y0YlNCUGxrWmFKZGcwTnVadHV6R2Z6WkZhSmoyS0tSZVVVWUpCNDM2?=
- =?utf-8?B?U3pQVnhOYTlDOXZteFp5Q0c2b0plQUs5OEtzWDJUUGJGdDJhNkFlTDBaTGFI?=
- =?utf-8?B?cnJhcW5LcGRzQW9PYmNMS0RuWW5qM0pBdnpPZjRDTlErZzN1MFNVOGZ2YThh?=
- =?utf-8?B?aDJNVkErZkJuSExlaTMvYzFMbzdUZVRsTms1OGlMbUt0VG5BbGVmUFNiS0Z1?=
- =?utf-8?B?Zkc0akNTQ1ZOdjNZN1VXdU9uUi9Ub1FQcU5qVDk4anhlc0V2eng4SS9hQm1R?=
- =?utf-8?B?eXY2Z2xSUEJQU2dSWHVOTXBOR0RqcmFYQlQ1MmFqNHE2MU83aHRCNVRkTE5W?=
- =?utf-8?B?TkphTEZvV0lCVTB6VlVHbGRzb1BzdDRjbWQ1REI3SDJmWWRGU1RiSTFhbjRk?=
- =?utf-8?Q?VtA+4BRnweHUW7Kei/XYChI8sDITWCLVlY/AhBe?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01a7b20f-a580-4cce-304e-08d947a96ab2
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3823.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TpisYN4Gc1kW6MxiYPRcT9Q83laoGHzbQNC8NUf55s+PWy9XYc4o9/jBVjkT?=
+ =?us-ascii?Q?V6PH4atarec+zlXXAooZud1yEcXTWYYr2qynwBlBZdxHA8H0W4mB4NGjK43m?=
+ =?us-ascii?Q?NUYG8BEBh91ROpRF8/HfoCt3ykrHJ+qQTNGUBMknDojPlaLURrbVz+MH30Xh?=
+ =?us-ascii?Q?J1alSFrJHRW1KfU9//9qJoVNYbi5Pc6PTodThbJXB92hsgg4x9j2xrbQnot2?=
+ =?us-ascii?Q?fDpJSR6J+dtdAiC7FqW1rKkHjiYm+woSW/5xtBB9ZYDOsLUwKiXdi2djq1cc?=
+ =?us-ascii?Q?XbSmKHC7eZzuY9RfoaMc8TNq8M7Z2HTRf1korEeKH8cCz1m85mYNtVf6hN1U?=
+ =?us-ascii?Q?GGmxZE4j4ww4gQPlqiok3VhDH3qQgOtygSNfkL/e6+ARNVrk5SDf5jpvbv4M?=
+ =?us-ascii?Q?vB7iAAhc1L+rQlPWOYpg91WuusNy0f1HGwZ62bokQ7Zdm4u0gpwYTnzXYWPm?=
+ =?us-ascii?Q?cd+0rJu6pXc1a03L3YI7nCBpyqVu5t3zFKe+u/GYrAgCQ3YvM4ZMsYKlzvV8?=
+ =?us-ascii?Q?S3tsVA7tBBG+HBpaKrgn2bhGX3B2Usq4huV1pPfGpngMGWIDfFwW+pgZ3R+P?=
+ =?us-ascii?Q?wRwsNhQw5lW0iBtaImcKEIIXYWwHLfJ2k0fpwC+rneIapcoMqnF3e0KIJeqL?=
+ =?us-ascii?Q?F+F1LVYwO8eLTuqcP0J8R23TDsuElnGDIYLHwsKrboanUR0lLgwLytYtcZX0?=
+ =?us-ascii?Q?VYpYYaRFLNuc3sx1L+fLGAEm83VKzrkPlahaKNtAlk3V4y1m6S5cGnzvJ3Qq?=
+ =?us-ascii?Q?cT+5NXTY6g4umRzcO8EXYE3qb33WW8dPsdFhBHRqdaRygKB/OZCQvNbEz+Cq?=
+ =?us-ascii?Q?6noisRS3cXhXc+7/kKDIpzqtEKKxe/5kgkLZGBbqpVeZu2D4QDmlv6Z2bN3K?=
+ =?us-ascii?Q?7hJH1opsFXFSb/l3lpUoa2HB7sR/u0yCkRd27vpHoXg30g1WcgSuF4QMagsf?=
+ =?us-ascii?Q?WMACfOgm6ZWWGSHGRFH247IfvNVHw/yJGGI5xluXSZUG3nIOUDfXRWa4lYQF?=
+ =?us-ascii?Q?QK49zc3GOVw/wKa9HirSWpwQK0ehkkhbaQl1/FL9uZ16ca+fsBfWQu9UHhFI?=
+ =?us-ascii?Q?NHa4YSv4z/Q6dkIKiNaZPHP8hUWZpzwkV12UMjbRv0XB/xH3S8w+1VpVpZvA?=
+ =?us-ascii?Q?eLwKSZXQVYpW+rrkKdlnmZqNK018r36uPBY4RauErjsaf6gIA9uNlHCeZq8T?=
+ =?us-ascii?Q?Pa0YzP3E0fme66XM5VNRA9XOcOj8X53nqsr+i092Iv1dp/3QtP1C3hezCUut?=
+ =?us-ascii?Q?4ZOSGspJmhLLnwSvPt1vFSzBJBE2SYxoLNWl1XOb/Cl4RDYzAvUXcLuxv8lE?=
+ =?us-ascii?Q?ePboteuBumGaWp/sNku5+zhu2N96lplEc0QtnhXINf6fGQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60b50dd4-b706-403b-251a-08d947aa4b75
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2021 15:58:41.6012
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2021 16:04:58.7745
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xV7vXmcYwuqD2CNPPYUQhdXL8H47a3qJWGCHKH8Sw6+xGxO8XOsU28h2+ZhEhOG1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3983
+X-MS-Exchange-CrossTenant-UserPrincipalName: uug6tb5SUvf2G7PY6IWpKWEwxyq/deIyjfjQy8xHWnT9JLoVDoDE75xjH6f8dwug
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR15MB4407
+X-OriginatorOrg: fb.com
+X-Proofpoint-ORIG-GUID: aZ0su_cuO8UR0YVyS7ApYbagAmnp6Ywl
+X-Proofpoint-GUID: aZ0su_cuO8UR0YVyS7ApYbagAmnp6Ywl
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-15_10:2021-07-14,2021-07-15 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 phishscore=0 spamscore=0
+ malwarescore=0 adultscore=0 mlxlogscore=999 priorityscore=1501
+ clxscore=1015 mlxscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2107150111
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=_MailMate_5EF0C679-0D14-4BE4-A995-A8ABDD56B992_=
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 15, 2021 at 11:31:17AM +0200, Jan Kara wrote:
+> On Thu 15-07-21 09:42:06, Boyang Xue wrote:
+> > On Thu, Jul 15, 2021 at 7:46 AM Roman Gushchin <guro@fb.com> wrote:
+> > >
+> > > On Thu, Jul 15, 2021 at 12:22:28AM +0800, Boyang Xue wrote:
+> > > > Hi Jan,
+> > > >
+> > > > On Wed, Jul 14, 2021 at 5:26 PM Jan Kara <jack@suse.cz> wrote:
+> > > > >
+> > > > > On Wed 14-07-21 16:44:33, Boyang Xue wrote:
+> > > > > > Hi Roman,
+> > > > > >
+> > > > > > On Wed, Jul 14, 2021 at 12:12 PM Roman Gushchin <guro@fb.com> wrote:
+> > > > > > >
+> > > > > > > On Wed, Jul 14, 2021 at 11:21:12AM +0800, Boyang Xue wrote:
+> > > > > > > > Hello,
+> > > > > > > >
+> > > > > > > > I'm not sure if this is the right place to report this bug, please
+> > > > > > > > correct me if I'm wrong.
+> > > > > > > >
+> > > > > > > > I found kernel-5.14.0-rc1 (built from the Linus tree) crash when it's
+> > > > > > > > running xfstests generic/256 on ext4 [1]. Looking at the call trace,
+> > > > > > > > it looks like the bug had been introduced by the commit
+> > > > > > > >
+> > > > > > > > c22d70a162d3 writeback, cgroup: release dying cgwbs by switching attached inodes
+> > > > > > > >
+> > > > > > > > It only happens on aarch64, not on x86_64, ppc64le and s390x. Testing
+> > > > > > > > was performed with the latest xfstests, and the bug can be reproduced
+> > > > > > > > on ext{2, 3, 4} with {1k, 2k, 4k} block sizes.
+> > > > > > >
+> > > > > > > Hello Boyang,
+> > > > > > >
+> > > > > > > thank you for the report!
+> > > > > > >
+> > > > > > > Do you know on which line the oops happens?
+> > > > > >
+> > > > > > I was trying to inspect the vmcore with crash utility, but
+> > > > > > unfortunately it doesn't work.
+> > > > >
+> > > > > Thanks for report!  Have you tried addr2line utility? Looking at the oops I
+> > > > > can see:
+> > > >
+> > > > Thanks for the tips!
+> > > >
+> > > > It's unclear to me that where to find the required address in the
+> > > > addr2line command line, i.e.
+> > > >
+> > > > addr2line -e /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
+> > > > <what address here?>
+> > >
+> > > You can use $nm <vmlinux> to get an address of cleanup_offline_cgwbs_workfn()
+> > > and then add 0x320.
+> > 
+> > Thanks! Hope the following helps:
+> 
+> Thanks for the data! 
+> 
+> > static void cleanup_offline_cgwbs_workfn(struct work_struct *work)
+> > {
+> >         struct bdi_writeback *wb;
+> >         LIST_HEAD(processed);
+> > 
+> >         spin_lock_irq(&cgwb_lock);
+> > 
+> >         while (!list_empty(&offline_cgwbs)) {
+> >                 wb = list_first_entry(&offline_cgwbs, struct bdi_writeback,
+> >                                       offline_node);
+> >                 list_move(&wb->offline_node, &processed);
+> > 
+> >                 /*
+> >                  * If wb is dirty, cleaning up the writeback by switching
+> >                  * attached inodes will result in an effective removal of any
+> >                  * bandwidth restrictions, which isn't the goal.  Instead,
+> >                  * it can be postponed until the next time, when all io
+> >                  * will be likely completed.  If in the meantime some inodes
+> >                  * will get re-dirtied, they should be eventually switched to
+> >                  * a new cgwb.
+> >                  */
+> >                 if (wb_has_dirty_io(wb))
+> >                         continue;
+> > 
+> >                 if (!wb_tryget(wb))  <=== line#679
+> >                         continue;
+> 
+> Aha, interesting. So it seems we crashed trying to dereference
+> wb->refcnt->data. So it looks like cgwb_release_workfn() raced with
+> cleanup_offline_cgwbs_workfn() and percpu_ref_exit() got called from
+> cgwb_release_workfn() and then cleanup_offline_cgwbs_workfn() called
+> wb_tryget(). I think the proper fix is to move:
+> 
+>         spin_lock_irq(&cgwb_lock);
+>         list_del(&wb->offline_node);
+>         spin_unlock_irq(&cgwb_lock);
+> 
+> in cgwb_release_workfn() to the beginning of that function so that we are
+> sure even cleanup_offline_cgwbs_workfn() cannot be working with the wb when
+> it is being released. Roman?
 
-On 14 Jul 2021, at 23:35, Matthew Wilcox (Oracle) wrote:
+Yes, it sounds like the most reasonable explanation.
+Thank you!
 
-> This is the folio equivalent of migrate_page_copy(), which is retained
-> as a wrapper for filesystems which are not yet converted to folios.
-> Also convert copy_huge_page() to folio_copy().
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  include/linux/migrate.h |  1 +
->  include/linux/mm.h      |  2 +-
->  mm/folio-compat.c       |  6 ++++++
->  mm/hugetlb.c            |  2 +-
->  mm/migrate.c            | 14 +++++---------
->  mm/util.c               |  6 +++---
->  6 files changed, 17 insertions(+), 14 deletions(-)
->
-LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
+Boyang, would you mind to test the following patch?
 
-=E2=80=94
-Best Regards,
-Yan, Zi
-
---=_MailMate_5EF0C679-0D14-4BE4-A995-A8ABDD56B992_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmDwWywPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqKvR8QALNt0F+0YGGlbfB87ylYsb1TuzvXyJXq7V3l
-hS1yCLoSsexA3xiphXXijJ4U6clEqRgSjxZ21GuyuJRVCO0lD6EvIiA7jjDVPUQo
-numdM86QYbB0P7qZjhFnn1GHXCafrY8RUxoCxrLGkZA8rfhWmvEiIM+h02U/FdcP
-UYzCYki0GOaD8PoV6PdLCq5Ny3XJKdoi0gMpkUM3923gCaGhXvJZ5SG3ycdb+Skg
-Y2xSF8pncTKzTtGsJrK6qcXxESktuO4/9W2clREU4lWbrH1kjw7SfeKbTP4tWchu
-MNUz6lWDMi0Y+qiz+hAPELdIpfonTcZAzEiUEnsUSIouUz3vEbtMJ9qEEBnLtw0/
-CZSWDXvsreDObagku0BuNWBHgO1UiZen6y6lAkreO68hzSt05KbdL3apiL0Bbl7c
-JDF7EIB7BbrkbB71R194W9pbn7EwmVk7/249RQ0QA8dAwmev+8XBEoK3PHnTY4Wh
-OlAp9v51/YtxrKLwERqmWC6JORhD/mT9pW9KknbRb+sHVVzW80etKpp+BanO6Xws
-yAHZ9P4+ElWd0kRdpdssGvIN4OoEdUxlsA0JWw0EIixcxeHXZuArhhxAFSzQp32n
-EY9S/B1PcbILIejgVIj0HCp2FK+9H3Kbpx5FqUNhVp7Gcd0EoQcEz0oSNlSLILPm
-l6bKGloq
-=YUF5
------END PGP SIGNATURE-----
-
---=_MailMate_5EF0C679-0D14-4BE4-A995-A8ABDD56B992_=--
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 271f2ca862c8..f5561ea7d90a 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -398,12 +398,12 @@ static void cgwb_release_workfn(struct work_struct *work)
+        blkcg_unpin_online(blkcg);
+ 
+        fprop_local_destroy_percpu(&wb->memcg_completions);
+-       percpu_ref_exit(&wb->refcnt);
+ 
+        spin_lock_irq(&cgwb_lock);
+        list_del(&wb->offline_node);
+        spin_unlock_irq(&cgwb_lock);
+ 
++       percpu_ref_exit(&wb->refcnt);
+        wb_exit(wb);
+        WARN_ON_ONCE(!list_empty(&wb->b_attached));
+        kfree_rcu(wb, rcu);
