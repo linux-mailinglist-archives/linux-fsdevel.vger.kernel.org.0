@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0DEB3CAE17
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 22:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A72CB3CAE18
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 22:44:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237203AbhGOUpN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 16:45:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55926 "EHLO
+        id S231192AbhGOUqx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 16:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237159AbhGOUpM (ORCPT
+        with ESMTP id S230209AbhGOUqw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 16:45:12 -0400
+        Thu, 15 Jul 2021 16:46:52 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06776C06175F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jul 2021 13:42:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77BEC06175F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jul 2021 13:43:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=mOZR97vqhEKo31GvUk0y72ueq9pa4KcTUloIAzr8f6s=; b=dydepiEDzcA6t4f0OG6Uo0PHyt
-        eIt2VL2HzcHRVdKOR6dm5k8wRnRCqN9xfyQL1EzL11Rzk9BLw1lWtSI/0ryHbKfP/yn8HFPC/l9Rb
-        dEADq0rvvgz9QxZNk72fBDHxpb9wsJrTm3ngwjsWwVW1L5L5SkERS2uB4A6evtTOykODrETR9Rz8a
-        NJXEhof5Ax9Sz5RNjQoCvLc9naz2rYjWyiWkVbX4hgzCxphxjzEVKyF8AOjB4ztlX1vGpz2rNGKR+
-        +mllsOIAFoymdaRhJ2beiUpVdxvi2Fbr5cCosQsz2P5ssb5i7vSkyz8t0AxaGlC+9usAbgRg1mRmu
-        C2f8a0HQ==;
+        bh=zKOP8KwzfNUOpMbEVjQJMJQRfPiAH79Vbkb431wFw7E=; b=ZJn6G3R5AOZ1h5Ig2GvfaSFt8j
+        cLrgAn9pcwmt1jEjHaACB11TKD44LqJ4aGpYffs6ZrV990rve60LvTULh71fQXIVCRuJCAuoqjxin
+        Qld11TNlHBZzHX2+mOVGm9FRdS7J6FXcAQZTFndsT8faVq3LoA5Sgy12i4LmesSur9h6niQ8Q6RCL
+        OqZ/jlyjc4g1OiVNtqlZNCMJN76cl22+ebHO6fzbgFwxU3WafWCN6Tp7Cb/ANkKHb50T6OgZKvpNa
+        Ncb2/tbxaCTR5QmymMUwtLaPiNg7TkZXk5WG09/7U3kNzGcxf1JqJZdTC+Y44z+E6JuY5Kt6lCW4D
+        rGnlKwmA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m47zo-003q1m-J4; Thu, 15 Jul 2021 20:30:20 +0000
+        id 1m480M-003q7j-Nr; Thu, 15 Jul 2021 20:31:22 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v14 29/39] mm/filemap: Add readahead_folio()
-Date:   Thu, 15 Jul 2021 21:00:20 +0100
-Message-Id: <20210715200030.899216-30-willy@infradead.org>
+Subject: [PATCH v14 30/39] mm/workingset: Convert workingset_refault() to take a folio
+Date:   Thu, 15 Jul 2021 21:00:21 +0100
+Message-Id: <20210715200030.899216-31-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210715200030.899216-1-willy@infradead.org>
 References: <20210715200030.899216-1-willy@infradead.org>
@@ -43,93 +43,183 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pointers stored in the page cache are folios, by definition.
-This change comes with a behaviour change -- callers of readahead_folio()
-are no longer required to put the page reference themselves.  This matches
-how readpage works, rather than matching how readpages used to work.
+This nets us 178 bytes of savings from removing calls to compound_head.
+The three callers all grow a little, but each of them will be converted
+to use folios soon, so that's fine.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/pagemap.h | 53 +++++++++++++++++++++++++++++------------
- 1 file changed, 38 insertions(+), 15 deletions(-)
+ include/linux/swap.h |  4 ++--
+ mm/filemap.c         |  2 +-
+ mm/memory.c          |  3 ++-
+ mm/swap.c            |  7 +++----
+ mm/swap_state.c      |  2 +-
+ mm/workingset.c      | 34 +++++++++++++++++-----------------
+ 6 files changed, 26 insertions(+), 26 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 18c06c3e42c3..bd4daebaf70e 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -988,33 +988,56 @@ void page_cache_async_readahead(struct address_space *mapping,
- 	page_cache_async_ra(&ractl, page, req_count);
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index c7a4c0a5863d..5e01675af7ab 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -329,7 +329,7 @@ static inline swp_entry_t folio_swap_entry(struct folio *folio)
+ /* linux/mm/workingset.c */
+ void workingset_age_nonresident(struct lruvec *lruvec, unsigned long nr_pages);
+ void *workingset_eviction(struct page *page, struct mem_cgroup *target_memcg);
+-void workingset_refault(struct page *page, void *shadow);
++void workingset_refault(struct folio *folio, void *shadow);
+ void workingset_activation(struct folio *folio);
+ 
+ /* Only track the nodes of mappings with shadow entries */
+@@ -350,7 +350,7 @@ extern unsigned long nr_free_buffer_pages(void);
+ /* linux/mm/swap.c */
+ extern void lru_note_cost(struct lruvec *lruvec, bool file,
+ 			  unsigned int nr_pages);
+-extern void lru_note_cost_page(struct page *);
++extern void lru_note_cost_folio(struct folio *);
+ extern void lru_cache_add(struct page *);
+ void mark_page_accessed(struct page *);
+ void folio_mark_accessed(struct folio *);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index a74c69a938ab..6bec995e69bd 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -981,7 +981,7 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
+ 		 */
+ 		WARN_ON_ONCE(PageActive(page));
+ 		if (!(gfp_mask & __GFP_WRITE) && shadow)
+-			workingset_refault(page, shadow);
++			workingset_refault(page_folio(page), shadow);
+ 		lru_cache_add(page);
+ 	}
+ 	return ret;
+diff --git a/mm/memory.c b/mm/memory.c
+index 614418e26e2c..627e7836ade6 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3538,7 +3538,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 
+ 				shadow = get_shadow_from_swap_cache(entry);
+ 				if (shadow)
+-					workingset_refault(page, shadow);
++					workingset_refault(page_folio(page),
++								shadow);
+ 
+ 				lru_cache_add(page);
+ 
+diff --git a/mm/swap.c b/mm/swap.c
+index d32007fe23b3..6e80f30d2e5e 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -315,11 +315,10 @@ void lru_note_cost(struct lruvec *lruvec, bool file, unsigned int nr_pages)
+ 	} while ((lruvec = parent_lruvec(lruvec)));
  }
  
-+static inline struct folio *__readahead_folio(struct readahead_control *ractl)
-+{
-+	struct folio *folio;
-+
-+	BUG_ON(ractl->_batch_count > ractl->_nr_pages);
-+	ractl->_nr_pages -= ractl->_batch_count;
-+	ractl->_index += ractl->_batch_count;
-+
-+	if (!ractl->_nr_pages) {
-+		ractl->_batch_count = 0;
-+		return NULL;
-+	}
-+
-+	folio = xa_load(&ractl->mapping->i_pages, ractl->_index);
-+	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
-+	ractl->_batch_count = folio_nr_pages(folio);
-+
-+	return folio;
-+}
-+
- /**
-  * readahead_page - Get the next page to read.
-- * @rac: The current readahead request.
-+ * @ractl: The current readahead request.
-  *
-  * Context: The page is locked and has an elevated refcount.  The caller
-  * should decreases the refcount once the page has been submitted for I/O
-  * and unlock the page once all I/O to that page has completed.
-  * Return: A pointer to the next page, or %NULL if we are done.
-  */
--static inline struct page *readahead_page(struct readahead_control *rac)
-+static inline struct page *readahead_page(struct readahead_control *ractl)
+-void lru_note_cost_page(struct page *page)
++void lru_note_cost_folio(struct folio *folio)
  {
--	struct page *page;
-+	struct folio *folio = __readahead_folio(ractl);
- 
--	BUG_ON(rac->_batch_count > rac->_nr_pages);
--	rac->_nr_pages -= rac->_batch_count;
--	rac->_index += rac->_batch_count;
--
--	if (!rac->_nr_pages) {
--		rac->_batch_count = 0;
--		return NULL;
--	}
-+	return &folio->page;
-+}
- 
--	page = xa_load(&rac->mapping->i_pages, rac->_index);
--	VM_BUG_ON_PAGE(!PageLocked(page), page);
--	rac->_batch_count = thp_nr_pages(page);
-+/**
-+ * readahead_folio - Get the next folio to read.
-+ * @ractl: The current readahead request.
-+ *
-+ * Context: The folio is locked.  The caller should unlock the folio once
-+ * all I/O to that folio has completed.
-+ * Return: A pointer to the next folio, or %NULL if we are done.
-+ */
-+static inline struct folio *readahead_folio(struct readahead_control *ractl)
-+{
-+	struct folio *folio = __readahead_folio(ractl);
- 
--	return page;
-+	folio_put(folio);
-+	return folio;
+-	struct folio *folio = page_folio(page);
+-	lru_note_cost(folio_lruvec(folio),
+-		      page_is_file_lru(page), thp_nr_pages(page));
++	lru_note_cost(folio_lruvec(folio), folio_is_file_lru(folio),
++			folio_nr_pages(folio));
  }
  
- static inline unsigned int __readahead_batch(struct readahead_control *rac,
+ static void __folio_activate(struct folio *folio, struct lruvec *lruvec)
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index c56aa9ac050d..1a29b4f98208 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -498,7 +498,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 	mem_cgroup_swapin_uncharge_swap(entry);
+ 
+ 	if (shadow)
+-		workingset_refault(page, shadow);
++		workingset_refault(page_folio(page), shadow);
+ 
+ 	/* Caller will initiate read into locked page */
+ 	lru_cache_add(page);
+diff --git a/mm/workingset.c b/mm/workingset.c
+index 39bb60d50217..10830211a187 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -273,17 +273,17 @@ void *workingset_eviction(struct page *page, struct mem_cgroup *target_memcg)
+ }
+ 
+ /**
+- * workingset_refault - evaluate the refault of a previously evicted page
+- * @page: the freshly allocated replacement page
+- * @shadow: shadow entry of the evicted page
++ * workingset_refault - evaluate the refault of a previously evicted folio
++ * @page: the freshly allocated replacement folio
++ * @shadow: shadow entry of the evicted folio
+  *
+  * Calculates and evaluates the refault distance of the previously
+- * evicted page in the context of the node and the memcg whose memory
++ * evicted folio in the context of the node and the memcg whose memory
+  * pressure caused the eviction.
+  */
+-void workingset_refault(struct page *page, void *shadow)
++void workingset_refault(struct folio *folio, void *shadow)
+ {
+-	bool file = page_is_file_lru(page);
++	bool file = folio_is_file_lru(folio);
+ 	struct mem_cgroup *eviction_memcg;
+ 	struct lruvec *eviction_lruvec;
+ 	unsigned long refault_distance;
+@@ -301,10 +301,10 @@ void workingset_refault(struct page *page, void *shadow)
+ 	rcu_read_lock();
+ 	/*
+ 	 * Look up the memcg associated with the stored ID. It might
+-	 * have been deleted since the page's eviction.
++	 * have been deleted since the folio's eviction.
+ 	 *
+ 	 * Note that in rare events the ID could have been recycled
+-	 * for a new cgroup that refaults a shared page. This is
++	 * for a new cgroup that refaults a shared folio. This is
+ 	 * impossible to tell from the available data. However, this
+ 	 * should be a rare and limited disturbance, and activations
+ 	 * are always speculative anyway. Ultimately, it's the aging
+@@ -340,14 +340,14 @@ void workingset_refault(struct page *page, void *shadow)
+ 	refault_distance = (refault - eviction) & EVICTION_MASK;
+ 
+ 	/*
+-	 * The activation decision for this page is made at the level
++	 * The activation decision for this folio is made at the level
+ 	 * where the eviction occurred, as that is where the LRU order
+-	 * during page reclaim is being determined.
++	 * during folio reclaim is being determined.
+ 	 *
+-	 * However, the cgroup that will own the page is the one that
++	 * However, the cgroup that will own the folio is the one that
+ 	 * is actually experiencing the refault event.
+ 	 */
+-	memcg = page_memcg(page);
++	memcg = folio_memcg(folio);
+ 	lruvec = mem_cgroup_lruvec(memcg, pgdat);
+ 
+ 	inc_lruvec_state(lruvec, WORKINGSET_REFAULT_BASE + file);
+@@ -375,15 +375,15 @@ void workingset_refault(struct page *page, void *shadow)
+ 	if (refault_distance > workingset_size)
+ 		goto out;
+ 
+-	SetPageActive(page);
+-	workingset_age_nonresident(lruvec, thp_nr_pages(page));
++	folio_set_active(folio);
++	workingset_age_nonresident(lruvec, folio_nr_pages(folio));
+ 	inc_lruvec_state(lruvec, WORKINGSET_ACTIVATE_BASE + file);
+ 
+-	/* Page was active prior to eviction */
++	/* Folio was active prior to eviction */
+ 	if (workingset) {
+-		SetPageWorkingset(page);
++		folio_set_workingset(folio);
+ 		/* XXX: Move to lru_cache_add() when it supports new vs putback */
+-		lru_note_cost_page(page);
++		lru_note_cost_folio(folio);
+ 		inc_lruvec_state(lruvec, WORKINGSET_RESTORE_BASE + file);
+ 	}
+ out:
 -- 
 2.30.2
 
