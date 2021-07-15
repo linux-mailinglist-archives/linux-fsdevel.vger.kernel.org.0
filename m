@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35CFD3C9682
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 05:39:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28A3F3C9685
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 05:39:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232846AbhGODmB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 23:42:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45158 "EHLO
+        id S233210AbhGODmu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 23:42:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230256AbhGODmA (ORCPT
+        with ESMTP id S230256AbhGODmt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 23:42:00 -0400
+        Wed, 14 Jul 2021 23:42:49 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58D34C06175F;
-        Wed, 14 Jul 2021 20:39:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA5BC06175F;
+        Wed, 14 Jul 2021 20:39:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=YAqeh0C8qmQsEJqIBNEgXfnLun7FdKZhk6Ud5nhuHqo=; b=Y991KGkeu5WYFyEUEZkNUg8YJx
-        WGouXEnlWBO8LyU7wksO9eyaPEMTd4BDUQSnF0dYm62eyxYTZTKNPqjktm0GCS/zDxTSNyjYwi4od
-        aHxxA8Azu6NJgUW5bCeFzzp93+PaVmziNqv0REyyFp4AOIztsMZZCGqX79e36a/p3SUjQEPk7DSP+
-        v0ZJX4FBAyw0B50HndKZ2HOYv1B10426Jn+zFDhwStHF2Nt6FM1dQbS7ISrfKLEciJ9tmBablIkuH
-        9eURFx1AuP0g6hOsDtLQpj6e8gphf8habrTcTyRRxEIXz7ilgl4SUdBlIwUdQCDDD8CQkrXSuQPca
-        9Uu1010g==;
+        bh=B8pcrYR+hNLPq7sa1dArlFf92eyhuj070BMxPGyPphc=; b=A00dpqNer+TANE5sSbs0rKjs55
+        FaVy+I5QoJC2eBkmbTCR9ZtAwBtE0WmMwV4DTeXv50m8RKBaSmm9duRpIBHe9a5IVYgbsL47LaBfv
+        S9X+G+XwfQwMf0sj3SOv3MKnHTtZVFweRUJNdVtS14eHGrabegqjp7lZqRv2Y1dmnkVxY9PpMyYXA
+        +TJmgQvYlkePLStwK4ScNlIIEIxPDP3QRTMLFoMO9/fFsfunUg30KxSQ+yMedYdsyFCQJ5RnjdxUL
+        P4XPLDiHJkVXJbMhyBDOr5Mu382CVG7Rmnz0WJYoI5PVOVvjb+wt2GqYZmTPso9tbf3ZOsaXN40yg
+        wDYOn5hw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m3sCC-002uIR-1E; Thu, 15 Jul 2021 03:38:08 +0000
+        id 1m3sCs-002uMs-4Y; Thu, 15 Jul 2021 03:38:48 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Zi Yan <ziy@nvidia.com>, Christoph Hellwig <hch@lst.de>,
         Jeff Layton <jlayton@kernel.org>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         Vlastimil Babka <vbabka@suse.cz>,
         William Kucharski <william.kucharski@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
         David Howells <dhowells@redhat.com>
-Subject: [PATCH v14 002/138] mm: Introduce struct folio
-Date:   Thu, 15 Jul 2021 04:34:48 +0100
-Message-Id: <20210715033704.692967-3-willy@infradead.org>
+Subject: [PATCH v14 003/138] mm: Add folio_pgdat(), folio_zone() and folio_zonenum()
+Date:   Thu, 15 Jul 2021 04:34:49 +0100
+Message-Id: <20210715033704.692967-4-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210715033704.692967-1-willy@infradead.org>
 References: <20210715033704.692967-1-willy@infradead.org>
@@ -49,247 +49,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A struct folio is a new abstraction to replace the venerable struct page.
-A function which takes a struct folio argument declares that it will
-operate on the entire (possibly compound) page, not just PAGE_SIZE bytes.
-In return, the caller guarantees that the pointer it is passing does
-not point to a tail page.  No change to generated code.
+These are just convenience wrappers for callers with folios; pgdat and
+zone can be reached from tail pages as well as head pages.  No change
+to generated code.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Jeff Layton <jlayton@kernel.org>
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: David Howells <dhowells@redhat.com>
 ---
- Documentation/core-api/mm-api.rst |  1 +
- include/linux/mm.h                | 74 +++++++++++++++++++++++++++++++
- include/linux/mm_types.h          | 60 +++++++++++++++++++++++++
- include/linux/page-flags.h        | 28 ++++++++++++
- 4 files changed, 163 insertions(+)
+ include/linux/mm.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/core-api/mm-api.rst b/Documentation/core-api/mm-api.rst
-index a42f9baddfbf..2a94e6164f80 100644
---- a/Documentation/core-api/mm-api.rst
-+++ b/Documentation/core-api/mm-api.rst
-@@ -95,6 +95,7 @@ More Memory Management Functions
- .. kernel-doc:: mm/mempolicy.c
- .. kernel-doc:: include/linux/mm_types.h
-    :internal:
-+.. kernel-doc:: include/linux/page-flags.h
- .. kernel-doc:: include/linux/mm.h
-    :internal:
- .. kernel-doc:: include/linux/mmzone.h
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 8dd65290bac0..5071084a71b9 100644
+index 5071084a71b9..0e14ac29a3e9 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -949,6 +949,20 @@ static inline unsigned int compound_order(struct page *page)
- 	return page[1].compound_order;
+@@ -1144,6 +1144,11 @@ static inline enum zone_type page_zonenum(const struct page *page)
+ 	return (page->flags >> ZONES_PGSHIFT) & ZONES_MASK;
  }
  
-+/**
-+ * folio_order - The allocation order of a folio.
-+ * @folio: The folio.
-+ *
-+ * A folio is composed of 2^order pages.  See get_order() for the definition
-+ * of order.
-+ *
-+ * Return: The order of the folio.
-+ */
-+static inline unsigned int folio_order(struct folio *folio)
++static inline enum zone_type folio_zonenum(const struct folio *folio)
 +{
-+	return compound_order(&folio->page);
++	return page_zonenum(&folio->page);
 +}
 +
- static inline bool hpage_pincount_available(struct page *page)
+ #ifdef CONFIG_ZONE_DEVICE
+ static inline bool is_zone_device_page(const struct page *page)
  {
- 	/*
-@@ -1594,6 +1608,65 @@ static inline void set_page_links(struct page *page, enum zone_type zone,
- #endif
+@@ -1559,6 +1564,16 @@ static inline pg_data_t *page_pgdat(const struct page *page)
+ 	return NODE_DATA(page_to_nid(page));
  }
  
-+/**
-+ * folio_nr_pages - The number of pages in the folio.
-+ * @folio: The folio.
-+ *
-+ * Return: A number which is a power of two.
-+ */
-+static inline unsigned long folio_nr_pages(struct folio *folio)
++static inline struct zone *folio_zone(const struct folio *folio)
 +{
-+	return compound_nr(&folio->page);
++	return page_zone(&folio->page);
 +}
 +
-+/**
-+ * folio_next - Move to the next physical folio.
-+ * @folio: The folio we're currently operating on.
-+ *
-+ * If you have physically contiguous memory which may span more than
-+ * one folio (eg a &struct bio_vec), use this function to move from one
-+ * folio to the next.  Do not use it if the memory is only virtually
-+ * contiguous as the folios are almost certainly not adjacent to each
-+ * other.  This is the folio equivalent to writing ``page++``.
-+ *
-+ * Context: We assume that the folios are refcounted and/or locked at a
-+ * higher level and do not adjust the reference counts.
-+ * Return: The next struct folio.
-+ */
-+static inline struct folio *folio_next(struct folio *folio)
++static inline pg_data_t *folio_pgdat(const struct folio *folio)
 +{
-+	return (struct folio *)folio_page(folio, folio_nr_pages(folio));
++	return page_pgdat(&folio->page);
 +}
 +
-+/**
-+ * folio_shift - The number of bits covered by this folio.
-+ * @folio: The folio.
-+ *
-+ * A folio contains a number of bytes which is a power-of-two in size.
-+ * This function tells you which power-of-two the folio is.
-+ *
-+ * Context: The caller should have a reference on the folio to prevent
-+ * it from being split.  It is not necessary for the folio to be locked.
-+ * Return: The base-2 logarithm of the size of this folio.
-+ */
-+static inline unsigned int folio_shift(struct folio *folio)
-+{
-+	return PAGE_SHIFT + folio_order(folio);
-+}
-+
-+/**
-+ * folio_size - The number of bytes in a folio.
-+ * @folio: The folio.
-+ *
-+ * Context: The caller should have a reference on the folio to prevent
-+ * it from being split.  It is not necessary for the folio to be locked.
-+ * Return: The number of bytes in this folio.
-+ */
-+static inline size_t folio_size(struct folio *folio)
-+{
-+	return PAGE_SIZE << folio_order(folio);
-+}
-+
- /*
-  * Some inline functions in vmstat.h depend on page_zone()
-  */
-@@ -1699,6 +1772,7 @@ extern void pagefault_out_of_memory(void);
- 
- #define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
- #define offset_in_thp(page, p)	((unsigned long)(p) & (thp_size(page) - 1))
-+#define offset_in_folio(folio, p) ((unsigned long)(p) & (folio_size(folio) - 1))
- 
- /*
-  * Flags passed to show_mem() and show_free_areas() to suppress output in
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 52bbd2b7cb46..f023eaa866fe 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -231,6 +231,66 @@ struct page {
- #endif
- } _struct_page_alignment;
- 
-+/**
-+ * struct folio - Represents a contiguous set of bytes.
-+ * @flags: Identical to the page flags.
-+ * @lru: Least Recently Used list; tracks how recently this folio was used.
-+ * @mapping: The file this page belongs to, or refers to the anon_vma for
-+ *    anonymous pages.
-+ * @index: Offset within the file, in units of pages.  For anonymous pages,
-+ *    this is the index from the beginning of the mmap.
-+ * @private: Filesystem per-folio data (see folio_attach_private()).
-+ *    Used for swp_entry_t if folio_test_swapcache().
-+ * @_mapcount: Do not access this member directly.  Use folio_mapcount() to
-+ *    find out how many times this folio is mapped by userspace.
-+ * @_refcount: Do not access this member directly.  Use folio_ref_count()
-+ *    to find how many references there are to this folio.
-+ * @memcg_data: Memory Control Group data.
-+ *
-+ * A folio is a physically, virtually and logically contiguous set
-+ * of bytes.  It is a power-of-two in size, and it is aligned to that
-+ * same power-of-two.  It is at least as large as %PAGE_SIZE.  If it is
-+ * in the page cache, it is at a file offset which is a multiple of that
-+ * power-of-two.  It may be mapped into userspace at an address which is
-+ * at an arbitrary page offset, but its kernel virtual address is aligned
-+ * to its size.
-+ */
-+struct folio {
-+	/* private: don't document the anon union */
-+	union {
-+		struct {
-+	/* public: */
-+			unsigned long flags;
-+			struct list_head lru;
-+			struct address_space *mapping;
-+			pgoff_t index;
-+			void *private;
-+			atomic_t _mapcount;
-+			atomic_t _refcount;
-+#ifdef CONFIG_MEMCG
-+			unsigned long memcg_data;
-+#endif
-+	/* private: the union with struct page is transitional */
-+		};
-+		struct page page;
-+	};
-+};
-+
-+static_assert(sizeof(struct page) == sizeof(struct folio));
-+#define FOLIO_MATCH(pg, fl)						\
-+	static_assert(offsetof(struct page, pg) == offsetof(struct folio, fl))
-+FOLIO_MATCH(flags, flags);
-+FOLIO_MATCH(lru, lru);
-+FOLIO_MATCH(compound_head, lru);
-+FOLIO_MATCH(index, index);
-+FOLIO_MATCH(private, private);
-+FOLIO_MATCH(_mapcount, _mapcount);
-+FOLIO_MATCH(_refcount, _refcount);
-+#ifdef CONFIG_MEMCG
-+FOLIO_MATCH(memcg_data, memcg_data);
-+#endif
-+#undef FOLIO_MATCH
-+
- static inline atomic_t *compound_mapcount_ptr(struct page *page)
+ #ifdef SECTION_IN_PAGE_FLAGS
+ static inline void set_page_section(struct page *page, unsigned long section)
  {
- 	return &page[1].compound_mapcount;
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 5922031ffab6..70ede8345538 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -191,6 +191,34 @@ static inline unsigned long _compound_head(const struct page *page)
- 
- #define compound_head(page)	((typeof(page))_compound_head(page))
- 
-+/**
-+ * page_folio - Converts from page to folio.
-+ * @p: The page.
-+ *
-+ * Every page is part of a folio.  This function cannot be called on a
-+ * NULL pointer.
-+ *
-+ * Context: No reference, nor lock is required on @page.  If the caller
-+ * does not hold a reference, this call may race with a folio split, so
-+ * it should re-check the folio still contains this page after gaining
-+ * a reference on the folio.
-+ * Return: The folio which contains this page.
-+ */
-+#define page_folio(p)		(_Generic((p),				\
-+	const struct page *:	(const struct folio *)_compound_head(p), \
-+	struct page *:		(struct folio *)_compound_head(p)))
-+
-+/**
-+ * folio_page - Return a page from a folio.
-+ * @folio: The folio.
-+ * @n: The page number to return.
-+ *
-+ * @n is relative to the start of the folio.  This function does not
-+ * check that the page number lies within @folio; the caller is presumed
-+ * to have a reference to the page.
-+ */
-+#define folio_page(folio, n)	nth_page(&(folio)->page, n)
-+
- static __always_inline int PageTail(struct page *page)
- {
- 	return READ_ONCE(page->compound_head) & 1;
 -- 
 2.30.2
 
