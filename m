@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2A513CAE01
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 22:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BED4B3CAE04
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 22:37:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235914AbhGOUir (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 16:38:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54262 "EHLO
+        id S237067AbhGOUjl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 16:39:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236532AbhGOUiq (ORCPT
+        with ESMTP id S235972AbhGOUjj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 16:38:46 -0400
+        Thu, 15 Jul 2021 16:39:39 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE05C061764
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jul 2021 13:35:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8557EC061762
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jul 2021 13:36:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=mn7q/52I4w3t9ii2jzCwCXbdd/SQ2Ju45FWtqep1dhc=; b=egqSYj5mscIvoZLVYltsYLjMqQ
-        kytF+EUS0NlT9q+4GjNTuYqiXbo9sLrE5Z68fUQS/ipRKfj/NvaZTY2kMElb0mKPzT7+3ZaMiNXya
-        j5YZhhAARf+WnmGoSsbH3G9bYgl542trcuVLshvEJ/rSNJTpsoJqSidFHFoP9kHjwWkFktK9b5x5Y
-        2WbuDQDqfbhprQoN87sVHHNG8zzVpA+bXjCNRrU2Qe8/0llrSnI3ey2wpjcPioM1TkJ/RIQN6rhBL
-        Y0d0kwxXxvAKYfHTh8owHYhXuSDbLQ0v22cWGwrKzgfhofexLYG3HB/lJPcHDI+snmjyeFCzhNW1h
-        tQ15/k5A==;
+        bh=aG1Z62nXu6WKzoz8firz+hfiIW2uMXHCr6KhoOFkmPs=; b=wSjcZGqCc2vOb+LRU9rIrIQCQb
+        s6KjnJYTfsJQT3qUVUVX+ZnwBxRwSj2akQMrjuoJDYdh/9DOOmk9iwy1WNO/+yEUH+YvNg00DMNQT
+        nylqleKHcucwRBg4ovhwE3pGBylizf56zn2oelmlUH1Ju0M6OK5V+BGUvNZt3f5g8acrCgMf4DxSJ
+        ZXOOBsI/6g91E0DM6/CIdT1fl3MMY+iEL6RjitJyAxX/JPWadTIB07QQsH7/nuqQEr2r8MEHltm3/
+        q+LIWx2S1kTNZZjm/Cn61uXVuo6KvAAjU++qgsjUOcegcj7END5D4HDm1a6zz0aKhwuhuYoAtldTG
+        WKgbEq+g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m482w-003qEc-Qm; Thu, 15 Jul 2021 20:33:40 +0000
+        id 1m483g-003qFb-Vk; Thu, 15 Jul 2021 20:34:35 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v14 33/39] mm/lru: Add folio_add_lru()
-Date:   Thu, 15 Jul 2021 21:00:24 +0100
-Message-Id: <20210715200030.899216-34-willy@infradead.org>
+Subject: [PATCH v14 34/39] mm/page_alloc: Add folio allocation functions
+Date:   Thu, 15 Jul 2021 21:00:25 +0100
+Message-Id: <20210715200030.899216-35-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210715200030.899216-1-willy@infradead.org>
 References: <20210715200030.899216-1-willy@infradead.org>
@@ -43,88 +43,111 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reimplement lru_cache_add() as a wrapper around folio_add_lru().
-Saves 159 bytes of kernel text due to removing calls to compound_head().
+The __folio_alloc(), __folio_alloc_node() and folio_alloc() functions
+are mostly for type safety, but they also ensure that the page allocator
+allocates a compound page and initialises the deferred list if the page
+is large enough to have one.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/swap.h |  1 +
- mm/folio-compat.c    |  6 ++++++
- mm/swap.c            | 22 +++++++++++-----------
- 3 files changed, 18 insertions(+), 11 deletions(-)
+ include/linux/gfp.h | 16 ++++++++++++++++
+ mm/mempolicy.c      | 10 ++++++++++
+ mm/page_alloc.c     | 12 ++++++++++++
+ 3 files changed, 38 insertions(+)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 5e01675af7ab..81801ba78b1e 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -351,6 +351,7 @@ extern unsigned long nr_free_buffer_pages(void);
- extern void lru_note_cost(struct lruvec *lruvec, bool file,
- 			  unsigned int nr_pages);
- extern void lru_note_cost_folio(struct folio *);
-+extern void folio_add_lru(struct folio *);
- extern void lru_cache_add(struct page *);
- void mark_page_accessed(struct page *);
- void folio_mark_accessed(struct folio *);
-diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index c1e01bc36d32..6de3cd78a4ae 100644
---- a/mm/folio-compat.c
-+++ b/mm/folio-compat.c
-@@ -102,3 +102,9 @@ bool redirty_page_for_writepage(struct writeback_control *wbc,
- 	return folio_redirty_for_writepage(wbc, page_folio(page));
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index dc5ff40608ce..3745efd21cf6 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -523,6 +523,8 @@ static inline void arch_alloc_page(struct page *page, int order) { }
+ 
+ struct page *__alloc_pages(gfp_t gfp, unsigned int order, int preferred_nid,
+ 		nodemask_t *nodemask);
++struct folio *__folio_alloc(gfp_t gfp, unsigned int order, int preferred_nid,
++		nodemask_t *nodemask);
+ 
+ unsigned long __alloc_pages_bulk(gfp_t gfp, int preferred_nid,
+ 				nodemask_t *nodemask, int nr_pages,
+@@ -564,6 +566,15 @@ __alloc_pages_node(int nid, gfp_t gfp_mask, unsigned int order)
+ 	return __alloc_pages(gfp_mask, order, nid, NULL);
  }
- EXPORT_SYMBOL(redirty_page_for_writepage);
-+
-+void lru_cache_add(struct page *page)
+ 
++static inline
++struct folio *__folio_alloc_node(gfp_t gfp, unsigned int order, int nid)
 +{
-+	folio_add_lru(page_folio(page));
++	VM_BUG_ON(nid < 0 || nid >= MAX_NUMNODES);
++	VM_WARN_ON((gfp & __GFP_THISNODE) && !node_online(nid));
++
++	return __folio_alloc(gfp, order, nid, NULL);
 +}
-+EXPORT_SYMBOL(lru_cache_add);
-diff --git a/mm/swap.c b/mm/swap.c
-index 89d4471ceb80..6f382abeccf9 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -459,29 +459,29 @@ void folio_mark_accessed(struct folio *folio)
- EXPORT_SYMBOL(folio_mark_accessed);
++
+ /*
+  * Allocate pages, preferring the node given as nid. When nid == NUMA_NO_NODE,
+  * prefer the current CPU's closest node. Otherwise node must be valid and
+@@ -580,6 +591,7 @@ static inline struct page *alloc_pages_node(int nid, gfp_t gfp_mask,
  
- /**
-- * lru_cache_add - add a page to a page list
-- * @page: the page to be added to the LRU.
-+ * folio_add_lru - Add a folio to an LRU list.
-+ * @folio: The folio to be added to the LRU.
-  *
-- * Queue the page for addition to the LRU via pagevec. The decision on whether
-+ * Queue the folio for addition to the LRU. The decision on whether
-  * to add the page to the [in]active [file|anon] list is deferred until the
-- * pagevec is drained. This gives a chance for the caller of lru_cache_add()
-- * have the page added to the active list using mark_page_accessed().
-+ * pagevec is drained. This gives a chance for the caller of folio_add_lru()
-+ * have the folio added to the active list using folio_mark_accessed().
-  */
--void lru_cache_add(struct page *page)
-+void folio_add_lru(struct folio *folio)
+ #ifdef CONFIG_NUMA
+ struct page *alloc_pages(gfp_t gfp, unsigned int order);
++struct folio *folio_alloc(gfp_t gfp, unsigned order);
+ extern struct page *alloc_pages_vma(gfp_t gfp_mask, int order,
+ 			struct vm_area_struct *vma, unsigned long addr,
+ 			int node, bool hugepage);
+@@ -590,6 +602,10 @@ static inline struct page *alloc_pages(gfp_t gfp_mask, unsigned int order)
  {
- 	struct pagevec *pvec;
- 
--	VM_BUG_ON_PAGE(PageActive(page) && PageUnevictable(page), page);
--	VM_BUG_ON_PAGE(PageLRU(page), page);
-+	VM_BUG_ON_FOLIO(folio_test_active(folio) && folio_test_unevictable(folio), folio);
-+	VM_BUG_ON_FOLIO(folio_test_lru(folio), folio);
- 
--	get_page(page);
-+	folio_get(folio);
- 	local_lock(&lru_pvecs.lock);
- 	pvec = this_cpu_ptr(&lru_pvecs.lru_add);
--	if (pagevec_add_and_need_flush(pvec, page))
-+	if (pagevec_add_and_need_flush(pvec, &folio->page))
- 		__pagevec_lru_add(pvec);
- 	local_unlock(&lru_pvecs.lock);
+ 	return alloc_pages_node(numa_node_id(), gfp_mask, order);
  }
--EXPORT_SYMBOL(lru_cache_add);
-+EXPORT_SYMBOL(folio_add_lru);
++static inline struct folio *folio_alloc(gfp_t gfp, unsigned int order)
++{
++	return __folio_alloc_node(gfp, order, numa_node_id());
++}
+ #define alloc_pages_vma(gfp_mask, order, vma, addr, node, false)\
+ 	alloc_pages(gfp_mask, order)
+ #define alloc_hugepage_vma(gfp_mask, vma, addr, order) \
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index e32360e90274..95d0cf05f7ca 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2249,6 +2249,16 @@ struct page *alloc_pages(gfp_t gfp, unsigned order)
+ }
+ EXPORT_SYMBOL(alloc_pages);
  
- /**
-  * lru_cache_add_inactive_or_unevictable
++struct folio *folio_alloc(gfp_t gfp, unsigned order)
++{
++	struct page *page = alloc_pages(gfp | __GFP_COMP, order);
++
++	if (page && order > 1)
++		prep_transhuge_page(page);
++	return (struct folio *)page;
++}
++EXPORT_SYMBOL(folio_alloc);
++
+ int vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *dst)
+ {
+ 	struct mempolicy *pol = mpol_dup(vma_policy(src));
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d72a0d9d4184..d03145671934 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5399,6 +5399,18 @@ struct page *__alloc_pages(gfp_t gfp, unsigned int order, int preferred_nid,
+ }
+ EXPORT_SYMBOL(__alloc_pages);
+ 
++struct folio *__folio_alloc(gfp_t gfp, unsigned int order, int preferred_nid,
++		nodemask_t *nodemask)
++{
++	struct page *page = __alloc_pages(gfp | __GFP_COMP, order,
++			preferred_nid, nodemask);
++
++	if (page && order > 1)
++		prep_transhuge_page(page);
++	return (struct folio *)page;
++}
++EXPORT_SYMBOL(__folio_alloc);
++
+ /*
+  * Common helper functions. Never use with __GFP_HIGHMEM because the returned
+  * address cannot represent highmem pages. Use alloc_pages and then kmap if
 -- 
 2.30.2
 
