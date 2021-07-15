@@ -2,110 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89E783CAE30
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 22:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ACA53CAE5B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 23:09:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbhGOVCM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 17:02:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35534 "EHLO mail.kernel.org"
+        id S229786AbhGOVMA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 17:12:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229459AbhGOVCM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 17:02:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3DCC5613DB;
-        Thu, 15 Jul 2021 20:59:18 +0000 (UTC)
+        id S229566AbhGOVL7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Jul 2021 17:11:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6F4C2613C3;
+        Thu, 15 Jul 2021 21:09:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626382758;
-        bh=0EucBWjY29MULPwrccvkBApnBg2v72BlT6IHmjKghlU=;
+        s=k20201202; t=1626383345;
+        bh=MAxyyVaKY3GD4cnJ4LiMPgmv/Rs15AJKqkGtsFTJAg8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=joTNieRPj8cS/TGFOPAPhkb0rc9ZVr8napBQt9m85+2DQVUkowqVmvDOze7153qj1
-         HwrO7MKTkSZYRtu0Fh8IcYTzQTlu8KHQ+da6BxpBW42CojKDcIF8bIXo9BYmlYYDJU
-         AdILwiATZR4GYeTsCuEjyn7slVojO/WznHrA/HAxvEeDfdwodC0ywidsZP93BlE/pz
-         owf/ZdXd4Y+8dQglmE/CefBkqmy/SBsrTBWaVcMwzwzbL3qsSklLSfdNeaY/T0Xn8f
-         lsiiImBzEYzHe+E/wGlkAlm6oO5Ui2DT0iBCvJLS3BgHZWiQMSSWYIsCOnXr+w6CJX
-         aoDJRiBBG53Vg==
-Date:   Thu, 15 Jul 2021 13:59:17 -0700
+        b=ObZm+IkXPYqHsR2V/ZesMW3EEKhaKW+5K4vQu2sx7bgk8VlptKZND3iPiwHId9uSy
+         tfiBUuPxoZdr78FiiJAEitUwugWuO2suLRx7QZY67iq9nKwZJh4AFJ3967Yw5iZLCz
+         xBNA+EkGd4vv8JUA3kcQZe4/e31DsBsfdakHJALprCDX2Yxwixhzq9XlBlZYUxrdhb
+         WaS82tr6A/q+um43dMWfMk0RG7drqXaJsgPW81lXLCwzh5Y9Plu4JH+bGJkeKiTnXu
+         kw2Wr2Gw84Xdcj1vKhT7/au1Yu94JBeM0HEE3C8MdHJZ5BRras5ZS+WTNSAAO5XuTR
+         rjdJBJ6t8CQYg==
+Date:   Thu, 15 Jul 2021 14:09:04 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 090/138] block: Add bio_add_folio()
-Message-ID: <20210715205917.GC22357@magnolia>
+Subject: Re: [PATCH v14 092/138] iomap: Convert to_iomap_page to take a folio
+Message-ID: <20210715210904.GD22357@magnolia>
 References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-91-willy@infradead.org>
+ <20210715033704.692967-93-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210715033704.692967-91-willy@infradead.org>
+In-Reply-To: <20210715033704.692967-93-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 04:36:16AM +0100, Matthew Wilcox (Oracle) wrote:
-> This is a thin wrapper around bio_add_page().  The main advantage here
-> is the documentation that the submitter can expect to see folios in the
-> completion handler, and that stupidly large folios are not supported.
-> It's not currently possible to allocate stupidly large folios, but if
-> it ever becomes possible, this function will fail gracefully instead of
-> doing I/O to the wrong bytes.
+On Thu, Jul 15, 2021 at 04:36:18AM +0100, Matthew Wilcox (Oracle) wrote:
+> The big comment about only using a head page can go away now that
+> it takes a folio argument.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  block/bio.c         | 21 +++++++++++++++++++++
->  include/linux/bio.h |  3 ++-
->  2 files changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/block/bio.c b/block/bio.c
-> index 1fab762e079b..1b500611d25c 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -933,6 +933,27 @@ int bio_add_page(struct bio *bio, struct page *page,
->  }
->  EXPORT_SYMBOL(bio_add_page);
->  
-> +/**
-> + * bio_add_folio - Attempt to add part of a folio to a bio.
-> + * @bio: Bio to add to.
-> + * @folio: Folio to add.
-> + * @len: How many bytes from the folio to add.
-> + * @off: First byte in this folio to add.
-> + *
-> + * Always uses the head page of the folio in the bio.  If a submitter
-> + * only uses bio_add_folio(), it can count on never seeing tail pages
-> + * in the completion routine.  BIOs do not support folios larger than 2GiB.
-> + *
-> + * Return: The number of bytes from this folio added to the bio.
-> + */
-> +size_t bio_add_folio(struct bio *bio, struct folio *folio, size_t len,
-> +		size_t off)
-> +{
-> +	if (len > UINT_MAX || off > UINT_MAX)
 
-Er... if bios don't support folios larger than 2GB, then why check @off
-and @len against UINT_MAX, which is ~4GB?
+Looks decent to me,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
-> +		return 0;
-> +	return bio_add_page(bio, &folio->page, len, off);
-> +}
-> +
->  void bio_release_pages(struct bio *bio, bool mark_dirty)
->  {
->  	struct bvec_iter_all iter_all;
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 2203b686e1f0..ade93e2de6a1 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -462,7 +462,8 @@ extern void bio_uninit(struct bio *);
->  extern void bio_reset(struct bio *);
->  void bio_chain(struct bio *, struct bio *);
+> ---
+>  fs/iomap/buffered-io.c | 35 +++++++++++++++++------------------
+>  1 file changed, 17 insertions(+), 18 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 41da4f14c00b..cd5c2f24cb7e 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -22,8 +22,8 @@
+>  #include "../internal.h"
 >  
-> -extern int bio_add_page(struct bio *, struct page *, unsigned int,unsigned int);
-> +int bio_add_page(struct bio *, struct page *, unsigned len, unsigned off);
-> +size_t bio_add_folio(struct bio *, struct folio *, size_t len, size_t off);
->  extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
->  			   unsigned int, unsigned int);
->  int bio_add_zone_append_page(struct bio *bio, struct page *page,
+>  /*
+> - * Structure allocated for each page or THP when block size < page size
+> - * to track sub-page uptodate status and I/O completions.
+> + * Structure allocated for each folio when block size < folio size
+> + * to track sub-folio uptodate status and I/O completions.
+>   */
+>  struct iomap_page {
+>  	atomic_t		read_bytes_pending;
+> @@ -32,17 +32,10 @@ struct iomap_page {
+>  	unsigned long		uptodate[];
+>  };
+>  
+> -static inline struct iomap_page *to_iomap_page(struct page *page)
+> +static inline struct iomap_page *to_iomap_page(struct folio *folio)
+>  {
+> -	/*
+> -	 * per-block data is stored in the head page.  Callers should
+> -	 * not be dealing with tail pages (and if they are, they can
+> -	 * call thp_head() first.
+> -	 */
+> -	VM_BUG_ON_PGFLAGS(PageTail(page), page);
+> -
+> -	if (page_has_private(page))
+> -		return (struct iomap_page *)page_private(page);
+> +	if (folio_test_private(folio))
+> +		return folio_get_private(folio);
+>  	return NULL;
+>  }
+>  
+> @@ -51,7 +44,8 @@ static struct bio_set iomap_ioend_bioset;
+>  static struct iomap_page *
+>  iomap_page_create(struct inode *inode, struct page *page)
+>  {
+> -	struct iomap_page *iop = to_iomap_page(page);
+> +	struct folio *folio = page_folio(page);
+> +	struct iomap_page *iop = to_iomap_page(folio);
+>  	unsigned int nr_blocks = i_blocks_per_page(inode, page);
+>  
+>  	if (iop || nr_blocks <= 1)
+> @@ -144,7 +138,8 @@ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
+>  static void
+>  iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned len)
+>  {
+> -	struct iomap_page *iop = to_iomap_page(page);
+> +	struct folio *folio = page_folio(page);
+> +	struct iomap_page *iop = to_iomap_page(folio);
+>  	struct inode *inode = page->mapping->host;
+>  	unsigned first = off >> inode->i_blkbits;
+>  	unsigned last = (off + len - 1) >> inode->i_blkbits;
+> @@ -173,7 +168,8 @@ static void
+>  iomap_read_page_end_io(struct bio_vec *bvec, int error)
+>  {
+>  	struct page *page = bvec->bv_page;
+> -	struct iomap_page *iop = to_iomap_page(page);
+> +	struct folio *folio = page_folio(page);
+> +	struct iomap_page *iop = to_iomap_page(folio);
+>  
+>  	if (unlikely(error)) {
+>  		ClearPageUptodate(page);
+> @@ -433,7 +429,8 @@ int
+>  iomap_is_partially_uptodate(struct page *page, unsigned long from,
+>  		unsigned long count)
+>  {
+> -	struct iomap_page *iop = to_iomap_page(page);
+> +	struct folio *folio = page_folio(page);
+> +	struct iomap_page *iop = to_iomap_page(folio);
+>  	struct inode *inode = page->mapping->host;
+>  	unsigned len, first, last;
+>  	unsigned i;
+> @@ -1011,7 +1008,8 @@ static void
+>  iomap_finish_page_writeback(struct inode *inode, struct page *page,
+>  		int error, unsigned int len)
+>  {
+> -	struct iomap_page *iop = to_iomap_page(page);
+> +	struct folio *folio = page_folio(page);
+> +	struct iomap_page *iop = to_iomap_page(folio);
+>  
+>  	if (error) {
+>  		SetPageError(page);
+> @@ -1304,7 +1302,8 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>  		struct writeback_control *wbc, struct inode *inode,
+>  		struct page *page, u64 end_offset)
+>  {
+> -	struct iomap_page *iop = to_iomap_page(page);
+> +	struct folio *folio = page_folio(page);
+> +	struct iomap_page *iop = to_iomap_page(folio);
+>  	struct iomap_ioend *ioend, *next;
+>  	unsigned len = i_blocksize(inode);
+>  	u64 file_offset; /* file offset of page */
 > -- 
 > 2.30.2
 > 
