@@ -2,105 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A9A493CAEF4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 00:10:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A1D43CAEF6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 00:11:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229810AbhGOWNM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 18:13:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51620 "EHLO mail.kernel.org"
+        id S231871AbhGOWOT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 18:14:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230314AbhGOWNM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 18:13:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B54936127C;
-        Thu, 15 Jul 2021 22:10:18 +0000 (UTC)
+        id S229927AbhGOWOT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Jul 2021 18:14:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 49D436117A;
+        Thu, 15 Jul 2021 22:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626387018;
-        bh=DL1+EY8Up3dbdkcsy7P1QWytHaaB0X9T2s1KQsnZABU=;
+        s=k20201202; t=1626387085;
+        bh=mU8IxQLXIJVg/zkRJqgrYqRpoPatjq8fJe0GfF1JrvE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MRSlL9xMC+YUaOuXc+MFpLlCQTPT/W/DMMt98Zqvu7y9MI4TDFZvfGq321ZcrocJV
-         qh1BxpLNgf7uFTAMB15z/Vtp8RCTcSnTXezamauzrfK6H8bRfl/o/GpzzyvN0hIGpH
-         GZfruex10UPUy3ceQNhJOT3nhLgLXCyJOrUxnJMCqQ0K20DF/rB5JLLdYg8EIe/slY
-         +qO5+27L84doDqhXxgz5TJwpy0jT1ijUlZBqGgBj8roqtJSroTIUsyXKKz9V4uf6Dp
-         XPyhnQndHvgm1jcmiuE9Rozby6zEh/Rrf8CrzSHE8ItjFG07W0eus70zBQTj83wUpt
-         j2XXFkcDdTasQ==
-Date:   Thu, 15 Jul 2021 15:10:18 -0700
+        b=IPKe3q105/TOxOYPtJTTOwkQ2S2H8ZphuTtkriYun61+2wdi0Mzgz4vXxxe7Suy2j
+         DpetdcbMIUT/px8vmMx5FzwTD8FNWp8kKVPKQe6jyJ66oDBw/1zyOL0Y1NxV1m3vt0
+         mNMLwq81F5fFiRYstSfU3z9HxuKIF+tEcYONMMyCl0c3IofjC6DzOkEhkj0kuR3whn
+         jufl3KN1egpswiqxexvZEo53XdGzhrEBNTullMAIokX6cOxaEjuiFqrMEji6Yc0XT2
+         kux9DD8+4mue5DltD1KKbi2WWp1hdBXnCmL4ufRrJ+xcX4wmOa6uWEO4ttmOcIwv+n
+         GvPpwOyxgZE4Q==
+Date:   Thu, 15 Jul 2021 15:11:25 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 128/138] iomap: Support multi-page folios in
- invalidatepage
-Message-ID: <20210715221018.GT22357@magnolia>
+Subject: Re: [PATCH v14 129/138] xfs: Support THPs
+Message-ID: <20210715221125.GU22357@magnolia>
 References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-129-willy@infradead.org>
+ <20210715033704.692967-130-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210715033704.692967-129-willy@infradead.org>
+In-Reply-To: <20210715033704.692967-130-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 04:36:54AM +0100, Matthew Wilcox (Oracle) wrote:
-> If we're punching a hole in a multi-page folio, we need to remove the
-> per-page iomap data as the folio is about to be split and each page will
-> need its own.  This means that writepage can now come across a page with
-> no iop allocated, so remove the assertion that there is already one,
-> and just create one (with the uptodate bits set) if there isn't one.
+On Thu, Jul 15, 2021 at 04:36:55AM +0100, Matthew Wilcox (Oracle) wrote:
+> There is one place which assumes the size of a page; fix it.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/xfs/xfs_aops.c  | 11 ++++++-----
+>  fs/xfs/xfs_super.c |  3 ++-
+>  2 files changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index cb4e0fcf4c76..9ffbd116592a 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -432,10 +432,11 @@ xfs_discard_page(
+>  	struct page		*page,
+>  	loff_t			fileoff)
 
-Lol, Andreas already did the bottom half of the change for you.
+/me wonders if this parameter ought to become pos like most other
+places, but as a straight-up conversion it looks fine to me.
 
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
-> ---
->  fs/iomap/buffered-io.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 48de198c5603..7f78256fc0ba 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -474,13 +474,17 @@ iomap_invalidatepage(struct page *page, unsigned int offset, unsigned int len)
->  	trace_iomap_invalidatepage(folio->mapping->host, offset, len);
->  
->  	/*
-> -	 * If we are invalidating the entire page, clear the dirty state from it
-> -	 * and release it to avoid unnecessary buildup of the LRU.
-> +	 * If we are invalidating the entire folio, clear the dirty state
-> +	 * from it and release it to avoid unnecessary buildup of the LRU.
->  	 */
->  	if (offset == 0 && len == folio_size(folio)) {
->  		WARN_ON_ONCE(folio_test_writeback(folio));
->  		folio_cancel_dirty(folio);
->  		iomap_page_release(folio);
-> +	} else if (folio_multi(folio)) {
-> +		/* Must release the iop so the page can be split */
-> +		WARN_ON_ONCE(!folio_test_uptodate(folio) && folio_test_dirty(folio));
-> +		iomap_page_release(folio);
->  	}
->  }
->  EXPORT_SYMBOL_GPL(iomap_invalidatepage);
-> @@ -1300,7 +1304,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  		struct writeback_control *wbc, struct inode *inode,
->  		struct folio *folio, loff_t end_pos)
 >  {
-> -	struct iomap_page *iop = to_iomap_page(folio);
-> +	struct iomap_page *iop = iomap_page_create(inode, folio);
->  	struct iomap_ioend *ioend, *next;
->  	unsigned len = i_blocksize(inode);
->  	unsigned nblocks = i_blocks_per_folio(inode, folio);
-> @@ -1308,7 +1312,6 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  	int error = 0, count = 0, i;
->  	LIST_HEAD(submit_list);
+> -	struct inode		*inode = page->mapping->host;
+> +	struct folio		*folio = page_folio(page);
+> +	struct inode		*inode = folio->mapping->host;
+>  	struct xfs_inode	*ip = XFS_I(inode);
+>  	struct xfs_mount	*mp = ip->i_mount;
+> -	unsigned int		pageoff = offset_in_page(fileoff);
+> +	size_t			pageoff = offset_in_folio(folio, fileoff);
+>  	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, fileoff);
+>  	xfs_fileoff_t		pageoff_fsb = XFS_B_TO_FSBT(mp, pageoff);
+>  	int			error;
+> @@ -445,14 +446,14 @@ xfs_discard_page(
 >  
-> -	WARN_ON_ONCE(nblocks > 1 && !iop);
->  	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) != 0);
+>  	xfs_alert_ratelimited(mp,
+>  		"page discard on page "PTR_FMT", inode 0x%llx, offset %llu.",
+> -			page, ip->i_ino, fileoff);
+> +			folio, ip->i_ino, fileoff);
 >  
->  	/*
+>  	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
+> -			i_blocks_per_page(inode, page) - pageoff_fsb);
+> +			i_blocks_per_folio(inode, folio) - pageoff_fsb);
+>  	if (error && !XFS_FORCED_SHUTDOWN(mp))
+>  		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
+>  out_invalidate:
+> -	iomap_invalidatepage(page, pageoff, PAGE_SIZE - pageoff);
+> +	iomap_invalidatepage(&folio->page, pageoff, folio_size(folio) - pageoff);
+>  }
+>  
+>  static const struct iomap_writeback_ops xfs_writeback_ops = {
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 2c9e26a44546..24adea02b887 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1891,7 +1891,8 @@ static struct file_system_type xfs_fs_type = {
+>  	.init_fs_context	= xfs_init_fs_context,
+>  	.parameters		= xfs_fs_parameters,
+>  	.kill_sb		= kill_block_super,
+> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | \
+> +				  FS_THP_SUPPORT,
+>  };
+>  MODULE_ALIAS_FS("xfs");
+>  
 > -- 
 > 2.30.2
 > 
