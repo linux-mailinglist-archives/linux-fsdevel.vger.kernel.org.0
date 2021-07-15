@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD2E43CAFEB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 02:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA55A3CAFD9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 02:04:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232983AbhGPAHG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 20:07:06 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:28974 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232707AbhGPAG6 (ORCPT
+        id S232586AbhGPAGz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 20:06:55 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:11421 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232499AbhGPAGy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 20:06:58 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210716000403epoutp03e58c850e5e19e9c6432073ed7a8c4d98~SHJVjssfP0464104641epoutp03X
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jul 2021 00:04:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210716000403epoutp03e58c850e5e19e9c6432073ed7a8c4d98~SHJVjssfP0464104641epoutp03X
+        Thu, 15 Jul 2021 20:06:54 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210716000357epoutp0270ea10c2353a90f99ff38d09d559e8c3~SHJP2fcGJ1074510745epoutp020
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jul 2021 00:03:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210716000357epoutp0270ea10c2353a90f99ff38d09d559e8c3~SHJP2fcGJ1074510745epoutp020
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1626393843;
-        bh=wAQt2fUaE5bfLKSZFrxGtQ7xf52CbM989EE+omtBaj8=;
+        s=mail20170921; t=1626393837;
+        bh=YFLSrUXx6/13cRr5mZe3XXsWwcu7cmjgDv+ySjZOHYE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UC2rAbp2ZxdGIvv7QLsq2/gYFc8hKL/nfA7TKUxjOOXLymeYA2HCNnbjzaCKvsssy
-         BiWIrxyPKG26hqLAdMfo6ols6AhB9jXCw2k93+pWsSfQ9n3tyUuK7Q/zvO8coLeGhd
-         Bx4owdCxPzWO5C2hgS/8V/ivz4wJxx+YvXAHrT7s=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        b=L28VQHRmLpPcsoO8TjBBkBPVdnd0ncs8SqLVg0/23F5w8OqoVXwTV3aMamaZod64o
+         ebTEHIopJegI3k3nLAI7yK+nZorc/Q4JfUPoizaRBWdNp81phfjAKv4ntED2LgUJU7
+         cnnnnnbwp0h2a1NJv/9SL+bheAGD+PmLTmXWq61U=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
         epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210716000354epcas1p183b53032149214e496cec35821ee3ba4~SHJNaqW_K2663626636epcas1p18;
-        Fri, 16 Jul 2021 00:03:54 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4GQs0T2vndz4x9QH; Fri, 16 Jul
-        2021 00:03:53 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        20210716000353epcas1p1c4095b2fc9782121daabbfc0d4e19037~SHJMudNzZ0646506465epcas1p1d;
+        Fri, 16 Jul 2021 00:03:53 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4GQs0S5nwsz4x9Q4; Fri, 16 Jul
+        2021 00:03:52 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
         epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        15.0E.13454.9ECC0F06; Fri, 16 Jul 2021 09:03:53 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20210716000348epcas1p4e6911b697bb4ebbc51880ff0cdd8bd04~SHJHyr-1Y0587105871epcas1p4E;
-        Fri, 16 Jul 2021 00:03:48 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210716000348epsmtrp1389077f91b38439680a7b0a4f441c7b5~SHJHxxARv2134121341epsmtrp1B;
-        Fri, 16 Jul 2021 00:03:48 +0000 (GMT)
-X-AuditID: b6c32a39-16fff7000002348e-cb-60f0cce93490
+        B3.0E.13454.8ECC0F06; Fri, 16 Jul 2021 09:03:52 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210716000349epcas1p1062a5e54cb3adda3c3ca23b933acffee~SHJIf1BxJ1420814208epcas1p1G;
+        Fri, 16 Jul 2021 00:03:49 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210716000349epsmtrp202c09f12f6416c0827e4bed5ed4b9ec1~SHJIevq_g1353413534epsmtrp2n;
+        Fri, 16 Jul 2021 00:03:49 +0000 (GMT)
+X-AuditID: b6c32a39-185ff7000002348e-c8-60f0cce8be6b
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        18.FA.08394.4ECC0F06; Fri, 16 Jul 2021 09:03:48 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1C.8E.08289.5ECC0F06; Fri, 16 Jul 2021 09:03:49 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.89.31.111]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210716000348epsmtip285167e1051fefd2464b45ac12f454912~SHJHfVEN11854418544epsmtip2j;
-        Fri, 16 Jul 2021 00:03:48 +0000 (GMT)
+        20210716000349epsmtip2310e355effe4d4fbbd73292cd8dde63e~SHJINjype1664016640epsmtip2R;
+        Fri, 16 Jul 2021 00:03:49 +0000 (GMT)
 From:   Namjae Jeon <namjae.jeon@samsung.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-cifs@vger.kernel.org
@@ -59,60 +59,60 @@ Cc:     linux-cifsd-devel@lists.sourceforge.net, aurelien.aptel@gmail.com,
         christian@brauner.io, smfrench@gmail.com, hyc.lee@gmail.com,
         Namjae Jeon <namjae.jeon@samsung.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH v6 02/13] ksmbd: add server handler
-Date:   Fri, 16 Jul 2021 08:53:45 +0900
-Message-Id: <20210715235356.3191-3-namjae.jeon@samsung.com>
+Subject: [PATCH v6 03/13] ksmbd: add tcp transport layer
+Date:   Fri, 16 Jul 2021 08:53:46 +0900
+Message-Id: <20210715235356.3191-4-namjae.jeon@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210715235356.3191-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmge7LMx8SDP6cFLQ4/vovu0XjO2WL
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUxbVRT3vte+lrnqW4Ht2iWDPTInHdCW0nJRWDTi9oxO2QbRmCzlhb4U
+        tn7ZFgRGYjGZjGby4UxwyDdxzo7pRhsGxS5L2cRO5gQ3BjicOhc6kO8McAyxpUX975xzfx/n
+        nHv4uNBJiPh5egtr0jNaitjA6eiJlcT7+maypV/d3ol6J1Z4qHQqBk38XcNB31e1YOjLs1cx
+        NHh3mod8qy4c/bW6CNA3bi8H/eSqI9BSzfvoo4o5Ljp2U4y6L7QQ6E9fD4FGqhsJdGOll4uW
+        l+qIF4X0Sv0sTn9m7efQXbWjPNpxRkx3N81jdPewlaCPda7w6Nn7Ixy6wmkHtLP1N4yeb99G
+        t/8xiWVsfEebmssyatYUzepzDOo8vSaNeu2g6mWVQimVxctSUDIVrWd0bBqV/npG/J48rX84
+        KrqA0eb7SxmM2UxJdqeaDPkWNjrXYLakUaxRrTXKpMYEM6Mz5+s1CTkG3fMyqTRR4Udma3MX
+        P20BxukyrNA19wXXCn6+BWwgjA/JJGh1N3BsYANfSHYC6Dk3jgeTOQCX79h4wWQeQMfJR7x1
+        Sn1VfwjlAtA+u0r8S5mtuOYX5vMJchd87IwMECLIQ3Coc2KNgJM2HN6/24cFHsJJBPuvfYAH
+        8BxyBywdjAqUBeQL8NSqkwiaRcGz5y/jgTiMTIX3vAsgoAPJPj68eHJ9iHS44B4PEcLheK8z
+        1KkIzk+5Q/X34HfeR1gwLoHnGy7xAr6QlMMTPksgxMlY+LVLEkRsh13L9WvqOPkUnHp4ghtE
+        C+DxD4VByA5YMdATEtwKbWUzIVMa/vBrKRbcSCWAXeN1vCqwrfY/hyYA7GAzazTrNKxZZlT8
+        /8vawdr5ilM6Qc3kTIIHYHzgAZCPUxGCzxMns4UCNVNUzJoMKlO+ljV7gMK/umpcFJlj8N+/
+        3qKSKRLlcjlKUiYrFXJqi6CL8GQLSQ1jYY+wrJE1rfMwfpjIim22Fgkv875dOB5XoMW6BZ6y
+        q8qKB0O7i680cG8lL0mymsN3WtMLUpjDquZGYXHH9J5DWe/CgzFjo75fFpNiNo1FOmbPJO6/
+        OZrhVb95YCv3SdJwPW6XvXxpWvpM9Wn5S5nDWXubk7od9OFGXe1eVjQ1esTzYxYvcQDbpLxd
+        IxCfEpQs0MrFto2VGR7D0ajlx4UXZU2Soaai59xu5fBpLeuIGyE7WgdUT8ztXzh3ry9Tpind
+        4sppiiho++RBQtaFfWoHSr4jLBSUDzSXvDXmzS/fF9V//eGiZyr2RiZ14I2jV55tWfpYLKkE
+        7kuD9t/pp+0iHfCFg1dsrdSrura3t1Mccy4jE+MmM/MPlr+nGkcEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLLMWRmVeSWpSXmKPExsWy7bCSvO7TMx8SDLbO4bM4/vovu0XjO2WL
         1/+ms1icnrCIyWLl6qNMFtfuv2e3ePF/F7PFz//fGS327D3JYnF51xw2ix/T6y16+z6xWrRe
         0bLYvXERm8WbF4fZLG5NnM9mcf7vcVaL3z/msDkIefyd+5HZY3bDRRaPnbPusntsXqHlsXvB
-        ZyaP3Tcb2Dxad/xl9/j49BaLR9+WVYweWxY/ZPL4vEnOY9OTt0wBPFE5NhmpiSmpRQqpecn5
-        KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAzykplCXmlAKFAhKLi5X07WyK
-        8ktLUhUy8otLbJVSC1JyCgwNCvSKE3OLS/PS9ZLzc60MDQyMTIEqE3IyFp1qYixYuoyp4uXj
-        tYwNjJffMXYxcnJICJhIbDx6DMjm4hAS2MEo8fDaRTYI5xOjxM/Nl6Ay3xglLr47xgTTsvzX
-        AjYQW0hgL6PE3QtyEDZQx6vztl2MHBxsAtoSf7aIgoRFBGIlbux4zQwyh1mgi1ni6f0zYHOE
-        BYwlNtz4DWazCKhKdMxbBmbzClhLTNv6lhVil7zE6g0HmEFsTgEbiccnv4EdJCFwgUPidfcr
-        qCIXiSnXJzBD2MISr45vYYewpSRe9rdB2eUSJ07+gnqgRmLDvH3sIIdKAB3R86IExGQW0JRY
-        v0sfokJRYufvueAQYhbgk3j3tYcVoppXoqNNCKJEVaLv0mGogdISXe0foBZ5SGxado8VEmz9
-        jBLN9w+yTmCUm4WwYQEj4ypGsdSC4tz01GLDAlPkGNvECE69WpY7GKe//aB3iJGJg/EQowQH
-        s5II71KjtwlCvCmJlVWpRfnxRaU5qcWHGE2BYTeRWUo0OR+Y/PNK4g1NjYyNjS1MzMzNTI2V
-        xHl3sh1KEBJITyxJzU5NLUgtgulj4uCUamBaVc3yWL28sC/jUUPjxao5NecnsisoLIyoiTWK
-        uFQk8cLcOSAuIeKkpOODcB/OvsMvZBefP6JZc63rwuxJLd1PfqwomnPk3PGjgSLHzmhei62J
-        fDVpcWfYJzbmw9uDnl7evsTrW86LY03Xa7gncdVvX9rVxBZ4+62ZXXjqA4sUl/X6+3qvaumv
-        9Ut5+stw/a/166UPRUlum/FoYZOMW3rt/RKG4qs6oRfEPXKulc47fEpf0ExM+ZXbBU+9CIH2
-        3G2+kwR+HhW9KDPZUIB7hfYLedeb4kI8h45xH8m1yFlZlZl6k8/8yyXRGXsL8s8ULxTOWn/9
-        4Dn/m+/3MQa8+eek8Lar19q3+b3KgwRWzgAlluKMREMt5qLiRADLg9hpRgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLLMWRmVeSWpSXmKPExsWy7bCSvO6TMx8SDBpuS1scf/2X3aLxnbLF
-        63/TWSxOT1jEZLFy9VEmi2v337NbvPi/i9ni5//vjBZ79p5ksbi8aw6bxY/p9Ra9fZ9YLVqv
-        aFns3riIzeLNi8NsFrcmzmezOP/3OKvF7x9z2ByEPP7O/cjsMbvhIovHzll32T02r9Dy2L3g
-        M5PH7psNbB6tO/6ye3x8eovFo2/LKkaPLYsfMnl83iTnsenJW6YAnigum5TUnMyy1CJ9uwSu
-        jEWnmhgLli5jqnj5eC1jA+Pld4xdjJwcEgImEst/LWDrYuTiEBLYzSjRtWo/E0RCWuLYiTPM
-        XYwcQLawxOHDxSBhIYEPjBKb5peAhNkEtCX+bBEFCYsIxEvcbLjNAjKGWWAOs8TOjUfA5gsL
-        GEtsuPEbbCSLgKpEx7xlYDavgLXEtK1vWSFWyUus3nCAGcTmFLCReHzyGyPELmuJ9Ws2sExg
-        5FvAyLCKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4RrQ0dzBuX/VB7xAjEwfjIUYJ
-        DmYlEd6lRm8ThHhTEiurUovy44tKc1KLDzFKc7AoifNe6DoZLySQnliSmp2aWpBaBJNl4uCU
-        amBy0A8Kc5hwY+aua16prj0NtR6/PIJ3LlUK+y691DI7WO/UJ1muCXZM/Sl7H5532+nzXyvt
-        zgTlU3P2xwTGPJest+BYn/5uTpT8pgv6H+W2zNk8NVB2PZd67dZFmrbm+yqVE65ozWOS6Llx
-        f9fVd9mbrl/84nHVeqsL8/Ib2wqn+n52XnBpQW5nqMaGtXVCep/+OrJrTo+JfhC995/jl3cP
-        ZhrHbddfHyTd1Sj56Gjm45tG1YJbt0bcf7na4OaXls5XqUunMSw9GsP8MMl/bse0J4fPX5m7
-        bqadSBDLVusAllbeps7j3779Z6pLnM4d2CLonB0xy/Abm5NHY8wGMy/h3V5fPocf2Z7MNv+w
-        xwUdJZbijERDLeai4kQAmYpr8AADAAA=
-X-CMS-MailID: 20210716000348epcas1p4e6911b697bb4ebbc51880ff0cdd8bd04
+        ZyaP3Tcb2Dxad/xl9/j49BaLR9+WVYweWxY/ZPL4vEnOY9OTt0wBPFFcNimpOZllqUX6dglc
+        Gd9nLGIseN/OVLHr03LWBsbbVxm7GDk5JARMJOZOuMjcxcjFISSwg1Hi5c0eqIS0xLETZ4AS
+        HEC2sMThw8UQNR8YJXau+gcWZxPQlvizRRSkXEQgXuJmw20WkBpmgTnMEjs3HgGbIyxgIXHx
+        VBNYPYuAqkTjNXmQMK+AtcTM/1vYIFbJS6zecIAZxOYUsJF4fPIbWKsQUM36NRtYJjDyLWBk
+        WMUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERwjWlo7GPes+qB3iJGJg/EQowQHs5II
+        71KjtwlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeS90nYwXEkhPLEnNTk0tSC2CyTJxcEo1ME2J
+        tUrYpyNRVDjvxOmNd5qibE6u/md0N+o1/6Ym99urO6wdc35eeTTf0/lzwssJ/+ZwP0/gKO5b
+        rdo5M6pnX/qRjtMZ5qtenN+wrjRGRfM2bxAn69+CRQ2b972Zlhpp/zr3+h0764rLS7pMsreI
+        OHz5+uBIksmsspbXfQ8553yyna927X5P1wdOn4WTlVrMXiUcbN9S26Nq67eFcc3ELbJ/GI02
+        M3k9+mPWUa1xX4P5WEPxpUu+zEeO9HcXHomeuq9mygxx7jd7nPLED2z5tu+C2JHkDzlnZk8Q
+        qL82w7akdp3bXa+ir/0z63w2h3/aPu0He+3e9OUzzDZkPK22uhWoNCvnglL/UybHeZ0MJS5K
+        LMUZiYZazEXFiQCpyCloAAMAAA==
+X-CMS-MailID: 20210716000349epcas1p1062a5e54cb3adda3c3ca23b933acffee
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210716000348epcas1p4e6911b697bb4ebbc51880ff0cdd8bd04
+X-CMS-RootMailID: 20210716000349epcas1p1062a5e54cb3adda3c3ca23b933acffee
 References: <20210715235356.3191-1-namjae.jeon@samsung.com>
-        <CGME20210716000348epcas1p4e6911b697bb4ebbc51880ff0cdd8bd04@epcas1p4.samsung.com>
+        <CGME20210716000349epcas1p1062a5e54cb3adda3c3ca23b933acffee@epcas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds server handler for central processing.
+This adds tcp transport layer.
 
 Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
@@ -120,1400 +120,1296 @@ Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
 Acked-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
 ---
- fs/ksmbd/glob.h          |  49 +++
- fs/ksmbd/ksmbd_netlink.h | 395 ++++++++++++++++++++++++
- fs/ksmbd/ksmbd_work.c    |  80 +++++
- fs/ksmbd/ksmbd_work.h    | 117 ++++++++
- fs/ksmbd/server.c        | 633 +++++++++++++++++++++++++++++++++++++++
- fs/ksmbd/server.h        |  70 +++++
- 6 files changed, 1344 insertions(+)
- create mode 100644 fs/ksmbd/glob.h
- create mode 100644 fs/ksmbd/ksmbd_netlink.h
- create mode 100644 fs/ksmbd/ksmbd_work.c
- create mode 100644 fs/ksmbd/ksmbd_work.h
- create mode 100644 fs/ksmbd/server.c
- create mode 100644 fs/ksmbd/server.h
+ fs/ksmbd/connection.c    | 413 ++++++++++++++++++++++++++
+ fs/ksmbd/connection.h    | 211 +++++++++++++
+ fs/ksmbd/transport_tcp.c | 619 +++++++++++++++++++++++++++++++++++++++
+ fs/ksmbd/transport_tcp.h |  13 +
+ 4 files changed, 1256 insertions(+)
+ create mode 100644 fs/ksmbd/connection.c
+ create mode 100644 fs/ksmbd/connection.h
+ create mode 100644 fs/ksmbd/transport_tcp.c
+ create mode 100644 fs/ksmbd/transport_tcp.h
 
-diff --git a/fs/ksmbd/glob.h b/fs/ksmbd/glob.h
+diff --git a/fs/ksmbd/connection.c b/fs/ksmbd/connection.c
 new file mode 100644
-index 000000000000..49a5a3afa118
+index 000000000000..d7ee0bfb5838
 --- /dev/null
-+++ b/fs/ksmbd/glob.h
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ *   Copyright (C) 2016 Namjae Jeon <linkinjeon@kernel.org>
-+ *   Copyright (C) 2018 Samsung Electronics Co., Ltd.
-+ */
-+
-+#ifndef __KSMBD_GLOB_H
-+#define __KSMBD_GLOB_H
-+
-+#include <linux/ctype.h>
-+
-+#include "unicode.h"
-+#include "vfs_cache.h"
-+
-+#define KSMBD_VERSION	"3.1.9"
-+
-+extern int ksmbd_debug_types;
-+
-+#define KSMBD_DEBUG_SMB		BIT(0)
-+#define KSMBD_DEBUG_AUTH	BIT(1)
-+#define KSMBD_DEBUG_VFS		BIT(2)
-+#define KSMBD_DEBUG_OPLOCK      BIT(3)
-+#define KSMBD_DEBUG_IPC         BIT(4)
-+#define KSMBD_DEBUG_CONN        BIT(5)
-+#define KSMBD_DEBUG_RDMA        BIT(6)
-+#define KSMBD_DEBUG_ALL         (KSMBD_DEBUG_SMB | KSMBD_DEBUG_AUTH |	\
-+				KSMBD_DEBUG_VFS | KSMBD_DEBUG_OPLOCK |	\
-+				KSMBD_DEBUG_IPC | KSMBD_DEBUG_CONN |	\
-+				KSMBD_DEBUG_RDMA)
-+
-+#ifdef pr_fmt
-+#undef pr_fmt
-+#endif
-+
-+#ifdef SUBMOD_NAME
-+#define pr_fmt(fmt)	"ksmbd: " SUBMOD_NAME ": " fmt
-+#else
-+#define pr_fmt(fmt)	"ksmbd: " fmt
-+#endif
-+
-+#define ksmbd_debug(type, fmt, ...)				\
-+	do {							\
-+		if (ksmbd_debug_types & KSMBD_DEBUG_##type)	\
-+			pr_info(fmt, ##__VA_ARGS__);		\
-+	} while (0)
-+
-+#define UNICODE_LEN(x)		((x) * 2)
-+
-+#endif /* __KSMBD_GLOB_H */
-diff --git a/fs/ksmbd/ksmbd_netlink.h b/fs/ksmbd/ksmbd_netlink.h
-new file mode 100644
-index 000000000000..2fbe2bc1e093
---- /dev/null
-+++ b/fs/ksmbd/ksmbd_netlink.h
-@@ -0,0 +1,395 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ *   Copyright (C) 2018 Samsung Electronics Co., Ltd.
-+ *
-+ *   linux-ksmbd-devel@lists.sourceforge.net
-+ */
-+
-+#ifndef _LINUX_KSMBD_SERVER_H
-+#define _LINUX_KSMBD_SERVER_H
-+
-+#include <linux/types.h>
-+
-+/*
-+ * This is a userspace ABI to communicate data between ksmbd and user IPC
-+ * daemon using netlink. This is added to track and cache user account DB
-+ * and share configuration info from userspace.
-+ *
-+ *  - KSMBD_EVENT_HEARTBEAT_REQUEST(ksmbd_heartbeat)
-+ *    This event is to check whether user IPC daemon is alive. If user IPC
-+ *    daemon is dead, ksmbd keep existing connection till disconnecting and
-+ *    new connection will be denied.
-+ *
-+ *  - KSMBD_EVENT_STARTING_UP(ksmbd_startup_request)
-+ *    This event is to receive the information that initializes the ksmbd
-+ *    server from the user IPC daemon and to start the server. The global
-+ *    section parameters are given from smb.conf as initialization
-+ *    information.
-+ *
-+ *  - KSMBD_EVENT_SHUTTING_DOWN(ksmbd_shutdown_request)
-+ *    This event is to shutdown ksmbd server.
-+ *
-+ *  - KSMBD_EVENT_LOGIN_REQUEST/RESPONSE(ksmbd_login_request/response)
-+ *    This event is to get user account info to user IPC daemon.
-+ *
-+ *  - KSMBD_EVENT_SHARE_CONFIG_REQUEST/RESPONSE(ksmbd_share_config_request/response)
-+ *    This event is to get net share configuration info.
-+ *
-+ *  - KSMBD_EVENT_TREE_CONNECT_REQUEST/RESPONSE(ksmbd_tree_connect_request/response)
-+ *    This event is to get session and tree connect info.
-+ *
-+ *  - KSMBD_EVENT_TREE_DISCONNECT_REQUEST(ksmbd_tree_disconnect_request)
-+ *    This event is to send tree disconnect info to user IPC daemon.
-+ *
-+ *  - KSMBD_EVENT_LOGOUT_REQUEST(ksmbd_logout_request)
-+ *    This event is to send logout request to user IPC daemon.
-+ *
-+ *  - KSMBD_EVENT_RPC_REQUEST/RESPONSE(ksmbd_rpc_command)
-+ *    This event is to make DCE/RPC request like srvsvc, wkssvc, lsarpc,
-+ *    samr to be processed in userspace.
-+ *
-+ *  - KSMBD_EVENT_SPNEGO_AUTHEN_REQUEST/RESPONSE(ksmbd_spnego_authen_request/response)
-+ *    This event is to make kerberos authentication to be processed in
-+ *    userspace.
-+ */
-+
-+#define KSMBD_GENL_NAME		"SMBD_GENL"
-+#define KSMBD_GENL_VERSION		0x01
-+
-+#define KSMBD_REQ_MAX_ACCOUNT_NAME_SZ	48
-+#define KSMBD_REQ_MAX_HASH_SZ		18
-+#define KSMBD_REQ_MAX_SHARE_NAME	64
-+
-+/*
-+ * IPC heartbeat frame to check whether user IPC daemon is alive.
-+ */
-+struct ksmbd_heartbeat {
-+	__u32	handle;
-+};
-+
-+/*
-+ * Global config flags.
-+ */
-+#define KSMBD_GLOBAL_FLAG_INVALID		(0)
-+#define KSMBD_GLOBAL_FLAG_SMB2_LEASES		BIT(0)
-+#define KSMBD_GLOBAL_FLAG_SMB2_ENCRYPTION	BIT(1)
-+#define KSMBD_GLOBAL_FLAG_SMB3_MULTICHANNEL	BIT(2)
-+
-+/*
-+ * IPC request for ksmbd server startup
-+ */
-+struct ksmbd_startup_request {
-+	__u32	flags;			/* Flags for global config */
-+	__s32	signing;		/* Signing enabled */
-+	__s8	min_prot[16];		/* The minimum SMB protocol version */
-+	__s8	max_prot[16];		/* The maximum SMB protocol version */
-+	__s8	netbios_name[16];
-+	__s8	work_group[64];		/* Workgroup */
-+	__s8	server_string[64];	/* Server string */
-+	__u16	tcp_port;		/* tcp port */
-+	__u16	ipc_timeout;		/*
-+					 * specifies the number of seconds
-+					 * server will wait for the userspace to
-+					 * reply to heartbeat frames.
-+					 */
-+	__u32	deadtime;		/* Number of minutes of inactivity */
-+	__u32	file_max;		/* Limits the maximum number of open files */
-+	__u32	smb2_max_write;		/* MAX write size */
-+	__u32	smb2_max_read;		/* MAX read size */
-+	__u32	smb2_max_trans;		/* MAX trans size */
-+	__u32	share_fake_fscaps;	/*
-+					 * Support some special application that
-+					 * makes QFSINFO calls to check whether
-+					 * we set the SPARSE_FILES bit (0x40).
-+					 */
-+	__u32	sub_auth[3];		/* Subauth value for Security ID */
-+	__u32	ifc_list_sz;		/* interfaces list size */
-+	__s8	____payload[];
-+};
-+
-+#define KSMBD_STARTUP_CONFIG_INTERFACES(s)	((s)->____payload)
-+
-+/*
-+ * IPC request to shutdown ksmbd server.
-+ */
-+struct ksmbd_shutdown_request {
-+	__s32	reserved;
-+};
-+
-+/*
-+ * IPC user login request.
-+ */
-+struct ksmbd_login_request {
-+	__u32	handle;
-+	__s8	account[KSMBD_REQ_MAX_ACCOUNT_NAME_SZ]; /* user account name */
-+};
-+
-+/*
-+ * IPC user login response.
-+ */
-+struct ksmbd_login_response {
-+	__u32	handle;
-+	__u32	gid;					/* group id */
-+	__u32	uid;					/* user id */
-+	__s8	account[KSMBD_REQ_MAX_ACCOUNT_NAME_SZ]; /* user account name */
-+	__u16	status;
-+	__u16	hash_sz;			/* hash size */
-+	__s8	hash[KSMBD_REQ_MAX_HASH_SZ];	/* password hash */
-+};
-+
-+/*
-+ * IPC request to fetch net share config.
-+ */
-+struct ksmbd_share_config_request {
-+	__u32	handle;
-+	__s8	share_name[KSMBD_REQ_MAX_SHARE_NAME]; /* share name */
-+};
-+
-+/*
-+ * IPC response to the net share config request.
-+ */
-+struct ksmbd_share_config_response {
-+	__u32	handle;
-+	__u32	flags;
-+	__u16	create_mask;
-+	__u16	directory_mask;
-+	__u16	force_create_mode;
-+	__u16	force_directory_mode;
-+	__u16	force_uid;
-+	__u16	force_gid;
-+	__u32	veto_list_sz;
-+	__s8	____payload[];
-+};
-+
-+#define KSMBD_SHARE_CONFIG_VETO_LIST(s)	((s)->____payload)
-+
-+static inline char *
-+ksmbd_share_config_path(struct ksmbd_share_config_response *sc)
-+{
-+	char *p = sc->____payload;
-+
-+	if (sc->veto_list_sz)
-+		p += sc->veto_list_sz + 1;
-+
-+	return p;
-+}
-+
-+/*
-+ * IPC request for tree connection. This request include session and tree
-+ * connect info from client.
-+ */
-+struct ksmbd_tree_connect_request {
-+	__u32	handle;
-+	__u16	account_flags;
-+	__u16	flags;
-+	__u64	session_id;
-+	__u64	connect_id;
-+	__s8	account[KSMBD_REQ_MAX_ACCOUNT_NAME_SZ];
-+	__s8	share[KSMBD_REQ_MAX_SHARE_NAME];
-+	__s8	peer_addr[64];
-+};
-+
-+/*
-+ * IPC Response structure for tree connection.
-+ */
-+struct ksmbd_tree_connect_response {
-+	__u32	handle;
-+	__u16	status;
-+	__u16	connection_flags;
-+};
-+
-+/*
-+ * IPC Request struture to disconnect tree connection.
-+ */
-+struct ksmbd_tree_disconnect_request {
-+	__u64	session_id;	/* session id */
-+	__u64	connect_id;	/* tree connection id */
-+};
-+
-+/*
-+ * IPC Response structure to logout user account.
-+ */
-+struct ksmbd_logout_request {
-+	__s8	account[KSMBD_REQ_MAX_ACCOUNT_NAME_SZ]; /* user account name */
-+};
-+
-+/*
-+ * RPC command structure to send rpc request like srvsvc or wkssvc to
-+ * IPC user daemon.
-+ */
-+struct ksmbd_rpc_command {
-+	__u32	handle;
-+	__u32	flags;
-+	__u32	payload_sz;
-+	__u8	payload[];
-+};
-+
-+/*
-+ * IPC Request Kerberos authentication
-+ */
-+struct ksmbd_spnego_authen_request {
-+	__u32	handle;
-+	__u16	spnego_blob_len;	/* the length of spnego_blob */
-+	__u8	spnego_blob[0];		/*
-+					 * the GSS token from SecurityBuffer of
-+					 * SMB2 SESSION SETUP request
-+					 */
-+};
-+
-+/*
-+ * Response data which includes the GSS token and the session key generated by
-+ * user daemon.
-+ */
-+struct ksmbd_spnego_authen_response {
-+	__u32	handle;
-+	struct ksmbd_login_response login_response; /*
-+						     * the login response with
-+						     * a user identified by the
-+						     * GSS token from a client
-+						     */
-+	__u16	session_key_len; /* the length of the session key */
-+	__u16	spnego_blob_len; /*
-+				  * the length of  the GSS token which will be
-+				  * stored in SecurityBuffer of SMB2 SESSION
-+				  * SETUP response
-+				  */
-+	__u8	payload[]; /* session key + AP_REP */
-+};
-+
-+/*
-+ * This also used as NETLINK attribute type value.
-+ *
-+ * NOTE:
-+ * Response message type value should be equal to
-+ * request message type value + 1.
-+ */
-+enum ksmbd_event {
-+	KSMBD_EVENT_UNSPEC			= 0,
-+	KSMBD_EVENT_HEARTBEAT_REQUEST,
-+
-+	KSMBD_EVENT_STARTING_UP,
-+	KSMBD_EVENT_SHUTTING_DOWN,
-+
-+	KSMBD_EVENT_LOGIN_REQUEST,
-+	KSMBD_EVENT_LOGIN_RESPONSE		= 5,
-+
-+	KSMBD_EVENT_SHARE_CONFIG_REQUEST,
-+	KSMBD_EVENT_SHARE_CONFIG_RESPONSE,
-+
-+	KSMBD_EVENT_TREE_CONNECT_REQUEST,
-+	KSMBD_EVENT_TREE_CONNECT_RESPONSE,
-+
-+	KSMBD_EVENT_TREE_DISCONNECT_REQUEST	= 10,
-+
-+	KSMBD_EVENT_LOGOUT_REQUEST,
-+
-+	KSMBD_EVENT_RPC_REQUEST,
-+	KSMBD_EVENT_RPC_RESPONSE,
-+
-+	KSMBD_EVENT_SPNEGO_AUTHEN_REQUEST,
-+	KSMBD_EVENT_SPNEGO_AUTHEN_RESPONSE	= 15,
-+
-+	KSMBD_EVENT_MAX
-+};
-+
-+/*
-+ * Enumeration for IPC tree connect status.
-+ */
-+enum KSMBD_TREE_CONN_STATUS {
-+	KSMBD_TREE_CONN_STATUS_OK		= 0,
-+	KSMBD_TREE_CONN_STATUS_NOMEM,
-+	KSMBD_TREE_CONN_STATUS_NO_SHARE,
-+	KSMBD_TREE_CONN_STATUS_NO_USER,
-+	KSMBD_TREE_CONN_STATUS_INVALID_USER,
-+	KSMBD_TREE_CONN_STATUS_HOST_DENIED	= 5,
-+	KSMBD_TREE_CONN_STATUS_CONN_EXIST,
-+	KSMBD_TREE_CONN_STATUS_TOO_MANY_CONNS,
-+	KSMBD_TREE_CONN_STATUS_TOO_MANY_SESSIONS,
-+	KSMBD_TREE_CONN_STATUS_ERROR,
-+};
-+
-+/*
-+ * User config flags.
-+ */
-+#define KSMBD_USER_FLAG_INVALID		(0)
-+#define KSMBD_USER_FLAG_OK		BIT(0)
-+#define KSMBD_USER_FLAG_BAD_PASSWORD	BIT(1)
-+#define KSMBD_USER_FLAG_BAD_UID		BIT(2)
-+#define KSMBD_USER_FLAG_BAD_USER	BIT(3)
-+#define KSMBD_USER_FLAG_GUEST_ACCOUNT	BIT(4)
-+
-+/*
-+ * Share config flags.
-+ */
-+#define KSMBD_SHARE_FLAG_INVALID		(0)
-+#define KSMBD_SHARE_FLAG_AVAILABLE		BIT(0)
-+#define KSMBD_SHARE_FLAG_BROWSEABLE		BIT(1)
-+#define KSMBD_SHARE_FLAG_WRITEABLE		BIT(2)
-+#define KSMBD_SHARE_FLAG_READONLY		BIT(3)
-+#define KSMBD_SHARE_FLAG_GUEST_OK		BIT(4)
-+#define KSMBD_SHARE_FLAG_GUEST_ONLY		BIT(5)
-+#define KSMBD_SHARE_FLAG_STORE_DOS_ATTRS	BIT(6)
-+#define KSMBD_SHARE_FLAG_OPLOCKS		BIT(7)
-+#define KSMBD_SHARE_FLAG_PIPE			BIT(8)
-+#define KSMBD_SHARE_FLAG_HIDE_DOT_FILES		BIT(9)
-+#define KSMBD_SHARE_FLAG_INHERIT_OWNER		BIT(10)
-+#define KSMBD_SHARE_FLAG_STREAMS		BIT(11)
-+#define KSMBD_SHARE_FLAG_FOLLOW_SYMLINKS	BIT(12)
-+#define KSMBD_SHARE_FLAG_ACL_XATTR		BIT(13)
-+
-+/*
-+ * Tree connect request flags.
-+ */
-+#define KSMBD_TREE_CONN_FLAG_REQUEST_SMB1	(0)
-+#define KSMBD_TREE_CONN_FLAG_REQUEST_IPV6	BIT(0)
-+#define KSMBD_TREE_CONN_FLAG_REQUEST_SMB2	BIT(1)
-+
-+/*
-+ * Tree connect flags.
-+ */
-+#define KSMBD_TREE_CONN_FLAG_GUEST_ACCOUNT	BIT(0)
-+#define KSMBD_TREE_CONN_FLAG_READ_ONLY		BIT(1)
-+#define KSMBD_TREE_CONN_FLAG_WRITABLE		BIT(2)
-+#define KSMBD_TREE_CONN_FLAG_ADMIN_ACCOUNT	BIT(3)
-+
-+/*
-+ * RPC over IPC.
-+ */
-+#define KSMBD_RPC_METHOD_RETURN		BIT(0)
-+#define KSMBD_RPC_SRVSVC_METHOD_INVOKE	BIT(1)
-+#define KSMBD_RPC_SRVSVC_METHOD_RETURN	(KSMBD_RPC_SRVSVC_METHOD_INVOKE | KSMBD_RPC_METHOD_RETURN)
-+#define KSMBD_RPC_WKSSVC_METHOD_INVOKE	BIT(2)
-+#define KSMBD_RPC_WKSSVC_METHOD_RETURN	(KSMBD_RPC_WKSSVC_METHOD_INVOKE | KSMBD_RPC_METHOD_RETURN)
-+#define KSMBD_RPC_IOCTL_METHOD		(BIT(3) | KSMBD_RPC_METHOD_RETURN)
-+#define KSMBD_RPC_OPEN_METHOD		BIT(4)
-+#define KSMBD_RPC_WRITE_METHOD		BIT(5)
-+#define KSMBD_RPC_READ_METHOD		(BIT(6) | KSMBD_RPC_METHOD_RETURN)
-+#define KSMBD_RPC_CLOSE_METHOD		BIT(7)
-+#define KSMBD_RPC_RAP_METHOD		(BIT(8) | KSMBD_RPC_METHOD_RETURN)
-+#define KSMBD_RPC_RESTRICTED_CONTEXT	BIT(9)
-+#define KSMBD_RPC_SAMR_METHOD_INVOKE	BIT(10)
-+#define KSMBD_RPC_SAMR_METHOD_RETURN	(KSMBD_RPC_SAMR_METHOD_INVOKE | KSMBD_RPC_METHOD_RETURN)
-+#define KSMBD_RPC_LSARPC_METHOD_INVOKE	BIT(11)
-+#define KSMBD_RPC_LSARPC_METHOD_RETURN	(KSMBD_RPC_LSARPC_METHOD_INVOKE | KSMBD_RPC_METHOD_RETURN)
-+
-+/*
-+ * RPC status definitions.
-+ */
-+#define KSMBD_RPC_OK			0
-+#define KSMBD_RPC_EBAD_FUNC		0x00000001
-+#define KSMBD_RPC_EACCESS_DENIED	0x00000005
-+#define KSMBD_RPC_EBAD_FID		0x00000006
-+#define KSMBD_RPC_ENOMEM		0x00000008
-+#define KSMBD_RPC_EBAD_DATA		0x0000000D
-+#define KSMBD_RPC_ENOTIMPLEMENTED	0x00000040
-+#define KSMBD_RPC_EINVALID_PARAMETER	0x00000057
-+#define KSMBD_RPC_EMORE_DATA		0x000000EA
-+#define KSMBD_RPC_EINVALID_LEVEL	0x0000007C
-+#define KSMBD_RPC_SOME_NOT_MAPPED	0x00000107
-+
-+#define KSMBD_CONFIG_OPT_DISABLED	0
-+#define KSMBD_CONFIG_OPT_ENABLED	1
-+#define KSMBD_CONFIG_OPT_AUTO		2
-+#define KSMBD_CONFIG_OPT_MANDATORY	3
-+
-+#endif /* _LINUX_KSMBD_SERVER_H */
-diff --git a/fs/ksmbd/ksmbd_work.c b/fs/ksmbd/ksmbd_work.c
-new file mode 100644
-index 000000000000..fd58eb4809f6
---- /dev/null
-+++ b/fs/ksmbd/ksmbd_work.c
-@@ -0,0 +1,80 @@
++++ b/fs/ksmbd/connection.c
+@@ -0,0 +1,413 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ *   Copyright (C) 2019 Samsung Electronics Co., Ltd.
-+ */
-+
-+#include <linux/list.h>
-+#include <linux/mm.h>
-+#include <linux/slab.h>
-+#include <linux/workqueue.h>
-+
-+#include "server.h"
-+#include "connection.h"
-+#include "ksmbd_work.h"
-+#include "mgmt/ksmbd_ida.h"
-+
-+static struct kmem_cache *work_cache;
-+static struct workqueue_struct *ksmbd_wq;
-+
-+struct ksmbd_work *ksmbd_alloc_work_struct(void)
-+{
-+	struct ksmbd_work *work = kmem_cache_zalloc(work_cache, GFP_KERNEL);
-+
-+	if (work) {
-+		work->compound_fid = KSMBD_NO_FID;
-+		work->compound_pfid = KSMBD_NO_FID;
-+		INIT_LIST_HEAD(&work->request_entry);
-+		INIT_LIST_HEAD(&work->async_request_entry);
-+		INIT_LIST_HEAD(&work->fp_entry);
-+		INIT_LIST_HEAD(&work->interim_entry);
-+	}
-+	return work;
-+}
-+
-+void ksmbd_free_work_struct(struct ksmbd_work *work)
-+{
-+	WARN_ON(work->saved_cred != NULL);
-+
-+	kvfree(work->response_buf);
-+	kvfree(work->aux_payload_buf);
-+	kfree(work->tr_buf);
-+	kvfree(work->request_buf);
-+	if (work->async_id)
-+		ksmbd_release_id(&work->conn->async_ida, work->async_id);
-+	kmem_cache_free(work_cache, work);
-+}
-+
-+void ksmbd_work_pool_destroy(void)
-+{
-+	kmem_cache_destroy(work_cache);
-+}
-+
-+int ksmbd_work_pool_init(void)
-+{
-+	work_cache = kmem_cache_create("ksmbd_work_cache",
-+				       sizeof(struct ksmbd_work), 0,
-+				       SLAB_HWCACHE_ALIGN, NULL);
-+	if (!work_cache)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+int ksmbd_workqueue_init(void)
-+{
-+	ksmbd_wq = alloc_workqueue("ksmbd-io", 0, 0);
-+	if (!ksmbd_wq)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+void ksmbd_workqueue_destroy(void)
-+{
-+	flush_workqueue(ksmbd_wq);
-+	destroy_workqueue(ksmbd_wq);
-+	ksmbd_wq = NULL;
-+}
-+
-+bool ksmbd_queue_work(struct ksmbd_work *work)
-+{
-+	return queue_work(ksmbd_wq, &work->work);
-+}
-diff --git a/fs/ksmbd/ksmbd_work.h b/fs/ksmbd/ksmbd_work.h
-new file mode 100644
-index 000000000000..f7156bc50049
---- /dev/null
-+++ b/fs/ksmbd/ksmbd_work.h
-@@ -0,0 +1,117 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ *   Copyright (C) 2019 Samsung Electronics Co., Ltd.
-+ */
-+
-+#ifndef __KSMBD_WORK_H__
-+#define __KSMBD_WORK_H__
-+
-+#include <linux/ctype.h>
-+#include <linux/workqueue.h>
-+
-+struct ksmbd_conn;
-+struct ksmbd_session;
-+struct ksmbd_tree_connect;
-+
-+enum {
-+	KSMBD_WORK_ACTIVE = 0,
-+	KSMBD_WORK_CANCELLED,
-+	KSMBD_WORK_CLOSED,
-+};
-+
-+/* one of these for every pending CIFS request at the connection */
-+struct ksmbd_work {
-+	/* Server corresponding to this mid */
-+	struct ksmbd_conn               *conn;
-+	struct ksmbd_session            *sess;
-+	struct ksmbd_tree_connect       *tcon;
-+
-+	/* Pointer to received SMB header */
-+	void                            *request_buf;
-+	/* Response buffer */
-+	void                            *response_buf;
-+
-+	/* Read data buffer */
-+	void                            *aux_payload_buf;
-+
-+	/* Next cmd hdr in compound req buf*/
-+	int                             next_smb2_rcv_hdr_off;
-+	/* Next cmd hdr in compound rsp buf*/
-+	int                             next_smb2_rsp_hdr_off;
-+
-+	/*
-+	 * Current Local FID assigned compound response if SMB2 CREATE
-+	 * command is present in compound request
-+	 */
-+	u64				compound_fid;
-+	u64				compound_pfid;
-+	u64				compound_sid;
-+
-+	const struct cred		*saved_cred;
-+
-+	/* Number of granted credits */
-+	unsigned int			credits_granted;
-+
-+	/* response smb header size */
-+	unsigned int                    resp_hdr_sz;
-+	unsigned int                    response_sz;
-+	/* Read data count */
-+	unsigned int                    aux_payload_sz;
-+
-+	void				*tr_buf;
-+
-+	unsigned char			state;
-+	/* Multiple responses for one request e.g. SMB ECHO */
-+	bool                            multiRsp:1;
-+	/* No response for cancelled request */
-+	bool                            send_no_response:1;
-+	/* Request is encrypted */
-+	bool                            encrypted:1;
-+	/* Is this SYNC or ASYNC ksmbd_work */
-+	bool                            syncronous:1;
-+	bool                            need_invalidate_rkey:1;
-+
-+	unsigned int                    remote_key;
-+	/* cancel works */
-+	int                             async_id;
-+	void                            **cancel_argv;
-+	void                            (*cancel_fn)(void **argv);
-+
-+	struct work_struct              work;
-+	/* List head at conn->requests */
-+	struct list_head                request_entry;
-+	/* List head at conn->async_requests */
-+	struct list_head                async_request_entry;
-+	struct list_head                fp_entry;
-+	struct list_head                interim_entry;
-+};
-+
-+/**
-+ * ksmbd_resp_buf_next - Get next buffer on compound response.
-+ * @work: smb work containing response buffer
-+ */
-+static inline void *ksmbd_resp_buf_next(struct ksmbd_work *work)
-+{
-+	return work->response_buf + work->next_smb2_rsp_hdr_off;
-+}
-+
-+/**
-+ * ksmbd_req_buf_next - Get next buffer on compound request.
-+ * @work: smb work containing response buffer
-+ */
-+static inline void *ksmbd_req_buf_next(struct ksmbd_work *work)
-+{
-+	return work->request_buf + work->next_smb2_rcv_hdr_off;
-+}
-+
-+struct ksmbd_work *ksmbd_alloc_work_struct(void);
-+void ksmbd_free_work_struct(struct ksmbd_work *work);
-+
-+void ksmbd_work_pool_destroy(void);
-+int ksmbd_work_pool_init(void);
-+
-+int ksmbd_workqueue_init(void);
-+void ksmbd_workqueue_destroy(void);
-+bool ksmbd_queue_work(struct ksmbd_work *work);
-+
-+#endif /* __KSMBD_WORK_H__ */
-diff --git a/fs/ksmbd/server.c b/fs/ksmbd/server.c
-new file mode 100644
-index 000000000000..a8c59e96a2f7
---- /dev/null
-+++ b/fs/ksmbd/server.c
-@@ -0,0 +1,633 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ *   Copyright (C) 2016 Namjae Jeon <linkinjeon@kernel.org>
++ *   Copyright (C) 2016 Namjae Jeon <namjae.jeon@protocolfreedom.org>
 + *   Copyright (C) 2018 Samsung Electronics Co., Ltd.
 + */
 +
-+#include "glob.h"
-+#include "oplock.h"
-+#include "misc.h"
-+#include <linux/sched/signal.h>
-+#include <linux/workqueue.h>
-+#include <linux/sysfs.h>
++#include <linux/mutex.h>
++#include <linux/freezer.h>
 +#include <linux/module.h>
-+#include <linux/moduleparam.h>
 +
 +#include "server.h"
 +#include "smb_common.h"
-+#include "smbstatus.h"
++#include "mgmt/ksmbd_ida.h"
 +#include "connection.h"
-+#include "transport_ipc.h"
-+#include "mgmt/user_session.h"
-+#include "crypto_ctx.h"
-+#include "auth.h"
++#include "transport_tcp.h"
++#include "transport_rdma.h"
 +
-+int ksmbd_debug_types;
++static DEFINE_MUTEX(init_lock);
 +
-+struct ksmbd_server_config server_conf;
++static struct ksmbd_conn_ops default_conn_ops;
 +
-+enum SERVER_CTRL_TYPE {
-+	SERVER_CTRL_TYPE_INIT,
-+	SERVER_CTRL_TYPE_RESET,
-+};
++LIST_HEAD(conn_list);
++DEFINE_RWLOCK(conn_list_lock);
 +
-+struct server_ctrl_struct {
-+	int			type;
-+	struct work_struct	ctrl_work;
-+};
-+
-+static DEFINE_MUTEX(ctrl_lock);
-+
-+static int ___server_conf_set(int idx, char *val)
++/**
++ * ksmbd_conn_free() - free resources of the connection instance
++ *
++ * @conn:	connection instance to be cleand up
++ *
++ * During the thread termination, the corresponding conn instance
++ * resources(sock/memory) are released and finally the conn object is freed.
++ */
++void ksmbd_conn_free(struct ksmbd_conn *conn)
 +{
-+	if (idx >= ARRAY_SIZE(server_conf.conf))
-+		return -EINVAL;
++	write_lock(&conn_list_lock);
++	list_del(&conn->conns_list);
++	write_unlock(&conn_list_lock);
 +
-+	if (!val || val[0] == 0x00)
-+		return -EINVAL;
-+
-+	kfree(server_conf.conf[idx]);
-+	server_conf.conf[idx] = kstrdup(val, GFP_KERNEL);
-+	if (!server_conf.conf[idx])
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+int ksmbd_set_netbios_name(char *v)
-+{
-+	return ___server_conf_set(SERVER_CONF_NETBIOS_NAME, v);
-+}
-+
-+int ksmbd_set_server_string(char *v)
-+{
-+	return ___server_conf_set(SERVER_CONF_SERVER_STRING, v);
-+}
-+
-+int ksmbd_set_work_group(char *v)
-+{
-+	return ___server_conf_set(SERVER_CONF_WORK_GROUP, v);
-+}
-+
-+char *ksmbd_netbios_name(void)
-+{
-+	return server_conf.conf[SERVER_CONF_NETBIOS_NAME];
-+}
-+
-+char *ksmbd_server_string(void)
-+{
-+	return server_conf.conf[SERVER_CONF_SERVER_STRING];
-+}
-+
-+char *ksmbd_work_group(void)
-+{
-+	return server_conf.conf[SERVER_CONF_WORK_GROUP];
++	kvfree(conn->request_buf);
++	kfree(conn->preauth_info);
++	kfree(conn);
 +}
 +
 +/**
-+ * check_conn_state() - check state of server thread connection
-+ * @work:     smb work containing server thread information
++ * ksmbd_conn_alloc() - initialize a new connection instance
 + *
-+ * Return:	0 on valid connection, otherwise 1 to reconnect
++ * Return:	ksmbd_conn struct on success, otherwise NULL
 + */
-+static inline int check_conn_state(struct ksmbd_work *work)
++struct ksmbd_conn *ksmbd_conn_alloc(void)
 +{
-+	struct smb_hdr *rsp_hdr;
++	struct ksmbd_conn *conn;
 +
-+	if (ksmbd_conn_exiting(work) || ksmbd_conn_need_reconnect(work)) {
-+		rsp_hdr = work->response_buf;
-+		rsp_hdr->Status.CifsError = STATUS_CONNECTION_DISCONNECTED;
-+		return 1;
-+	}
-+	return 0;
++	conn = kzalloc(sizeof(struct ksmbd_conn), GFP_KERNEL);
++	if (!conn)
++		return NULL;
++
++	conn->need_neg = true;
++	conn->status = KSMBD_SESS_NEW;
++	conn->local_nls = load_nls("utf8");
++	if (!conn->local_nls)
++		conn->local_nls = load_nls_default();
++	atomic_set(&conn->req_running, 0);
++	atomic_set(&conn->r_count, 0);
++	init_waitqueue_head(&conn->req_running_q);
++	INIT_LIST_HEAD(&conn->conns_list);
++	INIT_LIST_HEAD(&conn->sessions);
++	INIT_LIST_HEAD(&conn->requests);
++	INIT_LIST_HEAD(&conn->async_requests);
++	spin_lock_init(&conn->request_lock);
++	spin_lock_init(&conn->credits_lock);
++	ida_init(&conn->async_ida);
++
++	spin_lock_init(&conn->llist_lock);
++	INIT_LIST_HEAD(&conn->lock_list);
++
++	write_lock(&conn_list_lock);
++	list_add(&conn->conns_list, &conn_list);
++	write_unlock(&conn_list_lock);
++	return conn;
 +}
 +
-+#define TCP_HANDLER_CONTINUE	0
-+#define TCP_HANDLER_ABORT	1
-+
-+static int __process_request(struct ksmbd_work *work, struct ksmbd_conn *conn,
-+			     u16 *cmd)
++bool ksmbd_conn_lookup_dialect(struct ksmbd_conn *c)
 +{
-+	struct smb_version_cmds *cmds;
-+	u16 command;
-+	int ret;
++	struct ksmbd_conn *t;
++	bool ret = false;
 +
-+	if (check_conn_state(work))
-+		return TCP_HANDLER_CONTINUE;
++	read_lock(&conn_list_lock);
++	list_for_each_entry(t, &conn_list, conns_list) {
++		if (memcmp(t->ClientGUID, c->ClientGUID, SMB2_CLIENT_GUID_SIZE))
++			continue;
 +
-+	if (ksmbd_verify_smb_message(work))
-+		return TCP_HANDLER_ABORT;
-+
-+	command = conn->ops->get_cmd_val(work);
-+	*cmd = command;
-+
-+andx_again:
-+	if (command >= conn->max_cmds) {
-+		conn->ops->set_rsp_status(work, STATUS_INVALID_PARAMETER);
-+		return TCP_HANDLER_CONTINUE;
-+	}
-+
-+	cmds = &conn->cmds[command];
-+	if (!cmds->proc) {
-+		ksmbd_debug(SMB, "*** not implemented yet cmd = %x\n", command);
-+		conn->ops->set_rsp_status(work, STATUS_NOT_IMPLEMENTED);
-+		return TCP_HANDLER_CONTINUE;
-+	}
-+
-+	if (work->sess && conn->ops->is_sign_req(work, command)) {
-+		ret = conn->ops->check_sign_req(work);
-+		if (!ret) {
-+			conn->ops->set_rsp_status(work, STATUS_ACCESS_DENIED);
-+			return TCP_HANDLER_CONTINUE;
-+		}
-+	}
-+
-+	ret = cmds->proc(work);
-+
-+	if (ret < 0)
-+		ksmbd_debug(CONN, "Failed to process %u [%d]\n", command, ret);
-+	/* AndX commands - chained request can return positive values */
-+	else if (ret > 0) {
-+		command = ret;
-+		*cmd = command;
-+		goto andx_again;
-+	}
-+
-+	if (work->send_no_response)
-+		return TCP_HANDLER_ABORT;
-+	return TCP_HANDLER_CONTINUE;
-+}
-+
-+static void __handle_ksmbd_work(struct ksmbd_work *work,
-+				struct ksmbd_conn *conn)
-+{
-+	u16 command = 0;
-+	int rc;
-+
-+	if (conn->ops->allocate_rsp_buf(work))
-+		return;
-+
-+	if (conn->ops->is_transform_hdr &&
-+	    conn->ops->is_transform_hdr(work->request_buf)) {
-+		rc = conn->ops->decrypt_req(work);
-+		if (rc < 0) {
-+			conn->ops->set_rsp_status(work, STATUS_DATA_ERROR);
-+			goto send;
-+		}
-+
-+		work->encrypted = true;
-+	}
-+
-+	rc = conn->ops->init_rsp_hdr(work);
-+	if (rc) {
-+		/* either uid or tid is not correct */
-+		conn->ops->set_rsp_status(work, STATUS_INVALID_HANDLE);
-+		goto send;
-+	}
-+
-+	if (conn->ops->check_user_session) {
-+		rc = conn->ops->check_user_session(work);
-+		if (rc < 0) {
-+			command = conn->ops->get_cmd_val(work);
-+			conn->ops->set_rsp_status(work,
-+					STATUS_USER_SESSION_DELETED);
-+			goto send;
-+		} else if (rc > 0) {
-+			rc = conn->ops->get_ksmbd_tcon(work);
-+			if (rc < 0) {
-+				conn->ops->set_rsp_status(work,
-+					STATUS_NETWORK_NAME_DELETED);
-+				goto send;
-+			}
-+		}
-+	}
-+
-+	do {
-+		rc = __process_request(work, conn, &command);
-+		if (rc == TCP_HANDLER_ABORT)
-+			break;
-+
-+		/*
-+		 * Call smb2_set_rsp_credits() function to set number of credits
-+		 * granted in hdr of smb2 response.
-+		 */
-+		if (conn->ops->set_rsp_credits) {
-+			spin_lock(&conn->credits_lock);
-+			rc = conn->ops->set_rsp_credits(work);
-+			spin_unlock(&conn->credits_lock);
-+			if (rc < 0) {
-+				conn->ops->set_rsp_status(work,
-+					STATUS_INVALID_PARAMETER);
-+				goto send;
-+			}
-+		}
-+
-+		if (work->sess &&
-+		    (work->sess->sign || smb3_11_final_sess_setup_resp(work) ||
-+		     conn->ops->is_sign_req(work, command)))
-+			conn->ops->set_sign_rsp(work);
-+	} while (is_chained_smb2_message(work));
-+
-+	if (work->send_no_response)
-+		return;
-+
-+send:
-+	smb3_preauth_hash_rsp(work);
-+	if (work->sess && work->sess->enc && work->encrypted &&
-+	    conn->ops->encrypt_resp) {
-+		rc = conn->ops->encrypt_resp(work);
-+		if (rc < 0) {
-+			conn->ops->set_rsp_status(work, STATUS_DATA_ERROR);
-+			goto send;
-+		}
-+	}
-+
-+	ksmbd_conn_write(work);
-+}
-+
-+/**
-+ * handle_ksmbd_work() - process pending smb work requests
-+ * @wk:	smb work containing request command buffer
-+ *
-+ * called by kworker threads to processing remaining smb work requests
-+ */
-+static void handle_ksmbd_work(struct work_struct *wk)
-+{
-+	struct ksmbd_work *work = container_of(wk, struct ksmbd_work, work);
-+	struct ksmbd_conn *conn = work->conn;
-+
-+	atomic64_inc(&conn->stats.request_served);
-+
-+	__handle_ksmbd_work(work, conn);
-+
-+	ksmbd_conn_try_dequeue_request(work);
-+	ksmbd_free_work_struct(work);
-+	atomic_dec(&conn->r_count);
-+}
-+
-+/**
-+ * queue_ksmbd_work() - queue a smb request to worker thread queue
-+ *		for proccessing smb command and sending response
-+ * @conn:	connection instance
-+ *
-+ * read remaining data from socket create and submit work.
-+ */
-+static int queue_ksmbd_work(struct ksmbd_conn *conn)
-+{
-+	struct ksmbd_work *work;
-+
-+	work = ksmbd_alloc_work_struct();
-+	if (!work) {
-+		pr_err("allocation for work failed\n");
-+		return -ENOMEM;
-+	}
-+
-+	work->conn = conn;
-+	work->request_buf = conn->request_buf;
-+	conn->request_buf = NULL;
-+
-+	if (ksmbd_init_smb_server(work)) {
-+		ksmbd_free_work_struct(work);
-+		return -EINVAL;
-+	}
-+
-+	ksmbd_conn_enqueue_request(work);
-+	atomic_inc(&conn->r_count);
-+	/* update activity on connection */
-+	conn->last_active = jiffies;
-+	INIT_WORK(&work->work, handle_ksmbd_work);
-+	ksmbd_queue_work(work);
-+	return 0;
-+}
-+
-+static int ksmbd_server_process_request(struct ksmbd_conn *conn)
-+{
-+	return queue_ksmbd_work(conn);
-+}
-+
-+static int ksmbd_server_terminate_conn(struct ksmbd_conn *conn)
-+{
-+	ksmbd_sessions_deregister(conn);
-+	destroy_lease_table(conn);
-+	return 0;
-+}
-+
-+static void ksmbd_server_tcp_callbacks_init(void)
-+{
-+	struct ksmbd_conn_ops ops;
-+
-+	ops.process_fn = ksmbd_server_process_request;
-+	ops.terminate_fn = ksmbd_server_terminate_conn;
-+
-+	ksmbd_conn_init_server_callbacks(&ops);
-+}
-+
-+static void server_conf_free(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(server_conf.conf); i++) {
-+		kfree(server_conf.conf[i]);
-+		server_conf.conf[i] = NULL;
-+	}
-+}
-+
-+static int server_conf_init(void)
-+{
-+	WRITE_ONCE(server_conf.state, SERVER_STATE_STARTING_UP);
-+	server_conf.enforced_signing = 0;
-+	server_conf.min_protocol = ksmbd_min_protocol();
-+	server_conf.max_protocol = ksmbd_max_protocol();
-+	server_conf.auth_mechs = KSMBD_AUTH_NTLMSSP;
-+#ifdef CONFIG_SMB_SERVER_KERBEROS5
-+	server_conf.auth_mechs |= KSMBD_AUTH_KRB5 |
-+				KSMBD_AUTH_MSKRB5;
-+#endif
-+	return 0;
-+}
-+
-+static void server_ctrl_handle_init(struct server_ctrl_struct *ctrl)
-+{
-+	int ret;
-+
-+	ret = ksmbd_conn_transport_init();
-+	if (ret) {
-+		server_queue_ctrl_reset_work();
-+		return;
-+	}
-+
-+	WRITE_ONCE(server_conf.state, SERVER_STATE_RUNNING);
-+}
-+
-+static void server_ctrl_handle_reset(struct server_ctrl_struct *ctrl)
-+{
-+	ksmbd_ipc_soft_reset();
-+	ksmbd_conn_transport_destroy();
-+	server_conf_free();
-+	server_conf_init();
-+	WRITE_ONCE(server_conf.state, SERVER_STATE_STARTING_UP);
-+}
-+
-+static void server_ctrl_handle_work(struct work_struct *work)
-+{
-+	struct server_ctrl_struct *ctrl;
-+
-+	ctrl = container_of(work, struct server_ctrl_struct, ctrl_work);
-+
-+	mutex_lock(&ctrl_lock);
-+	switch (ctrl->type) {
-+	case SERVER_CTRL_TYPE_INIT:
-+		server_ctrl_handle_init(ctrl);
++		ret = true;
 +		break;
-+	case SERVER_CTRL_TYPE_RESET:
-+		server_ctrl_handle_reset(ctrl);
-+		break;
-+	default:
-+		pr_err("Unknown server work type: %d\n", ctrl->type);
 +	}
-+	mutex_unlock(&ctrl_lock);
-+	kfree(ctrl);
-+	module_put(THIS_MODULE);
-+}
-+
-+static int __queue_ctrl_work(int type)
-+{
-+	struct server_ctrl_struct *ctrl;
-+
-+	ctrl = kmalloc(sizeof(struct server_ctrl_struct), GFP_KERNEL);
-+	if (!ctrl)
-+		return -ENOMEM;
-+
-+	__module_get(THIS_MODULE);
-+	ctrl->type = type;
-+	INIT_WORK(&ctrl->ctrl_work, server_ctrl_handle_work);
-+	queue_work(system_long_wq, &ctrl->ctrl_work);
-+	return 0;
-+}
-+
-+int server_queue_ctrl_init_work(void)
-+{
-+	return __queue_ctrl_work(SERVER_CTRL_TYPE_INIT);
-+}
-+
-+int server_queue_ctrl_reset_work(void)
-+{
-+	return __queue_ctrl_work(SERVER_CTRL_TYPE_RESET);
-+}
-+
-+static ssize_t stats_show(struct class *class, struct class_attribute *attr,
-+			  char *buf)
-+{
-+	/*
-+	 * Inc this each time you change stats output format,
-+	 * so user space will know what to do.
-+	 */
-+	static int stats_version = 2;
-+	static const char * const state[] = {
-+		"startup",
-+		"running",
-+		"reset",
-+		"shutdown"
-+	};
-+
-+	ssize_t sz = scnprintf(buf, PAGE_SIZE, "%d %s %d %lu\n", stats_version,
-+			       state[server_conf.state], server_conf.tcp_port,
-+			       server_conf.ipc_last_active / HZ);
-+	return sz;
-+}
-+
-+static ssize_t kill_server_store(struct class *class,
-+				 struct class_attribute *attr, const char *buf,
-+				 size_t len)
-+{
-+	if (!sysfs_streq(buf, "hard"))
-+		return len;
-+
-+	pr_info("kill command received\n");
-+	mutex_lock(&ctrl_lock);
-+	WRITE_ONCE(server_conf.state, SERVER_STATE_RESETTING);
-+	__module_get(THIS_MODULE);
-+	server_ctrl_handle_reset(NULL);
-+	module_put(THIS_MODULE);
-+	mutex_unlock(&ctrl_lock);
-+	return len;
-+}
-+
-+static const char * const debug_type_strings[] = {"smb", "auth", "vfs",
-+						  "oplock", "ipc", "conn",
-+						  "rdma"};
-+
-+static ssize_t debug_show(struct class *class, struct class_attribute *attr,
-+			  char *buf)
-+{
-+	ssize_t sz = 0;
-+	int i, pos = 0;
-+
-+	for (i = 0; i < ARRAY_SIZE(debug_type_strings); i++) {
-+		if ((ksmbd_debug_types >> i) & 1) {
-+			pos = scnprintf(buf + sz,
-+					PAGE_SIZE - sz,
-+					"[%s] ",
-+					debug_type_strings[i]);
-+		} else {
-+			pos = scnprintf(buf + sz,
-+					PAGE_SIZE - sz,
-+					"%s ",
-+					debug_type_strings[i]);
-+		}
-+		sz += pos;
-+	}
-+	sz += scnprintf(buf + sz, PAGE_SIZE - sz, "\n");
-+	return sz;
-+}
-+
-+static ssize_t debug_store(struct class *class, struct class_attribute *attr,
-+			   const char *buf, size_t len)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(debug_type_strings); i++) {
-+		if (sysfs_streq(buf, "all")) {
-+			if (ksmbd_debug_types == KSMBD_DEBUG_ALL)
-+				ksmbd_debug_types = 0;
-+			else
-+				ksmbd_debug_types = KSMBD_DEBUG_ALL;
-+			break;
-+		}
-+
-+		if (sysfs_streq(buf, debug_type_strings[i])) {
-+			if (ksmbd_debug_types & (1 << i))
-+				ksmbd_debug_types &= ~(1 << i);
-+			else
-+				ksmbd_debug_types |= (1 << i);
-+			break;
-+		}
-+	}
-+
-+	return len;
-+}
-+
-+static CLASS_ATTR_RO(stats);
-+static CLASS_ATTR_WO(kill_server);
-+static CLASS_ATTR_RW(debug);
-+
-+static struct attribute *ksmbd_control_class_attrs[] = {
-+	&class_attr_stats.attr,
-+	&class_attr_kill_server.attr,
-+	&class_attr_debug.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(ksmbd_control_class);
-+
-+static struct class ksmbd_control_class = {
-+	.name		= "ksmbd-control",
-+	.owner		= THIS_MODULE,
-+	.class_groups	= ksmbd_control_class_groups,
-+};
-+
-+static int ksmbd_server_shutdown(void)
-+{
-+	WRITE_ONCE(server_conf.state, SERVER_STATE_SHUTTING_DOWN);
-+
-+	class_unregister(&ksmbd_control_class);
-+	ksmbd_workqueue_destroy();
-+	ksmbd_ipc_release();
-+	ksmbd_conn_transport_destroy();
-+	ksmbd_crypto_destroy();
-+	ksmbd_free_global_file_table();
-+	destroy_lease_table(NULL);
-+	ksmbd_work_pool_destroy();
-+	ksmbd_exit_file_cache();
-+	server_conf_free();
-+	return 0;
-+}
-+
-+static int __init ksmbd_server_init(void)
-+{
-+	int ret;
-+
-+	ret = class_register(&ksmbd_control_class);
-+	if (ret) {
-+		pr_err("Unable to register ksmbd-control class\n");
-+		return ret;
-+	}
-+
-+	ksmbd_server_tcp_callbacks_init();
-+
-+	ret = server_conf_init();
-+	if (ret)
-+		goto err_unregister;
-+
-+	ret = ksmbd_work_pool_init();
-+	if (ret)
-+		goto err_unregister;
-+
-+	ret = ksmbd_init_file_cache();
-+	if (ret)
-+		goto err_destroy_work_pools;
-+
-+	ret = ksmbd_ipc_init();
-+	if (ret)
-+		goto err_exit_file_cache;
-+
-+	ret = ksmbd_init_global_file_table();
-+	if (ret)
-+		goto err_ipc_release;
-+
-+	ret = ksmbd_inode_hash_init();
-+	if (ret)
-+		goto err_destroy_file_table;
-+
-+	ret = ksmbd_crypto_create();
-+	if (ret)
-+		goto err_release_inode_hash;
-+
-+	ret = ksmbd_workqueue_init();
-+	if (ret)
-+		goto err_crypto_destroy;
-+	return 0;
-+
-+err_crypto_destroy:
-+	ksmbd_crypto_destroy();
-+err_release_inode_hash:
-+	ksmbd_release_inode_hash();
-+err_destroy_file_table:
-+	ksmbd_free_global_file_table();
-+err_ipc_release:
-+	ksmbd_ipc_release();
-+err_exit_file_cache:
-+	ksmbd_exit_file_cache();
-+err_destroy_work_pools:
-+	ksmbd_work_pool_destroy();
-+err_unregister:
-+	class_unregister(&ksmbd_control_class);
-+
++	read_unlock(&conn_list_lock);
 +	return ret;
 +}
 +
-+/**
-+ * ksmbd_server_exit() - shutdown forker thread and free memory at module exit
-+ */
-+static void __exit ksmbd_server_exit(void)
++void ksmbd_conn_enqueue_request(struct ksmbd_work *work)
 +{
-+	ksmbd_server_shutdown();
-+	ksmbd_release_inode_hash();
++	struct ksmbd_conn *conn = work->conn;
++	struct list_head *requests_queue = NULL;
++
++	if (conn->ops->get_cmd_val(work) != SMB2_CANCEL_HE) {
++		requests_queue = &conn->requests;
++		work->syncronous = true;
++	}
++
++	if (requests_queue) {
++		atomic_inc(&conn->req_running);
++		spin_lock(&conn->request_lock);
++		list_add_tail(&work->request_entry, requests_queue);
++		spin_unlock(&conn->request_lock);
++	}
 +}
 +
-+MODULE_AUTHOR("Namjae Jeon <linkinjeon@kernel.org>");
-+MODULE_VERSION(KSMBD_VERSION);
-+MODULE_DESCRIPTION("Linux kernel CIFS/SMB SERVER");
-+MODULE_LICENSE("GPL");
-+MODULE_SOFTDEP("pre: ecb");
-+MODULE_SOFTDEP("pre: hmac");
-+MODULE_SOFTDEP("pre: md4");
-+MODULE_SOFTDEP("pre: md5");
-+MODULE_SOFTDEP("pre: nls");
-+MODULE_SOFTDEP("pre: aes");
-+MODULE_SOFTDEP("pre: cmac");
-+MODULE_SOFTDEP("pre: sha256");
-+MODULE_SOFTDEP("pre: sha512");
-+MODULE_SOFTDEP("pre: aead2");
-+MODULE_SOFTDEP("pre: ccm");
-+MODULE_SOFTDEP("pre: gcm");
-+module_init(ksmbd_server_init)
-+module_exit(ksmbd_server_exit)
-diff --git a/fs/ksmbd/server.h b/fs/ksmbd/server.h
++int ksmbd_conn_try_dequeue_request(struct ksmbd_work *work)
++{
++	struct ksmbd_conn *conn = work->conn;
++	int ret = 1;
++
++	if (list_empty(&work->request_entry) &&
++	    list_empty(&work->async_request_entry))
++		return 0;
++
++	if (!work->multiRsp)
++		atomic_dec(&conn->req_running);
++	spin_lock(&conn->request_lock);
++	if (!work->multiRsp) {
++		list_del_init(&work->request_entry);
++		if (work->syncronous == false)
++			list_del_init(&work->async_request_entry);
++		ret = 0;
++	}
++	spin_unlock(&conn->request_lock);
++
++	wake_up_all(&conn->req_running_q);
++	return ret;
++}
++
++static void ksmbd_conn_lock(struct ksmbd_conn *conn)
++{
++	mutex_lock(&conn->srv_mutex);
++}
++
++static void ksmbd_conn_unlock(struct ksmbd_conn *conn)
++{
++	mutex_unlock(&conn->srv_mutex);
++}
++
++void ksmbd_conn_wait_idle(struct ksmbd_conn *conn)
++{
++	wait_event(conn->req_running_q, atomic_read(&conn->req_running) < 2);
++}
++
++int ksmbd_conn_write(struct ksmbd_work *work)
++{
++	struct ksmbd_conn *conn = work->conn;
++	struct smb_hdr *rsp_hdr = work->response_buf;
++	size_t len = 0;
++	int sent;
++	struct kvec iov[3];
++	int iov_idx = 0;
++
++	ksmbd_conn_try_dequeue_request(work);
++	if (!rsp_hdr) {
++		pr_err("NULL response header\n");
++		return -EINVAL;
++	}
++
++	if (work->tr_buf) {
++		iov[iov_idx] = (struct kvec) { work->tr_buf,
++				sizeof(struct smb2_transform_hdr) };
++		len += iov[iov_idx++].iov_len;
++	}
++
++	if (work->aux_payload_sz) {
++		iov[iov_idx] = (struct kvec) { rsp_hdr, work->resp_hdr_sz };
++		len += iov[iov_idx++].iov_len;
++		iov[iov_idx] = (struct kvec) { work->aux_payload_buf, work->aux_payload_sz };
++		len += iov[iov_idx++].iov_len;
++	} else {
++		if (work->tr_buf)
++			iov[iov_idx].iov_len = work->resp_hdr_sz;
++		else
++			iov[iov_idx].iov_len = get_rfc1002_len(rsp_hdr) + 4;
++		iov[iov_idx].iov_base = rsp_hdr;
++		len += iov[iov_idx++].iov_len;
++	}
++
++	ksmbd_conn_lock(conn);
++	sent = conn->transport->ops->writev(conn->transport, &iov[0],
++					iov_idx, len,
++					work->need_invalidate_rkey,
++					work->remote_key);
++	ksmbd_conn_unlock(conn);
++
++	if (sent < 0) {
++		pr_err("Failed to send message: %d\n", sent);
++		return sent;
++	}
++
++	return 0;
++}
++
++int ksmbd_conn_rdma_read(struct ksmbd_conn *conn, void *buf,
++			 unsigned int buflen, u32 remote_key, u64 remote_offset,
++			 u32 remote_len)
++{
++	int ret = -EINVAL;
++
++	if (conn->transport->ops->rdma_read)
++		ret = conn->transport->ops->rdma_read(conn->transport,
++						      buf, buflen,
++						      remote_key, remote_offset,
++						      remote_len);
++	return ret;
++}
++
++int ksmbd_conn_rdma_write(struct ksmbd_conn *conn, void *buf,
++			  unsigned int buflen, u32 remote_key,
++			  u64 remote_offset, u32 remote_len)
++{
++	int ret = -EINVAL;
++
++	if (conn->transport->ops->rdma_write)
++		ret = conn->transport->ops->rdma_write(conn->transport,
++						       buf, buflen,
++						       remote_key, remote_offset,
++						       remote_len);
++	return ret;
++}
++
++bool ksmbd_conn_alive(struct ksmbd_conn *conn)
++{
++	if (!ksmbd_server_running())
++		return false;
++
++	if (conn->status == KSMBD_SESS_EXITING)
++		return false;
++
++	if (kthread_should_stop())
++		return false;
++
++	if (atomic_read(&conn->stats.open_files_count) > 0)
++		return true;
++
++	/*
++	 * Stop current session if the time that get last request from client
++	 * is bigger than deadtime user configured and opening file count is
++	 * zero.
++	 */
++	if (server_conf.deadtime > 0 &&
++	    time_after(jiffies, conn->last_active + server_conf.deadtime)) {
++		ksmbd_debug(CONN, "No response from client in %lu minutes\n",
++			    server_conf.deadtime / SMB_ECHO_INTERVAL);
++		return false;
++	}
++	return true;
++}
++
++/**
++ * ksmbd_conn_handler_loop() - session thread to listen on new smb requests
++ * @p:		connection instance
++ *
++ * One thread each per connection
++ *
++ * Return:	0 on success
++ */
++int ksmbd_conn_handler_loop(void *p)
++{
++	struct ksmbd_conn *conn = (struct ksmbd_conn *)p;
++	struct ksmbd_transport *t = conn->transport;
++	unsigned int pdu_size;
++	char hdr_buf[4] = {0,};
++	int size;
++
++	mutex_init(&conn->srv_mutex);
++	__module_get(THIS_MODULE);
++
++	if (t->ops->prepare && t->ops->prepare(t))
++		goto out;
++
++	conn->last_active = jiffies;
++	while (ksmbd_conn_alive(conn)) {
++		if (try_to_freeze())
++			continue;
++
++		kvfree(conn->request_buf);
++		conn->request_buf = NULL;
++
++		size = t->ops->read(t, hdr_buf, sizeof(hdr_buf));
++		if (size != sizeof(hdr_buf))
++			break;
++
++		pdu_size = get_rfc1002_len(hdr_buf);
++		ksmbd_debug(CONN, "RFC1002 header %u bytes\n", pdu_size);
++
++		/* make sure we have enough to get to SMB header end */
++		if (!ksmbd_pdu_size_has_room(pdu_size)) {
++			ksmbd_debug(CONN, "SMB request too short (%u bytes)\n",
++				    pdu_size);
++			continue;
++		}
++
++		/* 4 for rfc1002 length field */
++		size = pdu_size + 4;
++		conn->request_buf = kvmalloc(size, GFP_KERNEL);
++		if (!conn->request_buf)
++			continue;
++
++		memcpy(conn->request_buf, hdr_buf, sizeof(hdr_buf));
++		if (!ksmbd_smb_request(conn))
++			break;
++
++		/*
++		 * We already read 4 bytes to find out PDU size, now
++		 * read in PDU
++		 */
++		size = t->ops->read(t, conn->request_buf + 4, pdu_size);
++		if (size < 0) {
++			pr_err("sock_read failed: %d\n", size);
++			break;
++		}
++
++		if (size != pdu_size) {
++			pr_err("PDU error. Read: %d, Expected: %d\n",
++			       size, pdu_size);
++			continue;
++		}
++
++		if (!default_conn_ops.process_fn) {
++			pr_err("No connection request callback\n");
++			break;
++		}
++
++		if (default_conn_ops.process_fn(conn)) {
++			pr_err("Cannot handle request\n");
++			break;
++		}
++	}
++
++out:
++	/* Wait till all reference dropped to the Server object*/
++	while (atomic_read(&conn->r_count) > 0)
++		schedule_timeout(HZ);
++
++	unload_nls(conn->local_nls);
++	if (default_conn_ops.terminate_fn)
++		default_conn_ops.terminate_fn(conn);
++	t->ops->disconnect(t);
++	module_put(THIS_MODULE);
++	return 0;
++}
++
++void ksmbd_conn_init_server_callbacks(struct ksmbd_conn_ops *ops)
++{
++	default_conn_ops.process_fn = ops->process_fn;
++	default_conn_ops.terminate_fn = ops->terminate_fn;
++}
++
++int ksmbd_conn_transport_init(void)
++{
++	int ret;
++
++	mutex_lock(&init_lock);
++	ret = ksmbd_tcp_init();
++	if (ret) {
++		pr_err("Failed to init TCP subsystem: %d\n", ret);
++		goto out;
++	}
++
++	ret = ksmbd_rdma_init();
++	if (ret) {
++		pr_err("Failed to init RDMA subsystem: %d\n", ret);
++		goto out;
++	}
++out:
++	mutex_unlock(&init_lock);
++	return ret;
++}
++
++static void stop_sessions(void)
++{
++	struct ksmbd_conn *conn;
++
++again:
++	read_lock(&conn_list_lock);
++	list_for_each_entry(conn, &conn_list, conns_list) {
++		struct task_struct *task;
++
++		task = conn->transport->handler;
++		if (task)
++			ksmbd_debug(CONN, "Stop session handler %s/%d\n",
++				    task->comm, task_pid_nr(task));
++		conn->status = KSMBD_SESS_EXITING;
++	}
++	read_unlock(&conn_list_lock);
++
++	if (!list_empty(&conn_list)) {
++		schedule_timeout_interruptible(HZ / 10); /* 100ms */
++		goto again;
++	}
++}
++
++void ksmbd_conn_transport_destroy(void)
++{
++	mutex_lock(&init_lock);
++	ksmbd_tcp_destroy();
++	ksmbd_rdma_destroy();
++	stop_sessions();
++	mutex_unlock(&init_lock);
++}
+diff --git a/fs/ksmbd/connection.h b/fs/ksmbd/connection.h
 new file mode 100644
-index 000000000000..ac9d932f8c8a
+index 000000000000..487c2024b0d5
 --- /dev/null
-+++ b/fs/ksmbd/server.h
-@@ -0,0 +1,70 @@
++++ b/fs/ksmbd/connection.h
+@@ -0,0 +1,211 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +/*
 + *   Copyright (C) 2018 Samsung Electronics Co., Ltd.
 + */
 +
-+#ifndef __SERVER_H__
-+#define __SERVER_H__
++#ifndef __KSMBD_CONNECTION_H__
++#define __KSMBD_CONNECTION_H__
 +
-+#include "smbacl.h"
++#include <linux/list.h>
++#include <linux/ip.h>
++#include <net/sock.h>
++#include <net/tcp.h>
++#include <net/inet_connection_sock.h>
++#include <net/request_sock.h>
++#include <linux/kthread.h>
++#include <linux/nls.h>
++
++#include "smb_common.h"
++#include "ksmbd_work.h"
++
++#define KSMBD_SOCKET_BACKLOG		16
 +
 +/*
-+ * Server state type
++ * WARNING
++ *
++ * This is nothing but a HACK. Session status should move to channel
++ * or to session. As of now we have 1 tcp_conn : 1 ksmbd_session, but
++ * we need to change it to 1 tcp_conn : N ksmbd_sessions.
 + */
 +enum {
-+	SERVER_STATE_STARTING_UP,
-+	SERVER_STATE_RUNNING,
-+	SERVER_STATE_RESETTING,
-+	SERVER_STATE_SHUTTING_DOWN,
++	KSMBD_SESS_NEW = 0,
++	KSMBD_SESS_GOOD,
++	KSMBD_SESS_EXITING,
++	KSMBD_SESS_NEED_RECONNECT,
++	KSMBD_SESS_NEED_NEGOTIATE
 +};
++
++struct ksmbd_stats {
++	atomic_t			open_files_count;
++	atomic64_t			request_served;
++};
++
++struct ksmbd_transport;
++
++struct ksmbd_conn {
++	struct smb_version_values	*vals;
++	struct smb_version_ops		*ops;
++	struct smb_version_cmds		*cmds;
++	unsigned int			max_cmds;
++	struct mutex			srv_mutex;
++	int				status;
++	unsigned int			cli_cap;
++	char				*request_buf;
++	struct ksmbd_transport		*transport;
++	struct nls_table		*local_nls;
++	struct list_head		conns_list;
++	/* smb session 1 per user */
++	struct list_head		sessions;
++	unsigned long			last_active;
++	/* How many request are running currently */
++	atomic_t			req_running;
++	/* References which are made for this Server object*/
++	atomic_t			r_count;
++	unsigned short			total_credits;
++	unsigned short			max_credits;
++	spinlock_t			credits_lock;
++	wait_queue_head_t		req_running_q;
++	/* Lock to protect requests list*/
++	spinlock_t			request_lock;
++	struct list_head		requests;
++	struct list_head		async_requests;
++	int				connection_type;
++	struct ksmbd_stats		stats;
++	char				ClientGUID[SMB2_CLIENT_GUID_SIZE];
++	union {
++		/* pending trans request table */
++		struct trans_state	*recent_trans;
++		/* Used by ntlmssp */
++		char			*ntlmssp_cryptkey;
++	};
++
++	spinlock_t			llist_lock;
++	struct list_head		lock_list;
++
++	struct preauth_integrity_info	*preauth_info;
++
++	bool				need_neg;
++	unsigned int			auth_mechs;
++	unsigned int			preferred_auth_mech;
++	bool				sign;
++	bool				use_spnego:1;
++	__u16				cli_sec_mode;
++	__u16				srv_sec_mode;
++	/* dialect index that server chose */
++	__u16				dialect;
++
++	char				*mechToken;
++
++	struct ksmbd_conn_ops	*conn_ops;
++
++	/* Preauth Session Table */
++	struct list_head		preauth_sess_table;
++
++	struct sockaddr_storage		peer_addr;
++
++	/* Identifier for async message */
++	struct ida			async_ida;
++
++	__le16				cipher_type;
++	__le16				compress_algorithm;
++	bool				posix_ext_supported;
++	bool				binding;
++};
++
++struct ksmbd_conn_ops {
++	int	(*process_fn)(struct ksmbd_conn *conn);
++	int	(*terminate_fn)(struct ksmbd_conn *conn);
++};
++
++struct ksmbd_transport_ops {
++	int (*prepare)(struct ksmbd_transport *t);
++	void (*disconnect)(struct ksmbd_transport *t);
++	int (*read)(struct ksmbd_transport *t, char *buf, unsigned int size);
++	int (*writev)(struct ksmbd_transport *t, struct kvec *iovs, int niov,
++		      int size, bool need_invalidate_rkey,
++		      unsigned int remote_key);
++	int (*rdma_read)(struct ksmbd_transport *t, void *buf, unsigned int len,
++			 u32 remote_key, u64 remote_offset, u32 remote_len);
++	int (*rdma_write)(struct ksmbd_transport *t, void *buf,
++			  unsigned int len, u32 remote_key, u64 remote_offset,
++			  u32 remote_len);
++};
++
++struct ksmbd_transport {
++	struct ksmbd_conn		*conn;
++	struct ksmbd_transport_ops	*ops;
++	struct task_struct		*handler;
++};
++
++#define KSMBD_TCP_RECV_TIMEOUT	(7 * HZ)
++#define KSMBD_TCP_SEND_TIMEOUT	(5 * HZ)
++#define KSMBD_TCP_PEER_SOCKADDR(c)	((struct sockaddr *)&((c)->peer_addr))
++
++extern struct list_head conn_list;
++extern rwlock_t conn_list_lock;
++
++bool ksmbd_conn_alive(struct ksmbd_conn *conn);
++void ksmbd_conn_wait_idle(struct ksmbd_conn *conn);
++struct ksmbd_conn *ksmbd_conn_alloc(void);
++void ksmbd_conn_free(struct ksmbd_conn *conn);
++bool ksmbd_conn_lookup_dialect(struct ksmbd_conn *c);
++int ksmbd_conn_write(struct ksmbd_work *work);
++int ksmbd_conn_rdma_read(struct ksmbd_conn *conn, void *buf,
++			 unsigned int buflen, u32 remote_key, u64 remote_offset,
++			 u32 remote_len);
++int ksmbd_conn_rdma_write(struct ksmbd_conn *conn, void *buf,
++			  unsigned int buflen, u32 remote_key, u64 remote_offset,
++			  u32 remote_len);
++void ksmbd_conn_enqueue_request(struct ksmbd_work *work);
++int ksmbd_conn_try_dequeue_request(struct ksmbd_work *work);
++void ksmbd_conn_init_server_callbacks(struct ksmbd_conn_ops *ops);
++int ksmbd_conn_handler_loop(void *p);
++int ksmbd_conn_transport_init(void);
++void ksmbd_conn_transport_destroy(void);
 +
 +/*
-+ * Server global config string index
++ * WARNING
++ *
++ * This is a hack. We will move status to a proper place once we land
++ * a multi-sessions support.
 + */
-+enum {
-+	SERVER_CONF_NETBIOS_NAME,
-+	SERVER_CONF_SERVER_STRING,
-+	SERVER_CONF_WORK_GROUP,
-+};
-+
-+struct ksmbd_server_config {
-+	unsigned int		flags;
-+	unsigned int		state;
-+	short			signing;
-+	short			enforced_signing;
-+	short			min_protocol;
-+	short			max_protocol;
-+	unsigned short		tcp_port;
-+	unsigned short		ipc_timeout;
-+	unsigned long		ipc_last_active;
-+	unsigned long		deadtime;
-+	unsigned int		share_fake_fscaps;
-+	struct smb_sid		domain_sid;
-+	unsigned int		auth_mechs;
-+
-+	char			*conf[SERVER_CONF_WORK_GROUP + 1];
-+};
-+
-+extern struct ksmbd_server_config server_conf;
-+
-+int ksmbd_set_netbios_name(char *v);
-+int ksmbd_set_server_string(char *v);
-+int ksmbd_set_work_group(char *v);
-+
-+char *ksmbd_netbios_name(void);
-+char *ksmbd_server_string(void);
-+char *ksmbd_work_group(void);
-+
-+static inline int ksmbd_server_running(void)
++static inline bool ksmbd_conn_good(struct ksmbd_work *work)
 +{
-+	return READ_ONCE(server_conf.state) == SERVER_STATE_RUNNING;
++	return work->conn->status == KSMBD_SESS_GOOD;
 +}
 +
-+static inline int ksmbd_server_configurable(void)
++static inline bool ksmbd_conn_need_negotiate(struct ksmbd_work *work)
 +{
-+	return READ_ONCE(server_conf.state) < SERVER_STATE_RESETTING;
++	return work->conn->status == KSMBD_SESS_NEED_NEGOTIATE;
 +}
 +
-+int server_queue_ctrl_init_work(void);
-+int server_queue_ctrl_reset_work(void);
-+#endif /* __SERVER_H__ */
++static inline bool ksmbd_conn_need_reconnect(struct ksmbd_work *work)
++{
++	return work->conn->status == KSMBD_SESS_NEED_RECONNECT;
++}
++
++static inline bool ksmbd_conn_exiting(struct ksmbd_work *work)
++{
++	return work->conn->status == KSMBD_SESS_EXITING;
++}
++
++static inline void ksmbd_conn_set_good(struct ksmbd_work *work)
++{
++	work->conn->status = KSMBD_SESS_GOOD;
++}
++
++static inline void ksmbd_conn_set_need_negotiate(struct ksmbd_work *work)
++{
++	work->conn->status = KSMBD_SESS_NEED_NEGOTIATE;
++}
++
++static inline void ksmbd_conn_set_need_reconnect(struct ksmbd_work *work)
++{
++	work->conn->status = KSMBD_SESS_NEED_RECONNECT;
++}
++
++static inline void ksmbd_conn_set_exiting(struct ksmbd_work *work)
++{
++	work->conn->status = KSMBD_SESS_EXITING;
++}
++#endif /* __CONNECTION_H__ */
+diff --git a/fs/ksmbd/transport_tcp.c b/fs/ksmbd/transport_tcp.c
+new file mode 100644
+index 000000000000..56ec11ff5a9f
+--- /dev/null
++++ b/fs/ksmbd/transport_tcp.c
+@@ -0,0 +1,619 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ *   Copyright (C) 2016 Namjae Jeon <linkinjeon@kernel.org>
++ *   Copyright (C) 2018 Samsung Electronics Co., Ltd.
++ */
++
++#include <linux/freezer.h>
++
++#include "smb_common.h"
++#include "server.h"
++#include "auth.h"
++#include "connection.h"
++#include "transport_tcp.h"
++
++#define IFACE_STATE_DOWN		BIT(0)
++#define IFACE_STATE_CONFIGURED		BIT(1)
++
++struct interface {
++	struct task_struct	*ksmbd_kthread;
++	struct socket		*ksmbd_socket;
++	struct list_head	entry;
++	char			*name;
++	struct mutex		sock_release_lock;
++	int			state;
++};
++
++static LIST_HEAD(iface_list);
++
++static int bind_additional_ifaces;
++
++struct tcp_transport {
++	struct ksmbd_transport		transport;
++	struct socket			*sock;
++	struct kvec			*iov;
++	unsigned int			nr_iov;
++};
++
++static struct ksmbd_transport_ops ksmbd_tcp_transport_ops;
++
++static void tcp_stop_kthread(struct task_struct *kthread);
++static struct interface *alloc_iface(char *ifname);
++
++#define KSMBD_TRANS(t)	(&(t)->transport)
++#define TCP_TRANS(t)	((struct tcp_transport *)container_of(t, \
++				struct tcp_transport, transport))
++
++static inline void ksmbd_tcp_nodelay(struct socket *sock)
++{
++	tcp_sock_set_nodelay(sock->sk);
++}
++
++static inline void ksmbd_tcp_reuseaddr(struct socket *sock)
++{
++	sock_set_reuseaddr(sock->sk);
++}
++
++static inline void ksmbd_tcp_rcv_timeout(struct socket *sock, s64 secs)
++{
++	lock_sock(sock->sk);
++	if (secs && secs < MAX_SCHEDULE_TIMEOUT / HZ - 1)
++		sock->sk->sk_rcvtimeo = secs * HZ;
++	else
++		sock->sk->sk_rcvtimeo = MAX_SCHEDULE_TIMEOUT;
++	release_sock(sock->sk);
++}
++
++static inline void ksmbd_tcp_snd_timeout(struct socket *sock, s64 secs)
++{
++	sock_set_sndtimeo(sock->sk, secs);
++}
++
++static struct tcp_transport *alloc_transport(struct socket *client_sk)
++{
++	struct tcp_transport *t;
++	struct ksmbd_conn *conn;
++
++	t = kzalloc(sizeof(*t), GFP_KERNEL);
++	if (!t)
++		return NULL;
++	t->sock = client_sk;
++
++	conn = ksmbd_conn_alloc();
++	if (!conn) {
++		kfree(t);
++		return NULL;
++	}
++
++	conn->transport = KSMBD_TRANS(t);
++	KSMBD_TRANS(t)->conn = conn;
++	KSMBD_TRANS(t)->ops = &ksmbd_tcp_transport_ops;
++	return t;
++}
++
++static void free_transport(struct tcp_transport *t)
++{
++	kernel_sock_shutdown(t->sock, SHUT_RDWR);
++	sock_release(t->sock);
++	t->sock = NULL;
++
++	ksmbd_conn_free(KSMBD_TRANS(t)->conn);
++	kfree(t->iov);
++	kfree(t);
++}
++
++/**
++ * kvec_array_init() - initialize a IO vector segment
++ * @new:	IO vector to be initialized
++ * @iov:	base IO vector
++ * @nr_segs:	number of segments in base iov
++ * @bytes:	total iovec length so far for read
++ *
++ * Return:	Number of IO segments
++ */
++static unsigned int kvec_array_init(struct kvec *new, struct kvec *iov,
++				    unsigned int nr_segs, size_t bytes)
++{
++	size_t base = 0;
++
++	while (bytes || !iov->iov_len) {
++		int copy = min(bytes, iov->iov_len);
++
++		bytes -= copy;
++		base += copy;
++		if (iov->iov_len == base) {
++			iov++;
++			nr_segs--;
++			base = 0;
++		}
++	}
++
++	memcpy(new, iov, sizeof(*iov) * nr_segs);
++	new->iov_base += base;
++	new->iov_len -= base;
++	return nr_segs;
++}
++
++/**
++ * get_conn_iovec() - get connection iovec for reading from socket
++ * @t:		TCP transport instance
++ * @nr_segs:	number of segments in iov
++ *
++ * Return:	return existing or newly allocate iovec
++ */
++static struct kvec *get_conn_iovec(struct tcp_transport *t, unsigned int nr_segs)
++{
++	struct kvec *new_iov;
++
++	if (t->iov && nr_segs <= t->nr_iov)
++		return t->iov;
++
++	/* not big enough -- allocate a new one and release the old */
++	new_iov = kmalloc_array(nr_segs, sizeof(*new_iov), GFP_KERNEL);
++	if (new_iov) {
++		kfree(t->iov);
++		t->iov = new_iov;
++		t->nr_iov = nr_segs;
++	}
++	return new_iov;
++}
++
++static unsigned short ksmbd_tcp_get_port(const struct sockaddr *sa)
++{
++	switch (sa->sa_family) {
++	case AF_INET:
++		return ntohs(((struct sockaddr_in *)sa)->sin_port);
++	case AF_INET6:
++		return ntohs(((struct sockaddr_in6 *)sa)->sin6_port);
++	}
++	return 0;
++}
++
++/**
++ * ksmbd_tcp_new_connection() - create a new tcp session on mount
++ * @client_sk:	socket associated with new connection
++ *
++ * whenever a new connection is requested, create a conn thread
++ * (session thread) to handle new incoming smb requests from the connection
++ *
++ * Return:	0 on success, otherwise error
++ */
++static int ksmbd_tcp_new_connection(struct socket *client_sk)
++{
++	struct sockaddr *csin;
++	int rc = 0;
++	struct tcp_transport *t;
++
++	t = alloc_transport(client_sk);
++	if (!t)
++		return -ENOMEM;
++
++	csin = KSMBD_TCP_PEER_SOCKADDR(KSMBD_TRANS(t)->conn);
++	if (kernel_getpeername(client_sk, csin) < 0) {
++		pr_err("client ip resolution failed\n");
++		rc = -EINVAL;
++		goto out_error;
++	}
++
++	KSMBD_TRANS(t)->handler = kthread_run(ksmbd_conn_handler_loop,
++					      KSMBD_TRANS(t)->conn,
++					      "ksmbd:%u",
++					      ksmbd_tcp_get_port(csin));
++	if (IS_ERR(KSMBD_TRANS(t)->handler)) {
++		pr_err("cannot start conn thread\n");
++		rc = PTR_ERR(KSMBD_TRANS(t)->handler);
++		free_transport(t);
++	}
++	return rc;
++
++out_error:
++	free_transport(t);
++	return rc;
++}
++
++/**
++ * ksmbd_kthread_fn() - listen to new SMB connections and callback server
++ * @p:		arguments to forker thread
++ *
++ * Return:	Returns a task_struct or ERR_PTR
++ */
++static int ksmbd_kthread_fn(void *p)
++{
++	struct socket *client_sk = NULL;
++	struct interface *iface = (struct interface *)p;
++	int ret;
++
++	while (!kthread_should_stop()) {
++		mutex_lock(&iface->sock_release_lock);
++		if (!iface->ksmbd_socket) {
++			mutex_unlock(&iface->sock_release_lock);
++			break;
++		}
++		ret = kernel_accept(iface->ksmbd_socket, &client_sk,
++				    O_NONBLOCK);
++		mutex_unlock(&iface->sock_release_lock);
++		if (ret) {
++			if (ret == -EAGAIN)
++				/* check for new connections every 100 msecs */
++				schedule_timeout_interruptible(HZ / 10);
++			continue;
++		}
++
++		ksmbd_debug(CONN, "connect success: accepted new connection\n");
++		client_sk->sk->sk_rcvtimeo = KSMBD_TCP_RECV_TIMEOUT;
++		client_sk->sk->sk_sndtimeo = KSMBD_TCP_SEND_TIMEOUT;
++
++		ksmbd_tcp_new_connection(client_sk);
++	}
++
++	ksmbd_debug(CONN, "releasing socket\n");
++	return 0;
++}
++
++/**
++ * ksmbd_tcp_run_kthread() - start forker thread
++ * @iface: pointer to struct interface
++ *
++ * start forker thread(ksmbd/0) at module init time to listen
++ * on port 445 for new SMB connection requests. It creates per connection
++ * server threads(ksmbd/x)
++ *
++ * Return:	0 on success or error number
++ */
++static int ksmbd_tcp_run_kthread(struct interface *iface)
++{
++	int rc;
++	struct task_struct *kthread;
++
++	kthread = kthread_run(ksmbd_kthread_fn, (void *)iface, "ksmbd-%s",
++			      iface->name);
++	if (IS_ERR(kthread)) {
++		rc = PTR_ERR(kthread);
++		return rc;
++	}
++	iface->ksmbd_kthread = kthread;
++
++	return 0;
++}
++
++/**
++ * ksmbd_tcp_readv() - read data from socket in given iovec
++ * @t:		TCP transport instance
++ * @iov_orig:	base IO vector
++ * @nr_segs:	number of segments in base iov
++ * @to_read:	number of bytes to read from socket
++ *
++ * Return:	on success return number of bytes read from socket,
++ *		otherwise return error number
++ */
++static int ksmbd_tcp_readv(struct tcp_transport *t, struct kvec *iov_orig,
++			   unsigned int nr_segs, unsigned int to_read)
++{
++	int length = 0;
++	int total_read;
++	unsigned int segs;
++	struct msghdr ksmbd_msg;
++	struct kvec *iov;
++	struct ksmbd_conn *conn = KSMBD_TRANS(t)->conn;
++
++	iov = get_conn_iovec(t, nr_segs);
++	if (!iov)
++		return -ENOMEM;
++
++	ksmbd_msg.msg_control = NULL;
++	ksmbd_msg.msg_controllen = 0;
++
++	for (total_read = 0; to_read; total_read += length, to_read -= length) {
++		try_to_freeze();
++
++		if (!ksmbd_conn_alive(conn)) {
++			total_read = -ESHUTDOWN;
++			break;
++		}
++		segs = kvec_array_init(iov, iov_orig, nr_segs, total_read);
++
++		length = kernel_recvmsg(t->sock, &ksmbd_msg,
++					iov, segs, to_read, 0);
++
++		if (length == -EINTR) {
++			total_read = -ESHUTDOWN;
++			break;
++		} else if (conn->status == KSMBD_SESS_NEED_RECONNECT) {
++			total_read = -EAGAIN;
++			break;
++		} else if (length == -ERESTARTSYS || length == -EAGAIN) {
++			usleep_range(1000, 2000);
++			length = 0;
++			continue;
++		} else if (length <= 0) {
++			total_read = -EAGAIN;
++			break;
++		}
++	}
++	return total_read;
++}
++
++/**
++ * ksmbd_tcp_read() - read data from socket in given buffer
++ * @t:		TCP transport instance
++ * @buf:	buffer to store read data from socket
++ * @to_read:	number of bytes to read from socket
++ *
++ * Return:	on success return number of bytes read from socket,
++ *		otherwise return error number
++ */
++static int ksmbd_tcp_read(struct ksmbd_transport *t, char *buf, unsigned int to_read)
++{
++	struct kvec iov;
++
++	iov.iov_base = buf;
++	iov.iov_len = to_read;
++
++	return ksmbd_tcp_readv(TCP_TRANS(t), &iov, 1, to_read);
++}
++
++static int ksmbd_tcp_writev(struct ksmbd_transport *t, struct kvec *iov,
++			    int nvecs, int size, bool need_invalidate,
++			    unsigned int remote_key)
++
++{
++	struct msghdr smb_msg = {.msg_flags = MSG_NOSIGNAL};
++
++	return kernel_sendmsg(TCP_TRANS(t)->sock, &smb_msg, iov, nvecs, size);
++}
++
++static void ksmbd_tcp_disconnect(struct ksmbd_transport *t)
++{
++	free_transport(TCP_TRANS(t));
++}
++
++static void tcp_destroy_socket(struct socket *ksmbd_socket)
++{
++	int ret;
++
++	if (!ksmbd_socket)
++		return;
++
++	/* set zero to timeout */
++	ksmbd_tcp_rcv_timeout(ksmbd_socket, 0);
++	ksmbd_tcp_snd_timeout(ksmbd_socket, 0);
++
++	ret = kernel_sock_shutdown(ksmbd_socket, SHUT_RDWR);
++	if (ret)
++		pr_err("Failed to shutdown socket: %d\n", ret);
++	else
++		sock_release(ksmbd_socket);
++}
++
++/**
++ * create_socket - create socket for ksmbd/0
++ *
++ * Return:	Returns a task_struct or ERR_PTR
++ */
++static int create_socket(struct interface *iface)
++{
++	int ret;
++	struct sockaddr_in6 sin6;
++	struct sockaddr_in sin;
++	struct socket *ksmbd_socket;
++	bool ipv4 = false;
++
++	ret = sock_create(PF_INET6, SOCK_STREAM, IPPROTO_TCP, &ksmbd_socket);
++	if (ret) {
++		pr_err("Can't create socket for ipv6, try ipv4: %d\n", ret);
++		ret = sock_create(PF_INET, SOCK_STREAM, IPPROTO_TCP,
++				  &ksmbd_socket);
++		if (ret) {
++			pr_err("Can't create socket for ipv4: %d\n", ret);
++			goto out_error;
++		}
++
++		sin.sin_family = PF_INET;
++		sin.sin_addr.s_addr = htonl(INADDR_ANY);
++		sin.sin_port = htons(server_conf.tcp_port);
++		ipv4 = true;
++	} else {
++		sin6.sin6_family = PF_INET6;
++		sin6.sin6_addr = in6addr_any;
++		sin6.sin6_port = htons(server_conf.tcp_port);
++	}
++
++	ksmbd_tcp_nodelay(ksmbd_socket);
++	ksmbd_tcp_reuseaddr(ksmbd_socket);
++
++	ret = sock_setsockopt(ksmbd_socket,
++			      SOL_SOCKET,
++			      SO_BINDTODEVICE,
++			      KERNEL_SOCKPTR(iface->name),
++			      strlen(iface->name));
++	if (ret != -ENODEV && ret < 0) {
++		pr_err("Failed to set SO_BINDTODEVICE: %d\n", ret);
++		goto out_error;
++	}
++
++	if (ipv4)
++		ret = kernel_bind(ksmbd_socket, (struct sockaddr *)&sin,
++				  sizeof(sin));
++	else
++		ret = kernel_bind(ksmbd_socket, (struct sockaddr *)&sin6,
++				  sizeof(sin6));
++	if (ret) {
++		pr_err("Failed to bind socket: %d\n", ret);
++		goto out_error;
++	}
++
++	ksmbd_socket->sk->sk_rcvtimeo = KSMBD_TCP_RECV_TIMEOUT;
++	ksmbd_socket->sk->sk_sndtimeo = KSMBD_TCP_SEND_TIMEOUT;
++
++	ret = kernel_listen(ksmbd_socket, KSMBD_SOCKET_BACKLOG);
++	if (ret) {
++		pr_err("Port listen() error: %d\n", ret);
++		goto out_error;
++	}
++
++	iface->ksmbd_socket = ksmbd_socket;
++	ret = ksmbd_tcp_run_kthread(iface);
++	if (ret) {
++		pr_err("Can't start ksmbd main kthread: %d\n", ret);
++		goto out_error;
++	}
++	iface->state = IFACE_STATE_CONFIGURED;
++
++	return 0;
++
++out_error:
++	tcp_destroy_socket(ksmbd_socket);
++	iface->ksmbd_socket = NULL;
++	return ret;
++}
++
++static int ksmbd_netdev_event(struct notifier_block *nb, unsigned long event,
++			      void *ptr)
++{
++	struct net_device *netdev = netdev_notifier_info_to_dev(ptr);
++	struct interface *iface;
++	int ret, found = 0;
++
++	switch (event) {
++	case NETDEV_UP:
++		if (netdev->priv_flags & IFF_BRIDGE_PORT)
++			return NOTIFY_OK;
++
++		list_for_each_entry(iface, &iface_list, entry) {
++			if (!strcmp(iface->name, netdev->name)) {
++				found = 1;
++				if (iface->state != IFACE_STATE_DOWN)
++					break;
++				ret = create_socket(iface);
++				if (ret)
++					return NOTIFY_OK;
++				break;
++			}
++		}
++		if (!found && bind_additional_ifaces) {
++			iface = alloc_iface(kstrdup(netdev->name, GFP_KERNEL));
++			if (!iface)
++				return NOTIFY_OK;
++			ret = create_socket(iface);
++			if (ret)
++				break;
++		}
++		break;
++	case NETDEV_DOWN:
++		list_for_each_entry(iface, &iface_list, entry) {
++			if (!strcmp(iface->name, netdev->name) &&
++			    iface->state == IFACE_STATE_CONFIGURED) {
++				tcp_stop_kthread(iface->ksmbd_kthread);
++				iface->ksmbd_kthread = NULL;
++				mutex_lock(&iface->sock_release_lock);
++				tcp_destroy_socket(iface->ksmbd_socket);
++				iface->ksmbd_socket = NULL;
++				mutex_unlock(&iface->sock_release_lock);
++
++				iface->state = IFACE_STATE_DOWN;
++				break;
++			}
++		}
++		break;
++	}
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block ksmbd_netdev_notifier = {
++	.notifier_call = ksmbd_netdev_event,
++};
++
++int ksmbd_tcp_init(void)
++{
++	register_netdevice_notifier(&ksmbd_netdev_notifier);
++
++	return 0;
++}
++
++static void tcp_stop_kthread(struct task_struct *kthread)
++{
++	int ret;
++
++	if (!kthread)
++		return;
++
++	ret = kthread_stop(kthread);
++	if (ret)
++		pr_err("failed to stop forker thread\n");
++}
++
++void ksmbd_tcp_destroy(void)
++{
++	struct interface *iface, *tmp;
++
++	unregister_netdevice_notifier(&ksmbd_netdev_notifier);
++
++	list_for_each_entry_safe(iface, tmp, &iface_list, entry) {
++		list_del(&iface->entry);
++		kfree(iface->name);
++		kfree(iface);
++	}
++}
++
++static struct interface *alloc_iface(char *ifname)
++{
++	struct interface *iface;
++
++	if (!ifname)
++		return NULL;
++
++	iface = kzalloc(sizeof(struct interface), GFP_KERNEL);
++	if (!iface) {
++		kfree(ifname);
++		return NULL;
++	}
++
++	iface->name = ifname;
++	iface->state = IFACE_STATE_DOWN;
++	list_add(&iface->entry, &iface_list);
++	mutex_init(&iface->sock_release_lock);
++	return iface;
++}
++
++int ksmbd_tcp_set_interfaces(char *ifc_list, int ifc_list_sz)
++{
++	int sz = 0;
++
++	if (!ifc_list_sz) {
++		struct net_device *netdev;
++
++		rtnl_lock();
++		for_each_netdev(&init_net, netdev) {
++			if (netdev->priv_flags & IFF_BRIDGE_PORT)
++				continue;
++			if (!alloc_iface(kstrdup(netdev->name, GFP_KERNEL)))
++				return -ENOMEM;
++		}
++		rtnl_unlock();
++		bind_additional_ifaces = 1;
++		return 0;
++	}
++
++	while (ifc_list_sz > 0) {
++		if (!alloc_iface(kstrdup(ifc_list, GFP_KERNEL)))
++			return -ENOMEM;
++
++		sz = strlen(ifc_list);
++		if (!sz)
++			break;
++
++		ifc_list += sz + 1;
++		ifc_list_sz -= (sz + 1);
++	}
++
++	bind_additional_ifaces = 0;
++
++	return 0;
++}
++
++static struct ksmbd_transport_ops ksmbd_tcp_transport_ops = {
++	.read		= ksmbd_tcp_read,
++	.writev		= ksmbd_tcp_writev,
++	.disconnect	= ksmbd_tcp_disconnect,
++};
+diff --git a/fs/ksmbd/transport_tcp.h b/fs/ksmbd/transport_tcp.h
+new file mode 100644
+index 000000000000..e338bebe322f
+--- /dev/null
++++ b/fs/ksmbd/transport_tcp.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ *   Copyright (C) 2018 Samsung Electronics Co., Ltd.
++ */
++
++#ifndef __KSMBD_TRANSPORT_TCP_H__
++#define __KSMBD_TRANSPORT_TCP_H__
++
++int ksmbd_tcp_set_interfaces(char *ifc_list, int ifc_list_sz);
++int ksmbd_tcp_init(void);
++void ksmbd_tcp_destroy(void);
++
++#endif /* __KSMBD_TRANSPORT_TCP_H__ */
 -- 
 2.17.1
 
