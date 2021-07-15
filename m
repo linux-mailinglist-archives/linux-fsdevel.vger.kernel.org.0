@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 404793C975D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 06:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6480B3C9760
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 06:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236494AbhGOEaG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 00:30:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56398 "EHLO
+        id S235615AbhGOEaj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 00:30:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236430AbhGOEaF (ORCPT
+        with ESMTP id S233134AbhGOEai (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 00:30:05 -0400
+        Thu, 15 Jul 2021 00:30:38 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC47C06175F;
-        Wed, 14 Jul 2021 21:27:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51EAAC06175F;
+        Wed, 14 Jul 2021 21:27:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=W+gx+KpLcRiFJw54VT39FE+dDAoPUQY74UTXIQApCwU=; b=gQRS6zW3Xiqls6dnRao3LjWaVP
-        Ujxgt42k3TeBz35edde+quLsoSS364uXxHuBUiZl+ckGELzW3LQi8Enc7HtR9kgWg0NWWS13QMPff
-        R9v9CF2wCsmf4zi9kSxCLPPt84aL7Rclxl6T35y8emA6B+vjr1X3r9pTnDIzKN9Ehi0XK1pXPSQyt
-        0pQNc5IMTZq7bi149CS1Hss69xtlgrN6zrh/umxBAlXmybJfNyQqX/gHEv6l/aJIOEpaNSYxurIrJ
-        8+SM+Nejozq3gA4SFsRrMOllWS4ryw+Sd8hPk0yclbnl6/2Dir8yZaMon72MjN0vXhRucv46SsFDC
-        NOubgQdg==;
+        bh=CFvJkkEN8s/6lLPeZLAt71H4VLu4g1kSLOabcpJEMsA=; b=Dvw4p2WXnfiSw3lLx59yQKyeq3
+        mlFMF/LTsapJ6bJx94piaLHVRdoSIu3rBa5Y0GCyzh3fhLhtEPepnfiwiTNSPM4WrOSFh3sA8ljpA
+        lG+aBpAajvwUJQgI4ACJh3npYaKzhN6IjpWnybCzNP6Zsy1/HafxfjzME9duHAYu3wLQMYvmUoWU+
+        7WMMtuiGtbsCAh56LcbJR0LfLOFplVWw+wagoz3MUpOJIo3qarirx6v0nh0KEvrFvKo6nXUCg7b16
+        wrmC4m/0TPLEwilNnL5UYQkObwXCsJ3qaNjn46INpn1DnhtiJBbZlLGQO39/39teCFlvLpCOB/2Vv
+        Z8nk9G2Q==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m3swc-002xGI-RL; Thu, 15 Jul 2021 04:26:12 +0000
+        id 1m3sxE-002xIW-0h; Thu, 15 Jul 2021 04:26:40 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v14 061/138] mm/migrate: Add folio_migrate_flags()
-Date:   Thu, 15 Jul 2021 04:35:47 +0100
-Message-Id: <20210715033704.692967-62-willy@infradead.org>
+Subject: [PATCH v14 062/138] mm/migrate: Add folio_migrate_copy()
+Date:   Thu, 15 Jul 2021 04:35:48 +0100
+Message-Id: <20210715033704.692967-63-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210715033704.692967-1-willy@infradead.org>
 References: <20210715033704.692967-1-willy@infradead.org>
@@ -43,342 +43,128 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Turn migrate_page_states() into a wrapper around folio_migrate_flags().
-Also convert two functions only called from folio_migrate_flags() to
-be folio-based.  ksm_migrate_page() becomes folio_migrate_ksm() and
-copy_page_owner() becomes folio_copy_owner().  folio_migrate_flags()
-alone shrinks by two thirds -- 1967 bytes down to 642 bytes.
+This is the folio equivalent of migrate_page_copy(), which is retained
+as a wrapper for filesystems which are not yet converted to folios.
+Also convert copy_huge_page() to folio_copy().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/ksm.h        |  4 +-
- include/linux/migrate.h    |  1 +
- include/linux/page_owner.h |  8 ++--
- mm/folio-compat.c          |  6 +++
- mm/ksm.c                   | 31 ++++++++------
- mm/migrate.c               | 84 +++++++++++++++++++-------------------
- mm/page_owner.c            | 10 ++---
- 7 files changed, 77 insertions(+), 67 deletions(-)
+ include/linux/migrate.h |  1 +
+ include/linux/mm.h      |  2 +-
+ mm/folio-compat.c       |  6 ++++++
+ mm/hugetlb.c            |  2 +-
+ mm/migrate.c            | 14 +++++---------
+ mm/util.c               |  6 +++---
+ 6 files changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-index 161e8164abcf..a38a5bca1ba5 100644
---- a/include/linux/ksm.h
-+++ b/include/linux/ksm.h
-@@ -52,7 +52,7 @@ struct page *ksm_might_need_to_copy(struct page *page,
- 			struct vm_area_struct *vma, unsigned long address);
- 
- void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc);
--void ksm_migrate_page(struct page *newpage, struct page *oldpage);
-+void folio_migrate_ksm(struct folio *newfolio, struct folio *folio);
- 
- #else  /* !CONFIG_KSM */
- 
-@@ -83,7 +83,7 @@ static inline void rmap_walk_ksm(struct page *page,
- {
- }
- 
--static inline void ksm_migrate_page(struct page *newpage, struct page *oldpage)
-+static inline void folio_migrate_ksm(struct folio *newfolio, struct folio *old)
- {
- }
- #endif /* CONFIG_MMU */
 diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index eb14495a1f46..ba0a554b3eae 100644
+index ba0a554b3eae..6a01de9faff5 100644
 --- a/include/linux/migrate.h
 +++ b/include/linux/migrate.h
-@@ -51,6 +51,7 @@ extern int migrate_huge_page_move_mapping(struct address_space *mapping,
- 				  struct page *newpage, struct page *page);
+@@ -52,6 +52,7 @@ extern int migrate_huge_page_move_mapping(struct address_space *mapping,
  extern int migrate_page_move_mapping(struct address_space *mapping,
  		struct page *newpage, struct page *page, int extra_count);
-+void folio_migrate_flags(struct folio *newfolio, struct folio *folio);
+ void folio_migrate_flags(struct folio *newfolio, struct folio *folio);
++void folio_migrate_copy(struct folio *newfolio, struct folio *folio);
  int folio_migrate_mapping(struct address_space *mapping,
  		struct folio *newfolio, struct folio *folio, int extra_count);
  #else
-diff --git a/include/linux/page_owner.h b/include/linux/page_owner.h
-index 719bfe5108c5..43c638c51c1f 100644
---- a/include/linux/page_owner.h
-+++ b/include/linux/page_owner.h
-@@ -12,7 +12,7 @@ extern void __reset_page_owner(struct page *page, unsigned int order);
- extern void __set_page_owner(struct page *page,
- 			unsigned int order, gfp_t gfp_mask);
- extern void __split_page_owner(struct page *page, unsigned int nr);
--extern void __copy_page_owner(struct page *oldpage, struct page *newpage);
-+extern void __folio_copy_owner(struct folio *newfolio, struct folio *old);
- extern void __set_page_owner_migrate_reason(struct page *page, int reason);
- extern void __dump_page_owner(const struct page *page);
- extern void pagetypeinfo_showmixedcount_print(struct seq_file *m,
-@@ -36,10 +36,10 @@ static inline void split_page_owner(struct page *page, unsigned int nr)
- 	if (static_branch_unlikely(&page_owner_inited))
- 		__split_page_owner(page, nr);
- }
--static inline void copy_page_owner(struct page *oldpage, struct page *newpage)
-+static inline void folio_copy_owner(struct folio *newfolio, struct folio *old)
- {
- 	if (static_branch_unlikely(&page_owner_inited))
--		__copy_page_owner(oldpage, newpage);
-+		__folio_copy_owner(newfolio, old);
- }
- static inline void set_page_owner_migrate_reason(struct page *page, int reason)
- {
-@@ -63,7 +63,7 @@ static inline void split_page_owner(struct page *page,
- 			unsigned int order)
- {
- }
--static inline void copy_page_owner(struct page *oldpage, struct page *newpage)
-+static inline void folio_copy_owner(struct folio *newfolio, struct folio *folio)
- {
- }
- static inline void set_page_owner_migrate_reason(struct page *page, int reason)
-diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index d883d964fd52..3f00ad92d1ff 100644
---- a/mm/folio-compat.c
-+++ b/mm/folio-compat.c
-@@ -58,4 +58,10 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 					page_folio(page), extra_count);
- }
- EXPORT_SYMBOL(migrate_page_move_mapping);
-+
-+void migrate_page_states(struct page *newpage, struct page *page)
-+{
-+	folio_migrate_flags(page_folio(newpage), page_folio(page));
-+}
-+EXPORT_SYMBOL(migrate_page_states);
- #endif
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 23d36b59f997..3a70786906eb 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -753,7 +753,7 @@ static struct page *get_ksm_page(struct stable_node *stable_node,
- 	/*
- 	 * We come here from above when page->mapping or !PageSwapCache
- 	 * suggests that the node is stale; but it might be under migration.
--	 * We need smp_rmb(), matching the smp_wmb() in ksm_migrate_page(),
-+	 * We need smp_rmb(), matching the smp_wmb() in folio_migrate_ksm(),
- 	 * before checking whether node->kpfn has been changed.
- 	 */
- 	smp_rmb();
-@@ -854,9 +854,14 @@ static int unmerge_ksm_pages(struct vm_area_struct *vma,
- 	return err;
- }
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index deb0f5efaa65..23276330ef4f 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -911,7 +911,7 @@ void __put_page(struct page *page);
+ void put_pages_list(struct list_head *pages);
  
-+static inline struct stable_node *folio_stable_node(struct folio *folio)
-+{
-+	return folio_test_ksm(folio) ? folio_raw_mapping(folio) : NULL;
-+}
-+
- static inline struct stable_node *page_stable_node(struct page *page)
- {
--	return PageKsm(page) ? page_rmapping(page) : NULL;
-+	return folio_stable_node(page_folio(page));
- }
- 
- static inline void set_page_stable_node(struct page *page,
-@@ -2661,26 +2666,26 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
- }
- 
- #ifdef CONFIG_MIGRATION
--void ksm_migrate_page(struct page *newpage, struct page *oldpage)
-+void folio_migrate_ksm(struct folio *newfolio, struct folio *folio)
- {
- 	struct stable_node *stable_node;
- 
--	VM_BUG_ON_PAGE(!PageLocked(oldpage), oldpage);
--	VM_BUG_ON_PAGE(!PageLocked(newpage), newpage);
--	VM_BUG_ON_PAGE(newpage->mapping != oldpage->mapping, newpage);
-+	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
-+	VM_BUG_ON_FOLIO(!folio_test_locked(newfolio), newfolio);
-+	VM_BUG_ON_FOLIO(newfolio->mapping != folio->mapping, newfolio);
- 
--	stable_node = page_stable_node(newpage);
-+	stable_node = folio_stable_node(folio);
- 	if (stable_node) {
--		VM_BUG_ON_PAGE(stable_node->kpfn != page_to_pfn(oldpage), oldpage);
--		stable_node->kpfn = page_to_pfn(newpage);
-+		VM_BUG_ON_FOLIO(stable_node->kpfn != folio_pfn(folio), folio);
-+		stable_node->kpfn = folio_pfn(newfolio);
- 		/*
--		 * newpage->mapping was set in advance; now we need smp_wmb()
-+		 * newfolio->mapping was set in advance; now we need smp_wmb()
- 		 * to make sure that the new stable_node->kpfn is visible
--		 * to get_ksm_page() before it can see that oldpage->mapping
--		 * has gone stale (or that PageSwapCache has been cleared).
-+		 * to get_ksm_page() before it can see that folio->mapping
-+		 * has gone stale (or that folio_test_swapcache has been cleared).
- 		 */
- 		smp_wmb();
--		set_page_stable_node(oldpage, NULL);
-+		set_page_stable_node(&folio->page, NULL);
- 	}
- }
- #endif /* CONFIG_MIGRATION */
-diff --git a/mm/migrate.c b/mm/migrate.c
-index aa4f2310c5bb..a86be2bfc9a1 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -538,82 +538,80 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
- }
+ void split_page(struct page *page, unsigned int order);
+-void copy_huge_page(struct page *dst, struct page *src);
++void folio_copy(struct folio *dst, struct folio *src);
  
  /*
-- * Copy the page to its new location
-+ * Copy the flags and some other ancillary information
-  */
--void migrate_page_states(struct page *newpage, struct page *page)
-+void folio_migrate_flags(struct folio *newfolio, struct folio *folio)
- {
--	struct folio *folio = page_folio(page);
--	struct folio *newfolio = page_folio(newpage);
- 	int cpupid;
- 
--	if (PageError(page))
--		SetPageError(newpage);
--	if (PageReferenced(page))
--		SetPageReferenced(newpage);
--	if (PageUptodate(page))
--		SetPageUptodate(newpage);
--	if (TestClearPageActive(page)) {
--		VM_BUG_ON_PAGE(PageUnevictable(page), page);
--		SetPageActive(newpage);
--	} else if (TestClearPageUnevictable(page))
--		SetPageUnevictable(newpage);
--	if (PageWorkingset(page))
--		SetPageWorkingset(newpage);
--	if (PageChecked(page))
--		SetPageChecked(newpage);
--	if (PageMappedToDisk(page))
--		SetPageMappedToDisk(newpage);
-+	if (folio_test_error(folio))
-+		folio_set_error(newfolio);
-+	if (folio_test_referenced(folio))
-+		folio_set_referenced(newfolio);
-+	if (folio_test_uptodate(folio))
-+		folio_mark_uptodate(newfolio);
-+	if (folio_test_clear_active(folio)) {
-+		VM_BUG_ON_FOLIO(folio_test_unevictable(folio), folio);
-+		folio_set_active(newfolio);
-+	} else if (folio_test_clear_unevictable(folio))
-+		folio_set_unevictable(newfolio);
-+	if (folio_test_workingset(folio))
-+		folio_set_workingset(newfolio);
-+	if (folio_test_checked(folio))
-+		folio_set_checked(newfolio);
-+	if (folio_test_mappedtodisk(folio))
-+		folio_set_mappedtodisk(newfolio);
- 
- 	/* Move dirty on pages not done by folio_migrate_mapping() */
--	if (PageDirty(page))
--		SetPageDirty(newpage);
-+	if (folio_test_dirty(folio))
-+		folio_set_dirty(newfolio);
- 
--	if (page_is_young(page))
--		set_page_young(newpage);
--	if (page_is_idle(page))
--		set_page_idle(newpage);
-+	if (folio_test_young(folio))
-+		folio_set_young(newfolio);
-+	if (folio_test_idle(folio))
-+		folio_set_idle(newfolio);
- 
- 	/*
- 	 * Copy NUMA information to the new page, to prevent over-eager
- 	 * future migrations of this same page.
- 	 */
--	cpupid = page_cpupid_xchg_last(page, -1);
--	page_cpupid_xchg_last(newpage, cpupid);
-+	cpupid = page_cpupid_xchg_last(&folio->page, -1);
-+	page_cpupid_xchg_last(&newfolio->page, cpupid);
- 
--	ksm_migrate_page(newpage, page);
-+	folio_migrate_ksm(newfolio, folio);
- 	/*
- 	 * Please do not reorder this without considering how mm/ksm.c's
- 	 * get_ksm_page() depends upon ksm_migrate_page() and PageSwapCache().
- 	 */
--	if (PageSwapCache(page))
--		ClearPageSwapCache(page);
--	ClearPagePrivate(page);
-+	if (folio_test_swapcache(folio))
-+		folio_clear_swapcache(folio);
-+	folio_clear_private(folio);
- 
- 	/* page->private contains hugetlb specific flags */
--	if (!PageHuge(page))
--		set_page_private(page, 0);
-+	if (!folio_test_hugetlb(folio))
-+		folio->private = NULL;
- 
- 	/*
- 	 * If any waiters have accumulated on the new page then
- 	 * wake them up.
- 	 */
--	if (PageWriteback(newpage))
--		end_page_writeback(newpage);
-+	if (folio_test_writeback(newfolio))
-+		folio_end_writeback(newfolio);
- 
- 	/*
- 	 * PG_readahead shares the same bit with PG_reclaim.  The above
- 	 * end_page_writeback() may clear PG_readahead mistakenly, so set the
- 	 * bit after that.
- 	 */
--	if (PageReadahead(page))
--		SetPageReadahead(newpage);
-+	if (folio_test_readahead(folio))
-+		folio_set_readahead(newfolio);
- 
--	copy_page_owner(page, newpage);
-+	folio_copy_owner(folio, newfolio);
- 
--	if (!PageHuge(page))
-+	if (!folio_test_hugetlb(folio))
- 		mem_cgroup_migrate(folio, newfolio);
+  * Compound pages have a destructor function.  Provide a
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index 3f00ad92d1ff..2ccd8f213fc4 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -64,4 +64,10 @@ void migrate_page_states(struct page *newpage, struct page *page)
+ 	folio_migrate_flags(page_folio(newpage), page_folio(page));
  }
--EXPORT_SYMBOL(migrate_page_states);
-+EXPORT_SYMBOL(folio_migrate_flags);
+ EXPORT_SYMBOL(migrate_page_states);
++
++void migrate_page_copy(struct page *newpage, struct page *page)
++{
++	folio_migrate_copy(page_folio(newpage), page_folio(page));
++}
++EXPORT_SYMBOL(migrate_page_copy);
+ #endif
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 924553aa8f78..b46f9d09aa94 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5200,7 +5200,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
+ 			*pagep = NULL;
+ 			goto out;
+ 		}
+-		copy_huge_page(page, *pagep);
++		folio_copy(page_folio(page), page_folio(*pagep));
+ 		put_page(*pagep);
+ 		*pagep = NULL;
+ 	}
+diff --git a/mm/migrate.c b/mm/migrate.c
+index a86be2bfc9a1..36cdae0a1235 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -613,16 +613,12 @@ void folio_migrate_flags(struct folio *newfolio, struct folio *folio)
+ }
+ EXPORT_SYMBOL(folio_migrate_flags);
  
- void migrate_page_copy(struct page *newpage, struct page *page)
+-void migrate_page_copy(struct page *newpage, struct page *page)
++void folio_migrate_copy(struct folio *newfolio, struct folio *folio)
  {
-@@ -654,7 +652,7 @@ int migrate_page(struct address_space *mapping,
+-	if (PageHuge(page) || PageTransHuge(page))
+-		copy_huge_page(newpage, page);
+-	else
+-		copy_highpage(newpage, page);
+-
+-	migrate_page_states(newpage, page);
++	folio_copy(newfolio, folio);
++	folio_migrate_flags(newfolio, folio);
+ }
+-EXPORT_SYMBOL(migrate_page_copy);
++EXPORT_SYMBOL(folio_migrate_copy);
+ 
+ /************************************************************
+  *                    Migration functions
+@@ -650,7 +646,7 @@ int migrate_page(struct address_space *mapping,
+ 		return rc;
+ 
  	if (mode != MIGRATE_SYNC_NO_COPY)
- 		migrate_page_copy(newpage, page);
+-		migrate_page_copy(newpage, page);
++		folio_migrate_copy(newfolio, folio);
  	else
--		migrate_page_states(newpage, page);
-+		folio_migrate_flags(newfolio, folio);
+ 		folio_migrate_flags(newfolio, folio);
  	return MIGRATEPAGE_SUCCESS;
+diff --git a/mm/util.c b/mm/util.c
+index 149537120a91..904a75612307 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -728,13 +728,13 @@ int __page_mapcount(struct page *page)
  }
- EXPORT_SYMBOL(migrate_page);
-diff --git a/mm/page_owner.c b/mm/page_owner.c
-index f51a57e92aa3..23bfb074ca3f 100644
---- a/mm/page_owner.c
-+++ b/mm/page_owner.c
-@@ -210,10 +210,10 @@ void __split_page_owner(struct page *page, unsigned int nr)
+ EXPORT_SYMBOL_GPL(__page_mapcount);
+ 
+-void copy_huge_page(struct page *dst, struct page *src)
++void folio_copy(struct folio *dst, struct folio *src)
+ {
+-	unsigned i, nr = compound_nr(src);
++	unsigned i, nr = folio_nr_pages(src);
+ 
+ 	for (i = 0; i < nr; i++) {
+ 		cond_resched();
+-		copy_highpage(nth_page(dst, i), nth_page(src, i));
++		copy_highpage(folio_page(dst, i), folio_page(src, i));
  	}
  }
  
--void __copy_page_owner(struct page *oldpage, struct page *newpage)
-+void __folio_copy_owner(struct folio *newfolio, struct folio *old)
- {
--	struct page_ext *old_ext = lookup_page_ext(oldpage);
--	struct page_ext *new_ext = lookup_page_ext(newpage);
-+	struct page_ext *old_ext = lookup_page_ext(&old->page);
-+	struct page_ext *new_ext = lookup_page_ext(&newfolio->page);
- 	struct page_owner *old_page_owner, *new_page_owner;
- 
- 	if (unlikely(!old_ext || !new_ext))
-@@ -231,11 +231,11 @@ void __copy_page_owner(struct page *oldpage, struct page *newpage)
- 	new_page_owner->free_ts_nsec = old_page_owner->ts_nsec;
- 
- 	/*
--	 * We don't clear the bit on the oldpage as it's going to be freed
-+	 * We don't clear the bit on the old folio as it's going to be freed
- 	 * after migration. Until then, the info can be useful in case of
- 	 * a bug, and the overall stats will be off a bit only temporarily.
- 	 * Also, migrate_misplaced_transhuge_page() can still fail the
--	 * migration and then we want the oldpage to retain the info. But
-+	 * migration and then we want the old folio to retain the info. But
- 	 * in that case we also don't need to explicitly clear the info from
- 	 * the new page, which will be freed.
- 	 */
 -- 
 2.30.2
 
