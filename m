@@ -2,58 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E1BB3C9604
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 04:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9FD63C9652
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 05:16:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234624AbhGOCjh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 22:39:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59494 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231921AbhGOCj0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 22:39:26 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3ACCC06175F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 19:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=8ajqsZ5gg0J0/2Vvmn7KSFKmWiDI+nEHnSs0tpVpdGQ=; b=oeLv2OYnZlt9+NSA32Dj6pdUR9
-        XMIcw3xlBfv9ptMlEpuudg5nUVXlZiG1kjmJe93hYVbxsnt4nkL4Z/V28jfmOybYlUP4S3/u5Gs8z
-        7YUZxxLrqMMDE6jAkAk3zFhyk0AzZLux/cWfkXFs3gzZVUwHn1ricjbRXBEXtEdKk1TzGYF0uWWmT
-        +yuJv2IJkxQb4MOK5V3l3xP2JcgWfofR1bfeNb1xXq5u5np/3VkzFW82D6rIRQCVMf+mUb+HIKosh
-        MuhS0Sc/vJaqYQV6srETG6DRwTp9nNQYqdg+MAHQMwrjb7sBzVsH49I6VGAPqNcB3XLmNBUyF1rba
-        XuxB072g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m3rDl-002rze-7B; Thu, 15 Jul 2021 02:35:54 +0000
-Date:   Thu, 15 Jul 2021 03:35:29 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Boyang Xue <bxue@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, Roman Gushchin <guro@fb.com>,
+        id S233439AbhGODTA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 23:19:00 -0400
+Received: from foss.arm.com ([217.140.110.172]:45970 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233066AbhGODS7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Jul 2021 23:18:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48A8C11D4;
+        Wed, 14 Jul 2021 20:16:07 -0700 (PDT)
+Received: from entos-ampere-02.shanghai.arm.com (entos-ampere-02.shanghai.arm.com [10.169.214.103])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EB2143F7D8;
+        Wed, 14 Jul 2021 20:16:04 -0700 (PDT)
+From:   Jia He <justin.he@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>, nd@arm.com,
+        Jia He <justin.he@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: Patch 'writeback, cgroup: release dying cgwbs by switching
- attached inodes' leads to kernel crash
-Message-ID: <YO+e8UrCbzp2pfvj@casper.infradead.org>
-References: <CAHLe9YZ1_0p_rn+fbXFxU3ySJ_XU=QdSKJAu2j3WD8qmDuNTaQ@mail.gmail.com>
- <YO5kCzI133B/fHiS@carbon.dhcp.thefacebook.com>
- <CAHLe9YYiNnbyYGHoArJxvCEsqaqt2rwp5OHCSy+gWH+D8OFLQA@mail.gmail.com>
- <20210714092639.GB9457@quack2.suse.cz>
- <CAHLe9YbKXcF1mkSeK0Fo7wAUN02-_LfLD+2hdmVMJY_-gNq=-A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHLe9YbKXcF1mkSeK0Fo7wAUN02-_LfLD+2hdmVMJY_-gNq=-A@mail.gmail.com>
+Subject: [PATCH RFC 03/13] fs: Remove the number postfix of '%pD' in format string
+Date:   Thu, 15 Jul 2021 11:15:23 +0800
+Message-Id: <20210715031533.9553-4-justin.he@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210715031533.9553-1-justin.he@arm.com>
+References: <20210715031533.9553-1-justin.he@arm.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 12:22:28AM +0800, Boyang Xue wrote:
-> It's unclear to me that where to find the required address in the
-> addr2line command line, i.e.
-> 
-> addr2line -e /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
-> <what address here?>
+After the behavior of '%pD' is changed to print the full path of file,
+the previous number postfix of '%pD' is pointless.
 
-./scripts/faddr2line /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux cleanup_offline_cgwbs_workfn+0x320/0x394
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Jia He <justin.he@arm.com>
+---
+ fs/exec.c       | 2 +-
+ fs/ioctl.c      | 2 +-
+ fs/read_write.c | 2 +-
+ fs/splice.c     | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 38f63451b928..a9f9de7da8ff 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -811,7 +811,7 @@ int setup_arg_pages(struct linux_binprm *bprm,
+ 	BUG_ON(prev != vma);
+ 
+ 	if (unlikely(vm_flags & VM_EXEC)) {
+-		pr_warn_once("process '%pD4' started with executable stack\n",
++		pr_warn_once("process '%pD' started with executable stack\n",
+ 			     bprm->file);
+ 	}
+ 
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 1e2204fa9963..80c9d3d00c8f 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -78,7 +78,7 @@ static int ioctl_fibmap(struct file *filp, int __user *p)
+ 
+ 	if (block > INT_MAX) {
+ 		error = -ERANGE;
+-		pr_warn_ratelimited("[%s/%d] FS: %s File: %pD4 would truncate fibmap result\n",
++		pr_warn_ratelimited("[%s/%d] FS: %s File: %pD would truncate fibmap result\n",
+ 				    current->comm, task_pid_nr(current),
+ 				    sb->s_id, filp);
+ 	}
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 9db7adf160d2..3fdb17e4b712 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -422,7 +422,7 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
+ static int warn_unsupported(struct file *file, const char *op)
+ {
+ 	pr_warn_ratelimited(
+-		"kernel %s not supported for file %pD4 (pid: %d comm: %.20s)\n",
++		"kernel %s not supported for file %pD (pid: %d comm: %.20s)\n",
+ 		op, file, current->pid, current->comm);
+ 	return -EINVAL;
+ }
+diff --git a/fs/splice.c b/fs/splice.c
+index 5dbce4dcc1a7..4b0b9029b5ca 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -751,7 +751,7 @@ EXPORT_SYMBOL(generic_splice_sendpage);
+ static int warn_unsupported(struct file *file, const char *op)
+ {
+ 	pr_debug_ratelimited(
+-		"splice %s not supported for file %pD4 (pid: %d comm: %.20s)\n",
++		"splice %s not supported for file %pD (pid: %d comm: %.20s)\n",
+ 		op, file, current->pid, current->comm);
+ 	return -EINVAL;
+ }
+-- 
+2.17.1
 
