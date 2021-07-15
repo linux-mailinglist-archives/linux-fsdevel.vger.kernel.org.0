@@ -2,200 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 821513C9BD7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 11:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F0CC3C9BE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 11:31:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234825AbhGOJda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 05:33:30 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:37189 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233886AbhGOJd3 (ORCPT
+        id S231443AbhGOJe3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 05:34:29 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:49880 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238774AbhGOJeL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 05:33:29 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R631e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UfsAWGW_1626341432;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UfsAWGW_1626341432)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 15 Jul 2021 17:30:33 +0800
-From:   Jeffle Xu <jefflexu@linux.alibaba.com>
-To:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, bo.liu@linux.alibaba.com
-Subject: [RFC PATCH 3/3] fuse: add per-file DAX flag
-Date:   Thu, 15 Jul 2021 17:30:31 +0800
-Message-Id: <20210715093031.55667-4-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210715093031.55667-1-jefflexu@linux.alibaba.com>
-References: <20210715093031.55667-1-jefflexu@linux.alibaba.com>
+        Thu, 15 Jul 2021 05:34:11 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 1AB1222924;
+        Thu, 15 Jul 2021 09:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1626341478; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=BiEOXaAhNfaK+uoOQNX0TiOjwvYsZy9v/7XAXayxtXM=;
+        b=zHm4wEiRUKs7r2kBC9pzE9X6GlNhgY8lfeiD99Ek1ENKlMzm23v4gBuKt7p23JiJDYM29f
+        a54SqohiFj+CwHbD7dTsF8MPRrWLxI+ibZF0d9DIrlA+ctarqi+dG6IcvEoIMFvVFuLBSD
+        kYnlyRaS4XbEPkihhDML50mtfypRj7o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1626341478;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=BiEOXaAhNfaK+uoOQNX0TiOjwvYsZy9v/7XAXayxtXM=;
+        b=sdrUrIgfRX1lxObijjKWQ56g67OntJNXZjI1CwT9CJwppTiY3JGCwo85yB66M8pFbbo1zD
+        SvBlisbZnEyqIyBA==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 0BE6AA3B9C;
+        Thu, 15 Jul 2021 09:31:18 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EF8451E0BF2; Thu, 15 Jul 2021 11:31:17 +0200 (CEST)
+Date:   Thu, 15 Jul 2021 11:31:17 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Boyang Xue <bxue@redhat.com>
+Cc:     Roman Gushchin <guro@fb.com>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: Patch 'writeback, cgroup: release dying cgwbs by switching
+ attached inodes' leads to kernel crash
+Message-ID: <20210715093117.GD9457@quack2.suse.cz>
+References: <CAHLe9YZ1_0p_rn+fbXFxU3ySJ_XU=QdSKJAu2j3WD8qmDuNTaQ@mail.gmail.com>
+ <YO5kCzI133B/fHiS@carbon.dhcp.thefacebook.com>
+ <CAHLe9YYiNnbyYGHoArJxvCEsqaqt2rwp5OHCSy+gWH+D8OFLQA@mail.gmail.com>
+ <20210714092639.GB9457@quack2.suse.cz>
+ <CAHLe9YbKXcF1mkSeK0Fo7wAUN02-_LfLD+2hdmVMJY_-gNq=-A@mail.gmail.com>
+ <YO93VTcLDNisdHRf@carbon.dhcp.thefacebook.com>
+ <CAHLe9YaNtmJ8xx=A+6Ki+Fc2Kx=5jL745NJ8PL+w95-WhJrG3g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHLe9YaNtmJ8xx=A+6Ki+Fc2Kx=5jL745NJ8PL+w95-WhJrG3g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add one flag for fuse_attr.flags indicating if DAX shall be enabled for
-this file.
+On Thu 15-07-21 09:42:06, Boyang Xue wrote:
+> On Thu, Jul 15, 2021 at 7:46 AM Roman Gushchin <guro@fb.com> wrote:
+> >
+> > On Thu, Jul 15, 2021 at 12:22:28AM +0800, Boyang Xue wrote:
+> > > Hi Jan,
+> > >
+> > > On Wed, Jul 14, 2021 at 5:26 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Wed 14-07-21 16:44:33, Boyang Xue wrote:
+> > > > > Hi Roman,
+> > > > >
+> > > > > On Wed, Jul 14, 2021 at 12:12 PM Roman Gushchin <guro@fb.com> wrote:
+> > > > > >
+> > > > > > On Wed, Jul 14, 2021 at 11:21:12AM +0800, Boyang Xue wrote:
+> > > > > > > Hello,
+> > > > > > >
+> > > > > > > I'm not sure if this is the right place to report this bug, please
+> > > > > > > correct me if I'm wrong.
+> > > > > > >
+> > > > > > > I found kernel-5.14.0-rc1 (built from the Linus tree) crash when it's
+> > > > > > > running xfstests generic/256 on ext4 [1]. Looking at the call trace,
+> > > > > > > it looks like the bug had been introduced by the commit
+> > > > > > >
+> > > > > > > c22d70a162d3 writeback, cgroup: release dying cgwbs by switching attached inodes
+> > > > > > >
+> > > > > > > It only happens on aarch64, not on x86_64, ppc64le and s390x. Testing
+> > > > > > > was performed with the latest xfstests, and the bug can be reproduced
+> > > > > > > on ext{2, 3, 4} with {1k, 2k, 4k} block sizes.
+> > > > > >
+> > > > > > Hello Boyang,
+> > > > > >
+> > > > > > thank you for the report!
+> > > > > >
+> > > > > > Do you know on which line the oops happens?
+> > > > >
+> > > > > I was trying to inspect the vmcore with crash utility, but
+> > > > > unfortunately it doesn't work.
+> > > >
+> > > > Thanks for report!  Have you tried addr2line utility? Looking at the oops I
+> > > > can see:
+> > >
+> > > Thanks for the tips!
+> > >
+> > > It's unclear to me that where to find the required address in the
+> > > addr2line command line, i.e.
+> > >
+> > > addr2line -e /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
+> > > <what address here?>
+> >
+> > You can use $nm <vmlinux> to get an address of cleanup_offline_cgwbs_workfn()
+> > and then add 0x320.
+> 
+> Thanks! Hope the following helps:
 
-When the per-file DAX flag changes for an *opened* file, the state of
-the file won't be updated until this file is closed and reopened later.
+Thanks for the data! 
 
-Currently it is not implemented yet to change per-file DAX flag inside
-guest kernel, e.g., by chattr(1).
+> static void cleanup_offline_cgwbs_workfn(struct work_struct *work)
+> {
+>         struct bdi_writeback *wb;
+>         LIST_HEAD(processed);
+> 
+>         spin_lock_irq(&cgwb_lock);
+> 
+>         while (!list_empty(&offline_cgwbs)) {
+>                 wb = list_first_entry(&offline_cgwbs, struct bdi_writeback,
+>                                       offline_node);
+>                 list_move(&wb->offline_node, &processed);
+> 
+>                 /*
+>                  * If wb is dirty, cleaning up the writeback by switching
+>                  * attached inodes will result in an effective removal of any
+>                  * bandwidth restrictions, which isn't the goal.  Instead,
+>                  * it can be postponed until the next time, when all io
+>                  * will be likely completed.  If in the meantime some inodes
+>                  * will get re-dirtied, they should be eventually switched to
+>                  * a new cgwb.
+>                  */
+>                 if (wb_has_dirty_io(wb))
+>                         continue;
+> 
+>                 if (!wb_tryget(wb))  <=== line#679
+>                         continue;
 
-Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
----
- fs/fuse/dax.c             | 28 ++++++++++++++++++++++++----
- fs/fuse/file.c            |  4 ++--
- fs/fuse/fuse_i.h          |  5 +++--
- fs/fuse/inode.c           |  4 +++-
- include/uapi/linux/fuse.h |  5 +++++
- 5 files changed, 37 insertions(+), 9 deletions(-)
+Aha, interesting. So it seems we crashed trying to dereference
+wb->refcnt->data. So it looks like cgwb_release_workfn() raced with
+cleanup_offline_cgwbs_workfn() and percpu_ref_exit() got called from
+cgwb_release_workfn() and then cleanup_offline_cgwbs_workfn() called
+wb_tryget(). I think the proper fix is to move:
 
-diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index 4873d764cb66..ed5a430364bb 100644
---- a/fs/fuse/dax.c
-+++ b/fs/fuse/dax.c
-@@ -1341,7 +1341,7 @@ static const struct address_space_operations fuse_dax_file_aops  = {
- 	.invalidatepage	= noop_invalidatepage,
- };
- 
--static bool fuse_should_enable_dax(struct inode *inode)
-+static bool fuse_should_enable_dax(struct inode *inode, unsigned int flags)
- {
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	unsigned int mode;
-@@ -1354,18 +1354,38 @@ static bool fuse_should_enable_dax(struct inode *inode)
- 	if (mode == FUSE_DAX_MOUNT_NEVER)
- 		return false;
- 
--	return true;
-+	if (mode == FUSE_DAX_MOUNT_ALWAYS)
-+		return true;
-+
-+	WARN_ON(mode != FUSE_DAX_MOUNT_INODE);
-+	return flags & FUSE_ATTR_DAX;
- }
- 
--void fuse_dax_inode_init(struct inode *inode)
-+void fuse_dax_inode_init(struct inode *inode, unsigned int flags)
- {
--	if (!fuse_should_enable_dax(inode))
-+	if (!fuse_should_enable_dax(inode, flags))
- 		return;
- 
- 	inode->i_flags |= S_DAX;
- 	inode->i_data.a_ops = &fuse_dax_file_aops;
- }
- 
-+void fuse_update_dax(struct inode *inode, unsigned int flags)
-+{
-+	bool oldstate, newstate;
-+	struct fuse_conn *fc = get_fuse_conn(inode);
-+
-+	if (!IS_ENABLED(CONFIG_FUSE_DAX) || !fc->dax ||
-+	    fc->dax->mode != FUSE_DAX_MOUNT_INODE)
-+		return;
-+
-+	oldstate = IS_DAX(inode);
-+	newstate = flags & FUSE_ATTR_DAX;
-+
-+	if (oldstate != newstate)
-+		d_mark_dontcache(inode);
-+}
-+
- bool fuse_dax_check_alignment(struct fuse_conn *fc, unsigned int map_alignment)
- {
- 	if (fc->dax && (map_alignment > FUSE_DAX_SHIFT)) {
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 97f860cfc195..cf42af492146 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3142,7 +3142,7 @@ static const struct address_space_operations fuse_file_aops  = {
- 	.write_end	= fuse_write_end,
- };
- 
--void fuse_init_file_inode(struct inode *inode)
-+void fuse_init_file_inode(struct inode *inode, struct fuse_attr *attr)
- {
- 	struct fuse_inode *fi = get_fuse_inode(inode);
- 
-@@ -3156,5 +3156,5 @@ void fuse_init_file_inode(struct inode *inode)
- 	fi->writepages = RB_ROOT;
- 
- 	if (IS_ENABLED(CONFIG_FUSE_DAX))
--		fuse_dax_inode_init(inode);
-+		fuse_dax_inode_init(inode, attr->flags);
- }
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index f29018323845..b0ecfffd0c7d 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1000,7 +1000,7 @@ int fuse_notify_poll_wakeup(struct fuse_conn *fc,
- /**
-  * Initialize file operations on a regular file
-  */
--void fuse_init_file_inode(struct inode *inode);
-+void fuse_init_file_inode(struct inode *inode, struct fuse_attr *attr);
- 
- /**
-  * Initialize inode operations on regular files and special files
-@@ -1252,8 +1252,9 @@ int fuse_dax_conn_alloc(struct fuse_conn *fc, unsigned int mode,
- 			struct dax_device *dax_dev);
- void fuse_dax_conn_free(struct fuse_conn *fc);
- bool fuse_dax_inode_alloc(struct super_block *sb, struct fuse_inode *fi);
--void fuse_dax_inode_init(struct inode *inode);
-+void fuse_dax_inode_init(struct inode *inode, unsigned int flags);
- void fuse_dax_inode_cleanup(struct inode *inode);
-+void fuse_update_dax(struct inode *inode, unsigned int flags);
- bool fuse_dax_check_alignment(struct fuse_conn *fc, unsigned int map_alignment);
- void fuse_dax_cancel_work(struct fuse_conn *fc);
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index f6b46395edb2..47ebb1a394d2 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -269,6 +269,8 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
- 		if (inval)
- 			invalidate_inode_pages2(inode->i_mapping);
- 	}
-+
-+	fuse_update_dax(inode, attr->flags);
- }
- 
- static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr)
-@@ -281,7 +283,7 @@ static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr)
- 	inode->i_ctime.tv_nsec = attr->ctimensec;
- 	if (S_ISREG(inode->i_mode)) {
- 		fuse_init_common(inode);
--		fuse_init_file_inode(inode);
-+		fuse_init_file_inode(inode, attr);
- 	} else if (S_ISDIR(inode->i_mode))
- 		fuse_init_dir(inode);
- 	else if (S_ISLNK(inode->i_mode))
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 36ed092227fa..9ee088ddbe2a 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -184,6 +184,9 @@
-  *
-  *  7.34
-  *  - add FUSE_SYNCFS
-+ *
-+ *  7.35
-+ *  - add FUSE_ATTR_DAX
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -449,8 +452,10 @@ struct fuse_file_lock {
-  * fuse_attr flags
-  *
-  * FUSE_ATTR_SUBMOUNT: Object is a submount root
-+ * FUSE_ATTR_DAX: Enable DAX for this file in per-file DAX mode
-  */
- #define FUSE_ATTR_SUBMOUNT      (1 << 0)
-+#define FUSE_ATTR_DAX      	(1 << 1)
- 
- /**
-  * Open flags
+        spin_lock_irq(&cgwb_lock);
+        list_del(&wb->offline_node);
+        spin_unlock_irq(&cgwb_lock);
+
+in cgwb_release_workfn() to the beginning of that function so that we are
+sure even cleanup_offline_cgwbs_workfn() cannot be working with the wb when
+it is being released. Roman?
+
+								Honza
+
 -- 
-2.27.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
