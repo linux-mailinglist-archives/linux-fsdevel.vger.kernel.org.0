@@ -2,213 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 513503C986F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 07:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B857F3C97F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 07:01:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239479AbhGOFcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 01:32:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42726 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238709AbhGOFcV (ORCPT
+        id S237053AbhGOFEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 01:04:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23603 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237177AbhGOFEI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 01:32:21 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 641EEC06175F;
-        Wed, 14 Jul 2021 22:29:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=XiMUvgaQRDYtKInq/h4jgn0syV52emYjHtsQoYohWY4=; b=uXEmtwKK4BYhtjvIXP5eOWI8a6
-        7Dj9kZ96pnzLmW5EdnGCY/fBzRzRjcxFsOrIcBr9sWGfUzQtR3LwnfAfp6894LET/mIkzV7BL3K4a
-        4jaXee88MmQJDcyVz2tLHWF3GhdbXCrM14RsVtnlQqx/0Lv5EEkTHhUFMLeJHUD54I1NRwY9nwQXk
-        ni7/rKoyHH3v+66NlAExxvUdkmxUUMzcC9/UGqgQ46+NVKREUMDARCSnQkTjLdW1Qac6k2EyAyJdk
-        Jn7uU+gzBpzuFGcefZ/o+bMzq9LxSspKDLnJJYm4kfWaX7BdlbPl56xpssJY8V/Oeee3/l3ka5J+L
-        b5oKWFKw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m3tuu-0031Js-3E; Thu, 15 Jul 2021 05:28:28 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v14 138/138] mm/readahead: Add multi-page folio readahead
-Date:   Thu, 15 Jul 2021 04:37:04 +0100
-Message-Id: <20210715033704.692967-139-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210715033704.692967-1-willy@infradead.org>
-References: <20210715033704.692967-1-willy@infradead.org>
+        Thu, 15 Jul 2021 01:04:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626325275;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WtjoUKLcgmL3bnw/gxqCJv6EYfcYaY0E3bn8JDpe3PI=;
+        b=HGBLkOX+IZpd9PDeczkUWAdzxkUB6jF+BaMjpI7N1m38DiQuOUKRwW869N/rf4muIE+R7N
+        9KBfNt4KWhZWBDpNk6+kT1JzHD6SZAzlLmJfX1/HrHyGMdmNNnF5OIw4cQPu7VkM/IlxX6
+        ZxmEcM+pWRmcoghNunOq3wxIMhDCZpE=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-324-k-oCfqRUMHSl_6ZdORUq8A-1; Thu, 15 Jul 2021 01:01:14 -0400
+X-MC-Unique: k-oCfqRUMHSl_6ZdORUq8A-1
+Received: by mail-pf1-f200.google.com with SMTP id q22-20020a62e1160000b029032b880fc048so3395795pfh.21
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 22:01:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=WtjoUKLcgmL3bnw/gxqCJv6EYfcYaY0E3bn8JDpe3PI=;
+        b=aa07RKMmUD54b/elW2qSafNbZUZVZXqWRknHvZjcZwqreFGuaxRTEGqdBIIt5bUQUF
+         zBccfB+5G1Hinr2gyV8W+vS9mAbwfFZK9119GSZPbDNdHji7Ywi08MmyLfHa7zbG4pue
+         9gB6cAtVBpBzBgsZoJg5LZaXQwWpTcrwmCFgSI/FlEDk6BpgrT1KlS0OYltKchd3Eg8f
+         XLqH3QmGGfRiyYfOPItkcMNaGBS0u8gycH3u7HnE8ZuEukYHQNC0Hv0T9A6xTYqEMJjd
+         EVPgiiEgvTw0DD3XuCbmpM/xy63MBvoyiJUsOjf4AieJJFhgjUuJfUzLg49ljPFp+Vnj
+         c+hg==
+X-Gm-Message-State: AOAM533ZPnDp94JNGCxPhLEBNiTLzwGezen28hGsttjhNMekMYMDKwkG
+        i08Yl0nXrdU87LuQPKiZ8XDJV1vx7ygx7zTZ4vPmhmnObcYULw++0XHfGCdVIQQ9/8qUNqlCTvI
+        rCUPN2EhX/+bR++P3/TuPAI6fpA==
+X-Received: by 2002:a63:1e5c:: with SMTP id p28mr2391186pgm.3.1626325272858;
+        Wed, 14 Jul 2021 22:01:12 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwkpF4TSDI5DZm/B2bv9bWVuNXDKhmhRtseurS2rxggrCDnmBokVeS6bdawuICnE0MaFRu/xw==
+X-Received: by 2002:a63:1e5c:: with SMTP id p28mr2391148pgm.3.1626325272634;
+        Wed, 14 Jul 2021 22:01:12 -0700 (PDT)
+Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id o20sm5070990pgv.80.2021.07.14.22.01.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Jul 2021 22:01:12 -0700 (PDT)
+Subject: Re: [PATCH v9 16/17] vduse: Introduce VDUSE - vDPA Device in
+ Userspace
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        He Zhe <zhe.he@windriver.com>,
+        Liu Xiaodong <xiaodong.liu@intel.com>,
+        songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20210713084656.232-1-xieyongji@bytedance.com>
+ <20210713084656.232-17-xieyongji@bytedance.com>
+ <26116714-f485-eeab-4939-71c4c10c30de@redhat.com>
+ <CACycT3uh+wUeDM1H7JiCJTMeCVCBngURGKeXD-h+meekNNwiQw@mail.gmail.com>
+ <ec3e2729-3490-851f-ed4b-6dee9c04831c@redhat.com>
+ <CACycT3vTyR=+6xOJyXCu_bGAKcz4Fx3bA25WfdBjhxJ6MOvLzw@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <5d756360-b540-2faf-6e52-e7e6e863ca0b@redhat.com>
+Date:   Thu, 15 Jul 2021 13:00:56 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <CACycT3vTyR=+6xOJyXCu_bGAKcz4Fx3bA25WfdBjhxJ6MOvLzw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If the filesystem supports multi-page folios, allocate larger pages in
-the readahead code when it seems worth doing.  The heuristic for choosing
-larger page sizes will surely need some tuning, but this aggressive
-ramp-up has been good for testing.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- mm/readahead.c | 102 +++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 95 insertions(+), 7 deletions(-)
+在 2021/7/15 下午12:03, Yongji Xie 写道:
+>> Which ioctl can be used for this?
+>>
+> I mean we can introduce a new ioctl for that in the future.
 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index e1df44ad57ed..27e76cc2a9ba 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -149,7 +149,7 @@ static void read_pages(struct readahead_control *rac, struct list_head *pages,
- 
- 	blk_finish_plug(&plug);
- 
--	BUG_ON(!list_empty(pages));
-+	BUG_ON(pages && !list_empty(pages));
- 	BUG_ON(readahead_count(rac));
- 
- out:
-@@ -430,11 +430,99 @@ static int try_context_readahead(struct address_space *mapping,
- 	return 1;
- }
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+static inline int ra_alloc_folio(struct readahead_control *ractl, pgoff_t index,
-+		pgoff_t mark, unsigned int order, gfp_t gfp)
-+{
-+	int err;
-+	struct folio *folio = filemap_alloc_folio(gfp, order);
-+
-+	if (!folio)
-+		return -ENOMEM;
-+	if (mark - index < (1UL << order))
-+		folio_set_readahead(folio);
-+	err = filemap_add_folio(ractl->mapping, folio, index, gfp);
-+	if (err)
-+		folio_put(folio);
-+	else
-+		ractl->_nr_pages += 1UL << order;
-+	return err;
-+}
-+
-+static void page_cache_ra_order(struct readahead_control *ractl,
-+		struct file_ra_state *ra, unsigned int new_order)
-+{
-+	struct address_space *mapping = ractl->mapping;
-+	pgoff_t index = readahead_index(ractl);
-+	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
-+	pgoff_t mark = index + ra->size - ra->async_size;
-+	int err = 0;
-+	gfp_t gfp = readahead_gfp_mask(mapping);
-+
-+	if (!mapping_thp_support(mapping) || ra->size < 4)
-+		goto fallback;
-+
-+	limit = min(limit, index + ra->size - 1);
-+
-+	/* Grow page size up to PMD size */
-+	if (new_order < HPAGE_PMD_ORDER) {
-+		new_order += 2;
-+		if (new_order > HPAGE_PMD_ORDER)
-+			new_order = HPAGE_PMD_ORDER;
-+		while ((1 << new_order) > ra->size)
-+			new_order--;
-+	}
-+
-+	while (index <= limit) {
-+		unsigned int order = new_order;
-+
-+		/* Align with smaller pages if needed */
-+		if (index & ((1UL << order) - 1)) {
-+			order = __ffs(index);
-+			if (order == 1)
-+				order = 0;
-+		}
-+		/* Don't allocate pages past EOF */
-+		while (index + (1UL << order) - 1 > limit) {
-+			if (--order == 1)
-+				order = 0;
-+		}
-+		err = ra_alloc_folio(ractl, index, mark, order, gfp);
-+		if (err)
-+			break;
-+		index += 1UL << order;
-+	}
-+
-+	if (index > limit) {
-+		ra->size += index - limit - 1;
-+		ra->async_size += index - limit - 1;
-+	}
-+
-+	read_pages(ractl, NULL, false);
-+
-+	/*
-+	 * If there were already pages in the page cache, then we may have
-+	 * left some gaps.  Let the regular readahead code take care of this
-+	 * situation.
-+	 */
-+	if (!err)
-+		return;
-+fallback:
-+	do_page_cache_ra(ractl, ra->size, ra->async_size);
-+}
-+#else
-+static void page_cache_ra_order(struct readahead_control *ractl,
-+		struct file_ra_state *ra, unsigned int order)
-+{
-+	do_page_cache_ra(ractl, ra->size, ra->async_size);
-+}
-+#endif
-+
- /*
-  * A minimal readahead algorithm for trivial sequential/random reads.
-  */
- static void ondemand_readahead(struct readahead_control *ractl,
--		bool hit_readahead_marker, unsigned long req_size)
-+		struct folio *folio, unsigned long req_size)
- {
- 	struct backing_dev_info *bdi = inode_to_bdi(ractl->mapping->host);
- 	struct file_ra_state *ra = ractl->ra;
-@@ -469,12 +557,12 @@ static void ondemand_readahead(struct readahead_control *ractl,
- 	}
- 
- 	/*
--	 * Hit a marked page without valid readahead state.
-+	 * Hit a marked folio without valid readahead state.
- 	 * E.g. interleaved reads.
- 	 * Query the pagecache for async_size, which normally equals to
- 	 * readahead size. Ramp it up and use it as the new readahead size.
- 	 */
--	if (hit_readahead_marker) {
-+	if (folio) {
- 		pgoff_t start;
- 
- 		rcu_read_lock();
-@@ -547,7 +635,7 @@ static void ondemand_readahead(struct readahead_control *ractl,
- 	}
- 
- 	ractl->_index = ra->start;
--	do_page_cache_ra(ractl, ra->size, ra->async_size);
-+	page_cache_ra_order(ractl, ra, folio ? folio_order(folio) : 0);
- }
- 
- void page_cache_sync_ra(struct readahead_control *ractl,
-@@ -575,7 +663,7 @@ void page_cache_sync_ra(struct readahead_control *ractl,
- 	}
- 
- 	/* do read-ahead */
--	ondemand_readahead(ractl, false, req_count);
-+	ondemand_readahead(ractl, NULL, req_count);
- }
- EXPORT_SYMBOL_GPL(page_cache_sync_ra);
- 
-@@ -604,7 +692,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
- 		return;
- 
- 	/* do read-ahead */
--	ondemand_readahead(ractl, true, req_count);
-+	ondemand_readahead(ractl, folio, req_count);
- }
- EXPORT_SYMBOL_GPL(page_cache_async_ra);
- 
--- 
-2.30.2
+
+Ok, I see.
+
+
+>
+>>>> I wonder if it's better to do something similar to ccw:
+>>>>
+>>>> 1) requires the userspace to update the status bit in the response
+>>>> 2) update the dev->status to the status in the response if no timeout
+>>>>
+>>>> Then userspace could then set NEEDS_RESET if necessary.
+>>>>
+>>> But NEEDS_RESET does not only happen in this case.
+>> Yes, so you need an ioctl for userspace to update the device status
+>> (NEEDS_RESET) probably.
+>>
+> Yes, but I'd like to do that after the initial version is merged since
+> NEEDS_RESET is not supported now.
+
+
+Right.
+
+Thanks
+
+
+>
 
