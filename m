@@ -2,216 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 769273C95AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 03:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CA4F3C95DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 04:21:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231324AbhGOBpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 21:45:16 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33752 "EHLO
+        id S234331AbhGOCXr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 22:23:47 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:54841 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229909AbhGOBpQ (ORCPT
+        by vger.kernel.org with ESMTP id S232527AbhGOCXq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 21:45:16 -0400
+        Wed, 14 Jul 2021 22:23:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626313343;
+        s=mimecast20190719; t=1626315653;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=a5H9o3Uo90SFrExZQnEzhsWVBMlknIqUSJrzFwHnmuE=;
-        b=eJ8h8IQEXcxoC6myk7+Q5oVHDVOJ9KiP+XHPrDutB8UW+eYmTV1glIIvpIRuiRmxUbtOSK
-        ISN2SOU6TeJgJj++M8batuW98qgcobF/hn+BuEyfX+66kpt8ZIumQeieY5bLKpTaZvokEK
-        qjDjyhgbwtTFkP4tVs3k4FqdcpUNRLA=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-515-rxV_7Q5RMfKbgklmKFWZoA-1; Wed, 14 Jul 2021 21:42:22 -0400
-X-MC-Unique: rxV_7Q5RMfKbgklmKFWZoA-1
-Received: by mail-pj1-f70.google.com with SMTP id gc15-20020a17090b310fb0290173c8985d0dso2544978pjb.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 18:42:21 -0700 (PDT)
+        bh=qIMPem89MDX9CyRymEODASuBwQsPbelIeY3DhbvC9/k=;
+        b=DcXIrls6kUOSzah4+A5t5FUO7Cdsj42KYlPmndz+pIQ1IfGKcKkStoNGmQbkiY94DIUGOi
+        okL6e1sRJNyvHkBUPm5kKK1VP3zEC5d1VwJcXZVdCnkQdQ0pphvmvZR29cHWYdnz06Bsi3
+        0tcdpk9eIz3NhYQJvpME/Vg0W10lrN4=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-16-ajYNEWWENPONDgy1HSozxQ-1; Wed, 14 Jul 2021 22:20:52 -0400
+X-MC-Unique: ajYNEWWENPONDgy1HSozxQ-1
+Received: by mail-pf1-f199.google.com with SMTP id i13-20020aa78b4d0000b02902ea019ef670so3136670pfd.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 19:20:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a5H9o3Uo90SFrExZQnEzhsWVBMlknIqUSJrzFwHnmuE=;
-        b=eK+WMcPzSgZyHp1RllkwFL10aywJ+8SkZHKP1lIvnYqBaISJzU3aPkxQdkH9ImSff2
-         GB1Ei+ZVBYGpS5QBTVes9fzeZ/qOIWQ5OpKwC6ahHZcNeBHzBpFerxJvkzPki0drsc8c
-         FaJXGvnVMkqVi1f66KkQqFRY4hPDA2zH/xcAeDcphbaZauvzZ8IdpL9hIYkFqnbczh+T
-         /gs4cInF7i8Qdf2xSHCPZyM5fjNA03TzbE4ZxczChwHnPyacoI3HqEeSkwOSO9hMfKSW
-         GFUxw4UAGJgmWOhrbFS6q3AyAnkAwOq0rIE2OSSolwJCCpyNw8KEDliA7CPCgt0+QVg8
-         0f0Q==
-X-Gm-Message-State: AOAM531KPDnAwlZ+pDzGTI/8nG2rkzGo1lMC1ymLuubD3kynyx1JGIvG
-        r8ny72/y0ranFDFIz2sFG+ZunMzmU/v+RiQJkNxDA0J2exN0y89odrj48q+IME1PmYNnE9PhlAc
-        /x9vLCErc+V/j28U3oRUF4BXRUkQodOVQsRXyT3jp2w==
-X-Received: by 2002:a62:154f:0:b029:331:b0d6:9adc with SMTP id 76-20020a62154f0000b0290331b0d69adcmr1254183pfv.73.1626313341020;
-        Wed, 14 Jul 2021 18:42:21 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwrDYcrJuNkF4UTr94I8/U/ZMWIkHueW9mm0fljRwvGbFR/TdGj3T/24HpFqJZtU7xZ+sAUi1J1Rv54fCNs/x4=
-X-Received: by 2002:a62:154f:0:b029:331:b0d6:9adc with SMTP id
- 76-20020a62154f0000b0290331b0d69adcmr1254136pfv.73.1626313340660; Wed, 14 Jul
- 2021 18:42:20 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=qIMPem89MDX9CyRymEODASuBwQsPbelIeY3DhbvC9/k=;
+        b=QYCKLwhERevF5tohDQwbqDa/enPsCObLD12soLaKfuEVM1GeGIs9aa3r/22HYoYJO3
+         VwNxTeS3E+UBccMjb3PfXfTnDOdpZAAdm6mRnf4bCoiYOwrmDrqbyey4YDEzadyHjhzF
+         AYDxnt1D/YYwdqF8BqN6Kr2TbdzsdlmdTmIDZqRNCT0DiiF1ZMF1Dzcpl1mhOLczBxjL
+         9JMOIzV0pPbaTNfdVE/lIsu4HQRdxriKOA8v8HEMVYz8/bvKS0muRXt4AhzqT3DjMd9y
+         u9kPXVeSKSk2qdqtWiS0arLDPQC4dRKAoqCSBwgw1UcT5KywzCFp2dCoPoF3DU9b5SdP
+         e5ZA==
+X-Gm-Message-State: AOAM532CouhgW5HPMyJvdarfxcYTOYBvCBNh+rur+OsCpjTtrNrwLMhB
+        lNTJ/5ndQjL/Cip0es0GWCR2KohPiOhG1EYaoiewwF5HyHWgDxKqwbEVo0OzbygSeIfbvab9yu/
+        543R2++9cMrVmOiIDSSSkDf1yOQ==
+X-Received: by 2002:a17:90a:1941:: with SMTP id 1mr7021888pjh.217.1626315650956;
+        Wed, 14 Jul 2021 19:20:50 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJybOsI3CmBYlnZZGHyBp8j1KVybpeIfAQjdQVC6tPCV/HtNWu2hK14gevvyKrFs/xFGbLJ7PQ==
+X-Received: by 2002:a17:90a:1941:: with SMTP id 1mr7021834pjh.217.1626315650579;
+        Wed, 14 Jul 2021 19:20:50 -0700 (PDT)
+Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id p3sm7097812pjt.0.2021.07.14.19.20.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Jul 2021 19:20:50 -0700 (PDT)
+Subject: Re: [PATCH v9 13/17] vdpa: factor out vhost_vdpa_pa_map() and
+ vhost_vdpa_pa_unmap()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
+        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
+        hch@infradead.org, christian.brauner@canonical.com,
+        rdunlap@infradead.org, willy@infradead.org,
+        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
+        corbet@lwn.net, mika.penttila@nextfour.com, joro@8bytes.org,
+        gregkh@linuxfoundation.org, zhe.he@windriver.com,
+        xiaodong.liu@intel.com, songmuchun@bytedance.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20210713084656.232-1-xieyongji@bytedance.com>
+ <20210713084656.232-14-xieyongji@bytedance.com> <20210713113114.GL1954@kadam>
+ <20e75b53-0dce-2f2d-b717-f78553bddcd8@redhat.com>
+ <20210714080512.GW1954@kadam>
+ <db02315d-0ffe-f4a2-da67-5a014060fa4a@redhat.com>
+ <20210714095722.GC25548@kadam>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <96f66296-2071-c321-96d7-882070261eb6@redhat.com>
+Date:   Thu, 15 Jul 2021 10:20:40 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <CAHLe9YZ1_0p_rn+fbXFxU3ySJ_XU=QdSKJAu2j3WD8qmDuNTaQ@mail.gmail.com>
- <YO5kCzI133B/fHiS@carbon.dhcp.thefacebook.com> <CAHLe9YYiNnbyYGHoArJxvCEsqaqt2rwp5OHCSy+gWH+D8OFLQA@mail.gmail.com>
- <20210714092639.GB9457@quack2.suse.cz> <CAHLe9YbKXcF1mkSeK0Fo7wAUN02-_LfLD+2hdmVMJY_-gNq=-A@mail.gmail.com>
- <YO93VTcLDNisdHRf@carbon.dhcp.thefacebook.com>
-In-Reply-To: <YO93VTcLDNisdHRf@carbon.dhcp.thefacebook.com>
-From:   Boyang Xue <bxue@redhat.com>
-Date:   Thu, 15 Jul 2021 09:42:06 +0800
-Message-ID: <CAHLe9YaNtmJ8xx=A+6Ki+Fc2Kx=5jL745NJ8PL+w95-WhJrG3g@mail.gmail.com>
-Subject: Re: Patch 'writeback, cgroup: release dying cgwbs by switching
- attached inodes' leads to kernel crash
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210714095722.GC25548@kadam>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 7:46 AM Roman Gushchin <guro@fb.com> wrote:
->
-> On Thu, Jul 15, 2021 at 12:22:28AM +0800, Boyang Xue wrote:
-> > Hi Jan,
-> >
-> > On Wed, Jul 14, 2021 at 5:26 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Wed 14-07-21 16:44:33, Boyang Xue wrote:
-> > > > Hi Roman,
-> > > >
-> > > > On Wed, Jul 14, 2021 at 12:12 PM Roman Gushchin <guro@fb.com> wrote:
-> > > > >
-> > > > > On Wed, Jul 14, 2021 at 11:21:12AM +0800, Boyang Xue wrote:
-> > > > > > Hello,
-> > > > > >
-> > > > > > I'm not sure if this is the right place to report this bug, please
-> > > > > > correct me if I'm wrong.
-> > > > > >
-> > > > > > I found kernel-5.14.0-rc1 (built from the Linus tree) crash when it's
-> > > > > > running xfstests generic/256 on ext4 [1]. Looking at the call trace,
-> > > > > > it looks like the bug had been introduced by the commit
-> > > > > >
-> > > > > > c22d70a162d3 writeback, cgroup: release dying cgwbs by switching attached inodes
-> > > > > >
-> > > > > > It only happens on aarch64, not on x86_64, ppc64le and s390x. Testing
-> > > > > > was performed with the latest xfstests, and the bug can be reproduced
-> > > > > > on ext{2, 3, 4} with {1k, 2k, 4k} block sizes.
-> > > > >
-> > > > > Hello Boyang,
-> > > > >
-> > > > > thank you for the report!
-> > > > >
-> > > > > Do you know on which line the oops happens?
-> > > >
-> > > > I was trying to inspect the vmcore with crash utility, but
-> > > > unfortunately it doesn't work.
-> > >
-> > > Thanks for report!  Have you tried addr2line utility? Looking at the oops I
-> > > can see:
-> >
-> > Thanks for the tips!
-> >
-> > It's unclear to me that where to find the required address in the
-> > addr2line command line, i.e.
-> >
-> > addr2line -e /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
-> > <what address here?>
->
-> You can use $nm <vmlinux> to get an address of cleanup_offline_cgwbs_workfn()
-> and then add 0x320.
 
-Thanks! Hope the following helps:
+在 2021/7/14 下午5:57, Dan Carpenter 写道:
+> On Wed, Jul 14, 2021 at 05:41:54PM +0800, Jason Wang wrote:
+>> 在 2021/7/14 下午4:05, Dan Carpenter 写道:
+>>> On Wed, Jul 14, 2021 at 10:14:32AM +0800, Jason Wang wrote:
+>>>> 在 2021/7/13 下午7:31, Dan Carpenter 写道:
+>>>>> On Tue, Jul 13, 2021 at 04:46:52PM +0800, Xie Yongji wrote:
+>>>>>> @@ -613,37 +618,28 @@ static void vhost_vdpa_unmap(struct vhost_vdpa *v, u64 iova, u64 size)
+>>>>>>     	}
+>>>>>>     }
+>>>>>> -static int vhost_vdpa_process_iotlb_update(struct vhost_vdpa *v,
+>>>>>> -					   struct vhost_iotlb_msg *msg)
+>>>>>> +static int vhost_vdpa_pa_map(struct vhost_vdpa *v,
+>>>>>> +			     u64 iova, u64 size, u64 uaddr, u32 perm)
+>>>>>>     {
+>>>>>>     	struct vhost_dev *dev = &v->vdev;
+>>>>>> -	struct vhost_iotlb *iotlb = dev->iotlb;
+>>>>>>     	struct page **page_list;
+>>>>>>     	unsigned long list_size = PAGE_SIZE / sizeof(struct page *);
+>>>>>>     	unsigned int gup_flags = FOLL_LONGTERM;
+>>>>>>     	unsigned long npages, cur_base, map_pfn, last_pfn = 0;
+>>>>>>     	unsigned long lock_limit, sz2pin, nchunks, i;
+>>>>>> -	u64 iova = msg->iova;
+>>>>>> +	u64 start = iova;
+>>>>>>     	long pinned;
+>>>>>>     	int ret = 0;
+>>>>>> -	if (msg->iova < v->range.first ||
+>>>>>> -	    msg->iova + msg->size - 1 > v->range.last)
+>>>>>> -		return -EINVAL;
+>>>>> This is not related to your patch, but can the "msg->iova + msg->size"
+>>>>> addition can have an integer overflow.  From looking at the callers it
+>>>>> seems like it can.  msg comes from:
+>>>>>      vhost_chr_write_iter()
+>>>>>      --> dev->msg_handler(dev, &msg);
+>>>>>          --> vhost_vdpa_process_iotlb_msg()
+>>>>>             --> vhost_vdpa_process_iotlb_update()
+>>>> Yes.
+>>>>
+>>>>
+>>>>> If I'm thinking of the right thing then these are allowed to overflow to
+>>>>> 0 because of the " - 1" but not further than that.  I believe the check
+>>>>> needs to be something like:
+>>>>>
+>>>>> 	if (msg->iova < v->range.first ||
+>>>>> 	    msg->iova - 1 > U64_MAX - msg->size ||
+>>>> I guess we don't need - 1 here?
+>>> The - 1 is important.  The highest address is 0xffffffff.  So it goes
+>>> start + size = 0 and then start + size - 1 == 0xffffffff.
+>>
+>> Right, so actually
+>>
+>> msg->iova = 0xfffffffe, msg->size=2 is valid.
+> I believe so, yes.  It's inclusive of 0xfffffffe and 0xffffffff.
+> (Not an expert).
 
-# grep  cleanup_offline_cgwbs_workfn
-/boot/System.map-5.14.0-0.rc1.15.bx.el9.aarch64
-ffff8000102d6ab0 t cleanup_offline_cgwbs_workfn
 
-## ffff8000102d6ab0+0x320=FFFF8000102D6DD0
+I think so, and we probably need to fix vhost_overflow() as well which did:
 
-# addr2line -e /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
-FFFF8000102D6DD0
-/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/atomic-arch-fallback.h:2265
-# vi /usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/atomic-arch-fallback.h
-```
-arch_atomic64_fetch_add_unless(atomic64_t *v, s64 a, s64 u)
+static bool vhost_overflow(u64 uaddr, u64 size)
 {
-        s64 c = arch_atomic64_read(v); <=== line#2265
-
-        do {
-                if (unlikely(c == u))
-                        break;
-        } while (!arch_atomic64_try_cmpxchg(v, &c, c + a));
-
-        return c;
+         /* Make sure 64 bit math will not overflow. */
+         return uaddr > ULONG_MAX || size > ULONG_MAX || uaddr > 
+ULONG_MAX - size;
 }
-```
 
-# addr2line -i -e
-/usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
-FFFF8000102D6DD0
-/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/atomic-arch-fallback.h:2265
-/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/atomic-arch-fallback.h:2290
-/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/asm-generic/atomic-instrumented.h:1149
-/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/asm-generic/atomic-long.h:491
-/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/percpu-refcount.h:247
-/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/percpu-refcount.h:266
-/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/backing-dev-defs.h:227
-/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/backing-dev-defs.h:224
-/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/mm/backing-dev.c:679
-# vi /usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/mm/backing-dev.c
-```
-static void cleanup_offline_cgwbs_workfn(struct work_struct *work)
-{
-        struct bdi_writeback *wb;
-        LIST_HEAD(processed);
+Thanks
 
-        spin_lock_irq(&cgwb_lock);
-
-        while (!list_empty(&offline_cgwbs)) {
-                wb = list_first_entry(&offline_cgwbs, struct bdi_writeback,
-                                      offline_node);
-                list_move(&wb->offline_node, &processed);
-
-                /*
-                 * If wb is dirty, cleaning up the writeback by switching
-                 * attached inodes will result in an effective removal of any
-                 * bandwidth restrictions, which isn't the goal.  Instead,
-                 * it can be postponed until the next time, when all io
-                 * will be likely completed.  If in the meantime some inodes
-                 * will get re-dirtied, they should be eventually switched to
-                 * a new cgwb.
-                 */
-                if (wb_has_dirty_io(wb))
-                        continue;
-
-                if (!wb_tryget(wb))  <=== line#679
-                        continue;
-
-                spin_unlock_irq(&cgwb_lock);
-                while (cleanup_offline_cgwb(wb))
-                        cond_resched();
-                spin_lock_irq(&cgwb_lock);
-
-                wb_put(wb);
-        }
-
-        if (!list_empty(&processed))
-                list_splice_tail(&processed, &offline_cgwbs);
-
-        spin_unlock_irq(&cgwb_lock);
-}
-```
 
 >
-> Alternatively, maybe you can put the image you're using somewhere?
-
-I put those rpms in the Google Drive
-https://drive.google.com/drive/folders/1aw-WK2yWD11UWB059bJt6WKNW1OP_fex?usp=sharing
-
->
-> I'm working on getting my arm64 setup and reproduce the problem, but it takes
-> time, and I'm not sure I'll be able to reproduce it in qemu running on top of x86.
-
-Thanks! It's only reproducible on aarch64 and ppc64le in my test. I'm
-happy to help test patch, if it would help.
-
->
-> Thanks!
+> regards,
+> dan carpenter
 >
 
