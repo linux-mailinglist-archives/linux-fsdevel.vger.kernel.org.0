@@ -2,183 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C91983C9585
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 03:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 769273C95AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 03:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234577AbhGOBRl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 21:17:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:45156 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234288AbhGOBRk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 21:17:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52CDE1396;
-        Wed, 14 Jul 2021 18:14:48 -0700 (PDT)
-Received: from entos-ampere-02.shanghai.arm.com (entos-ampere-02.shanghai.arm.com [10.169.214.103])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 29DF73F7D8;
-        Wed, 14 Jul 2021 18:14:42 -0700 (PDT)
-From:   Jia He <justin.he@arm.com>
-To:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, nd@arm.com,
-        Jia He <justin.he@arm.com>
-Subject: [PATCH v7 5/5] lib/test_printf.c: add test cases for '%pD'
-Date:   Thu, 15 Jul 2021 09:14:07 +0800
-Message-Id: <20210715011407.7449-6-justin.he@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210715011407.7449-1-justin.he@arm.com>
-References: <20210715011407.7449-1-justin.he@arm.com>
+        id S231324AbhGOBpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 21:45:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33752 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229909AbhGOBpQ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Jul 2021 21:45:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626313343;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=a5H9o3Uo90SFrExZQnEzhsWVBMlknIqUSJrzFwHnmuE=;
+        b=eJ8h8IQEXcxoC6myk7+Q5oVHDVOJ9KiP+XHPrDutB8UW+eYmTV1glIIvpIRuiRmxUbtOSK
+        ISN2SOU6TeJgJj++M8batuW98qgcobF/hn+BuEyfX+66kpt8ZIumQeieY5bLKpTaZvokEK
+        qjDjyhgbwtTFkP4tVs3k4FqdcpUNRLA=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-515-rxV_7Q5RMfKbgklmKFWZoA-1; Wed, 14 Jul 2021 21:42:22 -0400
+X-MC-Unique: rxV_7Q5RMfKbgklmKFWZoA-1
+Received: by mail-pj1-f70.google.com with SMTP id gc15-20020a17090b310fb0290173c8985d0dso2544978pjb.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jul 2021 18:42:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a5H9o3Uo90SFrExZQnEzhsWVBMlknIqUSJrzFwHnmuE=;
+        b=eK+WMcPzSgZyHp1RllkwFL10aywJ+8SkZHKP1lIvnYqBaISJzU3aPkxQdkH9ImSff2
+         GB1Ei+ZVBYGpS5QBTVes9fzeZ/qOIWQ5OpKwC6ahHZcNeBHzBpFerxJvkzPki0drsc8c
+         FaJXGvnVMkqVi1f66KkQqFRY4hPDA2zH/xcAeDcphbaZauvzZ8IdpL9hIYkFqnbczh+T
+         /gs4cInF7i8Qdf2xSHCPZyM5fjNA03TzbE4ZxczChwHnPyacoI3HqEeSkwOSO9hMfKSW
+         GFUxw4UAGJgmWOhrbFS6q3AyAnkAwOq0rIE2OSSolwJCCpyNw8KEDliA7CPCgt0+QVg8
+         0f0Q==
+X-Gm-Message-State: AOAM531KPDnAwlZ+pDzGTI/8nG2rkzGo1lMC1ymLuubD3kynyx1JGIvG
+        r8ny72/y0ranFDFIz2sFG+ZunMzmU/v+RiQJkNxDA0J2exN0y89odrj48q+IME1PmYNnE9PhlAc
+        /x9vLCErc+V/j28U3oRUF4BXRUkQodOVQsRXyT3jp2w==
+X-Received: by 2002:a62:154f:0:b029:331:b0d6:9adc with SMTP id 76-20020a62154f0000b0290331b0d69adcmr1254183pfv.73.1626313341020;
+        Wed, 14 Jul 2021 18:42:21 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwrDYcrJuNkF4UTr94I8/U/ZMWIkHueW9mm0fljRwvGbFR/TdGj3T/24HpFqJZtU7xZ+sAUi1J1Rv54fCNs/x4=
+X-Received: by 2002:a62:154f:0:b029:331:b0d6:9adc with SMTP id
+ 76-20020a62154f0000b0290331b0d69adcmr1254136pfv.73.1626313340660; Wed, 14 Jul
+ 2021 18:42:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHLe9YZ1_0p_rn+fbXFxU3ySJ_XU=QdSKJAu2j3WD8qmDuNTaQ@mail.gmail.com>
+ <YO5kCzI133B/fHiS@carbon.dhcp.thefacebook.com> <CAHLe9YYiNnbyYGHoArJxvCEsqaqt2rwp5OHCSy+gWH+D8OFLQA@mail.gmail.com>
+ <20210714092639.GB9457@quack2.suse.cz> <CAHLe9YbKXcF1mkSeK0Fo7wAUN02-_LfLD+2hdmVMJY_-gNq=-A@mail.gmail.com>
+ <YO93VTcLDNisdHRf@carbon.dhcp.thefacebook.com>
+In-Reply-To: <YO93VTcLDNisdHRf@carbon.dhcp.thefacebook.com>
+From:   Boyang Xue <bxue@redhat.com>
+Date:   Thu, 15 Jul 2021 09:42:06 +0800
+Message-ID: <CAHLe9YaNtmJ8xx=A+6Ki+Fc2Kx=5jL745NJ8PL+w95-WhJrG3g@mail.gmail.com>
+Subject: Re: Patch 'writeback, cgroup: release dying cgwbs by switching
+ attached inodes' leads to kernel crash
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-After the behaviour of specifier '%pD' is changed to print the full path
-of struct file, the related test cases are also updated.
+On Thu, Jul 15, 2021 at 7:46 AM Roman Gushchin <guro@fb.com> wrote:
+>
+> On Thu, Jul 15, 2021 at 12:22:28AM +0800, Boyang Xue wrote:
+> > Hi Jan,
+> >
+> > On Wed, Jul 14, 2021 at 5:26 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Wed 14-07-21 16:44:33, Boyang Xue wrote:
+> > > > Hi Roman,
+> > > >
+> > > > On Wed, Jul 14, 2021 at 12:12 PM Roman Gushchin <guro@fb.com> wrote:
+> > > > >
+> > > > > On Wed, Jul 14, 2021 at 11:21:12AM +0800, Boyang Xue wrote:
+> > > > > > Hello,
+> > > > > >
+> > > > > > I'm not sure if this is the right place to report this bug, please
+> > > > > > correct me if I'm wrong.
+> > > > > >
+> > > > > > I found kernel-5.14.0-rc1 (built from the Linus tree) crash when it's
+> > > > > > running xfstests generic/256 on ext4 [1]. Looking at the call trace,
+> > > > > > it looks like the bug had been introduced by the commit
+> > > > > >
+> > > > > > c22d70a162d3 writeback, cgroup: release dying cgwbs by switching attached inodes
+> > > > > >
+> > > > > > It only happens on aarch64, not on x86_64, ppc64le and s390x. Testing
+> > > > > > was performed with the latest xfstests, and the bug can be reproduced
+> > > > > > on ext{2, 3, 4} with {1k, 2k, 4k} block sizes.
+> > > > >
+> > > > > Hello Boyang,
+> > > > >
+> > > > > thank you for the report!
+> > > > >
+> > > > > Do you know on which line the oops happens?
+> > > >
+> > > > I was trying to inspect the vmcore with crash utility, but
+> > > > unfortunately it doesn't work.
+> > >
+> > > Thanks for report!  Have you tried addr2line utility? Looking at the oops I
+> > > can see:
+> >
+> > Thanks for the tips!
+> >
+> > It's unclear to me that where to find the required address in the
+> > addr2line command line, i.e.
+> >
+> > addr2line -e /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
+> > <what address here?>
+>
+> You can use $nm <vmlinux> to get an address of cleanup_offline_cgwbs_workfn()
+> and then add 0x320.
 
-Given the full path string of '%pD' is prepended from the end of the scratch
-buffer, the check of "wrote beyond the nul-terminator" should be skipped
-for '%pD'.
+Thanks! Hope the following helps:
 
-Parameterize the new using_scratch_space in __test(), do_test() and wrapper
-macros to skip the test case mentioned above,
+# grep  cleanup_offline_cgwbs_workfn
+/boot/System.map-5.14.0-0.rc1.15.bx.el9.aarch64
+ffff8000102d6ab0 t cleanup_offline_cgwbs_workfn
 
-Signed-off-by: Jia He <justin.he@arm.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- lib/test_printf.c | 49 +++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 39 insertions(+), 10 deletions(-)
+## ffff8000102d6ab0+0x320=FFFF8000102D6DD0
 
-diff --git a/lib/test_printf.c b/lib/test_printf.c
-index cabdf9f5fd15..381c9dcd3c2d 100644
---- a/lib/test_printf.c
-+++ b/lib/test_printf.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/bitmap.h>
- #include <linux/dcache.h>
-+#include <linux/fs.h>
- #include <linux/socket.h>
- #include <linux/in.h>
- 
-@@ -37,8 +38,8 @@ static char *alloced_buffer __initdata;
- 
- extern bool no_hash_pointers;
- 
--static int __printf(4, 0) __init
--do_test(int bufsize, const char *expect, int elen,
-+static int __printf(5, 0) __init
-+do_test(int bufsize, const char *expect, int elen, bool using_scratch_space,
- 	const char *fmt, va_list ap)
- {
- 	va_list aq;
-@@ -78,7 +79,7 @@ do_test(int bufsize, const char *expect, int elen,
- 		return 1;
- 	}
- 
--	if (memchr_inv(test_buffer + written + 1, FILL_CHAR, bufsize - (written + 1))) {
-+	if (!using_scratch_space && memchr_inv(test_buffer + written + 1, FILL_CHAR, bufsize - (written + 1))) {
- 		pr_warn("vsnprintf(buf, %d, \"%s\", ...) wrote beyond the nul-terminator\n",
- 			bufsize, fmt);
- 		return 1;
-@@ -97,8 +98,9 @@ do_test(int bufsize, const char *expect, int elen,
- 	return 0;
- }
- 
--static void __printf(3, 4) __init
--__test(const char *expect, int elen, const char *fmt, ...)
-+static void __printf(4, 5) __init
-+__test(const char *expect, int elen, bool using_scratch_space,
-+	const char *fmt, ...)
- {
- 	va_list ap;
- 	int rand;
-@@ -119,11 +121,11 @@ __test(const char *expect, int elen, const char *fmt, ...)
- 	 * enough and 0), and then we also test that kvasprintf would
- 	 * be able to print it as expected.
- 	 */
--	failed_tests += do_test(BUF_SIZE, expect, elen, fmt, ap);
-+	failed_tests += do_test(BUF_SIZE, expect, elen, using_scratch_space, fmt, ap);
- 	rand = 1 + prandom_u32_max(elen+1);
- 	/* Since elen < BUF_SIZE, we have 1 <= rand <= BUF_SIZE. */
--	failed_tests += do_test(rand, expect, elen, fmt, ap);
--	failed_tests += do_test(0, expect, elen, fmt, ap);
-+	failed_tests += do_test(rand, expect, elen, using_scratch_space, fmt, ap);
-+	failed_tests += do_test(0, expect, elen, using_scratch_space, fmt, ap);
- 
- 	p = kvasprintf(GFP_KERNEL, fmt, ap);
- 	if (p) {
-@@ -138,8 +140,15 @@ __test(const char *expect, int elen, const char *fmt, ...)
- 	va_end(ap);
- }
- 
-+/*
-+ * More relaxed test for non-standard formats that are using the provided buffer
-+ * as a scratch space and write beyond the trailing '\0'.
-+ */
-+#define test_using_scratch_space(expect, fmt, ...)			\
-+	__test(expect, strlen(expect), true, fmt, ##__VA_ARGS__)
-+
- #define test(expect, fmt, ...)					\
--	__test(expect, strlen(expect), fmt, ##__VA_ARGS__)
-+	__test(expect, strlen(expect), false, fmt, ##__VA_ARGS__)
- 
- static void __init
- test_basic(void)
-@@ -150,7 +159,7 @@ test_basic(void)
- 	test("", &nul);
- 	test("100%", "100%%");
- 	test("xxx%yyy", "xxx%cyyy", '%');
--	__test("xxx\0yyy", 7, "xxx%cyyy", '\0');
-+	__test("xxx\0yyy", 7, false, "xxx%cyyy", '\0');
- }
- 
- static void __init
-@@ -501,6 +510,25 @@ dentry(void)
- 	test("  bravo/alfa|  bravo/alfa", "%12pd2|%*pd2", &test_dentry[2], 12, &test_dentry[2]);
- }
- 
-+static struct vfsmount test_vfsmnt __initdata = {};
-+
-+static struct file test_file __initdata = {
-+	.f_path = { .dentry = &test_dentry[2],
-+		    .mnt = &test_vfsmnt,
-+	},
-+};
-+
-+static void __init
-+f_d_path(void)
-+{
-+	test("(null)", "%pD", NULL);
-+	test("(efault)", "%pD", PTR_INVALID);
-+
-+	test_using_scratch_space("/bravo/alfa   |/bravo/alfa   ", "%-14pD|%*pD", &test_file, -14, &test_file);
-+	test_using_scratch_space("   /bravo/alfa|   /bravo/alfa", "%14pD|%*pD", &test_file, 14, &test_file);
-+	test_using_scratch_space("   /bravo/alfa|/bravo/alfa   ", "%14pD|%-14pD", &test_file, &test_file);
-+}
-+
- static void __init
- struct_va_format(void)
- {
-@@ -789,6 +817,7 @@ test_pointer(void)
- 	ip();
- 	uuid();
- 	dentry();
-+	f_d_path();
- 	struct_va_format();
- 	time_and_date();
- 	struct_clk();
--- 
-2.17.1
+# addr2line -e /usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
+FFFF8000102D6DD0
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/atomic-arch-fallback.h:2265
+# vi /usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/atomic-arch-fallback.h
+```
+arch_atomic64_fetch_add_unless(atomic64_t *v, s64 a, s64 u)
+{
+        s64 c = arch_atomic64_read(v); <=== line#2265
+
+        do {
+                if (unlikely(c == u))
+                        break;
+        } while (!arch_atomic64_try_cmpxchg(v, &c, c + a));
+
+        return c;
+}
+```
+
+# addr2line -i -e
+/usr/lib/debug/lib/modules/5.14.0-0.rc1.15.bx.el9.aarch64/vmlinux
+FFFF8000102D6DD0
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/atomic-arch-fallback.h:2265
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/atomic-arch-fallback.h:2290
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/asm-generic/atomic-instrumented.h:1149
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/asm-generic/atomic-long.h:491
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/percpu-refcount.h:247
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/percpu-refcount.h:266
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/backing-dev-defs.h:227
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/./include/linux/backing-dev-defs.h:224
+/usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/mm/backing-dev.c:679
+# vi /usr/src/debug/kernel-5.14.0-0.rc1.15.bx/linux-5.14.0-0.rc1.15.bx.el9.aarch64/mm/backing-dev.c
+```
+static void cleanup_offline_cgwbs_workfn(struct work_struct *work)
+{
+        struct bdi_writeback *wb;
+        LIST_HEAD(processed);
+
+        spin_lock_irq(&cgwb_lock);
+
+        while (!list_empty(&offline_cgwbs)) {
+                wb = list_first_entry(&offline_cgwbs, struct bdi_writeback,
+                                      offline_node);
+                list_move(&wb->offline_node, &processed);
+
+                /*
+                 * If wb is dirty, cleaning up the writeback by switching
+                 * attached inodes will result in an effective removal of any
+                 * bandwidth restrictions, which isn't the goal.  Instead,
+                 * it can be postponed until the next time, when all io
+                 * will be likely completed.  If in the meantime some inodes
+                 * will get re-dirtied, they should be eventually switched to
+                 * a new cgwb.
+                 */
+                if (wb_has_dirty_io(wb))
+                        continue;
+
+                if (!wb_tryget(wb))  <=== line#679
+                        continue;
+
+                spin_unlock_irq(&cgwb_lock);
+                while (cleanup_offline_cgwb(wb))
+                        cond_resched();
+                spin_lock_irq(&cgwb_lock);
+
+                wb_put(wb);
+        }
+
+        if (!list_empty(&processed))
+                list_splice_tail(&processed, &offline_cgwbs);
+
+        spin_unlock_irq(&cgwb_lock);
+}
+```
+
+>
+> Alternatively, maybe you can put the image you're using somewhere?
+
+I put those rpms in the Google Drive
+https://drive.google.com/drive/folders/1aw-WK2yWD11UWB059bJt6WKNW1OP_fex?usp=sharing
+
+>
+> I'm working on getting my arm64 setup and reproduce the problem, but it takes
+> time, and I'm not sure I'll be able to reproduce it in qemu running on top of x86.
+
+Thanks! It's only reproducible on aarch64 and ppc64le in my test. I'm
+happy to help test patch, if it would help.
+
+>
+> Thanks!
+>
 
