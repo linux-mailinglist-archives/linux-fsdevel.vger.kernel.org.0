@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AFCB3CAE0E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 22:39:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 022FA3CAE1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 22:45:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237504AbhGOUme (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 16:42:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55218 "EHLO
+        id S230515AbhGOUsZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 16:48:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237791AbhGOUmd (ORCPT
+        with ESMTP id S230165AbhGOUsY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 16:42:33 -0400
+        Thu, 15 Jul 2021 16:48:24 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D86C061762
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jul 2021 13:39:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F249FC06175F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jul 2021 13:45:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=iQqpnTwxqRXjD5hes7UseJQTEUIrkCuby3ucZ182rzs=; b=uitKHfs4H4unpnN+CyQ+ciCnHD
-        ugtp6nC6T3j5xuzinFXn0KNevuOZXhhV1diCij61FWBE5V3P1BvUzz0RsQ1ALQz/7zaVWfRUG0Qil
-        ehEEoBTOSLRO33ey/rJqwY0DRsRkb48OIXf+GNaTbwDC8sfOXVWI3aMkARGnkdHc0sbdQT6PpnBUj
-        v67qvTEHXIwV4RgVgJtA8jlp+w6RB89/A/UXkw0yb9Br+/U3ZXC+TOQc/BwXauoWlRqzqGbqwzrj1
-        YH5EH6BKmgC0VXxHf6s9Hv7dRSEHc+3w6u1AVPAEnTg2Af0PeyudfP+Ia4BPqJL8jgdvsQvJ2/PNY
-        s2EgM79A==;
+        bh=8eTHk8glw+F+ekL5Cv+Dll9+ELMBL3Xwu0ZsSBcDxyw=; b=osPN8Ksn7TPB2J5ngdRrVlD+fw
+        5uM/4RwXPDbZHAjwR8lbgdyuvNPuVoAGYmVYqJquy3O7O0pLGpU0SCAD8cEtRgblHUsxn0QftlJE5
+        B7E0x9ObP3XRSfHNNXbXufebs/CxQoUFoyH3CzLz5Lm+j+iaKHUQSoBOh9+iLSXKW9d/gfdntOiHX
+        WtWfwM20WZdyo0SUM2CwVKkDRPOdCmaHWOidEGG5VwCRxu+jNGIAdXfMUOvfGTiwyqf7fAt5euGhx
+        1drxsS8ttiLQdp+hJKATpSFIX/u6x/iHc/2AXB2zwoYG5vtc42HixPUGvSwXOgoGAxryaMi2kEj1J
+        78o6wcYw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m481R-003qBz-9S; Thu, 15 Jul 2021 20:32:18 +0000
+        id 1m482S-003qDc-2R; Thu, 15 Jul 2021 20:33:02 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v14 31/39] mm: Add folio_evictable()
-Date:   Thu, 15 Jul 2021 21:00:22 +0100
-Message-Id: <20210715200030.899216-32-willy@infradead.org>
+Subject: [PATCH v14 32/39] mm/lru: Convert __pagevec_lru_add_fn to take a folio
+Date:   Thu, 15 Jul 2021 21:00:23 +0100
+Message-Id: <20210715200030.899216-33-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210715200030.899216-1-willy@infradead.org>
 References: <20210715200030.899216-1-willy@infradead.org>
@@ -43,58 +43,158 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the folio equivalent of page_evictable().  Unfortunately, it's
-different from !folio_test_unevictable(), but I think it's used in places
-where you have to be a VM expert and can reasonably be expected to know
-the difference.
+This saves five calls to compound_head(), totalling 60 bytes of text.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- mm/internal.h | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+ include/trace/events/pagemap.h | 32 ++++++++++++++++----------------
+ mm/swap.c                      | 34 +++++++++++++++++-----------------
+ 2 files changed, 33 insertions(+), 33 deletions(-)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 08e8a28994d1..0910efec5821 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -72,17 +72,28 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t start,
- 		pgoff_t end, struct pagevec *pvec, pgoff_t *indices);
+diff --git a/include/trace/events/pagemap.h b/include/trace/events/pagemap.h
+index 1fd0185d66e8..171524d3526d 100644
+--- a/include/trace/events/pagemap.h
++++ b/include/trace/events/pagemap.h
+@@ -16,38 +16,38 @@
+ #define PAGEMAP_MAPPEDDISK	0x0020u
+ #define PAGEMAP_BUFFERS		0x0040u
  
- /**
-- * page_evictable - test whether a page is evictable
-- * @page: the page to test
-+ * folio_evictable - Test whether a folio is evictable.
-+ * @folio: The folio to test.
-  *
-- * Test whether page is evictable--i.e., should be placed on active/inactive
-- * lists vs unevictable list.
-- *
-- * Reasons page might not be evictable:
-- * (1) page's mapping marked unevictable
-- * (2) page is part of an mlocked VMA
-+ * Test whether @folio is evictable -- i.e., should be placed on
-+ * active/inactive lists vs unevictable list.
-  *
-+ * Reasons folio might not be evictable:
-+ * 1. folio's mapping marked unevictable
-+ * 2. One of the pages in the folio is part of an mlocked VMA
-  */
-+static inline bool folio_evictable(struct folio *folio)
-+{
-+	bool ret;
-+
-+	/* Prevent address_space of inode and swap cache from being freed */
-+	rcu_read_lock();
-+	ret = !mapping_unevictable(folio_mapping(folio)) &&
-+			!folio_test_mlocked(folio);
-+	rcu_read_unlock();
-+	return ret;
-+}
-+
- static inline bool page_evictable(struct page *page)
+-#define trace_pagemap_flags(page) ( \
+-	(PageAnon(page)		? PAGEMAP_ANONYMOUS  : PAGEMAP_FILE) | \
+-	(page_mapped(page)	? PAGEMAP_MAPPED     : 0) | \
+-	(PageSwapCache(page)	? PAGEMAP_SWAPCACHE  : 0) | \
+-	(PageSwapBacked(page)	? PAGEMAP_SWAPBACKED : 0) | \
+-	(PageMappedToDisk(page)	? PAGEMAP_MAPPEDDISK : 0) | \
+-	(page_has_private(page) ? PAGEMAP_BUFFERS    : 0) \
++#define trace_pagemap_flags(folio) ( \
++	(folio_test_anon(folio)		? PAGEMAP_ANONYMOUS  : PAGEMAP_FILE) | \
++	(folio_mapped(folio)		? PAGEMAP_MAPPED     : 0) | \
++	(folio_test_swapcache(folio)	? PAGEMAP_SWAPCACHE  : 0) | \
++	(folio_test_swapbacked(folio)	? PAGEMAP_SWAPBACKED : 0) | \
++	(folio_test_mappedtodisk(folio)	? PAGEMAP_MAPPEDDISK : 0) | \
++	(folio_test_private(folio)	? PAGEMAP_BUFFERS    : 0) \
+ 	)
+ 
+ TRACE_EVENT(mm_lru_insertion,
+ 
+-	TP_PROTO(struct page *page),
++	TP_PROTO(struct folio *folio),
+ 
+-	TP_ARGS(page),
++	TP_ARGS(folio),
+ 
+ 	TP_STRUCT__entry(
+-		__field(struct page *,	page	)
++		__field(struct folio *,	folio	)
+ 		__field(unsigned long,	pfn	)
+ 		__field(enum lru_list,	lru	)
+ 		__field(unsigned long,	flags	)
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->page	= page;
+-		__entry->pfn	= page_to_pfn(page);
+-		__entry->lru	= folio_lru_list(page_folio(page));
+-		__entry->flags	= trace_pagemap_flags(page);
++		__entry->folio	= folio;
++		__entry->pfn	= folio_pfn(folio);
++		__entry->lru	= folio_lru_list(folio);
++		__entry->flags	= trace_pagemap_flags(folio);
+ 	),
+ 
+ 	/* Flag format is based on page-types.c formatting for pagemap */
+-	TP_printk("page=%p pfn=0x%lx lru=%d flags=%s%s%s%s%s%s",
+-			__entry->page,
++	TP_printk("folio=%p pfn=0x%lx lru=%d flags=%s%s%s%s%s%s",
++			__entry->folio,
+ 			__entry->pfn,
+ 			__entry->lru,
+ 			__entry->flags & PAGEMAP_MAPPED		? "M" : " ",
+diff --git a/mm/swap.c b/mm/swap.c
+index 6e80f30d2e5e..89d4471ceb80 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -1001,17 +1001,18 @@ void __pagevec_release(struct pagevec *pvec)
+ }
+ EXPORT_SYMBOL(__pagevec_release);
+ 
+-static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec)
++static void __pagevec_lru_add_fn(struct folio *folio, struct lruvec *lruvec)
  {
- 	bool ret;
+-	int was_unevictable = TestClearPageUnevictable(page);
+-	int nr_pages = thp_nr_pages(page);
++	int was_unevictable = folio_test_clear_unevictable(folio);
++	int nr_pages = folio_nr_pages(folio);
+ 
+-	VM_BUG_ON_PAGE(PageLRU(page), page);
++	VM_BUG_ON_FOLIO(folio_test_lru(folio), folio);
+ 
+ 	/*
+-	 * Page becomes evictable in two ways:
++	 * Folio becomes evictable in two ways:
+ 	 * 1) Within LRU lock [munlock_vma_page() and __munlock_pagevec()].
+-	 * 2) Before acquiring LRU lock to put the page to correct LRU and then
++	 * 2) Before acquiring LRU lock to put the folio on the correct LRU
++	 *    and then
+ 	 *   a) do PageLRU check with lock [check_move_unevictable_pages]
+ 	 *   b) do PageLRU check before lock [clear_page_mlock]
+ 	 *
+@@ -1020,10 +1021,10 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec)
+ 	 *
+ 	 * #0: __pagevec_lru_add_fn		#1: clear_page_mlock
+ 	 *
+-	 * SetPageLRU()				TestClearPageMlocked()
++	 * folio_set_lru()			folio_test_clear_mlocked()
+ 	 * smp_mb() // explicit ordering	// above provides strict
+ 	 *					// ordering
+-	 * PageMlocked()			PageLRU()
++	 * folio_test_mlocked()			folio_test_lru()
+ 	 *
+ 	 *
+ 	 * if '#1' does not observe setting of PG_lru by '#0' and fails
+@@ -1034,21 +1035,21 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec)
+ 	 * looking at the same page) and the evictable page will be stranded
+ 	 * in an unevictable LRU.
+ 	 */
+-	SetPageLRU(page);
++	folio_set_lru(folio);
+ 	smp_mb__after_atomic();
+ 
+-	if (page_evictable(page)) {
++	if (folio_evictable(folio)) {
+ 		if (was_unevictable)
+ 			__count_vm_events(UNEVICTABLE_PGRESCUED, nr_pages);
+ 	} else {
+-		ClearPageActive(page);
+-		SetPageUnevictable(page);
++		folio_clear_active(folio);
++		folio_set_unevictable(folio);
+ 		if (!was_unevictable)
+ 			__count_vm_events(UNEVICTABLE_PGCULLED, nr_pages);
+ 	}
+ 
+-	add_page_to_lru_list(page, lruvec);
+-	trace_mm_lru_insertion(page);
++	lruvec_add_folio(lruvec, folio);
++	trace_mm_lru_insertion(folio);
+ }
+ 
+ /*
+@@ -1062,11 +1063,10 @@ void __pagevec_lru_add(struct pagevec *pvec)
+ 	unsigned long flags = 0;
+ 
+ 	for (i = 0; i < pagevec_count(pvec); i++) {
+-		struct page *page = pvec->pages[i];
+-		struct folio *folio = page_folio(page);
++		struct folio *folio = page_folio(pvec->pages[i]);
+ 
+ 		lruvec = folio_lruvec_relock_irqsave(folio, lruvec, &flags);
+-		__pagevec_lru_add_fn(page, lruvec);
++		__pagevec_lru_add_fn(folio, lruvec);
+ 	}
+ 	if (lruvec)
+ 		unlock_page_lruvec_irqrestore(lruvec, flags);
 -- 
 2.30.2
 
