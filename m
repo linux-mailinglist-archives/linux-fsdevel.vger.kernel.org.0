@@ -2,56 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BCF273C9C65
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 12:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D96B3C9C68
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 12:07:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235234AbhGOKKk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 06:10:40 -0400
+        id S241190AbhGOKKp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 06:10:45 -0400
 Received: from mail-eopbgr70098.outbound.protection.outlook.com ([40.107.7.98]:48611
         "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232495AbhGOKKi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 06:10:38 -0400
+        id S232585AbhGOKKl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Jul 2021 06:10:41 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gh+XlOLrOPdFNvy+j0HGQIdoTxooFoFpl3nru1M4uHiwvkUOaNmxdLK1ECCMJcgOISbyA1MP7aRWfR8rYxOQGlK0Nm3PAyFBxdPL1u8mm6Wdx8Fu8xZUFUUbD6Wo4jeTHTpUjFZqmGuqM3MFaUQiUb6rZlarEkV4mlp37JyDe1P8beptgXd80ZZGcy7OKBZdU8ACEoZdC/R2/6k56vikCRT8RkeaVHAtW6D1m4SzpDfdIBWASdx9gKIp4ssK5b5XchxPEpelQ5cB2G2FIJd9o2w6BT6ub7ExhSf33ImFDXSPOZlBGnq4MvDUmude7yitAunXuGIxXtzwkM+e1xSvGw==
+ b=AqMwPia+9RLSYqZ8f+ntYOzm7AD7d5izsWOq61KYx0i7jztMSU0ToWsCdMgVcdyAgTbZkQ8Ou6pfDIRoDh7YAhuBfgX2IXRbFsw4mXD09oyj1mECpHDm6+AGb+beYuikWCERL8OcNOk+xo0HHHO3Ac9FXaPYX2WfgcgFHWKv0Dl072rBR+Oh4r8DqQ8Rux2+iOIy4ViG/lPtdIM9bf5857QfBhBV1iiNJRiH13ZSB83FWUTCpmWYb3YBbA2w7UKMfnSGTS6CxNe0tmBHhsFn1TRihGilM+cwoRKRFipJDRp6OsKiKV5D8j29DasZyArmLgMrdA8ZCYdVcHq6PzOCBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0nSYwDNS+/5G8ExMeeHKnPnG3UUt8OG+PdEZ46phabA=;
- b=fIBDQpY94uaB+vaCnaauVK+MEk8LfYjYj9IGZQxJRvQFrvBFoGiVxDeUoftzwGPLumjX1Ssm8kwU8Rko+CiSvwRS3aIoVw+QF48GTbQUMhu8s3mWcfv25JVa/6b33EgKpjmVan8aF0oSR2ggNnsXllxA0DuM8sDIsd1padpTbcxAgWxDmUFVZDTM8ReUkiLIxyna0+Whl6hTpExsIqwqLlUzZLqD2tgC6H7hEUhn+lwktN12Rg3N5cqSUvVu7GOflpvRNG36zKMAL+YD5F6cFtlEF/7B/HoSvziK+ZWO1JjhdoB63jjCuC+AT5GC7XMN0HTEcktjNcB/PInL47GIkA==
+ bh=Fw1rZ1+mOGZ5ITIQWt/Gk7SotaDrPFh8wNQph4GGjAY=;
+ b=FauR1JO1tJwmyCYbG1LY3H65xHH25oPXl+9pyKzwUkMYR30RYVttGI6pJtoKxxj1y/lVx8evXuXz2TQ5mMerZKA/3UfyLlNGkuoAxPpBKIHdUzw2QjYB0fQQ9isn7XuVg4LMqF9GeBNW2q2hqFxCIIIa+95VrcJbgbz0dVb1BbmtWFOWtc9uwMS3grKDUqqckgoQ52khDjaegcsuv8nGw/tW5OUmr+Ps/O5Anfp5YPYOS4q8ciIk6vGbknP7bUjh8Kz7a+zwclAhFHAs12ohHaUQBqRW7nE9pCnuhUGfQs/S/vKo4v+INscJac8Hkce9NkQX0PFZqLkedFp7DPdpEw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
  header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0nSYwDNS+/5G8ExMeeHKnPnG3UUt8OG+PdEZ46phabA=;
- b=WROBsdFK6j56WlKsgaxTdew8J9+i5kEdhbOLvbsbDTrSwZH1uu8JqvCJ+k/GXCSJsNUn5k5/LRGg6PNe436m52QXljdwl1U3YFjHQVT7f1SH5rPN9NUnVuMR99ckahcHFOUtsnJSS+KSTXVdrmBEImOPKrvMO8c4Xm0tQh2Bi1w=
+ bh=Fw1rZ1+mOGZ5ITIQWt/Gk7SotaDrPFh8wNQph4GGjAY=;
+ b=Y9yokrLUVb1B1OH0msihXNhvHY5qnVdOUA37hYFLat2CwRplXdm6CfAj+ow8A3jAV0AC3jK1GafTrbwNu797ffGLvV1EyepR3GQQT8xp6hStdSmke2oVZWwIgq2+9aICOaxWlFBKqxf2FCdTlEHZIiFVgZm2d0ZvokH7T3juoPY=
 Authentication-Results: ubuntu.com; dkim=none (message not signed)
  header.d=none;ubuntu.com; dmarc=none action=none header.from=virtuozzo.com;
 Received: from VE1PR08MB4989.eurprd08.prod.outlook.com (2603:10a6:803:114::19)
  by VI1PR08MB2975.eurprd08.prod.outlook.com (2603:10a6:803:44::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21; Thu, 15 Jul
- 2021 10:07:42 +0000
+ 2021 10:07:44 +0000
 Received: from VE1PR08MB4989.eurprd08.prod.outlook.com
  ([fe80::c402:b828:df33:5694]) by VE1PR08MB4989.eurprd08.prod.outlook.com
  ([fe80::c402:b828:df33:5694%7]) with mapi id 15.20.4331.023; Thu, 15 Jul 2021
- 10:07:42 +0000
+ 10:07:44 +0000
 From:   Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 To:     Christian Brauner <christian.brauner@ubuntu.com>,
         linux-fsdevel@vger.kernel.org
 Cc:     Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Mattias Nissler <mnissler@chromium.org>,
         Aleksa Sarai <cyphar@cyphar.com>,
-        Andrei Vagin <avagin@gmail.com>, linux-api@vger.kernel.org,
+        Andrei Vagin <avagin@gmail.com>,
+        linux-kselftest@vger.kernel.org,
         lkml <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 1/2] move_mount: allow to add a mount into an existing group
-Date:   Thu, 15 Jul 2021 13:07:13 +0300
-Message-Id: <20210715100714.120228-1-ptikhomirov@virtuozzo.com>
+Subject: [PATCH v5 2/2] tests: add move_mount(MOVE_MOUNT_SET_GROUP) selftest
+Date:   Thu, 15 Jul 2021 13:07:14 +0300
+Message-Id: <20210715100714.120228-2-ptikhomirov@virtuozzo.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210715100714.120228-1-ptikhomirov@virtuozzo.com>
+References: <20210715100714.120228-1-ptikhomirov@virtuozzo.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: PR2P264CA0039.FRAP264.PROD.OUTLOOK.COM
@@ -59,88 +63,73 @@ X-ClientProxiedBy: PR2P264CA0039.FRAP264.PROD.OUTLOOK.COM
  (2603:10a6:803:114::19)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from fedora.sw.ru (46.39.230.13) by PR2P264CA0039.FRAP264.PROD.OUTLOOK.COM (2603:10a6:101:1::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Thu, 15 Jul 2021 10:07:41 +0000
+Received: from fedora.sw.ru (46.39.230.13) by PR2P264CA0039.FRAP264.PROD.OUTLOOK.COM (2603:10a6:101:1::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Thu, 15 Jul 2021 10:07:42 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c9e42545-1d3e-4aef-bf82-08d947786263
+X-MS-Office365-Filtering-Correlation-Id: b02abb28-6424-4b48-8692-08d94778635f
 X-MS-TrafficTypeDiagnostic: VI1PR08MB2975:
 X-LD-Processed: 0bc7f26d-0264-416e-a6fc-8352af79c58f,ExtAddr
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR08MB2975125BA23B0F8DB83AFE0AB7129@VI1PR08MB2975.eurprd08.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Microsoft-Antispam-PRVS: <VI1PR08MB29752C5815FE087202BDBD8FB7129@VI1PR08MB2975.eurprd08.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:353;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: w34qPPW5U5AQu41ebA/TdGMCZBz4PTQDb7SbptyRSxrVKFM0IFrp8UjG0N4uBLrsk8MuK/Cekk/dAns7ukyGgZsThlOKYmMjUXkh6tYutZI7n02PsHPuutYUtxrwK0W4b19LT41VhlkUWerJ4BGMIogSc66pQaIoVKeqoUk/GpOFKxmGf99ZXYm9lKRb64LZMdRBuTMcQGTcCEV9IFc+HZFwTu5zMpiXGyE0eLDs9p/+jyhrUjsVzs+6LVLSRiX0Uequh2xQMYcmeXIg/vRDLf8MxGuo7CY1XkvN897bzhqQ2D+x84ltiIL/yDtBlqNqi1mac3SRMkLcBq/QWawlXwEbd8xMo4M0XKD/dE5RVzLykpI2griwkgUZc0llmPPov2muRutPYaXL6sbB3DuHZOc4JqzvXTBwdmr5hWMk1LOIgcEDRZyRhG0RBbgFsdXXWOGM5wynCQtUrzjP3Fqqeev3LOKx7LJPV5AUsPSNXZ6eqaBJj7ipO+ADaEBLgS8hNOsqnJykxzdXA1vD7n/NlrUHJCdn0V6suDCUwiqiV58vhWNKPkLdzdFIIIV5aDG+6Pwbc6soy8v/xxCdOoV1UtSfTVLFdCx8wjp6+PicskqsV/sb1k4J0lPHAH0DM+C+I19QgyvjfN92oyFj0E+ioaXfKk/R4oP2ghN+XG0z52/YFk1DS4L+ziWrJs6WQiJWtpEJulyMkSWjWV2oUDrxeO/lC/nH2pGJHOiNi17Xc84IsKy2+V51EFIAkMw1Nm1Edf6LL1NflPTUhWEHKv1nJmd+tVLaX5+Ia0IljmEztbZcFsCCQoT6eJ35mPo1EAaA
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR08MB4989.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(966005)(6506007)(4326008)(6486002)(6512007)(86362001)(2906002)(54906003)(36756003)(52116002)(956004)(2616005)(26005)(5660300002)(66946007)(83380400001)(66476007)(1076003)(8936002)(38350700002)(38100700002)(6666004)(66556008)(8676002)(316002)(186003)(478600001);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: 1ncmHBFkDMasj6mAKAei28yR0RAbZocRyNFKt35bAmuKN0E34IJgOZS8JOzxbwOlx3eb2juXrdr1I6rasGdTi695wWCsCcjmWsISY7i4apLy/rPjg8qvaL/BTQfKxi2RrEm0/o3BcySmmSTINaqY7RTDoIEw10hCd6Rjb3BnmDjU02jadGZKzJsEqP2PLINuLVZLzgCa042uZmHi1rX0zTkNn81iUokrZbVlTJHmPasulsJBPuzrL8r5vC3UItaf1xhCzvptpC/bgGp5QjHyXwXyoE90ShZ2av+EZL0fVKyvF97CblCop72A59N9ljsN8BtfnE0OCEVY4ZbD18jlLKYrQAXFuePY3HpO2fmazVVPT8lB9lds5Qb0+ARNf+LVnLJ8GcG83kSNig6uuOZVX7eOdNZn4eD7jLmxJo4Trg+34nwq6l4QQx8Q2MDlF4NFlAiu5KfBKaq9yCiQTFWoNvVrnIjrY8GZIrbrXmtbxvqLDSivuntd2hazKIywN0CN8MnioxtzNOjJOSLqvZ5OifZRc+dBkiI9BRs6krtTbJ/vAYxHHvDJ+kEQIXlGuDtQRT8/7L342Td1F6rAGVR1tO2ImPPbiPF1jxZRDmdH410lBRqoIqQj6MH0a1YRdDItwUkXoIIlsT5XyU0OfcMFxIj4s7gbXJLYUE90agqvlwB1zDo0wq96xJQIdogo3Nnt9O10Xv53pqQyHdzDQweSdBcQ5kTV/O+WKmYANEtWPxkaVJuWJSlsYvb5NJlqCEIpWJBEFuqdIqppl7sfEg8hlLmbUSF1PQ7O1DNVk6SYaSs=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR08MB4989.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(966005)(6506007)(30864003)(4326008)(6486002)(6512007)(86362001)(2906002)(54906003)(36756003)(52116002)(956004)(7416002)(2616005)(26005)(5660300002)(66946007)(83380400001)(66476007)(1076003)(8936002)(38350700002)(38100700002)(6666004)(66556008)(8676002)(316002)(186003)(478600001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ErePowSeLhvcjRUwmbOSOPZvceSWaOsvMZ3GHHW7g5Wl7++E2NwiVaVhgJpP?=
- =?us-ascii?Q?4RlM4A2V+TFs3t4w+DMwYDMemWB3MtMYWRC/ICu1XJNCQLYYX+hev3UJV3cQ?=
- =?us-ascii?Q?0QdtB4513nIn4gif0lhsDYHQTHr6nxVliwcJlWC+5r2URBWFrBLfJPphTlWg?=
- =?us-ascii?Q?FRQokKOSVeLHZxO7wfPb6nss0KuriUFwIFP5m6oBmImEquzoUtFH98OuCVfR?=
- =?us-ascii?Q?W50GBP/f4EZ8NVGHUCW/agrKfdZFhkubDkv/OHhjF6BZiaSLJABE1p/nwbCf?=
- =?us-ascii?Q?evNR9+qn/IxN7Mgbdr4gCoUc8OGcvbDOP1vwu2x1YwdK1xQiWzFakKgKNq5I?=
- =?us-ascii?Q?pbFZZLSi04lPnYyfTg3BaJCipnz22rL27ppqwAV0kEealkFcOMyMKLo4EMMi?=
- =?us-ascii?Q?NIEQSD81xU/BsqQgXkn2e1LUIfApOwmXVig9WQkRi8y6v22Ft0xXp/bo/WQ9?=
- =?us-ascii?Q?hTjyB18J7jjOaDBnbIrUUigygDPT8Fm85OgUsIon8P4ZBfx4ygvY8kH0MX1b?=
- =?us-ascii?Q?pcxTgWBYYCS/hkInyYRpg+FhcgScFxmfYonVE0JfP8ddWMO8CwNFvbCHN+7h?=
- =?us-ascii?Q?goy0IutPH5ixA8NinL2nCZSgvZAirawB1LVCO2LVcW2PWveY7XK+pZz5SxOQ?=
- =?us-ascii?Q?ca4IFGQhbHfjaxlsz+F46nZTG4qVp6MSCAdMUZn502DX1XTh8rs2W1No/Ztl?=
- =?us-ascii?Q?YW6IrlNeZgsPfhihiZPatDemTHaBT6JEopBmWisUreFAVUE7hY7/FFMOwU0u?=
- =?us-ascii?Q?yZ2R/W60CyZGaUMv8coFvc4wTXmfOpt6TsRp9GqQ2uKYt1OHP7YfmBWMFlaD?=
- =?us-ascii?Q?hkU0VIsr3sZD1YX1X2K5bWn10bss3soxR8Hid2sRim326Z1DBfI9pXNwz55F?=
- =?us-ascii?Q?n9lKDb+0pEeKBPaBpb3vFlkoCqsnmitOInLk+Fgj/LyW2c2F2eNy6NwqCOA7?=
- =?us-ascii?Q?98BLf2mOPuwIRmqwwE0zbJP/6YOsfm6Iwka0EmieAwDCpgx29F6fS1AINBd8?=
- =?us-ascii?Q?oPOqQ9tKmXUf1fDKOj0UYx8GWeBFYP4c7+caanyULA5jvV9so7CLrqYUBR/n?=
- =?us-ascii?Q?IMEgwk5ldn47oXFGWaz1sz2RSLlPMRXha/LJBvWghz5+/RVSiL4gxPXCdwBw?=
- =?us-ascii?Q?KshvutFYJYa6+M4vbks3WcDrVzmrnYWDRjJAoRyufGr0M3Mig4Y4S4SJd+Rt?=
- =?us-ascii?Q?k9KmVvxfiKtg8bVvrcD8SBp+rNXvO/ZXajXnPWU/P9gK31dkON48IuBsWoIN?=
- =?us-ascii?Q?gTC0KS/bxg9KEvUSz7Uafq1zlfHmWNy2IjPBNwRC/MIxPzcfQRj7QfltGCUr?=
- =?us-ascii?Q?ugXL/ogZWUHZjlddgaZfrl66?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/moxW/bKjVFXTzNWT03ETwJuYjCVKFlut11JGKEGwO4EausF3xqe5VK3RtUr?=
+ =?us-ascii?Q?4Ps3/X6eiPZ/S3w/qrsDolk8m7RZ3/UyTaMUsEpI7uwsmRWtC3KE/o1NfTXh?=
+ =?us-ascii?Q?BdccTSCKFcaNDt3Ca/QuLG6mUzVyCKnyFZI40CzVd8GO26DqZAS/R1VbljJM?=
+ =?us-ascii?Q?6CLpts0kr5iBfF6QnJLzzewEhX/+NNPLTG63prcoKBTLAjQq4VnD89Fswfgr?=
+ =?us-ascii?Q?z0NZZjF4JdvZcTORp+vZCpIOlgt2qXNzn3WD6+ynkASb9ixfHoQOKkToMkQU?=
+ =?us-ascii?Q?xZCPNvVJDucbgOclFXQ4+vq46fM6xe16rkk2H7oJOaD08zRzjY5pPD6xLXdA?=
+ =?us-ascii?Q?kTicuJb2Bn4ui4MgOqdBXZewbUtAl7UgWM0ssmxT71Hn+yUaYqWSmd693jRl?=
+ =?us-ascii?Q?BOdgBSBvQ96fKUHCY2A04AhsTpc5Q3XsREMvuPeXOHbkjXJ2aqPkFuM7eO1a?=
+ =?us-ascii?Q?eaICCaI4CixWWTGep9LvLrseddK2DC7CMvAGWC6WKrB8PAfBYdZHzlyngPUa?=
+ =?us-ascii?Q?Xvp2kZbaZVUb7VRnx9M7ZUv3T2sshboJDY+qDnci4KZd3AFRszhBWb6yDg1Y?=
+ =?us-ascii?Q?q2fXLhM1ReYVjdIQFaBsPBdeyW/zMcVPAIixHyPFbZyv4GbdSxImQPjrq8nt?=
+ =?us-ascii?Q?A5Wwn9Md4RWXYwFsqC0syJeMjcZWSQzEWdlbZK+io1fdZdmUmCkPiFoaagoq?=
+ =?us-ascii?Q?Z3SqY1TQUPNLud3osFZwo+lxyENBL4PFjOxkVnkHZFSxU5WfYQNFHY+0YTmY?=
+ =?us-ascii?Q?DWhTMSGqL1llnA/GlsKB+HpNrgFJgxGkDBvf8mRWBZrCnn5xYE9mtG4NmcUY?=
+ =?us-ascii?Q?vjeD7zis7qME3FoE+/f32uEWMkkfnFWZlpSxYrVw+bNG5On9CX64uZEwx2YO?=
+ =?us-ascii?Q?MNbGwiOPtCCj+QB28IViZSaaNKQrGMByPyYyDHJjbv7joBta6i5q45FGCXIv?=
+ =?us-ascii?Q?Z3NyZg/S+rtPkFARLAKSdbgGkZ6o4VfSEHUMdD5Kmh5rXjzun0ERAWyxCnW8?=
+ =?us-ascii?Q?gqv5OanAZ65iiDgwsMY41kChINidPU46HXCq6AUBer9D79YHxhJIYy79bbH3?=
+ =?us-ascii?Q?dLn38tflBTojqAOSNTDNXhflztZwBVMVgx4UQAL70gwfXXkzsGEFIt8qhrzP?=
+ =?us-ascii?Q?cbO71aHU5fG3gWvlCmCg4Ak/HLDmNmrchJkOBUIuAfJ3aq9IkEYwqKfgqY7H?=
+ =?us-ascii?Q?yrWcMX3DMl8TQHhclO/Nna3zEhfh8N8epOZ1U/0+LIgFrxVzztzgbp6YfVTi?=
+ =?us-ascii?Q?iHAogkv/37hvWlRVC9oSp18YiK3bMDwu3uPL5u/Hd2Vy5A5XyHbwVlWnDTUV?=
+ =?us-ascii?Q?p4y2RMT92u9zUfDa/x2q61ur?=
 X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9e42545-1d3e-4aef-bf82-08d947786263
+X-MS-Exchange-CrossTenant-Network-Message-Id: b02abb28-6424-4b48-8692-08d94778635f
 X-MS-Exchange-CrossTenant-AuthSource: VE1PR08MB4989.eurprd08.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2021 10:07:42.3796
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2021 10:07:43.9997
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +rZSboxGBF47KlEDOLQaFvMklYSkayL38ZkDRend5cIexsD6d1O1CWw4oZbSA2vy/wV/8ixvhRDvkRUzhqooIiJNyARlgG2MObIE37rJFvY=
+X-MS-Exchange-CrossTenant-UserPrincipalName: T8aBlVqALee00KayREQ9kZ/ZrXt9ie2XZkkSc9Tahmk1qz7/9uOvsNHDHmKUfvemYlNGrVM8I6DvDhWHNaarDx7Ad2hZP0ln4hHF7i5IkjI=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB2975
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Previously a sharing group (shared and master ids pair) can be only
-inherited when mount is created via bindmount. This patch adds an
-ability to add an existing private mount into an existing sharing group.
+Add a simple selftest for a move_mount(MOVE_MOUNT_SET_GROUP). This tests
+that one can copy sharing from one mount from nested mntns with nested
+userns owner to another mount from other nested mntns with other nested
+userns owner while in their parent userns.
 
-With this functionality one can first create the desired mount tree from
-only private mounts (without the need to care about undesired mount
-propagation or mount creation order implied by sharing group
-dependencies), and next then setup any desired mount sharing between
-those mounts in tree as needed.
+  TAP version 13
+  1..1
+  # Starting 1 tests from 2 test cases.
+  #  RUN           move_mount_set_group.complex_sharing_copying ...
+  #            OK  move_mount_set_group.complex_sharing_copying
+  ok 1 move_mount_set_group.complex_sharing_copying
+  # PASSED: 1 / 1 tests passed.
+  # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-This allows CRIU to restore any set of mount namespaces, mount trees and
-sharing group trees for a container.
-
-We have many issues with restoring mounts in CRIU related to sharing
-groups and propagation:
-- reverse sharing groups vs mount tree order requires complex mounts
-  reordering which mostly implies also using some temporary mounts
-(please see https://lkml.org/lkml/2021/3/23/569 for more info)
-
-- mount() syscall creates tons of mounts due to propagation
-- mount re-parenting due to propagation
-- "Mount Trap" due to propagation
-- "Non Uniform" propagation, meaning that with different tricks with
-  mount order and temporary children-"lock" mounts one can create mount
-  trees which can't be restored without those tricks
-(see https://www.linuxplumbersconf.org/event/7/contributions/640/)
-
-With this new functionality we can resolve all the problems with
-propagation at once.
-
+Cc: Shuah Khan <shuah@kernel.org>
 Cc: Eric W. Biederman <ebiederm@xmission.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: Christian Brauner <christian.brauner@ubuntu.com>
@@ -148,188 +137,449 @@ Cc: Mattias Nissler <mnissler@chromium.org>
 Cc: Aleksa Sarai <cyphar@cyphar.com>
 Cc: Andrei Vagin <avagin@gmail.com>
 Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-api@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
 Cc: lkml <linux-kernel@vger.kernel.org>
 Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 
 ---
-This is a rework of "mnt: allow to add a mount into an existing group"
-patch from Andrei. https://lkml.org/lkml/2017/4/28/20
-
-New do_set_group is similar to do_move_mount, but with some restrictions
-of do_move_mount removed and that's why:
-
-1) Allow "cross-namespace" sharing group set. If we allow operation only
-with mounts from current+anon mount namespace one would still be able to
-setns(from_mntns) + open_tree(from, OPEN_TREE_CLONE) + setns(to_mntns) +
-move_mount(anon, to, MOVE_MOUNT_SET_GROUP) to set sharing group to mount
-in different mount namespace with source mount. But with this approach
-we would need to create anon mount namespace and mount copy each time,
-which is just a waste of resources. So instead lets just check if we are
-allowed to modify both mount namespaces (which looks equivalent to what
-setns-es and open_tree check).
-
-2) Skip checks wich only apply to actually moving mount which we have in
-do_move_mount and open_tree. We don't need to check for MNT_LOCKED,
-d_is_dir matching, unbindable, nsfs loops and ancestor relation as we
-don't move mounts.
-
-Also let's add some new checks:
-
-1) Don't allow to copy sharing from mount with narrow root to a wider
-root, so that user does not have power to receive more propagations when
-user already has. (proposed by Andrei)
-
-2) Don't allow to copy sharing from mount with locked children for the
-same reason, as user shouldn't see propagations to areas overmounted by
-locked mounts (if the user could not already do it before sharing
-adjustment).
-
-3) If From is private for MOVE_MOUNT_SET_GROUP let's report an error
-instead of just doing nothing, so that the user knows that there is
-probably some logical usage error. (proposed by Christian)
-
-Security note: there would be no (new) loops in sharing groups tree,
-because this new move_mount(MOVE_MOUNT_SET_GROUP) operation only adds
-one _private_ mount to one group (without moving between groups), the
-sharing groups tree itself stays unchanged after it.
-
-In Virtuozzo we have "mount-v2" implementation, based with the original
-kernel patch from Andrei, tested for almost a year and it actually
-decreased number of bugs with mounts a lot. One can take a look on the
-implementation of sharing group restore in CRIU in "mount-v2" here:
-
-https://src.openvz.org/projects/OVZ/repos/criu/browse/criu/mount-v2.c#898
-
-This works almost the same with current version of patch if we replace
-mount(MS_SET_GROUP) to move_mount(MOVE_MOUNT_SET_GROUP), please see
-super-draft port for mainstream criu, this at least passes
-non-user-namespaced mount tests (zdtm.py --mounts-v2 -f ns).
-
+Note: One can also test it via criu mount-v2 POC:
 https://github.com/Snorch/criu/commits/mount-v2-poc
 
-v2: Solve the problem mentioned by Andrei:
-- check mnt_root of "to" is in the sub-tree of mnt_root of "from"
-- also check "from" has no locked mounts in subroot of "to"
-v3: Add checks:
-- check paths to be mount root dentries
-- return EINVAL if From is private (no sharing to copy)
-v4: Protect mnt->mnt_flags modification with mount_lock
+v3: add some test
+v5: fix test codding style + fix cc
 
 ---
- fs/namespace.c             | 77 +++++++++++++++++++++++++++++++++++++-
- include/uapi/linux/mount.h |  3 +-
- 2 files changed, 78 insertions(+), 2 deletions(-)
+ tools/testing/selftests/Makefile              |   1 +
+ .../selftests/move_mount_set_group/.gitignore |   1 +
+ .../selftests/move_mount_set_group/Makefile   |   7 +
+ .../selftests/move_mount_set_group/config     |   1 +
+ .../move_mount_set_group_test.c               | 375 ++++++++++++++++++
+ 5 files changed, 385 insertions(+)
+ create mode 100644 tools/testing/selftests/move_mount_set_group/.gitignore
+ create mode 100644 tools/testing/selftests/move_mount_set_group/Makefile
+ create mode 100644 tools/testing/selftests/move_mount_set_group/config
+ create mode 100644 tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ab4174a3c802..5d0b477c2682 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2684,6 +2684,78 @@ static bool check_for_nsfs_mounts(struct mount *subtree)
- 	return ret;
- }
- 
-+static int do_set_group(struct path *from_path, struct path *to_path)
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index fb010a35d61a..dd0388eab94d 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -35,6 +35,7 @@ TARGETS += memory-hotplug
+ TARGETS += mincore
+ TARGETS += mount
+ TARGETS += mount_setattr
++TARGETS += move_mount_set_group
+ TARGETS += mqueue
+ TARGETS += nci
+ TARGETS += net
+diff --git a/tools/testing/selftests/move_mount_set_group/.gitignore b/tools/testing/selftests/move_mount_set_group/.gitignore
+new file mode 100644
+index 000000000000..f5e339268720
+--- /dev/null
++++ b/tools/testing/selftests/move_mount_set_group/.gitignore
+@@ -0,0 +1 @@
++move_mount_set_group_test
+diff --git a/tools/testing/selftests/move_mount_set_group/Makefile b/tools/testing/selftests/move_mount_set_group/Makefile
+new file mode 100644
+index 000000000000..80c2d86812b0
+--- /dev/null
++++ b/tools/testing/selftests/move_mount_set_group/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++# Makefile for mount selftests.
++CFLAGS = -g -I../../../../usr/include/ -Wall -O2
++
++TEST_GEN_FILES += move_mount_set_group_test
++
++include ../lib.mk
+diff --git a/tools/testing/selftests/move_mount_set_group/config b/tools/testing/selftests/move_mount_set_group/config
+new file mode 100644
+index 000000000000..416bd53ce982
+--- /dev/null
++++ b/tools/testing/selftests/move_mount_set_group/config
+@@ -0,0 +1 @@
++CONFIG_USER_NS=y
+diff --git a/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c b/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
+new file mode 100644
+index 000000000000..860198f83a53
+--- /dev/null
++++ b/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
+@@ -0,0 +1,375 @@
++// SPDX-License-Identifier: GPL-2.0
++#define _GNU_SOURCE
++#include <sched.h>
++#include <stdio.h>
++#include <errno.h>
++#include <string.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/mount.h>
++#include <sys/wait.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <fcntl.h>
++#include <stdbool.h>
++#include <stdarg.h>
++#include <sys/syscall.h>
++
++#include "../kselftest_harness.h"
++
++#ifndef CLONE_NEWNS
++#define CLONE_NEWNS 0x00020000
++#endif
++
++#ifndef CLONE_NEWUSER
++#define CLONE_NEWUSER 0x10000000
++#endif
++
++#ifndef MS_SHARED
++#define MS_SHARED (1 << 20)
++#endif
++
++#ifndef MS_PRIVATE
++#define MS_PRIVATE (1<<18)
++#endif
++
++#ifndef MOVE_MOUNT_SET_GROUP
++#define MOVE_MOUNT_SET_GROUP 0x00000100
++#endif
++
++#ifndef MOVE_MOUNT_F_EMPTY_PATH
++#define MOVE_MOUNT_F_EMPTY_PATH 0x00000004
++#endif
++
++#ifndef MOVE_MOUNT_T_EMPTY_PATH
++#define MOVE_MOUNT_T_EMPTY_PATH 0x00000040
++#endif
++
++static ssize_t write_nointr(int fd, const void *buf, size_t count)
 +{
-+	struct mount *from, *to;
-+	int err;
++	ssize_t ret;
 +
-+	from = real_mount(from_path->mnt);
-+	to = real_mount(to_path->mnt);
++	do {
++		ret = write(fd, buf, count);
++	} while (ret < 0 && errno == EINTR);
 +
-+	namespace_lock();
-+
-+	err = -EINVAL;
-+	/* To and From must be mounted */
-+	if (!is_mounted(&from->mnt))
-+		goto out;
-+	if (!is_mounted(&to->mnt))
-+		goto out;
-+
-+	err = -EPERM;
-+	/* We should be allowed to modify mount namespaces of both mounts */
-+	if (!ns_capable(from->mnt_ns->user_ns, CAP_SYS_ADMIN))
-+		goto out;
-+	if (!ns_capable(to->mnt_ns->user_ns, CAP_SYS_ADMIN))
-+		goto out;
-+
-+	err = -EINVAL;
-+	/* To and From paths should be mount roots */
-+	if (from_path->dentry != from_path->mnt->mnt_root)
-+		goto out;
-+	if (to_path->dentry != to_path->mnt->mnt_root)
-+		goto out;
-+
-+	/* Setting sharing groups is only allowed across same superblock */
-+	if (from->mnt.mnt_sb != to->mnt.mnt_sb)
-+		goto out;
-+
-+	/* From mount root should be wider than To mount root */
-+	if (!is_subdir(to->mnt.mnt_root, from->mnt.mnt_root))
-+		goto out;
-+
-+	/* From mount should not have locked children in place of To's root */
-+	if (has_locked_children(from, to->mnt.mnt_root))
-+		goto out;
-+
-+	/* Setting sharing groups is only allowed on private mounts */
-+	if (IS_MNT_SHARED(to) || IS_MNT_SLAVE(to))
-+		goto out;
-+
-+	/* From should not be private */
-+	if (!IS_MNT_SHARED(from) && !IS_MNT_SLAVE(from))
-+		goto out;
-+
-+	if (IS_MNT_SLAVE(from)) {
-+		struct mount *m = from->mnt_master;
-+
-+		list_add(&to->mnt_slave, &m->mnt_slave_list);
-+		to->mnt_master = m;
-+	}
-+
-+	if (IS_MNT_SHARED(from)) {
-+		to->mnt_group_id = from->mnt_group_id;
-+		list_add(&to->mnt_share, &from->mnt_share);
-+		lock_mount_hash();
-+		set_mnt_shared(to);
-+		unlock_mount_hash();
-+	}
-+
-+	err = 0;
-+out:
-+	namespace_unlock();
-+	return err;
++	return ret;
 +}
 +
- static int do_move_mount(struct path *old_path, struct path *new_path)
- {
- 	struct mnt_namespace *ns;
-@@ -3669,7 +3741,10 @@ SYSCALL_DEFINE5(move_mount,
- 	if (ret < 0)
- 		goto out_to;
- 
--	ret = do_move_mount(&from_path, &to_path);
-+	if (flags & MOVE_MOUNT_SET_GROUP)
-+		ret = do_set_group(&from_path, &to_path);
-+	else
-+		ret = do_move_mount(&from_path, &to_path);
- 
- out_to:
- 	path_put(&to_path);
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index dd7a166fdf9c..4d93967f8aea 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -73,7 +73,8 @@
- #define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
- #define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
- #define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
--#define MOVE_MOUNT__MASK		0x00000077
-+#define MOVE_MOUNT_SET_GROUP		0x00000100 /* Set sharing group instead */
-+#define MOVE_MOUNT__MASK		0x00000177
- 
- /*
-  * fsopen() flags.
++static int write_file(const char *path, const void *buf, size_t count)
++{
++	int fd;
++	ssize_t ret;
++
++	fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY | O_NOFOLLOW);
++	if (fd < 0)
++		return -1;
++
++	ret = write_nointr(fd, buf, count);
++	close(fd);
++	if (ret < 0 || (size_t)ret != count)
++		return -1;
++
++	return 0;
++}
++
++static int create_and_enter_userns(void)
++{
++	uid_t uid;
++	gid_t gid;
++	char map[100];
++
++	uid = getuid();
++	gid = getgid();
++
++	if (unshare(CLONE_NEWUSER))
++		return -1;
++
++	if (write_file("/proc/self/setgroups", "deny", sizeof("deny") - 1) &&
++	    errno != ENOENT)
++		return -1;
++
++	snprintf(map, sizeof(map), "0 %d 1", uid);
++	if (write_file("/proc/self/uid_map", map, strlen(map)))
++		return -1;
++
++
++	snprintf(map, sizeof(map), "0 %d 1", gid);
++	if (write_file("/proc/self/gid_map", map, strlen(map)))
++		return -1;
++
++	if (setgid(0))
++		return -1;
++
++	if (setuid(0))
++		return -1;
++
++	return 0;
++}
++
++static int prepare_unpriv_mountns(void)
++{
++	if (create_and_enter_userns())
++		return -1;
++
++	if (unshare(CLONE_NEWNS))
++		return -1;
++
++	if (mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0))
++		return -1;
++
++	return 0;
++}
++
++static char *get_field(char *src, int nfields)
++{
++	int i;
++	char *p = src;
++
++	for (i = 0; i < nfields; i++) {
++		while (*p && *p != ' ' && *p != '\t')
++			p++;
++
++		if (!*p)
++			break;
++
++		p++;
++	}
++
++	return p;
++}
++
++static void null_endofword(char *word)
++{
++	while (*word && *word != ' ' && *word != '\t')
++		word++;
++	*word = '\0';
++}
++
++static bool is_shared_mount(const char *path)
++{
++	size_t len = 0;
++	char *line = NULL;
++	FILE *f = NULL;
++
++	f = fopen("/proc/self/mountinfo", "re");
++	if (!f)
++		return false;
++
++	while (getline(&line, &len, f) != -1) {
++		char *opts, *target;
++
++		target = get_field(line, 4);
++		if (!target)
++			continue;
++
++		opts = get_field(target, 2);
++		if (!opts)
++			continue;
++
++		null_endofword(target);
++
++		if (strcmp(target, path) != 0)
++			continue;
++
++		null_endofword(opts);
++		if (strstr(opts, "shared:"))
++			return true;
++	}
++
++	free(line);
++	fclose(f);
++
++	return false;
++}
++
++/* Attempt to de-conflict with the selftests tree. */
++#ifndef SKIP
++#define SKIP(s, ...)	XFAIL(s, ##__VA_ARGS__)
++#endif
++
++#define SET_GROUP_FROM	"/tmp/move_mount_set_group_supported_from"
++#define SET_GROUP_TO	"/tmp/move_mount_set_group_supported_to"
++
++static int move_mount_set_group_supported(void)
++{
++	int ret;
++
++	if (mount("testing", "/tmp", "tmpfs", MS_NOATIME | MS_NODEV,
++		  "size=100000,mode=700"))
++		return -1;
++
++	if (mount(NULL, "/tmp", NULL, MS_PRIVATE, 0))
++		return -1;
++
++	if (mkdir(SET_GROUP_FROM, 0777))
++		return -1;
++
++	if (mkdir(SET_GROUP_TO, 0777))
++		return -1;
++
++	if (mount("testing", SET_GROUP_FROM, "tmpfs", MS_NOATIME | MS_NODEV,
++		  "size=100000,mode=700"))
++		return -1;
++
++	if (mount(SET_GROUP_FROM, SET_GROUP_TO, NULL, MS_BIND, NULL))
++		return -1;
++
++	if (mount(NULL, SET_GROUP_FROM, NULL, MS_SHARED, 0))
++		return -1;
++
++	ret = syscall(SYS_move_mount, AT_FDCWD, SET_GROUP_FROM,
++		      AT_FDCWD, SET_GROUP_TO, MOVE_MOUNT_SET_GROUP);
++	umount2("/tmp", MNT_DETACH);
++
++	return ret < 0 ? false : true;
++}
++
++FIXTURE(move_mount_set_group) {
++};
++
++#define SET_GROUP_A "/tmp/A"
++
++FIXTURE_SETUP(move_mount_set_group)
++{
++	int ret;
++
++	ASSERT_EQ(prepare_unpriv_mountns(), 0);
++
++	ret = move_mount_set_group_supported();
++	ASSERT_GE(ret, 0);
++	if (!ret)
++		SKIP(return, "move_mount(MOVE_MOUNT_SET_GROUP) is not supported");
++
++	umount2("/tmp", MNT_DETACH);
++
++	ASSERT_EQ(mount("testing", "/tmp", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir(SET_GROUP_A, 0777), 0);
++
++	ASSERT_EQ(mount("testing", SET_GROUP_A, "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++}
++
++FIXTURE_TEARDOWN(move_mount_set_group)
++{
++	int ret;
++
++	ret = move_mount_set_group_supported();
++	ASSERT_GE(ret, 0);
++	if (!ret)
++		SKIP(return, "move_mount(MOVE_MOUNT_SET_GROUP) is not supported");
++
++	umount2("/tmp", MNT_DETACH);
++}
++
++#define __STACK_SIZE (8 * 1024 * 1024)
++static pid_t do_clone(int (*fn)(void *), void *arg, int flags)
++{
++	void *stack;
++
++	stack = malloc(__STACK_SIZE);
++	if (!stack)
++		return -ENOMEM;
++
++#ifdef __ia64__
++	return __clone2(fn, stack, __STACK_SIZE, flags | SIGCHLD, arg, NULL);
++#else
++	return clone(fn, stack + __STACK_SIZE, flags | SIGCHLD, arg, NULL);
++#endif
++}
++
++static int wait_for_pid(pid_t pid)
++{
++	int status, ret;
++
++again:
++	ret = waitpid(pid, &status, 0);
++	if (ret == -1) {
++		if (errno == EINTR)
++			goto again;
++
++		return -1;
++	}
++
++	if (!WIFEXITED(status))
++		return -1;
++
++	return WEXITSTATUS(status);
++}
++
++struct child_args {
++	int unsfd;
++	int mntnsfd;
++	bool shared;
++	int mntfd;
++};
++
++static int get_nestedns_mount_cb(void *data)
++{
++	struct child_args *ca = (struct child_args *)data;
++	int ret;
++
++	ret = prepare_unpriv_mountns();
++	if (ret)
++		return 1;
++
++	if (ca->shared) {
++		ret = mount(NULL, SET_GROUP_A, NULL, MS_SHARED, 0);
++		if (ret)
++			return 1;
++	}
++
++	ret = open("/proc/self/ns/user", O_RDONLY);
++	if (ret < 0)
++		return 1;
++	ca->unsfd = ret;
++
++	ret = open("/proc/self/ns/mnt", O_RDONLY);
++	if (ret < 0)
++		return 1;
++	ca->mntnsfd = ret;
++
++	ret = open(SET_GROUP_A, O_RDONLY);
++	if (ret < 0)
++		return 1;
++	ca->mntfd = ret;
++
++	return 0;
++}
++
++TEST_F(move_mount_set_group, complex_sharing_copying)
++{
++	struct child_args ca_from = {
++		.shared = true,
++	};
++	struct child_args ca_to = {
++		.shared = false,
++	};
++	pid_t pid;
++	int ret;
++
++	ret = move_mount_set_group_supported();
++	ASSERT_GE(ret, 0);
++	if (!ret)
++		SKIP(return, "move_mount(MOVE_MOUNT_SET_GROUP) is not supported");
++
++	pid = do_clone(get_nestedns_mount_cb, (void *)&ca_from, CLONE_VFORK |
++		       CLONE_VM | CLONE_FILES); ASSERT_GT(pid, 0);
++	ASSERT_EQ(wait_for_pid(pid), 0);
++
++	pid = do_clone(get_nestedns_mount_cb, (void *)&ca_to, CLONE_VFORK |
++		       CLONE_VM | CLONE_FILES); ASSERT_GT(pid, 0);
++	ASSERT_EQ(wait_for_pid(pid), 0);
++
++	ASSERT_EQ(syscall(SYS_move_mount, ca_from.mntfd, "",
++			  ca_to.mntfd, "", MOVE_MOUNT_SET_GROUP
++			  | MOVE_MOUNT_F_EMPTY_PATH | MOVE_MOUNT_T_EMPTY_PATH),
++		  0);
++
++	ASSERT_EQ(setns(ca_to.mntnsfd, CLONE_NEWNS), 0);
++	ASSERT_EQ(is_shared_mount(SET_GROUP_A), 1);
++}
++
++TEST_HARNESS_MAIN
 -- 
 2.31.1
 
