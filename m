@@ -2,41 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 921B63C9698
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 05:46:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2D723C969A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 05:46:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234069AbhGODtW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jul 2021 23:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46834 "EHLO
+        id S234128AbhGODti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jul 2021 23:49:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230121AbhGODtV (ORCPT
+        with ESMTP id S230121AbhGODth (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jul 2021 23:49:21 -0400
+        Wed, 14 Jul 2021 23:49:37 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 624FCC06175F;
-        Wed, 14 Jul 2021 20:46:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E4CC06175F;
+        Wed, 14 Jul 2021 20:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=YOwUI2qAcdszbkKuR5ckiu9qObMI6+1n7AV5Fnqf7Ss=; b=ajidZu6ue4C4aWSfTwccXKaMm6
-        EYd43L44kymkkrz0PQugRKDWMcs8VM9/AuIRUooy2HaM7n1XDztksFWNrIsJA8qnPtIRQTSYmeEI/
-        ftiTujTzvrFwBmtUONIjrk4ASJDitji7QbglQoEnbS6uh9wf5tLh6Wpzs7LB7xu+FUeCs752jlXUe
-        5jurBZ4PPdryy9rP8HewfS6i6WRaCfaeukZPx6YHoYKWatq2qjDk9XPuqneG0lqUZZa+N1FYPNGXb
-        E5V11lVrhLRHWJkFCjl0SUR6ur+glMLM1v0hoFtUN3iPw2CwshLZGkuDDhYt8b2AfvKV+doV6Q4La
-        X4xxoGQA==;
+        bh=RlVk2C5vivb5uiOtN9+ZTOqv1LuuWnSFLIpXMjTgz7k=; b=H1Mt7U0RaconMyxIEtQt0ZO25I
+        joUGDkgkCgmdQdKMcHMoYZhIV26rssBPUxW72w5s9fyoC8TJY2z3TfHu3Wyc5f2aDNeI4g86qsVf8
+        tpuY2zX2M7bf3p2Lwf3LHusmIVQkAaa4ApyP+SNHzk6ti1XnlilEo9zYTH8LL2vo2o3OjohBr/pgI
+        iz0G1+TmVVX330mKylhrHsmnXGFbEOfCIPDgKPZoj1jnj2v8+l3GnWAybIxu072DXp/LpEnFqXUiG
+        s9sOtHISeVjOTI6iOjI4G87z7XryTDB71Foe2ISvKM2Wb/RQsA6MR41c468rJEilKBICGaw9iSINS
+        LEVEXI/g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m3sIg-002uiH-Ox; Thu, 15 Jul 2021 03:45:04 +0000
+        id 1m3sJX-002ul3-Jx; Thu, 15 Jul 2021 03:45:48 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Yu Zhao <yuzhao@google.com>, Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH v14 011/138] mm/lru: Add folio LRU functions
-Date:   Thu, 15 Jul 2021 04:34:57 +0100
-Message-Id: <20210715033704.692967-12-willy@infradead.org>
+        Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        David Howells <dhowells@redhat.com>
+Subject: [PATCH v14 012/138] mm: Handle per-folio private data
+Date:   Thu, 15 Jul 2021 04:34:58 +0100
+Message-Id: <20210715033704.692967-13-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210715033704.692967-1-willy@infradead.org>
 References: <20210715033704.692967-1-willy@infradead.org>
@@ -46,197 +49,140 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Handle arbitrary-order folios being added to the LRU.  By definition,
-all pages being added to the LRU were already head or base pages, but
-call page_folio() on them anyway to get the type right and avoid the
-buried calls to compound_head().
+Add folio_get_private() which mirrors page_private() -- ie folio private
+data is the same as page private data.  The only difference is that these
+return a void * instead of an unsigned long, which matches the majority
+of users.
 
-Saves 783 bytes of kernel text; no functions grow.
+Turn attach_page_private() into folio_attach_private() and reimplement
+attach_page_private() as a wrapper.  No filesystem which uses page private
+data currently supports compound pages, so we're free to define the rules.
+attach_page_private() may only be called on a head page; if you want
+to add private data to a tail page, you can call set_page_private()
+directly (and shouldn't increment the page refcount!  That should be
+done when adding private data to the head page / folio).
+
+This saves 813 bytes of text with the distro-derived config that I'm
+testing due to removing the calls to compound_head() in get_page()
+& put_page().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Yu Zhao <yuzhao@google.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: David Howells <dhowells@redhat.com>
+Acked-by: Jeff Layton <jlayton@kernel.org>
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+Reviewed-by: David Howells <dhowells@redhat.com>
 ---
- include/linux/mm_inline.h      | 98 ++++++++++++++++++++++------------
- include/trace/events/pagemap.h |  2 +-
- 2 files changed, 65 insertions(+), 35 deletions(-)
+ include/linux/mm_types.h | 11 +++++++++
+ include/linux/pagemap.h  | 48 ++++++++++++++++++++++++----------------
+ 2 files changed, 40 insertions(+), 19 deletions(-)
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index 355ea1ee32bd..ee155d19885e 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -6,22 +6,27 @@
- #include <linux/swap.h>
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index f023eaa866fe..c4dd41bb1019 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -309,6 +309,12 @@ static inline atomic_t *compound_pincount_ptr(struct page *page)
+ #define PAGE_FRAG_CACHE_MAX_SIZE	__ALIGN_MASK(32768, ~PAGE_MASK)
+ #define PAGE_FRAG_CACHE_MAX_ORDER	get_order(PAGE_FRAG_CACHE_MAX_SIZE)
  
- /**
-- * page_is_file_lru - should the page be on a file LRU or anon LRU?
-- * @page: the page to test
-+ * folio_is_file_lru - should the folio be on a file LRU or anon LRU?
-+ * @folio: the folio to test
-  *
-- * Returns 1 if @page is a regular filesystem backed page cache page or a lazily
-- * freed anonymous page (e.g. via MADV_FREE).  Returns 0 if @page is a normal
-- * anonymous page, a tmpfs page or otherwise ram or swap backed page.  Used by
-- * functions that manipulate the LRU lists, to sort a page onto the right LRU
-- * list.
-+ * Returns 1 if @folio is a regular filesystem backed page cache folio
-+ * or a lazily freed anonymous folio (e.g. via MADV_FREE).  Returns 0 if
-+ * @folio is a normal anonymous folio, a tmpfs folio or otherwise ram or
-+ * swap backed folio.  Used by functions that manipulate the LRU lists,
-+ * to sort a folio onto the right LRU list.
-  *
-  * We would like to get this info without a page flag, but the state
-- * needs to survive until the page is last deleted from the LRU, which
-+ * needs to survive until the folio is last deleted from the LRU, which
-  * could be as far down as __page_cache_release.
-  */
-+static inline int folio_is_file_lru(struct folio *folio)
-+{
-+	return !folio_test_swapbacked(folio);
-+}
-+
- static inline int page_is_file_lru(struct page *page)
- {
--	return !PageSwapBacked(page);
-+	return folio_is_file_lru(page_folio(page));
++/*
++ * page_private can be used on tail pages.  However, PagePrivate is only
++ * checked by the VM on the head page.  So page_private on the tail pages
++ * should be used for data that's ancillary to the head page (eg attaching
++ * buffer heads to tail pages after attaching buffer heads to the head page)
++ */
+ #define page_private(page)		((page)->private)
+ 
+ static inline void set_page_private(struct page *page, unsigned long private)
+@@ -316,6 +322,11 @@ static inline void set_page_private(struct page *page, unsigned long private)
+ 	page->private = private;
  }
  
- static __always_inline void update_lru_size(struct lruvec *lruvec,
-@@ -39,69 +44,94 @@ static __always_inline void update_lru_size(struct lruvec *lruvec,
++static inline void *folio_get_private(struct folio *folio)
++{
++	return folio->private;
++}
++
+ struct page_frag_cache {
+ 	void * va;
+ #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index db1726b1bc1c..3279c731ee04 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -184,42 +184,52 @@ static inline bool page_cache_get_speculative(struct page *page)
  }
  
  /**
-- * __clear_page_lru_flags - clear page lru flags before releasing a page
-- * @page: the page that was on lru and now has a zero reference
-+ * __folio_clear_lru_flags - clear page lru flags before releasing a page
-+ * @folio: The folio that was on lru and now has a zero reference
+- * attach_page_private - Attach private data to a page.
+- * @page: Page to attach data to.
+- * @data: Data to attach to page.
++ * folio_attach_private - Attach private data to a folio.
++ * @folio: Folio to attach data to.
++ * @data: Data to attach to folio.
+  *
+- * Attaching private data to a page increments the page's reference count.
+- * The data must be detached before the page will be freed.
++ * Attaching private data to a folio increments the page's reference count.
++ * The data must be detached before the folio will be freed.
   */
--static __always_inline void __clear_page_lru_flags(struct page *page)
-+static __always_inline void __folio_clear_lru_flags(struct folio *folio)
+-static inline void attach_page_private(struct page *page, void *data)
++static inline void folio_attach_private(struct folio *folio, void *data)
  {
--	VM_BUG_ON_PAGE(!PageLRU(page), page);
-+	VM_BUG_ON_FOLIO(!folio_test_lru(folio), folio);
- 
--	__ClearPageLRU(page);
-+	__folio_clear_lru(folio);
- 
- 	/* this shouldn't happen, so leave the flags to bad_page() */
--	if (PageActive(page) && PageUnevictable(page))
-+	if (folio_test_active(folio) && folio_test_unevictable(folio))
- 		return;
- 
--	__ClearPageActive(page);
--	__ClearPageUnevictable(page);
-+	__folio_clear_active(folio);
-+	__folio_clear_unevictable(folio);
-+}
-+
-+static __always_inline void __clear_page_lru_flags(struct page *page)
-+{
-+	__folio_clear_lru_flags(page_folio(page));
+-	get_page(page);
+-	set_page_private(page, (unsigned long)data);
+-	SetPagePrivate(page);
++	folio_get(folio);
++	folio->private = data;
++	folio_set_private(folio);
  }
  
  /**
-- * page_lru - which LRU list should a page be on?
-- * @page: the page to test
-+ * folio_lru_list - which LRU list should a folio be on?
-+ * @folio: the folio to test
+- * detach_page_private - Detach private data from a page.
+- * @page: Page to detach data from.
++ * folio_detach_private - Detach private data from a folio.
++ * @folio: Folio to detach data from.
   *
-- * Returns the LRU list a page should be on, as an index
-+ * Returns the LRU list a folio should be on, as an index
-  * into the array of LRU lists.
+- * Removes the data that was previously attached to the page and decrements
++ * Removes the data that was previously attached to the folio and decrements
+  * the refcount on the page.
+  *
+- * Return: Data that was attached to the page.
++ * Return: Data that was attached to the folio.
   */
--static __always_inline enum lru_list page_lru(struct page *page)
-+static __always_inline enum lru_list folio_lru_list(struct folio *folio)
+-static inline void *detach_page_private(struct page *page)
++static inline void *folio_detach_private(struct folio *folio)
  {
- 	enum lru_list lru;
+-	void *data = (void *)page_private(page);
++	void *data = folio_get_private(folio);
  
--	VM_BUG_ON_PAGE(PageActive(page) && PageUnevictable(page), page);
-+	VM_BUG_ON_FOLIO(folio_test_active(folio) && folio_test_unevictable(folio), folio);
+-	if (!PagePrivate(page))
++	if (!folio_test_private(folio))
+ 		return NULL;
+-	ClearPagePrivate(page);
+-	set_page_private(page, 0);
+-	put_page(page);
++	folio_clear_private(folio);
++	folio->private = NULL;
++	folio_put(folio);
  
--	if (PageUnevictable(page))
-+	if (folio_test_unevictable(folio))
- 		return LRU_UNEVICTABLE;
- 
--	lru = page_is_file_lru(page) ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON;
--	if (PageActive(page))
-+	lru = folio_is_file_lru(folio) ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON;
-+	if (folio_test_active(folio))
- 		lru += LRU_ACTIVE;
- 
- 	return lru;
+ 	return data;
  }
  
-+static __always_inline
-+void lruvec_add_folio(struct lruvec *lruvec, struct folio *folio)
++static inline void attach_page_private(struct page *page, void *data)
 +{
-+	enum lru_list lru = folio_lru_list(folio);
-+
-+	update_lru_size(lruvec, lru, folio_zonenum(folio),
-+			folio_nr_pages(folio));
-+	list_add(&folio->lru, &lruvec->lists[lru]);
++	folio_attach_private(page_folio(page), data);
 +}
 +
- static __always_inline void add_page_to_lru_list(struct page *page,
- 				struct lruvec *lruvec)
- {
--	enum lru_list lru = page_lru(page);
-+	lruvec_add_folio(lruvec, page_folio(page));
++static inline void *detach_page_private(struct page *page)
++{
++	return folio_detach_private(page_folio(page));
 +}
 +
-+static __always_inline
-+void lruvec_add_folio_tail(struct lruvec *lruvec, struct folio *folio)
-+{
-+	enum lru_list lru = folio_lru_list(folio);
- 
--	update_lru_size(lruvec, lru, page_zonenum(page), thp_nr_pages(page));
--	list_add(&page->lru, &lruvec->lists[lru]);
-+	update_lru_size(lruvec, lru, folio_zonenum(folio),
-+			folio_nr_pages(folio));
-+	list_add_tail(&folio->lru, &lruvec->lists[lru]);
- }
- 
- static __always_inline void add_page_to_lru_list_tail(struct page *page,
- 				struct lruvec *lruvec)
- {
--	enum lru_list lru = page_lru(page);
-+	lruvec_add_folio_tail(lruvec, page_folio(page));
-+}
- 
--	update_lru_size(lruvec, lru, page_zonenum(page), thp_nr_pages(page));
--	list_add_tail(&page->lru, &lruvec->lists[lru]);
-+static __always_inline
-+void lruvec_del_folio(struct lruvec *lruvec, struct folio *folio)
-+{
-+	list_del(&folio->lru);
-+	update_lru_size(lruvec, folio_lru_list(folio), folio_zonenum(folio),
-+			-folio_nr_pages(folio));
- }
- 
- static __always_inline void del_page_from_lru_list(struct page *page,
- 				struct lruvec *lruvec)
- {
--	list_del(&page->lru);
--	update_lru_size(lruvec, page_lru(page), page_zonenum(page),
--			-thp_nr_pages(page));
-+	lruvec_del_folio(lruvec, page_folio(page));
- }
- #endif
-diff --git a/include/trace/events/pagemap.h b/include/trace/events/pagemap.h
-index 1d28431e85bd..92ad176210ff 100644
---- a/include/trace/events/pagemap.h
-+++ b/include/trace/events/pagemap.h
-@@ -41,7 +41,7 @@ TRACE_EVENT(mm_lru_insertion,
- 	TP_fast_assign(
- 		__entry->page	= page;
- 		__entry->pfn	= page_to_pfn(page);
--		__entry->lru	= page_lru(page);
-+		__entry->lru	= folio_lru_list(page_folio(page));
- 		__entry->flags	= trace_pagemap_flags(page);
- 	),
- 
+ #ifdef CONFIG_NUMA
+ extern struct page *__page_cache_alloc(gfp_t gfp);
+ #else
 -- 
 2.30.2
 
