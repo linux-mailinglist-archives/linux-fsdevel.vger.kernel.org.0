@@ -2,69 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFC4F3CADC3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 22:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4AFB3CADFA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 22:31:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343601AbhGOUUu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 16:20:50 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:60670 "EHLO
-        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241154AbhGOUUn (ORCPT
+        id S235390AbhGOUeq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 16:34:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53206 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237350AbhGOUeK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 16:20:43 -0400
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m47nj-000xOY-8c; Thu, 15 Jul 2021 20:17:43 +0000
-Date:   Thu, 15 Jul 2021 20:17:43 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH  05/14] namei: prepare do_mkdirat for refactoring
-Message-ID: <YPCX5/0NtbEySW9q@zeniv-ca.linux.org.uk>
-References: <20210715103600.3570667-1-dkadashev@gmail.com>
- <20210715103600.3570667-6-dkadashev@gmail.com>
+        Thu, 15 Jul 2021 16:34:10 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BCFAC061762
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jul 2021 13:31:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=Y5UinLMttKqw/QQSFxAT646FpHEwMgiRMjMa0npizhw=; b=LY08HvZb1KdMfnKkEHmmRuOxfO
+        GrLaQK7gJoqeX6SGaDFpYBnkIgBgeDrMTufPukFJbdIz8YhGKMuMdLLzvvWqLg55dJFet11wvGZ63
+        2JFOZjBn2a0XoRsdkNQ0tt7tCU32oYPSbHanmrMygve57dTD1KC8SYOXO11zztGf6bpmnibyB2Vg1
+        LzIFcxCM6etRinsZEh8NIwf0oAZjEuKgwubFSOrje0DoGblLXapjYw+Vz0JvQaZ1R6nkPfaCSSTmw
+        9jl1jLgyb43cmgHFTKvWmhAFKjP2g/lOdXRoLG28pVAvfGNpks1HANlBG8wBBM6sOpg8k6WpDWVDK
+        P1vIVVKQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m47yq-003pwV-Ht; Thu, 15 Jul 2021 20:29:31 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH v14 28/39] mm/filemap: Add folio_mkwrite_check_truncate()
+Date:   Thu, 15 Jul 2021 21:00:19 +0100
+Message-Id: <20210715200030.899216-29-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210715200030.899216-1-willy@infradead.org>
+References: <20210715200030.899216-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210715103600.3570667-6-dkadashev@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 05:35:51PM +0700, Dmitry Kadashev wrote:
-> This is just a preparation for the move of the main mkdirat logic to a
-> separate function to make the logic easier to follow.  This change
-> contains the flow changes so that the actual change to move the main
-> logic to a separate function does no change the flow at all.
-> 
-> Just like the similar patches for rmdir and unlink a few commits before,
-> there two changes here:
-> 
-> 1. Previously on filename_create() error the function used to exit
-> immediately, and now it will check the return code to see if ESTALE
-> retry is appropriate. The filename_create() does its own retries on
-> ESTALE (at least via filename_parentat() used inside), but this extra
-> check should be completely fine.
+This is the folio equivalent of page_mkwrite_check_truncate().
 
-This is the wrong way to go.  Really.  Look at it that way - LOOKUP_REVAL
-is the final stage of escalation; if we had to go there, there's no
-point being optimistic about the last dcache lookup, nevermind trying
-to retry the parent pathwalk if we fail with -ESTALE doing it.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/pagemap.h | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-I'm not saying that it's something worth optimizing for; the problem
-is different - the logics makes no sense whatsoever that way.  It's
-a matter of reader's cycles wasted on "what the fuck are we trying
-to do here?", not the CPU cycles wasted on execution.
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 412db88b8d0c..18c06c3e42c3 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1121,6 +1121,34 @@ static inline unsigned long dir_pages(struct inode *inode)
+ 			       PAGE_SHIFT;
+ }
+ 
++/**
++ * folio_mkwrite_check_truncate - check if folio was truncated
++ * @folio: the folio to check
++ * @inode: the inode to check the folio against
++ *
++ * Return: the number of bytes in the folio up to EOF,
++ * or -EFAULT if the folio was truncated.
++ */
++static inline ssize_t folio_mkwrite_check_truncate(struct folio *folio,
++					      struct inode *inode)
++{
++	loff_t size = i_size_read(inode);
++	pgoff_t index = size >> PAGE_SHIFT;
++	size_t offset = offset_in_folio(folio, size);
++
++	if (!folio->mapping)
++		return -EFAULT;
++
++	/* folio is wholly inside EOF */
++	if (folio_next_index(folio) - 1 < index)
++		return folio_size(folio);
++	/* folio is wholly past EOF */
++	if (folio->index > index || !offset)
++		return -EFAULT;
++	/* folio is partially inside EOF */
++	return offset;
++}
++
+ /**
+  * page_mkwrite_check_truncate - check if page was truncated
+  * @page: the page to check
+-- 
+2.30.2
 
-While we are at it, it makes no sense for filename_parentat() and its
-ilk to go for RCU and normal if it's been given LOOKUP_REVAL - I mean,
-look at the sequence of calls in there.  And try to make sense of
-it.  Especially of the "OK, RCU attempt told us to sod off and try normal;
-here, let's call path_parentat() with LOOKUP_REVAL for flags and if it
-says -ESTALE, call it again with exact same arguments" part.
-
-Seriously, look at that from the point of view of somebody who tries
-to make sense of the entire thing.
