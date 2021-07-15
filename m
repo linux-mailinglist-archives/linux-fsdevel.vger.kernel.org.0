@@ -2,104 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D323C9CC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 12:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7771B3C9CD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jul 2021 12:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240535AbhGOKhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 06:37:15 -0400
-Received: from mga06.intel.com ([134.134.136.31]:16970 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231670AbhGOKhO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 06:37:14 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10045"; a="271634220"
-X-IronPort-AV: E=Sophos;i="5.84,240,1620716400"; 
-   d="scan'208";a="271634220"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2021 03:34:21 -0700
-X-IronPort-AV: E=Sophos;i="5.84,240,1620716400"; 
-   d="scan'208";a="452373614"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2021 03:34:17 -0700
-Received: from andy by smile with local (Exim 4.94.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1m3yh0-00DhHX-P0; Thu, 15 Jul 2021 13:34:10 +0300
-Date:   Thu, 15 Jul 2021 13:34:10 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jia He <justin.he@arm.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
+        id S232570AbhGOKjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 06:39:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55882 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232526AbhGOKjE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Jul 2021 06:39:04 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A15EC06175F;
+        Thu, 15 Jul 2021 03:36:10 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id h8so7427638eds.4;
+        Thu, 15 Jul 2021 03:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FwwLaXHeFD676V7GhX0BNFyfYdUME4hhQYfPK3kPSew=;
+        b=bHS8DCtxxF9lDg973HKJJvhPTD5l+/YGDoUowamOiEvU21nCtztYzu14qnsiLLB2DX
+         AJX+1lqcspDexte1ViAeJBoGWcK/0aff1fde/yXpJ8EznldR+x8ghUulD6onO8UETrr4
+         fgHeX3e+w2JncxgI5BqaX4v6UcgWekFKCkL8VGz/gAlTuPdEbaVLSrCa+8ekMHG9IRdu
+         tOp3MbJ3F/ktNhhgj5iiMDY9PEegW8HzwpUCwKuQHJoKXvXZDUSllTmO0MYGwm2oVnJ2
+         EObTb46gKN3/K+5nC9TxGQAk2o4UFdiw3HDYe4yYBCgaGal37h2hTA33zsKT04uD+oS+
+         91Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FwwLaXHeFD676V7GhX0BNFyfYdUME4hhQYfPK3kPSew=;
+        b=gCaZnk+JNND+Hl9M1qmXZ6rFg3MC3yCBmz/X32NbFyV92BPLx2zVA0o7kyWJJDSdDG
+         ldzBG7iZSM+Vu7ENXY6g/a9Nb3UtBYrFx3t29Pt/Tkd6DgWUfBW+5YsPJOCcoxIvW+wI
+         D8djUtYaf/dGA955VX4ppPv48C983q+jBDlrcMN2ZAvUHvOUji7SjH/mhnrRSwgcTlMh
+         FloHn49gpror7RSFNbjewuGr7AVAe9Pi4G9YntR8QGCt9HEOeIGq9Qw2p1RrTUqRCHuB
+         Xsk5Iq8EGMYAGdfRuodo6ztbDNaqrOjwaQl+VpgntSqAZJtTHqcNieR5WKRsvi8gNFD8
+         F4IA==
+X-Gm-Message-State: AOAM532FvZsKbVLbAMfxpgKz0FGCxDM0A6RXNk4H9KkLtvagkwWoQFE2
+        U7F7UOe6uB59SfjuSNIOLuk=
+X-Google-Smtp-Source: ABdhPJxvkCRrLxCUkrvohOuOcpaB29uUCe4cVF9v03r+3+Rx/zI4fmG8nCcGNfEl2WNy/Ch/CH9/Rw==
+X-Received: by 2002:aa7:c04e:: with SMTP id k14mr5866183edo.157.1626345369016;
+        Thu, 15 Jul 2021 03:36:09 -0700 (PDT)
+Received: from carbon.v ([108.61.166.58])
+        by smtp.googlemail.com with ESMTPSA id dd24sm2228464edb.45.2021.07.15.03.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jul 2021 03:36:08 -0700 (PDT)
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, nd@arm.com
-Subject: Re: [PATCH v7 1/5] d_path: fix Kernel doc validator complaints
-Message-ID: <YPAPIsGkom68R1WR@smile.fi.intel.com>
-References: <20210715011407.7449-1-justin.he@arm.com>
- <20210715011407.7449-2-justin.he@arm.com>
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Dmitry Kadashev <dkadashev@gmail.com>
+Subject: [PATCH  00/14] namei: clean up retry logic in various do_* functions
+Date:   Thu, 15 Jul 2021 17:35:46 +0700
+Message-Id: <20210715103600.3570667-1-dkadashev@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210715011407.7449-2-justin.he@arm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 09:14:03AM +0800, Jia He wrote:
-> Kernel doc validator complains:
->   Function parameter or member 'p' not described in 'prepend_name'
->   Excess function parameter 'buffer' description in 'prepend_name'
+Suggested by Linus in https://lore.kernel.org/io-uring/CAHk-=wh=cpt_tQCirzFZRPawRpbuFTZ2MxNpXiyUF+eBXF=+sw@mail.gmail.com/
 
-Yup!
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+This patchset does all the do_* functions one by one. The idea is to
+move the main logic to a helper function and handle stale retries /
+struct filename cleanups outside, which makes the logic easier to
+follow.
 
-> Fixes: ad08ae586586 ("d_path: introduce struct prepend_buffer")
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Jia He <justin.he@arm.com>
-> ---
->  fs/d_path.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/d_path.c b/fs/d_path.c
-> index 23a53f7b5c71..4eb31f86ca88 100644
-> --- a/fs/d_path.c
-> +++ b/fs/d_path.c
-> @@ -33,9 +33,8 @@ static void prepend(struct prepend_buffer *p, const char *str, int namelen)
->  
->  /**
->   * prepend_name - prepend a pathname in front of current buffer pointer
-> - * @buffer: buffer pointer
-> - * @buflen: allocated length of the buffer
-> - * @name:   name string and length qstr structure
-> + * @p: prepend buffer which contains buffer pointer and allocated length
-> + * @name: name string and length qstr structure
->   *
->   * With RCU path tracing, it may race with d_move(). Use READ_ONCE() to
->   * make sure that either the old or the new name pointer and length are
-> @@ -108,8 +107,7 @@ static int __prepend_path(const struct dentry *dentry, const struct mount *mnt,
->   * prepend_path - Prepend path string to a buffer
->   * @path: the dentry/vfsmount to report
->   * @root: root vfsmnt/dentry
-> - * @buffer: pointer to the end of the buffer
-> - * @buflen: pointer to buffer length
-> + * @p: prepend buffer which contains buffer pointer and allocated length
->   *
->   * The function will first try to write out the pathname without taking any
->   * lock other than the RCU read lock to make sure that dentries won't go away.
-> -- 
-> 2.17.1
-> 
+There are a few minor changes in behavior:
+
+1. filename_lookup() / filename_parentat() / filename_create() do their
+own retries on ESTALE (regardless of flags), and previously they were
+exempt from retries in the do_* functions (but they *were* called on
+retry - it's just the return code wasn't checked for ESTALE). And
+now the retry is done on the upper level, and so technically it could be
+called a behavior change. Hopefully it's an edge case where an
+additional check does not matter.
+
+2. Some safety checks like may_mknod() / flags validation are now
+repeated on retry. Those are mostly trivial and retry is a slow path, so
+that should be OK.
+
+3. retry_estale() is wrapped into unlikely() now
+
+On top of https://lore.kernel.org/io-uring/20210708063447.3556403-1-dkadashev@gmail.com/
+
+v2:
+
+- Split flow changes and code reorganization to different commits;
+
+- Move more checks into the new helpers, to avoid gotos in the touched
+  do_* functions completely;
+
+- Add unlikely() around retry_estale();
+
+- Name the new helper functions try_* instead of *_helper;
+
+Dmitry Kadashev (14):
+  namei: prepare do_rmdir for refactoring
+  namei: clean up do_rmdir retry logic
+  namei: prepare do_unlinkat for refactoring
+  namei: clean up do_unlinkat retry logic
+  namei: prepare do_mkdirat for refactoring
+  namei: clean up do_mkdirat retry logic
+  namei: prepare do_mknodat for refactoring
+  namei: clean up do_mknodat retry logic
+  namei: prepare do_symlinkat for refactoring
+  namei: clean up do_symlinkat retry logic
+  namei: prepare do_linkat for refactoring
+  namei: clean up do_linkat retry logic
+  namei: prepare do_renameat2 for refactoring
+  namei: clean up do_renameat2 retry logic
+
+ fs/namei.c | 252 +++++++++++++++++++++++++++++------------------------
+ 1 file changed, 140 insertions(+), 112 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.30.2
 
