@@ -2,81 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 063263CBAD1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 18:57:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A26863CBB30
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 19:29:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230480AbhGPRAd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jul 2021 13:00:33 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:59746 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230425AbhGPRAV (ORCPT
+        id S231397AbhGPRcf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jul 2021 13:32:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55054 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229803AbhGPRcf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jul 2021 13:00:21 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 490BB22B0B;
-        Fri, 16 Jul 2021 16:57:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1626454644; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pxtS5Oudgec4rEwV+dOqiY1lV684Qv1oXIm2Do6XZfk=;
-        b=hiFNsQSKFHqkGL/hKshmGNpZ5ZjicXOhEN/YtCsK88lEdh0idp4zsblQzEdVglXoiKYrdc
-        p6thMlpmVE41Yxl0KhkO7rimQTZLZLGojpDdoiJ9mLxNfdVo5NksjmOqEElW2p9FcTO/dc
-        rWtidrEtmI2xNoBjWEUHSwW4bb+gIwg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1626454644;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pxtS5Oudgec4rEwV+dOqiY1lV684Qv1oXIm2Do6XZfk=;
-        b=s2c+8kdjfyur3gk7j7C5XyvF5JLV7mAnIM52+3ast7hDDkz7BxCQcxzHI0oLCb040Bok4p
-        kH2nrdw58zKz0qCw==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 3725FA3BB9;
-        Fri, 16 Jul 2021 16:57:24 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 12D411E0BF2; Fri, 16 Jul 2021 18:57:24 +0200 (CEST)
-Date:   Fri, 16 Jul 2021 18:57:24 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Ted Tso <tytso@mit.edu>, Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH 0/14 v10] fs: Hole punch vs page cache filling races
-Message-ID: <20210716165724.GH31920@quack2.suse.cz>
-References: <20210715133202.5975-1-jack@suse.cz>
- <YPEg63TU0pPzK5xB@infradead.org>
- <20210716164311.GA22357@magnolia>
+        Fri, 16 Jul 2021 13:32:35 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B65AC06175F;
+        Fri, 16 Jul 2021 10:29:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=aZmjSXQT2GBYEBGI1TcwL/i/O3t9bBKdz76mcXGD5rk=; b=dXMopdFJgtdpJIeIYwMMT3lzlM
+        dXojkdE1+oWzSS7x+Mp69ajD6KVNhWdk2swxd4P5C9zTFBYuLYVpAC1Wq6pFoQTURx5Hmy6c+SDRS
+        JqglNgskvWn+Fuy5TT61n5/FBJcpc1EUd4hxWepM48PvxB84jEmb79BqiNO2CQs+Jwn/lhaU9JXgL
+        QDEY2RwoUl/W003MFrZ8gBhI9rdCUveyIVKFcpBizgY5g0yQXYznTAlJIg2tDD2w9dzMPYiSyXq1e
+        dTofb9LXvgdtZnMXIZIynvYEOW2sN1IOZ8s3JT0PKIUnO3d4Sx9r1zwHLmEY6X4eA+EZPcf7QimxL
+        VsaH4Vjg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m4RdC-004g2W-T4; Fri, 16 Jul 2021 17:28:18 +0000
+Date:   Fri, 16 Jul 2021 18:28:10 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Gao Xiang <xiang@kernel.org>,
+        linux-erofs@lists.ozlabs.org, stable@vger.kernel.org
+Subject: Re: [PATCH] iomap: Add missing flush_dcache_page
+Message-ID: <YPHBqlLJQKQgRHqH@casper.infradead.org>
+References: <20210716150032.1089982-1-willy@infradead.org>
+ <YPGf8o7vo6/9iTE5@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210716164311.GA22357@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YPGf8o7vo6/9iTE5@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 16-07-21 09:43:11, Darrick J. Wong wrote:
-> On Fri, Jul 16, 2021 at 07:02:19AM +0100, Christoph Hellwig wrote:
-> > On Thu, Jul 15, 2021 at 03:40:10PM +0200, Jan Kara wrote:
-> > > Hello,
-> > > 
-> > > here is another version of my patches to address races between hole punching
-> > > and page cache filling functions for ext4 and other filesystems. The only
-> > > change since the last time is a small cleanup applied to changes of
-> > > filemap_fault() in patch 3/14 based on Christoph's & Darrick's feedback (thanks
-> > > guys!).  Darrick, Christoph, is the patch fine now?
+On Fri, Jul 16, 2021 at 04:04:18PM +0100, Christoph Hellwig wrote:
+> On Fri, Jul 16, 2021 at 04:00:32PM +0100, Matthew Wilcox (Oracle) wrote:
+> > Inline data needs to be flushed from the kernel's view of a page before
+> > it's mapped by userspace.
 > > 
-> > Looks fine to me.
+> > Cc: stable@vger.kernel.org
+> > Fixes: 19e0c58f6552 ("iomap: generic inline data handling")
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > ---
+> >  fs/iomap/buffered-io.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 41da4f14c00b..fe60c603f4ca 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -222,6 +222,7 @@ iomap_read_inline_data(struct inode *inode, struct page *page,
+> >  	memcpy(addr, iomap->inline_data, size);
+> >  	memset(addr + size, 0, PAGE_SIZE - size);
+> >  	kunmap_atomic(addr);
+> > +	flush_dcache_page(page);
 > 
-> Me too.
+> .. and all writes into a kmap also need such a flush, so this needs to
+> move a line up.  My plan was to add a memcpy_to_page_and_pad helper
+> ala memcpy_to_page to get various file systems and drivers out of the
+> business of cache flushing as much as we can.
 
-Thanks guys! I've pushed the patches to linux-next.
-
-									Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+hm?  It's absolutely allowed to flush the page after calling kunmap.
+Look at zero_user_segments(), for example.
