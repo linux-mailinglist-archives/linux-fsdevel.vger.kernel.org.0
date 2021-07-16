@@ -2,87 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F633CB2CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 08:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2A3E3CB327
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 09:17:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235110AbhGPGps (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jul 2021 02:45:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234855AbhGPGps (ORCPT
+        id S235737AbhGPHTJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jul 2021 03:19:09 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:48144 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235689AbhGPHTJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jul 2021 02:45:48 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 130E6C06175F;
-        Thu, 15 Jul 2021 23:42:54 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id h8so11575466eds.4;
-        Thu, 15 Jul 2021 23:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=O5Zke66uI5LxZVkYWI95Tx+J3KNQ1bPBIGGmEE1oiJQ=;
-        b=Zt8Vy0wAGBl/en8Xn9uzslyZHwSzjc1/gs/urvGIcRN9UWRy8/ZTbccFU1C7yY0/5Q
-         axNSq7qTb4vh3bdcGoQ2ZVaY6LIsu0SdU5aB5RZGRBXe3+dIktx0R6ZiyiYpVGWC6hpY
-         PrgwhbedATfheNR8ZKHjs/nYUokDMq+wmPjPMhMJhCSL9vwVx4bxSiTm+Ky6kFfOFo60
-         J3RaSxMWubWBhbS6IkggABuT9FpMSN1c25AWbQTYy1qfUEZ4BEBH01fc2x44agUT4QAT
-         dobKSzXd32r7LZh/EfpSdyUHSC/lxahmD2V0s/lnF0DLX6Qv8dBl8rkKFYZl++u3BjTp
-         A+XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=O5Zke66uI5LxZVkYWI95Tx+J3KNQ1bPBIGGmEE1oiJQ=;
-        b=ncGTtNBBEATaCs/1lSaZILPPfPz+4LKfS/Cu/1qyLfcbj4XGx5oZH8E9HnF73XgUyN
-         NWakxswAuWOqw/vZ6HhlpCpZ0mtfFZJUrtMRo36w4rfRg/tnYY3YumK/09qRUFlVJdF+
-         oWEMjKiaWr6OWSDsfMzQObPsANuiu95ZQwI/xXIhc15KkIL/sNKze0uOYxrqrXKwpvwC
-         6qkIaGf9z7M77tBKZFUGNnH6WTMR3dwkEehwEXNWsuhNhwsLao9ho2D/qMaCFFkZYtUj
-         Jv+QrtY+HoibEnWiI/rmoTt6hecV5T/9pBXFiMpDGBVvBjxe9n2acIet4+zKFpMIsKTS
-         PCJg==
-X-Gm-Message-State: AOAM531q0LArk+4ThWKT+WFaCmat+MHAuozb79kP4cwnV7dnCpDUgFhp
-        gKZ+wrHXuo/sn9A35uJ8vO6/tmHjCwTERvjq0jpLnrB7
-X-Google-Smtp-Source: ABdhPJw+VGZgQAn0kjFh/ndkDCk6xrwoK9JC9hWPUgvQg28yCLKiLI1BqsD2UUYKC07wFnL249FnqDPk/Oo6olaRXT4=
-X-Received: by 2002:aa7:dbc3:: with SMTP id v3mr12670927edt.63.1626417772479;
- Thu, 15 Jul 2021 23:42:52 -0700 (PDT)
-MIME-Version: 1.0
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Fri, 16 Jul 2021 12:12:41 +0530
-Message-ID: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com>
-Subject: MTD: How to get actual image size from MTD partition
-To:     open list <linux-kernel@vger.kernel.org>,
+        Fri, 16 Jul 2021 03:19:09 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 8AD12616B568;
+        Fri, 16 Jul 2021 09:16:13 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id wXv3S29yopAW; Fri, 16 Jul 2021 09:16:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 2C4C56169BB9;
+        Fri, 16 Jul 2021 09:16:13 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id tSjbk7sNumXT; Fri, 16 Jul 2021 09:16:13 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id F31C9616B568;
+        Fri, 16 Jul 2021 09:16:12 +0200 (CEST)
+Date:   Fri, 16 Jul 2021 09:16:12 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Pintu Agarwal <pintu.ping@gmail.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
         linux-mtd <linux-mtd@lists.infradead.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Phillip Lougher <phillip@squashfs.org.uk>,
         Sean Nyekjaer <sean@geanix.com>,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>,
-        Richard Weinberger <richard@nod.at>
-Content-Type: text/plain; charset="UTF-8"
+        Kernelnewbies <kernelnewbies@kernelnewbies.org>
+Message-ID: <456614823.32530.1626419772792.JavaMail.zimbra@nod.at>
+In-Reply-To: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com>
+References: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com>
+Subject: Re: MTD: How to get actual image size from MTD partition
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF78 (Linux)/8.8.12_GA_3809)
+Thread-Topic: How to get actual image size from MTD partition
+Thread-Index: wRfeFLQcDSd8DiGHIt8B6zS4rgdF6w==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Pintu,
 
-Our ARM32 Linux embedded system consists of these:
-* Linux Kernel: 4.14
-* Processor: Qualcomm Arm32 Cortex-A7
-* Storage: NAND 512MB
-* Platform: Simple busybox
-* Filesystem: UBIFS, Squashfs
-* Consists of nand raw partitions, squashfs ubi volumes.
+----- Ursprüngliche Mail -----
+> Von: "Pintu Agarwal" <pintu.ping@gmail.com>
+> My requirement:
+> To find the checksum of a real image in runtime which is flashed in an
+> MTD partition.
+> 
+> Problem:
+> Currently, to find the checksum, we are using:
+> $ md5sum /dev/mtd14
+> This returns the proper checksum of the entire partition.
+> But we wanted to find the checksum only for the actual image data
+> which will be used by our C utility to validate the image.
+> Here, we don't know the actual image size.
+> We only know the "partition-size" and "erasesize".
+> 
+> So, is there a mechanism to somehow find the image size at runtime?
 
-My requirement:
-To find the checksum of a real image in runtime which is flashed in an
-MTD partition.
+not really, UBI manages the MTD and does wearleveling, auto growing of volumes, etc...
+So as soon you attach the image once, it is changed and the checksum won't match.
+It may work if you don't attach UBI and your flash program tool keeps track of
+what pages it wrote.
 
-Problem:
-Currently, to find the checksum, we are using:
-$ md5sum /dev/mtd14
-This returns the proper checksum of the entire partition.
-But we wanted to find the checksum only for the actual image data
-which will be used by our C utility to validate the image.
-Here, we don't know the actual image size.
-We only know the "partition-size" and "erasesize".
-
-So, is there a mechanism to somehow find the image size at runtime?
-
-Regards,
-Pintu
+Thanks,
+//richard
