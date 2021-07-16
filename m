@@ -2,82 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 145AA3CB094
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 03:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8C013CB09C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 03:59:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231313AbhGPBzp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 21:55:45 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:54738 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230297AbhGPBzp (ORCPT
+        id S232800AbhGPCCV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 22:02:21 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:57696 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230523AbhGPCCV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 21:55:45 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Ufw0VTO_1626400369;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Ufw0VTO_1626400369)
+        Thu, 15 Jul 2021 22:02:21 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R551e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Ufw0Wkn_1626400764;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Ufw0Wkn_1626400764)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 16 Jul 2021 09:52:50 +0800
-From:   Jeffle Xu <jefflexu@linux.alibaba.com>
-To:     vgoyal@redhat.com
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, bo.liu@linux.alibaba.com
-Subject: [PATCH] virtiofsd: support per-file DAX
-Date:   Fri, 16 Jul 2021 09:52:49 +0800
-Message-Id: <20210716015249.86064-1-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <YPDhv0JJHqbMCyXD@redhat.com>
-References: <YPDhv0JJHqbMCyXD@redhat.com>
+          Fri, 16 Jul 2021 09:59:25 +0800
+Subject: Re: [RFC PATCH 3/3] fuse: add per-file DAX flag
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Liu Bo <bo.liu@linux.alibaba.com>, stefanha@redhat.com,
+        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+References: <20210715093031.55667-1-jefflexu@linux.alibaba.com>
+ <20210715093031.55667-4-jefflexu@linux.alibaba.com>
+ <20210716004028.GA30967@rsjd01523.et2sqa> <YPDX9S3/TD3CL0CZ@redhat.com>
+ <6d956097-47c1-5193-bbaa-faf14f0989ef@linux.alibaba.com>
+ <YPDhv0JJHqbMCyXD@redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <bfde6c40-4b67-fd24-0df1-21f0cf5a8fd1@linux.alibaba.com>
+Date:   Fri, 16 Jul 2021 09:59:24 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <YPDhv0JJHqbMCyXD@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-An example implementation of supporting per-file DAX flag for virtiofsd,
-where DAx is enabled for files larger than 1M size.
 
-Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
----
- contrib/virtiofsd/fuse_kernel.h   | 4 +++-
- contrib/virtiofsd/fuse_lowlevel.c | 3 +++
- 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/contrib/virtiofsd/fuse_kernel.h b/contrib/virtiofsd/fuse_kernel.h
-index d2b7ccf96b..9c476b7021 100644
---- a/contrib/virtiofsd/fuse_kernel.h
-+++ b/contrib/virtiofsd/fuse_kernel.h
-@@ -165,6 +165,8 @@
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
- 
-+#define FUSE_ATTR_DAX  (1 << 1)
-+
- /* Make sure all structures are padded to 64bit boundary, so 32bit
-    userspace works under 64bit kernels */
- 
-@@ -184,7 +186,7 @@ struct fuse_attr {
- 	uint32_t	gid;
- 	uint32_t	rdev;
- 	uint32_t	blksize;
--	uint32_t	padding;
-+	uint32_t	flags;
- };
- 
- struct fuse_kstatfs {
-diff --git a/contrib/virtiofsd/fuse_lowlevel.c b/contrib/virtiofsd/fuse_lowlevel.c
-index 046a1b4a02..d8a3873246 100644
---- a/contrib/virtiofsd/fuse_lowlevel.c
-+++ b/contrib/virtiofsd/fuse_lowlevel.c
-@@ -60,6 +60,9 @@ static void convert_stat(const struct stat *stbuf, struct fuse_attr *attr)
- 	attr->atimensec = ST_ATIM_NSEC(stbuf);
- 	attr->mtimensec = ST_MTIM_NSEC(stbuf);
- 	attr->ctimensec = ST_CTIM_NSEC(stbuf);
-+
-+	if (stbuf->st_size >= 1048576)
-+		attr->flags |= FUSE_ATTR_DAX;
- }
- 
- static void convert_attr(const struct fuse_setattr_in *attr, struct stat *stbuf)
+On 7/16/21 9:32 AM, Vivek Goyal wrote:
+> On Fri, Jul 16, 2021 at 09:18:34AM +0800, JeffleXu wrote:
+>>
+>>
+>> On 7/16/21 8:51 AM, Vivek Goyal wrote:
+>>> On Fri, Jul 16, 2021 at 08:40:29AM +0800, Liu Bo wrote:
+>>>> On Thu, Jul 15, 2021 at 05:30:31PM +0800, Jeffle Xu wrote:
+>>>>> Add one flag for fuse_attr.flags indicating if DAX shall be enabled for
+>>>>> this file.
+>>>>>
+>>>>> When the per-file DAX flag changes for an *opened* file, the state of
+>>>>> the file won't be updated until this file is closed and reopened later.
+>>>>>
+>>>>> Currently it is not implemented yet to change per-file DAX flag inside
+>>>>> guest kernel, e.g., by chattr(1).
+>>>>
+>>>> Thanks for the patch, it looks good to me.
+>>>>
+>>>> I think it's a good starting point, what I'd like to discuss here is
+>>>> whether we're going to let chattr to toggle the dax flag.
+>>>
+>>> I have the same question. Why not take chattr approach as taken
+>>> by ext4/xfs as well.
+>>>
+>>> Vivek
+>>
+>> Thanks.
+>>
+>> We can implement the chattr approach as ext4/xfs do, if we have this use
+>> scenario. It's an RFC patch, and I want to collect more feedback as soon
+>> as possible.
+> 
+> I guess chattr approach will allow client (as well as server) to control
+> which files should be DAX. While this approach allows only server to
+> specify which files should use DAX. Given currently we let client
+> control whether to use dax or not (-o dax), it probably will make
+> sense to use chattr based approach?
+
+Yes, changing the per-file DAX flag from guest side, such as by chattr,
+may be needed for completeness. I will include this in the next version.
+
+> 
+> I will look at the patches. Do you have a corresponding user space
+> implementation somewhere so that I can test it?
+
+Thanks. I have sent the corresponding patch in-reply-to your mail.
+
 -- 
-2.27.0
-
+Thanks,
+Jeffle
