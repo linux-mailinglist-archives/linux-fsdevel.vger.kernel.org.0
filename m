@@ -2,76 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A26863CBB30
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 19:29:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FDF93CBBA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 20:08:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231397AbhGPRcf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jul 2021 13:32:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55054 "EHLO
+        id S230415AbhGPSKx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jul 2021 14:10:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229803AbhGPRcf (ORCPT
+        with ESMTP id S229803AbhGPSKx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jul 2021 13:32:35 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B65AC06175F;
-        Fri, 16 Jul 2021 10:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=aZmjSXQT2GBYEBGI1TcwL/i/O3t9bBKdz76mcXGD5rk=; b=dXMopdFJgtdpJIeIYwMMT3lzlM
-        dXojkdE1+oWzSS7x+Mp69ajD6KVNhWdk2swxd4P5C9zTFBYuLYVpAC1Wq6pFoQTURx5Hmy6c+SDRS
-        JqglNgskvWn+Fuy5TT61n5/FBJcpc1EUd4hxWepM48PvxB84jEmb79BqiNO2CQs+Jwn/lhaU9JXgL
-        QDEY2RwoUl/W003MFrZ8gBhI9rdCUveyIVKFcpBizgY5g0yQXYznTAlJIg2tDD2w9dzMPYiSyXq1e
-        dTofb9LXvgdtZnMXIZIynvYEOW2sN1IOZ8s3JT0PKIUnO3d4Sx9r1zwHLmEY6X4eA+EZPcf7QimxL
-        VsaH4Vjg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m4RdC-004g2W-T4; Fri, 16 Jul 2021 17:28:18 +0000
-Date:   Fri, 16 Jul 2021 18:28:10 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Gao Xiang <xiang@kernel.org>,
-        linux-erofs@lists.ozlabs.org, stable@vger.kernel.org
-Subject: Re: [PATCH] iomap: Add missing flush_dcache_page
-Message-ID: <YPHBqlLJQKQgRHqH@casper.infradead.org>
-References: <20210716150032.1089982-1-willy@infradead.org>
- <YPGf8o7vo6/9iTE5@infradead.org>
+        Fri, 16 Jul 2021 14:10:53 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED627C06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jul 2021 11:07:56 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id u25so15139798ljj.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jul 2021 11:07:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=la3VY4BX+aLIya8DFhmm4lsPFouObr1MQVIqGHV1haM=;
+        b=V5IgJX7qk9FOKmWrEPUq3X8QcEKSnfNd7zCeCtbaLY0k8Q/Y6yXzaNyWL1szPNBeoN
+         00Jvw9tYc6Q2BmPQR4l9+qfRP+5w3nQFFulhhD/7g9a9d+kjSsA5xl63651acPtoBV5F
+         ya5WSNhbjkI1gJfk0JKG7f2M9rt3cil+GoEwk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=la3VY4BX+aLIya8DFhmm4lsPFouObr1MQVIqGHV1haM=;
+        b=iNZBQxYJ1Mr0NyXH/wJr828YcTeXkwLF7quoPIwtpFWGVwoGJZIJbM+TrvNwJBOGK5
+         LGuBmFDXEmvEbYyGXiP0gjA0Hk0VTb/4r6ObtHGJ8hZSArnktPUKkrsdceFuLirOybIW
+         AU/hr88tJkqsjSkqC5ynMJ/Zj2i3drQeheWUmiiP+PHbo4ddTyUWOynSqUJtK4KlYX7H
+         wb8wVP15tEkhrbQdMyD1oaCa8bLQz605/PwPf/jfwGVNoJPGFSOIft/qSDoYthzminar
+         sTsEKN7P7BlYfufawfsGeR58l2AuhNKTSlqJWHycTos+fP/0ScnBintHKDSjdYCvzgJC
+         1e3w==
+X-Gm-Message-State: AOAM530i3Hz5xcMJwAIXZsGl2JAQ1hHww3EX7W8TFg5bflWegntMOUmS
+        j9h5iwJ1VgbSDa4+J6WtojyPjl3wWheqfs6s
+X-Google-Smtp-Source: ABdhPJy9RdjFLhjfInof7tZcxvECWZ0oAeZpLtS/xOOPv8Vmq7aYiGvVrmclUdDdsPvFPu8IOCCPXA==
+X-Received: by 2002:a2e:9d1a:: with SMTP id t26mr10023812lji.10.1626458868101;
+        Fri, 16 Jul 2021 11:07:48 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id k11sm699000lfm.133.2021.07.16.11.07.46
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Jul 2021 11:07:47 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id f30so17454140lfj.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jul 2021 11:07:46 -0700 (PDT)
+X-Received: by 2002:a05:6512:3f82:: with SMTP id x2mr7981304lfa.421.1626458865567;
+ Fri, 16 Jul 2021 11:07:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YPGf8o7vo6/9iTE5@infradead.org>
+References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com> <20210716114635.14797-1-papadakospan@gmail.com>
+In-Reply-To: <20210716114635.14797-1-papadakospan@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 16 Jul 2021 11:07:29 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com>
+Message-ID: <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com>
+Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
+To:     "Leonidas P. Papadakos" <papadakospan@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     zajec5@gmail.com, "Darrick J. Wong" <djwong@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 16, 2021 at 04:04:18PM +0100, Christoph Hellwig wrote:
-> On Fri, Jul 16, 2021 at 04:00:32PM +0100, Matthew Wilcox (Oracle) wrote:
-> > Inline data needs to be flushed from the kernel's view of a page before
-> > it's mapped by userspace.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 19e0c58f6552 ("iomap: generic inline data handling")
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > ---
-> >  fs/iomap/buffered-io.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index 41da4f14c00b..fe60c603f4ca 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -222,6 +222,7 @@ iomap_read_inline_data(struct inode *inode, struct page *page,
-> >  	memcpy(addr, iomap->inline_data, size);
-> >  	memset(addr + size, 0, PAGE_SIZE - size);
-> >  	kunmap_atomic(addr);
-> > +	flush_dcache_page(page);
-> 
-> .. and all writes into a kmap also need such a flush, so this needs to
-> move a line up.  My plan was to add a memcpy_to_page_and_pad helper
-> ala memcpy_to_page to get various file systems and drivers out of the
-> business of cache flushing as much as we can.
+On Fri, Jul 16, 2021 at 4:49 AM Leonidas P. Papadakos
+<papadakospan@gmail.com> wrote:
+>
+> This driver is already in a much better feature state than the old ntfs driver from 2001.
 
-hm?  It's absolutely allowed to flush the page after calling kunmap.
-Look at zero_user_segments(), for example.
+If the new ntfs code has acks from people - and it sounds like it did
+get them - and Paragon is expected to be the maintainer of it, then I
+think Paragon should just make a git pull request for it.
+
+That's assuming that it continues to be all in just fs/ntfs3/ (plus
+fs/Kconfig, fs/Makefile and MAINTAINERS entries and whatever
+documentation) and there are no other system-wide changes. Which I
+don't think it had.
+
+We simply don't have anybody to funnel new filesystems - the fsdevel
+mailing list is good for comments and get feedback, but at some point
+somebody just needs to actually submit it, and that's not what fsdevel
+ends up doing.
+
+The argument that "it's already in a much better state than the old
+ntfs driver" may not be a very strong technical argument (not because
+of any Paragon problems - just because the old ntfs driver is not
+great), but it _is_ a fairly strong argument for merging the new one
+from Paragon.
+
+And I don't think there has been any huge _complaints_ about the code,
+and I don't think there's been any sign that being outside the kernel
+helps.
+
+               Linus
