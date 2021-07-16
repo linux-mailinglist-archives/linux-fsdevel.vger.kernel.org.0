@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FDC03CB8D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 16:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 408733CB8D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 16:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240454AbhGPOni (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jul 2021 10:43:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36464 "EHLO mail.kernel.org"
+        id S240469AbhGPOnk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jul 2021 10:43:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232988AbhGPOni (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jul 2021 10:43:38 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BC271613F5;
-        Fri, 16 Jul 2021 14:40:42 +0000 (UTC)
+        id S232988AbhGPOnj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Jul 2021 10:43:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A126C613FC;
+        Fri, 16 Jul 2021 14:40:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626446443;
-        bh=88spGNyluutPzDN0JI8idu1yC06Iuwa4Jxi/++a9CYk=;
+        s=k20201202; t=1626446444;
+        bh=hCHntWrZmULEajsGnxh4y43wXlCSz6CxDtKDb0Kydp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C8doAhLjAan/i8YFRaUfyiowMTh/rN3RihH5HgMt25tD4ewCuPx0CuABVSX22g4VJ
-         xH1aGdrzb7tpAC71QjMxpUiC9Z0G6SOihgzj4tX/F+EOMZTdGTOXRf1grUNEJEgfIj
-         7dSRGWHqC/qELlDVN9pxOynwhqQCMgVZtaihiF/5b/6BbbGfjz2571fBIUbp70yH8N
-         1LKcSJt4RB7Y9wioN85kJZ8tAgMKHTgFRf9byyKCLcnlpp3S3q245wplxyJGAQR5Lq
-         qKIcgfBOHQs7pRiQe6HCVw8dp2Hg+JnwxuDNbEzM2hPHDbwgxOIMhpgcTGZGdnwTPg
-         5vGFchRbPDU+w==
+        b=XT6yq9RX9AO2TALWFY7xtOHA7gvRHNaqMtQSptevzwfZZ+SoATRNotr62tyNxSFPO
+         wE24hrpMqJngEMs6huxGVqnHe4cHREt34MRbAlUuT/8Lf975adG2YOfeVk2ADkClKz
+         GTHGGYHM9QHqYLmyG/p/AcvuAd8jUyjAfN+FAAhUEww/KlwzJ9Q4f2242Z/Fjy7mFZ
+         lk5psGsFSNq96V5nRhafZIuj2R/zMoDfiZKqkJrD9koK/nKT/mnawcyDVhv2vUe+Co
+         bd+xngXcXlHrsq3CN5EOKwTLMUBlPSShwlKd8i0CRrNr14IUkAHQ0gSSA+gh5lg/3X
+         ttIkzd+qRCL3A==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-f2fs-devel@lists.sourceforge.net,
         Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
@@ -30,9 +30,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         Satya Tangirala <satyaprateek2357@gmail.com>,
         Changheun Lee <nanich.lee@samsung.com>,
         Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: [PATCH 1/9] f2fs: make f2fs_write_failed() take struct inode
-Date:   Fri, 16 Jul 2021 09:39:11 -0500
-Message-Id: <20210716143919.44373-2-ebiggers@kernel.org>
+Subject: [PATCH 2/9] f2fs: remove allow_outplace_dio()
+Date:   Fri, 16 Jul 2021 09:39:12 -0500
+Message-Id: <20210716143919.44373-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210716143919.44373-1-ebiggers@kernel.org>
 References: <20210716143919.44373-1-ebiggers@kernel.org>
@@ -44,47 +44,65 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Make f2fs_write_failed() take a 'struct inode' directly rather than a
-'struct address_space', as this simplifies it slightly.
+We can just check f2fs_lfs_mode() directly.  The block_unaligned_IO()
+check is redundant because in LFS mode, f2fs doesn't do direct I/O
+writes that aren't block-aligned (due to f2fs_force_buffered_io()
+returning true in this case, triggering the fallback to buffered I/O).
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/data.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/f2fs/data.c |  2 +-
+ fs/f2fs/f2fs.h | 10 ----------
+ fs/f2fs/file.c |  2 +-
+ 3 files changed, 2 insertions(+), 12 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d2cf48c5a2e4..c478964a5695 100644
+index c478964a5695..18cb28a514e6 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -3176,9 +3176,8 @@ static int f2fs_write_data_pages(struct address_space *mapping,
- 			FS_CP_DATA_IO : FS_DATA_IO);
+@@ -3551,7 +3551,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	if (f2fs_force_buffered_io(inode, iocb, iter))
+ 		return 0;
+ 
+-	do_opu = allow_outplace_dio(inode, iocb, iter);
++	do_opu = (rw == WRITE && f2fs_lfs_mode(sbi));
+ 
+ 	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ee8eb33e2c25..ad7c1b94e23a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4305,16 +4305,6 @@ static inline int block_unaligned_IO(struct inode *inode,
+ 	return align & blocksize_mask;
  }
  
--static void f2fs_write_failed(struct address_space *mapping, loff_t to)
-+static void f2fs_write_failed(struct inode *inode, loff_t to)
+-static inline int allow_outplace_dio(struct inode *inode,
+-				struct kiocb *iocb, struct iov_iter *iter)
+-{
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	int rw = iov_iter_rw(iter);
+-
+-	return (f2fs_lfs_mode(sbi) && (rw == WRITE) &&
+-				!block_unaligned_IO(inode, iocb, iter));
+-}
+-
+ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 				struct kiocb *iocb, struct iov_iter *iter)
  {
--	struct inode *inode = mapping->host;
- 	loff_t i_size = i_size_read(inode);
- 
- 	if (IS_NOQUOTA(inode))
-@@ -3410,7 +3409,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 
- fail:
- 	f2fs_put_page(page, 1);
--	f2fs_write_failed(mapping, pos + len);
-+	f2fs_write_failed(inode, pos + len);
- 	if (drop_atomic)
- 		f2fs_drop_inmem_pages_all(sbi, false);
- 	return err;
-@@ -3600,7 +3599,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
- 						count - iov_iter_count(iter));
- 		} else if (err < 0) {
--			f2fs_write_failed(mapping, offset + count);
-+			f2fs_write_failed(inode, offset + count);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6afd4562335f..b1cb5b50faac 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4292,7 +4292,7 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			 * back to buffered IO.
+ 			 */
+ 			if (!f2fs_force_buffered_io(inode, iocb, from) &&
+-					allow_outplace_dio(inode, iocb, from))
++					f2fs_lfs_mode(F2FS_I_SB(inode)))
+ 				goto write;
  		}
- 	} else {
- 		if (err > 0)
+ 		preallocated = true;
 -- 
 2.32.0
 
