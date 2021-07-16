@@ -2,90 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 103E33CB0E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 04:56:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC79B3CB0FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 05:12:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233456AbhGPC7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jul 2021 22:59:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54794 "EHLO
+        id S233550AbhGPDP0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jul 2021 23:15:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233119AbhGPC7X (ORCPT
+        with ESMTP id S233647AbhGPDPY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jul 2021 22:59:23 -0400
+        Thu, 15 Jul 2021 23:15:24 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 916BAC06175F;
-        Thu, 15 Jul 2021 19:56:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E25AC06175F;
+        Thu, 15 Jul 2021 20:12:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=mq3wTgxZEH4QjjVWOJ11+pesVGFg8c21USpyyqDfH2c=; b=US/J81dKvyj3XraQz7j/+lGQ4Z
-        cTeopUgtkoIGZ2vozywVhGZjGkmPudXnlTVoT5F/+KDreUWuz0vTUa30IPEpKlPCLBy4n+qh3Qlzk
-        jmDWlcYNDNpsytiPJahTck5WFxpluOYgE8N8TNMBq0nIPyki3s/GD2pCY4rAAqlBQBoMmExKUGeno
-        oU2dJtqFJsod9rHDEMbNBWMV9CC8MqLWd21ONFlMki2uWn+Cb0N2NuWeP6PJRzLThxRKzAoJXeijZ
-        Ny1rZx+F07h/ZHRIUxaOkh+5zYAnNvSnIJoaoZ9qHQ1Uc1+q0sW55SR5IN8yRG0WKW9QCptCAoFTo
-        XX1kZukA==;
+        bh=TRDya8wHWkJxj5dWxTTzT73+dIkTaai0safBwEJTM+0=; b=MwzLcqHYbmp3Z0BhM8fXff+86l
+        k2Lkime2zcBMJsOr6pG++QI9XGFLoWMwdot/nq5BMizLvsKhnhG2J2LrkWjI/4ouZ6pCkg1FD5A6a
+        wpUv/moDpYyoRAB5EIoKy1zZhc07/0qXFDwTYEF01LlF7dbGOY2DTNgLuV5cBNnb738mxNUncogxY
+        uqMjDCavSPsUSKbva4hdobjPZpXKbTTWPMZoSiE71V6c3T/mly+Y8ujoGM8gOhWq67dvuLeVm470W
+        9PzxCxuX5ofo6UMb10Xh0R95dHa7FnDT6K5tiFBhi60MGwdcknp8Ag9RgjFGm+BE/xZwZ3DE8MY6r
+        suGyIuFw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m4E0y-0045Gl-CZ; Fri, 16 Jul 2021 02:55:57 +0000
-Date:   Fri, 16 Jul 2021 03:55:48 +0100
+        id 1m4EGN-0045sr-7Q; Fri, 16 Jul 2021 03:11:53 +0000
+Date:   Fri, 16 Jul 2021 04:11:43 +0100
 From:   Matthew Wilcox <willy@infradead.org>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 105/138] iomap: Convert iomap_add_to_ioend to take a
- folio
-Message-ID: <YPD1NLkRo0dneNii@casper.infradead.org>
+Subject: Re: [PATCH v14 102/138] iomap: Convert iomap_write_begin and
+ iomap_write_end to folios
+Message-ID: <YPD476gr7MWsaAyr@casper.infradead.org>
 References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-106-willy@infradead.org>
- <20210715220120.GP22357@magnolia>
+ <20210715033704.692967-103-willy@infradead.org>
+ <20210715215105.GM22357@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210715220120.GP22357@magnolia>
+In-Reply-To: <20210715215105.GM22357@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 03:01:20PM -0700, Darrick J. Wong wrote:
-> On Thu, Jul 15, 2021 at 04:36:31AM +0100, Matthew Wilcox (Oracle) wrote:
+On Thu, Jul 15, 2021 at 02:51:05PM -0700, Darrick J. Wong wrote:
+> On Thu, Jul 15, 2021 at 04:36:28AM +0100, Matthew Wilcox (Oracle) wrote:
+> > +static int iomap_write_begin(struct inode *inode, loff_t pos, size_t len,
+> > +		unsigned flags, struct folio **foliop, struct iomap *iomap,
+> > +		struct iomap *srcmap)
+> >  {
+> >  	const struct iomap_page_ops *page_ops = iomap->page_ops;
+> > +	struct folio *folio;
+> >  	struct page *page;
+> > +	unsigned fgp = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE | FGP_NOFS;
+> >  	int status = 0;
 > >  
-> > -	merged = __bio_try_merge_page(wpc->ioend->io_bio, page, len, poff,
-> > -			&same_page);
-> >  	if (iop)
-> >  		atomic_add(len, &iop->write_bytes_pending);
-> > -
-> > -	if (!merged) {
-> > -		if (bio_full(wpc->ioend->io_bio, len)) {
-> > -			wpc->ioend->io_bio =
-> > -				iomap_chain_bio(wpc->ioend->io_bio);
-> > -		}
-> > -		bio_add_page(wpc->ioend->io_bio, page, len, poff);
-> > +	if (!bio_add_folio(wpc->ioend->io_bio, folio, len, poff)) {
-> > +		wpc->ioend->io_bio = iomap_chain_bio(wpc->ioend->io_bio);
-> > +		bio_add_folio(wpc->ioend->io_bio, folio, len, poff);
+> >  	BUG_ON(pos + len > iomap->offset + iomap->length);
+> > @@ -604,30 +605,31 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+> >  			return status;
+> >  	}
+> >  
+> > -	page = grab_cache_page_write_begin(inode->i_mapping, pos >> PAGE_SHIFT,
+> > -			AOP_FLAG_NOFS);
+> > -	if (!page) {
+> > +	folio = __filemap_get_folio(inode->i_mapping, pos >> PAGE_SHIFT, fgp,
 > 
-> The paranoiac in me wonders if we ought to have some sort of error
-> checking here just in case we encounter double failures?
+> Ah, ok, so we're moving the file_get_pages flags up to iomap now.
 
-Maybe?  We didn't have it before, and it's just been allocated.
-I'd defer to Christoph here.
+Right, saves us having a folio equivalent of
+grab_cache_page_write_begin().  And lets us get rid of AOP_FLAG_NOFS
+eventually (although that really should be obsoleted by scoped
+allocations, but one windmill at a time).
 
-> > -	for (i = 0, file_offset = page_offset(page);
-> > -	     i < (PAGE_SIZE >> inode->i_blkbits) && file_offset < end_offset;
-> > -	     i++, file_offset += len) {
-> > +	for (i = 0; i < nblocks; i++, pos += len) {
-> > +		if (pos >= end_offset)
-> > +			break;
+> > +	struct page *page = folio_file_page(folio, pos / PAGE_SIZE);
 > 
-> Any particular reason this isn't:
-> 
-> 	for (i = 0; i < nblocks && pos < end_offset; i++, pos += len) {
-> 
-> ?
+> pos >> PAGE_SHIFT ?
 
-Just mild personal preference ... I don't even like having the pos +=
-len in there.  But you're maintainer, I'll shuffle that in.
+mmm.  We're inconsistent:
 
-> Everything from here on out looks decent to me.
+willy@pepe:~/kernel/folio$ git grep '/ PAGE_SIZE' mm/ fs/ |wc
+     92     720    6475
+willy@pepe:~/kernel/folio$ git grep '>> PAGE_SHIFT' mm/ fs/ |wc
+    635    4582   39394
 
-Thanks!
+That said, there's a clear preference.  It's just that we had a bug the
+other day where somebody shifted by PAGE_SHIFT in the wrong direction ...
+But again, this is your code, so I'll change to the shift.
+
