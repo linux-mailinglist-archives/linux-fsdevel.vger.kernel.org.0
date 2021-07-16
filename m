@@ -2,96 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F2323CB765
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 14:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 518D63CB7A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 15:04:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239151AbhGPMhw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jul 2021 08:37:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41598 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237493AbhGPMhv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jul 2021 08:37:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 257A8613EB;
-        Fri, 16 Jul 2021 12:34:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626438897;
-        bh=8oSShhkIfW1t+XoSC5QjALfMGrJlfUvBnSJjgbK3dUU=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=RE3E3apIjL37m9puTMaJRWXtg4wvv5pQJ++HzsRrfvFc+6K0xhirXwfr5FY4SfyXf
-         SNS1FmBCSlhtE+WirH3Aw2XTU9LRvm/ag+nCT9PyJMJpGiCDQWtQqnTpZtGMf3vUp0
-         R40buGaI6IsqJVqMuORqUXuX5jJQB6FTASMBykv6W3N+vsfOmiBCsThBW/uOVW69cH
-         iYORXYgJLPIKU5SljBe4j0WoquY3opRecUWHabQXjHKC7ErA7H99CdCDXmGpIyuURk
-         mseoqjDkYJcW2gCPtSyVPjOVSQeXsYHiD/etqkSKO6HK6kZWWSUYDCSczdL+XLOFUG
-         qHjxwqonSKfgw==
-Received: by mail-ot1-f41.google.com with SMTP id h24-20020a9d64180000b029036edcf8f9a6so9698360otl.3;
-        Fri, 16 Jul 2021 05:34:57 -0700 (PDT)
-X-Gm-Message-State: AOAM533gM2KWHv0GG8zHz3NGtCR2LaI/k8/zA4Np1gWztJj84r62ncyJ
-        SaCRBb9v3ZFkCeLPmk2eeU4Gu1jxKaKXWkvFcG0=
-X-Google-Smtp-Source: ABdhPJyjt4E+0BOmUYSSQ6pS521inDb618V4rGsb+1/LSSqH+21otdkyBWisA+zwqcCWMMK8TvRofOxu9ckWzJ8oWzo=
-X-Received: by 2002:a9d:3644:: with SMTP id w62mr8212190otb.205.1626438896478;
- Fri, 16 Jul 2021 05:34:56 -0700 (PDT)
+        id S239574AbhGPNG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jul 2021 09:06:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51366 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232706AbhGPNG4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Jul 2021 09:06:56 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF456C061760;
+        Fri, 16 Jul 2021 06:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ZnncS7EMVgffQsq6qFPh/18HhJ7accRmRlB/yo0s+qU=; b=JSAv+m6ZpKT/OgpPZ5INhBHanu
+        QVyPEIr/P4R+CJu/yBbb24MkyFoVlRsOhkblNsYi+CBUoalGt+yQLUtQ3PMNxYtPDBRBGc6LB62jU
+        XOcXv8JP7Htt4hYsHDeeBN0ZeqGwM3MouwXrhVMkRVQWeztziQ9eNQR8T/xZe8KGTqXMWdv8JePdu
+        snYUMYkPAdRMiWJmWnBasals+i5LGXq8PACRz1efviUrq1ahXYxCVgcsla2P+zXpN3vMBS61C4gri
+        DntZyk/SJXTLoCRkKaDzsL0L0vswEtdBFgClxONP/qIEs0NSlGCSz1TUhIrHRt34N1SahOCOpvtGs
+        XjGd69zQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m4NU5-004URh-SL; Fri, 16 Jul 2021 13:02:44 +0000
+Date:   Fri, 16 Jul 2021 14:02:29 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Chao Yu <chao@kernel.org>, Liu Bo <bo.liu@linux.alibaba.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Liu Jiang <gerry@linux.alibaba.com>
+Subject: Re: [PATCH 1/2] iomap: support tail packing inline read
+Message-ID: <YPGDZYT9OxdgNYf2@casper.infradead.org>
+References: <20210716050724.225041-1-hsiangkao@linux.alibaba.com>
+ <20210716050724.225041-2-hsiangkao@linux.alibaba.com>
 MIME-Version: 1.0
-Received: by 2002:ac9:4443:0:0:0:0:0 with HTTP; Fri, 16 Jul 2021 05:34:55
- -0700 (PDT)
-In-Reply-To: <69f734b3-7e1a-6c9c-d2cc-4debf6c418ca@samba.org>
-References: <CGME20210716000346epcas1p4fecf8bdde87dd76457b739fc3c1812a3@epcas1p4.samsung.com>
- <20210715235356.3191-1-namjae.jeon@samsung.com> <69f734b3-7e1a-6c9c-d2cc-4debf6c418ca@samba.org>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Fri, 16 Jul 2021 21:34:55 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_L5owJE7yyHL5aR5-F5oPke-sh=HGGinPDGUCgVa4V7w@mail.gmail.com>
-Message-ID: <CAKYAXd_L5owJE7yyHL5aR5-F5oPke-sh=HGGinPDGUCgVa4V7w@mail.gmail.com>
-Subject: Re: [Linux-cifsd-devel] [PATCH v6 00/13] ksmbd: introduce new SMB3
- kernel server
-To:     Stefan Metzmacher <metze@samba.org>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cifs@vger.kernel.org,
-        linux-cifsd-devel@lists.sourceforge.net, aurelien.aptel@gmail.com,
-        sandeen@sandeen.net, willy@infradead.org, hch@infradead.org,
-        senozhatsky@chromium.org, christian@brauner.io,
-        viro@zeniv.linux.org.uk, ronniesahlberg@gmail.com, hch@lst.de,
-        dan.carpenter@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210716050724.225041-2-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2021-07-16 17:35 GMT+09:00, Stefan Metzmacher via Linux-cifsd-devel
-<linux-cifsd-devel@lists.sourceforge.net>:
->
-> Hi Namjae,
-Hi Metze,
+On Fri, Jul 16, 2021 at 01:07:23PM +0800, Gao Xiang wrote:
+> This tries to add tail packing inline read to iomap. Different from
+> the previous approach, it only marks the block range uptodate in the
+> page it covers.
 
->
->> Mailing list and repositories
->> =============================
->>  - linux-cifsd-devel@lists.sourceforge.net
->
-> Wasn't the latest idea to use linux-cifs@vger.kernel.org?
-Okay, I will add it on next spin.
->
->>  - https://github.com/smfrench/smb3-kernel/tree/cifsd-for-next
->
-> I think you should also include https://git.samba.org/?p=ksmbd.git;a=summary
-> here.
-Okay.
->
->>  - https://github.com/cifsd-team/ksmbd (out-of-tree)
->>  - https://github.com/cifsd-team/ksmbd-tools
->
-> I would be great to have an actual branch with the posted patches,
-> I didn't found any in the above repos.
->
-> I would make it easier to have a look at the whole set.
-Okay, Will add it in next spin also.
->
-> Thanks!
-Thanks for your review!
-> metze
->
->
-> _______________________________________________
-> Linux-cifsd-devel mailing list
-> Linux-cifsd-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-cifsd-devel
->
+Why?  This path is called under two circumstances: readahead and readpage.
+In both cases, we're trying to bring the entire page uptodate.  The inline
+extent is always the tail of the file, so we may as well zero the part of
+the page past the end of file and mark the entire page uptodate instead
+and leaving the end of the page !uptodate.
+
+I see the case where, eg, we have the first 2048 bytes of the file
+out-of-inode and then 20 bytes in the inode.  So we'll create the iop
+for the head of the file, but then we may as well finish the entire
+PAGE_SIZE chunk as part of this iteration rather than update 2048-3071
+as being uptodate and leave the 3072-4095 block for a future iteration.
+
