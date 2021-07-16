@@ -2,133 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC1ED3CB727
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 14:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F2323CB765
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 14:34:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232256AbhGPMNC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jul 2021 08:13:02 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:58664 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232085AbhGPMNC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jul 2021 08:13:02 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7D637205E6;
-        Fri, 16 Jul 2021 12:10:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1626437405; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gn3NzijDyMlTSPv52ZJ0rg5uPOpBL0bDagguSlAodGg=;
-        b=ZvOAHYYXDTqPqXQyYOZg674ICk3W48WdlIZ65ZjAwAbcaeJfY7OcOfcL19sIh2wMHxSnke
-        Jx/WnJtDrz8zRQZYvZpfrrds6j0bbN0knxYwTVS+Be5odK6TRC+EGwUn/ye2YR+JFMmYzP
-        rqnY4TpeaXnYvfYDzWH3eOXdH0t7LYw=
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 358BF13AE4;
-        Fri, 16 Jul 2021 12:10:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id oHZ4CR138WBAKwAAGKfGzw
-        (envelope-from <nborisov@suse.com>); Fri, 16 Jul 2021 12:10:05 +0000
-Subject: Re: [PATCH] vfs: Optimize dedupe comparison
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        david@fromorbit.com, djwong@kernel.org
-References: <20210715141309.38443-1-nborisov@suse.com>
- <YPBGoDlf9T6kFjk1@casper.infradead.org>
- <7c4c9e73-0a8b-5621-0b74-1bf34e4b4817@suse.com>
- <YPBPkupPDnsCXrLU@casper.infradead.org>
-From:   Nikolay Borisov <nborisov@suse.com>
-Message-ID: <255720dc-01d2-e778-4c91-5868cd7f6a80@suse.com>
-Date:   Fri, 16 Jul 2021 15:10:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S239151AbhGPMhw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jul 2021 08:37:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41598 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237493AbhGPMhv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Jul 2021 08:37:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 257A8613EB;
+        Fri, 16 Jul 2021 12:34:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626438897;
+        bh=8oSShhkIfW1t+XoSC5QjALfMGrJlfUvBnSJjgbK3dUU=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=RE3E3apIjL37m9puTMaJRWXtg4wvv5pQJ++HzsRrfvFc+6K0xhirXwfr5FY4SfyXf
+         SNS1FmBCSlhtE+WirH3Aw2XTU9LRvm/ag+nCT9PyJMJpGiCDQWtQqnTpZtGMf3vUp0
+         R40buGaI6IsqJVqMuORqUXuX5jJQB6FTASMBykv6W3N+vsfOmiBCsThBW/uOVW69cH
+         iYORXYgJLPIKU5SljBe4j0WoquY3opRecUWHabQXjHKC7ErA7H99CdCDXmGpIyuURk
+         mseoqjDkYJcW2gCPtSyVPjOVSQeXsYHiD/etqkSKO6HK6kZWWSUYDCSczdL+XLOFUG
+         qHjxwqonSKfgw==
+Received: by mail-ot1-f41.google.com with SMTP id h24-20020a9d64180000b029036edcf8f9a6so9698360otl.3;
+        Fri, 16 Jul 2021 05:34:57 -0700 (PDT)
+X-Gm-Message-State: AOAM533gM2KWHv0GG8zHz3NGtCR2LaI/k8/zA4Np1gWztJj84r62ncyJ
+        SaCRBb9v3ZFkCeLPmk2eeU4Gu1jxKaKXWkvFcG0=
+X-Google-Smtp-Source: ABdhPJyjt4E+0BOmUYSSQ6pS521inDb618V4rGsb+1/LSSqH+21otdkyBWisA+zwqcCWMMK8TvRofOxu9ckWzJ8oWzo=
+X-Received: by 2002:a9d:3644:: with SMTP id w62mr8212190otb.205.1626438896478;
+ Fri, 16 Jul 2021 05:34:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YPBPkupPDnsCXrLU@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac9:4443:0:0:0:0:0 with HTTP; Fri, 16 Jul 2021 05:34:55
+ -0700 (PDT)
+In-Reply-To: <69f734b3-7e1a-6c9c-d2cc-4debf6c418ca@samba.org>
+References: <CGME20210716000346epcas1p4fecf8bdde87dd76457b739fc3c1812a3@epcas1p4.samsung.com>
+ <20210715235356.3191-1-namjae.jeon@samsung.com> <69f734b3-7e1a-6c9c-d2cc-4debf6c418ca@samba.org>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Fri, 16 Jul 2021 21:34:55 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_L5owJE7yyHL5aR5-F5oPke-sh=HGGinPDGUCgVa4V7w@mail.gmail.com>
+Message-ID: <CAKYAXd_L5owJE7yyHL5aR5-F5oPke-sh=HGGinPDGUCgVa4V7w@mail.gmail.com>
+Subject: Re: [Linux-cifsd-devel] [PATCH v6 00/13] ksmbd: introduce new SMB3
+ kernel server
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-cifs@vger.kernel.org,
+        linux-cifsd-devel@lists.sourceforge.net, aurelien.aptel@gmail.com,
+        sandeen@sandeen.net, willy@infradead.org, hch@infradead.org,
+        senozhatsky@chromium.org, christian@brauner.io,
+        viro@zeniv.linux.org.uk, ronniesahlberg@gmail.com, hch@lst.de,
+        dan.carpenter@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+2021-07-16 17:35 GMT+09:00, Stefan Metzmacher via Linux-cifsd-devel
+<linux-cifsd-devel@lists.sourceforge.net>:
+>
+> Hi Namjae,
+Hi Metze,
 
-
-On 15.07.21 г. 18:09, Matthew Wilcox wrote:
-> On Thu, Jul 15, 2021 at 05:44:15PM +0300, Nikolay Borisov wrote:
->> That was my first impression, here's the profile:
->>
->>        │    Disassembly of section .text:
->>        │
->>        │    ffffffff815c6f60 <memcmp>:
->>        │    memcmp():
->>        │      test   %rdx,%rdx
->>        │    ↓ je     22
->>        │      xor    %ecx,%ecx
->>        │    ↓ jmp    12
->>  49.32 │ 9:   add    $0x1,%rcx
->>   0.03 │      cmp    %rcx,%rdx
->>  11.82 │    ↓ je     21
->>   0.01 │12:   movzbl (%rdi,%rcx,1),%eax
->>  38.19 │      movzbl (%rsi,%rcx,1),%r8d
->>   0.59 │      sub    %r8d,%eax
->>   0.04 │    ↑ je     9
-> 
-> That looks like a byte loop to me ...
-> 
->> It's indeed on x86-64 and according to the sources it's using
->> __builtin_memcmp according to arch/x86/boot/string.h
-> 
-> I think the 'boot' part of that path might indicate that it's not what's
-> actually being used by the kernel.
-> 
-> $ git grep __HAVE_ARCH_MEMCMP
-> arch/arc/include/asm/string.h:#define __HAVE_ARCH_MEMCMP
-> arch/arm64/include/asm/string.h:#define __HAVE_ARCH_MEMCMP
-> arch/csky/abiv2/inc/abi/string.h:#define __HAVE_ARCH_MEMCMP
-> arch/powerpc/include/asm/string.h:#define __HAVE_ARCH_MEMCMP
-> arch/s390/include/asm/string.h:#define __HAVE_ARCH_MEMCMP       /* arch function */
-> arch/s390/lib/string.c:#ifdef __HAVE_ARCH_MEMCMP
-> arch/s390/purgatory/string.c:#define __HAVE_ARCH_MEMCMP /* arch function */
-> arch/sparc/include/asm/string.h:#define __HAVE_ARCH_MEMCMP
-> include/linux/string.h:#ifndef __HAVE_ARCH_MEMCMP
-> lib/string.c:#ifndef __HAVE_ARCH_MEMCMP
-> 
-> So I think x86-64 is using the stupid one.
-> 
->>> Can this even happen?  Surely we can only dedup on a block boundary and
->>> blocks are required to be a power of two and at least 512 bytes in size?
->>
->> I was wondering the same thing, but AFAICS it seems to be possible i.e
->> if userspace spaces bad offsets, while all kinds of internal fs
->> synchronization ops are going to be performed on aligned offsets, that
->> doesn't mean the original ones, passed from userspace are themselves
->> aligned explicitly.
-> 
-> Ah, I thought it'd be failed before we got to this point.
-> 
-> But honestly, I think x86-64 needs to be fixed to either use
-> __builtin_memcmp() or to have a nicely written custom memcmp().  I
-> tried to find the gcc implementation of __builtin_memcmp() on
-> x86-64, but I can't.
-
-__builtin_memcmp is a no go due to this function being an ifunc [0]
- and is being resolved to a call to memcmp which causes link => build
-failures. So what remains is to either patch particular sites or as Dave
-suggested have a generic optimized implementation.
-
-glibc's implementation [1] seems straightforward enough to be
-convertible to kernel style. However it would need definitive proof it
-actually improves performance in a variety of scenarios.
-
-[0] https://sourceware.org/glibc/wiki/GNU_IFUNC
-[1] https://sourceware.org/git/?p=glibc.git;a=blob;f=string/memcmp.c
-
-> 
+>
+>> Mailing list and repositories
+>> =============================
+>>  - linux-cifsd-devel@lists.sourceforge.net
+>
+> Wasn't the latest idea to use linux-cifs@vger.kernel.org?
+Okay, I will add it on next spin.
+>
+>>  - https://github.com/smfrench/smb3-kernel/tree/cifsd-for-next
+>
+> I think you should also include https://git.samba.org/?p=ksmbd.git;a=summary
+> here.
+Okay.
+>
+>>  - https://github.com/cifsd-team/ksmbd (out-of-tree)
+>>  - https://github.com/cifsd-team/ksmbd-tools
+>
+> I would be great to have an actual branch with the posted patches,
+> I didn't found any in the above repos.
+>
+> I would make it easier to have a look at the whole set.
+Okay, Will add it in next spin also.
+>
+> Thanks!
+Thanks for your review!
+> metze
+>
+>
+> _______________________________________________
+> Linux-cifsd-devel mailing list
+> Linux-cifsd-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-cifsd-devel
+>
