@@ -2,131 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D8FA3CB812
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 15:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D7D13CB830
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 15:56:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240100AbhGPNvz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jul 2021 09:51:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233006AbhGPNvy (ORCPT
+        id S240066AbhGPN7Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jul 2021 09:59:24 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:36583 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232895AbhGPN7Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jul 2021 09:51:54 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 061F2C06175F;
-        Fri, 16 Jul 2021 06:49:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CHBQMIYjF69FA2gIyZaFptHFVKHivJqyTB2HIyMYZO8=; b=iPIHtj/jsfpKa+a4IGnEc3wC1W
-        nf64vk+sLr385Zy4w5ggTqtNLDnpNp17NP3Hu+5JZ+Og2mjShh7k2A7KVXyP7HFliWFgYvR3PQFr4
-        JCfsVOUqnlyEthAL4yCYvdToxwlG4LiCnx//a4R6oUY3/+bP+DMUGO8d4fftbcUKgQ2aggSPfIoEN
-        fakdGJXIVQ2Rr0DyE82l7u7UzyToWSLGZnxkJk4ofSHrSVIVyJ5nkPzLwxt7Noe2uohmtbCOVGnZS
-        32hgW7YHhxvtii9Fy9QEWstKrcESRyIfWii69VHIf+KkOq6ZPNchnuZ9+yYrdSp04TvIefuWP3JTY
-        on6GKVyg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m4OBj-004WBk-9H; Fri, 16 Jul 2021 13:47:50 +0000
-Date:   Fri, 16 Jul 2021 14:47:35 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Gao Xiang <hsiangkao@linux.alibaba.com>,
+        Fri, 16 Jul 2021 09:59:24 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0UfzOB3Y_1626443784;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UfzOB3Y_1626443784)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 16 Jul 2021 21:56:25 +0800
+Date:   Fri, 16 Jul 2021 21:56:23 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Chao Yu <chao@kernel.org>, Liu Bo <bo.liu@linux.alibaba.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Liu Jiang <gerry@linux.alibaba.com>
+Subject: Re: [PATCH 1/2] iomap: support tail packing inline read
+Message-ID: <YPGQB3zT4Wp4Q38X@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
         linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Chao Yu <chao@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, Chao Yu <chao@kernel.org>,
         Liu Bo <bo.liu@linux.alibaba.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: Re: [PATCH 1/2] iomap: support tail packing inline read
-Message-ID: <YPGN97vWokqkWSZn@casper.infradead.org>
+        Liu Jiang <gerry@linux.alibaba.com>
 References: <20210716050724.225041-1-hsiangkao@linux.alibaba.com>
  <20210716050724.225041-2-hsiangkao@linux.alibaba.com>
- <YPFPDS5ktWJEUKTo@infradead.org>
+ <YPGDZYT9OxdgNYf2@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YPFPDS5ktWJEUKTo@infradead.org>
+In-Reply-To: <YPGDZYT9OxdgNYf2@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 16, 2021 at 10:19:09AM +0100, Christoph Hellwig wrote:
->  static void
->  iomap_read_inline_data(struct inode *inode, struct page *page,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, loff_t pos, unsigned int size)
->  {
-> -	size_t size = i_size_read(inode);
-> +	unsigned int block_aligned_size = round_up(size, i_blocksize(inode));
-> +	unsigned int poff = offset_in_page(pos);
->  	void *addr;
->  
-> -	if (PageUptodate(page))
-> -		return;
-> -
-> -	BUG_ON(page_has_private(page));
-> -	BUG_ON(page->index);
-> +	/* make sure that inline_data doesn't cross page boundary */
->  	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
-> +	BUG_ON(size != i_size_read(inode) - pos);
->  
->  	addr = kmap_atomic(page);
-> -	memcpy(addr, iomap->inline_data, size);
-> -	memset(addr + size, 0, PAGE_SIZE - size);
-> +	memcpy(addr + poff, iomap->inline_data - iomap->offset + pos, size);
-> +	memset(addr + poff + size, 0, block_aligned_size - size);
->  	kunmap_atomic(addr);
-> -	SetPageUptodate(page);
-> +
-> +	iomap_set_range_uptodate(page, poff, block_aligned_size);
->  }
+Hi Matthew,
 
-This should be relatively straightforward to port to folios.
-I think it looks something like this ...
+On Fri, Jul 16, 2021 at 02:02:29PM +0100, Matthew Wilcox wrote:
+> On Fri, Jul 16, 2021 at 01:07:23PM +0800, Gao Xiang wrote:
+> > This tries to add tail packing inline read to iomap. Different from
+> > the previous approach, it only marks the block range uptodate in the
+> > page it covers.
+> 
+> Why?  This path is called under two circumstances: readahead and readpage.
+> In both cases, we're trying to bring the entire page uptodate.  The inline
+> extent is always the tail of the file, so we may as well zero the part of
+> the page past the end of file and mark the entire page uptodate instead
+> and leaving the end of the page !uptodate.
+> 
+> I see the case where, eg, we have the first 2048 bytes of the file
+> out-of-inode and then 20 bytes in the inode.  So we'll create the iop
+> for the head of the file, but then we may as well finish the entire
+> PAGE_SIZE chunk as part of this iteration rather than update 2048-3071
+> as being uptodate and leave the 3072-4095 block for a future iteration.
 
-@@ -211,23 +211,18 @@ struct iomap_readpage_ctx {
- };
+Thanks for your comments. Hmm... If I understand the words above correctly,
+what I'd like to do is to cover the inline extents (blocks) only
+reported by iomap_begin() rather than handling other (maybe)
+logical-not-strictly-relevant areas such as post-EOF (even pages
+will be finally entirely uptodated), I think such zeroed area should
+be handled by from the point of view of the extent itself
 
- static void iomap_read_inline_data(struct inode *inode, struct folio *folio,
--               struct iomap *iomap)
-+               struct iomap *iomap, loff_t pos, size_t size)
- {
--       size_t size = i_size_read(inode);
-        void *addr;
-+       size_t offset = offset_in_folio(folio, pos);
+         if (iomap_block_needs_zeroing(inode, iomap, pos)) {
+                 zero_user(page, poff, plen);
+                 iomap_set_range_uptodate(page, poff, plen);
+                 goto done;
+         }
 
--       if (folio_test_uptodate(folio))
--               return;
-+       BUG_ON(size != i_size_read(inode) - pos);
+The benefits I can think out are 1) it makes the logic understand
+easier and no special cases just for tail-packing handling 2) it can
+be then used for any inline extent cases (I mean e.g. in the middle of
+the file) rather than just tail-packing inline blocks although currently
+there is a BUG_ON to prevent this but it's easier to extend even further.
+3) it can be used as a part for later partial page uptodate logic in
+order to match the legacy buffer_head logic (I remember something if my
+memory is not broken about this...)
 
--       BUG_ON(folio->index);
--       BUG_ON(folio_multi(folio));
--       BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
--
--       addr = kmap_local_folio(folio, 0);
-+       addr = kmap_local_folio(folio, offset);
-        memcpy(addr, iomap->inline_data, size);
-        memset(addr + size, 0, PAGE_SIZE - size);
-        kunmap_local(addr);
--       folio_mark_uptodate(folio);
-+       iomap_set_range_uptodate(folio, to_iomap_page(folio), pos, size);
- }
-
-> -	if (iomap->type == IOMAP_INLINE) {
-> -		WARN_ON_ONCE(pos);
-> -		iomap_read_inline_data(inode, page, iomap);
-> -		return PAGE_SIZE;
-> -	}
-> +	if (iomap->type == IOMAP_INLINE && !pos)
-> +		WARN_ON_ONCE(to_iomap_page(page) != NULL);
-> +	else
-> +		iop = iomap_page_create(inode, page);
-
-This WARN_ON doesn't make sense to me.  If a file contains bytes 0-2047
-that are !INLINE and then bytes 2048-2050 that are INLINE, we're going
-to trigger it.  Perhaps just make this:
-
-	if (iomap->type != IOMAP_INLINE || pos)
-		iop = iomap_page_create(inode, page);
+Thanks,
+Gao Xiang
 
