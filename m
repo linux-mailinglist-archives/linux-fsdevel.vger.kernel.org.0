@@ -2,128 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2629A3CB5E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 12:19:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 138EA3CB63A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 12:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237155AbhGPKWe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jul 2021 06:22:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42574 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231720AbhGPKWe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jul 2021 06:22:34 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7563C06175F;
-        Fri, 16 Jul 2021 03:19:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=k1yI3xZMljuco026FxHxM/0j0phJa/QvjQkg48mc0YE=; b=hzHCW9Y+Aa/rEziRwzmIBnqaTy
-        3aGyHM7oQkEp6gNB0sIw64hQAAkuK8YBie4CGCsFOp1fI1N+pPtgHf8rI0Beuu6tdFq1MN9S7GDn6
-        h89UVfXfYi34Dq03MW4rWT5aL//dnILUjzaBH9BhrimyB5ZJrA83uuPBoJPlcTFKz90yitnj+l54R
-        GiWDuVltR1MaThRQQh3I4ToK8R2QD7mtuOKKX9muCX0n2wCTu/grpUIu1qEGlgGfrxAb1yZ9GnCwb
-        29+V/IGdQ/9RKK/21Oe0yk9hMkTBPn293fjpj9kCztD5Fvk52CO02qt/2x4RU2Em/eRD0IL9PWETO
-        2lnnID2Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m4KwM-000Njv-Kw; Fri, 16 Jul 2021 10:19:30 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2EACC9877DF; Fri, 16 Jul 2021 12:19:29 +0200 (CEST)
-Date:   Fri, 16 Jul 2021 12:19:29 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Hou Tao <houtao1@huawei.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        yukuai3@huawei.com, paulmck@kernel.org, will@kernel.org
-Subject: Re: [PATCH] block: ensure the memory order between bi_private and
- bi_status
-Message-ID: <20210716101929.GD4717@worktop.programming.kicks-ass.net>
-References: <20210701113537.582120-1-houtao1@huawei.com>
- <20210715070148.GA8088@lst.de>
- <20210715081348.GG2725@worktop.programming.kicks-ass.net>
- <36a122ea-d18a-9317-aadd-b6b69a6f0283@huawei.com>
+        id S239151AbhGPKrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jul 2021 06:47:22 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:23899 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238337AbhGPKrW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Jul 2021 06:47:22 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1626432267; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=fRfzqitEiF6pl1t4p+k88/o5RHLLygqMeNZ3f4gZTbw=; b=MSVHG7H6mEwwIIPhY28AIAyn3+urd07gCK2vUDEFR6xbU1TQGX48Me9naTVp25q9caQdfZoS
+ 8uBm0WzW1GG49tiIcblESupjfSOc8+9q6jTIqYkCz94GJsDHpWfXo3cQMl/6sds4Cgz6Kw3m
+ OmElvmUIzC8NgQX3WZJlokdpvTE=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
+ 60f162fc4815712f3ac18cfa (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 16 Jul 2021 10:44:12
+ GMT
+Sender: charante=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id CBDEBC4323A; Fri, 16 Jul 2021 10:44:11 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        NICE_REPLY_A,SPF_FAIL,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [192.168.29.110] (unknown [49.37.159.253])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: charante)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D607FC433D3;
+        Fri, 16 Jul 2021 10:44:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D607FC433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
+Subject: Re: [PATCH V4,0/3] mm: compaction: proactive compaction trigger by
+ user
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     vbabka@suse.cz, corbet@lwn.net, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, osalvador@suse.de,
+        rientjes@google.com, mchehab+huawei@kernel.org,
+        lokeshgidra@google.com, andrew.a.klychkov@gmail.com,
+        xi.fengfei@h3c.com, nigupta@nvidia.com,
+        dave.hansen@linux.intel.com, famzheng@amazon.com,
+        mateusznosek0@gmail.com, oleksandr@redhat.com, sh_def@163.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        "vinmenon@codeaurora.org" <vinmenon@codeaurora.org>
+References: <cover.1624028025.git.charante@codeaurora.org>
+ <c0150787-5f85-29ac-9666-05fabedabb1e@codeaurora.org>
+ <20210715212744.1a43012c21711bafd25e5b68@linux-foundation.org>
+From:   Charan Teja Kalla <charante@codeaurora.org>
+Message-ID: <f24af677-1005-b14c-4bbe-f41feefe172b@codeaurora.org>
+Date:   Fri, 16 Jul 2021 16:14:01 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <36a122ea-d18a-9317-aadd-b6b69a6f0283@huawei.com>
+In-Reply-To: <20210715212744.1a43012c21711bafd25e5b68@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 16, 2021 at 05:02:33PM +0800, Hou Tao wrote:
+Thanks Andrew for the reply!!
 
-> > Cachelines don't guarantee anything, you can get partial forwards.
+On 7/16/2021 9:57 AM, Andrew Morton wrote:
+> On Sat, 3 Jul 2021 15:52:10 +0530 Charan Teja Kalla <charante@codeaurora.org> wrote:
 > 
-> Could you please point me to any reference ? I can not google
+>> A gentle ping to have your valuable comments.
 > 
-> any memory order things by using "partial forwards".
-
-I'm not sure I have references, but there are CPUs that can do, for
-example, store forwarding at a granularity below cachelines (ie at
-register size).
-
-In such a case a CPU might observe the stored value before it is
-committed to memory.
-
-
-> >>> @@ -224,7 +224,11 @@ static void blkdev_bio_end_io_simple(struct bio *bio)
-> >>>  {
-> >>>  	struct task_struct *waiter = bio->bi_private;
-> >>>  
-> >>> -	WRITE_ONCE(bio->bi_private, NULL);
-> >>> +	/*
-> >>> +	 * Paired with smp_load_acquire in __blkdev_direct_IO_simple()
-> >>> +	 * to ensure the order between bi_private and bi_xxx
-> >>> +	 */
-> > This comment doesn't help me; where are the other stores? Presumably
-> > somewhere before this is called, but how does one go about finding them?
+> Can we please have a resend?
 > 
-> Yes, the change log is vague and it will be corrected. The other stores
+> The series has two fixes against the current code.  Please separate
+> that work out from the new feature.  So a 2-patch series to fix the bugs
+> followed by a single patch to add your new feature.
+
+https://lore.kernel.org/patchwork/patch/1448789/ -- Can go as a separate
+bug fix.
+
+https://lore.kernel.org/patchwork/patch/1448793/ -- is the second bug
+fix which is tightly coupled with the feature of explicitly waking of
+kcompactd on the event of change in compaction proactiveness, when it is
+sleeping with MAX_SCHEDULE_TIMEOUT.
+
+So, will make the changes with 1 patch bug fix and 2nd patch feature
+where the second bug fix also clubbed.
+
+I hope this is fine.
 > 
-> happen in req_bio_endio() and its callees when the request completes.
-
-Aaah, right. So initially I was wondering if it would make sense to put
-the barrier there, but having looked at this a little longer, this
-really seems to be about these two DIO methods.
-
-> > The Changelog seems to suggest you only care about bi_css, not bi_xxx in
-> > general. In specific you can only care about stores that happen before
-> > this; is all of bi_xxx written before here? If not, you have to be more
-> > specific.
 > 
-> Actually we care about all bi_xxx which are written in req_bio_endio,
-> and all writes to bi_xxx happen before blkdev_bio_end_io_simple().
-> Here I just try to use bi_status as one example.
 
-I see req_bio_endio() change bi_status, bi_flags and bi_iter, but afaict
-there's more bi_ fields.
-
-> >>> @@ -283,7 +287,8 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
-> >>>  	qc = submit_bio(&bio);
-> >>>  	for (;;) {
-> >>>  		set_current_state(TASK_UNINTERRUPTIBLE);
-> >>> -		if (!READ_ONCE(bio.bi_private))
-> >>> +		/* Refer to comments in blkdev_bio_end_io_simple() */
-> >>> +		if (!smp_load_acquire(&bio.bi_private))
-> >>>  			break;
-> >>>  		if (!(iocb->ki_flags & IOCB_HIPRI) ||
-> >>>  		    !blk_poll(bdev_get_queue(bdev), qc, true))
-> > That comment there doesn't help me find any relevant later loads and is
-> > thus again inadequate.
-> >
-> > Here the purpose seems to be to ensure the bi_css load happens after the
-> > bi_private load, and this again is cheaper done using smp_rmb().
-> Yes and thanks again.
-> >
-> > Also, the implication seems to be -- but is not spelled out anywhere --
-> > that if bi_private is !NULL, it is stable.
-> 
-> What is the meaning of "it is stable" ? Do you mean if bi_private is NULL,
-> the values of bi_xxx should be ensured ?
-
-With stable I mean that if it is !NULL the value is always the same.
-
-I've read more code and this is indeed the case, specifically, here
-bi_private seems to be 'current' and will only be changed to NULL.
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
+Forum, a Linux Foundation Collaborative Project
