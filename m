@@ -2,53 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE2A43CC492
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jul 2021 18:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44BDC3CC4BF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jul 2021 19:17:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231861AbhGQQu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Jul 2021 12:50:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34398 "EHLO mail.kernel.org"
+        id S232544AbhGQRUL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Jul 2021 13:20:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230386AbhGQQu5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Jul 2021 12:50:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 975BF61159;
-        Sat, 17 Jul 2021 16:48:00 +0000 (UTC)
+        id S232010AbhGQRUL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 17 Jul 2021 13:20:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9629E6115A;
+        Sat, 17 Jul 2021 17:17:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626540480;
-        bh=F2cQxMmvBTPCYCi6oBbR2Z1X00LvbmuUKTmvk4lba7Q=;
+        s=k20201202; t=1626542234;
+        bh=9M4WiUsEgOctpJxxgPigGn9zB747+l+Fi5R2vFQb6ak=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ipv+4BZ11TkDehbsUZ/WaEi+KS4ajyJqGpIXGwea9RWBVeD8okngJEODoMMfPiIQJ
-         QMCZIGJAbdHKDww1YxLtLJ+u6HgY78l1Dh1bL7BoLt7jbLnWrIGJaM2QQw6TbPHyYh
-         Qu5B9YW0jV2WpSwIa266gEStjmLiuLvzUhdN0+L4+YaEXwEi6k02fSDXSTrbfCMr30
-         3k3x/yu3JbXhF7wmmeTRdx3N9hGqehgIyn9eBqF/I2JA6ZJuv2C9G/MjbJToVkNgJQ
-         HNIw2Mf++EPXJKU7HElG+jAkZQEmiTnAR0EASiJyKTJfeRybLE8bWPZLYR3zTi6N1o
-         vPa0jNETTKqCw==
-Received: by pali.im (Postfix)
-        id 0B79A95D; Sat, 17 Jul 2021 18:47:57 +0200 (CEST)
-Date:   Sat, 17 Jul 2021 18:47:57 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     "Leonidas P. Papadakos" <papadakospan@gmail.com>
-Cc:     zajec5@gmail.com, almaz.alexandrovich@paragon-software.com,
-        djwong@kernel.org, gregkh@linuxfoundation.org, hdegoede@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        willy@infradead.org
-Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
-Message-ID: <20210717164757.dwhcbacgi5jf6qwh@pali>
-References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
- <20210716114635.14797-1-papadakospan@gmail.com>
+        b=Wgj/S5X46GZM/dB4/6vofbinxvayxhrJENOOUti3djByOLRx28R+0SFGDINC6x4R4
+         mTQ7uk66leDhUC90TuI/cLFU6+2wryRy0jftVFZPyP6Omnb+eQjQRAB1gVblIGh4Na
+         NY1uppnoWk8jfhgmNbwAKdGLnzxqE/zGxSj5/x+by2LXH9Wu75MluQFVDHvSPwuNL2
+         G7JYVpWCoOo0bH7NzikWlRMw2CXxkt867wKNhqCLWhJL2EzEOZKC00h9lBviKi9EZ0
+         vOfsqxtAwURMRgJdAxsX5nIYFRmENdUsDECTnpZZGg+DWVSvLZGN5HE11voGMICnVO
+         pCd5WporbfTgw==
+Date:   Sat, 17 Jul 2021 10:17:13 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Murphy Zhou <jencce.kernel@gmail.com>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Subject: Re: [fsdax xfs] Regression panic at inode_switch_wbs_work_fn
+Message-ID: <20210717171713.GB22357@magnolia>
+References: <CADJHv_uitWbPquubkFJGwiFi8Vx7V0ZxhYUSiEOd1_vMhHOonA@mail.gmail.com>
+ <YPBdG2pe94hRdCMC@carbon.dhcp.thefacebook.com>
+ <CADJHv_sij245-dtvhSac_cwkYQLrSFBgjoXnja_-OYaZk6Cfdg@mail.gmail.com>
+ <YPHoUQyWW0/02l1X@carbon.dhcp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210716114635.14797-1-papadakospan@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <YPHoUQyWW0/02l1X@carbon.dhcp.thefacebook.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Friday 16 July 2021 14:46:35 Leonidas P. Papadakos wrote:
-> It would mean having good support for a cross-platform filesystem suitable for hard drives. exFAT is welcome, but it's a simple filesystem for flash storage.
+On Fri, Jul 16, 2021 at 01:13:05PM -0700, Roman Gushchin wrote:
+> On Fri, Jul 16, 2021 at 01:57:55PM +0800, Murphy Zhou wrote:
+> > Hi,
+> > 
+> > On Fri, Jul 16, 2021 at 12:07 AM Roman Gushchin <guro@fb.com> wrote:
+> > >
+> > > On Thu, Jul 15, 2021 at 06:10:22PM +0800, Murphy Zhou wrote:
+> > > > Hi,
+> > > >
+> > > > #Looping generic/270 of xfstests[1] on pmem ramdisk with
+> > > > mount option:  -o dax=always
+> > > > mkfs.xfs option: -f -b size=4096 -m reflink=0
+> > > > can hit this panic now.
+> > > >
+> > > > #It's not reproducible on ext4.
+> > > > #It's not reproducible without dax=always.
+> > >
+> > > Hi Murphy!
+> > >
+> > > Thank you for the report!
+> > >
+> > > Can you, please, check if the following patch fixes the problem?
+> > 
+> > No. Still the same panic.
+> 
+> Hm, can you, please, double check this? It seems that the patch fixes the
+> problem for others (of course, it can be a different problem).
+> CCed you on the proper patch, just sent to the list.
+> 
+> Otherwise, can you, please, say on which line of code the panic happens?
+> (using addr2line utility, for example)
 
-FYI: There is also another cross-platform filesystem (Linux kernel,
-Windows NT kernel, Mac OS X kernel) suitable for hard disks too with
-POSIX permissions about which people do not know too much. It is UDF.
+I experience the same problem that Murphy does, and I tracked it down
+to this chunk of inode_do_switch_wbs:
+
+	/*
+	 * Count and transfer stats.  Note that PAGECACHE_TAG_DIRTY points
+	 * to possibly dirty pages while PAGECACHE_TAG_WRITEBACK points to
+	 * pages actually under writeback.
+	 */
+	xas_for_each_marked(&xas, page, ULONG_MAX, PAGECACHE_TAG_DIRTY) {
+here >>>>>>>>>> if (PageDirty(page)) {
+			dec_wb_stat(old_wb, WB_RECLAIMABLE);
+			inc_wb_stat(new_wb, WB_RECLAIMABLE);
+		}
+	}
+
+I suspect that "page" is really a pfn to a pmem mapping and not a real
+struct page.
+
+--D
+
+> 
+> Thank you!
