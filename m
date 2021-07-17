@@ -2,106 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 724643CC403
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jul 2021 17:16:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77DA13CC479
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jul 2021 18:36:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234552AbhGQPTJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Jul 2021 11:19:09 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:20887 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234500AbhGQPTI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Jul 2021 11:19:08 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Ug3MJx6_1626534958;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Ug3MJx6_1626534958)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 17 Jul 2021 23:16:00 +0800
-Date:   Sat, 17 Jul 2021 23:15:58 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
-        <andreas.gruenbacher@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-erofs@lists.ozlabs.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Chao Yu <chao@kernel.org>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>
-Subject: Re: [PATCH 1/2] iomap: support tail packing inline read
-Message-ID: <YPL0LqHzEbUY4zY/@B-P7TQMD6M-0146.local>
-Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
-        Andreas =?utf-8?Q?Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>, linux-erofs@lists.ozlabs.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Chao Yu <chao@kernel.org>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>
-References: <20210716050724.225041-1-hsiangkao@linux.alibaba.com>
- <20210716050724.225041-2-hsiangkao@linux.alibaba.com>
- <YPGDZYT9OxdgNYf2@casper.infradead.org>
- <YPGQB3zT4Wp4Q38X@B-P7TQMD6M-0146.local>
- <YPGbNCdCNXIpNdqd@casper.infradead.org>
- <YPGfqLcSiH3/z2RT@B-P7TQMD6M-0146.local>
- <CAHpGcMJzEiJUbD=7ZOdH7NF+gq9MuEi8=ym34ay7QAm5_91s7g@mail.gmail.com>
- <YPLdSja/4FBsjss/@B-P7TQMD6M-0146.local>
- <YPLw0uc1jVKI8uKo@casper.infradead.org>
+        id S231504AbhGQQjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Jul 2021 12:39:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229581AbhGQQjS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 17 Jul 2021 12:39:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 767CE61159;
+        Sat, 17 Jul 2021 16:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626539781;
+        bh=aS/8fXKGqP+eRkRmy4zGdgvreLyHM+o3rXjR4DSYef4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dcY0aTikovMEKpcRgpONj6NzjFolN5kFoimT1/1jnxNIhCMiOhY3hu+aQYoI4isg3
+         CtT1zwAb+v0CbL1vFwXZivuc3OYqEVS9W0TfHKPsr1HF1y5kHfnEKPskJMvvMN8cRg
+         jokzTFQ2kbK5aEfrUnuNhWFARgFc/7Y7YdkhM+wZ5aeW4hjw1rqH+d7nWoote3K8zG
+         XijF6pT5q4SvZt8IVrcLBBQ2xrYG1LJmMAmWyztgbwqIOXkjrvO5hW0XN4xiMZIqdg
+         93KJkWL//yUYCpTRMTDX8juYeTqXVNeplzpvsHYWvUTQdpysk0cwEPAHieg0k7IbN1
+         Cqky9kQHl8Eqg==
+Received: by pali.im (Postfix)
+        id EF34895D; Sat, 17 Jul 2021 18:36:18 +0200 (CEST)
+Date:   Sat, 17 Jul 2021 18:36:18 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, dsterba@suse.cz, aaptel@suse.com,
+        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
+        mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
+        andy.lavr@gmail.com, kari.argillander@gmail.com,
+        oleksandr@natalenko.name
+Subject: Re: [PATCH v26 00/10] NTFS read-write driver GPL implementation by
+ Paragon Software
+Message-ID: <20210717163618.vt6zjnhaiey6l64m@pali>
+References: <20210402155347.64594-1-almaz.alexandrovich@paragon-software.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPLw0uc1jVKI8uKo@casper.infradead.org>
+In-Reply-To: <20210402155347.64594-1-almaz.alexandrovich@paragon-software.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
+Hello!
 
-On Sat, Jul 17, 2021 at 04:01:38PM +0100, Matthew Wilcox wrote:
-> On Sat, Jul 17, 2021 at 09:38:18PM +0800, Gao Xiang wrote:
-> > Sorry about some late. I've revised a version based on Christoph's
-> > version and Matthew's thought above. I've preliminary checked with
-> > EROFS, if it does make sense, please kindly help check on the gfs2
-> > side as well..
-> 
-> I don't understand how this bit works:
+I would like to remind that there are still two open questions about
+this ntfs driver which needs to be resolved by vfs maintainers (Al?)
+prior merging / accepting this driver into kernel tree.
 
-This part inherited from the Christoph version without change.
-The following thoughts are just my own understanding...
+1) Should this new ntfs driver use and implement old FAT ioctl calls?
+These ioctls are added in patch: Add file operations and implementation.
+First time I wrote about them in email:
+https://lore.kernel.org/linux-fsdevel/20200921133647.3tczqm5zfvae6q6a@pali/
 
-> 
-> >  	struct page *page = ctx->cur_page;
-> > -	struct iomap_page *iop;
-> > +	struct iomap_page *iop = NULL;
-> >  	bool same_page = false, is_contig = false;
-> >  	loff_t orig_pos = pos;
-> >  	unsigned poff, plen;
-> >  	sector_t sector;
-> >  
-> > -	if (iomap->type == IOMAP_INLINE) {
-> > -		WARN_ON_ONCE(pos);
-> > -		iomap_read_inline_data(inode, page, iomap);
-> > -		return PAGE_SIZE;
-> > -	}
-> > +	if (iomap->type == IOMAP_INLINE && !pos)
-> > +		WARN_ON_ONCE(to_iomap_page(page) != NULL);
-> > +	else
-> > +		iop = iomap_page_create(inode, page);
-> 
-> Imagine you have a file with bytes 0-2047 in an extent which is !INLINE
-> and bytes 2048-2051 in the INLINE extent.  When you read the page, first
-> you create an iop for the !INLINE extent.  Then this function is called
-
-Yes, it first created an iop for the !INLINE extent.
-
-> again for the INLINE extent and you'll hit the WARN_ON_ONCE.  No?
-
-If it is called again with another INLINE extent, pos will be non-0?
-so (!pos) == false. Am I missing something?
-
-Thanks,
-Gao Xiang
-
-> 
+2) Should kernel have two ntfs drivers? And if yes, how they would
+interact to userspace? Both Christoph and me think that not, see email:
+https://lore.kernel.org/linux-fsdevel/20201031085142.GA5949@lst.de/
