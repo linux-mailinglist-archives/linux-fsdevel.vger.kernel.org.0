@@ -2,162 +2,390 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFBFD3CBD91
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jul 2021 22:13:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37D1C3CC0B9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jul 2021 04:28:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229896AbhGPUQJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jul 2021 16:16:09 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:62158 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233644AbhGPUQI (ORCPT
+        id S238186AbhGQCbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jul 2021 22:31:18 -0400
+Received: from mail-il1-f199.google.com ([209.85.166.199]:36632 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238173AbhGQCbR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jul 2021 16:16:08 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16GK9Im7010862;
-        Fri, 16 Jul 2021 13:13:11 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=kNTBruFZ5RZSrKI6VZhDFed99XFTUqJvnV5IbHUm84U=;
- b=BC0dp04lxBsOZLwBCU5tpsWeqFttBcdxgMApa4yA4CjZMuNC/Q9fmUMpK7O8CKOWh705
- 750rZjSiLKmvTO/qYOFRu2JhQNhEpUAN1E0m3b4n8btfexjqNtuHt7lpCuITCcHJjKRC
- GNsaflOzK740gUFPJDD03YVbFP/G7DiowhA= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 39tw3b68hr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Fri, 16 Jul 2021 13:13:10 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 16 Jul 2021 13:13:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mu39YXMLHD9MB/9leopQatmrIzBv7t5ePqmuDxgV140Hr8ro0rx6ciKr2uXqn6yk1DL2goTpnslJYY5yGBomCVML4XcvMNcejePHyr6OkAeH3ddbbz5kgZZYAq2pJJkphR03O02qJFmJw6elVy76Be90uua+6xhi/r4pauchQEnjwMpRkQdAZbKHfQYOV0cbHlScu1XCKnX/sLY1hPY7PK3mKfl7ft4+vxJONjeimCYEtgMzfKQ4pprPEIV8UuPStFKYXkuP+quJVhADh5QB3R4RqvfpW6xmamcAuVnzy5J3JSjQ7lGrzjE9z+Mjywj5YkHIa5TVdMSx0sfbyU7ekA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kNTBruFZ5RZSrKI6VZhDFed99XFTUqJvnV5IbHUm84U=;
- b=RGyBSHIcJNaNEXAxQ8XlXh91l26ZihlThZlQT/p+NIrcmlZSBGUajma/jP88GUkjNHcJ9I4tRQHoDkpjHpjLUaLZJ0X9d4lGsMs45YW2fgnD3mfpWOod+FGEguvbbbaam97yXRzjGB1FJ5eIAlX8FtuWhnOwQa8mCI6/f9VO3Htv+Lr3wXfIjPgO8ZFMgJHRCW/G++1ciXZM8+lURkVLM8eXHj8y0VCr5mcUelvhmlWICg91Bzv+Cwv9hDOD0ewUFtESBYI1rpvUc3zAyLDaemSEKyMhwlbBbgM5+Y0t8bBoGKY8yD5lXzlC6FkApK4brk0f6yGScMNnrkgTVei3ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=fb.com;
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
- by BY3PR15MB4868.namprd15.prod.outlook.com (2603:10b6:a03:3c3::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21; Fri, 16 Jul
- 2021 20:13:07 +0000
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::9520:2bcd:e6fd:1dc7]) by BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::9520:2bcd:e6fd:1dc7%6]) with mapi id 15.20.4308.027; Fri, 16 Jul 2021
- 20:13:07 +0000
-Date:   Fri, 16 Jul 2021 13:13:05 -0700
-From:   Roman Gushchin <guro@fb.com>
-To:     Murphy Zhou <jencce.kernel@gmail.com>
-CC:     Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Subject: Re: [fsdax xfs] Regression panic at inode_switch_wbs_work_fn
-Message-ID: <YPHoUQyWW0/02l1X@carbon.dhcp.thefacebook.com>
-References: <CADJHv_uitWbPquubkFJGwiFi8Vx7V0ZxhYUSiEOd1_vMhHOonA@mail.gmail.com>
- <YPBdG2pe94hRdCMC@carbon.dhcp.thefacebook.com>
- <CADJHv_sij245-dtvhSac_cwkYQLrSFBgjoXnja_-OYaZk6Cfdg@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CADJHv_sij245-dtvhSac_cwkYQLrSFBgjoXnja_-OYaZk6Cfdg@mail.gmail.com>
-X-ClientProxiedBy: SJ0PR05CA0033.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::8) To BYAPR15MB4136.namprd15.prod.outlook.com
- (2603:10b6:a03:96::24)
+        Fri, 16 Jul 2021 22:31:17 -0400
+Received: by mail-il1-f199.google.com with SMTP id j13-20020a056e02218db02902141528bc7cso2416245ila.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jul 2021 19:28:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=cRbh8Tinf77HQCnZXcCsyZQGB7EXM3IOmE6qpom6jko=;
+        b=Z2uPeliv/G/mUOYX2qK2WxqyOf8oTbBJDa4Z/YuE8qWkkHUzAmk3jFH6s1nwG3sD9M
+         CloZ5dZSdSXRVhuUe5uXVPFyzH9mp/fPKhLkchBVQSymAviNEav+vIwwyC5Zm4DdCQ+o
+         zjfEYAl+owkzR45ML5F3/kLO4EH6gmFa8ZeDlQgA5jyXxMtarxg/8jYe/AdoZCrUIMGO
+         O9r5R+RVHjDdqsNCgQLYqtFNRrHywloKYa1EDUFxcZdoBBXEk+/Kxs9wpEHq7fo9vxnw
+         H/j7MS1S7deoLGRouVAuQqOn2ZLz+LOXD15JBq0ARBbfOdFnfMFNhxoDjwjOs3980dJC
+         RKhg==
+X-Gm-Message-State: AOAM531VxzL2NWnFBEEkd/qstS3aJjnDduNXslmNEZlAs7yY4HSi4FRu
+        kzYYNUWFnc4f87CSqdSK6WQpOHq52e0jEIo6ivdu1sYy+hck
+X-Google-Smtp-Source: ABdhPJzOamzTb7oQuNdpVA8renRACbieBVe1TEE1BbdIUI6mcROJK17QTaCNYE7+/qavBzJOpBvCXfnuQxAadIz22xgtsLZmniFi
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.dhcp.thefacebook.com (2620:10d:c090:400::5:3533) by SJ0PR05CA0033.namprd05.prod.outlook.com (2603:10b6:a03:33f::8) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.13 via Frontend Transport; Fri, 16 Jul 2021 20:13:07 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 25922e44-79b9-497e-471d-08d948962060
-X-MS-TrafficTypeDiagnostic: BY3PR15MB4868:
-X-Microsoft-Antispam-PRVS: <BY3PR15MB48685A4577BC4054538856FCBE119@BY3PR15MB4868.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: P2wgkPMW+LGG8iy4g4Lz1HsPLUp4dN3Asi/B2LlB+FcwHRoE0GppiG8CfcxTPpOUn/ktxBzFzkp/CfadViAeINMHgj02gBIib51PRb9B/hODCelHsv2Vg8uCs8X9WdPgdSRHlWlLAN9UcgSEhg/K4T2fq/lF40X7Y7Cms517YRWo4cBAMJBIjmf5fkI2SEJXOyed7Mk45OP7XYBs/Htd0Dmwr5e6gg8loPPJvZ8d09uAd0WWz3yxZ7xicYYJQMo3O7POU4oYQJDfJgOp+qGyuBalbowXplDJ4DCXcuoFweP+KwMC4RFnbm9SeRBlIbWDS0uVRIJ5bwhpQ9bR4h5ZWmIhKYHw4JoI1a0dvl+iAIAfNXtFTFFktcXWqC3MnkSLP6bhklT9ODJu0nPHKqRiTZLHzLv4r9KM8IhWcCndIjT73JBbJCtrz8OZEZRlLSG0qRwB6jT5DshCjiFysQPdCJTbhZh0dFRqjKM/LQVepdaGJN7iiLM8q8gnIxcm5QaelcROPY/quvWtjGqTyCVL+GfisUMk5cSyK8OawmxnoiPEa8gQlyhFzDYr2hxLgQpL363c/I78KGUiRDkChXj0OmqJGGz6vPAJVo2IIYUs3xMdC3OeQRQHkhekSn6rGwd5CqCqEma6x5c6sTaluY7OmA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39850400004)(346002)(366004)(136003)(376002)(396003)(4326008)(55016002)(186003)(4744005)(2906002)(5660300002)(9686003)(54906003)(8936002)(6916009)(8676002)(7696005)(6506007)(316002)(66476007)(66556008)(52116002)(86362001)(66946007)(38100700002)(478600001)(53546011);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NZJlmxeiOm+Hl7vWKyn/3kSY9disMU1/XT7x7LZiIjCSTxxVfgkGAiq/8ZvH?=
- =?us-ascii?Q?i1X/SFCJ3Gtyt5l9LXDwdqJJDPyimH4pNt+17Ey0SZ3z0JUqQAxN53tcb2Au?=
- =?us-ascii?Q?hQbafSR9/cn6MJPi0DxjbhorPlh0/l41LS9qjCxWGb3NZIMOvXmj4aJukKQH?=
- =?us-ascii?Q?90aG7Dzw6nEHNzkoI59lOWcXxoAlERynji5OrysXoqbMCHO/DV6vwGJfL51v?=
- =?us-ascii?Q?OnzBaCh4R3Qq+f0Bg+5az9SH5UFozgySedM7nr/3EoO3Qtm14GnVPFomaPbg?=
- =?us-ascii?Q?4YJS0S52t0Jn5fIv5tzBOFL8kkRyRXEnKmxhc6isbPNvt2ujO05SJZzGOfNk?=
- =?us-ascii?Q?2mt4Gw2VokLLnC9ZoFx8uLfMGtu4E0MQaruXyY+JjVh9cA6bpy11GhF7GUsH?=
- =?us-ascii?Q?P+G94cBPJd3wDTIPWxtGPQ3QnSiHEXNX3g4CLPkWB4pPlntGQQHYZPmyIsdB?=
- =?us-ascii?Q?6U6j2XMK7pnj8+TsN7Ly1a3mm7tjSDDxFUNRE93B4VHG3xxrEi93fCksIL4k?=
- =?us-ascii?Q?4qjS4KHMKFL0iPWSQvfJdxNHoBNYZnQ9Fis8ogozlr6kSTZgjdjsYdr556w7?=
- =?us-ascii?Q?eda1CnMIjkueGhnP9+04X433tQDB6KulPf+v33TBsbBEfU45JsRRCvR01xKD?=
- =?us-ascii?Q?Gk72DSBOOT2RRc15eVFSCN0ydb3mdiy10Is8F+W4GD+EP+nZDgKT7GiC6XoO?=
- =?us-ascii?Q?fWX80sv4Sw3LJMHWOPQlJFO3772bHz1CDq84SzfarygUwx3geJYL0w6wRhiq?=
- =?us-ascii?Q?gmECEuq7LsdcbELCdhHZ9uENPkdGm2i2nCxpb0xLwAm+ctyScA/OdDLedwoM?=
- =?us-ascii?Q?VuaFore65f+T3mp8mpIVH49JisJn7y/AqtL+jb2v169TlQDWLPITCVq/Wzc0?=
- =?us-ascii?Q?9fUJPen+u6YIWcmI0DOeFzU0E8KbujqPuHKGanx3sXJH6aT6MpI5MGfB7Wrr?=
- =?us-ascii?Q?pTy2bmpVoEs1ixj9TFvZZXncGRAsSUHMTCCdC9xtxhcAm7ZPmJoUQJ94a3xU?=
- =?us-ascii?Q?8vds4l/kifUCTc09LSnsWiJKs2wIyLVKqVCIHJCfh4OXtIGl30H2xtS55W+Z?=
- =?us-ascii?Q?SOVOzcnWA55CuGqH7qVkEnEOGOLRtrNfIZyMykSVbRcNreakXMLY7U5Cmavu?=
- =?us-ascii?Q?n5XAo6BkAu6tfISJjygo7niFFMWkUBDu9r7xSXLQiFdvx5Jp0RPl4B5w5VT+?=
- =?us-ascii?Q?kAtXSauxpp9QTd9z53ZurtTvov4U9yYEki3QGFFgBM0L0xJd6vTErvoLbBg1?=
- =?us-ascii?Q?HPe+8RNVIynvRzlu0AIK65oaSuuxFrXtzZsGm6uh+zHNK2O4CvNqFuNuCytI?=
- =?us-ascii?Q?Lv6yHgNxQIhe586nsPaFM85iel5670AWcEChrr7msrz4IQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25922e44-79b9-497e-471d-08d948962060
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2021 20:13:07.7099
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3yA9ijKqcbj8PCUE0OwWQYiN3ifuRlUHpiuTgUi+hxxxetssl88qM6+NSgwto44s
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR15MB4868
-X-OriginatorOrg: fb.com
-X-Proofpoint-ORIG-GUID: ME1FrIHQEnVdPAygiuHlJGNDrpE5FcHO
-X-Proofpoint-GUID: ME1FrIHQEnVdPAygiuHlJGNDrpE5FcHO
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-16_09:2021-07-16,2021-07-16 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=862
- clxscore=1015 phishscore=0 suspectscore=0 impostorscore=0 bulkscore=0
- priorityscore=1501 lowpriorityscore=0 mlxscore=0 adultscore=0
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2107160127
-X-FB-Internal: deliver
+X-Received: by 2002:a05:6e02:ea9:: with SMTP id u9mr8524153ilj.174.1626488900759;
+ Fri, 16 Jul 2021 19:28:20 -0700 (PDT)
+Date:   Fri, 16 Jul 2021 19:28:20 -0700
+In-Reply-To: <000000000000295a6a05b65efe35@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000029363505c748757d@google.com>
+Subject: Re: [syzbot] INFO: task hung in fuse_simple_request
+From:   syzbot <syzbot+46fe899420456e014d6b@syzkaller.appspotmail.com>
+To:     areeba.ahmed@futuregulfpak.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, miklos@szeredi.hu,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 16, 2021 at 01:57:55PM +0800, Murphy Zhou wrote:
-> Hi,
-> 
-> On Fri, Jul 16, 2021 at 12:07 AM Roman Gushchin <guro@fb.com> wrote:
-> >
-> > On Thu, Jul 15, 2021 at 06:10:22PM +0800, Murphy Zhou wrote:
-> > > Hi,
-> > >
-> > > #Looping generic/270 of xfstests[1] on pmem ramdisk with
-> > > mount option:  -o dax=always
-> > > mkfs.xfs option: -f -b size=4096 -m reflink=0
-> > > can hit this panic now.
-> > >
-> > > #It's not reproducible on ext4.
-> > > #It's not reproducible without dax=always.
-> >
-> > Hi Murphy!
-> >
-> > Thank you for the report!
-> >
-> > Can you, please, check if the following patch fixes the problem?
-> 
-> No. Still the same panic.
+syzbot has found a reproducer for the following issue on:
 
-Hm, can you, please, double check this? It seems that the patch fixes the
-problem for others (of course, it can be a different problem).
-CCed you on the proper patch, just sent to the list.
+HEAD commit:    d936eb238744 Revert "Makefile: Enable -Wimplicit-fallthrou..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1492834a300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=73e52880ded966e4
+dashboard link: https://syzkaller.appspot.com/bug?extid=46fe899420456e014d6b
+compiler:       Debian clang version 11.0.1-2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165fc902300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1130705c300000
 
-Otherwise, can you, please, say on which line of code the panic happens?
-(using addr2line utility, for example)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+46fe899420456e014d6b@syzkaller.appspotmail.com
 
-Thank you!
+INFO: task syz-executor874:8578 blocked for more than 143 seconds.
+      Not tainted 5.14.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor874 state:D stack:26768 pid: 8578 ppid:  8450 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0xc07/0x11f0 kernel/sched/core.c:5940
+ schedule+0x14b/0x210 kernel/sched/core.c:6019
+ request_wait_answer fs/fuse/dev.c:411 [inline]
+ __fuse_request_send fs/fuse/dev.c:430 [inline]
+ fuse_simple_request+0x1125/0x19f0 fs/fuse/dev.c:515
+ fuse_do_getattr+0x396/0x1210 fs/fuse/dir.c:1009
+ vfs_getattr fs/stat.c:142 [inline]
+ vfs_statx+0x1ba/0x3d0 fs/stat.c:207
+ vfs_fstatat fs/stat.c:225 [inline]
+ __do_sys_newfstatat fs/stat.c:394 [inline]
+ __se_sys_newfstatat+0xb4/0x780 fs/stat.c:388
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x446039
+RSP: 002b:00007fbb526242f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+RAX: ffffffffffffffda RBX: 00000000004cb4e0 RCX: 0000000000446039
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: ffffffffffffff9c
+RBP: 000000000049b16c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 64695f70756f7267 R14: 65646f6d746f6f72 R15: 00000000004cb4e8
+INFO: task syz-executor874:8582 blocked for more than 143 seconds.
+      Not tainted 5.14.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor874 state:D stack:25368 pid: 8582 ppid:  8451 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0xc07/0x11f0 kernel/sched/core.c:5940
+ schedule+0x14b/0x210 kernel/sched/core.c:6019
+ request_wait_answer fs/fuse/dev.c:411 [inline]
+ __fuse_request_send fs/fuse/dev.c:430 [inline]
+ fuse_simple_request+0x1125/0x19f0 fs/fuse/dev.c:515
+ fuse_do_getattr+0x396/0x1210 fs/fuse/dir.c:1009
+ vfs_getattr fs/stat.c:142 [inline]
+ vfs_statx+0x1ba/0x3d0 fs/stat.c:207
+ vfs_fstatat fs/stat.c:225 [inline]
+ __do_sys_newfstatat fs/stat.c:394 [inline]
+ __se_sys_newfstatat+0xb4/0x780 fs/stat.c:388
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x446039
+RSP: 002b:00007fbb526242f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+RAX: ffffffffffffffda RBX: 00000000004cb4e0 RCX: 0000000000446039
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: ffffffffffffff9c
+RBP: 000000000049b16c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 64695f70756f7267 R14: 65646f6d746f6f72 R15: 00000000004cb4e8
+INFO: task syz-executor874:8597 blocked for more than 143 seconds.
+      Not tainted 5.14.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor874 state:D stack:24784 pid: 8597 ppid:  8448 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0xc07/0x11f0 kernel/sched/core.c:5940
+ schedule+0x14b/0x210 kernel/sched/core.c:6019
+ request_wait_answer fs/fuse/dev.c:411 [inline]
+ __fuse_request_send fs/fuse/dev.c:430 [inline]
+ fuse_simple_request+0x1125/0x19f0 fs/fuse/dev.c:515
+ fuse_do_getattr+0x396/0x1210 fs/fuse/dir.c:1009
+ vfs_getattr fs/stat.c:142 [inline]
+ vfs_statx+0x1ba/0x3d0 fs/stat.c:207
+ vfs_fstatat fs/stat.c:225 [inline]
+ __do_sys_newfstatat fs/stat.c:394 [inline]
+ __se_sys_newfstatat+0xb4/0x780 fs/stat.c:388
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x446039
+RSP: 002b:00007fbb526242f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+RAX: ffffffffffffffda RBX: 00000000004cb4e0 RCX: 0000000000446039
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: ffffffffffffff9c
+RBP: 000000000049b16c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 64695f70756f7267 R14: 65646f6d746f6f72 R15: 00000000004cb4e8
+INFO: task syz-executor874:8601 blocked for more than 144 seconds.
+      Not tainted 5.14.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor874 state:D stack:24784 pid: 8601 ppid:  8452 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0xc07/0x11f0 kernel/sched/core.c:5940
+ schedule+0x14b/0x210 kernel/sched/core.c:6019
+ request_wait_answer fs/fuse/dev.c:411 [inline]
+ __fuse_request_send fs/fuse/dev.c:430 [inline]
+ fuse_simple_request+0x1125/0x19f0 fs/fuse/dev.c:515
+ fuse_do_getattr+0x396/0x1210 fs/fuse/dir.c:1009
+ vfs_getattr fs/stat.c:142 [inline]
+ vfs_statx+0x1ba/0x3d0 fs/stat.c:207
+ vfs_fstatat fs/stat.c:225 [inline]
+ __do_sys_newfstatat fs/stat.c:394 [inline]
+ __se_sys_newfstatat+0xb4/0x780 fs/stat.c:388
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x446039
+RSP: 002b:00007fbb526242f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+RAX: ffffffffffffffda RBX: 00000000004cb4e0 RCX: 0000000000446039
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: ffffffffffffff9c
+RBP: 000000000049b16c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 64695f70756f7267 R14: 65646f6d746f6f72 R15: 00000000004cb4e8
+INFO: task syz-executor874:8617 blocked for more than 144 seconds.
+      Not tainted 5.14.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor874 state:D stack:26768 pid: 8617 ppid:  8451 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0xc07/0x11f0 kernel/sched/core.c:5940
+ schedule+0x14b/0x210 kernel/sched/core.c:6019
+ request_wait_answer fs/fuse/dev.c:411 [inline]
+ __fuse_request_send fs/fuse/dev.c:430 [inline]
+ fuse_simple_request+0x1125/0x19f0 fs/fuse/dev.c:515
+ fuse_do_getattr+0x396/0x1210 fs/fuse/dir.c:1009
+ vfs_getattr fs/stat.c:142 [inline]
+ vfs_statx+0x1ba/0x3d0 fs/stat.c:207
+ vfs_fstatat fs/stat.c:225 [inline]
+ __do_sys_newfstatat fs/stat.c:394 [inline]
+ __se_sys_newfstatat+0xb4/0x780 fs/stat.c:388
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x446039
+RSP: 002b:00007fbb526242f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+RAX: ffffffffffffffda RBX: 00000000004cb4e0 RCX: 0000000000446039
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: ffffffffffffff9c
+RBP: 000000000049b16c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 64695f70756f7267 R14: 65646f6d746f6f72 R15: 00000000004cb4e8
+INFO: task syz-executor874:8626 blocked for more than 144 seconds.
+      Not tainted 5.14.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor874 state:D stack:24784 pid: 8626 ppid:  8450 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0xc07/0x11f0 kernel/sched/core.c:5940
+ schedule+0x14b/0x210 kernel/sched/core.c:6019
+ request_wait_answer fs/fuse/dev.c:411 [inline]
+ __fuse_request_send fs/fuse/dev.c:430 [inline]
+ fuse_simple_request+0x1125/0x19f0 fs/fuse/dev.c:515
+ fuse_do_getattr+0x396/0x1210 fs/fuse/dir.c:1009
+ vfs_getattr fs/stat.c:142 [inline]
+ vfs_statx+0x1ba/0x3d0 fs/stat.c:207
+ vfs_fstatat fs/stat.c:225 [inline]
+ __do_sys_newfstatat fs/stat.c:394 [inline]
+ __se_sys_newfstatat+0xb4/0x780 fs/stat.c:388
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x446039
+RSP: 002b:00007fbb526242f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+RAX: ffffffffffffffda RBX: 00000000004cb4e0 RCX: 0000000000446039
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: ffffffffffffff9c
+RBP: 000000000049b16c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 64695f70756f7267 R14: 65646f6d746f6f72 R15: 00000000004cb4e8
+INFO: task syz-executor874:8630 blocked for more than 145 seconds.
+      Not tainted 5.14.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor874 state:D stack:24784 pid: 8630 ppid:  8452 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0xc07/0x11f0 kernel/sched/core.c:5940
+ schedule+0x14b/0x210 kernel/sched/core.c:6019
+ request_wait_answer fs/fuse/dev.c:411 [inline]
+ __fuse_request_send fs/fuse/dev.c:430 [inline]
+ fuse_simple_request+0x1125/0x19f0 fs/fuse/dev.c:515
+ fuse_do_getattr+0x396/0x1210 fs/fuse/dir.c:1009
+ vfs_getattr fs/stat.c:142 [inline]
+ vfs_statx+0x1ba/0x3d0 fs/stat.c:207
+ vfs_fstatat fs/stat.c:225 [inline]
+ __do_sys_newfstatat fs/stat.c:394 [inline]
+ __se_sys_newfstatat+0xb4/0x780 fs/stat.c:388
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x446039
+RSP: 002b:00007fbb526242f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+RAX: ffffffffffffffda RBX: 00000000004cb4e0 RCX: 0000000000446039
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: ffffffffffffff9c
+RBP: 000000000049b16c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 64695f70756f7267 R14: 65646f6d746f6f72 R15: 00000000004cb4e8
+INFO: task syz-executor874:8634 blocked for more than 145 seconds.
+      Not tainted 5.14.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor874 state:D stack:26640 pid: 8634 ppid:  8448 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0xc07/0x11f0 kernel/sched/core.c:5940
+ schedule+0x14b/0x210 kernel/sched/core.c:6019
+ request_wait_answer fs/fuse/dev.c:411 [inline]
+ __fuse_request_send fs/fuse/dev.c:430 [inline]
+ fuse_simple_request+0x1125/0x19f0 fs/fuse/dev.c:515
+ fuse_do_getattr+0x396/0x1210 fs/fuse/dir.c:1009
+ vfs_getattr fs/stat.c:142 [inline]
+ vfs_statx+0x1ba/0x3d0 fs/stat.c:207
+ vfs_fstatat fs/stat.c:225 [inline]
+ __do_sys_newfstatat fs/stat.c:394 [inline]
+ __se_sys_newfstatat+0xb4/0x780 fs/stat.c:388
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x446039
+RSP: 002b:00007fbb526242f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+RAX: ffffffffffffffda RBX: 00000000004cb4e0 RCX: 0000000000446039
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: ffffffffffffff9c
+RBP: 000000000049b16c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 64695f70756f7267 R14: 65646f6d746f6f72 R15: 00000000004cb4e8
+INFO: task syz-executor874:8657 blocked for more than 145 seconds.
+      Not tainted 5.14.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor874 state:D stack:26768 pid: 8657 ppid:  8450 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0xc07/0x11f0 kernel/sched/core.c:5940
+ schedule+0x14b/0x210 kernel/sched/core.c:6019
+ request_wait_answer fs/fuse/dev.c:411 [inline]
+ __fuse_request_send fs/fuse/dev.c:430 [inline]
+ fuse_simple_request+0x1125/0x19f0 fs/fuse/dev.c:515
+ fuse_do_getattr+0x396/0x1210 fs/fuse/dir.c:1009
+ vfs_getattr fs/stat.c:142 [inline]
+ vfs_statx+0x1ba/0x3d0 fs/stat.c:207
+ vfs_fstatat fs/stat.c:225 [inline]
+ __do_sys_newfstatat fs/stat.c:394 [inline]
+ __se_sys_newfstatat+0xb4/0x780 fs/stat.c:388
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x446039
+RSP: 002b:00007fbb526242f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+RAX: ffffffffffffffda RBX: 00000000004cb4e0 RCX: 0000000000446039
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: ffffffffffffff9c
+RBP: 000000000049b16c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 64695f70756f7267 R14: 65646f6d746f6f72 R15: 00000000004cb4e8
+INFO: task syz-executor874:8665 blocked for more than 145 seconds.
+      Not tainted 5.14.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor874 state:D stack:26768 pid: 8665 ppid:  8452 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4683 [inline]
+ __schedule+0xc07/0x11f0 kernel/sched/core.c:5940
+ schedule+0x14b/0x210 kernel/sched/core.c:6019
+ request_wait_answer fs/fuse/dev.c:411 [inline]
+ __fuse_request_send fs/fuse/dev.c:430 [inline]
+ fuse_simple_request+0x1125/0x19f0 fs/fuse/dev.c:515
+ fuse_do_getattr+0x396/0x1210 fs/fuse/dir.c:1009
+ vfs_getattr fs/stat.c:142 [inline]
+ vfs_statx+0x1ba/0x3d0 fs/stat.c:207
+ vfs_fstatat fs/stat.c:225 [inline]
+ __do_sys_newfstatat fs/stat.c:394 [inline]
+ __se_sys_newfstatat+0xb4/0x780 fs/stat.c:388
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x446039
+RSP: 002b:00007fbb526242f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
+RAX: ffffffffffffffda RBX: 00000000004cb4e0 RCX: 0000000000446039
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: ffffffffffffff9c
+RBP: 000000000049b16c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 64695f70756f7267 R14: 65646f6d746f6f72 R15: 00000000004cb4e8
+
+Showing all locks held in the system:
+1 lock held by ksoftirqd/0/13:
+ #0: ffff8880b9c514d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x1b/0x30 kernel/sched/core.c:460
+1 lock held by khungtaskd/1644:
+ #0: ffffffff8c7177c0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x0/0x30 arch/x86/pci/mmconfig_64.c:151
+1 lock held by in:imklog/8138:
+ #0: ffff888019edb270 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x24e/0x2f0 fs/file.c:974
+no locks held by syz-executor874/16040.
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 1644 Comm: khungtaskd Not tainted 5.14.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1d3/0x29f lib/dump_stack.c:105
+ nmi_cpu_backtrace+0x16c/0x190 lib/nmi_backtrace.c:105
+ nmi_trigger_cpumask_backtrace+0x191/0x2f0 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:210 [inline]
+ watchdog+0xd06/0xd50 kernel/hung_task.c:295
+ kthread+0x453/0x480 kernel/kthread.c:319
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 8453 Comm: syz-executor874 Not tainted 5.14.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:put_pid+0x0/0x130 kernel/pid.c:106
+Code: 1f 84 00 00 00 00 00 0f 1f 00 be af 00 00 00 48 c7 c7 40 99 5c 8c e8 ff d4 74 00 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc <55> 41 57 41 56 41 54 53 49 89 ff e8 c0 a3 2b 00 4d 85 ff 0f 84 aa
+RSP: 0018:ffffc9000198fc78 EFLAGS: 00000286
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc9000198fd90 R08: ffffffff81869020 R09: ffffed1002bf8685
+R10: ffffed1002bf8685 R11: 0000000000000000 R12: 0000000000000000
+R13: 1ffff92000331f94 R14: 1ffff92000331f9b R15: 0000000000000000
+FS:  00000000020ba300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fbb52603718 CR3: 00000000366ee000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ kernel_wait4+0x27f/0x380 kernel/exit.c:1678
+ __do_sys_wait4 kernel/exit.c:1705 [inline]
+ __se_sys_wait4 kernel/exit.c:1701 [inline]
+ __x64_sys_wait4+0x117/0x1c0 kernel/exit.c:1701
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x444826
+Code: 0f 1f 40 00 31 c9 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 49 89 ca 64 8b 04 25 18 00 00 00 85 c0 75 11 b8 3d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 5a c3 90 48 83 ec 28 89 54 24 14 48 89 74 24
+RSP: 002b:00007fff50fbe958 EFLAGS: 00000246 ORIG_RAX: 000000000000003d
+RAX: ffffffffffffffda RBX: 00007fff50fbea10 RCX: 0000000000444826
+RDX: 0000000040000001 RSI: 00007fff50fbe98c RDI: 00000000ffffffff
+RBP: 00007fff50fbe98c R08: 00007fff50fec080 R09: 0000000000000010
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000f4240
+R13: 0000000000001eee R14: 00007fff50fbe9e0 R15: 00007fff50fbe9d0
+
