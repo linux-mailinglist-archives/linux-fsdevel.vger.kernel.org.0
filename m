@@ -2,89 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8523CEF50
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 00:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FB773CF0D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 02:39:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245627AbhGSVnZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jul 2021 17:43:25 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:46293 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1354249AbhGSVaq (ORCPT
+        id S1348096AbhGSXx5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jul 2021 19:53:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46610 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1355272AbhGSX1b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jul 2021 17:30:46 -0400
-Received: from dread.disaster.area (pa49-181-34-10.pa.nsw.optusnet.com.au [49.181.34.10])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 608471045436;
-        Tue, 20 Jul 2021 08:10:06 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1m5bSf-008Ug1-At; Tue, 20 Jul 2021 08:10:05 +1000
-Date:   Tue, 20 Jul 2021 08:10:05 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
-        cluster-devel@redhat.com
-Subject: Re: [PATCH 20/27] fsdax: switch dax_iomap_rw to use iomap_iter
-Message-ID: <20210719221005.GL664593@dread.disaster.area>
-References: <20210719103520.495450-1-hch@lst.de>
- <20210719103520.495450-21-hch@lst.de>
+        Mon, 19 Jul 2021 19:27:31 -0400
+X-Greylist: delayed 490 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 19 Jul 2021 16:59:58 PDT
+Received: from gimli.rothwell.id.au (gimli.rothwell.id.au [IPv6:2404:9400:2:0:216:3eff:fee1:997a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9DA5C05BD30
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jul 2021 16:59:58 -0700 (PDT)
+Received: from authenticated.rothwell.id.au (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.rothwell.id.au (Postfix) with ESMTPSA id 4GTJXX4zlPzykD;
+        Tue, 20 Jul 2021 09:51:40 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rothwell.id.au;
+        s=201702; t=1626738701;
+        bh=1WO9k5eI6bGdzlIKCTJhZj9/sUgG0e1cD2+T+Sp0pmc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AcLHHd2gQzK1ZLfycbqUVskRkCBOgMtqGNHQBr6VpTcamC76eiELQ8qaX9lC5KpxI
+         uYko4eyhnHbY99gMafFiI4FRxxjmF7TIxKttyFwOHHsuPZ4sZX5lpPNdXXJqxVLhOR
+         r8QgHB3NaU38j4G03nIdEKWGC2fif/VnSPlDOrfVrbStwMsE6//ChnCX4P9dHMIzgL
+         ZjeK7fAQ+4OGjcENhEfuhKuttW0591kpZ33lgyUJ0eYREzR7jdtMhbdQtoH/nITEkC
+         tCImhaU0cJnUQ0ojUo6gDeNFFSLEf53q07WtlpeW48oBzOErWQ7DUG4J+JO3QZ3N+H
+         G6YdrhJjJzg5A==
+Date:   Tue, 20 Jul 2021 09:51:37 +1000
+From:   Stephen Rothwell <sfr@rothwell.id.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Folio tree for next
+Message-ID: <20210720095137.65702810@elm.ozlabs.ibm.com>
+In-Reply-To: <20210720094033.46b34168@canb.auug.org.au>
+References: <YPTu+xHa+0Qz0cOu@casper.infradead.org>
+        <20210718205758.65254408be0b2a17cfad7809@linux-foundation.org>
+        <20210720094033.46b34168@canb.auug.org.au>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210719103520.495450-21-hch@lst.de>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
-        a=hdaoRb6WoHYrV466vVKEyw==:117 a=hdaoRb6WoHYrV466vVKEyw==:17
-        a=kj9zAlcOel0A:10 a=e_q4qTt1xDgA:10 a=7-415B0cAAAA:8
-        a=ptF0LWpzHeEXjmLxdvQA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: multipart/signed; boundary="Sig_/r+a3h9RBW5C+1eFlQhlnRx7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 19, 2021 at 12:35:13PM +0200, Christoph Hellwig wrote:
-> Switch the dax_iomap_rw implementation to use iomap_iter.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/dax.c | 49 ++++++++++++++++++++++++-------------------------
->  1 file changed, 24 insertions(+), 25 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 4d63040fd71f56..51da45301350a6 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1103,20 +1103,21 @@ s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
->  	return size;
->  }
->  
-> -static loff_t
-> -dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap, struct iomap *srcmap)
-> +static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
-> +		struct iov_iter *iter)
+--Sig_/r+a3h9RBW5C+1eFlQhlnRx7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-At first I wondered "iomi? Strange name, why is this one-off name
-used?" and then I realised it's because this function also takes an
-struct iov_iter named "iter".
+Hi Andrew,
 
-That's going to cause confusion in the long run - iov_iter and
-iomap_iter both being generally named "iter", and then one or the
-other randomly changing when both are used in the same function.
+On Tue, 20 Jul 2021 09:40:33 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Sun, 18 Jul 2021 20:57:58 -0700 Andrew Morton <akpm@linux-foundation.o=
+rg> wrote:
+> >
+> > On Mon, 19 Jul 2021 04:18:19 +0100 Matthew Wilcox <willy@infradead.org>=
+ wrote:
+> >  =20
+> > > Please include a new tree in linux-next:
+> > >=20
+> > > https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/hea=
+ds/for-next
+> > > aka
+> > > git://git.infradead.org/users/willy/pagecache.git for-next
+> > >=20
+> > > There are some minor conflicts with mmotm.  I resolved some of them by
+> > > pulling in three patches from mmotm and rebasing on top of them.
+> > > These conflicts (or near-misses) still remain, and I'm showing my
+> > > resolution:   =20
+> >=20
+> > I'm thinking that it would be better if I were to base all of the -mm
+> > MM patches on linux-next.  Otherwise Stephen is going to have a pretty
+> > miserable two months... =20
+>=20
+> If they are only minor conflicts, then please leave them to me (and
+> Linus).  That way if Linus decides not to take the folio tree or the
+> mmotm changes (or they get radically changed), then they are not
+> contaminated by each other ... hints (or example resolutions) are
+> always welcome.
 
-Would it be better to avoid any possible confusion simply by using
-"iomi" for all iomap_iter variables throughout the patchset from the
-start? That way nobody is going to confuse iov_iter with iomap_iter
-iteration variables and code that uses both types will naturally
-have different, well known names...
+Also, I prefer to have less, not more, of the mmotm patch set depending
+on the rest of linux-next since fixing conflicts while rebasing is
+often more pain than while merging.
 
+--=20
 Cheers,
+Stephen Rothwell
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--Sig_/r+a3h9RBW5C+1eFlQhlnRx7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmD2EAoACgkQAVBC80lX
+0GwYnggAmdaNrN1vJU6cuGReiBkw9zM49IBrvcZX/zhUwjXTKzkTfnH/CfyqnYHT
+f6q/UPYrVFeH8Jto9g1sMs4u56yHaRogNmPie4VJDXWjqa7N5JO3FPtz3YtGcMVH
+zHyBQoNRShKFeMfz5Uadh+LjMwtFdrJEtK/DS7s5FYVmKGdp8o44cPL0HxsUTiTC
+Huc4OMvMrch7q5aYoh+3NAG1xcjvIFfdAhx9nx9p+5Az+0Br0aQPC4DgPGLkgmlU
+Zs1+ljEG2JgLj05XpFCfsO69eYCu0K03/zMhSjfcGp1pEiu/KzzBnIOFYLKC6ABp
+S55UPNpClvtHTDBJw5URUuJ0hRSTeQ==
+=hVBl
+-----END PGP SIGNATURE-----
+
+--Sig_/r+a3h9RBW5C+1eFlQhlnRx7--
