@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B8393CEA49
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jul 2021 19:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53EF03CEB97
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jul 2021 22:06:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350419AbhGSRKk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jul 2021 13:10:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55452 "EHLO mail.kernel.org"
+        id S1355716AbhGSRVy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jul 2021 13:21:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348982AbhGSRId (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jul 2021 13:08:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5B5896115B;
-        Mon, 19 Jul 2021 17:48:46 +0000 (UTC)
+        id S1378034AbhGSRRU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Jul 2021 13:17:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D7C1761006;
+        Mon, 19 Jul 2021 17:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626716926;
-        bh=cwiE32QXA51fa29A7Kq5IlLu+fSmd1CcbP1DerMz15E=;
+        s=k20201202; t=1626717476;
+        bh=x8x0pqYFmuT5qMTKwlfFNeYH6hS0owwPMc2CIru3JzA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SW+CaXYQPqIBvaC99pVdVPnfwn32i85U1Mpxw3MHTuJGygBc3+jBmCAXbLoDv7Yk1
-         H7sT5gfkMuizmIOOHtthaVQoFX2bdiEpPVIdh9XRmPoObtGwsOHaYj/M1FAWp9a0PQ
-         HnIVEjIVBE3lQEcsji/ucuGmovjIWWRFHguJhwfMCkEA1BkIyaHsAx5NxWomJv55xT
-         LZ6eVqCG7OWTk4Zz+2G8aEYSlFUJEsbC4h/vL58ytEOgXkOLmtU1MxKO3ErGDwE2TJ
-         JuCrhaIrQm/Fg7aSGcmxxIw/Px2wNe3xAnTd2v/B9E++w8Nk5K7a/cb1S0qklyzYIC
-         xrAGvm+qt2FXA==
-Date:   Mon, 19 Jul 2021 10:48:46 -0700
+        b=YCqMLshCd5VlFt6qY7ow+EPyAxC3nLUM+r5tRv+eN2i1qoVRrynw50Zyvq5YnPyhj
+         Rp/iZj6ZzLGbNcw8ftnZA/xC97yDiPTbdHkI2nBxhYyxLaOQOA3Z5tPN73ax9WEfdF
+         LkyKvxGu95M9mi1/Tp7zOOBw27ndzwluDyrRZ+p0NHS4M+HpEX4aSUik78mg6wHS2n
+         QbeVKL6uOmJjyF0NX/8u32Qi9NXQjQXFzMT/mYryuRft7dA1wuoTqZnzQBD/X5DYzS
+         bK9HN4kZHKdLNxWd1nBU7w4rnf1PVkdgpfUKp3w7ZcdUHpyIXnJmeKU8phfNbRrntH
+         tfZyI3LdWvKAA==
+Date:   Mon, 19 Jul 2021 10:57:56 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -33,228 +33,85 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: Re: [PATCH 21/27] iomap: remove iomap_apply
-Message-ID: <20210719174846.GL22357@magnolia>
+Subject: Re: RFC: switch iomap to an iterator model
+Message-ID: <20210719175756.GM22357@magnolia>
 References: <20210719103520.495450-1-hch@lst.de>
- <20210719103520.495450-22-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210719103520.495450-22-hch@lst.de>
+In-Reply-To: <20210719103520.495450-1-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 19, 2021 at 12:35:14PM +0200, Christoph Hellwig wrote:
-> iomap_apply is unused now, so remove it.
+On Mon, Jul 19, 2021 at 12:34:53PM +0200, Christoph Hellwig wrote:
+> Hi all,
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/iomap/Makefile     |  1 -
->  fs/iomap/apply.c      | 99 -------------------------------------------
->  fs/iomap/trace.h      | 40 -----------------
->  include/linux/iomap.h | 10 -----
->  4 files changed, 150 deletions(-)
+> this series replies the existing callback-based iomap_apply to an iter based
+> model.  The prime aim here is to simply the DAX reflink support, which
+> requires iterating through two inodes, something that is rather painful
+> with the apply model.  It also helps to kill an indirect call per segment
+> as-is.  Compared to the earlier patchset from Matthew Wilcox that this
+> series is based upon it does not eliminate all indirect calls, but as the
+> upside it does not change the file systems at all (except for the btrfs
+> and gfs2 hooks which have slight prototype changes).
 
-mmm, negative LOC delta ;)
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+FWIW patches 9-20 look ok to me, modulo the discussion I started in
+patch 8 about defining a distinct type for iomap byte lengths instead of
+the combination of int/ssize_t/u64 that we use now.
+
+> This passes basic testing on XFS for block based file systems.  The DAX
+> changes are entirely untested as I haven't managed to get pmem work in
+> recent qemu.
+
+This gets increasingly difficult as time goes by.
+
+Right now I have the following bits of libvirt xml in the vm
+definitions:
+
+  <maxMemory slots='32' unit='KiB'>1073741824</maxMemory>
+  <devices>
+    <memory model='nvdimm' access='shared'>
+      <source>
+        <path>/run/g.mem</path>
+      </source>
+      <target>
+        <size unit='KiB'>10487808</size>
+        <node>0</node>
+      </target>
+      <address type='dimm' slot='0'/>
+    </memory>
+  </devices>
+
+Which seems to translate to:
+
+-machine pc-q35-4.2,accel=kvm,usb=off,vmport=off,dump-guest-core=off,nvdimm=on
+-object memory-backend-file,id=memnvdimm0,prealloc=no,mem-path=/run/g.mem,share=yes,size=10739515392,align=128M
+-device nvdimm,memdev=memnvdimm0,id=nvdimm0,slot=0,label-size=2M
+
+Evidently something was added to the pmem code(?) that makes it fussy if
+the memory region doesn't align to a 128M boundary or the label isn't
+big enough for ... whatever gets written into them.
+
+The file /run/g.mem is intended to provide 10GB of pmem to the VM, with
+an additional 2M allocated for the label.
 
 --D
 
->  delete mode 100644 fs/iomap/apply.c
-> 
-> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
-> index 85034deb5a2f19..ebd9866d80ae90 100644
-> --- a/fs/iomap/Makefile
-> +++ b/fs/iomap/Makefile
-> @@ -9,7 +9,6 @@ ccflags-y += -I $(srctree)/$(src)		# needed for trace events
->  obj-$(CONFIG_FS_IOMAP)		+= iomap.o
->  
->  iomap-y				+= trace.o \
-> -				   apply.o \
->  				   iter.o \
->  				   buffered-io.o \
->  				   direct-io.o \
-> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
-> deleted file mode 100644
-> index 26ab6563181fc6..00000000000000
-> --- a/fs/iomap/apply.c
-> +++ /dev/null
-> @@ -1,99 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -/*
-> - * Copyright (C) 2010 Red Hat, Inc.
-> - * Copyright (c) 2016-2018 Christoph Hellwig.
-> - */
-> -#include <linux/module.h>
-> -#include <linux/compiler.h>
-> -#include <linux/fs.h>
-> -#include <linux/iomap.h>
-> -#include "trace.h"
-> -
-> -/*
-> - * Execute a iomap write on a segment of the mapping that spans a
-> - * contiguous range of pages that have identical block mapping state.
-> - *
-> - * This avoids the need to map pages individually, do individual allocations
-> - * for each page and most importantly avoid the need for filesystem specific
-> - * locking per page. Instead, all the operations are amortised over the entire
-> - * range of pages. It is assumed that the filesystems will lock whatever
-> - * resources they require in the iomap_begin call, and release them in the
-> - * iomap_end call.
-> - */
-> -loff_t
-> -iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
-> -		const struct iomap_ops *ops, void *data, iomap_actor_t actor)
-> -{
-> -	struct iomap iomap = { .type = IOMAP_HOLE };
-> -	struct iomap srcmap = { .type = IOMAP_HOLE };
-> -	loff_t written = 0, ret;
-> -	u64 end;
-> -
-> -	trace_iomap_apply(inode, pos, length, flags, ops, actor, _RET_IP_);
-> -
-> -	/*
-> -	 * Need to map a range from start position for length bytes. This can
-> -	 * span multiple pages - it is only guaranteed to return a range of a
-> -	 * single type of pages (e.g. all into a hole, all mapped or all
-> -	 * unwritten). Failure at this point has nothing to undo.
-> -	 *
-> -	 * If allocation is required for this range, reserve the space now so
-> -	 * that the allocation is guaranteed to succeed later on. Once we copy
-> -	 * the data into the page cache pages, then we cannot fail otherwise we
-> -	 * expose transient stale data. If the reserve fails, we can safely
-> -	 * back out at this point as there is nothing to undo.
-> -	 */
-> -	ret = ops->iomap_begin(inode, pos, length, flags, &iomap, &srcmap);
-> -	if (ret)
-> -		return ret;
-> -	if (WARN_ON(iomap.offset > pos)) {
-> -		written = -EIO;
-> -		goto out;
-> -	}
-> -	if (WARN_ON(iomap.length == 0)) {
-> -		written = -EIO;
-> -		goto out;
-> -	}
-> -
-> -	trace_iomap_apply_dstmap(inode, &iomap);
-> -	if (srcmap.type != IOMAP_HOLE)
-> -		trace_iomap_apply_srcmap(inode, &srcmap);
-> -
-> -	/*
-> -	 * Cut down the length to the one actually provided by the filesystem,
-> -	 * as it might not be able to give us the whole size that we requested.
-> -	 */
-> -	end = iomap.offset + iomap.length;
-> -	if (srcmap.type != IOMAP_HOLE)
-> -		end = min(end, srcmap.offset + srcmap.length);
-> -	if (pos + length > end)
-> -		length = end - pos;
-> -
-> -	/*
-> -	 * Now that we have guaranteed that the space allocation will succeed,
-> -	 * we can do the copy-in page by page without having to worry about
-> -	 * failures exposing transient data.
-> -	 *
-> -	 * To support COW operations, we read in data for partially blocks from
-> -	 * the srcmap if the file system filled it in.  In that case we the
-> -	 * length needs to be limited to the earlier of the ends of the iomaps.
-> -	 * If the file system did not provide a srcmap we pass in the normal
-> -	 * iomap into the actors so that they don't need to have special
-> -	 * handling for the two cases.
-> -	 */
-> -	written = actor(inode, pos, length, data, &iomap,
-> -			srcmap.type != IOMAP_HOLE ? &srcmap : &iomap);
-> -
-> -out:
-> -	/*
-> -	 * Now the data has been copied, commit the range we've copied.  This
-> -	 * should not fail unless the filesystem has had a fatal error.
-> -	 */
-> -	if (ops->iomap_end) {
-> -		ret = ops->iomap_end(inode, pos, length,
-> -				     written > 0 ? written : 0,
-> -				     flags, &iomap);
-> -	}
-> -
-> -	return written ? written : ret;
-> -}
-> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-> index 1012d7af6b689b..f1519f9a140320 100644
-> --- a/fs/iomap/trace.h
-> +++ b/fs/iomap/trace.h
-> @@ -138,49 +138,9 @@ DECLARE_EVENT_CLASS(iomap_class,
->  DEFINE_EVENT(iomap_class, name,	\
->  	TP_PROTO(struct inode *inode, struct iomap *iomap), \
->  	TP_ARGS(inode, iomap))
-> -DEFINE_IOMAP_EVENT(iomap_apply_dstmap);
-> -DEFINE_IOMAP_EVENT(iomap_apply_srcmap);
->  DEFINE_IOMAP_EVENT(iomap_iter_dstmap);
->  DEFINE_IOMAP_EVENT(iomap_iter_srcmap);
->  
-> -TRACE_EVENT(iomap_apply,
-> -	TP_PROTO(struct inode *inode, loff_t pos, loff_t length,
-> -		unsigned int flags, const void *ops, void *actor,
-> -		unsigned long caller),
-> -	TP_ARGS(inode, pos, length, flags, ops, actor, caller),
-> -	TP_STRUCT__entry(
-> -		__field(dev_t, dev)
-> -		__field(u64, ino)
-> -		__field(loff_t, pos)
-> -		__field(loff_t, length)
-> -		__field(unsigned int, flags)
-> -		__field(const void *, ops)
-> -		__field(void *, actor)
-> -		__field(unsigned long, caller)
-> -	),
-> -	TP_fast_assign(
-> -		__entry->dev = inode->i_sb->s_dev;
-> -		__entry->ino = inode->i_ino;
-> -		__entry->pos = pos;
-> -		__entry->length = length;
-> -		__entry->flags = flags;
-> -		__entry->ops = ops;
-> -		__entry->actor = actor;
-> -		__entry->caller = caller;
-> -	),
-> -	TP_printk("dev %d:%d ino 0x%llx pos %lld length %lld flags %s (0x%x) "
-> -		  "ops %ps caller %pS actor %ps",
-> -		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> -		   __entry->ino,
-> -		   __entry->pos,
-> -		   __entry->length,
-> -		   __print_flags(__entry->flags, "|", IOMAP_FLAGS_STRINGS),
-> -		   __entry->flags,
-> -		   __entry->ops,
-> -		   (void *)__entry->caller,
-> -		   __entry->actor)
-> -);
-> -
->  TRACE_EVENT(iomap_iter,
->  	TP_PROTO(struct iomap_iter *iter, const void *ops,
->  		 unsigned long caller),
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index da01226886eca4..2f13e34c2c0b0b 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -199,16 +199,6 @@ static inline struct iomap *iomap_iter_srcmap(struct iomap_iter *i)
->  	return &i->iomap;
->  }
->  
-> -/*
-> - * Main iomap iterator function.
-> - */
-> -typedef loff_t (*iomap_actor_t)(struct inode *inode, loff_t pos, loff_t len,
-> -		void *data, struct iomap *iomap, struct iomap *srcmap);
-> -
-> -loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
-> -		unsigned flags, const struct iomap_ops *ops, void *data,
-> -		iomap_actor_t actor);
-> -
->  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
->  		const struct iomap_ops *ops);
->  int iomap_readpage(struct page *page, const struct iomap_ops *ops);
-> -- 
-> 2.30.2
-> 
+> Diffstat:
+>  b/fs/btrfs/inode.c       |    5 
+>  b/fs/buffer.c            |    4 
+>  b/fs/dax.c               |  578 ++++++++++++++++++++++-------------------------
+>  b/fs/gfs2/bmap.c         |    5 
+>  b/fs/internal.h          |    4 
+>  b/fs/iomap/Makefile      |    2 
+>  b/fs/iomap/buffered-io.c |  344 +++++++++++++--------------
+>  b/fs/iomap/direct-io.c   |  162 ++++++-------
+>  b/fs/iomap/fiemap.c      |  101 +++-----
+>  b/fs/iomap/iter.c        |   74 ++++++
+>  b/fs/iomap/seek.c        |   88 +++----
+>  b/fs/iomap/swapfile.c    |   38 +--
+>  b/fs/iomap/trace.h       |   35 +-
+>  b/include/linux/iomap.h  |   73 ++++-
+>  fs/iomap/apply.c         |   99 --------
+>  15 files changed, 777 insertions(+), 835 deletions(-)
