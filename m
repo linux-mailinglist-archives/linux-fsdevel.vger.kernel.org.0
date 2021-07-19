@@ -2,156 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C92013CCB6A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jul 2021 00:40:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D6883CCC0A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jul 2021 03:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234020AbhGRWnS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Jul 2021 18:43:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21376 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233875AbhGRWnN (ORCPT
+        id S233894AbhGSBuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Jul 2021 21:50:46 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:34589 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233713AbhGSBuq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Jul 2021 18:43:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626648014;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KCnSLNP7riR8LfALdj37STeKckvJ3hnzBxN8+ybrwAA=;
-        b=IzitkoTuH9rDpqpbUU0JiukMqWTRgTHuf3C3rjVXGgy6xXW+a4Mmef7c/kzfBOdbMKIyyR
-        iieoD2eWL2KRTBd2BRjCfp2D4wyOv9b1jM0DZdSboOQ23IlRupM7sGeyDIv2JUwQrMAEOc
-        VdFuyuehy32+3alCzgX4II4flhtrcdI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-422-_lYvoSUYM2qhfapcOfSkeQ-1; Sun, 18 Jul 2021 18:40:10 -0400
-X-MC-Unique: _lYvoSUYM2qhfapcOfSkeQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3994F362F8;
-        Sun, 18 Jul 2021 22:40:09 +0000 (UTC)
-Received: from max.com (unknown [10.40.195.75])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D5A560C0F;
-        Sun, 18 Jul 2021 22:40:02 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v2 6/6] gfs2: Fix mmap + page fault deadlocks for direct I/O
-Date:   Mon, 19 Jul 2021 00:39:32 +0200
-Message-Id: <20210718223932.2703330-7-agruenba@redhat.com>
-In-Reply-To: <20210718223932.2703330-1-agruenba@redhat.com>
-References: <20210718223932.2703330-1-agruenba@redhat.com>
+        Sun, 18 Jul 2021 21:50:46 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UgAb0Iu_1626659265;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UgAb0Iu_1626659265)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 19 Jul 2021 09:47:45 +0800
+Subject: Re: [PATCH] vfs: only allow SETFLAGS to set DAX flag on files and
+ dirs
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+References: <20210716061951.81529-1-jefflexu@linux.alibaba.com>
+ <20210716162017.GA22346@magnolia>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <e85ceae6-23b8-aea8-1314-7e2ebece61d6@linux.alibaba.com>
+Date:   Mon, 19 Jul 2021 09:47:45 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20210716162017.GA22346@magnolia>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Direct I/O differs from buffered I/O in that it uses bio_iov_iter_get_pages for
-grabbing page references and for manually faulting in pages instead of
-triggering actual page faults.  For disabling these manual page faults, it's
-not enough to call pagefault_disable(); instead, we use the new
-ITER_FLAG_FAST_ONLY flag for telling iomap_dio_rw to stop faulting pages in for
-us.
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/gfs2/file.c | 35 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index 99df7934b4d8..6feb857a8a1c 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -763,21 +763,42 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
- 	struct file *file = iocb->ki_filp;
- 	struct gfs2_inode *ip = GFS2_I(file->f_mapping->host);
- 	size_t count = iov_iter_count(to);
-+	size_t written = 0;
- 	ssize_t ret;
- 
-+	/*
-+	 * In this function, we disable page faults when whe're holding the
-+	 * inode glock while doing I/O.  If a page fault occurs, we drop the
-+	 * inode glock, fault in the pages manually, and then we retry.  Other
-+	 * than in gfs2_file_read_iter, iomap_dio_rw can trigger implicit as
-+	 * well as manual page faults, and we need to disable both kinds
-+	 * separately.
-+	 */
-+
- 	if (!count)
- 		return 0; /* skip atime */
- 
- 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
-+retry:
- 	ret = gfs2_glock_nq(gh);
- 	if (ret)
- 		goto out_uninit;
- 
-+	pagefault_disable();
-+	to->type |= ITER_FLAG_FAST_ONLY;
- 	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0);
-+	to->type &= ~ITER_FLAG_FAST_ONLY;
-+	pagefault_enable();
-+
- 	gfs2_glock_dq(gh);
-+	if (ret > 0)
-+		written += ret;
-+	if (unlikely(iov_iter_count(to) && (ret > 0 || ret == -EFAULT)) &&
-+	    fault_in_iov_iter(to))
-+		goto retry;
- out_uninit:
- 	gfs2_holder_uninit(gh);
--	return ret;
-+	return written ? written : ret;
- }
- 
- static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
-@@ -790,6 +811,12 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	loff_t offset = iocb->ki_pos;
- 	ssize_t ret;
- 
-+	/*
-+	 * In this function, we disable page faults when whe're holding the
-+	 * inode glock while doing I/O.  If a page fault occurs, we drop the
-+	 * inode glock, fault in the pages manually, and then we retry.
-+	 */
-+
- 	/*
- 	 * Deferred lock, even if its a write, since we do no allocation on
- 	 * this path. All we need to change is the atime, and this lock mode
-@@ -799,6 +826,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	 * VFS does.
- 	 */
- 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
-+retry:
- 	ret = gfs2_glock_nq(gh);
- 	if (ret)
- 		goto out_uninit;
-@@ -807,11 +835,16 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	if (offset + len > i_size_read(&ip->i_inode))
- 		goto out;
- 
-+	from->type |= ITER_FLAG_FAST_ONLY;
- 	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0);
-+	from->type &= ~ITER_FLAG_FAST_ONLY;
-+
- 	if (ret == -ENOTBLK)
- 		ret = 0;
- out:
- 	gfs2_glock_dq(gh);
-+	if (unlikely(ret == -EFAULT) && fault_in_iov_iter(from))
-+		goto retry;
- out_uninit:
- 	gfs2_holder_uninit(gh);
- 	return ret;
+On 7/17/21 12:20 AM, Darrick J. Wong wrote:
+> On Fri, Jul 16, 2021 at 02:19:51PM +0800, Jeffle Xu wrote:
+>> This is similar to commit dbc77f31e58b ("vfs: only allow FSSETXATTR to
+>> set DAX flag on files and dirs").
+>>
+>> Though the underlying filesystems may have filtered invalid flags, e.g.,
+>> ext4_mask_flags() called in ext4_fileattr_set(), also check it in VFS
+>> layer.
+>>
+>> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+>> ---
+>>  fs/ioctl.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ioctl.c b/fs/ioctl.c
+>> index 1e2204fa9963..1fe73e148e2d 100644
+>> --- a/fs/ioctl.c
+>> +++ b/fs/ioctl.c
+>> @@ -835,7 +835,7 @@ static int fileattr_set_prepare(struct inode *inode,
+>>  	 * It is only valid to set the DAX flag on regular files and
+>>  	 * directories on filesystems.
+>>  	 */
+>> -	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
+>> +	if ((fa->fsx_xflags & FS_XFLAG_DAX || fa->flags & FS_DAX_FL) &&
+> 
+> I thought we always had to surround flag tests with separate
+> parentheses...?
+
+Thanks.
+
+The 'bitwise and' has a higher priority than 'logical or'. But for sure
+I can add parentheses to make it more readable and precise.
+
 -- 
-2.26.3
-
+Thanks,
+Jeffle
