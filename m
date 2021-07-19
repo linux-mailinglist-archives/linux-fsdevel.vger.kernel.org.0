@@ -2,153 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3F923CEF20
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 00:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C395C3CEF40
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 00:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357782AbhGSVaq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jul 2021 17:30:46 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:55250 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236964AbhGSSCR (ORCPT
+        id S1389646AbhGSVgT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jul 2021 17:36:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1384535AbhGSSbO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jul 2021 14:02:17 -0400
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16JIddVF021977;
-        Mon, 19 Jul 2021 11:42:48 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=h6dfNe43UztjEZWZv7t1tRjSf+bAAPIcDP6rCoYNNig=;
- b=QayKAOXcFS3cPeLswQVqlds1/JDNrUE3E8gSwgUavfwW3G/GPBn1XEHIo/P72Gge5J7J
- t7gHEuRaX5NNPlNrPvSnu93y9tm+XxbKpJbfHBlrQGgtXYPrC47i72km6p/a+mWedjaQ
- csEtThTgf+ot/v1j4PmpEz1yDTTzoKWOo1o= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 39vyt4mmp0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 19 Jul 2021 11:42:47 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 19 Jul 2021 11:42:46 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R+UfCu7pYlXigbj5yabc8EQMQo8iP+kTTS7CGsxrnq438daNbsv8yYg20RnFXydstEAUaLgCsxnMg8zxZjvzcydapnqFxaAibIuT8H43YhwQ0xHKpEaPrgH8/L5Xos9WXKPeTNE1cIQO7O2ubYEH96GahqvOie2Lk5qTl57ueASy09ViU16+4Dqx+VNy5d76RAi6e+1RIHCpJcF7At1aW+PlwT9fJ3+NQdnFDP0wiSSfeehCg81pNaO7nMkQKe9bSUf9RosIxMipl2PdyggiiktAA4ULboH5e0N4jqA/4LDTCABGe7wBw6RNL/a9g9Ky5wyCHMTvjr7/kyCZlHAEYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h6dfNe43UztjEZWZv7t1tRjSf+bAAPIcDP6rCoYNNig=;
- b=KMgmztY30QMjukaP3BIIYBe2CHj6KLLClMQoLHD8GFDGc71fGx+ovfRsk6zEyWbY/a1N0T8oKBFl0w59gc5RmAXpZZTaRaTHzJbnN8maPgBiqfEZwYDD1LqCJvBRcI99jXWuV7trkwDV/yOhaedzCISdAkweeLUc8QTj4CRQh00TSSmP+IegpDZFSr/JCPHovOrNuNlLy1Pd1PiCCJV0NPVi7jItyoT1jh4ZqH8qqXYl7WCy2mEPROBgWpQ3nJTdGqzj09lWsuX6SqCIuWdTK0EQMiLeNUxnJI+74AjLzokM1pXns+Ed/UgkhV5C37SveG25gxH2iTj2wMBNymM8mQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Authentication-Results: infradead.org; dkim=none (message not signed)
- header.d=none;infradead.org; dmarc=none action=none header.from=fb.com;
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
- by BYAPR15MB2712.namprd15.prod.outlook.com (2603:10b6:a03:15c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.23; Mon, 19 Jul
- 2021 18:42:45 +0000
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::9520:2bcd:e6fd:1dc7]) by BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::9520:2bcd:e6fd:1dc7%6]) with mapi id 15.20.4331.033; Mon, 19 Jul 2021
- 18:42:45 +0000
-Date:   Mon, 19 Jul 2021 11:42:42 -0700
-From:   Roman Gushchin <guro@fb.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <dchinner@redhat.com>,
-        Murphy Zhou <jencce.kernel@gmail.com>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [PATCH] writeback, cgroup: do not reparent dax inodes
-Message-ID: <YPXHokLyedlmdrZ8@carbon.lan>
-References: <20210719171350.3876830-1-guro@fb.com>
- <YPXAxo6YzR8Mx/Bm@casper.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <YPXAxo6YzR8Mx/Bm@casper.infradead.org>
-X-ClientProxiedBy: SJ0PR05CA0105.namprd05.prod.outlook.com
- (2603:10b6:a03:334::20) To BYAPR15MB4136.namprd15.prod.outlook.com
- (2603:10b6:a03:96::24)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.lan (2620:10d:c090:400::5:a191) by SJ0PR05CA0105.namprd05.prod.outlook.com (2603:10b6:a03:334::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.11 via Frontend Transport; Mon, 19 Jul 2021 18:42:44 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5393f367-45d8-47d5-9894-08d94ae4ff98
-X-MS-TrafficTypeDiagnostic: BYAPR15MB2712:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB27123755232C3AB3E260D802BEE19@BYAPR15MB2712.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Fzl4BO09zn20zef07wiRZvjgGsxdouS0EqNhUEdPbXjlQhUgXCLLggeP5iFgG7wqiP2WHY6+ga8WtIf+8REIq9NBDqqrHeMC0moA48tmwxRURmENPol8t5Csxtise5LqxzDdYgXfrxr2WkpB7wjH/z/dRRdUUtlm+hG9pKqR1wIefk/B2+AiaF8YDI506uUIsgDSthyQEsXvOd3t5KQEtD9DITeQtRJkbtIFhDEHn18Tnz6PjmdjGO3fAyrStE+Pj9tadtqFxzfIQfjI1bdTS2j86ZYAM5u4wHUsuEk+FzVdcYYaSJAGAov6dHjLqcckiphrWm1sAzrIdLr6YWifE9et3CZL+Qtz3eKd/BykLW2ORPeitCSOuyc3sNXoCxXJ9wpkO3WT9QcAWLkvxf/OGTlDG/75D6ufdqOzyjf/qzILvdHT/tBCaf5fwL3XF/IAkhs20BB4/Si27EFRqnZrn/24wJQ6cw0mpJxVgqmTUnAp2G5fh6n8EegIPdcCTWcV+3Ls7RKR61ijGe5x3noWVJPzxj1s9NlU/QTHq6SBRJcoZxfUsgWGOI1PBue6p2vooUyCnqPGytxsoaFsaE1lukPHjyHEiWKaacl28Zxm8MeiPecHKu+Pj2X/bKyadxHM
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66556008)(66476007)(316002)(36756003)(4744005)(9686003)(86362001)(8886007)(4326008)(186003)(7696005)(2906002)(54906003)(508600001)(6916009)(6506007)(5660300002)(8936002)(55016002)(38100700002)(66946007)(8676002)(52116002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?RwaQe51A8E+DMKRTKou/Bqts6u9vBTCiZet1VzBB9sevFaqXBPVcGHuc+m2c?=
- =?us-ascii?Q?oPhrqj2Vo1aF/05szHAGOtJ0V3dnxlVwIeEulNXCCLtfAnIy/vyfFFvPBkxP?=
- =?us-ascii?Q?UF+6ZqIKOCd5CUvfdep50lO1sNodl1hrGuTx5Bjv4dwxqE5T5/8MvNy//OXY?=
- =?us-ascii?Q?XyFuHRLay72YiJ11DTPlYUun7Dmn0yC4bVWk53QSn0Gyhx7HRiZ1Hfa9OQ46?=
- =?us-ascii?Q?oyvTg5KKHR4wxfAaKNrD+Xib5K3Sd8tnT/+AONSbJvY+yYPO5XU/QHwydUDW?=
- =?us-ascii?Q?e2f67vQRndK+QHqdyY54I091sZ0AHSnU4fVztD5wG6hbArHhduB8/g6TlXWD?=
- =?us-ascii?Q?MferJjsDJ7ofgkzkvmbjx+Cvy4nZUP0vM3j3gkGVE9/9nUfgss4DYbiEbvfH?=
- =?us-ascii?Q?6cvCRslyHIZtR3p/U3tu4mpLn43kmiT1Teo6uASaLMijnsl7mHIoKCdM5DCT?=
- =?us-ascii?Q?xBIWkcz98AyvKe2idZyOrpOW1lSOXRVi5B6E31fdOiTFncboff8pzjjT0OYZ?=
- =?us-ascii?Q?qYFT26JtKRULcH/BeKr1LYEvxpbvQTVAJvNmZtTNGZJ9cEKG+/GhtudiYkyb?=
- =?us-ascii?Q?L/zD8EVmCd1trh5/sliT+WqtO4RYHNfSy63b4vs6xfsQwHcIPaL8WP208R9U?=
- =?us-ascii?Q?0HeeROBSzjkSG4lNzntOdHz76sOEiB3Wk/68oNVcQlfvrOz+qJvh6BKMdmE9?=
- =?us-ascii?Q?mc8/psg8KX21v8LIf7klqqllNUkfGmv+TDF6X5fXfw5OlmOYFPu6WdEn2eL/?=
- =?us-ascii?Q?cAFnJxI+zrNTRHhFLgeMrdwH9pBog12aHjO5ViTlKzMGixe5IgJJHmsnwnU9?=
- =?us-ascii?Q?xXbWQJD1jTidh4gj46Dr/VMjJoNoJG+WLlxAMyiTVkQt/k6DclE7/HCzG70l?=
- =?us-ascii?Q?uKf8n2zKRqIKX6ZKYCbd5uIB4ZldSTj1Fmcas3NS4u+f4IZELZj+WtphCBkF?=
- =?us-ascii?Q?OywVpuP3LFnzpcFOaMTJjcQevv2L8VEU5ujFUwUxRWEoFzCOlqUDRo2o9l96?=
- =?us-ascii?Q?stBAIFi3NDzHL4RFY0tekwmjqVDC2CXZ7y4+sUMUSjh1AKAA/Wf4JdUBapXd?=
- =?us-ascii?Q?d6t4dy2vWxMmxqI/dhN6G0KNzhPpGmqKUJS1XuYYdXUT/UnrACbwm6wikAjC?=
- =?us-ascii?Q?tVHBw8f3sYpfPsNzQYwILMSQS52EbWs+yU/Z8jwovl359ewtgvMO7dNeJ1Rf?=
- =?us-ascii?Q?Ofc7M3anunU7zrglDRqfYTR8tUmTQxT/+i2yCjAa+fQbM8os4STSaM+xJn2r?=
- =?us-ascii?Q?w8IfK/MgvoLO2lHJFY65XB2DJn99USL/1AhBTg6RqeJBbYc1sLf/KDgHboz8?=
- =?us-ascii?Q?SmvoDzz3YjKAQ8LGhYHX72T4EuFfn79EJZS+5VVMH9iiqA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5393f367-45d8-47d5-9894-08d94ae4ff98
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2021 18:42:45.2324
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Lq2ClsSPsrPSFM96R5S89UPiuitkBK0MmhUqdiCggG6xpGohaMg0+47kheUV5dNo
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2712
-X-OriginatorOrg: fb.com
-X-Proofpoint-ORIG-GUID: qGdIwYBSoS0IILHjXDmbUmkl_0jXQQHT
-X-Proofpoint-GUID: qGdIwYBSoS0IILHjXDmbUmkl_0jXQQHT
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-19_09:2021-07-19,2021-07-19 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 malwarescore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 bulkscore=0
- spamscore=0 adultscore=0 suspectscore=0 phishscore=0 mlxscore=0
- mlxlogscore=677 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2104190000 definitions=main-2107190106
-X-FB-Internal: deliver
+        Mon, 19 Jul 2021 14:31:14 -0400
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87AF8C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jul 2021 12:01:46 -0700 (PDT)
+Received: by mail-qk1-x732.google.com with SMTP id j184so17789738qkd.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jul 2021 12:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=HpIVR41SNxxmrWQRPZx1Jc8kIHqT4zYLW1S+TZScing=;
+        b=EKWC7HyDe1yb7k1ZElLzi1jjJHVyrpHbBo6xL9vTICFcPc5Cg4dtfBYmUOKqTm02zN
+         kzofWlC/brSGeoi00EcZTIsvR8CoekX72V8ssgA8k+vf8OJNlZSF0g0ulOAtPzpZWFPD
+         Z4JPmoSOXBoHUSQCxbdtMYYAXdBBtgBNwSuMS5dcwt+FoNUlgshudIQV1ZtRFGwsTLXj
+         6XGcmZ4QEMPnSM/QULEiR2YXV36XwRRI7MxKmSZQOwahRkO1Zj5WkRr8ZHpW30gXVIXz
+         CrMV1vM0kDJXrTjuS05ZtAZeyWrB7JbiCHkFS2/XSTC83rxcE8PyY8tWr6LzGmm41jKc
+         QgOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=HpIVR41SNxxmrWQRPZx1Jc8kIHqT4zYLW1S+TZScing=;
+        b=XOTk/4w8smqYKQx/EIk8eC/PKuugoMIgTepZrtrJhbXVKEO+FD0F8pJ7P3zdaQ7LIQ
+         pyKv+3P/hKPaMQv5tDd8QC8hrskK72IVjkcbCMgQamesDh6i2GAJpondGCktwFMaufDq
+         xLYUWI2tEuNhO4SyRhiXgxXVGa7eGIM4c1DgIrIT5mxMfknlRwmuBXu2sK24QgGlBUhG
+         fL6Z3wk8xhyIFlL68uCj5XgLNyO6MerJ46z3hW3okX0RepOpI5FRFjeKcoK4VB1hYldg
+         OlFVOUVHjesDUyX/0a3W1en+sy9F90mQBXnrQLKXp/ny6WXI/xCkKttsEaFRa0ljXbpq
+         f7gQ==
+X-Gm-Message-State: AOAM5323N4JyLU8O3akulPI9iBGNpoS2bmBrRjOE+efeNtPqxEYaUtvJ
+        YBVBaOmdpYVDhLZTAq4Nq+8jng==
+X-Google-Smtp-Source: ABdhPJyHpC+Qam/iW1OeJW20ZKqmuNIo1FjqlsVTttIiMWE6JjxW68cHDQi/pXp5liWKwHysIa9IGg==
+X-Received: by 2002:a37:8e44:: with SMTP id q65mr26070129qkd.372.1626721910686;
+        Mon, 19 Jul 2021 12:11:50 -0700 (PDT)
+Received: from smtpclient.apple ([2600:1700:42f0:6600:ec90:c991:5957:a3db])
+        by smtp.gmail.com with ESMTPSA id j2sm6276237qtn.46.2021.07.19.12.11.49
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Jul 2021 12:11:50 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.100.0.2.22\))
+Subject: Re: [RESEND PATCH v2] hfsplus: prevent negative dentries when
+ casefolded
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+In-Reply-To: <a2c84cfa-b6ed-c86c-0bb1-d05087c141d7@synology.com>
+Date:   Mon, 19 Jul 2021 12:11:47 -0700
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        gustavoars@kernel.org, gregkh@linuxfoundation.org,
+        keescook@chromium.org, mszeredi@redhat.com, shepjeng@gmail.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E4E0A1E4-52A9-45D0-A179-B5289641FE22@dubeyko.com>
+References: <20210716073635.1613671-1-cccheng@synology.com>
+ <02B9566C-A78E-42FB-924B-A503E4BC6D2F@dubeyko.com>
+ <a2c84cfa-b6ed-c86c-0bb1-d05087c141d7@synology.com>
+To:     Chung-Chiang Cheng <cccheng@synology.com>
+X-Mailer: Apple Mail (2.3654.100.0.2.22)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 19, 2021 at 07:13:26PM +0100, Matthew Wilcox wrote:
-> On Mon, Jul 19, 2021 at 10:13:50AM -0700, Roman Gushchin wrote:
-> > The inode switching code is not suited for dax inodes. An attempt
-> > to switch a dax inode to a parent writeback structure (as a part
-> > of a writeback cleanup procedure) results in a panic like this:
-> [...]
-> > The crash happens on an attempt to iterate over attached pagecache
-> > pages and check the dirty flag: a dax inode's xarray contains pfn's
-> > instead of generic struct page pointers.
-> 
-> I wondered why this happens for DAX and not for other kinds of non-page
-> entries in the inodes.  The answer is that it's a tagged iteration, and
-> shadow/swap entries are never tagged; only DAX entries get tagged.
 
-Indeed! A good note.
 
-> 
-> Acked-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> 
+> On Jul 19, 2021, at 2:03 AM, Chung-Chiang Cheng <cccheng@synology.com> =
+wrote:
+>=20
+> This function revalidates dentries without blocking and storing to the
+> dentry. As the document mentioned [1], I think it's safe in rcu-walk
+> mode. I also found jfs_ci_revalidate() takes the same approach.
+>=20
+>         d_revalidate may be called in rcu-walk mode (flags & =
+LOOKUP_RCU).
+>         If in rcu-walk mode, the filesystem must revalidate the dentry =
+without
+>         blocking or storing to the dentry, d_parent and d_inode should =
+not be
+>         used without care (because they can change and, in d_inode =
+case, even
+>         become NULL under us
+>=20
+>=20
+> [1] https://www.kernel.org/doc/Documentation/filesystems/vfs.txt
+>=20
 
-Thank you!
+
+I am still not convinced by the explanation.
+
+>> This patch takes the same approach to drop negative dentires as vfat =
+does.=20
+
+You mentioned that you follows by vfat approach. But this code contains =
+this code, as far as I can see. How could you prove that we will not =
+introduce some weird bug here? What if code of this function will be =
+changed in the future? I suppose that missing of this code could be the =
+way to introduce some bug, anyway.
+
+>> touch aaa
+>> rm aaa
+>> touch AAA
+
+By the way, have you tested other possible combinations? I mean (1) =
+=E2=80=98aaa=E2=80=99 -> =E2=80=98AAA=E2=80=99, (2) =E2=80=98AAA=E2=80=99 =
+-> =E2=80=98aaa=E2=80=99, (3) =E2=80=98aaa=E2=80=99 -> =E2=80=98aaa=E2=80=99=
+, (4) =E2=80=98AAA=E2=80=99 -> =E2=80=98AAA=E2=80=99. Could you please =
+add in the comment that it was tested? Could we create the file in =
+case-insensitive mode and, then, try to delete in case-sensitive and =
+vise versa? Do we define this flag during volume creation? Can we change =
+the flag by volume tuning?
+
+Thanks,
+Slava.
+
+
+> Thanks,
+> C.C.Cheng
+>=20
+>>> +
+>>> +int hfsplus_revalidate_dentry(struct dentry *dentry, unsigned int =
+flags)
+>>> +{
+>> What=E2=80=99s about this code?
+>>=20
+>> If (flags & LOOKUP_RCU)
+>>    return -ECHILD;
+>>=20
+>> Do we really need to miss it here?
+>>=20
+>> Thanks,
+>> Slava.
+>>=20
+>>=20
+>>> +	/*
+>>> +	 * dentries are always valid when disabling casefold.
+>>> +	 */
+>>> +	if (!test_bit(HFSPLUS_SB_CASEFOLD, =
+&HFSPLUS_SB(dentry->d_sb)->flags))
+>>> +		return 1;
+>>> +
+>>> +	/*
+>>> +	 * Positive dentries are valid when enabling casefold.
+>>> +	 *
+>>> +	 * Note, rename() to existing directory entry will have =
+->d_inode, and
+>>> +	 * will use existing name which isn't specified name by user.
+>>> +	 *
+>>> +	 * We may be able to drop this positive dentry here. But =
+dropping
+>>> +	 * positive dentry isn't good idea. So it's unsupported like
+>>> +	 * rename("filename", "FILENAME") for now.
+>>> +	 */
+>>> +	if (d_really_is_positive(dentry))
+>>> +		return 1;
+>>> +
+>>> +	/*
+>>> +	 * Drop the negative dentry, in order to make sure to use the =
+case
+>>> +	 * sensitive name which is specified by user if this is for =
+creation.
+>>> +	 */
+>>> +	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET))
+>>> +		return 0;
+>>> +
+>>> +	return 1;
+>>> +}
+>>> --=20
+>>> 2.25.1
+>>>=20
+
