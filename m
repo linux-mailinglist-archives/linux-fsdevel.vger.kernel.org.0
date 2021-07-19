@@ -2,62 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFBAD3CED34
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jul 2021 22:29:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1CD83CED31
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jul 2021 22:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351532AbhGSRsv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jul 2021 13:48:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51386 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382448AbhGSRjV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jul 2021 13:39:21 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E49C061225;
-        Mon, 19 Jul 2021 11:01:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=vowro5yGBW6raP/4H44k+wX5zWXpKRbu3Z3IwekcF6g=; b=Sy4gd7MoBwkmEBCRAxHi9v1KP6
-        nvLic8PgYzDJ4Z27YBnQkBmwvvhPtTUId/BMzWNdVIgRU6I6gL4O8jgU5Zf3MyDsgB9D5y0nnssZl
-        v1dVeYo89omfazgNgK6UOwun1kNqA6UroQ+fI17P4h6IHKiT53zAJBKr63xXYt0sF6BKtjFj86atV
-        QD5JjDme6HRzaPwmscQxvt+19wGByDRHd8T5r4UXSOX0kzJaxVJaYQCEI4dfVtN4Vgl7dwP+FcDSS
-        yOqYhy8yHbW/67wqKHx2ttJlv799QuAz9/7cd9s49rw/L8UfJAnWGywBDZ4fq1DVZwxGmYoQru1X5
-        bg/7OtfA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m5Xle-007Hqh-Bc; Mon, 19 Jul 2021 18:13:49 +0000
-Date:   Mon, 19 Jul 2021 19:13:26 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Dave Chinner <dchinner@redhat.com>,
-        Murphy Zhou <jencce.kernel@gmail.com>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [PATCH] writeback, cgroup: do not reparent dax inodes
-Message-ID: <YPXAxo6YzR8Mx/Bm@casper.infradead.org>
-References: <20210719171350.3876830-1-guro@fb.com>
+        id S1350039AbhGSRsm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jul 2021 13:48:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1379192AbhGSRfb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Jul 2021 13:35:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 20A6B610FB;
+        Mon, 19 Jul 2021 18:16:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626718571;
+        bh=3if5psrMgcS5ntuhboErJR2PdkvwudAjGSgamgfGbIM=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=VEbV/PoB7BD+IXyi27bnqiIBsOCfdREnckZmHqQ3uHYWhvcwPNmsKv/kuziXzJDir
+         l/czml19dBW3Hd7ZCgjDxnwWxln2HEAy+ty+pOV9n6wjkwvPyc9nM8JQv+n4fO6FDo
+         se+V8WSoftjPlwx6dt/2IMG6tCrLXNADXhKkuHXwx3YW/v70efFTP7wupR/pRtZO6W
+         1zH94nic3llEnVkps0SlgkISRkC0TylzbI0cBGF3qJ+ld88NRRlqkyO1kiffGf04yr
+         LcpVyXxCxavbc7WHYAA8TkNWZckZeBZvocadxBkZwucMZQAfC/cmbEF0MBGJgRRw55
+         s5LpfrJJc4WUA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id DD6645C2BE5; Mon, 19 Jul 2021 11:16:10 -0700 (PDT)
+Date:   Mon, 19 Jul 2021 11:16:10 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Hou Tao <houtao1@huawei.com>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        yukuai3@huawei.com, will@kernel.org, peterz@infradead.org
+Subject: Re: [PATCH] block: ensure the memory order between bi_private and
+ bi_status
+Message-ID: <20210719181610.GA4397@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <20210701113537.582120-1-houtao1@huawei.com>
+ <20210715070148.GA8088@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210719171350.3876830-1-guro@fb.com>
+In-Reply-To: <20210715070148.GA8088@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 19, 2021 at 10:13:50AM -0700, Roman Gushchin wrote:
-> The inode switching code is not suited for dax inodes. An attempt
-> to switch a dax inode to a parent writeback structure (as a part
-> of a writeback cleanup procedure) results in a panic like this:
-[...]
-> The crash happens on an attempt to iterate over attached pagecache
-> pages and check the dirty flag: a dax inode's xarray contains pfn's
-> instead of generic struct page pointers.
+On Thu, Jul 15, 2021 at 09:01:48AM +0200, Christoph Hellwig wrote:
+> On Thu, Jul 01, 2021 at 07:35:37PM +0800, Hou Tao wrote:
 
-I wondered why this happens for DAX and not for other kinds of non-page
-entries in the inodes.  The answer is that it's a tagged iteration, and
-shadow/swap entries are never tagged; only DAX entries get tagged.
+[ . . . ]
 
-Acked-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > Fixing it by using smp_load_acquire() & smp_store_release() to guarantee
+> > the order between {bio->bi_private|dio->waiter} and {bi_status|bi_blkg}.
+> > 
+> > Fixes: 189ce2b9dcc3 ("block: fast-path for small and simple direct I/O requests")
+> 
+> This obviously does not look broken, but smp_load_acquire /
+> smp_store_release is way beyond my paygrade.  Adding some CCs.
 
+Huh.
+
+I think that it was back in 2006 when I first told Linus that my goal was
+to make memory ordering routine.  I clearly have not yet achieved that
+goal, even given a lot of help from a lot of people over a lot of years.
+
+Oh well, what is life without an ongoing challenge?  ;-)
+
+							Thanx, Paul
