@@ -2,82 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 536733CF248
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 04:58:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1A2F3CF27B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 05:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345562AbhGTCRS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jul 2021 22:17:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55582 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345078AbhGTCPo (ORCPT
+        id S1346354AbhGTCgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jul 2021 22:36:47 -0400
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:52787 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1388872AbhGSVJS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jul 2021 22:15:44 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679C4C061768
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jul 2021 19:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ddFeRTWSZ+X6AQt7FcVLxDNr63yOS1Yd3t70mbLKXzI=; b=fYVv5ucLOhkhhtiSIF6xRyOBP/
-        cV2wxlhBWulN2BlKt7DKyAIpW8oHCxoaAiVn7MyLfJcicfsvg6gGseiEgURzMwwnMS7jT2LU6GU5F
-        hGSh9x5DQLDv5fjLewivc1nojYhfvj3CpsXA6/vUqnoRBz8ctTUdEBlEZ0JAwLX7RGMqkYdGVan2c
-        shYhxrL9h+6gYowbcRGRe3CwTyKOrjQst/M7BOko3HHS88vHiktdRW6xoNBi9QblTYs0JrqGjm+wp
-        RufyTCMtwv1Nz4mDF/cZEFBkGyTCcNnbS1479nGyIJH3LdXbeiYJHLSmZcIJeIpgkmHNUo4oSQi8f
-        PWZmsH6A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m5fv6-007iR0-47; Tue, 20 Jul 2021 02:55:48 +0000
-Date:   Tue, 20 Jul 2021 03:55:44 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Folio tree for next
-Message-ID: <YPY7MPs1zcBClw79@casper.infradead.org>
-References: <YPTu+xHa+0Qz0cOu@casper.infradead.org>
- <20210718205758.65254408be0b2a17cfad7809@linux-foundation.org>
- <20210720094033.46b34168@canb.auug.org.au>
+        Mon, 19 Jul 2021 17:09:18 -0400
+Received: from dread.disaster.area (pa49-181-34-10.pa.nsw.optusnet.com.au [49.181.34.10])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id D3E955E74;
+        Tue, 20 Jul 2021 07:48:38 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1m5b7u-008UI5-A0; Tue, 20 Jul 2021 07:48:38 +1000
+Date:   Tue, 20 Jul 2021 07:48:38 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        cluster-devel@redhat.com
+Subject: Re: [PATCH 08/27] iomap: add the new iomap_iter model
+Message-ID: <20210719214838.GK664593@dread.disaster.area>
+References: <20210719103520.495450-1-hch@lst.de>
+ <20210719103520.495450-9-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210720094033.46b34168@canb.auug.org.au>
+In-Reply-To: <20210719103520.495450-9-hch@lst.de>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
+        a=hdaoRb6WoHYrV466vVKEyw==:117 a=hdaoRb6WoHYrV466vVKEyw==:17
+        a=kj9zAlcOel0A:10 a=e_q4qTt1xDgA:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
+        a=7pAWPZz2LBkM90URnJoA:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 20, 2021 at 09:40:33AM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
+On Mon, Jul 19, 2021 at 12:35:01PM +0200, Christoph Hellwig wrote:
+> The iomap_iter struct provides a convenient way to package up and
+> maintain all the arguments to the various mapping and operation
+> functions.  It is operated on using the iomap_iter() function that
+> is called in loop until the whole range has been processed.  Compared
+> to the existing iomap_apply() function this avoid an indirect call
+> for each iteration.
 > 
-> On Sun, 18 Jul 2021 20:57:58 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Mon, 19 Jul 2021 04:18:19 +0100 Matthew Wilcox <willy@infradead.org> wrote:
-> > 
-> > > Please include a new tree in linux-next:
-> > > 
-> > > https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/for-next
-> > > aka
-> > > git://git.infradead.org/users/willy/pagecache.git for-next
-> > > 
-> > > There are some minor conflicts with mmotm.  I resolved some of them by
-> > > pulling in three patches from mmotm and rebasing on top of them.
-> > > These conflicts (or near-misses) still remain, and I'm showing my
-> > > resolution:  
-> > 
-> > I'm thinking that it would be better if I were to base all of the -mm
-> > MM patches on linux-next.  Otherwise Stephen is going to have a pretty
-> > miserable two months...
+> For now iomap_iter() calls back into the existing ->iomap_begin and
+> ->iomap_end methods, but in the future this could be further optimized
+> to avoid indirect calls entirely.
 > 
-> If they are only minor conflicts, then please leave them to me (and
-> Linus).  That way if Linus decides not to take the folio tree or the
-> mmotm changes (or they get radically changed), then they are not
-> contaminated by each other ... hints (or example resolutions) are
-> always welcome.
+> Based on an earlier patch from Matthew Wilcox <willy@infradead.org>.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/Makefile     |  1 +
+>  fs/iomap/iter.c       | 74 +++++++++++++++++++++++++++++++++++++++++++
+>  fs/iomap/trace.h      | 37 +++++++++++++++++++++-
+>  include/linux/iomap.h | 56 ++++++++++++++++++++++++++++++++
+>  4 files changed, 167 insertions(+), 1 deletion(-)
+>  create mode 100644 fs/iomap/iter.c
+> 
+> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
+> index eef2722d93a183..85034deb5a2f19 100644
+> --- a/fs/iomap/Makefile
+> +++ b/fs/iomap/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_FS_IOMAP)		+= iomap.o
+>  
+>  iomap-y				+= trace.o \
+>  				   apply.o \
+> +				   iter.o \
 
-I think conceptually, the folio for-next tree is part of mmotm for this
-cycle.  I would have asked Andrew to carry these patches, but there are
-people (eg Dave Howells) who want to develop against them.  And that's
-hard to do with patches that are in mmotm.
+Can we break this cycle of creating new files and removing old files
+when changing the iomap core code? It breaks the ability to troll
+git history easily through git blame and other techniques that are
+file based.
 
-So if Andrew bases mmotm on the folio tree for this cycle, does that
-make sense?
+If we are going to create a new file, then the core iomap code that
+every thing depends on should just be in a neutrally names file such
+as "iomap.c" so that we don't need to play these games in future.
+
+....
+
+> +/**
+> + * iomap_iter - iterate over a ranges in a file
+> + * @iter: iteration structue
+> + * @ops: iomap ops provided by the file system
+> + *
+> + * Iterate over file system provided contiguous ranges of blocks with the same
+> + * state.  Should be called in a loop that continues as long as this function
+> + * returns a positive value.  If 0 or a negative value is returned the caller
+> + * should break out of the loop - a negative value is an error either from the
+> + * file system or from the last iteration stored in @iter.copied.
+> + */
+> +int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+> +{
+
+We should avoid namespace conflicts where function names shadow
+object types. iomap_iterate() is fine as the function name - there's
+no need for abbreviation here because it's not an overly long name.
+This will makes it clearly different to the struct iomap_iter that
+is passed to it and it will also make grep, cscope and other
+code searching tools much more precise...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
