@@ -2,86 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA593CEF3E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 00:31:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D1F3CEF19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 00:31:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1389616AbhGSVgO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jul 2021 17:36:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383933AbhGSSP5 (ORCPT
+        id S244233AbhGSV2K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jul 2021 17:28:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39837 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1383654AbhGSSBM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jul 2021 14:15:57 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20FEDC061574;
-        Mon, 19 Jul 2021 11:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=W8PwHzjpB4aVlX4Erzmy7nPi4Frr4taQ2kuLjYKQ+Hk=; b=rKTaja6pHvmYOl5n8sOPFHzRC/
-        mi6IAdriTI87FrWSST2pBxQCtStzPYvLClvHi/3oJQNAKoJ6pZ86ZscLj/ZbqIJB50AoJIqMIh4Jn
-        Y7lzbUGA4HhWc+G6U3Ga8+3/X7J55S4mmqwc2T0z357P9SzwA/OONbgA8MzP7SFGMbT9OCIwB+gx3
-        DYKbcjxDUrGTQpeeI4XGowBLaRhNGdcHAZZ4tvFtsntkWn9gO0jOrTB+jwv9efO42+7xn4gFHqDF5
-        IDYI9DLU6unnCdo0ZWPhXJbjjtZtAmWSbhKt4iNdxdfGcLdqBw63N9xHXkGpy20eAdqbs3RgwFO9G
-        5gkMbwKQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m5YQ2-007MUk-0O; Mon, 19 Jul 2021 18:55:30 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-block@vger.kernel.org
-Subject: [PATCH v15 17/17] iomap: Convert iomap_migrate_page to use folios
-Date:   Mon, 19 Jul 2021 19:40:01 +0100
-Message-Id: <20210719184001.1750630-18-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210719184001.1750630-1-willy@infradead.org>
-References: <20210719184001.1750630-1-willy@infradead.org>
+        Mon, 19 Jul 2021 14:01:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626720099;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=p204Ua/8UMVEDK/XuK5qa9JXwwuGxX3Scr0fvegt0Q8=;
+        b=NU4B4IIYND7BQGflnhCsU1nYeg1AJ+c9LkcHabMcQUX+2wmaa4lzEOQHrHj36R/LHebBdM
+        QHlYtaw7qE+Lfol1DBBnV9F8BesY9d1UnYhr95dvYyyMXqb/qw05r8/WhrW8Y8sYkzo7Za
+        nLpM6zHCr5EbEIjG2nEqzzIox3n3sgc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-231-iNZ3s_tHMRaavc_J-FzkGg-1; Mon, 19 Jul 2021 14:41:37 -0400
+X-MC-Unique: iNZ3s_tHMRaavc_J-FzkGg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04456101F7A5;
+        Mon, 19 Jul 2021 18:41:36 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-118-17.rdu2.redhat.com [10.10.118.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F16055D6A1;
+        Mon, 19 Jul 2021 18:41:30 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 79845223E4F; Mon, 19 Jul 2021 14:41:30 -0400 (EDT)
+Date:   Mon, 19 Jul 2021 14:41:30 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     stefanha@redhat.com, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
+Subject: Re: [PATCH v2 3/4] fuse: add per-file DAX flag
+Message-ID: <YPXHWmiYXMNxxhf7@redhat.com>
+References: <20210716104753.74377-1-jefflexu@linux.alibaba.com>
+ <20210716104753.74377-4-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210716104753.74377-4-jefflexu@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The arguments are still pages for now, but we can use folios internally
-and cut out a lot of calls to compound_head().
+On Fri, Jul 16, 2021 at 06:47:52PM +0800, Jeffle Xu wrote:
+> Add one flag for fuse_attr.flags indicating if DAX shall be enabled for
+> this file.
+> 
+> When the per-file DAX flag changes for an *opened* file, the state of
+> the file won't be updated until this file is closed and reopened later.
+> 
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/iomap/buffered-io.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+[..]
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 36ed092227fa..90c9df10d37a 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -184,6 +184,9 @@
+>   *
+>   *  7.34
+>   *  - add FUSE_SYNCFS
+> + *
+> + *  7.35
+> + *  - add FUSE_ATTR_DAX
+>   */
+>  
+>  #ifndef _LINUX_FUSE_H
+> @@ -449,8 +452,10 @@ struct fuse_file_lock {
+>   * fuse_attr flags
+>   *
+>   * FUSE_ATTR_SUBMOUNT: Object is a submount root
+> + * FUSE_ATTR_DAX: Enable DAX for this file in per-file DAX mode
+>   */
+>  #define FUSE_ATTR_SUBMOUNT      (1 << 0)
+> +#define FUSE_ATTR_DAX		(1 << 1)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 60d3b7af61d1..cf56b19fb101 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -492,19 +492,21 @@ int
- iomap_migrate_page(struct address_space *mapping, struct page *newpage,
- 		struct page *page, enum migrate_mode mode)
- {
-+	struct folio *folio = page_folio(page);
-+	struct folio *newfolio = page_folio(newpage);
- 	int ret;
- 
--	ret = migrate_page_move_mapping(mapping, newpage, page, 0);
-+	ret = folio_migrate_mapping(mapping, newfolio, folio, 0);
- 	if (ret != MIGRATEPAGE_SUCCESS)
- 		return ret;
- 
--	if (page_has_private(page))
--		attach_page_private(newpage, detach_page_private(page));
-+	if (folio_test_private(folio))
-+		folio_attach_private(newfolio, folio_detach_private(folio));
- 
- 	if (mode != MIGRATE_SYNC_NO_COPY)
--		migrate_page_copy(newpage, page);
-+		folio_migrate_copy(newfolio, folio);
- 	else
--		migrate_page_states(newpage, page);
-+		folio_migrate_flags(newfolio, folio);
- 	return MIGRATEPAGE_SUCCESS;
- }
- EXPORT_SYMBOL_GPL(iomap_migrate_page);
--- 
-2.30.2
+Generic fuse changes (addition of FUSE_ATTR_DAX) should probably in
+a separate patch. 
+
+I am not clear on one thing. If we are planning to rely on persistent
+inode attr (FS_XFLAG_DAX as per Documentation/filesystems/dax.rst), then
+why fuse server needs to communicate the state of that attr using a 
+flag? Can client directly query it?  I am not sure where at these
+attrs stored and if fuse protocol currently supports it.
+
+What about flag STATX_ATTR_DAX. We probably should report that too
+in stat if we are using dax on the inode?
+
+Vivek
 
