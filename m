@@ -2,109 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E4D23CCFE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jul 2021 11:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECF273CD031
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jul 2021 11:11:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235566AbhGSIXK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jul 2021 04:23:10 -0400
-Received: from mail.synology.com ([211.23.38.101]:32806 "EHLO synology.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235498AbhGSIXJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jul 2021 04:23:09 -0400
-Subject: Re: [RESEND PATCH v2] hfsplus: prevent negative dentries when
- casefolded
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
-        t=1626685428; bh=nrLeIo3KdjKJ3knzH46N/b/L2z/5UVOq0EeQ1Fo8DU0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=P/+x438MJ0hx/dzk6G6PB75DxBzAzn4P/QnJWOY1jTGjHRDDvcPxBC0B80YiZSuzL
-         KiP/a3GgRsXI+BY3bryY1szsYl2nk5AwPcfaWZhXbE9HN1DJiInDlLHyPvZZDnq/19
-         WGggKzqDt5FvIreyh8/qvLLICGvyxhOAZ8L30QUE=
-To:     Viacheslav Dubeyko <slava@dubeyko.com>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        gustavoars@kernel.org, gregkh@linuxfoundation.org,
-        keescook@chromium.org, mszeredi@redhat.com, shepjeng@gmail.com
-References: <20210716073635.1613671-1-cccheng@synology.com>
- <02B9566C-A78E-42FB-924B-A503E4BC6D2F@dubeyko.com>
-From:   Chung-Chiang Cheng <cccheng@synology.com>
-Message-ID: <a2c84cfa-b6ed-c86c-0bb1-d05087c141d7@synology.com>
-Date:   Mon, 19 Jul 2021 17:03:45 +0800
+        id S235515AbhGSIaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jul 2021 04:30:23 -0400
+Received: from mail-ej1-f47.google.com ([209.85.218.47]:33517 "EHLO
+        mail-ej1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235150AbhGSIaT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Jul 2021 04:30:19 -0400
+Received: by mail-ej1-f47.google.com with SMTP id bu12so27603794ejb.0;
+        Mon, 19 Jul 2021 02:10:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RBSq6zJFuhCvZnOd2gsZfOMT0eqyDUMuVPMMsfBiF1k=;
+        b=tyuwkC2PzoZWVuCqm9kCcz3M9SCCkXn/k2TPyTvNUCyrH//h97IumALBHO8pcUpWgj
+         OIWRiPnAheYYrXvjryxDIP6hOU9+DElevR87h88njDFs3ujo0voRJaw5/Ll1x8qjwGgv
+         zd1xKrFqSC+6ZSuU5Wyn9GEwDDm+eQGmeUJu/ZCU1tnUkp/B08O/yyMYbk60PfjNWBRs
+         HtRbPlO/whptCcPo2L3HmnD6a9KfspVqDB+1IKiFAVxZtb9cttM5npNsK/uS0YEHudjQ
+         v3detn/3H/nsLpPwP9PVzSAFnGO6NtzfUIcxd+tPhJ0i6uwXc9BWELDB/9jK/hpPQpXX
+         GHGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RBSq6zJFuhCvZnOd2gsZfOMT0eqyDUMuVPMMsfBiF1k=;
+        b=FgQxKc5byMJe0bSG1fnGpoawYdpDi9fTYJDOnrhCStxHvzA5k3Yh0zBr6/BGhBJaSV
+         hAI/rKWJ3yLxZf9TJzJGl1s2KC3lLreXhQ/SuAXVsdHLxm91k0d1k/lHiAzdOOP3sCMt
+         QQAyvuXqtR0PChino0BErbaw4Ui6rTlJ+YPNQFOMPBsA7d0XIdVOQbanVHAtEMhiLmWd
+         7xfAb9VO8o1Vcm7B5vWKWr9MvOAwmIyIW91DRsVWCwrhUcRDf1qpr65X1pj8PjLeIfvs
+         SYaoyPlVBMJczgpxt+CoFYZWd+C0ZEmnreBEJUmKNQ4UIVAu9Ajaj4f5gTvH4nFfsqYQ
+         YiiA==
+X-Gm-Message-State: AOAM530I4p1W3KBuvr9MMnUBxhZC+jy8dYaw+/ddUO/a6OpbKZZv6g0k
+        qW0p4QZ+jHqUyxxKhZ2mkaOG53f6RqL7n18ZGjQ=
+X-Google-Smtp-Source: ABdhPJwubtgEMes7Ng29QD5qA/jN51mjW/q7+dtbpcLGkpLbDjrv1aOLcqCXW12Mc7+LVAk5fM+b/NX/9+Yz96jFMnM=
+X-Received: by 2002:a17:906:9d17:: with SMTP id fn23mr26835249ejc.191.1626685798074;
+ Mon, 19 Jul 2021 02:09:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <02B9566C-A78E-42FB-924B-A503E4BC6D2F@dubeyko.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Synology-MCP-Status: no
-X-Synology-Spam-Flag: no
-X-Synology-Spam-Status: score=0, required 6, WHITELIST_FROM_ADDRESS 0
-X-Synology-Virus-Status: no
+References: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com>
+ <YPGojf7hX//Wn5su@kroah.com> <568938486.33366.1626452816917.JavaMail.zimbra@nod.at>
+In-Reply-To: <568938486.33366.1626452816917.JavaMail.zimbra@nod.at>
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Mon, 19 Jul 2021 14:39:46 +0530
+Message-ID: <CAOuPNLj1YC7gjuhyvunqnB_4JveGRyHcL9hcqKFSNKmfxVSWRA@mail.gmail.com>
+Subject: Re: MTD: How to get actual image size from MTD partition
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Greg KH <greg@kroah.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Sean Nyekjaer <sean@geanix.com>,
+        Kernelnewbies <kernelnewbies@kernelnewbies.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This function revalidates dentries without blocking and storing to the
-dentry. As the document mentioned [1], I think it's safe in rcu-walk
-mode. I also found jfs_ci_revalidate() takes the same approach.
+On Fri, 16 Jul 2021 at 21:56, Richard Weinberger <richard@nod.at> wrote:
 
-         d_revalidate may be called in rcu-walk mode (flags & LOOKUP_RCU).
-         If in rcu-walk mode, the filesystem must revalidate the dentry 
-without
-         blocking or storing to the dentry, d_parent and d_inode should 
-not be
-         used without care (because they can change and, in d_inode 
-case, even
-         become NULL under us
-
-
-[1] https://www.kernel.org/doc/Documentation/filesystems/vfs.txt
-
-Thanks,
-C.C.Cheng
-
->> +
->> +int hfsplus_revalidate_dentry(struct dentry *dentry, unsigned int flags)
->> +{
-> What’s about this code?
+> >> My requirement:
+> >> To find the checksum of a real image in runtime which is flashed in an
+> >> MTD partition.
+> >
+> > Try using the dm-verity module for ensuring that a block device really
+> > is properly signed before mounting it.  That's what it was designed for
+> > and is independent of the block device type.
 >
-> If (flags & LOOKUP_RCU)
->     return -ECHILD;
+> MTDs are not block devices. :-)
 >
-> Do we really need to miss it here?
->
-> Thanks,
-> Slava.
->
->
->> +	/*
->> +	 * dentries are always valid when disabling casefold.
->> +	 */
->> +	if (!test_bit(HFSPLUS_SB_CASEFOLD, &HFSPLUS_SB(dentry->d_sb)->flags))
->> +		return 1;
->> +
->> +	/*
->> +	 * Positive dentries are valid when enabling casefold.
->> +	 *
->> +	 * Note, rename() to existing directory entry will have ->d_inode, and
->> +	 * will use existing name which isn't specified name by user.
->> +	 *
->> +	 * We may be able to drop this positive dentry here. But dropping
->> +	 * positive dentry isn't good idea. So it's unsupported like
->> +	 * rename("filename", "FILENAME") for now.
->> +	 */
->> +	if (d_really_is_positive(dentry))
->> +		return 1;
->> +
->> +	/*
->> +	 * Drop the negative dentry, in order to make sure to use the case
->> +	 * sensitive name which is specified by user if this is for creation.
->> +	 */
->> +	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET))
->> +		return 0;
->> +
->> +	return 1;
->> +}
->> -- 
->> 2.25.1
->>
+Is it possible to use dm-verity with squashfs ?
+We are using squashfs for our rootfs which is an MTD block /dev/mtdblock44
