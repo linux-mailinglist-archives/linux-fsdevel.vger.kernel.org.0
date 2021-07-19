@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93D223CEA26
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jul 2021 19:55:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CE523CEA27
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jul 2021 19:55:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347420AbhGSRH7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jul 2021 13:07:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53392 "EHLO mail.kernel.org"
+        id S1348676AbhGSRIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jul 2021 13:08:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244827AbhGSRD0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jul 2021 13:03:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 25B0B6113A;
-        Mon, 19 Jul 2021 17:44:04 +0000 (UTC)
+        id S1353348AbhGSREL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Jul 2021 13:04:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 05BEF610FB;
+        Mon, 19 Jul 2021 17:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626716644;
-        bh=kW1l1kaum3Tpsa+sz63uanvZPNmQHO4sxydiOUWyvj4=;
+        s=k20201202; t=1626716682;
+        bh=gwGuV8sGJDDh7S/VDyRXUZPBUpAgXRbjYPrdH+XeSO0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=El+xfRLj2mg/bGMIws6GMhs7JnBKPKKO2Gab2mn96havpF7CV4Wdhvj3mcL7CvSEk
-         UNpVsp5pVq/8n0v+7IXBDeVDNLb/s3wLqv/+z64OiTftgqshyEjV+tkfJcVIDZFTAQ
-         /d3cjWwxAaeCsHU2mBFjFiRWaJci44a84uTZ3ewLcOBinKnxn5E/iFcox7BLY7vQmV
-         qUu676PiiHCDXrRBiztErPIrzFJOUw0tVLngs/Z0lGWIpGQ9X3y5hFMA4PWyzSowsr
-         qJwJBHBtFgZl3EuSU1xcWE9dxI+P0eQOBnwELORK65y2LHPCuHSq0HkBtENvvm+pUI
-         hHuyBeLsd9Y8A==
-Date:   Mon, 19 Jul 2021 10:44:03 -0700
+        b=SL3ib1NOoZSgayuaZnqguxYWuQOyGocRJ+73vpqXYKXlyCzH024iH//UfHfJopNp2
+         wfg5Wag3Ejll+8wOKxcsPqvMv1QxFT59wrX8/Yuh1ecvgGOxXf000ZBScuwPgGFbwj
+         zycTTxazZQQnV4Ue0zd6yoKAdkhsBIIy98DsmkoyuQlyRRL5nIqw3S7Zc6h/bpVFdY
+         9MMGdqxMuOpjDSprFcO/vShX2QUm0k+GFU+U5SOAJVv8GSyezp/Ja/Vhna9it4Jmkd
+         UVFA5pucTnCKXbL+U7B3zMNnlhbspiDxQqAfXmjbMqz5jGV84IkCRLrlj+XXMJacrh
+         X2TFWm4il5/Sw==
+Date:   Mon, 19 Jul 2021 10:44:41 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -33,155 +33,141 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: Re: [PATCH 27/27] iomap: constify iomap_iter_srcmap
-Message-ID: <20210719174403.GI22357@magnolia>
+Subject: Re: [PATCH 23/27] iomap: rework unshare flag
+Message-ID: <20210719174441.GJ22357@magnolia>
 References: <20210719103520.495450-1-hch@lst.de>
- <20210719103520.495450-28-hch@lst.de>
+ <20210719103520.495450-24-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210719103520.495450-28-hch@lst.de>
+In-Reply-To: <20210719103520.495450-24-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 19, 2021 at 12:35:20PM +0200, Christoph Hellwig wrote:
-> The srcmap returned from iomap_iter_srcmap is never modified, so mark
-> the iomap returned from it const and constify a lot of code that never
-> modifies the iomap.
+On Mon, Jul 19, 2021 at 12:35:16PM +0200, Christoph Hellwig wrote:
+> Instead of another internal flags namespace inside of buffered-io.c,
+> just pass a UNSHARE hint in the main iomap flags field.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/buffered-io.c | 23 +++++++++--------------
+>  include/linux/iomap.h  |  1 +
+>  2 files changed, 10 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index daabbe8d7edfb5..eb5d742b5bf8b7 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -511,10 +511,6 @@ iomap_migrate_page(struct address_space *mapping, struct page *newpage,
+>  EXPORT_SYMBOL_GPL(iomap_migrate_page);
+>  #endif /* CONFIG_MIGRATION */
+>  
+> -enum {
+> -	IOMAP_WRITE_F_UNSHARE		= (1 << 0),
+> -};
 
-LGTM!
+Oh good, this finally dies.
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
-> ---
->  fs/iomap/buffered-io.c | 32 ++++++++++++++++----------------
->  include/linux/iomap.h  |  2 +-
->  2 files changed, 17 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index eb5d742b5bf8b7..a2dd42f3115cfa 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -226,20 +226,20 @@ iomap_read_inline_data(struct inode *inode, struct page *page,
->  	SetPageUptodate(page);
+> -
+>  static void
+>  iomap_write_failed(struct inode *inode, loff_t pos, unsigned len)
+>  {
+> @@ -544,7 +540,7 @@ iomap_read_page_sync(loff_t block_start, struct page *page, unsigned poff,
 >  }
 >  
-> -static inline bool iomap_block_needs_zeroing(struct iomap_iter *iter,
-> +static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
->  		loff_t pos)
+>  static int __iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+> -		unsigned len, int flags, struct page *page)
+> +		unsigned len, struct page *page)
 >  {
-> -	struct iomap *srcmap = iomap_iter_srcmap(iter);
-> +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  
->  	return srcmap->type != IOMAP_MAPPED ||
->  		(srcmap->flags & IOMAP_F_NEW) ||
->  		pos >= i_size_read(iter->inode);
->  }
->  
-> -static loff_t iomap_readpage_iter(struct iomap_iter *iter,
-> +static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
->  		struct iomap_readpage_ctx *ctx, loff_t offset)
->  {
-> -	struct iomap *iomap = &iter->iomap;
-> +	const struct iomap *iomap = &iter->iomap;
->  	loff_t pos = iter->pos + offset;
->  	loff_t length = iomap_length(iter) - offset;
->  	struct page *page = ctx->cur_page;
-> @@ -355,7 +355,7 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
->  }
->  EXPORT_SYMBOL_GPL(iomap_readpage);
->  
-> -static loff_t iomap_readahead_iter(struct iomap_iter *iter,
-> +static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
->  		struct iomap_readpage_ctx *ctx)
->  {
->  	loff_t length = iomap_length(iter);
-> @@ -539,10 +539,10 @@ iomap_read_page_sync(loff_t block_start, struct page *page, unsigned poff,
->  	return submit_bio_wait(&bio);
->  }
->  
-> -static int __iomap_write_begin(struct iomap_iter *iter, loff_t pos,
-> +static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
->  		unsigned len, struct page *page)
->  {
-> -	struct iomap *srcmap = iomap_iter_srcmap(iter);
-> +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+>  	struct iomap *srcmap = iomap_iter_srcmap(iter);
 >  	struct iomap_page *iop = iomap_page_create(iter->inode, page);
->  	loff_t block_size = i_blocksize(iter->inode);
->  	loff_t block_start = round_down(pos, block_size);
-> @@ -580,11 +580,11 @@ static int __iomap_write_begin(struct iomap_iter *iter, loff_t pos,
->  	return 0;
+> @@ -563,13 +559,13 @@ static int __iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+>  		if (plen == 0)
+>  			break;
+>  
+> -		if (!(flags & IOMAP_WRITE_F_UNSHARE) &&
+> +		if (!(iter->flags & IOMAP_UNSHARE) &&
+>  		    (from <= poff || from >= poff + plen) &&
+>  		    (to <= poff || to >= poff + plen))
+>  			continue;
+>  
+>  		if (iomap_block_needs_zeroing(iter, block_start)) {
+> -			if (WARN_ON_ONCE(flags & IOMAP_WRITE_F_UNSHARE))
+> +			if (WARN_ON_ONCE(iter->flags & IOMAP_UNSHARE))
+>  				return -EIO;
+>  			zero_user_segments(page, poff, from, to, poff + plen);
+>  		} else {
+> @@ -585,7 +581,7 @@ static int __iomap_write_begin(struct iomap_iter *iter, loff_t pos,
 >  }
 >  
-> -static int iomap_write_begin(struct iomap_iter *iter, loff_t pos, unsigned len,
-> -		struct page **pagep)
-> +static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
-> +		unsigned len, struct page **pagep)
+>  static int iomap_write_begin(struct iomap_iter *iter, loff_t pos, unsigned len,
+> -		unsigned flags, struct page **pagep)
+> +		struct page **pagep)
 >  {
 >  	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
-> -	struct iomap *srcmap = iomap_iter_srcmap(iter);
-> +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  	struct page *page;
->  	int status = 0;
+>  	struct iomap *srcmap = iomap_iter_srcmap(iter);
+> @@ -617,7 +613,7 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos, unsigned len,
+>  	else if (iter->iomap.flags & IOMAP_F_BUFFER_HEAD)
+>  		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
+>  	else
+> -		status = __iomap_write_begin(iter, pos, len, flags, page);
+> +		status = __iomap_write_begin(iter, pos, len, page);
 >  
-> @@ -655,10 +655,10 @@ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
->  	return copied;
->  }
+>  	if (unlikely(status))
+>  		goto out_unlock;
+> @@ -748,7 +744,7 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>  			break;
+>  		}
 >  
-> -static size_t iomap_write_end_inline(struct iomap_iter *iter, struct page *page,
-> -		loff_t pos, size_t copied)
-> +static size_t iomap_write_end_inline(const struct iomap_iter *iter,
-> +		struct page *page, loff_t pos, size_t copied)
->  {
-> -	struct iomap *iomap = &iter->iomap;
-> +	const struct iomap *iomap = &iter->iomap;
->  	void *addr;
+> -		status = iomap_write_begin(iter, pos, bytes, 0, &page);
+> +		status = iomap_write_begin(iter, pos, bytes, &page);
+>  		if (unlikely(status))
+>  			break;
 >  
->  	WARN_ON_ONCE(!PageUptodate(page));
-> @@ -678,7 +678,7 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
->  		size_t copied, struct page *page)
->  {
->  	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
-> -	struct iomap *srcmap = iomap_iter_srcmap(iter);
-> +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  	loff_t old_size = iter->inode->i_size;
->  	size_t ret;
+> @@ -825,8 +821,7 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+>  		unsigned long bytes = min_t(loff_t, PAGE_SIZE - offset, length);
+>  		struct page *page;
 >  
-> @@ -803,7 +803,7 @@ EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
->  static loff_t iomap_unshare_iter(struct iomap_iter *iter)
->  {
->  	struct iomap *iomap = &iter->iomap;
-> -	struct iomap *srcmap = iomap_iter_srcmap(iter);
-> +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  	loff_t pos = iter->pos;
->  	loff_t length = iomap_length(iter);
->  	long status = 0;
-> @@ -879,7 +879,7 @@ static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
->  static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  {
->  	struct iomap *iomap = &iter->iomap;
-> -	struct iomap *srcmap = iomap_iter_srcmap(iter);
-> +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  	loff_t pos = iter->pos;
->  	loff_t length = iomap_length(iter);
->  	loff_t written = 0;
+> -		status = iomap_write_begin(iter, pos, bytes,
+> -				IOMAP_WRITE_F_UNSHARE, &page);
+> +		status = iomap_write_begin(iter, pos, bytes, &page);
+>  		if (unlikely(status))
+>  			return status;
+>  
+> @@ -854,7 +849,7 @@ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+>  		.inode		= inode,
+>  		.pos		= pos,
+>  		.len		= len,
+> -		.flags		= IOMAP_WRITE,
+> +		.flags		= IOMAP_WRITE | IOMAP_UNSHARE,
+>  	};
+>  	int ret;
+>  
+> @@ -871,7 +866,7 @@ static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
+>  	unsigned offset = offset_in_page(pos);
+>  	unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
+>  
+> -	status = iomap_write_begin(iter, pos, bytes, 0, &page);
+> +	status = iomap_write_begin(iter, pos, bytes, &page);
+>  	if (status)
+>  		return status;
+>  
 > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 719798814bdfdb..a1fb0d22efbd40 100644
+> index 2f13e34c2c0b0b..719798814bdfdb 100644
 > --- a/include/linux/iomap.h
 > +++ b/include/linux/iomap.h
-> @@ -193,7 +193,7 @@ static inline u64 iomap_length(const struct iomap_iter *iter)
->   * for a given operation, which may or may no be identical to the destination
->   * map in &i->iomap.
->   */
-> -static inline struct iomap *iomap_iter_srcmap(struct iomap_iter *i)
-> +static inline const struct iomap *iomap_iter_srcmap(const struct iomap_iter *i)
->  {
->  	if (i->srcmap.type != IOMAP_HOLE)
->  		return &i->srcmap;
+> @@ -122,6 +122,7 @@ struct iomap_page_ops {
+>  #define IOMAP_DIRECT		(1 << 4) /* direct I/O */
+>  #define IOMAP_NOWAIT		(1 << 5) /* do not block */
+>  #define IOMAP_OVERWRITE_ONLY	(1 << 6) /* only pure overwrites allowed */
+> +#define IOMAP_UNSHARE		(1 << 7) /* unshare_file_range */
+>  
+>  struct iomap_ops {
+>  	/*
 > -- 
 > 2.30.2
 > 
