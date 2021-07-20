@@ -2,139 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BA9013CF4CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 08:51:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A4C93CF4D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 08:53:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236465AbhGTGK6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 02:10:58 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:49947 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231681AbhGTGK6 (ORCPT
+        id S236271AbhGTGMT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 02:12:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51782 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231681AbhGTGMS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 02:10:58 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UgOMTpy_1626763894;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UgOMTpy_1626763894)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 20 Jul 2021 14:51:35 +0800
-Subject: Re: [PATCH v2 3/4] fuse: add per-file DAX flag
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-References: <20210716104753.74377-1-jefflexu@linux.alibaba.com>
- <20210716104753.74377-4-jefflexu@linux.alibaba.com>
- <YPXWA+Uo5vFuHCH0@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <61bca75f-2efa-f032-41d6-fcb525d8b528@linux.alibaba.com>
-Date:   Tue, 20 Jul 2021 14:51:34 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        Tue, 20 Jul 2021 02:12:18 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACAA7C061574;
+        Mon, 19 Jul 2021 23:52:55 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id b13so31423262ybk.4;
+        Mon, 19 Jul 2021 23:52:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i3P8iElB5BGBQz2BogP4lQASid2sQ5rb3EtbxDtbWs4=;
+        b=AtS0wxaS1Bj9E3TmY9c1facqtAUt9c2uSz/5v+5sacTMFNZVLJ7Vu5fQyxbN/57CqK
+         VjGx/q3n+fhPovMQqwjwUQvv0e2b2Pc7UDROeWsYtFitDoDNs+rVA1bZjAEurNx4bXCK
+         gzIt8XolsduvStf4dLN2kKRhssAUCJRcFzSz1bQhksTA+AmtKkkbCbO7cNyB6wAUtMEE
+         hwXa5yj7r7ICD32Q89WMxQEfUNMGoiLmuRLnI2mj7JhnOdwe1UjZWR9opuut2u/cVGBX
+         qILOfUOmB46REpiydvC0cz79BJZjKa/kYHrtwLqvjQXQ8q2E+E0CYoe497cs6giTUgxM
+         aJrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i3P8iElB5BGBQz2BogP4lQASid2sQ5rb3EtbxDtbWs4=;
+        b=JqqF8thsdowOMRM2FwVIV4ACRiPWZuB/4H8E27GdGJ+1tIQzpZF968n8vAOi3nb8ic
+         r2Pt8N+1wdwNArOGfTWcjlo74uWuszsSqpykCJF3gVBWKq8KvTb92D65puUHJfMJMF1F
+         uevgRb55PUVMnb7+cAiL6T+FQwVI41qpj85v/2uy1pnFLoZVs792HLC16FI8f5fV1tpU
+         9o9eBwLrFfbDxlGFeoXA4sLXK8t+SmJdjOxucFIzGJk+Zj3lHv4JikCKDxAI8WrumlSn
+         2IDriVJAhZplm9EpgrpY+rXN4uvPz3CiUn6ic7TURJ8TaUC8Y0uMtNBkFtMfihEUzMd0
+         95bg==
+X-Gm-Message-State: AOAM531FVfxVvVv4/5S3/1hxTULSzILthS/Tk3htSmzP1E0PUzNyO+nf
+        iuuoBXF9h2mt5qNtB3wW2dQ+YT4rho/sJFp10FE=
+X-Google-Smtp-Source: ABdhPJzeoi9+3uEXJ5VJ1NSLe9UYlkcdyqgQ9slWkEEBGjlwjq+9o5zNkLIc6Mqx+mAcOtAcslDhMkfOL3I7w+kJcG4=
+X-Received: by 2002:a25:e08a:: with SMTP id x132mr37315083ybg.511.1626763975019;
+ Mon, 19 Jul 2021 23:52:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YPXWA+Uo5vFuHCH0@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210715103600.3570667-1-dkadashev@gmail.com> <20210715103600.3570667-2-dkadashev@gmail.com>
+ <YPCRQo3vsSgBwzCN@zeniv-ca.linux.org.uk>
+In-Reply-To: <YPCRQo3vsSgBwzCN@zeniv-ca.linux.org.uk>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Tue, 20 Jul 2021 13:52:43 +0700
+Message-ID: <CAOKbgA68Oa_vrD4nZw0puCiqHFFA_8PrkADrRmWgt=4WE6Wfqw@mail.gmail.com>
+Subject: Re: [PATCH 01/14] namei: prepare do_rmdir for refactoring
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jul 16, 2021 at 2:49 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Thu, Jul 15, 2021 at 05:35:47PM +0700, Dmitry Kadashev wrote:
+> > This is just a preparation for the move of the main rmdir logic to a
+> > separate function to make the logic easier to follow.  This change
+> > contains the flow changes so that the actual change to move the main
+> > logic to a separate function does no change the flow at all.
+> >
+> > Two changes here:
+> >
+> > 1. Previously on filename_parentat() error the function used to exit
+> > immediately, and now it will check the return code to see if ESTALE
+> > retry is appropriate. The filename_parentat() does its own retries on
+> > ESTALE, but this extra check should be completely fine.
+> >
+> > 2. The retry_estale() check is wrapped in unlikely(). Some other places
+> > already have that and overall it seems to make sense.
+>
+> That's not the way to do it.
+>
+> static inline bool
+> retry_estale(const long error, const unsigned int flags)
+> {
+>         return unlikely(error == -ESTALE && !(flags & LOOKUP_REVAL));
+> }
+>
+> And strip the redundant unlikely in the callers.  Having that markup
+> in callers makes sense only when different callers have different
+> odds of positive result, which is very much not the case here.
+
+Yeah, I thought about this, but wasn't sure about interplay of
+inline+[un]likely(). But I see that it's used quite a bit throughout the
+kernel code so I suppose it's fine. I'll use that next time, thanks.
 
 
-On 7/20/21 3:44 AM, Vivek Goyal wrote:
-> On Fri, Jul 16, 2021 at 06:47:52PM +0800, Jeffle Xu wrote:
->> Add one flag for fuse_attr.flags indicating if DAX shall be enabled for
->> this file.
->>
->> When the per-file DAX flag changes for an *opened* file, the state of
->> the file won't be updated until this file is closed and reopened later.
->>
->> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
->> ---
->>  fs/fuse/dax.c             | 21 +++++++++++++++++----
->>  fs/fuse/file.c            |  4 ++--
->>  fs/fuse/fuse_i.h          |  5 +++--
->>  fs/fuse/inode.c           |  5 ++++-
->>  include/uapi/linux/fuse.h |  5 +++++
->>  5 files changed, 31 insertions(+), 9 deletions(-)
->>
->> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
->> index a478e824c2d0..0e862119757a 100644
->> --- a/fs/fuse/dax.c
->> +++ b/fs/fuse/dax.c
->> @@ -1341,7 +1341,7 @@ static const struct address_space_operations fuse_dax_file_aops  = {
->>  	.invalidatepage	= noop_invalidatepage,
->>  };
->>  
->> -static bool fuse_should_enable_dax(struct inode *inode)
->> +static bool fuse_should_enable_dax(struct inode *inode, unsigned int flags)
->>  {
->>  	struct fuse_conn *fc = get_fuse_conn(inode);
->>  	unsigned int mode;
->> @@ -1354,18 +1354,31 @@ static bool fuse_should_enable_dax(struct inode *inode)
->>  	if (mode == FUSE_DAX_MOUNT_NEVER)
->>  		return false;
->>  
->> -	return true;
->> +	if (mode == FUSE_DAX_MOUNT_ALWAYS)
->> +		return true;
->> +
->> +	WARN_ON(mode != FUSE_DAX_MOUNT_INODE);
->> +	return flags & FUSE_ATTR_DAX;
->>  }
->>  
->> -void fuse_dax_inode_init(struct inode *inode)
->> +void fuse_dax_inode_init(struct inode *inode, unsigned int flags)
->>  {
->> -	if (!fuse_should_enable_dax(inode))
->> +	if (!fuse_should_enable_dax(inode, flags))
->>  		return;
->>  
->>  	inode->i_flags |= S_DAX;
->>  	inode->i_data.a_ops = &fuse_dax_file_aops;
->>  }
->>  
->> +void fuse_dax_dontcache(struct inode *inode, bool newdax)
->> +{
->> +	struct fuse_conn *fc = get_fuse_conn(inode);
->> +
->> +	if (fc->dax && fc->dax->mode == FUSE_DAX_MOUNT_INODE &&
->> +	    IS_DAX(inode) != newdax)
->> +		d_mark_dontcache(inode);
->> +}
->> +
-> 
-> This capability to mark an inode dontcache should probably be in a
-> separate patch. These seem to logically two functionalities. One is
-> enabling DAX on an inode. And second is making sure how soon you
-> see the effect of that change and hence marking inode dontcache.
-
-OK, sounds reasonable.
-
-> 
-> Not sure how useful this is. In cache=none mode we should get rid of
-> inode ASAP. In cache=auto mode we will get rid of after 1 second (or
-> after a user specified timeout). So only place this seems to be
-> useful is cache=always.
-
-Actually dontcache here is used to avoid dynamic switching between DAX
-and non-DAX state while file is opened. The complexity of dynamic
-switching is that, you have to clear the address_space, since page cache
-and DAX entry can not coexist in the address space. Besides,
-inode->a_ops also needs to be changed dynamically.
-
-With dontcache, dynamic switching is no longer needed and the DAX state
-will be decided only when inode (in memory) is initialized. The downside
-is that the new DAX state won't be updated until the file is closed and
-reopened later.
-
-'cache=none' only invalidates dentry, while the inode (in memory) is
-still there (with address_space uncleared and a_ops unchanged).
-
-The dynamic switching may be done, though it's not such straightforward.
-Currently, ext4/xfs are all implemented in this dontcache way, i.e., the
-new DAX state won't be seen until the file is closed and reopened later.
-
--- 
-Thanks,
-Jeffle
+--
+Dmitry Kadashev
