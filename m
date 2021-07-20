@@ -2,29 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 761AD3CFEBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 18:08:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3BF23CFED4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 18:12:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234127AbhGTP1n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 11:27:43 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56040 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240284AbhGTPT1 (ORCPT
+        id S229903AbhGTP2w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 11:28:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240495AbhGTPUm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 11:19:27 -0400
+        Tue, 20 Jul 2021 11:20:42 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63E15C0613EE;
+        Tue, 20 Jul 2021 09:00:09 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id 709741F43129
+        with ESMTPSA id D43781F4312B
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     jack@suse.com, amir73il@gmail.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         dhowells@redhat.com, khazhy@google.com,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com, Jan Kara <jack@suse.cz>
-Subject: [PATCH v4 03/16] fanotify: Split fsid check from other fid mode checks
-Date:   Tue, 20 Jul 2021 11:59:31 -0400
-Message-Id: <20210720155944.1447086-4-krisman@collabora.com>
+        kernel@collabora.com
+Subject: [PATCH v4 04/16] fsnotify: Reserve mark bits for backends
+Date:   Tue, 20 Jul 2021 11:59:32 -0400
+Message-Id: <20210720155944.1447086-5-krisman@collabora.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210720155944.1447086-1-krisman@collabora.com>
 References: <20210720155944.1447086-1-krisman@collabora.com>
@@ -34,106 +37,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-FAN_FS_ERROR will require fsid, but not necessarily require the
-filesystem to expose a file handle.  Split those checks into different
-functions, so they can be used separately when setting up an event.
+Split out the final bits of struct fsnotify_mark->flags for use by a
+backend.
 
-While there, update a comment about tmpfs having 0 fsid, which is no
-longer true.
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
 ---
-Changes since v2:
-  - FAN_ERROR -> FAN_FS_ERROR (Amir)
-  - Update comment (Amir)
+ include/linux/fsnotify_backend.h | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-Changes since v1:
-  (Amir)
-  - Sort hunks to simplify diff.
-Changes since RFC:
-  (Amir)
-  - Rename fanotify_check_path_fsid -> fanotify_test_fsid.
-  - Use dentry directly instead of path.
----
- fs/notify/fanotify/fanotify_user.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
-
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 68a53d3534f8..67b18dfe0025 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1192,16 +1192,15 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	return fd;
- }
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index 1ce66748a2d2..9d5586445c65 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -363,6 +363,21 @@ struct fsnotify_mark_connector {
+ 	struct hlist_head list;
+ };
  
--/* Check if filesystem can encode a unique fid */
--static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
-+static int fanotify_test_fsid(struct dentry *dentry, __kernel_fsid_t *fsid)
- {
- 	__kernel_fsid_t root_fsid;
- 	int err;
- 
- 	/*
--	 * Make sure path is not in filesystem with zero fsid (e.g. tmpfs).
-+	 * Make sure dentry is not of a filesystem with zero fsid (e.g. fuse).
- 	 */
--	err = vfs_get_fsid(path->dentry, fsid);
-+	err = vfs_get_fsid(dentry, fsid);
- 	if (err)
- 		return err;
- 
-@@ -1209,10 +1208,10 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
- 		return -ENODEV;
- 
- 	/*
--	 * Make sure path is not inside a filesystem subvolume (e.g. btrfs)
-+	 * Make sure dentry is not of a filesystem subvolume (e.g. btrfs)
- 	 * which uses a different fsid than sb root.
- 	 */
--	err = vfs_get_fsid(path->dentry->d_sb->s_root, &root_fsid);
-+	err = vfs_get_fsid(dentry->d_sb->s_root, &root_fsid);
- 	if (err)
- 		return err;
- 
-@@ -1220,6 +1219,12 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
- 	    root_fsid.val[1] != fsid->val[1])
- 		return -EXDEV;
- 
-+	return 0;
-+}
++#define FSNOTIFY_MARK_FLAG(flag)	\
++static const unsigned int FSNOTIFY_MARK_FLAG_##flag = \
++	(1 << FSN_MARK_FL_BIT_##flag)
 +
-+/* Check if filesystem can encode a unique fid */
-+static int fanotify_test_fid(struct dentry *dentry)
-+{
- 	/*
- 	 * We need to make sure that the file system supports at least
- 	 * encoding a file handle so user can use name_to_handle_at() to
-@@ -1227,8 +1232,8 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
- 	 * objects. However, name_to_handle_at() requires that the
- 	 * filesystem also supports decoding file handles.
- 	 */
--	if (!path->dentry->d_sb->s_export_op ||
--	    !path->dentry->d_sb->s_export_op->fh_to_dentry)
-+	if (!dentry->d_sb->s_export_op ||
-+	    !dentry->d_sb->s_export_op->fh_to_dentry)
- 		return -EOPNOTSUPP;
- 
- 	return 0;
-@@ -1379,7 +1384,11 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	}
- 
- 	if (fid_mode) {
--		ret = fanotify_test_fid(&path, &__fsid);
-+		ret = fanotify_test_fsid(path.dentry, &__fsid);
-+		if (ret)
-+			goto path_put_and_out;
++enum fsnotify_mark_bits {
++	FSN_MARK_FL_BIT_IGNORED_SURV_MODIFY,
++	FSN_MARK_FL_BIT_ALIVE,
++	FSN_MARK_FL_BIT_ATTACHED,
++	FSN_MARK_PRIVATE_FLAGS,
++};
 +
-+		ret = fanotify_test_fid(path.dentry);
- 		if (ret)
- 			goto path_put_and_out;
++FSNOTIFY_MARK_FLAG(IGNORED_SURV_MODIFY);
++FSNOTIFY_MARK_FLAG(ALIVE);
++FSNOTIFY_MARK_FLAG(ATTACHED);
++
+ /*
+  * A mark is simply an object attached to an in core inode which allows an
+  * fsnotify listener to indicate they are either no longer interested in events
+@@ -398,9 +413,7 @@ struct fsnotify_mark {
+ 	struct fsnotify_mark_connector *connector;
+ 	/* Events types to ignore [mark->lock, group->mark_mutex] */
+ 	__u32 ignored_mask;
+-#define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY	0x01
+-#define FSNOTIFY_MARK_FLAG_ALIVE		0x02
+-#define FSNOTIFY_MARK_FLAG_ATTACHED		0x04
++	/* Upper bits [31:PRIVATE_FLAGS] are reserved for backend usage */
+ 	unsigned int flags;		/* flags [mark->lock] */
+ };
  
 -- 
 2.32.0
