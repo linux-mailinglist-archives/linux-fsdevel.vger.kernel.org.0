@@ -2,82 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B1573CFE6B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 17:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA743CFEBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 18:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238597AbhGTPRV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 11:17:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241892AbhGTOzS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 10:55:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 24149601FD;
-        Tue, 20 Jul 2021 15:35:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626795356;
-        bh=6WWbHG/Fa5709pODcaChGeaGj3p2RG9Qp8c92oe20zI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JQKtkHgtu6oCFgE8fW9thT3eytInZV3idh1LlWRc/P0FRUiv8NTrsAeqyvPR0tk/z
-         SDRabWk8G6xfWiZf36Rj0S2TFnEp3Ov1e+odU8Ld39pdfNN3ZmiSGlST3OvHnFtjx2
-         OY7l50V5VXFeqfqVhKMLPOoHsJU5yWsQdpboDBTH9exrO64daiyQtBpU/W8qJ7BMYb
-         c0ZyP8452/1RH3t7P70w8nDGP41Z7tlQOjutKH2mfwi5bkOW8Rx3wAeDcL7y8RbRhz
-         EcPGzNjnZF7cLbi7QT/jvxOBfsB0+0qYju73pgV88ubSipoKUbl/1JNMtAytQX8myD
-         SWCbbC145IMAg==
-Date:   Tue, 20 Jul 2021 18:35:50 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 000/138] Memory folios
-Message-ID: <YPbtVvnow+4I4ytS@kernel.org>
-References: <20210715033704.692967-1-willy@infradead.org>
- <YParbk8LxhrZMExc@kernel.org>
- <YPbEax52N7OBQCZp@casper.infradead.org>
- <YPbpBv30NqeQPqPK@kernel.org>
- <YPbqcQ9i/Vi7ivEE@casper.infradead.org>
+        id S234902AbhGTP1i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 11:27:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34178 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239809AbhGTPSQ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Jul 2021 11:18:16 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34CC8C061225;
+        Tue, 20 Jul 2021 08:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xHc3DzHalCTqDobJ5vVOoZ7iaprvb5xHc81pJawU1NY=; b=oQrmeaLyxz9SidxuUn07Z95Stk
+        muyQsxJjF9TDXi5Ml/OyTQSInPDeYVOCeIXrERYZKdOMv8uSaANLYFKXr+wCIx0y5vhMZqXqcMdM3
+        Qy4lgGy/5UAvD8c26Ca3NPDpdLR1NtcxJ8qskgUyVRbqWgl3xdSAWAPfs0fNJDwxd+9kFVRX8xDwm
+        vGJFhU4dFC4vgPa2OSLC5zLrkCPoWAKN6+j5rloh3k/fUuElmtFNuKM90EgWvbg85sfa1J62ILWyl
+        +38+96HaN2FY82HlBPVe+qlaxYmGk1ZNxmbZcOpaXW9ISHDoxAvELuXpTqGOsj0bJugmwLjS+GANj
+        FjSEK9kA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m5s6M-008Hf9-VV; Tue, 20 Jul 2021 15:56:21 +0000
+Date:   Tue, 20 Jul 2021 16:56:10 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Gao Xiang <xiang@kernel.org>,
+        linux-erofs@lists.ozlabs.org, stable@vger.kernel.org,
+        Christoph Lameter <cl@linux.com>
+Subject: Re: [PATCH] iomap: Add missing flush_dcache_page
+Message-ID: <YPbyGnpwsaC006Rk@casper.infradead.org>
+References: <20210716150032.1089982-1-willy@infradead.org>
+ <YPGf8o7vo6/9iTE5@infradead.org>
+ <YPHBqlLJQKQgRHqH@casper.infradead.org>
+ <YPU6NVlfIh4PfbPl@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPbqcQ9i/Vi7ivEE@casper.infradead.org>
+In-Reply-To: <YPU6NVlfIh4PfbPl@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 20, 2021 at 04:23:29PM +0100, Matthew Wilcox wrote:
-> On Tue, Jul 20, 2021 at 06:17:26PM +0300, Mike Rapoport wrote:
-> > On Tue, Jul 20, 2021 at 01:41:15PM +0100, Matthew Wilcox wrote:
-> > > On Tue, Jul 20, 2021 at 01:54:38PM +0300, Mike Rapoport wrote:
-> > > > Most of the changelogs (at least at the first patches) mention reduction of
-> > > > the kernel size for your configuration on x86. I wonder, what happens if
-> > > > you build the kernel with "non-distro" configuration, e.g. defconfig or
-> > > > tiny.config?
+On Mon, Jul 19, 2021 at 09:39:17AM +0100, Christoph Hellwig wrote:
+> On Fri, Jul 16, 2021 at 06:28:10PM +0100, Matthew Wilcox wrote:
+> > > >  	memcpy(addr, iomap->inline_data, size);
+> > > >  	memset(addr + size, 0, PAGE_SIZE - size);
+> > > >  	kunmap_atomic(addr);
+> > > > +	flush_dcache_page(page);
 > > > 
-> > > I did an allnoconfig build and that reduced in size by ~2KiB.
-> > > 
-> > > > Also, what is the difference on !x86 builds?
-> > > 
-> > > I don't generally do non-x86 builds ... feel free to compare for
-> > > yourself!
+> > > .. and all writes into a kmap also need such a flush, so this needs to
+> > > move a line up.  My plan was to add a memcpy_to_page_and_pad helper
+> > > ala memcpy_to_page to get various file systems and drivers out of the
+> > > business of cache flushing as much as we can.
 > > 
-> > I did allnoconfig and defconfig for arm64 and powerpc.
-> > 
-> > All execpt arm64::defconfig show decrease by ~1KiB, while arm64::defconfig
-> > was actually increased by ~500 bytes.
+> > hm?  It's absolutely allowed to flush the page after calling kunmap.
+> > Look at zero_user_segments(), for example.
 > 
-> Which patch did you go up to for that?  If you're going past patch 50 or
-> so, then you're starting to add functionality (ie support for arbitrary
-> order pages), so a certain amount of extra code size might be expected.
-> I measured 6KB at patch 32 or so, then between patch 32 & 50 was pretty
-> much a wash.
+> Documentation/core-api/cachetlb.rst states that any user page obtained
+> using kmap needs a flush_kernel_dcache_page after modification.
+> flush_dcache_page is a strict superset of flush_kernel_dcache_page.
 
-I've used folio_14 tag:
+Looks like (the other) Christoph broke this in 2008 with commit
+eebd2aa35569 ("Pagecache zeroing: zero_user_segment, zero_user_segments
+and zero_user"):
 
-commit 480552d0322d855d146c0fa6fdf1e89ca8569037 (HEAD, tag: folio_14)
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Wed Feb 5 11:27:01 2020 -0500
+It has one line about it in the changelog:
 
-    mm/readahead: Add multi-page folio readahead
- 
--- 
-Sincerely yours,
-Mike.
+    Also extract the flushing of the caches to be outside of the kmap.
+
+... which doesn't even attempt to justify why it's safe to do so.
+
+-               memset((char *)kaddr + (offset), 0, (size));    \
+-               flush_dcache_page(page);                        \
+-               kunmap_atomic(kaddr, (km_type));                \
++       kunmap_atomic(kaddr, KM_USER0);
++       flush_dcache_page(page);
+
+Looks like it came from
+https://lore.kernel.org/lkml/20070911060425.472862098@sgi.com/
+but there was no discussion of this ... plenty of discussion about
+other conceptual problems with the entire patchset.
+
+> That beeing said flushing after kmap updates is a complete mess.
+> arm as probably the poster child for dcache challenged plus highmem
+> architectures always flushed caches from kunmap and, and arc has
+> a flush_dcache_page that doesn't work at all on a highmem page that
+> is not kmapped (where kmap_atomic and kmap_local_page don't count as
+> kmapped as they don't set page->virtual).
