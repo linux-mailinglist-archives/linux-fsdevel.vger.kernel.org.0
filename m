@@ -2,177 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CBB03D021A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 21:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F234D3D022C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 21:27:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231467AbhGTSin (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 14:38:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36649 "EHLO
+        id S230338AbhGTSrI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 14:47:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:53616 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230173AbhGTSh5 (ORCPT
+        by vger.kernel.org with ESMTP id S229865AbhGTSrB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 14:37:57 -0400
+        Tue, 20 Jul 2021 14:47:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626808714;
+        s=mimecast20190719; t=1626809249;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=YVavRmBCFQMgCfTGMbqTCEVwgb4wxSR94J/cuWyrTdU=;
-        b=WgH/9w+Ty0hpVrpTAn7koM18u5ckCRftOeMr1z2bS8sSEwB7Q69J3+d4jpgeTCVDjqvSED
-        jvLrM87S5y5ga/1eNB+6AhGRfh3jSTQobdxxlECWhBamTysZ+3EePmsHD0+XSqTrT/8Vaw
-        k9kmrB7vrlXAZmyVp1kIzMxBwJSwK4Y=
+        bh=q/d/LJIq20gccDCxNrTxAI8zEP6GHLRdmU5ruw0kxIg=;
+        b=hxihkticV2rbw51z7LZ6oHuv1ymNQmqwAffILN2HoBQlF8uuiHWcTkDc6D5y1eLKyKz/Or
+        4zAnIKrGrWjDvb73pGzLFA4xUYjtEj40LsgIPkD2hZyMZS71p9S1LDNj4/jw6eXOplXqYq
+        Mkhi0GbR76YDoIFCtAU09Ch3TU+EvM0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-245-OTi243zAMb2FbI2bX7HUMg-1; Tue, 20 Jul 2021 15:18:31 -0400
-X-MC-Unique: OTi243zAMb2FbI2bX7HUMg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-324-ENyoAwCvN8i5aRgIUOrEiQ-1; Tue, 20 Jul 2021 15:27:26 -0400
+X-MC-Unique: ENyoAwCvN8i5aRgIUOrEiQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D62ED100C609;
-        Tue, 20 Jul 2021 19:18:29 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 794D51835AC2;
+        Tue, 20 Jul 2021 19:27:24 +0000 (UTC)
 Received: from horse.redhat.com (ovpn-113-228.rdu2.redhat.com [10.10.113.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BC64C5D6A1;
-        Tue, 20 Jul 2021 19:18:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8D04760583;
+        Tue, 20 Jul 2021 19:27:16 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 4142B223E70; Tue, 20 Jul 2021 15:18:25 -0400 (EDT)
-Date:   Tue, 20 Jul 2021 15:18:25 -0400
+        id 24F59223E70; Tue, 20 Jul 2021 15:27:16 -0400 (EDT)
+Date:   Tue, 20 Jul 2021 15:27:16 -0400
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     JeffleXu <jefflexu@linux.alibaba.com>
 Cc:     stefanha@redhat.com, miklos@szeredi.hu,
         linux-fsdevel@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-Subject: Re: [PATCH v2 0/4] virtiofs,fuse: support per-file DAX
-Message-ID: <YPchgf665bwUMKWU@redhat.com>
+Subject: Re: [PATCH v2 3/4] fuse: add per-file DAX flag
+Message-ID: <YPcjlN1ThL4UX8dn@redhat.com>
 References: <20210716104753.74377-1-jefflexu@linux.alibaba.com>
- <YPXu3BefIi7Ts48I@redhat.com>
- <031efb1d-7c0d-35fb-c147-dcc3b6cac0ef@linux.alibaba.com>
+ <20210716104753.74377-4-jefflexu@linux.alibaba.com>
+ <YPXWA+Uo5vFuHCH0@redhat.com>
+ <61bca75f-2efa-f032-41d6-fcb525d8b528@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <031efb1d-7c0d-35fb-c147-dcc3b6cac0ef@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <61bca75f-2efa-f032-41d6-fcb525d8b528@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 20, 2021 at 01:25:11PM +0800, JeffleXu wrote:
+On Tue, Jul 20, 2021 at 02:51:34PM +0800, JeffleXu wrote:
 > 
 > 
-> On 7/20/21 5:30 AM, Vivek Goyal wrote:
-> > On Fri, Jul 16, 2021 at 06:47:49PM +0800, Jeffle Xu wrote:
-> >> This patchset adds support of per-file DAX for virtiofs, which is
-> >> inspired by Ira Weiny's work on ext4[1] and xfs[2].
+> On 7/20/21 3:44 AM, Vivek Goyal wrote:
+> > On Fri, Jul 16, 2021 at 06:47:52PM +0800, Jeffle Xu wrote:
+> >> Add one flag for fuse_attr.flags indicating if DAX shall be enabled for
+> >> this file.
 > >>
-> >> There are three related scenarios:
-> >> 1. Alloc inode: get per-file DAX flag from fuse_attr.flags. (patch 3)
-> >> 2. Per-file DAX flag changes when the file has been opened. (patch 3)
-> >> In this case, the dentry and inode are all marked as DONT_CACHE, and
-> >> the DAX state won't be updated until the file is closed and reopened
-> >> later.
-> >> 3. Users can change the per-file DAX flag inside the guest by chattr(1).
-> >> (patch 4)
-> >> 4. Create new files under directories with DAX enabled. When creating
-> >> new files in ext4/xfs on host, the new created files will inherit the
-> >> per-file DAX flag from the directory, and thus the new created files in
-> >> virtiofs will also inherit the per-file DAX flag if the fuse server
-> >> derives fuse_attr.flags from the underlying ext4/xfs inode's per-file
-> >> DAX flag.
+> >> When the per-file DAX flag changes for an *opened* file, the state of
+> >> the file won't be updated until this file is closed and reopened later.
+> >>
+> >> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> >> ---
+> >>  fs/fuse/dax.c             | 21 +++++++++++++++++----
+> >>  fs/fuse/file.c            |  4 ++--
+> >>  fs/fuse/fuse_i.h          |  5 +++--
+> >>  fs/fuse/inode.c           |  5 ++++-
+> >>  include/uapi/linux/fuse.h |  5 +++++
+> >>  5 files changed, 31 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+> >> index a478e824c2d0..0e862119757a 100644
+> >> --- a/fs/fuse/dax.c
+> >> +++ b/fs/fuse/dax.c
+> >> @@ -1341,7 +1341,7 @@ static const struct address_space_operations fuse_dax_file_aops  = {
+> >>  	.invalidatepage	= noop_invalidatepage,
+> >>  };
+> >>  
+> >> -static bool fuse_should_enable_dax(struct inode *inode)
+> >> +static bool fuse_should_enable_dax(struct inode *inode, unsigned int flags)
+> >>  {
+> >>  	struct fuse_conn *fc = get_fuse_conn(inode);
+> >>  	unsigned int mode;
+> >> @@ -1354,18 +1354,31 @@ static bool fuse_should_enable_dax(struct inode *inode)
+> >>  	if (mode == FUSE_DAX_MOUNT_NEVER)
+> >>  		return false;
+> >>  
+> >> -	return true;
+> >> +	if (mode == FUSE_DAX_MOUNT_ALWAYS)
+> >> +		return true;
+> >> +
+> >> +	WARN_ON(mode != FUSE_DAX_MOUNT_INODE);
+> >> +	return flags & FUSE_ATTR_DAX;
+> >>  }
+> >>  
+> >> -void fuse_dax_inode_init(struct inode *inode)
+> >> +void fuse_dax_inode_init(struct inode *inode, unsigned int flags)
+> >>  {
+> >> -	if (!fuse_should_enable_dax(inode))
+> >> +	if (!fuse_should_enable_dax(inode, flags))
+> >>  		return;
+> >>  
+> >>  	inode->i_flags |= S_DAX;
+> >>  	inode->i_data.a_ops = &fuse_dax_file_aops;
+> >>  }
+> >>  
+> >> +void fuse_dax_dontcache(struct inode *inode, bool newdax)
+> >> +{
+> >> +	struct fuse_conn *fc = get_fuse_conn(inode);
+> >> +
+> >> +	if (fc->dax && fc->dax->mode == FUSE_DAX_MOUNT_INODE &&
+> >> +	    IS_DAX(inode) != newdax)
+> >> +		d_mark_dontcache(inode);
+> >> +}
+> >> +
 > > 
-> > Thinking little bit more about this from requirement perspective. I think
-> > we are trying to address two use cases here.
-> > 
-> > A. Client does not know which files DAX should be used on. Only server
-> >    knows it and server passes this information to client. I suspect
-> >    that's your primary use case.
+> > This capability to mark an inode dontcache should probably be in a
+> > separate patch. These seem to logically two functionalities. One is
+> > enabling DAX on an inode. And second is making sure how soon you
+> > see the effect of that change and hence marking inode dontcache.
 > 
-> Yes, this is the starting point of this patch set.
+> OK, sounds reasonable.
 > 
 > > 
-> > B. Client is driving which files are supposed to be using DAX. This is
-> >    exactly same as the model ext4/xfs are using by storing a persistent
-> >    flag on inode. 
-> > 
-> > Current patches seem to be a hybrid of both approach A and B. 
-> > 
-> > If we were to implement B, then fuse client probably needs to have the
-> > capability to query FS_XFLAG_DAX on inode and decide whether to
-> > enable DAX or not. (Without extra round trip). Or know it indirectly
-> > by extending GETATTR and requesting this explicitly.
+> > Not sure how useful this is. In cache=none mode we should get rid of
+> > inode ASAP. In cache=auto mode we will get rid of after 1 second (or
+> > after a user specified timeout). So only place this seems to be
+> > useful is cache=always.
 > 
-> If guest queries if the file is DAX capable or not by an extra GETATTR,
-> I'm afraid this will add extra round trip.
+> Actually dontcache here is used to avoid dynamic switching between DAX
+> and non-DAX state while file is opened. The complexity of dynamic
+> switching is that, you have to clear the address_space, since page cache
+> and DAX entry can not coexist in the address space. Besides,
+> inode->a_ops also needs to be changed dynamically.
 > 
-> Or if we add the DAX flag (ATTR_DAX) by extending LOOKUP, as done by
-> this patch set, then the FUSE server needs to set ATTR_DAX according to
-> the FS_XFLAG_DAX of the backend files, *to make the FS_XFLAG_DAX flag
-> previously set by FUSE client work*. Then it becomes a *mandatory*
-> requirement when implementing FUSE server. i.e., it becomes part of the
-> FUSE protocol rather than implementation specific. FUSE server can still
-> implement some other algorithm deciding whether to set ATTR_DAX or not,
-> though it must set ATTR_DAX once the backend file is flagged with
-> FS_XFLAG_DAX.
+> With dontcache, dynamic switching is no longer needed and the DAX state
+> will be decided only when inode (in memory) is initialized. The downside
+> is that the new DAX state won't be updated until the file is closed and
+> reopened later.
 > 
-> Besides, as you said, FUSE server needs to add one extra
-> GETFLAGS/FSGETXATTR ioctl per LOOKUP in this case. To eliminate this
-> cost, we could negotiate the per-file DAX capability during FUSE_INIT.
-> Only when the per-file DAX capability is negotiated, will the FUSE
-> server do extra GETFLAGS/FSGETXATTR ioctl and set ATTR_DAX flag when
-> doing LOOKUP.
+> 'cache=none' only invalidates dentry, while the inode (in memory) is
+> still there (with address_space uncleared and a_ops unchanged).
+
+Aha.., that's a good point.
 > 
-> 
-> Personally, I prefer the second way, i.e., by extending LOOKUP (adding
-> ATTR_DAX), to eliminate the extra round trip.
+> The dynamic switching may be done, though it's not such straightforward.
+> Currently, ext4/xfs are all implemented in this dontcache way, i.e., the
+> new DAX state won't be seen until the file is closed and reopened later.
 
-Negotiating a fuse feature say FUSE_FS_XFLAG_DAX makes sense. If
-client is mounted with "-o dax=inode", then client will negotitate
-this feature and if server does not support it, mount can fail.
+Got it. Agreed that dontcache seems reasonable if file's DAX state
+has changed. Keep it in separate patch though with proper commit
+logs.
 
-But this probably will be binding on server that it needs to return
-the state of FS_XFLAG_DAX attr on inode upon lookup/getattr. I don't
-this will allow server to implement its own separate policy which
-does not follow FS_XFLAG_DAX xattr. 
+Also, please copy virtiofs list (virtio-fs@redhat.com) when you post
+patches next time.
 
-IOW, I don't think server can choose to implement its own policy
-for enabling dax for "-o dax=inode".
-
-If there is really a need to for something new where server needs
-to dynamically decide which inodes should use dax (and not use
-FS_XFLAG_FS), I guess that probably should be a separate mount
-option say "-o dax=server" and it negotiates a separate feature
-say FUSE_DAX_SERVER. Once that's negotiated, now both client
-and server know that DAX will be used on files as determined
-by server and not necessarily by using file attr FS_XFLAG_DAX.
-
-So is "dax=inode" enough for your needs? What's your requirement,
-can you give little bit of more details.
-
-Thanks
 Vivek
-
-> 
-> > 
-> > If we were only implementing A, then server does not have a way to 
-> > tell client to enable DAX. Server can either look at FS_XFLAG_DAX
-> > and decide to enable DAX or use some other property. Given querying
-> > FS_XFLAG_DAX will be an extra ioctl() on every inode lookup/getattr,
-> > it probably will be a server option. But enabling on server does not
-> > mean client will enable it.
-> 
-> As I said previously, it can be negotiated whether this per-file DAX
-> capability is needed. Guest can advertise this capability when '-o
-> dax=inode' is configured.
-> 
-> > 
-> > I think my primary concern with this patch right now is trying to
-> > figure out which requirement we are trying to cater to first and how
-> > to connect server and client well so they both understand what mode
-> > they are operating in and interact well.
-> > 
-> 
-> 
-> -- 
-> Thanks,
-> Jeffle
-> 
 
