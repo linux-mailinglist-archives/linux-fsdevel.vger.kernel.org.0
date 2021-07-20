@@ -2,174 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B57633CFFEF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 19:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D1E23D000A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 19:20:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231149AbhGTQcM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 12:32:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50360 "EHLO
+        id S233517AbhGTQjZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 12:39:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235060AbhGTQ1B (ORCPT
+        with ESMTP id S230474AbhGTQiJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 12:27:01 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B853DC061762;
-        Tue, 20 Jul 2021 10:07:37 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id c15so3194881wrs.5;
-        Tue, 20 Jul 2021 10:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DNygOtZpkIIP08PxsGiZ5ssIxJ/z+tvBQ5q38tIgqgs=;
-        b=k1EnSfz85sJZRY6p9qzIgt+o4W9g2sU3MRfFiA3tQU5E/a8CPtAvfRF1+FmvtHuWeo
-         5q4g0nsBPzwkiz9WQm88kJmL4h12x0lfr6Y61ih9eD7u7uzqchCrQb5G8ZpfVP0bCTt0
-         kZaBgsjJDCioGKO1aq609akM48pm/mprFFqaTve4wJtC+vTjPManzjGcm53ZLJk5lzzc
-         RJnrQcWhCAr1Gb4vCrxBPMBrlE+HfIJLyQ1b9w5/YQBoLZUDGqiRStue6ZKhRnbJnoVK
-         6qdL2ZlRdRm11hsvTA5l9cLvJBdFWQrZBsG9aQZC7+XgveLz1SauNZNBpbpF4fcMfzg5
-         ZWiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DNygOtZpkIIP08PxsGiZ5ssIxJ/z+tvBQ5q38tIgqgs=;
-        b=BTNnD4KDfLWC0eK621RItXOdEePUkr3xPIgno2cppO5tuFsDWNmlcaUHkoE8YHxG29
-         kAuPJH6QE3PtF0l2fQ159ibbuomiPZYdQT8g7EIIbnclFj0MTQ8K5EMhHZchUJ1rcGvn
-         ymGh5+ZKDn0qv7mt/02UW75NI9diWBMt37gi/iTZu/NUS0QhTljNxhAUzz5/Juq2g06D
-         pVDx0cpeiqjM+0j/ig0sQGpc9E4O0+emKB+ev36kNQVwX6xr7i4XwhMlwBZOaFFVteZQ
-         ZB5vjAvKarxl8OEiMIDvlsiVFhWnOpg0LBbihPS9yApM5TAXU21GYoBnjbii74OfrBpX
-         MlHQ==
-X-Gm-Message-State: AOAM5332hGfKTtym186YmtPmZhNg038MlMvTM5kzlHCd7+emttkCGvZZ
-        tcFxAmlKI2dvyd1y8DrkER5darOnMqhdSz6j4Ko=
-X-Google-Smtp-Source: ABdhPJxHVuHNdNbggrwZQHkYjR15ABf3zbvwV8sxRHzwcBvsks6yv3AlJiBf8yBQrO34v1cGhLP9tBA9nv2bq25DmYU=
-X-Received: by 2002:adf:fb8f:: with SMTP id a15mr37716944wrr.92.1626800856299;
- Tue, 20 Jul 2021 10:07:36 -0700 (PDT)
+        Tue, 20 Jul 2021 12:38:09 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E339BC061574;
+        Tue, 20 Jul 2021 10:18:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=nIUPbWmLSj16v4fdAmjxUh4nxogfx1bpU0hHVWTHTvI=; b=nAMqbSKWqbj/Ac8oc6FDFmgton
+        RWU7nDnH8HrY85pFnG7w+Znd8kqgpgYH6kGrc0ZS0U4Rj3cgtOVkZ9CQVcSB3AvQJmFeaBpDg+AHQ
+        3h17EK9hTAwPtE9UQjVBjT9mYQ+kKPofbajFnmisOvdG3HmquACGcZSlEszqrCdkAGjDlyt+lkrQI
+        LluCGBk2OL/UMvMOhPbeJDLHHibCxk6RvoNSe81nNjIfrVuvZizcHHWE5F9fKbAYiLEXwW3tPSiYx
+        WWVglYjmfJGXd1ANfpypqnnW2wcjiJp4xM99heruNQkZJtVfWHzadyV2PUALLWwC3WAXgisP+MSTT
+        i9ru9xuA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m5tNl-008LUQ-99; Tue, 20 Jul 2021 17:18:17 +0000
+Date:   Tue, 20 Jul 2021 18:18:13 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v14 000/138] Memory folios
+Message-ID: <YPcFVScLa2GGY2RP@casper.infradead.org>
+References: <20210715033704.692967-1-willy@infradead.org>
+ <YParbk8LxhrZMExc@kernel.org>
+ <YPbEax52N7OBQCZp@casper.infradead.org>
+ <YPbpBv30NqeQPqPK@kernel.org>
+ <YPbqcQ9i/Vi7ivEE@casper.infradead.org>
+ <YPbtVvnow+4I4ytS@kernel.org>
 MIME-Version: 1.0
-References: <20210720155944.1447086-1-krisman@collabora.com> <20210720155944.1447086-17-krisman@collabora.com>
-In-Reply-To: <20210720155944.1447086-17-krisman@collabora.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 20 Jul 2021 20:07:25 +0300
-Message-ID: <CAOQ4uxhCKYo7Rx3_U=H2JJAK_GkbA-peWZEjyxzd7Sc=s=Eu3g@mail.gmail.com>
-Subject: Re: [PATCH v4 16/16] docs: Document the FAN_FS_ERROR event
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YPbtVvnow+4I4ytS@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 20, 2021 at 7:00 PM Gabriel Krisman Bertazi
-<krisman@collabora.com> wrote:
->
-> Document the FAN_FS_ERROR event for user administrators and user space
-> developers.
->
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
->
+On Tue, Jul 20, 2021 at 06:35:50PM +0300, Mike Rapoport wrote:
+> On Tue, Jul 20, 2021 at 04:23:29PM +0100, Matthew Wilcox wrote:
+> > Which patch did you go up to for that?  If you're going past patch 50 or
+> > so, then you're starting to add functionality (ie support for arbitrary
+> > order pages), so a certain amount of extra code size might be expected.
+> > I measured 6KB at patch 32 or so, then between patch 32 & 50 was pretty
+> > much a wash.
+> 
+> I've used folio_14 tag:
+> 
+> commit 480552d0322d855d146c0fa6fdf1e89ca8569037 (HEAD, tag: folio_14)
+> Author: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Date:   Wed Feb 5 11:27:01 2020 -0500
+> 
+>     mm/readahead: Add multi-page folio readahead
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Probably worth trying the for-next tag instead to get a meaningful
+comparison of how much using folios saves over pages.
 
-Expect one outdated detail...
-
-> ---
-> Changes Since v3:
->   - Move FAN_FS_ERROR notification into a subsection of the file.
-> Changes Since v2:
->   - NTR
-> Changes since v1:
->   - Drop references to location record
->   - Explain that the inode field is optional
->   - Explain we are reporting only the first error
-> ---
->  .../admin-guide/filesystem-monitoring.rst     | 70 +++++++++++++++++++
->  Documentation/admin-guide/index.rst           |  1 +
->  2 files changed, 71 insertions(+)
->  create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
->
-> diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
-> new file mode 100644
-> index 000000000000..6c8982985a27
-> --- /dev/null
-> +++ b/Documentation/admin-guide/filesystem-monitoring.rst
-> @@ -0,0 +1,70 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +====================================
-> +File system Monitoring with fanotify
-> +====================================
-> +
-> +File system Error Reporting
-> +===========================
-> +
-> +fanotify supports the FAN_FS_ERROR mark for file system-wide error
-> +reporting.  It is meant to be used by file system health monitoring
-> +daemons who listen on that interface and take actions (notify sysadmin,
-> +start recovery) when a file system problem is detected by the kernel.
-> +
-> +By design, A FAN_FS_ERROR notification exposes sufficient information for a
-> +monitoring tool to know a problem in the file system has happened.  It
-> +doesn't necessarily provide a user space application with semantics to
-> +verify an IO operation was successfully executed.  That is outside of
-> +scope of this feature. Instead, it is only meant as a framework for
-> +early file system problem detection and reporting recovery tools.
-> +
-> +When a file system operation fails, it is common for dozens of kernel
-> +errors to cascade after the initial failure, hiding the original failure
-> +log, which is usually the most useful debug data to troubleshoot the
-> +problem.  For this reason, FAN_FS_ERROR only reports the first error that
-> +occurred since the last notification, and it simply counts addition
-> +errors.  This ensures that the most important piece of error information
-> +is never lost.
-> +
-> +FAN_FS_ERROR requires the fanotify group to be setup with the
-> +FAN_REPORT_FID flag.
-> +
-> +At the time of this writing, the only file system that emits FAN_FS_ERROR
-> +notifications is Ext4.
-> +
-> +A user space example code is provided at ``samples/fanotify/fs-monitor.c``.
-> +
-> +A FAN_FS_ERROR Notification has the following format::
-> +
-> +  [ Notification Metadata (Mandatory) ]
-> +  [ Generic Error Record  (Mandatory) ]
-> +  [ FID record            (Mandatory) ]
-> +
-> +Generic error record
-> +--------------------
-> +
-> +The generic error record provides enough information for a file system
-> +agnostic tool to learn about a problem in the file system, without
-> +providing any additional details about the problem.  This record is
-> +identified by ``struct fanotify_event_info_header.info_type`` being set
-> +to FAN_EVENT_INFO_TYPE_ERROR.
-> +
-> +  struct fanotify_event_info_error {
-> +       struct fanotify_event_info_header hdr;
-> +       __s32 error;
-> +       __u32 error_count;
-> +  };
-> +
-> +The `error` field identifies the type of error. `error_count` count
-> +tracks the number of errors that occurred and were suppressed to
-> +preserve the original error, since the last notification.
-> +
-> +FID record
-> +----------
-> +
-> +The FID record can be used to uniquely identify the inode that triggered
-> +the error through the combination of fsid and file handler.  A
-> +filesystem specific handler can use that information to attempt a
-> +recovery procedure.  Errors that are not related to an inode are
-> +reported against the root inode.
-
-Not uptodate...
-
-Thanks,
-Amir.
+I don't want to give the impression that this is all that can be
+saved by switching to folios.  There are still hundreds of places that
+call PageFoo(), SetPageFoo(), ClearPageFoo(), put_page(), get_page(),
+lock_page() and so on.  There's probably another 20KB of code that can
+be removed that way.
