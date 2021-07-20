@@ -2,92 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 453CE3CFE69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 17:57:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A893CFE6A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 17:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239344AbhGTPRO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 11:17:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37568 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240510AbhGTOhQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 10:37:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 160BC60BBB;
-        Tue, 20 Jul 2021 15:17:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626794252;
-        bh=LtjPryF5wQ+xbt8V4dRvkcVmj+HVQ3+YnBKjwD6ZnZc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ej0xHGEHA2478zU7X6ZJ6wQtMml81/PK3gzs2kynQQbFxwA4cRIYlr5JoLwHFq61N
-         kL6nNiKsbUvN2RkvRPPiKppvpu9YNJsW28LzfwgduA87qbRnWHPMUG40PvSdvnxO2o
-         4PRE51ENn5DrcS5asbNlvG5H3wW6q8d9ucu2wBe0zJmqorMpd37QkaJOt5G35rrog2
-         qIzpu47nfzNUQhXBiYpvrX+jLwXyl6sRMBUdt1KlLO8D6o5oMwCG3ehnvEkAeISnQm
-         vrhBkCvECcc3RbfsMAwuDCCzLj7sCOEhrZlZ/Tk/Rtt6tMmJKgO8uFExcuq7Cw+ERI
-         jctuzM8Vw77+Q==
-Date:   Tue, 20 Jul 2021 18:17:26 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
+        id S237833AbhGTPRS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 11:17:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57184 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241778AbhGTOxu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Jul 2021 10:53:50 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3A5C0613DB;
+        Tue, 20 Jul 2021 08:23:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=YMJtZl0zXHIg/quYkGxZ124m2IPJSkonaupGUSsz4Eg=; b=LmHCNdtnyQmWHaZa+nyfYJ9TbM
+        hlWkq/nRtQ+gQeZBatFJyw8v5ISxlLOHOrPJOZGpGTscR2vBu0ynTY3otLp/O+0DYdo8AHvH9U1OZ
+        CexnBvS9QvhGiyRDsimnFgbK0ffkcFhiBi2Nd/J3FW3NMJVoA1HoCZm+gXjwm92SEfPQDFlGEXviJ
+        pGMDTHuSUXpsgvPaE8lGNpGaIJO1+MGDWFs0FYYGgjWcj4IJVs7dkg2h16lwDhXQivyHSMclIAm7I
+        289weZ1G+Pa2nUUXhyiKPNb7YoHelS2rbxk2G76taXCJ3U0GT1/o6oJz/VyD1GcaLXsgjEuAiLOFb
+        5ihwf5wA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m5raj-008Feq-29; Tue, 20 Jul 2021 15:23:41 +0000
+Date:   Tue, 20 Jul 2021 16:23:29 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH v14 000/138] Memory folios
-Message-ID: <YPbpBv30NqeQPqPK@kernel.org>
+Message-ID: <YPbqcQ9i/Vi7ivEE@casper.infradead.org>
 References: <20210715033704.692967-1-willy@infradead.org>
  <YParbk8LxhrZMExc@kernel.org>
  <YPbEax52N7OBQCZp@casper.infradead.org>
+ <YPbpBv30NqeQPqPK@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPbEax52N7OBQCZp@casper.infradead.org>
+In-Reply-To: <YPbpBv30NqeQPqPK@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 20, 2021 at 01:41:15PM +0100, Matthew Wilcox wrote:
-> On Tue, Jul 20, 2021 at 01:54:38PM +0300, Mike Rapoport wrote:
-> > Most of the changelogs (at least at the first patches) mention reduction of
-> > the kernel size for your configuration on x86. I wonder, what happens if
-> > you build the kernel with "non-distro" configuration, e.g. defconfig or
-> > tiny.config?
+On Tue, Jul 20, 2021 at 06:17:26PM +0300, Mike Rapoport wrote:
+> On Tue, Jul 20, 2021 at 01:41:15PM +0100, Matthew Wilcox wrote:
+> > On Tue, Jul 20, 2021 at 01:54:38PM +0300, Mike Rapoport wrote:
+> > > Most of the changelogs (at least at the first patches) mention reduction of
+> > > the kernel size for your configuration on x86. I wonder, what happens if
+> > > you build the kernel with "non-distro" configuration, e.g. defconfig or
+> > > tiny.config?
+> > 
+> > I did an allnoconfig build and that reduced in size by ~2KiB.
+> > 
+> > > Also, what is the difference on !x86 builds?
+> > 
+> > I don't generally do non-x86 builds ... feel free to compare for
+> > yourself!
 > 
-> I did an allnoconfig build and that reduced in size by ~2KiB.
+> I did allnoconfig and defconfig for arm64 and powerpc.
 > 
-> > Also, what is the difference on !x86 builds?
+> All execpt arm64::defconfig show decrease by ~1KiB, while arm64::defconfig
+> was actually increased by ~500 bytes.
+
+Which patch did you go up to for that?  If you're going past patch 50 or
+so, then you're starting to add functionality (ie support for arbitrary
+order pages), so a certain amount of extra code size might be expected.
+I measured 6KB at patch 32 or so, then between patch 32 & 50 was pretty
+much a wash.
+
+> I didn't dig into objdumps yet.
 > 
-> I don't generally do non-x86 builds ... feel free to compare for
-> yourself!
-
-I did allnoconfig and defconfig for arm64 and powerpc.
-
-All execpt arm64::defconfig show decrease by ~1KiB, while arm64::defconfig
-was actually increased by ~500 bytes.
-
-I didn't dig into objdumps yet.
-
-I also tried to build arm but it failed with:
-
-  CC      fs/remap_range.o
-fs/remap_range.c: In function 'vfs_dedupe_file_range_compare':
-fs/remap_range.c:250:3: error: implicit declaration of function 'flush_dcache_folio'; did you mean 'flush_cache_louis'? [-Werror=implicit-function-declaration]
-  250 |   flush_dcache_folio(src_folio);
-      |   ^~~~~~~~~~~~~~~~~~
-      |   flush_cache_louis
-cc1: some warnings being treated as errors
-
-
-> I imagine it'll be 2-4 instructions per call to
-> compound_head().  ie something like:
+> I also tried to build arm but it failed with:
 > 
-> 	load page into reg S
-> 	load reg S + 8 into reg T
-> 	test bottom bit of reg T
-> 	cond-move reg T - 1 to reg S
-> becomes
-> 	load folio into reg S
-> 
-> the exact spelling of those instructions will vary from architecture to
-> architecture; some will take more instructions than others.  Possibly it
-> means we end up using one fewer register and so reducing the number of
-> registers spilled to the stack.  Probably not, though.
+>   CC      fs/remap_range.o
+> fs/remap_range.c: In function 'vfs_dedupe_file_range_compare':
+> fs/remap_range.c:250:3: error: implicit declaration of function 'flush_dcache_folio'; did you mean 'flush_cache_louis'? [-Werror=implicit-function-declaration]
+>   250 |   flush_dcache_folio(src_folio);
+>       |   ^~~~~~~~~~~~~~~~~~
+>       |   flush_cache_louis
+> cc1: some warnings being treated as errors
 
--- 
-Sincerely yours,
-Mike.
+Already complained about by the build bot; already fixed.  You should
+maybe look at the git tree if you're doing more than code review.
