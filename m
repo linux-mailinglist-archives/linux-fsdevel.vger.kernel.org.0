@@ -2,70 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF333CF839
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 12:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D19723CF845
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 12:47:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237515AbhGTKFG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 06:05:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236773AbhGTKCu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 06:02:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D5DCF6120C;
-        Tue, 20 Jul 2021 10:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626777809;
-        bh=6cH5Jl0CX+wYlRijXnrox+m77wGnJ7blH2LxXxGvQ94=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J2SZempbeWlNxeWMltuyYTWoH59TZforrWOESpYyGT9SoZrSYJTDWSO0dvMRA9MH/
-         HsRqbCheJVAF1no4QQungT2P5YzfkKS3+cbd1eoHyFpYnS+f1EzmrCB+KX9RaLufpT
-         9cSuh87yjLbaNWTYSZxhIQ4jPoG5mDA4tFL0nhrdYY374Ea3HaL90wSguy5fXnKQBu
-         05RuMXvuLyLSO3/tRyX7ys8OuFbJpfXaB+3kE10gK18lDyrQOWqDK3N5GjZUozZvAJ
-         fC56rzKLuAfq0PgxSlBx+sLiQ+N+mFgQE5MBpbB/ULhWRNnXe4SinazkFgOEWNGj1E
-         C6GFW5gx16C3w==
-Date:   Tue, 20 Jul 2021 13:43:21 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v14 010/138] mm: Add folio flag manipulation functions
-Message-ID: <YPaoybp9hDG+otnt@kernel.org>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-11-willy@infradead.org>
+        id S236934AbhGTKFs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 06:05:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48228 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237176AbhGTKE5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Jul 2021 06:04:57 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CCC5C061766
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jul 2021 03:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=kw5qJ9mHZtQZy8JGCShJAX0qxC24RPXU4QQbUpepc+U=; b=TWeYeyBHQScInGYXlBu1aB+IZ8
+        HNF+diAmrjQC2LAJaMmwuTtEKPmdfoZ5djiOrKzm/NZ5d40t76EVePwIPJ6tU+nCZceVJQuhdbBIY
+        GGaPyoI2skAKDvb2L6Z/+W4ucaRl/R0bqw/ZPqSyjjEM5GA0MbXzCWGqtoUfJRuy/7oOApPLakdFW
+        E8F3PzRByt9LtCtZQ3b1NBwsWS2aCOT9WVD/jMu8YWlaWMPgcnu8hzwhaKDlOMN/gvz77nR1yHU+T
+        /5Urco/ogdRMm8SWU97xv+m636lrjxKxLODfyGxXwQxDlFmJbUE4WBE6szSzYfpErsZdWVcBkecGS
+        juJ2arBw==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m5nEO-0080n0-SF; Tue, 20 Jul 2021 10:44:34 +0000
+Date:   Tue, 20 Jul 2021 11:44:08 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Pavel Reichl <preichl@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, cem@redhat.com
+Subject: Re: [PATCH 1/1] exfat: Add fiemap support
+Message-ID: <YPao+CL6Cm1ZetBs@infradead.org>
+References: <20210720093748.180714-1-preichl@redhat.com>
+ <20210720093748.180714-2-preichl@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210715033704.692967-11-willy@infradead.org>
+In-Reply-To: <20210720093748.180714-2-preichl@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 04:34:56AM +0100, Matthew Wilcox (Oracle) wrote:
-> These new functions are the folio analogues of the various PageFlags
-> functions.  If CONFIG_DEBUG_VM_PGFLAGS is enabled, we check the folio
-> is not a tail page at every invocation.  This will also catch the
-> PagePoisoned case as a poisoned page has every bit set, which would
-> include PageTail.
-> 
-> This saves 1684 bytes of text with the distro-derived config that
-> I'm testing due to removing a double call to compound_head() in
-> PageSwapCache().
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Jeff Layton <jlayton@kernel.org>
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> Reviewed-by: David Howells <dhowells@redhat.com>
-> ---
->  include/linux/page-flags.h | 219 ++++++++++++++++++++++++++-----------
->  1 file changed, 156 insertions(+), 63 deletions(-)
-
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-
+Please don't add new callers of generic_block_fiemap, as that function
+should go away ASAP.  Please use iomap_fiemap instead.
