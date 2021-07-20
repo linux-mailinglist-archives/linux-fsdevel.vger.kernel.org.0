@@ -2,142 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C553CF702
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 11:38:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 761343CF736
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 11:52:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231665AbhGTI6M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 04:58:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32854 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229675AbhGTI6J (ORCPT
+        id S234265AbhGTJMC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 05:12:02 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:54854 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232506AbhGTJMB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 04:58:09 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4494BC061574;
-        Tue, 20 Jul 2021 02:38:47 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id t3so27631839edc.7;
-        Tue, 20 Jul 2021 02:38:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=ob2cL9xsCuqI2PtZCWk4ZnfruGA/KtiWAaZc2Xrr4AE=;
-        b=goq6yCQPn/6AnEsFbyX2k+3qh8cv1+Kn3s6p2QPPbSaOJTqpkvxalHq2CtwvJ/x9NH
-         MaPHlgNqCVgT0yrQoPQxlanIWryDj5GNQkebvgmavNwAyt/sLhZiRD2uU5/FshixSweE
-         tRXovwpnIBJCdOuFamWmlVnIT1wMpzyAMwBvzlS+a9nGB1U9InErKigu4UuRtbMWEgej
-         +1URvihDMERpFLKHK+LbEJWBuGdVDbsLAVEZiMgl502Je1yTiPvO/TPBJmegUQ5BMwH8
-         0j0F8SxJQwBCpjDjI3gJ60pAY8W7DKaVDx/cwN+afAu/BiQoS3u8r++tINTjkE9mR8aP
-         o7LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=ob2cL9xsCuqI2PtZCWk4ZnfruGA/KtiWAaZc2Xrr4AE=;
-        b=db74qaueC+i+2fxS1k4Vc+ARBjFxr7aOJodBw8tUS8tt6vji8HrUTMd8DywYUAa0KH
-         IbMVmGM5BMvzXV5c9af4Bqov2djL5xJrCnoUbQKLVvC1BctR8MFDQV/ne4KqecOv081/
-         FVJP6edrSbNFJpoEbOYYsy9sL8KU4aLBe+2csbTXIeYiCPMs7SmJMGVRfNA6nwqogmdM
-         0CR8ANqdTfDHWDJZZi10vgm44uHpsT3m3UJsPXmDZj8mx348plMkao7U+mt//Cd+i8+o
-         yCdqX/bZjGn05on7fLGPz8ZTwvRBCc+w55DcuBL0R/BsmeMtMl9MRY/2stL1OtS2A6jX
-         uJqQ==
-X-Gm-Message-State: AOAM532MEBdDz6ZVGXEAhbqQX9GoMqw6/JLAtvGb7nqYKl1qeWgc/6++
-        Lb8CSKwGp/SR7Qag/3+5KvDTskmeWeEKV3LaaEDzoFMSS7HTyQ==
-X-Google-Smtp-Source: ABdhPJyFYULltN0VLmruKU6gln2nBG30ldbFf2khnefL2E+dRSChweVniLR25706q27205hxMP3yUCyt6LutA6yXFB8=
-X-Received: by 2002:a05:6402:5209:: with SMTP id s9mr30408240edd.92.1626773925557;
- Tue, 20 Jul 2021 02:38:45 -0700 (PDT)
+        Tue, 20 Jul 2021 05:12:01 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0B1DF1FD3E;
+        Tue, 20 Jul 2021 09:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1626774756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0S3FE71qGo66t31Vxc28Wi9V+Ayx6OZMuHotTPZ+18Y=;
+        b=c2XzEflSX0tIvkoXclpsr1Pe1rwb9SiwUw5Glll8ctmd9TDuRsQwYS1BLW/AjVcFtvH+Rq
+        W6oJgU04IUmXu1L/1wUNyWdN6bOMgy+b6ADzKJW1x0BccrffxjZDSzIduLav2BcOc6NBmk
+        IKBPPCIKUYUO4NmItmpCSt/z+J74vDI=
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 80D2213AA2;
+        Tue, 20 Jul 2021 09:52:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id +x0ZHeOc9mCHKgAAGKfGzw
+        (envelope-from <nborisov@suse.com>); Tue, 20 Jul 2021 09:52:35 +0000
+Subject: Re: [PATCH 03/27] iomap: mark the iomap argument to iomap_sector
+ const
+To:     "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        cluster-devel@redhat.com
+References: <20210719103520.495450-1-hch@lst.de>
+ <20210719103520.495450-4-hch@lst.de> <20210719160820.GE22402@magnolia>
+From:   Nikolay Borisov <nborisov@suse.com>
+Message-ID: <ab10035a-43ee-8f25-47c0-57321f748abd@suse.com>
+Date:   Tue, 20 Jul 2021 12:52:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Tue, 20 Jul 2021 15:08:34 +0530
-Message-ID: <CAOuPNLhqSpaTm3u4kFsnuZ0PLDKuX8wsxuF=vUJ1TEG0EP+L1g@mail.gmail.com>
-Subject: Kernel 4.14: Using dm-verity with squashfs rootfs - mounting issue
-To:     open list <linux-kernel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>, dm-devel@redhat.com,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>, agk@redhat.com,
-        snitzer@redhat.com, shli@kernel.org, mpatocka@redhat.com,
-        samitolvanen@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210719160820.GE22402@magnolia>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-Our ARM32 Linux embedded system consists of these:
-* Linux Kernel: 4.14
-* Processor: Qualcomm Arm32 Cortex-A7
-* Storage: NAND 512MB
-* Platform: Simple busybox
-* Filesystem: UBIFS, Squashfs
-* Consists of nand raw partitions, squashfs ubi volumes.
-
-My requirement:
-We wanted to use dm-verity at boot time to check the integrity of
-squashfs-rootfs before mounting.
-
-Problem:
-dm-0 is not able to locate and mount the squash fs rootfs block.
-The same approach is working when emulating with ext4 but fails with squash=
-fs.
-
-Logs:
-[....]
-[    0.000000] Kernel command line: [...] verity=3D"96160 12020
-d7b8a7d0c01b9aec888930841313a81603a50a2a7be44631c4c813197a50d681 0 "
-rootfstype=3Dsquashfs root=3D/dev/mtdblock34 ubi.mtd=3D30,0,30 [...]
-root=3D/dev/dm-0 dm=3D"system none ro,0 96160 verity 1 /dev/mtdblock34
-/dev/mtdblock39 4096 4096 12020 8 sha256
-d7b8a7d0c01b9aec888930841313a81603a50a2a7be44631c4c813197a50d681
-aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
-[....]
-[    4.693620] vreg_conn_pa: disa=E2=96=92[    4.700662] md: Skipping
-autodetection of RAID arrays. (raid=3Dautodetect will force)
-[    4.700713] device-mapper: init: attempting early device configuration.
-[    4.708224] device-mapper: init: adding target '0 96160 verity 1
-/dev/mtdblock34 /dev/mtdblock39 4096 4096 12020 8 sha256
-d7b8a7d0c01b9aec888930841313a81603a50a2a7be44631c4c813197a50d681
-aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7'
-[    4.714979] device-mapper: verity: sha256 using implementation
-"sha256-generic"
-[    4.737808] device-mapper: init: dm-0 is ready
-[....]
-[    5.278103] No filesystem could mount root, tried:
-[    5.278107]  squashfs
-[    5.280477]
-[    5.287627] Kernel panic - not syncing: VFS: Unable to mount root
-fs on unknown-block(253,0)
-[...]
-
-Not sure, why is it still locating block "253" here which seems like a
-MAJOR number ?
-
-Working logs on ext4:
-[....]
-[    4.529822] v=E2=96=92[    4.534035] md: Skipping autodetection of RAID
-arrays. (raid=3Dautodetect will force)
-[    4.534087] device-mapper: init: attempting early device configuration.
-[    4.550316] device-mapper: init: adding target '0 384440 verity 1
-/dev/ubiblock0_0 /dev/ubiblock0_0 4096 4096 48055 48063 sha256
-a02e0c13afb31e99b999c64aae6f4644c24addbc58db5689902cc5ba0be2d15b
-aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7 10
-restart_on_corruption ignore_zero_blocks use_fec_from_device
-/dev/ubiblock0_0 fec_roots 2 fec_blocks 48443 fec_start 48443'
-[    4.572215] device-mapper: verity: sha256 using implementation
-"sha256-generic"
-[    4.610692] device-mapper: init: dm-0 is ready
-[    4.720174] EXT4-fs (dm-0): mounted filesystem with ordered data
-mode. Opts: (null)
-[    4.720438] VFS: Mounted root (ext4 filesystem) readonly on device 253:0=
-.
-[    4.737256] devtmpfs: mounted
-[....]
-
-Questions:
-a) Is dm-verity supposed to work on squashfs block devices ?
-b) Are there any known issues with dm-verity on Kernel 4.14 ?
-c) Are there any patches that we are missing ?
 
 
-Thanks,
-Pintu
+On 19.07.21 г. 19:08, Darrick J. Wong wrote:
+> On Mon, Jul 19, 2021 at 12:34:56PM +0200, Christoph Hellwig wrote:
+>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> 
+> /me wonders, does this have any significant effect on the generated
+> code?
+
+https://theartofmachinery.com/2019/08/12/c_const_isnt_for_performance.html
+
+> 
+> It's probably a good idea to feed the optimizer as much usage info as we
+> can, though I would imagine that for such a simple function it can
+> probably tell that we don't change *iomap.
+> 
+> IMHO, constifiying functions is a good way to signal to /programmers/
+> that they're not intended to touch the arguments, so
+> 
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> 
+> --D
+> 
+>> ---
+>>  include/linux/iomap.h | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+>> index 093519d91cc9cc..f9c36df6a3061b 100644
+>> --- a/include/linux/iomap.h
+>> +++ b/include/linux/iomap.h
+>> @@ -91,8 +91,7 @@ struct iomap {
+>>  	const struct iomap_page_ops *page_ops;
+>>  };
+>>  
+>> -static inline sector_t
+>> -iomap_sector(struct iomap *iomap, loff_t pos)
+>> +static inline sector_t iomap_sector(const struct iomap *iomap, loff_t pos)
+>>  {
+>>  	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+>>  }
+>> -- 
+>> 2.30.2
+>>
+> 
