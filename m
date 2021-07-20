@@ -2,96 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 352333CF4A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 08:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E2AB3CF4AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 08:43:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241984AbhGTF7l convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 01:59:41 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:40882 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236659AbhGTF7j (ORCPT
+        id S242476AbhGTGC3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 02:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242781AbhGTGCU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 01:59:39 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 38E546169BC2;
-        Tue, 20 Jul 2021 08:40:16 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 2vmFpKXdmr5S; Tue, 20 Jul 2021 08:40:15 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id C12B36169BD2;
-        Tue, 20 Jul 2021 08:40:15 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id NPuSyuIQ7j5f; Tue, 20 Jul 2021 08:40:15 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 88A5B6169BC2;
-        Tue, 20 Jul 2021 08:40:15 +0200 (CEST)
-Date:   Tue, 20 Jul 2021 08:40:15 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Pintu Agarwal <pintu.ping@gmail.com>
-Cc:     Greg KH <greg@kroah.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        Sean Nyekjaer <sean@geanix.com>,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>
-Message-ID: <1556211076.48404.1626763215205.JavaMail.zimbra@nod.at>
-In-Reply-To: <CAOuPNLh_KY4NaVWSEV2JPp8fx0iy8E1MU8GHT-w7-hMXrvSaeA@mail.gmail.com>
-References: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com> <YPGojf7hX//Wn5su@kroah.com> <568938486.33366.1626452816917.JavaMail.zimbra@nod.at> <CAOuPNLj1YC7gjuhyvunqnB_4JveGRyHcL9hcqKFSNKmfxVSWRA@mail.gmail.com> <1458549943.44607.1626686894648.JavaMail.zimbra@nod.at> <CAOuPNLh_KY4NaVWSEV2JPp8fx0iy8E1MU8GHT-w7-hMXrvSaeA@mail.gmail.com>
-Subject: Re: MTD: How to get actual image size from MTD partition
+        Tue, 20 Jul 2021 02:02:20 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7169BC061762;
+        Mon, 19 Jul 2021 23:42:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=yHEkvegX26cVfn3GkiLWFqcYGsXKWPu+0RziWCi4PNQ=; b=itzkrhKqUQAJb/TGYv0epIArX2
+        XQYlyumTDeAyQx1Zx12TkGxqGdpgeePnT2Wn9IrMsqzvJrOnH8sDURWSunM/k3bGVwFK83ZEEfOdZ
+        SiC6NEHDTjY+8xr0kQLKVukXeO4DYkP/M3VeCOhM9ipqe7b78EKiJ4US3/R31ofc9pNoYdkBZPWj6
+        vHBtymaHAB3UVOVFmYbLZUwL6rhMsUFMgEWOD0DeuJSHjRq6wtlQWt7EKwKtWhfFngiB+aSeIyHOF
+        et033hLWYXwMTVGuFr1CSny08jgnsVE4rfz8V5IlU6w4jqZ7LTSFf/dlPRivTDwIGPwJ1CWQOZTsb
+        BI4iNYjg==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m5jS4-007pmm-CB; Tue, 20 Jul 2021 06:42:10 +0000
+Date:   Tue, 20 Jul 2021 07:42:00 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH v15 01/17] block: Add bio_add_folio()
+Message-ID: <YPZwODMq1ilIeS4t@infradead.org>
+References: <20210719184001.1750630-1-willy@infradead.org>
+ <20210719184001.1750630-2-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF90 (Linux)/8.8.12_GA_3809)
-Thread-Topic: How to get actual image size from MTD partition
-Thread-Index: c6zZTS0QxRlvwgld28+UkRfD2UKnsA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210719184001.1750630-2-willy@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ Ursprüngliche Mail -----
-> Von: "Pintu Agarwal" <pintu.ping@gmail.com>
-> Okay thank you.
-> We have tried dm-verity with squashfs (for our rootfs) but we are
-> facing some mounting issues.
-> [...]
-> [    4.697757] device-mapper: init: adding target '0 96160 verity 1
-> /dev/mtdblock34 /dev/mtdblock39 4096 4096 12020 8 sha256
-> d7b8a7d0c01b9aec888930841313a81603a50a2a7be44631c4c813197a50d681
-> aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7'
-> [    4.704771] device-mapper: verity: sha256 using implementation
-> "sha256-generic"
-> [...]
-> [    4.727366] device-mapper: init: dm-0 is ready
-> [    4.912558] VFS: Cannot open root device "dm-0" or
-> unknown-block(253,0): error -5
-> 
-> The same works with ext4 emulation.
-> So, not sure if there are any changes missing w.r.t. squashfs on 4.14 kernel ?
+On Mon, Jul 19, 2021 at 07:39:45PM +0100, Matthew Wilcox (Oracle) wrote:
+> +/**
+> + * bio_add_folio - Attempt to add part of a folio to a bio.
+> + * @bio: Bio to add to.
+> + * @folio: Folio to add.
+> + * @len: How many bytes from the folio to add.
+> + * @off: First byte in this folio to add.
+> + *
+> + * Always uses the head page of the folio in the bio.  If a submitter only
+> + * uses bio_add_folio(), it can count on never seeing tail pages in the
+> + * completion routine.  BIOs do not support folios that are 4GiB or larger.
+> + *
+> + * Return: The number of bytes from this folio added to the bio.
+> + */
+> +size_t bio_add_folio(struct bio *bio, struct folio *folio, size_t len,
+> +		size_t off)
+> +{
+> +	if (len > UINT_MAX || off > UINT_MAX)
+> +		return 0;
+> +	return bio_add_page(bio, &folio->page, len, off);
+> +}
 
-I don't know.
-
-> Anyways, I will create a separate thread for dm-verity issue and keep
-> this thread still open for UBI image size issue.
-> We may use dm-verify for rootfs during booting, but still we need to
-> perform integrity check for other nand partitions and UBI volumes.
-> 
-> So, instead of calculating the checksum for the entire partition, is
-> it possible to perform checksum only based on the image size ?
-> Right now, we are still exploring what are the best possible
-> mechanisms available for this.
-
-I still don't fully understand what you are trying to achieve.
-Is it about cryptographic integrity of your storage or detecting
-errors after the flashing process?
-
-But let me advertise ubiblock a second time. If you place your squashfs on
-a UBI static volume, UBI knows the exact length and you can checksum it
-more easily.
-
-Thanks,
-//richard
+I'd use the opportunity to switch to a true/false return instead of
+the length.  This has been on my todo list for bio_add_page for a while,
+so it might make sense to start out the new API the right way.
