@@ -2,86 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F26A23CFA2A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 15:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C05983CFA9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 15:33:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232364AbhGTMap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 08:30:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53022 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231526AbhGTMao (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 08:30:44 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4097C061574;
-        Tue, 20 Jul 2021 06:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=hgPl5F02pttqsu+FUSnFeMJhzopEmUNSjuPlvxGlBNQ=; b=M6xeEccq4GIeEt99toObAGtega
-        3m5vXEaKuL0UJFc7tAGqTZZd0Og1h2AmXcr/BLCdSYHDFQQ+ceK9SAwtm4mhWFxtDlpMtrNk6kQtq
-        3narjx3gwvt6smCi08/VGdQn/hyuOVKK/96yfbhpmT1DUyh7sS2XAUpsD/e4loZnORNGjmGG7wjXq
-        G0ruOtWipKwCrP4s3jcp17w0HyaJCWrYiwi+KfgRX0OrCBHASij/vmXQj7Kl2Wv6ylaAkHkgxUuOS
-        EQBQjX0T+gILeL6j/dEER9Py2kZxiI+hT+kjb7WlRee4qMf0r9+dyT1RyHfUo1jzRxOvlLnk5Iuf7
-        b/ZhMeKA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m5pWL-008850-86; Tue, 20 Jul 2021 13:10:55 +0000
-Date:   Tue, 20 Jul 2021 14:10:49 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v14 011/138] mm/lru: Add folio LRU functions
-Message-ID: <YPbLWVXXC8sJNt8N@casper.infradead.org>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-12-willy@infradead.org>
- <YPao+syEWXGhDxay@kernel.org>
+        id S238428AbhGTMwj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 08:52:39 -0400
+Received: from verein.lst.de ([213.95.11.211]:55157 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238738AbhGTMrB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Jul 2021 08:47:01 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 6EA406736F; Tue, 20 Jul 2021 15:26:44 +0200 (CEST)
+Date:   Tue, 20 Jul 2021 15:26:44 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] iomap: simplify iomap_readpage_actor
+Message-ID: <20210720132644.GA11913@lst.de>
+References: <20210720084320.184877-1-hch@lst.de> <YPbBLCphExqjig1O@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPao+syEWXGhDxay@kernel.org>
+In-Reply-To: <YPbBLCphExqjig1O@casper.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 20, 2021 at 01:44:10PM +0300, Mike Rapoport wrote:
-> >  /**
-> > - * page_is_file_lru - should the page be on a file LRU or anon LRU?
-> > - * @page: the page to test
-> > + * folio_is_file_lru - should the folio be on a file LRU or anon LRU?
-> > + * @folio: the folio to test
-> >   *
-> > - * Returns 1 if @page is a regular filesystem backed page cache page or a lazily
-> > - * freed anonymous page (e.g. via MADV_FREE).  Returns 0 if @page is a normal
-> > - * anonymous page, a tmpfs page or otherwise ram or swap backed page.  Used by
-> > - * functions that manipulate the LRU lists, to sort a page onto the right LRU
-> > - * list.
-> > + * Returns 1 if @folio is a regular filesystem backed page cache folio
-> > + * or a lazily freed anonymous folio (e.g. via MADV_FREE).  Returns 0 if
-> > + * @folio is a normal anonymous folio, a tmpfs folio or otherwise ram or
-> > + * swap backed folio.  Used by functions that manipulate the LRU lists,
-> > + * to sort a folio onto the right LRU list.
-> >   *
-> >   * We would like to get this info without a page flag, but the state
-> > - * needs to survive until the page is last deleted from the LRU, which
-> > + * needs to survive until the folio is last deleted from the LRU, which
-> >   * could be as far down as __page_cache_release.
+On Tue, Jul 20, 2021 at 01:27:24PM +0100, Matthew Wilcox wrote:
+> On Tue, Jul 20, 2021 at 10:43:19AM +0200, Christoph Hellwig wrote:
+> > Now that the outstanding reads are counted in bytes, there is no need
+> > to use the low-level __bio_try_merge_page API, we can switch back to
+> > always using bio_add_page and simply iomap_readpage_actor again.
 > 
-> It seems mm_inline.h is not a part of generated API docs, otherwise
-> kerneldoc would be unhappy about missing Return: description.
+> I don't think this quite works.  You need to check the return value
+> from bio_add_page(), otherwise you can be in a situation where you try
+> to add a page to the last bvec and it's not contiguous, so it fails.
 
-kernel-doc doesn't warn about that by default.
+Indeed.  While bio_full covers the number of vectors, if we run out of
+bytes in bi_size this won't work.
 
-    # This check emits a lot of warnings at the moment, because many
-    # functions don't have a 'Return' doc section. So until the number
-    # of warnings goes sufficiently down, the check is only performed in
-    # verbose mode.
-    # TODO: always perform the check.
-    if ($verbose && !$noret) {
-            check_return_section($file, $declaration_name, $return_type);
-    }
+I think we can do this version, but I haven't tested it yet:
+
+---
+From 4198cd5805d45f83c9029743ad5d0ce774a4e0f8 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Mon, 12 Jul 2021 11:00:58 +0200
+Subject: iomap: simplify iomap_readpage_actor
+
+Now that the outstanding reads are counted in bytes, there is no need
+to use the low-level __bio_try_merge_page API, we can switch back to
+always using bio_add_page and simply iomap_readpage_actor again.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/iomap/buffered-io.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 87ccb3438becd9..712b6513a0c449 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -241,7 +241,6 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	struct iomap_readpage_ctx *ctx = data;
+ 	struct page *page = ctx->cur_page;
+ 	struct iomap_page *iop;
+-	bool same_page = false, is_contig = false;
+ 	loff_t orig_pos = pos;
+ 	unsigned poff, plen;
+ 	sector_t sector;
+@@ -268,16 +267,10 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	if (iop)
+ 		atomic_add(plen, &iop->read_bytes_pending);
+ 
+-	/* Try to merge into a previous segment if we can */
+ 	sector = iomap_sector(iomap, pos);
+-	if (ctx->bio && bio_end_sector(ctx->bio) == sector) {
+-		if (__bio_try_merge_page(ctx->bio, page, plen, poff,
+-				&same_page))
+-			goto done;
+-		is_contig = true;
+-	}
+-
+-	if (!is_contig || bio_full(ctx->bio, plen)) {
++	if (!ctx->bio ||
++	    bio_end_sector(ctx->bio) != sector ||
++	    bio_add_page(ctx->bio, page, plen, poff) != plen) {
+ 		gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
+ 		gfp_t orig_gfp = gfp;
+ 		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
+@@ -301,9 +294,8 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 		ctx->bio->bi_iter.bi_sector = sector;
+ 		bio_set_dev(ctx->bio, iomap->bdev);
+ 		ctx->bio->bi_end_io = iomap_read_end_io;
++		__bio_add_page(ctx->bio, page, plen, poff);
+ 	}
+-
+-	bio_add_page(ctx->bio, page, plen, poff);
+ done:
+ 	/*
+ 	 * Move the caller beyond our range so that it keeps making progress.
+-- 
+2.30.2
 
