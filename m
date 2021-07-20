@@ -2,80 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07E993CF873
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 12:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A80703CF8A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jul 2021 13:10:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236753AbhGTKO4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 06:14:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237649AbhGTKOG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 06:14:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E9884600D4;
-        Tue, 20 Jul 2021 10:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626778484;
-        bh=Ja1be3usDDuv2HFqu3UdV/HBuywqhaiWMGjarNGVSxk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oWbtO1C6ssjAl8A8/TUy/4MJ+D1+YoxtieXKimAg3Y0aNz/BxIr4OL51uig3Z0R38
-         9N/y6VfgbnrSv6m37Yv8NVUcPWiXZxSlp44ndQrVI7oyLILn/zFwfE/Jh590iVcvSg
-         veQZQULOIw0j84/xUVkXbaycXmF5XblA24XmXwZWKkkXnhO0NGLwwkJrqX+NTWYUcb
-         OE8yBrczsTk2CZ1ehs19FGfP2q00tq+aJVZDOqZZST0zXqof/50gufNvlZs42UJrYd
-         mXbCZjpVe14qY5Gjxom3PFf9gtJooP0Ree5Ttn2+bVhnh4Nn3Iwjr8+IFRURUPDY16
-         cgJg0PboswF7w==
-Date:   Tue, 20 Jul 2021 13:54:38 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 000/138] Memory folios
-Message-ID: <YParbk8LxhrZMExc@kernel.org>
-References: <20210715033704.692967-1-willy@infradead.org>
+        id S235975AbhGTK3C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 06:29:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53708 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235398AbhGTK3A (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Jul 2021 06:29:00 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F32C061574;
+        Tue, 20 Jul 2021 04:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=FYa1vrOxhsL4J+dsjH3v2WKh547oNJsLenp0YgNCV9w=; b=W1mvuHw1PFT2PcpbakXqkrY5pU
+        ZCm3GD3vmA/BqdD1A1b99KnL2GNlaq504KUjikxyc/L8AjOtX7sMhsvNqXIrsaMJ9CrD8xVV9vy1C
+        Td6aQITuPNAJigOZm0BWNCqRJSLUHIUtyADB4kKNlghmHizMqsETiyF8MPV/iS7NtUAXctCqQN+KX
+        CNao0V5xI5VDZIpJzYLOCjf7oUkiR1mgE9tR1DA1IWrGvS47V13junRhdNJ6DuF4MflKdq0dMUecl
+        Pa45VLzoIgGw8P+83aj6ZmO5G8bHz+sKDDHbr+quEr12eREwLbXUsJY+fGka15IDVvcocbiVGxkyi
+        +uOHG7Wg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m5ncC-0082Ew-FD; Tue, 20 Jul 2021 11:08:54 +0000
+Date:   Tue, 20 Jul 2021 12:08:44 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH v15 00/17] Folio support in block + iomap layers
+Message-ID: <YPauvIzYONsQJxkr@casper.infradead.org>
+References: <20210719184001.1750630-1-willy@infradead.org>
+ <YPaM7IsHKT0tu2Dc@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210715033704.692967-1-willy@infradead.org>
+In-Reply-To: <YPaM7IsHKT0tu2Dc@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
+On Tue, Jul 20, 2021 at 09:44:28AM +0100, Christoph Hellwig wrote:
+> Btw, this seems to miss a Cc to linux-block.
 
-(Sorry for the late response, I could not find time earlier)
+hm?  i see it on linux-block, and so does lore.  maybe vger is being
+slow again?
 
-On Thu, Jul 15, 2021 at 04:34:46AM +0100, Matthew Wilcox (Oracle) wrote:
-> Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
-> benefit from a larger "page size".  As an example, an earlier iteration
-> of this idea which used compound pages (and wasn't particularly tuned)
-> got a 7% performance boost when compiling the kernel.
-> 
-> Using compound pages or THPs exposes a weakness of our type system.
-> Functions are often unprepared for compound pages to be passed to them,
-> and may only act on PAGE_SIZE chunks.  Even functions which are aware of
-> compound pages may expect a head page, and do the wrong thing if passed
-> a tail page.
-> 
-> We also waste a lot of instructions ensuring that we're not looking at
-> a tail page.  Almost every call to PageFoo() contains one or more hidden
-> calls to compound_head().  This also happens for get_page(), put_page()
-> and many more functions.
-> 
-> This patch series uses a new type, the struct folio, to manage memory.
-> It converts enough of the page cache, iomap and XFS to use folios instead
-> of pages, and then adds support for multi-page folios.  It passes xfstests
-> (running on XFS) with no regressions compared to v5.14-rc1.
-
-I like the idea of folio and that first patches I've reviewed look good.
-
-Most of the changelogs (at least at the first patches) mention reduction of
-the kernel size for your configuration on x86. I wonder, what happens if
-you build the kernel with "non-distro" configuration, e.g. defconfig or
-tiny.config?
-
-Also, what is the difference on !x86 builds?
- 
-> Git: https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/tags/folio_14
-
--- 
-Sincerely yours,
-Mike.
+https://lore.kernel.org/linux-block/20210719184001.1750630-1-willy@infradead.org/
