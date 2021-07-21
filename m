@@ -2,179 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 534233D1699
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 20:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F34A93D16AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 20:55:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239366AbhGUSFU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 14:05:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239324AbhGUSFU (ORCPT
+        id S231669AbhGUSO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 14:14:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54312 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229833AbhGUSO1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 14:05:20 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CA62C061575
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jul 2021 11:45:55 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id y25so3469845ljy.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jul 2021 11:45:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8y6QbjABYVdCwCo9bCH3uRUzlEcjRbA7x2BUjVyc0ws=;
-        b=hBUMMtm8juMCJx4jllyZahvGiCtlfjKyjc1FvS1TrtIMoXehtYE8RQBhzutuMuUXBw
-         +ZzhHb+Uy6icnIIwEZFOuLpqmC7VLRKYfCK1VRcuzDI5JuppC+jaTAWvJurBuPnMtXuA
-         SFtKdmhSLtUp7cgKEZPGOTovb4IS5Dqjf8u7Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8y6QbjABYVdCwCo9bCH3uRUzlEcjRbA7x2BUjVyc0ws=;
-        b=WS6iNV1Yb0xi3C9vFtJZO8t4VRAG94KO1Z6nITs1Lb3BEKDBI5TDheCsvUIcOLYarm
-         btNrXeLpxrQix2dXqxFiE7O2qV2Y/b34t6RDi1cC3atm1QaXvAZFeENmndvgQBTedCNU
-         MDjRGHBqtrLLf0VmIMMw5xl8o091RY0QsMMh4+LcfmOm+g1UtjErj94nDjVnRT8zXdMn
-         Su7PvmCQOye0Q+UDaSB+ZFGcm4KjplYlyrwHUk8DE++CZhHlU4m8iNm3tiRB7PJB1hWb
-         oH/ZRqzzbSfFlinnFvwhPnzIcuP1KyrR1NSkRemUmShs3fvWV8diAHN1UJTGMVtLlPSv
-         3pug==
-X-Gm-Message-State: AOAM530FHpwR0TeD71Aeeektf6HyNv9awJfOP991y5fYEcqa0jL+ajhV
-        6/xiotE+QBEsU8uPMXcOGAoLTiKG19lV0oBh
-X-Google-Smtp-Source: ABdhPJwQiGyG1HGq/uw0vtmbHCpuXH5o5admdiT26SQomfRHspF50viYTHBxBNmqt1Xx9QbEDgGR4w==
-X-Received: by 2002:a2e:9a53:: with SMTP id k19mr32113436ljj.482.1626893153570;
-        Wed, 21 Jul 2021 11:45:53 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id y20sm1954579lfg.70.2021.07.21.11.45.52
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Jul 2021 11:45:53 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id u13so4608793lfs.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jul 2021 11:45:52 -0700 (PDT)
-X-Received: by 2002:a05:6512:3f82:: with SMTP id x2mr25045987lfa.421.1626893152674;
- Wed, 21 Jul 2021 11:45:52 -0700 (PDT)
+        Wed, 21 Jul 2021 14:14:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626893703;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jJTgBMXwThnuFAlDzExyHYWCk5DsYLxTDpEqi54da7Q=;
+        b=dYmsSM8JqA/TQ6k30JybIhVZwlfxa04/EpXhMvM75RIgf8YRrap2H/HmimryA3TWrjWWBw
+        iyCmosMWT9o+wpPsua4ElzVv7Rm1WgBM8FY06ef4MXAuZ+dyDsV5vsvmw9jtPudaQWQcvv
+        rwOLCJEfuV14vq90Lk2Cz7esNaRrqWc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-463-_zwGKJtQPgywbHz1n30GUA-1; Wed, 21 Jul 2021 14:55:02 -0400
+X-MC-Unique: _zwGKJtQPgywbHz1n30GUA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8567F2B6;
+        Wed, 21 Jul 2021 18:54:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-62.rdu2.redhat.com [10.10.112.62])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D744F5D740;
+        Wed, 21 Jul 2021 18:54:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <e7a3b850e8a42845f4e020c7642743b3dce2b9f1.camel@redhat.com>
+References: <e7a3b850e8a42845f4e020c7642743b3dce2b9f1.camel@redhat.com> <162687506932.276387.14456718890524355509.stgit@warthog.procyon.org.uk> <162687511125.276387.15493860267582539643.stgit@warthog.procyon.org.uk>
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 03/12] netfs: Remove netfs_read_subrequest::transferred
 MIME-Version: 1.0
-References: <20210721135926.602840-1-nborisov@suse.com> <CAHk-=whqJKKc9wUacLEkvTzXYfYOUDt=kHKX6Fa8Kb4kQftbbQ@mail.gmail.com>
- <b24b5a9d-69a0-43b9-2ceb-8e4ee3bf2f17@suse.com>
-In-Reply-To: <b24b5a9d-69a0-43b9-2ceb-8e4ee3bf2f17@suse.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 21 Jul 2021 11:45:36 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgMyXh3gGuSzj_Dgw=Gn_XPxGSTPq6Pz7dEyx6JNuAh9g@mail.gmail.com>
-Message-ID: <CAHk-=wgMyXh3gGuSzj_Dgw=Gn_XPxGSTPq6Pz7dEyx6JNuAh9g@mail.gmail.com>
-Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Content-Type: multipart/mixed; boundary="000000000000741c3905c7a694cd"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <298116.1626893692.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 21 Jul 2021 19:54:52 +0100
+Message-ID: <298117.1626893692@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000741c3905c7a694cd
-Content-Type: text/plain; charset="UTF-8"
+Jeff Layton <jlayton@redhat.com> wrote:
 
-On Wed, Jul 21, 2021 at 11:17 AM Nikolay Borisov <nborisov@suse.com> wrote:
->
-> I find it somewhat arbitrary that we choose to align the 2nd pointer and
-> not the first.
+> The above two deltas seem like they should have been in patch #2.
 
-Yeah, that's a bit odd, but I don't think it matters.
+Yeah.  Looks like at least partially so.
 
-The hope is obviously that they are mutually aligned, and in that case
-it doesn't matter which one you aim to align.
+> > @@ -635,15 +625,8 @@ void netfs_subreq_terminated(struct netfs_read_su=
+brequest *subreq,
+> >  		goto failed;
+> >  	}
+> >  =
 
-> So you are saying that the current memcmp could indeed use improvement
-> but you don't want it to be based on the glibc's code due to the ugly
-> misalignment handling?
+> > -	if (WARN(transferred_or_error > subreq->len - subreq->transferred,
+> > -		 "Subreq overread: R%x[%x] %zd > %zu - %zu",
+> > -		 rreq->debug_id, subreq->debug_index,
+> > -		 transferred_or_error, subreq->len, subreq->transferred))
+> > -		transferred_or_error =3D subreq->len - subreq->transferred;
+> > -
+> >  	subreq->error =3D 0;
+> > -	subreq->transferred +=3D transferred_or_error;
+> > -	if (subreq->transferred < subreq->len)
+> > +	if (iov_iter_count(&subreq->iter))
+> >  		goto incomplete;
+> >  =
 
-Yeah. I suspect that this (very simple) patch gives you the same
-performance improvement that the glibc code does.
+> =
 
-NOTE! I'm not saying this patch is perfect. This one doesn't even
-_try_ to do the mutual alignment, because it's really silly. But I'm
-throwing this out here for discussion, because
+> I must be missing it, but where does subreq->iter get advanced to the
+> end of the current read? If you're getting rid of subreq->transferred
+> then I think that has to happen above, no?
 
- - it's really simple
+For afs, afs_req_issue_op() points fsreq->iter at the subrequest iterator =
+and
+calls afs_fetch_data().  Thereafter, we wend our way to
+afs_deliver_fs_fetch_data() or yfs_deliver_fs_fetch_data() which set
+call->iter to point to that iterator and then call afs_extract_data() whic=
+h
+passes it to rxrpc_kernel_recv_data(), which eventually passes it to
+skb_copy_datagram_iter(), which advances the iterator.
 
- - I suspect it gets you 99% of the way there
+For the cache, the subrequest iterator is passed to the cache backend by
+netfs_read_from_cache().  This would be cachefiles_read() which calls
+vfs_iocb_iter_read() which I thought advances the iterator (leastways,
+filemap_read() keeps going until iov_iter_count() reaches 0 or some other =
+stop
+condition occurs and doesn't thereafter call iov_iter_revert()).
 
- - the code generation is actually quite good with both gcc and clang.
-This is gcc:
+David
 
-        memcmp:
-                jmp     .L60
-        .L52:
-                movq    (%rsi), %rax
-                cmpq    %rax, (%rdi)
-                jne     .L53
-                addq    $8, %rdi
-                addq    $8, %rsi
-                subq    $8, %rdx
-        .L60:
-                cmpq    $7, %rdx
-                ja      .L52
-                testq   %rdx, %rdx
-                je      .L61
-        .L53:
-                xorl    %ecx, %ecx
-                jmp     .L56
-        .L62:
-                addq    $1, %rcx
-                cmpq    %rcx, %rdx
-                je      .L51
-        .L56:
-                movzbl  (%rdi,%rcx), %eax
-                movzbl  (%rsi,%rcx), %r8d
-                subl    %r8d, %eax
-                je      .L62
-        .L51:
-                ret
-        .L61:
-                xorl    %eax, %eax
-                ret
-
-and notice how there are no spills, no extra garbage, just simple and
-straightforward code.
-
-Those things ends mattering too - it's good for I$, it's good for the
-small cases, and it's good for debugging and reading the code.
-
-If this is "good enough" for your test-case, I really would prefer
-something like this. "Make it as simple as possible, but no simpler"
-
-I can do the mutual alignment too, but I'd actually prefer to do it as
-a separate patch, for when there are numbers for that.
-
-And I wouldn't do it as a byte-by-byte case, because that's just stupid.
-
-I'd do it using a separate first single "get unaligned word from both
-sources, compare them for equality, and then only add enough bytes to
-align"
-
-                  Linus
-
---000000000000741c3905c7a694cd
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_krdu1hal0>
-X-Attachment-Id: f_krdu1hal0
-
-IGxpYi9zdHJpbmcuYyB8IDE2ICsrKysrKysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAxNiBp
-bnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvbGliL3N0cmluZy5jIGIvbGliL3N0cmluZy5jCmlu
-ZGV4IDc3YmQwYjFkMzI5Ni4uYjJkZTQ1YTU4MWY0IDEwMDY0NAotLS0gYS9saWIvc3RyaW5nLmMK
-KysrIGIvbGliL3N0cmluZy5jCkBAIC0yOSw2ICsyOSw3IEBACiAjaW5jbHVkZSA8bGludXgvZXJy
-bm8uaD4KICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+CiAKKyNpbmNsdWRlIDxhc20vdW5hbGlnbmVk
-Lmg+CiAjaW5jbHVkZSA8YXNtL2J5dGVvcmRlci5oPgogI2luY2x1ZGUgPGFzbS93b3JkLWF0LWEt
-dGltZS5oPgogI2luY2x1ZGUgPGFzbS9wYWdlLmg+CkBAIC05MzUsNiArOTM2LDIxIEBAIF9fdmlz
-aWJsZSBpbnQgbWVtY21wKGNvbnN0IHZvaWQgKmNzLCBjb25zdCB2b2lkICpjdCwgc2l6ZV90IGNv
-dW50KQogCWNvbnN0IHVuc2lnbmVkIGNoYXIgKnN1MSwgKnN1MjsKIAlpbnQgcmVzID0gMDsKIAor
-I2lmZGVmIENPTkZJR19IQVZFX0VGRklDSUVOVF9VTkFMSUdORURfQUNDRVNTCisJaWYgKGNvdW50
-ID49IHNpemVvZih1bnNpZ25lZCBsb25nKSkgeworCQljb25zdCB1bnNpZ25lZCBsb25nICp1MSA9
-IGNzOworCQljb25zdCB1bnNpZ25lZCBsb25nICp1MiA9IGN0OworCQlkbyB7CisJCQlpZiAoZ2V0
-X3VuYWxpZ25lZCh1MSkgIT0gZ2V0X3VuYWxpZ25lZCh1MikpCisJCQkJYnJlYWs7CisJCQl1MSsr
-OworCQkJdTIrKzsKKwkJCWNvdW50IC09IHNpemVvZih1bnNpZ25lZCBsb25nKTsKKwkJfSB3aGls
-ZSAoY291bnQgPj0gc2l6ZW9mKHVuc2lnbmVkIGxvbmcpKTsKKwkJY3MgPSB1MTsKKwkJY3QgPSB1
-MjsKKwl9CisjZW5kaWYKIAlmb3IgKHN1MSA9IGNzLCBzdTIgPSBjdDsgMCA8IGNvdW50OyArK3N1
-MSwgKytzdTIsIGNvdW50LS0pCiAJCWlmICgocmVzID0gKnN1MSAtICpzdTIpICE9IDApCiAJCQli
-cmVhazsK
---000000000000741c3905c7a694cd--
