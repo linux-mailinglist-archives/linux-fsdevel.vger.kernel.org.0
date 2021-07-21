@@ -2,104 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D42443D1821
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 22:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 130F43D186D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 22:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231921AbhGUTrk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 15:47:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54364 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231247AbhGUTrj (ORCPT
+        id S229597AbhGUUNz convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 16:13:55 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:44328 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229520AbhGUUNz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 15:47:39 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06C9BC061575
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jul 2021 13:28:16 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id y7so4639831ljm.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jul 2021 13:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=Wfplf+fD3sAhG/xYw9pABvgaxNvCuT0joqilD8I+WIY=;
-        b=Cy+092dUMFCuH1x/9wzZLNPpohYwL5mLJ+XoNI+Yu8Va3rjvRxkCDSxK4HdOBvSFlS
-         0734f+bWrs/te02P8ApPWN8u9tATzWG8YVMRzmGI/BbmcsJ1RHcmjpVboynFKJRBL4z9
-         CEy0kwsNhs6vH5oTOf6B4dDodN/vfPbEOpwUw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=Wfplf+fD3sAhG/xYw9pABvgaxNvCuT0joqilD8I+WIY=;
-        b=YfQo1WwxazgPAVe37ZovEaRsZcU3eirM35uqmPQPySey8F/aSStPBIJSo+eYBw5I6l
-         AchYtC/azQ6oVLdz1zX3rM3julpWowvi2HLhzWUcl66mFNhIVcASXzvdvqTC5q7zozG/
-         LRMMRD/zC/2caEvuOXzrDWFlOWI9YfFKcyYM8mvQFNlvi1VMHeewpG5fw24AARxOFoLI
-         4o/tfR2VNWax/0ooTqkhInPYRzoNb86k2EwmjdC88uU5elNifmEylZOjiPjcf2Sfo7YH
-         O4V9RJ4owjOr583mrXQbvHeJef06oHvG7j3eV0YMQy6pvsO/84/ASfhf5fJPU4VZIuAa
-         8Yyg==
-X-Gm-Message-State: AOAM53324a7NtrJCjxUAmUfD2DrG9CdzeFyxF9bCbZr+KYAcqtRvqGwe
-        JYSV3x5Gp88T7s1EuyVspmbyez28WXf1aS6H
-X-Google-Smtp-Source: ABdhPJwjqlZxD2HpgnzPKuLkundkb/fEjYdvdbta8aoh9GfYHWGlKpni5PG6DMmM/aL+B7kr1YQLjQ==
-X-Received: by 2002:a2e:89ca:: with SMTP id c10mr32381477ljk.508.1626899293834;
-        Wed, 21 Jul 2021 13:28:13 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id 11sm731315ljq.140.2021.07.21.13.28.12
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Jul 2021 13:28:13 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id y25so3825218ljy.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jul 2021 13:28:12 -0700 (PDT)
-X-Received: by 2002:a2e:81c4:: with SMTP id s4mr32086757ljg.251.1626899292773;
- Wed, 21 Jul 2021 13:28:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210721135926.602840-1-nborisov@suse.com> <CAHk-=whqJKKc9wUacLEkvTzXYfYOUDt=kHKX6Fa8Kb4kQftbbQ@mail.gmail.com>
- <20210721201029.GQ19710@twin.jikos.cz>
-In-Reply-To: <20210721201029.GQ19710@twin.jikos.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 21 Jul 2021 13:27:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whCygw44p30Pmf+Bt8=LVtmij3_XOxweEA3OQNruhMg+A@mail.gmail.com>
-Message-ID: <CAHk-=whCygw44p30Pmf+Bt8=LVtmij3_XOxweEA3OQNruhMg+A@mail.gmail.com>
-Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
-To:     David Sterba <dsterba@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
+        Wed, 21 Jul 2021 16:13:55 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 4FA38606BA4F;
+        Wed, 21 Jul 2021 22:54:29 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id OeNpA8TbCsvM; Wed, 21 Jul 2021 22:54:28 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 88A0960A59D3;
+        Wed, 21 Jul 2021 22:54:28 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id JgBGLF30wa6X; Wed, 21 Jul 2021 22:54:28 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 55876606BA4F;
+        Wed, 21 Jul 2021 22:54:28 +0200 (CEST)
+Date:   Wed, 21 Jul 2021 22:54:28 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Pintu Agarwal <pintu.ping@gmail.com>
+Cc:     Greg KH <greg@kroah.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Sean Nyekjaer <sean@geanix.com>,
+        Kernelnewbies <kernelnewbies@kernelnewbies.org>
+Message-ID: <2132615832.4458.1626900868118.JavaMail.zimbra@nod.at>
+In-Reply-To: <CAOuPNLhti3tocN-_D7Q0QaAx5acHpb3AQyWaUKgQPNW3XWu58g@mail.gmail.com>
+References: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com> <YPGojf7hX//Wn5su@kroah.com> <568938486.33366.1626452816917.JavaMail.zimbra@nod.at> <CAOuPNLj1YC7gjuhyvunqnB_4JveGRyHcL9hcqKFSNKmfxVSWRA@mail.gmail.com> <1458549943.44607.1626686894648.JavaMail.zimbra@nod.at> <CAOuPNLh_KY4NaVWSEV2JPp8fx0iy8E1MU8GHT-w7-hMXrvSaeA@mail.gmail.com> <1556211076.48404.1626763215205.JavaMail.zimbra@nod.at> <CAOuPNLhti3tocN-_D7Q0QaAx5acHpb3AQyWaUKgQPNW3XWu58g@mail.gmail.com>
+Subject: Re: MTD: How to get actual image size from MTD partition
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF90 (Linux)/8.8.12_GA_3809)
+Thread-Topic: How to get actual image size from MTD partition
+Thread-Index: BowgerheV9p1zguM4N2pUdD/cVsfMg==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 1:13 PM David Sterba <dsterba@suse.cz> wrote:
->
-> adding a memcmp_large that compares by native words or u64 could be
-> the best option.
+----- Ursprüngliche Mail -----
+>> But let me advertise ubiblock a second time.
+> Sorry, I could not understand about the ubiblock request. Is it
+> possible to elaborate little more ?
+> We are already using squashfs on top of our UBI volumes (including
+> rootfs mounting).
+> This is the kernel command line we pass:
+> rootfstype=squashfs root=/dev/mtdblock44 ubi.mtd=40,0,30
+> And CONFIG_MTD_UBI_BLOCK=y is already enabled in our kernel.
+> Do we need to do something different for ubiblock ?
 
-Yeah, we could just special-case that one place.
+From that command line I understand that you are *not* using squashfs on top of UBI.
+You use mtdblock. ubiblock is a mechanism to turn an UBI volume into a read-only
+block device.
+See: http://www.linux-mtd.infradead.org/doc/ubi.html#L_ubiblock
 
-But see the patches I sent out - I think we can get the best of both worlds.
+>> If you place your squashfs on a UBI static volume, UBI knows the exact length
+>> and you can checksum it
+>> more easily.
+> Yes, we use squashfs on UBI volumes, but our volume type is still dynamic.
+> Also, you said, UBI knows the exact length, you mean the whole image length ?
+> How can we get this length at runtime ?
 
-A small and simple memcmp() that is good enough and not the
-_completely_ stupid thing we have now.
+You need a static volume for that. If you update a static volume the length is
+known by UBI.
 
-The second patch I sent out even gets the mutually aligned case right.
+> Also, how can we get the checksum of the entire UBI volume content
+> (ignoring the erased/empty/bad block content) ?
 
-Of course, the glibc code also ended up unrolling things a bit, but
-honestly, the way it did it was too disgusting for words.
+Just read from the volume. /dev/ubiX_Y.
 
-And if it really turns out that the unrolling makes a big difference -
-although I doubt it's meaningful with any modern core - I can add a
-couple of lines to that simple patch I sent out to do that too.
-Without getting the monster that is that glibc code.
+> Or, you mean to say, the whole checksum logic is in-built inside the
+> UBI layer and users don't need to worry about the integrity at all ?
 
-Of course, my patch depends on the fact that "get_unaligned()" is
-cheap on all CPU's that really matter, and that caches aren't
-direct-mapped any more. The glibc code seems to be written for a world
-where registers are cheap, unaligned accesses are prohibitively
-expensive, and unrolling helps because L1 caches are direct-mapped and
-you really want to do chunking to not get silly way conflicts.
+Static volumes have a crc32 checksum over the whole content.
+Of course this offers no cryptographic integrity.
+See: http://www.linux-mtd.infradead.org/doc/ubi.html#L_overview
 
-If old-style Sparc or MIPS was our primary target, that would be one
-thing. But it really isn't.
-
-              Linus
+Thanks,
+//richard
