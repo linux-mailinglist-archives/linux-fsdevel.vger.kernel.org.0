@@ -2,59 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA693D08D0
+	by mail.lfdr.de (Postfix) with ESMTP id 7934C3D08D1
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 08:22:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233774AbhGUFlR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 01:41:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57570 "EHLO
+        id S235101AbhGUFlf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 01:41:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234476AbhGUFir (ORCPT
+        with ESMTP id S234745AbhGUFix (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 01:38:47 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E71CDC0613E9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jul 2021 23:18:57 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id d9so1466300pfv.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jul 2021 23:18:57 -0700 (PDT)
+        Wed, 21 Jul 2021 01:38:53 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C09C061766
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jul 2021 23:19:29 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id gx2so1059133pjb.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jul 2021 23:19:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=bwSGq2+2N9Ym0S0vdErsfXkf1wBOnbO5unmsadijD/c=;
-        b=judp3ZMAguK9eGmKOEuGqhY3LC5bBv2jks7mTtDs0UhoQyTv13AsQf1CjhnNb6xOtO
-         lYEOqmLcfH6fi7wIXvPENGJHF8re301Vx7ghU9gU7a4ThLEt9q214bh0YrL7w/teTNPf
-         Z6CYghOklTnSWs6oRVzb5P1fYo8ntDK6bvay0bVE5mucHtLqKNa+Z3/umrKO9CFynxnO
-         /XJJsnLV1fLnC1y+qaKtn97KYytK2eXB8Augk6tkCwlBAu8ihe57NaYDIewo3CV6PgVj
-         I0pdyz/d5ZOPyREk6GNRBTgnk6rr7Wqfaqcx0ermcoq8H/0clKlTEy85DKMjLhmr521g
-         ZVZQ==
+        bh=K50f2pQblnPllZPSuSx0j99p6GugE4ag9IrRIM4Wc54=;
+        b=uVrciz/kA09liw7J35FTUicG4vv0sNIvylwHgLgND/NnvzjHhdlmNXyNBH9i0v75wa
+         4kP6RM/9m0af/L5U/mVmgsSZb6U6GxGjuAiMtVmK6JHo1170bq/v2BykF2mF3p8iNdBF
+         Psq8wIiMR2bi5vVjzJ8hJqV62g26T9KoeNaTTB5r37K4wU9++8ifgvliDUVqr9oxSi59
+         T/RbWybXeg7Fv2fe8PS9mcgsFf3hdjrV3r6efMasg4XL4MWAD3OAmxJw8x/DiLwzMXv2
+         0NZ9KUv1j87OwNJsIgL4Hynt6VXf/5b0wx5ywj2PYZVvwifsOBp+JhMdNXT2uEu/nZDr
+         7nNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=bwSGq2+2N9Ym0S0vdErsfXkf1wBOnbO5unmsadijD/c=;
-        b=WpWOqCW7cg1vnNV83hRl7IS85D/oGUvfr1xoYWkX5tVJWci9xRrQLlNcjhezV+2U3X
-         8Q8FTZ7hHDs95d7bwDfp2eSABjEJtNJj6PXIBuhaMAhBxGfyYVc8dElG3bXv/q/b0sW6
-         MuuSTdD3PtFE+atw2s0mH5L4DfC5YRibomQP5WVy+ewBR0fgLioXmhNtV3YjYTE9Xu1N
-         bv9XdruvngoR1r+BppaxHcopzeRB51OH77IT08JT6HU1UxGMWuaJ3MIMi4aFmV64WyLW
-         sx7avTtlOGusscyI/2SGuMiNoULWlpAzQryWf5DRLCpYP+QgG5QUunbnARWnrDlcQCf0
-         QkVw==
-X-Gm-Message-State: AOAM533qktNHEoDn5Id29NeBXQbGGogygMKJ1QQjGHFFXkFhAnGfbxRQ
-        a26JspWebtBnxd9B11tlJEmuLg==
-X-Google-Smtp-Source: ABdhPJyNawQBGxZQTicFmmttJChFF3A5H6Q/fNFdWp9wbyrY1oZR1GqIv7ZlrflCMHzNwconbZ2p5Q==
-X-Received: by 2002:a62:3045:0:b029:32b:880f:c03a with SMTP id w66-20020a6230450000b029032b880fc03amr35058403pfw.22.1626848336881;
-        Tue, 20 Jul 2021 23:18:56 -0700 (PDT)
+        bh=K50f2pQblnPllZPSuSx0j99p6GugE4ag9IrRIM4Wc54=;
+        b=WON6HDtpiLyRRYAQnoV7T4QWWNrBYUtfKvKvUphE2Vk06OSoY4GqennatmIIaYM6JH
+         hrr54GVH54ZltZab8lncQ7Hdxbg8flD6u4hI9w0NKk6thBGwjDLoUSkLJ1Zc8da2OXQr
+         oH3abkvotsk9mUMt+Ku1bNSP/YQicFXGN6eTAWBy/R5YUi1JcRKv4nWqH1FrhBQ/W2/f
+         kI4g7UuXfaNoo2y1pSYSPjsK69SAE5lQVrwFN1yIrocBnJh2EViaB/sAfRxae4LKAlSp
+         3QH97wkLlHVcB/wofH4SzAlF3l+hwwzXgtqFHn3+a4tmjweX6/evbOO4VadfZh7IXh9V
+         gVOQ==
+X-Gm-Message-State: AOAM5338UgzQZmgNuyV3fFVwY2Dejev8DYDnfPZAVY23Wn3l2NNnCV1o
+        hZifDhQb0xq8gw2KOSYJdVW3jA==
+X-Google-Smtp-Source: ABdhPJz6SV4GlvaP86f+V71qviTTcKiahLyezpCdRPxxo//FnZa9oj9Yq23AcIzDntX5oF4VqSstKQ==
+X-Received: by 2002:a17:90a:530e:: with SMTP id x14mr34167363pjh.128.1626848368344;
+        Tue, 20 Jul 2021 23:19:28 -0700 (PDT)
 Received: from google.com ([2401:fa00:9:211:c03c:a42a:c97a:1b7d])
-        by smtp.gmail.com with ESMTPSA id n33sm28308474pgm.55.2021.07.20.23.18.54
+        by smtp.gmail.com with ESMTPSA id c14sm28373550pgv.86.2021.07.20.23.19.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Jul 2021 23:18:56 -0700 (PDT)
-Date:   Wed, 21 Jul 2021 16:18:45 +1000
+        Tue, 20 Jul 2021 23:19:27 -0700 (PDT)
+Date:   Wed, 21 Jul 2021 16:19:16 +1000
 From:   Matthew Bobrowski <repnop@google.com>
 To:     jack@suse.cz, amir73il@gmail.com, christian.brauner@ubuntu.com
 Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH v3 4/5] fanotify/fanotify_user.c: introduce a generic info
- record copying helper
-Message-ID: <5ac9237ed6f055613c817eb1b9eedcaf1e53d4e6.1626845288.git.repnop@google.com>
+Subject: [PATCH v3 5/5] fanotify: add pidfd support to the fanotify API
+Message-ID: <02ba3581fee21c34bd986e093d9eb0b9897fa741.1626845288.git.repnop@google.com>
 References: <cover.1626845287.git.repnop@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -64,241 +63,302 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The copy_info_records_to_user() helper allows for the separation of
-info record copying routines/conditionals from copy_event_to_user(),
-which reduces the overall clutter within this function. This becomes
-especially true as we start introducing additional info records in the
-future i.e. struct fanotify_event_info_pidfd. On success, this helper
-returns the total amount of bytes that have been copied into the user
-supplied buffer and on error, a negative value is returned to the
-caller.
+Introduce a new flag FAN_REPORT_PIDFD for fanotify_init(2) which
+allows userspace applications to control whether a pidfd info record
+containing a pidfd is to be returned with each event.
 
-The newly defined macro FANOTIFY_INFO_MODES can be used to obtain info
-record types that have been enabled for a specific notification
-group. This macro becomes useful in the subsequent patch when the
-FAN_REPORT_PIDFD initialization flag is introduced.
+If FAN_REPORT_PIDFD is enabled for a notification group, an additional
+struct fanotify_event_info_pidfd object will be supplied alongside the
+generic struct fanotify_event_metadata within a single event. This
+functionality is analogous to that of FAN_REPORT_FID in terms of how
+the event structure is supplied to the userspace application. Usage of
+FAN_REPORT_PIDFD with FAN_REPORT_FID/FAN_REPORT_DFID_NAME is
+permitted, and in this case a struct fanotify_event_info_pidfd object
+will follow any struct fanotify_event_info_fid object.
+
+Currently, the usage of FAN_REPORT_TID is not permitted along with
+FAN_REPORT_PIDFD as the pidfd API only supports the creation of pidfds
+for thread-group leaders. Additionally, the FAN_REPORT_PIDFD is
+limited to privileged processes only i.e. listeners that are running
+with the CAP_SYS_ADMIN capability. Attempting to supply either of
+these initialization flags with FAN_REPORT_PIDFD will result with
+EINVAL being returned to the caller.
+
+In the event of a pidfd creation error, there are two types of error
+values that can be reported back to the listener. There is
+FAN_NOPIDFD, which will be reported in cases where the process
+responsible for generating the event has terminated prior to fanotify
+being able to create pidfd for event->pid via pidfd_create(). The
+there is FAN_EPIDFD, which will be reported if a more generic pidfd
+creation error occurred when calling pidfd_create().
 
 Signed-off-by: Matthew Bobrowski <repnop@google.com>
 ---
- fs/notify/fanotify/fanotify_user.c | 155 ++++++++++++++++-------------
- include/linux/fanotify.h           |   2 +
- 2 files changed, 90 insertions(+), 67 deletions(-)
+
+Changes since v2:
+
+ * The FAN_REPORT_PIDFD flag value has been changed from 0x00001000 to
+   0x00000080. This was so that future FID related initialization flags
+   could be grouped nicely.
+
+* Fixed pidfd clean up at out_close_fd label in
+  copy_event_to_user(). Reversed the conditional and it now uses the
+  close_fd() helper instead of put_unused_fd() as we also need to close the
+  backing file, not just just mark the pidfd free in the fdtable.
+
+* Shuffled around the WARN_ON_ONCE(FAN_REPORT_TID) within
+  copy_event_to_user() so that it's inside the if (pidfd_mode) branch. It
+  makes more sense to be as close to pidfd creation as possible.
+
+* Fixed up the comment block within the if (pidfd_mode) branch.
+
+ fs/notify/fanotify/fanotify_user.c | 88 ++++++++++++++++++++++++++++--
+ include/linux/fanotify.h           |  3 +-
+ include/uapi/linux/fanotify.h      | 13 +++++
+ 3 files changed, 98 insertions(+), 6 deletions(-)
 
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 182fea255376..d19f70b2c24c 100644
+index d19f70b2c24c..bcc375c258ce 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -173,7 +173,7 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
- 	size_t event_size = FAN_EVENT_METADATA_LEN;
- 	struct fanotify_event *event = NULL;
- 	struct fsnotify_event *fsn_event;
--	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
-+	unsigned int info_mode = FAN_GROUP_FLAG(group, FANOTIFY_INFO_MODES);
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/fanotify.h>
+ #include <linux/fcntl.h>
++#include <linux/fdtable.h>
+ #include <linux/file.h>
+ #include <linux/fs.h>
+ #include <linux/anon_inodes.h>
+@@ -106,6 +107,8 @@ struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
+ #define FANOTIFY_EVENT_ALIGN 4
+ #define FANOTIFY_FID_INFO_HDR_LEN \
+ 	(sizeof(struct fanotify_event_info_fid) + sizeof(struct file_handle))
++#define FANOTIFY_PIDFD_INFO_HDR_LEN \
++	sizeof(struct fanotify_event_info_pidfd)
  
- 	pr_debug("%s: group=%p count=%zd\n", __func__, group, count);
+ static int fanotify_fid_info_len(int fh_len, int name_len)
+ {
+@@ -138,6 +141,9 @@ static int fanotify_event_info_len(unsigned int info_mode,
+ 		dot_len = 1;
+ 	}
  
-@@ -183,8 +183,8 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
- 		goto out;
++	if (info_mode & FAN_REPORT_PIDFD)
++		info_len += FANOTIFY_PIDFD_INFO_HDR_LEN;
++
+ 	if (fh_len)
+ 		info_len += fanotify_fid_info_len(fh_len, dot_len);
  
- 	event = FANOTIFY_E(fsn_event);
--	if (fid_mode)
--		event_size += fanotify_event_info_len(fid_mode, event);
-+	if (info_mode)
-+		event_size += fanotify_event_info_len(info_mode, event);
- 
- 	if (event_size > count) {
- 		event = ERR_PTR(-EINVAL);
-@@ -401,6 +401,86 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+@@ -401,13 +407,34 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
  	return info_len;
  }
  
-+static int copy_info_records_to_user(struct fanotify_event *event,
-+				     struct fanotify_info *info,
-+				     unsigned int info_mode,
-+				     char __user *buf, size_t count)
++static int copy_pidfd_info_to_user(int pidfd,
++				   char __user *buf,
++				   size_t count)
 +{
-+	int ret, total_bytes = 0, info_type = 0;
-+	unsigned int fid_mode = info_mode & FANOTIFY_FID_BITS;
++	struct fanotify_event_info_pidfd info = { };
++	size_t info_len = FANOTIFY_PIDFD_INFO_HDR_LEN;
 +
-+	/*
-+	 * Event info records order is as follows: dir fid + name, child fid.
-+	 */
-+	if (fanotify_event_dir_fh_len(event)) {
-+		info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
-+					     FAN_EVENT_INFO_TYPE_DFID;
-+		ret = copy_fid_info_to_user(fanotify_event_fsid(event),
-+					    fanotify_info_dir_fh(info),
-+					    info_type,
-+					    fanotify_info_name(info),
-+					    info->name_len, buf, count);
-+		if (ret < 0)
-+			return ret;
++	if (WARN_ON_ONCE(info_len > count))
++		return -EFAULT;
 +
-+		buf += ret;
-+		count -= ret;
-+		total_bytes += ret;
-+	}
++	info.hdr.info_type = FAN_EVENT_INFO_TYPE_PIDFD;
++	info.hdr.len = info_len;
++	info.pidfd = pidfd;
 +
-+	if (fanotify_event_object_fh_len(event)) {
-+		const char *dot = NULL;
-+		int dot_len = 0;
++	if (copy_to_user(buf, &info, info_len))
++		return -EFAULT;
 +
-+		if (fid_mode == FAN_REPORT_FID || info_type) {
-+			/*
-+			 * With only group flag FAN_REPORT_FID only type FID is
-+			 * reported. Second info record type is always FID.
-+			 */
-+			info_type = FAN_EVENT_INFO_TYPE_FID;
-+		} else if ((fid_mode & FAN_REPORT_NAME) &&
-+			   (event->mask & FAN_ONDIR)) {
-+			/*
-+			 * With group flag FAN_REPORT_NAME, if name was not
-+			 * recorded in an event on a directory, report the name
-+			 * "." with info type DFID_NAME.
-+			 */
-+			info_type = FAN_EVENT_INFO_TYPE_DFID_NAME;
-+			dot = ".";
-+			dot_len = 1;
-+		} else if ((event->mask & ALL_FSNOTIFY_DIRENT_EVENTS) ||
-+			   (event->mask & FAN_ONDIR)) {
-+			/*
-+			 * With group flag FAN_REPORT_DIR_FID, a single info
-+			 * record has type DFID for directory entry
-+			 * modificatio\ n event and for event on a directory.
-+			 */
-+			info_type = FAN_EVENT_INFO_TYPE_DFID;
-+		} else {
-+			/*
-+			 * With group flags FAN_REPORT_DIR_FID|FAN_REPORT_FID,
-+			 * a single info record has type FID for event on a
-+			 * non-directory, when there is no directory to report.
-+			 * For example, on FAN_DELETE_SELF event.
-+			 */
-+			info_type = FAN_EVENT_INFO_TYPE_FID;
-+		}
-+
-+		ret = copy_fid_info_to_user(fanotify_event_fsid(event),
-+					    fanotify_event_object_fh(event),
-+					    info_type, dot, dot_len,
-+					    buf, count);
-+		if (ret < 0)
-+			return ret;
-+
-+		buf += ret;
-+		count -= ret;
-+		total_bytes += ret;
-+	}
-+
-+	return total_bytes;
++	return info_len;
 +}
 +
- static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 				  struct fanotify_event *event,
- 				  char __user *buf, size_t count)
-@@ -408,15 +488,14 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	struct fanotify_event_metadata metadata;
+ static int copy_info_records_to_user(struct fanotify_event *event,
+ 				     struct fanotify_info *info,
+-				     unsigned int info_mode,
++				     unsigned int info_mode, int pidfd,
+ 				     char __user *buf, size_t count)
+ {
+ 	int ret, total_bytes = 0, info_type = 0;
+ 	unsigned int fid_mode = info_mode & FANOTIFY_FID_BITS;
++	unsigned int pidfd_mode = info_mode & FAN_REPORT_PIDFD;
+ 
+ 	/*
+ 	 * Event info records order is as follows: dir fid + name, child fid.
+@@ -478,6 +505,16 @@ static int copy_info_records_to_user(struct fanotify_event *event,
+ 		total_bytes += ret;
+ 	}
+ 
++	if (pidfd_mode) {
++		ret = copy_pidfd_info_to_user(pidfd, buf, count);
++		if (ret < 0)
++			return ret;
++
++		buf += ret;
++		count -= ret;
++		total_bytes += ret;
++	}
++
+ 	return total_bytes;
+ }
+ 
+@@ -489,8 +526,9 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
  	struct path *path = fanotify_event_path(event);
  	struct fanotify_info *info = fanotify_event_info(event);
--	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
-+	unsigned int info_mode = FAN_GROUP_FLAG(group, FANOTIFY_INFO_MODES);
+ 	unsigned int info_mode = FAN_GROUP_FLAG(group, FANOTIFY_INFO_MODES);
++	unsigned int pidfd_mode = info_mode & FAN_REPORT_PIDFD;
  	struct file *f = NULL;
- 	int ret, fd = FAN_NOFD;
--	int info_type = 0;
+-	int ret, fd = FAN_NOFD;
++	int ret, pidfd = FAN_NOPIDFD, fd = FAN_NOFD;
  
  	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
  
- 	metadata.event_len = FAN_EVENT_METADATA_LEN +
--				fanotify_event_info_len(fid_mode, event);
-+				fanotify_event_info_len(info_mode, event);
- 	metadata.metadata_len = FAN_EVENT_METADATA_LEN;
- 	metadata.vers = FANOTIFY_METADATA_VERSION;
- 	metadata.reserved = 0;
-@@ -465,69 +544,11 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	if (f)
+@@ -524,6 +562,34 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	}
+ 	metadata.fd = fd;
+ 
++	if (pidfd_mode) {
++		/*
++		 * Complain if the FAN_REPORT_PIDFD and FAN_REPORT_TID mutual
++		 * exclusion is ever lifted. At the time of incoporating pidfd
++		 * support within fanotify, the pidfd API only supported the
++		 * creation of pidfds for thread-group leaders.
++		 */
++		WARN_ON_ONCE(FAN_GROUP_FLAG(group, FAN_REPORT_TID));
++
++		/*
++		 * The PIDTYPE_TGID check for an event->pid is performed
++		 * preemptively in attempt to catch those rare instances where
++		 * the process responsible for generating the event has
++		 * terminated prior to calling into pidfd_create() and acquiring
++		 * a valid pidfd. Report FAN_NOPIDFD to the listener in those
++		 * cases. All other pidfd creation errors are represented as
++		 * FAN_EPIDFD.
++		 */
++		if (metadata.pid == 0 ||
++		    !pid_has_task(event->pid, PIDTYPE_TGID)) {
++			pidfd = FAN_NOPIDFD;
++		} else {
++			pidfd = pidfd_create(event->pid, 0);
++			if (pidfd < 0)
++				pidfd = FAN_EPIDFD;
++		}
++	}
++
+ 	ret = -EFAULT;
+ 	/*
+ 	 * Sanity check copy size in case get_one_event() and
+@@ -545,8 +611,8 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
  		fd_install(fd, f);
  
--	/* Event info records order is: dir fid + name, child fid */
--	if (fanotify_event_dir_fh_len(event)) {
--		info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
--					     FAN_EVENT_INFO_TYPE_DFID;
--		ret = copy_fid_info_to_user(fanotify_event_fsid(event),
--					    fanotify_info_dir_fh(info),
--					    info_type,
--					    fanotify_info_name(info),
--					    info->name_len, buf, count);
--		if (ret < 0)
--			goto out_close_fd;
--
--		buf += ret;
--		count -= ret;
--	}
--
--	if (fanotify_event_object_fh_len(event)) {
--		const char *dot = NULL;
--		int dot_len = 0;
--
--		if (fid_mode == FAN_REPORT_FID || info_type) {
--			/*
--			 * With only group flag FAN_REPORT_FID only type FID is
--			 * reported. Second info record type is always FID.
--			 */
--			info_type = FAN_EVENT_INFO_TYPE_FID;
--		} else if ((fid_mode & FAN_REPORT_NAME) &&
--			   (event->mask & FAN_ONDIR)) {
--			/*
--			 * With group flag FAN_REPORT_NAME, if name was not
--			 * recorded in an event on a directory, report the
--			 * name "." with info type DFID_NAME.
--			 */
--			info_type = FAN_EVENT_INFO_TYPE_DFID_NAME;
--			dot = ".";
--			dot_len = 1;
--		} else if ((event->mask & ALL_FSNOTIFY_DIRENT_EVENTS) ||
--			   (event->mask & FAN_ONDIR)) {
--			/*
--			 * With group flag FAN_REPORT_DIR_FID, a single info
--			 * record has type DFID for directory entry modification
--			 * event and for event on a directory.
--			 */
--			info_type = FAN_EVENT_INFO_TYPE_DFID;
--		} else {
--			/*
--			 * With group flags FAN_REPORT_DIR_FID|FAN_REPORT_FID,
--			 * a single info record has type FID for event on a
--			 * non-directory, when there is no directory to report.
--			 * For example, on FAN_DELETE_SELF event.
--			 */
--			info_type = FAN_EVENT_INFO_TYPE_FID;
--		}
--
--		ret = copy_fid_info_to_user(fanotify_event_fsid(event),
--					    fanotify_event_object_fh(event),
--					    info_type, dot, dot_len,
--					    buf, count);
-+	if (info_mode) {
-+		ret = copy_info_records_to_user(event, info, info_mode,
+ 	if (info_mode) {
+-		ret = copy_info_records_to_user(event, info, info_mode,
+-						buf, count);
++		ret = copy_info_records_to_user(event, info, info_mode, pidfd,
 +						buf, count);
  		if (ret < 0)
  			goto out_close_fd;
--
--		buf += ret;
--		count -= ret;
  	}
+@@ -558,6 +624,10 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 		put_unused_fd(fd);
+ 		fput(f);
+ 	}
++
++	if (pidfd >= 0)
++		close_fd(pidfd);
++
+ 	return ret;
+ }
  
- 	return metadata.event_len;
+@@ -1103,6 +1173,14 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ #endif
+ 		return -EINVAL;
+ 
++	/*
++	 * A pidfd can only be returned for a thread-group leader; thus
++	 * FAN_REPORT_PIDFD and FAN_REPORT_TID need to remain mutually
++	 * exclusive.
++	 */
++	if ((flags & FAN_REPORT_PIDFD) && (flags & FAN_REPORT_TID))
++		return -EINVAL;
++
+ 	if (event_f_flags & ~FANOTIFY_INIT_ALL_EVENT_F_BITS)
+ 		return -EINVAL;
+ 
+@@ -1504,7 +1582,7 @@ static int __init fanotify_user_setup(void)
+ 				     FANOTIFY_DEFAULT_MAX_USER_MARKS);
+ 
+ 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
+-	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
++	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 11);
+ 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
+ 
+ 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
 diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index a16dbeced152..10a7e26ddba6 100644
+index 10a7e26ddba6..eec3b7c40811 100644
 --- a/include/linux/fanotify.h
 +++ b/include/linux/fanotify.h
-@@ -27,6 +27,8 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
+@@ -27,7 +27,7 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
  
  #define FANOTIFY_FID_BITS	(FAN_REPORT_FID | FAN_REPORT_DFID_NAME)
  
-+#define FANOTIFY_INFO_MODES	(FANOTIFY_FID_BITS)
-+
+-#define FANOTIFY_INFO_MODES	(FANOTIFY_FID_BITS)
++#define FANOTIFY_INFO_MODES	(FANOTIFY_FID_BITS | FAN_REPORT_PIDFD)
+ 
  /*
   * fanotify_init() flags that require CAP_SYS_ADMIN.
-  * We do not allow unprivileged groups to request permission events.
+@@ -37,6 +37,7 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
+  */
+ #define FANOTIFY_ADMIN_INIT_FLAGS	(FANOTIFY_PERM_CLASSES | \
+ 					 FAN_REPORT_TID | \
++					 FAN_REPORT_PIDFD | \
+ 					 FAN_UNLIMITED_QUEUE | \
+ 					 FAN_UNLIMITED_MARKS)
+ 
+diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+index fbf9c5c7dd59..64553df9d735 100644
+--- a/include/uapi/linux/fanotify.h
++++ b/include/uapi/linux/fanotify.h
+@@ -51,6 +51,7 @@
+ #define FAN_ENABLE_AUDIT	0x00000040
+ 
+ /* Flags to determine fanotify event format */
++#define FAN_REPORT_PIDFD	0x00000080	/* Report pidfd for event->pid */
+ #define FAN_REPORT_TID		0x00000100	/* event->pid is thread id */
+ #define FAN_REPORT_FID		0x00000200	/* Report unique file id */
+ #define FAN_REPORT_DIR_FID	0x00000400	/* Report unique directory id */
+@@ -123,6 +124,7 @@ struct fanotify_event_metadata {
+ #define FAN_EVENT_INFO_TYPE_FID		1
+ #define FAN_EVENT_INFO_TYPE_DFID_NAME	2
+ #define FAN_EVENT_INFO_TYPE_DFID	3
++#define FAN_EVENT_INFO_TYPE_PIDFD	4
+ 
+ /* Variable length info record following event metadata */
+ struct fanotify_event_info_header {
+@@ -148,6 +150,15 @@ struct fanotify_event_info_fid {
+ 	unsigned char handle[0];
+ };
+ 
++/*
++ * This structure is used for info records of type FAN_EVENT_INFO_TYPE_PIDFD.
++ * It holds a pidfd for the pid that was responsible for generating an event.
++ */
++struct fanotify_event_info_pidfd {
++	struct fanotify_event_info_header hdr;
++	__s32 pidfd;
++};
++
+ struct fanotify_response {
+ 	__s32 fd;
+ 	__u32 response;
+@@ -160,6 +171,8 @@ struct fanotify_response {
+ 
+ /* No fd set in event */
+ #define FAN_NOFD	-1
++#define FAN_NOPIDFD	FAN_NOFD
++#define FAN_EPIDFD	-2
+ 
+ /* Helper functions to deal with fanotify_event_metadata buffers */
+ #define FAN_EVENT_METADATA_LEN (sizeof(struct fanotify_event_metadata))
 -- 
 2.32.0.432.gabb21c7263-goog
 
