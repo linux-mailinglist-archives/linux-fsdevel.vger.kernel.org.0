@@ -2,114 +2,505 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BD153D14DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 19:10:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FB543D14E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 19:14:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229791AbhGUQ3w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 12:29:52 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45405 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229600AbhGUQ3w (ORCPT
+        id S232733AbhGUQdp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 12:33:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38256 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229459AbhGUQdp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 12:29:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626887428;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pHIrr2R+m6okqzTEImHOCFTKRL2HTOsLF72rQ2qjio0=;
-        b=hpO/uPM9rOwoB0hSq6aXB+7enkOeDEO2BhCp60Tlsqd1h7YrdrkSUkm6qNTzdH7jCRHkS6
-        N2zXsFFE+f83VfhfJOJMy/b5+5tAQWhp9pU79KZ0EnA9yEXH6+jgiSmWrbAiP5SRk79Occ
-        0lwK3/a5UlHJQUdHKAu2FNKo/53pIQE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-586-MEydbkNIO4KK5-uKnWDkiw-1; Wed, 21 Jul 2021 13:10:27 -0400
-X-MC-Unique: MEydbkNIO4KK5-uKnWDkiw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 63C72107ACF5;
-        Wed, 21 Jul 2021 17:10:25 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6B58B62672;
-        Wed, 21 Jul 2021 17:10:17 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 16LHAGci011835;
-        Wed, 21 Jul 2021 13:10:16 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 16LHAF51011830;
-        Wed, 21 Jul 2021 13:10:15 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 21 Jul 2021 13:10:15 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Pintu Agarwal <pintu.ping@gmail.com>
-cc:     open list <linux-kernel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>, dm-devel@redhat.com,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>, agk@redhat.com,
-        snitzer@redhat.com, shli@kernel.org,
-        Sami Tolvanen <samitolvanen@google.com>
-Subject: Re: Kernel 4.14: Using dm-verity with squashfs rootfs - mounting
- issue
-In-Reply-To: <CAOuPNLhh_LkLQ8mSA4eoUDLCLzHo5zHXsiQZXUB_-T_F1_v6-g@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.2107211300520.10897@file01.intranet.prod.int.rdu2.redhat.com>
-References: <CAOuPNLhqSpaTm3u4kFsnuZ0PLDKuX8wsxuF=vUJ1TEG0EP+L1g@mail.gmail.com> <alpine.LRH.2.02.2107200737510.19984@file01.intranet.prod.int.rdu2.redhat.com> <CAOuPNLhh_LkLQ8mSA4eoUDLCLzHo5zHXsiQZXUB_-T_F1_v6-g@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Wed, 21 Jul 2021 12:33:45 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ECF7C061575;
+        Wed, 21 Jul 2021 10:14:19 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id r132so4259303yba.5;
+        Wed, 21 Jul 2021 10:14:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=k4n5HTR41bwQP/gHCh2Uj1KAz797nFkzDOjHQZkjrx4=;
+        b=dNyOYCTt0OJ3PmqENI7eKfLJqW53MQRXX/iFyGb1VPm6Jse2JtGfL9IzHayEy6Z8s+
+         ihHN05Uyfit86CqC/c6jeIyMtrj27Vvmz88cosDkZwl8duzHWqFjvTaTYcZTxAY7Wk/y
+         vN0GSusviE7WclR8dinYtcz912DqewMq4SPZkSWIGMRlhkdTXe7PF8dZVgZyShXFBlyW
+         9y5ziqJxwF7O4VhSbefPo6TelmIwtEfhN+AJmnyS2mn8jq2qqZ7vzr2xOrwRzgbgedrf
+         fuo7kx3YlhAxiAm9YHcXlEDFMY5c1b0vTVGPBs8wvaniTNrPV+YP5+YFQVwuP3PdarIY
+         5muQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=k4n5HTR41bwQP/gHCh2Uj1KAz797nFkzDOjHQZkjrx4=;
+        b=JEudp7Ophmyf+f7wnkW7H8D7az61Oa449BRn0QXAuHRL42UoZL4/Fxp9mDUWVWdgb4
+         q3iM50Eftuk+UIBlTquCUhV5T7bfhny5rhCpijwHND5MAWSJxo6h0ZLLiIkVCRjovzHN
+         En0uZj8O5kIKbLr1F6zKKYNg52XFk4Lj4pwVi28l8+y8/GmPKIIuObf9nHS8Iv2u4co5
+         clfAnGHqQXhQy0jXpcJmBsl+ZIUwa6IQUliNCroGWPLwhVZDCtpqSgltggEb6PCrP4ny
+         7/a2gJ8UIYov+vXzqAhy3HhRfesS2lSry6ImQmeAKRrp/Hil6QeDDnllXik4A1Ni+lMR
+         vLYA==
+X-Gm-Message-State: AOAM530PSooBI7zuZFX5cFN1BpYqm/a6yeSj2l97dRzQMINgY+UawQYp
+        HfAOC+pytRY7pQ7USLCe4EpsHPfbhvSpHd9nv/RW0AJ9Epk=
+X-Google-Smtp-Source: ABdhPJx1hSI+Y9hRS2MZyF2dLbdW84YCmmwk63SOuqWAiyTFM0gxKWlUQ6yJFfFtfuFohqXVZmMZm2HtXeYk5y0BjnI=
+X-Received: by 2002:a25:2e49:: with SMTP id b9mr48846175ybn.250.1626887656389;
+ Wed, 21 Jul 2021 10:14:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+From:   butt3rflyh4ck <butterflyhuangxx@gmail.com>
+Date:   Thu, 22 Jul 2021 01:14:06 +0800
+Message-ID: <CAFcO6XOdMe-RgN8MCUT59cYEVBp+3VYTW-exzxhKdBk57q0GYw@mail.gmail.com>
+Subject: A shift-out-of-bounds in minix_statfs in fs/minix/inode.c
+To:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: multipart/mixed; boundary="000000000000f36eb305c7a54c80"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+--000000000000f36eb305c7a54c80
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi, there was a shift-out-bounds bug in minix_statfs in
+fs/minix/inode.c founded by my custom syzkaller and reproduced in
+linux-5.13.0-rc6+.
+
+####
+Simply analyze the vulnerability principle, First, mount a minix file
+system by minix_fill_super() and initialize some custom basic data.
+
+the code is as follows:
+```
+static int minix_fill_super(struct super_block *s, void *data, int silent)
+{
+struct buffer_head *bh;
+struct buffer_head **map;
+struct minix_super_block *ms;
+struct minix3_super_block *m3s =3D NULL;
+unsigned long i, block;
+struct inode *root_inode;
+struct minix_sb_info *sbi;
+int ret =3D -EINVAL;
+
+sbi =3D kzalloc(sizeof(struct minix_sb_info), GFP_KERNEL);
+if (!sbi)
+return -ENOMEM;
+s->s_fs_info =3D sbi;
+
+BUILD_BUG_ON(32 !=3D sizeof (struct minix_inode));
+BUILD_BUG_ON(64 !=3D sizeof(struct minix2_inode));
+
+if (!sb_set_blocksize(s, BLOCK_SIZE))
+goto out_bad_hblock;
+
+if (!(bh =3D sb_bread(s, 1)))    /// -----------------> get
+minix_super_block's data from super_block
+goto out_bad_sb;
+
+ms =3D (struct minix_super_block *) bh->b_data; /// --------------> set
+minix_super_block pointer
+sbi->s_ms =3D ms;
+sbi->s_sbh =3D bh;
+sbi->s_mount_state =3D ms->s_state;
+sbi->s_ninodes =3D ms->s_ninodes;
+sbi->s_nzones =3D ms->s_nzones;
+sbi->s_imap_blocks =3D ms->s_imap_blocks;
+sbi->s_zmap_blocks =3D ms->s_zmap_blocks;
+sbi->s_firstdatazone =3D ms->s_firstdatazone;
+sbi->s_log_zone_size =3D ms->s_log_zone_size;  // ------------------>
+set sbi->s_log_zone_size
+s->s_maxbytes =3D ms->s_max_size;
+s->s_magic =3D ms->s_magic;
+```
+Set bh->b_data to sbi. Initialize minix_sb_info by minix_super_block =E2=80=
+=99s data
+
+After the file system is mounted, we can call the statfs syscall and
+it could invoke the minix_statfs function. the code is as follows:
+```
+static int minix_statfs(struct dentry *dentry, struct kstatfs *buf)
+{
+struct super_block *sb =3D dentry->d_sb;
+struct minix_sb_info *sbi =3D minix_sb(sb);
+u64 id =3D huge_encode_dev(sb->s_bdev->bd_dev);
+buf->f_type =3D sb->s_magic;
+buf->f_bsize =3D sb->s_blocksize;
+buf->f_blocks =3D (sbi->s_nzones - sbi->s_firstdatazone) <<
+sbi->s_log_zone_size;  // -----> shift left
+buf->f_bfree =3D minix_count_free_blocks(sb);
+buf->f_bavail =3D buf->f_bfree;
+buf->f_files =3D sbi->s_ninodes;
+buf->f_ffree =3D minix_count_free_inodes(sb);
+buf->f_namelen =3D sbi->s_namelen;
+buf->f_fsid =3D u64_to_fsid(id);
+
+return 0;
+}
+```
+if set sbi->s_log_zone_size as a lager num, the
+(sbi->s_nzones-sbi->s_firstdatazone) will be shift left out of bounds
+from the 64-bit type 'long unsigned int'.
+
+####
+crash logs is as follows:
+```
+[ 1512.826425][ T8010] loop0: detected capacity change from 0 to 16
+[ 1512.829202][ T8010]
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+[ 1512.830892][ T8010] UBSAN: shift-out-of-bounds in fs/minix/inode.c:380:5=
+7
+[ 1512.851019][ T8010] shift exponent 1024 is too large for 64-bit
+type 'long unsigned int'
+[ 1512.852875][ T8010] CPU: 0 PID: 8010 Comm: minix_statfs Not tainted
+5.13.0-rc6+ #21
+[ 1512.854333][ T8010] Hardware name: QEMU Standard PC (i440FX + PIIX,
+1996), BIOS 1.13.0-1ubuntu1 04/01/2014
+[ 1512.856165][ T8010] Call Trace:
+[ 1512.856809][ T8010]  dump_stack+0x7f/0xad
+[ 1512.857629][ T8010]  ubsan_epilogue+0x5/0x40
+[ 1512.858417][ T8010]  __ubsan_handle_shift_out_of_bounds.cold+0x61/0x10e
+[ 1512.859634][ T8010]  ? __lock_acquire+0x3b6/0x2680
+[ 1512.860566][ T8010]  minix_statfs.cold+0x16/0x1f
+[ 1512.861453][ T8010]  statfs_by_dentry+0x48/0x70
+[ 1512.862314][ T8010]  vfs_statfs+0x11/0xc0
+[ 1512.863095][ T8010]  fd_statfs+0x29/0x60
+[ 1512.863860][ T8010]  __do_sys_fstatfs+0x20/0x50
+[ 1512.864733][ T8010]  do_syscall_64+0x3a/0xb0
+[ 1512.865820][ T8010]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[ 1512.866948][ T8010] RIP: 0033:0x44e74d
+[ 1512.867804][ T8010] Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3
+0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b
+4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff 8
+[ 1512.871739][ T8010] RSP: 002b:00007ffe06c55808 EFLAGS: 00000217
+ORIG_RAX: 000000000000008a
+[ 1512.873195][ T8010] RAX: ffffffffffffffda RBX: 0000000000400530
+RCX: 000000000044e74d
+[ 1512.874585][ T8010] RDX: 000000000044d9f7 RSI: 0000000000000000
+RDI: 0000000000000005
+[ 1512.875939][ T8010] RBP: 00007ffe06c55820 R08: 00007ffe06c55664
+R09: 0000000000000000
+[ 1512.877284][ T8010] R10: 00007ffe06c556e0 R11: 0000000000000217
+R12: 0000000000403750
+[ 1512.878665][ T8010] R13: 0000000000000000 R14: 00000000004c6018
+R15: 0000000000000000
+[ 1512.881676][ T8010]
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+[ 1512.883289][ T8010] Kernel panic - not syncing: panic_on_warn set ...
+[ 1512.884457][ T8010] CPU: 0 PID: 8010 Comm: minix_statfs Not tainted
+5.13.0-rc6+ #21
+[ 1512.885851][ T8010] Hardware name: QEMU Standard PC (i440FX + PIIX,
+1996), BIOS 1.13.0-1ubuntu1 04/01/2014
+[ 1512.887598][ T8010] Call Trace:
+[ 1512.888186][ T8010]  dump_stack+0x7f/0xad
+[ 1512.888935][ T8010]  panic+0x147/0x31a
+[ 1512.889623][ T8010]  ubsan_epilogue+0x3f/0x40
+[ 1512.890392][ T8010]  __ubsan_handle_shift_out_of_bounds.cold+0x61/0x10e
+[ 1512.891527][ T8010]  ? __lock_acquire+0x3b6/0x2680
+[ 1512.892353][ T8010]  minix_statfs.cold+0x16/0x1f
+[ 1512.893202][ T8010]  statfs_by_dentry+0x48/0x70
+[ 1512.894033][ T8010]  vfs_statfs+0x11/0xc0
+[ 1512.894759][ T8010]  fd_statfs+0x29/0x60
+[ 1512.895483][ T8010]  __do_sys_fstatfs+0x20/0x50
+[ 1512.896298][ T8010]  do_syscall_64+0x3a/0xb0
+[ 1512.897103][ T8010]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[ 1512.898136][ T8010] RIP: 0033:0x44e74d
+[ 1512.898823][ T8010] Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3
+0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b
+4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff 8
+[ 1512.902284][ T8010] RSP: 002b:00007ffe06c55808 EFLAGS: 00000217
+ORIG_RAX: 000000000000008a
+[ 1512.903771][ T8010] RAX: ffffffffffffffda RBX: 0000000000400530
+RCX: 000000000044e74d
+[ 1512.905263][ T8010] RDX: 000000000044d9f7 RSI: 0000000000000000
+RDI: 0000000000000005
+[ 1512.906723][ T8010] RBP: 00007ffe06c55820 R08: 00007ffe06c55664
+R09: 0000000000000000
+[ 1512.908181][ T8010] R10: 00007ffe06c556e0 R11: 0000000000000217
+R12: 0000000000403750
+[ 1512.909661][ T8010] R13: 0000000000000000 R14: 00000000004c6018
+R15: 0000000000000000
+[ 1512.911356][ T8010] Kernel Offset: disabled
+[ 1512.912216][ T8010] Rebooting in 86400 seconds..
+```
+The attachment is a reproduction.
 
 
-On Wed, 21 Jul 2021, Pintu Agarwal wrote:
+Regards,
+    butt3rflyh4ck
 
-> On Tue, 20 Jul 2021 at 17:12, Mikulas Patocka <mpatocka@redhat.com> wrote:
-> >
-> > Hi
-> >
-> > Try to set up dm-verity with block size 512 bytes.
-> >
-> > I don't know what block size does squashfs use, but if the filesystem
-> > block size is smaller than dm-verity block size, it doesn't work.
-> >
-> Okay thank you so much for this clue,
-> It seems we are using 65536 as the squashfs block size:
+--=20
+Active Defense Lab of Venustech
 
-65536 is the compression block size - it is unrelated to I/O block size.
+--000000000000f36eb305c7a54c80
+Content-Type: application/octet-stream; name="repro.cprog"
+Content-Disposition: attachment; filename="repro.cprog"
+Content-Transfer-Encoding: base64
+Content-ID: <f_krdqw2970>
+X-Attachment-Id: f_krdqw2970
 
-There's a config option SQUASHFS_4K_DEVBLK_SIZE. The documentation says 
-that it uses by default 1K block size and if you enable this option, it 
-uses 4K block size.
-
-So, try to set it. Or try to reduce dm-verity block size down to 1K.
-
-> ==> mksquashfs [...] - comp xz -Xdict-size 32K -noI -Xbcj arm -b 65536
-> -processors 1
-> 
-> But for dm-verity we are giving block size of 4096
-> ==> [    0.000000] Kernel command line:[..] verity="96160 12020
-> d7b8a7d0c01b9aec888930841313a81603a50a2a7be44631c4c813197a50d681 0 "
-> rootfstype=squashfs root=/dev/mtdblock34 ubi.mtd=30,0,30 [...]
-> root=/dev/dm-0 dm="system none ro,0 96160 verity 1 /dev/mtdblock34
-> /dev/mtdblock39 4096 4096 12020 8 sha256
-> d7b8a7d0c01b9aec888930841313a81603a50a2a7be44631c4c813197a50d681
-> aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
-> 
-> Now, we are checking by giving squashfs block size also as 4096
-> 
-> In case, if this does not work, what else could be the other option ?
-> Can we try with initramfs approach ?
-
-Yes - you can try initramfs.
-
-Mikulas
-
-> Thanks,
-> Pintu
-> 
-
+Ly8gYXV0b2dlbmVyYXRlZCBieSBzeXprYWxsZXIgKGh0dHBzOi8vZ2l0aHViLmNvbS9nb29nbGUv
+c3l6a2FsbGVyKQoKI2RlZmluZSBfR05VX1NPVVJDRSAKCiNpbmNsdWRlIDxlbmRpYW4uaD4KI2lu
+Y2x1ZGUgPGVycm5vLmg+CiNpbmNsdWRlIDxmY250bC5oPgojaW5jbHVkZSA8c3RkZGVmLmg+CiNp
+bmNsdWRlIDxzdGRpbnQuaD4KI2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4K
+I2luY2x1ZGUgPHN0cmluZy5oPgojaW5jbHVkZSA8c3lzL2lvY3RsLmg+CiNpbmNsdWRlIDxzeXMv
+bW91bnQuaD4KI2luY2x1ZGUgPHN5cy9zdGF0Lmg+CiNpbmNsdWRlIDxzeXMvc3lzY2FsbC5oPgoj
+aW5jbHVkZSA8c3lzL3R5cGVzLmg+CiNpbmNsdWRlIDx1bmlzdGQuaD4KCiNpbmNsdWRlIDxsaW51
+eC9sb29wLmg+CgpzdGF0aWMgdW5zaWduZWQgbG9uZyBsb25nIHByb2NpZDsKCnN0cnVjdCBmc19p
+bWFnZV9zZWdtZW50IHsKCXZvaWQqIGRhdGE7Cgl1aW50cHRyX3Qgc2l6ZTsKCXVpbnRwdHJfdCBv
+ZmZzZXQ7Cn07CgojZGVmaW5lIElNQUdFX01BWF9TRUdNRU5UUyA0MDk2CiNkZWZpbmUgSU1BR0Vf
+TUFYX1NJWkUgKDEyOSA8PCAyMCkKCiNkZWZpbmUgc3lzX21lbWZkX2NyZWF0ZSAzMTkKCnN0YXRp
+YyB1bnNpZ25lZCBsb25nIGZzX2ltYWdlX3NlZ21lbnRfY2hlY2sodW5zaWduZWQgbG9uZyBzaXpl
+LCB1bnNpZ25lZCBsb25nIG5zZWdzLCBzdHJ1Y3QgZnNfaW1hZ2Vfc2VnbWVudCogc2VncykKewoJ
+aWYgKG5zZWdzID4gSU1BR0VfTUFYX1NFR01FTlRTKQoJCW5zZWdzID0gSU1BR0VfTUFYX1NFR01F
+TlRTOwoJZm9yIChzaXplX3QgaSA9IDA7IGkgPCBuc2VnczsgaSsrKSB7CgkJaWYgKHNlZ3NbaV0u
+c2l6ZSA+IElNQUdFX01BWF9TSVpFKQoJCQlzZWdzW2ldLnNpemUgPSBJTUFHRV9NQVhfU0laRTsK
+CQlzZWdzW2ldLm9mZnNldCAlPSBJTUFHRV9NQVhfU0laRTsKCQlpZiAoc2Vnc1tpXS5vZmZzZXQg
+PiBJTUFHRV9NQVhfU0laRSAtIHNlZ3NbaV0uc2l6ZSkKCQkJc2Vnc1tpXS5vZmZzZXQgPSBJTUFH
+RV9NQVhfU0laRSAtIHNlZ3NbaV0uc2l6ZTsKCQlpZiAoc2l6ZSA8IHNlZ3NbaV0ub2Zmc2V0ICsg
+c2Vnc1tpXS5vZmZzZXQpCgkJCXNpemUgPSBzZWdzW2ldLm9mZnNldCArIHNlZ3NbaV0ub2Zmc2V0
+OwoJfQoJaWYgKHNpemUgPiBJTUFHRV9NQVhfU0laRSkKCQlzaXplID0gSU1BR0VfTUFYX1NJWkU7
+CglyZXR1cm4gc2l6ZTsKfQpzdGF0aWMgaW50IHNldHVwX2xvb3BfZGV2aWNlKGxvbmcgdW5zaWdu
+ZWQgc2l6ZSwgbG9uZyB1bnNpZ25lZCBuc2Vncywgc3RydWN0IGZzX2ltYWdlX3NlZ21lbnQqIHNl
+Z3MsIGNvbnN0IGNoYXIqIGxvb3BuYW1lLCBpbnQqIG1lbWZkX3AsIGludCogbG9vcGZkX3ApCnsK
+CWludCBlcnIgPSAwLCBsb29wZmQgPSAtMTsKCXNpemUgPSBmc19pbWFnZV9zZWdtZW50X2NoZWNr
+KHNpemUsIG5zZWdzLCBzZWdzKTsKCWludCBtZW1mZCA9IHN5c2NhbGwoc3lzX21lbWZkX2NyZWF0
+ZSwgInN5emthbGxlciIsIDApOwoJaWYgKG1lbWZkID09IC0xKSB7CgkJZXJyID0gZXJybm87CgkJ
+Z290byBlcnJvcjsKCX0KCWlmIChmdHJ1bmNhdGUobWVtZmQsIHNpemUpKSB7CgkJZXJyID0gZXJy
+bm87CgkJZ290byBlcnJvcl9jbG9zZV9tZW1mZDsKCX0KCWZvciAoc2l6ZV90IGkgPSAwOyBpIDwg
+bnNlZ3M7IGkrKykgewoJCWlmIChwd3JpdGUobWVtZmQsIHNlZ3NbaV0uZGF0YSwgc2Vnc1tpXS5z
+aXplLCBzZWdzW2ldLm9mZnNldCkgPCAwKSB7CgkJfQoJfQoJbG9vcGZkID0gb3Blbihsb29wbmFt
+ZSwgT19SRFdSKTsKCWlmIChsb29wZmQgPT0gLTEpIHsKCQllcnIgPSBlcnJubzsKCQlnb3RvIGVy
+cm9yX2Nsb3NlX21lbWZkOwoJfQoJaWYgKGlvY3RsKGxvb3BmZCwgTE9PUF9TRVRfRkQsIG1lbWZk
+KSkgewoJCWlmIChlcnJubyAhPSBFQlVTWSkgewoJCQllcnIgPSBlcnJubzsKCQkJZ290byBlcnJv
+cl9jbG9zZV9sb29wOwoJCX0KCQlpb2N0bChsb29wZmQsIExPT1BfQ0xSX0ZELCAwKTsKCQl1c2xl
+ZXAoMTAwMCk7CgkJaWYgKGlvY3RsKGxvb3BmZCwgTE9PUF9TRVRfRkQsIG1lbWZkKSkgewoJCQll
+cnIgPSBlcnJubzsKCQkJZ290byBlcnJvcl9jbG9zZV9sb29wOwoJCX0KCX0KCSptZW1mZF9wID0g
+bWVtZmQ7CgkqbG9vcGZkX3AgPSBsb29wZmQ7CglyZXR1cm4gMDsKCmVycm9yX2Nsb3NlX2xvb3A6
+CgljbG9zZShsb29wZmQpOwplcnJvcl9jbG9zZV9tZW1mZDoKCWNsb3NlKG1lbWZkKTsKZXJyb3I6
+CgllcnJubyA9IGVycjsKCXJldHVybiAtMTsKfQoKc3RhdGljIGxvbmcgc3l6X21vdW50X2ltYWdl
+KHZvbGF0aWxlIGxvbmcgZnNhcmcsIHZvbGF0aWxlIGxvbmcgZGlyLCB2b2xhdGlsZSB1bnNpZ25l
+ZCBsb25nIHNpemUsIHZvbGF0aWxlIHVuc2lnbmVkIGxvbmcgbnNlZ3MsIHZvbGF0aWxlIGxvbmcg
+c2VnbWVudHMsIHZvbGF0aWxlIGxvbmcgZmxhZ3MsIHZvbGF0aWxlIGxvbmcgb3B0c2FyZykKewoJ
+c3RydWN0IGZzX2ltYWdlX3NlZ21lbnQqIHNlZ3MgPSAoc3RydWN0IGZzX2ltYWdlX3NlZ21lbnQq
+KXNlZ21lbnRzOwoJaW50IHJlcyA9IC0xLCBlcnIgPSAwLCBsb29wZmQgPSAtMSwgbWVtZmQgPSAt
+MSwgbmVlZF9sb29wX2RldmljZSA9ICEhc2VnczsKCWNoYXIqIG1vdW50X29wdHMgPSAoY2hhciop
+b3B0c2FyZzsKCWNoYXIqIHRhcmdldCA9IChjaGFyKilkaXI7CgljaGFyKiBmcyA9IChjaGFyKilm
+c2FyZzsKCWNoYXIqIHNvdXJjZSA9IE5VTEw7CgljaGFyIGxvb3BuYW1lWzY0XTsKCWlmIChuZWVk
+X2xvb3BfZGV2aWNlKSB7CgkJbWVtc2V0KGxvb3BuYW1lLCAwLCBzaXplb2YobG9vcG5hbWUpKTsK
+CQlzbnByaW50Zihsb29wbmFtZSwgc2l6ZW9mKGxvb3BuYW1lKSwgIi9kZXYvbG9vcCVsbHUiLCBw
+cm9jaWQpOwoJCWlmIChzZXR1cF9sb29wX2RldmljZShzaXplLCBuc2Vncywgc2VncywgbG9vcG5h
+bWUsICZtZW1mZCwgJmxvb3BmZCkgPT0gLTEpCgkJCXJldHVybiAtMTsKCQlzb3VyY2UgPSBsb29w
+bmFtZTsKCX0KCW1rZGlyKHRhcmdldCwgMDc3Nyk7CgljaGFyIG9wdHNbMjU2XTsKCW1lbXNldChv
+cHRzLCAwLCBzaXplb2Yob3B0cykpOwoJaWYgKHN0cmxlbihtb3VudF9vcHRzKSA+IChzaXplb2Yo
+b3B0cykgLSAzMikpIHsKCX0KCXN0cm5jcHkob3B0cywgbW91bnRfb3B0cywgc2l6ZW9mKG9wdHMp
+IC0gMzIpOwoJaWYgKHN0cmNtcChmcywgImlzbzk2NjAiKSA9PSAwKSB7CgkJZmxhZ3MgfD0gTVNf
+UkRPTkxZOwoJfSBlbHNlIGlmIChzdHJuY21wKGZzLCAiZXh0IiwgMykgPT0gMCkgewoJCWlmIChz
+dHJzdHIob3B0cywgImVycm9ycz1wYW5pYyIpIHx8IHN0cnN0cihvcHRzLCAiZXJyb3JzPXJlbW91
+bnQtcm8iKSA9PSAwKQoJCQlzdHJjYXQob3B0cywgIixlcnJvcnM9Y29udGludWUiKTsKCX0gZWxz
+ZSBpZiAoc3RyY21wKGZzLCAieGZzIikgPT0gMCkgewoJCXN0cmNhdChvcHRzLCAiLG5vdXVpZCIp
+OwoJfQoJcmVzID0gbW91bnQoc291cmNlLCB0YXJnZXQsIGZzLCBmbGFncywgb3B0cyk7CglpZiAo
+cmVzID09IC0xKSB7CgkJZXJyID0gZXJybm87CgkJZ290byBlcnJvcl9jbGVhcl9sb29wOwoJfQoJ
+cmVzID0gb3Blbih0YXJnZXQsIE9fUkRPTkxZIHwgT19ESVJFQ1RPUlkpOwoJaWYgKHJlcyA9PSAt
+MSkgewoJCWVyciA9IGVycm5vOwoJfQoKZXJyb3JfY2xlYXJfbG9vcDoKCWlmIChuZWVkX2xvb3Bf
+ZGV2aWNlKSB7CgkJaW9jdGwobG9vcGZkLCBMT09QX0NMUl9GRCwgMCk7CgkJY2xvc2UobG9vcGZk
+KTsKCQljbG9zZShtZW1mZCk7Cgl9CgllcnJubyA9IGVycjsKCXJldHVybiByZXM7Cn0KCnVpbnQ2
+NF90IHJbMV0gPSB7MHhmZmZmZmZmZmZmZmZmZmZmfTsKCmludCBtYWluKHZvaWQpCnsKCQlzeXNj
+YWxsKF9fTlJfbW1hcCwgMHgxZmZmZjAwMHVsLCAweDEwMDB1bCwgMHVsLCAweDMydWwsIC0xLCAw
+dWwpOwoJc3lzY2FsbChfX05SX21tYXAsIDB4MjAwMDAwMDB1bCwgMHgxMDAwMDAwdWwsIDd1bCwg
+MHgzMnVsLCAtMSwgMHVsKTsKCXN5c2NhbGwoX19OUl9tbWFwLCAweDIxMDAwMDAwdWwsIDB4MTAw
+MHVsLCAwdWwsIDB4MzJ1bCwgLTEsIDB1bCk7CgkJCQlpbnRwdHJfdCByZXMgPSAwOwptZW1jcHko
+KHZvaWQqKTB4MjAwMDAwMDAsICJtaW5peFwwMDAiLCA2KTsKbWVtY3B5KCh2b2lkKikweDIwMDAw
+MTAwLCAiLi9maWxlMFwwMDAiLCA4KTsKKih1aW50NjRfdCopMHgyMDAwMDIwMCA9IDB4MjAwMDBl
+ODA7Cm1lbWNweSgodm9pZCopMHgyMDAwMGU4MCwgIlx4MTBceDAwXHgwMFx4MDBceDAwXHgwMFx4
+MDFceDAwXHgwMVx4MDBceDA1XHgwMCIsMTIpOwoKCQltZW1jcHkoKHZvaWQqKSgweDIwMDAwZTgw
+KzB4YyksIlx4MDBceDA0IiwyKTsvLyBzZXQgbWluaXhfc3VwZXJfYmxvY2stPnNfbG9nX3pvbmVf
+c2l6ZSBhcyAxMDI0CgkJCgkJbWVtY3B5KCh2b2lkKikoMHgyMDAwMGU4MCsweGMrMHgyKSwiXHgw
+MFx4MDBceGZmXHhmZlx4ZmZceDdmXHgyMFx4MDBceDAwXHgwMFx4NWFceDRkXHg0NFx4YjlceGFh
+XHg1OVx4YTBceDk1XHg1ZVx4MjJceDAzXHhiNFx4MTFceGFiXHhjY1x4MjhceDQ3XHhlN1x4ZjZc
+eDA5XHg3YVx4MTRceGQ1XHhlMVx4NTVceDU1XHhmOVx4YmRceDM2XHhkZFx4NmNceDVmXHgwNFx4
+MWVceDNjXHg3M1x4MGRceGQwXHg5YVx4ZGJceGU2XHgwM1x4ZGNceDM1XHgzNVx4NWJceDBiXHgy
+ZVx4NGNceDdmXHhhM1x4MjVceGZmXHhlMVx4ZjlceDU2XHhhOVx4MGRceGI3XHg0Ylx4NmRceDgz
+XHgwNFx4ZDFceGRkXHgzZVx4NmVceDA2XHg0MVx4NjJceDkxXHgzOFx4M2ZceGYyXHg0OFx4Yzhc
+eGI2XHgyOFx4ODVceDFhXHgyMFx4ODhceDk3XHhiN1x4YTFceDBmXHhkM1x4OWZceGViXHg5ZVx4
+NzJceDhhXHg4Nlx4ODBceDA5XHgwZFx4YjlceDFlXHg1NVx4MzBceGIwXHg1M1x4MTBceDJkXHg4
+N1x4YTNceDRlXHg2Nlx4ZTZceGZiXHg1Nlx4ZjRceDMwXHhkZFx4M2ZceDUzXHg5ZFx4ZmZceDIy
+XHgzMVx4YzNceGZhXHhiYlx4ZTFceGMzXHhjN1x4NzJceDdjXHgzOVx4ZGNceGFiXHhhYVx4MDNc
+eDk4XHgyNFx4ZDVceDQ3XHhmYlx4ODBceDhlXHhjOFx4ZGFceDI2XHhhMFx4NDZceGZlXHg1Mlx4
+MjJceDU5XHgyNlx4OTRceDNjXHgyMVx4NWFceGNmXHg4OFx4OTFceDFmXHg3MVx4MGJceGVlXHg1
+NFx4MjhceGVkXHhlN1x4N2VceGQ5XHgwZVx4NGFceGM2XHgzYVx4OGNceDc4XHg0ZFx4Y2JceDg1
+XHg5Zlx4NTRceDE5XHhmNFx4NTNceDg3XHg1Ylx4YmRceGI1XHgyYVx4YzZceDkwXHg4ZFx4NmVc
+eGU2XHhhY1x4YTFceDZkXHgxOFx4MjhceGExXHhjZlx4ZDZceDIzXHg3Y1x4ZTVceGJjXHg4Mlx4
+MWRceDhmXHgyOVx4YTFceDYyXHgyMFx4YjRceDA5XHhhNVx4YjNceDBjXHhjZlx4NDJceDgxXHg2
+Ylx4Y2JceDQwXHhlOVx4NjRceGI1XHgwMVx4NTlceDEzXHgwZFx4MTlceDFlXHg3OVx4YjhceDFk
+XHhhOVx4YTlceDVjXHhhNlx4MDJceDg3XHg5MFx4NmFceDQzXHgzNlx4ZWVceDYyXHhhNFx4NGJc
+eDU3XHg5Y1x4MzBceDlkXHhiOVx4OThceDRjXHgyMVx4ZGVceGY0XHg2Y1x4NGVceGY0XHgzYlx4
+MjRceGI3XHg4OFx4MmZceGI5XHgwMFx4NTFceDMxXHgzM1x4YTdceGMxXHg1MVx4YjJceGY2XHhh
+Zlx4YjRceGUzXHhjN1x4MzZceDI0XHg1Y1x4ZGNceGNlXHg3MVx4YjdceDM1XHhkZFx4YzRceDIy
+XHhhN1x4NjZceDU5XHg4Y1x4NGFceDc5XHg5Nlx4ODVceDdlXHgxZFx4YTlceDRjXHgwM1x4YmVc
+eDJjXHg1MFx4YjZceGJkXHg4NVx4YWNceDFjXHhkMlx4MGVceDg1XHhkOVx4ZGNceDY3XHg5YVx4
+NjRceGM3XHg5Mlx4NTJceGM4XHgwN1x4NzlceGI5XHgyNFx4OTNceGEyXHg1M1x4MGNceDIzXHg5
+N1x4MmRceGJiXHhlM1x4YWVceDNlXHhlYlx4MDJceDgxXHg0ZFx4OGZceGZmXHhiZFx4ZjBceGNl
+XHg5OFx4ZWRceGQwXHhjNVx4ZjhceDM1XHhiYVx4YmFceDEwXHg2ZFx4M2VceGUyXHhhYVx4NGRc
+eGY2XHhkY1x4MWZceDQ4XHhlM1x4Y2FceDgwXHhkNlx4NDhceDE5XHhmYlx4ZTZceDU0XHhiMFx4
+ZjBceGI4XHhhOFx4YmNceDUwXHhlNVx4YWFceDAzXHgzZVx4Y2RceDE0XHg1MVx4MjBceDk5XHgw
+MFx4ZWRceDc2XHgyMFx4OTdceDNhXHhmOVx4MTFceGM2XHg2OFx4NGNceDIyXHg2OFx4ZjJceDJl
+XHgzNlx4ZjlceGQ2XHhjYlx4OTlceDg5XHg3NFx4MTBceGQ2XHg3Mlx4MTlceGIwXHhhYlx4NzJc
+eDlkXHgzYVx4MThceDVmXHhhN1x4MjJceDk5XHhlNVx4NmNceDMyXHgwMFx4ODVceDExXHgyZVx4
+ZTRceDEzXHg3ZVx4YTVceGJkXHg4YVx4MWVceDEzXHhjYVx4MGVceDdmXHgwY1x4ZjVceDI4XHgy
+NFx4MzVceGViXHhhZiIsIDQ3NC0xMi0yKTsKKih1aW50NjRfdCopMHgyMDAwMDIwOCA9IDB4MWRh
+OwoqKHVpbnQ2NF90KikweDIwMDAwMjEwID0gMHg0MDA7CioodWludDY0X3QqKTB4MjAwMDAyMTgg
+PSAweDIwMDAwNWMwOwptZW1jcHkoKHZvaWQqKTB4MjAwMDA1YzAsICJceGZmXHgwMFx4ZmVceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceDAzXHhmMFx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
+XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
+eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
+ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
+Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZWRceDQxXHgwMyIsIDIwNTEpOwoqKHVpbnQ2NF90
+KikweDIwMDAwMjIwID0gMHg4MDM7CioodWludDY0X3QqKTB4MjAwMDAyMjggPSAweDgwMDsvLwoq
+KHVpbnQ2NF90KikweDIwMDAwMjMwID0gMDsKKih1aW50NjRfdCopMHgyMDAwMDIzOCA9IDA7Cioo
+dWludDY0X3QqKTB4MjAwMDAyNDAgPSAweDEwMDA7CglyZXMgPSAtMTsKcmVzID0gc3l6X21vdW50
+X2ltYWdlKDB4MjAwMDAwMDAsIDB4MjAwMDAxMDAsIDAsIDMsIDB4MjAwMDAyMDAsIDAsIDB4MjAw
+MDBlMDApOwoJaWYgKHJlcyAhPSAtMSkKCQlyWzBdID0gcmVzOwoJc3lzY2FsbChfX05SX2ZzdGF0
+ZnMsIHJbMF0sIDB1bCk7CglyZXR1cm4gMDsKfQo=
+--000000000000f36eb305c7a54c80--
