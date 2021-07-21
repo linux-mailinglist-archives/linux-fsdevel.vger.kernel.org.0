@@ -2,153 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F36CC3D102E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 15:47:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F49A3D104C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 15:55:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238863AbhGUNHC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 09:07:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22237 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238804AbhGUNGz (ORCPT
+        id S237551AbhGUNPJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 09:15:09 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:50426 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232706AbhGUNPJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 09:06:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626875251;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Wed, 21 Jul 2021 09:15:09 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id A4A9620341;
+        Wed, 21 Jul 2021 13:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1626875744; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=cux4vK7FasEebT+e6GSkGlqilieGd9BwE6MltPwMMpQ=;
-        b=UV9p6KN7KGytsysN3afLg3XAEde+e7dct5dtBowmoy5ecIPsAjM8sKflGP8eDq0XRuKgLk
-        mEUGArDl0qdW5bGttBahVZp2fC/fJqMYQEtrUAhENopmxKAsoz3GgrC2+wOi3sbCDyc7+T
-        KGsW6//rN9LVfqNRCbQXVVrfiUbC8TY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-347-Q8UWrdvhOY-FMC_HmRYBkg-1; Wed, 21 Jul 2021 09:47:26 -0400
-X-MC-Unique: Q8UWrdvhOY-FMC_HmRYBkg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        bh=d2zL4DSMxxgusCwerQYFit51RZdm7XIpv5GcoSHdjTc=;
+        b=k41ZNBw3GYqRYI9O1VKZjSxUOz2zBx+Bp+E+Nz9zW7n8bXxAVTwiYAaGH73jrLMynem9Ji
+        nNQvCmYsb7AdauDaq7kR9oSaQ4aVPKIgUynRW1ea8F7jdq7NzNBYwUVyF2pECfarNjpDhj
+        tZeaGuigE2yUMqO09pxLu/N6JsmB0yo=
+Received: from suse.cz (pathway.suse.cz [10.100.12.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F80F107ACF5;
-        Wed, 21 Jul 2021 13:47:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-62.rdu2.redhat.com [10.10.112.62])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 99F0C19C79;
-        Wed, 21 Jul 2021 13:47:16 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 12/12] netfs: Export some read-request ref functions
-From:   David Howells <dhowells@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
+        by relay2.suse.de (Postfix) with ESMTPS id 47F1EA3B83;
+        Wed, 21 Jul 2021 13:55:44 +0000 (UTC)
+Date:   Wed, 21 Jul 2021 15:55:44 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jia He <justin.he@arm.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        devel@lists.orangefs.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 21 Jul 2021 14:47:15 +0100
-Message-ID: <162687523532.276387.15449857111016442696.stgit@warthog.procyon.org.uk>
-In-Reply-To: <162687506932.276387.14456718890524355509.stgit@warthog.procyon.org.uk>
-References: <162687506932.276387.14456718890524355509.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, nd@arm.com
+Subject: Re: [PATCH v7 3/5] lib/vsprintf.c: make '%pD' print the full path of
+ file
+Message-ID: <20210721135544.w4blqsvcyr42sxcb@pathway.suse.cz>
+References: <20210715011407.7449-1-justin.he@arm.com>
+ <20210715011407.7449-4-justin.he@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210715011407.7449-4-justin.he@arm.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Export some functions for getting/putting read-request structures for use
-in later patches.
+On Thu 2021-07-15 09:14:05, Jia He wrote:
+> Previously, the specifier '%pD' was for printing dentry name of struct
+> file. It may not be perfect since by default it only prints one component.
+> 
+> As suggested by Linus [1]:
+>   A dentry has a parent, but at the same time, a dentry really does
+>   inherently have "one name" (and given just the dentry pointers, you
+>   can't show mount-related parenthood, so in many ways the "show just
+>   one name" makes sense for "%pd" in ways it doesn't necessarily for
+>   "%pD"). But while a dentry arguably has that "one primary component",
+>   a _file_ is certainly not exclusively about that last component.
+> 
+> Hence change the behavior of '%pD' to print the full path of that file.
+> It is worthy of noting that %pD uses the entire given buffer as a scratch
+> space. It might write something behind the trailing '\0' but never write
+> beyond the scratch space.
+> 
+> Precision specifier is never going to be used with %p (or any of its
+> kernel extensions) if -Wformat is turned on.
+> 
+> Link: https://lore.kernel.org/lkml/CAHk-=wimsMqGdzik187YWLb-ru+iktb4MYbMQG1rnZ81dXYFVg@mail.gmail.com/ [1]
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Jia He <justin.he@arm.com>
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
- fs/netfs/internal.h    |   10 ++++++++++
- fs/netfs/read_helper.c |   15 +++------------
- 2 files changed, 13 insertions(+), 12 deletions(-)
-
-diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-index a9ec6591f90a..6ae1eb55093a 100644
---- a/fs/netfs/internal.h
-+++ b/fs/netfs/internal.h
-@@ -78,9 +78,19 @@ static inline void netfs_see_write_request(struct netfs_write_request *wreq,
-  */
- extern unsigned int netfs_debug;
- 
-+void __netfs_put_subrequest(struct netfs_read_subrequest *subreq, bool was_async);
-+void netfs_put_read_request(struct netfs_read_request *rreq, bool was_async);
-+void netfs_rreq_completed(struct netfs_read_request *rreq, bool was_async);
- int netfs_prefetch_for_write(struct file *file, struct page *page, loff_t pos, size_t len,
- 			     bool always_fill);
- 
-+static inline void netfs_put_subrequest(struct netfs_read_subrequest *subreq,
-+					bool was_async)
-+{
-+	if (refcount_dec_and_test(&subreq->usage))
-+		__netfs_put_subrequest(subreq, was_async);
-+}
-+
- /*
-  * write_helper.c
-  */
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index 0b771f2f5449..e5c636acc756 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -28,14 +28,6 @@ MODULE_PARM_DESC(netfs_debug, "Netfs support debugging mask");
- 
- static void netfs_rreq_work(struct work_struct *);
- static void netfs_rreq_clear_buffer(struct netfs_read_request *);
--static void __netfs_put_subrequest(struct netfs_read_subrequest *, bool);
--
--static void netfs_put_subrequest(struct netfs_read_subrequest *subreq,
--				 bool was_async)
--{
--	if (refcount_dec_and_test(&subreq->usage))
--		__netfs_put_subrequest(subreq, was_async);
--}
- 
- static struct netfs_read_request *netfs_alloc_read_request(struct address_space *mapping,
- 							   struct file *file)
-@@ -97,7 +89,7 @@ static void netfs_free_read_request(struct work_struct *work)
- 	netfs_stat_d(&netfs_n_rh_rreq);
- }
- 
--static void netfs_put_read_request(struct netfs_read_request *rreq, bool was_async)
-+void netfs_put_read_request(struct netfs_read_request *rreq, bool was_async)
- {
- 	if (refcount_dec_and_test(&rreq->usage)) {
- 		if (was_async) {
-@@ -135,8 +127,7 @@ static void netfs_get_read_subrequest(struct netfs_read_subrequest *subreq)
- 	refcount_inc(&subreq->usage);
- }
- 
--static void __netfs_put_subrequest(struct netfs_read_subrequest *subreq,
--				   bool was_async)
-+void __netfs_put_subrequest(struct netfs_read_subrequest *subreq, bool was_async)
- {
- 	struct netfs_read_request *rreq = subreq->rreq;
- 
-@@ -214,7 +205,7 @@ static void netfs_read_from_server(struct netfs_read_request *rreq,
- /*
-  * Release those waiting.
-  */
--static void netfs_rreq_completed(struct netfs_read_request *rreq, bool was_async)
-+void netfs_rreq_completed(struct netfs_read_request *rreq, bool was_async)
- {
- 	trace_netfs_rreq(rreq, netfs_rreq_trace_done);
- 	netfs_rreq_clear_subreqs(rreq, was_async);
-
-
+Best Regards,
+Petr
