@@ -2,88 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED4F33D118C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:41:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27AD43D1190
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:42:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238644AbhGUOAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 10:00:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232937AbhGUOAj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 10:00:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C5B8A608FE;
-        Wed, 21 Jul 2021 14:41:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626878475;
-        bh=tjvEDndwlqVC8D5pilgd6nm+94RRJ1oxz9bJvd0cl40=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RuZMi6fJEhdOKhGCC2OF//03EYGnY0M2mu6VYbhx2NB/55HaBUDY6irzSN1a8b6Bq
-         5ClVFbJuNzSBtLQDibHKvcjq77579AI4Ig0faWL/zdhmBE8DOdLpgMLlsGopss8GzL
-         yDd0BzER9ZGkq3oG+WzcKiAf9zX0s7Sb8HDEu2xte9Z1JiBmCyLaHJM+/OQVO3LCiM
-         TZ+udFqK1PVOyS887uMFAse0bfeUEX/ZHkZ0Gi6DuRVEyoJjkXB6PpdYpTgami1rpZ
-         2mC6ftkay+45+lBeE6WOcEApyaYJVBZaLrntevRVIHv9JNghcplSOmW0DR9JAe4ovr
-         EGUTWFXIZdlcw==
-Date:   Wed, 21 Jul 2021 07:41:14 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Jeff Layton <jlayton@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v14 002/138] mm: Introduce struct folio
-Message-ID: <20210721144114.GA8572@magnolia>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-3-willy@infradead.org>
- <YPaoBcXmrLv7zpD2@kernel.org>
- <YPeXrDf2RRJmXMFM@casper.infradead.org>
+        id S238144AbhGUOB4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 10:01:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233069AbhGUOBz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Jul 2021 10:01:55 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 190DFC061575;
+        Wed, 21 Jul 2021 07:42:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gYtnqfL5mi01AypapuUeV0QNO83R6S+yM6GrYpNlxlQ=; b=YdkN7hT42xh2IyHLdQeeLSC10Y
+        kdXYaAzGnB9fSomoALgFPcW6c30lkQWKOW0gIyj1splapRI4SwQ7+4+Qxxa9/TDXTKNtMYz8sCEEa
+        eJkMpNB7ai1U/lH5QEOdUzhJv7QN3Z2p0YfmKXdGkjXdFpV+ff3ELE//wcqCZCVmxQtDu24haMi8z
+        51wKLVS0LXbvikpsaLGmjVRr0+yjFJKsMbwpAJS+79Lo1qE2vwYcbJbdjcqSRx1uRHui7L33e3h3e
+        A9ghmrL9cTeUbD2XcfwPVZbi4Bjb86J+sMUXgG3cs3a4P0P0EtFOjbNPbo0DT1Qq0n7BGj+6+R08X
+        1+hCkJ8w==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m6DQI-009IMi-3a; Wed, 21 Jul 2021 14:42:16 +0000
+Date:   Wed, 21 Jul 2021 15:42:10 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org, ndesaulniers@google.com,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com
+Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
+Message-ID: <YPgyQsG7PFLL8yE3@infradead.org>
+References: <20210721135926.602840-1-nborisov@suse.com>
+ <YPgwATAQBfU2eeOk@infradead.org>
+ <b1fdda4c-5f2a-a86a-0407-1591229bb241@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPeXrDf2RRJmXMFM@casper.infradead.org>
+In-Reply-To: <b1fdda4c-5f2a-a86a-0407-1591229bb241@suse.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 04:42:36AM +0100, Matthew Wilcox wrote:
-> On Tue, Jul 20, 2021 at 01:40:05PM +0300, Mike Rapoport wrote:
-> > > +/**
-> > > + * folio_shift - The number of bits covered by this folio.
+On Wed, Jul 21, 2021 at 05:35:42PM +0300, Nikolay Borisov wrote:
+> 
+> 
+> On 21.07.21 ??. 17:32, Christoph Hellwig wrote:
+> > This seems to have lost the copyright notices from glibc.
 > > 
-> > For me this sounds like the size of the folio in bits.
-> > Maybe just repeat "The base-2 logarithm of the size of this folio" here and
-> > in return description?
-> > 
-> > > + * @folio: The folio.
-> > > + *
-> > > + * A folio contains a number of bytes which is a power-of-two in size.
-> > > + * This function tells you which power-of-two the folio is.
-> > > + *
-> > > + * Context: The caller should have a reference on the folio to prevent
-> > > + * it from being split.  It is not necessary for the folio to be locked.
-> > > + * Return: The base-2 logarithm of the size of this folio.
-> > > + */
 > 
-> I've gone with:
+> I copied over only the code, what else needs to be brought up:
 > 
->  /**
-> - * folio_shift - The number of bits covered by this folio.
-> + * folio_shift - The size of the memory described by this folio.
->   * @folio: The folio.
->   *
-> - * A folio contains a number of bytes which is a power-of-two in size.
-> - * This function tells you which power-of-two the folio is.
-> + * A folio represents a number of bytes which is a power-of-two in size.
-> + * This function tells you which power-of-two the folio is.  See also
-> + * folio_size() and folio_order().
->   *
->   * Context: The caller should have a reference on the folio to prevent
->   * it from being split.  It is not necessary for the folio to be locked.
+>  Copyright (C) 1991-2021 Free Software Foundation, Inc.
+>    This file is part of the GNU C Library.
+>    Contributed by Torbjorn Granlund (tege@sics.se).
 > 
+> The rest is the generic GPL license txt ?
 
-I like it. :)
-
---D
+Last time I checked glibc is under LGPL.
