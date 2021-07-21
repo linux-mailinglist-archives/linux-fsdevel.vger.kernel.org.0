@@ -2,335 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 663CC3D19A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 00:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED0A53D19D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 00:39:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230123AbhGUVn3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 17:43:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229936AbhGUVn2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 17:43:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D13F561244;
-        Wed, 21 Jul 2021 22:24:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626906244;
-        bh=LtkOAe2ux4tPqaKJayL+DllIZFvll48z5Dv27JuyO+E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Zlo+kSDYUwGgfshJpwUrsqHKNRzikUPmxEV4uH1cNIoK1+uSTv3k0amtbMXagYLfc
-         ejo4WTpXWvNcqgAzHI54qnfZiXg1I9qPELqWKGik9UpLToWuyEwNeAHrz/JuTbZR78
-         BST6bkIsiiAtzPNNaqk71OrLE48ZjsfL4TlgRI1sHsCDF7MISgehp+FHpXUbKa91Bo
-         iwyoFtoV7O0yYOKomwi+KmeFXJq5yTxXKA8dqQwIev6cQCKHmtbWpBRUx0cx29BUj7
-         SZNH0MEXLCtR+FBCKjV25/lA0RuamKl//p3hPcvtcLtzU7Jjzmmhd97IOB6VXUjCm3
-         LVVpObLEt/bCw==
-Date:   Wed, 21 Jul 2021 15:24:04 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-Subject: Re: [PATCH v5] iomap: support tail packing inline read
-Message-ID: <20210721222404.GA8639@magnolia>
-References: <20210721082323.41933-1-hsiangkao@linux.alibaba.com>
+        id S230139AbhGUV6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 17:58:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229684AbhGUV6c (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Jul 2021 17:58:32 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B920DC061575
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jul 2021 15:39:03 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id q13so1360051plx.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jul 2021 15:39:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zgSFlgIErcE20qOtBjVS3tEuJuhNy+gIfspSfkxg+jg=;
+        b=FmtIS2QP+SG1tZGGEc3x7dlWedV8xt76PF0aijqIROWCNhFyaxFg7DZcqySV2vBtyM
+         TUcBON3fQezuxRAhLI3ofPJupt7SsuVx4LpdYs8j1nPopT0WThoow6S71k5trra4utzL
+         FI5/rf0W8UDyAJiO1jnQilnUuGMdNk4Jp7AOCumLK/iVpMplRNCCprP14q4KL7qamWbW
+         P6fSjM6yjxyueVTah5b4kfetvPlf8mq4M+s+OavKjtfMKj6QrLBO2jvDlmQV7rLRLXx2
+         MTfgEnwEKJk7nnK+0jPGwv9VsoEDjyMgxUlzYoNO1o14Gl6c4dluT2Mn0P2uFLMt6rLV
+         EGGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zgSFlgIErcE20qOtBjVS3tEuJuhNy+gIfspSfkxg+jg=;
+        b=nNvAOdNxdVUEw4DfV0nKVcltrXlrKJiogHBYM7+m64y/3669oYhGJLfrTzA84dDLeZ
+         9e+Ly4jh4AMabZyQRaSTAfYj16Hg5qkmsdPeVFrKQKAi05IlK/6+9k7hIaGILipvF0kn
+         NktHgrWHGup06cZ4u/U8VHi1p1YnlOB6bL7g9gaxQb4RvOvoxQzp+VcDXKyj/4yq5GKD
+         5U6Wc5aiuAdTP7ImzYAZ3M/Pu4YTvRvWCcYlLJgfz/KZ+CkEIgcZB7wP7J2uzV9VDLql
+         xmCoL3OTOOfMI2/0J6MDnSYoYKgwWPiqOuTyrk5X2G2f2wOUIc+/IBagV2CqsdP+kwyA
+         l9ng==
+X-Gm-Message-State: AOAM532co0cR4T1sllErCh0K0CP37Q7P/NycelPB0eTYPyegkWlJpgIO
+        +i+wmAh+soUCQGbNFUJQGFqrAw==
+X-Google-Smtp-Source: ABdhPJwud0FGocuPTKNSo7W7DBEItQNmDXHKuGbfLPko2JI+TsbsDJGYYyxOHu+/u8Sz/9dQTib/9A==
+X-Received: by 2002:a17:90a:550a:: with SMTP id b10mr5973295pji.103.1626907143106;
+        Wed, 21 Jul 2021 15:39:03 -0700 (PDT)
+Received: from google.com ([2401:fa00:9:211:5ef6:1575:7ff9:6e66])
+        by smtp.gmail.com with ESMTPSA id ft7sm873941pjb.32.2021.07.21.15.39.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jul 2021 15:39:02 -0700 (PDT)
+Date:   Thu, 22 Jul 2021 08:38:51 +1000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [bug report] fanotify: fix copy_event_to_user() fid error clean
+ up
+Message-ID: <YPih+xdLAJ2qQ/uW@google.com>
+References: <20210721125407.GA25822@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210721082323.41933-1-hsiangkao@linux.alibaba.com>
+In-Reply-To: <20210721125407.GA25822@kili>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 04:23:23PM +0800, Gao Xiang wrote:
-> This tries to add tail packing inline read to iomap, which can support
-> several inline tail blocks. Similar to the previous approach, it cleans
-> post-EOF in one iteration.
+On Wed, Jul 21, 2021 at 05:54:07AM -0700, Dan Carpenter wrote:
+> Hello Matthew Bobrowski,
 > 
-> The write path remains untouched since EROFS cannot be used for testing.
-> It'd be better to be implemented if upcoming real users care rather than
-> leave untested dead code around.
-
-I had a conversation with Gao on IRC this morning, and I think I've
-finally gotten up to speed on where he's trying to go with this
-patchset.  Maybe that will make review of this patch easier, or at least
-not muddy the waters further.
-
-Right now, inline data in iomap serves exactly two users -- gfs2 and
-ext4.  ext4 doesn't use iomap for buffered IO and doesn't support
-directio for inline data files, so we can ignore them for now.  gfs2
-uses iomap for buffered IO, and it stores the inline data after the
-gfs2_dinode.
-
-iomap's inline data functions exist to serve the gfs2 use case, which is
-why the code has baked-in assumptions that iomap->offset is always zero,
-and the length is never more than a page.
-
-It used to be the case that we'd always attach an iomap_page to a page
-for blocksize < pagesize files, but as of 5.14-rc2 we're starting to
-move towards creating and dropping them on demand.  IOWs, reads from
-inline data files always read the entire file contents into the page so
-we mark the whole page uptodate and do not attach an iomap_page (unlike
-regular reads).  Writes don't attach an iomap_page to inline data files.
-Writeback attaches an iomap_page.
-
-Did I get that much right?  Onto the erofs part, now that I've also
-taken the time to figure out what it's doing by reading the ondisk
-format in Documentation/.  (Thanks for that, erofs developers!)
-
-erofs can perform tail packing to reduce internal block fragmentation.
-Tails of files are written immediately after the ondisk inode, which is
-why Gao wants to use IOMAP_INLINE for this.  Note that erofs tailpacking
-is /not/ same as what reiserfs does, and the inlinedata model is /not/
-the same as what gfs2 does.
-
-A tail-packed erofs file mapping looks like this:
-
-x = round_down(i_size, blocksize);
-[0..(x - 1)]:		mapped to a range of external blocks
-[x..(i_size - 1)]:	inline data immediately after the inode
-
-The previous discussions have gone a bit afield -- there's only one
-inline data region per file, it won't cross a page boundary because
-erofs requires blocksize == pagesize, and it's always at the end of the
-file.  I don't know how we got onto the topic of multiple inline data
-regions or encoded regions in the middle of a file, but that's not on
-anybody's requirement list today, AFAICT.
-
-I suspect that adapting the inlinedata code to support regions that
-don't start at offset zero but are otherwise page-aligned can be done
-with fairly minor changes to the accounting, since I think that largely
-can be done by removing the asserts about offset==0.
-
-Did I get that right?
-
-The next thing the erofs developers want to do is add support for
-blocksize < pagesize, presumably so that they can mount a 4k blocksize
-erofs volume on a machine with 64k pages.  For that, I think erofs needs
-to be able to read the tail bytes into the middle of an existing page.
-Hence the need to update the per-block uptodate bits in the iomap_page
-from the read function, and all the math changes where we increase the
-starting address of a copy by (iomap->offset - pos).  The end result
-should be that we can handle inline data regions anywhere, though we
-won't really have a way to test that until erofs starts supporting
-blocksize < pagesize.
-
-Assuming that my assumptions are correct, I think this patch decomposes
-into three more targeted changes, one of which applies now, and the rest
-which will go with the later effort.
-
-1) Update the code to handle inline data mappings where iomap->offset is
-not zero but the start of the mapping is always page-aligned.
-
-2) Adapt the inline data code to create and update the iop as
-appropriate.  This could be a little tricky since I've seen elsewhere in
-the v4 discussion thread that people like the idea of not paying the iop
-overhead for pages that are backed by a single extent even when bs < ps.
-I suspect we have enough to decide this from the *iomap/*srcmap length
-in iomap_readpage_actor or iomap_write_begin, though I've not written
-any code that tries that.
-
-3) Update the code to handle inline data mappings where iomap->offset
-can point to the middle of a page.
-
-My apologies if everyone else already figured all of this out; for all I
-know I'm merely scrawling this here as notes to refer back to for future
-discussions.
-
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Darrick J. Wong <djwong@kernel.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-> ---
-> v4: https://lore.kernel.org/r/20210720133554.44058-1-hsiangkao@linux.alibaba.com
-> changes since v4:
->  - turn to WARN_ON_ONCE() suggested by Darrick;
->  - fix size to "min(iomap->length + iomap->offset - pos,
->                     PAGE_SIZE - poff)"
+> The patch f644bc449b37: "fanotify: fix copy_event_to_user() fid error
+> clean up" from Jun 11, 2021, leads to the following static checker
+> warning:
 > 
->  fs/iomap/buffered-io.c | 58 +++++++++++++++++++++++++++---------------
->  fs/iomap/direct-io.c   | 13 +++++++---
->  2 files changed, 47 insertions(+), 24 deletions(-)
+> 	fs/notify/fanotify/fanotify_user.c:533 copy_event_to_user()
+> 	error: we previously assumed 'f' could be null (see line 462)
+
+I've made a couple comments below. What am I missing?
+
+> fs/notify/fanotify/fanotify_user.c
+>     401 static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>     402 				  struct fanotify_event *event,
+>     403 				  char __user *buf, size_t count)
+>     404 {
+>     405 	struct fanotify_event_metadata metadata;
+>     406 	struct path *path = fanotify_event_path(event);
+>     407 	struct fanotify_info *info = fanotify_event_info(event);
+>     408 	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+>     409 	struct file *f = NULL;
+>     410 	int ret, fd = FAN_NOFD;
+>     411 	int info_type = 0;
+>     412 
+>     413 	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+>     414 
+>     415 	metadata.event_len = FAN_EVENT_METADATA_LEN +
+>     416 				fanotify_event_info_len(fid_mode, event);
+>     417 	metadata.metadata_len = FAN_EVENT_METADATA_LEN;
+>     418 	metadata.vers = FANOTIFY_METADATA_VERSION;
+>     419 	metadata.reserved = 0;
+>     420 	metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
+>     421 	metadata.pid = pid_vnr(event->pid);
+>     422 	/*
+>     423 	 * For an unprivileged listener, event->pid can be used to identify the
+>     424 	 * events generated by the listener process itself, without disclosing
+>     425 	 * the pids of other processes.
+>     426 	 */
+>     427 	if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
+>     428 	    task_tgid(current) != event->pid)
+>     429 		metadata.pid = 0;
+>     430 
+>     431 	/*
+>     432 	 * For now, fid mode is required for an unprivileged listener and
+>     433 	 * fid mode does not report fd in events.  Keep this check anyway
+>     434 	 * for safety in case fid mode requirement is relaxed in the future
+>     435 	 * to allow unprivileged listener to get events with no fd and no fid.
+>     436 	 */
+>     437 	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
+>     438 	    path && path->mnt && path->dentry) {
+>     439 		fd = create_fd(group, path, &f);
+>     440 		if (fd < 0)
+>     441 			return fd;
+>     442 	}
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 87ccb3438bec..d8436d34a159 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -205,25 +205,27 @@ struct iomap_readpage_ctx {
->  	struct readahead_control *rac;
->  };
->  
-> -static void
-> +static int
->  iomap_read_inline_data(struct inode *inode, struct page *page,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, loff_t pos)
->  {
-> -	size_t size = i_size_read(inode);
-> +	unsigned int size, poff = offset_in_page(pos);
->  	void *addr;
->  
-> -	if (PageUptodate(page))
-> -		return;
-> -
-> -	BUG_ON(page_has_private(page));
-> -	BUG_ON(page->index);
-> -	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
-> +	/* inline source data must be inside a single page */
-> +	if (WARN_ON_ONCE(iomap->length > PAGE_SIZE -
-> +			 offset_in_page(iomap->inline_data)))
-> +		return -EIO;
-> +	/* handle tail-packing blocks cross the current page into the next */
-> +	size = min_t(unsigned int, iomap->length + iomap->offset - pos,
-> +		     PAGE_SIZE - poff);
+> "f" is NULL on the else path
 
-Part of my confusion has resulted from this comment -- now that I think
-I understand the problem domain better, I realize that the clamping code
-here is not because erofs will hand us a tail-packing iomap that crosses
-page boundaries; this clamp simply protects us from memory corruption.
+Uh ha, although "fd" on the else path also remains set to the initial value
+of FAN_NOFD, right?
 
-	/*
-	 * iomap->inline_data is a kernel-mapped memory page, so we must
-	 * terminate the read at the end of that page.
-	 */
-	if (WARN_ON_ONCE(...))
-		return -EIO;
-	size = min_t(...);
-
-TBH I wonder if we merely need a rule that ->iomap_begin must not hand
-back an inline data mapping that crosses a page, since I think the
-check in the previous line is sufficient.
-
->  	addr = kmap_atomic(page);
-> -	memcpy(addr, iomap->inline_data, size);
-> -	memset(addr + size, 0, PAGE_SIZE - size);
-> +	memcpy(addr + poff, iomap->inline_data - iomap->offset + pos, size);
-
-I keep seeing this (iomap->inline_data + pos - iomap->offset)
-construction in this patch, maybe it should be a helper?
-
-> +	memset(addr + poff + size, 0, PAGE_SIZE - poff - size);
->  	kunmap_atomic(addr);
-> -	SetPageUptodate(page);
-> +	iomap_set_range_uptodate(page, poff, PAGE_SIZE - poff);
-> +	return PAGE_SIZE - poff;
->  }
->  
->  static inline bool iomap_block_needs_zeroing(struct inode *inode,
-> @@ -245,19 +247,23 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  	loff_t orig_pos = pos;
->  	unsigned poff, plen;
->  	sector_t sector;
-> +	int ret;
->  
-> -	if (iomap->type == IOMAP_INLINE) {
-> -		WARN_ON_ONCE(pos);
-> -		iomap_read_inline_data(inode, page, iomap);
-> -		return PAGE_SIZE;
-> -	}
-> -
-> -	/* zero post-eof blocks as the page may be mapped */
->  	iop = iomap_page_create(inode, page);
-> +	/* needs to skip some leading uptodate blocks */
->  	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
->  	if (plen == 0)
->  		goto done;
->  
-> +	if (iomap->type == IOMAP_INLINE) {
-> +		ret = iomap_read_inline_data(inode, page, iomap, pos);
-> +		if (ret < 0)
-> +			return ret;
-> +		plen = ret;
-> +		goto done;
-> +	}
-> +
-> +	/* zero post-eof blocks as the page may be mapped */
->  	if (iomap_block_needs_zeroing(inode, iomap, pos)) {
->  		zero_user(page, poff, plen);
->  		iomap_set_range_uptodate(page, poff, plen);
-> @@ -589,6 +595,18 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
->  	return 0;
->  }
->  
-> +static int iomap_write_begin_inline(struct inode *inode, loff_t pos,
-> +		struct page *page, struct iomap *srcmap)
-> +{
-> +	/* needs more work for the tailpacking case, disable for now */
-> +	if (WARN_ON_ONCE(srcmap->offset != 0))
-> +		return -EIO;
-> +	if (PageUptodate(page))
-> +		return 0;
-> +	iomap_read_inline_data(inode, page, srcmap, 0);
-> +	return 0;
-> +}
-> +
->  static int
->  iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
->  		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
-> @@ -618,7 +636,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
->  	}
->  
->  	if (srcmap->type == IOMAP_INLINE)
-> -		iomap_read_inline_data(inode, page, srcmap);
-> +		status = iomap_write_begin_inline(inode, pos, page, srcmap);
->  	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
->  		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
->  	else
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 9398b8c31323..cbadb99fb88c 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -379,22 +379,27 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
->  {
->  	struct iov_iter *iter = dio->submit.iter;
->  	size_t copied;
-> +	void *dst = iomap->inline_data + pos - iomap->offset;
->  
-> -	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
-> +	/* inline data must be inside a single page */
-> +	if (WARN_ON_ONCE(length > PAGE_SIZE -
-> +			 offset_in_page(iomap->inline_data)))
-> +		return -EIO;
-
-	/*
-	 * iomap->inline_data is a kernel-mapped memory page, so we must
-	 * terminate the write at the end of that page.
-	 */
-	if (WARN_ON_ONCE(...))
-		return -EIO;
-
->  	if (dio->flags & IOMAP_DIO_WRITE) {
-
-I thought we weren't allowing writes to an inline mapping unless
-iomap->offset == 0?  Why is it necessary to change the directio write
-path?  Shouldn't this be:
-
-		/* needs more work for the tailpacking case, disable for now */
-		if (WARN_ON_ONCE(pos > 0))
-			return -EIO;
-
---D
-
->  		loff_t size = inode->i_size;
->  
->  		if (pos > size)
-> -			memset(iomap->inline_data + size, 0, pos - size);
-> -		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
-> +			memset(iomap->inline_data + size - iomap->offset,
-> +			       0, pos - size);
-> +		copied = copy_from_iter(dst, length, iter);
->  		if (copied) {
->  			if (pos + copied > size)
->  				i_size_write(inode, pos + copied);
->  			mark_inode_dirty(inode);
->  		}
->  	} else {
-> -		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
-> +		copied = copy_to_iter(dst, length, iter);
->  	}
->  	dio->size += copied;
->  	return copied;
-> -- 
-> 2.24.4
+>     443 	metadata.fd = fd;
+>     444 
+>     445 	ret = -EFAULT;
+>     446 	/*
+>     447 	 * Sanity check copy size in case get_one_event() and
+>     448 	 * event_len sizes ever get out of sync.
+>     449 	 */
+>     450 	if (WARN_ON_ONCE(metadata.event_len > count))
+>     451 		goto out_close_fd;
+>     452 
+>     453 	if (copy_to_user(buf, &metadata, FAN_EVENT_METADATA_LEN))
+>     454 		goto out_close_fd;
+>                         ^^^^^^^^^^^^^^^^^
+> This is problematic
 > 
+>     455 
+>     456 	buf += FAN_EVENT_METADATA_LEN;
+>     457 	count -= FAN_EVENT_METADATA_LEN;
+>     458 
+>     459 	if (fanotify_is_perm_event(event->mask))
+>     460 		FANOTIFY_PERM(event)->fd = fd;
+>     461 
+>     462 	if (f)
+>                    ^^^
+> 
+>     463 		fd_install(fd, f);
+>     464 
+>     465 	/* Event info records order is: dir fid + name, child fid */
+>     466 	if (fanotify_event_dir_fh_len(event)) {
+>     467 		info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
+>     468 					     FAN_EVENT_INFO_TYPE_DFID;
+>     469 		ret = copy_info_to_user(fanotify_event_fsid(event),
+>     470 					fanotify_info_dir_fh(info),
+>     471 					info_type, fanotify_info_name(info),
+>     472 					info->name_len, buf, count);
+>     473 		if (ret < 0)
+>     474 			goto out_close_fd;
+>     475 
+>     476 		buf += ret;
+>     477 		count -= ret;
+>     478 	}
+>     479 
+>     480 	if (fanotify_event_object_fh_len(event)) {
+>     481 		const char *dot = NULL;
+>     482 		int dot_len = 0;
+>     483 
+>     484 		if (fid_mode == FAN_REPORT_FID || info_type) {
+>     485 			/*
+>     486 			 * With only group flag FAN_REPORT_FID only type FID is
+>     487 			 * reported. Second info record type is always FID.
+>     488 			 */
+>     489 			info_type = FAN_EVENT_INFO_TYPE_FID;
+>     490 		} else if ((fid_mode & FAN_REPORT_NAME) &&
+>     491 			   (event->mask & FAN_ONDIR)) {
+>     492 			/*
+>     493 			 * With group flag FAN_REPORT_NAME, if name was not
+>     494 			 * recorded in an event on a directory, report the
+>     495 			 * name "." with info type DFID_NAME.
+>     496 			 */
+>     497 			info_type = FAN_EVENT_INFO_TYPE_DFID_NAME;
+>     498 			dot = ".";
+>     499 			dot_len = 1;
+>     500 		} else if ((event->mask & ALL_FSNOTIFY_DIRENT_EVENTS) ||
+>     501 			   (event->mask & FAN_ONDIR)) {
+>     502 			/*
+>     503 			 * With group flag FAN_REPORT_DIR_FID, a single info
+>     504 			 * record has type DFID for directory entry modification
+>     505 			 * event and for event on a directory.
+>     506 			 */
+>     507 			info_type = FAN_EVENT_INFO_TYPE_DFID;
+>     508 		} else {
+>     509 			/*
+>     510 			 * With group flags FAN_REPORT_DIR_FID|FAN_REPORT_FID,
+>     511 			 * a single info record has type FID for event on a
+>     512 			 * non-directory, when there is no directory to report.
+>     513 			 * For example, on FAN_DELETE_SELF event.
+>     514 			 */
+>     515 			info_type = FAN_EVENT_INFO_TYPE_FID;
+>     516 		}
+>     517 
+>     518 		ret = copy_info_to_user(fanotify_event_fsid(event),
+>     519 					fanotify_event_object_fh(event),
+>     520 					info_type, dot, dot_len, buf, count);
+>     521 		if (ret < 0)
+>     522 			goto out_close_fd;
+>                                 ^^^^^^^^^^^^^^^^^
+> 
+> 
+>     523 
+>     524 		buf += ret;
+>     525 		count -= ret;
+>     526 	}
+>     527 
+>     528 	return metadata.event_len;
+>     529 
+>     530 out_close_fd:
+>     531 	if (fd != FAN_NOFD) {
+>     532 		put_unused_fd(fd);
+> --> 533 		fput(f);
+>                         ^^^^^^^
+> This leads to a NULL dereference
+
+Sure would, however if the intial else path is taken above skipping
+create_fd() then "fd" would remain set to FAN_NOFD and "f" would remain set
+to NULL, then this branch would not be taken and thus not leading to a NULL
+dereference?
+
+To make things clearer, avoid any future confusion and possibly tripping
+over such a bug, perhaps it'd be better to split up the fput(f) call into a
+separate branch outside of the current conditional, simply i.e.
+
+...
+
+if (f)
+	fput(f);
+
+...
+
+Thoughts?
+
+>     534 	}
+>     535 	return ret;
+>     536 }
+
+/M
