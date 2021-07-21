@@ -2,124 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C823D0C09
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 12:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E44723D0C08
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 12:13:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237556AbhGUJG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 05:06:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39254 "EHLO mail.kernel.org"
+        id S237530AbhGUJG4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 05:06:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237471AbhGUJE0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S237476AbhGUJE0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 21 Jul 2021 05:04:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C31CE61181;
-        Wed, 21 Jul 2021 09:43:57 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F383E611CE;
+        Wed, 21 Jul 2021 09:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626860639;
-        bh=D6dUEy2u2WAwK3Wav/+todv+3LklSEqNky2DVPOIV50=;
+        s=k20201202; t=1626860650;
+        bh=UcNsCOeP9E0aJ5CeOiZ43ZkdbySOVX/gLMDfuWMg0lE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mxyUmfBvxcIFV+vIpWm4eZHp7gLCPBwsfZvtGrgYZgCcxVP+wfTLKY5nlT8DSAVSx
-         gd9kIeu9gVFcsX1B++GCcPrPEB3MaNPeB0UTzGATyylqZCLmQ0tG+CCFAe2nV5cUlG
-         79RLzUNBePkQeD4MG7kY4g0KAmHvufaLIgS4qoOMzMRLp/8IZbmFa/7ZVqFX8KP7bf
-         pLBe0Nq+lQDXIz9axBJeYTDi3+gZIApKGbDuc8EEx00DR6bW9RHbLIfr41SDvtd4Cr
-         xsrzCnWq5l40iLwSbVJKT083L6Me4kdyIaU3QgRBTRpuN2/01tMdHL7XwIh7IGrDya
-         Thm5TroTtgNMg==
-Date:   Wed, 21 Jul 2021 12:43:53 +0300
+        b=HQfxrCv7K1DRsCJrlA6pb9QQ2+m22y0FLER/jNbiP0qEsls6jh+qHMorntKQ/VE0m
+         EOtCHqkJNXuUj2Y3tWSgyFsZaiIJOI28KBZg4+VwZq8aHZwlEKF1VQA7vvHgnhv+HH
+         i2FRkkp8P6pb0i2IjrbfMGI1aKqTo1AdCpXPWWH9+OzUV1ErweCsz2DZhy5rSCE7Vh
+         3wXAi0OtLLymRENzQ4i8TieEP2y1CWns8RTBVMpnSYjak86o8QWrpIkSyPKDwI+9DD
+         ZYuLrAzyqBjGjYj3BAayXkgN4mkiao74mmNA8qKQNuLErGc3Dm2ecFABX4YQG9OPo0
+         XzwPdboK77NEg==
+Date:   Wed, 21 Jul 2021 12:44:04 +0300
 From:   Mike Rapoport <rppt@kernel.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v14 048/138] mm/memcg: Add folio_lruvec_lock() and
- similar functions
-Message-ID: <YPfsWdV6AyrFOWsG@kernel.org>
+Subject: Re: [PATCH v14 040/138] mm/memcg: Convert mem_cgroup_charge() to
+ take a folio
+Message-ID: <YPfsZIZZqT6SAYub@kernel.org>
 References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-49-willy@infradead.org>
+ <20210715033704.692967-41-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210715033704.692967-49-willy@infradead.org>
+In-Reply-To: <20210715033704.692967-41-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 04:35:34AM +0100, Matthew Wilcox (Oracle) wrote:
-> These are the folio equivalents of lock_page_lruvec() and similar
-> functions.  Also convert lruvec_memcg_debug() to take a folio.
+On Thu, Jul 15, 2021 at 04:35:26AM +0100, Matthew Wilcox (Oracle) wrote:
+> Convert all callers of mem_cgroup_charge() to call page_folio() on the
+> page they're currently passing in.  Many of them will be converted to
+> use folios themselves soon.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
 > ---
->  include/linux/memcontrol.h | 32 ++++++++++++++-----------
->  mm/compaction.c            |  2 +-
->  mm/huge_memory.c           |  5 ++--
->  mm/memcontrol.c            | 48 ++++++++++++++++----------------------
->  mm/rmap.c                  |  2 +-
->  mm/swap.c                  |  8 ++++---
->  mm/vmscan.c                |  3 ++-
->  7 files changed, 50 insertions(+), 50 deletions(-)
+>  include/linux/memcontrol.h |  6 +++---
+>  kernel/events/uprobes.c    |  3 ++-
+>  mm/filemap.c               |  2 +-
+>  mm/huge_memory.c           |  2 +-
+>  mm/khugepaged.c            |  4 ++--
+>  mm/ksm.c                   |  3 ++-
+>  mm/memcontrol.c            | 26 +++++++++++++-------------
+>  mm/memory.c                |  9 +++++----
+>  mm/migrate.c               |  2 +-
+>  mm/shmem.c                 |  2 +-
+>  mm/userfaultfd.c           |  2 +-
+>  11 files changed, 32 insertions(+), 29 deletions(-)
 > 
 > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index fd578d70b579..5935f06316b1 100644
+> index c2ffad021e09..03283d97b62a 100644
 > --- a/mm/memcontrol.c
 > +++ b/mm/memcontrol.c
-> @@ -1158,67 +1158,59 @@ int mem_cgroup_scan_tasks(struct mem_cgroup *memcg,
+> @@ -6697,27 +6696,27 @@ static int __mem_cgroup_charge(struct page *page, struct mem_cgroup *memcg,
+>  
+>  	local_irq_disable();
+>  	mem_cgroup_charge_statistics(memcg, nr_pages);
+> -	memcg_check_events(memcg, page_to_nid(page));
+> +	memcg_check_events(memcg, folio_nid(folio));
+>  	local_irq_enable();
+>  out:
+>  	return ret;
 >  }
->  
->  #ifdef CONFIG_DEBUG_VM
-> -void lruvec_memcg_debug(struct lruvec *lruvec, struct page *page)
-> +void lruvec_memcg_debug(struct lruvec *lruvec, struct folio *folio)
->  {
->  	struct mem_cgroup *memcg;
->  
->  	if (mem_cgroup_disabled())
->  		return;
->  
-> -	memcg = page_memcg(page);
-> +	memcg = folio_memcg(folio);
->  
->  	if (!memcg)
-> -		VM_BUG_ON_PAGE(lruvec_memcg(lruvec) != root_mem_cgroup, page);
-> +		VM_BUG_ON_FOLIO(lruvec_memcg(lruvec) != root_mem_cgroup, folio);
->  	else
-> -		VM_BUG_ON_PAGE(lruvec_memcg(lruvec) != memcg, page);
-> +		VM_BUG_ON_FOLIO(lruvec_memcg(lruvec) != memcg, folio);
->  }
->  #endif
 >  
 >  /**
-> - * lock_page_lruvec - lock and return lruvec for a given page.
-> - * @page: the page
-> + * folio_lruvec_lock - lock and return lruvec for a given folio.
-> + * @folio: Pointer to the folio.
+> - * mem_cgroup_charge - charge a newly allocated page to a cgroup
+> - * @page: page to charge
+> - * @mm: mm context of the victim
+> - * @gfp_mask: reclaim mode
+> + * mem_cgroup_charge - Charge a newly allocated folio to a cgroup.
+> + * @folio: Folio to charge.
+> + * @mm: mm context of the allocating task.
+> + * @gfp: reclaim mode
 >   *
->   * These functions are safe to use under any of the following conditions:
-> - * - page locked
-> - * - PageLRU cleared
-> - * - lock_page_memcg()
-> - * - page->_refcount is zero
-> + * - folio locked
-> + * - folio_test_lru false
-> + * - folio_memcg_lock()
-> + * - folio frozen (refcount of 0)
+> - * Try to charge @page to the memcg that @mm belongs to, reclaiming
+> - * pages according to @gfp_mask if necessary. if @mm is NULL, try to
+> + * Try to charge @folio to the memcg that @mm belongs to, reclaiming
+> + * pages according to @gfp if necessary.  If @mm is NULL, try to
+>   * charge to the active memcg.
+>   *
+> - * Do not use this for pages allocated for swapin.
+> + * Do not use this for folios allocated for swapin.
+>   *
+>   * Returns 0 on success. Otherwise, an error code is returned.
 
 Missing return description
 
 >   */
-> -struct lruvec *lock_page_lruvec(struct page *page)
-> +struct lruvec *folio_lruvec_lock(struct folio *folio)
+> -int mem_cgroup_charge(struct page *page, struct mm_struct *mm, gfp_t gfp_mask)
+> +int mem_cgroup_charge(struct folio *folio, struct mm_struct *mm, gfp_t gfp)
 >  {
-> -	struct folio *folio = page_folio(page);
-> -	struct lruvec *lruvec;
-> +	struct lruvec *lruvec = folio_lruvec(folio);
->  
-> -	lruvec = folio_lruvec(folio);
->  	spin_lock(&lruvec->lru_lock);
-> -
-> -	lruvec_memcg_debug(lruvec, page);
-> +	lruvec_memcg_debug(lruvec, folio);
->  
->  	return lruvec;
->  }
->  
+>  	struct mem_cgroup *memcg;
+>  	int ret;
 
 -- 
 Sincerely yours,
