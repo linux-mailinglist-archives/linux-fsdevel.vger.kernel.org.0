@@ -2,159 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F78A3D10F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:14:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D022A3D113C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239170AbhGUNeQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 09:34:16 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:44686 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238737AbhGUNeK (ORCPT
+        id S237734AbhGUNpe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 09:45:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53115 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239327AbhGUNlr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 09:34:10 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UgX56vV_1626876884;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UgX56vV_1626876884)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 21 Jul 2021 22:14:45 +0800
-Subject: Re: [PATCH v2 3/4] fuse: add per-file DAX flag
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-References: <20210716104753.74377-1-jefflexu@linux.alibaba.com>
- <20210716104753.74377-4-jefflexu@linux.alibaba.com>
- <YPXWA+Uo5vFuHCH0@redhat.com>
- <61bca75f-2efa-f032-41d6-fcb525d8b528@linux.alibaba.com>
- <YPcjlN1ThL4UX8dn@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <0ad3b5d2-3d19-a33b-7841-1912ea30c081@linux.alibaba.com>
-Date:   Wed, 21 Jul 2021 22:14:44 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        Wed, 21 Jul 2021 09:41:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626877336;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=qxdAEr2YRqU2Aqy0XvfKttwJTSza/9Yda5xfUDXe0eg=;
+        b=fFBZcncjK+39eEXGb2OLY+8arbmJzfUnBp7H1f6NDmxoLpEOYvl35UQWHd1gI1LGq/1guX
+        rJaxFCTYr/7A5N3yia9HgbxfL//ryd0BU64afqzPN6MNbRe0SjiOpf9IAarVQPHe8aiII1
+        b3NZ/nMcmWQqzhcoHjRdYjf7jeeMN1o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-41-xax8cnLwMW-3dri9F1qkGw-1; Wed, 21 Jul 2021 10:22:13 -0400
+X-MC-Unique: xax8cnLwMW-3dri9F1qkGw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1ACCE3E743;
+        Wed, 21 Jul 2021 14:22:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-62.rdu2.redhat.com [10.10.112.62])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A1F715D9DD;
+        Wed, 21 Jul 2021 14:22:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Tom Rix <trix@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        "Alexey Dobriyan (SK hynix)" <adobriyan@gmail.com>,
+        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] afs: Miscellaneous fixes
 MIME-Version: 1.0
-In-Reply-To: <YPcjlN1ThL4UX8dn@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <281334.1626877326.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 21 Jul 2021 15:22:06 +0100
+Message-ID: <281335.1626877326@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Linus,
 
+Can you pull these miscellaneous fixes for afs please?
 
-On 7/21/21 3:27 AM, Vivek Goyal wrote:
-> On Tue, Jul 20, 2021 at 02:51:34PM +0800, JeffleXu wrote:
->>
->>
->> On 7/20/21 3:44 AM, Vivek Goyal wrote:
->>> On Fri, Jul 16, 2021 at 06:47:52PM +0800, Jeffle Xu wrote:
->>>> Add one flag for fuse_attr.flags indicating if DAX shall be enabled for
->>>> this file.
->>>>
->>>> When the per-file DAX flag changes for an *opened* file, the state of
->>>> the file won't be updated until this file is closed and reopened later.
->>>>
->>>> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
->>>> ---
->>>>  fs/fuse/dax.c             | 21 +++++++++++++++++----
->>>>  fs/fuse/file.c            |  4 ++--
->>>>  fs/fuse/fuse_i.h          |  5 +++--
->>>>  fs/fuse/inode.c           |  5 ++++-
->>>>  include/uapi/linux/fuse.h |  5 +++++
->>>>  5 files changed, 31 insertions(+), 9 deletions(-)
->>>>
->>>> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
->>>> index a478e824c2d0..0e862119757a 100644
->>>> --- a/fs/fuse/dax.c
->>>> +++ b/fs/fuse/dax.c
->>>> @@ -1341,7 +1341,7 @@ static const struct address_space_operations fuse_dax_file_aops  = {
->>>>  	.invalidatepage	= noop_invalidatepage,
->>>>  };
->>>>  
->>>> -static bool fuse_should_enable_dax(struct inode *inode)
->>>> +static bool fuse_should_enable_dax(struct inode *inode, unsigned int flags)
->>>>  {
->>>>  	struct fuse_conn *fc = get_fuse_conn(inode);
->>>>  	unsigned int mode;
->>>> @@ -1354,18 +1354,31 @@ static bool fuse_should_enable_dax(struct inode *inode)
->>>>  	if (mode == FUSE_DAX_MOUNT_NEVER)
->>>>  		return false;
->>>>  
->>>> -	return true;
->>>> +	if (mode == FUSE_DAX_MOUNT_ALWAYS)
->>>> +		return true;
->>>> +
->>>> +	WARN_ON(mode != FUSE_DAX_MOUNT_INODE);
->>>> +	return flags & FUSE_ATTR_DAX;
->>>>  }
->>>>  
->>>> -void fuse_dax_inode_init(struct inode *inode)
->>>> +void fuse_dax_inode_init(struct inode *inode, unsigned int flags)
->>>>  {
->>>> -	if (!fuse_should_enable_dax(inode))
->>>> +	if (!fuse_should_enable_dax(inode, flags))
->>>>  		return;
->>>>  
->>>>  	inode->i_flags |= S_DAX;
->>>>  	inode->i_data.a_ops = &fuse_dax_file_aops;
->>>>  }
->>>>  
->>>> +void fuse_dax_dontcache(struct inode *inode, bool newdax)
->>>> +{
->>>> +	struct fuse_conn *fc = get_fuse_conn(inode);
->>>> +
->>>> +	if (fc->dax && fc->dax->mode == FUSE_DAX_MOUNT_INODE &&
->>>> +	    IS_DAX(inode) != newdax)
->>>> +		d_mark_dontcache(inode);
->>>> +}
->>>> +
->>>
->>> This capability to mark an inode dontcache should probably be in a
->>> separate patch. These seem to logically two functionalities. One is
->>> enabling DAX on an inode. And second is making sure how soon you
->>> see the effect of that change and hence marking inode dontcache.
->>
->> OK, sounds reasonable.
->>
->>>
->>> Not sure how useful this is. In cache=none mode we should get rid of
->>> inode ASAP. In cache=auto mode we will get rid of after 1 second (or
->>> after a user specified timeout). So only place this seems to be
->>> useful is cache=always.
->>
->> Actually dontcache here is used to avoid dynamic switching between DAX
->> and non-DAX state while file is opened. The complexity of dynamic
->> switching is that, you have to clear the address_space, since page cache
->> and DAX entry can not coexist in the address space. Besides,
->> inode->a_ops also needs to be changed dynamically.
->>
->> With dontcache, dynamic switching is no longer needed and the DAX state
->> will be decided only when inode (in memory) is initialized. The downside
->> is that the new DAX state won't be updated until the file is closed and
->> reopened later.
->>
->> 'cache=none' only invalidates dentry, while the inode (in memory) is
->> still there (with address_space uncleared and a_ops unchanged).
-> 
-> Aha.., that's a good point.
->>
->> The dynamic switching may be done, though it's not such straightforward.
->> Currently, ext4/xfs are all implemented in this dontcache way, i.e., the
->> new DAX state won't be seen until the file is closed and reopened later.
-> 
-> Got it. Agreed that dontcache seems reasonable if file's DAX state
-> has changed. Keep it in separate patch though with proper commit
-> logs.
-> 
-> Also, please copy virtiofs list (virtio-fs@redhat.com) when you post
-> patches next time.
-> 
+ (1) Fix a tracepoint that causes one of the tracing subsystem query files
+     to crash if the module is loaded[1].
 
-Got it. By the way, what's the git repository of virtiofsd? AFAIK,
-virtiofsd included in qemu (git@github.com:qemu/qemu.git) doesn't
-support DAX yet?
+ (2) Fix afs_writepages() to take account of whether the storage rpc
+     actually succeeded when updating the cyclic writeback counter[2].
 
--- 
+ (3) Fix some error code propagation/handling[3].
+
+ (4) Fix place where afs_writepages() was setting writeback_index to a fil=
+e
+     position rather than a page index[4].
+
+Changes
+=3D=3D=3D=3D=3D=3D=3D
+
+ver #2:
+   - Fix an additional case of afs_writepages() setting writeback_index on
+     error[4].
+   - Fix afs_writepages() setting writeback_index to a file pos[4].
+
 Thanks,
-Jeffle
+David
+
+Link: https://lore.kernel.org/r/162430903582.2896199.6098150063997983353.s=
+tgit@warthog.procyon.org.uk/ [1]
+Link: https://lore.kernel.org/r/20210430155031.3287870-1-trix@redhat.com [=
+2]
+Link: https://lore.kernel.org/r/1619691492-83866-1-git-send-email-jiapeng.=
+chong@linux.alibaba.com [3]
+Link: https://lore.kernel.org/r/CAB9dFdvHsLsw7CMnB+4cgciWDSqVjuij4mH3TaXnH=
+QB8sz5rHw@mail.gmail.com/ [4]
+Link: https://lore.kernel.org/r/162609463116.3133237.11899334298425929820.=
+stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/162610726011.3408253.2771348573083023654.s=
+tgit@warthog.procyon.org.uk/ # v2
+
+---
+The following changes since commit e73f0f0ee7541171d89f2e2491130c7771ba58d=
+3:
+
+  Linux 5.14-rc1 (2021-07-11 15:07:40 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/afs-fixes-20210721
+
+for you to fetch changes up to b428081282f85db8a0d4ae6206a8c39db9c8341b:
+
+  afs: Remove redundant assignment to ret (2021-07-21 15:11:22 +0100)
+
+----------------------------------------------------------------
+AFS fixes
+
+----------------------------------------------------------------
+David Howells (2):
+      afs: Fix tracepoint string placement with built-in AFS
+      afs: Fix setting of writeback_index
+
+Jiapeng Chong (1):
+      afs: Remove redundant assignment to ret
+
+Tom Rix (1):
+      afs: check function return
+
+ fs/afs/cmservice.c         | 25 +++++------------
+ fs/afs/dir.c               | 10 ++++---
+ fs/afs/write.c             | 18 ++++++++-----
+ include/trace/events/afs.h | 67 +++++++++++++++++++++++++++++++++++++++++=
++----
+ 4 files changed, 87 insertions(+), 33 deletions(-)
+
