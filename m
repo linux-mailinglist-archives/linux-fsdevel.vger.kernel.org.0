@@ -2,72 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8F903D1172
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A70D93D117C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:36:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237204AbhGUNzH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 09:55:07 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:57542 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232160AbhGUNzH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 09:55:07 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C245D1FEBA;
-        Wed, 21 Jul 2021 14:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1626878142; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=q0kCXBTCbuZTbhG0GdZDl+3489oWG/wz0jjtbgTWj1Y=;
-        b=ePybv2pmGQT79Tr0pBcwvpiADKvqrc9FKyyTRJNdAtfwQ7GjHfljQjAdHAexx0YtkTHCbh
-        2Nr5LORyLTSsMFh1wUto1EMR0JSNxUog+PrkGV2x/bojbiH0TcbvJq9qRWyaOS0yeF8fNU
-        8EUIAZD9KxPYxql1OPwGvnMxV1urFgw=
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 77CE713BF7;
-        Wed, 21 Jul 2021 14:35:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id 5rX8Gr4w+GDJJAAAGKfGzw
-        (envelope-from <nborisov@suse.com>); Wed, 21 Jul 2021 14:35:42 +0000
-Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, ndesaulniers@google.com,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com
-References: <20210721135926.602840-1-nborisov@suse.com>
- <YPgwATAQBfU2eeOk@infradead.org>
-From:   Nikolay Borisov <nborisov@suse.com>
-Message-ID: <b1fdda4c-5f2a-a86a-0407-1591229bb241@suse.com>
-Date:   Wed, 21 Jul 2021 17:35:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S239114AbhGUNzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 09:55:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231139AbhGUNzi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Jul 2021 09:55:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C1C1D6121F;
+        Wed, 21 Jul 2021 14:36:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626878174;
+        bh=OoSIb5rdAAyByaIH7juDwMpDP+yfFGAa/j+nu8lp9ZA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LU8Bd2+gTsPqudTVI86lm3Oh/Qzy07FrWI+64sn8Kx1kZwH3mcW+yyRDK65iO2SUF
+         bCZgf1XqQMgHdpn1+VUN3LbvMkivGTSjApejKMjMpIm7059FVpFgyMpGd7vKdrld6n
+         +TV3al+pid0aP/b6/Vyw2Q/Nn0B2+aROfZRqmAYpCMNC0CtBk+oc0TJO3dhRUbaOBK
+         vThI48NXQuOLknNVAX3MZ/jWLR+ZUHWkJEIyS1vHFF9IWy6/OKzBGPbWwFDNO39jLR
+         xZjGxD/IEQjnqpT8iFblS+y/59EIaFKnF3/JDGsqwg+0/bSS3Wb2C9HaruyUftPxOh
+         RwJKhAm3Vfv5w==
+Date:   Wed, 21 Jul 2021 17:36:08 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v14 011/138] mm/lru: Add folio LRU functions
+Message-ID: <YPgw2AVMuK2YkCIT@kernel.org>
+References: <20210715033704.692967-1-willy@infradead.org>
+ <20210715033704.692967-12-willy@infradead.org>
+ <YPao+syEWXGhDxay@kernel.org>
+ <YPedzMQi+h/q0sRU@casper.infradead.org>
+ <YPfdM9dLEsFXZJgf@kernel.org>
+ <YPgDne2ORs+tJsk2@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <YPgwATAQBfU2eeOk@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YPgDne2ORs+tJsk2@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 21.07.21 г. 17:32, Christoph Hellwig wrote:
-> This seems to have lost the copyright notices from glibc.
+On Wed, Jul 21, 2021 at 12:23:09PM +0100, Matthew Wilcox wrote:
+> On Wed, Jul 21, 2021 at 11:39:15AM +0300, Mike Rapoport wrote:
+> > On Wed, Jul 21, 2021 at 05:08:44AM +0100, Matthew Wilcox wrote:
+> > > I wanted to turn those last two sentences into a list, but my
+> > > kernel-doc-fu abandoned me.  Feel free to submit a follow-on patch to
+> > > fix that ;-)
+> > 
+> > Here it is ;-)
 > 
+> Did you try it?  Here's what that turns into with htmldoc:
 
-I copied over only the code, what else needs to be brought up:
+Yes, but I was so happy to see bullets that I missed the fact they are in
+the wrong section :(
+ 
+> Description
+> 
+> We would like to get this info without a page flag, but the state needs
+> to survive until the folio is last deleted from the LRU, which could be
+> as far down as __page_cache_release.
+> 
+>  * 1 if folio is a regular filesystem backed page cache folio or a
+>    lazily freed anonymous folio (e.g. via MADV_FREE).
+>  * 0 if folio is a normal anonymous folio, a tmpfs folio or otherwise
+>    ram or swap backed folio.
+> 
+> Return
+> 
+> An integer (not a boolean!) used to sort a folio onto the right LRU list
+> and to account folios correctly.
+> 
+> Yes, we get a bulleted list, but it's placed in the wrong section!
+> 
+> Adding linux-doc for additional insight into this problem.
+> For their reference, here's the input:
+>
+> /**
+>  * folio_is_file_lru - Should the folio be on a file LRU or anon LRU?
+>  * @folio: The folio to test.
+>  *
+>  * We would like to get this info without a page flag, but the state
+>  * needs to survive until the folio is last deleted from the LRU, which
+>  * could be as far down as __page_cache_release.
+>  *
+>  * Return: An integer (not a boolean!) used to sort a folio onto the
+>  * right LRU list and to account folios correctly.
+>  *
+>  * - 1 if @folio is a regular filesystem backed page cache folio
+>  *   or a lazily freed anonymous folio (e.g. via MADV_FREE).
+>  * - 0 if @folio is a normal anonymous folio, a tmpfs folio or otherwise
+>  *   ram or swap backed folio.
+>  */
+> static inline int folio_is_file_lru(struct folio *folio)
 
- Copyright (C) 1991-2021 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-   Contributed by Torbjorn Granlund (tege@sics.se).
+Hmm, there is some contradiction between kernel-doc assumption that
+anything after a blank line is the default (i.e. Description) section and
+the sphynx ideas where empty blank lines should be:
 
-The rest is the generic GPL license txt ?
+
+	if ($state == STATE_BODY_WITH_BLANK_LINE && /^\s*\*\s?\S/) {
+		dump_section($file, $section, $contents);
+		$section = $section_default;
+		$new_start_line = $.;
+		$contents = "";
+	}
+
+(from scripts/kernel-doc::process_body())
+
+-- 
+Sincerely yours,
+Mike.
