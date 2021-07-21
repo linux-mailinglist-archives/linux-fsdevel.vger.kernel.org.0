@@ -2,74 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E31323D07C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 06:32:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D7333D0810
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 07:05:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232091AbhGUDvY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 23:51:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33310 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232238AbhGUDu4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 23:50:56 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64820C061574;
-        Tue, 20 Jul 2021 21:31:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=oXXmw0xRZx1duRhUChyatQyyj1O6vy9kc7fAFrgNi1c=; b=fIzsHCIxsD0PCsJQXquJXuNBaR
-        4aCcmn3x3h8xgBXvng6sFzappeCZKsJXdZuOfFY5hRC5zYFElLBPBA05cwFrt1WqFloPNwX7w5ya7
-        dQdasSz7A7RosEIr7rui5ggNaap7lNKfunb0p9DAwsLdgEeXlwlsv6uc5K45owvneghM4t0+vzzlJ
-        rQgPX6OYp+o5pGeH7F/oxaYj6fuwMR9/T82xk3Elo0xOLlmCnT/sKYYFpOywp6M+kzlQ+mG3pZC/g
-        onfQVrTlWcNciXXPkP49pMZajCIbAzTqmu40ZZ14eFcC2ydIw1qYzOc5rVZeEjJngkmzFcRiS2KpY
-        gucM0dIQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m63t6-008mw6-MF; Wed, 21 Jul 2021 04:31:21 +0000
-Date:   Wed, 21 Jul 2021 05:31:16 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH v15 16/17] iomap: Convert iomap_add_to_ioend to take a
- folio
-Message-ID: <YPejFDYKUn6qtLo5@casper.infradead.org>
-References: <20210719184001.1750630-1-willy@infradead.org>
- <20210719184001.1750630-17-willy@infradead.org>
- <20210721001219.GR22357@magnolia>
- <YPeiRb8o+zh29Pag@infradead.org>
+        id S232735AbhGUEYl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 00:24:41 -0400
+Received: from ozlabs.org ([203.11.71.1]:49843 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232900AbhGUEYU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Jul 2021 00:24:20 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4GV3RV40ZBz9sSs;
+        Wed, 21 Jul 2021 15:04:54 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1626843895;
+        bh=kXwg2yU4EaNsIIueeR8GovNFTK0nmHx4aTXTq88AaOA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZuH7xAgld4AvfNLY5ez6iq8OKKlGZjBrcmWdAcuWgTJfs3ISQJ9IAfRm6RX1huEtg
+         r/YSZwvuWX5C7f0QVxPNZsy0RLmIjAzSfSJXU48FQuQGPCvs29b0mrSitudwWNwvn4
+         c9QP08vH94c5Or5UJTuaKDrApBKby+ISnHbtTbIr4Icfnlvq95aI6XIZg+avuCosyx
+         iNcBowSgY15jcQo/CSZdPk1u4NsWsC0qD1dezmtTTY/QC5DRPyVkL77PgtdTbEskbE
+         albs/g42Lhx5mBZuyMJDDaKKcgcdfp5z8WT2BiRZosDQHHaxLZ5wsPN4l1Ls+lK/WK
+         TRk/fxsiHckQg==
+Date:   Wed, 21 Jul 2021 15:04:53 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Folio tree for next
+Message-ID: <20210721150453.266d0b25@canb.auug.org.au>
+In-Reply-To: <YPTu+xHa+0Qz0cOu@casper.infradead.org>
+References: <YPTu+xHa+0Qz0cOu@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YPeiRb8o+zh29Pag@infradead.org>
+Content-Type: multipart/signed; boundary="Sig_/4eqt7ccmom_Xpmx2/pyOMn8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 05:27:49AM +0100, Christoph Hellwig wrote:
-> On Tue, Jul 20, 2021 at 05:12:19PM -0700, Darrick J. Wong wrote:
-> > I /am/ beginning to wonder, though -- seeing as Christoph and Matthew
-> > both have very large patchsets changing things in fs/iomap/, how would
-> > you like those landed?  Christoph's iterator refactoring looks like it
-> > could be ready to go for 5.15.  Matthew's folio series looks like a
-> > mostly straightforward conversion for iomap, except that it has 91
-> > patches as a hard dependency.
-> > 
-> > Since most of the iomap changes for 5.15 aren't directly related to
-> > folios, I think I prefer iomap-for-next to be based directly off -rcX
-> > like usual, though I don't know where that leaves the iomap folio
-> > conversion.  I suppose one could add them to a branch that itself is a
-> > result of the folio and iomap branches, or leave them off for 5.16?
-> 
-> Maybe willy has a different opinion, but I thought the plan was to have
-> the based folio enablement in 5.15, and then do things like the iomap
-> conversion in the the next merge window.  If we have everything ready
-> this window we could still add a branch that builds on top of both
-> the iomap and folio trees, though.
+--Sig_/4eqt7ccmom_Xpmx2/pyOMn8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, my plan was to have the iomap conversion and the second half of the
-page cache work hit 5.16.  If we're ready earlier, that's great!  Both
-you and I want to see both the folio work and the iomap_iter work
-get merged, so I don't anticipate any lack of will to get the work done.
+Hi Matthew,
+
+On Mon, 19 Jul 2021 04:18:19 +0100 Matthew Wilcox <willy@infradead.org> wro=
+te:
+>
+> Please include a new tree in linux-next:
+>=20
+> https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/f=
+or-next
+> aka
+> git://git.infradead.org/users/willy/pagecache.git for-next
+
+Added from today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+
+--Sig_/4eqt7ccmom_Xpmx2/pyOMn8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmD3qvUACgkQAVBC80lX
+0GzLtQf/ZNKcpSSKD2fEjkP9fcnL+w+grMgP+K2xTcQ1ap99iRQDuq3uprhvfbfL
+38+sJCmmoZkh+VjgMhPHj+AnVu53fFLxS0pC/ZdUbll1YRubEsGjEb8aoScXwVVg
+tp6NQ/X2crsmSNbF1kKRHvhoMKEuLRYfnBYtlLleJwHdyvOgm5wfAYdwxDhPHeKK
+eWkj2KBiyP8JJVvEf9itb3AJoAbkJgBizlxmpJxk7bZuAW8TO/EnVU4DHU1ZCzIF
+krpym8k1tO7f45ci6ZXkddKCAtuxDq4z7ojC16oq3aTz6FD3gKAwS2JHdWqkzYnb
+QMwGdhcPV0SPqeIszZjWP8vSI21ueg==
+=eHku
+-----END PGP SIGNATURE-----
+
+--Sig_/4eqt7ccmom_Xpmx2/pyOMn8--
