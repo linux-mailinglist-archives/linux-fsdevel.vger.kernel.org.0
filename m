@@ -2,67 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 941F93D1748
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 22:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E8FB3D17A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 22:13:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240160AbhGUTHL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 15:07:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56962 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232622AbhGUTHL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 15:07:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 6BA1C61208;
-        Wed, 21 Jul 2021 19:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626896865;
-        bh=i3ClP/ySeTW8UzaTHjmH9w442P6AbI3jr7evO/kZ9Yo=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=pdL2JkeUAztQPcbdF84g99KoOJTviNGjIu7JUTqf+RVC6Tm0pQzeyDnH8c/hNzNiJ
-         DAwNSs6lpO13Ps0kHUjZvl5Mn6MA1/8jIdXillK++JBDTEUH3kIq9RNGaXpvdk7WSA
-         Dipel4WQVugaPHIidCZ/DU5YkfoID8t41IIoQizApqN9GT0iYu9hwMknnritJ4QuXI
-         W9KPrMFnGfMyk4O9vZZEZKwhkfMqPx99eWmjys7FxrWp6p5I+8SkRhE56dHfl/bXKq
-         iFssE+2zs1J6WVsrsdJaM3b8n6Q/CMVsuQtRFHEyq8yOGFOycHR3D3lqnscvCq7kCl
-         69hhzD063mTrQ==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 547DC60A4E;
-        Wed, 21 Jul 2021 19:47:45 +0000 (UTC)
-Subject: Re: [GIT PULL] afs: Miscellaneous fixes
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <281335.1626877326@warthog.procyon.org.uk>
-References: <281335.1626877326@warthog.procyon.org.uk>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <281335.1626877326@warthog.procyon.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/afs-fixes-20210721
-X-PR-Tracked-Commit-Id: b428081282f85db8a0d4ae6206a8c39db9c8341b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b4e62aaf95e8a340f3a6e0e2fc9a649f875034b3
-Message-Id: <162689686528.6427.15425115148571359800.pr-tracker-bot@kernel.org>
-Date:   Wed, 21 Jul 2021 19:47:45 +0000
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
-        linux-afs@lists.infradead.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Tom Rix <trix@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        "Alexey Dobriyan (SK hynix)" <adobriyan@gmail.com>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S229960AbhGUTci (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 15:32:38 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:39506 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229742AbhGUTch (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Jul 2021 15:32:37 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 565512258A;
+        Wed, 21 Jul 2021 20:13:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1626898392;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DnugCTEBu/3zdvXcY55icg8lMm81MI8TLb/CodM5bQ4=;
+        b=Q3dgsvHCULcJ/SqVmQxhIrkMuUCDzdLhFmrnDGcZNqkr1xgEy4QK7yHLVfABgJtYUUer54
+        jz62fd45a7ax5Z7G87TQRg350dZfoMia9EFD5kHKVfBu/aJWy21zRZaCiyVGX21E84WorC
+        ph13hTPc6uWv72rfmRD2i0p/A5PundI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1626898392;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DnugCTEBu/3zdvXcY55icg8lMm81MI8TLb/CodM5bQ4=;
+        b=i77W9cAZ6xZdrQcCdPf5TLuSIGRu7hT3cO+1QLjU8gPMujSJyBm94BUhf3i5V0qKexTICD
+        N/XC57je7LvTQHAw==
+Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
+        by relay2.suse.de (Postfix) with ESMTP id 46C59A3B85;
+        Wed, 21 Jul 2021 20:13:12 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id CA8AEDA701; Wed, 21 Jul 2021 22:10:29 +0200 (CEST)
+Date:   Wed, 21 Jul 2021 22:10:29 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Nikolay Borisov <nborisov@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
+Message-ID: <20210721201029.GQ19710@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+References: <20210721135926.602840-1-nborisov@suse.com>
+ <CAHk-=whqJKKc9wUacLEkvTzXYfYOUDt=kHKX6Fa8Kb4kQftbbQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whqJKKc9wUacLEkvTzXYfYOUDt=kHKX6Fa8Kb4kQftbbQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Wed, 21 Jul 2021 15:22:06 +0100:
+On Wed, Jul 21, 2021 at 11:00:59AM -0700, Linus Torvalds wrote:
+> On Wed, Jul 21, 2021 at 6:59 AM Nikolay Borisov <nborisov@suse.com> wrote:
+> >
+> > This is glibc's memcmp version. The upside is that for architectures
+> > which don't have an optimized version the kernel can provide some
+> > solace in the form of a generic, word-sized optimized memcmp. I tested
+> > this with a heavy IOCTL_FIDEDUPERANGE(2) workload and here are the
+> > results I got:
+> 
+> Hmm. I suspect the usual kernel use of memcmp() is _very_ skewed to
+> very small memcmp calls, and I don't think I've ever seen that
+> (horribly bad) byte-wise default memcmp in most profiles.
+> 
+> I suspect that FIDEDUPERANGE thing is most likely a very special case.
+> 
+> So I don't think you're wrong to look at this, but I think you've gone
+> from our old "spend no effort at all" to "look at one special case".
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/afs-fixes-20210721
+The memcmp in question is fs/remap_range.c:vfs_dedupe_file_range_compare
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b4e62aaf95e8a340f3a6e0e2fc9a649f875034b3
+   253                  src_addr = kmap_atomic(src_page);
+   254                  dest_addr = kmap_atomic(dest_page);
+   ...
+   259                  if (memcmp(src_addr + src_poff, dest_addr + dest_poff, cmp_len))
+   260                          same = false;
+   261  
+   262                  kunmap_atomic(dest_addr);
+   263                  kunmap_atomic(src_addr);
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+so adding a memcmp_large that compares by native words or u64 could be
+the best option. There's some alignment of the starting offset and
+length but that can be special cased and fall back to standard memcmp.
+The dedupe ioctl is typically called on ranges spanning many pages so
+the overhead of the non-paged portions should be insignificant.
