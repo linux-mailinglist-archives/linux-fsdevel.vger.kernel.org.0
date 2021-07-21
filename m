@@ -2,79 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C37003D0962
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 09:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 372863D09B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 09:29:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234204AbhGUG1i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 02:27:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40336 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234120AbhGUG13 (ORCPT
+        id S235313AbhGUGsx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 02:48:53 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:59771 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234659AbhGUGsY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 02:27:29 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31CEC061574;
-        Wed, 21 Jul 2021 00:07:07 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id k11so1255505ioa.5;
-        Wed, 21 Jul 2021 00:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fQFwt7gxtHzd25YAAbBq9bLGklSRxkB0hJRi8vFv0lo=;
-        b=rxfclDiGAgJ6SpBve3jOsbQJGI+H90cWK053UHsBSgT7pWT/toQqdNs7K37KkCJco0
-         7zoX41XwpIwXYlLcIzcMncFfCyv3GY86/xvWELsw2CWep7FJxPAwoJDikPDAPZkaYFnK
-         KG0ZCjPpXz8yM0faqjhPIzc/jlxb1K1Hjw1w9xDauvF4eVnAtkT24n44iJ24Qo1iKJy4
-         bQGpWV3TL9AQOGigprG5kHfWFQYg77cCX+4Q9kWKDjIECLFL2hkikIOqR28ObInVd9l8
-         qcnxHUpNOMBj34NAVBg+vZBi8EELKxm/opoDm/A4RpQioWLZM5v2wKiGvORZd+JQFFiJ
-         ul7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fQFwt7gxtHzd25YAAbBq9bLGklSRxkB0hJRi8vFv0lo=;
-        b=ocKqOie19CB8mlMUHzrV6u626+S2CvQ7HnaYrGTOAnLhF8uQxR7Y7ThGMJheLnbLZ9
-         QBs+Abo7LoQxuXAuwoq2UXN3FdG8A7EvOY8DvMaHder3qlh+NovHpek7F8OYrKAs3KK+
-         sTU/lgko98z8XVri9jUL7qu/1cnlAV2etBnrRuk9Tbw7opWTfesHr/ZX7+1dMKRV4410
-         846SzXkYVT/kH2/EtKAa6vsade1SaEVtHJGdZo1H9rqGwE4c97vzJrBT80auRgGjtYba
-         /iwzDG0uijr5s7hPS82MhZFJAh4ZK5Ol/sSJEUJmFHgjsvoMWJ1wk4DWdcd2kowtic9c
-         lxgA==
-X-Gm-Message-State: AOAM532ErrX+XfYbFtaIF++L21e2jWNdaAqlbCw1KWpZaIy8FmDrUUjR
-        Z/VlxP3nQWIggE/rB/LYWKMn+zA6AaaAqHqq338=
-X-Google-Smtp-Source: ABdhPJzTh087Z8o0mTV/0aqBP0TY5z9XzlbPe3zGzhCp7rEvUSiPFIJ6fa2JWbuN1HyMVmX2aaKs7DbZiEU+zHzvED4=
-X-Received: by 2002:a05:6602:146:: with SMTP id v6mr25777583iot.5.1626851227171;
- Wed, 21 Jul 2021 00:07:07 -0700 (PDT)
+        Wed, 21 Jul 2021 02:48:24 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UgVICqi_1626852531;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UgVICqi_1626852531)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 21 Jul 2021 15:28:52 +0800
+Date:   Wed, 21 Jul 2021 15:28:51 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
+        <andreas.gruenbacher@gmail.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-erofs@lists.ozlabs.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v4] iomap: support tail packing inline read
+Message-ID: <YPfMs2OxIwFb8QW8@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Andreas =?utf-8?Q?Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, linux-erofs@lists.ozlabs.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+References: <20210720133554.44058-1-hsiangkao@linux.alibaba.com>
+ <20210720204224.GK23236@magnolia>
+ <YPc9viRAKm6cf2Ey@casper.infradead.org>
+ <YPdkYFSjFHDOU4AV@B-P7TQMD6M-0146.local>
+ <20210721001720.GS22357@magnolia>
+ <YPdrSN6Vso98bLzB@B-P7TQMD6M-0146.local>
+ <CAHpGcM+8cp81=bkzFf3sZfKREM9VbXfePpXrswNJOLVcwEnK7A@mail.gmail.com>
+ <YPeMRsJwELjoWLFs@B-P7TQMD6M-0146.local>
+ <CAHpGcMJg5TOhexLdN8HgGoFhB8kbn1FdAD8Z2XEK9C7oHptFwA@mail.gmail.com>
 MIME-Version: 1.0
-References: <cover.1626845287.git.repnop@google.com>
-In-Reply-To: <cover.1626845287.git.repnop@google.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 21 Jul 2021 10:06:56 +0300
-Message-ID: <CAOQ4uxhBYhQoZcbuzT+KsTuyndE7kEv4R8ZhRL-kQScyfADY2A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] Add pidfd support to the fanotify API
-To:     Matthew Bobrowski <repnop@google.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHpGcMJg5TOhexLdN8HgGoFhB8kbn1FdAD8Z2XEK9C7oHptFwA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 9:17 AM Matthew Bobrowski <repnop@google.com> wrote:
->
-> Hey Jan/Amir/Christian,
->
-> This is an updated version of the FAN_REPORT_PIDFD series which contains
-> the addressed nits from the previous review [0]. As per request, you can
-> also find the draft LTP tests here [1] and man-pages update for this new
-> API change here [2].
->
-> [0] https://lore.kernel.org/linux-fsdevel/cover.1623282854.git.repnop@google.com/
-> [1] https://github.com/matthewbobrowski/ltp/commits/fanotify_pidfd_v2
-> [2] https://github.com/matthewbobrowski/man-pages/commits/fanotify_pidfd_v1
+On Wed, Jul 21, 2021 at 08:43:00AM +0200, Andreas Grünbacher wrote:
+> Am Mi., 21. Juli 2021 um 04:54 Uhr schrieb Gao Xiang
+> <hsiangkao@linux.alibaba.com>:
+> > Hi Andreas,
+> >
+> > On Wed, Jul 21, 2021 at 04:26:47AM +0200, Andreas Grünbacher wrote:
+> > > Am Mi., 21. Juli 2021 um 02:33 Uhr schrieb Gao Xiang
+> > > <hsiangkao@linux.alibaba.com>:
+> > > > > And since you can only kmap one page at a time, an inline read grabs the
+> > > > > first part of the data in "page one" and then we have to call
+> > > > > iomap_begin a second time get a new address so that we can read the rest
+> > > > > from "page two"?
+> > > >
+> > > > Nope, currently EROFS inline data won't cross page like this.
+> > > >
+> > > > But in principle, yes, I don't want to limit it to the current
+> > > > EROFS or gfs2 usage. I think we could make this iomap function
+> > > > more generally (I mean, I'd like to make the INLINE extent
+> > > > functionity as general as possible,
+> > >
+> > > Nono. Can we please limit this patch what we actually need right now,
+> > > and worry about extending it later?
+> >
+> > Can you elaborate what it will benefit us if we only support one tail
+> > block for iomap_read_inline_data()? (I mean it has similar LOC changes,
+> > similar implementation / complexity.) The only concern I think is if
+> > it causes gfs2 regression, so that is what I'd like to confirm.
+> 
+> iomap_read_inline_data supports one inline page now (i.e., from the
+> beginning of the file). It seems that you don't need more than one
+> tail page in EROFS, right?
+> 
+> You were speculating about inline data in the middle of a file. That
+> sounds like a really, really bad idea to me, and I don't think we
+> should waste any time on it.
 
-FWIW, those test and man page drafts look good to me :)
+Huh? why do you think it's a bad idea? I could give real example to you.
+
+At least, it can be used for some encoded data or repeated pattern (such
+as AABBAABBAABB...) in a packed way (marked in extent metadata).
+Is that enough?
+
+Again, I don't see what the benefits if limiting it to one tail block,
+it (maybe) just modifies:
++	/* handle tail-packing blocks cross the current page into the next */
++	size = min_t(unsigned int, iomap->length + pos - iomap->offset,
++		     PAGE_SIZE - poff);
+
+to
++	size = min_t(unsigned int, i_blocksize(inode),
++		     PAGE_SIZE - poff);
+
+And which has the similar complexity, so why not using iomap->length
+here instead?
 
 Thanks,
-Amir.
+Gao Xiang
