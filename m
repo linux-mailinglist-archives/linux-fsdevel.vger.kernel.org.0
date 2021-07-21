@@ -2,90 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B3D3D0602
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 02:03:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77ABB3D060E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 02:18:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234127AbhGTXWJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jul 2021 19:22:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232511AbhGTXVr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jul 2021 19:21:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9370061019;
-        Wed, 21 Jul 2021 00:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626825744;
-        bh=92Gjrop0XLyAuerlYU5OBiO3OpCjgEbq8pXa4g95YMg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HSEsFujMopdUvp/8h/Vc0fIoUMksjU9jfdH9FvJoEO7G/eylKh7A35iPv8fZOQq0p
-         +7MVyZZ72wnBFkYD9qVLyS+7p2f/3yRzQkG+Kh9R+45N+Rcllur2A9iHsvFVLQJ18r
-         rSFuT5t3tYnmCZubOLS0HgLwJd/+77CNDCS2OYMFcSlhOYaUL288u3RwfRfZmuvv5I
-         AXyjMxXp8RvrV9Xa02Oz42YzOWMrHxUpoeWKBeHawB6v70VDFGqoq9QXS/5GeBQ4z6
-         as5XpKOVLB7hyc9wUeduPF7u/OoY2LE9Vm6tX363ql0sy1Nm2f/0775xk71coepC1F
-         Xh7d+IHGYJzXA==
-Date:   Tue, 20 Jul 2021 17:02:24 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH v15 17/17] iomap: Convert iomap_migrate_page to use folios
-Message-ID: <20210721000224.GQ22357@magnolia>
-References: <20210719184001.1750630-1-willy@infradead.org>
- <20210719184001.1750630-18-willy@infradead.org>
+        id S232801AbhGTXYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jul 2021 19:24:51 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:59920 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235067AbhGTXXK (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Jul 2021 19:23:10 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UgSnpfC_1626825824;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UgSnpfC_1626825824)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 21 Jul 2021 08:03:45 +0800
+Date:   Wed, 21 Jul 2021 08:03:44 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+Subject: Re: [PATCH v4] iomap: support tail packing inline read
+Message-ID: <YPdkYFSjFHDOU4AV@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+References: <20210720133554.44058-1-hsiangkao@linux.alibaba.com>
+ <20210720204224.GK23236@magnolia>
+ <YPc9viRAKm6cf2Ey@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210719184001.1750630-18-willy@infradead.org>
+In-Reply-To: <YPc9viRAKm6cf2Ey@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 19, 2021 at 07:40:01PM +0100, Matthew Wilcox (Oracle) wrote:
-> The arguments are still pages for now, but we can use folios internally
-> and cut out a lot of calls to compound_head().
+On Tue, Jul 20, 2021 at 10:18:54PM +0100, Matthew Wilcox wrote:
+> On Tue, Jul 20, 2021 at 01:42:24PM -0700, Darrick J. Wong wrote:
+> > > -	BUG_ON(page_has_private(page));
+> > > -	BUG_ON(page->index);
+> > > -	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> > > +	/* inline source data must be inside a single page */
+> > > +	BUG_ON(iomap->length > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> > 
+> > Can we reduce the strength of these checks to a warning and an -EIO
+> > return?
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> I'm not entirely sure that we need this check, tbh.
 
-Didn't I RVb this last time? ;)
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+I'm fine to get rid of this check, it just inherited from:
+ - BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
 
---D
+It has no real effect, but when reading INLINE extent, its .iomap_begin()
+does:
+	iomap->private = erofs_get_meta_page()	/* get meta page */
 
-> ---
->  fs/iomap/buffered-io.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
+and in the .iomap_end(), it does:
+	struct page *ipage = iomap->private;
+	if (ipage) {
+		unlock_page(ipage);
+		put_page(ipage);
+	}
+
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 60d3b7af61d1..cf56b19fb101 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -492,19 +492,21 @@ int
->  iomap_migrate_page(struct address_space *mapping, struct page *newpage,
->  		struct page *page, enum migrate_mode mode)
->  {
-> +	struct folio *folio = page_folio(page);
-> +	struct folio *newfolio = page_folio(newpage);
->  	int ret;
->  
-> -	ret = migrate_page_move_mapping(mapping, newpage, page, 0);
-> +	ret = folio_migrate_mapping(mapping, newfolio, folio, 0);
->  	if (ret != MIGRATEPAGE_SUCCESS)
->  		return ret;
->  
-> -	if (page_has_private(page))
-> -		attach_page_private(newpage, detach_page_private(page));
-> +	if (folio_test_private(folio))
-> +		folio_attach_private(newfolio, folio_detach_private(folio));
->  
->  	if (mode != MIGRATE_SYNC_NO_COPY)
-> -		migrate_page_copy(newpage, page);
-> +		folio_migrate_copy(newfolio, folio);
->  	else
-> -		migrate_page_states(newpage, page);
-> +		folio_migrate_flags(newfolio, folio);
->  	return MIGRATEPAGE_SUCCESS;
->  }
->  EXPORT_SYMBOL_GPL(iomap_migrate_page);
-> -- 
-> 2.30.2
+> > > +	/* handle tail-packing blocks cross the current page into the next */
+> > > +	size = min_t(unsigned int, iomap->length + pos - iomap->offset,
+> > > +		     PAGE_SIZE - poff);
+> > >  
+> > >  	addr = kmap_atomic(page);
+> > > -	memcpy(addr, iomap->inline_data, size);
+> > > -	memset(addr + size, 0, PAGE_SIZE - size);
+> > > +	memcpy(addr + poff, iomap->inline_data - iomap->offset + pos, size);
+> > > +	memset(addr + poff + size, 0, PAGE_SIZE - poff - size);
+> > 
+> > Hmm, so I guess the point of this is to support reading data from a
+> > tail-packing block, where each file gets some arbitrary byte range
+> > within the tp-block, and the range isn't aligned to an fs block?  Hence
+> > you have to use the inline data code to read the relevant bytes and copy
+> > them into the pagecache?
 > 
+> I think there are two distinct cases for IOMAP_INLINE.  One is
+> where the tail of the file is literally embedded into the inode.
+> Like ext4 fast symbolic links.  Taking the ext4 i_blocks layout
+> as an example, you could have a 4kB block stored in i_block[0]
+> and then store bytes 4096-4151 in i_block[1-14] (although reading
+> https://www.kernel.org/doc/html/latest/filesystems/ext4/dynamic.html
+> makes me think that ext4 only supports storing 0-59 in the i_blocks;
+> it doesn't support 0-4095 in i_block[0] and then 4096-4151 in i_blocks)
+> 
+> The other is what I think erofs is doing where, for example, you'd
+> specify in i_block[1] the block which contains the tail and then in
+> i_block[2] what offset of the block the tail starts at.
+
+Nope, EROFS inline data is embedded into the inode in order to save
+I/O as well as space (maybe I didn't express clear before [1]). 
+
+I understand the other one, but it can only save storage space but
+cannot save I/O (we still need another independent I/O to read its
+meta buffered page).
+
+In the view of INLINE extent itself, I think both ways can be
+supported with this approach.
+
+[1] https://www.kernel.org/doc/html/latest/filesystems/erofs.html
+    "On-disk details" section.
+
+Thanks,
+Gao Xiang
