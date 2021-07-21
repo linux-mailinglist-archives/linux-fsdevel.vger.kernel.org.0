@@ -2,106 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BC2F3D0A5C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 10:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D11AC3D0A9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 10:32:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235894AbhGUH3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 03:29:07 -0400
-Received: from mail-m121144.qiye.163.com ([115.236.121.144]:41476 "EHLO
-        mail-m121144.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235954AbhGUH1V (ORCPT
+        id S236428AbhGUHsf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 03:48:35 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:42239 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236422AbhGUHnE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 03:27:21 -0400
-DKIM-Signature: a=rsa-sha256;
-        b=Oq7ucI7cOEz3YT5+tpsXb8SnX4l2s3WvTgtwwJGeWlz9ba4H7tJEwim4eXtQBgyI7Ybqi4CZd9wXphclQOuZhxoyFQB3gXaDn6RbmyvwRoEMf5vendbyL714FO04o1Ri2DmZ5grykpvoPs7UvsbqMxvwIxnRvR61uWHjBreUvNc=;
-        c=relaxed/relaxed; s=default; d=vivo.com; v=1;
-        bh=SF+ygtvBfcYPbmC1D6tZgdZGrjGqPciVxZWao+csWPc=;
-        h=date:mime-version:subject:message-id:from;
-Received: from [172.25.44.145] (unknown [58.251.74.232])
-        by mail-m121144.qiye.163.com (Hmail) with ESMTPA id 0410EAC00A7;
-        Wed, 21 Jul 2021 16:07:54 +0800 (CST)
-Subject: Re: [PATCH v3] fuse: use newer inode info when writeback cache is
- enabled
-To:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
-References: <20210629130311.238638-1-changfengnan@vivo.com>
-From:   Fengnan Chang <changfengnan@vivo.com>
-Message-ID: <1acffbf7-3826-6125-f5b8-476cef2b1bbc@vivo.com>
-Date:   Wed, 21 Jul 2021 16:07:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Wed, 21 Jul 2021 03:43:04 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UgVIMrR_1626855804;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UgVIMrR_1626855804)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 21 Jul 2021 16:23:37 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Gao Xiang <hsiangkao@linux.alibaba.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+Subject: [PATCH v5] iomap: support tail packing inline read
+Date:   Wed, 21 Jul 2021 16:23:23 +0800
+Message-Id: <20210721082323.41933-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.4
 MIME-Version: 1.0
-In-Reply-To: <20210629130311.238638-1-changfengnan@vivo.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
-        kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWUJPGkxWQkoZQk9NSxpIGE
-        9DVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ngg6Lhw5Qz9DSVFNH0ozGg89
-        DgIKFB1VSlVKTUlNQ05PQ0xOT0xNVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
-        WU5DVUlOSlVMT1VJSElZV1kIAVlBSE9MTTcG
-X-HM-Tid: 0a7ac81b5fdcb039kuuu0410eac00a7
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi miklos：
+This tries to add tail packing inline read to iomap, which can support
+several inline tail blocks. Similar to the previous approach, it cleans
+post-EOF in one iteration.
 
-    Have you test this version? Is there any problem ?
+The write path remains untouched since EROFS cannot be used for testing.
+It'd be better to be implemented if upcoming real users care rather than
+leave untested dead code around.
 
-Thanks.
-	
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Darrick J. Wong <djwong@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+v4: https://lore.kernel.org/r/20210720133554.44058-1-hsiangkao@linux.alibaba.com
+changes since v4:
+ - turn to WARN_ON_ONCE() suggested by Darrick;
+ - fix size to "min(iomap->length + iomap->offset - pos,
+                    PAGE_SIZE - poff)"
 
-On 2021/6/29 21:03, Fengnan Chang wrote:
-> When writeback cache is enabled, the inode information in cached is
-> considered new by default, and the inode information of lowerfs is
-> stale.
-> When a lower fs is mount in a different directory through different
-> connection, for example PATHA and PATHB, since writeback cache is
-> enabled by default, when the file is modified through PATHA, viewing the
-> same file from the PATHB, PATHB will think that cached inode is newer
-> than lowerfs, resulting in file size and time from under PATHA and PATHB
-> is inconsistent.
-> Add a judgment condition to check whether to use the info in the cache
-> according to mtime.
-> 
-> Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
-> ---
->   fs/fuse/fuse_i.h | 6 ++++++
->   fs/fuse/inode.c  | 4 +++-
->   2 files changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 07829ce78695..98fc2ba91a03 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -909,6 +909,12 @@ static inline void fuse_page_descs_length_init(struct fuse_page_desc *descs,
->   	for (i = index; i < index + nr_pages; i++)
->   		descs[i].length = PAGE_SIZE - descs[i].offset;
->   }
-> +static inline bool attr_newer_than_local(struct fuse_attr *attr, struct inode *inode)
-> +{
-> +	return (attr->mtime > inode->i_mtime.tv_sec) ||
-> +		((attr->mtime == inode->i_mtime.tv_sec) &&
-> +		 (attr->mtimensec > inode->i_mtime.tv_nsec));
-> +}
->   
->   /** Device operations */
->   extern const struct file_operations fuse_dev_operations;
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index b9beb39a4a18..32545f488274 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -241,8 +241,10 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
->   	 * extend local i_size without keeping userspace server in sync. So,
->   	 * attr->size coming from server can be stale. We cannot trust it.
->   	 */
-> -	if (!is_wb || !S_ISREG(inode->i_mode))
-> +	if (!is_wb || !S_ISREG(inode->i_mode)
-> +		|| (attr_newer_than_local(attr, inode) && !inode_is_open_for_write(inode))) {
->   		i_size_write(inode, attr->size);
-> +	}
->   	spin_unlock(&fi->lock);
->   
->   	if (!is_wb && S_ISREG(inode->i_mode)) {
-> 
+ fs/iomap/buffered-io.c | 58 +++++++++++++++++++++++++++---------------
+ fs/iomap/direct-io.c   | 13 +++++++---
+ 2 files changed, 47 insertions(+), 24 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 87ccb3438bec..d8436d34a159 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -205,25 +205,27 @@ struct iomap_readpage_ctx {
+ 	struct readahead_control *rac;
+ };
+ 
+-static void
++static int
+ iomap_read_inline_data(struct inode *inode, struct page *page,
+-		struct iomap *iomap)
++		struct iomap *iomap, loff_t pos)
+ {
+-	size_t size = i_size_read(inode);
++	unsigned int size, poff = offset_in_page(pos);
+ 	void *addr;
+ 
+-	if (PageUptodate(page))
+-		return;
+-
+-	BUG_ON(page_has_private(page));
+-	BUG_ON(page->index);
+-	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	/* inline source data must be inside a single page */
++	if (WARN_ON_ONCE(iomap->length > PAGE_SIZE -
++			 offset_in_page(iomap->inline_data)))
++		return -EIO;
++	/* handle tail-packing blocks cross the current page into the next */
++	size = min_t(unsigned int, iomap->length + iomap->offset - pos,
++		     PAGE_SIZE - poff);
+ 
+ 	addr = kmap_atomic(page);
+-	memcpy(addr, iomap->inline_data, size);
+-	memset(addr + size, 0, PAGE_SIZE - size);
++	memcpy(addr + poff, iomap->inline_data - iomap->offset + pos, size);
++	memset(addr + poff + size, 0, PAGE_SIZE - poff - size);
+ 	kunmap_atomic(addr);
+-	SetPageUptodate(page);
++	iomap_set_range_uptodate(page, poff, PAGE_SIZE - poff);
++	return PAGE_SIZE - poff;
+ }
+ 
+ static inline bool iomap_block_needs_zeroing(struct inode *inode,
+@@ -245,19 +247,23 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	loff_t orig_pos = pos;
+ 	unsigned poff, plen;
+ 	sector_t sector;
++	int ret;
+ 
+-	if (iomap->type == IOMAP_INLINE) {
+-		WARN_ON_ONCE(pos);
+-		iomap_read_inline_data(inode, page, iomap);
+-		return PAGE_SIZE;
+-	}
+-
+-	/* zero post-eof blocks as the page may be mapped */
+ 	iop = iomap_page_create(inode, page);
++	/* needs to skip some leading uptodate blocks */
+ 	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
+ 	if (plen == 0)
+ 		goto done;
+ 
++	if (iomap->type == IOMAP_INLINE) {
++		ret = iomap_read_inline_data(inode, page, iomap, pos);
++		if (ret < 0)
++			return ret;
++		plen = ret;
++		goto done;
++	}
++
++	/* zero post-eof blocks as the page may be mapped */
+ 	if (iomap_block_needs_zeroing(inode, iomap, pos)) {
+ 		zero_user(page, poff, plen);
+ 		iomap_set_range_uptodate(page, poff, plen);
+@@ -589,6 +595,18 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+ 	return 0;
+ }
+ 
++static int iomap_write_begin_inline(struct inode *inode, loff_t pos,
++		struct page *page, struct iomap *srcmap)
++{
++	/* needs more work for the tailpacking case, disable for now */
++	if (WARN_ON_ONCE(srcmap->offset != 0))
++		return -EIO;
++	if (PageUptodate(page))
++		return 0;
++	iomap_read_inline_data(inode, page, srcmap, 0);
++	return 0;
++}
++
+ static int
+ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+ 		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
+@@ -618,7 +636,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+ 	}
+ 
+ 	if (srcmap->type == IOMAP_INLINE)
+-		iomap_read_inline_data(inode, page, srcmap);
++		status = iomap_write_begin_inline(inode, pos, page, srcmap);
+ 	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
+ 		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
+ 	else
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 9398b8c31323..cbadb99fb88c 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -379,22 +379,27 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
+ {
+ 	struct iov_iter *iter = dio->submit.iter;
+ 	size_t copied;
++	void *dst = iomap->inline_data + pos - iomap->offset;
+ 
+-	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	/* inline data must be inside a single page */
++	if (WARN_ON_ONCE(length > PAGE_SIZE -
++			 offset_in_page(iomap->inline_data)))
++		return -EIO;
+ 
+ 	if (dio->flags & IOMAP_DIO_WRITE) {
+ 		loff_t size = inode->i_size;
+ 
+ 		if (pos > size)
+-			memset(iomap->inline_data + size, 0, pos - size);
+-		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
++			memset(iomap->inline_data + size - iomap->offset,
++			       0, pos - size);
++		copied = copy_from_iter(dst, length, iter);
+ 		if (copied) {
+ 			if (pos + copied > size)
+ 				i_size_write(inode, pos + copied);
+ 			mark_inode_dirty(inode);
+ 		}
+ 	} else {
+-		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
++		copied = copy_to_iter(dst, length, iter);
+ 	}
+ 	dio->size += copied;
+ 	return copied;
+-- 
+2.24.4
+
