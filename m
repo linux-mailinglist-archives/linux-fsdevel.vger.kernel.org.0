@@ -2,92 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 696BF3D1192
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:43:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C63F3D11A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:51:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238998AbhGUOCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 10:02:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50024 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233069AbhGUOCX (ORCPT
+        id S238315AbhGUOLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 10:11:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32926 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232939AbhGUOLS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 10:02:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626878579;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=aKs3+Xdc2Yu+lcTu46rzXDZNt56m1hbeO49s4AhSxWY=;
-        b=b5AhOuFdD00mAzbUu8FtMiwbabWhYSquAVqRZ8p3qEwI2Tf/vVmTKkNvZqh7FUsBQduBiT
-        a5EFU/N6YdBYJ5yf/HOmXS9dpumcMM8IHETAp4k3VvFhL95wM7JMfvaXx3LlkccuwyNWw0
-        Hvn98gpB1U6fQaT9IYcjtVlrxVFDldw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-599-s-RFpwf6O2aYXw05b7YYdg-1; Wed, 21 Jul 2021 10:42:58 -0400
-X-MC-Unique: s-RFpwf6O2aYXw05b7YYdg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F0B17760C0;
-        Wed, 21 Jul 2021 14:42:55 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E7E0E61F21;
-        Wed, 21 Jul 2021 14:42:50 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 568DB223E70; Wed, 21 Jul 2021 10:42:50 -0400 (EDT)
-Date:   Wed, 21 Jul 2021 10:42:50 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 0/4] virtiofs,fuse: support per-file DAX
-Message-ID: <YPgyalU0avl9KI/U@redhat.com>
-References: <20210716104753.74377-1-jefflexu@linux.alibaba.com>
- <YPXu3BefIi7Ts48I@redhat.com>
- <031efb1d-7c0d-35fb-c147-dcc3b6cac0ef@linux.alibaba.com>
- <YPchgf665bwUMKWU@redhat.com>
- <38e9da34-cc2b-f496-7ebb-18db8da1aa01@linux.alibaba.com>
- <YPgXuacFfJ/JVRjo@redhat.com>
+        Wed, 21 Jul 2021 10:11:18 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E358CC061575;
+        Wed, 21 Jul 2021 07:51:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=AKhTwBZRXuGyK0eHt0zsDJMOjVofgpnBIIWEazs7doI=; b=egiPLTjakG8jcgwUqAP7E3PEAa
+        CVYhSGAarUxwP3XjPbEHvaB3QfbP66PeiHIyi0IUdquVR+rZcGXpYLNmXX+YRWyc7+NAOJOQ1ru1g
+        cwLHq3YAEbnlcygzQ+TUuukACRA0ajirTF09amSs3alMVWmT1VawrduKoJyb0FttR9X/otktMQ+BU
+        IyrKGa7C0gtof2ZZuwwy+mZuZ9Z8bsMkPPpysQzqt3bnCPp2oR4GCBaD07AjEnQz62+fYYr62lfbG
+        cNfbK2iah0tgoiZrSorKKIjVWMb1nausf8L06VQOD6EX06zJJrYrB4KJx/Q1DJsQdhUKQ4H0rlzpC
+        7dNYi4rA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m6DZ5-009Inm-09; Wed, 21 Jul 2021 14:51:20 +0000
+Date:   Wed, 21 Jul 2021 15:51:14 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Nikolay Borisov <nborisov@suse.com>, linux-kernel@vger.kernel.org,
+        ndesaulniers@google.com, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com
+Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
+Message-ID: <YPg0Ylbmk4qIZ/63@casper.infradead.org>
+References: <20210721135926.602840-1-nborisov@suse.com>
+ <YPgwATAQBfU2eeOk@infradead.org>
+ <b1fdda4c-5f2a-a86a-0407-1591229bb241@suse.com>
+ <YPgyQsG7PFLL8yE3@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPgXuacFfJ/JVRjo@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <YPgyQsG7PFLL8yE3@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 08:48:57AM -0400, Vivek Goyal wrote:
-[..]
-> > > So is "dax=inode" enough for your needs? What's your requirement,
-> > > can you give little bit of more details.
+On Wed, Jul 21, 2021 at 03:42:10PM +0100, Christoph Hellwig wrote:
+> On Wed, Jul 21, 2021 at 05:35:42PM +0300, Nikolay Borisov wrote:
 > > 
-> > In our use case, the backend fs is something like SquashFS on host. The
-> > content of the file on host is downloaded *as needed*. When the file is
-> > not completely ready (completely downloaded), the guest will follow the
-> > normal IO routine, i.e., by FUSE_READ/FUSE_WRITE request. While the file
-> > is completely ready, per-file DAX is enabled for this file. IOW the FUSE
-> > server need to dynamically decide if per-file DAX shall be enabled,
-> > depending on if the file is completely downloaded.
+> > 
+> > On 21.07.21 ??. 17:32, Christoph Hellwig wrote:
+> > > This seems to have lost the copyright notices from glibc.
+> > > 
+> > 
+> > I copied over only the code, what else needs to be brought up:
+> > 
+> >  Copyright (C) 1991-2021 Free Software Foundation, Inc.
+> >    This file is part of the GNU C Library.
+> >    Contributed by Torbjorn Granlund (tege@sics.se).
+> > 
+> > The rest is the generic GPL license txt ?
 > 
-> So you don't want to enable DAX yet because guest might fault on
-> a section of file which has not been downloaded yet?
-> 
-> I am wondering if somehow user fault handling can help with this.
-> If we could handle faults for this file in user space, then you
-> should be able to download that particular page[s] and resolve
-> the fault?
+> Last time I checked glibc is under LGPL.
 
-Stefan mentioned that can't we block when fuse mmap request comes
-in and download corresponding section of file. Or do whatever you
-are doing in FUSE_READ. 
-
-IOW, even if you enable dax in your use case on all files,
-FUSE_SETUPMAPPING request will give you control to make sure 
-file section being mmaped has been downloaded.
-
-Vivek
-
+This particular file is under LGPL-2.1, so we can distribute it under
+GPL 2.
