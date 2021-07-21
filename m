@@ -2,201 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D11AC3D0A9C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 10:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD6743D0B2C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 11:20:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236428AbhGUHsf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 03:48:35 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:42239 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236422AbhGUHnE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 03:43:04 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UgVIMrR_1626855804;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UgVIMrR_1626855804)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 21 Jul 2021 16:23:37 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>,
+        id S237201AbhGUIUT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 04:20:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50700 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237227AbhGUIAA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Jul 2021 04:00:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CFBED61363;
+        Wed, 21 Jul 2021 08:39:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626856762;
+        bh=cdGZXToDNH3wVRvcOvtaAq0f15eiAAgnqELHYuf3ux0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z9tql+kl9M4zdDGconByR3ww+a1DLQWAzJyLwN+vp7jgz0IIi9XCVV7uD3VBRFaHB
+         cridxMan6pAFb00mOYww18hDJGQYpQyHanrwsD366rbo9j+bBfrTS2liAlb25fIad5
+         psyqbUnh2rfNOQPW7BgLNIDbnbuCpwkoNGP1eaYZcG6Sw+LObdy2EKe9LCoRPmWyqr
+         0MqTMDm8CcOmGFZS2x8bJGRjoyqKNWGIf3M+fI3oAUKkqAwxuOqahrCn0SvXACo/y3
+         6vYonx/lxEjmQHs3ZZMIC1MU4ejcxCCgOJWfWpL+Wa0cDmtzfPwfHQ0rdYBHswRaCg
+         CW8coEWoSz+Xg==
+Date:   Wed, 21 Jul 2021 11:39:15 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
         Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-Subject: [PATCH v5] iomap: support tail packing inline read
-Date:   Wed, 21 Jul 2021 16:23:23 +0800
-Message-Id: <20210721082323.41933-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
+        David Howells <dhowells@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v14 011/138] mm/lru: Add folio LRU functions
+Message-ID: <YPfdM9dLEsFXZJgf@kernel.org>
+References: <20210715033704.692967-1-willy@infradead.org>
+ <20210715033704.692967-12-willy@infradead.org>
+ <YPao+syEWXGhDxay@kernel.org>
+ <YPedzMQi+h/q0sRU@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YPedzMQi+h/q0sRU@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This tries to add tail packing inline read to iomap, which can support
-several inline tail blocks. Similar to the previous approach, it cleans
-post-EOF in one iteration.
+On Wed, Jul 21, 2021 at 05:08:44AM +0100, Matthew Wilcox wrote:
+> On Tue, Jul 20, 2021 at 01:44:10PM +0300, Mike Rapoport wrote:
+> > It seems mm_inline.h is not a part of generated API docs, otherwise
+> > kerneldoc would be unhappy about missing Return: description.
+> 
+> It isn't, but I did add mm_inline.h to Documentation as part of this
+> patch (thanks!) and made this change:
+> 
+>  /**
+> - * folio_is_file_lru - should the folio be on a file LRU or anon LRU?
+> - * @folio: the folio to test
+> - *
+> - * Returns 1 if @folio is a regular filesystem backed page cache folio
+> - * or a lazily freed anonymous folio (e.g. via MADV_FREE).  Returns 0 if
+> - * @folio is a normal anonymous folio, a tmpfs folio or otherwise ram or
+> - * swap backed folio.  Used by functions that manipulate the LRU lists,
+> - * to sort a folio onto the right LRU list.
+> + * folio_is_file_lru - Should the folio be on a file LRU or anon LRU?
+> + * @folio: The folio to test.
+>   *
+>   * We would like to get this info without a page flag, but the state
+>   * needs to survive until the folio is last deleted from the LRU, which
+>   * could be as far down as __page_cache_release.
+> + *
+> + * Return: An integer (not a boolean!) used to sort a folio onto the
+> + * right LRU list and to account folios correctly.
+> + * 1 if @folio is a regular filesystem backed page cache folio
+> + * or a lazily freed anonymous folio (e.g. via MADV_FREE).
+> + * 0 if @folio is a normal anonymous folio, a tmpfs folio or otherwise
+> + * ram or swap backed folio.
+>   */
+> 
+> I wanted to turn those last two sentences into a list, but my
+> kernel-doc-fu abandoned me.  Feel free to submit a follow-on patch to
+> fix that ;-)
 
-The write path remains untouched since EROFS cannot be used for testing.
-It'd be better to be implemented if upcoming real users care rather than
-leave untested dead code around.
+Here it is ;-)
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Darrick J. Wong <djwong@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Feel free to fold it into the original commit if you'd like to.
+
+From 636d1715252f7bd1e87219797153b8baa28774af Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.ibm.com>
+Date: Wed, 21 Jul 2021 11:35:15 +0300
+Subject: [PATCH] mm/docs: folio_is_file_lru: make return description a list
+
+Reformat return value description of folio_is_file_lru() so that will be
+presented as a list in the generated output.
+
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
-v4: https://lore.kernel.org/r/20210720133554.44058-1-hsiangkao@linux.alibaba.com
-changes since v4:
- - turn to WARN_ON_ONCE() suggested by Darrick;
- - fix size to "min(iomap->length + iomap->offset - pos,
-                    PAGE_SIZE - poff)"
+ include/linux/mm_inline.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
- fs/iomap/buffered-io.c | 58 +++++++++++++++++++++++++++---------------
- fs/iomap/direct-io.c   | 13 +++++++---
- 2 files changed, 47 insertions(+), 24 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 87ccb3438bec..d8436d34a159 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -205,25 +205,27 @@ struct iomap_readpage_ctx {
- 	struct readahead_control *rac;
- };
- 
--static void
-+static int
- iomap_read_inline_data(struct inode *inode, struct page *page,
--		struct iomap *iomap)
-+		struct iomap *iomap, loff_t pos)
+diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
+index d39537c5471b..b263ac0a2c3a 100644
+--- a/include/linux/mm_inline.h
++++ b/include/linux/mm_inline.h
+@@ -15,10 +15,11 @@
+  *
+  * Return: An integer (not a boolean!) used to sort a folio onto the
+  * right LRU list and to account folios correctly.
+- * 1 if @folio is a regular filesystem backed page cache folio
+- * or a lazily freed anonymous folio (e.g. via MADV_FREE).
+- * 0 if @folio is a normal anonymous folio, a tmpfs folio or otherwise
+- * ram or swap backed folio.
++ *
++ * - 1 if @folio is a regular filesystem backed page cache folio
++ *   or a lazily freed anonymous folio (e.g. via MADV_FREE).
++ * - 0 if @folio is a normal anonymous folio, a tmpfs folio or otherwise
++ *   ram or swap backed folio.
+  */
+ static inline int folio_is_file_lru(struct folio *folio)
  {
--	size_t size = i_size_read(inode);
-+	unsigned int size, poff = offset_in_page(pos);
- 	void *addr;
- 
--	if (PageUptodate(page))
--		return;
--
--	BUG_ON(page_has_private(page));
--	BUG_ON(page->index);
--	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
-+	/* inline source data must be inside a single page */
-+	if (WARN_ON_ONCE(iomap->length > PAGE_SIZE -
-+			 offset_in_page(iomap->inline_data)))
-+		return -EIO;
-+	/* handle tail-packing blocks cross the current page into the next */
-+	size = min_t(unsigned int, iomap->length + iomap->offset - pos,
-+		     PAGE_SIZE - poff);
- 
- 	addr = kmap_atomic(page);
--	memcpy(addr, iomap->inline_data, size);
--	memset(addr + size, 0, PAGE_SIZE - size);
-+	memcpy(addr + poff, iomap->inline_data - iomap->offset + pos, size);
-+	memset(addr + poff + size, 0, PAGE_SIZE - poff - size);
- 	kunmap_atomic(addr);
--	SetPageUptodate(page);
-+	iomap_set_range_uptodate(page, poff, PAGE_SIZE - poff);
-+	return PAGE_SIZE - poff;
- }
- 
- static inline bool iomap_block_needs_zeroing(struct inode *inode,
-@@ -245,19 +247,23 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 	loff_t orig_pos = pos;
- 	unsigned poff, plen;
- 	sector_t sector;
-+	int ret;
- 
--	if (iomap->type == IOMAP_INLINE) {
--		WARN_ON_ONCE(pos);
--		iomap_read_inline_data(inode, page, iomap);
--		return PAGE_SIZE;
--	}
--
--	/* zero post-eof blocks as the page may be mapped */
- 	iop = iomap_page_create(inode, page);
-+	/* needs to skip some leading uptodate blocks */
- 	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
- 	if (plen == 0)
- 		goto done;
- 
-+	if (iomap->type == IOMAP_INLINE) {
-+		ret = iomap_read_inline_data(inode, page, iomap, pos);
-+		if (ret < 0)
-+			return ret;
-+		plen = ret;
-+		goto done;
-+	}
-+
-+	/* zero post-eof blocks as the page may be mapped */
- 	if (iomap_block_needs_zeroing(inode, iomap, pos)) {
- 		zero_user(page, poff, plen);
- 		iomap_set_range_uptodate(page, poff, plen);
-@@ -589,6 +595,18 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
- 	return 0;
- }
- 
-+static int iomap_write_begin_inline(struct inode *inode, loff_t pos,
-+		struct page *page, struct iomap *srcmap)
-+{
-+	/* needs more work for the tailpacking case, disable for now */
-+	if (WARN_ON_ONCE(srcmap->offset != 0))
-+		return -EIO;
-+	if (PageUptodate(page))
-+		return 0;
-+	iomap_read_inline_data(inode, page, srcmap, 0);
-+	return 0;
-+}
-+
- static int
- iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
- 		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
-@@ -618,7 +636,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
- 	}
- 
- 	if (srcmap->type == IOMAP_INLINE)
--		iomap_read_inline_data(inode, page, srcmap);
-+		status = iomap_write_begin_inline(inode, pos, page, srcmap);
- 	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
- 		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
- 	else
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 9398b8c31323..cbadb99fb88c 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -379,22 +379,27 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
- {
- 	struct iov_iter *iter = dio->submit.iter;
- 	size_t copied;
-+	void *dst = iomap->inline_data + pos - iomap->offset;
- 
--	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
-+	/* inline data must be inside a single page */
-+	if (WARN_ON_ONCE(length > PAGE_SIZE -
-+			 offset_in_page(iomap->inline_data)))
-+		return -EIO;
- 
- 	if (dio->flags & IOMAP_DIO_WRITE) {
- 		loff_t size = inode->i_size;
- 
- 		if (pos > size)
--			memset(iomap->inline_data + size, 0, pos - size);
--		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
-+			memset(iomap->inline_data + size - iomap->offset,
-+			       0, pos - size);
-+		copied = copy_from_iter(dst, length, iter);
- 		if (copied) {
- 			if (pos + copied > size)
- 				i_size_write(inode, pos + copied);
- 			mark_inode_dirty(inode);
- 		}
- 	} else {
--		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
-+		copied = copy_to_iter(dst, length, iter);
- 	}
- 	dio->size += copied;
- 	return copied;
 -- 
-2.24.4
+2.31.1
 
+-- 
+Sincerely yours,
+Mike.
