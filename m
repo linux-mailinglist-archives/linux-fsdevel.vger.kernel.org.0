@@ -2,115 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A70D93D117C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E79D73D118A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:40:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239114AbhGUNzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 09:55:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231139AbhGUNzi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 09:55:38 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C1C1D6121F;
-        Wed, 21 Jul 2021 14:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626878174;
-        bh=OoSIb5rdAAyByaIH7juDwMpDP+yfFGAa/j+nu8lp9ZA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LU8Bd2+gTsPqudTVI86lm3Oh/Qzy07FrWI+64sn8Kx1kZwH3mcW+yyRDK65iO2SUF
-         bCZgf1XqQMgHdpn1+VUN3LbvMkivGTSjApejKMjMpIm7059FVpFgyMpGd7vKdrld6n
-         +TV3al+pid0aP/b6/Vyw2Q/Nn0B2+aROfZRqmAYpCMNC0CtBk+oc0TJO3dhRUbaOBK
-         vThI48NXQuOLknNVAX3MZ/jWLR+ZUHWkJEIyS1vHFF9IWy6/OKzBGPbWwFDNO39jLR
-         xZjGxD/IEQjnqpT8iFblS+y/59EIaFKnF3/JDGsqwg+0/bSS3Wb2C9HaruyUftPxOh
-         RwJKhAm3Vfv5w==
-Date:   Wed, 21 Jul 2021 17:36:08 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v14 011/138] mm/lru: Add folio LRU functions
-Message-ID: <YPgw2AVMuK2YkCIT@kernel.org>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-12-willy@infradead.org>
- <YPao+syEWXGhDxay@kernel.org>
- <YPedzMQi+h/q0sRU@casper.infradead.org>
- <YPfdM9dLEsFXZJgf@kernel.org>
- <YPgDne2ORs+tJsk2@casper.infradead.org>
+        id S238110AbhGUN74 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 09:59:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37259 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232976AbhGUN7z (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Jul 2021 09:59:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626878431;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pe6IL0lY4+BmYk7TYzqnbY5CUvQ+ZXsB2yM3wwA1rMA=;
+        b=ELU0aiSBJH/lR0dvWu/84JthV7wm2YylNNT7BWC8rurZeqCNt/f+VQCyPL1bST+cAw1d/w
+        6ZyZ1rQHmuxTnoIsCTbU+tycqPy7obb/2bTrOuAyThLWlCqoypQLSmrPsHdRzH3JqSSii5
+        XTnDIbB6aMXK11FKnZjpB+TjVTm4Qxs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-233-nUsPwB42Mn-jARrDsSXGXw-1; Wed, 21 Jul 2021 10:40:30 -0400
+X-MC-Unique: nUsPwB42Mn-jARrDsSXGXw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 386F564ADA;
+        Wed, 21 Jul 2021 14:40:29 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.17.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CB37A5C1BB;
+        Wed, 21 Jul 2021 14:40:23 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 3514C223E70; Wed, 21 Jul 2021 10:40:23 -0400 (EDT)
+Date:   Wed, 21 Jul 2021 10:40:23 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     stefanha@redhat.com, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 3/4] fuse: add per-file DAX flag
+Message-ID: <YPgx10F0ZMDnhGex@redhat.com>
+References: <20210716104753.74377-1-jefflexu@linux.alibaba.com>
+ <20210716104753.74377-4-jefflexu@linux.alibaba.com>
+ <YPXWA+Uo5vFuHCH0@redhat.com>
+ <61bca75f-2efa-f032-41d6-fcb525d8b528@linux.alibaba.com>
+ <YPcjlN1ThL4UX8dn@redhat.com>
+ <0ad3b5d2-3d19-a33b-7841-1912ea30c081@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPgDne2ORs+tJsk2@casper.infradead.org>
+In-Reply-To: <0ad3b5d2-3d19-a33b-7841-1912ea30c081@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 12:23:09PM +0100, Matthew Wilcox wrote:
-> On Wed, Jul 21, 2021 at 11:39:15AM +0300, Mike Rapoport wrote:
-> > On Wed, Jul 21, 2021 at 05:08:44AM +0100, Matthew Wilcox wrote:
-> > > I wanted to turn those last two sentences into a list, but my
-> > > kernel-doc-fu abandoned me.  Feel free to submit a follow-on patch to
-> > > fix that ;-)
+On Wed, Jul 21, 2021 at 10:14:44PM +0800, JeffleXu wrote:
+[..]
+> > Also, please copy virtiofs list (virtio-fs@redhat.com) when you post
+> > patches next time.
 > > 
-> > Here it is ;-)
 > 
-> Did you try it?  Here's what that turns into with htmldoc:
+> Got it. By the way, what's the git repository of virtiofsd? AFAIK,
+> virtiofsd included in qemu (git@github.com:qemu/qemu.git) doesn't
+> support DAX yet?
 
-Yes, but I was so happy to see bullets that I missed the fact they are in
-the wrong section :(
- 
-> Description
-> 
-> We would like to get this info without a page flag, but the state needs
-> to survive until the folio is last deleted from the LRU, which could be
-> as far down as __page_cache_release.
-> 
->  * 1 if folio is a regular filesystem backed page cache folio or a
->    lazily freed anonymous folio (e.g. via MADV_FREE).
->  * 0 if folio is a normal anonymous folio, a tmpfs folio or otherwise
->    ram or swap backed folio.
-> 
-> Return
-> 
-> An integer (not a boolean!) used to sort a folio onto the right LRU list
-> and to account folios correctly.
-> 
-> Yes, we get a bulleted list, but it's placed in the wrong section!
-> 
-> Adding linux-doc for additional insight into this problem.
-> For their reference, here's the input:
->
-> /**
->  * folio_is_file_lru - Should the folio be on a file LRU or anon LRU?
->  * @folio: The folio to test.
->  *
->  * We would like to get this info without a page flag, but the state
->  * needs to survive until the folio is last deleted from the LRU, which
->  * could be as far down as __page_cache_release.
->  *
->  * Return: An integer (not a boolean!) used to sort a folio onto the
->  * right LRU list and to account folios correctly.
->  *
->  * - 1 if @folio is a regular filesystem backed page cache folio
->  *   or a lazily freed anonymous folio (e.g. via MADV_FREE).
->  * - 0 if @folio is a normal anonymous folio, a tmpfs folio or otherwise
->  *   ram or swap backed folio.
->  */
-> static inline int folio_is_file_lru(struct folio *folio)
+Yes virtiofsd got merged in qemu upstream. And it does not support dax
+yet. David is still sorting out couple of issues based on feedback. I
+think following is the branch where he had pushed his latest patches.
 
-Hmm, there is some contradiction between kernel-doc assumption that
-anything after a blank line is the default (i.e. Description) section and
-the sphynx ideas where empty blank lines should be:
+https://gitlab.com/virtio-fs/qemu/-/tree/virtio-fs-dev
 
+David, please correct me if that's not the case.
 
-	if ($state == STATE_BODY_WITH_BLANK_LINE && /^\s*\*\s?\S/) {
-		dump_section($file, $section, $contents);
-		$section = $section_default;
-		$new_start_line = $.;
-		$contents = "";
-	}
+Vivek
 
-(from scripts/kernel-doc::process_body())
-
--- 
-Sincerely yours,
-Mike.
