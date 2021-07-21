@@ -2,81 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E79D73D118A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED4F33D118C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 16:41:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238110AbhGUN74 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 09:59:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37259 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232976AbhGUN7z (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 09:59:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626878431;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pe6IL0lY4+BmYk7TYzqnbY5CUvQ+ZXsB2yM3wwA1rMA=;
-        b=ELU0aiSBJH/lR0dvWu/84JthV7wm2YylNNT7BWC8rurZeqCNt/f+VQCyPL1bST+cAw1d/w
-        6ZyZ1rQHmuxTnoIsCTbU+tycqPy7obb/2bTrOuAyThLWlCqoypQLSmrPsHdRzH3JqSSii5
-        XTnDIbB6aMXK11FKnZjpB+TjVTm4Qxs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-233-nUsPwB42Mn-jARrDsSXGXw-1; Wed, 21 Jul 2021 10:40:30 -0400
-X-MC-Unique: nUsPwB42Mn-jARrDsSXGXw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 386F564ADA;
-        Wed, 21 Jul 2021 14:40:29 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CB37A5C1BB;
-        Wed, 21 Jul 2021 14:40:23 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 3514C223E70; Wed, 21 Jul 2021 10:40:23 -0400 (EDT)
-Date:   Wed, 21 Jul 2021 10:40:23 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 3/4] fuse: add per-file DAX flag
-Message-ID: <YPgx10F0ZMDnhGex@redhat.com>
-References: <20210716104753.74377-1-jefflexu@linux.alibaba.com>
- <20210716104753.74377-4-jefflexu@linux.alibaba.com>
- <YPXWA+Uo5vFuHCH0@redhat.com>
- <61bca75f-2efa-f032-41d6-fcb525d8b528@linux.alibaba.com>
- <YPcjlN1ThL4UX8dn@redhat.com>
- <0ad3b5d2-3d19-a33b-7841-1912ea30c081@linux.alibaba.com>
+        id S238644AbhGUOAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 10:00:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53360 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232937AbhGUOAj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Jul 2021 10:00:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C5B8A608FE;
+        Wed, 21 Jul 2021 14:41:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626878475;
+        bh=tjvEDndwlqVC8D5pilgd6nm+94RRJ1oxz9bJvd0cl40=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RuZMi6fJEhdOKhGCC2OF//03EYGnY0M2mu6VYbhx2NB/55HaBUDY6irzSN1a8b6Bq
+         5ClVFbJuNzSBtLQDibHKvcjq77579AI4Ig0faWL/zdhmBE8DOdLpgMLlsGopss8GzL
+         yDd0BzER9ZGkq3oG+WzcKiAf9zX0s7Sb8HDEu2xte9Z1JiBmCyLaHJM+/OQVO3LCiM
+         TZ+udFqK1PVOyS887uMFAse0bfeUEX/ZHkZ0Gi6DuRVEyoJjkXB6PpdYpTgami1rpZ
+         2mC6ftkay+45+lBeE6WOcEApyaYJVBZaLrntevRVIHv9JNghcplSOmW0DR9JAe4ovr
+         EGUTWFXIZdlcw==
+Date:   Wed, 21 Jul 2021 07:41:14 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH v14 002/138] mm: Introduce struct folio
+Message-ID: <20210721144114.GA8572@magnolia>
+References: <20210715033704.692967-1-willy@infradead.org>
+ <20210715033704.692967-3-willy@infradead.org>
+ <YPaoBcXmrLv7zpD2@kernel.org>
+ <YPeXrDf2RRJmXMFM@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0ad3b5d2-3d19-a33b-7841-1912ea30c081@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <YPeXrDf2RRJmXMFM@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 10:14:44PM +0800, JeffleXu wrote:
-[..]
-> > Also, please copy virtiofs list (virtio-fs@redhat.com) when you post
-> > patches next time.
+On Wed, Jul 21, 2021 at 04:42:36AM +0100, Matthew Wilcox wrote:
+> On Tue, Jul 20, 2021 at 01:40:05PM +0300, Mike Rapoport wrote:
+> > > +/**
+> > > + * folio_shift - The number of bits covered by this folio.
 > > 
+> > For me this sounds like the size of the folio in bits.
+> > Maybe just repeat "The base-2 logarithm of the size of this folio" here and
+> > in return description?
+> > 
+> > > + * @folio: The folio.
+> > > + *
+> > > + * A folio contains a number of bytes which is a power-of-two in size.
+> > > + * This function tells you which power-of-two the folio is.
+> > > + *
+> > > + * Context: The caller should have a reference on the folio to prevent
+> > > + * it from being split.  It is not necessary for the folio to be locked.
+> > > + * Return: The base-2 logarithm of the size of this folio.
+> > > + */
 > 
-> Got it. By the way, what's the git repository of virtiofsd? AFAIK,
-> virtiofsd included in qemu (git@github.com:qemu/qemu.git) doesn't
-> support DAX yet?
+> I've gone with:
+> 
+>  /**
+> - * folio_shift - The number of bits covered by this folio.
+> + * folio_shift - The size of the memory described by this folio.
+>   * @folio: The folio.
+>   *
+> - * A folio contains a number of bytes which is a power-of-two in size.
+> - * This function tells you which power-of-two the folio is.
+> + * A folio represents a number of bytes which is a power-of-two in size.
+> + * This function tells you which power-of-two the folio is.  See also
+> + * folio_size() and folio_order().
+>   *
+>   * Context: The caller should have a reference on the folio to prevent
+>   * it from being split.  It is not necessary for the folio to be locked.
+> 
 
-Yes virtiofsd got merged in qemu upstream. And it does not support dax
-yet. David is still sorting out couple of issues based on feedback. I
-think following is the branch where he had pushed his latest patches.
+I like it. :)
 
-https://gitlab.com/virtio-fs/qemu/-/tree/virtio-fs-dev
-
-David, please correct me if that's not the case.
-
-Vivek
-
+--D
