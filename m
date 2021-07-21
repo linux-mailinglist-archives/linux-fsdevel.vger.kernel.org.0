@@ -2,505 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FB543D14E6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 19:14:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6D033D14EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 19:17:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232733AbhGUQdp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 12:33:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38256 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbhGUQdp (ORCPT
+        id S234515AbhGUQgY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 12:36:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46967 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233203AbhGUQgX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 12:33:45 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ECF7C061575;
-        Wed, 21 Jul 2021 10:14:19 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id r132so4259303yba.5;
-        Wed, 21 Jul 2021 10:14:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=k4n5HTR41bwQP/gHCh2Uj1KAz797nFkzDOjHQZkjrx4=;
-        b=dNyOYCTt0OJ3PmqENI7eKfLJqW53MQRXX/iFyGb1VPm6Jse2JtGfL9IzHayEy6Z8s+
-         ihHN05Uyfit86CqC/c6jeIyMtrj27Vvmz88cosDkZwl8duzHWqFjvTaTYcZTxAY7Wk/y
-         vN0GSusviE7WclR8dinYtcz912DqewMq4SPZkSWIGMRlhkdTXe7PF8dZVgZyShXFBlyW
-         9y5ziqJxwF7O4VhSbefPo6TelmIwtEfhN+AJmnyS2mn8jq2qqZ7vzr2xOrwRzgbgedrf
-         fuo7kx3YlhAxiAm9YHcXlEDFMY5c1b0vTVGPBs8wvaniTNrPV+YP5+YFQVwuP3PdarIY
-         5muQ==
+        Wed, 21 Jul 2021 12:36:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626887819;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=45Nv4CwiblR8FGtkBjhkDjeZeYsNgqMrzsXCoaXKlcs=;
+        b=gDWcy8NIxe9/V5FcdM8+kT/08r4yHl8432TqZdmla7z84fBUmQBH6cH8mN6DfIR1z9k8PE
+        XVev+sv0Ic3drn0kX9b6FwCkwrPz8q05dm7e/HNFAFgu3mVaLhCbY5h099tBUn7xofH6S0
+        G+gzCb8rtxIM4etdXIHnH3RSkpBJP8E=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-163-XEpUNNbmPeyFodDvPhFQxA-1; Wed, 21 Jul 2021 13:16:58 -0400
+X-MC-Unique: XEpUNNbmPeyFodDvPhFQxA-1
+Received: by mail-qv1-f70.google.com with SMTP id l4-20020a0ce0840000b02902cec39ab618so2012073qvk.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jul 2021 10:16:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=k4n5HTR41bwQP/gHCh2Uj1KAz797nFkzDOjHQZkjrx4=;
-        b=JEudp7Ophmyf+f7wnkW7H8D7az61Oa449BRn0QXAuHRL42UoZL4/Fxp9mDUWVWdgb4
-         q3iM50Eftuk+UIBlTquCUhV5T7bfhny5rhCpijwHND5MAWSJxo6h0ZLLiIkVCRjovzHN
-         En0uZj8O5kIKbLr1F6zKKYNg52XFk4Lj4pwVi28l8+y8/GmPKIIuObf9nHS8Iv2u4co5
-         clfAnGHqQXhQy0jXpcJmBsl+ZIUwa6IQUliNCroGWPLwhVZDCtpqSgltggEb6PCrP4ny
-         7/a2gJ8UIYov+vXzqAhy3HhRfesS2lSry6ImQmeAKRrp/Hil6QeDDnllXik4A1Ni+lMR
-         vLYA==
-X-Gm-Message-State: AOAM530PSooBI7zuZFX5cFN1BpYqm/a6yeSj2l97dRzQMINgY+UawQYp
-        HfAOC+pytRY7pQ7USLCe4EpsHPfbhvSpHd9nv/RW0AJ9Epk=
-X-Google-Smtp-Source: ABdhPJx1hSI+Y9hRS2MZyF2dLbdW84YCmmwk63SOuqWAiyTFM0gxKWlUQ6yJFfFtfuFohqXVZmMZm2HtXeYk5y0BjnI=
-X-Received: by 2002:a25:2e49:: with SMTP id b9mr48846175ybn.250.1626887656389;
- Wed, 21 Jul 2021 10:14:16 -0700 (PDT)
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=45Nv4CwiblR8FGtkBjhkDjeZeYsNgqMrzsXCoaXKlcs=;
+        b=sCNw8rGqLAF7Fl9x+t9pkgdfiuflOIDbT/6XQz2k3bv4MbfNOtPoqveggw3hBpG2aJ
+         u7lmwlt3ExR/XhpAVweGxe6MJzNKsERoDtQNvGp0tQvLTSDDHdymuIValiRDgcggpJcJ
+         Ma1CkmnIwTE9XpLcl+ii6aDMWJcOLs0iupL9FmEA6kDbo5ZhFVNLVoZxuTHmLehmU4sZ
+         0fO8v7MP2UhrwD6Wj9QZQlE/G/u1JbkRpA7R3sp/bMnQPWrn5af5r8NVtsa04xiJW5bU
+         mCIEOuesnRTtw+YAyRLY9joLaysa/hAlqFVN9ih7pYTxF9dS/8eZKTtLAhWiaOJs8UFL
+         L+Ew==
+X-Gm-Message-State: AOAM531ggCj1XKaEBwrOdgEs7RSlWrrFGmO9vXD+8SERoltBvxR6l2RE
+        EggqL/MZ+CENIQXnB+eTJ7oUwCxeLiTXxN7mNwEMxZK48uSasfio/UWa0WACr5CpQKIMrpHZMH8
+        0GvsobOdot9GFMCY58xssLzj2LQ==
+X-Received: by 2002:ad4:45a6:: with SMTP id y6mr36933564qvu.1.1626887817698;
+        Wed, 21 Jul 2021 10:16:57 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwroCy17a7YpgGcviCUSg3J+GVy+n4E5MAqofjS2RsLBi/0nF/2omAf2j+swlCqTU83eT+04Q==
+X-Received: by 2002:ad4:45a6:: with SMTP id y6mr36933536qvu.1.1626887817521;
+        Wed, 21 Jul 2021 10:16:57 -0700 (PDT)
+Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id t6sm1744741qkg.75.2021.07.21.10.16.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jul 2021 10:16:57 -0700 (PDT)
+Message-ID: <0555748529d483fb9b69eceb56bf9ebc1efceaf1.camel@redhat.com>
+Subject: Re: [RFC PATCH 02/12] netfs: Add an iov_iter to the read subreq for
+ the network fs/cache to use
+From:   Jeff Layton <jlayton@redhat.com>
+To:     David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 21 Jul 2021 13:16:56 -0400
+In-Reply-To: <162687509306.276387.7579641363406546284.stgit@warthog.procyon.org.uk>
+References: <162687506932.276387.14456718890524355509.stgit@warthog.procyon.org.uk>
+         <162687509306.276387.7579641363406546284.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
 MIME-Version: 1.0
-From:   butt3rflyh4ck <butterflyhuangxx@gmail.com>
-Date:   Thu, 22 Jul 2021 01:14:06 +0800
-Message-ID: <CAFcO6XOdMe-RgN8MCUT59cYEVBp+3VYTW-exzxhKdBk57q0GYw@mail.gmail.com>
-Subject: A shift-out-of-bounds in minix_statfs in fs/minix/inode.c
-To:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: multipart/mixed; boundary="000000000000f36eb305c7a54c80"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000f36eb305c7a54c80
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2021-07-21 at 14:44 +0100, David Howells wrote:
+> Add an iov_iter to the read subrequest and set it up to define the
+> destination buffer to write into.  This will allow future patches to point
+> to a bounce buffer instead for purposes of handling oversize writes,
+> decryption (where we want to save the encrypted data to the cache) and
+> decompression.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+> 
+>  fs/afs/file.c          |    6 +-----
+>  fs/netfs/read_helper.c |    5 ++++-
+>  include/linux/netfs.h  |    2 ++
+>  3 files changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/afs/file.c b/fs/afs/file.c
+> index c9c21ad0e7c9..ca529f23515a 100644
+> --- a/fs/afs/file.c
+> +++ b/fs/afs/file.c
+> @@ -319,11 +319,7 @@ static void afs_req_issue_op(struct netfs_read_subrequest *subreq)
+>  	fsreq->len	= subreq->len   - subreq->transferred;
+>  	fsreq->key	= subreq->rreq->netfs_priv;
+>  	fsreq->vnode	= vnode;
+> -	fsreq->iter	= &fsreq->def_iter;
+> -
+> -	iov_iter_xarray(&fsreq->def_iter, READ,
+> -			&fsreq->vnode->vfs_inode.i_mapping->i_pages,
+> -			fsreq->pos, fsreq->len);
+> +	fsreq->iter	= &subreq->iter;
+>  
+>  	afs_fetch_data(fsreq->vnode, fsreq);
+>  }
+> diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+> index 0b6cd3b8734c..715f3e9c380d 100644
+> --- a/fs/netfs/read_helper.c
+> +++ b/fs/netfs/read_helper.c
+> @@ -150,7 +150,7 @@ static void netfs_clear_unread(struct netfs_read_subrequest *subreq)
+>  {
+>  	struct iov_iter iter;
+>  
+> -	iov_iter_xarray(&iter, WRITE, &subreq->rreq->mapping->i_pages,
+> +	iov_iter_xarray(&iter, READ, &subreq->rreq->mapping->i_pages,
 
-Hi, there was a shift-out-bounds bug in minix_statfs in
-fs/minix/inode.c founded by my custom syzkaller and reproduced in
-linux-5.13.0-rc6+.
+What's up with the WRITE -> READ change here? Was that a preexisting
+bug?
 
-####
-Simply analyze the vulnerability principle, First, mount a minix file
-system by minix_fill_super() and initialize some custom basic data.
+>  			subreq->start + subreq->transferred,
+>  			subreq->len   - subreq->transferred);
+>  	iov_iter_zero(iov_iter_count(&iter), &iter);
+> @@ -745,6 +745,9 @@ netfs_rreq_prepare_read(struct netfs_read_request *rreq,
+>  	if (WARN_ON(subreq->len == 0))
+>  		source = NETFS_INVALID_READ;
+>  
+> +	iov_iter_xarray(&subreq->iter, READ, &rreq->mapping->i_pages,
+> +			subreq->start, subreq->len);
+> +
+>  out:
+>  	subreq->source = source;
+>  	trace_netfs_sreq(subreq, netfs_sreq_trace_prepare);
+> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+> index fe9887768292..5e4fafcc9480 100644
+> --- a/include/linux/netfs.h
+> +++ b/include/linux/netfs.h
+> @@ -17,6 +17,7 @@
+>  #include <linux/workqueue.h>
+>  #include <linux/fs.h>
+>  #include <linux/pagemap.h>
+> +#include <linux/uio.h>
+>  
+>  /*
+>   * Overload PG_private_2 to give us PG_fscache - this is used to indicate that
+> @@ -112,6 +113,7 @@ struct netfs_cache_resources {
+>  struct netfs_read_subrequest {
+>  	struct netfs_read_request *rreq;	/* Supervising read request */
+>  	struct list_head	rreq_link;	/* Link in rreq->subrequests */
+> +	struct iov_iter		iter;		/* Iterator for this subrequest */
+>  	loff_t			start;		/* Where to start the I/O */
+>  	size_t			len;		/* Size of the I/O */
+>  	size_t			transferred;	/* Amount of data transferred */
+> 
+> 
 
-the code is as follows:
-```
-static int minix_fill_super(struct super_block *s, void *data, int silent)
-{
-struct buffer_head *bh;
-struct buffer_head **map;
-struct minix_super_block *ms;
-struct minix3_super_block *m3s =3D NULL;
-unsigned long i, block;
-struct inode *root_inode;
-struct minix_sb_info *sbi;
-int ret =3D -EINVAL;
+-- 
+Jeff Layton <jlayton@redhat.com>
 
-sbi =3D kzalloc(sizeof(struct minix_sb_info), GFP_KERNEL);
-if (!sbi)
-return -ENOMEM;
-s->s_fs_info =3D sbi;
-
-BUILD_BUG_ON(32 !=3D sizeof (struct minix_inode));
-BUILD_BUG_ON(64 !=3D sizeof(struct minix2_inode));
-
-if (!sb_set_blocksize(s, BLOCK_SIZE))
-goto out_bad_hblock;
-
-if (!(bh =3D sb_bread(s, 1)))    /// -----------------> get
-minix_super_block's data from super_block
-goto out_bad_sb;
-
-ms =3D (struct minix_super_block *) bh->b_data; /// --------------> set
-minix_super_block pointer
-sbi->s_ms =3D ms;
-sbi->s_sbh =3D bh;
-sbi->s_mount_state =3D ms->s_state;
-sbi->s_ninodes =3D ms->s_ninodes;
-sbi->s_nzones =3D ms->s_nzones;
-sbi->s_imap_blocks =3D ms->s_imap_blocks;
-sbi->s_zmap_blocks =3D ms->s_zmap_blocks;
-sbi->s_firstdatazone =3D ms->s_firstdatazone;
-sbi->s_log_zone_size =3D ms->s_log_zone_size;  // ------------------>
-set sbi->s_log_zone_size
-s->s_maxbytes =3D ms->s_max_size;
-s->s_magic =3D ms->s_magic;
-```
-Set bh->b_data to sbi. Initialize minix_sb_info by minix_super_block =E2=80=
-=99s data
-
-After the file system is mounted, we can call the statfs syscall and
-it could invoke the minix_statfs function. the code is as follows:
-```
-static int minix_statfs(struct dentry *dentry, struct kstatfs *buf)
-{
-struct super_block *sb =3D dentry->d_sb;
-struct minix_sb_info *sbi =3D minix_sb(sb);
-u64 id =3D huge_encode_dev(sb->s_bdev->bd_dev);
-buf->f_type =3D sb->s_magic;
-buf->f_bsize =3D sb->s_blocksize;
-buf->f_blocks =3D (sbi->s_nzones - sbi->s_firstdatazone) <<
-sbi->s_log_zone_size;  // -----> shift left
-buf->f_bfree =3D minix_count_free_blocks(sb);
-buf->f_bavail =3D buf->f_bfree;
-buf->f_files =3D sbi->s_ninodes;
-buf->f_ffree =3D minix_count_free_inodes(sb);
-buf->f_namelen =3D sbi->s_namelen;
-buf->f_fsid =3D u64_to_fsid(id);
-
-return 0;
-}
-```
-if set sbi->s_log_zone_size as a lager num, the
-(sbi->s_nzones-sbi->s_firstdatazone) will be shift left out of bounds
-from the 64-bit type 'long unsigned int'.
-
-####
-crash logs is as follows:
-```
-[ 1512.826425][ T8010] loop0: detected capacity change from 0 to 16
-[ 1512.829202][ T8010]
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-[ 1512.830892][ T8010] UBSAN: shift-out-of-bounds in fs/minix/inode.c:380:5=
-7
-[ 1512.851019][ T8010] shift exponent 1024 is too large for 64-bit
-type 'long unsigned int'
-[ 1512.852875][ T8010] CPU: 0 PID: 8010 Comm: minix_statfs Not tainted
-5.13.0-rc6+ #21
-[ 1512.854333][ T8010] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS 1.13.0-1ubuntu1 04/01/2014
-[ 1512.856165][ T8010] Call Trace:
-[ 1512.856809][ T8010]  dump_stack+0x7f/0xad
-[ 1512.857629][ T8010]  ubsan_epilogue+0x5/0x40
-[ 1512.858417][ T8010]  __ubsan_handle_shift_out_of_bounds.cold+0x61/0x10e
-[ 1512.859634][ T8010]  ? __lock_acquire+0x3b6/0x2680
-[ 1512.860566][ T8010]  minix_statfs.cold+0x16/0x1f
-[ 1512.861453][ T8010]  statfs_by_dentry+0x48/0x70
-[ 1512.862314][ T8010]  vfs_statfs+0x11/0xc0
-[ 1512.863095][ T8010]  fd_statfs+0x29/0x60
-[ 1512.863860][ T8010]  __do_sys_fstatfs+0x20/0x50
-[ 1512.864733][ T8010]  do_syscall_64+0x3a/0xb0
-[ 1512.865820][ T8010]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-[ 1512.866948][ T8010] RIP: 0033:0x44e74d
-[ 1512.867804][ T8010] Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3
-0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b
-4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff 8
-[ 1512.871739][ T8010] RSP: 002b:00007ffe06c55808 EFLAGS: 00000217
-ORIG_RAX: 000000000000008a
-[ 1512.873195][ T8010] RAX: ffffffffffffffda RBX: 0000000000400530
-RCX: 000000000044e74d
-[ 1512.874585][ T8010] RDX: 000000000044d9f7 RSI: 0000000000000000
-RDI: 0000000000000005
-[ 1512.875939][ T8010] RBP: 00007ffe06c55820 R08: 00007ffe06c55664
-R09: 0000000000000000
-[ 1512.877284][ T8010] R10: 00007ffe06c556e0 R11: 0000000000000217
-R12: 0000000000403750
-[ 1512.878665][ T8010] R13: 0000000000000000 R14: 00000000004c6018
-R15: 0000000000000000
-[ 1512.881676][ T8010]
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-[ 1512.883289][ T8010] Kernel panic - not syncing: panic_on_warn set ...
-[ 1512.884457][ T8010] CPU: 0 PID: 8010 Comm: minix_statfs Not tainted
-5.13.0-rc6+ #21
-[ 1512.885851][ T8010] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS 1.13.0-1ubuntu1 04/01/2014
-[ 1512.887598][ T8010] Call Trace:
-[ 1512.888186][ T8010]  dump_stack+0x7f/0xad
-[ 1512.888935][ T8010]  panic+0x147/0x31a
-[ 1512.889623][ T8010]  ubsan_epilogue+0x3f/0x40
-[ 1512.890392][ T8010]  __ubsan_handle_shift_out_of_bounds.cold+0x61/0x10e
-[ 1512.891527][ T8010]  ? __lock_acquire+0x3b6/0x2680
-[ 1512.892353][ T8010]  minix_statfs.cold+0x16/0x1f
-[ 1512.893202][ T8010]  statfs_by_dentry+0x48/0x70
-[ 1512.894033][ T8010]  vfs_statfs+0x11/0xc0
-[ 1512.894759][ T8010]  fd_statfs+0x29/0x60
-[ 1512.895483][ T8010]  __do_sys_fstatfs+0x20/0x50
-[ 1512.896298][ T8010]  do_syscall_64+0x3a/0xb0
-[ 1512.897103][ T8010]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-[ 1512.898136][ T8010] RIP: 0033:0x44e74d
-[ 1512.898823][ T8010] Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3
-0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b
-4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff 8
-[ 1512.902284][ T8010] RSP: 002b:00007ffe06c55808 EFLAGS: 00000217
-ORIG_RAX: 000000000000008a
-[ 1512.903771][ T8010] RAX: ffffffffffffffda RBX: 0000000000400530
-RCX: 000000000044e74d
-[ 1512.905263][ T8010] RDX: 000000000044d9f7 RSI: 0000000000000000
-RDI: 0000000000000005
-[ 1512.906723][ T8010] RBP: 00007ffe06c55820 R08: 00007ffe06c55664
-R09: 0000000000000000
-[ 1512.908181][ T8010] R10: 00007ffe06c556e0 R11: 0000000000000217
-R12: 0000000000403750
-[ 1512.909661][ T8010] R13: 0000000000000000 R14: 00000000004c6018
-R15: 0000000000000000
-[ 1512.911356][ T8010] Kernel Offset: disabled
-[ 1512.912216][ T8010] Rebooting in 86400 seconds..
-```
-The attachment is a reproduction.
-
-
-Regards,
-    butt3rflyh4ck
-
---=20
-Active Defense Lab of Venustech
-
---000000000000f36eb305c7a54c80
-Content-Type: application/octet-stream; name="repro.cprog"
-Content-Disposition: attachment; filename="repro.cprog"
-Content-Transfer-Encoding: base64
-Content-ID: <f_krdqw2970>
-X-Attachment-Id: f_krdqw2970
-
-Ly8gYXV0b2dlbmVyYXRlZCBieSBzeXprYWxsZXIgKGh0dHBzOi8vZ2l0aHViLmNvbS9nb29nbGUv
-c3l6a2FsbGVyKQoKI2RlZmluZSBfR05VX1NPVVJDRSAKCiNpbmNsdWRlIDxlbmRpYW4uaD4KI2lu
-Y2x1ZGUgPGVycm5vLmg+CiNpbmNsdWRlIDxmY250bC5oPgojaW5jbHVkZSA8c3RkZGVmLmg+CiNp
-bmNsdWRlIDxzdGRpbnQuaD4KI2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4K
-I2luY2x1ZGUgPHN0cmluZy5oPgojaW5jbHVkZSA8c3lzL2lvY3RsLmg+CiNpbmNsdWRlIDxzeXMv
-bW91bnQuaD4KI2luY2x1ZGUgPHN5cy9zdGF0Lmg+CiNpbmNsdWRlIDxzeXMvc3lzY2FsbC5oPgoj
-aW5jbHVkZSA8c3lzL3R5cGVzLmg+CiNpbmNsdWRlIDx1bmlzdGQuaD4KCiNpbmNsdWRlIDxsaW51
-eC9sb29wLmg+CgpzdGF0aWMgdW5zaWduZWQgbG9uZyBsb25nIHByb2NpZDsKCnN0cnVjdCBmc19p
-bWFnZV9zZWdtZW50IHsKCXZvaWQqIGRhdGE7Cgl1aW50cHRyX3Qgc2l6ZTsKCXVpbnRwdHJfdCBv
-ZmZzZXQ7Cn07CgojZGVmaW5lIElNQUdFX01BWF9TRUdNRU5UUyA0MDk2CiNkZWZpbmUgSU1BR0Vf
-TUFYX1NJWkUgKDEyOSA8PCAyMCkKCiNkZWZpbmUgc3lzX21lbWZkX2NyZWF0ZSAzMTkKCnN0YXRp
-YyB1bnNpZ25lZCBsb25nIGZzX2ltYWdlX3NlZ21lbnRfY2hlY2sodW5zaWduZWQgbG9uZyBzaXpl
-LCB1bnNpZ25lZCBsb25nIG5zZWdzLCBzdHJ1Y3QgZnNfaW1hZ2Vfc2VnbWVudCogc2VncykKewoJ
-aWYgKG5zZWdzID4gSU1BR0VfTUFYX1NFR01FTlRTKQoJCW5zZWdzID0gSU1BR0VfTUFYX1NFR01F
-TlRTOwoJZm9yIChzaXplX3QgaSA9IDA7IGkgPCBuc2VnczsgaSsrKSB7CgkJaWYgKHNlZ3NbaV0u
-c2l6ZSA+IElNQUdFX01BWF9TSVpFKQoJCQlzZWdzW2ldLnNpemUgPSBJTUFHRV9NQVhfU0laRTsK
-CQlzZWdzW2ldLm9mZnNldCAlPSBJTUFHRV9NQVhfU0laRTsKCQlpZiAoc2Vnc1tpXS5vZmZzZXQg
-PiBJTUFHRV9NQVhfU0laRSAtIHNlZ3NbaV0uc2l6ZSkKCQkJc2Vnc1tpXS5vZmZzZXQgPSBJTUFH
-RV9NQVhfU0laRSAtIHNlZ3NbaV0uc2l6ZTsKCQlpZiAoc2l6ZSA8IHNlZ3NbaV0ub2Zmc2V0ICsg
-c2Vnc1tpXS5vZmZzZXQpCgkJCXNpemUgPSBzZWdzW2ldLm9mZnNldCArIHNlZ3NbaV0ub2Zmc2V0
-OwoJfQoJaWYgKHNpemUgPiBJTUFHRV9NQVhfU0laRSkKCQlzaXplID0gSU1BR0VfTUFYX1NJWkU7
-CglyZXR1cm4gc2l6ZTsKfQpzdGF0aWMgaW50IHNldHVwX2xvb3BfZGV2aWNlKGxvbmcgdW5zaWdu
-ZWQgc2l6ZSwgbG9uZyB1bnNpZ25lZCBuc2Vncywgc3RydWN0IGZzX2ltYWdlX3NlZ21lbnQqIHNl
-Z3MsIGNvbnN0IGNoYXIqIGxvb3BuYW1lLCBpbnQqIG1lbWZkX3AsIGludCogbG9vcGZkX3ApCnsK
-CWludCBlcnIgPSAwLCBsb29wZmQgPSAtMTsKCXNpemUgPSBmc19pbWFnZV9zZWdtZW50X2NoZWNr
-KHNpemUsIG5zZWdzLCBzZWdzKTsKCWludCBtZW1mZCA9IHN5c2NhbGwoc3lzX21lbWZkX2NyZWF0
-ZSwgInN5emthbGxlciIsIDApOwoJaWYgKG1lbWZkID09IC0xKSB7CgkJZXJyID0gZXJybm87CgkJ
-Z290byBlcnJvcjsKCX0KCWlmIChmdHJ1bmNhdGUobWVtZmQsIHNpemUpKSB7CgkJZXJyID0gZXJy
-bm87CgkJZ290byBlcnJvcl9jbG9zZV9tZW1mZDsKCX0KCWZvciAoc2l6ZV90IGkgPSAwOyBpIDwg
-bnNlZ3M7IGkrKykgewoJCWlmIChwd3JpdGUobWVtZmQsIHNlZ3NbaV0uZGF0YSwgc2Vnc1tpXS5z
-aXplLCBzZWdzW2ldLm9mZnNldCkgPCAwKSB7CgkJfQoJfQoJbG9vcGZkID0gb3Blbihsb29wbmFt
-ZSwgT19SRFdSKTsKCWlmIChsb29wZmQgPT0gLTEpIHsKCQllcnIgPSBlcnJubzsKCQlnb3RvIGVy
-cm9yX2Nsb3NlX21lbWZkOwoJfQoJaWYgKGlvY3RsKGxvb3BmZCwgTE9PUF9TRVRfRkQsIG1lbWZk
-KSkgewoJCWlmIChlcnJubyAhPSBFQlVTWSkgewoJCQllcnIgPSBlcnJubzsKCQkJZ290byBlcnJv
-cl9jbG9zZV9sb29wOwoJCX0KCQlpb2N0bChsb29wZmQsIExPT1BfQ0xSX0ZELCAwKTsKCQl1c2xl
-ZXAoMTAwMCk7CgkJaWYgKGlvY3RsKGxvb3BmZCwgTE9PUF9TRVRfRkQsIG1lbWZkKSkgewoJCQll
-cnIgPSBlcnJubzsKCQkJZ290byBlcnJvcl9jbG9zZV9sb29wOwoJCX0KCX0KCSptZW1mZF9wID0g
-bWVtZmQ7CgkqbG9vcGZkX3AgPSBsb29wZmQ7CglyZXR1cm4gMDsKCmVycm9yX2Nsb3NlX2xvb3A6
-CgljbG9zZShsb29wZmQpOwplcnJvcl9jbG9zZV9tZW1mZDoKCWNsb3NlKG1lbWZkKTsKZXJyb3I6
-CgllcnJubyA9IGVycjsKCXJldHVybiAtMTsKfQoKc3RhdGljIGxvbmcgc3l6X21vdW50X2ltYWdl
-KHZvbGF0aWxlIGxvbmcgZnNhcmcsIHZvbGF0aWxlIGxvbmcgZGlyLCB2b2xhdGlsZSB1bnNpZ25l
-ZCBsb25nIHNpemUsIHZvbGF0aWxlIHVuc2lnbmVkIGxvbmcgbnNlZ3MsIHZvbGF0aWxlIGxvbmcg
-c2VnbWVudHMsIHZvbGF0aWxlIGxvbmcgZmxhZ3MsIHZvbGF0aWxlIGxvbmcgb3B0c2FyZykKewoJ
-c3RydWN0IGZzX2ltYWdlX3NlZ21lbnQqIHNlZ3MgPSAoc3RydWN0IGZzX2ltYWdlX3NlZ21lbnQq
-KXNlZ21lbnRzOwoJaW50IHJlcyA9IC0xLCBlcnIgPSAwLCBsb29wZmQgPSAtMSwgbWVtZmQgPSAt
-MSwgbmVlZF9sb29wX2RldmljZSA9ICEhc2VnczsKCWNoYXIqIG1vdW50X29wdHMgPSAoY2hhciop
-b3B0c2FyZzsKCWNoYXIqIHRhcmdldCA9IChjaGFyKilkaXI7CgljaGFyKiBmcyA9IChjaGFyKilm
-c2FyZzsKCWNoYXIqIHNvdXJjZSA9IE5VTEw7CgljaGFyIGxvb3BuYW1lWzY0XTsKCWlmIChuZWVk
-X2xvb3BfZGV2aWNlKSB7CgkJbWVtc2V0KGxvb3BuYW1lLCAwLCBzaXplb2YobG9vcG5hbWUpKTsK
-CQlzbnByaW50Zihsb29wbmFtZSwgc2l6ZW9mKGxvb3BuYW1lKSwgIi9kZXYvbG9vcCVsbHUiLCBw
-cm9jaWQpOwoJCWlmIChzZXR1cF9sb29wX2RldmljZShzaXplLCBuc2Vncywgc2VncywgbG9vcG5h
-bWUsICZtZW1mZCwgJmxvb3BmZCkgPT0gLTEpCgkJCXJldHVybiAtMTsKCQlzb3VyY2UgPSBsb29w
-bmFtZTsKCX0KCW1rZGlyKHRhcmdldCwgMDc3Nyk7CgljaGFyIG9wdHNbMjU2XTsKCW1lbXNldChv
-cHRzLCAwLCBzaXplb2Yob3B0cykpOwoJaWYgKHN0cmxlbihtb3VudF9vcHRzKSA+IChzaXplb2Yo
-b3B0cykgLSAzMikpIHsKCX0KCXN0cm5jcHkob3B0cywgbW91bnRfb3B0cywgc2l6ZW9mKG9wdHMp
-IC0gMzIpOwoJaWYgKHN0cmNtcChmcywgImlzbzk2NjAiKSA9PSAwKSB7CgkJZmxhZ3MgfD0gTVNf
-UkRPTkxZOwoJfSBlbHNlIGlmIChzdHJuY21wKGZzLCAiZXh0IiwgMykgPT0gMCkgewoJCWlmIChz
-dHJzdHIob3B0cywgImVycm9ycz1wYW5pYyIpIHx8IHN0cnN0cihvcHRzLCAiZXJyb3JzPXJlbW91
-bnQtcm8iKSA9PSAwKQoJCQlzdHJjYXQob3B0cywgIixlcnJvcnM9Y29udGludWUiKTsKCX0gZWxz
-ZSBpZiAoc3RyY21wKGZzLCAieGZzIikgPT0gMCkgewoJCXN0cmNhdChvcHRzLCAiLG5vdXVpZCIp
-OwoJfQoJcmVzID0gbW91bnQoc291cmNlLCB0YXJnZXQsIGZzLCBmbGFncywgb3B0cyk7CglpZiAo
-cmVzID09IC0xKSB7CgkJZXJyID0gZXJybm87CgkJZ290byBlcnJvcl9jbGVhcl9sb29wOwoJfQoJ
-cmVzID0gb3Blbih0YXJnZXQsIE9fUkRPTkxZIHwgT19ESVJFQ1RPUlkpOwoJaWYgKHJlcyA9PSAt
-MSkgewoJCWVyciA9IGVycm5vOwoJfQoKZXJyb3JfY2xlYXJfbG9vcDoKCWlmIChuZWVkX2xvb3Bf
-ZGV2aWNlKSB7CgkJaW9jdGwobG9vcGZkLCBMT09QX0NMUl9GRCwgMCk7CgkJY2xvc2UobG9vcGZk
-KTsKCQljbG9zZShtZW1mZCk7Cgl9CgllcnJubyA9IGVycjsKCXJldHVybiByZXM7Cn0KCnVpbnQ2
-NF90IHJbMV0gPSB7MHhmZmZmZmZmZmZmZmZmZmZmfTsKCmludCBtYWluKHZvaWQpCnsKCQlzeXNj
-YWxsKF9fTlJfbW1hcCwgMHgxZmZmZjAwMHVsLCAweDEwMDB1bCwgMHVsLCAweDMydWwsIC0xLCAw
-dWwpOwoJc3lzY2FsbChfX05SX21tYXAsIDB4MjAwMDAwMDB1bCwgMHgxMDAwMDAwdWwsIDd1bCwg
-MHgzMnVsLCAtMSwgMHVsKTsKCXN5c2NhbGwoX19OUl9tbWFwLCAweDIxMDAwMDAwdWwsIDB4MTAw
-MHVsLCAwdWwsIDB4MzJ1bCwgLTEsIDB1bCk7CgkJCQlpbnRwdHJfdCByZXMgPSAwOwptZW1jcHko
-KHZvaWQqKTB4MjAwMDAwMDAsICJtaW5peFwwMDAiLCA2KTsKbWVtY3B5KCh2b2lkKikweDIwMDAw
-MTAwLCAiLi9maWxlMFwwMDAiLCA4KTsKKih1aW50NjRfdCopMHgyMDAwMDIwMCA9IDB4MjAwMDBl
-ODA7Cm1lbWNweSgodm9pZCopMHgyMDAwMGU4MCwgIlx4MTBceDAwXHgwMFx4MDBceDAwXHgwMFx4
-MDFceDAwXHgwMVx4MDBceDA1XHgwMCIsMTIpOwoKCQltZW1jcHkoKHZvaWQqKSgweDIwMDAwZTgw
-KzB4YyksIlx4MDBceDA0IiwyKTsvLyBzZXQgbWluaXhfc3VwZXJfYmxvY2stPnNfbG9nX3pvbmVf
-c2l6ZSBhcyAxMDI0CgkJCgkJbWVtY3B5KCh2b2lkKikoMHgyMDAwMGU4MCsweGMrMHgyKSwiXHgw
-MFx4MDBceGZmXHhmZlx4ZmZceDdmXHgyMFx4MDBceDAwXHgwMFx4NWFceDRkXHg0NFx4YjlceGFh
-XHg1OVx4YTBceDk1XHg1ZVx4MjJceDAzXHhiNFx4MTFceGFiXHhjY1x4MjhceDQ3XHhlN1x4ZjZc
-eDA5XHg3YVx4MTRceGQ1XHhlMVx4NTVceDU1XHhmOVx4YmRceDM2XHhkZFx4NmNceDVmXHgwNFx4
-MWVceDNjXHg3M1x4MGRceGQwXHg5YVx4ZGJceGU2XHgwM1x4ZGNceDM1XHgzNVx4NWJceDBiXHgy
-ZVx4NGNceDdmXHhhM1x4MjVceGZmXHhlMVx4ZjlceDU2XHhhOVx4MGRceGI3XHg0Ylx4NmRceDgz
-XHgwNFx4ZDFceGRkXHgzZVx4NmVceDA2XHg0MVx4NjJceDkxXHgzOFx4M2ZceGYyXHg0OFx4Yzhc
-eGI2XHgyOFx4ODVceDFhXHgyMFx4ODhceDk3XHhiN1x4YTFceDBmXHhkM1x4OWZceGViXHg5ZVx4
-NzJceDhhXHg4Nlx4ODBceDA5XHgwZFx4YjlceDFlXHg1NVx4MzBceGIwXHg1M1x4MTBceDJkXHg4
-N1x4YTNceDRlXHg2Nlx4ZTZceGZiXHg1Nlx4ZjRceDMwXHhkZFx4M2ZceDUzXHg5ZFx4ZmZceDIy
-XHgzMVx4YzNceGZhXHhiYlx4ZTFceGMzXHhjN1x4NzJceDdjXHgzOVx4ZGNceGFiXHhhYVx4MDNc
-eDk4XHgyNFx4ZDVceDQ3XHhmYlx4ODBceDhlXHhjOFx4ZGFceDI2XHhhMFx4NDZceGZlXHg1Mlx4
-MjJceDU5XHgyNlx4OTRceDNjXHgyMVx4NWFceGNmXHg4OFx4OTFceDFmXHg3MVx4MGJceGVlXHg1
-NFx4MjhceGVkXHhlN1x4N2VceGQ5XHgwZVx4NGFceGM2XHgzYVx4OGNceDc4XHg0ZFx4Y2JceDg1
-XHg5Zlx4NTRceDE5XHhmNFx4NTNceDg3XHg1Ylx4YmRceGI1XHgyYVx4YzZceDkwXHg4ZFx4NmVc
-eGU2XHhhY1x4YTFceDZkXHgxOFx4MjhceGExXHhjZlx4ZDZceDIzXHg3Y1x4ZTVceGJjXHg4Mlx4
-MWRceDhmXHgyOVx4YTFceDYyXHgyMFx4YjRceDA5XHhhNVx4YjNceDBjXHhjZlx4NDJceDgxXHg2
-Ylx4Y2JceDQwXHhlOVx4NjRceGI1XHgwMVx4NTlceDEzXHgwZFx4MTlceDFlXHg3OVx4YjhceDFk
-XHhhOVx4YTlceDVjXHhhNlx4MDJceDg3XHg5MFx4NmFceDQzXHgzNlx4ZWVceDYyXHhhNFx4NGJc
-eDU3XHg5Y1x4MzBceDlkXHhiOVx4OThceDRjXHgyMVx4ZGVceGY0XHg2Y1x4NGVceGY0XHgzYlx4
-MjRceGI3XHg4OFx4MmZceGI5XHgwMFx4NTFceDMxXHgzM1x4YTdceGMxXHg1MVx4YjJceGY2XHhh
-Zlx4YjRceGUzXHhjN1x4MzZceDI0XHg1Y1x4ZGNceGNlXHg3MVx4YjdceDM1XHhkZFx4YzRceDIy
-XHhhN1x4NjZceDU5XHg4Y1x4NGFceDc5XHg5Nlx4ODVceDdlXHgxZFx4YTlceDRjXHgwM1x4YmVc
-eDJjXHg1MFx4YjZceGJkXHg4NVx4YWNceDFjXHhkMlx4MGVceDg1XHhkOVx4ZGNceDY3XHg5YVx4
-NjRceGM3XHg5Mlx4NTJceGM4XHgwN1x4NzlceGI5XHgyNFx4OTNceGEyXHg1M1x4MGNceDIzXHg5
-N1x4MmRceGJiXHhlM1x4YWVceDNlXHhlYlx4MDJceDgxXHg0ZFx4OGZceGZmXHhiZFx4ZjBceGNl
-XHg5OFx4ZWRceGQwXHhjNVx4ZjhceDM1XHhiYVx4YmFceDEwXHg2ZFx4M2VceGUyXHhhYVx4NGRc
-eGY2XHhkY1x4MWZceDQ4XHhlM1x4Y2FceDgwXHhkNlx4NDhceDE5XHhmYlx4ZTZceDU0XHhiMFx4
-ZjBceGI4XHhhOFx4YmNceDUwXHhlNVx4YWFceDAzXHgzZVx4Y2RceDE0XHg1MVx4MjBceDk5XHgw
-MFx4ZWRceDc2XHgyMFx4OTdceDNhXHhmOVx4MTFceGM2XHg2OFx4NGNceDIyXHg2OFx4ZjJceDJl
-XHgzNlx4ZjlceGQ2XHhjYlx4OTlceDg5XHg3NFx4MTBceGQ2XHg3Mlx4MTlceGIwXHhhYlx4NzJc
-eDlkXHgzYVx4MThceDVmXHhhN1x4MjJceDk5XHhlNVx4NmNceDMyXHgwMFx4ODVceDExXHgyZVx4
-ZTRceDEzXHg3ZVx4YTVceGJkXHg4YVx4MWVceDEzXHhjYVx4MGVceDdmXHgwY1x4ZjVceDI4XHgy
-NFx4MzVceGViXHhhZiIsIDQ3NC0xMi0yKTsKKih1aW50NjRfdCopMHgyMDAwMDIwOCA9IDB4MWRh
-OwoqKHVpbnQ2NF90KikweDIwMDAwMjEwID0gMHg0MDA7CioodWludDY0X3QqKTB4MjAwMDAyMTgg
-PSAweDIwMDAwNWMwOwptZW1jcHkoKHZvaWQqKTB4MjAwMDA1YzAsICJceGZmXHgwMFx4ZmVceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceDAzXHhmMFx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZm
-XHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZc
-eGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4
-ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhm
-Zlx4ZmZceGZmXHhmZlx4ZmZceGZmXHhmZlx4ZWRceDQxXHgwMyIsIDIwNTEpOwoqKHVpbnQ2NF90
-KikweDIwMDAwMjIwID0gMHg4MDM7CioodWludDY0X3QqKTB4MjAwMDAyMjggPSAweDgwMDsvLwoq
-KHVpbnQ2NF90KikweDIwMDAwMjMwID0gMDsKKih1aW50NjRfdCopMHgyMDAwMDIzOCA9IDA7Cioo
-dWludDY0X3QqKTB4MjAwMDAyNDAgPSAweDEwMDA7CglyZXMgPSAtMTsKcmVzID0gc3l6X21vdW50
-X2ltYWdlKDB4MjAwMDAwMDAsIDB4MjAwMDAxMDAsIDAsIDMsIDB4MjAwMDAyMDAsIDAsIDB4MjAw
-MDBlMDApOwoJaWYgKHJlcyAhPSAtMSkKCQlyWzBdID0gcmVzOwoJc3lzY2FsbChfX05SX2ZzdGF0
-ZnMsIHJbMF0sIDB1bCk7CglyZXR1cm4gMDsKfQo=
---000000000000f36eb305c7a54c80--
