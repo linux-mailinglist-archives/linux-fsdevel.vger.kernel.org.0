@@ -2,73 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32D363D0DC5
+	by mail.lfdr.de (Postfix) with ESMTP id E79053D0DC7
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 13:34:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237966AbhGUKwj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 06:52:39 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:48052 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237424AbhGUKmY (ORCPT
+        id S238083AbhGUKxE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 06:53:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41330 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238015AbhGUKmn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 06:42:24 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id C15141FD4A;
-        Wed, 21 Jul 2021 11:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1626866576;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wmZc3hU/5jvx4cqOqNXcrhZN3NNBbqBfZfeEhxx8RQo=;
-        b=iChYs2bPCerVbHhJtIABHNDHNxLIMvFlL6KYGjtHXfKaC9s3dgGGqenmtffFbJotffIO67
-        zeZS/G14JpYM/AqchuTWvV8RDz2Lry2V8ghlqrFulueoO0/EEw4OCTF1QRkmF7pGkNfJu4
-        26ZlxQKIOUPh5WvicfW9BZeeRUT+uts=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1626866576;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wmZc3hU/5jvx4cqOqNXcrhZN3NNBbqBfZfeEhxx8RQo=;
-        b=3wpq68V053oHIxkwfcd2eyY7/qS54/2hN3D8pEc2I6ml5zFOAArHa4yj3urG19GAqeWSfd
-        Fp09MflSRIvHMzAQ==
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
-        by relay2.suse.de (Postfix) with ESMTP id B8A60A3B81;
-        Wed, 21 Jul 2021 11:22:56 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 9D59BDA704; Wed, 21 Jul 2021 13:20:15 +0200 (CEST)
-Date:   Wed, 21 Jul 2021 13:20:15 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org,
-        kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: Re: [PATCH v3 6/9] fs: add a filemap_fdatawrite_wbc helper
-Message-ID: <20210721112015.GC19710@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Christoph Hellwig <hch@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org,
-        kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-        Nikolay Borisov <nborisov@suse.com>
-References: <cover.1626288241.git.josef@toxicpanda.com>
- <1a353b1b013f616c2798526a8d21bb0cd609c25f.1626288241.git.josef@toxicpanda.com>
- <YO/UfqDrIEizq7Re@infradead.org>
+        Wed, 21 Jul 2021 06:42:43 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A898DC061574;
+        Wed, 21 Jul 2021 04:23:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=tjKLXf0Ng52UH5nHxMTM/eP+9xIaqoGvYekhvlgulkU=; b=ml92iat7e/0Z0zUSXyBKWCFT/T
+        +LyfOBlYqxlteYRIYhfLZunuiaY0K4ewec4QNxKTsAhIvGnLKyEVhhQanm/af+BF2OtFcRhk4GElJ
+        5a3qkimaAA9z/UuwPVhjWwfSHWIRErSBHjJL2JkvMkmBc4Ceclrfn77wnaYSomg+bKyW7LR23ZWw5
+        SfrPRbkNbOVXp2zoGMtiZYFHSqjVuP96NiR3So0JPPEWP/nd/By1Hku3hx2ymY4pO1kMLzEYCbI9Q
+        LI5fLcJlj77T+vGjXJtV8j+oeZfRQ1PDsGlSIZCUVZStjZsZeWA0daIESAeCtuBMJlF/PReDVvnGc
+        fQJ7Kptw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m6AJh-0097oC-3n; Wed, 21 Jul 2021 11:23:10 +0000
+Date:   Wed, 21 Jul 2021 12:23:09 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v14 011/138] mm/lru: Add folio LRU functions
+Message-ID: <YPgDne2ORs+tJsk2@casper.infradead.org>
+References: <20210715033704.692967-1-willy@infradead.org>
+ <20210715033704.692967-12-willy@infradead.org>
+ <YPao+syEWXGhDxay@kernel.org>
+ <YPedzMQi+h/q0sRU@casper.infradead.org>
+ <YPfdM9dLEsFXZJgf@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YO/UfqDrIEizq7Re@infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <YPfdM9dLEsFXZJgf@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 07:23:58AM +0100, Christoph Hellwig wrote:
-> >  extern int filemap_check_errors(struct address_space *mapping);
-> >  extern void __filemap_set_wb_err(struct address_space *mapping, int err);
-> > +extern int filemap_fdatawrite_wbc(struct address_space *mapping,
-> > +				  struct writeback_control *wbc);
+On Wed, Jul 21, 2021 at 11:39:15AM +0300, Mike Rapoport wrote:
+> On Wed, Jul 21, 2021 at 05:08:44AM +0100, Matthew Wilcox wrote:
+> > I wanted to turn those last two sentences into a list, but my
+> > kernel-doc-fu abandoned me.  Feel free to submit a follow-on patch to
+> > fix that ;-)
 > 
-> No need for the extern here.
+> Here it is ;-)
 
-I'll remove it when applying the patch. There are many externs in the
-file but also declaration without it so this one won't stand out.
+Did you try it?  Here's what that turns into with htmldoc:
+
+Description
+
+We would like to get this info without a page flag, but the state needs
+to survive until the folio is last deleted from the LRU, which could be
+as far down as __page_cache_release.
+
+ * 1 if folio is a regular filesystem backed page cache folio or a
+   lazily freed anonymous folio (e.g. via MADV_FREE).
+ * 0 if folio is a normal anonymous folio, a tmpfs folio or otherwise
+   ram or swap backed folio.
+
+Return
+
+An integer (not a boolean!) used to sort a folio onto the right LRU list
+and to account folios correctly.
+
+Yes, we get a bulleted list, but it's placed in the wrong section!
+
+Adding linux-doc for additional insight into this problem.
+For their reference, here's the input:
+
+/**
+ * folio_is_file_lru - Should the folio be on a file LRU or anon LRU?
+ * @folio: The folio to test.
+ *
+ * We would like to get this info without a page flag, but the state
+ * needs to survive until the folio is last deleted from the LRU, which
+ * could be as far down as __page_cache_release.
+ *
+ * Return: An integer (not a boolean!) used to sort a folio onto the
+ * right LRU list and to account folios correctly.
+ *
+ * - 1 if @folio is a regular filesystem backed page cache folio
+ *   or a lazily freed anonymous folio (e.g. via MADV_FREE).
+ * - 0 if @folio is a normal anonymous folio, a tmpfs folio or otherwise
+ *   ram or swap backed folio.
+ */
+static inline int folio_is_file_lru(struct folio *folio)
+
