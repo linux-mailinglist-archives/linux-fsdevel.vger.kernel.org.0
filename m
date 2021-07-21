@@ -2,158 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 312F23D1341
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 18:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28EFE3D13F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jul 2021 18:20:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231239AbhGUPZJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jul 2021 11:25:09 -0400
-Received: from mx08-001d1705.pphosted.com ([185.183.30.70]:25616 "EHLO
-        mx08-001d1705.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231286AbhGUPZI (ORCPT
+        id S236115AbhGUPkL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jul 2021 11:40:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21249 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235743AbhGUPkK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jul 2021 11:25:08 -0400
-X-Greylist: delayed 2839 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Jul 2021 11:25:06 EDT
-Received: from pps.filterd (m0209318.ppops.net [127.0.0.1])
-        by mx08-001d1705.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16LFF7gQ008433;
-        Wed, 21 Jul 2021 15:17:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=S1;
- bh=oEIV+9dPcloLX9P7zIFTdHSHcpo1/5ngZlDHzZrJrEE=;
- b=JLWiESBT3gRUGmj+A1s+SKDuEvY21i34QFpdMeGonEQXDmNB46V9AtjdDK2kP0EFT3bv
- 7mWctL8SNBcGqHbODkJLfK6yWK+iYXmZHWiYu2+Wikt3A2u06+/apM/1zEF6RqY0x8k9
- woBY4DG+aBD3GR7MlaU8xaxexfdXqgKhiMi5rqBiDP6r5itQsG3sE+sqPkBcuMrxiWW+
- hLGstukg/jeykzEuysycBcKP7irpS2DKtzBl9ykHS7Ts78S5ziR7a48xs7V0Iy3Fkw54
- l9bZm+qfIOHxdQhVmRqUiLs3q2AsRYY4/JbqGb6VGVeiPKdFojRGZ6ej4UCTbzmcbgi3 Cw== 
-Received: from eur03-ve1-obe.outbound.protection.outlook.com (mail-ve1eur03lp2058.outbound.protection.outlook.com [104.47.9.58])
-        by mx08-001d1705.pphosted.com with ESMTP id 39vyttmcab-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Jul 2021 15:17:57 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dzS/iKCwws6Zbxsphk5akYHbE7rBGJtI9zEF6KolTFJOQyTbMAMUETYlyGcdARGugdoB4DDEY/B9ylknG76OBed1ILcBzGP08UN9XQMC9sgyLdTZ+grEh7wNxF9SeHG8OWN8Vj1lPnkNpZGvP8UZygGJrHm8T3kBxzQATqxy6jhnFrQy34OQAKxaEAnXG5XxMdFVQiXCLz+QogTY2ETX8R3g8J2bcb8a4ViuwhOk6gM/d8LwoppdMkboQdWPuas5IVyyBxdYb0l0qTgXcxItFlogNfWHbKItc+Tpiet4e61erR73Q2rbgSoXnsY58d4rW0b6YeEA6q9AF7+IB+OC5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oEIV+9dPcloLX9P7zIFTdHSHcpo1/5ngZlDHzZrJrEE=;
- b=Mkj8QtCcXBqRYPKwzeXh18ROaY/knTwizU3vseKLcfab8H9cLGTG5YO0hYQrS+ueyX7icZNeL6FKgAfsx/8I6gmPtkCiwRTpdDRPRRHK3UMJ6LpOUJK7rNsqrql/yTDsFr2AG7WFezQg7QxR7RFJBgfFMgPATssmXsivV0a1CtGvDICpykc9GuKn8074aqAcaUKithS5QqAWzH/c915X6VjZRG3BrPjOBCwO06D2T40ixIap0MrrySYvpbeDiFyB79eUWUgSTSmEMv/F3Yj+c2LiRmLh9bOKdt57QoTzrFkI/025sgH6ryido9tWNUPdMrhqoCUx7t899O5+TLHfqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from AM9P193MB1491.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:306::20)
- by AM8P193MB0787.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:1e0::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21; Wed, 21 Jul
- 2021 15:17:53 +0000
-Received: from AM9P193MB1491.EURP193.PROD.OUTLOOK.COM
- ([fe80::d104:306f:a063:bcce]) by AM9P193MB1491.EURP193.PROD.OUTLOOK.COM
- ([fe80::d104:306f:a063:bcce%6]) with mapi id 15.20.4331.034; Wed, 21 Jul 2021
- 15:17:53 +0000
-From:   <Peter.Enderborg@sony.com>
-To:     <willy@infradead.org>, <hch@infradead.org>, <tege@sics.se>
-CC:     <nborisov@suse.com>, <linux-kernel@vger.kernel.org>,
-        <ndesaulniers@google.com>, <torvalds@linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <david@fromorbit.com>
-Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
-Thread-Topic: [PATCH] lib/string: Bring optimized memcmp from glibc
-Thread-Index: AQHXfkOTpsQK/isENkuotdGMivwLHw==
-Date:   Wed, 21 Jul 2021 15:17:53 +0000
-Message-ID: <0c3b5f75-3a8e-2b99-9032-d8e394db2a5d@sony.com>
-References: <20210721135926.602840-1-nborisov@suse.com>
- <YPgwATAQBfU2eeOk@infradead.org>
- <b1fdda4c-5f2a-a86a-0407-1591229bb241@suse.com>
- <YPgyQsG7PFLL8yE3@infradead.org> <YPg0Ylbmk4qIZ/63@casper.infradead.org>
-In-Reply-To: <YPg0Ylbmk4qIZ/63@casper.infradead.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-authentication-results: infradead.org; dkim=none (message not signed)
- header.d=none;infradead.org; dmarc=none action=none header.from=sony.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 03553fe0-06ab-4273-3254-08d94c5ab64a
-x-ms-traffictypediagnostic: AM8P193MB0787:
-x-microsoft-antispam-prvs: <AM8P193MB078736DC1C553C12789A1DC686E39@AM8P193MB0787.EURP193.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: /4HwFZyd9kCRtcVxmcsPhyyJzmDGf/oMb2OIvjwK3l8CfoZ90easzow8JE3AAtUXTBZous3uDqc0CmngeiRGAAMEBQV8tXyG2z3b8hXLu5e9AkGXdv0zGG1CrCcjSImvjq6UdNPwAzkp6ZgWdRIjc6K9/vTjt/GvvvLSitOWSPyjBqSpZ4P5PvHH7i6qpO748xIPps1iNgu8+G8RZX/0XzxwdtFwqwUkMCnstMtynara+nPOPTrjqda1zCHfuFv3WrpEEm4i9+VdnlD7BcXp0iwCKZ9RwjMBkAmEO13aAGiDTdNyBWPUt6/Cw8PL+B+Pb8hlUTeUAFxt3Xghuj6ssnkLb/wAE5dtJlg6uH3Exx+qdf+pPSgwkL2CsMmPxFRlZF2H3eE+aOZpNrMU59eUmwWEXOOt5+A4N8yyzZt/NRTIT1vd94TqjaznnpjirPSgox0kkfMELjKBX1W9E+75SqXNz5b1RKFeE9LAyb7xpUAQr85t6sYwEaTFlCxtcCkSp0ZcpoTIAOgxM1UGWM8okFD8bD10NkEhohhlqy2Lx93JPCjNAoAdk7bF/jnkx86GBsB0om7ezek+ahyOD19EixzsfeBeoJTYQ4P2dViPer6q9eMQ9gNqITSD+2Jn3RH+kPrblFleGSD7PzOsIQPqVeLSstN4fUE58rueogers5rQP7+E3lL14Xj+nrEbVgDp6xaMJXArVFAZSKaD6+m6owbDMqeOBeIqbpAj/Kp9PY5BEGzXgEiRr0EGEVYjuNOBFk+1ZSQ021R1ghd5UpST/9IHcMdr45tt3MptxpNxDSQ=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9P193MB1491.EURP193.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(376002)(366004)(39850400004)(396003)(136003)(346002)(31686004)(54906003)(110136005)(8676002)(316002)(66476007)(122000001)(478600001)(2906002)(64756008)(66556008)(66446008)(91956017)(5660300002)(8936002)(26005)(36756003)(4326008)(4744005)(6486002)(6506007)(186003)(71200400001)(83380400001)(2616005)(38100700002)(86362001)(66946007)(76116006)(31696002)(53546011)(6512007)(2004002)(43740500002)(38070700004)(45980500001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZGlMVHE0UmxlWmh4Q2pOY09NUHV6ZGFXMnpGM2xja2RMQzhwdWdXUXZxZGlp?=
- =?utf-8?B?ZjR3anZwTG8zc1hRcWo1Q2NISXJmd2tHU25DZDZCYXNCOWRwSmJZZS95T3RD?=
- =?utf-8?B?Zklvc2E3dk5rU29jS2drcWl6Q2VITzVqMDBoMlYyQ095UkFpM0lkYUh4TVdr?=
- =?utf-8?B?enU1WXF1RHoxT2hma3R1dEc4dlo5cmVjU0FPZ0RZUFRyeHQ3WUowSHdqK2hr?=
- =?utf-8?B?Zk9scFRodHk1Wnl1K3g4Skw5SHc1bDU2NkZVZ29JbWhhWFllNTZGSDl2Q0o4?=
- =?utf-8?B?YVZKTHpaeU82NVlrMmgwZjNXMHRWaXQ3a3F4V2EyY2dEOU9zQjFGQ0lEQ3By?=
- =?utf-8?B?dVNGTnZVdzdBUHpRUVVxbkhSTkNnYjNMQjByYkdlcXdqQzYxTHdZNUNyN2dQ?=
- =?utf-8?B?Q0d0UVVZRDNFZUIxd0l6VzNtQnc3RWg3TGVWOHo4Um95NTBmMk9VRGFxUzN5?=
- =?utf-8?B?NHBvRmhvRVR4VzNia3FVY3BMOU0zQ1g2WS9tbXd2Skh1aE5ubnljVUpRSktT?=
- =?utf-8?B?VnBERFhJM0I0eFFQNzVCZzBZeEpGMXFMYzEwdDFSMU5XSkFaRGJWL0w0TVBi?=
- =?utf-8?B?Q1QvbDlyT0pxcFlKSnNJTlg5UzBaVHBTODRqcFlYcTJvQm90SWRkV0NWbGFj?=
- =?utf-8?B?OG5zSDdCRlhuUHRVZFRLWmZMTFk2bXVjTUoyRXVHYnVMdHdud01WRENnMWN2?=
- =?utf-8?B?VzhkRElkOHR1aW9NNFEySzluVjlMVjlFL05xTkYyTnRPRXJFVVhyTkdxcnhM?=
- =?utf-8?B?SlN3bUNCWi82bVdRLzl2UldSSW9EaXh2TjlONFJOWHduSVdPTXVGdURQOERT?=
- =?utf-8?B?RjQvdHVNOHBNWkF2T1NHUU9ub0JVSHY0am9saFNSZ1hCVzFiQmZzQUN2Qkdk?=
- =?utf-8?B?MlZ0U052OXg1Tm4zeGlWNkh3Z2tmV0RHWnBNbmtXUG40RzU3S24rdkhSbm1F?=
- =?utf-8?B?QjdqNzg1dXFQSDB6NmdvVWM4dWhJT0R0MkpkUGVWdFdWRGtlNmtDS091cHc2?=
- =?utf-8?B?cU5vZ0QvaFVTMHhzbFUzVTlJcW0yK0JMeFR2NURiYmVTeHYzLzhETnhjL1VZ?=
- =?utf-8?B?Um52ZHM5ZStCczFzVTJKK3VqK0drRlUrY3hKaWs5VGhORkxFalNuN0Mvb3l6?=
- =?utf-8?B?MzQyOUtZYXpBK1RPOUhpUkJ5K25TMUkyMjRMbHAzNmZ3MUh1T0FDY2ttQzY1?=
- =?utf-8?B?aWJ6ZFI3dHVsMWlydUQrczhUL2RKYTJpRzhGZkhJdHQxb1VZNVFYZ1NRZDQx?=
- =?utf-8?B?WjM0VVhTS1N0ZjFWWUxORHBVeE84R2piaVN4b2UrVXpONVBNaE9Oejk2Sk5w?=
- =?utf-8?B?NTZoQnN3WjdvWVpBMVR3c2s4TW5MeHZmTjZtNUpWQVhIMjBOTjVlMFowMXV1?=
- =?utf-8?B?NklSc3oxN21iNG9pNzhLWHpydkVWOVZmTjlOTmpWdENnb1RydGdHU3VpTmFm?=
- =?utf-8?B?bEhLQWl5MHNxRlI0aDNFcHpDV2lGWGI4WVpDU0tMSXc5QlM0cTNOUWpOUE9q?=
- =?utf-8?B?WlJkNTlKZ1BjT0crVTJyMDNiSVNYMnNIMnUwellVKytXSTYrNlQ2SE1FOGF3?=
- =?utf-8?B?RmFzbWtoTmdjMUZ1cTNGTzIrU1l1V1p6SVJpYXF4cjB6ZS8wOGI3SFRvQlNY?=
- =?utf-8?B?NzVpd3orcTNHME9jL2hRajNtb0tUUzZCT1lteW1NNVZ6QUQ0UGRUYXZQdGZI?=
- =?utf-8?B?ZlhVa3NQakxVTzQ0U1JZWlljaEhhd2hvNTdNa3p6c01UOElvTXUrTjdIR1dz?=
- =?utf-8?Q?1k54iVTmuv8wbXUKOyEgUJhbXkf6iQ5IK0yIOrW?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C4DDAB90E1841B4891F0EC988169CF73@EURP193.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        Wed, 21 Jul 2021 11:40:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626884446;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YkZTscC6KpmV7ZPZQ/arpngaCqGBZg3nbQ0knfcsigA=;
+        b=OoNHUArlPziuidJkqum5NZbzWl39kZjrq4df41R5oo6znE6t+yLYc7yQp+RG/+GR/O3JGL
+        i4A+KrgqRY9y6V+MOcv+m5i9kIoMjtMX0RYriMvGWgiNuPci8UQwpf51MkFl21mJgESsH4
+        ob8TyMIRz1KtdFpJc6sqena2XP/IT7o=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-601-ziJnkzcaPYW-_hTuT2JDNA-1; Wed, 21 Jul 2021 12:20:45 -0400
+X-MC-Unique: ziJnkzcaPYW-_hTuT2JDNA-1
+Received: by mail-qv1-f70.google.com with SMTP id x18-20020ad440d20000b02902e121b2b364so1880553qvp.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jul 2021 09:20:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=YkZTscC6KpmV7ZPZQ/arpngaCqGBZg3nbQ0knfcsigA=;
+        b=NFwm7yZ2kN/UzyF+FhCIPun0iMydrKtxpaclTY++hEiA7HVGm5tzQdSBeq8fT8QWmr
+         iQD4xnSE+ZlkYai3esINV/LN8e3tqQgq7zXZQgGoOAC/4/n+nPfMz7yKktq+BCCd+RC0
+         2GqGoDmxGPsgvfYnN6Mqyhw7N2qkUA2jPJwb0UJxp+frIn9/AjsLeIo79iKqtC7aKyHV
+         yHjqTScIl6DQDVHmF71DydIixDc2cVHy2gilQYU46ArQJNaWAqRH8ycyom0Jv8ZCidd5
+         CuqCn9URPlT6h0IoCrW0sIRIZnYwyajfnHthljrACE4s6zhBbuYggEPYA9oJnNSwZC5D
+         GHaw==
+X-Gm-Message-State: AOAM533vcvonTUoW/E8SsM2VzNxB/q0h9PFtVdG57o6FnAFPF01/c+RQ
+        f5XkGxSOafn2HcmOR8mu5oM7sBOXBpJsyX1gptgz42xYmiesh/T/jovFwpvnFFuJS6EdxE14/Cv
+        n843GbIhEGeaEpSGGgYmdn33k+w==
+X-Received: by 2002:a0c:a223:: with SMTP id f32mr37104022qva.8.1626884444602;
+        Wed, 21 Jul 2021 09:20:44 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw+t6fxG/ixd7o7dlSLuaUhbdIrVbCJpvX027HWNZq9vT5wDnkVq2oxjwvDHG0JV/G1ddMkig==
+X-Received: by 2002:a0c:a223:: with SMTP id f32mr37103999qva.8.1626884444411;
+        Wed, 21 Jul 2021 09:20:44 -0700 (PDT)
+Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id i4sm9475118qka.130.2021.07.21.09.20.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jul 2021 09:20:43 -0700 (PDT)
+Message-ID: <35ecb577315f486f1636b2316c2051ad004f6f7b.camel@redhat.com>
+Subject: Re: [RFC PATCH 01/12] afs: Sort out symlink reading
+From:   Jeff Layton <jlayton@redhat.com>
+To:     David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 21 Jul 2021 12:20:42 -0400
+In-Reply-To: <162687508008.276387.6418924257569297305.stgit@warthog.procyon.org.uk>
+References: <162687506932.276387.14456718890524355509.stgit@warthog.procyon.org.uk>
+         <162687508008.276387.6418924257569297305.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
 MIME-Version: 1.0
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM9P193MB1491.EURP193.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03553fe0-06ab-4273-3254-08d94c5ab64a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jul 2021 15:17:53.8131
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Mk0nOrWNcxvu31nUgORtd6xtRrbpvRkHLeE5In4r+/xGJYNd5HsKAUV5u/0gSRMhyuB5buUrcW5Fqe9IOx78HEqJSuVhsT9fvANGio6nB+A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8P193MB0787
-X-Proofpoint-GUID: kgMkHxsBEhdOA_ECcuuYPjYhpV7KuC54
-X-Proofpoint-ORIG-GUID: kgMkHxsBEhdOA_ECcuuYPjYhpV7KuC54
-X-Sony-Outbound-GUID: kgMkHxsBEhdOA_ECcuuYPjYhpV7KuC54
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-21_09:2021-07-21,2021-07-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- mlxlogscore=915 adultscore=0 clxscore=1011 priorityscore=1501 spamscore=0
- mlxscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2107210089
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gNy8yMS8yMSA0OjUxIFBNLCBNYXR0aGV3IFdpbGNveCB3cm90ZToNCj4gT24gV2VkLCBKdWwg
-MjEsIDIwMjEgYXQgMDM6NDI6MTBQTSArMDEwMCwgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6DQo+
-PiBPbiBXZWQsIEp1bCAyMSwgMjAyMSBhdCAwNTozNTo0MlBNICswMzAwLCBOaWtvbGF5IEJvcmlz
-b3Ygd3JvdGU6DQo+Pj4NCj4+PiBPbiAyMS4wNy4yMSA/Py4gMTc6MzIsIENocmlzdG9waCBIZWxs
-d2lnIHdyb3RlOg0KPj4+PiBUaGlzIHNlZW1zIHRvIGhhdmUgbG9zdCB0aGUgY29weXJpZ2h0IG5v
-dGljZXMgZnJvbSBnbGliYy4NCj4+Pj4NCj4+PiBJIGNvcGllZCBvdmVyIG9ubHkgdGhlIGNvZGUs
-IHdoYXQgZWxzZSBuZWVkcyB0byBiZSBicm91Z2h0IHVwOg0KPj4+DQo+Pj4gIENvcHlyaWdodCAo
-QykgMTk5MS0yMDIxIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbiwgSW5jLg0KPj4+ICAgIFRoaXMg
-ZmlsZSBpcyBwYXJ0IG9mIHRoZSBHTlUgQyBMaWJyYXJ5Lg0KPj4+ICAgIENvbnRyaWJ1dGVkIGJ5
-IFRvcmJqb3JuIEdyYW5sdW5kICh0ZWdlQHNpY3Muc2UpLg0KPj4+DQo+Pj4gVGhlIHJlc3QgaXMg
-dGhlIGdlbmVyaWMgR1BMIGxpY2Vuc2UgdHh0ID8NCj4+IExhc3QgdGltZSBJIGNoZWNrZWQgZ2xp
-YmMgaXMgdW5kZXIgTEdQTC4NCj4gVGhpcyBwYXJ0aWN1bGFyIGZpbGUgaXMgdW5kZXIgTEdQTC0y
-LjEsIHNvIHdlIGNhbiBkaXN0cmlidXRlIGl0IHVuZGVyDQo+IEdQTCAyLg0KDQpTdXJlLiBCdXQg
-c2hvdWxkIG5vdCBUb3JiasO2cm4gR3Jhbmx1bmQgaGF2ZSBzb21lIGNyZWQ/DQoNClNvcnQgb2Yg
-Ik9yaWdpbmFsLUF1dGhvciIgdGFnIG9yIHNvbWV0aGluZz8NCg0K
+On Wed, 2021-07-21 at 14:44 +0100, David Howells wrote:
+> afs_readpage() doesn't get a file pointer when called for a symlink, so
+> separate it from regular file pointer handling.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+> 
+>  fs/afs/file.c     |   14 +++++++++-----
+>  fs/afs/inode.c    |    6 +++---
+>  fs/afs/internal.h |    3 ++-
+>  3 files changed, 14 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/afs/file.c b/fs/afs/file.c
+> index ca0d993add65..c9c21ad0e7c9 100644
+> --- a/fs/afs/file.c
+> +++ b/fs/afs/file.c
+> @@ -19,6 +19,7 @@
+>  
+>  static int afs_file_mmap(struct file *file, struct vm_area_struct *vma);
+>  static int afs_readpage(struct file *file, struct page *page);
+> +static int afs_symlink_readpage(struct file *file, struct page *page);
+>  static void afs_invalidatepage(struct page *page, unsigned int offset,
+>  			       unsigned int length);
+>  static int afs_releasepage(struct page *page, gfp_t gfp_flags);
+> @@ -46,7 +47,7 @@ const struct inode_operations afs_file_inode_operations = {
+>  	.permission	= afs_permission,
+>  };
+>  
+> -const struct address_space_operations afs_fs_aops = {
+> +const struct address_space_operations afs_file_aops = {
+>  	.readpage	= afs_readpage,
+>  	.readahead	= afs_readahead,
+>  	.set_page_dirty	= afs_set_page_dirty,
+> @@ -60,6 +61,12 @@ const struct address_space_operations afs_fs_aops = {
+>  	.writepages	= afs_writepages,
+>  };
+>  
+> +const struct address_space_operations afs_symlink_aops = {
+> +	.readpage	= afs_symlink_readpage,
+> +	.releasepage	= afs_releasepage,
+> +	.invalidatepage	= afs_invalidatepage,
+> +};
+> +
+>  static const struct vm_operations_struct afs_vm_ops = {
+>  	.fault		= filemap_fault,
+>  	.map_pages	= filemap_map_pages,
+> @@ -321,7 +328,7 @@ static void afs_req_issue_op(struct netfs_read_subrequest *subreq)
+>  	afs_fetch_data(fsreq->vnode, fsreq);
+>  }
+>  
+> -static int afs_symlink_readpage(struct page *page)
+> +static int afs_symlink_readpage(struct file *file, struct page *page)
+>  {
+>  	struct afs_vnode *vnode = AFS_FS_I(page->mapping->host);
+>  	struct afs_read *fsreq;
+
+
+I wonder...would you be better served here by not using page_readlink
+for symlinks and instead use simple_get_link and roll your own readlink
+operation. It seems a bit more direct, and AFS seems to be the only
+caller of page_readlink.
+
+> @@ -386,9 +393,6 @@ const struct netfs_read_request_ops afs_req_ops = {
+>  
+>  static int afs_readpage(struct file *file, struct page *page)
+>  {
+> -	if (!file)
+> -		return afs_symlink_readpage(page);
+> -
+>  	return netfs_readpage(file, page, &afs_req_ops, NULL);
+>  }
+>  
+> diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+> index bef6f5ccfb09..cf7b66957c6f 100644
+> --- a/fs/afs/inode.c
+> +++ b/fs/afs/inode.c
+> @@ -105,7 +105,7 @@ static int afs_inode_init_from_status(struct afs_operation *op,
+>  		inode->i_mode	= S_IFREG | (status->mode & S_IALLUGO);
+>  		inode->i_op	= &afs_file_inode_operations;
+>  		inode->i_fop	= &afs_file_operations;
+> -		inode->i_mapping->a_ops	= &afs_fs_aops;
+> +		inode->i_mapping->a_ops	= &afs_file_aops;
+>  		break;
+>  	case AFS_FTYPE_DIR:
+>  		inode->i_mode	= S_IFDIR |  (status->mode & S_IALLUGO);
+> @@ -123,11 +123,11 @@ static int afs_inode_init_from_status(struct afs_operation *op,
+>  			inode->i_mode	= S_IFDIR | 0555;
+>  			inode->i_op	= &afs_mntpt_inode_operations;
+>  			inode->i_fop	= &afs_mntpt_file_operations;
+> -			inode->i_mapping->a_ops	= &afs_fs_aops;
+> +			inode->i_mapping->a_ops	= &afs_symlink_aops;
+>  		} else {
+>  			inode->i_mode	= S_IFLNK | status->mode;
+>  			inode->i_op	= &afs_symlink_inode_operations;
+> -			inode->i_mapping->a_ops	= &afs_fs_aops;
+> +			inode->i_mapping->a_ops	= &afs_symlink_aops;
+>  		}
+>  		inode_nohighmem(inode);
+>  		break;
+> diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+> index 791cf02e5696..ccdde00ada8a 100644
+> --- a/fs/afs/internal.h
+> +++ b/fs/afs/internal.h
+> @@ -1050,7 +1050,8 @@ extern void afs_dynroot_depopulate(struct super_block *);
+>  /*
+>   * file.c
+>   */
+> -extern const struct address_space_operations afs_fs_aops;
+> +extern const struct address_space_operations afs_file_aops;
+> +extern const struct address_space_operations afs_symlink_aops;
+>  extern const struct inode_operations afs_file_inode_operations;
+>  extern const struct file_operations afs_file_operations;
+>  extern const struct netfs_read_request_ops afs_req_ops;
+> 
+> 
+
+Regardless, this is more reasonable than what's there now.
+
+Reviewed-by: Jeff Layton <jlayton@redhat.com>
+
