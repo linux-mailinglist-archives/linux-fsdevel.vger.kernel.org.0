@@ -2,161 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DECE93D250A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 16:01:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2DEA3D25A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 16:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232166AbhGVNVE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 09:21:04 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:31280 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232177AbhGVNVD (ORCPT
+        id S232372AbhGVNoK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 09:44:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34519 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232317AbhGVNoI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 09:21:03 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16ME0vNw013456;
-        Thu, 22 Jul 2021 14:01:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2021-07-09;
- bh=w31ZYQiggnfBgtWIsRek2y7HK2iAelKQtLHiwc1V9Wc=;
- b=kGwraQX33mNXyOYp+9ZkZ3KfQFvE3wE9sL+AC7n07T8c9L6GZwVKzLoJYnuYT0ek+Kr+
- UcqgzkCMDQfc8fWfYZHYYGyQ4J0JMPakl0d8OQYgOHgCTfO42UB/dZPfjznn1tzwee5B
- ynOiCA7qHHn7vEHHlVme0in6DOlNIVh+oZnPC4aKi+3INew0OYoCtUx4uIJiavZTwTLB
- fWjyi8KzeLyEfS2p2hY6P5Vt6tTiioNcUe1/Qwz9ZRbObivxzcRGX49hMeoAmOTtedf1
- CP+KujScm25QLfg77dk2s9ApyIWEmpX9DWuNDTYjZaeBjkKzAKgnwJB8mxLKkJzdwDkA iQ== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2020-01-29;
- bh=w31ZYQiggnfBgtWIsRek2y7HK2iAelKQtLHiwc1V9Wc=;
- b=YkzHJ2l2pNkrT+Sp5GIhN+F+JY7481eTrslhHSQUzUKlu3kF1eS2voMm33crpt/LweeJ
- 9TrdqNVyyLkPhSVaZG6A2W6sJ0IKGblyKVS/BY6sHrEI2+2hQeYzwFSHcY41bKYCvvP/
- fN4jc98dJDqG+Ve3nk4gBm50U+ldBFs/2q2VtocahpIAwVzs+5Bk5oMAkC1bLV0bX3xx
- AlkIEvyWWcuemT6BzlLCBYW/e/PCzP7Sm+TiDECHUtaA+yW8G1L/Acwikn+HeWKpdiGE
- iJZmErZ2Q3bXu2mlSJLJg2nCaqjWvflcmP80+q368HXuGD623sHG80BobrpNqSa4vj7q Ow== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39y04ds566-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Jul 2021 14:01:32 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 16ME1TLI183593;
-        Thu, 22 Jul 2021 14:01:31 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2105.outbound.protection.outlook.com [104.47.55.105])
-        by aserp3030.oracle.com with ESMTP id 39wunp0dmb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Jul 2021 14:01:30 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ej9QYyHIwmoqlM29ZYWxs6qisPL1XgzXiS4DlG9cUbhyAgnLMMSC8sMdpDbdT8iztDoED5CW8483g1tABk/HBWIbXi/eETif7lLR7uyzEoZPeZoDAYYxKy6D/qoopxmqp3dZ0MmTtNjcWoai/LRj8h5t5PwRM9mMY4kMQPkItNobxQMNwDdPGNSiRpvoGjkPgsRkUC6hxFiUOmhWv1HODqcedp5ue7vDqxq/MfnaVrMKEETg/px2UmjsuWc0qm8bs9ojcVPLFmYNeaicdXqS026Z8KWFGHyS+u/2v05dFsrYtHiYSAMf05A1IJpI9detMUFqeiTBYYxGrt5/kbdsOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w31ZYQiggnfBgtWIsRek2y7HK2iAelKQtLHiwc1V9Wc=;
- b=hE9qVfbwVsmhOql9orsG4pe7LGVQUcla5fHnoz4cUARQG2QliqjGpZSdOlFkDkp2VMKcy5Wt0i+xeTfTkGCVft3KgoRoXbqSN2FL57oUILHnCYURgG9u8DcFcdciQC+dK07N7Xdou1rPsvDQFCRijJmXLgCaDJaDlP6UOCtp4RiY/LbEdHnvO7rfi75pexTgmv8InSIzstvGyIpLXz05+HRwsCq+4ypra1peU2pwlZz/1ZAvo0AtYYBqYZBdrm83MqUBgNCXmUI3lVWwGH5lTf2m4BeVbFIbqsxlHtD52YMb2F3NBaASPj7IpSH9rEhyF4rx49tC6abfmwJUDvWL3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w31ZYQiggnfBgtWIsRek2y7HK2iAelKQtLHiwc1V9Wc=;
- b=HftMqmwn65yVl95CXostc96rEcODA26UoMmpIW/zJN1iZtLDRNvZ+ZDSyWaucs4/PT/yPgLL8PQPN9WHlGgcLTIvHzY63EDf2rAJw+C3gF6ECYYpNPjv/UNKrnoHHfggBBe75TSJ3RwEilZ+kKFQ6uD6EgWW1Y0x2Nrss7/fiPc=
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=oracle.com;
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by MWHPR10MB1951.namprd10.prod.outlook.com
- (2603:10b6:300:10a::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.26; Thu, 22 Jul
- 2021 14:01:19 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::5820:e42b:73d7:4268]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::5820:e42b:73d7:4268%7]) with mapi id 15.20.4331.034; Thu, 22 Jul 2021
- 14:01:19 +0000
-Date:   Thu, 22 Jul 2021 17:01:03 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [bug report] fanotify: fix copy_event_to_user() fid error clean
- up
-Message-ID: <20210722140103.GZ25548@kadam>
-References: <20210721125407.GA25822@kili>
- <YPih+xdLAJ2qQ/uW@google.com>
- <CAOQ4uxgLZTTYV9h4SkCwYEm9D+Nd4VX5MbX8e-fUprsLOdPS2w@mail.gmail.com>
- <20210722093142.GU25548@kadam>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210722093142.GU25548@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: JN2P275CA0026.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:2::14)
- To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+        Thu, 22 Jul 2021 09:44:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626963881;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=xxRxJnSuUSBg6S3Mu6d9msoL1c9ep8RmoIwicFHckLo=;
+        b=HixSCSHIQJwsTBxJ1eJEFvsG4oyfhVVgVgUA+n8J88jb30Ep9dWjyGRmGQr/ocQFqi9Nx5
+        rEe2l/LAInU1FAv9kvDqf4YKo8uUmlwIsDsui8e4m1sgff0c1yYdYg3tGPJxaTP92g10QQ
+        754q50nywBTyJ2ZRPi1iJcS7ydYteqw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-329-Ct5bAETdOJK754ythEqN7g-1; Thu, 22 Jul 2021 10:24:33 -0400
+X-MC-Unique: Ct5bAETdOJK754ythEqN7g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 881D61026200;
+        Thu, 22 Jul 2021 14:24:32 +0000 (UTC)
+Received: from ws.net.home (ovpn-113-182.ams2.redhat.com [10.36.113.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8EBCC60C05;
+        Thu, 22 Jul 2021 14:24:31 +0000 (UTC)
+Date:   Thu, 22 Jul 2021 16:24:28 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux v2.37.1
+Message-ID: <20210722142428.5dbmkxhu7jjqbzfy@ws.net.home>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from kadam (102.222.70.252) by JN2P275CA0026.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:2::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.25 via Frontend Transport; Thu, 22 Jul 2021 14:01:15 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 43895230-d38c-4e92-de14-08d94d192e29
-X-MS-TrafficTypeDiagnostic: MWHPR10MB1951:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MWHPR10MB1951396FA999719C35C8C7D98EE49@MWHPR10MB1951.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: yYbKs4Oh0BJWa1MocG99+yuOnJxCEXck86AytyGW/wnx4nYfn1+46r9hDnvIHU0sFib3FQkwC3rA2B/osUaTKAyaqdYCMyaHTkU6FAl5tfRac82gIH51Bb8mgtashHI9w6+oLw6FJ6+WS5W6DPoYtyZBh5zFYA+boYHoELg8VlNicJXs/FsnCNyaZwB6eTRZHP8xSz82v1q7Ls6dcHv8yzsTl01F/B2NxnQt36yIwE5lXB69mXJJxI+Hkssc2V+a698yMgme8SzuYzwJEurvjLLx8WfPzgBWoJtxoc8o69bcYiYuJMdLXibGtkoxJ904lBWSlwrflKmTUIxbgTEWcwpWhlR7FgIs4NupGjspqqkF+hRuUke3nhgVtwPu36arC+v2asGTn7lO3iJMNbUozyOt46ypbOkHHQFk0m6Rzh0m9D9w/M8kJJtztGgsnwoNcyLP2fdrksZEAa5iOjshU9r/6LFkepi7HiOl+bzPIDknK1v1AQfGnTPrkM9CcL5pbuI0ZLmsHA8dxyRI8pxPMdewMHPWurB1z0AOkaOIdyGcg//0Qb6LQEzd4JB8gn1yIK8ACUxj99T089jYkZLcqug/GOMxwJfSqrN4GwEVCFMlhg0PIGr+wLLkpWat+qEMZwkaK7hhCxZlL1jg05A56LKzSiPNkkUcT/0PR17ViYL5LkzhTkiRhzuPo9c+2IdwsZWu1QIu4+Sgp2bcgjvomw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(4744005)(9576002)(4326008)(9686003)(66946007)(66476007)(6916009)(66556008)(38100700002)(38350700002)(54906003)(316002)(33716001)(508600001)(86362001)(52116002)(44832011)(6496006)(186003)(33656002)(55016002)(1076003)(8936002)(956004)(8676002)(26005)(6666004)(5660300002)(2906002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?mKe98UeCzde3NvR8xlaVoIJtgifp4PsB+ZAMe/BzR82WKTKaVZmP88l3RNCX?=
- =?us-ascii?Q?x0AFWoAEUsI5TOU39kY6YsyRxZgL+kVo+oYNeQjert3YtQuzJOKBmex2DjZB?=
- =?us-ascii?Q?eXCKMCIGAxYNhqKVbz0zy8fTUdjAngVgzWU/a4h0COptSO+XCUN+kIsv7w3Y?=
- =?us-ascii?Q?6VG0yr9EKK1lwUhtBy00YjLl/RMdA5xDWZ0ELpyqSzLBqyo+XZgcLB58XYvI?=
- =?us-ascii?Q?2oSrO6yS2CdCSO3uTpRwiPYGATgy3VnhZ9lrN5eJ4Pv0hWWDFpaYnO36CZNQ?=
- =?us-ascii?Q?L0Xl5gpSFNJPJHjljZ9nVFfx5f78Wt6wjbxXvVwU3iCcc0q3OKXZtl1yBJe4?=
- =?us-ascii?Q?3PON/QEV7lApRIbZq8WwhT80s696jgKKmyE4SS8spZ/otmKOZuzIG2dsrvgS?=
- =?us-ascii?Q?Q9mFFi+V9xW8PEKs8RiSyaJrvVpPYzZZ7HXWz9flC+KCECXq9n1AWkLnSJqm?=
- =?us-ascii?Q?QEZ6yHJL5ZtmvYa6w0KzRt7n6pB2/m93AvC8edAklnXFOD9YbbNk/UxnSDqi?=
- =?us-ascii?Q?71c6Mb1z8UmH97Z3T636xaWJ3WzO+3LEET72xRD1WSGdkvMBP5lJmTkPbCBX?=
- =?us-ascii?Q?y8L1Mhtcg4yyJKhrQZyjJC9B6FVg63fjvLhO3ZjtAM6IW66a3gJi9I3nnqOu?=
- =?us-ascii?Q?M7biARhLrQvYhK+tmHZRK7ds/U2UfSb4mJYDRqVEYP1ErLDPVDRGV5QQr7Ix?=
- =?us-ascii?Q?d2uoCHKZ6EteiOW7mBJAoCVhbOE39b3xE4zrlCx1OuAmh9ZhrT6PWtuYXNcK?=
- =?us-ascii?Q?NZjq8+QvAWZDpSVWLV74DjjC+PFUo1OrxNrAWUL0jo9i4WUlxzsRcHzNiD9q?=
- =?us-ascii?Q?KLXAe7LgnP8EHaqX5x7973cC9Dj5afSqABafV2FrTrzuuIdbXRPPdGNwM0YK?=
- =?us-ascii?Q?/XoMYGXuNrO+7XsIQSX4HMSCtHth7OHX2alaxnMDT1ggVgGXg64Mg+5mBmXd?=
- =?us-ascii?Q?f0WQEgbCKdOuhg0/fQmy3LPfxKpysxhltHWEyU71YMw8O6drmDHdcXOGoEXD?=
- =?us-ascii?Q?vtyGZ3SNriTOa950NB5OGa6wJetbpsW9C/gtY8eazgSBVAceeprnmBdL7GJe?=
- =?us-ascii?Q?jhcVOkQmHVAZVfytnWGnVKFzaqqs++p6O/rYi7wlLc7gLSpqx3J2Y9vP6P/H?=
- =?us-ascii?Q?6Y8lxB/w51VyZz3ltuIG54fVWY0tloN7clhg/MUjo5ZoNwKoae0f/d3OG+hp?=
- =?us-ascii?Q?pA/ddhri3R3QGc1YNE95HCnNrwzwN6KbgX4Up4K6vBxyios4VzTC4smqKswZ?=
- =?us-ascii?Q?CPl7iIP20EkwrlRk0wjfkjhMCxll9ByfI9LYtJpLYV3zHFbp6s+eGhq9kOe2?=
- =?us-ascii?Q?9noqZS5YJOHjo5T0ZYRV3l0i?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43895230-d38c-4e92-de14-08d94d192e29
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2021 14:01:19.5441
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BHuw+eYN6r/v3WqsHFnBDAgUQUyBDNvpEy20klnfQepX/jiiSJD6Nvg6QAkgSPStugOX7D8qjjlVXppQI44pkICDn+xw9wiz7NIJZQjqdz8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1951
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10053 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 spamscore=0
- bulkscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2107220095
-X-Proofpoint-GUID: 97X-dKSDc72zlc1u26EyvFwS-tT2YcjO
-X-Proofpoint-ORIG-GUID: 97X-dKSDc72zlc1u26EyvFwS-tT2YcjO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 22, 2021 at 12:31:42PM +0300, Dan Carpenter wrote:
-> Smatch is *supposed* to know about the relationship between those two.
-> The bug is actually that Smatch records in the database that create_fd()
-> always fails.  It's a serious bug, and I'm trying to investigate what's
-> going on and I'm sure that I will fix this before the end of the week.
 
-I'm testing a Smatch fix for this so hopefully it will pushed in a few
-days.
+The util-linux stable release v2.37.1 is available at
+ 
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.37/
+ 
+Feedback and bug reports, as always, are welcomed.
+ 
+  Karel
 
-regards,
-dan carpenter
+
+
+util-linux 2.37.1 Release Notes
+===============================
+
+agetty:
+   - do not use atol()  [Karel Zak]
+blockdev:
+   - improve arguments parsing (remove atoi)  [Karel Zak]
+build-sys:
+   - Update configure.ac  [Alex Xu]
+   - add generated man-pages to distribution tarball  [Karel Zak]
+   - display cryptsetup status after ./configure  [Luca Boccassi]
+   - fix {release-version} man pages  [Karel Zak]
+   - install hardlink bash-completion  [Karel Zak]
+   - make re-use of generated man-pages more robust  [Karel Zak]
+   - use $LIBS rather than LDFLAGS  [Karel Zak]
+cfdisk:
+   - do not use atoi()  [Karel Zak]
+   - optimize mountpoint detection for PARTUUID  [Karel Zak]
+dmesg:
+   - fix indentation in man page  [Platon Pronko]
+   - fix possible memory leak [coverity scan]  [Karel Zak]
+   - remove  condition [lgtm scan]  [Karel Zak]
+docs:
+   - add uclampset to AUTHORS file  [Karel Zak]
+   - fix typo in v2.37-ReleaseNotes  [Karel Zak]
+   - update AUTHORS file  [Karel Zak]
+eject:
+   - add __format__ attribute  [Karel Zak]
+   - do not use atoi()  [Karel Zak]
+fdisk:
+   - do not print error message when partition reordering is not needed  [Pali Rohár]
+   - move reorder diag messages to fdisk_reorder_partitions()  [Pali Rohár]
+findmnt:
+   - (verify) fix cache related memory leaks on --nocanonicalize [coverity scan]  [Karel Zak]
+   - (verify) fix memory leak [asan]  [Karel Zak]
+   - add __format__ attribute  [Karel Zak]
+fsck:
+   - check errno after strto..()  [Karel Zak]
+   - do not use atoi()  [Karel Zak]
+fsck.cramfs:
+   - use open+fstat rather than stat+open  [Karel Zak]
+fstrim:
+   - clean return code on --quiet-unsupported  [Karel Zak]
+hardlink:
+   - remove pcre2posix.h support  [Karel Zak]
+hexdump:
+   - correctly display signed single byte integers  [Samir Benmendil]
+   - do not use atoi()  [Karel Zak]
+hwclock:
+   - check errno after strto..()  [Karel Zak]
+   - close adjtime on write error [coverity scan]  [Karel Zak]
+   - fix ul_path_scanf() use  [Karel Zak]
+include/c:
+   - add __format__ attribute  [Karel Zak]
+   - add drop_permissions(), consolidate UID/GID reset  [Karel Zak]
+include/path:
+   - add __format__attribute  [Karel Zak]
+include/strutils:
+   - cleanup strto..() functions  [Karel Zak]
+   - consolidate string to number conversion  [Karel Zak]
+   - fix __format__attribute  [Karel Zak]
+   - fix heap-buffer-overflow in normalize_whitespace()  [Karel Zak]
+include/strv:
+   - fix format attributes  [Karel Zak]
+ipcs:
+   - check errno after strto..()  [Karel Zak]
+   - do not use atoi()  [Karel Zak]
+kill:
+   - check errno after strto..()  [Karel Zak]
+ldattach:
+   - add __format__ attribute  [Karel Zak]
+lib/loopdev:
+   - perform retry on EAGAIN  [Karel Zak]
+lib/path:
+   - (test) fix ul_new_path() use  [Karel Zak]
+   - fix possible leak when use ul_path_read_string() [coverity scan]  [Karel Zak]
+   - improve ul_path_readlink() to be more robust  [Karel Zak]
+libblkid:
+   - Add hyphens to UUID string representation in Stratis superblock parsing  [John Baublitz]
+   - check errno after strto..()  [Karel Zak]
+   - vfat  Fix reading FAT16 boot label and serial id  [Pali Rohár]
+   - vfat  Fix reading FAT32 boot label  [Pali Rohár]
+libfdisk:
+   - add and fix __format__ attributes  [Karel Zak]
+libmount:
+   - add __format__ attribute  [Karel Zak]
+   - check errno after strto..()  [Karel Zak]
+libsmartcols:
+   - fix bare array on JSON output  [Karel Zak]
+libuuid:
+   - check errno after strto..()  [Karel Zak]
+logger:
+   - add __format__ attribute  [Karel Zak]
+login:
+   - add callback for close_range()  [Karel Zak]
+   - fix close_range() use  [Karel Zak]
+   - remove obsolete and confusing comment  [Karel Zak]
+lsblk:
+   - fix formatting in -e option  [ratijas]
+   - normalize space in SERIAL and MODEL  [Karel Zak]
+   - use ID_MODEL_ENC is possible  [Karel Zak]
+lscpu:
+   - check errno after strto..()  [Karel Zak]
+   - do not use atoi()  [Karel Zak]
+   - don't use DMI if executed with --sysroot  [Karel Zak]
+   - fix build on powerpc  [Georgy Yakovlev]
+lslocks:
+   - check errno after strto..()  [Karel Zak]
+lslogins:
+   - ask for supplementary groups only once [asan]  [Karel Zak]
+   - check errno after strto..()  [Karel Zak]
+   - consolidate and optimize utmp files use  [Karel Zak]
+   - fix memory leak [asan]  [Karel Zak]
+   - use sd_journal_get_data() in proper way  [Karel Zak]
+lsmem:
+   - check errno after strto..()  [Karel Zak]
+meson:
+   - fix crypt_activate_by_signed_key detection  [Luca Boccassi]
+   - fix dlopen support for cryptsetup  [Luca Boccassi]
+misc:
+   - improve string to number conversions  [Karel Zak]
+mkfs.cramfs:
+   - add comment to explain readlink() use  [Karel Zak]
+mkswap:
+   - fix holes detection (infinite loop and/or stack-buffer-underflow)  [Karel Zak]
+more:
+   - add __format__ attribute  [Karel Zak]
+   - fix null-pointer dereference  [Karel Zak]
+   - fix setuid/setgid order  [Karel Zak]
+mount:
+   - fix roothash signature extension in manpage  [Luca Boccassi]
+   - man-page; add all overlayfs options  [Tj]
+   - mount.8 fix overlayfs nfs_export= indention  [Karel Zak]
+mount.8.adoc:
+   - Remove context options exclusion  [Thiébaud Weksteen]
+   - document SELinux use of nosuid mount flag  [Topi Miettinen]
+namei:
+   - simplify code  [Karel Zak]
+newgrp:
+   - fix memory leak [coverity scan]  [Karel Zak]
+pg:
+   - do not use atoi()  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
+   - update sr.po (from translationproject.org)  [Мирослав Николић]
+readprofile:
+   - check errno after strto..()  [Karel Zak]
+rename:
+   - use readlink() in more robust way  [Karel Zak]
+rfkill:
+   - Set scols table name to make the json output valid  [Nicolai Dagestad]
+script:
+   - add __format__ attribute  [Karel Zak]
+sulogin:
+   - add missing ifdefs  [Karel Zak]
+   - use explicit_bzero() for buffer with password  [Karel Zak]
+swapon:
+   - do not use atoi()  [Karel Zak]
+test/eject:
+   - guard asan LD_PRELOAD with use-system-commands check  [Ross Burton]
+tests:
+   - check correct log file for errors in blkdiscard test  [Ross Burton]
+   - don't hardcode /bin/kill in the kill tests  [Ross Burton]
+   - fix lsns test on kernels without USER namespaces  [Anatoly Pugachev]
+   - mark ul/ul as a known failure  [Ross Burton]
+   - skip if scsi_debug model file is not accessible  [Karel Zak]
+   - update sfdisk reorder test  [Karel Zak]
+tools:
+   - report and use LDFLAGS in tools/config-gen  [Karel Zak]
+uclampset:
+   - Fix left over optind++  [Qais Yousef]
+utmpdump:
+   - do not use atoi()  [Karel Zak]
+verity:
+   - fix verity.roothashsig only working as last parameter  [Luca Boccassi]
+wall:
+   - add __format__ attribute  [Karel Zak]
+wipefs:
+   - check errno after strto..()  [Karel Zak]
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
