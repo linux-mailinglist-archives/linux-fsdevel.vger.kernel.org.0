@@ -2,90 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 100A43D2F76
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 00:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7623D2FD7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 00:34:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231799AbhGVVU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 17:20:56 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:33558 "EHLO
-        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231336AbhGVVU4 (ORCPT
+        id S232116AbhGVVyG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 17:54:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44892 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231596AbhGVVyG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 17:20:56 -0400
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m6gip-002zZI-Tc; Thu, 22 Jul 2021 21:59:16 +0000
-Date:   Thu, 22 Jul 2021 21:59:15 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Thu, 22 Jul 2021 17:54:06 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 702EDC061575;
+        Thu, 22 Jul 2021 15:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=ePleACZs1ZsydqUvDnxgo+oZtae2ZwTuTK5A4YacCoI=; b=SqGQvGubmRSX5z6BjCjuw+xEDr
+        I6P/kC+e4Tk6N+of1b2zAJDnnHUqwHk3E/t5gR1d3ktMRWwtx9Kg2TCYIomWfDEAPHQlM17+zgKkt
+        Xn/RYJwQ50sjdfd4EguIuEopwtI8uo2nMuFD7HyFylL3MDlwFq2YyRqXto2SJlejjxs9CBi3nOEiy
+        JMtkT8N2sXCzpgbb/oDr90EnS4b2tgrpoLYCxjUD8rfd1deEJSANI5pMZWX+KXzfr78l2k9nNg8BM
+        Fi/ZxQM5/pwmq9qOM7ffeWpTh6HfWhO+DElp+RamcyEWm/5UO5eXBGbMD7KQEkFsux8/ahD5J8ptK
+        4oyfef2Q==;
+Received: from [2601:1c0:6280:3f0:7629:afff:fe72:e49d]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m6hH3-002tcC-VI; Thu, 22 Jul 2021 22:34:38 +0000
+Subject: Re: A shift-out-of-bounds in minix_statfs in fs/minix/inode.c
+To:     Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <willy@infradead.org>
+Cc:     butt3rflyh4ck <butterflyhuangxx@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
-Message-ID: <YPnqM0fY3nM5RdRI@zeniv-ca.linux.org.uk>
-References: <cover.1618916549.git.asml.silence@gmail.com>
- <939776f90de8d2cdd0414e1baa29c8ec0926b561.1618916549.git.asml.silence@gmail.com>
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <CAFcO6XOdMe-RgN8MCUT59cYEVBp+3VYTW-exzxhKdBk57q0GYw@mail.gmail.com>
+ <YPhbU/umyUZLdxIw@casper.infradead.org> <YPnp/zXp3saLbz03@mit.edu>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e494c34c-1118-584f-a001-2929df747f8b@infradead.org>
+Date:   Thu, 22 Jul 2021 15:34:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <939776f90de8d2cdd0414e1baa29c8ec0926b561.1618916549.git.asml.silence@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <YPnp/zXp3saLbz03@mit.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 20, 2021 at 12:03:33PM +0100, Pavel Begunkov wrote:
-> Just a bit of code tossing in io_sq_offload_create(), so it looks a bit
-> better. No functional changes.
+On 7/22/21 2:58 PM, Theodore Ts'o wrote:
+...
 
-Does a use-after-free count as a functional change?
+> 
+> So I do care about this for ext4, although I don't guarantee immediate
+> response, as it's something that I usually end up doing on my own
+> time.  I do get cranky that Syzkaller makes it painful to extract out
+> the fuzzed file system image, and I much prefer those fuzzing systems
+> which provide the file system image and the C program used to trigger
+> the failre as two seprate files.  Or failing that, if there was some
 
->  		f = fdget(p->wq_fd);
+gosh yes. I have added a patch to the syzkaller C reproducer multiple times
+so that it would write out the fs image and then I could just use that
+with 'mount' etc. instead of running the (unreadable) C reproducer.
 
-Descriptor table is shared with another thread, grabbed a reference to file.
-Refcount is 2 (1 from descriptor table, 1 held by us)
+> trivial way to get the syzkaller reproducer program to disgorge the
+> file system image to a specified output file.  As a result, if I have
+> a choice of spending time investigating fuzzing report from a more
+> file-system friendly fuzzing program and syzkaller, I'll tend choose
+> to spend my time dealing with other file system fuzzing reports first.
 
->  		if (!f.file)
->  			return -ENXIO;
 
-Nope, not NULL.
 
-> -		if (f.file->f_op != &io_uring_fops) {
-> -			fdput(f);
-> -			return -EINVAL;
-> -		}
->  		fdput(f);
+-- 
+~Randy
 
-Decrement refcount, get preempted away.  f.file->f_count is 1 now.
-
-Another thread: close() on the same descriptor.  Final reference to
-struct file (from descriptor table) is gone, file closed, memory freed.
-
-Regain CPU...
-
-> +		if (f.file->f_op != &io_uring_fops)
-> +			return -EINVAL;
-
-... and dereference an already freed structure.
-
-What scares me here is that you are playing with bloody fundamental objects,
-without understanding even the basics regarding their handling ;-/
-
-1) descriptor tables can be shared.
-2) another thread can close file right under you.
-3) once all references to opened file are gone, it gets shut down and
-struct file gets freed.
-4) inside an fdget()/fdput() pair you are guaranteed that (3) won't happen.
-As soon as you've done fdput(), that promise is gone.
-
-	In the above only (1) might have been non-obvious, because if you
-accept _that_, you have to ask yourself what the fuck would prevent file
-disappearing once you've done fdput(), seeing that it might be the last
-thing your syscall is doing to the damn thing.  So either that would've
-leaked it, or _something_ in the operations you've done to it must've
-made it possible for close(2) to get the damn thing.  And dereferencing
-->f_op is unlikely to be that, isn't it?  Which leaves fdput() the
-only candidate.  It's common sense stuff...
-
-	Again, descriptor table is a shared resource and threads sharing
-it can issue syscalls at the same time.  Sure, I've got fewer excuses
-than you do for lack of documentation, but that's really basic...
