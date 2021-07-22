@@ -2,103 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F07133D24CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 15:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCBA83D24DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 15:50:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232135AbhGVNF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 09:05:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35550 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231925AbhGVNF1 (ORCPT
+        id S232118AbhGVNJn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 09:09:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39162 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231925AbhGVNJn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 09:05:27 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71314C061575;
-        Thu, 22 Jul 2021 06:46:02 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id u13so8570455lfs.11;
-        Thu, 22 Jul 2021 06:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=S5FBe7ueCEgBBBcVlYIV5ZQBPwUEDI96bGTpteUkpVg=;
-        b=ODQJCwhH4fpxxhVlyvc7qpPwR4JZiWsrgG8NvFvy5X3NG25wTU6ksHsU1cL8b1QGuU
-         tp875eIubB65RbEhE7PNrtCX89VD3dgDJHWmRbjJ9fWOo3S8i12JKyydfYJK5k8O4IOE
-         KTHILQtAAJA7SsGOAWfryjyQXAaZZg4ZS8+7xtQnzgv4DZGAUwMf2/poxEvFSI8dteOf
-         5V4oFyStMw5PiChxrAqttDR6C45175WAIq1FLMI6wrOKrPLTvI3CtdF7ipHlFsV8/MWo
-         u3I7bty7jolpesArC0A8mwuHZEK3ccnYiL+3b7KRvvG4ZsPH2OnVhIcDTlGXByw1z8Qv
-         mkZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=S5FBe7ueCEgBBBcVlYIV5ZQBPwUEDI96bGTpteUkpVg=;
-        b=qKsoV6DOtwq/IYHkfEmOL4V+oAkfvmyeGpG9qGGasShQzmKMT32D07B+AqhlZaiyhZ
-         wOrsxgaPVkepUi7KGsNrEcm2RHufFt0eM1cRlKqE8wKel8TlsmpEjSVu7OZPkmrNjx3D
-         pykGXLHUxkvsLeXxK1NmOOWneD1aKqxHOlPIhLUKOGUfwDEwk0BC1BA8zDZMxAOHirQd
-         kMdZHpfG2PQfmawrkIctM8dLOsErxoZsvRQ1iONMIZ99L6+vbU39ZIi7dGLRx4mYyy/A
-         KqeJOAeeZO2V2XqHGASfqZRrZ7FdhbNbsv8z0byZt5x8T5I8aIogKGYcKWxZfE74W32L
-         EHMA==
-X-Gm-Message-State: AOAM532SRjaHJft8Tq+k7DfwjKLNBvwTyy/AGvbMdloHH+aNpVxZfJep
-        +3GVvXwh7p68UA8FWnPP0QY=
-X-Google-Smtp-Source: ABdhPJy36a3gqQAyT0+tVLg1bfWSzgW5dYJ2GTCxgOvalOUdOoeV5NbZ3uVv5LxINryzPiIxhI7AOg==
-X-Received: by 2002:a05:6512:3326:: with SMTP id l6mr28891434lfe.658.1626961560871;
-        Thu, 22 Jul 2021 06:46:00 -0700 (PDT)
-Received: from [192.168.2.145] (79-139-184-182.dynamic.spd-mgts.ru. [79.139.184.182])
-        by smtp.googlemail.com with ESMTPSA id d23sm3102281ljl.115.2021.07.22.06.46.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Jul 2021 06:46:00 -0700 (PDT)
-Subject: Re: [PATCH v14 062/138] mm/migrate: Add folio_migrate_copy()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-63-willy@infradead.org>
- <a670e7c1-95fb-324f-055f-74dd4c81c0d0@gmail.com>
- <YPlko1ObxD/CEz8o@casper.infradead.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fd3fe780-1a1b-1ba7-1725-72286470ce4c@gmail.com>
-Date:   Thu, 22 Jul 2021 16:45:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Thu, 22 Jul 2021 09:09:43 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16MDX0E3128636;
+        Thu, 22 Jul 2021 09:50:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=kos3FVmTd7oXvlZ3XCZRWpWrBVMFG6Ui1FBGEyaRtbM=;
+ b=DAyvb9xvFE2UQS0Zg29ILghYMai1hPTyTS1IjqmMirx29XIBVi16ARu24ieY7aMdoZ/U
+ LT8kv5W08Yl0FhygOB9/wJSDgUtTBB2rPmMrrv3OTsCQrtVAx8tzbxVocRekDFegYoUR
+ rOilz2tiKreRQJbwnQFnbQXfyVSYnys6kvnyMlqeIwh6QGaXmeYUQGxJ3h2BbyhOnJfN
+ 6Xlubt9owPftU0vPOHKrnutK9JaxxwSHSoaXn5D8hrZi53EjvPwuwUh0BpO+QlODWDyP
+ rfoxXyzLKTpo9tWb0PSPjesK7ApBo5KdrVDRkmtvrMb0oPtAo9QnxqYV+WyrwIoUn0D7 0A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39y8xahu24-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Jul 2021 09:50:15 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16MDXeMb136193;
+        Thu, 22 Jul 2021 09:50:15 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39y8xahtyw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Jul 2021 09:50:15 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16MDlGuG008371;
+        Thu, 22 Jul 2021 13:50:12 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 39vng724gw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Jul 2021 13:50:12 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16MDlfMx23921074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Jul 2021 13:47:41 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E0D3D11C054;
+        Thu, 22 Jul 2021 13:50:09 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D3B6B11C04A;
+        Thu, 22 Jul 2021 13:50:07 +0000 (GMT)
+Received: from sig-9-65-201-143.ibm.com (unknown [9.65.201.143])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 22 Jul 2021 13:50:07 +0000 (GMT)
+Message-ID: <decadc5869f3de0bc78f783703e5ca9286f42522.camel@linux.ibm.com>
+Subject: Re: [syzbot] possible deadlock in mnt_want_write (2)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        syzbot <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com>,
+        Hillf Danton <hdanton@sina.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Thu, 22 Jul 2021 09:50:06 -0400
+In-Reply-To: <CAJfpegsYNcv+mEVpLBxVGSQhXr0Q_UnOUC1VkYuYB=xzRt+f-A@mail.gmail.com>
+References: <00000000000067d24205c4d0e599@google.com>
+         <CAJfpegsYNcv+mEVpLBxVGSQhXr0Q_UnOUC1VkYuYB=xzRt+f-A@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: jNI6zunxBaehC_v-7eAEcm_fNZPdIjc1
+X-Proofpoint-ORIG-GUID: v1AYLtooOcVymVRZmDtX_OfRce_DyXX7
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-In-Reply-To: <YPlko1ObxD/CEz8o@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-22_07:2021-07-22,2021-07-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1011 mlxlogscore=930 mlxscore=0 spamscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 adultscore=0 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2107220091
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-22.07.2021 15:29, Matthew Wilcox пишет:
-> On Thu, Jul 22, 2021 at 02:52:28PM +0300, Dmitry Osipenko wrote:
-...
-> The obvious solution is just to change folio_copy():
+[CC'ing Hillf Danton <hdanton@sina.com>]
+
+Hi Miklos,
+
+On Mon, 2021-07-19 at 17:11 +0200, Miklos Szeredi wrote:
+> [CC: linux-intergrity]
 > 
->  {
-> -       unsigned i, nr = folio_nr_pages(src);
-> +       unsigned i = 0;
-> +       unsigned nr = folio_nr_pages(src);
-> 
-> -       for (i = 0; i < nr; i++) {
-> -               cond_resched();
-> +       for (;;) {
->                 copy_highpage(folio_page(dst, i), folio_page(src, i));
-> +               if (i++ == nr)
+> On Tue, 15 Jun 2021 at 18:59, syzbot
+> <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    06af8679 coredump: Limit what can interrupt coredumps
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=162f99afd00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=547a5e42ca601229
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=b42fe626038981fb7bfa
+> > compiler:       Debian clang version 11.0.1-2
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
 
-This works with the ++i precedence change. Thanks!
+There was a similar syzbot report and followup discussion [1].  
+According to Amir Goldstein,  it's a false positive lockdep warning.  
+At this point we understand how to fix the problem, but are waiting for
+a reproducer.
 
-> +                       break;
-> +               cond_resched();
->         }
->  }
-> 
-> now it only calls cond_resched() for multi-page folios.
+thanks,
 
-...
+Mimi
 
-Thank you for the explanation and for the fix!
+[1] Message-Id: <20210616090142.734-1-hdanton@sina.com>
 
-The fs/ and mm/ are mostly outside of my scope, hope you'll figure out
-the buffer-head case soon.
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com
+
+
