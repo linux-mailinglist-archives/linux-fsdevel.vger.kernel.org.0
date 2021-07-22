@@ -2,106 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93DDC3D1DCA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 07:54:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 461623D1DD4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 07:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230125AbhGVFNl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 01:13:41 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:36414 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbhGVFNk (ORCPT
+        id S230109AbhGVFQD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 01:16:03 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:34995 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229967AbhGVFP6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 01:13:40 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 434F91FEEF;
-        Thu, 22 Jul 2021 05:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1626933255; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nEQOsUBhG7WuceEdafdVcMY/cqYyTJYTe4BOBvgIZgM=;
-        b=FzsAUuKT9FbQwXQ3KEtoHkP8PVj0LRaZb5nqfoPxY3v5XjScaLtY3LhudrgyZU2GbiAwgf
-        CocoqrB672lsxB8PS2NDLR7blctdZlwgyuie4K+bWvT2nxPYmoQb5wEta7gn1mgsyLs0Ze
-        1thGT4zbJ4gVye4yLA8Kw5OaR7/VCsQ=
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id DFDFA13299;
-        Thu, 22 Jul 2021 05:54:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id pPCSMwYI+WB6aQAAGKfGzw
-        (envelope-from <nborisov@suse.com>); Thu, 22 Jul 2021 05:54:14 +0000
-Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Sterba <dsterba@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-References: <20210721135926.602840-1-nborisov@suse.com>
- <CAHk-=whqJKKc9wUacLEkvTzXYfYOUDt=kHKX6Fa8Kb4kQftbbQ@mail.gmail.com>
- <20210721201029.GQ19710@twin.jikos.cz>
- <CAHk-=whCygw44p30Pmf+Bt8=LVtmij3_XOxweEA3OQNruhMg+A@mail.gmail.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Message-ID: <792949a2-d987-f6a0-a153-8c5fe1e3a073@suse.com>
-Date:   Thu, 22 Jul 2021 08:54:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Thu, 22 Jul 2021 01:15:58 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Ugaix7h_1626933391;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Ugaix7h_1626933391)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 22 Jul 2021 13:56:32 +0800
+Date:   Thu, 22 Jul 2021 13:56:30 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+Subject: Re: [PATCH v6] iomap: support tail packing inline read
+Message-ID: <YPkIjhVq+MzVl1Sk@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Christoph Hellwig <hch@lst.de>,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+References: <20210722031729.51628-1-hsiangkao@linux.alibaba.com>
+ <20210722053947.GA28594@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=whCygw44p30Pmf+Bt8=LVtmij3_XOxweEA3OQNruhMg+A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210722053947.GA28594@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Christoph,
 
+On Thu, Jul 22, 2021 at 07:39:47AM +0200, Christoph Hellwig wrote:
+> I think some of the language here is confusing - mostly about tail
+> packing when we otherwise use inline data.  Can you take a look at
+> the version below?  This mostly cleans up the terminology, adds a
+> new helper to check the size, and removes the error on trying to
+> write with a non-zero pos, as it can be trivially supported now.
+> 
 
-On 21.07.21 г. 23:27, Linus Torvalds wrote:
-> On Wed, Jul 21, 2021 at 1:13 PM David Sterba <dsterba@suse.cz> wrote:
->>
->> adding a memcmp_large that compares by native words or u64 could be
->> the best option.
-> 
-> Yeah, we could just special-case that one place.
+Many thanks for your time and hard work on revising this again. I'm
+fine with this version and the update for iomap_write_begin(), and
+I will do test hours later as I said before.
 
-This who thread started because I first implemented a special case just
-for dedupe and Dave Chinner suggested instead of playing whack-a-mole to
-get something decent for the generic memcmp so that we get an
-improvement across the whole of the kernel.
+Hopefully this version could be confirmed by Andreas on the gfs2
+side as well.
 
+Thanks,
+Gao Xiang
+
+> ---
+> From 0f9c6ac6c2e372739b29195d25bebb8dd87e583a Mon Sep 17 00:00:00 2001
+> From: Gao Xiang <hsiangkao@linux.alibaba.com>
+> Date: Thu, 22 Jul 2021 11:17:29 +0800
+> Subject: iomap: make inline data support more flexible
 > 
-> But see the patches I sent out - I think we can get the best of both worlds.
+> Add support for offsets into the inline data page at iomap->inline_data
+> to cater for the EROFS tailpackng case where a small data is stored
+> right after the inode.
 > 
-> A small and simple memcmp() that is good enough and not the
-> _completely_ stupid thing we have now.
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> ---
+>  fs/iomap/buffered-io.c | 35 ++++++++++++++++++-----------------
+>  fs/iomap/direct-io.c   | 10 ++++++----
+>  include/linux/iomap.h  | 14 ++++++++++++++
+>  3 files changed, 38 insertions(+), 21 deletions(-)
 > 
-> The second patch I sent out even gets the mutually aligned case right.
-> 
-> Of course, the glibc code also ended up unrolling things a bit, but
-> honestly, the way it did it was too disgusting for words.
-> 
-> And if it really turns out that the unrolling makes a big difference -
-> although I doubt it's meaningful with any modern core - I can add a
-> couple of lines to that simple patch I sent out to do that too.
-> Without getting the monster that is that glibc code.
-> 
-> Of course, my patch depends on the fact that "get_unaligned()" is
-> cheap on all CPU's that really matter, and that caches aren't
-> direct-mapped any more. The glibc code seems to be written for a world
-> where registers are cheap, unaligned accesses are prohibitively
-> expensive, and unrolling helps because L1 caches are direct-mapped and
-> you really want to do chunking to not get silly way conflicts.
-> 
-> If old-style Sparc or MIPS was our primary target, that would be one
-> thing. But it really isn't.
-> 
->               Linus
-> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 87ccb3438becd9..0597f5c186a33f 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -205,25 +205,29 @@ struct iomap_readpage_ctx {
+>  	struct readahead_control *rac;
+>  };
+>  
+> -static void
+> -iomap_read_inline_data(struct inode *inode, struct page *page,
+> -		struct iomap *iomap)
+> +static int iomap_read_inline_data(struct inode *inode, struct page *page,
+> +		struct iomap *iomap, loff_t pos)
+>  {
+> -	size_t size = i_size_read(inode);
+> +	size_t size = iomap->length + iomap->offset - pos;
+>  	void *addr;
+>  
+>  	if (PageUptodate(page))
+> -		return;
+> +		return PAGE_SIZE;
+>  
+> -	BUG_ON(page_has_private(page));
+> -	BUG_ON(page->index);
+> -	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> +	/* inline data must start page aligned in the file */
+> +	if (WARN_ON_ONCE(offset_in_page(pos)))
+> +		return -EIO;
+> +	if (WARN_ON_ONCE(!iomap_inline_data_size_valid(iomap)))
+> +		return -EIO;
+> +	if (WARN_ON_ONCE(page_has_private(page)))
+> +		return -EIO;
+>  
+>  	addr = kmap_atomic(page);
+> -	memcpy(addr, iomap->inline_data, size);
+> +	memcpy(addr, iomap_inline_buf(iomap, pos), size);
+>  	memset(addr + size, 0, PAGE_SIZE - size);
+>  	kunmap_atomic(addr);
+>  	SetPageUptodate(page);
+> +	return PAGE_SIZE;
+>  }
+>  
+>  static inline bool iomap_block_needs_zeroing(struct inode *inode,
+> @@ -246,11 +250,8 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	unsigned poff, plen;
+>  	sector_t sector;
+>  
+> -	if (iomap->type == IOMAP_INLINE) {
+> -		WARN_ON_ONCE(pos);
+> -		iomap_read_inline_data(inode, page, iomap);
+> -		return PAGE_SIZE;
+> -	}
+> +	if (iomap->type == IOMAP_INLINE)
+> +		return iomap_read_inline_data(inode, page, iomap, pos);
+>  
+>  	/* zero post-eof blocks as the page may be mapped */
+>  	iop = iomap_page_create(inode, page);
+> @@ -618,14 +619,14 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  	}
+>  
+>  	if (srcmap->type == IOMAP_INLINE)
+> -		iomap_read_inline_data(inode, page, srcmap);
+> +		status = iomap_read_inline_data(inode, page, srcmap, pos);
+>  	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
+>  		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
+>  	else
+>  		status = __iomap_write_begin(inode, pos, len, flags, page,
+>  				srcmap);
+>  
+> -	if (unlikely(status))
+> +	if (unlikely(status < 0))
+>  		goto out_unlock;
+>  
+>  	*pagep = page;
+> @@ -675,7 +676,7 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
+>  
+>  	flush_dcache_page(page);
+>  	addr = kmap_atomic(page);
+> -	memcpy(iomap->inline_data + pos, addr + pos, copied);
+> +	memcpy(iomap_inline_buf(iomap, pos), addr + pos, copied);
+>  	kunmap_atomic(addr);
+>  
+>  	mark_inode_dirty(inode);
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 9398b8c31323b3..a6aaea2764a55f 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -378,23 +378,25 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		struct iomap_dio *dio, struct iomap *iomap)
+>  {
+>  	struct iov_iter *iter = dio->submit.iter;
+> +	void *dst = iomap_inline_buf(iomap, pos);
+>  	size_t copied;
+>  
+> -	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> +	if (WARN_ON_ONCE(!iomap_inline_data_size_valid(iomap)))
+> +		return -EIO;
+>  
+>  	if (dio->flags & IOMAP_DIO_WRITE) {
+>  		loff_t size = inode->i_size;
+>  
+>  		if (pos > size)
+> -			memset(iomap->inline_data + size, 0, pos - size);
+> -		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
+> +			memset(iomap_inline_buf(iomap, size), 0, pos - size);
+> +		copied = copy_from_iter(dst, length, iter);
+>  		if (copied) {
+>  			if (pos + copied > size)
+>  				i_size_write(inode, pos + copied);
+>  			mark_inode_dirty(inode);
+>  		}
+>  	} else {
+> -		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
+> +		copied = copy_to_iter(dst, length, iter);
+>  	}
+>  	dio->size += copied;
+>  	return copied;
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 479c1da3e2211e..5efae7153912ed 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -97,6 +97,20 @@ iomap_sector(struct iomap *iomap, loff_t pos)
+>  	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+>  }
+>  
+> +static inline void *iomap_inline_buf(const struct iomap *iomap, loff_t pos)
+> +{
+> +	return iomap->inline_data - iomap->offset + pos;
+> +}
+> +
+> +/*
+> + * iomap->inline_data is a potentially kmapped page, ensure it never crosseѕ a
+> + * page boundary.
+> + */
+> +static inline bool iomap_inline_data_size_valid(const struct iomap *iomap)
+> +{
+> +	return iomap->length <= PAGE_SIZE - offset_in_page(iomap->inline_data);
+> +}
+> +
+>  /*
+>   * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
+>   * and page_done will be called for each page written to.  This only applies to
+> -- 
+> 2.30.2
