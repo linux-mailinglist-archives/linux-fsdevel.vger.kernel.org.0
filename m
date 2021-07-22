@@ -2,183 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC9593D22DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 13:42:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0B2E3D22F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 13:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231707AbhGVLB4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 07:01:56 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:38814 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231566AbhGVLBz (ORCPT
+        id S231766AbhGVLL4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 07:11:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37850 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231627AbhGVLL4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 07:01:55 -0400
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C9CAC20B8016;
-        Thu, 22 Jul 2021 04:42:30 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C9CAC20B8016
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1626954150;
-        bh=sGwLum2AxhbtrpJ7xqyEMr2W/f/xXktE5uFvk0yKiMo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=etVlz2pz2TaOE+R96P1w4ctlor8huZ3CIJ/Q8Qwx1k2+QfrdKxyAh17pJlpuF9ZVN
-         c41fv0aoV6GXB8/NbJ0phlK18M8YRCnsjp3cYTpTBLqWrElAfNMQdO2bZg99Slp3LS
-         UVGOcqT9TzAHjaBPx8yIluVr8bP7HR0fCX1HZchY=
-Received: by mail-pj1-f52.google.com with SMTP id i16-20020a17090acf90b02901736d9d2218so5096611pju.1;
-        Thu, 22 Jul 2021 04:42:30 -0700 (PDT)
-X-Gm-Message-State: AOAM530eJEgVA6KTEtFrwqoNbGdEMytrHMe4c536RRoWHjm7T1niBIFe
-        aUHfEEr8qpl3cn+YRHxj7+sSRQzsXDz9EQahHx8=
-X-Google-Smtp-Source: ABdhPJzz4jFqHprYZm/Tu2+suDDmD9tWwVgUUCAvbfXUJw8mK1tkTXu6QD2LFCMB2NC9biNaXqVJpmykWKoowtucTB8=
-X-Received: by 2002:a17:902:bf47:b029:12b:afd0:e39 with SMTP id
- u7-20020a170902bf47b029012bafd00e39mr1282903pls.19.1626954150202; Thu, 22 Jul
- 2021 04:42:30 -0700 (PDT)
+        Thu, 22 Jul 2021 07:11:56 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BD10C061575;
+        Thu, 22 Jul 2021 04:52:31 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id i5so8108576lfe.2;
+        Thu, 22 Jul 2021 04:52:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ypKqM7KTx5GpDb/y7PGXXY/nEaOI08qXqRMcMGLHsKU=;
+        b=Co2isklHqoeK+dVakSgNHl1oaYC9tuYysc/z5nwhR3VrEEJOloyqQJolx8feidgI2N
+         ElgwJgIBswly6hyU6XFqmMNhxtXQxVGpf1WbmLUeWByCdqiGWCg5e/FUzZsmVQQAxooB
+         X/Zw56MlS/+Y9Kbd7goKvDrb1ckkoQnynCg5lcAUSz+HQMbh1lbYMWy4z+fANVX0uyP8
+         UfQiHSRYYGGlClGYooUJffvGkMxOxwj91cM0DHyXxrc6/rrEA6FaWUfWXMmNB1CmnQgE
+         pWPzKf/cxv9issJjiSM4eE320SYJBlYjwTccZ01uEu159EFWzwb/dRYqDvIaaIA6S4Bm
+         ESGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ypKqM7KTx5GpDb/y7PGXXY/nEaOI08qXqRMcMGLHsKU=;
+        b=CjFD9LnmPQIMxXr4UWmCH5WV7Iv0UhYkMzxSOJ2GxvOhqxcMpRG6NtkYoHP19twG4z
+         QKllX0t+JSiN3rAo1bafyqOiW8IPpYqiohtzrEXs6d/3rEU44XvhZWVV4S3RORuZSWLt
+         cFBK2AOjqxWv7+HK/TLx363jHb6nDsqlCKaD1XTUvq/El6e1cJRTOPyxEIDSsReHDmHr
+         LWWi/RD2R0aniH6mCG2d9COqYYS+BrkSukfNDsTPBtOavosyUbRn+AIt26yuoIzmuMDS
+         rqwA20nfQUMqx9CNjqXQkkk57ddRMhqoP10ZJs/vAuUKDe7cpY3BLmZXcxz9rka/j6xL
+         u3Zw==
+X-Gm-Message-State: AOAM530edj4kSpFCmD2aJvLTwyZ7rhhHEKhthJ/dEJZxz+fmYaj4xU22
+        RYR24xhrkdDISh25afyCo76+fSZwEKE=
+X-Google-Smtp-Source: ABdhPJyQqV5j32AB3JiK3JxX8PRQKtaHRVok6krIaVVBKgiYVsFhCKwwo1GtwUnNXDsB5GfcKeqEJA==
+X-Received: by 2002:a05:6512:68c:: with SMTP id t12mr12714146lfe.224.1626954749387;
+        Thu, 22 Jul 2021 04:52:29 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-184-182.dynamic.spd-mgts.ru. [79.139.184.182])
+        by smtp.googlemail.com with ESMTPSA id l21sm2623692ljc.94.2021.07.22.04.52.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Jul 2021 04:52:29 -0700 (PDT)
+Subject: Re: [PATCH v14 062/138] mm/migrate: Add folio_migrate_copy()
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+References: <20210715033704.692967-1-willy@infradead.org>
+ <20210715033704.692967-63-willy@infradead.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <a670e7c1-95fb-324f-055f-74dd4c81c0d0@gmail.com>
+Date:   Thu, 22 Jul 2021 14:52:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <20210712230530.29323-1-mcroce@linux.microsoft.com> <3ca56654449b53814a22e3f06179292bc959ae72.camel@debian.org>
-In-Reply-To: <3ca56654449b53814a22e3f06179292bc959ae72.camel@debian.org>
-From:   Matteo Croce <mcroce@linux.microsoft.com>
-Date:   Thu, 22 Jul 2021 13:41:54 +0200
-X-Gmail-Original-Message-ID: <CAFnufp2RmL3CQBJOmZgfsLEPKJ7g_qWJibzEhnMadhs=xC7mQw@mail.gmail.com>
-Message-ID: <CAFnufp2RmL3CQBJOmZgfsLEPKJ7g_qWJibzEhnMadhs=xC7mQw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/5] block: add a sequence number to disks
-To:     Luca Boccassi <bluca@debian.org>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lennart Poettering <lennart@poettering.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tejun Heo <tj@kernel.org>,
-        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
-        Niklas Cassel <niklas.cassel@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        JeffleXu <jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210715033704.692967-63-willy@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 20, 2021 at 7:27 PM Luca Boccassi <bluca@debian.org> wrote:
->
-> On Tue, 2021-07-13 at 01:05 +0200, Matteo Croce wrote:
-> > From: Matteo Croce <mcroce@microsoft.com>
-> >
-> > Associating uevents with block devices in userspace is difficult and racy:
-> > the uevent netlink socket is lossy, and on slow and overloaded systems has
-> > a very high latency. Block devices do not have exclusive owners in
-> > userspace, any process can set one up (e.g. loop devices). Moreover, device
-> > names can be reused (e.g. loop0 can be reused again and again). A userspace
-> > process setting up a block device and watching for its events cannot thus
-> > reliably tell whether an event relates to the device it just set up or
-> > another earlier instance with the same name.
-> >
-> > Being able to set a UUID on a loop device would solve the race conditions.
-> > But it does not allow to derive orderings from uevents: if you see a uevent
-> > with a UUID that does not match the device you are waiting for, you cannot
-> > tell whether it's because the right uevent has not arrived yet, or it was
-> > already sent and you missed it. So you cannot tell whether you should wait
-> > for it or not.
-> >
-> > Being able to set devices up in a namespace would solve the race conditions
-> > too, but it can work only if being namespaced is feasible in the first
-> > place. Many userspace processes need to set devices up for the root
-> > namespace, so this solution cannot always work.
-> >
-> > Changing the loop devices naming implementation to always use
-> > monotonically increasing device numbers, instead of reusing the lowest
-> > free number, would also solve the problem, but it would be very disruptive
-> > to userspace and likely break many existing use cases. It would also be
-> > quite awkward to use on long-running machines, as the loop device name
-> > would quickly grow to many-digits length.
-> >
-> > Furthermore, this problem does not affect only loop devices - partition
-> > probing is asynchronous and very slow on busy systems. It is very easy to
-> > enter races when using LO_FLAGS_PARTSCAN and watching for the partitions to
-> > show up, as it can take a long time for the uevents to be delivered after
-> > setting them up.
-> >
-> > Associating a unique, monotonically increasing sequential number to the
-> > lifetime of each block device, which can be retrieved with an ioctl
-> > immediately upon setting it up, allows to solve the race conditions with
-> > uevents, and also allows userspace processes to know whether they should
-> > wait for the uevent they need or if it was dropped and thus they should
-> > move on.
-> >
-> > This does not benefit only loop devices and block devices with multiple
-> > partitions, but for example also removable media such as USB sticks or
-> > cdroms/dvdroms/etc.
-> >
-> > The first patch is the core one, the 2..4 expose the information in
-> > different ways, and the last one makes the loop device generate a media
-> > changed event upon attach, detach or reconfigure, so the sequence number
-> > is increased.
-> >
-> > If merged, this feature will immediately used by the userspace:
-> > https://github.com/systemd/systemd/issues/17469#issuecomment-762919781
-> >
-> > v4 -> v5:
-> > - introduce a helper to raise media changed events
-> > - use the new helper in loop instead of the full event code
-> > - unexport inc_diskseq() which is only used by the block code now
-> > - rebase on top of 5.14-rc1
-> >
-> > v3 -> v4:
-> > - rebased on top of 5.13
-> > - hook the seqnum increase into the media change event
-> > - make the loop device raise media change events
-> > - merge 1/6 and 5/6
-> > - move the uevent part of 1/6 into a separate one
-> > - drop the now unneeded sysfs refactor
-> > - change 'diskseq' to a global static variable
-> > - add more comments
-> > - refactor commit messages
-> >
-> > v2 -> v3:
-> > - rebased on top of 5.13-rc7
-> > - resend because it appeared archived on patchwork
-> >
-> > v1 -> v2:
-> > - increase seqnum on media change
-> > - increase on loop detach
-> >
-> > Matteo Croce (6):
-> >   block: add disk sequence number
-> >   block: export the diskseq in uevents
-> >   block: add ioctl to read the disk sequence number
-> >   block: export diskseq in sysfs
-> >   block: add a helper to raise a media changed event
-> >   loop: raise media_change event
-> >
-> >  Documentation/ABI/testing/sysfs-block | 12 ++++++
-> >  block/disk-events.c                   | 62 +++++++++++++++++++++------
-> >  block/genhd.c                         | 43 +++++++++++++++++++
-> >  block/ioctl.c                         |  2 +
-> >  drivers/block/loop.c                  |  5 +++
-> >  include/linux/genhd.h                 |  3 ++
-> >  include/uapi/linux/fs.h               |  1 +
-> >  7 files changed, 114 insertions(+), 14 deletions(-)
->
-> For the series:
->
-> Tested-by: Luca Boccassi <bluca@debian.org>
->
-> I have implemented the basic systemd support for this (ioctl + uevent,
-> sysfs will be done later), and tested with this series on x86_64 and
-> Debian 11 userspace, everything seems to work great. Thanks Matteo!
->
-> Here's the implementation, in draft state until the kernel side is
-> merged:
->
-> https://github.com/systemd/systemd/pull/20257
->
+15.07.2021 06:35, Matthew Wilcox (Oracle) пишет:
+> This is the folio equivalent of migrate_page_copy(), which is retained
+> as a wrapper for filesystems which are not yet converted to folios.
+> Also convert copy_huge_page() to folio_copy().
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  include/linux/migrate.h |  1 +
+>  include/linux/mm.h      |  2 +-
+>  mm/folio-compat.c       |  6 ++++++
+>  mm/hugetlb.c            |  2 +-
+>  mm/migrate.c            | 14 +++++---------
+>  mm/util.c               |  6 +++---
+>  6 files changed, 17 insertions(+), 14 deletions(-)
 
-Hi Jens,
+Hi,
 
-Given that the whole series has been acked and tested, and the
-userspace has a draft implementation for it, is there anything else we
-can do here?
+I'm getting warnings that might be related to this patch.
 
-Regards,
--- 
-per aspera ad upstream
+[37020.191023] BUG: sleeping function called from invalid context at mm/util.c:761
+[37020.191383] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 29, name: kcompactd0
+[37020.191550] CPU: 1 PID: 29 Comm: kcompactd0 Tainted: G        W         5.14.0-rc2-next-20210721-00201-g393e9d2093a1 #8880
+[37020.191576] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[37020.191599] [<c010ce15>] (unwind_backtrace) from [<c0108fd5>] (show_stack+0x11/0x14)
+[37020.191667] [<c0108fd5>] (show_stack) from [<c0a74b1f>] (dump_stack_lvl+0x2b/0x34)
+[37020.191724] [<c0a74b1f>] (dump_stack_lvl) from [<c0141a41>] (___might_sleep+0xed/0x11c)
+[37020.191779] [<c0141a41>] (___might_sleep) from [<c0241e07>] (folio_copy+0x3f/0x84)
+[37020.191817] [<c0241e07>] (folio_copy) from [<c027a7b1>] (folio_migrate_copy+0x11/0x1c)
+[37020.191856] [<c027a7b1>] (folio_migrate_copy) from [<c027ab65>] (__buffer_migrate_page.part.0+0x215/0x238)
+[37020.191891] [<c027ab65>] (__buffer_migrate_page.part.0) from [<c027b73d>] (buffer_migrate_page_norefs+0x19/0x28)
+[37020.191927] [<c027b73d>] (buffer_migrate_page_norefs) from [<c027affd>] (move_to_new_page+0x4d/0x200)
+[37020.191960] [<c027affd>] (move_to_new_page) from [<c027bc91>] (migrate_pages+0x521/0x72c)
+[37020.191993] [<c027bc91>] (migrate_pages) from [<c024dbc1>] (compact_zone+0x589/0xb60)
+[37020.192031] [<c024dbc1>] (compact_zone) from [<c024e1eb>] (proactive_compact_node+0x53/0x6c)
+[37020.192064] [<c024e1eb>] (proactive_compact_node) from [<c024e713>] (kcompactd+0x20b/0x238)
+[37020.192096] [<c024e713>] (kcompactd) from [<c013b987>] (kthread+0x123/0x140)
+[37020.192134] [<c013b987>] (kthread) from [<c0100155>] (ret_from_fork+0x11/0x1c)
+[37020.192164] Exception stack(0xc1751fb0 to 0xc1751ff8)
+
