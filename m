@@ -2,93 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AB7A3D2686
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 17:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FB6C3D2764
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 18:15:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232641AbhGVOkr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 10:40:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57610 "EHLO
+        id S229569AbhGVPfH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 11:35:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232613AbhGVOkN (ORCPT
+        with ESMTP id S229476AbhGVPfG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 10:40:13 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0420CC0613CF;
-        Thu, 22 Jul 2021 08:20:26 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id pf12-20020a17090b1d8cb0290175c085e7a5so4840549pjb.0;
-        Thu, 22 Jul 2021 08:20:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=rWoKywolpsLaO+fLwhS065JQ8TxoNqZcLux7FKVCf+E=;
-        b=FNAmnyHz9OF8cO1mwm6/P6LMeRdqR/kMONKBrzlhaASHy8MgXpZDGIsxAo+CwZFedV
-         OIcWvC/gE/9qAxQTRHnvXPQowGT2zM0Y5E8BgTAc/CW53WD6k0HafIjpvoUv97k7l0ZC
-         /4EhjxgP5rFsNx5oE1i0SYMNZ+j74e1BnwNeOnwEaDO66drHOkY74qyTbi7520LNmW7x
-         LhT/5RBZT3BBMtj2mRIbTd4/VQEJpLSVNlht/A7N7jpk+03VDqjctGWtE8nwiduHWmDx
-         DFPK+0Ps65ovBu9sMq21h1r+ydRiOxuQVgHoXUms6d5imMVhyfJSsstqF3fonCdBoD7s
-         FRug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=rWoKywolpsLaO+fLwhS065JQ8TxoNqZcLux7FKVCf+E=;
-        b=PZ9XikxX8cKgRWTUSGlIM3pFxvSDCP7WVqf9LSIQuk14t6h+M4KU2GEncDW6pCDqbY
-         hERq08MtlfHFR1JonZ7/+3P8B37rwd1Gpt0h1/2uwON++iJn3pclaalBbV3dqpSeNsYE
-         U2IcwhzUl65j1G/jEGWjsvU6kPl+I5RFGH3e0SaAhulsFNG0RqBQvvJoKwlNhRinnwnp
-         rjG+fAGn3StsatYybc5+zeDqZJfs7bMfF9KzO5DaxevotIL6BYe2BWvngxZTWu8yNiyb
-         toZjkVrMgv1XBy3Ap9vgx7DIb0eqI1EaJDxBvEVVh0tLFfhcXuhSbOeW2ek0iU42MRRi
-         89nQ==
-X-Gm-Message-State: AOAM533VjmvVRfJugWzRMOFLn+dlMat5bx1tbLG4psDglp4aoEeHb+BT
-        IQmfRHg6+2fqUVrj5cVozzk=
-X-Google-Smtp-Source: ABdhPJzI2YstmX9Sr8akgUiD7CUc9KWdSM2OtnbOCbvr/aCcrY/u0Jjlg+ASZUbHXuLaY/lwowzXxg==
-X-Received: by 2002:a17:902:b707:b029:12a:d3d7:a82c with SMTP id d7-20020a170902b707b029012ad3d7a82cmr136167pls.24.1626967225624;
-        Thu, 22 Jul 2021 08:20:25 -0700 (PDT)
-Received: from VM-0-3-centos.localdomain ([101.32.213.191])
-        by smtp.gmail.com with ESMTPSA id 11sm30768663pfl.41.2021.07.22.08.20.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Jul 2021 08:20:25 -0700 (PDT)
-From:   brookxu <brookxu.cn@gmail.com>
-To:     viro@zeniv.linux.org.uk, tj@kernel.org, lizefan.x@bytedance.com,
-        hannes@cmpxchg.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org
-Subject: [RFC PATCH v2 3/3] misc_cgroup: delete failed logs to avoid log flooding
-Date:   Thu, 22 Jul 2021 23:20:19 +0800
-Message-Id: <e2b0dd55908750bfb0a97efae4f4e2dff2ab6a4a.1626966339.git.brookxu@tencent.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
-References: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
-In-Reply-To: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
-References: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
+        Thu, 22 Jul 2021 11:35:06 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D42FC061757;
+        Thu, 22 Jul 2021 09:15:41 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id F399C1F44551
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     "Chen, Rong A" <rong.a.chen@intel.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        kernel test robot <lkp@intel.com>, amir73il@gmail.com,
+        kbuild-all@lists.01.org, djwong@kernel.org, tytso@mit.edu,
+        david@fromorbit.com, jack@suse.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 14/15] samples: Add fs error monitoring example
+Organization: Collabora
+References: <20210629191035.681913-15-krisman@collabora.com>
+        <202106301048.BainWUsk-lkp@intel.com> <87mtqicqux.fsf@collabora.com>
+        <20210720194955.GH25548@kadam>
+        <4313fff4-343a-2937-3a97-c5da860827b1@intel.com>
+Date:   Thu, 22 Jul 2021 12:15:35 -0400
+In-Reply-To: <4313fff4-343a-2937-3a97-c5da860827b1@intel.com> (Rong A. Chen's
+        message of "Thu, 22 Jul 2021 20:54:36 +0800")
+Message-ID: <874kcmb9zs.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Chunguang Xu <brookxu@tencent.com>
+"Chen, Rong A" <rong.a.chen@intel.com> writes:
 
-Since the upper-level logic will constantly retry when it fails, in
-high-stress scenarios, a large number of failure logs may affect
-performance. Therefore, we can replace it with the failcnt counter.
+> Hi Gabriel,
+>
+> On 7/21/2021 3:49 AM, Dan Carpenter wrote:
+>> On Mon, Jul 19, 2021 at 10:36:54AM -0400, Gabriel Krisman Bertazi
+>> wrote:
+>>> kernel test robot <lkp@intel.com> writes:
+>>>
+>>>> Hi Gabriel,
+>>>>
+>>>> I love your patch! Yet something to improve:
+>>>>
+>>>> [auto build test ERROR on ext3/fsnotify]
+>>>> [also build test ERROR on ext4/dev linus/master v5.13 next-20210629]
+>>>> [cannot apply to tytso-fscrypt/master]
+>>>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>>>> And when submitting patch, we suggest to use '--base' as documented in
+>>>> https://git-scm.com/docs/git-format-patch ]
+>>>>
+>>>> url:    https://github.com/0day-ci/linux/commits/Gabriel-Krisman-Bertazi/File-system-wide-monitoring/20210630-031347
+>>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git  fsnotify
+>>>> config: arm64-allyesconfig (attached as .config)
+>>>> compiler: aarch64-linux-gcc (GCC) 9.3.0
+>>>> reproduce (this is a W=1 build):
+>>>>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross  -O ~/bin/make.cross
+>>>>          chmod +x ~/bin/make.cross
+>>>>          # https://github.com/0day-ci/linux/commit/746524d8db08a041fed90e41b15c8e8ca69cb22d
+>>>>          git remote add linux-review https://github.com/0day-ci/linux
+>>>>          git fetch --no-tags linux-review Gabriel-Krisman-Bertazi/File-system-wide-monitoring/20210630-031347
+>>>>          git checkout 746524d8db08a041fed90e41b15c8e8ca69cb22d
+>>>>          # save the attached .config to linux build tree
+>>>>          mkdir build_dir
+>>>>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross O=build_dir ARCH=arm64 SHELL=/bin/bash samples/
+>>>>
+>>>> If you fix the issue, kindly add following tag as appropriate
+>>>> Reported-by: kernel test robot <lkp@intel.com>
+>>>>
+>>>> All errors (new ones prefixed by >>):
+>>>>
+>>>>>> samples/fanotify/fs-monitor.c:7:10: fatal error: errno.h: No such file or directory
+>>>>         7 | #include <errno.h>
+>>>>           |          ^~~~~~~~~
+>>>>     compilation terminated.
+>>>
+>>> Hi Dan,
+>>>
+>>> I'm not sure what's the proper fix here.  Looks like 0day is not using
+>>> cross system libraries when building this user space code.  Should I do
+>>> something special to silent it?
+>
+> It seems need extra libraries for arm64, we'll disable CONFIG_SAMPLES to
+> avoid reporting this error.
 
-Signed-off-by: Chunguang Xu <brookxu@tencent.com>
----
- kernel/cgroup/misc.c | 2 --
- 1 file changed, 2 deletions(-)
+There are kernel space code in samples/ that still benefit from the test
+robot. See ftrace/ftrace-direct-too.c for one instance.
 
-diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index 7c568b619f82..b7de0fafa48a 100644
---- a/kernel/cgroup/misc.c
-+++ b/kernel/cgroup/misc.c
-@@ -159,8 +159,6 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg,
- 		if (new_usage > READ_ONCE(res->max) ||
- 		    new_usage > READ_ONCE(misc_res_capacity[type])) {
- 			if (!res->failed) {
--				pr_info("cgroup: charge rejected by the misc controller for %s resource in ",
--					misc_res_name[type]);
- 				pr_cont_cgroup_path(i->css.cgroup);
- 				pr_cont("\n");
- 				res->failed = true;
+Perhaps it can be disabled just for userprogs-* Makefile entries in
+samples/ ?
+
 -- 
-2.30.0
-
+Gabriel Krisman Bertazi
