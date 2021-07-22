@@ -2,94 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EDFD3D1DBC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 07:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93DDC3D1DCA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 07:54:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230306AbhGVFF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 01:05:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38898 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbhGVFF5 (ORCPT
+        id S230125AbhGVFNl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 01:13:41 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:36414 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229971AbhGVFNk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 01:05:57 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 795ABC0613D3;
-        Wed, 21 Jul 2021 22:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=8OS9hJDhEgFPapGc5vq7VW2JySETKhcWW0o+i9nkCw4=; b=N9jyhS+hcGvIRwLliW9nh3IMly
-        ScniiaEpPFe0M47CWPB0EBXoZFWxcB5JgYVc+O7Ym6blIAo9TR8Ltn0NTBrV3JAM8W96mNowjebsF
-        3Aop4Rb+bqZixVrwqSGlhb6hPKSf8AptmbegpP/RMfTUaIn+4a2BHvkdeknjstp6Hu+jD/o1Ev9eH
-        ebCEIV0c9KtW3r4kFc3CrqQOIXB+PAZ9tIdgAFH2YY5Ekh74leTHgmydsPhXATzO5toV0KtaVdcsZ
-        SqynBqgFrKLc8dLeXy8c/vALnfJ7FMYOC3q5xc80TOXFwWWG+7/2qVjJAfwpIaO96m4tfbERJfl9s
-        wJL65rrA==;
-Received: from [2001:4bb8:193:7660:643c:9899:473:314a] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m6RWI-009vXO-69; Thu, 22 Jul 2021 05:45:34 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 2/2] iomap: simplify iomap_add_to_ioend
-Date:   Thu, 22 Jul 2021 07:42:56 +0200
-Message-Id: <20210722054256.932965-3-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210722054256.932965-1-hch@lst.de>
-References: <20210722054256.932965-1-hch@lst.de>
+        Thu, 22 Jul 2021 01:13:40 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 434F91FEEF;
+        Thu, 22 Jul 2021 05:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1626933255; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nEQOsUBhG7WuceEdafdVcMY/cqYyTJYTe4BOBvgIZgM=;
+        b=FzsAUuKT9FbQwXQ3KEtoHkP8PVj0LRaZb5nqfoPxY3v5XjScaLtY3LhudrgyZU2GbiAwgf
+        CocoqrB672lsxB8PS2NDLR7blctdZlwgyuie4K+bWvT2nxPYmoQb5wEta7gn1mgsyLs0Ze
+        1thGT4zbJ4gVye4yLA8Kw5OaR7/VCsQ=
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id DFDFA13299;
+        Thu, 22 Jul 2021 05:54:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id pPCSMwYI+WB6aQAAGKfGzw
+        (envelope-from <nborisov@suse.com>); Thu, 22 Jul 2021 05:54:14 +0000
+Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Sterba <dsterba@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+References: <20210721135926.602840-1-nborisov@suse.com>
+ <CAHk-=whqJKKc9wUacLEkvTzXYfYOUDt=kHKX6Fa8Kb4kQftbbQ@mail.gmail.com>
+ <20210721201029.GQ19710@twin.jikos.cz>
+ <CAHk-=whCygw44p30Pmf+Bt8=LVtmij3_XOxweEA3OQNruhMg+A@mail.gmail.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Message-ID: <792949a2-d987-f6a0-a153-8c5fe1e3a073@suse.com>
+Date:   Thu, 22 Jul 2021 08:54:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <CAHk-=whCygw44p30Pmf+Bt8=LVtmij3_XOxweEA3OQNruhMg+A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that the outstanding writes are counted in bytes, there is no need
-to use the low-level __bio_try_merge_page API, we can switch back to
-always using bio_add_page and simply iomap_add_to_ioend again.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/buffered-io.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 7898c1c47370e6..d31e0d3b50c683 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1252,7 +1252,6 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
- 	sector_t sector = iomap_sector(&wpc->iomap, offset);
- 	unsigned len = i_blocksize(inode);
- 	unsigned poff = offset & (PAGE_SIZE - 1);
--	bool merged, same_page = false;
- 
- 	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, sector)) {
- 		if (wpc->ioend)
-@@ -1260,19 +1259,13 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
- 		wpc->ioend = iomap_alloc_ioend(inode, wpc, offset, sector, wbc);
- 	}
- 
--	merged = __bio_try_merge_page(wpc->ioend->io_bio, page, len, poff,
--			&same_page);
--	if (iop)
--		atomic_add(len, &iop->write_bytes_pending);
--
--	if (!merged) {
--		if (bio_full(wpc->ioend->io_bio, len)) {
--			wpc->ioend->io_bio =
--				iomap_chain_bio(wpc->ioend->io_bio);
--		}
--		bio_add_page(wpc->ioend->io_bio, page, len, poff);
-+	if (bio_add_page(wpc->ioend->io_bio, page, len, poff) != len) {
-+		wpc->ioend->io_bio = iomap_chain_bio(wpc->ioend->io_bio);
-+		__bio_add_page(wpc->ioend->io_bio, page, len, poff);
- 	}
- 
-+	if (iop)
-+		atomic_add(len, &iop->write_bytes_pending);
- 	wpc->ioend->io_size += len;
- 	wbc_account_cgroup_owner(wbc, page, len);
- }
--- 
-2.30.2
+On 21.07.21 г. 23:27, Linus Torvalds wrote:
+> On Wed, Jul 21, 2021 at 1:13 PM David Sterba <dsterba@suse.cz> wrote:
+>>
+>> adding a memcmp_large that compares by native words or u64 could be
+>> the best option.
+> 
+> Yeah, we could just special-case that one place.
 
+This who thread started because I first implemented a special case just
+for dedupe and Dave Chinner suggested instead of playing whack-a-mole to
+get something decent for the generic memcmp so that we get an
+improvement across the whole of the kernel.
+
+> 
+> But see the patches I sent out - I think we can get the best of both worlds.
+> 
+> A small and simple memcmp() that is good enough and not the
+> _completely_ stupid thing we have now.
+> 
+> The second patch I sent out even gets the mutually aligned case right.
+> 
+> Of course, the glibc code also ended up unrolling things a bit, but
+> honestly, the way it did it was too disgusting for words.
+> 
+> And if it really turns out that the unrolling makes a big difference -
+> although I doubt it's meaningful with any modern core - I can add a
+> couple of lines to that simple patch I sent out to do that too.
+> Without getting the monster that is that glibc code.
+> 
+> Of course, my patch depends on the fact that "get_unaligned()" is
+> cheap on all CPU's that really matter, and that caches aren't
+> direct-mapped any more. The glibc code seems to be written for a world
+> where registers are cheap, unaligned accesses are prohibitively
+> expensive, and unrolling helps because L1 caches are direct-mapped and
+> you really want to do chunking to not get silly way conflicts.
+> 
+> If old-style Sparc or MIPS was our primary target, that would be one
+> thing. But it really isn't.
+> 
+>               Linus
+> 
