@@ -2,180 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 105453D268F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 17:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21EFD3D268C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 17:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232648AbhGVOlH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 10:41:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57518 "EHLO
+        id S232619AbhGVOlF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 10:41:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232620AbhGVOkP (ORCPT
+        with ESMTP id S232616AbhGVOkO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 10:40:15 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C155CC061757;
-        Thu, 22 Jul 2021 08:20:22 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id i16-20020a17090acf90b02901736d9d2218so5985678pju.1;
-        Thu, 22 Jul 2021 08:20:22 -0700 (PDT)
+        Thu, 22 Jul 2021 10:40:14 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52AD8C061760;
+        Thu, 22 Jul 2021 08:20:24 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id q13so3885652plx.7;
+        Thu, 22 Jul 2021 08:20:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=dcmUigRFaKaUGLQ8hPJNePWalGpdmF9/PmKs/DMnFfs=;
-        b=AvId1PeFmONSOPW86UAvvUln0l2s3+ibt9wUhp3/0CAzqmHEppIRVnUjPGhTvTS5bB
-         ksubKtFnhPrJgaSFMOYoJfRP0BLxxz+u9XomRSiOtIG1qyAeB1ItJmGZ+qBNxlpBb7Zo
-         kM+qN+GliyXzrSwqfctZznjlNVT/y0uscX1DWG0ePfsp9JS/JAUsJlrKsWIYRjf4UUbT
-         8OKuzDUUtxkyS9tT13HrPcjTv2JoPyL3qYNXzjlYvCq5fSrjPjFsg/dxAyR6HJTK9Qx/
-         QU7UGYhKi71GRa2VkRCQ0IFXsP3plfzp5uJL0VpvtYMyEoV/Fqpq+xLW7neo8wqN1njD
-         v2yQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=nKxDmYGABfohxuLPargQrpGLtl0A5Dtlbr1nooTegnQ=;
+        b=h6zrYKfCi1QSIzifwVkE7CUsQr1UndXBaiqyHaBpdyxXY0wJ1YhxH3BMVzvT6CZmtp
+         8bkLzFD/Gi5zkPzY2wdY0b0WxpLSLnFDccOf3hqiE1hk9PmDJgT/xjg3oBdUkTIbrFpW
+         Ri3+1WQ7beOC6hsFBHAf1xh4f5xIjDyXJocNC58mZ3gk634oHfq0Oyc+r3gB0137Ifhs
+         U/q1ao8boXFw7SgU89Sx2YSBj//JenOdNZ+W5qa4yeJ5lKobUmfSyUvVzTZMyQooitW7
+         j5EvBh/9CtDymXx4S+49VPJA1qhUqOe4CucENeWME11G6WHv19KuoY33RLnNwts1ALfy
+         vIcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dcmUigRFaKaUGLQ8hPJNePWalGpdmF9/PmKs/DMnFfs=;
-        b=MoMWogbRqDl83hmQdPEiENUWv+IpX9cNtVkAv4vkujfDSum4E0T0cqTjBl7x4oYh70
-         6krbAEnSsIrwtwUjG6uIvPLF4ibrrhFVnjBvHZzc37nAA9RTLLnH12KG5knCAH0aVzY9
-         ge+QDDapTjldQma9XPDeQu13kE4ffDiWuDgvGBaVA8qESL9Oni5oZMHdlFMZi9G91leS
-         5Jp61w13kylPK+BoJNAj+RurG4IHy2GU/VKyW1CrXyBJNARZJSgA7a6kfEKMJD33gbmv
-         6iIuzrI+Jn4PRv05PMTgS1RJiCBvIdpzX8Cegm7n0BTMdwI+vDG6Jg8TACzd9Hje2EyP
-         BycQ==
-X-Gm-Message-State: AOAM532sZRQtQ6b7Q3P+mhrM2TB89vKeZZmFcYKOGGBdInO1JNBjkE2f
-        dlTjJmHGztH/Y0b+GYwomM3tpl03t8/dpg==
-X-Google-Smtp-Source: ABdhPJzyGTPSRCYDexUXivv9U9ci/H14qAtcJL5ddN027Yx7Tr/76igW7lmGo7GD6X2JJcpl31AEDw==
-X-Received: by 2002:aa7:8ed0:0:b029:357:9c8:d13 with SMTP id b16-20020aa78ed00000b029035709c80d13mr238924pfr.10.1626967222204;
-        Thu, 22 Jul 2021 08:20:22 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=nKxDmYGABfohxuLPargQrpGLtl0A5Dtlbr1nooTegnQ=;
+        b=ts4H2HDpnHb6621IMMCEXgfsLPZnXDFSPbdcjVBkIKb7z6YJRTFA4D1pvPvBVcBX/0
+         vJpHGnaDRU60tgiPykOE0FRvkNajEik3Zwq3nAhjkFbHn4cZ+PECBf2bgikZV6rnnoat
+         5oq1CXvf673zLMwlFOd/nzeNjxObaCSuT3oB7I7vDqDDG12qVsMFjjRPOZoObdQGvzB1
+         Y76s4y4JGcOQuBl0Oc01grR+6h6WsIspC0AsDlvpjYOR71pCWhocpOeJGJt7fns9O49G
+         j8INSMJ7R/BccUukTkP3o57/m6O+TytJdhMijHZqy/2kepuSKpBsTaXtxAQ4bocJaUEZ
+         XJpw==
+X-Gm-Message-State: AOAM533WA7Ptld/NBZfobSUr/AdqpB4f0z+bOfEMi2TlAwg2bfql7ykt
+        Mavy4cOS1f+EunNx9gnciRQ=
+X-Google-Smtp-Source: ABdhPJynUglnoTqx2b3U+Jmd3z13zKTgqg7hfMNFT99PXfOeXXdvMHYWyOk35UOj8hXjL7dchrbG8w==
+X-Received: by 2002:a17:902:7005:b029:12b:9b9f:c463 with SMTP id y5-20020a1709027005b029012b9b9fc463mr117766plk.76.1626967223931;
+        Thu, 22 Jul 2021 08:20:23 -0700 (PDT)
 Received: from VM-0-3-centos.localdomain ([101.32.213.191])
-        by smtp.gmail.com with ESMTPSA id 11sm30768663pfl.41.2021.07.22.08.20.20
+        by smtp.gmail.com with ESMTPSA id 11sm30768663pfl.41.2021.07.22.08.20.22
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Jul 2021 08:20:21 -0700 (PDT)
+        Thu, 22 Jul 2021 08:20:23 -0700 (PDT)
 From:   brookxu <brookxu.cn@gmail.com>
 To:     viro@zeniv.linux.org.uk, tj@kernel.org, lizefan.x@bytedance.com,
         hannes@cmpxchg.org
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         cgroups@vger.kernel.org
-Subject: [RFC PATCH v2 1/3] misc_cgroup: add support for nofile limit
-Date:   Thu, 22 Jul 2021 23:20:17 +0800
-Message-Id: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
+Subject: [RFC PATCH v2 2/3] misc_cgroup: add failcnt counter
+Date:   Thu, 22 Jul 2021 23:20:18 +0800
+Message-Id: <5aed58ba0147169ab26b1403fe135df4f77b8492.1626966339.git.brookxu@tencent.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
+References: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
+In-Reply-To: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
+References: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Chunguang Xu <brookxu@tencent.com>
 
-Since the global open files are limited, in order to avoid the
-abnormal behavior of some containers from generating too many
-files, causing other containers to be unavailable, we need to
-limit the open files of some containers.
-
-v2: fix compile error while CONFIG_CGROUP_MISC not set.
+Instead of printing logs, we should probably track failures through
+a failcnt counter, similar to mem_cgroup.
 
 Signed-off-by: Chunguang Xu <brookxu@tencent.com>
-Reported-by: kernel test robot <lkp@intel.com>
 ---
- fs/file_table.c             | 28 ++++++++++++++++++++++++++--
- include/linux/fs.h          |  4 +++-
  include/linux/misc_cgroup.h |  1 +
- kernel/cgroup/misc.c        |  1 +
- 4 files changed, 31 insertions(+), 3 deletions(-)
+ kernel/cgroup/misc.c        | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 45437f8e1003..5957b2de9701 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -29,6 +29,7 @@
- #include <linux/swap.h>
- 
- #include <linux/atomic.h>
-+#include <linux/misc_cgroup.h>
- 
- #include "internal.h"
- 
-@@ -53,8 +54,16 @@ static void file_free_rcu(struct rcu_head *head)
- static inline void file_free(struct file *f)
- {
- 	security_file_free(f);
--	if (!(f->f_mode & FMODE_NOACCOUNT))
-+	if (!(f->f_mode & FMODE_NOACCOUNT)) {
-+#ifdef CONFIG_CGROUP_MISC
-+		struct misc_cg *misc_cg = css_misc(f->f_css);
-+
-+		misc_cg_uncharge(MISC_CG_RES_NOFILE, misc_cg, 1);
-+		put_misc_cg(misc_cg);
-+#endif
-+
- 		percpu_counter_dec(&nr_files);
-+	}
- 	call_rcu(&f->f_u.fu_rcuhead, file_free_rcu);
- }
- 
-@@ -148,8 +157,22 @@ struct file *alloc_empty_file(int flags, const struct cred *cred)
- 	}
- 
- 	f = __alloc_file(flags, cred);
--	if (!IS_ERR(f))
-+	if (!IS_ERR(f)) {
-+#ifdef CONFIG_CGROUP_MISC
-+		struct misc_cg *misc_cg = get_current_misc_cg();
-+		int ret;
-+
-+		ret = misc_cg_try_charge(MISC_CG_RES_NOFILE, misc_cg, 1);
-+		if (ret < 0) {
-+			file_free(f);
-+			put_misc_cg(misc_cg);
-+			return ERR_PTR(-ENFILE);
-+		}
-+		f->f_css = &misc_cg->css;
-+#endif
-+
- 		percpu_counter_inc(&nr_files);
-+	}
- 
- 	return f;
- 
-@@ -397,4 +420,5 @@ void __init files_maxfiles_init(void)
- 	n = ((nr_pages - memreserve) * (PAGE_SIZE / 1024)) / 10;
- 
- 	files_stat.max_files = max_t(unsigned long, n, NR_FILE);
-+	misc_cg_set_capacity(MISC_CG_RES_NOFILE, files_stat.max_files);
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fad6663cd1b0..9ef3dd579ed6 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -947,7 +947,9 @@ struct file {
- #endif
- 	/* needed for tty driver, and maybe others */
- 	void			*private_data;
--
-+#ifdef CONFIG_CGROUP_MISC
-+	struct cgroup_subsys_state *f_css;
-+#endif
- #ifdef CONFIG_EPOLL
- 	/* Used by fs/eventpoll.c to link all the hooks to this file */
- 	struct hlist_head	*f_ep;
 diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-index da2367e2ac1e..8450a5e66de0 100644
+index 8450a5e66de0..dd1a786f39b8 100644
 --- a/include/linux/misc_cgroup.h
 +++ b/include/linux/misc_cgroup.h
-@@ -18,6 +18,7 @@ enum misc_res_type {
- 	/* AMD SEV-ES ASIDs resource */
- 	MISC_CG_RES_SEV_ES,
- #endif
-+	MISC_CG_RES_NOFILE,
- 	MISC_CG_RES_TYPES
+@@ -37,6 +37,7 @@ struct misc_cg;
+ struct misc_res {
+ 	unsigned long max;
+ 	atomic_long_t usage;
++	atomic_long_t failcnt;
+ 	bool failed;
  };
  
 diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index ec02d963cad1..5d51b8eeece6 100644
+index 5d51b8eeece6..7c568b619f82 100644
 --- a/kernel/cgroup/misc.c
 +++ b/kernel/cgroup/misc.c
-@@ -24,6 +24,7 @@ static const char *const misc_res_name[] = {
- 	/* AMD SEV-ES ASIDs resource */
- 	"sev_es",
- #endif
-+	"nofile"
- };
+@@ -165,6 +165,7 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg,
+ 				pr_cont("\n");
+ 				res->failed = true;
+ 			}
++			atomic_long_inc(&res->failcnt);
+ 			ret = -EBUSY;
+ 			goto err_charge;
+ 		}
+@@ -312,6 +313,29 @@ static int misc_cg_current_show(struct seq_file *sf, void *v)
+ 	return 0;
+ }
  
- /* Root misc cgroup */
++/**
++ * misc_cg_failcnt_show() - Show the fail count of the misc cgroup.
++ * @sf: Interface file
++ * @v: Arguments passed
++ *
++ * Context: Any context.
++ * Return: 0 to denote successful print.
++ */
++static int misc_cg_failcnt_show(struct seq_file *sf, void *v)
++{
++	int i;
++	unsigned long failcnt;
++	struct misc_cg *cg = css_misc(seq_css(sf));
++
++	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
++		failcnt = atomic_long_read(&cg->res[i].failcnt);
++		if (READ_ONCE(misc_res_capacity[i]) || failcnt)
++			seq_printf(sf, "%s %lu\n", misc_res_name[i], failcnt);
++	}
++
++	return 0;
++}
++
+ /**
+  * misc_cg_capacity_show() - Show the total capacity of misc res on the host.
+  * @sf: Interface file
+@@ -349,6 +373,11 @@ static struct cftype misc_cg_files[] = {
+ 		.seq_show = misc_cg_current_show,
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+ 	},
++	{
++		.name = "failcnt",
++		.seq_show = misc_cg_failcnt_show,
++		.flags = CFTYPE_NOT_ON_ROOT,
++	},
+ 	{
+ 		.name = "capacity",
+ 		.seq_show = misc_cg_capacity_show,
+@@ -383,6 +412,7 @@ misc_cg_alloc(struct cgroup_subsys_state *parent_css)
+ 	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
+ 		WRITE_ONCE(cg->res[i].max, MAX_NUM);
+ 		atomic_long_set(&cg->res[i].usage, 0);
++		atomic_long_set(&cg->res[i].failcnt, 0);
+ 	}
+ 
+ 	return &cg->css;
 -- 
 2.30.0
 
