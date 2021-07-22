@@ -2,108 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8FEE3D2352
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 14:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC7843D23E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 14:54:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231805AbhGVLtD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 07:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46330 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231772AbhGVLtB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 07:49:01 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12894C061575;
-        Thu, 22 Jul 2021 05:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=DuSfqtaB0ngelOfdPmwtHOFsvbwzQU43s1iPkHHgCOY=; b=CDPU7rS/r6RC9X60DZY0bTR79W
-        zIFexzbAW2kV9TU/9XbHoiexUXWiZT1hykYMmfIMhvX1mJTlQh366sK9lpd3i86gxVGxb0ufBm3b7
-        2qNeKbSZ2ja7YL6n51uzmTQJUA+5QhQQxo8LJtcMJz2mAh8yMZVqyvAWG6X9OdztWndDIWtnKDemx
-        chUzbyio2/e41hNSItYXb2oBbreXQyy1Zq24ax2bzgjP95UCdsqZ9nb3wQ5XdGWFbIUWCauu0vD9n
-        xy0DRyPigMH30VY8/82/twMp7dVLWjUr7cgFgx+9N0HDzEMHO2FdVYIvC61RqdJ24OLl0/dONb9LW
-        6Avt9wgQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m6XpL-00AFNu-Uy; Thu, 22 Jul 2021 12:29:29 +0000
-Date:   Thu, 22 Jul 2021 13:29:23 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH v14 062/138] mm/migrate: Add folio_migrate_copy()
-Message-ID: <YPlko1ObxD/CEz8o@casper.infradead.org>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-63-willy@infradead.org>
- <a670e7c1-95fb-324f-055f-74dd4c81c0d0@gmail.com>
+        id S232082AbhGVMOK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 08:14:10 -0400
+Received: from mga18.intel.com ([134.134.136.126]:9907 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232029AbhGVMOG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Jul 2021 08:14:06 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10052"; a="198907741"
+X-IronPort-AV: E=Sophos;i="5.84,261,1620716400"; 
+   d="scan'208";a="198907741"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2021 05:54:40 -0700
+X-IronPort-AV: E=Sophos;i="5.84,261,1620716400"; 
+   d="scan'208";a="501808880"
+Received: from denglijx-mobl.ccr.corp.intel.com (HELO [10.255.29.108]) ([10.255.29.108])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2021 05:54:37 -0700
+Subject: Re: [PATCH v3 14/15] samples: Add fs error monitoring example
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     kernel test robot <lkp@intel.com>, amir73il@gmail.com,
+        kbuild-all@lists.01.org, djwong@kernel.org, tytso@mit.edu,
+        david@fromorbit.com, jack@suse.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+References: <20210629191035.681913-15-krisman@collabora.com>
+ <202106301048.BainWUsk-lkp@intel.com> <87mtqicqux.fsf@collabora.com>
+ <20210720194955.GH25548@kadam>
+From:   "Chen, Rong A" <rong.a.chen@intel.com>
+Message-ID: <4313fff4-343a-2937-3a97-c5da860827b1@intel.com>
+Date:   Thu, 22 Jul 2021 20:54:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a670e7c1-95fb-324f-055f-74dd4c81c0d0@gmail.com>
+In-Reply-To: <20210720194955.GH25548@kadam>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 22, 2021 at 02:52:28PM +0300, Dmitry Osipenko wrote:
-> I'm getting warnings that might be related to this patch.
+Hi Gabriel,
 
-Thank you!  This is a good report.  I've trimmed away some of the
-unnecessary bits from below:
+On 7/21/2021 3:49 AM, Dan Carpenter wrote:
+> 
+> On Mon, Jul 19, 2021 at 10:36:54AM -0400, Gabriel Krisman Bertazi wrote:
+>> kernel test robot <lkp@intel.com> writes:
+>>
+>>> Hi Gabriel,
+>>>
+>>> I love your patch! Yet something to improve:
+>>>
+>>> [auto build test ERROR on ext3/fsnotify]
+>>> [also build test ERROR on ext4/dev linus/master v5.13 next-20210629]
+>>> [cannot apply to tytso-fscrypt/master]
+>>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>>> And when submitting patch, we suggest to use '--base' as documented in
+>>> https://git-scm.com/docs/git-format-patch ]
+>>>
+>>> url:    https://github.com/0day-ci/linux/commits/Gabriel-Krisman-Bertazi/File-system-wide-monitoring/20210630-031347
+>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git  fsnotify
+>>> config: arm64-allyesconfig (attached as .config)
+>>> compiler: aarch64-linux-gcc (GCC) 9.3.0
+>>> reproduce (this is a W=1 build):
+>>>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross  -O ~/bin/make.cross
+>>>          chmod +x ~/bin/make.cross
+>>>          # https://github.com/0day-ci/linux/commit/746524d8db08a041fed90e41b15c8e8ca69cb22d
+>>>          git remote add linux-review https://github.com/0day-ci/linux
+>>>          git fetch --no-tags linux-review Gabriel-Krisman-Bertazi/File-system-wide-monitoring/20210630-031347
+>>>          git checkout 746524d8db08a041fed90e41b15c8e8ca69cb22d
+>>>          # save the attached .config to linux build tree
+>>>          mkdir build_dir
+>>>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross O=build_dir ARCH=arm64 SHELL=/bin/bash samples/
+>>>
+>>> If you fix the issue, kindly add following tag as appropriate
+>>> Reported-by: kernel test robot <lkp@intel.com>
+>>>
+>>> All errors (new ones prefixed by >>):
+>>>
+>>>>> samples/fanotify/fs-monitor.c:7:10: fatal error: errno.h: No such file or directory
+>>>         7 | #include <errno.h>
+>>>           |          ^~~~~~~~~
+>>>     compilation terminated.
+>>
+>> Hi Dan,
+>>
+>> I'm not sure what's the proper fix here.  Looks like 0day is not using
+>> cross system libraries when building this user space code.  Should I do
+>> something special to silent it?
 
-> BUG: sleeping function called from invalid context at mm/util.c:761
-> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 29, name: kcompactd0
+It seems need extra libraries for arm64, we'll disable CONFIG_SAMPLES to 
+avoid reporting this error.
 
-This is absolutely a result of this patch:
+Best Regards,
+Rong Chen
 
-        for (i = 0; i < nr; i++) {
-                cond_resched();
-                copy_highpage(folio_page(dst, i), folio_page(src, i));
-        }
 
-cond_resched() can sleep, of course.  This is new; previously only
-copying huge pages would call cond_resched().  Now every page copy
-calls cond_resched().
-
-> (___might_sleep) from (folio_copy+0x3f/0x84)
-> (folio_copy) from (folio_migrate_copy+0x11/0x1c)
-> (folio_migrate_copy) from (__buffer_migrate_page.part.0+0x215/0x238)
-> (__buffer_migrate_page.part.0) from (buffer_migrate_page_norefs+0x19/0x28)
-
-__buffer_migrate_page() is where we become atomic:
-
-        if (check_refs)
-                spin_lock(&mapping->private_lock);
-...
-                migrate_page_copy(newpage, page);
-...
-        if (check_refs)
-                spin_unlock(&mapping->private_lock);
-
-> (buffer_migrate_page_norefs) from (move_to_new_page+0x4d/0x200)
-> (move_to_new_page) from (migrate_pages+0x521/0x72c)
-> (migrate_pages) from (compact_zone+0x589/0xb60)
-
-The obvious solution is just to change folio_copy():
-
- {
--       unsigned i, nr = folio_nr_pages(src);
-+       unsigned i = 0;
-+       unsigned nr = folio_nr_pages(src);
-
--       for (i = 0; i < nr; i++) {
--               cond_resched();
-+       for (;;) {
-                copy_highpage(folio_page(dst, i), folio_page(src, i));
-+               if (i++ == nr)
-+                       break;
-+               cond_resched();
-        }
- }
-
-now it only calls cond_resched() for multi-page folios.
-
-But that leaves us with a bit of an ... impediment to using multi-page
-folios for buffer-head based filesystems (and block devices).  I must
-admit to not knowing the buffer_head locking scheme quite as well as
-I would like to.  Is it possible to drop this spinlock earlier?
+> 
+> I'm not the person to ask, I just look at Smatch warnings.  Rong Chen
+> might know the answer.
+> 
+> regards,
+> dan carpenter
+> 
