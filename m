@@ -2,167 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D3E13D2AC6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 19:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DE883D2BE8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 20:26:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232787AbhGVQWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 12:22:54 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:50914 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230469AbhGVQWw (ORCPT
+        id S229937AbhGVRqA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 13:46:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229502AbhGVRp7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 12:22:52 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 31A20203E2;
-        Thu, 22 Jul 2021 17:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1626973403; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iGctC4EQ9hNVc3gaN3R5S7yichC5UDxNPtD6UtEHN7U=;
-        b=bX2bnjsCjXUeIvvsHtlTyjhnHEM7HjYuey/J7dpEg6wgAwdXJ2o1dDz/+pSStZB/yLwVMJ
-        mNXkGGo+IXqr3rwwIimY2un/36++0Qo4osXDXvb3dmP4kEqnTJ7UEzEfFUnol1AlRgR5h8
-        SMwNnZYGt7FTIhCYJBD/dCifs4lT/x4=
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id D70BA139A1;
-        Thu, 22 Jul 2021 17:03:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id rd0VMtqk+WDNLwAAGKfGzw
-        (envelope-from <nborisov@suse.com>); Thu, 22 Jul 2021 17:03:22 +0000
-Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nikolay Borisov <nborisov@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-References: <20210721135926.602840-1-nborisov@suse.com>
- <CAHk-=whqJKKc9wUacLEkvTzXYfYOUDt=kHKX6Fa8Kb4kQftbbQ@mail.gmail.com>
- <b24b5a9d-69a0-43b9-2ceb-8e4ee3bf2f17@suse.com>
- <CAHk-=wgMyXh3gGuSzj_Dgw=Gn_XPxGSTPq6Pz7dEyx6JNuAh9g@mail.gmail.com>
- <CAHk-=wgr3JSoasv3Kyzc0u-L36oAr=hzY9oUrCxaszWaxgLW0A@mail.gmail.com>
- <eef30b51-c69f-0e70-11a8-c35f90aeca67@gmail.com>
- <CAHk-=whTNJyEMmCpNh5FeT+bJzSE2CYDPWyDO12G4q39d1jn1g@mail.gmail.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Message-ID: <c8262efc-e97a-4672-0cc1-90c778eecd94@suse.com>
-Date:   Thu, 22 Jul 2021 20:03:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=whTNJyEMmCpNh5FeT+bJzSE2CYDPWyDO12G4q39d1jn1g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 22 Jul 2021 13:45:59 -0400
+Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C828C06175F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jul 2021 11:26:34 -0700 (PDT)
+Received: by mail-pj1-x104a.google.com with SMTP id g14-20020a17090a4b0eb029017395ea5199so353854pjh.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jul 2021 11:26:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=zdafpjZOpX7w6ukm7UkyAJ9U3xYdHtSO79XymBUPu/o=;
+        b=sdJPsNKSHYFbC/G+xIVl3Qk4+Rvo57mP9IEXixCOWBzjsFotznwfryTn0zYl4yGHpT
+         5FbXMLAs09OWq4xdRxZEWNwM37C7Yfl0z+VPM7fkn95Nvhi0H/e7MguHjswI8IY9Mp7G
+         S6uyExEloYAuxSMXUTRs7RX59i0LVbF7Y35beGZ/Cq6/wSnj/Bp2XIkL3GESUE28Aunf
+         KymWbsI5an9Me7Ud4ap2MSa3GHzDYoWngDnUwCY+tiKKQooheZHW4YdNkkQqGdw3zMrw
+         0j77ZArAzNLojl5RKH3amMWjXtdz+m2PmxAghXCgrthIgKOW1jpZ2r9FucoCbdjaNPhi
+         DxiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=zdafpjZOpX7w6ukm7UkyAJ9U3xYdHtSO79XymBUPu/o=;
+        b=LUQPgharNv1x9Vykg1fj19gjV7UryF7RR0xCD1N/UWte4+S6WstMfaVrPCmAZjKJ+v
+         RWKVtd7Vznf5EJCdvihU7zrnv751k+IIrA/QDHKe5RhqgeYHmtHPMENpA48yuLDyZKON
+         nTi9KcnTsR8Ff7bM9MVYWtttRZXr0JHX9uNqcL06dXXuMVRt6snozYpzxe3UxCdWRVqj
+         DUVmQOvh+dbLJjJJdUNNwtDtd+4XLY/DsuEUv1ynS6KeO0x00DjsHSCG9+qDcKTh8Tvt
+         mtPlyqDm3wMODqv8z4yKAWMtAgBTgEV21u8iWcLo+EjX9CSEkULipznTuxKdRSFJdGE0
+         QteA==
+X-Gm-Message-State: AOAM531GiKfU1J4DIUAZljet0B+ZQHr9U/iEMC6HTyJVjUn/rFuZKxey
+        Q64o5HckbB5dhFVNTjJmZ1ks0jRQlL2IZg==
+X-Google-Smtp-Source: ABdhPJwcAqY66M07KTVd1PIwkXpHctb2IIw+Mqa4e3ZiMuTmqXewQLqvt4qbhgjgAWx4ur65ahffx9kXqjiLIQ==
+X-Received: from shakeelb.svl.corp.google.com ([2620:15c:2cd:202:eee8:d6f7:9645:48ee])
+ (user=shakeelb job=sendgmr) by 2002:a63:5118:: with SMTP id
+ f24mr1257023pgb.34.1626978393555; Thu, 22 Jul 2021 11:26:33 -0700 (PDT)
+Date:   Thu, 22 Jul 2021 11:26:27 -0700
+Message-Id: <20210722182627.2267368-1-shakeelb@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.32.0.432.gabb21c7263-goog
+Subject: [PATCH] writeback: memcg: simplify cgroup_writeback_by_id
+From:   Shakeel Butt <shakeelb@google.com>
+To:     Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+        Jan Kara <jack@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Shakeel Butt <shakeelb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Currently cgroup_writeback_by_id calls mem_cgroup_wb_stats() to get
+dirty pages for a memcg. However mem_cgroup_wb_stats() does a lot more
+than just get the number of dirty pages. Just directly get the number of
+dirty pages instead of calling mem_cgroup_wb_stats(). Also
+cgroup_writeback_by_id() is only called for best-effort dirty flushing,
+so remove the unused 'nr' parameter and no need to explicitly flush
+memcg stats.
 
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+ fs/fs-writeback.c          | 20 +++++++++-----------
+ include/linux/memcontrol.h | 15 +++++++++++++++
+ include/linux/writeback.h  |  2 +-
+ mm/memcontrol.c            | 13 +------------
+ 4 files changed, 26 insertions(+), 24 deletions(-)
 
-On 22.07.21 г. 19:40, Linus Torvalds wrote:
-> On Thu, Jul 22, 2021 at 4:28 AM Nikolay Borisov
-> <n.borisov.lkml@gmail.com> wrote:
->>
->> This one also works, tested only on x86-64. Looking at the perf diff:
->>
->>     30.44%    -28.66%  [kernel.vmlinux]         [k] memcmp
-> 
-> Ok.
-> 
-> So the one that doesn't even bother to align is
-> 
->     30.44%    -29.38%  [kernel.vmlinux]         [k] memcmp
-> 
-> and the one that aligns the first one is
-> 
->     30.44%    -28.66%  [kernel.vmlinux]         [k] memcmp
-> 
-> and the difference between the two is basically in the noise:
-> 
->      1.05%     +0.72%  [kernel.vmlinux]     [k] memcmp
-> 
-> but the first one does seem to be slightly better.
-> 
->> Now on a more practical note, IIUC your 2nd version makes sense if the
->> cost of doing a one unaligned access in the loop body is offset by the
->> fact we are doing a native word-sized comparison, right?
-> 
-> So honestly, the reason the first one seems to beat the second one is
-> that the cost of unaligned accesses on modern x86 is basically
-> epsilon.
-> 
-> For all normal unaligned accesses there simply is no cost at all.
-> There is a _tiny_ cost when the unaligned access crosses a cacheline
-> access boundary (which on older CPU's is every 32 bytes, on modern
-> ones it's 64 bytes). And then there is another slightly bigger cost
-> when the unaligned access actually crosses a page boundary.
-> 
-> But even those non-zero cost cases are basically in the noise, because
-> under most circumstances they will be hidden by any out-of-order
-> engine, and completely dwarfed by the _real_ costs which are branch
-> mispredicts and cache misses.
-> 
-> So on the whole, unaligned accesses are basically no cost at all. You
-> almost have to have unusual code sequences for them to be even
-> measurable.
-> 
-> So that second patch that aligns one of the sources is basically only
-> extra overhead for no real advantage. The cost of it is probably one
-> more branch mispredict, and possibly a cycle or two for the extra
-> instructions.
-> 
-> Which is why the first one wins: it's simpler, and the extra work the
-> second one does is basically not worth it on x86. Plus I suspect your
-> test-case was all aligned anyway to begin with, so the extra work is
-> _doubly_ pointless.
-> 
-> I suspect the second patch would be worthwhile if
-> 
->  (a) there really were a lot of strings that weren't aligned (likelihood: low)
-> 
->  (b) other microarchitectures that do worse on unaligned accesses -
-> some microarchitectures spend extra cycles on _any_ unaligned accesses
-> even if they don't cross cache access boundaries etc.
-> 
-> and I can see (b) happening quite easily. You just won't see it on a
-> modern x86-64 setup.
-> 
-> I suspect we should start with the first version. It's not only better
-> on x86, but it's simpler, and it's guarded by that
-> 
->     #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> 
-> so it's fundamentally "safer" on architectures that are just horrible
-> about unaligned accesses.
-> 
-> Now, admittedly I don't personally even care about such architectures,
-> and because we use "get_unaligned()", the compiler should always
-> generate code that doesn't absolutely suck for bad architectures, but
-> considering how long we've gone with the completely brainlessly simple
-> "byte at a time" version without anybody even noticing, I think a
-> minimal change is a better change.
-> 
-> That said, I'm not convinced I want to apply even that minimal first
-> patch outside of the merge window.
-> 
-> So would you mind reminding me about this patch the next merge window?
-> Unless there was some big extrernal reason why the performance of
-> memcmp() mattered to you so much (ie some user that actually noticed
-> and complained) and we really want to prioritize this..
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 867984e778c3..35894a2dba75 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1039,20 +1039,20 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
+  * cgroup_writeback_by_id - initiate cgroup writeback from bdi and memcg IDs
+  * @bdi_id: target bdi id
+  * @memcg_id: target memcg css id
+- * @nr: number of pages to write, 0 for best-effort dirty flushing
+  * @reason: reason why some writeback work initiated
+  * @done: target wb_completion
+  *
+  * Initiate flush of the bdi_writeback identified by @bdi_id and @memcg_id
+  * with the specified parameters.
+  */
+-int cgroup_writeback_by_id(u64 bdi_id, int memcg_id, unsigned long nr,
++int cgroup_writeback_by_id(u64 bdi_id, int memcg_id,
+ 			   enum wb_reason reason, struct wb_completion *done)
+ {
+ 	struct backing_dev_info *bdi;
+ 	struct cgroup_subsys_state *memcg_css;
+ 	struct bdi_writeback *wb;
+ 	struct wb_writeback_work *work;
++	unsigned long dirty;
+ 	int ret;
+ 
+ 	/* lookup bdi and memcg */
+@@ -1081,24 +1081,22 @@ int cgroup_writeback_by_id(u64 bdi_id, int memcg_id, unsigned long nr,
+ 	}
+ 
+ 	/*
+-	 * If @nr is zero, the caller is attempting to write out most of
++	 * The caller is attempting to write out most of
+ 	 * the currently dirty pages.  Let's take the current dirty page
+ 	 * count and inflate it by 25% which should be large enough to
+ 	 * flush out most dirty pages while avoiding getting livelocked by
+ 	 * concurrent dirtiers.
++	 *
++	 * BTW the memcg stats are flushed periodically and this is best-effort
++	 * estimation, so some potential error is ok.
+ 	 */
+-	if (!nr) {
+-		unsigned long filepages, headroom, dirty, writeback;
+-
+-		mem_cgroup_wb_stats(wb, &filepages, &headroom, &dirty,
+-				      &writeback);
+-		nr = dirty * 10 / 8;
+-	}
++	dirty = memcg_page_state(mem_cgroup_from_css(memcg_css), NR_FILE_DIRTY);
++	dirty = dirty * 10 / 8;
+ 
+ 	/* issue the writeback work */
+ 	work = kzalloc(sizeof(*work), GFP_NOWAIT | __GFP_NOWARN);
+ 	if (work) {
+-		work->nr_pages = nr;
++		work->nr_pages = dirty;
+ 		work->sync_mode = WB_SYNC_NONE;
+ 		work->range_cyclic = 1;
+ 		work->reason = reason;
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index b4c6b613e162..7028d8e4a3d7 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -989,6 +989,16 @@ static inline void mod_memcg_state(struct mem_cgroup *memcg,
+ 	local_irq_restore(flags);
+ }
+ 
++static inline unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx)
++{
++	long x = READ_ONCE(memcg->vmstats.state[idx]);
++#ifdef CONFIG_SMP
++	if (x < 0)
++		x = 0;
++#endif
++	return x;
++}
++
+ static inline unsigned long lruvec_page_state(struct lruvec *lruvec,
+ 					      enum node_stat_item idx)
+ {
+@@ -1444,6 +1454,11 @@ static inline void mod_memcg_state(struct mem_cgroup *memcg,
+ {
+ }
+ 
++static inline unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx)
++{
++	return 0;
++}
++
+ static inline unsigned long lruvec_page_state(struct lruvec *lruvec,
+ 					      enum node_stat_item idx)
+ {
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index 1f34ddf284dc..109e0dcd1d21 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -218,7 +218,7 @@ void wbc_attach_and_unlock_inode(struct writeback_control *wbc,
+ void wbc_detach_inode(struct writeback_control *wbc);
+ void wbc_account_cgroup_owner(struct writeback_control *wbc, struct page *page,
+ 			      size_t bytes);
+-int cgroup_writeback_by_id(u64 bdi_id, int memcg_id, unsigned long nr_pages,
++int cgroup_writeback_by_id(u64 bdi_id, int memcg_id,
+ 			   enum wb_reason reason, struct wb_completion *done);
+ void cgroup_writeback_umount(void);
+ bool cleanup_offline_cgwb(struct bdi_writeback *wb);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 35bb5f8f9ea8..6580c2381a3e 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -631,17 +631,6 @@ void __mod_memcg_state(struct mem_cgroup *memcg, int idx, int val)
+ 	cgroup_rstat_updated(memcg->css.cgroup, smp_processor_id());
+ }
+ 
+-/* idx can be of type enum memcg_stat_item or node_stat_item. */
+-static unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx)
+-{
+-	long x = READ_ONCE(memcg->vmstats.state[idx]);
+-#ifdef CONFIG_SMP
+-	if (x < 0)
+-		x = 0;
+-#endif
+-	return x;
+-}
+-
+ /* idx can be of type enum memcg_stat_item or node_stat_item. */
+ static unsigned long memcg_page_state_local(struct mem_cgroup *memcg, int idx)
+ {
+@@ -4609,7 +4598,7 @@ void mem_cgroup_flush_foreign(struct bdi_writeback *wb)
+ 		    atomic_read(&frn->done.cnt) == 1) {
+ 			frn->at = 0;
+ 			trace_flush_foreign(wb, frn->bdi_id, frn->memcg_id);
+-			cgroup_writeback_by_id(frn->bdi_id, frn->memcg_id, 0,
++			cgroup_writeback_by_id(frn->bdi_id, frn->memcg_id,
+ 					       WB_REASON_FOREIGN_FLUSH,
+ 					       &frn->done);
+ 		}
+-- 
+2.32.0.432.gabb21c7263-goog
 
-I will do my best and hope I don't forget. OTOH there isn't anything
-pressing it's something I found while looking at fidedupe's performance
-and not even the major contributor but still, it looks sensible to fix
-it now, that I have a workload at hand which clearly demonstrates
-positive impact and can easily measure any changes.
-> 
->               Linus
-> 
