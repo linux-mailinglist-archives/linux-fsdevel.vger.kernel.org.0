@@ -2,93 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA153D210C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 11:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51BAC3D228D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 13:10:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231440AbhGVI6Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 04:58:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35268 "EHLO
+        id S231536AbhGVKaF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 06:30:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231467AbhGVI6N (ORCPT
+        with ESMTP id S231450AbhGVKaF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 04:58:13 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57A4CC061760;
-        Thu, 22 Jul 2021 02:38:48 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id nt18-20020a17090b2492b02901765d605e14so3713377pjb.5;
-        Thu, 22 Jul 2021 02:38:48 -0700 (PDT)
+        Thu, 22 Jul 2021 06:30:05 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 396FEC061575;
+        Thu, 22 Jul 2021 04:10:39 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id ee25so6283320edb.5;
+        Thu, 22 Jul 2021 04:10:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=rWoKywolpsLaO+fLwhS065JQ8TxoNqZcLux7FKVCf+E=;
-        b=aUMFOQ62cj8KgNQfMrZak9npSfuiUFKVuex2Lz6KaoNppN0fl3yd3thHqPkpW5cBXa
-         1WIAz8+th/+lcNkl9lPsgK/agEMTecj2c6vEseG9pCsOXOb63lWJOBEJrbwjPTkHBhxL
-         aUcsJPf2Yy1prGmwlAFMnuC7k5mVfJZYM1N1GOzRx7FQJmpenyO7J6P7OjdRXkqMkW1G
-         OwdFptYyCikK1O101OuJpaopl9Xwl/68BuAzLS3HwTWXad4UsP39DgcnT2VBawdODbot
-         rDoSMiEfvXVDUx/92vxTFLfS4IoB+IjKv7D83agxVr5IdhRVLZ4apTAsepnYpMdq6T/q
-         iWRQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=bB4VtmJFxxMk/xBdcOQ1aAgpkQfyBX7MX2ec1/1+iic=;
+        b=kS8N55z/Mvvyqlvp1E5NKwCjT4j99fk1wbSreQcjnCFZZsU7Bh5VqyE1wmM9X18znC
+         TMJnNpDiSyrcNnMiYG6Kggc97uaIFNHZlxaQIqMp2bHz4UUgGi7YGg9G18IEDxlH+ACC
+         wMhw7fE6DLlLZob+k8ZvVGvbTCyVUv5vErhRggVkfD9adlzkHza1sZUkUOFCuD0omtlr
+         hJT/jtngpCE+rIMfgocltP39U68xb+xt0KpHmHMbH8JLUQH/yNYRUqWStTVXeAhx/lvZ
+         ZmYS8iGhs9Df5x4d+InHU6Hxqgmqc9WgkjnFkCNXmtpznjNP2/eYi5l0mEIm+YgSUzrt
+         YkZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=rWoKywolpsLaO+fLwhS065JQ8TxoNqZcLux7FKVCf+E=;
-        b=rFT7uexz+p7u8/ClMzAA59IN9OD+tr3I3e0FXKM8m8XIPgttjbsaZknBnwJRyRuYVm
-         b3sSqJhgJZlkIn9LTtP3rivJj+Npo62s3/jsk+77iAyde5Rbl6nflbNmcSIDAxdZbPhz
-         pAS3rUl8+eWmGik0xflBPDmgQR/pKDD971mxLu93VlfeC1e4yMqjiptIyk05zbc9Kt3W
-         456RN74EFGZ0oF/Dd9qW17wj3v7iPrYk/F56MlkiLXymXF4tJECpUAfdvPx/194Vo8EC
-         i0AJSoeBR/c1pP0z5Oz1thPjh6LtG82LTKt0ODqQE+/YzS/83TaFZSojC6qIKpdmY7DP
-         lVCQ==
-X-Gm-Message-State: AOAM531CbrIVA4DBiv+5E+ztZFeBshu6Y571ALWUjRAp552s+OAIrkHv
-        DkRAxkFNGh+ySD7ocSC1G1eJMqeNC46u3w==
-X-Google-Smtp-Source: ABdhPJwHRbtHtlncyO74ZSrMdkFdGZJVI2mbT13Zj/kafRqRgF2ylAPWQDid7HgIbicySX1sgJnISw==
-X-Received: by 2002:a63:5fc7:: with SMTP id t190mr3219724pgb.46.1626946727828;
-        Thu, 22 Jul 2021 02:38:47 -0700 (PDT)
-Received: from VM-0-3-centos.localdomain ([101.32.213.191])
-        by smtp.gmail.com with ESMTPSA id m1sm14208741pfc.36.2021.07.22.02.38.46
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Jul 2021 02:38:47 -0700 (PDT)
-From:   brookxu <brookxu.cn@gmail.com>
-To:     viro@zeniv.linux.org.uk, tj@kernel.org, lizefan.x@bytedance.com,
-        hannes@cmpxchg.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org
-Subject: [RFC PATCH 3/3] misc_cgroup: delete failed logs to avoid log flooding
-Date:   Thu, 22 Jul 2021 17:38:40 +0800
-Message-Id: <9561f990656620f8b39c83453a857c5c35e3ddd0.1626946231.git.brookxu@tencent.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <4775e8d187920399403b296f8bb11bd687688671.1626946231.git.brookxu@tencent.com>
-References: <4775e8d187920399403b296f8bb11bd687688671.1626946231.git.brookxu@tencent.com>
-In-Reply-To: <4775e8d187920399403b296f8bb11bd687688671.1626946231.git.brookxu@tencent.com>
-References: <4775e8d187920399403b296f8bb11bd687688671.1626946231.git.brookxu@tencent.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=bB4VtmJFxxMk/xBdcOQ1aAgpkQfyBX7MX2ec1/1+iic=;
+        b=mpnV11yxLolOigXJZeYdPUd+6rgsSJ14fBGd2XtDW5kh3zX0/QWcNybvfnXMgc8a4m
+         Kf9twkGaU+cVXf8CGrIVaKBBdfTWYoVvMVAYkaUU0TNM7Qgm85F0Vb/OtXGL5lO0dENc
+         Hh4u3AMrMso+sQgdC9UsseEApHZsiImfcXeTVOEVh7eJvJ9ypdLZYpWPdbc/lCngYY3r
+         qccJhNizoU5u0QnH0S6HPELViT7JoNUo4CpaY+NBo1GqjRhMVTRzRLplZphC4Xq3VIdx
+         dRiAcIgWmY8etNOWVdNFbD4J0Vx0kONreft8AloKduyWu+4nDicYNHovKd1tvRtl6qnq
+         NZqA==
+X-Gm-Message-State: AOAM530hnjhQ8cVtl8ihhzQ2GdOsBIVAsTzsmdxbvO2E7iIGytTARCBb
+        NgZ4xV/HB70/Ln6lIGbuiD4rIOKAOMV5sAHz68k=
+X-Google-Smtp-Source: ABdhPJxfnXX/pOEUxaSfYeYzP/ePzj4psI/hct4tmT+zwV5PstjA001Zgw8aamUPhp7zuqIJ4TTRbyX/Qbj5vJ+xi6Y=
+X-Received: by 2002:a05:6402:19a:: with SMTP id r26mr52960170edv.230.1626952237710;
+ Thu, 22 Jul 2021 04:10:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com>
+ <YPGojf7hX//Wn5su@kroah.com> <568938486.33366.1626452816917.JavaMail.zimbra@nod.at>
+ <CAOuPNLj1YC7gjuhyvunqnB_4JveGRyHcL9hcqKFSNKmfxVSWRA@mail.gmail.com>
+ <1458549943.44607.1626686894648.JavaMail.zimbra@nod.at> <CAOuPNLh_KY4NaVWSEV2JPp8fx0iy8E1MU8GHT-w7-hMXrvSaeA@mail.gmail.com>
+ <1556211076.48404.1626763215205.JavaMail.zimbra@nod.at> <CAOuPNLhti3tocN-_D7Q0QaAx5acHpb3AQyWaUKgQPNW3XWu58g@mail.gmail.com>
+ <2132615832.4458.1626900868118.JavaMail.zimbra@nod.at>
+In-Reply-To: <2132615832.4458.1626900868118.JavaMail.zimbra@nod.at>
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Thu, 22 Jul 2021 16:40:26 +0530
+Message-ID: <CAOuPNLhCMT7QTF+QadJyGDFNshH9VjEAzWStRpe8itw7HXve=A@mail.gmail.com>
+Subject: Re: MTD: How to get actual image size from MTD partition
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Greg KH <greg@kroah.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Sean Nyekjaer <sean@geanix.com>,
+        Kernelnewbies <kernelnewbies@kernelnewbies.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Chunguang Xu <brookxu@tencent.com>
+On Thu, 22 Jul 2021 at 02:24, Richard Weinberger <richard@nod.at> wrote:
+>
+> ----- Urspr=C3=BCngliche Mail -----
+> >> But let me advertise ubiblock a second time.
+> > Sorry, I could not understand about the ubiblock request. Is it
+> > possible to elaborate little more ?
+> > We are already using squashfs on top of our UBI volumes (including
+> > rootfs mounting).
+> > This is the kernel command line we pass:
+> > rootfstype=3Dsquashfs root=3D/dev/mtdblock44 ubi.mtd=3D40,0,30
+> > And CONFIG_MTD_UBI_BLOCK=3Dy is already enabled in our kernel.
+> > Do we need to do something different for ubiblock ?
+>
+> From that command line I understand that you are *not* using squashfs on =
+top of UBI.
+> You use mtdblock. ubiblock is a mechanism to turn an UBI volume into a re=
+ad-only
+> block device.
+> See: http://www.linux-mtd.infradead.org/doc/ubi.html#L_ubiblock
+>
+Okay, you mean to say, we should use this ?
+ubi.mtd=3D5 ubi.block=3D0,0 root=3D/dev/ubiblock0_0
+Instead of this:
+root=3D/dev/mtdblock44 ubi.mtd=3D40,0,30
 
-Since the upper-level logic will constantly retry when it fails, in
-high-stress scenarios, a large number of failure logs may affect
-performance. Therefore, we can replace it with the failcnt counter.
+Okay I will discuss this internally and check..
 
-Signed-off-by: Chunguang Xu <brookxu@tencent.com>
----
- kernel/cgroup/misc.c | 2 --
- 1 file changed, 2 deletions(-)
+> >> If you place your squashfs on a UBI static volume, UBI knows the exact=
+ length
+> >> and you can checksum it
+> >> more easily.
+> > Yes, we use squashfs on UBI volumes, but our volume type is still dynam=
+ic.
+> > Also, you said, UBI knows the exact length, you mean the whole image le=
+ngth ?
+> > How can we get this length at runtime ?
+>
+> You need a static volume for that. If you update a static volume the leng=
+th is
+> known by UBI.
+>
+Thank you so much for your reply!
 
-diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index 7c568b619f82..b7de0fafa48a 100644
---- a/kernel/cgroup/misc.c
-+++ b/kernel/cgroup/misc.c
-@@ -159,8 +159,6 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg,
- 		if (new_usage > READ_ONCE(res->max) ||
- 		    new_usage > READ_ONCE(misc_res_capacity[type])) {
- 			if (!res->failed) {
--				pr_info("cgroup: charge rejected by the misc controller for %s resource in ",
--					misc_res_name[type]);
- 				pr_cont_cgroup_path(i->css.cgroup);
- 				pr_cont("\n");
- 				res->failed = true;
--- 
-2.30.0
+Sorry, I could not get this part. How static volume can give image len ?
+You mean there is some interface available in kernel to get actual image le=
+n ?
 
+> > Also, how can we get the checksum of the entire UBI volume content
+> > (ignoring the erased/empty/bad block content) ?
+>
+> Just read from the volume. /dev/ubiX_Y.
+>
+I think this also will give the entire volume size, but we still don't know=
+ how
+many pages have real data ?
+For example:
+Suppose, my raw partition/volume is of size 10MB
+But my actual data inside it is of size ~3MB (may be split across?)
+Then, how can we get the actual size of the data content ?
+You mean to say: /dev/ubiX_Y should contain only data blocks ?
+
+> > Or, you mean to say, the whole checksum logic is in-built inside the
+> > UBI layer and users don't need to worry about the integrity at all ?
+>
