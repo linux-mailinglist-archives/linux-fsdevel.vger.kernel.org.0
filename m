@@ -2,109 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC7843D23E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 14:54:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F07133D24CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 15:46:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232082AbhGVMOK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 08:14:10 -0400
-Received: from mga18.intel.com ([134.134.136.126]:9907 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232029AbhGVMOG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 08:14:06 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10052"; a="198907741"
-X-IronPort-AV: E=Sophos;i="5.84,261,1620716400"; 
-   d="scan'208";a="198907741"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2021 05:54:40 -0700
-X-IronPort-AV: E=Sophos;i="5.84,261,1620716400"; 
-   d="scan'208";a="501808880"
-Received: from denglijx-mobl.ccr.corp.intel.com (HELO [10.255.29.108]) ([10.255.29.108])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2021 05:54:37 -0700
-Subject: Re: [PATCH v3 14/15] samples: Add fs error monitoring example
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     kernel test robot <lkp@intel.com>, amir73il@gmail.com,
-        kbuild-all@lists.01.org, djwong@kernel.org, tytso@mit.edu,
-        david@fromorbit.com, jack@suse.com, dhowells@redhat.com,
-        khazhy@google.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-References: <20210629191035.681913-15-krisman@collabora.com>
- <202106301048.BainWUsk-lkp@intel.com> <87mtqicqux.fsf@collabora.com>
- <20210720194955.GH25548@kadam>
-From:   "Chen, Rong A" <rong.a.chen@intel.com>
-Message-ID: <4313fff4-343a-2937-3a97-c5da860827b1@intel.com>
-Date:   Thu, 22 Jul 2021 20:54:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.12.0
+        id S232135AbhGVNF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 09:05:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35550 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231925AbhGVNF1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Jul 2021 09:05:27 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71314C061575;
+        Thu, 22 Jul 2021 06:46:02 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id u13so8570455lfs.11;
+        Thu, 22 Jul 2021 06:46:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=S5FBe7ueCEgBBBcVlYIV5ZQBPwUEDI96bGTpteUkpVg=;
+        b=ODQJCwhH4fpxxhVlyvc7qpPwR4JZiWsrgG8NvFvy5X3NG25wTU6ksHsU1cL8b1QGuU
+         tp875eIubB65RbEhE7PNrtCX89VD3dgDJHWmRbjJ9fWOo3S8i12JKyydfYJK5k8O4IOE
+         KTHILQtAAJA7SsGOAWfryjyQXAaZZg4ZS8+7xtQnzgv4DZGAUwMf2/poxEvFSI8dteOf
+         5V4oFyStMw5PiChxrAqttDR6C45175WAIq1FLMI6wrOKrPLTvI3CtdF7ipHlFsV8/MWo
+         u3I7bty7jolpesArC0A8mwuHZEK3ccnYiL+3b7KRvvG4ZsPH2OnVhIcDTlGXByw1z8Qv
+         mkZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=S5FBe7ueCEgBBBcVlYIV5ZQBPwUEDI96bGTpteUkpVg=;
+        b=qKsoV6DOtwq/IYHkfEmOL4V+oAkfvmyeGpG9qGGasShQzmKMT32D07B+AqhlZaiyhZ
+         wOrsxgaPVkepUi7KGsNrEcm2RHufFt0eM1cRlKqE8wKel8TlsmpEjSVu7OZPkmrNjx3D
+         pykGXLHUxkvsLeXxK1NmOOWneD1aKqxHOlPIhLUKOGUfwDEwk0BC1BA8zDZMxAOHirQd
+         kMdZHpfG2PQfmawrkIctM8dLOsErxoZsvRQ1iONMIZ99L6+vbU39ZIi7dGLRx4mYyy/A
+         KqeJOAeeZO2V2XqHGASfqZRrZ7FdhbNbsv8z0byZt5x8T5I8aIogKGYcKWxZfE74W32L
+         EHMA==
+X-Gm-Message-State: AOAM532SRjaHJft8Tq+k7DfwjKLNBvwTyy/AGvbMdloHH+aNpVxZfJep
+        +3GVvXwh7p68UA8FWnPP0QY=
+X-Google-Smtp-Source: ABdhPJy36a3gqQAyT0+tVLg1bfWSzgW5dYJ2GTCxgOvalOUdOoeV5NbZ3uVv5LxINryzPiIxhI7AOg==
+X-Received: by 2002:a05:6512:3326:: with SMTP id l6mr28891434lfe.658.1626961560871;
+        Thu, 22 Jul 2021 06:46:00 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-184-182.dynamic.spd-mgts.ru. [79.139.184.182])
+        by smtp.googlemail.com with ESMTPSA id d23sm3102281ljl.115.2021.07.22.06.46.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Jul 2021 06:46:00 -0700 (PDT)
+Subject: Re: [PATCH v14 062/138] mm/migrate: Add folio_migrate_copy()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>
+References: <20210715033704.692967-1-willy@infradead.org>
+ <20210715033704.692967-63-willy@infradead.org>
+ <a670e7c1-95fb-324f-055f-74dd4c81c0d0@gmail.com>
+ <YPlko1ObxD/CEz8o@casper.infradead.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <fd3fe780-1a1b-1ba7-1725-72286470ce4c@gmail.com>
+Date:   Thu, 22 Jul 2021 16:45:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20210720194955.GH25548@kadam>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <YPlko1ObxD/CEz8o@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Gabriel,
-
-On 7/21/2021 3:49 AM, Dan Carpenter wrote:
+22.07.2021 15:29, Matthew Wilcox пишет:
+> On Thu, Jul 22, 2021 at 02:52:28PM +0300, Dmitry Osipenko wrote:
+...
+> The obvious solution is just to change folio_copy():
 > 
-> On Mon, Jul 19, 2021 at 10:36:54AM -0400, Gabriel Krisman Bertazi wrote:
->> kernel test robot <lkp@intel.com> writes:
->>
->>> Hi Gabriel,
->>>
->>> I love your patch! Yet something to improve:
->>>
->>> [auto build test ERROR on ext3/fsnotify]
->>> [also build test ERROR on ext4/dev linus/master v5.13 next-20210629]
->>> [cannot apply to tytso-fscrypt/master]
->>> [If your patch is applied to the wrong git tree, kindly drop us a note.
->>> And when submitting patch, we suggest to use '--base' as documented in
->>> https://git-scm.com/docs/git-format-patch ]
->>>
->>> url:    https://github.com/0day-ci/linux/commits/Gabriel-Krisman-Bertazi/File-system-wide-monitoring/20210630-031347
->>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git  fsnotify
->>> config: arm64-allyesconfig (attached as .config)
->>> compiler: aarch64-linux-gcc (GCC) 9.3.0
->>> reproduce (this is a W=1 build):
->>>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross  -O ~/bin/make.cross
->>>          chmod +x ~/bin/make.cross
->>>          # https://github.com/0day-ci/linux/commit/746524d8db08a041fed90e41b15c8e8ca69cb22d
->>>          git remote add linux-review https://github.com/0day-ci/linux
->>>          git fetch --no-tags linux-review Gabriel-Krisman-Bertazi/File-system-wide-monitoring/20210630-031347
->>>          git checkout 746524d8db08a041fed90e41b15c8e8ca69cb22d
->>>          # save the attached .config to linux build tree
->>>          mkdir build_dir
->>>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross O=build_dir ARCH=arm64 SHELL=/bin/bash samples/
->>>
->>> If you fix the issue, kindly add following tag as appropriate
->>> Reported-by: kernel test robot <lkp@intel.com>
->>>
->>> All errors (new ones prefixed by >>):
->>>
->>>>> samples/fanotify/fs-monitor.c:7:10: fatal error: errno.h: No such file or directory
->>>         7 | #include <errno.h>
->>>           |          ^~~~~~~~~
->>>     compilation terminated.
->>
->> Hi Dan,
->>
->> I'm not sure what's the proper fix here.  Looks like 0day is not using
->> cross system libraries when building this user space code.  Should I do
->> something special to silent it?
-
-It seems need extra libraries for arm64, we'll disable CONFIG_SAMPLES to 
-avoid reporting this error.
-
-Best Regards,
-Rong Chen
-
-
+>  {
+> -       unsigned i, nr = folio_nr_pages(src);
+> +       unsigned i = 0;
+> +       unsigned nr = folio_nr_pages(src);
 > 
-> I'm not the person to ask, I just look at Smatch warnings.  Rong Chen
-> might know the answer.
+> -       for (i = 0; i < nr; i++) {
+> -               cond_resched();
+> +       for (;;) {
+>                 copy_highpage(folio_page(dst, i), folio_page(src, i));
+> +               if (i++ == nr)
+
+This works with the ++i precedence change. Thanks!
+
+> +                       break;
+> +               cond_resched();
+>         }
+>  }
 > 
-> regards,
-> dan carpenter
-> 
+> now it only calls cond_resched() for multi-page folios.
+
+...
+
+Thank you for the explanation and for the fix!
+
+The fs/ and mm/ are mostly outside of my scope, hope you'll figure out
+the buffer-head case soon.
