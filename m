@@ -2,93 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 795513D2F6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jul 2021 23:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 100A43D2F76
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 00:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232135AbhGVVSB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 17:18:01 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37725 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231336AbhGVVSA (ORCPT
+        id S231799AbhGVVU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 17:20:56 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:33558 "EHLO
+        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231336AbhGVVU4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 17:18:00 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 16MLwOFW015534
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Jul 2021 17:58:24 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id F2E6115C37C0; Thu, 22 Jul 2021 17:58:23 -0400 (EDT)
-Date:   Thu, 22 Jul 2021 17:58:23 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     butt3rflyh4ck <butterflyhuangxx@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Thu, 22 Jul 2021 17:20:56 -0400
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m6gip-002zZI-Tc; Thu, 22 Jul 2021 21:59:16 +0000
+Date:   Thu, 22 Jul 2021 21:59:15 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: A shift-out-of-bounds in minix_statfs in fs/minix/inode.c
-Message-ID: <YPnp/zXp3saLbz03@mit.edu>
-References: <CAFcO6XOdMe-RgN8MCUT59cYEVBp+3VYTW-exzxhKdBk57q0GYw@mail.gmail.com>
- <YPhbU/umyUZLdxIw@casper.infradead.org>
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
+Message-ID: <YPnqM0fY3nM5RdRI@zeniv-ca.linux.org.uk>
+References: <cover.1618916549.git.asml.silence@gmail.com>
+ <939776f90de8d2cdd0414e1baa29c8ec0926b561.1618916549.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPhbU/umyUZLdxIw@casper.infradead.org>
+In-Reply-To: <939776f90de8d2cdd0414e1baa29c8ec0926b561.1618916549.git.asml.silence@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 21, 2021 at 06:37:23PM +0100, Matthew Wilcox wrote:
-> On Thu, Jul 22, 2021 at 01:14:06AM +0800, butt3rflyh4ck wrote:
-> > ms = (struct minix_super_block *) bh->b_data; /// --------------> set
-> > minix_super_block pointer
-> > sbi->s_ms = ms;
-> > sbi->s_sbh = bh;
-> > sbi->s_mount_state = ms->s_state;
-> > sbi->s_ninodes = ms->s_ninodes;
-> > sbi->s_nzones = ms->s_nzones;
-> > sbi->s_imap_blocks = ms->s_imap_blocks;
-> > sbi->s_zmap_blocks = ms->s_zmap_blocks;
-> > sbi->s_firstdatazone = ms->s_firstdatazone;
-> > sbi->s_log_zone_size = ms->s_log_zone_size;  // ------------------>
-> > set sbi->s_log_zone_size
-> 
-> So what you're saying is that if you construct a malicious minix image,
-> you can produce undefined behaviour?  That's not something we're
-> traditionally interested in, unless the filesystem is one customarily
-> used for data interchange (like FAT or iso9660).
+On Tue, Apr 20, 2021 at 12:03:33PM +0100, Pavel Begunkov wrote:
+> Just a bit of code tossing in io_sq_offload_create(), so it looks a bit
+> better. No functional changes.
 
-It's going to depend on the file system maintainer.  The traditional
-answer is that block device is part of the Trusted Computing Base, and
-malicious file system images are not considered part of the threat
-model.  A system adminstration or developer which allows potentially
-malicious agents to mount file system agents are cray-cray.
+Does a use-after-free count as a functional change?
 
-Unfortunately, those developers are also known as "Linux desktop devs"
-(who implement unprivileged mounts of USB cards) or "container
-evangelists" who think containers should be treated as being Just As
-Good as VM's From A Security Perspective.
+>  		f = fdget(p->wq_fd);
 
-So I do care about this for ext4, although I don't guarantee immediate
-response, as it's something that I usually end up doing on my own
-time.  I do get cranky that Syzkaller makes it painful to extract out
-the fuzzed file system image, and I much prefer those fuzzing systems
-which provide the file system image and the C program used to trigger
-the failre as two seprate files.  Or failing that, if there was some
-trivial way to get the syzkaller reproducer program to disgorge the
-file system image to a specified output file.  As a result, if I have
-a choice of spending time investigating fuzzing report from a more
-file-system friendly fuzzing program and syzkaller, I'll tend choose
-to spend my time dealing with other file system fuzzing reports first.
+Descriptor table is shared with another thread, grabbed a reference to file.
+Refcount is 2 (1 from descriptor table, 1 held by us)
 
-The problem for Minix is that it does not have an active maintainer.
-So if you submit fuzzing reports for Minix, it's unlikely anyone will
-spend time working on it.  But if you submit a patch, it can go in,
-probably via Andrew Morton.  (Recent Minix fixes that have gone in
-this way: 0a12c4a8069 and 32ac86efff9)
+>  		if (!f.file)
+>  			return -ENXIO;
 
-Cheers,
+Nope, not NULL.
 
-					- Ted
-					
+> -		if (f.file->f_op != &io_uring_fops) {
+> -			fdput(f);
+> -			return -EINVAL;
+> -		}
+>  		fdput(f);
+
+Decrement refcount, get preempted away.  f.file->f_count is 1 now.
+
+Another thread: close() on the same descriptor.  Final reference to
+struct file (from descriptor table) is gone, file closed, memory freed.
+
+Regain CPU...
+
+> +		if (f.file->f_op != &io_uring_fops)
+> +			return -EINVAL;
+
+... and dereference an already freed structure.
+
+What scares me here is that you are playing with bloody fundamental objects,
+without understanding even the basics regarding their handling ;-/
+
+1) descriptor tables can be shared.
+2) another thread can close file right under you.
+3) once all references to opened file are gone, it gets shut down and
+struct file gets freed.
+4) inside an fdget()/fdput() pair you are guaranteed that (3) won't happen.
+As soon as you've done fdput(), that promise is gone.
+
+	In the above only (1) might have been non-obvious, because if you
+accept _that_, you have to ask yourself what the fuck would prevent file
+disappearing once you've done fdput(), seeing that it might be the last
+thing your syscall is doing to the damn thing.  So either that would've
+leaked it, or _something_ in the operations you've done to it must've
+made it possible for close(2) to get the damn thing.  And dereferencing
+->f_op is unlikely to be that, isn't it?  Which leaves fdput() the
+only candidate.  It's common sense stuff...
+
+	Again, descriptor table is a shared resource and threads sharing
+it can issue syscalls at the same time.  Sure, I've got fewer excuses
+than you do for lack of documentation, but that's really basic...
