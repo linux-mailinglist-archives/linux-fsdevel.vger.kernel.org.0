@@ -2,41 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21AFF3D32D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 05:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1EF3D32F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 05:59:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234330AbhGWDSU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 23:18:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38782 "EHLO mail.kernel.org"
+        id S234262AbhGWDSy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 23:18:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234200AbhGWDR7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 23:17:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 276A660F36;
-        Fri, 23 Jul 2021 03:58:32 +0000 (UTC)
+        id S234250AbhGWDSI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Jul 2021 23:18:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8AF1860E9C;
+        Fri, 23 Jul 2021 03:58:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627012713;
-        bh=PcJSEufoi0i8jRxWfiKREwhqCPga+r/UzzLHV2wQEnw=;
+        s=k20201202; t=1627012722;
+        bh=doR6LMEEYb1rjzpVj1h50RnV5NItZ15HdlpAELiDtSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qBeLVZSP3iVZ5R436dWTy+VhSNFV5x2gaXeiCA9QwYz/I+mAEwm31/7YTrBDEtHXm
-         qMwMT9Ir9CFesdQV7Rmtl9zIfqJMn+jJZaPxF9SRAVLe6jawtq50hEiBZ3BFs+sp9/
-         KvsAsaECkXG48Q0B8+73kR44vO1QUACefmEkyDXGQ40Gy1Q/qqVj/Qhx/v2rFepc+D
-         4xw7XoqkXFQK9WA7n5C5vOpzszCuCxFcGUst91caOkQP6fAS8HNGMuC6TC3jJ/gG6f
-         eXR52nW+Bi4YRiRCwuWVhI6eUJ+EKGZUav+zx9xka5JWDQC2vrZMXAqSlUmZoUO0Pd
-         G1R6CQx+BRWqQ==
+        b=kDx2YVpeQu7ebQ8xabHkX0ljVjiuHIaw4Kr5WOWxE0UvGqmNcW9jBbQWuEUufBolK
+         BTtczr/ouk8+CMXLbF51vZkf1ALK2yMUh4YrPdlGZrgBxa0mza3kM9z/Ui1RpLzEg2
+         AnjmN/qi9gNffRJcfUHEqrQihl8UQ/4GtgcDV32pCb5Iopz3c5579I45FP/05hFy3h
+         0ZQJ4PsSF+86XLENb84bL1raLgwGGTbFE97dnfsxq6nrGTwFtA8WMLLRR+ZLkDZzjC
+         pc9lUuhwvSz7ITKiXtuShj8TpefIX8IwPSx28f7eRicx7btgFG1l4cP0zQfPi201WY
+         K2qtlrySJJMxA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Leizhen <thunder.leizhen@huawei.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sasha Levin <sashal@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 13/14] iomap: remove the length variable in iomap_seek_hole
-Date:   Thu, 22 Jul 2021 23:58:12 -0400
-Message-Id: <20210723035813.531837-13-sashal@kernel.org>
+Cc:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 05/11] hfs: add missing clean-up in hfs_fill_super
+Date:   Thu, 22 Jul 2021 23:58:29 -0400
+Message-Id: <20210723035835.532148-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210723035813.531837-1-sashal@kernel.org>
-References: <20210723035813.531837-1-sashal@kernel.org>
+In-Reply-To: <20210723035835.532148-1-sashal@kernel.org>
+References: <20210723035835.532148-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -45,55 +48,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+From: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
 
-[ Upstream commit 49694d14ff68fa4b5f86019dbcfb44a8bd213e58 ]
+[ Upstream commit 16ee572eaf0d09daa4c8a755fdb71e40dbf8562d ]
 
-The length variable is rather pointless given that it can be trivially
-deduced from offset and size.  Also the initial calculation can lead
-to KASAN warnings.
+Patch series "hfs: fix various errors", v2.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reported-by: Leizhen (ThunderTown) <thunder.leizhen@huawei.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+This series ultimately aims to address a lockdep warning in
+hfs_find_init reported by Syzbot [1].
+
+The work done for this led to the discovery of another bug, and the
+Syzkaller repro test also reveals an invalid memory access error after
+clearing the lockdep warning.  Hence, this series is broken up into
+three patches:
+
+1. Add a missing call to hfs_find_exit for an error path in
+   hfs_fill_super
+
+2. Fix memory mapping in hfs_bnode_read by fixing calls to kmap
+
+3. Add lock nesting notation to tell lockdep that the observed locking
+   hierarchy is safe
+
+This patch (of 3):
+
+Before exiting hfs_fill_super, the struct hfs_find_data used in
+hfs_find_init should be passed to hfs_find_exit to be cleaned up, and to
+release the lock held on the btree.
+
+The call to hfs_find_exit is missing from an error path.  We add it back
+in by consolidating calls to hfs_find_exit for error paths.
+
+Link: https://syzkaller.appspot.com/bug?id=f007ef1d7a31a469e3be7aeb0fde0769b18585db [1]
+Link: https://lkml.kernel.org/r/20210701030756.58760-1-desmondcheongzx@gmail.com
+Link: https://lkml.kernel.org/r/20210701030756.58760-2-desmondcheongzx@gmail.com
+Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/iomap/seek.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ fs/hfs/super.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
-index c61b889235b3..10c4c1e80124 100644
---- a/fs/iomap/seek.c
-+++ b/fs/iomap/seek.c
-@@ -140,23 +140,20 @@ loff_t
- iomap_seek_hole(struct inode *inode, loff_t offset, const struct iomap_ops *ops)
- {
- 	loff_t size = i_size_read(inode);
--	loff_t length = size - offset;
- 	loff_t ret;
- 
- 	/* Nothing to be found before or beyond the end of the file. */
- 	if (offset < 0 || offset >= size)
- 		return -ENXIO;
- 
--	while (length > 0) {
--		ret = iomap_apply(inode, offset, length, IOMAP_REPORT, ops,
--				  &offset, iomap_seek_hole_actor);
-+	while (offset < size) {
-+		ret = iomap_apply(inode, offset, size - offset, IOMAP_REPORT,
-+				  ops, &offset, iomap_seek_hole_actor);
- 		if (ret < 0)
- 			return ret;
- 		if (ret == 0)
- 			break;
--
- 		offset += ret;
--		length -= ret;
+diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+index 173876782f73..77b6f35a4aa9 100644
+--- a/fs/hfs/super.c
++++ b/fs/hfs/super.c
+@@ -427,14 +427,12 @@ static int hfs_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (!res) {
+ 		if (fd.entrylength > sizeof(rec) || fd.entrylength < 0) {
+ 			res =  -EIO;
+-			goto bail;
++			goto bail_hfs_find;
+ 		}
+ 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
  	}
+-	if (res) {
+-		hfs_find_exit(&fd);
+-		goto bail_no_root;
+-	}
++	if (res)
++		goto bail_hfs_find;
+ 	res = -EINVAL;
+ 	root_inode = hfs_iget(sb, &fd.search_key->cat, &rec);
+ 	hfs_find_exit(&fd);
+@@ -450,6 +448,8 @@ static int hfs_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* everything's okay */
+ 	return 0;
  
- 	return offset;
++bail_hfs_find:
++	hfs_find_exit(&fd);
+ bail_no_root:
+ 	pr_err("get root inode failed\n");
+ bail:
 -- 
 2.30.2
 
