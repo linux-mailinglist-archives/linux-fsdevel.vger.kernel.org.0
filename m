@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5189E3D41DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 22:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F01A3D41E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 22:59:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231865AbhGWUSm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jul 2021 16:18:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23358 "EHLO
+        id S232042AbhGWUSo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 16:18:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44150 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232073AbhGWUSl (ORCPT
+        by vger.kernel.org with ESMTP id S231879AbhGWUSm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jul 2021 16:18:41 -0400
+        Fri, 23 Jul 2021 16:18:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1627073954;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=pFei+s+fWvJWvz6iB+WUaD924M10iRi+eomBo7E3jgU=;
-        b=Ab76SAg6sd/BkW6ovHhhyHqDekAW7WOddvNg2lDpQizXi1rCtxAu/GGfm4dIDclXbxpgUg
-        rIo4+cXTTWSccSG8uP88+lfuHthVYw/tk53b47jJmCkUrHgRhJEZC1qwKVHeA9mtGkZ1h8
-        TGRIAFBK0YJ0PZSw3ox7aGK7/sEGXI4=
+        bh=uFO7RXxVKFSfj+JbYdfvdLiEFoV9tSxk0YcX6nQXpmY=;
+        b=dAxvkXn17udjAepVWMZ/JusQR0QK1b5x0TrHF17+d0OefwjWE+W4V1GrbQ8M0eA492hf1n
+        e1AjMI69XH+jBG60tp/XfdRGjDr3+PXPR2zcv1+PnypIqabDQUpLvp0pTNhNXAz5CqtHCD
+        FCjG2iq68c3QShcUGWzydOSzNKJsxfY=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-225-X45yxMnRO86KqkwtcPyfmg-1; Fri, 23 Jul 2021 16:59:10 -0400
-X-MC-Unique: X45yxMnRO86KqkwtcPyfmg-1
+ us-mta-423-dhkyPezkPFe-gRt0owe1lw-1; Fri, 23 Jul 2021 16:59:13 -0400
+X-MC-Unique: dhkyPezkPFe-gRt0owe1lw-1
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04261801A92;
-        Fri, 23 Jul 2021 20:59:09 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BAEDD801A92;
+        Fri, 23 Jul 2021 20:59:11 +0000 (UTC)
 Received: from max.com (unknown [10.40.194.164])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E53CB10074FD;
-        Fri, 23 Jul 2021 20:59:02 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 58A98100238C;
+        Fri, 23 Jul 2021 20:59:09 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -43,9 +43,9 @@ Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
         cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
         Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v3 6/7] iov_iter: Introduce noio flag to disable page faults
-Date:   Fri, 23 Jul 2021 22:58:39 +0200
-Message-Id: <20210723205840.299280-7-agruenba@redhat.com>
+Subject: [PATCH v3 7/7] gfs2: Fix mmap + page fault deadlocks for direct I/O
+Date:   Fri, 23 Jul 2021 22:58:40 +0200
+Message-Id: <20210723205840.299280-8-agruenba@redhat.com>
 In-Reply-To: <20210723205840.299280-1-agruenba@redhat.com>
 References: <20210723205840.299280-1-agruenba@redhat.com>
 MIME-Version: 1.0
@@ -55,88 +55,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce a new noio flag to indicate to get_user_pages to use the
-FOLL_FAST_ONLY flag.  This will cause get_user_pages to fail when it
-would otherwise fault in a page.
+Also disable page faults during direct I/O requests and implement the same kind
+of retry logic as in the buffered I/O case.
 
-Currently, the noio flag is only checked in iov_iter_get_pages and
-iov_iter_get_pages_alloc.  This is enough for iomaop_dio_rw, but it
-may make sense to check for this flag in other contexts as well.
+Direct I/O requests differ from buffered I/O requests in that they use
+bio_iov_iter_get_pages for grabbing page references and faulting in pages
+instead of triggering real page faults.  Those manual page faults can be
+disabled with the iocb->noio flag.
 
 Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 ---
- include/linux/uio.h |  1 +
- lib/iov_iter.c      | 20 +++++++++++++++-----
- 2 files changed, 16 insertions(+), 5 deletions(-)
+ fs/gfs2/file.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 152b3605e86c..8de6354ade14 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -29,6 +29,7 @@ enum iter_type {
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index f66ac7f56f6d..7986f3be69d2 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -782,21 +782,41 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
+ 	struct file *file = iocb->ki_filp;
+ 	struct gfs2_inode *ip = GFS2_I(file->f_mapping->host);
+ 	size_t count = iov_iter_count(to);
++	size_t written = 0;
+ 	ssize_t ret;
  
- struct iov_iter {
- 	u8 iter_type;
-+	bool noio;
- 	bool data_source;
- 	size_t iov_offset;
- 	size_t count;
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 7221665f7ac4..a20426cedf60 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -509,6 +509,7 @@ void iov_iter_init(struct iov_iter *i, unsigned int direction,
- 	WARN_ON(direction & ~(READ | WRITE));
- 	*i = (struct iov_iter) {
- 		.iter_type = ITER_IOVEC,
-+		.noio = false,
- 		.data_source = direction,
- 		.iov = iov,
- 		.nr_segs = nr_segs,
-@@ -1519,13 +1520,17 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
- 		return 0;
- 
- 	if (likely(iter_is_iovec(i))) {
-+		unsigned int gup_flags = 0;
- 		unsigned long addr;
- 
-+		if (iov_iter_rw(i) != WRITE)
-+			gup_flags |= FOLL_WRITE;
-+		if (i->noio)
-+			gup_flags |= FOLL_FAST_ONLY;
++	/*
++	 * In this function, we disable page faults when we're holding the
++	 * inode glock while doing I/O.  If a page fault occurs, we drop the
++	 * inode glock, fault in the pages manually, and then we retry.  Other
++	 * than in gfs2_file_read_iter, iomap_dio_rw can trigger implicit as
++	 * well as manual page faults, and we need to disable both kinds
++	 * separately.
++	 */
 +
- 		addr = first_iovec_segment(i, &len, start, maxsize, maxpages);
- 		n = DIV_ROUND_UP(len, PAGE_SIZE);
--		res = get_user_pages_fast(addr, n,
--				iov_iter_rw(i) != WRITE ?  FOLL_WRITE : 0,
--				pages);
-+		res = get_user_pages_fast(addr, n, gup_flags, pages);
- 		if (unlikely(res <= 0))
- 			return res;
- 		return (res == n ? len : res * PAGE_SIZE) - *start;
-@@ -1641,15 +1646,20 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
- 		return 0;
+ 	if (!count)
+ 		return 0; /* skip atime */
  
- 	if (likely(iter_is_iovec(i))) {
-+		unsigned int gup_flags = 0;
- 		unsigned long addr;
+ 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
++retry:
+ 	ret = gfs2_glock_nq(gh);
+ 	if (ret)
+ 		goto out_uninit;
  
-+		if (iov_iter_rw(i) != WRITE)
-+			gup_flags |= FOLL_WRITE;
-+		if (i->noio)
-+			gup_flags |= FOLL_FAST_ONLY;
++	pagefault_disable();
++	to->noio = true;
+ 	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0);
++	to->noio = false;
++	pagefault_enable();
 +
- 		addr = first_iovec_segment(i, &len, start, maxsize, ~0U);
- 		n = DIV_ROUND_UP(len, PAGE_SIZE);
- 		p = get_pages_array(n);
- 		if (!p)
- 			return -ENOMEM;
--		res = get_user_pages_fast(addr, n,
--				iov_iter_rw(i) != WRITE ?  FOLL_WRITE : 0, p);
-+		res = get_user_pages_fast(addr, n, gup_flags, p);
- 		if (unlikely(res <= 0)) {
- 			kvfree(p);
- 			*pages = ZERO_SIZE_PTR;
+ 	gfs2_glock_dq(gh);
++	if (ret > 0)
++		written += ret;
++	if (unlikely(ret == -EFAULT) && fault_in_iov_iter(to))
++		goto retry;
+ out_uninit:
+ 	gfs2_holder_uninit(gh);
+-	return ret;
++	return written ? written : ret;
+ }
+ 
+ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
+@@ -809,6 +829,12 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
+ 	loff_t offset = iocb->ki_pos;
+ 	ssize_t ret;
+ 
++	/*
++	 * In this function, we disable page faults when we're holding the
++	 * inode glock while doing I/O.  If a page fault occurs, we drop the
++	 * inode glock, fault in the pages manually, and then we retry.
++	 */
++
+ 	/*
+ 	 * Deferred lock, even if its a write, since we do no allocation on
+ 	 * this path. All we need to change is the atime, and this lock mode
+@@ -818,6 +844,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
+ 	 * VFS does.
+ 	 */
+ 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
++retry:
+ 	ret = gfs2_glock_nq(gh);
+ 	if (ret)
+ 		goto out_uninit;
+@@ -826,11 +853,16 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
+ 	if (offset + len > i_size_read(&ip->i_inode))
+ 		goto out;
+ 
++	from->noio = true;
+ 	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0);
++	from->noio = false;
++
+ 	if (ret == -ENOTBLK)
+ 		ret = 0;
+ out:
+ 	gfs2_glock_dq(gh);
++	if (unlikely(ret == -EFAULT) && fault_in_iov_iter(from))
++		goto retry;
+ out_uninit:
+ 	gfs2_holder_uninit(gh);
+ 	return ret;
 -- 
 2.26.3
 
