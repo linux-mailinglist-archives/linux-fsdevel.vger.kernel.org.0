@@ -2,77 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3321B3D3D03
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 17:57:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 458033D3D61
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 18:17:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235740AbhGWPQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jul 2021 11:16:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55288 "EHLO
+        id S230467AbhGWPg4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 11:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235734AbhGWPQe (ORCPT
+        with ESMTP id S230453AbhGWPg4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jul 2021 11:16:34 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 004CFC061757;
-        Fri, 23 Jul 2021 08:57:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ovsyxI38eNvliEW3ps0I8aR1LXX7PaOVRwl/PkPRFDM=; b=Wxnyx+dw5dcaJEYk7A89PoveYG
-        dA8Nw8DvgO2pjZqcy/y8tpZrV64svCyzBmRc/Gy4epobh41YlOfrukZvPFMZKaDuDgRSixj+x74+8
-        00UAFBs1Z0nkdxFm5I1rUKVQOJnBb1GiIOIfe3rk7YOPWjLbhOLitR++IQOvGval1ceVQ8xMAOmD1
-        vxEh5cCcxzU+c54cdxTVTtzz4Fz7zl1OwsM6MalIKvBJLh5nwtMzF3gueE10t+emldzVdMmHfpw6B
-        QLyWdJV9mA0XiEtVWlpW3Y/3s1Z2rbjwDR1ZybmhJIHGnQ5ECIM/neeB7i0/iUlddaXiE1S+SHxbE
-        rtiZ4Uyg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m6xXP-00BVcv-W7; Fri, 23 Jul 2021 15:56:43 +0000
-Date:   Fri, 23 Jul 2021 16:56:35 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-Subject: Re: [PATCH v6] iomap: support tail packing inline read
-Message-ID: <YPrms0fWPwEZGNAL@casper.infradead.org>
-References: <20210722031729.51628-1-hsiangkao@linux.alibaba.com>
- <20210722053947.GA28594@lst.de>
- <YPrauRjG7+vCw7f9@casper.infradead.org>
- <YPre+j906ywgRHEZ@B-P7TQMD6M-0146.local>
+        Fri, 23 Jul 2021 11:36:56 -0400
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69850C061757
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 09:17:29 -0700 (PDT)
+Received: by mail-il1-x132.google.com with SMTP id o7so855718ilh.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 09:17:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ihWneKebM4lpsOeEFb80CNpygB9RTktVEb8Cc/YXHUc=;
+        b=lUn6K2TYkavFX2oglx3hEhjVlhSxKHyQQ3xMrUsOyQ48uDXj+cDolNgviLuNitadjX
+         pey4VdiGPxv/G3WbY2GAjMbZWKbdIPw0nj0aU7Wx9tGEeMR+MuQukP77zySNuwD0yUro
+         abLQdDe8nxxeZY73r9WZx8LhOYIInZVExEpLI0YEutxBlojv8KaxKOhUsdIIyi5DV1Lv
+         t6rhXW6kEmLSa2htH0LcPOhIoRPwnFviLW37UDMy8t8wWaQuEPksg16jPoG7VxBO1DBw
+         UtZ5Am+KeD/GMH8ozZDXlBjhkvzrPeXEZJuPXlwWf5vpUo2IyOsDcNRsVgOFSNuNowze
+         5GDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ihWneKebM4lpsOeEFb80CNpygB9RTktVEb8Cc/YXHUc=;
+        b=PP8xHOugCnhIFyeHd8o94giIrH1ynnF4YWt+JW95F3OUZp+4WPsKJvP4pOieXEpIE3
+         rkYrdDtoqFm2feKCGl9WIMhzm51foGRp0Vum+peb8Oi5YXCnfRXw2fCbchkPoknq2Hg4
+         qnuZGdHju0g7M5vbRa830eF5zVfhOuF7DvFwG7gf/+1hES3n7oVQ85HNgrU/PzniMWu0
+         meUM3oOueySyNkRKXAaq1XkQ9X1f8dNDhdVNHDhiFSHFLn2RP/MAD/OJTamuqhyPbgHE
+         rPTBl1Sdw6lbpQtYkPvI6E/I1R3Eii8LXRqaW1btuCh3y0TBe/uSDTc+1FiGMsHXQ7tz
+         NaKw==
+X-Gm-Message-State: AOAM530GzWEm7xykwBM7lzYgsE5wsXT+JIblwFRRM6CvVMLydi3SxyPO
+        AIgHo/2bD78EBhl4q8/TlU5/HQ==
+X-Google-Smtp-Source: ABdhPJyPOnhWH64cVqUzTNSWHK2FqyJ+GkOfJQ1D0PSUIohw+xTLS0G3vSwAAXD3sTw66ytGr+GM1A==
+X-Received: by 2002:a05:6e02:5cf:: with SMTP id l15mr3943619ils.90.1627057048691;
+        Fri, 23 Jul 2021 09:17:28 -0700 (PDT)
+Received: from [192.168.1.10] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id a17sm12803ios.36.2021.07.23.09.17.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Jul 2021 09:17:28 -0700 (PDT)
+Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <cover.1618916549.git.asml.silence@gmail.com>
+ <939776f90de8d2cdd0414e1baa29c8ec0926b561.1618916549.git.asml.silence@gmail.com>
+ <YPnqM0fY3nM5RdRI@zeniv-ca.linux.org.uk>
+ <57758edf-d064-d37e-e544-e0c72299823d@kernel.dk>
+ <YPn/m56w86xAlbIm@zeniv-ca.linux.org.uk>
+ <a85df247-137f-721c-6056-a5c340eed90e@kernel.dk>
+ <YPoI+GYrgZgWN/dW@zeniv-ca.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8fb39022-ba21-2c1f-3df5-29be002014d8@kernel.dk>
+Date:   Fri, 23 Jul 2021 10:17:27 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YPre+j906ywgRHEZ@B-P7TQMD6M-0146.local>
+In-Reply-To: <YPoI+GYrgZgWN/dW@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 23, 2021 at 11:23:38PM +0800, Gao Xiang wrote:
-> Hi Matthew,
+On 7/22/21 6:10 PM, Al Viro wrote:
+> On Thu, Jul 22, 2021 at 05:42:55PM -0600, Jens Axboe wrote:
 > 
-> On Fri, Jul 23, 2021 at 04:05:29PM +0100, Matthew Wilcox wrote:
-> > On Thu, Jul 22, 2021 at 07:39:47AM +0200, Christoph Hellwig wrote:
-> > > @@ -675,7 +676,7 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
-> > >  
-> > >  	flush_dcache_page(page);
-> > >  	addr = kmap_atomic(page);
-> > > -	memcpy(iomap->inline_data + pos, addr + pos, copied);
-> > > +	memcpy(iomap_inline_buf(iomap, pos), addr + pos, copied);
-> > 
-> > This is wrong; pos can be > PAGE_SIZE, so this needs to be
-> > addr + offset_in_page(pos).
+>>> So how can we possibly get there with tsk->files == NULL and what does it
+>>> have to do with files, anyway?
+>>
+>> It's not the clearest, but the files check is just to distinguish between
+>> exec vs normal cancel. For exec, we pass in files == NULL. It's not
+>> related to task->files being NULL or not, we explicitly pass NULL for
+>> exec.
 > 
-> Yeah, thanks for pointing out. It seems so, since EROFS cannot test
-> such write path, previously it was disabled explicitly. I could
-> update it in the next version as above.
+> Er...  So turn that argument into bool cancel_all, and pass false on exit and
+> true on exec? 
 
-We're also missing a call to __set_page_dirty_nobuffers().  This
-matters to nobody right now -- erofs is read-only and gfs2 only
-supports inline data in the inode.  I presume what is happening
-for gfs2 is that at inode writeback time, it copies the ~60 bytes
-from the page cache into the inode and then schedules the inode
-for writeback.
+Yes
 
-But logically, we should mark the page as dirty.  It'll be marked
-as dirty by ->mkwrite, should the page be mmaped, so gfs2 must
-already cope with a dirty page for inline data.
+> While we are at it, what happens if you pass io_uring descriptor
+> to another process, close yours and then have the recepient close the one it
+> has gotten?  AFAICS, io_ring_ctx_wait_and_kill(ctx) will be called in context
+> of a process that has never done anything io_uring-related.  Can it end up
+> trying to resubmit some requests?> 
+> I rather hope it can't happen, but I don't see what would prevent it...
+
+No, the pending request would either have gone to a created thread of
+the original task on submission, or it would be sitting in a
+ready-to-retry state. The retry would attempt to queue to original task,
+and either succeed (if still alive) or get failed with -ECANCELED. Any
+given request is tied to the original task.
+
+-- 
+Jens Axboe
+
