@@ -2,103 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0CCF3D3168
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 03:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B3543D31F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 04:40:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233135AbhGWBMA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 21:12:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230318AbhGWBMA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 21:12:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9D60160E9A;
-        Fri, 23 Jul 2021 01:52:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627005154;
-        bh=dubo8niTm2fAph2AV70T+l7jUyaRlEBWVCODXsuymHs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=c8rOmcNFq6dVUMpNu9SxM6DzJMyst3LN3ufi73N+zsM7d12ZgHatlfR7cgZ/fy0i6
-         UkMx1ZSt2deeQV/WhcR3DmQ1tFmA88bh+/5HsYEUO0L/tKgbq4e6h1vdz6cHl6Sg4Y
-         UByeKuoFIh2LBpzC40H7E8cedR/pY8VLEbmWPQajXI5cJU7TbYNSb5fEfWRIAOXCu5
-         4B4AtgfcgElSc+jmbP1Ru4A9jvHlT+sEvOXG1Up4bKSCww3RphljdQeES5GWl9h401
-         Mi+4O0r6VI4rlaFlY/bu7iGQtLRd/rXRLsqJzof8eGgNg1u8d843jzSDIm9nAlr/Ev
-         cJqgvM0mTz49Q==
-Date:   Thu, 22 Jul 2021 18:52:33 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
+        id S233238AbhGWCAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 22:00:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231663AbhGWCAF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Jul 2021 22:00:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E03AC061575;
+        Thu, 22 Jul 2021 19:40:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bvpCKyJPKQ+52VGiNWJJ88JT5lIx01OMRbRWDKPTqTM=; b=NXA5uHy4/Ittca66HSknUtfumF
+        zTtO6XSGT1YO7UP6247R2NDdNion/+J6gNl8kGxNG4lMhKyn2bXw+IQAIGi+dBeKVZp4H/lxltCQk
+        ZBBiqOBKlOkf2u8fyRsznnFfC2QTdjn0E6UNW1BiMN+9A8oEBXcoXcUsHnKMqg6mIhulHlS+dymml
+        0lzzyUxAUC6WQt+DeIDwuMGSxYMY72hMHbxt6Rdnn3Z+7QWsc7ChWKZYdzmrN5+/A7C9tJ1jKqrSu
+        q9PSi9ccXXrFy9+8g2YuWvxMltN4viVvE3phGqWQ3NNu+mQAX8zzJzCqNF8uzvc/B9nt6VPAzA0r0
+        T20CUYGQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m6l6x-00Av3q-13; Fri, 23 Jul 2021 02:40:30 +0000
+Date:   Fri, 23 Jul 2021 03:40:27 +0100
+From:   Matthew Wilcox <willy@infradead.org>
 To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Satya Tangirala <satyaprateek2357@gmail.com>,
-        Changheun Lee <nanich.lee@samsung.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: [PATCH 6/9] f2fs: implement iomap operations
-Message-ID: <YPog4SDY3nNC78sK@sol.localdomain>
-References: <20210716143919.44373-1-ebiggers@kernel.org>
- <20210716143919.44373-7-ebiggers@kernel.org>
- <YPU+3inGclUtcSpJ@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH v15 02/17] block: Add bio_for_each_folio_all()
+Message-ID: <YPosG9HKRBt9+GUy@casper.infradead.org>
+References: <20210719184001.1750630-1-willy@infradead.org>
+ <20210719184001.1750630-3-willy@infradead.org>
+ <YPZxp6ZbRGYYBnYK@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPU+3inGclUtcSpJ@infradead.org>
+In-Reply-To: <YPZxp6ZbRGYYBnYK@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christoph,
+On Tue, Jul 20, 2021 at 08:48:07AM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 19, 2021 at 07:39:46PM +0100, Matthew Wilcox (Oracle) wrote:
+> >  #define bio_for_each_bvec_all(bvl, bio, i)		\
+> >  	for (i = 0, bvl = bio_first_bvec_all(bio);	\
+> > -	     i < (bio)->bi_vcnt; i++, bvl++)		\
+> > +	     i < (bio)->bi_vcnt; i++, bvl++)
+> 
+> Pleae split out this unrelated fixup.
+> 
+> > +static inline
+> > +void bio_first_folio(struct folio_iter *fi, struct bio *bio, int i)
+> 
+> Please fix the strange formatting.
 
-On Mon, Jul 19, 2021 at 10:59:10AM +0200, Christoph Hellwig wrote:
-> On Fri, Jul 16, 2021 at 09:39:16AM -0500, Eric Biggers wrote:
-> > +static blk_qc_t f2fs_dio_submit_bio(struct inode *inode, struct iomap *iomap,
-> > +				    struct bio *bio, loff_t file_offset)
+static inline void bio_first_folio(struct folio_iter *fi, struct bio *bio,
+		int i)
+
 > > +{
-> > +	struct f2fs_private_dio *dio;
-> > +	bool write = (bio_op(bio) == REQ_OP_WRITE);
+> > +	struct bio_vec *bvec = bio_first_bvec_all(bio) + i;
 > > +
-> > +	dio = f2fs_kzalloc(F2FS_I_SB(inode),
-> > +			sizeof(struct f2fs_private_dio), GFP_NOFS);
-> > +	if (!dio)
-> > +		goto out;
-> > +
-> > +	dio->inode = inode;
-> > +	dio->orig_end_io = bio->bi_end_io;
-> > +	dio->orig_private = bio->bi_private;
-> > +	dio->write = write;
-> > +
-> > +	bio->bi_end_io = f2fs_dio_end_io;
-> > +	bio->bi_private = dio;
-> > +
-> > +	inc_page_count(F2FS_I_SB(inode),
-> > +			write ? F2FS_DIO_WRITE : F2FS_DIO_READ);
-> > +
-> > +	return submit_bio(bio);
+> > +	fi->folio = page_folio(bvec->bv_page);
+> > +	fi->offset = bvec->bv_offset +
+> > +			PAGE_SIZE * (bvec->bv_page - &fi->folio->page);
 > 
-> I don't think there is any need for this mess.  The F2FS_DIO_WRITE /
-> F2FS_DIO_READ counts are only used to check if there is any inflight
-> I/O at all.  So instead we can increment them once before calling
-> iomap_dio_rw, and decrement them in ->end_io or for a failure/noop
-> exit from iomap_dio_rw.  Untested patch below.  Note that all this
-> would be much simpler to review if the last three patches were folded
-> into a single one.
+> Can we have a little helper for the offset in folio calculation, like:
 > 
+> static inline size_t offset_of_page_in_folio(struct page *page)
+> {
+> 	return (bvec->bv_page - &page_folio(page)->page) * PAGE;
+> }
+> 
+> as that makes the callers a lot easier to read.
 
-I am trying to do this, but unfortunately I don't see a way to make it work
-correctly in all cases.
+I've spent most of today thinking about this one.  I actually don't
+want to make this easy to read.  This is code that, in an ideal world,
+would not exist.  A bio_vec should not contain a struct page; it should
+probably be:
 
-The main problem is that when iomap_dio_rw() returns an error (other than
--EIOCBQUEUED), there is no way to know whether ->end_io() has been called or
-not.  This is because iomap_dio_rw() can fail either early, before "starting"
-the I/O (in which case ->end_io() won't have been called), or later, after
-"starting" the I/O (in which case ->end_io() will have been called).  Note that
-this can't be worked around by checking whether the iov_iter has been advanced
-or not, since a failure could occur between "starting" the I/O and the iov_iter
-being advanced for the first time.
+struct bio_vec {
+	phys_addr_t bv_start;
+	unsigned int bv_len;
+};
 
-Would you be receptive to adding a ->begin_io() callback to struct iomap_dio_ops
-in order to allow filesystems to maintain counters like this?
+and then the helper to get from a bio_vec to a folio_iter looks like:
 
-Either way, given the problem here, I think I should leave this out of the
-initial conversion and just do a dumb translation of the existing f2fs logic to
-start with, like I have in this patch.
+	fi->folio = pfn_folio(bvec->bv_start >> PAGE_SHIFT);
+	fi->offset = offset_in_folio(fi->folio, bvec->bv_start);
 
-- Eric
+If instead we decide to keep bvecs the way they are, we can at
+least turn the bv_page into bv_folio, and then we won't need this
+code either.
