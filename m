@@ -2,216 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D90E3D3EF0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 19:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52C093D4004
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 19:56:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231590AbhGWRBJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jul 2021 13:01:09 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:45206 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230094AbhGWRBI (ORCPT
+        id S229527AbhGWRQA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 13:16:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55234 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229450AbhGWRP6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jul 2021 13:01:08 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R561e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UgjVCmC_1627062093;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UgjVCmC_1627062093)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 24 Jul 2021 01:41:38 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>,
-        Huang Jianan <huangjianan@oppo.com>
-Subject: [PATCH v7] iomap: make inline data support more flexible
-Date:   Sat, 24 Jul 2021 01:41:31 +0800
-Message-Id: <20210723174131.180813-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
+        Fri, 23 Jul 2021 13:15:58 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCC3DC061757
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 10:56:30 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id j21so3545693ioo.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 10:56:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=34Pe8bE5xOlRF7EDsbVPuwXSX7BdV/HHwwshey5X0LI=;
+        b=dipRY5xyLdP1f8LknS9Od4DmvOwbQa07ypsTB9w65eaCSLiCnYa+haJ2mog+hfH3GA
+         FseGzkUW3BUmqVu+2Rc8IBueaQgpTTZUHbQcSXD79ig6vy82tPQyFCmXNxtAZPUMXhZY
+         A3C4+yq42KxL6/0PPsScsQ2+wmqe8LKr9yb3CqBliSzbEDjJXGSeww7rK41XbHdJThlI
+         awgAK5fllqbNJ7nSxKPMQG1UZLYWNpokz3f1/90vo7uNrygJP7HJaUBuYYlmVtgxlp3m
+         Cs61fwc2aik/eMbMYZFjo9b0nZ3B8aLsk/aYS1izgS3JNhOcUGJirSNQDNHAAkJBqW35
+         tSrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=34Pe8bE5xOlRF7EDsbVPuwXSX7BdV/HHwwshey5X0LI=;
+        b=GZyK0LqoE9EV/0s38+0YRVkXfgoW8bKcfiYM5RwlInMZYP3XZpANYlz8ah8dk3YsPS
+         eoVR1Ah4Jg185P+iutqm77AJIgFQLEuaLYkoXP4oFQb7j33y8yCgRREN8US5piyOjCei
+         s3gBTDYNAQpypxGXGs73FLXgUpazVMuh26rKVDm5EHaWwOJ/kKhKbF3YkaQHrWaQXzRi
+         VAFcKhQnq+EmAtnVGmmZuGsQvhLcz8sBswWbcCNryLOficxkSTYWP6dE3qpgcvvmhVcX
+         AfPLvFtz/lWT56yv+W8mq+Wd5eoflIRFYjt1G6zhn7BhtneHCU0vN4RXShHfMkHruejq
+         7lqA==
+X-Gm-Message-State: AOAM532Dp/7rPKJLpieulc5McfGSr7XbPqFP1Kgvjz/o7ciY0q3ewSv8
+        q2QPfNy4vkEAy3L8zLnKjp6VPe86WZKXU6VQ
+X-Google-Smtp-Source: ABdhPJyZy16aCwI60W9wTLWaKjkJKsgJKGBbmJE8eTV6oTc0hCA5+KuW9Mfvl1ISD2b/2cLZsqgKAg==
+X-Received: by 2002:a05:6602:2099:: with SMTP id a25mr4829293ioa.143.1627062990069;
+        Fri, 23 Jul 2021 10:56:30 -0700 (PDT)
+Received: from [192.168.1.10] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id k21sm18819166ios.0.2021.07.23.10.56.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Jul 2021 10:56:29 -0700 (PDT)
+Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <cover.1618916549.git.asml.silence@gmail.com>
+ <939776f90de8d2cdd0414e1baa29c8ec0926b561.1618916549.git.asml.silence@gmail.com>
+ <YPnqM0fY3nM5RdRI@zeniv-ca.linux.org.uk>
+ <57758edf-d064-d37e-e544-e0c72299823d@kernel.dk>
+ <YPn/m56w86xAlbIm@zeniv-ca.linux.org.uk>
+ <a85df247-137f-721c-6056-a5c340eed90e@kernel.dk>
+ <YPoI+GYrgZgWN/dW@zeniv-ca.linux.org.uk>
+ <8fb39022-ba21-2c1f-3df5-29be002014d8@kernel.dk>
+ <YPr4OaHv0iv0KTOc@zeniv-ca.linux.org.uk>
+ <c09589ed-4ae9-c3c5-ec91-ba28b8f01424@kernel.dk>
+ <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
+Message-ID: <640bdb4e-f4d9-a5b8-5b7f-5265b39c8044@kernel.dk>
+Date:   Fri, 23 Jul 2021 11:56:29 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add support for reading inline data content into the page cache from
-nonzero page-aligned file offsets.  This enables the EROFS tailpacking
-mode where the last few bytes of the file are stored right after the
-inode.
+On 7/23/21 11:36 AM, Jens Axboe wrote:
+> On 7/23/21 11:32 AM, Jens Axboe wrote:
+>> Outside of that, we're not submitting off release, only killing anything
+>> pending. The only odd case there is iopoll, but that doesn't resubmit
+>> here.
+> 
+> OK perhaps I'm wrong on this one - if we have a pending iopoll request,
+> and we run into the rare case of needing resubmit, we are doing that off
+> the release path and that should not happen. Hence it could potentially
+> happen for iosched and/or low queue depth devices, if you are using a
+> ring for pure polling. I'll patch that up.
 
-The buffered write path remains untouched since EROFS cannot be used
-for testing. It'd be better to be implemented if upcoming real users
-care and provide a real pattern rather than leave untested dead code
-around.
+Will send out two patches for this. Note that I don't see this being a
+real issue, as we explicitly gave the ring fd to another task, and being
+that this is purely for read/write, it would result in -EFAULT anyway.
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Darrick J. Wong <djwong@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-Tested-by: Huang Jianan <huangjianan@oppo.com> # erofs
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
-v6: https://lore.kernel.org/r/20210722031729.51628-1-hsiangkao@linux.alibaba.com
-changes since v6:
- - based on Christoph's reply;
- - update commit message suggested by Darrick;
- - disable buffered write path until some real fs users.
-
- fs/iomap/buffered-io.c | 42 ++++++++++++++++++++++++++----------------
- fs/iomap/direct-io.c   | 10 ++++++----
- include/linux/iomap.h  | 14 ++++++++++++++
- 3 files changed, 46 insertions(+), 20 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 87ccb3438bec..f351e1f9e3f6 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -205,25 +205,29 @@ struct iomap_readpage_ctx {
- 	struct readahead_control *rac;
- };
- 
--static void
--iomap_read_inline_data(struct inode *inode, struct page *page,
--		struct iomap *iomap)
-+static int iomap_read_inline_data(struct inode *inode, struct page *page,
-+		struct iomap *iomap, loff_t pos)
- {
--	size_t size = i_size_read(inode);
-+	size_t size = iomap->length + iomap->offset - pos;
- 	void *addr;
- 
- 	if (PageUptodate(page))
--		return;
-+		return PAGE_SIZE;
- 
--	BUG_ON(page_has_private(page));
--	BUG_ON(page->index);
--	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
-+	/* inline data must start page aligned in the file */
-+	if (WARN_ON_ONCE(offset_in_page(pos)))
-+		return -EIO;
-+	if (WARN_ON_ONCE(!iomap_inline_data_size_valid(iomap)))
-+		return -EIO;
-+	if (WARN_ON_ONCE(page_has_private(page)))
-+		return -EIO;
- 
- 	addr = kmap_atomic(page);
--	memcpy(addr, iomap->inline_data, size);
-+	memcpy(addr, iomap_inline_buf(iomap, pos), size);
- 	memset(addr + size, 0, PAGE_SIZE - size);
- 	kunmap_atomic(addr);
- 	SetPageUptodate(page);
-+	return PAGE_SIZE;
- }
- 
- static inline bool iomap_block_needs_zeroing(struct inode *inode,
-@@ -246,11 +250,8 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 	unsigned poff, plen;
- 	sector_t sector;
- 
--	if (iomap->type == IOMAP_INLINE) {
--		WARN_ON_ONCE(pos);
--		iomap_read_inline_data(inode, page, iomap);
--		return PAGE_SIZE;
--	}
-+	if (iomap->type == IOMAP_INLINE)
-+		return iomap_read_inline_data(inode, page, iomap, pos);
- 
- 	/* zero post-eof blocks as the page may be mapped */
- 	iop = iomap_page_create(inode, page);
-@@ -589,6 +590,15 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
- 	return 0;
- }
- 
-+static int iomap_write_begin_inline(struct inode *inode,
-+		struct page *page, struct iomap *srcmap)
-+{
-+	/* needs more work for the tailpacking case, disable for now */
-+	if (WARN_ON_ONCE(srcmap->offset != 0))
-+		return -EIO;
-+	return iomap_read_inline_data(inode, page, srcmap, 0);
-+}
-+
- static int
- iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
- 		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
-@@ -618,14 +628,14 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
- 	}
- 
- 	if (srcmap->type == IOMAP_INLINE)
--		iomap_read_inline_data(inode, page, srcmap);
-+		status = iomap_write_begin_inline(inode, page, srcmap);
- 	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
- 		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
- 	else
- 		status = __iomap_write_begin(inode, pos, len, flags, page,
- 				srcmap);
- 
--	if (unlikely(status))
-+	if (unlikely(status < 0))
- 		goto out_unlock;
- 
- 	*pagep = page;
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 9398b8c31323..a6aaea2764a5 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -378,23 +378,25 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
- 		struct iomap_dio *dio, struct iomap *iomap)
- {
- 	struct iov_iter *iter = dio->submit.iter;
-+	void *dst = iomap_inline_buf(iomap, pos);
- 	size_t copied;
- 
--	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
-+	if (WARN_ON_ONCE(!iomap_inline_data_size_valid(iomap)))
-+		return -EIO;
- 
- 	if (dio->flags & IOMAP_DIO_WRITE) {
- 		loff_t size = inode->i_size;
- 
- 		if (pos > size)
--			memset(iomap->inline_data + size, 0, pos - size);
--		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
-+			memset(iomap_inline_buf(iomap, size), 0, pos - size);
-+		copied = copy_from_iter(dst, length, iter);
- 		if (copied) {
- 			if (pos + copied > size)
- 				i_size_write(inode, pos + copied);
- 			mark_inode_dirty(inode);
- 		}
- 	} else {
--		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
-+		copied = copy_to_iter(dst, length, iter);
- 	}
- 	dio->size += copied;
- 	return copied;
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 479c1da3e221..56b118c6d05c 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -97,6 +97,20 @@ iomap_sector(struct iomap *iomap, loff_t pos)
- 	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
- }
- 
-+static inline void *iomap_inline_buf(const struct iomap *iomap, loff_t pos)
-+{
-+	return iomap->inline_data - iomap->offset + pos;
-+}
-+
-+/*
-+ * iomap->inline_data is a potentially kmapped page, ensure it never crosses a
-+ * page boundary.
-+ */
-+static inline bool iomap_inline_data_size_valid(const struct iomap *iomap)
-+{
-+	return iomap->length <= PAGE_SIZE - offset_in_page(iomap->inline_data);
-+}
-+
- /*
-  * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
-  * and page_done will be called for each page written to.  This only applies to
 -- 
-2.24.4
+Jens Axboe
 
