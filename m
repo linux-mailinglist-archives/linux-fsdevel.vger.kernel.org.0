@@ -2,59 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3C993D3C24
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 17:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A18C3D3C51
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 17:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235440AbhGWOZT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jul 2021 10:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43326 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235351AbhGWOZS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jul 2021 10:25:18 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE835C061575;
-        Fri, 23 Jul 2021 08:05:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TH+UO+4GlVJPwsICtqlb2GDVZ2D9S2sacJqluLD1cbU=; b=ryUceu+cYHelVxJMnHQDMyfPmq
-        1CmyM/LHAHkQgUx4cO8EdjLvKifP61OBPlPyUgIcxSaTkiH+a4dktu+nR+Gs+zi1cyNxG2Yd46ojm
-        KxL0i0AytbtSWTbmcpgpLAgCZKlIxwEIKAn6SRJrpA0ZkVBZTAaybsgiyKcmtqYMkV3R2cEOAMa8I
-        b9W8adfTMvE8RA61u57/ieX9FkjfJ1LgFRBAdezhXjx8d3AvAMQRJhAkIK1/urYh/4UGodi0SAHjZ
-        p/d6loPEz9qZZq7hJPbgZ4M/XQVjZLZs+zMZA2gXsxalO2C5fU/1Q/npBzRRu0DGpsfadyaxZ7dhm
-        TbWYshoQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m6wjx-00BSns-9o; Fri, 23 Jul 2021 15:05:32 +0000
-Date:   Fri, 23 Jul 2021 16:05:29 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Gao Xiang <hsiangkao@linux.alibaba.com>,
-        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-Subject: Re: [PATCH v6] iomap: support tail packing inline read
-Message-ID: <YPrauRjG7+vCw7f9@casper.infradead.org>
-References: <20210722031729.51628-1-hsiangkao@linux.alibaba.com>
- <20210722053947.GA28594@lst.de>
+        id S235542AbhGWOjN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 10:39:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:47308 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235497AbhGWOjD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Jul 2021 10:39:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 371E012FC;
+        Fri, 23 Jul 2021 08:19:23 -0700 (PDT)
+Received: from [192.168.178.6] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A79D33F73D;
+        Fri, 23 Jul 2021 08:19:20 -0700 (PDT)
+Subject: Re: [PATCH] sched/uclamp: Introduce a method to transform UCLAMP_MIN
+ into BOOST
+To:     Xuewen Yan <xuewen.yan94@gmail.com>, mingo@redhat.com,
+        peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org
+Cc:     rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, mcgrof@kernel.org, keescook@chromium.org,
+        yzaikin@google.com, pjt@google.com, qais.yousef@arm.com,
+        qperret@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20210721075751.542-1-xuewen.yan94@gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <d8e14c3c-0eab-2d4d-693e-fb647c7f7c8c@arm.com>
+Date:   Fri, 23 Jul 2021 17:19:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210722053947.GA28594@lst.de>
+In-Reply-To: <20210721075751.542-1-xuewen.yan94@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 22, 2021 at 07:39:47AM +0200, Christoph Hellwig wrote:
-> @@ -675,7 +676,7 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
->  
->  	flush_dcache_page(page);
->  	addr = kmap_atomic(page);
-> -	memcpy(iomap->inline_data + pos, addr + pos, copied);
-> +	memcpy(iomap_inline_buf(iomap, pos), addr + pos, copied);
+On 21/07/2021 09:57, Xuewen Yan wrote:
+> From: Xuewen Yan <xuewen.yan@unisoc.com>
+> 
+> The uclamp can clamp the util within uclamp_min and uclamp_max,
+> it is benifit to some tasks with small util, but for those tasks
+> with middle util, it is useless.
+> 
+> To speed up those tasks, convert UCLAMP_MIN to BOOST,
+> the BOOST as schedtune does:
 
-This is wrong; pos can be > PAGE_SIZE, so this needs to be
-addr + offset_in_page(pos).
+Maybe it's important to note here that schedtune is the `out-of-tree`
+predecessor of uclamp used in some Android versions.
 
+> boot = uclamp_min / SCHED_CAPACITY_SCALE;
+> margin = boost * (uclamp_max - util)
+> boost_util = util + margin;
+
+This is essentially the functionality from schedtune_margin() in
+Android, right?
+
+So in your implementation, the margin (i.e. what is added to the task
+util) not only depends on uclamp_min, but also on `uclamp_max`?
+
+> Scenario:
+> if the task_util = 200, {uclamp_min, uclamp_max} = {100, 1024}
+> 
+> without patch:
+> clamp_util = 200;
+> 
+> with patch:
+> clamp_util = 200 + (100 / 1024) * (1024 - 200) = 280;
+
+The same could be achieved by using {uclamp_min, uclamp_max} = {280, 1024}?
+
+Uclamp_min is meant to be the final `boost( = util + margin)`
+information. You just have to set it appropriately to the task (via
+per-task and/or per-cgroup interface).
+
+Uclamp_min is for `boosting`, Uclamp max is for `capping` CPU frequency.
+
+[...]
