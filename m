@@ -2,100 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA1293D436D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 01:40:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F68F3D4372
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 01:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232550AbhGWXAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jul 2021 19:00:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47670 "EHLO
+        id S233135AbhGWXE7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 19:04:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233145AbhGWXAK (ORCPT
+        with ESMTP id S233057AbhGWXE7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jul 2021 19:00:10 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E446CC061575
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 16:40:41 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id z2so4695902lft.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 16:40:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7xkMQPx7Z/4PMvWsEiJNAXvxh1Yr4z8dYX5ZnaiIDS4=;
-        b=XXoy1TPU1apSD7knzLgEhQnUUASvLsESNRi3ne6s4RCN746cE5c/oLewHe1ah7OJWX
-         zX+tmIau5y44orzHmGjm9NcWL+vLn4r2ubesRM6O+2Iy+N+vnUOQl9FVjsbt1NtSVWKo
-         b0f0DH3eFHCHJGwwrCVmMzWiBYZqlieI0j0Fs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7xkMQPx7Z/4PMvWsEiJNAXvxh1Yr4z8dYX5ZnaiIDS4=;
-        b=YCvoZaKBftivkLt+RKvVfAZpSwLiZWCtJC6Z1x6eKZdFhut0nuG6wVD7eNnrc3JJav
-         bUKEC3JRlaL0sQSvgT0lpEumnaakPRbd04tCNApAY4Z3Iy5odWXpzRiIBRuFCZclNR2o
-         90Zv4+fu5nCvjIdX1+nr3whVaWlPDzhFGFyZZC5R9nXM4bDHrf8o099ZXthwakjU30xh
-         cgHJRpIHAucXV27rGQyjDvngafSFBILbeeWWzFXGDnctG1B/WvgHmw12TgNlNCKvGWnI
-         rcCtY6nosjTUwqGOtaPs+Xss10DqU++LJHmOtEqHPXiJiLAW7iC/7G0hD4ZWRai5CbtC
-         ttug==
-X-Gm-Message-State: AOAM531N1Fi/0akbnkYiekeef9lEKMydryyfkPS7AURXxaeUkEOOEnES
-        8Jb7nLZ2zJ0LhPNzc6ntlkS67yZkhgcLsPcm
-X-Google-Smtp-Source: ABdhPJwpJAIHZLbDw7yO7VPAYgpiZ3A3PJaV8PpNCZrO1o+RO8T2d/2EDf5lH5SlUpN8gQ4Py0UcWw==
-X-Received: by 2002:a05:6512:169e:: with SMTP id bu30mr4449127lfb.291.1627083639946;
-        Fri, 23 Jul 2021 16:40:39 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id p3sm274180lfa.228.2021.07.23.16.40.38
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Jul 2021 16:40:39 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id e5so3598106ljp.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 16:40:38 -0700 (PDT)
-X-Received: by 2002:a2e:90cd:: with SMTP id o13mr4693434ljg.465.1627083638619;
- Fri, 23 Jul 2021 16:40:38 -0700 (PDT)
+        Fri, 23 Jul 2021 19:04:59 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE01C061575;
+        Fri, 23 Jul 2021 16:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=8SxMLjYw0e0mPm6nMo2BIduVNWoK1Bl40gyExsHwCZo=; b=PnvHaBYqI2UUgh3VWtFHonn9eM
+        KgUiiOCblYXOZJZAHruGfHGUdiYbDf8lG09m4Em+2UlF5/RPwCYeVUxVA1H9+uBANzWf+Ga+fINtQ
+        xPgu69qpReLlEBzGvQO0q3UOVIDjItWN3F4y7dBMd1AgVgv9Q6v9A4tTKnp2w5HAL1++tv/4fl33W
+        0kLMbylFrEXzgbYgBRrT9ts52jM6ddNp8Sdm04EFUDa/UZz/P0aBM4wxLhG0vmdpJgAr3+mHVCl4n
+        /1w5wyafgfHNhsnRI1DpV3zVSvGnvKQe7ni1ZokQS5JyXV4UV3PM4ifhR4BB9aa7o2d+Hbeu7XQJV
+        LJCL2Smg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m74qu-00Br6u-Md; Fri, 23 Jul 2021 23:45:15 +0000
+Date:   Sat, 24 Jul 2021 00:45:12 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
+Message-ID: <YPtUiLg7n8I+dpCT@casper.infradead.org>
+References: <YPn/m56w86xAlbIm@zeniv-ca.linux.org.uk>
+ <a85df247-137f-721c-6056-a5c340eed90e@kernel.dk>
+ <YPoI+GYrgZgWN/dW@zeniv-ca.linux.org.uk>
+ <8fb39022-ba21-2c1f-3df5-29be002014d8@kernel.dk>
+ <YPr4OaHv0iv0KTOc@zeniv-ca.linux.org.uk>
+ <c09589ed-4ae9-c3c5-ec91-ba28b8f01424@kernel.dk>
+ <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
+ <640bdb4e-f4d9-a5b8-5b7f-5265b39c8044@kernel.dk>
+ <YPsR2FgShiiYA2do@zeniv-ca.linux.org.uk>
+ <YPskZS1uLctRWz/f@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-References: <20210723205840.299280-1-agruenba@redhat.com> <20210723205840.299280-2-agruenba@redhat.com>
-In-Reply-To: <20210723205840.299280-2-agruenba@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 23 Jul 2021 16:40:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg1n8yVeKABgfx7itM5o1jXVx6WXRF5PxHx+uqeFBmsmQ@mail.gmail.com>
-Message-ID: <CAHk-=wg1n8yVeKABgfx7itM5o1jXVx6WXRF5PxHx+uqeFBmsmQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/7] iov_iter: Introduce fault_in_iov_iter helper
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YPskZS1uLctRWz/f@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 23, 2021 at 1:58 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
->
-> Introduce a new fault_in_iov_iter helper for manually faulting in an iterator.
-> Other than fault_in_pages_writeable(), this function is non-destructive.
+On Fri, Jul 23, 2021 at 08:19:49PM +0000, Al Viro wrote:
+> To elaborate: ->release() instance may not assume anything about current->mm,
+> or assume anything about current, for that matter.  It is entirely possible
+> to arrange its execution in context of a process that is not yours and had not
+> consent to doing that.  In particular, it's a hard bug to have _any_ visible
+> effects depending upon the memory mappings, memory contents or the contents of
+> descriptor table of the process in question.
 
-Again, as I pointed out in the previous version, "Other than" is not
-sensible language.
+Hmm.  Could we add a poison_current() function?  Something like ...
 
-You mean "Unlike".
+static inline void call_release(struct file *file, struct inode *inode)
+{
+	void *tmp = poison_current();
+	if (file->f_op->release)
+		file->f_op->release(inode, file);
+	restore_current(tmp);
+}
 
-Same issue in the comment:
-
-> + * Other than fault_in_pages_writeable(), this function is non-destructive even
-> + * when faulting in pages for writing.
-
-It really should be
-
-  "Unlike fault_in_pages_writeable(), this function .."
-
-to parse correctly.
-
-I understand what you mean, but only because I know what
-fault_in_pages_writeable() does and what the issue was.
-
-And in a year or two, I might have forgotten, and wonder what you meant.
-
-             Linus
+Should be straightforward for asm-generic/current.h and for x86 too.
+Probably have to disable preemption?  Maybe interrupts too?  Not sure
+what's kept in current these days that an interrupt handler might
+rely on being able to access temporarily.
