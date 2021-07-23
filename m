@@ -2,83 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2110C3D4100
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 21:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 884243D414C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 22:10:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229535AbhGWTAq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jul 2021 15:00:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50412 "EHLO
+        id S229575AbhGWTaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 15:30:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbhGWTAq (ORCPT
+        with ESMTP id S229528AbhGWTaK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jul 2021 15:00:46 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AE78C061575;
-        Fri, 23 Jul 2021 12:41:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wLxpkipMgvxMPaddvglb23fn92nRwXLxVzoe/PF9JSQ=; b=DUvza/oQxDEBXJqJ5qe+4PTwXC
-        ChPVxolPzM+XTosRn0XRvWFQ1OexQFajE9Z4o9uitWBobGl7UU32YrNCyj13LnbxrrY7sbjBM5sOR
-        jem8Ki3m+t/iECfVFQlshxNX45nc/eyPN3oj8wmvTLfxkTpY33/OiXq+3GtkUPO3QkQoHn9w6nVwp
-        uzii5hHtVnIYlPPFUwAKLO3vYU7S7rkj+XqvPCeK8GEQtCKAATVF/wDFqFQwJgz4us0q/h/xs0hY6
-        WtG0OT4Y1X0p3fVH2+2M05eariMyo6FgboYSkFr32VXkQ9kHDCOKAkAzitN4xwH7RALnAOMwdwUqX
-        gIUnrWJQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m712R-00BgWf-O0; Fri, 23 Jul 2021 19:41:00 +0000
-Date:   Fri, 23 Jul 2021 20:40:51 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>,
-        Huang Jianan <huangjianan@oppo.com>
-Subject: Re: [PATCH v7] iomap: make inline data support more flexible
-Message-ID: <YPsbQzcNz+r4V7P2@casper.infradead.org>
-References: <20210723174131.180813-1-hsiangkao@linux.alibaba.com>
+        Fri, 23 Jul 2021 15:30:10 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 438EAC061757
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 13:10:43 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id d17so4304227plh.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 13:10:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6j3jQyhScfoP16cST3l8x4oQrf6kP/yRdLm1yZkDhM4=;
+        b=gwp+CmqQ+wjzFbfP/GzmwyfcAn8o7oWp6CjK5oyBcrVFIXidHz6N5nH69hJlYcJlk3
+         nrbokqlnacoVgGAXa4UqxYUv1RC5t5ttMYY4A1+zblmv4vrlaej5v/TUu2SXw46Lj34l
+         aC7BWUu+mdeHMhZjIFIKKsAfyhIg8ehDnFDxNY9rmD0O8CMBEQyTavBLNwkbUi+EDNgv
+         DP3ObdeyxU6gO58Ms2tXTUNNk7l4qNMnW2DvOIe5rXOwCpEXwO+0XkVrUhpKX+S/hm8j
+         XAJ4ee3RhP9NdA5cOdDBfsE2deunUENhm7A2TSJ1PPSBl/vDhkZZ9BCiGSZoRA14x7jt
+         pL7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6j3jQyhScfoP16cST3l8x4oQrf6kP/yRdLm1yZkDhM4=;
+        b=VqEneCyno/PjBj76muUnP/zYHHx+NCvHO4bHh9PGlydvKRvYOBexOf/uzwzsR8MMvi
+         FF5+Hqj6dWbBlGcWi0hAO5LKibDcJ60aHzAYCMs43mfurXT9s6ng34qtAqHOuVaP6dRy
+         vi87KPd4bm7EDygyYM122aR4xTty4Kjrx/va4xaOwKJpr4+r9VJGEs9fVWW2zvCozxeu
+         48P77nOJ1teDl5GatNAndGldZYDsgeeAycgoxfstHhB+L6aEdt/YsvNch2m/p1ls3rqT
+         ZMpSOi0WAzx1u0Kp1cog9cy3RMV7OLhZl73Xvg47JGsovkuKbDEyUxQYMnm4zi3hJJfd
+         M2+A==
+X-Gm-Message-State: AOAM532ssXOGgOokIF3lIiLhs+vinBPz/2YK/a72lahiIeUfjEhxKkdX
+        uxJlNDTAuJWKQ4bBnDKWteF39A==
+X-Google-Smtp-Source: ABdhPJxWDPhO0SgOSdWH2ix+jdwxw/0cuL5zySQ4AF3IZtWR6juc/q9w6Bli4YRy7SVHO4Bwu1g1dw==
+X-Received: by 2002:a17:90b:209:: with SMTP id fy9mr5856453pjb.187.1627071042551;
+        Fri, 23 Jul 2021 13:10:42 -0700 (PDT)
+Received: from [192.168.1.187] ([198.8.77.61])
+        by smtp.gmail.com with ESMTPSA id m2sm15360492pja.52.2021.07.23.13.10.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Jul 2021 13:10:41 -0700 (PDT)
+Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <YPnqM0fY3nM5RdRI@zeniv-ca.linux.org.uk>
+ <57758edf-d064-d37e-e544-e0c72299823d@kernel.dk>
+ <YPn/m56w86xAlbIm@zeniv-ca.linux.org.uk>
+ <a85df247-137f-721c-6056-a5c340eed90e@kernel.dk>
+ <YPoI+GYrgZgWN/dW@zeniv-ca.linux.org.uk>
+ <8fb39022-ba21-2c1f-3df5-29be002014d8@kernel.dk>
+ <YPr4OaHv0iv0KTOc@zeniv-ca.linux.org.uk>
+ <c09589ed-4ae9-c3c5-ec91-ba28b8f01424@kernel.dk>
+ <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
+ <640bdb4e-f4d9-a5b8-5b7f-5265b39c8044@kernel.dk>
+ <YPsR2FgShiiYA2do@zeniv-ca.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <3f557a2b-e83c-69e6-b953-06d0b05512ae@kernel.dk>
+Date:   Fri, 23 Jul 2021 14:10:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210723174131.180813-1-hsiangkao@linux.alibaba.com>
+In-Reply-To: <YPsR2FgShiiYA2do@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 24, 2021 at 01:41:31AM +0800, Gao Xiang wrote:
-> Add support for reading inline data content into the page cache from
-> nonzero page-aligned file offsets.  This enables the EROFS tailpacking
-> mode where the last few bytes of the file are stored right after the
-> inode.
+On 7/23/21 1:00 PM, Al Viro wrote:
+> On Fri, Jul 23, 2021 at 11:56:29AM -0600, Jens Axboe wrote:
 > 
-> The buffered write path remains untouched since EROFS cannot be used
-> for testing. It'd be better to be implemented if upcoming real users
-> care and provide a real pattern rather than leave untested dead code
-> around.
+>> Will send out two patches for this. Note that I don't see this being a
+>> real issue, as we explicitly gave the ring fd to another task, and being
+>> that this is purely for read/write, it would result in -EFAULT anyway.
+> 
+> You do realize that ->release() might come from seriously unexpected
+> places, right?  E.g. recvmsg() by something that doesn't expect
+> SCM_RIGHTS attached to it will end up with all struct file references
+> stashed into the sucker dropped, and if by that time that's the last
+> reference - welcome to ->release() run as soon as recepient hits
+> task_work_run().
+> 
+> What's more, if you stash that into garbage for unix_gc() to pick,
+> *any* process closing an AF_UNIX socket might end up running your
+> ->release().
+> 
+> So you really do *not* want to spawn any threads there, let alone
+> possibly exfiltrating memory contents of happy recepient of your
+> present...
 
-My one complaint with this version is the subject line.  It's a bit vague.
-I went with:
+Yes I know, and the iopoll was the exception - we don't do anything but
+cancel off release otherwise.
 
-iomap: Support file tail packing
-
-I also wrote a changelog entry that reads:
-    The existing inline data support only works for cases where the entire
-    file is stored as inline data.  For larger files, EROFS stores the
-    initial blocks separately and then can pack a small tail adjacent to
-    the inode.  Generalise inline data to allow for tail packing.  Tails
-    may not cross a page boundary in memory.
-
-... but I'm not sure that's necessarily better than what you've written
-here.
-
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Darrick J. Wong <djwong@kernel.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-> Tested-by: Huang Jianan <huangjianan@oppo.com> # erofs
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+-- 
+Jens Axboe
 
