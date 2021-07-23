@@ -2,118 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B74A3D42F4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 00:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA1293D436D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 01:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232905AbhGWVvs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jul 2021 17:51:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60902 "EHLO
+        id S232550AbhGWXAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 19:00:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232301AbhGWVvr (ORCPT
+        with ESMTP id S233145AbhGWXAK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jul 2021 17:51:47 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751A3C061757
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 15:32:20 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id i10so1632964pla.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 15:32:20 -0700 (PDT)
+        Fri, 23 Jul 2021 19:00:10 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E446CC061575
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 16:40:41 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id z2so4695902lft.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 16:40:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tV66efr2sfMcVMLylWg/LJpGnE8LpQ4XpbFt6ERNEeo=;
-        b=QAKuLY9GgxJ50ci9igLT9xJTZDGG+RU9DZ986me1IQNJIRMu8qK/XFM6sG2CkkDM9T
-         90Ea5+/fcz4HhlsQuOlc946CFqbFBuEkWYtl9RB46oFekXIbQ4ZjdhT4lIZ7IEl5lVBl
-         XNeVK+oHSqAr0R22ItaC1Xci11ealYBMDm6sRKIzWm38plmpVfHhpQNyXeL0OEaUAq/b
-         HBznImA+f0YcjN+9uO3aDVIflz+ZFpke60t1y/VLAP3CobWxVUqEgVl/2K2cAp1i0tPn
-         99QAIp0TAlb0kXaPxfNSWe5eD61v0AOOJ+WWKLLzuHxTV+Go+CGO/B5nFVkj1esQL7ni
-         PSZQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7xkMQPx7Z/4PMvWsEiJNAXvxh1Yr4z8dYX5ZnaiIDS4=;
+        b=XXoy1TPU1apSD7knzLgEhQnUUASvLsESNRi3ne6s4RCN746cE5c/oLewHe1ah7OJWX
+         zX+tmIau5y44orzHmGjm9NcWL+vLn4r2ubesRM6O+2Iy+N+vnUOQl9FVjsbt1NtSVWKo
+         b0f0DH3eFHCHJGwwrCVmMzWiBYZqlieI0j0Fs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tV66efr2sfMcVMLylWg/LJpGnE8LpQ4XpbFt6ERNEeo=;
-        b=XPs2IrtW3JIF0RaZpHxz3f5IB1ZecnCulkQoUsEK0TR49OWAz/oUnZQtWnGinjowB7
-         YGUgptg5MQUDLv1jfbIy0cLsgg/RwPQsn2tItK9/n6plltrJM6YrYFI/XmXgrUl9AxKI
-         MktVl+agLPbHyZjevOdy7DDYA6SWGDcUNuhRh4TqfAwwhBTjYMuZXWZdr7P6/QtJu9ZM
-         BH928T2aK8KWk3JGZWe+Hrx87zymDqMU0mZ0qagBhCrd5GqSzlCsBP3meYTSBbtbeTwL
-         AxKl7oZsOY85L1IlTpzRL8M2byGFSRuiHJOoHU189LemUWRrN2GSx1MrFAPusg3UiBtN
-         m/TA==
-X-Gm-Message-State: AOAM531ZDWifnlXRBq16OawMs4Wyb24DxoH4l7U/ZxyGDKPLP8kKsVSn
-        zl+IRXFLhmKYd4oeXPew8bTZ0A==
-X-Google-Smtp-Source: ABdhPJycsBNUILT/c7G9sDe0E4iCZEgqH7eESCoAuXelywzS7rUSy/PDR2L5TwX/RgNYlZtjbimZFQ==
-X-Received: by 2002:a17:90b:a15:: with SMTP id gg21mr15674896pjb.190.1627079539802;
-        Fri, 23 Jul 2021 15:32:19 -0700 (PDT)
-Received: from [192.168.1.187] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id m19sm35418743pfa.135.2021.07.23.15.32.18
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7xkMQPx7Z/4PMvWsEiJNAXvxh1Yr4z8dYX5ZnaiIDS4=;
+        b=YCvoZaKBftivkLt+RKvVfAZpSwLiZWCtJC6Z1x6eKZdFhut0nuG6wVD7eNnrc3JJav
+         bUKEC3JRlaL0sQSvgT0lpEumnaakPRbd04tCNApAY4Z3Iy5odWXpzRiIBRuFCZclNR2o
+         90Zv4+fu5nCvjIdX1+nr3whVaWlPDzhFGFyZZC5R9nXM4bDHrf8o099ZXthwakjU30xh
+         cgHJRpIHAucXV27rGQyjDvngafSFBILbeeWWzFXGDnctG1B/WvgHmw12TgNlNCKvGWnI
+         rcCtY6nosjTUwqGOtaPs+Xss10DqU++LJHmOtEqHPXiJiLAW7iC/7G0hD4ZWRai5CbtC
+         ttug==
+X-Gm-Message-State: AOAM531N1Fi/0akbnkYiekeef9lEKMydryyfkPS7AURXxaeUkEOOEnES
+        8Jb7nLZ2zJ0LhPNzc6ntlkS67yZkhgcLsPcm
+X-Google-Smtp-Source: ABdhPJwpJAIHZLbDw7yO7VPAYgpiZ3A3PJaV8PpNCZrO1o+RO8T2d/2EDf5lH5SlUpN8gQ4Py0UcWw==
+X-Received: by 2002:a05:6512:169e:: with SMTP id bu30mr4449127lfb.291.1627083639946;
+        Fri, 23 Jul 2021 16:40:39 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id p3sm274180lfa.228.2021.07.23.16.40.38
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Jul 2021 15:32:19 -0700 (PDT)
-Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <YPn/m56w86xAlbIm@zeniv-ca.linux.org.uk>
- <a85df247-137f-721c-6056-a5c340eed90e@kernel.dk>
- <YPoI+GYrgZgWN/dW@zeniv-ca.linux.org.uk>
- <8fb39022-ba21-2c1f-3df5-29be002014d8@kernel.dk>
- <YPr4OaHv0iv0KTOc@zeniv-ca.linux.org.uk>
- <c09589ed-4ae9-c3c5-ec91-ba28b8f01424@kernel.dk>
- <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
- <640bdb4e-f4d9-a5b8-5b7f-5265b39c8044@kernel.dk>
- <YPsR2FgShiiYA2do@zeniv-ca.linux.org.uk>
- <3f557a2b-e83c-69e6-b953-06d0b05512ae@kernel.dk>
- <YPslfT91brz3SsuM@zeniv-ca.linux.org.uk>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <46b579e9-795b-18db-6ccd-437278430ad7@kernel.dk>
-Date:   Fri, 23 Jul 2021 16:32:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 23 Jul 2021 16:40:39 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id e5so3598106ljp.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 16:40:38 -0700 (PDT)
+X-Received: by 2002:a2e:90cd:: with SMTP id o13mr4693434ljg.465.1627083638619;
+ Fri, 23 Jul 2021 16:40:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YPslfT91brz3SsuM@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210723205840.299280-1-agruenba@redhat.com> <20210723205840.299280-2-agruenba@redhat.com>
+In-Reply-To: <20210723205840.299280-2-agruenba@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 23 Jul 2021 16:40:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg1n8yVeKABgfx7itM5o1jXVx6WXRF5PxHx+uqeFBmsmQ@mail.gmail.com>
+Message-ID: <CAHk-=wg1n8yVeKABgfx7itM5o1jXVx6WXRF5PxHx+uqeFBmsmQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] iov_iter: Introduce fault_in_iov_iter helper
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/23/21 2:24 PM, Al Viro wrote:
-> On Fri, Jul 23, 2021 at 02:10:40PM -0600, Jens Axboe wrote:
->> On 7/23/21 1:00 PM, Al Viro wrote:
->>> On Fri, Jul 23, 2021 at 11:56:29AM -0600, Jens Axboe wrote:
->>>
->>>> Will send out two patches for this. Note that I don't see this being a
->>>> real issue, as we explicitly gave the ring fd to another task, and being
->>>> that this is purely for read/write, it would result in -EFAULT anyway.
->>>
->>> You do realize that ->release() might come from seriously unexpected
->>> places, right?  E.g. recvmsg() by something that doesn't expect
->>> SCM_RIGHTS attached to it will end up with all struct file references
->>> stashed into the sucker dropped, and if by that time that's the last
->>> reference - welcome to ->release() run as soon as recepient hits
->>> task_work_run().
->>>
->>> What's more, if you stash that into garbage for unix_gc() to pick,
->>> *any* process closing an AF_UNIX socket might end up running your
->>> ->release().
->>>
->>> So you really do *not* want to spawn any threads there, let alone
->>> possibly exfiltrating memory contents of happy recepient of your
->>> present...
->>
->> Yes I know, and the iopoll was the exception - we don't do anything but
->> cancel off release otherwise.
-> 
-> Not saying you don't - I just want to have that in (searchable) archives.
-> Ideally we need that kind of stuff in Documentation/*, but having it
-> findable by google search is at least better than nothing...
+On Fri, Jul 23, 2021 at 1:58 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+>
+> Introduce a new fault_in_iov_iter helper for manually faulting in an iterator.
+> Other than fault_in_pages_writeable(), this function is non-destructive.
 
-Agree, and I'll amend the commit to include a reference to it as well
-and expand the explanation a bit. The easier that kind of stuff is to
-find, the better.
+Again, as I pointed out in the previous version, "Other than" is not
+sensible language.
 
--- 
-Jens Axboe
+You mean "Unlike".
 
+Same issue in the comment:
+
+> + * Other than fault_in_pages_writeable(), this function is non-destructive even
+> + * when faulting in pages for writing.
+
+It really should be
+
+  "Unlike fault_in_pages_writeable(), this function .."
+
+to parse correctly.
+
+I understand what you mean, but only because I know what
+fault_in_pages_writeable() does and what the issue was.
+
+And in a year or two, I might have forgotten, and wonder what you meant.
+
+             Linus
