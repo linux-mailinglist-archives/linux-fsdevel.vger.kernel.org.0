@@ -2,129 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 455243D36ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 10:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD6AC3D37A1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 11:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234517AbhGWH7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jul 2021 03:59:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32894 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229907AbhGWH7T (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jul 2021 03:59:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1627029593;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0R6geRNUNQC0kRoF+lSv0pifLg2KS6M6ylGJCMhofy4=;
-        b=IF4/l2ffsAVJmuw29rHktc4SwMyJ4y0K0BcSlO2tua+9Rx7EaPkkM5FhCmO+okA/6oW0sX
-        yWOLuOvbyQCjf8p5QkNb2TUkxD0yZTib2yDJSgiSYfvokeQ6LHwvmdxXdFQY3qOCDp5KNv
-        5SvV5y0q9g7lB/Ue0IfhnsaZipA8h8U=
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
- [209.85.219.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-357-milNMvjwNN6dtxSgP3CV4Q-1; Fri, 23 Jul 2021 04:39:51 -0400
-X-MC-Unique: milNMvjwNN6dtxSgP3CV4Q-1
-Received: by mail-yb1-f200.google.com with SMTP id a6-20020a25ae060000b0290551bbd99700so1130352ybj.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jul 2021 01:39:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0R6geRNUNQC0kRoF+lSv0pifLg2KS6M6ylGJCMhofy4=;
-        b=N0EbthgmTPG9Fnp2vKq0aG8m3Q5n1k4vJjsbEQfE29ahAYzwrbc4SBdXdJw3UQVod0
-         9dMjAFj3/tFdBpvGKiBrn5gKFntLpdJfNC63cys5Wg/4MSWo7VGoN4XgRUXClkKUbHEP
-         Pel4zQtftbrhFMF+taOiFLjAyS4pO/0QkGW76YP2qUnDIsYgNj50oTWymx5TvJoTNPVr
-         CAfqkqIoutN8pWp5AMO+57FiL0KS3CqyoAv1MFHk6GksdUOuZ8FQbbNtJXvsuW4I3zKv
-         vPBtz17Weib7Q71imkqKpC64yreHvQ/oUD4SOu9cF3dZmIv+lKQhAHwGPf3fy0SkMceF
-         Qg4w==
-X-Gm-Message-State: AOAM532hME2ev1PORN4cj/K3GP6hjU0whC+WBnoToQGRl1fxEGn7M4Au
-        O3o2wMRkQPQL/zYcm8PMPvwdahymCFmOqSf7zjvNrZdxi736lmyNb2sYD6IehaR+oWFCNbWhamy
-        bUeCCYRRZJn05PX7zzUIMmb4BdgUoBPVqvQZb6IL6rg==
-X-Received: by 2002:a25:ad06:: with SMTP id y6mr4824947ybi.439.1627029591446;
-        Fri, 23 Jul 2021 01:39:51 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwoipMlzBA/c+4YtmIWldiJukH66ZNqDaJOTH+DaPJOdlJ6BqCck6ROt8is3ynzWvQ2IC9DyGQaGkkj7dNqS/Y=
-X-Received: by 2002:a25:ad06:: with SMTP id y6mr4824924ybi.439.1627029591301;
- Fri, 23 Jul 2021 01:39:51 -0700 (PDT)
+        id S230397AbhGWImW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 04:42:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56228 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232347AbhGWImV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Jul 2021 04:42:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 551FF60ED4;
+        Fri, 23 Jul 2021 09:22:53 +0000 (UTC)
+Date:   Fri, 23 Jul 2021 11:22:50 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        butt3rflyh4ck <butterflyhuangxx@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: A shift-out-of-bounds in minix_statfs in fs/minix/inode.c
+Message-ID: <20210723092250.6nvmikgcs4v5ekix@wittgenstein>
+References: <CAFcO6XOdMe-RgN8MCUT59cYEVBp+3VYTW-exzxhKdBk57q0GYw@mail.gmail.com>
+ <YPhbU/umyUZLdxIw@casper.infradead.org>
+ <YPnp/zXp3saLbz03@mit.edu>
 MIME-Version: 1.0
-References: <20210624152515.1844133-1-omosnace@redhat.com>
-In-Reply-To: <20210624152515.1844133-1-omosnace@redhat.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Fri, 23 Jul 2021 10:39:40 +0200
-Message-ID: <CAFqZXNtb-VdL9f8Ntg3RLZtP0x-7ZgEP1D0qL9fWCM7SPWcHXQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] userfaultfd: open userfaultfds with O_RDONLY
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        "Robert O'Callahan" <roc@ocallahan.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YPnp/zXp3saLbz03@mit.edu>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 24, 2021 at 5:25 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> Since userfaultfd doesn't implement a write operation, it is more
-> appropriate to open it read-only.
->
-> When userfaultfds are opened read-write like it is now, and such fd is
-> passed from one process to another, SELinux will check both read and
-> write permissions for the target process, even though it can't actually
-> do any write operation on the fd later.
->
-> Inspired by the following bug report, which has hit the SELinux scenario
-> described above:
-> https://bugzilla.redhat.com/show_bug.cgi?id=1974559
->
-> Reported-by: Robert O'Callahan <roc@ocallahan.org>
-> Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->
-> I marked this as RFC, because I'm not sure if this has any unwanted side
-> effects. I only ran this patch through selinux-testsuite, which has a
-> simple userfaultfd subtest, and a reproducer from the Bugzilla report.
->
-> Please tell me whether this makes sense and/or if it passes any
-> userfaultfd tests you guys might have.
->
->  fs/userfaultfd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 14f92285d04f..24e14c36068f 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -986,7 +986,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *new,
->         int fd;
->
->         fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
-> -                       O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
-> +                       O_RDONLY | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
->         if (fd < 0)
->                 return fd;
->
-> @@ -2088,7 +2088,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
->         mmgrab(ctx->mm);
->
->         fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
-> -                       O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
-> +                       O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
->         if (fd < 0) {
->                 mmdrop(ctx->mm);
->                 kmem_cache_free(userfaultfd_ctx_cachep, ctx);
-> --
-> 2.31.1
+On Thu, Jul 22, 2021 at 05:58:23PM -0400, Theodore Ts'o wrote:
+> On Wed, Jul 21, 2021 at 06:37:23PM +0100, Matthew Wilcox wrote:
+> > On Thu, Jul 22, 2021 at 01:14:06AM +0800, butt3rflyh4ck wrote:
+> > > ms = (struct minix_super_block *) bh->b_data; /// --------------> set
+> > > minix_super_block pointer
+> > > sbi->s_ms = ms;
+> > > sbi->s_sbh = bh;
+> > > sbi->s_mount_state = ms->s_state;
+> > > sbi->s_ninodes = ms->s_ninodes;
+> > > sbi->s_nzones = ms->s_nzones;
+> > > sbi->s_imap_blocks = ms->s_imap_blocks;
+> > > sbi->s_zmap_blocks = ms->s_zmap_blocks;
+> > > sbi->s_firstdatazone = ms->s_firstdatazone;
+> > > sbi->s_log_zone_size = ms->s_log_zone_size;  // ------------------>
+> > > set sbi->s_log_zone_size
+> > 
+> > So what you're saying is that if you construct a malicious minix image,
+> > you can produce undefined behaviour?  That's not something we're
+> > traditionally interested in, unless the filesystem is one customarily
+> > used for data interchange (like FAT or iso9660).
+> 
+> It's going to depend on the file system maintainer.  The traditional
+> answer is that block device is part of the Trusted Computing Base, and
+> malicious file system images are not considered part of the threat
+> model.  A system adminstration or developer which allows potentially
+> malicious agents to mount file system agents are cray-cray.
+> 
+> Unfortunately, those developers are also known as "Linux desktop devs"
+> (who implement unprivileged mounts of USB cards) or "container
 
-Ping? Any comments on this patch?
+That has always been a weird approach for sure.
 
--- 
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+> evangelists" who think containers should be treated as being Just As
+> Good as VM's From A Security Perspective.
 
+Mounting virtual filesystems like procfs, sysfs, cgroupfs, devpts,
+binderfs and so on in unprivileged containers makes a lot of sense but
+for filesystems like ext4, xfs, or btrfs making them mountable inside
+unprivileged containers aka user namespaces never made a lot of sense to
+me.
+
+Most users don't really want to or need to expose a whole filesystem
+image to their containers anyway. It's much more common that they want
+to expose a part of an existing filesystem that has been mounted by an
+administrator before. Which means they create bind mounts of the
+directories that they want to expose. And as soon as the filesystem
+supports idmapped mounts like ext4 does you can then serve all of those
+use-cases including creating an idmapped mount of the whole filesystem
+itself. And then you shouldn't need to require that the filesystem must
+be able to mount untrusted images.
+
+> 
+> So I do care about this for ext4, although I don't guarantee immediate
+> response, as it's something that I usually end up doing on my own
+> time.  I do get cranky that Syzkaller makes it painful to extract out
+> the fuzzed file system image, and I much prefer those fuzzing systems
+> which provide the file system image and the C program used to trigger
+> the failre as two seprate files.  Or failing that, if there was some
+> trivial way to get the syzkaller reproducer program to disgorge the
+> file system image to a specified output file.  As a result, if I have
+> a choice of spending time investigating fuzzing report from a more
+> file-system friendly fuzzing program and syzkaller, I'll tend choose
+> to spend my time dealing with other file system fuzzing reports first.
+> 
+> The problem for Minix is that it does not have an active maintainer.
+> So if you submit fuzzing reports for Minix, it's unlikely anyone will
+> spend time working on it.  But if you submit a patch, it can go in,
+> probably via Andrew Morton.  (Recent Minix fixes that have gone in
+> this way: 0a12c4a8069 and 32ac86efff9)
+> 
+> Cheers,
+> 
+> 					- Ted> 					
