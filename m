@@ -2,237 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AF813D3143
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 03:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A263D3159
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 03:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233050AbhGWAqd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 20:46:33 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:58816 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232892AbhGWAqd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 20:46:33 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R481e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Ugeeht8_1627003623;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Ugeeht8_1627003623)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 23 Jul 2021 09:27:04 +0800
-Date:   Fri, 23 Jul 2021 09:26:59 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-Subject: Re: [PATCH v6] iomap: support tail packing inline read
-Message-ID: <YPoa4x6d3giqq5z6@B-P7TQMD6M-0146.local>
-Mail-Followup-To: "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-References: <20210722031729.51628-1-hsiangkao@linux.alibaba.com>
- <20210722053947.GA28594@lst.de>
- <20210722165109.GD8639@magnolia>
+        id S233112AbhGWAzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 20:55:24 -0400
+Received: from mga02.intel.com ([134.134.136.20]:55328 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232892AbhGWAzX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Jul 2021 20:55:23 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10053"; a="198987750"
+X-IronPort-AV: E=Sophos;i="5.84,262,1620716400"; 
+   d="scan'208";a="198987750"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2021 18:35:54 -0700
+X-IronPort-AV: E=Sophos;i="5.84,262,1620716400"; 
+   d="scan'208";a="433364508"
+Received: from rongch2-mobl.ccr.corp.intel.com (HELO [10.249.174.9]) ([10.249.174.9])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2021 18:35:51 -0700
+Subject: Re: [PATCH v3 14/15] samples: Add fs error monitoring example
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        kernel test robot <lkp@intel.com>, amir73il@gmail.com,
+        kbuild-all@lists.01.org, djwong@kernel.org, tytso@mit.edu,
+        david@fromorbit.com, jack@suse.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+References: <20210629191035.681913-15-krisman@collabora.com>
+ <202106301048.BainWUsk-lkp@intel.com> <87mtqicqux.fsf@collabora.com>
+ <20210720194955.GH25548@kadam>
+ <4313fff4-343a-2937-3a97-c5da860827b1@intel.com>
+ <874kcmb9zs.fsf@collabora.com>
+From:   "Chen, Rong A" <rong.a.chen@intel.com>
+Message-ID: <31d5c954-0188-e91f-4444-faeb6dc1339a@intel.com>
+Date:   Fri, 23 Jul 2021 09:35:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210722165109.GD8639@magnolia>
+In-Reply-To: <874kcmb9zs.fsf@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Darrick,
 
-On Thu, Jul 22, 2021 at 09:51:09AM -0700, Darrick J. Wong wrote:
-> On Thu, Jul 22, 2021 at 07:39:47AM +0200, Christoph Hellwig wrote:
-> > I think some of the language here is confusing - mostly about tail
-> > packing when we otherwise use inline data.  Can you take a look at
-> > the version below?  This mostly cleans up the terminology, adds a
-> > new helper to check the size, and removes the error on trying to
-> > write with a non-zero pos, as it can be trivially supported now.
-> > 
-> > ---
-> > From 0f9c6ac6c2e372739b29195d25bebb8dd87e583a Mon Sep 17 00:00:00 2001
-> > From: Gao Xiang <hsiangkao@linux.alibaba.com>
-> > Date: Thu, 22 Jul 2021 11:17:29 +0800
-> > Subject: iomap: make inline data support more flexible
-> > 
-> > Add support for offsets into the inline data page at iomap->inline_data
-> > to cater for the EROFS tailpackng case where a small data is stored
-> > right after the inode.
-> 
-> The commit message is a little misleading -- this adds support for
-> inline data pages at nonzero (but page-aligned) file offsets, not file
-> offsets into the page itself.  I suggest:
-> 
-> "Add support for reading inline data content into the page cache from
-> nonzero page-aligned file offsets.  This enables the EROFS tailpacking
-> mode where the last few bytes of the file are stored right after the
-> inode."
-> 
-> The code changes look good to me.
 
-Thanks for your suggestion. I've tested EROFS with no problem so far. 
-
-I could update the commit message like this, what should I do next?
-
-Many thanks,
-Gao Xiang
-
+On 7/23/2021 12:15 AM, Gabriel Krisman Bertazi wrote:
+> "Chen, Rong A" <rong.a.chen@intel.com> writes:
 > 
-> --D
+>> Hi Gabriel,
+>>
+>> On 7/21/2021 3:49 AM, Dan Carpenter wrote:
+>>> On Mon, Jul 19, 2021 at 10:36:54AM -0400, Gabriel Krisman Bertazi
+>>> wrote:
+>>>> kernel test robot <lkp@intel.com> writes:
+>>>>
+>>>>> Hi Gabriel,
+>>>>>
+>>>>> I love your patch! Yet something to improve:
+>>>>>
+>>>>> [auto build test ERROR on ext3/fsnotify]
+>>>>> [also build test ERROR on ext4/dev linus/master v5.13 next-20210629]
+>>>>> [cannot apply to tytso-fscrypt/master]
+>>>>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>>>>> And when submitting patch, we suggest to use '--base' as documented in
+>>>>> https://git-scm.com/docs/git-format-patch ]
+>>>>>
+>>>>> url:    https://github.com/0day-ci/linux/commits/Gabriel-Krisman-Bertazi/File-system-wide-monitoring/20210630-031347
+>>>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git  fsnotify
+>>>>> config: arm64-allyesconfig (attached as .config)
+>>>>> compiler: aarch64-linux-gcc (GCC) 9.3.0
+>>>>> reproduce (this is a W=1 build):
+>>>>>           wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross  -O ~/bin/make.cross
+>>>>>           chmod +x ~/bin/make.cross
+>>>>>           # https://github.com/0day-ci/linux/commit/746524d8db08a041fed90e41b15c8e8ca69cb22d
+>>>>>           git remote add linux-review https://github.com/0day-ci/linux
+>>>>>           git fetch --no-tags linux-review Gabriel-Krisman-Bertazi/File-system-wide-monitoring/20210630-031347
+>>>>>           git checkout 746524d8db08a041fed90e41b15c8e8ca69cb22d
+>>>>>           # save the attached .config to linux build tree
+>>>>>           mkdir build_dir
+>>>>>           COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross O=build_dir ARCH=arm64 SHELL=/bin/bash samples/
+>>>>>
+>>>>> If you fix the issue, kindly add following tag as appropriate
+>>>>> Reported-by: kernel test robot <lkp@intel.com>
+>>>>>
+>>>>> All errors (new ones prefixed by >>):
+>>>>>
+>>>>>>> samples/fanotify/fs-monitor.c:7:10: fatal error: errno.h: No such file or directory
+>>>>>          7 | #include <errno.h>
+>>>>>            |          ^~~~~~~~~
+>>>>>      compilation terminated.
+>>>>
+>>>> Hi Dan,
+>>>>
+>>>> I'm not sure what's the proper fix here.  Looks like 0day is not using
+>>>> cross system libraries when building this user space code.  Should I do
+>>>> something special to silent it?
+>>
+>> It seems need extra libraries for arm64, we'll disable CONFIG_SAMPLES to
+>> avoid reporting this error.
 > 
-> > 
-> > Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-> > ---
-> >  fs/iomap/buffered-io.c | 35 ++++++++++++++++++-----------------
-> >  fs/iomap/direct-io.c   | 10 ++++++----
-> >  include/linux/iomap.h  | 14 ++++++++++++++
-> >  3 files changed, 38 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index 87ccb3438becd9..0597f5c186a33f 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -205,25 +205,29 @@ struct iomap_readpage_ctx {
-> >  	struct readahead_control *rac;
-> >  };
-> >  
-> > -static void
-> > -iomap_read_inline_data(struct inode *inode, struct page *page,
-> > -		struct iomap *iomap)
-> > +static int iomap_read_inline_data(struct inode *inode, struct page *page,
-> > +		struct iomap *iomap, loff_t pos)
-> >  {
-> > -	size_t size = i_size_read(inode);
-> > +	size_t size = iomap->length + iomap->offset - pos;
-> >  	void *addr;
-> >  
-> >  	if (PageUptodate(page))
-> > -		return;
-> > +		return PAGE_SIZE;
-> >  
-> > -	BUG_ON(page_has_private(page));
-> > -	BUG_ON(page->index);
-> > -	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
-> > +	/* inline data must start page aligned in the file */
-> > +	if (WARN_ON_ONCE(offset_in_page(pos)))
-> > +		return -EIO;
-> > +	if (WARN_ON_ONCE(!iomap_inline_data_size_valid(iomap)))
-> > +		return -EIO;
-> > +	if (WARN_ON_ONCE(page_has_private(page)))
-> > +		return -EIO;
-> >  
-> >  	addr = kmap_atomic(page);
-> > -	memcpy(addr, iomap->inline_data, size);
-> > +	memcpy(addr, iomap_inline_buf(iomap, pos), size);
-> >  	memset(addr + size, 0, PAGE_SIZE - size);
-> >  	kunmap_atomic(addr);
-> >  	SetPageUptodate(page);
-> > +	return PAGE_SIZE;
-> >  }
-> >  
-> >  static inline bool iomap_block_needs_zeroing(struct inode *inode,
-> > @@ -246,11 +250,8 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> >  	unsigned poff, plen;
-> >  	sector_t sector;
-> >  
-> > -	if (iomap->type == IOMAP_INLINE) {
-> > -		WARN_ON_ONCE(pos);
-> > -		iomap_read_inline_data(inode, page, iomap);
-> > -		return PAGE_SIZE;
-> > -	}
-> > +	if (iomap->type == IOMAP_INLINE)
-> > +		return iomap_read_inline_data(inode, page, iomap, pos);
-> >  
-> >  	/* zero post-eof blocks as the page may be mapped */
-> >  	iop = iomap_page_create(inode, page);
-> > @@ -618,14 +619,14 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
-> >  	}
-> >  
-> >  	if (srcmap->type == IOMAP_INLINE)
-> > -		iomap_read_inline_data(inode, page, srcmap);
-> > +		status = iomap_read_inline_data(inode, page, srcmap, pos);
-> >  	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
-> >  		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
-> >  	else
-> >  		status = __iomap_write_begin(inode, pos, len, flags, page,
-> >  				srcmap);
-> >  
-> > -	if (unlikely(status))
-> > +	if (unlikely(status < 0))
-> >  		goto out_unlock;
-> >  
-> >  	*pagep = page;
-> > @@ -675,7 +676,7 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
-> >  
-> >  	flush_dcache_page(page);
-> >  	addr = kmap_atomic(page);
-> > -	memcpy(iomap->inline_data + pos, addr + pos, copied);
-> > +	memcpy(iomap_inline_buf(iomap, pos), addr + pos, copied);
-> >  	kunmap_atomic(addr);
-> >  
-> >  	mark_inode_dirty(inode);
-> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > index 9398b8c31323b3..a6aaea2764a55f 100644
-> > --- a/fs/iomap/direct-io.c
-> > +++ b/fs/iomap/direct-io.c
-> > @@ -378,23 +378,25 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
-> >  		struct iomap_dio *dio, struct iomap *iomap)
-> >  {
-> >  	struct iov_iter *iter = dio->submit.iter;
-> > +	void *dst = iomap_inline_buf(iomap, pos);
-> >  	size_t copied;
-> >  
-> > -	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
-> > +	if (WARN_ON_ONCE(!iomap_inline_data_size_valid(iomap)))
-> > +		return -EIO;
-> >  
-> >  	if (dio->flags & IOMAP_DIO_WRITE) {
-> >  		loff_t size = inode->i_size;
-> >  
-> >  		if (pos > size)
-> > -			memset(iomap->inline_data + size, 0, pos - size);
-> > -		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
-> > +			memset(iomap_inline_buf(iomap, size), 0, pos - size);
-> > +		copied = copy_from_iter(dst, length, iter);
-> >  		if (copied) {
-> >  			if (pos + copied > size)
-> >  				i_size_write(inode, pos + copied);
-> >  			mark_inode_dirty(inode);
-> >  		}
-> >  	} else {
-> > -		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
-> > +		copied = copy_to_iter(dst, length, iter);
-> >  	}
-> >  	dio->size += copied;
-> >  	return copied;
-> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> > index 479c1da3e2211e..5efae7153912ed 100644
-> > --- a/include/linux/iomap.h
-> > +++ b/include/linux/iomap.h
-> > @@ -97,6 +97,20 @@ iomap_sector(struct iomap *iomap, loff_t pos)
-> >  	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
-> >  }
-> >  
-> > +static inline void *iomap_inline_buf(const struct iomap *iomap, loff_t pos)
-> > +{
-> > +	return iomap->inline_data - iomap->offset + pos;
-> > +}
-> > +
-> > +/*
-> > + * iomap->inline_data is a potentially kmapped page, ensure it never crosseѕ a
-> > + * page boundary.
-> > + */
-> > +static inline bool iomap_inline_data_size_valid(const struct iomap *iomap)
-> > +{
-> > +	return iomap->length <= PAGE_SIZE - offset_in_page(iomap->inline_data);
-> > +}
-> > +
-> >  /*
-> >   * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
-> >   * and page_done will be called for each page written to.  This only applies to
-> > -- 
-> > 2.30.2
-> > 
+> There are kernel space code in samples/ that still benefit from the test
+> robot. See ftrace/ftrace-direct-too.c for one instance.
+> 
+> Perhaps it can be disabled just for userprogs-* Makefile entries in
+> samples/ ?
+> 
+
+we'll still test samples on arch x86_64, is there a simple way to 
+disable userprogs-* cases? we don't want to edit kernel code.
+
+Best Regards,
+Rong Chen
