@@ -2,69 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44FDA3D4019
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 20:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DFCE3D4080
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 21:02:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbhGWRVD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jul 2021 13:21:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53276 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229455AbhGWRVA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jul 2021 13:21:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BDB5C60ED7;
-        Fri, 23 Jul 2021 18:01:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627063293;
-        bh=VHCSeZJjKJsnsMZa5G6+nO2ertF1iyega0AIgFlXcHw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lexpHC2Xb8ad3XL+3ndSXyTqZCBNVOupFseIarel+Mmw5OcSv9az58MqEnExtejJS
-         3kaAnuIaM57aLk4BVPWKP3Nnc8/z0ZjNlvJnmDc+4h0GnHvAgCvY3Ukm9JO4jkwjQI
-         WMTA2GZxlWSQk/Ti4Q8xoYLzQEpHDiCZFfXanHEQDMOrtDhO4Q9KAgSyyemguNQD3m
-         LEtDcaOqlFGMOr6ayPdTfwFtRT/2SvVwd/nbQ7i6HNGnnny1hqpLV+ldD8YekCDsA/
-         fGQABKNeLLQjj9N8RSi8lbmw54ozHRvSp3dk2+pxKS7a9nV+2PSYgt1S1PpwhObLzs
-         NkrLFmd/gCYVw==
-Message-ID: <f456cc25cd31789cd2cdbbee1a8bb10859b849ab.camel@kernel.org>
-Subject: Re: [PATCH] fscrypt: align Base64 encoding with RFC 4648 base64url
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Hannes Reinecke <hare@suse.de>
-Date:   Fri, 23 Jul 2021 14:01:31 -0400
-In-Reply-To: <YPp667igbuyElEcD@sol.localdomain>
-References: <20210718000125.59701-1-ebiggers@kernel.org>
-         <YPp667igbuyElEcD@sol.localdomain>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
+        id S229676AbhGWSWU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 14:22:20 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:49616 "EHLO
+        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229461AbhGWSWT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Jul 2021 14:22:19 -0400
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m70PY-003FS9-Fa; Fri, 23 Jul 2021 19:00:40 +0000
+Date:   Fri, 23 Jul 2021 19:00:40 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
+Message-ID: <YPsR2FgShiiYA2do@zeniv-ca.linux.org.uk>
+References: <YPnqM0fY3nM5RdRI@zeniv-ca.linux.org.uk>
+ <57758edf-d064-d37e-e544-e0c72299823d@kernel.dk>
+ <YPn/m56w86xAlbIm@zeniv-ca.linux.org.uk>
+ <a85df247-137f-721c-6056-a5c340eed90e@kernel.dk>
+ <YPoI+GYrgZgWN/dW@zeniv-ca.linux.org.uk>
+ <8fb39022-ba21-2c1f-3df5-29be002014d8@kernel.dk>
+ <YPr4OaHv0iv0KTOc@zeniv-ca.linux.org.uk>
+ <c09589ed-4ae9-c3c5-ec91-ba28b8f01424@kernel.dk>
+ <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
+ <640bdb4e-f4d9-a5b8-5b7f-5265b39c8044@kernel.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <640bdb4e-f4d9-a5b8-5b7f-5265b39c8044@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-07-23 at 01:16 -0700, Eric Biggers wrote:
-> On Sat, Jul 17, 2021 at 07:01:25PM -0500, Eric Biggers wrote:
-> > 
-> > There have been two attempts to copy the fscrypt Base64 code into lib/
-> > (https://lkml.kernel.org/r/20200821182813.52570-6-jlayton@kernel.org and
-> > https://lkml.kernel.org/r/20210716110428.9727-5-hare@suse.de), and both
-> > have been caught up by the fscrypt Base64 variant being nonstandard and
-> > not properly documented.  Also, the planned use of the fscrypt Base64
-> > code in the CephFS storage back-end will prevent it from being changed
-> > later (whereas currently it can still be changed), so we need to choose
-> > an encoding that we're happy with before it's too late.
-> 
-> Jeff, any thoughts on whether this is the variant of Base64 you want to use in
-> the CephFS fscrypt support?
-> 
+On Fri, Jul 23, 2021 at 11:56:29AM -0600, Jens Axboe wrote:
 
-I can't do a deep review today, but this looks fine at first glance.
+> Will send out two patches for this. Note that I don't see this being a
+> real issue, as we explicitly gave the ring fd to another task, and being
+> that this is purely for read/write, it would result in -EFAULT anyway.
 
-We're not too particular about what sort of encoding we use for ceph. We
-just need something that is consistent and results in valid POSIX
-filenames. Changing it to better adhere to the standard sounds like a
-good thing to do.
+You do realize that ->release() might come from seriously unexpected places,
+right?  E.g. recvmsg() by something that doesn't expect SCM_RIGHTS attached
+to it will end up with all struct file references stashed into the sucker
+dropped, and if by that time that's the last reference - welcome to ->release()
+run as soon as recepient hits task_work_run().
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+What's more, if you stash that into garbage for unix_gc() to pick, *any*
+process closing an AF_UNIX socket might end up running your ->release().
 
+So you really do *not* want to spawn any threads there, let alone
+possibly exfiltrating memory contents of happy recepient of your present...
