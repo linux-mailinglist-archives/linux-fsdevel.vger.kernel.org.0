@@ -2,42 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53E763D3283
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 05:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D363D3295
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 05:58:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233857AbhGWDRM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 23:17:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37168 "EHLO mail.kernel.org"
+        id S233992AbhGWDRa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jul 2021 23:17:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233809AbhGWDRG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 23:17:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AD11A60F23;
-        Fri, 23 Jul 2021 03:57:38 +0000 (UTC)
+        id S233743AbhGWDRL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Jul 2021 23:17:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 30B6760F36;
+        Fri, 23 Jul 2021 03:57:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627012660;
-        bh=L6zrMib38PMBx0pfY6NQOvKUlUy4B3F5GMeXPrHd81Q=;
+        s=k20201202; t=1627012665;
+        bh=NBwycyZpcWFpXMuqm52Myl7XVI6DIA0P1rTPJSPJshM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BjL02Am17ui9k8Ldx/OAP8ng63wuzsWDEjVofU87jWUqpVVfruBw0nfPUaSdiIIYg
-         Uq66UDIuqZy6Dn5mPrx36k5X0Z4OSBKKKp8AdVR3vxZypLL9RwcXk8PA/jrANHNOgP
-         fsfZ3Kd1ph9TJIQbh9EwoICIFbWXzUguxzruCUl9Kx112gKfYp0PPoXdA2S8UdZi7K
-         kMNw7Rg6BA2A9g902JRZH5juypV6ODfYhkU/ORMhrZ6NDo9ZvXQlIjMQQLiPOvQLVN
-         2qupcxwzbzVCzloRY6CA2JE01y6vYa0jEHymUFX9U4MS0VMq4WgELdcijzPoKKCaYG
-         1+ejx6X8y80Dg==
+        b=ic2nJKIrCBwu3sfucijcpkEErlDZrR//hMefpeHrlWl4CI1cAQwW0iYJGL80rbU4q
+         sze5ctQpWDJR47y/GrjdBjcS0vaYg4nXDj7XR3hW4YcsGMrR4Vr8WKgz64e2awIsr/
+         /i44iKTd8D9o8UEE9b9GzM3aoEncJq3WmrYoWQO7j5KVHgDdGb7FskPmscO+IwL8Qx
+         qS7IHAlqOfffgGqk3D5RTJlHrjUnSD4C5buEfkc+SdG5VbKg8ygwGdZtoxVXmjvW7G
+         PW0VfVvenMbpG+EY6i5yGxuVjYwwbosB5ChoYscD6M4EkVy7tcvnvpiYusRsXmURb7
+         CD17QKXMUBHGw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
-        syzbot+b718ec84a87b7e73ade4@syzkaller.appspotmail.com,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.13 13/19] hfs: add lock nesting notation to hfs_find_init
-Date:   Thu, 22 Jul 2021 23:57:14 -0400
-Message-Id: <20210723035721.531372-13-sashal@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Leizhen <thunder.leizhen@huawei.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sasha Levin <sashal@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.13 17/19] iomap: remove the length variable in iomap_seek_data
+Date:   Thu, 22 Jul 2021 23:57:18 -0400
+Message-Id: <20210723035721.531372-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210723035721.531372-1-sashal@kernel.org>
 References: <20210723035721.531372-1-sashal@kernel.org>
@@ -49,88 +45,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+From: Christoph Hellwig <hch@lst.de>
 
-[ Upstream commit b3b2177a2d795e35dc11597b2609eb1e7e57e570 ]
+[ Upstream commit 3ac1d426510f97ace05093ae9f2f710d9cbe6215 ]
 
-Syzbot reports a possible recursive lock in [1].
+The length variable is rather pointless given that it can be trivially
+deduced from offset and size.  Also the initial calculation can lead
+to KASAN warnings.
 
-This happens due to missing lock nesting information.  From the logs, we
-see that a call to hfs_fill_super is made to mount the hfs filesystem.
-While searching for the root inode, the lock on the catalog btree is
-grabbed.  Then, when the parent of the root isn't found, a call to
-__hfs_bnode_create is made to create the parent of the root.  This
-eventually leads to a call to hfs_ext_read_extent which grabs a lock on
-the extents btree.
-
-Since the order of locking is catalog btree -> extents btree, this lock
-hierarchy does not lead to a deadlock.
-
-To tell lockdep that this locking is safe, we add nesting notation to
-distinguish between catalog btrees, extents btrees, and attributes
-btrees (for HFS+).  This has already been done in hfsplus.
-
-Link: https://syzkaller.appspot.com/bug?id=f007ef1d7a31a469e3be7aeb0fde0769b18585db [1]
-Link: https://lkml.kernel.org/r/20210701030756.58760-4-desmondcheongzx@gmail.com
-Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
-Reported-by: syzbot+b718ec84a87b7e73ade4@syzkaller.appspotmail.com
-Tested-by: syzbot+b718ec84a87b7e73ade4@syzkaller.appspotmail.com
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reported-by: Leizhen (ThunderTown) <thunder.leizhen@huawei.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfs/bfind.c | 14 +++++++++++++-
- fs/hfs/btree.h |  7 +++++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ fs/iomap/seek.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-index 4af318fbda77..ef9498a6e88a 100644
---- a/fs/hfs/bfind.c
-+++ b/fs/hfs/bfind.c
-@@ -25,7 +25,19 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
- 	fd->key = ptr + tree->max_key_len + 2;
- 	hfs_dbg(BNODE_REFS, "find_init: %d (%p)\n",
- 		tree->cnid, __builtin_return_address(0));
--	mutex_lock(&tree->tree_lock);
-+	switch (tree->cnid) {
-+	case HFS_CAT_CNID:
-+		mutex_lock_nested(&tree->tree_lock, CATALOG_BTREE_MUTEX);
-+		break;
-+	case HFS_EXT_CNID:
-+		mutex_lock_nested(&tree->tree_lock, EXTENTS_BTREE_MUTEX);
-+		break;
-+	case HFS_ATTR_CNID:
-+		mutex_lock_nested(&tree->tree_lock, ATTR_BTREE_MUTEX);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
- 	return 0;
+diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
+index dab1b02eba5b..50b8f1418f26 100644
+--- a/fs/iomap/seek.c
++++ b/fs/iomap/seek.c
+@@ -83,27 +83,23 @@ loff_t
+ iomap_seek_data(struct inode *inode, loff_t offset, const struct iomap_ops *ops)
+ {
+ 	loff_t size = i_size_read(inode);
+-	loff_t length = size - offset;
+ 	loff_t ret;
+ 
+ 	/* Nothing to be found before or beyond the end of the file. */
+ 	if (offset < 0 || offset >= size)
+ 		return -ENXIO;
+ 
+-	while (length > 0) {
+-		ret = iomap_apply(inode, offset, length, IOMAP_REPORT, ops,
+-				  &offset, iomap_seek_data_actor);
++	while (offset < size) {
++		ret = iomap_apply(inode, offset, size - offset, IOMAP_REPORT,
++				  ops, &offset, iomap_seek_data_actor);
+ 		if (ret < 0)
+ 			return ret;
+ 		if (ret == 0)
+-			break;
+-
++			return offset;
+ 		offset += ret;
+-		length -= ret;
+ 	}
+ 
+-	if (length <= 0)
+-		return -ENXIO;
+-	return offset;
++	/* We've reached the end of the file without finding data */
++	return -ENXIO;
  }
- 
-diff --git a/fs/hfs/btree.h b/fs/hfs/btree.h
-index 4ba45caf5939..0e6baee93245 100644
---- a/fs/hfs/btree.h
-+++ b/fs/hfs/btree.h
-@@ -13,6 +13,13 @@ typedef int (*btree_keycmp)(const btree_key *, const btree_key *);
- 
- #define NODE_HASH_SIZE  256
- 
-+/* B-tree mutex nested subclasses */
-+enum hfs_btree_mutex_classes {
-+	CATALOG_BTREE_MUTEX,
-+	EXTENTS_BTREE_MUTEX,
-+	ATTR_BTREE_MUTEX,
-+};
-+
- /* A HFS BTree held in memory */
- struct hfs_btree {
- 	struct super_block *sb;
+ EXPORT_SYMBOL_GPL(iomap_seek_data);
 -- 
 2.30.2
 
