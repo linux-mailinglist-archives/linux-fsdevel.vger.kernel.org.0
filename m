@@ -2,130 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DD1A3D3350
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 06:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 225A93D33DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 07:00:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234748AbhGWDVI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jul 2021 23:21:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37950 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233954AbhGWDR0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jul 2021 23:17:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A0F8460F12;
-        Fri, 23 Jul 2021 03:57:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627012680;
-        bh=xWkpJRPBgVu7ghb0+9m/dqBnIov78P5tyBMJYtPGLao=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P7nFJc1qaXS/AuJAzVbdLXVCwegdmZUvv+oyOeLcMkbMbEBVzw/ODleKTktHdWtlA
-         FzwwqfjsDVZXRsaWnUQW9wcSyWj2v5MK3C+LOW8RUmZrLdB39U3lt8YTQwPIuUPzyG
-         7NBFLAvzF1rCzcgAuYSDH5efhQQDVmcdiLmbOIcDNDWntYKIcNOqkZilUUuLzwRMHM
-         oyZ1fq1Kwvy/2gf7c7OLoTouwr8lSOerfAc7J6rzz+6MLfyZeqlNeU1lUSNcjQFb1e
-         ITei0hHYtkCR+aBtVOWnYqzAhVsPubLSZ7gHpoS+iMmNW+4YVmfipgdqu0mMXFRxEw
-         33pIz8RveOz8A==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 09/17] hfs: add missing clean-up in hfs_fill_super
-Date:   Thu, 22 Jul 2021 23:57:40 -0400
-Message-Id: <20210723035748.531594-9-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210723035748.531594-1-sashal@kernel.org>
-References: <20210723035748.531594-1-sashal@kernel.org>
+        id S229733AbhGWEUG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 00:20:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45742 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229447AbhGWEUF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Jul 2021 00:20:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A6FC061575;
+        Thu, 22 Jul 2021 22:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=4qd4HWfR62CNOrkSwzE6Doa+rbZvUu2MnV3xCDp5M6Y=; b=orkv4g04AUQYr+HMgYoF/k5xSF
+        wIdA3/lfQnnkeZqpQRN75Xh2QRWa0OHn2w5cMNuhefHq2T7eT6wphEyIpPkm8ftUuhv6ygSb2R1nu
+        bTMqM/sH5ZEWpdDuXPcgLLCbgsntwtmLFQMWWoTp/P4XgG2tgfE/Q75+yuHf/NVtSuo8EB8QXHC52
+        q9xKUGz4TBsm/bxZSshhcrfalVECQxd+P7M5la3+x9/Be4KYvOQxdEpzwa65DFJiSZgUM3o+DXzrQ
+        B59eYqiOYgmSVhuHk0X8G55Dc6Pbre/XuAwcW5teQg9aT6V2PleCQHnDUsIBuCt+mL8Cw6LdMX2tC
+        tzKVwQBA==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m6nI3-00B0JI-MH; Fri, 23 Jul 2021 05:00:10 +0000
+Date:   Fri, 23 Jul 2021 06:00:03 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Satya Tangirala <satyaprateek2357@gmail.com>,
+        Changheun Lee <nanich.lee@samsung.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Subject: Re: [PATCH 6/9] f2fs: implement iomap operations
+Message-ID: <YPpM09DLTB28obqQ@infradead.org>
+References: <20210716143919.44373-1-ebiggers@kernel.org>
+ <20210716143919.44373-7-ebiggers@kernel.org>
+ <YPU+3inGclUtcSpJ@infradead.org>
+ <YPog4SDY3nNC78sK@sol.localdomain>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YPog4SDY3nNC78sK@sol.localdomain>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+On Thu, Jul 22, 2021 at 06:52:33PM -0700, Eric Biggers wrote:
+> I am trying to do this, but unfortunately I don't see a way to make it work
+> correctly in all cases.
+> 
+> The main problem is that when iomap_dio_rw() returns an error (other than
+> -EIOCBQUEUED), there is no way to know whether ->end_io() has been called or
+> not.  This is because iomap_dio_rw() can fail either early, before "starting"
+> the I/O (in which case ->end_io() won't have been called), or later, after
+> "starting" the I/O (in which case ->end_io() will have been called).  Note that
+> this can't be worked around by checking whether the iov_iter has been advanced
+> or not, since a failure could occur between "starting" the I/O and the iov_iter
+> being advanced for the first time.
+> 
+> Would you be receptive to adding a ->begin_io() callback to struct iomap_dio_ops
+> in order to allow filesystems to maintain counters like this?
 
-[ Upstream commit 16ee572eaf0d09daa4c8a755fdb71e40dbf8562d ]
+I think we can triviall fix this by using the slightly lower level
+__iomap_dio_rw API.  Incremental patch to my previous one below:
 
-Patch series "hfs: fix various errors", v2.
-
-This series ultimately aims to address a lockdep warning in
-hfs_find_init reported by Syzbot [1].
-
-The work done for this led to the discovery of another bug, and the
-Syzkaller repro test also reveals an invalid memory access error after
-clearing the lockdep warning.  Hence, this series is broken up into
-three patches:
-
-1. Add a missing call to hfs_find_exit for an error path in
-   hfs_fill_super
-
-2. Fix memory mapping in hfs_bnode_read by fixing calls to kmap
-
-3. Add lock nesting notation to tell lockdep that the observed locking
-   hierarchy is safe
-
-This patch (of 3):
-
-Before exiting hfs_fill_super, the struct hfs_find_data used in
-hfs_find_init should be passed to hfs_find_exit to be cleaned up, and to
-release the lock held on the btree.
-
-The call to hfs_find_exit is missing from an error path.  We add it back
-in by consolidating calls to hfs_find_exit for error paths.
-
-Link: https://syzkaller.appspot.com/bug?id=f007ef1d7a31a469e3be7aeb0fde0769b18585db [1]
-Link: https://lkml.kernel.org/r/20210701030756.58760-1-desmondcheongzx@gmail.com
-Link: https://lkml.kernel.org/r/20210701030756.58760-2-desmondcheongzx@gmail.com
-Signed-off-by: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/hfs/super.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index 44d07c9e3a7f..12d9bae39363 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -420,14 +420,12 @@ static int hfs_fill_super(struct super_block *sb, void *data, int silent)
- 	if (!res) {
- 		if (fd.entrylength > sizeof(rec) || fd.entrylength < 0) {
- 			res =  -EIO;
--			goto bail;
-+			goto bail_hfs_find;
- 		}
- 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
- 	}
--	if (res) {
--		hfs_find_exit(&fd);
--		goto bail_no_root;
--	}
-+	if (res)
-+		goto bail_hfs_find;
- 	res = -EINVAL;
- 	root_inode = hfs_iget(sb, &fd.search_key->cat, &rec);
- 	hfs_find_exit(&fd);
-@@ -443,6 +441,8 @@ static int hfs_fill_super(struct super_block *sb, void *data, int silent)
- 	/* everything's okay */
- 	return 0;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 4fed90cc1462..11844bd0cb7a 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4243,6 +4243,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	const loff_t pos = iocb->ki_pos;
+ 	const size_t count = iov_iter_count(to);
++	struct iomap_dio *dio;
+ 	ssize_t ret;
  
-+bail_hfs_find:
-+	hfs_find_exit(&fd);
- bail_no_root:
- 	pr_err("get root inode failed\n");
- bail:
--- 
-2.30.2
-
+ 	if (count == 0)
+@@ -4260,8 +4261,13 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	}
+ 
+ 	inc_page_count(F2FS_I_SB(inode), F2FS_DIO_READ);
+-	ret = iomap_dio_rw(iocb, to, &f2fs_iomap_ops, &f2fs_iomap_dio_ops, 0);
+-
++	dio = __iomap_dio_rw(iocb, to, &f2fs_iomap_ops, &f2fs_iomap_dio_ops, 0);
++	if (IS_ERR_OR_NULL(dio)) {
++		dec_page_count(F2FS_I_SB(inode), F2FS_DIO_READ);
++		ret = PTR_ERR_OR_ZERO(dio);
++	} else {
++		ret = iomap_dio_complete(dio);
++	}
+ 	up_read(&fi->i_gc_rwsem[READ]);
+ 
+ 	file_accessed(file);
+@@ -4271,8 +4277,6 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	else if (ret == -EIOCBQUEUED)
+ 		f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_READ_IO,
+ 				   count - iov_iter_count(to));
+-	else
+-		dec_page_count(F2FS_I_SB(inode), F2FS_DIO_READ);
+ out:
+ 	trace_f2fs_direct_IO_exit(inode, pos, count, READ, ret);
+ 	return ret;
