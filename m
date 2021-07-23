@@ -2,71 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DAE523D4176
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 22:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A7523D41CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jul 2021 22:58:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229657AbhGWTn6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jul 2021 15:43:58 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:50240 "EHLO
-        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbhGWTn6 (ORCPT
+        id S229657AbhGWUST (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jul 2021 16:18:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50169 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229461AbhGWUST (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jul 2021 15:43:58 -0400
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m71if-003HMY-7I; Fri, 23 Jul 2021 20:24:29 +0000
-Date:   Fri, 23 Jul 2021 20:24:29 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 3/3] io_uring: refactor io_sq_offload_create()
-Message-ID: <YPslfT91brz3SsuM@zeniv-ca.linux.org.uk>
-References: <YPn/m56w86xAlbIm@zeniv-ca.linux.org.uk>
- <a85df247-137f-721c-6056-a5c340eed90e@kernel.dk>
- <YPoI+GYrgZgWN/dW@zeniv-ca.linux.org.uk>
- <8fb39022-ba21-2c1f-3df5-29be002014d8@kernel.dk>
- <YPr4OaHv0iv0KTOc@zeniv-ca.linux.org.uk>
- <c09589ed-4ae9-c3c5-ec91-ba28b8f01424@kernel.dk>
- <591b4a1e-606a-898c-7470-b5a1be621047@kernel.dk>
- <640bdb4e-f4d9-a5b8-5b7f-5265b39c8044@kernel.dk>
- <YPsR2FgShiiYA2do@zeniv-ca.linux.org.uk>
- <3f557a2b-e83c-69e6-b953-06d0b05512ae@kernel.dk>
+        Fri, 23 Jul 2021 16:18:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1627073931;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=/nhpAW6DhddRuT8w8zINHZDUaJ16Ga0NWcS3sD7FPLI=;
+        b=XD+C4w3vcJE1UHwvuy6Ja31Dff+r8pMV0Xh3Rt76or19nhVSuV5h84mOXNOWoY0qfGFuk9
+        VE8uCa30fbrjPTYAt8NsR0jwgf5SPU5AGTOYAFQWR/FJzqe6Oht0KcRlWxHhodOg5EvoEs
+        vjm4ewmm+IA7Ce1Y7NP0Fz05wqVCL+k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-325-_DZBFc4uPuKedgN0ZWTt4w-1; Fri, 23 Jul 2021 16:58:50 -0400
+X-MC-Unique: _DZBFc4uPuKedgN0ZWTt4w-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C62CA3639F;
+        Fri, 23 Jul 2021 20:58:48 +0000 (UTC)
+Received: from max.com (unknown [10.40.194.164])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9FB8C100238C;
+        Fri, 23 Jul 2021 20:58:42 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH v3 0/7] gfs2: Fix mmap + page fault deadlocks
+Date:   Fri, 23 Jul 2021 22:58:33 +0200
+Message-Id: <20210723205840.299280-1-agruenba@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3f557a2b-e83c-69e6-b953-06d0b05512ae@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 23, 2021 at 02:10:40PM -0600, Jens Axboe wrote:
-> On 7/23/21 1:00 PM, Al Viro wrote:
-> > On Fri, Jul 23, 2021 at 11:56:29AM -0600, Jens Axboe wrote:
-> > 
-> >> Will send out two patches for this. Note that I don't see this being a
-> >> real issue, as we explicitly gave the ring fd to another task, and being
-> >> that this is purely for read/write, it would result in -EFAULT anyway.
-> > 
-> > You do realize that ->release() might come from seriously unexpected
-> > places, right?  E.g. recvmsg() by something that doesn't expect
-> > SCM_RIGHTS attached to it will end up with all struct file references
-> > stashed into the sucker dropped, and if by that time that's the last
-> > reference - welcome to ->release() run as soon as recepient hits
-> > task_work_run().
-> > 
-> > What's more, if you stash that into garbage for unix_gc() to pick,
-> > *any* process closing an AF_UNIX socket might end up running your
-> > ->release().
-> > 
-> > So you really do *not* want to spawn any threads there, let alone
-> > possibly exfiltrating memory contents of happy recepient of your
-> > present...
-> 
-> Yes I know, and the iopoll was the exception - we don't do anything but
-> cancel off release otherwise.
+Hi Linus et al.,
 
-Not saying you don't - I just want to have that in (searchable) archives.
-Ideally we need that kind of stuff in Documentation/*, but having it
-findable by google search is at least better than nothing...
+here's an update of my gfs2 mmap + page fault fixes (against -rc2).
+From my point of view,
+
+  * these two are ready and need to be looked at by Al:
+
+    iov_iter: Introduce fault_in_iov_iter helper
+    iov_iter: Introduce noio flag to disable page faults
+
+  * these two need to be reviewed by Christoph at least:
+
+    iomap: Fix iomap_dio_rw return value for user copies
+    iomap: Support restarting direct I/O requests after user copy failures
+
+Thanks a lot,
+Andreas
+
+Andreas Gruenbacher (7):
+  iov_iter: Introduce fault_in_iov_iter helper
+  gfs2: Add wrapper for iomap_file_buffered_write
+  gfs2: Fix mmap + page fault deadlocks for buffered I/O
+  iomap: Fix iomap_dio_rw return value for user copies
+  iomap: Support restarting direct I/O requests after user copy failures
+  iov_iter: Introduce noio flag to disable page faults
+  gfs2: Fix mmap + page fault deadlocks for direct I/O
+
+ fs/gfs2/file.c       | 77 ++++++++++++++++++++++++++++++++++++++++----
+ fs/iomap/direct-io.c | 13 ++++++--
+ include/linux/mm.h   |  3 ++
+ include/linux/uio.h  |  2 ++
+ lib/iov_iter.c       | 62 ++++++++++++++++++++++++++++++++---
+ mm/gup.c             | 68 ++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 211 insertions(+), 14 deletions(-)
+
+-- 
+2.26.3
+
