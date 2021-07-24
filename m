@@ -2,110 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84A7B3D49A9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 21:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F4503D49B2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 21:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbhGXTFf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Jul 2021 15:05:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56816 "EHLO
+        id S229588AbhGXTMW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Jul 2021 15:12:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbhGXTFe (ORCPT
+        with ESMTP id S229481AbhGXTMW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Jul 2021 15:05:34 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 520A5C061757
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jul 2021 12:46:06 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id j8-20020a17090aeb08b0290173bac8b9c9so13931976pjz.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jul 2021 12:46:06 -0700 (PDT)
+        Sat, 24 Jul 2021 15:12:22 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625ABC061757
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jul 2021 12:52:53 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id l17so6125482ljn.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jul 2021 12:52:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SaRVMIPsR4RUT0xlMnKQjQMMszZ0iueZl2tGoIzLrJM=;
-        b=FNnF3e0uYRIU4gSyLJfdlw7+kMTm7aNiVoiIg+bnba8zFWIMy4Ef+tApv3CbTY3wNR
-         MwIU3QiAYVwVvQIFmhzx6sFDrftBF4y+DQJY5LnBmS4Vi8BnahJAOZflcSEIA5DhU6U5
-         7g30HUKxH+mbzdacHLcZ4DPAIWVHE63QKozAl5UVvFyK2nSb1OJUItHZfyI/wYV/J4D9
-         9M/JQ95+XQaOxD8z7ZB0WdayvPyhY5nqYCD04/+izy7b6eXRin8McVhmHLh5mEHA9OHQ
-         pOfC+HDW3GfQLG6u4ZJrORNQy9St2KJmjK85mkhiNm1EafXSgNeSCrwcQnbxILNp0cmj
-         jyvQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lpee2uSXjqYzurXDPtFtjsJbLcrcS7+O9pSXA980Af4=;
+        b=MaXZzTxCAJIwowsCCE6Fdt5US9OP43caVSTixXGxGUe+EmHdqYjF8ACbPwZmUFZzTq
+         ODWJwVvcv34qH8KZtMP1sfKtg9N4icSPWeZzKNUlGyB0noOzVBAqOVDZWwi0Ng2nf+r3
+         4fEBuRnwf4eViJa+iNl8/P/Lcmilq1BHRdFNc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SaRVMIPsR4RUT0xlMnKQjQMMszZ0iueZl2tGoIzLrJM=;
-        b=k5SnDpw8Bf+zVRv4NYY5venLUhmSWNgG28KjcNmgJiCniPLKcOajYsWaE0ln/f4X94
-         o39xD+RvlHHaeR4f7jCsizSd5FMjwKqlfu+MjrnX0T0iEkQ5xAnFS3z5SbOiPJt3ps+8
-         8en8UL9gdJ60SR8DVEP6ZSKCAo/vC9J8n8/lRmsYenQOXT3U1mXYyuvjcpGh8DGBAIFX
-         OnFmKus8Bly9Wg5lPZ6K1IcR3bvI2IH9vXuKxT8krUD284A3HoV3yA10tJVL+XEnniCj
-         1ynmT8tQ7pTRwdO6T5bYi9X3MiTYzGNnB9d0KG6Vtkh/u+pUk+Dj6gAtg2kve10x3j/z
-         6Jxw==
-X-Gm-Message-State: AOAM530W8+iM5Vqv6XpjrgcKX1lVElacEs9i6xwE74ePu1qzdCokMpCm
-        UhAMxt4XtQ1gul/pnX5aqVoV8A==
-X-Google-Smtp-Source: ABdhPJylawTGN3h+Z+h36hC8P3jWa6Xs90tk7UGNIstd8gOZaOSwuboq4WYd8TNMxYvPmRp5FY83pg==
-X-Received: by 2002:aa7:8751:0:b029:32b:560a:b17f with SMTP id g17-20020aa787510000b029032b560ab17fmr10492603pfo.32.1627155965856;
-        Sat, 24 Jul 2021 12:46:05 -0700 (PDT)
-Received: from [192.168.1.187] ([198.8.77.61])
-        by smtp.gmail.com with ESMTPSA id y7sm35336773pfi.204.2021.07.24.12.46.04
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lpee2uSXjqYzurXDPtFtjsJbLcrcS7+O9pSXA980Af4=;
+        b=mzAEZBLfBsOoJGnEJYgNo36B7X7ZMsB1qE1qw4HoSNlA42g4KhD0gGqE+MDXwQ3dcX
+         SxwJ8+Y0b0ZDFthI+XXTtRJJhDe68UmvZT1AYXB7rOJsXFERjE5AkOhGbRRSMdQeAQ0i
+         kq9YbdQROVn/nGwaWull3VL0D5xNGGtanezpwnypokU0igqyY6++sMz4PXt1Pha3F1/V
+         h9B25SZsyUPAIBgYDZGE1U5i14C6CqGbWstmrKx0wEZ+XTXKIwLYAsh4VCP3dbp/amCH
+         AfdQQJd7lKCmxVbCoqUx/PWgP9UuxlrQF4ngGi2sAMtpBHJceE7KZ93DKv23ZbRFlY9+
+         N+Xw==
+X-Gm-Message-State: AOAM532Cutsl9NeaRDZ0/T9ygohOOyzjxHyMaBGTDPWVIVSRH/CsGERa
+        UAEyXycqhlYL9sTrnYmYKGiGsZREq3qlRhNX
+X-Google-Smtp-Source: ABdhPJy9bZXLok6UNRmxveSLWX8iZ9h7/iBZnMgYgNFpRhzYoh9WpNxrqiXb0yNyvgS1gquk/KkjXg==
+X-Received: by 2002:a05:651c:2105:: with SMTP id a5mr7376092ljq.259.1627156371679;
+        Sat, 24 Jul 2021 12:52:51 -0700 (PDT)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id d18sm3608007ljc.64.2021.07.24.12.52.50
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jul 2021 12:46:05 -0700 (PDT)
-Subject: Re: [PATCH 0/2] Close a hole where IOCB_NOWAIT reads could sleep
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     io-uring@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org
-References: <20210711150927.3898403-1-willy@infradead.org>
- <a3d0f8da-ffb4-25a3-07a1-79987ce788c5@kernel.dk>
- <YPxaXE0mf26aqy/O@casper.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5b0e9558-0bb0-c2b0-2125-b8d33a1c3360@kernel.dk>
-Date:   Sat, 24 Jul 2021 13:46:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sat, 24 Jul 2021 12:52:50 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id a26so7925159lfr.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jul 2021 12:52:50 -0700 (PDT)
+X-Received: by 2002:a05:6512:3f82:: with SMTP id x2mr7023206lfa.421.1627156370007;
+ Sat, 24 Jul 2021 12:52:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YPxaXE0mf26aqy/O@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210724193449.361667-1-agruenba@redhat.com> <20210724193449.361667-2-agruenba@redhat.com>
+In-Reply-To: <20210724193449.361667-2-agruenba@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 24 Jul 2021 12:52:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whodi=ZPhoJy_a47VD+-aFtz385B4_GHvQp8Bp9NdTKUg@mail.gmail.com>
+Message-ID: <CAHk-=whodi=ZPhoJy_a47VD+-aFtz385B4_GHvQp8Bp9NdTKUg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/8] iov_iter: Introduce iov_iter_fault_in_writeable helper
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/24/21 12:22 PM, Matthew Wilcox wrote:
-> On Sun, Jul 11, 2021 at 07:44:07PM -0600, Jens Axboe wrote:
->> On 7/11/21 9:09 AM, Matthew Wilcox (Oracle) wrote:
->>> I noticed a theoretical case where an IOCB_NOWAIT read could sleep:
->>>
->>> filemap_get_pages
->>>   filemap_get_read_batch
->>>   page_cache_sync_readahead
->>>     page_cache_sync_ra
->>>       ondemand_readahead
->>>         do_page_cache_ra
->>>         page_cache_ra_unbounded
->>>           gfp_t gfp_mask = readahead_gfp_mask(mapping);
->>>           memalloc_nofs_save()
->>>           __page_cache_alloc(gfp_mask);
->>>
->>> We're in a nofs context, so we're not going to start new IO, but we might
->>> wait for writeback to complete.  We generally don't want to sleep for IO,
->>> particularly not for IO that isn't related to us.
->>>
->>> Jens, can you run this through your test rig and see if it makes any
->>> practical difference?
->>
->> You bet, I'll see if I can trigger this condition and verify we're no
->> longer blocking on writeback. Thanks for hacking this up.
-> 
-> Did you have any success yet?
+On Sat, Jul 24, 2021 at 12:35 PM Andreas Gruenbacher
+<agruenba@redhat.com> wrote:
+>
+> +int iov_iter_fault_in_writeable(const struct iov_iter *i, size_t bytes)
+> +{
+...
+> +                       if (fault_in_user_pages(start, len, true) != len)
+> +                               return -EFAULT;
 
-Sorry forgot to report back - I did run some testing last week, and
-didn't manage to make it hit the blocking condition. Did various
-read/write mix on the same file, made sure there was memory pressure,
-etc. I'll give it another go, please let me know if you have an idea on
-how to make this easier to hit... I know it's one of those things that
-you hit all the time in certain workloads (hence why I would love to see
-it get fixed), but I just didn't manage to provoke it when I tried.
+Looking at this once more, I think this is likely wrong.
 
--- 
-Jens Axboe
+Why?
 
+Because any user can/should only care about at least *part* of the
+area being writable.
+
+Imagine that you're doing a large read. If the *first* page is
+writable, you should still return the partial read, not -EFAULT.
+
+So I think the code needs to return 0 if _any_ fault was successful.
+Or perhaps return how much it was able to fault in. Because returning
+-EFAULT if any of it failed seems wrong, and doesn't allow for partial
+success being reported.
+
+The other reaction I have is that you now only do the
+iov_iter_fault_in_writeable, but then you make fault_in_user_pages()
+still have that "bool write" argument.
+
+We already have 'fault_in_pages_readable()', and that one is more
+efficient (well, at least if the fault isn't needed it is). So it
+would make more sense to just implement fault_in_pages_writable()
+instead of that "fault_in_user_pages(, bool write)".
+
+                 Linus
