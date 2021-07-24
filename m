@@ -2,34 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A5653D48E0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 19:28:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37D073D490F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 20:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbhGXQri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Jul 2021 12:47:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54612 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbhGXQri (ORCPT
+        id S229925AbhGXR2d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Jul 2021 13:28:33 -0400
+Received: from bedivere.hansenpartnership.com ([96.44.175.130]:52744 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229655AbhGXR2c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Jul 2021 12:47:38 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D640C061575;
-        Sat, 24 Jul 2021 10:28:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=R/q2OUFHGHnNOj2YWSRkzWiiQH0hVUMtLRqj4jzPJgI=; b=gky8adROBWilg+idqPXV+hW/r0
-        G/T/24vDtwXzirAYXoSMJL0OFgxbeHHb9dBijq4Hdx5aE6ruopVRBxiNXg2Ru35hosdK1HjAHxn/L
-        joFlAgkSTuo3tM9QI2DL+fMGt/rqtTCt10rMHmMv2Ze0SqKAqsm66VYhMw0/sCZmm7L6yObMp6Qfr
-        /GrFP39f5wcfT8XHXRgyZRasl1YekSlNMRiLjuKPKh23854ciMhfGFy+3C8SeaFYhPyWbChjaQMNY
-        SfiprTA4hFxIL3DoJyBPydDPdFdnOpj5u5AXMLIbMVm50LnUiwZe204L/IG6oW/40+uEkeuSnX2gr
-        rtbRNriA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m7LRB-00CQK6-H6; Sat, 24 Jul 2021 17:28:00 +0000
-Date:   Sat, 24 Jul 2021 18:27:45 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-kernel@vger.kernel.org
+        Sat, 24 Jul 2021 13:28:32 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 182A21280193;
+        Sat, 24 Jul 2021 11:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1627150144;
+        bh=OBdIbbICnlhWCgpUXqhBHIcAkWO2KhMxkOjYPmxy+rk=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=gcFzw40+mFqkGB0zVGYDDIcydpsBgO0E3sNonwKK7u/oLqfO4PUUERLX3/snLZRfC
+         bf12atERrZw+QVmbt1qyzee4CXDJjDfr6HRI2l2dt1orUKzbF4dbwPWIlVP8QThiC+
+         6Lr6Rnuel7fjYRMJF2S7+/zTFE7wNzXZ1SXUZzxE=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id lxd24d0VwAYk; Sat, 24 Jul 2021 11:09:04 -0700 (PDT)
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::527])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 761EC12800A0;
+        Sat, 24 Jul 2021 11:09:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1627150143;
+        bh=OBdIbbICnlhWCgpUXqhBHIcAkWO2KhMxkOjYPmxy+rk=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=ptJWvvM7GD/9XKXB8DiWs9YTDWM/KfwqNNXZECbrVE7knJVp39uLW4ZXTii3+UJFj
+         fgibyWkQGzmxVQHYKmIP/KUmRzICDL7hz7v4AaYmmx+GomDg84HgijyWKk/tSUB2f7
+         gmb8GXwr+qmtFhkOAp9JPshrsvV1IR3cuJGJV02M=
+Message-ID: <1e48f7edcb6d9a67e8b78823660939007e14bae1.camel@HansenPartnership.com>
+Subject: Re: Folios give an 80% performance win
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -37,41 +48,34 @@ Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>,
         Andres Freund <andres@anarazel.de>,
         Michael Larabel <Michael@michaellarabel.com>
-Subject: Folios give an 80% performance win
-Message-ID: <YPxNkRYMuWmuRnA5@casper.infradead.org>
+Date:   Sat, 24 Jul 2021 11:09:02 -0700
+In-Reply-To: <YPxNkRYMuWmuRnA5@casper.infradead.org>
 References: <20210715033704.692967-1-willy@infradead.org>
+         <YPxNkRYMuWmuRnA5@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210715033704.692967-1-willy@infradead.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 04:34:46AM +0100, Matthew Wilcox (Oracle) wrote:
-> Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
-> benefit from a larger "page size".  As an example, an earlier iteration
-> of this idea which used compound pages (and wasn't particularly tuned)
-> got a 7% performance boost when compiling the kernel.
+On Sat, 2021-07-24 at 18:27 +0100, Matthew Wilcox wrote:
+> What blows me away is the 80% performance improvement for PostgreSQL.
+> I know they use the page cache extensively, so it's plausibly real.
+> I'm a bit surprised that it has such good locality, and the size of
+> the win far exceeds my expectations.  We should probably dive into it
+> and figure out exactly what's going on.
 
-I want to thank Michael Larabel for his benchmarking effort:
-https://www.phoronix.com/scan.php?page=news_item&px=Folios-v14-Testing-AMD-Linux
+Since none of the other tested databases showed more than a 3%
+improvement, this looks like an anomalous result specific to something
+in postgres ... although the next biggest db: mariadb wasn't part of
+the tests so I'm not sure that's definitive.  Perhaps the next step
+should be to test mariadb?  Since they're fairly similar in domain
+(both full SQL) if mariadb shows this type of improvement, you can
+safely assume it's something in the way SQL databases handle paging and
+if it doesn't, it's likely fixing a postgres inefficiency.
 
-I'm not too surprised by the lack of performance change on the majority
-of benchmarks.  This patch series is only going to change things for
-heavy users of the page cache (ie it'll do nothing for anon memory users),
-and it's only really a benefit for programs that have good locality.
+James
 
-What blows me away is the 80% performance improvement for PostgreSQL.
-I know they use the page cache extensively, so it's plausibly real.
-I'm a bit surprised that it has such good locality, and the size of the
-win far exceeds my expectations.  We should probably dive into it and
-figure out exactly what's going on.
 
-Should we accelerate inclusion of this patchset?  Right now, I have
-89 mm patches queued up for the 5.15 merge window.  My plan was to get
-the 17 iomap + block patches, plus another 18 page cache patches into
-5.16 and then get the 14 multi-page folio patches into 5.17.  But I'm
-mindful of the longterm release coming up "soon", and I'm not sure we're
-best served by multiple distros trying to backport the multi-page folio
-patches to either 5.15 or 5.16.
