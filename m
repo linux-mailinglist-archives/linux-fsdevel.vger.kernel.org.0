@@ -2,98 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 358E23D4A6F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jul 2021 00:06:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2783A3D4A80
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jul 2021 00:45:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229831AbhGXV0Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Jul 2021 17:26:24 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32643 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229539AbhGXV0Y (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Jul 2021 17:26:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1627164415;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=977uLZZ1MP2YWJkQk/8ziIBF22i/BGM3rYPV0nl730Y=;
-        b=Laskzr+zGM+NwbM9YgGyvagQQAqruBQJzLdqAnRj6feGxPehz+FKVqnDidsqwXl+ZW2XMI
-        k2iQ9DRBt8bNtvWvHf5xCtTMs6AmZs/aY6AWxHjoi3VbVXVJEqXyXNnkofKN/vmU0OdbC1
-        sE81QEbceLyW2DenlcWONVMxw46Eqnw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-357-CrsE3WJVMfu1jCAQJdRj3w-1; Sat, 24 Jul 2021 18:06:53 -0400
-X-MC-Unique: CrsE3WJVMfu1jCAQJdRj3w-1
-Received: by mail-wr1-f72.google.com with SMTP id c5-20020a5d52850000b0290126f2836a61so2601038wrv.6
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jul 2021 15:06:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=977uLZZ1MP2YWJkQk/8ziIBF22i/BGM3rYPV0nl730Y=;
-        b=gGFpBTXw6bviGl5YwzJlFkMcl4Pn4kZyYEJ4W3BfUkMOfEVSKI9H9V/Eodtv5RHhkA
-         76+smqpr2FUEHq2yY0hDpZJIFns6KRlDB4meh0fpcWayNHflJGfCntLju73Zu2TkVrkG
-         bzftY7xR4EGc3CEDO0yyM5sPG2LdM18q25QGTLo914urpXShrUct4nvg6gCdW4+30Fa2
-         ug46oR66Yq9v5sTCPw6PUz3F8AioHDD93+a9FaVb9bVW6tSrFMJHzFJ59QNGMpbaqn1D
-         4gVCL2nSCAK/8ZCE1TSyiyzdGy9pN5+Yhki70/VyjeKS8DT8/SIbtExU76H1r8MLD7+x
-         tsww==
-X-Gm-Message-State: AOAM530W/Zh4D8GYXoA4aoYrmMSXn5ZiT2cQ4Ie1WmTAPTBk+5i7OPv+
-        Vcf1M+RLwEAiZMtmlYDIfEukaRGizS6U8pHal3i5zojX0TMA1TkZ9KHn3mC006eKoqk0B6aPuDS
-        eTaSLF5/f/jARxKWJK6KK2cn7YC3zUlghLn2/nIppjg==
-X-Received: by 2002:a5d:540d:: with SMTP id g13mr3472786wrv.329.1627164412613;
-        Sat, 24 Jul 2021 15:06:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw98aCqVjWxX38oeHKCaIaIHxY0Om7RKidPStZZN7z95eN6USQN5AiyYEGvql/V+hxUp7+bvK5ucN6W9nHcicg=
-X-Received: by 2002:a5d:540d:: with SMTP id g13mr3472762wrv.329.1627164412331;
- Sat, 24 Jul 2021 15:06:52 -0700 (PDT)
+        id S229795AbhGXWE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Jul 2021 18:04:28 -0400
+Received: from rome.phoronix.com ([192.211.48.82]:8272 "EHLO rome.phoronix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229588AbhGXWE2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 24 Jul 2021 18:04:28 -0400
+X-Greylist: delayed 1285 seconds by postgrey-1.27 at vger.kernel.org; Sat, 24 Jul 2021 18:04:28 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=michaellarabel.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=v15tJ2HW76/73pqT/Le2YOylxGKz5JEzbw/tmVjFExE=; b=k+VJcRQ5Y8jvR4ceEM6LSG0S8V
+        H3jgGf9cDnSEqK11uI4Oa5jDZ8dE0O4GcAg3lMb6KVGeWzTVGJqqkI9tcxUA36ZtqcIgZmTpG78bF
+        pFU4D8lUv5BuDzDwssWQvQHxA9dYic/hMPmT9HEy6ghHB0pLCURoDO7k7qrvE69pLmdF8/k5kFvuJ
+        38QLQWSJGuCCCAF0cMX8/HTqUawql82S3rlqmHNS6qan1lBzhea3XkWygQQLFZv51NdxCRjsBQn3l
+        onX9eheu7P5zz2J6b6CeHs/hOKPnTJa+Y0E92YUDLPX+e0ExiYWcC0bJWaoQeu0iFdX0+QRmGC36r
+        +SmJUdew==;
+Received: from c-73-176-63-28.hsd1.il.comcast.net ([73.176.63.28]:57014 helo=[192.168.86.57])
+        by rome.phoronix.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <Michael@MichaelLarabel.com>)
+        id 1m7Q3S-00063Q-5I; Sat, 24 Jul 2021 18:23:29 -0400
+Subject: Re: Folios give an 80% performance win
+To:     Andres Freund <andres@anarazel.de>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <20210715033704.692967-1-willy@infradead.org>
+ <YPxNkRYMuWmuRnA5@casper.infradead.org>
+ <1e48f7edcb6d9a67e8b78823660939007e14bae1.camel@HansenPartnership.com>
+ <YPxYdhEirWL0XExY@casper.infradead.org>
+ <b12f95c9f817f05e91ecd1aec81316afa1da1e42.camel@HansenPartnership.com>
+ <17a9d8bf-cd52-4e6c-9b3e-2fbc1e4592d9@www.fastmail.com>
+ <YPxjbopzwFYJw9hV@casper.infradead.org>
+ <4c634d08-c658-44cf-ac92-92097eeb8532@www.fastmail.com>
+ <20210724214413.fqsbjxhhodfzchs6@alap3.anarazel.de>
+From:   Michael Larabel <Michael@MichaelLarabel.com>
+Message-ID: <4ab2f8c4-38ce-3860-1465-e04dea4017b2@MichaelLarabel.com>
+Date:   Sat, 24 Jul 2021 17:23:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <20210724193449.361667-1-agruenba@redhat.com> <20210724193449.361667-2-agruenba@redhat.com>
- <CAHk-=whodi=ZPhoJy_a47VD+-aFtz385B4_GHvQp8Bp9NdTKUg@mail.gmail.com>
- <YPx28cEvrVl6YrDk@zeniv-ca.linux.org.uk> <CAHc6FU5nGRn1_oc-8rSOCPfkasWknH1Wb3FeeQYP29zb_5fFGQ@mail.gmail.com>
- <YPyMyPCpZKGlfAGk@zeniv-ca.linux.org.uk>
-In-Reply-To: <YPyMyPCpZKGlfAGk@zeniv-ca.linux.org.uk>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Sun, 25 Jul 2021 00:06:41 +0200
-Message-ID: <CAHc6FU4aVL_g3LHEWng1fr8j3jJt+QVK3wAda2q6pfi+xRJcwg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/8] iov_iter: Introduce iov_iter_fault_in_writeable helper
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210724214413.fqsbjxhhodfzchs6@alap3.anarazel.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - rome.phoronix.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - MichaelLarabel.com
+X-Get-Message-Sender-Via: rome.phoronix.com: authenticated_id: michael@michaellarabel.com
+X-Authenticated-Sender: rome.phoronix.com: michael@michaellarabel.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 24, 2021 at 11:57 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Sat, Jul 24, 2021 at 11:38:20PM +0200, Andreas Gruenbacher wrote:
+On 7/24/21 4:44 PM, Andres Freund wrote:
+> Hi,
 >
-> > Hmm, how could we have sub-page failure areas when this is about if
-> > and how pages are mapped? If we return the number of bytes that are
-> > accessible, then users will know if they got nothing, something, or
-> > everything, and they can act accordingly.
+> On 2021-07-24 12:12:36 -0700, Andres Freund wrote:
+>> On Sat, Jul 24, 2021, at 12:01, Matthew Wilcox wrote:
+>>> On Sat, Jul 24, 2021 at 11:45:26AM -0700, Andres Freund wrote:
+>>> It's always possible I just broke something.  The xfstests aren't
+>>> exhaustive, and no regressions doesn't mean no problems.
+>>>
+>>> Can you guide Michael towards parameters for pgbench that might give
+>>> an indication of performance on a more realistic workload that doesn't
+>>> entirely fit in memory?
+>> Fitting in memory isn't bad - that's a large post of real workloads. It just makes it hard to believe the performance improvement, given that we expect to be bound by disk sync speed...
+> I just tried to compare folio-14 vs its baseline, testing commit 8096acd7442e
+> against 480552d0322d. In a VM however (but at least with its memory being
+> backed by huge pages and storage being passed through).  I got about 7%
+> improvement with just some baseline tuning of postgres applied. I think a 1-2%
+> of that is potentially runtime variance (I saw slightly different timings
+> leading around checkpointing that lead to a bit "unfair" advantage to the
+> folio run).
 >
-> What I'm saying is that in situation when you have cacheline-sized
-> poisoned areas, there's no way to get an accurate count of readable
-> area other than try and copy it out.
+> That's a *nice* win!
 >
-> What's more, "something" is essentially useless information - the
-> pages might get unmapped right as your function returns; the caller
-> still needs to deal with partial copies.  And that's a slow path
-> by definition, so informing them of a partial fault-in is not
-> going to be useful.
+> WRT the ~70% improvement:
 >
-> As far as callers are concerned, it's "nothing suitable in the
-> beginning of the area" vs. "something might be accessible".
+>> Michael, where do I find more details about the codification used during the
+>> run?
+> After some digging I found https://github.com/phoronix-test-suite/phoronix-test-suite/blob/94562dd4a808637be526b639d220c7cd937e2aa1/ob-cache/test-profiles/pts/pgbench-1.10.1/install.sh
+> For one the test says its done on ext4, while I used xfs. But I think the
+> bigger thing is the following:
 
-Yes, and the third case would be "something might be accessible, but
-not all of it". There probably are callers that give up when they
-don't have it all.
+Yes that is the run/setup script used. The additional pgbench arguments 
+passed at run-time are outlined in
 
-Andreas
+https://github.com/phoronix-test-suite/phoronix-test-suite/blob/94562dd4a808637be526b639d220c7cd937e2aa1/ob-cache/test-profiles/pts/pgbench-1.10.1/test-definition.xml
 
+Though in this case is quite straight-forward in corresponding to the 
+relevant -s, -c options for pgbench and what is shown in turn on the 
+pgbench graphs.
+
+I have been running some more PostgreSQL tests on other hardware as well 
+as via HammerDB and other databases. Will send that over when wrapped up 
+likely tomorrow.
+
+Michael
+
+
+>
+> The phoronix test uses postgres with only one relevant setting adjusted
+> (increasing the max connection count). That will end up using a buffer pool of
+> 128MB, no huge pages, and importantly is configured to aim for not more than
+> 1GB for postgres' journal, which will lead to constant checkpointing. The test
+> also only runs for 15 seconds, which likely isn't even enough to "warm up"
+> (the creation of the data set here will take longer than the run).
+>
+> Given that the dataset phoronix is using is about ~16GB of data (excluding
+> WAL), and uses 256 concurrent clients running full tilt, using that limited
+> postgres settings doesn't end up measuring something particularly interesting
+> in my opinion.
+>
+> Without changing the filesystem, using a configuration more similar to
+> phoronix', I do get a bigger win. But the run-to-run variance is so high
+> (largely due to the short test duration) that I don't trust those results
+> much.
+>
+> It does look like there's a less slowdown due to checkpoints (i.e. fsyncing
+> all data files postgres modified since the last checkpoints) on the folio
+> branch, which does make some sense to me and would be a welcome improvement.
+>
+> Greetings,
+>
+> Andres Freund
