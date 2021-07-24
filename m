@@ -2,134 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 873CF3D4974
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 21:13:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 111333D497A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 21:21:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbhGXSca (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Jul 2021 14:32:30 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:34645 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229476AbhGXSc3 (ORCPT
+        id S229549AbhGXSkr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Jul 2021 14:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51352 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229476AbhGXSkq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Jul 2021 14:32:29 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id B6AC432007D7;
-        Sat, 24 Jul 2021 15:13:00 -0400 (EDT)
-Received: from imap35 ([10.202.2.85])
-  by compute3.internal (MEProxy); Sat, 24 Jul 2021 15:13:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm2; bh=dXCbOqGxR8Vk0pjKq6a806jXWA/9phv
-        bJwLeUoq51KU=; b=reX+fT1wQPMi3/naLPEr73S1dEeec5Q5Gp9mM6EaMl0oEYI
-        YG6Lc4V3g94xLJQQ9c2i3JxjS2LeycCpGmVROS64RIr+YuCD+uaNsjmJcHrelKKb
-        nywedFxnXuqzdFJr8XJhnszWbix3V0yuwQo9CBgxhjuoDJS4bT+cGOEldOB/pmNh
-        drtFGF2peoVeZadpc9qIpqIAQlOTG/VRi3xvvgLiiLjlrVvRjX6lcvtdaIDdfXll
-        hfmLPYrprUF6QIJ/JWFCRty5yyvMwVWVb5O0kNmIE6KsJaozRBFzduCZLDNjdFvL
-        aLGfBfgg9YxI+JWvpeHxS9rOPufDDWjsj4vVeqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=dXCbOq
-        GxR8Vk0pjKq6a806jXWA/9phvbJwLeUoq51KU=; b=RH85y+QAkCaiVl/RGgPPfc
-        qNBBmEhpVrrzn4pFqOybH4CpMdPDY2alln2Vf3pFeg8k+VIKDf/7rzqiFKeRQJ2o
-        HFmGYktc+hTbMnRxyU2QOVH0zRU0hyOmu6DKqYV7wUrDPz797T49AIEZhf1eBjXF
-        UnWUV32Nd9SC83MIOjTIjkDQoElYkN+6m+qHGKAI6SFE8zUzhi4vWGJPbinRfcER
-        wHuCch47FgsDDPS6uFoqyfl5PbOXG+KolTQpUabN/Ij2NVaZ7x08gExbkwOgV9ol
-        tpWV1GW01aDDrSuKAbLZvNvpkDM/zXXdm6fo3JPP3/FVqVRnxlUGkLH2j1loPgJw
-        ==
-X-ME-Sender: <xms:O2b8YPRWR9vGHGOdV2jtWo0qt6f1GQPWzzcitafZT4hVRRLR0Aa4lQ>
-    <xme:O2b8YAxaZX5RNDLvemPotjfVsQ3icVW8rMqY_mwvowQOYMkP2cWP1rzqIuuNAKQ98
-    Fi9002quhfcZ5ewbg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrgedtgddufeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    rhgvshcuhfhrvghunhgufdcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecugg
-    ftrfgrthhtvghrnhepteegvddvffeghfejteevteevfeegffduudffgedtueejvdejlefg
-    veegudekfedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homheprghnughrvghssegrnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:O2b8YE13fkLSRTrxxqo-QMva6yeIkZTmAipGX2FlOp4Y5yZ9MjNorQ>
-    <xmx:O2b8YPBl5_T1Ub9zSAuSlWvQXnjqDYi4oYz49Owk3vCtVxfVrRZxwA>
-    <xmx:O2b8YIjLn4GAfS3WntS4Xd8JpGDzLqa-veLVPkIFEiARKEz2M5Q6Lg>
-    <xmx:PGb8YEh_SSJs3X01a3UVPc37VTRTkh1P_8jIDp461lZ19sjRyUbetQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id DED8515A007C; Sat, 24 Jul 2021 15:12:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.5.0-alpha0-540-g21c5be8f1e-fm-20210722.001-g21c5be8f
-Mime-Version: 1.0
-Message-Id: <4c634d08-c658-44cf-ac92-92097eeb8532@www.fastmail.com>
-In-Reply-To: <YPxjbopzwFYJw9hV@casper.infradead.org>
-References: <20210715033704.692967-1-willy@infradead.org>
- <YPxNkRYMuWmuRnA5@casper.infradead.org>
- <1e48f7edcb6d9a67e8b78823660939007e14bae1.camel@HansenPartnership.com>
- <YPxYdhEirWL0XExY@casper.infradead.org>
- <b12f95c9f817f05e91ecd1aec81316afa1da1e42.camel@HansenPartnership.com>
- <17a9d8bf-cd52-4e6c-9b3e-2fbc1e4592d9@www.fastmail.com>
- <YPxjbopzwFYJw9hV@casper.infradead.org>
-Date:   Sat, 24 Jul 2021 12:12:36 -0700
-From:   "Andres Freund" <andres@anarazel.de>
-To:     "Matthew Wilcox" <willy@infradead.org>
-Cc:     "James Bottomley" <James.Bottomley@hansenpartnership.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "Christoph Hellwig" <hch@lst.de>,
-        "Michael Larabel" <Michael@michaellarabel.com>
+        Sat, 24 Jul 2021 14:40:46 -0400
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E9FFC061575;
+        Sat, 24 Jul 2021 12:21:18 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 251C81280541;
+        Sat, 24 Jul 2021 12:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1627154478;
+        bh=RwmyDLi8Otc7MLTn5MLWY8ZIvHMRyae2630SrNyNvd4=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=EsGCwytkbLX6pUETj7D3+5M3ugtzjkH76d1GnEPLwRl8a7rSwC6FxNxqdQJ2eQqYf
+         rzf5sfyyGcl/n/0aqXBBp2IZZNQr8EErbWOf9SvKVUcjzYqpJNkWOFqmYvEvA9yxJ2
+         Oadd9mn5PzfgwKOpbJDL/a6gedSqdr+XH7AoOFAA=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id F2DEa1vXkPjj; Sat, 24 Jul 2021 12:21:18 -0700 (PDT)
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::527])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 798DF1280534;
+        Sat, 24 Jul 2021 12:21:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1627154477;
+        bh=RwmyDLi8Otc7MLTn5MLWY8ZIvHMRyae2630SrNyNvd4=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=UoAYYAcLzUOuZJV9op1vWS6kU+0PyuMTg++SW4Jb/zU4jOJTzWv7u0x6DH8acKDrz
+         6jhc4biqzwPMeX1IfwKyMNVumkwu3DHv8bhFmInjqG1t5sQmnsT0dVu/EYS4CxYjUn
+         WEU/WBB19lmhYdkyvX6nVEv88/ZJiSMTfhD6BZRE=
+Message-ID: <f1d0d61e9528c011f25ee1dfdf6c0b14fb3166b1.camel@HansenPartnership.com>
 Subject: Re: Folios give an 80% performance win
-Content-Type: text/plain
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Andres Freund <andres@anarazel.de>,
+        Michael Larabel <Michael@michaellarabel.com>
+Date:   Sat, 24 Jul 2021 12:21:16 -0700
+In-Reply-To: <YPxg3RYDp/C7/ack@casper.infradead.org>
+References: <20210715033704.692967-1-willy@infradead.org>
+         <YPxNkRYMuWmuRnA5@casper.infradead.org>
+         <1e48f7edcb6d9a67e8b78823660939007e14bae1.camel@HansenPartnership.com>
+         <YPxYdhEirWL0XExY@casper.infradead.org>
+         <b12f95c9f817f05e91ecd1aec81316afa1da1e42.camel@HansenPartnership.com>
+         <YPxg3RYDp/C7/ack@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-On Sat, Jul 24, 2021, at 12:01, Matthew Wilcox wrote:
-> On Sat, Jul 24, 2021 at 11:45:26AM -0700, Andres Freund wrote:
-> > On Sat, Jul 24, 2021, at 11:23, James Bottomley wrote:
-> > > Well, I cut the previous question deliberately, but if you're going to
-> > > force me to answer, my experience with storage tells me that one test
-> > > being 10x different from all the others usually indicates a problem
-> > > with the benchmark test itself rather than a baseline improvement, so
-> > > I'd wait for more data.
+On Sat, 2021-07-24 at 19:50 +0100, Matthew Wilcox wrote:
+> On Sat, Jul 24, 2021 at 11:23:25AM -0700, James Bottomley wrote:
+> > On Sat, 2021-07-24 at 19:14 +0100, Matthew Wilcox wrote:
+> > > On Sat, Jul 24, 2021 at 11:09:02AM -0700, James Bottomley wrote:
+> > > > On Sat, 2021-07-24 at 18:27 +0100, Matthew Wilcox wrote:
+> > > > > What blows me away is the 80% performance improvement for
+> > > > > PostgreSQL. I know they use the page cache extensively, so
+> > > > > it's
+> > > > > plausibly real. I'm a bit surprised that it has such good
+> > > > > locality, and the size of the win far exceeds my
+> > > > > expectations.  We should probably dive into it and figure out
+> > > > > exactly what's going on.
+> > > > 
+> > > > Since none of the other tested databases showed more than a 3%
+> > > > improvement, this looks like an anomalous result specific to
+> > > > something in postgres ... although the next biggest db: mariadb
+> > > > wasn't part of the tests so I'm not sure that's
+> > > > definitive.  Perhaps the next step should be to t
+> > > > est mariadb?  Since they're fairly similar in domain (both full
+> > > > SQL) if mariadb shows this type of improvement, you can
+> > > > safely assume it's something in the way SQL databases handle
+> > > > paging and if it doesn't, it's likely fixing a postgres
+> > > > inefficiency.
+> > > 
+> > > I think the thing that's specific to PostgreSQL is that it's a
+> > > heavy user of the page cache.  My understanding is that most
+> > > databases use direct IO and manage their own page cache, while
+> > > PostgreSQL trusts the kernel to get it right.
 > > 
-> > I have a similar reaction - the large improvements are for a read/write pgbench benchmark at a scale that fits in memory. That's typically purely bound by the speed at which the WAL can be synced to disk. As far as I recall mariadb also uses buffered IO for WAL (but there was recent work in the area).
-> > 
-> > Is there a reason fdatasync() of 16MB files to have got a lot faster? Or a chance that could be broken?
-> > 
-> > Some improvement for read-only wouldn't surprise me, particularly if the os/pg weren't configured for explicit huge pages. Pgbench has a uniform distribution so its *very* tlb miss heavy with 4k pages.
+> > That's testable with mariadb, at least for the innodb engine since
+> > the flush_method is settable. 
 > 
-> It's going to depend substantially on the access pattern.  If the 16MB
-> file (oof, that's tiny!) was read in in large chunks or even in small
-> chunks, but consecutively, the folio changes will allocate larger pages
-> (16k, 64k, 256k, ...).  Theoretically it might get up to 2MB pages and
-> start using PMDs, but I've never seen that in my testing.
+> We're still not communicating well.  I'm not talking about writes,
+> I'm talking about reads.  Postgres uses the page cache for reads.
+> InnoDB uses O_DIRECT (afaict).  See articles like this one:
+> https://www.percona.com/blog/2018/02/08/fsync-performance-storage-devices/
 
-The 16MB files are just for the WAL/journal, and are write only in a benchmark like this. With pgbench it'll be written in small consecutive chunks (a few pages at a time, for each group commit). Each page is only written once, until after a checkpoint the entire file is "recycled" (renamed into the future of the WAL stream) and reused from start.
+If it were all about reads, wouldn't the Phoronix pgbench read only
+test have shown a better improvement than 7%?  I think the Phoronix
+data shows that whatever it is it's to do with writes ... that does
+imply something in the way the log syncs data.
 
-The data files are 1GB.
-
-
-> fdatasync() could indeed have got much faster.  If we're writing back a
-> 256kB page as a unit, we're handling 64 times less metadata than writing
-> back 64x4kB pages.  We'll track 64x less dirty bits.  We'll find only
-> 64 dirty pages per 16MB instead of 4096 dirty pages.
-
-The dirty writes will be 8-32k or so in this workload - the constant commits require the WAL to constantly be flushed.
+James
 
 
-> It's always possible I just broke something.  The xfstests aren't
-> exhaustive, and no regressions doesn't mean no problems.
-> 
-> Can you guide Michael towards parameters for pgbench that might give
-> an indication of performance on a more realistic workload that doesn't
-> entirely fit in memory?
-
-Fitting in memory isn't bad - that's a large post of real workloads. It just makes it hard to believe the performance improvement, given that we expect to be bound by disk sync speed...
-
-Michael, where do I find more details about the codification used during the run?
-
-Regards,
-
-Andres
