@@ -2,138 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 734BF3D4842
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 17:14:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A5653D48E0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jul 2021 19:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbhGXOeF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Jul 2021 10:34:05 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:50944 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229944AbhGXOdx (ORCPT
+        id S229689AbhGXQri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Jul 2021 12:47:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54612 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229535AbhGXQri (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Jul 2021 10:33:53 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Ugohg-R_1627139662;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Ugohg-R_1627139662)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 24 Jul 2021 23:14:23 +0800
-Date:   Sat, 24 Jul 2021 23:14:22 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 2/2] iomap: Support inline data with block size < page
- size
-Message-ID: <YPwuTsBAsUSSOIvo@B-P7TQMD6M-0146.local>
-Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-xfs@vger.kernel.org
-References: <20210724034435.2854295-1-willy@infradead.org>
- <20210724034435.2854295-3-willy@infradead.org>
- <YPubNbDS0KgUALtt@B-P7TQMD6M-0146.local>
- <YPwdzD+nf9rStDI3@casper.infradead.org>
+        Sat, 24 Jul 2021 12:47:38 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D640C061575;
+        Sat, 24 Jul 2021 10:28:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=R/q2OUFHGHnNOj2YWSRkzWiiQH0hVUMtLRqj4jzPJgI=; b=gky8adROBWilg+idqPXV+hW/r0
+        G/T/24vDtwXzirAYXoSMJL0OFgxbeHHb9dBijq4Hdx5aE6ruopVRBxiNXg2Ru35hosdK1HjAHxn/L
+        joFlAgkSTuo3tM9QI2DL+fMGt/rqtTCt10rMHmMv2Ze0SqKAqsm66VYhMw0/sCZmm7L6yObMp6Qfr
+        /GrFP39f5wcfT8XHXRgyZRasl1YekSlNMRiLjuKPKh23854ciMhfGFy+3C8SeaFYhPyWbChjaQMNY
+        SfiprTA4hFxIL3DoJyBPydDPdFdnOpj5u5AXMLIbMVm50LnUiwZe204L/IG6oW/40+uEkeuSnX2gr
+        rtbRNriA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m7LRB-00CQK6-H6; Sat, 24 Jul 2021 17:28:00 +0000
+Date:   Sat, 24 Jul 2021 18:27:45 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Andres Freund <andres@anarazel.de>,
+        Michael Larabel <Michael@michaellarabel.com>
+Subject: Folios give an 80% performance win
+Message-ID: <YPxNkRYMuWmuRnA5@casper.infradead.org>
+References: <20210715033704.692967-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YPwdzD+nf9rStDI3@casper.infradead.org>
+In-Reply-To: <20210715033704.692967-1-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 24, 2021 at 03:03:56PM +0100, Matthew Wilcox wrote:
-> On Sat, Jul 24, 2021 at 12:46:45PM +0800, Gao Xiang wrote:
-> > Hi Matthew,
-> > 
-> > On Sat, Jul 24, 2021 at 04:44:35AM +0100, Matthew Wilcox (Oracle) wrote:
-> > > Remove the restriction that inline data must start on a page boundary
-> > > in a file.  This allows, for example, the first 2KiB to be stored out
-> > > of line and the trailing 30 bytes to be stored inline.
-> > > 
-> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > ---
-> > >  fs/iomap/buffered-io.c | 18 ++++++++----------
-> > >  1 file changed, 8 insertions(+), 10 deletions(-)
-> > > 
-> > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > > index 7bd8e5de996d..d7d6af29af7f 100644
-> > > --- a/fs/iomap/buffered-io.c
-> > > +++ b/fs/iomap/buffered-io.c
-> > > @@ -209,25 +209,23 @@ static int iomap_read_inline_data(struct inode *inode, struct page *page,
-> > >  		struct iomap *iomap, loff_t pos)
-> > >  {
-> > >  	size_t size = iomap->length + iomap->offset - pos;
-> > > +	size_t poff = offset_in_page(pos);
-> > >  	void *addr;
-> > >  
-> > >  	if (PageUptodate(page))
-> > > -		return PAGE_SIZE;
-> > > +		return PAGE_SIZE - poff;
-> > >  
-> > > -	/* inline data must start page aligned in the file */
-> > > -	if (WARN_ON_ONCE(offset_in_page(pos)))
-> > > -		return -EIO;
-> > >  	if (WARN_ON_ONCE(!iomap_inline_data_size_valid(iomap)))
-> > >  		return -EIO;
-> > > -	if (WARN_ON_ONCE(page_has_private(page)))
-> > > -		return -EIO;
-> > > +	if (poff > 0)
-> > > +		iomap_page_create(inode, page);
-> > 
-> > Thanks for the patch!
-> > 
-> > Previously I'd like to skip the leading uptodate blocks and update the
-> > extent it covers that is due to already exist iop. If we get rid of the
-> > offset_in_page(pos) restriction like this, I'm not sure if we (or some
-> > other fs users) could face something like below (due to somewhat buggy
-> > fs users likewise):
-> > 
-> >  [0 - 4096)    plain block
-> > 
-> >  [4096 - 4608)  tail INLINE 1 (e.g. by mistake or just splitted
-> >                                     .iomap_begin() report.)
-> >  [4608 - 5120]  tail INLINE 2
-> 
-> My assumption is that an INLINE extent is <= block_size.  Otherwise
-> the first part of the extent would be not-inline.  So this would be
-> a bug in the filesystem; [4096-4608) should not be an inline extent.
+On Thu, Jul 15, 2021 at 04:34:46AM +0100, Matthew Wilcox (Oracle) wrote:
+> Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
+> benefit from a larger "page size".  As an example, an earlier iteration
+> of this idea which used compound pages (and wasn't particularly tuned)
+> got a 7% performance boost when compiling the kernel.
 
-Yes, never mind. Sorry about again.
+I want to thank Michael Larabel for his benchmarking effort:
+https://www.phoronix.com/scan.php?page=news_item&px=Folios-v14-Testing-AMD-Linux
 
-> 
-> > with this code iomap_set_range_uptodate() wouldn't behave correctly.
-> > 
-> > In addition, currently EROFS cannot test such path (since EROFS is
-> > page-sized block only for now) as Darrick said in the previous reply,
-> > so I think it would be better together with the folio patchset and
-> > targeted for the corresponding merge window, so I can test iomap
-> > supported EROFS with the new folio support together (That also give
-> > me some time to support sub-pagesized uncompressed blocks...)
-> 
-> Do you want to test erofs with multi-page folios?  That might be
-> even more interesting than block size < page size.
+I'm not too surprised by the lack of performance change on the majority
+of benchmarks.  This patch series is only going to change things for
+heavy users of the page cache (ie it'll do nothing for anon memory users),
+and it's only really a benefit for programs that have good locality.
 
-Hmm.. I'm busy in developing for some new scenario. Will look into
-that after the current busy period.
+What blows me away is the 80% performance improvement for PostgreSQL.
+I know they use the page cache extensively, so it's plausibly real.
+I'm a bit surprised that it has such good locality, and the size of the
+win far exceeds my expectations.  We should probably dive into it and
+figure out exactly what's going on.
 
-> 
-> > > -	addr = kmap_atomic(page);
-> > > +	addr = kmap_atomic(page) + poff;
-> > >  	memcpy(addr, iomap_inline_buf(iomap, pos), size);
-> > > -	memset(addr + size, 0, PAGE_SIZE - size);
-> > > +	memset(addr + size, 0, PAGE_SIZE - poff - size);
-> > >  	kunmap_atomic(addr);
-> > 
-> > As my limited understanding, this may need to be fixed, since it
-> > doesn't match kmap_atomic(page)...
-> 
-> void kunmap_local_indexed(void *vaddr)
-> {
->         unsigned long addr = (unsigned long) vaddr & PAGE_MASK;
-> 
-> so it's fine to unmap any address in the page.
-
-I already checked this (in practice it has no problem due to the
-current implementation), yet I'm not quite sure if it matches the
-API usage, and not quite sure how many in-kernel users use like this.
-
-Thanks,
-Gao Xiang
+Should we accelerate inclusion of this patchset?  Right now, I have
+89 mm patches queued up for the 5.15 merge window.  My plan was to get
+the 17 iomap + block patches, plus another 18 page cache patches into
+5.16 and then get the 14 multi-page folio patches into 5.17.  But I'm
+mindful of the longterm release coming up "soon", and I'm not sure we're
+best served by multiple distros trying to backport the multi-page folio
+patches to either 5.15 or 5.16.
