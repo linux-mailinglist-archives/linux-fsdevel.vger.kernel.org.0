@@ -2,177 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5214C3D577A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 12:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 193D93D5838
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 13:06:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232307AbhGZJsZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jul 2021 05:48:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231421AbhGZJsY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jul 2021 05:48:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3577A60F22;
-        Mon, 26 Jul 2021 10:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627295333;
-        bh=Q65wTxj8papDGcJgc1J3joFcMnqpS0z8nz0sG+q3sxg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I2Q/4Rva/RhthB6gI3WyVPrWUJVPx67RSGyIOzspJjxIpyA16Os8henvyDWoLa3Y2
-         QBzOm4QDF7TAzSXNw8SCdQxAEd9KBBHqsAlkfPDv1wfo5vOK9UlpaJ2X0hXVfOSfDq
-         qJ3WjZeuaYFZ10Uw4V0FceBeGRmpGw8gMBG/r3MkgLUoh8g7/z0eOXBuqkN/UtIw7R
-         HVuXafM6m5J7gejBj1jQvnidifG/OMxbUn7IQGF2inOBC0AOC6gYSyYWmgYz5k09eA
-         nu3/GAXtWvSCGSe9suy/OiHuwudhSi5YWkDhbt5QmPne0dzNxuAne1HBlV1CQOUic0
-         wsXzJWTKthviQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 01/21] namei: add mapping aware lookup helper
-Date:   Mon, 26 Jul 2021 12:27:56 +0200
-Message-Id: <20210726102816.612434-2-brauner@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210726102816.612434-1-brauner@kernel.org>
-References: <20210726102816.612434-1-brauner@kernel.org>
+        id S232498AbhGZKZx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jul 2021 06:25:53 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40177 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232240AbhGZKZw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Jul 2021 06:25:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1627297581;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ad2ryKrfK6sJyTkUWOpK6mUvcD3y5ZEk3RAUKPbVjNc=;
+        b=cwi3AxDbqO2j34kUGNOwYI+DKPy1CR1D8YKkU4D2aSgnFWr67KxmSYOucqvP7WH9+B0Elf
+        5WpuR4QUGPUFnoOWrHi1lQs0J9BR8wRBlIua8XiheivVwLCiuFiqYu+BJk3dzUig4vI5Ei
+        1yls3mnf2+7nlXLF0/IbBqqmfZtJhHg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-23-w0pUUMoZMBaG1V_MtCOAzw-1; Mon, 26 Jul 2021 07:06:19 -0400
+X-MC-Unique: w0pUUMoZMBaG1V_MtCOAzw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BDB848799F6;
+        Mon, 26 Jul 2021 11:06:17 +0000 (UTC)
+Received: from max.com (unknown [10.40.194.164])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 277C810016F8;
+        Mon, 26 Jul 2021 11:06:14 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Huang Jianan <huangjianan@oppo.com>,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+Subject: Re: [PATCH v7] iomap: make inline data support more flexible
+Date:   Mon, 26 Jul 2021 13:06:11 +0200
+Message-Id: <20210726110611.459173-1-agruenba@redhat.com>
+In-Reply-To: <CAHpGcMKZP8b3TbRv3D-pcrE_iDU5TKUFHst9emuQmRPntFSArA@mail.gmail.com>
+References: <CAHpGcMKZP8b3TbRv3D-pcrE_iDU5TKUFHst9emuQmRPntFSArA@mail.gmail.com> <CAHpGcMJBhWcwteLDSBU3hgwq1tk_+LqogM1ZM=Fv8U0VtY5hMg@mail.gmail.com> <20210723174131.180813-1-hsiangkao@linux.alibaba.com> <20210725221639.426565-1-agruenba@redhat.com> <YP4zUvnBCAb86Mny@B-P7TQMD6M-0146.local>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4654; h=from:subject; bh=hz8lZ5Aw+HWLOcVYddCv6SoN2CluB8W6yBJZblizz5M=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST86zNgN5p4SPBhTaJLwYlo178b658tbfY7sW7K2fcbFwWz HxD+2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRyysZ/rv80FPc993IZ+ehXGWZfO umjTIXtuWwhLv2/HhcyNqXv53hr0QjY6f0XN7D7mqqK9M5pxqlTsnbkD/HgfnZUr3K0rit/AA=
-X-Developer-Key: i=christian.brauner@ubuntu.com; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+Here's the promised update.  Passes fstests on gfs2.
 
-Various filesystems rely on the lookup_one_len() helper to lookup a single path
-component relative to a well-known starting point. Allow such filesystems to
-support idmapped mounts by adding a version of this helper to take the idmap
-into account when calling inode_permission(). This change is a required to let
-btrfs (and other filesystems) support idmapped mounts.
+Thanks,
+Andreas
 
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+--
+
+Subject: iomap: Support tail packing
+
+The existing inline data support only works for cases where the entire
+file is stored as inline data.  For larger files, EROFS stores the
+initial blocks separately and then can pack a small tail adjacent to the
+inode.  Generalise inline data to allow for tail packing.  Tails may not
+cross a page boundary in memory.
+
+We currently have no filesystems that support tail packing and writing,
+so that case is currently disabled (see iomap_write_begin_inline).  I'm
+not aware of any reason why this code path shouldn't work, however.
+
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Darrick J. Wong <djwong@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 ---
-/* v2 */
-- Al Viro <viro@zeniv.linux.org.uk>:
-  - Add a new lookup helper instead of changing the old ones.
+ fs/iomap/buffered-io.c | 38 +++++++++++++++++++++++++-------------
+ fs/iomap/direct-io.c   |  9 +++++----
+ include/linux/iomap.h  | 20 +++++++++++++++++++-
+ 3 files changed, 49 insertions(+), 18 deletions(-)
 
-/* v3 */
-unchanged
----
- fs/namei.c            | 44 +++++++++++++++++++++++++++++++++++++------
- include/linux/namei.h |  2 ++
- 2 files changed, 40 insertions(+), 6 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index bf6d8a738c59..8f416698ee34 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2575,8 +2575,9 @@ int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
- }
- EXPORT_SYMBOL(vfs_path_lookup);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 87ccb3438bec..dee6b0952ef8 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -205,25 +205,29 @@ struct iomap_readpage_ctx {
+ 	struct readahead_control *rac;
+ };
  
--static int lookup_one_len_common(const char *name, struct dentry *base,
--				 int len, struct qstr *this)
-+static int lookup_one_len_common(struct user_namespace *mnt_userns,
-+				 const char *name, struct dentry *base, int len,
-+				 struct qstr *this)
+-static void
+-iomap_read_inline_data(struct inode *inode, struct page *page,
++static int iomap_read_inline_data(struct inode *inode, struct page *page,
+ 		struct iomap *iomap)
  {
- 	this->name = name;
- 	this->len = len;
-@@ -2604,7 +2605,7 @@ static int lookup_one_len_common(const char *name, struct dentry *base,
- 			return err;
+-	size_t size = i_size_read(inode);
++	size_t size = i_size_read(inode) - iomap->offset;
+ 	void *addr;
+ 
+ 	if (PageUptodate(page))
+-		return;
++		return 0;
+ 
+-	BUG_ON(page_has_private(page));
+-	BUG_ON(page->index);
+-	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	/* inline and tail-packed data must start page aligned in the file */
++	if (WARN_ON_ONCE(offset_in_page(iomap->offset)))
++		return -EIO;
++	if (WARN_ON_ONCE(size > PAGE_SIZE - offset_in_page(iomap->inline_data)))
++		return -EIO;
++	if (WARN_ON_ONCE(page_has_private(page)))
++		return -EIO;
+ 
+ 	addr = kmap_atomic(page);
+ 	memcpy(addr, iomap->inline_data, size);
+ 	memset(addr + size, 0, PAGE_SIZE - size);
+ 	kunmap_atomic(addr);
+ 	SetPageUptodate(page);
++	return 0;
+ }
+ 
+ static inline bool iomap_block_needs_zeroing(struct inode *inode,
+@@ -247,9 +251,8 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	sector_t sector;
+ 
+ 	if (iomap->type == IOMAP_INLINE) {
+-		WARN_ON_ONCE(pos);
+-		iomap_read_inline_data(inode, page, iomap);
+-		return PAGE_SIZE;
++		int ret = iomap_read_inline_data(inode, page, iomap);
++		return ret ?: PAGE_SIZE;
  	}
  
--	return inode_permission(&init_user_ns, base->d_inode, MAY_EXEC);
-+	return inode_permission(mnt_userns, base->d_inode, MAY_EXEC);
+ 	/* zero post-eof blocks as the page may be mapped */
+@@ -589,6 +592,15 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+ 	return 0;
  }
  
- /**
-@@ -2628,7 +2629,7 @@ struct dentry *try_lookup_one_len(const char *name, struct dentry *base, int len
- 
- 	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
- 
--	err = lookup_one_len_common(name, base, len, &this);
-+	err = lookup_one_len_common(&init_user_ns, name, base, len, &this);
- 	if (err)
- 		return ERR_PTR(err);
- 
-@@ -2655,7 +2656,7 @@ struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
- 
- 	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
- 
--	err = lookup_one_len_common(name, base, len, &this);
-+	err = lookup_one_len_common(&init_user_ns, name, base, len, &this);
- 	if (err)
- 		return ERR_PTR(err);
- 
-@@ -2664,6 +2665,37 @@ struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
- }
- EXPORT_SYMBOL(lookup_one_len);
- 
-+/**
-+ * lookup_mapped_one_len - filesystem helper to lookup single pathname component
-+ * @mnt_userns:	user namespace of the mount the lookup is performed from
-+ * @name:	pathname component to lookup
-+ * @base:	base directory to lookup from
-+ * @len:	maximum length @len should be interpreted to
-+ *
-+ * Note that this routine is purely a helper for filesystem usage and should
-+ * not be called by generic code.
-+ *
-+ * The caller must hold base->i_mutex.
-+ */
-+struct dentry *lookup_mapped_one_len(struct user_namespace *mnt_userns,
-+				     const char *name, struct dentry *base,
-+				     int len)
++static int iomap_write_begin_inline(struct inode *inode,
++		struct page *page, struct iomap *srcmap)
 +{
-+	struct dentry *dentry;
-+	struct qstr this;
-+	int err;
-+
-+	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
-+
-+	err = lookup_one_len_common(mnt_userns, name, base, len, &this);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	dentry = lookup_dcache(&this, base, 0);
-+	return dentry ? dentry : __lookup_slow(&this, base, 0);
++	/* needs more work for the tailpacking case, disable for now */
++	if (WARN_ON_ONCE(srcmap->offset != 0))
++		return -EIO;
++	return iomap_read_inline_data(inode, page, srcmap);
 +}
-+EXPORT_SYMBOL(lookup_mapped_one_len);
 +
- /**
-  * lookup_one_len_unlocked - filesystem helper to lookup single pathname component
-  * @name:	pathname component to lookup
-@@ -2683,7 +2715,7 @@ struct dentry *lookup_one_len_unlocked(const char *name,
- 	int err;
- 	struct dentry *ret;
+ static int
+ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+ 		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
+@@ -618,7 +630,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+ 	}
  
--	err = lookup_one_len_common(name, base, len, &this);
-+	err = lookup_one_len_common(&init_user_ns, name, base, len, &this);
- 	if (err)
- 		return ERR_PTR(err);
+ 	if (srcmap->type == IOMAP_INLINE)
+-		iomap_read_inline_data(inode, page, srcmap);
++		status = iomap_write_begin_inline(inode, page, srcmap);
+ 	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
+ 		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
+ 	else
+@@ -671,11 +683,11 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
+ 	void *addr;
  
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index be9a2b349ca7..fd9d22128df6 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -68,6 +68,8 @@ extern struct dentry *try_lookup_one_len(const char *, struct dentry *, int);
- extern struct dentry *lookup_one_len(const char *, struct dentry *, int);
- extern struct dentry *lookup_one_len_unlocked(const char *, struct dentry *, int);
- extern struct dentry *lookup_positive_unlocked(const char *, struct dentry *, int);
-+extern struct dentry *lookup_mapped_one_len(struct user_namespace *,
-+					    const char *, struct dentry *, int);
+ 	WARN_ON_ONCE(!PageUptodate(page));
+-	BUG_ON(pos + copied > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	BUG_ON(!iomap_inline_data_size_valid(iomap));
  
- extern int follow_down_one(struct path *);
- extern int follow_down(struct path *);
+ 	flush_dcache_page(page);
+ 	addr = kmap_atomic(page);
+-	memcpy(iomap->inline_data + pos, addr + pos, copied);
++	memcpy(iomap_inline_data(iomap, pos), addr + pos, copied);
+ 	kunmap_atomic(addr);
+ 
+ 	mark_inode_dirty(inode);
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 9398b8c31323..6fdae86d0f1d 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -380,21 +380,22 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
+ 	struct iov_iter *iter = dio->submit.iter;
+ 	size_t copied;
+ 
+-	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	if (WARN_ON_ONCE(!iomap_inline_data_size_valid(iomap)))
++		return -EIO;
+ 
+ 	if (dio->flags & IOMAP_DIO_WRITE) {
+ 		loff_t size = inode->i_size;
+ 
+ 		if (pos > size)
+-			memset(iomap->inline_data + size, 0, pos - size);
+-		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
++			memset(iomap_inline_data(iomap, size), 0, pos - size);
++		copied = copy_from_iter(iomap_inline_data(iomap, pos), length, iter);
+ 		if (copied) {
+ 			if (pos + copied > size)
+ 				i_size_write(inode, pos + copied);
+ 			mark_inode_dirty(inode);
+ 		}
+ 	} else {
+-		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
++		copied = copy_to_iter(iomap_inline_data(iomap, pos), length, iter);
+ 	}
+ 	dio->size += copied;
+ 	return copied;
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 479c1da3e221..c6af1ef608c6 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -28,7 +28,7 @@ struct vm_fault;
+ #define IOMAP_DELALLOC	1	/* delayed allocation blocks */
+ #define IOMAP_MAPPED	2	/* blocks allocated at @addr */
+ #define IOMAP_UNWRITTEN	3	/* blocks allocated at @addr in unwritten state */
+-#define IOMAP_INLINE	4	/* data inline in the inode */
++#define IOMAP_INLINE	4	/* inline or tail-packed data */
+ 
+ /*
+  * Flags reported by the file system from iomap_begin:
+@@ -97,6 +97,24 @@ iomap_sector(struct iomap *iomap, loff_t pos)
+ 	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+ }
+ 
++/*
++ * Returns the inline data pointer for logical offset @pos.
++ */
++static inline void *iomap_inline_data(struct iomap *iomap, loff_t pos)
++{
++	return iomap->inline_data + pos - iomap->offset;
++}
++
++/*
++ * Check if the mapping's length is within the valid range for inline data.
++ * This is used to guard against accessing data beyond the page inline_data
++ * points at.
++ */
++static inline bool iomap_inline_data_size_valid(struct iomap *iomap)
++{
++	return iomap->length <= PAGE_SIZE - offset_in_page(iomap->inline_data);
++}
++
+ /*
+  * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
+  * and page_done will be called for each page written to.  This only applies to
 -- 
-2.30.2
+2.26.3
 
