@@ -2,87 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC7B3D5370
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 08:58:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FE2A3D53B6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 09:16:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231918AbhGZGQo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jul 2021 02:16:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29059 "EHLO
+        id S232250AbhGZGeC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jul 2021 02:34:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:60562 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231795AbhGZGQo (ORCPT
+        by vger.kernel.org with ESMTP id S232207AbhGZGeB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jul 2021 02:16:44 -0400
+        Mon, 26 Jul 2021 02:34:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1627282632;
+        s=mimecast20190719; t=1627283669;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hoM+40XrUs08/iafF0W5TlGWYGpGG8kF5CcKon7tTtw=;
-        b=JH4sTO+ItS2ylGohJwbMuzFe7NEZ3thd+ywlWkIUP9ewujUW9bwlMzAVTXbl/gbZXPPl4J
-        PB1abFQNDILxsZyU8d9L/mkWS3c0klcJkej+dG2yTWykuYghRbqDSCtLcZiCyHJ/AYzTp1
-        /FEh1U3AJ31u6abG5osRgHkYM+XJfOA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-25-LQmr-HhoOgO-89wwiSsjAQ-1; Mon, 26 Jul 2021 02:57:10 -0400
-X-MC-Unique: LQmr-HhoOgO-89wwiSsjAQ-1
-Received: by mail-wr1-f70.google.com with SMTP id s16-20020adfdb100000b0290140a25efc6dso4345692wri.5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jul 2021 23:57:10 -0700 (PDT)
+        bh=um4df6F+Tcs1NedbhaEs9ICFL4JEkb2ohkfDmaRpXVs=;
+        b=HdnxcrnE9PyzpgE4b4yqNeXuzbLGuc5mu+BoNa8WdKmEgkUsbrZweEAbaDgdVG599z1bPn
+        /tgVP/+z3SG4Jx0LyZGJeuHrMvy/bCcfROrLbYV1EAC2ShAhCETm5A1dOjXkv9B8655s8D
+        kAghvLQmEWyTkHZGzHHZ3yjrQwRTKTI=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-36-4zuSIHD9Mf6nKi8E5E68zg-1; Mon, 26 Jul 2021 03:14:28 -0400
+X-MC-Unique: 4zuSIHD9Mf6nKi8E5E68zg-1
+Received: by mail-wm1-f72.google.com with SMTP id n7-20020a05600c3b87b029024e59a633baso2407859wms.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jul 2021 00:14:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hoM+40XrUs08/iafF0W5TlGWYGpGG8kF5CcKon7tTtw=;
-        b=i/uz1KHF52OLJcThzLz9EPcsp6IeuNkhP9ZelBIbQ21w5RcLWg1N6QcooS+LMeanV8
-         Zf7ACros7DvkVPNwdVPPq6lryVtkaFC3r65HI6SlF1tE1YTr7JWin/17oDhn5n+EVlKp
-         J74wa0cP52IpAS6efGvArkzwg0UQmMlSLdPF2vwgT2AMkFyLkg9rPTdh9SrE+Qb0OMVl
-         0agrv0Fdd1NnOd5lioU/WWqB1iHY2+1RWdJZVylOeIWMQzols9/2dbtI3QpBL9sUWPKk
-         JC7ybN6UQoheVpFbnVzxyZdpQAifxsgr6c03qD0X7mv3gH87B5cdVzCgPGAg0IiRM+Gf
-         Z/Zw==
-X-Gm-Message-State: AOAM5339NXQY87PB15SHhvr7ohqTJII5QL308R+aGtsGiDgAM8b5lQED
-        hkwcuG9hEard94mXyHLHaE0rhgF2/opkjPZ1qEmotC0olg+Bs3gmKQd8ADAvfzRm3fjUDtjupKc
-        moKBJY6c4ITxKRP75amFSJHxNPlTsPANXMx9rjRpTkA==
-X-Received: by 2002:a05:600c:2319:: with SMTP id 25mr9998430wmo.27.1627282629744;
-        Sun, 25 Jul 2021 23:57:09 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy1d7vnal7HJ1PcZ4njvl3+oYt3GMB7C300ETtzmpr8AsBsi2dyhup0b5RU8e3Tw7o3XKPki+Q+cwnpDOXFJvY=
-X-Received: by 2002:a05:600c:2319:: with SMTP id 25mr9998417wmo.27.1627282629625;
- Sun, 25 Jul 2021 23:57:09 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=um4df6F+Tcs1NedbhaEs9ICFL4JEkb2ohkfDmaRpXVs=;
+        b=QXmb3UFIkjrdjmiDsJ78MOFFyDslF5w1K0MMu/8baNm7IAjUkb+/jS94VsV9C0LXjQ
+         XcnWfSLhB457aLBBTUnmHDqsnRmApVDqK5zxGMZEed05RJY4beglVrS9LoSzng/BOJ5W
+         dc4WRP15r1dpfRvIsMCr6NmXLWvRXX0Qt8hYko3/rRNtxUX0Gqq/1qtuh2o2gpUxC/KZ
+         LzQqzcFr21Ik3ShnjmBUY5pCum4mt6Z28wrUKowh/YlyaulZ8VTW1NZaP4+mfaMQKJVM
+         un/TcM7vtcgYqDlwtYsf0tvOisULBPalbu8E0VWcQnTeifeL6PRlJY3zxxMY2q+7bzEv
+         oMww==
+X-Gm-Message-State: AOAM530+28F9dRQx/BVA/kZa6ykhb0A6eIkIO7NLsFHYzoLRmk45Dur4
+        MO+lUxZBcWyCNM50ZxNsaBzoRyHMtZX21JYXhIAyx/ELyM+/BpNkPDutAg+O+tJrKu5GG8tx3UE
+        E0/9nFGTHibkwYGxYmHZ2GCj+Kg==
+X-Received: by 2002:a05:600c:a08:: with SMTP id z8mr11306683wmp.52.1627283667217;
+        Mon, 26 Jul 2021 00:14:27 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyrJ5ioNqCfkDgUWTA7YxeWf82kzHlJSCsGt9E8hJ1xGP6IhEO9RD5CtVqgDVl+ePM/lAAEqw==
+X-Received: by 2002:a05:600c:a08:: with SMTP id z8mr11306664wmp.52.1627283667006;
+        Mon, 26 Jul 2021 00:14:27 -0700 (PDT)
+Received: from [192.168.3.132] (p4ff23b33.dip0.t-ipconnect.de. [79.242.59.51])
+        by smtp.gmail.com with ESMTPSA id d203sm7830431wmd.38.2021.07.26.00.14.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Jul 2021 00:14:26 -0700 (PDT)
+Subject: Re: mmotm 2021-07-23-15-03 uploaded (mm/memory_hotplug.c)
+To:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+References: <20210723220400.w5iKInKaC%akpm@linux-foundation.org>
+ <5966f6a2-bdba-3a54-c6cb-d21aaeb8f534@infradead.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Message-ID: <5394da5e-29f0-ff7d-e614-e2805400a8bb@redhat.com>
+Date:   Mon, 26 Jul 2021 09:14:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <CAHpGcMJBhWcwteLDSBU3hgwq1tk_+LqogM1ZM=Fv8U0VtY5hMg@mail.gmail.com>
- <20210723174131.180813-1-hsiangkao@linux.alibaba.com> <20210725221639.426565-1-agruenba@redhat.com>
- <YP4mzBixPoBgGCCR@casper.infradead.org>
-In-Reply-To: <YP4mzBixPoBgGCCR@casper.infradead.org>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Mon, 26 Jul 2021 08:56:58 +0200
-Message-ID: <CAHc6FU6C44b=u3YJmL9VSZGwLK3wAVxgnNdxx87RmEwVbRUB=w@mail.gmail.com>
-Subject: Re: [PATCH v7] iomap: make inline data support more flexible
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Gao Xiang <hsiangkao@linux.alibaba.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Huang Jianan <huangjianan@oppo.com>,
-        linux-erofs@lists.ozlabs.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5966f6a2-bdba-3a54-c6cb-d21aaeb8f534@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 26, 2021 at 5:07 AM Matthew Wilcox <willy@infradead.org> wrote:
-> On Mon, Jul 26, 2021 at 12:16:39AM +0200, Andreas Gruenbacher wrote:
-> > @@ -247,7 +251,6 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> >       sector_t sector;
-> >
-> >       if (iomap->type == IOMAP_INLINE) {
-> > -             WARN_ON_ONCE(pos);
-> >               iomap_read_inline_data(inode, page, iomap);
-> >               return PAGE_SIZE;
->
-> This surely needs to return -EIO if there was an error.
+On 24.07.21 20:49, Randy Dunlap wrote:
+> On 7/23/21 3:04 PM, akpm@linux-foundation.org wrote:
+>> The mm-of-the-moment snapshot 2021-07-23-15-03 has been uploaded to
+>>
+>>     https://www.ozlabs.org/~akpm/mmotm/
+>>
+>> mmotm-readme.txt says
+>>
+>> README for mm-of-the-moment:
+>>
+>> https://www.ozlabs.org/~akpm/mmotm/
+>>
+>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> more than once a week.
+>>
+>> You will need quilt to apply these patches to the latest Linus release (5.x
+>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>> https://ozlabs.org/~akpm/mmotm/series
+>>
+>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>> followed by the base kernel version against which this patch series is to
+>> be applied.
+>>
+> 
+> on x86_64:
+> # CONFIG_CMA is not set
+> 
+> mm-memory_hotplug-memory-group-aware-auto-movable-online-policy.patch
+> 
+> 
+> 
+> ../mm/memory_hotplug.c: In function ‘auto_movable_stats_account_zone’:
+> ../mm/memory_hotplug.c:748:33: error: ‘struct zone’ has no member named ‘cma_pages’; did you mean ‘managed_pages’?
+>     stats->movable_pages += zone->cma_pages;
+>                                   ^~~~~~~~~
+>                                   managed_pages
+> ../mm/memory_hotplug.c:750:38: error: ‘struct zone’ has no member named ‘cma_pages’; did you mean ‘managed_pages’?
+>     stats->kernel_early_pages -= zone->cma_pages;
+>                                        ^~~~~~~~~
+>                                        managed_pages
+> 
+> 
 
-Hmm, right.
+Thanks Randy, the following on top should make it fly:
 
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index bfdaa28eb86f..fa1a0afd32ba 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -741,13 +741,15 @@ static void auto_movable_stats_account_zone(struct auto_movable_stats *stats,
+         if (zone_idx(zone) == ZONE_MOVABLE) {
+                 stats->movable_pages += zone->present_pages;
+         } else {
++               stats->kernel_early_pages += zone->present_early_pages;
++#ifdef CONFIG_CMA
+                 /*
+                  * CMA pages (never on hotplugged memory) behave like
+                  * ZONE_MOVABLE.
+                  */
+                 stats->movable_pages += zone->cma_pages;
+-               stats->kernel_early_pages += zone->present_early_pages;
+                 stats->kernel_early_pages -= zone->cma_pages;
++#endif /* CONFIG_CMA */
+         }
+  }
+  struct auto_movable_group_stats {
+
+
+-- 
 Thanks,
-Andreas
+
+David / dhildenb
 
