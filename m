@@ -2,64 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5FFE3D65A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 19:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C82E33D65B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 19:27:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240687AbhGZQoj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jul 2021 12:44:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40374 "EHLO
+        id S241414AbhGZQrA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jul 2021 12:47:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240647AbhGZQof (ORCPT
+        with ESMTP id S239792AbhGZQqz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jul 2021 12:44:35 -0400
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B236C08E9BB
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jul 2021 10:04:02 -0700 (PDT)
-Received: by mail-ua1-x92c.google.com with SMTP id 105so2498236uac.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jul 2021 10:04:02 -0700 (PDT)
+        Mon, 26 Jul 2021 12:46:55 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D0D3C09B129
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jul 2021 10:15:51 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id b21so12130250ljo.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jul 2021 10:15:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=dqWo1cJKltYm0kgUUF9ha9eRwUy1a0AkQIgFIcHfjZo=;
-        b=ZrkQui4xfvoh3I3+0RO9AnsC9hA6d2y5SUYcQzhjBNWmNbL8jqDotKTCYgPLxHwSyn
-         lRzyaGawC1POaVtcb1WBO6ZYvNKKda/cLE1HKAu06y35UNfMaU+SZhg2Sg/ITrMX5mZX
-         aY7w/vuwGqR77DivElMMtduFPn7OYS9gZ6uJTkaIOZV2uXyGK44xV0KOSgzjsfCNaIYB
-         M40M56gp2sMinPyBMw+picm/L1jFgvx94UIrNEg6y+pF7iSDUZNcfwe+fV3M7ITRFpXS
-         vZw62F7ADAEDflrU7KLrJHZxTeVZltY74Zoyx39jx19DhOQi9XdNmA3BbEOQ6wbRlyyl
-         hG3g==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9nCFSPU1gol0E4rDrQO0oADKpQ2235snVgYBEAYRF9Y=;
+        b=FxPJdanONOHHlkh8d+J5uVuVxTrNApcx9MiCzLB+nhd8tO35LqWJyHr+nxkh4eWigS
+         ZNzz6/AWWNqMLc+6W91Fb7ndI1UZV6LZf2IS1/3v1vXYt+73u2Zxzb6gTHcdLl3xf0YV
+         A1H174iotHYgi5TQ4Xu9vzheCPDn7kIx+3FPg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=dqWo1cJKltYm0kgUUF9ha9eRwUy1a0AkQIgFIcHfjZo=;
-        b=GOULrZ/0xaoEG2OtLU1u3zOsUs/nEs9JmwYLclh45pYhzHVtnqxasoFJjV9qXySX9k
-         HXIyttPGiFbGfvwvoGviDdHke91tBwSogY2QVh14mx9gnVlC6nL6gwKEU9NElQ4D8qfv
-         5/p2F6K90jswTax+SvvUY8Y+ZXWWYxyMoYz11PvlCmYB3MA0OEXz8SrmeCvDnJPO/A6b
-         8CVYq2QOzAjGq8GM/3xHJP34Jx8qQD+nB0CKiu5I1t7cHZEfa9w3EcSEnOIZIeuw+7fS
-         v2DbXGWNsAfb/VWlNnRwHlgoHMf5canKb80D0TFBHvR8GKyLV7HntT83P3yaorxeZ/XQ
-         Cx2Q==
-X-Gm-Message-State: AOAM530jpJHCX0+gcLtDMzrPkf0sCEGMgrV048bSy6R8qbC3lclPZfwK
-        kEOlbiXXqynktM+pbg8heNmOdKABBa9mH+VQEos=
-X-Google-Smtp-Source: ABdhPJzD9TzVFqhv8tfkg7GLtBs0WKbvqyvutRqMRgnT5Xjvk3xmVwgNaLWambJGrdEpFE97ykwOdUU5aAH/wow3OZ8=
-X-Received: by 2002:a9f:3e0d:: with SMTP id o13mr11562696uai.143.1627319041625;
- Mon, 26 Jul 2021 10:04:01 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9nCFSPU1gol0E4rDrQO0oADKpQ2235snVgYBEAYRF9Y=;
+        b=dtrbaeVhL95Zzsb+sGw+wD2zvf4MUy5oR2H9V9I9vQQ2b7oNEui3jHaDAzPS/Uu0aw
+         Q9MZ1RzdXXIrUnMxvxQqKi3VJyT6m+g+NacE4vs6wF7g/JWo98wPmWVRRnYVThN+/Ywi
+         AT1m14CqUEJ8N7orOECIGlg3QkGF3jY902Ntk37LmMy5N/GCXeUTuxgnDJ3K73Neq06r
+         ru5MMe9GJUwFlF3gTzKgwwIa5UKv9fmj25LwOZXDE0VBQdFbgY6wmsheSn6XYkOk4t/3
+         86kyL8+VZxjZT2gNguwb3XiELeqFDuQ6jvfukf5pC5rsudojw6JSruw+Mma0o1Eqff0U
+         sh0Q==
+X-Gm-Message-State: AOAM5300iK2NGMOCFPrwxLYrnYQ7F9RXuqW3cx9tQNnVlEtzN4uMBAn2
+        Ua7s9/hHB6JaImPr7wbpSmZ3QozDqDxyWA43
+X-Google-Smtp-Source: ABdhPJyLVavvOH8kLUi3DXUCsBnZz7HcOvkAzy9uGwyDtYqcL9biCExt2t+/Nhy0efvMPYQuNwEiXA==
+X-Received: by 2002:a2e:7319:: with SMTP id o25mr12611837ljc.264.1627319748883;
+        Mon, 26 Jul 2021 10:15:48 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id g9sm54843lfh.95.2021.07.26.10.15.47
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Jul 2021 10:15:48 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id b21so12130113ljo.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jul 2021 10:15:47 -0700 (PDT)
+X-Received: by 2002:a2e:3212:: with SMTP id y18mr12834084ljy.220.1627319747365;
+ Mon, 26 Jul 2021 10:15:47 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:edd6:0:0:0:0:0 with HTTP; Mon, 26 Jul 2021 10:04:01
- -0700 (PDT)
-Reply-To: 1234567officialnicole@gmail.com
-From:   Miss Nicole <leeyan6000@gmail.com>
-Date:   Mon, 26 Jul 2021 17:04:01 +0000
-Message-ID: <CAHPc8MYR5juTnaox2DiUfi9v7vxnUhr7cB1sYs36WRN7Vtww8w@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
+References: <20210723205840.299280-1-agruenba@redhat.com> <20210723205840.299280-2-agruenba@redhat.com>
+ <20210726163326.GK20621@quack2.suse.cz>
+In-Reply-To: <20210726163326.GK20621@quack2.suse.cz>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 26 Jul 2021 10:15:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgqOZmRT_gmAS+K9sA7EYCKM9BYzvJMhy1_P6JaaVGvfA@mail.gmail.com>
+Message-ID: <CAHk-=wgqOZmRT_gmAS+K9sA7EYCKM9BYzvJMhy1_P6JaaVGvfA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] iov_iter: Introduce fault_in_iov_iter helper
+To:     Jan Kara <jack@suse.cz>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Nice to meet you, my name is Miss Nicole from New York but currently
-on mission abroad
-I sent you an email,did you receive it?
-Please reply to this email for more details about myself
-Regards
-Ms. N
+On Mon, Jul 26, 2021 at 9:33 AM Jan Kara <jack@suse.cz> wrote:
+>
+> On Fri 23-07-21 22:58:34, Andreas Gruenbacher wrote:
+> > +     gup_flags = FOLL_TOUCH | FOLL_POPULATE;
+>
+> I don't think FOLL_POPULATE makes sense here. It makes sense only with
+> FOLL_MLOCK and determines whether mlock(2) should fault in missing pages or
+> not.
+
+Yeah, it won't hurt, but FOLL_POPULATE doesn't actually do anything
+unless FOLL_MLOCK is set. It is, as you say, a magic flag just for
+mlock.
+
+The only ones that should matter are FOLL_WRITE (for obvious reasons)
+and FOLL_TOUCH (to set the accessed and dirty bits, rather than just
+th protection bits)
+
+                   Linus
