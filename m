@@ -2,109 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C28563D65C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 19:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 398EC3D6592
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 19:20:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235742AbhGZQsD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jul 2021 12:48:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41328 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236125AbhGZQsA (ORCPT
+        id S241746AbhGZQjt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jul 2021 12:39:49 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:48564 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238015AbhGZQjN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jul 2021 12:48:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F19C0F26E9;
-        Mon, 26 Jul 2021 10:20:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Vqs3NN7xHX7VuOasPLpzjTGLT3AH9xa8Uq7MQmQ6U4c=; b=FHZjLR+NROgvBqw4Rm7M0EuXpa
-        Kq6UeMFn2BtIU2GMt1yXDOwsIQZHALmf+/OE6I98Khff0DHRw8lbz4cZx6pl/fT02klNbbERY4Wl9
-        73UDsnMBCMKydcqtpoq0Np+twUCVzutn0wWZQI/9BkedfPwQ93MnGgGoGg3D/rErUq5MwHPDXsvC6
-        xHMFpHwVQJg3ZVRYJxwGD6376R4w+aik2waOk0pqxN1RhLFxH8wb8tB4GqkYfawx4Ut2aFgesDBw3
-        rcviwx77AEEexcFpnrw6y66YYaEkaDUyP0NlaE8/MYGc7IVElytXGb805x+X6gnoa/0v6x6P+Ej9l
-        Cx7Uu3RA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m84GP-00EExM-FX; Mon, 26 Jul 2021 17:19:47 +0000
-Date:   Mon, 26 Jul 2021 18:19:37 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] fs: reduce pointers while using file_ra_state_init()
-Message-ID: <YP7uqRrXsbCqTpfx@casper.infradead.org>
-References: <20210726164647.brx3l2ykwv3zz7vr@fiona>
+        Mon, 26 Jul 2021 12:39:13 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 63A151FECC;
+        Mon, 26 Jul 2021 17:19:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1627319980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zqJFxm3DslHec2M18KWDSFwDCWT/wQs0v44ZacRghJw=;
+        b=2YBb2jw9T9G6mkASlJjYijLvhkUlorvux5veJW+aM/pXrPugQ1fPtYa55eRRCX4bZnBT42
+        Ex6K01Io2qgEGJdAur9YsMR19EKAtyFTnZgz7k9BH9oyyLR9Ye5lyKzrTkxu1QUvlOAEHI
+        ObJ26+X46A5cPqOwq8VGthxX1mU1glI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1627319980;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zqJFxm3DslHec2M18KWDSFwDCWT/wQs0v44ZacRghJw=;
+        b=77GddXGKjj5sKVpoFtfwFsp261+LjVICZ0p0a3SfxGi2cCD9JTyetXCDtXm5waqN+ATKeQ
+        /GholCGNP9LQLHBA==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 4ECF8A3B85;
+        Mon, 26 Jul 2021 17:19:40 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 1C1F11E3B13; Mon, 26 Jul 2021 19:19:40 +0200 (CEST)
+Date:   Mon, 26 Jul 2021 19:19:40 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com
+Subject: Re: [PATCH v3 5/7] iomap: Support restarting direct I/O requests
+ after user copy failures
+Message-ID: <20210726171940.GM20621@quack2.suse.cz>
+References: <20210723205840.299280-1-agruenba@redhat.com>
+ <20210723205840.299280-6-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210726164647.brx3l2ykwv3zz7vr@fiona>
+In-Reply-To: <20210723205840.299280-6-agruenba@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 26, 2021 at 11:46:47AM -0500, Goldwyn Rodrigues wrote:
-> Simplification.
+On Fri 23-07-21 22:58:38, Andreas Gruenbacher wrote:
+> In __iomap_dio_rw, when iomap_apply returns an -EFAULT error, complete the
+> request synchronously and reset the iterator to the start position.  This
+> allows callers to deal with the failure and retry the operation.
 > 
-> file_ra_state_init() take struct address_space *, just to use inode
-> pointer by dereferencing from mapping->host.
+> In gfs2, we need to disable page faults while we're holding glocks to prevent
+> deadlocks.  This patch is the minimum solution I could find to make
+> iomap_dio_rw work with page faults disabled.  It's still expensive because any
+> I/O that was carried out before hitting -EFAULT needs to be retried.
 > 
-> The callers also derive mapping either by file->f_mapping, or
-> even file->f_mapping->host->i_mapping.
+> A possible improvement would be to add an IOMAP_DIO_FAULT_RETRY or similar flag
+> that would allow iomap_dio_rw to return a short result when hitting -EFAULT.
+> Callers could then retry only the rest of the request after dealing with the
+> page fault.
 > 
-> Change file_ra_state_init() to accept struct inode * to reduce pointer
-> dereferencing, both in the callee and the caller.
+> Asynchronous requests turn into synchronous requests up to the point of the
+> page fault in any case, but they could be retried asynchronously after dealing
+> with the page fault.  To make that work, the completion notification would have
+> to include the bytes read or written before the page fault(s) as well, and we'd
+> need an additional iomap_dio_rw argument for that.
 > 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> ---
+>  fs/iomap/direct-io.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index cc0b4bc8861b..b0a494211bb4 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -561,6 +561,15 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		ret = iomap_apply(inode, pos, count, iomap_flags, ops, dio,
+>  				iomap_dio_actor);
+>  		if (ret <= 0) {
+> +			if (ret == -EFAULT) {
+> +				/*
+> +				 * To allow retrying the request, fail
+> +				 * synchronously and reset the iterator.
+> +				 */
+> +				wait_for_completion = true;
+> +				iov_iter_revert(dio->submit.iter, dio->size);
+> +			}
+> +
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Hum, OK, but this means that if userspace submits large enough write, GFS2
+will livelock trying to complete it? While other filesystems can just
+submit multiple smaller bios constructed in iomap_apply() (paging in
+different parts of the buffer) and thus complete the write?
 
-(some adjacent comments)
+								Honza
 
-> diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
-> index 4806295116d8..c43bf9915cda 100644
-> --- a/fs/btrfs/free-space-cache.c
-> +++ b/fs/btrfs/free-space-cache.c
-> @@ -351,7 +351,7 @@ static void readahead_cache(struct inode *inode)
->  	if (!ra)
->  		return;
->  
-> -	file_ra_state_init(ra, inode->i_mapping);
-> +	file_ra_state_init(ra, inode);
->  	last_index = (i_size_read(inode) - 1) >> PAGE_SHIFT;
->  
->  	page_cache_sync_readahead(inode->i_mapping, ra, NULL, 0, last_index);
-
-Why does btrfs allocate a file_ra_state using kmalloc instead of
-on the stack?
-
-> +++ b/include/linux/fs.h
-> @@ -3260,7 +3260,7 @@ extern long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
->  
->  
->  extern void
-> -file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping);
-> +file_ra_state_init(struct file_ra_state *ra, struct inode *inode);
-
-This should move to pagemap.h (and lose the extern).
-I'd put it near the definition of VM_READAHEAD_PAGES.
-
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index d589f147f4c2..3541941df5e7 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -31,9 +31,9 @@
->   * memset *ra to zero.
->   */
->  void
-> -file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping)
-> +file_ra_state_init(struct file_ra_state *ra, struct inode *inode)
->  {
-> -	ra->ra_pages = inode_to_bdi(mapping->host)->ra_pages;
-> +	ra->ra_pages = inode_to_bdi(inode)->ra_pages;
->  	ra->prev_pos = -1;
->  }
->  EXPORT_SYMBOL_GPL(file_ra_state_init);
-
-I'm not entirely sure why this function is out-of-line, tbh.
-Would it make more sense for it to be static inline in a header?
+>  			/* magic error code to fall back to buffered I/O */
+>  			if (ret == -ENOTBLK) {
+>  				wait_for_completion = true;
+> -- 
+> 2.26.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
