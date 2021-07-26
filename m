@@ -2,74 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E7903D51F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 05:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 588F03D51FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 05:59:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231538AbhGZDSH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Jul 2021 23:18:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53008 "EHLO mail.kernel.org"
+        id S231601AbhGZDSh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Jul 2021 23:18:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230321AbhGZDSG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Jul 2021 23:18:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4FA6960EB2;
-        Mon, 26 Jul 2021 03:58:35 +0000 (UTC)
+        id S230321AbhGZDSh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 25 Jul 2021 23:18:37 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4F48460E78;
+        Mon, 26 Jul 2021 03:59:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627271915;
-        bh=WPLxji5Fu3Q2Q6hrxcLMN8a8q3esfgs4pl4CERub5YQ=;
+        s=k20201202; t=1627271946;
+        bh=S2M7O/hWRwUTq7mbz2jtiILfGuQ8RGSgKtCdk8rgMuE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qgmYCrRdhNjrVPAoHCovW00SjzclRfqwwr+TF3YR2+VJF1OfgIcpNJhkK4eByklBX
-         1XsJZZP4DbXkPdxsLdLYxA0F0+DFSdkn+q82TKancpVQOq8njTx5CMjF365UH0jLct
-         +XR0U8gxeOY8AKCfFMl8mQ4vk8iUZzr5EkvUdRyExEMjbU5Ihr5JHoZbSbzkOIcn1x
-         KnYkutj0MPTAemKe1UU4n1kFuON6bpcSgNOo/rQL9qTHaQ9hC4omSBP1szv45dUwzW
-         D9kauqkb7x7Q6cQlBmkD77q96XTWfchBYyNXTSZkExEq3gQ9n9Bt7ND2MMha2wKIni
-         Y6XgTywBxx92g==
-Date:   Sun, 25 Jul 2021 20:58:34 -0700
+        b=CsfM/EqjBD7gxSof38fX80XYdi8aaah/mVKkEx455k8XQV81FIQODx7ckwDiWSAKZ
+         7Khpzk20Zo0beRXkf7hS2YFZnjS52bXw/0T98a8QHTaZk7pSn5c1LE0wwkMfEByZ7j
+         5oiD/LCKLV5g89VMNUdEXkdEX2101ssUUd9OwsUpAFcMI2mxUIPZybbHFor+bqTUqA
+         CCkj0InOg6KFQHOkQJJthsAFo5fhpEQ9b6SKIBdkBErPouUNQP8UzkHGIL/HwVOymg
+         s6MEDaL839H63/B595h4GQguvJyDjVWD2wf7/vYj+N8gN+4pCgjAaV9yHeA/xiuWTO
+         zR9ObgiG5njPg==
+Date:   Sun, 25 Jul 2021 20:59:05 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] fscrypt: report correct st_size for encrypted
- symlinks
-Message-ID: <YP4y6izInCXVJMup@sol.localdomain>
-References: <20210702065350.209646-1-ebiggers@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH] fscrypt: align Base64 encoding with RFC 4648 base64url
+Message-ID: <YP4zCXWV2N1Ys+lh@sol.localdomain>
+References: <20210718000125.59701-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210702065350.209646-1-ebiggers@kernel.org>
+In-Reply-To: <20210718000125.59701-1-ebiggers@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 01, 2021 at 11:53:45PM -0700, Eric Biggers wrote:
-> This series makes the stat() family of syscalls start reporting the
-> correct size for encrypted symlinks.
+On Sat, Jul 17, 2021 at 07:01:25PM -0500, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> See patch 1 for a detailed explanation of the problem and solution.
+> fscrypt uses a Base64 encoding to encode no-key filenames (the filenames
+> that are presented to userspace when a directory is listed without its
+> encryption key).  There are many variants of Base64, but the most common
+> ones are specified by RFC 4648.  fscrypt can't use the regular RFC 4648
+> "base64" variant because "base64" uses the '/' character, which isn't
+> allowed in filenames.  However, RFC 4648 also specifies a "base64url"
+> variant for use in URLs and filenames.  "base64url" is less common than
+> "base64", but it's still implemented in many programming libraries.
 > 
-> Patch 1 adds a helper function that computes the correct size for an
-> encrypted symlink.  Patches 2-4 make the filesystems with fscrypt
-> support use it, and patch 5 updates the documentation.
+> Unfortunately, what fscrypt actually uses is a custom Base64 variant
+> that differs from "base64url" in several ways:
 > 
-> This series applies to mainline commit 3dbdb38e2869.
+> - The binary data is divided into 6-bit chunks differently.
 > 
-> Eric Biggers (5):
->   fscrypt: add fscrypt_symlink_getattr() for computing st_size
->   ext4: report correct st_size for encrypted symlinks
->   f2fs: report correct st_size for encrypted symlinks
->   ubifs: report correct st_size for encrypted symlinks
->   fscrypt: remove mention of symlink st_size quirk from documentation
+> - Values 62 and 63 are encoded with '+' and ',' instead of '-' and '_'.
 > 
->  Documentation/filesystems/fscrypt.rst |  5 ---
->  fs/crypto/hooks.c                     | 44 +++++++++++++++++++++++++++
->  fs/ext4/symlink.c                     | 12 +++++++-
->  fs/f2fs/namei.c                       | 12 +++++++-
->  fs/ubifs/file.c                       | 13 +++++++-
->  include/linux/fscrypt.h               |  7 +++++
->  6 files changed, 85 insertions(+), 8 deletions(-)
+> - '='-padding isn't used.  This isn't a problem per se, as the padding
+>   isn't technically necessary, and RFC 4648 doesn't strictly require it.
+>   But it needs to be properly documented.
 > 
+> There have been two attempts to copy the fscrypt Base64 code into lib/
+> (https://lkml.kernel.org/r/20200821182813.52570-6-jlayton@kernel.org and
+> https://lkml.kernel.org/r/20210716110428.9727-5-hare@suse.de), and both
+> have been caught up by the fscrypt Base64 variant being nonstandard and
+> not properly documented.  Also, the planned use of the fscrypt Base64
+> code in the CephFS storage back-end will prevent it from being changed
+> later (whereas currently it can still be changed), so we need to choose
+> an encoding that we're happy with before it's too late.
 > 
-> base-commit: 3dbdb38e286903ec220aaf1fb29a8d94297da246
+> Therefore, switch the fscrypt Base64 variant to base64url, in order to
+> align more closely with RFC 4648 and other implementations and uses of
+> Base64.  However, I opted not to implement '='-padding, as '='-padding
+> adds complexity, is unnecessary, and isn't required by the RFC.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  Documentation/filesystems/fscrypt.rst |  10 +--
+>  fs/crypto/fname.c                     | 106 ++++++++++++++++----------
+>  2 files changed, 70 insertions(+), 46 deletions(-)
 
-All applied to fscrypt.git#master for 5.15.
+Applied to fscrypt.git#master for 5.15.
 
 - Eric
