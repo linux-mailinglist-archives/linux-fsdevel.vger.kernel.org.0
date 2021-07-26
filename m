@@ -2,26 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8FF33D6712
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 21:01:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 742283D6717
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 21:01:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233011AbhGZSUZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jul 2021 14:20:25 -0400
-Received: from relay.sw.ru ([185.231.240.75]:55224 "EHLO relay.sw.ru"
+        id S233327AbhGZSUj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jul 2021 14:20:39 -0400
+Received: from relay.sw.ru ([185.231.240.75]:55252 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232923AbhGZSUV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jul 2021 14:20:21 -0400
+        id S233069AbhGZSU2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Jul 2021 14:20:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=virtuozzo.com; s=relay; h=Content-Type:MIME-Version:Date:Message-ID:Subject
-        :From; bh=bgm9OS9KolAL5uXELhf+0mY9tqnepOoZ0HrSZvp8ULM=; b=fJg7jHp0nLOCKiZRvSW
-        shjBPrvwZFDautLw7asTY58rHCktPPFXvYpeUmXDGP4Llrjo6vcM76twwpiQCwRt4LzY/MYnhlRTp
-        IfRU9n/mBlGXktU/RJIw05ivHFKfA+terzsuXL2OkgTq2FebvFmw+g3OU0PHQOXFWgFdo1gcbrU=;
+        :From; bh=7c123YSCTdMincmxsUMhI0gcAR3i6drsKgalA/feMPM=; b=OM1ywa0FINzPxgssHvz
+        uMeln3xNmKRwTBX5ClBVDs1ebLGKCE56jvO/HAux6oHnIrCaJWgLnTiuTzMF6Pywq3KJHpcvF7ydW
+        683QCNaK+qJ5+s1W1RTYWTBQ94DOQSpYYyg85LjkeWAcD8oawmr1o7apPCiyf0wCWSt3ScUXqyY=;
 Received: from [10.93.0.56]
         by relay.sw.ru with esmtp (Exim 4.94.2)
         (envelope-from <vvs@virtuozzo.com>)
-        id 1m85qL-005JUI-1U; Mon, 26 Jul 2021 22:00:49 +0300
+        id 1m85qR-005JUj-27; Mon, 26 Jul 2021 22:00:55 +0300
 From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH v6 07/16] memcg: enable accounting for mnt_cache entries
+Subject: [PATCH v6 08/16] memcg: enable accounting for pollfd and select bits
+ arrays
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     cgroups@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
         Shakeel Butt <shakeelb@google.com>,
@@ -32,8 +33,8 @@ Cc:     cgroups@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <9bf9d9bd-03b1-2adb-17b4-5d59a86a9394@virtuozzo.com>
  <cover.1627321321.git.vvs@virtuozzo.com>
-Message-ID: <8d06c97c-451f-474b-026f-b898e2566daf@virtuozzo.com>
-Date:   Mon, 26 Jul 2021 22:00:48 +0300
+Message-ID: <d4c21050-cc0e-5c07-b64a-d0245e155663@virtuozzo.com>
+Date:   Mon, 26 Jul 2021 22:00:54 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
@@ -45,42 +46,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The kernel allocates ~400 bytes of 'strcut mount' for any new mount.
-Creating a new mount namespace clones most of the parent mounts,
-and this can be repeated many times. Additionally, each mount allocates
-up to PATH_MAX=4096 bytes for mnt->mnt_devname.
+User can call select/poll system calls with a large number of assigned
+file descriptors and force kernel to allocate up to several pages of memory
+till end of these sleeping system calls. We have here long-living
+unaccounted per-task allocations.
 
 It makes sense to account for these allocations to restrict the host's
 memory consumption from inside the memcg-limited container.
 
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 ---
- fs/namespace.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/select.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ab4174a..c6a74e5 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -203,7 +203,8 @@ static struct mount *alloc_vfsmnt(const char *name)
- 			goto out_free_cache;
+diff --git a/fs/select.c b/fs/select.c
+index 945896d..e83e563 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -655,7 +655,7 @@ int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
+ 			goto out_nofds;
  
- 		if (name) {
--			mnt->mnt_devname = kstrdup_const(name, GFP_KERNEL);
-+			mnt->mnt_devname = kstrdup_const(name,
-+							 GFP_KERNEL_ACCOUNT);
- 			if (!mnt->mnt_devname)
- 				goto out_free_id;
- 		}
-@@ -4222,7 +4223,7 @@ void __init mnt_init(void)
- 	int err;
+ 		alloc_size = 6 * size;
+-		bits = kvmalloc(alloc_size, GFP_KERNEL);
++		bits = kvmalloc(alloc_size, GFP_KERNEL_ACCOUNT);
+ 		if (!bits)
+ 			goto out_nofds;
+ 	}
+@@ -1000,7 +1000,7 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
  
- 	mnt_cache = kmem_cache_create("mnt_cache", sizeof(struct mount),
--			0, SLAB_HWCACHE_ALIGN | SLAB_PANIC, NULL);
-+			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT, NULL);
- 
- 	mount_hashtable = alloc_large_system_hash("Mount-cache",
- 				sizeof(struct hlist_head),
+ 		len = min(todo, POLLFD_PER_PAGE);
+ 		walk = walk->next = kmalloc(struct_size(walk, entries, len),
+-					    GFP_KERNEL);
++					    GFP_KERNEL_ACCOUNT);
+ 		if (!walk) {
+ 			err = -ENOMEM;
+ 			goto out_fds;
 -- 
 1.8.3.1
 
