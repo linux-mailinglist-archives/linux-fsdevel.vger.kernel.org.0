@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FD2C3D64A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 18:48:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F873D64C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 18:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239843AbhGZQAB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jul 2021 12:00:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44316 "EHLO mail.kernel.org"
+        id S237299AbhGZQBm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jul 2021 12:01:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239874AbhGZP6y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jul 2021 11:58:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9B84460F11;
-        Mon, 26 Jul 2021 16:39:22 +0000 (UTC)
+        id S239635AbhGZQBL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Jul 2021 12:01:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A078F6044F;
+        Mon, 26 Jul 2021 16:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627317562;
-        bh=2V+n70BOKIV4yKlANEh8mr0Ca45xZl/Lan3YYFb5GQ4=;
+        s=k20201202; t=1627317699;
+        bh=gzDT7wFMaBVM7jHMV9j2LnPXkhFzf2SkOgzgY0DWdco=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aN+kq03AaV0oDH0WPR5uFmK9Lx76YUVi9n6+UXyT04etfzep9HCnNGQZtCxh3SP04
-         1Rj8TJPGAhgzqDeiJsmv528NBDiXrZIR/3b7C/btCDidvxL+Vr1qRaTFpwpD4Q0A0C
-         jlc0xlcHJprfaiXdkZ14vNsvdNWUJGhd0eoinfsGuMW1+rTBmDlMzhchdOcI5nPyeo
-         AUqdSrRWtsjw7CLFoup0OXFMy4fWNQ/cbnebcPTDwP8Rg53hv5tnhHtYDgVqDJxh1y
-         el2j7hTZekOQDhHiqFskE/A4hwrR6hzcEapR0ENx5hXqQ2mMg0+3dv2IlBJ4/9R7vm
-         TDT0e3fwRGfyg==
-Date:   Mon, 26 Jul 2021 09:39:22 -0700
+        b=Dt7NiyJ6S0ebbg6JjN1J3hpYwMtBeuZFLHg4XctWD+PJT1VkkEkLiaVIv+Ax7oYIM
+         wouQol0HzZ0dJEwjW5dRnGama/EvRsKNsP+C1lSpYHFTBGjRFxQ5wDzp/eRC2rwK7+
+         I/2sVR1ncgrhp/P4K/kV9AGRFO5EmjUd2ZcPdSOcotZ0xBbN7RUHTVHmIjGD/tJEsI
+         LIbfakTnG02uhbYf4Z+mVfl+4qoEqfIqJgjaMWYwcHF6aGr/HYVpL+QylMGse0fklH
+         YDbCnHZmlb+VqxjZut4VysLwKaKZeUe7AuiRbflIG360pc6W3GTfIPfKwvhMwsZVbb
+         sw7t1KZqiaf7A==
+Date:   Mon, 26 Jul 2021 09:41:39 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -33,115 +33,48 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: Re: [PATCH 16/27] iomap: switch iomap_bmap to use iomap_iter
-Message-ID: <20210726163922.GA559142@magnolia>
+Subject: Re: [PATCH 17/27] iomap: switch iomap_seek_hole to use iomap_iter
+Message-ID: <20210726164139.GS559212@magnolia>
 References: <20210719103520.495450-1-hch@lst.de>
- <20210719103520.495450-17-hch@lst.de>
- <20210719170545.GF22402@magnolia>
- <20210726081942.GD14853@lst.de>
+ <20210719103520.495450-18-hch@lst.de>
+ <20210719172247.GG22402@magnolia>
+ <20210726082236.GE14853@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210726081942.GD14853@lst.de>
+In-Reply-To: <20210726082236.GE14853@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 26, 2021 at 10:19:42AM +0200, Christoph Hellwig wrote:
-> On Mon, Jul 19, 2021 at 10:05:45AM -0700, Darrick J. Wong wrote:
-> > >  	bno = 0;
-> > > -	ret = iomap_apply(inode, pos, blocksize, 0, ops, &bno,
-> > > -			  iomap_bmap_actor);
-> > > +	while ((ret = iomap_iter(&iter, ops)) > 0) {
-> > > +		if (iter.iomap.type != IOMAP_MAPPED)
-> > > +			continue;
+On Mon, Jul 26, 2021 at 10:22:36AM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 19, 2021 at 10:22:47AM -0700, Darrick J. Wong wrote:
+> > > -static loff_t
+> > > -iomap_seek_hole_actor(struct inode *inode, loff_t start, loff_t length,
+> > > -		      void *data, struct iomap *iomap, struct iomap *srcmap)
+> > > +static loff_t iomap_seek_hole_iter(const struct iomap_iter *iter, loff_t *pos)
 > > 
-> > There isn't a mapped extent, so return 0 here, right?
+> > /me wonders if @pos should be named hole_pos (here and in the caller) to
+> > make it a little easier to read...
 > 
-> We can't just return 0, we always need the final iomap_iter() call
-> to clean up in case a ->iomap_end method is supplied.  No for bmap
-> having and needing one is rather theoretical, but people will copy
-> and paste that once we start breaking the rules.
+> Sure.
+> 
+> > ...because what we're really saying here is that if seek_hole_iter found
+> > a hole (and returned zero, thereby terminating the loop before iter.len
+> > could reach zero), we want to return the position of the hole.
+> 
+> Yes.
+> 
+> > > +	return size;
+> > 
+> > Not sure why we return size here...?  Oh, because there's an implicit
+> > hole at EOF, so we return i_size.  Uh, does this do the right thing if
+> > ->iomap_begin returns posteof mappings?  I don't see anything in
+> > iomap_iter_advance that would stop iteration at EOF.
+> 
+> Nothing in ->iomap_begin checks that, iomap_seek_hole initializes
+> iter.len so that it stops at EOF.
 
-Oh, right, I forgot that someone might want to ->iomap_end.  The
-"continue" works because we only asked for one block, therefore we know
-that we'll never get to the loop body a second time; and we ignore
-iter.processed, which also means we never revisit the loop body.
-
-This "continue without setting iter.processed to break out of loop"
-pattern is a rather indirect subtlety, since C programmers are taught
-that they can break out of a loop using break;.  This new iomap_iter
-pattern fubars that longstanding language feature, and the language
-around it is soft:
-
-> /**
->  * iomap_iter - iterate over a ranges in a file
->  * @iter: iteration structue
->  * @ops: iomap ops provided by the file system
->  *
->  * Iterate over file system provided contiguous ranges of blocks with the same
->  * state.  Should be called in a loop that continues as long as this function
->  * returns a positive value.  If 0 or a negative value is returned the caller
->  * should break out of the loop - a negative value is an error either from the
->  * file system or from the last iteration stored in @iter.copied.
->  */
-
-The documentation needs to be much more explicit about the fact that you
-cannot "break;" your way out of an iomap_iter loop.  I think the comment
-should be rewritten along these lines:
-
-"Iterate over filesystem-provided space mappings for the provided file
-range.  This function handles cleanup of resources acquired for
-iteration when the filesystem indicates there are no more space
-mappings, which means that this function must be called in a loop that
-continues as long it returns a positive value.  If 0 or a negative value
-is returned, the caller must not return to the loop body.  Within a loop
-body, there are two ways to break out of the loop body: leave
-@iter.processed unchanged, or set it to the usual negative errno."
-
-Hm.
-
-What if we provide an explicit loop break function?  That would be clear
-overkill for bmap, but somebody else wanting to break out of a more
-complex loop body ought to be able to say "break" to do that, not
-"continue with subtleties".
-
-static inline int
-iomap_iter_break(struct iomap_iter *iter, int ret)
-{
-	int ret2;
-
-	if (!iter->iomap.length || !ops->iomap_end)
-		return ret;
-
-	ret2 = ops->iomap_end(iter->inode, iter->pos, iomap_length(iter),
-			0, iter->flags, &iter->iomap);
-	return ret ? ret : ret2;
-}
-
-And then then theoretical loop body becomes:
-
-	while ((ret = iomap_iter(&iter, ops)) > 0) {
-		if (iter.iomap.type != WHAT_I_WANT) {
-			ret = iomap_iter_break(&iter, 0);
-			break;
-		}
-
-		<large blob of code here>
-
-		ret = vfs_do_some_risky_thing(...);
-		if (ret) {
-			ret = iomap_iter_break(&iter, ret);
-			break;
-		}
-
-		<more loop body here>
-
-		iter.processed = iter.iomap.length;
-	}
-	return ret;
-
-Clunky, for sure, but at least we still get to use break as the language
-designers intended.
+Oh, right.  Sorry, I forgot that. :(
 
 --D
