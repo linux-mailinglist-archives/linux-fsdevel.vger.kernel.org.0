@@ -2,86 +2,259 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 588F03D51FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 05:59:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 855D13D5206
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jul 2021 06:00:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231601AbhGZDSh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Jul 2021 23:18:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230321AbhGZDSh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Jul 2021 23:18:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4F48460E78;
-        Mon, 26 Jul 2021 03:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627271946;
-        bh=S2M7O/hWRwUTq7mbz2jtiILfGuQ8RGSgKtCdk8rgMuE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CsfM/EqjBD7gxSof38fX80XYdi8aaah/mVKkEx455k8XQV81FIQODx7ckwDiWSAKZ
-         7Khpzk20Zo0beRXkf7hS2YFZnjS52bXw/0T98a8QHTaZk7pSn5c1LE0wwkMfEByZ7j
-         5oiD/LCKLV5g89VMNUdEXkdEX2101ssUUd9OwsUpAFcMI2mxUIPZybbHFor+bqTUqA
-         CCkj0InOg6KFQHOkQJJthsAFo5fhpEQ9b6SKIBdkBErPouUNQP8UzkHGIL/HwVOymg
-         s6MEDaL839H63/B595h4GQguvJyDjVWD2wf7/vYj+N8gN+4pCgjAaV9yHeA/xiuWTO
-         zR9ObgiG5njPg==
-Date:   Sun, 25 Jul 2021 20:59:05 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH] fscrypt: align Base64 encoding with RFC 4648 base64url
-Message-ID: <YP4zCXWV2N1Ys+lh@sol.localdomain>
-References: <20210718000125.59701-1-ebiggers@kernel.org>
+        id S231455AbhGZDTx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Jul 2021 23:19:53 -0400
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:47131 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231280AbhGZDTw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 25 Jul 2021 23:19:52 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UgwTPtU_1627272019;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UgwTPtU_1627272019)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 26 Jul 2021 12:00:20 +0800
+Date:   Mon, 26 Jul 2021 12:00:18 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Huang Jianan <huangjianan@oppo.com>,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+Subject: Re: [PATCH v7] iomap: make inline data support more flexible
+Message-ID: <YP4zUvnBCAb86Mny@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Huang Jianan <huangjianan@oppo.com>, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+References: <CAHpGcMJBhWcwteLDSBU3hgwq1tk_+LqogM1ZM=Fv8U0VtY5hMg@mail.gmail.com>
+ <20210723174131.180813-1-hsiangkao@linux.alibaba.com>
+ <20210725221639.426565-1-agruenba@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210718000125.59701-1-ebiggers@kernel.org>
+In-Reply-To: <20210725221639.426565-1-agruenba@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 17, 2021 at 07:01:25PM -0500, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Mon, Jul 26, 2021 at 12:16:39AM +0200, Andreas Gruenbacher wrote:
+> Here's a fixed and cleaned up version that passes fstests on gfs2.
+
+(cont.
+https://lore.kernel.org/r/YP4fk75mr%2FmIotDy@B-P7TQMD6M-0146.local)
+
+Would you mind listing what it fixed on gfs2 compared with v7?
+IOWs, I wonder which case failed with v7 on gfs2 so I could recheck
+this.
+
 > 
-> fscrypt uses a Base64 encoding to encode no-key filenames (the filenames
-> that are presented to userspace when a directory is listed without its
-> encryption key).  There are many variants of Base64, but the most common
-> ones are specified by RFC 4648.  fscrypt can't use the regular RFC 4648
-> "base64" variant because "base64" uses the '/' character, which isn't
-> allowed in filenames.  However, RFC 4648 also specifies a "base64url"
-> variant for use in URLs and filenames.  "base64url" is less common than
-> "base64", but it's still implemented in many programming libraries.
+> I see no reason why the combination of tail packing + writing should
+> cause any issues, so in my opinion, the check that disables that
+> combination in iomap_write_begin_inline should still be removed.
 > 
-> Unfortunately, what fscrypt actually uses is a custom Base64 variant
-> that differs from "base64url" in several ways:
+> It turns out that returning the number of bytes copied from
+> iomap_read_inline_data is a bit irritating: the function is really used
+> for filling the page, but that's not always the "progress" we're looking
+> for.  In the iomap_readpage case, we actually need to advance by an
+> antire page, but in the iomap_file_buffered_write case, we need to
+> advance by the length parameter of iomap_write_actor or less.  So I've
+> changed that back.
 > 
-> - The binary data is divided into 6-bit chunks differently.
+> I've also renamed iomap_inline_buf to iomap_inline_data and I've turned
+> iomap_inline_data_size_valid into iomap_within_inline_data, which seems
+> more useful to me.
 > 
-> - Values 62 and 63 are encoded with '+' and ',' instead of '-' and '_'.
+> Thanks,
+> Andreas
 > 
-> - '='-padding isn't used.  This isn't a problem per se, as the padding
->   isn't technically necessary, and RFC 4648 doesn't strictly require it.
->   But it needs to be properly documented.
+> --
 > 
-> There have been two attempts to copy the fscrypt Base64 code into lib/
-> (https://lkml.kernel.org/r/20200821182813.52570-6-jlayton@kernel.org and
-> https://lkml.kernel.org/r/20210716110428.9727-5-hare@suse.de), and both
-> have been caught up by the fscrypt Base64 variant being nonstandard and
-> not properly documented.  Also, the planned use of the fscrypt Base64
-> code in the CephFS storage back-end will prevent it from being changed
-> later (whereas currently it can still be changed), so we need to choose
-> an encoding that we're happy with before it's too late.
+> Subject: [PATCH] iomap: Support tail packing
 > 
-> Therefore, switch the fscrypt Base64 variant to base64url, in order to
-> align more closely with RFC 4648 and other implementations and uses of
-> Base64.  However, I opted not to implement '='-padding, as '='-padding
-> adds complexity, is unnecessary, and isn't required by the RFC.
+> The existing inline data support only works for cases where the entire
+> file is stored as inline data.  For larger files, EROFS stores the
+> initial blocks separately and then can pack a small tail adjacent to the
+> inode.  Generalise inline data to allow for tail packing.  Tails may not
+> cross a page boundary in memory.
 > 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> We currently have no filesystems that support tail packing and writing,
+> so that case is currently disabled (see iomap_write_begin_inline).  I'm
+> not aware of any reason why this code path shouldn't work, however.
+> 
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Darrick J. Wong <djwong@kernel.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Andreas Gruenbacher <andreas.gruenbacher@gmail.com>
+> Tested-by: Huang Jianan <huangjianan@oppo.com> # erofs
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 > ---
->  Documentation/filesystems/fscrypt.rst |  10 +--
->  fs/crypto/fname.c                     | 106 ++++++++++++++++----------
->  2 files changed, 70 insertions(+), 46 deletions(-)
+>  fs/iomap/buffered-io.c | 34 +++++++++++++++++++++++-----------
+>  fs/iomap/direct-io.c   | 11 ++++++-----
+>  include/linux/iomap.h  | 22 +++++++++++++++++++++-
+>  3 files changed, 50 insertions(+), 17 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 87ccb3438bec..334bf98fdd4a 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -205,25 +205,29 @@ struct iomap_readpage_ctx {
+>  	struct readahead_control *rac;
+>  };
+>  
+> -static void
+> -iomap_read_inline_data(struct inode *inode, struct page *page,
+> +static int iomap_read_inline_data(struct inode *inode, struct page *page,
+>  		struct iomap *iomap)
+>  {
+> -	size_t size = i_size_read(inode);
+> +	size_t size = i_size_read(inode) - iomap->offset;
+>  	void *addr;
+>  
+>  	if (PageUptodate(page))
+> -		return;
+> +		return 0;
+>  
+> -	BUG_ON(page_has_private(page));
+> -	BUG_ON(page->index);
+> -	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> +	/* inline and tail-packed data must start page aligned in the file */
+> +	if (WARN_ON_ONCE(offset_in_page(iomap->offset)))
+> +		return -EIO;
+> +	if (WARN_ON_ONCE(size > PAGE_SIZE - offset_in_page(iomap->inline_data)))
+> +		return -EIO;
+> +	if (WARN_ON_ONCE(page_has_private(page)))
+> +		return -EIO;
+>  
+>  	addr = kmap_atomic(page);
+>  	memcpy(addr, iomap->inline_data, size);
+>  	memset(addr + size, 0, PAGE_SIZE - size);
+>  	kunmap_atomic(addr);
+>  	SetPageUptodate(page);
+> +	return 0;
+>  }
+>  
+>  static inline bool iomap_block_needs_zeroing(struct inode *inode,
+> @@ -247,7 +251,6 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	sector_t sector;
+>  
+>  	if (iomap->type == IOMAP_INLINE) {
+> -		WARN_ON_ONCE(pos);
+>  		iomap_read_inline_data(inode, page, iomap);
+>  		return PAGE_SIZE;
+>  	}
+> @@ -589,6 +592,15 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+>  	return 0;
+>  }
+>  
+> +static int iomap_write_begin_inline(struct inode *inode,
+> +		struct page *page, struct iomap *srcmap)
+> +{
+> +	/* needs more work for the tailpacking case, disable for now */
+> +	if (WARN_ON_ONCE(srcmap->offset != 0))
+> +		return -EIO;
+> +	return iomap_read_inline_data(inode, page, srcmap);
+> +}
+> +
+>  static int
+>  iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
+> @@ -618,7 +630,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  	}
+>  
+>  	if (srcmap->type == IOMAP_INLINE)
+> -		iomap_read_inline_data(inode, page, srcmap);
+> +		status = iomap_write_begin_inline(inode, page, srcmap);
+>  	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
+>  		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
+>  	else
+> @@ -671,11 +683,11 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
+>  	void *addr;
+>  
+>  	WARN_ON_ONCE(!PageUptodate(page));
+> -	BUG_ON(pos + copied > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> +	BUG_ON(!iomap_within_inline_data(iomap, pos + copied - 1));
+>  
+>  	flush_dcache_page(page);
+>  	addr = kmap_atomic(page);
+> -	memcpy(iomap->inline_data + pos, addr + pos, copied);
+> +	memcpy(iomap_inline_data(iomap, pos), addr + pos, copied);
+>  	kunmap_atomic(addr);
+>  
+>  	mark_inode_dirty(inode);
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 9398b8c31323..c9424e58f613 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -380,21 +380,22 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
+>  	struct iov_iter *iter = dio->submit.iter;
+>  	size_t copied;
+>  
+> -	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> +	if (WARN_ON_ONCE(!iomap_within_inline_data(iomap, pos + length - 1)))
+> +		return -EIO;
 
-Applied to fscrypt.git#master for 5.15.
+I also wonder what is wrong with the previous patch:
 
-- Eric
++	if (WARN_ON_ONCE(!iomap_inline_data_size_valid(iomap)))
++		return -EIO;
+
++/*
++ * iomap->inline_data is a potentially kmapped page, ensure it never crosses a
++ * page boundary.
++ */
++static inline bool iomap_inline_data_size_valid(const struct iomap *iomap)
++{
++	return iomap->length <= PAGE_SIZE - offset_in_page(iomap->inline_data);
++}
+
+In principle, the relationship of iomap->offset, pos, length and
+iomap->length is:
+
+"	iomap->offset <= pos < pos + length <= iomap->offset +
+iomap->length	"
+
+pos and pos + length are also impacted by what user requests rather
+than the original extent itself reported by fs.
+
+Here we need to make sure the whole extent in the page, so I think
+it'd be better to check with iomap->length rather than some pos,
+length related stuffs.
+
+>  
+>  	if (dio->flags & IOMAP_DIO_WRITE) {
+> -		loff_t size = inode->i_size;
+> +		loff_t size = iomap->offset + iomap->length;
+
+and here, since it's the last extent and due to the current limitation
+in practice,
+iomap->offset + iomap->length == inode->i_size,
+
+yet I wonder why this part uses iomap->length to calculate instead of
+using i_size as in iomap_read_inline_data().
+
+My thought is "here it handles the i_size pointer and append write",
+so I think "loff_t size = inode->i_size" makes more sense here.
+
+>  
+>  		if (pos > size)
+> -			memset(iomap->inline_data + size, 0, pos - size);
+> -		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
+> +			memset(iomap_inline_data(iomap, size), 0, pos - size);
+> +		copied = copy_from_iter(iomap_inline_data(iomap, pos), length, iter);
+
+iomap_inline_buf() was suggested by Darrick. From my point of view,
+I think it's better since it's a part of iomap->inline_data due to
+pos involved.
+
+Thanks,
+Gao Xiang
+
