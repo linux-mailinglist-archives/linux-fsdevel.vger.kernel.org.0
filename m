@@ -2,244 +2,305 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 912E13D6937
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 00:06:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A8D93D6941
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 00:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233365AbhGZVZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jul 2021 17:25:59 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:45892 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232875AbhGZVZ6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jul 2021 17:25:58 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D0F802207A;
-        Mon, 26 Jul 2021 22:06:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1627337185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=t1OOBggeUv9JvaojXQWKsfIektKETu87AVmNWxqA1cA=;
-        b=1X/xlvhM/bUjR/tNbFExoJsUlL0M729uljt/3JfP+TgeOX1Fg+TnwDL+qI/EcxbHVWgkKu
-        N7yf932gaCVU/quXBrcP+lbPin+omZ9bWjOrdTxhR6JRYF/0GBEUxJh4FnuNa8Vxx07zJp
-        cO/YKRR1t2BB3SvPlin5+/BOWZcAGXE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1627337185;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=t1OOBggeUv9JvaojXQWKsfIektKETu87AVmNWxqA1cA=;
-        b=EsYGdWhsbgrBEUTeNZdP1j5ajhFJRi9R7T/YtClnjR/2JtCLq6SkCooo2Y957qIah67Htd
-        MS6YDcTBSoqs+MDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 34D6513B58;
-        Mon, 26 Jul 2021 22:06:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Hf2UON8x/2C0SAAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 26 Jul 2021 22:06:23 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        id S233510AbhGZVa0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jul 2021 17:30:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232875AbhGZVa0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Jul 2021 17:30:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8524960F6C;
+        Mon, 26 Jul 2021 22:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627337454;
+        bh=w/fmIjLHBnzr5HnHiBN32D3V0n8K+sJQdPLYemMegyg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rICN/ko08Wz1IATO9P5iDVR//PdMSMLSaOUcFVI/j8BdwLxunD/zYDxYozicYyNk+
+         hg/MiPDVbwMNcreIrgX+wsKufuJPldiQIdAw3MBUGAPjbEE7PndDD/ulsz1DSOPuEg
+         5ywyo5pQdWXDzfvf7fkn7DVC6uaVXFW217TUg1B+7aX6Tv3Xl6C6qTwIUtBukRvyKc
+         l64RbodTR2CWeLUEKAGIK0OxRfRKgLJ2ZQ2Trojo5n8DgMCJQDOM8Y5FxyMaGepT2/
+         1w8DnlIZDj72EZFAA5OwBWYWWdReaDgX2LyBNWglKF2T+UzADqzYMsoBaQzrA4FADs
+         wfgwgy9VCYSeA==
+Date:   Mon, 26 Jul 2021 15:10:54 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Huang Jianan <huangjianan@oppo.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: Re: [PATCH v8] iomap: make inline data support more flexible
+Message-ID: <20210726221054.GG8572@magnolia>
+References: <20210726145734.214295-1-hsiangkao@linux.alibaba.com>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Goldwyn Rodrigues" <rgoldwyn@suse.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] fs: reduce pointers while using file_ra_state_init()
-In-reply-to: <20210726164647.brx3l2ykwv3zz7vr@fiona>
-References: <20210726164647.brx3l2ykwv3zz7vr@fiona>
-Date:   Tue, 27 Jul 2021 08:06:21 +1000
-Message-id: <162733718119.4153.5949006309014161476@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210726145734.214295-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 27 Jul 2021, Goldwyn Rodrigues wrote:
-> Simplification.
->=20
-> file_ra_state_init() take struct address_space *, just to use inode
-> pointer by dereferencing from mapping->host.
->=20
-> The callers also derive mapping either by file->f_mapping, or
-> even file->f_mapping->host->i_mapping.
->=20
-> Change file_ra_state_init() to accept struct inode * to reduce pointer
-> dereferencing, both in the callee and the caller.
-
-You seem to be assuming that inode->i_mapping->host is always 'inode'.
-That is not the case.
-
-In particular, fs/coda/file.c contains
-
-	if (coda_inode->i_mapping =3D=3D &coda_inode->i_data)
-		coda_inode->i_mapping =3D host_inode->i_mapping;
-
-So a "coda_inode" shares the mapping with a "host_inode".
-
-This is why an inode has both i_data and i_mapping.
-
-So I'm not really sure this patch is safe.  It might break codafs.
-
-But it is more likely that codafs isn't used, doesn't work, should be
-removed, and i_data should be renamed to i_mapping.
-
-NeilBrown
-
-
->=20
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Mon, Jul 26, 2021 at 10:57:34PM +0800, Gao Xiang wrote:
+> The existing inline data support only works for cases where the entire
+> file is stored as inline data.  For larger files, EROFS stores the
+> initial blocks separately and then can pack a small tail adjacent to the
+> inode.  Generalise inline data to allow for tail packing.  Tails may not
+> cross a page boundary in memory.
+> 
+> We currently have no filesystems that support tail packing and writing,
+> so that case is currently disabled (see iomap_write_begin_inline).
+> 
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Darrick J. Wong <djwong@kernel.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 > ---
->  fs/btrfs/free-space-cache.c | 2 +-
->  fs/btrfs/ioctl.c            | 2 +-
->  fs/btrfs/relocation.c       | 2 +-
->  fs/btrfs/send.c             | 2 +-
->  fs/nfs/nfs4file.c           | 2 +-
->  fs/open.c                   | 2 +-
->  fs/verity/enable.c          | 2 +-
->  include/linux/fs.h          | 2 +-
->  mm/readahead.c              | 4 ++--
->  9 files changed, 10 insertions(+), 10 deletions(-)
->=20
-> diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
-> index 4806295116d8..c43bf9915cda 100644
-> --- a/fs/btrfs/free-space-cache.c
-> +++ b/fs/btrfs/free-space-cache.c
-> @@ -351,7 +351,7 @@ static void readahead_cache(struct inode *inode)
->  	if (!ra)
->  		return;
-> =20
-> -	file_ra_state_init(ra, inode->i_mapping);
-> +	file_ra_state_init(ra, inode);
->  	last_index =3D (i_size_read(inode) - 1) >> PAGE_SHIFT;
-> =20
->  	page_cache_sync_readahead(inode->i_mapping, ra, NULL, 0, last_index);
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index 5dc2fd843ae3..b3508887d466 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -1399,7 +1399,7 @@ int btrfs_defrag_file(struct inode *inode, struct fil=
-e *file,
->  	if (!file) {
->  		ra =3D kzalloc(sizeof(*ra), GFP_KERNEL);
->  		if (ra)
-> -			file_ra_state_init(ra, inode->i_mapping);
-> +			file_ra_state_init(ra, inode);
->  	} else {
->  		ra =3D &file->f_ra;
->  	}
-> diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-> index b70be2ac2e9e..4f35672b93a5 100644
-> --- a/fs/btrfs/relocation.c
-> +++ b/fs/btrfs/relocation.c
-> @@ -2911,7 +2911,7 @@ static int relocate_file_extent_cluster(struct inode =
-*inode,
->  	if (ret)
->  		goto out;
-> =20
-> -	file_ra_state_init(ra, inode->i_mapping);
-> +	file_ra_state_init(ra, inode);
-> =20
->  	ret =3D setup_extent_mapping(inode, cluster->start - offset,
->  				   cluster->end - offset, cluster->start);
-> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-> index bd69db72acc5..3eb8d2277a3d 100644
-> --- a/fs/btrfs/send.c
-> +++ b/fs/btrfs/send.c
-> @@ -4949,7 +4949,7 @@ static int put_file_data(struct send_ctx *sctx, u64 o=
-ffset, u32 len)
-> =20
->  	/* initial readahead */
->  	memset(&sctx->ra, 0, sizeof(struct file_ra_state));
-> -	file_ra_state_init(&sctx->ra, inode->i_mapping);
-> +	file_ra_state_init(&sctx->ra, inode);
-> =20
->  	while (index <=3D last_index) {
->  		unsigned cur_len =3D min_t(unsigned, len,
-> diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-> index a1e5c6b85ded..c810a6151c93 100644
-> --- a/fs/nfs/nfs4file.c
-> +++ b/fs/nfs/nfs4file.c
-> @@ -385,7 +385,7 @@ static struct file *__nfs42_ssc_open(struct vfsmount *s=
-s_mnt,
->  	nfs_file_set_open_context(filep, ctx);
->  	put_nfs_open_context(ctx);
-> =20
-> -	file_ra_state_init(&filep->f_ra, filep->f_mapping->host->i_mapping);
-> +	file_ra_state_init(&filep->f_ra, file_inode(filep));
->  	res =3D filep;
->  out_free_name:
->  	kfree(read_name);
-> diff --git a/fs/open.c b/fs/open.c
-> index e53af13b5835..9c6773a4fb30 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -840,7 +840,7 @@ static int do_dentry_open(struct file *f,
->  	f->f_write_hint =3D WRITE_LIFE_NOT_SET;
->  	f->f_flags &=3D ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);
-> =20
-> -	file_ra_state_init(&f->f_ra, f->f_mapping->host->i_mapping);
-> +	file_ra_state_init(&f->f_ra, inode);
-> =20
->  	/* NB: we're sure to have correct a_ops only after f_op->open */
->  	if (f->f_flags & O_DIRECT) {
-> diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-> index 77e159a0346b..460d881080ac 100644
-> --- a/fs/verity/enable.c
-> +++ b/fs/verity/enable.c
-> @@ -66,7 +66,7 @@ static int build_merkle_tree_level(struct file *filp, uns=
-igned int level,
->  		dst_block_num =3D 0; /* unused */
->  	}
-> =20
-> -	file_ra_state_init(&ra, filp->f_mapping);
-> +	file_ra_state_init(&ra, inode);
-> =20
->  	for (i =3D 0; i < num_blocks_to_hash; i++) {
->  		struct page *src_page;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c3c88fdb9b2a..3b8ce0221477 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3260,7 +3260,7 @@ extern long do_splice_direct(struct file *in, loff_t =
-*ppos, struct file *out,
-> =20
-> =20
->  extern void
-> -file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping=
-);
-> +file_ra_state_init(struct file_ra_state *ra, struct inode *inode);
->  extern loff_t noop_llseek(struct file *file, loff_t offset, int whence);
->  extern loff_t no_llseek(struct file *file, loff_t offset, int whence);
->  extern loff_t vfs_setpos(struct file *file, loff_t offset, loff_t maxsize);
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index d589f147f4c2..3541941df5e7 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -31,9 +31,9 @@
->   * memset *ra to zero.
->   */
->  void
-> -file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping)
-> +file_ra_state_init(struct file_ra_state *ra, struct inode *inode)
+> v7: https://lore.kernel.org/r/20210723174131.180813-1-hsiangkao@linux.alibaba.com
+> changes since v7:
+>  - This version is based on Andreas's patch, the main difference
+>    is to avoid using "iomap->length" in iomap_read_inline_data().
+>    more details see:
+>     https://lore.kernel.org/r/CAHpGcMJhuSApy4eg9jKe2pYq4d7bY-Lg-Bmo9tOANghQ2Hxo-A@mail.gmail.com
+>    The rest are similar (some renaming and return type changes.)
+> 
+>  - with update according to Christoph's comments:
+>    https://lore.kernel.org/r/20210726121702.GA528@lst.de/
+>    except that "
+>     I think we should fix that now that we have the srcmap concept.
+>     That is or IOMAP_WRITE|IOMAP_ZERO return the inline map as the
+>     soure map, and return the actual block map we plan to write into
+>     as the main iomap. "
+>    Hopefully it could be addressed with a new gfs2-related patch.
+> 
+>  - it passes gfs2 fstests and no strange on my side.
+> 
+> Hopefully I don't miss anything (already many inputs), and everyone
+> is happy with this version.
+> 
+>  fs/iomap/buffered-io.c | 40 ++++++++++++++++++++++++++++------------
+>  fs/iomap/direct-io.c   | 10 ++++++----
+>  include/linux/iomap.h  | 18 ++++++++++++++++++
+>  3 files changed, 52 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 87ccb3438bec..0d9f161ecb7e 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -205,25 +205,30 @@ struct iomap_readpage_ctx {
+>  	struct readahead_control *rac;
+>  };
+>  
+> -static void
+> -iomap_read_inline_data(struct inode *inode, struct page *page,
+> +static int iomap_read_inline_data(struct inode *inode, struct page *page,
+>  		struct iomap *iomap)
 >  {
-> -	ra->ra_pages =3D inode_to_bdi(mapping->host)->ra_pages;
-> +	ra->ra_pages =3D inode_to_bdi(inode)->ra_pages;
->  	ra->prev_pos =3D -1;
+> -	size_t size = i_size_read(inode);
+> +	size_t size = i_size_read(inode) - iomap->offset;
+>  	void *addr;
+>  
+>  	if (PageUptodate(page))
+> -		return;
+> +		return 0;
+>  
+> -	BUG_ON(page_has_private(page));
+> -	BUG_ON(page->index);
+> -	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> +	/* inline data must start page aligned in the file */
+> +	if (WARN_ON_ONCE(offset_in_page(iomap->offset)))
+> +		return -EIO;
+> +	if (WARN_ON_ONCE(size > PAGE_SIZE -
+> +			 offset_in_page(iomap->inline_data)))
+> +		return -EIO;
+> +	if (WARN_ON_ONCE(page_has_private(page)))
+> +		return -EIO;
+>  
+>  	addr = kmap_atomic(page);
+>  	memcpy(addr, iomap->inline_data, size);
+>  	memset(addr + size, 0, PAGE_SIZE - size);
+>  	kunmap_atomic(addr);
+>  	SetPageUptodate(page);
+> +	return 0;
+
+As I muttered in the v7 thread, I don't really like how this function
+gets away from using iomap->length for the copy length, unlike the other
+iomap read paths.  I started sketching out how I'd really like the
+function to read and ended up with:
+
+static int iomap_read_inline_data(struct inode *inode, struct page *page,
+			struct iomap *iomap)
+{
+	void *addr;
+	loff_t isize = i_size_read(inode);
+	loff_t ret;
+	unsigned int plen = min(isize - iomap->offset, iomap->length);
+
+	/* inline data must start page aligned in the file */
+	if (WARN_ON_ONCE(offset_in_page(iomap->offset)))
+		return -EIO;
+	if (WARN_ON_ONCE(!iomap_inline_data_valid(iomap)))
+		return -EIO;
+	if (WARN_ON_ONCE(page_has_private(page)))
+		return -EIO;
+
+	addr = kmap_atomic(page);
+	memcpy(addr, iomap->inline_data, plen);
+	if (iomap->offset + plen == isize) {
+		/* If we reach EOF, we can zero the rest of the page */
+		memset(addr + plen, 0, PAGE_SIZE - plen);
+		plen = PAGE_SIZE;
+	}
+
+	if (offset_in_page(iomap->offset) == 0 && plen == PAGE_SIZE) {
+		SetPageUptodate(page);
+	} else {
+		iomap_page_create(inode, page);
+		iomap_set_range_uptodate(page,
+				offset_in_page(iomap->offset), plen);
+	}
+	kunmap_atomic(addr);
+	return plen;
+}
+
+But then my brain filled up with all the other potential case I'd have
+to support in order to do this properly, and decided that this patch,
+while retaining some grossness, isn't really any worse that what we have
+now.
+
+I think I /would/ like to request a V9 with one extra safety check,
+however:
+
+	if (WARN_ON_ONCE(size > iomap->length))
+		return -EIO;
+
+Add that one sanity check and I think I'm willing to throw this on the
+pile for 5.15.
+
+--D
+
 >  }
->  EXPORT_SYMBOL_GPL(file_ra_state_init);
-> --=20
-> 2.32.0
->=20
->=20
-> --=20
-> Goldwyn
->=20
->=20
+>  
+>  static inline bool iomap_block_needs_zeroing(struct inode *inode,
+> @@ -247,8 +252,10 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	sector_t sector;
+>  
+>  	if (iomap->type == IOMAP_INLINE) {
+> -		WARN_ON_ONCE(pos);
+> -		iomap_read_inline_data(inode, page, iomap);
+> +		int ret = iomap_read_inline_data(inode, page, iomap);
+> +
+> +		if (ret)
+> +			return ret;
+>  		return PAGE_SIZE;
+>  	}
+>  
+> @@ -589,6 +596,15 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+>  	return 0;
+>  }
+>  
+> +static int iomap_write_begin_inline(struct inode *inode,
+> +		struct page *page, struct iomap *srcmap)
+> +{
+> +	/* needs more work for the tailpacking case, disable for now */
+> +	if (WARN_ON_ONCE(srcmap->offset != 0))
+> +		return -EIO;
+> +	return iomap_read_inline_data(inode, page, srcmap);
+> +}
+> +
+>  static int
+>  iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
+> @@ -618,7 +634,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  	}
+>  
+>  	if (srcmap->type == IOMAP_INLINE)
+> -		iomap_read_inline_data(inode, page, srcmap);
+> +		status = iomap_write_begin_inline(inode, page, srcmap);
+>  	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
+>  		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
+>  	else
+> @@ -671,11 +687,11 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
+>  	void *addr;
+>  
+>  	WARN_ON_ONCE(!PageUptodate(page));
+> -	BUG_ON(pos + copied > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> +	BUG_ON(!iomap_inline_data_valid(iomap));
+>  
+>  	flush_dcache_page(page);
+>  	addr = kmap_atomic(page);
+> -	memcpy(iomap->inline_data + pos, addr + pos, copied);
+> +	memcpy(iomap_inline_data(iomap, pos), addr + pos, copied);
+>  	kunmap_atomic(addr);
+>  
+>  	mark_inode_dirty(inode);
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 9398b8c31323..41ccbfc9dc82 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -378,23 +378,25 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		struct iomap_dio *dio, struct iomap *iomap)
+>  {
+>  	struct iov_iter *iter = dio->submit.iter;
+> +	void *inline_data = iomap_inline_data(iomap, pos);
+>  	size_t copied;
+>  
+> -	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> +	if (WARN_ON_ONCE(!iomap_inline_data_valid(iomap)))
+> +		return -EIO;
+>  
+>  	if (dio->flags & IOMAP_DIO_WRITE) {
+>  		loff_t size = inode->i_size;
+>  
+>  		if (pos > size)
+> -			memset(iomap->inline_data + size, 0, pos - size);
+> -		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
+> +			memset(iomap_inline_data(iomap, size), 0, pos - size);
+> +		copied = copy_from_iter(inline_data, length, iter);
+>  		if (copied) {
+>  			if (pos + copied > size)
+>  				i_size_write(inode, pos + copied);
+>  			mark_inode_dirty(inode);
+>  		}
+>  	} else {
+> -		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
+> +		copied = copy_to_iter(inline_data, length, iter);
+>  	}
+>  	dio->size += copied;
+>  	return copied;
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 479c1da3e221..b8ec145b2975 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -97,6 +97,24 @@ iomap_sector(struct iomap *iomap, loff_t pos)
+>  	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+>  }
+>  
+> +/*
+> + * Returns the inline data pointer for logical offset @pos.
+> + */
+> +static inline void *iomap_inline_data(struct iomap *iomap, loff_t pos)
+> +{
+> +	return iomap->inline_data + pos - iomap->offset;
+> +}
+> +
+> +/*
+> + * Check if the mapping's length is within the valid range for inline data.
+> + * This is used to guard against accessing data beyond the page inline_data
+> + * points at.
+> + */
+> +static inline bool iomap_inline_data_valid(struct iomap *iomap)
+> +{
+> +	return iomap->length <= PAGE_SIZE - offset_in_page(iomap->inline_data);
+> +}
+> +
+>  /*
+>   * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
+>   * and page_done will be called for each page written to.  This only applies to
+> -- 
+> 2.24.4
+> 
