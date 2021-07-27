@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ACC213D82D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 00:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B09FC3D82DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 00:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233230AbhG0W2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jul 2021 18:28:42 -0400
+        id S233162AbhG0W2t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jul 2021 18:28:49 -0400
 Received: from mail-bn7nam10on2075.outbound.protection.outlook.com ([40.107.92.75]:51599
         "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233101AbhG0W2V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jul 2021 18:28:21 -0400
+        id S233086AbhG0W2m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Jul 2021 18:28:42 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RbTuORSJ+kWxeFRFHYjwThQQDavAssVrZLoFxCtPRXW/V9pY5OGGz9y7jzTfl+5/zypx82DfAP1ih2yUaxeQ52MkAvoiF6yV//OZUSE+97Sgiqx1hFcE2/lPflYF+Lw2f4pc/bjMHswjuhOIY1EuCa7gXk5b1i8bBEU1NwdBoLaGGHpWYKy6tzzMlr/sdu3PkW5NCZEVlOHX9zP5dj9BREyEfg82v/HrVDnMwFWZo3uoNlZlncKr+O6JjuSKksUEfXvZMFgoxcfAGvFHqCrB9TZINsIe810uz2vMZDbPZSA7H418/N+vUZWi+gkbcboxIT5UEetOPk6HJEFNx6gBTA==
+ b=IODcJV8Kss3MMrfqAelTlOx5inSIuo7dqPJUVDg8K4rOUajwhBlaTG3zLEpvgm7D0O+XoCKpOTR5WkG7RQ6JMlcriBUvKGYOgIfNsykO5uRffZ7HVDML0Os73PXByQTZGq8/aVtYdCpIPWcBVcFCBHtWIbqnRz9YbOyKy6NxjROS/62lu365WSXEZ7sk6DamypJ78LaA6tEgxz2XkVy9x7Lk4g6W5f4uU284XQKjhqDwSq/r824+MXN0i0A22zakY2N1A1vCpPDPKKbEBKZAVPKR96w+62k8ryVbT2NCMNnCsJU8299XzN7dKXZ60dP2NkMUoK+5/fI8BFcrznUNLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PKsrhM66TBye+IC6wdBCuUHX+ezNw8g/dcZ86WD4xr8=;
- b=PQW3QRvnXBKiP/MUyty52/naTGNkq3UnwqVe4Z4yaVnSTfE0jepcWJlVrguOsNMCRQO8lCPLb37t1MT4zARq+tX9InuilV9ZpjCVMUwReQVBoQJ/myaq1B2qg1QAuC1ZnRYwhfPlIpjAFnPbfUP2G8TTAgKWzNYNbZx7Dmiw4BsXXVKmJjp1eiLsAq+b64KmWJbwXhxgq1csmriGgAjU+4eZ9L3vaxXM6g9aQQEXjGo1Gz/b/FDbdcKzZG67DNl8JFtmxgm/jouYn8tdk1AurhTPqFV8VTi6rbJxO+9MaNSPFhAGvHgNCpiD2wXFYiLtSamKsJNNN8Pe0DhoY1qiuA==
+ bh=D4naflCbBggOcnOdpK1E+FdYlswu1/63kE7BSki7t2w=;
+ b=iIPh2rEBT+oHALshyHjZn3rwn/TTc2cQQN/LLwpRQBR2D2iukoILlqoluHJQ3xqfVzG3iWMNXy3bKgu2SJi5rjbAe3aehchB2BHw354bhK4zdAuLsnCnZiJT//UVWBPlwY9ryKFhI+KjtfR0ErsA+jCMFqmNiSPaJnQjPXWe1RiPeMGhn+9vix0LZyFcs1G48msrLrPh9+SpSp7dvsWLiPLzrb0doaSTkIQ69o+mcYZ0yRgCtnQryXJaqpDqbcmvxchQv4LdpBy01AKBzn1RkBW7Lpl+S2FeDzqpHqGYAovZEgcm64PpcB5eFz8hgQbgFDEMDK4zxhbyMbn2nS/9xA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PKsrhM66TBye+IC6wdBCuUHX+ezNw8g/dcZ86WD4xr8=;
- b=b5D+2kt5z6/UT7xSYILI0siYWijDQozr6mc/3ad5F/1HwiXyZ/sSZFgRYFwHC+YJewHgPcLEDiREJefI1inMigO48cJm8vvxJob6se0SsZBPc2YAoJ53DAox0Q0oN6VUiNwNIEe8hPFCLFL6D0chu1hlOKfoY4/+kuWpZt434wY=
+ bh=D4naflCbBggOcnOdpK1E+FdYlswu1/63kE7BSki7t2w=;
+ b=OgYJAZmsOOfZF6ybEL9Bl3P5RcHc0GxOtXUOsmQcyYfFr5a+LDjnCxcKNEdSAOprochI+Iyfn9E4J9b0sJBw+fyd88NKGOk7yvZb/o07OH7n5Ne295WRr4CQqS+QMvAKsTidtMZNdnKgWTaeHuZCcDCRTegkPB0zi/Bo/uLQiRM=
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
 Received: from DM4PR12MB5229.namprd12.prod.outlook.com (2603:10b6:5:398::12)
  by DM6PR12MB5520.namprd12.prod.outlook.com (2603:10b6:5:208::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.18; Tue, 27 Jul
- 2021 22:28:10 +0000
+ 2021 22:28:20 +0000
 Received: from DM4PR12MB5229.namprd12.prod.outlook.com
  ([fe80::73:2581:970b:3208]) by DM4PR12MB5229.namprd12.prod.outlook.com
  ([fe80::73:2581:970b:3208%3]) with mapi id 15.20.4352.031; Tue, 27 Jul 2021
- 22:28:10 +0000
+ 22:28:20 +0000
 From:   Tom Lendacky <thomas.lendacky@amd.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
@@ -52,67 +52,68 @@ Cc:     Borislav Petkov <bp@alien8.de>,
         Sathyanarayanan Kuppuswamy 
         <sathyanarayanan.kuppuswamy@linux.intel.com>,
         Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH 09/11] x86/sev: Remove the now unused mem_encrypt_active() function
-Date:   Tue, 27 Jul 2021 17:26:12 -0500
-Message-Id: <2e6fb78b7b18437f0e754513bf6312dcba3d1565.1627424774.git.thomas.lendacky@amd.com>
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Subject: [PATCH 10/11] powerpc/pseries/svm: Remove the now unused mem_encrypt_active() function
+Date:   Tue, 27 Jul 2021 17:26:13 -0500
+Message-Id: <ce42e6ff7debc5b724c63352817e4346439d3160.1627424774.git.thomas.lendacky@amd.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1627424773.git.thomas.lendacky@amd.com>
 References: <cover.1627424773.git.thomas.lendacky@amd.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SN4PR0501CA0065.namprd05.prod.outlook.com
- (2603:10b6:803:41::42) To DM4PR12MB5229.namprd12.prod.outlook.com
+X-ClientProxiedBy: SA9PR11CA0010.namprd11.prod.outlook.com
+ (2603:10b6:806:6e::15) To DM4PR12MB5229.namprd12.prod.outlook.com
  (2603:10b6:5:398::12)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from tlendack-t1.amd.com (165.204.77.1) by SN4PR0501CA0065.namprd05.prod.outlook.com (2603:10b6:803:41::42) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.12 via Frontend Transport; Tue, 27 Jul 2021 22:28:08 +0000
+Received: from tlendack-t1.amd.com (165.204.77.1) by SA9PR11CA0010.namprd11.prod.outlook.com (2603:10b6:806:6e::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.26 via Frontend Transport; Tue, 27 Jul 2021 22:28:18 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e1210c41-0710-4a44-4dd0-08d9514dd080
+X-MS-Office365-Filtering-Correlation-Id: a2ff93a6-8c75-4220-83a9-08d9514dd6b2
 X-MS-TrafficTypeDiagnostic: DM6PR12MB5520:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR12MB55205EA5C80ACD08C660059FECE99@DM6PR12MB5520.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:901;
+X-Microsoft-Antispam-PRVS: <DM6PR12MB55209266F66CADE6727BA1E3ECE99@DM6PR12MB5520.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1107;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: caY92Oook+0mgYTlSeZEOWrLCK8ng8jh0vvKP1BbkEZAAC3aLHcNNTDH3XMhnf+QJIiRO60OqNZmeXErwAsjuYUuO/WMokPKz24N8o39fqkbrdn3EM+rn7ASkiK/wyHNGhwlhmoXkJ56UKYU2PzAc91i4QWG8+cqIsUBkfxFVReUdloYOnTBdvOurVOemI0PP0vvSzOBim8NSSb0xSvqexy0WSahZH2BXrlric7apUdwjeWOhMtF/ALVwwKm/LqHUagQLkGOGKWmcyjMIFnQ4LfekeQ1wi8N5I7gtXGh9b8gb0OSWWxWPBQ/CgTwvxIVHHxUrSLL5VbL43BvZ7J9JNSM7o1j3mGCcdNVbhkoXvxQD+9YcYDvG8rYGRPkl9xPLgZktk5UC6E+F/UauAkE+JWFwk8L0RP4ezweYV7rkC3qWv1+ZWvygyCxMy+v1sfnNHX5SwCLTOOAPXvzHmMnFbMHFrtRmrnRp96EDGYJDNzIrdarADeFrcczvydnqtbLzK1r0wY+94fkZ6V9ZY64+sq7PKlnSaL5RusL8AU13uv0KYzd81SuLuB5bYcciUOpZfD9JE7OXcX0LJ7nH+apWTDXqkefWZ6ejFtX9XY0omxYGLeDV4oT8qq6H6jrDcFse9C1Z5mXHx5XfvazBD+SzH440iNDFPHPFiW/bAyL90Ol+s+szNel/BmJ628DbyijluEdJ50y0Y2MXICYx3is+Q==
+X-Microsoft-Antispam-Message-Info: 1TR3e+7vboeNn96OGJH/uyylPHctUUGnJSZMIA2ijuITPzdFvOVMYAoal/j8eVuJ5JAjiyYlmWv9cLppj7WmbocsicyjE0AVuA3XBqvfPf+GH71yIw4yW9J/TB7q/tfA13JpFcZMlEhow9TnXhra5pzdf+8xpUkm1LzKH0Jjq7VCGzHdlmELGbqXyMkQoDNZqSV1sJkyDSVbIGi20TzBFPMGaP2Z4od1HdaHaSln4SaDDQQQSxFGgh5CMAxk0q8WATYzsp4k0U/68Gu+N7pBcKz2CH08/0WhEko4bnTs3aqpnNy8VlGQqlEc3WI/1WlEZA7fx+jivCpp87fU9+eRdH3iFsBM2JS8meDv25I2kUyIRt+5oclbUDJb1LDNdiC88qIGyPzMgGtk1g04Q4gfPZcxdBXWynqV90TVIWpzozx/2louqjAAhL+THKHrJUYE05tujTR31VwcWMBW4gkBjmE3ABWnfO0ACoW/YB3LScJH1okjh4rxxLEQQN2yqk4WrZWQ/Yb3IN+7ENrkCa01g4q7XrEKiD8DUuFrk6PWxuQ2GYaulMcZ13R1lSnikE7FhxUA+5iveWRsfn2jy4DO/x7VrzejHuZUowbPjIAK42EbKxOpy2w2UVGcB24VFreA47IsIu4NkUdfg5bHjyIjQmZjcr3kNoKjaCGDDWuA0eXo1kQUvXqefOuZMGJ7mV0wB/R+VFWJWIyZ1Ng2SWzJDu9M4yS+5jsXEhJnS5iQJDU=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5229.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(136003)(396003)(39860400002)(376002)(366004)(52116002)(186003)(478600001)(38350700002)(921005)(5660300002)(38100700002)(956004)(8676002)(6486002)(54906003)(4326008)(2616005)(7416002)(7696005)(86362001)(8936002)(316002)(66556008)(6666004)(66476007)(36756003)(66946007)(2906002)(83380400001)(26005)(4744005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BciGXQlnIeOx5rkJCKv83CMBYwzmZ62spmW5pyKr4uFHG7B1b+N5HPefFk/B?=
- =?us-ascii?Q?kvweRS1jAuUrqRtp0r2/z2mguV5R0h2GiTHMJKaAplo8PnUa2OvH6q2bbl9G?=
- =?us-ascii?Q?mhp8EjsXkN5D/S2kZN8oeStGgfd15n7kg1tnjrGM6px+nbkm5Xl94sAh3iek?=
- =?us-ascii?Q?mMY7R+KLJm89V70WfB0J3xJXlXxhiVAWrOGD0PIK3BvV+KTvLaGRXiboYBvr?=
- =?us-ascii?Q?ydOTlDz29CKbsVTHzIu6GW1YA/wzUjXY/GPBKwY2ylJfD3HRP1sDZLGi6Meo?=
- =?us-ascii?Q?4wwfmoTqoCKxRDqWRaZMWSD1pluJZw96UiEN1xcBuMq5qcqcEHKcxUj57FcS?=
- =?us-ascii?Q?VKFXDr4YdO1fuPwwUuXSzwxtDAFvoSUWc++wSsOuDpBjjTCK5GodGfQqwUI9?=
- =?us-ascii?Q?pIUhFqfEq540t2MFiLl8A3G1mH/VlmPTFVV7XVRXdWCmT40hOc/1VNZiklWA?=
- =?us-ascii?Q?3iHKVO3DPxJbsj8L7+Dlme0vVZxMSakDatDVqTcYU+qe1p+bGpmbDg1zYVdE?=
- =?us-ascii?Q?c4mloPOOtlEmpRRp+acFYyGGuiCuJJ7xNOrTpDz0U7TBYqGh9sjga4Juw9aZ?=
- =?us-ascii?Q?udxw4f1viibGnEgtUPk7KPCbVqGxrPPItcN9Y5K6SO2lUrziBt5BNara8Em8?=
- =?us-ascii?Q?fvwva/6BVkcrv0z/lk7+RqVe4W5Ip0BuHjAJBFUlM+5o+j86nMhKtsrvjblx?=
- =?us-ascii?Q?DbfgcBaXZbMysizvP4firBns88yUNpYqnFn08hWZblQZ+RvwD9CZw54OMUjN?=
- =?us-ascii?Q?ea+nLD6ePkwXoWjvPbKl/y4S5kYH5RMOeM3w7iqdVNc6Di91AUMzQVMeiLff?=
- =?us-ascii?Q?a+JZxPQgAl5k4WSwqFsH19fQREs6ApWRjPn0kRMsLnOSw01mmWyheHzLZngd?=
- =?us-ascii?Q?JvNwdkZSGdNszDmU2RKsC25cAk1SYEzKisIl/G3EIKQnKofWX6Jsb+hahc8e?=
- =?us-ascii?Q?vVm7oYk2WMDkgUWy8KAlDIORmjKu4IzblpQ0bsUK3GNQ+9kV2XOmA7WWC7ca?=
- =?us-ascii?Q?uqHXOwY+X+WGGbpwL2SU9yBFMqQZLhv5xZYXsnf7tVzS392RZxxMPU3fhKoP?=
- =?us-ascii?Q?NWy7XXtOLjAmMunfAQMUlplVemmjoWtwutYpY9Stbjvlx4Jb9cb8nBlIcG5u?=
- =?us-ascii?Q?WkRnfzbAAqUS4Z7bkadtgJOsdz5KqFldipFBXsJTKO0Bl2NTJtPhPtXxYGk+?=
- =?us-ascii?Q?OJfziSz6qYly5+/b5SSanAgs3KbeDPZzhnlue/AK+UkejdvCKbo8DIYy4Sad?=
- =?us-ascii?Q?h+kouLwvicLBqA1UO8dcy0+uBj7OHKKFyrWBwxOibpCR5y8kziY6RKV67DT3?=
- =?us-ascii?Q?FqTuUUKelzCETVLw1bDw+FQ2?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?33XF5xyV6fSMw3mBCWiOHJrlKtNzKeJ6/jRgmcl8RZYEr1Vi6JiElIyMpiOC?=
+ =?us-ascii?Q?9+zwKk2nCv/fQvEkn4PQsdV59SWL4lyHFU5QopsGnK0eh00aIpOkFKGWY2Fu?=
+ =?us-ascii?Q?8aXmURCD9kstB8NClzK3Rk2gjyQUbEdGjco6x3g3zuy8WMSDVSwL2xY/K+xt?=
+ =?us-ascii?Q?6XG74Jys1erg/n5OHktqH4mIetUzRpDp9/6VfJo214rBIA35S4WhOn5XmSfJ?=
+ =?us-ascii?Q?jDIHNxja59sr1O2x16/gfH8vh5qqbz/+oXD5HEYKqaBhXxzn6ZlkQJ3Zq0RH?=
+ =?us-ascii?Q?dFJR4MB5Jn3c1mAa/D56lHvqzr7KvaLe4QFCjaUOx9cPzGRLts1lBQ9eb9Ak?=
+ =?us-ascii?Q?1zSh2aioycePqhFntOln3Kamhc1W+eBKk6+nI4BJXBbvuRr5eANOeA7C6SwZ?=
+ =?us-ascii?Q?BAR4g5BpZiC5UZ9dx9+YLBSyVNM/FpxahsiRvrVfKViw9wQnonQEhWQAaFJB?=
+ =?us-ascii?Q?BQxUHB3Jmt/mCq57S20Z9a6tM/9e4UModS5iimgQx0SDYmv6RiZS0CHzM598?=
+ =?us-ascii?Q?B/D/ro0+S2kn/Tw6NRu1YfYbTi5sl+YpYU00362j9JVxM6XYDmkY0gRusWaZ?=
+ =?us-ascii?Q?CcvSb3OqbJ7sUotrVhyvlVpTSgsDDWqlRN2NLtDUhp0L+XnLzerAxyP1bGFn?=
+ =?us-ascii?Q?wJdbHZza1l6u7s7XqMrnibPaGVJH9yuCUYRyezByek4A8hXZeNpv3d6aO3Rz?=
+ =?us-ascii?Q?teIxHnnpVfWBcfEGWfMHyucA8Entxxx+uQrEuVho9ucBJCLywWZ4MXRU2LEn?=
+ =?us-ascii?Q?gWZtdnc7FSraxU3HqTTgsM1mCLyZls4SimBB7udd+bX4jBtbDmV95K++ZjkD?=
+ =?us-ascii?Q?D6XHykJK04u/s1gtiMkSbvR473nC0jltyuQEx0LpKe3Am7bt87avHd2W8+td?=
+ =?us-ascii?Q?6djBJH5VP5x3W5+60NLgGPlwvKtm/0MAeY1hNse87F4HXXrA7Scj47I/5zZ1?=
+ =?us-ascii?Q?pn8gitU04mTXFyQ4sRGVEDMUZ71h5L6HUezkXig+OJN0ZnMmwalqI4i+qRat?=
+ =?us-ascii?Q?KDJq38cFj/dIPINUBWJhoN5SUi0srC3i5DaFKGNMPY9jdMmEperBEZBYpmxY?=
+ =?us-ascii?Q?XnLxmN0N3WxAWQhC7x10qRzyDskphfFkwWVGrHkV/IfG0IZy0P5sSaNfxKVQ?=
+ =?us-ascii?Q?+DRbQP8igDrWZCLvhqEN6x67EYVOpPFE6dXkCdHhBs8FXP4JK07Avj4QZc4e?=
+ =?us-ascii?Q?PzU/X8mn73iqAIQN5uur85oHQp8/HF88gRNK6jAotV1wrEz8wBdjid2U5O8Y?=
+ =?us-ascii?Q?WY11jD/9JLM1FOl7FgrYgVDv5ysBItsvT/kTDdiotQ4l+27sx+YIdGXA8IGn?=
+ =?us-ascii?Q?aecQt1f94b714YykypFf8I3U?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1210c41-0710-4a44-4dd0-08d9514dd080
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2ff93a6-8c75-4220-83a9-08d9514dd6b2
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5229.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2021 22:28:10.4516
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2021 22:28:20.7713
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IFLvGqgt15SZua3H3/Ow+sfZ51XMCL/axZ8PA9JCScELh+vGxAhBcZExN0voS08kwOfFOAJH6nAfu7AkuMJq+g==
+X-MS-Exchange-CrossTenant-UserPrincipalName: sK+QPL1UQy1x9YBjf2wLCNl6K8ELA+qcyL1NCrg8TKafLNREDqaRZrt8bwe+VFZXfpQiQOVdt50NIH1p+iGXeQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB5520
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -121,30 +122,30 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 The mem_encrypt_active() function has been replaced by prot_guest_has(),
 so remove the implementation.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
 Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
- arch/x86/include/asm/mem_encrypt.h | 5 -----
+ arch/powerpc/include/asm/mem_encrypt.h | 5 -----
  1 file changed, 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
-index 797146e0cd6b..94c089e9ea69 100644
---- a/arch/x86/include/asm/mem_encrypt.h
-+++ b/arch/x86/include/asm/mem_encrypt.h
-@@ -97,11 +97,6 @@ static inline void mem_encrypt_free_decrypted_mem(void) { }
+diff --git a/arch/powerpc/include/asm/mem_encrypt.h b/arch/powerpc/include/asm/mem_encrypt.h
+index ba9dab07c1be..2f26b8fc8d29 100644
+--- a/arch/powerpc/include/asm/mem_encrypt.h
++++ b/arch/powerpc/include/asm/mem_encrypt.h
+@@ -10,11 +10,6 @@
  
- extern char __start_bss_decrypted[], __end_bss_decrypted[], __start_bss_decrypted_unused[];
+ #include <asm/svm.h>
  
 -static inline bool mem_encrypt_active(void)
 -{
--	return sme_me_mask;
+-	return is_secure_guest();
 -}
 -
- static inline u64 sme_get_me_mask(void)
+ static inline bool force_dma_unencrypted(struct device *dev)
  {
- 	return sme_me_mask;
+ 	return is_secure_guest();
 -- 
 2.32.0
 
