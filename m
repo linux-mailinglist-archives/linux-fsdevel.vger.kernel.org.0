@@ -2,79 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 520573D7131
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 10:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B69623D71FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 11:30:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235931AbhG0IaV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jul 2021 04:30:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235740AbhG0IaV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jul 2021 04:30:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EF0E9611AD;
-        Tue, 27 Jul 2021 08:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627374619;
-        bh=RC6Acl2iuH0vikxc0De/SVQbosapIi4KuvPx7aSVX/E=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ENHoxaf1pjgjGoribd/AIOnp0lb7C0kwIJD0P/oAJmBBP1u0cuZ97ejG/GYq2pqUn
-         g+GrK0qh/mqMcRKcDsebAnEjcsUZTGy9H2ZtnPKYjlG1Fzif/TCbXjTCSyZ0Tkm5wm
-         xkMaZhzARG/O3vaMe3ImgzJDqjVPmSaBvWGZev5pod/VdQQ6tyENezrmgtDJXlbhSu
-         JcMCgBWzuOmWQo86CRS4gcaD1KjLTxqZZwM7ZJHwPz1JphFZ7Kt1gwycsv7QD66d3g
-         QU9blu8qpG2RN9Yi7Zpr6VHd9y16Co5w9YvkHtIHn9+LdmsCproxP0Q99CMlVM6BhD
-         3+dGTikJOeLIw==
-Subject: Re: [PATCH 3/9] f2fs: rework write preallocations
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Satya Tangirala <satyaprateek2357@gmail.com>,
-        Changheun Lee <nanich.lee@samsung.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-References: <20210716143919.44373-1-ebiggers@kernel.org>
- <20210716143919.44373-4-ebiggers@kernel.org>
- <14782036-f6a5-878a-d21f-e7dd7008a285@kernel.org>
- <YP2l+1umf9ct/4Sp@sol.localdomain> <YP9oou9sx4oJF1sc@google.com>
- <70f16fec-02f6-cb19-c407-856101cacc23@kernel.org>
- <YP+38QzXS6kpLGn0@sol.localdomain>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <70d9c954-d7f0-bbe2-f078-62273229342f@kernel.org>
-Date:   Tue, 27 Jul 2021 16:30:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S236049AbhG0JaG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jul 2021 05:30:06 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.85.151]:21196 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236022AbhG0JaG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Jul 2021 05:30:06 -0400
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-70-ms7TCF98MzyTiP7ml5G1wg-1; Tue, 27 Jul 2021 10:30:03 +0100
+X-MC-Unique: ms7TCF98MzyTiP7ml5G1wg-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.23; Tue, 27 Jul 2021 10:30:02 +0100
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.023; Tue, 27 Jul 2021 10:30:02 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
+Subject: RE: [PATCH v4 1/8] iov_iter: Introduce iov_iter_fault_in_writeable
+ helper
+Thread-Topic: [PATCH v4 1/8] iov_iter: Introduce iov_iter_fault_in_writeable
+ helper
+Thread-Index: AQHXgMWAppW/hO87w0mGvb576BwgJqtWjhtg
+Date:   Tue, 27 Jul 2021 09:30:02 +0000
+Message-ID: <03e0541400e946cf87bc285198b82491@AcuMS.aculab.com>
+References: <20210724193449.361667-1-agruenba@redhat.com>
+ <20210724193449.361667-2-agruenba@redhat.com>
+ <CAHk-=whodi=ZPhoJy_a47VD+-aFtz385B4_GHvQp8Bp9NdTKUg@mail.gmail.com>
+In-Reply-To: <CAHk-=whodi=ZPhoJy_a47VD+-aFtz385B4_GHvQp8Bp9NdTKUg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-In-Reply-To: <YP+38QzXS6kpLGn0@sol.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/7/27 15:38, Eric Biggers wrote:
-> That's somewhat helpful, but I've been doing some more investigation and now I'm
-> even more confused.  How can f2fs support non-overwrite DIO writes at all
-> (meaning DIO writes in LFS mode as well as DIO writes to holes in non-LFS mode),
-> given that it has no support for unwritten extents?  AFAICS, as-is users can
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjQgSnVseSAyMDIxIDIwOjUzDQo+IA0KPiBP
+biBTYXQsIEp1bCAyNCwgMjAyMSBhdCAxMjozNSBQTSBBbmRyZWFzIEdydWVuYmFjaGVyDQo+IDxh
+Z3J1ZW5iYUByZWRoYXQuY29tPiB3cm90ZToNCj4gPg0KPiA+ICtpbnQgaW92X2l0ZXJfZmF1bHRf
+aW5fd3JpdGVhYmxlKGNvbnN0IHN0cnVjdCBpb3ZfaXRlciAqaSwgc2l6ZV90IGJ5dGVzKQ0KPiA+
+ICt7DQo+IC4uLg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGlmIChmYXVsdF9pbl91c2Vy
+X3BhZ2VzKHN0YXJ0LCBsZW4sIHRydWUpICE9IGxlbikNCj4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHJldHVybiAtRUZBVUxUOw0KPiANCj4gTG9va2luZyBhdCB0aGlzIG9uY2Ug
+bW9yZSwgSSB0aGluayB0aGlzIGlzIGxpa2VseSB3cm9uZy4NCj4gDQo+IFdoeT8NCj4gDQo+IEJl
+Y2F1c2UgYW55IHVzZXIgY2FuL3Nob3VsZCBvbmx5IGNhcmUgYWJvdXQgYXQgbGVhc3QgKnBhcnQq
+IG9mIHRoZQ0KPiBhcmVhIGJlaW5nIHdyaXRhYmxlLg0KPiANCj4gSW1hZ2luZSB0aGF0IHlvdSdy
+ZSBkb2luZyBhIGxhcmdlIHJlYWQuIElmIHRoZSAqZmlyc3QqIHBhZ2UgaXMNCj4gd3JpdGFibGUs
+IHlvdSBzaG91bGQgc3RpbGwgcmV0dXJuIHRoZSBwYXJ0aWFsIHJlYWQsIG5vdCAtRUZBVUxULg0K
+DQpNeSAyYy4uLg0KDQpJcyBpdCBhY3R1YWxseSB3b3J0aCBkb2luZyBhbnkgbW9yZSB0aGFuIGVu
+c3VyaW5nIHRoZSBmaXJzdCBieXRlDQpvZiB0aGUgYnVmZmVyIGlzIHBhZ2VkIGluIGJlZm9yZSBl
+bnRlcmluZyB0aGUgYmxvY2sgdGhhdCBoYXMNCnRvIGRpc2FibGUgcGFnZSBmYXVsdHM/DQoNCk1v
+c3Qgb2YgdGhlIGFsbCB0aGUgcGFnZXMgYXJlIHByZXNlbnQgc28gdGhlIElPIGNvbXBsZXRlcy4N
+Cg0KVGhlIHBhZ2VzIGNhbiBhbHdheXMgZ2V0IHVubWFwcGVkIChkdWUgdG8gcGFnZSBwcmVzc3Vy
+ZSBvcg0KYW5vdGhlciBhcHBsaWNhdGlvbiB0aHJlYWQgdW5tYXBwaW5nIHRoZW0pIHNvIHRoZXJl
+IG5lZWRzDQp0byBiZSBhIHJldHJ5IGxvb3AuDQpHaXZlbiB0aGUgY29zdCBvZiBhY3R1YWxseSBm
+YXVsdGluZyBpbiBhIHBhZ2UgZ29pbmcgYXJvdW5kDQp0aGUgb3V0ZXIgbG9vcCBtYXkgbm90IG1h
+dHRlci4NCkluZGVlZCwgaWYgYW4gYXBwbGljYXRpb24gaGFzIGp1c3QgbW1hcCgpZWQgaW4gYSB2
+ZXJ5IGxhcmdlDQpmaWxlIGFuZCBpcyB0aGVuIGRvaW5nIGEgd3JpdGUoKSBmcm9tIGl0IHRoZW4g
+aXQgaXMgcXVpdGUNCmxpa2VseSB0aGF0IHRoZSBwYWdlcyBnb3QgdW5tYXBwZWQhDQoNCkNsZWFy
+bHkgdGhlcmUgbmVlZHMgdG8gYmUgZXh0cmEgY29kZSB0byBlbnN1cmUgcHJvZ3Jlc3MgaXMgbWFk
+ZS4NClRoaXMgbWlnaHQgYWN0dWFsbHkgcmVxdWlyZSB0aGUgdXNlIG9mICdib3VuY2UgYnVmZmVy
+cycNCmZvciByZWFsbHkgcHJvYmxlbWF0aWMgdXNlciByZXF1ZXN0cy4NCg0KSSBhbHNvIHdvbmRl
+ciB3aGF0IGFjdHVhbGx5IGhhcHBlbnMgZm9yIHBpcGVzIGFuZCBmaWZvcy4NCklJUkMgcmVhZHMg
+YW5kIHdyaXRlIG9mIHVwIHRvIFBJUEVfTUFYICh0eXBpY2FsbHkgNDA5NikNCmFyZSBleHBlY3Rl
+ZCB0byBiZSBhdG9taWMuDQpUaGlzIHNob3VsZCBiZSB0cnVlIGV2ZW4gaWYgdGhlcmUgYXJlIHBh
+Z2UgZmF1bHRzIHBhcnQgd2F5DQp0aHJvdWdoIHRoZSBjb3B5X3RvL2Zyb21fdXNlcigpLg0KDQpJ
+dCBoYXMgdG8gYmUgc2FpZCBJIGNhbid0IHNlZSBhbnkgcmVmZXJlbmNlIHRvIFBJUEVfTUFYDQpp
+biB0aGUgbGludXggbWFuIHBhZ2VzLCBidXQgSSdtIHN1cmUgaXQgaXMgaW4gdGhlIFBPU0lYL1RP
+Rw0Kc3BlYy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJh
+bWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0
+cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-I'm trying to pick up DAX support patch created by Qiuyang from huawei, and it
-looks it faces the same issue, so it tries to fix this by calling sb_issue_zeroout()
-in f2fs_map_blocks() before it returns.
-
-> easily leak uninitialized disk contents on f2fs by issuing a DIO write that
-> won't complete fully (or might not complete fully), then reading back the blocks
-> that got allocated but not written to.
-> 
-> I think that f2fs will have to take the ext2 approach of not allowing
-> non-overwrite DIO writes at all...
-Yes,
-
-Another option is to enhance f2fs metadata's scalability which needs to update layout
-of dnode block or SSA block, after that we can record the status of unwritten data block
-there... it's a big change though...
-
-Thanks,
-
-> 
-> - Eric
-> 
