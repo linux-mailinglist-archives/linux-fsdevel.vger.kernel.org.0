@@ -2,94 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F23A3D7A22
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 17:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9633D7AF9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 18:32:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237062AbhG0Pru (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jul 2021 11:47:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45580 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232679AbhG0Prt (ORCPT
+        id S229494AbhG0QcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jul 2021 12:32:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48634 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229670AbhG0QcU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jul 2021 11:47:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1627400869;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=ralyV5G7XJkmcT2GXx/j2umoacDKJ2ppZ813mNupf+4=;
-        b=dtYbpuTirxw7kAVCL6T7vnMVebrHTokm8g/kasznvWYXjTbQDzcX3om2+xukz7jiRvuatr
-        6PxhONbuNoVF6PPZMi7M0v31Bauw9nmtjqGta77QVo/1xfxMqjau0I8icauswo8iNJfxUo
-        VbjAgrxBt4El4vdW372Mc6pNNz3MYIY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-212--tPwhjigM7-Tm0m0FAyATw-1; Tue, 27 Jul 2021 11:47:45 -0400
-X-MC-Unique: -tPwhjigM7-Tm0m0FAyATw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F2DDA18C8C00;
-        Tue, 27 Jul 2021 15:47:40 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8A6965D9FC;
-        Tue, 27 Jul 2021 15:47:40 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 16RFldMM011955;
-        Tue, 27 Jul 2021 11:47:39 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 16RFlb1u011951;
-        Tue, 27 Jul 2021 11:47:37 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Tue, 27 Jul 2021 11:47:37 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Zhongwei Cai <sunrise_l@sjtu.edu.cn>,
-        Mingkai Dong <mingkaidong@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Theodore Ts'o" <tytso@mit.edu>
-cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, nvdimm@lists.linux.dev
-Subject: [RFC v4] nvfs: a filesystem for persistent memory
-Message-ID: <alpine.LRH.2.02.2107270946180.876@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Tue, 27 Jul 2021 12:32:20 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94C16C061757;
+        Tue, 27 Jul 2021 09:32:20 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id c16so10795111plh.7;
+        Tue, 27 Jul 2021 09:32:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=XnS7wGZkaUxUxBZzeIMFzrqtlFgUpVB9JFi7oU+kz1o=;
+        b=inkbtFcEAo4u9yojc/TIlxlnH2aBE6NspFb61m++w6vZ7IurjQrC7tNFN79v6tSijC
+         xaWgmiXGsYMkgsGBgokfIS1K/GKKgx0wlfPj6D9yFhOqhBkQElMoPOFes37ElCCRLNau
+         YCbj234wAO6gg6ftw1DnuhGmqgOFYR8DvZekesH/Oy1KOf0SHI1StnAbuhlFKXazlPeb
+         TWVX7epjbQySXXVsipN39I9ZzBMUBnvHjELkRONfj3vK1I3Vd/Dz5vOlTd3rEueUKLhT
+         /j7MzAmKWjHFHvKIRwPiMhR42xDYiWVYquRgJnoZ0cjnMH2/oax7x/OLTiKaATysBI6K
+         8bmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=XnS7wGZkaUxUxBZzeIMFzrqtlFgUpVB9JFi7oU+kz1o=;
+        b=M2GorkuEr5QzLyxA4b4iMlL09wmw0P4h4BT+6aEpyfq62gT0dB6YJAWmzfMPVPdFf0
+         FdoohgTVH642oEBKhbId0+59+X2YzmMPSnz+Zywk/Xl7ok9zkaXfjrkrd2KRLYo/wTAu
+         G1p0m9LgBQ7bcqGldN6CBlIeP03qvUQYKm3/9GXadRF8QbN7YD//spNb74o6JckgXiFz
+         Wsk5iIj9c0zqGVPU6wWyAx0HSH6l8B0SaUyn6FpFJe0513dy6mWEYBbGmjNZG6CBqiJf
+         F5ouQ7UE5Fpsz1gw0bc/NnzRq+l9R4AK5PGDcb2tKBAnTkwC9WWxZDEmiYgxfB1WBZk/
+         2r8A==
+X-Gm-Message-State: AOAM532RfADtK+gfx/TPChuoAEt25XvNjdX+tHR8EWh+63uWhoMnV8Ls
+        2Fh3z43EhAdY6fXYXWceUYc=
+X-Google-Smtp-Source: ABdhPJx0d7ZZWtjJIILVKYS4nXUt5hGghooKeSQHOhY3DYsW1p1pmc6dJL0N2mcEcDedMkmWK9Hm3A==
+X-Received: by 2002:a65:654c:: with SMTP id a12mr24563952pgw.118.1627403539876;
+        Tue, 27 Jul 2021 09:32:19 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:400::5:7502])
+        by smtp.gmail.com with ESMTPSA id z21sm3216582pjh.19.2021.07.27.09.32.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jul 2021 09:32:19 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Tue, 27 Jul 2021 06:32:15 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     brookxu <brookxu.cn@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, lizefan.x@bytedance.com,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [RFC PATCH v2 1/3] misc_cgroup: add support for nofile limit
+Message-ID: <YQA1D1GRiF9+px/s@mtj.duckdns.org>
+References: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
+ <YP8ovYqISzKC43mt@mtj.duckdns.org>
+ <b2ff6f80-8ec6-e260-ec42-2113e8ce0a18@gmail.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2ff6f80-8ec6-e260-ec42-2113e8ce0a18@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi
+Hello,
 
-I announce a new version of NVFS - a filesystem for persistent memory.
-You can download it at:
-	http://people.redhat.com/~mpatocka/nvfs/
-	git://leontynka.twibright.com/nvfs.git
-Description of the filesystem layout:
-	http://people.redhat.com/~mpatocka/nvfs/INTERNALS
+On Tue, Jul 27, 2021 at 11:18:00AM +0800, brookxu wrote:
+> According to files_maxfiles_init(), we only allow about 10% of free memory to
+> create filps, and each filp occupies about 1K of cache. In this way, on a 16G
+> memory machine, the maximum usable filp is about 1,604,644. In general
+> scenarios, this may not be a big problem, but if the task is abnormal, it will
+> very likely become a bottleneck and affect other modules. 
 
+Yeah but that can be configured trivially through sysfs. The reason why the
+default limit is lowered is because we wanna prevent a part of system to
+consume all the memory through fds. With cgroups, we already have that
+protection and at least some systems already configure file-max to maximum,
+so I don't see a point in adding another interface to subdivide the
+artificial limit.
 
-Changes since the last release:
+Thanks.
 
-* updated for the kernels 5.13 and 5.14-rc
-
-* add the ability to export the NVFS filesystem over NFS:
-	- each directory contains a pointer to its parent directory 
-	- add the 'generation' field to inodes
-	- the ability to open files by inode numbers
-
-* fixed some endianity conversions
-
-* fixed some sparse warnings
-
-* fixed a bug in extended attributes
-
-Mikulas
-
+-- 
+tejun
