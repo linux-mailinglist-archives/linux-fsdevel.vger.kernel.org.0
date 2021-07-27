@@ -2,142 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16B453D7388
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 12:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB3333D7390
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 12:45:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236332AbhG0Koc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jul 2021 06:44:32 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:34109 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236186AbhG0Koa (ORCPT
+        id S236366AbhG0Ko7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jul 2021 06:44:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52930 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236269AbhG0Ko6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jul 2021 06:44:30 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 155F3580ACA;
-        Tue, 27 Jul 2021 06:44:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Tue, 27 Jul 2021 06:44:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        hzwP7HziDq3+lShGm+nfs91KpNl05pJCwIUruh9Ju94=; b=pWgsuCA7q3GmjXTE
-        FDvgePMxG6kyzXKuN+2QNxiqRQwcA+9aEK+ZNYltcBaKS76VT46ARnMl9VHAO9Ll
-        F5Ynu687blGcolvBxiCfWeZ2WhIgcYXEhyL841wPrxg+jlo29GkD//srH4HoxM9U
-        8MIEuySboa5mCMksbFCEa/U+g98Fp4xbY7pPpSpl4qK7YO/8+Ffjb9oExIiGdCzg
-        48KKFZifSvzrrwzEeZRfEqLH4Tq4BPJoqHpVHaAfLuKPnvZX7qRBLpZBKrmUizrS
-        Up8bAmRqybLfIkQAW+mdDe9O/Z2zbg234M30kBKZyuFy+gGYPEssZyeJZQEYfuaJ
-        RprK6A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=hzwP7HziDq3+lShGm+nfs91KpNl05pJCwIUruh9Ju
-        94=; b=KKl3fOo2us0gNYxEpts5gM3+aXz8Y7LShysbJuNQIoTuTKgC05Yu+8nFK
-        PrptjfyxleFjpR2o/4HJFTEUndQpWVIgBS/4fdIzhTYOH3AOUZNrzIq8VMER1pKN
-        koVXShuqjcPwieOnkKE2vhv5+MfgXVP2V4VGTgOU3uNFTbugsISeTzadbpFCroYo
-        BsbT+QMcY38hLoB8xtjbKSGJmxeCQusA73tYWV7DVrQm/G58r+l20Lv1PeERgUGy
-        gjdet35hew3YR9FgpKs/vKk7CWN8MZN84RJ/R0iFMdW9R53xidGk3R4Q5K/gThne
-        aOYNlT2kQzDNnaAITKbxj2OIleKWw==
-X-ME-Sender: <xms:i-P_YH1IG-2kbvfdHrW6CQZ6L_QyrZvjK_DSb_QFOadVFCzyKPmHHw>
-    <xme:i-P_YGFH8PhzPS9u1PGabCK4gE4LLgzWpTf02lF6aJ_DcrS5Ry1_vZ6mhtU3-UJIJ
-    r3pP04cDvdq>
-X-ME-Received: <xmr:i-P_YH7iO8FyTbe7bqIXO6RBdsXw7lx7w1iBEBjR-qNIiW6I3fTBgH5bHMCt9VSMLq1lBfOt4W2s6IhqlwiES8TJoCxvajA079bD7avtNDfEgnyawlhThcVvc6EphQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrgeejgddviecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
-    hhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:i-P_YM0PCGnoqBoSt-OFaz7Jb4DKEhZt0YsvfwWR2mSYyK7gpjfG2A>
-    <xmx:i-P_YKGs4IkMQkOs0zRRMXYlS_V_pw8cm5j2birwO5tLnO_5uSc0YA>
-    <xmx:i-P_YN_CFNPjSBhWeG8vE1is8gIuBYU8P5TRo8fq3v6MHre-PRm0Xw>
-    <xmx:juP_YF9Lbe0rwNFtXOg7D5qPaiSIVveImQNuYwKbLWAq0fZY1bhmOQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 27 Jul 2021 06:44:22 -0400 (EDT)
-Message-ID: <2d4b407cad4270952a85951455cb722a4c435c69.camel@themaw.net>
-Subject: Re: [PATCH v8 0/5] kernfs: proposed locking and concurrency
- improvement
-From:   Ian Kent <raven@themaw.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>,
-        Fox Chen <foxhlchen@gmail.com>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 27 Jul 2021 18:44:18 +0800
-In-Reply-To: <YP/ZwYrtx+h/a/Ez@kroah.com>
-References: <162642752894.63632.5596341704463755308.stgit@web.messagingengine.com>
-         <YP/ZwYrtx+h/a/Ez@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        Tue, 27 Jul 2021 06:44:58 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1078AC061757
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jul 2021 03:44:58 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id r18so15425400iot.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jul 2021 03:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m0XGZGDgCsdMkQgJ6m/fS8fImgLN5ZcFU8urf8IBU8A=;
+        b=TEj6bd1Ave3DHoTOw5LoiuAgMOCIBcZLL0bEdR9sKle0HLOwy1kLZpAEUh2FoB4xkr
+         uKQ/LWm/vJKbQGn290SxWiIQVZZaYGCJ/RMotYtmZlZOKqjDZhy9sgrQ3gxoErZIY8zq
+         Xz+FqHE7jV79VbyOR+uULv/dcqWNafnXtaAZIwBNkf1yUas8E0LmY5oGbwflHofJHLkX
+         SXqGKKYmzSWNseFLHJXLWruar0U8atpQhJl8cc2T/Bt61zM69L4yXd+H8gY8Nlp5viIz
+         1MLYr5scsoXFoDYlzHQc+p85eBNXT7lybGEe3hfMPtiAaCr2FMQ6zjtpJy0Rn7iIfROY
+         86ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m0XGZGDgCsdMkQgJ6m/fS8fImgLN5ZcFU8urf8IBU8A=;
+        b=hd1IUztzXuckQpZVvZ/9UtuTgYM7dsAqZw5l3opkeMgyFXok+HCJ5lflKJSn/E+WwE
+         Ek+HM72DSWD4a7S8b6SNu6lohOjiKd+DxDE7ToUpGxiYoXIhaGKM1KlhkfYPqFNr8FmB
+         qYruBnkhzAb/ps7rJAd+QATc0ar1Hiyf0pvz3tCpSiqkbmGvhRtpeMb08nJhOJuHBLoE
+         +/FMjg1KCX0w84tTajE18wesNHU4He2SpliPr/G8z3lWqlNurPmUJU4lPx2wj0Tp4lGg
+         hb1n7EXTJAYxqbZURITHwFUSNcdl2tlnXC0EMZl1p6FFQhyzELuB6ZoEo0//dQDG7cH9
+         z0Rg==
+X-Gm-Message-State: AOAM531qi44nm4a8M9GxFsnVODTybDhCcRYqn2mLpwNETEDQ1WHz22ZS
+        gYaBZKAsi5rqeJEpYNf6I1nH+xoHFIwQq09j0RU=
+X-Google-Smtp-Source: ABdhPJx89y7WPJagRTgHlXKlHY+Ouau3zjL/jGqrAp4mDIbQ4nUgdn1oflpTaGUa/cjAGrDIrayX/ccjec/eDdwTa+0=
+X-Received: by 2002:a05:6638:3292:: with SMTP id f18mr21503192jav.120.1627382697526;
+ Tue, 27 Jul 2021 03:44:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <CAOQ4uxgckzeRuiKSe7D=TVaJGTYwy4cbCFDpdWMQr1R_xXkJig@mail.gmail.com>
+ <20210712111016.GC26530@quack2.suse.cz> <CAOQ4uxgnbirvr-KSMQyz-PL+Q_FmBF_OfSmWFEu6B0TYN-w1tg@mail.gmail.com>
+ <20210712162623.GA9804@quack2.suse.cz> <CAOQ4uxgHeX3r4eJ=4OgksDnkddPqOs0a8JxP5VDFjEddmRcorA@mail.gmail.com>
+ <YO469q9T7h0LBlIT@google.com> <CAOQ4uxgkMrMiNNA=Y2OKP4XYoiDMMZLZshzyviirmRzwQvjr2w@mail.gmail.com>
+ <YPDKa0tZ+kIoT8Um@google.com> <20210716094755.GD31920@quack2.suse.cz> <CAOQ4uxhxa9PL4CTkXNe6_iH2qNOf-TW8FdWgwSDa-ZiCGzb=UQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhxa9PL4CTkXNe6_iH2qNOf-TW8FdWgwSDa-ZiCGzb=UQ@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 27 Jul 2021 13:44:46 +0300
+Message-ID: <CAOQ4uxhuQ71pxyK5DqPa=-toAL2-w=0mUwnZjwGLjbYm72AuKQ@mail.gmail.com>
+Subject: Re: FAN_REPORT_CHILD_FID
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2021-07-27 at 12:02 +0200, Greg Kroah-Hartman wrote:
-> On Fri, Jul 16, 2021 at 05:28:13PM +0800, Ian Kent wrote:
-> > There have been a few instances of contention on the kernfs_mutex
-> > during
-> > path walks, a case on very large IBM systems seen by myself, a
-> > report by
-> > Brice Goglin and followed up by Fox Chen, and I've since seen a
-> > couple
-> > of other reports by CoreOS users.
-> > 
-> > The common thread is a large number of kernfs path walks leading to
-> > slowness of path walks due to kernfs_mutex contention.
-> > 
-> > The problem being that changes to the VFS over some time have
-> > increased
-> > it's concurrency capabilities to an extent that kernfs's use of a
-> > mutex
-> > is no longer appropriate. There's also an issue of walks for non-
-> > existent
-> > paths causing contention if there are quite a few of them which is
-> > a less
-> > common problem.
-> > 
-> > This patch series is relatively straight forward.
-> > 
-> > All it does is add the ability to take advantage of VFS negative
-> > dentry
-> > caching to avoid needless dentry alloc/free cycles for lookups of
-> > paths
-> > that don't exit and change the kernfs_mutex to a read/write
-> > semaphore.
-> > 
-> > The patch that tried to stay in VFS rcu-walk mode during path walks
-> > has
-> > been dropped for two reasons. First, it doesn't actually give very
-> > much
-> > improvement and, second, if there's a place where mistakes could go
-> > unnoticed it would be in that path. This makes the patch series
-> > simpler
-> > to review and reduces the likelihood of problems going unnoticed
-> > and
-> > popping up later.
-> > 
-> > Changes since v7:
-> > - remove extra tab in helper kernfs_dir_changed.
-> > - fix thinko adding an unnecessary kernfs_inc_rev() in
-> > kernfs_rename_ns().
-> 
-> Thanks for sticking with this, I've applied this to my testing branch
-> and let's see how 0-day does with it :)
+On Fri, Jul 16, 2021 at 2:24 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Fri, Jul 16, 2021 at 12:47 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Fri 16-07-21 09:53:15, Matthew Bobrowski wrote:
+> > > On Wed, Jul 14, 2021 at 03:09:56PM +0300, Amir Goldstein wrote:
+> > > > I am still debating with myself between adding a new event type
+> > > > (FAN_RENAME), adding a new report flag (FAN_REPORT_TARGET_FID)
+> > > > that adds info records to existing MOVE_ events or some combination.
+> > >
+> > > Well, if we went with adding a new event FAN_RENAME and specifying that
+> > > resulted in the generation of additional
+> > > FAN_EVENT_INFO_TYPE_DFID_NAME_{FROM,TO} information record types for an
+> > > event, wouldn't it be weird as it doesn't follow the conventional mechanism
+> > > of a listener asking for additional information records? As in,
+> > > traditionally we'd intialize the notification group with a flag and then
+> > > that flag controls whether or not one is permitted to receive events of a
+> > > particular type that may or may not include information records?
+> > >
+> > > Maybe a combination approach is needed in this instance, but this doesn't
+> > > necessarily simplify things when attempting to document the API semantics
+> > > IMO.
+> >
+> > So there are couple of ways how to approach this I guess. One is that we
+> > add a flag like FAN_REPORT_SECONDARY_DFID and FAN_REPORT_SECONDARY_NAME
+> > which would add another DFID(+NAME) record of new type to rename event. In
+> > principle these could be added to MOVED_FROM and/or MOVED_TO events
+> > (probably both are useful). But I'd find the naming somewhat confusing and
+> > difficult to sensibly describe.
+> >
+> > That's why I think it may be clearer to go with new FAN_RENAME event that
+> > will be triggered when the directory is on either end of rename(2) (source
+> > or target). If DFID(+NAME) is enabled for the group, the event would report
+> > both source and target DFIDs (and names if enabled) instead of one. I don't
+> > think special FAN_REPORT_? flag to enable the second DFID would be useful
+> > in this case (either for clarity or enabling some functionality).
+> >
+>
+> I agree that FAN_RENAME without any new REPORT flag is possible.
+> Still, I would like to at least try to come up with some UAPI that is more
+> compatible with existing semantics and simlifies them rather than creating
+> more special cases.
+>
+> For example, if FAN_REPORT_ALL_FIDS would start reporting all the
+> relevant fid records for all events, then nothing would change for
+> FAN_OPEN etc, but FAN_CREATE etc would start reporting the
+> target fid and FAN_MOVED_* would start reporting source, target and self
+> fids or dfid/name records and then FAN_MOVED_* pair can be "merged"
+> because they carry the exact same information.
+> (I suppose FAN_MOVE_SELF could be "merged" with them as well)
+>
+> When I write "merged" I mean queued as a single recorded event
+> depending on backend flags, like we do with event ON_CHILD and
+> event on self for inotify vs. fanotify.
+>
+> With this scheme, listeners that only set FAN_MOVED_FROM in
+> mask would get all relevant information and users that only set
+> FAN_MOVED_TO would get all relevant information and we avoid
+> the spam of different event formats for the same event in case
+> users set FAN_MOVED|FAN_RENAME|FAN_MOVE_SELF in the mask.
+>
+> That just leaves the question of HOW to describe the info records
+> in a consistent way.
+>
+> I was thinking about:
+>
+> #define FAN_EVENT_INFO_OF_SELF           1
+> #define FAN_EVENT_INFO_OF_SOURCE    2
+> #define FAN_EVENT_INFO_OF_TARGET     3
+>
+> struct fanotify_event_info_header {
+>         __u8 info_type; /* The type of object of the info record */
+>         __u8 info_of;     /* The subject of the info record */
+>         __u16 len;
+> };
+>
+> The existing info_type values determine HOW that info can be used.
+> For example, FAN_EVENT_INFO_TYPE_DFID can always be resolved
+> to a linked path if directory is not dead and reachable, while
+> FAN_EVENT_INFO_TYPE_FID is similar, but it could resolve to an
+> unknown path even if the inode is linked.
+>
+> Most events will only report records OF_SELF or OF_TARGET or both.
+> FAN_MOVED_* will also report records OF_SOURCE.
+>
+> One way to think about it is that we are encoding all the information
+> found in man page about what the info record is describing, depending
+> on the event type and making it available in the event itself, so application
+> does not need to code the semantics of the man page w.r.t info records
+> meaning for different event types.
+>
+> w.r.t backward compatibility of event parsers, naturally, the REPORT_ALL
+> flag protects us from regressions, but also adapting to the new scheme is
+> pretty easy. In particular, if application ignored the info_of field the only
+> event where things could go wrong is FAN_MOVED_TO because the
+> first info record is not what it used to be (assuming that we report the
+> info of source dirent first).
+>
 
-That's great news Greg, and thanks for putting up with me too, ;)
+> Thoughts?
 
-Ian
+Jan,
 
+I know you are catching up on emails and this is a very low priority.
+Whenever you get to it, here is a POC branch I prepared for
+FAN_REPORT_FID_OF:
 
+https://github.com/amir73il/linux/commits/fanotify_fid_of
+
+This does not include the unified move event with 3 info records
+only the basic extension of the UAPI with the sub_type info
+concept, which is used to report child fid records for dirent events.
+
+Here is an update of LTP test to support my claim about
+ease of adaptation for existing applications to new UAPI:
+
+https://github.com/amir73il/ltp/commits/fanotify_fid_of
+
+I haven't bothered to create a man page draft, but I did go over the
+existing documentation to estimate how much of it would need to change
+and I think it would require surprisingly little changes as the man page
+sections about expected info records were written in quite a broad language.
+
+Thanks,
+Amir.
