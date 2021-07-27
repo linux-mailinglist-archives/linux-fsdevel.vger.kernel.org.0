@@ -2,49 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 692373D832D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 00:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AC723D833E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 00:43:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232516AbhG0Wmf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jul 2021 18:42:35 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:56918 "EHLO
+        id S233117AbhG0WnP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jul 2021 18:43:15 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:57146 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232272AbhG0Wme (ORCPT
+        with ESMTP id S231730AbhG0WnN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jul 2021 18:42:34 -0400
+        Tue, 27 Jul 2021 18:43:13 -0400
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 1EBEE21E78;
-        Tue, 27 Jul 2021 22:42:33 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2895B21E78;
+        Tue, 27 Jul 2021 22:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1627425753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1627425792; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=vihpmn2uoW6kZkMJWdfOx9gWR0FQiyNFeIX6RH/tPsE=;
-        b=cnEQe2j4Cfk4z+cT0/DTSCoA8HsDK23LYcZHSIFtsZsj4Gqkbyv44hDWtBnQaq7dBqjwi/
-        XOkzuOrESpt8dPeEFYWNZ0j9noavvwMqKtpFtfFeRCZaK362EdTK4iXe5rwrIWn2bD7L5d
-        ijiP8vUysS8ikbuwH9sPSEPA7elwD0A=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xLs00Rrv/kTcj/5olsX73VJ3zYmRNlaU9tOovlvLkrY=;
+        b=CDYrsqvXmziG2cY28/a82LbbwXxEKRAV1gNZwQZZjcmIeTklR0CSSUHSCu/Y8kbUonbe78
+        wjytZURQAFUN9P7NL1uOozNd/XxH68LBZ2xuRkX6yleEp1GBawrGqI4r5Uq4RZmKoos8RD
+        3E2YzIB7cRdofn5hdWyD0PIc8fkzukw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1627425753;
+        s=susede2_ed25519; t=1627425792;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=vihpmn2uoW6kZkMJWdfOx9gWR0FQiyNFeIX6RH/tPsE=;
-        b=WVW8TUzL8L/T4o072uy0bIR/zei2PvXlKzV4Gh/qB8JGOBRXiFVuJHdGkNrvAX/kPp5YRQ
-        uFwhOXaIKOMqGUCQ==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xLs00Rrv/kTcj/5olsX73VJ3zYmRNlaU9tOovlvLkrY=;
+        b=WP2zRKJ88WSgYMmFFXlnfNH3h946jiyNr0bF/6uXF8WrxO9XhcMa7bNsJ2H42E5Iv6mzYx
+        6eNbxKV9SskOJzDw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2FEEE13A5D;
-        Tue, 27 Jul 2021 22:42:29 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 22F9C13A5D;
+        Tue, 27 Jul 2021 22:43:08 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id zXUnN9WLAGGCVQAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 27 Jul 2021 22:42:29 +0000
-Subject: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
+        id rca3NPyLAGGzVQAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 27 Jul 2021 22:43:08 +0000
+Subject: [PATCH 05/11] VFS: new function: mount_is_internal()
 From:   NeilBrown <neilb@suse.de>
 To:     Christoph Hellwig <hch@infradead.org>,
         Josef Bacik <josef@toxicpanda.com>,
@@ -55,7 +57,9 @@ To:     Christoph Hellwig <hch@infradead.org>,
 Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-btrfs@vger.kernel.org
 Date:   Wed, 28 Jul 2021 08:37:45 +1000
-Message-ID: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+Message-ID: <162742546552.32498.14429836898036234922.stgit@noble.brown>
+In-Reply-To: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,100 +68,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There are long-standing problems with btrfs subvols, particularly in
-relation to whether and how they are exposed in the mount table.
+This patch introduces the concept of an "internal" mount which is a
+mount where a filesystem has create the mount itself.
 
- - /proc/self/mountinfo reports the major:minor device number for each
-    filesystem and when a btrfs subvol is explicitly mounted, the number
-    reported is wrong - it does not match what stat() reports for the
-    mountpoint.
+Both the mounted-on-dentry and the mount's root dentry must refer to the
+same superblock (they may be the same dentry), and the mounted-on dentry
+must be an automount.
 
- - when subvol are not explicitly mounted, they don't appear in
-   mountinfo at all.
-
-Consequences include that a tool which uses stat() to find the dev of the
-filesystem, then searches mountinfo for that filesystem, will not find
-it.
-
-Some tools (e.g. findmnt) appear to have been enhanced to cope with this
-strangeness, but it would be best to make btrfs behave more normally.
-
-  - nfsd cannot currently see the transition to subvol, so reports the
-    main volume and all subvols to the client as being in the same
-    filesystem.  As inode numbers are not unique across all subvols,
-    this can confuse clients.  In particular, 'find' is likely to report a
-    loop.
-
-subvols can be made to appear in mountinfo using automounts.  However
-nfsd does not cope well with automounts.  It assumes all filesystems to
-be exported are already mounted.  So adding automounts to btrfs would
-break nfsd.
-
-We can enhance nfsd to understand that some automounts can be managed.
-"internal mounts" where a filesystem provides an automount point and
-mounts its own directories, can be handled differently by nfsd.
-
-This series addresses all these issues.  After a few enhancements to the
-VFS to provide needed support, they enhance exportfs and nfsd to cope
-with the concept of internal mounts, and then enhance btrfs to provide
-them.
-
-The NFSv3 support is incomplete.  I'm not sure we can make it work
-"perfectly".  A normal nfsv3 mount seem to work well enough, but if
-mounted with '-o noac', it loses track of the mounted-on inode number
-and complains about inode numbers changing.
-
-My basic test for these is to mount a btrfs filesystem which contains
-subvols, nfs-export it and mount it with nfsv3 and nfsv4, then run
-'find' in each of the filesystem and check the contents of
-/proc/self/mountinfo.
-
-The first patch simply fixes the dev number in mountinfo and could
-possibly be tagged for -stable.
-
-NeilBrown
-
+Signed-off-by: NeilBrown <neilb@suse.de>
 ---
+ fs/namespace.c        |   29 +++++++++++++++++++++++++++++
+ include/linux/mount.h |    2 ++
+ 2 files changed, 31 insertions(+)
 
-NeilBrown (11):
-      VFS: show correct dev num in mountinfo
-      VFS: allow d_automount to create in-place bind-mount.
-      VFS: pass lookup_flags into follow_down()
-      VFS: export lookup_mnt()
-      VFS: new function: mount_is_internal()
-      nfsd: include a vfsmount in struct svc_fh
-      exportfs: Allow filehandle lookup to cross internal mount points.
-      nfsd: change get_parent_attributes() to nfsd_get_mounted_on()
-      nfsd: Allow filehandle lookup to cross internal mount points.
-      btrfs: introduce mapping function from location to inum
-      btrfs: use automount to bind-mount all subvol roots.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 73bbdb921e24..a14efbccfb03 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1273,6 +1273,35 @@ bool path_is_mountpoint(const struct path *path)
+ }
+ EXPORT_SYMBOL(path_is_mountpoint);
+ 
++/**
++ * mount_is_internal() - Check if path is a mount internal to a single filesystem
++ * @mnt: vfsmount to check
++ *
++ * Some filesystems present multiple file-sets using a single
++ * superblock, such as btrfs with multiple subvolumes.  Names within a
++ * parent filesystem which lead to a subordinate filesystem are
++ * implemented as automounts so that the structure is visible in the
++ * mount table.  nfsd needs visibility into this arrangement so that it
++ * can determine if a mountpoint requires a new export, or is completely
++ * covered by an existing mount.
++ *
++ * An "internal" mount is one where the parent and child have the same
++ * superblock, and the mounted-on dentry is "managed" as an automount.  A
++ * filehandle found for an inode in the child can be looked-up using either
++ * vfsmount.
++ */
++bool mount_is_internal(struct vfsmount *mnt)
++{
++	struct mount *m = real_mount(mnt);
++
++	if (!mnt_has_parent(m))
++		return false;
++	if (m->mnt_parent->mnt.mnt_sb != m->mnt.mnt_sb)
++		return false;
++	return m->mnt_mountpoint->d_flags & DCACHE_NEED_AUTOMOUNT;
++}
++EXPORT_SYMBOL(mount_is_internal);
++
+ struct vfsmount *mnt_clone_internal(const struct path *path)
+ {
+ 	struct mount *p;
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index 1d3daed88f83..ab58087728ba 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -118,6 +118,8 @@ extern unsigned int sysctl_mount_max;
+ 
+ extern bool path_is_mountpoint(const struct path *path);
+ 
++extern bool mount_is_internal(struct vfsmount *mnt);
++
+ extern struct vfsmount *lookup_mnt(const struct path *);
+ 
+ extern void kern_unmount_array(struct vfsmount *mnt[], unsigned int num);
 
-
- fs/btrfs/btrfs_inode.h   |  12 +++
- fs/btrfs/inode.c         | 111 ++++++++++++++++++++++++++-
- fs/btrfs/super.c         |   1 +
- fs/exportfs/expfs.c      | 100 ++++++++++++++++++++----
- fs/fhandle.c             |   2 +-
- fs/internal.h            |   1 -
- fs/namei.c               |   6 +-
- fs/namespace.c           |  32 +++++++-
- fs/nfsd/export.c         |   4 +-
- fs/nfsd/nfs3xdr.c        |  40 +++++++---
- fs/nfsd/nfs4proc.c       |   9 ++-
- fs/nfsd/nfs4xdr.c        | 106 ++++++++++++-------------
- fs/nfsd/nfsfh.c          |  44 +++++++----
- fs/nfsd/nfsfh.h          |   3 +-
- fs/nfsd/nfsproc.c        |   5 +-
- fs/nfsd/vfs.c            | 162 +++++++++++++++++++++++----------------
- fs/nfsd/vfs.h            |  12 +--
- fs/nfsd/xdr4.h           |   2 +-
- fs/overlayfs/namei.c     |   5 +-
- fs/xfs/xfs_ioctl.c       |  12 ++-
- include/linux/exportfs.h |   4 +-
- include/linux/mount.h    |   4 +
- include/linux/namei.h    |   2 +-
- 23 files changed, 490 insertions(+), 189 deletions(-)
-
---
-Signature
 
