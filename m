@@ -2,136 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B67B3D6C0F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 04:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 224FC3D6C39
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 05:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234505AbhG0CGH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jul 2021 22:06:07 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:40474 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233727AbhG0CGG (ORCPT
+        id S234533AbhG0CTt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jul 2021 22:19:49 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:23162 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234410AbhG0CTr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jul 2021 22:06:06 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 380CD220F7;
-        Tue, 27 Jul 2021 02:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1627353993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=APvpEj/C5O4j/vdhFvTtJp7pnacMiKi2HxGUdwadN9A=;
-        b=HTPIbu+kTIomAhzPQLYze7fN3sW6GE90+OasyJtLyvaSGiu0IAdGFEr7V4HspoLodUOBP/
-        UvPy/OMuKM1RkOZvSCDTlV86zdkLGq6MBl3SnCXoBUgN1H6A8/1zcAKYRxh/C9Zv6gKvzy
-        qrWJKbyfZ3WkSN5CslF1AI4/2ICNCh4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1627353993;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=APvpEj/C5O4j/vdhFvTtJp7pnacMiKi2HxGUdwadN9A=;
-        b=PmhyBKHBUB/VZueUX4Yf4VwUCJ35+fUSE0BTDLR7TKF9+dBAU5skZHv2Rzr/PAfOhEsvVc
-        VsBvQhdi/HRVEaCw==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id BDC22133DE;
-        Tue, 27 Jul 2021 02:46:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id xRWIHYhz/2CqUgAAGKfGzw
-        (envelope-from <rgoldwyn@suse.de>); Tue, 27 Jul 2021 02:46:32 +0000
-Date:   Mon, 26 Jul 2021 21:46:30 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] fs: reduce pointers while using file_ra_state_init()
-Message-ID: <20210727024630.ia4sne4gbruvssgy@fiona>
-References: <20210726164647.brx3l2ykwv3zz7vr@fiona>
- <162733718119.4153.5949006309014161476@noble.neil.brown.name>
- <YP9p8G6eu30+d2jH@casper.infradead.org>
- <162735275468.4153.4700285307587386171@noble.neil.brown.name>
+        Mon, 26 Jul 2021 22:19:47 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R351e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0Uh6wb0w_1627354798;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Uh6wb0w_1627354798)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 27 Jul 2021 11:00:02 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Huang Jianan <huangjianan@oppo.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Gao Xiang <hsiangkao@linux.alibaba.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH v9] iomap: Support file tail packing
+Date:   Tue, 27 Jul 2021 10:59:56 +0800
+Message-Id: <20210727025956.80684-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <162735275468.4153.4700285307587386171@noble.neil.brown.name>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12:25 27/07, NeilBrown wrote:
-> On Tue, 27 Jul 2021, Matthew Wilcox wrote:
-> > On Tue, Jul 27, 2021 at 08:06:21AM +1000, NeilBrown wrote:
-> > > You seem to be assuming that inode->i_mapping->host is always 'inode'.
-> > > That is not the case.
-> > 
-> > Weeeelllll ... technically, outside of the filesystems that are
-> > changed here, the only assumption in common code that is made is that
-> > inode_to_bdi(inode->i_mapping->host->i_mapping->host) ==
-> > inode_to_bdi(inode)
-> 
-> Individual filesystems doing their own thing is fine.  Passing just an
-> inode to inode_to_bdi is fine.
-> 
-> But the patch changes do_dentry_open()
+The existing inline data support only works for cases where the entire
+file is stored as inline data.  For larger files, EROFS stores the
+initial blocks separately and then can pack a small tail adjacent to the
+inode.  Generalise inline data to allow for tail packing.  Tails may not
+cross a page boundary in memory.
 
-But do_dentry_open() is setting up the file pointer (f) based on
-inode (and it's i_mapping). Can f->f_mapping change within
-do_dentry_open()?
+We currently have no filesystems that support tail packing and writing,
+so that case is currently disabled (see iomap_write_begin_inline).
 
-> 
-> > 
-> > Looking at inode_to_bdi, that just means that they have the same i_sb.
-> > Which is ... not true for character raw devices?
-> >         if (++raw_devices[minor].inuse == 1)
-> >                 file_inode(filp)->i_mapping =
-> >                         bdev->bd_inode->i_mapping;
-> > but then, who's using readahead on a character raw device?  They
-> > force O_DIRECT.  But maybe this should pass inode->i_mapping->host
-> > instead of inode.
-> 
-> Also not true in coda.
-> 
-> coda (for those who don't know) is a network filesystem which fetches
-> whole files (and often multiple files) at a time (like the Andrew
-> filesystem).  The files are stored in a local filesystem which acts as a
-> cache.
-> 
-> So an inode in a 'coda' filesystem access page-cache pages from a file
-> in e.g. an 'ext4' filesystem.  This is done via the ->i_mapping link.
-> For (nearly?) all other filesystems, ->i_mapping is a link to ->i_data
-> in the same inode.
-> 
-> > 
-> > > In particular, fs/coda/file.c contains
-> > > 
-> > > 	if (coda_inode->i_mapping == &coda_inode->i_data)
-> > > 		coda_inode->i_mapping = host_inode->i_mapping;
-> > > 
-> > > So a "coda_inode" shares the mapping with a "host_inode".
-> > > 
-> > > This is why an inode has both i_data and i_mapping.
-> > > 
-> > > So I'm not really sure this patch is safe.  It might break codafs.
-> > > 
-> > > But it is more likely that codafs isn't used, doesn't work, should be
-> > > removed, and i_data should be renamed to i_mapping.
-> > 
-> > I think there's also something unusual going on with either ocfs2
-> > or gfs2.  But yes, I don't understand the rules for when I need to
-> > go from inode->i_mapping->host.
-> > 
-> 
-> Simple.  Whenever you want to work with the page-cache pages, you cannot
-> assume anything in the original inode is relevant except i_mapping (and
-> maybe i_size I guess).
-> 
-> NeilBrown
+Cc: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+v8: https://lore.kernel.org/r/20210726145734.214295-1-hsiangkao@linux.alibaba.com
+changes since v8:
+ - update the subject to 'iomap: Support file tail packing' as there
+   are clearly a number of ways to make the inline data support more
+   flexible (Matthew);
 
+ - add one extra safety check (Darrick):
+	if (WARN_ON_ONCE(size > iomap->length))
+		return -EIO;
+
+ fs/iomap/buffered-io.c | 42 ++++++++++++++++++++++++++++++------------
+ fs/iomap/direct-io.c   | 10 ++++++----
+ include/linux/iomap.h  | 18 ++++++++++++++++++
+ 3 files changed, 54 insertions(+), 16 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 87ccb3438bec..f429b9d87dbe 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -205,25 +205,32 @@ struct iomap_readpage_ctx {
+ 	struct readahead_control *rac;
+ };
+ 
+-static void
+-iomap_read_inline_data(struct inode *inode, struct page *page,
++static int iomap_read_inline_data(struct inode *inode, struct page *page,
+ 		struct iomap *iomap)
+ {
+-	size_t size = i_size_read(inode);
++	size_t size = i_size_read(inode) - iomap->offset;
+ 	void *addr;
+ 
+ 	if (PageUptodate(page))
+-		return;
++		return 0;
+ 
+-	BUG_ON(page_has_private(page));
+-	BUG_ON(page->index);
+-	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	/* inline data must start page aligned in the file */
++	if (WARN_ON_ONCE(offset_in_page(iomap->offset)))
++		return -EIO;
++	if (WARN_ON_ONCE(size > PAGE_SIZE -
++			 offset_in_page(iomap->inline_data)))
++		return -EIO;
++	if (WARN_ON_ONCE(size > iomap->length))
++		return -EIO;
++	if (WARN_ON_ONCE(page_has_private(page)))
++		return -EIO;
+ 
+ 	addr = kmap_atomic(page);
+ 	memcpy(addr, iomap->inline_data, size);
+ 	memset(addr + size, 0, PAGE_SIZE - size);
+ 	kunmap_atomic(addr);
+ 	SetPageUptodate(page);
++	return 0;
+ }
+ 
+ static inline bool iomap_block_needs_zeroing(struct inode *inode,
+@@ -247,8 +254,10 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	sector_t sector;
+ 
+ 	if (iomap->type == IOMAP_INLINE) {
+-		WARN_ON_ONCE(pos);
+-		iomap_read_inline_data(inode, page, iomap);
++		int ret = iomap_read_inline_data(inode, page, iomap);
++
++		if (ret)
++			return ret;
+ 		return PAGE_SIZE;
+ 	}
+ 
+@@ -589,6 +598,15 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+ 	return 0;
+ }
+ 
++static int iomap_write_begin_inline(struct inode *inode,
++		struct page *page, struct iomap *srcmap)
++{
++	/* needs more work for the tailpacking case, disable for now */
++	if (WARN_ON_ONCE(srcmap->offset != 0))
++		return -EIO;
++	return iomap_read_inline_data(inode, page, srcmap);
++}
++
+ static int
+ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+ 		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
+@@ -618,7 +636,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+ 	}
+ 
+ 	if (srcmap->type == IOMAP_INLINE)
+-		iomap_read_inline_data(inode, page, srcmap);
++		status = iomap_write_begin_inline(inode, page, srcmap);
+ 	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
+ 		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
+ 	else
+@@ -671,11 +689,11 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
+ 	void *addr;
+ 
+ 	WARN_ON_ONCE(!PageUptodate(page));
+-	BUG_ON(pos + copied > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	BUG_ON(!iomap_inline_data_valid(iomap));
+ 
+ 	flush_dcache_page(page);
+ 	addr = kmap_atomic(page);
+-	memcpy(iomap->inline_data + pos, addr + pos, copied);
++	memcpy(iomap_inline_data(iomap, pos), addr + pos, copied);
+ 	kunmap_atomic(addr);
+ 
+ 	mark_inode_dirty(inode);
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 9398b8c31323..41ccbfc9dc82 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -378,23 +378,25 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		struct iomap_dio *dio, struct iomap *iomap)
+ {
+ 	struct iov_iter *iter = dio->submit.iter;
++	void *inline_data = iomap_inline_data(iomap, pos);
+ 	size_t copied;
+ 
+-	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	if (WARN_ON_ONCE(!iomap_inline_data_valid(iomap)))
++		return -EIO;
+ 
+ 	if (dio->flags & IOMAP_DIO_WRITE) {
+ 		loff_t size = inode->i_size;
+ 
+ 		if (pos > size)
+-			memset(iomap->inline_data + size, 0, pos - size);
+-		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
++			memset(iomap_inline_data(iomap, size), 0, pos - size);
++		copied = copy_from_iter(inline_data, length, iter);
+ 		if (copied) {
+ 			if (pos + copied > size)
+ 				i_size_write(inode, pos + copied);
+ 			mark_inode_dirty(inode);
+ 		}
+ 	} else {
+-		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
++		copied = copy_to_iter(inline_data, length, iter);
+ 	}
+ 	dio->size += copied;
+ 	return copied;
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 479c1da3e221..b8ec145b2975 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -97,6 +97,24 @@ iomap_sector(struct iomap *iomap, loff_t pos)
+ 	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+ }
+ 
++/*
++ * Returns the inline data pointer for logical offset @pos.
++ */
++static inline void *iomap_inline_data(struct iomap *iomap, loff_t pos)
++{
++	return iomap->inline_data + pos - iomap->offset;
++}
++
++/*
++ * Check if the mapping's length is within the valid range for inline data.
++ * This is used to guard against accessing data beyond the page inline_data
++ * points at.
++ */
++static inline bool iomap_inline_data_valid(struct iomap *iomap)
++{
++	return iomap->length <= PAGE_SIZE - offset_in_page(iomap->inline_data);
++}
++
+ /*
+  * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
+  * and page_done will be called for each page written to.  This only applies to
 -- 
-Goldwyn
+2.24.4
+
