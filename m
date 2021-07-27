@@ -2,130 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED27D3D6CCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 05:32:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19E193D6D07
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 05:49:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234988AbhG0CwM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jul 2021 22:52:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39606 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234422AbhG0CwM (ORCPT
+        id S234893AbhG0DJL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jul 2021 23:09:11 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:44474 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234809AbhG0DJK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jul 2021 22:52:12 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 074FFC061757;
-        Mon, 26 Jul 2021 20:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=Z5OTHAoZBoL/SIl2ruEQOeyRsTlnOUVPwpimgyS/uS8=; b=OKHmk2zQ+VU1/UmXqMg+XTROia
-        eCdPlEg03Z42i9H1TINqbUMFUo0zG3Nma0I2Rv5B0ifctio5yE7P/9ncedSMUbW8/jtrZwe+qJZd6
-        0k+ajWQY71ticFXRcEXl8EbThQY2GxKLLOd1ramA2skbs/trFBklvKOjSrKxiURl2ljGfgti81tvT
-        ISly06NfPvXfPY6oo26nXXdwyB+3esFPaqZ3qvDMr+kHGGLhf0A+aVxdT2DLozInlhZlfzw+9bDnS
-        qJjUFB7Nyni5NmLzCvstoY/QD0JWrOkK/wB95lx8Ca/8zI5Zu/bFIqdOkiJAei8v7+oEM628yyTUc
-        NQR2fQuA==;
-Received: from [2601:1c0:6280:3f0::aefb]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m8Dpe-00D0NX-GD; Tue, 27 Jul 2021 03:32:38 +0000
-Subject: Re: mmotm 2021-07-23-15-03 uploaded (mm/memory_hotplug.c)
-To:     David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-References: <20210723220400.w5iKInKaC%akpm@linux-foundation.org>
- <5966f6a2-bdba-3a54-c6cb-d21aaeb8f534@infradead.org>
- <5394da5e-29f0-ff7d-e614-e2805400a8bb@redhat.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <1549416a-05aa-108b-ec95-cac9d84febd1@infradead.org>
-Date:   Mon, 26 Jul 2021 20:32:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Mon, 26 Jul 2021 23:09:10 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 1284B22019;
+        Tue, 27 Jul 2021 03:49:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1627357777; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ADAJ0xRh1XICgfjWMOlNhyNJ5UxRHdIAobMT7+CzNzw=;
+        b=MDaJ6ioB9xpCfvLmF7/OrVZ8BVNK06CP7wr8B84iyhptD97IBxCwe00N6BLr5FhZWRv7ro
+        4TeioBLN3olfKzQbu6+UuC6xCsXIs/4XaN8RymSzZQbba73lcwiINXRa2GdE28gFRswiFe
+        EhoZ0o7vTE9Z5CV1w5OKwRBFjfPTBvg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1627357777;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ADAJ0xRh1XICgfjWMOlNhyNJ5UxRHdIAobMT7+CzNzw=;
+        b=/wi4abGKP+tM1SmABu/nTaRDwc+NdvHwOFIAuRRvzx6Xh74A6wMcVMZFWkuBM3EfPb5dZB
+        Yuc3SE8Om6nk8WDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2EAA413B5C;
+        Tue, 27 Jul 2021 03:49:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id XWb3Nk6C/2ACKQAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 27 Jul 2021 03:49:34 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <5394da5e-29f0-ff7d-e614-e2805400a8bb@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Goldwyn Rodrigues" <rgoldwyn@suse.de>
+Cc:     "Matthew Wilcox" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] fs: reduce pointers while using file_ra_state_init()
+In-reply-to: <20210727024630.ia4sne4gbruvssgy@fiona>
+References: <20210726164647.brx3l2ykwv3zz7vr@fiona>,
+ <162733718119.4153.5949006309014161476@noble.neil.brown.name>,
+ <YP9p8G6eu30+d2jH@casper.infradead.org>,
+ <162735275468.4153.4700285307587386171@noble.neil.brown.name>,
+ <20210727024630.ia4sne4gbruvssgy@fiona>
+Date:   Tue, 27 Jul 2021 13:49:31 +1000
+Message-id: <162735777193.4153.15638869819515863315@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/26/21 12:14 AM, David Hildenbrand wrote:
-> On 24.07.21 20:49, Randy Dunlap wrote:
->> On 7/23/21 3:04 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2021-07-23-15-03 has been uploaded to
->>>
->>>     https://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> https://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>>
->>> You will need quilt to apply these patches to the latest Linus release (5.x
->>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->>> https://ozlabs.org/~akpm/mmotm/series
->>>
->>> The file broken-out.tar.gz contains two datestamp files: .DATE and
->>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
->>> followed by the base kernel version against which this patch series is to
->>> be applied.
->>>
->>
->> on x86_64:
->> # CONFIG_CMA is not set
->>
->> mm-memory_hotplug-memory-group-aware-auto-movable-online-policy.patch
->>
->>
->>
->> ../mm/memory_hotplug.c: In function ‘auto_movable_stats_account_zone’:
->> ../mm/memory_hotplug.c:748:33: error: ‘struct zone’ has no member named ‘cma_pages’; did you mean ‘managed_pages’?
->>     stats->movable_pages += zone->cma_pages;
->>                                   ^~~~~~~~~
->>                                   managed_pages
->> ../mm/memory_hotplug.c:750:38: error: ‘struct zone’ has no member named ‘cma_pages’; did you mean ‘managed_pages’?
->>     stats->kernel_early_pages -= zone->cma_pages;
->>                                        ^~~~~~~~~
->>                                        managed_pages
->>
->>
-> 
-> Thanks Randy, the following on top should make it fly:
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index bfdaa28eb86f..fa1a0afd32ba 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -741,13 +741,15 @@ static void auto_movable_stats_account_zone(struct auto_movable_stats *stats,
->         if (zone_idx(zone) == ZONE_MOVABLE) {
->                 stats->movable_pages += zone->present_pages;
->         } else {
-> +               stats->kernel_early_pages += zone->present_early_pages;
-> +#ifdef CONFIG_CMA
->                 /*
->                  * CMA pages (never on hotplugged memory) behave like
->                  * ZONE_MOVABLE.
->                  */
->                 stats->movable_pages += zone->cma_pages;
-> -               stats->kernel_early_pages += zone->present_early_pages;
->                 stats->kernel_early_pages -= zone->cma_pages;
-> +#endif /* CONFIG_CMA */
->         }
->  }
->  struct auto_movable_group_stats {
-> 
-> 
+On Tue, 27 Jul 2021, Goldwyn Rodrigues wrote:
+> On 12:25 27/07, NeilBrown wrote:
+> > On Tue, 27 Jul 2021, Matthew Wilcox wrote:
+> > > On Tue, Jul 27, 2021 at 08:06:21AM +1000, NeilBrown wrote:
+> > > > You seem to be assuming that inode->i_mapping->host is always 'inode'.
+> > > > That is not the case.
+> > >=20
+> > > Weeeelllll ... technically, outside of the filesystems that are
+> > > changed here, the only assumption in common code that is made is that
+> > > inode_to_bdi(inode->i_mapping->host->i_mapping->host) =3D=3D
+> > > inode_to_bdi(inode)
+> >=20
+> > Individual filesystems doing their own thing is fine.  Passing just an
+> > inode to inode_to_bdi is fine.
+> >=20
+> > But the patch changes do_dentry_open()
+>=20
+> But do_dentry_open() is setting up the file pointer (f) based on
+> inode (and it's i_mapping). Can f->f_mapping change within
+> do_dentry_open()?
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+do_dentry_open calls file_ra_state_init() to copy ra_pages from the bdi
+for inode->i_mapping->host->i_mapping.
+I do think there is some pointless indirection here, and it should be
+sufficient to pass inode->i_mapping (aka f->f_mapping) to
+file_ra_state_init(). (though in 2004, Andrew Morton thought otherwise)
+But you have changed do_dentry_open() to not follow the ->i_mapping link
+at all.
+So in the coda case f->f_ra will be inititalied from the bdi for coda
+instead of the bdi for the filesystem coda uses for local storage.
 
-Thanks.
+So this is a change in behaviour.  Maybe not a serious one, but one that
+needs to be understood.
 
--- 
-~Randy
+https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/commit/?i=
+d=3D1c211088833a27daa4512348bcae9890e8cf92d4
 
+Hmm.  drivers/dax/device.c does some funky things with ->i_mapping too.
+I wonder if that would be affected by this change....  probably not, it
+looks like it is the same super_block and so the same ra info for both
+mappings.
+
+NeilBrown
+
+>=20
+> >=20
+> > >=20
+> > > Looking at inode_to_bdi, that just means that they have the same i_sb.
+> > > Which is ... not true for character raw devices?
+> > >         if (++raw_devices[minor].inuse =3D=3D 1)
+> > >                 file_inode(filp)->i_mapping =3D
+> > >                         bdev->bd_inode->i_mapping;
+> > > but then, who's using readahead on a character raw device?  They
+> > > force O_DIRECT.  But maybe this should pass inode->i_mapping->host
+> > > instead of inode.
+> >=20
+> > Also not true in coda.
+> >=20
+> > coda (for those who don't know) is a network filesystem which fetches
+> > whole files (and often multiple files) at a time (like the Andrew
+> > filesystem).  The files are stored in a local filesystem which acts as a
+> > cache.
+> >=20
+> > So an inode in a 'coda' filesystem access page-cache pages from a file
+> > in e.g. an 'ext4' filesystem.  This is done via the ->i_mapping link.
+> > For (nearly?) all other filesystems, ->i_mapping is a link to ->i_data
+> > in the same inode.
+> >=20
+> > >=20
+> > > > In particular, fs/coda/file.c contains
+> > > >=20
+> > > > 	if (coda_inode->i_mapping =3D=3D &coda_inode->i_data)
+> > > > 		coda_inode->i_mapping =3D host_inode->i_mapping;
+> > > >=20
+> > > > So a "coda_inode" shares the mapping with a "host_inode".
+> > > >=20
+> > > > This is why an inode has both i_data and i_mapping.
+> > > >=20
+> > > > So I'm not really sure this patch is safe.  It might break codafs.
+> > > >=20
+> > > > But it is more likely that codafs isn't used, doesn't work, should be
+> > > > removed, and i_data should be renamed to i_mapping.
+> > >=20
+> > > I think there's also something unusual going on with either ocfs2
+> > > or gfs2.  But yes, I don't understand the rules for when I need to
+> > > go from inode->i_mapping->host.
+> > >=20
+> >=20
+> > Simple.  Whenever you want to work with the page-cache pages, you cannot
+> > assume anything in the original inode is relevant except i_mapping (and
+> > maybe i_size I guess).
+> >=20
+> > NeilBrown
+>=20
+> --=20
+> Goldwyn
+>=20
+>=20
