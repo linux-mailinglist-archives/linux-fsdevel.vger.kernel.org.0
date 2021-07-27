@@ -2,78 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9DD93D6E23
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 07:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B7EB3D6F7D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 08:31:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235306AbhG0FeU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jul 2021 01:34:20 -0400
-Received: from relay.sw.ru ([185.231.240.75]:40198 "EHLO relay.sw.ru"
+        id S235638AbhG0Gbl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jul 2021 02:31:41 -0400
+Received: from verein.lst.de ([213.95.11.211]:48591 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235365AbhG0FeD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jul 2021 01:34:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=virtuozzo.com; s=relay; h=Content-Type:MIME-Version:Date:Message-ID:Subject
-        :From; bh=C9yDGq1DGF0qRqKlvs/XnP70DMDpJdWqT+roIArxGNw=; b=CvXCCvMZiYCq8mxvXOr
-        Agp20Om2u94X+CEcSy0B/UFaTXNSBj/N+yP5icjwPBSWruFNdchRW1KZ1ErzOj77rYVmFjlVfn7Dq
-        XjnnvOi/LnDag45EmLbQSpWTDsUZFP3prIONANdVnXyp91qW0N99uqryiCmovBz+fYvNaufvwSk=;
-Received: from [10.93.0.56]
-        by relay.sw.ru with esmtp (Exim 4.94.2)
-        (envelope-from <vvs@virtuozzo.com>)
-        id 1m8Fif-005LXQ-Mo; Tue, 27 Jul 2021 08:33:33 +0300
-From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH v7 04/10] memcg: enable accounting for fasync_cache
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     cgroups@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <6f21a0e0-bd36-b6be-1ffa-0dc86c06c470@virtuozzo.com>
- <cover.1627362057.git.vvs@virtuozzo.com>
-Message-ID: <1b408625-d71c-0b26-b0b6-9baf00f93e69@virtuozzo.com>
-Date:   Tue, 27 Jul 2021 08:33:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S234803AbhG0Gbl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Jul 2021 02:31:41 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 0300B67373; Tue, 27 Jul 2021 08:31:39 +0200 (CEST)
+Date:   Tue, 27 Jul 2021 08:31:38 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        cluster-devel@redhat.com
+Subject: Re: [PATCH 16/27] iomap: switch iomap_bmap to use iomap_iter
+Message-ID: <20210727063138.GA10143@lst.de>
+References: <20210719103520.495450-1-hch@lst.de> <20210719103520.495450-17-hch@lst.de> <20210719170545.GF22402@magnolia> <20210726081942.GD14853@lst.de> <20210726163922.GA559142@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <cover.1627362057.git.vvs@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210726163922.GA559142@magnolia>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fasync_struct is used by almost all character device drivers to set up
-the fasync queue, and for regular files by the file lease code.
-This structure is quite small but long-living and it can be assigned
-for any open file.
+On Mon, Jul 26, 2021 at 09:39:22AM -0700, Darrick J. Wong wrote:
+> The documentation needs to be much more explicit about the fact that you
+> cannot "break;" your way out of an iomap_iter loop.  I think the comment
+> should be rewritten along these lines:
+> 
+> "Iterate over filesystem-provided space mappings for the provided file
+> range.  This function handles cleanup of resources acquired for
+> iteration when the filesystem indicates there are no more space
+> mappings, which means that this function must be called in a loop that
+> continues as long it returns a positive value.  If 0 or a negative value
+> is returned, the caller must not return to the loop body.  Within a loop
+> body, there are two ways to break out of the loop body: leave
+> @iter.processed unchanged, or set it to the usual negative errno."
+> 
+> Hm.
 
-It makes sense to account for its allocations to restrict the host's
-memory consumption from inside the memcg-limited container.
+Yes, I'll update the documentation.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
----
- fs/fcntl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Clunky, for sure, but at least we still get to use break as the language
+> designers intended.
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index f946bec..714e7c9 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1049,7 +1049,8 @@ static int __init fcntl_init(void)
- 			__FMODE_EXEC | __FMODE_NONOTIFY));
- 
- 	fasync_cache = kmem_cache_create("fasync_cache",
--		sizeof(struct fasync_struct), 0, SLAB_PANIC, NULL);
-+					 sizeof(struct fasync_struct), 0,
-+					 SLAB_PANIC | SLAB_ACCOUNT, NULL);
- 	return 0;
- }
- 
--- 
-1.8.3.1
-
+I can't see any advantage there over just proper documentation.  If you
+are totally attached to a working break we might have to come up with
+a nasty for_each macro that ensures we have a final iomap_apply, but I
+doubt it is worth the effort.
