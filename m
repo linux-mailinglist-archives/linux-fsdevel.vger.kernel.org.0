@@ -2,87 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C1643D707A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 09:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 472153D7102
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jul 2021 10:16:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235786AbhG0Hi3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jul 2021 03:38:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235518AbhG0Hi0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jul 2021 03:38:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D7E0861108;
-        Tue, 27 Jul 2021 07:38:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627371507;
-        bh=hH6uQTAHdrrSIaY1aFLgH9BCERIskl+VRH3TTckavQs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=asexRtT3wtpqPwdGLVkXyWga3WEH2h1pOVDgsN63yGun/2/Wg4kw5DUF/M3NtGukX
-         lu+a5+HfT7nqoRLRmjGNa55Nt0kwdXFBO9tsngMciZFCWzLQRDBeITI5eG5hCU7MOz
-         FpD5OApj7eNGcv8TWb70SJiTuHLFKtHzKnim4QqUCf1Rgjwk3P1Vfgk7MU5ZEWiIXR
-         aqRjEou+YRBAjqzE56cuIDu9wOHbtgaVGnxB+0xKLWeYZllYzfxErWfZtwXiO6lylK
-         NXCTIsZhptfrd/8RY37Fm6NDGu9Q+z7H+kOEQYJLid/+J9C+YhysLsoG9B9GGeJ7oT
-         BQ2pyvqpuYoMA==
-Date:   Tue, 27 Jul 2021 00:38:25 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Satya Tangirala <satyaprateek2357@gmail.com>,
-        Changheun Lee <nanich.lee@samsung.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: [PATCH 3/9] f2fs: rework write preallocations
-Message-ID: <YP+38QzXS6kpLGn0@sol.localdomain>
-References: <20210716143919.44373-1-ebiggers@kernel.org>
- <20210716143919.44373-4-ebiggers@kernel.org>
- <14782036-f6a5-878a-d21f-e7dd7008a285@kernel.org>
- <YP2l+1umf9ct/4Sp@sol.localdomain>
- <YP9oou9sx4oJF1sc@google.com>
- <70f16fec-02f6-cb19-c407-856101cacc23@kernel.org>
+        id S235940AbhG0IQq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jul 2021 04:16:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235916AbhG0IQp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Jul 2021 04:16:45 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE931C061757;
+        Tue, 27 Jul 2021 01:16:44 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id r18so15030432iot.4;
+        Tue, 27 Jul 2021 01:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sP8eKZ1XYYokuigntJ2pKqnPDXKqzr0gADQFPYAP/F0=;
+        b=ZIbksXglz0e8nvEHWrY+mdEE+bNMt2sZuDLW6CpWne4HLRmCnyaT6SJNUOEPzXzdC1
+         qqF8bmMlLkkYY58+O6NVL+7ZvYdEstzp8OL8m84rAnCkAOAzav+aPNeWUvYKPUyR2yjK
+         xB5770Ay737fd/KiQdUUbDdXySit084aH4fC2QsGfAlYnbHGl9iNBoCGJdwSbYqh0H9h
+         +zGJEnXlTbqCIuv9xOoN8IucdY86g93Rl/pEC0cL6w3zRSQMHtBK5bmF+TxC+5/r+Mxv
+         fFagCnQvY1IKer0kANqp99tip0dmwWf+qHrVpsTE0wCKa36EmxEcMqfnaDqGk9MBL0+E
+         yBxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sP8eKZ1XYYokuigntJ2pKqnPDXKqzr0gADQFPYAP/F0=;
+        b=Rgw+P6+z/ByRq9kQ/ACvRNQmN0HR9o9hrdXJK3itis2BDI6SqitjxC1tNVY6g7M8uJ
+         v6Bi0i38+AGiUK+nMoQXmMdhKOpOThAhlMmVTdwwcwiIitn4T0vctSjlXOXEErcU8+LN
+         s6XCdrACXop6VPlnm044lOSvGImiuJ1MFcNWwY2Ar6Ue98serCdI0kXHOwT/16OzYSsw
+         Ystfm8JJCCBT+LwfOMS1xAvHXS8KV/Vlwgvp8HWl3qgKTFtf1AWk3UG/hDM0KC/3I4xk
+         YCeMZ4c+fRI9HjJVx/bZt4YSfpSUsDSaPq0Q+OswDhsQQPn83nhQX7ltUkaZ5wOh4818
+         Zu1Q==
+X-Gm-Message-State: AOAM532s+Y/1uI9oji0B7XdhsQSW3e6fDhD5149FVtP99ju5xOGPmssH
+        X4ZcN+LiRzykpRB7Ah0pkwHpkJac7kI6lHHJxls=
+X-Google-Smtp-Source: ABdhPJyzTxUEARhWR3GJXMzMXYIDCi9AdH6GOVhq6lMHJTWBTHL+qtdQTPGOL49nz+Vc/ybGO3vUwcPwP9VE70uGoWA=
+X-Received: by 2002:a6b:7b44:: with SMTP id m4mr17981714iop.72.1627373804363;
+ Tue, 27 Jul 2021 01:16:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <70f16fec-02f6-cb19-c407-856101cacc23@kernel.org>
+References: <cover.1626845287.git.repnop@google.com> <5ac9237ed6f055613c817eb1b9eedcaf1e53d4e6.1626845288.git.repnop@google.com>
+ <CAOQ4uxj8jzdT4uKzE7hFDo=KwiyH+E0GHbHpToWRpFZ+zX3fhw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj8jzdT4uKzE7hFDo=KwiyH+E0GHbHpToWRpFZ+zX3fhw@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 27 Jul 2021 11:16:33 +0300
+Message-ID: <CAOQ4uxhnCk+FXK_e_GA=jC_0HWO+3ZdwHSi=zCa2Kpb0NDxBSg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] fanotify/fanotify_user.c: introduce a generic info
+ record copying helper
+To:     Matthew Bobrowski <repnop@google.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 27, 2021 at 11:23:03AM +0800, Chao Yu wrote:
-> > > 
-> > > Do you have a proper explanation for why preallocations shouldn't be done in
-> 
-> See commit f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode"),
-> f2fs_map_blocks() logic was changed to force allocating a new block address no matter
-> previous block address was existed if it is called from write path of DIO. So, in such
-> condition, if we preallocate new block address in f2fs_file_write_iter(), we will
-> suffer the problem which my trace indicates.
-> 
-> > > this case?  Note that preallocations are still done for buffered writes, which
-> > > may be out-of-place as well; how are those different?
-> Got your concern.
-> 
-> For buffered IO, we use F2FS_GET_BLOCK_PRE_AIO, in this mode, we just preserve
-> filesystem block count and tag NEW_ADDR in dnode block, so, it's fine, double
-> new block address allocation won't happen during data page writeback.
-> 
-> For direct IO, we use F2FS_GET_BLOCK_PRE_DIO, in this mode, we will allocate
-> physical block address, after preallocation, if we fallback to buffered IO, we
-> may suffer double new block address allocation issue... IIUC.
-> 
-> Well, can we relocate preallocation into f2fs_direct_IO() after all cases which
-> may cause fallbacking DIO to buffered IO?
-> 
+On Wed, Jul 21, 2021 at 9:35 AM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Wed, Jul 21, 2021 at 9:18 AM Matthew Bobrowski <repnop@google.com> wrote:
+> >
+> > The copy_info_records_to_user() helper allows for the separation of
+> > info record copying routines/conditionals from copy_event_to_user(),
+> > which reduces the overall clutter within this function. This becomes
+> > especially true as we start introducing additional info records in the
+> > future i.e. struct fanotify_event_info_pidfd. On success, this helper
+> > returns the total amount of bytes that have been copied into the user
+> > supplied buffer and on error, a negative value is returned to the
+> > caller.
+> >
+> > The newly defined macro FANOTIFY_INFO_MODES can be used to obtain info
+> > record types that have been enabled for a specific notification
+> > group. This macro becomes useful in the subsequent patch when the
+> > FAN_REPORT_PIDFD initialization flag is introduced.
+> >
+> > Signed-off-by: Matthew Bobrowski <repnop@google.com>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+>
+> > ---
+> >  fs/notify/fanotify/fanotify_user.c | 155 ++++++++++++++++-------------
+> >  include/linux/fanotify.h           |   2 +
+> >  2 files changed, 90 insertions(+), 67 deletions(-)
+> >
+> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> > index 182fea255376..d19f70b2c24c 100644
+> > --- a/fs/notify/fanotify/fanotify_user.c
+> > +++ b/fs/notify/fanotify/fanotify_user.c
+> > @@ -173,7 +173,7 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+> >         size_t event_size = FAN_EVENT_METADATA_LEN;
+> >         struct fanotify_event *event = NULL;
+> >         struct fsnotify_event *fsn_event;
+> > -       unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+> > +       unsigned int info_mode = FAN_GROUP_FLAG(group, FANOTIFY_INFO_MODES);
+> >
+> >         pr_debug("%s: group=%p count=%zd\n", __func__, group, count);
+> >
+> > @@ -183,8 +183,8 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+> >                 goto out;
+> >
+> >         event = FANOTIFY_E(fsn_event);
+> > -       if (fid_mode)
+> > -               event_size += fanotify_event_info_len(fid_mode, event);
+> > +       if (info_mode)
+> > +               event_size += fanotify_event_info_len(info_mode, event);
+> >
+> >         if (event_size > count) {
+> >                 event = ERR_PTR(-EINVAL);
+> > @@ -401,6 +401,86 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+> >         return info_len;
+> >  }
+> >
+> > +static int copy_info_records_to_user(struct fanotify_event *event,
+> > +                                    struct fanotify_info *info,
+> > +                                    unsigned int info_mode,
+> > +                                    char __user *buf, size_t count)
+> > +{
+> > +       int ret, total_bytes = 0, info_type = 0;
+> > +       unsigned int fid_mode = info_mode & FANOTIFY_FID_BITS;
+> > +
+> > +       /*
+> > +        * Event info records order is as follows: dir fid + name, child fid.
+> > +        */
+> > +       if (fanotify_event_dir_fh_len(event)) {
+> > +               info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
+> > +                                            FAN_EVENT_INFO_TYPE_DFID;
+> > +               ret = copy_fid_info_to_user(fanotify_event_fsid(event),
+> > +                                           fanotify_info_dir_fh(info),
+> > +                                           info_type,
+> > +                                           fanotify_info_name(info),
+> > +                                           info->name_len, buf, count);
+> > +               if (ret < 0)
+> > +                       return ret;
+> > +
+> > +               buf += ret;
+> > +               count -= ret;
+> > +               total_bytes += ret;
+> > +       }
+> > +
+> > +       if (fanotify_event_object_fh_len(event)) {
+> > +               const char *dot = NULL;
+> > +               int dot_len = 0;
+> > +
+> > +               if (fid_mode == FAN_REPORT_FID || info_type) {
+> > +                       /*
+> > +                        * With only group flag FAN_REPORT_FID only type FID is
+> > +                        * reported. Second info record type is always FID.
+> > +                        */
+> > +                       info_type = FAN_EVENT_INFO_TYPE_FID;
+> > +               } else if ((fid_mode & FAN_REPORT_NAME) &&
+> > +                          (event->mask & FAN_ONDIR)) {
+> > +                       /*
+> > +                        * With group flag FAN_REPORT_NAME, if name was not
+> > +                        * recorded in an event on a directory, report the name
+> > +                        * "." with info type DFID_NAME.
+> > +                        */
+> > +                       info_type = FAN_EVENT_INFO_TYPE_DFID_NAME;
+> > +                       dot = ".";
+> > +                       dot_len = 1;
+> > +               } else if ((event->mask & ALL_FSNOTIFY_DIRENT_EVENTS) ||
+> > +                          (event->mask & FAN_ONDIR)) {
+> > +                       /*
+> > +                        * With group flag FAN_REPORT_DIR_FID, a single info
+> > +                        * record has type DFID for directory entry
+> > +                        * modificatio\ n event and for event on a directory.
 
-That's somewhat helpful, but I've been doing some more investigation and now I'm
-even more confused.  How can f2fs support non-overwrite DIO writes at all
-(meaning DIO writes in LFS mode as well as DIO writes to holes in non-LFS mode),
-given that it has no support for unwritten extents?  AFAICS, as-is users can
-easily leak uninitialized disk contents on f2fs by issuing a DIO write that
-won't complete fully (or might not complete fully), then reading back the blocks
-that got allocated but not written to.
+Just notices this typo in the copied comment:
+modificatio\ n
 
-I think that f2fs will have to take the ext2 approach of not allowing
-non-overwrite DIO writes at all...
+And for the next posting, please remove the mention of fanotify_user.c from
+the commit title - it adds no information and clutters the git oneline log.
+This concerns patch 3/5 as well. It does NOT concern the kernel/pid.c patches.
 
-- Eric
+Thanks,
+Amir.
