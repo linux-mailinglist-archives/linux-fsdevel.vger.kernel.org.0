@@ -2,113 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2B333D9789
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 23:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A70E3D985B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 00:25:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231719AbhG1VaK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 17:30:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51156 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231126AbhG1VaJ (ORCPT
+        id S232163AbhG1WZk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 18:25:40 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:54054 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231989AbhG1WZi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 17:30:09 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21E35C061765
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jul 2021 14:30:07 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id 184so3773820qkh.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jul 2021 14:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uVT1uFTAOGfK1fP5fzGaiByMshUd21P5nAY5t0mAWDw=;
-        b=o4pY+ugBDJRzrhgcaJYE3XIJZ/sZ/DL9/abDHd9cjt+SdfzNT7ZItYIrHzt1ZzUKGW
-         jPk87LcV9EbN29AUKteWvNlZ5PAZnZtNQCelTIIKjrsxHVgc61EI9m8JqbsFMDhVJ9Wt
-         Ljo/lFqcApepJWx9bGlw2a4ErY9seplPEw2vq3gG87Yy42jzl4bXSKyN+zBirqcZucui
-         qtc1pEWIC9s5EgdRSq9Lytn56zd+OUiePpmSYmCg5RD8LPI1zLZ8Cr4FMrZUNlxvAWyF
-         LqFeon22h5DzRAxin62tbC7hDBDDN7TLbSEejSqSYxapDjDv+uvHv9J+cI5SiHaF7UGS
-         VTvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uVT1uFTAOGfK1fP5fzGaiByMshUd21P5nAY5t0mAWDw=;
-        b=hpHI9g9I7TNohjt8TUF5rY4l3J5RqCaENPDmfSkdAVLCV9jejPSV1oggEmNU7fw7vB
-         XNmk09LtkXsRAi2GCjA8fcv+QjHXv/1Ab+SKZZkTpMuhVLyjZPsQ6Nv8wkE9ZqKapWPI
-         oand9SJjriFt8V1JFYNZVkzX1GlNWwLOfvu3HgNvR/m2l8khwi0Gz47re9515xu2q+7s
-         WgKf4c9UG0mdUuqdmXEFCFFYEK14i4SlF5Ta+zuoOM9nwNR8aUEwTFWq36JBQxez3ps5
-         rVM7XwS4rSNf3TPpnwP80A7Vi3Laklfdojf9mKP9jNjSkydJSoALua7EpacpLd+mLe/M
-         fgOQ==
-X-Gm-Message-State: AOAM533Tig1M969KABdmHsBeK+UL2PUQATzLi9jgfNCG+Ay7NRmk/Opv
-        PMifsqlWDXT4sI2wW7Pc3jbW7w==
-X-Google-Smtp-Source: ABdhPJy46q0J2ekkhkPZzNGpN9S/kQjLTruBQy5vunkhOpVUkV4xSJpf0x4MXXNiyBhVYP01cf58dw==
-X-Received: by 2002:a37:9b44:: with SMTP id d65mr1729724qke.71.1627507806155;
-        Wed, 28 Jul 2021 14:30:06 -0700 (PDT)
-Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id u36sm455507qtc.71.2021.07.28.14.30.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Jul 2021 14:30:05 -0700 (PDT)
-Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
-To:     "J. Bruce Fields" <bfields@fieldses.org>, NeilBrown <neilb@suse.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Wed, 28 Jul 2021 18:25:38 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C2A511FFFC;
+        Wed, 28 Jul 2021 22:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1627511135; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hjqme1zUDcnCcoQ3Tk+VHxnefaATV89KJZnBvhXQjFA=;
+        b=ilInrbZFKX8z9FuzlIy3upOXktBpM2kuOdFc746OIss7c3RfZzh+438j+1r0gOkFUJ7bkn
+        U1lQx/2lxi8zlln0vXKn91Z64LgK9rcMZFLAej96S8LTfLtdG58Yy+qNqNTDb7NQNGqlQ1
+        9osZkZr3/h8YYrHr4P1+nJYrQLHG01I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1627511135;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hjqme1zUDcnCcoQ3Tk+VHxnefaATV89KJZnBvhXQjFA=;
+        b=DC6yRi2TJLwl24uaWgAmLztV9spiv/95pJXC4jAxYXp91tLSjJk9TmT9Wok5B/wQVRrGDU
+        nnSoBaZSdPm5pCAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DDD7913BC4;
+        Wed, 28 Jul 2021 22:25:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id yB6XJlzZAWEzXQAAMHmgww
+        (envelope-from <neilb@suse.de>); Wed, 28 Jul 2021 22:25:32 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-btrfs@vger.kernel.org
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
- <20210728193536.GD3152@fieldses.org>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <e75ccfd2-e09f-99b3-b132-3bd69f3c734c@toxicpanda.com>
-Date:   Wed, 28 Jul 2021 17:30:04 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.12.0
-MIME-Version: 1.0
-In-Reply-To: <20210728193536.GD3152@fieldses.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 07/11] exportfs: Allow filehandle lookup to cross internal
+ mount points.
+In-reply-to: <20210728191711.GC3152@fieldses.org>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
+ <162742546554.32498.9309110546560807513.stgit@noble.brown>,
+ <20210728191711.GC3152@fieldses.org>
+Date:   Thu, 29 Jul 2021 08:25:29 +1000
+Message-id: <162751112971.21659.13568311032380832336@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/28/21 3:35 PM, J. Bruce Fields wrote:
-> I'm still stuck trying to understand why subvolumes can't get their own
-> superblocks:
-> 
-> 	- Why are the performance issues Josef raises unsurmountable?
-> 	  And why are they unique to btrfs?  (Surely there other cases
-> 	  where people need hundreds or thousands of superblocks?)
-> 
+On Thu, 29 Jul 2021, J. Bruce Fields wrote:
+> On Wed, Jul 28, 2021 at 08:37:45AM +1000, NeilBrown wrote:
+> > @@ -232,6 +239,68 @@ reconnect_path(struct vfsmount *mnt, struct dentry *=
+target_dir, char *nbuf)
+> >  	}
+> >  	dput(dentry);
+> >  	clear_disconnected(target_dir);
+>=20
+> Minor nit--I'd prefer the following in a separate function.
 
-I don't think anybody has that many file systems.  For btrfs it's a single file 
-system.  Think of syncfs, it's going to walk through all of the super blocks on 
-the system calling ->sync_fs on each subvol superblock.  Now this isn't a huge 
-deal, we could just have some flag that says "I'm not real" or even just have 
-anonymous superblocks that don't get added to the global super_blocks list, and 
-that would address my main pain points.
+Fair.  Are you thinking "a separate function that is called here" or "a
+separate function that needs to be called by whoever called
+exportfs_decode_fh_raw()" if they happen to want the vfsmnt to be
+updated?
 
-The second part is inode reclaim.  Again this particular problem could be 
-avoided if we had an anonymous superblock that wasn't actually used, but the 
-inode lru is per superblock.  Now with reclaim instead of walking all the 
-inodes, you're walking a bunch of super blocks and then walking the list of 
-inodes within those super blocks.  You're burning CPU cycles because now instead 
-of getting big chunks of inodes to dispose, it's spread out across many super 
-blocks.
+NeilBrown
 
-The other weird thing is the way we apply pressure to shrinker systems.  We 
-essentially say "try to evict X objects from your list", which means in this 
-case with lots of subvolumes we'd be evicting waaaaay more inodes than you were 
-before, likely impacting performance where you have workloads that have lots of 
-files open across many subvolumes (which is what FB does with it's containers).
-
-If we want a anonymous superblock per subvolume then the only way it'll work is 
-if it's not actually tied into anything, and we still use the primary super 
-block for the whole file system.  And if that's what we're going to do what's 
-the point of the super block exactly?  This approach that Neil's come up with 
-seems like a reasonable solution to me.  Christoph gets his separation and 
-/proc/self/mountinfo, and we avoid the scalability headache of a billion super 
-blocks.  Thanks,
-
-Josef
+>=20
+> --b.
+>=20
+> > +
+> > +	/* Need to find appropriate vfsmount, which might not exist yet.
+> > +	 * We may need to trigger automount points.
+> > +	 */
+> > +	path.mnt =3D mnt;
+> > +	path.dentry =3D target_dir;
+> > +	vfs_getattr_nosec(&path, &stat, 0, AT_STATX_DONT_SYNC);
+> > +	target_dev =3D stat.dev;
+> > +
+> > +	path.dentry =3D mnt->mnt_root;
+> > +	vfs_getattr_nosec(&path, &stat, 0, AT_STATX_DONT_SYNC);
+> > +
+> > +	while (stat.dev !=3D target_dev) {
+> > +		/* walk up the dcache tree from target_dir, recording the
+> > +		 * location of the most recent change in dev number,
+> > +		 * until we find a mountpoint.
+> > +		 * If there was no change in show_dev result before the
+> > +		 * mountpount, the vfsmount at the mountpoint is what we want.
+> > +		 * If there was, we need to trigger an automount where the
+> > +		 * show_dev() result changed.
+> > +		 */
