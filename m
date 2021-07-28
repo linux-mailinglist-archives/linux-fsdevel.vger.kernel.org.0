@@ -2,115 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01EF53D85E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 04:29:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 187F23D8609
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 05:17:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233440AbhG1C3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jul 2021 22:29:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33884 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233223AbhG1C3Z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jul 2021 22:29:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7069F60F9D;
-        Wed, 28 Jul 2021 02:29:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627439364;
-        bh=92/QU5E2eSQ6Mi3MNPH50dd6V05Hb7i5VrQtXsDNLTo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sngqlEFdZ1mpdSmM5PMlNOmlefHphaw0iNtvYJjbHzNcP7420wr+CKetnrlksePur
-         aejSQgZbvhFwgqUm6+p1O054oZMR+q6GVxJzE+RiSgaJiP1Z87znO7NMDCVXBtANAT
-         oWEL9N7F5jY+1NJ9qwJthdTmYyMvnhD3CX9CXBS60bn8k7UPy+BwFzXyI6s7JdxBue
-         mN+YTqXdHR5rDvjH3CuS7qsjthNPZPeTpCs4GCtSpaBbG8sWzyEvUupdBjkUpsoLCe
-         GZzHTlnLkHEbDv9iUKo+0likZYp16Bs2oyrEJkd+nJEs1vbL4e9NfKyTi3+KHBzb0V
-         fvfy9XVBs+gYw==
-Date:   Tue, 27 Jul 2021 19:29:23 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Satya Tangirala <satyaprateek2357@gmail.com>,
-        Changheun Lee <nanich.lee@samsung.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: [PATCH 3/9] f2fs: rework write preallocations
-Message-ID: <YQDBA2xqbIQPPivQ@google.com>
-References: <20210716143919.44373-1-ebiggers@kernel.org>
- <20210716143919.44373-4-ebiggers@kernel.org>
- <14782036-f6a5-878a-d21f-e7dd7008a285@kernel.org>
- <YP2l+1umf9ct/4Sp@sol.localdomain>
- <YP9oou9sx4oJF1sc@google.com>
+        id S234133AbhG1DRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jul 2021 23:17:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233437AbhG1DRS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Jul 2021 23:17:18 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3066C061757;
+        Tue, 27 Jul 2021 20:17:16 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id q17-20020a17090a2e11b02901757deaf2c8so2360195pjd.0;
+        Tue, 27 Jul 2021 20:17:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=I4bD52HQNVCYUp+mhhWgz8FNJ8BrE2vk1IbUNpEx9mc=;
+        b=O8vdbtiSSnF7huzNnfIfptHg4BK2bgYcoQEclIsnGfmOOra4Xdk/QITTy+84+9kitx
+         BYp/Sh5ewo+8bf4AJC/P0Q3U71IPe5HMptnSED42dGXWQLpHDPAIPhX1bguUnlZBnKgB
+         aB2kecaHynHcaIXmEvnRg/G+0aET27nYjz9g3UGIpLWkw1q0dbTRHfXC/5CfsCDz4uXW
+         ewgCEvqemZc+Ov93GmBN5AB9uTpFGRjHiUqfyqI16jZ8Czu3kW1dAmstrpgNb4SF+kqX
+         oO1KbPFuqiSo1ZH3QZGC0coDcFt4AnZXvxc37pSgmdHNPlAsBCVh4BPL96npS4gCVwAJ
+         nVsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=I4bD52HQNVCYUp+mhhWgz8FNJ8BrE2vk1IbUNpEx9mc=;
+        b=byZ6I65iGn9cyWbbRK/WnnTy+VtKUUbvfFQie9bbxaiZDgMuuS0P5cV8ehH+M5LyPx
+         EuptAugGpI2c/5NTK/BE0B4KC2FM4StCfXjIPGnerpmJYZxzETZd+iztZwlAW4YX6yaj
+         H4+0RCNU7RBn63u0EBNeeB19mEidt4PLt3+egCTj0Aizm1Vs9+YITItEV29kND6a5Zas
+         VG1Doh+wSvdfpJxhR+F90HeU8kQR6EXpzl34jCypf9j/J7ij/uqJXrw3MUOhQL0OEp31
+         UFTLYDoQBggyDuUOyM3DDLceA98W62lJCKj0mpxChfjn/HrdnHXs6bs8+3ZyAMiyApFY
+         YJkg==
+X-Gm-Message-State: AOAM532GWwCRzAUKlmz9eQw6pZatPbc4IV4/N2kW+wedIyC/rTqcWv9Q
+        CBDJ2ssi9tGudoYm3J3J1qziSChn7Z4FgQ==
+X-Google-Smtp-Source: ABdhPJzts8MDkebguIrKuEo2Mf7Fx/AxDKnceNtdB8dlpgbg5FjJsoG0NmlSjh+uCI/aKrnf5iiFFw==
+X-Received: by 2002:a63:d34e:: with SMTP id u14mr7960675pgi.244.1627442236125;
+        Tue, 27 Jul 2021 20:17:16 -0700 (PDT)
+Received: from [192.168.255.10] ([203.205.141.110])
+        by smtp.gmail.com with ESMTPSA id l10sm4363284pjg.11.2021.07.27.20.17.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Jul 2021 20:17:15 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 1/3] misc_cgroup: add support for nofile limit
+To:     Tejun Heo <tj@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, lizefan.x@bytedance.com,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+References: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
+ <YP8ovYqISzKC43mt@mtj.duckdns.org>
+ <b2ff6f80-8ec6-e260-ec42-2113e8ce0a18@gmail.com>
+ <YQA1D1GRiF9+px/s@mtj.duckdns.org>
+From:   brookxu <brookxu.cn@gmail.com>
+Message-ID: <ca2bdc60-f117-e917-85b1-8c9ec0c6942f@gmail.com>
+Date:   Wed, 28 Jul 2021 11:17:08 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YP9oou9sx4oJF1sc@google.com>
+In-Reply-To: <YQA1D1GRiF9+px/s@mtj.duckdns.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/26, Jaegeuk Kim wrote:
-> On 07/25, Eric Biggers wrote:
-> > On Sun, Jul 25, 2021 at 06:50:51PM +0800, Chao Yu wrote:
-> > > On 2021/7/16 22:39, Eric Biggers wrote:
-> > > > From: Eric Biggers <ebiggers@google.com>
-> > > > 
-> > > > f2fs_write_begin() assumes that all blocks were preallocated by
-> > > > default unless FI_NO_PREALLOC is explicitly set.  This invites data
-> > > > corruption, as there are cases in which not all blocks are preallocated.
-> > > > Commit 47501f87c61a ("f2fs: preallocate DIO blocks when forcing
-> > > > buffered_io") fixed one case, but there are others remaining.
-> > > 
-> > > Could you please explain which cases we missed to handle previously?
-> > > then I can check those related logic before and after the rework.
-> > 
-> > Any case where a buffered write happens while not all blocks were preallocated
-> > but FI_NO_PREALLOC wasn't set.  For example when ENOSPC was hit in the middle of
-> > the preallocations for a direct write that will fall back to a buffered write,
-> > e.g. due to f2fs_force_buffered_io() or page cache invalidation failure.
-> > 
-> > > 
-> > > > -			/*
-> > > > -			 * If force_buffere_io() is true, we have to allocate
-> > > > -			 * blocks all the time, since f2fs_direct_IO will fall
-> > > > -			 * back to buffered IO.
-> > > > -			 */
-> > > > -			if (!f2fs_force_buffered_io(inode, iocb, from) &&
-> > > > -					f2fs_lfs_mode(F2FS_I_SB(inode)))
-> > > > -				goto write;
-> > > 
-> > > We should keep this OPU DIO logic, otherwise, in lfs mode, write dio
-> > > will always allocate two block addresses for each 4k append IO.
-> > > 
-> > > I jsut test based on codes of last f2fs dev-test branch.
-> > 
-> > Yes, I had misread that due to the weird goto and misleading comment and
-> > translated it into:
-> > 
-> >         /* If it will be an in-place direct write, don't bother. */
-> >         if (dio && !f2fs_lfs_mode(sbi))
-> >                 return 0;
-> > 
-> > It should be:
-> > 
-> >         if (dio && f2fs_lfs_mode(sbi))
-> >                 return 0;
+
+
+Tejun Heo wrote on 2021/7/28 12:32 上午:
+> Hello,
 > 
-> Hmm, this addresses my 250 failure. And, I think the below commit can explain
-> the case.
+> On Tue, Jul 27, 2021 at 11:18:00AM +0800, brookxu wrote:
+>> According to files_maxfiles_init(), we only allow about 10% of free memory to
+>> create filps, and each filp occupies about 1K of cache. In this way, on a 16G
+>> memory machine, the maximum usable filp is about 1,604,644. In general
+>> scenarios, this may not be a big problem, but if the task is abnormal, it will
+>> very likely become a bottleneck and affect other modules. 
+> 
+> Yeah but that can be configured trivially through sysfs. The reason why the
+> default limit is lowered is because we wanna prevent a part of system to
+> consume all the memory through fds. With cgroups, we already have that
+> protection and at least some systems already configure file-max to maximum,
+> so I don't see a point in adding another interface to subdivide the
+> artificial limit.
+> 
 
-In addition to this, I got failure on generic/263, and the below change fixes
-it. (I didn't take a look at deeply tho.)
+Yeah we can adjust file-max through sysctl, but in many cases we adjust it according
+to the actual load of the machine, not for abnormal tasks. Another problem is that in
+practical applications, kmem_limit will cause some minor problems. In many cases,
+kmem_limit is disabled. Limit_in_bytes mainly counts user pages and pagecache, which
+may cause files_cache to be out of control. In this case, if file-max is set to MAX,
+we may have a risk in the abnormal scene, which prevents us from recovering from the
+abnormal scene. Maybe I missed something.
 
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4344,8 +4344,13 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter)
-                        return ret;
-        }
-
--       map.m_lblk = (pos >> inode->i_blkbits);
--       map.m_len = ((pos + count - 1) >> inode->i_blkbits) - map.m_lblk + 1;
-+       map.m_lblk = F2FS_BLK_ALIGN(pos);
-+       map.m_len = F2FS_BYTES_TO_BLK(pos + count);
-+       if (map.m_len > map.m_lblk)
-+               map.m_len -= map.m_lblk;
-+       else
-+               map.m_len = 0;
-+
+> Thanks.
+> 
