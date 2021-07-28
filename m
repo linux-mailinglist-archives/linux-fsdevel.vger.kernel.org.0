@@ -2,157 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E66CF3D9614
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 21:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AFBE3D966F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 22:12:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231152AbhG1Tfl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 15:35:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53800 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229690AbhG1Tfk (ORCPT
+        id S231396AbhG1UMS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 16:12:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57478 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231392AbhG1UMS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 15:35:40 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78CC6C061757;
-        Wed, 28 Jul 2021 12:35:37 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id BAC546C91; Wed, 28 Jul 2021 15:35:36 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org BAC546C91
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1627500936;
-        bh=+ubDzSENl39MUZIPXJcllRmY3lYjmwUKCDsj0PDkg4w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q6pK9ojWCkrR98kzMLRySGHNXaOC8domFNiLKDe9C4R+73FjE8De5OBwjGe/7Js61
-         WVSJ9a/8YqpcB+C0AYk02CVYsyVuoIUKtMHb93Y/jbgUOO1anbGCpabk2k2brgyjCH
-         oxklpoC/f/SUUJUVPoYV1eB8DS1qKaeqJDcwdRIM=
-Date:   Wed, 28 Jul 2021 15:35:36 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
-Message-ID: <20210728193536.GD3152@fieldses.org>
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+        Wed, 28 Jul 2021 16:12:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1627503136;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=SQoUhTYek/sbmmfvELcZcV2xU/1jF0ea9DMZkLH8lxw=;
+        b=eG2523b4k2P18JslqaiYjcRVkNWxA+L/pdhd7YCqj9RSJV52xthmipLipDkiwfn5ukAiJ0
+        P7I0pTqnUn97NM6pH/QJznLZ8SjWZ1YLhmcUZ6s2zXYaLS40xm1ZZAYPV+zYL412+pDmRC
+        zdjZ3gfN6AugzfyC08aberQkoSRKDSk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-537-F5N4kZpbNSCSzsHcWb0JKg-1; Wed, 28 Jul 2021 16:12:14 -0400
+X-MC-Unique: F5N4kZpbNSCSzsHcWb0JKg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0AAE9107ACF5;
+        Wed, 28 Jul 2021 20:12:13 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-112-7.ams2.redhat.com [10.36.112.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7A9435D9FC;
+        Wed, 28 Jul 2021 20:12:11 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     linux-kernel@vger.kernel.org, ndesaulniers@google.com,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com
+Subject: Re: [PATCH] lib/string: Bring optimized memcmp from glibc
+References: <20210721135926.602840-1-nborisov@suse.com>
+Date:   Wed, 28 Jul 2021 22:12:09 +0200
+In-Reply-To: <20210721135926.602840-1-nborisov@suse.com> (Nikolay Borisov's
+        message of "Wed, 21 Jul 2021 16:59:26 +0300")
+Message-ID: <877dha6vvq.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <162742539595.32498.13687924366155737575.stgit@noble.brown>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I'm still stuck trying to understand why subvolumes can't get their own
-superblocks:
+* Nikolay Borisov:
 
-	- Why are the performance issues Josef raises unsurmountable?
-	  And why are they unique to btrfs?  (Surely there other cases
-	  where people need hundreds or thousands of superblocks?)
+> +/*
+> + * Compare A and B bytewise in the byte order of the machine.
+> + * A and B are known to be different. This is needed only on little-endian
+> + * machines.
+> + */
+> +static inline int memcmp_bytes(unsigned long a, unsigned long b)
+> +{
+> +	long srcp1 = (long) &a;
+> +	long srcp2 = (long) &b;
+> +	unsigned long a0, b0;
+> +
+> +	do {
+> +		a0 = ((uint8_t *) srcp1)[0];
+> +		b0 = ((uint8_t *) srcp2)[0];
+> +		srcp1 += 1;
+> +		srcp2 += 1;
+> +	} while (a0 == b0);
+> +	return a0 - b0;
+> +}
 
-	- If filehandle decoding can return a different vfs mount than
-	  it's passed, why can't it return a different superblock?
+Should this be this?
 
---b.
+static inline int memcmp_bytes(unsigned long a, unsigned long b)
+{
+	if (sizeof(a) == 4)
+		return __builtin_bswap32(a) < __builtin_bswap32(b) ? -1 : 0;
+	else
+		return __builtin_bswap64(a) < __builtin_bswap64(b) ? -1 : 0;
+}
 
-On Wed, Jul 28, 2021 at 08:37:45AM +1000, NeilBrown wrote:
-> There are long-standing problems with btrfs subvols, particularly in
-> relation to whether and how they are exposed in the mount table.
-> 
->  - /proc/self/mountinfo reports the major:minor device number for each
->     filesystem and when a btrfs subvol is explicitly mounted, the number
->     reported is wrong - it does not match what stat() reports for the
->     mountpoint.
-> 
->  - when subvol are not explicitly mounted, they don't appear in
->    mountinfo at all.
-> 
-> Consequences include that a tool which uses stat() to find the dev of the
-> filesystem, then searches mountinfo for that filesystem, will not find
-> it.
-> 
-> Some tools (e.g. findmnt) appear to have been enhanced to cope with this
-> strangeness, but it would be best to make btrfs behave more normally.
-> 
->   - nfsd cannot currently see the transition to subvol, so reports the
->     main volume and all subvols to the client as being in the same
->     filesystem.  As inode numbers are not unique across all subvols,
->     this can confuse clients.  In particular, 'find' is likely to report a
->     loop.
-> 
-> subvols can be made to appear in mountinfo using automounts.  However
-> nfsd does not cope well with automounts.  It assumes all filesystems to
-> be exported are already mounted.  So adding automounts to btrfs would
-> break nfsd.
-> 
-> We can enhance nfsd to understand that some automounts can be managed.
-> "internal mounts" where a filesystem provides an automount point and
-> mounts its own directories, can be handled differently by nfsd.
-> 
-> This series addresses all these issues.  After a few enhancements to the
-> VFS to provide needed support, they enhance exportfs and nfsd to cope
-> with the concept of internal mounts, and then enhance btrfs to provide
-> them.
-> 
-> The NFSv3 support is incomplete.  I'm not sure we can make it work
-> "perfectly".  A normal nfsv3 mount seem to work well enough, but if
-> mounted with '-o noac', it loses track of the mounted-on inode number
-> and complains about inode numbers changing.
-> 
-> My basic test for these is to mount a btrfs filesystem which contains
-> subvols, nfs-export it and mount it with nfsv3 and nfsv4, then run
-> 'find' in each of the filesystem and check the contents of
-> /proc/self/mountinfo.
-> 
-> The first patch simply fixes the dev number in mountinfo and could
-> possibly be tagged for -stable.
-> 
-> NeilBrown
-> 
-> ---
-> 
-> NeilBrown (11):
->       VFS: show correct dev num in mountinfo
->       VFS: allow d_automount to create in-place bind-mount.
->       VFS: pass lookup_flags into follow_down()
->       VFS: export lookup_mnt()
->       VFS: new function: mount_is_internal()
->       nfsd: include a vfsmount in struct svc_fh
->       exportfs: Allow filehandle lookup to cross internal mount points.
->       nfsd: change get_parent_attributes() to nfsd_get_mounted_on()
->       nfsd: Allow filehandle lookup to cross internal mount points.
->       btrfs: introduce mapping function from location to inum
->       btrfs: use automount to bind-mount all subvol roots.
-> 
-> 
->  fs/btrfs/btrfs_inode.h   |  12 +++
->  fs/btrfs/inode.c         | 111 ++++++++++++++++++++++++++-
->  fs/btrfs/super.c         |   1 +
->  fs/exportfs/expfs.c      | 100 ++++++++++++++++++++----
->  fs/fhandle.c             |   2 +-
->  fs/internal.h            |   1 -
->  fs/namei.c               |   6 +-
->  fs/namespace.c           |  32 +++++++-
->  fs/nfsd/export.c         |   4 +-
->  fs/nfsd/nfs3xdr.c        |  40 +++++++---
->  fs/nfsd/nfs4proc.c       |   9 ++-
->  fs/nfsd/nfs4xdr.c        | 106 ++++++++++++-------------
->  fs/nfsd/nfsfh.c          |  44 +++++++----
->  fs/nfsd/nfsfh.h          |   3 +-
->  fs/nfsd/nfsproc.c        |   5 +-
->  fs/nfsd/vfs.c            | 162 +++++++++++++++++++++++----------------
->  fs/nfsd/vfs.h            |  12 +--
->  fs/nfsd/xdr4.h           |   2 +-
->  fs/overlayfs/namei.c     |   5 +-
->  fs/xfs/xfs_ioctl.c       |  12 ++-
->  include/linux/exportfs.h |   4 +-
->  include/linux/mount.h    |   4 +
->  include/linux/namei.h    |   2 +-
->  23 files changed, 490 insertions(+), 189 deletions(-)
-> 
-> --
-> Signature
+(Or whatever macro versions the kernel has for this.)
+
+Or is the expectation that targets that don't have an assembler
+implementation for memcmp have also bad bswap built-ins?
+
+Thanks,
+Florian
+
