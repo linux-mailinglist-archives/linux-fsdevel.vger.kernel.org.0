@@ -2,88 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0857D3D8888
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 09:06:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B10183D8904
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 09:41:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233625AbhG1HGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 03:06:49 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:42440 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233182AbhG1HGs (ORCPT
+        id S233758AbhG1Hlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 03:41:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57454 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233277AbhG1Hln (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 03:06:48 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A4C0D20184;
-        Wed, 28 Jul 2021 07:06:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1627456006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AfT1RNigMB0X8lNElLJC52DFJE8CZLB1bbjI9jWvyrE=;
-        b=ppUYBNGdBKxOuntHL4e7tIFcFojxVgLKKOAo1un/XFpAk9RVMGiBwSVpgjXOn1Cl6jwuU7
-        e06lNuLOCC4hT1/Y3TBOfDtvK7aUihpcvreAvsVomKzBaIgGcQpV6L3ml5wWMiOoJtWupw
-        XmFMFEKpbutupWr1J1IprhJFUTr5iMs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1627456006;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AfT1RNigMB0X8lNElLJC52DFJE8CZLB1bbjI9jWvyrE=;
-        b=NGQILfQ9RzmQm4xmwiR3jccC3Kg+aFC+LBztvbWmprJY+7W9aw13two/AVXbC2wYydy3Bb
-        YX9gfDrCecLGjgDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 70FC413B1B;
-        Wed, 28 Jul 2021 07:06:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 6/5fCwMCAWF+TwAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 28 Jul 2021 07:06:43 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Jul 2021 03:41:43 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2DCC061757;
+        Wed, 28 Jul 2021 00:41:42 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id e2-20020a17090a4a02b029016f3020d867so2962240pjh.3;
+        Wed, 28 Jul 2021 00:41:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3gyKs31H8DmWFPMAtNTmsj5Y1115XQKa+6v265+MF98=;
+        b=QPu+Xan/QfEel2lNwA6ZQhbMilq9UteGKnrllrkZPvNwLRhg0S3qj4s90qHn2xz5l8
+         gTSMklmYaUeB6fQPHQZHVY9jPgtLDojxLzKnpdRSZioEB7reKaZgUPaMaIZ9eed02LuH
+         PpJy0MsbsyXcon9DIIBmRgTe4UZ9bSc93nUgMeheh7F99nvyA5VCd4LCEPyJf1lSRwf0
+         xjzGAPFL+1bDLKkPhTczAZtX5/upHfbIdvsDahSHga7KNj7W1A6bfjRrtqgHIHX30G4z
+         8CaicVMaFgOhxTm1spcOTKAuqHil3FpknfxE9g0U9NbnlUOPYHw65wPWYlaNKuR8ueZH
+         OxTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=3gyKs31H8DmWFPMAtNTmsj5Y1115XQKa+6v265+MF98=;
+        b=RixPIpWngY0omGymjCT/WJZbAcgVrTX0Bq+DgW6Kcp3TuckkFOW8Zig3fpNf5YX2EX
+         ArvnVe6VNq8URdlfWOBtexFvUn0GGetd02HirfdqwizxbtNnQtemEVodxNayNozO1eJZ
+         quPFMjC5roTeQjfj3sU2wmoLM4yD8KtannJZ1+WI3bKjMODEtv/BDHI6kgKNjvvX7uTd
+         WmgPhtHiS/iwjKK7CVfCfEUMATx90V2FGfP2Cumco5Q+LnG+iYJvT6eqGHlLi6bxGCXU
+         Pz7m9hVe6cvlCnXamsJwvi/zDgGDW06hZQEnetK7obQ95QrtSZnWVWhBm9kZiPIDsJYW
+         +A/w==
+X-Gm-Message-State: AOAM530258c8U3cR4oGzhC/R7Qe+xlQGpLZTQoiNFey+D2eccIIhNdjT
+        UuV4+4Zo9oyIFp+rLrQu9OY=
+X-Google-Smtp-Source: ABdhPJzlHENqMVVGhp6QfQiRNFBo4bVChcVgOZ4iDyoLYi5WaZre5bP2oK0YfEh38riCyflQczQMBQ==
+X-Received: by 2002:a17:902:8648:b029:129:dda4:ddc2 with SMTP id y8-20020a1709028648b0290129dda4ddc2mr22168302plt.4.1627458102256;
+        Wed, 28 Jul 2021 00:41:42 -0700 (PDT)
+Received: from localhost (udp264798uds.hawaiiantel.net. [72.253.242.87])
+        by smtp.gmail.com with ESMTPSA id x14sm6540101pfq.143.2021.07.28.00.41.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jul 2021 00:41:41 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Tue, 27 Jul 2021 21:41:40 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     brookxu <brookxu.cn@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, lizefan.x@bytedance.com,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [RFC PATCH v2 1/3] misc_cgroup: add support for nofile limit
+Message-ID: <YQEKNPrrOuyxTarN@mtj.duckdns.org>
+References: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
+ <YP8ovYqISzKC43mt@mtj.duckdns.org>
+ <b2ff6f80-8ec6-e260-ec42-2113e8ce0a18@gmail.com>
+ <YQA1D1GRiF9+px/s@mtj.duckdns.org>
+ <ca2bdc60-f117-e917-85b1-8c9ec0c6942f@gmail.com>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Wang Yugui" <wangyugui@e16-tech.com>
-Cc:     "Christoph Hellwig" <hch@infradead.org>,
-        "Josef Bacik" <josef@toxicpanda.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
-        "David Sterba" <dsterba@suse.com>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
-In-reply-to: <20210728125819.6E52.409509F4@e16-tech.com>
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
- <20210728125819.6E52.409509F4@e16-tech.com>
-Date:   Wed, 28 Jul 2021 17:06:40 +1000
-Message-id: <162745600062.21659.13334440659372332769@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca2bdc60-f117-e917-85b1-8c9ec0c6942f@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 28 Jul 2021, Wang Yugui wrote:
-> Hi,
-> 
-> We no longer need the dummy inode(BTRFS_FIRST_FREE_OBJECTID - 1) in this
-> patch serials?
+On Wed, Jul 28, 2021 at 11:17:08AM +0800, brookxu wrote:
+> Yeah we can adjust file-max through sysctl, but in many cases we adjust it according
+> to the actual load of the machine, not for abnormal tasks. Another problem is that in
+> practical applications, kmem_limit will cause some minor problems. In many cases,
+> kmem_limit is disabled. Limit_in_bytes mainly counts user pages and pagecache, which
+> may cause files_cache to be out of control. In this case, if file-max is set to MAX,
+> we may have a risk in the abnormal scene, which prevents us from recovering from the
+> abnormal scene. Maybe I missed something.
 
-No.
+Kmem control is always on in cgroup2 and has been in wide production use for
+years now. If there are problems with it, we need to fix them. That really
+doesn't justify adding another feature.
 
-> 
-> I tried to backport it to 5.10.x, but it failed to work.
-> No big modification in this 5.10.x backporting, and all modified pathes
-> are attached.
+Thanks.
 
-I'm not surprised, but I doubt there would be a major barrier to making
-it work.  I'm unlikely to try until I have more positive reviews.
-
-Thanks,
-NeilBrown
+-- 
+tejun
