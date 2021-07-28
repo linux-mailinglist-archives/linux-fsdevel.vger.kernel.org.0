@@ -2,88 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B10183D8904
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 09:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD9343D8979
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 10:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233758AbhG1Hlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 03:41:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57454 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233277AbhG1Hln (ORCPT
+        id S235239AbhG1IHr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 04:07:47 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:34896 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234464AbhG1IHo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 03:41:43 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2DCC061757;
-        Wed, 28 Jul 2021 00:41:42 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id e2-20020a17090a4a02b029016f3020d867so2962240pjh.3;
-        Wed, 28 Jul 2021 00:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=3gyKs31H8DmWFPMAtNTmsj5Y1115XQKa+6v265+MF98=;
-        b=QPu+Xan/QfEel2lNwA6ZQhbMilq9UteGKnrllrkZPvNwLRhg0S3qj4s90qHn2xz5l8
-         gTSMklmYaUeB6fQPHQZHVY9jPgtLDojxLzKnpdRSZioEB7reKaZgUPaMaIZ9eed02LuH
-         PpJy0MsbsyXcon9DIIBmRgTe4UZ9bSc93nUgMeheh7F99nvyA5VCd4LCEPyJf1lSRwf0
-         xjzGAPFL+1bDLKkPhTczAZtX5/upHfbIdvsDahSHga7KNj7W1A6bfjRrtqgHIHX30G4z
-         8CaicVMaFgOhxTm1spcOTKAuqHil3FpknfxE9g0U9NbnlUOPYHw65wPWYlaNKuR8ueZH
-         OxTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=3gyKs31H8DmWFPMAtNTmsj5Y1115XQKa+6v265+MF98=;
-        b=RixPIpWngY0omGymjCT/WJZbAcgVrTX0Bq+DgW6Kcp3TuckkFOW8Zig3fpNf5YX2EX
-         ArvnVe6VNq8URdlfWOBtexFvUn0GGetd02HirfdqwizxbtNnQtemEVodxNayNozO1eJZ
-         quPFMjC5roTeQjfj3sU2wmoLM4yD8KtannJZ1+WI3bKjMODEtv/BDHI6kgKNjvvX7uTd
-         WmgPhtHiS/iwjKK7CVfCfEUMATx90V2FGfP2Cumco5Q+LnG+iYJvT6eqGHlLi6bxGCXU
-         Pz7m9hVe6cvlCnXamsJwvi/zDgGDW06hZQEnetK7obQ95QrtSZnWVWhBm9kZiPIDsJYW
-         +A/w==
-X-Gm-Message-State: AOAM530258c8U3cR4oGzhC/R7Qe+xlQGpLZTQoiNFey+D2eccIIhNdjT
-        UuV4+4Zo9oyIFp+rLrQu9OY=
-X-Google-Smtp-Source: ABdhPJzlHENqMVVGhp6QfQiRNFBo4bVChcVgOZ4iDyoLYi5WaZre5bP2oK0YfEh38riCyflQczQMBQ==
-X-Received: by 2002:a17:902:8648:b029:129:dda4:ddc2 with SMTP id y8-20020a1709028648b0290129dda4ddc2mr22168302plt.4.1627458102256;
-        Wed, 28 Jul 2021 00:41:42 -0700 (PDT)
-Received: from localhost (udp264798uds.hawaiiantel.net. [72.253.242.87])
-        by smtp.gmail.com with ESMTPSA id x14sm6540101pfq.143.2021.07.28.00.41.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jul 2021 00:41:41 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 27 Jul 2021 21:41:40 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     brookxu <brookxu.cn@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, lizefan.x@bytedance.com,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/3] misc_cgroup: add support for nofile limit
-Message-ID: <YQEKNPrrOuyxTarN@mtj.duckdns.org>
-References: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
- <YP8ovYqISzKC43mt@mtj.duckdns.org>
- <b2ff6f80-8ec6-e260-ec42-2113e8ce0a18@gmail.com>
- <YQA1D1GRiF9+px/s@mtj.duckdns.org>
- <ca2bdc60-f117-e917-85b1-8c9ec0c6942f@gmail.com>
+        Wed, 28 Jul 2021 04:07:44 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 010DB222D3;
+        Wed, 28 Jul 2021 08:07:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1627459662; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OXI0uktMkctmL9XFBy07luz+iWONpftBvU1Q3doyNg4=;
+        b=S0+UERrIhbNy/3eVuwC5CNnvQYo40sg79taj2C18YlKJGbhMrv+NZbBh2yjGDG9aRkg4a2
+        Nt9KvIofEiNJf/WPaTP67+0/xOXx5R8iBaMlYdTnTDfoY5rV7XoEnMooowE+GKxJcmI1rm
+        pcHjHOso0fNRzK3khl9u1IEKZjOYfoQ=
+Received: from suse.cz (unknown [10.100.216.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id DAF0DA3B85;
+        Wed, 28 Jul 2021 08:07:40 +0000 (UTC)
+Date:   Wed, 28 Jul 2021 10:07:40 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Menglong Dong <menglong8.dong@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Sami Tolvanen <samitolvanen@google.com>, johan@kernel.org,
+        ojeda@kernel.org, jeyu@kernel.org, masahiroy@kernel.org,
+        joe@perches.com, Jan Kara <jack@suse.cz>, hare@suse.de,
+        Jens Axboe <axboe@kernel.dk>, tj@kernel.org,
+        gregkh@linuxfoundation.org, song@kernel.org,
+        NeilBrown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Barret Rhoden <brho@google.com>, f.fainelli@gmail.com,
+        palmerdabbelt@google.com, wangkefeng.wang@huawei.com,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, vbabka@suse.cz,
+        Alexander Potapenko <glider@google.com>,
+        johannes.berg@intel.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>, jojing64@gmail.com,
+        terrelln@fb.com, geert@linux-m68k.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, arnd@arndb.de,
+        Chris Down <chris@chrisdown.name>, mingo@kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Josh Triplett <josh@joshtriplett.org>
+Subject: Re: [PATCH v6 2/2] init/do_mounts.c: create second mount for
+ initramfs
+Message-ID: <YQEQTO+AwC67BT4u@alley>
+References: <20210605034447.92917-1-dong.menglong@zte.com.cn>
+ <20210605034447.92917-3-dong.menglong@zte.com.cn>
+ <20210605115019.umjumoasiwrclcks@wittgenstein>
+ <CADxym3bs1r_+aPk9Z_5Y7QBBV_RzUbW9PUqSLB7akbss_dJi_g@mail.gmail.com>
+ <20210607103147.yhniqeulw4pmvjdr@wittgenstein>
+ <20210607121524.GB3896@www>
+ <20210617035756.GA228302@www>
+ <20210617143834.ybxk6cxhpavlf4gg@wittgenstein>
+ <CADxym3aLQNJaWjdkMVAjuVk_btopv6jHrVjtP+cKwH8x6R7ojQ@mail.gmail.com>
+ <20210727123701.zlcrrf4p2fsmeeas@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ca2bdc60-f117-e917-85b1-8c9ec0c6942f@gmail.com>
+In-Reply-To: <20210727123701.zlcrrf4p2fsmeeas@wittgenstein>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 28, 2021 at 11:17:08AM +0800, brookxu wrote:
-> Yeah we can adjust file-max through sysctl, but in many cases we adjust it according
-> to the actual load of the machine, not for abnormal tasks. Another problem is that in
-> practical applications, kmem_limit will cause some minor problems. In many cases,
-> kmem_limit is disabled. Limit_in_bytes mainly counts user pages and pagecache, which
-> may cause files_cache to be out of control. In this case, if file-max is set to MAX,
-> we may have a risk in the abnormal scene, which prevents us from recovering from the
-> abnormal scene. Maybe I missed something.
+On Tue 2021-07-27 14:37:01, Christian Brauner wrote:
+> On Tue, Jul 27, 2021 at 08:24:03PM +0800, Menglong Dong wrote:
+> > Hello Christian,
+> > 
+> > On Thu, Jun 17, 2021 at 10:38 PM Christian Brauner
+> > <christian.brauner@ubuntu.com> wrote:
+> > >
+> > [...]
+> > >
+> > > Hey Menglong,
+> > >
+> > > Since we're very close to the next kernel release it's unlikely that
+> > > anything will happen before the merge window has closed.
+> > > Otherwise I think we're close. I haven't had the time to test yet but if
+> > > nothing major comes up I'll pick it up and route it through my tree.
+> > > We need to be sure there's no regressions for anyone using this.
+> > >
+> > 
+> > Seems that it has been a month, and is it ok to move a little
+> > further? (knock-knock :/)
+> 
+> Yep, sorry.
+> When I tested this early during the merge window it regressed booting a
+> regular system for me meaning if I compiled a kernel with this feature
+> enabled it complained about not being being able to open an initial
+> console and it dropped me right into initramfs instead of successfully
+> booting. I haven't looked into what this is caused or how to fix it for
+> lack of time.
 
-Kmem control is always on in cgroup2 and has been in wide production use for
-years now. If there are problems with it, we need to fix them. That really
-doesn't justify adding another feature.
+I guess that you have seen the following message printed by
+console_on_rootfs():
 
-Thanks.
+      "Warning: unable to open an initial console."
 
--- 
-tejun
+This function is responsible for opening stdin, stdout, stderr
+file to be used by the init process.
+
+I am not sure how this is supposed to work with the pivot_root
+and initramfs.
+
+
+Some more details:
+
+console_on_rootfs() tries to open /dev/console. It is created
+by tty_init(). The open() callback calls:
+
+  + tty_kopen()
+    + tty_lookup_driver()
+      + console_device()
+
+, where console_device() iterates over all registered consoles
+  and returns the first with tty binding.
+
+There is ttynull_console that might be used as a fallback. But I
+am not sure if this is what you want.
+
+Best Regards,
+Petr
