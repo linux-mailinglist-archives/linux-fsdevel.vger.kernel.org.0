@@ -2,84 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E303B3D8F00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 15:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1881E3D8FA1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 15:52:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236209AbhG1N06 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 09:26:58 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:48446 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233315AbhG1N06 (ORCPT
+        id S236667AbhG1NwU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 09:52:20 -0400
+Received: from zaphod.cobb.me.uk ([213.138.97.131]:43138 "EHLO
+        zaphod.cobb.me.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236952AbhG1Nto (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 09:26:58 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 269B8201AF;
-        Wed, 28 Jul 2021 13:26:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1627478816; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type;
-        bh=j7yhpOxwjJ78x0wN/zOzIyZtZ4n5rn70DcyUwVeOtSQ=;
-        b=lmyyR80nJ93uRXuiiSliXBzaHeiiUUpI2kFRIKs6SHt+8gc6XOw36LUNB0Iji6LkMKd40S
-        2Ag9G5ia4dzsEnrcucVaB3rFfq1++qKrIjOj0P9CkCww7vo1krA7WUbU88BL4n9ZTuHWtI
-        yoEA6iLoH6U65Ap54v6IGTMjSYwUuso=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1627478816;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type;
-        bh=j7yhpOxwjJ78x0wN/zOzIyZtZ4n5rn70DcyUwVeOtSQ=;
-        b=946i5x8e9CcIYsoKmskZkX5zhDABWERTKEXN8ZUvc2slAP9CeFlRmDf5UDlBkvHhkTQk+a
-        UzAJinNzCGltx3Bg==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 1794CA3B81;
-        Wed, 28 Jul 2021 13:26:56 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D702F1E1321; Wed, 28 Jul 2021 15:26:55 +0200 (CEST)
-Date:   Wed, 28 Jul 2021 15:26:55 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] ext2 and reiserfs fixes for 5.14-rc4
-Message-ID: <20210728132655.GI29619@quack2.suse.cz>
+        Wed, 28 Jul 2021 09:49:44 -0400
+Received: by zaphod.cobb.me.uk (Postfix, from userid 107)
+        id A0F9B9C366; Wed, 28 Jul 2021 14:43:55 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cobb.uk.net;
+        s=201703; t=1627479835;
+        bh=AVprTXs7DyGHj0L7AmX18qLo2Z3rK1/x2Gl7dXunk0c=;
+        h=From:To:Cc:References:Subject:Date:In-Reply-To:From;
+        b=P78icvf1LC1b3lK8Aazp7RxJK63O+aoNb27kYWo6Razi5LEgwkJsv2oFOz9g2QJm+
+         uQABMy38OU1lTe4doxgxN3PviWxte1wly4H2+3Vuoy4d6SIzOKaKi3DaqTz1cdEasX
+         U5tzo9O3chmA82NIZkc+KvMkVdJzo2heuYu7/aImhTvPG5gpSsEsVFfLKLhSDp1oDN
+         khCzi58165JAVXEq+pRvCB99Z4EL641OjhZCcBxse3lTAcoXMIC4ClGbBjVGupHPuJ
+         B/FwoCn7DSCRnSNfA+5w0zzH1+PayzZynNyf/BCzLw+2HwW9BC9EpsQhFVHSNQtnm/
+         Ujvb/LaC/UuFQ==
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on zaphod.cobb.me.uk
+X-Spam-Status: No, score=-3.3 required=12.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NICE_REPLY_A,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.2
+X-Spam-Level: 
+X-Spam-Bar: 
+Received: from black.home.cobb.me.uk (unknown [192.168.0.205])
+        by zaphod.cobb.me.uk (Postfix) with ESMTP id F3F339B846;
+        Wed, 28 Jul 2021 14:43:52 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cobb.uk.net;
+        s=201703; t=1627479833;
+        bh=AVprTXs7DyGHj0L7AmX18qLo2Z3rK1/x2Gl7dXunk0c=;
+        h=From:To:Cc:References:Subject:Date:In-Reply-To:From;
+        b=Z6Jkm+JubTCKlQzFQC7kdv34buXMMFdGTRl0xbnIQMBu2D9WNo/T0dKFwZBvSpVzb
+         CsXLqPq+mjMzbHKiqUUUasWfG5vRSLoEUQTZ2g5VYI8AH/CQAV4spRcLI+CmussRPT
+         Wy0S7XH2GWbrFldyF9CvDJRZ5BAyxN8rUmSogjUu4ZXu5zgr5U9GuPhsu8yE+GMgsa
+         c6INNSNPs7vrmGj7TyKDdD23JAr75chB8Xq/3wkaLa2OOAm6H78bETe/IJEbIikb3y
+         Vu0QtVHihqTk8gdAjHsyMJzV4SRkQuSaJh4M4uM+URDtzrsDWVKl2d2T6EHUjqwZK2
+         GefGpOz9uCYjA==
+Received: from [192.168.0.202] (ryzen.home.cobb.me.uk [192.168.0.202])
+        by black.home.cobb.me.uk (Postfix) with ESMTP id A5D6027556C;
+        Wed, 28 Jul 2021 14:43:52 +0100 (BST)
+From:   g.btrfs@cobb.uk.net
+To:     NeilBrown <neilb@suse.de>, Wang Yugui <wangyugui@e16-tech.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+ <20210728125819.6E52.409509F4@e16-tech.com>
+ <20210728140431.D704.409509F4@e16-tech.com>
+ <162745567084.21659.16797059962461187633@noble.neil.brown.name>
+Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
+Message-ID: <2cb6455c-7b9f-9ac3-fd9d-9121eb1aa109@cobb.uk.net>
+Date:   Wed, 28 Jul 2021 14:43:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <162745567084.21659.16797059962461187633@noble.neil.brown.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  Hello Linus,
+On 28/07/2021 08:01, NeilBrown wrote:
+> On Wed, 28 Jul 2021, Wang Yugui wrote:
+>> Hi,
+>>
+>> This patchset works well in 5.14-rc3.
+> 
+> Thanks for testing.
+> 
+>>
+>> 1, fixed dummy inode(255, BTRFS_FIRST_FREE_OBJECTID - 1 )  is changed to
+>> dynamic dummy inode(18446744073709551358, or 18446744073709551359, ...)
+> 
+> The BTRFS_FIRST_FREE_OBJECTID-1 was a just a hack, I never wanted it to
+> be permanent.
+> The new number is ULONG_MAX - subvol_id (where subvol_id starts at 257 I
+> think).
+> This is a bit less of a hack.  It is an easily available number that is
+> fairly unique.
+> 
+>>
+>> 2, btrfs subvol mount info is shown in /proc/mounts, even if nfsd/nfs is
+>> not used.
+>> /dev/sdc                btrfs   94G  3.5M   93G   1% /mnt/test
+>> /dev/sdc                btrfs   94G  3.5M   93G   1% /mnt/test/sub1
+>> /dev/sdc                btrfs   94G  3.5M   93G   1% /mnt/test/sub2
+>>
+>> This is a visiual feature change for btrfs user.
+> 
+> Hopefully it is an improvement.  But it is certainly a change that needs
+> to be carefully considered.
 
-  could you please pull from
+Would this change the behaviour of findmnt? I have several scripts that
+depend on findmnt to select btrfs filesystems. Just to take a couple of
+examples (using the example shown above): my scripts would depend on
+'findmnt --target /mnt/test/sub1 -o target' providing /mnt/test, not the
+subvolume; and another script would depend on 'findmnt -t btrfs
+--mountpoint /mnt/test/sub1' providing no output as the directory is not
+an /etc/fstab mount point for a btrfs filesystem.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fixes_for_v5.14-rc4
-
-to get a fix of ext2 conversion to kmap_local() and two reiserfs hardening
-fixes.
-
-Top of the tree is 13d257503c09. The full shortlog is:
-
-Javier Pello (1):
-      fs/ext2: Avoid page_address on pages returned by ext2_get_page
-
-Shreyansh Chouhan (1):
-      reiserfs: check directory items on read from disk
-
-Yu Kuai (1):
-      reiserfs: add check for root_inode in reiserfs_fill_super
-
-The diffstat is
-
- fs/ext2/dir.c       | 12 ++++++------
- fs/ext2/ext2.h      |  3 ++-
- fs/ext2/namei.c     |  4 ++--
- fs/reiserfs/stree.c | 31 ++++++++++++++++++++++++++-----
- fs/reiserfs/super.c |  8 ++++++++
- 5 files changed, 44 insertions(+), 14 deletions(-)
-
-							Thanks
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Maybe findmnt isn't affected? Or maybe the change is worth making
+anyway? But it needs to be carefully considered if it breaks existing
+user interfaces.
