@@ -2,72 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B8173D87DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 08:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 323B53D8871
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 09:01:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234632AbhG1G0e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 02:26:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40106 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234137AbhG1G0d (ORCPT
+        id S233225AbhG1HB3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 03:01:29 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:47346 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229939AbhG1HBW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 02:26:33 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE1E7C061757
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jul 2021 23:26:29 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id h14so1884287lfv.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jul 2021 23:26:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=Aauu7gYvMaBruI9Zt1CgTlkxSZ8evQwPBhKOMH6jf8s=;
-        b=YK4XhaC3dRlqP9RZdptvXnVn+OLJqFZ2gWIOlwgzJKz+8PK08usRAsbaWOtZ4DnePc
-         AZ3ZX9Wq1vmzJE3iokDwCe3DeY7D/4pKyQgkaB+zUlmXF0o3uc2N1vVe44fIKgPHoir8
-         SUXAfbRUK9Rc3k+6brJcw3HCnYCCPEYEVeJA+WFsF7q3u/55MYxJ+21fQBXADUdODTrd
-         z/mq+OKszNzIwbd1/G3b93VpE4oUDWYpGiufGZOqoOAyg9Uoi366zelXBpqkqnBWnjJU
-         P2rU1gWVfc6b5b1U1MgxA4dODFfqekrT/x0nX/tZTSJgpB7HKfnSmlXSopperItTn4i2
-         zQ1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=Aauu7gYvMaBruI9Zt1CgTlkxSZ8evQwPBhKOMH6jf8s=;
-        b=H8BFn68mAHh4l1Cq7CDMo4e52mr0BYDvBkML04Xw0Aw7w1PSwsK2VhlYvb7T695Vux
-         y1flSRH4F/99yq8XpS2VnJtpvX0ELZNM4XPrNIocnV68V/UwQK1gurRhsoqGAiLvByLI
-         hP3kSFWsxyAhzOzwz3NI4NB/zhq5SAMBHiTbS6ynw7z3KBMyOSTxY50DwFUvrNXKveeE
-         Y7OtubXYUCJn++NeuwoIFyDhmGvIyShnL9qUq5FXqN3hqJGL/JjGpTBbCGSabMkRMB8R
-         zebwnpaeW2tUT2IFo8rtJLv/wN1Vj0q7Netbbm/ms99XRfCZANR4fsT7kHyONYrB8WxZ
-         gPsw==
-X-Gm-Message-State: AOAM5304MeJzbI8qXxfAMqtmkbGYi4pMGva39kCie/Rmy3dznRf+860r
-        ZGgF/hzeSc2PyD0i2srV+ZA4vmKwOdjCG3RCk2o=
-X-Google-Smtp-Source: ABdhPJybsrgaR5m51HWYwyQTizDaS3CvXJs+/oNXQYGo5TCwJoOeWdCZRt7xVu/RR94V5qttCrxrxkeBAXkeOwlM364=
-X-Received: by 2002:a19:e201:: with SMTP id z1mr19005272lfg.176.1627453587936;
- Tue, 27 Jul 2021 23:26:27 -0700 (PDT)
+        Wed, 28 Jul 2021 03:01:22 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id CBA57222C2;
+        Wed, 28 Jul 2021 07:01:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1627455679; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vfKtWzYL5xXiaqOIrst/4AjlFpXV2P7VCCB+Rl25VdM=;
+        b=2XMWMKwA5ujV2g4duDlLx1urXnz015ncFd+g/bzlGaGwp3E0wkaCNB1CkvywR4RU/SRp/6
+        3ZeGRXag0UNS8AhbOuYFzetobKFNDPN58HXRzIQ0Eqb06Jcj339+18DxmVPALnCW3AFHA7
+        dDvSSrrKAzv1eOyPCDiO0oTqJWAhV38=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1627455679;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vfKtWzYL5xXiaqOIrst/4AjlFpXV2P7VCCB+Rl25VdM=;
+        b=laAJHdS5TTLoYJ5xLk6clvHlwoqXRbxNQC6y50j1atA0ZrUIJTJe7rIS6lcX5FNiqUP1s+
+        O1JTaN0SRvag+EDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A524A13AC2;
+        Wed, 28 Jul 2021 07:01:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id iuzAGLwAAWH7TQAAMHmgww
+        (envelope-from <neilb@suse.de>); Wed, 28 Jul 2021 07:01:16 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Reply-To: godwinppter@gmail.com
-Sender: azizissa85@gmail.com
-Received: by 2002:a05:651c:236:0:0:0:0 with HTTP; Tue, 27 Jul 2021 23:26:27
- -0700 (PDT)
-From:   Godwin Pete <godwinnpeter@gmail.com>
-Date:   Wed, 28 Jul 2021 08:26:27 +0200
-X-Google-Sender-Auth: kCkTyA_FFIaieB9rXbLHxYjFrec
-Message-ID: <CAGDYFmQq3Nojt7wvp7epwRFZrhmGem8wvnvFNy40YuVKRGkJRw@mail.gmail.com>
-Subject: Reply immediately
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Wang Yugui" <wangyugui@e16-tech.com>
+Cc:     "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
+In-reply-to: <20210728140431.D704.409509F4@e16-tech.com>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
+ <20210728125819.6E52.409509F4@e16-tech.com>,
+ <20210728140431.D704.409509F4@e16-tech.com>
+Date:   Wed, 28 Jul 2021 17:01:10 +1000
+Message-id: <162745567084.21659.16797059962461187633@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-My good friend,
+On Wed, 28 Jul 2021, Wang Yugui wrote:
+> Hi,
+> 
+> This patchset works well in 5.14-rc3.
 
-I just want to know if you, can help me to transfer the amount of
-($6Million). After the transfer we have to share it, 50% for me, and
-50% for you. Please let me know if you can help me for more
-information in regards with the transfer. I hope you can work with me
-honestly?
+Thanks for testing.
 
+> 
+> 1, fixed dummy inode(255, BTRFS_FIRST_FREE_OBJECTID - 1 )  is changed to
+> dynamic dummy inode(18446744073709551358, or 18446744073709551359, ...)
 
-Thanks.
+The BTRFS_FIRST_FREE_OBJECTID-1 was a just a hack, I never wanted it to
+be permanent.
+The new number is ULONG_MAX - subvol_id (where subvol_id starts at 257 I
+think).
+This is a bit less of a hack.  It is an easily available number that is
+fairly unique.
 
-Godwin Peter,
+> 
+> 2, btrfs subvol mount info is shown in /proc/mounts, even if nfsd/nfs is
+> not used.
+> /dev/sdc                btrfs   94G  3.5M   93G   1% /mnt/test
+> /dev/sdc                btrfs   94G  3.5M   93G   1% /mnt/test/sub1
+> /dev/sdc                btrfs   94G  3.5M   93G   1% /mnt/test/sub2
+> 
+> This is a visiual feature change for btrfs user.
+
+Hopefully it is an improvement.  But it is certainly a change that needs
+to be carefully considered.
+
+Thanks,
+NeilBrown
