@@ -2,215 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA143D8D0C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 13:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E4D83D8DBD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 14:27:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234869AbhG1LvE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 07:51:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58546 "EHLO
+        id S236293AbhG1M07 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 08:26:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234835AbhG1LvD (ORCPT
+        with ESMTP id S235204AbhG1M0v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 07:51:03 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBEE7C061757;
-        Wed, 28 Jul 2021 04:51:00 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id l18so2168567wrv.5;
-        Wed, 28 Jul 2021 04:51:00 -0700 (PDT)
+        Wed, 28 Jul 2021 08:26:51 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BBC6C061798;
+        Wed, 28 Jul 2021 05:26:48 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id w17so3545638ybl.11;
+        Wed, 28 Jul 2021 05:26:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=yp5cWmb4AkxFKBl8NuqRHF/Fj+1O+kz07eQ9B1cFrTM=;
-        b=rjufznQpIgT9Y4X5wATRAu5BDsSd6HgqZ5d9ZbD1tV5XqwI37bp4dlZn7sEU3roUWH
-         clGVPK5HZt0ibEg3n3rnQO/LLfCGXNB1z/OcJviBqX5BnDvPAT6ovSqtf2GG9z+b2bf5
-         hNRMQ5K1GU2t5utAkiIOYPFplsyDtoOtGyLrHrE0gjJStx3UlTxodAu66P1SUyVqHuRo
-         M6T6x8SRy36Ns7u7LeNWzv4QGHqMLlVM5YZOdZC2fd6M+9vcopSschELbxKP610fuQ0E
-         cnkAxdbpF2osQv7uYuvrxQu8i8zU9T8kP5ggNwdog+ispko+yCugJr87oZyjOacGVREA
-         620A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=g9LwHxHXC5qDgh7Rw7rbXvgKOrYZgamIabLRMHDDPdE=;
+        b=ZdrteGW1nA7xRsM+S5I+KtW+WeCk1f8i+onuIgcTnHADESJYRGWFzT3WNa3EzSpZdY
+         eg83oGEjb9tAKShV8EfcMYQxiBOnrxHehB7SwHpTOPF0WtIGqPtgQtd3ifX4YU+Ayra0
+         JCObS1GSLlfgfFO0tueehM6US/7hl2GhKRBclk11+2HPW4fvviNY12tX18M6ymvxNRJ0
+         AHvB5VtXzXa2rCFqbh7+9qzhuLesskcWY5h/SzAHvdFrp0/VJkp00rX30INx6ZVzMNiG
+         RUWOiRWeDm7nhiYhJWgoUn7uOmRAbD6Pbqa0zpx0yH8uxxBw+XxjLqdQRyfJH9aWgxSk
+         1UXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=yp5cWmb4AkxFKBl8NuqRHF/Fj+1O+kz07eQ9B1cFrTM=;
-        b=QPuryN1fLc/VPu6yEAvogl5fia8uovJAdD5soyvzbh84n3HUPMW+hTkIgVHJtGMrE1
-         nKQ2jii29LcsxjHkisvumT1oAy2ADr1pz5KqxEzu5jHoMij+kNTiIBxwT8VLZiIEjnZp
-         7mOdcvzPrbNAaMPE3XlRqsNZmE+RJ0MYwPs5X8F3fXxjK2ZzYVk9i4VTyklWjqIJTqCg
-         6zcMSr6WQrv5MYAvttKw3SNWXQwlXfl9AfaaV8biVmyeEyU9yx6cxUwkWrDD63AV30xY
-         ZE9SbLvjy/vIu8YhoD/NK3JrU6c1YMlquXYJDov8lJu/LKPfWFjJgRzl7Hg5CBQzxCZ3
-         k6tA==
-X-Gm-Message-State: AOAM530Ia0096yhmBDQwaQ+HSKaF4EE/BOpyfIV1bBc8AtuXPKqRweLr
-        e58feEfqg/+IXQMk5+0JKt0=
-X-Google-Smtp-Source: ABdhPJxnFTfpGwAmyL+B5BY1p5oMjCoBMdD/Omxoq7nc4R8MHgQpLQLkqKXCOPeVLSKKDmRSYkfgVw==
-X-Received: by 2002:adf:d1c7:: with SMTP id b7mr22336082wrd.108.1627473059546;
-        Wed, 28 Jul 2021 04:50:59 -0700 (PDT)
-Received: from ?IPv6:2a02:908:1252:fb60:6a5d:b580:2891:cbac? ([2a02:908:1252:fb60:6a5d:b580:2891:cbac])
-        by smtp.gmail.com with ESMTPSA id q72sm7758671wme.14.2021.07.28.04.50.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Jul 2021 04:50:59 -0700 (PDT)
-Subject: Re: [PATCH 00/11] Implement generic prot_guest_has() helper function
-To:     Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Cc:     Sathyanarayanan Kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Will Deacon <will@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, Baoquan He <bhe@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joerg Roedel <joro@8bytes.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-References: <cover.1627424773.git.thomas.lendacky@amd.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <5cd35ae7-a7ff-eca4-5d2a-f0dad94e1d7a@gmail.com>
-Date:   Wed, 28 Jul 2021 13:50:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=g9LwHxHXC5qDgh7Rw7rbXvgKOrYZgamIabLRMHDDPdE=;
+        b=rtwp4PotH6C1rWraPgdImD4l6vMmB7HKDfR/CXXdtO1K93g0wikedpsagfmogUL9IP
+         0LDR0CNkh/kWMt60CbPn67XO8HntFYRB2V+NOq5A6OEd6x4QLUVf1Q6ZUj7m3y6s6g5u
+         ELMlzC63k8UukZW+59/x1i6GhDmTK4TJaQdbNkJ0uTAkmrdOViak1gNP0fzOIBWUm0RG
+         EVntNpRxqzP9O/Jb6jdmARVrgUZwxrsMcxEzHptjWMuhW2r1KMo8tTIxQ8IoC/HbVnAl
+         7Hms/KgYLNeRWCt2eDnsY6+14dXtKn1wQX5nPgeXQmt//98buEje25fKVsmvpBzMjCSz
+         X8lg==
+X-Gm-Message-State: AOAM532SrbrDtJUXwuqeNVxRcH5G/wUx7J21QguQKR8ln/OmpcECexHE
+        5+U7t1CN9rvmfXUI/zJp2jj5ZgF3lKxl8W6Il3g=
+X-Google-Smtp-Source: ABdhPJxCe2mMDODYGW6OF0fRZyCdRdTP6PQOzo7vDQeJZBgMRIiag+FoEFNd+gI5VHTw83rjEqpeoSW/5unl2Q8tpRE=
+X-Received: by 2002:a5b:286:: with SMTP id x6mr2835851ybl.59.1627475208122;
+ Wed, 28 Jul 2021 05:26:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cover.1627424773.git.thomas.lendacky@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+ <20210728125819.6E52.409509F4@e16-tech.com> <20210728140431.D704.409509F4@e16-tech.com>
+ <162745567084.21659.16797059962461187633@noble.neil.brown.name>
+In-Reply-To: <162745567084.21659.16797059962461187633@noble.neil.brown.name>
+From:   Neal Gompa <ngompa13@gmail.com>
+Date:   Wed, 28 Jul 2021 08:26:12 -0400
+Message-ID: <CAEg-Je8Pqbw0tTw6NWkAcD=+zGStOJR0J-409mXuZ1vmb6dZsA@mail.gmail.com>
+Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
+To:     NeilBrown <neilb@suse.de>
+Cc:     Wang Yugui <wangyugui@e16-tech.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs@vger.kernel.org,
+        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am 28.07.21 um 00:26 schrieb Tom Lendacky:
-> This patch series provides a generic helper function, prot_guest_has(),
-> to replace the sme_active(), sev_active(), sev_es_active() and
-> mem_encrypt_active() functions.
+On Wed, Jul 28, 2021 at 3:02 AM NeilBrown <neilb@suse.de> wrote:
 >
-> It is expected that as new protected virtualization technologies are
-> added to the kernel, they can all be covered by a single function call
-> instead of a collection of specific function calls all called from the
-> same locations.
+> On Wed, 28 Jul 2021, Wang Yugui wrote:
+> > Hi,
+> >
+> > This patchset works well in 5.14-rc3.
 >
-> The powerpc and s390 patches have been compile tested only. Can the
-> folks copied on this series verify that nothing breaks for them.
+> Thanks for testing.
+>
+> >
+> > 1, fixed dummy inode(255, BTRFS_FIRST_FREE_OBJECTID - 1 )  is changed t=
+o
+> > dynamic dummy inode(18446744073709551358, or 18446744073709551359, ...)
+>
+> The BTRFS_FIRST_FREE_OBJECTID-1 was a just a hack, I never wanted it to
+> be permanent.
+> The new number is ULONG_MAX - subvol_id (where subvol_id starts at 257 I
+> think).
+> This is a bit less of a hack.  It is an easily available number that is
+> fairly unique.
+>
+> >
+> > 2, btrfs subvol mount info is shown in /proc/mounts, even if nfsd/nfs i=
+s
+> > not used.
+> > /dev/sdc                btrfs   94G  3.5M   93G   1% /mnt/test
+> > /dev/sdc                btrfs   94G  3.5M   93G   1% /mnt/test/sub1
+> > /dev/sdc                btrfs   94G  3.5M   93G   1% /mnt/test/sub2
+> >
+> > This is a visiual feature change for btrfs user.
+>
+> Hopefully it is an improvement.  But it is certainly a change that needs
+> to be carefully considered.
 
-As GPU driver dev I'm only one end user of this, but at least from the 
-high level point of view that makes totally sense to me.
+I think this is behavior people generally expect, but I wonder what
+the consequences of this would be with huge numbers of subvolumes. If
+there are hundreds or thousands of them (which is quite possible on
+SUSE systems, for example, with its auto-snapshotting regime), this
+would be a mess, wouldn't it?
 
-Feel free to add an Acked-by: Christian König <christian.koenig@amd.com>.
+Or can we add a way to mark these things to not show up there or is
+there some kind of behavioral change we can make to snapper or other
+tools to make them not show up here?
 
-We could run that through the AMD GPU unit tests, but I fear we actually 
-don't test on a system with SEV/SME active.
 
-Going to raise that on our team call today.
 
-Regards,
-Christian.
-
->
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: VMware Graphics <linux-graphics-maintainer@vmware.com>
-> Cc: Will Deacon <will@kernel.org>
->
-> ---
->
-> Patches based on:
->    https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
->    commit 79e920060fa7 ("Merge branch 'WIP/fixes'")
->
-> Tom Lendacky (11):
->    mm: Introduce a function to check for virtualization protection
->      features
->    x86/sev: Add an x86 version of prot_guest_has()
->    powerpc/pseries/svm: Add a powerpc version of prot_guest_has()
->    x86/sme: Replace occurrences of sme_active() with prot_guest_has()
->    x86/sev: Replace occurrences of sev_active() with prot_guest_has()
->    x86/sev: Replace occurrences of sev_es_active() with prot_guest_has()
->    treewide: Replace the use of mem_encrypt_active() with
->      prot_guest_has()
->    mm: Remove the now unused mem_encrypt_active() function
->    x86/sev: Remove the now unused mem_encrypt_active() function
->    powerpc/pseries/svm: Remove the now unused mem_encrypt_active()
->      function
->    s390/mm: Remove the now unused mem_encrypt_active() function
->
->   arch/Kconfig                               |  3 ++
->   arch/powerpc/include/asm/mem_encrypt.h     |  5 --
->   arch/powerpc/include/asm/protected_guest.h | 30 +++++++++++
->   arch/powerpc/platforms/pseries/Kconfig     |  1 +
->   arch/s390/include/asm/mem_encrypt.h        |  2 -
->   arch/x86/Kconfig                           |  1 +
->   arch/x86/include/asm/kexec.h               |  2 +-
->   arch/x86/include/asm/mem_encrypt.h         | 13 +----
->   arch/x86/include/asm/protected_guest.h     | 27 ++++++++++
->   arch/x86/kernel/crash_dump_64.c            |  4 +-
->   arch/x86/kernel/head64.c                   |  4 +-
->   arch/x86/kernel/kvm.c                      |  3 +-
->   arch/x86/kernel/kvmclock.c                 |  4 +-
->   arch/x86/kernel/machine_kexec_64.c         | 19 +++----
->   arch/x86/kernel/pci-swiotlb.c              |  9 ++--
->   arch/x86/kernel/relocate_kernel_64.S       |  2 +-
->   arch/x86/kernel/sev.c                      |  6 +--
->   arch/x86/kvm/svm/svm.c                     |  3 +-
->   arch/x86/mm/ioremap.c                      | 16 +++---
->   arch/x86/mm/mem_encrypt.c                  | 60 +++++++++++++++-------
->   arch/x86/mm/mem_encrypt_identity.c         |  3 +-
->   arch/x86/mm/pat/set_memory.c               |  3 +-
->   arch/x86/platform/efi/efi_64.c             |  9 ++--
->   arch/x86/realmode/init.c                   |  8 +--
->   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    |  4 +-
->   drivers/gpu/drm/drm_cache.c                |  4 +-
->   drivers/gpu/drm/vmwgfx/vmwgfx_drv.c        |  4 +-
->   drivers/gpu/drm/vmwgfx/vmwgfx_msg.c        |  6 +--
->   drivers/iommu/amd/init.c                   |  7 +--
->   drivers/iommu/amd/iommu.c                  |  3 +-
->   drivers/iommu/amd/iommu_v2.c               |  3 +-
->   drivers/iommu/iommu.c                      |  3 +-
->   fs/proc/vmcore.c                           |  6 +--
->   include/linux/mem_encrypt.h                |  4 --
->   include/linux/protected_guest.h            | 37 +++++++++++++
->   kernel/dma/swiotlb.c                       |  4 +-
->   36 files changed, 218 insertions(+), 104 deletions(-)
->   create mode 100644 arch/powerpc/include/asm/protected_guest.h
->   create mode 100644 arch/x86/include/asm/protected_guest.h
->   create mode 100644 include/linux/protected_guest.h
->
-
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
