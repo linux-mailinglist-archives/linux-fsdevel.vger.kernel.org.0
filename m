@@ -2,214 +2,308 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C82F3D858C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 03:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E013D85B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 03:52:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233179AbhG1Bla (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jul 2021 21:41:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33496 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232786AbhG1Bl3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jul 2021 21:41:29 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99861C061757;
-        Tue, 27 Jul 2021 18:41:27 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id bp1so919801lfb.3;
-        Tue, 27 Jul 2021 18:41:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E5jiYoVzOn8Prs0+MhZalqYuEt1KYfevlJM4eREnX+k=;
-        b=qbKn3lZirWqrbPBwIrezD3UTHXmIRYR30Xqu6p13h+2zS4uiuRAvHTIsTJmZwqfp12
-         mWiJw81FkosjiMZL0TzAvMndePXlj3MD2GOrTrrkTRJ4LjfUKBgUvO9nA1p+Uuw6K1Rf
-         wGrB0VLwSdhfLgR7PzluniE2Xz16C1siGaqGmnXUvQCRZCJ80nSLeZxXDozJ0V0A0eaD
-         VI/eKOuJpDVV5KhTi+/1686V4WKzC9sXhlCyw1lbkrdX545r6seHUz6xoQ76bwKwmoNi
-         /Q62b3xaCoB7tui0Hsx+iio8RCUlsIVGpZ5vYLhJxcW8MevX7EuvgVcDomcq0Z4t3bgC
-         Ms1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E5jiYoVzOn8Prs0+MhZalqYuEt1KYfevlJM4eREnX+k=;
-        b=AypTmD9S8scHTE7IK1aayI14ZcY7ubWdGDPMWWhb/8zew4MinjcSMN0VdPihkCCkMU
-         fxG5inTuxFJzXl5FGcqj+xLZzLmr3L4lp1B9wpvbBqC1vGskApNrjUITzXB1/4SYUjWA
-         3A8ZdC/U/t8qXNTkTX+AJy43JjrkEokF7A8H4evaiLrZCx7KL17tXKMDlZoIU1ojppY6
-         +NZW99Fa4A/tzPhzForPHbs1MwvBz8rUk7gJsCjDBe7zeuZ2zz9PmfpnqJFAMTIH+5BP
-         Fe/+fhdeMsBED8tcYN7dmPgsdG4eONBKYI8GNLPiDO6AfgDzajCM1/Egsuibr4Kp38yf
-         PZfg==
-X-Gm-Message-State: AOAM533/MqdsppSD2gPksdYie4QksepEXJd/sSELW5p53J20MR0pMrNN
-        JONi0appBhHL87ln8jEXBI7uWyN/h+Exzcz2bmI=
-X-Google-Smtp-Source: ABdhPJzTwvqOTICC61A4ZfJyncncoaifTS5eFNCfcr3HTc5AXMBwxe5l1JTWJ/2imPS50xyTq+i1fFpaMh7XYfAp48c=
-X-Received: by 2002:a19:6709:: with SMTP id b9mr8226637lfc.95.1627436485961;
- Tue, 27 Jul 2021 18:41:25 -0700 (PDT)
+        id S233384AbhG1Bwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jul 2021 21:52:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46676 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233234AbhG1Bwo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Jul 2021 21:52:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C81A2601FF;
+        Wed, 28 Jul 2021 01:52:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627437164;
+        bh=bZebbcvnXhR5JIU5tUHxuvey9bFsVigx8iGinyfrMx8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PQrN3JG+y/WeffBreyMFAws4OuNvbiwN8RgJa+TIqW6JHrDVlwAluX2IUC63VMcph
+         dmTe6DWZojACuOvg+7OMlvpSddIs5/EDMj48fd3iDMJA8qT0r08NevFzkaK0KGb1AZ
+         ou6HVU0xf26qae/yVTo0UX4oERqUZlYiwQz7BN0D16RsJvIX3kkYY+CNeLf3doP5sO
+         f9G9Y2wZHkdmt/zeWYoZomqQQaHidvxHwO+o29dUGnFXEWH7z5QCAqNZqm/38vk7ox
+         WDXn1wCZJOXHVJRWX8ybszk0FsywQPR+rff9bOSPKCzcAdLvSUuMgnDGUojIAh9bSi
+         gcyflowv0pbkA==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-f2fs-devel@lists.sourceforge.net,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH] f2fs: remove broken support for allocating DIO writes
+Date:   Tue, 27 Jul 2021 18:51:54 -0700
+Message-Id: <20210728015154.171507-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <20210721075751.542-1-xuewen.yan94@gmail.com> <d8e14c3c-0eab-2d4d-693e-fb647c7f7c8c@arm.com>
- <CAB8ipk9rO7majqxo0eTnPf5Xs-c4iF8TPQqonCjv6sCd2J6ONA@mail.gmail.com>
- <20210726171716.jow6qfbxx6xr5q3t@e107158-lin.cambridge.arm.com>
- <CAB8ipk9cZ4amrarQSN9TtqEwc42RFM1cBUGsTYKuF0maRFx4Zw@mail.gmail.com> <20210727134509.j2fhimhp4dht3hir@e107158-lin.cambridge.arm.com>
-In-Reply-To: <20210727134509.j2fhimhp4dht3hir@e107158-lin.cambridge.arm.com>
-From:   Xuewen Yan <xuewen.yan94@gmail.com>
-Date:   Wed, 28 Jul 2021 09:40:52 +0800
-Message-ID: <CAB8ipk8bKe_PxKaXdpqa62soC9_uqTDZMoWU3fi8DUBOD8uErg@mail.gmail.com>
-Subject: Re: [PATCH] sched/uclamp: Introduce a method to transform UCLAMP_MIN
- into BOOST
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Benjamin Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        mcgrof@kernel.org, Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <qperret@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Qais
+From: Eric Biggers <ebiggers@google.com>
 
-Thanks for your patient reply, and I have got that I need to do more
-work in uclamp to balance the performance and power, especially in
-per-task API.
-And If there is any progress in the future, I hope to keep
-communicating with you.
+Currently, non-overwrite DIO writes are fundamentally unsafe on f2fs as
+they require preallocating blocks, but f2fs doesn't support unwritten
+blocks and therefore has to preallocate the blocks as regular blocks.
+f2fs has no way to reliably roll back such preallocations, so as a
+result, f2fs will leak uninitialized blocks to users if a DIO write
+doesn't fully complete.  This can be easily reproduced by issuing a DIO
+write that will fail due to misalignment, e.g.:
 
-Thank you very much!
+	rm -f file
+	truncate -s 1000000 file
+	dd if=/dev/zero bs=999999 oflag=direct conv=notrunc of=file
+	od -tx1 file  # shows uninitialized disk blocks
 
-BR
-xuewen
+Until a proper design for non-overwrite DIO writes on f2fs can be
+designed and implemented, remove support for them and make them fall
+back to buffered I/O.  This is what other filesystems that don't support
+unwritten blocks, e.g. ext2, also do, at least for non-extending DIO
+writes.  However, f2fs can't do extending DIO writes either, as f2fs
+appears to have no mechanism for guaranteeing that leftover allocated
+blocks past EOF will get truncated.  (f2fs does have an orphan list, but
+it's only used for deleting inodes, not truncating them.)
 
-On Tue, Jul 27, 2021 at 9:45 PM Qais Yousef <qais.yousef@arm.com> wrote:
->
-> Hi Xuewen
->
-> On 07/27/21 20:16, Xuewen Yan wrote:
-> > Hi Qais
-> >
-> > On Tue, Jul 27, 2021 at 1:17 AM Qais Yousef <qais.yousef@arm.com> wrote:
-> > >
-> > > > > >
-> > > > > > The uclamp can clamp the util within uclamp_min and uclamp_max,
-> > > > > > it is benifit to some tasks with small util, but for those tasks
-> > > > > > with middle util, it is useless.
-> > >
-> > > It's not really useless, it works as it's designed ;-)
-> >
-> > Yes, my expression problem...
->
-> No worries, I understood what you meant. But I had to highlight that this is
-> the intended design behavior :-)
->
-> >
-> > >
-> > > As Dietmar highlighted, you need to pick a higher boost value that gives you
-> > > the best perf/watt for your use case.
-> > >
-> > > I assume that this is a patch in your own Android 5.4 kernel, right? I'm not
-> >
-> > Yes, the patch indeed is used in my own Android12 with kernel5.4.
-> >
-> > > aware of any such patch in Android Common Kernel. If it's there, do you mind
-> > > pointing me to the gerrit change that introduced it?
-> >
-> > emmm, sorry I kind of understand what that means.  Your means is  what
-> > I need to do is to send this patch to google?
->
-> Oh no. I meant if you are *not* carrying this patch in your own, I'd appreciate
-> getting a link to when it was merged into Google' tree. But you already said
-> you carry this patch on your own kernel, so there's nothing to do :)
->
-> >
-> > >
-> > > > Because the kernel used in Android do not have the schedtune, and the
-> > > > uclamp can not
-> > > > boost all the util, and this is the reason for the design of the patch.
-> > >
-> > > Do you have a specific workload in mind here that is failing? It would help if
-> > > you can explain in detail the mode of failure you're seeing to help us
-> > > understand the problem better.
-> >
-> > The patch has has been working with me for a while, I can redo this
-> > data, but this might take a while :)
->
-> But there must have been a reason you introduced it in the first place, what
-> was that reason?
->
-> >
-> > > >
-> > > > >
-> > > > > > Scenario:
-> > > > > > if the task_util = 200, {uclamp_min, uclamp_max} = {100, 1024}
-> > > > > >
-> > > > > > without patch:
-> > > > > > clamp_util = 200;
-> > > > > >
-> > > > > > with patch:
-> > > > > > clamp_util = 200 + (100 / 1024) * (1024 - 200) = 280;
-> > >
-> > > If a task util was 200, how long does it take for it to reach 280? Why do you
-> > > need to have this immediate boost value applied and can't wait for this time to
-> > > lapse? I'm not sure, but ramping up by 80 points shouldn't take *that* long,
-> > > but don't quote me on this :-)
-> >
-> > Here is just one example to illustrate that , with this patch, It also
-> > can boost the util which in {UCLAMP_MIN, UCLAMP_MAX}...
-> >
-> > >
-> > > > >
-> > > > > The same could be achieved by using {uclamp_min, uclamp_max} = {280, 1024}?
-> > > >
-> > > > Yes, for per-task, that is no problem, but for per-cgroup, most times,
-> > > > we can not always only put the special task into the cgroup.
-> > > > For example, in Android , there is a cgroup named "top-app", often all
-> > > > the threads of a app would be put into it.
-> > > > But, not all threads of this app need to be boosted, if we set the
-> > > > uclamp_min too big, the all the small task would be clamped to
-> > > > uclamp_min,
-> > > > the power consumption would be increased, howerever, if setting the
-> > > > uclamp_min smaller, the performance may be increased.
-> > > > Such as:
-> > > > a task's util is 50,  {uclamp_min, uclamp_max} = {100, 1024}
-> > > > the boost_util =  50 + (100 / 1024) * (1024 - 50) = 145;
-> > > > but if we set {uclamp_min, uclamp_max} = {280, 1024}, without patch:
-> > > > the clamp_util = 280.
-> > >
-> > > I assume {uclamp_min, uclamp_max} = {145, 1024} is not good enough because you
-> > > want this 200 task to be boosted to 280. One can argue that not all tasks at
-> > > 200 need to be boosted to 280 too. So the question is, like above, what type
-> > > of tasks that are failing here and how do you observe this failure? It seems
-> > > there's a class of performance critical tasks that need this fast boosting.
-> > > Can't you identify them and boost them individually?
-> >
-> > Yes, the best way to do that is boosting them individually, but
-> > usually, it may not be so easy...
->
-> Yes I appreciate that, but cgroup is a coarse grain controller. Even with your
-> approach, you will still have to find the best compromise because some tasks
-> will get more boosting than they really need to and waste power even with your
-> approach.
->
-> For best outcome with uclamp; the cgroup should be used to specify the minimum
-> performance requirement of a class of tasks, then use the per-task API to fine
-> tune the settings for specific tasks.
->
-> I appreciate it'll take time to get there, but this is the best way forward.
->
-> If you have a specific use case that's failing, it will still be good to share
-> the details to think more if there's something we can do about it at the kernel
-> level.
->
-> Thanks
->
-> --
-> Qais Yousef
+This patch doesn't attempt to remove the F2FS_GET_BLOCK_{DIO,PRE_DIO}
+cases in f2fs_map_blocks(); that can be cleaned up later.
+
+Fixes: bfad7c2d4033 ("f2fs: introduce a new direct_IO write path")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+
+This applies to the latest f2fs.git#dev branch.
+
+ fs/f2fs/data.c | 82 +++++++++++---------------------------------------
+ fs/f2fs/f2fs.h | 24 +++++----------
+ fs/f2fs/file.c | 11 ++-----
+ 3 files changed, 28 insertions(+), 89 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index cb71d7317ad2..756b2277bf1b 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1374,9 +1374,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	struct f2fs_map_blocks map;
+-	int flag;
+ 	int err = 0;
+-	bool direct_io = iocb->ki_flags & IOCB_DIRECT;
+ 
+ 	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
+ 	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
+@@ -1390,13 +1388,6 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+ 	map.m_seg_type = NO_CHECK_TYPE;
+ 	map.m_may_create = true;
+ 
+-	if (direct_io) {
+-		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
+-		flag = f2fs_force_buffered_io(inode, iocb, from) ?
+-					F2FS_GET_BLOCK_PRE_AIO :
+-					F2FS_GET_BLOCK_PRE_DIO;
+-		goto map_blocks;
+-	}
+ 	if (iocb->ki_pos + iov_iter_count(from) > MAX_INLINE_DATA(inode)) {
+ 		err = f2fs_convert_inline_inode(inode);
+ 		if (err)
+@@ -1405,13 +1396,9 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+ 	if (f2fs_has_inline_data(inode))
+ 		return err;
+ 
+-	flag = F2FS_GET_BLOCK_PRE_AIO;
+-
+-map_blocks:
+-	err = f2fs_map_blocks(inode, &map, 1, flag);
++	err = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_AIO);
+ 	if (map.m_len > 0 && err == -ENOSPC) {
+-		if (!direct_io)
+-			set_inode_flag(inode, FI_NO_PREALLOC);
++		set_inode_flag(inode, FI_NO_PREALLOC);
+ 		err = 0;
+ 	}
+ 	return err;
+@@ -1701,47 +1688,30 @@ static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
+ 	return (blks << inode->i_blkbits);
+ }
+ 
+-static int __get_data_block(struct inode *inode, sector_t iblock,
+-			struct buffer_head *bh, int create, int flag,
+-			pgoff_t *next_pgofs, int seg_type, bool may_write)
++static int get_data_block_dio(struct inode *inode, sector_t iblock,
++			      struct buffer_head *bh, int create)
+ {
+-	struct f2fs_map_blocks map;
++	struct f2fs_map_blocks map = {
++		.m_lblk = iblock,
++		.m_len = bytes_to_blks(inode, bh->b_size),
++	};
+ 	int err;
+ 
+-	map.m_lblk = iblock;
+-	map.m_len = bytes_to_blks(inode, bh->b_size);
+-	map.m_next_pgofs = next_pgofs;
+-	map.m_next_extent = NULL;
+-	map.m_seg_type = seg_type;
+-	map.m_may_create = may_write;
+-
+-	err = f2fs_map_blocks(inode, &map, create, flag);
++	/*
++	 * We don't allocate blocks here, as that would expose uninitialized
++	 * blocks if the DIO write doesn't fully complete.  DIO writes that need
++	 * to allocate blocks will fall back to buffered writes.
++	 */
++	err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_DEFAULT);
+ 	if (!err) {
+-		map_bh(bh, inode->i_sb, map.m_pblk);
++		if (map.m_flags & F2FS_MAP_MAPPED)
++			map_bh(bh, inode->i_sb, map.m_pblk);
+ 		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
+ 		bh->b_size = blks_to_bytes(inode, map.m_len);
+ 	}
+ 	return err;
+ }
+ 
+-static int get_data_block_dio_write(struct inode *inode, sector_t iblock,
+-			struct buffer_head *bh_result, int create)
+-{
+-	return __get_data_block(inode, iblock, bh_result, create,
+-				F2FS_GET_BLOCK_DIO, NULL,
+-				f2fs_rw_hint_to_seg_type(inode->i_write_hint),
+-				true);
+-}
+-
+-static int get_data_block_dio(struct inode *inode, sector_t iblock,
+-			struct buffer_head *bh_result, int create)
+-{
+-	return __get_data_block(inode, iblock, bh_result, create,
+-				F2FS_GET_BLOCK_DIO, NULL,
+-				f2fs_rw_hint_to_seg_type(inode->i_write_hint),
+-				false);
+-}
+-
+ static int f2fs_xattr_fiemap(struct inode *inode,
+ 				struct fiemap_extent_info *fieinfo)
+ {
+@@ -3556,7 +3526,6 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	int err;
+ 	enum rw_hint hint = iocb->ki_hint;
+ 	int whint_mode = F2FS_OPTION(sbi).whint_mode;
+-	bool do_opu;
+ 
+ 	err = check_direct_IO(inode, iter, offset);
+ 	if (err)
+@@ -3565,8 +3534,6 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	if (f2fs_force_buffered_io(inode, iocb, iter))
+ 		return 0;
+ 
+-	do_opu = rw == WRITE && f2fs_lfs_mode(sbi);
+-
+ 	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+ 
+ 	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
+@@ -3578,27 +3545,15 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 			err = -EAGAIN;
+ 			goto out;
+ 		}
+-		if (do_opu && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
+-			up_read(&fi->i_gc_rwsem[rw]);
+-			iocb->ki_hint = hint;
+-			err = -EAGAIN;
+-			goto out;
+-		}
+ 	} else {
+ 		down_read(&fi->i_gc_rwsem[rw]);
+-		if (do_opu)
+-			down_read(&fi->i_gc_rwsem[READ]);
+ 	}
+ 
+ 	err = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev,
+-			iter, rw == WRITE ? get_data_block_dio_write :
+-			get_data_block_dio, NULL, f2fs_dio_submit_bio,
++			iter, get_data_block_dio, NULL, f2fs_dio_submit_bio,
+ 			rw == WRITE ? DIO_LOCKING | DIO_SKIP_HOLES :
+ 			DIO_SKIP_HOLES);
+ 
+-	if (do_opu)
+-		up_read(&fi->i_gc_rwsem[READ]);
+-
+ 	up_read(&fi->i_gc_rwsem[rw]);
+ 
+ 	if (rw == WRITE) {
+@@ -3607,8 +3562,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 		if (err > 0) {
+ 			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
+ 									err);
+-			if (!do_opu)
+-				set_inode_flag(inode, FI_UPDATE_WRITE);
++			set_inode_flag(inode, FI_UPDATE_WRITE);
+ 		} else if (err == -EIOCBQUEUED) {
+ 			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
+ 						count - iov_iter_count(iter));
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5d16486feb8f..c99756a6ff5f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4302,17 +4302,6 @@ static inline void f2fs_i_compr_blocks_update(struct inode *inode,
+ 	f2fs_mark_inode_dirty_sync(inode, true);
+ }
+ 
+-static inline int block_unaligned_IO(struct inode *inode,
+-				struct kiocb *iocb, struct iov_iter *iter)
+-{
+-	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
+-	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
+-	loff_t offset = iocb->ki_pos;
+-	unsigned long align = offset | iov_iter_alignment(iter);
+-
+-	return align & blocksize_mask;
+-}
+-
+ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 				struct kiocb *iocb, struct iov_iter *iter)
+ {
+@@ -4329,12 +4318,13 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 	 */
+ 	if (f2fs_sb_has_blkzoned(sbi))
+ 		return true;
+-	if (f2fs_lfs_mode(sbi) && (rw == WRITE)) {
+-		if (block_unaligned_IO(inode, iocb, iter))
+-			return true;
+-		if (F2FS_IO_ALIGNED(sbi))
+-			return true;
+-	}
++	/*
++	 * DIO writes in LFS mode would require preallocating blocks, which is
++	 * hard to do without exposing uninitialized blocks after short writes.
++	 */
++	if (f2fs_lfs_mode(sbi) && rw == WRITE)
++		return true;
++
+ 	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_CP_DISABLED))
+ 		return true;
+ 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index f335d38efc76..745672ab5a2a 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4287,14 +4287,9 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			err = f2fs_convert_inline_inode(inode);
+ 			if (err)
+ 				goto out_err;
+-			/*
+-			 * If force_buffere_io() is true, we have to allocate
+-			 * blocks all the time, since f2fs_direct_IO will fall
+-			 * back to buffered IO.
+-			 */
+-			if (!f2fs_force_buffered_io(inode, iocb, from) &&
+-					f2fs_lfs_mode(F2FS_I_SB(inode)))
+-				goto write;
++
++			set_inode_flag(inode, FI_NO_PREALLOC);
++			goto write;
+ 		}
+ 		preallocated = true;
+ 		target_size = iocb->ki_pos + iov_iter_count(from);
+
+base-commit: 08b8de81abe13b595120973b3089c4958e3ff2da
+-- 
+2.32.0
+
