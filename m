@@ -2,95 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27AC23D8ED7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 15:20:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D69B43D8EED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 15:24:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235260AbhG1NUs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 09:20:48 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:46716 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233315AbhG1NUr (ORCPT
+        id S236269AbhG1NYR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 09:24:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51930 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233315AbhG1NYR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 09:20:47 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 1F5701FFC7;
-        Wed, 28 Jul 2021 13:20:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1627478445; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lCc5x9urEAZbNeY9OEDsNeOQwSlhy+n+fY25TCQ64aM=;
-        b=JeqZj2gEBvBQQh9j/aIB1HSyc0nVD4VVFybRuvBCWo9NMLpa0XkD9cNEquZSTUUl3KbVjr
-        ZhtB97LKSLY+64j5EVEfceX4QWyIG4bkJ4uS7++WZXhw1nUO8ZO826AgSmDsXRWnraCBOF
-        spw6swU04pemMW7ZVGS6aJfCH2b1tsc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1627478445;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lCc5x9urEAZbNeY9OEDsNeOQwSlhy+n+fY25TCQ64aM=;
-        b=clUl68gl0bspZvvru0CFeBx5YvDxB/xb2ax14ZghSBarl6DajMQRrAG4/LdYJz4UmHtb7j
-        iHOxDh1tcESJBiCQ==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id EF25CA3B85;
-        Wed, 28 Jul 2021 13:20:44 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B6C641E1321; Wed, 28 Jul 2021 15:20:44 +0200 (CEST)
-Date:   Wed, 28 Jul 2021 15:20:44 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH -next] filesystems/locking: fix Malformed table warning
-Message-ID: <20210728132044.GH29619@quack2.suse.cz>
-References: <20210727232212.12510-1-rdunlap@infradead.org>
- <20210728000409.GE559142@magnolia>
+        Wed, 28 Jul 2021 09:24:17 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77F2C061757;
+        Wed, 28 Jul 2021 06:24:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=wyV5oHahoyFyDlkMKSruinnsahdkugSgLawjHfbEEjQ=; b=CxvZX41K0o1QkS+QNIrwd0eOBe
+        mqQ6PrksWIat6lXJKZPun+q1pAOQx0xLcn0dXI0f5/QwQmDJVibY4qE3c7TAdHgsIiPO3KhQic7GW
+        1eyfOJ6+e5m0vdD3PZ+UIsWjdf71Rv+qjxbud/TVWu09HUCIEgoxhatZ/TSoyrl9g8w0xVsK0qnJb
+        Ssgb2vj86C8FXbvbGsNNF9o/MH3FUfh7M9nUfPwhEPmwHvq/+B3ENaQ00GINALSLZBrB8jUNO3eAN
+        ZD343FSM3tMyDXd6949QP8wSOuEJ0mt327HB6lpEtnWhWjFhF6Z9hGOLbHanuC9ie9QiNGCSpAJVM
+        Xwq8/NVQ==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m8jWV-00G5AN-CH; Wed, 28 Jul 2021 13:23:16 +0000
+Date:   Wed, 28 Jul 2021 14:22:59 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 02/11] x86/sev: Add an x86 version of prot_guest_has()
+Message-ID: <YQFaM7nOhD2d6SUQ@infradead.org>
+References: <cover.1627424773.git.thomas.lendacky@amd.com>
+ <b3e929a77303dd47fd2adc2a1011009d3bfcee20.1627424774.git.thomas.lendacky@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210728000409.GE559142@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <b3e929a77303dd47fd2adc2a1011009d3bfcee20.1627424774.git.thomas.lendacky@amd.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 27-07-21 17:04:09, Darrick J. Wong wrote:
-> On Tue, Jul 27, 2021 at 04:22:12PM -0700, Randy Dunlap wrote:
-> > Update the bottom border to be the same as the top border.
-> > 
-> > Documentation/filesystems/locking.rst:274: WARNING: Malformed table.
-> > Bottom/header table border does not match top border.
-> > 
-> > Fixes: 730633f0b7f9 ("mm: Protect operations adding pages to page cache with invalidate_lock")
-> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > Cc: Darrick J. Wong <djwong@kernel.org>
-> > Cc: Christoph Hellwig <hch@lst.de>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: linux-fsdevel@vger.kernel.org
+On Tue, Jul 27, 2021 at 05:26:05PM -0500, Tom Lendacky via iommu wrote:
+> Introduce an x86 version of the prot_guest_has() function. This will be
+> used in the more generic x86 code to replace vendor specific calls like
+> sev_active(), etc.
 > 
-> Looks ugly but probably correct
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> While the name suggests this is intended mainly for guests, it will
+> also be used for host memory encryption checks in place of sme_active().
+> 
+> The amd_prot_guest_has() function does not use EXPORT_SYMBOL_GPL for the
+> same reasons previously stated when changing sme_active(), sev_active and
 
-Thanks for the fix and for review! I've added the patch to my branch with
-hole punch fixes.
-
-								Honza
-> > ---
-> >  Documentation/filesystems/locking.rst |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > --- linext-20210727.orig/Documentation/filesystems/locking.rst
-> > +++ linext-20210727/Documentation/filesystems/locking.rst
-> > @@ -295,7 +295,7 @@ is_partially_uptodate:	yes
-> >  error_remove_page:	yes
-> >  swap_activate:		no
-> >  swap_deactivate:	no
-> > -======================	======================== =========
-> > +======================	======================== =========	===============
-> >  
-> >  ->write_begin(), ->write_end() and ->readpage() may be called from
-> >  the request handler (/dev/loop).
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+None of that applies here as none of the callers get pulled into
+random macros.  The only case of that is sme_me_mask through
+sme_mask, but that's not something this series replaces as far as I can
+tell.
