@@ -2,64 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E3A3D8457
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 01:57:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA3D3D8460
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 02:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232837AbhG0X5P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jul 2021 19:57:15 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:53845 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232786AbhG0X5P (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jul 2021 19:57:15 -0400
-Received: by mail-il1-f199.google.com with SMTP id l14-20020a056e0205ceb02901f2f7ba704aso480414ils.20
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jul 2021 16:57:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=Ty4TQPGEDKcGdMb6gqnGGhBMQQtzNle2IFTM2JBzdpw=;
-        b=DOVesI+C32M5vWO51i0mL6sml4RmAv8X4teMOGC4fSO8z8LQoit/ZOfadCuLl3r738
-         AnqYH27Po22oi64jC529lFFlcefx54AuaNB6pJrfs/099KvsRM+laWsGdBX4kwIkwCJL
-         c8Tl42cb7CMUvquLbC+K2DJC234kOzZmPhEkJTKHnVmLy2S8yEVEXJyqI8onWSGDeovQ
-         B/tbjCtwGFHDLYCZn4Rhra6zrRfa7czGXmCSIascHiruT8Axc2Ek7t2EEcbCfrhExuFi
-         DyXUHTTUl53quohDviXv/M7IMUUP6MFPvY7YXpu8DzxR0S9VMdUMGKtUjfbJmhjQuBz3
-         zwYw==
-X-Gm-Message-State: AOAM533JDbhZuqv8cQEID74EXdzwAXtITbSXzEKpZXHVyJ/zcd3d34tx
-        LC6Imk34qi0vWNzsupIG83lKd/uXIfYqyfPSLqHCpE+tgMwi
-X-Google-Smtp-Source: ABdhPJxi794p2hLFiirgR9Foy8pLJY+506lpsOX3kCxS6r/0n5vf9hy+CWYYNJ5uvcSGBDxKN6zzTZCed5eyrCSZB1mmLDJ5Xp/t
+        id S232963AbhG1AEK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jul 2021 20:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232796AbhG1AEK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Jul 2021 20:04:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 79AE860F9B;
+        Wed, 28 Jul 2021 00:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627430649;
+        bh=CVtEJinMhj+vpS0dGC/FJSBH3tbjVYSpo1t2j7x6Dyk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=APFPyXj1T7+IwlOacL5ZeFCHaMci+xsdrYC+dJVjlDNaVdVJA6JUVULactRthGlh0
+         Zrb876CILloo016O6+Bus/czZk4sihv4X7iFmZT+8/OsmnHZGeZTtbWrmeBQez63hM
+         t5Mb/Me5GSnEq0/QMKdcnHrRWUkbYitwkkXORBGZHmabKEVgBDi8U2L92xuYUx09fA
+         cf4enWRxT0fK+Yw060P9tUi+dWLnrK3eemqD0zCfsjJT8hTuTU5t+uGOYl04wWmwkO
+         4GK4vLg80TOU+WQTDtYn9E5YoBbODEudHGTn9uPEyUWdUgxazX4+w5cJxQToTyJcDw
+         0Lq+o1fqCPvrA==
+Date:   Tue, 27 Jul 2021 17:04:09 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH -next] filesystems/locking: fix Malformed table warning
+Message-ID: <20210728000409.GE559142@magnolia>
+References: <20210727232212.12510-1-rdunlap@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8d83:: with SMTP id b3mr21141726ioj.179.1627430233390;
- Tue, 27 Jul 2021 16:57:13 -0700 (PDT)
-Date:   Tue, 27 Jul 2021 16:57:13 -0700
-In-Reply-To: <CAOssrKdqbOr0jeE1pYqkWnFysVbdi+H7sfoc3c4CaiqBUqQz_g@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f541e805c823a0fd@google.com>
-Subject: Re: [syzbot] possible deadlock in pipe_lock (5)
-From:   syzbot <syzbot+579885d1a9a833336209@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, hdanton@sina.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mszeredi@redhat.com, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210727232212.12510-1-rdunlap@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Jul 27, 2021 at 04:22:12PM -0700, Randy Dunlap wrote:
+> Update the bottom border to be the same as the top border.
+> 
+> Documentation/filesystems/locking.rst:274: WARNING: Malformed table.
+> Bottom/header table border does not match top border.
+> 
+> Fixes: 730633f0b7f9 ("mm: Protect operations adding pages to page cache with invalidate_lock")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Darrick J. Wong <djwong@kernel.org>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: linux-fsdevel@vger.kernel.org
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Looks ugly but probably correct
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Reported-and-tested-by: syzbot+579885d1a9a833336209@syzkaller.appspotmail.com
+--D
 
-Tested on:
-
-commit:         7d549995 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=40eef000d7648480
-dashboard link: https://syzkaller.appspot.com/bug?extid=579885d1a9a833336209
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=104bb746300000
-
-Note: testing is done by a robot and is best-effort only.
+> ---
+>  Documentation/filesystems/locking.rst |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- linext-20210727.orig/Documentation/filesystems/locking.rst
+> +++ linext-20210727/Documentation/filesystems/locking.rst
+> @@ -295,7 +295,7 @@ is_partially_uptodate:	yes
+>  error_remove_page:	yes
+>  swap_activate:		no
+>  swap_deactivate:	no
+> -======================	======================== =========
+> +======================	======================== =========	===============
+>  
+>  ->write_begin(), ->write_end() and ->readpage() may be called from
+>  the request handler (/dev/loop).
