@@ -2,88 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B18933D923C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 17:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 518BD3D9317
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 18:23:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236909AbhG1Pis (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 11:38:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55216 "EHLO
+        id S229567AbhG1QXo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 12:23:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbhG1Pis (ORCPT
+        with ESMTP id S229501AbhG1QXo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 11:38:48 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A3AFC061757;
-        Wed, 28 Jul 2021 08:38:45 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id a4-20020a17090aa504b0290176a0d2b67aso10666963pjq.2;
-        Wed, 28 Jul 2021 08:38:45 -0700 (PDT)
+        Wed, 28 Jul 2021 12:23:44 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A8D9C061757;
+        Wed, 28 Jul 2021 09:23:42 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id qk33so5458982ejc.12;
+        Wed, 28 Jul 2021 09:23:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DHb1viiq/M1erLr2X07zcQ77mhbJoJfUhPFzGDRbbgk=;
-        b=eCuSx67rfqyMOyriSQb1ffa/WuN7WKoJYkCifLb4icEiL3Na9lr1lgBva/EV3IsW1j
-         SC9BTzDRtxiJrFSJabc9C2jIqi0Mtyl42GPLBULan6SY56jK364YbFbOJwS4pR5ae3Ts
-         azWrICO+Ts7LoJwkmgYNcXI6IS6OqjD5CA9ohdhhq3ob/kql5wHVkXBi5alr5MqT4tg+
-         NWm0++pZ/XJbL04cDL4YZR6SS/6TqRu82e98h8+C6Q9DdnxJNxiK73ypXVpVYAmrCnko
-         GgOoPUP/0ncWvxHFncNrSuribzkOrjsWtplELgnujfG+9iWLyn1es1Q6WMNsem+f7lWO
-         X0tQ==
+        h=to:reply-to:from:subject:cc:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=og7+V4BOs6plr/YGVQnX+404P8F5uFz/ISDuajxswv0=;
+        b=SC0VdSX/F/sOPmI3Q7YmCzFCdl4xqt7oa+7hod2kYnKT61yxCqweHv52cjGPgqMYEG
+         RcPLe47wvzr7VYoKT0BGePbN79leHnWxbtRqQ7SKjcaTKl9BuAZx6RsKhqc99DIh3vuI
+         l2/CRbRa3VMSZkHa2tgDqgSMSbMkjIt57ZAJuHIgeQwo9HNbQ3S6fqblouQ4te9ygmjJ
+         3scrhJkQFszM3oHw43uBp3Qye3qkEYtDqX7rGW5YbiSXNMVz7Flq1mNtL79NkljqGdwb
+         8VAeU8fx0K61LtprexwTE1B2wj7TdRm905zA3cETTZR2GVdr1VcfcQYr81iI2gk3bdqW
+         X11g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=DHb1viiq/M1erLr2X07zcQ77mhbJoJfUhPFzGDRbbgk=;
-        b=UJ38o5uygs222FsvRi0w229j2dnnRhdQUb3o4CkCL5tyo/9prtS4qWIg87zV7D/ZRy
-         rRfBrMLesNqxvjl8Jz74mGNLP3X3OJJJ6ATzx2HuuQsTZLtElpvsVQRv3F4NehKVFQ2Z
-         T6MmAduVWcu0eR6c1ukfMXOhaOdqeMvSyiNaI64ewM3muDL9s8uXw4nVgCEWA820R2nL
-         ZJ/VvmrASN63N3ivXX+C+AU3Kf5LDjSmYUMKadfFDKT5cgbJ93KVReCI837BbmON0WRE
-         PXyz+lqGYQtUArdlAbkNmGcpVAqM3DdF6NchmG/p4y5EV3B9zOAhQMBqZJJZlkMyVRUH
-         kmsw==
-X-Gm-Message-State: AOAM5320GXcoj2YKr3R014bt/gtsUHv2wfROxTdgnOeeUcXo3+9DHbdf
-        rK2b7Qcg7OvglzPYYw9iIxE=
-X-Google-Smtp-Source: ABdhPJxAJ6n0FO1TcmsdoSCEaC1XspNv7XkZHHNHeyT9JJfKfQxQ+5RKqYotOFj+A5tEEgr7BH8fCQ==
-X-Received: by 2002:a63:6f8c:: with SMTP id k134mr387286pgc.35.1627486724843;
-        Wed, 28 Jul 2021 08:38:44 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::5:3784])
-        by smtp.gmail.com with ESMTPSA id f4sm82823pgi.68.2021.07.28.08.38.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jul 2021 08:38:44 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 28 Jul 2021 05:38:39 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     brookxu <brookxu.cn@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, lizefan.x@bytedance.com,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/3] misc_cgroup: add support for nofile limit
-Message-ID: <YQF5/8Zb/iY5DS7f@mtj.duckdns.org>
-References: <3fd94563b4949ffbfe10e7d18ac1df3852b103a6.1626966339.git.brookxu@tencent.com>
- <YP8ovYqISzKC43mt@mtj.duckdns.org>
- <b2ff6f80-8ec6-e260-ec42-2113e8ce0a18@gmail.com>
- <YQA1D1GRiF9+px/s@mtj.duckdns.org>
- <ca2bdc60-f117-e917-85b1-8c9ec0c6942f@gmail.com>
- <YQEKNPrrOuyxTarN@mtj.duckdns.org>
- <ed8824d5-0557-7d38-97bd-18d6795faa55@gmail.com>
+        h=x-gm-message-state:to:reply-to:from:subject:cc:message-id:date
+         :user-agent:mime-version:content-transfer-encoding:content-language;
+        bh=og7+V4BOs6plr/YGVQnX+404P8F5uFz/ISDuajxswv0=;
+        b=ZwH2PsLj68jstp5rg5TWhSzGZ5fUNnzC7ukg/WuFUlGwtLd1+Mfu0F4gGhzJrEt+wM
+         ipjXPQtneVCQeNqhJFpS0HRSx1N4DuNXr82wic7fBEBN6hx1ljR8Guibmkqvr6/HfVxP
+         D/e+CngkVXW2M8+BZbN4r1CgmsmWuZUsR/3pRtDlFSGbOydPmihQhsYMS2IK0/Cmbg1c
+         vN9AuEv+u6Rf72VEb6mZXATOit8PpLb9TWwCem1mt0nxH4PDPN7thPW33xquG/Ohm7eN
+         oh9Pz9Fwz9HT6x/c40q/lhI7ipT4M+kBQvg8AQbPE6qukSTtqMG029JJqlNfZ5EB8nEl
+         duWQ==
+X-Gm-Message-State: AOAM5338Ef1iB1NeqCjE3iyNYdZlNROKpATLz4hGwnJ/cbuDMVvWj1nc
+        In+wDv2rgO9KWavcKUADW9o=
+X-Google-Smtp-Source: ABdhPJwN0gRL2jyJMYaqSosjMJgABzLSD6PtiDIEUqOq98x3mvzvPq+nXwfkMdfkmV81p3SfW/Xj7g==
+X-Received: by 2002:a17:906:43c9:: with SMTP id j9mr280384ejn.57.1627489420927;
+        Wed, 28 Jul 2021 09:23:40 -0700 (PDT)
+Received: from [192.168.0.114] ([37.239.218.3])
+        by smtp.gmail.com with ESMTPSA id n13sm69223ejk.97.2021.07.28.09.23.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Jul 2021 09:23:40 -0700 (PDT)
+To:     yanp.bugz@gmail.com
+Reply-To: cc64ac69-f4e5-3fc4-1362-ced7cf68119a@gmail.com
+From:   Mohammad Rasim <mohammad.rasim96@gmail.com>
+Subject: Re: [PATCH v26 00/10] NTFS read-write driver GPL implementation by
+ Paragon Software
+Cc:     aaptel@suse.com, almaz.alexandrovich@paragon-software.com,
+        andy.lavr@gmail.com, anton@tuxera.com, dan.carpenter@oracle.com,
+        dsterba@suse.cz, ebiggers@kernel.org, hch@lst.de, joe@perches.com,
+        kari.argillander@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        mark@harmstone.com, nborisov@suse.com, oleksandr@natalenko.name,
+        pali@kernel.org, rdunlap@infradead.org, viro@zeniv.linux.org.uk,
+        willy@infradead.org
+Message-ID: <2f310e28-49fe-3206-40d9-0c8a729f9227@gmail.com>
+Date:   Wed, 28 Jul 2021 19:23:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed8824d5-0557-7d38-97bd-18d6795faa55@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi,
 
-On Wed, Jul 28, 2021 at 05:47:05PM +0800, brookxu wrote:
-> But considering stability issues(k8s), There are still many production environments use
-> cgroup v1 without kmem. If kmem is enabled, due to the relatively large granularity
-> of kmem, this feature can also prevent the abnormal open behavior from making the entire
-> container unavailable? but I currently do not have this scenario.
+I've been using your ntfs driver for sometime now and it's great to 
+finally have a good driver for this FS, however i have problem where if 
+the power cuts off from my system while writing to the volume the 
+partition gets corrupted, this is expected of course but the problem is 
+that `ntfsfix` tool can't fix the partition and no matter how many times 
+i run it the system will always spits this in the kernel log when trying 
+to mount the partition:
 
-Now we are repeating the same points. This simply doesn't justify adding a
-user-facing feature that we have to maintain for eternity.
+     ntfs3: sdb1: volume is dirty and "force" flag is not set!
 
-Thanks.
+if i boot to a windows 10 OS then the system is able to mount the volume 
+with no problem(even before running chkdsk on it), windows `chkdsk` 
+utility can find the errors and fix them, and i can reboot to linux to 
+use my partition again with no problem.
 
--- 
-tejun
+it would be nice to have your filesystem utilites published on github so 
+we can use them with the current out of the tree driver
+
+
+Regards
+
