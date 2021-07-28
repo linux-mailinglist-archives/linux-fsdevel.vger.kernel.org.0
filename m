@@ -2,81 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 808B33D8E33
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 14:47:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D23813D8EAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 15:12:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235244AbhG1Mro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 08:47:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:56709 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236221AbhG1Mrl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 08:47:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1627476459;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AnQBX0jQrXqx6HiP9TW1YM3F0zAsy1/0i/tnCnd26/s=;
-        b=AmlZ8fwAcB/QIHGatLUuz0zbDFuwuhR5T3J7GjwH+1XJ80oZWLsNGOy8DsEK4pNtn5vEX/
-        5hAlmuQpSbcYihacs/4Is5plAf+Ft0VAOMLDpIxYvaoWoPwRH1t9odD/b5wjeZRbq/U0JG
-        K46/qHltwcqd85nL56jNPRwotPMkuQM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-554-_Zf42Ne9PQCiRgMRpl8_lg-1; Wed, 28 Jul 2021 08:47:37 -0400
-X-MC-Unique: _Zf42Ne9PQCiRgMRpl8_lg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E5BCB107ACF5;
-        Wed, 28 Jul 2021 12:47:36 +0000 (UTC)
-Received: from vishnu.redhat.com (ovpn-112-120.phx2.redhat.com [10.3.112.120])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A735B5C1BB;
-        Wed, 28 Jul 2021 12:47:36 +0000 (UTC)
-From:   Bob Peterson <rpeterso@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [vfs PATCH 2/2] gfs2: Switch to may_setattr in gfs2_setattr
-Date:   Wed, 28 Jul 2021 07:47:34 -0500
-Message-Id: <20210728124734.227375-3-rpeterso@redhat.com>
-In-Reply-To: <20210728124734.227375-1-rpeterso@redhat.com>
-References: <20210728124734.227375-1-rpeterso@redhat.com>
+        id S236269AbhG1NMV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 09:12:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60464 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235204AbhG1NMV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Jul 2021 09:12:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6AE4760FED;
+        Wed, 28 Jul 2021 13:12:16 +0000 (UTC)
+Date:   Wed, 28 Jul 2021 15:12:13 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 11/11] btrfs: use automount to bind-mount all subvol
+ roots.
+Message-ID: <20210728131213.pgu3r4m4ulozrcav@wittgenstein>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+ <162742546558.32498.1901201501617899416.stgit@noble.brown>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <162742546558.32498.1901201501617899416.stgit@noble.brown>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+On Wed, Jul 28, 2021 at 08:37:45AM +1000, NeilBrown wrote:
+> All subvol roots are now marked as automounts.  If the d_automount()
+> function determines that the dentry is not the root of the vfsmount, it
+> creates a simple loop-back mount of the dentry onto itself.  If it
+> determines that it IS the root of the vfsmount, it returns -EISDIR so
+> that no further automounting is attempted.
+> 
+> btrfs_getattr pays special attention to these automount dentries.
+> If it is NOT the root of the vfsmount:
+>  - the ->dev is reported as that for the rest of the vfsmount
+>  - the ->ino is reported as the subvol objectid, suitable transformed
+>    to avoid collision.
+> 
+> This way the same inode appear to be different depending on which mount
+> it is in.
+> 
+> automounted vfsmounts are kept on a list and timeout after 500 to 1000
+> seconds of last use.  This is configurable via a module parameter.
+> The tracking and timeout of automounts is copied from NFS.
+> 
+> Link: https://lore.kernel.org/r/162742546558.32498.1901201501617899416.stgit@noble.brown
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
+>  fs/btrfs/btrfs_inode.h |    2 +
+>  fs/btrfs/inode.c       |  108 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/btrfs/super.c       |    1 
+>  3 files changed, 111 insertions(+)
+> 
+> diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+> index a4b5f38196e6..f03056cacc4a 100644
+> --- a/fs/btrfs/btrfs_inode.h
+> +++ b/fs/btrfs/btrfs_inode.h
+> @@ -387,4 +387,6 @@ static inline void btrfs_print_data_csum_error(struct btrfs_inode *inode,
+>  			mirror_num);
+>  }
+>  
+> +void btrfs_release_automount_timer(void);
+> +
+>  #endif
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 02537c1a9763..a5f46545fb38 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/migrate.h>
+>  #include <linux/sched/mm.h>
+>  #include <linux/iomap.h>
+> +#include <linux/fs_context.h>
+>  #include <asm/unaligned.h>
+>  #include "misc.h"
+>  #include "ctree.h"
+> @@ -5782,6 +5783,8 @@ static int btrfs_init_locked_inode(struct inode *inode, void *p)
+>  	struct btrfs_iget_args *args = p;
+>  
+>  	inode->i_ino = args->ino;
+> +	if (args->ino == BTRFS_FIRST_FREE_OBJECTID)
+> +		inode->i_flags |= S_AUTOMOUNT;
+>  	BTRFS_I(inode)->location.objectid = args->ino;
+>  	BTRFS_I(inode)->location.type = BTRFS_INODE_ITEM_KEY;
+>  	BTRFS_I(inode)->location.offset = 0;
+> @@ -5985,6 +5988,101 @@ static int btrfs_dentry_delete(const struct dentry *dentry)
+>  	return 0;
+>  }
+>  
+> +static void btrfs_expire_automounts(struct work_struct *work);
+> +static LIST_HEAD(btrfs_automount_list);
+> +static DECLARE_DELAYED_WORK(btrfs_automount_task, btrfs_expire_automounts);
+> +int btrfs_mountpoint_expiry_timeout = 500 * HZ;
+> +static void btrfs_expire_automounts(struct work_struct *work)
+> +{
+> +	struct list_head *list = &btrfs_automount_list;
+> +	int timeout = READ_ONCE(btrfs_mountpoint_expiry_timeout);
+> +
+> +	mark_mounts_for_expiry(list);
+> +	if (!list_empty(list) && timeout > 0)
+> +		schedule_delayed_work(&btrfs_automount_task, timeout);
+> +}
+> +
+> +void btrfs_release_automount_timer(void)
+> +{
+> +	if (list_empty(&btrfs_automount_list))
+> +		cancel_delayed_work(&btrfs_automount_task);
+> +}
+> +
+> +static struct vfsmount *btrfs_automount(struct path *path)
+> +{
+> +	struct fs_context fc;
+> +	struct vfsmount *mnt;
+> +	int timeout = READ_ONCE(btrfs_mountpoint_expiry_timeout);
+> +
+> +	if (path->dentry == path->mnt->mnt_root)
+> +		/* dentry is root of the vfsmount,
+> +		 * so skip automount processing
+> +		 */
+> +		return ERR_PTR(-EISDIR);
+> +	/* Create a bind-mount to expose the subvol in the mount table */
+> +	fc.root = path->dentry;
+> +	fc.sb_flags = 0;
+> +	fc.source = "btrfs-automount";
+> +	mnt = vfs_create_mount(&fc);
+> +	if (IS_ERR(mnt))
+> +		return mnt;
 
-The permission check in gfs2_setattr is an old and outdated version of
-may_setattr().  Switch to the updated version.
+Hey Neil,
 
-Fixes fstest generic/079.
+Sorry if this is a stupid question but wouldn't you want to copy the
+mount properties from path->mnt here? Couldn't you otherwise use this to
+e.g. suddenly expose a dentry on a read-only mount as read-write?
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
----
- fs/gfs2/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index 6e15434b23ac..3130f85d2b3f 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -1985,8 +1985,8 @@ static int gfs2_setattr(struct user_namespace *mnt_userns,
- 	if (error)
- 		goto out;
- 
--	error = -EPERM;
--	if (IS_IMMUTABLE(inode) || IS_APPEND(inode))
-+	error = may_setattr(&init_user_ns, inode, attr->ia_valid);
-+	if (error)
- 		goto error;
- 
- 	error = setattr_prepare(&init_user_ns, dentry, attr);
--- 
-2.31.1
-
+Christian
