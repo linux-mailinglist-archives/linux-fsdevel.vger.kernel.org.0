@@ -2,142 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFEE03D95FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 21:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E66CF3D9614
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jul 2021 21:35:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231261AbhG1TWX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 15:22:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50834 "EHLO
+        id S231152AbhG1Tfl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 15:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230164AbhG1TWX (ORCPT
+        with ESMTP id S229690AbhG1Tfk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 15:22:23 -0400
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B9A3C061757
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jul 2021 12:22:21 -0700 (PDT)
-Received: by mail-ot1-x32e.google.com with SMTP id c7-20020a9d27870000b02904d360fbc71bso3191711otb.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jul 2021 12:22:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xtCzcJFAu9dR3CG6ek/fh/xMW6UNckFyG7RsgVYyIWw=;
-        b=TT+fBye+Vvf5GJpNluw0WcRTC7515kpgaXVVegMP0wr4inSikyrK9QanPefFtjXmim
-         WTEQtYiCNW/5IW8h+juauUzRzHM/svXLuLrAV+fuKZ9rqkmQbDIA9OT+VvZQH2bjm2cT
-         0/p6SsgDhIIYH/h46RytjULmrLSTZRSXTrga4HzPz/3Qm0rJj1aeVtkoOK4gaNlySQvW
-         3M+BSBbmJisXYnHtIp6o6BQhrd/mwd9K2OyKVF+/qPBE4+wp0j2A3zZhqHHEgyHyZMqF
-         tmmtTCOr682Mglw8SU0cvL4tSZlC4vzW8FLEHyOkF1swMSKXTy+H6mdf1t8PCYkkfmg8
-         Lovw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xtCzcJFAu9dR3CG6ek/fh/xMW6UNckFyG7RsgVYyIWw=;
-        b=L2FXdULi5UqL3sEo0R6btEBamknrMSxfSckxCalxBdZ7/hKyI4Sxb/4ZFaVn4B+2Vf
-         RVvz/fWP/tXZXpb3FyOPZNP/6Nq7CNp52UyR59wCGq2+z6J+VpYBb5Bq2ixHNsPp3GAV
-         JHs5fUCj+AiPsT85xrUR/VozFjTSzmwS0ARACd2ofEqiFcXoPCG2qeRFDCvi8Nwh6kVP
-         D2IG+EGapsP2FegdX/PZjxjIjtoXfYm6aYvr7BPF7MWfws7eSkwi8sJblzoL+dJlDPTz
-         M2rkX/fUdWws1ty3YrSNiIiN2J9iI0EqB1kQuC5OaCko12bMSJ1OSU3tmBwZpxLNv2Vu
-         S8xg==
-X-Gm-Message-State: AOAM532kG66YgrD06wD9zJHPgyf645AOvsl/xP5kabWEnvPBiBuO+xx3
-        gajsFlNMmE1WCoZnXSZkMUHGYg==
-X-Google-Smtp-Source: ABdhPJxCOixxPZx/B9u6/IckaLKvyCZhkvAoWYTyKbBLx//EwCPaLJWT+Dr+GFNlXpBF10QYtCkl5g==
-X-Received: by 2002:a9d:6e8a:: with SMTP id a10mr1050189otr.51.1627500140530;
-        Wed, 28 Jul 2021 12:22:20 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id p4sm127444ooa.35.2021.07.28.12.22.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Jul 2021 12:22:20 -0700 (PDT)
-Subject: Re: [PATCH v5 0/5] block: add a sequence number to disks
-To:     Matteo Croce <mcroce@linux.microsoft.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Lennart Poettering <lennart@poettering.net>,
-        Luca Boccassi <bluca@debian.org>,
+        Wed, 28 Jul 2021 15:35:40 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78CC6C061757;
+        Wed, 28 Jul 2021 12:35:37 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id BAC546C91; Wed, 28 Jul 2021 15:35:36 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org BAC546C91
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1627500936;
+        bh=+ubDzSENl39MUZIPXJcllRmY3lYjmwUKCDsj0PDkg4w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=q6pK9ojWCkrR98kzMLRySGHNXaOC8domFNiLKDe9C4R+73FjE8De5OBwjGe/7Js61
+         WVSJ9a/8YqpcB+C0AYk02CVYsyVuoIUKtMHb93Y/jbgUOO1anbGCpabk2k2brgyjCH
+         oxklpoC/f/SUUJUVPoYV1eB8DS1qKaeqJDcwdRIM=
+Date:   Wed, 28 Jul 2021 15:35:36 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tejun Heo <tj@kernel.org>,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
-        Niklas Cassel <niklas.cassel@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        JeffleXu <jefflexu@linux.alibaba.com>
-References: <20210712230530.29323-1-mcroce@linux.microsoft.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fa2b4c63-6262-ab0b-63c2-270e84207dc0@kernel.dk>
-Date:   Wed, 28 Jul 2021 13:22:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
+Message-ID: <20210728193536.GD3152@fieldses.org>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
 MIME-Version: 1.0
-In-Reply-To: <20210712230530.29323-1-mcroce@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/12/21 5:05 PM, Matteo Croce wrote:
-> From: Matteo Croce <mcroce@microsoft.com>
-> 
-> Associating uevents with block devices in userspace is difficult and racy:
-> the uevent netlink socket is lossy, and on slow and overloaded systems has
-> a very high latency. Block devices do not have exclusive owners in
-> userspace, any process can set one up (e.g. loop devices). Moreover, device
-> names can be reused (e.g. loop0 can be reused again and again). A userspace
-> process setting up a block device and watching for its events cannot thus
-> reliably tell whether an event relates to the device it just set up or
-> another earlier instance with the same name.
-> 
-> Being able to set a UUID on a loop device would solve the race conditions.
-> But it does not allow to derive orderings from uevents: if you see a uevent
-> with a UUID that does not match the device you are waiting for, you cannot
-> tell whether it's because the right uevent has not arrived yet, or it was
-> already sent and you missed it. So you cannot tell whether you should wait
-> for it or not.
-> 
-> Being able to set devices up in a namespace would solve the race conditions
-> too, but it can work only if being namespaced is feasible in the first
-> place. Many userspace processes need to set devices up for the root
-> namespace, so this solution cannot always work.
-> 
-> Changing the loop devices naming implementation to always use
-> monotonically increasing device numbers, instead of reusing the lowest
-> free number, would also solve the problem, but it would be very disruptive
-> to userspace and likely break many existing use cases. It would also be
-> quite awkward to use on long-running machines, as the loop device name
-> would quickly grow to many-digits length.
-> 
-> Furthermore, this problem does not affect only loop devices - partition
-> probing is asynchronous and very slow on busy systems. It is very easy to
-> enter races when using LO_FLAGS_PARTSCAN and watching for the partitions to
-> show up, as it can take a long time for the uevents to be delivered after
-> setting them up.
-> 
-> Associating a unique, monotonically increasing sequential number to the
-> lifetime of each block device, which can be retrieved with an ioctl
-> immediately upon setting it up, allows to solve the race conditions with
-> uevents, and also allows userspace processes to know whether they should
-> wait for the uevent they need or if it was dropped and thus they should
-> move on.
-> 
-> This does not benefit only loop devices and block devices with multiple
-> partitions, but for example also removable media such as USB sticks or
-> cdroms/dvdroms/etc.
-> 
-> The first patch is the core one, the 2..4 expose the information in
-> different ways, and the last one makes the loop device generate a media
-> changed event upon attach, detach or reconfigure, so the sequence number
-> is increased.
-> 
-> If merged, this feature will immediately used by the userspace:
-> https://github.com/systemd/systemd/issues/17469#issuecomment-762919781
+I'm still stuck trying to understand why subvolumes can't get their own
+superblocks:
 
-Applied for 5.15, with #2 done manually since it didn't apply cleanly.
+	- Why are the performance issues Josef raises unsurmountable?
+	  And why are they unique to btrfs?  (Surely there other cases
+	  where people need hundreds or thousands of superblocks?)
 
--- 
-Jens Axboe
+	- If filehandle decoding can return a different vfs mount than
+	  it's passed, why can't it return a different superblock?
 
+--b.
+
+On Wed, Jul 28, 2021 at 08:37:45AM +1000, NeilBrown wrote:
+> There are long-standing problems with btrfs subvols, particularly in
+> relation to whether and how they are exposed in the mount table.
+> 
+>  - /proc/self/mountinfo reports the major:minor device number for each
+>     filesystem and when a btrfs subvol is explicitly mounted, the number
+>     reported is wrong - it does not match what stat() reports for the
+>     mountpoint.
+> 
+>  - when subvol are not explicitly mounted, they don't appear in
+>    mountinfo at all.
+> 
+> Consequences include that a tool which uses stat() to find the dev of the
+> filesystem, then searches mountinfo for that filesystem, will not find
+> it.
+> 
+> Some tools (e.g. findmnt) appear to have been enhanced to cope with this
+> strangeness, but it would be best to make btrfs behave more normally.
+> 
+>   - nfsd cannot currently see the transition to subvol, so reports the
+>     main volume and all subvols to the client as being in the same
+>     filesystem.  As inode numbers are not unique across all subvols,
+>     this can confuse clients.  In particular, 'find' is likely to report a
+>     loop.
+> 
+> subvols can be made to appear in mountinfo using automounts.  However
+> nfsd does not cope well with automounts.  It assumes all filesystems to
+> be exported are already mounted.  So adding automounts to btrfs would
+> break nfsd.
+> 
+> We can enhance nfsd to understand that some automounts can be managed.
+> "internal mounts" where a filesystem provides an automount point and
+> mounts its own directories, can be handled differently by nfsd.
+> 
+> This series addresses all these issues.  After a few enhancements to the
+> VFS to provide needed support, they enhance exportfs and nfsd to cope
+> with the concept of internal mounts, and then enhance btrfs to provide
+> them.
+> 
+> The NFSv3 support is incomplete.  I'm not sure we can make it work
+> "perfectly".  A normal nfsv3 mount seem to work well enough, but if
+> mounted with '-o noac', it loses track of the mounted-on inode number
+> and complains about inode numbers changing.
+> 
+> My basic test for these is to mount a btrfs filesystem which contains
+> subvols, nfs-export it and mount it with nfsv3 and nfsv4, then run
+> 'find' in each of the filesystem and check the contents of
+> /proc/self/mountinfo.
+> 
+> The first patch simply fixes the dev number in mountinfo and could
+> possibly be tagged for -stable.
+> 
+> NeilBrown
+> 
+> ---
+> 
+> NeilBrown (11):
+>       VFS: show correct dev num in mountinfo
+>       VFS: allow d_automount to create in-place bind-mount.
+>       VFS: pass lookup_flags into follow_down()
+>       VFS: export lookup_mnt()
+>       VFS: new function: mount_is_internal()
+>       nfsd: include a vfsmount in struct svc_fh
+>       exportfs: Allow filehandle lookup to cross internal mount points.
+>       nfsd: change get_parent_attributes() to nfsd_get_mounted_on()
+>       nfsd: Allow filehandle lookup to cross internal mount points.
+>       btrfs: introduce mapping function from location to inum
+>       btrfs: use automount to bind-mount all subvol roots.
+> 
+> 
+>  fs/btrfs/btrfs_inode.h   |  12 +++
+>  fs/btrfs/inode.c         | 111 ++++++++++++++++++++++++++-
+>  fs/btrfs/super.c         |   1 +
+>  fs/exportfs/expfs.c      | 100 ++++++++++++++++++++----
+>  fs/fhandle.c             |   2 +-
+>  fs/internal.h            |   1 -
+>  fs/namei.c               |   6 +-
+>  fs/namespace.c           |  32 +++++++-
+>  fs/nfsd/export.c         |   4 +-
+>  fs/nfsd/nfs3xdr.c        |  40 +++++++---
+>  fs/nfsd/nfs4proc.c       |   9 ++-
+>  fs/nfsd/nfs4xdr.c        | 106 ++++++++++++-------------
+>  fs/nfsd/nfsfh.c          |  44 +++++++----
+>  fs/nfsd/nfsfh.h          |   3 +-
+>  fs/nfsd/nfsproc.c        |   5 +-
+>  fs/nfsd/vfs.c            | 162 +++++++++++++++++++++++----------------
+>  fs/nfsd/vfs.h            |  12 +--
+>  fs/nfsd/xdr4.h           |   2 +-
+>  fs/overlayfs/namei.c     |   5 +-
+>  fs/xfs/xfs_ioctl.c       |  12 ++-
+>  include/linux/exportfs.h |   4 +-
+>  include/linux/mount.h    |   4 +
+>  include/linux/namei.h    |   2 +-
+>  23 files changed, 490 insertions(+), 189 deletions(-)
+> 
+> --
+> Signature
