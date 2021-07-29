@@ -2,116 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FB193D9909
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 00:51:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8D473D9A13
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 02:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232208AbhG1WvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jul 2021 18:51:00 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:41274 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232073AbhG1WvA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jul 2021 18:51:00 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 181FF222F0;
-        Wed, 28 Jul 2021 22:50:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1627512657; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tUEOsvvUIOuI1HIMa4PjI1BF+bZxtkgy+G2Q3z4Ys6g=;
-        b=OWBvF8PVwFJQ1nlDkLsGwLbqNQxTZz74jyxvzI+FxjLM3jNT1mAH2bz/QI6C2XROOBQ/m1
-        /zJkUHBJ9yAI8QM+QAjJPdhu2wDaidg6TpYEkewz2Mah6rBz1kMc7YKBvzWzcGd+vyVTf7
-        5xIkcwpnZuIeKALI/Tg+9RPighwQEF4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1627512657;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tUEOsvvUIOuI1HIMa4PjI1BF+bZxtkgy+G2Q3z4Ys6g=;
-        b=r8erBIibIGxkeHylhY3WZz8ZIQA//m/H7RaPG6YnwJMiwFooQ46AASK9PbXKB5bFpbevuo
-        0xzYoNn8/zY0RdDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8EF4013481;
-        Wed, 28 Jul 2021 22:50:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id og/gEk3fAWF3YwAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 28 Jul 2021 22:50:53 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S232875AbhG2A01 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jul 2021 20:26:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232727AbhG2A01 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Jul 2021 20:26:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2465E60F59;
+        Thu, 29 Jul 2021 00:26:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627518384;
+        bh=uludeyf3+zGf2YO7V7UPfU6EFXH4cySzsy2ac4vsqZg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=uc+72srOYR120uKGl7ZxsAJO2p0AMdqnnbO8mDXLYzC3n8ZaPT0qkoi/GV9IVP1l4
+         ZrAfzKwfU3hfAOrONYnqYPgHd/TnafG4/K9DAwHy3hO8MXHsRDFDB7pFClWg+3M/7Z
+         BNTpulDwWjsDj9yXPrafyLei5OXfAXPV2yg+brRzltg7lyONSFwSlS0k9Rtt7h2sVj
+         Ci/rZW1yQR/LSdLe1jRlUY4nsk9b3YXPAMeu9h94UPw15RdQjzOwEiGnYrpoCSOibp
+         NzqUm9sTByxPYnLI1sSwefdqgKAfpdajK78xOVOUxykWCO6pPP+BHgnjYelPo75Qw8
+         ofqXEcTdeS8yA==
+Subject: Re: [PATCH 3/9] f2fs: rework write preallocations
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Satya Tangirala <satyaprateek2357@gmail.com>,
+        Changheun Lee <nanich.lee@samsung.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+References: <20210716143919.44373-1-ebiggers@kernel.org>
+ <20210716143919.44373-4-ebiggers@kernel.org>
+ <14782036-f6a5-878a-d21f-e7dd7008a285@kernel.org>
+ <YP2l+1umf9ct/4Sp@sol.localdomain> <YP9oou9sx4oJF1sc@google.com>
+ <70f16fec-02f6-cb19-c407-856101cacc23@kernel.org>
+ <YP+38QzXS6kpLGn0@sol.localdomain>
+ <70d9c954-d7f0-bbe2-f078-62273229342f@kernel.org>
+ <20210727153335.GE559212@magnolia>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <e237ab66-82dd-254d-7be2-aee8cb2b1c85@kernel.org>
+Date:   Thu, 29 Jul 2021 08:26:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Neal Gompa" <ngompa13@gmail.com>
-Cc:     "Wang Yugui" <wangyugui@e16-tech.com>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        "Josef Bacik" <josef@toxicpanda.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
-        "David Sterba" <dsterba@suse.com>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        linux-nfs@vger.kernel.org,
-        "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
-In-reply-to: <CAEg-Je8Pqbw0tTw6NWkAcD=+zGStOJR0J-409mXuZ1vmb6dZsA@mail.gmail.com>
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
- <20210728125819.6E52.409509F4@e16-tech.com>,
- <20210728140431.D704.409509F4@e16-tech.com>,
- <162745567084.21659.16797059962461187633@noble.neil.brown.name>,
- <CAEg-Je8Pqbw0tTw6NWkAcD=+zGStOJR0J-409mXuZ1vmb6dZsA@mail.gmail.com>
-Date:   Thu, 29 Jul 2021 08:50:50 +1000
-Message-id: <162751265073.21659.11050133384025400064@noble.neil.brown.name>
+In-Reply-To: <20210727153335.GE559212@magnolia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gV2VkLCAyOCBKdWwgMjAyMSwgTmVhbCBHb21wYSB3cm90ZToKPiBPbiBXZWQsIEp1bCAyOCwg
-MjAyMSBhdCAzOjAyIEFNIE5laWxCcm93biA8bmVpbGJAc3VzZS5kZT4gd3JvdGU6Cj4gPgo+ID4g
-T24gV2VkLCAyOCBKdWwgMjAyMSwgV2FuZyBZdWd1aSB3cm90ZToKPiA+ID4gSGksCj4gPiA+Cj4g
-PiA+IFRoaXMgcGF0Y2hzZXQgd29ya3Mgd2VsbCBpbiA1LjE0LXJjMy4KPiA+Cj4gPiBUaGFua3Mg
-Zm9yIHRlc3RpbmcuCj4gPgo+ID4gPgo+ID4gPiAxLCBmaXhlZCBkdW1teSBpbm9kZSgyNTUsIEJU
-UkZTX0ZJUlNUX0ZSRUVfT0JKRUNUSUQgLSAxICkgIGlzIGNoYW5nZWQgdG8KPiA+ID4gZHluYW1p
-YyBkdW1teSBpbm9kZSgxODQ0Njc0NDA3MzcwOTU1MTM1OCwgb3IgMTg0NDY3NDQwNzM3MDk1NTEz
-NTksIC4uLikKPiA+Cj4gPiBUaGUgQlRSRlNfRklSU1RfRlJFRV9PQkpFQ1RJRC0xIHdhcyBhIGp1
-c3QgYSBoYWNrLCBJIG5ldmVyIHdhbnRlZCBpdCB0bwo+ID4gYmUgcGVybWFuZW50Lgo+ID4gVGhl
-IG5ldyBudW1iZXIgaXMgVUxPTkdfTUFYIC0gc3Vidm9sX2lkICh3aGVyZSBzdWJ2b2xfaWQgc3Rh
-cnRzIGF0IDI1NyBJCj4gPiB0aGluaykuCj4gPiBUaGlzIGlzIGEgYml0IGxlc3Mgb2YgYSBoYWNr
-LiAgSXQgaXMgYW4gZWFzaWx5IGF2YWlsYWJsZSBudW1iZXIgdGhhdCBpcwo+ID4gZmFpcmx5IHVu
-aXF1ZS4KPiA+Cj4gPiA+Cj4gPiA+IDIsIGJ0cmZzIHN1YnZvbCBtb3VudCBpbmZvIGlzIHNob3du
-IGluIC9wcm9jL21vdW50cywgZXZlbiBpZiBuZnNkL25mcyBpcwo+ID4gPiBub3QgdXNlZC4KPiA+
-ID4gL2Rldi9zZGMgICAgICAgICAgICAgICAgYnRyZnMgICA5NEcgIDMuNU0gICA5M0cgICAxJSAv
-bW50L3Rlc3QKPiA+ID4gL2Rldi9zZGMgICAgICAgICAgICAgICAgYnRyZnMgICA5NEcgIDMuNU0g
-ICA5M0cgICAxJSAvbW50L3Rlc3Qvc3ViMQo+ID4gPiAvZGV2L3NkYyAgICAgICAgICAgICAgICBi
-dHJmcyAgIDk0RyAgMy41TSAgIDkzRyAgIDElIC9tbnQvdGVzdC9zdWIyCj4gPiA+Cj4gPiA+IFRo
-aXMgaXMgYSB2aXNpdWFsIGZlYXR1cmUgY2hhbmdlIGZvciBidHJmcyB1c2VyLgo+ID4KPiA+IEhv
-cGVmdWxseSBpdCBpcyBhbiBpbXByb3ZlbWVudC4gIEJ1dCBpdCBpcyBjZXJ0YWlubHkgYSBjaGFu
-Z2UgdGhhdCBuZWVkcwo+ID4gdG8gYmUgY2FyZWZ1bGx5IGNvbnNpZGVyZWQuCj4gCj4gSSB0aGlu
-ayB0aGlzIGlzIGJlaGF2aW9yIHBlb3BsZSBnZW5lcmFsbHkgZXhwZWN0LCBidXQgSSB3b25kZXIg
-d2hhdAo+IHRoZSBjb25zZXF1ZW5jZXMgb2YgdGhpcyB3b3VsZCBiZSB3aXRoIGh1Z2UgbnVtYmVy
-cyBvZiBzdWJ2b2x1bWVzLiBJZgo+IHRoZXJlIGFyZSBodW5kcmVkcyBvciB0aG91c2FuZHMgb2Yg
-dGhlbSAod2hpY2ggaXMgcXVpdGUgcG9zc2libGUgb24KPiBTVVNFIHN5c3RlbXMsIGZvciBleGFt
-cGxlLCB3aXRoIGl0cyBhdXRvLXNuYXBzaG90dGluZyByZWdpbWUpLCB0aGlzCj4gd291bGQgYmUg
-YSBtZXNzLCB3b3VsZG4ndCBpdD8KCldvdWxkIHRoZXJlIGJlIGh1bmRyZWRzIG9yIHRob3VzYW5k
-cyBvZiBzdWJ2b2xzIGNvbmN1cnJlbnRseSBiZWluZwphY2Nlc3NlZD8gVGhlIGF1dG8tbW91bnRl
-ZCBzdWJ2b2xzIG9ubHkgYXBwZWFyIGluIHRoZSBtb3VudCB0YWJsZSB3aGlsZQp0aGF0IGFyZSBi
-ZWluZyBhY2Nlc3NlZCwgYW5kIGZvciBhYm91dCAxNSBtaW51dGVzIGFmdGVyIHRoZSBsYXN0IGFj
-Y2Vzcy4KSSBzdXNwZWN0IHRoYXQgbW9zdCBzdWJ2b2xzIGFyZSAiYmFja3VwIiBzbmFwc2hvdHMg
-d2hpY2ggYXJlIG5vdCBiZWluZwphY2Nlc3NlZCBhbmQgc28gd291bGQgbm90IGFwcGVhci4KCj4g
-Cj4gT3IgY2FuIHdlIGFkZCBhIHdheSB0byBtYXJrIHRoZXNlIHRoaW5ncyB0byBub3Qgc2hvdyB1
-cCB0aGVyZSBvciBpcwo+IHRoZXJlIHNvbWUga2luZCBvZiBiZWhhdmlvcmFsIGNoYW5nZSB3ZSBj
-YW4gbWFrZSB0byBzbmFwcGVyIG9yIG90aGVyCj4gdG9vbHMgdG8gbWFrZSB0aGVtIG5vdCBzaG93
-IHVwIGhlcmU/CgpDZXJ0YWlubHkgaXQgbWlnaHQgbWFrZSBzZW5zZSB0byBmbGFnIHRoZXNlIGlu
-IHNvbWUgd2F5IHNvIHRoYXQgdG9vbHMKY2FuIGNob29zZSB0aGUgaWdub3JlIHRoZW0gb3IgaGFu
-ZGxlIHRoZW0gc3BlY2lhbGx5LCBqdXN0IGFzIG5mc2QgbmVlZHMKdG8gaGFuZGxlIHRoZW0gc3Bl
-Y2lhbGx5LiAgSSB3YXMgY29uc2lkZXJpbmcgYSAibG9jYWwiIG1vdW50IGZsYWcuCgpOZWlsQnJv
-d24KCj4gCj4gCj4gCj4gLS0gCj4g55yf5a6f44Gv44GE44Gk44KC5LiA44Gk77yBLyBBbHdheXMs
-IHRoZXJlJ3Mgb25seSBvbmUgdHJ1dGghCj4gCj4gCg==
+On 2021/7/27 23:33, Darrick J. Wong wrote:
+> On Tue, Jul 27, 2021 at 04:30:16PM +0800, Chao Yu wrote:
+>> On 2021/7/27 15:38, Eric Biggers wrote:
+>>> That's somewhat helpful, but I've been doing some more investigation and now I'm
+>>> even more confused.  How can f2fs support non-overwrite DIO writes at all
+>>> (meaning DIO writes in LFS mode as well as DIO writes to holes in non-LFS mode),
+>>> given that it has no support for unwritten extents?  AFAICS, as-is users can
+>>
+>> I'm trying to pick up DAX support patch created by Qiuyang from huawei, and it
+>> looks it faces the same issue, so it tries to fix this by calling sb_issue_zeroout()
+>> in f2fs_map_blocks() before it returns.
+> 
+> I really hope you don't, because zeroing the region before memcpy'ing it
+> is absurd.  I don't know if f2fs can do that (xfs can't really) without
+> pinning resources during a potentially lengthy memcpy operation, but you
+> /could/ allocate the space in ->iomap_begin, attach some record of that
+> to iomap->private, and only commit the mapping update in ->iomap_end.
+
+Thanks for the suggestion, let me check this a little bit later, since now I
+just try to stabilize the codes...
+
+Thanks,
+
+> 
+> --D
+> 
+>>> easily leak uninitialized disk contents on f2fs by issuing a DIO write that
+>>> won't complete fully (or might not complete fully), then reading back the blocks
+>>> that got allocated but not written to.
+>>>
+>>> I think that f2fs will have to take the ext2 approach of not allowing
+>>> non-overwrite DIO writes at all...
+>> Yes,
+>>
+>> Another option is to enhance f2fs metadata's scalability which needs to update layout
+>> of dnode block or SSA block, after that we can record the status of unwritten data block
+>> there... it's a big change though...
+>>
+>> Thanks,
+>>
+>>>
+>>> - Eric
+>>>
