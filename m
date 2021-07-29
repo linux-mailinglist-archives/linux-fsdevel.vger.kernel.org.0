@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69EDD3D9E84
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 09:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33F613D9E86
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 09:36:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234765AbhG2HgJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jul 2021 03:36:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46606 "EHLO
+        id S234838AbhG2HgM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jul 2021 03:36:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234721AbhG2HgG (ORCPT
+        with ESMTP id S234763AbhG2HgL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jul 2021 03:36:06 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABBA3C061757
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 00:36:03 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id g23-20020a17090a5797b02901765d605e14so7969165pji.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 00:36:03 -0700 (PDT)
+        Thu, 29 Jul 2021 03:36:11 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F05F8C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 00:36:08 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id o44-20020a17090a0a2fb0290176ca3e5a2fso8016523pjo.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 00:36:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=omwDqSVrMraB8zPCmbagpNybYhuwUgLxPSaQSPVKs0I=;
-        b=naBlQMPkB/0DkelUJr1LWVocrdIW6Peexm/f7/BA/529HP7dXnwA1mEQRpxsTu/nyt
-         5tSNHUAPj0I23nUM3cEaLX7W0FcfFZ/nIw/hTE0AbmJOLKU6x4Our6Q4VO6WxlOJJCEK
-         v75eCTZ2rkY4QZ4y+7yLjNGET7/dDbliCxmVK70acQ5r5hI7NYOBP6q5q2H55CRB27Yw
-         JgDWvRBoG8Q2BXzdSiM0/OI45aNpXQyYEVdGOMn/e2B4DUPsbSxolGo9ZcFYLJ9z3d2g
-         n1NF1lN2f4dqSTn2d4cGD5EJW0DwNvhKakHLHdWUFAi1yGntoi8qBSZfWJo845VSX0hW
-         z1jA==
+        bh=x7lCOA+2uHcoDlHpnAPiyr08qHLnKknrRwhD42bW14c=;
+        b=L3+zrqxq1jDIch5mBMRlq4aMkZWeJXNgz//RgYj4u3V1lMU7q20ZSp16442c0mWaWo
+         3pimykQ5c3xo5hFxpe8YP2kPqJRUDXMEfySemYatlQJMfgm4TKPWnxljrQ4scQVJVmAe
+         SgYBeBiHSj6pBrjI7edJBnGY1o6V08/DYlBoSrgQMsrmRK906zgqaAWchZrUKOHWJ1s2
+         G28MPqjFEY3cvBXfzP0Rxts8xu3e5wgWbnD4qAUWn0c4JOpCgg0t7ExynJrXsb/Lqv0X
+         wvgLL4SNtH3zcQoSC98vHFIPnTb8V3qERqJnvlidDS9Zlh9UapAb0RrBTxogd7yCCZ8j
+         K9/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=omwDqSVrMraB8zPCmbagpNybYhuwUgLxPSaQSPVKs0I=;
-        b=rU66jxe06jyBdonD+1NO9SaWoyXOCXbFNDLE1mznYvxgKpO0uuv6SUWChx1f+TkBsK
-         JAtsC35YQlHOY+0x6Osa5BXEfh2dR7/kJsR5PGGpTunCOKhgYQor85XYnT/hmw8nqB34
-         3PRzG5wP44K+SsUFOsJyllm4x+XOY/S13WDEHq0NqOGFNUJQ/x2OntazziIJNc/wmhRo
-         uSoJBG7aQlz5CZBZTrE7jtOyphQl3Q7QHzG7uxTg/IhB+MgYLJOXu0lDAp2VN5l/f6kH
-         DxJ+qRTqHPV1/1MWyfsHEWKYd8rX0cWIZxSjfMExVzIy9ZHhK+NQmSMPomuy8XgqE73H
-         UFpg==
-X-Gm-Message-State: AOAM530/XsY5e62napMNYnCKMHHHJsT87zvoUKz+iQmjqp7xRtsyZ+OK
-        Gtr24ZbXzsUix4zaVE5x/ZDW
-X-Google-Smtp-Source: ABdhPJxHbuy/f6Ntcbrd8G6sqB1/UuTPykG+LdmRwbmQ8qaXm3ieni6kdT8Dl8Ys4/OxQN2NjqkIeA==
-X-Received: by 2002:aa7:9a4e:0:b029:32b:34a7:2e4e with SMTP id x14-20020aa79a4e0000b029032b34a72e4emr3941364pfj.20.1627544163282;
-        Thu, 29 Jul 2021 00:36:03 -0700 (PDT)
+        bh=x7lCOA+2uHcoDlHpnAPiyr08qHLnKknrRwhD42bW14c=;
+        b=Heed59gMI6pBZQwJO2JrnNtRO2pYfs3oTx9ZLtuds6Y4XwLGTc7gSabuxyyHulhKvI
+         UQr5doiJw4hDyX8+LqDYyfiOa+093LZKSPwGpPODYsiH+9bE1PYK3nvOUxL1rUtU5JLn
+         8ysjr9eWIfoIXP19+GBAv1hHmXCK63RV3iRTuC4+dWkxH+4xF5+4x1NPNRZAZr33US5e
+         PE1w8DZprMtLymG8h4dlo4NW9UvASHgSjtB/nDyENr753/5/FjyjSTQVq8MZRNsJaQ/4
+         wYpZHkN4eq3d+VNmK+rEgCt0bNboxOUSIYagmgJSj9b2l9K1IWCAG79hKNAxRtmSB76Q
+         CRxg==
+X-Gm-Message-State: AOAM530fWu/JVyyGquPoOWSu9NQZBFgMyjlSoNUvxyEgraredQQOkHNK
+        Atl12WRulMpL9PVQUL3BnG2y
+X-Google-Smtp-Source: ABdhPJz6gtDSzVbKQwR9fMTMuBAxDE/HudL65A5sjPsB1aFvsDsAWmfl9tE1fqIYigp4LRfAx1lPGg==
+X-Received: by 2002:a62:804b:0:b029:328:db41:1f47 with SMTP id j72-20020a62804b0000b0290328db411f47mr3610895pfd.43.1627544168542;
+        Thu, 29 Jul 2021 00:36:08 -0700 (PDT)
 Received: from localhost ([139.177.225.253])
-        by smtp.gmail.com with ESMTPSA id k198sm2457702pfd.148.2021.07.29.00.36.01
+        by smtp.gmail.com with ESMTPSA id y8sm2535031pfe.162.2021.07.29.00.36.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jul 2021 00:36:02 -0700 (PDT)
+        Thu, 29 Jul 2021 00:36:08 -0700 (PDT)
 From:   Xie Yongji <xieyongji@bytedance.com>
 To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
         sgarzare@redhat.com, parav@nvidia.com, hch@infradead.org,
@@ -61,9 +61,9 @@ Cc:     songmuchun@bytedance.com,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v10 01/17] iova: Export alloc_iova_fast() and free_iova_fast()
-Date:   Thu, 29 Jul 2021 15:34:47 +0800
-Message-Id: <20210729073503.187-2-xieyongji@bytedance.com>
+Subject: [PATCH v10 02/17] file: Export receive_fd() to modules
+Date:   Thu, 29 Jul 2021 15:34:48 +0800
+Message-Id: <20210729073503.187-3-xieyongji@bytedance.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210729073503.187-1-xieyongji@bytedance.com>
 References: <20210729073503.187-1-xieyongji@bytedance.com>
@@ -73,34 +73,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Export alloc_iova_fast() and free_iova_fast() so that
-some modules can use it to improve iova allocation efficiency.
+Export receive_fd() so that some modules can use
+it to pass file descriptor between processes without
+missing any security stuffs.
 
 Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 ---
- drivers/iommu/iova.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/file.c            | 6 ++++++
+ include/linux/file.h | 7 +++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-index b6cf5f16123b..3941ed6bb99b 100644
---- a/drivers/iommu/iova.c
-+++ b/drivers/iommu/iova.c
-@@ -521,6 +521,7 @@ alloc_iova_fast(struct iova_domain *iovad, unsigned long size,
- 
- 	return new_iova->pfn_lo;
+diff --git a/fs/file.c b/fs/file.c
+index 86dc9956af32..210e540672aa 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1134,6 +1134,12 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
+ 	return new_fd;
  }
-+EXPORT_SYMBOL_GPL(alloc_iova_fast);
  
- /**
-  * free_iova_fast - free iova pfn range into rcache
-@@ -538,6 +539,7 @@ free_iova_fast(struct iova_domain *iovad, unsigned long pfn, unsigned long size)
++int receive_fd(struct file *file, unsigned int o_flags)
++{
++	return __receive_fd(file, NULL, o_flags);
++}
++EXPORT_SYMBOL_GPL(receive_fd);
++
+ static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
+ {
+ 	int err = -EBADF;
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 2de2e4613d7b..51e830b4fe3a 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -94,6 +94,9 @@ extern void fd_install(unsigned int fd, struct file *file);
  
- 	free_iova(iovad, pfn);
+ extern int __receive_fd(struct file *file, int __user *ufd,
+ 			unsigned int o_flags);
++
++extern int receive_fd(struct file *file, unsigned int o_flags);
++
+ static inline int receive_fd_user(struct file *file, int __user *ufd,
+ 				  unsigned int o_flags)
+ {
+@@ -101,10 +104,6 @@ static inline int receive_fd_user(struct file *file, int __user *ufd,
+ 		return -EFAULT;
+ 	return __receive_fd(file, ufd, o_flags);
  }
-+EXPORT_SYMBOL_GPL(free_iova_fast);
+-static inline int receive_fd(struct file *file, unsigned int o_flags)
+-{
+-	return __receive_fd(file, NULL, o_flags);
+-}
+ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags);
  
- #define fq_ring_for_each(i, fq) \
- 	for ((i) = (fq)->head; (i) != (fq)->tail; (i) = ((i) + 1) % IOVA_FQ_SIZE)
+ extern void flush_delayed_fput(void);
 -- 
 2.11.0
 
