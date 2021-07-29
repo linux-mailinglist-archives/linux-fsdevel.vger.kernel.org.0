@@ -2,190 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB3F23DA479
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 15:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754373DA47E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 15:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237657AbhG2NkA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jul 2021 09:40:00 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:58332 "EHLO
+        id S237641AbhG2Nkx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jul 2021 09:40:53 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:58392 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237656AbhG2Nj6 (ORCPT
+        with ESMTP id S237608AbhG2Nkw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jul 2021 09:39:58 -0400
+        Thu, 29 Jul 2021 09:40:52 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 3E6D620032;
-        Thu, 29 Jul 2021 13:39:54 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 44E572003A;
+        Thu, 29 Jul 2021 13:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1627565994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1627566048; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=qBB8iKzSWglbn2svjqbyBvTur1gSGSRi7WJk5pLBV6Q=;
-        b=Ht7KdXAjYk8/OBd+yUBiT3MTqqm+qYTTeCfuBfNzExiwdD85Qo/NE+05yVyFOhgSzaqtb2
-        HGqyrPNYAlFXOH72O0LifxKBWHkreWvEhHsS3HYX+qh4l8w+lQhuCSc+RtN+8AkfavCQUV
-        IeGp7pvMJMCz4HqU+8WNshW9I3af02g=
+        bh=zQ5rlkcLuoTbOuoxb2KOY6qdY81CEr3ax9QvoQljnlc=;
+        b=0x6Q7L2soYQQus4/ECuxPmJJmE5QLXgHD03/WNfl7trhCbZ62fYBO7XqEyamyHdFMdchpt
+        S1QiYY/c41LejOaKV5D5VUjh1aRtjVJcPkZJgQYa5Fu6N1omAs4JGgkqCvf5PcKk/otsDs
+        z7j9qXOUFJ7BmDQyY0OG9HtW7lcIVy4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1627565994;
+        s=susede2_ed25519; t=1627566048;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=qBB8iKzSWglbn2svjqbyBvTur1gSGSRi7WJk5pLBV6Q=;
-        b=IURGsvfIWmGvVidBBqqlR5iODG93nueHi3K3f8L6u25xXVia1kkYcTLqzRoMS1pgW0goIt
-        cqUXByw+a3OFcbCg==
+        bh=zQ5rlkcLuoTbOuoxb2KOY6qdY81CEr3ax9QvoQljnlc=;
+        b=K2RL80hB5F2E3nIb8msjt3Ph1xJiM4ELE+etaj6r4qdiNkS6F5e2EFPKzSRuzxh58yG3v2
+        3Dek7r+DVrV79RBQ==
 Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 2543EA3B8C;
-        Thu, 29 Jul 2021 13:39:54 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id 3830AA3B88;
+        Thu, 29 Jul 2021 13:40:48 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 0469B1E12F7; Thu, 29 Jul 2021 15:39:54 +0200 (CEST)
-Date:   Thu, 29 Jul 2021 15:39:53 +0200
+        id 245A21E12F7; Thu, 29 Jul 2021 15:40:48 +0200 (CEST)
+Date:   Thu, 29 Jul 2021 15:40:48 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jann Horn <jannh@google.com>,
-        Matthew Bobrowski <repnop@google.com>, Jan Kara <jack@suse.cz>,
+To:     Matthew Bobrowski <repnop@google.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 5/5] fanotify: add pidfd support to the fanotify API
-Message-ID: <20210729133953.GL29619@quack2.suse.cz>
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v3 0/5] Add pidfd support to the fanotify API
+Message-ID: <20210729134048.GM29619@quack2.suse.cz>
 References: <cover.1626845287.git.repnop@google.com>
- <02ba3581fee21c34bd986e093d9eb0b9897fa741.1626845288.git.repnop@google.com>
- <CAG48ez3MsFPn6TsJz75hvikgyxG5YGyT2gdoFwZuvKut4Xms1g@mail.gmail.com>
- <CAOQ4uxhDkAmqkxT668sGD8gHcssGTeJ3o6kzzz3=0geJvfAjdg@mail.gmail.com>
+ <CAOQ4uxhBYhQoZcbuzT+KsTuyndE7kEv4R8ZhRL-kQScyfADY2A@mail.gmail.com>
+ <YP9AMGlGCuItQgJb@google.com>
+ <YP9QaEaCWvUV4Qie@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhDkAmqkxT668sGD8gHcssGTeJ3o6kzzz3=0geJvfAjdg@mail.gmail.com>
+In-Reply-To: <YP9QaEaCWvUV4Qie@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 27-07-21 07:19:43, Amir Goldstein wrote:
-> On Tue, Jul 27, 2021 at 3:24 AM Jann Horn <jannh@google.com> wrote:
-> >
-> > On Wed, Jul 21, 2021 at 8:21 AM Matthew Bobrowski <repnop@google.com> wrote:
-> > > Introduce a new flag FAN_REPORT_PIDFD for fanotify_init(2) which
-> > > allows userspace applications to control whether a pidfd info record
-> > > containing a pidfd is to be returned with each event.
-> > >
-> > > If FAN_REPORT_PIDFD is enabled for a notification group, an additional
-> > > struct fanotify_event_info_pidfd object will be supplied alongside the
-> > > generic struct fanotify_event_metadata within a single event. This
-> > > functionality is analogous to that of FAN_REPORT_FID in terms of how
-> > > the event structure is supplied to the userspace application. Usage of
-> > > FAN_REPORT_PIDFD with FAN_REPORT_FID/FAN_REPORT_DFID_NAME is
-> > > permitted, and in this case a struct fanotify_event_info_pidfd object
-> > > will follow any struct fanotify_event_info_fid object.
-> > >
-> > > Currently, the usage of FAN_REPORT_TID is not permitted along with
-> > > FAN_REPORT_PIDFD as the pidfd API only supports the creation of pidfds
-> > > for thread-group leaders. Additionally, the FAN_REPORT_PIDFD is
-> > > limited to privileged processes only i.e. listeners that are running
-> > > with the CAP_SYS_ADMIN capability. Attempting to supply either of
-> > > these initialization flags with FAN_REPORT_PIDFD will result with
-> > > EINVAL being returned to the caller.
-> > >
-> > > In the event of a pidfd creation error, there are two types of error
-> > > values that can be reported back to the listener. There is
-> > > FAN_NOPIDFD, which will be reported in cases where the process
-> > > responsible for generating the event has terminated prior to fanotify
-> > > being able to create pidfd for event->pid via pidfd_create(). The
-> > > there is FAN_EPIDFD, which will be reported if a more generic pidfd
-> > > creation error occurred when calling pidfd_create().
-> > [...]
-> > > @@ -524,6 +562,34 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
-> > >         }
-> > >         metadata.fd = fd;
-> > >
-> > > +       if (pidfd_mode) {
-> > > +               /*
-> > > +                * Complain if the FAN_REPORT_PIDFD and FAN_REPORT_TID mutual
-> > > +                * exclusion is ever lifted. At the time of incoporating pidfd
-> > > +                * support within fanotify, the pidfd API only supported the
-> > > +                * creation of pidfds for thread-group leaders.
-> > > +                */
-> > > +               WARN_ON_ONCE(FAN_GROUP_FLAG(group, FAN_REPORT_TID));
-> > > +
-> > > +               /*
-> > > +                * The PIDTYPE_TGID check for an event->pid is performed
-> > > +                * preemptively in attempt to catch those rare instances where
-> > > +                * the process responsible for generating the event has
-> > > +                * terminated prior to calling into pidfd_create() and acquiring
-> > > +                * a valid pidfd. Report FAN_NOPIDFD to the listener in those
-> > > +                * cases. All other pidfd creation errors are represented as
-> > > +                * FAN_EPIDFD.
-> > > +                */
-> > > +               if (metadata.pid == 0 ||
-> > > +                   !pid_has_task(event->pid, PIDTYPE_TGID)) {
-> > > +                       pidfd = FAN_NOPIDFD;
-> > > +               } else {
-> > > +                       pidfd = pidfd_create(event->pid, 0);
-> > > +                       if (pidfd < 0)
-> > > +                               pidfd = FAN_EPIDFD;
-> > > +               }
-> > > +       }
-> > > +
-> >
-> > As a general rule, f_op->read callbacks aren't allowed to mess with
-> > the file descriptor table of the calling process. A process should be
-> > able to receive a file descriptor from an untrusted source and call
-> > functions like read() on it without worrying about affecting its own
-> > file descriptor table state with that.
-> >
+On Tue 27-07-21 10:16:40, Matthew Bobrowski wrote:
+> On Tue, Jul 27, 2021 at 09:07:28AM +1000, Matthew Bobrowski wrote:
+> > On Wed, Jul 21, 2021 at 10:06:56AM +0300, Amir Goldstein wrote:
+> > > On Wed, Jul 21, 2021 at 9:17 AM Matthew Bobrowski <repnop@google.com> wrote:
+> > > >
+> > > > Hey Jan/Amir/Christian,
+> > > >
+> > > > This is an updated version of the FAN_REPORT_PIDFD series which contains
+> > > > the addressed nits from the previous review [0]. As per request, you can
+> > > > also find the draft LTP tests here [1] and man-pages update for this new
+> > > > API change here [2].
+> > > >
+> > > > [0] https://lore.kernel.org/linux-fsdevel/cover.1623282854.git.repnop@google.com/
+> > > > [1] https://github.com/matthewbobrowski/ltp/commits/fanotify_pidfd_v2
+> > > > [2] https://github.com/matthewbobrowski/man-pages/commits/fanotify_pidfd_v1
+> > > 
+> > > FWIW, those test and man page drafts look good to me :)
+> > 
+> > Fantastic, thanks for the review!
+> > 
+> > I will adjust the minor comments/documentation on patch 5/5 and send
+> > through an updated series.
 > 
-> Interesting. I've never considered this interface flaw.
-> Thanks for bringing this up!
+> Alright, so I've fixed up the git commit message and comment in the source
+> code so that it's more accurate in terms of when/why FAN_NOPIDFD is
+> reported.
+> 
+> I'm going to hold with sending through v4 until I have Jan also look peek
+> and poke at v3 as I want to avoid doing any unnecessary round trips.
 
-Me neither. But I guess it's one more reason why any fd-generating variant
-of fanotify should stay priviledged.
-
-> > I realize that existing fanotify code appears to be violating that
-> > rule already, and that you're limiting creation of fanotify file
-> > descriptors that can hit this codepath to CAP_SYS_ADMIN, but still, I
-> > think fanotify_read() probably ought to be an ioctl, or something
-> > along those lines, instead of an f_op->read handler if it messes with
-> > the caller's fd table?
-> 
-> Naturally, we cannot change the legacy interface.
-> However, since fanotify has a modern FAN_REPORT_FID interface
-> which does not mess with fd table maybe this is an opportunity not
-> to repeat the same mistake for the FAN_REPORT_FID interface.
-> 
-> Matthew, can you explain what is the use case of the consumer
-> application of pidfd. I am guessing this is for an audit user case?
-> because if it were for permission events, event->pid would have been
-> sufficient.
-> 
-> If that is the case, then I presume that the application does not really
-> need to operate on the pidfd, it only need to avoid reporting wrong
-> process details after pid wraparound?
-> 
-> If that is the case, then maybe a model similar to inode generation
-> can be used to report a "pid generation" in addition to event->pid
-> and export pid generation in /proc/<pid>/status?
-> 
-> Or am I completely misunderstanding the use case?
-
-Well, but pidfd also makes sure that /proc/<pid>/ keeps belonging to the
-same process while you read various data from it. And you cannot achieve
-that with pid+generation thing you've suggested. Plus the additional
-concept and its complexity is non-trivial So I tend to agree with
-Christian that we really want to return pidfd.
-
-Given returning pidfd is CAP_SYS_ADMIN priviledged operation I'm undecided
-whether it is worth the trouble to come up with some other mechanism how to
-return pidfd with the event. We could return some cookie which could be
-then (by some ioctl or so) either transformed into real pidfd or released
-(so that we can release pid handle in the kernel) but it looks ugly and
-complicates things for everybody without bringing significant security
-improvement (we already can pass fd with the event). So I'm pondering
-whether there's some other way how we could make the interface safer - e.g.
-so that the process receiving the event (not the one creating the group)
-would also need to opt in for getting fds created in its file table.
-
-But so far nothing bright has come to my mind. :-|
+I've read through the series and I don't have any more comments besides the
+objection raised by Jann. I'm still considering that one...
 
 								Honza
+
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
