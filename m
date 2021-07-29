@@ -2,336 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 189223DA8EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 18:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED8EE3DA9A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 19:05:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230502AbhG2QZD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jul 2021 12:25:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35542 "EHLO mail.kernel.org"
+        id S229758AbhG2RFK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jul 2021 13:05:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229769AbhG2QZC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jul 2021 12:25:02 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8F2866023F;
-        Thu, 29 Jul 2021 16:24:59 +0000 (UTC)
+        id S229598AbhG2RFJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Jul 2021 13:05:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BCD4D608FB;
+        Thu, 29 Jul 2021 17:05:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627575899;
-        bh=hZqiNVZpuLQGIlHXWtfF9ZLbLhrDzPspSpSCowZ5YqU=;
+        s=k20201202; t=1627578306;
+        bh=tanSVsx7ADuqXEdPw5RRp50ATY4l6T4Qv7QD92oqXLo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QMRZc2GCf6w2YWMYuxGfUTD/VQcqx/F66L6iwupEbtA8KymF6cDcEUeheRB/tLhjI
-         o5AmO5Opq6N5L+upUbWRK8jB1fCinBl8mlV27WHhlvoBxIcCY3OuLFwsJY9y3lTduG
-         KRMg3zv8rc0Aw+q3Qec7hHKR5PI7+MOUusHTB3NPCwfi5657epQCRqllFjiOJfFZbZ
-         1RJY9bYuUYNgQYx1k+NNqy2CTZbRY5GuQYR81YlAjPicZcSBSv8Wm+wWv6j0Rwr/nI
-         vQbyI9j3/1BNwx3lu2vq6eipVLDlWIuViL0woM7NLwYIrfI+HS4CDZauhTXg9Nx5ra
-         Kei1Es8gQkcyw==
-Date:   Thu, 29 Jul 2021 09:24:59 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com, kari.argillander@gmail.com,
-        oleksandr@natalenko.name
-Subject: Re: [PATCH v27 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-Message-ID: <20210729162459.GA3601405@magnolia>
-References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
+        b=G5eTbInk043l3QZy/X/+tmctZYvHGT3qTR5XSteSRIaKfI2AQODu3rY6oA3FMzM7Q
+         zRF5kmbDdfDMw+ar3NaYpPLtGIK/wThWBCjD7bfR/ESusGVnvXm8wI8I5rRT1ej0cV
+         Ns/H9JaeoasP4XDZan1W5qEBUmCcaq/k/7d7eQQ74WHgFWa2rffb7M9ibQX5/CgUJO
+         8O2PY4gtNOwFSDPIP4h+wT2PtClcmlyoP12QYx2fb5Cg6sy0904/PprcErfLFJadtp
+         dnj12WjA2RydGW8CXR9WlH2mTWnKdzIwxoEreLGGPyg9/f71ee2+94Oon/Z2WQd/Ph
+         U8rWEfscQq+cA==
+Date:   Thu, 29 Jul 2021 13:05:04 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Yang Yingliang <yangyingliang@huawei.com>, viro@zeniv.linux.org.uk,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     stable@vger.kernel.org, gregkh@linuxfoundation.org, axboe@kernel.dk
+Subject: Re: [PATCH 5.10] io_uring: fix null-ptr-deref in
+ io_sq_offload_start()
+Message-ID: <YQLfwGSq+BRFTUzu@sashalap>
+References: <20210729142338.1085951-1-yangyingliang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20210729142338.1085951-1-yangyingliang@huawei.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 29, 2021 at 04:49:33PM +0300, Konstantin Komarov wrote:
-> This patch adds NTFS Read-Write driver to fs/ntfs3.
-> 
-> Having decades of expertise in commercial file systems development and huge
-> test coverage, we at Paragon Software GmbH want to make our contribution to
-> the Open Source Community by providing implementation of NTFS Read-Write
-> driver for the Linux Kernel.
-> 
-> This is fully functional NTFS Read-Write driver. Current version works with
-> NTFS(including v3.1) and normal/compressed/sparse files and supports journal replaying.
-> 
-> We plan to support this version after the codebase once merged, and add new
-> features and fix bugs. For example, full journaling support over JBD will be
-> added in later updates.
+On Thu, Jul 29, 2021 at 10:23:38PM +0800, Yang Yingliang wrote:
+>I met a null-ptr-deref when doing fault-inject test:
+>
+>[   65.441626][ T8299] general protection fault, probably for non-canonical address 0xdffffc0000000029: 0000 [#1] PREEMPT SMP KASAN
+>[   65.443219][ T8299] KASAN: null-ptr-deref in range [0x0000000000000148-0x000000000000014f]
+>[   65.444331][ T8299] CPU: 2 PID: 8299 Comm: test Not tainted 5.10.49+ #499
+>[   65.445277][ T8299] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+>[   65.446614][ T8299] RIP: 0010:io_disable_sqo_submit+0x124/0x260
+>[   65.447554][ T8299] Code: 7b 40 89 ee e8 2d b9 9a ff 85 ed 74 40 e8 04 b8 9a ff 49 8d be 48 01 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 22 01 00 00 49 8b ae 48 01 00 00 48 85 ed 74 0d
+>[   65.450860][ T8299] RSP: 0018:ffffc9000122fd70 EFLAGS: 00010202
+>[   65.451826][ T8299] RAX: dffffc0000000000 RBX: ffff88801b11f000 RCX: ffffffff81d5d783
+>[   65.453166][ T8299] RDX: 0000000000000029 RSI: ffffffff81d5d78c RDI: 0000000000000148
+>[   65.454606][ T8299] RBP: 0000000000000002 R08: ffff88810168c280 R09: ffffed1003623e79
+>[   65.456063][ T8299] R10: ffffc9000122fd70 R11: ffffed1003623e78 R12: ffff88801b11f040
+>[   65.457542][ T8299] R13: ffff88801b11f3c0 R14: 0000000000000000 R15: 000000000000001a
+>[   65.458910][ T8299] FS:  00007ffb602e3500(0000) GS:ffff888064100000(0000) knlGS:0000000000000000
+>[   65.460533][ T8299] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>[   65.461736][ T8299] CR2: 00007ffb5fe7eb24 CR3: 000000010a619000 CR4: 0000000000750ee0
+>[   65.463146][ T8299] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>[   65.464618][ T8299] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>[   65.466052][ T8299] PKRU: 55555554
+>[   65.466708][ T8299] Call Trace:
+>[   65.467304][ T8299]  io_uring_setup+0x2041/0x3ac0
+>[   65.468169][ T8299]  ? io_iopoll_check+0x500/0x500
+>[   65.469123][ T8299]  ? syscall_enter_from_user_mode+0x1c/0x50
+>[   65.470241][ T8299]  do_syscall_64+0x2d/0x70
+>[   65.471028][ T8299]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>[   65.472099][ T8299] RIP: 0033:0x7ffb5fdec839
+>[   65.472925][ T8299] Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 1f f6 2c 00 f7 d8 64 89 01 48
+>[   65.476465][ T8299] RSP: 002b:00007ffc33539ef8 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
+>[   65.478026][ T8299] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ffb5fdec839
+>[   65.479503][ T8299] RDX: 0000000020ffd000 RSI: 0000000020000080 RDI: 0000000000100001
+>[   65.480927][ T8299] RBP: 00007ffc33539f70 R08: 0000000000000000 R09: 0000000000000000
+>[   65.482416][ T8299] R10: 0000000000000000 R11: 0000000000000206 R12: 0000555e85531320
+>[   65.483845][ T8299] R13: 00007ffc3353a0a0 R14: 0000000000000000 R15: 0000000000000000
+>[   65.485331][ T8299] Modules linked in:
+>[   65.486000][ T8299] Dumping ftrace buffer:
+>[   65.486772][ T8299]    (ftrace buffer empty)
+>[   65.487595][ T8299] ---[ end trace a9a5fad3ebb303b7 ]---
+>
+>If io_allocate_scq_urings() fails in io_uring_create(), 'ctx->sq_data'
+>is not set yet, when calling io_sq_offload_start() in io_disable_sqo_submit()
+>in error path, it will lead a null-ptr-deref.
+>
+>The io_disable_sqo_submit() has been removed in mainline by commit
+>70aacfe66136 ("io_uring: kill sqo_dead and sqo submission halting"),
+>so the bug has been eliminated in mainline, it's a fix only for stable-5.10.
 
-Cool!
+I've added the rest of the io uring folks to this thread. Please do so
+in the future using scripts/get_maintainer.pl.
 
-I have the same (still unanswered) questions as last time:
-
-1. What happens when you run ntfs3 through fstests with '-g all'?  I get
-that the pass rate isn't going to be as high with ntfs3 as it is with
-ext4/xfs/btrfs, but fstests can be adapted (see the recent attempts to
-get exfat under test).
-
-(And yes, not all the fstests will pass, since some of them are random
-exercisers that we use to keep the bug backlog populated.  We can help
-you figure out which tests are erratic like that).
-
-2. Same question as #1, except for whatever internal QA suite Paragon
-has used to qualify the ntfs3 driver over the years.  (If you haven't
-been using fstests this whole time.)
-
-3. If you (Paragon) do have an internal QA suite, are you willing to
-contribute some of that to fstests to improve its ability to exercise
-whatever features and quirks are unique to NTFS?
-
-4. How often do you run QA validation (of any kind) on the ntfs3
-codebase?
-
-In case you're wondering why I ask these questions, my motivation is
-in figuring out how easy it will be to extend QA coverage to the
-community supported QA suite (fstests) so that people making treewide
-and vfs level changes can check that their changes don't bitrot your
-driver, and vice-versa.  My primary interest leans towards convincing
-everyone to value QA and practice it regularly (aka sharing the load so
-it's not entirely up to the maintainer to catch all problems) vs.
-finding every coding error as a gate condition for merging.
-
-As another fs maintainer, I know that this is key to preventing fs
-drivers from turning into a rotting garbage fire, and probably the best
-I can do for a review of ntfs3 since I don't anticipate having time for
-a super-detailed review and you've been submitting this driver for a
-while now.
-
---D
-
-> 
-> v2:
->  - patch splitted to chunks (file-wise)
->  - build issues fixed
->  - sparse and checkpatch.pl errors fixed
->  - NULL pointer dereference on mkfs.ntfs-formatted volume mount fixed
->  - cosmetics + code cleanup
-> 
-> v3:
->  - added acl, noatime, no_acs_rules, prealloc mount options
->  - added fiemap support
->  - fixed encodings support
->  - removed typedefs
->  - adapted Kernel-way logging mechanisms
->  - fixed typos and corner-case issues
-> 
-> v4:
->  - atomic_open() refactored
->  - code style updated
->  - bugfixes
-> 
-> v5:
-> - nls/nls_alt mount options added
-> - Unicode conversion fixes
-> - Improved very fragmented files operations
-> - logging cosmetics
-> 
-> v6:
-> - Security Descriptors processing changed
->   added system.ntfs_security xattr to set
->   SD
-> - atomic_open() optimized
-> - cosmetics
-> 
-> v7:
-> - Security Descriptors validity checks added (by Mark Harmstone)
-> - atomic_open() fixed for the compressed file creation with directio
->   case
-> - remount support
-> - temporarily removed readahead usage
-> - cosmetics
-> 
-> v8:
-> - Compressed files operations fixed
-> 
-> v9:
-> - Further cosmetics applied as suggested
-> by Joe Perches
-> 
-> v10:
-> - operations with compressed/sparse files on very fragmented volumes improved
-> - reduced memory consumption for above cases
-> 
-> v11:
-> - further compressed files optimizations: reads/writes are now skipping bufferization
-> - journal wipe to the initial state optimized (bufferization is also skipped)
-> - optimized run storage (re-packing cluster metainformation)
-> - fixes based on Matthew Wilcox feedback to the v10
-> - compressed/sparse/normal could be set for empty files with 'system.ntfs_attrib' xattr
-> 
-> v12:
-> - nls_alt mount option removed after discussion with Pali Rohar
-> - fixed ni_repack()
-> - fixed resident files transition to non-resident when size increasing
-> 
-> v13:
-> - nested_lock fix (lockdep)
-> - out-of-bounds read fix (KASAN warning)
-> - resident->nonresident transition fixed for compressed files
-> - load_nls() missed fix applied
-> - some sparse utility warnings fixes
-> 
-> v14:
-> - support for additional compression types (we've adapted WIMLIB's
->   implementation, authored by Eric Biggers, into ntfs3)
-> 
-> v15:
-> - kernel test robot warnings fixed
-> - lzx/xpress compression license headers updated
-> 
-> v16:
-> - lzx/xpress moved to initial ntfs-3g plugin code
-> - mutexes instead of a global spinlock for compresions
-> - FALLOC_FL_PUNCH_HOLE and FALLOC_FL_COLLAPSE_RANGE implemented
-> - CONFIG_NTFS3_FS_POSIX_ACL added
-> 
-> v17:
-> - FALLOC_FL_COLLAPSE_RANGE fixed
-> - fixes for Mattew Wilcox's and Andy Lavr's concerns
-> 
-> v18:
-> - ntfs_alloc macro splitted into two ntfs_malloc + ntfs_zalloc
-> - attrlist.c: always use ntfs_cmp_names instead of memcmp; compare entry names
->   only for entry with vcn == 0
-> - dir.c: remove unconditional ni_lock in ntfs_readdir
-> - fslog.c: corrected error case behavior
-> - index.c: refactored due to modification of ntfs_cmp_names; use rw_semaphore
->   for read/write access to alloc_run and bitmap_run while ntfs_readdir
-> - run.c: separated big/little endian code in functions
-> - upcase.c: improved ntfs_cmp_names, thanks to Kari Argillander for idea
->   and 'bothcase' implementation
-> 
-> v19:
-> - fixed directory bitmap for 2MB cluster size
-> - fixed rw_semaphore init for directories
-> 
-> v20:
-> - fixed issue with incorrect hidden/system attribute setting on
->   root subdirectories
-> - use kvmalloc instead of kmalloc for runs array
-> - fixed index behavior on volumes with cluster size more than 4k
-> - current build info is added into module info instead of printing on insmod
-> 
-> v21:
-> - fixes for clang CFI checks
-> - fixed sb->s_maxbytes for 32bit clusters
-> - user.DOSATTRIB is no more intercepted by ntfs3
-> - corrected xattr limits;  is used
-> - corrected CONFIG_NTFS3_64BIT_CLUSTER usage
-> - info about current build is added into module info and printing
-> on insmod (by Andy Lavr's request)
-> note: v21 is applicable for 'linux-next' not older than 2021.01.28
-> 
-> v22:
-> - ntfs_cmp_names() fixed
-> - raise warning if 'nls->uni2char' fails
-> - hot fix free clusters code optimized
-> - use clang-format 11.0 instead of 10.0 to format code
-> 
-> v23:
-> - corrections for Kernel Test Robot warnings
-> - kmem_cache_create() utilized to allocate memory in bitmap.c
-> - cosmetics and comments thru the code
-> 
-> v24:
-> - BIO_MAX_PAGES -> BIO_MAX_VECS (fix for build issue of v23 vs linux-next)
-> - minor optimization for LogFile: do not fill it with -1, if it's already there
-> - index.c: removed 'inline' in definition of hdr_find_split() and hdr_insert_head()
-> 
-> v25:
-> - restore fs/Makefile in patch
-> - refactor ntfs_create_inode() to use error-valued pointer
-> - use mi_get_ref to fill MFT_REF
-> - minimize checkpatch.pl warnings: replace LogFile with \x24LogFile when printing
-> 
-> v26:
-> - fixed coccinelle warnings
-> - fslog.c: fix memory leak and memory overwrite
-> 
-> v27:
-> - iov_iter_copy_from_user_atomic() replaced by copy_page_from_iter_atomic()
-> and  iov_iter_advance() removed
-> 
-> Konstantin Komarov (10):
->   fs/ntfs3: Add headers and misc files
->   fs/ntfs3: Add initialization of super block
->   fs/ntfs3: Add bitmap
->   fs/ntfs3: Add file operations and implementation
->   fs/ntfs3: Add attrib operations
->   fs/ntfs3: Add compression
->   fs/ntfs3: Add NTFS journal
->   fs/ntfs3: Add Kconfig, Makefile and doc
->   fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
->   fs/ntfs3: Add MAINTAINERS
-> 
->  Documentation/filesystems/ntfs3.rst |  107 +
->  MAINTAINERS                         |    7 +
->  fs/Kconfig                          |    1 +
->  fs/Makefile                         |    1 +
->  fs/ntfs3/Kconfig                    |   46 +
->  fs/ntfs3/Makefile                   |   36 +
->  fs/ntfs3/attrib.c                   | 2082 +++++++++++
->  fs/ntfs3/attrlist.c                 |  456 +++
->  fs/ntfs3/bitfunc.c                  |  135 +
->  fs/ntfs3/bitmap.c                   | 1519 ++++++++
->  fs/ntfs3/debug.h                    |   64 +
->  fs/ntfs3/dir.c                      |  594 +++
->  fs/ntfs3/file.c                     | 1130 ++++++
->  fs/ntfs3/frecord.c                  | 3071 ++++++++++++++++
->  fs/ntfs3/fslog.c                    | 5181 +++++++++++++++++++++++++++
->  fs/ntfs3/fsntfs.c                   | 2542 +++++++++++++
->  fs/ntfs3/index.c                    | 2641 ++++++++++++++
->  fs/ntfs3/inode.c                    | 2034 +++++++++++
->  fs/ntfs3/lib/decompress_common.c    |  332 ++
->  fs/ntfs3/lib/decompress_common.h    |  352 ++
->  fs/ntfs3/lib/lib.h                  |   26 +
->  fs/ntfs3/lib/lzx_decompress.c       |  683 ++++
->  fs/ntfs3/lib/xpress_decompress.c    |  155 +
->  fs/ntfs3/lznt.c                     |  452 +++
->  fs/ntfs3/namei.c                    |  578 +++
->  fs/ntfs3/ntfs.h                     | 1238 +++++++
->  fs/ntfs3/ntfs_fs.h                  | 1085 ++++++
->  fs/ntfs3/record.c                   |  609 ++++
->  fs/ntfs3/run.c                      | 1111 ++++++
->  fs/ntfs3/super.c                    | 1500 ++++++++
->  fs/ntfs3/upcase.c                   |  105 +
->  fs/ntfs3/xattr.c                    | 1046 ++++++
->  32 files changed, 30919 insertions(+)
->  create mode 100644 Documentation/filesystems/ntfs3.rst
->  create mode 100644 fs/ntfs3/Kconfig
->  create mode 100644 fs/ntfs3/Makefile
->  create mode 100644 fs/ntfs3/attrib.c
->  create mode 100644 fs/ntfs3/attrlist.c
->  create mode 100644 fs/ntfs3/bitfunc.c
->  create mode 100644 fs/ntfs3/bitmap.c
->  create mode 100644 fs/ntfs3/debug.h
->  create mode 100644 fs/ntfs3/dir.c
->  create mode 100644 fs/ntfs3/file.c
->  create mode 100644 fs/ntfs3/frecord.c
->  create mode 100644 fs/ntfs3/fslog.c
->  create mode 100644 fs/ntfs3/fsntfs.c
->  create mode 100644 fs/ntfs3/index.c
->  create mode 100644 fs/ntfs3/inode.c
->  create mode 100644 fs/ntfs3/lib/decompress_common.c
->  create mode 100644 fs/ntfs3/lib/decompress_common.h
->  create mode 100644 fs/ntfs3/lib/lib.h
->  create mode 100644 fs/ntfs3/lib/lzx_decompress.c
->  create mode 100644 fs/ntfs3/lib/xpress_decompress.c
->  create mode 100644 fs/ntfs3/lznt.c
->  create mode 100644 fs/ntfs3/namei.c
->  create mode 100644 fs/ntfs3/ntfs.h
->  create mode 100644 fs/ntfs3/ntfs_fs.h
->  create mode 100644 fs/ntfs3/record.c
->  create mode 100644 fs/ntfs3/run.c
->  create mode 100644 fs/ntfs3/super.c
->  create mode 100644 fs/ntfs3/upcase.c
->  create mode 100644 fs/ntfs3/xattr.c
-> 
-> 
-> base-commit: 5a4cee98ea757e1a2a1354b497afdf8fafc30a20
-> -- 
-> 2.25.4
-> 
+-- 
+Thanks,
+Sasha
