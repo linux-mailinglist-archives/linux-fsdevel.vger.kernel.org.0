@@ -2,167 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D75533DAED2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 00:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E43A3DAF73
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 00:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231168AbhG2W1h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jul 2021 18:27:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35964 "EHLO
+        id S234089AbhG2WtM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jul 2021 18:49:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232487AbhG2W1g (ORCPT
+        with ESMTP id S234347AbhG2WtI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jul 2021 18:27:36 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F1C1C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 15:27:32 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id k4-20020a17090a5144b02901731c776526so17833296pjm.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 15:27:32 -0700 (PDT)
+        Thu, 29 Jul 2021 18:49:08 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28C0CC061765
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 15:49:04 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id l19so12456126pjz.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 15:49:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=B+QdeEzKa7UGI7quNzIlqUk5zLUPhgyuAsRaG6gQ5IY=;
-        b=WMq+7+IlsWHXF4HeIvz63NNsfXkMKCbTTamxqofx03/G8LbaagqbDyseNJVHndzT9Y
-         CrPjke5OxZdTR76+IXA9lm8zDJVQSOTMmcX3ijL4Fpk+g8jGLLYg0BAAZT3BSa75EvpQ
-         5RbVT4osAxt1WW5wGRyLp4n7AhR6xdlAKBfwZiJibhmbXfhiGs7u3QC5UaLkdONdHKL0
-         b8iEv/DyMBUbTrH0QZvnCryG2eMIBptpgAh8Yd3IUB8voSIoRmnri9JcHux2QUOtZ/Zq
-         LL4Y2/yBUTguhU12uMuqjyuQd4+TvfaKr0sz3gg1oMmcoKRtekhCYABu0NWrkEeFZwu9
-         /RpQ==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=cud3OIkgb3qTpL75CZeQ4prefyp9kbYPmFH5eW7nSl0=;
+        b=pngrPVc1ThDnBlTMX37huWkZLhfwyBbhEvacbRWVmsLUTE698eeDlGMCjL1HcKZ2Y5
+         2UZmcnqRNphPnwhBqA8a70FfJkN3VoLf4zE0/xICG4dPOmnqMYLxvBpcAxYVWJLf2cvi
+         gy+8a6msQAmlTsJT9W0R7Q5vjf4Ize3MMZBDfTaX2qVnPRrXix4okmMsnUOMyp8tVgas
+         AEHd37T8235msNSausxzC7/6bIfZxPmHmW0vigz5ZvAKYKQjmrwyYLkDYtmePhv4bDKO
+         0HT7i88Wk9R7ybF4w3QFyEz8S5w7lN51oFp8o1bXVBYwn9Z5WlwNwa5hQB577Qy+rwvK
+         3VXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=B+QdeEzKa7UGI7quNzIlqUk5zLUPhgyuAsRaG6gQ5IY=;
-        b=gMlPbIUwm53DsOL7SpqFdL0tukikrW1kuziroY/X67pA8hPuX0QV01DQCXbkPh4r8f
-         iXz/F99NRM8fjA7sTUkvd6HpxbsX8thjkC1X76szLoIZpSob5oDNazoUHelTQXsfrrAC
-         ElbVpsB0y5vUsiy7IWIFMImO0jZqqhvQ71/MMqseV+e3De05V9u3E4qjuvhHG9KPspoa
-         HfoowFT4b+3pLsIOw2F+2OJHZ5S/hVjZa5pFymyDuw7loW484TSP+C1eSsBScznzS+vx
-         ZUEBQoDUUXlx4T+u1vA/L2RgHnuLg9prTX7Co20qzETyBDvCljWJkOUQ107A/+b4hyZC
-         OMtQ==
-X-Gm-Message-State: AOAM531fPSoYexWo93u6iIXLEPKVpBbH19BqEI/QQs2mgdNdWFWmtYX/
-        qMxGLuPx/wtliXQJ3LA9aL5vHEk8qujHxg==
-X-Google-Smtp-Source: ABdhPJx+Gc8+F5ihI3VBpAYkqcuqCY0quYPQO6lq0gbUrjCef5HWDouQvALe38N+Y6qlDcjHSRiK1w==
-X-Received: by 2002:a17:902:ab98:b029:12b:acc0:e18c with SMTP id f24-20020a170902ab98b029012bacc0e18cmr6570044plr.10.1627597651515;
-        Thu, 29 Jul 2021 15:27:31 -0700 (PDT)
-Received: from sspatil2.c.googlers.com.com (190.40.105.34.bc.googleusercontent.com. [34.105.40.190])
-        by smtp.gmail.com with ESMTPSA id 5sm4761989pfp.154.2021.07.29.15.27.30
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cud3OIkgb3qTpL75CZeQ4prefyp9kbYPmFH5eW7nSl0=;
+        b=YMLqFQgX6au07JmhnIyCtX+PAGfHrBLyR7ek41pPD5/yo/CzeHFdnZ2NcHob+a5Hgs
+         YtUr65hTEn786qbgMisXncGo17vJGhjurkHU3de+8bqCCcHqHJEMZZeowgBul+1aTw2O
+         EctFtO9+he4cxpd3gXtWKzXY9p7jPUrbneDzsUFV0nKO+6KQtKkN4uI0om9c6hIdyPNT
+         KRAwyGLXfi+o++e67SscYDzM8Ha1Z/jL7Da8/Vtc1I63Or2swmEiadYcbNvh7XPC+RRQ
+         7SBwgtIjmLynd0alTvD/ius4XcHNKzAgy/kApTp4c0IYqU+NT+kA5ToP0+HiypMj4Q3G
+         VL4w==
+X-Gm-Message-State: AOAM5319lnjnCWkPuq1/9cQerZ4rvkPugEjM8/B1M8A4ChSa+MvXLIJc
+        rPN47tmNBQM2bI+VkNLsdLslhw==
+X-Google-Smtp-Source: ABdhPJy4PXErrWgDXOCNXUSpbIXGeRYQnnjP5FknlN72tzyDYHxD4GkLjobNpmAyfUemapUXSC8gEQ==
+X-Received: by 2002:a05:6a00:158e:b029:32b:9de5:a199 with SMTP id u14-20020a056a00158eb029032b9de5a199mr7229064pfk.76.1627598943460;
+        Thu, 29 Jul 2021 15:49:03 -0700 (PDT)
+Received: from google.com (64.157.240.35.bc.googleusercontent.com. [35.240.157.64])
+        by smtp.gmail.com with ESMTPSA id w15sm4340796pjc.45.2021.07.29.15.49.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jul 2021 15:27:31 -0700 (PDT)
-From:   Sandeep Patil <sspatil@android.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sandeep Patil <sspatil@android.com>, torvalds@linux-foundation.org,
-        dhowells@redhat.com, gregkh@linuxfoundation.org,
-        stable@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH 1/1] fs: pipe: wakeup readers everytime new data written is to pipe
-Date:   Thu, 29 Jul 2021 22:26:35 +0000
-Message-Id: <20210729222635.2937453-2-sspatil@android.com>
-X-Mailer: git-send-email 2.32.0.554.ge1b32706d8-goog
-In-Reply-To: <20210729222635.2937453-1-sspatil@android.com>
-References: <20210729222635.2937453-1-sspatil@android.com>
+        Thu, 29 Jul 2021 15:49:02 -0700 (PDT)
+Date:   Thu, 29 Jul 2021 22:48:54 +0000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     jack@suse.cz, amir73il@gmail.com, christian.brauner@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 5/5] fanotify: add pidfd support to the fanotify API
+Message-ID: <YQMwVjLir+KYOTpY@google.com>
+References: <cover.1626845287.git.repnop@google.com>
+ <02ba3581fee21c34bd986e093d9eb0b9897fa741.1626845288.git.repnop@google.com>
+ <CAG48ez3MsFPn6TsJz75hvikgyxG5YGyT2gdoFwZuvKut4Xms1g@mail.gmail.com>
+ <YQAB+peigKOy/66O@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YQAB+peigKOy/66O@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-commit '1b6b26ae7053 ("pipe: fix and clarify pipe write wakeup logic")'
-changed pipe_write() to wakeup readers only if the pipe was empty.
-Prior to this change, threads waiting in epoll_wait(EPOLLET | EPOLLIN)
-on non-empty pipes would get woken up on new data.
+On Tue, Jul 27, 2021 at 10:54:18PM +1000, Matthew Bobrowski wrote:
+> Hey Jann,
+> 
+> On Tue, Jul 27, 2021 at 02:23:38AM +0200, Jann Horn wrote:
+> > On Wed, Jul 21, 2021 at 8:21 AM Matthew Bobrowski <repnop@google.com> wrote:
+> > > Introduce a new flag FAN_REPORT_PIDFD for fanotify_init(2) which
+> > > allows userspace applications to control whether a pidfd info record
+> > > containing a pidfd is to be returned with each event.
+> > >
+> > > If FAN_REPORT_PIDFD is enabled for a notification group, an additional
+> > > struct fanotify_event_info_pidfd object will be supplied alongside the
+> > > generic struct fanotify_event_metadata within a single event. This
+> > > functionality is analogous to that of FAN_REPORT_FID in terms of how
+> > > the event structure is supplied to the userspace application. Usage of
+> > > FAN_REPORT_PIDFD with FAN_REPORT_FID/FAN_REPORT_DFID_NAME is
+> > > permitted, and in this case a struct fanotify_event_info_pidfd object
+> > > will follow any struct fanotify_event_info_fid object.
+> > >
+> > > Currently, the usage of FAN_REPORT_TID is not permitted along with
+> > > FAN_REPORT_PIDFD as the pidfd API only supports the creation of pidfds
+> > > for thread-group leaders. Additionally, the FAN_REPORT_PIDFD is
+> > > limited to privileged processes only i.e. listeners that are running
+> > > with the CAP_SYS_ADMIN capability. Attempting to supply either of
+> > > these initialization flags with FAN_REPORT_PIDFD will result with
+> > > EINVAL being returned to the caller.
+> > >
+> > > In the event of a pidfd creation error, there are two types of error
+> > > values that can be reported back to the listener. There is
+> > > FAN_NOPIDFD, which will be reported in cases where the process
+> > > responsible for generating the event has terminated prior to fanotify
+> > > being able to create pidfd for event->pid via pidfd_create(). The
+> > > there is FAN_EPIDFD, which will be reported if a more generic pidfd
+> > > creation error occurred when calling pidfd_create().
+> > [...]
+> > > @@ -524,6 +562,34 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+> > >         }
+> > >         metadata.fd = fd;
+> > >
+> > > +       if (pidfd_mode) {
+> > > +               /*
+> > > +                * Complain if the FAN_REPORT_PIDFD and FAN_REPORT_TID mutual
+> > > +                * exclusion is ever lifted. At the time of incoporating pidfd
+> > > +                * support within fanotify, the pidfd API only supported the
+> > > +                * creation of pidfds for thread-group leaders.
+> > > +                */
+> > > +               WARN_ON_ONCE(FAN_GROUP_FLAG(group, FAN_REPORT_TID));
+> > > +
+> > > +               /*
+> > > +                * The PIDTYPE_TGID check for an event->pid is performed
+> > > +                * preemptively in attempt to catch those rare instances where
+> > > +                * the process responsible for generating the event has
+> > > +                * terminated prior to calling into pidfd_create() and acquiring
+> > > +                * a valid pidfd. Report FAN_NOPIDFD to the listener in those
+> > > +                * cases. All other pidfd creation errors are represented as
+> > > +                * FAN_EPIDFD.
+> > > +                */
+> > > +               if (metadata.pid == 0 ||
+> > > +                   !pid_has_task(event->pid, PIDTYPE_TGID)) {
+> > > +                       pidfd = FAN_NOPIDFD;
+> > > +               } else {
+> > > +                       pidfd = pidfd_create(event->pid, 0);
+> > > +                       if (pidfd < 0)
+> > > +                               pidfd = FAN_EPIDFD;
+> > > +               }
+> > > +       }
+> > > +
+> > 
+> > As a general rule, f_op->read callbacks aren't allowed to mess with
+> > the file descriptor table of the calling process. A process should be
+> > able to receive a file descriptor from an untrusted source and call
+> > functions like read() on it without worrying about affecting its own
+> > file descriptor table state with that.
+> 
+> Interesting, thanks for bringing this up. I never knew about this general
+> rule. Do you mind elaborating a little on why f_op->read() callbacks aren't
+> allowed to mess with the fdtable of the calling process? I don't quite
+> exactly understand why this is considered to be suboptimal.
 
-It meant an applications that,
-   1. used pipe + epoll for notifications between threads / processes
-   2. Didn't drain the pipe on each epoll wakeup unless the pipe was full
-started to experience hang / timeouts in threads stuck in epoll_wait()
+Nevermind. I done a little extra thinking about this and I can see exactly why
+this could be problematic.
 
-So restore the old behavior to wakeup all readers if any new data is
-written to the pipe.
-
-Fixes: 1b6b26ae7053 ("pipe: fix and clarify pipe write wakeup logic")
-Signed-off-by: Sandeep Patil <sspatil@android.com>
----
- fs/pipe.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index bfd946a9ad01..dda22a316bb3 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -406,7 +406,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t ret = 0;
- 	size_t total_len = iov_iter_count(from);
- 	ssize_t chars;
--	bool was_empty = false;
-+	bool do_wakeup = false;
- 	bool wake_next_writer = false;
- 
- 	/* Null write succeeds. */
-@@ -429,10 +429,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- #endif
- 
- 	/*
--	 * Only wake up if the pipe started out empty, since
--	 * otherwise there should be no readers waiting.
-+	 * Wake up readers if the pipe was written to. Regardless
-+	 * of whether it was empty or not. Otherwise, threads
-+	 * waiting with EPOLLET will hang until the pipe is emptied.
- 	 *
--	 * If it wasn't empty we try to merge new data into
-+	 * If pipe wasn't empty we try to merge new data into
- 	 * the last buffer.
- 	 *
- 	 * That naturally merges small writes, but it also
-@@ -440,9 +441,8 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	 * spanning multiple pages.
- 	 */
- 	head = pipe->head;
--	was_empty = pipe_empty(head, pipe->tail);
- 	chars = total_len & (PAGE_SIZE-1);
--	if (chars && !was_empty) {
-+	if (chars && !pipe_empty(head, pipe->tail)) {
- 		unsigned int mask = pipe->ring_size - 1;
- 		struct pipe_buffer *buf = &pipe->bufs[(head - 1) & mask];
- 		int offset = buf->offset + buf->len;
-@@ -460,6 +460,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			}
- 
- 			buf->len += ret;
-+			do_wakeup = true;
- 			if (!iov_iter_count(from))
- 				goto out;
- 		}
-@@ -526,6 +527,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			ret += copied;
- 			buf->offset = 0;
- 			buf->len = copied;
-+			do_wakeup = true;
- 
- 			if (!iov_iter_count(from))
- 				break;
-@@ -553,13 +555,12 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		 * become empty while we dropped the lock.
- 		 */
- 		__pipe_unlock(pipe);
--		if (was_empty) {
-+		if (do_wakeup) {
- 			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 			kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		}
- 		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
- 		__pipe_lock(pipe);
--		was_empty = pipe_empty(pipe->head, pipe->tail);
- 		wake_next_writer = true;
- 	}
- out:
-@@ -576,7 +577,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	 * how (for example) the GNU make jobserver uses small writes to
- 	 * wake up pending jobs
- 	 */
--	if (was_empty) {
-+	if (do_wakeup) {
- 		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 	}
--- 
-2.32.0.554.ge1b32706d8-goog
-
+/M
