@@ -2,230 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D893DA740
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 17:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ABB53DA75E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 17:19:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237531AbhG2PNV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jul 2021 11:13:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44046 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229864AbhG2PNV (ORCPT
+        id S237761AbhG2PTr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jul 2021 11:19:47 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:41160 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237757AbhG2PTc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jul 2021 11:13:21 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331B2C061765;
-        Thu, 29 Jul 2021 08:13:17 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id 185so7610690iou.10;
-        Thu, 29 Jul 2021 08:13:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Nua3Rn1N6LerhfGPLxEEhXWOndG8+5p+OI6P+akMl1A=;
-        b=m4YScbaD9QIw9AwZPdFEsnfKjf7ZokjEP+7zKsRsyxsJDvbbbKF1pQ1pmjZRRrBPaX
-         a0sJgR8LcZ0qcHhjSJl7Z/OZNFFFoPIx1sdrnGGjBlh07ciQN6Ix5HP4jPaUvxCa5zUO
-         vCHysTNEENyAZdx8/I1LYV/dkunMI61NmME40d+W407ULeVljLlL35mxrWO9QGJJ+/E+
-         ENwER+OW6xqeZbRG2zme++s8Xp/nRwdxA0AKDYR04jUVlJ0f1+YNrBwqRmGJg6X4vs49
-         HiZoCndQD+SoEIXIBwSbmaQXmvAhoZwSVtVSU4aRD69bdhwnSSaD6/8u6M73gyt8m2Ot
-         e7Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Nua3Rn1N6LerhfGPLxEEhXWOndG8+5p+OI6P+akMl1A=;
-        b=HY0d2ec7HU5OKxyi2PIcjevpRbzAx3veB5kufdVB+REZY6r2lTjXt8KHIJwfs22wRF
-         i+GXRiy+cLR2pFT03Jq2bX+2dPbWM6nSs76SIlnKQR9xbR2b2d290ksP7MpVwGsRK1Zj
-         pfHIZh4b9tCe/HvA/7wRENNCIWFQglqUoGon7sc6SpTmTzOzJu+MN/3e/vSWIrUcfU2v
-         0zyEwmDrkK9+kO49TorDANiMUnnaQe8fpBW0+X2iDPLCICpO+nYczu/Ts6U9f9BGBX7z
-         LEyONNc3vfLBtH/fDxwnfSfzuUwViLSdbgL0NmCR6yVwAU+rMYW6BRVmgEN2NCHhrKVb
-         LbKg==
-X-Gm-Message-State: AOAM531EI3pGCsRXrVzxMHtWESnpvWc7rwgdBlRJLiWZFEKiSmbW5q8Y
-        kmHrQnrg3XFar3T4Dz7NhP6xS8qJN/rF1o0Yj3Y=
-X-Google-Smtp-Source: ABdhPJzq8YUSxUBQ+7HsVo5gRtsHjBLgc3FRx4IqJOEvM9Zq6mv8yuNFWRbzXaemsL3JY8KVeTK65vtcBG0oQ1txDX0=
-X-Received: by 2002:a6b:3bc3:: with SMTP id i186mr4539502ioa.64.1627571596658;
- Thu, 29 Jul 2021 08:13:16 -0700 (PDT)
+        Thu, 29 Jul 2021 11:19:32 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 82455223D8;
+        Thu, 29 Jul 2021 15:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1627571967; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EsaQkyOJ/y7V50td67hCyqP/I5uN0MeHxA5G783O9yE=;
+        b=CjhqW4EUd1qPgP5ufMskNy1R612Ch3agnha0+rygg9phpVOQhqXL8aIAxj8DKMLwxNuDFE
+        QEghiUhQEBzk8hOH5/25u78dHY5FsR9bzztKdhmMkjGs2ZGMj2Bbie4BBfc7zqdeujqf1j
+        AQQWPsY9nswd7wXxDkWmXsfSENeBmBU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1627571967;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EsaQkyOJ/y7V50td67hCyqP/I5uN0MeHxA5G783O9yE=;
+        b=tOEqG2bKX9LUvTE7tcCQ58PCI+kVcuKh59fF3R9MEOYY1Rv4TylqN+/ht8W6KFS1OZWtVh
+        KnZtrCvtOfoZNGBw==
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 16B3913738;
+        Thu, 29 Jul 2021 15:19:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id xWBDMv7GAmHHKwAAGKfGzw
+        (envelope-from <rgoldwyn@suse.de>); Thu, 29 Jul 2021 15:19:26 +0000
+Date:   Thu, 29 Jul 2021 10:19:24 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-nfs@vger.kernel.org,
+        codalist@coda.cs.cmu.edu
+Subject: Re: [PATCH] fs: reduce pointers while using file_ra_state_init()
+Message-ID: <20210729151924.ncwwsz6x6jknyk6t@fiona>
+References: <20210726164647.brx3l2ykwv3zz7vr@fiona>
+ <162753473650.21659.5563242071693885551@noble.neil.brown.name>
 MIME-Version: 1.0
-References: <cover.1626845287.git.repnop@google.com> <02ba3581fee21c34bd986e093d9eb0b9897fa741.1626845288.git.repnop@google.com>
- <CAG48ez3MsFPn6TsJz75hvikgyxG5YGyT2gdoFwZuvKut4Xms1g@mail.gmail.com>
- <CAOQ4uxhDkAmqkxT668sGD8gHcssGTeJ3o6kzzz3=0geJvfAjdg@mail.gmail.com> <20210729133953.GL29619@quack2.suse.cz>
-In-Reply-To: <20210729133953.GL29619@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 29 Jul 2021 18:13:05 +0300
-Message-ID: <CAOQ4uxi70KXGwpcBnRiyPXZCjFQfifaWaYVSDK2chaaZSyXXhQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] fanotify: add pidfd support to the fanotify API
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jann Horn <jannh@google.com>,
-        Matthew Bobrowski <repnop@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <162753473650.21659.5563242071693885551@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 29, 2021 at 4:39 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 27-07-21 07:19:43, Amir Goldstein wrote:
-> > On Tue, Jul 27, 2021 at 3:24 AM Jann Horn <jannh@google.com> wrote:
-> > >
-> > > On Wed, Jul 21, 2021 at 8:21 AM Matthew Bobrowski <repnop@google.com> wrote:
-> > > > Introduce a new flag FAN_REPORT_PIDFD for fanotify_init(2) which
-> > > > allows userspace applications to control whether a pidfd info record
-> > > > containing a pidfd is to be returned with each event.
-> > > >
-> > > > If FAN_REPORT_PIDFD is enabled for a notification group, an additional
-> > > > struct fanotify_event_info_pidfd object will be supplied alongside the
-> > > > generic struct fanotify_event_metadata within a single event. This
-> > > > functionality is analogous to that of FAN_REPORT_FID in terms of how
-> > > > the event structure is supplied to the userspace application. Usage of
-> > > > FAN_REPORT_PIDFD with FAN_REPORT_FID/FAN_REPORT_DFID_NAME is
-> > > > permitted, and in this case a struct fanotify_event_info_pidfd object
-> > > > will follow any struct fanotify_event_info_fid object.
-> > > >
-> > > > Currently, the usage of FAN_REPORT_TID is not permitted along with
-> > > > FAN_REPORT_PIDFD as the pidfd API only supports the creation of pidfds
-> > > > for thread-group leaders. Additionally, the FAN_REPORT_PIDFD is
-> > > > limited to privileged processes only i.e. listeners that are running
-> > > > with the CAP_SYS_ADMIN capability. Attempting to supply either of
-> > > > these initialization flags with FAN_REPORT_PIDFD will result with
-> > > > EINVAL being returned to the caller.
-> > > >
-> > > > In the event of a pidfd creation error, there are two types of error
-> > > > values that can be reported back to the listener. There is
-> > > > FAN_NOPIDFD, which will be reported in cases where the process
-> > > > responsible for generating the event has terminated prior to fanotify
-> > > > being able to create pidfd for event->pid via pidfd_create(). The
-> > > > there is FAN_EPIDFD, which will be reported if a more generic pidfd
-> > > > creation error occurred when calling pidfd_create().
-> > > [...]
-> > > > @@ -524,6 +562,34 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
-> > > >         }
-> > > >         metadata.fd = fd;
-> > > >
-> > > > +       if (pidfd_mode) {
-> > > > +               /*
-> > > > +                * Complain if the FAN_REPORT_PIDFD and FAN_REPORT_TID mutual
-> > > > +                * exclusion is ever lifted. At the time of incoporating pidfd
-> > > > +                * support within fanotify, the pidfd API only supported the
-> > > > +                * creation of pidfds for thread-group leaders.
-> > > > +                */
-> > > > +               WARN_ON_ONCE(FAN_GROUP_FLAG(group, FAN_REPORT_TID));
-> > > > +
-> > > > +               /*
-> > > > +                * The PIDTYPE_TGID check for an event->pid is performed
-> > > > +                * preemptively in attempt to catch those rare instances where
-> > > > +                * the process responsible for generating the event has
-> > > > +                * terminated prior to calling into pidfd_create() and acquiring
-> > > > +                * a valid pidfd. Report FAN_NOPIDFD to the listener in those
-> > > > +                * cases. All other pidfd creation errors are represented as
-> > > > +                * FAN_EPIDFD.
-> > > > +                */
-> > > > +               if (metadata.pid == 0 ||
-> > > > +                   !pid_has_task(event->pid, PIDTYPE_TGID)) {
-> > > > +                       pidfd = FAN_NOPIDFD;
-> > > > +               } else {
-> > > > +                       pidfd = pidfd_create(event->pid, 0);
-> > > > +                       if (pidfd < 0)
-> > > > +                               pidfd = FAN_EPIDFD;
-> > > > +               }
-> > > > +       }
-> > > > +
-> > >
-> > > As a general rule, f_op->read callbacks aren't allowed to mess with
-> > > the file descriptor table of the calling process. A process should be
-> > > able to receive a file descriptor from an untrusted source and call
-> > > functions like read() on it without worrying about affecting its own
-> > > file descriptor table state with that.
-> > >
-> >
-> > Interesting. I've never considered this interface flaw.
-> > Thanks for bringing this up!
->
-> Me neither. But I guess it's one more reason why any fd-generating variant
-> of fanotify should stay priviledged.
->
-> > > I realize that existing fanotify code appears to be violating that
-> > > rule already, and that you're limiting creation of fanotify file
-> > > descriptors that can hit this codepath to CAP_SYS_ADMIN, but still, I
-> > > think fanotify_read() probably ought to be an ioctl, or something
-> > > along those lines, instead of an f_op->read handler if it messes with
-> > > the caller's fd table?
-> >
-> > Naturally, we cannot change the legacy interface.
-> > However, since fanotify has a modern FAN_REPORT_FID interface
-> > which does not mess with fd table maybe this is an opportunity not
-> > to repeat the same mistake for the FAN_REPORT_FID interface.
-> >
-> > Matthew, can you explain what is the use case of the consumer
-> > application of pidfd. I am guessing this is for an audit user case?
-> > because if it were for permission events, event->pid would have been
-> > sufficient.
-> >
-> > If that is the case, then I presume that the application does not really
-> > need to operate on the pidfd, it only need to avoid reporting wrong
-> > process details after pid wraparound?
-> >
-> > If that is the case, then maybe a model similar to inode generation
-> > can be used to report a "pid generation" in addition to event->pid
-> > and export pid generation in /proc/<pid>/status?
-> >
-> > Or am I completely misunderstanding the use case?
->
-> Well, but pidfd also makes sure that /proc/<pid>/ keeps belonging to the
-> same process while you read various data from it. And you cannot achieve
-> that with pid+generation thing you've suggested. Plus the additional
-> concept and its complexity is non-trivial So I tend to agree with
-> Christian that we really want to return pidfd.
->
-> Given returning pidfd is CAP_SYS_ADMIN priviledged operation I'm undecided
-> whether it is worth the trouble to come up with some other mechanism how to
-> return pidfd with the event. We could return some cookie which could be
-> then (by some ioctl or so) either transformed into real pidfd or released
-> (so that we can release pid handle in the kernel) but it looks ugly and
-> complicates things for everybody without bringing significant security
-> improvement (we already can pass fd with the event). So I'm pondering
-> whether there's some other way how we could make the interface safer - e.g.
-> so that the process receiving the event (not the one creating the group)
-> would also need to opt in for getting fds created in its file table.
->
-> But so far nothing bright has come to my mind. :-|
->
+On 14:58 29/07, NeilBrown wrote:
+> On Tue, 27 Jul 2021, Goldwyn Rodrigues wrote:
+> > Simplification.
+> > 
+> > file_ra_state_init() take struct address_space *, just to use inode
+> > pointer by dereferencing from mapping->host.
+> > 
+> > The callers also derive mapping either by file->f_mapping, or
+> > even file->f_mapping->host->i_mapping.
+> > 
+> > Change file_ra_state_init() to accept struct inode * to reduce pointer
+> > dereferencing, both in the callee and the caller.
+> > 
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > ---
+> ....
+> 
+> > diff --git a/mm/readahead.c b/mm/readahead.c
+> > index d589f147f4c2..3541941df5e7 100644
+> > --- a/mm/readahead.c
+> > +++ b/mm/readahead.c
+> > @@ -31,9 +31,9 @@
+> >   * memset *ra to zero.
+> >   */
+> >  void
+> > -file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping)
+> > +file_ra_state_init(struct file_ra_state *ra, struct inode *inode)
+> >  {
+> > -	ra->ra_pages = inode_to_bdi(mapping->host)->ra_pages;
+> > +	ra->ra_pages = inode_to_bdi(inode)->ra_pages;
+> >  	ra->prev_pos = -1;
+> 
+> I think this patch can be made OK by adding:
+> 
+>   if (unlikely(inode->i_mapping != &inode->i_data))
+> 	inode = inode->i_mapping->host;
+> 
+> The "unlikely" is mostly for documentation.
+> Loading "inode->i_mapping" is nearly free as that cache line needs to be
+> loaded to get i_sb, which inode_to_bdi() needs.  Calculating &->i_data
+> is trivial.  So this adds minimal cost, and preserves correctness.
+> 
 
-There is a way, it is not bright, but it is pretty simple -
-store an optional pid in group->fanotify_data.fd_reader.
+Thanks Neil. Coda seems to be the only filesystem to manipulate
+inode->i_mapping to support the mmap() operation and eventually resets
+it back on release().
 
-With flag FAN_REPORT_PIDFD, both pidfd and event->fd reporting
-will be disabled to any process other than fd_reader.
-Without FAN_REPORT_PIDFD, event->fd reporting will be disabled
-if fd_reaader is set to a process other than the reader.
+Not sure if this hack should be put in just for coda, or just leave the
+function prototype as it is to accept address_space *. I will send out
+another patch to see what others feel about it.
 
-A process can call ioctl START_FD_READER to set fd_reader to itself.
-With FAN_REPORT_PIDFD, if reaader_fd is NULL and the reader
-process has CAP_SYS_ADMIN, read() sets fd_reader to itself.
 
-Permission wise, START_FD_READER is allowed with
-CAP_SYS_ADMIN or if fd_reader is not owned by another process.
-We may consider YIELD_FD_READER ioctl if needed.
-
-I think that this is a pretty cheap price for implementation
-and maybe acceptable overhead for complicating the API?
-Note that without passing fd, there is no need for any ioctl.
-
-An added security benefit is that the ioctl adds is a way for the
-caller of fanotify_init() to make sure that even if the fanotify_fd is
-leaked, that event->fd will not be leaked, regardless of flag
-FAN_REPORT_PIDFD.
-
-So the START_FD_READER ioctl feature could be implemented
-and documented first.
-And then FAN_REPORT_PIDFD could use the feature with a
-very minor API difference:
-- Without the flag, other processes can read fds by default and
-  group initiator can opt-out
-- With the flag, other processes cannot read fds by default and
-  need to opt-in
-
-Thanks,
-Amir.
+-- 
+Goldwyn
