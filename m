@@ -2,118 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 909813D9CF3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 06:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D82C3D9D10
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 07:27:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233790AbhG2E7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jul 2021 00:59:05 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:48662 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233607AbhG2E7F (ORCPT
+        id S233790AbhG2F1b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jul 2021 01:27:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45230 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230300AbhG2F1a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jul 2021 00:59:05 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 80C5422372;
-        Thu, 29 Jul 2021 04:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1627534741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1LN0AGtLQbaCW/YF78ot6nD4sfri/rbkOHMPxF1T0A8=;
-        b=bqWy6eItAXTgCTka8yK34nUwl0/UZ/MrHh6+xIm92dYRak8EVlxsIfhHy5JC52rDodU4Et
-        cs8ARZTWjNWlcS18SvD1Io/lEcPJp9AJm0OSa5B9mEZaudvBjAqRCTPSfmgT6lyJD6qdgT
-        MoQ63BDpy+q0c6/vH6x2PW31UsmRWuU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1627534741;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1LN0AGtLQbaCW/YF78ot6nD4sfri/rbkOHMPxF1T0A8=;
-        b=git8nnpPIaot5rpgWIZxkDSMYw8xLPoLk3/BOSjf9KMNlp/VFxFmWUF10BAiPLNY4agGv4
-        1WhFHBr8B4zAzpCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9EEB913ADD;
-        Thu, 29 Jul 2021 04:58:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id YbqRFpM1AmH4OAAAMHmgww
-        (envelope-from <neilb@suse.de>); Thu, 29 Jul 2021 04:58:59 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Thu, 29 Jul 2021 01:27:30 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C51F8C061757;
+        Wed, 28 Jul 2021 22:27:26 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id z3so4539188ile.12;
+        Wed, 28 Jul 2021 22:27:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DTeAbs9nCmz6V+eczywLnOWUpZGnm+DncT63ZiRo/lo=;
+        b=vgPiyoKHxgAtrVNGmkH1dEGA6gNBDTvrHhAdmFug/wiS6g7ntg2E93RFZ4QOes4Vo8
+         +0x1SOMR0eqfSFFKT3aDg5BMcaE41kCCtXMwwR7XhbqRGC2IhMk9mxeQUEwPg9KoB/7U
+         DE9HnWFvKOW4CL2IQBTbDFZwl9CBQCssQRF27S4DOS4NcLXsOKseeznJ1Jmsuer2+eoB
+         0BJ9kX+3anmoIPTnBzSLQ16yy0RkK2PVggQEbqD7WO/Fizdj+XIT84+XntA6loJCrx2X
+         gJrcEz1rCEgdIvydUw4/nxqN334RVnfSXImiZzj2enf/VQVAaAMGNPgZRHcvoYwL+TEx
+         oDZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DTeAbs9nCmz6V+eczywLnOWUpZGnm+DncT63ZiRo/lo=;
+        b=lZ8K16efaDzIHPuRWsAiVcszQjTzeCKok0G0CVQ+oS9UbQgA+hu2W0Xgjfef9Q7L23
+         DAh75SuaIW37h+KPS6eWDgGbpmCpgX7kK3aR7Xdw/J0TscFSqQEvrKmnR+WXKc5QkGMp
+         u3/nWWcAnWov/FgWdS8z0QAJsizaxeasYldOrmbLBtZxwoI/cvTwLK181YqlTDonuQwO
+         ydIgxS4KYynlkeyMAOovSpGX/Tm+Oo8EDE8c/Pbvy9WwFwoNjkob6aqKIFxa1yQDlsAc
+         TmD6rYvyH7Ctssb/tSlHY+m+oznmuhV5urty7xLLWu3+szwIlwUOi/j/Nq+7/cc9RMy1
+         kd6A==
+X-Gm-Message-State: AOAM530UPeXQaqxwumBWpOLHHK8rV9xfBvgZYm8RCuoC06t8727hmZak
+        b5PwexD3v5RqiIJ5omxytzxrgxlD3KRXOoXrpgc=
+X-Google-Smtp-Source: ABdhPJxwG8Kc8HTWidT5R4osTYLwPRtVaXbXue0evzaiEyiHCcYn2tC/reoBc53O68HGysKNO3P3GDu+AC8Vc9tIpbQ=
+X-Received: by 2002:a05:6e02:1c02:: with SMTP id l2mr2417307ilh.9.1627536446171;
+ Wed, 28 Jul 2021 22:27:26 -0700 (PDT)
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Goldwyn Rodrigues" <rgoldwyn@suse.de>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] fs: reduce pointers while using file_ra_state_init()
-In-reply-to: <20210726164647.brx3l2ykwv3zz7vr@fiona>
-References: <20210726164647.brx3l2ykwv3zz7vr@fiona>
-Date:   Thu, 29 Jul 2021 14:58:56 +1000
-Message-id: <162753473650.21659.5563242071693885551@noble.neil.brown.name>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+ <162742546554.32498.9309110546560807513.stgit@noble.brown>
+ <CAOQ4uxjXcVE=4K+3uSYXLsvGgi0o7Nav=DsV=0qG_DanjXB18Q@mail.gmail.com> <162751852209.21659.13294658501847453542@noble.neil.brown.name>
+In-Reply-To: <162751852209.21659.13294658501847453542@noble.neil.brown.name>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 29 Jul 2021 08:27:15 +0300
+Message-ID: <CAOQ4uxj9DW2SHqWCMXy4oRdazbODMhtWeyvNsKJm__0fuuspyQ@mail.gmail.com>
+Subject: Re: [PATCH 07/11] exportfs: Allow filehandle lookup to cross internal
+ mount points.
+To:     NeilBrown <neilb@suse.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 27 Jul 2021, Goldwyn Rodrigues wrote:
-> Simplification.
-> 
-> file_ra_state_init() take struct address_space *, just to use inode
-> pointer by dereferencing from mapping->host.
-> 
-> The callers also derive mapping either by file->f_mapping, or
-> even file->f_mapping->host->i_mapping.
-> 
-> Change file_ra_state_init() to accept struct inode * to reduce pointer
-> dereferencing, both in the callee and the caller.
-> 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> ---
-....
+On Thu, Jul 29, 2021 at 3:28 AM NeilBrown <neilb@suse.de> wrote:
+>
+> On Wed, 28 Jul 2021, Amir Goldstein wrote:
+> > On Wed, Jul 28, 2021 at 1:44 AM NeilBrown <neilb@suse.de> wrote:
+> > >
+> > > When a filesystem has internal mounts, it controls the filehandles
+> > > across all those mounts (subvols) in the filesystem.  So it is useful to
+> > > be able to look up a filehandle again one mount, and get a result which
+> > > is in a different mount (part of the same overall file system).
+> > >
+> > > This patch makes that possible by changing export_decode_fh() and
+> > > export_decode_fh_raw() to take a vfsmount pointer by reference, and
+> > > possibly change the vfsmount pointed to before returning.
+> > >
+> > > The core of the change is in reconnect_path() which now not only checks
+> > > that the dentry is fully connected, but also that the vfsmnt reported
+> > > has the same 'dev' (reported by vfs_getattr) as the dentry.
+> > > If it doesn't, we walk up the dparent() chain to find the highest place
+> > > where the dev changes without there being a mount point, and trigger an
+> > > automount there.
+> > >
+> > > As no filesystems yet provide local-mounts, this does not yet change any
+> > > behaviour.
+> > >
+> > > In exportfs_decode_fh_raw() we previously tested for DCACHE_DISCONNECT
+> > > before calling reconnect_path().  That test is dropped.  It was only a
+> > > minor optimisation and is now inconvenient.
+> > >
+> > > The change in overlayfs needs more careful thought than I have yet given
+> > > it.
+> >
+> > Just note that overlayfs does not support following auto mounts in layers.
+> > See ovl_dentry_weird(). ovl_lookup() fails if it finds such a dentry.
+> > So I think you need to make sure that the vfsmount was not crossed
+> > when decoding an overlayfs real fh.
+>
+> Sounds sensible - thanks.
+> Does this mean that my change would cause problems for people using
+> overlayfs with a btrfs lower layer?
+>
 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index d589f147f4c2..3541941df5e7 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -31,9 +31,9 @@
->   * memset *ra to zero.
->   */
->  void
-> -file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping)
-> +file_ra_state_init(struct file_ra_state *ra, struct inode *inode)
->  {
-> -	ra->ra_pages = inode_to_bdi(mapping->host)->ra_pages;
-> +	ra->ra_pages = inode_to_bdi(inode)->ra_pages;
->  	ra->prev_pos = -1;
+It sounds like it might :-/
+I assume that enabling automount in btrfs in opt-in?
+Otherwise you will be changing behavior for users of existing systems.
 
-I think this patch can be made OK by adding:
+I am not sure, but I think it may be possible to remove the AUTOMOUNT
+check from the ovl_dentry_weird() condition with an explicit overlayfs
+config/module/mount option so that we won't change behavior by
+default, but distro may change the default for overlayfs.
 
-  if (unlikely(inode->i_mapping != &inode->i_data))
-	inode = inode->i_mapping->host;
+Then, when admin changes the btrfs options on the system to perform
+automounts, it will also need to change the overlayfs options to not
+error on automounts.
 
-The "unlikely" is mostly for documentation.
-Loading "inode->i_mapping" is nearly free as that cache line needs to be
-loaded to get i_sb, which inode_to_bdi() needs.  Calculating &->i_data
-is trivial.  So this adds minimal cost, and preserves correctness.
+Given that today, subvolume mounts (or any mounts) on the lower layer
+are not followed by overlayfs, I don't really see the difference
+if mounts are created manually or automatically.
+Miklos?
 
-NeilBrown
+> >
+> > Apart from that, I think that your new feature should be opt-in w.r.t
+> > the exportfs_decode_fh() vfs api and that overlayfs should not opt-in
+> > for the cross mount decode.
+>
+> I did consider making it opt-in, but it is easy enough for the caller
+> to ignore the changed vfsmount, and only one (of 4) callers that it
+> really makes a difference for.
+>
 
+Which reminds me. Please ignore the changed vfsmount in
+do_handle_to_path() (or do not opt-in to changed vfsmount).
 
->  }
->  EXPORT_SYMBOL_GPL(file_ra_state_init);
-> -- 
-> 2.32.0
-> 
-> 
-> -- 
-> Goldwyn
-> 
-> 
+I have an application that uses a bind mount to filter file handles
+of directories by subtree. It opens by the file handles that were
+acquired from fanotify DFID info record using a mountfd in the
+bind mount and readlink /proc/self/fd to determine the path
+relative to that subtree bind mount.
+
+Your change, IIUC, is going to change the semantics of
+open_by_handle_at(2) and is going to break my application.
+
+If you need this change for nfsd, please keep it as an internal api
+used only by nfsd.
+
+TBH, I think it would also be nice to have an internal api to limit
+reconnect_path() walk up to mnt->mnt_root, which is what overlayfs
+really wants, so here is another excuse for you to introduce
+"reconnect flags" to exportfs_decode_fh_raw() ;-)
+
+Note that I had already added support for one implicit "reconnect
+flag" (i.e. "don't reconnect") in commit 8a22efa15b46
+("ovl: do not try to reconnect a disconnected origin dentry").
+
+Thanks,
+Amir.
