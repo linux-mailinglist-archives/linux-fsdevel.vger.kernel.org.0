@@ -2,90 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D10863D9F01
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 09:54:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8364B3D9FCB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jul 2021 10:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234673AbhG2Hye (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jul 2021 03:54:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50968 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234524AbhG2Hyd (ORCPT
+        id S234996AbhG2Ipe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jul 2021 04:45:34 -0400
+Received: from outbound-smtp14.blacknight.com ([46.22.139.231]:38177 "EHLO
+        outbound-smtp14.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234949AbhG2Ipd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jul 2021 03:54:33 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA496C061757
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 00:54:30 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id y7so4708399eda.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 00:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=JhyYKXCDstgWYTf9eYB2G0RxJ+h6usI9uHuVn48Gi+k=;
-        b=dpwo6MHjkxUgZCz+WvEEW5EsVsjZZC7pfhlA4vXqoVb3ebbbutaT1rm/AOvtP2LRup
-         PS8Ys/KS27/1WW4e7gG9sXFzMWtoDq7EObK35VDbwLicUwWSv8wvyLCteNakbMgA0kJF
-         /w0Sk+oDG1CPh54FDzA9+d8H2N3SwSX0vorTsFkHqQ/tlNRs6xsyvgvXUcBuYD34M5f+
-         ekDlw5ipOQ1873PwEHXXsTl7JzPDaI4ef+t5AC8fMhTtzjPL35lZ6+SF4JXmAsmmrcIV
-         wRCAj7NHDAkOVZ88s2s6xN7TCIMQb5C4889wIuOui7ujeKsfo4lcYs3sjI2xFPN9TXAz
-         F51A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=JhyYKXCDstgWYTf9eYB2G0RxJ+h6usI9uHuVn48Gi+k=;
-        b=Eib9fctg/w1SlSfq96ppRtMVjqtp7SMu7SckHHR0bYCUbgyUd62VXJPPe+hIg3hZZ0
-         RZnZJfQ1pVyiOxtH3BDGk8ayuDtFc4l9MEk9rCiomTbBh5h47Fb3qwuYygcac4W1jr/d
-         0GkqIdHc+yeCUppYuWaDFifSolc9SK+OusjpqpyssRvJFLeB1hf1rT6YsBZrlK6bnHhy
-         q9zVyJAhn0JrcQL26ChjTgZnombmbIT5PUyDLOG9x7KQ3VHaJ2bvHnzn5FcdkwEqYzqC
-         Uq9GU2VFKM0JZoeW4ZusxSFIrt8YMsf0+0HWIsAVRpYT/9K7+gLugxO5tEzPJbm0woJd
-         xpzA==
-X-Gm-Message-State: AOAM530v1241ZFvM7PASjYagvv5zxdHI30MAcZ0s2iqcf7DSF80m+wHy
-        eXS7E88Us/vUAduZBU7JUJI9XnBcR1n0xBPzUik=
-X-Google-Smtp-Source: ABdhPJxSwwSWww7uArRBuBC4QHz2WPshYD6DJIwmT///IqMepwjS1RoFGoq7CAo/0LhoVFLhiJ6aULavAnI+C2TJoNQ=
-X-Received: by 2002:aa7:d98d:: with SMTP id u13mr4710182eds.238.1627545269279;
- Thu, 29 Jul 2021 00:54:29 -0700 (PDT)
+        Thu, 29 Jul 2021 04:45:33 -0400
+X-Greylist: delayed 523 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Jul 2021 04:45:33 EDT
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp14.blacknight.com (Postfix) with ESMTPS id 0046D1C4546
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 09:36:45 +0100 (IST)
+Received: (qmail 32396 invoked from network); 29 Jul 2021 08:36:45 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.255])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 29 Jul 2021 08:36:45 -0000
+Date:   Thu, 29 Jul 2021 09:36:44 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v14 049/138] mm/memcg: Add folio_lruvec_relock_irq() and
+ folio_lruvec_relock_irqsave()
+Message-ID: <20210729083644.GD3809@techsingularity.net>
+References: <20210715033704.692967-1-willy@infradead.org>
+ <20210715033704.692967-50-willy@infradead.org>
 MIME-Version: 1.0
-Sender: chijosco1990@gmail.com
-Received: by 2002:a17:906:4eca:0:0:0:0 with HTTP; Thu, 29 Jul 2021 00:54:28
- -0700 (PDT)
-From:   "Mr. Ibrahim Idewu" <ibrahimidewu4@gmail.com>
-Date:   Thu, 29 Jul 2021 08:54:28 +0100
-X-Google-Sender-Auth: BXAgL5MkF9yzjlNK9NguIomTxFQ
-Message-ID: <CAMsCVzCv2_PFmRaiVXKO19kNXLJfuh7Pv2fYeuwJm-ie4qtZuQ@mail.gmail.com>
-Subject: HELLO FRIEND
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20210715033704.692967-50-willy@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Friend,
+On Thu, Jul 15, 2021 at 04:35:35AM +0100, Matthew Wilcox (Oracle) wrote:
+> These are the folio equivalents of relock_page_lruvec_irq() and
+> folio_lruvec_relock_irqsave().  Also convert page_matches_lruvec()
+> to folio_matches_lruvec().
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-My name is Mr.Ibrahim Idewu. I have decided to seek a confidential
-co-operation  with you in the execution of the deal described
-here-under for our both  mutual benefit and I hope you will keep it a
-top secret because of the nature  of the transaction, During the
-course of our bank year auditing, I discovered  an unclaimed/abandoned
-fund, sum total of {US$19.3 Million United State  Dollars} in the bank
-account that belongs to a Saudi Arabia businessman Who unfortunately
-lost his life and entire family in a Motor Accident.
-I want to present you to the bank as the next of kin to the dead
-business man after the money will be sent to you we then share
-60percent to me and 40percent to you.
-All necessary arrangements have been made by me.
+When build testing what you had in your for-next branch, I got a new
+warning for powerpc defconfig
 
-upon consideration of this offer send me the below information
+ In file included from ./include/linux/mmzone.h:8,
+                  from ./include/linux/gfp.h:6,
+                  from ./include/linux/mm.h:10,
+                  from mm/swap.c:17:
+ mm/swap.c: In function 'release_pages':
+ ./include/linux/spinlock.h:290:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   290 |   _raw_spin_unlock_irqrestore(lock, flags); \
+       |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+ mm/swap.c:906:16: note: 'flags' was declared here
+   906 |  unsigned long flags;
+       |                ^~~~~
 
+I'm fairly sure it's a false positive and the compiler just cannot figure
+out that flags are only accessed when lruvec is !NULL and once lruvec is
+!NULL, flags are valid
 
--Your Full Name:
--Your Contact Address:
--Your direct Mobile telephone Number:
--Your Date of Birth:
--Your occupation:
-
-
-I await your swift response and re-assurance.
-
-
-Best regards,
-
-Mr.Ibrahim Idewu.
+diff --git a/mm/swap.c b/mm/swap.c
+index 6f382abeccf9..96a23af8d1c7 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -903,7 +903,7 @@ void release_pages(struct page **pages, int nr)
+ 	int i;
+ 	LIST_HEAD(pages_to_free);
+ 	struct lruvec *lruvec = NULL;
+-	unsigned long flags;
++	unsigned long flags = 0;
+ 	unsigned int lock_batch;
+ 
+ 	for (i = 0; i < nr; i++) {
