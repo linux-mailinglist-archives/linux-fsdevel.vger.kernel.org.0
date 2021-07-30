@@ -2,72 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 887013DB062
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 02:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D6E13DB06F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 02:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232671AbhG3AmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jul 2021 20:42:22 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:42876 "EHLO
+        id S232725AbhG3A5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jul 2021 20:57:17 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:42938 "EHLO
         zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229953AbhG3AmR (ORCPT
+        with ESMTP id S229667AbhG3A5P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jul 2021 20:42:17 -0400
+        Thu, 29 Jul 2021 20:57:15 -0400
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m9GbC-005366-IM; Fri, 30 Jul 2021 00:42:02 +0000
-Date:   Fri, 30 Jul 2021 00:42:02 +0000
+        id 1m9Gpn-0053HG-6t; Fri, 30 Jul 2021 00:57:07 +0000
+Date:   Fri, 30 Jul 2021 00:57:07 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 09/11] nfsd: Allow filehandle lookup to cross internal
- mount points.
-Message-ID: <YQNK2rgZuqh/XmMt@zeniv-ca.linux.org.uk>
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
- <162742546556.32498.16708762469227881912.stgit@noble.brown>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hch@lst.de, virtio-fs@redhat.com,
+        v9fs-developer@lists.sourceforge.net, stefanha@redhat.com,
+        miklos@szeredi.hu
+Subject: Re: [PATCH v3 3/3] fs: simplify get_filesystem_list /
+ get_all_fs_names
+Message-ID: <YQNOY9H/6mJMWRNN@zeniv-ca.linux.org.uk>
+References: <20210714202321.59729-1-vgoyal@redhat.com>
+ <20210714202321.59729-4-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <162742546556.32498.16708762469227881912.stgit@noble.brown>
+In-Reply-To: <20210714202321.59729-4-vgoyal@redhat.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 28, 2021 at 08:37:45AM +1000, NeilBrown wrote:
+On Wed, Jul 14, 2021 at 04:23:21PM -0400, Vivek Goyal wrote:
 
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index baa12ac36ece..22523e1cd478 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -64,7 +64,7 @@ nfsd_cross_mnt(struct svc_rqst *rqstp, struct path *path_parent,
->  			    .dentry = dget(path_parent->dentry)};
->  	int err = 0;
+> +static int __init split_fs_names(char *page, char *names)
+>  {
+> +	int count = 0;
+> +	char *p = page;
 >  
-> -	err = follow_down(&path, 0);
-> +	err = follow_down(&path, LOOKUP_AUTOMOUNT);
->  	if (err < 0)
->  		goto out;
->  	if (path.mnt == path_parent->mnt && path.dentry == path_parent->dentry &&
-> @@ -73,6 +73,13 @@ nfsd_cross_mnt(struct svc_rqst *rqstp, struct path *path_parent,
->  		path_put(&path);
->  		goto out;
+> +	strcpy(p, root_fs_names);
+> +	while (*p++) {
+> +		if (p[-1] == ',')
+> +			p[-1] = '\0';
 >  	}
-> +	if (mount_is_internal(path.mnt)) {
-> +		/* Use the new path, but don't look for a new export */
-> +		/* FIXME should I check NOHIDE in this case?? */
-> +		path_put(path_parent);
-> +		*path_parent = path;
-> +		goto out;
-> +	}
+> +	*p = '\0';
+> +
+> +	for (p = page; *p; p += strlen(p)+1)
+> +		count++;
+>  
+> +	return count;
+>  }
 
-... IOW, mount_is_internal() is called with no exclusion whatsoever.  What's there
-to
-	* keep its return value valid?
-	* prevent fetching ->mnt_mountpoint, getting preempted away, having
-the mount moved *and* what used to be ->mnt_mountpoint evicted from dcache,
-now that it's no longer pinned, then mount_is_internal() regaining CPU and
-dereferencing ->mnt_mountpoint, which now points to hell knows what?
+Ummm....  The last part makes no sense - it counts '\0' in the array
+pointed to be page, until the first double '\0' in there.  All of
+which had been put there by the loop immediately prior to that one...
+
+Incidentally, it treats stray ,, in root_fs_names as termination;
+is that intentional?
