@@ -2,108 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DEAB03DC1AF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jul 2021 01:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60F53DC1B4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jul 2021 01:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234255AbhG3Xsc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 19:48:32 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:38749 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234037AbhG3Xsb (ORCPT
+        id S234422AbhG3XtK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 19:49:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41674 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234312AbhG3XtH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 19:48:31 -0400
-Received: by mail-il1-f198.google.com with SMTP id h27-20020a056e021d9bb02902021736bb95so5793879ila.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 16:48:25 -0700 (PDT)
+        Fri, 30 Jul 2021 19:49:07 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5BAC06175F;
+        Fri, 30 Jul 2021 16:49:01 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id hs10so11006597ejc.0;
+        Fri, 30 Jul 2021 16:49:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HYPzEhg0/ZZoBcXr9dsUKJdtTAKeNCNJr4RSfiPRVf4=;
+        b=KjWLVlYdbMHNyu8daHscO5bjhMTc83ScQQRkQJs51/weY6+MoWT2UXvSdqDCM/s9D1
+         7sZ2zbFaVw6CuuBPCKR5xaVMVFCe1w03820ESTI3X8yN/6k1Gjvc/0J1asEopf8Us/SX
+         krhGPj0E6Mri/Jszps7QWUjiap5dOdRBytWn5QgyJFsmxGHlR1Bjvzhr/gY8rdwq/thF
+         DCIRDltbAeKacc+wNSRLGkjk6Z2MiSTPOed/arRPuxBLl9Q6BK5MYReJHxB8Q7LBVf5n
+         Sde7ulBRCOf9ZnW7lkyYr7Ms0Okj+9/UOuA2RFGBMopIxg8TGogaLv26b3kBD+TUw5S2
+         RrGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=XOreqIcoTN1CtO7Rz4sC/ft2790hKcx+mUxiRxZRZCU=;
-        b=sqnNVWAaXXyqpdjebNp4LfqMOgEjbepF6MZZ+3YadzmPgEN9cR+RGX6U33u1IW+sfm
-         s19BHUbp6zsyicCljUqG9hDkFPuW9tou4iQ9AbXywaVelfBsQlAhrmRcrk7RiD3rlrOs
-         0zD6uZXEdkcnEkxArBHqYdQLAtT7QKcPXzlEoEGE187fJdu8ZFkzFC+LgFDIVC8EZtMY
-         lYxm7xkrugc/pwjYXiunm9Ox82u6uohjO7To0QJENS9nAI+C7uURlYd4LeNpkPuqhuPa
-         5sAUYuc4uL9+0a9S4LgAMsPNi07Afj4Colfswf9G1dSaS75YD4BiutpHqZ670LgSrnId
-         AGCA==
-X-Gm-Message-State: AOAM530SD6ZS+kyo1pMx9sh8jE7eRsB/dDZd6knnsswrEp8nCBN4sL4g
-        apy6AqrVRVu0i1FfZwYaEab+yUMUUv6l8+iJPCJ70BgFo12e
-X-Google-Smtp-Source: ABdhPJzTEADX6ZN4Z6+YdAIXInK+cyRyXLX6x1dyM7YnnZMD8vZl09oNarbHWppt9RORDy6snaHPuMUp9NvxnrGuTbgzUwMgvl1C
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HYPzEhg0/ZZoBcXr9dsUKJdtTAKeNCNJr4RSfiPRVf4=;
+        b=koFDzdgeJCG6PAVz/caTWFKOCKO3/ieOvNLN1arSR6PL95G99PBVC40QcpTZ05Q0kV
+         8LVgTSsFXzNMubiX8DMm1e02ucjLGvH9qAmW2doD4x/6vLnSJq568LaZJ7VVC92/1lYG
+         Lyonw9cKFbKXG24EZfbYWwsfgQ2W1bxCSLOrugWcseiXWmnzsfouP689u6i6ndSh6uZO
+         FsdFsx1fpwnj09eulmlqk8jtqkxhzB2hXdAGFLQr3KIsBij4l/7GRV4F4rgiKEH1RPxE
+         4Hngs0FKjmb+DI0nDDaSxIIVbPZBsQCxWPVsdCDQMANokQRjFmqjxJzb3wwtt9YVccmT
+         z8mQ==
+X-Gm-Message-State: AOAM531IqZUe18zsEH59oSe3FMzObx/YUqEuumdhCE4kRbVsrvNZ0ttU
+        FEx4DdPsgY5E7CiqjyhSOViTbcE59+t32P7zKGE=
+X-Google-Smtp-Source: ABdhPJw93gmIwH5JvSsjLc49Q82IxtdtjQ/L//coez2gOyINWwXsAL7oghmfNbipmXkMo9pUyizGY4fmwNGfAuk+zqE=
+X-Received: by 2002:a17:906:1f82:: with SMTP id t2mr5105584ejr.499.1627688939706;
+ Fri, 30 Jul 2021 16:48:59 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:418f:: with SMTP id az15mr4146349jab.8.1627688905321;
- Fri, 30 Jul 2021 16:48:25 -0700 (PDT)
-Date:   Fri, 30 Jul 2021 16:48:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000001b19a05c85fdb77@google.com>
-Subject: [syzbot] WARNING in fuse_get_tree
-From:   syzbot <syzbot+afacc3ce1215afa24615@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com> <f3f6f5e7-6749-7830-5627-a1b6b68dc365@google.com>
+In-Reply-To: <f3f6f5e7-6749-7830-5627-a1b6b68dc365@google.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Fri, 30 Jul 2021 16:48:48 -0700
+Message-ID: <CAHbLzkosYQGKA5V0DLeBm73wz5GAwxyKiy3KpJzXSpPPrCvM6Q@mail.gmail.com>
+Subject: Re: [PATCH 02/16] huge tmpfs: fix split_huge_page() after FALLOC_FL_KEEP_SIZE
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Matthew Auld <matthew.auld@intel.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, Linux MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Jul 30, 2021 at 12:28 AM Hugh Dickins <hughd@google.com> wrote:
+>
+> A successful shmem_fallocate() guarantees that the extent has been
+> reserved, even beyond i_size when the FALLOC_FL_KEEP_SIZE flag was used.
+> But that guarantee is broken by shmem_unused_huge_shrink()'s attempts to
+> split huge pages and free their excess beyond i_size; and by other uses
+> of split_huge_page() near i_size.
+>
+> It's sad to add a shmem inode field just for this, but I did not find a
+> better way to keep the guarantee.  A flag to say KEEP_SIZE has been used
+> would be cheaper, but I'm averse to unclearable flags.  The fallocend
+> field is not perfect either (many disjoint ranges might be fallocated),
+> but good enough; and gains another use later on.
+>
+> Fixes: 779750d20b93 ("shmem: split huge pages beyond i_size under memory pressure")
+> Signed-off-by: Hugh Dickins <hughd@google.com>
 
-syzbot found the following issue on:
+Reviewed-by: Yang Shi <shy828301@gmail.com>
 
-HEAD commit:    2265c5286967 Add linux-next specific files for 20210726
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=102c92b6300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=531dbd796dcea4b4
-dashboard link: https://syzkaller.appspot.com/bug?extid=afacc3ce1215afa24615
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14d97fca300000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=174a53f8300000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+afacc3ce1215afa24615@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 8483 at fs/fuse/inode.c:1595 fuse_get_tree+0x2eb/0x3f0 fs/fuse/inode.c:1595
-Modules linked in:
-CPU: 1 PID: 8483 Comm: syz-executor536 Not tainted 5.14.0-rc3-next-20210726-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:fuse_get_tree+0x2eb/0x3f0 fs/fuse/inode.c:1595
-Code: df 48 8b 85 78 03 00 00 48 89 f9 48 c1 e9 03 80 3c 11 00 0f 85 e8 00 00 00 4c 8b ad 80 03 00 00 4c 39 e8 74 29 e8 05 25 c8 fe <0f> 0b 48 b8 00 00 00 00 00 fc ff df 4c 89 fa 48 c1 ea 03 80 3c 02
-RSP: 0018:ffffc9000d6e7d40 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff8880269e6780 RCX: 0000000000000000
-RDX: ffff888035118000 RSI: ffffffff82ada24b RDI: ffff8880169b6028
-RBP: ffff8880360d3800 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffff82ada0de R11: 0000000000000000 R12: ffff88802ada7c00
-R13: ffff8880145fe800 R14: ffff8880269e6788 R15: ffff8880360d3b78
-FS:  0000000000b25300(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4fd309fc08 CR3: 0000000027619000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- vfs_get_tree+0x89/0x2f0 fs/super.c:1498
- do_new_mount fs/namespace.c:2905 [inline]
- path_mount+0x132a/0x1fa0 fs/namespace.c:3235
- do_mount fs/namespace.c:3248 [inline]
- __do_sys_mount fs/namespace.c:3456 [inline]
- __se_sys_mount fs/namespace.c:3433 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3433
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x43f329
-Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcdd911e98 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 000000000043f329
-RDX: 0000000020002100 RSI: 00000000200020c0 RDI: 0000000000000000
-RBP: 0000000000403080 R08: 0000000020002140 R09: 0000000000400488
-R10: 0000000000004000 R11: 0000000000000246 R12: 0000000000403110
-R13: 0000000000000000 R14: 00000000004ad018 R15: 0000000000400488
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> ---
+>  include/linux/shmem_fs.h | 13 +++++++++++++
+>  mm/huge_memory.c         |  6 ++++--
+>  mm/shmem.c               | 15 ++++++++++++++-
+>  3 files changed, 31 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 8e775ce517bb..9b7f7ac52351 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -18,6 +18,7 @@ struct shmem_inode_info {
+>         unsigned long           flags;
+>         unsigned long           alloced;        /* data pages alloced to file */
+>         unsigned long           swapped;        /* subtotal assigned to swap */
+> +       pgoff_t                 fallocend;      /* highest fallocate endindex */
+>         struct list_head        shrinklist;     /* shrinkable hpage inodes */
+>         struct list_head        swaplist;       /* chain of maybes on swap */
+>         struct shared_policy    policy;         /* NUMA memory alloc policy */
+> @@ -119,6 +120,18 @@ static inline bool shmem_file(struct file *file)
+>         return shmem_mapping(file->f_mapping);
+>  }
+>
+> +/*
+> + * If fallocate(FALLOC_FL_KEEP_SIZE) has been used, there may be pages
+> + * beyond i_size's notion of EOF, which fallocate has committed to reserving:
+> + * which split_huge_page() must therefore not delete.  This use of a single
+> + * "fallocend" per inode errs on the side of not deleting a reservation when
+> + * in doubt: there are plenty of cases when it preserves unreserved pages.
+> + */
+> +static inline pgoff_t shmem_fallocend(struct inode *inode, pgoff_t eof)
+> +{
+> +       return max(eof, SHMEM_I(inode)->fallocend);
+> +}
+> +
+>  extern bool shmem_charge(struct inode *inode, long pages);
+>  extern void shmem_uncharge(struct inode *inode, long pages);
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index afff3ac87067..890fb73ac89b 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2454,11 +2454,11 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+>
+>         for (i = nr - 1; i >= 1; i--) {
+>                 __split_huge_page_tail(head, i, lruvec, list);
+> -               /* Some pages can be beyond i_size: drop them from page cache */
+> +               /* Some pages can be beyond EOF: drop them from page cache */
+>                 if (head[i].index >= end) {
+>                         ClearPageDirty(head + i);
+>                         __delete_from_page_cache(head + i, NULL);
+> -                       if (IS_ENABLED(CONFIG_SHMEM) && PageSwapBacked(head))
+> +                       if (shmem_mapping(head->mapping))
+>                                 shmem_uncharge(head->mapping->host, 1);
+>                         put_page(head + i);
+>                 } else if (!PageAnon(page)) {
+> @@ -2686,6 +2686,8 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+>                  * head page lock is good enough to serialize the trimming.
+>                  */
+>                 end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE);
+> +               if (shmem_mapping(mapping))
+> +                       end = shmem_fallocend(mapping->host, end);
+>         }
+>
+>         /*
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 0cd5c9156457..24c9da6b41c2 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -905,6 +905,9 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+>         if (lend == -1)
+>                 end = -1;       /* unsigned, so actually very big */
+>
+> +       if (info->fallocend > start && info->fallocend <= end && !unfalloc)
+> +               info->fallocend = start;
+> +
+>         pagevec_init(&pvec);
+>         index = start;
+>         while (index < end && find_lock_entries(mapping, index, end - 1,
+> @@ -2667,7 +2670,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+>         struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+>         struct shmem_inode_info *info = SHMEM_I(inode);
+>         struct shmem_falloc shmem_falloc;
+> -       pgoff_t start, index, end;
+> +       pgoff_t start, index, end, undo_fallocend;
+>         int error;
+>
+>         if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
+> @@ -2736,6 +2739,15 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+>         inode->i_private = &shmem_falloc;
+>         spin_unlock(&inode->i_lock);
+>
+> +       /*
+> +        * info->fallocend is only relevant when huge pages might be
+> +        * involved: to prevent split_huge_page() freeing fallocated
+> +        * pages when FALLOC_FL_KEEP_SIZE committed beyond i_size.
+> +        */
+> +       undo_fallocend = info->fallocend;
+> +       if (info->fallocend < end)
+> +               info->fallocend = end;
+> +
+>         for (index = start; index < end; ) {
+>                 struct page *page;
+>
+> @@ -2750,6 +2762,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+>                 else
+>                         error = shmem_getpage(inode, index, &page, SGP_FALLOC);
+>                 if (error) {
+> +                       info->fallocend = undo_fallocend;
+>                         /* Remove the !PageUptodate pages we added */
+>                         if (index > start) {
+>                                 shmem_undo_range(inode,
+> --
+> 2.26.2
+>
