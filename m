@@ -2,164 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AA353DBD3A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 18:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A9273DBD6A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 18:57:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229865AbhG3Qox (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 12:44:53 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:57584 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbhG3Qox (ORCPT
+        id S230002AbhG3Q5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 12:57:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229921AbhG3Q5j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 12:44:53 -0400
-X-Greylist: delayed 1174 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Jul 2021 12:44:52 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 920883F6B4;
-        Fri, 30 Jul 2021 18:25:11 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.99
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.99 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, NICE_REPLY_A=-1.091, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id iYCBCkGot8cO; Fri, 30 Jul 2021 18:25:10 +0200 (CEST)
-Received: by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id D1D7E3F67A;
-        Fri, 30 Jul 2021 18:25:07 +0200 (CEST)
-Received: from [192.168.0.10] (port=63860)
-        by tnonline.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <forza@tnonline.net>)
-        id 1m9VJr-0003Dz-2C; Fri, 30 Jul 2021 18:25:07 +0200
-Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
-To:     Josef Bacik <josef@toxicpanda.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc:     NeilBrown <neilb@suse.de>,
-        Zygo Blaxell <ce3g8jdj@umail.furryterror.org>,
-        Neal Gompa <ngompa13@gmail.com>,
-        Wang Yugui <wangyugui@e16-tech.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs@vger.kernel.org,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
-References: <162745567084.21659.16797059962461187633@noble.neil.brown.name>
- <CAEg-Je8Pqbw0tTw6NWkAcD=+zGStOJR0J-409mXuZ1vmb6dZsA@mail.gmail.com>
- <162751265073.21659.11050133384025400064@noble.neil.brown.name>
- <20210729023751.GL10170@hungrycats.org>
- <162752976632.21659.9573422052804077340@noble.neil.brown.name>
- <20210729232017.GE10106@hungrycats.org>
- <162761259105.21659.4838403432058511846@noble.neil.brown.name>
- <341403c0-a7a7-f6c8-5ef6-2d966b1907a8@gmx.com>
- <162762468711.21659.161298577376336564@noble.neil.brown.name>
- <bcde95bc-0bb8-a6e9-f197-590c8a0cba11@gmx.com>
- <20210730151748.GA21825@fieldses.org>
- <ae85654d-950f-04a2-8fca-145412b31e57@toxicpanda.com>
-From:   Forza <forza@tnonline.net>
-Message-ID: <f87bb0f7-270c-f79f-bccf-a3ba116ac7f8@tnonline.net>
-Date:   Fri, 30 Jul 2021 18:25:06 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Fri, 30 Jul 2021 12:57:39 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD4CCC06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 09:57:33 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id y200so12235836iof.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 09:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+vMrhHxq2Fz8e6Gv8iJtBi5orK+B6mypyqmy4OKkzLw=;
+        b=PWS130CeczEUvv0MBpfhpjSeFGPh9jIxLDs8mhnI9lOcsy6MgNNeKz81co+++BhxCT
+         2Sjrz+QgXK/a4mRyu4XKO+m3adXz5jQHE1PEk6i6VTQnl8k7ZyUVOEGQijBVBQYiKXaV
+         19Zp9P6/5Y8BlP1jcsS3lxo3Bf9VsZuH0Npi//qVGfd0sVQjT2SxmV8XJkitivyv+Rmg
+         AK1jgyb7XSeZGVDDI6wWjs15RQ1O0T+bYQ9GWMQBuCUyDD6T2G8i5t0Y1L0X3i0DK5V/
+         +N/aTi5l1kggDkz6SFoX8bk7pDCv9zkXpvIq0mJ2uXvGU5cfWJtpEbg+kxVv9cqg7kF+
+         GHAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+vMrhHxq2Fz8e6Gv8iJtBi5orK+B6mypyqmy4OKkzLw=;
+        b=GkAZwT55ICiz8y26SzhxCj3v5nWAOVlcZ9oa04rz+r6dUq05oUAJBthE+pdFd53WRt
+         58N+lF+BRPoiILDRvIiVdItZ/yYn81aUlmJ4zBMGZLM1lbgoTW2WnFiNPyyhLZ6R9iuh
+         DcIOnNrUYM1PizVnxrIjHJRbtZz/Yim/+2dRFG0rZ4zxvM6UJFDn7BWgfy4uBWUYWx6w
+         W1/ZifwwHWMJu9WQDQ43er35eAWIblI7H9MLoI6FUgMf5uYFfPxSKpRP57aFgWLVfj7x
+         hxY/arJOeOLMSQdKs17MtdpD7Nnzm6y2nwxxi91Veymw86fUcywWmaMsgtGRk7gsW00b
+         6+aw==
+X-Gm-Message-State: AOAM530iCEHQ5jFg2f3HE6pnkYKpwDPDuL0omluw1e6zi/tor8URkXD2
+        xwZFgy/AqEsSDlqWQgsXSGneDPRip6EoFk05RLM=
+X-Google-Smtp-Source: ABdhPJzRgmkq/i47iXUmcpeHtbdI6SsJOyte6tu6ONPyl+PyCnu3u5F0++/7XJq7ewknxRzyAQhGKo29t2M7jauEok4=
+X-Received: by 2002:a5d:8b03:: with SMTP id k3mr2000558ion.203.1627664252922;
+ Fri, 30 Jul 2021 09:57:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <ae85654d-950f-04a2-8fca-145412b31e57@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+References: <f183fb32-3f08-94f1-19b9-6fe2447b168c@samba.org>
+In-Reply-To: <f183fb32-3f08-94f1-19b9-6fe2447b168c@samba.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 30 Jul 2021 19:57:22 +0300
+Message-ID: <CAOQ4uxgPK+cj2BMuA2EmfkygLmJj0gXk5mM3zZOw9ftR4+Mf1Q@mail.gmail.com>
+Subject: Re: Allowed operations on O_PATH handles
+To:     Ralph Boehme <slow@samba.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>, Rich Felker <dalias@libc.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jul 30, 2021 at 12:25 PM Ralph Boehme <slow@samba.org> wrote:
+>
+> Hi!
+>
 
+Hi Ralph!
 
-On 2021-07-30 17:48, Josef Bacik wrote:
-> On 7/30/21 11:17 AM, J. Bruce Fields wrote:
->> On Fri, Jul 30, 2021 at 02:23:44PM +0800, Qu Wenruo wrote:
->>> OK, forgot it's an opt-in feature, then it's less an impact.
->>>
->>> But it can still sometimes be problematic.
->>>
->>> E.g. if the user want to put some git code into one subvolume, while
->>> export another subvolume through NFS.
->>>
->>> Then the user has to opt-in, affecting the git subvolume to lose the
->>> ability to determine subvolume boundary, right?
->>
->> Totally naive question: is it be possible to treat different subvolumes
->> differently, and give the user some choice at subvolume creation time
->> how this new boundary should behave?
->>
->> It seems like there are some conflicting priorities that can only be
->> resolved by someone who knows the intended use case.
->>
-> 
-> This is the crux of the problem.  We have no real interfaces or anything 
-> to deal with this sort of paradigm.  We do the st_dev thing because 
-> that's the most common way that tools like find or rsync use to 
-> determine they've wandered into a "different" volume.  This exists 
-> specifically because of usescases like Zygo's, where he's taking 
-> thousands of snapshots and manually excluding them from find/rsync is 
-> just not reasonable.
-> 
-> We have no good way to give the user information about what's going on, 
-> we just have these old shitty interfaces.  I asked our guys about 
-> filling up /proc/self/mountinfo with our subvolumes and they had a heart 
-> attack because we have around 2-4k subvolumes on machines, and with 
-> monitoring stuff in place we regularly read /proc/self/mountinfo to 
-> determine what's mounted and such.
-> 
-> And then there's NFS which needs to know that it's walked into a new 
-> inode space.
-> 
-> This is all super shitty, and mostly exists because we don't have a good 
-> way to expose to the user wtf is going on.
-> 
-> Personally I would be ok with simply disallowing NFS to wander into 
-> subvolumes from an exported fs.  If you want to export subvolumes then 
-> export them individually, otherwise if you walk into a subvolume from 
-> NFS you simply get an empty directory.
-> 
-> This doesn't solve the mountinfo problem where a user may want to figure 
-> out which subvol they're in, but this is where I think we could address 
-> the issue with better interfaces.  Or perhaps Neil's idea to have a 
-> common major number with a different minor number for every subvol.
-> 
-> Either way this isn't as simple as shoehorning it into automount and 
-> being done with it, we need to take a step back and think about how 
-> should this actually look, taking into account we've got 12 years of 
-> having Btrfs deployed with existing usecases that expect a certain 
-> behavior.  Thanks,
-> 
-> Josef
+> A recent commit 44a3b87444058b2cb055092cdebc63858707bf66 allows
+> utimensat() to be called on O_PATH opened handles.
+>
+> If utimensat() is allowed, why isn't fchmod()? What's the high level
+> rationale here that I'm missing? Why is this not documented in man openat.2?
+>
 
+As you noticed, there is no uniformity among the various filesystem syscalls,
+but there are some common guidelines.
 
-As a user and sysadmin I really appreciate the way Btrfs currently works.
+1. O_PATH fds are normally provided as the dirfd argument to XXXat()
+    calls (such as utimensat()).
+2. When the syscall supports empty name with dirfd to represent the
+    O_PATH fd object itself, an explicit AT_EMPTY_PATH is required
 
-We use hourly snapshots which are exposed over Samba as "Previous 
-Versions" to Windows users. This amounts to thousands of snapshots, all 
-user serviceable. A great feature!
+So the commit above simply brings utimensat() up to standards.
 
-In Samba world we have a mount option[1] called "noserverino" which lets 
-the client generate unique inode numbers, rather than using the server 
-provided inode numbers. This allows Linux clients to work well against 
-servers exposing subvolumes and snapshots.
+>  From man openat.2
+>
+>    O_PATH (since Linux 2.6.39)
+>
+>      Obtain a file descriptor that can be used for two purposes:
+>      to indicate a location in the filesystem tree and to perform
+>      operations that act purely at the file descriptor level. The
+>      file itself is not opened, and other file operations (e.g.,
+>      read(2),  write(2),   fchmod(2),   fchown(2),   fgetxattr(2),
+>      ioctl(2), mmap(2)) fail with the error EBADF.
+>      ...
+>
+> My understanding of which operations are allowed on file handles opened
+> with O_PATH was that generally modifying operations would not be
+> allowed, but only read access to inode data.
+>
 
-NFS has really old roots and had to make choices that we don't really 
-have to make today. Can we not provide something similar to mount.cifs 
-that generate unique inode numbers for the clients. This could be either 
-an nfsd export option (such as /mnt/foo *(rw,uniq_inodes)) or a mount 
-option on the clients.
+I think the rationale is that they are allowed when a user explicitly
+requests to use them via a new XXXat(..., AT_EMPTY_PATH) API.
 
-One worry I have with making subvolumes automountpoints is that it might 
-affect the possibility to cp --reflink across that boundary.
+write(),read(),mmap() are different because they access file data,
+so it is required that the file is "really open".
 
+Letting fgetxattr() accept an O_PATH was actually suggested [1],
+but the author (Miklos) dropped it shortly after, because there is
+already a safe API to achieve the same goal using magic /proc
+symlink (see details in [1]).
 
+If you need to operate on a (real) symlink target and you have an
+O_PATH to the (real) symlink, you will need to work a bit harder.
+Adding AT_EMPTY_PATH to fchmodat() and friends could make
+this task easier and I don't think there would be an objection to do
+that, just someone needs to drive the work...
 
-[1] https://www.samba.org/~ab/output/htmldocs/manpages-3/mount.cifs.8.html
+fchmodat() specifically is a bit broken and an attempt to introduce
+fchmodat2() was attempted [2], but did not go through.
 
+> Can someone please help me to make sense of this?
+>
 
+Does that answer your question or do you have other needs
+that the current API cannot provide?
 
+Thanks,
+Amir.
+
+[1] https://lore.kernel.org/linux-fsdevel/CAOssrKeV7g0wPg4ozspG4R7a+5qARqWdG+GxWtXB-MCfbVM=9A@mail.gmail.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200916002335.GQ3265@brightrain.aerifal.cx/
