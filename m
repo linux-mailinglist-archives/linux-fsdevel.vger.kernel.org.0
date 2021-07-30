@@ -2,340 +2,1133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B171F3DB5FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 11:33:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B6E43DB62A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 11:41:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238315AbhG3JdJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 05:33:09 -0400
-Received: from esa14.fujitsucc.c3s2.iphmx.com ([68.232.156.101]:8054 "EHLO
-        esa14.fujitsucc.c3s2.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238298AbhG3JdI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 05:33:08 -0400
-X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Jul 2021 05:33:07 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1627637583; x=1659173583;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=+mnf66uj4w0fnfMNjYsus6KCqgk1b/IsA2hOc1c4H0c=;
-  b=ss6raf3o5KSX4bmimLpQ7Pc/RWIRHOaU8w8LMpPqMI6bC4Mo8bdZoPXy
-   6a+jf1PUhORiC1Q5b4QCBsVFEPA1HUJHiAKbtVMuOghKHFRgNCtTZAr5r
-   f0eEKZCSn00JXTgu3SYAWuEVxh9gs5HsdLcCd0BGIkvA21VOT2zG4er8d
-   AVgx2HRZqlr+AMzaj/RuPh22qdOnwGXTFpsw5wCn/wYCuchU3djdblSqa
-   Dbu8zBJ5Qzu9M3Rmrd0s7BTApRrzLkQqz+jRQ/6Ak+G+L6FjkxSrYaojk
-   VfzQgb6z6E8wK5zarKJga/aTXUl6CsoMSOEQQXrKiUuQVmTfpVwXWELoY
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10060"; a="35766196"
-X-IronPort-AV: E=Sophos;i="5.84,281,1620658800"; 
-   d="scan'208";a="35766196"
-Received: from mail-os2jpn01lp2053.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([104.47.92.53])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2021 18:25:50 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Oe8RVtSxH1Cgy/NmForoEuMVTwpJB9d1SnxryzYKXhoj7lov8Zk06LVNDv567w9aoMAyHdM1AUdoS9nrlAwLvY7itveg66aS0EhlPbIuAcGMQnNnF82Kzqmrul/73tat8wnqCExwJI3JulTRV/FaHC1lxLC3uXZ2lrA0KtFDzV1M5WZnKHYEkpcHc+vzedvngJKZTQAn4Owlg/ewZf/UYJ6PcbWh1IYxSnZiuzLXhC7eS4D6Odd5In78CRaZadtciAliJQEd1AAZztowFHMlS++/t0QeXar/GoipqHoxP7UNX99PreZcYV0HjM9zUrs6Q3VkMuQZkJEUntCGu2eGgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+mnf66uj4w0fnfMNjYsus6KCqgk1b/IsA2hOc1c4H0c=;
- b=QoGf/SZffCf7cdVwJx1ObnkpcbU1CdeUDG+T3paLceT+eA5EHzfBxnijm0Yi6IgNHYVrUAa4t5oYmfuYdGHDHnrmTbomeOtHCXNs0SgendcLaxrG8E7EqirvqitBztgZh2Fc6bD0zJs0ugL2ihZ2PGgozNhJkN+Snabd7+cRHpslUAUh5KkCI4jEhGQE3jBYzSL9oOmQWhPgsCIfhgl1xn9w2gyxQ8NSDNR6eI/FvI2IMg2d+pUGAXtfv7G05QezSv5HBL7Uv+Ym70uLNwmkjf7hNyjt0Ix5XdtW36PA1jMV7Hpx2fo4mam80vRKt3rTakamiJiumo2/XAhDwA0G0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+mnf66uj4w0fnfMNjYsus6KCqgk1b/IsA2hOc1c4H0c=;
- b=XYfFjAV8txAtvxBR2svFuzUNxV9D99b4GmtN0wCKFOF07VgkbtmYSZnUBRiST9xdxK3qJHstDrSqV6EofwWEPHMLtEi0ouMGo0jQ17hHaq/2EK5/diSwcV0YkSoZ3t2E/du512ikJaRQG4kfY4x6yYT67RR+fR5VnIcxNUKt5TY=
-Received: from OSBPR01MB2920.jpnprd01.prod.outlook.com (2603:1096:604:18::16)
- by OSAPR01MB4610.jpnprd01.prod.outlook.com (2603:1096:604:6e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.21; Fri, 30 Jul
- 2021 09:25:43 +0000
-Received: from OSBPR01MB2920.jpnprd01.prod.outlook.com
- ([fe80::b88e:7015:e4a2:3d9a]) by OSBPR01MB2920.jpnprd01.prod.outlook.com
- ([fe80::b88e:7015:e4a2:3d9a%7]) with mapi id 15.20.4352.034; Fri, 30 Jul 2021
- 09:25:43 +0000
-From:   "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
-To:     David Hildenbrand <david@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>
-CC:     "Darrick J. Wong" <djwong@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@lst.de" <hch@lst.de>, "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>
-Subject: RE: [PATCH v6 6/9] xfs: Implement ->corrupted_range() for XFS
-Thread-Topic: [PATCH v6 6/9] xfs: Implement ->corrupted_range() for XFS
-Thread-Index: AQHXhSBovZIp2W/9YE+rhx/Wuicgv6tbPLOAgAACERA=
-Date:   Fri, 30 Jul 2021 09:25:43 +0000
-Message-ID: <OSBPR01MB2920E338AE42C6696EEFD3AAF4EC9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
-References: <20210730085245.3069812-1-ruansy.fnst@fujitsu.com>
- <20210730085245.3069812-7-ruansy.fnst@fujitsu.com>
- <f0037d29-9402-6357-ce91-ef6e2e5b7c04@redhat.com>
-In-Reply-To: <f0037d29-9402-6357-ce91-ef6e2e5b7c04@redhat.com>
-Accept-Language: en-US, zh-CN
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: redhat.com; dkim=none (message not signed)
- header.d=none;redhat.com; dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ff270130-5630-4402-dbfd-08d9533c018a
-x-ms-traffictypediagnostic: OSAPR01MB4610:
-x-microsoft-antispam-prvs: <OSAPR01MB4610508471B0D588B1831A36F4EC9@OSAPR01MB4610.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: XWPP4udVU/wLzG+Cp7l/nQJrb/YgJi/AihPMuGkwcXE/kLnVhkw8pfR7hjPCTFuf6nUDWQE5dVCZnndznZ/r3Yo41tsZApGjpp+w8tyemj3TIDIL6Ca8dTnnHBc9tvnJwn+w4dvGjAYmEosKullIiiMRRB+wLtb3WKYM1iIFxVg65EU2o9zFcmdpRdwSl1FJB67mpXjcuLeDA5aIG13k+hyNY5c/pJwHUx5utGlx+QmKxDlne+aGdXNepP7n3RS75HDcXv7JtkaBaaw9Fj1wIFd+e/2a378QKrpbQR/6NTo5Hi/A8SeDiAInSdvKGfCmc9Hn6HnkF73T16BVD6GwNvAPCFAkkwmog/U9AoY9CxhWFkEqt3pFp601B52fTd1WQZvBWrE18Tl+ezN5I+PtEc5k/n9plKxfYE4Cm5XOSwtytSnnOoiGX7OusuGK2Zka6nDIAJj4M1wbWEw4m7qPquVg+seYNiN3zC6yQKAqUDopdPh7MMVVDra4jXD2TiLU6jPkwT2wpcQQR8dpKl4noyS8VtjJH72JxwbQ6G+u/jBCVuH2oKYQpzvRuvfW1rcYHCPGZQUEPamntYqkqPnZQWE3Ovw5nPMpYLMLWUhrwSYzNCLiIRl4YdkkFVd0fDnK5iQeehQEInAOLGk94EXyCOYfq5s14cRgl74mQNh5tAydkF6/tWwkWrNTKfARwDHa5rd5jRfG3KfGdiT/TzY9dg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSBPR01MB2920.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(39860400002)(136003)(346002)(396003)(376002)(2906002)(26005)(316002)(86362001)(7416002)(6506007)(186003)(110136005)(71200400001)(4326008)(5660300002)(122000001)(85182001)(38070700005)(38100700002)(8676002)(478600001)(53546011)(9686003)(7696005)(66476007)(52536014)(83380400001)(55016002)(33656002)(8936002)(76116006)(66946007)(30864003)(66446008)(64756008)(54906003)(66556008);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NFVMSm1GVlRsQzZMMG1KbXZuaDVGSXh4UVd4MTlOZzdtY3dFbnB4V0g3b0Jl?=
- =?utf-8?B?SjZrVTVFR0YvM0Y4S0NJd0EzM01idXF6V1VWTFBOL3ljU0krSzhtdkp3Smx2?=
- =?utf-8?B?NTlaaGxGSXRUc1BWb0VaWVgvbWpoSTdiWFBmeGgwNERmWTZGUE9vRENGazJM?=
- =?utf-8?B?MGc2cEJmditPd1RvL2NTTHRZNGlOajFsbE9ubzlaRDVmbTBaU3dwTWJqOHBS?=
- =?utf-8?B?ck9nb2NtTmdKdFRRTHZqRGJqdS9jcDlwbXMxd2YweFNSTnJFejRjclJrVXRz?=
- =?utf-8?B?Y1BvSFdYdmxnOTBtN29YSWxvMUlTcmkzOXlQUExZTTZNN1dMNTY4Q2FUZytT?=
- =?utf-8?B?c2pMUUp6N2ttRFg3UGVab3hmeVVVbi9Ld3paM2FDZUZ2ZmhvTE1BdVhCNDhm?=
- =?utf-8?B?Q0RDWjJtS3ovbnl5SXY3SlZodGRFZHU2VDQ5RmZ6NW0vYXhzWnpETnFMVmVD?=
- =?utf-8?B?QUY5RVg4QU9ZaS82eW9WOEdtcW14WU9nNEwyYk5XR1BvTjhhTUhWbHJjNS9N?=
- =?utf-8?B?WWZEeWJvandaNEo3dWZRck9pRDRTNUdZcDhTVjZJbW1jMFBLWVUrRzlBaUg2?=
- =?utf-8?B?K1dxalBrcndzZXgyNjA3ak9WNU12czhZd0F4UG1jRFFiZm1KSTdRcXdlMnBi?=
- =?utf-8?B?UStCckVqaWR1WlBYdmN6NlQ5bVhRelpWMXBsVlduaTZFTzdlRENxSjBvOU5s?=
- =?utf-8?B?TzNUamI4d0NPWmR6Y0xsVHFFTDhTKzkxZ3lqcXN2dVFPOExuOWpka3RrNUNG?=
- =?utf-8?B?RTF0ZUxHRG1FR3RDT1FZOTdlb3l3VHpiRmNMTUtpOTJFbTUrQW4wWHJoS1lw?=
- =?utf-8?B?VDdkTHlGQTNnZ0xuSkZBUlR5bXlYRFFTK05WMmE2aUNZbnRnR2liVk55Y203?=
- =?utf-8?B?ampaQ1JNMGlkUXZ4aDQ2ZXdQTjBBaUNoY3U0ZlB1eTMyOEp6NDZydlh0SjZt?=
- =?utf-8?B?RUNON3d3U0xxaktUOW1WeUdkc0VQanZGM21wVnVjOU1HaEVFSFNhYlBiUVFW?=
- =?utf-8?B?aktYakhyRXJTVVEveVhLSVlOMjV2Y0kyZTUvVm9jRFZiTVJFZzhxYlc5bldI?=
- =?utf-8?B?ZU16MytUbTRmUFZBMlYvUjU0dzdhYkZ3VW5kbFFrbEZyWmxQVXNRTXUweXlS?=
- =?utf-8?B?QWc0U0hkUjFNdkNWcEFtejZpc3ZCY1VIS3c5c2t6dmJ2ZDdyMGladDh6SHFS?=
- =?utf-8?B?S0ZYSlpDamZKWllkaFhwa3ZEUENROXFEQXB6ZjMvUWQ5bisrbXp4Yyt1cE5u?=
- =?utf-8?B?TnlkUjR5cWhiRWg4Q0dKeDlaZ21iOEExTWtodjQ2R0ZKM1ZWaStPd1ZBSkp6?=
- =?utf-8?B?VGtaQ2Z4OXRFMVFFUC9IbTl3bzZSOEhZcVMzWDRhTEo3Vkh3VnVmSTlXVjMv?=
- =?utf-8?B?ZTJMRUlBd1lSMk9rbllqS1U3SkxDa2duMU5xaHBWbmw0RWNHSnRwdzdWOTZ6?=
- =?utf-8?B?aWtOQWQ4NGo3bGpqczVrOHRkTDdlREVEbHZXaHJwakh5cTRwOWRGVEZKMlRh?=
- =?utf-8?B?MHphYmxtVzY5V2Y1b3M0QzJoTEZyOUJKL3BrdTFRWExyZjlzbWkyWklpbGhp?=
- =?utf-8?B?enZPVHhVYmtoYzlqWUpVR3gxbnBObGhDVXFBeEV2akh3Zm5GVHBGZUhoUjVP?=
- =?utf-8?B?bUpDZTZVNmovU2VrVUh2Y25SVDJ3TmxwRHNyQ29ZUm9UZmZhcWJ6ZUJRLytU?=
- =?utf-8?B?M1kzb1U3QzZIZ2Z6UnpiWVV4R25TcXVYTlFsU0RZM3lYZ1lBQzVsUUlkemdZ?=
- =?utf-8?Q?S2E8/w0SQo3ylg/+FIJ1WFOPpsYNns4o4DloRC0?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S238271AbhG3Jlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 05:41:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231159AbhG3Jln (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Jul 2021 05:41:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 70C33603E9;
+        Fri, 30 Jul 2021 09:41:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627638099;
+        bh=CPHYDTR1oYdXfo1M632p9LWhgverub63Lz/0wZ1qIzA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mmhB4+0YQSfLRtrRkJpQtAJgAA3ezg/rN56Sckx+OccAaW6jdJsEvEpuerlW1Kdki
+         2AHd7155Z8YLU+W03FKof8MhTOuxa+4Z1qAPA5OFJA4YELlBnRPzgc5mfU4WCkOkk/
+         CJYJ7YosXrk9+nZml+P4thrwGKsc0bRThgQe5eOL5cjOusMEp3ATE0/Bh9rcm1QCoM
+         BrYlTi6U2YR1YGEmTc2f4AEtouy4LnBKJpcfpVLUmwM+iB2adPi0dRrR9qh/TYCfI5
+         mug2mXODzqhXs4pDbY5GTDBxrjkvBa26XE69ZZsG/GRg2QVNN4XUOiU203xN5owF+z
+         VeaBLqSEASFYg==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Alejandro Colomar <alx.manpages@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        linux-man@vger.kernel.org
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v2] mount_setattr.2: New manual page documenting the mount_setattr() system call
+Date:   Fri, 30 Jul 2021 11:41:21 +0200
+Message-Id: <20210730094121.3252024-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2920.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff270130-5630-4402-dbfd-08d9533c018a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2021 09:25:43.7477
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Qf53AchwNYjk0dl7MSrNOsYq86Aa/WJLEk3iIFLfgpXnL6qFRFhsdBNvbo/C4tm7aYNDBroIRJnHuReu6gPFGw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB4610
+X-Developer-Signature: v=1; a=openpgp-sha256; l=31859; h=from:subject; bh=gTLhuPCTzn81eP+Vsfysd2qHKkv42H/ixIHIEJe8B0s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQyn7T7t/mLSpVF1Z3jCufMKrdPXvT3zhdPnUmXrarOr2L/ /qRavaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiyy8xMhw99T3xWKydvabgwlxGW+ mZzoymb4L0K/MPPs0wFvGI0GFk+Cb3MVvpfrO1zYb5cRuv3Cwyl+64YXxkclf//PWfHnO3cgEA
+X-Developer-Key: i=christian.brauner@ubuntu.com; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY2IDYv
-OV0geGZzOiBJbXBsZW1lbnQgLT5jb3JydXB0ZWRfcmFuZ2UoKSBmb3IgWEZTDQo+IA0KPiBUaGVy
-ZSBpcyBubyBvY3VycmVuY2Ugb2YgImNvcnJ1cHRlZF9yYW5nZSIgaW4gdGhpcyBwYXRjaC4gRG9l
-cyB0aGUgcGF0Y2gNCj4gc3ViamVjdCBuZWVkIHVwZGF0aW5nPw0KPiANCg0KWWVzLCBJIGZvcmdv
-dCB0aGlzLi4uICBUaGFua3MgZm9yIHBvaW50aW5nIG91dC4NCg0KDQotLQ0KVGhhbmtzLA0KUnVh
-bi4NCg0KPiANCj4gT24gMzAuMDcuMjEgMTA6NTIsIFNoaXlhbmcgUnVhbiB3cm90ZToNCj4gPiBU
-aGlzIGZ1bmN0aW9uIGlzIHVzZWQgdG8gaGFuZGxlIGVycm9ycyB3aGljaCBtYXkgY2F1c2UgZGF0
-YSBsb3N0IGluDQo+ID4gZmlsZXN5c3RlbS4gIFN1Y2ggYXMgbWVtb3J5IGZhaWx1cmUgaW4gZnNk
-YXggbW9kZS4NCj4gPg0KPiA+IElmIHRoZSBybWFwIGZlYXR1cmUgb2YgWEZTIGVuYWJsZWQsIHdl
-IGNhbiBxdWVyeSBpdCB0byBmaW5kIGZpbGVzIGFuZA0KPiA+IG1ldGFkYXRhIHdoaWNoIGFyZSBh
-c3NvY2lhdGVkIHdpdGggdGhlIGNvcnJ1cHQgZGF0YS4gIEZvciBub3cgYWxsIHdlIGRvDQo+ID4g
-aXMga2lsbCBwcm9jZXNzZXMgd2l0aCB0aGF0IGZpbGUgbWFwcGVkIGludG8gdGhlaXIgYWRkcmVz
-cyBzcGFjZXMsIGJ1dA0KPiA+IGZ1dHVyZSBwYXRjaGVzIGNvdWxkIGFjdHVhbGx5IGRvIHNvbWV0
-aGluZyBhYm91dCBjb3JydXB0IG1ldGFkYXRhLg0KPiA+DQo+ID4gQWZ0ZXIgdGhhdCwgdGhlIG1l
-bW9yeSBmYWlsdXJlIG5lZWRzIHRvIG5vdGlmeSB0aGUgcHJvY2Vzc2VzIHdobyBhcmUNCj4gPiB1
-c2luZyB0aG9zZSBmaWxlcy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFNoaXlhbmcgUnVhbiA8
-cnVhbnN5LmZuc3RAZnVqaXRzdS5jb20+DQo+ID4gLS0tDQo+ID4gICBkcml2ZXJzL2RheC9zdXBl
-ci5jIHwgIDEyICsrKysNCj4gPiAgIGZzL3hmcy94ZnNfZnNvcHMuYyAgfCAgIDUgKysNCj4gPiAg
-IGZzL3hmcy94ZnNfbW91bnQuaCAgfCAgIDEgKw0KPiA+ICAgZnMveGZzL3hmc19zdXBlci5jICB8
-IDEzNQ0KPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+
-ICAgaW5jbHVkZS9saW51eC9kYXguaCB8ICAxMyArKysrKw0KPiA+ICAgNSBmaWxlcyBjaGFuZ2Vk
-LCAxNjYgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZGF4L3N1
-cGVyLmMgYi9kcml2ZXJzL2RheC9zdXBlci5jDQo+ID4gaW5kZXggMDBjMzJkZmE1NjY1Li42M2Y3
-YjYzZDA3OGQgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9kYXgvc3VwZXIuYw0KPiA+ICsrKyBi
-L2RyaXZlcnMvZGF4L3N1cGVyLmMNCj4gPiBAQCAtNjUsNiArNjUsMTggQEAgc3RydWN0IGRheF9k
-ZXZpY2UgKmZzX2RheF9nZXRfYnlfYmRldihzdHJ1Y3QNCj4gYmxvY2tfZGV2aWNlICpiZGV2KQ0K
-PiA+ICAgCXJldHVybiBkYXhfZ2V0X2J5X2hvc3QoYmRldi0+YmRfZGlzay0+ZGlza19uYW1lKTsN
-Cj4gPiAgIH0NCj4gPiAgIEVYUE9SVF9TWU1CT0xfR1BMKGZzX2RheF9nZXRfYnlfYmRldik7DQo+
-ID4gKw0KPiA+ICt2b2lkIGZzX2RheF9zZXRfaG9sZGVyKHN0cnVjdCBkYXhfZGV2aWNlICpkYXhf
-ZGV2LCB2b2lkICpob2xkZXIsDQo+ID4gKwkJY29uc3Qgc3RydWN0IGRheF9ob2xkZXJfb3BlcmF0
-aW9ucyAqb3BzKQ0KPiA+ICt7DQo+ID4gKwlkYXhfc2V0X2hvbGRlcihkYXhfZGV2LCBob2xkZXIs
-IG9wcyk7DQo+ID4gK30NCj4gPiArRVhQT1JUX1NZTUJPTF9HUEwoZnNfZGF4X3NldF9ob2xkZXIp
-Ow0KPiA+ICt2b2lkICpmc19kYXhfZ2V0X2hvbGRlcihzdHJ1Y3QgZGF4X2RldmljZSAqZGF4X2Rl
-dikNCj4gPiArew0KPiA+ICsJcmV0dXJuIGRheF9nZXRfaG9sZGVyKGRheF9kZXYpOw0KPiA+ICt9
-DQo+ID4gK0VYUE9SVF9TWU1CT0xfR1BMKGZzX2RheF9nZXRfaG9sZGVyKTsNCj4gPiAgICNlbmRp
-Zg0KPiA+DQo+ID4gICBib29sIF9fZ2VuZXJpY19mc2RheF9zdXBwb3J0ZWQoc3RydWN0IGRheF9k
-ZXZpY2UgKmRheF9kZXYsDQo+ID4gZGlmZiAtLWdpdCBhL2ZzL3hmcy94ZnNfZnNvcHMuYyBiL2Zz
-L3hmcy94ZnNfZnNvcHMuYw0KPiA+IGluZGV4IDZlZDI5YjE1ODMxMi4uZTk2ZGRiNWMyOGJjIDEw
-MDY0NA0KPiA+IC0tLSBhL2ZzL3hmcy94ZnNfZnNvcHMuYw0KPiA+ICsrKyBiL2ZzL3hmcy94ZnNf
-ZnNvcHMuYw0KPiA+IEBAIC01NDksNiArNTQ5LDExIEBAIHhmc19kb19mb3JjZV9zaHV0ZG93bigN
-Cj4gPiAgIAkJCQlmbGFncywgX19yZXR1cm5fYWRkcmVzcywgZm5hbWUsIGxubnVtKTsNCj4gPiAg
-IAkJaWYgKFhGU19FUlJMRVZFTF9ISUdIIDw9IHhmc19lcnJvcl9sZXZlbCkNCj4gPiAgIAkJCXhm
-c19zdGFja190cmFjZSgpOw0KPiA+ICsJfSBlbHNlIGlmIChmbGFncyAmIFNIVVRET1dOX0NPUlJV
-UFRfTUVUQSkgew0KPiA+ICsJCXhmc19hbGVydF90YWcobXAsIFhGU19QVEFHX1NIVVRET1dOX0NP
-UlJVUFQsDQo+ID4gKyJDb3JydXB0aW9uIG9mIG9uLWRpc2sgbWV0YWRhdGEgZGV0ZWN0ZWQuICBT
-aHV0dGluZyBkb3duIGZpbGVzeXN0ZW0iKTsNCj4gPiArCQlpZiAoWEZTX0VSUkxFVkVMX0hJR0gg
-PD0geGZzX2Vycm9yX2xldmVsKQ0KPiA+ICsJCQl4ZnNfc3RhY2tfdHJhY2UoKTsNCj4gPiAgIAl9
-IGVsc2UgaWYgKGxvZ2Vycm9yKSB7DQo+ID4gICAJCXhmc19hbGVydF90YWcobXAsIFhGU19QVEFH
-X1NIVVRET1dOX0xPR0VSUk9SLA0KPiA+ICAgIkxvZyBJL08gZXJyb3IgKDB4JXgpIGRldGVjdGVk
-IGF0ICVwUyAoJXM6JWQpLiBTaHV0dGluZyBkb3duIGZpbGVzeXN0ZW0iLA0KPiA+IGRpZmYgLS1n
-aXQgYS9mcy94ZnMveGZzX21vdW50LmggYi9mcy94ZnMveGZzX21vdW50LmgNCj4gPiBpbmRleCBj
-NzhiNjNmZTc3OWEuLjIwM2ViNjJkMTZkMCAxMDA2NDQNCj4gPiAtLS0gYS9mcy94ZnMveGZzX21v
-dW50LmgNCj4gPiArKysgYi9mcy94ZnMveGZzX21vdW50LmgNCj4gPiBAQCAtMjc3LDYgKzI3Nyw3
-IEBAIHZvaWQgeGZzX2RvX2ZvcmNlX3NodXRkb3duKHN0cnVjdCB4ZnNfbW91bnQgKm1wLA0KPiBp
-bnQgZmxhZ3MsIGNoYXIgKmZuYW1lLA0KPiA+ICAgI2RlZmluZSBTSFVURE9XTl9MT0dfSU9fRVJS
-T1IJMHgwMDAyCS8qIHdyaXRlIGF0dGVtcHQgdG8gdGhlDQo+IGxvZyBmYWlsZWQgKi8NCj4gPiAg
-ICNkZWZpbmUgU0hVVERPV05fRk9SQ0VfVU1PVU5UCTB4MDAwNAkvKiBzaHV0ZG93biBmcm9tDQo+
-IGEgZm9yY2VkIHVubW91bnQgKi8NCj4gPiAgICNkZWZpbmUgU0hVVERPV05fQ09SUlVQVF9JTkNP
-UkUJMHgwMDA4CS8qIGNvcnJ1cHQNCj4gaW4tbWVtb3J5IGRhdGEgc3RydWN0dXJlcyAqLw0KPiA+
-ICsjZGVmaW5lIFNIVVRET1dOX0NPUlJVUFRfTUVUQQkweDAwMTAgIC8qIGNvcnJ1cHQgbWV0YWRh
-dGEgb24NCj4gZGV2aWNlICovDQo+ID4NCj4gPiAgIC8qDQo+ID4gICAgKiBGbGFncyBmb3IgeGZz
-X21vdW50ZnMNCj4gPiBkaWZmIC0tZ2l0IGEvZnMveGZzL3hmc19zdXBlci5jIGIvZnMveGZzL3hm
-c19zdXBlci5jDQo+ID4gaW5kZXggMmM5ZTI2YTQ0NTQ2Li40YTM2MmUxNDMxOGQgMTAwNjQ0DQo+
-ID4gLS0tIGEvZnMveGZzL3hmc19zdXBlci5jDQo+ID4gKysrIGIvZnMveGZzL3hmc19zdXBlci5j
-DQo+ID4gQEAgLTM3LDExICszNywxOSBAQA0KPiA+ICAgI2luY2x1ZGUgInhmc19yZWZsaW5rLmgi
-DQo+ID4gICAjaW5jbHVkZSAieGZzX3B3b3JrLmgiDQo+ID4gICAjaW5jbHVkZSAieGZzX2FnLmgi
-DQo+ID4gKyNpbmNsdWRlICJ4ZnNfYWxsb2MuaCINCj4gPiArI2luY2x1ZGUgInhmc19ybWFwLmgi
-DQo+ID4gKyNpbmNsdWRlICJ4ZnNfcm1hcF9idHJlZS5oIg0KPiA+ICsjaW5jbHVkZSAieGZzX3J0
-YWxsb2MuaCINCj4gPiArI2luY2x1ZGUgInhmc19iaXQuaCINCj4gPg0KPiA+ICAgI2luY2x1ZGUg
-PGxpbnV4L21hZ2ljLmg+DQo+ID4gICAjaW5jbHVkZSA8bGludXgvZnNfY29udGV4dC5oPg0KPiA+
-ICAgI2luY2x1ZGUgPGxpbnV4L2ZzX3BhcnNlci5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvbW0u
-aD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L2RheC5oPg0KPiA+DQo+ID4gK3N0YXRpYyBjb25zdCBz
-dHJ1Y3QgZGF4X2hvbGRlcl9vcGVyYXRpb25zIHhmc19kYXhfaG9sZGVyX29wZXJhdGlvbnM7DQo+
-ID4gICBzdGF0aWMgY29uc3Qgc3RydWN0IHN1cGVyX29wZXJhdGlvbnMgeGZzX3N1cGVyX29wZXJh
-dGlvbnM7DQo+ID4NCj4gPiAgIHN0YXRpYyBzdHJ1Y3Qga3NldCAqeGZzX2tzZXQ7CQkvKiB0b3At
-bGV2ZWwgeGZzIHN5c2ZzIGRpciAqLw0KPiA+IEBAIC0zNTIsNiArMzYwLDcgQEAgeGZzX2Nsb3Nl
-X2RldmljZXMoDQo+ID4NCj4gPiAgIAkJeGZzX2ZyZWVfYnVmdGFyZyhtcC0+bV9sb2dkZXZfdGFy
-Z3ApOw0KPiA+ICAgCQl4ZnNfYmxrZGV2X3B1dChsb2dkZXYpOw0KPiA+ICsJCWZzX2RheF9zZXRf
-aG9sZGVyKGRheF9sb2dkZXYsIE5VTEwsIE5VTEwpOw0KPiA+ICAgCQlmc19wdXRfZGF4KGRheF9s
-b2dkZXYpOw0KPiA+ICAgCX0NCj4gPiAgIAlpZiAobXAtPm1fcnRkZXZfdGFyZ3ApIHsNCj4gPiBA
-QCAtMzYwLDkgKzM2OSwxMSBAQCB4ZnNfY2xvc2VfZGV2aWNlcygNCj4gPg0KPiA+ICAgCQl4ZnNf
-ZnJlZV9idWZ0YXJnKG1wLT5tX3J0ZGV2X3RhcmdwKTsNCj4gPiAgIAkJeGZzX2Jsa2Rldl9wdXQo
-cnRkZXYpOw0KPiA+ICsJCWZzX2RheF9zZXRfaG9sZGVyKGRheF9ydGRldiwgTlVMTCwgTlVMTCk7
-DQo+ID4gICAJCWZzX3B1dF9kYXgoZGF4X3J0ZGV2KTsNCj4gPiAgIAl9DQo+ID4gICAJeGZzX2Zy
-ZWVfYnVmdGFyZyhtcC0+bV9kZGV2X3RhcmdwKTsNCj4gPiArCWZzX2RheF9zZXRfaG9sZGVyKGRh
-eF9kZGV2LCBOVUxMLCBOVUxMKTsNCj4gPiAgIAlmc19wdXRfZGF4KGRheF9kZGV2KTsNCj4gPiAg
-IH0NCj4gPg0KPiA+IEBAIC0zODYsNiArMzk3LDcgQEAgeGZzX29wZW5fZGV2aWNlcygNCj4gPiAg
-IAlzdHJ1Y3QgYmxvY2tfZGV2aWNlCSpsb2dkZXYgPSBOVUxMLCAqcnRkZXYgPSBOVUxMOw0KPiA+
-ICAgCWludAkJCWVycm9yOw0KPiA+DQo+ID4gKwlmc19kYXhfc2V0X2hvbGRlcihkYXhfZGRldiwg
-bXAsICZ4ZnNfZGF4X2hvbGRlcl9vcGVyYXRpb25zKTsNCj4gPiAgIAkvKg0KPiA+ICAgCSAqIE9w
-ZW4gcmVhbCB0aW1lIGFuZCBsb2cgZGV2aWNlcyAtIG9yZGVyIGlzIGltcG9ydGFudC4NCj4gPiAg
-IAkgKi8NCj4gPiBAQCAtMzk0LDYgKzQwNiw5IEBAIHhmc19vcGVuX2RldmljZXMoDQo+ID4gICAJ
-CWlmIChlcnJvcikNCj4gPiAgIAkJCWdvdG8gb3V0Ow0KPiA+ICAgCQlkYXhfbG9nZGV2ID0gZnNf
-ZGF4X2dldF9ieV9iZGV2KGxvZ2Rldik7DQo+ID4gKwkJaWYgKGRheF9sb2dkZXYgIT0gZGF4X2Rk
-ZXYpDQo+ID4gKwkJCWZzX2RheF9zZXRfaG9sZGVyKGRheF9sb2dkZXYsIG1wLA0KPiA+ICsJCQkJ
-ICAgICAgICZ4ZnNfZGF4X2hvbGRlcl9vcGVyYXRpb25zKTsNCj4gPiAgIAl9DQo+ID4NCj4gPiAg
-IAlpZiAobXAtPm1fcnRuYW1lKSB7DQo+ID4gQEAgLTQwOCw2ICs0MjMsNyBAQCB4ZnNfb3Blbl9k
-ZXZpY2VzKA0KPiA+ICAgCQkJZ290byBvdXRfY2xvc2VfcnRkZXY7DQo+ID4gICAJCX0NCj4gPiAg
-IAkJZGF4X3J0ZGV2ID0gZnNfZGF4X2dldF9ieV9iZGV2KHJ0ZGV2KTsNCj4gPiArCQlmc19kYXhf
-c2V0X2hvbGRlcihkYXhfcnRkZXYsIG1wLCAmeGZzX2RheF9ob2xkZXJfb3BlcmF0aW9ucyk7DQo+
-ID4gICAJfQ0KPiA+DQo+ID4gICAJLyoNCj4gPiBAQCAtMTA3MCw2ICsxMDg2LDEyNSBAQCB4ZnNf
-ZnNfZnJlZV9jYWNoZWRfb2JqZWN0cygNCj4gPiAgIAlyZXR1cm4geGZzX3JlY2xhaW1faW5vZGVz
-X25yKFhGU19NKHNiKSwgc2MtPm5yX3RvX3NjYW4pOw0KPiA+ICAgfQ0KPiA+DQo+ID4gK3N0YXRp
-YyBpbnQNCj4gPiAreGZzX2NvcnJ1cHRfaGVscGVyKA0KPiA+ICsJc3RydWN0IHhmc19idHJlZV9j
-dXIJCSpjdXIsDQo+ID4gKwlzdHJ1Y3QgeGZzX3JtYXBfaXJlYwkJKnJlYywNCj4gPiArCXZvaWQJ
-CQkJKmRhdGEpDQo+ID4gK3sNCj4gPiArCXN0cnVjdCB4ZnNfaW5vZGUJCSppcDsNCj4gPiArCXN0
-cnVjdCBhZGRyZXNzX3NwYWNlCQkqbWFwcGluZzsNCj4gPiArCWludAkJCQllcnJvciA9IDAsICpm
-bGFncyA9IGRhdGEsIGk7DQo+ID4gKw0KPiA+ICsJaWYgKFhGU19STUFQX05PTl9JTk9ERV9PV05F
-UihyZWMtPnJtX293bmVyKSB8fA0KPiA+ICsJICAgIChyZWMtPnJtX2ZsYWdzICYgKFhGU19STUFQ
-X0FUVFJfRk9SSyB8DQo+IFhGU19STUFQX0JNQlRfQkxPQ0spKSkgew0KPiA+ICsJCS8vIFRPRE8g
-Y2hlY2sgYW5kIHRyeSB0byBmaXggbWV0YWRhdGENCj4gPiArCQl4ZnNfZm9yY2Vfc2h1dGRvd24o
-Y3VyLT5iY19tcCwgU0hVVERPV05fQ09SUlVQVF9NRVRBKTsNCj4gPiArCQlyZXR1cm4gLUVGU0NP
-UlJVUFRFRDsNCj4gPiArCX0NCj4gPiArDQo+ID4gKwkvKiBHZXQgZmlsZXMgdGhhdCBpbmNvcmUs
-IGZpbHRlciBvdXQgb3RoZXJzIHRoYXQgYXJlIG5vdCBpbiB1c2UuICovDQo+ID4gKwllcnJvciA9
-IHhmc19pZ2V0KGN1ci0+YmNfbXAsIGN1ci0+YmNfdHAsIHJlYy0+cm1fb3duZXIsDQo+IFhGU19J
-R0VUX0lOQ09SRSwNCj4gPiArCQkJIDAsICZpcCk7DQo+ID4gKwlpZiAoZXJyb3IpDQo+ID4gKwkJ
-cmV0dXJuIGVycm9yOw0KPiA+ICsNCj4gPiArCW1hcHBpbmcgPSBWRlNfSShpcCktPmlfbWFwcGlu
-ZzsNCj4gPiArCWlmIChJU19FTkFCTEVEKENPTkZJR19NRU1PUllfRkFJTFVSRSkpIHsNCj4gPiAr
-CQlmb3IgKGkgPSAwOyBpIDwgcmVjLT5ybV9ibG9ja2NvdW50OyBpKyspIHsNCj4gPiArCQkJZXJy
-b3IgPSBtZl9kYXhfa2lsbF9wcm9jcyhtYXBwaW5nLCByZWMtPnJtX29mZnNldCArIGksDQo+ID4g
-KwkJCQkJCSAgKmZsYWdzKTsNCj4gPiArCQkJaWYgKGVycm9yKQ0KPiA+ICsJCQkJYnJlYWs7DQo+
-ID4gKwkJfQ0KPiA+ICsJfQ0KPiA+ICsJLy8gVE9ETyB0cnkgdG8gZml4IGRhdGENCj4gPiArCXhm
-c19pcmVsZShpcCk7DQo+ID4gKw0KPiA+ICsJcmV0dXJuIGVycm9yOw0KPiA+ICt9DQo+ID4gKw0K
-PiA+ICtzdGF0aWMgbG9mZl90DQo+ID4gK3hmc19kYXhfYmRldl9vZmZzZXQoDQo+ID4gKwlzdHJ1
-Y3QgeGZzX21vdW50ICptcCwNCj4gPiArCXN0cnVjdCBkYXhfZGV2aWNlICpkYXhfZGV2LA0KPiA+
-ICsJbG9mZl90IGRpc2tfb2Zmc2V0KQ0KPiA+ICt7DQo+ID4gKwlzdHJ1Y3QgYmxvY2tfZGV2aWNl
-ICpiZGV2Ow0KPiA+ICsNCj4gPiArCWlmIChtcC0+bV9kZGV2X3RhcmdwLT5idF9kYXhkZXYgPT0g
-ZGF4X2RldikNCj4gPiArCQliZGV2ID0gbXAtPm1fZGRldl90YXJncC0+YnRfYmRldjsNCj4gPiAr
-CWVsc2UgaWYgKG1wLT5tX2xvZ2Rldl90YXJncC0+YnRfZGF4ZGV2ID09IGRheF9kZXYpDQo+ID4g
-KwkJYmRldiA9IG1wLT5tX2xvZ2Rldl90YXJncC0+YnRfYmRldjsNCj4gPiArCWVsc2UNCj4gPiAr
-CQliZGV2ID0gbXAtPm1fcnRkZXZfdGFyZ3AtPmJ0X2JkZXY7DQo+ID4gKw0KPiA+ICsJcmV0dXJu
-IGRpc2tfb2Zmc2V0IC0gKGdldF9zdGFydF9zZWN0KGJkZXYpIDw8IFNFQ1RPUl9TSElGVCk7DQo+
-ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQNCj4gPiAreGZzX2RheF9ub3RpZnlfZmFpbHVy
-ZSgNCj4gPiArCXN0cnVjdCBkYXhfZGV2aWNlCSpkYXhfZGV2LA0KPiA+ICsJbG9mZl90CQkJb2Zm
-c2V0LA0KPiA+ICsJc2l6ZV90CQkJbGVuLA0KPiA+ICsJdm9pZAkJCSpkYXRhKQ0KPiA+ICt7DQo+
-ID4gKwlzdHJ1Y3QgeGZzX21vdW50CSptcCA9IGZzX2RheF9nZXRfaG9sZGVyKGRheF9kZXYpOw0K
-PiA+ICsJc3RydWN0IHhmc190cmFucwkqdHAgPSBOVUxMOw0KPiA+ICsJc3RydWN0IHhmc19idHJl
-ZV9jdXIJKmN1ciA9IE5VTEw7DQo+ID4gKwlzdHJ1Y3QgeGZzX2J1ZgkJKmFnZl9icCA9IE5VTEw7
-DQo+ID4gKwlzdHJ1Y3QgeGZzX3JtYXBfaXJlYwlybWFwX2xvdywgcm1hcF9oaWdoOw0KPiA+ICsJ
-bG9mZl90IAkJCWJkZXZfb2Zmc2V0ID0geGZzX2RheF9iZGV2X29mZnNldChtcCwgZGF4X2RldiwN
-Cj4gPiArCQkJCQkJCQkgIG9mZnNldCk7DQo+ID4gKwl4ZnNfZnNibG9ja190CQlmc2JubyA9IFhG
-U19CX1RPX0ZTQihtcCwgYmRldl9vZmZzZXQpOw0KPiA+ICsJeGZzX2ZpbGJsa3NfdAkJYmNudCA9
-IFhGU19CX1RPX0ZTQihtcCwgbGVuKTsNCj4gPiArCXhmc19hZ251bWJlcl90CQlhZ25vID0gWEZT
-X0ZTQl9UT19BR05PKG1wLCBmc2Jubyk7DQo+ID4gKwl4ZnNfYWdibG9ja190CQlhZ2JubyA9IFhG
-U19GU0JfVE9fQUdCTk8obXAsIGZzYm5vKTsNCj4gPiArCWludAkJCWVycm9yID0gMDsNCj4gPiAr
-DQo+ID4gKwlpZiAobXAtPm1fbG9nZGV2X3RhcmdwICYmIG1wLT5tX2xvZ2Rldl90YXJncC0+YnRf
-ZGF4ZGV2ID09DQo+IGRheF9kZXYgJiYNCj4gPiArCSAgICBtcC0+bV9sb2dkZXZfdGFyZ3AgIT0g
-bXAtPm1fZGRldl90YXJncCkgew0KPiA+ICsJCXhmc19lcnIobXAsICJvbmRpc2sgbG9nIGNvcnJ1
-cHQsIHNodXR0aW5nIGRvd24gZnMhIik7DQo+ID4gKwkJeGZzX2ZvcmNlX3NodXRkb3duKG1wLCBT
-SFVURE9XTl9DT1JSVVBUX01FVEEpOw0KPiA+ICsJCXJldHVybiAtRUZTQ09SUlVQVEVEOw0KPiA+
-ICsJfQ0KPiA+ICsNCj4gPiArCWlmICgheGZzX3NiX3ZlcnNpb25faGFzcm1hcGJ0KCZtcC0+bV9z
-YikpIHsNCj4gPiArCQl4ZnNfd2FybihtcCwgIm5vdGlmeV9mYWlsdXJlKCkgbmVlZHMgcm1hcGJ0
-IGVuYWJsZWQhIik7DQo+ID4gKwkJcmV0dXJuIC1FT1BOT1RTVVBQOw0KPiA+ICsJfQ0KPiA+ICsN
-Cj4gPiArCWVycm9yID0geGZzX3RyYW5zX2FsbG9jX2VtcHR5KG1wLCAmdHApOw0KPiA+ICsJaWYg
-KGVycm9yKQ0KPiA+ICsJCXJldHVybiBlcnJvcjsNCj4gPiArDQo+ID4gKwllcnJvciA9IHhmc19h
-bGxvY19yZWFkX2FnZihtcCwgdHAsIGFnbm8sIDAsICZhZ2ZfYnApOw0KPiA+ICsJaWYgKGVycm9y
-KQ0KPiA+ICsJCWdvdG8gb3V0X2NhbmNlbF90cDsNCj4gPiArDQo+ID4gKwljdXIgPSB4ZnNfcm1h
-cGJ0X2luaXRfY3Vyc29yKG1wLCB0cCwgYWdmX2JwLCBhZ2ZfYnAtPmJfcGFnKTsNCj4gPiArDQo+
-ID4gKwkvKiBDb25zdHJ1Y3QgYSByYW5nZSBmb3Igcm1hcCBxdWVyeSAqLw0KPiA+ICsJbWVtc2V0
-KCZybWFwX2xvdywgMCwgc2l6ZW9mKHJtYXBfbG93KSk7DQo+ID4gKwltZW1zZXQoJnJtYXBfaGln
-aCwgMHhGRiwgc2l6ZW9mKHJtYXBfaGlnaCkpOw0KPiA+ICsJcm1hcF9sb3cucm1fc3RhcnRibG9j
-ayA9IHJtYXBfaGlnaC5ybV9zdGFydGJsb2NrID0gYWdibm87DQo+ID4gKwlybWFwX2xvdy5ybV9i
-bG9ja2NvdW50ID0gcm1hcF9oaWdoLnJtX2Jsb2NrY291bnQgPSBiY250Ow0KPiA+ICsNCj4gPiAr
-CWVycm9yID0geGZzX3JtYXBfcXVlcnlfcmFuZ2UoY3VyLCAmcm1hcF9sb3csICZybWFwX2hpZ2gs
-DQo+ID4gKwkJCQkgICAgIHhmc19jb3JydXB0X2hlbHBlciwgZGF0YSk7DQo+ID4gKw0KPiA+ICsJ
-eGZzX2J0cmVlX2RlbF9jdXJzb3IoY3VyLCBlcnJvcik7DQo+ID4gKwl4ZnNfdHJhbnNfYnJlbHNl
-KHRwLCBhZ2ZfYnApOw0KPiA+ICsNCj4gPiArb3V0X2NhbmNlbF90cDoNCj4gPiArCXhmc190cmFu
-c19jYW5jZWwodHApOw0KPiA+ICsJcmV0dXJuIGVycm9yOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICtz
-dGF0aWMgY29uc3Qgc3RydWN0IGRheF9ob2xkZXJfb3BlcmF0aW9ucyB4ZnNfZGF4X2hvbGRlcl9v
-cGVyYXRpb25zID0gew0KPiA+ICsJLm5vdGlmeV9mYWlsdXJlID0geGZzX2RheF9ub3RpZnlfZmFp
-bHVyZSwNCj4gPiArfTsNCj4gPiArDQo+ID4gICBzdGF0aWMgY29uc3Qgc3RydWN0IHN1cGVyX29w
-ZXJhdGlvbnMgeGZzX3N1cGVyX29wZXJhdGlvbnMgPSB7DQo+ID4gICAJLmFsbG9jX2lub2RlCQk9
-IHhmc19mc19hbGxvY19pbm9kZSwNCj4gPiAgIAkuZGVzdHJveV9pbm9kZQkJPSB4ZnNfZnNfZGVz
-dHJveV9pbm9kZSwNCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9kYXguaCBiL2luY2x1
-ZGUvbGludXgvZGF4LmgNCj4gPiBpbmRleCAzNTllODA5NTE2YjguLmM4YTE4OGI3NjAzMSAxMDA2
-NDQNCj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2RheC5oDQo+ID4gKysrIGIvaW5jbHVkZS9saW51
-eC9kYXguaA0KPiA+IEBAIC0xNjAsNiArMTYwLDkgQEAgc3RhdGljIGlubGluZSB2b2lkIGZzX3B1
-dF9kYXgoc3RydWN0IGRheF9kZXZpY2UNCj4gKmRheF9kZXYpDQo+ID4gICB9DQo+ID4NCj4gPiAg
-IHN0cnVjdCBkYXhfZGV2aWNlICpmc19kYXhfZ2V0X2J5X2JkZXYoc3RydWN0IGJsb2NrX2Rldmlj
-ZSAqYmRldik7DQo+ID4gK3ZvaWQgZnNfZGF4X3NldF9ob2xkZXIoc3RydWN0IGRheF9kZXZpY2Ug
-KmRheF9kZXYsIHZvaWQgKmhvbGRlciwNCj4gPiArCQljb25zdCBzdHJ1Y3QgZGF4X2hvbGRlcl9v
-cGVyYXRpb25zICpvcHMpOw0KPiA+ICt2b2lkICpmc19kYXhfZ2V0X2hvbGRlcihzdHJ1Y3QgZGF4
-X2RldmljZSAqZGF4X2Rldik7DQo+ID4gICBpbnQgZGF4X3dyaXRlYmFja19tYXBwaW5nX3Jhbmdl
-KHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nLA0KPiA+ICAgCQlzdHJ1Y3QgZGF4X2Rldmlj
-ZSAqZGF4X2Rldiwgc3RydWN0IHdyaXRlYmFja19jb250cm9sICp3YmMpOw0KPiA+DQo+ID4gQEAg
-LTE5MSw2ICsxOTQsMTYgQEAgc3RhdGljIGlubGluZSBzdHJ1Y3QgZGF4X2RldmljZQ0KPiAqZnNf
-ZGF4X2dldF9ieV9iZGV2KHN0cnVjdCBibG9ja19kZXZpY2UgKmJkZXYpDQo+ID4gICAJcmV0dXJu
-IE5VTEw7DQo+ID4gICB9DQo+ID4NCj4gPiArc3RhdGljIGlubGluZSB2b2lkIGZzX2RheF9zZXRf
-aG9sZGVyKHN0cnVjdCBkYXhfZGV2aWNlICpkYXhfZGV2LCB2b2lkDQo+ICpob2xkZXIsDQo+ID4g
-KwkJY29uc3Qgc3RydWN0IGRheF9ob2xkZXJfb3BlcmF0aW9ucyAqb3BzKQ0KPiA+ICt7DQo+ID4g
-K30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbmxpbmUgdm9pZCAqZnNfZGF4X2dldF9ob2xkZXIoc3Ry
-dWN0IGRheF9kZXZpY2UgKmRheF9kZXYpDQo+ID4gK3sNCj4gPiArCXJldHVybiBOVUxMOw0KPiA+
-ICt9DQo+ID4gKw0KPiA+ICAgc3RhdGljIGlubGluZSBzdHJ1Y3QgcGFnZSAqZGF4X2xheW91dF9i
-dXN5X3BhZ2Uoc3RydWN0IGFkZHJlc3Nfc3BhY2UNCj4gKm1hcHBpbmcpDQo+ID4gICB7DQo+ID4g
-ICAJcmV0dXJuIE5VTEw7DQo+ID4NCj4gDQo+IA0KPiAtLQ0KPiBUaGFua3MsDQo+IA0KPiBEYXZp
-ZCAvIGRoaWxkZW5iDQoNCg==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ man2/mount_setattr.2 | 1071 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 1071 insertions(+)
+ create mode 100644 man2/mount_setattr.2
+
+diff --git a/man2/mount_setattr.2 b/man2/mount_setattr.2
+new file mode 100644
+index 000000000..1ef7630f2
+--- /dev/null
++++ b/man2/mount_setattr.2
+@@ -0,0 +1,1071 @@
++.\" Copyright (c) 2021 by Christian Brauner <christian.brauner@ubuntu.com>
++.\"
++.\" %%%LICENSE_START(VERBATIM)
++.\" Permission is granted to make and distribute verbatim copies of this
++.\" manual provided the copyright notice and this permission notice are
++.\" preserved on all copies.
++.\"
++.\" Permission is granted to copy and distribute modified versions of this
++.\" manual under the conditions for verbatim copying, provided that the
++.\" entire resulting derived work is distributed under the terms of a
++.\" permission notice identical to this one.
++.\"
++.\" Since the Linux kernel and libraries are constantly changing, this
++.\" manual page may be incorrect or out-of-date.  The author(s) assume no
++.\" responsibility for errors or omissions, or for damages resulting from
++.\" the use of the information contained herein.  The author(s) may not
++.\" have taken the same level of care in the production of this manual,
++.\" which is licensed free of charge, as they might when working
++.\" professionally.
++.\"
++.\" Formatted or processed versions of this manual, if unaccompanied by
++.\" the source, must acknowledge the copyright and authors of this work.
++.\" %%%LICENSE_END
++.\"
++.TH MOUNT_SETATTR 2 2021-03-22 "Linux" "Linux Programmer's Manual"
++.SH NAME
++mount_setattr \- change mount properties of a mount or mount tree
++.SH SYNOPSIS
++.nf
++.BI "int mount_setattr(int " dfd ", const char *" path ", unsigned int " flags ,
++.BI "                  struct mount_attr *" attr ", size_t " size );
++.fi
++.PP
++.IR Note :
++There is no glibc wrapper for this system call; see NOTES.
++.SH DESCRIPTION
++The
++.BR mount_setattr (2)
++system call changes the mount properties of a mount or entire mount tree.
++If
++.I path
++is a relative pathname, then it is interpreted relative to the directory
++referred to by the file descriptor
++.I dfd
++(or the current working directory of the calling process, if
++.I dfd
++is the special value
++.BR AT_FDCWD ).
++If
++.I path
++is the empty string and
++.BR AT_EMPTY_PATH
++is specified in
++.I flags
++then the mount properties of the mount identified by
++.I dfd
++are changed.
++.PP
++The
++.BR mount_setattr (2)
++system call uses an extensible structure
++.I ( "struct mount_attr" )
++to allow for future extensions. Any non-flag extensions to
++.BR mount_setattr (2)
++will be implemented as new fields appended to the above structure,
++with a zero value in a new field resulting in the kernel behaving
++as though that extension field was not present.
++Therefore, the caller
++.I must
++zero-fill this structure on initialization.
++(See the "Extensibility" section under
++.B NOTES
++for more details on why this is necessary.)
++.PP
++The
++.I size
++argument should usually be specified as
++.IR "sizeof(struct mount_attr)" .
++However, if the caller does not intend to make use of features that got
++introduced after the initial version of
++.I struct mount_attr
++they are free to pass the size of the initial struct together with the larger
++struct.
++This allows the kernel to not copy later parts of the struct that aren't used
++anyway.
++With each extension that changes the size of
++.I struct mount_attr
++the kernel will expose a define of the form
++.B MOUNT_ATTR_SIZE_VER<number> .
++For example the macro for the size of the initial version of
++.I struct mount_attr
++is
++.BR MOUNT_ATTR_SIZE_VER0 .
++.PP
++The
++.I flags
++argument can be used to alter the path resolution behavior.
++The supported values are:
++.TP
++.B AT_EMPTY_PATH
++If
++.I path
++is the empty string change the mount properties on
++.I dfd
++itself.
++.TP
++.B AT_RECURSIVE
++Change the mount properties of the entire mount tree.
++.TP
++.B AT_SYMLINK_NOFOLLOW
++Don't follow trailing symlinks.
++.TP
++.B AT_NO_AUTOMOUNT
++Don't trigger automounts.
++.PP
++The
++.I attr
++argument of
++.BR mount_setattr (2)
++is a structure of the following form:
++.PP
++.in +4n
++.EX
++struct mount_attr {
++    u64 attr_set;    /* Mount properties to set. */
++    u64 attr_clr;    /* Mount properties to clear. */
++    u64 propagation; /* Mount propagation type. */
++    u64 userns_fd;   /* User namespace file descriptor. */
++};
++.EE
++.in
++.PP
++The
++.I attr_set
++and
++.I attr_clr
++members are used to specify the mount properties that are supposed to be set or
++cleared for a given mount or mount tree.
++Flags set in
++.I attr_set
++enable a property on a mount or mount tree and flags set in
++.I attr_clr
++remove a property from a mount or mount tree.
++.PP
++When changing mount properties the kernel will first clear the flags specified
++in the
++.I attr_clr
++field and then set the flags specified in the
++.I attr_set
++field:
++.PP
++.in +4n
++.EX
++struct mount_attr attr = {
++    .attr_clr = MOUNT_ATTR_NOEXEC | MOUNT_ATTR_NODEV,
++    .attr_set = MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID,
++};
++unsigned int current_mnt_flags = mnt->mnt_flags;
++
++/*
++ * Clear all flags set in .attr_clr, i.e
++ * clear MOUNT_ATTR_NOEXEC and MOUNT_ATTR_NODEV.
++ */
++current_mnt_flags &= ~attr->attr_clr;
++
++/*
++ * Now set all flags set in .attr_set, i.e.
++ * set MOUNT_ATTR_RDONLY and MOUNT_ATTR_NOSUID.
++ */
++current_mnt_flags |= attr->attr_set;
++
++mnt->mnt_flags = current_mnt_flags;
++.EE
++.in
++.PP
++The effect of this change will be a mount or mount tree that is read-only,
++blocks the execution of setuid binaries but does allow to execute programs and
++access to devices nodes.
++Multiple changes with the same set of flags requested
++in
++.I attr_clr
++and
++.I attr_set
++are guaranteed to be idempotent after the changes have been applied.
++.PP
++The following mount attributes can be specified in the
++.I attr_set
++or
++.I attr_clr
++fields:
++.TP
++.B MOUNT_ATTR_RDONLY
++If set in
++.I attr_set
++makes the mount read only and if set in
++.I attr_clr
++removes the read only setting if set on the mount.
++.TP
++.B MOUNT_ATTR_NOSUID
++If set in
++.I attr_set
++makes the mount not honor setuid and setgid binaries, and file capabilities
++when executing programs.
++If set in
++.I attr_clr
++clears the setuid, setgid, and file capability restriction if set on this
++mount.
++.TP
++.B MOUNT_ATTR_NODEV
++If set in
++.I attr_set
++prevents access to devices on this mount and if set in
++.I attr_clr
++removes the device access restriction if set on this mount.
++.TP
++.B MOUNT_ATTR_NOEXEC
++If set in
++.I attr_set
++prevents executing programs on this mount and if set in
++.I attr_clr
++removes the restriction to execute programs on this mount.
++.TP
++.B MOUNT_ATTR_NODIRATIME
++If set in
++.I attr_set
++prevents updating access time for directories on this mount and if set in
++.I attr_clr
++removes access time restriction for directories.
++Note that
++.BR MOUNT_ATTR_NODIRATIME
++can be combined with other access time settings and is implied
++by the noatime setting.
++All other access time settings are mutually exclusive.
++.TP
++.B MOUNT_ATTR__ATIME - Changing access time settings
++In the new mount api the access time values are an enum starting from 0.
++Even though they are an enum in contrast to the other mount flags such as
++.BR MOUNT_ATTR_NOEXEC
++they are nonetheless passed in
++.I attr_set
++and
++.I attr_clr
++for consistency with
++.BR fsmount (2)
++which introduced this behavior.
++.IP
++Note, since access times are an enum, not a bitmap,
++users wanting to transition to a different access time setting cannot simply
++specify the access time in
++.I attr_set
++but must also set
++.BR MOUNT_ATTR__ATIME
++in the
++.I attr_clr
++field.
++The kernel will verify that
++.BR MOUNT_ATTR__ATIME
++isn't partially set in
++.I attr_clr
++and that
++.I attr_set
++doesn't have any access time bits set if
++.BR MOUNT_ATTR__ATIME
++isn't set in
++.I attr_clr.
++.RS
++.TP
++.B MOUNT_ATTR_RELATIME
++When a file is accessed via this mount, update the file's last access time
++(atime) only if the current value of atime is less than or equal to the file's
++last modification time (mtime) or last status change time (ctime).
++.IP
++To enable this access time setting on a mount or mount tree
++.BR MOUNT_ATTR_RELATIME
++must be set in
++.I attr_set
++and
++.BR MOUNT_ATTR__ATIME
++must be set in the
++.I attr_clr
++field.
++.TP
++.BR MOUNT_ATTR_NOATIME
++Do not update access times for (all types of) files on this mount.
++.IP
++To enable this access time setting on a mount or mount tree
++.BR MOUNT_ATTR_NOATIME
++must be set in
++.I attr_set
++and
++.BR MOUNT_ATTR__ATIME
++must be set in the
++.I attr_clr
++field.
++.TP
++.BR MOUNT_ATTR_STRICTATIME
++Always update the last access time (atime) when files are accessed on this
++mount.
++.IP
++To enable this access time setting on a mount or mount tree
++.BR MOUNT_ATTR_STRICTATIME
++must be set in
++.I attr_set
++and
++.BR MOUNT_ATTR__ATIME
++must be set in the
++.I attr_clr
++field.
++.RE
++.TP
++.BR MOUNT_ATTR_IDMAP
++If set in
++.I attr_set
++creates an idmapped mount.
++The idmapping is taken from the user namespace specified in
++.I userns_fd
++and attached to the mount.
++It is not supported to change the idmapping of a mount after it has been
++idmapped.
++Therefore, it is invalid to specify
++.BR MOUNT_ATTR_IDMAP
++in
++.I attr_clr.
++More details can be found in subsequent paragraphs.
++.IP
++Creating an idmapped mount allows to change the ownership of all files located
++under a given mount.
++Other mounts that expose the same files will not be affected,
++i.e. the ownership will not be changed.
++Consequently, a caller accessing files through an idmapped mount will see them
++owned by the uid and gid according to the idmapping attached to the mount.
++.IP
++The idmapping is also applied to the following
++.BR xattr (7)
++namespaces:
++.RS
++.RS
++.IP \(bu 2
++The
++.I security.
++namespace when interacting with filesystem capabilities through the
++.I security.capability
++key whenever filesystem
++.BR capabilities (7)
++are stored or returned in the
++.I VFS_CAP_REVISION_3
++format which stores a rootid alongside the capabilities.
++.IP \(bu 2
++The
++.I system.posix_acl_access
++and
++.I system.posix_acl_default
++keys whenever uids or gids are stored in
++.BR ACL_USER
++and
++.BR ACL_GROUP
++entries.
++.RE
++.RE
++.IP
++The following conditions must be met in order to create an idmapped mount:
++.RS
++.RS
++.IP \(bu 2
++The caller must have
++.I CAP_SYS_ADMIN
++in the initial user namespace.
++.IP \(bu 2
++The filesystem must be mounted in the initial user namespace.
++.IP \(bu
++The underlying filesystem must support idmapped mounts.
++Currently
++.BR xfs (5),
++.BR ext4 (5)
++and
++.BR fat
++filesystems support idmapped mounts with more filesystems being actively worked
++on.
++.IP \(bu
++The mount must not already be idmapped.
++This also implies that the idmapping of a mount cannot be altered.
++.IP \(bu
++The mount must be a detached/anonymous mount,
++i.e. it must have been created by calling
++.BR open_tree (2)
++with the
++.I OPEN_TREE_CLONE
++flag and it must not already have been visible in the filesystem.
++.RE
++.IP
++.RE
++.IP
++In the common case the user namespace passed in
++.I userns_fd
++together with
++.BR MOUNT_ATTR_IDMAP
++in
++.I attr_set
++to create an idmapped mount will be the user namespace of a container.
++In other scenarios it will be a dedicated user namespace associated with a
++given user's login session as is the case for portable home directories in
++.BR systemd-homed.service (8)).
++Details on how to create user namespaces and how to setup idmappings can be
++gathered from
++.BR user_namespaces (7).
++.IP
++In essence, an idmapping associated with a user namespace is a 1-to-1 mapping
++between source and target ids for a given range.
++Specifically, an idmapping always has the abstract form
++.I [type of id] [source id] [target id] [range].
++For example, uid 1000 1001 1 would mean that uid 1000 is mapped to uid 1001,
++gid 1000 1001 2 would mean that gid 1000 will be mapped to gid 1001 and gid
++1001 to gid 1002.
++If we were to attach the idmapping of uid 1000 1001 1 to a mount it would cause
++all files owned by uid 1000 to be owned by uid 1001.
++It is possible to specify up to 340 of such idmappings providing for a great
++deal of flexibility.
++If any source ids are not mapped to a target id all files owned by that
++unmapped source id will appear as being owned by the overflow uid or overflow
++gid respectively (see
++.BR user_namespaces (7)
++and
++.BR proc (5)).
++.IP
++Idmapped mounts can be useful in the following and a variety of other
++scenarios:
++.RS
++.RS
++.IP \(bu 2
++Idmapped mounts make it possible to easily share files between multiple users
++or multiple machines especially in complex scenarios.
++For example, idmapped mounts are used to implement portable home directories in
++.BR systemd-homed.service (8)
++where they allow users to move their home directory to an external storage
++device and use it on multiple computers where they are assigned different uids
++and gids.
++This effectively makes it possible to assign random uids and gids at login
++time.
++.IP \(bu
++It is possible to share files from the host with unprivileged containers
++without having to change ownership permanently through
++.BR chown (2).
++.IP \(bu
++It is possible to idmap a container's root filesystem without having to mangle
++every file.
++.IP \(bu
++It is possible to share files between containers with non-overlapping
++idmappings.
++.IP \(bu
++Filesystem that lack a proper concept of ownership such as fat can use idmapped
++mounts to implement discretionary access (DAC) permission checking.
++.IP \(bu
++Idmapped mounts allow users to efficiently change ownership on a per-mount
++basis without having to (recursively)
++.BR chown (2)
++all files. In contrast to
++.BR chown (2)
++changing ownership of large sets of files is instantenous with idmapped mounts.
++This is especially useful when ownership of an entire root filesystem of a
++virtual machine or container is to be changed.
++With idmapped mounts a single
++.BR mount_setattr (2)
++system call will be sufficient to change the ownership of all files.
++.IP \(bu
++Idmapped mounts always take the current ownership into account as
++idmappings specify what a given uid or gid is supposed to be mapped to.
++This contrasts with the
++.BR chown (2)
++system call which cannot by itself take the current ownership of the files it
++changes into account.
++It simply changes the ownership to the specified uid and gid.
++.IP \(bu
++Idmapped mounts allow to change ownership locally,
++restricting it to specific mounts,
++and temporarily as the ownership changes only apply as long
++as the mount exists.
++In contrast, changing ownership via the
++.BR chown (2)
++system call changes the ownership globally and permanently.
++.RE
++.RE
++.IP
++.PP
++The
++.I propagation
++field is used to specify the propagation type of the mount or mount tree.
++Mount propagation options are mutually exclusive,
++i.e. the propagation values behave like an enum.
++The supported mount propagation settings are:
++.TP
++.B MS_PRIVATE
++Turn all mounts into private mounts.
++Mount and unmount events do not propagate into or out of this mount point.
++.TP
++.B MS_SHARED
++Turn all mounts into shared mounts.
++Mount points share events with members of a peer group.
++Mount and unmount events immediately under this mount point
++will propagate to the other mount points that are members of the peer group.
++Propagation here means that the same mount or unmount will automatically occur
++under all of the other mount points in the peer group.
++Conversely, mount and unmount events that take place under peer mount points
++will propagate to this mount point.
++.TP
++.B MS_SLAVE
++Turn all mounts into dependent mounts.
++Mount and unmount events propagate into this mount point from a shared peer
++group.
++Mount and unmount events under this mount point do not propagate to any peer.
++.TP
++.B MS_UNBINDABLE
++This is like a private mount, and in addition this mount can't be bind mounted.
++Attempts to bind mount this mount will fail.
++When a recursive bind mount is performed on a directory subtree,
++any bind mounts within the subtree are automatically pruned
++(i.e., not replicated) when replicating that subtree to produce the target
++subtree.
++.PP
++.SH RETURN VALUE
++On success,
++.BR mount_setattr (2)
++returns zero.
++On error, \-1 is returned and
++.I errno
++is set to indicate the cause of the error.
++.SH ERRORS
++.TP
++.B EBADF
++.I dfd
++is not a valid file descriptor.
++.TP
++.B EBADF
++An invalid file descriptor value was specified in
++.I userns_fd.
++.TP
++.B EBUSY
++The caller tried to change the mount to
++.BR MOUNT_ATTR_RDONLY
++but the mount had writers.
++.TP
++.B EINVAL
++The path specified via the
++.I dfd
++and
++.I path
++arguments to
++.BR mount_setattr (2)
++isn't a mountpoint.
++.TP
++.B EINVAL
++An unsupported value was set in
++.I flags.
++.TP
++.B EINVAL
++An unsupported value was specified in the
++.I attr_set
++field of
++.IR mount_attr.
++.TP
++.B EINVAL
++An unsupported value was specified in the
++.I attr_clr
++field of
++.IR mount_attr.
++.TP
++.B EINVAL
++An unsupported value was specified in the
++.I propagation
++field of
++.IR mount_attr.
++.TP
++.B EINVAL
++More than one of
++.BR MS_SHARED,
++.BR MS_SLAVE,
++.BR MS_PRIVATE,
++or
++.BR MS_UNBINDABLE
++was set in
++.I propagation
++field of
++.IR mount_attr.
++.TP
++.B EINVAL
++An access time setting was specified in the
++.I attr_set
++field without
++.BR MOUNT_ATTR__ATIME
++being set in the
++.I attr_clr
++field.
++.TP
++.B EINVAL
++.BR MOUNT_ATTR_IDMAP
++was specified in
++.I attr_clr.
++.TP
++.B EINVAL
++A file descriptor value was specified in
++.I userns_fd
++which exceeds
++.BR INT_MAX.
++.TP
++.B EINVAL
++A valid file descriptor value was specified in
++.I userns_fd
++but the file descriptor wasn't a namespace file descriptor or did not refer to
++a user namespace.
++.TP
++.B EINVAL
++The underlying filesystem does not support idmapped mounts.
++.TP
++.B EINVAL
++The mount to idmap is not a detached/anonymous mount, i.e. the mount is already
++visible in the filesystem.
++.TP
++.B EINVAL
++A partial access time setting was specified in
++.I attr_clr
++instead of
++.BR MOUNT_ATTR__ATIME
++being set.
++.TP
++.B EINVAL
++The mount is located outside the caller's mount namespace.
++.TP
++.B EINVAL
++The underlying filesystem is mounted in a user namespace.
++.TP
++.B ENOENT
++A pathname was empty or had a nonexistent component.
++.TP
++.B ENOMEM
++When changing mount propagation to
++.BR MS_SHARED
++a new peer group id needs to be allocated for all mounts without a peer group
++id set.
++Allocation of this peer group id has failed.
++.TP
++.B ENOSPC
++When changing mount propagation to
++.BR MS_SHARED
++a new peer group id needs to be allocated for all mounts without a peer group
++id set.
++Allocation of this peer group id can fail.
++Note that technically further error codes are possible that are specific to the
++id allocation implementation used.
++.TP
++.B EPERM
++One of the mounts had at least one of
++.BR MOUNT_ATTR_RDONLY,
++.BR MOUNT_ATTR_NODEV,
++.BR MOUNT_ATTR_NOSUID,
++.BR MOUNT_ATTR_NOEXEC,
++.BR MOUNT_ATTR_NOATIME,
++or
++.BR MOUNT_ATTR_NODIRATIME
++set and the flag is locked.
++Mount attributes become locked on a mount if:
++.RS
++.IP \(bu 2
++a new mount or mount tree is created causing mount propagation across user
++namespaces.
++The kernel will lock the aforementioned flags to protect these sensitive
++properties from being altered.
++.IP \(bu
++a new mount and user namespace pair is created.
++This happens for example when specifying
++.BR CLONE_NEWUSER | CLONE_NEWNS
++in
++.BR unshare (2),
++.BR clone (2),
++or
++.BR clone3 (2).
++The aformentioned flags become locked to protect user namespaces from altering
++sensitive mount properties.
++.RE
++.TP
++.B EPERM
++A valid file descriptor value was specified in
++.I userns_fd
++but the file descriptor refers to the initial user namespace.
++.TP
++.B EPERM
++An already idmapped mount was supposed to be idmapped.
++.TP
++.B EPERM
++The caller does not have
++.I CAP_SYS_ADMIN
++in the initial user namespace.
++.SH VERSIONS
++.BR mount_setattr (2)
++first appeared in Linux 5.12.
++.\" commit 7d6beb71da3cc033649d641e1e608713b8220290
++.\" commit 2a1867219c7b27f928e2545782b86daaf9ad50bd
++.\" commit 9caccd41541a6f7d6279928d9f971f6642c361af
++.SH CONFORMING TO
++.BR mount_setattr (2)
++is Linux specific.
++.SH NOTES
++Currently, there is no glibc wrapper for this system call;
++call it using
++.BR syscall (2).
++.\"
++.SS Extensibility
++In order to allow for future extensibility,
++.BR mount_setattr (2)
++along with other system calls such as
++.BR openat2 (2)
++and
++.BR clone3 (2)
++requires the user-space application to specify the size of the
++.I mount_attr
++structure that it is passing.
++By providing this information, it is possible for
++.BR mount_setattr (2)
++to provide both forwards- and backwards-compatibility, with
++.I size
++acting as an implicit version number.
++(Because new extension fields will always
++be appended, the structure size will always increase.)
++This extensibility design is very similar to other system calls such as
++.BR perf_setattr (2),
++.BR perf_event_open (2),
++.BR clone3 (2)
++and
++.BR openat2 (2) .
++.PP
++Let
++.I usize
++be the size of the structure as specified by the user-space application,
++and let
++.I ksize
++be the size of the structure which the kernel supports,
++then there are three cases to consider:
++.IP \(bu 2
++If
++.IR ksize
++equals
++.IR usize ,
++then there is no version mismatch and
++.I attr
++can be used verbatim.
++.IP \(bu
++If
++.IR ksize
++is larger than
++.IR usize ,
++then there are some extension fields that the kernel supports which the
++user-space application is unaware of.
++Because a zero value in any added extension field signifies a no-op,
++the kernel treats all of the extension fields not provided by the user-space
++application as having zero values.
++This provides backwards-compatibility.
++.IP \(bu
++If
++.IR ksize
++is smaller than
++.IR usize ,
++then there are some extension fields which the user-space application is aware
++of but which the kernel does not support.
++Because any extension field must have its zero values signify a no-op,
++the kernel can safely ignore the unsupported extension fields if they are
++all zero.
++If any unsupported extension fields are non-zero, then \-1 is returned and
++.I errno
++is set to
++.BR E2BIG .
++This provides forwards-compatibility.
++.PP
++Because the definition of
++.I struct mount_attr
++may change in the future
++(with new fields being added when system headers are updated),
++user-space applications should zero-fill
++.I struct mount_attr
++to ensure that recompiling the program with new headers will not result in
++spurious errors at runtime.
++The simplest way is to use a designated initializer:
++.PP
++.in +4n
++.EX
++struct mount_attr attr = {
++    .attr_set = MOUNT_ATTR_RDONLY,
++    .attr_clr = MOUNT_ATTR_NODEV
++};
++.EE
++.in
++.PP
++or explicitly using
++.BR memset (3)
++or similar functions:
++.PP
++.in +4n
++.EX
++struct mount_attr attr;
++memset(&attr, 0, sizeof(attr));
++attr.attr_set = MOUNT_ATTR_RDONLY;
++attr.attr_clr = MOUNT_ATTR_NODEV;
++.EE
++.in
++.PP
++A user-space application that wishes to determine which extensions the running
++kernel supports can do so by conducting a binary search on
++.IR size
++with a structure which has every byte nonzero
++(to find the largest value which doesn't produce an error of
++.BR E2BIG ).
++.SH EXAMPLES
++.EX
++/*
++ * This program allows the caller to create a new detached mount and set
++ * various properties on it.
++ */
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <getopt.h>
++#include <linux/mount.h>
++#include <linux/types.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/syscall.h>
++#include <unistd.h>
++
++/* mount_setattr() */
++#ifndef MOUNT_ATTR_RDONLY
++#define MOUNT_ATTR_RDONLY 0x00000001
++#endif
++
++#ifndef MOUNT_ATTR_NOSUID
++#define MOUNT_ATTR_NOSUID 0x00000002
++#endif
++
++#ifndef MOUNT_ATTR_NOEXEC
++#define MOUNT_ATTR_NOEXEC 0x00000008
++#endif
++
++#ifndef MOUNT_ATTR__ATIME
++#define MOUNT_ATTR__ATIME 0x00000070
++#endif
++
++#ifndef MOUNT_ATTR_NOATIME
++#define MOUNT_ATTR_NOATIME 0x00000010
++#endif
++
++#ifndef MOUNT_ATTR_IDMAP
++#define MOUNT_ATTR_IDMAP 0x00100000
++#endif
++
++#ifndef AT_RECURSIVE
++#define AT_RECURSIVE 0x8000
++#endif
++
++#ifndef __NR_mount_setattr
++    #if defined __alpha__
++        #define __NR_mount_setattr 552
++    #elif defined _MIPS_SIM
++        #if _MIPS_SIM == _MIPS_SIM_ABI32    /* o32 */
++            #define __NR_mount_setattr (442 + 4000)
++        #endif
++        #if _MIPS_SIM == _MIPS_SIM_NABI32   /* n32 */
++            #define __NR_mount_setattr (442 + 6000)
++        #endif
++        #if _MIPS_SIM == _MIPS_SIM_ABI64    /* n64 */
++            #define __NR_mount_setattr (442 + 5000)
++        #endif
++    #elif defined __ia64__
++        #define __NR_mount_setattr (442 + 1024)
++    #else
++        #define __NR_mount_setattr 442
++    #endif
++struct mount_attr {
++    __u64 attr_set;
++    __u64 attr_clr;
++    __u64 propagation;
++    __u64 userns_fd;
++};
++#endif
++
++/* open_tree() */
++#ifndef OPEN_TREE_CLONE
++#define OPEN_TREE_CLONE 1
++#endif
++
++#ifndef OPEN_TREE_CLOEXEC
++#define OPEN_TREE_CLOEXEC O_CLOEXEC
++#endif
++
++#ifndef __NR_open_tree
++    #if defined __alpha__
++        #define __NR_open_tree 538
++    #elif defined _MIPS_SIM
++        #if _MIPS_SIM == _MIPS_SIM_ABI32    /* o32 */
++            #define __NR_open_tree 4428
++        #endif
++        #if _MIPS_SIM == _MIPS_SIM_NABI32   /* n32 */
++            #define __NR_open_tree 6428
++        #endif
++        #if _MIPS_SIM == _MIPS_SIM_ABI64    /* n64 */
++            #define __NR_open_tree 5428
++        #endif
++    #elif defined __ia64__
++        #define __NR_open_tree (428 + 1024)
++    #else
++        #define __NR_open_tree 428
++    #endif
++#endif
++
++/* move_mount() */
++#ifndef MOVE_MOUNT_F_EMPTY_PATH
++#define MOVE_MOUNT_F_EMPTY_PATH 0x00000004
++#endif
++
++#ifndef __NR_move_mount
++    #if defined __alpha__
++        #define __NR_move_mount 539
++    #elif defined _MIPS_SIM
++        #if _MIPS_SIM == _MIPS_SIM_ABI32    /* o32 */
++            #define __NR_move_mount 4429
++        #endif
++        #if _MIPS_SIM == _MIPS_SIM_NABI32   /* n32 */
++            #define __NR_move_mount 6429
++        #endif
++        #if _MIPS_SIM == _MIPS_SIM_ABI64    /* n64 */
++            #define __NR_move_mount 5429
++        #endif
++    #elif defined __ia64__
++        #define __NR_move_mount (428 + 1024)
++    #else
++        #define __NR_move_mount 429
++    #endif
++#endif
++
++static inline int mount_setattr(int dfd,
++                                const char *path,
++                                unsigned int flags,
++                                struct mount_attr *attr,
++                                size_t size)
++{
++    return syscall(__NR_mount_setattr, dfd, path,
++                   flags, attr, size);
++}
++
++static inline int open_tree(int dfd, const char *filename,
++                            unsigned int flags)
++{
++    return syscall(__NR_open_tree, dfd, filename, flags);
++}
++
++static inline int move_mount(int from_dfd,
++                             const char *from_pathname,
++                             int to_dfd,
++                             const char *to_pathname,
++                             unsigned int flags)
++{
++    return syscall(__NR_move_mount, from_dfd,
++                   from_pathname, to_dfd, to_pathname, flags);
++}
++
++static const struct option longopts[] = {
++    {"map-mount",       required_argument,  0,  'a'},
++    {"recursive",       no_argument,        0,  'b'},
++    {"read-only",       no_argument,        0,  'c'},
++    {"block-setid",     no_argument,        0,  'd'},
++    {"block-devices",   no_argument,        0,  'e'},
++    {"block-exec",      no_argument,        0,  'f'},
++    {"no-access-time",  no_argument,        0,  'g'},
++    { NULL,             0,                  0,   0 },
++};
++
++#define exit_log(format, ...)                   \\
++    ({                                          \\
++        fprintf(stderr, format, ##__VA_ARGS__); \\
++        exit(EXIT_FAILURE);                     \\
++    })
++
++int main(int argc, char *argv[])
++{
++    int fd_userns = -EBADF, index = 0;
++    bool recursive = false;
++    struct mount_attr *attr = &(struct mount_attr){};
++    const char *source, *target;
++    int fd_tree, new_argc, ret;
++    char *const *new_argv;
++
++    while ((ret = getopt_long_only(argc, argv, "",
++                                  longopts, &index)) != -1) {
++        switch (ret) {
++        case 'a':
++            fd_userns = open(optarg, O_RDONLY | O_CLOEXEC);
++            if (fd_userns < 0)
++                exit_log("%m - Failed top open %s\n", optarg);
++            break;
++        case 'b':
++            recursive = true;
++            break;
++        case 'c':
++            attr->attr_set |= MOUNT_ATTR_RDONLY;
++            break;
++        case 'd':
++            attr->attr_set |= MOUNT_ATTR_NOSUID;
++            break;
++        case 'e':
++            attr->attr_set |= MOUNT_ATTR_NODEV;
++            break;
++        case 'f':
++            attr->attr_set |= MOUNT_ATTR_NOEXEC;
++            break;
++        case 'g':
++            attr->attr_set |= MOUNT_ATTR_NOATIME;
++            attr->attr_clr |= MOUNT_ATTR__ATIME;
++            break;
++        default:
++            exit_log("Invalid argument specified");
++        }
++    }
++
++    new_argv = &argv[optind];
++    new_argc = argc - optind;
++    if (new_argc < 2)
++        exit_log("Missing source or target mountpoint\n");
++    source = new_argv[0];
++    target = new_argv[1];
++
++    fd_tree = open_tree(-EBADF, source,
++                        OPEN_TREE_CLONE |
++                        OPEN_TREE_CLOEXEC |
++                        AT_EMPTY_PATH |
++                        (recursive ? AT_RECURSIVE : 0));
++    if (fd_tree < 0)
++        exit_log("%m - Failed to open %s\n", source);
++
++    if (fd_userns >= 0) {
++        attr->attr_set  |= MOUNT_ATTR_IDMAP;
++        attr->userns_fd = fd_userns;
++    }
++    ret = mount_setattr(fd_tree, "",
++                        AT_EMPTY_PATH |
++                        (recursive ? AT_RECURSIVE : 0),
++                        attr, sizeof(struct mount_attr));
++    if (ret < 0)
++        exit_log("%m - Failed to change mount attributes\n");
++    close(fd_userns);
++
++    ret = move_mount(fd_tree, "", -EBADF, target,
++                     MOVE_MOUNT_F_EMPTY_PATH);
++    if (ret < 0)
++        exit_log("%m - Failed to attach mount to %s\n", target);
++    close(fd_tree);
++
++    exit(EXIT_SUCCESS);
++}
++.EE
++.fi
++.SH SEE ALSO
++.BR capabilities (7),
++.BR clone (2),
++.BR clone3 (2),
++.BR ext4 (5),
++.BR mount (2),
++.BR mount_namespaces (7),
++.BR newuidmap (1),
++.BR newgidmap (1),
++.BR proc (5),
++.BR unshare (2),
++.BR user_namespaces (7),
++.BR xattr (7),
++.BR xfs (5)
+
+base-commit: fbe71b1b79e72be3b9afc44b5d479e7fd84b598a
+-- 
+2.30.2
+
