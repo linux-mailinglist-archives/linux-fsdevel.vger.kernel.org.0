@@ -2,396 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEC5C3DBF2D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 21:46:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9883B3DBF39
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 21:48:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230475AbhG3Tq5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 15:46:57 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:45378 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231438AbhG3Tq4 (ORCPT
+        id S231698AbhG3Tre (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 15:47:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39358 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231671AbhG3Tr3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 15:46:56 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UhT8q23_1627674386;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UhT8q23_1627674386)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 31 Jul 2021 03:46:49 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     linux-erofs@lists.ozlabs.org
-Cc:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Chao Yu <chao@kernel.org>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>,
-        Huang Jianan <huangjianan@oppo.com>,
-        Tao Ma <boyu.mt@taobao.com>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH v2 3/3] erofs: convert all uncompressed cases to iomap
-Date:   Sat, 31 Jul 2021 03:46:25 +0800
-Message-Id: <20210730194625.93856-4-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.24.4
-In-Reply-To: <20210730194625.93856-1-hsiangkao@linux.alibaba.com>
-References: <20210730194625.93856-1-hsiangkao@linux.alibaba.com>
+        Fri, 30 Jul 2021 15:47:29 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D783C06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 12:47:24 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id mz5-20020a17090b3785b0290176ecf64922so22299876pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 12:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fVdK+4JXg1aEU6XfRh+cT+ODjMWEeNcMZB7CqecVmNQ=;
+        b=HYVita9b1C5beEoeXprjo4vFurQEJTSI122jNUYTouv7+uhU3kZRWfDvekYorQcIlX
+         VMJj2O1A+65NqfjmjZsXIRJ5SbV3HWAp+iR5bIut2A6nO2wlHsFSVHWGvvAPB3uhoRlB
+         CNvFOapwu3pxj9SoDqqxVkAGYfA6WVK6qLZVEvYeXIPd2rhYAmL0IamDDCgvIfRaDcyR
+         zxUFHP7w7sXGib73VVY5yyFOqpwyhhyIRj58iuiRNTSE/L3bCpy57250dFYQ+OMq1qKX
+         Lcon3B4KeC3pTGg4PaiHZyvxEnr2VLuG5n0Wi8n73I/58IdmktC45hdXj9eRgedtHcyP
+         hUqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fVdK+4JXg1aEU6XfRh+cT+ODjMWEeNcMZB7CqecVmNQ=;
+        b=ZheAsutIQKo1fpMb97icb9cSIs/fO1L3mJ3djYEZwiZdORoLZO83rHzKvGMNfHGE2i
+         9yxvZ53VH8TKXQW4G/FdvZpZejoHOeYfK6f6ZybbbyEhnyWmBpE2kOE2WQBT/o55W3fB
+         4kjwcIP5L8yUw3Y8egYHHqycKZwPI/Z+EnGbrGYTUwkfOsqmt6+w83aZPwMxw65YwvVd
+         6h5f6zOHidikW1euGpbYjTALHtGlxwuW28JoWzGEFYD2Hw30CVVXZOyhnH1b36TLV+GF
+         CHG1Jmwks1NSc9U/ad1WfTOuvXulSaWrInX45Qa/E+Bw1qOC9ZqRMgR8WNcTJHFgzkhu
+         RFAg==
+X-Gm-Message-State: AOAM530T1OnxCupWzLj0+xHnUFzralMG/u/ZzIzP2kxbhR0+UGObZ9zH
+        4jaabCg2/6ikl5jZVwwgGEGtTg==
+X-Google-Smtp-Source: ABdhPJzyPmaZrPaLUVXnl5we9tv+oas4aGybiyjrzCiyaLLDZGutjPcXPcmdDXmepzlsX+7HyDoFIQ==
+X-Received: by 2002:a62:8f86:0:b029:32e:33d7:998b with SMTP id n128-20020a628f860000b029032e33d7998bmr4618356pfd.64.1627674444190;
+        Fri, 30 Jul 2021 12:47:24 -0700 (PDT)
+Received: from sspatil2.c.googlers.com (190.40.105.34.bc.googleusercontent.com. [34.105.40.190])
+        by smtp.gmail.com with ESMTPSA id k4sm3703778pgh.9.2021.07.30.12.47.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Jul 2021 12:47:22 -0700 (PDT)
+Subject: Re: [PATCH 1/1] fs: pipe: wakeup readers everytime new data written
+ is to pipe
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable <stable@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>
+References: <20210729222635.2937453-1-sspatil@android.com>
+ <20210729222635.2937453-2-sspatil@android.com>
+ <CAHk-=wh-DWvsFykwAy6uwyv24nasJ39d7SHT+15x+xEXBtSm_Q@mail.gmail.com>
+ <cee514d6-8551-8838-6d61-098d04e226ca@android.com>
+ <CAHk-=wjStQurUzSAPVajL6Rj=CaPuSSgwaMO=0FJzFvSD66ACw@mail.gmail.com>
+From:   Sandeep Patil <sspatil@android.com>
+Message-ID: <b1688f32-cb0e-04e1-3c91-aa8cddbcf41d@android.com>
+Date:   Fri, 30 Jul 2021 19:47:22 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wjStQurUzSAPVajL6Rj=CaPuSSgwaMO=0FJzFvSD66ACw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since tail-packing inline has been supported by iomap now, let's
-convert all EROFS uncompressed data I/O to iomap, which is pretty
-straight-forward.
+On 7/30/21 7:23 PM, Linus Torvalds wrote:
+> On Fri, Jul 30, 2021 at 12:11 PM Sandeep Patil <sspatil@android.com> wrote:
+>>
+>> Yes, your patch fixes all apps on Android I can test that include this
+>> library.
+> 
+> Ok, thanks for checking.
+> 
+>> fwiw, the library seems to have been fixed. However, I am not sure
+>> how long it will be for all apps to take that update :(.
+> 
+> I wonder if I could make the wakeup logic do this only for the epollet case.
 
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/data.c | 288 ++++++++----------------------------------------
- 1 file changed, 49 insertions(+), 239 deletions(-)
+aren't we supposed to wakeup on each write in level-triggered (default) 
+case though?
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 911521293b20..6b98156bb5ca 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -9,29 +9,6 @@
- #include <linux/dax.h>
- #include <trace/events/erofs.h>
- 
--static void erofs_readendio(struct bio *bio)
--{
--	struct bio_vec *bvec;
--	blk_status_t err = bio->bi_status;
--	struct bvec_iter_all iter_all;
--
--	bio_for_each_segment_all(bvec, bio, iter_all) {
--		struct page *page = bvec->bv_page;
--
--		/* page is already locked */
--		DBG_BUGON(PageUptodate(page));
--
--		if (err)
--			SetPageError(page);
--		else
--			SetPageUptodate(page);
--
--		unlock_page(page);
--		/* page could be reclaimed now */
--	}
--	bio_put(bio);
--}
--
- struct page *erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr)
- {
- 	struct address_space *const mapping = sb->s_bdev->bd_inode->i_mapping;
-@@ -109,206 +86,6 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
- 	return err;
- }
- 
--static inline struct bio *erofs_read_raw_page(struct bio *bio,
--					      struct address_space *mapping,
--					      struct page *page,
--					      erofs_off_t *last_block,
--					      unsigned int nblocks,
--					      unsigned int *eblks,
--					      bool ra)
--{
--	struct inode *const inode = mapping->host;
--	struct super_block *const sb = inode->i_sb;
--	erofs_off_t current_block = (erofs_off_t)page->index;
--	int err;
--
--	DBG_BUGON(!nblocks);
--
--	if (PageUptodate(page)) {
--		err = 0;
--		goto has_updated;
--	}
--
--	/* note that for readpage case, bio also equals to NULL */
--	if (bio &&
--	    (*last_block + 1 != current_block || !*eblks)) {
--submit_bio_retry:
--		submit_bio(bio);
--		bio = NULL;
--	}
--
--	if (!bio) {
--		struct erofs_map_blocks map = {
--			.m_la = blknr_to_addr(current_block),
--		};
--		erofs_blk_t blknr;
--		unsigned int blkoff;
--
--		err = erofs_map_blocks_flatmode(inode, &map, EROFS_GET_BLOCKS_RAW);
--		if (err)
--			goto err_out;
--
--		/* zero out the holed page */
--		if (!(map.m_flags & EROFS_MAP_MAPPED)) {
--			zero_user_segment(page, 0, PAGE_SIZE);
--			SetPageUptodate(page);
--
--			/* imply err = 0, see erofs_map_blocks */
--			goto has_updated;
--		}
--
--		/* for RAW access mode, m_plen must be equal to m_llen */
--		DBG_BUGON(map.m_plen != map.m_llen);
--
--		blknr = erofs_blknr(map.m_pa);
--		blkoff = erofs_blkoff(map.m_pa);
--
--		/* deal with inline page */
--		if (map.m_flags & EROFS_MAP_META) {
--			void *vsrc, *vto;
--			struct page *ipage;
--
--			DBG_BUGON(map.m_plen > PAGE_SIZE);
--
--			ipage = erofs_get_meta_page(inode->i_sb, blknr);
--
--			if (IS_ERR(ipage)) {
--				err = PTR_ERR(ipage);
--				goto err_out;
--			}
--
--			vsrc = kmap_atomic(ipage);
--			vto = kmap_atomic(page);
--			memcpy(vto, vsrc + blkoff, map.m_plen);
--			memset(vto + map.m_plen, 0, PAGE_SIZE - map.m_plen);
--			kunmap_atomic(vto);
--			kunmap_atomic(vsrc);
--			flush_dcache_page(page);
--
--			SetPageUptodate(page);
--			/* TODO: could we unlock the page earlier? */
--			unlock_page(ipage);
--			put_page(ipage);
--
--			/* imply err = 0, see erofs_map_blocks */
--			goto has_updated;
--		}
--
--		/* pa must be block-aligned for raw reading */
--		DBG_BUGON(erofs_blkoff(map.m_pa));
--
--		/* max # of continuous pages */
--		if (nblocks > DIV_ROUND_UP(map.m_plen, PAGE_SIZE))
--			nblocks = DIV_ROUND_UP(map.m_plen, PAGE_SIZE);
--
--		*eblks = bio_max_segs(nblocks);
--		bio = bio_alloc(GFP_NOIO, *eblks);
--
--		bio->bi_end_io = erofs_readendio;
--		bio_set_dev(bio, sb->s_bdev);
--		bio->bi_iter.bi_sector = (sector_t)blknr <<
--			LOG_SECTORS_PER_BLOCK;
--		bio->bi_opf = REQ_OP_READ | (ra ? REQ_RAHEAD : 0);
--	}
--
--	err = bio_add_page(bio, page, PAGE_SIZE, 0);
--	/* out of the extent or bio is full */
--	if (err < PAGE_SIZE)
--		goto submit_bio_retry;
--	--*eblks;
--	*last_block = current_block;
--	return bio;
--
--err_out:
--	/* for sync reading, set page error immediately */
--	if (!ra) {
--		SetPageError(page);
--		ClearPageUptodate(page);
--	}
--has_updated:
--	unlock_page(page);
--
--	/* if updated manually, continuous pages has a gap */
--	if (bio)
--		submit_bio(bio);
--	return err ? ERR_PTR(err) : NULL;
--}
--
--/*
-- * since we dont have write or truncate flows, so no inode
-- * locking needs to be held at the moment.
-- */
--static int erofs_raw_access_readpage(struct file *file, struct page *page)
--{
--	erofs_off_t last_block;
--	unsigned int eblks;
--	struct bio *bio;
--
--	trace_erofs_readpage(page, true);
--
--	bio = erofs_read_raw_page(NULL, page->mapping,
--				  page, &last_block, 1, &eblks, false);
--
--	if (IS_ERR(bio))
--		return PTR_ERR(bio);
--
--	if (bio)
--		submit_bio(bio);
--	return 0;
--}
--
--static void erofs_raw_access_readahead(struct readahead_control *rac)
--{
--	erofs_off_t last_block;
--	unsigned int eblks;
--	struct bio *bio = NULL;
--	struct page *page;
--
--	trace_erofs_readpages(rac->mapping->host, readahead_index(rac),
--			readahead_count(rac), true);
--
--	while ((page = readahead_page(rac))) {
--		prefetchw(&page->flags);
--
--		bio = erofs_read_raw_page(bio, rac->mapping, page, &last_block,
--				readahead_count(rac), &eblks, true);
--
--		/* all the page errors are ignored when readahead */
--		if (IS_ERR(bio)) {
--			pr_err("%s, readahead error at page %lu of nid %llu\n",
--			       __func__, page->index,
--			       EROFS_I(rac->mapping->host)->nid);
--
--			bio = NULL;
--		}
--
--		put_page(page);
--	}
--
--	if (bio)
--		submit_bio(bio);
--}
--
--static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
--{
--	struct inode *inode = mapping->host;
--	struct erofs_map_blocks map = {
--		.m_la = blknr_to_addr(block),
--	};
--
--	if (EROFS_I(inode)->datalayout == EROFS_INODE_FLAT_INLINE) {
--		erofs_blk_t blks = i_size_read(inode) >> LOG_BLOCK_SIZE;
--
--		if (block >> LOG_SECTORS_PER_BLOCK >= blks)
--			return 0;
--	}
--
--	if (!erofs_map_blocks_flatmode(inode, &map, EROFS_GET_BLOCKS_RAW))
--		return erofs_blknr(map.m_pa);
--
--	return 0;
--}
--
- static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
- {
-@@ -327,6 +104,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	iomap->offset = map.m_la;
- 	iomap->length = map.m_llen;
- 	iomap->flags = 0;
-+	iomap->private = NULL;
- 
- 	if (!(map.m_flags & EROFS_MAP_MAPPED)) {
- 		iomap->type = IOMAP_HOLE;
-@@ -336,20 +114,61 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 		return 0;
- 	}
- 
--	/* that shouldn't happen for now */
- 	if (map.m_flags & EROFS_MAP_META) {
--		DBG_BUGON(1);
--		return -ENOTBLK;
-+		struct page *ipage;
-+
-+		iomap->type = IOMAP_INLINE;
-+		ipage = erofs_get_meta_page(inode->i_sb,
-+					    erofs_blknr(map.m_pa));
-+		iomap->inline_data = page_address(ipage) +
-+					erofs_blkoff(map.m_pa);
-+		iomap->private = ipage;
-+	} else {
-+		iomap->type = IOMAP_MAPPED;
-+		iomap->addr = map.m_pa;
- 	}
--	iomap->type = IOMAP_MAPPED;
--	iomap->addr = map.m_pa;
- 	return 0;
- }
- 
-+static int erofs_iomap_end(struct inode *inode, loff_t pos, loff_t length,
-+		ssize_t written, unsigned flags, struct iomap *iomap)
-+{
-+	struct page *ipage = iomap->private;
-+
-+	if (ipage) {
-+		DBG_BUGON(iomap->type != IOMAP_INLINE);
-+		unlock_page(ipage);
-+		put_page(ipage);
-+	} else {
-+		DBG_BUGON(iomap->type == IOMAP_INLINE);
-+	}
-+	return written;
-+}
-+
- const struct iomap_ops erofs_iomap_ops = {
- 	.iomap_begin = erofs_iomap_begin,
-+	.iomap_end = erofs_iomap_end,
- };
- 
-+/*
-+ * since we dont have write or truncate flows, so no inode
-+ * locking needs to be held at the moment.
-+ */
-+static int erofs_readpage(struct file *file, struct page *page)
-+{
-+	return iomap_readpage(page, &erofs_iomap_ops);
-+}
-+
-+static void erofs_readahead(struct readahead_control *rac)
-+{
-+	return iomap_readahead(rac, &erofs_iomap_ops);
-+}
-+
-+static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
-+{
-+	return iomap_bmap(mapping, block, &erofs_iomap_ops);
-+}
-+
- static int erofs_prepare_dio(struct kiocb *iocb, struct iov_iter *to)
- {
- 	struct inode *inode = file_inode(iocb->ki_filp);
-@@ -365,15 +184,6 @@ static int erofs_prepare_dio(struct kiocb *iocb, struct iov_iter *to)
- 
- 	if (align & blksize_mask)
- 		return -EINVAL;
--
--	/*
--	 * Temporarily fall back tail-packing inline to buffered I/O instead
--	 * since tail-packing inline support relies on an iomap core update.
--	 */
--	if (EROFS_I(inode)->datalayout == EROFS_INODE_FLAT_INLINE &&
--	    iocb->ki_pos + iov_iter_count(to) >
--			rounddown(inode->i_size, EROFS_BLKSIZ))
--		return 1;
- 	return 0;
- }
- 
-@@ -409,8 +219,8 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 
- /* for uncompressed (aligned) files and raw access for other files */
- const struct address_space_operations erofs_raw_access_aops = {
--	.readpage = erofs_raw_access_readpage,
--	.readahead = erofs_raw_access_readahead,
-+	.readpage = erofs_readpage,
-+	.readahead = erofs_readahead,
- 	.bmap = erofs_bmap,
- 	.direct_IO = noop_direct_IO,
- };
--- 
-2.24.4
+> 
+> I'll have to think about it, but maybe I'll just apply that simple
+> patch. I dislike the pointless wakeups, and as long as the only case I
+> knew of was only a test of broken behavior, it was fine. But now that
+> you've reported actual application breakage, this is in the "real
+> regression" category, and so I'll fix it one way or the other.
+> 
+> And on the other hand I also have a slight preference towards your
+> patch simply because you did the work of finding this out, so you
+> should get the credit.
+
+Ha, I can't really claim credit here. This was also reported to us
+in Android that triggered the search. Plus, now that I see your thread 
+with Michael Kerrisk, he was way ahead of us in finding this out.
+
+> 
+> I'll mull it over a bit more, but whatever I'll do I'll do before rc4
+> and mark it for stable.
+
+Thanks, I was actually going to suggest taking your patch cause it also 
+  makes changes in pipe_read(). I am not sure if there are apps that do 
+EPOLLET | EPOLLOUT (can't think of a reason why).
+
+- ssp
+
+> 
+> Thanks for testing,
+> 
+>                   Linus
+> 
 
