@@ -2,315 +2,308 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B19D3DB498
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 09:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B34303DB49E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 09:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237886AbhG3Hkd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 03:40:33 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:28205 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237667AbhG3Hkc (ORCPT
+        id S237886AbhG3Hm2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 03:42:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51502 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230337AbhG3Hm0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 03:40:32 -0400
-Received: from [10.0.2.15] ([86.243.172.93])
-        by mwinf5d81 with ME
-        id bKgS2500121Fzsu03KgSa2; Fri, 30 Jul 2021 09:40:26 +0200
-X-ME-Helo: [10.0.2.15]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 30 Jul 2021 09:40:26 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH v27 04/10] fs/ntfs3: Add file operations and
- implementation
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        pali@kernel.org, dsterba@suse.cz, aaptel@suse.com,
-        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
-        mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com, kari.argillander@gmail.com,
-        oleksandr@natalenko.name
-References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
- <20210729134943.778917-5-almaz.alexandrovich@paragon-software.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <27fe7136-c929-a1a1-9ec6-20c051a34b3b@wanadoo.fr>
-Date:   Fri, 30 Jul 2021 09:40:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Fri, 30 Jul 2021 03:42:26 -0400
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6136DC0613C1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 00:42:22 -0700 (PDT)
+Received: by mail-qt1-x832.google.com with SMTP id x9so5794882qtw.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 00:42:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=xThcyhwVzbZ0QG3SJMzciKfOkK2D1+jiVLTEbX6+zFE=;
+        b=HbUlXvFb5XYC3VEXO+6211+jPIKP5PobcFagWqFtBrvjjP+Cxr4VLM1qLw4GnGiHY4
+         7xuX0hmza/QU+KT850MEpof+IzVXeTzrcjvMq53TXy+7TpybwnXgNnwKRewAVUyTaNo8
+         5AY/s0nJXhrf79mI3dagZwDRkRpk+In3d0tMkqp/K5cVNQhYSpZKOhBstMUE4HeEvmy1
+         VCd6nPqLn/S/7f884daFRqK6jXJxIu/vJWh60QT2BMOpgippk7xNzyotPf3gqYxvjeKV
+         nKAa/Z5XYPoOxmdZpLtRJqo4iGjrg3G4x11CRSjPTn786elcgmIVZ7SobbMWJkaG2gwv
+         twWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=xThcyhwVzbZ0QG3SJMzciKfOkK2D1+jiVLTEbX6+zFE=;
+        b=f+q0s9+RjSaK/IyS+Um84kmTmn8suAyzgzxhF/KnVJya+TVvkgFRhrIL5ajH2ky35w
+         eMaEa6sR9NXeoOeR8bHfS5wN9eDHs2jWdffodBvIyE7t/rnKFUkwBMm2/Zxu4Kc1RVQK
+         pSl3mA4eZ5PYlmiN3jVOgTE5O7hWRJUDS9wPdW0k3ms67vl4st2t6D04l44bjLvvwdiX
+         EZ5uYDC1TzterkiiqW37XKdpAka6+OmP18j84xYUmbsu0sD5+cvQQ85sd9m7/VHIR3f4
+         ck9+IrEUlGmbBE5Y1cU3fd1oU3zHq5Q5vgeDjAgsot625XbgwaMLQPRdUJmUigvRGrpE
+         y3XA==
+X-Gm-Message-State: AOAM530B+k3sBGi+PHq+zqf3SwJo9u1yAVpffDVPhpQqsQ/uC4tx7m2X
+        llqIuPg0qLtZlNTG75sba+M0fQ==
+X-Google-Smtp-Source: ABdhPJzarucL0DNU7lVhbHFW8SWRQUj2t3cj9hw+0XuyUqg25IndM2TpaLf5DYuxw/fq6deq1ypAvg==
+X-Received: by 2002:ac8:72d6:: with SMTP id o22mr1139596qtp.177.1627630941171;
+        Fri, 30 Jul 2021 00:42:21 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id d79sm547197qke.45.2021.07.30.00.42.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jul 2021 00:42:20 -0700 (PDT)
+Date:   Fri, 30 Jul 2021 00:42:16 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.anvils
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Hugh Dickins <hughd@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <shy828301@gmail.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Matthew Auld <matthew.auld@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH 06/16] huge tmpfs: shmem_is_huge(vma, inode, index)
+In-Reply-To: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com>
+Message-ID: <dae523ab-c75b-f532-af9d-8b6a1d4e29b@google.com>
+References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20210729134943.778917-5-almaz.alexandrovich@paragon-software.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Le 29/07/2021 à 15:49, Konstantin Komarov a écrit :
-> This adds file operations and implementation
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> ---
->   fs/ntfs3/dir.c     |  594 +++++++++
->   fs/ntfs3/file.c    | 1130 ++++++++++++++++
->   fs/ntfs3/frecord.c | 3071 ++++++++++++++++++++++++++++++++++++++++++++
->   fs/ntfs3/namei.c   |  578 +++++++++
->   fs/ntfs3/record.c  |  609 +++++++++
->   fs/ntfs3/run.c     | 1111 ++++++++++++++++
->   6 files changed, 7093 insertions(+)
->   create mode 100644 fs/ntfs3/dir.c
->   create mode 100644 fs/ntfs3/file.c
->   create mode 100644 fs/ntfs3/frecord.c
->   create mode 100644 fs/ntfs3/namei.c
->   create mode 100644 fs/ntfs3/record.c
->   create mode 100644 fs/ntfs3/run.c
-> 
+Extend shmem_huge_enabled(vma) to shmem_is_huge(vma, inode, index), so
+that a consistent set of checks can be applied, even when the inode is
+accessed through read/write syscalls (with NULL vma) instead of mmaps
+(the index argument is seldom of interest, but required by mount option
+"huge=within_size").  Clean up and rearrange the checks a little.
 
-[...]
+This then replaces the checks which shmem_fault() and shmem_getpage_gfp()
+were making, and eliminates the SGP_HUGE and SGP_NOHUGE modes: while it's
+still true that khugepaged's collapse_file() at that point wants a small
+page, the race that might allocate it a huge page is too unlikely to be
+worth optimizing against (we are there *because* there was at least one
+small page in the way), and handled by a later PageTransCompound check.
 
-> diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
-> new file mode 100644
-> index 000000000..f5db12cd3
-> --- /dev/null
-> +++ b/fs/ntfs3/namei.c
+Replace a couple of 0s by explicit SHMEM_HUGE_NEVERs; and replace the
+obscure !shmem_mapping() symlink check by explicit S_ISLNK() - nothing
+else needs that symlink check, so leave it there in shmem_getpage_gfp().
 
-[...]
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+ include/linux/shmem_fs.h |  9 +++--
+ mm/khugepaged.c          |  2 +-
+ mm/shmem.c               | 84 ++++++++++++----------------------------
+ 3 files changed, 32 insertions(+), 63 deletions(-)
 
-> +/*
-> + * ntfs_rename
-> + *
-> + * inode_operations::rename
-> + */
-> +static int ntfs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
-> +		       struct dentry *old_dentry, struct inode *new_dir,
-> +		       struct dentry *new_dentry, u32 flags)
-> +{
-> +	int err;
-> +	struct super_block *sb = old_dir->i_sb;
-> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
-> +	struct ntfs_inode *old_dir_ni = ntfs_i(old_dir);
-> +	struct ntfs_inode *new_dir_ni = ntfs_i(new_dir);
-> +	struct ntfs_inode *old_ni;
-> +	struct ATTR_FILE_NAME *old_name, *new_name, *fname;
-> +	u8 name_type;
-> +	bool is_same;
-> +	struct inode *old_inode, *new_inode;
-> +	struct NTFS_DE *old_de, *new_de;
-> +	struct ATTRIB *attr;
-> +	struct ATTR_LIST_ENTRY *le;
-> +	u16 new_de_key_size;
-> +
-> +	static_assert(SIZEOF_ATTRIBUTE_FILENAME_MAX + SIZEOF_RESIDENT < 1024);
-> +	static_assert(SIZEOF_ATTRIBUTE_FILENAME_MAX + sizeof(struct NTFS_DE) <
-> +		      1024);
-> +	static_assert(PATH_MAX >= 4 * 1024);
-> +
-> +	if (flags & ~RENAME_NOREPLACE)
-> +		return -EINVAL;
-> +
-> +	old_inode = d_inode(old_dentry);
-> +	new_inode = d_inode(new_dentry);
-> +
-> +	old_ni = ntfs_i(old_inode);
-> +
-> +	is_same = old_dentry->d_name.len == new_dentry->d_name.len &&
-> +		  !memcmp(old_dentry->d_name.name, new_dentry->d_name.name,
-> +			  old_dentry->d_name.len);
-> +
-> +	if (is_same && old_dir == new_dir) {
-> +		/* Nothing to do */
-> +		err = 0;
-> +		goto out;
-> +	}
-> +
-> +	if (ntfs_is_meta_file(sbi, old_inode->i_ino)) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	if (new_inode) {
-> +		/*target name exists. unlink it*/
-> +		dget(new_dentry);
-> +		ni_lock_dir(new_dir_ni);
-> +		err = ntfs_unlink_inode(new_dir, new_dentry);
-> +		ni_unlock(new_dir_ni);
-> +		dput(new_dentry);
-> +		if (err)
-> +			goto out;
-> +	}
-> +
-> +	/* allocate PATH_MAX bytes */
-> +	old_de = __getname();
-> +	if (!old_de) {
-> +		err = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	err = fill_name_de(sbi, old_de, &old_dentry->d_name, NULL);
-> +	if (err < 0)
-> +		goto out1;
-> +
-> +	old_name = (struct ATTR_FILE_NAME *)(old_de + 1);
-> +
-> +	if (is_same) {
-> +		new_de = old_de;
-> +	} else {
-> +		new_de = Add2Ptr(old_de, 1024);
-> +		err = fill_name_de(sbi, new_de, &new_dentry->d_name, NULL);
-> +		if (err < 0)
-> +			goto out1;
-> +	}
-> +
-> +	ni_lock_dir(old_dir_ni);
-> +	ni_lock(old_ni);
-> +
-> +	mi_get_ref(&old_dir_ni->mi, &old_name->home);
-> +
-> +	/*get pointer to file_name in mft*/
-> +	fname = ni_fname_name(old_ni, (struct cpu_str *)&old_name->name_len,
-> +			      &old_name->home, &le);
-> +	if (!fname) {
-> +		err = -EINVAL;
-> +		goto out2;
-> +	}
-> +
-> +	/* Copy fname info from record into new fname */
-> +	new_name = (struct ATTR_FILE_NAME *)(new_de + 1);
-> +	memcpy(&new_name->dup, &fname->dup, sizeof(fname->dup));
-> +
-> +	name_type = paired_name(fname->type);
-> +
-> +	/* remove first name from directory */
-> +	err = indx_delete_entry(&old_dir_ni->dir, old_dir_ni, old_de + 1,
-> +				le16_to_cpu(old_de->key_size), sbi);
-> +	if (err)
-> +		goto out3;
-> +
-> +	/* remove first name from mft */
-> +	err = ni_remove_attr_le(old_ni, attr_from_name(fname), le);
-> +	if (err)
-> +		goto out4;
-> +
-> +	le16_add_cpu(&old_ni->mi.mrec->hard_links, -1);
-> +	old_ni->mi.dirty = true;
-> +
-> +	if (name_type != FILE_NAME_POSIX) {
-> +		/* get paired name */
-> +		fname = ni_fname_type(old_ni, name_type, &le);
-> +		if (fname) {
-> +			/* remove second name from directory */
-> +			err = indx_delete_entry(&old_dir_ni->dir, old_dir_ni,
-> +						fname, fname_full_size(fname),
-> +						sbi);
-> +			if (err)
-> +				goto out5;
-> +
-> +			/* remove second name from mft */
-> +			err = ni_remove_attr_le(old_ni, attr_from_name(fname),
-> +						le);
-> +			if (err)
-> +				goto out6;
-> +
-> +			le16_add_cpu(&old_ni->mi.mrec->hard_links, -1);
-> +			old_ni->mi.dirty = true;
-> +		}
-> +	}
-> +
-> +	/* Add new name */
-> +	mi_get_ref(&old_ni->mi, &new_de->ref);
-> +	mi_get_ref(&ntfs_i(new_dir)->mi, &new_name->home);
-> +
-> +	new_de_key_size = le16_to_cpu(new_de->key_size);
-> +
-> +	/* insert new name in mft */
-> +	err = ni_insert_resident(old_ni, new_de_key_size, ATTR_NAME, NULL, 0,
-> +				 &attr, NULL);
-> +	if (err)
-> +		goto out7;
-> +
-> +	attr->res.flags = RESIDENT_FLAG_INDEXED;
-> +
-> +	memcpy(Add2Ptr(attr, SIZEOF_RESIDENT), new_name, new_de_key_size);
-> +
-> +	le16_add_cpu(&old_ni->mi.mrec->hard_links, 1);
-> +	old_ni->mi.dirty = true;
-> +
-> +	/* insert new name in directory */
-> +	err = indx_insert_entry(&new_dir_ni->dir, new_dir_ni, new_de, sbi,
-> +				NULL);
-> +	if (err)
-> +		goto out8;
-> +
-> +	if (IS_DIRSYNC(new_dir))
-> +		err = ntfs_sync_inode(old_inode);
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index 9b7f7ac52351..3b05a28e34c4 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -86,7 +86,12 @@ extern void shmem_truncate_range(struct inode *inode, loff_t start, loff_t end);
+ extern int shmem_unuse(unsigned int type, bool frontswap,
+ 		       unsigned long *fs_pages_to_unuse);
+ 
+-extern bool shmem_huge_enabled(struct vm_area_struct *vma);
++extern bool shmem_is_huge(struct vm_area_struct *vma,
++			  struct inode *inode, pgoff_t index);
++static inline bool shmem_huge_enabled(struct vm_area_struct *vma)
++{
++	return shmem_is_huge(vma, file_inode(vma->vm_file), vma->vm_pgoff);
++}
+ extern unsigned long shmem_swap_usage(struct vm_area_struct *vma);
+ extern unsigned long shmem_partial_swap_usage(struct address_space *mapping,
+ 						pgoff_t start, pgoff_t end);
+@@ -95,8 +100,6 @@ extern unsigned long shmem_partial_swap_usage(struct address_space *mapping,
+ enum sgp_type {
+ 	SGP_READ,	/* don't exceed i_size, don't allocate page */
+ 	SGP_CACHE,	/* don't exceed i_size, may allocate page */
+-	SGP_NOHUGE,	/* like SGP_CACHE, but no huge pages */
+-	SGP_HUGE,	/* like SGP_CACHE, huge pages preferred */
+ 	SGP_WRITE,	/* may exceed i_size, may allocate !Uptodate page */
+ 	SGP_FALLOC,	/* like SGP_WRITE, but make existing page Uptodate */
+ };
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index b0412be08fa2..cecb19c3e965 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1721,7 +1721,7 @@ static void collapse_file(struct mm_struct *mm,
+ 				xas_unlock_irq(&xas);
+ 				/* swap in or instantiate fallocated page */
+ 				if (shmem_getpage(mapping->host, index, &page,
+-						  SGP_NOHUGE)) {
++						  SGP_CACHE)) {
+ 					result = SCAN_FAIL;
+ 					goto xa_unlocked;
+ 				}
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 740d48ef1eb5..6def7391084c 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -474,39 +474,35 @@ static bool shmem_confirm_swap(struct address_space *mapping,
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ /* ifdef here to avoid bloating shmem.o when not necessary */
+ 
+-static int shmem_huge __read_mostly;
++static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
+ 
+-bool shmem_huge_enabled(struct vm_area_struct *vma)
++bool shmem_is_huge(struct vm_area_struct *vma,
++		   struct inode *inode, pgoff_t index)
+ {
+-	struct inode *inode = file_inode(vma->vm_file);
+-	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+ 	loff_t i_size;
+-	pgoff_t off;
+ 
+-	if ((vma->vm_flags & VM_NOHUGEPAGE) ||
+-	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+-		return false;
+-	if (shmem_huge == SHMEM_HUGE_FORCE)
+-		return true;
+ 	if (shmem_huge == SHMEM_HUGE_DENY)
+ 		return false;
+-	switch (sbinfo->huge) {
+-	case SHMEM_HUGE_NEVER:
++	if (vma && ((vma->vm_flags & VM_NOHUGEPAGE) ||
++	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags)))
+ 		return false;
++	if (shmem_huge == SHMEM_HUGE_FORCE)
++		return true;
++
++	switch (SHMEM_SB(inode->i_sb)->huge) {
+ 	case SHMEM_HUGE_ALWAYS:
+ 		return true;
+ 	case SHMEM_HUGE_WITHIN_SIZE:
+-		off = round_up(vma->vm_pgoff, HPAGE_PMD_NR);
++		index = round_up(index, HPAGE_PMD_NR);
+ 		i_size = round_up(i_size_read(inode), PAGE_SIZE);
+-		if (i_size >= HPAGE_PMD_SIZE &&
+-				i_size >> PAGE_SHIFT >= off)
++		if (i_size >= HPAGE_PMD_SIZE && (i_size >> PAGE_SHIFT) >= index)
+ 			return true;
+ 		fallthrough;
+ 	case SHMEM_HUGE_ADVISE:
+-		/* TODO: implement fadvise() hints */
+-		return (vma->vm_flags & VM_HUGEPAGE);
++		if (vma && (vma->vm_flags & VM_HUGEPAGE))
++			return true;
++		fallthrough;
+ 	default:
+-		VM_BUG_ON(1);
+ 		return false;
+ 	}
+ }
+@@ -680,6 +676,12 @@ static long shmem_unused_huge_count(struct super_block *sb,
+ 
+ #define shmem_huge SHMEM_HUGE_DENY
+ 
++bool shmem_is_huge(struct vm_area_struct *vma,
++		   struct inode *inode, pgoff_t index)
++{
++	return false;
++}
++
+ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
+ 		struct shrink_control *sc, unsigned long nr_to_split)
+ {
+@@ -1829,7 +1831,6 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 	struct shmem_sb_info *sbinfo;
+ 	struct mm_struct *charge_mm;
+ 	struct page *page;
+-	enum sgp_type sgp_huge = sgp;
+ 	pgoff_t hindex = index;
+ 	gfp_t huge_gfp;
+ 	int error;
+@@ -1838,8 +1839,6 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 
+ 	if (index > (MAX_LFS_FILESIZE >> PAGE_SHIFT))
+ 		return -EFBIG;
+-	if (sgp == SGP_NOHUGE || sgp == SGP_HUGE)
+-		sgp = SGP_CACHE;
+ repeat:
+ 	if (sgp <= SGP_CACHE &&
+ 	    ((loff_t)index << PAGE_SHIFT) >= i_size_read(inode)) {
+@@ -1898,36 +1897,12 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 		return 0;
+ 	}
+ 
+-	/* shmem_symlink() */
+-	if (!shmem_mapping(mapping))
+-		goto alloc_nohuge;
+-	if (shmem_huge == SHMEM_HUGE_DENY || sgp_huge == SGP_NOHUGE)
++	/* Never use a huge page for shmem_symlink() */
++	if (S_ISLNK(inode->i_mode))
+ 		goto alloc_nohuge;
+-	if (shmem_huge == SHMEM_HUGE_FORCE)
+-		goto alloc_huge;
+-	switch (sbinfo->huge) {
+-	case SHMEM_HUGE_NEVER:
++	if (!shmem_is_huge(vma, inode, index))
+ 		goto alloc_nohuge;
+-	case SHMEM_HUGE_WITHIN_SIZE: {
+-		loff_t i_size;
+-		pgoff_t off;
+-
+-		off = round_up(index, HPAGE_PMD_NR);
+-		i_size = round_up(i_size_read(inode), PAGE_SIZE);
+-		if (i_size >= HPAGE_PMD_SIZE &&
+-		    i_size >> PAGE_SHIFT >= off)
+-			goto alloc_huge;
+ 
+-		fallthrough;
+-	}
+-	case SHMEM_HUGE_ADVISE:
+-		if (sgp_huge == SGP_HUGE)
+-			goto alloc_huge;
+-		/* TODO: implement fadvise() hints */
+-		goto alloc_nohuge;
+-	}
+-
+-alloc_huge:
+ 	huge_gfp = vma_thp_gfp_mask(vma);
+ 	huge_gfp = limit_gfp_mask(huge_gfp, gfp);
+ 	page = shmem_alloc_and_acct_page(huge_gfp, inode, index, true);
+@@ -2083,7 +2058,6 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct inode *inode = file_inode(vma->vm_file);
+ 	gfp_t gfp = mapping_gfp_mask(inode->i_mapping);
+-	enum sgp_type sgp;
+ 	int err;
+ 	vm_fault_t ret = VM_FAULT_LOCKED;
+ 
+@@ -2146,15 +2120,7 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 		spin_unlock(&inode->i_lock);
+ 	}
+ 
+-	sgp = SGP_CACHE;
+-
+-	if ((vma->vm_flags & VM_NOHUGEPAGE) ||
+-	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+-		sgp = SGP_NOHUGE;
+-	else if (vma->vm_flags & VM_HUGEPAGE)
+-		sgp = SGP_HUGE;
+-
+-	err = shmem_getpage_gfp(inode, vmf->pgoff, &vmf->page, sgp,
++	err = shmem_getpage_gfp(inode, vmf->pgoff, &vmf->page, SGP_CACHE,
+ 				  gfp, vma, vmf, &ret);
+ 	if (err)
+ 		return vmf_error(err);
+@@ -3961,7 +3927,7 @@ int __init shmem_init(void)
+ 	if (has_transparent_hugepage() && shmem_huge > SHMEM_HUGE_DENY)
+ 		SHMEM_SB(shm_mnt->mnt_sb)->huge = shmem_huge;
+ 	else
+-		shmem_huge = 0; /* just in case it was patched */
++		shmem_huge = SHMEM_HUGE_NEVER; /* just in case it was patched */
+ #endif
+ 	return 0;
+ 
+-- 
+2.26.2
 
-This value returned by 'ntfs_sync_inode()' is silenced below.
-Maybe the same should be done here?
-Anyway, this 'err' is never used and is forced to 0 below
-
-> +	else
-> +		mark_inode_dirty(old_inode);
-> +
-> +	old_dir->i_ctime = old_dir->i_mtime = current_time(old_dir);
-> +	if (IS_DIRSYNC(old_dir))
-> +		(void)ntfs_sync_inode(old_dir);
-
-here
-
-> +	else
-> +		mark_inode_dirty(old_dir);
-> +
-> +	if (old_dir != new_dir) {
-> +		new_dir->i_mtime = new_dir->i_ctime = old_dir->i_ctime;
-> +		mark_inode_dirty(new_dir);
-> +	}
-> +
-> +	if (old_inode) {
-> +		old_inode->i_ctime = old_dir->i_ctime;
-> +		mark_inode_dirty(old_inode);
-> +	}
-> +
-> +	err = 0;
-
-and here.
-
-> +	/* normal way */
-> +	goto out2;
-> +
-> +out8:
-> +	/* undo
-> +	 * ni_insert_resident(old_ni, new_de_key_size, ATTR_NAME, NULL, 0,
-> +	 *			 &attr, NULL);
-> +	 */
-> +	mi_remove_attr(&old_ni->mi, attr);
-> +out7:
-> +	/* undo
-> +	 * ni_remove_attr_le(old_ni, attr_from_name(fname), le);
-> +	 */
-> +out6:
-> +	/* undo
-> +	 * indx_delete_entry(&old_dir_ni->dir, old_dir_ni,
-> +	 *					fname, fname_full_size(fname),
-> +	 *					sbi);
-> +	 */
-> +out5:
-> +	/* undo
-> +	 * ni_remove_attr_le(old_ni, attr_from_name(fname), le);
-> +	 */
-> +out4:
-> +	/* undo:
-> +	 * indx_delete_entry(&old_dir_ni->dir, old_dir_ni, old_de + 1,
-> +	 *			old_de->key_size, NULL);
-> +	 */
-> +out3:
-> +out2:
-> +	ni_unlock(old_ni);
-> +	ni_unlock(old_dir_ni);
-> +out1:
-> +	__putname(old_de);
-> +out:
-> +	return err;
-> +}
-
-[...]
