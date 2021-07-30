@@ -2,135 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAB643DC1A3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jul 2021 01:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEAB03DC1AF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jul 2021 01:48:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234034AbhG3XlN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 19:41:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39828 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231209AbhG3XlM (ORCPT
+        id S234255AbhG3Xsc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 19:48:32 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:38749 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234037AbhG3Xsb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 19:41:12 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C01C06175F;
-        Fri, 30 Jul 2021 16:41:07 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id b7so15443986edu.3;
-        Fri, 30 Jul 2021 16:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jSLUnuuq5fV++9tMx9L7dLU+YzP6IguTmZ4Xmh+94Bg=;
-        b=nJKDksbiCLIFAtUQDafEvw8Tzb1I9e/ExJonodW9mAQVo7IJwENFLNXkXhOxQeKsnF
-         poz0zfkeaJomNjwwRAtTVImPZ92rp8E3H3CqyHF5VgrqRpilrelaFtxpKdggbwdknlCr
-         +frMG9q5tu10/1KIxHyes8BTAmU+QlEfUuJ7sO5JvAx8phaVDZzW5wzyVupRCAacJXNr
-         8tyaFCL2nt6rxITYE0xsb5sZ+Hy2cz09YeQZxlkcM0wHwtYgFgMRZMbJKLv2Z6DzZe5m
-         cDi/yh4U3O7fgoOk1CIomGbWhRk9XwpRqGI0XGnw7VcJq6oDOZAdFx31F6W6U9IWMDge
-         aGRQ==
+        Fri, 30 Jul 2021 19:48:31 -0400
+Received: by mail-il1-f198.google.com with SMTP id h27-20020a056e021d9bb02902021736bb95so5793879ila.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 16:48:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jSLUnuuq5fV++9tMx9L7dLU+YzP6IguTmZ4Xmh+94Bg=;
-        b=s+uiL59t5wzD51UH+syFsE0X75ihfncp2mVPIPLknL/CgeTqYWuAfG6QqT7iVUhgMR
-         5SMsHEoxFRkalz5GNAWqJBulPS82iNQ3GhcrQHGdJTE6xTpA6WkU7hSwpJJ/LelM8gp6
-         WtPAvR0/uhW579GWQW6+zLC8YrudWJCylYQhaInfhRA2UsgufLqZMW3Sa2gwQGsOSJn6
-         05zV2cYPhwhJsXN5vz3jmAESpmrhnHXtdv0zYreiVbqZbC0zoHJMuCtdLVAXPSUiag0D
-         APkfyzAsZhwEQQIRELUSZAxFxb1O2OITtBwpF4aiVgg90ImxwcKEs6swSvqcR8B/YeGJ
-         xmfw==
-X-Gm-Message-State: AOAM530EbjgnbcuqB8z7J+XZ6uZXSnGu8MytyhLP1U3zASWmPG3qqMRO
-        bUcCnYFDu+U91ZzC/TSqf0fv1yil5yxmqiGhSMA=
-X-Google-Smtp-Source: ABdhPJxfYN/q50PwtEt3EJiGj5Xb4PpKv5m7TrjWQ6Yme3cRMXL+6f6psAPwR3C5mFjRRECnBjMITxj+5Mu6oUPn4q4=
-X-Received: by 2002:a50:ce45:: with SMTP id k5mr6111555edj.168.1627688466110;
- Fri, 30 Jul 2021 16:41:06 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=XOreqIcoTN1CtO7Rz4sC/ft2790hKcx+mUxiRxZRZCU=;
+        b=sqnNVWAaXXyqpdjebNp4LfqMOgEjbepF6MZZ+3YadzmPgEN9cR+RGX6U33u1IW+sfm
+         s19BHUbp6zsyicCljUqG9hDkFPuW9tou4iQ9AbXywaVelfBsQlAhrmRcrk7RiD3rlrOs
+         0zD6uZXEdkcnEkxArBHqYdQLAtT7QKcPXzlEoEGE187fJdu8ZFkzFC+LgFDIVC8EZtMY
+         lYxm7xkrugc/pwjYXiunm9Ox82u6uohjO7To0QJENS9nAI+C7uURlYd4LeNpkPuqhuPa
+         5sAUYuc4uL9+0a9S4LgAMsPNi07Afj4Colfswf9G1dSaS75YD4BiutpHqZ670LgSrnId
+         AGCA==
+X-Gm-Message-State: AOAM530SD6ZS+kyo1pMx9sh8jE7eRsB/dDZd6knnsswrEp8nCBN4sL4g
+        apy6AqrVRVu0i1FfZwYaEab+yUMUUv6l8+iJPCJ70BgFo12e
+X-Google-Smtp-Source: ABdhPJzTEADX6ZN4Z6+YdAIXInK+cyRyXLX6x1dyM7YnnZMD8vZl09oNarbHWppt9RORDy6snaHPuMUp9NvxnrGuTbgzUwMgvl1C
 MIME-Version: 1.0
-References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com> <e6e572-f314-8a43-41a7-7582759d24@google.com>
-In-Reply-To: <e6e572-f314-8a43-41a7-7582759d24@google.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Fri, 30 Jul 2021 16:40:54 -0700
-Message-ID: <CAHbLzkp2s+Tkd1kdD4XPU-BF_rDy3Ck7+peTg+WdOWORMjwK-g@mail.gmail.com>
-Subject: Re: [PATCH 09/16] huge tmpfs: decide stat.st_blksize by shmem_is_huge()
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Matthew Auld <matthew.auld@intel.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, Linux MM <linux-mm@kvack.org>
+X-Received: by 2002:a05:6638:418f:: with SMTP id az15mr4146349jab.8.1627688905321;
+ Fri, 30 Jul 2021 16:48:25 -0700 (PDT)
+Date:   Fri, 30 Jul 2021 16:48:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000001b19a05c85fdb77@google.com>
+Subject: [syzbot] WARNING in fuse_get_tree
+From:   syzbot <syzbot+afacc3ce1215afa24615@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 30, 2021 at 12:51 AM Hugh Dickins <hughd@google.com> wrote:
->
-> 4.18 commit 89fdcd262fd4 ("mm: shmem: make stat.st_blksize return huge
-> page size if THP is on") added is_huge_enabled() to decide st_blksize:
-> now that hugeness can be defined per file, that too needs to be replaced
-> by shmem_is_huge().
->
-> Unless they have been fcntl'ed F_HUGEPAGE, this does give a different
-> answer (No) for small files on a "huge=within_size" mount: but that can
-> be considered a minor bugfix.  And a different answer (No) for unfcntl'ed
-> files on a "huge=advise" mount: I'm reluctant to complicate it, just to
-> reproduce the same debatable answer as before.
->
-> Signed-off-by: Hugh Dickins <hughd@google.com>
+Hello,
 
-Reviewed-by: Yang Shi <shy828301@gmail.com>
+syzbot found the following issue on:
 
-> ---
->  mm/shmem.c | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 67a4b7a4849b..f50f2ede71da 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -712,15 +712,6 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
->  }
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->
-> -static inline bool is_huge_enabled(struct shmem_sb_info *sbinfo)
-> -{
-> -       if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
-> -           (shmem_huge == SHMEM_HUGE_FORCE || sbinfo->huge) &&
-> -           shmem_huge != SHMEM_HUGE_DENY)
-> -               return true;
-> -       return false;
-> -}
-> -
->  /*
->   * Like add_to_page_cache_locked, but error if expected item has gone.
->   */
-> @@ -1101,7 +1092,6 @@ static int shmem_getattr(struct user_namespace *mnt_userns,
->  {
->         struct inode *inode = path->dentry->d_inode;
->         struct shmem_inode_info *info = SHMEM_I(inode);
-> -       struct shmem_sb_info *sb_info = SHMEM_SB(inode->i_sb);
->
->         if (info->alloced - info->swapped != inode->i_mapping->nrpages) {
->                 spin_lock_irq(&info->lock);
-> @@ -1110,7 +1100,7 @@ static int shmem_getattr(struct user_namespace *mnt_userns,
->         }
->         generic_fillattr(&init_user_ns, inode, stat);
->
-> -       if (is_huge_enabled(sb_info))
-> +       if (shmem_is_huge(NULL, inode, 0))
->                 stat->blksize = HPAGE_PMD_SIZE;
->
->         return 0;
-> --
-> 2.26.2
->
+HEAD commit:    2265c5286967 Add linux-next specific files for 20210726
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=102c92b6300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=531dbd796dcea4b4
+dashboard link: https://syzkaller.appspot.com/bug?extid=afacc3ce1215afa24615
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14d97fca300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=174a53f8300000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+afacc3ce1215afa24615@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 8483 at fs/fuse/inode.c:1595 fuse_get_tree+0x2eb/0x3f0 fs/fuse/inode.c:1595
+Modules linked in:
+CPU: 1 PID: 8483 Comm: syz-executor536 Not tainted 5.14.0-rc3-next-20210726-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:fuse_get_tree+0x2eb/0x3f0 fs/fuse/inode.c:1595
+Code: df 48 8b 85 78 03 00 00 48 89 f9 48 c1 e9 03 80 3c 11 00 0f 85 e8 00 00 00 4c 8b ad 80 03 00 00 4c 39 e8 74 29 e8 05 25 c8 fe <0f> 0b 48 b8 00 00 00 00 00 fc ff df 4c 89 fa 48 c1 ea 03 80 3c 02
+RSP: 0018:ffffc9000d6e7d40 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff8880269e6780 RCX: 0000000000000000
+RDX: ffff888035118000 RSI: ffffffff82ada24b RDI: ffff8880169b6028
+RBP: ffff8880360d3800 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffffff82ada0de R11: 0000000000000000 R12: ffff88802ada7c00
+R13: ffff8880145fe800 R14: ffff8880269e6788 R15: ffff8880360d3b78
+FS:  0000000000b25300(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4fd309fc08 CR3: 0000000027619000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1498
+ do_new_mount fs/namespace.c:2905 [inline]
+ path_mount+0x132a/0x1fa0 fs/namespace.c:3235
+ do_mount fs/namespace.c:3248 [inline]
+ __do_sys_mount fs/namespace.c:3456 [inline]
+ __se_sys_mount fs/namespace.c:3433 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3433
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x43f329
+Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcdd911e98 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 000000000043f329
+RDX: 0000000020002100 RSI: 00000000200020c0 RDI: 0000000000000000
+RBP: 0000000000403080 R08: 0000000020002140 R09: 0000000000400488
+R10: 0000000000004000 R11: 0000000000000246 R12: 0000000000403110
+R13: 0000000000000000 R14: 00000000004ad018 R15: 0000000000400488
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
