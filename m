@@ -2,193 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D72043DB4EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 10:11:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E317C3DB4F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 10:13:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237981AbhG3IL6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 04:11:58 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:18616 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237922AbhG3IL6 (ORCPT
+        id S238060AbhG3INL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 04:13:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58884 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238048AbhG3INK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 04:11:58 -0400
-Received: from [10.0.2.15] ([86.243.172.93])
-        by mwinf5d81 with ME
-        id bLBr2500S21Fzsu03LBrEA; Fri, 30 Jul 2021 10:11:53 +0200
-X-ME-Helo: [10.0.2.15]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 30 Jul 2021 10:11:53 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH v27 03/10] fs/ntfs3: Add bitmap
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        pali@kernel.org, dsterba@suse.cz, aaptel@suse.com,
-        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
-        mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com, kari.argillander@gmail.com,
-        oleksandr@natalenko.name
-References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
- <20210729134943.778917-4-almaz.alexandrovich@paragon-software.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <33a0225a-7264-ff4c-b48e-d1a1c3d368c4@wanadoo.fr>
-Date:   Fri, 30 Jul 2021 10:11:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Fri, 30 Jul 2021 04:13:10 -0400
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C58A8C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 01:13:04 -0700 (PDT)
+Received: by mail-qt1-x835.google.com with SMTP id t18so5860941qta.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 01:13:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=6jcq19xGjLmUrRwSvlYxDwEEZEY30Ie1/WmTXGS/o98=;
+        b=Kac6JXUK7HkQ+j1nfCyWf78Lx9/J8DhbK9cEe+BUdcchaQcuwA3yUFSUhn/812O94Y
+         NYSWAx93XtwzseOdArk3qWr12pWQKPcJXgne/v78P0RQYFGrJ9nealVyPoIWx/EqYa7m
+         hDroul1FOfEO5SGdz3xKVOhIExAaODMNchQY4wjDIFQbwb10BIZ+bstMTSQIg1LN8qqy
+         eQAeDVhg1sz7SnP/E6f7lZDfkw7dTurQMEXnYyWb1vsMskpJatZ803Gdo+KCv9j+v8j+
+         ZEaOVViwafQGLKntkVwsZOYOPJK6ZWRqxSUO+LBdEYTTuWXaUrj8wSn5ScQLmiKbcD64
+         v8vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=6jcq19xGjLmUrRwSvlYxDwEEZEY30Ie1/WmTXGS/o98=;
+        b=RQBcYO1vmXz1IG60dHvLeiLOcZcyVivDreqc0J6xyuiwrHFYummtYyWVS46us7N4b5
+         w756zIhQiwyp2qeYCT+acyIDcZH6Zr06CpeoeW5gI6IdLs5SFab5qrmVVjbcLnxgDeNo
+         l6F0AfRyh1OAiGpc47qKkOJ32kJHn9F4YUHv2IWuEtC+P6yIWJW/HuwLnoyJCGDz2N4I
+         +RGXFBbvpo9S5o8RmVw+rbbv6vLP/gkqYLP2eyy1r81LVaAgquuUlHtBAByB38JY4bHX
+         KnN7RFrJERD5Cx0WzXDDoABDXzjGZMI8djff2mJlKb9AzdJ6Jh3ksYh8zuS3vfNhbvP/
+         tuYQ==
+X-Gm-Message-State: AOAM532TjZHsrGTVYcgIv8IfRlweXojV3Kvi5TFjscFNP/JveNBPCDrQ
+        pGqQtNJUAtUvcrGJiqTIck0WBg==
+X-Google-Smtp-Source: ABdhPJyEd1jy6kKL/d+sUdaFX+XbhOvASGlRdpkXHz5LKfA/TN8qNb3mrpImsaMxEE6XRNqjUfjSpg==
+X-Received: by 2002:ac8:5552:: with SMTP id o18mr1239016qtr.51.1627632783757;
+        Fri, 30 Jul 2021 01:13:03 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id d129sm539530qkf.136.2021.07.30.01.13.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jul 2021 01:13:02 -0700 (PDT)
+Date:   Fri, 30 Jul 2021 01:13:00 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.anvils
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Hugh Dickins <hughd@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <shy828301@gmail.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Matthew Auld <matthew.auld@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH 16/16] memfd: memfd_create(name, MFD_MEM_LOCK) for memlocked
+ shmem
+In-Reply-To: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com>
+Message-ID: <be7c30cc-20fd-b5d6-83a2-366410753145@google.com>
+References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20210729134943.778917-4-almaz.alexandrovich@paragon-software.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Le 29/07/2021 à 15:49, Konstantin Komarov a écrit :
-> This adds bitmap
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> ---
->   fs/ntfs3/bitfunc.c |  135 ++++
->   fs/ntfs3/bitmap.c  | 1519 ++++++++++++++++++++++++++++++++++++++++++++
->   2 files changed, 1654 insertions(+)
->   create mode 100644 fs/ntfs3/bitfunc.c
->   create mode 100644 fs/ntfs3/bitmap.c
-> 
-> diff --git a/fs/ntfs3/bitfunc.c b/fs/ntfs3/bitfunc.c
-> new file mode 100644
-> index 000000000..2de5faef2
-> --- /dev/null
-> +++ b/fs/ntfs3/bitfunc.c
+Now that the size of a memlocked file can be changed, memfd_create() can
+accept an MFD_MEM_LOCK flag to request memlocking, even though the initial
+size is of course 0.
 
-[...]
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+ include/uapi/linux/memfd.h |  1 +
+ mm/memfd.c                 |  7 +++++--
+ mm/shmem.c                 | 13 ++++++++++++-
+ 3 files changed, 18 insertions(+), 3 deletions(-)
 
-> +bool are_bits_set(const ulong *lmap, size_t bit, size_t nbits)
-> +{
-> +	u8 mask;
-> +	size_t pos = bit & 7;
-> +	const u8 *map = (u8 *)lmap + (bit >> 3);
-> +
-> +	if (pos) {
-> +		if (8 - pos >= nbits) {
-> +			mask = fill_mask[pos + nbits] & zero_mask[pos];
-> +			return !nbits || (*map & mask) == mask;
-> +		}
-> +
-> +		mask = zero_mask[pos];
-> +		if ((*map++ & mask) != mask)
-> +			return false;
-> +		nbits -= 8 - pos;
-> +	}
-> +
-> +	pos = ((size_t)map) & (sizeof(size_t) - 1);
-> +	if (pos) {
-> +		pos = sizeof(size_t) - pos;
-> +		if (nbits >= pos * 8) {
-> +			for (nbits -= pos * 8; pos; pos--, map++) {
-> +				if (*map != 0xFF)
-> +					return false;
-> +			}
-> +		}
-> +	}
-> +
-> +	for (pos = nbits / BITS_IN_SIZE_T; pos; pos--, map += sizeof(size_t)) {
-> +		if (*((size_t *)map) != MINUS_ONE_T)
-> +			return false;
-> +	}
-> +
-> +	for (pos = (nbits % BITS_IN_SIZE_T) >> 3; pos; pos--, map++) {
-> +		if (*map != 0xFF)
-> +			return false;
-> +	}
-> +
-> +	pos = nbits & 7;
-> +	if (pos) {
-> +		u8 mask = fill_mask[pos];
+diff --git a/include/uapi/linux/memfd.h b/include/uapi/linux/memfd.h
+index 8358a69e78cc..9113b5aa1763 100644
+--- a/include/uapi/linux/memfd.h
++++ b/include/uapi/linux/memfd.h
+@@ -9,6 +9,7 @@
+ #define MFD_ALLOW_SEALING	0x0002U
+ #define MFD_HUGETLB		0x0004U		/* Use hugetlbfs */
+ #define MFD_HUGEPAGE		0x0008U		/* Use huge tmpfs */
++#define MFD_MEM_LOCK		0x0010U		/* Memlock tmpfs */
+ 
+ /*
+  * Huge page size encoding when MFD_HUGETLB is specified, and a huge page
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 0d1a504d2fc9..e39f9eed55d2 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -248,7 +248,8 @@ long memfd_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
+ #define MFD_ALL_FLAGS  (MFD_CLOEXEC | \
+ 			MFD_ALLOW_SEALING | \
+ 			MFD_HUGETLB | \
+-			MFD_HUGEPAGE)
++			MFD_HUGEPAGE | \
++			MFD_MEM_LOCK)
+ 
+ SYSCALL_DEFINE2(memfd_create,
+ 		const char __user *, uname,
+@@ -262,7 +263,7 @@ SYSCALL_DEFINE2(memfd_create,
+ 
+ 	if (flags & MFD_HUGETLB) {
+ 		/* Disallow huge tmpfs when choosing hugetlbfs */
+-		if (flags & MFD_HUGEPAGE)
++		if (flags & (MFD_HUGEPAGE | MFD_MEM_LOCK))
+ 			return -EINVAL;
+ 		/* Allow huge page size encoding in flags. */
+ 		if (flags & ~(unsigned int)(MFD_ALL_FLAGS |
+@@ -314,6 +315,8 @@ SYSCALL_DEFINE2(memfd_create,
+ 
+ 		if (flags & MFD_HUGEPAGE)
+ 			vm_flags |= VM_HUGEPAGE;
++		if (flags & MFD_MEM_LOCK)
++			vm_flags |= VM_LOCKED;
+ 		file = shmem_file_setup(name, 0, vm_flags);
+ 	}
+ 
+diff --git a/mm/shmem.c b/mm/shmem.c
+index fa4a264453bf..a0a83e59ae07 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2395,7 +2395,7 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
+ 		spin_lock_init(&info->lock);
+ 		atomic_set(&info->stop_eviction, 0);
+ 		info->seals = F_SEAL_SEAL;
+-		info->flags = flags & VM_NORESERVE;
++		info->flags = flags & (VM_NORESERVE | VM_LOCKED);
+ 		if ((flags & VM_HUGEPAGE) &&
+ 		    transparent_hugepage_allowed(sbinfo) &&
+ 		    !test_bit(MMF_DISABLE_THP, &current->mm->flags))
+@@ -4254,6 +4254,17 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, l
+ 	inode->i_size = size;
+ 	clear_nlink(inode);	/* It is unlinked */
+ 	res = ERR_PTR(ramfs_nommu_expand_for_mapping(inode, size));
++	if (!IS_ERR(res) && (flags & VM_LOCKED)) {
++		struct ucounts *ucounts = current_ucounts();
++		/*
++		 * Only memfd_create() may pass VM_LOCKED, and it passes
++		 * size 0; but avoid that assumption in case it changes.
++		 */
++		if (user_shm_lock(size, ucounts, true))
++			SHMEM_I(inode)->mlock_ucounts = ucounts;
++		else
++			res = ERR_PTR(-EPERM);
++	}
+ 	if (!IS_ERR(res))
+ 		res = alloc_file_pseudo(inode, mnt, name, O_RDWR,
+ 				&shmem_file_operations);
+-- 
+2.26.2
 
-There is no need to define a new 'mask' variable here, it just shadows 
-the already existing one. 'u8' can be removed.
-
-> +
-> +		if ((*map & mask) != mask)
-> +			return false;
-> +	}
-> +
-> +	// All bits are ones
-> +	return true;
-> +}
-> diff --git a/fs/ntfs3/bitmap.c b/fs/ntfs3/bitmap.c
-> new file mode 100644
-> index 000000000..32aab0031
-> --- /dev/null
-> +++ b/fs/ntfs3/bitmap.c
-
-[...]
-
-> +bool wnd_is_used(struct wnd_bitmap *wnd, size_t bit, size_t bits)
-> +{
-> +	bool ret = false;
-> +	struct super_block *sb = wnd->sb;
-> +	size_t iw = bit >> (sb->s_blocksize_bits + 3);
-> +	u32 wbits = 8 * sb->s_blocksize;
-> +	u32 wbit = bit & (wbits - 1);
-> +	size_t end;
-> +	struct rb_node *n;
-> +	struct e_node *e;
-> +
-> +	if (RB_EMPTY_ROOT(&wnd->start_tree))
-> +		goto use_wnd;
-> +
-> +	end = bit + bits;
-> +	n = rb_lookup(&wnd->start_tree, end - 1);
-> +	if (!n)
-> +		goto use_wnd;
-> +
-> +	e = rb_entry(n, struct e_node, start.node);
-> +	if (e->start.key + e->count.key > bit)
-> +		return false;
-> +
-> +use_wnd:
-> +	while (iw < wnd->nwnd && bits) {
-> +		u32 tail, op;
-> +
-> +		if (unlikely(iw + 1 == wnd->nwnd))
-> +			wbits = wnd->bits_last;
-> +
-> +		tail = wbits - wbit;
-> +		op = tail < bits ? tail : bits;
-> +
-> +		if (wnd->free_bits[iw]) {
-> +			bool ret;
-
-This 'ret' shadows the one defined above. It looks spurious and could 
-certainly be removed.
-However is looks safe because...
-
-> +			struct buffer_head *bh = wnd_map(wnd, iw);
-> +
-> +			if (IS_ERR(bh))
-> +				goto out;
-> +
-> +			ret = are_bits_set((ulong *)bh->b_data, wbit, op);
-> +			put_bh(bh);
-> +			if (!ret)
-> +				goto out;
-
-... if *this* 'ret' is false, the *other* 'ret' is false as well.
-
-> +		}
-> +
-> +		bits -= op;
-> +		wbit = 0;
-> +		iw += 1;
-> +	}
-> +	ret = true;
-> +
-> +out:
-> +	return ret;
-> +}
-
-[...]
