@@ -2,106 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD0D3DC11E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jul 2021 00:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF2413DC148
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jul 2021 00:53:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233341AbhG3Weu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 18:34:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51566 "EHLO
+        id S233586AbhG3WyA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 18:54:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233260AbhG3Wes (ORCPT
+        with ESMTP id S233540AbhG3WyA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 18:34:48 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DB71C0613C1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 15:34:42 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id pf12-20020a17090b1d8cb0290175c085e7a5so22872624pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 15:34:42 -0700 (PDT)
+        Fri, 30 Jul 2021 18:54:00 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D07EC06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 15:53:54 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id x8so7521437lfe.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 15:53:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=2B8bmMK1MWV0IKBzZFhJ4QQnRCCDWLQwwtmcrrRzShw=;
-        b=UfW+Uyhy937lSOvlfCbvzUSHfPBdVvhcTOaILHqlmzjEQeZkE7CJS1pDjY85yLeTrk
-         ZUbJvCXGnG9V4YR8YvLqiCoHxoAuC0RJHo8xznM5u3dhr6dkJI9BNq9mI/HgcDxL19UV
-         T0+Bsg6O2a3etVDRUOMu6je3JU33B5pFqiYpolqwzc84ASrmmPyryuwH24+FPODl2NK0
-         /jswqbw3cLYGC3s8tw+3+64iNj05CofMOCHjsjPmhNsSGF6fZGX5s2X6UpkAmOT82yEf
-         KD+vMh5N6wzurqnoLV7GP3bDuQRiamzrkbH5J6wxueQVfjy9YKlsV1lqKUCTBLbTMy1G
-         tbIg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yYbtWfX/VpaE9nHQJkZCw7fSJcFmIUlyV/5TayfE7hA=;
+        b=Fqxp+6NowYbKv5rRJ/gXfT9fQE7WNRfQMz7ewsVfXqQCI/6qccNDGPRAZ8zIWLRWJw
+         fn5tMHr8L2OzrRt1sMfOgIznX3bwi2JxoMG5PJWoRba5cMouN2loaRB8zJe9tVwaWunw
+         MagpwR4oinoVQdlPXNhpjkx0/5EUNLis/kcmw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2B8bmMK1MWV0IKBzZFhJ4QQnRCCDWLQwwtmcrrRzShw=;
-        b=p4ofa8qbhfpYyGjZi9Ow2uIyfEPzSjj3EwFwJUbrCl/W6ORLapoMsPNA4iSaBT9rSA
-         l4Qf6op6SPRnPqdI1HTvKYB+4BTYCnaj95epVn74ibiyFP2IhygSKS+YSIIbwoIKV/tG
-         m0QJsTsBHIQJeQubwL9rRshIfo17z8UHH6MrXm+rfRrZl8U09JSVcyMqvC4QLasTif5K
-         lNRRSoPsEUCfglDWhvuW8L2mRTqayqtPAHihSq2nUePfD5Aq09ccvu4NIf7Q/G6Swlf4
-         WouuCIqmxpehfeZFieN0/ycMs10OsIR9964EM0+OX9aku2WVLcivIiunYO9EySdd7nv2
-         mifA==
-X-Gm-Message-State: AOAM533QdEbaVcDfMFGo9cRbmyVH+8oPuZ0s4XJCFyxZACTG7GvGEaAs
-        PONb32UMfO/7mcd1V8WEUbDgHA==
-X-Google-Smtp-Source: ABdhPJzSqN3B7Go3MtNjE9VY5h0clk+hYXj3ladZ5/S+PnXE8W92M9c05HKB4nGF1ekuX4eoULgjrQ==
-X-Received: by 2002:a17:90b:1bcc:: with SMTP id oa12mr5239612pjb.113.1627684481796;
-        Fri, 30 Jul 2021 15:34:41 -0700 (PDT)
-Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id b184sm3525033pfg.72.2021.07.30.15.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jul 2021 15:34:41 -0700 (PDT)
-Date:   Fri, 30 Jul 2021 22:34:37 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Borislav Petkov <bp@alien8.de>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Sathyanarayanan Kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Will Deacon <will@kernel.org>, Dave Young <dyoung@redhat.com>,
-        Baoquan He <bhe@redhat.com>
-Subject: Re: [PATCH 07/11] treewide: Replace the use of mem_encrypt_active()
- with prot_guest_has()
-Message-ID: <YQR+ffO92gMfGDbs@google.com>
-References: <cover.1627424773.git.thomas.lendacky@amd.com>
- <029791b24c6412f9427cfe6ec598156c64395964.1627424774.git.thomas.lendacky@amd.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yYbtWfX/VpaE9nHQJkZCw7fSJcFmIUlyV/5TayfE7hA=;
+        b=PgP3vWPXydFCsB/3VnFmLdHyTHWlTMagiiNgfLZ5aQK/5+hq8UUOjADJP/1hQ5hKVm
+         kWWve7MtYXgnG5pDBAvpt/vwIBkEOicSIolnSFjSjWivFKASDdPPwlYftW6K1jCNc7TZ
+         wazKbXHcp3OVYjCZL9Qie4hgo+e/9lJaBvPiqm/26N+glc7gGU3ycsW/Xl6eWIkYZM9d
+         aFOeK+LefiZ+QgxbwWXMQNseUpRrTtjMhjHPK0R5lH2KK7EkwhKJKb/6O1bf4wEV2UBs
+         7ciegloQbFI/OzZDmmBwVXNQnHyJQ2nZ1y21stSGBOjiv4RB4elIu+TvEzbp6JIqj5P8
+         BXMw==
+X-Gm-Message-State: AOAM533ssuEqSw11SApDLNGNA088V/t6Hriijk+aoyKDKQgXiiXRbttf
+        TGRd7CYh/LZDZwiLyu9OoISvMb3drk1GS77g3Wc=
+X-Google-Smtp-Source: ABdhPJyR/1qA6BCfL02vD7vuZeHXD42ciVglGYpTfEo4EBfEzcaRDbd22gLBOAnR6WFyTzc8LB/DIw==
+X-Received: by 2002:a19:d609:: with SMTP id n9mr3699232lfg.198.1627685632814;
+        Fri, 30 Jul 2021 15:53:52 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id m6sm281578lfo.0.2021.07.30.15.53.50
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Jul 2021 15:53:51 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id z2so20928245lft.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 15:53:50 -0700 (PDT)
+X-Received: by 2002:ac2:44ad:: with SMTP id c13mr3528996lfm.377.1627685630269;
+ Fri, 30 Jul 2021 15:53:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <029791b24c6412f9427cfe6ec598156c64395964.1627424774.git.thomas.lendacky@amd.com>
+References: <20210729222635.2937453-1-sspatil@android.com> <20210729222635.2937453-2-sspatil@android.com>
+ <CAHk-=wh-DWvsFykwAy6uwyv24nasJ39d7SHT+15x+xEXBtSm_Q@mail.gmail.com>
+ <cee514d6-8551-8838-6d61-098d04e226ca@android.com> <CAHk-=wjStQurUzSAPVajL6Rj=CaPuSSgwaMO=0FJzFvSD66ACw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjStQurUzSAPVajL6Rj=CaPuSSgwaMO=0FJzFvSD66ACw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 30 Jul 2021 15:53:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjrfasYJUaZ-rJmYt9xa=DqmJ5-sVRG7cJ2X8nNcSXp9g@mail.gmail.com>
+Message-ID: <CAHk-=wjrfasYJUaZ-rJmYt9xa=DqmJ5-sVRG7cJ2X8nNcSXp9g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] fs: pipe: wakeup readers everytime new data written
+ is to pipe
+To:     Sandeep Patil <sspatil@android.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable <stable@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 27, 2021, Tom Lendacky wrote:
-> @@ -451,7 +450,7 @@ void __init mem_encrypt_free_decrypted_mem(void)
->  	 * The unused memory range was mapped decrypted, change the encryption
->  	 * attribute from decrypted to encrypted before freeing it.
->  	 */
-> -	if (mem_encrypt_active()) {
-> +	if (sme_me_mask) {
+On Fri, Jul 30, 2021 at 12:23 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> I'll mull it over a bit more, but whatever I'll do I'll do before rc4
+> and mark it for stable.
 
-Any reason this uses sme_me_mask?  The helper it calls, __set_memory_enc_dec(),
-uses prot_guest_has(PATTR_MEM_ENCRYPT) so I assume it's available?
+Ok, I ended up committing the minimal possible change (and fixing up
+the comment above it).
 
->  		r = set_memory_encrypted(vaddr, npages);
->  		if (r) {
->  			pr_warn("failed to free unused decrypted pages\n");
+It's very much *not* the original behavior either, but that original
+behavior was truly insane ("wake up for each hunk written"), and I'm
+trying to at least keep the kernel code from doing actively stupid
+things.
 
+Since that old patch of mine worked for your test-case, then clearly
+that realm-core library didn't rely on _that_ kind of insane internal
+kernel implementation details exposed as semantics. So The minimal
+patch basically says "each write() system call wil do at least one
+wake-up, whether really necessary or not".
+
+I also intentionally kept the read side untouched, in that there
+apparently still isn't a case that would need the confused semantics
+for read events.
+
+End result: the commit message is a lot bigger than the patch, with
+most of it being trying to explain the background.
+
+I've pushed it out as commit 3a34b13a88ca ("pipe: make pipe writes
+always wake up readers"). Holler if you notice anything odd remaining.
+
+              Linus
