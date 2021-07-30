@@ -2,544 +2,244 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAD193DB8CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 14:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 259393DB9AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 15:53:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238851AbhG3MpF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 08:45:05 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49954 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238852AbhG3Moq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 08:44:46 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: shreeya)
-        with ESMTPSA id E2D9D1F43BF9
-From:   Shreeya Patel <shreeya.patel@collabora.com>
-To:     krisman@collabora.com, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jaegeuk@kernel.org, chao@kernel.org, ebiggers@google.com,
-        drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com,
-        Shreeya Patel <shreeya.patel@collabora.com>
-Subject: [PATCH] fs: unicode: Add utf8-data module
-Date:   Fri, 30 Jul 2021 18:13:33 +0530
-Message-Id: <20210730124333.6744-1-shreeya.patel@collabora.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S239080AbhG3Nxx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 09:53:53 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:13094 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231210AbhG3Nxw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Jul 2021 09:53:52 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1627653227; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=wmpbdKATG8kg+bXPd14dXXlCiC9n7700UrJNofyUcEA=; b=hyvMDbIzctA/DavTVNTK71Um5V8caz56wQeLVGQOvFsCJkvfIKGQACt8z+QESUobTb4/FxyC
+ ovCmB+A3qCeQqrI6bHesFxpBedFRn/YvkljZAxV1yD6qCWjMl+V1kum+LJftHfC9NerzWadV
+ HsdwH0eI7jiuQ2dXcweUF56EBlw=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 6104046738fa9bfe9c5e9936 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 30 Jul 2021 13:53:43
+ GMT
+Sender: charante=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 3C477C43460; Fri, 30 Jul 2021 13:53:42 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,SPF_FAIL,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+Received: from hu-charante-hyd.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: charante)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3A24BC433D3;
+        Fri, 30 Jul 2021 13:53:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A24BC433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
+From:   Charan Teja Reddy <charante@codeaurora.org>
+To:     akpm@linux-foundation.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        dave.hansen@linux.intel.com, vbabka@suse.cz,
+        mgorman@techsingularity.net, nigupta@nvidia.com, corbet@lwn.net,
+        rppt@kernel.org, khalid.aziz@oracle.com, rientjes@google.com
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        vinmenon@codeaurora.org,
+        Charan Teja Reddy <charante@codeaurora.org>
+Subject: [PATCH V5] mm: compaction: support triggering of proactive compaction by user
+Date:   Fri, 30 Jul 2021 19:23:27 +0530
+Message-Id: <1627653207-12317-1-git-send-email-charante@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-utf8data.h_shipped has a large database table which is an auto-generated
-decodification trie for the unicode normalization functions.
-We can avoid carrying this large table in the kernel unless it is required
-by the filesystem during boot process.
+The proactive compaction[1] gets triggered for every 500msec and run
+compaction on the node for COMPACTION_HPAGE_ORDER (usually order-9)
+pages based on the value set to sysctl.compaction_proactiveness.
+Triggering the compaction for every 500msec in search of
+COMPACTION_HPAGE_ORDER pages is not needed for all applications,
+especially on the embedded system usecases which may have few MB's of
+RAM. Enabling the proactive compaction in its state will endup in
+running almost always on such systems.
 
-Hence, add utf8-data module which will be loaded only when UTF-8 encoding
-support is needed by the filesystem, provided it is selected as M.
-utf8-data will provide access to the data tables present in utf8data.h.
+Other side, proactive compaction can still be very much useful for
+getting a set of higher order pages in some controllable
+manner(controlled by using the sysctl.compaction_proactiveness). So, on
+systems where enabling the proactive compaction always may proove not
+required, can trigger the same from user space on write to its sysctl
+interface. As an example, say app launcher decide to launch the memory
+heavy application which can be launched fast if it gets more higher
+order pages thus launcher can prepare the system in advance by
+triggering the proactive compaction from userspace.
 
-Also, add support for enabling utf8-data as a built-in option so that
-filesystems that require UTF-8 encoding during boot process can access
-the data tables without any failure.
+This triggering of proactive compaction is done on a write to
+sysctl.compaction_proactiveness by user.
 
-Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+[1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
+
+Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
 ---
- fs/unicode/Kconfig         | 23 ++++++++++--
- fs/unicode/Makefile        |  3 +-
- fs/unicode/utf8-core.c     | 50 +++++++++++++++++++++++++--
- fs/unicode/utf8-data.c     | 42 ++++++++++++++++++++++
- fs/unicode/utf8-norm.c     | 71 +++++++++++++++++++++++---------------
- fs/unicode/utf8-selftest.c | 25 ++++++--------
- fs/unicode/utf8n.h         | 32 +++++++++++++++++
- 7 files changed, 198 insertions(+), 48 deletions(-)
- create mode 100644 fs/unicode/utf8-data.c
+ Changes in V5:
+ 	-- Avoid unnecessary wakeup of proactive compaction when it is disabled.
+	-- No changes in the logic of triggering the proactive compaction.
 
-diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
-index 2c27b9a5cd6c..80341fae5e63 100644
---- a/fs/unicode/Kconfig
-+++ b/fs/unicode/Kconfig
-@@ -2,13 +2,30 @@
- #
- # UTF-8 normalization
- #
-+# This config option will be automatically selected when UNICODE_UTF8_DATA
-+# is enabled. UNICODE config will provide all the UTF-8 core and normalization
-+# functions which will use UTF-8 data tables.
- config UNICODE
- 	bool "UTF-8 normalization and casefolding support"
-+
-+config UNICODE_UTF8_DATA
-+	tristate "UTF-8 support for native Case-Insensitive filesystems"
-+	select UNICODE
- 	help
--	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
--	  support.
-+	  Say M here to enable UTF-8 NFD normalization and NFD+CF casefolding
-+	  support as a loadable module or say Y for building it into the kernel.
-+	  It is currently supported by EXT4 and F2FS filesystems.
-+
-+	  utf8data.h_shipped has a large database table which is an
-+	  auto-generated decodification trie for the unicode normalization
-+	  functions. Enabling UNICODE_UTF8_DATA as M will allow you to avoid
-+	  carrying this large table into the kernel and module will only be
-+	  loaded with the data tables whenever required by any filesystem.
-+	  If your filesystem requires to have the utf8-data during boot time
-+	  then you should have it built into the kernel by saying Y here to
-+	  avoid any boot failure.
+ Changes in V4:
+	-- Changed the code as the 'proactive_defer' counter is removed.
+	-- No changes in the logic of triggering the proactive compaction.
+	-- https://lore.kernel.org/patchwork/patch/1448777/
+
+ Changes in V3:
+        -- Fixed review comments from Valstimil and others.
+        -- https://lore.kernel.org/patchwork/patch/1438211/
+
+ Changes in V2:
+	-- remove /proc/../proactive_compact_memory interface trigger for proactive compaction
+        -- Intention is same that add a way to trigger proactive compaction by user.
+        -- https://lore.kernel.org/patchwork/patch/1431283/
+
+ changes in V1:
+	-- Created the new /proc/sys/vm/proactive_compact_memory in
+	   interface to trigger proactive compaction from user 
+        -- https://lore.kernel.org/lkml/1619098678-8501-1-git-send-email-charante@codeaurora.org/
+
+ Documentation/admin-guide/sysctl/vm.rst |  3 ++-
+ include/linux/compaction.h              |  2 ++
+ include/linux/mmzone.h                  |  1 +
+ kernel/sysctl.c                         |  2 +-
+ mm/compaction.c                         | 38 +++++++++++++++++++++++++++++++--
+ 5 files changed, 42 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+index 003d5cc..b526cf6 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -118,7 +118,8 @@ compaction_proactiveness
  
- config UNICODE_NORMALIZATION_SELFTEST
- 	tristate "Test UTF-8 normalization support"
--	depends on UNICODE
-+	depends on UNICODE_UTF8_DATA
- 	default n
-diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-index b88aecc86550..fc28a6e2c56f 100644
---- a/fs/unicode/Makefile
-+++ b/fs/unicode/Makefile
-@@ -2,10 +2,11 @@
+ This tunable takes a value in the range [0, 100] with a default value of
+ 20. This tunable determines how aggressively compaction is done in the
+-background. Setting it to 0 disables proactive compaction.
++background. On write of non zero value to this tunable will immediately
++trigger the proactive compaction. Setting it to 0 disables proactive compaction.
  
- obj-$(CONFIG_UNICODE) += unicode.o
- obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
-+obj-$(CONFIG_UNICODE_UTF8_DATA) += utf8-data.o
+ Note that compaction has a non-trivial system-wide impact as pages
+ belonging to different processes are moved around, which could also lead
+diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+index c24098c..34bce35 100644
+--- a/include/linux/compaction.h
++++ b/include/linux/compaction.h
+@@ -84,6 +84,8 @@ static inline unsigned long compact_gap(unsigned int order)
+ extern unsigned int sysctl_compaction_proactiveness;
+ extern int sysctl_compaction_handler(struct ctl_table *table, int write,
+ 			void *buffer, size_t *length, loff_t *ppos);
++extern int compaction_proactiveness_sysctl_handler(struct ctl_table *table,
++		int write, void *buffer, size_t *length, loff_t *ppos);
+ extern int sysctl_extfrag_threshold;
+ extern int sysctl_compact_unevictable_allowed;
  
- unicode-y := utf8-norm.o utf8-core.o
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 4610750..6a1d79d 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -853,6 +853,7 @@ typedef struct pglist_data {
+ 	enum zone_type kcompactd_highest_zoneidx;
+ 	wait_queue_head_t kcompactd_wait;
+ 	struct task_struct *kcompactd;
++	bool proactive_compact_trigger;
+ #endif
+ 	/*
+ 	 * This is a per-node reserve of pages that are not available
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 82d6ff6..65bc6f7 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2871,7 +2871,7 @@ static struct ctl_table vm_table[] = {
+ 		.data		= &sysctl_compaction_proactiveness,
+ 		.maxlen		= sizeof(sysctl_compaction_proactiveness),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
++		.proc_handler	= compaction_proactiveness_sysctl_handler,
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= &one_hundred,
+ 	},
+diff --git a/mm/compaction.c b/mm/compaction.c
+index f984ad0..fbc60f9 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2700,6 +2700,30 @@ static void compact_nodes(void)
+  */
+ unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
  
--$(obj)/utf8-norm.o: $(obj)/utf8data.h
-+$(obj)/utf8-data.o: $(obj)/utf8data.h
- 
- # In the normal build, the checked-in utf8data.h is just shipped.
- #
-diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
-index dc25823bfed9..3d32c9e5c581 100644
---- a/fs/unicode/utf8-core.c
-+++ b/fs/unicode/utf8-core.c
-@@ -192,7 +192,7 @@ static int utf8_parse_version(const char *version, unsigned int *maj,
- 	return 0;
- }
- 
--struct unicode_map *utf8_load(const char *version)
-+static struct unicode_map *utf8_load_core(const char *version)
- {
- 	struct unicode_map *um = NULL;
- 	int unicode_version;
-@@ -225,11 +225,57 @@ struct unicode_map *utf8_load(const char *version)
- 
- 	return um;
- }
-+
-+static void utf8_unload_core(struct unicode_map *um)
++int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
++		void *buffer, size_t *length, loff_t *ppos)
 +{
-+	kfree(um);
-+}
++	int rc, nid;
 +
-+static int utf8mod_get(void)
-+{
-+	int ret;
++	rc = proc_dointvec_minmax(table, write, buffer, length, ppos);
++	if (rc)
++		return rc;
 +
-+	spin_lock(&utf8_lock);
-+	ret = utf8data_loaded && try_module_get(utf8_ops->owner);
-+	spin_unlock(&utf8_lock);
-+	return ret;
-+}
++	if (write && sysctl_compaction_proactiveness) {
++		for_each_online_node(nid) {
++			pg_data_t *pgdat = NODE_DATA(nid);
 +
-+struct unicode_map *utf8_load(const char *version)
-+{
-+	struct unicode_map *um;
++			if (pgdat->proactive_compact_trigger)
++				continue;
 +
-+	/*
-+	 * try_then_request_module() is used here instead of using
-+	 * request_module() because of the following problems that
-+	 * could occur with the usage of request_module().
-+	 * 1) Multiple calls in parallel to utf8_load() would fail if
-+	 * kmod_concurrent_max == 0
-+	 * 2) There would be unnecessary memory allocation and userspace
-+	 * invocation in call_modprobe() that would always happen even if
-+	 * the module is already loaded.
-+	 * Hence, using try_then_request_module() would first check if the
-+	 * module is already loaded, if not then it calls the request_module()
-+	 * and finally would aquire the reference of the loaded module.
-+	 */
-+	if (!try_then_request_module(utf8mod_get(), "utf8-data")) {
-+		pr_err("Failed to load UTF-8 module\n");
-+		return ERR_PTR(-ENODEV);
++			pgdat->proactive_compact_trigger = true;
++			wake_up_interruptible(&pgdat->kcompactd_wait);
++		}
 +	}
-+	um = utf8_load_core(version);
-+	if (IS_ERR(um))
-+		module_put(utf8_ops->owner);
 +
-+	return um;
-+}
- EXPORT_SYMBOL(utf8_load);
- 
- void utf8_unload(struct unicode_map *um)
- {
--	kfree(um);
-+	if (um) {
-+		utf8_unload_core(um);
-+		module_put(utf8_ops->owner);
-+	}
- }
- EXPORT_SYMBOL(utf8_unload);
- 
-diff --git a/fs/unicode/utf8-data.c b/fs/unicode/utf8-data.c
-new file mode 100644
-index 000000000000..c798962d362d
---- /dev/null
-+++ b/fs/unicode/utf8-data.c
-@@ -0,0 +1,42 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include "utf8n.h"
-+
-+#define __INCLUDED_FROM_UTF8NORM_C__
-+#include "utf8data.h"
-+#undef __INCLUDED_FROM_UTF8NORM_C__
-+
-+struct utf8_data ops = {
-+	.owner = THIS_MODULE,
-+
-+	.utf8vers = utf8vers,
-+
-+	.utf8agetab = utf8agetab,
-+	.utf8agetab_size = ARRAY_SIZE(utf8agetab),
-+
-+	.utf8nfdicfdata = utf8nfdicfdata,
-+	.utf8nfdicfdata_size = ARRAY_SIZE(utf8nfdicfdata),
-+
-+	.utf8nfdidata = utf8nfdidata,
-+	.utf8nfdidata_size = ARRAY_SIZE(utf8nfdidata),
-+
-+	.utf8data = utf8data,
-+	.utf8data_size = ARRAY_SIZE(utf8data),
-+};
-+
-+static int __init utf8_init(void)
-+{
-+	unicode_register(&ops);
 +	return 0;
 +}
 +
-+static void __exit utf8_exit(void)
-+{
-+	unicode_unregister();
-+}
-+
-+module_init(utf8_init);
-+module_exit(utf8_exit);
-+
-+MODULE_LICENSE("GPL v2");
-diff --git a/fs/unicode/utf8-norm.c b/fs/unicode/utf8-norm.c
-index 1d2d2e5b906a..f3d6bbe0fe4c 100644
---- a/fs/unicode/utf8-norm.c
-+++ b/fs/unicode/utf8-norm.c
-@@ -6,22 +6,19 @@
+ /*
+  * This is the entry point for compacting all nodes via
+  * /proc/sys/vm/compact_memory
+@@ -2744,7 +2768,8 @@ void compaction_unregister_node(struct node *node)
  
- #include "utf8n.h"
- 
--struct utf8data {
--	unsigned int maxage;
--	unsigned int offset;
--};
-+/* Spinlock for protecting utf8data_loaded and utf8_ops */
-+DEFINE_SPINLOCK(utf8_lock);
- 
--#define __INCLUDED_FROM_UTF8NORM_C__
--#include "utf8data.h"
--#undef __INCLUDED_FROM_UTF8NORM_C__
-+struct utf8_data *utf8_ops;
-+bool utf8data_loaded;
- 
- int utf8version_is_supported(u8 maj, u8 min, u8 rev)
+ static inline bool kcompactd_work_requested(pg_data_t *pgdat)
  {
--	int i = ARRAY_SIZE(utf8agetab) - 1;
-+	int i = utf8_ops->utf8agetab_size - 1;
- 	unsigned int sb_utf8version = UNICODE_AGE(maj, min, rev);
+-	return pgdat->kcompactd_max_order > 0 || kthread_should_stop();
++	return pgdat->kcompactd_max_order > 0 || kthread_should_stop() ||
++		pgdat->proactive_compact_trigger;
+ }
  
--	while (i >= 0 && utf8agetab[i] != 0) {
--		if (sb_utf8version == utf8agetab[i])
-+	while (i >= 0 && utf8_ops->utf8agetab[i] != 0) {
-+		if (sb_utf8version == utf8_ops->utf8agetab[i])
- 			return 1;
- 		i--;
+ static bool kcompactd_node_suitable(pg_data_t *pgdat)
+@@ -2895,9 +2920,16 @@ static int kcompactd(void *p)
+ 	while (!kthread_should_stop()) {
+ 		unsigned long pflags;
+ 
++		/*
++		 * Avoid the unnecessary wakeup for proactive compaction
++		 * when it is disabled.
++		 */
++		if (!sysctl_compaction_proactiveness)
++			timeout = MAX_SCHEDULE_TIMEOUT;
+ 		trace_mm_compaction_kcompactd_sleep(pgdat->node_id);
+ 		if (wait_event_freezable_timeout(pgdat->kcompactd_wait,
+-			kcompactd_work_requested(pgdat), timeout)) {
++			kcompactd_work_requested(pgdat), timeout) &&
++			!pgdat->proactive_compact_trigger) {
+ 
+ 			psi_memstall_enter(&pflags);
+ 			kcompactd_do_work(pgdat);
+@@ -2932,6 +2964,8 @@ static int kcompactd(void *p)
+ 				timeout =
+ 				   default_timeout << COMPACT_MAX_DEFER_SHIFT;
+ 		}
++		if (unlikely(pgdat->proactive_compact_trigger))
++			pgdat->proactive_compact_trigger = false;
  	}
-@@ -31,7 +28,7 @@ EXPORT_SYMBOL(utf8version_is_supported);
  
- int utf8version_latest(void)
- {
--	return utf8vers;
-+	return utf8_ops->utf8vers;
- }
- EXPORT_SYMBOL(utf8version_latest);
- 
-@@ -168,7 +165,7 @@ typedef const unsigned char utf8trie_t;
-  * underlying datatype: unsigned char.
-  *
-  * leaf[0]: The unicode version, stored as a generation number that is
-- *          an index into utf8agetab[].  With this we can filter code
-+ *          an index into utf8_ops->utf8agetab[].  With this we can filter code
-  *          points based on the unicode version in which they were
-  *          defined.  The CCC of a non-defined code point is 0.
-  * leaf[1]: Canonical Combining Class. During normalization, we need
-@@ -330,7 +327,7 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
- 	if (len == 0)
- 		return NULL;
- 
--	trie = utf8data + data->offset;
-+	trie = utf8_ops->utf8data + data->offset;
- 	node = 1;
- 	while (node) {
- 		offlen = (*trie & OFFLEN) >> OFFLEN_SHIFT;
-@@ -418,7 +415,7 @@ int utf8agemax(const struct utf8data *data, const char *s)
- 		if (!leaf)
- 			return -1;
- 
--		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-+		leaf_age = utf8_ops->utf8agetab[LEAF_GEN(leaf)];
- 		if (leaf_age <= data->maxage && leaf_age > age)
- 			age = leaf_age;
- 		s += utf8clen(s);
-@@ -446,7 +443,7 @@ int utf8agemin(const struct utf8data *data, const char *s)
- 		leaf = utf8lookup(data, hangul, s);
- 		if (!leaf)
- 			return -1;
--		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-+		leaf_age = utf8_ops->utf8agetab[LEAF_GEN(leaf)];
- 		if (leaf_age <= data->maxage && leaf_age < age)
- 			age = leaf_age;
- 		s += utf8clen(s);
-@@ -473,7 +470,7 @@ int utf8nagemax(const struct utf8data *data, const char *s, size_t len)
- 		leaf = utf8nlookup(data, hangul, s, len);
- 		if (!leaf)
- 			return -1;
--		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-+		leaf_age = utf8_ops->utf8agetab[LEAF_GEN(leaf)];
- 		if (leaf_age <= data->maxage && leaf_age > age)
- 			age = leaf_age;
- 		len -= utf8clen(s);
-@@ -501,7 +498,7 @@ int utf8nagemin(const struct utf8data *data, const char *s, size_t len)
- 		leaf = utf8nlookup(data, hangul, s, len);
- 		if (!leaf)
- 			return -1;
--		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-+		leaf_age = utf8_ops->utf8agetab[LEAF_GEN(leaf)];
- 		if (leaf_age <= data->maxage && leaf_age < age)
- 			age = leaf_age;
- 		len -= utf8clen(s);
-@@ -529,7 +526,7 @@ ssize_t utf8len(const struct utf8data *data, const char *s)
- 		leaf = utf8lookup(data, hangul, s);
- 		if (!leaf)
- 			return -1;
--		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
-+		if (utf8_ops->utf8agetab[LEAF_GEN(leaf)] > data->maxage)
- 			ret += utf8clen(s);
- 		else if (LEAF_CCC(leaf) == DECOMPOSE)
- 			ret += strlen(LEAF_STR(leaf));
-@@ -557,7 +554,7 @@ ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
- 		leaf = utf8nlookup(data, hangul, s, len);
- 		if (!leaf)
- 			return -1;
--		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
-+		if (utf8_ops->utf8agetab[LEAF_GEN(leaf)] > data->maxage)
- 			ret += utf8clen(s);
- 		else if (LEAF_CCC(leaf) == DECOMPOSE)
- 			ret += strlen(LEAF_STR(leaf));
-@@ -690,7 +687,7 @@ int utf8byte(struct utf8cursor *u8c)
- 
- 		ccc = LEAF_CCC(leaf);
- 		/* Characters that are too new have CCC 0. */
--		if (utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
-+		if (utf8_ops->utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
- 			ccc = STOPPER;
- 		} else if (ccc == DECOMPOSE) {
- 			u8c->len -= utf8clen(u8c->s);
-@@ -769,24 +766,42 @@ EXPORT_SYMBOL(utf8byte);
- 
- const struct utf8data *utf8nfdi(unsigned int maxage)
- {
--	int i = ARRAY_SIZE(utf8nfdidata) - 1;
-+	int i = utf8_ops->utf8nfdidata_size - 1;
- 
--	while (maxage < utf8nfdidata[i].maxage)
-+	while (maxage < utf8_ops->utf8nfdidata[i].maxage)
- 		i--;
--	if (maxage > utf8nfdidata[i].maxage)
-+	if (maxage > utf8_ops->utf8nfdidata[i].maxage)
- 		return NULL;
--	return &utf8nfdidata[i];
-+	return &utf8_ops->utf8nfdidata[i];
- }
- EXPORT_SYMBOL(utf8nfdi);
- 
- const struct utf8data *utf8nfdicf(unsigned int maxage)
- {
--	int i = ARRAY_SIZE(utf8nfdicfdata) - 1;
-+	int i = utf8_ops->utf8nfdicfdata_size - 1;
- 
--	while (maxage < utf8nfdicfdata[i].maxage)
-+	while (maxage < utf8_ops->utf8nfdicfdata[i].maxage)
- 		i--;
--	if (maxage > utf8nfdicfdata[i].maxage)
-+	if (maxage > utf8_ops->utf8nfdicfdata[i].maxage)
- 		return NULL;
--	return &utf8nfdicfdata[i];
-+	return &utf8_ops->utf8nfdicfdata[i];
- }
- EXPORT_SYMBOL(utf8nfdicf);
-+
-+void unicode_register(struct utf8_data *ops)
-+{
-+	spin_lock(&utf8_lock);
-+	utf8_ops = ops;
-+	utf8data_loaded = true;
-+	spin_unlock(&utf8_lock);
-+}
-+EXPORT_SYMBOL(unicode_register);
-+
-+void unicode_unregister(void)
-+{
-+	spin_lock(&utf8_lock);
-+	utf8_ops = NULL;
-+	utf8data_loaded = false;
-+	spin_unlock(&utf8_lock);
-+}
-+EXPORT_SYMBOL(unicode_unregister);
-diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
-index 6fe8af7edccb..d8069f4ad452 100644
---- a/fs/unicode/utf8-selftest.c
-+++ b/fs/unicode/utf8-selftest.c
-@@ -16,6 +16,7 @@
- 
- unsigned int failed_tests;
- unsigned int total_tests;
-+struct unicode_map *table;
- 
- /* Tests will be based on this version. */
- #define latest_maj 12
-@@ -232,16 +233,9 @@ static void check_utf8_nfdicf(void)
- 	}
- }
- 
--static void check_utf8_comparisons(void)
-+static void check_utf8_comparisons(struct unicode_map *table)
- {
- 	int i;
--	struct unicode_map *table = utf8_load("12.1.0");
--
--	if (IS_ERR(table)) {
--		pr_err("%s: Unable to load utf8 %d.%d.%d. Skipping.\n",
--		       __func__, latest_maj, latest_min, latest_rev);
--		return;
--	}
- 
- 	for (i = 0; i < ARRAY_SIZE(nfdi_test_data); i++) {
- 		const struct qstr s1 = {.name = nfdi_test_data[i].str,
-@@ -262,8 +256,6 @@ static void check_utf8_comparisons(void)
- 		test_f(!utf8_strncasecmp(table, &s1, &s2),
- 		       "%s %s comparison mismatch\n", s1.name, s2.name);
- 	}
--
--	utf8_unload(table);
- }
- 
- static void check_supported_versions(void)
-@@ -274,9 +266,6 @@ static void check_supported_versions(void)
- 	/* Unicode 9.0.0 should be supported. */
- 	test(utf8version_is_supported(9, 0, 0));
- 
--	/* Unicode 1x.0.0 (the latest version) should be supported. */
--	test(utf8version_is_supported(latest_maj, latest_min, latest_rev));
--
- 	/* Next versions don't exist. */
- 	test(!utf8version_is_supported(13, 0, 0));
- 	test(!utf8version_is_supported(0, 0, 0));
-@@ -288,10 +277,17 @@ static int __init init_test_ucd(void)
- 	failed_tests = 0;
- 	total_tests = 0;
- 
-+	table = utf8_load("12.1.0");
-+	if (IS_ERR(table)) {
-+		pr_err("%s: Unable to load utf8 %d.%d.%d. Could not run the tests\n",
-+		       __func__, latest_maj, latest_min, latest_rev);
-+		return -EINVAL;
-+	}
-+
- 	check_supported_versions();
- 	check_utf8_nfdi();
- 	check_utf8_nfdicf();
--	check_utf8_comparisons();
-+	check_utf8_comparisons(table);
- 
- 	if (!failed_tests)
- 		pr_info("All %u tests passed\n", total_tests);
-@@ -303,6 +299,7 @@ static int __init init_test_ucd(void)
- 
- static void __exit exit_test_ucd(void)
- {
-+	utf8_unload(table);
- }
- 
- module_init(init_test_ucd);
-diff --git a/fs/unicode/utf8n.h b/fs/unicode/utf8n.h
-index 0acd530c2c79..6843229bcb2b 100644
---- a/fs/unicode/utf8n.h
-+++ b/fs/unicode/utf8n.h
-@@ -11,6 +11,7 @@
- #include <linux/export.h>
- #include <linux/string.h>
- #include <linux/module.h>
-+#include <linux/spinlock.h>
- 
- /* Encoding a unicode version number as a single unsigned int. */
- #define UNICODE_MAJ_SHIFT		(16)
-@@ -21,6 +22,11 @@
- 	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
- 	 ((unsigned int)(REV)))
- 
-+extern spinlock_t utf8_lock;
-+
-+extern struct utf8_data *utf8_ops;
-+extern bool utf8data_loaded;
-+
- /* Highest unicode version supported by the data tables. */
- extern int utf8version_is_supported(u8 maj, u8 min, u8 rev);
- extern int utf8version_latest(void);
-@@ -105,4 +111,30 @@ extern int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
-  */
- extern int utf8byte(struct utf8cursor *u8c);
- 
-+struct utf8data {
-+	unsigned int maxage;
-+	unsigned int offset;
-+};
-+
-+struct utf8_data {
-+	struct module *owner;
-+
-+	const unsigned int utf8vers;
-+
-+	const unsigned int *utf8agetab;
-+	int utf8agetab_size;
-+
-+	const struct utf8data *utf8nfdicfdata;
-+	int utf8nfdicfdata_size;
-+
-+	const struct utf8data *utf8nfdidata;
-+	int utf8nfdidata_size;
-+
-+	const unsigned char *utf8data;
-+	int utf8data_size;
-+};
-+
-+void unicode_register(struct utf8_data *ops);
-+void unicode_unregister(void);
-+
- #endif /* UTF8NORM_H */
+ 	return 0;
 -- 
-2.30.2
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
+member of the Code Aurora Forum, hosted by The Linux Foundation
 
