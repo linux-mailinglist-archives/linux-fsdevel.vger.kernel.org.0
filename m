@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84F4C3DB30D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 07:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F0363DB31D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 08:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237163AbhG3F6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 01:58:21 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:51830 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237035AbhG3F6T (ORCPT
+        id S237264AbhG3GBJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 02:01:09 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:34982 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229999AbhG3GBJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 01:58:19 -0400
+        Fri, 30 Jul 2021 02:01:09 -0400
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 100022238B;
-        Fri, 30 Jul 2021 05:58:14 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 867761FDB1;
+        Fri, 30 Jul 2021 06:01:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1627624694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1627624863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=HTRH/OYio0D4QPjATbqxXdI9yfVMbySsNkg6tU+Cye8=;
-        b=EV650qU5HyFBDOyYdmgsDF1mEj2Pj7Fb4hLrAi6uCsyc0YvOuZ9VpSh3gHCMQN8V1ExJP6
-        gpjgTf3725oaO9xAvyypXwvNCIWJoHf6iK10+Wib2HoqHB5wbsqABGq/JXI2X3+dIzlpQF
-        3knXPWUg44bw4JI3Y/nDsQoJ7DKrtA0=
+        bh=1xHOP8ZRZex6z6cQJzGtenvi+uTP2BbtR83yGHCWjxk=;
+        b=XWYkUrlCx11IaPtjvIhwa4sC9iIzgCm6D0QPPFd8XWiw93pacsxM9c5opDnYUaxBDU6uFm
+        AMErkFZd2aqqfFBcQ5l1vt8nosGRwct3AFJ1iHxjMQZWkg/A0HiuCa8nWAZDUhg2fRinKV
+        pDwkYrRQFzU0bsHOdOPAJFOU0CueHzo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1627624694;
+        s=susede2_ed25519; t=1627624863;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=HTRH/OYio0D4QPjATbqxXdI9yfVMbySsNkg6tU+Cye8=;
-        b=AO+FcYH1ftcTRQ+U4RqzRpwgi0JrZL0WmGrnBCPIxh+nFSvITYzG1/9UW4sjOX7naT+UtP
-        QDbGBZf+azZUcJAA==
+        bh=1xHOP8ZRZex6z6cQJzGtenvi+uTP2BbtR83yGHCWjxk=;
+        b=ZGJWj+0Y2iDQNAaAVBGvjSNO5ccFMjcmROL4vNWbobPjmB2zXp0IadgO9h/6aZv/7oNnN9
+        ROP98cwA2ZPbuwBQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1FAE813BF9;
-        Fri, 30 Jul 2021 05:58:09 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 974A113BF9;
+        Fri, 30 Jul 2021 06:00:59 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id qfHVM/GUA2GqfwAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 30 Jul 2021 05:58:09 +0000
+        id JKVLFZuVA2GvAQAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 30 Jul 2021 06:00:59 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 From:   "NeilBrown" <neilb@suse.de>
 To:     "Qu Wenruo" <quwenruo.btrfs@gmx.com>
@@ -64,7 +64,7 @@ Cc:     "Zygo Blaxell" <ce3g8jdj@umail.furryterror.org>,
         linux-nfs@vger.kernel.org,
         "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>
 Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
-In-reply-to: <341403c0-a7a7-f6c8-5ef6-2d966b1907a8@gmx.com>
+In-reply-to: <046c96cd-f2a5-be04-e7b5-012e896c5816@gmx.com>
 References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
  <20210728125819.6E52.409509F4@e16-tech.com>,
  <20210728140431.D704.409509F4@e16-tech.com>,
@@ -75,105 +75,41 @@ References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
  <162752976632.21659.9573422052804077340@noble.neil.brown.name>,
  <20210729232017.GE10106@hungrycats.org>,
  <162761259105.21659.4838403432058511846@noble.neil.brown.name>,
- <341403c0-a7a7-f6c8-5ef6-2d966b1907a8@gmx.com>
-Date:   Fri, 30 Jul 2021 15:58:07 +1000
-Message-id: <162762468711.21659.161298577376336564@noble.neil.brown.name>
+ <341403c0-a7a7-f6c8-5ef6-2d966b1907a8@gmx.com>,
+ <046c96cd-f2a5-be04-e7b5-012e896c5816@gmx.com>
+Date:   Fri, 30 Jul 2021 16:00:54 +1000
+Message-id: <162762485406.21659.16909119511605460065@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 30 Jul 2021, Qu Wenruo wrote:
->=20
-> On 2021/7/30 =E4=B8=8A=E5=8D=8810:36, NeilBrown wrote:
-> >
-> > I've been pondering all the excellent feedback, and what I have learnt
-> > from examining the code in btrfs, and I have developed a different
-> > perspective.
->=20
-> Great! Some new developers into the btrfs realm!
-
-:-)
-
->=20
-> >
-> > Maybe "subvol" is a poor choice of name because it conjures up
-> > connections with the Volumes in LVM, and btrfs subvols are very different
-> > things.  Btrfs subvols are really just subtrees that can be treated as a
-> > unit for operations like "clone" or "destroy".
-> >
-> > As such, they don't really deserve separate st_dev numbers.
-> >
-> > Maybe the different st_dev numbers were introduced as a "cheap" way to
-> > extend to size of the inode-number space.  Like many "cheap" things, it
-> > has hidden costs.
-> >
-> > Maybe objects in different subvols should still be given different inode
-> > numbers.  This would be problematic on 32bit systems, but much less so on
-> > 64bit systems.
-> >
-> > The patch below, which is just a proof-of-concept, changes btrfs to
-> > report a uniform st_dev, and different (64bit) st_ino in different subvol=
-s.
-> >
-> > It has problems:
-> >   - it will break any 32bit readdir and 32bit stat.  I don't know how big
-> >     a problem that is these days (ino_t in the kernel is "unsigned long",
-> >     not "unsigned long long). That surprised me).
-> >   - It might break some user-space expectations.  One thing I have learnt
-> >     is not to make any assumption about what other people might expect.
->=20
-> Wouldn't any filesystem boundary check fail to stop at subvolume boundary?
-
-You mean like "du -x"?? Yes.  You would lose the misleading illusion
-that there are multiple filesystems.  That is one user-expectation that
-would need to be addressed before people opt-in
-
->=20
-> Then it will go through the full btrfs subvolumes/snapshots, which can
-> be super slow.
->=20
-> >
-> > However, it would be quite easy to make this opt-in (or opt-out) with a
-> > mount option, so that people who need the current inode numbers and will
-> > accept the current breakage can keep working.
-> >
-> > I think this approach would be a net-win for NFS export, whether BTRFS
-> > supports it directly or not.  I might post a patch which modifies NFS to
-> > intuit improved inode numbers for btrfs exports....
->=20
-> Some extra ideas, but not familiar with VFS enough to be sure.
->=20
-> Can we generate "fake" superblock for each subvolume?
-
-I don't see how that would help.  Either subvols are like filesystems
-and appear in /proc/mounts, or they aren't like filesystems and don't
-get different st_dev.  Either of these outcomes can be achieved without
-fake superblocks.  If you really need BTRFS subvols to have some
-properties of filesystems but not all, then you are in for a whole world
-of pain.
-
-Maybe btrfs subvols should be treated more like XFS "managed trees".  At
-least there you have precedent and someone else to share the pain.
-Maybe we should train people to use "quota" to check the usage of a
-subvol, rather than "du" (which will stop working with my patch if it
-contains refs to other subvols) or "df" (which already doesn't work), or
-"btrs df"
-
-> Like using the subolume UUID to replace the FSID of each subvolume.
-> Could that migrate the problem?
-
-Which problem, exactly?  My first approach to making subvols work on NFS
-took essentially that approach.  It was seen (quite reasonably) as a
-hack to work around poor behaviour in btrfs.
-
-Given that NFS has always seen all of a btrfs filesystem as have a
-uniform fsid, I'm now of the opinion that we don't want to change that,
-but should just fix the duplicate-inode-number problem.
-
-If I could think of some way for NFSD to see different inode numbers
-than VFS, I would push hard for fixs nfsd by giving it more sane inode
-numbers.
-
-Thanks,
-NeilBrown
-
+T24gRnJpLCAzMCBKdWwgMjAyMSwgUXUgV2VucnVvIHdyb3RlOgo+IAo+IE9uIDIwMjEvNy8zMCDk
+uIvljYgxOjI1LCBRdSBXZW5ydW8gd3JvdGU6Cj4gPgo+ID4KPiA+IE9uIDIwMjEvNy8zMCDkuIrl
+jYgxMDozNiwgTmVpbEJyb3duIHdyb3RlOgo+ID4+Cj4gPj4gSSd2ZSBiZWVuIHBvbmRlcmluZyBh
+bGwgdGhlIGV4Y2VsbGVudCBmZWVkYmFjaywgYW5kIHdoYXQgSSBoYXZlIGxlYXJudAo+ID4+IGZy
+b20gZXhhbWluaW5nIHRoZSBjb2RlIGluIGJ0cmZzLCBhbmQgSSBoYXZlIGRldmVsb3BlZCBhIGRp
+ZmZlcmVudAo+ID4+IHBlcnNwZWN0aXZlLgo+ID4KPiA+IEdyZWF0ISBTb21lIG5ldyBkZXZlbG9w
+ZXJzIGludG8gdGhlIGJ0cmZzIHJlYWxtIQo+ID4KPiA+Pgo+ID4+IE1heWJlICJzdWJ2b2wiIGlz
+IGEgcG9vciBjaG9pY2Ugb2YgbmFtZSBiZWNhdXNlIGl0IGNvbmp1cmVzIHVwCj4gPj4gY29ubmVj
+dGlvbnMgd2l0aCB0aGUgVm9sdW1lcyBpbiBMVk0sIGFuZCBidHJmcyBzdWJ2b2xzIGFyZSB2ZXJ5
+IGRpZmZlcmVudAo+ID4+IHRoaW5ncy7CoCBCdHJmcyBzdWJ2b2xzIGFyZSByZWFsbHkganVzdCBz
+dWJ0cmVlcyB0aGF0IGNhbiBiZSB0cmVhdGVkIGFzIGEKPiA+PiB1bml0IGZvciBvcGVyYXRpb25z
+IGxpa2UgImNsb25lIiBvciAiZGVzdHJveSIuCj4gPj4KPiA+PiBBcyBzdWNoLCB0aGV5IGRvbid0
+IHJlYWxseSBkZXNlcnZlIHNlcGFyYXRlIHN0X2RldiBudW1iZXJzLgo+ID4+Cj4gPj4gTWF5YmUg
+dGhlIGRpZmZlcmVudCBzdF9kZXYgbnVtYmVycyB3ZXJlIGludHJvZHVjZWQgYXMgYSAiY2hlYXAi
+IHdheSB0bwo+ID4+IGV4dGVuZCB0byBzaXplIG9mIHRoZSBpbm9kZS1udW1iZXIgc3BhY2UuwqAg
+TGlrZSBtYW55ICJjaGVhcCIgdGhpbmdzLCBpdAo+ID4+IGhhcyBoaWRkZW4gY29zdHMuCj4gCj4g
+Rm9yZ290IGFub3RoZXIgcHJvYmxlbSBhbHJlYWR5IGNhdXNlZCBieSB0aGlzIHN0X2RldiBtZXRo
+b2QuCj4gCj4gU2luY2UgYnRyZnMgdXNlcyBzdF9kZXYgdG8gZGlzdGluZ3Vpc2ggdGhlbSBpdHMg
+aW5vZGUgbmFtZSBzcGFjZSwgYW5kCj4gc3RfZGV2IGlzIGFsbG9jYXRlZCB1c2luZyBhbm9ueW1v
+dXMgYmRldiwgYW5kIHRoZSBhbm9ueW1vdXMgYmRldiBwb29yCj4gaGFzIGxpbWl0ZWQgc2l6ZSAo
+bXVjaCBzbWFsbGVyIHRoYW4gYnRyZnMgc3Vidm9sdW1lIGlkIG5hbWUgc3BhY2UpLCBpdCdzCj4g
+YWxyZWFkeSBjYXVzaW5nIHByb2JsZW1zIGxpa2Ugd2UgY2FuJ3QgYWxsb2NhdGUgZW5vdWdoIGFu
+b255bW91cyBiZGV2Cj4gZm9yIGVhY2ggc3Vidm9sdW1lLCBhbmQgZmFpbGVkIHRvIGNyZWF0ZSBz
+dWJ2b2x1bWUvc25hcHNob3QuCgpXaGF0IHNvcnQgb2YgbnVtYmVycyBkbyB5b3Ugc2VlIGluIHBy
+YWN0aWNlPyBIb3cgbWFueSBzdWJ2b2x1bWVzIGFuZCBob3cKbWFueSBpbm9kZXMgcGVyIHN1YnZv
+bHVtZT8KSWYgd2UgYWxsb2NhdGVkIHNvbWUgbnVtYmVyIG9mIGJpdHMgdG8gZWFjaCwgd2l0aCBv
+dmVyLWFsbG9jYXRpb24gdG8KYWxsb3cgZm9yIGdyb3d0aCwgY291bGQgd2UgZml0IGJvdGggaW50
+byA2NCBiaXRzPwoKTmVpbEJyb3duCgoKPiAKPiBUaHVzIGl0J3MgcmVhbGx5IGEgdGltZSB0byBy
+ZS1jb25zaWRlciBob3cgd2Ugc2hvdWxkIGV4cG9ydCB0aGlzIGluZm8gdG8KPiB1c2VyIHNwYWNl
+Lgo+IAo+IFRoYW5rcywKPiBRdQo+IAo=
