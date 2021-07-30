@@ -2,138 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A49023DB488
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 09:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E81E3DB48D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 09:34:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237832AbhG3HbH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 03:31:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48836 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237872AbhG3HbG (ORCPT
+        id S237851AbhG3HeG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 03:34:06 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:37974 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237403AbhG3HeF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 03:31:06 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA59AC0613CF
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 00:31:00 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id 129so8585634qkg.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jul 2021 00:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=nVKTzg+zegoJ7pq31Eztzo2O8w5rVTTFPmYOBnSB5HQ=;
-        b=I5y09he3LMg9nKJBO/RVZIAjX6eTPeNw3nDjtVgbJJDsdfBWEvUcV7yl3ay/o2aq3N
-         U/3Db1OVkuwPTecxrJzo9KsnCtel83a2PlXjtiNu0Rmayu9sRgJrg1Y3QGGP6uDxv80+
-         WbBfX4kJ+XgAia/sidQoA3Vk7ZCYy1wJR60sTwGylISHBMWoKN/vkV4GWBs7zEx+mGll
-         u4M62kd1imThj2ggOgJ585Fitxj1BfSa+4J1Va4PDDiO5VdAta3MHT4du6H9lezICkVs
-         K08fxnzZpkjVK8KJuM0jehbU6wPy6juKuaTpVaNVWtJ8OnEvN/N1ZCEjky/4Wup1/IZV
-         4EFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=nVKTzg+zegoJ7pq31Eztzo2O8w5rVTTFPmYOBnSB5HQ=;
-        b=Zj3lp8QvyMBobiMoeXcvwzKJUN68lG1FqYjUAfcuTHlcfM+Kqtiw7uCw7eoz5XFfuE
-         XGleXdQZ63ugmMnBTvYUfh0gNZcVsrbpIKe1ciiiWZN/sVz28ZMUB7LAKtYybMLRIl23
-         fSRE59PtNwLbsJwedz8y543ZITvG6QAj6yR9DV2/f9bvMFzBa+lZBx4cgElH/BgstqlM
-         9OgrVuSBFkAkQZnhXO9c517gd6NjYKYok9w1NV/HJCLABmjQsVpED0qqIohN63y6km0n
-         g+3i+4KRBGdAfCN19vKXrCeCxxQGfO45+HDzhx3zdcPuplQGeCUhNceZS7BBS7iuFtIk
-         szrw==
-X-Gm-Message-State: AOAM531JruFwiFbf+Sjh7MIfQ80lmkK9nZKBVMq4ineKOSjWPFRnvjNS
-        A6VUT59BXLzqZIcPWCKZc6o9VQ==
-X-Google-Smtp-Source: ABdhPJxDC7noWhmpF/FxW8qRqxgJS863LkrD33kURWaXcju0YbgRvrIQ99//7ad611wyKnJPjLJpKA==
-X-Received: by 2002:ae9:e002:: with SMTP id m2mr1031128qkk.474.1627630259647;
-        Fri, 30 Jul 2021 00:30:59 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id c6sm504860qke.133.2021.07.30.00.30.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jul 2021 00:30:58 -0700 (PDT)
-Date:   Fri, 30 Jul 2021 00:30:56 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.anvils
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Hugh Dickins <hughd@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Yang Shi <shy828301@gmail.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Matthew Auld <matthew.auld@intel.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH 03/16] huge tmpfs: remove shrinklist addition from
- shmem_setattr()
-In-Reply-To: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com>
-Message-ID: <42353193-6896-aa85-9127-78881d5fef66@google.com>
-References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com>
+        Fri, 30 Jul 2021 03:34:05 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7101C2221B;
+        Fri, 30 Jul 2021 07:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1627630440; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YAlYon3Hac3rWdBYEYV2hMROstwba47XrP47jS8wCi4=;
+        b=SdhxMV1gWcR7BdbTd2862pVouJNBan3hj7HS5s2ySjCoisJPui7qWLGWyMdplVtPjKpKEa
+        FoUcYtrPGJjWua9N4CDF0vNAI53E0TkB3xEVrKOF40C1jU09hKHdFrussdVXvQ+kfwCArp
+        obvj2uQsS+gLeJtVgCZFZ1gont39l0A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1627630440;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YAlYon3Hac3rWdBYEYV2hMROstwba47XrP47jS8wCi4=;
+        b=wSFZlcCix7g5plUAnscf8jyoBu7lmVOq9IhgR5I/70g5Sp5Oy1PcFBl+Ar4TSl36oYuge+
+        JbS1ti6LcFhfERBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B8F6213BF9;
+        Fri, 30 Jul 2021 07:33:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 0wDdGmSrA2G3GAAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 30 Jul 2021 07:33:56 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Miklos Szeredi" <miklos@szeredi.hu>
+Cc:     "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+        "Linux NFS list" <linux-nfs@vger.kernel.org>,
+        "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH 01/11] VFS: show correct dev num in mountinfo
+In-reply-to: <CAJfpegtu3NKW9m2jepRrXe4UTuD6_3k0Y6TcCBLSQH7SSC90BA@mail.gmail.com>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
+ <162742546548.32498.10889023150565429936.stgit@noble.brown>,
+ <YQNG+ivSssWNmY9O@zeniv-ca.linux.org.uk>,
+ <162762290067.21659.4783063641244045179@noble.neil.brown.name>,
+ <CAJfpegsR1qvWAKNmdjLfOewUeQy-b6YBK4pcHf7JBExAqqUvvg@mail.gmail.com>,
+ <162762562934.21659.18227858730706293633@noble.neil.brown.name>,
+ <CAJfpegtu3NKW9m2jepRrXe4UTuD6_3k0Y6TcCBLSQH7SSC90BA@mail.gmail.com>
+Date:   Fri, 30 Jul 2021 17:33:53 +1000
+Message-id: <162763043341.21659.15645923585962859662@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There's a block of code in shmem_setattr() to add the inode to
-shmem_unused_huge_shrink()'s shrinklist when lowering i_size: it dates
-from before 5.7 changed truncation to do split_huge_page() for itself,
-and should have been removed at that time.
+>On Fri, 30 Jul 2021, Miklos Szeredi wrote:
+> On Fri, 30 Jul 2021 at 08:13, NeilBrown <neilb@suse.de> wrote:
+> >
+> > On Fri, 30 Jul 2021, Miklos Szeredi wrote:
+> > > On Fri, 30 Jul 2021 at 07:28, NeilBrown <neilb@suse.de> wrote:
+> > > >
+> > > > On Fri, 30 Jul 2021, Al Viro wrote:
+> > > > > On Wed, Jul 28, 2021 at 08:37:45AM +1000, NeilBrown wrote:
+> > > > > > /proc/$PID/mountinfo contains a field for the device number of the
+> > > > > > filesystem at each mount.
+> > > > > >
+> > > > > > This is taken from the superblock ->s_dev field, which is correct=
+ for
+> > > > > > every filesystem except btrfs.  A btrfs filesystem can contain mu=
+ltiple
+> > > > > > subvols which each have a different device number.  If (a directo=
+ry
+> > > > > > within) one of these subvols is mounted, the device number report=
+ed in
+> > > > > > mountinfo will be different from the device number reported by st=
+at().
+> > > > > >
+> > > > > > This confuses some libraries and tools such as, historically, fin=
+dmnt.
+> > > > > > Current findmnt seems to cope with the strangeness.
+> > > > > >
+> > > > > > So instead of using ->s_dev, call vfs_getattr_nosec() and use the=
+ ->dev
+> > > > > > provided.  As there is no STATX flag to ask for the device number=
+, we
+> > > > > > pass a request mask for zero, and also ask the filesystem to avoid
+> > > > > > syncing with any remote service.
+> > > > >
+> > > > > Hard NAK.  You are putting IO (potentially - network IO, with no up=
+per
+> > > > > limit on the completion time) under namespace_sem.
+> > > >
+> > > > Why would IO be generated? The inode must already be in cache because=
+ it
+> > > > is mounted, and STATX_DONT_SYNC is passed.  If a filesystem did IO in
+> > > > those circumstances, it would be broken.
+> > >
+> > > STATX_DONT_SYNC is a hint, and while some network fs do honor it, not a=
+ll do.
+> > >
+> >
+> > That's ... unfortunate.  Rather seems to spoil the whole point of having
+> > a flag like that.  Maybe it should have been called
+> >    "STATX_SYNC_OR_SYNC_NOT_THERE_IS_NO_GUARANTEE"
+>=20
+> And I guess just about every filesystem would need to be fixed to
+> prevent starting I/O on STATX_DONT_SYNC, as block I/O could just as
+> well generate network traffic.
 
-I am over-stating that: split_huge_page() can fail (notably if there's
-an extra reference to the page at that time), so there might be value in
-retrying.  But there were already retries as truncation worked through
-the tails, and this addition risks repeating unsuccessful retries
-indefinitely: I'd rather remove it now, and work on reducing the
-chance of split_huge_page() failures separately, if we need to.
+Certainly I think that would be appropriate.  If the information simply
+isn't available EWOULDBLOCK could be returned.
 
-Fixes: 71725ed10c40 ("mm: huge tmpfs: try to split_huge_page() when punching hole")
-Signed-off-by: Hugh Dickins <hughd@google.com>
----
- mm/shmem.c | 19 -------------------
- 1 file changed, 19 deletions(-)
+>=20
+> Probably much easier fix btrfs to use some sort of subvolume structure
+> that the VFS knows about.  I think there's been talk about that for a
+> long time, not sure where it got stalled.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 24c9da6b41c2..ce3ccaac54d6 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1061,7 +1061,6 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
- {
- 	struct inode *inode = d_inode(dentry);
- 	struct shmem_inode_info *info = SHMEM_I(inode);
--	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
- 	int error;
- 
- 	error = setattr_prepare(&init_user_ns, dentry, attr);
-@@ -1097,24 +1096,6 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
- 			if (oldsize > holebegin)
- 				unmap_mapping_range(inode->i_mapping,
- 							holebegin, 0, 1);
--
--			/*
--			 * Part of the huge page can be beyond i_size: subject
--			 * to shrink under memory pressure.
--			 */
--			if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
--				spin_lock(&sbinfo->shrinklist_lock);
--				/*
--				 * _careful to defend against unlocked access to
--				 * ->shrink_list in shmem_unused_huge_shrink()
--				 */
--				if (list_empty_careful(&info->shrinklist)) {
--					list_add_tail(&info->shrinklist,
--							&sbinfo->shrinklist);
--					sbinfo->shrinklist_len++;
--				}
--				spin_unlock(&sbinfo->shrinklist_lock);
--			}
- 		}
- 	}
- 
--- 
-2.26.2
+An easy fix for this particular patch is to add a super_operation which
+provides the devno to show in /proc/self/mountinfo.  There are already a
+number of show_foo super_operations to show other content.
 
+But I'm curious about your reference to "some sort of subvolume
+structure that the VFS knows about".  Do you have any references, or can
+you suggest a search term I could try?
+
+Thanks,
+NeilBrown
