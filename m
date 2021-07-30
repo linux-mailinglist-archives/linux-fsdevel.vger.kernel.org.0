@@ -2,163 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B49AC3DB343
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 08:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92F3C3DB358
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 08:14:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237300AbhG3GKQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 02:10:16 -0400
-Received: from mout.gmx.net ([212.227.15.18]:52331 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237294AbhG3GKP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 02:10:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1627625379;
-        bh=I8WE73oxF7X+UZs1Q1N5gmkD8Cef5zfT4nU/B4xjmLg=;
-        h=X-UI-Sender-Class:To:Cc:References:From:Subject:Date:In-Reply-To;
-        b=WuAGcGrFYAaIb5hpZwTNdY4nhTtDx1Da+WFqJnUbKUPI+IX00mDCmbtPAFUFrJ5d1
-         RGhiqCGX/DatptY8UCiiAJXUv2xcGmCYlkdZHlMvswKi7g1As7XO4BpJ3T+jsMQoj8
-         G3c0cH9b81+8XiW+VAh9j/oW4vwaBx5G/3WrI6dI=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([45.77.180.217]) by mail.gmx.net (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1McH9i-1mliGs38hQ-00cg1h; Fri, 30
- Jul 2021 08:09:39 +0200
-To:     NeilBrown <neilb@suse.de>
-Cc:     Zygo Blaxell <ce3g8jdj@umail.furryterror.org>,
-        Neal Gompa <ngompa13@gmail.com>,
-        Wang Yugui <wangyugui@e16-tech.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs@vger.kernel.org,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
- <20210728125819.6E52.409509F4@e16-tech.com>
- <20210728140431.D704.409509F4@e16-tech.com>
- <162745567084.21659.16797059962461187633@noble.neil.brown.name>
- <CAEg-Je8Pqbw0tTw6NWkAcD=+zGStOJR0J-409mXuZ1vmb6dZsA@mail.gmail.com>
- <162751265073.21659.11050133384025400064@noble.neil.brown.name>
- <20210729023751.GL10170@hungrycats.org>
- <162752976632.21659.9573422052804077340@noble.neil.brown.name>
- <20210729232017.GE10106@hungrycats.org>
- <162761259105.21659.4838403432058511846@noble.neil.brown.name>
- <341403c0-a7a7-f6c8-5ef6-2d966b1907a8@gmx.com>
- <046c96cd-f2a5-be04-e7b5-012e896c5816@gmx.com>
- <162762485406.21659.16909119511605460065@noble.neil.brown.name>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
-Message-ID: <d275631f-7f0e-1db4-0e27-9d873eb422f8@gmx.com>
-Date:   Fri, 30 Jul 2021 14:09:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
-MIME-Version: 1.0
-In-Reply-To: <162762485406.21659.16909119511605460065@noble.neil.brown.name>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S237403AbhG3GOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 02:14:02 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:56770 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237369AbhG3GOA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Jul 2021 02:14:00 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 6346122127;
+        Fri, 30 Jul 2021 06:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1627625635; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=m2yEmtTaGWEawyT0nrZUfA07XI3cxeb2AJlM17C7sQw=;
+        b=pOOrMoueTAs+B0POnYeyPIGzcwr3wsglAn1PfF8hHOdH/qPB4OukxIqYv+yiyrBAIE+i3q
+        J7BY8vBcz7tTni1j2dKTnmFvAm+tDuuoBxGU4/6LuWoNj4iDFMV2N3VERodVCfyA+3GYDK
+        O/GY535+tItlnMNVMgn15js54m326dg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1627625635;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=m2yEmtTaGWEawyT0nrZUfA07XI3cxeb2AJlM17C7sQw=;
+        b=PgBZAjsrC/EfJMLt2gSqpfJMY/nPfocm1s44eLwMlBWpzVRHHFfXR8eJe5Zb5M4/Y7P9vH
+        5HRCP7fGbfZAfZBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 319AF13BFD;
+        Fri, 30 Jul 2021 06:13:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id GbCIN5+YA2ETBQAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 30 Jul 2021 06:13:51 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XeoeEPdAtR0LhBdcOeJiZDS6sIOzzS4iZs0ezV9YNargaHccpHJ
- CZ/IYgNRozpSlXPceK1f//2BF2J3lk6EGuesbcf/oK/nLFNgk2lEfq1jO9gBzwLSAQ9i/Ge
- DX//gelS3QfYdq3/W3PJi3OgeJ7RaVxCe8Ru9GzXZ0wOKl9ytGCXJ4zLueg2uYEJeQrTeFl
- jvMQHLtx/Pfv29IBdff4Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3pj23FL4K+E=:M3Zbm1cX0mEQXZ6+7dly8P
- 6Vlp4iLZ8svpTYE0SlH5r2Y+r/AQwdqfRUQa95QWE86LMYOm6CxI2eCGZ2vljfMi2sO17YPTl
- WaNuKamtd+7xrD2zhj6nTkwVicIIpytXjDLOdjymScmmht3X5WYhRekL2l4aIQpfnEoDnD8+X
- yTXAe6psJ7TMM+V6hvjeH8puAttCQf9mwRBh1xNo86Lm7yREBIBmQf54sazgS99gmCYEU+YGt
- LTKuPDqOF1LSwTyLUT9lfKBGddGHZF5j1Ie/5NKC53WbmFl6aKcfBnTcG7ONXFtlWp11V4A+t
- Kwe409VkwBAs03dK0fmkXKfprtrfDQHHSzreMWkug+MvVKGjn8l6sa72RbuwGzAHkNn5hBi/7
- CRPkFsPZwy1Yb1vxM4pvpgZcp+uT7ht9eE0FgflbhKNYDwE/75/GWRs+bcys2vISoGqY+4YGK
- JgzNjeD89kcGWjencAfEReiFTvpkwBJBFwbdrYTGEFSdJmUONhd+0ZMEwMjZQHHTnpbyP7h3y
- Uw6i6gKotf2EgRzJWluSk6spB9AeWf82n7ZHfo5LnzD8dnzCY1CA5XcfTurB6v2bWVTVTgsBd
- K/nQHinIHe+WhppBlXzVryCedxokMI8oBri8xtA6+1OKxJMNzeS2vYslXpvzzUGqR/v3CXywQ
- YkgFaQWBFw+/Q7cVk4c7b4s/GmEAWOmI8m5rJZqZtt5xKwkaT1aXz9sNRAelkrROT6QM3YPvb
- FBRWfU8OG+KXiWPTiyiRYFI4xAiJol8VpXZ/pALCTUPu1KCUagY3T4wMyNINMerZq0Jv6rGQd
- PsyKmtb38lCvKoE5KdjbmJFpaL8cFoJtSjgGlSFYlNf1sDKxlWtqfJQoWrLH9mJP/r3e0TgNi
- 8MnX1yLxZcdAnov24iiVaYFFhFlhLVL9sm3h8IIBMaBMsftkb3mbawtBSuTBtOVyXk11Igt0w
- FWhlSf7fcqJwQzJcdLFgK4SaE3gz1vsZA7uvjCQMhsg46ZoIFbSLKG+qKy7FUPKtKVWrRRJ9H
- OxE5OccuRLEvMN5Jrc26WZBkeLJgKLdNxwvBqY0YMOjd2cvAo8ZEV5p4CPZ7jGLAZ5ttIxHns
- IT4uZ22vdb8atMio2JZcPJsxR0CFlHx+GiISiiLIM7zA39jtPx+7XwkzA==
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Miklos Szeredi" <miklos@szeredi.hu>
+Cc:     "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+        "Linux NFS list" <linux-nfs@vger.kernel.org>,
+        "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH 01/11] VFS: show correct dev num in mountinfo
+In-reply-to: <CAJfpegsR1qvWAKNmdjLfOewUeQy-b6YBK4pcHf7JBExAqqUvvg@mail.gmail.com>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
+ <162742546548.32498.10889023150565429936.stgit@noble.brown>,
+ <YQNG+ivSssWNmY9O@zeniv-ca.linux.org.uk>,
+ <162762290067.21659.4783063641244045179@noble.neil.brown.name>,
+ <CAJfpegsR1qvWAKNmdjLfOewUeQy-b6YBK4pcHf7JBExAqqUvvg@mail.gmail.com>
+Date:   Fri, 30 Jul 2021 16:13:49 +1000
+Message-id: <162762562934.21659.18227858730706293633@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, 30 Jul 2021, Miklos Szeredi wrote:
+> On Fri, 30 Jul 2021 at 07:28, NeilBrown <neilb@suse.de> wrote:
+> >
+> > On Fri, 30 Jul 2021, Al Viro wrote:
+> > > On Wed, Jul 28, 2021 at 08:37:45AM +1000, NeilBrown wrote:
+> > > > /proc/$PID/mountinfo contains a field for the device number of the
+> > > > filesystem at each mount.
+> > > >
+> > > > This is taken from the superblock ->s_dev field, which is correct for
+> > > > every filesystem except btrfs.  A btrfs filesystem can contain multip=
+le
+> > > > subvols which each have a different device number.  If (a directory
+> > > > within) one of these subvols is mounted, the device number reported in
+> > > > mountinfo will be different from the device number reported by stat().
+> > > >
+> > > > This confuses some libraries and tools such as, historically, findmnt.
+> > > > Current findmnt seems to cope with the strangeness.
+> > > >
+> > > > So instead of using ->s_dev, call vfs_getattr_nosec() and use the ->d=
+ev
+> > > > provided.  As there is no STATX flag to ask for the device number, we
+> > > > pass a request mask for zero, and also ask the filesystem to avoid
+> > > > syncing with any remote service.
+> > >
+> > > Hard NAK.  You are putting IO (potentially - network IO, with no upper
+> > > limit on the completion time) under namespace_sem.
+> >
+> > Why would IO be generated? The inode must already be in cache because it
+> > is mounted, and STATX_DONT_SYNC is passed.  If a filesystem did IO in
+> > those circumstances, it would be broken.
+>=20
+> STATX_DONT_SYNC is a hint, and while some network fs do honor it, not all d=
+o.
+>=20
 
+That's ... unfortunate.  Rather seems to spoil the whole point of having
+a flag like that.  Maybe it should have been called=20
+   "STATX_SYNC_OR_SYNC_NOT_THERE_IS_NO_GUARANTEE"
 
-On 2021/7/30 =E4=B8=8B=E5=8D=882:00, NeilBrown wrote:
-> On Fri, 30 Jul 2021, Qu Wenruo wrote:
->>
->> On 2021/7/30 =E4=B8=8B=E5=8D=881:25, Qu Wenruo wrote:
->>>
->>>
->>> On 2021/7/30 =E4=B8=8A=E5=8D=8810:36, NeilBrown wrote:
->>>>
->>>> I've been pondering all the excellent feedback, and what I have learn=
-t
->>>> from examining the code in btrfs, and I have developed a different
->>>> perspective.
->>>
->>> Great! Some new developers into the btrfs realm!
->>>
->>>>
->>>> Maybe "subvol" is a poor choice of name because it conjures up
->>>> connections with the Volumes in LVM, and btrfs subvols are very diffe=
-rent
->>>> things.=C2=A0 Btrfs subvols are really just subtrees that can be trea=
-ted as a
->>>> unit for operations like "clone" or "destroy".
->>>>
->>>> As such, they don't really deserve separate st_dev numbers.
->>>>
->>>> Maybe the different st_dev numbers were introduced as a "cheap" way t=
-o
->>>> extend to size of the inode-number space.=C2=A0 Like many "cheap" thi=
-ngs, it
->>>> has hidden costs.
->>
->> Forgot another problem already caused by this st_dev method.
->>
->> Since btrfs uses st_dev to distinguish them its inode name space, and
->> st_dev is allocated using anonymous bdev, and the anonymous bdev poor
->> has limited size (much smaller than btrfs subvolume id name space), it'=
-s
->> already causing problems like we can't allocate enough anonymous bdev
->> for each subvolume, and failed to create subvolume/snapshot.
->
-> What sort of numbers do you see in practice? How many subvolumes and how
-> many inodes per subvolume?
-
-Normally the "live"(*) subvolume numbers are below the minor dev number
-range (1<<20), thus not a big deal.
-
-*: Live here means the subvolume is at least accessed once. Subvolume
-exists but never accessed doesn't get its anonymous bdev number allocated.
-
-But (1<<20) is really small compared some real-world users.
-Thus we had some reports of such problem, and changed the timing to
-allocate such bdev number.
-
-> If we allocated some number of bits to each, with over-allocation to
-> allow for growth, could we fit both into 64 bits?
-
-I don't think it's even possible, as currently we use u32 for dev_t,
-which is already way below the theoretical limit (U64_MAX - 512).
-
-Thus AFAIK there is no real way to solve it right now.
-
-Thanks,
-Qu
->
-> NeilBrown
->
->
->>
->> Thus it's really a time to re-consider how we should export this info t=
-o
->> user space.
->>
->> Thanks,
->> Qu
->>
+Thanks.
+NeilBrown
