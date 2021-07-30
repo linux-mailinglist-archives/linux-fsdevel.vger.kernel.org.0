@@ -2,142 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D59A3DBB03
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 16:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53F883DBBEE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 17:17:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239283AbhG3Orv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 10:47:51 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:60936 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231272AbhG3Orv (ORCPT
+        id S239609AbhG3PRz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 11:17:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239509AbhG3PRy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 10:47:51 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 09B3C20258;
-        Fri, 30 Jul 2021 14:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1627656465; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VPU4h+79VaObBuUI134rKDUJewEmHD+xcV1/Q7N1298=;
-        b=Q1MstY447zOi0/z9z+Th3HozqFSuMRQmVtmRRWMekXlJqZmKudlGMsuxWb2FhD4/Sv2PCO
-        pWV2ATU4bt3GVVQkPIQsRgKKjeKrPGXi4MB/SWXUr4aGwYcP4GWO6BjCU948BNtiyXK/19
-        ndWoxBMH6yF46fOe/Z6fV21MiWPrhBI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1627656465;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VPU4h+79VaObBuUI134rKDUJewEmHD+xcV1/Q7N1298=;
-        b=cal+IcpvWskOYgsqK/sgaP6mNgzpiWcJNKLrCicz286AJjuT4FAseeM1Y7PNGDtT1h8IRT
-        TnbJrIw7P4H22BAw==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id B73CC13806;
-        Fri, 30 Jul 2021 14:47:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id PhcQLBARBGGpfQAAGKfGzw
-        (envelope-from <vbabka@suse.cz>); Fri, 30 Jul 2021 14:47:44 +0000
-Subject: Re: [PATCH V5] mm: compaction: support triggering of proactive
- compaction by user
-To:     Charan Teja Kalla <charante@codeaurora.org>,
-        akpm@linux-foundation.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com,
-        dave.hansen@linux.intel.com, mgorman@techsingularity.net,
-        nigupta@nvidia.com, corbet@lwn.net, rppt@kernel.org,
-        khalid.aziz@oracle.com, rientjes@google.com
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        vinmenon@codeaurora.org
-References: <1627653207-12317-1-git-send-email-charante@codeaurora.org>
- <8fe4ba65-28e1-02d8-cf4d-74aaa76fe9df@suse.cz>
- <690ffed8-9c2a-1a9e-e592-a103b09e05a7@codeaurora.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <fd2ff7c8-b023-f0e7-06b9-7386fce11c4c@suse.cz>
-Date:   Fri, 30 Jul 2021 16:47:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Fri, 30 Jul 2021 11:17:54 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14A5C061765;
+        Fri, 30 Jul 2021 08:17:49 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 765D96C0C; Fri, 30 Jul 2021 11:17:48 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 765D96C0C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1627658268;
+        bh=Li85SDlcyV77joGjmGDEsUglXDaV5Llbu6EqziOjsyk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hmBdBXPsolGx/6yQJRZFOCw1ozPtQ3p9NLGLQPVTKL8SGFMkIiiHLmQxDrTMcR/w8
+         Cm5TAbqvKfh6Kc94qsr0O54PvbB3Vrn38d7tI2h+LumarzcT8OqZEsyTRoo6lDG75L
+         Uz8vZbrwqRkgMQKewqArRRbp5TnloKzSZhbYvyKk=
+Date:   Fri, 30 Jul 2021 11:17:48 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc:     NeilBrown <neilb@suse.de>,
+        Zygo Blaxell <ce3g8jdj@umail.furryterror.org>,
+        Neal Gompa <ngompa13@gmail.com>,
+        Wang Yugui <wangyugui@e16-tech.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs@vger.kernel.org,
+        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
+Message-ID: <20210730151748.GA21825@fieldses.org>
+References: <162745567084.21659.16797059962461187633@noble.neil.brown.name>
+ <CAEg-Je8Pqbw0tTw6NWkAcD=+zGStOJR0J-409mXuZ1vmb6dZsA@mail.gmail.com>
+ <162751265073.21659.11050133384025400064@noble.neil.brown.name>
+ <20210729023751.GL10170@hungrycats.org>
+ <162752976632.21659.9573422052804077340@noble.neil.brown.name>
+ <20210729232017.GE10106@hungrycats.org>
+ <162761259105.21659.4838403432058511846@noble.neil.brown.name>
+ <341403c0-a7a7-f6c8-5ef6-2d966b1907a8@gmx.com>
+ <162762468711.21659.161298577376336564@noble.neil.brown.name>
+ <bcde95bc-0bb8-a6e9-f197-590c8a0cba11@gmx.com>
 MIME-Version: 1.0
-In-Reply-To: <690ffed8-9c2a-1a9e-e592-a103b09e05a7@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bcde95bc-0bb8-a6e9-f197-590c8a0cba11@gmx.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/30/21 4:46 PM, Charan Teja Kalla wrote:
-> Thanks Vlastimil!!
+On Fri, Jul 30, 2021 at 02:23:44PM +0800, Qu Wenruo wrote:
+> OK, forgot it's an opt-in feature, then it's less an impact.
 > 
-> On 7/30/2021 7:36 PM, Vlastimil Babka wrote:
->>> The proactive compaction[1] gets triggered for every 500msec and run
->>> compaction on the node for COMPACTION_HPAGE_ORDER (usually order-9)
->>> pages based on the value set to sysctl.compaction_proactiveness.
->>> Triggering the compaction for every 500msec in search of
->>> COMPACTION_HPAGE_ORDER pages is not needed for all applications,
->>> especially on the embedded system usecases which may have few MB's of
->>> RAM. Enabling the proactive compaction in its state will endup in
->>> running almost always on such systems.
->>>
->>> Other side, proactive compaction can still be very much useful for
->>> getting a set of higher order pages in some controllable
->>> manner(controlled by using the sysctl.compaction_proactiveness). So, on
->>> systems where enabling the proactive compaction always may proove not
->>> required, can trigger the same from user space on write to its sysctl
->>> interface. As an example, say app launcher decide to launch the memory
->>> heavy application which can be launched fast if it gets more higher
->>> order pages thus launcher can prepare the system in advance by
->>> triggering the proactive compaction from userspace.
->>>
->>> This triggering of proactive compaction is done on a write to
->>> sysctl.compaction_proactiveness by user.
->>>
->>> [1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
->>>
->>> Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
->> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> But it can still sometimes be problematic.
 > 
-> Thanks for the tag here.
-
-Np.
-
->> 
->>> @@ -2895,9 +2920,16 @@ static int kcompactd(void *p)
->>>  	while (!kthread_should_stop()) {
->>>  		unsigned long pflags;
->>>  
->>> +		/*
->>> +		 * Avoid the unnecessary wakeup for proactive compaction
->>> +		 * when it is disabled.
->>> +		 */
->>> +		if (!sysctl_compaction_proactiveness)
->>> +			timeout = MAX_SCHEDULE_TIMEOUT;
->> Does this part actually logically belong more to your previous patch that
->> optimized the deferred timeouts?
+> E.g. if the user want to put some git code into one subvolume, while
+> export another subvolume through NFS.
 > 
-> IMO, it won't fit there. Reason is that when user writes
-> sysctl_compaction_proactiveness = 0, it will goes to sleep with
-> MAX_SCHEDULE_TIMEOUT. Say now user writes non-zero value to
-> sysctl_compaction_proactiveness then no condition is there to wake it up
-> for proactive compaction, means, it will still be in sleep with
-> MAX_SCHEDULE_TIMEOUT.
+> Then the user has to opt-in, affecting the git subvolume to lose the
+> ability to determine subvolume boundary, right?
 
-Good point!
+Totally naive question: is it be possible to treat different subvolumes
+differently, and give the user some choice at subvolume creation time
+how this new boundary should behave?
 
-> Thus this logic is put in this patch, where, proactive compaction work
-> will be scheduled immediately on switch of proactiveness value from zero
-> to a non-zero.
+It seems like there are some conflicting priorities that can only be
+resolved by someone who knows the intended use case.
 
-Agreed. Thanks!
-
->> 
-> 
-
+--b.
