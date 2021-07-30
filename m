@@ -2,130 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B243DB2FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 07:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 778D83DB300
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 07:54:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237018AbhG3FyO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 01:54:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53742 "EHLO
+        id S237004AbhG3Fyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 01:54:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236952AbhG3FyM (ORCPT
+        with ESMTP id S236641AbhG3Fyu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 01:54:12 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB08DC061765;
-        Thu, 29 Jul 2021 22:54:07 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id 185so10059749iou.10;
-        Thu, 29 Jul 2021 22:54:07 -0700 (PDT)
+        Fri, 30 Jul 2021 01:54:50 -0400
+Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98373C0613C1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 22:54:45 -0700 (PDT)
+Received: by mail-vs1-xe33.google.com with SMTP id q68so4832960vsb.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jul 2021 22:54:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=q4qU9xSHNkjJ5OcNfnUzZC+k2SqdMvWGQ3cVqENWg+M=;
-        b=dO3wljk1s++Hf22rkfvSx9ZYE3MN5Mtcv4n3lgqTL7F0VSjqGTyHJQVTz2Ele7pWsS
-         /xftWTyy1oW1IRm1g9YLcSLJ0j7tykIlayIiE/zwuVmL2IuNLGJQIs9bh9f/MkF2/vYr
-         fRppSpNOsy35LQk5QAUNLqE2IF88t8PBPX6S7pYBrOpZRO0+2bClNAIKNBgSf5GZ/Ob8
-         yc0+X8UXICo2wMfJIf4Rwvo8xVIH5cKJeXLStSQj/nl19ygreqlIxucRkBaPN60iVwJl
-         vQg6OSNFs4URjeHJHDqLlORtrBKw4UHOOy5fOIFZqatfan70rhMU8IUHShs0CIHSjvYW
-         PSQQ==
+         :cc;
+        bh=1SNy8LW/E+8+ElZpkoWIFsZBHlsdT3d2OxsKqUy6RHw=;
+        b=OrOtfbAtgDjL5oEcpFfXsYf2A0YndCveLq4cDS0W/7gT2XliL6bbv+qCH345i1N/Z0
+         Vu15fmugh8dTMc7eP9NuKKMN3cszgAph4kO33C1xM5FOUqV/45zBxEFKWcJW8xgDcXQ0
+         lhCxYQLMRB9AfFKz2uBv67omqq2V+OKPAxTBc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=q4qU9xSHNkjJ5OcNfnUzZC+k2SqdMvWGQ3cVqENWg+M=;
-        b=TyqAG4bzL6TpBPNZmCB5kNIiwT+hV+QynD/WSXcvMimqRjjubTAVfZQ5FQhCZ1EwYV
-         76UNFqyxvbVX9awDl8QX6vqJUjX2/jLJqRH0V4JiyrySN1EcJZ9GCF4Y/TOefP828zhq
-         gMNZZByBUt8xhc+5YCc6dXjVLiVwcYRe/oABS+48HVLbUuSChsiG2aE7fvvhL9zvM75+
-         kHJ1Awi43grbPJAhSBGRV0tzop4bwm2bmKiSV4jzT5yjYgMZAYIeC9MtXrZ1t5uTvhJP
-         ZmQg2x5q2AaP+xt98vunl3aFt3LBGTl35zNWRG+8tpg7xXgxjDUy2XHhFyMexDJ6G555
-         xv0A==
-X-Gm-Message-State: AOAM533I2PZ+21/DpNV8s8AFmu3SCNeQVZIYgbsiMx6Nkujk1KfBlFW2
-        wyyyDRhXUKNHqsLkkPsG+d+52Bq/ME7GCtIJ4QI=
-X-Google-Smtp-Source: ABdhPJwt5bqFq+eUjmoToEspcOh42SUfLj9pABKR9lO+IYUqEDQInu+MroEUZgZxkM85JA9C4RsO5T1ce0ik2ptnyso=
-X-Received: by 2002:a02:908a:: with SMTP id x10mr774688jaf.30.1627624447209;
- Thu, 29 Jul 2021 22:54:07 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=1SNy8LW/E+8+ElZpkoWIFsZBHlsdT3d2OxsKqUy6RHw=;
+        b=kA7fkYCgvGSjG2q0JiV3QoT0cxOQS90W3LuIwvzGb5UuFBMncaWVqCAZYKa0Zhkkfn
+         uyI4C1oZ5pMDrWPuyw9oJik/eHS8z0Gw4xz9IlVsUPqIbc198uRN+glEOprIzugOAYli
+         IzujSc5ogNhOqQbNY87FFvD3wYuycN8+FQYeIseH+G4R6xoXxR+AKkS58ezsXpuMFmz6
+         Iep/8Zxim7FFYMrBLddQytQQV7JqqHv/F8bQkQ5fxwJ1DCs2tNPuVTB6VlP+JSUWrto2
+         PDf+5q3h5anQZszJcjWRk1nxVZHPowtaQ0k/QAEDk7U0SxeDKtJHo8M0WhhrAzr4ykGu
+         jStA==
+X-Gm-Message-State: AOAM532vTO/vWP8PDLkmjMoPtWiVYaUwm26mcs2lCMlM2vOBKP4monjY
+        X/MQfassMdmg26c9AwO6Hr2jfFWyOVx0RPSzml04hHbrxIk=
+X-Google-Smtp-Source: ABdhPJwpge6iVGOfoymPDRo8pcPqDXfJ9ZzeVbQulV8CRSYfoKFi7A3vNMX7JgsDY3TDVYtWKA/dQ3zg9u5SHFxdrHE=
+X-Received: by 2002:a05:6102:34d9:: with SMTP id a25mr392282vst.0.1627624484737;
+ Thu, 29 Jul 2021 22:54:44 -0700 (PDT)
 MIME-Version: 1.0
 References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
- <20210728125819.6E52.409509F4@e16-tech.com> <20210728140431.D704.409509F4@e16-tech.com>
- <162745567084.21659.16797059962461187633@noble.neil.brown.name>
- <CAEg-Je8Pqbw0tTw6NWkAcD=+zGStOJR0J-409mXuZ1vmb6dZsA@mail.gmail.com>
- <162751265073.21659.11050133384025400064@noble.neil.brown.name>
- <20210729023751.GL10170@hungrycats.org> <162752976632.21659.9573422052804077340@noble.neil.brown.name>
- <20210729232017.GE10106@hungrycats.org> <162761259105.21659.4838403432058511846@noble.neil.brown.name>
- <341403c0-a7a7-f6c8-5ef6-2d966b1907a8@gmx.com> <046c96cd-f2a5-be04-e7b5-012e896c5816@gmx.com>
-In-Reply-To: <046c96cd-f2a5-be04-e7b5-012e896c5816@gmx.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 30 Jul 2021 08:53:56 +0300
-Message-ID: <CAOQ4uxjFkvj9eqhNANEeYm22nqf=-wiCCMeZAgY55WQ0Fij-aw@mail.gmail.com>
-Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
-To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc:     NeilBrown <neilb@suse.de>,
-        Zygo Blaxell <ce3g8jdj@umail.furryterror.org>,
-        Neal Gompa <ngompa13@gmail.com>,
-        Wang Yugui <wangyugui@e16-tech.com>,
+ <162742546548.32498.10889023150565429936.stgit@noble.brown>
+ <YQNG+ivSssWNmY9O@zeniv-ca.linux.org.uk> <162762290067.21659.4783063641244045179@noble.neil.brown.name>
+In-Reply-To: <162762290067.21659.4783063641244045179@noble.neil.brown.name>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 30 Jul 2021 07:54:33 +0200
+Message-ID: <CAJfpegsR1qvWAKNmdjLfOewUeQy-b6YBK4pcHf7JBExAqqUvvg@mail.gmail.com>
+Subject: Re: [PATCH 01/11] VFS: show correct dev num in mountinfo
+To:     NeilBrown <neilb@suse.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
         Josef Bacik <josef@toxicpanda.com>,
         "J. Bruce Fields" <bfields@fieldses.org>,
         Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
         Btrfs BTRFS <linux-btrfs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 30, 2021 at 8:33 AM Qu Wenruo <quwenruo.btrfs@gmx.com> wrote:
+On Fri, 30 Jul 2021 at 07:28, NeilBrown <neilb@suse.de> wrote:
 >
->
->
-> On 2021/7/30 =E4=B8=8B=E5=8D=881:25, Qu Wenruo wrote:
+> On Fri, 30 Jul 2021, Al Viro wrote:
+> > On Wed, Jul 28, 2021 at 08:37:45AM +1000, NeilBrown wrote:
+> > > /proc/$PID/mountinfo contains a field for the device number of the
+> > > filesystem at each mount.
+> > >
+> > > This is taken from the superblock ->s_dev field, which is correct for
+> > > every filesystem except btrfs.  A btrfs filesystem can contain multiple
+> > > subvols which each have a different device number.  If (a directory
+> > > within) one of these subvols is mounted, the device number reported in
+> > > mountinfo will be different from the device number reported by stat().
+> > >
+> > > This confuses some libraries and tools such as, historically, findmnt.
+> > > Current findmnt seems to cope with the strangeness.
+> > >
+> > > So instead of using ->s_dev, call vfs_getattr_nosec() and use the ->dev
+> > > provided.  As there is no STATX flag to ask for the device number, we
+> > > pass a request mask for zero, and also ask the filesystem to avoid
+> > > syncing with any remote service.
 > >
-> >
-> > On 2021/7/30 =E4=B8=8A=E5=8D=8810:36, NeilBrown wrote:
-> >>
-> >> I've been pondering all the excellent feedback, and what I have learnt
-> >> from examining the code in btrfs, and I have developed a different
-> >> perspective.
-> >
-> > Great! Some new developers into the btrfs realm!
-> >
-> >>
-> >> Maybe "subvol" is a poor choice of name because it conjures up
-> >> connections with the Volumes in LVM, and btrfs subvols are very differ=
-ent
-> >> things.  Btrfs subvols are really just subtrees that can be treated as=
- a
-> >> unit for operations like "clone" or "destroy".
-> >>
-> >> As such, they don't really deserve separate st_dev numbers.
-> >>
-> >> Maybe the different st_dev numbers were introduced as a "cheap" way to
-> >> extend to size of the inode-number space.  Like many "cheap" things, i=
-t
-> >> has hidden costs.
+> > Hard NAK.  You are putting IO (potentially - network IO, with no upper
+> > limit on the completion time) under namespace_sem.
 >
-> Forgot another problem already caused by this st_dev method.
->
-> Since btrfs uses st_dev to distinguish them its inode name space, and
-> st_dev is allocated using anonymous bdev, and the anonymous bdev poor
-> has limited size (much smaller than btrfs subvolume id name space), it's
-> already causing problems like we can't allocate enough anonymous bdev
-> for each subvolume, and failed to create subvolume/snapshot.
->
+> Why would IO be generated? The inode must already be in cache because it
+> is mounted, and STATX_DONT_SYNC is passed.  If a filesystem did IO in
+> those circumstances, it would be broken.
 
-How about creating a major dev for btrfs subvolumes to start with.
-Then at least there is a possibility for administrative reservation of
-st_dev values for subvols that need persistent <st_dev;st_ino>
-
-By default subvols get assigned a minor dynamically as today
-and with opt-in (e.g. for small short lived btrfs filesystems), the
-unified st_dev approach can be used, possibly by providing
-an upper limit to the inode numbers on the filesystem, similar to
-xfs -o inode32 mount option.
+STATX_DONT_SYNC is a hint, and while some network fs do honor it, not all do.
 
 Thanks,
-Amir.
+Miklos
