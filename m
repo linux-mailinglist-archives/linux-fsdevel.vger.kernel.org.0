@@ -2,85 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F8673DAFCA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 01:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AB113DB030
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 02:18:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234989AbhG2XUu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jul 2021 19:20:50 -0400
-Received: from james.kirk.hungrycats.org ([174.142.39.145]:40972 "EHLO
-        james.kirk.hungrycats.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229975AbhG2XUu (ORCPT
+        id S235339AbhG3ASO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jul 2021 20:18:14 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:42500 "EHLO
+        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235214AbhG3ASO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jul 2021 19:20:50 -0400
-Received: by james.kirk.hungrycats.org (Postfix, from userid 1002)
-        id 2A9A5B0AA25; Thu, 29 Jul 2021 19:20:39 -0400 (EDT)
-Date:   Thu, 29 Jul 2021 19:20:39 -0400
-From:   Zygo Blaxell <ce3g8jdj@umail.furryterror.org>
-To:     NeilBrown <neilb@suse.de>
+        Thu, 29 Jul 2021 20:18:14 -0400
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m9G9b-0052l3-6o; Fri, 30 Jul 2021 00:13:31 +0000
+Date:   Fri, 30 Jul 2021 00:13:31 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Josef Bacik <josef@toxicpanda.com>
 Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Neal Gompa <ngompa13@gmail.com>,
-        Wang Yugui <wangyugui@e16-tech.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
+        NeilBrown <neilb@suse.de>, Christoph Hellwig <hch@infradead.org>,
         Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs@vger.kernel.org,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
+        David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org
 Subject: Re: [PATCH/RFC 00/11] expose btrfs subvols in mount table correctly
-Message-ID: <20210729232039.GF10106@hungrycats.org>
+Message-ID: <YQNEK48+GLDvOx8t@zeniv-ca.linux.org.uk>
 References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
- <20210728125819.6E52.409509F4@e16-tech.com>
- <20210728140431.D704.409509F4@e16-tech.com>
- <162745567084.21659.16797059962461187633@noble.neil.brown.name>
- <CAEg-Je8Pqbw0tTw6NWkAcD=+zGStOJR0J-409mXuZ1vmb6dZsA@mail.gmail.com>
- <20210728191431.GA3152@fieldses.org>
- <20210729012931.GK10170@hungrycats.org>
- <162752300106.21659.7482208502904653864@noble.neil.brown.name>
+ <20210728193536.GD3152@fieldses.org>
+ <e75ccfd2-e09f-99b3-b132-3bd69f3c734c@toxicpanda.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <162752300106.21659.7482208502904653864@noble.neil.brown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <e75ccfd2-e09f-99b3-b132-3bd69f3c734c@toxicpanda.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 29, 2021 at 11:43:21AM +1000, NeilBrown wrote:
-> On Thu, 29 Jul 2021, Zygo Blaxell wrote:
-> > 
-> > I'm looking at a few machines here, and if all the subvols are visible to
-> > 'df', its output would be somewhere around 3-5 MB.  That's too much--we'd
-> > have to hack up df to not show the same btrfs twice...as well as every
-> > monitoring tool that reports free space...which sounds similar to the
-> > problems we're trying to avoid.
+On Wed, Jul 28, 2021 at 05:30:04PM -0400, Josef Bacik wrote:
+
+> I don't think anybody has that many file systems.  For btrfs it's a single
+> file system.  Think of syncfs, it's going to walk through all of the super
+> blocks on the system calling ->sync_fs on each subvol superblock.  Now this
+> isn't a huge deal, we could just have some flag that says "I'm not real" or
+> even just have anonymous superblocks that don't get added to the global
+> super_blocks list, and that would address my main pain points.
+
+Umm...  Aren't the snapshots read-only by definition?
+
+> The second part is inode reclaim.  Again this particular problem could be
+> avoided if we had an anonymous superblock that wasn't actually used, but the
+> inode lru is per superblock.  Now with reclaim instead of walking all the
+> inodes, you're walking a bunch of super blocks and then walking the list of
+> inodes within those super blocks.  You're burning CPU cycles because now
+> instead of getting big chunks of inodes to dispose, it's spread out across
+> many super blocks.
 > 
-> Thanks for providing hard data!! How many of these subvols are actively
-> used (have a file open) a the same time? Most? About half? Just a few??
+> The other weird thing is the way we apply pressure to shrinker systems.  We
+> essentially say "try to evict X objects from your list", which means in this
+> case with lots of subvolumes we'd be evicting waaaaay more inodes than you
+> were before, likely impacting performance where you have workloads that have
+> lots of files open across many subvolumes (which is what FB does with it's
+> containers).
+> 
+> If we want a anonymous superblock per subvolume then the only way it'll work
+> is if it's not actually tied into anything, and we still use the primary
+> super block for the whole file system.  And if that's what we're going to do
+> what's the point of the super block exactly?  This approach that Neil's come
+> up with seems like a reasonable solution to me.  Christoph gets his
+> separation and /proc/self/mountinfo, and we avoid the scalability headache
+> of a billion super blocks.  Thanks,
 
-Between 1% and 10% of the subvols have open fds at any time (not counting
-bees, which holds an open fd on every subvol most of the time).  The ratio
-is higher (more active) when the machine has less storage or more CPU/RAM:
-we keep idle subvols around longer if we have lots of free space, or we
-make more subvols active at the same time if we have lots of RAM and CPU.
+AFAICS, we also get arseloads of weird corner cases - in particular, Neil's
+suggestions re visibility in /proc/mounts look rather arbitrary.
 
-I don't recall if stat() triggers automount, but most of the subvols are
-located in a handful of directories.  Could a single 'ls -l' command
-activate all of their automounts?  If so, then we'd be hitting those
-at least once every 15 minutes--these directories are browseable, and
-an entry point for users.  Certainly anything that looks inside those
-directories (like certain file-browsing user agents that look for icons
-one level down) will trigger automount as they search children of the
-subvol root.
-
-Some of this might be fixable, like I could probably make bees be
-more parsimonious with subvol root fds, and I could probably rework
-reporting scripts to avoid touching anything inside subdirectories,
-and I could probably rework our subvolume directory layout to avoid
-accidentally triggering thousands of automounts.  But I'd rather not.
-I'd rather have working NFS and a 15-20 line df output with no new
-privacy or scalability concerns.
-
-> Thanks,
-> NeilBrown
+Al, really disliking the entire series...
