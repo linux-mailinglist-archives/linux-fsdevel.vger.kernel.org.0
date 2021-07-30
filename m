@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5E113DB2D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 07:33:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D48A63DB2F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jul 2021 07:43:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236430AbhG3Fdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jul 2021 01:33:38 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:50578 "EHLO
+        id S236603AbhG3FnX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jul 2021 01:43:23 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:51110 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230383AbhG3Fdi (ORCPT
+        with ESMTP id S230162AbhG3FnW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jul 2021 01:33:38 -0400
+        Fri, 30 Jul 2021 01:43:22 -0400
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B7EE52234C;
-        Fri, 30 Jul 2021 05:33:32 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 8ABE422386;
+        Fri, 30 Jul 2021 05:43:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1627623212; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1627623797; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=U23+/hZjJxbH5NKPlHP4VCQ6o249NRYzE/t/5htL4+k=;
-        b=A13dI3Bnye6A+xR11hb9a02sSAIJFMavYVMgSGF43ZK+etvdcpJbgxWiBRoVRBpP5G+98Z
-        kDQZA8Fo77LaIN1cGRyWmiSy0BOT/hW8mBhEXyUqSEZYRLzZ/MkJ3uQu4EjEA1q9iIFJDw
-        RzHvvAjmOauK1qFhz8LJgTpQJQC+Vko=
+        bh=d1vVobsHGIK8tpporn/Uz4BMLNgGBlTdsKnVBQ03gqs=;
+        b=HQ9WxcXf1I3QtRWo0DA/JPVX6NFfD2oJbJuEJcSectdr3ZnwqIDdC9oEeOlihjiDmgg8X4
+        k3g2mVmenFcKl5G/m9y+w+o1hAwbX6kSKfE6GPaFqGkGL0CjoH9KCub8hvdiq6uWoOEeUE
+        kxHGYVrxjKmlFCyesEe3o7m7l1qtQLM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1627623212;
+        s=susede2_ed25519; t=1627623797;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=U23+/hZjJxbH5NKPlHP4VCQ6o249NRYzE/t/5htL4+k=;
-        b=lcUuFGfY/zgFx4jyK69l3f7/++5RKWlQsF3uhCiAhwa8vY4ztg0+TBLvxWySJQJ5BpQAHb
-        eb9B/Qng16X0WNDA==
+        bh=d1vVobsHGIK8tpporn/Uz4BMLNgGBlTdsKnVBQ03gqs=;
+        b=gGE3Xwk1k5wETxoc6G8VAHxtnLUJPCSyeHN5LUSN5oO7SY9m+OnGC7Z1e96alzz3c7sDXH
+        PtEKD3GDBWuimACA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CAFD513BF9;
-        Fri, 30 Jul 2021 05:33:29 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A465513BF9;
+        Fri, 30 Jul 2021 05:43:14 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id /EKHISmPA2HIeQAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 30 Jul 2021 05:33:29 +0000
+        id rw6aGHKRA2ErfAAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 30 Jul 2021 05:43:14 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 From:   "NeilBrown" <neilb@suse.de>
 To:     "Al Viro" <viro@zeniv.linux.org.uk>
@@ -57,36 +57,69 @@ Cc:     "Christoph Hellwig" <hch@infradead.org>,
         "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
         "David Sterba" <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 04/11] VFS: export lookup_mnt()
-In-reply-to: <YQNIUA6NKmSgdawv@zeniv-ca.linux.org.uk>
+Subject: Re: [PATCH 09/11] nfsd: Allow filehandle lookup to cross internal
+ mount points.
+In-reply-to: <YQNK2rgZuqh/XmMt@zeniv-ca.linux.org.uk>
 References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
- <162742546551.32498.5847026750506620683.stgit@noble.brown>,
- <YQNIUA6NKmSgdawv@zeniv-ca.linux.org.uk>
-Date:   Fri, 30 Jul 2021 15:33:26 +1000
-Message-id: <162762320688.21659.7949785958006573635@noble.neil.brown.name>
+ <162742546556.32498.16708762469227881912.stgit@noble.brown>,
+ <YQNK2rgZuqh/XmMt@zeniv-ca.linux.org.uk>
+Date:   Fri, 30 Jul 2021 15:43:11 +1000
+Message-id: <162762379181.21659.6770844735701522704@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, 30 Jul 2021, Al Viro wrote:
 > On Wed, Jul 28, 2021 at 08:37:45AM +1000, NeilBrown wrote:
-> > In order to support filehandle lookup in filesystems with internal
-> > mounts (multiple subvols in the one filesystem) reconnect_path() in
-> > exportfs will need to find out if a given dentry is already mounted.
-> > This can be done with the function lookup_mnt(), so export that to make
-> > it available.
-> 
-> IMO having exportfs modular is wrong - note that fs/fhandle.c is
-> 	* calling functions in exportfs
-> 	* non-modular
-> 	* ... and not going to be modular, no matter what - there
-> are syscalls in it.
-> 
-> 
+>=20
+> > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> > index baa12ac36ece..22523e1cd478 100644
+> > --- a/fs/nfsd/vfs.c
+> > +++ b/fs/nfsd/vfs.c
+> > @@ -64,7 +64,7 @@ nfsd_cross_mnt(struct svc_rqst *rqstp, struct path *pat=
+h_parent,
+> >  			    .dentry =3D dget(path_parent->dentry)};
+> >  	int err =3D 0;
+> > =20
+> > -	err =3D follow_down(&path, 0);
+> > +	err =3D follow_down(&path, LOOKUP_AUTOMOUNT);
+> >  	if (err < 0)
+> >  		goto out;
+> >  	if (path.mnt =3D=3D path_parent->mnt && path.dentry =3D=3D path_parent-=
+>dentry &&
+> > @@ -73,6 +73,13 @@ nfsd_cross_mnt(struct svc_rqst *rqstp, struct path *pa=
+th_parent,
+> >  		path_put(&path);
+> >  		goto out;
+> >  	}
+> > +	if (mount_is_internal(path.mnt)) {
+> > +		/* Use the new path, but don't look for a new export */
+> > +		/* FIXME should I check NOHIDE in this case?? */
+> > +		path_put(path_parent);
+> > +		*path_parent =3D path;
+> > +		goto out;
+> > +	}
+>=20
+> ... IOW, mount_is_internal() is called with no exclusion whatsoever.  What'=
+s there
+> to
+> 	* keep its return value valid?
+> 	* prevent fetching ->mnt_mountpoint, getting preempted away, having
+> the mount moved *and* what used to be ->mnt_mountpoint evicted from dcache,
+> now that it's no longer pinned, then mount_is_internal() regaining CPU and
+> dereferencing ->mnt_mountpoint, which now points to hell knows what?
+>=20
 
-I agree - it makes sense for exportfs to be non-module.  It cannot be
-module if FHANDLE is enabled, and if you don't want FHANDLE you probably
-don't want EXPORTFS either.
+Yes, mount_is_internal needs to same mount_lock protection that
+lookup_mnt() has.  Thanks.
+
+I don't think it matter how long the result remains valid.  The only
+realistic transtion is from True to False, but the fact that it *was*
+True means that it is acceptable for the lookup to have succeeded.
+i.e.  If the mountpoint was moved which a request was being processed it
+will either cause the same result as if it happened before the request
+started, or after it finished.  Either seems OK.
 
 Thanks,
 NeilBrown
+
