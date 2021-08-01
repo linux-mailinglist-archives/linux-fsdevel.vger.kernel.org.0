@@ -2,112 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6063A3DCA27
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Aug 2021 07:38:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F4833DCA5D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Aug 2021 08:32:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230087AbhHAFiR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Aug 2021 01:38:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56502 "EHLO
+        id S230193AbhHAGdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Aug 2021 02:33:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbhHAFiR (ORCPT
+        with ESMTP id S229451AbhHAGdA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Aug 2021 01:38:17 -0400
-Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E29E4C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jul 2021 22:38:09 -0700 (PDT)
-Received: by mail-qv1-xf36.google.com with SMTP id 3so7405904qvd.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jul 2021 22:38:09 -0700 (PDT)
+        Sun, 1 Aug 2021 02:33:00 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA0FC06175F;
+        Sat, 31 Jul 2021 23:32:52 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id k3so13666086ilu.2;
+        Sat, 31 Jul 2021 23:32:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=iGWJvQyFhYWArKOyYVxVLAiTfV4uzV67U+jmo+FAouk=;
-        b=EMVItB+G7FfUUoNMnfQwOUjV3ArbnBTu1oFkd7HLTYn2tVC6AJEYtE4T+IsCywUSpg
-         Gw4RUEMFPxQ3c9322Xw+RyDT87+g5/V4dM1xr6NBy3DpWF3Y02qrA72ey7xkFYZJd8of
-         qvOv35ebfTG1e41XeO2QIcJBLmf4x0wzo4lWLjyI/uSpUUbEIQw1c6tXOakZLKmIU5vJ
-         UR8u6931Pg3iNzH27zPBbSiikVRqrIuOAPnoELhiKdGJ5DZrHSq5Xgrf+zD2wDgtJvSs
-         z16Y7Ke/ASDEDjgWOS8tZrDCCMqsa1ToXM08aiKAmUQOQkjWTt8QElX2iHgbpwCxCk0j
-         zQkw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eUClev66k2CwNGVehotJ41c5fU9e0u4+Aw/nkEdVSo4=;
+        b=Vor6uuwaFPIL6tI6kQNkUjJBadv0llFfR5CYI6gj3wgECMJLXhN8hg3InrXzdHHw6x
+         v9zDzDwZrBxZAcGVOhvymBCPk2UZZZD7TE+EL+mty8S27t8FQDf4NpTcBEsxZHaum6y2
+         3d0A2nn07EApu+KWWgSNxbgjokNSOjRHtla+4d2rAcFKVGCatM2ZE2N5s9tKeMu6a/CM
+         pRDEWT/JCaNndYE6sLyMVTDlq5XAulCKN+/9cZ2bJ3T/9sjK5EPOtpjLffGuKojj1MGt
+         ocfbZFSrsbWmB6T1ogXtulec1lpogOHEpVI0cE2oF/9LBTDgyysS6fWvrh9+gqf+y41G
+         RVAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=iGWJvQyFhYWArKOyYVxVLAiTfV4uzV67U+jmo+FAouk=;
-        b=Z+rt0a+wcnzwOdsA006j8daQxslJX+KNZyLcmRXjvNPUoZ83QP7ogiyHESpmYjSxgr
-         8lRF0V+B2oSrUxNsLXvryvOyc8XPzCqEWaVEMzUNoa58StbmmiYF3pVlg3SKLMd2LzgU
-         1E5rg2GIMtCeWXHh1qrVCoHSJfZLpS4RdWk1MaNfJhCb0gvb/tGdSLKyFo0nwBnoM56O
-         YvGVv4PaDMkpH27h7VdmOSZM7y/N1ha4aNQQdyCt8ru032V3nA1Fw+qYsIvsDVtVBRQl
-         6zmrKQF5jJ0jiWQqF2BdLGM22whZCvsZY4huYCUV5ckTkkGHRNjiFIstmjKRXa3VEkb4
-         g4XA==
-X-Gm-Message-State: AOAM531i2pdSnky1m58lQgpjWUoaaoi2UFKf0CzsBfHNSQ7zVbeZmvyi
-        eDt4Hq0HZv3uM6O+dToIWMkqbQ==
-X-Google-Smtp-Source: ABdhPJx99ZPzHnZXgS9SRq4nFquQqzs6nebhu/Lg9udhCOUcHRGzDhYlonCB3p+LX1OoydNRLgHVnw==
-X-Received: by 2002:ad4:442e:: with SMTP id e14mr10587697qvt.43.1627796288923;
-        Sat, 31 Jul 2021 22:38:08 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id h10sm3613305qka.83.2021.07.31.22.38.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Jul 2021 22:38:08 -0700 (PDT)
-Date:   Sat, 31 Jul 2021 22:37:55 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.anvils
-To:     Yang Shi <shy828301@gmail.com>
-cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Matthew Auld <matthew.auld@intel.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, Linux MM <linux-mm@kvack.org>
-Subject: Re: [PATCH 06/16] huge tmpfs: shmem_is_huge(vma, inode, index)
-In-Reply-To: <e7374d7e-4773-aba1-763-8fa2c953f917@google.com>
-Message-ID: <ccb7e48b-b9ad-30bb-47df-14cc8298ef8e@google.com>
-References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com> <dae523ab-c75b-f532-af9d-8b6a1d4e29b@google.com> <CAHbLzkoKZ9OdUfP5DX81CKOJWrRZ0GANrmenNeKWNmSOgUh0bQ@mail.gmail.com> <e7374d7e-4773-aba1-763-8fa2c953f917@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eUClev66k2CwNGVehotJ41c5fU9e0u4+Aw/nkEdVSo4=;
+        b=NXcRw/ACQKNQbke/stUq/d0xbJnDfiexL6k+/AAdpSXUTszGpTUpuEXq61XXtkevlM
+         +nh44rjKwJov2oyIlvkg1Zc07hzSKnI6ybs5gyLuqX+sop+YD0BLT6PZ4bLmEg3hzzcK
+         UhP6gxIkGlyZeHusKKHJZr8kdZRMD6aYIucs25zMsS7oZYl53rfS4zecuKT0bJ8aa7sK
+         AyRBYOQR8q3AH4ZVmAoRxpEjsMDOxumQ3FkKDq249FDBG98zu7iMmbQtvf0j6rXGLo0D
+         m7PJF1habaQFbQZjxOdBU9a3dYEUsMYo0M5Ox6ygO8R6l6ND4FQoqPAHxZlMW775ejfy
+         N8kA==
+X-Gm-Message-State: AOAM533U8+FFVDcJjZjCFGeDP/oFrNj5sSAj7JFGcTPQ18bYlwddII50
+        Vi0axjNTjLnDQRHA37wtlNq2FukHlZUAEtAjYWzqB51C
+X-Google-Smtp-Source: ABdhPJz2A1YHGrY91aq4xNrHBpd0Fw24qT58iA89MIoLql0jpWOElyATTepmR5ts870yyPm/tMwh/otaM060TJQrreE=
+X-Received: by 2002:a92:d28b:: with SMTP id p11mr3097565ilp.250.1627799571702;
+ Sat, 31 Jul 2021 23:32:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20210720155944.1447086-9-krisman@collabora.com>
+ <20210731063818.GB18773@xsang-OptiPlex-9020> <CAOQ4uxgtke-jK3a1SxowdEhObw8rDuUXB-DSGCr-M1uVMWarww@mail.gmail.com>
+ <87lf5mi7mv.fsf@collabora.com>
+In-Reply-To: <87lf5mi7mv.fsf@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 1 Aug 2021 09:32:40 +0300
+Message-ID: <CAOQ4uxhsb_iVBTWVVreS7eSRCUapFFcyhXwnekaqptbMJSm1KQ@mail.gmail.com>
+Subject: Re: [fsnotify] 4c40d6efc8: unixbench.score -3.3% regression
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     0day robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+        lkp@lists.01.org, ying.huang@intel.com, feng.tang@intel.com,
+        zhengjun.xing@linux.intel.com, Jan Kara <jack@suse.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com,
+        Mel Gorman <mgorman@techsingularity.net>,
+        kernel test robot <oliver.sang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 31 Jul 2021, Hugh Dickins wrote:
-> On Fri, 30 Jul 2021, Yang Shi wrote:
-> > On Fri, Jul 30, 2021 at 12:42 AM Hugh Dickins <hughd@google.com> wrote:
-> > >
-> > > Extend shmem_huge_enabled(vma) to shmem_is_huge(vma, inode, index), so
-> > > that a consistent set of checks can be applied, even when the inode is
-> > > accessed through read/write syscalls (with NULL vma) instead of mmaps
-> > > (the index argument is seldom of interest, but required by mount option
-> > > "huge=within_size").  Clean up and rearrange the checks a little.
-> > >
-> > > This then replaces the checks which shmem_fault() and shmem_getpage_gfp()
-> > > were making, and eliminates the SGP_HUGE and SGP_NOHUGE modes: while it's
-> > > still true that khugepaged's collapse_file() at that point wants a small
-> > > page, the race that might allocate it a huge page is too unlikely to be
-> > > worth optimizing against (we are there *because* there was at least one
-> > > small page in the way), and handled by a later PageTransCompound check.
-> > 
-> > Yes, it seems too unlikely. But if it happens the PageTransCompound
-> > check may be not good enough since the page allocated by
-> > shmem_getpage() may be charged to wrong memcg (root memcg). And it
-> > won't be replaced by a newly allocated huge page so the wrong charge
-> > can't be undone.
-> 
-> Good point on the memcg charge: I hadn't thought of that.  Of course
-> it's not specific to SGP_CACHE versus SGP_NOHUGE (this patch), but I
-> admit that a huge mischarge is hugely worse than a small mischarge.
+On Sat, Jul 31, 2021 at 10:51 PM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Amir Goldstein <amir73il@gmail.com> writes:
+>
+> > On Sat, Jul 31, 2021 at 9:20 AM kernel test robot <oliver.sang@intel.com> wrote:
+> >>
+> >>
+> >>
+> >> Greeting,
+> >>
+> >> FYI, we noticed a -3.3% regression of unixbench.score due to commit:
+> >>
+> >>
+> >> commit: 4c40d6efc8b22b88a45c335ffd6d25b55d769f5b ("[PATCH v4 08/16] fsnotify: pass arguments of fsnotify() in struct fsnotify_event_info")
+> >> url: https://github.com/0day-ci/linux/commits/Gabriel-Krisman-Bertazi/File-system-wide-monitoring/20210721-001444
+> >> base: https://git.kernel.org/cgit/linux/kernel/git/jack/linux-fs.git fsnotify
+> >>
+> >> in testcase: unixbench
+> >> on test machine: 96 threads 2 sockets Intel(R) Xeon(R) CPU @ 2.30GHz with 128G memory
+> >> with following parameters:
+> >>
+> >>         runtime: 300s
+> >>         nr_task: 1
+> >>         test: pipe
+> >>         cpufreq_governor: performance
+> >>         ucode: 0x4003006
+> >>
+> >> test-description: UnixBench is the original BYTE UNIX benchmark suite aims to test performance of Unix-like system.
+> >> test-url: https://github.com/kdlucas/byte-unixbench
+> >>
+> >> In addition to that, the commit also has significant impact on the following tests:
+> >>
+> >> +------------------+-------------------------------------------------------------------------------------+
+> >> | testcase: change | will-it-scale: will-it-scale.per_thread_ops -1.3% regression                        |
+> >> | test machine     | 192 threads 4 sockets Intel(R) Xeon(R) Platinum 9242 CPU @ 2.30GHz with 192G memory |
+> >> | test parameters  | cpufreq_governor=performance                                                        |
+> >> |                  | mode=thread                                                                         |
+> >> |                  | nr_task=100%                                                                        |
+> >> |                  | test=eventfd1                                                                       |
+> >> |                  | ucode=0x5003006                                                                     |
+> >> +------------------+-------------------------------------------------------------------------------------+
+> >>
+> >>
+> >> If you fix the issue, kindly add following tag
+> >> Reported-by: kernel test robot <oliver.sang@intel.com>
+> >>
+> >
+> > Gabriel,
+> >
+> > It looks like my change throws away much of the performance gain for
+> > small IO on pipes without any watches that was achieved by commit
+> > 71d734103edf ("fsnotify: Rearrange fast path to minimise overhead
+> > when there is no watcher").
+> >
+> > I think the way to fix it is to lift the optimization in __fsnotify()
+> > to the fsnotify_parent() inline wrapper as Mel considered doing
+> > but was not sure it was worth the effort at the time.
+> >
+> > It's not completely trivial. I think it requires setting a flag
+> > MNT_FSNOTIFY_WATCHED when there are watches on the
+> > vfsmount. I will look into it.
+>
+> Amir,
+>
+> Since this patch is a clean up, would you mind if I drop it from my
+> series and base my work on top of mainline? Eventually, we can rebase
+> this patch, when the performance issue is addressed.
+>
+> I ask because I'm about to send a v5 and I'm not sure if I should wait
+> to have this fixed.
 
-Stupid me (and maybe I haven't given this enough consideration yet):
-but, much better than SGP_NOHUGE, much better than SGP_CACHE, would be
-SGP_READ there, wouldn't it?  Needs to beware of the NULL too, of course.
+I guess you mean that you want to add the sb to fsnotify() args list.
+I don't mind, it's up to Jan.
 
-Hugh
+Thanks,
+Amir.
