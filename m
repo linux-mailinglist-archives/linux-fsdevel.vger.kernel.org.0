@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C46A83DC988
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Aug 2021 06:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A58D3DCA1E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Aug 2021 07:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230087AbhHAECH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Aug 2021 00:02:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34556 "EHLO
+        id S230193AbhHAFWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Aug 2021 01:22:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbhHAECE (ORCPT
+        with ESMTP id S229451AbhHAFWx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Aug 2021 00:02:04 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D91F9C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jul 2021 21:01:55 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id b20so13538880qkj.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jul 2021 21:01:55 -0700 (PDT)
+        Sun, 1 Aug 2021 01:22:53 -0400
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A159C06175F
+        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jul 2021 22:22:45 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id t66so13698021qkb.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jul 2021 22:22:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:in-reply-to:message-id:references
          :mime-version;
-        bh=Bamtlf1xYDbsxVIm2+Hj57JkHWBBhyBU5JpXT15STbM=;
-        b=LSHEuW5/YX6Gd4nLb2XE10CrvjgFEJIu8hjBL06szNHTitQHTQiecsmoEnUEH8l1ks
-         BMTWEgFKO4ZrE6GdFu62kquXtXG2gHhFe1CLhSqRbqhDp0jK0ISilfzcVvpuL8CdcT8t
-         J6r+US2mhB1QjthfCD7/udVR2nJDNYZkq/+4IIMvzFSsIpLTg/0oZVVd1eyM9J5LzHqA
-         k8uOLtSfxwq4dvW4HDVzWZ0bGHVN9QcgEc61iA+kgMyCPOeEFEEPw/axIkw9ppd6kQrg
-         zXYtv2xnLk/qo0zqNHc8zWazozt+Uw3mnrjShjjrJBtfRdbjAtHLiFjVxwanehVAMh5O
-         soPw==
+        bh=cVKnxJsFEmP6VTmBi9tS1yfqRxwfKg7VbrVRt8cHCvo=;
+        b=nniVekF9vlkNnrUOafOtXHIsYcNQ6rL681EWtkcizPpBYll7lGMYewKh1N7H2JRk17
+         W0OqhipS9dSd1GQCB/S4HKMVJ+kCD5IJjKeELxH4EMefOyJk8jTTN3pKMDwIneZUp+ej
+         jae6g/X2+jWkwVpG9KNQSuaa5bPuGGEImGu6NNGoZOCk2cNAAPoUpIpjb6yO1DfUJKDo
+         0fLMhDxxRlzDyrz7L2+M6p7LMvHMsaEaoarTGBW265h1BQXYdupguv/qK6jzUiF34ZYG
+         cP/L9VDHJTKUhgKU3CllS6TWZG3uAfhZQihh+VyjmnPMe8hbV5K7gjV20NEtsdO17mr6
+         2hsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
          :references:mime-version;
-        bh=Bamtlf1xYDbsxVIm2+Hj57JkHWBBhyBU5JpXT15STbM=;
-        b=eWzwqclbDBpJ37FjliBQRkIIQsqX8Y2viKI4ws/rIJOnxIoiaaNjMG12RSvu9z+eFk
-         Zdt+/o1qZakzy9g1fyJ44Ci+aSsjzZ+WAic+JtQZEb2n87tlgqedwAOBodIsptrf4RUX
-         N6Om10Yjnf7uqVF6tpDp/1BwnlsBYzISy9VS6T3h9jj0BFrX3hyahZ/EXqhCmjvgtZHP
-         1AFRhrtfB/GL3lid7CEVKsCji5+n6PFTxkCunzbVQo2I1ck24wvIWE3YqVJLzUbTd69z
-         IMeWle7cp6FL1IMJ8qtluJXxmSXsSh8mJLMEfc98nIHO0EepMTr8UF7XYjOHCe7ZKxIA
-         JEJQ==
-X-Gm-Message-State: AOAM533Y8aUuFavTj/vTaOu3w0V7K4Su0s/FQW8aQ813M0Nv3ubdbGXH
-        dHZ7Xi5Huh8BuY6O1w09+QqRrw==
-X-Google-Smtp-Source: ABdhPJwpiOW6lPa9+HxDKJhJy9Z92W83ZI44clBKHCglmMG1irmPwdmlSECTwZypIvw95ecMuWY1tw==
-X-Received: by 2002:a37:9b14:: with SMTP id d20mr9473258qke.368.1627790514364;
-        Sat, 31 Jul 2021 21:01:54 -0700 (PDT)
+        bh=cVKnxJsFEmP6VTmBi9tS1yfqRxwfKg7VbrVRt8cHCvo=;
+        b=olTk5hAbwF7zSP6TGkBS7tJAbs2purDHA+GDdqAATHyAkHb0KuFfrsNjHCm1KkFgOS
+         O4/UwBwcxMJ95U/fFxI8supqJH33YL6U6ETOjU1nQ4z+ZLahOWAjEb6+d5D3z/34Ab4d
+         GM4ZZpRzVqXDBeP+EzlBz+cq8qnZ6ng9fVN3Xv2R5v53ikxwZlXjBSKvtIHHBfd/7ICn
+         xrwlp6OINugzD/5htNoOTouht5oXSl1lX/RBl0NH7n4ZrCdd51brFrQkXvJnGG2uw0qT
+         jGuRGghHUcb6hg6k/C318RUwEtgciuNJ9o76AldF0JjkDXzr3RSkGFqukXLDeyns5gZT
+         BKPg==
+X-Gm-Message-State: AOAM533CUqJbLR9HrJgS2QRmTPdl3E/Et/0uatGsmb+yT/g0yOLRlOPZ
+        AIvgh/thko3LPgJT4814b3R2TQ==
+X-Google-Smtp-Source: ABdhPJyrUeF6RAIGrh/c9ff88AZw0UDXNn0Fppp7eogohS/Zaj97Y7d5VtLeRxic/CzNt1nJO85UaA==
+X-Received: by 2002:a05:620a:2053:: with SMTP id d19mr7804552qka.402.1627795364185;
+        Sat, 31 Jul 2021 22:22:44 -0700 (PDT)
 Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 71sm2818101qtc.97.2021.07.31.21.01.52
+        by smtp.gmail.com with ESMTPSA id i7sm2891875qtr.80.2021.07.31.22.22.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Jul 2021 21:01:53 -0700 (PDT)
-Date:   Sat, 31 Jul 2021 21:01:51 -0700 (PDT)
+        Sat, 31 Jul 2021 22:22:43 -0700 (PDT)
+Date:   Sat, 31 Jul 2021 22:22:41 -0700 (PDT)
 From:   Hugh Dickins <hughd@google.com>
 X-X-Sender: hugh@ripple.anvils
 To:     Yang Shi <shy828301@gmail.com>
@@ -69,11 +69,10 @@ cc:     Hugh Dickins <hughd@google.com>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-api@vger.kernel.org, Linux MM <linux-mm@kvack.org>
-Subject: Re: [PATCH 04/16] huge tmpfs: revert shmem's use of
- transhuge_vma_enabled()
-In-Reply-To: <CAHbLzko5oU_1X=M1LFr=4hNDvs0BF0UY+_8e0RHMhUqspMHV3Q@mail.gmail.com>
-Message-ID: <55526ab1-4280-9538-51d7-6669b8a97f@google.com>
-References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com> <b44e3619-712e-90af-89d2-e4ba654c5110@google.com> <CAHbLzko5oU_1X=M1LFr=4hNDvs0BF0UY+_8e0RHMhUqspMHV3Q@mail.gmail.com>
+Subject: Re: [PATCH 06/16] huge tmpfs: shmem_is_huge(vma, inode, index)
+In-Reply-To: <CAHbLzkoKZ9OdUfP5DX81CKOJWrRZ0GANrmenNeKWNmSOgUh0bQ@mail.gmail.com>
+Message-ID: <e7374d7e-4773-aba1-763-8fa2c953f917@google.com>
+References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com> <dae523ab-c75b-f532-af9d-8b6a1d4e29b@google.com> <CAHbLzkoKZ9OdUfP5DX81CKOJWrRZ0GANrmenNeKWNmSOgUh0bQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
@@ -81,58 +80,89 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, 30 Jul 2021, Yang Shi wrote:
-> On Fri, Jul 30, 2021 at 12:36 AM Hugh Dickins <hughd@google.com> wrote:
+> On Fri, Jul 30, 2021 at 12:42 AM Hugh Dickins <hughd@google.com> wrote:
 > >
-> > 5.14 commit e6be37b2e7bd ("mm/huge_memory.c: add missing read-only THP
-> > checking in transparent_hugepage_enabled()") added transhuge_vma_enabled()
-> > as a wrapper for two very different checks: shmem_huge_enabled() prefers
-> > to show those two checks explicitly, as before.
+> > Extend shmem_huge_enabled(vma) to shmem_is_huge(vma, inode, index), so
+> > that a consistent set of checks can be applied, even when the inode is
+> > accessed through read/write syscalls (with NULL vma) instead of mmaps
+> > (the index argument is seldom of interest, but required by mount option
+> > "huge=within_size").  Clean up and rearrange the checks a little.
+> >
+> > This then replaces the checks which shmem_fault() and shmem_getpage_gfp()
+> > were making, and eliminates the SGP_HUGE and SGP_NOHUGE modes: while it's
+> > still true that khugepaged's collapse_file() at that point wants a small
+> > page, the race that might allocate it a huge page is too unlikely to be
+> > worth optimizing against (we are there *because* there was at least one
+> > small page in the way), and handled by a later PageTransCompound check.
 > 
-> Basically I have no objection to separating them again. But IMHO they
-> seem not very different. Or just makes things easier for the following
-> patches?
+> Yes, it seems too unlikely. But if it happens the PageTransCompound
+> check may be not good enough since the page allocated by
+> shmem_getpage() may be charged to wrong memcg (root memcg). And it
+> won't be replaced by a newly allocated huge page so the wrong charge
+> can't be undone.
 
-Well, it made it easier to apply the patch I'd prepared earlier,
-but that was not the point; and I thought it best to be upfront
-about the reversion, rather than hiding it in the movement.
+Good point on the memcg charge: I hadn't thought of that.  Of course
+it's not specific to SGP_CACHE versus SGP_NOHUGE (this patch), but I
+admit that a huge mischarge is hugely worse than a small mischarge.
 
-The end result of the two checks is the same (don't try for huge pages),
-and they have been grouped together because they occurred together in
-several places, and both rely on "vma".
+We could fix it by making shmem_getpage_gfp() non-static, and pointing
+to the vma (hence its mm, hence its memcg) here, couldn't we?  Easily
+done, but I don't really want to make shmem_getpage_gfp() public just
+for this, for two reasons.
 
-But one check is whether the app has marked that address range not to use
-THPs; and the other check is whether the process is running in a hierarchy
-that has been marked never to use THPs (which just uses vma to get to mm
-to get to mm->flags (whether current->mm would be more relevant is not an
-argument I want to get into, I'm not at all sure)).
+One is that the huge race it just so unlikely; and a mischarge to root
+is not the end of the world, so long as it's not reproducible.  It can
+only happen on the very first page of the huge extent, and the prior
+"Stop if extent has been truncated" check makes sure there was one
+entry in the extent at that point: so the race with hole-punch can only
+occur after we xas_unlock_irq(&xas) immediately before shmem_getpage()
+looks up the page in the tree (and I say hole-punch not truncate,
+because shmem_getpage()'s i_size check will reject when truncated).
+I don't doubt that it could happen, but stand by not optimizing against.
 
-To me those are very different; and I'm particularly concerned to make
-MMF_DISABLE_THP references visible, since it did not exist when Kirill
-and I first implemented shmem huge pages, and I've tended to forget it:
-but consider it more in this series.
+Other reason is that doing shmem_getpage() (or shmem_getpage_gfp())
+there is unhealthy for unrelated reasons, that I cannot afford to get
+into sending patches for at this time: but some of our users found the
+worst-case latencies in collapse_file() intolerable - shmem_getpage()
+may be reading in from swap, while the locked head of the huge page
+being built is in the page cache keeping other users waiting.  So,
+I'd say there's something worse than memcg in that shmem_getpage(),
+but fixing that cannot be a part of this series.
+
+> 
+> And, another question is it seems the newly allocated huge page will
+> just be uncharged instead of being freed until
+> "khugepaged_pages_to_scan" pages are scanned. The
+> khugepaged_prealloc_page() is called to free the allocated huge page
+> before each call to khugepaged_scan_mm_slot(). But
+> khugepaged_scan_file() -> collapse_fille() -> khugepaged_alloc_page()
+> may be called multiple times in the loop in khugepaged_scan_mm_slot(),
+> so khugepaged_alloc_page() may see that page to trigger VM_BUG IIUC.
+> 
+> The code is quite convoluted, I'm not sure whether I miss something or
+> not. And this problem seems very hard to trigger in real life
+> workload.
+
+Just to clarify, those two paragraphs are not about this patch, but about
+what happens to mm/khugepaged.c's newly allocated huge page, when collapse
+fails for any reason.
+
+Yes, the code is convoluted: that's because it takes very different paths
+when CONFIG_NUMA=y (when it cannot predict which node to allocate from)
+and when not NUMA (when it can allocate the huge page at a good unlocked
+moment, and carry it forward from one attempt to the next).
+
+I don't like it at all, the two paths are confusing: sometimes I wonder
+whether we should just remove the !CONFIG_NUMA path entirely; and other
+times I wonder in the other direction, whether the CONFIG_NUMA=y path
+ought to go the other way when it finds nr_node_ids is 1.  Undecided.
+
+I'm confident that if you work through the two cases (thinking about
+only one of them at once!), you'll find that the failure paths (not
+to mention the successful paths) do actually work correctly without
+leaking (well, maybe the !NUMA path can hold on to one huge page
+indefinitely, I forget, but I wouldn't count that as leaking).
+
+Collapse failure is not uncommon and leaking huge pages gets noticed.
 
 Hugh
-
-> 
-> >
-> > Signed-off-by: Hugh Dickins <hughd@google.com>
-> > ---
-> >  mm/shmem.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index ce3ccaac54d6..c6fa6f4f2db8 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -4003,7 +4003,8 @@ bool shmem_huge_enabled(struct vm_area_struct *vma)
-> >         loff_t i_size;
-> >         pgoff_t off;
-> >
-> > -       if (!transhuge_vma_enabled(vma, vma->vm_flags))
-> > +       if ((vma->vm_flags & VM_NOHUGEPAGE) ||
-> > +           test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
-> >                 return false;
-> >         if (shmem_huge == SHMEM_HUGE_FORCE)
-> >                 return true;
-> > --
-> > 2.26.2
