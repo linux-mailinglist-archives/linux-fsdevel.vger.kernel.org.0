@@ -2,181 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CDE63DD597
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 14:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FC9C3DD5B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 14:34:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233604AbhHBMYp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Aug 2021 08:24:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233498AbhHBMYo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Aug 2021 08:24:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C148D600D4;
-        Mon,  2 Aug 2021 12:24:32 +0000 (UTC)
-Date:   Mon, 2 Aug 2021 14:24:30 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 01/21] namei: add mapping aware lookup helper
-Message-ID: <20210802122430.25hlgpnkwfemvih3@wittgenstein>
-References: <20210727104900.829215-1-brauner@kernel.org>
- <20210727104900.829215-2-brauner@kernel.org>
+        id S233498AbhHBMel (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Aug 2021 08:34:41 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:49228 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232682AbhHBMek (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Aug 2021 08:34:40 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 6674421DAF;
+        Mon,  2 Aug 2021 12:34:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1627907670; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1JwBpQrhWZhrIjYV1ocSnEmpFvTTOsNISW+USXEtBBw=;
+        b=K3CYFbEgNe5AtnzuNr99KwUt23FUdVOSSRhXiF5TEYfwCsdmWCnDTeRGE67VjjrRYANCEi
+        cYGkfhUV7wko5xq7cP6qVbRQQFletnbaJC5+hkTDZXKmd8UyeVqzhboTyU8siZ9EaY9Tsz
+        a/2Ko1//tPKNpxMn6Ls0+3PGYIOGxBI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1627907670;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1JwBpQrhWZhrIjYV1ocSnEmpFvTTOsNISW+USXEtBBw=;
+        b=VWW3ePffNfi3S1WE3qT81DRkafm3yZ0ii2iV3TRux/fzWSbHrLW6MKZ2vbr5j+rX8z5abZ
+        rP/AmP0SjFw4wpAg==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 5614CA3BB5;
+        Mon,  2 Aug 2021 12:34:30 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 2DAED1E0BBB; Mon,  2 Aug 2021 14:34:28 +0200 (CEST)
+Date:   Mon, 2 Aug 2021 14:34:28 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
+        Matthew Bobrowski <repnop@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 5/5] fanotify: add pidfd support to the fanotify API
+Message-ID: <20210802123428.GB28745@quack2.suse.cz>
+References: <cover.1626845287.git.repnop@google.com>
+ <02ba3581fee21c34bd986e093d9eb0b9897fa741.1626845288.git.repnop@google.com>
+ <CAG48ez3MsFPn6TsJz75hvikgyxG5YGyT2gdoFwZuvKut4Xms1g@mail.gmail.com>
+ <CAOQ4uxhDkAmqkxT668sGD8gHcssGTeJ3o6kzzz3=0geJvfAjdg@mail.gmail.com>
+ <20210729133953.GL29619@quack2.suse.cz>
+ <CAOQ4uxi70KXGwpcBnRiyPXZCjFQfifaWaYVSDK2chaaZSyXXhQ@mail.gmail.com>
+ <CAOQ4uxgFLqO5_vPTb5hkfO1Fb27H-h0TqHsB6owZxrZw4YLoEA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210727104900.829215-2-brauner@kernel.org>
+In-Reply-To: <CAOQ4uxgFLqO5_vPTb5hkfO1Fb27H-h0TqHsB6owZxrZw4YLoEA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 27, 2021 at 12:48:40PM +0200, Christian Brauner wrote:
-> From: Christian Brauner <christian.brauner@ubuntu.com>
+On Fri 30-07-21 08:03:01, Amir Goldstein wrote:
+> On Thu, Jul 29, 2021 at 6:13 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > On Thu, Jul 29, 2021 at 4:39 PM Jan Kara <jack@suse.cz> wrote:
+> > > Well, but pidfd also makes sure that /proc/<pid>/ keeps belonging to the
+> > > same process while you read various data from it. And you cannot achieve
+> > > that with pid+generation thing you've suggested. Plus the additional
+> > > concept and its complexity is non-trivial So I tend to agree with
+> > > Christian that we really want to return pidfd.
+> > >
+> > > Given returning pidfd is CAP_SYS_ADMIN priviledged operation I'm undecided
+> > > whether it is worth the trouble to come up with some other mechanism how to
+> > > return pidfd with the event. We could return some cookie which could be
+> > > then (by some ioctl or so) either transformed into real pidfd or released
+> > > (so that we can release pid handle in the kernel) but it looks ugly and
+> > > complicates things for everybody without bringing significant security
+> > > improvement (we already can pass fd with the event). So I'm pondering
+> > > whether there's some other way how we could make the interface safer - e.g.
+> > > so that the process receiving the event (not the one creating the group)
+> > > would also need to opt in for getting fds created in its file table.
+> > >
+> > > But so far nothing bright has come to my mind. :-|
+> > >
+> >
+> > There is a way, it is not bright, but it is pretty simple -
+> > store an optional pid in group->fanotify_data.fd_reader.
+> >
+> > With flag FAN_REPORT_PIDFD, both pidfd and event->fd reporting
+> > will be disabled to any process other than fd_reader.
+> > Without FAN_REPORT_PIDFD, event->fd reporting will be disabled
+> > if fd_reaader is set to a process other than the reader.
+> >
+> > A process can call ioctl START_FD_READER to set fd_reader to itself.
+> > With FAN_REPORT_PIDFD, if reaader_fd is NULL and the reader
+> > process has CAP_SYS_ADMIN, read() sets fd_reader to itself.
+> >
+> > Permission wise, START_FD_READER is allowed with
+> > CAP_SYS_ADMIN or if fd_reader is not owned by another process.
+> > We may consider YIELD_FD_READER ioctl if needed.
+> >
+> > I think that this is a pretty cheap price for implementation
+> > and maybe acceptable overhead for complicating the API?
+> > Note that without passing fd, there is no need for any ioctl.
+> >
+> > An added security benefit is that the ioctl adds is a way for the
+> > caller of fanotify_init() to make sure that even if the fanotify_fd is
+> > leaked, that event->fd will not be leaked, regardless of flag
+> > FAN_REPORT_PIDFD.
+> >
+> > So the START_FD_READER ioctl feature could be implemented
+> > and documented first.
+> > And then FAN_REPORT_PIDFD could use the feature with a
+> > very minor API difference:
+> > - Without the flag, other processes can read fds by default and
+> >   group initiator can opt-out
+> > - With the flag, other processes cannot read fds by default and
+> >   need to opt-in
 > 
-> Various filesystems rely on the lookup_one_len() helper to lookup a single path
-> component relative to a well-known starting point. Allow such filesystems to
-> support idmapped mounts by adding a version of this helper to take the idmap
-> into account when calling inode_permission(). This change is a required to let
-> btrfs (and other filesystems) support idmapped mounts.
+> Or maybe something even simpler... fanotify_init() flag
+> FAN_PRIVATE (or FAN_PROTECTED) that limits event reading
+> to the initiator process (not only fd reading).
 > 
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
+> FAN_REPORT_PIDFD requires FAN_PRIVATE.
+> If we do not know there is a use case for passing fanotify_fd
+> that reports pidfds to another process why implement the ioctl.
+> We can always implement it later if the need arises.
+> If we contemplate this future change, though, maybe the name
+> FAN_PROTECTED is better to start with.
 
-Christoph, Matthew are you ok with this now?
+Good ideas. I think we are fine with returning pidfd only to the process
+creating the fanotify group. Later we can add an ioctl which would indicate
+that the process is also prepared to have fds created in its file table.
+But I have still some open questions:
+Do we want threads of the same process to still be able to receive fds?
+Also pids can be recycled so they are probably not completely reliable
+identifiers? What if someone wants to process events from fanotify group by
+multiple processes / threads (fd can be inherited also through fork(2)...)?
 
-Christian
+I'm currently undecided whether explicit FAN_PROTECTED flag (and impact on
+receiving / not receiving whole event) makes this better.
 
-> /* v2 */
-> - Al Viro <viro@zeniv.linux.org.uk>:
->   - Add a new lookup helper instead of changing the old ones.
-> 
-> /* v3 */
-> unchanged
-> 
-> /* v4 */
-> - Christoph Hellwig <hch@infradead.org>,
->   Matthew Wilcox (Oracle) <willy@infradead.org>:
->   - Simplify the name of lookup_mapped_one_len() to either lookup_one_mapped()
->     or lookup_one(). The *_len() prefix in all those helper apparently just
->     exists for historical reasons because we used to have lookup_dentry(), then
->     grew lookup_one(), and then grew lookup_one_len().
-> ---
->  fs/namei.c            | 43 +++++++++++++++++++++++++++++++++++++------
->  include/linux/namei.h |  2 ++
->  2 files changed, 39 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index bf6d8a738c59..902df46e7dd3 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2575,8 +2575,9 @@ int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
->  }
->  EXPORT_SYMBOL(vfs_path_lookup);
->  
-> -static int lookup_one_len_common(const char *name, struct dentry *base,
-> -				 int len, struct qstr *this)
-> +static int lookup_one_common(struct user_namespace *mnt_userns,
-> +			     const char *name, struct dentry *base, int len,
-> +			     struct qstr *this)
->  {
->  	this->name = name;
->  	this->len = len;
-> @@ -2604,7 +2605,7 @@ static int lookup_one_len_common(const char *name, struct dentry *base,
->  			return err;
->  	}
->  
-> -	return inode_permission(&init_user_ns, base->d_inode, MAY_EXEC);
-> +	return inode_permission(mnt_userns, base->d_inode, MAY_EXEC);
->  }
->  
->  /**
-> @@ -2628,7 +2629,7 @@ struct dentry *try_lookup_one_len(const char *name, struct dentry *base, int len
->  
->  	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
->  
-> -	err = lookup_one_len_common(name, base, len, &this);
-> +	err = lookup_one_common(&init_user_ns, name, base, len, &this);
->  	if (err)
->  		return ERR_PTR(err);
->  
-> @@ -2655,7 +2656,7 @@ struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
->  
->  	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
->  
-> -	err = lookup_one_len_common(name, base, len, &this);
-> +	err = lookup_one_common(&init_user_ns, name, base, len, &this);
->  	if (err)
->  		return ERR_PTR(err);
->  
-> @@ -2664,6 +2665,36 @@ struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
->  }
->  EXPORT_SYMBOL(lookup_one_len);
->  
-> +/**
-> + * lookup_one - filesystem helper to lookup single pathname component
-> + * @mnt_userns:	user namespace of the mount the lookup is performed from
-> + * @name:	pathname component to lookup
-> + * @base:	base directory to lookup from
-> + * @len:	maximum length @len should be interpreted to
-> + *
-> + * Note that this routine is purely a helper for filesystem usage and should
-> + * not be called by generic code.
-> + *
-> + * The caller must hold base->i_mutex.
-> + */
-> +struct dentry *lookup_one(struct user_namespace *mnt_userns, const char *name,
-> +			  struct dentry *base, int len)
-> +{
-> +	struct dentry *dentry;
-> +	struct qstr this;
-> +	int err;
-> +
-> +	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
-> +
-> +	err = lookup_one_common(mnt_userns, name, base, len, &this);
-> +	if (err)
-> +		return ERR_PTR(err);
-> +
-> +	dentry = lookup_dcache(&this, base, 0);
-> +	return dentry ? dentry : __lookup_slow(&this, base, 0);
-> +}
-> +EXPORT_SYMBOL(lookup_one);
-> +
->  /**
->   * lookup_one_len_unlocked - filesystem helper to lookup single pathname component
->   * @name:	pathname component to lookup
-> @@ -2683,7 +2714,7 @@ struct dentry *lookup_one_len_unlocked(const char *name,
->  	int err;
->  	struct dentry *ret;
->  
-> -	err = lookup_one_len_common(name, base, len, &this);
-> +	err = lookup_one_common(&init_user_ns, name, base, len, &this);
->  	if (err)
->  		return ERR_PTR(err);
->  
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index be9a2b349ca7..df106b6d3cc5 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -68,6 +68,8 @@ extern struct dentry *try_lookup_one_len(const char *, struct dentry *, int);
->  extern struct dentry *lookup_one_len(const char *, struct dentry *, int);
->  extern struct dentry *lookup_one_len_unlocked(const char *, struct dentry *, int);
->  extern struct dentry *lookup_positive_unlocked(const char *, struct dentry *, int);
-> +extern struct dentry *lookup_one(struct user_namespace *, const char *,
-> +				 struct dentry *, int);
->  
->  extern int follow_down_one(struct path *);
->  extern int follow_down(struct path *);
-> -- 
-> 2.30.2
-> 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
