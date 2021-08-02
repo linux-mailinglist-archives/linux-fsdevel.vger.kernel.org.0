@@ -2,374 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0073DCEE1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 05:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B7343DCF30
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 06:18:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231639AbhHBDZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Aug 2021 23:25:34 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:40650 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230341AbhHBDZd (ORCPT
+        id S229828AbhHBESq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Aug 2021 00:18:46 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:45136 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229457AbhHBESq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Aug 2021 23:25:33 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 1723NGEr019269
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 1 Aug 2021 23:23:17 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 4BEDF15C3DD2; Sun,  1 Aug 2021 23:23:16 -0400 (EDT)
-Date:   Sun, 1 Aug 2021 23:23:16 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com, kari.argillander@gmail.com,
-        oleksandr@natalenko.name
-Subject: Re: [PATCH v27 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-Message-ID: <YQdlJM6ngxPoeq4U@mit.edu>
-References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
- <20210729162459.GA3601405@magnolia>
+        Mon, 2 Aug 2021 00:18:46 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id AFCE91FF24;
+        Mon,  2 Aug 2021 04:18:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1627877915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oCxfnDIQHo7zeHdIihSV072lb1GzrTxq9yJB4Mf+O8E=;
+        b=tG9f93fBuVgpVrn/aw2zo+rtxGc+IO6UoZuVfSzBrejHuz6s6vNVMySwT6a4VSlvQPeYNY
+        zOh0SS6/bwCLqF8xem+3GElgwi1tY4XZfNsynVwBGsYu5JD96KwaGrw8J2h3bcFn6PLs8/
+        sdsU4C0MPlrtC05jwTxjP8tzfuEHRVI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1627877915;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oCxfnDIQHo7zeHdIihSV072lb1GzrTxq9yJB4Mf+O8E=;
+        b=oaGsnA8vKrjArsboWH11XwYKNZAB4/ptlgHYBQUbGFXYXV5Qd49pTQqIKmjM9KkJ6wzfmh
+        WFvRCeit5Vwzy+CA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8410E1345F;
+        Mon,  2 Aug 2021 04:18:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 1W6pEBhyB2EXaQAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 02 Aug 2021 04:18:32 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210729162459.GA3601405@magnolia>
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Miklos Szeredi" <miklos@szeredi.hu>
+Cc:     "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+        "Linux NFS list" <linux-nfs@vger.kernel.org>,
+        "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>
+Subject: A Third perspective on BTRFS nfsd subvol dev/inode number issues.
+In-reply-to: <CAJfpegub4oBZCBXFQqc8J-zUiSW+KaYZLjZaeVm_cGzNVpxj+A@mail.gmail.com>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
+ <162742546548.32498.10889023150565429936.stgit@noble.brown>,
+ <YQNG+ivSssWNmY9O@zeniv-ca.linux.org.uk>,
+ <162762290067.21659.4783063641244045179@noble.neil.brown.name>,
+ <CAJfpegsR1qvWAKNmdjLfOewUeQy-b6YBK4pcHf7JBExAqqUvvg@mail.gmail.com>,
+ <162762562934.21659.18227858730706293633@noble.neil.brown.name>,
+ <CAJfpegtu3NKW9m2jepRrXe4UTuD6_3k0Y6TcCBLSQH7SSC90BA@mail.gmail.com>,
+ <162763043341.21659.15645923585962859662@noble.neil.brown.name>,
+ <CAJfpegub4oBZCBXFQqc8J-zUiSW+KaYZLjZaeVm_cGzNVpxj+A@mail.gmail.com>
+Date:   Mon, 02 Aug 2021 14:18:29 +1000
+Message-id: <162787790940.32159.14588617595952736785@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 29, 2021 at 09:24:59AM -0700, Darrick J. Wong wrote:
+On Fri, 30 Jul 2021, Miklos Szeredi wrote:
+> On Fri, 30 Jul 2021 at 09:34, NeilBrown <neilb@suse.de> wrote:
 > 
-> I have the same (still unanswered) questions as last time:
+> > But I'm curious about your reference to "some sort of subvolume
+> > structure that the VFS knows about".  Do you have any references, or can
+> > you suggest a search term I could try?
 > 
-> 1. What happens when you run ntfs3 through fstests with '-g all'?  I get
-> that the pass rate isn't going to be as high with ntfs3 as it is with
-> ext4/xfs/btrfs, but fstests can be adapted (see the recent attempts to
-> get exfat under test).
-
-Indeed, it's not that hard at all.  I've included a patch to
-xfstests-bld[1] so that you can just run "kvm-xfstests -c ntfs3 -g
-auto".
-
-Konstantin, I would *strongly* encourage you to try running fstests,
-about 60 seconds into a run, we discover that generic/013 will trigger
-locking problems that could lead to deadlocks.
-
-The test generic/091 will also trigger kernel NULL dereference BUG:
-
-BUG: kernel NULL pointer dereference, address: 0000000000000008
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 0 P4D 0 
-Oops: 0000 [#1] SMP NOPTI
-CPU: 0 PID: 23029 Comm: fsx Not tainted 5.14.0-rc2-xfstests-00010-gdf9570
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/4
-RIP: 0010:__bio_add_page+0x46/0x80
-Code: 39 47 5a 76 3d 41 89 d0 41 f7 d0 44 39 47 28 77 31 48 89 30 89 48 5
-RSP: 0018:ffffa3fa05e13900 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000001000 RCX: 0000000000000000
-RDX: 0000000000001000 RSI: 0000000000000000 RDI: ffff908b8f930b40
-RBP: ffff908b8f930b40 R08: 00000000ffffefff R09: 0000000000000000
-R10: ffffffffa4973270 R11: 0000000000000002 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f04a8ba2740(0000) GS:ffff908bfda00000(0000) knlGS:0000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000008 CR3: 0000000010984005 CR4: 0000000000770ef0
-PKRU: 55555554
-Call Trace:
- bio_add_page+0x62/0x90
- submit_bh_wbc+0xe3/0x190
- ll_rw_block+0xaa/0xb0
- ntfs_get_block_vbo+0x305/0x430
- do_direct_IO+0x3af/0xa20
- do_blockdev_direct_IO+0x2b7/0x960
- ? ntfs_get_block_write_begin+0x20/0x20
- ? ntfs_get_block_write_begin+0x20/0x20
- ? end_buffer_read_nobh+0x30/0x30
- ntfs_direct_IO+0xe5/0x1f0
- ? touch_atime+0x36/0x250
- generic_file_read_iter+0x8c/0x170
- generic_file_splice_read+0xfc/0x1b0
- splice_direct_to_actor+0xc3/0x230
- ? do_splice_to+0xc0/0xc0
- do_splice_direct+0x91/0xd0
- vfs_copy_file_range+0x144/0x450
- __do_sys_copy_file_range+0xc1/0x200
- do_syscall_64+0x38/0x90
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f04a8c98f59
-Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 8
-RSP: 002b:00007ffc8a2202b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000146
-RAX: ffffffffffffffda RBX: 000000000000d000 RCX: 00007f04a8c98f59
-RDX: 0000000000000003 RSI: 00007ffc8a220300 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 000000000000d000 R09: 0000000000000000
-R10: 00007ffc8a220308 R11: 0000000000000246 R12: 00007ffc8a220300
-R13: 00007ffc8a220308 R14: 000000000000d000 R15: 000000000004c000
-CR2: 0000000000000008
----[ end trace 1412a19831693976 ]---
-
-It should also be noted that there doesn't appear to be an fsck for
-ntfs --- there is ntfsfix in the ntfs-3g package but it's a full
-replacement for chkdsk, and it will often throw up its hands, and tell
-you to boot into Windows and run CHKDSK.  To be fair, this is also
-true for the fuse-based ntfs implementation --- but at least the
-fuse-based ntfs implementation won't deadlock your kernel or OOPS the
-kernel with null pointer dereferences....  :-)
-
+> Found this:
+> https://lore.kernel.org/linux-fsdevel/20180508180436.716-1-mfasheh@suse.de/
 > 
-> In case you're wondering why I ask these questions, my motivation is
-> in figuring out how easy it will be to extend QA coverage to the
-> community supported QA suite (fstests) so that people making treewide
-> and vfs level changes can check that their changes don't bitrot your
-> driver, and vice-versa.  My primary interest leans towards convincing
-> everyone to value QA and practice it regularly (aka sharing the load so
-> it's not entirely up to the maintainer to catch all problems) vs.
-> finding every coding error as a gate condition for merging.
 
-There are some changes that I've identified to make fstests support
-fstests more cleanly.  But the real problem is the very weak level of
-userspace tools available for NTFS today.  Is this something that
-Paragon Software is planning on remedying?
+Excellent, thanks.  Very useful.
 
-						- Ted
+OK.  Time for a third perspective.
 
-Note: this isn't ready for prime-time yet, since the way I've hacked
-up /sbin/mkfs.ntfs3 causes gce-xfstests to fail.  So this isn't going
-to be going to xfsteests-bld upstream just yet.  But it's good enough
-to make kvm-xfstests work....
+With its current framing the problem is unsolvable.  So it needs to be
+reframed.
 
-Support for the fuse-based ntfs is also not complete for kvm-xfstests,
-although the config files for ntfs didn't take that much time to do at
-the same time.  Support for the fuse-based ntfs will require some
-changes to _fs_type in common/rc so that fstests won't barf because
-when you mount -t ntfs, /proc/mounts and df -T show a file system type
-of "fuseblk".  What I've done so far was just a quick hack, because I
-was curious how ready for prime-time ntfs3 might currently be.  :-)
-But it does demonstrate how easy it is to run fstests on ntfs3.  The
-hard part will be fixing all of the bugs that it uncovers --- but
-better that you discover them now, rather than your customers (not to
-mention the customers for all of us who work for various Linux
-distributions and hyperscale cloud companies!).
+By "current framing", I mean that we are trying to get btrfs to behave
+in a way that meets current user-space expectations.  Specially, the
+expectation that each object in any filesystem can be uniquely
+identified by a 64bit inode number.  btrfs provides functionality which
+needs more than 64bits.  So it simple does not fit.  btrfs currently
+fudges with device numbers to hide the problem.  This is at best an
+incomplete solution, and is already being shown to be insufficient.
 
+Therefore we need to change user-space expectations.  This has been done
+before multiple times - often by breaking things and leaving it up to
+user-space to fix it.  My favourite example is that NFSv2 broke the
+creation of lock files with O_CREAT|O_EXCL.  USER-space starting using
+hard-links to achieve the same result.  When NFSv3 added reliable
+O_CREAT|O_EXCL support, it hardly mattered.... but I digress.
 
-commit c2899d9c0251078d9088b44cc7c583c192edd8a4
-Author: Theodore Ts'o <tytso@mit.edu>
-Date:   Sun Aug 1 20:47:35 2021 -0400
+It think we need to bite-the-bullet and decide that 64bits is not
+enough, and in fact no number of bits will ever be enough.  overlayfs
+makes this clear.  overlayfs merges multiple filesystems, and so needs
+strictly more bits to uniquely identify all inodes than any of the
+filesystems use.  Currently it over-loads the high bits and hopes the
+filesystem doesn't use them.
 
-    test-appliance: add support for ntfs and ntfs3 file systems
-    
-    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+The "obvious" choice for a replacement is the file handle provided by
+name_to_handle_at() (falling back to st_ino if name_to_handle_at isn't
+supported by the filesystem).  This returns an extensible opaque
+byte-array.  It is *already* more reliable than st_ino.  Comparing
+st_ino is only a reliable way to check if two files are the same if you
+have both of them open.  If you don't, then one of the files might have
+been deleted and the inode number reused for the other.  A filehandle
+contains a generation number which protects against this.
 
-diff --git a/kvm-xfstests/test-appliance/files/root/fs/ntfs/cfg/all.list b/kvm-xfstests/test-appliance/files/root/fs/ntfs/cfg/all.list
-new file mode 100644
-index 0000000..4ad96d5
---- /dev/null
-+++ b/kvm-xfstests/test-appliance/files/root/fs/ntfs/cfg/all.list
-@@ -0,0 +1 @@
-+default
-diff --git a/kvm-xfstests/test-appliance/files/root/fs/ntfs/cfg/default b/kvm-xfstests/test-appliance/files/root/fs/ntfs/cfg/default
-new file mode 100644
-index 0000000..8280c69
---- /dev/null
-+++ b/kvm-xfstests/test-appliance/files/root/fs/ntfs/cfg/default
-@@ -0,0 +1,4 @@
-+SIZE=small
-+export MKFS_OPTIONS=""
-+export NTFS_MOUNT_OPTIONS=""
-+TESTNAME="ntfs"
-diff --git a/kvm-xfstests/test-appliance/files/root/fs/ntfs/config b/kvm-xfstests/test-appliance/files/root/fs/ntfs/config
-new file mode 100644
-index 0000000..bee23a5
---- /dev/null
-+++ b/kvm-xfstests/test-appliance/files/root/fs/ntfs/config
-@@ -0,0 +1,64 @@
-+#
-+# Configuration file for ntfs
-+#
-+
-+DEFAULT_MKFS_OPTIONS=""
-+
-+function check_filesystem()
-+{
-+    local dev="$1"
-+    local ret
-+
-+    /bin/ntfsfix "$dev"
-+    ret="$?"
-+    echo ntfsfix exited with status "$ret"
-+    return "$ret"
-+}
-+
-+function format_filesystem()
-+{
-+    local dev="$1"
-+    local opts="$2"
-+    local ret
-+
-+    /sbin/mkfs.ntfs -f $opts "$dev"
-+    ret="$?"
-+    return "$ret"
-+}
-+
-+function setup_mount_opts()
-+{
-+    if test -n "$MNTOPTS" ; then
-+	if test -n "$NTFS_MOUNT_OPTIONS" ; then
-+            export NTFS_MOUNT_OPTIONS="$MOUNT_OPTIONS,$MNTOPTS"
-+	else
-+	    export NTFS_MOUNT_OPTIONS="-o $MNTOPTS"
-+	fi
-+    fi
-+}
-+
-+function get_mkfs_opts()
-+{
-+    echo "$NTFS_MKFS_OPTIONS"
-+}
-+
-+function show_mkfs_opts()
-+{
-+    echo NTFS_MKFS_OPTIONS: "$NTFS_MKFS_OPTIONS"
-+}
-+
-+function show_mount_opts()
-+{
-+    echo NTFS_MOUNT_OPTIONS: "NTFS_MOUNT_OPTIONS"
-+}
-+
-+function test_name_alias()
-+{
-+    echo "$1"
-+}
-+
-+function reset_vars()
-+{
-+    unset NTFS_MOUNT_OPTIONS
-+    unset MKFS_OPTIONS
-+}
-diff --git a/kvm-xfstests/test-appliance/files/root/fs/ntfs3/cfg/all.list b/kvm-xfstests/test-appliance/files/root/fs/ntfs3/cfg/all.list
-new file mode 100644
-index 0000000..4ad96d5
---- /dev/null
-+++ b/kvm-xfstests/test-appliance/files/root/fs/ntfs3/cfg/all.list
-@@ -0,0 +1 @@
-+default
-diff --git a/kvm-xfstests/test-appliance/files/root/fs/ntfs3/cfg/default b/kvm-xfstests/test-appliance/files/root/fs/ntfs3/cfg/default
-new file mode 100644
-index 0000000..8ba5d07
---- /dev/null
-+++ b/kvm-xfstests/test-appliance/files/root/fs/ntfs3/cfg/default
-@@ -0,0 +1,4 @@
-+SIZE=small
-+export MKFS_OPTIONS=""
-+export NTFS3_MOUNT_OPTIONS=""
-+TESTNAME="ntfs3"
-diff --git a/kvm-xfstests/test-appliance/files/root/fs/ntfs3/config b/kvm-xfstests/test-appliance/files/root/fs/ntfs3/config
-new file mode 100644
-index 0000000..6f67e12
---- /dev/null
-+++ b/kvm-xfstests/test-appliance/files/root/fs/ntfs3/config
-@@ -0,0 +1,64 @@
-+#
-+# Configuration file for ntfs3
-+#
-+
-+DEFAULT_MKFS_OPTIONS=""
-+
-+function check_filesystem()
-+{
-+    local dev="$1"
-+    local ret
-+
-+    /bin/ntfsfix "$dev"
-+    ret="$?"
-+    echo ntfsfix exited with status "$ret"
-+    return "$ret"
-+}
-+
-+function format_filesystem()
-+{
-+    local dev="$1"
-+    local opts="$2"
-+    local ret
-+
-+    /sbin/mkfs.ntfs -f $opts "$dev"
-+    ret="$?"
-+    return "$ret"
-+}
-+
-+function setup_mount_opts()
-+{
-+    if test -n "$MNTOPTS" ; then
-+	if test -n "$NTFS3_MOUNT_OPTIONS" ; then
-+            export NTFS3_MOUNT_OPTIONS="$MOUNT_OPTIONS,$MNTOPTS"
-+	else
-+	    export NTFS3_MOUNT_OPTIONS="-o $MNTOPTS"
-+	fi
-+    fi
-+}
-+
-+function get_mkfs_opts()
-+{
-+    echo "$NTFS3_MKFS_OPTIONS"
-+}
-+
-+function show_mkfs_opts()
-+{
-+    echo NTFS3_MKFS_OPTIONS: "$NTFS3_MKFS_OPTIONS"
-+}
-+
-+function show_mount_opts()
-+{
-+    echo NTFS3_MOUNT_OPTIONS: "NTFS3_MOUNT_OPTIONS"
-+}
-+
-+function test_name_alias()
-+{
-+    echo "$1"
-+}
-+
-+function reset_vars()
-+{
-+    unset NTFS3_MOUNT_OPTIONS
-+    unset MKFS_OPTIONS
-+}
-diff --git a/kvm-xfstests/test-appliance/files/sbin/mkfs.ntfs3 b/kvm-xfstests/test-appliance/files/sbin/mkfs.ntfs3
-new file mode 100755
-index 0000000..f6657a6
---- /dev/null
-+++ b/kvm-xfstests/test-appliance/files/sbin/mkfs.ntfs3
-@@ -0,0 +1,2 @@
-+#!/bin/sh
-+/sbin/mkfs.ntfs -f $*
-diff --git a/kvm-xfstests/test-appliance/gce-xfstests-bld.sh b/kvm-xfstests/test-appliance/gce-xfstests-bld.sh
-index befb105..48ce713 100644
---- a/kvm-xfstests/test-appliance/gce-xfstests-bld.sh
-+++ b/kvm-xfstests/test-appliance/gce-xfstests-bld.sh
-@@ -73,6 +73,7 @@ PACKAGES="bash-completion \
- 	nbd-server \
- 	nfs-common \
- 	nfs-kernel-server \
-+	ntfs-3g \
- 	nvme-cli \
- 	openssl \
- 	pciutils \
-diff --git a/kvm-xfstests/test-appliance/xfstests-packages b/kvm-xfstests/test-appliance/xfstests-packages
-index 85ca6a6..6bb8432 100644
---- a/kvm-xfstests/test-appliance/xfstests-packages
-+++ b/kvm-xfstests/test-appliance/xfstests-packages
-@@ -33,6 +33,7 @@ mtd-utils
- multipath-tools
- nbd-client
- nbd-server
-+ntfs-3g
- nvme-cli
- parted
- perl
+So I think we need to strongly encourage user-space to start using
+name_to_handle_at() whenever there is a need to test if two things are
+the same.
+
+This frees us to be a little less precise about assuring st_ino is
+always unique, but only a little.  We still want to minimize conflicts
+and avoid them in common situations.
+
+A filehandle typically has some bytes used to locate the inode -
+"location" - and some to validate it - "generation".  In general, st_ino
+must now be seen as a hash of the "location".  It could be a generic hash
+(xxhash? jhash?) or it could be a careful xor of the bits.
+
+For btrfs, the "location" is root.objectid ++ file.objectid.  I think
+the inode should become (file.objectid ^ swab64(root.objectid)).  This
+will provide numbers that are unique until you get very large subvols,
+and very many subvols.  It also ensures that two inodes in the same
+subvol will be guaranteed to have different st_ino.
+
+This will quickly cause problems for overlayfs as it means that if btrfs
+is used with overlayfs, the top few bits won't be zero.  Possibly btrfs
+could be polite and shift the swab64(root.objectid) down 8 bits to make
+room.  Possible overlayfs should handle this case (top N-bits not all
+zero), and switch to a generic hash of the inode number (or preferably
+the filehandle) to (64-N bits).
+
+If we convince user-space to use filehandles to compare objects, the NFS
+problems I initially was trying to address go away.  Even before that,
+if btrfs switches to a hashed (i.e. xor) inode number, then the problems
+also go away.  but they aren't the only problems here.
+
+Accessing the fhandle isn't always possible.  For example reading
+/proc/locks reports major:minor:inode-number for each file (This is the
+major:minor from the superblock, so btrfs internal dev numbers aren't
+used).  The filehandle is simply not available.  I think the only way
+to address this is to create a new file. "/proc/locks2" :-)
+Similarly the "lock:" lines in /proc/$PID/fdinfo/$FD need to be duplicated
+as "lock2:" lines with filehandle instead of inode number.  Ditto for
+'inotify:' lines and possibly others.
+
+Similarly /proc/$PID/maps contains the inode number with no fhandle.
+The situation isn't so bad there as there is a path name, and you can
+even call name_to_handle_at("/proc/$PID/map_files/$RANGE") to get the
+fhandle.  It might be better to provide a new file though.
+
+Next we come to the use of different device numbers in the one btrfs
+filesystem.  I'm of the opinion that this was an unfortunately choice
+that we need to deprecate.  Tools that use fhandle won't need it to
+differentiate inodes, but there is more to the story than just that
+need.
+
+As has been mentioned, people depend on "du -x" and "find -mount" (aka
+"-xdev") to stay within a "subvol".  We need to provide a clean
+alternate before discouraging that usage.
+
+xfs, ext4, fuse, and f2fs each (can) maintain a "project id" for each
+inode, which effectively groups inodes into a tree.  This is used for
+project quotas.  At one level this is conceptually very similar to the
+btrfs subtree.root.objectid.  It is different in that it is only 32 bits
+(:-[) and is mapped between user name-spaces like uids and gids.  It is
+similar in that it identifies a group of inodes that are accounted
+together and are (generally) contiguous in a tree.
+
+If we encouraged "du" to have a "--proj" option (-j) which stays within
+a project, and gave a similar option to find, that could be broadly
+useful.  Then if btrfs provided the subvol objectid as fsx_projid
+(available in FS_IOC_FSGETXATTR ioctl), then "du --proj" on btrfs would
+stay in a subvol.  Longer term it might make sense to add a 64bit
+project-id to statx.  I don't think it would make sense for btrfs to
+have a 'project' concept that is different from the "subvolume".
+
+It would be cool if "df" could have a "--proj" (or similar) flag so that
+it would report the usage of a "subtree" (given a path).  Unfortunately
+there isn't really an interface for this.  Going through the quota
+system might be nice, I don't think it would work.
+
+Another thought about btrfs device numbers is that, providing inode
+numbers are (nearly) unique, we don't really need more than 2.  A btrfs
+filesystem could allocate 2 anon device numbers.  One would be assigned
+to the root, and each subvolume would get whichever device number its
+parent doesn't have.  This would stop "du -x" and "find -mount" and
+similar from crossing into subvols.  There could be a mount option to
+select between "1", "2", and "many" device numbers for a filesystem.
+
+- I note that cephfs place games with st_dev too....  I wonder if we can
+  learn anything from that. 
+- audit uses sb->s_dev without asking the filesystem.  So it won't
+  handle  btrfs correctly.  I wonder if there is room for it to use
+  file handles.
+
+I accept that I'm proposing some BIG changes here, and they might break
+things.  But btrfs is already broken in various ways.  I think we need a
+goal to work towards which will eventually remove all breakage and still
+have room for expansion.  I think that must include:
+
+- providing as-unique-as-practical inode numbers across the whole
+  filesystem, and deprecating the internal use of different device
+  numbers.  Make it possible to mount without them ASAP, and aim to
+  make that the default eventually.
+- working with user-space tool/library developers to use
+  name_to_handle_at() to identify inodes, only using st_ino
+  as a fall-back
+- adding filehandles to various /proc etc files as needed, either
+  duplicating lines or duplicating files.  And helping application which
+  use these files to migrate (I would *NOT* change the dev numbers in
+  the current file to report the internal btrfs dev numbers the way that
+  SUSE does.  I would prefer that current breakage could be used to
+  motivate developers towards depending instead on fhandles).
+- exporting subtree (aka subvol) id to user-space, possibly paralleling
+  proj_id in some way, and extending various tools to understand
+  subtrees
+
+Who's with me??
+
+NeilBrown
