@@ -2,116 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59DC53DDF0F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 20:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDEA73DDFB5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 20:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230030AbhHBSXy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Aug 2021 14:23:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51348 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229677AbhHBSXy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Aug 2021 14:23:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1DA2060F36;
-        Mon,  2 Aug 2021 18:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627928624;
-        bh=fAaavI+s0werBnx4XNVTbI9DFm2vApq65CJQ2LMNvp4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KRANRutS3dB5fxLVFYYsufg2cjZtdG0nRrYoWpkrOqaOnmJfYlYNROYkC5nxp/wHG
-         EtemQ4x/xJy0S5GcJjxptCEKk87mypINtgv3jj4dpyplr2hBcXlX6OSNBrshKiHWSX
-         PRkoYa+c3RYNzGnycqE9UWG0Ysbhc/6oKuwrIUPpzrqW60u77+V3qEz6WgXVFrQ9sY
-         I7Uni//GPetcNNjnFfubVF7mZ0Xz5wTzDO0iyKJBkaTjzxkk0+8HOKjMKE5VT1IlBM
-         DEl9ZUz/a1kvjiuvsdvFJqxG+qYrqR/jxXuT2a873B949CuCMHe9qS8iXqeKArjLYt
-         vB2r3oqdKRXuQ==
-Date:   Mon, 2 Aug 2021 11:23:42 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] f2fs: remove broken support for allocating DIO writes
-Message-ID: <YQg4Lukc2dXX3aJc@google.com>
-References: <20210728015154.171507-1-ebiggers@kernel.org>
- <YQRQRh1zUHSIzcC/@gmail.com>
- <YQS5eBljtztWwOFE@mit.edu>
- <YQd3Hbid/mFm0o24@sol.localdomain>
- <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
+        id S231204AbhHBS7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Aug 2021 14:59:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60622 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230476AbhHBS7P (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Aug 2021 14:59:15 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F244CC061764
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Aug 2021 11:59:04 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id z3so19421475plg.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Aug 2021 11:59:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ohR8MWK5z6tQgaHzKRw4z/9ZmwZHAJlnfek7VuSAWHE=;
+        b=L2XLjUI8HeOqDyYuw9UZPUofbh1myp7tASYZwPPGk1eYrihjC7WlcdMVrBDbf5o8yt
+         TblwUbG7lhiV1NGwUK4evO3ikpN8AHycGh6Wff5qujpld8ERJrhT8+HYFxsUw2WCDuyG
+         FcamSDP7RkvedijB0Eva2Q8J6DHoorwAZdpAk+QN2Vv3iBmpzelHklnasHrdDcTWeX5h
+         dCCZ//wqNcJ5NFdMhXRj/F8h4p/bEqpI2bKFc9yAW8XdriJZMrrIRrHNfKe9bE38XZyv
+         GNjcTLQyN0QBTIuKPjzv0Wg4a8XhWKdK0mKVfhCxY0A5GEQYwRe+WwoHJ6L7NN6BiRAs
+         lDBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ohR8MWK5z6tQgaHzKRw4z/9ZmwZHAJlnfek7VuSAWHE=;
+        b=Ou5ii8VqDmqIMAAULZefkSdxqUBZDlYf6Bv0ofzoatua0FLccUhcM7hxuzO0u85bkb
+         0q4vuRqItJtIXLGtO3cJ6rMz6M3VLpi7/IclTI5joGxN4r0umaW/rpUo65S/NBXHnUx3
+         T5lZ7j83EMuDcQ6d3gmfwCumBoIlj4GZTSjQIE0styIcTBR2pFz/GQQCZrUPf1Qr++e1
+         D7O8y74kzJ3Zde5nwvRCWnJhG29berjqOsyJUumcQZ42/W/jXgqrsoZKeclBDAdGsNlU
+         C4FMUpXs/f/wGQ6S54NCkfYzVBn14g/C4xkKPXSPFsIQ++pEjoyunbAmW+Y1xiWeYIh9
+         baag==
+X-Gm-Message-State: AOAM530myLTxxKe3CZ/tCppZGmmjqWw7fPFAHLz99gTk6XajQlca/zEi
+        dtBW6N9aWCnIRKQmZhLpDxP5jg==
+X-Google-Smtp-Source: ABdhPJw0PZIQU+a+lKpgEKgrBypeszyyvsh48xyNukQdoijIoZro31ZDTgCwHQ9cjrxbem1kEDfS7g==
+X-Received: by 2002:a63:f145:: with SMTP id o5mr234562pgk.273.1627930744547;
+        Mon, 02 Aug 2021 11:59:04 -0700 (PDT)
+Received: from sspatil2.c.googlers.com (190.40.105.34.bc.googleusercontent.com. [34.105.40.190])
+        by smtp.gmail.com with ESMTPSA id c14sm615337pjr.3.2021.08.02.11.59.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Aug 2021 11:59:04 -0700 (PDT)
+Subject: Re: [PATCH 1/1] fs: pipe: wakeup readers everytime new data written
+ is to pipe
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable <stable@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>
+References: <20210729222635.2937453-1-sspatil@android.com>
+ <20210729222635.2937453-2-sspatil@android.com>
+ <CAHk-=wh-DWvsFykwAy6uwyv24nasJ39d7SHT+15x+xEXBtSm_Q@mail.gmail.com>
+ <cee514d6-8551-8838-6d61-098d04e226ca@android.com>
+ <CAHk-=wjStQurUzSAPVajL6Rj=CaPuSSgwaMO=0FJzFvSD66ACw@mail.gmail.com>
+ <CAHk-=wjrfasYJUaZ-rJmYt9xa=DqmJ5-sVRG7cJ2X8nNcSXp9g@mail.gmail.com>
+From:   Sandeep Patil <sspatil@android.com>
+Message-ID: <fc0e2c8a-96cc-7787-6866-3802a1d5c50e@android.com>
+Date:   Mon, 2 Aug 2021 18:59:03 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
+In-Reply-To: <CAHk-=wjrfasYJUaZ-rJmYt9xa=DqmJ5-sVRG7cJ2X8nNcSXp9g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08/02, Chao Yu wrote:
-> On 2021/8/2 12:39, Eric Biggers wrote:
-> > On Fri, Jul 30, 2021 at 10:46:16PM -0400, Theodore Ts'o wrote:
-> > > On Fri, Jul 30, 2021 at 12:17:26PM -0700, Eric Biggers wrote:
-> > > > > Currently, non-overwrite DIO writes are fundamentally unsafe on f2fs as
-> > > > > they require preallocating blocks, but f2fs doesn't support unwritten
-> > > > > blocks and therefore has to preallocate the blocks as regular blocks.
-> > > > > f2fs has no way to reliably roll back such preallocations, so as a
-> > > > > result, f2fs will leak uninitialized blocks to users if a DIO write
-> > > > > doesn't fully complete.
-> > > 
-> > > There's another way of solving this problem which doesn't require
-> > > supporting unwritten blocks.  What a file system *could* do is to
-> > > allocate the blocks, but *not* update the on-disk data structures ---
-> > > so the allocation happens in memory only, so you know that the
-> > > physical blocks won't get used for another files, and then issue the
-> > > data block writes.  On the block I/O completion, trigger a workqueue
-> > > function which updates the on-disk metadata to assign physical blocks
-> > > to the inode.
-> > > 
-> > > That way if you crash before the data I/O has a chance to complete,
-> > > the on-disk logical block -> physical block map hasn't been updated
-> > > yet, and so you don't need to worry about leaking uninitialized blocks.
+On 7/30/21 10:53 PM, Linus Torvalds wrote:
+> On Fri, Jul 30, 2021 at 12:23 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> I'll mull it over a bit more, but whatever I'll do I'll do before rc4
+>> and mark it for stable.
 > 
-> Thanks for your suggestion, I think it makes sense.
+> Ok, I ended up committing the minimal possible change (and fixing up
+> the comment above it).
 > 
-> > > 
-> > > Cheers,
-> > > 
-> > > 					- Ted
-> > 
-> > Jaegeuk and Chao, any idea how feasible it would be for f2fs to do this?
+> It's very much *not* the original behavior either, but that original
+> behavior was truly insane ("wake up for each hunk written"), and I'm
+> trying to at least keep the kernel code from doing actively stupid
+> things.
 > 
-> Firstly, let's notice that below metadata will be touched during DIO
-> preallocation flow:
-> - log header
-> - sit bitmap/count
-> - free seg/sec bitmap/count
-> - dirty seg/sec bitmap/count
+> Since that old patch of mine worked for your test-case, then clearly
+> that realm-core library didn't rely on _that_ kind of insane internal
+> kernel implementation details exposed as semantics. So The minimal
+> patch basically says "each write() system call wil do at least one
+> wake-up, whether really necessary or not".
 > 
-> And there is one case we need to concern about is: checkpoint() can be
-> triggered randomly in between dio_preallocate() and dio_end_io(), we should
-> not persist any DIO preallocation related metadata during checkpoint(),
-> otherwise, sudden power-cut after the checkpoint will corrupt filesytem.
+> I also intentionally kept the read side untouched, in that there
+> apparently still isn't a case that would need the confused semantics
+> for read events.
 > 
-> So it needs to well separate two kinds of metadata update:
-> a) belong to dio preallocation
-> b) the left one
+> End result: the commit message is a lot bigger than the patch, with
+> most of it being trying to explain the background.
 > 
-> After that, it will simply checkpoint() flow to just flush metadata b), for
-> other flow, like GC, data/node allocation, it needs to query/update metadata
-> after we combine metadata a) and b).
-> 
-> In addition, there is an existing in-memory log header framework in f2fs,
-> based on this fwk, it's very easy for us to add a new in-memory log header
-> for DIO preallocation.
-> 
-> So it seems feasible for me until now...
-> 
-> Jaegeuk, any other concerns about the implementation details?
+> I've pushed it out as commit 3a34b13a88ca ("pipe: make pipe writes
+> always wake up readers"). Holler if you notice anything odd remaining.
 
-Hmm, I'm still trying to deal with this as a corner case where the writes
-haven't completed due to an error. How about keeping the preallocated block
-offsets and releasing them if we get an error? Do we need to handle EIO right?
+Since what you merged isn't different than what I tested, I don't
+expect any surprises but I will test it regardless. I will come back
+if I see anything unexpected.
 
-> 
-> Thanks,
-> 
-> > 
-> > - Eric
-> > 
+Thanks for the explanation about the default behavior earlier
+in the thread.
+
+- ssp
