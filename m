@@ -2,114 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8211D3DD462
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 12:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E3D3DD508
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 14:01:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233362AbhHBK4v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Aug 2021 06:56:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44376 "EHLO mail.kernel.org"
+        id S233522AbhHBMBN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Aug 2021 08:01:13 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:14420 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232553AbhHBK4u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Aug 2021 06:56:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AFC9D60FA0;
-        Mon,  2 Aug 2021 10:56:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1627901800;
-        bh=h+7I0H8rF/Is64jUPUf1bffmm3WwpS87lete8aEqJRI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GvATdkkoc2VbLAmP00SHg0cv07aLz8LGN4QS1SwDpd4ZNMMsM/zcPlzAh/XSyZ5F7
-         YVJNzzef5lkGNL3K43RsqDn9e1ED7KSBKwB89uMZy+8z21cNOAWz0Mzxy2wcTE5qbC
-         voykBx81DgFi24tnvRkKATvnnlQUEyjvAJ+W2pNk=
-Date:   Mon, 2 Aug 2021 12:56:36 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sandeep Patil <sspatil@android.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.13 001/104] pipe: make pipe writes always wake
- up readers
-Message-ID: <YQfPZAytBFdFJeH7@kroah.com>
-References: <20210802104831.2095760-1-sashal@kernel.org>
+        id S230503AbhHBMBN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Aug 2021 08:01:13 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1627905664; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=2TAtXvlUUR0mBh67yB7f449WY+htKivr3VQmX7vMj9Y=; b=dO7f35gIo28sy9/pHBTkcPyI9wvRVsToZZDbfyAdZSRUhBK/97lVZ5GyP5AThp4aSStxo0I+
+ x2PxIM+TLk5Hy9IeQA/i7EtvxPu6QstgGX/51uPSnyvX+L4IR9j1YlbtjXIs7BN+UE6ErybC
+ i43w95HpHAtZrqNzRv8G7YItiQc=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 6107de5a17c2b4047d859d6c (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 02 Aug 2021 12:00:26
+ GMT
+Sender: charante=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id C44C7C43460; Mon,  2 Aug 2021 12:00:25 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        NICE_REPLY_A,SPF_FAIL autolearn=no autolearn_force=no version=3.4.0
+Received: from [192.168.29.110] (unknown [49.37.157.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: charante)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E568FC43460;
+        Mon,  2 Aug 2021 12:00:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E568FC43460
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
+Subject: Re: [PATCH V5] mm: compaction: support triggering of proactive
+ compaction by user
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     akpm@linux-foundation.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        dave.hansen@linux.intel.com, vbabka@suse.cz,
+        mgorman@techsingularity.net, nigupta@nvidia.com, corbet@lwn.net,
+        khalid.aziz@oracle.com, rientjes@google.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        vinmenon@codeaurora.org
+References: <1627653207-12317-1-git-send-email-charante@codeaurora.org>
+ <YQRTqNF3xn+tB+qN@kernel.org>
+From:   Charan Teja Kalla <charante@codeaurora.org>
+Message-ID: <1089d373-221e-7094-b778-ac260ca139a5@codeaurora.org>
+Date:   Mon, 2 Aug 2021 17:30:16 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210802104831.2095760-1-sashal@kernel.org>
+In-Reply-To: <YQRTqNF3xn+tB+qN@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 02, 2021 at 06:46:48AM -0400, Sasha Levin wrote:
-> From: Linus Torvalds <torvalds@linux-foundation.org>
-> 
-> commit 3a34b13a88caeb2800ab44a4918f230041b37dd9 upstream.
-> 
-> Since commit 1b6b26ae7053 ("pipe: fix and clarify pipe write wakeup
-> logic") we have sanitized the pipe write logic, and would only try to
-> wake up readers if they needed it.
-> 
-> In particular, if the pipe already had data in it before the write,
-> there was no point in trying to wake up a reader, since any existing
-> readers must have been aware of the pre-existing data already.  Doing
-> extraneous wakeups will only cause potential thundering herd problems.
-> 
-> However, it turns out that some Android libraries have misused the EPOLL
-> interface, and expected "edge triggered" be to "any new write will
-> trigger it".  Even if there was no edge in sight.
-> 
-> Quoting Sandeep Patil:
->  "The commit 1b6b26ae7053 ('pipe: fix and clarify pipe write wakeup
->   logic') changed pipe write logic to wakeup readers only if the pipe
->   was empty at the time of write. However, there are libraries that
->   relied upon the older behavior for notification scheme similar to
->   what's described in [1]
-> 
->   One such library 'realm-core'[2] is used by numerous Android
->   applications. The library uses a similar notification mechanism as GNU
->   Make but it never drains the pipe until it is full. When Android moved
->   to v5.10 kernel, all applications using this library stopped working.
-> 
->   The library has since been fixed[3] but it will be a while before all
->   applications incorporate the updated library"
-> 
-> Our regression rule for the kernel is that if applications break from
-> new behavior, it's a regression, even if it was because the application
-> did something patently wrong.  Also note the original report [4] by
-> Michal Kerrisk about a test for this epoll behavior - but at that point
-> we didn't know of any actual broken use case.
-> 
-> So add the extraneous wakeup, to approximate the old behavior.
-> 
-> [ I say "approximate", because the exact old behavior was to do a wakeup
->   not for each write(), but for each pipe buffer chunk that was filled
->   in. The behavior introduced by this change is not that - this is just
->   "every write will cause a wakeup, whether necessary or not", which
->   seems to be sufficient for the broken library use. ]
-> 
-> It's worth noting that this adds the extraneous wakeup only for the
-> write side, while the read side still considers the "edge" to be purely
-> about reading enough from the pipe to allow further writes.
-> 
-> See commit f467a6a66419 ("pipe: fix and clarify pipe read wakeup logic")
-> for the pipe read case, which remains that "only wake up if the pipe was
-> full, and we read something from it".
-> 
-> Link: https://lore.kernel.org/lkml/CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com/ [1]
-> Link: https://github.com/realm/realm-core [2]
-> Link: https://github.com/realm/realm-core/issues/4666 [3]
-> Link: https://lore.kernel.org/lkml/CAKgNAkjMBGeAwF=2MKK758BhxvW58wYTgYKB2V-gY1PwXxrH+Q@mail.gmail.com/ [4]
-> Link: https://lore.kernel.org/lkml/20210729222635.2937453-1-sspatil@android.com/
-> Reported-by: Sandeep Patil <sspatil@android.com>
-> Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  fs/pipe.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+Thanks Mike for the review!!
 
-This is already in the 5.13 queue, did you mean to send this again?
+On 7/31/2021 1:01 AM, Mike Rapoport wrote:
+>> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+>> index 003d5cc..b526cf6 100644
+>> --- a/Documentation/admin-guide/sysctl/vm.rst
+>> +++ b/Documentation/admin-guide/sysctl/vm.rst
+>> @@ -118,7 +118,8 @@ compaction_proactiveness
+>>  
+>>  This tunable takes a value in the range [0, 100] with a default value of
+>>  20. This tunable determines how aggressively compaction is done in the
+>> -background. Setting it to 0 disables proactive compaction.
+>> +background. On write of non zero value to this tunable will immediately
+> Nit: I think "Write of non zero ..."
 
-thanks,
+Can Andrew change it while applying the patch ?
 
-greg k-h
+> 
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
+Forum, a Linux Foundation Collaborative Project
