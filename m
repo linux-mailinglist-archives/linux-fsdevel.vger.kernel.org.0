@@ -2,111 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DDB33DD279
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 11:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 589443DD2AC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 11:11:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232987AbhHBJAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Aug 2021 05:00:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232983AbhHBJA0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Aug 2021 05:00:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6832860EBD;
-        Mon,  2 Aug 2021 09:00:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627894817;
-        bh=NpGYxMxPtr0QSqg+p3P23qf5aNI0HOKU5NMbrglC06Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=RdoQGF598VsHZscJC5HMR3we486QnR63NlWZ5ruA3kXqcyZu1Xq5eGtri+xlTiPFZ
-         z+Pzx3D4O+YR5+qVkKcRl9Lp7NtBn4jBuNi2KOmY5qq3fzArDmV432u2NUXjwtpPDB
-         vX/7/MQbJnNmRXLtumUOdf5EHFZHfKUr96PqD1Yn5PclZQvXQYNketFumi4dcgsI0k
-         X7RImEgtiF1tVMlS0ImsrsZ37cnFyq/Aoh533Cjzq/3VH2BABrTQAe4ZoQeEke4/rW
-         I6YZb1I5/DL/NEarggj7M4msoiSivQpXYNOVBih4zMEloTJF2bhwC2SSRvDJA9srnB
-         q8sIRtOirdNMw==
-Subject: Re: [PATCH] f2fs: remove broken support for allocating DIO writes
-To:     Eric Biggers <ebiggers@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-References: <20210728015154.171507-1-ebiggers@kernel.org>
- <YQRQRh1zUHSIzcC/@gmail.com> <YQS5eBljtztWwOFE@mit.edu>
- <YQd3Hbid/mFm0o24@sol.localdomain>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
-Date:   Mon, 2 Aug 2021 17:00:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S232921AbhHBJLa convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 2 Aug 2021 05:11:30 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:31726 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232878AbhHBJL2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Aug 2021 05:11:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id E07893F6CC;
+        Mon,  2 Aug 2021 11:11:16 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -1.899
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.899 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Cy0qVDvQK-Ic; Mon,  2 Aug 2021 11:11:16 +0200 (CEST)
+Received: by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 1CDAC3F4E5;
+        Mon,  2 Aug 2021 11:11:14 +0200 (CEST)
+Received: from [192.168.0.126] (port=33408)
+        by tnonline.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <forza@tnonline.net>)
+        id 1mATyc-0000KC-Rr; Mon, 02 Aug 2021 11:11:13 +0200
+Date:   Mon, 2 Aug 2021 11:11:13 +0200 (GMT+02:00)
+From:   Forza <forza@tnonline.net>
+To:     Amir Goldstein <amir73il@gmail.com>, NeilBrown <neilb@suse.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Christoph Hellwig <hch@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
+Message-ID: <697c3b9.eed85c8a.17b0621a43a@tnonline.net>
+Subject: Re: A Third perspective on BTRFS nfsd subvol dev/inode number
+ issues.
 MIME-Version: 1.0
-In-Reply-To: <YQd3Hbid/mFm0o24@sol.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+X-Mailer: R2Mail2
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/8/2 12:39, Eric Biggers wrote:
-> On Fri, Jul 30, 2021 at 10:46:16PM -0400, Theodore Ts'o wrote:
->> On Fri, Jul 30, 2021 at 12:17:26PM -0700, Eric Biggers wrote:
->>>> Currently, non-overwrite DIO writes are fundamentally unsafe on f2fs as
->>>> they require preallocating blocks, but f2fs doesn't support unwritten
->>>> blocks and therefore has to preallocate the blocks as regular blocks.
->>>> f2fs has no way to reliably roll back such preallocations, so as a
->>>> result, f2fs will leak uninitialized blocks to users if a DIO write
->>>> doesn't fully complete.
->>
->> There's another way of solving this problem which doesn't require
->> supporting unwritten blocks.  What a file system *could* do is to
->> allocate the blocks, but *not* update the on-disk data structures ---
->> so the allocation happens in memory only, so you know that the
->> physical blocks won't get used for another files, and then issue the
->> data block writes.  On the block I/O completion, trigger a workqueue
->> function which updates the on-disk metadata to assign physical blocks
->> to the inode.
->>
->> That way if you crash before the data I/O has a chance to complete,
->> the on-disk logical block -> physical block map hasn't been updated
->> yet, and so you don't need to worry about leaking uninitialized blocks.
 
-Thanks for your suggestion, I think it makes sense.
 
+---- From: Amir Goldstein <amir73il@gmail.com> -- Sent: 2021-08-02 - 09:54 ----
+
+> On Mon, Aug 2, 2021 at 8:41 AM NeilBrown <neilb@suse.de> wrote:
 >>
->> Cheers,
+>> On Mon, 02 Aug 2021, Al Viro wrote:
+>> > On Mon, Aug 02, 2021 at 02:18:29PM +1000, NeilBrown wrote:
+>> >
+>> > > It think we need to bite-the-bullet and decide that 64bits is not
+>> > > enough, and in fact no number of bits will ever be enough.  overlayfs
+>> > > makes this clear.
+>> >
+>> > Sure - let's go for broke and use XML.  Oh, wait - it's 8 months too
+>> > early...
+>> >
+>> > > So I think we need to strongly encourage user-space to start using
+>> > > name_to_handle_at() whenever there is a need to test if two things are
+>> > > the same.
+>> >
+>> > ... and forgetting the inconvenient facts, such as that two different
+>> > fhandles may correspond to the same object.
 >>
->> 					- Ted
+>> Can they?  They certainly can if the "connectable" flag is passed.
+>> name_to_handle_at() cannot set that flag.
+>> nfsd can, so using name_to_handle_at() on an NFS filesystem isn't quite
+>> perfect.  However it is the best that can be done over NFS.
+>>
+>> Or is there some other situation where two different filehandles can be
+>> reported for the same inode?
+>>
+>> Do you have a better suggestion?
+>>
 > 
-> Jaegeuk and Chao, any idea how feasible it would be for f2fs to do this?
-
-Firstly, let's notice that below metadata will be touched during DIO
-preallocation flow:
-- log header
-- sit bitmap/count
-- free seg/sec bitmap/count
-- dirty seg/sec bitmap/count
-
-And there is one case we need to concern about is: checkpoint() can be
-triggered randomly in between dio_preallocate() and dio_end_io(), we should
-not persist any DIO preallocation related metadata during checkpoint(),
-otherwise, sudden power-cut after the checkpoint will corrupt filesytem.
-
-So it needs to well separate two kinds of metadata update:
-a) belong to dio preallocation
-b) the left one
-
-After that, it will simply checkpoint() flow to just flush metadata b), for
-other flow, like GC, data/node allocation, it needs to query/update metadata
-after we combine metadata a) and b).
-
-In addition, there is an existing in-memory log header framework in f2fs,
-based on this fwk, it's very easy for us to add a new in-memory log header
-for DIO preallocation.
-
-So it seems feasible for me until now...
-
-Jaegeuk, any other concerns about the implementation details?
-
-Thanks,
-
+> Neil,
 > 
-> - Eric
+> I think the plan of "changing the world" is not very realistic.
+> Sure, *some* tools can be changed, but all of them?
 > 
+> I went back to read your initial cover letter to understand the
+> problem and what I mostly found there was that the view of
+> /proc/x/mountinfo was hiding information that is important for
+> some tools to understand what is going on with btrfs subvols.
+> 
+> Well I am not a UNIX history expert, but I suppose that
+> /proc/PID/mountinfo was created because /proc/mounts and
+> /proc/PID/mounts no longer provided tool with all the information
+> about Linux mounts.
+> 
+> Maybe it's time for a new interface to query the more advanced
+> sb/mount topology? fsinfo() maybe? With mount2 compatible API for
+> traversing mounts that is not limited to reporting all entries inside
+> a single page. I suppose we could go for some hierarchical view
+> under /proc/PID/mounttree. I don't know - new API is hard.
+> 
+> In any case, instead of changing st_dev and st_ino or changing the
+> world to work with file handles, why not add inode generation (and
+> maybe subvol id) to statx().
+> filesystem that care enough will provide this information and tools that
+> care enough will use it.
+> 
+> Thanks,
+> Amir.
+
+I think it would be better and easier if nfs provided clients with virtual inodes and kept an internal mapping to actual filesystem inodes. Samba does this with the mount.cifs -o noserverino option, and as far as I know it works pretty well. 
+
+This  could be made either as an export option (/mnt/foo *(noserverino) or like in the Samba case, a mount option. 
+
+This way existing tools will continue to work and we don't have to reinvent various Linux subsystems. Because it's an option, users that don't use btrfs or other filesystems with snapshots, can simply skip it. 
+
+Thanks, 
+Forza 
+
