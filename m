@@ -2,76 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B6013DE0DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 22:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF5FA3DE0E0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 22:41:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231704AbhHBUlg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Aug 2021 16:41:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231165AbhHBUlg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Aug 2021 16:41:36 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45561C06175F;
-        Mon,  2 Aug 2021 13:41:26 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 304A86C0C; Mon,  2 Aug 2021 16:41:25 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 304A86C0C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1627936885;
-        bh=q/UuuHCbZV3tHIdfne8YVZJEixvdkw4Um1I/o0Jqicg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IcfNcaGlpP6lHk2GKC5A2fO2xG/cg+HjALtkJo/TVtEcP0ElO4H+6JV/IP17JHEp6
-         ZWEJYj2SrqQQ/yFASOtKqCxEdkHzL11TWT70253S8kAuoXf+guvYScad2rCziLALFF
-         rKZ/deGSqCkmXEwi65n7rYZcnM7/l7PPN+qCWZ9o=
-Date:   Mon, 2 Aug 2021 16:41:25 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Patrick Goetz <pgoetz@math.utexas.edu>
-Cc:     NeilBrown <neilb@suse.de>, Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
-Subject: Re: A Third perspective on BTRFS nfsd subvol dev/inode number issues.
-Message-ID: <20210802204125.GE6890@fieldses.org>
-References: <YQNG+ivSssWNmY9O@zeniv-ca.linux.org.uk>
- <162762290067.21659.4783063641244045179@noble.neil.brown.name>
- <CAJfpegsR1qvWAKNmdjLfOewUeQy-b6YBK4pcHf7JBExAqqUvvg@mail.gmail.com>
- <162762562934.21659.18227858730706293633@noble.neil.brown.name>
- <CAJfpegtu3NKW9m2jepRrXe4UTuD6_3k0Y6TcCBLSQH7SSC90BA@mail.gmail.com>
- <162763043341.21659.15645923585962859662@noble.neil.brown.name>
- <CAJfpegub4oBZCBXFQqc8J-zUiSW+KaYZLjZaeVm_cGzNVpxj+A@mail.gmail.com>
- <162787790940.32159.14588617595952736785@noble.neil.brown.name>
- <20210802123930.GA6890@fieldses.org>
- <47101630-9d59-5818-34dd-3755e101fc18@math.utexas.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47101630-9d59-5818-34dd-3755e101fc18@math.utexas.edu>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S232261AbhHBUlx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Aug 2021 16:41:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58372 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231165AbhHBUlw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Aug 2021 16:41:52 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9936260F35;
+        Mon,  2 Aug 2021 20:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1627936902;
+        bh=mD2GlJ7qH0mW1hEmSzx38bjvmcCI51oF/MKdQrW9HmU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=1JTdIkjiyweXRbNQAEN28NLpa5d8t+1ZUkAsnz3nmXFhOSTwSra+EzKTAU/8H0jqg
+         L8vmi7MQk4/BZlCyXJkei2xPkwoMybAKXl1T4b/e9SroNjP/dc4bb/hiIUMlXO/UBm
+         W0qE/aeML0YzE8KUtr+Ov3bF70Ndb/62dDcFyN3Y=
+Date:   Mon, 2 Aug 2021 13:41:41 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Charan Teja Kalla <charante@codeaurora.org>
+Cc:     Mike Rapoport <rppt@kernel.org>, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        dave.hansen@linux.intel.com, vbabka@suse.cz,
+        mgorman@techsingularity.net, nigupta@nvidia.com, corbet@lwn.net,
+        khalid.aziz@oracle.com, rientjes@google.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        vinmenon@codeaurora.org
+Subject: Re: [PATCH V5] mm: compaction: support triggering of proactive
+ compaction by user
+Message-Id: <20210802134141.dbff2d5f850bbe84f3bef4d5@linux-foundation.org>
+In-Reply-To: <1089d373-221e-7094-b778-ac260ca139a5@codeaurora.org>
+References: <1627653207-12317-1-git-send-email-charante@codeaurora.org>
+        <YQRTqNF3xn+tB+qN@kernel.org>
+        <1089d373-221e-7094-b778-ac260ca139a5@codeaurora.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 02, 2021 at 03:32:45PM -0500, Patrick Goetz wrote:
-> On 8/2/21 7:39 AM, J. Bruce Fields wrote:
-> >On Mon, Aug 02, 2021 at 02:18:29PM +1000, NeilBrown wrote:
-> >>For btrfs, the "location" is root.objectid ++ file.objectid.  I think
-> >>the inode should become (file.objectid ^ swab64(root.objectid)).  This
-> >>will provide numbers that are unique until you get very large subvols,
-> >>and very many subvols.
-> >
-> >If you snapshot a filesystem, I'd expect, at least by default, that
-> >inodes in the snapshot to stay the same as in the snapshotted
-> >filesystem.
+On Mon, 2 Aug 2021 17:30:16 +0530 Charan Teja Kalla <charante@codeaurora.org> wrote:
+
+> Thanks Mike for the review!!
 > 
-> For copy on right systems like ZFS, how could it be otherwise?
+> On 7/31/2021 1:01 AM, Mike Rapoport wrote:
+> >> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+> >> index 003d5cc..b526cf6 100644
+> >> --- a/Documentation/admin-guide/sysctl/vm.rst
+> >> +++ b/Documentation/admin-guide/sysctl/vm.rst
+> >> @@ -118,7 +118,8 @@ compaction_proactiveness
+> >>  
+> >>  This tunable takes a value in the range [0, 100] with a default value of
+> >>  20. This tunable determines how aggressively compaction is done in the
+> >> -background. Setting it to 0 disables proactive compaction.
+> >> +background. On write of non zero value to this tunable will immediately
+> > Nit: I think "Write of non zero ..."
+> 
+> Can Andrew change it while applying the patch ?
 
-I'm reacting to Neil's suggesting above, which (as I understand it)
-would result in different inode numbers.
-
---b.
+I have done so, thanks.
