@@ -2,173 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5CE3DDA64
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 16:13:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89BFD3DDB37
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 16:38:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236697AbhHBONq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Aug 2021 10:13:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43096 "EHLO
+        id S234335AbhHBOin (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Aug 2021 10:38:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239161AbhHBOL5 (ORCPT
+        with ESMTP id S234338AbhHBOim (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Aug 2021 10:11:57 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D257EC028BFE
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Aug 2021 06:53:43 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id c9so16554135qkc.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Aug 2021 06:53:43 -0700 (PDT)
+        Mon, 2 Aug 2021 10:38:42 -0400
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F768C06175F;
+        Mon,  2 Aug 2021 07:38:32 -0700 (PDT)
+Received: by mail-il1-x130.google.com with SMTP id i13so4712128ilm.11;
+        Mon, 02 Aug 2021 07:38:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7YZ+YWuu0r8ls2F/ASXAfqcelR3faj3UC8eZqkF+Zko=;
-        b=pi2O34Gbu2DJiPT2DXuDG4QdH2iMvOdf7tSszje2qigN/T8dFHQH1pZvveTmPZn6j+
-         n+3K6aI91XYsSTxYK5jB8LHLswOYhOtyzb1/xWaQKFKzEy3YX52WVV2Dqhsu07r6IDBy
-         /Msf3u0R5zINNltrJUS4FpJrqYDP/afbpxcJpNpJXUIUeChB3cG/u39CTUTc6tYtV8MR
-         m9IixiU2rlsVICCdlryAlPFb6PkwD//xhAm4KiY3GiDBnyp1U/RkfoGK9NZkWcfIxAVy
-         CpJ7xSMq8XqGrE/t7mnlmMpciZNikmfd2pCBtxlfO7JcrlZYbk6z+N+tEp+CIhBteKHm
-         2tGg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uyvSu8hXlGrXjo383HRHntv30MzfTiguiDMp7shBOGQ=;
+        b=AIrI+WLnKK42kyNt+p8/JA3eJIjYSDP+B0quHPZZLPYe+ipn0kxU2HIIpR5hwTmNvl
+         dvxB2LhakC5V1xnykDBNu84pJbRZTN6JL2P3sOAohW4Km8irQhvSCu4+0ygTQ+u+UnAg
+         g9RbJf/+eVC/9EHVj0T7pNKL6aiX0y2aqkDSHfVio5mcTfLM3Rgn7GyXx9irwJ688Ceg
+         M3n6x3ZjNxklckzUIbmnHIIPAmNKsoylyUdtxJ+TprFAwrDrhajlUIh6Fs3Q3nQTGWr6
+         7zfyOHWD/5xpBTVosPjAq+8Q/CxNapplxI+ZbIaXRUPisrgjyQEpVphwlEKzwsP/g2hZ
+         oyGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7YZ+YWuu0r8ls2F/ASXAfqcelR3faj3UC8eZqkF+Zko=;
-        b=OAxM6IFG46/EdaPYFvNjgAOy1qY9WJY1zd0+fwL/4jEoj3Nnx9hH6yFL7JVUO5WBy5
-         m0g143b+7SoLMk/L54sCnftb0UtvO2KFxRoD61tKtAzrKJHta6AQAYwYxDG98dtV96oO
-         X5Kntluf+jZ7aarRGxKkjDl9VbO4Z8b3/ZjPkdxOEG942mrhPtMGIgKclHc6bV8xpqCG
-         TuAj5ofEUgw4J5uq2ZdW9Q/eV2TLLGOQTM1CULZy392M/sInXv0+KuCkRMleYLNZlIcI
-         JMaeLpPu2OW2/QcvJpx0obQGbf7ab1R9Cc4q6tKJyKXyLz2wXsNc7RPBMeqmePZVkgtH
-         s0lw==
-X-Gm-Message-State: AOAM533hnRk4vZFJXhoZZR4AZ3H+TTOh1UT2vWR0f4STOBtCDOQNfDb7
-        7a1qGnsEWzINJ89j6d7wGYVTmw==
-X-Google-Smtp-Source: ABdhPJydpVHsw4eOuMz3Y7rq9l4GuTxSALmGUmQoE814YRrjc3UCGWfVQPb8BvvAzRQHbeEJTDf+tA==
-X-Received: by 2002:a05:620a:233:: with SMTP id u19mr15753757qkm.48.1627912422875;
-        Mon, 02 Aug 2021 06:53:42 -0700 (PDT)
-Received: from [192.168.1.110] (38-132-189-23.dynamic-broadband.skybest.com. [38.132.189.23])
-        by smtp.gmail.com with ESMTPSA id a127sm6015928qkc.121.2021.08.02.06.53.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Aug 2021 06:53:42 -0700 (PDT)
-Subject: Re: A Third perspective on BTRFS nfsd subvol dev/inode number issues.
-To:     Amir Goldstein <amir73il@gmail.com>, NeilBrown <neilb@suse.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Christoph Hellwig <hch@infradead.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
- <162742546548.32498.10889023150565429936.stgit@noble.brown>
- <YQNG+ivSssWNmY9O@zeniv-ca.linux.org.uk>
- <162762290067.21659.4783063641244045179@noble.neil.brown.name>
- <CAJfpegsR1qvWAKNmdjLfOewUeQy-b6YBK4pcHf7JBExAqqUvvg@mail.gmail.com>
- <162762562934.21659.18227858730706293633@noble.neil.brown.name>
- <CAJfpegtu3NKW9m2jepRrXe4UTuD6_3k0Y6TcCBLSQH7SSC90BA@mail.gmail.com>
- <162763043341.21659.15645923585962859662@noble.neil.brown.name>
- <CAJfpegub4oBZCBXFQqc8J-zUiSW+KaYZLjZaeVm_cGzNVpxj+A@mail.gmail.com>
- <162787790940.32159.14588617595952736785@noble.neil.brown.name>
- <YQeB3ASDyO0wSgL4@zeniv-ca.linux.org.uk>
- <162788285645.32159.12666247391785546590@noble.neil.brown.name>
- <CAOQ4uxgnGWMUvtyJ0MMxMzHFwiyR68FHorDNmLSva0CdpVNNcQ@mail.gmail.com>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <2337f1ba-ffed-2369-47a0-5ffda2d8b51c@toxicpanda.com>
-Date:   Mon, 2 Aug 2021 09:53:41 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uyvSu8hXlGrXjo383HRHntv30MzfTiguiDMp7shBOGQ=;
+        b=fOacwD04QfkO4Oj/nAuQCg7H5eMBX20Y94jUcR183roEofPx/wal29Pox8U7LmS4db
+         1tAAkP/RBf8eDsRLwOp2BCLgSYuYzrtDhQWaz0ng0upNHIWD15v/jm2QhUVVjBhCC2kn
+         MW8fy+SNL6G87FODuQz1ZJM+VgZdcHjdQEJQSSWStPrRdAUm97SuZKZ6fvddPMZyJY6f
+         YR9T73Wp6NoMNo0aLPiDUY4Z7Ixb7yzWEwgVUal7zBv+0qZiUsn77yMQmGum20d8zqBW
+         yQ/DQ7/fNynwx3I0P7lYpylied8WzOKpuIpsnoPnVimBaTUdfQTS7bwx7n6peZiLGqKp
+         cFLQ==
+X-Gm-Message-State: AOAM532Q1UFOyx4JCLYiObp8BSUfG3PrKb1pv9U1KCE1kZQsJvYjuEw/
+        S6ti3CGEuY9Cb34UeEJX71+LwfpcGhN2Sw1XPZA=
+X-Google-Smtp-Source: ABdhPJwU7SusTT5nH81Jvghcw5aTFyoSW2d3mfog1Iry1tcSCN8OfZvxrWB9ocKNajHR4IvMPgbahuc2wY8MimRAQjc=
+X-Received: by 2002:a05:6e02:1c2d:: with SMTP id m13mr1205436ilh.137.1627915111964;
+ Mon, 02 Aug 2021 07:38:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxgnGWMUvtyJ0MMxMzHFwiyR68FHorDNmLSva0CdpVNNcQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1626845287.git.repnop@google.com> <02ba3581fee21c34bd986e093d9eb0b9897fa741.1626845288.git.repnop@google.com>
+ <CAG48ez3MsFPn6TsJz75hvikgyxG5YGyT2gdoFwZuvKut4Xms1g@mail.gmail.com>
+ <CAOQ4uxhDkAmqkxT668sGD8gHcssGTeJ3o6kzzz3=0geJvfAjdg@mail.gmail.com>
+ <20210729133953.GL29619@quack2.suse.cz> <CAOQ4uxi70KXGwpcBnRiyPXZCjFQfifaWaYVSDK2chaaZSyXXhQ@mail.gmail.com>
+ <CAOQ4uxgFLqO5_vPTb5hkfO1Fb27H-h0TqHsB6owZxrZw4YLoEA@mail.gmail.com> <20210802123428.GB28745@quack2.suse.cz>
+In-Reply-To: <20210802123428.GB28745@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 2 Aug 2021 17:38:20 +0300
+Message-ID: <CAOQ4uxhk-vTOFvpuh81A2V5H0nfAJW6y3qBi9TgnZxAkRDSeKQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] fanotify: add pidfd support to the fanotify API
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jann Horn <jannh@google.com>,
+        Matthew Bobrowski <repnop@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/2/21 3:54 AM, Amir Goldstein wrote:
-> On Mon, Aug 2, 2021 at 8:41 AM NeilBrown <neilb@suse.de> wrote:
->>
->> On Mon, 02 Aug 2021, Al Viro wrote:
->>> On Mon, Aug 02, 2021 at 02:18:29PM +1000, NeilBrown wrote:
->>>
->>>> It think we need to bite-the-bullet and decide that 64bits is not
->>>> enough, and in fact no number of bits will ever be enough.  overlayfs
->>>> makes this clear.
->>>
->>> Sure - let's go for broke and use XML.  Oh, wait - it's 8 months too
->>> early...
->>>
->>>> So I think we need to strongly encourage user-space to start using
->>>> name_to_handle_at() whenever there is a need to test if two things are
->>>> the same.
->>>
->>> ... and forgetting the inconvenient facts, such as that two different
->>> fhandles may correspond to the same object.
->>
->> Can they?  They certainly can if the "connectable" flag is passed.
->> name_to_handle_at() cannot set that flag.
->> nfsd can, so using name_to_handle_at() on an NFS filesystem isn't quite
->> perfect.  However it is the best that can be done over NFS.
->>
->> Or is there some other situation where two different filehandles can be
->> reported for the same inode?
->>
->> Do you have a better suggestion?
->>
-> 
-> Neil,
-> 
-> I think the plan of "changing the world" is not very realistic.
-> Sure, *some* tools can be changed, but all of them?
-> 
-> I went back to read your initial cover letter to understand the
-> problem and what I mostly found there was that the view of
-> /proc/x/mountinfo was hiding information that is important for
-> some tools to understand what is going on with btrfs subvols.
-> 
-> Well I am not a UNIX history expert, but I suppose that
-> /proc/PID/mountinfo was created because /proc/mounts and
-> /proc/PID/mounts no longer provided tool with all the information
-> about Linux mounts.
-> 
-> Maybe it's time for a new interface to query the more advanced
-> sb/mount topology? fsinfo() maybe? With mount2 compatible API for
-> traversing mounts that is not limited to reporting all entries inside
-> a single page. I suppose we could go for some hierarchical view
-> under /proc/PID/mounttree. I don't know - new API is hard.
-> 
-> In any case, instead of changing st_dev and st_ino or changing the
-> world to work with file handles, why not add inode generation (and
-> maybe subvol id) to statx().
-> filesystem that care enough will provide this information and tools that
-> care enough will use it.
-> 
+On Mon, Aug 2, 2021 at 3:34 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Fri 30-07-21 08:03:01, Amir Goldstein wrote:
+> > On Thu, Jul 29, 2021 at 6:13 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > On Thu, Jul 29, 2021 at 4:39 PM Jan Kara <jack@suse.cz> wrote:
+> > > > Well, but pidfd also makes sure that /proc/<pid>/ keeps belonging to the
+> > > > same process while you read various data from it. And you cannot achieve
+> > > > that with pid+generation thing you've suggested. Plus the additional
+> > > > concept and its complexity is non-trivial So I tend to agree with
+> > > > Christian that we really want to return pidfd.
+> > > >
+> > > > Given returning pidfd is CAP_SYS_ADMIN priviledged operation I'm undecided
+> > > > whether it is worth the trouble to come up with some other mechanism how to
+> > > > return pidfd with the event. We could return some cookie which could be
+> > > > then (by some ioctl or so) either transformed into real pidfd or released
+> > > > (so that we can release pid handle in the kernel) but it looks ugly and
+> > > > complicates things for everybody without bringing significant security
+> > > > improvement (we already can pass fd with the event). So I'm pondering
+> > > > whether there's some other way how we could make the interface safer - e.g.
+> > > > so that the process receiving the event (not the one creating the group)
+> > > > would also need to opt in for getting fds created in its file table.
+> > > >
+> > > > But so far nothing bright has come to my mind. :-|
+> > > >
+> > >
+> > > There is a way, it is not bright, but it is pretty simple -
+> > > store an optional pid in group->fanotify_data.fd_reader.
+> > >
+> > > With flag FAN_REPORT_PIDFD, both pidfd and event->fd reporting
+> > > will be disabled to any process other than fd_reader.
+> > > Without FAN_REPORT_PIDFD, event->fd reporting will be disabled
+> > > if fd_reaader is set to a process other than the reader.
+> > >
+> > > A process can call ioctl START_FD_READER to set fd_reader to itself.
+> > > With FAN_REPORT_PIDFD, if reaader_fd is NULL and the reader
+> > > process has CAP_SYS_ADMIN, read() sets fd_reader to itself.
+> > >
+> > > Permission wise, START_FD_READER is allowed with
+> > > CAP_SYS_ADMIN or if fd_reader is not owned by another process.
+> > > We may consider YIELD_FD_READER ioctl if needed.
+> > >
+> > > I think that this is a pretty cheap price for implementation
+> > > and maybe acceptable overhead for complicating the API?
+> > > Note that without passing fd, there is no need for any ioctl.
+> > >
+> > > An added security benefit is that the ioctl adds is a way for the
+> > > caller of fanotify_init() to make sure that even if the fanotify_fd is
+> > > leaked, that event->fd will not be leaked, regardless of flag
+> > > FAN_REPORT_PIDFD.
+> > >
+> > > So the START_FD_READER ioctl feature could be implemented
+> > > and documented first.
+> > > And then FAN_REPORT_PIDFD could use the feature with a
+> > > very minor API difference:
+> > > - Without the flag, other processes can read fds by default and
+> > >   group initiator can opt-out
+> > > - With the flag, other processes cannot read fds by default and
+> > >   need to opt-in
+> >
+> > Or maybe something even simpler... fanotify_init() flag
+> > FAN_PRIVATE (or FAN_PROTECTED) that limits event reading
+> > to the initiator process (not only fd reading).
+> >
+> > FAN_REPORT_PIDFD requires FAN_PRIVATE.
+> > If we do not know there is a use case for passing fanotify_fd
+> > that reports pidfds to another process why implement the ioctl.
+> > We can always implement it later if the need arises.
+> > If we contemplate this future change, though, maybe the name
+> > FAN_PROTECTED is better to start with.
+>
+> Good ideas. I think we are fine with returning pidfd only to the process
+> creating the fanotify group. Later we can add an ioctl which would indicate
+> that the process is also prepared to have fds created in its file table.
+> But I have still some open questions:
+> Do we want threads of the same process to still be able to receive fds?
 
-Can y'all wait till I'm back from vacation, goddamn ;)
+I don't see why not.
+They will be bloating the same fd table as the thread that called
+fanotify_init().
 
-This is what I'm aiming for, I spent some time looking at how many 
-places we string parse /proc/<whatever>/mounts and my head hurts.
+> Also pids can be recycled so they are probably not completely reliable
+> identifiers?
 
-Btrfs already has a reasonable solution for this, we have UUID's for 
-everything.  UUID's aren't a strictly btrfs thing either, all the file 
-systems have some sort of UUID identifier, hell its built into blkid.  I 
-would love if we could do a better job about letting applications query 
-information about where they are.  And we could expose this with the 
-relatively common UUID format.  You ask what fs you're in, you get the 
-FS UUID, and then if you're on Btrfs you get the specific subvolume UUID 
-you're in.  That way you could do more fancy things like know if you've 
-wandered into a new file system completely or just a different subvolume.
+Not sure I follow. The group hold a refcount on struct pid of the process that
+called fanotify_init() - I think that can used to check if reader process is
+the same process, but not sure. Maybe there is another way (Christian?).
 
-We have to keep the st_ino/st_dev thing for backwards compatibility, but 
-make it easier to get more info out of the file system.
+> What if someone wants to process events from fanotify group by
+> multiple processes / threads (fd can be inherited also through fork(2)...)?
+>
 
-We could in theory expose just the subvolid also, since that's a nice 
-simple u64, but it limits our ability to do new fancy shit in the 
-future.  It's not a bad solution, but like I said I think we need to 
-take a step back and figure out what problem we're specifically trying 
-to solve, and work from there.  Starting from automounts and working our 
-way back is not going very well.  Thanks,
+That's the same as passing fd between processes, no?
+If users want to do that, we will need to implement the ioctl or
+fanotify_init() flag FAN_SHARED.
 
-Josef
+> I'm currently undecided whether explicit FAN_PROTECTED flag (and impact on
+> receiving / not receiving whole event) makes this better.
+>
+
+Yeh, I'm not sure either. You usually tell me not to overload different
+meanings on one flag, which I always found to be good advice :-)
+
+Thanks,
+Amir.
