@@ -2,61 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E393DCD3E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Aug 2021 21:28:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B47963DCE9D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 04:07:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229837AbhHAT2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Aug 2021 15:28:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54230 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229497AbhHAT2i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Aug 2021 15:28:38 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 7326460234;
-        Sun,  1 Aug 2021 19:28:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627846110;
-        bh=gMD3M8FBGT+jCZ5xeSC0cLoBN4JBtQKeWJnyfL4VFik=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Lf7yjpTnc1hMfkKcQwq8sCw0NYx5a2hF1SuCq5bfv6teqYCeSIVZzc1ZalGwpq2S3
-         oKOYwx7dw451J0h1QS3vm5GZcLetNhVT9dk4hFjxcdIQkBjtJ/aOjxCFAKhHvS6EkN
-         lLrx0RJDtaBNT7+nHJtzSqEQsY//kZ48HN+6vi7FfT86tLoLgsdl6r/WPI+w4pIHrL
-         X9qmYcWhwjHww2ST2M9zqvKD7OrMJdP+OD/YFUqHPb201IsqZZnaAyj1085LFMDaay
-         VNCce56EiEXIFZdVSISbsE3efRTgHei7c0Nf5J0J2apQ+jfgf+0QltiBSSllfvewG6
-         enoiCW7KzG/kw==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 5B68A60A2E;
-        Sun,  1 Aug 2021 19:28:30 +0000 (UTC)
-Subject: Re: [GIT PULL] xfs: bug fixes for 5.14-rc4
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210731213740.GN3601443@magnolia>
-References: <20210731213740.GN3601443@magnolia>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210731213740.GN3601443@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.14-fixes-2
-X-PR-Tracked-Commit-Id: 81a448d7b0668ae39c08e6f34a54cc7eafb844f1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: aa6603266cc0760ebb83cf11cb5a2b8fca84cd68
-Message-Id: <162784611031.1186.18214929758593020802.pr-tracker-bot@kernel.org>
-Date:   Sun, 01 Aug 2021 19:28:30 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
+        id S231897AbhHBCHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Aug 2021 22:07:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40582 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231639AbhHBCHS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 1 Aug 2021 22:07:18 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14411C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Aug 2021 19:07:09 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id e2-20020a17090a4a02b029016f3020d867so22576388pjh.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Aug 2021 19:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=4UJ4VdvnjH1UiyxFLhfo4+Yb9Ryf1kMpy89iq5kXl0w=;
+        b=h4Gon6qMPYDo2lsCs4PsNoGy80tLzXuEToQdbh2o9jopf5bYBAOz17DzX5JaPAglWB
+         ZspMHGwhwV0o7ZQ20LtmH9fgw6C4yfLjrkIARS/2L1EXq+jWkN8FWM4RB5YyvIb6mzC1
+         m6h+5KUq36Oj5KeOZnHwRKTo27klJiR4uZa4FhRW+HYGa/YykFVO2BNcYvUAmroyGRNt
+         x9xa85jeHijocjr1kD0MBE5Qg4neTYrmSYVWRd0Q3GCTQMThKhcbWFR7+F0AkEo0DANr
+         sf3fQqrxIuhyxDLle8TtzWhvOR0BUaQE1aZ2Kdm94AxoWD58nTg1ufcffywHSrdGAjZV
+         nabg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:content-transfer-encoding;
+        bh=4UJ4VdvnjH1UiyxFLhfo4+Yb9Ryf1kMpy89iq5kXl0w=;
+        b=o3C98XhhNF3q2TwFnd5FUqJ+F80SBDn+mdyGewrHER+VZujG90wZs3qAfojzFcf2Yh
+         5NemqIIVG0k+binjryGoEqxs5ph2FHqKDO0vvDFKKOYfgK0tnRmFIiL/+eD9MmLtKcOb
+         E9MjUw6WO7RTw4hXImNO5HCfmGoj4tZlDqdFEB0y+1raBpZgzfXORTszjmFTF7hBAt8l
+         XpkFY6NwhgZECoN4BFtEhP5Em5HkGiB2z3JT8YKZb+/XStBmLIOs6aXgJUlfOE8MzVJs
+         Gp65civ409ZMiXFPet00d7eG36zEQzhxEeU1BfHeisUnJiwSabFVHHpIVmzd6Ck29rNr
+         nFzg==
+X-Gm-Message-State: AOAM533EIH7T2hmAPEkZDRWwwaPOKXuGGh/yr4IdA0U0B6LtzHhESzeH
+        FspG0WwnWBXBotlsftoOMLDcTbj6wJgSoRURWA4=
+X-Google-Smtp-Source: ABdhPJyOoupAo8Qe/sm/nCwgsoJC1nu7lAjOxrDsoi3uqYjV6ajsfiX1AfQn3wz4FVcemphN/47bcesD7pegSSIGb1A=
+X-Received: by 2002:a17:90a:ab07:: with SMTP id m7mr14556713pjq.27.1627870028713;
+ Sun, 01 Aug 2021 19:07:08 -0700 (PDT)
+MIME-Version: 1.0
+Sender: corinekoudeabo7@gmail.com
+Received: by 2002:a17:90a:3e44:0:0:0:0 with HTTP; Sun, 1 Aug 2021 19:07:08
+ -0700 (PDT)
+From:   Kayla <sgtkaylamanthey612@gmail.com>
+Date:   Mon, 2 Aug 2021 03:07:08 +0100
+X-Google-Sender-Auth: lQ-NHrB6TO0Csl69uz_279MfFKE
+Message-ID: <CAM5npYuJUZpt2uGZux3yUBQ0bhm+jhX_r+epfq1zLG3rP0ThYA@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Sat, 31 Jul 2021 14:37:40 -0700:
-
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.14-fixes-2
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/aa6603266cc0760ebb83cf11cb5a2b8fca84cd68
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+=C5=BDivjo, ali ste prejeli moja dva prej=C5=A1nja sporo=C4=8Dila? prosim p=
+reverite
+in mi odgovorite.
