@@ -2,58 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F9063DE0C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 22:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B0723DE0C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 22:39:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231308AbhHBUg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Aug 2021 16:36:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56220 "EHLO
+        id S231451AbhHBUjZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Aug 2021 16:39:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231165AbhHBUg2 (ORCPT
+        with ESMTP id S231165AbhHBUjY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Aug 2021 16:36:28 -0400
+        Mon, 2 Aug 2021 16:39:24 -0400
 Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAC5BC06175F;
-        Mon,  2 Aug 2021 13:36:17 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id hs10so24238883ejc.0;
-        Mon, 02 Aug 2021 13:36:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10B20C06175F;
+        Mon,  2 Aug 2021 13:39:14 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id go31so32833195ejc.6;
+        Mon, 02 Aug 2021 13:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zBWtV7N+RxH/CGPxWHVVPsVwXrz5q6//82lIjHdhJwk=;
-        b=dZjqXQSQJ+v4/jf7G29LGsKvh6x+AOb0oGYBMMznnJ3q4NjcfHQ8mHJzkBCKKQ9CzU
-         4bMEE0mY2rh8+ivUJqwoBfUTrZgLkE66Xc15R8Uvy+tIaLRkFCkGRhFKNeLfq71pM3WX
-         RQBOA3ryTimbaIeOc6CNntH0Q7FBxwucGeE2btN5wWeue9iDtUs19AZySnaq+FJeJ2Di
-         wJQmkgU/Tw5eMvjDKRw+f1nlXnsoWiODiKmtOb0/AjY9Rd7Pn8w7uarkaD9qTIod3nn8
-         i8JegkEq4i0r0aOrscicZ2LtIHQhNGMjKVwJ0+j2hJSFg6JaaIxESpYHjE/o8oVGiqtn
-         skYQ==
+        bh=z+1ZVGdug029BKztuBflcFM502/rjs3mo1eYtrMifDk=;
+        b=WpqW6gbPXWmSXSnBXN8wuQVcUZ5E+920VtDCBI9sJOXAr5tN2Vf5zVNcGKewIC7PYJ
+         1gM06RAbNtITBSUxFkYEWFDPQsnfX3ekTklSXHkCXyK/p1X8Mk9fXWBdHarsIreOLC6l
+         J+4ji/fyHzEfPW+YKKlN/ZKuW0fUwUeqdBWZSNtLgQAQRIfwvu2llBdvR/ZYKE/ceJAD
+         RC/VI9WxFcMwJzOrdM/OFO/+917WZhOuglpb6YRteH3Lug//OW1e/NjbrvZM5VtieJ//
+         vm/OR6HsSi8MJSY/qaoXsXKrjm6v6usut/5pspJ/pDZKmiFbOc8Okx9F8wg8KJJEFh/m
+         nDIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zBWtV7N+RxH/CGPxWHVVPsVwXrz5q6//82lIjHdhJwk=;
-        b=oJxTJsHv/h4BpKXZb5X+mQif8e3vHMKVzbVW8+Gf+5t6Pz5hab++Y/W3VyKms9yvhO
-         u27mVKw0S2rId/aGGcUuCnKGeNObx+ZT3mxCWrqZdGDuySPHK6g5IYEk9rIjPRVs8Lwe
-         XzvDsfMcR4i4NR/WG3w2HuPUbagv4cdiRcjTcDYjh2ZUTfayfkTNl38BpuTXWCTo2NQh
-         OtWhkNeAefO27ahqbqdCJ9JWocITAkZ6lKci0phWoS0fK0FXOqPHDd1s4SVoj7MrXKqp
-         KicLVURrzJrPH0Vbuk6yDBObr8a+LditGNU7KxEqGh7HTCepMHfFbhFflbXkT+AS5B5L
-         3TWg==
-X-Gm-Message-State: AOAM532aZIvN3Kexp6DBE3y3DNSkFD5N/UiS41OSC2fZ64h8dv3wohEF
-        oXqFEDZSLB1eL1w90e6tDLRTzaZKvcyIoMvB9lQ=
-X-Google-Smtp-Source: ABdhPJwFajkjqJ/lrekCzz9XwsvODk97FD+a2XwTBTnhhdH0saAAl6Z3OYjKtXSNXFb1fHhngk46UbjmPQt3yc+CIGE=
-X-Received: by 2002:a17:906:31d4:: with SMTP id f20mr16721382ejf.383.1627936576255;
- Mon, 02 Aug 2021 13:36:16 -0700 (PDT)
+        bh=z+1ZVGdug029BKztuBflcFM502/rjs3mo1eYtrMifDk=;
+        b=kxTaYwZ3LntMSJPcc6FJUGY+LfNrfyhemc+5xREc3uY72gkZTXt7ZhWVMhhM7pbrLI
+         EAzep19qEC177pdrNTB+JD4tImThOXlLBG/iiQgURJmLMWVaard5qgfHR8QrR5tZBg9B
+         yCdzFwQJqdDYyrBn2Zox15UiYtExLvRbdkEOn+fbZaa8gDPg7W6RTMyc9K6d4KxkAftz
+         oYyt3qO1HCGEoIIxd3sq8RhKZHnf0QVr4M19JZ2t8fB5HftoMdz0IVTN3NbjCQdzyzSS
+         0hO16u/VJ3ys7SCR6RxMW9ioO2iTuK6Fb8LB3Hrlvygrw+c6/GpdX2wmNLdHNWYhY8pi
+         lqBg==
+X-Gm-Message-State: AOAM533xe3SwiII1QqTzvy0qUe6D93qVa5m/LYyQ/WkxAFYqWGWphQk9
+        m0M9aITTiuKq8/yY8D9cH8sjeeDizOhncnZaArk=
+X-Google-Smtp-Source: ABdhPJz+bFqjk8VaBnBWuFFdFQPRqIUBKPTB9RbWFhRR+y+f3gJt5VIBShRoOFUv/tXM63FGpUHBOjlGJ6nvf3KArRs=
+X-Received: by 2002:a17:906:1f82:: with SMTP id t2mr16945837ejr.499.1627936752631;
+ Mon, 02 Aug 2021 13:39:12 -0700 (PDT)
 MIME-Version: 1.0
 References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com>
- <af71608e-ecc-af95-3511-1a62cbf8d751@google.com> <CAHbLzkqp5-SrOBkpvxieswD6OwPT70gsztNpXCTBXW2JnrFpfg@mail.gmail.com>
- <422db5c4-2490-749c-964b-dd2b93286ed5@google.com>
-In-Reply-To: <422db5c4-2490-749c-964b-dd2b93286ed5@google.com>
+ <b44e3619-712e-90af-89d2-e4ba654c5110@google.com> <CAHbLzko5oU_1X=M1LFr=4hNDvs0BF0UY+_8e0RHMhUqspMHV3Q@mail.gmail.com>
+ <55526ab1-4280-9538-51d7-6669b8a97f@google.com>
+In-Reply-To: <55526ab1-4280-9538-51d7-6669b8a97f@google.com>
 From:   Yang Shi <shy828301@gmail.com>
-Date:   Mon, 2 Aug 2021 13:36:04 -0700
-Message-ID: <CAHbLzkrvB6r5CKxwhcKmLZN+H3t10UuqeXT5vgi=YzkZjA2qnw@mail.gmail.com>
-Subject: Re: [PATCH 01/16] huge tmpfs: fix fallocate(vanilla) advance over
- huge pages
+Date:   Mon, 2 Aug 2021 13:39:00 -0700
+Message-ID: <CAHbLzkqTHcXqxUYzu98Ea_EzEaQ+eLPDmgyoSQEcC3MoEqchmg@mail.gmail.com>
+Subject: Re: [PATCH 04/16] huge tmpfs: revert shmem's use of transhuge_vma_enabled()
 To:     Hugh Dickins <hughd@google.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Shakeel Butt <shakeelb@google.com>,
@@ -76,105 +75,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 31, 2021 at 8:38 PM Hugh Dickins <hughd@google.com> wrote:
+On Sat, Jul 31, 2021 at 9:01 PM Hugh Dickins <hughd@google.com> wrote:
 >
 > On Fri, 30 Jul 2021, Yang Shi wrote:
-> > On Fri, Jul 30, 2021 at 12:25 AM Hugh Dickins <hughd@google.com> wrote:
+> > On Fri, Jul 30, 2021 at 12:36 AM Hugh Dickins <hughd@google.com> wrote:
 > > >
-> > > shmem_fallocate() goes to a lot of trouble to leave its newly allocated
-> > > pages !Uptodate, partly to identify and undo them on failure, partly to
-> > > leave the overhead of clearing them until later.  But the huge page case
-> > > did not skip to the end of the extent, walked through the tail pages one
-> > > by one, and appeared to work just fine: but in doing so, cleared and
-> > > Uptodated the huge page, so there was no way to undo it on failure.
-> > >
-> > > Now advance immediately to the end of the huge extent, with a comment on
-> > > why this is more than just an optimization.  But although this speeds up
-> > > huge tmpfs fallocation, it does leave the clearing until first use, and
-> > > some users may have come to appreciate slow fallocate but fast first use:
-> > > if they complain, then we can consider adding a pass to clear at the end.
-> > >
-> > > Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-> > > Signed-off-by: Hugh Dickins <hughd@google.com>
+> > > 5.14 commit e6be37b2e7bd ("mm/huge_memory.c: add missing read-only THP
+> > > checking in transparent_hugepage_enabled()") added transhuge_vma_enabled()
+> > > as a wrapper for two very different checks: shmem_huge_enabled() prefers
+> > > to show those two checks explicitly, as before.
 > >
-> > Reviewed-by: Yang Shi <shy828301@gmail.com>
+> > Basically I have no objection to separating them again. But IMHO they
+> > seem not very different. Or just makes things easier for the following
+> > patches?
 >
-> Many thanks for reviewing so many of these.
+> Well, it made it easier to apply the patch I'd prepared earlier,
+> but that was not the point; and I thought it best to be upfront
+> about the reversion, rather than hiding it in the movement.
 >
-> >
-> > A nit below:
-> >
-> > > ---
-> > >  mm/shmem.c | 19 ++++++++++++++++---
-> > >  1 file changed, 16 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/mm/shmem.c b/mm/shmem.c
-> > > index 70d9ce294bb4..0cd5c9156457 100644
-> > > --- a/mm/shmem.c
-> > > +++ b/mm/shmem.c
-> > > @@ -2736,7 +2736,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
-> > >         inode->i_private = &shmem_falloc;
-> > >         spin_unlock(&inode->i_lock);
-> > >
-> > > -       for (index = start; index < end; index++) {
-> > > +       for (index = start; index < end; ) {
-> > >                 struct page *page;
-> > >
-> > >                 /*
-> > > @@ -2759,13 +2759,26 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
-> > >                         goto undone;
-> > >                 }
-> > >
-> > > +               index++;
-> > > +               /*
-> > > +                * Here is a more important optimization than it appears:
-> > > +                * a second SGP_FALLOC on the same huge page will clear it,
-> > > +                * making it PageUptodate and un-undoable if we fail later.
-> > > +                */
-> > > +               if (PageTransCompound(page)) {
-> > > +                       index = round_up(index, HPAGE_PMD_NR);
-> > > +                       /* Beware 32-bit wraparound */
-> > > +                       if (!index)
-> > > +                               index--;
-> > > +               }
-> > > +
-> > >                 /*
-> > >                  * Inform shmem_writepage() how far we have reached.
-> > >                  * No need for lock or barrier: we have the page lock.
-> > >                  */
-> > > -               shmem_falloc.next++;
-> > >                 if (!PageUptodate(page))
-> > > -                       shmem_falloc.nr_falloced++;
-> > > +                       shmem_falloc.nr_falloced += index - shmem_falloc.next;
-> > > +               shmem_falloc.next = index;
-> >
-> > This also fixed the wrong accounting of nr_falloced, so it should be
-> > able to avoid returning -ENOMEM prematurely IIUC. Is it worth
-> > mentioning in the commit log?
+> The end result of the two checks is the same (don't try for huge pages),
+> and they have been grouped together because they occurred together in
+> several places, and both rely on "vma".
 >
-> It took me a long time to see your point there: ah yes, because it made
-> the whole huge page Uptodate when it reached the first tail, there would
-> have been only one nr_falloced++ for the whole of the huge page: well
-> spotted, thanks, I hadn't realized that.
+> But one check is whether the app has marked that address range not to use
+> THPs; and the other check is whether the process is running in a hierarchy
+> that has been marked never to use THPs (which just uses vma to get to mm
+> to get to mm->flags (whether current->mm would be more relevant is not an
+> argument I want to get into, I'm not at all sure)).
 >
-> Though I'm not so sure about your premature -ENOMEM: because once it has
-> made the huge page Uptodate, the other end (shmem_writepage()) will not
-> be incrementing nr_unswapped at all: so -ENOMEM would have been deferred
-> rather than premature, wouldn't it?
+> To me those are very different; and I'm particularly concerned to make
+> MMF_DISABLE_THP references visible, since it did not exist when Kirill
+> and I first implemented shmem huge pages, and I've tended to forget it:
+> but consider it more in this series.
 
-Ah, ok, I didn't pay too much attention to how nr_unswapped is
-incremented. Just thought nr_falloced will be incremented by 512
-rather than 1, so it is more unlikely to return -ENOMEM.
+Yes, I agree one checks vma the other one checks mm, they are
+different from this perspective. Anyway, as I said I have no objection
+to this change. You could add Reviewed-by: Yang Shi
+<shy828301@gmail.com>
 
->
-> Add a comment on this in the commit log: yes, I guess so, but I haven't
-> worked out what to write yet.
 >
 > Hugh
 >
 > >
 > > >
-> > >                 /*
-> > >                  * If !PageUptodate, leave it that way so that freeable pages
+> > > Signed-off-by: Hugh Dickins <hughd@google.com>
+> > > ---
+> > >  mm/shmem.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/mm/shmem.c b/mm/shmem.c
+> > > index ce3ccaac54d6..c6fa6f4f2db8 100644
+> > > --- a/mm/shmem.c
+> > > +++ b/mm/shmem.c
+> > > @@ -4003,7 +4003,8 @@ bool shmem_huge_enabled(struct vm_area_struct *vma)
+> > >         loff_t i_size;
+> > >         pgoff_t off;
+> > >
+> > > -       if (!transhuge_vma_enabled(vma, vma->vm_flags))
+> > > +       if ((vma->vm_flags & VM_NOHUGEPAGE) ||
+> > > +           test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+> > >                 return false;
+> > >         if (shmem_huge == SHMEM_HUGE_FORCE)
+> > >                 return true;
 > > > --
 > > > 2.26.2
