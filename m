@@ -2,76 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FB2A3DDBDC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 17:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59DC53DDF0F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Aug 2021 20:23:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234431AbhHBPGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Aug 2021 11:06:51 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:40593 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S234291AbhHBPGu (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Aug 2021 11:06:50 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 172F5HMY027185
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 2 Aug 2021 11:05:18 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 7350D15C3DD2; Mon,  2 Aug 2021 11:05:17 -0400 (EDT)
-Date:   Mon, 2 Aug 2021 11:05:17 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com, kari.argillander@gmail.com,
-        oleksandr@natalenko.name
-Subject: Re: [PATCH v27 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-Message-ID: <YQgJrYPphDC4W4Q3@mit.edu>
-References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
- <20210729162459.GA3601405@magnolia>
- <YQdlJM6ngxPoeq4U@mit.edu>
+        id S230030AbhHBSXy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Aug 2021 14:23:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51348 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229677AbhHBSXy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Aug 2021 14:23:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1DA2060F36;
+        Mon,  2 Aug 2021 18:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627928624;
+        bh=fAaavI+s0werBnx4XNVTbI9DFm2vApq65CJQ2LMNvp4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KRANRutS3dB5fxLVFYYsufg2cjZtdG0nRrYoWpkrOqaOnmJfYlYNROYkC5nxp/wHG
+         EtemQ4x/xJy0S5GcJjxptCEKk87mypINtgv3jj4dpyplr2hBcXlX6OSNBrshKiHWSX
+         PRkoYa+c3RYNzGnycqE9UWG0Ysbhc/6oKuwrIUPpzrqW60u77+V3qEz6WgXVFrQ9sY
+         I7Uni//GPetcNNjnFfubVF7mZ0Xz5wTzDO0iyKJBkaTjzxkk0+8HOKjMKE5VT1IlBM
+         DEl9ZUz/a1kvjiuvsdvFJqxG+qYrqR/jxXuT2a873B949CuCMHe9qS8iXqeKArjLYt
+         vB2r3oqdKRXuQ==
+Date:   Mon, 2 Aug 2021 11:23:42 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] f2fs: remove broken support for allocating DIO writes
+Message-ID: <YQg4Lukc2dXX3aJc@google.com>
+References: <20210728015154.171507-1-ebiggers@kernel.org>
+ <YQRQRh1zUHSIzcC/@gmail.com>
+ <YQS5eBljtztWwOFE@mit.edu>
+ <YQd3Hbid/mFm0o24@sol.localdomain>
+ <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YQdlJM6ngxPoeq4U@mit.edu>
+In-Reply-To: <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It should also noted that apparently ntfs3 does not properly support
-user namespaces, such that generic/317 fails:
+On 08/02, Chao Yu wrote:
+> On 2021/8/2 12:39, Eric Biggers wrote:
+> > On Fri, Jul 30, 2021 at 10:46:16PM -0400, Theodore Ts'o wrote:
+> > > On Fri, Jul 30, 2021 at 12:17:26PM -0700, Eric Biggers wrote:
+> > > > > Currently, non-overwrite DIO writes are fundamentally unsafe on f2fs as
+> > > > > they require preallocating blocks, but f2fs doesn't support unwritten
+> > > > > blocks and therefore has to preallocate the blocks as regular blocks.
+> > > > > f2fs has no way to reliably roll back such preallocations, so as a
+> > > > > result, f2fs will leak uninitialized blocks to users if a DIO write
+> > > > > doesn't fully complete.
+> > > 
+> > > There's another way of solving this problem which doesn't require
+> > > supporting unwritten blocks.  What a file system *could* do is to
+> > > allocate the blocks, but *not* update the on-disk data structures ---
+> > > so the allocation happens in memory only, so you know that the
+> > > physical blocks won't get used for another files, and then issue the
+> > > data block writes.  On the block I/O completion, trigger a workqueue
+> > > function which updates the on-disk metadata to assign physical blocks
+> > > to the inode.
+> > > 
+> > > That way if you crash before the data I/O has a chance to complete,
+> > > the on-disk logical block -> physical block map hasn't been updated
+> > > yet, and so you don't need to worry about leaking uninitialized blocks.
+> 
+> Thanks for your suggestion, I think it makes sense.
+> 
+> > > 
+> > > Cheers,
+> > > 
+> > > 					- Ted
+> > 
+> > Jaegeuk and Chao, any idea how feasible it would be for f2fs to do this?
+> 
+> Firstly, let's notice that below metadata will be touched during DIO
+> preallocation flow:
+> - log header
+> - sit bitmap/count
+> - free seg/sec bitmap/count
+> - dirty seg/sec bitmap/count
+> 
+> And there is one case we need to concern about is: checkpoint() can be
+> triggered randomly in between dio_preallocate() and dio_end_io(), we should
+> not persist any DIO preallocation related metadata during checkpoint(),
+> otherwise, sudden power-cut after the checkpoint will corrupt filesytem.
+> 
+> So it needs to well separate two kinds of metadata update:
+> a) belong to dio preallocation
+> b) the left one
+> 
+> After that, it will simply checkpoint() flow to just flush metadata b), for
+> other flow, like GC, data/node allocation, it needs to query/update metadata
+> after we combine metadata a) and b).
+> 
+> In addition, there is an existing in-memory log header framework in f2fs,
+> based on this fwk, it's very easy for us to add a new in-memory log header
+> for DIO preallocation.
+> 
+> So it seems feasible for me until now...
+> 
+> Jaegeuk, any other concerns about the implementation details?
 
-generic/317		[10:37:19][    7.024574] run fstests generic/317 at 2021-08-02 10:37:19
- [10:37:19]- output mismatch (see /results/ntfs3/results-default/generic/317.out.bad)
-    --- tests/generic/317.out	2021-08-01 20:47:35.000000000 -0400
-    +++ /results/ntfs3/results-default/generic/317.out.bad	2021-08-02 10:37:19.930687003 -0400
-    @@ -13,8 +13,8 @@
-     From init_user_ns
-       File: "$SCRATCH_MNT/file1"
-       Size: 0            Filetype: Regular File
-    -  Mode: (0644/-rw-r--r--)         Uid: (qa_user)  Gid: (qa_user)
-    +  Mode: (0755/-rwxr-xr-x)         Uid: (0)  Gid: (0)
-     From user_ns
-       File: "$SCRATCH_MNT/file1"
-    ...
-    (Run 'diff -u /root/xfstests/tests/generic/317.out /results/ntfs3/results-default/generic/317.out.bad'  to see the entire diff)
-Ran: generic/317
-Failures: generic/317
+Hmm, I'm still trying to deal with this as a corner case where the writes
+haven't completed due to an error. How about keeping the preallocated block
+offsets and releasing them if we get an error? Do we need to handle EIO right?
 
-
-Is Paragon Software willing to commit to fixing these and other bugs?
-Better yet, it would be nice if Paragon Software could improve its
-testing and other QA processes.
-
-Furthermore, container developers should note that ntfs3 is not
-currently safe for use with containers.
-
-   	   	    	       	      - Ted
+> 
+> Thanks,
+> 
+> > 
+> > - Eric
+> > 
