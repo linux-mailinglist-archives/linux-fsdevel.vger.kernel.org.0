@@ -2,169 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46F493DF568
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 21:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 146E53DF5B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 21:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239876AbhHCTTp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 15:19:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48737 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239730AbhHCTT1 (ORCPT
+        id S239713AbhHCTcb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 15:32:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49686 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239395AbhHCTcb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 15:19:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628018354;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IULcZE+GE0RHMHtw9EFWCvHkiLwAkm0qqTvH1XU9M1M=;
-        b=A+sF10RZT0pBWUldMh68lVSoy/TFxohtv94K/uv/m1pSgxD2MLhU0lwA0AuxNQGQL/mWdX
-        r/7W1Jb/xDfhNA5nA3YXY7jQZDThZSIXl+6U9UcMRP7RpxsjSZsHAZns1RX+1OM3yzNevy
-        Mp+/NmyXNuUB68FIGteRH3pxK0I73sQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-495-L1wwZNlZOW-pGMgnx9sAag-1; Tue, 03 Aug 2021 15:19:10 -0400
-X-MC-Unique: L1wwZNlZOW-pGMgnx9sAag-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C6971800489;
-        Tue,  3 Aug 2021 19:19:08 +0000 (UTC)
-Received: from max.com (unknown [10.40.193.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CD6C560C0F;
-        Tue,  3 Aug 2021 19:19:02 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v5 12/12] gfs2: Fix mmap + page fault deadlocks for direct I/O
-Date:   Tue,  3 Aug 2021 21:18:18 +0200
-Message-Id: <20210803191818.993968-13-agruenba@redhat.com>
-In-Reply-To: <20210803191818.993968-1-agruenba@redhat.com>
-References: <20210803191818.993968-1-agruenba@redhat.com>
+        Tue, 3 Aug 2021 15:32:31 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC9EC061757;
+        Tue,  3 Aug 2021 12:32:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=kyaz/Rz/bSCjiof19r0/8BkeZwVEwIoViXF5/mhhW7o=; b=IdTCll474SU4SUOfKffebGMqNs
+        K4eY3QxkRlDIGPWAFx1SsF8CWY4amwUt94jiaCwZiRz4GUSw8M9+n2NwfeOgvuz/db+Pf2mHJlM/U
+        kYlrrS+bX7MBnJl36fs2EoEpnzSZRDNULdy0sScDEwNqNal/FNtWG8okwyFyy+h28GwJrO3XNL1DN
+        y8i5/Ufh8rQzfPAZQ6YWJQtf5wjw8dwE9I4i8ghgyxaGDW/wt+LeA5v/HE3P0nwTRxpMeIYxWD8H6
+        c8EZmw6SvWwxllWyWeSmfCowq/4guu8nJdI27j2FDkKaVQp8xtnWD0WQm9LAq1ztKT4ND55Qd+2H9
+        L/sD2eQQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mB08X-0051rz-It; Tue, 03 Aug 2021 19:31:45 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 1/2] iomap: Use kmap_local_page instead of kmap_atomic
+Date:   Tue,  3 Aug 2021 20:31:33 +0100
+Message-Id: <20210803193134.1198733-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Also disable page faults during direct I/O requests and implement the same
-kind of retry logic as in the buffered I/O case.
+kmap_atomic() has the side-effect of disabling pagefaults and
+preemption.  kmap_local_page() does not do this and is preferred.
 
-Direct I/O requests differ from buffered I/O requests in that they use
-bio_iov_iter_get_pages for grabbing page references and faulting in pages
-instead of triggering physical page faults.  Those manual page faults can be
-disabled with the new iocb->noio flag.
-
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/gfs2/file.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
+ fs/iomap/buffered-io.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index d98f690097e2..ed42b7675551 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -782,21 +782,47 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
- 	struct file *file = iocb->ki_filp;
- 	struct gfs2_inode *ip = GFS2_I(file->f_mapping->host);
- 	size_t count = iov_iter_count(to);
-+	size_t written = 0;
- 	ssize_t ret;
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index c1c8cd41ea81..8ee0211bea86 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -223,10 +223,10 @@ static int iomap_read_inline_data(struct inode *inode, struct page *page,
+ 	if (poff > 0)
+ 		iomap_page_create(inode, page);
  
-+	/*
-+	 * In this function, we disable page faults when we're holding the
-+	 * inode glock while doing I/O.  If a page fault occurs, we drop the
-+	 * inode glock, fault in the pages manually, and retry.
-+	 *
-+	 * Unlike generic_file_read_iter, for reads, iomap_dio_rw can trigger
-+	 * physical as well as manual page faults, and we need to disable both
-+	 * kinds.
-+	 */
-+
- 	if (!count)
- 		return 0; /* skip atime */
- 
- 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
-+retry:
- 	ret = gfs2_glock_nq(gh);
- 	if (ret)
- 		goto out_uninit;
- 
--	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0, 0);
-+	pagefault_disable();
-+	to->noio = true;
-+	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL,
-+			   IOMAP_DIO_PARTIAL, written);
-+	to->noio = false;
-+	pagefault_enable();
-+
- 	gfs2_glock_dq(gh);
-+	if (ret > 0)
-+		written = ret;
-+	if (unlikely(iov_iter_count(to) && (ret > 0 || ret == -EFAULT)) &&
-+	    iter_is_iovec(to) &&
-+	    fault_in_iov_iter_writeable(to, SIZE_MAX) != 0)
-+		goto retry;
- out_uninit:
- 	gfs2_holder_uninit(gh);
--	return ret;
-+	if (ret < 0)
-+		return ret;
-+	return written;
+-	addr = kmap_atomic(page) + poff;
++	addr = kmap_local_page(page) + poff;
+ 	memcpy(addr, iomap->inline_data, size);
+ 	memset(addr + size, 0, PAGE_SIZE - poff - size);
+-	kunmap_atomic(addr);
++	kunmap_local(addr);
+ 	iomap_set_range_uptodate(page, poff, PAGE_SIZE - poff);
+ 	return PAGE_SIZE - poff;
  }
+@@ -682,9 +682,9 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
+ 	BUG_ON(!iomap_inline_data_valid(iomap));
  
- static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
-@@ -809,6 +835,15 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	loff_t offset = iocb->ki_pos;
- 	ssize_t ret;
+ 	flush_dcache_page(page);
+-	addr = kmap_atomic(page);
+-	memcpy(iomap_inline_data(iomap, pos), addr + pos, copied);
+-	kunmap_atomic(addr);
++	addr = kmap_local_page(page) + pos;
++	memcpy(iomap_inline_data(iomap, pos), addr, copied);
++	kunmap_local(addr);
  
-+	/*
-+	 * In this function, we disable page faults when we're holding the
-+	 * inode glock while doing I/O.  If a page fault occurs, we drop the
-+	 * inode glock, fault in the pages manually, and retry.
-+	 *
-+	 * For writes, iomap_dio_rw only triggers manual page faults, so we
-+	 * don't need to disable physical ones.
-+	 */
-+
- 	/*
- 	 * Deferred lock, even if its a write, since we do no allocation on
- 	 * this path. All we need to change is the atime, and this lock mode
-@@ -818,6 +853,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	 * VFS does.
- 	 */
- 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
-+retry:
- 	ret = gfs2_glock_nq(gh);
- 	if (ret)
- 		goto out_uninit;
-@@ -826,11 +862,18 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	if (offset + len > i_size_read(&ip->i_inode))
- 		goto out;
- 
-+	from->noio = true;
- 	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0, 0);
-+	from->noio = false;
-+
- 	if (ret == -ENOTBLK)
- 		ret = 0;
- out:
- 	gfs2_glock_dq(gh);
-+	if (unlikely(ret == -EFAULT) &&
-+	    iter_is_iovec(from) &&
-+	    fault_in_iov_iter_readable(from, len) == len)
-+		goto retry;
- out_uninit:
- 	gfs2_holder_uninit(gh);
- 	return ret;
+ 	mark_inode_dirty(inode);
+ 	return copied;
 -- 
-2.26.3
+2.30.2
 
