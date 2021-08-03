@@ -2,131 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43FDD3DE40A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 03:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87A723DE417
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 03:40:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233344AbhHCBfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Aug 2021 21:35:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232904AbhHCBfA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Aug 2021 21:35:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 455F560FA0;
-        Tue,  3 Aug 2021 01:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627954490;
-        bh=XRzA3NrzzEUgpsOEuNtbvyLKsenWMKiE5wFIrQcFx2Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tgaDKnP+hbvLQZXYzSVAUGYqbB3FuLq4omTfeTO1Pz2y32jDuHV8nhRUAqcWqs/U8
-         l9fxboTiygfUKWrPbdU2gPVKZ5EiE0dmufn9LUwj5TeVckseuoOpXlnFPFxCqpSWXw
-         NrIqvKK42kChEo+AYluJ0WNaV7fEM6L0H42L2jz05c6ng5C/bTf8V9yXAW4GK1k1k9
-         va2C/Tf/5t5TcblLTTwde6RrRCTQHgkLbApoz36qVbG6ARjcaEspeo7DUr6OIVyAKP
-         XRU9hp2Es1zy/7Grmi+ZlG6sfEfajF7w97x601rGidAkJi4oSY/WxOkzqU/qEH2bqC
-         hhImbvyDtRTQA==
-Date:   Mon, 2 Aug 2021 18:34:48 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] f2fs: remove broken support for allocating DIO writes
-Message-ID: <YQidOD/zNB17fd9v@google.com>
-References: <20210728015154.171507-1-ebiggers@kernel.org>
- <YQRQRh1zUHSIzcC/@gmail.com>
- <YQS5eBljtztWwOFE@mit.edu>
- <YQd3Hbid/mFm0o24@sol.localdomain>
- <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
- <YQg4Lukc2dXX3aJc@google.com>
- <b88328b4-db3e-0097-d8cc-f250ee678e5b@kernel.org>
+        id S233516AbhHCBkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Aug 2021 21:40:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43568 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232904AbhHCBks (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Aug 2021 21:40:48 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 326F0C06175F;
+        Mon,  2 Aug 2021 18:40:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VyFA1z5ngZ0mjADNv8+t6fHk/i7xgEzisFeVDdSHspo=; b=rz7Z7Ai+DJR4jVHuhbK7W5UQqk
+        4uU26mPOXb3JxjtGC7q9KtfilWl4bAckJod73v+82rcyDeffua5z3/TXWNYET/rHHx/zDI9FQWIcJ
+        YhRr1nh6ZKH8jHFAT34+YKd+ufT787Cjv0XzQPCrmlgD24BEbraiMF0Gbjb8uPTkvw5kDVfMPomwX
+        cYnNVrIP8U0P7UMqQC45ydrL8KV30eKMH400ev4x0TzoJtvrB/k8qlZWlygTv5TvY+IEg9dI/PzyS
+        uex1LisXBNRhzZSCPnqRG6HzaPMrry4QXM0dHWrtVzo3BE/Ptg+mm9UKDCeMYLWd6YarB1RPVItxE
+        WRz32YLg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mAjOA-0045lA-3i; Tue, 03 Aug 2021 01:38:46 +0000
+Date:   Tue, 3 Aug 2021 02:38:38 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <shy828301@gmail.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Matthew Auld <matthew.auld@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 10/16] tmpfs: fcntl(fd, F_MEM_LOCK) to memlock a tmpfs
+ file
+Message-ID: <YQieHio1oUKCfgqq@casper.infradead.org>
+References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com>
+ <54e03798-d836-ae64-f41-4a1d46bc115b@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b88328b4-db3e-0097-d8cc-f250ee678e5b@kernel.org>
+In-Reply-To: <54e03798-d836-ae64-f41-4a1d46bc115b@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08/03, Chao Yu wrote:
-> On 2021/8/3 2:23, Jaegeuk Kim wrote:
-> > On 08/02, Chao Yu wrote:
-> > > On 2021/8/2 12:39, Eric Biggers wrote:
-> > > > On Fri, Jul 30, 2021 at 10:46:16PM -0400, Theodore Ts'o wrote:
-> > > > > On Fri, Jul 30, 2021 at 12:17:26PM -0700, Eric Biggers wrote:
-> > > > > > > Currently, non-overwrite DIO writes are fundamentally unsafe on f2fs as
-> > > > > > > they require preallocating blocks, but f2fs doesn't support unwritten
-> > > > > > > blocks and therefore has to preallocate the blocks as regular blocks.
-> > > > > > > f2fs has no way to reliably roll back such preallocations, so as a
-> > > > > > > result, f2fs will leak uninitialized blocks to users if a DIO write
-> > > > > > > doesn't fully complete.
-> > > > > 
-> > > > > There's another way of solving this problem which doesn't require
-> > > > > supporting unwritten blocks.  What a file system *could* do is to
-> > > > > allocate the blocks, but *not* update the on-disk data structures ---
-> > > > > so the allocation happens in memory only, so you know that the
-> > > > > physical blocks won't get used for another files, and then issue the
-> > > > > data block writes.  On the block I/O completion, trigger a workqueue
-> > > > > function which updates the on-disk metadata to assign physical blocks
-> > > > > to the inode.
-> > > > > 
-> > > > > That way if you crash before the data I/O has a chance to complete,
-> > > > > the on-disk logical block -> physical block map hasn't been updated
-> > > > > yet, and so you don't need to worry about leaking uninitialized blocks.
-> > > 
-> > > Thanks for your suggestion, I think it makes sense.
-> > > 
-> > > > > 
-> > > > > Cheers,
-> > > > > 
-> > > > > 					- Ted
-> > > > 
-> > > > Jaegeuk and Chao, any idea how feasible it would be for f2fs to do this?
-> > > 
-> > > Firstly, let's notice that below metadata will be touched during DIO
-> > > preallocation flow:
-> > > - log header
-> > > - sit bitmap/count
-> > > - free seg/sec bitmap/count
-> > > - dirty seg/sec bitmap/count
-> > > 
-> > > And there is one case we need to concern about is: checkpoint() can be
-> > > triggered randomly in between dio_preallocate() and dio_end_io(), we should
-> > > not persist any DIO preallocation related metadata during checkpoint(),
-> > > otherwise, sudden power-cut after the checkpoint will corrupt filesytem.
-> > > 
-> > > So it needs to well separate two kinds of metadata update:
-> > > a) belong to dio preallocation
-> > > b) the left one
-> > > 
-> > > After that, it will simply checkpoint() flow to just flush metadata b), for
-> > > other flow, like GC, data/node allocation, it needs to query/update metadata
-> > > after we combine metadata a) and b).
-> > > 
-> > > In addition, there is an existing in-memory log header framework in f2fs,
-> > > based on this fwk, it's very easy for us to add a new in-memory log header
-> > > for DIO preallocation.
-> > > 
-> > > So it seems feasible for me until now...
-> > > 
-> > > Jaegeuk, any other concerns about the implementation details?
-> > 
-> > Hmm, I'm still trying to deal with this as a corner case where the writes
-> > haven't completed due to an error. How about keeping the preallocated block
-> > offsets and releasing them if we get an error? Do we need to handle EIO right?
-> 
-> What about the case that CP + SPO following DIO preallocation? User will
-> encounter uninitialized block after recovery.
+On Fri, Jul 30, 2021 at 12:55:22AM -0700, Hugh Dickins wrote:
+> A new uapi to lock the files on tmpfs in memory, to protect against swap
+> without mapping the files. This commit introduces two new commands to
+> fcntl and shmem: F_MEM_LOCK and F_MEM_UNLOCK. The locking will be
+> charged against RLIMIT_MEMLOCK of uid in namespace of the caller.
 
-I think buffered writes as a workaround can expose the last unwritten block as
-well, if SPO happens right after block allocation. We may need to compromise
-at certain level?
-
-> 
-> Thanks,
-> 
-> > 
-> > > 
-> > > Thanks,
-> > > 
-> > > > 
-> > > > - Eric
-> > > > 
+It's not clear to me why this is limited to shmfs.  Would it not also
+make sense for traditional filesystems, eg to force chrome's text pages
+to stay in the page cache, no matter how much memory the tabs allocate?
