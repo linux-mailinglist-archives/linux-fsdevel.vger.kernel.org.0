@@ -2,69 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 376A33DF305
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 18:42:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EC813DF30B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 18:43:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234573AbhHCQmx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 12:42:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59438 "EHLO mail.kernel.org"
+        id S234615AbhHCQnD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 12:43:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234565AbhHCQmw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 12:42:52 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0416660555;
-        Tue,  3 Aug 2021 16:42:40 +0000 (UTC)
+        id S234641AbhHCQnC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Aug 2021 12:43:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9B34B60555;
+        Tue,  3 Aug 2021 16:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628008961;
-        bh=hJz+8h+1bPkjlwbjSsncSGCIoIMEkSuRDoLBTB9ttAQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hVB3kBXzSWg9T4lAeDOH2Oo2HKYb3i/eVRbGRy1ZiI6Z/JL0RX0Jro3CGC9hWqKUP
-         en53RrDnniTSbnnMQPJwM7KIIazRyobXzS6oXuuVQ9g7h46gDg2rzt4sT0TNgs6OxA
-         oe8F7l1zZBDmBYZs73NQ4/udtdGZHaPA0yK7OBkcyJ9rzpMtsMLlryvQYDuYDCnEvt
-         7HBO4IPuwhUfNblrC/FELftqDVzS+2pPtIx3jxAYQnCA05fD5Ccsxx+ZvShPaOvm2r
-         t7CJau1y3CsZBX3S8rDsl50mrucfxqI7kj1JTcjVdzZjfquEJx1ONaIM1JA1oQIHFd
-         e1HdzvIPJDrJA==
-Date:   Tue, 3 Aug 2021 09:42:40 -0700
+        s=k20201202; t=1628008971;
+        bh=N0oTYHMTVW2k9vPS5WIst0KtjPixQzHdv0Q5QPH55gQ=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=C7avMTCs5wZQCjqYXkwgc3Kqdv5QPvC2J6cvrltEV+IVUY7W/PHp0006NOgsZL/Tv
+         5bNcjlo9Hw7CNW4RavkB7WIH6Ad5dYL96mV7Atg1cdBzT63p+lfM9ASJ8rbm4PM3zH
+         R1SSsQpdA7isYPoubeNo/AAFkrbgdWazDzrs79moxQpfKy+Wi3BXLxjueurv1WFTGF
+         xqg8+00PRzmOdUr13zRILWrHBYSb5ht6GHdX/EoowKhu1uVo78Mox+piuq587/ozT7
+         sS5ttqz4Zyl1bxfijnbDoD2ecE3nS+wDYKUURgYE/BZQP5zPrY4saONEyGUx90jWuC
+         N56wK6YNXoCXg==
+Date:   Tue, 3 Aug 2021 09:42:51 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
+To:     Matthew Wilcox <willy@infradead.org>,
         Christoph Hellwig <hch@infradead.org>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         xfs <linux-xfs@vger.kernel.org>
 Subject: Re: iomap 5.15 branch construction ...
-Message-ID: <20210803164240.GC3601405@magnolia>
+Message-ID: <20210803164251.GD3601405@magnolia>
 References: <20210802221114.GG3601466@magnolia>
- <YQhzDPl13/Kl4JdQ@gmail.com>
+ <YQiMFsO5DQouSPs/@B-P7TQMD6M-0146.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YQhzDPl13/Kl4JdQ@gmail.com>
+In-Reply-To: <YQiMFsO5DQouSPs/@B-P7TQMD6M-0146.local>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 02, 2021 at 03:34:52PM -0700, Eric Biggers wrote:
+On Tue, Aug 03, 2021 at 08:21:42AM +0800, Gao Xiang wrote:
 > On Mon, Aug 02, 2021 at 03:11:14PM -0700, Darrick J. Wong wrote:
-> > 6. Earlier, Eric Biggers had a patchset that made some iomap changes
-> > ahead of porting f2fs to use directio.  I /think/ those changes were
-> > dropped in the latest submission because the intended use of those
-> > changes (counters of the number of pages undergoing reads or writes,
-> > iirc?) has been replaced with something simpler.  IOWs, f2fs doesn't
-> > need any iomap changes for 5.15, right?
+> > Hi everyone!
+> > 
+> > iomap has become very popular for this cycle, with seemingly a lot of
+> > overlapping patches and whatnot.  Does this accurately reflect all the
+> > stuff that people are trying to send for 5.15?
+> > 
+> > 1. So far, I think these v2 patches from Christoph are ready to go:
+> > 
+> > 	iomap: simplify iomap_readpage_actor
+> > 	iomap: simplify iomap_add_to_ioend
+> > 
+> > 2. This is the v9 "iomap: Support file tail packing" patch from Gao,
+> > with a rather heavily edited commit:
+> > 
+> > 	iomap: support reading inline data from non-zero pos
+> > 
+> > Should I wait for a v10 patch with spelling fixes as requested by
+> > Andreas?  And if there is a v10 submission, please update the commit
+> > message.
 > 
-> Converting f2fs to use iomap for direct I/O doesn't require any iomap changes.
-> You might be referring to
-> https://lkml.kernel.org/r/20210604210908.2105870-7-satyat@google.com
-> ("iomap: support direct I/O with fscrypt using blk-crypto"), which will be
-> needed to support direct I/O on encrypted files.  Direct I/O support on
-> encrypted files will be a new feature, and it's being held up for other reasons.
-> So there's nothing for you to do for 5.15.  (And separately, using iomap for
-> direct I/O in f2fs is being held up by existing f2fs direct I/O bugs.)
+> I've already sent out v10 with these changes:
+> https://lore.kernel.org/r/20210803001727.50281-1-hsiangkao@linux.alibaba.com
 
-Ok, thank you for the update!
+Applied, thanks.
 
 --D
 
 > 
-> - Eric
+> Thanks,
+> Gao Xiang
