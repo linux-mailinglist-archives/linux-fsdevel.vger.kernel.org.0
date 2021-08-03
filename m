@@ -2,110 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD09E3DE36D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 02:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 515FA3DE373
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 02:17:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232772AbhHCAP6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Aug 2021 20:15:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52378 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232208AbhHCAP6 (ORCPT
+        id S232768AbhHCARs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Aug 2021 20:17:48 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:47822 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232634AbhHCARs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Aug 2021 20:15:58 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C609C06175F;
-        Mon,  2 Aug 2021 17:15:48 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id BE3DC6C0C; Mon,  2 Aug 2021 20:15:46 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org BE3DC6C0C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1627949746;
-        bh=OCGZP64OD91fAUXxmT0Uz7TLHSVGqZUGpiy+xnWtjj0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xJ0zRQTIUDvRLFx+sJlBSxUhve7zCbgjnCUEEULjslGdiKIzQQlRZGu4Xwp1wBE0j
-         rm1/1Ly2Art3ofeGQcfvJhTcDCOl0WzlYcUQPXvKBBjnq345sPO6TTD6y7qhGS2E9d
-         pBG6DslqL80STAF0A7v4/udDaPNzsDYPKHpj9OgQ=
-Date:   Mon, 2 Aug 2021 20:15:46 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
-Subject: Re: A Third perspective on BTRFS nfsd subvol dev/inode number issues.
-Message-ID: <20210803001546.GI6890@fieldses.org>
-References: <CAJfpegtu3NKW9m2jepRrXe4UTuD6_3k0Y6TcCBLSQH7SSC90BA@mail.gmail.com>
- <162763043341.21659.15645923585962859662@noble.neil.brown.name>
- <CAJfpegub4oBZCBXFQqc8J-zUiSW+KaYZLjZaeVm_cGzNVpxj+A@mail.gmail.com>
- <162787790940.32159.14588617595952736785@noble.neil.brown.name>
- <20210802123930.GA6890@fieldses.org>
- <162793864421.32159.6348977485257143426@noble.neil.brown.name>
- <20210802215059.GF6890@fieldses.org>
- <162794157037.32159.9608382458264702109@noble.neil.brown.name>
- <20210802221434.GG6890@fieldses.org>
- <162794380480.32159.709590144894407738@noble.neil.brown.name>
+        Mon, 2 Aug 2021 20:17:48 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0UhoymnS_1627949850;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UhoymnS_1627949850)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 03 Aug 2021 08:17:36 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Huang Jianan <huangjianan@oppo.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Gao Xiang <hsiangkao@linux.alibaba.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH v10] iomap: support reading inline data from non-zero pos
+Date:   Tue,  3 Aug 2021 08:17:27 +0800
+Message-Id: <20210803001727.50281-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.4
+In-Reply-To: <YQfh7V0lvLNx0QlR@B-P7TQMD6M-0146.local>
+References: <YQfh7V0lvLNx0QlR@B-P7TQMD6M-0146.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <162794380480.32159.709590144894407738@noble.neil.brown.name>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 03, 2021 at 08:36:44AM +1000, NeilBrown wrote:
-> On Tue, 03 Aug 2021, J. Bruce Fields wrote:
-> > On Tue, Aug 03, 2021 at 07:59:30AM +1000, NeilBrown wrote:
-> > > On Tue, 03 Aug 2021, J. Bruce Fields wrote:
-> > > > On Tue, Aug 03, 2021 at 07:10:44AM +1000, NeilBrown wrote:
-> > > > > On Mon, 02 Aug 2021, J. Bruce Fields wrote:
-> > > > > > On Mon, Aug 02, 2021 at 02:18:29PM +1000, NeilBrown wrote:
-> > > > > > > For btrfs, the "location" is root.objectid ++ file.objectid.  I think
-> > > > > > > the inode should become (file.objectid ^ swab64(root.objectid)).  This
-> > > > > > > will provide numbers that are unique until you get very large subvols,
-> > > > > > > and very many subvols.
-> > > > > > 
-> > > > > > If you snapshot a filesystem, I'd expect, at least by default, that
-> > > > > > inodes in the snapshot to stay the same as in the snapshotted
-> > > > > > filesystem.
-> > > > > 
-> > > > > As I said: we need to challenge and revise user-space (and meat-space)
-> > > > > expectations. 
-> > > > 
-> > > > The example that came to mind is people that export a snapshot, then
-> > > > replace it with an updated snapshot, and expect that to be transparent
-> > > > to clients.
-> > > > 
-> > > > Our client will error out with ESTALE if it notices an inode number
-> > > > changed out from under it.
-> > > 
-> > > Will it?
-> > 
-> > See fs/nfs/inode.c:nfs_check_inode_attributes():
-> > 
-> > 	if (nfsi->fileid != fattr->fileid) {
-> >                 /* Is this perhaps the mounted-on fileid? */
-> >                 if ((fattr->valid & NFS_ATTR_FATTR_MOUNTED_ON_FILEID) &&
-> >                     nfsi->fileid == fattr->mounted_on_fileid)
-> >                         return 0;
-> >                 return -ESTALE;
-> >         }
-> 
-> That code fires if the fileid (inode number) reported for a particular
-> filehandle changes.  I'm saying that won't happen.
-> 
-> If you reflink (aka snaphot) a btrfs subtree (aka "subvol"), then the
-> new sub-tree will ALREADY have different filehandles than the original
-> subvol.
+The existing inline data support only works for cases where the entire
+file is stored as inline data.  For larger files, EROFS stores the
+initial blocks separately and the remainder of the file ("file tail")
+adjacent to the inode.  Generalise inline data to allow reading the
+inline file tail.  Tails may not cross a page boundary in memory.
 
-Whoops, you're right, sorry for the noise....
+We currently have no filesystems that support tails and writing,
+so that case is currently disabled (see iomap_write_begin_inline).
 
---b.
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+changes since v9:
+ - update commit message suggested by Darrick and
+   collect his RVB;
+ - update a semicolon suggested by Andreas.
 
-> Whether it has the same inode numbers or different ones is
-> irrelevant to NFS.
+ fs/iomap/buffered-io.c | 42 ++++++++++++++++++++++++++++++------------
+ fs/iomap/direct-io.c   | 10 ++++++----
+ include/linux/iomap.h  | 18 ++++++++++++++++++
+ 3 files changed, 54 insertions(+), 16 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 87ccb3438bec..dd1e2cbec5a0 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -205,25 +205,32 @@ struct iomap_readpage_ctx {
+ 	struct readahead_control *rac;
+ };
+ 
+-static void
+-iomap_read_inline_data(struct inode *inode, struct page *page,
++static int iomap_read_inline_data(struct inode *inode, struct page *page,
+ 		struct iomap *iomap)
+ {
+-	size_t size = i_size_read(inode);
++	size_t size = i_size_read(inode) - iomap->offset;
+ 	void *addr;
+ 
+ 	if (PageUptodate(page))
+-		return;
++		return 0;
+ 
+-	BUG_ON(page_has_private(page));
+-	BUG_ON(page->index);
+-	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	/* inline data must start page aligned in the file */
++	if (WARN_ON_ONCE(offset_in_page(iomap->offset)))
++		return -EIO;
++	if (WARN_ON_ONCE(size > PAGE_SIZE -
++			 offset_in_page(iomap->inline_data)))
++		return -EIO;
++	if (WARN_ON_ONCE(size > iomap->length))
++		return -EIO;
++	if (WARN_ON_ONCE(page_has_private(page)))
++		return -EIO;
+ 
+ 	addr = kmap_atomic(page);
+ 	memcpy(addr, iomap->inline_data, size);
+ 	memset(addr + size, 0, PAGE_SIZE - size);
+ 	kunmap_atomic(addr);
+ 	SetPageUptodate(page);
++	return 0;
+ }
+ 
+ static inline bool iomap_block_needs_zeroing(struct inode *inode,
+@@ -247,8 +254,10 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	sector_t sector;
+ 
+ 	if (iomap->type == IOMAP_INLINE) {
+-		WARN_ON_ONCE(pos);
+-		iomap_read_inline_data(inode, page, iomap);
++		int ret = iomap_read_inline_data(inode, page, iomap);
++
++		if (ret)
++			return ret;
+ 		return PAGE_SIZE;
+ 	}
+ 
+@@ -589,6 +598,15 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+ 	return 0;
+ }
+ 
++static int iomap_write_begin_inline(struct inode *inode,
++		struct page *page, struct iomap *srcmap)
++{
++	/* needs more work for the tailpacking case; disable for now */
++	if (WARN_ON_ONCE(srcmap->offset != 0))
++		return -EIO;
++	return iomap_read_inline_data(inode, page, srcmap);
++}
++
+ static int
+ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+ 		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
+@@ -618,7 +636,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+ 	}
+ 
+ 	if (srcmap->type == IOMAP_INLINE)
+-		iomap_read_inline_data(inode, page, srcmap);
++		status = iomap_write_begin_inline(inode, page, srcmap);
+ 	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
+ 		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
+ 	else
+@@ -671,11 +689,11 @@ static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
+ 	void *addr;
+ 
+ 	WARN_ON_ONCE(!PageUptodate(page));
+-	BUG_ON(pos + copied > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	BUG_ON(!iomap_inline_data_valid(iomap));
+ 
+ 	flush_dcache_page(page);
+ 	addr = kmap_atomic(page);
+-	memcpy(iomap->inline_data + pos, addr + pos, copied);
++	memcpy(iomap_inline_data(iomap, pos), addr + pos, copied);
+ 	kunmap_atomic(addr);
+ 
+ 	mark_inode_dirty(inode);
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 9398b8c31323..41ccbfc9dc82 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -378,23 +378,25 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		struct iomap_dio *dio, struct iomap *iomap)
+ {
+ 	struct iov_iter *iter = dio->submit.iter;
++	void *inline_data = iomap_inline_data(iomap, pos);
+ 	size_t copied;
+ 
+-	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	if (WARN_ON_ONCE(!iomap_inline_data_valid(iomap)))
++		return -EIO;
+ 
+ 	if (dio->flags & IOMAP_DIO_WRITE) {
+ 		loff_t size = inode->i_size;
+ 
+ 		if (pos > size)
+-			memset(iomap->inline_data + size, 0, pos - size);
+-		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
++			memset(iomap_inline_data(iomap, size), 0, pos - size);
++		copied = copy_from_iter(inline_data, length, iter);
+ 		if (copied) {
+ 			if (pos + copied > size)
+ 				i_size_write(inode, pos + copied);
+ 			mark_inode_dirty(inode);
+ 		}
+ 	} else {
+-		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
++		copied = copy_to_iter(inline_data, length, iter);
+ 	}
+ 	dio->size += copied;
+ 	return copied;
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 479c1da3e221..b8ec145b2975 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -97,6 +97,24 @@ iomap_sector(struct iomap *iomap, loff_t pos)
+ 	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+ }
+ 
++/*
++ * Returns the inline data pointer for logical offset @pos.
++ */
++static inline void *iomap_inline_data(struct iomap *iomap, loff_t pos)
++{
++	return iomap->inline_data + pos - iomap->offset;
++}
++
++/*
++ * Check if the mapping's length is within the valid range for inline data.
++ * This is used to guard against accessing data beyond the page inline_data
++ * points at.
++ */
++static inline bool iomap_inline_data_valid(struct iomap *iomap)
++{
++	return iomap->length <= PAGE_SIZE - offset_in_page(iomap->inline_data);
++}
++
+ /*
+  * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
+  * and page_done will be called for each page written to.  This only applies to
+-- 
+2.24.4
 
