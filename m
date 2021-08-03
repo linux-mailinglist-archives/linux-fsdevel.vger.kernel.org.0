@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2F883DE755
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 09:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEE3A3DE75C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 09:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234270AbhHCHlq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 03:41:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27533 "EHLO
+        id S234277AbhHCHl5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 03:41:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:30708 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234254AbhHCHlm (ORCPT
+        by vger.kernel.org with ESMTP id S234238AbhHCHl4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 03:41:42 -0400
+        Tue, 3 Aug 2021 03:41:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1627976491;
+        s=mimecast20190719; t=1627976506;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=XXZLExcEITdntTYG0Of03HReF9Mx2BfGVrCdJE4PA5o=;
-        b=C9wNBvp7uY+fMwiLY79ZG9HwKKwLLBPLcQahjva50Tp6iH3XjsHTILyMiOjkS2KTdHNntJ
-        UwfK7D7NhXZcLQXk+IWt7yxmD2zLHDdMDYoAcTgMKp7azFAyS4TIVXbXQVVH3gddjBsKpl
-        2DBigBWPnpu+DMc8KARoRiIz9b5kiVg=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-579-bCNADh4iN-my6Yr1OPev4g-1; Tue, 03 Aug 2021 03:41:30 -0400
-X-MC-Unique: bCNADh4iN-my6Yr1OPev4g-1
-Received: by mail-pl1-f197.google.com with SMTP id i7-20020a17090332c7b0290124e63feb68so15900952plr.17
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 00:41:29 -0700 (PDT)
+        bh=sEW12L7lEJwVitr0islGtcOwaqb3auoW/6llqcQs9Bo=;
+        b=FfH74tOm/n80+lYqV0aOjgw/VpCgeyp3m6yISnb7I4WUvRIMCIsSPnIddEMXdHqrgL4kSF
+        VAmuFp6uoMPhkpnBnqLR9psIutX4x/MEs5isC2COsALVVUvZQvl4i7Zr/w9gXYreHI/mC9
+        J6BFAqh9CY+e5NAuFeC3WHBGs98NlhE=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-270-kl4-8c6vPpanOh3884EV5g-1; Tue, 03 Aug 2021 03:41:44 -0400
+X-MC-Unique: kl4-8c6vPpanOh3884EV5g-1
+Received: by mail-pj1-f72.google.com with SMTP id f62-20020a17090a28c4b02901733dbfa29cso2220550pjd.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 00:41:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=XXZLExcEITdntTYG0Of03HReF9Mx2BfGVrCdJE4PA5o=;
-        b=Qx0VAj2soJCDz7rDHhTeO4bFhJIMhzg7QGDEOUPduMDRiwjtYu9b95+f3KbU6cKHDf
-         DA5QQDGBk6gDnb4RS1iNHZWOuAPMwSs0JE2KxElDgBjj9zdT9+Dd9oISuK5fWOpxWuWc
-         Roeu0OwLagjACvOzVXANsVhfr4OsJB24vM+syubB0CcsZU5e++Qc45bJyg7/wiLgdNLe
-         1OKx1lqTulTlUv8OntG4Pzq2uBieKdl5l9fmvwJ4LtsJcEp94eZcL6bNPcsUbd5tuVH0
-         wyzCSY1NsVwGlIzYV3Ln9UBfKNKMpBnm+8oe2FzeyFM4ZLEnarsaYOrQLtI2J5RHc5DM
-         jl4Q==
-X-Gm-Message-State: AOAM533Ky0KEW3knySV20tvr6QNtvcnLUOPHfho0INio9a7I5KX/8Us4
-        0+UDKUP+31ZFyZf4JpOB0Pq9v7zN9ciRc4SLX8NUEf4CUXiOxZYRPDgDzM+40vPywl24gYR5jqn
-        AHfFTU9+8PY8NR0D/hJTkaBY5Zg==
-X-Received: by 2002:aa7:961d:0:b029:3bc:dbdd:7a9b with SMTP id q29-20020aa7961d0000b02903bcdbdd7a9bmr9608162pfg.32.1627976489053;
-        Tue, 03 Aug 2021 00:41:29 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwwjX4aE2G2A/KT25YRVhvLPWveCcGvZhYValWvnC/74smyorfbkjI1EnjKESaebAF3OLAkpg==
-X-Received: by 2002:aa7:961d:0:b029:3bc:dbdd:7a9b with SMTP id q29-20020aa7961d0000b02903bcdbdd7a9bmr9608133pfg.32.1627976488686;
-        Tue, 03 Aug 2021 00:41:28 -0700 (PDT)
+        bh=sEW12L7lEJwVitr0islGtcOwaqb3auoW/6llqcQs9Bo=;
+        b=KHxzo5c+wFyskUw/VLV7d5Hz3pLBh5ygnWYj4+0yy5qxEp4NyhHX+NRjLPodeSoeKj
+         RMXoAyj4h8osbj9WNSL1HoQp0pDWMjEfx6T4Xu2udwopr9P8llz3KTIR/yvu2xYwIyic
+         XrwuOSs1DIG9f3jXJf70lQme+wX6Zu4D3FrrPp9bfz7tcT6YuQ7MDY0E7coYLOO8MqqL
+         5zgu893CdqF9KLTOf4YzM71EUppZ7kywsL3MhZ8irzYPzie7kxw6S96n3SlYASVSOg1W
+         EAuOQf5atkHI3z2zgCgAcG5mpAuzWhbQYEzCwVMxtzVWSR9xORhxszT6daO9ZEJN3zjs
+         pL8A==
+X-Gm-Message-State: AOAM531D75CnRrg3QZypcBTJ4JnpHXbTShOhJzYxFstou1VyYYdJi4Xo
+        xVr6jX6sO686I4yor3P7y6iYyv0zGjHI/+/U752H71I57v+RPY6Uw+tLfgkmW6hB1GXh4P2rBmd
+        NYAbTTkgk4LNN0uGEjpGsdIxaHA==
+X-Received: by 2002:a65:6658:: with SMTP id z24mr924184pgv.266.1627976503787;
+        Tue, 03 Aug 2021 00:41:43 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyTQ9FIMwD850kYRySFMOvwSa2Mh3zZSaM4w5MdRtHBvqDzhjK3JTqHR+x1mQoJbyhltJ0O8Q==
+X-Received: by 2002:a65:6658:: with SMTP id z24mr924161pgv.266.1627976503586;
+        Tue, 03 Aug 2021 00:41:43 -0700 (PDT)
 Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id j6sm16132108pgq.0.2021.08.03.00.41.20
+        by smtp.gmail.com with ESMTPSA id r15sm13016701pjl.29.2021.08.03.00.41.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Aug 2021 00:41:28 -0700 (PDT)
+        Tue, 03 Aug 2021 00:41:42 -0700 (PDT)
 Subject: Re: [PATCH v10 01/17] iova: Export alloc_iova_fast() and
  free_iova_fast()
 To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
@@ -70,8 +70,8 @@ Cc:     songmuchun@bytedance.com,
 References: <20210729073503.187-1-xieyongji@bytedance.com>
  <20210729073503.187-2-xieyongji@bytedance.com>
 From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <4eb84e87-21ef-608f-ae15-3e9bc442971c@redhat.com>
-Date:   Tue, 3 Aug 2021 15:41:18 +0800
+Message-ID: <43d88942-1cd3-c840-6fec-4155fd544d80@redhat.com>
+Date:   Tue, 3 Aug 2021 15:41:33 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
@@ -89,7 +89,7 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 > some modules can use it to improve iova allocation efficiency.
 
 
-It's better to explain which alloc_iova() is not sufficient here.
+It's better to explain why alloc_iova() is not sufficient here.
 
 Thanks
 
