@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 957963DE7F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 10:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BBE83DE807
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 10:11:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234494AbhHCIJz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 04:09:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:59238 "EHLO
+        id S234453AbhHCILL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 04:11:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39119 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234284AbhHCIJu (ORCPT
+        by vger.kernel.org with ESMTP id S234344AbhHCILJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 04:09:50 -0400
+        Tue, 3 Aug 2021 04:11:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1627978178;
+        s=mimecast20190719; t=1627978258;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=d/r6zvhdFIL6U9mMpelz1ZP/rGx2CiqZiJxW3s2xgLY=;
-        b=LOFwDr1VQuRJSPoCcXU7iZPYXL1N6dXCiShUeot75AojJ2dC082rcTa0pg4nbiIZnhZiGu
-        vndbAIxYvVnaW2xkCSaa7QdgXtCs4WTRILHqt4boUXY4Ij4UhcLWbG4ty8TesmV5roE+DE
-        IfFlnu8x0Bj9bnXUxKzUOMBjBYQeUio=
+        bh=zY0Qm6avJnx4fVfjFEoZtBf+5KuAldMVTd58ZzB3Cto=;
+        b=bNJ8lizq6MiVd9yH+5iGVvJdM2MBgBdV3O5VgUZbEql+yQF676e3dZ49eIaq2BIJWz0P52
+        /AzS+jJZu93WpHGBBdn83coKWzv0YRQeM/FMnZjm87eRaISJ9C32LXr3hPDUQoPvJpS4Eq
+        30yfgQynOZJ4/Dwse2Fc1K9e710zVDw=
 Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
  [209.85.214.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-191-Bavu5G4GNh2fIDowbhEOOQ-1; Tue, 03 Aug 2021 04:09:37 -0400
-X-MC-Unique: Bavu5G4GNh2fIDowbhEOOQ-1
-Received: by mail-pl1-f197.google.com with SMTP id f17-20020a170902ab91b029012c3bac8d81so15970756plr.23
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 01:09:37 -0700 (PDT)
+ us-mta-287-nBmYZa1wPxSBBxQ33AkWKQ-1; Tue, 03 Aug 2021 04:10:57 -0400
+X-MC-Unique: nBmYZa1wPxSBBxQ33AkWKQ-1
+Received: by mail-pl1-f197.google.com with SMTP id a17-20020a170902ecd1b029012c22956f93so16006754plh.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 01:10:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=d/r6zvhdFIL6U9mMpelz1ZP/rGx2CiqZiJxW3s2xgLY=;
-        b=jvv7IkKRFrmXOeFT4vyCvOn5YIOovodHx9cwlS3hsLyQRDG5TekhhOeVM3e6XRsQr7
-         AeS9Km2oRavrXpiAiBQJ1M7CGkp9P+OurtLIR06ScW6l5wlNZAd2qiArietLgpwaEMDo
-         irqzlvd37kojz8N8OjEvD5s/XMwUmAqA+hxQ9FZBFqBNNviSUVCbu6/HjZofVYphd+Tx
-         O10TbZqaExfBLZ3+Vw4r11bCUlWkcqDtqEHw93m6KsirHGoQeanb0ResFxV5XAm9o4qw
-         fVlSkh8vbLIQZVoPRoXI72uNozpOJXWvgy5FwrYn58tppR8V4MXWo03eQDmTuKbIUYGI
-         D5qw==
-X-Gm-Message-State: AOAM532ss5txAh686opQBtaTyytUTgFJ1sfKa/r1Cmhx51skRehZpE2k
-        hccVigXEU5W89dc02k+nP8j5ZDXnDzqRo60RgAndBDth48/eC/EbyjthiDBSZDRsjvJ7k4n0tz9
-        4ewNDZ9YHXTNLHyJnVxJmY/Eu/w==
-X-Received: by 2002:aa7:8e51:0:b029:332:920f:1430 with SMTP id d17-20020aa78e510000b0290332920f1430mr21300598pfr.1.1627978176647;
-        Tue, 03 Aug 2021 01:09:36 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx7eB41SimgYU81rcElaZj+nONhqTjmXUgDQCX8JCwgqwPPspHzUgCCQ+CXUVfMnpfJwz3SQw==
-X-Received: by 2002:aa7:8e51:0:b029:332:920f:1430 with SMTP id d17-20020aa78e510000b0290332920f1430mr21300550pfr.1.1627978176387;
-        Tue, 03 Aug 2021 01:09:36 -0700 (PDT)
+        bh=zY0Qm6avJnx4fVfjFEoZtBf+5KuAldMVTd58ZzB3Cto=;
+        b=r6hjC0nLwH4isDUel9iYYYQdn6DaGTHUrsCGl0uSJPPenXnkDvvMaYLiagXqtv0IUt
+         8M2pwlL8IaDq4ZIgZ6rHyHrCsC7UxqkuVY9GWC0VK3krFc12QDYum/0eeYUhDeEEZR+l
+         7WxtJalLVgUSXzRZWP/8DtSznYCLUSQsrwu30Kvr+SM9dl3nAv8zB9vjkO/DKGl2JT5X
+         E+wd/aUeEEAlx0sXykjV7xM9lsna1mtuGda6g8DvMYLiM9iKuVMYfrXVyYDRsfQ2uKzD
+         vnCk2MFgYFN4BbdCaOoIkt05aE7QQhpKec+xysdL9tjzD44ugLsE+SeuUfpxm1uZ5TWq
+         43+Q==
+X-Gm-Message-State: AOAM5332nRA9eZY0WSBduEyasNHLchVZBrf8X+sGgFQnPrrD786o/SYS
+        co0qfYLLI66At+Ux5UVVVMQeZkla7alHFKdBdQ47CT7vQ2x0wOmyc/uAIvbNp3Z0liNwHDtZ7Sy
+        rpcHlolTQfGRY6O+wckg2h/dtpw==
+X-Received: by 2002:a63:f904:: with SMTP id h4mr2936175pgi.238.1627978255984;
+        Tue, 03 Aug 2021 01:10:55 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwH8hbLkAijKqHClsGdxbrFT2e5OFHsYSjNhxOgbwifClMzXSHDtPi9YbQ4DmXvoCPE/e8DcA==
+X-Received: by 2002:a63:f904:: with SMTP id h4mr2936146pgi.238.1627978255811;
+        Tue, 03 Aug 2021 01:10:55 -0700 (PDT)
 Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id j10sm15534492pfd.200.2021.08.03.01.09.28
+        by smtp.gmail.com with ESMTPSA id u21sm14097827pfh.163.2021.08.03.01.10.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Aug 2021 01:09:35 -0700 (PDT)
-Subject: Re: [PATCH v10 10/17] virtio: Handle device reset failure in
- register_virtio_device()
+        Tue, 03 Aug 2021 01:10:55 -0700 (PDT)
+Subject: Re: [PATCH v10 05/17] vhost-vdpa: Fail the vhost_vdpa_set_status() on
+ reset failure
 To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
         stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
         hch@infradead.org, christian.brauner@canonical.com,
@@ -68,14 +68,14 @@ Cc:     songmuchun@bytedance.com,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 References: <20210729073503.187-1-xieyongji@bytedance.com>
- <20210729073503.187-11-xieyongji@bytedance.com>
+ <20210729073503.187-6-xieyongji@bytedance.com>
 From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <6bb6c689-e6dd-cfa2-094b-a0ca4258aded@redhat.com>
-Date:   Tue, 3 Aug 2021 16:09:23 +0800
+Message-ID: <55191de0-1a03-ff0d-1a49-afc419014bab@redhat.com>
+Date:   Tue, 3 Aug 2021 16:10:46 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <20210729073503.187-11-xieyongji@bytedance.com>
+In-Reply-To: <20210729073503.187-6-xieyongji@bytedance.com>
 Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
@@ -85,53 +85,52 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 ÔÚ 2021/7/29 ÏÂÎç3:34, Xie Yongji Ð´µÀ:
-> The device reset may fail in virtio-vdpa case now, so add checks to
-> its return value and fail the register_virtio_device().
+> Re-read the device status to ensure it's set to zero during
+> resetting. Otherwise, fail the vhost_vdpa_set_status() after timeout.
+>
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> ---
+>   drivers/vhost/vdpa.c | 11 ++++++++++-
+>   1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> index b07aa161f7ad..dd05c1e1133c 100644
+> --- a/drivers/vhost/vdpa.c
+> +++ b/drivers/vhost/vdpa.c
+> @@ -157,7 +157,7 @@ static long vhost_vdpa_set_status(struct vhost_vdpa *v, u8 __user *statusp)
+>   	struct vdpa_device *vdpa = v->vdpa;
+>   	const struct vdpa_config_ops *ops = vdpa->config;
+>   	u8 status, status_old;
+> -	int nvqs = v->nvqs;
+> +	int timeout = 0, nvqs = v->nvqs;
+>   	u16 i;
+>   
+>   	if (copy_from_user(&status, statusp, sizeof(status)))
+> @@ -173,6 +173,15 @@ static long vhost_vdpa_set_status(struct vhost_vdpa *v, u8 __user *statusp)
+>   		return -EINVAL;
+>   
+>   	ops->set_status(vdpa, status);
+> +	if (status == 0) {
+> +		while (ops->get_status(vdpa)) {
+> +			timeout += 20;
+> +			if (timeout > VDPA_RESET_TIMEOUT_MS)
+> +				return -EIO;
+> +
+> +			msleep(20);
+> +		}
 
 
-So the reset() would be called by the driver during remove as well, or 
-is it sufficient to deal only with the reset during probe?
+Spec has introduced the reset a one of the basic facility. And consider 
+we differ reset here.
+
+This makes me think if it's better to introduce a dedicated vdpa ops for 
+reset?
 
 Thanks
 
 
->
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> ---
->   drivers/virtio/virtio.c | 15 ++++++++++-----
->   1 file changed, 10 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-> index a15beb6b593b..8df75425fb43 100644
-> --- a/drivers/virtio/virtio.c
-> +++ b/drivers/virtio/virtio.c
-> @@ -349,7 +349,9 @@ int register_virtio_device(struct virtio_device *dev)
+> +	}
 >   
->   	/* We always start by resetting the device, in case a previous
->   	 * driver messed it up.  This also tests that code path a little. */
-> -	dev->config->reset(dev);
-> +	err = dev->config->reset(dev);
-> +	if (err)
-> +		goto err_reset;
->   
->   	/* Acknowledge that we've seen the device. */
->   	virtio_add_status(dev, VIRTIO_CONFIG_S_ACKNOWLEDGE);
-> @@ -362,10 +364,13 @@ int register_virtio_device(struct virtio_device *dev)
->   	 */
->   	err = device_add(&dev->dev);
->   	if (err)
-> -		ida_simple_remove(&virtio_index_ida, dev->index);
-> -out:
-> -	if (err)
-> -		virtio_add_status(dev, VIRTIO_CONFIG_S_FAILED);
-> +		goto err_add;
-> +
-> +	return 0;
-> +err_add:
-> +	virtio_add_status(dev, VIRTIO_CONFIG_S_FAILED);
-> +err_reset:
-> +	ida_simple_remove(&virtio_index_ida, dev->index);
->   	return err;
->   }
->   EXPORT_SYMBOL_GPL(register_virtio_device);
+>   	if ((status & VIRTIO_CONFIG_S_DRIVER_OK) && !(status_old & VIRTIO_CONFIG_S_DRIVER_OK))
+>   		for (i = 0; i < nvqs; i++)
 
