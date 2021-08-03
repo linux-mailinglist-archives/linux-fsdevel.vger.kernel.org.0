@@ -2,112 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 658413DF44C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 20:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FD133DF54C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 21:18:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238638AbhHCSER (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 14:04:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56472 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238628AbhHCSER (ORCPT
+        id S239620AbhHCTSm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 15:18:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24153 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238188AbhHCTSm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 14:04:17 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53A8BC06175F
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Aug 2021 11:04:05 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id h14so26218658wrx.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 11:04:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pi1UXkTQldERNML991jYDsPgWN1vYpM8GjLB7gfzc1E=;
-        b=K8HR+dehCQLfMWVbgpOXAwZzR9jl0or7LFqyt8BEGPHsBv4hPgHGU/ZvsIHS/sFaaf
-         Htq7b+CtfBMd1JcOGpyhgumXlWapNrJELVOGQpIVTtxAlzLtIkRrxgrdwkxQ45wt5loh
-         eM29eoG+f2uncAgpewtXpgb2fD1+1gMLJR+z1o+jaM5E4MvN76Ct3prmEguZucRvVA8g
-         L5IkBY1k/hAiacpbI4VgtM4uZRjT+9qDWpx40UhbLHncC8qPWm1JFw44RnYVK5cyWeJS
-         4sS/qltssXTiLlkZcne6Z1g+np1LmCY2ajOlqe9w9R3apZNKsjW2/GwF272QpbSQ7Pu/
-         kzOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pi1UXkTQldERNML991jYDsPgWN1vYpM8GjLB7gfzc1E=;
-        b=k3AnGR0y6S5TvLb/ydpqWRqZ1ucoS4N3D28LdSCryYbgQaUYVkN0ISM4CBebEf/KMb
-         thrJutf2vGs2Gsojl0Xmb84YmyueC1Sbepoh72i9Rt0Del6KI8QqLYqzaOzeL6xFOlB9
-         U1nlJRFZ8XukIryITGjfzWZFMkY2Dr0szbb5oINPy3HlzZr9RaVKGuMyTQ2gIS2tTCD6
-         1NvM1zifhcYk9cBzhP0nIa/SSBXj6fM/DbBdaC12CZf9SG094xNn4zoKKCGJ3kTuBrka
-         9iQ6VGWDfdbgcRm9e7psSWdJuyqk+n0cd6sBI0RHbuHK3mbxcUg0tqz00uQQk800Gym0
-         3Jmw==
-X-Gm-Message-State: AOAM533ShV211w8GK1rFU/x2mptsJGBwq59550WgPjYrIltxaSLDf7A3
-        0yE7M1cj55HsubPPOHAIKgzGSM5pVp4=
-X-Google-Smtp-Source: ABdhPJwH5BHhiJ5aJqS6GbmbvxoKhccrgv9Wpm03zIysFDtMfyQnKchFlU/dQWhUg3VSqRaSbDChUQ==
-X-Received: by 2002:adf:d085:: with SMTP id y5mr23877371wrh.272.1628013844012;
-        Tue, 03 Aug 2021 11:04:04 -0700 (PDT)
-Received: from localhost.localdomain ([185.110.110.213])
-        by smtp.gmail.com with ESMTPSA id b14sm15515555wrm.43.2021.08.03.11.04.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Aug 2021 11:04:03 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/4] fsnotify: optimize the case of no marks of any type
-Date:   Tue,  3 Aug 2021 21:03:44 +0300
-Message-Id: <20210803180344.2398374-5-amir73il@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210803180344.2398374-1-amir73il@gmail.com>
-References: <20210803180344.2398374-1-amir73il@gmail.com>
+        Tue, 3 Aug 2021 15:18:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628018310;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=DFWNnmq4Fr86FBlSANVnWR2moKkcBcoaXFNT4Ed8iZI=;
+        b=GUGv0mS3pNi1zkLJK9e7s+5n1E73K26ZxFODYss2YvqTvZHa+7NKApvYaD0cmOxWM605Bn
+        tvUUmFAJnYo17xufh9ElV0tEeZ+kUKGACVCW7cCz7nqx6FDovmdYDxO2PPjFwwmSc4O6k+
+        eAaYL9jZXn917E9ERK8QgkIcMU0nRLk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-102-F09b58fmOROfEYdP18qfSQ-1; Tue, 03 Aug 2021 15:18:29 -0400
+X-MC-Unique: F09b58fmOROfEYdP18qfSQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C48F83E741;
+        Tue,  3 Aug 2021 19:18:27 +0000 (UTC)
+Received: from max.com (unknown [10.40.193.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EC59860C0F;
+        Tue,  3 Aug 2021 19:18:20 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        kvm-ppc@vger.kernel.org
+Subject: [PATCH v5 00/12] gfs2: Fix mmap + page fault deadlocks
+Date:   Tue,  3 Aug 2021 21:18:06 +0200
+Message-Id: <20210803191818.993968-1-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a simple check in the inline helpers to avoid calling fsnotify()
-and __fsnotify_parent() in case there are no marks of any type
-(inode/sb/mount) for an inode's sb, so there can be no objects
-of any type interested in the event.
+Hi all,
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- include/linux/fsnotify.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+here's another update on top of v5.14-rc4.  There seems to be a bug in
+get_user_pages_fast when called with FOLL_FAST_ONLY; please see below.
 
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index f8acddcf54fb..12d3a7d308ab 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -30,6 +30,9 @@ static inline void fsnotify_name(struct inode *dir, __u32 mask,
- 				 struct inode *child,
- 				 const struct qstr *name, u32 cookie)
- {
-+	if (atomic_long_read(&dir->i_sb->s_fsnotify_connectors) == 0)
-+		return;
-+
- 	fsnotify(mask, child, FSNOTIFY_EVENT_INODE, dir, name, NULL, cookie);
- }
- 
-@@ -41,6 +44,9 @@ static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
- 
- static inline void fsnotify_inode(struct inode *inode, __u32 mask)
- {
-+	if (atomic_long_read(&inode->i_sb->s_fsnotify_connectors) == 0)
-+		return;
-+
- 	if (S_ISDIR(inode->i_mode))
- 		mask |= FS_ISDIR;
- 
-@@ -53,6 +59,9 @@ static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
- {
- 	struct inode *inode = d_inode(dentry);
- 
-+	if (atomic_long_read(&inode->i_sb->s_fsnotify_connectors) == 0)
-+		return 0;
-+
- 	if (S_ISDIR(inode->i_mode)) {
- 		mask |= FS_ISDIR;
- 
+Changes:
+
+ * Change fault_in_pages_{readable,writeable} to return the number of
+   bytes that should be accessible instead of failing outright when
+   part of the requested region cannot be faulted in.  Change
+   iov_iter_fault_in_readable to those same semantics.
+
+ * Add fault_in_iov_iter_writeable for safely faulting in pages for
+   writing without modifying the pages.
+
+
+With this patch queue, fstest generic/208 (aio-dio-invalidate-failure.c)
+endlessly spins in gfs2_file_direct_write.  It looks as if there's a bug
+in get_user_pages_fast when called with FOLL_FAST_ONLY:
+
+ (1) The test case performs an aio write into a 32 MB buffer.
+
+ (2) The buffer is initially not in memory, so when iomap_dio_rw() ->
+     ... -> bio_iov_iter_get_pages() is called with the iter->noio flag
+     set, we get to get_user_pages_fast() with FOLL_FAST_ONLY set.
+     get_user_pages_fast() returns 0, which causes
+     bio_iov_iter_get_pages to return -EFAULT.
+
+ (3) Then gfs2_file_direct_write faults in the entire buffer with
+     fault_in_iov_iter_readable(), which succeeds.
+
+ (4) With the buffer in memory, we retry the iomap_dio_rw() ->
+     ... -> bio_iov_iter_get_pages() -> ... -> get_user_pages_fast().
+     This should succeed now, but get_user_pages_fast() still returns 0.
+
+ (5) Thus we end up in step (3) again.
+
+The buffered writes generic/208 performs are unrelated to this hang.
+
+
+Apart from the generic/208 hang, gfs2 still needs a better strategy for
+faulting in more reasonable chunks of memory at a time and for resuming
+requests after faulting in pages.  We've got some of the pieces in place
+for safely allowing that, but more work remains to be done.
+
+
+For immediate consideration by Al Viro:
+
+  iov_iter: Fix iov_iter_get_pages{,_alloc} page fault return value
+
+
+For immediate consideration by Paul Mackerras:
+
+  powerpc/kvm: Fix kvm_use_magic_page
+
+
+Thanks,
+Andreas
+
+
+Andreas Gruenbacher (12):
+  iov_iter: Fix iov_iter_get_pages{,_alloc} page fault return value
+  powerpc/kvm: Fix kvm_use_magic_page
+  Turn fault_in_pages_{readable,writeable} into
+    fault_in_{readable,writeable}
+  Turn iov_iter_fault_in_readable into fault_in_iov_iter_readable
+  iov_iter: Introduce fault_in_iov_iter_writeable
+  gfs2: Add wrapper for iomap_file_buffered_write
+  gfs2: Fix mmap + page fault deadlocks for buffered I/O
+  iomap: Fix iomap_dio_rw return value for user copies
+  iomap: Support restarting direct I/O requests after user copy failures
+  iomap: Add done_before argument to iomap_dio_rw
+  iov_iter: Introduce noio flag to disable page faults
+  gfs2: Fix mmap + page fault deadlocks for direct I/O
+
+ arch/powerpc/kernel/kvm.c           |   3 +-
+ arch/powerpc/kernel/signal_32.c     |   4 +-
+ arch/powerpc/kernel/signal_64.c     |   2 +-
+ arch/x86/kernel/fpu/signal.c        |   8 +-
+ drivers/gpu/drm/armada/armada_gem.c |   7 +-
+ fs/btrfs/file.c                     |   8 +-
+ fs/btrfs/ioctl.c                    |   7 +-
+ fs/ext4/file.c                      |   5 +-
+ fs/f2fs/file.c                      |   6 +-
+ fs/fuse/file.c                      |   2 +-
+ fs/gfs2/file.c                      |  95 ++++++++++++++++++++---
+ fs/iomap/buffered-io.c              |   2 +-
+ fs/iomap/direct-io.c                |  28 +++++--
+ fs/ntfs/file.c                      |   2 +-
+ fs/xfs/xfs_file.c                   |   6 +-
+ fs/zonefs/super.c                   |   4 +-
+ include/linux/iomap.h               |  11 ++-
+ include/linux/pagemap.h             |  58 +-------------
+ include/linux/uio.h                 |   4 +-
+ lib/iov_iter.c                      | 107 ++++++++++++++++++++------
+ mm/filemap.c                        |   4 +-
+ mm/gup.c                            | 113 ++++++++++++++++++++++++++++
+ 22 files changed, 360 insertions(+), 126 deletions(-)
+
 -- 
-2.25.1
+2.26.3
 
