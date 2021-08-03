@@ -2,207 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A9CA83DF7CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 00:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B34D3DF818
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 00:49:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbhHCWan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 18:30:43 -0400
-Received: from mout.gmx.net ([212.227.15.15]:36707 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229611AbhHCWan (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 18:30:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1628029793;
-        bh=VveEwFhEVJvR/f/tkOmF9Se0fAJfnMxJr2QcJgUnUxs=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=M1qfLh2SJbmIagyvcq+cnaGlKJz64Cke+Qh7c+9cVNXa574IpTdbBUKxceokYemJz
-         kpb2X4YfppO9a0uemi0w5lFdu7TK9zPSoPJrbdMS0nArf7sbIobf9Cs5xL2zP0VbtA
-         NEpCPv4KRN4g1oZd124PErfItsvcaw5p+HdMAIF4=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MKsnP-1mRDGH1W3R-00LIhr; Wed, 04
- Aug 2021 00:29:53 +0200
-Subject: Re: A Third perspective on BTRFS nfsd subvol dev/inode number issues.
-To:     Josef Bacik <josef@toxicpanda.com>,
-        Amir Goldstein <amir73il@gmail.com>, NeilBrown <neilb@suse.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Christoph Hellwig <hch@infradead.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
+        id S231329AbhHCWtZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 18:49:25 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:35432 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230141AbhHCWtU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Aug 2021 18:49:20 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 173MmaxP028414
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 3 Aug 2021 18:48:36 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 291E015C3DEA; Tue,  3 Aug 2021 18:48:36 -0400 (EDT)
+Date:   Tue, 3 Aug 2021 18:48:36 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Leonidas P. Papadakos" <papadakospan@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        zajec5@gmail.com, "Darrick J. Wong" <djwong@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
- <162742546548.32498.10889023150565429936.stgit@noble.brown>
- <YQNG+ivSssWNmY9O@zeniv-ca.linux.org.uk>
- <162762290067.21659.4783063641244045179@noble.neil.brown.name>
- <CAJfpegsR1qvWAKNmdjLfOewUeQy-b6YBK4pcHf7JBExAqqUvvg@mail.gmail.com>
- <162762562934.21659.18227858730706293633@noble.neil.brown.name>
- <CAJfpegtu3NKW9m2jepRrXe4UTuD6_3k0Y6TcCBLSQH7SSC90BA@mail.gmail.com>
- <162763043341.21659.15645923585962859662@noble.neil.brown.name>
- <CAJfpegub4oBZCBXFQqc8J-zUiSW+KaYZLjZaeVm_cGzNVpxj+A@mail.gmail.com>
- <162787790940.32159.14588617595952736785@noble.neil.brown.name>
- <YQeB3ASDyO0wSgL4@zeniv-ca.linux.org.uk>
- <162788285645.32159.12666247391785546590@noble.neil.brown.name>
- <CAOQ4uxgnGWMUvtyJ0MMxMzHFwiyR68FHorDNmLSva0CdpVNNcQ@mail.gmail.com>
- <2337f1ba-ffed-2369-47a0-5ffda2d8b51c@toxicpanda.com>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Message-ID: <beb00e40-1058-d88e-6d06-b0ffddacbb39@gmx.com>
-Date:   Wed, 4 Aug 2021 06:29:43 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
+Message-ID: <YQnHxIU+EAAxIjZA@mit.edu>
+References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
+ <20210716114635.14797-1-papadakospan@gmail.com>
+ <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2337f1ba-ffed-2369-47a0-5ffda2d8b51c@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2TuxT3PyCrTEnO/hkRUoOTuzj2XgLWwrnVTW5B6pRr40jcn0WXr
- mQqMkccd72wUN0TWhncxG+kH6P3+A6b91xUcNaK7gVCaa4SJSLbHhqY8Q8+yx778AdNfhqa
- tNbOmWi6ZlfAdyUwKqIYjjaO4ycvBelcSjBwkWrwkbZyNE5s9onDNdhUMkP9YwDGKVfFZ06
- tylcnRrAgbfFvuJNGRWTA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:gDT4QhjdgvU=:y6faMYwKxIYgcmY7jehv0O
- mbko+1dYIyxsCrFx67MSaNHG3qGWH2n1RXXlFf3Afa4yD+0vtpQLbKeu+Am3TSJNiqhKOxW/Z
- /7q11mQRLQowCSTNgOLW4Chor8K1XBA0W6iwc2vPSCUZR0a9A2plBkQNbgJ2NZ5udWAOhnAur
- Lmxou383SZ0sVGQ3C2ODI2pR7HMYbJAeMKgKKvc71cPAlb/JLQ8df3MQi97jM13R+kbwYI85J
- o+XUbWWZBuna0yEDq1MmdaxjtbAukWpKCEWx7erxqEyQQstniR0nWZC7Kw9BxdpVGcqU2COAN
- O06IGkpz7Z1bmQIZ0+zCUhhHhDSKNR6weHNdE48Nc5GSMP+aWGndxUxILoDx5eeRIZtFVQ+HB
- ipZHOx3rQcnhY6xrGVO8AYG1MPcUnwALaZ7Y1JcRK7y8XH1X8kIWzbnLbMT0hwB2W+e2QwQie
- H4D9vgWZgfxQfNCWFQS0qQ9avnWEoj//PvuCTjjFAZgGdrMfo/RVE/qqKTcXoQYDp5WVKVJjW
- 9WpVEaKtWP5rr56mzhcteFpE9zkWewUbFN7SnJ1TancEjj9Tybry5ZyK1L15zKG08lE3NhgIh
- RfKDhXQu+G9S5q7uqySwVsTEKpp/dGc7nray4PzRtJi0lo3xA5G2NxPZNY75tCATGuBoGNuMl
- THGkfNWmqbY1PIGnJHfPA9LWgSKc2lwgGNfdIPNWMkP+32R0NVr+g8v9v/zlzmLTq+H6Qb2kl
- 07DISMVm6yW2+9VvA15/RCaN/OApWDYRjff/Ty8Eoms5maikg/LBqyG3btxkC0aRRFRglufC9
- 6IBUqUwnCCZ8vtuHxZFHrUQPonAHCL+T1LMKhP1jWt+nn57gwbZAt++QR2KscP0IbB2K3RaJK
- YDIbc3BAD9u7VaypwgNI+IJZ8encNEiCuxGkl+Dk93qkWfRXNsjRlGv8YsUwexHR5WPAYP2R/
- /6uRjZ6a6EVbo2FZjA7YhPdgo17dly2iYoY4hgMMbdUeMGktvd8gb4uux2O+VfJ8dY0z9AXNI
- PiVna2i+KECUmOed/sp6Wr/NUjA8aFNPYocGhdqQA+0BrJsCev/fwdsvdisHvnTbBJXh8UyHC
- CxrAvpslK1kC33nFBRXmcyKFkDRj9CRlKyBz245/7dogGy0NFza/kqdXg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jul 16, 2021 at 11:07:29AM -0700, Linus Torvalds wrote:
+> 
+> The argument that "it's already in a much better state than the old
+> ntfs driver" may not be a very strong technical argument (not because
+> of any Paragon problems - just because the old ntfs driver is not
+> great), but it _is_ a fairly strong argument for merging the new one
+> from Paragon.
 
+I'm not 100% sure that "it's better than the old driver", actually.
+Konstantin has not been responding to Darrick and my questions about
+what sort of QA and testing they were doing.
 
-On 2021/8/2 =E4=B8=8B=E5=8D=889:53, Josef Bacik wrote:
-> On 8/2/21 3:54 AM, Amir Goldstein wrote:
->> On Mon, Aug 2, 2021 at 8:41 AM NeilBrown <neilb@suse.de> wrote:
->>>
->>> On Mon, 02 Aug 2021, Al Viro wrote:
->>>> On Mon, Aug 02, 2021 at 02:18:29PM +1000, NeilBrown wrote:
->>>>
->>>>> It think we need to bite-the-bullet and decide that 64bits is not
->>>>> enough, and in fact no number of bits will ever be enough.=C2=A0 ove=
-rlayfs
->>>>> makes this clear.
->>>>
->>>> Sure - let's go for broke and use XML.=C2=A0 Oh, wait - it's 8 months=
- too
->>>> early...
->>>>
->>>>> So I think we need to strongly encourage user-space to start using
->>>>> name_to_handle_at() whenever there is a need to test if two things a=
-re
->>>>> the same.
->>>>
->>>> ... and forgetting the inconvenient facts, such as that two different
->>>> fhandles may correspond to the same object.
->>>
->>> Can they?=C2=A0 They certainly can if the "connectable" flag is passed=
-.
->>> name_to_handle_at() cannot set that flag.
->>> nfsd can, so using name_to_handle_at() on an NFS filesystem isn't quit=
-e
->>> perfect.=C2=A0 However it is the best that can be done over NFS.
->>>
->>> Or is there some other situation where two different filehandles can b=
-e
->>> reported for the same inode?
->>>
->>> Do you have a better suggestion?
->>>
->>
->> Neil,
->>
->> I think the plan of "changing the world" is not very realistic.
->> Sure, *some* tools can be changed, but all of them?
->>
->> I went back to read your initial cover letter to understand the
->> problem and what I mostly found there was that the view of
->> /proc/x/mountinfo was hiding information that is important for
->> some tools to understand what is going on with btrfs subvols.
->>
->> Well I am not a UNIX history expert, but I suppose that
->> /proc/PID/mountinfo was created because /proc/mounts and
->> /proc/PID/mounts no longer provided tool with all the information
->> about Linux mounts.
->>
->> Maybe it's time for a new interface to query the more advanced
->> sb/mount topology? fsinfo() maybe? With mount2 compatible API for
->> traversing mounts that is not limited to reporting all entries inside
->> a single page. I suppose we could go for some hierarchical view
->> under /proc/PID/mounttree. I don't know - new API is hard.
->>
->> In any case, instead of changing st_dev and st_ino or changing the
->> world to work with file handles, why not add inode generation (and
->> maybe subvol id) to statx().
->> filesystem that care enough will provide this information and tools tha=
-t
->> care enough will use it.
->>
->
-> Can y'all wait till I'm back from vacation, goddamn ;)
->
-> This is what I'm aiming for, I spent some time looking at how many
-> places we string parse /proc/<whatever>/mounts and my head hurts.
->
-> Btrfs already has a reasonable solution for this, we have UUID's for
-> everything.=C2=A0 UUID's aren't a strictly btrfs thing either, all the f=
-ile
-> systems have some sort of UUID identifier, hell its built into blkid.=C2=
-=A0 I
-> would love if we could do a better job about letting applications query
-> information about where they are.=C2=A0 And we could expose this with th=
-e
-> relatively common UUID format.=C2=A0 You ask what fs you're in, you get =
-the
-> FS UUID, and then if you're on Btrfs you get the specific subvolume UUID
-> you're in.=C2=A0 That way you could do more fancy things like know if yo=
-u've
-> wandered into a new file system completely or just a different subvolume=
-.
+So over the weekend, I decided to take efforts into my own hands, and
+made the relatively simple changes to fstests needed to add support
+for ntfs and ntfs3 file systems.  The results show that the number
+fstests failures in ntfs3 is 23% *more* than ntfs.  This includes a
+potential deadlock bug, and generic/475 reliably livelocking.  Ntfs3
+is also currently not container compatible, because it's not properly
+handling user namespaces.
 
-I'm completely on the side of using proper UUID.
+For more details, please see [1] and [2] for the complete set of test
+artifacts.
 
-But suddenly I find a problem for this, at least we still need something
-like st_dev for real volume based snapshot.
+[1] https://www.kernel.org/pub/linux/kernel/people/tytso/fstests-results/results-ntfs-2021-08-02.tar.xz
+[2] https://www.kernel.org/pub/linux/kernel/people/tytso/fstests-results/results-ntfs3-2021-08-03.tar.xz
 
-One of the problem for real volume based snapshot is, the snapshoted
-volume is completely the same filesystem, every binary is the same,
-including UUID.
+> And I don't think there has been any huge _complaints_ about the code,
+> and I don't think there's been any sign that being outside the kernel
+> helps.
 
-That means, the only way to distinguish such volumes is by st_dev.
+Historically, the file system community at large have pushed for a
+fairly high bar before a file system is merged into the kernel,
+because there was a concern that once a file system got dumped into
+fs/ if the maintainers weren't going to commit to continuous
+improvement of their file system --- the only leverage we might have
+is what effectively amounts to "hazing" to make sure that the
+propsective maintainers would actually be serious about continuing to
+work on the file system.
 
-For such pure UUID base solution, it's in fact unable to distinguish
-them using just UUID.
-Unless we have some device UUID to replace the old st_dev.
+One argument for why this should be the case is that unlike a dodgy
+driver that "just" causes the kernel to crash, if data ends up getting
+corrupted, simply rebooting won't recover the user's data.  And once a
+file system is added to mainline, it's a lot harder to remove it if it
+turns out to be buggy as all h*ck. 
 
-Thanks,
-Qu
+It's not clear this has been an effective strategy.  And there are
+other ways we could handle an abandonware file system --- we could
+liberally festoon its Kconfig with warnings and printk "DANGER WILL
+ROBINSON" messages when someone attempts to use a dodgy file system in
+mainline.  But I think whatever rationale we give for accepting --- or
+holding off --- on ntfs3, we should also think about how we should be
+handling requests from other file systems such as bcachefs, reiserfs4,
+tux3, etc.
 
->
-> We have to keep the st_ino/st_dev thing for backwards compatibility, but
-> make it easier to get more info out of the file system.
->
-> We could in theory expose just the subvolid also, since that's a nice
-> simple u64, but it limits our ability to do new fancy shit in the
-> future.=C2=A0 It's not a bad solution, but like I said I think we need t=
-o
-> take a step back and figure out what problem we're specifically trying
-> to solve, and work from there.=C2=A0 Starting from automounts and workin=
-g our
-> way back is not going very well.=C2=A0 Thanks,
->
-> Josef
+Maybe this should be a maintainers summit discussion topic?  I
+dunno....
+
+					- Ted
+
+P.S.  Here is the summary of the test results of running ntfs and
+ntfs3 on 5.14-rc2, with the latest ntfs3 patches applied.  Note that
+for ntfs3, I had to manually exclude generic/475, since running that
+test will cause the kernel to lock up and prevent the rest of the
+tesets from running.  So that's really 68 fstests failures for ntfs3,
+versus 55 fstests failures for ntfs.
+
+And it's really not the absolute number of test failures that bothers
+me, so much as the complete radio silence from Konstantin after you've
+indicated that you are willing to take the ntfs3 merge request.  It
+increases the concerns I personally have that ntfs3 might end up
+becoming abandonware after it's been accepted.
+
+ntfs/default: 670 tests, 55 failures, 211 skipped, 34783 seconds
+  Failures: generic/003 generic/035 generic/053 generic/062 
+    generic/087 generic/088 generic/093 generic/097 generic/099 
+    generic/102 generic/105 generic/123 generic/126 generic/193 
+    generic/226 generic/237 generic/260 generic/294 generic/306 
+    generic/307 generic/314 generic/317 generic/318 generic/319 
+    generic/321 generic/355 generic/375 generic/378 generic/409 
+    generic/410 generic/411 generic/416 generic/423 generic/424 
+    generic/426 generic/427 generic/441 generic/444 generic/452 
+    generic/466 generic/467 generic/475 generic/477 generic/500 
+    generic/525 generic/529 generic/545 generic/547 generic/553 
+    generic/555 generic/564 generic/589 generic/597 generic/629 
+    generic/631 
+
+ntfs3/default: 664 tests, 67 failures, 206 skipped, 8106 seconds
+  Failures: generic/013 generic/015 generic/034 generic/039 
+    generic/040 generic/041 generic/056 generic/057 generic/065 
+    generic/066 generic/073 generic/083 generic/090 generic/091 
+    generic/092 generic/094 generic/101 generic/102 generic/104 
+    generic/106 generic/107 generic/130 generic/225 generic/226 
+    generic/228 generic/240 generic/258 generic/263 generic/311 
+    generic/317 generic/320 generic/321 generic/322 generic/335 
+    generic/336 generic/341 generic/342 generic/343 generic/348 
+    generic/360 generic/361 generic/371 generic/376 generic/416 
+    generic/427 generic/441 generic/476 generic/480 generic/481 
+    generic/483 generic/489 generic/498 generic/502 generic/510 
+    generic/512 generic/520 generic/526 generic/527 generic/534 
+    generic/538 generic/547 generic/551 generic/552 generic/557 
+    generic/598 generic/631 generic/640 
+
+Other file systems for reference:
+
+f2fs/default: 646 tests, 13 failures, 154 skipped, 1812 seconds
+  Failures: generic/018 generic/026 generic/050 generic/064
+    generic/066 generic/103 generic/219 generic/260 generic/342
+    generic/502 generic/506 generic/526 generic/527
+
+btrfs/default: 1075 tests, 8 failures, 219 skipped, 9143 seconds
+  Failures: btrfs/012 btrfs/154 btrfs/219 btrfs/220 btrfs/235
+    btrfs/241 generic/260 shared/298
+
+xfs/4k: 922 tests, 1 failures, 136 skipped, 5452 seconds
+  Failures: xfs/506
+
+ext4/4k: 504 tests, 0 failures, 25 skipped, 6877 seconds
+
+nfs/filestore_v3: 743 tests, 1 failures, 307 skipped, 9261 seconds
+  Failures: generic/551
+
+(Note: GCE Filestore uses a Linux kernel so this is testing the nfsv3
+client versus a Linux nfsv3 server --- I think the Filestore kernel is
+currently using 5.4.129 if I remember correctly.)
