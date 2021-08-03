@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FE703DE99C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 11:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 037F53DE9B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 11:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235027AbhHCJST (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 05:18:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37764 "EHLO
+        id S234707AbhHCJbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 05:31:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234922AbhHCJSS (ORCPT
+        with ESMTP id S234687AbhHCJbo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 05:18:18 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AEE4C06175F
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Aug 2021 02:18:07 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id yk17so27661377ejb.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 02:18:06 -0700 (PDT)
+        Tue, 3 Aug 2021 05:31:44 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FB1AC0613D5
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Aug 2021 02:31:33 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id z11so5728648edb.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 02:31:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=bNa7n1tZtuJcEEYiLTNeGKslKTEJs+rtFT0YV9yNlew=;
-        b=Jd+UZ5AGs0Ooq/66KM+jA4m9HwVi+MRm7XqkaGbn4V3hh5RUeGnjXO4FB7ez9GAPYi
-         tgsVUEl0qxA7yF00ZHW+ZQiwCQ+LlBhQO7XW9c8IihoDB7j2kIzgHGgN0wPJWzhpaSye
-         JNwP1w89B3rYkEiXk/GkfLl0DR/lZ5VVGVH+IgILe+GxDSLM0KE2pbBO9vokfAg1Y2DJ
-         4RPjt/85Mviy7n69snrUtKkUS9Z6/N8O0sY0KgvcM19Hi4Hbb6ldZkvVVYKFbXNgIOAM
-         fo/TUivWwXaMC+0AFsFKUL9/T5bEBtf2ZUMRUza95oSJ9q2/NCozwY/+6bIvFMxUfevT
-         EO6A==
+        bh=XnFT0+T34CYtIhtj9AFRhRgp0BmU14hBeulSmSMqkco=;
+        b=lnh5e5rtm1i3OI43NQE8IstmfTWykpBHTHoQHdfbzzsQX7nlQoH6dmaIGzGDt/3IpX
+         hVaLY2SyXmPXkpBBd9scceDJf/zBQ4A76NX2+7ALhUhIU4ZBFN+VFm3yT5ahwH3xFnI5
+         e4JmTQu0w1sKOfhaBUWL7fjXF1tZIaQNk1baawfU+UMg2Icf5373OPJbGCHz6/DLMbMX
+         WiHewdxY/zEYYxZs2QOJhCw6f774C+Tq2heA/u+W2YvusHjifhzWyPmdNcLd7MathYyr
+         f4iT9bjGEC8A90IGAxotEqF8N9hdUVOFaJEcIDHz/CheJ4AdYPep42urz4UhJ0ASDRKH
+         BIYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bNa7n1tZtuJcEEYiLTNeGKslKTEJs+rtFT0YV9yNlew=;
-        b=eHJ3/iLPDHPxhBiYPCPqmqBn3/n28bzK2YUh08tUmNqrKZXfFIB02cxIDXSlwuf1b0
-         7/kKUeC9OJ5u4UMLqIC0P1I+lpr8XbJMUs3npXR45C3jzHz4xdeL+wZuc5Cc9l8g+vXU
-         9wydCm+OH78lbL2xaMR4s20ZfyGamKO/iLEgaF2yChEywApDG9aNJ6ws3TwYvPpwMtNV
-         kthlYFKburabV93lsWsUw95s0FY3nqt0sV3o2sXO99ULPWAcqa1zDo2gGe65UH2HlCJD
-         OTET16At7GEpMamkrwJo8IL9N5LW+PUCJtUdFnxbSnL5ndzTz40ikCBJa1WzTWi79EfR
-         jeNg==
-X-Gm-Message-State: AOAM531ADIIKoB/MMfsNwj9lJacX4epvpkw7V4R+eDQEdEqmUmC+jp5h
-        i62UzBB3zvoE1LrE7S+6N41wsAoy9pngh2ZB9BaC
-X-Google-Smtp-Source: ABdhPJz+l/RWTi/cEp9hIjcvn9xzMhjrwXVoQzQni85Wf2XRf3qnbCHSQTs5k/IZl5rLuZZ4G+B/tk85r0HL53eNKZg=
-X-Received: by 2002:a17:906:af77:: with SMTP id os23mr19120305ejb.427.1627982285614;
- Tue, 03 Aug 2021 02:18:05 -0700 (PDT)
+        bh=XnFT0+T34CYtIhtj9AFRhRgp0BmU14hBeulSmSMqkco=;
+        b=e2OkmX0+EG3yd8RLwqi+LcjAfvjyt7aim7420KJekYQr3F0XeaEORorcUvht818pm0
+         o98SKdsqmUDn2Rk0W/zyBWgU8cm9pt5J+0TVi7q1EblNvnmB67fxxurrihT7LrPCm5ru
+         +JlAz1S6hi3Jm3HAqknLkS13WGdYkQZ0on9rQC6mGiWQGnlYszWBCx3qAQPi2ywtB/lp
+         4ICgVkIYj/38Hf0xRxLwbdBhtus/g1D0oJmHOn/vGjoE/HDIQ3AFuYd/tXGkO7AFu3mh
+         60L6amSVywkB4lyoPAZJXpS7yUAmL2+9K/ymPXFAECYf8TnJWeWI0nqiUE80uiOEUsuC
+         fnJA==
+X-Gm-Message-State: AOAM533zMS3Ni/XsEcTWI7Pz8YsdjY32iW+V5nEEnZ0chM0euXiiMA8K
+        LQX05i2wixlav67rhd7Rp1p1qgbSMty4TEWUDIM3
+X-Google-Smtp-Source: ABdhPJy+LxOFqB8YD73zckkZYLMc9dK6jQxb/4DjwmZe9c1z6ZeWREgaWSDzSR2aIdoSx6+rDpaFnlN8W0AAfJNPoJw=
+X-Received: by 2002:a05:6402:74f:: with SMTP id p15mr24038732edy.195.1627983091785;
+ Tue, 03 Aug 2021 02:31:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-8-xieyongji@bytedance.com>
- <487ed840-f417-e1b6-edb3-15f19969de51@redhat.com>
-In-Reply-To: <487ed840-f417-e1b6-edb3-15f19969de51@redhat.com>
+References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-5-xieyongji@bytedance.com>
+ <39a191f6-555b-d2e6-e712-735b540526d0@redhat.com>
+In-Reply-To: <39a191f6-555b-d2e6-e712-735b540526d0@redhat.com>
 From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 3 Aug 2021 17:17:54 +0800
-Message-ID: <CACycT3ujOQ84mNMEjE-H93cgVvrWeKaDcAabg7GPvMzU-rSPYw@mail.gmail.com>
-Subject: Re: [PATCH v10 07/17] virtio: Don't set FAILED status bit on device
- index allocation failure
+Date:   Tue, 3 Aug 2021 17:31:20 +0800
+Message-ID: <CACycT3sdH3zVzznsaMb0+3mzrLF7FjmB89U11fZv_23Y4_WbEw@mail.gmail.com>
+Subject: Re: [PATCH v10 04/17] vdpa: Fail the vdpa_reset() if fail to set
+ device status to zero
 To:     Jason Wang <jasowang@redhat.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
@@ -81,22 +81,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 3, 2021 at 4:03 PM Jason Wang <jasowang@redhat.com> wrote:
+On Tue, Aug 3, 2021 at 3:58 PM Jason Wang <jasowang@redhat.com> wrote:
 >
 >
 > =E5=9C=A8 2021/7/29 =E4=B8=8B=E5=8D=883:34, Xie Yongji =E5=86=99=E9=81=93=
 :
-> > We don't need to set FAILED status bit on device index allocation
-> > failure since the device initialization hasn't been started yet.
-> > This doesn't affect runtime, found in code review.
+> > Re-read the device status to ensure it's set to zero during
+> > resetting. Otherwise, fail the vdpa_reset() after timeout.
 > >
 > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > ---
+> >   include/linux/vdpa.h | 15 ++++++++++++++-
+> >   1 file changed, 14 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+> > index 406d53a606ac..d1a80ef05089 100644
+> > --- a/include/linux/vdpa.h
+> > +++ b/include/linux/vdpa.h
+> > @@ -6,6 +6,7 @@
+> >   #include <linux/device.h>
+> >   #include <linux/interrupt.h>
+> >   #include <linux/vhost_iotlb.h>
+> > +#include <linux/delay.h>
+> >
+> >   /**
+> >    * struct vdpa_calllback - vDPA callback definition.
+> > @@ -340,12 +341,24 @@ static inline struct device *vdpa_get_dma_dev(str=
+uct vdpa_device *vdev)
+> >       return vdev->dma_dev;
+> >   }
+> >
+> > -static inline void vdpa_reset(struct vdpa_device *vdev)
+> > +#define VDPA_RESET_TIMEOUT_MS 1000
+> > +
+> > +static inline int vdpa_reset(struct vdpa_device *vdev)
+> >   {
+> >       const struct vdpa_config_ops *ops =3D vdev->config;
+> > +     int timeout =3D 0;
+> >
+> >       vdev->features_valid =3D false;
+> >       ops->set_status(vdev, 0);
+> > +     while (ops->get_status(vdev)) {
+> > +             timeout +=3D 20;
+> > +             if (timeout > VDPA_RESET_TIMEOUT_MS)
+> > +                     return -EIO;
+> > +
+> > +             msleep(20);
+> > +     }
 >
 >
-> Does it really harm?
+> I wonder if it's better to do this in the vDPA parent?
+>
+> Thanks
 >
 
-Actually not. I think I can remove this patch if we don't need it.
+Sorry, I didn't get you here. Do you mean vDPA parent driver (e.g.
+VDUSE)? Actually I didn't find any other place where I can do
+set_status() and get_status().
 
 Thanks,
 Yongji
