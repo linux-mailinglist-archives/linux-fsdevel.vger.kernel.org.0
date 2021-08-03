@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D26A93DE924
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 11:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A44B3DE990
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 11:13:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234970AbhHCJCY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 05:02:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33784 "EHLO
+        id S234959AbhHCJN5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 05:13:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234760AbhHCJCV (ORCPT
+        with ESMTP id S234994AbhHCJN4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 05:02:21 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AE2EC06175F
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Aug 2021 02:02:09 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id d6so20434697edt.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 02:02:09 -0700 (PDT)
+        Tue, 3 Aug 2021 05:13:56 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C35E6C061764
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Aug 2021 02:13:44 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id n2so28065471eda.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 02:13:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=3wZFhZTC8zZY+D9UvhMcL30+qrKHqoBqQtpm1vOADzM=;
-        b=JKe8MBo/Q/9jJiWfNFv7/6FozVELAtit9lfH9d5TxXXMYzq/K+Pmkq5MZfy0MK2cFu
-         cx6FhhWxNDc+0E1xzGVvot63Tu4Ur8FkAtBApXV5HGWA7B6YAue4z52aDqp2cPeuObcM
-         NbvLlt0iETqmIH/loBFX6RmK5lnhTeVCMIO5KKZH9Z5CWgGXEldHbQTMQQrf9uJEnfFB
-         86l/PEM0xk2vAai/1RJXq5azCxa1fJfFP2bTdkelMNkruzkW1VP4XZZrR/YihWu8I9cm
-         wPq3kJhM7XQVmw7qPL2HCPQ0a2PjgZxJc4l7AroO/DlUf8xZiD0v/CMDlg12kwVoA4f6
-         XDfQ==
+        bh=TzdywkyaGO6eDzvYKvoBys7MoF5h7biikR9uQQ2v4KY=;
+        b=DEM52txH8kmvAxsC/lp3YibL085f86KNaEqwdtqjBneskd0IwK0e82rXwYB9c8t9Tr
+         ww3wmXWrMP+YvxKKT1uoX0D7YO1isLAI7ThWYluU0YqLEZfwyV3Now5FHhcsj9Cr4md2
+         DZbBBbTbmK4BxlAzhBhpLgE8bQmmioK+cAe9+tZXxl+zmcGsylSDUZow3cip4f0fIcZu
+         MERRn3uePPig17zL37ynIRKvdD/aR+949V8EqcMSPuQnAxFERSIirzW9KgUlD1mKDCqP
+         30ZZw62oN0JD1lDOJ7F2XvxmIbwFaTw/pPYHnAPUzntV50gGc5kMQcteBHILZ55utDRZ
+         Y5FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3wZFhZTC8zZY+D9UvhMcL30+qrKHqoBqQtpm1vOADzM=;
-        b=QFVEfuHVmBmbZU5gNLgwdNBBZJS9p+EkiDFyzxM7VwbNxGdtVRN6CdkaF8D09T1pIc
-         H+WK+MZpI6VawmWoFrk85m9m6MY1gbbbzHwf6J62Md2pEQn5+t+EfubOXarBhpZpo9B+
-         CbR3BseVjtgxo/wMv2vt6C2TrhozBLB+AAamFzPWOtQ9AJ5i4ARkekGN9T954fIb26Ov
-         Xhw5wDWO2/T/ZDXXeEh/IF1ESZuCvds/YWhG6z6qBYsM5tna3JPrKntoRBCN72zvXNCU
-         VFb0QMULvAzFhKQ99K+6aaRxu5a63d6VKdBsYEKV0Ubde8skBw/vfEtljKWKcCIamZmz
-         64sg==
-X-Gm-Message-State: AOAM533xhu8ixk202NcJDBIMa1B+Y1PNkXUNhHppJCTDptDYncHAE1ds
-        HzJk37auvqlZqqZ62O+dNLG2ZofzqMLTcXuAb5qj
-X-Google-Smtp-Source: ABdhPJyS6bOrWfuvjmdwVRGONpMTv6Y0zVE0kh7I9sjtSTBg5XbDmv85P6yS8Pkoi3kNsB54rx4AF9ZFKn4Qu8vMSM8=
-X-Received: by 2002:aa7:c50a:: with SMTP id o10mr23739559edq.118.1627981328237;
- Tue, 03 Aug 2021 02:02:08 -0700 (PDT)
+        bh=TzdywkyaGO6eDzvYKvoBys7MoF5h7biikR9uQQ2v4KY=;
+        b=aoIlf8ktLOv7CQvl55Yy5u3UaA3rKqRQlfvBInskCOfW/6ExydNFw2E4mcS+NSs3Uw
+         wH8cQgbNb29rhNJNWCn2TWbK1Us/e3dhvZxh84jIPpeuBfxQj6hVQn+eUrpKb8xTb8Kv
+         rcMJ5DHfoDrlLLKvgL5cDAfLFAYznjkTVWNGW7MXmx4krE3gw90ghUOJNFgjea00d/DX
+         YNoTK3dhWcNzuNirgekmoGWdzqLVPUB4wVxNvZIfa+qrSUCMFFYx5o8OqfhAUVSRVB7Y
+         AWGN8qj4E1/DHuhEyMs2vS2uO8wrZv5QH1qhw6SVDcII4wR+GbaLuwEZV6+cy2dgn0tD
+         HPMQ==
+X-Gm-Message-State: AOAM530r5EocQQyxUzu9vV20d8CY62OHUk3r5WtvU4UvSrWvuR2osyNq
+        +BR7fqGNdBAg5ipX4mUmP9AryrBT72ZxqUKaVRW2
+X-Google-Smtp-Source: ABdhPJzTcfFrmUvQ6VoEyuq0IwD//odDZyHHo9um9hSrSwgnp0TxB8fuvj0AdwM4682E0gxOiogSbfaYRhrBcwi+Smg=
+X-Received: by 2002:a50:fb05:: with SMTP id d5mr23600055edq.5.1627982023010;
+ Tue, 03 Aug 2021 02:13:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-3-xieyongji@bytedance.com>
- <a0ab081a-db06-6b7a-b22e-4ace96a5c7db@redhat.com>
-In-Reply-To: <a0ab081a-db06-6b7a-b22e-4ace96a5c7db@redhat.com>
+References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-4-xieyongji@bytedance.com>
+ <aaf82d3f-05e3-13d5-3a63-52cd8045b4c6@redhat.com>
+In-Reply-To: <aaf82d3f-05e3-13d5-3a63-52cd8045b4c6@redhat.com>
 From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 3 Aug 2021 17:01:57 +0800
-Message-ID: <CACycT3sdx8nA8fh3pjO_=pbiM+Bs5y+h4fuGkFQEsRSaBnph7Q@mail.gmail.com>
-Subject: Re: [PATCH v10 02/17] file: Export receive_fd() to modules
+Date:   Tue, 3 Aug 2021 17:13:32 +0800
+Message-ID: <CACycT3upc6-Sfo-68vg7aFR1zd8=ovg_-rR4UQaqgcVTG62USw@mail.gmail.com>
+Subject: Re: [PATCH v10 03/17] vdpa: Fix code indentation
 To:     Jason Wang <jasowang@redhat.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
@@ -80,39 +80,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 3, 2021 at 3:46 PM Jason Wang <jasowang@redhat.com> wrote:
+On Tue, Aug 3, 2021 at 3:51 PM Jason Wang <jasowang@redhat.com> wrote:
 >
 >
 > =E5=9C=A8 2021/7/29 =E4=B8=8B=E5=8D=883:34, Xie Yongji =E5=86=99=E9=81=93=
 :
-> > Export receive_fd() so that some modules can use
-> > it to pass file descriptor between processes without
-> > missing any security stuffs.
+> > Use tabs to indent the code instead of spaces.
 > >
 > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 > > ---
-> >   fs/file.c            | 6 ++++++
-> >   include/linux/file.h | 7 +++----
-> >   2 files changed, 9 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/file.c b/fs/file.c
-> > index 86dc9956af32..210e540672aa 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -1134,6 +1134,12 @@ int receive_fd_replace(int new_fd, struct file *=
-file, unsigned int o_flags)
-> >       return new_fd;
-> >   }
-> >
-> > +int receive_fd(struct file *file, unsigned int o_flags)
-> > +{
-> > +     return __receive_fd(file, NULL, o_flags);
+> >   include/linux/vdpa.h | 29 ++++++++++++++---------------
+> >   1 file changed, 14 insertions(+), 15 deletions(-)
 >
 >
-> Any reason that receive_fd_user() can live in the file.h?
+> It looks to me not all the warnings are addressed.
+>
+> Or did you silent checkpatch.pl -f?
 >
 
-Since no modules use it.
+This patch only fixes the code indent issue. I will address all
+warnings in the next version.
 
 Thanks,
 Yongji
