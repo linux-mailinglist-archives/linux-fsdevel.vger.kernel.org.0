@@ -2,57 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D14963DE791
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 09:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BB7B3DE7A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 09:58:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234386AbhHCHvM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 03:51:12 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34228 "EHLO
+        id S234303AbhHCH6y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 03:58:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48582 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234291AbhHCHvM (ORCPT
+        by vger.kernel.org with ESMTP id S234277AbhHCH6y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 03:51:12 -0400
+        Tue, 3 Aug 2021 03:58:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1627977061;
+        s=mimecast20190719; t=1627977523;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=oYcam7agTFSd/2Q6NOTWlhklTs5e2KArUsWMeCcGGAM=;
-        b=VdofTyAdJZV9hm305JyIHmXL7Mqfti9dV37IcC4KcHiCQeEW7g19W+inxDJkvw8DS8xOqL
-        s0Hy3pYjBqRgLJws0uQWJQ7AIBPD1OjIlifA2nupTd+M465E2GIwkYnhlDL+oUFugi1Yyu
-        +el3gQxdr3u/qAq65yx+8xs5E78SpcM=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-563-ZqImD0K2PwGJzU3uLoWRQQ-1; Tue, 03 Aug 2021 03:51:00 -0400
-X-MC-Unique: ZqImD0K2PwGJzU3uLoWRQQ-1
-Received: by mail-pj1-f72.google.com with SMTP id o23-20020a17090a4217b02901774c248202so2166364pjg.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 00:51:00 -0700 (PDT)
+        bh=4067Q/uBr5whrrksAorpAMgFNv8fx79XPkLrnKf4gpY=;
+        b=GsYFhZt0eeN7o6OmcSp59Y3ZBqGFQJPDhZgS3Z0hWFoJuGkoqWS9w+upgFHXJGjMTDac++
+        XAJ07zL6HQiAkQFSyyinvydU+J0PqWiaSmmyB/Zve7namqIHO+533Mw5BDqK/aVe3BLYu/
+        nBo96LvmrcVOXaI23SHi/QClOF8f+Vo=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-31-5-2tttlQMSupwGM3gbZXbQ-1; Tue, 03 Aug 2021 03:58:41 -0400
+X-MC-Unique: 5-2tttlQMSupwGM3gbZXbQ-1
+Received: by mail-pj1-f71.google.com with SMTP id h21-20020a17090adb95b029017797967ffbso2771841pjv.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 00:58:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=oYcam7agTFSd/2Q6NOTWlhklTs5e2KArUsWMeCcGGAM=;
-        b=fVp7zu4lalbyxxihJL57NxeBx10WvEIec2azJ7B9N+KQ6tdVmKWFX9RYt4M9dSYhVA
-         RH51avbBJnyv/G9Y++2abXxSVgtcUWm2F9FLlzb+y4yYpZKprWkPxnGp18JH6lXiHrov
-         hecgtGjT9qnr2ANU9SSKlJrjLMgaFck6lH+104t0S/MeRmS7R2ZxcHpZwp+j4e5UqzPJ
-         cfjb3I8r7ejeoPCQ3zdqntb/cJLPLGqAYlnCy57nQkdx2VqOzK+pH1+Bb4yyxLW9+uhH
-         36JtcBeeq9LL2Oe5LwP1BDH0Uw4yuoN73VGU+R4cnM06cHdR2+Dbd/0wtexs7oBewcX2
-         klqw==
-X-Gm-Message-State: AOAM533lWTTQ2MRExEVYjBiw3AzfpBEuildafYQxg7glLMQAG03d/stc
-        fAiktlOgyh0dTvSMa0ioKN5GKTyqrCUCUd7p2i5kebuG281Tw+xy1A7NXLHfuzK8HTbvXYco2go
-        EhxLABDYlYMy7kS8dOABmDq3pUQ==
-X-Received: by 2002:a05:6a00:a8a:b029:356:be61:7f18 with SMTP id b10-20020a056a000a8ab0290356be617f18mr20640888pfl.29.1627977059222;
-        Tue, 03 Aug 2021 00:50:59 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwLduE7LXN7Wln37TgSE39sEWlhyZA9xOCP4JLoPOJrBqHBCOe6D/dpJAaC4v4en3vOIVKYWw==
-X-Received: by 2002:a05:6a00:a8a:b029:356:be61:7f18 with SMTP id b10-20020a056a000a8ab0290356be617f18mr20640860pfl.29.1627977058989;
-        Tue, 03 Aug 2021 00:50:58 -0700 (PDT)
+        bh=4067Q/uBr5whrrksAorpAMgFNv8fx79XPkLrnKf4gpY=;
+        b=BtWKXdokiPLWsy8pVWZebe2nJlj3I1a1XC70rLQPDJf+tDgQOGFy4IHgZrXOFrTnuD
+         bmFFjaX9QF4NJxJzxiEg0GslEkVJEtl+WipeuQc500f2V6oygSMpxktpMey952PmY6F4
+         GclPfYRgvqCXLs+90mszGbj76jGZbs5CIJ2oACYH8CCGLOY6lGPp0SUuXZYS7E02Pq3x
+         2f+SJzewfo7ZHMBl6MfYUaWGjhwquNmaEbi5KhPePwXFAS9QSWdF73CvTtjOfs8XTrTT
+         1D08qevuIxoefp5/w0atpjEgMvDLcUoIGyt3ZVpsmJk+p7FHVz45uDK2npkt+4GA9XFh
+         ECgQ==
+X-Gm-Message-State: AOAM533mELS/otaJF8KCn2xEuWjioalkNLw9jYS/w7JvoF5NRmxBYyMT
+        D9nF6uwj34Wa9jZb8qA8lrZl5ADEd0VaJxxVekEXYnJ0iAcPy3bIJD7OmbYYeQ+SedbcXlrp2JF
+        L7EaXruOxeckGLtaWOnX0Z9BVtA==
+X-Received: by 2002:a62:64ce:0:b029:3b8:90c:6eec with SMTP id y197-20020a6264ce0000b02903b8090c6eecmr13054225pfb.9.1627977520778;
+        Tue, 03 Aug 2021 00:58:40 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwjX5wUayvV2kr5HqNyIW/IueFG/FKVhos2G8U/pZi0sFBb3YPj3+qYU1BLVJyBkEZqQdqW6A==
+X-Received: by 2002:a62:64ce:0:b029:3b8:90c:6eec with SMTP id y197-20020a6264ce0000b02903b8090c6eecmr13054211pfb.9.1627977520538;
+        Tue, 03 Aug 2021 00:58:40 -0700 (PDT)
 Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id 98sm13139744pjo.26.2021.08.03.00.50.51
+        by smtp.gmail.com with ESMTPSA id s133sm4953282pfs.190.2021.08.03.00.58.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Aug 2021 00:50:58 -0700 (PDT)
-Subject: Re: [PATCH v10 03/17] vdpa: Fix code indentation
+        Tue, 03 Aug 2021 00:58:40 -0700 (PDT)
+Subject: Re: [PATCH v10 04/17] vdpa: Fail the vdpa_reset() if fail to set
+ device status to zero
 To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
         stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
         hch@infradead.org, christian.brauner@canonical.com,
@@ -67,14 +68,14 @@ Cc:     songmuchun@bytedance.com,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 References: <20210729073503.187-1-xieyongji@bytedance.com>
- <20210729073503.187-4-xieyongji@bytedance.com>
+ <20210729073503.187-5-xieyongji@bytedance.com>
 From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <aaf82d3f-05e3-13d5-3a63-52cd8045b4c6@redhat.com>
-Date:   Tue, 3 Aug 2021 15:50:49 +0800
+Message-ID: <39a191f6-555b-d2e6-e712-735b540526d0@redhat.com>
+Date:   Tue, 3 Aug 2021 15:58:30 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <20210729073503.187-4-xieyongji@bytedance.com>
+In-Reply-To: <20210729073503.187-5-xieyongji@bytedance.com>
 Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
@@ -84,90 +85,57 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 ÔÚ 2021/7/29 ÏÂÎç3:34, Xie Yongji Ð´µÀ:
-> Use tabs to indent the code instead of spaces.
+> Re-read the device status to ensure it's set to zero during
+> resetting. Otherwise, fail the vdpa_reset() after timeout.
 >
 > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 > ---
->   include/linux/vdpa.h | 29 ++++++++++++++---------------
->   1 file changed, 14 insertions(+), 15 deletions(-)
+>   include/linux/vdpa.h | 15 ++++++++++++++-
+>   1 file changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+> index 406d53a606ac..d1a80ef05089 100644
+> --- a/include/linux/vdpa.h
+> +++ b/include/linux/vdpa.h
+> @@ -6,6 +6,7 @@
+>   #include <linux/device.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/vhost_iotlb.h>
+> +#include <linux/delay.h>
+>   
+>   /**
+>    * struct vdpa_calllback - vDPA callback definition.
+> @@ -340,12 +341,24 @@ static inline struct device *vdpa_get_dma_dev(struct vdpa_device *vdev)
+>   	return vdev->dma_dev;
+>   }
+>   
+> -static inline void vdpa_reset(struct vdpa_device *vdev)
+> +#define VDPA_RESET_TIMEOUT_MS 1000
+> +
+> +static inline int vdpa_reset(struct vdpa_device *vdev)
+>   {
+>   	const struct vdpa_config_ops *ops = vdev->config;
+> +	int timeout = 0;
+>   
+>   	vdev->features_valid = false;
+>   	ops->set_status(vdev, 0);
+> +	while (ops->get_status(vdev)) {
+> +		timeout += 20;
+> +		if (timeout > VDPA_RESET_TIMEOUT_MS)
+> +			return -EIO;
+> +
+> +		msleep(20);
+> +	}
 
 
-It looks to me not all the warnings are addressed.
-
-Or did you silent checkpatch.pl -f?
+I wonder if it's better to do this in the vDPA parent?
 
 Thanks
 
 
->
-> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-> index 7c49bc5a2b71..406d53a606ac 100644
-> --- a/include/linux/vdpa.h
-> +++ b/include/linux/vdpa.h
-> @@ -43,17 +43,17 @@ struct vdpa_vq_state_split {
->    * @last_used_idx: used index
->    */
->   struct vdpa_vq_state_packed {
-> -        u16	last_avail_counter:1;
-> -        u16	last_avail_idx:15;
-> -        u16	last_used_counter:1;
-> -        u16	last_used_idx:15;
-> +	u16	last_avail_counter:1;
-> +	u16	last_avail_idx:15;
-> +	u16	last_used_counter:1;
-> +	u16	last_used_idx:15;
->   };
->   
->   struct vdpa_vq_state {
-> -     union {
-> -          struct vdpa_vq_state_split split;
-> -          struct vdpa_vq_state_packed packed;
-> -     };
-> +	union {
-> +		struct vdpa_vq_state_split split;
-> +		struct vdpa_vq_state_packed packed;
-> +	};
->   };
->   
->   struct vdpa_mgmt_dev;
-> @@ -131,7 +131,7 @@ struct vdpa_iova_range {
->    *				@vdev: vdpa device
->    *				@idx: virtqueue index
->    *				@state: pointer to returned state (last_avail_idx)
-> - * @get_vq_notification: 	Get the notification area for a virtqueue
-> + * @get_vq_notification:	Get the notification area for a virtqueue
->    *				@vdev: vdpa device
->    *				@idx: virtqueue index
->    *				Returns the notifcation area
-> @@ -342,25 +342,24 @@ static inline struct device *vdpa_get_dma_dev(struct vdpa_device *vdev)
->   
->   static inline void vdpa_reset(struct vdpa_device *vdev)
->   {
-> -        const struct vdpa_config_ops *ops = vdev->config;
-> +	const struct vdpa_config_ops *ops = vdev->config;
->   
->   	vdev->features_valid = false;
-> -        ops->set_status(vdev, 0);
-> +	ops->set_status(vdev, 0);
+> +
+> +	return 0;
 >   }
 >   
 >   static inline int vdpa_set_features(struct vdpa_device *vdev, u64 features)
->   {
-> -        const struct vdpa_config_ops *ops = vdev->config;
-> +	const struct vdpa_config_ops *ops = vdev->config;
->   
->   	vdev->features_valid = true;
-> -        return ops->set_features(vdev, features);
-> +	return ops->set_features(vdev, features);
->   }
->   
-> -
->   static inline void vdpa_get_config(struct vdpa_device *vdev, unsigned offset,
->   				   void *buf, unsigned int len)
->   {
-> -        const struct vdpa_config_ops *ops = vdev->config;
-> +	const struct vdpa_config_ops *ops = vdev->config;
->   
->   	/*
->   	 * Config accesses aren't supposed to trigger before features are set.
 
