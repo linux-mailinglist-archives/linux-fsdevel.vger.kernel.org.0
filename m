@@ -2,142 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 037F53DE9B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 11:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8AB3DE9CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Aug 2021 11:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234707AbhHCJbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 05:31:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41000 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234687AbhHCJbo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 05:31:44 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FB1AC0613D5
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Aug 2021 02:31:33 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id z11so5728648edb.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 02:31:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XnFT0+T34CYtIhtj9AFRhRgp0BmU14hBeulSmSMqkco=;
-        b=lnh5e5rtm1i3OI43NQE8IstmfTWykpBHTHoQHdfbzzsQX7nlQoH6dmaIGzGDt/3IpX
-         hVaLY2SyXmPXkpBBd9scceDJf/zBQ4A76NX2+7ALhUhIU4ZBFN+VFm3yT5ahwH3xFnI5
-         e4JmTQu0w1sKOfhaBUWL7fjXF1tZIaQNk1baawfU+UMg2Icf5373OPJbGCHz6/DLMbMX
-         WiHewdxY/zEYYxZs2QOJhCw6f774C+Tq2heA/u+W2YvusHjifhzWyPmdNcLd7MathYyr
-         f4iT9bjGEC8A90IGAxotEqF8N9hdUVOFaJEcIDHz/CheJ4AdYPep42urz4UhJ0ASDRKH
-         BIYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XnFT0+T34CYtIhtj9AFRhRgp0BmU14hBeulSmSMqkco=;
-        b=e2OkmX0+EG3yd8RLwqi+LcjAfvjyt7aim7420KJekYQr3F0XeaEORorcUvht818pm0
-         o98SKdsqmUDn2Rk0W/zyBWgU8cm9pt5J+0TVi7q1EblNvnmB67fxxurrihT7LrPCm5ru
-         +JlAz1S6hi3Jm3HAqknLkS13WGdYkQZ0on9rQC6mGiWQGnlYszWBCx3qAQPi2ywtB/lp
-         4ICgVkIYj/38Hf0xRxLwbdBhtus/g1D0oJmHOn/vGjoE/HDIQ3AFuYd/tXGkO7AFu3mh
-         60L6amSVywkB4lyoPAZJXpS7yUAmL2+9K/ymPXFAECYf8TnJWeWI0nqiUE80uiOEUsuC
-         fnJA==
-X-Gm-Message-State: AOAM533zMS3Ni/XsEcTWI7Pz8YsdjY32iW+V5nEEnZ0chM0euXiiMA8K
-        LQX05i2wixlav67rhd7Rp1p1qgbSMty4TEWUDIM3
-X-Google-Smtp-Source: ABdhPJy+LxOFqB8YD73zckkZYLMc9dK6jQxb/4DjwmZe9c1z6ZeWREgaWSDzSR2aIdoSx6+rDpaFnlN8W0AAfJNPoJw=
-X-Received: by 2002:a05:6402:74f:: with SMTP id p15mr24038732edy.195.1627983091785;
- Tue, 03 Aug 2021 02:31:31 -0700 (PDT)
+        id S234977AbhHCJjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 05:39:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234816AbhHCJiv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Aug 2021 05:38:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EB6EB60F48;
+        Tue,  3 Aug 2021 09:37:55 +0000 (UTC)
+Date:   Tue, 3 Aug 2021 11:37:53 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
+        Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 5/5] fanotify: add pidfd support to the fanotify API
+Message-ID: <20210803093753.mxcn6nzgj55erpuw@wittgenstein>
+References: <cover.1626845287.git.repnop@google.com>
+ <02ba3581fee21c34bd986e093d9eb0b9897fa741.1626845288.git.repnop@google.com>
+ <CAG48ez3MsFPn6TsJz75hvikgyxG5YGyT2gdoFwZuvKut4Xms1g@mail.gmail.com>
+ <CAOQ4uxhDkAmqkxT668sGD8gHcssGTeJ3o6kzzz3=0geJvfAjdg@mail.gmail.com>
+ <20210729133953.GL29619@quack2.suse.cz>
+ <CAOQ4uxi70KXGwpcBnRiyPXZCjFQfifaWaYVSDK2chaaZSyXXhQ@mail.gmail.com>
+ <CAOQ4uxgFLqO5_vPTb5hkfO1Fb27H-h0TqHsB6owZxrZw4YLoEA@mail.gmail.com>
+ <20210802123428.GB28745@quack2.suse.cz>
+ <CAOQ4uxhk-vTOFvpuh81A2V5H0nfAJW6y3qBi9TgnZxAkRDSeKQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-5-xieyongji@bytedance.com>
- <39a191f6-555b-d2e6-e712-735b540526d0@redhat.com>
-In-Reply-To: <39a191f6-555b-d2e6-e712-735b540526d0@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 3 Aug 2021 17:31:20 +0800
-Message-ID: <CACycT3sdH3zVzznsaMb0+3mzrLF7FjmB89U11fZv_23Y4_WbEw@mail.gmail.com>
-Subject: Re: [PATCH v10 04/17] vdpa: Fail the vdpa_reset() if fail to set
- device status to zero
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Liu Xiaodong <xiaodong.liu@intel.com>,
-        Joe Perches <joe@perches.com>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhk-vTOFvpuh81A2V5H0nfAJW6y3qBi9TgnZxAkRDSeKQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 3, 2021 at 3:58 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> =E5=9C=A8 2021/7/29 =E4=B8=8B=E5=8D=883:34, Xie Yongji =E5=86=99=E9=81=93=
-:
-> > Re-read the device status to ensure it's set to zero during
-> > resetting. Otherwise, fail the vdpa_reset() after timeout.
+On Mon, Aug 02, 2021 at 05:38:20PM +0300, Amir Goldstein wrote:
+> On Mon, Aug 2, 2021 at 3:34 PM Jan Kara <jack@suse.cz> wrote:
 > >
-> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > ---
-> >   include/linux/vdpa.h | 15 ++++++++++++++-
-> >   1 file changed, 14 insertions(+), 1 deletion(-)
+> > On Fri 30-07-21 08:03:01, Amir Goldstein wrote:
+> > > On Thu, Jul 29, 2021 at 6:13 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > > On Thu, Jul 29, 2021 at 4:39 PM Jan Kara <jack@suse.cz> wrote:
+> > > > > Well, but pidfd also makes sure that /proc/<pid>/ keeps belonging to the
+> > > > > same process while you read various data from it. And you cannot achieve
+> > > > > that with pid+generation thing you've suggested. Plus the additional
+> > > > > concept and its complexity is non-trivial So I tend to agree with
+> > > > > Christian that we really want to return pidfd.
+> > > > >
+> > > > > Given returning pidfd is CAP_SYS_ADMIN priviledged operation I'm undecided
+> > > > > whether it is worth the trouble to come up with some other mechanism how to
+> > > > > return pidfd with the event. We could return some cookie which could be
+> > > > > then (by some ioctl or so) either transformed into real pidfd or released
+> > > > > (so that we can release pid handle in the kernel) but it looks ugly and
+> > > > > complicates things for everybody without bringing significant security
+> > > > > improvement (we already can pass fd with the event). So I'm pondering
+> > > > > whether there's some other way how we could make the interface safer - e.g.
+> > > > > so that the process receiving the event (not the one creating the group)
+> > > > > would also need to opt in for getting fds created in its file table.
+> > > > >
+> > > > > But so far nothing bright has come to my mind. :-|
+> > > > >
+> > > >
+> > > > There is a way, it is not bright, but it is pretty simple -
+> > > > store an optional pid in group->fanotify_data.fd_reader.
+> > > >
+> > > > With flag FAN_REPORT_PIDFD, both pidfd and event->fd reporting
+> > > > will be disabled to any process other than fd_reader.
+> > > > Without FAN_REPORT_PIDFD, event->fd reporting will be disabled
+> > > > if fd_reaader is set to a process other than the reader.
+> > > >
+> > > > A process can call ioctl START_FD_READER to set fd_reader to itself.
+> > > > With FAN_REPORT_PIDFD, if reaader_fd is NULL and the reader
+> > > > process has CAP_SYS_ADMIN, read() sets fd_reader to itself.
+> > > >
+> > > > Permission wise, START_FD_READER is allowed with
+> > > > CAP_SYS_ADMIN or if fd_reader is not owned by another process.
+> > > > We may consider YIELD_FD_READER ioctl if needed.
+> > > >
+> > > > I think that this is a pretty cheap price for implementation
+> > > > and maybe acceptable overhead for complicating the API?
+> > > > Note that without passing fd, there is no need for any ioctl.
+> > > >
+> > > > An added security benefit is that the ioctl adds is a way for the
+> > > > caller of fanotify_init() to make sure that even if the fanotify_fd is
+> > > > leaked, that event->fd will not be leaked, regardless of flag
+> > > > FAN_REPORT_PIDFD.
+> > > >
+> > > > So the START_FD_READER ioctl feature could be implemented
+> > > > and documented first.
+> > > > And then FAN_REPORT_PIDFD could use the feature with a
+> > > > very minor API difference:
+> > > > - Without the flag, other processes can read fds by default and
+> > > >   group initiator can opt-out
+> > > > - With the flag, other processes cannot read fds by default and
+> > > >   need to opt-in
+> > >
+> > > Or maybe something even simpler... fanotify_init() flag
+> > > FAN_PRIVATE (or FAN_PROTECTED) that limits event reading
+> > > to the initiator process (not only fd reading).
+> > >
+> > > FAN_REPORT_PIDFD requires FAN_PRIVATE.
+> > > If we do not know there is a use case for passing fanotify_fd
+> > > that reports pidfds to another process why implement the ioctl.
+> > > We can always implement it later if the need arises.
+> > > If we contemplate this future change, though, maybe the name
+> > > FAN_PROTECTED is better to start with.
 > >
-> > diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-> > index 406d53a606ac..d1a80ef05089 100644
-> > --- a/include/linux/vdpa.h
-> > +++ b/include/linux/vdpa.h
-> > @@ -6,6 +6,7 @@
-> >   #include <linux/device.h>
-> >   #include <linux/interrupt.h>
-> >   #include <linux/vhost_iotlb.h>
-> > +#include <linux/delay.h>
-> >
-> >   /**
-> >    * struct vdpa_calllback - vDPA callback definition.
-> > @@ -340,12 +341,24 @@ static inline struct device *vdpa_get_dma_dev(str=
-uct vdpa_device *vdev)
-> >       return vdev->dma_dev;
-> >   }
-> >
-> > -static inline void vdpa_reset(struct vdpa_device *vdev)
-> > +#define VDPA_RESET_TIMEOUT_MS 1000
-> > +
-> > +static inline int vdpa_reset(struct vdpa_device *vdev)
-> >   {
-> >       const struct vdpa_config_ops *ops =3D vdev->config;
-> > +     int timeout =3D 0;
-> >
-> >       vdev->features_valid =3D false;
-> >       ops->set_status(vdev, 0);
-> > +     while (ops->get_status(vdev)) {
-> > +             timeout +=3D 20;
-> > +             if (timeout > VDPA_RESET_TIMEOUT_MS)
-> > +                     return -EIO;
-> > +
-> > +             msleep(20);
-> > +     }
->
->
-> I wonder if it's better to do this in the vDPA parent?
->
-> Thanks
->
+> > Good ideas. I think we are fine with returning pidfd only to the process
+> > creating the fanotify group. Later we can add an ioctl which would indicate
+> > that the process is also prepared to have fds created in its file table.
+> > But I have still some open questions:
+> > Do we want threads of the same process to still be able to receive fds?
+> 
+> I don't see why not.
+> They will be bloating the same fd table as the thread that called
+> fanotify_init().
+> 
+> > Also pids can be recycled so they are probably not completely reliable
+> > identifiers?
+> 
+> Not sure I follow. The group hold a refcount on struct pid of the process that
+> called fanotify_init() - I think that can used to check if reader process is
+> the same process, but not sure. Maybe there is another way (Christian?).
 
-Sorry, I didn't get you here. Do you mean vDPA parent driver (e.g.
-VDUSE)? Actually I didn't find any other place where I can do
-set_status() and get_status().
+If the fanotify group hold's a reference to struct pid it won't get
+recycled. And it can be used to check if the reader thread is the same
+thread with some care. You also have to be specific what exactly you
+want to know.  If you're asking if the reading process is the same as
+the fanotify_init() process you can be asking one of two things.
 
-Thanks,
-Yongji
+You can be asking if the reader is a thread in the same thread-group as
+the thread that called fanotify_init(). In that case you might need to
+do something like
+
+rcu_read_lock();
+struct task_struct *fanotify_init_task_struct = pid_task(stashed_struct_pid, PIDTYPE_PID);
+if (!fanotify_init_task_struct) {
+	/* The thread which called fanotify_init() has died already. */ 
+	return -ESRCH;
+}
+if (same_thread_group(fanotify_init_task_struct, current))
+rcu_read_unlock();
+
+though thinking about it makes me realise that there's a corner case. If
+the thread that called fanotify_init() is a thread in a non-empty
+thread-group it can already have died and been reaped. This would mean,
+pid_task(..., PIDTYPE_PID) will return NULL but there are still other
+threads alive in the thread-group. Handling that case might be a bit
+complicated.
+
+If you're asking whether the reading thread is really the same as the
+thread that created the fanotify instance then you might need to do sm
+like
+
+rcu_read_lock();
+if (pid_task(stashed_struct_pid, PIDTYPE_PID) == current)
+rcu_read_unlock();
+
+Just for completeness if I remember all of this right: there's a corner
+case because of how de_thread() works.
+During exec the thread that is execing will assume the struct pid of the
+old thread-group leader. (All other threads in the same thread-group
+will get killed.)
+Assume the thread that created the fanotify instance is not the
+thread-group leader in its non-empty thread-group. And further assume it
+exec's. Then it will assume the struct pid of the old thread-group
+leader during de_thread().
+Assume the thread inherits the fanotify fd across the exec. Now, when it
+tries to read a new event after the exec then pid_task() will return
+NULL.
+However, if the thread was already the thread-group leader before the
+exec then pid_task() will return the same task struct as before after
+the exec (because no struct pid swapping needed to take place).
+
+I hope this causes more clarity then confusion. :)
+Christian
