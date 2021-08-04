@@ -2,132 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E81F23DFD9F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 11:08:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FF153DFDC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 11:15:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236934AbhHDJIQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 05:08:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37440 "EHLO
+        id S236253AbhHDJPo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 05:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236932AbhHDJIP (ORCPT
+        with ESMTP id S232276AbhHDJPn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 05:08:15 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F07F6C0613D5
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 02:08:01 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id e19so2668042ejs.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 02:08:01 -0700 (PDT)
+        Wed, 4 Aug 2021 05:15:43 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 353F5C0613D5
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 02:15:31 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id o20so2098374oiw.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 02:15:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vHxgnDbRze3cfbummo1oFdspd0VXUkioTGyKAxbmjBY=;
-        b=rrLb5avlbWWVVZAoiqSf4GuH1Tep3672/ZPFrJ1q2sFsUjVxFnNVB7tKQ6xXG4rhnv
-         1PpAczmI/qacC7vsiZ2BEcntWSoQhW130Qwg+GEKxWvTPhhjdU0zMqHukOrvN7jIhUoV
-         Nsn2eb0p8F8I1ZJcwL62tBSr6vb1HYCK7y/HkosE9AxRt7VX5in8838+OKYoj/JdigCO
-         22pQ6zrUz1MLqHboxSN2WElTA63GZmG1OcBMMKNc/LoDbjlq6Lf4z01rVYSWbqkkn5bl
-         mqGmd/oNyGjYpPMnG5vHW8RpUjXvzzZbHlRoL8cVzBdZSTws01CqFaXWZkQX3ftOVtMV
-         f9GA==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=h7Zb2A6Dh35OWvvMLuElewoKlDVEdIPG861c8z8d7jg=;
+        b=Y+FPojpZ7vt4c9aS5JxHtYi18I/UZ1MIAtfN7XmXFNAKWkhc8z6zThket2NIo8OWzv
+         o6BoeEfJUNOU/E2EOlgL44Q4WYwKCgL8OwzFH99F9XMQm5SSel14hNwv+AqmKFh46L1C
+         1kYt5Y5qZQQCbd/dwLuOkWY6OJGph/xf8u3TjomeEOCGyff7QYW73X1eNuTNkYLQvGv5
+         ZR/cHEpvqFQSWRV4hjpDNnphgts54ZHQ3cccgNqDNaVhI4CSKEqCcv+xmT4QLqpNVaTx
+         QEFAj5r7cAVU0Tga+T52yaijY0x26+uG/kZiDest7zF2s/PQqIlz4mKUa2LMtIjVXg41
+         0Xaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vHxgnDbRze3cfbummo1oFdspd0VXUkioTGyKAxbmjBY=;
-        b=pWCUQHQVc0ShLpkJz6rv9WvirsAaiZNVLDFpahL0WgDd8NO58pvFxr9XpDR+krOkc0
-         geMgFyC3LwCAqFXe1ALgt16L4vvJZKGjoRPYQzy53VzVZLTHrUQd1hj880jTU6mNsq1j
-         MVCm/s/+wdE7bEXDPK4NACuiwIPaxsZdbF4RGDbR+26fWN1VGR6U013QBjJ71XxQ8BOs
-         Dr8/DEwfT96RyQHxmQw8Q30siLNPOpipHzd3EmQ/2YVNjQthLoo4RoWjmrtefyUwzrcI
-         XKQO+bZOCioCmwm8L7GvIuHlEPEeMCc3Hh0Dtbw18qr6gQBi4cYXKewLp07M6CY6ZysI
-         eEZA==
-X-Gm-Message-State: AOAM533Q/W5pYDLhE0GOMVnoDNtWKHciWZv5UaMHiceKTWd9ZYficN6P
-        eLuJx1mX/x2coOzmyIDoXV/onZ7fzfAoVNUApEWk
-X-Google-Smtp-Source: ABdhPJz7ndtSUpcqEgNkoVHcDwP0fq03BR0Lre7qDAvevyBxeyuNZM0taxEDcIn1Kzh847IXKZfSmIisXg0eBWVCt2c=
-X-Received: by 2002:a17:906:58c7:: with SMTP id e7mr24219405ejs.197.1628068080494;
- Wed, 04 Aug 2021 02:08:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-11-xieyongji@bytedance.com>
- <6bb6c689-e6dd-cfa2-094b-a0ca4258aded@redhat.com> <CACycT3v7BHxYY0OFYJRFU41Bz1=_v8iMRwzYKgX6cJM-SiNH+A@mail.gmail.com>
- <fdcb0224-11f9-caf2-a44e-e6406087fd50@redhat.com> <CACycT3v0EQVrv_A1K1bKmiYu0q5aFE=t+0yRaWKC7T3_H3oB-Q@mail.gmail.com>
- <bd48ec76-0d5c-2efb-8406-894286b28f6b@redhat.com>
-In-Reply-To: <bd48ec76-0d5c-2efb-8406-894286b28f6b@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 4 Aug 2021 17:07:49 +0800
-Message-ID: <CACycT3tUwJXUV24PK7OvzPrHYYeQ5Q3qUW_vbuFMjwig0dBw2g@mail.gmail.com>
-Subject: Re: [PATCH v10 10/17] virtio: Handle device reset failure in register_virtio_device()
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=h7Zb2A6Dh35OWvvMLuElewoKlDVEdIPG861c8z8d7jg=;
+        b=dIsfwAr4O95C/UZtt/wNVFMSI/bwUxpz1AUsLIBXKcL+FWA6sHqmVWKKjnL7ZKdURM
+         PLQ20jrteoxGVm+8U8Izbdt1R7g7x99XxX/W/wp7if/4hwvyde9tzkktzRgGYu0guIPO
+         nehVkO+OZ2yZfes04aVtHMNi134mC5t3rAR2nBHYkVF0zgjipbltSDP/qjwp5ClethPS
+         OZPPvZNjfcA6Dpln/nSmFXKcH6G8xZy3bNeereyhL+lA3brD3O+E/8lFGXV2kbdFOGkc
+         niuizWpf0Md8ji8BO1st0WzipEpsloAEOrd3iGqajnIOxgC5vB2feqVxlS3Ha1CsJZFp
+         X/tQ==
+X-Gm-Message-State: AOAM53258Zte+XHD01reuLNwrIAYppZvzBgPG5w392K5Q/H5XpW0rCO4
+        VL5yuBes7m3W1okjFfHo5EJepg==
+X-Google-Smtp-Source: ABdhPJyiGrsvu72TeAV4c1kVT/RJj6hoqjS/aWTa8gUe1f/N1n3nzIaS/JrvT7jZLpDJKjpFi8eRxg==
+X-Received: by 2002:aca:6704:: with SMTP id z4mr17441159oix.89.1628068530413;
+        Wed, 04 Aug 2021 02:15:30 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id x8sm260465oof.27.2021.08.04.02.15.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Aug 2021 02:15:29 -0700 (PDT)
+Date:   Wed, 4 Aug 2021 02:15:26 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.anvils
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <shy828301@gmail.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
         Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Liu Xiaodong <xiaodong.liu@intel.com>,
-        Joe Perches <joe@perches.com>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Matthew Auld <matthew.auld@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 10/16] tmpfs: fcntl(fd, F_MEM_LOCK) to memlock a tmpfs
+ file
+In-Reply-To: <YQieHio1oUKCfgqq@casper.infradead.org>
+Message-ID: <7077b94a-d894-4d97-4b3e-23f516d58591@google.com>
+References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com> <54e03798-d836-ae64-f41-4a1d46bc115b@google.com> <YQieHio1oUKCfgqq@casper.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 4, 2021 at 4:54 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> =E5=9C=A8 2021/8/4 =E4=B8=8B=E5=8D=884:50, Yongji Xie =E5=86=99=E9=81=93:
-> > On Wed, Aug 4, 2021 at 4:32 PM Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >> =E5=9C=A8 2021/8/3 =E4=B8=8B=E5=8D=885:38, Yongji Xie =E5=86=99=E9=81=
-=93:
-> >>> On Tue, Aug 3, 2021 at 4:09 PM Jason Wang <jasowang@redhat.com> wrote=
-:
-> >>>> =E5=9C=A8 2021/7/29 =E4=B8=8B=E5=8D=883:34, Xie Yongji =E5=86=99=E9=
-=81=93:
-> >>>>> The device reset may fail in virtio-vdpa case now, so add checks to
-> >>>>> its return value and fail the register_virtio_device().
-> >>>> So the reset() would be called by the driver during remove as well, =
-or
-> >>>> is it sufficient to deal only with the reset during probe?
-> >>>>
-> >>> Actually there is no way to handle failure during removal. And it
-> >>> should be safe with the protection of software IOTLB even if the
-> >>> reset() fails.
-> >>>
-> >>> Thanks,
-> >>> Yongji
-> >>
-> >> If this is true, does it mean we don't even need to care about reset
-> >> failure?
-> >>
-> > But we need to handle the failure in the vhost-vdpa case, isn't it?
->
->
-> Yes, but:
->
-> - This patch is for virtio not for vhost, if we don't care virtio, we
-> can avoid the changes
-> - For vhost, there could be two ways probably:
->
-> 1) let the set_status to report error
-> 2) require userspace to re-read for status
->
-> It looks to me you want to go with 1) and I'm not sure whether or not
-> it's too late to go with 2).
->
+On Tue, 3 Aug 2021, Matthew Wilcox wrote:
+> On Fri, Jul 30, 2021 at 12:55:22AM -0700, Hugh Dickins wrote:
+> > A new uapi to lock the files on tmpfs in memory, to protect against swap
+> > without mapping the files. This commit introduces two new commands to
+> > fcntl and shmem: F_MEM_LOCK and F_MEM_UNLOCK. The locking will be
+> > charged against RLIMIT_MEMLOCK of uid in namespace of the caller.
+> 
+> It's not clear to me why this is limited to shmfs.  Would it not also
+> make sense for traditional filesystems, eg to force chrome's text pages
+> to stay in the page cache, no matter how much memory the tabs allocate?
 
-Looks like 2) can't work if reset failure happens in
-vhost_vdpa_release() and vhost_vdpa_open().
+Right: if VFS people would like this to be available for all filesystems,
+that's fine by me - it's just that we have not given thought to other
+filesystems, and the demand was for tmpfs, so that was where to start.
+I'm more confident adding fields to shmem inode than to generic inode.
 
-Thanks,
-Yongji
+(Plus tmpfs does have a stronger claim on CAP_IPC_LOCK etc, but there's
+no real reason why that cannot be extended to similar use by other FSs).
+
+hugetlbfs and ramfs, where the files are already memlocked?  Not worth a
+special case, I think: if someone uses up memlock quota on them, so be it.
+
+It looks as if tmpfs would still want its own special case, just to
+handle the FALLOC_FL_KEEP_SIZE issue (see 12/16): tmpfs has beyond-i_size
+pages in memory, but accounts them evictable; whereas I doubt any storage
+filesystems would be using memory for them.
+
+To be clear: I'm not intending to extend this to other filesystems at
+the moment; but happy to do so if that's the consensus.
+
+Hugh
