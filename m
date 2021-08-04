@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26F163DFCE9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 10:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 150A03DFCF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 10:33:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236529AbhHDIdJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 04:33:09 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35450 "EHLO
+        id S236579AbhHDIds (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 04:33:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43411 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236477AbhHDIdH (ORCPT
+        by vger.kernel.org with ESMTP id S236569AbhHDIdr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 04:33:07 -0400
+        Wed, 4 Aug 2021 04:33:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628065975;
+        s=mimecast20190719; t=1628066015;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8Mht9KhrSAoC5vXTThxE4PNfv46coChGKCgMCqOMEH8=;
-        b=dyOpaIwGpzWoc8ZuRFP7YDpMwK02/4zEOi0VVeq1KF0LCbagYbLPAgsMqOIiju/QXpCJzP
-        TguirhqwFZ4Gz0F0JO1ya4/KweC7eP9K5VitKlezybrNtCl0hanbDYmJ1elW8hurfrrVWW
-        3NHgcCZRnmYxeV7/tannE9nzxI7Dqq8=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-446-xPwJULvGNsW7vejPG0rljA-1; Wed, 04 Aug 2021 04:32:54 -0400
-X-MC-Unique: xPwJULvGNsW7vejPG0rljA-1
-Received: by mail-pj1-f72.google.com with SMTP id f62-20020a17090a28c4b02901733dbfa29cso5848410pjd.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 01:32:53 -0700 (PDT)
+        bh=pu0a7lvcVcx3k9JzblDeMR6k/r0nIYwunXvj5hzSi7c=;
+        b=ZKq6FAa53mXo9FIrwomu8YHD5tauf/1PsI8sn0f+rHL9DhD+/fB2EujaKZiBwx3VqkAY5q
+        bXnjRGLLWJ26g5bmKZF+RwnLs6PXZmtSq0itk5FdmK5Z3Q0xBKkI1vWmdTcrJXx8inEzae
+        MyLBUMuQ+w5PF/vXmsEMsqyp4wlQFBQ=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-72-m-zIvwWhMo2uWUg9ZmUVBQ-1; Wed, 04 Aug 2021 04:33:25 -0400
+X-MC-Unique: m-zIvwWhMo2uWUg9ZmUVBQ-1
+Received: by mail-pl1-f198.google.com with SMTP id k16-20020a170902ba90b029012c06f217cdso1587837pls.14
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 01:33:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=8Mht9KhrSAoC5vXTThxE4PNfv46coChGKCgMCqOMEH8=;
-        b=oo2CputfweaCl7qAkImrihP+8sguIF/RBd04QB2Rx3pb9ucl1FedevlQWmTufQ65uv
-         ICi3H74XRLzsPfmh4C3tz2xBo6Z2bIQOevebswxvzY/DtHmbt1uWPNK7twI/Yfby2B8R
-         XBAr67xJvW1LuZfnRQtxpznemkwZ++2gqdvGeSTi433D+Bzt2UQVu17KwA4PR2Y6hWDI
-         XybfTT/neAEG7XGpXGH9J/Kw9vBsYNANjNCRnKfsueiu0mnxk+Cf96sNG+vNkhDUppYG
-         jsfH+usR0tPHddEIxNbGc3MeH/z7hc0KGC/k/M3L/mh/GIH4EgSAioPFCEFIhUvLgaXi
-         IxmQ==
-X-Gm-Message-State: AOAM531k6qEYKwyOi3qSY9RlVz/zjkoR0xM6sWhlW/I6pOfDOWchmGns
-        VZew0/4FFiDif6EnXokpLWrZrJrDDwVOj3XOtlUxVdLTNZ+AVaWISDrr7/rx1rknlkMD61ETEwt
-        PSsEafuAwnRvNc10LxHydS4Ws5w==
-X-Received: by 2002:a17:903:2448:b029:12c:cbce:8f86 with SMTP id l8-20020a1709032448b029012ccbce8f86mr5117569pls.72.1628065973003;
-        Wed, 04 Aug 2021 01:32:53 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz0IqxY2soH2Uz1iq8mrB6lhygXB67xl2gJSTSu+DC+/FQJJ+3UJPurBSvXJuePHIlHPLAFsQ==
-X-Received: by 2002:a17:903:2448:b029:12c:cbce:8f86 with SMTP id l8-20020a1709032448b029012ccbce8f86mr5117546pls.72.1628065972803;
-        Wed, 04 Aug 2021 01:32:52 -0700 (PDT)
+        bh=pu0a7lvcVcx3k9JzblDeMR6k/r0nIYwunXvj5hzSi7c=;
+        b=VUUeIFNuTW4/MeFQshMuTJ8U6K1jct8St5Q6CqEsnQehVgny6iWgyoiXDE3JZJ7YVc
+         si0ZDC0O2ONCROohxOck61bE/C42mrStvJ5Fgb5m4+Sz0eEAg2xQrb7Q1mJqOj5wpsAU
+         d5zoQAyihgpMqp8LSVRrlUioCVjbZ8vj9g7xz2n03Zn38JU0GcyhQNwUO8ntTPv0yTKZ
+         LHu0KJlUD1YIkTz9jKf+bEKgZDmUCoHkCjTbkiiYKNUc5ZFtHJ0Qxo5dG7YBQFjs24cE
+         QxTtSLa5qN45aZQBS3FmfvahW/sk/0Z/P31sVbXCmirOoI9vlJacUPweyIimBjbT+gn1
+         89xg==
+X-Gm-Message-State: AOAM532E0AQKKZHYFWcGhupFFRPOLjh9arrXBNz14N5mkEYigJk2e8AV
+        WosaXRryJHEkI19w1Of0yfCS3qceC13Sx7UQSYx7tJ+ywhRUqVm9fPpqih7wCQYpqL7oKySR6VT
+        eNqU3ZMi0WnU0kUNH9JC9f+yDqw==
+X-Received: by 2002:a17:90a:d910:: with SMTP id c16mr8668190pjv.62.1628066004065;
+        Wed, 04 Aug 2021 01:33:24 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwGRA+b96dTvWH6rNF0GvUzAXXF5DIHsXTKRy/aLxqgmWgMfbwupx2NN3JsBxmvFmLwQEe/ug==
+X-Received: by 2002:a17:90a:d910:: with SMTP id c16mr8668175pjv.62.1628066003910;
+        Wed, 04 Aug 2021 01:33:23 -0700 (PDT)
 Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id d65sm1065176pjk.45.2021.08.04.01.32.42
+        by smtp.gmail.com with ESMTPSA id i24sm1831736pfr.207.2021.08.04.01.33.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Aug 2021 01:32:52 -0700 (PDT)
-Subject: Re: [PATCH v10 10/17] virtio: Handle device reset failure in
- register_virtio_device()
+        Wed, 04 Aug 2021 01:33:23 -0700 (PDT)
+Subject: Re: [PATCH v10 05/17] vhost-vdpa: Fail the vhost_vdpa_set_status() on
+ reset failure
 To:     Yongji Xie <xieyongji@bytedance.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
@@ -77,16 +77,16 @@ Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel <linux-kernel@vger.kernel.org>
 References: <20210729073503.187-1-xieyongji@bytedance.com>
- <20210729073503.187-11-xieyongji@bytedance.com>
- <6bb6c689-e6dd-cfa2-094b-a0ca4258aded@redhat.com>
- <CACycT3v7BHxYY0OFYJRFU41Bz1=_v8iMRwzYKgX6cJM-SiNH+A@mail.gmail.com>
+ <20210729073503.187-6-xieyongji@bytedance.com>
+ <55191de0-1a03-ff0d-1a49-afc419014bab@redhat.com>
+ <CACycT3sfiFizYQckHi5k4MpVpOOQCEwJhC-cToAnXaBVHTDPQQ@mail.gmail.com>
 From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <fdcb0224-11f9-caf2-a44e-e6406087fd50@redhat.com>
-Date:   Wed, 4 Aug 2021 16:32:39 +0800
+Message-ID: <f9311396-c461-e14a-d24e-0f8cd6458a11@redhat.com>
+Date:   Wed, 4 Aug 2021 16:33:14 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <CACycT3v7BHxYY0OFYJRFU41Bz1=_v8iMRwzYKgX6cJM-SiNH+A@mail.gmail.com>
+In-Reply-To: <CACycT3sfiFizYQckHi5k4MpVpOOQCEwJhC-cToAnXaBVHTDPQQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
@@ -95,27 +95,62 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-在 2021/8/3 下午5:38, Yongji Xie 写道:
-> On Tue, Aug 3, 2021 at 4:09 PM Jason Wang <jasowang@redhat.com> wrote:
+在 2021/8/3 下午5:50, Yongji Xie 写道:
+> On Tue, Aug 3, 2021 at 4:10 PM Jason Wang <jasowang@redhat.com> wrote:
 >>
 >> 在 2021/7/29 下午3:34, Xie Yongji 写道:
->>> The device reset may fail in virtio-vdpa case now, so add checks to
->>> its return value and fail the register_virtio_device().
+>>> Re-read the device status to ensure it's set to zero during
+>>> resetting. Otherwise, fail the vhost_vdpa_set_status() after timeout.
+>>>
+>>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+>>> ---
+>>>    drivers/vhost/vdpa.c | 11 ++++++++++-
+>>>    1 file changed, 10 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+>>> index b07aa161f7ad..dd05c1e1133c 100644
+>>> --- a/drivers/vhost/vdpa.c
+>>> +++ b/drivers/vhost/vdpa.c
+>>> @@ -157,7 +157,7 @@ static long vhost_vdpa_set_status(struct vhost_vdpa *v, u8 __user *statusp)
+>>>        struct vdpa_device *vdpa = v->vdpa;
+>>>        const struct vdpa_config_ops *ops = vdpa->config;
+>>>        u8 status, status_old;
+>>> -     int nvqs = v->nvqs;
+>>> +     int timeout = 0, nvqs = v->nvqs;
+>>>        u16 i;
+>>>
+>>>        if (copy_from_user(&status, statusp, sizeof(status)))
+>>> @@ -173,6 +173,15 @@ static long vhost_vdpa_set_status(struct vhost_vdpa *v, u8 __user *statusp)
+>>>                return -EINVAL;
+>>>
+>>>        ops->set_status(vdpa, status);
+>>> +     if (status == 0) {
+>>> +             while (ops->get_status(vdpa)) {
+>>> +                     timeout += 20;
+>>> +                     if (timeout > VDPA_RESET_TIMEOUT_MS)
+>>> +                             return -EIO;
+>>> +
+>>> +                     msleep(20);
+>>> +             }
 >>
->> So the reset() would be called by the driver during remove as well, or
->> is it sufficient to deal only with the reset during probe?
+>> Spec has introduced the reset a one of the basic facility. And consider
+>> we differ reset here.
 >>
-> Actually there is no way to handle failure during removal. And it
-> should be safe with the protection of software IOTLB even if the
-> reset() fails.
->
-> Thanks,
-> Yongji
+>> This makes me think if it's better to introduce a dedicated vdpa ops for
+>> reset?
+>>
+> Do you mean replace the ops.set_status(vdev, 0) with the ops.reset()?
+> Then we can remove the timeout processing which is device specific
+> stuff.
 
 
-If this is true, does it mean we don't even need to care about reset 
-failure?
+Exactly.
 
 Thanks
 
+
+>
+> Thanks,
+> Yongji
+>
 
