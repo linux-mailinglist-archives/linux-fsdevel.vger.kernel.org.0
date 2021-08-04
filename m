@@ -2,91 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B67333E0289
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 15:56:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 105FE3E02AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 16:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237778AbhHDN4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 09:56:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47166 "EHLO
+        id S238577AbhHDODx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 10:03:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236659AbhHDN4b (ORCPT
+        with ESMTP id S238304AbhHDODv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 09:56:31 -0400
-Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C453C0613D5
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 06:56:18 -0700 (PDT)
-Received: by mail-yb1-xb43.google.com with SMTP id p145so4082276ybg.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 06:56:18 -0700 (PDT)
+        Wed, 4 Aug 2021 10:03:51 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40F1C0613D5
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 07:03:38 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id c24so1343869lfi.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 07:03:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=XdkjCkEbpHg5nd+jg1mbTbTC48Xz0zrIT+9qtD4A290=;
-        b=n7FuXSl/Sls7PmGWYsuMrdBXwwTfbO4HyWIdnVEG6dKGz1KtWPdyMfsKxxPgmRsDSl
-         XE6E1wsZijIhWPkzjn1/nF3Am+Zyoj4Z5fLARZmUlEOtiDY4gb6qc7VXNGmPKXvK+kXk
-         T2LRnNOMJIZcb6zd6Z2sIFXMHvdICj68tMAcBzbVpwWugDd5JYtg6LXsj0u441l8bHlV
-         eewa/TELhY7Zf9Ci3Mue1HEvJBxRnT1FD7Otbw1iA0f3d/S5XYJ0Pi/QlaUEAMUzvHEh
-         VmDYO+0Y8FmC8IiCizODCpeAfd+VYSa79v7sGNKPIa3SCNZDV1UNaRJ7JHRbZwBYtrsu
-         qzXg==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ughZXN0i6ciMUaDjjaXdTQDv5YKCIbyqFTwOxdxRMYc=;
+        b=cwWoGqnBtbRPE3rm+p3rv/XNLBT6UskyQZGbimvxIbkwBs9NHfpMNztqOBU1axgWsG
+         k+F67X5sBHfB/LkTVsbBcVP2q59dpESact7KEX5gs+41LKKBw5SglU+AMKmP/VXtN5qf
+         oOtAuvqE0rzvbGC+nI1XTgP/4PMXCt+NQLGsbz48Zlk1S5hT41Hpq/SukRNVayGLyx4d
+         aubveY9oEz/95GNs4EfKHMpq3GIAzIkijo2rW4tK1OUWJ48SI8Vs49cxQFbo/S+Bucxv
+         H4XQKrayIn0ZOhCKjafL1f2R+9oxA8RT/Zmve2xalFVx/569jcVkyshiYm0Swqqjl8oi
+         IOrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=XdkjCkEbpHg5nd+jg1mbTbTC48Xz0zrIT+9qtD4A290=;
-        b=tUuBJKNxzEdz5dkBh2w/dKggOCi4q5GbXARY7QfScFlCeBHpLwpTbugMhLdPEhP6BK
-         3efazH2KsjE+9SJUAs/UzV7rEZM6wtoa2RARknSi+ENrCZFG6nc5EaUX5U/b23ETpRMm
-         UAM0TUcbXKFuUwHvBkOtIMDESeHMPMo1nRdigh4KxvjbfbGLgjFB6uA1MEH68Xj55pb2
-         2pcaysWuuCDw19dCBlr4pES+ylJ9Bg2bZybBNHdACboFxGl5M/hbTvPk6dRwtb/uFY3j
-         /wSebOIZoLa0tOk4/pCEY2GQvd2up+tpiAGxqqCUYmmlzDgrBTXi+uhhQHNbSy9Xr4tL
-         OgjQ==
-X-Gm-Message-State: AOAM530kRj68owVQ3T9CSPIh7hwk0Rv8eCmzVy9HmPhZotTYFCX5zy/U
-        Ie+Rk2oxbXmMDo/fKsnh/yBEnWw+dSj0z8v7Xcw3r8YWJg==
-X-Google-Smtp-Source: ABdhPJwyOiIcsgEIhoYi89iWEWEaUPHqqxP48cazWEjYWv9eVBD5pXAhaJr2hmtj8mrEV1aqZig5L591xK1EqmukPvs=
-X-Received: by 2002:a25:a109:: with SMTP id z9mr3801742ybh.279.1628085366144;
- Wed, 04 Aug 2021 06:56:06 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ughZXN0i6ciMUaDjjaXdTQDv5YKCIbyqFTwOxdxRMYc=;
+        b=eVYmVW2cm/ysMnsLOCTuzdZEHM0RjcYNEH7ploRtGcuAu+eiC3HUWNAc3EN008SMuC
+         bxLt4RmGw8q0wcGyZmo1hHKyPq3eSUOsXykoD8LvbnQpWNoMmdxS1DgxqcycWZH//5FS
+         uX0Eg/Xyooli4eS5qrO9vV4ApqVVnb6cybLcAS2gil48v0+5xgIs/1JxSkKFr6cSw6E/
+         K0T+CbgZRROo+OMbhx+uQ3MPH1CVmTzdyBOVkX79Lh1OjphAv8nYC352Jvf4DDFCDXK8
+         m8LFh/yFncE1HOsdJ6CWqwGv3sMxNftonAhb2ob36xR+6wXr2OgPn+jNTjFTbqgBSsoJ
+         X76w==
+X-Gm-Message-State: AOAM533xQOK+fXdnvQ1nePtJIWbMGim18N3oP8WADaICYbgtYajuV4Tb
+        cpuVctQ7nGIFOmIXsY3pV7nWdg==
+X-Google-Smtp-Source: ABdhPJwoHv/m0AtQTKnETyKLX66l6MWvksv+9Z7Vx7V6O2e8eYlYGJ7BNGoinJFDdPVshZj0811POg==
+X-Received: by 2002:a05:6512:b22:: with SMTP id w34mr20234036lfu.596.1628085817256;
+        Wed, 04 Aug 2021 07:03:37 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id b15sm207452lff.104.2021.08.04.07.03.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Aug 2021 07:03:36 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 23CAC102BC1; Wed,  4 Aug 2021 17:03:41 +0300 (+03)
+Date:   Wed, 4 Aug 2021 17:03:41 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <shy828301@gmail.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Matthew Auld <matthew.auld@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 07/16] memfd: memfd_create(name, MFD_HUGEPAGE) for shmem
+ huge pages
+Message-ID: <20210804140341.m3ptxesrxwivqjmk@box.shutemov.name>
+References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com>
+ <c140f56a-1aa3-f7ae-b7d1-93da7d5a3572@google.com>
 MIME-Version: 1.0
-Reply-To: d807vfh57p@gmail.com
-Sender: ft4757ghg@gmail.com
-Received: by 2002:a05:7108:2c8a:0:0:0:0 with HTTP; Wed, 4 Aug 2021 06:56:05
- -0700 (PDT)
-From:   Dixie Prichard <m568987k@gmail.com>
-Date:   Wed, 4 Aug 2021 14:56:05 +0100
-X-Google-Sender-Auth: ba8kPuHi-xcVL7-QrlrzOo-wimQ
-Message-ID: <CAK_-KPO_6F9RwJzX5p4hP69y3Yund8oCH=ENimiJyDAiGmPvMw@mail.gmail.com>
-Subject: << Message From Mrs. Dixie Prichard >>
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c140f56a-1aa3-f7ae-b7d1-93da7d5a3572@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Jul 30, 2021 at 12:45:49AM -0700, Hugh Dickins wrote:
+> Commit 749df87bd7be ("mm/shmem: add hugetlbfs support to memfd_create()")
+> in 4.14 added the MFD_HUGETLB flag to memfd_create(), to use hugetlbfs
+> pages instead of tmpfs pages: now add the MFD_HUGEPAGE flag, to use tmpfs
+> Transparent Huge Pages when they can be allocated (flag named to follow
+> the precedent of madvise's MADV_HUGEPAGE for THPs).
 
-Please accept my apologies for writing a surprise letter to you. My
-name is Mrs. Dixie Prichard. I'm the General Operation/Regional
-Accountant of First Pillar Finance Bank, United Kingdom. I am the
-account officer to one of our clients from your country who had a
-project account with our bank in 2006 the valued sum of GBP=C2=A3
-6,300,000.00 (Six Million Three Hundred Thousand British Pounds). He
-was among the fatalities of the May 26, 2006 earthquake in Java,
-Indonesia, which killed approximately 5,782 people. He was on a
-business trip in Indonesia during this disaster that ended his life
-and he did not specify a next heir when he opened the account.
+I don't like the interface. THP supposed to be transparent, not yet another
+hugetlbs.
 
-I would like to introduce you to the bank as the beneficiary for this
-transaction and invest the funds. Since you have a surname similar to
-that of the deceased client, it will be easier for me to introduce you
-to the bank management to release the fund. All I need is your sincere
-cooperation and I promise this will be done under a legitimate
-agreement that will protect us from any violation of the law. I agree
-that 40% of this money will go to you as my foreign partner, 50% to
-me, while 10% will go to establish a foundation for the
-underprivileged people in your country. If you would like to hear me
-out, I will provide you with full details about the transaction in
-your reply to this letter.
+> /sys/kernel/mm/transparent_hugepage/shmem_enabled "always" or "force"
+> already made this possible: but that is much too blunt an instrument,
+> affecting all the very different kinds of files on the internal shmem
+> mount, and was intended just for ease of testing hugepage loads.
 
-Thank you for your urgent response.
+I wounder if your tried "always" in production? What breaks? Maybe we can
+make it work with a heuristic? This would speed up adoption.
 
-Regards,
-Mrs. Dixie Prichard
+If a tunable needed, I would rather go with fadvise(). It would operate on
+a couple of bits per struct file and they get translated into VM_HUGEPAGE
+and VM_NOHUGEPAGE on mmap().
+
+Later if needed fadvise() implementation may be extended to track
+requested ranges. But initially it can be simple.
+
+-- 
+ Kirill A. Shutemov
