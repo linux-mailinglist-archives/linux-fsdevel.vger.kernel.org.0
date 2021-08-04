@@ -2,162 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8FB73E05F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 18:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 288723E07A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 20:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237892AbhHDQbk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 12:31:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55500 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbhHDQbk (ORCPT
+        id S238629AbhHDSd0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 14:33:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:60544 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238604AbhHDSd0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 12:31:40 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F842C061798
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 09:31:27 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id x8so5493042lfe.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 09:31:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Mbke9nvjw7+ZeekiQRXLpz0LVFhUcu96Nb3OTfXE7BU=;
-        b=PZ1SUNe5srVpzwzOaifNxeDnFelZQ09VVBF0S+czoEleI8H7NaXtf6BgmLYsKuLNiC
-         LTcU8OYPWLuF/4NphS6i+l1ci/XnoMb+i+upOTt69bQAT3JgDhcod/J5a5/zqAWUQ5CE
-         n8TsxAIOFru99StbsoS1slJejG91rgTWWoOlM=
+        Wed, 4 Aug 2021 14:33:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628101992;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qWfQ4ISwjwffNQ7YHGuZ5FJ03xVMdb5Rajli0vTZ9tM=;
+        b=hkpKzjCe19k/xYwyzS1MnmDhA2r6Hfzv2g4Pz1XRmoMOsiohIOspormrEf0jgoDm91eG20
+        yCHq1pUHOSTwqwKeXciDvHv54ZKx7Fm32G7Qppq1mCb9Aq5y38Zc5gR86KB54ayp21lIpQ
+        NKw1x4jmDxr6YzqAN+J5GQNs93JAJ0g=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-390-9M6l__-HO1mNRY_s38zY9A-1; Wed, 04 Aug 2021 14:33:11 -0400
+X-MC-Unique: 9M6l__-HO1mNRY_s38zY9A-1
+Received: by mail-qt1-f198.google.com with SMTP id o11-20020ac85a4b0000b029028acd99a680so1406126qta.19
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 11:33:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Mbke9nvjw7+ZeekiQRXLpz0LVFhUcu96Nb3OTfXE7BU=;
-        b=rg54PlVZDA8o9GvvnnS/aL8cAu0agmTvBao6Eym2IAWKZZ7BB2TAthYqD+bwoEvUSJ
-         +g1Kqco+aGsc0Gsp4QqSCQg3O02myfnR8tBqOnCK413hMttPLzgJmhiCKDu5azJI9uVw
-         x5aYbZs3rvIq1V1l++6/IEooaG4Khw/o/acrstjjBV0bYs7DgieXfI+vqjg5gg+KhhUk
-         AitpR/m6dqnncrhhrF48Xee6p3yVUAdxsSaSN1UdEEkV5EFful6+TgReZ/zgcNZrIuLp
-         qqB/Z6KgIX2eMlw50rXS8ENv38KOPpFWT3hy0sROhmnthM7SDYSwJ8HAswlKrmlt1/bl
-         8oXw==
-X-Gm-Message-State: AOAM530Cy2n4TIPRFI5kHr3pM72mCOjzHIvDi4tmLimO0GYnLqRhBty1
-        10GaqmY+CONZ1LrysrAdw1Evdk7yPM43o7lv
-X-Google-Smtp-Source: ABdhPJwJmjIDmb+UACZlHZ8UL4ggn4ykFTAa64fIBBIMZERRtl/7BWtfpM0eg3yE2p+2tuPxxEmNJw==
-X-Received: by 2002:a19:c10c:: with SMTP id r12mr88528lff.522.1628094685394;
-        Wed, 04 Aug 2021 09:31:25 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id z13sm197737ljk.39.2021.08.04.09.31.18
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Aug 2021 09:31:18 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id b6so5416182lff.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 09:31:18 -0700 (PDT)
-X-Received: by 2002:a19:fc06:: with SMTP id a6mr62531lfi.377.1628094677755;
- Wed, 04 Aug 2021 09:31:17 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qWfQ4ISwjwffNQ7YHGuZ5FJ03xVMdb5Rajli0vTZ9tM=;
+        b=XYYhWIhSYyuRChj/xUiHVD0ETg/gi/d0xPHNjVQfLyPayujm0sQfwYZ3ZhBG7egGdJ
+         iNSEWI1vKT+KOpnTRPmuMravT1u6IAbPdHvBCwxlWwK/z1Bl4wsGWDtHIwKdfN/9d8yu
+         3Y0BIHTpFLRz9SQ6ssWfA70sLVvGajBWM3WoCSJl2LcOcc3yiFK2TrYN4TNFvcYicyDq
+         kaGwJr05eMf+r9BEpSbqWpRwIt2odwKTVa5hL1VtUVYLV7zZUTOJdcmBDu0/WlGa8NKC
+         hyca3QHb11ILvjOOxjtqc1j/mpPjrOhurBXSNSoQGjv8I7re+51eIEKTAeMsw3utUOuo
+         jCUw==
+X-Gm-Message-State: AOAM530e9zrxFR28QFqU+kWUcRSBcKmZ9hsZGEv4lOaQvvR/8fX0uLrg
+        toTMz+HnZGpnVYRAca7Ba1B20Wu4/hYm09QjKhu9+InAMNmL6ZKnSmL1iBg93R86YCB1rqRIanE
+        EDhHLH5thrJvBlArmrAGnXy5wuA==
+X-Received: by 2002:a05:622a:142:: with SMTP id v2mr824987qtw.343.1628101991052;
+        Wed, 04 Aug 2021 11:33:11 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJznD6r9qJJsML71uwOWGJ7AtcsNDE2L3CoWfiJ+z4195j80LyXBqS0JqLw/mvR2d81qYKN2fA==
+X-Received: by 2002:a05:622a:142:: with SMTP id v2mr824969qtw.343.1628101990769;
+        Wed, 04 Aug 2021 11:33:10 -0700 (PDT)
+Received: from t490s (bras-base-toroon474qw-grc-92-76-70-75-133.dsl.bell.ca. [76.70.75.133])
+        by smtp.gmail.com with ESMTPSA id v11sm1287314qtc.0.2021.08.04.11.33.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Aug 2021 11:33:08 -0700 (PDT)
+Date:   Wed, 4 Aug 2021 14:33:07 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Tiberiu A Georgescu <tiberiu.georgescu@nutanix.com>
+Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        david@redhat.com, christian.brauner@ubuntu.com,
+        ebiederm@xmission.com, adobriyan@gmail.com,
+        songmuchun@bytedance.com, axboe@kernel.dk,
+        vincenzo.frascino@arm.com, catalin.marinas@arm.com,
+        peterz@infradead.org, chinwen.chang@mediatek.com,
+        linmiaohe@huawei.com, jannh@google.com, apopple@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, ivan.teterevkov@nutanix.com,
+        florian.schmidt@nutanix.com, carl.waldspurger@nutanix.com,
+        jonathan.davies@nutanix.com
+Subject: Re: [PATCH 0/1] pagemap: swap location for shared pages
+Message-ID: <YQrdY5zQOVgQJ1BI@t490s>
+References: <20210730160826.63785-1-tiberiu.georgescu@nutanix.com>
 MIME-Version: 1.0
-References: <1628086770.5rn8p04n6j.none.ref@localhost> <1628086770.5rn8p04n6j.none@localhost>
-In-Reply-To: <1628086770.5rn8p04n6j.none@localhost>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 4 Aug 2021 09:31:01 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiLr55zHUWNzmp3DeoO0DUaYp7vAzQB5KUCni5FpwC7Uw@mail.gmail.com>
-Message-ID: <CAHk-=wiLr55zHUWNzmp3DeoO0DUaYp7vAzQB5KUCni5FpwC7Uw@mail.gmail.com>
-Subject: Re: [REGRESSION?] Simultaneous writes to a reader-less, non-full pipe
- can hang
-To:     "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, acrichton@mozilla.com,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210730160826.63785-1-tiberiu.georgescu@nutanix.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Your program is buggy.
+Hi, Tiberiu,
 
-On Wed, Aug 4, 2021 at 8:37 AM Alex Xu (Hello71) <alex_y_xu@yahoo.ca> wrote:
->
->     pipe(pipefd);
->     printf("init buffer: %d\n", fcntl(pipefd[1], F_GETPIPE_SZ));
->     printf("new buffer:  %d\n", fcntl(pipefd[1], F_SETPIPE_SZ, 0));
+On Fri, Jul 30, 2021 at 04:08:25PM +0000, Tiberiu A Georgescu wrote:
+> This patch follows up on a previous RFC:
+> 20210714152426.216217-1-tiberiu.georgescu@nutanix.com
+> 
+> When a page allocated using the MAP_SHARED flag is swapped out, its pagemap
+> entry is cleared. In many cases, there is no difference between swapped-out
+> shared pages and newly allocated, non-dirty pages in the pagemap interface.
+> 
+> Example pagemap-test code (Tested on Kernel Version 5.14-rc3):
+>     #define NPAGES (256)
+>     /* map 1MiB shared memory */
+>     size_t pagesize = getpagesize();
+>     char *p = mmap(NULL, pagesize * NPAGES, PROT_READ | PROT_WRITE,
+>     		   MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+>     /* Dirty new pages. */
+>     for (i = 0; i < PAGES; i++)
+>     	p[i * pagesize] = i;
+> 
+> Run the above program in a small cgroup, which causes swapping:
+>     /* Initialise cgroup & run a program */
+>     $ echo 512K > foo/memory.limit_in_bytes
+>     $ echo 60 > foo/memory.swappiness
+>     $ cgexec -g memory:foo ./pagemap-test
+> 
+> Check the pagemap report. Example of the current expected output:
+>     $ dd if=/proc/$PID/pagemap ibs=8 skip=$(($VADDR / $PAGESIZE)) count=$COUNT | hexdump -C
+>     00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+>     *
+>     00000710  e1 6b 06 00 00 00 00 a1  9e eb 06 00 00 00 00 a1  |.k..............|
+>     00000720  6b ee 06 00 00 00 00 a1  a5 a4 05 00 00 00 00 a1  |k...............|
+>     00000730  5c bf 06 00 00 00 00 a1  90 b6 06 00 00 00 00 a1  |\...............|
+> 
+> The first pagemap entries are reported as zeroes, indicating the pages have
+> never been allocated while they have actually been swapped out.
+> 
+> This patch addresses the behaviour and modifies pte_to_pagemap_entry() to
+> make use of the XArray associated with the virtual memory area struct
+> passed as an argument. The XArray contains the location of virtual pages in
+> the page cache, swap cache or on disk. If they are in either of the caches,
+> then the original implementation still works. If not, then the missing
+> information will be retrieved from the XArray.
+> 
+> Performance
+> ============
+> I measured the performance of the patch on a single socket Xeon E5-2620
+> machine, with 128GiB of RAM and 128GiB of swap storage. These were the
+> steps taken:
+> 
+>   1. Run example pagemap-test code on a cgroup
+>     a. Set up cgroup with limit_in_bytes=4GiB and swappiness=60;
+>     b. allocate 16GiB (about 4 million pages);
+>     c. dirty 0,50 or 100% of pages;
+>     d. do this for both private and shared memory.
+>   2. Run `dd if=<PAGEMAP> ibs=8 skip=$(($VADDR / $PAGESIZE)) count=4194304`
+>      for each possible configuration above
+>     a.  3 times for warm up;
+>     b. 10 times to measure performance.
+>        Use `time` or another performance measuring tool.
+> 
+> Results (averaged over 10 iterations):
+>                +--------+------------+------------+
+>                | dirty% |  pre patch | post patch |
+>                +--------+------------+------------+
+>  private|anon  |     0% |      8.15s |      8.40s |
+>                |    50% |     11.83s |     12.19s |
+>                |   100% |     12.37s |     12.20s |
+>                +--------+------------+------------+
+>   shared|anon  |     0% |      8.17s |      8.18s |
+>                |    50% | (*) 10.43s |     37.43s |
+>                |   100% | (*) 10.20s |     38.59s |
+>                +--------+------------+------------+
+> 
+> (*): reminder that pre-patch produces incorrect pagemap entries for swapped
+>      out pages.
+> 
+> From run to run the above results are stable (mostly <1% stderr).
+> 
+> The amount of time it takes for a full read of the pagemap depends on the
+> granularity used by dd to read the pagemap file. Even though the access is
+> sequential, the script only reads 8 bytes at a time, running pagemap_read()
+> COUNT times (one time for each page in a 16GiB area).
+> 
+> To reduce overhead, we can use batching for large amounts of sequential
+> access. We can make dd read multiple page entries at a time,
+> allowing the kernel to make optimisations and yield more throughput.
+> 
+> Performance in real time (seconds) of
+> `dd if=<PAGEMAP> ibs=8*$BATCH skip=$(($VADDR / $PAGESIZE / $BATCH))
+> count=$((4194304 / $BATCH))`:
+> +---------------------------------+ +---------------------------------+
+> |     Shared, Anon, 50% dirty     | |     Shared, Anon, 100% dirty    |
+> +-------+------------+------------+ +-------+------------+------------+
+> | Batch |  Pre-patch | Post-patch | | Batch |  Pre-patch | Post-patch |
+> +-------+------------+------------+ +-------+------------+------------+
+> |     1 | (*) 10.43s |     37.43s | |     1 | (*) 10.20s |     38.59s |
+> |     2 | (*)  5.25s |     18.77s | |     2 | (*)  5.15s |     19.37s |
+> |     4 | (*)  2.63s |      9.42s | |     4 | (*)  2.63s |      9.74s |
+> |     8 | (*)  1.38s |      4.80s | |     8 | (*)  1.35s |      4.94s |
+> |    16 | (*)  0.73s |      2.46s | |    16 | (*)  0.72s |      2.54s |
+> |    32 | (*)  0.40s |      1.31s | |    32 | (*)  0.41s |      1.34s |
+> |    64 | (*)  0.25s |      0.72s | |    64 | (*)  0.24s |      0.74s |
+> |   128 | (*)  0.16s |      0.43s | |   128 | (*)  0.16s |      0.44s |
+> |   256 | (*)  0.12s |      0.28s | |   256 | (*)  0.12s |      0.29s |
+> |   512 | (*)  0.10s |      0.21s | |   512 | (*)  0.10s |      0.22s |
+> |  1024 | (*)  0.10s |      0.20s | |  1024 | (*)  0.10s |      0.21s |
+> +-------+------------+------------+ +-------+------------+------------+
+> 
+> To conclude, in order to make the most of the underlying mechanisms of
+> pagemap and xarray, one should be using batching to achieve better
+> performance.
 
-Yeah, what did you expect this to do? You said you want a minimal
-buffer, you get a really small buffer.
+So what I'm still a bit worried is whether it will regress some existing users.
+Note that existing users can try to read pagemap in their own way; we can't
+expect all the userspaces to change their behavior due to a kernel change.
 
-Then you try to write multiple messages to the pipe that you just said
-should have a minimum size.
+Meanwhile, from the numbers, it seems to show a 4x speed down due to looking up
+the page cache no matter the size of ibs=.  IOW I don't see a good way to avoid
+that overhead, so no way to have the userspace run as fast as before.
 
-Don't do that then.
+Also note that it's not only affecting the PM_SWAP users; it potentially
+affects all the /proc/pagemap users as long as there're file-backed memory on
+the read region of pagemap, which is very sane to happen.
 
-> /proc/x/stack shows that the remaining thread is hanging at pipe.c:560.
-> It looks like not only there needs to be space in the pipe, but also
-> slots.
+That's why I think if we want to persist it, we should still consider starting
+from the pte marker idea.
 
-Correct. The fullness of a pipe is not about whether it has the
-possibility of merging more bytes into an existing not-full slot, but
-about whether it has empty slots left.
+I do plan to move the pte marker idea forward unless that'll be NACKed upstream
+for some other reason, because that seems to be the only way for uffd-wp to
+support file based memories; no matter with a new swp type or with special swap
+pte.  I am even thinking about whether I should propose that with PM_SWAP first
+because that seems to be a simpler scenario than uffd-wp (which will get the
+rest uffd-wp patches involved then), then we can have a shared infrastructure.
+But haven't thought deeper than that.
 
-Part of that is simply the POSIX pipe guarantees - a write of size
-PIPE_BUF or less is guaranteed to be atomic, so it mustn't be split
-among buffers.
+Thanks,
 
-So a pipe must not be "writable" unless it has space for at least that
-much (think select/poll, which don't know the size of the write).
+-- 
+Peter Xu
 
-The fact that we might be able to reuse a partially filled buffer for
-smaller writes is simply not relevant to that issue.
-
-And yes, we could have different measures of "could write" for
-different writes, but we just don't have or want that complexity.
-
-Please don't mess with F_SETPIPE_SZ unless you have a really good
-reason to do so, and actually understand what you are doing.
-
-Doing a F_SETPIPE_SZ, 0 basically means "I want the mimimum pipe size
-possible". And that one accepts exactly one write at a time.
-
-Of course, the exact semantics are much more complicated than that
-"exactly one write". The pipe write code will optimistically merge
-writes into a previous buffer, which means that depending on the
-pattern of your writes, the exact number of bytes you can write will
-be very different.
-
-But that "merge writes into a previous buffer" only appends to the
-buffer - not _reuse_ it - so when each buffer is one page in size,
-what happens is that you can merge up to 4096 bytes worth of writes,
-but then after that the pipe write will want a new buffer - even if
-the old buffer is now empty because of old reads.
-
-That's why your test program won't block immediately: both writers
-will actually start out happily doing writes into that one buffer that
-is allocated, but at some point that buffer ends, and it wants to
-allocate a new buffer.
-
-But you told it not to allocate more buffers, and the old buffer is
-never completely empty because your readers never read _everythign_,
-so it will hang, waiting for you to empty the one minimal buffer it
-allocated. And that will never happen.
-
-There's a very real reason why we do *not* by default say "pipes can
-only ever use only one buffer".
-
-I don't think this is a regression, but if you have an actual
-application - not a test program - that does crazy things like this
-and used to work (I'm not sure it has ever worked, though), we can
-look into making it work again.
-
-That said, I suspect the way to make it work is to just say "the
-minimum pipe size is two slots" rather than change the "we want at
-least one empty slot". Exactly because of that whole "look, we must
-not consider a pipe that doesn't have a slot writable".
-
-Because clearly people don't understand how subtle F_SETPIPE_SZ is.
-It's not really a "byte count", even though that is how it's
-expressed.
-
-                   Linus
