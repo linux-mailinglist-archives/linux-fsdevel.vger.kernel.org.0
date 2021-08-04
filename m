@@ -2,94 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BFAD3DF91E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 03:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F12F63DF995
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 04:13:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232158AbhHDBEE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 21:04:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232116AbhHDBEE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 21:04:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 49EB660EE9;
-        Wed,  4 Aug 2021 01:03:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628039032;
-        bh=3zpTVINyDQY06hDwhYcrGO5+Ep7Qt5Tfwx09qPKhUSk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YKP6ry3t6DYW1/STHLt13HzOzHU51+xx8mVeLUKW6eVa16+T07HRrn4jB2qwvsiTJ
-         lroMLc0yp7Mk0nu+cTODcTJaizbnClbLg7iAD5/TZ0edGk32QjxPoqvIyH4S+5zW8O
-         +tXj9Y3R8owoZDv39tLITGVLB3Uvd5bomqd+KacsGUc6qu7am0XGodkGZlcawTGJzV
-         2kDTnkkGMEmn1AEjuwDG4v+Y1Tcp4NIa7BIfTBU6ltNiirdAjnyj1rTotkNoJh7+kL
-         kYqPdGxEQbL40TrbUMS4Rtqzg/rk+XnIC9ZjPqvUrXqhE0fyHoz95Od7oZGjQnjxuE
-         NWvMCDgHBGHVA==
-Date:   Tue, 3 Aug 2021 18:03:51 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Leonidas P. Papadakos" <papadakospan@gmail.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        zajec5@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
-Message-ID: <20210804010351.GM3601466@magnolia>
-References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
- <20210716114635.14797-1-papadakospan@gmail.com>
- <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com>
- <YQnHxIU+EAAxIjZA@mit.edu>
- <YQnU5m/ur+0D5MfJ@casper.infradead.org>
- <YQnZgq3gMKGI1Nig@mit.edu>
- <CAHk-=wiSwzrWOSN5UCrej3YcLRPmW5tViGSA5p2m-hiyKnQiMg@mail.gmail.com>
- <YQnkGMxZCgCWXQPf@mit.edu>
+        id S234242AbhHDCNX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Aug 2021 22:13:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57688 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229892AbhHDCNL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Aug 2021 22:13:11 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6042DC06175F;
+        Tue,  3 Aug 2021 19:12:59 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id d17so1278262plr.12;
+        Tue, 03 Aug 2021 19:12:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=i7/21JOa6ndS+LDgm4xtjgQFIyuj0hUBVl5kgE/wV9o=;
+        b=J5N9T0CVUgyGSnCCn1nrxNA6iQCubLwXaXXYP/kFcfDfP9MNz0vB4yWPSbsPKSD00C
+         JphfVS3W5Hv8SN+1q4hy/pf1e6/LlifGOUyKryHf0P3hP6jPYxEm4Mb1XkqIITaPQr4N
+         EtLsfsrJLz6jZ3C/YV2t08nMAg+55QW2rfDapuCNhcNT4HxtmVQOk7KksZGaqPOTcrXf
+         KNWfwYcG7mxcUyskY1e7XvooCaiNammKawCHQqJOE5x2FyyHFhHI4C70e+PI+g73pZcp
+         2Yhi0jupry2LGkpVSJ21RCgLX7uAX9Dec8Rr39bBaDBQXCT77Ns9SpWFtEUzL7kYD6FX
+         kLFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=i7/21JOa6ndS+LDgm4xtjgQFIyuj0hUBVl5kgE/wV9o=;
+        b=pl8l2uWrY4ZZB51FgYhH2IpP5lYJPFMSWtiM74sv9paWAR/B6hVSLziv9E0SGhMRgR
+         tnpauLVncAI8zPT0EZQvQ9haGlvmBqV/WzKFnBNfArbGfVy/re+/giTVhVCADAw/1is0
+         IzNahLsP33AyiCT1T/3yKQn1Fcsr7YdDoccpYzkOmpPvMuqE7owecYYLhjYBmGC5+YcS
+         PnDH6vyJ09SrYICX2TrRxfStgJGJIGGbsu2Mdxs88oBDrK0ikzjiWo7nFrqB4lkzwlJO
+         43OY0AOMqJzc4trLj5aZuo48dZDdfsX95Cx+jZNB5u9g/1/ma1+oDG/AcvmpJ79iu4Bg
+         udEw==
+X-Gm-Message-State: AOAM533pRbIeuRuBuIjreARkS9rO5jqHk/4WBALm8qeoAdieyJvkJTGZ
+        6lJcYw1kRuzWasmbrUPsMJg=
+X-Google-Smtp-Source: ABdhPJw4hmMBznYzIQFFHfUx42p3lkWi+wBFXCTWgYkjWuaMuwujk9mhh3Cl3UNrSTVWmVaZ9WbGAA==
+X-Received: by 2002:a17:902:8bc4:b029:12b:8470:e29e with SMTP id r4-20020a1709028bc4b029012b8470e29emr4334561plo.2.1628043178927;
+        Tue, 03 Aug 2021 19:12:58 -0700 (PDT)
+Received: from [0.0.0.0] ([45.76.223.48])
+        by smtp.gmail.com with ESMTPSA id d17sm510457pfn.110.2021.08.03.19.12.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Aug 2021 19:12:58 -0700 (PDT)
+Subject: Re: [PATCH 0/2] Fix /proc/sys/fs/nfs/nsm_use_hostnames on big endian
+ machines
+To:     Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>, linux-s390@vger.kernel.org,
+        Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>
+References: <20210803105937.52052-1-thuth@redhat.com>
+From:   Jia He <hejianet@gmail.com>
+Message-ID: <98549025-d163-0ce4-0a9d-9da3ee945f44@gmail.com>
+Date:   Wed, 4 Aug 2021 10:12:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YQnkGMxZCgCWXQPf@mit.edu>
+In-Reply-To: <20210803105937.52052-1-thuth@redhat.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 03, 2021 at 08:49:28PM -0400, Theodore Ts'o wrote:
-> On Tue, Aug 03, 2021 at 05:10:22PM -0700, Linus Torvalds wrote:
-> > The user-space FUSE thing does indeed work reasonably well.
-> > 
-> > It performs horribly badly if you care about things like that, though.
-> > 
-> > In fact, your own numbers kind of show that:
-> > 
-> >   ntfs/default: 670 tests, 55 failures, 211 skipped, 34783 seconds
-> >   ntfs3/default: 664 tests, 67 failures, 206 skipped, 8106 seconds
-> > 
-> > and that's kind of the point of ntfs3.
-> 
-> Sure, although if you run fstress in parallel ntfs3 will lock up, the
-> system hard, and it has at least one lockdep deadlock complaints.
-> It's not up to me, but personally, I'd feel better if *someone* at
-> Paragon Software responded to Darrrick and my queries about their
-> quality assurance, and/or made commitments that they would at least
-> *try* to fix the problems that about 5 minutes of testing using
-> fstests turned up trivially.
 
-<cough> Yes, my aim was to gauge their interest in actively QAing the
-driver's current problems so that it doesn't become one of the shabby
-Linux filesystem drivers, like <cough>ntfs.
+On 2021/8/3 18:59, Thomas Huth wrote:
+> There is an endianess problem with /proc/sys/fs/nfs/nsm_use_hostnames
+> (which can e.g. be seen on an s390x host) :
+>
+>   # modprobe lockd nsm_use_hostnames=1
+>   # cat /proc/sys/fs/nfs/nsm_use_hostnames
+>   16777216
+>
+> The nsm_use_hostnames variable is declared as "bool" which is required
+> for the correct type for the module parameter. However, this does not
+> work correctly with the entry in the /proc filesystem since this
+> currently requires "int".
+>
+> Jia He already provided patches for this problem a couple of years ago,
+> but apparently they felt through the cracks and never got merged. So
+> here's a rebased version to finally fix this issue.
+>
+> Buglink: https://bugzilla.redhat.com/show_bug.cgi?id=1764075
+>
+> Jia He (2):
+>    sysctl: introduce new proc handler proc_dobool
+>    lockd: change the proc_handler for nsm_use_hostnames
 
-Note I didn't even ask for a particular percentage of passing tests,
-because I already know that non-Unix filesystems fail the tests that
-look for the more Unix-specific behaviors.
+Thanks for picking them up ;-)
 
-I really only wanted them to tell /us/ what the baseline is.  IMHO the
-silence from them is a lot more telling.  Both generic/013 and
-generic/475 are basic "try to create files and read and write data to
-them" exercisers; failing those is a red flag.
+---
+Cheers,
+Justin (Jia He)
 
---D
-
-> I can even give them patches and configsto make it trivially easy for
-> them to run fstests using KVM or GCE....
-> 
-> 				- Ted
