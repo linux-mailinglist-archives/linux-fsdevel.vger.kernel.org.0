@@ -2,173 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F2E83DFAC6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 06:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F113DFADD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 07:02:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230487AbhHDEwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 00:52:45 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:52533 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230234AbhHDEwp (ORCPT
+        id S235072AbhHDFC3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 01:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38714 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230120AbhHDFC3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 00:52:45 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Uhw5or2_1628052749;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Uhw5or2_1628052749)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 04 Aug 2021 12:52:31 +0800
-Date:   Wed, 4 Aug 2021 12:52:29 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Chao Yu <chao@kernel.org>
-Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        nvdimm@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>,
-        Huang Jianan <huangjianan@oppo.com>,
-        Tao Ma <boyu.mt@taobao.com>
-Subject: Re: [PATCH v2 1/3] erofs: iomap support for non-tailpacking DIO
-Message-ID: <YQodDac58Uta4ZtR@B-P7TQMD6M-0146.local>
-Mail-Followup-To: Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>,
-        Huang Jianan <huangjianan@oppo.com>, Tao Ma <boyu.mt@taobao.com>
-References: <20210730194625.93856-1-hsiangkao@linux.alibaba.com>
- <20210730194625.93856-2-hsiangkao@linux.alibaba.com>
- <e79e3261-e582-e848-b550-c0c3163d9af4@kernel.org>
- <YQoX62zRERGX9BGB@B-P7TQMD6M-0146.local>
+        Wed, 4 Aug 2021 01:02:29 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB35C06179B
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Aug 2021 22:02:14 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id y12so1911491edo.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 22:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=N+beALY95MrjF7EQlWQ+7qrLEnnewleV96sjHNxuEQs=;
+        b=1rLCLS4VnBkloqKEKCZnZytWQey60VsL3htB4tjjDdGtlLAiqoh4sNKJRTSD6PwHMR
+         9vnNHw1iSS/Fx6i0RCE4RQQ4vyqq5rtIc36Im9QY2RqHEKf/w7Ug3oZhwlGcXQQVWu+G
+         DaqQtL3jX0bh/ha8PFkv/P+nkTaCYS0lRvDdZ7eTBoSHDgR6igcI7RQpNA/OnHviNAOp
+         B3a2lMoBgB2yx2PIRIb70LzX8dilNPja4adYWApEFw1rdfLmQVuZMJXeYvIXWxCdUk2b
+         bPhkn+mywOFmHQT2BPGuByMD4SU6R+J4yLdJWCNVm7lh1t2vV6tsAG7vZpgywjnOueBE
+         IJ+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=N+beALY95MrjF7EQlWQ+7qrLEnnewleV96sjHNxuEQs=;
+        b=clcxvdcbr2eBumoHHL+s/PQG0UPH2kW4D/Oz13UChfx6nTQk4uxfgQVZ+2Jf8TinJf
+         9Q/ljdFBpVaqotUh1G93Y1RFjHcQOCjpex5Ag1zxL0wxzb7bXxwZbWoH8BSo+UctcCyE
+         eI35B6GDtBxIc0jLvawKZ2yV7kW+iV5mLPzTs+nCwvgzDPuaCFT359OR4RV83RkTcnMZ
+         c++GL8A2RCZ3uXAymysCzdovDLFIYvy93Ld9+fyQVneaEj5aTwkdvlcloxdqggX/shiC
+         fZlEoiGHJYFozs+RPBNIhxbwqyQTthaN2FgRMSzggui7TjgxLi6WDgPzSBKXCTMJ71HT
+         iLVA==
+X-Gm-Message-State: AOAM532/qI2r/2E1hAEQAImhh+5Bu5WZ1oQeXmUDozIpcgSBgPupV7Kr
+        ukxRt3KTbzO59orvXxL0oEeejrwgceo9QXqAjgn9
+X-Google-Smtp-Source: ABdhPJyt1k/RSWy83+1+OmhkaAmWeFnxG6MZmwR66lsbk5H/EN4omlE0NKvZ4kUYOjDCLtkcwCUQ7smkV99GEEOO3As=
+X-Received: by 2002:aa7:c50a:: with SMTP id o10mr29218603edq.118.1628053332808;
+ Tue, 03 Aug 2021 22:02:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YQoX62zRERGX9BGB@B-P7TQMD6M-0146.local>
+References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-2-xieyongji@bytedance.com>
+ <43d88942-1cd3-c840-6fec-4155fd544d80@redhat.com> <CACycT3vcpwyA3xjD29f1hGnYALyAd=-XcWp8+wJiwSqpqUu00w@mail.gmail.com>
+ <6e05e25e-e569-402e-d81b-8ac2cff1c0e8@arm.com>
+In-Reply-To: <6e05e25e-e569-402e-d81b-8ac2cff1c0e8@arm.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Wed, 4 Aug 2021 13:02:01 +0800
+Message-ID: <CACycT3sm2r8NMMUPy1k1PuSZZ3nM9aic-O4AhdmRRCwgmwGj4Q@mail.gmail.com>
+Subject: Re: [PATCH v10 01/17] iova: Export alloc_iova_fast() and free_iova_fast()
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Jason Wang <jasowang@redhat.com>, kvm <kvm@vger.kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Liu Xiaodong <xiaodong.liu@intel.com>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        songmuchun@bytedance.com, Jens Axboe <axboe@kernel.dk>,
+        He Zhe <zhe.he@windriver.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, bcrl@kvack.org,
+        netdev@vger.kernel.org, Joe Perches <joe@perches.com>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 04, 2021 at 12:30:35PM +0800, Gao Xiang wrote:
-> Hi Chao,
-> 
-> On Wed, Aug 04, 2021 at 10:57:08AM +0800, Chao Yu wrote:
-> > On 2021/7/31 3:46, Gao Xiang wrote:
-> 
-> ...
-> 
-> > >   }
-> > > +static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-> > > +		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
-> > > +{
-> > > +	int ret;
-> > > +	struct erofs_map_blocks map;
-> > > +
-> > > +	map.m_la = offset;
-> > > +	map.m_llen = length;
-> > > +
-> > > +	ret = erofs_map_blocks_flatmode(inode, &map, EROFS_GET_BLOCKS_RAW);
-> > > +	if (ret < 0)
-> > > +		return ret;
-> > > +
-> > > +	iomap->bdev = inode->i_sb->s_bdev;
-> > > +	iomap->offset = map.m_la;
-> > > +	iomap->length = map.m_llen;
-> > > +	iomap->flags = 0;
-> > > +
-> > > +	if (!(map.m_flags & EROFS_MAP_MAPPED)) {
-> > > +		iomap->type = IOMAP_HOLE;
-> > > +		iomap->addr = IOMAP_NULL_ADDR;
-> > > +		if (!iomap->length)
-> > > +			iomap->length = length;
-> > 
-> > This only happens for the case offset exceeds isize?
-> 
-> Thanks for the review.
-> 
-> Yeah, this is a convention (length 0 with !EROFS_MAP_MAPPED) for post-EOF
-> in erofs_map_blocks_flatmode(), need to follow iomap rule as well.
-> 
-> > 
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	/* that shouldn't happen for now */
-> > > +	if (map.m_flags & EROFS_MAP_META) {
-> > > +		DBG_BUGON(1);
-> > > +		return -ENOTBLK;
-> > > +	}
-> > > +	iomap->type = IOMAP_MAPPED;
-> > > +	iomap->addr = map.m_pa;
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +const struct iomap_ops erofs_iomap_ops = {
-> > > +	.iomap_begin = erofs_iomap_begin,
-> > > +};
-> > > +
-> > > +static int erofs_prepare_dio(struct kiocb *iocb, struct iov_iter *to)
-> > > +{
-> > > +	struct inode *inode = file_inode(iocb->ki_filp);
-> > > +	loff_t align = iocb->ki_pos | iov_iter_count(to) |
-> > > +		iov_iter_alignment(to);
-> > > +	struct block_device *bdev = inode->i_sb->s_bdev;
-> > > +	unsigned int blksize_mask;
-> > > +
-> > > +	if (bdev)
-> > > +		blksize_mask = (1 << ilog2(bdev_logical_block_size(bdev))) - 1;
-> > > +	else
-> > > +		blksize_mask = (1 << inode->i_blkbits) - 1;
-> > > +
-> > > +	if (align & blksize_mask)
-> > > +		return -EINVAL;
-> > > +
-> > > +	/*
-> > > +	 * Temporarily fall back tail-packing inline to buffered I/O instead
-> > > +	 * since tail-packing inline support relies on an iomap core update.
-> > > +	 */
-> > > +	if (EROFS_I(inode)->datalayout == EROFS_INODE_FLAT_INLINE &&
-> > > +	    iocb->ki_pos + iov_iter_count(to) >
-> > > +			rounddown(inode->i_size, EROFS_BLKSIZ))
-> > > +		return 1;
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> > > +{
-> > > +	/* no need taking (shared) inode lock since it's a ro filesystem */
-> > > +	if (!iov_iter_count(to))
-> > > +		return 0;
-> > > +
-> > > +	if (iocb->ki_flags & IOCB_DIRECT) {
-> > > +		int err = erofs_prepare_dio(iocb, to);
-> > > +
-> > > +		if (!err)
-> > > +			return iomap_dio_rw(iocb, to, &erofs_iomap_ops,
-> > > +					    NULL, 0);
-> > > +		if (err < 0)
-> > > +			return err;
-> > > +		/*
-> > > +		 * Fallback to buffered I/O if the operation being performed on
-> > > +		 * the inode is not supported by direct I/O. The IOCB_DIRECT
-> > > +		 * flag needs to be cleared here in order to ensure that the
-> > > +		 * direct I/O path within generic_file_read_iter() is not
-> > > +		 * taken.
-> > > +		 */
-> > > +		iocb->ki_flags &= ~IOCB_DIRECT;
-> > > +	}
-> > > +	return generic_file_read_iter(iocb, to);
-> > 
-> > It looks it's fine to call filemap_read() directly since above codes have
-> > covered DIO case, then we don't need to change iocb->ki_flags flag, it's
-> > minor though.
-> 
-> Yeah, we could use filemap_read() here instead. yet IMO, it might be
-> better to drop IOCB_DIRECT too to keep iocb consistent with the real
-> semantics (even it's not used internally.)
+On Tue, Aug 3, 2021 at 6:54 PM Robin Murphy <robin.murphy@arm.com> wrote:
+>
+> On 2021-08-03 09:54, Yongji Xie wrote:
+> > On Tue, Aug 3, 2021 at 3:41 PM Jason Wang <jasowang@redhat.com> wrote:
+> >>
+> >>
+> >> =E5=9C=A8 2021/7/29 =E4=B8=8B=E5=8D=883:34, Xie Yongji =E5=86=99=E9=81=
+=93:
+> >>> Export alloc_iova_fast() and free_iova_fast() so that
+> >>> some modules can use it to improve iova allocation efficiency.
+> >>
+> >>
+> >> It's better to explain why alloc_iova() is not sufficient here.
+> >>
+> >
+> > Fine.
+>
+> What I fail to understand from the later patches is what the IOVA domain
+> actually represents. If the "device" is a userspace process then
+> logically the "IOVA" would be the userspace address, so presumably
+> somewhere you're having to translate between this arbitrary address
+> space and actual usable addresses - if you're worried about efficiency
+> surely it would be even better to not do that?
+>
 
-After checking the other users of filemap_read(), I'm fine to leave
-IOCB_DIRECT as-is. Will update.
+Yes, userspace daemon needs to translate the "IOVA" in a DMA
+descriptor to the VA (from mmap(2)). But this actually doesn't affect
+performance since it's an identical mapping in most cases.
+
+> Presumably userspace doesn't have any concern about alignment and the
+> things we have to worry about for the DMA API in general, so it's pretty
+> much just allocating slots in a buffer, and there are far more effective
+> ways to do that than a full-blown address space manager.
+
+Considering iova allocation efficiency, I think the iova allocator is
+better here. In most cases, we don't even need to hold a spin lock
+during iova allocation.
+
+> If you're going
+> to reuse any infrastructure I'd have expected it to be SWIOTLB rather
+> than the IOVA allocator. Because, y'know, you're *literally implementing
+> a software I/O TLB* ;)
+>
+
+But actually what we can reuse in SWIOTLB is the IOVA allocator. And
+the IOVA management in SWIOTLB is not what we want. For example,
+SWIOTLB allocates and uses contiguous memory for bouncing, which is
+not necessary in VDUSE case. And VDUSE needs coherent mapping which is
+not supported by the SWIOTLB. Besides, the SWIOTLB works in singleton
+mode (designed for platform IOMMU) , but VDUSE is based on on-chip
+IOMMU (supports multiple instances). So I still prefer to reuse the
+IOVA allocator to implement a MMU-based software IOTLB.
 
 Thanks,
-Gao Xiang
+Yongji
