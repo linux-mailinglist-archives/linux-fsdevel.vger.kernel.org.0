@@ -2,188 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D0973E0497
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 17:44:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 369953E053E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 18:06:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239258AbhHDPoI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 11:44:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:33872 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239214AbhHDPoG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 11:44:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 191B531B;
-        Wed,  4 Aug 2021 08:43:53 -0700 (PDT)
-Received: from [10.57.36.146] (unknown [10.57.36.146])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D22B33F66F;
-        Wed,  4 Aug 2021 08:43:48 -0700 (PDT)
-Subject: Re: [PATCH v10 01/17] iova: Export alloc_iova_fast() and
- free_iova_fast()
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     kvm <kvm@vger.kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Liu Xiaodong <xiaodong.liu@intel.com>,
-        Joe Perches <joe@perches.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        songmuchun@bytedance.com, Jens Axboe <axboe@kernel.dk>,
-        He Zhe <zhe.he@windriver.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, bcrl@kvack.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>
-References: <20210729073503.187-1-xieyongji@bytedance.com>
- <20210729073503.187-2-xieyongji@bytedance.com>
- <43d88942-1cd3-c840-6fec-4155fd544d80@redhat.com>
- <CACycT3vcpwyA3xjD29f1hGnYALyAd=-XcWp8+wJiwSqpqUu00w@mail.gmail.com>
- <6e05e25e-e569-402e-d81b-8ac2cff1c0e8@arm.com>
- <CACycT3sm2r8NMMUPy1k1PuSZZ3nM9aic-O4AhdmRRCwgmwGj4Q@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <417ce5af-4deb-5319-78ce-b74fb4dd0582@arm.com>
-Date:   Wed, 4 Aug 2021 16:43:43 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S230464AbhHDQGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 12:06:51 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41822 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229577AbhHDQGp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Aug 2021 12:06:45 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id 469141F4080F
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     jack@suse.com, amir73il@gmail.com
+Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
+        dhowells@redhat.com, khazhy@google.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-api@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCH v5 00/23] File system wide monitoring
+Date:   Wed,  4 Aug 2021 12:05:49 -0400
+Message-Id: <20210804160612.3575505-1-krisman@collabora.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <CACycT3sm2r8NMMUPy1k1PuSZZ3nM9aic-O4AhdmRRCwgmwGj4Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-08-04 06:02, Yongji Xie wrote:
-> On Tue, Aug 3, 2021 at 6:54 PM Robin Murphy <robin.murphy@arm.com> wrote:
->>
->> On 2021-08-03 09:54, Yongji Xie wrote:
->>> On Tue, Aug 3, 2021 at 3:41 PM Jason Wang <jasowang@redhat.com> wrote:
->>>>
->>>>
->>>> 在 2021/7/29 下午3:34, Xie Yongji 写道:
->>>>> Export alloc_iova_fast() and free_iova_fast() so that
->>>>> some modules can use it to improve iova allocation efficiency.
->>>>
->>>>
->>>> It's better to explain why alloc_iova() is not sufficient here.
->>>>
->>>
->>> Fine.
->>
->> What I fail to understand from the later patches is what the IOVA domain
->> actually represents. If the "device" is a userspace process then
->> logically the "IOVA" would be the userspace address, so presumably
->> somewhere you're having to translate between this arbitrary address
->> space and actual usable addresses - if you're worried about efficiency
->> surely it would be even better to not do that?
->>
-> 
-> Yes, userspace daemon needs to translate the "IOVA" in a DMA
-> descriptor to the VA (from mmap(2)). But this actually doesn't affect
-> performance since it's an identical mapping in most cases.
+Hi,
 
-I'm not familiar with the vhost_iotlb stuff, but it looks suspiciously 
-like you're walking yet another tree to make those translations. Even if 
-the buffer can be mapped all at once with a fixed offset such that each 
-DMA mapping call doesn't need a lookup for each individual "IOVA" - that 
-might be what's happening already, but it's a bit hard to follow just 
-reading the patches in my mail client - vhost_iotlb_add_range() doesn't 
-look like it's super-cheap to call, and you're serialising on a lock for 
-that.
+This is the 5th version of the FAN_FS_ERROR patches.  This applies
+the feedback from last version (thanks Amir, Jan).  Biggest changes are
+the split up of the FAN_FS_ERROR patch into something more reviewable,
+and the removal of the event_info structure due to the perf regression
+shown by unixbench.
 
-My main point, though, is that if you've already got something else 
-keeping track of the actual addresses, then the way you're using an 
-iova_domain appears to be something you could do with a trivial bitmap 
-allocator. That's why I don't buy the efficiency argument. The main 
-design points of the IOVA allocator are to manage large address spaces 
-while trying to maximise spatial locality to minimise the underlying 
-pagetable usage, and allocating with a flexible limit to support 
-multiple devices with different addressing capabilities in the same 
-address space. If none of those aspects are relevant to the use-case - 
-which AFAICS appears to be true here - then as a general-purpose 
-resource allocator it's rubbish and has an unreasonably massive memory 
-overhead and there are many, many better choices.
+This was tested with LTP for regressions, and also using the sample on
+the last patch, with a corrupted image.  I wrote a new ltp test for this
+feature which is being reviewed and is available at:
 
-FWIW I've recently started thinking about moving all the caching stuff 
-out of iova_domain and into the iommu-dma layer since it's now a giant 
-waste of space for all the other current IOVA users.
+  https://gitlab.collabora.com/krisman/ltp  -b fan-fs-error
 
->> Presumably userspace doesn't have any concern about alignment and the
->> things we have to worry about for the DMA API in general, so it's pretty
->> much just allocating slots in a buffer, and there are far more effective
->> ways to do that than a full-blown address space manager.
-> 
-> Considering iova allocation efficiency, I think the iova allocator is
-> better here. In most cases, we don't even need to hold a spin lock
-> during iova allocation.
-> 
->> If you're going
->> to reuse any infrastructure I'd have expected it to be SWIOTLB rather
->> than the IOVA allocator. Because, y'know, you're *literally implementing
->> a software I/O TLB* ;)
->>
-> 
-> But actually what we can reuse in SWIOTLB is the IOVA allocator.
+In addition, I wrote a man-page that can be pulled from:
 
-Huh? Those are completely unrelated and orthogonal things - SWIOTLB does 
-not use an external allocator (see find_slots()). By SWIOTLB I mean 
-specifically the library itself, not dma-direct or any of the other 
-users built around it. The functionality for managing slots in a buffer 
-and bouncing data in and out can absolutely be reused - that's why users 
-like the Xen and iommu-dma code *are* reusing it instead of open-coding 
-their own versions.
+  https://gitlab.collabora.com/krisman/man-pages.git -b fan-fs-error
 
-> And
-> the IOVA management in SWIOTLB is not what we want. For example,
-> SWIOTLB allocates and uses contiguous memory for bouncing, which is
-> not necessary in VDUSE case.
+And is being reviewed at the list.
 
-alloc_iova() allocates a contiguous (in IOVA address) region of space. 
-In vduse_domain_map_page() you use it to allocate a contiguous region of 
-space from your bounce buffer. Can you clarify how that is fundamentally 
-different from allocating a contiguous region of space from a bounce 
-buffer? Nobody's saying the underlying implementation details of where 
-the buffer itself comes from can't be tweaked.
+I also pushed this full series to:
 
-> And VDUSE needs coherent mapping which is
-> not supported by the SWIOTLB. Besides, the SWIOTLB works in singleton
-> mode (designed for platform IOMMU) , but VDUSE is based on on-chip
-> IOMMU (supports multiple instances).
-That's not entirely true - the IOMMU bounce buffering scheme introduced 
-in intel-iommu and now moved into the iommu-dma layer was already a step 
-towards something conceptually similar. It does still rely on stealing 
-the underlying pages from the global SWIOTLB pool at the moment, but the 
-bouncing is effectively done in a per-IOMMU-domain context.
+  https://gitlab.collabora.com/krisman/linux -b fanotify-notifications-single-slot
 
-The next step is currently queued in linux-next, wherein we can now have 
-individual per-device SWIOTLB pools. In fact at that point I think you 
-might actually be able to do your thing without implementing any special 
-DMA ops at all - you'd need to set up a pool for your "device" with 
-force_bounce set, then when you mmap() that to userspace, set up 
-dev->dma_range_map to describe an offset from the physical address of 
-the buffer to the userspace address, and I think dma-direct would be 
-tricked into doing the right thing. It's a bit wacky, but it could stand 
-to save a hell of a lot of bother.
+Thank you
 
-Finally, enhancing SWIOTLB to cope with virtually-mapped buffers that 
-don't have to be physically contiguous is a future improvement which I 
-think could benefit various use-cases - indeed it's possibly already on 
-the table for IOMMU bounce pages - so would probably be welcome in general.
+Original cover letter
+---------------------
+Hi,
 
- > So I still prefer to reuse the
- > IOVA allocator to implement a MMU-based software IOTLB.
+This series follow up on my previous proposal [1] to support file system
+wide monitoring.  As suggested by Amir, this proposal drops the ring
+buffer in favor of a single slot associated with each mark.  This
+simplifies a bit the implementation, as you can see in the code.
 
-If you're dead set on open-coding all the bounce-buffering machinery, 
-then I'd honestly recommend open-coding a more suitable buffer allocator 
-as well ;)
+As a reminder, This proposal is limited to an interface for
+administrators to monitor the health of a file system, instead of a
+generic inteface for file errors.  Therefore, this doesn't solve the
+problem of writeback errors or the need to watch a specific subtree.
 
-Thanks,
-Robin.
+In comparison to the previous RFC, this implementation also drops the
+per-fs data and location, and leave those as future extensions.
+
+* Implementation
+
+The feature is implemented on top of fanotify, as a new type of fanotify
+mark, FAN_ERROR, which a file system monitoring tool can register to
+receive error notifications.  When an error occurs a new notification is
+generated, in addition followed by this info field:
+
+ - FS generic data: A file system agnostic structure that has a generic
+ error code and identifies the filesystem.  Basically, it let's
+ userspace know something happened on a monitored filesystem.  Since
+ only the first error is recorded since the last read, this also
+ includes a counter of errors that happened since the last read.
+
+* Testing
+
+This was tested by watching notifications flowing from an intentionally
+corrupted filesystem in different places.  In addition, other events
+were watched in an attempt to detect regressions.
+
+Is there a specific testsuite for fanotify I should be running?
+
+* Patches
+
+This patchset is divided as follows: Patch 1 through 5 are refactoring
+to fsnotify/fanotify in preparation for FS_ERROR/FAN_ERROR; patch 6 and
+7 implement the FS_ERROR API for filesystems to report error; patch 8
+add support for FAN_ERROR in fanotify; Patch 9 is an example
+implementation for ext4; patch 10 and 11 provide a sample userspace code
+and documentation.
+
+I also pushed the full series to:
+
+  https://gitlab.collabora.com/krisman/linux -b fanotify-notifications-single-slot
+
+[1] https://lwn.net/Articles/854545/
+[2] https://lwn.net/Articles/856916/
+
+Cc: Darrick J. Wong <djwong@kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: jack@suse.com
+To: amir73il@gmail.com
+Cc: dhowells@redhat.com
+Cc: khazhy@google.com
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-api@vger.kernel.org
+Cc: linux-api@vger.kernel.org
+
+Gabriel Krisman Bertazi (23):
+  fsnotify: Don't insert unmergeable events in hashtable
+  fanotify: Fold event size calculation to its own function
+  fanotify: Split fsid check from other fid mode checks
+  fsnotify: Reserve mark bits for backends
+  fanotify: Split superblock marks out to a new cache
+  inotify: Don't force FS_IN_IGNORED
+  fsnotify: Add helper to detect overflow_event
+  fsnotify: Add wrapper around fsnotify_add_event
+  fsnotify: Support passing argument to insert callback on add_event
+  fsnotify: Allow events reported with an empty inode
+  fsnotify: Support FS_ERROR event type
+  fanotify: Expose helper to estimate file handle encoding length
+  fanotify: Allow file handle encoding for unhashed events
+  fanotify: Encode invalid file handler when no inode is provided
+  fanotify: Require fid_mode for any non-fd event
+  fanotify: Reserve UAPI bits for FAN_FS_ERROR
+  fanotify: Preallocate per superblock mark error event
+  fanotify: Handle FAN_FS_ERROR events
+  fanotify: Report fid info for file related file system errors
+  fanotify: Emit generic error info type for error event
+  ext4: Send notifications on error
+  samples: Add fs error monitoring example
+  docs: Document the FAN_FS_ERROR event
+
+ .../admin-guide/filesystem-monitoring.rst     |  70 +++++
+ Documentation/admin-guide/index.rst           |   1 +
+ fs/ext4/super.c                               |   8 +
+ fs/kernfs/file.c                              |   6 +-
+ fs/notify/fanotify/fanotify.c                 | 186 +++++++++---
+ fs/notify/fanotify/fanotify.h                 |  80 +++++-
+ fs/notify/fanotify/fanotify_user.c            | 266 +++++++++++++++---
+ fs/notify/fsnotify.c                          |  14 +-
+ fs/notify/inotify/inotify_fsnotify.c          |   2 +-
+ fs/notify/inotify/inotify_user.c              |   6 +-
+ fs/notify/notification.c                      |  16 +-
+ include/linux/fanotify.h                      |   9 +-
+ include/linux/fsnotify.h                      |  20 +-
+ include/linux/fsnotify_backend.h              |  76 ++++-
+ include/uapi/linux/fanotify.h                 |   8 +
+ samples/Kconfig                               |   9 +
+ samples/Makefile                              |   1 +
+ samples/fanotify/Makefile                     |   5 +
+ samples/fanotify/fs-monitor.c                 | 138 +++++++++
+ 19 files changed, 803 insertions(+), 118 deletions(-)
+ create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
+ create mode 100644 samples/fanotify/Makefile
+ create mode 100644 samples/fanotify/fs-monitor.c
+
+-- 
+2.32.0
+
