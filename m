@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E5CA3DFD54
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 10:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E81F23DFD9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 11:08:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236791AbhHDIy1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 04:54:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45908 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235421AbhHDIy0 (ORCPT
+        id S236934AbhHDJIQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 05:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37440 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236932AbhHDJIP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 04:54:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628067253;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JEJS6wNFWZnl108KgJLIgK1xlv8/2mIWHkixRJuOciE=;
-        b=GONl3DzdGQzihJnzWiBgJn/e/P5qBr2vuzJtjLN172OKPkY36pYYID/K3UGhaLBHQx5RCL
-        pEfcQWkcapr6bcpkfkZHiASKwl7GcLGuQ3tcrhENXjnkhHYQYLsicuBa6l/Zzkx4VhB+yt
-        MBdfWuUNQGEgkA5fyl4ZnNA4APO9HOc=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-587-FLPfNphUPyOQ6nnGYahEbQ-1; Wed, 04 Aug 2021 04:54:12 -0400
-X-MC-Unique: FLPfNphUPyOQ6nnGYahEbQ-1
-Received: by mail-pj1-f70.google.com with SMTP id gt7-20020a17090af2c7b02901773c999dcbso1489139pjb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 01:54:12 -0700 (PDT)
+        Wed, 4 Aug 2021 05:08:15 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F07F6C0613D5
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 02:08:01 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id e19so2668042ejs.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 02:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vHxgnDbRze3cfbummo1oFdspd0VXUkioTGyKAxbmjBY=;
+        b=rrLb5avlbWWVVZAoiqSf4GuH1Tep3672/ZPFrJ1q2sFsUjVxFnNVB7tKQ6xXG4rhnv
+         1PpAczmI/qacC7vsiZ2BEcntWSoQhW130Qwg+GEKxWvTPhhjdU0zMqHukOrvN7jIhUoV
+         Nsn2eb0p8F8I1ZJcwL62tBSr6vb1HYCK7y/HkosE9AxRt7VX5in8838+OKYoj/JdigCO
+         22pQ6zrUz1MLqHboxSN2WElTA63GZmG1OcBMMKNc/LoDbjlq6Lf4z01rVYSWbqkkn5bl
+         mqGmd/oNyGjYpPMnG5vHW8RpUjXvzzZbHlRoL8cVzBdZSTws01CqFaXWZkQX3ftOVtMV
+         f9GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=JEJS6wNFWZnl108KgJLIgK1xlv8/2mIWHkixRJuOciE=;
-        b=YH9Fm/nGEoP+4wlqbaFZlR5ooID4Uw1faKhJ5ALrsyAJNTRRL20sC44HrtZLklro7p
-         fhDZqCbx3nbLQ+YVuIQZcoUND4qxQKf0EVy74S78efDLLtkMNiKvNV36pepsG6UtDZda
-         Ilk9/svqOTn/GqggFRlwYB9jC4SxKxrREMlF+n0vN8Q6VTzANa47K2Wjjz9IpcqmMqDs
-         2R3QCtCR/3TdY3hJD+FdjWeJ5SN2yIuGCahHEJYcK3WWkkxhpxa6M6FlsjwAq+tAMbCh
-         sqZQkkp6U9hy1dYz5Pz4e/RoPM4qWO7FmshXyf2i34qPkstx0xIszW6Mh92qj08ujzQK
-         TfMQ==
-X-Gm-Message-State: AOAM531EjYDKeScKLy34xFBNOWZiswq49vyTXyi+q/bQEEMYPbPHBAIp
-        KmXi55w0+8BPdWeLm45yRpu/Bq2GhrHqRi/JX66LhKS33nb7YJm75Wc9GKcivw6J26d6jcSZ2KN
-        dJmWcFWTyJ55nKvuXygS+/2lY0g==
-X-Received: by 2002:a17:90a:f486:: with SMTP id bx6mr26967683pjb.26.1628067251872;
-        Wed, 04 Aug 2021 01:54:11 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxdg7DPc1fVvfeRYsMAj9zuHXHxH4WMFyt0BnuNiFR52VmL83Bg8evPgUiXWSZNAPGcbnx9HQ==
-X-Received: by 2002:a17:90a:f486:: with SMTP id bx6mr26967649pjb.26.1628067251626;
-        Wed, 04 Aug 2021 01:54:11 -0700 (PDT)
-Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id 6sm1963202pfg.108.2021.08.04.01.54.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Aug 2021 01:54:11 -0700 (PDT)
-Subject: Re: [PATCH v10 10/17] virtio: Handle device reset failure in
- register_virtio_device()
-To:     Yongji Xie <xieyongji@bytedance.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vHxgnDbRze3cfbummo1oFdspd0VXUkioTGyKAxbmjBY=;
+        b=pWCUQHQVc0ShLpkJz6rv9WvirsAaiZNVLDFpahL0WgDd8NO58pvFxr9XpDR+krOkc0
+         geMgFyC3LwCAqFXe1ALgt16L4vvJZKGjoRPYQzy53VzVZLTHrUQd1hj880jTU6mNsq1j
+         MVCm/s/+wdE7bEXDPK4NACuiwIPaxsZdbF4RGDbR+26fWN1VGR6U013QBjJ71XxQ8BOs
+         Dr8/DEwfT96RyQHxmQw8Q30siLNPOpipHzd3EmQ/2YVNjQthLoo4RoWjmrtefyUwzrcI
+         XKQO+bZOCioCmwm8L7GvIuHlEPEeMCc3Hh0Dtbw18qr6gQBi4cYXKewLp07M6CY6ZysI
+         eEZA==
+X-Gm-Message-State: AOAM533Q/W5pYDLhE0GOMVnoDNtWKHciWZv5UaMHiceKTWd9ZYficN6P
+        eLuJx1mX/x2coOzmyIDoXV/onZ7fzfAoVNUApEWk
+X-Google-Smtp-Source: ABdhPJz7ndtSUpcqEgNkoVHcDwP0fq03BR0Lre7qDAvevyBxeyuNZM0taxEDcIn1Kzh847IXKZfSmIisXg0eBWVCt2c=
+X-Received: by 2002:a17:906:58c7:: with SMTP id e7mr24219405ejs.197.1628068080494;
+ Wed, 04 Aug 2021 02:08:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-11-xieyongji@bytedance.com>
+ <6bb6c689-e6dd-cfa2-094b-a0ca4258aded@redhat.com> <CACycT3v7BHxYY0OFYJRFU41Bz1=_v8iMRwzYKgX6cJM-SiNH+A@mail.gmail.com>
+ <fdcb0224-11f9-caf2-a44e-e6406087fd50@redhat.com> <CACycT3v0EQVrv_A1K1bKmiYu0q5aFE=t+0yRaWKC7T3_H3oB-Q@mail.gmail.com>
+ <bd48ec76-0d5c-2efb-8406-894286b28f6b@redhat.com>
+In-Reply-To: <bd48ec76-0d5c-2efb-8406-894286b28f6b@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Wed, 4 Aug 2021 17:07:49 +0800
+Message-ID: <CACycT3tUwJXUV24PK7OvzPrHYYeQ5Q3qUW_vbuFMjwig0dBw2g@mail.gmail.com>
+Subject: Re: [PATCH v10 10/17] virtio: Handle device reset failure in register_virtio_device()
+To:     Jason Wang <jasowang@redhat.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
         Stefano Garzarella <sgarzare@redhat.com>,
@@ -66,7 +66,7 @@ Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
         Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
         Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
         Greg KH <gregkh@linuxfoundation.org>,
         He Zhe <zhe.he@windriver.com>,
@@ -76,68 +76,58 @@ Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel <linux-kernel@vger.kernel.org>
-References: <20210729073503.187-1-xieyongji@bytedance.com>
- <20210729073503.187-11-xieyongji@bytedance.com>
- <6bb6c689-e6dd-cfa2-094b-a0ca4258aded@redhat.com>
- <CACycT3v7BHxYY0OFYJRFU41Bz1=_v8iMRwzYKgX6cJM-SiNH+A@mail.gmail.com>
- <fdcb0224-11f9-caf2-a44e-e6406087fd50@redhat.com>
- <CACycT3v0EQVrv_A1K1bKmiYu0q5aFE=t+0yRaWKC7T3_H3oB-Q@mail.gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <bd48ec76-0d5c-2efb-8406-894286b28f6b@redhat.com>
-Date:   Wed, 4 Aug 2021 16:54:02 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.12.0
-MIME-Version: 1.0
-In-Reply-To: <CACycT3v0EQVrv_A1K1bKmiYu0q5aFE=t+0yRaWKC7T3_H3oB-Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-在 2021/8/4 下午4:50, Yongji Xie 写道:
-> On Wed, Aug 4, 2021 at 4:32 PM Jason Wang <jasowang@redhat.com> wrote:
->>
->> 在 2021/8/3 下午5:38, Yongji Xie 写道:
->>> On Tue, Aug 3, 2021 at 4:09 PM Jason Wang <jasowang@redhat.com> wrote:
->>>> 在 2021/7/29 下午3:34, Xie Yongji 写道:
->>>>> The device reset may fail in virtio-vdpa case now, so add checks to
->>>>> its return value and fail the register_virtio_device().
->>>> So the reset() would be called by the driver during remove as well, or
->>>> is it sufficient to deal only with the reset during probe?
->>>>
->>> Actually there is no way to handle failure during removal. And it
->>> should be safe with the protection of software IOTLB even if the
->>> reset() fails.
->>>
->>> Thanks,
->>> Yongji
->>
->> If this is true, does it mean we don't even need to care about reset
->> failure?
->>
-> But we need to handle the failure in the vhost-vdpa case, isn't it?
-
-
-Yes, but:
-
-- This patch is for virtio not for vhost, if we don't care virtio, we 
-can avoid the changes
-- For vhost, there could be two ways probably:
-
-1) let the set_status to report error
-2) require userspace to re-read for status
-
-It looks to me you want to go with 1) and I'm not sure whether or not 
-it's too late to go with 2).
-
-Thanks
-
-
+On Wed, Aug 4, 2021 at 4:54 PM Jason Wang <jasowang@redhat.com> wrote:
 >
-> Thanks,
-> Yongji
+>
+> =E5=9C=A8 2021/8/4 =E4=B8=8B=E5=8D=884:50, Yongji Xie =E5=86=99=E9=81=93:
+> > On Wed, Aug 4, 2021 at 4:32 PM Jason Wang <jasowang@redhat.com> wrote:
+> >>
+> >> =E5=9C=A8 2021/8/3 =E4=B8=8B=E5=8D=885:38, Yongji Xie =E5=86=99=E9=81=
+=93:
+> >>> On Tue, Aug 3, 2021 at 4:09 PM Jason Wang <jasowang@redhat.com> wrote=
+:
+> >>>> =E5=9C=A8 2021/7/29 =E4=B8=8B=E5=8D=883:34, Xie Yongji =E5=86=99=E9=
+=81=93:
+> >>>>> The device reset may fail in virtio-vdpa case now, so add checks to
+> >>>>> its return value and fail the register_virtio_device().
+> >>>> So the reset() would be called by the driver during remove as well, =
+or
+> >>>> is it sufficient to deal only with the reset during probe?
+> >>>>
+> >>> Actually there is no way to handle failure during removal. And it
+> >>> should be safe with the protection of software IOTLB even if the
+> >>> reset() fails.
+> >>>
+> >>> Thanks,
+> >>> Yongji
+> >>
+> >> If this is true, does it mean we don't even need to care about reset
+> >> failure?
+> >>
+> > But we need to handle the failure in the vhost-vdpa case, isn't it?
+>
+>
+> Yes, but:
+>
+> - This patch is for virtio not for vhost, if we don't care virtio, we
+> can avoid the changes
+> - For vhost, there could be two ways probably:
+>
+> 1) let the set_status to report error
+> 2) require userspace to re-read for status
+>
+> It looks to me you want to go with 1) and I'm not sure whether or not
+> it's too late to go with 2).
 >
 
+Looks like 2) can't work if reset failure happens in
+vhost_vdpa_release() and vhost_vdpa_open().
+
+Thanks,
+Yongji
