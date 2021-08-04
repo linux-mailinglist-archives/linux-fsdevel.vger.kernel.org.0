@@ -2,111 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FF153DFDC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 11:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10E753DFE06
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 11:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236253AbhHDJPo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 05:15:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232276AbhHDJPn (ORCPT
+        id S236578AbhHDJbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 05:31:44 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:40182 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230436AbhHDJbn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 05:15:43 -0400
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 353F5C0613D5
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 02:15:31 -0700 (PDT)
-Received: by mail-oi1-x231.google.com with SMTP id o20so2098374oiw.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 02:15:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=h7Zb2A6Dh35OWvvMLuElewoKlDVEdIPG861c8z8d7jg=;
-        b=Y+FPojpZ7vt4c9aS5JxHtYi18I/UZ1MIAtfN7XmXFNAKWkhc8z6zThket2NIo8OWzv
-         o6BoeEfJUNOU/E2EOlgL44Q4WYwKCgL8OwzFH99F9XMQm5SSel14hNwv+AqmKFh46L1C
-         1kYt5Y5qZQQCbd/dwLuOkWY6OJGph/xf8u3TjomeEOCGyff7QYW73X1eNuTNkYLQvGv5
-         ZR/cHEpvqFQSWRV4hjpDNnphgts54ZHQ3cccgNqDNaVhI4CSKEqCcv+xmT4QLqpNVaTx
-         QEFAj5r7cAVU0Tga+T52yaijY0x26+uG/kZiDest7zF2s/PQqIlz4mKUa2LMtIjVXg41
-         0Xaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=h7Zb2A6Dh35OWvvMLuElewoKlDVEdIPG861c8z8d7jg=;
-        b=dIsfwAr4O95C/UZtt/wNVFMSI/bwUxpz1AUsLIBXKcL+FWA6sHqmVWKKjnL7ZKdURM
-         PLQ20jrteoxGVm+8U8Izbdt1R7g7x99XxX/W/wp7if/4hwvyde9tzkktzRgGYu0guIPO
-         nehVkO+OZ2yZfes04aVtHMNi134mC5t3rAR2nBHYkVF0zgjipbltSDP/qjwp5ClethPS
-         OZPPvZNjfcA6Dpln/nSmFXKcH6G8xZy3bNeereyhL+lA3brD3O+E/8lFGXV2kbdFOGkc
-         niuizWpf0Md8ji8BO1st0WzipEpsloAEOrd3iGqajnIOxgC5vB2feqVxlS3Ha1CsJZFp
-         X/tQ==
-X-Gm-Message-State: AOAM53258Zte+XHD01reuLNwrIAYppZvzBgPG5w392K5Q/H5XpW0rCO4
-        VL5yuBes7m3W1okjFfHo5EJepg==
-X-Google-Smtp-Source: ABdhPJyiGrsvu72TeAV4c1kVT/RJj6hoqjS/aWTa8gUe1f/N1n3nzIaS/JrvT7jZLpDJKjpFi8eRxg==
-X-Received: by 2002:aca:6704:: with SMTP id z4mr17441159oix.89.1628068530413;
-        Wed, 04 Aug 2021 02:15:30 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id x8sm260465oof.27.2021.08.04.02.15.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Aug 2021 02:15:29 -0700 (PDT)
-Date:   Wed, 4 Aug 2021 02:15:26 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.anvils
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Yang Shi <shy828301@gmail.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Matthew Auld <matthew.auld@intel.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 10/16] tmpfs: fcntl(fd, F_MEM_LOCK) to memlock a tmpfs
- file
-In-Reply-To: <YQieHio1oUKCfgqq@casper.infradead.org>
-Message-ID: <7077b94a-d894-4d97-4b3e-23f516d58591@google.com>
-References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com> <54e03798-d836-ae64-f41-4a1d46bc115b@google.com> <YQieHio1oUKCfgqq@casper.infradead.org>
+        Wed, 4 Aug 2021 05:31:43 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B402D221B5;
+        Wed,  4 Aug 2021 09:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1628069490; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/CL90sbdhCGnwPijnIZMVO1l7TdCtzuZFibOtSaIO3g=;
+        b=vnk1T4jqLsR2415kEzCvuSnxDm09j7/RRja16DAosTFHalxLxgBIT08YF2mzYveQ3XZwkj
+        SZbcJoCqou/sJrO8c+aIWy4nwuoTYXf1GDwnr878/S8VKAdzm27I+VucnzXVtAHcavNqjm
+        NATc5+6EH38AKumeHld3XpKjGUZC1pM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1628069490;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/CL90sbdhCGnwPijnIZMVO1l7TdCtzuZFibOtSaIO3g=;
+        b=ebEeoWXlX+Pg1i8Oo1rgxE/sHDeHH1cw7yTNQ9BxF+BFQZUdj5DGfbEoCrPzTm6uPjP9bv
+        1gWXYZsAFHlS/nBg==
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 851841338E;
+        Wed,  4 Aug 2021 09:31:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id rVNrHnJeCmFMbQAAGKfGzw
+        (envelope-from <ddiss@suse.de>); Wed, 04 Aug 2021 09:31:30 +0000
+Date:   Wed, 4 Aug 2021 11:31:29 +0200
+From:   David Disseldorp <ddiss@suse.de>
+To:     linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH RESEND 1/3] initramfs: move unnecessary memcmp from hot
+ path
+Message-ID: <20210804113129.60848be6@suse.de>
+In-Reply-To: <20210721115153.28620-1-ddiss@suse.de>
+References: <20210721115153.28620-1-ddiss@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 3 Aug 2021, Matthew Wilcox wrote:
-> On Fri, Jul 30, 2021 at 12:55:22AM -0700, Hugh Dickins wrote:
-> > A new uapi to lock the files on tmpfs in memory, to protect against swap
-> > without mapping the files. This commit introduces two new commands to
-> > fcntl and shmem: F_MEM_LOCK and F_MEM_UNLOCK. The locking will be
-> > charged against RLIMIT_MEMLOCK of uid in namespace of the caller.
+Ping, any feedback on this change?
+
+I think it's a no brainer, but for kicks I ran a few unrealistic micro
+benchmarks on my laptop. Extraction time for a cpio image with 1M+
+directories improved by 5ms (pre: 14.614s, post: 14.609s), when averaged
+across 20 runs of:
+  qemu-system-x86_64 -machine accel=kvm -smp cpus=1 -m 10240 \
+        -kernel ~/linux/arch/x86/boot/bzImage \
+        -initrd ./initrds/gen_cpio.out \
+        -append "initramfs_async=0 console=ttyS0 panic=0" -nographic \
+        | awk '/Trying to unpack rootfs/ {start_ts = $2};
+               /Freeing initrd memory/ {end_ts = $2}
+               END {printf "%f\n", end_ts - start_ts}'
+
+Cheers, David
+
+On Wed, 21 Jul 2021 13:51:51 +0200, David Disseldorp wrote:
+
+> do_header() is called for each cpio entry and first checks for "newc"
+> magic before parsing further. The magic check includes a special case
+> error message if POSIX.1 ASCII (cpio -H odc) magic is detected. This
+> special case POSIX.1 check needn't be done in the hot path, so move it
+> under the non-newc-magic error path.
 > 
-> It's not clear to me why this is limited to shmfs.  Would it not also
-> make sense for traditional filesystems, eg to force chrome's text pages
-> to stay in the page cache, no matter how much memory the tabs allocate?
+> Signed-off-by: David Disseldorp <ddiss@suse.de>
+> ---
+>  init/initramfs.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/init/initramfs.c b/init/initramfs.c
+> index af27abc59643..f01590cefa2d 100644
+> --- a/init/initramfs.c
+> +++ b/init/initramfs.c
+> @@ -256,12 +256,11 @@ static int __init do_collect(void)
+>  
+>  static int __init do_header(void)
+>  {
+> -	if (memcmp(collected, "070707", 6)==0) {
+> -		error("incorrect cpio method used: use -H newc option");
+> -		return 1;
+> -	}
+>  	if (memcmp(collected, "070701", 6)) {
+> -		error("no cpio magic");
+> +		if (memcmp(collected, "070707", 6) == 0)
+> +			error("incorrect cpio method used: use -H newc option");
+> +		else
+> +			error("no cpio magic");
+>  		return 1;
+>  	}
+>  	parse_header(collected);
 
-Right: if VFS people would like this to be available for all filesystems,
-that's fine by me - it's just that we have not given thought to other
-filesystems, and the demand was for tmpfs, so that was where to start.
-I'm more confident adding fields to shmem inode than to generic inode.
-
-(Plus tmpfs does have a stronger claim on CAP_IPC_LOCK etc, but there's
-no real reason why that cannot be extended to similar use by other FSs).
-
-hugetlbfs and ramfs, where the files are already memlocked?  Not worth a
-special case, I think: if someone uses up memlock quota on them, so be it.
-
-It looks as if tmpfs would still want its own special case, just to
-handle the FALLOC_FL_KEEP_SIZE issue (see 12/16): tmpfs has beyond-i_size
-pages in memory, but accounts them evictable; whereas I doubt any storage
-filesystems would be using memory for them.
-
-To be clear: I'm not intending to extend this to other filesystems at
-the moment; but happy to do so if that's the consensus.
-
-Hugh
