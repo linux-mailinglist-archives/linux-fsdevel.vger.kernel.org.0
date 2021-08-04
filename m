@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C0EF3E057A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 18:07:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 895243E057C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 18:10:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233604AbhHDQIJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 12:08:09 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42152 "EHLO
+        id S233796AbhHDQIT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 12:08:19 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42168 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231474AbhHDQII (ORCPT
+        with ESMTP id S231474AbhHDQIM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 12:08:08 -0400
+        Wed, 4 Aug 2021 12:08:12 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id 8B1F71F43697
+        with ESMTPSA id 64F071F43697
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     jack@suse.com, amir73il@gmail.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
@@ -23,9 +23,9 @@ Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         linux-api@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH v5 20/23] fanotify: Emit generic error info type for error event
-Date:   Wed,  4 Aug 2021 12:06:09 -0400
-Message-Id: <20210804160612.3575505-21-krisman@collabora.com>
+Subject: [PATCH v5 21/23] ext4: Send notifications on error
+Date:   Wed,  4 Aug 2021 12:06:10 -0400
+Message-Id: <20210804160612.3575505-22-krisman@collabora.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210804160612.3575505-1-krisman@collabora.com>
 References: <20210804160612.3575505-1-krisman@collabora.com>
@@ -35,108 +35,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The Error info type is a record sent to users on FAN_FS_ERROR events
-documenting the type of error.  It also carries an error count,
-documenting how many errors were observed since the last reporting.
+Send a FS_ERROR message via fsnotify to a userspace monitoring tool
+whenever a ext4 error condition is triggered.  This follows the existing
+error conditions in ext4, so it is hooked to the ext4_error* functions.
+
+It also follows the current dmesg reporting in the format.  The
+filesystem message is composed mostly by the string that would be
+otherwise printed in dmesg.
+
+A new ext4 specific record format is exposed in the uapi, such that a
+monitoring tool knows what to expect when listening errors of an ext4
+filesystem.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify_user.c | 35 ++++++++++++++++++++++++++++++
- include/uapi/linux/fanotify.h      |  7 ++++++
- 2 files changed, 42 insertions(+)
+ fs/ext4/super.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 74def82630bb..ea22586c39e6 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -107,6 +107,8 @@ struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
- #define FANOTIFY_EVENT_ALIGN 4
- #define FANOTIFY_INFO_HDR_LEN \
- 	(sizeof(struct fanotify_event_info_fid) + sizeof(struct file_handle))
-+#define FANOTIFY_INFO_ERROR_LEN \
-+	(sizeof(struct fanotify_event_info_error))
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index dfa09a277b56..b9ecd43678d7 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -46,6 +46,7 @@
+ #include <linux/part_stat.h>
+ #include <linux/kthread.h>
+ #include <linux/freezer.h>
++#include <linux/fsnotify.h>
  
- static int fanotify_fid_info_len(int fh_len, int name_len)
- {
-@@ -130,6 +132,9 @@ static size_t fanotify_event_len(struct fanotify_event *event,
- 	if (!fid_mode)
- 		return event_len;
- 
-+	if (fanotify_is_error_event(event->mask))
-+		event_len += FANOTIFY_INFO_ERROR_LEN;
+ #include "ext4.h"
+ #include "ext4_extents.h"	/* Needed for trace points definition */
+@@ -762,6 +763,8 @@ void __ext4_error(struct super_block *sb, const char *function,
+ 		       sb->s_id, function, line, current->comm, &vaf);
+ 		va_end(args);
+ 	}
++	fsnotify_sb_error(sb, NULL, error);
 +
- 	info = fanotify_event_info(event);
- 	dir_fh_len = fanotify_event_dir_fh_len(event);
- 	fh_len = fanotify_event_object_fh_len(event);
-@@ -395,6 +400,28 @@ static int process_access_response(struct fsnotify_group *group,
- 	return -ENOENT;
+ 	ext4_handle_error(sb, force_ro, error, 0, block, function, line);
  }
  
-+static size_t copy_error_info_to_user(struct fanotify_event *event,
-+				      char __user *buf, int count)
-+{
-+	struct fanotify_event_info_error info;
-+	struct fanotify_error_event *fee = FANOTIFY_EE(event);
+@@ -792,6 +795,8 @@ void __ext4_error_inode(struct inode *inode, const char *function,
+ 			       current->comm, &vaf);
+ 		va_end(args);
+ 	}
++	fsnotify_sb_error(inode->i_sb, inode, error);
 +
-+	info.hdr.info_type = FAN_EVENT_INFO_TYPE_ERROR;
-+	info.hdr.pad = 0;
-+	info.hdr.len = FANOTIFY_INFO_ERROR_LEN;
+ 	ext4_handle_error(inode->i_sb, false, error, inode->i_ino, block,
+ 			  function, line);
+ }
+@@ -830,6 +835,8 @@ void __ext4_error_file(struct file *file, const char *function,
+ 			       current->comm, path, &vaf);
+ 		va_end(args);
+ 	}
++	fsnotify_sb_error(inode->i_sb, inode, EFSCORRUPTED);
 +
-+	if (WARN_ON(count < info.hdr.len))
-+		return -EFAULT;
-+
-+	info.error = fee->error;
-+	info.error_count = fee->err_count;
-+
-+	if (copy_to_user(buf, &info, sizeof(info)))
-+		return -EFAULT;
-+
-+	return info.hdr.len;
-+}
-+
- static int copy_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
- 			     int info_type, const char *name, size_t name_len,
- 			     char __user *buf, size_t count)
-@@ -553,6 +580,14 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	if (f)
- 		fd_install(fd, f);
+ 	ext4_handle_error(inode->i_sb, false, EFSCORRUPTED, inode->i_ino, block,
+ 			  function, line);
+ }
+@@ -897,6 +904,7 @@ void __ext4_std_error(struct super_block *sb, const char *function,
+ 		printk(KERN_CRIT "EXT4-fs error (device %s) in %s:%d: %s\n",
+ 		       sb->s_id, function, line, errstr);
+ 	}
++	fsnotify_sb_error(sb, sb->s_root->d_inode, errno);
  
-+	if (fanotify_is_error_event(event->mask)) {
-+		ret = copy_error_info_to_user(event, buf, count);
-+		if (ret < 0)
-+			goto out_close_fd;
-+		buf += ret;
-+		count -= ret;
-+	}
-+
- 	/* Event info records order is: dir fid + name, child fid */
- 	if (fanotify_event_dir_fh_len(event)) {
- 		info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index 16402037fc7a..80040a92e9d9 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -124,6 +124,7 @@ struct fanotify_event_metadata {
- #define FAN_EVENT_INFO_TYPE_FID		1
- #define FAN_EVENT_INFO_TYPE_DFID_NAME	2
- #define FAN_EVENT_INFO_TYPE_DFID	3
-+#define FAN_EVENT_INFO_TYPE_ERROR	4
- 
- /* Variable length info record following event metadata */
- struct fanotify_event_info_header {
-@@ -149,6 +150,12 @@ struct fanotify_event_info_fid {
- 	unsigned char handle[0];
- };
- 
-+struct fanotify_event_info_error {
-+	struct fanotify_event_info_header hdr;
-+	__s32 error;
-+	__u32 error_count;
-+};
-+
- struct fanotify_response {
- 	__s32 fd;
- 	__u32 response;
+ 	ext4_handle_error(sb, false, -errno, 0, 0, function, line);
+ }
 -- 
 2.32.0
 
