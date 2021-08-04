@@ -2,91 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C03E43DFB9B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 08:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51AE53DFBC4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 09:07:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235398AbhHDGwM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 02:52:12 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:50642 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235019AbhHDGwM (ORCPT
+        id S235706AbhHDHHR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 03:07:17 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:57890 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234689AbhHDHHR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 02:52:12 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R571e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UhwYqW9_1628059917;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UhwYqW9_1628059917)
+        Wed, 4 Aug 2021 03:07:17 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Uhx4ykY_1628060813;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Uhx4ykY_1628060813)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 04 Aug 2021 14:51:58 +0800
-Subject: Re: [PATCH v2 0/4] virtiofs,fuse: support per-file DAX
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-References: <20210716104753.74377-1-jefflexu@linux.alibaba.com>
- <YPXu3BefIi7Ts48I@redhat.com>
- <031efb1d-7c0d-35fb-c147-dcc3b6cac0ef@linux.alibaba.com>
- <YPchgf665bwUMKWU@redhat.com>
- <38e9da34-cc2b-f496-7ebb-18db8da1aa01@linux.alibaba.com>
- <YPgXuacFfJ/JVRjo@redhat.com> <YPgyalU0avl9KI/U@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <f16e97cd-6e64-2c2c-080d-f70a5bf4a390@linux.alibaba.com>
-Date:   Wed, 4 Aug 2021 14:51:57 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+          Wed, 04 Aug 2021 15:06:53 +0800
+From:   Jeffle Xu <jefflexu@linux.alibaba.com>
+To:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, virtio-fs@redhat.com,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com
+Subject: [PATCH v3 0/8] fuse,virtiofs: support per-file DAX
+Date:   Wed,  4 Aug 2021 15:06:45 +0800
+Message-Id: <20210804070653.118123-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <YPgyalU0avl9KI/U@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+changes since v2:
+- modify fuse_show_options() accordingly to make it compatible with
+  new tri-state mount option (patch 2)
+- extract FUSE protocol changes into one seperate patch (patch 3)
+- FUSE server/client need to negotiate if they support per-file DAX
+  (patch 4)
+- extract DONT_CACHE logic into patch 6/7
 
 
-On 7/21/21 10:42 PM, Vivek Goyal wrote:
-> On Wed, Jul 21, 2021 at 08:48:57AM -0400, Vivek Goyal wrote:
-> [..]
->>>> So is "dax=inode" enough for your needs? What's your requirement,
->>>> can you give little bit of more details.
->>>
->>> In our use case, the backend fs is something like SquashFS on host. The
->>> content of the file on host is downloaded *as needed*. When the file is
->>> not completely ready (completely downloaded), the guest will follow the
->>> normal IO routine, i.e., by FUSE_READ/FUSE_WRITE request. While the file
->>> is completely ready, per-file DAX is enabled for this file. IOW the FUSE
->>> server need to dynamically decide if per-file DAX shall be enabled,
->>> depending on if the file is completely downloaded.
->>
->> So you don't want to enable DAX yet because guest might fault on
->> a section of file which has not been downloaded yet?
->>
->> I am wondering if somehow user fault handling can help with this.
->> If we could handle faults for this file in user space, then you
->> should be able to download that particular page[s] and resolve
->> the fault?
-> 
-> Stefan mentioned that can't we block when fuse mmap request comes
-> in and download corresponding section of file. Or do whatever you
-> are doing in FUSE_READ. 
-> 
-> IOW, even if you enable dax in your use case on all files,
-> FUSE_SETUPMAPPING request will give you control to make sure 
-> file section being mmaped has been downloaded.
-> 
+This patchset adds support of per-file DAX for virtiofs, which is
+inspired by Ira Weiny's work on ext4[1] and xfs[2].
 
-Sorry for the late reply. I missed this mail as it is classified into
-the mailing list folder.
+Any comment is welcome.
 
-The idea you mentioned may works. Anyway, the implementation details of
-the FUSE server is not strongly binding to the FUSE protocol changes in
-kernel. The protocol only requires that FUSE client shall be able to
-store FS_DAX_FL attr persistently in *some way*. The changes in kernel
-shall be general, no matter whether the FUSE server is FS_DAX_FL attr
-based or something else.
+[1] commit 9cb20f94afcd ("fs/ext4: Make DAX mount option a tri-state")
+[2] commit 02beb2686ff9 ("fs/xfs: Make DAX mount option a tri-state")
 
+v2: https://www.spinics.net/lists/linux-fsdevel/msg199584.html
+v1: https://www.spinics.net/lists/linux-virtualization/msg51008.html
+
+Jeffle Xu (8):
+  fuse: add fuse_should_enable_dax() helper
+  fuse: Make DAX mount option a tri-state
+  fuse: support per-file DAX
+  fuse: negotiate if server/client supports per-file DAX
+  fuse: enable per-file DAX
+  fuse: mark inode DONT_CACHE when per-file DAX indication changes
+  fuse: support changing per-file DAX flag inside guest
+  fuse: show '-o dax=inode' option only when FUSE server supports
+
+ fs/fuse/dax.c             | 32 ++++++++++++++++++++++++++++++--
+ fs/fuse/file.c            |  4 ++--
+ fs/fuse/fuse_i.h          | 22 ++++++++++++++++++----
+ fs/fuse/inode.c           | 27 ++++++++++++++++++---------
+ fs/fuse/ioctl.c           | 15 +++++++++++++--
+ fs/fuse/virtio_fs.c       | 16 ++++++++++++++--
+ include/uapi/linux/fuse.h |  9 ++++++++-
+ 7 files changed, 103 insertions(+), 22 deletions(-)
 
 -- 
-Thanks,
-Jeffle
+2.27.0
+
