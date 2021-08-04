@@ -2,279 +2,228 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ED2D3DFA13
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 05:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B1293DFA6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 06:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234917AbhHDDqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Aug 2021 23:46:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50100 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230060AbhHDDqc (ORCPT
+        id S234051AbhHDEaw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 00:30:52 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:56368 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229562AbhHDEav (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Aug 2021 23:46:32 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5517BC061798
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Aug 2021 20:46:19 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id u16so1560955ple.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 20:46:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VBQ5X0XFtaTARsq0VxwUzdcBPwSLT6DWzNeswQNYXSY=;
-        b=GXOFeOGmonGdx/YsT7WglsyU0nYY1FHGsRnZ2r+xOcTV3gCtyoq2vZVMUyrGF9fnn2
-         ZYbWwSSxctZSEMUv890e04JiuvdMlRev6CTK/bgAtHwtQfBIyjvRn11wE2GTWqtElWUo
-         akNu4jxiAMoUm7K69k7jwfKhqULR14HViibFjHSYX9L4ks4bOWa4XqqcZhStVPMo2AO7
-         CdMTXJ1vo+n46KV/GHzJ28eV7pcbhdcrS7X52jKmLfX8MZZeoKzbQtfRDxJGSjxkQ4HN
-         cI854SbjjktQcbf64AE2mrk7GyCs21oMINooi7D+WgoQ0p3sRPs9XslcrYeLwP8uK3DN
-         lQJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VBQ5X0XFtaTARsq0VxwUzdcBPwSLT6DWzNeswQNYXSY=;
-        b=FM/fznz7xMF+w+wR17mbVvHSunPSw8nXQR3BYd+TZ+VRSNiiLaVB7IoCsh0InFNgqc
-         o002iecFedGdach9JHyIiCTYXNGGa1c9B4Cln8mgaEKxysTXs9WsN5DhlRtBYrM8AfsV
-         QFGKp4yQWwE/kqwo1HjLof7kKhwlI7v7GgR4aucq/gZ1QryLUDUC5E2Avk/lePs5Km5L
-         vZsgmH9mCn6CaTHMJYP75H/IimEfLWfPgEElAJ4ZP3HbAOBVEU6oV5qT/hTf624NqF4C
-         28o+fFyvP6IQX3rjFXe9Twnth5btsM00oPP2CaU6yVWrqVgJ+D/T6uGhO8oEEfNOIVF7
-         6F5Q==
-X-Gm-Message-State: AOAM531N+TWJOSgGJPwxfv943n4y7coQdgQvSjqw1VN4edV07EjlCi6k
-        gT13SHhq9tkpXDu1lDRk56szWw==
-X-Google-Smtp-Source: ABdhPJw1RxnwxzG5rLIBEpQO6yyXRE1CZlaODWLQe/IFqlLPudi5SHj78TqY/fmQ/wPivkoKun5QnA==
-X-Received: by 2002:a63:4543:: with SMTP id u3mr476702pgk.423.1628048778595;
-        Tue, 03 Aug 2021 20:46:18 -0700 (PDT)
-Received: from google.com ([2401:fa00:9:211:7ff1:360d:6b2e:2bd2])
-        by smtp.gmail.com with ESMTPSA id f15sm725041pgv.92.2021.08.03.20.46.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Aug 2021 20:46:17 -0700 (PDT)
-Date:   Wed, 4 Aug 2021 13:46:05 +1000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 5/5] fanotify: add pidfd support to the fanotify API
-Message-ID: <YQoNfd2tCjt4MLl2@google.com>
-References: <CAG48ez3MsFPn6TsJz75hvikgyxG5YGyT2gdoFwZuvKut4Xms1g@mail.gmail.com>
- <CAOQ4uxhDkAmqkxT668sGD8gHcssGTeJ3o6kzzz3=0geJvfAjdg@mail.gmail.com>
- <20210729133953.GL29619@quack2.suse.cz>
- <CAOQ4uxi70KXGwpcBnRiyPXZCjFQfifaWaYVSDK2chaaZSyXXhQ@mail.gmail.com>
- <CAOQ4uxgFLqO5_vPTb5hkfO1Fb27H-h0TqHsB6owZxrZw4YLoEA@mail.gmail.com>
- <20210802123428.GB28745@quack2.suse.cz>
- <CAOQ4uxhk-vTOFvpuh81A2V5H0nfAJW6y3qBi9TgnZxAkRDSeKQ@mail.gmail.com>
- <20210803093753.mxcn6nzgj55erpuw@wittgenstein>
- <CAOQ4uxgKuS8SJjz2AJQAB=3d3Yw5EeJxZ28L-u4Z0Wd35ZZFHQ@mail.gmail.com>
- <20210803140421.GE10621@quack2.suse.cz>
+        Wed, 4 Aug 2021 00:30:51 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R611e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0UhwJ.LP_1628051435;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UhwJ.LP_1628051435)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 04 Aug 2021 12:30:37 +0800
+Date:   Wed, 4 Aug 2021 12:30:35 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        nvdimm@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Liu Jiang <gerry@linux.alibaba.com>,
+        Huang Jianan <huangjianan@oppo.com>,
+        Tao Ma <boyu.mt@taobao.com>
+Subject: Re: [PATCH v2 1/3] erofs: iomap support for non-tailpacking DIO
+Message-ID: <YQoX62zRERGX9BGB@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Liu Jiang <gerry@linux.alibaba.com>,
+        Huang Jianan <huangjianan@oppo.com>, Tao Ma <boyu.mt@taobao.com>
+References: <20210730194625.93856-1-hsiangkao@linux.alibaba.com>
+ <20210730194625.93856-2-hsiangkao@linux.alibaba.com>
+ <e79e3261-e582-e848-b550-c0c3163d9af4@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210803140421.GE10621@quack2.suse.cz>
+In-Reply-To: <e79e3261-e582-e848-b550-c0c3163d9af4@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 03, 2021 at 04:04:21PM +0200, Jan Kara wrote:
-> On Tue 03-08-21 13:07:57, Amir Goldstein wrote:
-> > On Tue, Aug 3, 2021 at 12:37 PM Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > >
-> > > On Mon, Aug 02, 2021 at 05:38:20PM +0300, Amir Goldstein wrote:
-> > > > On Mon, Aug 2, 2021 at 3:34 PM Jan Kara <jack@suse.cz> wrote:
-> > > > >
-> > > > > On Fri 30-07-21 08:03:01, Amir Goldstein wrote:
-> > > > > > On Thu, Jul 29, 2021 at 6:13 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > > > > On Thu, Jul 29, 2021 at 4:39 PM Jan Kara <jack@suse.cz> wrote:
-> > > > > > > > Well, but pidfd also makes sure that /proc/<pid>/ keeps belonging to the
-> > > > > > > > same process while you read various data from it. And you cannot achieve
-> > > > > > > > that with pid+generation thing you've suggested. Plus the additional
-> > > > > > > > concept and its complexity is non-trivial So I tend to agree with
-> > > > > > > > Christian that we really want to return pidfd.
-> > > > > > > >
-> > > > > > > > Given returning pidfd is CAP_SYS_ADMIN priviledged operation I'm undecided
-> > > > > > > > whether it is worth the trouble to come up with some other mechanism how to
-> > > > > > > > return pidfd with the event. We could return some cookie which could be
-> > > > > > > > then (by some ioctl or so) either transformed into real pidfd or released
-> > > > > > > > (so that we can release pid handle in the kernel) but it looks ugly and
-> > > > > > > > complicates things for everybody without bringing significant security
-> > > > > > > > improvement (we already can pass fd with the event). So I'm pondering
-> > > > > > > > whether there's some other way how we could make the interface safer - e.g.
-> > > > > > > > so that the process receiving the event (not the one creating the group)
-> > > > > > > > would also need to opt in for getting fds created in its file table.
-> > > > > > > >
-> > > > > > > > But so far nothing bright has come to my mind. :-|
-> > > > > > > >
-> > > > > > >
-> > > > > > > There is a way, it is not bright, but it is pretty simple -
-> > > > > > > store an optional pid in group->fanotify_data.fd_reader.
-> > > > > > >
-> > > > > > > With flag FAN_REPORT_PIDFD, both pidfd and event->fd reporting
-> > > > > > > will be disabled to any process other than fd_reader.
-> > > > > > > Without FAN_REPORT_PIDFD, event->fd reporting will be disabled
-> > > > > > > if fd_reaader is set to a process other than the reader.
-> > > > > > >
-> > > > > > > A process can call ioctl START_FD_READER to set fd_reader to itself.
-> > > > > > > With FAN_REPORT_PIDFD, if reaader_fd is NULL and the reader
-> > > > > > > process has CAP_SYS_ADMIN, read() sets fd_reader to itself.
-> > > > > > >
-> > > > > > > Permission wise, START_FD_READER is allowed with
-> > > > > > > CAP_SYS_ADMIN or if fd_reader is not owned by another process.
-> > > > > > > We may consider YIELD_FD_READER ioctl if needed.
-> > > > > > >
-> > > > > > > I think that this is a pretty cheap price for implementation
-> > > > > > > and maybe acceptable overhead for complicating the API?
-> > > > > > > Note that without passing fd, there is no need for any ioctl.
-> > > > > > >
-> > > > > > > An added security benefit is that the ioctl adds is a way for the
-> > > > > > > caller of fanotify_init() to make sure that even if the fanotify_fd is
-> > > > > > > leaked, that event->fd will not be leaked, regardless of flag
-> > > > > > > FAN_REPORT_PIDFD.
-> > > > > > >
-> > > > > > > So the START_FD_READER ioctl feature could be implemented
-> > > > > > > and documented first.
-> > > > > > > And then FAN_REPORT_PIDFD could use the feature with a
-> > > > > > > very minor API difference:
-> > > > > > > - Without the flag, other processes can read fds by default and
-> > > > > > >   group initiator can opt-out
-> > > > > > > - With the flag, other processes cannot read fds by default and
-> > > > > > >   need to opt-in
-> > > > > >
-> > > > > > Or maybe something even simpler... fanotify_init() flag
-> > > > > > FAN_PRIVATE (or FAN_PROTECTED) that limits event reading
-> > > > > > to the initiator process (not only fd reading).
-> > > > > >
-> > > > > > FAN_REPORT_PIDFD requires FAN_PRIVATE.
-> > > > > > If we do not know there is a use case for passing fanotify_fd
-> > > > > > that reports pidfds to another process why implement the ioctl.
-> > > > > > We can always implement it later if the need arises.
-> > > > > > If we contemplate this future change, though, maybe the name
-> > > > > > FAN_PROTECTED is better to start with.
-> > > > >
-> > > > > Good ideas. I think we are fine with returning pidfd only to the process
-> > > > > creating the fanotify group. Later we can add an ioctl which would indicate
-> > > > > that the process is also prepared to have fds created in its file table.
-> > > > > But I have still some open questions:
-> > > > > Do we want threads of the same process to still be able to receive fds?
-> > > >
-> > > > I don't see why not.
-> > > > They will be bloating the same fd table as the thread that called
-> > > > fanotify_init().
-> > > >
-> > > > > Also pids can be recycled so they are probably not completely reliable
-> > > > > identifiers?
-> > > >
-> > > > Not sure I follow. The group hold a refcount on struct pid of the process that
-> > > > called fanotify_init() - I think that can used to check if reader process is
-> > > > the same process, but not sure. Maybe there is another way (Christian?).
-> > >
-> > > If the fanotify group hold's a reference to struct pid it won't get
-> > > recycled. And it can be used to check if the reader thread is the same
-> > > thread with some care. You also have to be specific what exactly you
-> > > want to know.  If you're asking if the reading process is the same as
-> > > the fanotify_init() process you can be asking one of two things.
-> > >
-> > > You can be asking if the reader is a thread in the same thread-group as
-> > > the thread that called fanotify_init(). In that case you might need to
-> > > do something like
-> > >
-> > > rcu_read_lock();
-> > > struct task_struct *fanotify_init_task_struct = pid_task(stashed_struct_pid, PIDTYPE_PID);
-> > > if (!fanotify_init_task_struct) {
-> > >         /* The thread which called fanotify_init() has died already. */
-> > >         return -ESRCH;
-> > > }
-> > > if (same_thread_group(fanotify_init_task_struct, current))
-> > > rcu_read_unlock();
-> > >
-> > > though thinking about it makes me realise that there's a corner case. If
-> > > the thread that called fanotify_init() is a thread in a non-empty
-> > > thread-group it can already have died and been reaped. This would mean,
-> > > pid_task(..., PIDTYPE_PID) will return NULL but there are still other
-> > > threads alive in the thread-group. Handling that case might be a bit
-> > > complicated.
-> > >
-> > > If you're asking whether the reading thread is really the same as the
-> > > thread that created the fanotify instance then you might need to do sm
-> > > like
-> > >
-> > > rcu_read_lock();
-> > > if (pid_task(stashed_struct_pid, PIDTYPE_PID) == current)
-> > > rcu_read_unlock();
-> > >
-> > > Just for completeness if I remember all of this right: there's a corner
-> > > case because of how de_thread() works.
-> > > During exec the thread that is execing will assume the struct pid of the
-> > > old thread-group leader. (All other threads in the same thread-group
-> > > will get killed.)
-> > > Assume the thread that created the fanotify instance is not the
-> > > thread-group leader in its non-empty thread-group. And further assume it
-> > > exec's. Then it will assume the struct pid of the old thread-group
-> > > leader during de_thread().
-> > > Assume the thread inherits the fanotify fd across the exec. Now, when it
-> > > tries to read a new event after the exec then pid_task() will return
-> > > NULL.
-> > > However, if the thread was already the thread-group leader before the
-> > > exec then pid_task() will return the same task struct as before after
-> > > the exec (because no struct pid swapping needed to take place).
-> > >
-> > > I hope this causes more clarity ?then confusion. :)
-> > 
-> > I'm afraid it's the latter :D
-> > 
-> > Sigh! We must simplify.
-> > 
-> > Thinking out loud, instead of sealing the possibility of another
-> > process reading pidfd, maybe just avoid the most obvious unintentional
-> > leak of fanotify_fd to another process by mandating  FAN_CLOEXEC?
->
-> Well, I don't think we need any protection from leaking fanotify_fd. It is
-> special fd with special priviledges as any other. If you leak it, well, bad
-> luck but that's how Unix priviledge model works.
+Hi Chao,
+
+On Wed, Aug 04, 2021 at 10:57:08AM +0800, Chao Yu wrote:
+> On 2021/7/31 3:46, Gao Xiang wrote:
+
+...
+
+> >   }
+> > +static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+> > +		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
+> > +{
+> > +	int ret;
+> > +	struct erofs_map_blocks map;
+> > +
+> > +	map.m_la = offset;
+> > +	map.m_llen = length;
+> > +
+> > +	ret = erofs_map_blocks_flatmode(inode, &map, EROFS_GET_BLOCKS_RAW);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	iomap->bdev = inode->i_sb->s_bdev;
+> > +	iomap->offset = map.m_la;
+> > +	iomap->length = map.m_llen;
+> > +	iomap->flags = 0;
+> > +
+> > +	if (!(map.m_flags & EROFS_MAP_MAPPED)) {
+> > +		iomap->type = IOMAP_HOLE;
+> > +		iomap->addr = IOMAP_NULL_ADDR;
+> > +		if (!iomap->length)
+> > +			iomap->length = length;
 > 
-> The threat IMO is that you have a process X, that process expects to
-> receive fd to work with from process Y. Now process Y is malicious (or
-> taken over by an attacker) and passes to X fanotify_fd. X reads from
-> fanotify_fd to get data to process, it performs all kinds of validity
-> checks on untrusted input but it does not expect that the read has side
-> effects on X's file_table and in the worst case can lead to some compromise
-> of X or easily to DoS on X by exhausting its file_table space.
->
-> Currently this attack vector is moot because you have to have CAP_SYS_ADMIN
-> to get to fanotify_fd and then you can certainly do worse things. But OTOH
-> I can see why Jann was uneasy about this.
+> This only happens for the case offset exceeds isize?
 
-As I have breifly expressed in my previous emails, the cause for concern
-here is flakey IMO. If there's sensible something that I'm clearly missing,
-then please explain.
+Thanks for the review.
 
-From my perspective, the only sensible attack vector that's maybe worth
-worrying about here is the possibility of exhausting the fdtable of a given
-process, which yes, can be considered as a form of DoS. However, in any
-case, there are other defensive protections/measures that a programmer
-could employ in their application code which could prevent such from ever
-happening.
+Yeah, this is a convention (length 0 with !EROFS_MAP_MAPPED) for post-EOF
+in erofs_map_blocks_flatmode(), need to follow iomap rule as well.
 
-The whole passing of file descriptors between process Y and process X and
-the leaking of a file descriptor thing simply goes back to what you've
-mentioned above Jan. I consider it a very weak argument. When enabling
-FAN_REPORT_PIDFD, the process requires CAP_SYS_ADMIN. If that process ever
-has its execution flow hijacked by an attacker, then I'm sorry, I think
-there's other larger causes for concern at that point rather then worrying
-about the state of some other child processes fdtable.
+> 
+> > +		return 0;
+> > +	}
+> > +
+> > +	/* that shouldn't happen for now */
+> > +	if (map.m_flags & EROFS_MAP_META) {
+> > +		DBG_BUGON(1);
+> > +		return -ENOTBLK;
+> > +	}
+> > +	iomap->type = IOMAP_MAPPED;
+> > +	iomap->addr = map.m_pa;
+> > +	return 0;
+> > +}
+> > +
+> > +const struct iomap_ops erofs_iomap_ops = {
+> > +	.iomap_begin = erofs_iomap_begin,
+> > +};
+> > +
+> > +static int erofs_prepare_dio(struct kiocb *iocb, struct iov_iter *to)
+> > +{
+> > +	struct inode *inode = file_inode(iocb->ki_filp);
+> > +	loff_t align = iocb->ki_pos | iov_iter_count(to) |
+> > +		iov_iter_alignment(to);
+> > +	struct block_device *bdev = inode->i_sb->s_bdev;
+> > +	unsigned int blksize_mask;
+> > +
+> > +	if (bdev)
+> > +		blksize_mask = (1 << ilog2(bdev_logical_block_size(bdev))) - 1;
+> > +	else
+> > +		blksize_mask = (1 << inode->i_blkbits) - 1;
+> > +
+> > +	if (align & blksize_mask)
+> > +		return -EINVAL;
+> > +
+> > +	/*
+> > +	 * Temporarily fall back tail-packing inline to buffered I/O instead
+> > +	 * since tail-packing inline support relies on an iomap core update.
+> > +	 */
+> > +	if (EROFS_I(inode)->datalayout == EROFS_INODE_FLAT_INLINE &&
+> > +	    iocb->ki_pos + iov_iter_count(to) >
+> > +			rounddown(inode->i_size, EROFS_BLKSIZ))
+> > +		return 1;
+> > +	return 0;
+> > +}
+> > +
+> > +static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> > +{
+> > +	/* no need taking (shared) inode lock since it's a ro filesystem */
+> > +	if (!iov_iter_count(to))
+> > +		return 0;
+> > +
+> > +	if (iocb->ki_flags & IOCB_DIRECT) {
+> > +		int err = erofs_prepare_dio(iocb, to);
+> > +
+> > +		if (!err)
+> > +			return iomap_dio_rw(iocb, to, &erofs_iomap_ops,
+> > +					    NULL, 0);
+> > +		if (err < 0)
+> > +			return err;
+> > +		/*
+> > +		 * Fallback to buffered I/O if the operation being performed on
+> > +		 * the inode is not supported by direct I/O. The IOCB_DIRECT
+> > +		 * flag needs to be cleared here in order to ensure that the
+> > +		 * direct I/O path within generic_file_read_iter() is not
+> > +		 * taken.
+> > +		 */
+> > +		iocb->ki_flags &= ~IOCB_DIRECT;
+> > +	}
+> > +	return generic_file_read_iter(iocb, to);
+> 
+> It looks it's fine to call filemap_read() directly since above codes have
+> covered DIO case, then we don't need to change iocb->ki_flags flag, it's
+> minor though.
 
-In general cases, I get that passing a file descriptor between process Y
-and process X and then having process X's fdtable modified as result of
-calling functions like read() is considered undesired. But, for
-applications that makes use of fanotify is there ever a case where we pass
-the fanotify file descriptor to a random/unexpected process and have it
-process events? I don't think so. So, I suppose what I'm trying to say is
-that, if an application chooses to opt-in and use a flag like
-FAN_REPORT_PIDFD or any other future file descriptor generating variant,
-the expectation is that which ever process is created and event processing
-is passed to that process, then it should always expect to have its fdtable
-modified when reading events.
+Yeah, we could use filemap_read() here instead. yet IMO, it might be
+better to drop IOCB_DIRECT too to keep iocb consistent with the real
+semantics (even it's not used internally.)
 
-/M
+> 
+> > +}
+> > +
+> >   /* for uncompressed (aligned) files and raw access for other files */
+> >   const struct address_space_operations erofs_raw_access_aops = {
+> >   	.readpage = erofs_raw_access_readpage,
+> >   	.readahead = erofs_raw_access_readahead,
+> >   	.bmap = erofs_bmap,
+> > +	.direct_IO = noop_direct_IO,
+> > +};
+> > +
+> > +const struct file_operations erofs_file_fops = {
+> > +	.llseek		= generic_file_llseek,
+> > +	.read_iter	= erofs_file_read_iter,
+> > +	.mmap		= generic_file_readonly_mmap,
+> > +	.splice_read	= generic_file_splice_read,
+> >   };
+> > diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+> > index aa8a0d770ba3..00edb7562fea 100644
+> > --- a/fs/erofs/inode.c
+> > +++ b/fs/erofs/inode.c
+> > @@ -247,7 +247,10 @@ static int erofs_fill_inode(struct inode *inode, int isdir)
+> >   	switch (inode->i_mode & S_IFMT) {
+> >   	case S_IFREG:
+> >   		inode->i_op = &erofs_generic_iops;
+> > -		inode->i_fop = &generic_ro_fops;
+> > +		if (!erofs_inode_is_data_compressed(vi->datalayout))
+> > +			inode->i_fop = &erofs_file_fops;
+> > +		else
+> > +			inode->i_fop = &generic_ro_fops;
+> 
+> if (erofs_inode_is_data_compressed(vi->datalayout))
+> 	inode->i_fop = &generic_ro_fops;
+> else
+> 	inode->i_fop = &erofs_file_fops;
+> 
+> Otherwise, it looks good to me.
+
+ok, will fix in the next version.
+
+Thanks,
+Gao Xiang
+
+> 
+> Reviewed-by: Chao Yu <chao@kernel.org>
+> 
+> Thanks
+> 
+> >   		break;
+> >   	case S_IFDIR:
+> >   		inode->i_op = &erofs_dir_iops;
+> > diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> > index 543c2ff97d30..2669c785d548 100644
+> > --- a/fs/erofs/internal.h
+> > +++ b/fs/erofs/internal.h
+> > @@ -371,6 +371,7 @@ static inline int z_erofs_map_blocks_iter(struct inode *inode,
+> >   #endif	/* !CONFIG_EROFS_FS_ZIP */
+> >   /* data.c */
+> > +extern const struct file_operations erofs_file_fops;
+> >   struct page *erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr);
+> >   /* inode.c */
+> > 
