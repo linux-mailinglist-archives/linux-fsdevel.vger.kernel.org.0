@@ -2,90 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49C983E0223
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 15:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B67333E0289
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 15:56:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237384AbhHDNiE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 09:38:04 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:44522 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234089AbhHDNiE (ORCPT
+        id S237778AbhHDN4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 09:56:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47166 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236659AbhHDN4b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 09:38:04 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id CBEC91FDF1;
-        Wed,  4 Aug 2021 13:37:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1628084270; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kAOyPfhApQEvYuznvyJ9FA5mKKOF/pnqDMA2tFhz0QM=;
-        b=QI3YyHqfmDJGAdQgLFOU+rlhZPyk3YS7dLYnRBSb+B751BIzkRHfZowKoCuN2VcJEqhr7i
-        /3ew01zSCO8Gbf0scwI/WkYkM2CZMorCEoth7qVPG4NX7sRhdB61h1ETsaKGFSXnc7zFmB
-        a/xsfNqKc9utPqgY+rfk7WXnf5XQWSM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1628084270;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kAOyPfhApQEvYuznvyJ9FA5mKKOF/pnqDMA2tFhz0QM=;
-        b=V3EG5c72wjKqApkkkYjmPcIo2GiCxgGiOeL12dG1KvMZYgpMAaCVMhZQ0yOHFyWZNAUSDH
-        nVK5N3hbGXkl2UBg==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id A26C513942;
-        Wed,  4 Aug 2021 13:37:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id mkY1Ji6YCmEPQAAAGKfGzw
-        (envelope-from <ddiss@suse.de>); Wed, 04 Aug 2021 13:37:50 +0000
-Date:   Wed, 4 Aug 2021 15:37:49 +0200
-From:   David Disseldorp <ddiss@suse.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH RESEND 1/3] initramfs: move unnecessary memcmp from hot
- path
-Message-ID: <20210804153749.5bb69afd@suse.de>
-In-Reply-To: <YQqOrCw29ff7zJHb@zeniv-ca.linux.org.uk>
-References: <20210721115153.28620-1-ddiss@suse.de>
-        <20210804113129.60848be6@suse.de>
-        <YQqOrCw29ff7zJHb@zeniv-ca.linux.org.uk>
+        Wed, 4 Aug 2021 09:56:31 -0400
+Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C453C0613D5
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 06:56:18 -0700 (PDT)
+Received: by mail-yb1-xb43.google.com with SMTP id p145so4082276ybg.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 06:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=XdkjCkEbpHg5nd+jg1mbTbTC48Xz0zrIT+9qtD4A290=;
+        b=n7FuXSl/Sls7PmGWYsuMrdBXwwTfbO4HyWIdnVEG6dKGz1KtWPdyMfsKxxPgmRsDSl
+         XE6E1wsZijIhWPkzjn1/nF3Am+Zyoj4Z5fLARZmUlEOtiDY4gb6qc7VXNGmPKXvK+kXk
+         T2LRnNOMJIZcb6zd6Z2sIFXMHvdICj68tMAcBzbVpwWugDd5JYtg6LXsj0u441l8bHlV
+         eewa/TELhY7Zf9Ci3Mue1HEvJBxRnT1FD7Otbw1iA0f3d/S5XYJ0Pi/QlaUEAMUzvHEh
+         VmDYO+0Y8FmC8IiCizODCpeAfd+VYSa79v7sGNKPIa3SCNZDV1UNaRJ7JHRbZwBYtrsu
+         qzXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=XdkjCkEbpHg5nd+jg1mbTbTC48Xz0zrIT+9qtD4A290=;
+        b=tUuBJKNxzEdz5dkBh2w/dKggOCi4q5GbXARY7QfScFlCeBHpLwpTbugMhLdPEhP6BK
+         3efazH2KsjE+9SJUAs/UzV7rEZM6wtoa2RARknSi+ENrCZFG6nc5EaUX5U/b23ETpRMm
+         UAM0TUcbXKFuUwHvBkOtIMDESeHMPMo1nRdigh4KxvjbfbGLgjFB6uA1MEH68Xj55pb2
+         2pcaysWuuCDw19dCBlr4pES+ylJ9Bg2bZybBNHdACboFxGl5M/hbTvPk6dRwtb/uFY3j
+         /wSebOIZoLa0tOk4/pCEY2GQvd2up+tpiAGxqqCUYmmlzDgrBTXi+uhhQHNbSy9Xr4tL
+         OgjQ==
+X-Gm-Message-State: AOAM530kRj68owVQ3T9CSPIh7hwk0Rv8eCmzVy9HmPhZotTYFCX5zy/U
+        Ie+Rk2oxbXmMDo/fKsnh/yBEnWw+dSj0z8v7Xcw3r8YWJg==
+X-Google-Smtp-Source: ABdhPJwyOiIcsgEIhoYi89iWEWEaUPHqqxP48cazWEjYWv9eVBD5pXAhaJr2hmtj8mrEV1aqZig5L591xK1EqmukPvs=
+X-Received: by 2002:a25:a109:: with SMTP id z9mr3801742ybh.279.1628085366144;
+ Wed, 04 Aug 2021 06:56:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Reply-To: d807vfh57p@gmail.com
+Sender: ft4757ghg@gmail.com
+Received: by 2002:a05:7108:2c8a:0:0:0:0 with HTTP; Wed, 4 Aug 2021 06:56:05
+ -0700 (PDT)
+From:   Dixie Prichard <m568987k@gmail.com>
+Date:   Wed, 4 Aug 2021 14:56:05 +0100
+X-Google-Sender-Auth: ba8kPuHi-xcVL7-QrlrzOo-wimQ
+Message-ID: <CAK_-KPO_6F9RwJzX5p4hP69y3Yund8oCH=ENimiJyDAiGmPvMw@mail.gmail.com>
+Subject: << Message From Mrs. Dixie Prichard >>
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 4 Aug 2021 12:57:16 +0000, Al Viro wrote:
+Hello,
 
-> On Wed, Aug 04, 2021 at 11:31:29AM +0200, David Disseldorp wrote:
-> > Ping, any feedback on this change?
-> > 
-> > I think it's a no brainer, but for kicks I ran a few unrealistic micro
-> > benchmarks on my laptop. Extraction time for a cpio image with 1M+
-> > directories improved by 5ms (pre: 14.614s, post: 14.609s), when averaged
-> > across 20 runs of:
-> >   qemu-system-x86_64 -machine accel=kvm -smp cpus=1 -m 10240 \
-> >         -kernel ~/linux/arch/x86/boot/bzImage \
-> >         -initrd ./initrds/gen_cpio.out \
-> >         -append "initramfs_async=0 console=ttyS0 panic=0" -nographic \
-> >         | awk '/Trying to unpack rootfs/ {start_ts = $2};
-> >                /Freeing initrd memory/ {end_ts = $2}
-> >                END {printf "%f\n", end_ts - start_ts}'  
-> 
-> What was the dispersion for those runs?
+Please accept my apologies for writing a surprise letter to you. My
+name is Mrs. Dixie Prichard. I'm the General Operation/Regional
+Accountant of First Pillar Finance Bank, United Kingdom. I am the
+account officer to one of our clients from your country who had a
+project account with our bank in 2006 the valued sum of GBP=C2=A3
+6,300,000.00 (Six Million Three Hundred Thousand British Pounds). He
+was among the fatalities of the May 26, 2006 earthquake in Java,
+Indonesia, which killed approximately 5,782 people. He was on a
+business trip in Indonesia during this disaster that ended his life
+and he did not specify a next heir when he opened the account.
 
-Too high for the 5ms to be considered statistically significant. Std
-deviations were pre: 171ms, post: 214ms... <sigh> I'll redo this on a
-proper test rig.
+I would like to introduce you to the bank as the beneficiary for this
+transaction and invest the funds. Since you have a surname similar to
+that of the deceased client, it will be easier for me to introduce you
+to the bank management to release the fund. All I need is your sincere
+cooperation and I promise this will be done under a legitimate
+agreement that will protect us from any violation of the law. I agree
+that 40% of this money will go to you as my foreign partner, 50% to
+me, while 10% will go to establish a foundation for the
+underprivileged people in your country. If you would like to hear me
+out, I will provide you with full details about the transaction in
+your reply to this letter.
 
-Cheers, David
+Thank you for your urgent response.
+
+Regards,
+Mrs. Dixie Prichard
