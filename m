@@ -2,136 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87F113DFADD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 07:02:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 950163DFB7C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 08:38:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235072AbhHDFC3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 01:02:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38714 "EHLO
+        id S235599AbhHDGi2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 02:38:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230120AbhHDFC3 (ORCPT
+        with ESMTP id S235419AbhHDGi1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 01:02:29 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB35C06179B
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Aug 2021 22:02:14 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id y12so1911491edo.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Aug 2021 22:02:14 -0700 (PDT)
+        Wed, 4 Aug 2021 02:38:27 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97DE7C0613D5;
+        Tue,  3 Aug 2021 23:38:14 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id m13so2615662lfg.13;
+        Tue, 03 Aug 2021 23:38:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=N+beALY95MrjF7EQlWQ+7qrLEnnewleV96sjHNxuEQs=;
-        b=1rLCLS4VnBkloqKEKCZnZytWQey60VsL3htB4tjjDdGtlLAiqoh4sNKJRTSD6PwHMR
-         9vnNHw1iSS/Fx6i0RCE4RQQ4vyqq5rtIc36Im9QY2RqHEKf/w7Ug3oZhwlGcXQQVWu+G
-         DaqQtL3jX0bh/ha8PFkv/P+nkTaCYS0lRvDdZ7eTBoSHDgR6igcI7RQpNA/OnHviNAOp
-         B3a2lMoBgB2yx2PIRIb70LzX8dilNPja4adYWApEFw1rdfLmQVuZMJXeYvIXWxCdUk2b
-         bPhkn+mywOFmHQT2BPGuByMD4SU6R+J4yLdJWCNVm7lh1t2vV6tsAG7vZpgywjnOueBE
-         IJ+g==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=RGi+UjdGgDWz1eAwnozhR2gWINzZqIgqVqUuObzwmS0=;
+        b=uVHrBHbnhwooKsFvpB0aHMp3qXRizv+vurz5f5TvQJJwPreqwud/BDLt049mR1ZnXP
+         NhVK8+OK7z0GN0d0kQKgdp7uGDiOO4xXtgGyhT0X3XGw/YChw+mMA22yJRtefz+KtmOt
+         SXuRF5wfqocpk2X6LWe2TYfmRF62f2taLKOO23e3c4+6BcNefO14vRug+aA4w7DAwXbd
+         et4ufESMrUps29kq4a6y4fF0m3GsXdkj65u5bDm0xi7FqWMD4sCZTGAiDI8dPYzi8RXm
+         a8izzXT6Pp4CJ/gzFkoOFQQz46dtMSzGR0CrbhFKfVZJB2MPKmjntPw2QWluKSgbnxaj
+         jVPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=N+beALY95MrjF7EQlWQ+7qrLEnnewleV96sjHNxuEQs=;
-        b=clcxvdcbr2eBumoHHL+s/PQG0UPH2kW4D/Oz13UChfx6nTQk4uxfgQVZ+2Jf8TinJf
-         9Q/ljdFBpVaqotUh1G93Y1RFjHcQOCjpex5Ag1zxL0wxzb7bXxwZbWoH8BSo+UctcCyE
-         eI35B6GDtBxIc0jLvawKZ2yV7kW+iV5mLPzTs+nCwvgzDPuaCFT359OR4RV83RkTcnMZ
-         c++GL8A2RCZ3uXAymysCzdovDLFIYvy93Ld9+fyQVneaEj5aTwkdvlcloxdqggX/shiC
-         fZlEoiGHJYFozs+RPBNIhxbwqyQTthaN2FgRMSzggui7TjgxLi6WDgPzSBKXCTMJ71HT
-         iLVA==
-X-Gm-Message-State: AOAM532/qI2r/2E1hAEQAImhh+5Bu5WZ1oQeXmUDozIpcgSBgPupV7Kr
-        ukxRt3KTbzO59orvXxL0oEeejrwgceo9QXqAjgn9
-X-Google-Smtp-Source: ABdhPJyt1k/RSWy83+1+OmhkaAmWeFnxG6MZmwR66lsbk5H/EN4omlE0NKvZ4kUYOjDCLtkcwCUQ7smkV99GEEOO3As=
-X-Received: by 2002:aa7:c50a:: with SMTP id o10mr29218603edq.118.1628053332808;
- Tue, 03 Aug 2021 22:02:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-2-xieyongji@bytedance.com>
- <43d88942-1cd3-c840-6fec-4155fd544d80@redhat.com> <CACycT3vcpwyA3xjD29f1hGnYALyAd=-XcWp8+wJiwSqpqUu00w@mail.gmail.com>
- <6e05e25e-e569-402e-d81b-8ac2cff1c0e8@arm.com>
-In-Reply-To: <6e05e25e-e569-402e-d81b-8ac2cff1c0e8@arm.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 4 Aug 2021 13:02:01 +0800
-Message-ID: <CACycT3sm2r8NMMUPy1k1PuSZZ3nM9aic-O4AhdmRRCwgmwGj4Q@mail.gmail.com>
-Subject: Re: [PATCH v10 01/17] iova: Export alloc_iova_fast() and free_iova_fast()
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Jason Wang <jasowang@redhat.com>, kvm <kvm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RGi+UjdGgDWz1eAwnozhR2gWINzZqIgqVqUuObzwmS0=;
+        b=RfLZOgoBKeG5mG8riBVPt/m17+KLbV9GQL87AvgnPcZnMMXtIXtz5g7kz+roWo2WPs
+         diY5N0dMIZY0VAfSaOCZrAIOwboSnKIGSqGXrZCvjQ5p4qTeBFKyUUjutRNHp/S1NhmK
+         g+JqB+2cSrANrHkry0AcBk0ZbNK6AGr29avF72r385Jx7mwE5UPfhOCbijw8Iwz4IVl2
+         TZ1pgASSXFPpRtanUCdz+rTBUsz+yLaRzDdBPzyITZvtEkSQwhJP2wRileVO1nCoDOoN
+         2Z5HHB30w81KtFy/GKOH2hnx8PtXMZV/A+wefhOnuamXUJLtHM/bOcamlwJFY1P8VJ9q
+         HemQ==
+X-Gm-Message-State: AOAM532JVVTDVdPXwQlOMF2XJvAGVLoZa3hUqF1ExY1a/fiiV4RyyQ9x
+        cB49vqjoEGikr8HphobD4+E=
+X-Google-Smtp-Source: ABdhPJx1S4jrbszhB/Y7mKBHxW+sz5YOBXMVfcOWSmA5w3yYP3ZrB3blHuE8lWd20wbcWxbT3wpaMQ==
+X-Received: by 2002:a05:6512:23a4:: with SMTP id c36mr14995274lfv.539.1628059093007;
+        Tue, 03 Aug 2021 23:38:13 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id h11sm105805lfc.4.2021.08.03.23.38.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Aug 2021 23:38:12 -0700 (PDT)
+Date:   Wed, 4 Aug 2021 09:38:10 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Liu Xiaodong <xiaodong.liu@intel.com>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        songmuchun@bytedance.com, Jens Axboe <axboe@kernel.dk>,
-        He Zhe <zhe.he@windriver.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, bcrl@kvack.org,
-        netdev@vger.kernel.org, Joe Perches <joe@perches.com>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "Leonidas P. Papadakos" <papadakospan@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        zajec5@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
+Message-ID: <20210804063810.dvnqgxnaoajy3ehe@kari-VirtualBox>
+References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
+ <20210716114635.14797-1-papadakospan@gmail.com>
+ <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com>
+ <YQnHxIU+EAAxIjZA@mit.edu>
+ <YQnU5m/ur+0D5MfJ@casper.infradead.org>
+ <YQnZgq3gMKGI1Nig@mit.edu>
+ <CAHk-=wiSwzrWOSN5UCrej3YcLRPmW5tViGSA5p2m-hiyKnQiMg@mail.gmail.com>
+ <YQnkGMxZCgCWXQPf@mit.edu>
+ <20210804010351.GM3601466@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210804010351.GM3601466@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 3, 2021 at 6:54 PM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 2021-08-03 09:54, Yongji Xie wrote:
-> > On Tue, Aug 3, 2021 at 3:41 PM Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >>
-> >> =E5=9C=A8 2021/7/29 =E4=B8=8B=E5=8D=883:34, Xie Yongji =E5=86=99=E9=81=
-=93:
-> >>> Export alloc_iova_fast() and free_iova_fast() so that
-> >>> some modules can use it to improve iova allocation efficiency.
-> >>
-> >>
-> >> It's better to explain why alloc_iova() is not sufficient here.
-> >>
-> >
-> > Fine.
->
-> What I fail to understand from the later patches is what the IOVA domain
-> actually represents. If the "device" is a userspace process then
-> logically the "IOVA" would be the userspace address, so presumably
-> somewhere you're having to translate between this arbitrary address
-> space and actual usable addresses - if you're worried about efficiency
-> surely it would be even better to not do that?
->
+On Tue, Aug 03, 2021 at 06:03:51PM -0700, Darrick J. Wong wrote:
+> On Tue, Aug 03, 2021 at 08:49:28PM -0400, Theodore Ts'o wrote:
+> > On Tue, Aug 03, 2021 at 05:10:22PM -0700, Linus Torvalds wrote:
+> > > The user-space FUSE thing does indeed work reasonably well.
+> > > 
+> > > It performs horribly badly if you care about things like that, though.
+> > > 
+> > > In fact, your own numbers kind of show that:
+> > > 
+> > >   ntfs/default: 670 tests, 55 failures, 211 skipped, 34783 seconds
+> > >   ntfs3/default: 664 tests, 67 failures, 206 skipped, 8106 seconds
+> > > 
+> > > and that's kind of the point of ntfs3.
+> > 
+> > Sure, although if you run fstress in parallel ntfs3 will lock up, the
+> > system hard, and it has at least one lockdep deadlock complaints.
+> > It's not up to me, but personally, I'd feel better if *someone* at
+> > Paragon Software responded to Darrrick and my queries about their
+> > quality assurance, and/or made commitments that they would at least
+> > *try* to fix the problems that about 5 minutes of testing using
+> > fstests turned up trivially.
+> 
+> <cough> Yes, my aim was to gauge their interest in actively QAing the
+> driver's current problems so that it doesn't become one of the shabby
+> Linux filesystem drivers, like <cough>ntfs.
+> 
+> Note I didn't even ask for a particular percentage of passing tests,
+> because I already know that non-Unix filesystems fail the tests that
+> look for the more Unix-specific behaviors.
+> 
+> I really only wanted them to tell /us/ what the baseline is.  IMHO the
+> silence from them is a lot more telling.  Both generic/013 and
+> generic/475 are basic "try to create files and read and write data to
+> them" exercisers; failing those is a red flag.
+> 
 
-Yes, userspace daemon needs to translate the "IOVA" in a DMA
-descriptor to the VA (from mmap(2)). But this actually doesn't affect
-performance since it's an identical mapping in most cases.
+Konstantin has wrote about these thing see below.
 
-> Presumably userspace doesn't have any concern about alignment and the
-> things we have to worry about for the DMA API in general, so it's pretty
-> much just allocating slots in a buffer, and there are far more effective
-> ways to do that than a full-blown address space manager.
+On Thu, 20 Aug 2020 10:20:26 +0000, Konstantin Komarov wrote: 
+> xfstests are being one of our standard test suites among others.
+> Currently we have the 'generic/339' and 'generic/013' test cases
+> failing, working on it now. Other tests either pass or being skipped
+> (due to missing features e.g. reflink). 
+Source:
+https://lore.kernel.org/linux-fsdevel/7538540ab82e4b398a0203564a1f1b23@paragon-software.com/
 
-Considering iova allocation efficiency, I think the iova allocator is
-better here. In most cases, we don't even need to hold a spin lock
-during iova allocation.
+Also code tells that xfstests is being used in Paragon. In ntfs3/file.c:
 
-> If you're going
-> to reuse any infrastructure I'd have expected it to be SWIOTLB rather
-> than the IOVA allocator. Because, y'know, you're *literally implementing
-> a software I/O TLB* ;)
->
+/*
+* Unwritten area
+* NTFS is not able to store several unwritten areas
+* Activate 'ntfs_sparse_cluster' to zero new allocated clusters
+*
+* Dangerous in case:
+* 1G of sparsed clusters + 1 cluster of data =>
+* valid_size == 1G + 1 cluster
+* fallocate(1G) will zero 1G and this can be very long
+* xfstest 016/086 will fail without 'ntfs_sparse_cluster'
+*/
+/*ntfs_sparse_cluster(inode, NULL, vcn,
+ *	              min(vcn_v - vcn, clen));
+ */
 
-But actually what we can reuse in SWIOTLB is the IOVA allocator. And
-the IOVA management in SWIOTLB is not what we want. For example,
-SWIOTLB allocates and uses contiguous memory for bouncing, which is
-not necessary in VDUSE case. And VDUSE needs coherent mapping which is
-not supported by the SWIOTLB. Besides, the SWIOTLB works in singleton
-mode (designed for platform IOMMU) , but VDUSE is based on on-chip
-IOMMU (supports multiple instances). So I still prefer to reuse the
-IOVA allocator to implement a MMU-based software IOTLB.
+I'm just bringing this thing up because so many has asked and Konstantin
+has not responded recently. Hopefully he will soon. Of course is it
+little bit worrying that example generic/013 still fails after almoust
+year has passed and Konstantin said he is working on it. And it seems that
+more tests fails than beginning of review process.
 
-Thanks,
-Yongji
+> --D
+> 
+> > I can even give them patches and configsto make it trivially easy for
+> > them to run fstests using KVM or GCE....
+> > 
+> > 				- Ted
