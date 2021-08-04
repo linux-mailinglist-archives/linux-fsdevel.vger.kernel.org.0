@@ -2,153 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 049623E0581
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 18:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C01DA3E05F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 18:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233805AbhHDQKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 12:10:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbhHDQIU (ORCPT
+        id S237676AbhHDQbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 12:31:14 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:46132 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S237566AbhHDQbO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 12:08:20 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 112DAC0613D5;
-        Wed,  4 Aug 2021 09:08:08 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id AD91C1F4369A
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     jack@suse.com, amir73il@gmail.com
-Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
-        dhowells@redhat.com, khazhy@google.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-api@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH v5 23/23] docs: Document the FAN_FS_ERROR event
-Date:   Wed,  4 Aug 2021 12:06:12 -0400
-Message-Id: <20210804160612.3575505-24-krisman@collabora.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210804160612.3575505-1-krisman@collabora.com>
-References: <20210804160612.3575505-1-krisman@collabora.com>
+        Wed, 4 Aug 2021 12:31:14 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 174GUefr026063
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 4 Aug 2021 12:30:41 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 8AB6815C37C1; Wed,  4 Aug 2021 12:30:40 -0400 (EDT)
+Date:   Wed, 4 Aug 2021 12:30:40 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Kari Argillander <kari.argillander@gmail.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Leonidas P. Papadakos" <papadakospan@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        zajec5@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
+Message-ID: <YQrAsGBmVeKQp+Z9@mit.edu>
+References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
+ <20210716114635.14797-1-papadakospan@gmail.com>
+ <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com>
+ <YQnHxIU+EAAxIjZA@mit.edu>
+ <YQnU5m/ur+0D5MfJ@casper.infradead.org>
+ <YQnZgq3gMKGI1Nig@mit.edu>
+ <CAHk-=wiSwzrWOSN5UCrej3YcLRPmW5tViGSA5p2m-hiyKnQiMg@mail.gmail.com>
+ <YQnkGMxZCgCWXQPf@mit.edu>
+ <20210804010351.GM3601466@magnolia>
+ <20210804063810.dvnqgxnaoajy3ehe@kari-VirtualBox>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210804063810.dvnqgxnaoajy3ehe@kari-VirtualBox>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Document the FAN_FS_ERROR event for user administrators and user space
-developers.
+On Wed, Aug 04, 2021 at 09:38:10AM +0300, Kari Argillander wrote:
+> Konstantin has wrote about these thing see below.
+> 
+> Source:
+> https://lore.kernel.org/linux-fsdevel/7538540ab82e4b398a0203564a1f1b23@paragon-software.com/
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Thanks for the link; that's really helpful.
 
----
-Changes Since v4:
-  - Update documentation about reporting non-file error.
-Changes Since v3:
-  - Move FAN_FS_ERROR notification into a subsection of the file.
-Changes Since v2:
-  - NTR
-Changes since v1:
-  - Drop references to location record
-  - Explain that the inode field is optional
-  - Explain we are reporting only the first error
----
- .../admin-guide/filesystem-monitoring.rst     | 70 +++++++++++++++++++
- Documentation/admin-guide/index.rst           |  1 +
- 2 files changed, 71 insertions(+)
- create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
+> I'm just bringing this thing up because so many has asked and Konstantin
+> has not responded recently. Hopefully he will soon. Of course is it
+> little bit worrying that example generic/013 still fails after almoust
+> year has passed and Konstantin said he is working on it. And it seems that
+> more tests fails than beginning of review process.
 
-diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
-new file mode 100644
-index 000000000000..d03a2e54ae2a
---- /dev/null
-+++ b/Documentation/admin-guide/filesystem-monitoring.rst
-@@ -0,0 +1,70 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+====================================
-+File system Monitoring with fanotify
-+====================================
-+
-+File system Error Reporting
-+===========================
-+
-+fanotify supports the FAN_FS_ERROR mark for file system-wide error
-+reporting.  It is meant to be used by file system health monitoring
-+daemons who listen on that interface and take actions (notify sysadmin,
-+start recovery) when a file system problem is detected by the kernel.
-+
-+By design, A FAN_FS_ERROR notification exposes sufficient information for a
-+monitoring tool to know a problem in the file system has happened.  It
-+doesn't necessarily provide a user space application with semantics to
-+verify an IO operation was successfully executed.  That is outside of
-+scope of this feature. Instead, it is only meant as a framework for
-+early file system problem detection and reporting recovery tools.
-+
-+When a file system operation fails, it is common for dozens of kernel
-+errors to cascade after the initial failure, hiding the original failure
-+log, which is usually the most useful debug data to troubleshoot the
-+problem.  For this reason, FAN_FS_ERROR only reports the first error that
-+occurred since the last notification, and it simply counts addition
-+errors.  This ensures that the most important piece of error information
-+is never lost.
-+
-+FAN_FS_ERROR requires the fanotify group to be setup with the
-+FAN_REPORT_FID flag.
-+
-+At the time of this writing, the only file system that emits FAN_FS_ERROR
-+notifications is Ext4.
-+
-+A user space example code is provided at ``samples/fanotify/fs-monitor.c``.
-+
-+A FAN_FS_ERROR Notification has the following format::
-+
-+  [ Notification Metadata (Mandatory) ]
-+  [ Generic Error Record  (Mandatory) ]
-+  [ FID record            (Mandatory) ]
-+
-+Generic error record
-+--------------------
-+
-+The generic error record provides enough information for a file system
-+agnostic tool to learn about a problem in the file system, without
-+providing any additional details about the problem.  This record is
-+identified by ``struct fanotify_event_info_header.info_type`` being set
-+to FAN_EVENT_INFO_TYPE_ERROR.
-+
-+  struct fanotify_event_info_error {
-+	struct fanotify_event_info_header hdr;
-+	__s32 error;
-+	__u32 error_count;
-+  };
-+
-+The `error` field identifies the type of error. `error_count` count
-+tracks the number of errors that occurred and were suppressed to
-+preserve the original error, since the last notification.
-+
-+FID record
-+----------
-+
-+The FID record can be used to uniquely identify the inode that triggered
-+the error through the combination of fsid and file handler.  A
-+filesystem specific handler can use that information to attempt a
-+recovery procedure.  Errors that are not related to an inode are
-+reported with an empty file handler, with type FILEID_INVALID.
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index dc00afcabb95..1bedab498104 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -82,6 +82,7 @@ configure specific aspects of kernel behavior to your liking.
-    edid
-    efi-stub
-    ext4
-+   filesystem-monitoring
-    nfs/index
-    gpio/index
-    highuid
--- 
-2.32.0
+Also interesting is that back in August 2020 Konstantin had promised
+that they would be publishing their own fsck and mkfs tools.
+Personally, I consider having a strong set of file system utilities to
+be as important, if not more important, than the kernel code.  Perhaps
+there are licensing issues which is why he hasn't been able to make
+his code available?
 
+One thing which I wonder about is whether there is anyone other than
+Konstantin which is working on ntfs3?  I'm less concerned about
+specific problems about the *code* --- I'll let folks like Christoph,
+Dave, and Al weigh in on that front.
+
+I'm more concerned about the long term sustainability and
+maintainibility of the effort.  Programming is a team sport, and this
+is especially true in the file system.  If you look at the successful
+file systems, there are multiple developers involved, and ideally,
+those developers work for a variety of different companies.  This way,
+if a particular file system developer gets hit by a bus, laid low with
+COVD-19, or gets laid off by their company due to changing business
+strategies, or just decides to accept a higher paying job elsewhere,
+the file system can continue to be adequately supported upstream.
+
+If Konstantin really is the only developer working on ntfs3, that may
+very well explain why generic/013 failures have been unaddressed in
+over a year.  Which is why I tend to be much more concerned about
+development community and development processes than just the quality
+and maturity of the code.  If you have a good community and
+development processes, the code qualtiy will follow.  If you don't,
+that tends to be a recipe for eventual failure.
+
+There are a large number of people on the cc line, include from folks
+like Red Hat, SuSE, etc.  It would be *great* to hear that they are
+also working on ntfs3, and it's not just a one engineer show.  (Also,
+given the deadlock problems, lack of container compatibility, etc.,
+are the Linux distros actually planning on shipping ntfs3 to their
+customers?  Are they going to help make ntfs3 suitable for customers
+with access to their help desks?)
+
+> > > I can even give them patches and configs to make it trivially easy for
+> > > them to run fstests using KVM or GCE....
+
+I've since posted RFC patches to the fstests list to allow other
+people to run xfstests on ntfs3.  I don't know why Konstantin hadn't
+published his patches to fstests a year ago --- perhaps because of
+licensing concerns with the mkfs and fsck userspace programs which
+Paragon Software is using?
+
+My fstests patches use the mkfs.ntfs and ntfsfix which ships with the
+ntfs-3g package.  They are not ideal; for example ntfsfix will not
+detect or fix all problems, and it is documented that for some issues,
+you have to boot into Windows and run CHKDSK.  But it is the only
+thing that is going to be available for any **users** of ntfs3 outside
+of Paragon Software.
+
+Some kind of update from Paragon Software about when their versions of
+{mkfs,fsck}.ntfs might be made available for Linux distributions to
+use would certainly be enlightening.
+
+					- Ted
