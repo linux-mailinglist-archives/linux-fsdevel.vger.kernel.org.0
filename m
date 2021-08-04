@@ -2,127 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C01DA3E05F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 18:31:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8FB73E05F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 18:31:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237676AbhHDQbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 12:31:14 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:46132 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S237566AbhHDQbO (ORCPT
+        id S237892AbhHDQbk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 12:31:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55500 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229750AbhHDQbk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 12:31:14 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 174GUefr026063
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 4 Aug 2021 12:30:41 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 8AB6815C37C1; Wed,  4 Aug 2021 12:30:40 -0400 (EDT)
-Date:   Wed, 4 Aug 2021 12:30:40 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Kari Argillander <kari.argillander@gmail.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Leonidas P. Papadakos" <papadakospan@gmail.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        zajec5@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [GIT PULL] vboxsf fixes for 5.14-1
-Message-ID: <YQrAsGBmVeKQp+Z9@mit.edu>
-References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
- <20210716114635.14797-1-papadakospan@gmail.com>
- <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com>
- <YQnHxIU+EAAxIjZA@mit.edu>
- <YQnU5m/ur+0D5MfJ@casper.infradead.org>
- <YQnZgq3gMKGI1Nig@mit.edu>
- <CAHk-=wiSwzrWOSN5UCrej3YcLRPmW5tViGSA5p2m-hiyKnQiMg@mail.gmail.com>
- <YQnkGMxZCgCWXQPf@mit.edu>
- <20210804010351.GM3601466@magnolia>
- <20210804063810.dvnqgxnaoajy3ehe@kari-VirtualBox>
+        Wed, 4 Aug 2021 12:31:40 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F842C061798
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 09:31:27 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id x8so5493042lfe.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 09:31:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mbke9nvjw7+ZeekiQRXLpz0LVFhUcu96Nb3OTfXE7BU=;
+        b=PZ1SUNe5srVpzwzOaifNxeDnFelZQ09VVBF0S+czoEleI8H7NaXtf6BgmLYsKuLNiC
+         LTcU8OYPWLuF/4NphS6i+l1ci/XnoMb+i+upOTt69bQAT3JgDhcod/J5a5/zqAWUQ5CE
+         n8TsxAIOFru99StbsoS1slJejG91rgTWWoOlM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mbke9nvjw7+ZeekiQRXLpz0LVFhUcu96Nb3OTfXE7BU=;
+        b=rg54PlVZDA8o9GvvnnS/aL8cAu0agmTvBao6Eym2IAWKZZ7BB2TAthYqD+bwoEvUSJ
+         +g1Kqco+aGsc0Gsp4QqSCQg3O02myfnR8tBqOnCK413hMttPLzgJmhiCKDu5azJI9uVw
+         x5aYbZs3rvIq1V1l++6/IEooaG4Khw/o/acrstjjBV0bYs7DgieXfI+vqjg5gg+KhhUk
+         AitpR/m6dqnncrhhrF48Xee6p3yVUAdxsSaSN1UdEEkV5EFful6+TgReZ/zgcNZrIuLp
+         qqB/Z6KgIX2eMlw50rXS8ENv38KOPpFWT3hy0sROhmnthM7SDYSwJ8HAswlKrmlt1/bl
+         8oXw==
+X-Gm-Message-State: AOAM530Cy2n4TIPRFI5kHr3pM72mCOjzHIvDi4tmLimO0GYnLqRhBty1
+        10GaqmY+CONZ1LrysrAdw1Evdk7yPM43o7lv
+X-Google-Smtp-Source: ABdhPJwJmjIDmb+UACZlHZ8UL4ggn4ykFTAa64fIBBIMZERRtl/7BWtfpM0eg3yE2p+2tuPxxEmNJw==
+X-Received: by 2002:a19:c10c:: with SMTP id r12mr88528lff.522.1628094685394;
+        Wed, 04 Aug 2021 09:31:25 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id z13sm197737ljk.39.2021.08.04.09.31.18
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Aug 2021 09:31:18 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id b6so5416182lff.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 09:31:18 -0700 (PDT)
+X-Received: by 2002:a19:fc06:: with SMTP id a6mr62531lfi.377.1628094677755;
+ Wed, 04 Aug 2021 09:31:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210804063810.dvnqgxnaoajy3ehe@kari-VirtualBox>
+References: <1628086770.5rn8p04n6j.none.ref@localhost> <1628086770.5rn8p04n6j.none@localhost>
+In-Reply-To: <1628086770.5rn8p04n6j.none@localhost>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 4 Aug 2021 09:31:01 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiLr55zHUWNzmp3DeoO0DUaYp7vAzQB5KUCni5FpwC7Uw@mail.gmail.com>
+Message-ID: <CAHk-=wiLr55zHUWNzmp3DeoO0DUaYp7vAzQB5KUCni5FpwC7Uw@mail.gmail.com>
+Subject: Re: [REGRESSION?] Simultaneous writes to a reader-less, non-full pipe
+ can hang
+To:     "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>, acrichton@mozilla.com,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 04, 2021 at 09:38:10AM +0300, Kari Argillander wrote:
-> Konstantin has wrote about these thing see below.
-> 
-> Source:
-> https://lore.kernel.org/linux-fsdevel/7538540ab82e4b398a0203564a1f1b23@paragon-software.com/
+Your program is buggy.
 
-Thanks for the link; that's really helpful.
+On Wed, Aug 4, 2021 at 8:37 AM Alex Xu (Hello71) <alex_y_xu@yahoo.ca> wrote:
+>
+>     pipe(pipefd);
+>     printf("init buffer: %d\n", fcntl(pipefd[1], F_GETPIPE_SZ));
+>     printf("new buffer:  %d\n", fcntl(pipefd[1], F_SETPIPE_SZ, 0));
 
-> I'm just bringing this thing up because so many has asked and Konstantin
-> has not responded recently. Hopefully he will soon. Of course is it
-> little bit worrying that example generic/013 still fails after almoust
-> year has passed and Konstantin said he is working on it. And it seems that
-> more tests fails than beginning of review process.
+Yeah, what did you expect this to do? You said you want a minimal
+buffer, you get a really small buffer.
 
-Also interesting is that back in August 2020 Konstantin had promised
-that they would be publishing their own fsck and mkfs tools.
-Personally, I consider having a strong set of file system utilities to
-be as important, if not more important, than the kernel code.  Perhaps
-there are licensing issues which is why he hasn't been able to make
-his code available?
+Then you try to write multiple messages to the pipe that you just said
+should have a minimum size.
 
-One thing which I wonder about is whether there is anyone other than
-Konstantin which is working on ntfs3?  I'm less concerned about
-specific problems about the *code* --- I'll let folks like Christoph,
-Dave, and Al weigh in on that front.
+Don't do that then.
 
-I'm more concerned about the long term sustainability and
-maintainibility of the effort.  Programming is a team sport, and this
-is especially true in the file system.  If you look at the successful
-file systems, there are multiple developers involved, and ideally,
-those developers work for a variety of different companies.  This way,
-if a particular file system developer gets hit by a bus, laid low with
-COVD-19, or gets laid off by their company due to changing business
-strategies, or just decides to accept a higher paying job elsewhere,
-the file system can continue to be adequately supported upstream.
+> /proc/x/stack shows that the remaining thread is hanging at pipe.c:560.
+> It looks like not only there needs to be space in the pipe, but also
+> slots.
 
-If Konstantin really is the only developer working on ntfs3, that may
-very well explain why generic/013 failures have been unaddressed in
-over a year.  Which is why I tend to be much more concerned about
-development community and development processes than just the quality
-and maturity of the code.  If you have a good community and
-development processes, the code qualtiy will follow.  If you don't,
-that tends to be a recipe for eventual failure.
+Correct. The fullness of a pipe is not about whether it has the
+possibility of merging more bytes into an existing not-full slot, but
+about whether it has empty slots left.
 
-There are a large number of people on the cc line, include from folks
-like Red Hat, SuSE, etc.  It would be *great* to hear that they are
-also working on ntfs3, and it's not just a one engineer show.  (Also,
-given the deadlock problems, lack of container compatibility, etc.,
-are the Linux distros actually planning on shipping ntfs3 to their
-customers?  Are they going to help make ntfs3 suitable for customers
-with access to their help desks?)
+Part of that is simply the POSIX pipe guarantees - a write of size
+PIPE_BUF or less is guaranteed to be atomic, so it mustn't be split
+among buffers.
 
-> > > I can even give them patches and configs to make it trivially easy for
-> > > them to run fstests using KVM or GCE....
+So a pipe must not be "writable" unless it has space for at least that
+much (think select/poll, which don't know the size of the write).
 
-I've since posted RFC patches to the fstests list to allow other
-people to run xfstests on ntfs3.  I don't know why Konstantin hadn't
-published his patches to fstests a year ago --- perhaps because of
-licensing concerns with the mkfs and fsck userspace programs which
-Paragon Software is using?
+The fact that we might be able to reuse a partially filled buffer for
+smaller writes is simply not relevant to that issue.
 
-My fstests patches use the mkfs.ntfs and ntfsfix which ships with the
-ntfs-3g package.  They are not ideal; for example ntfsfix will not
-detect or fix all problems, and it is documented that for some issues,
-you have to boot into Windows and run CHKDSK.  But it is the only
-thing that is going to be available for any **users** of ntfs3 outside
-of Paragon Software.
+And yes, we could have different measures of "could write" for
+different writes, but we just don't have or want that complexity.
 
-Some kind of update from Paragon Software about when their versions of
-{mkfs,fsck}.ntfs might be made available for Linux distributions to
-use would certainly be enlightening.
+Please don't mess with F_SETPIPE_SZ unless you have a really good
+reason to do so, and actually understand what you are doing.
 
-					- Ted
+Doing a F_SETPIPE_SZ, 0 basically means "I want the mimimum pipe size
+possible". And that one accepts exactly one write at a time.
+
+Of course, the exact semantics are much more complicated than that
+"exactly one write". The pipe write code will optimistically merge
+writes into a previous buffer, which means that depending on the
+pattern of your writes, the exact number of bytes you can write will
+be very different.
+
+But that "merge writes into a previous buffer" only appends to the
+buffer - not _reuse_ it - so when each buffer is one page in size,
+what happens is that you can merge up to 4096 bytes worth of writes,
+but then after that the pipe write will want a new buffer - even if
+the old buffer is now empty because of old reads.
+
+That's why your test program won't block immediately: both writers
+will actually start out happily doing writes into that one buffer that
+is allocated, but at some point that buffer ends, and it wants to
+allocate a new buffer.
+
+But you told it not to allocate more buffers, and the old buffer is
+never completely empty because your readers never read _everythign_,
+so it will hang, waiting for you to empty the one minimal buffer it
+allocated. And that will never happen.
+
+There's a very real reason why we do *not* by default say "pipes can
+only ever use only one buffer".
+
+I don't think this is a regression, but if you have an actual
+application - not a test program - that does crazy things like this
+and used to work (I'm not sure it has ever worked, though), we can
+look into making it work again.
+
+That said, I suspect the way to make it work is to just say "the
+minimum pipe size is two slots" rather than change the "we want at
+least one empty slot". Exactly because of that whole "look, we must
+not consider a pipe that doesn't have a slot writable".
+
+Because clearly people don't understand how subtle F_SETPIPE_SZ is.
+It's not really a "byte count", even though that is how it's
+expressed.
+
+                   Linus
