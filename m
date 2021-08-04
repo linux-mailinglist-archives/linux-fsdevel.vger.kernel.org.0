@@ -2,133 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E0D93E091E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 22:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C01803E09DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Aug 2021 23:11:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231509AbhHDUE6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 16:04:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47522 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231247AbhHDUE5 (ORCPT
+        id S229688AbhHDVLe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 17:11:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40361 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229571AbhHDVLd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 16:04:57 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98E2CC0613D5
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 13:04:44 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id a7so3900773ljq.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 13:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sahklOmuEWNKGHdHX0TfbNlW0MEZnmzRkOffEEIf8Zg=;
-        b=RBNOcGPiP0Tn2LCxIxQy3MCJV4xnMx2Bve+Q5ATjwz8evRElxC7yfTfdMiL2NXb2Iv
-         Ffx4IWqpeE13/vv/zz8Vlc0A1isK2sj4QhG0E+5tSga50RWMCXvu5U5ABqhbaIQyTtuB
-         RFVNLsQvbKmyRfVvkpKzIEGVm48rk5eJ5LI2s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sahklOmuEWNKGHdHX0TfbNlW0MEZnmzRkOffEEIf8Zg=;
-        b=P7OpysmvTrt2qDN1vx/62lNNvrlEyUPlAXxUxeC1uOeuJ4A65YGBWYMSEVXdeG2dGJ
-         rdlo+lYAmiIp0IQOWpGBRJrDxTTRxish90KiyN1vwhIuFGjhBA7yjelxcRCJGPt24syV
-         bOkNwR1MovoJLRQlDVhY0s3q7g1m2AQC5y7apqoOmtZaEvMXbFjevDgi0j3DBtSCiFY9
-         4zmWFb4Kb2CUboUXR7hHm7aK5VQMSh5TZDjemiBjLbZz2sWHYHGNcc6Akiw03oJQ7+y4
-         Tpz4AT5pgJNNpet6g5V2tKdaWtUP0Uh5C4QEbuUG6toOuoloEhtna3gy4Tzx/r/VazmD
-         df8g==
-X-Gm-Message-State: AOAM530B8OqPLigUYTJQaqdFzu57I02Q8OpRK22CL1530X+YasF7DGPQ
-        BiaF9mT6i8l9eRTth77gCAMk0iKiFzypGM+P
-X-Google-Smtp-Source: ABdhPJx/19X4uvvp8vKQv8SBf2Cr8lODmsH961cdhb6WNmJ/k8lW8obF1xWhanSrGq3X/mqi2Ie8Yw==
-X-Received: by 2002:a2e:9355:: with SMTP id m21mr645787ljh.445.1628107482118;
-        Wed, 04 Aug 2021 13:04:42 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id bn3sm243754ljb.18.2021.08.04.13.04.40
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Aug 2021 13:04:41 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id m18so3961219ljo.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 13:04:40 -0700 (PDT)
-X-Received: by 2002:a2e:84c7:: with SMTP id q7mr670782ljh.61.1628107480111;
- Wed, 04 Aug 2021 13:04:40 -0700 (PDT)
+        Wed, 4 Aug 2021 17:11:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628111480;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0aCM0sS1/kssfJvUB4gZNdTsc20oPF9++cTUI8zhW60=;
+        b=CA4y1J6ULaHDSiJZppYNtte5dMEyCAWIH/8zvcc1t+BOInlXd5oqvn7wPmMzlNqNZ9p08Y
+        QPe/GkiL4/Mv3cr+U9NQk84um5CaaKRjiO7x5o5LOT2HVwnYiEr6oFgo3enn89oVF+Nn8X
+        JDT2tm1QwsUBNsx+8/WgJOKzY2eVwJU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-491-AA_yMFDwMs2mLG58g3F5tw-1; Wed, 04 Aug 2021 17:11:16 -0400
+X-MC-Unique: AA_yMFDwMs2mLG58g3F5tw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EDC398799FF;
+        Wed,  4 Aug 2021 21:11:13 +0000 (UTC)
+Received: from optiplex-fbsd (unknown [10.3.128.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5279960BF4;
+        Wed,  4 Aug 2021 21:11:09 +0000 (UTC)
+Date:   Wed, 4 Aug 2021 17:11:06 -0400
+From:   Rafael Aquini <aquini@redhat.com>
+To:     Charan Teja Reddy <charante@codeaurora.org>
+Cc:     akpm@linux-foundation.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        dave.hansen@linux.intel.com, vbabka@suse.cz,
+        mgorman@techsingularity.net, nigupta@nvidia.com, corbet@lwn.net,
+        rppt@kernel.org, khalid.aziz@oracle.com, rientjes@google.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        vinmenon@codeaurora.org
+Subject: Re: [PATCH V5] mm: compaction: support triggering of proactive
+ compaction by user
+Message-ID: <YQsCasRVGoVhIvyR@optiplex-fbsd>
+References: <1627653207-12317-1-git-send-email-charante@codeaurora.org>
 MIME-Version: 1.0
-References: <1628086770.5rn8p04n6j.none.ref@localhost> <1628086770.5rn8p04n6j.none@localhost>
- <CAHk-=wiLr55zHUWNzmp3DeoO0DUaYp7vAzQB5KUCni5FpwC7Uw@mail.gmail.com> <1628105897.vb3ko0vb06.none@localhost>
-In-Reply-To: <1628105897.vb3ko0vb06.none@localhost>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 4 Aug 2021 13:04:24 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wioi2+dfni1Sx2_Js_WmcgHKtzPUSDkhZ4uo0P6Qe0z+A@mail.gmail.com>
-Message-ID: <CAHk-=wioi2+dfni1Sx2_Js_WmcgHKtzPUSDkhZ4uo0P6Qe0z+A@mail.gmail.com>
-Subject: Re: [REGRESSION?] Simultaneous writes to a reader-less, non-full pipe
- can hang
-To:     "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Cc:     acrichton@mozilla.com, Christian Brauner <christian@brauner.io>,
-        David Howells <dhowells@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        keyrings@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-usb@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ian Kent <raven@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1627653207-12317-1-git-send-email-charante@codeaurora.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 4, 2021 at 12:48 PM Alex Xu (Hello71) <alex_y_xu@yahoo.ca> wrote:
->
-> I agree that if this only affects programs which intentionally adjust
-> the pipe buffer size, then it is not a huge issue. The problem,
-> admittedly buried very close to the bottom of my email, is that the
-> kernel will silently provide one-page pipe buffers if the user has
-> exceeded 16384 (by default) pipe buffer pages allocated.
+On Fri, Jul 30, 2021 at 07:23:27PM +0530, Charan Teja Reddy wrote:
+> The proactive compaction[1] gets triggered for every 500msec and run
+> compaction on the node for COMPACTION_HPAGE_ORDER (usually order-9)
+> pages based on the value set to sysctl.compaction_proactiveness.
+> Triggering the compaction for every 500msec in search of
+> COMPACTION_HPAGE_ORDER pages is not needed for all applications,
+> especially on the embedded system usecases which may have few MB's of
+> RAM. Enabling the proactive compaction in its state will endup in
+> running almost always on such systems.
+> 
+> Other side, proactive compaction can still be very much useful for
+> getting a set of higher order pages in some controllable
+> manner(controlled by using the sysctl.compaction_proactiveness). So, on
+> systems where enabling the proactive compaction always may proove not
+> required, can trigger the same from user space on write to its sysctl
+> interface. As an example, say app launcher decide to launch the memory
+> heavy application which can be launched fast if it gets more higher
+> order pages thus launcher can prepare the system in advance by
+> triggering the proactive compaction from userspace.
+> 
+> This triggering of proactive compaction is done on a write to
+> sysctl.compaction_proactiveness by user.
+> 
+> [1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
+> 
+> Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
 
-That's a good point.
+Acked-by: Rafael Aquini <aquini@redhat.com>
 
-That "fall back to a single buffer" case is meant to make things
-hobble along if the user has exhausted the pipe buffers, but you're
-right that we might want to make that minimum be two buffers.
+> ---
+>  Changes in V5:
+>  	-- Avoid unnecessary wakeup of proactive compaction when it is disabled.
+> 	-- No changes in the logic of triggering the proactive compaction.
+> 
+>  Changes in V4:
+> 	-- Changed the code as the 'proactive_defer' counter is removed.
+> 	-- No changes in the logic of triggering the proactive compaction.
+> 	-- https://lore.kernel.org/patchwork/patch/1448777/
+> 
+>  Changes in V3:
+>         -- Fixed review comments from Valstimil and others.
+>         -- https://lore.kernel.org/patchwork/patch/1438211/
+> 
+>  Changes in V2:
+> 	-- remove /proc/../proactive_compact_memory interface trigger for proactive compaction
+>         -- Intention is same that add a way to trigger proactive compaction by user.
+>         -- https://lore.kernel.org/patchwork/patch/1431283/
+> 
+>  changes in V1:
+> 	-- Created the new /proc/sys/vm/proactive_compact_memory in
+> 	   interface to trigger proactive compaction from user 
+>         -- https://lore.kernel.org/lkml/1619098678-8501-1-git-send-email-charante@codeaurora.org/
+> 
+>  Documentation/admin-guide/sysctl/vm.rst |  3 ++-
+>  include/linux/compaction.h              |  2 ++
+>  include/linux/mmzone.h                  |  1 +
+>  kernel/sysctl.c                         |  2 +-
+>  mm/compaction.c                         | 38 +++++++++++++++++++++++++++++++--
+>  5 files changed, 42 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+> index 003d5cc..b526cf6 100644
+> --- a/Documentation/admin-guide/sysctl/vm.rst
+> +++ b/Documentation/admin-guide/sysctl/vm.rst
+> @@ -118,7 +118,8 @@ compaction_proactiveness
+>  
+>  This tunable takes a value in the range [0, 100] with a default value of
+>  20. This tunable determines how aggressively compaction is done in the
+> -background. Setting it to 0 disables proactive compaction.
+> +background. On write of non zero value to this tunable will immediately
+> +trigger the proactive compaction. Setting it to 0 disables proactive compaction.
+>  
+>  Note that compaction has a non-trivial system-wide impact as pages
+>  belonging to different processes are moved around, which could also lead
+> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+> index c24098c..34bce35 100644
+> --- a/include/linux/compaction.h
+> +++ b/include/linux/compaction.h
+> @@ -84,6 +84,8 @@ static inline unsigned long compact_gap(unsigned int order)
+>  extern unsigned int sysctl_compaction_proactiveness;
+>  extern int sysctl_compaction_handler(struct ctl_table *table, int write,
+>  			void *buffer, size_t *length, loff_t *ppos);
+> +extern int compaction_proactiveness_sysctl_handler(struct ctl_table *table,
+> +		int write, void *buffer, size_t *length, loff_t *ppos);
+>  extern int sysctl_extfrag_threshold;
+>  extern int sysctl_compact_unevictable_allowed;
+>  
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index 4610750..6a1d79d 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -853,6 +853,7 @@ typedef struct pglist_data {
+>  	enum zone_type kcompactd_highest_zoneidx;
+>  	wait_queue_head_t kcompactd_wait;
+>  	struct task_struct *kcompactd;
+> +	bool proactive_compact_trigger;
+>  #endif
+>  	/*
+>  	 * This is a per-node reserve of pages that are not available
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 82d6ff6..65bc6f7 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2871,7 +2871,7 @@ static struct ctl_table vm_table[] = {
+>  		.data		= &sysctl_compaction_proactiveness,
+>  		.maxlen		= sizeof(sysctl_compaction_proactiveness),
+>  		.mode		= 0644,
+> -		.proc_handler	= proc_dointvec_minmax,
+> +		.proc_handler	= compaction_proactiveness_sysctl_handler,
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= &one_hundred,
+>  	},
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index f984ad0..fbc60f9 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -2700,6 +2700,30 @@ static void compact_nodes(void)
+>   */
+>  unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
+>  
+> +int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
+> +		void *buffer, size_t *length, loff_t *ppos)
+> +{
+> +	int rc, nid;
+> +
+> +	rc = proc_dointvec_minmax(table, write, buffer, length, ppos);
+> +	if (rc)
+> +		return rc;
+> +
+> +	if (write && sysctl_compaction_proactiveness) {
+> +		for_each_online_node(nid) {
+> +			pg_data_t *pgdat = NODE_DATA(nid);
+> +
+> +			if (pgdat->proactive_compact_trigger)
+> +				continue;
+> +
+> +			pgdat->proactive_compact_trigger = true;
+> +			wake_up_interruptible(&pgdat->kcompactd_wait);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * This is the entry point for compacting all nodes via
+>   * /proc/sys/vm/compact_memory
+> @@ -2744,7 +2768,8 @@ void compaction_unregister_node(struct node *node)
+>  
+>  static inline bool kcompactd_work_requested(pg_data_t *pgdat)
+>  {
+> -	return pgdat->kcompactd_max_order > 0 || kthread_should_stop();
+> +	return pgdat->kcompactd_max_order > 0 || kthread_should_stop() ||
+> +		pgdat->proactive_compact_trigger;
+>  }
+>  
+>  static bool kcompactd_node_suitable(pg_data_t *pgdat)
+> @@ -2895,9 +2920,16 @@ static int kcompactd(void *p)
+>  	while (!kthread_should_stop()) {
+>  		unsigned long pflags;
+>  
+> +		/*
+> +		 * Avoid the unnecessary wakeup for proactive compaction
+> +		 * when it is disabled.
+> +		 */
+> +		if (!sysctl_compaction_proactiveness)
+> +			timeout = MAX_SCHEDULE_TIMEOUT;
+>  		trace_mm_compaction_kcompactd_sleep(pgdat->node_id);
+>  		if (wait_event_freezable_timeout(pgdat->kcompactd_wait,
+> -			kcompactd_work_requested(pgdat), timeout)) {
+> +			kcompactd_work_requested(pgdat), timeout) &&
+> +			!pgdat->proactive_compact_trigger) {
+>  
+>  			psi_memstall_enter(&pflags);
+>  			kcompactd_do_work(pgdat);
+> @@ -2932,6 +2964,8 @@ static int kcompactd(void *p)
+>  				timeout =
+>  				   default_timeout << COMPACT_MAX_DEFER_SHIFT;
+>  		}
+> +		if (unlikely(pgdat->proactive_compact_trigger))
+> +			pgdat->proactive_compact_trigger = false;
+>  	}
+>  
+>  	return 0;
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
+> member of the Code Aurora Forum, hosted by The Linux Foundation
+> 
+> 
 
-I didn't test this, but the obvious fix seems to be just increasing
-the '1' to '2'.
-
-  @@ -781,8 +784,8 @@ struct pipe_inode_info *alloc_pipe_info(void)
-          user_bufs = account_pipe_buffers(user, 0, pipe_bufs);
-
-          if (too_many_pipe_buffers_soft(user_bufs) &&
-pipe_is_unprivileged_user()) {
-  -               user_bufs = account_pipe_buffers(user, pipe_bufs, 1);
-  -               pipe_bufs = 1;
-  +               user_bufs = account_pipe_buffers(user, pipe_bufs, 2);
-  +               pipe_bufs = 2;
-          }
-
-          if (too_many_pipe_buffers_hard(user_bufs) &&
-pipe_is_unprivileged_user())
-
-although a real patch would need a comment about how a single buffer
-is problematic, and probably make the '2' be a #define to not just
-repeat the same magic constant silently.
-
-IOW, something like
-
-  /*
-   * The general pipe use case needs at least two buffers: one
-   * for data yet to be read, and one for new data
-   */
-  #define DEF_MIN_PIPE_BUFFERS 2
-
-to go with the existing PIPE_DEF_BUFFERS (although the
-DEF_MIN_PIPE_BUFFERS use would only be in fs/pipe.c, so I guess it
-doesn't actually need to be exposed to anybody else in the pipe.h
-header file).
-
-I'd take that patch with some proper testing and a commit message.
-
-Hint hint ;)
-
-                Linus
