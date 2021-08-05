@@ -2,107 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E124C3E0AEE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 01:41:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 636DA3E0B12
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 02:04:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235701AbhHDXlg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 19:41:36 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:33416 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233881AbhHDXlf (ORCPT
+        id S234218AbhHEAE6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 20:04:58 -0400
+Received: from sonic304-25.consmr.mail.gq1.yahoo.com ([98.137.68.206]:39189
+        "EHLO sonic304-25.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229991AbhHEAE5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 19:41:35 -0400
-Received: by mail-il1-f200.google.com with SMTP id d6-20020a056e020506b0290208fe58bd16so1775255ils.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 16:41:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=aEfuAixG+gq35I7KjD5wnNAArKWS8WpJhEmIQRVu3Pw=;
-        b=a6j3Hyfy5DKs0hqViXyqahQITTSwkSNcBq839HWd5d91e3hAcm0XA+z0hhKgLJjY8G
-         TZPg53S0PKxhb36T3yaZceqyAI9J7vrlYoMQbY4qEpmiaqBgD0KofGB12hZzRArSLAWE
-         6nnNgy4qxKZ3exaIDqJPshS8Is+itmp+Zd6TmL+FlfbQ/8p/saT7QaRg9CxEF2NOT/Et
-         4ZKWVSWw7m08cp0XpHxXGFc/BLyRupMfsFEd/EXHi6p/ibwdsR7LPOIZqNKK+lQ2tLYf
-         gwnnoTLtUZNKJYEqFzqcyCXyJ1gJMIj03BPS4CuhbVNBg1hv1HVTFFxcHmZUQSbiQh4I
-         WGFA==
-X-Gm-Message-State: AOAM531cfdVILnWjcJsPbWLPV0go49g8KBpAUH8rz0Mj2nICzsoznKra
-        16Vuq/G/0Rk1SFenlbAsTYSG9pT5Au8HsirqhmqA6sRFcacs
-X-Google-Smtp-Source: ABdhPJxBPUnp6THFfHqBnALZZ0/hwHQ0xXpWHvxK4hS1LIa3+8vWhbeoZyoHVWQiKxId2UoLtnStAydbRAgvGm9xzrkUG0t4SQj5
+        Wed, 4 Aug 2021 20:04:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1628121883; bh=Px8nlLLH6Ndx1EN/tjAFhxnmFATVGBm9MtGprGQu7l8=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=klz2LRcMmTQ+82Cewoijf4xcyROAAd/q5TtybEGGXkrTE9QbyvzCvTz7KQVa78atK0C8Usl0n2JwjC8wt7I4PV4YSVgRrRFaCLpKcgrsH8pTdisVEK96Dp5w9+Op0eqnd8Rl02CcAdiEGNbmI3HjhqY8jZaH6gl9Ud6xCkpf52jPBDoshUaYFH6qfhpZCEc6N58gg/+ID8LQCB3+jlU1l4h+cLhA0ZA3hTHHxvISgbmShLIsswtv+zuCl2sA00y+ijM19TE3HotofBtCipoyUk6MJ8zuBayldswWEw6XzLGKRT/duJ+lulqFeUi6OXHgtGL7IVQH3UcQtBGzRGWutQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1628121883; bh=4bVZhNLThSBycdrdTcCuPlk2Xule4gNTmLRVIugiHx1=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=uiM9X9SNbs6/dM8+4iGoP7sUAr2dhBrEl3cmqMU2fzxHCiFULDuhmPv/W3cXVBveyjNhXphztxcBtQ5fSles5LopszMxfDzObTnRJGh7obR2bFSK5DTcqyk+v2X4FblnhVa1dCDLVfGyvO+n9yAw2v1Z5Pgwhi0z69dngeZNAXKw5T6MvDABz1DwehTnYPLBzfpD1HoePn6GNKGX+374G7jHQL5vImV8cgLiPVTORogtUMIn++4fr+QvyCjqXPJLRAhCxJf6p+EgDJLk2GD4fL0PU0psj2eE8cOzd/mzZPco1Jep8fCMpfu1N46TnDxiavGpeFxfPh1v3ErMQDXj2w==
+X-YMail-OSG: Ut64WiMVM1mxv7Orgh0IVRL93eKlPeW1mj6CJ6RV1o23dUlgWRdU8_33C1V9mFU
+ tDYZJ52_8vck6CJbNruXSNzdQCF361C8OMpdawxru51wZPBSinVyil1oCa_YxvFJIZi3RnYy0IwC
+ d_B_INsS7t6MIoInpZvvLMWcHQHj2sGFqdg.rDRoKGmeiDLdBJduR91hphmJcSkOOM3KvdvAhu1Q
+ bywDg..J62C9A_zxtixya5mtSIuLEJ6q1fzivVP4SHNkMadJImKq4YzHbKIQ2QQJtXSVQjOYymhP
+ zMnM4aMdfqHh2D_hLx_lf5FuGo6j_Y_I4Ljd8sXI8VQb1VSotHAz5n7MHhDaVWHBZlNNg2cxRsFu
+ AXfX1N.z.DzYUhCvgBNEIgAq0OS4S_cZqKZ0guhxTmX1bqBDWx0CtL5bHlp5WXVe0QrzNqYA0_bt
+ eUxVhBNSidXQlpMQZLKp79C3cVfrCFrrQV0fb_46lBovIpFk5l9CyBcv2_xn8Ms7hEZzxQ6NQ0Fe
+ mHxkHaol0BeNV24uQ.nlOsI_QvCa9bHU7GwXTMu1zzSqFW9Cbb536qzMeu8aOd8fevqArW9JIOOH
+ uJa.ggvW1kWEueRnRBDdexPQaatDxiCe6Mp.I3csaQbitvJsTpkSWGXnJNVWyTPe8QuKUvGFuTjm
+ dw_UNolrhrJEWVWlhxunBnY0w5y8AiyKIKpXEA3qi0CUUTLJcCLnuyOgaq.4dv072cohuhmORUTH
+ p8C4BG3SmkeJckEml4m30D6incpJcYTq.UT_HhtUDZsD6j2TGivFEXpjLAZBqVnoae9iIDkfkPH0
+ zYyZlsTcqMHkcJLJEd6ny5zIMoIXRWKlfhMKInTIjihieKFVR49SstJ1zAlpDnwpKzFStO_Rf_9B
+ NG1GUwdzgrv1cRbDr4UvaCglrZkzkg885KorkkU4tLnmsY.SVqQaTaLS.nsH7GdqeRjY0CW_p06k
+ YltU_nFhbIW.xwwdbsJV64ZLRm1djnAMkoAIErbrDq1.0rNYfVPzMLFiwIO1hAzf91_M67JTYLFc
+ 1_IxBhEkPqGXkkFBcwBXDzHJ4GzEGAH3UNRMnpWAAz1UmRArgQ_sisO.ifEY0RqlEpPLo9DQVYJW
+ XyN_PRENxsUMQSuoEdwepGG9Axx0HsxT08qAi8oh7rQcQN1K8T2SOvgstJ6kyiQj9ClNCcV5kt6p
+ zFT49SRoXv1Cj.yfR4O78WQ6_xYUctfKWLng8of_L5OR24WlVNYHahxyH7ar6S9NWh.a1bVrgh0G
+ SYXR940ajd8AiimHVAPp2QkNYAd_RwmLrJz66_CU7.b6YKY4wYE7Rf0hhfW81WAI38tKslTXzH4Y
+ af44tGtzsPW7U8Dh_R18i0QaYUZ1UeT4wYT3.EPJyUPNQ9sj01dB0muvfVEoxCoZVleZk0PcAmC.
+ 22z9AeckmGcnfB2AU..GHyggKnhgQfExtnMf4I.sRhXMFI08VaFT6taLQAijvs6.1T8jKHvTfbq6
+ P2wszjsYGIoxeQoh4GEuveg6nqAfqpeH.iFspGXTM_A4EVeWUC6NsB5oJoMFWbzz8j2kra1cPAkK
+ 0agJ0gh_0w0D_5yLw17dvRcMWT6IeIAVvq_liSP3JCELoTpScQoRp6C8I.ym_HCBj0vmckfEFcY8
+ pxHWOL_hIoOWnpES3Tc6lYp29.lo8DfSt6ftITUXNStxuok1KsNzDEHJFLNYJudCM1ScVcXQQoPJ
+ 1KU2gtGH_XhXMvQM92K6fE.CJJrpSRqsMpSkReeR5x8mj8V4Hgx5gJIIFXCZIS4ujkSbs7TaZ1RS
+ R5PJBCDZW3pMytqlBx4IaayXBnO9nyUTR1jCF1m_mMiwk1pKYS8dxckAGP7T6q4vNHa4I2L92pZM
+ DaPpiM5aeBaj7DLxmm1cSuhCODDb3GBngqj5JoOyOIrhdkrPZ5QKSYoHplgcC9_dhvXcYy32oN0W
+ LS.Ufdp5vwc5X.bxDKNpBzaqlvKtyxhnxv5okvVr8yyH77n0QCdmXyI1ky7oo9ygg_4tPjx8I1MI
+ 6PswxJZ0kea5m923Sj7omdMb3iZlWK6RXwJoXlqIhS0OEMjRE1kA7ZlPi9DQ7Ps1GkGXNmNE898Q
+ vW8TxqMBVaLsf8Q3sFBdp1vX6RwjPRz_MHxgo_lkCY9xr4pvUFJVAU4W5dNJHTcXD1BhUWBIvgfN
+ XUU1eXk_bSAGMy5f04o.SnLRTkToW9R7c3x_.Po4lUCh3YzfiiW5n6WCFRi7ZhP1Pm2vCLglSOX8
+ tTSzPoRozgl7XfGSWfbxg7mP3eIgROUXIEtn4VZrmiPRhkY9NaylzB6lXWlJPaa3aY2F29uvFcqS
+ YCHqQxruucBGxGWsG3HFb2Puuhv9XbnmC9yzzsErTBmHQZP.onvrXOqZ4T6IOuD_MgsR9FNl5Nl5
+ v6Dnhp2SY8afnWRJonMbTGOgRgksCYw7hjdb68CvdkqaTaDK37XLHomWuQBNU5d1FDNtqOGoTx6a
+ hgPm3ybxX3BGbeK9K6L_yVyhqqWWmLodV5tGZD9XjFHpgvLJB5QjoMkqFQdqiZ9ZAwZqrBv2_u1k
+ 76e6pJZl_UyxsCp4jpwLpoh_tLzn6ERtwIywsK9GEGcCiyZqhdyBXr194L5qo9hPLiNeTjGbOhYa
+ bBrrupqlOltyGyRatp11LETCJXv9Cf7_XHhPKWlN6cNiP1Rmbf4G7n_.MTJuKT7cy9_Cyv9WRtmg
+ rjTfV.Z8akF.xlmiIql7TsziNJ_YCKl3Lgy7H4T2Wv1ab.GPwb21SqbfiSSrap2Hh.RspK5QpJ48
+ eTIhqkWX_DzsX.3rdjitnezWHcnnxUDmO.Fn0EAZ358qandFyVjjt.7APiL0Qgbn9IWzcNRWj9V1
+ ou5aQN.j0m8Aw8JblbA48b9P_0cf6OrAqWRyCzEu6PpTQZaAY7AHybr0hCnDYfOXGKCHQPnBcCjd
+ mSIFk5wBHCbz1l.N55X786GMaEgkga7GsxMUkhqiAmlQ3r8GCUuTG5OBGnwVRKJJnSHKxfceYCOw
+ oyOmHcwqC4W4G3SSIAmOWWPyDZFLiwo3iYfZEnQXYcUWlXFKR9MEsbkXBphruKZtlUQrB0hD_wyz
+ 9kFxrU2THEJ3d5sAm7Qd3Z4TwfBVaL_eFelZRwAurT1rzvjnCf6QXY0eoxoyKupoTYA4bFfFSTgC
+ j0ENR63K8S2Rxj2DepVTBDbiJnFx4jwA9eW1HCOTiQO5RD2KkKRo4UwSXpjj5Z.ZiUmZrq9pipqq
+ jETPnhXOCjQTpHWcpC8iuJg6Z3x9WAUISsbgpY08iemm65HSVVdtcWmlkFgU6YttO.6XWo9fHVAv
+ ycho0t8VQX6HYE1_8kO.FZLAt4aBvqL09FXpZX1SU
+X-Sonic-MF: <alex_y_xu@yahoo.ca>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.gq1.yahoo.com with HTTP; Thu, 5 Aug 2021 00:04:43 +0000
+Received: by kubenode542.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 7a8253fde8c36a750343d2fbeabffa3e;
+          Thu, 05 Aug 2021 00:04:38 +0000 (UTC)
+From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
+To:     torvalds@linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.or, dhowells@redhat.com,
+        linux@rasmusvillemoes.dk, gregkh@linuxfoundation.org,
+        peterz@infradead.org, nicolas.dichtel@6wind.com, raven@themaw.net,
+        christian@brauner.io, "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
+Subject: [PATCH] pipe: increase minimum default pipe size to 2 pages
+Date:   Wed,  4 Aug 2021 20:04:35 -0400
+Message-Id: <20210805000435.10833-1-alex_y_xu@yahoo.ca>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:2243:: with SMTP id o64mr1834294jao.40.1628120481519;
- Wed, 04 Aug 2021 16:41:21 -0700 (PDT)
-Date:   Wed, 04 Aug 2021 16:41:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f3ee6005c8c45628@google.com>
-Subject: [syzbot] WARNING in iov_iter_pipe (2)
-From:   syzbot <syzbot+7e3ea7eaebc6168ab4d5@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+References: <20210805000435.10833-1-alex_y_xu.ref@yahoo.ca>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Before this patch, the following program prints 4096 and hangs.
+Afterwards, it prints 8192 and exits successfully. Note that you may
+need to increase your RLIMIT_NOFILE before running the program.
 
-syzbot found the following issue on:
+int main() {
+    int pipefd[2];
+    for (int i = 0; i < 1025; i++)
+        if (pipe(pipefd) == -1)
+            return 1;
+    size_t bufsz = fcntl(pipefd[1], F_GETPIPE_SZ);
+    printf("%zd\n", bufsz);
+    char *buf = calloc(bufsz, 1);
+    write(pipefd[1], buf, bufsz);
+    read(pipefd[0], buf, bufsz-1);
+    write(pipefd[1], buf, 1);
+}
 
-HEAD commit:    d5ad8ec3cfb5 Merge tag 'media/v5.14-2' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=156d81ae300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=343fd21f6f4da2d6
-dashboard link: https://syzkaller.appspot.com/bug?extid=7e3ea7eaebc6168ab4d5
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7e3ea7eaebc6168ab4d5@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 31934 at lib/iov_iter.c:1158 iov_iter_pipe+0x228/0x2d0 lib/iov_iter.c:1158
-Modules linked in:
-CPU: 0 PID: 31934 Comm: syz-executor.2 Not tainted 5.14.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:iov_iter_pipe+0x228/0x2d0 lib/iov_iter.c:1158
-Code: 83 c0 03 38 d0 7c 04 84 d2 75 54 44 89 63 24 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f c3 e8 5f 6f a1 fd 0f 0b e8 58 6f a1 fd <0f> 0b 48 b8 00 00 00 00 00 fc ff df 48 8b 14 24 48 c1 ea 03 0f b6
-RSP: 0018:ffffc90001c9f9e0 EFLAGS: 00010246
-RAX: 0000000000040000 RBX: ffffc90001c9fa60 RCX: ffffc90003359000
-RDX: 0000000000040000 RSI: ffffffff83d42c08 RDI: 0000000000000003
-RBP: ffff88807eb65400 R08: 0000000000000010 R09: 0000000000008000
-R10: ffffffff83d42aca R11: 0000000000004000 R12: 0000000000000050
-R13: 0000000000000000 R14: 0000000000000010 R15: 0000000000000010
-FS:  00007f0929a3d700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2f548000 CR3: 000000007e97f000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
-Call Trace:
- generic_file_splice_read+0x9c/0x6c0 fs/splice.c:307
- do_splice_to+0x1bf/0x250 fs/splice.c:796
- splice_direct_to_actor+0x2c2/0x8c0 fs/splice.c:870
- do_splice_direct+0x1b3/0x280 fs/splice.c:979
- do_sendfile+0x9f0/0x1120 fs/read_write.c:1260
- __do_sys_sendfile64 fs/read_write.c:1325 [inline]
- __se_sys_sendfile64 fs/read_write.c:1311 [inline]
- __x64_sys_sendfile64+0x1cc/0x210 fs/read_write.c:1311
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x4665e9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0929a3d188 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 000000000056c038 RCX: 00000000004665e9
-RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000008
-RBP: 00000000004bfcc4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000800100020001 R11: 0000000000000246 R12: 000000000056c038
-R13: 00007ffc9a3f6d4f R14: 00007f0929a3d300 R15: 0000000000022000
-
-
+Signed-off-by: Alex Xu (Hello71) <alex_y_xu@yahoo.ca>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+See discussion at https://lore.kernel.org/lkml/1628086770.5rn8p04n6j.none@localhost/.
+
+ fs/pipe.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 9ef4231cce61..8e6ef62aeb1c 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -31,6 +31,21 @@
+ 
+ #include "internal.h"
+ 
++/*
++ * New pipe buffers will be restricted to this size while the user is exceeding
++ * their pipe buffer quota. The general pipe use case needs at least two
++ * buffers: one for data yet to be read, and one for new data. If this is less
++ * than two, then a write to a non-empty pipe may block even if the pipe is not
++ * full. This can occur with GNU make jobserver or similar uses of pipes as
++ * semaphores: multiple processes may be waiting to write tokens back to the
++ * pipe before reading tokens: https://lore.kernel.org/lkml/1628086770.5rn8p04n6j.none@localhost/.
++ *
++ * Users can reduce their pipe buffers with F_SETPIPE_SZ below this at their
++ * own risk, namely: pipe writes to non-full pipes may block until the pipe is
++ * emptied.
++ */
++#define PIPE_MIN_DEF_BUFFERS 2
++
+ /*
+  * The max size that a non-root user is allowed to grow the pipe. Can
+  * be set by root in /proc/sys/fs/pipe-max-size
+@@ -781,8 +796,8 @@ struct pipe_inode_info *alloc_pipe_info(void)
+ 	user_bufs = account_pipe_buffers(user, 0, pipe_bufs);
+ 
+ 	if (too_many_pipe_buffers_soft(user_bufs) && pipe_is_unprivileged_user()) {
+-		user_bufs = account_pipe_buffers(user, pipe_bufs, 1);
+-		pipe_bufs = 1;
++		user_bufs = account_pipe_buffers(user, pipe_bufs, PIPE_MIN_DEF_BUFFERS);
++		pipe_bufs = PIPE_MIN_DEF_BUFFERS;
+ 	}
+ 
+ 	if (too_many_pipe_buffers_hard(user_bufs) && pipe_is_unprivileged_user())
+-- 
+2.32.0
+
