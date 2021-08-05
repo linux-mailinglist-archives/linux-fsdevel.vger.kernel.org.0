@@ -2,284 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 964BF3E1483
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 14:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F2793E14C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 14:34:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239484AbhHEMPc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Aug 2021 08:15:32 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:54418 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235505AbhHEMPb (ORCPT
+        id S241341AbhHEMe3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Aug 2021 08:34:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43898 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240235AbhHEMe2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Aug 2021 08:15:31 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 7C2F32238E;
-        Thu,  5 Aug 2021 12:15:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1628165716; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T5qIhflalc9TTaUMEzjBHNqphJ2L2l12Sys3yp8PJ5M=;
-        b=rOv3Mj7Ei3TftfnuieYzFaoxVf0eTMc0ptOWboVCHJ2lqs1SaDtgv3NDJUyi6HA9yZYWEQ
-        vhxI4OWHbYwmOG+TWUsWTwlJx9C28vtYmgr5p8e9RtpKTPMOoPiZRyoU8+F5ZzGaXY8pVM
-        eWdfpYKBGQUC05JlPMOH+nLkjoIG9H4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1628165716;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T5qIhflalc9TTaUMEzjBHNqphJ2L2l12Sys3yp8PJ5M=;
-        b=hhhRWFvWAp9VjpGzbgavNdHFwI9AfZvSbPCTe3PwSO43SmTPEn+Kf+DoByBxGJKCjNUv+o
-        9JCJlzml92bXweDw==
-Received: from quack2.suse.cz (unknown [10.163.43.118])
-        by relay2.suse.de (Postfix) with ESMTP id 626E1A3B85;
-        Thu,  5 Aug 2021 12:15:16 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3FB381E1511; Thu,  5 Aug 2021 14:15:16 +0200 (CEST)
-Date:   Thu, 5 Aug 2021 14:15:16 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
-        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
-        khazhy@google.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH v5 18/23] fanotify: Handle FAN_FS_ERROR events
-Message-ID: <20210805121516.GL14483@quack2.suse.cz>
-References: <20210804160612.3575505-1-krisman@collabora.com>
- <20210804160612.3575505-19-krisman@collabora.com>
+        Thu, 5 Aug 2021 08:34:28 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB14C061765
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Aug 2021 05:34:13 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id x14so8090473edr.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Aug 2021 05:34:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GRecJWHpf0gjvXsYNJwzmmW+nOAqDS98ZsWB4Lu3HTk=;
+        b=S6f8tdmaaPakzb2Xs58u/YwvnIh9rekjN/u2Vg+M56f15y23TmCewo4lbHT11uACan
+         R+0Eu0cRgugPW124XxHQqGp3wx/RovVoqc9g/5nLnXaB61Z52UKlJ4PHE0l2y75vPNYN
+         ZN3eBziwB8y1VUGOe2n0Cfa5D1KbaHg1q6wsiTnO5N9jY6j1pR4h2h+zXNzjloGGJxcc
+         JozAJrUYNwvab7kealUfpLrbQQgvGROl4OvFrT1C6e1DBRJy0NHbCY5LUedUjTqVYfLJ
+         K3XRVYc1Xi2ItkoU/5e6Bxz4uSapyv4cN401EkNa/+XGqNXSxwJLROZJrA4Iwpix9s/8
+         pOvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GRecJWHpf0gjvXsYNJwzmmW+nOAqDS98ZsWB4Lu3HTk=;
+        b=K/B8O1Y0qrbZ6qXtfnSfjH0oQ0FslwRkwXP9wCJUIm3Vvoj5wRsdZMCnD6BDE7Cku2
+         SS1OtEOCwgC8kQGHNSoCt8p7JjG9KCTSYvHvyZbxjiu7F74Qe8OLCNPTJxbvq8Mp/eet
+         uYrFov1UQ/qyI4b+NknCTvz4SlN9olVQf14GIzoDSYnb+rAbj/Cw4Jv+ue0EsSiySvuP
+         vboUDgMgfc8+I/StfMxWVujO3XEFDtGmh3tEkPcXtIUCxlD0ym+4rYkxtUcNCLT36kYi
+         TnfUCZoGhyWXjtgtU/U2dhyre4IEjjry9eAtICM9gAXvJAUFiU2kafK0k2cuRoLZ7i+U
+         hb9A==
+X-Gm-Message-State: AOAM530Rv/GS+2bILhpiCNZEk7D3Vc+1rmaeeahMhicEPORDHRA0VrfP
+        t+nELcv7hQkukdzVW+UiKGxaGPGvDfOIUArX/eWy
+X-Google-Smtp-Source: ABdhPJychbjmynLh9/Ea3o5hkpZtU2SNp1dmaj9zAcG470ZYKrb0D+35OhxBNRLSqHVcxZBaICqILCn+TZG+ukzKlGk=
+X-Received: by 2002:a05:6402:74f:: with SMTP id p15mr6132819edy.195.1628166852249;
+ Thu, 05 Aug 2021 05:34:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210804160612.3575505-19-krisman@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-2-xieyongji@bytedance.com>
+ <43d88942-1cd3-c840-6fec-4155fd544d80@redhat.com> <CACycT3vcpwyA3xjD29f1hGnYALyAd=-XcWp8+wJiwSqpqUu00w@mail.gmail.com>
+ <6e05e25e-e569-402e-d81b-8ac2cff1c0e8@arm.com> <CACycT3sm2r8NMMUPy1k1PuSZZ3nM9aic-O4AhdmRRCwgmwGj4Q@mail.gmail.com>
+ <417ce5af-4deb-5319-78ce-b74fb4dd0582@arm.com>
+In-Reply-To: <417ce5af-4deb-5319-78ce-b74fb4dd0582@arm.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Thu, 5 Aug 2021 20:34:01 +0800
+Message-ID: <CACycT3vARzvd4-dkZhDHqUkeYoSxTa2ty0z0ivE1znGti+n1-g@mail.gmail.com>
+Subject: Re: [PATCH v10 01/17] iova: Export alloc_iova_fast() and free_iova_fast()
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     kvm <kvm@vger.kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Liu Xiaodong <xiaodong.liu@intel.com>,
+        Joe Perches <joe@perches.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        songmuchun@bytedance.com, Jens Axboe <axboe@kernel.dk>,
+        He Zhe <zhe.he@windriver.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, bcrl@kvack.org,
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 04-08-21 12:06:07, Gabriel Krisman Bertazi wrote:
-> Wire up FAN_FS_ERROR in the fanotify_mark syscall.  The event can only
-> be requested for the entire filesystem, thus it requires the
-> FAN_MARK_FILESYSTEM.
-> 
-> FAN_FS_ERROR has to be handled slightly differently from other events
-> because it needs to be submitted in an atomic context, using
-> preallocated memory.  This patch implements the submission path by only
-> storing the first error event that happened in the slot (userspace
-> resets the slot by reading the event).
-> 
-> Extra error events happening when the slot is occupied are merged to the
-> original report, and the only information keep for these extra errors is
-> an accumulator counting the number of events, which is part of the
-> record reported back to userspace.
-> 
-> Reporting only the first event should be fine, since when a FS error
-> happens, a cascade of error usually follows, but the most meaningful
-> information is (usually) on the first erro.
-> 
-> The event dequeueing is also a bit special to avoid losing events. Since
-> event merging only happens while the event is queued, there is a window
-> between when an error event is dequeued (notification_lock is dropped)
-> until it is reset (.free_event()) where the slot is full, but no merges
-> can happen.
-> 
-> The proposed solution is to replace the event in the slot with a new
-> structure, prior to dropping the lock.  This way, if a new event arrives
-> in the time between the event was dequeued and the time it resets, the
-> new errors will still be logged and merged in the new slot.
-> 
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+On Wed, Aug 4, 2021 at 11:43 PM Robin Murphy <robin.murphy@arm.com> wrote:
+>
+> On 2021-08-04 06:02, Yongji Xie wrote:
+> > On Tue, Aug 3, 2021 at 6:54 PM Robin Murphy <robin.murphy@arm.com> wrot=
+e:
+> >>
+> >> On 2021-08-03 09:54, Yongji Xie wrote:
+> >>> On Tue, Aug 3, 2021 at 3:41 PM Jason Wang <jasowang@redhat.com> wrote=
+:
+> >>>>
+> >>>>
+> >>>> =E5=9C=A8 2021/7/29 =E4=B8=8B=E5=8D=883:34, Xie Yongji =E5=86=99=E9=
+=81=93:
+> >>>>> Export alloc_iova_fast() and free_iova_fast() so that
+> >>>>> some modules can use it to improve iova allocation efficiency.
+> >>>>
+> >>>>
+> >>>> It's better to explain why alloc_iova() is not sufficient here.
+> >>>>
+> >>>
+> >>> Fine.
+> >>
+> >> What I fail to understand from the later patches is what the IOVA doma=
+in
+> >> actually represents. If the "device" is a userspace process then
+> >> logically the "IOVA" would be the userspace address, so presumably
+> >> somewhere you're having to translate between this arbitrary address
+> >> space and actual usable addresses - if you're worried about efficiency
+> >> surely it would be even better to not do that?
+> >>
+> >
+> > Yes, userspace daemon needs to translate the "IOVA" in a DMA
+> > descriptor to the VA (from mmap(2)). But this actually doesn't affect
+> > performance since it's an identical mapping in most cases.
+>
+> I'm not familiar with the vhost_iotlb stuff, but it looks suspiciously
+> like you're walking yet another tree to make those translations. Even if
+> the buffer can be mapped all at once with a fixed offset such that each
+> DMA mapping call doesn't need a lookup for each individual "IOVA" - that
+> might be what's happening already, but it's a bit hard to follow just
+> reading the patches in my mail client - vhost_iotlb_add_range() doesn't
+> look like it's super-cheap to call, and you're serialising on a lock for
+> that.
+>
 
-The splitting of the patches really helped. Now I think I can grok much
-more details than before :) Thanks! Some comments below.
+Yes, that's true. Since the software IOTLB is not used in the VM case,
+we need a unified way (vhost_iotlb) to manage the IOVA mapping for
+both VM and Container cases.
 
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 0678d35432a7..4e9e271a4394 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -681,6 +681,42 @@ static __kernel_fsid_t fanotify_get_fsid(struct fsnotify_iter_info *iter_info)
->  	return fsid;
->  }
->  
-> +static int fanotify_merge_error_event(struct fsnotify_group *group,
-> +				      struct fsnotify_event *event)
-> +{
-> +	struct fanotify_event *fae = FANOTIFY_E(event);
-> +	struct fanotify_error_event *fee = FANOTIFY_EE(fae);
-> +
-> +	/*
-> +	 * When err_count > 0, the reporting slot is full.  Just account
-> +	 * the additional error and abort the insertion.
-> +	 */
-> +	if (fee->err_count) {
-> +		fee->err_count++;
-> +		return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void fanotify_insert_error_event(struct fsnotify_group *group,
-> +					struct fsnotify_event *event,
-> +					const void *data)
-> +{
-> +	const struct fs_error_report *report = (struct fs_error_report *) data;
-> +	struct fanotify_event *fae = FANOTIFY_E(event);
-> +	struct fanotify_error_event *fee;
-> +
-> +	/* This might be an unexpected type of event (i.e. overflow). */
-> +	if (!fanotify_is_error_event(fae->mask))
-> +		return;
-> +
-> +	fee = FANOTIFY_EE(fae);
-> +	fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
-> +	fee->error = report->error;
-> +	fee->err_count = 1;
-> +}
-> +
->  /*
->   * Add an event to hash table for faster merge.
->   */
-> @@ -735,7 +771,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
->  	BUILD_BUG_ON(FAN_OPEN_EXEC_PERM != FS_OPEN_EXEC_PERM);
->  	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
->  
-> -	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 19);
-> +	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 20);
->  
->  	mask = fanotify_group_event_mask(group, iter_info, mask, data,
->  					 data_type, dir);
-> @@ -760,6 +796,18 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
->  			return 0;
->  	}
->  
-> +	if (fanotify_is_error_event(mask)) {
-> +		struct fanotify_sb_mark *sb_mark =
-> +			FANOTIFY_SB_MARK(fsnotify_iter_sb_mark(iter_info));
-> +
-> +		ret = fsnotify_insert_event(group,
-> +					    &sb_mark->fee_slot->fae.fse,
-> +					    fanotify_merge_error_event,
-> +					    fanotify_insert_error_event,
-> +					    data);
-> +		goto finish;
-> +	}
+> My main point, though, is that if you've already got something else
+> keeping track of the actual addresses, then the way you're using an
+> iova_domain appears to be something you could do with a trivial bitmap
+> allocator. That's why I don't buy the efficiency argument. The main
+> design points of the IOVA allocator are to manage large address spaces
+> while trying to maximise spatial locality to minimise the underlying
+> pagetable usage, and allocating with a flexible limit to support
+> multiple devices with different addressing capabilities in the same
+> address space. If none of those aspects are relevant to the use-case -
+> which AFAICS appears to be true here - then as a general-purpose
+> resource allocator it's rubbish and has an unreasonably massive memory
+> overhead and there are many, many better choices.
+>
 
-Hum, seeing this and how you had to extend fsnotify_add_event() to
-accommodate this use, cannot we instead have something like:
+OK, I get your point. Actually we used the genpool allocator in the
+early version. Maybe we can fall back to using it.
 
-	if (fanotify_is_error_event(mask)) {
-		struct fanotify_sb_mark *sb_mark =
-			FANOTIFY_SB_MARK(fsnotify_iter_sb_mark(iter_info));
-		struct fanotify_error_event *event = &sb_mark->fee_slot;
-		bool queue = false;
+> FWIW I've recently started thinking about moving all the caching stuff
+> out of iova_domain and into the iommu-dma layer since it's now a giant
+> waste of space for all the other current IOVA users.
+>
+> >> Presumably userspace doesn't have any concern about alignment and the
+> >> things we have to worry about for the DMA API in general, so it's pret=
+ty
+> >> much just allocating slots in a buffer, and there are far more effecti=
+ve
+> >> ways to do that than a full-blown address space manager.
+> >
+> > Considering iova allocation efficiency, I think the iova allocator is
+> > better here. In most cases, we don't even need to hold a spin lock
+> > during iova allocation.
+> >
+> >> If you're going
+> >> to reuse any infrastructure I'd have expected it to be SWIOTLB rather
+> >> than the IOVA allocator. Because, y'know, you're *literally implementi=
+ng
+> >> a software I/O TLB* ;)
+> >>
+> >
+> > But actually what we can reuse in SWIOTLB is the IOVA allocator.
+>
+> Huh? Those are completely unrelated and orthogonal things - SWIOTLB does
+> not use an external allocator (see find_slots()). By SWIOTLB I mean
+> specifically the library itself, not dma-direct or any of the other
+> users built around it. The functionality for managing slots in a buffer
+> and bouncing data in and out can absolutely be reused - that's why users
+> like the Xen and iommu-dma code *are* reusing it instead of open-coding
+> their own versions.
+>
 
-		spin_lock(&group->notification_lock);
-		/* Not yet queued? */
-		if (!event->err_count) {
-			fee->error = report->error;
-			queue = true;
-		}
-		event->err_count++;
-		spin_unlock(&group->notification_lock);
-		if (queue) {
-			... fill in other error info in 'event' such as fhandle
-			fsnotify_add_event(group, &event->fae.fse, NULL);
-		}
-	}
+I see. Actually the slots management in SWIOTLB is what I mean by IOVA
+allocator.
 
-It would be IMHO simpler to follow what's going on and we don't have to
-touch fsnotify_add_event(). I do recognize that due to races it may happen
-that some racing fsnotify(FAN_FS_ERROR) call returns before the event is
-actually visible in the event queue. It don't think it really matters but
-if we wanted to be more careful, we would need to preformat fhandle into a
-local buffer and only copy it into the event under notification_lock when
-we see the event is unused.
+> > And
+> > the IOVA management in SWIOTLB is not what we want. For example,
+> > SWIOTLB allocates and uses contiguous memory for bouncing, which is
+> > not necessary in VDUSE case.
+>
+> alloc_iova() allocates a contiguous (in IOVA address) region of space.
+> In vduse_domain_map_page() you use it to allocate a contiguous region of
+> space from your bounce buffer. Can you clarify how that is fundamentally
+> different from allocating a contiguous region of space from a bounce
+> buffer? Nobody's saying the underlying implementation details of where
+> the buffer itself comes from can't be tweaked.
+>
 
-> +/*
-> + * Replace a mark's error event with a new structure in preparation for
-> + * it to be dequeued.  This is a bit annoying since we need to drop the
-> + * lock, so another thread might just steal the event from us.
-> + */
-> +static int fanotify_replace_fs_error_event(struct fsnotify_group *group,
-> +					   struct fanotify_event *fae)
-> +{
-> +	struct fanotify_error_event *new, *fee = FANOTIFY_EE(fae);
-> +	struct fanotify_sb_mark *sb_mark = fee->sb_mark;
-> +	struct fsnotify_event *fse;
-> +
-> +	pr_debug("%s: event=%p\n", __func__, fae);
-> +
-> +	assert_spin_locked(&group->notification_lock);
-> +
-> +	spin_unlock(&group->notification_lock);
-> +	new = fanotify_alloc_error_event(sb_mark);
-> +	spin_lock(&group->notification_lock);
-> +
-> +	if (!new)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * Since we temporarily dropped the notification_lock, the event
-> +	 * might have been taken from under us and reported by another
-> +	 * reader.  If that is the case, don't play games, just retry.
-> +	 */
-> +	fse = fsnotify_peek_first_event(group);
-> +	if (fse != &fae->fse) {
-> +		kfree(new);
-> +		return -EAGAIN;
-> +	}
-> +
-> +	sb_mark->fee_slot = new;
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * Get an fanotify notification event if one exists and is small
->   * enough to fit in "count". Return an error pointer if the count
-> @@ -212,9 +252,21 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
->  		goto out;
->  	}
->  
-> +	if (fanotify_is_error_event(event->mask)) {
-> +		/*
-> +		 * Replace the error event ahead of dequeueing so we
-> +		 * don't need to handle a incorrectly dequeued event.
-> +		 */
-> +		ret = fanotify_replace_fs_error_event(group, event);
-> +		if (ret) {
-> +			event = ERR_PTR(ret);
-> +			goto out;
-> +		}
-> +	}
-> +
+I mean physically contiguous memory here. We can currently allocate
+the bounce pages one by one rather than allocating a bunch of
+physically contiguous memory at once which is not friendly to a
+userspace device.
 
-The replacing, retry, and all is hairy. Cannot we just keep the same event
-attached to the sb mark and copy-out to on-stack buffer under
-notification_lock in get_one_event()? The event is big (due to fhandle) but
-fanotify_read() is not called from a deep call chain so we should have
-enough space on stack for that.
+> > And VDUSE needs coherent mapping which is
+> > not supported by the SWIOTLB. Besides, the SWIOTLB works in singleton
+> > mode (designed for platform IOMMU) , but VDUSE is based on on-chip
+> > IOMMU (supports multiple instances).
+> That's not entirely true - the IOMMU bounce buffering scheme introduced
+> in intel-iommu and now moved into the iommu-dma layer was already a step
+> towards something conceptually similar. It does still rely on stealing
+> the underlying pages from the global SWIOTLB pool at the moment, but the
+> bouncing is effectively done in a per-IOMMU-domain context.
+>
+> The next step is currently queued in linux-next, wherein we can now have
+> individual per-device SWIOTLB pools. In fact at that point I think you
+> might actually be able to do your thing without implementing any special
+> DMA ops at all - you'd need to set up a pool for your "device" with
+> force_bounce set, then when you mmap() that to userspace, set up
+> dev->dma_range_map to describe an offset from the physical address of
+> the buffer to the userspace address, and I think dma-direct would be
+> tricked into doing the right thing. It's a bit wacky, but it could stand
+> to save a hell of a lot of bother.
+>
 
->  	/*
-> -	 * Held the notification_lock the whole time, so this is the
-> -	 * same event we peeked above.
-> +	 * Even though we might have temporarily dropped the lock, this
-> +	 * is guaranteed to be the same event we peeked above.
->  	 */
->  	fsnotify_remove_first_event(group);
->  	if (fanotify_is_perm_event(event->mask))
-> @@ -596,6 +648,8 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
->  		event = get_one_event(group, count);
->  		if (IS_ERR(event)) {
->  			ret = PTR_ERR(event);
-> +			if (ret == -EAGAIN)
-> +				continue;
->  			break;
->  		}
->  
+Cool! I missed this work, sorry. But it looks like its current version
+can't meet our needs (e.g. avoid using physically contiguous memory).
+So I'd like to consider it as a follow-up optimization and use a
+general IOVA allocator in this initial version. The IOVA allocator
+would be still needed for coherent mapping
+(vduse_domain_alloc_coherent() and vduse_domain_free_coherent()) after
+we reuse the SWIOTLB.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Finally, enhancing SWIOTLB to cope with virtually-mapped buffers that
+> don't have to be physically contiguous is a future improvement which I
+> think could benefit various use-cases - indeed it's possibly already on
+> the table for IOMMU bounce pages - so would probably be welcome in genera=
+l.
+>
+
+Yes, it's indeed needed by VDUSE. But I'm not sure if it would be
+needed by other drivers. Looks like we need swiotlb_tbl_map_single()
+to return a virtual address and introduce some way to let the caller
+do some translation between VA to PA.
+
+Thanks,
+Yongji
