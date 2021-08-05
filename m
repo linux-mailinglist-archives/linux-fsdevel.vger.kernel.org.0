@@ -2,135 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 459403E16CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 16:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E96E3E1712
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 16:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240436AbhHEOSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Aug 2021 10:18:43 -0400
-Received: from sonic313-19.consmr.mail.gq1.yahoo.com ([98.137.65.82]:32944
-        "EHLO sonic313-19.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240231AbhHEOSn (ORCPT
+        id S235592AbhHEOiX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Aug 2021 10:38:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:34823 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232963AbhHEOiW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Aug 2021 10:18:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1628173108; bh=9+gSHMwzaMjedHzJLR+xBl2EvJdH5KdhquajRHszUs8=; h=Date:From:Subject:To:Cc:References:In-Reply-To:From:Subject:Reply-To; b=iqYjydmxYrP9R7WgDVysws74ul6IFqT4Yhvflvo+mtFUFwnINb2xv8diKYzM+2A8XOpLdcmVeEbWTyoeWOMQ8Y3Q9nDVe5mjQPfg5dOs5iHBmnyzYuAG8YzVhQ+FWfuzoW1daJlCwB1i5lxll10oiOzAdBBc2WyE4cQjTBWUJWXNizbqeXMNtgPuevfVN01/bxgPE2AmU2ujWf0y9xQknDwIUp77zbxT960kAyBgUmfacc5S/YmlOWDdPUXhcNbB1uZ5hOkYxa1d6ZzxgboQAJ1IbnEIM9E3IP7hTXGlpkEFpCZQDUKz25jRJAcHO05JUOGIMsvhoRLg+TuxeJ2HYQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1628173108; bh=KWUY/0CFxvN8ajb44suJ5QB4cYSABSsm5WF8Oy+XtdT=; h=X-Sonic-MF:Date:From:Subject:To:From:Subject; b=lCY6e+wD5Xx1TYPQrrzkxTNriSyTJ52hLiO2+FisY7fiFPxPs3BT3oltwOu07FzM+YoeGaDSA5xrNgtKB67aMk8jIpj9fnwc0I/mUgllsujrZn/vezMA7ZEMpQeaDrfw/QR9oUtwViR5RdBa/l2PnNm1UD3gYZuTR1j9MJHpaTjvFzucCzlKklCUXwU5YRY5m9wO0q+TFOpBxtkqXZXmuph0GwEgZkDqDJosPrTE3QOmVlJkBYuUwnj2iBnujPj+bvaMBUg2o6xenfZ8cSanzkCXn9ZIG/zKshTSPOvzBuU7XkzBMO50kkh9AReWCzZ6ff54YSDejcf5pvgmZQB0Gg==
-X-YMail-OSG: Y8Mqda8VM1kJRYyAgQWph5YbVZ1ybUQK8SUdrbvfp782LwLqpyTik7J3NZIoQEm
- 9Agb03.7wFW6103gvtnWLYpW_pd783NS82g2G4lMk8bI7LdEFDJlk.SbtBHdiVvdan3GNOaUuTdY
- W5O2giBztnaOCXdYohMR.9saOMQkA5xBPKOHj_IZALWW8GqG4dGe23zUdfp4lZneDpOcxzewXdjE
- eBl2hm7fl1_Ta_.HAuct252Q5l2wpRonFs_a06276rzcfTR5_7hHDcvffO8iBfhDl5ooET4Ox9rb
- WiF1i_OK4Qk_Xc7SWG9yjTMRQMHrKLyeXuVUnRYLdzXTRGSLJtLqVUntXsDYKsrlcAcTriyTVQ9v
- zzc8XZaF3YSy07gtb8NSpnlSeZhtZVscEyLck3VsAZXZPTlBS39hCgwYQ6AVNR8KJoOj9tbuyKiS
- YMizY_b_.EE9FW9UiUEiogd2z7cwRs31ejJa0g0Er6mL2ZFBw.klwvho6eKEnvecBm3cylivwNqA
- 2RDeHDcZ68nNpVj5pSqyt1d7rtnBjOvKHD9PtDsvTVt3M9A8yT9s64AuI4qxzPA2a1OiOl6Vb9Fo
- 2uQWfVSW074trAqL3BnVSEZ7SZ8oJjD0eas7_Mz5AkgzWpx_GDDvLpa0YF3tlZYP4mD.ceqxu4S6
- Kxpc0t4ssqi43eyp76rYDchuP.pvIDWUQu4NJ4WbRKDHhnyXhs2Q8_F.YhEHqNxG80YwQC81lj5r
- ZsnVn84LbAiS3UseNRK0D2NzFyTzTLi6yTJprMxlMSO0hgvoEyU0TLSoOtLA8Dbl6fJ.j1G9i14o
- ZYkfM1fj11FUcQTxjIEq6MwqtiBpIWdImTtrk5H5I20TELtDHNW2SzXiGvqXhbZVuZc7DFgKu14P
- 76LLTmJ4X_O3Q4jzjci4FDX0N1ZIHs.zZJCAouqqMn6jqOv9gPdfZiu0x8Lv9xYt0gj2FhS.NfZb
- EEbpcazrPzxjAe0K7zFLLnW0QK4PMnTREnQZg4TLON2Tfq3TyhEsMaHHWlNPoVI6Tvupydh7JMfV
- hJ1DUH0S.N.ScfRg.b2KNG34Nkw8YJCTMq6XZBfvDyKrrTn7jH67bgkwJlj2JL8dkaHyuD_2h48s
- l2fW50csxIU.eS9yIoz.qypVaa8gONNxYrxOEfBIYbXFL8QbKvY.Qt.QdiZyhQ4_lHPq2gnEAv0r
- AH6CAFmZo304IrdjlapA40Wnn_mWFw0P0AUODpCSgExoOd_TEF41np5YaZVrYaUnU3e5BGX08ZxP
- 4PDXLZhjXQg89ncyL1kZvN5aEHYZ0AKVVDrxUcJBW62n7obLIPwhdmW6ETLhxxdy14gMouK2jbdl
- U0u4mj7njzISGBVwPiT2cUj3RH1nhsb_N1yCWhScRIHTovCjmh__zarUD9JIfiuAhMZYKMxLetqk
- uxvwVP1SupmAf6VoikdOc71RNUshCU4k3IXHQM_u.IZefsWjIOnDIWOCI.ORb_7rfuKNjNcFwDKV
- iuGPTaQOWYkrJWBHItMujSywoi6r_oO7Ms3I0GKpL7ylZ5uD6cWzTM6rG9KA703pzVCOggCibmr5
- rqSTDQXBsTOoBYIJJ73fgxSRp14eQD9tfeWN9JpJH9W_B_e0oudfLiri8t8pA7b.iB.rRH7AEsOm
- VIYh4VwZu4s04PhbKMApKE_f.E2XzK14GXiHtPkAyE2MhfpW_Cdi.WvUXahxYtb7JIk_6PxkL72v
- IxFQ6PscSZ2J8l4Dsjc5VDDlEbnpXCU6ZT2lEiWoO90qokB2UfNpUXOX0efma2hFoadHHR.mjMmH
- HlV12HwEMF2aGJvC9qmmbPAgnB.R0Km3oiPEi6vYf34Ce_duNGgOcUbSASLYHHrqInaE13hBo5I.
- XmgnT_n8rcH7GiPKQleXWO.s3AN9DEL8tAmBUr3tPLAYhshc19A.Jbq4Fn4GUCMs3D5aKI0T26gv
- ogNXbtYWAO5WpOHW9U_WMbjVCk5rRTVW2EoTXChU9jBE8WuXSONIhncZv4fbKoXJ7MacKKqvO0e8
- se0sKyEEjltIIwskxmE7LgFlTDrcEfMsnuRqSx87_fc1jLk33C7xOhhpWrhJxIE4ZDYsePEml1Da
- eZ1w8Nu28fMqdJVpjB.hMWHcmTZPGsfrW2VEwNyH6NBbH.l8ZzYsOjg2RMrMKTvjzLWlmPyWKiNF
- RCO1e4WZp3HT.18_.gyknisrb9byU74B46cQ.5gjtva0dRT64K9_L8zzEzFzJmIjP.Df8i9PEMpJ
- VLLtTVPKO75NCmEsQyoWqHaOGEuZW5BWxX_LYcUKCriSIV54aoGsNnmzBWKRCDfw01pJgoCslIOV
- WY9KHRPUMLttykJGWLkiVj81QY_KOkCaNM4PLxBCeSlbr0yW4RXRYlDXU2abqJ_furayVH7YmyV9
- OS5ip21KYowZIhmCEy08Wk_jomNJQ221Qi5f224E9BjdF899AG2a.dQ9an9itCA9YO.uYXYedEcC
- haiNvmDsOBrYQ4IZqX8sVdBCcghhRXdvRmOnPbn3L_vqMcQY0RIkeAoKVbOFk2jL34f89nDQM9Ys
- zMrTp7a02gzh.3geZn9bNykh7zKBs69RFtt22RS5qDNGu.H.TduhUFZXA8URGQ2wMQu_0d3n9r3w
- AXAlCos_TuthEAWUvljCAaLrdVEA_gQYmVN2xrRXt4zEbfxSYPhOeoT_INN6I4ZB1es58xlk1sCS
- sN.R8qujdpbIgCXJ4gtEgXZhdUAcKcpQz5Wg2J2roA0FodBHF.sus0y5vCqODdVU0PuVceu92SLs
- YxUFTWncCN3Q96orSoO7jGmMF8LWvCIoYgCPujrjufGSbXtiLH1a2YNj7j1M0X3L8etnf53mRY6B
- jSxLyTyxHfItZ.YZLi0V5Td.kGF0n6ie8Bri7eaj5rkVhssmirQHJtQTfEWpHBe1jiPBSQvHPvlc
- X_NyaR2siPuBMHY4sTT9JYI3xFL4PrsjkyeQjYPk2WrHJABkGZEGhlnYyUQLpW0Cq7xyCglwhRuX
- dmDp7u5LessLJWW4gyx2Ajmq5vPsreITfQMa7orbyZdiOcqh3vvgKxhKIZLxOlZ9HhV4KM26LOM6
- _BpHO9xwZQ97JNEuiSVY2uF2pEtK4hpMdL6QgIzoWNUMNXXuAtvkBdshzoxch3ftcMUDPD2rMuEW
- Lf1krBmOyVSH3eqrmw24eWRmuO3j7eAT828kuSKSLyeN9t6QGP1ihl9YJ2WPXxzsTDvz3lrbJLza
- R6KjcItOJQuz.RQD3gf6HjQAP4hH4Tsybr6ZLlg--
-X-Sonic-MF: <alex_y_xu@yahoo.ca>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Thu, 5 Aug 2021 14:18:28 +0000
-Received: by kubenode544.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 6934473a6e897de19b3adfa8f92c3920;
-          Thu, 05 Aug 2021 14:18:26 +0000 (UTC)
-Date:   Thu, 05 Aug 2021 10:18:22 -0400
-From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Subject: Re: [PATCH] pipe: increase minimum default pipe size to 2 pages
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     christian@brauner.io, dhowells@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.or, linux@rasmusvillemoes.dk,
-        nicolas.dichtel@6wind.com, peterz@infradead.org, raven@themaw.net,
-        torvalds@linux-foundation.org
-References: <20210805000435.10833-1-alex_y_xu.ref@yahoo.ca>
-        <20210805000435.10833-1-alex_y_xu@yahoo.ca> <YQuixFfztw0RaDFi@kroah.com>
-In-Reply-To: <YQuixFfztw0RaDFi@kroah.com>
+        Thu, 5 Aug 2021 10:38:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628174288;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=w90vbKB51SLxac7fkQF8VwHCUjek+TgW3nOJS8GSEyU=;
+        b=SQ/tqphP7O6DOLsZZCdj7aK008jci9/IKdxvYF3+nUedZEUeA79g8VpJByH6l1wjJtY20x
+        gajykuvo7L2bO9II17BWQuSriRz5fh8oWoZJwT5sxxZOFFwmeeRt1P+2m9UcMAwJ/svDkx
+        JbZH6c8Y+ugLwumX0g5MwQobtOOiWSU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-236-0WieseC_PrujNVSR2mwqqA-1; Thu, 05 Aug 2021 10:38:05 -0400
+X-MC-Unique: 0WieseC_PrujNVSR2mwqqA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C5730190D340;
+        Thu,  5 Aug 2021 14:38:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1F7FE5D9DD;
+        Thu,  5 Aug 2021 14:38:01 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YQvpDP/tdkG4MMGs@casper.infradead.org>
+References: <YQvpDP/tdkG4MMGs@casper.infradead.org> <YQvbiCubotHz6cN7@casper.infradead.org> <1017390.1628158757@warthog.procyon.org.uk> <1170464.1628168823@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        jlayton@kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        dchinner@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Could it be made possible to offer "supplementary" data to a DIO write ?
 MIME-Version: 1.0
-Message-Id: <1628172774.4en5vcorw2.none@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: WebService/1.1.18749 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1186270.1628174281.1@warthog.procyon.org.uk>
+Date:   Thu, 05 Aug 2021 15:38:01 +0100
+Message-ID: <1186271.1628174281@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Excerpts from Greg KH's message of August 5, 2021 4:35 am:
-> On Wed, Aug 04, 2021 at 08:04:35PM -0400, Alex Xu (Hello71) wrote:
->> Before this patch, the following program prints 4096 and hangs.
->> Afterwards, it prints 8192 and exits successfully. Note that you may
->> need to increase your RLIMIT_NOFILE before running the program.
->>=20
->> int main() {
->>     int pipefd[2];
->>     for (int i =3D 0; i < 1025; i++)
->>         if (pipe(pipefd) =3D=3D -1)
->>             return 1;
->>     size_t bufsz =3D fcntl(pipefd[1], F_GETPIPE_SZ);
->>     printf("%zd\n", bufsz);
->>     char *buf =3D calloc(bufsz, 1);
->>     write(pipefd[1], buf, bufsz);
->>     read(pipefd[0], buf, bufsz-1);
->>     write(pipefd[1], buf, 1);
->> }
->>=20
->> Signed-off-by: Alex Xu (Hello71) <alex_y_xu@yahoo.ca>
->> ---
->=20
-> Is this due to the changes that happened in 5.5?  If so, a cc: stable
-> and a fixes tag would be nice to have :)
->=20
->> See discussion at https://lore.kernel.org/lkml/1628086770.5rn8p04n6j.non=
-e@localhost/.
->=20
-> This can go up in the changelog text too.
->=20
-> thanks,
->=20
-> greg k-h
->=20
+Matthew Wilcox <willy@infradead.org> wrote:
 
-I tested 5.4 and it exhibits the same problem as master using this=20
-non-racy program. I think the problem goes back to v4.5, the first=20
-release with 759c01142a ("pipe: limit the per-user amount of pages=20
-allocated in pipes"). The issue likely become more apparent with the=20
-improvement in pipe performance from v5.5, whereas before that, pipes=20
-were too slow for the issue to manifest in racy environments.
+> You can already get 400Gbit ethernet.
 
-I'll send a new patch with #include lines and a Fixes: 759c01142a. I'm=20
-not 100% sure that it actually goes back that far, but the worst thing=20
-that can plausibly happen is that applications opening very large=20
-numbers of pipes suddenly use slightly more memory. I certainly hope=20
-nobody is relying on pipes randomly blocking roughly 1/4096 of the=20
-time.
+Sorry, but that's not likely to become relevant any time soon.  Besides, my
+laptop's wifi doesn't really do that yet.
 
-Regards,
-Alex.
+> Saving 500 bytes by sending just the 12 bytes that changed is optimising the
+> wrong thing.
+
+In one sense, at least, you're correct.  The cost of setting up an RPC to do
+the write and setting up crypto is high compared to transmitting 3 bytes vs 4k
+bytes.
+
+> If you have two clients accessing the same file at byte granularity, you've
+> already lost.
+
+Doesn't stop people doing it, though.  People have sqlite, dbm, mail stores,
+whatever in the homedirs from the desktop environments.  Granted, most of the
+time people don't log in twice with the same homedir from two different
+machines (and it doesn't - or didn't - used to work with Gnome or KDE).
+
+> Extent based filesystems create huge extents anyway:
+
+Okay, so it's not feasible.  That's fine.
+
+> This has already happened when you initially wrote to the file backing
+> the cache.  Updates are just going to write to the already-allocated
+> blocks, unless you've done something utterly inappropriate to the
+> situation like reflinked the files.
+
+Or the file is being read random-access and we now have a block we didn't have
+before that is contiguous to another block we already have.
+
+> If you want to take leases at byte granularity, and then not writeback
+> parts of a page that are outside that lease, feel free.  It shouldn't
+> affect how you track dirtiness or how you writethrough the page cache
+> to the disk cache.
+
+Indeed.  Handling writes to the local disk cache is different from handling
+writes to the server(s).  The cache has a larger block size but I don't have
+to worry about third-party conflicts on it, whereas the server can be taken as
+having no minimum block size, but my write can clash with someone else's.
+
+Generally, I prefer to write back the minimum I can get away with (as does the
+Linux NFS client AFAICT).
+
+However, if everyone agrees that we should only ever write back a multiple of
+a certain block size, even to network filesystems, what block size should that
+be?  Note that PAGE_SIZE varies across arches and folios are going to
+exacerbate this.  What I don't want to happen is that you read from a file, it
+creates, say, a 4M (or larger) folio; you change three bytes and then you're
+forced to write back the entire 4M folio.
+
+Note that when content crypto or compression is employed, some multiple of the
+size of the encrypted/compressed blocks would be a requirement.
+
+David
+
