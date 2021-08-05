@@ -2,85 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C0A03E1B27
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 20:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFB293E1B2B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 20:24:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241145AbhHESW4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Aug 2021 14:22:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237370AbhHESWz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Aug 2021 14:22:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 16FF761104;
-        Thu,  5 Aug 2021 18:22:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628187761;
-        bh=xf1EO6vpWlDvbR3GGuw/iY2BzuNM81ziHAaiegMS7QA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=a2nOBjG3epNarvvavygK8sprmQtC9CE1KQmigYTgKCn/PbxM2BZ1aT+wHLo3l5Siz
-         /B6+5gKz92rtfDoC1FPtksRpcQ+k6Dev733h+9700UmG2v2+Mkp8kUk7Tc22eFI0c/
-         FvZCVw0wdicoGCH55+vp0HupMS0QChFdCYJje+ogDAMyM8gwkl9Z65dTGE+I9P0iL2
-         gTXCZYQ3ket7UU+6g/S7CEisLlVpvPTYB1gOI0Lpr7RNLmsbONCn3wR+p70JCnxKXr
-         J6mAHKJSigkVGOccACYUQSQ2ezfhoEFezp56i0AhRAxuKO25FXFgJ03c68CFpzHL7S
-         icqCvCPJWhqEQ==
-Date:   Thu, 5 Aug 2021 11:22:40 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Subject: [ANNOUNCE] xfs-linux: iomap-5.15-merge updated to ae44f9c286da
-Message-ID: <20210805182240.GX3601443@magnolia>
+        id S241028AbhHESYw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Aug 2021 14:24:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40364 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241011AbhHESYw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Aug 2021 14:24:52 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5727CC061765;
+        Thu,  5 Aug 2021 11:24:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=7ZEtilizO2+Pq/XgaczvBZxUkMnqeoxhTTdNMd/Upys=; b=rD69JWPQ77F+RpxlOuXiLX8+ms
+        pPoxsSeYzCB6md9pz+ZHu1zFjwPr5EaA5Mz4gnLSgqe2I+di4Mfjb3QRPNZ1/yP4V60+66ztpP502
+        TqPuO1CJI4sYGcn1xWwxXG+939qRy0m+Sk76GkjpCMWhxi3S4gnVxMermg9Hfiqrs8AnA0mmbokWX
+        WbOgrIvAM9vyLP2k4xRs+09qTi9fLhaaFRok7tuHq64HTOsLRq5HzDTyvZDljbMjXFU6c3dJOLDj9
+        AQlExOFuQ1QcqaqgSt5z3Atqeq7WUdyHLj9Tlvv/VhwH7d0dbPrNn7df4FNOPilFtTWpYQL7V6mmd
+        Vv5jDpUA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mBi2e-007Nls-32; Thu, 05 Aug 2021 18:24:33 +0000
+Date:   Thu, 5 Aug 2021 19:24:28 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/2] iomap: Use kmap_local_page instead of kmap_atomic
+Message-ID: <YQws3DQyk6pnyiBY@casper.infradead.org>
+References: <20210803193134.1198733-1-willy@infradead.org>
+ <20210805173104.GF3601405@magnolia>
+ <20210805173903.GH3601405@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20210805173903.GH3601405@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On Thu, Aug 05, 2021 at 10:39:03AM -0700, Darrick J. Wong wrote:
+> Though now that I think about it: Why does iomap_write_actor still use
+> copy_page_from_iter_atomic?  Can that be converted to use regular
+> copy_page_from_iter, which at least sometimes uses kmap_local_page?
 
-The iomap-5.15-merge branch of the xfs-linux repository at:
-
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
-
-has just been updated.
-
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.  Just sneaking in a couple more patches from Matthew
-Wilcox so that (presumably) Christoph has a stable place to rebase the
-iomap_iter series.
-
-The new head of the iomap-5.15-merge branch is commit:
-
-ae44f9c286da iomap: Add another assertion to inline data handling
-
-New Commits:
-
-Andreas Gruenbacher (1):
-      [f1f264b4c134] iomap: Fix some typos and bad grammar
-
-Christoph Hellwig (2):
-      [d0364f9490d7] iomap: simplify iomap_readpage_actor
-      [c1b79f11f4ec] iomap: simplify iomap_add_to_ioend
-
-Gao Xiang (1):
-      [69f4a26c1e0c] iomap: support reading inline data from non-zero pos
-
-Matthew Wilcox (Oracle) (3):
-      [b405435b419c] iomap: Support inline data with block size < page size
-      [ab069d5fdcd1] iomap: Use kmap_local_page instead of kmap_atomic
-      [ae44f9c286da] iomap: Add another assertion to inline data handling
-
-
-Code Diffstat:
-
- fs/iomap/buffered-io.c | 165 +++++++++++++++++++++++++------------------------
- fs/iomap/direct-io.c   |  10 +--
- include/linux/iomap.h  |  18 ++++++
- 3 files changed, 108 insertions(+), 85 deletions(-)
+I suspect copy_page_from_iter_atomic() should be converted to use
+kmap_local_page(), but I don't know.  generic_perform_write() uses
+the _atomic() version, so I'm not doing anything different without
+understanding more than I currently do.
