@@ -2,94 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB44F3E151C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 14:54:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4878B3E159A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 15:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239887AbhHEMyR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Aug 2021 08:54:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48480 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237597AbhHEMyQ (ORCPT
+        id S240569AbhHENYl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Aug 2021 09:24:41 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:47610 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229771AbhHENYk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Aug 2021 08:54:16 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10BA5C061765
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Aug 2021 05:54:02 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id l20so4364356iom.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Aug 2021 05:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=CUJAPxl/NPUJn40+0/B+dDcum5FvMyz50MbPQFWF6HU=;
-        b=P3CtrQKB6e5gkGuj5Fi21FBR9U3D2XrKByP3cIWqaXcKbkdRxoFzpv7owhOcyKRkc1
-         Y10XhT8lHfAe6ZexJVXvxAwHnfINwDrzWqYVUx398ndjXtJJJH6cAEs9h+TGZ96d1RkY
-         qxGgVE+E2du+4kWFYvfaq5KORF3OVj1eTx0b+VJLyvE5ItF1pEMqdPJ6IVuz6YI5MTHH
-         3Dwdb8tjlVuAyg8XhKTkSQn0oWV2Wk8qDF2861eWnCbaL87+fKA16D7uy5QM24SfG50E
-         0FSZcxKClrXHz/unxXB6hKxaGkkGkZw8a2XNn1t7iZFxQhmk5kYElmRpaqZrlhxnl3Y6
-         Dj7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=CUJAPxl/NPUJn40+0/B+dDcum5FvMyz50MbPQFWF6HU=;
-        b=TJM3dsU5KyW40D9h4FRXqMhGImers6FrROQB8Amm2DhW/PzIEvFn2frs2ME9eV42Yf
-         CHc1Dv7JhTe4h+X7ML7gAa7jJ09RGa09/KnKM3IzBOL8WMZkSQCEO+7dyM2+tq9/WD73
-         eQB98ulSnht1IYmKz++WirTPuMBHrn5SUpn3Rh7GheInkR2Wl5/6w03kY6XTLDOJGJjb
-         OHjaT+J5jrL5OliNPVNJz/1GX12EEIBcQtehqsg+JEauTEWmzJZzNJ+FgxJf6Z+XO1X7
-         emqiqPkthijrcBDIISo2Te0swuKFQwh5Taf8cvEZQKxnikWAEV5ODtR4QccIZNRNR0NN
-         xYQA==
-X-Gm-Message-State: AOAM530vZaZ5T2ti6iSPOKbz1Nig6DdFtPVNmAKXrPp7eOFEMEW/mqoY
-        KF4pKlLIFhb8AWcapRrTAcViewiR4dVG+7ucVvo=
-X-Google-Smtp-Source: ABdhPJwb2xjM6y0tH3mOD4y+0laeBhq2YhKd+WURIHoYWk2Km3b8BSIjcEgNMxxtw2fe8MP5lQXy8ygtY2r93rsbGAg=
-X-Received: by 2002:a6b:28a:: with SMTP id 132mr1085669ioc.157.1628168041470;
- Thu, 05 Aug 2021 05:54:01 -0700 (PDT)
+        Thu, 5 Aug 2021 09:24:40 -0400
+X-Greylist: delayed 1058 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Aug 2021 09:24:40 EDT
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:54410 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1mBd5D-0006Rn-Dh; Thu, 05 Aug 2021 09:06:47 -0400
+Message-ID: <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+Date:   Thu, 05 Aug 2021 09:06:42 -0400
+In-Reply-To: <87pmwmn5m0.fsf@disp2133>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+         <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
+         <87eeda7nqe.fsf@disp2133>
+         <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+         <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+         <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+         <87y2bh4jg5.fsf@disp2133>
+         <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+         <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+         <87pmwmn5m0.fsf@disp2133>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.3 
 MIME-Version: 1.0
-Received: by 2002:a4f:d234:0:0:0:0:0 with HTTP; Thu, 5 Aug 2021 05:54:01 -0700 (PDT)
-Reply-To: shawnhayden424@gmail.com
-From:   Shawn Hayden <sophiebrandon679@gmail.com>
-Date:   Thu, 5 Aug 2021 13:54:01 +0100
-Message-ID: <CAFXeZCSapq3DY2aP2ODS8PmVgMyuVdQ0KMxm-rWNBCCokxMbUQ@mail.gmail.com>
-Subject: =?UTF-8?B?Q8Otc2jDoG4gasSrZ8OydSDmhYjlloTmqZ/mp4s=?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-6Kaq5oSb55qE5pyL5Y+L77yMDQoNCuaIkeaYr+WxheS9j+WcqOe+juWci+eahOa+s+Wkp+WIqeS6
-nuWFrOawke+8jOS5n+aYr+S4gOWQjeaTgeaciSAzNSDlubTlt6XkvZzntpPpqZfnmoTmiL/lnLDn
-lKLntpPntIDkuroNCue2k+mpl+OAguaIkeacgOi/keaEn+afk+S6hiBDb3ZpZC0xOSDnl4Xmr5Lv
-vIzkuKbkuJTnlLHmlrwNCuaIkemAmeWAi+W5tOe0gO+8jOaIkeimuuW+l+aIkeaSkOS4jeS4i+WO
-u+S6huOAguaIkeS4gOebtOWcqOawp+awo+S4iw0K5bm+5aSp77yM5oiR5LiN6IO955So6Yyi6LK3
-5oiR55qE55Sf5rS744CC5oiR5Y+v5Lul5ZCR5oWI5ZaE5qmf5qeL5o2Q6LSIIDU1MDAg6JCs576O
-5YWD77yMDQrnibnliKXmmK/luavliqnnqq7kurrjgILljrvlubTmiJHnmoTlprvlrZDmrbvmlrzn
-mYznl4fvvIzmiJHllK/kuIDnmoTlhZLlrZDmmK/mhaLmgKfnl4UNCuizreW+kuaPrumcjeS6huaI
-kee1puS7lueahOaJgOacieizh+mHkeOAgg0K6Lq65Zyo55eF5bqK5LiK77yM5rKS5pyJ55Sf5a2Y
-55qE5biM5pyb77yM5oiR5biM5pybDQrkvaDluavmiJHlrozmiJDkuobmiJHmnIDlvoznmoTpoZjm
-nJvjgILpgJnmmK/kuIDlgIvngrrmiJHmnI3li5nnmoTpoZjmnJsNCueCuuaIkeeahOmdiOmtguWS
-jOe9queahOi1puWFjeWQkeS4iuW4neaHh+axguOAguWmguaenOS9oOmhmOaEjw0K5Lim5rqW5YKZ
-5o+Q5L6b5bmr5Yqp77yM6KuL5Zue562U5oiR77yM5oiR5pyD54K65oKo5o+Q5L6b6Kmz57Sw5L+h
-5oGv44CC5oiR55+l6YGT5oiRDQrlj6/ku6Xkv6Hku7vkvaDjgILoq4vluavluavmiJHjgIINCg0K
-6Kaq5YiH55qE5ZWP5YCZ44CCDQoNCuiCluaBqcK35rW355m744CCDQoNClHEq24nw6BpIGRlIHDD
-qW5neceSdSwNCg0Kd8eSIHNow6wgasWremjDuSB6w6BpIG3Em2lndcOzIGRlIMOgb2TDoGzDrHnH
-jiBnxY1uZ23DrW4sIHnEm3Now6wgecSrIG3DrW5nIHnHkm5neceSdSAzNQ0KbmnDoW4gZ8WNbmd6
-dcOyIGrEq25necOgbiBkZSBmw6FuZ2TDrGNox45uIGrEq25nasOsIHLDqW4NCmrEq25necOgbi4g
-V8eSIHp1w6xqw6xuIGfHjm5yx45ubGUgQ292aWQtMTkgYsOsbmdkw7osIGLDrG5ncWnEmyB5w7N1
-ecO6DQp3x5IgemjDqGdlIG5pw6FuasOsLCB3x5IganXDqWTDqSB3x5IgY2jEk25nIGLDuSB4acOg
-ccO5bGUuIFfHkiB5xKt6aMOtIHrDoGkgeceObmdxw6wgeGnDoA0KaseQIHRpxIFuLCB3x5IgYsO5
-bsOpbmcgecOybmcgcWnDoW4gbceOaSB3x5IgZGUgc2jEk25naHXDsy4gV8eSIGvEm3nHkCB4acOg
-bmcgY8Otc2jDoG4NCmrEq2fDsnUganXEgW56w6huZyA1NTAwIHfDoG4gbcSbaXl1w6FuLA0KdMOo
-YmnDqSBzaMOsIGLEgW5nemjDuSBxacOzbmcgcsOpbi4gUcO5bmnDoW4gd8eSIGRlIHHEq3ppIHPH
-kCB5w7ogw6FpemjDqG5nLCB3x5Igd8OpaXnEqw0KZGUgw6lyemkgc2jDrCBtw6BueMOsbmdiw6xu
-Zw0KZMeUIHTDuiBodcSraHXDsmxlIHfHkiBnxJtpIHTEgSBkZSBzdceSeceSdSB6xKtqxKtuLg0K
-VMeObmcgesOgaSBiw6xuZ2NodcOhbmcgc2jDoG5nLCBtw6lpeceSdSBzaMSTbmdjw7puIGRlIHjE
-q3fDoG5nLCB3x5IgeMSrd8OgbmcNCm7HkCBixIFuZyB3x5Igd8OhbmNow6luZ2xlIHfHkiB6dcOs
-aMOydSBkZSB5dcOgbnfDoG5nLiBaaMOoIHNow6wgecSrZ8OoIHfDqGkgd8eSIGbDunfDuQ0KZGUg
-eXXDoG53w6BuZw0Kd8OoaSB3x5IgZGUgbMOtbmdow7puIGjDqSB6dcOsIGRlIHNow6htaceObiB4
-acOgbmcgc2jDoG5nZMOsIGvEm25xacO6LiBSw7pndceSIG7HkCB5dcOgbnnDrA0KYsOsbmcgemjH
-lG5iw6hpIHTDrWfFjW5nIGLEgW5nemjDuSwgcceQbmcgaHXDrWTDoSB3x5IsIHfHkiBodcOsIHfD
-qGkgbsOtbiB0w61nxY1uZw0KeGnDoW5neMOsIHjDrG54xKsuIFfHkiB6aMSrZMOgbyB3x5INCmvE
-m3nHkCB4w6xucsOobiBux5AuIFHHkG5nIGLEgW5nIGLEgW5nIHfHki4NCg0KUcSrbnFpw6ggZGUg
-d8OobmjDsnUuDQoNClhpw6BvIMSTbsK3aMeOaSBkxJNuZy4NCg==
+On Tue, 2021-06-15 at 17:08 -0500, Eric W. Biederman wrote:
+> Oleg Nesterov <oleg@redhat.com> writes:
+> 
+> > > --- a/fs/coredump.c
+> > > +++ b/fs/coredump.c
+> > > @@ -519,7 +519,7 @@ static bool dump_interrupted(void)
+> > >          * but then we need to teach dump_write() to restart and
+> > > clear
+> > >          * TIF_SIGPENDING.
+> > >          */
+> > > -       return signal_pending(current);
+> > > +       return fatal_signal_pending(current) || freezing(current);
+> > >  }
+> > 
+> > 
+> > Well yes, this is what the comment says.
+> > 
+> > But note that there is another reason why dump_interrupted() returns
+> > true
+> > if signal_pending(), it assumes thagt __dump_emit()->__kernel_write()
+> > may
+> > fail anyway if signal_pending() is true. Say, pipe_write(), or iirc
+> > nfs,
+> > perhaps something else...
+> > 
+> > That is why zap_threads() clears TIF_SIGPENDING. Perhaps it should
+> > clear
+> > TIF_NOTIFY_SIGNAL as well and we should change io-uring to not abuse
+> > the
+> > dumping threads?
+> > 
+> > Or perhaps we should change __dump_emit() to clear signal_pending()
+> > and
+> > restart __kernel_write() if it fails or returns a short write.
+> > 
+> > Otherwise the change above doesn't look like a full fix to me.
+> 
+> Agreed.  The coredump to a pipe will still be short.  That needs
+> something additional.
+> 
+> The problem Olivier Langlois <olivier@trillion01.com> reported was
+> core dumps coming up short because TIF_NOTIFY_SIGNAL was being
+> set during a core dump.
+> 
+> We can see this with pipe_write returning -ERESTARTSYS
+> on a full pipe if signal_pending which includes TIF_NOTIFY_SIGNAL
+> is true.
+> 
+> Looking further if the thread that is core dumping initiated
+> any io_uring work then io_ring_exit_work will use task_work_add
+> to request that thread clean up it's io_uring state.
+> 
+> Perhaps we can put a big comment in dump_emit and if we
+> get back -ERESTARTSYS run tracework_notify_signal.  I am not
+> seeing any locks held at that point in the coredump, so it
+> should be safe.  The coredump is run inside of file_start_write
+> which is the only potential complication.
+> 
+> 
+> 
+> The code flow is complicated but it looks like the entire
+> point of the exercise is to call io_uring_del_task_file
+> on the originating thread.  I suppose that keeps the
+> locking of the xarray in io_uring_task simple.
+> 
+> 
+> Hmm.   All of this comes from io_uring_release.
+> How do we get to io_uring_release?  The coredump should
+> be catching everything in exit_mm before exit_files?
+> 
+> Confused and hopeful someone can explain to me what is going on,
+> and perhaps simplify it.
+> 
+> Eric
+
+Hi all,
+
+I didn't forgot about this remaining issue and I have kept thinking
+about it on and off.
+
+I did try the following on 5.12.19:
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 07afb5ddb1c4..614fe7a54c1a 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -41,6 +41,7 @@
+ #include <linux/fs.h>
+ #include <linux/path.h>
+ #include <linux/timekeeping.h>
++#include <linux/io_uring.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -625,6 +626,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 		need_suid_safe = true;
+ 	}
+ 
++	io_uring_files_cancel(current->files);
++
+ 	retval = coredump_wait(siginfo->si_signo, &core_state);
+ 	if (retval < 0)
+ 		goto fail_creds;
+-- 
+2.32.0
+
+with my current understanding, io_uring_files_cancel is supposed to
+cancel everything that might set the TIF_NOTIFY_SIGNAL.
+
+I must report that in my testing with generating a core dump through a
+pipe with the modif above, I still get truncated core dumps.
+
+systemd is having a weird error:
+[ 2577.870742] systemd-coredump[4056]: Failed to get COMM: No such
+process
+
+and nothing is captured
+
+so I have replaced it with a very simple shell:
+$ cat /proc/sys/kernel/core_pattern 
+|/home/lano1106/bin/pipe_core.sh %e %p
+
+~/bin $ cat pipe_core.sh 
+#!/bin/sh
+
+cat > /home/lano1106/core/core.$1.$2
+
+BFD: warning: /home/lano1106/core/core.test.10886 is truncated:
+expected core file size >= 24129536, found: 61440
+
+I conclude from my attempt that maybe io_uring_files_cancel is not 100%
+cleaning everything that it should clean.
+
+
