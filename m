@@ -2,292 +2,1442 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C0F3E0DE4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 07:51:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 777213E0DEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 07:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234461AbhHEFvs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Aug 2021 01:51:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36298 "EHLO
+        id S235083AbhHEF5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Aug 2021 01:57:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbhHEFvo (ORCPT
+        with ESMTP id S234461AbhHEF5i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Aug 2021 01:51:44 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91BE4C061765
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Aug 2021 22:51:30 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id o44-20020a17090a0a2fb0290176ca3e5a2fso7046792pjo.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Aug 2021 22:51:30 -0700 (PDT)
+        Thu, 5 Aug 2021 01:57:38 -0400
+Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83F06C061765;
+        Wed,  4 Aug 2021 22:57:24 -0700 (PDT)
+Received: by mail-qv1-xf33.google.com with SMTP id em4so2426747qvb.0;
+        Wed, 04 Aug 2021 22:57:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Hb1RiTdXXmVTdccKQEBpxF/aHVE3JRKRb2+RAfdmXqA=;
-        b=Sb7laE7/7wFc+Hct1FwlI7jbeFp6iSakTI8tl1rsJcfKuaZmczcDvQanNEmfXWW5nF
-         F6Kc0yHkfdIgZ+m09KvVAqC93MT1E+GlJa/dHwGPzc9EaxuoUQtbCrdlTTtX4gqhcZ09
-         cX+ZG8QLsfnIM4Kst3ch+D1l4qyaoQGHdDiDtUyH9SZIM/WMADH3FiybL47Rvd1rQ/eT
-         jHlnk1Tsfexw8jXwaC1RdZKCaTH1UNeTbxZTuuvirOHh9ONYSOkkSWCJCmBkHGYJ0chA
-         DKdMtBl5+BfFlIwa8GjELsJgmK1nrLZMg5UQHuoDsjGVN+dvxtE60VSAIFwc2NdSN6ok
-         lCcA==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VpA1QUZdjkf1W9N3zn5KbT7avLhlCfH+b+HtJRx6hts=;
+        b=FY4ltCE0pMKD/VAetlQni9g/oR6qm5QnZhfPywnws3GlB0+UZXSMh1A+cow+280668
+         LNBbZ5/Ug+6nI/OTyOECL7zFKbbiT70Gp8RzAYKrSxCC7fOQNxxgn9YugyTugPBhRGgI
+         RNqvFleeCOvFJTCyG/U04UeIr8WJGzJdqIw5gTMXtIZRaOmGwt3UF3ZnqfJ5dZBPQzSt
+         Iw2HLtMySl8YvjNWrceh0qpSA0WTlInScJPBwbi8TVoZcpCF2wZ2LCiulfuVQ1LkKxZ9
+         /WuNc8rBgIIgZNeN7sYHTRJuJr2foCgbKhiVZpRufhCgTVEkhD4dwwzTrVqyXMbLd7IW
+         RMzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Hb1RiTdXXmVTdccKQEBpxF/aHVE3JRKRb2+RAfdmXqA=;
-        b=HlDD7FIIQv2q/kp55SxxuIfg9MdEbIus5c0XTY4JHJy0X5Q/TnKx7RShzoP46U3dPv
-         Bn9EBgAvhRLc4HLpRVUpQV2G6r6sSjeGRRV+KGf7nZ8scYO9NL1PY63z9JyNayrB1LYz
-         ClweC2oHbebz6JdhttHzngaVwB3LvZk0HodbV6FiGLKiiG7EE8t77ABQ/zJIM83Dn/hY
-         EJlyvMhRVrN9Ubj4vgzv/bNspeFEhhNgYa1rQmVObMIXwQRH4v//lk2v+husqyOeLu1Y
-         s/fXswzXTGGfvlSK3Fi6A63ufbTfFUfI2xx5x2eXocdrGuI5Fe769tMV8kehgQELMBv3
-         ZFQA==
-X-Gm-Message-State: AOAM53395CIo34ecqRJoDrYNSzGNDgERc5p6gm8fIyor9zq4fIKVwT/T
-        YWVLsKbUHbP3Ekn+9Ixb0XJmXQ==
-X-Google-Smtp-Source: ABdhPJxzr9RZNQEMfrBd9eCpkhmXphAz7TaGhHybtCMVaK6G5tSveWsrI81RGYZqhWL/5ABSgzsYig==
-X-Received: by 2002:a17:90a:1c9:: with SMTP id 9mr2945132pjd.79.1628142689773;
-        Wed, 04 Aug 2021 22:51:29 -0700 (PDT)
-Received: from google.com ([2401:fa00:9:211:8490:30e3:f52b:e185])
-        by smtp.gmail.com with ESMTPSA id a12sm5140990pfg.120.2021.08.04.22.51.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Aug 2021 22:51:29 -0700 (PDT)
-Date:   Thu, 5 Aug 2021 15:51:16 +1000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 5/5] fanotify: add pidfd support to the fanotify API
-Message-ID: <YQt8VCexMYvysJB+@google.com>
-References: <20210729133953.GL29619@quack2.suse.cz>
- <CAOQ4uxi70KXGwpcBnRiyPXZCjFQfifaWaYVSDK2chaaZSyXXhQ@mail.gmail.com>
- <CAOQ4uxgFLqO5_vPTb5hkfO1Fb27H-h0TqHsB6owZxrZw4YLoEA@mail.gmail.com>
- <20210802123428.GB28745@quack2.suse.cz>
- <CAOQ4uxhk-vTOFvpuh81A2V5H0nfAJW6y3qBi9TgnZxAkRDSeKQ@mail.gmail.com>
- <20210803093753.mxcn6nzgj55erpuw@wittgenstein>
- <CAOQ4uxgKuS8SJjz2AJQAB=3d3Yw5EeJxZ28L-u4Z0Wd35ZZFHQ@mail.gmail.com>
- <20210803140421.GE10621@quack2.suse.cz>
- <YQoNfd2tCjt4MLl2@google.com>
- <20210804123940.GD4578@quack2.suse.cz>
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VpA1QUZdjkf1W9N3zn5KbT7avLhlCfH+b+HtJRx6hts=;
+        b=YIVP5H1oIaKXouBz8MSKOUTfDGyS0NGP4tsmUud2ADKTnxgKIt2t+qzMYFBO4XghRe
+         lRXSGzU55rpE1mvY2h5caKa1NR13+czhJil+CvSJ20zBtV4ZqB5IROWQkjx8Dy0CNUhQ
+         jG84NSVERUudmP3vByLBBKXomcvNFExkUOW8RQgKysUaTY8u9T+dPeuPEzTV+DU+o6Vy
+         MmHrukp22d6796PtmKRT+ijnlqzkxJAmcNWR34KkLfGuW0+dsgmboW1FVX2dUh34o8ip
+         lKyKuc1W58YS5vatJIKedUC413aSZQg7S5+FTmNT27QE6krwqPT/bE2w69FJfzemNFri
+         uw6Q==
+X-Gm-Message-State: AOAM533XzpFwrU+T4jSAgwkhFWqEELfhLSJtbqrJekSn5ADpsSRS8GDJ
+        H+UhOv8OXoYI5Y8UK+4zKdDEjKF6Kn6rFQ==
+X-Google-Smtp-Source: ABdhPJyj0ro7yOhK7VQ+f30gYcygCFWzSTgd2/4eBZPjCP/uyCqypK6hONlUQMNJNNk5HOWboAB05Q==
+X-Received: by 2002:a0c:e087:: with SMTP id l7mr3581083qvk.23.1628143043478;
+        Wed, 04 Aug 2021 22:57:23 -0700 (PDT)
+Received: from vismoola-instance-bm.osdevelopmeniad.oraclevcn.com ([209.17.40.43])
+        by smtp.gmail.com with ESMTPSA id v6sm2654595qkp.117.2021.08.04.22.57.22
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Aug 2021 22:57:23 -0700 (PDT)
+From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To:     vishal.moola@gmail.com, willy@infradead.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v2] Page Cache Allowing Hard Interrupts
+Date:   Thu,  5 Aug 2021 05:57:10 +0000
+Message-Id: <20210805055710.53673-1-vishal.moola@gmail.com>
+X-Mailer: git-send-email 2.33.0.rc0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210804123940.GD4578@quack2.suse.cz>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 04, 2021 at 02:39:40PM +0200, Jan Kara wrote:
-> On Wed 04-08-21 13:46:05, Matthew Bobrowski wrote:
-> > On Tue, Aug 03, 2021 at 04:04:21PM +0200, Jan Kara wrote:
-> > > On Tue 03-08-21 13:07:57, Amir Goldstein wrote:
-> > > > On Tue, Aug 3, 2021 at 12:37 PM Christian Brauner
-> > > > <christian.brauner@ubuntu.com> wrote:
-> > > > >
-> > > > > On Mon, Aug 02, 2021 at 05:38:20PM +0300, Amir Goldstein wrote:
-> > > > > > On Mon, Aug 2, 2021 at 3:34 PM Jan Kara <jack@suse.cz> wrote:
-> > > > > > >
-> > > > > > > On Fri 30-07-21 08:03:01, Amir Goldstein wrote:
-> > > > > > > > On Thu, Jul 29, 2021 at 6:13 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > > > > > > On Thu, Jul 29, 2021 at 4:39 PM Jan Kara <jack@suse.cz> wrote:
-> > > > > > > > > > Well, but pidfd also makes sure that /proc/<pid>/ keeps belonging to the
-> > > > > > > > > > same process while you read various data from it. And you cannot achieve
-> > > > > > > > > > that with pid+generation thing you've suggested. Plus the additional
-> > > > > > > > > > concept and its complexity is non-trivial So I tend to agree with
-> > > > > > > > > > Christian that we really want to return pidfd.
-> > > > > > > > > >
-> > > > > > > > > > Given returning pidfd is CAP_SYS_ADMIN priviledged operation I'm undecided
-> > > > > > > > > > whether it is worth the trouble to come up with some other mechanism how to
-> > > > > > > > > > return pidfd with the event. We could return some cookie which could be
-> > > > > > > > > > then (by some ioctl or so) either transformed into real pidfd or released
-> > > > > > > > > > (so that we can release pid handle in the kernel) but it looks ugly and
-> > > > > > > > > > complicates things for everybody without bringing significant security
-> > > > > > > > > > improvement (we already can pass fd with the event). So I'm pondering
-> > > > > > > > > > whether there's some other way how we could make the interface safer - e.g.
-> > > > > > > > > > so that the process receiving the event (not the one creating the group)
-> > > > > > > > > > would also need to opt in for getting fds created in its file table.
-> > > > > > > > > >
-> > > > > > > > > > But so far nothing bright has come to my mind. :-|
-> > > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > There is a way, it is not bright, but it is pretty simple -
-> > > > > > > > > store an optional pid in group->fanotify_data.fd_reader.
-> > > > > > > > >
-> > > > > > > > > With flag FAN_REPORT_PIDFD, both pidfd and event->fd reporting
-> > > > > > > > > will be disabled to any process other than fd_reader.
-> > > > > > > > > Without FAN_REPORT_PIDFD, event->fd reporting will be disabled
-> > > > > > > > > if fd_reaader is set to a process other than the reader.
-> > > > > > > > >
-> > > > > > > > > A process can call ioctl START_FD_READER to set fd_reader to itself.
-> > > > > > > > > With FAN_REPORT_PIDFD, if reaader_fd is NULL and the reader
-> > > > > > > > > process has CAP_SYS_ADMIN, read() sets fd_reader to itself.
-> > > > > > > > >
-> > > > > > > > > Permission wise, START_FD_READER is allowed with
-> > > > > > > > > CAP_SYS_ADMIN or if fd_reader is not owned by another process.
-> > > > > > > > > We may consider YIELD_FD_READER ioctl if needed.
-> > > > > > > > >
-> > > > > > > > > I think that this is a pretty cheap price for implementation
-> > > > > > > > > and maybe acceptable overhead for complicating the API?
-> > > > > > > > > Note that without passing fd, there is no need for any ioctl.
-> > > > > > > > >
-> > > > > > > > > An added security benefit is that the ioctl adds is a way for the
-> > > > > > > > > caller of fanotify_init() to make sure that even if the fanotify_fd is
-> > > > > > > > > leaked, that event->fd will not be leaked, regardless of flag
-> > > > > > > > > FAN_REPORT_PIDFD.
-> > > > > > > > >
-> > > > > > > > > So the START_FD_READER ioctl feature could be implemented
-> > > > > > > > > and documented first.
-> > > > > > > > > And then FAN_REPORT_PIDFD could use the feature with a
-> > > > > > > > > very minor API difference:
-> > > > > > > > > - Without the flag, other processes can read fds by default and
-> > > > > > > > >   group initiator can opt-out
-> > > > > > > > > - With the flag, other processes cannot read fds by default and
-> > > > > > > > >   need to opt-in
-> > > > > > > >
-> > > > > > > > Or maybe something even simpler... fanotify_init() flag
-> > > > > > > > FAN_PRIVATE (or FAN_PROTECTED) that limits event reading
-> > > > > > > > to the initiator process (not only fd reading).
-> > > > > > > >
-> > > > > > > > FAN_REPORT_PIDFD requires FAN_PRIVATE.
-> > > > > > > > If we do not know there is a use case for passing fanotify_fd
-> > > > > > > > that reports pidfds to another process why implement the ioctl.
-> > > > > > > > We can always implement it later if the need arises.
-> > > > > > > > If we contemplate this future change, though, maybe the name
-> > > > > > > > FAN_PROTECTED is better to start with.
-> > > > > > >
-> > > > > > > Good ideas. I think we are fine with returning pidfd only to the process
-> > > > > > > creating the fanotify group. Later we can add an ioctl which would indicate
-> > > > > > > that the process is also prepared to have fds created in its file table.
-> > > > > > > But I have still some open questions:
-> > > > > > > Do we want threads of the same process to still be able to receive fds?
-> > > > > >
-> > > > > > I don't see why not.
-> > > > > > They will be bloating the same fd table as the thread that called
-> > > > > > fanotify_init().
-> > > > > >
-> > > > > > > Also pids can be recycled so they are probably not completely reliable
-> > > > > > > identifiers?
-> > > > > >
-> > > > > > Not sure I follow. The group hold a refcount on struct pid of the process that
-> > > > > > called fanotify_init() - I think that can used to check if reader process is
-> > > > > > the same process, but not sure. Maybe there is another way (Christian?).
-> > > > >
-> > > > > If the fanotify group hold's a reference to struct pid it won't get
-> > > > > recycled. And it can be used to check if the reader thread is the same
-> > > > > thread with some care. You also have to be specific what exactly you
-> > > > > want to know.  If you're asking if the reading process is the same as
-> > > > > the fanotify_init() process you can be asking one of two things.
-> > > > >
-> > > > > You can be asking if the reader is a thread in the same thread-group as
-> > > > > the thread that called fanotify_init(). In that case you might need to
-> > > > > do something like
-> > > > >
-> > > > > rcu_read_lock();
-> > > > > struct task_struct *fanotify_init_task_struct = pid_task(stashed_struct_pid, PIDTYPE_PID);
-> > > > > if (!fanotify_init_task_struct) {
-> > > > >         /* The thread which called fanotify_init() has died already. */
-> > > > >         return -ESRCH;
-> > > > > }
-> > > > > if (same_thread_group(fanotify_init_task_struct, current))
-> > > > > rcu_read_unlock();
-> > > > >
-> > > > > though thinking about it makes me realise that there's a corner case. If
-> > > > > the thread that called fanotify_init() is a thread in a non-empty
-> > > > > thread-group it can already have died and been reaped. This would mean,
-> > > > > pid_task(..., PIDTYPE_PID) will return NULL but there are still other
-> > > > > threads alive in the thread-group. Handling that case might be a bit
-> > > > > complicated.
-> > > > >
-> > > > > If you're asking whether the reading thread is really the same as the
-> > > > > thread that created the fanotify instance then you might need to do sm
-> > > > > like
-> > > > >
-> > > > > rcu_read_lock();
-> > > > > if (pid_task(stashed_struct_pid, PIDTYPE_PID) == current)
-> > > > > rcu_read_unlock();
-> > > > >
-> > > > > Just for completeness if I remember all of this right: there's a corner
-> > > > > case because of how de_thread() works.
-> > > > > During exec the thread that is execing will assume the struct pid of the
-> > > > > old thread-group leader. (All other threads in the same thread-group
-> > > > > will get killed.)
-> > > > > Assume the thread that created the fanotify instance is not the
-> > > > > thread-group leader in its non-empty thread-group. And further assume it
-> > > > > exec's. Then it will assume the struct pid of the old thread-group
-> > > > > leader during de_thread().
-> > > > > Assume the thread inherits the fanotify fd across the exec. Now, when it
-> > > > > tries to read a new event after the exec then pid_task() will return
-> > > > > NULL.
-> > > > > However, if the thread was already the thread-group leader before the
-> > > > > exec then pid_task() will return the same task struct as before after
-> > > > > the exec (because no struct pid swapping needed to take place).
-> > > > >
-> > > > > I hope this causes more clarity ?then confusion. :)
-> > > > 
-> > > > I'm afraid it's the latter :D
-> > > > 
-> > > > Sigh! We must simplify.
-> > > > 
-> > > > Thinking out loud, instead of sealing the possibility of another
-> > > > process reading pidfd, maybe just avoid the most obvious unintentional
-> > > > leak of fanotify_fd to another process by mandating  FAN_CLOEXEC?
-> > >
-> > > Well, I don't think we need any protection from leaking fanotify_fd. It is
-> > > special fd with special priviledges as any other. If you leak it, well, bad
-> > > luck but that's how Unix priviledge model works.
-> > > 
-> > > The threat IMO is that you have a process X, that process expects to
-> > > receive fd to work with from process Y. Now process Y is malicious (or
-> > > taken over by an attacker) and passes to X fanotify_fd. X reads from
-> > > fanotify_fd to get data to process, it performs all kinds of validity
-> > > checks on untrusted input but it does not expect that the read has side
-> > > effects on X's file_table and in the worst case can lead to some compromise
-> > > of X or easily to DoS on X by exhausting its file_table space.
-> > >
-> > > Currently this attack vector is moot because you have to have CAP_SYS_ADMIN
-> > > to get to fanotify_fd and then you can certainly do worse things. But OTOH
-> > > I can see why Jann was uneasy about this.
-> > 
-> > As I have breifly expressed in my previous emails, the cause for concern
-> > here is flakey IMO. If there's sensible something that I'm clearly missing,
-> > then please explain.
-> 
-> No, I think your understanding is correct.
-> 
-> > From my perspective, the only sensible attack vector that's maybe worth
-> > worrying about here is the possibility of exhausting the fdtable of a given
-> > process, which yes, can be considered as a form of DoS. However, in any
-> > case, there are other defensive protections/measures that a programmer
-> > could employ in their application code which could prevent such from ever
-> > happening.
-> > 
-> > The whole passing of file descriptors between process Y and process X and
-> > the leaking of a file descriptor thing simply goes back to what you've
-> > mentioned above Jan. I consider it a very weak argument. When enabling
-> > FAN_REPORT_PIDFD, the process requires CAP_SYS_ADMIN. If that process ever
-> > has its execution flow hijacked by an attacker, then I'm sorry, I think
-> > there's other larger causes for concern at that point rather then worrying
-> > about the state of some other child processes fdtable.
-> > 
-> > In general cases, I get that passing a file descriptor between process Y
-> > and process X and then having process X's fdtable modified as result of
-> > calling functions like read() is considered undesired. But, for
-> > applications that makes use of fanotify is there ever a case where we pass
-> > the fanotify file descriptor to a random/unexpected process and have it
-> > process events? I don't think so. So, I suppose what I'm trying to say is
-> > that, if an application chooses to opt-in and use a flag like
-> > FAN_REPORT_PIDFD or any other future file descriptor generating variant,
-> > the expectation is that which ever process is created and event processing
-> > is passed to that process, then it should always expect to have its fdtable
-> > modified when reading events.
-> 
-> Yes, I was thinking about this some more and at this point, given the lack
-> of convenient options for the hardening, I think the best option is to keep
-> the interface as originally planned. Because I'm afraid the hardening options
-> we were able to come up with would only cause confusion (and from confusion
-> bugs easily arise) for little security gain.
+Previously, the page cache would disable ALL interrupts when making any
+modifications. This forces the kernel to wait for the page cache to finish
+its task(s) before the interrupts could be serviced. The page cache does
+not necessarily need to disable hard interrupts only soft interrupts.
 
-OK, in that case are you happy for me to post hopefully the last iteration
-of this series with the minor nits addressed?
+We can change the locks from _irq to _bh, so we only disable soft
+interrupts and allow hard interrupts. This also means we do not need to
+keep track of the flags for hard irq states. This should improve the kernel
+interrupt latency as the kernel can handle hard interrupts as they come in
+instead of waiting for the page cache to finish its tasks.
 
-/M
+This patch is a non-exhaustive list of changes to locks relating to the page
+cache. All of these changes yielded no issues with interrupt context locking
+conflicts, and should contribute to a better interrupt latency.
+
+Also to accomplish the above the following changes were made:
+Additional functions were added to the list_lru in order to allow locking
+only soft irqs for the i_pages lock.
+In mm/workingset.c the lru lock was changed to be nested bh instead of
+nested irq.
+Fixed some bugs that arose going from hard to soft locks
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+
+Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+---
+
+Changes for V2:
+-list_lruvec_shrink_walk_irq was modified to accomodate bh instead of irq
+and was removed as it is no longer necessacy.
+-Fixed vmstat assuming irqs are disabled under i_pages (it still
+disables irqs, just closer to the dependent function call)
+-Reorganized the additional changes section in V1 commit
+---
+ arch/arm/include/asm/cacheflush.h    |  4 +-
+ arch/csky/abiv1/inc/abi/cacheflush.h |  4 +-
+ arch/nds32/include/asm/cacheflush.h  |  4 +-
+ arch/nios2/include/asm/cacheflush.h  |  4 +-
+ arch/parisc/include/asm/cacheflush.h |  4 +-
+ fs/btrfs/extent_io.c                 |  4 +-
+ fs/dax.c                             | 60 ++++++++++++++--------------
+ fs/f2fs/data.c                       |  5 +--
+ fs/fs-writeback.c                    |  4 +-
+ fs/gfs2/glops.c                      |  4 +-
+ fs/inode.c                           |  6 +--
+ fs/nilfs2/btnode.c                   |  8 ++--
+ fs/nilfs2/page.c                     | 14 +++----
+ include/linux/backing-dev.h          |  4 +-
+ include/linux/list_lru.h             | 11 ++---
+ include/linux/memcontrol.h           |  4 +-
+ mm/filemap.c                         | 19 ++++-----
+ mm/khugepaged.c                      | 28 ++++++-------
+ mm/list_lru.c                        |  6 +--
+ mm/memfd.c                           | 16 ++++----
+ mm/migrate.c                         | 18 ++++-----
+ mm/page-writeback.c                  | 23 +++++------
+ mm/shmem.c                           | 12 +++---
+ mm/swap_slots.c                      |  6 +--
+ mm/swap_state.c                      | 14 +++----
+ mm/truncate.c                        | 19 +++++----
+ mm/vmscan.c                          |  9 ++---
+ mm/workingset.c                      | 13 +++---
+ 28 files changed, 157 insertions(+), 170 deletions(-)
+
+diff --git a/arch/arm/include/asm/cacheflush.h b/arch/arm/include/asm/cacheflush.h
+index 2e24e765e6d3..1feab3ef87e5 100644
+--- a/arch/arm/include/asm/cacheflush.h
++++ b/arch/arm/include/asm/cacheflush.h
+@@ -315,8 +315,8 @@ static inline void flush_anon_page(struct vm_area_struct *vma,
+ #define ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
+ extern void flush_kernel_dcache_page(struct page *);
+ 
+-#define flush_dcache_mmap_lock(mapping)		xa_lock_irq(&mapping->i_pages)
+-#define flush_dcache_mmap_unlock(mapping)	xa_unlock_irq(&mapping->i_pages)
++#define flush_dcache_mmap_lock(mapping)		xa_lock_bh(&mapping->i_pages)
++#define flush_dcache_mmap_unlock(mapping)	xa_unlock_bh(&mapping->i_pages)
+ 
+ /*
+  * We don't appear to need to do anything here.  In fact, if we did, we'd
+diff --git a/arch/csky/abiv1/inc/abi/cacheflush.h b/arch/csky/abiv1/inc/abi/cacheflush.h
+index 6cab7afae962..bea1d1d8cb49 100644
+--- a/arch/csky/abiv1/inc/abi/cacheflush.h
++++ b/arch/csky/abiv1/inc/abi/cacheflush.h
+@@ -17,8 +17,8 @@ extern void flush_dcache_page(struct page *);
+ #define ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
+ extern void flush_kernel_dcache_page(struct page *);
+ 
+-#define flush_dcache_mmap_lock(mapping)		xa_lock_irq(&mapping->i_pages)
+-#define flush_dcache_mmap_unlock(mapping)	xa_unlock_irq(&mapping->i_pages)
++#define flush_dcache_mmap_lock(mapping)		xa_lock_bh(&mapping->i_pages)
++#define flush_dcache_mmap_unlock(mapping)	xa_unlock_bh(&mapping->i_pages)
+ 
+ static inline void flush_kernel_vmap_range(void *addr, int size)
+ {
+diff --git a/arch/nds32/include/asm/cacheflush.h b/arch/nds32/include/asm/cacheflush.h
+index 7d6824f7c0e8..38d1c23fca43 100644
+--- a/arch/nds32/include/asm/cacheflush.h
++++ b/arch/nds32/include/asm/cacheflush.h
+@@ -40,8 +40,8 @@ void flush_anon_page(struct vm_area_struct *vma,
+ void flush_kernel_dcache_page(struct page *page);
+ void flush_kernel_vmap_range(void *addr, int size);
+ void invalidate_kernel_vmap_range(void *addr, int size);
+-#define flush_dcache_mmap_lock(mapping)   xa_lock_irq(&(mapping)->i_pages)
+-#define flush_dcache_mmap_unlock(mapping) xa_unlock_irq(&(mapping)->i_pages)
++#define flush_dcache_mmap_lock(mapping)   xa_lock_bh(&(mapping)->i_pages)
++#define flush_dcache_mmap_unlock(mapping) xa_unlock_bh(&(mapping)->i_pages)
+ 
+ #else
+ void flush_icache_user_page(struct vm_area_struct *vma, struct page *page,
+diff --git a/arch/nios2/include/asm/cacheflush.h b/arch/nios2/include/asm/cacheflush.h
+index 18eb9f69f806..816754cc0c4a 100644
+--- a/arch/nios2/include/asm/cacheflush.h
++++ b/arch/nios2/include/asm/cacheflush.h
+@@ -46,7 +46,7 @@ extern void copy_from_user_page(struct vm_area_struct *vma, struct page *page,
+ extern void flush_dcache_range(unsigned long start, unsigned long end);
+ extern void invalidate_dcache_range(unsigned long start, unsigned long end);
+ 
+-#define flush_dcache_mmap_lock(mapping)		xa_lock_irq(&mapping->i_pages)
+-#define flush_dcache_mmap_unlock(mapping)	xa_unlock_irq(&mapping->i_pages)
++#define flush_dcache_mmap_lock(mapping)		xa_lock_bh(&mapping->i_pages)
++#define flush_dcache_mmap_unlock(mapping)	xa_unlock_bh(&mapping->i_pages)
+ 
+ #endif /* _ASM_NIOS2_CACHEFLUSH_H */
+diff --git a/arch/parisc/include/asm/cacheflush.h b/arch/parisc/include/asm/cacheflush.h
+index 99663fc1f997..ac74ca0dd6c3 100644
+--- a/arch/parisc/include/asm/cacheflush.h
++++ b/arch/parisc/include/asm/cacheflush.h
+@@ -55,8 +55,8 @@ void invalidate_kernel_vmap_range(void *vaddr, int size);
+ #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
+ extern void flush_dcache_page(struct page *page);
+ 
+-#define flush_dcache_mmap_lock(mapping)		xa_lock_irq(&mapping->i_pages)
+-#define flush_dcache_mmap_unlock(mapping)	xa_unlock_irq(&mapping->i_pages)
++#define flush_dcache_mmap_lock(mapping)		xa_lock_bh(&mapping->i_pages)
++#define flush_dcache_mmap_unlock(mapping)	xa_unlock_bh(&mapping->i_pages)
+ 
+ #define flush_icache_page(vma,page)	do { 		\
+ 	flush_kernel_dcache_page(page);			\
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 9e81d25dea70..add1c04ed784 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -6209,11 +6209,11 @@ static void btree_clear_page_dirty(struct page *page)
+ 	ASSERT(PageDirty(page));
+ 	ASSERT(PageLocked(page));
+ 	clear_page_dirty_for_io(page);
+-	xa_lock_irq(&page->mapping->i_pages);
++	xa_lock_bh(&page->mapping->i_pages);
+ 	if (!PageDirty(page))
+ 		__xa_clear_mark(&page->mapping->i_pages,
+ 				page_index(page), PAGECACHE_TAG_DIRTY);
+-	xa_unlock_irq(&page->mapping->i_pages);
++	xa_unlock_bh(&page->mapping->i_pages);
+ }
+ 
+ static void clear_subpage_extent_buffer_dirty(const struct extent_buffer *eb)
+diff --git a/fs/dax.c b/fs/dax.c
+index da41f9363568..9fcb5a0caa20 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -241,11 +241,11 @@ static void *get_unlocked_entry(struct xa_state *xas, unsigned int order)
+ 		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
+ 		prepare_to_wait_exclusive(wq, &ewait.wait,
+ 					  TASK_UNINTERRUPTIBLE);
+-		xas_unlock_irq(xas);
++		xas_unlock_bh(xas);
+ 		xas_reset(xas);
+ 		schedule();
+ 		finish_wait(wq, &ewait.wait);
+-		xas_lock_irq(xas);
++		xas_lock_bh(xas);
+ 	}
+ }
+ 
+@@ -270,7 +270,7 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
+ 	 * never successfully performs its own wake up.
+ 	 */
+ 	prepare_to_wait(wq, &ewait.wait, TASK_UNINTERRUPTIBLE);
+-	xas_unlock_irq(xas);
++	xas_unlock_bh(xas);
+ 	schedule();
+ 	finish_wait(wq, &ewait.wait);
+ }
+@@ -293,9 +293,9 @@ static void dax_unlock_entry(struct xa_state *xas, void *entry)
+ 
+ 	BUG_ON(dax_is_locked(entry));
+ 	xas_reset(xas);
+-	xas_lock_irq(xas);
++	xas_lock_bh(xas);
+ 	old = xas_store(xas, entry);
+-	xas_unlock_irq(xas);
++	xas_unlock_bh(xas);
+ 	BUG_ON(!dax_is_locked(old));
+ 	dax_wake_entry(xas, entry, WAKE_NEXT);
+ }
+@@ -423,9 +423,9 @@ dax_entry_t dax_lock_page(struct page *page)
+ 			break;
+ 
+ 		xas.xa = &mapping->i_pages;
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 		if (mapping != page->mapping) {
+-			xas_unlock_irq(&xas);
++			xas_unlock_bh(&xas);
+ 			continue;
+ 		}
+ 		xas_set(&xas, page->index);
+@@ -437,7 +437,7 @@ dax_entry_t dax_lock_page(struct page *page)
+ 			continue;
+ 		}
+ 		dax_lock_entry(&xas, entry);
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 		break;
+ 	}
+ 	rcu_read_unlock();
+@@ -493,7 +493,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 
+ retry:
+ 	pmd_downgrade = false;
+-	xas_lock_irq(xas);
++	xas_lock_bh(xas);
+ 	entry = get_unlocked_entry(xas, order);
+ 
+ 	if (entry) {
+@@ -526,12 +526,12 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 		 * unmapped.
+ 		 */
+ 		if (dax_is_zero_entry(entry)) {
+-			xas_unlock_irq(xas);
++			xas_unlock_bh(xas);
+ 			unmap_mapping_pages(mapping,
+ 					xas->xa_index & ~PG_PMD_COLOUR,
+ 					PG_PMD_NR, false);
+ 			xas_reset(xas);
+-			xas_lock_irq(xas);
++			xas_lock_bh(xas);
+ 		}
+ 
+ 		dax_disassociate_entry(entry, mapping, false);
+@@ -557,7 +557,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 	}
+ 
+ out_unlock:
+-	xas_unlock_irq(xas);
++	xas_unlock_bh(xas);
+ 	if (xas_nomem(xas, mapping_gfp_mask(mapping) & ~__GFP_HIGHMEM))
+ 		goto retry;
+ 	if (xas->xa_node == XA_ERROR(-ENOMEM))
+@@ -566,7 +566,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 		return xa_mk_internal(VM_FAULT_SIGBUS);
+ 	return entry;
+ fallback:
+-	xas_unlock_irq(xas);
++	xas_unlock_bh(xas);
+ 	return xa_mk_internal(VM_FAULT_FALLBACK);
+ }
+ 
+@@ -626,7 +626,7 @@ struct page *dax_layout_busy_page_range(struct address_space *mapping,
+ 	 */
+ 	unmap_mapping_pages(mapping, start_idx, end_idx - start_idx + 1, 0);
+ 
+-	xas_lock_irq(&xas);
++	xas_lock_bh(&xas);
+ 	xas_for_each(&xas, entry, end_idx) {
+ 		if (WARN_ON_ONCE(!xa_is_value(entry)))
+ 			continue;
+@@ -641,11 +641,11 @@ struct page *dax_layout_busy_page_range(struct address_space *mapping,
+ 			continue;
+ 
+ 		xas_pause(&xas);
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 		cond_resched();
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 	}
+-	xas_unlock_irq(&xas);
++	xas_unlock_bh(&xas);
+ 	return page;
+ }
+ EXPORT_SYMBOL_GPL(dax_layout_busy_page_range);
+@@ -663,7 +663,7 @@ static int __dax_invalidate_entry(struct address_space *mapping,
+ 	int ret = 0;
+ 	void *entry;
+ 
+-	xas_lock_irq(&xas);
++	xas_lock_bh(&xas);
+ 	entry = get_unlocked_entry(&xas, 0);
+ 	if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
+ 		goto out;
+@@ -677,7 +677,7 @@ static int __dax_invalidate_entry(struct address_space *mapping,
+ 	ret = 1;
+ out:
+ 	put_unlocked_entry(&xas, entry, WAKE_ALL);
+-	xas_unlock_irq(&xas);
++	xas_unlock_bh(&xas);
+ 	return ret;
+ }
+ 
+@@ -761,7 +761,7 @@ static void *dax_insert_entry(struct xa_state *xas,
+ 	}
+ 
+ 	xas_reset(xas);
+-	xas_lock_irq(xas);
++	xas_lock_bh(xas);
+ 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
+ 		void *old;
+ 
+@@ -786,7 +786,7 @@ static void *dax_insert_entry(struct xa_state *xas,
+ 	if (dirty)
+ 		xas_set_mark(xas, PAGECACHE_TAG_DIRTY);
+ 
+-	xas_unlock_irq(xas);
++	xas_unlock_bh(xas);
+ 	return entry;
+ }
+ 
+@@ -924,7 +924,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+ 	 * they will see the entry locked and wait for it to unlock.
+ 	 */
+ 	xas_clear_mark(xas, PAGECACHE_TAG_TOWRITE);
+-	xas_unlock_irq(xas);
++	xas_unlock_bh(xas);
+ 
+ 	/*
+ 	 * If dax_writeback_mapping_range() was given a wbc->range_start
+@@ -946,7 +946,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+ 	 * entry lock.
+ 	 */
+ 	xas_reset(xas);
+-	xas_lock_irq(xas);
++	xas_lock_bh(xas);
+ 	xas_store(xas, entry);
+ 	xas_clear_mark(xas, PAGECACHE_TAG_DIRTY);
+ 	dax_wake_entry(xas, entry, WAKE_NEXT);
+@@ -984,7 +984,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+ 
+ 	tag_pages_for_writeback(mapping, xas.xa_index, end_index);
+ 
+-	xas_lock_irq(&xas);
++	xas_lock_bh(&xas);
+ 	xas_for_each_marked(&xas, entry, end_index, PAGECACHE_TAG_TOWRITE) {
+ 		ret = dax_writeback_one(&xas, dax_dev, mapping, entry);
+ 		if (ret < 0) {
+@@ -995,11 +995,11 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+ 			continue;
+ 
+ 		xas_pause(&xas);
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 		cond_resched();
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 	}
+-	xas_unlock_irq(&xas);
++	xas_unlock_bh(&xas);
+ 	trace_dax_writeback_range_done(inode, xas.xa_index, end_index);
+ 	return ret;
+ }
+@@ -1691,20 +1691,20 @@ dax_insert_pfn_mkwrite(struct vm_fault *vmf, pfn_t pfn, unsigned int order)
+ 	void *entry;
+ 	vm_fault_t ret;
+ 
+-	xas_lock_irq(&xas);
++	xas_lock_bh(&xas);
+ 	entry = get_unlocked_entry(&xas, order);
+ 	/* Did we race with someone splitting entry or so? */
+ 	if (!entry || dax_is_conflict(entry) ||
+ 	    (order == 0 && !dax_is_pte_entry(entry))) {
+ 		put_unlocked_entry(&xas, entry, WAKE_NEXT);
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
+ 						      VM_FAULT_NOPAGE);
+ 		return VM_FAULT_NOPAGE;
+ 	}
+ 	xas_set_mark(&xas, PAGECACHE_TAG_DIRTY);
+ 	dax_lock_entry(&xas, entry);
+-	xas_unlock_irq(&xas);
++	xas_unlock_bh(&xas);
+ 	if (order == 0)
+ 		ret = vmf_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
+ #ifdef CONFIG_FS_DAX_PMD
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d2cf48c5a2e4..b1d6a43d4b1c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -4083,12 +4083,11 @@ const struct address_space_operations f2fs_dblock_aops = {
+ void f2fs_clear_page_cache_dirty_tag(struct page *page)
+ {
+ 	struct address_space *mapping = page_mapping(page);
+-	unsigned long flags;
+ 
+-	xa_lock_irqsave(&mapping->i_pages, flags);
++	xa_lock_bh(&mapping->i_pages);
+ 	__xa_clear_mark(&mapping->i_pages, page_index(page),
+ 						PAGECACHE_TAG_DIRTY);
+-	xa_unlock_irqrestore(&mapping->i_pages, flags);
++	xa_unlock_bh(&mapping->i_pages);
+ }
+ 
+ int __init f2fs_init_post_read_processing(void)
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 4c3370548982..67d7af38b345 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -376,7 +376,7 @@ static bool inode_do_switch_wbs(struct inode *inode,
+ 	bool switched = false;
+ 
+ 	spin_lock(&inode->i_lock);
+-	xa_lock_irq(&mapping->i_pages);
++	xa_lock_bh(&mapping->i_pages);
+ 
+ 	/*
+ 	 * Once I_FREEING or I_WILL_FREE are visible under i_lock, the eviction
+@@ -447,7 +447,7 @@ static bool inode_do_switch_wbs(struct inode *inode,
+ 	 */
+ 	smp_store_release(&inode->i_state, inode->i_state & ~I_WB_SWITCH);
+ 
+-	xa_unlock_irq(&mapping->i_pages);
++	xa_unlock_bh(&mapping->i_pages);
+ 	spin_unlock(&inode->i_lock);
+ 
+ 	return switched;
+diff --git a/fs/gfs2/glops.c b/fs/gfs2/glops.c
+index 54d3fbeb3002..19d93d6ad67e 100644
+--- a/fs/gfs2/glops.c
++++ b/fs/gfs2/glops.c
+@@ -537,9 +537,9 @@ static void inode_go_dump(struct seq_file *seq, struct gfs2_glock *gl,
+ 	if (ip == NULL)
+ 		return;
+ 
+-	xa_lock_irq(&inode->i_data.i_pages);
++	xa_lock_bh(&inode->i_data.i_pages);
+ 	nrpages = inode->i_data.nrpages;
+-	xa_unlock_irq(&inode->i_data.i_pages);
++	xa_unlock_bh(&inode->i_data.i_pages);
+ 
+ 	gfs2_print_dbg(seq, "%s I: n:%llu/%llu t:%u f:0x%02lx d:0x%08x s:%llu "
+ 		       "p:%lu\n", fs_id_buf,
+diff --git a/fs/inode.c b/fs/inode.c
+index c93500d84264..56b54a13b58c 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -368,7 +368,7 @@ EXPORT_SYMBOL(inc_nlink);
+ 
+ static void __address_space_init_once(struct address_space *mapping)
+ {
+-	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ | XA_FLAGS_ACCOUNT);
++	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_BH | XA_FLAGS_ACCOUNT);
+ 	init_rwsem(&mapping->i_mmap_rwsem);
+ 	INIT_LIST_HEAD(&mapping->private_list);
+ 	spin_lock_init(&mapping->private_lock);
+@@ -527,7 +527,7 @@ void clear_inode(struct inode *inode)
+ 	 * process of removing the last page (in __delete_from_page_cache())
+ 	 * and we must not free the mapping under it.
+ 	 */
+-	xa_lock_irq(&inode->i_data.i_pages);
++	xa_lock_bh(&inode->i_data.i_pages);
+ 	BUG_ON(inode->i_data.nrpages);
+ 	/*
+ 	 * Almost always, mapping_empty(&inode->i_data) here; but there are
+@@ -537,7 +537,7 @@ void clear_inode(struct inode *inode)
+ 	 * or a cleanup function is called here, do not BUG_ON(!mapping_empty),
+ 	 * nor even WARN_ON(!mapping_empty).
+ 	 */
+-	xa_unlock_irq(&inode->i_data.i_pages);
++	xa_unlock_bh(&inode->i_data.i_pages);
+ 	BUG_ON(!list_empty(&inode->i_data.private_list));
+ 	BUG_ON(!(inode->i_state & I_FREEING));
+ 	BUG_ON(inode->i_state & I_CLEAR);
+diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
+index 4391fd3abd8f..3461fad484da 100644
+--- a/fs/nilfs2/btnode.c
++++ b/fs/nilfs2/btnode.c
+@@ -178,9 +178,9 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 				       (unsigned long long)oldkey,
+ 				       (unsigned long long)newkey);
+ 
+-		xa_lock_irq(&btnc->i_pages);
++		xa_lock_bh(&btnc->i_pages);
+ 		err = __xa_insert(&btnc->i_pages, newkey, opage, GFP_NOFS);
+-		xa_unlock_irq(&btnc->i_pages);
++		xa_unlock_bh(&btnc->i_pages);
+ 		/*
+ 		 * Note: page->index will not change to newkey until
+ 		 * nilfs_btnode_commit_change_key() will be called.
+@@ -235,10 +235,10 @@ void nilfs_btnode_commit_change_key(struct address_space *btnc,
+ 				       (unsigned long long)newkey);
+ 		mark_buffer_dirty(obh);
+ 
+-		xa_lock_irq(&btnc->i_pages);
++		xa_lock_bh(&btnc->i_pages);
+ 		__xa_erase(&btnc->i_pages, oldkey);
+ 		__xa_set_mark(&btnc->i_pages, newkey, PAGECACHE_TAG_DIRTY);
+-		xa_unlock_irq(&btnc->i_pages);
++		xa_unlock_bh(&btnc->i_pages);
+ 
+ 		opage->index = obh->b_blocknr = newkey;
+ 		unlock_page(opage);
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 171fb5cd427f..38669536ce8e 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -321,13 +321,13 @@ void nilfs_copy_back_pages(struct address_space *dmap,
+ 			struct page *p;
+ 
+ 			/* move the page to the destination cache */
+-			xa_lock_irq(&smap->i_pages);
++			xa_lock_bh(&smap->i_pages);
+ 			p = __xa_erase(&smap->i_pages, offset);
+ 			WARN_ON(page != p);
+ 			smap->nrpages--;
+-			xa_unlock_irq(&smap->i_pages);
++			xa_unlock_bh(&smap->i_pages);
+ 
+-			xa_lock_irq(&dmap->i_pages);
++			xa_lock_bh(&dmap->i_pages);
+ 			p = __xa_store(&dmap->i_pages, offset, page, GFP_NOFS);
+ 			if (unlikely(p)) {
+ 				/* Probably -ENOMEM */
+@@ -340,7 +340,7 @@ void nilfs_copy_back_pages(struct address_space *dmap,
+ 					__xa_set_mark(&dmap->i_pages, offset,
+ 							PAGECACHE_TAG_DIRTY);
+ 			}
+-			xa_unlock_irq(&dmap->i_pages);
++			xa_unlock_bh(&dmap->i_pages);
+ 		}
+ 		unlock_page(page);
+ 	}
+@@ -461,14 +461,14 @@ int __nilfs_clear_page_dirty(struct page *page)
+ 	struct address_space *mapping = page->mapping;
+ 
+ 	if (mapping) {
+-		xa_lock_irq(&mapping->i_pages);
++		xa_lock_bh(&mapping->i_pages);
+ 		if (test_bit(PG_dirty, &page->flags)) {
+ 			__xa_clear_mark(&mapping->i_pages, page_index(page),
+ 					     PAGECACHE_TAG_DIRTY);
+-			xa_unlock_irq(&mapping->i_pages);
++			xa_unlock_bh(&mapping->i_pages);
+ 			return clear_page_dirty_for_io(page);
+ 		}
+-		xa_unlock_irq(&mapping->i_pages);
++		xa_unlock_bh(&mapping->i_pages);
+ 		return 0;
+ 	}
+ 	return TestClearPageDirty(page);
+diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+index 44df4fcef65c..5535eed4222f 100644
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -315,7 +315,7 @@ unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
+ 	cookie->locked = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
+ 
+ 	if (unlikely(cookie->locked))
+-		xa_lock_irqsave(&inode->i_mapping->i_pages, cookie->flags);
++		xa_lock_bh(&inode->i_mapping->i_pages);
+ 
+ 	/*
+ 	 * Protected by either !I_WB_SWITCH + rcu_read_lock() or the i_pages
+@@ -333,7 +333,7 @@ static inline void unlocked_inode_to_wb_end(struct inode *inode,
+ 					    struct wb_lock_cookie *cookie)
+ {
+ 	if (unlikely(cookie->locked))
+-		xa_unlock_irqrestore(&inode->i_mapping->i_pages, cookie->flags);
++		xa_unlock_bh(&inode->i_mapping->i_pages);
+ 
+ 	rcu_read_unlock();
+ }
+diff --git a/include/linux/list_lru.h b/include/linux/list_lru.h
+index 1b5fceb565df..d0ab82030636 100644
+--- a/include/linux/list_lru.h
++++ b/include/linux/list_lru.h
+@@ -168,7 +168,7 @@ unsigned long list_lru_walk_one(struct list_lru *lru,
+ 				list_lru_walk_cb isolate, void *cb_arg,
+ 				unsigned long *nr_to_walk);
+ /**
+- * list_lru_walk_one_irq: walk a list_lru, isolating and disposing freeable items.
++ * list_lru_walk_one_bh: walk a list_lru, isolating and disposing freeable items.
+  * @lru: the lru pointer.
+  * @nid: the node id to scan from.
+  * @memcg: the cgroup to scan from.
+@@ -178,12 +178,13 @@ unsigned long list_lru_walk_one(struct list_lru *lru,
+  * @nr_to_walk: how many items to scan.
+  *
+  * Same as @list_lru_walk_one except that the spinlock is acquired with
+- * spin_lock_irq().
++ * spin_lock_bh().
+  */
+-unsigned long list_lru_walk_one_irq(struct list_lru *lru,
++unsigned long list_lru_walk_one_bh(struct list_lru *lru,
+ 				    int nid, struct mem_cgroup *memcg,
+ 				    list_lru_walk_cb isolate, void *cb_arg,
+ 				    unsigned long *nr_to_walk);
++
+ unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
+ 				 list_lru_walk_cb isolate, void *cb_arg,
+ 				 unsigned long *nr_to_walk);
+@@ -197,10 +198,10 @@ list_lru_shrink_walk(struct list_lru *lru, struct shrink_control *sc,
+ }
+ 
+ static inline unsigned long
+-list_lru_shrink_walk_irq(struct list_lru *lru, struct shrink_control *sc,
++list_lru_shrink_walk_bh(struct list_lru *lru, struct shrink_control *sc,
+ 			 list_lru_walk_cb isolate, void *cb_arg)
+ {
+-	return list_lru_walk_one_irq(lru, sc->nid, sc->memcg, isolate, cb_arg,
++	return list_lru_walk_one_bh(lru, sc->nid, sc->memcg, isolate, cb_arg,
+ 				     &sc->nr_to_scan);
+ }
+ 
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index bfe5c486f4ad..d9812c2028ef 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1460,12 +1460,12 @@ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
+ 
+ static inline void __inc_lruvec_kmem_state(void *p, enum node_stat_item idx)
+ {
+-	__mod_lruvec_kmem_state(p, idx, 1);
++	mod_lruvec_kmem_state(p, idx, 1);
+ }
+ 
+ static inline void __dec_lruvec_kmem_state(void *p, enum node_stat_item idx)
+ {
+-	__mod_lruvec_kmem_state(p, idx, -1);
++	mod_lruvec_kmem_state(p, idx, -1);
+ }
+ 
+ static inline struct lruvec *parent_lruvec(struct lruvec *lruvec)
+diff --git a/mm/filemap.c b/mm/filemap.c
+index d1458ecf2f51..ec1cb9d3d644 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -258,12 +258,11 @@ static void page_cache_free_page(struct address_space *mapping,
+ void delete_from_page_cache(struct page *page)
+ {
+ 	struct address_space *mapping = page_mapping(page);
+-	unsigned long flags;
+ 
+ 	BUG_ON(!PageLocked(page));
+-	xa_lock_irqsave(&mapping->i_pages, flags);
++	xa_lock_bh(&mapping->i_pages);
+ 	__delete_from_page_cache(page, NULL);
+-	xa_unlock_irqrestore(&mapping->i_pages, flags);
++	xa_unlock_bh(&mapping->i_pages);
+ 
+ 	page_cache_free_page(mapping, page);
+ }
+@@ -335,19 +334,18 @@ void delete_from_page_cache_batch(struct address_space *mapping,
+ 				  struct pagevec *pvec)
+ {
+ 	int i;
+-	unsigned long flags;
+ 
+ 	if (!pagevec_count(pvec))
+ 		return;
+ 
+-	xa_lock_irqsave(&mapping->i_pages, flags);
++	xa_lock_bh(&mapping->i_pages);
+ 	for (i = 0; i < pagevec_count(pvec); i++) {
+ 		trace_mm_filemap_delete_from_page_cache(pvec->pages[i]);
+ 
+ 		unaccount_page_cache_page(mapping, pvec->pages[i]);
+ 	}
+ 	page_cache_delete_batch(mapping, pvec);
+-	xa_unlock_irqrestore(&mapping->i_pages, flags);
++	xa_unlock_bh(&mapping->i_pages);
+ 
+ 	for (i = 0; i < pagevec_count(pvec); i++)
+ 		page_cache_free_page(mapping, pvec->pages[i]);
+@@ -821,7 +819,6 @@ void replace_page_cache_page(struct page *old, struct page *new)
+ 	void (*freepage)(struct page *) = mapping->a_ops->freepage;
+ 	pgoff_t offset = old->index;
+ 	XA_STATE(xas, &mapping->i_pages, offset);
+-	unsigned long flags;
+ 
+ 	VM_BUG_ON_PAGE(!PageLocked(old), old);
+ 	VM_BUG_ON_PAGE(!PageLocked(new), new);
+@@ -833,7 +830,7 @@ void replace_page_cache_page(struct page *old, struct page *new)
+ 
+ 	mem_cgroup_migrate(old, new);
+ 
+-	xas_lock_irqsave(&xas, flags);
++	xas_lock_bh(&xas);
+ 	xas_store(&xas, new);
+ 
+ 	old->mapping = NULL;
+@@ -846,7 +843,7 @@ void replace_page_cache_page(struct page *old, struct page *new)
+ 		__dec_lruvec_page_state(old, NR_SHMEM);
+ 	if (PageSwapBacked(new))
+ 		__inc_lruvec_page_state(new, NR_SHMEM);
+-	xas_unlock_irqrestore(&xas, flags);
++	xas_unlock_bh(&xas);
+ 	if (freepage)
+ 		freepage(old);
+ 	put_page(old);
+@@ -887,7 +884,7 @@ noinline int __add_to_page_cache_locked(struct page *page,
+ 		if (order > thp_order(page))
+ 			xas_split_alloc(&xas, xa_load(xas.xa, xas.xa_index),
+ 					order, gfp);
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 		xas_for_each_conflict(&xas, entry) {
+ 			old = entry;
+ 			if (!xa_is_value(entry)) {
+@@ -917,7 +914,7 @@ noinline int __add_to_page_cache_locked(struct page *page,
+ 		if (!huge)
+ 			__inc_lruvec_page_state(page, NR_FILE_PAGES);
+ unlock:
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 	} while (xas_nomem(&xas, gfp));
+ 
+ 	if (xas_error(&xas)) {
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index b0412be08fa2..eae8e0494de0 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1666,11 +1666,11 @@ static void collapse_file(struct mm_struct *mm,
+ 
+ 	/* This will be less messy when we use multi-index entries */
+ 	do {
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 		xas_create_range(&xas);
+ 		if (!xas_error(&xas))
+ 			break;
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 		if (!xas_nomem(&xas, GFP_KERNEL)) {
+ 			result = SCAN_FAIL;
+ 			goto out;
+@@ -1718,7 +1718,7 @@ static void collapse_file(struct mm_struct *mm,
+ 			}
+ 
+ 			if (xa_is_value(page) || !PageUptodate(page)) {
+-				xas_unlock_irq(&xas);
++				xas_unlock_bh(&xas);
+ 				/* swap in or instantiate fallocated page */
+ 				if (shmem_getpage(mapping->host, index, &page,
+ 						  SGP_NOHUGE)) {
+@@ -1727,14 +1727,14 @@ static void collapse_file(struct mm_struct *mm,
+ 				}
+ 			} else if (trylock_page(page)) {
+ 				get_page(page);
+-				xas_unlock_irq(&xas);
++				xas_unlock_bh(&xas);
+ 			} else {
+ 				result = SCAN_PAGE_LOCK;
+ 				goto xa_locked;
+ 			}
+ 		} else {	/* !is_shmem */
+ 			if (!page || xa_is_value(page)) {
+-				xas_unlock_irq(&xas);
++				xas_unlock_bh(&xas);
+ 				page_cache_sync_readahead(mapping, &file->f_ra,
+ 							  file, index,
+ 							  end - index);
+@@ -1759,13 +1759,13 @@ static void collapse_file(struct mm_struct *mm,
+ 				 * This is a one-off situation. We are not
+ 				 * forcing writeback in loop.
+ 				 */
+-				xas_unlock_irq(&xas);
++				xas_unlock_bh(&xas);
+ 				filemap_flush(mapping);
+ 				result = SCAN_FAIL;
+ 				goto xa_unlocked;
+ 			} else if (trylock_page(page)) {
+ 				get_page(page);
+-				xas_unlock_irq(&xas);
++				xas_unlock_bh(&xas);
+ 			} else {
+ 				result = SCAN_PAGE_LOCK;
+ 				goto xa_locked;
+@@ -1823,7 +1823,7 @@ static void collapse_file(struct mm_struct *mm,
+ 		if (page_mapped(page))
+ 			unmap_mapping_pages(mapping, index, 1, false);
+ 
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 		xas_set(&xas, index);
+ 
+ 		VM_BUG_ON_PAGE(page != xas_load(&xas), page);
+@@ -1837,7 +1837,7 @@ static void collapse_file(struct mm_struct *mm,
+ 		 */
+ 		if (!page_ref_freeze(page, 3)) {
+ 			result = SCAN_PAGE_COUNT;
+-			xas_unlock_irq(&xas);
++			xas_unlock_bh(&xas);
+ 			putback_lru_page(page);
+ 			goto out_unlock;
+ 		}
+@@ -1885,7 +1885,7 @@ static void collapse_file(struct mm_struct *mm,
+ 	}
+ 
+ xa_locked:
+-	xas_unlock_irq(&xas);
++	xas_unlock_bh(&xas);
+ xa_unlocked:
+ 
+ 	if (result == SCAN_SUCCEED) {
+@@ -1934,7 +1934,7 @@ static void collapse_file(struct mm_struct *mm,
+ 		struct page *page;
+ 
+ 		/* Something went wrong: roll back page cache changes */
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 		mapping->nrpages -= nr_none;
+ 
+ 		if (is_shmem)
+@@ -1960,13 +1960,13 @@ static void collapse_file(struct mm_struct *mm,
+ 			page_ref_unfreeze(page, 2);
+ 			xas_store(&xas, page);
+ 			xas_pause(&xas);
+-			xas_unlock_irq(&xas);
++			xas_unlock_bh(&xas);
+ 			unlock_page(page);
+ 			putback_lru_page(page);
+-			xas_lock_irq(&xas);
++			xas_lock_bh(&xas);
+ 		}
+ 		VM_BUG_ON(nr_none);
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 
+ 		new_page->mapping = NULL;
+ 	}
+diff --git a/mm/list_lru.c b/mm/list_lru.c
+index cd58790d0fb3..292b0435dc19 100644
+--- a/mm/list_lru.c
++++ b/mm/list_lru.c
+@@ -271,17 +271,17 @@ list_lru_walk_one(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
+ EXPORT_SYMBOL_GPL(list_lru_walk_one);
+ 
+ unsigned long
+-list_lru_walk_one_irq(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
++list_lru_walk_one_bh(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
+ 		      list_lru_walk_cb isolate, void *cb_arg,
+ 		      unsigned long *nr_to_walk)
+ {
+ 	struct list_lru_node *nlru = &lru->node[nid];
+ 	unsigned long ret;
+ 
+-	spin_lock_irq(&nlru->lock);
++	spin_lock_bh(&nlru->lock);
+ 	ret = __list_lru_walk_one(nlru, memcg_cache_id(memcg), isolate, cb_arg,
+ 				  nr_to_walk);
+-	spin_unlock_irq(&nlru->lock);
++	spin_unlock_bh(&nlru->lock);
+ 	return ret;
+ }
+ 
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 081dd33e6a61..ef7de2d1035a 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -35,7 +35,7 @@ static void memfd_tag_pins(struct xa_state *xas)
+ 
+ 	lru_add_drain();
+ 
+-	xas_lock_irq(xas);
++	xas_lock_bh(xas);
+ 	xas_for_each(xas, page, ULONG_MAX) {
+ 		if (xa_is_value(page))
+ 			continue;
+@@ -47,11 +47,11 @@ static void memfd_tag_pins(struct xa_state *xas)
+ 			continue;
+ 
+ 		xas_pause(xas);
+-		xas_unlock_irq(xas);
++		xas_unlock_bh(xas);
+ 		cond_resched();
+-		xas_lock_irq(xas);
++		xas_lock_bh(xas);
+ 	}
+-	xas_unlock_irq(xas);
++	xas_unlock_bh(xas);
+ }
+ 
+ /*
+@@ -84,7 +84,7 @@ static int memfd_wait_for_pins(struct address_space *mapping)
+ 			scan = LAST_SCAN;
+ 
+ 		xas_set(&xas, 0);
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 		xas_for_each_marked(&xas, page, ULONG_MAX, MEMFD_TAG_PINNED) {
+ 			bool clear = true;
+ 			if (xa_is_value(page))
+@@ -107,11 +107,11 @@ static int memfd_wait_for_pins(struct address_space *mapping)
+ 				continue;
+ 
+ 			xas_pause(&xas);
+-			xas_unlock_irq(&xas);
++			xas_unlock_bh(&xas);
+ 			cond_resched();
+-			xas_lock_irq(&xas);
++			xas_lock_bh(&xas);
+ 		}
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 	}
+ 
+ 	return error;
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 7e240437e7d9..8bca58b0544f 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -402,14 +402,14 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	oldzone = page_zone(page);
+ 	newzone = page_zone(newpage);
+ 
+-	xas_lock_irq(&xas);
++	xas_lock_bh(&xas);
+ 	if (page_count(page) != expected_count || xas_load(&xas) != page) {
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+ 	if (!page_ref_freeze(page, expected_count)) {
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -454,8 +454,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	 */
+ 	page_ref_unfreeze(page, expected_count - nr);
+ 
+-	xas_unlock(&xas);
+-	/* Leave irq disabled to prevent preemption while updating stats */
++	xas_unlock_bh(&xas);
+ 
+ 	/*
+ 	 * If moved to a different zone then also account
+@@ -494,7 +493,6 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 			__mod_zone_page_state(newzone, NR_ZONE_WRITE_PENDING, nr);
+ 		}
+ 	}
+-	local_irq_enable();
+ 
+ 	return MIGRATEPAGE_SUCCESS;
+ }
+@@ -510,15 +508,15 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 	XA_STATE(xas, &mapping->i_pages, page_index(page));
+ 	int expected_count;
+ 
+-	xas_lock_irq(&xas);
++	xas_lock_bh(&xas);
+ 	expected_count = 2 + page_has_private(page);
+ 	if (page_count(page) != expected_count || xas_load(&xas) != page) {
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+ 	if (!page_ref_freeze(page, expected_count)) {
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -531,7 +529,7 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 
+ 	page_ref_unfreeze(page, expected_count - 1);
+ 
+-	xas_unlock_irq(&xas);
++	xas_unlock_bh(&xas);
+ 
+ 	return MIGRATEPAGE_SUCCESS;
+ }
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 9f63548f247c..99221bf264cb 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2122,18 +2122,18 @@ void tag_pages_for_writeback(struct address_space *mapping,
+ 	unsigned int tagged = 0;
+ 	void *page;
+ 
+-	xas_lock_irq(&xas);
++	xas_lock_bh(&xas);
+ 	xas_for_each_marked(&xas, page, end, PAGECACHE_TAG_DIRTY) {
+ 		xas_set_mark(&xas, PAGECACHE_TAG_TOWRITE);
+ 		if (++tagged % XA_CHECK_SCHED)
+ 			continue;
+ 
+ 		xas_pause(&xas);
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 		cond_resched();
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 	}
+-	xas_unlock_irq(&xas);
++	xas_unlock_bh(&xas);
+ }
+ EXPORT_SYMBOL(tag_pages_for_writeback);
+ 
+@@ -2475,16 +2475,15 @@ void account_page_cleaned(struct page *page, struct address_space *mapping,
+ void __set_page_dirty(struct page *page, struct address_space *mapping,
+ 			     int warn)
+ {
+-	unsigned long flags;
+ 
+-	xa_lock_irqsave(&mapping->i_pages, flags);
++	xa_lock_bh(&mapping->i_pages);
+ 	if (page->mapping) {	/* Race with truncate? */
+ 		WARN_ON_ONCE(warn && !PageUptodate(page));
+ 		account_page_dirtied(page, mapping);
+ 		__xa_set_mark(&mapping->i_pages, page_index(page),
+ 				PAGECACHE_TAG_DIRTY);
+ 	}
+-	xa_unlock_irqrestore(&mapping->i_pages, flags);
++	xa_unlock_bh(&mapping->i_pages);
+ }
+ 
+ /*
+@@ -2740,9 +2739,8 @@ int test_clear_page_writeback(struct page *page)
+ 	if (mapping && mapping_use_writeback_tags(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct backing_dev_info *bdi = inode_to_bdi(inode);
+-		unsigned long flags;
+ 
+-		xa_lock_irqsave(&mapping->i_pages, flags);
++		xa_lock_bh(&mapping->i_pages);
+ 		ret = TestClearPageWriteback(page);
+ 		if (ret) {
+ 			__xa_clear_mark(&mapping->i_pages, page_index(page),
+@@ -2759,7 +2757,7 @@ int test_clear_page_writeback(struct page *page)
+ 						     PAGECACHE_TAG_WRITEBACK))
+ 			sb_clear_inode_writeback(mapping->host);
+ 
+-		xa_unlock_irqrestore(&mapping->i_pages, flags);
++		xa_unlock_bh(&mapping->i_pages);
+ 	} else {
+ 		ret = TestClearPageWriteback(page);
+ 	}
+@@ -2782,9 +2780,8 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
+ 		XA_STATE(xas, &mapping->i_pages, page_index(page));
+ 		struct inode *inode = mapping->host;
+ 		struct backing_dev_info *bdi = inode_to_bdi(inode);
+-		unsigned long flags;
+ 
+-		xas_lock_irqsave(&xas, flags);
++		xas_lock_bh(&xas);
+ 		xas_load(&xas);
+ 		ret = TestSetPageWriteback(page);
+ 		if (!ret) {
+@@ -2809,7 +2806,7 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
+ 			xas_clear_mark(&xas, PAGECACHE_TAG_DIRTY);
+ 		if (!keep_write)
+ 			xas_clear_mark(&xas, PAGECACHE_TAG_TOWRITE);
+-		xas_unlock_irqrestore(&xas, flags);
++		xas_unlock_bh(&xas);
+ 	} else {
+ 		ret = TestSetPageWriteback(page);
+ 	}
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 70d9ce294bb4..53d5a32aced1 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -698,7 +698,7 @@ static int shmem_add_to_page_cache(struct page *page,
+ 
+ 	do {
+ 		void *entry;
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 		entry = xas_find_conflict(&xas);
+ 		if (entry != expected)
+ 			xas_set_err(&xas, -EEXIST);
+@@ -719,7 +719,7 @@ static int shmem_add_to_page_cache(struct page *page,
+ 		__mod_lruvec_page_state(page, NR_FILE_PAGES, nr);
+ 		__mod_lruvec_page_state(page, NR_SHMEM, nr);
+ unlock:
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 	} while (xas_nomem(&xas, gfp));
+ 
+ 	if (xas_error(&xas)) {
+@@ -744,13 +744,13 @@ static void shmem_delete_from_page_cache(struct page *page, void *radswap)
+ 
+ 	VM_BUG_ON_PAGE(PageCompound(page), page);
+ 
+-	xa_lock_irq(&mapping->i_pages);
++	xa_lock_bh(&mapping->i_pages);
+ 	error = shmem_replace_entry(mapping, page->index, page, radswap);
+ 	page->mapping = NULL;
+ 	mapping->nrpages--;
+ 	__dec_lruvec_page_state(page, NR_FILE_PAGES);
+ 	__dec_lruvec_page_state(page, NR_SHMEM);
+-	xa_unlock_irq(&mapping->i_pages);
++	xa_unlock_bh(&mapping->i_pages);
+ 	put_page(page);
+ 	BUG_ON(error);
+ }
+@@ -1652,14 +1652,14 @@ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
+ 	 * Our caller will very soon move newpage out of swapcache, but it's
+ 	 * a nice clean interface for us to replace oldpage by newpage there.
+ 	 */
+-	xa_lock_irq(&swap_mapping->i_pages);
++	xa_lock_bh(&swap_mapping->i_pages);
+ 	error = shmem_replace_entry(swap_mapping, swap_index, oldpage, newpage);
+ 	if (!error) {
+ 		mem_cgroup_migrate(oldpage, newpage);
+ 		__inc_lruvec_page_state(newpage, NR_FILE_PAGES);
+ 		__dec_lruvec_page_state(oldpage, NR_FILE_PAGES);
+ 	}
+-	xa_unlock_irq(&swap_mapping->i_pages);
++	xa_unlock_bh(&swap_mapping->i_pages);
+ 
+ 	if (unlikely(error)) {
+ 		/*
+diff --git a/mm/swap_slots.c b/mm/swap_slots.c
+index a66f3e0ec973..e8bd8ec89dec 100644
+--- a/mm/swap_slots.c
++++ b/mm/swap_slots.c
+@@ -274,10 +274,10 @@ int free_swap_slot(swp_entry_t entry)
+ 
+ 	cache = raw_cpu_ptr(&swp_slots);
+ 	if (likely(use_swap_slot_cache && cache->slots_ret)) {
+-		spin_lock_irq(&cache->free_lock);
++		spin_lock_bh(&cache->free_lock);
+ 		/* Swap slots cache may be deactivated before acquiring lock */
+ 		if (!use_swap_slot_cache || !cache->slots_ret) {
+-			spin_unlock_irq(&cache->free_lock);
++			spin_unlock_bh(&cache->free_lock);
+ 			goto direct_free;
+ 		}
+ 		if (cache->n_ret >= SWAP_SLOTS_CACHE_SIZE) {
+@@ -291,7 +291,7 @@ int free_swap_slot(swp_entry_t entry)
+ 			cache->n_ret = 0;
+ 		}
+ 		cache->slots_ret[cache->n_ret++] = entry;
+-		spin_unlock_irq(&cache->free_lock);
++		spin_unlock_bh(&cache->free_lock);
+ 	} else {
+ direct_free:
+ 		swapcache_free_entries(&entry, 1);
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index c56aa9ac050d..1773d1593b93 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -114,7 +114,7 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry,
+ 	SetPageSwapCache(page);
+ 
+ 	do {
+-		xas_lock_irq(&xas);
++		xas_lock_bh(&xas);
+ 		xas_create_range(&xas);
+ 		if (xas_error(&xas))
+ 			goto unlock;
+@@ -134,7 +134,7 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry,
+ 		__mod_lruvec_page_state(page, NR_SWAPCACHE, nr);
+ 		ADD_CACHE_INFO(add_total, nr);
+ unlock:
+-		xas_unlock_irq(&xas);
++		xas_unlock_bh(&xas);
+ 	} while (xas_nomem(&xas, gfp));
+ 
+ 	if (!xas_error(&xas))
+@@ -242,9 +242,9 @@ void delete_from_swap_cache(struct page *page)
+ 	swp_entry_t entry = { .val = page_private(page) };
+ 	struct address_space *address_space = swap_address_space(entry);
+ 
+-	xa_lock_irq(&address_space->i_pages);
++	xa_lock_bh(&address_space->i_pages);
+ 	__delete_from_swap_cache(page, entry, NULL);
+-	xa_unlock_irq(&address_space->i_pages);
++	xa_unlock_bh(&address_space->i_pages);
+ 
+ 	put_swap_page(page, entry);
+ 	page_ref_sub(page, thp_nr_pages(page));
+@@ -261,13 +261,13 @@ void clear_shadow_from_swap_cache(int type, unsigned long begin,
+ 		struct address_space *address_space = swap_address_space(entry);
+ 		XA_STATE(xas, &address_space->i_pages, curr);
+ 
+-		xa_lock_irq(&address_space->i_pages);
++		xa_lock_bh(&address_space->i_pages);
+ 		xas_for_each(&xas, old, end) {
+ 			if (!xa_is_value(old))
+ 				continue;
+ 			xas_store(&xas, NULL);
+ 		}
+-		xa_unlock_irq(&address_space->i_pages);
++		xa_unlock_bh(&address_space->i_pages);
+ 
+ 		/* search the next swapcache until we meet end */
+ 		curr >>= SWAP_ADDRESS_SPACE_SHIFT;
+@@ -679,7 +679,7 @@ int init_swap_address_space(unsigned int type, unsigned long nr_pages)
+ 		return -ENOMEM;
+ 	for (i = 0; i < nr; i++) {
+ 		space = spaces + i;
+-		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_IRQ);
++		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_BH);
+ 		atomic_set(&space->i_mmap_writable, 0);
+ 		space->a_ops = &swap_aops;
+ 		/* swap cache doesn't use writeback related tags */
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 234ddd879caa..c5b7fd2360c7 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -45,9 +45,9 @@ static inline void __clear_shadow_entry(struct address_space *mapping,
+ static void clear_shadow_entry(struct address_space *mapping, pgoff_t index,
+ 			       void *entry)
+ {
+-	xa_lock_irq(&mapping->i_pages);
++	xa_lock_bh(&mapping->i_pages);
+ 	__clear_shadow_entry(mapping, index, entry);
+-	xa_unlock_irq(&mapping->i_pages);
++	xa_unlock_bh(&mapping->i_pages);
+ }
+ 
+ /*
+@@ -74,7 +74,7 @@ static void truncate_exceptional_pvec_entries(struct address_space *mapping,
+ 
+ 	dax = dax_mapping(mapping);
+ 	if (!dax)
+-		xa_lock_irq(&mapping->i_pages);
++		xa_lock_bh(&mapping->i_pages);
+ 
+ 	for (i = j; i < pagevec_count(pvec); i++) {
+ 		struct page *page = pvec->pages[i];
+@@ -94,7 +94,7 @@ static void truncate_exceptional_pvec_entries(struct address_space *mapping,
+ 	}
+ 
+ 	if (!dax)
+-		xa_unlock_irq(&mapping->i_pages);
++		xa_unlock_bh(&mapping->i_pages);
+ 	pvec->nr = j;
+ }
+ 
+@@ -452,8 +452,8 @@ void truncate_inode_pages_final(struct address_space *mapping)
+ 		 * modification that does not see AS_EXITING is
+ 		 * completed before starting the final truncate.
+ 		 */
+-		xa_lock_irq(&mapping->i_pages);
+-		xa_unlock_irq(&mapping->i_pages);
++		xa_lock_bh(&mapping->i_pages);
++		xa_unlock_bh(&mapping->i_pages);
+ 	}
+ 
+ 	/*
+@@ -560,7 +560,6 @@ void invalidate_mapping_pagevec(struct address_space *mapping,
+ static int
+ invalidate_complete_page2(struct address_space *mapping, struct page *page)
+ {
+-	unsigned long flags;
+ 
+ 	if (page->mapping != mapping)
+ 		return 0;
+@@ -568,13 +567,13 @@ invalidate_complete_page2(struct address_space *mapping, struct page *page)
+ 	if (page_has_private(page) && !try_to_release_page(page, GFP_KERNEL))
+ 		return 0;
+ 
+-	xa_lock_irqsave(&mapping->i_pages, flags);
++	xa_lock_bh(&mapping->i_pages);
+ 	if (PageDirty(page))
+ 		goto failed;
+ 
+ 	BUG_ON(page_has_private(page));
+ 	__delete_from_page_cache(page, NULL);
+-	xa_unlock_irqrestore(&mapping->i_pages, flags);
++	xa_unlock_bh(&mapping->i_pages);
+ 
+ 	if (mapping->a_ops->freepage)
+ 		mapping->a_ops->freepage(page);
+@@ -582,7 +581,7 @@ invalidate_complete_page2(struct address_space *mapping, struct page *page)
+ 	put_page(page);	/* pagecache ref */
+ 	return 1;
+ failed:
+-	xa_unlock_irqrestore(&mapping->i_pages, flags);
++	xa_unlock_bh(&mapping->i_pages);
+ 	return 0;
+ }
+ 
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 4620df62f0ff..f59e96f5223a 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1049,14 +1049,13 @@ static pageout_t pageout(struct page *page, struct address_space *mapping)
+ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ 			    bool reclaimed, struct mem_cgroup *target_memcg)
+ {
+-	unsigned long flags;
+ 	int refcount;
+ 	void *shadow = NULL;
+ 
+ 	BUG_ON(!PageLocked(page));
+ 	BUG_ON(mapping != page_mapping(page));
+ 
+-	xa_lock_irqsave(&mapping->i_pages, flags);
++	xa_lock_bh(&mapping->i_pages);
+ 	/*
+ 	 * The non racy check for a busy page.
+ 	 *
+@@ -1097,7 +1096,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ 		if (reclaimed && !mapping_exiting(mapping))
+ 			shadow = workingset_eviction(page, target_memcg);
+ 		__delete_from_swap_cache(page, swap, shadow);
+-		xa_unlock_irqrestore(&mapping->i_pages, flags);
++		xa_unlock_bh(&mapping->i_pages);
+ 		put_swap_page(page, swap);
+ 	} else {
+ 		void (*freepage)(struct page *);
+@@ -1123,7 +1122,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ 		    !mapping_exiting(mapping) && !dax_mapping(mapping))
+ 			shadow = workingset_eviction(page, target_memcg);
+ 		__delete_from_page_cache(page, shadow);
+-		xa_unlock_irqrestore(&mapping->i_pages, flags);
++		xa_unlock_bh(&mapping->i_pages);
+ 
+ 		if (freepage != NULL)
+ 			freepage(page);
+@@ -1132,7 +1131,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ 	return 1;
+ 
+ cannot_free:
+-	xa_unlock_irqrestore(&mapping->i_pages, flags);
++	xa_unlock_bh(&mapping->i_pages);
+ 	return 0;
+ }
+ 
+diff --git a/mm/workingset.c b/mm/workingset.c
+index 5ba3e42446fa..7a8c6844cff0 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -440,7 +440,6 @@ void workingset_update_node(struct xa_node *node)
+ 	 * already where they should be. The list_empty() test is safe
+ 	 * as node->private_list is protected by the i_pages lock.
+ 	 */
+-	VM_WARN_ON_ONCE(!irqs_disabled());  /* For __inc_lruvec_page_state */
+ 
+ 	if (node->count && node->count == node->nr_values) {
+ 		if (list_empty(&node->private_list)) {
+@@ -532,12 +531,10 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
+ 	 * pin only the address_space of the particular node we want
+ 	 * to reclaim, take the node off-LRU, and drop the lru_lock.
+ 	 */
+-
+ 	mapping = container_of(node->array, struct address_space, i_pages);
+-
+ 	/* Coming from the list, invert the lock order */
+ 	if (!xa_trylock(&mapping->i_pages)) {
+-		spin_unlock_irq(lru_lock);
++		spin_unlock_bh(lru_lock);
+ 		ret = LRU_RETRY;
+ 		goto out;
+ 	}
+@@ -560,19 +557,19 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
+ 	__inc_lruvec_kmem_state(node, WORKINGSET_NODERECLAIM);
+ 
+ out_invalid:
+-	xa_unlock_irq(&mapping->i_pages);
++	xa_unlock_bh(&mapping->i_pages);
+ 	ret = LRU_REMOVED_RETRY;
+ out:
+ 	cond_resched();
+-	spin_lock_irq(lru_lock);
++	spin_lock_bh(lru_lock);
+ 	return ret;
+ }
+ 
+ static unsigned long scan_shadow_nodes(struct shrinker *shrinker,
+ 				       struct shrink_control *sc)
+ {
+-	/* list_lru lock nests inside the IRQ-safe i_pages lock */
+-	return list_lru_shrink_walk_irq(&shadow_nodes, sc, shadow_lru_isolate,
++	/* list_lru lock nests inside the BH-safe i_pages lock */
++	return list_lru_shrink_walk_bh(&shadow_nodes, sc, shadow_lru_isolate,
+ 					NULL);
+ }
+ 
+-- 
+2.33.0.rc0
+
