@@ -2,1442 +2,630 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 777213E0DEA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 07:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E65B3E0E00
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 08:15:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235083AbhHEF5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Aug 2021 01:57:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37580 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234461AbhHEF5i (ORCPT
+        id S235659AbhHEGQL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Aug 2021 02:16:11 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:21154 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229775AbhHEGQK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Aug 2021 01:57:38 -0400
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83F06C061765;
-        Wed,  4 Aug 2021 22:57:24 -0700 (PDT)
-Received: by mail-qv1-xf33.google.com with SMTP id em4so2426747qvb.0;
-        Wed, 04 Aug 2021 22:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VpA1QUZdjkf1W9N3zn5KbT7avLhlCfH+b+HtJRx6hts=;
-        b=FY4ltCE0pMKD/VAetlQni9g/oR6qm5QnZhfPywnws3GlB0+UZXSMh1A+cow+280668
-         LNBbZ5/Ug+6nI/OTyOECL7zFKbbiT70Gp8RzAYKrSxCC7fOQNxxgn9YugyTugPBhRGgI
-         RNqvFleeCOvFJTCyG/U04UeIr8WJGzJdqIw5gTMXtIZRaOmGwt3UF3ZnqfJ5dZBPQzSt
-         Iw2HLtMySl8YvjNWrceh0qpSA0WTlInScJPBwbi8TVoZcpCF2wZ2LCiulfuVQ1LkKxZ9
-         /WuNc8rBgIIgZNeN7sYHTRJuJr2foCgbKhiVZpRufhCgTVEkhD4dwwzTrVqyXMbLd7IW
-         RMzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VpA1QUZdjkf1W9N3zn5KbT7avLhlCfH+b+HtJRx6hts=;
-        b=YIVP5H1oIaKXouBz8MSKOUTfDGyS0NGP4tsmUud2ADKTnxgKIt2t+qzMYFBO4XghRe
-         lRXSGzU55rpE1mvY2h5caKa1NR13+czhJil+CvSJ20zBtV4ZqB5IROWQkjx8Dy0CNUhQ
-         jG84NSVERUudmP3vByLBBKXomcvNFExkUOW8RQgKysUaTY8u9T+dPeuPEzTV+DU+o6Vy
-         MmHrukp22d6796PtmKRT+ijnlqzkxJAmcNWR34KkLfGuW0+dsgmboW1FVX2dUh34o8ip
-         lKyKuc1W58YS5vatJIKedUC413aSZQg7S5+FTmNT27QE6krwqPT/bE2w69FJfzemNFri
-         uw6Q==
-X-Gm-Message-State: AOAM533XzpFwrU+T4jSAgwkhFWqEELfhLSJtbqrJekSn5ADpsSRS8GDJ
-        H+UhOv8OXoYI5Y8UK+4zKdDEjKF6Kn6rFQ==
-X-Google-Smtp-Source: ABdhPJyj0ro7yOhK7VQ+f30gYcygCFWzSTgd2/4eBZPjCP/uyCqypK6hONlUQMNJNNk5HOWboAB05Q==
-X-Received: by 2002:a0c:e087:: with SMTP id l7mr3581083qvk.23.1628143043478;
-        Wed, 04 Aug 2021 22:57:23 -0700 (PDT)
-Received: from vismoola-instance-bm.osdevelopmeniad.oraclevcn.com ([209.17.40.43])
-        by smtp.gmail.com with ESMTPSA id v6sm2654595qkp.117.2021.08.04.22.57.22
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Aug 2021 22:57:23 -0700 (PDT)
-From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To:     vishal.moola@gmail.com, willy@infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v2] Page Cache Allowing Hard Interrupts
-Date:   Thu,  5 Aug 2021 05:57:10 +0000
-Message-Id: <20210805055710.53673-1-vishal.moola@gmail.com>
-X-Mailer: git-send-email 2.33.0.rc0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 5 Aug 2021 02:16:10 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210805061555epoutp0440820cfd6151d4eba319fff5af123683~YVHupbhNY0378903789epoutp048
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Aug 2021 06:15:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210805061555epoutp0440820cfd6151d4eba319fff5af123683~YVHupbhNY0378903789epoutp048
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1628144155;
+        bh=lky8Aq9TQ+WQF7MCXY0skNw0NFPAaunHFEcjCRvSkqE=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=mKN8KJbYneNtxdn5wJIQTZoUJmo7r56BxBCmOwDoxiLnjriTgB+yPDLNn55WD/uM1
+         yfUMHpb5Mez84odOcZIOTm1+g8Tu8a0doXNnIJAPIar8bcsrtipnfpkSxiwHcq6ZFQ
+         NZ6n/BVSMjp2x2wl3aK5iSYSUypMbh1qNNX99sUw=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210805061554epcas1p25d27f95df703b597224d571bcf18755e~YVHuDtHAk3126831268epcas1p2v;
+        Thu,  5 Aug 2021 06:15:54 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.165]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4GgJJT5fWzz4x9QM; Thu,  5 Aug
+        2021 06:15:53 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B3.A5.09468.9128B016; Thu,  5 Aug 2021 15:15:53 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210805061552epcas1p36b9ebf1ea832ba81c5e50daf32268f2d~YVHsZnvrt3072030720epcas1p3f;
+        Thu,  5 Aug 2021 06:15:52 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210805061552epsmtrp200a67035c226ca6bdfaded89d8de2e59~YVHsYod3r0723807238epsmtrp2e;
+        Thu,  5 Aug 2021 06:15:52 +0000 (GMT)
+X-AuditID: b6c32a37-0c7ff700000024fc-98-610b821908e9
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F5.DA.08289.8128B016; Thu,  5 Aug 2021 15:15:52 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.89.31.111]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210805061552epsmtip16888faa4e6e7f568a14b23f81457f6a5~YVHsFnmO23217432174epsmtip1z;
+        Thu,  5 Aug 2021 06:15:52 +0000 (GMT)
+From:   Namjae Jeon <namjae.jeon@samsung.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-cifs@vger.kernel.org
+Cc:     linux-cifsd-devel@lists.sourceforge.net, aurelien.aptel@gmail.com,
+        sandeen@sandeen.net, willy@infradead.org, hch@infradead.org,
+        senozhatsky@chromium.org, christian@brauner.io,
+        viro@zeniv.linux.org.uk, ronniesahlberg@gmail.com, hch@lst.de,
+        dan.carpenter@oracle.com, metze@samba.org, smfrench@gmail.com,
+        hyc.lee@gmail.com, Namjae Jeon <namjae.jeon@samsung.com>
+Subject: [PATCH v7 00/13] ksmbd: introduce new SMB3 kernel server
+Date:   Thu,  5 Aug 2021 15:05:33 +0900
+Message-Id: <20210805060546.3268-1-namjae.jeon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmrq5kE3eiwdvV6hbHX/9lt2h8p2zx
+        +t90FovTExYxWaxcfZTJ4tr99+wWL/7vYrb4+f87o8WevSdZLC7vmsNmcXHZTxaLH9PrLXr7
+        PrFatF7Rsti9cRGbxZsXh9kszv89zmrx+8ccNgchj79zPzJ7zG64yOKxc9Zddo/NK7Q8di/4
+        zOSx+2YDm8fHp7dYPObu6mP06NuyitFjy+KHTB6fN8l5bHrylimAJyrHJiM1MSW1SCE1Lzk/
+        JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoOSWFssScUqBQQGJxsZK+nU1R
+        fmlJqkJGfnGJrVJqQUpOgaFBgV5xYm5xaV66XnJ+rpWhgYGRKVBlQk7G5Na1zAUfTzFWnL+7
+        hLWBcdd0xi5GTg4JAROJ98e72UFsIYEdjBL/l4h3MXIB2Z8YJXqnXGKGcD4zSpyftYUJpmPb
+        5AdQiV2MEnt33WKEa1m6fRvQLA4ONgFtiT9bREEaRARiJW7seA3WwCzwhUlixfHPYPuEBRwl
+        dravYgGxWQRUJVbu/wbWyytgLXFxnh7EMnmJ1RsOgPVKCGzhkJi/sZMFIuEiseXXdjYIW1ji
+        1fEt7BC2lMTnd3uh4uUSJ07+grq6RmLDvH1g8yUEjCV6XpSAmMwCmhLrd+lDVChK7Pw9Fxwq
+        zAJ8Eu++9rBCVPNKdLQJQZSoSvRdOgw1UFqiq/0D1EAPiVNrfSBhGCtx5s9W1gmMsrMQ5i9g
+        ZFzFKJZaUJybnlpsWGCMHEebGMHpVct8B+O0tx/0DjEycTAeYpTgYFYS4U1ezJUoxJuSWFmV
+        WpQfX1Sak1p8iNEUGFgTmaVEk/OBCT6vJN7Q1MjY2NjCxMzczNRYSZz3W+zXBCGB9MSS1OzU
+        1ILUIpg+Jg5OqQYm7grWi1W8znve37my8Lqha8nSo6yfkjhLu7ZvdRJRMw7+JNwrYrMhJmep
+        6JpijZvbys2LDrH/ZF+a+2zvxYkCVfN+vK9t6Du8pGG/3MMpCgxde01ikqYLvsoPkMvW9urn
+        fc/L1Cmwb8qWlug96bNUyo+xGndzuj9cvXe+7A+x4O2ChS8Yj0x7eIqtbpLlmk+uOz4d/26j
+        K8ksljJFmTnwoU1nyzX2miOrE2d7HesMv/agM6rT+KRzr+D/BzZGzSErv2Rqml+WmqL+RCa5
+        wOXYFaYzt9YEffT0PMe9uvfg9V2Hrhw1vKeqxFhaw3k9ImlhotCss1mSTNe3LynwUdY/k6PQ
+        JG3B1nDS55xzsKoSS3FGoqEWc1FxIgAVkx51OAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKLMWRmVeSWpSXmKPExsWy7bCSnK5EE3eiwaQXBhbHX/9lt2h8p2zx
+        +t90FovTExYxWaxcfZTJ4tr99+wWL/7vYrb4+f87o8WevSdZLC7vmsNmcXHZTxaLH9PrLXr7
+        PrFatF7Rsti9cRGbxZsXh9kszv89zmrx+8ccNgchj79zPzJ7zG64yOKxc9Zddo/NK7Q8di/4
+        zOSx+2YDm8fHp7dYPObu6mP06NuyitFjy+KHTB6fN8l5bHrylimAJ4rLJiU1J7MstUjfLoEr
+        Y3LrWuaCj6cYK87fXcLawLhrOmMXIyeHhICJxLbJD5i7GLk4hAR2MEpcOvkcKiEtcezEGaAE
+        B5AtLHH4cDFEzQdGiT+dM9hB4mwC2hJ/toiClIsIxEvcbLjNAlLDLNDGLLF0+wxmkISwgKPE
+        zvZVLCA2i4CqxMr938B6eQWsJS7O04NYJS+xesMB5gmMPAsYGVYxSqYWFOem5xYbFhjlpZbr
+        FSfmFpfmpesl5+duYgSHvJbWDsY9qz7oHWJk4mA8xCjBwawkwpu8mCtRiDclsbIqtSg/vqg0
+        J7X4EKM0B4uSOO+FrpPxQgLpiSWp2ampBalFMFkmDk6pBqYSM3ej4pezk/t3dGSsPXLyjuRj
+        ybLqx+Ivajcu6+2XEpW9/d/TfX71lIS1h/b0Tph3y7D1xVqR4sVbjrfe7nEWN7aLzv36cN6K
+        1c+qq5/JmVwq55yl5abaZhhzwM4i+sHN7//PTbo5pSVZc6Yj56rF5zoz4xO3eC2O85kytWo+
+        a9Ly5eliWmHNe3zEf7aeaXx4yn9dlPVid+3CxVuXiGxl2btOdvUH3yaG4zOtNt3buUpO7nt0
+        yPFv+pu/Kh0q63mom/YytUihVtyb6yiX3Rn/SMlGoXCZZdtWaQZHzHxTsODUm4PKl5iPee99
+        HmjnsvCjec791z9ncR5enbwv/2P3foVFulm/vabt35E2Q/2FEktxRqKhFnNRcSIACUW/3ugC
+        AAA=
+X-CMS-MailID: 20210805061552epcas1p36b9ebf1ea832ba81c5e50daf32268f2d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210805061552epcas1p36b9ebf1ea832ba81c5e50daf32268f2d
+References: <CGME20210805061552epcas1p36b9ebf1ea832ba81c5e50daf32268f2d@epcas1p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Previously, the page cache would disable ALL interrupts when making any
-modifications. This forces the kernel to wait for the page cache to finish
-its task(s) before the interrupts could be serviced. The page cache does
-not necessarily need to disable hard interrupts only soft interrupts.
+This is the patch series for ksmbd kernel server.
 
-We can change the locks from _irq to _bh, so we only disable soft
-interrupts and allow hard interrupts. This also means we do not need to
-keep track of the flags for hard irq states. This should improve the kernel
-interrupt latency as the kernel can handle hard interrupts as they come in
-instead of waiting for the page cache to finish its tasks.
+What is ksmbd ?
+===============
 
-This patch is a non-exhaustive list of changes to locks relating to the page
-cache. All of these changes yielded no issues with interrupt context locking
-conflicts, and should contribute to a better interrupt latency.
+The SMB family of protocols is the most widely deployed
+network filesystem protocol, the default on Windows and Macs (and even
+on many phones and tablets), with clients and servers on all major
+operating systems, but lacked a kernel server for Linux. For many
+cases the current userspace server choices were suboptimal
+either due to memory footprint, performance or difficulty integrating
+well with advanced Linux features.
 
-Also to accomplish the above the following changes were made:
-Additional functions were added to the list_lru in order to allow locking
-only soft irqs for the i_pages lock.
-In mm/workingset.c the lru lock was changed to be nested bh instead of
-nested irq.
-Fixed some bugs that arose going from hard to soft locks
+ksmbd is a new kernel module which implements the server-side of the SMB3 protocol.
+The target is to provide optimized performance, GPLv2 SMB server, better
+lease handling (distributed caching). The bigger goal is to add new
+features more rapidly (e.g. RDMA aka "smbdirect", and recent encryption
+and signing improvements to the protocol) which are easier to develop
+on a smaller, more tightly optimized kernel server than for example
+in Samba.  The Samba project is much broader in scope (tools, security services,
+LDAP, Active Directory Domain Controller, and a cross platform file server
+for a wider variety of purposes) but the user space file server portion
+of Samba has proved hard to optimize for some Linux workloads, including
+for smaller devices. This is not meant to replace Samba, but rather be
+an extension to allow better optimizing for Linux, and will continue to
+integrate well with Samba user space tools and libraries where appropriate.
+Working with the Samba team we have already made sure that the configuration
+files and xattrs are in a compatible format between the kernel and
+user space server.
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
 
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
----
+Architecture
+============
 
-Changes for V2:
--list_lruvec_shrink_walk_irq was modified to accomodate bh instead of irq
-and was removed as it is no longer necessacy.
--Fixed vmstat assuming irqs are disabled under i_pages (it still
-disables irqs, just closer to the dependent function call)
--Reorganized the additional changes section in V1 commit
----
- arch/arm/include/asm/cacheflush.h    |  4 +-
- arch/csky/abiv1/inc/abi/cacheflush.h |  4 +-
- arch/nds32/include/asm/cacheflush.h  |  4 +-
- arch/nios2/include/asm/cacheflush.h  |  4 +-
- arch/parisc/include/asm/cacheflush.h |  4 +-
- fs/btrfs/extent_io.c                 |  4 +-
- fs/dax.c                             | 60 ++++++++++++++--------------
- fs/f2fs/data.c                       |  5 +--
- fs/fs-writeback.c                    |  4 +-
- fs/gfs2/glops.c                      |  4 +-
- fs/inode.c                           |  6 +--
- fs/nilfs2/btnode.c                   |  8 ++--
- fs/nilfs2/page.c                     | 14 +++----
- include/linux/backing-dev.h          |  4 +-
- include/linux/list_lru.h             | 11 ++---
- include/linux/memcontrol.h           |  4 +-
- mm/filemap.c                         | 19 ++++-----
- mm/khugepaged.c                      | 28 ++++++-------
- mm/list_lru.c                        |  6 +--
- mm/memfd.c                           | 16 ++++----
- mm/migrate.c                         | 18 ++++-----
- mm/page-writeback.c                  | 23 +++++------
- mm/shmem.c                           | 12 +++---
- mm/swap_slots.c                      |  6 +--
- mm/swap_state.c                      | 14 +++----
- mm/truncate.c                        | 19 +++++----
- mm/vmscan.c                          |  9 ++---
- mm/workingset.c                      | 13 +++---
- 28 files changed, 157 insertions(+), 170 deletions(-)
+               |--- ...
+       --------|--- ksmbd/3 - Client 3
+       |-------|--- ksmbd/2 - Client 2
+       |       |         ____________________________________________________
+       |       |        |- Client 1                                          |
+<--- Socket ---|--- ksmbd/1   <<= Authentication : NTLM/NTLM2, Kerberos      |
+       |       |      | |     <<= SMB engine : SMB2, SMB2.1, SMB3, SMB3.0.2, |
+       |       |      | |                SMB3.1.1                            |
+       |       |      | |____________________________________________________|
+       |       |      |
+       |       |      |--- VFS --- Local Filesystem
+       |       |
+KERNEL |--- ksmbd/0(forker kthread)
+---------------||---------------------------------------------------------------
+USER           ||
+               || communication using NETLINK
+               ||  ______________________________________________
+               || |                                              |
+        ksmbd.mountd <<= DCE/RPC(srvsvc, wkssvc, samr, lsarpc)   |
+               ^  |  <<= configure shares setting, user accounts |
+               |  |______________________________________________|
+               |
+               |------ smb.conf(config file)
+               |
+               |------ ksmbdpwd.db(user account/password file)
+                            ^
+  ksmbd.adduser ------------|
 
-diff --git a/arch/arm/include/asm/cacheflush.h b/arch/arm/include/asm/cacheflush.h
-index 2e24e765e6d3..1feab3ef87e5 100644
---- a/arch/arm/include/asm/cacheflush.h
-+++ b/arch/arm/include/asm/cacheflush.h
-@@ -315,8 +315,8 @@ static inline void flush_anon_page(struct vm_area_struct *vma,
- #define ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
- extern void flush_kernel_dcache_page(struct page *);
- 
--#define flush_dcache_mmap_lock(mapping)		xa_lock_irq(&mapping->i_pages)
--#define flush_dcache_mmap_unlock(mapping)	xa_unlock_irq(&mapping->i_pages)
-+#define flush_dcache_mmap_lock(mapping)		xa_lock_bh(&mapping->i_pages)
-+#define flush_dcache_mmap_unlock(mapping)	xa_unlock_bh(&mapping->i_pages)
- 
- /*
-  * We don't appear to need to do anything here.  In fact, if we did, we'd
-diff --git a/arch/csky/abiv1/inc/abi/cacheflush.h b/arch/csky/abiv1/inc/abi/cacheflush.h
-index 6cab7afae962..bea1d1d8cb49 100644
---- a/arch/csky/abiv1/inc/abi/cacheflush.h
-+++ b/arch/csky/abiv1/inc/abi/cacheflush.h
-@@ -17,8 +17,8 @@ extern void flush_dcache_page(struct page *);
- #define ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
- extern void flush_kernel_dcache_page(struct page *);
- 
--#define flush_dcache_mmap_lock(mapping)		xa_lock_irq(&mapping->i_pages)
--#define flush_dcache_mmap_unlock(mapping)	xa_unlock_irq(&mapping->i_pages)
-+#define flush_dcache_mmap_lock(mapping)		xa_lock_bh(&mapping->i_pages)
-+#define flush_dcache_mmap_unlock(mapping)	xa_unlock_bh(&mapping->i_pages)
- 
- static inline void flush_kernel_vmap_range(void *addr, int size)
- {
-diff --git a/arch/nds32/include/asm/cacheflush.h b/arch/nds32/include/asm/cacheflush.h
-index 7d6824f7c0e8..38d1c23fca43 100644
---- a/arch/nds32/include/asm/cacheflush.h
-+++ b/arch/nds32/include/asm/cacheflush.h
-@@ -40,8 +40,8 @@ void flush_anon_page(struct vm_area_struct *vma,
- void flush_kernel_dcache_page(struct page *page);
- void flush_kernel_vmap_range(void *addr, int size);
- void invalidate_kernel_vmap_range(void *addr, int size);
--#define flush_dcache_mmap_lock(mapping)   xa_lock_irq(&(mapping)->i_pages)
--#define flush_dcache_mmap_unlock(mapping) xa_unlock_irq(&(mapping)->i_pages)
-+#define flush_dcache_mmap_lock(mapping)   xa_lock_bh(&(mapping)->i_pages)
-+#define flush_dcache_mmap_unlock(mapping) xa_unlock_bh(&(mapping)->i_pages)
- 
- #else
- void flush_icache_user_page(struct vm_area_struct *vma, struct page *page,
-diff --git a/arch/nios2/include/asm/cacheflush.h b/arch/nios2/include/asm/cacheflush.h
-index 18eb9f69f806..816754cc0c4a 100644
---- a/arch/nios2/include/asm/cacheflush.h
-+++ b/arch/nios2/include/asm/cacheflush.h
-@@ -46,7 +46,7 @@ extern void copy_from_user_page(struct vm_area_struct *vma, struct page *page,
- extern void flush_dcache_range(unsigned long start, unsigned long end);
- extern void invalidate_dcache_range(unsigned long start, unsigned long end);
- 
--#define flush_dcache_mmap_lock(mapping)		xa_lock_irq(&mapping->i_pages)
--#define flush_dcache_mmap_unlock(mapping)	xa_unlock_irq(&mapping->i_pages)
-+#define flush_dcache_mmap_lock(mapping)		xa_lock_bh(&mapping->i_pages)
-+#define flush_dcache_mmap_unlock(mapping)	xa_unlock_bh(&mapping->i_pages)
- 
- #endif /* _ASM_NIOS2_CACHEFLUSH_H */
-diff --git a/arch/parisc/include/asm/cacheflush.h b/arch/parisc/include/asm/cacheflush.h
-index 99663fc1f997..ac74ca0dd6c3 100644
---- a/arch/parisc/include/asm/cacheflush.h
-+++ b/arch/parisc/include/asm/cacheflush.h
-@@ -55,8 +55,8 @@ void invalidate_kernel_vmap_range(void *vaddr, int size);
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
- extern void flush_dcache_page(struct page *page);
- 
--#define flush_dcache_mmap_lock(mapping)		xa_lock_irq(&mapping->i_pages)
--#define flush_dcache_mmap_unlock(mapping)	xa_unlock_irq(&mapping->i_pages)
-+#define flush_dcache_mmap_lock(mapping)		xa_lock_bh(&mapping->i_pages)
-+#define flush_dcache_mmap_unlock(mapping)	xa_unlock_bh(&mapping->i_pages)
- 
- #define flush_icache_page(vma,page)	do { 		\
- 	flush_kernel_dcache_page(page);			\
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 9e81d25dea70..add1c04ed784 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -6209,11 +6209,11 @@ static void btree_clear_page_dirty(struct page *page)
- 	ASSERT(PageDirty(page));
- 	ASSERT(PageLocked(page));
- 	clear_page_dirty_for_io(page);
--	xa_lock_irq(&page->mapping->i_pages);
-+	xa_lock_bh(&page->mapping->i_pages);
- 	if (!PageDirty(page))
- 		__xa_clear_mark(&page->mapping->i_pages,
- 				page_index(page), PAGECACHE_TAG_DIRTY);
--	xa_unlock_irq(&page->mapping->i_pages);
-+	xa_unlock_bh(&page->mapping->i_pages);
- }
- 
- static void clear_subpage_extent_buffer_dirty(const struct extent_buffer *eb)
-diff --git a/fs/dax.c b/fs/dax.c
-index da41f9363568..9fcb5a0caa20 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -241,11 +241,11 @@ static void *get_unlocked_entry(struct xa_state *xas, unsigned int order)
- 		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
- 		prepare_to_wait_exclusive(wq, &ewait.wait,
- 					  TASK_UNINTERRUPTIBLE);
--		xas_unlock_irq(xas);
-+		xas_unlock_bh(xas);
- 		xas_reset(xas);
- 		schedule();
- 		finish_wait(wq, &ewait.wait);
--		xas_lock_irq(xas);
-+		xas_lock_bh(xas);
- 	}
- }
- 
-@@ -270,7 +270,7 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
- 	 * never successfully performs its own wake up.
- 	 */
- 	prepare_to_wait(wq, &ewait.wait, TASK_UNINTERRUPTIBLE);
--	xas_unlock_irq(xas);
-+	xas_unlock_bh(xas);
- 	schedule();
- 	finish_wait(wq, &ewait.wait);
- }
-@@ -293,9 +293,9 @@ static void dax_unlock_entry(struct xa_state *xas, void *entry)
- 
- 	BUG_ON(dax_is_locked(entry));
- 	xas_reset(xas);
--	xas_lock_irq(xas);
-+	xas_lock_bh(xas);
- 	old = xas_store(xas, entry);
--	xas_unlock_irq(xas);
-+	xas_unlock_bh(xas);
- 	BUG_ON(!dax_is_locked(old));
- 	dax_wake_entry(xas, entry, WAKE_NEXT);
- }
-@@ -423,9 +423,9 @@ dax_entry_t dax_lock_page(struct page *page)
- 			break;
- 
- 		xas.xa = &mapping->i_pages;
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 		if (mapping != page->mapping) {
--			xas_unlock_irq(&xas);
-+			xas_unlock_bh(&xas);
- 			continue;
- 		}
- 		xas_set(&xas, page->index);
-@@ -437,7 +437,7 @@ dax_entry_t dax_lock_page(struct page *page)
- 			continue;
- 		}
- 		dax_lock_entry(&xas, entry);
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 		break;
- 	}
- 	rcu_read_unlock();
-@@ -493,7 +493,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
- 
- retry:
- 	pmd_downgrade = false;
--	xas_lock_irq(xas);
-+	xas_lock_bh(xas);
- 	entry = get_unlocked_entry(xas, order);
- 
- 	if (entry) {
-@@ -526,12 +526,12 @@ static void *grab_mapping_entry(struct xa_state *xas,
- 		 * unmapped.
- 		 */
- 		if (dax_is_zero_entry(entry)) {
--			xas_unlock_irq(xas);
-+			xas_unlock_bh(xas);
- 			unmap_mapping_pages(mapping,
- 					xas->xa_index & ~PG_PMD_COLOUR,
- 					PG_PMD_NR, false);
- 			xas_reset(xas);
--			xas_lock_irq(xas);
-+			xas_lock_bh(xas);
- 		}
- 
- 		dax_disassociate_entry(entry, mapping, false);
-@@ -557,7 +557,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
- 	}
- 
- out_unlock:
--	xas_unlock_irq(xas);
-+	xas_unlock_bh(xas);
- 	if (xas_nomem(xas, mapping_gfp_mask(mapping) & ~__GFP_HIGHMEM))
- 		goto retry;
- 	if (xas->xa_node == XA_ERROR(-ENOMEM))
-@@ -566,7 +566,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
- 		return xa_mk_internal(VM_FAULT_SIGBUS);
- 	return entry;
- fallback:
--	xas_unlock_irq(xas);
-+	xas_unlock_bh(xas);
- 	return xa_mk_internal(VM_FAULT_FALLBACK);
- }
- 
-@@ -626,7 +626,7 @@ struct page *dax_layout_busy_page_range(struct address_space *mapping,
- 	 */
- 	unmap_mapping_pages(mapping, start_idx, end_idx - start_idx + 1, 0);
- 
--	xas_lock_irq(&xas);
-+	xas_lock_bh(&xas);
- 	xas_for_each(&xas, entry, end_idx) {
- 		if (WARN_ON_ONCE(!xa_is_value(entry)))
- 			continue;
-@@ -641,11 +641,11 @@ struct page *dax_layout_busy_page_range(struct address_space *mapping,
- 			continue;
- 
- 		xas_pause(&xas);
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 		cond_resched();
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 	}
--	xas_unlock_irq(&xas);
-+	xas_unlock_bh(&xas);
- 	return page;
- }
- EXPORT_SYMBOL_GPL(dax_layout_busy_page_range);
-@@ -663,7 +663,7 @@ static int __dax_invalidate_entry(struct address_space *mapping,
- 	int ret = 0;
- 	void *entry;
- 
--	xas_lock_irq(&xas);
-+	xas_lock_bh(&xas);
- 	entry = get_unlocked_entry(&xas, 0);
- 	if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
- 		goto out;
-@@ -677,7 +677,7 @@ static int __dax_invalidate_entry(struct address_space *mapping,
- 	ret = 1;
- out:
- 	put_unlocked_entry(&xas, entry, WAKE_ALL);
--	xas_unlock_irq(&xas);
-+	xas_unlock_bh(&xas);
- 	return ret;
- }
- 
-@@ -761,7 +761,7 @@ static void *dax_insert_entry(struct xa_state *xas,
- 	}
- 
- 	xas_reset(xas);
--	xas_lock_irq(xas);
-+	xas_lock_bh(xas);
- 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
- 		void *old;
- 
-@@ -786,7 +786,7 @@ static void *dax_insert_entry(struct xa_state *xas,
- 	if (dirty)
- 		xas_set_mark(xas, PAGECACHE_TAG_DIRTY);
- 
--	xas_unlock_irq(xas);
-+	xas_unlock_bh(xas);
- 	return entry;
- }
- 
-@@ -924,7 +924,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
- 	 * they will see the entry locked and wait for it to unlock.
- 	 */
- 	xas_clear_mark(xas, PAGECACHE_TAG_TOWRITE);
--	xas_unlock_irq(xas);
-+	xas_unlock_bh(xas);
- 
- 	/*
- 	 * If dax_writeback_mapping_range() was given a wbc->range_start
-@@ -946,7 +946,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
- 	 * entry lock.
- 	 */
- 	xas_reset(xas);
--	xas_lock_irq(xas);
-+	xas_lock_bh(xas);
- 	xas_store(xas, entry);
- 	xas_clear_mark(xas, PAGECACHE_TAG_DIRTY);
- 	dax_wake_entry(xas, entry, WAKE_NEXT);
-@@ -984,7 +984,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
- 
- 	tag_pages_for_writeback(mapping, xas.xa_index, end_index);
- 
--	xas_lock_irq(&xas);
-+	xas_lock_bh(&xas);
- 	xas_for_each_marked(&xas, entry, end_index, PAGECACHE_TAG_TOWRITE) {
- 		ret = dax_writeback_one(&xas, dax_dev, mapping, entry);
- 		if (ret < 0) {
-@@ -995,11 +995,11 @@ int dax_writeback_mapping_range(struct address_space *mapping,
- 			continue;
- 
- 		xas_pause(&xas);
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 		cond_resched();
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 	}
--	xas_unlock_irq(&xas);
-+	xas_unlock_bh(&xas);
- 	trace_dax_writeback_range_done(inode, xas.xa_index, end_index);
- 	return ret;
- }
-@@ -1691,20 +1691,20 @@ dax_insert_pfn_mkwrite(struct vm_fault *vmf, pfn_t pfn, unsigned int order)
- 	void *entry;
- 	vm_fault_t ret;
- 
--	xas_lock_irq(&xas);
-+	xas_lock_bh(&xas);
- 	entry = get_unlocked_entry(&xas, order);
- 	/* Did we race with someone splitting entry or so? */
- 	if (!entry || dax_is_conflict(entry) ||
- 	    (order == 0 && !dax_is_pte_entry(entry))) {
- 		put_unlocked_entry(&xas, entry, WAKE_NEXT);
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
- 						      VM_FAULT_NOPAGE);
- 		return VM_FAULT_NOPAGE;
- 	}
- 	xas_set_mark(&xas, PAGECACHE_TAG_DIRTY);
- 	dax_lock_entry(&xas, entry);
--	xas_unlock_irq(&xas);
-+	xas_unlock_bh(&xas);
- 	if (order == 0)
- 		ret = vmf_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
- #ifdef CONFIG_FS_DAX_PMD
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d2cf48c5a2e4..b1d6a43d4b1c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -4083,12 +4083,11 @@ const struct address_space_operations f2fs_dblock_aops = {
- void f2fs_clear_page_cache_dirty_tag(struct page *page)
- {
- 	struct address_space *mapping = page_mapping(page);
--	unsigned long flags;
- 
--	xa_lock_irqsave(&mapping->i_pages, flags);
-+	xa_lock_bh(&mapping->i_pages);
- 	__xa_clear_mark(&mapping->i_pages, page_index(page),
- 						PAGECACHE_TAG_DIRTY);
--	xa_unlock_irqrestore(&mapping->i_pages, flags);
-+	xa_unlock_bh(&mapping->i_pages);
- }
- 
- int __init f2fs_init_post_read_processing(void)
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 4c3370548982..67d7af38b345 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -376,7 +376,7 @@ static bool inode_do_switch_wbs(struct inode *inode,
- 	bool switched = false;
- 
- 	spin_lock(&inode->i_lock);
--	xa_lock_irq(&mapping->i_pages);
-+	xa_lock_bh(&mapping->i_pages);
- 
- 	/*
- 	 * Once I_FREEING or I_WILL_FREE are visible under i_lock, the eviction
-@@ -447,7 +447,7 @@ static bool inode_do_switch_wbs(struct inode *inode,
- 	 */
- 	smp_store_release(&inode->i_state, inode->i_state & ~I_WB_SWITCH);
- 
--	xa_unlock_irq(&mapping->i_pages);
-+	xa_unlock_bh(&mapping->i_pages);
- 	spin_unlock(&inode->i_lock);
- 
- 	return switched;
-diff --git a/fs/gfs2/glops.c b/fs/gfs2/glops.c
-index 54d3fbeb3002..19d93d6ad67e 100644
---- a/fs/gfs2/glops.c
-+++ b/fs/gfs2/glops.c
-@@ -537,9 +537,9 @@ static void inode_go_dump(struct seq_file *seq, struct gfs2_glock *gl,
- 	if (ip == NULL)
- 		return;
- 
--	xa_lock_irq(&inode->i_data.i_pages);
-+	xa_lock_bh(&inode->i_data.i_pages);
- 	nrpages = inode->i_data.nrpages;
--	xa_unlock_irq(&inode->i_data.i_pages);
-+	xa_unlock_bh(&inode->i_data.i_pages);
- 
- 	gfs2_print_dbg(seq, "%s I: n:%llu/%llu t:%u f:0x%02lx d:0x%08x s:%llu "
- 		       "p:%lu\n", fs_id_buf,
-diff --git a/fs/inode.c b/fs/inode.c
-index c93500d84264..56b54a13b58c 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -368,7 +368,7 @@ EXPORT_SYMBOL(inc_nlink);
- 
- static void __address_space_init_once(struct address_space *mapping)
- {
--	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ | XA_FLAGS_ACCOUNT);
-+	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_BH | XA_FLAGS_ACCOUNT);
- 	init_rwsem(&mapping->i_mmap_rwsem);
- 	INIT_LIST_HEAD(&mapping->private_list);
- 	spin_lock_init(&mapping->private_lock);
-@@ -527,7 +527,7 @@ void clear_inode(struct inode *inode)
- 	 * process of removing the last page (in __delete_from_page_cache())
- 	 * and we must not free the mapping under it.
- 	 */
--	xa_lock_irq(&inode->i_data.i_pages);
-+	xa_lock_bh(&inode->i_data.i_pages);
- 	BUG_ON(inode->i_data.nrpages);
- 	/*
- 	 * Almost always, mapping_empty(&inode->i_data) here; but there are
-@@ -537,7 +537,7 @@ void clear_inode(struct inode *inode)
- 	 * or a cleanup function is called here, do not BUG_ON(!mapping_empty),
- 	 * nor even WARN_ON(!mapping_empty).
- 	 */
--	xa_unlock_irq(&inode->i_data.i_pages);
-+	xa_unlock_bh(&inode->i_data.i_pages);
- 	BUG_ON(!list_empty(&inode->i_data.private_list));
- 	BUG_ON(!(inode->i_state & I_FREEING));
- 	BUG_ON(inode->i_state & I_CLEAR);
-diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
-index 4391fd3abd8f..3461fad484da 100644
---- a/fs/nilfs2/btnode.c
-+++ b/fs/nilfs2/btnode.c
-@@ -178,9 +178,9 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
- 				       (unsigned long long)oldkey,
- 				       (unsigned long long)newkey);
- 
--		xa_lock_irq(&btnc->i_pages);
-+		xa_lock_bh(&btnc->i_pages);
- 		err = __xa_insert(&btnc->i_pages, newkey, opage, GFP_NOFS);
--		xa_unlock_irq(&btnc->i_pages);
-+		xa_unlock_bh(&btnc->i_pages);
- 		/*
- 		 * Note: page->index will not change to newkey until
- 		 * nilfs_btnode_commit_change_key() will be called.
-@@ -235,10 +235,10 @@ void nilfs_btnode_commit_change_key(struct address_space *btnc,
- 				       (unsigned long long)newkey);
- 		mark_buffer_dirty(obh);
- 
--		xa_lock_irq(&btnc->i_pages);
-+		xa_lock_bh(&btnc->i_pages);
- 		__xa_erase(&btnc->i_pages, oldkey);
- 		__xa_set_mark(&btnc->i_pages, newkey, PAGECACHE_TAG_DIRTY);
--		xa_unlock_irq(&btnc->i_pages);
-+		xa_unlock_bh(&btnc->i_pages);
- 
- 		opage->index = obh->b_blocknr = newkey;
- 		unlock_page(opage);
-diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-index 171fb5cd427f..38669536ce8e 100644
---- a/fs/nilfs2/page.c
-+++ b/fs/nilfs2/page.c
-@@ -321,13 +321,13 @@ void nilfs_copy_back_pages(struct address_space *dmap,
- 			struct page *p;
- 
- 			/* move the page to the destination cache */
--			xa_lock_irq(&smap->i_pages);
-+			xa_lock_bh(&smap->i_pages);
- 			p = __xa_erase(&smap->i_pages, offset);
- 			WARN_ON(page != p);
- 			smap->nrpages--;
--			xa_unlock_irq(&smap->i_pages);
-+			xa_unlock_bh(&smap->i_pages);
- 
--			xa_lock_irq(&dmap->i_pages);
-+			xa_lock_bh(&dmap->i_pages);
- 			p = __xa_store(&dmap->i_pages, offset, page, GFP_NOFS);
- 			if (unlikely(p)) {
- 				/* Probably -ENOMEM */
-@@ -340,7 +340,7 @@ void nilfs_copy_back_pages(struct address_space *dmap,
- 					__xa_set_mark(&dmap->i_pages, offset,
- 							PAGECACHE_TAG_DIRTY);
- 			}
--			xa_unlock_irq(&dmap->i_pages);
-+			xa_unlock_bh(&dmap->i_pages);
- 		}
- 		unlock_page(page);
- 	}
-@@ -461,14 +461,14 @@ int __nilfs_clear_page_dirty(struct page *page)
- 	struct address_space *mapping = page->mapping;
- 
- 	if (mapping) {
--		xa_lock_irq(&mapping->i_pages);
-+		xa_lock_bh(&mapping->i_pages);
- 		if (test_bit(PG_dirty, &page->flags)) {
- 			__xa_clear_mark(&mapping->i_pages, page_index(page),
- 					     PAGECACHE_TAG_DIRTY);
--			xa_unlock_irq(&mapping->i_pages);
-+			xa_unlock_bh(&mapping->i_pages);
- 			return clear_page_dirty_for_io(page);
- 		}
--		xa_unlock_irq(&mapping->i_pages);
-+		xa_unlock_bh(&mapping->i_pages);
- 		return 0;
- 	}
- 	return TestClearPageDirty(page);
-diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-index 44df4fcef65c..5535eed4222f 100644
---- a/include/linux/backing-dev.h
-+++ b/include/linux/backing-dev.h
-@@ -315,7 +315,7 @@ unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
- 	cookie->locked = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
- 
- 	if (unlikely(cookie->locked))
--		xa_lock_irqsave(&inode->i_mapping->i_pages, cookie->flags);
-+		xa_lock_bh(&inode->i_mapping->i_pages);
- 
- 	/*
- 	 * Protected by either !I_WB_SWITCH + rcu_read_lock() or the i_pages
-@@ -333,7 +333,7 @@ static inline void unlocked_inode_to_wb_end(struct inode *inode,
- 					    struct wb_lock_cookie *cookie)
- {
- 	if (unlikely(cookie->locked))
--		xa_unlock_irqrestore(&inode->i_mapping->i_pages, cookie->flags);
-+		xa_unlock_bh(&inode->i_mapping->i_pages);
- 
- 	rcu_read_unlock();
- }
-diff --git a/include/linux/list_lru.h b/include/linux/list_lru.h
-index 1b5fceb565df..d0ab82030636 100644
---- a/include/linux/list_lru.h
-+++ b/include/linux/list_lru.h
-@@ -168,7 +168,7 @@ unsigned long list_lru_walk_one(struct list_lru *lru,
- 				list_lru_walk_cb isolate, void *cb_arg,
- 				unsigned long *nr_to_walk);
- /**
-- * list_lru_walk_one_irq: walk a list_lru, isolating and disposing freeable items.
-+ * list_lru_walk_one_bh: walk a list_lru, isolating and disposing freeable items.
-  * @lru: the lru pointer.
-  * @nid: the node id to scan from.
-  * @memcg: the cgroup to scan from.
-@@ -178,12 +178,13 @@ unsigned long list_lru_walk_one(struct list_lru *lru,
-  * @nr_to_walk: how many items to scan.
-  *
-  * Same as @list_lru_walk_one except that the spinlock is acquired with
-- * spin_lock_irq().
-+ * spin_lock_bh().
-  */
--unsigned long list_lru_walk_one_irq(struct list_lru *lru,
-+unsigned long list_lru_walk_one_bh(struct list_lru *lru,
- 				    int nid, struct mem_cgroup *memcg,
- 				    list_lru_walk_cb isolate, void *cb_arg,
- 				    unsigned long *nr_to_walk);
-+
- unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
- 				 list_lru_walk_cb isolate, void *cb_arg,
- 				 unsigned long *nr_to_walk);
-@@ -197,10 +198,10 @@ list_lru_shrink_walk(struct list_lru *lru, struct shrink_control *sc,
- }
- 
- static inline unsigned long
--list_lru_shrink_walk_irq(struct list_lru *lru, struct shrink_control *sc,
-+list_lru_shrink_walk_bh(struct list_lru *lru, struct shrink_control *sc,
- 			 list_lru_walk_cb isolate, void *cb_arg)
- {
--	return list_lru_walk_one_irq(lru, sc->nid, sc->memcg, isolate, cb_arg,
-+	return list_lru_walk_one_bh(lru, sc->nid, sc->memcg, isolate, cb_arg,
- 				     &sc->nr_to_scan);
- }
- 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index bfe5c486f4ad..d9812c2028ef 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1460,12 +1460,12 @@ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
- 
- static inline void __inc_lruvec_kmem_state(void *p, enum node_stat_item idx)
- {
--	__mod_lruvec_kmem_state(p, idx, 1);
-+	mod_lruvec_kmem_state(p, idx, 1);
- }
- 
- static inline void __dec_lruvec_kmem_state(void *p, enum node_stat_item idx)
- {
--	__mod_lruvec_kmem_state(p, idx, -1);
-+	mod_lruvec_kmem_state(p, idx, -1);
- }
- 
- static inline struct lruvec *parent_lruvec(struct lruvec *lruvec)
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d1458ecf2f51..ec1cb9d3d644 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -258,12 +258,11 @@ static void page_cache_free_page(struct address_space *mapping,
- void delete_from_page_cache(struct page *page)
- {
- 	struct address_space *mapping = page_mapping(page);
--	unsigned long flags;
- 
- 	BUG_ON(!PageLocked(page));
--	xa_lock_irqsave(&mapping->i_pages, flags);
-+	xa_lock_bh(&mapping->i_pages);
- 	__delete_from_page_cache(page, NULL);
--	xa_unlock_irqrestore(&mapping->i_pages, flags);
-+	xa_unlock_bh(&mapping->i_pages);
- 
- 	page_cache_free_page(mapping, page);
- }
-@@ -335,19 +334,18 @@ void delete_from_page_cache_batch(struct address_space *mapping,
- 				  struct pagevec *pvec)
- {
- 	int i;
--	unsigned long flags;
- 
- 	if (!pagevec_count(pvec))
- 		return;
- 
--	xa_lock_irqsave(&mapping->i_pages, flags);
-+	xa_lock_bh(&mapping->i_pages);
- 	for (i = 0; i < pagevec_count(pvec); i++) {
- 		trace_mm_filemap_delete_from_page_cache(pvec->pages[i]);
- 
- 		unaccount_page_cache_page(mapping, pvec->pages[i]);
- 	}
- 	page_cache_delete_batch(mapping, pvec);
--	xa_unlock_irqrestore(&mapping->i_pages, flags);
-+	xa_unlock_bh(&mapping->i_pages);
- 
- 	for (i = 0; i < pagevec_count(pvec); i++)
- 		page_cache_free_page(mapping, pvec->pages[i]);
-@@ -821,7 +819,6 @@ void replace_page_cache_page(struct page *old, struct page *new)
- 	void (*freepage)(struct page *) = mapping->a_ops->freepage;
- 	pgoff_t offset = old->index;
- 	XA_STATE(xas, &mapping->i_pages, offset);
--	unsigned long flags;
- 
- 	VM_BUG_ON_PAGE(!PageLocked(old), old);
- 	VM_BUG_ON_PAGE(!PageLocked(new), new);
-@@ -833,7 +830,7 @@ void replace_page_cache_page(struct page *old, struct page *new)
- 
- 	mem_cgroup_migrate(old, new);
- 
--	xas_lock_irqsave(&xas, flags);
-+	xas_lock_bh(&xas);
- 	xas_store(&xas, new);
- 
- 	old->mapping = NULL;
-@@ -846,7 +843,7 @@ void replace_page_cache_page(struct page *old, struct page *new)
- 		__dec_lruvec_page_state(old, NR_SHMEM);
- 	if (PageSwapBacked(new))
- 		__inc_lruvec_page_state(new, NR_SHMEM);
--	xas_unlock_irqrestore(&xas, flags);
-+	xas_unlock_bh(&xas);
- 	if (freepage)
- 		freepage(old);
- 	put_page(old);
-@@ -887,7 +884,7 @@ noinline int __add_to_page_cache_locked(struct page *page,
- 		if (order > thp_order(page))
- 			xas_split_alloc(&xas, xa_load(xas.xa, xas.xa_index),
- 					order, gfp);
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 		xas_for_each_conflict(&xas, entry) {
- 			old = entry;
- 			if (!xa_is_value(entry)) {
-@@ -917,7 +914,7 @@ noinline int __add_to_page_cache_locked(struct page *page,
- 		if (!huge)
- 			__inc_lruvec_page_state(page, NR_FILE_PAGES);
- unlock:
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 	} while (xas_nomem(&xas, gfp));
- 
- 	if (xas_error(&xas)) {
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index b0412be08fa2..eae8e0494de0 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1666,11 +1666,11 @@ static void collapse_file(struct mm_struct *mm,
- 
- 	/* This will be less messy when we use multi-index entries */
- 	do {
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 		xas_create_range(&xas);
- 		if (!xas_error(&xas))
- 			break;
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 		if (!xas_nomem(&xas, GFP_KERNEL)) {
- 			result = SCAN_FAIL;
- 			goto out;
-@@ -1718,7 +1718,7 @@ static void collapse_file(struct mm_struct *mm,
- 			}
- 
- 			if (xa_is_value(page) || !PageUptodate(page)) {
--				xas_unlock_irq(&xas);
-+				xas_unlock_bh(&xas);
- 				/* swap in or instantiate fallocated page */
- 				if (shmem_getpage(mapping->host, index, &page,
- 						  SGP_NOHUGE)) {
-@@ -1727,14 +1727,14 @@ static void collapse_file(struct mm_struct *mm,
- 				}
- 			} else if (trylock_page(page)) {
- 				get_page(page);
--				xas_unlock_irq(&xas);
-+				xas_unlock_bh(&xas);
- 			} else {
- 				result = SCAN_PAGE_LOCK;
- 				goto xa_locked;
- 			}
- 		} else {	/* !is_shmem */
- 			if (!page || xa_is_value(page)) {
--				xas_unlock_irq(&xas);
-+				xas_unlock_bh(&xas);
- 				page_cache_sync_readahead(mapping, &file->f_ra,
- 							  file, index,
- 							  end - index);
-@@ -1759,13 +1759,13 @@ static void collapse_file(struct mm_struct *mm,
- 				 * This is a one-off situation. We are not
- 				 * forcing writeback in loop.
- 				 */
--				xas_unlock_irq(&xas);
-+				xas_unlock_bh(&xas);
- 				filemap_flush(mapping);
- 				result = SCAN_FAIL;
- 				goto xa_unlocked;
- 			} else if (trylock_page(page)) {
- 				get_page(page);
--				xas_unlock_irq(&xas);
-+				xas_unlock_bh(&xas);
- 			} else {
- 				result = SCAN_PAGE_LOCK;
- 				goto xa_locked;
-@@ -1823,7 +1823,7 @@ static void collapse_file(struct mm_struct *mm,
- 		if (page_mapped(page))
- 			unmap_mapping_pages(mapping, index, 1, false);
- 
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 		xas_set(&xas, index);
- 
- 		VM_BUG_ON_PAGE(page != xas_load(&xas), page);
-@@ -1837,7 +1837,7 @@ static void collapse_file(struct mm_struct *mm,
- 		 */
- 		if (!page_ref_freeze(page, 3)) {
- 			result = SCAN_PAGE_COUNT;
--			xas_unlock_irq(&xas);
-+			xas_unlock_bh(&xas);
- 			putback_lru_page(page);
- 			goto out_unlock;
- 		}
-@@ -1885,7 +1885,7 @@ static void collapse_file(struct mm_struct *mm,
- 	}
- 
- xa_locked:
--	xas_unlock_irq(&xas);
-+	xas_unlock_bh(&xas);
- xa_unlocked:
- 
- 	if (result == SCAN_SUCCEED) {
-@@ -1934,7 +1934,7 @@ static void collapse_file(struct mm_struct *mm,
- 		struct page *page;
- 
- 		/* Something went wrong: roll back page cache changes */
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 		mapping->nrpages -= nr_none;
- 
- 		if (is_shmem)
-@@ -1960,13 +1960,13 @@ static void collapse_file(struct mm_struct *mm,
- 			page_ref_unfreeze(page, 2);
- 			xas_store(&xas, page);
- 			xas_pause(&xas);
--			xas_unlock_irq(&xas);
-+			xas_unlock_bh(&xas);
- 			unlock_page(page);
- 			putback_lru_page(page);
--			xas_lock_irq(&xas);
-+			xas_lock_bh(&xas);
- 		}
- 		VM_BUG_ON(nr_none);
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 
- 		new_page->mapping = NULL;
- 	}
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index cd58790d0fb3..292b0435dc19 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -271,17 +271,17 @@ list_lru_walk_one(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
- EXPORT_SYMBOL_GPL(list_lru_walk_one);
- 
- unsigned long
--list_lru_walk_one_irq(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
-+list_lru_walk_one_bh(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
- 		      list_lru_walk_cb isolate, void *cb_arg,
- 		      unsigned long *nr_to_walk)
- {
- 	struct list_lru_node *nlru = &lru->node[nid];
- 	unsigned long ret;
- 
--	spin_lock_irq(&nlru->lock);
-+	spin_lock_bh(&nlru->lock);
- 	ret = __list_lru_walk_one(nlru, memcg_cache_id(memcg), isolate, cb_arg,
- 				  nr_to_walk);
--	spin_unlock_irq(&nlru->lock);
-+	spin_unlock_bh(&nlru->lock);
- 	return ret;
- }
- 
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 081dd33e6a61..ef7de2d1035a 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -35,7 +35,7 @@ static void memfd_tag_pins(struct xa_state *xas)
- 
- 	lru_add_drain();
- 
--	xas_lock_irq(xas);
-+	xas_lock_bh(xas);
- 	xas_for_each(xas, page, ULONG_MAX) {
- 		if (xa_is_value(page))
- 			continue;
-@@ -47,11 +47,11 @@ static void memfd_tag_pins(struct xa_state *xas)
- 			continue;
- 
- 		xas_pause(xas);
--		xas_unlock_irq(xas);
-+		xas_unlock_bh(xas);
- 		cond_resched();
--		xas_lock_irq(xas);
-+		xas_lock_bh(xas);
- 	}
--	xas_unlock_irq(xas);
-+	xas_unlock_bh(xas);
- }
- 
- /*
-@@ -84,7 +84,7 @@ static int memfd_wait_for_pins(struct address_space *mapping)
- 			scan = LAST_SCAN;
- 
- 		xas_set(&xas, 0);
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 		xas_for_each_marked(&xas, page, ULONG_MAX, MEMFD_TAG_PINNED) {
- 			bool clear = true;
- 			if (xa_is_value(page))
-@@ -107,11 +107,11 @@ static int memfd_wait_for_pins(struct address_space *mapping)
- 				continue;
- 
- 			xas_pause(&xas);
--			xas_unlock_irq(&xas);
-+			xas_unlock_bh(&xas);
- 			cond_resched();
--			xas_lock_irq(&xas);
-+			xas_lock_bh(&xas);
- 		}
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 	}
- 
- 	return error;
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 7e240437e7d9..8bca58b0544f 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -402,14 +402,14 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	oldzone = page_zone(page);
- 	newzone = page_zone(newpage);
- 
--	xas_lock_irq(&xas);
-+	xas_lock_bh(&xas);
- 	if (page_count(page) != expected_count || xas_load(&xas) != page) {
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 		return -EAGAIN;
- 	}
- 
- 	if (!page_ref_freeze(page, expected_count)) {
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 		return -EAGAIN;
- 	}
- 
-@@ -454,8 +454,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	 */
- 	page_ref_unfreeze(page, expected_count - nr);
- 
--	xas_unlock(&xas);
--	/* Leave irq disabled to prevent preemption while updating stats */
-+	xas_unlock_bh(&xas);
- 
- 	/*
- 	 * If moved to a different zone then also account
-@@ -494,7 +493,6 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 			__mod_zone_page_state(newzone, NR_ZONE_WRITE_PENDING, nr);
- 		}
- 	}
--	local_irq_enable();
- 
- 	return MIGRATEPAGE_SUCCESS;
- }
-@@ -510,15 +508,15 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
- 	XA_STATE(xas, &mapping->i_pages, page_index(page));
- 	int expected_count;
- 
--	xas_lock_irq(&xas);
-+	xas_lock_bh(&xas);
- 	expected_count = 2 + page_has_private(page);
- 	if (page_count(page) != expected_count || xas_load(&xas) != page) {
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 		return -EAGAIN;
- 	}
- 
- 	if (!page_ref_freeze(page, expected_count)) {
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 		return -EAGAIN;
- 	}
- 
-@@ -531,7 +529,7 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
- 
- 	page_ref_unfreeze(page, expected_count - 1);
- 
--	xas_unlock_irq(&xas);
-+	xas_unlock_bh(&xas);
- 
- 	return MIGRATEPAGE_SUCCESS;
- }
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 9f63548f247c..99221bf264cb 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2122,18 +2122,18 @@ void tag_pages_for_writeback(struct address_space *mapping,
- 	unsigned int tagged = 0;
- 	void *page;
- 
--	xas_lock_irq(&xas);
-+	xas_lock_bh(&xas);
- 	xas_for_each_marked(&xas, page, end, PAGECACHE_TAG_DIRTY) {
- 		xas_set_mark(&xas, PAGECACHE_TAG_TOWRITE);
- 		if (++tagged % XA_CHECK_SCHED)
- 			continue;
- 
- 		xas_pause(&xas);
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 		cond_resched();
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 	}
--	xas_unlock_irq(&xas);
-+	xas_unlock_bh(&xas);
- }
- EXPORT_SYMBOL(tag_pages_for_writeback);
- 
-@@ -2475,16 +2475,15 @@ void account_page_cleaned(struct page *page, struct address_space *mapping,
- void __set_page_dirty(struct page *page, struct address_space *mapping,
- 			     int warn)
- {
--	unsigned long flags;
- 
--	xa_lock_irqsave(&mapping->i_pages, flags);
-+	xa_lock_bh(&mapping->i_pages);
- 	if (page->mapping) {	/* Race with truncate? */
- 		WARN_ON_ONCE(warn && !PageUptodate(page));
- 		account_page_dirtied(page, mapping);
- 		__xa_set_mark(&mapping->i_pages, page_index(page),
- 				PAGECACHE_TAG_DIRTY);
- 	}
--	xa_unlock_irqrestore(&mapping->i_pages, flags);
-+	xa_unlock_bh(&mapping->i_pages);
- }
- 
- /*
-@@ -2740,9 +2739,8 @@ int test_clear_page_writeback(struct page *page)
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
- 		struct inode *inode = mapping->host;
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
--		unsigned long flags;
- 
--		xa_lock_irqsave(&mapping->i_pages, flags);
-+		xa_lock_bh(&mapping->i_pages);
- 		ret = TestClearPageWriteback(page);
- 		if (ret) {
- 			__xa_clear_mark(&mapping->i_pages, page_index(page),
-@@ -2759,7 +2757,7 @@ int test_clear_page_writeback(struct page *page)
- 						     PAGECACHE_TAG_WRITEBACK))
- 			sb_clear_inode_writeback(mapping->host);
- 
--		xa_unlock_irqrestore(&mapping->i_pages, flags);
-+		xa_unlock_bh(&mapping->i_pages);
- 	} else {
- 		ret = TestClearPageWriteback(page);
- 	}
-@@ -2782,9 +2780,8 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
- 		XA_STATE(xas, &mapping->i_pages, page_index(page));
- 		struct inode *inode = mapping->host;
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
--		unsigned long flags;
- 
--		xas_lock_irqsave(&xas, flags);
-+		xas_lock_bh(&xas);
- 		xas_load(&xas);
- 		ret = TestSetPageWriteback(page);
- 		if (!ret) {
-@@ -2809,7 +2806,7 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
- 			xas_clear_mark(&xas, PAGECACHE_TAG_DIRTY);
- 		if (!keep_write)
- 			xas_clear_mark(&xas, PAGECACHE_TAG_TOWRITE);
--		xas_unlock_irqrestore(&xas, flags);
-+		xas_unlock_bh(&xas);
- 	} else {
- 		ret = TestSetPageWriteback(page);
- 	}
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 70d9ce294bb4..53d5a32aced1 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -698,7 +698,7 @@ static int shmem_add_to_page_cache(struct page *page,
- 
- 	do {
- 		void *entry;
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 		entry = xas_find_conflict(&xas);
- 		if (entry != expected)
- 			xas_set_err(&xas, -EEXIST);
-@@ -719,7 +719,7 @@ static int shmem_add_to_page_cache(struct page *page,
- 		__mod_lruvec_page_state(page, NR_FILE_PAGES, nr);
- 		__mod_lruvec_page_state(page, NR_SHMEM, nr);
- unlock:
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 	} while (xas_nomem(&xas, gfp));
- 
- 	if (xas_error(&xas)) {
-@@ -744,13 +744,13 @@ static void shmem_delete_from_page_cache(struct page *page, void *radswap)
- 
- 	VM_BUG_ON_PAGE(PageCompound(page), page);
- 
--	xa_lock_irq(&mapping->i_pages);
-+	xa_lock_bh(&mapping->i_pages);
- 	error = shmem_replace_entry(mapping, page->index, page, radswap);
- 	page->mapping = NULL;
- 	mapping->nrpages--;
- 	__dec_lruvec_page_state(page, NR_FILE_PAGES);
- 	__dec_lruvec_page_state(page, NR_SHMEM);
--	xa_unlock_irq(&mapping->i_pages);
-+	xa_unlock_bh(&mapping->i_pages);
- 	put_page(page);
- 	BUG_ON(error);
- }
-@@ -1652,14 +1652,14 @@ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
- 	 * Our caller will very soon move newpage out of swapcache, but it's
- 	 * a nice clean interface for us to replace oldpage by newpage there.
- 	 */
--	xa_lock_irq(&swap_mapping->i_pages);
-+	xa_lock_bh(&swap_mapping->i_pages);
- 	error = shmem_replace_entry(swap_mapping, swap_index, oldpage, newpage);
- 	if (!error) {
- 		mem_cgroup_migrate(oldpage, newpage);
- 		__inc_lruvec_page_state(newpage, NR_FILE_PAGES);
- 		__dec_lruvec_page_state(oldpage, NR_FILE_PAGES);
- 	}
--	xa_unlock_irq(&swap_mapping->i_pages);
-+	xa_unlock_bh(&swap_mapping->i_pages);
- 
- 	if (unlikely(error)) {
- 		/*
-diff --git a/mm/swap_slots.c b/mm/swap_slots.c
-index a66f3e0ec973..e8bd8ec89dec 100644
---- a/mm/swap_slots.c
-+++ b/mm/swap_slots.c
-@@ -274,10 +274,10 @@ int free_swap_slot(swp_entry_t entry)
- 
- 	cache = raw_cpu_ptr(&swp_slots);
- 	if (likely(use_swap_slot_cache && cache->slots_ret)) {
--		spin_lock_irq(&cache->free_lock);
-+		spin_lock_bh(&cache->free_lock);
- 		/* Swap slots cache may be deactivated before acquiring lock */
- 		if (!use_swap_slot_cache || !cache->slots_ret) {
--			spin_unlock_irq(&cache->free_lock);
-+			spin_unlock_bh(&cache->free_lock);
- 			goto direct_free;
- 		}
- 		if (cache->n_ret >= SWAP_SLOTS_CACHE_SIZE) {
-@@ -291,7 +291,7 @@ int free_swap_slot(swp_entry_t entry)
- 			cache->n_ret = 0;
- 		}
- 		cache->slots_ret[cache->n_ret++] = entry;
--		spin_unlock_irq(&cache->free_lock);
-+		spin_unlock_bh(&cache->free_lock);
- 	} else {
- direct_free:
- 		swapcache_free_entries(&entry, 1);
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index c56aa9ac050d..1773d1593b93 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -114,7 +114,7 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry,
- 	SetPageSwapCache(page);
- 
- 	do {
--		xas_lock_irq(&xas);
-+		xas_lock_bh(&xas);
- 		xas_create_range(&xas);
- 		if (xas_error(&xas))
- 			goto unlock;
-@@ -134,7 +134,7 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry,
- 		__mod_lruvec_page_state(page, NR_SWAPCACHE, nr);
- 		ADD_CACHE_INFO(add_total, nr);
- unlock:
--		xas_unlock_irq(&xas);
-+		xas_unlock_bh(&xas);
- 	} while (xas_nomem(&xas, gfp));
- 
- 	if (!xas_error(&xas))
-@@ -242,9 +242,9 @@ void delete_from_swap_cache(struct page *page)
- 	swp_entry_t entry = { .val = page_private(page) };
- 	struct address_space *address_space = swap_address_space(entry);
- 
--	xa_lock_irq(&address_space->i_pages);
-+	xa_lock_bh(&address_space->i_pages);
- 	__delete_from_swap_cache(page, entry, NULL);
--	xa_unlock_irq(&address_space->i_pages);
-+	xa_unlock_bh(&address_space->i_pages);
- 
- 	put_swap_page(page, entry);
- 	page_ref_sub(page, thp_nr_pages(page));
-@@ -261,13 +261,13 @@ void clear_shadow_from_swap_cache(int type, unsigned long begin,
- 		struct address_space *address_space = swap_address_space(entry);
- 		XA_STATE(xas, &address_space->i_pages, curr);
- 
--		xa_lock_irq(&address_space->i_pages);
-+		xa_lock_bh(&address_space->i_pages);
- 		xas_for_each(&xas, old, end) {
- 			if (!xa_is_value(old))
- 				continue;
- 			xas_store(&xas, NULL);
- 		}
--		xa_unlock_irq(&address_space->i_pages);
-+		xa_unlock_bh(&address_space->i_pages);
- 
- 		/* search the next swapcache until we meet end */
- 		curr >>= SWAP_ADDRESS_SPACE_SHIFT;
-@@ -679,7 +679,7 @@ int init_swap_address_space(unsigned int type, unsigned long nr_pages)
- 		return -ENOMEM;
- 	for (i = 0; i < nr; i++) {
- 		space = spaces + i;
--		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_IRQ);
-+		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_BH);
- 		atomic_set(&space->i_mmap_writable, 0);
- 		space->a_ops = &swap_aops;
- 		/* swap cache doesn't use writeback related tags */
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 234ddd879caa..c5b7fd2360c7 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -45,9 +45,9 @@ static inline void __clear_shadow_entry(struct address_space *mapping,
- static void clear_shadow_entry(struct address_space *mapping, pgoff_t index,
- 			       void *entry)
- {
--	xa_lock_irq(&mapping->i_pages);
-+	xa_lock_bh(&mapping->i_pages);
- 	__clear_shadow_entry(mapping, index, entry);
--	xa_unlock_irq(&mapping->i_pages);
-+	xa_unlock_bh(&mapping->i_pages);
- }
- 
- /*
-@@ -74,7 +74,7 @@ static void truncate_exceptional_pvec_entries(struct address_space *mapping,
- 
- 	dax = dax_mapping(mapping);
- 	if (!dax)
--		xa_lock_irq(&mapping->i_pages);
-+		xa_lock_bh(&mapping->i_pages);
- 
- 	for (i = j; i < pagevec_count(pvec); i++) {
- 		struct page *page = pvec->pages[i];
-@@ -94,7 +94,7 @@ static void truncate_exceptional_pvec_entries(struct address_space *mapping,
- 	}
- 
- 	if (!dax)
--		xa_unlock_irq(&mapping->i_pages);
-+		xa_unlock_bh(&mapping->i_pages);
- 	pvec->nr = j;
- }
- 
-@@ -452,8 +452,8 @@ void truncate_inode_pages_final(struct address_space *mapping)
- 		 * modification that does not see AS_EXITING is
- 		 * completed before starting the final truncate.
- 		 */
--		xa_lock_irq(&mapping->i_pages);
--		xa_unlock_irq(&mapping->i_pages);
-+		xa_lock_bh(&mapping->i_pages);
-+		xa_unlock_bh(&mapping->i_pages);
- 	}
- 
- 	/*
-@@ -560,7 +560,6 @@ void invalidate_mapping_pagevec(struct address_space *mapping,
- static int
- invalidate_complete_page2(struct address_space *mapping, struct page *page)
- {
--	unsigned long flags;
- 
- 	if (page->mapping != mapping)
- 		return 0;
-@@ -568,13 +567,13 @@ invalidate_complete_page2(struct address_space *mapping, struct page *page)
- 	if (page_has_private(page) && !try_to_release_page(page, GFP_KERNEL))
- 		return 0;
- 
--	xa_lock_irqsave(&mapping->i_pages, flags);
-+	xa_lock_bh(&mapping->i_pages);
- 	if (PageDirty(page))
- 		goto failed;
- 
- 	BUG_ON(page_has_private(page));
- 	__delete_from_page_cache(page, NULL);
--	xa_unlock_irqrestore(&mapping->i_pages, flags);
-+	xa_unlock_bh(&mapping->i_pages);
- 
- 	if (mapping->a_ops->freepage)
- 		mapping->a_ops->freepage(page);
-@@ -582,7 +581,7 @@ invalidate_complete_page2(struct address_space *mapping, struct page *page)
- 	put_page(page);	/* pagecache ref */
- 	return 1;
- failed:
--	xa_unlock_irqrestore(&mapping->i_pages, flags);
-+	xa_unlock_bh(&mapping->i_pages);
- 	return 0;
- }
- 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 4620df62f0ff..f59e96f5223a 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1049,14 +1049,13 @@ static pageout_t pageout(struct page *page, struct address_space *mapping)
- static int __remove_mapping(struct address_space *mapping, struct page *page,
- 			    bool reclaimed, struct mem_cgroup *target_memcg)
- {
--	unsigned long flags;
- 	int refcount;
- 	void *shadow = NULL;
- 
- 	BUG_ON(!PageLocked(page));
- 	BUG_ON(mapping != page_mapping(page));
- 
--	xa_lock_irqsave(&mapping->i_pages, flags);
-+	xa_lock_bh(&mapping->i_pages);
- 	/*
- 	 * The non racy check for a busy page.
- 	 *
-@@ -1097,7 +1096,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
- 		if (reclaimed && !mapping_exiting(mapping))
- 			shadow = workingset_eviction(page, target_memcg);
- 		__delete_from_swap_cache(page, swap, shadow);
--		xa_unlock_irqrestore(&mapping->i_pages, flags);
-+		xa_unlock_bh(&mapping->i_pages);
- 		put_swap_page(page, swap);
- 	} else {
- 		void (*freepage)(struct page *);
-@@ -1123,7 +1122,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
- 		    !mapping_exiting(mapping) && !dax_mapping(mapping))
- 			shadow = workingset_eviction(page, target_memcg);
- 		__delete_from_page_cache(page, shadow);
--		xa_unlock_irqrestore(&mapping->i_pages, flags);
-+		xa_unlock_bh(&mapping->i_pages);
- 
- 		if (freepage != NULL)
- 			freepage(page);
-@@ -1132,7 +1131,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
- 	return 1;
- 
- cannot_free:
--	xa_unlock_irqrestore(&mapping->i_pages, flags);
-+	xa_unlock_bh(&mapping->i_pages);
- 	return 0;
- }
- 
-diff --git a/mm/workingset.c b/mm/workingset.c
-index 5ba3e42446fa..7a8c6844cff0 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -440,7 +440,6 @@ void workingset_update_node(struct xa_node *node)
- 	 * already where they should be. The list_empty() test is safe
- 	 * as node->private_list is protected by the i_pages lock.
- 	 */
--	VM_WARN_ON_ONCE(!irqs_disabled());  /* For __inc_lruvec_page_state */
- 
- 	if (node->count && node->count == node->nr_values) {
- 		if (list_empty(&node->private_list)) {
-@@ -532,12 +531,10 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
- 	 * pin only the address_space of the particular node we want
- 	 * to reclaim, take the node off-LRU, and drop the lru_lock.
- 	 */
--
- 	mapping = container_of(node->array, struct address_space, i_pages);
--
- 	/* Coming from the list, invert the lock order */
- 	if (!xa_trylock(&mapping->i_pages)) {
--		spin_unlock_irq(lru_lock);
-+		spin_unlock_bh(lru_lock);
- 		ret = LRU_RETRY;
- 		goto out;
- 	}
-@@ -560,19 +557,19 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
- 	__inc_lruvec_kmem_state(node, WORKINGSET_NODERECLAIM);
- 
- out_invalid:
--	xa_unlock_irq(&mapping->i_pages);
-+	xa_unlock_bh(&mapping->i_pages);
- 	ret = LRU_REMOVED_RETRY;
- out:
- 	cond_resched();
--	spin_lock_irq(lru_lock);
-+	spin_lock_bh(lru_lock);
- 	return ret;
- }
- 
- static unsigned long scan_shadow_nodes(struct shrinker *shrinker,
- 				       struct shrink_control *sc)
- {
--	/* list_lru lock nests inside the IRQ-safe i_pages lock */
--	return list_lru_shrink_walk_irq(&shadow_nodes, sc, shadow_lru_isolate,
-+	/* list_lru lock nests inside the BH-safe i_pages lock */
-+	return list_lru_shrink_walk_bh(&shadow_nodes, sc, shadow_lru_isolate,
- 					NULL);
- }
- 
+The subset of performance related operations(open/read/write/close etc.) belong
+in kernelspace(ksmbd) and the other subset which belong to operations(DCE/RPC,
+user account/share database) which are not really related with performance are
+handled in userspace(ksmbd.mountd).
+
+When the ksmbd.mountd is started, It starts up a forker thread at initialization
+time and opens a dedicated port 445 for listening to SMB requests. Whenever new
+clients make request, Forker thread will accept the client connection and fork
+a new thread for dedicated communication channel between the client and
+the server.
+
+
+ksmbd feature status
+====================
+
+============================== =================================================
+Feature name                   Status
+============================== =================================================
+Dialects                       Supported. SMB2.1 SMB3.0, SMB3.1.1 dialects
+                               (intentionally excludes security vulnerable SMB1 dialect).
+Auto Negotiation               Supported.
+Compound Request               Supported.
+Oplock Cache Mechanism         Supported.
+SMB2 leases(v1 lease)          Supported.
+Directory leases(v2 lease)     Planned for future.
+Multi-credits                  Supported.
+NTLM/NTLMv2                    Supported.
+HMAC-SHA256 Signing            Supported.
+Secure negotiate               Supported.
+Signing Update                 Supported.
+Pre-authentication integrity   Supported.
+SMB3 encryption(CCM, GCM)      Supported. (CCM and GCM128 supported, GCM256 in progress)
+SMB direct(RDMA)               Partially Supported. SMB3 Multi-channel is required
+                               to connect to Windows client.
+SMB3 Multi-channel             Partially Supported.
+SMB3.1.1 POSIX extension       Supported.
+ACLs                           Partially Supported. only DACLs available, SACLs
+                               (auditing) is planned for the future. For
+                               ownership (SIDs) ksmbd generates random subauth
+                               values(then store it to disk) and use uid/gid
+                               get from inode as RID for local domain SID.
+                               The current acl implementation is limited to
+                               standalone server, not a domain member.
+                               Integration with Samba tools is being worked on to
+                               allow future support for running as a domain member.
+Kerberos                       Supported.
+Durable handle v1,v2           Planned for future.
+Persistent handle              Planned for future.
+SMB2 notify                    Planned for future.
+Sparse file support            Supported.
+DCE/RPC support                Partially Supported. a few calls(NetShareEnumAll,
+                               NetServerGetInfo, SAMR, LSARPC) that are needed 
+                               for file server handled via netlink interface from
+                               ksmbd.mountd. Additional integration with Samba
+                               tools and libraries via upcall is being investigated
+                               to allow support for additional DCE/RPC management
+                               calls (and future support for Witness protocol e.g.)
+ksmbd/nfsd interoperability    Planned for future. The features that ksmbd
+                               support are Leases, Notify, ACLs and Share modes.
+============================== =================================================
+
+All features required as file server are currently implemented in ksmbd.
+In particular, the implementation of SMB Direct(RDMA) is only currently
+possible with ksmbd (among Linux servers)
+
+
+Stability
+=========
+
+It has been proved to be stable. A significant amount of xfstests pass and
+are run regularly from Linux to Linux:
+
+  http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/8/builds/53
+
+In addition regression tests using the broadest SMB3 functional test suite
+(Samba's "smbtorture") are run on every checkin. 
+It has already been used by many other open source toolkits and commercial companies
+that need NAS functionality. Their issues have been fixed and contributions are
+applied into ksmbd. Ksmbd has been well tested and verified in the field and market.
+
+
+Mailing list and repositories
+=============================
+ - linux-cifs@vger.kernel.org
+ - linux-cifsd-devel@lists.sourceforge.net(old and deprecated)
+ - https://git.samba.org/?p=ksmbd.git;a=shortlog;h=refs/heads/cifsd-for-next
+ - https://github.com/smfrench/smb3-kernel/tree/cifsd-for-next
+ - https://github.com/namjaejeon/smb3-kernel/tree/ksmbd-v7-series
+ - https://github.com/cifsd-team/ksmbd (out-of-tree)
+ - https://github.com/cifsd-team/ksmbd-tools
+
+
+How to run ksmbd 
+================
+
+   a. Download ksmbd-tools and compile them.
+	- https://github.com/cifsd-team/ksmbd-tools
+
+   b. Create user/password for SMB share.
+
+	# mkdir /etc/ksmbd/
+	# ksmbd.adduser -a <Enter USERNAME for SMB share access>
+
+   c. Create /etc/ksmbd/smb.conf file, add SMB share in smb.conf file
+	- Refer smb.conf.example and Documentation/configuration.txt
+	  in ksmbd-tools
+
+   d. Insert ksmbd.ko module
+
+	# insmod ksmbd.ko
+
+   e. Start ksmbd user space daemon
+	# ksmbd.mountd
+
+   f. Access share from Windows or Linux using SMB 
+       e.g. "mount -t cifs //server/share /mnt ..."
+
+
+v7:
+ - fix wrong compression context size.
+ - fix wrong error status return on session setup.
+ - set STATUS_INVALID_PARAMETER error status if credit charge is
+   invalid.
+ - move credit charge verification over smb2 request size verification.
+ - fix typo of MS-SMBD.
+ - add negotiate context verification.
+ - add support for negotiating signing algorithm.
+ - Fix potential memory leak in tcp_destroy_socket(). (Marios Makassikis)
+ - fix -Wstringop-truncation warnings.
+ - Return STATUS_OBJECT_PATH_NOT_FOUND if smb2_creat() returns ENOENT. (Marios Makassikis)
+ - don't set RSS capable in FSCTL_QUERY_NETWORK_INTERFACE_INFO.
+ - use channel signingkey for binding SMB2 session setup.
+ - fix missing error code in smb2_lock.
+ - add ipv6_addr_v4mapped check to know if connection from client is ipv4.
+ - fix an oops in error handling in smb2_open(). (Dan Carpenter)
+
+v6:
+ - Fix read on the uninitialized pointer sess. (Colin Ian King)
+ - call mnt_user_ns once in a function.
+ - remove unneeded NULL check in for_each_netdev. (Coverity Scan)
+ - fix read on the uninitialized send_ctx. (Coverity Scan)
+ - fix memory leak smb2_populate_readdir_entry(). (Coverity Scan)
+ - fix memory leak in smb_inherit_dacl(). (Coverity Scan)
+ - change data type of volatile/persistent id to u64. (Dan Carpenter)
+ - delete some stray tabs. (Dan Carpenter)
+ - use kasprintf() in ksmbd_vfs_xattr_stream_name(). (Dan Carpenter)
+ - fix the running request count decrement.
+ - free ksmbd_lock when file is closed.
+ - make smb2_find_context_vals return NULL if not found. (Dan Carpenter)
+ - handle error cases first in smb2_create_sd_buffers (Dan Carpenter)
+ - remove unneeded check_context_err. (Coverity Scan)
+ - fix memory leak in ksmbd_vfs_get_sd_xattr(). (Coverity Scan)
+ - fix unused err value in smb2_lock. (Coverity Scan)
+ - set RDMA capability for FSCTL_QUERY_NETWORK_INTERFACE_INFO.
+ - fix an error message in ksmbd_conn_trasnport_init.
+ - fix typo in comment.
+
+v5:
+ - fix list_add double add BUG_ON trap in setup_async_work().
+ - set epoch in smb2_lease_break response.
+ - fix possible compile error for asn1.c.
+ - remove duplicated argument. (Wan Jiabing)
+ - append ksmbd prefix into names for asn1 decoder.
+ - fix kfree of uninitialized pointer oid. (Colin Ian King)
+ - add support for SMB3 multichannel.
+ - remove cache read/trans buffer support. (Christoph Hellwig)
+ - initialize variables on the declaration. (Christoph Hellwig)
+ - remove ksmbd_vfs_copy_file_range. (Christoph Hellwig)
+ - use list_for_each_entry instead of list_for_each. (Christoph Hellwig)
+ - use goto instead of duplicating the resoure cleanup in ksmbd_open_fd. (Christoph Hellwig)
+ - fix overly long line. (Christoph Hellwig)
+ - remove unneeded FIXME comment. (Christoph Hellwig)
+ - remove ____ksmbd_align in ksmbd_server.h. (Christoph Hellwig)
+ - replace KSMBD_SHARE_CONFIG_PATH with inline function. (Christoph Hellwig)
+ - remove ksmbd_err/info. (Christoph Hellwig)
+ - opencode to avoid trivial wrappers. (Christoph Hellwig)
+ - factor out a ksmbd_validate_entry_in_use helper from __ksmbd_vfs_rename. (Christoph Hellwig)
+ - opencode posix acl functions instead of wrappers. (Christoph Hellwig)
+ - change stream type macro to enumeration. (Christoph Hellwig)
+ - use f_bsize instead of q->limits.logical_block_size. (Christoph Hellwig)
+ - remove unneeded NULL check in the list iterator. (Dan Carpenter)
+ - use f_bsize in FS_SECTOR_SIZE_INFORMATION. (Christoph Hellwig)
+ - move fs/cifsd to fs/ksmbd. (Christoph Hellwig)
+ - factor out a ksmbd_vfs_lock_parent helper. (Christoph Hellwig)
+ - set MAY_* flags together with open flags. (Christoph Hellwig)
+ - reorder and document on-disk strctures and netlink structure in headers. (Christoph Hellwig)
+ - remove macros in transport_ipc.c.
+ - replace BUFFER_NR_PAGES with inline function.
+ - replace KSMBD_ALIGN with kernel ALIGN macro.
+ - replace PAYLOAD_HEAD with inline function.
+ - remove getting worker state macros.
+ - remove and replace macros with inline functions in smb_common.h. (Christoph Hellwig)
+ - replace SMB_DIRECT_TRANS macro with inline function. (Christoph Hellwig)
+ - replace request and respone buffer macro with inline functions. (Christoph Hellwig)
+ - allow PROTECTED_DACL_SECINFO and UNPROTECTED_DACL_SECINFO addition information.
+ - replace fp macros with inline functions.
+ - relax credit_charge check in smb2_validate_credit_charge(). (Marios Makassikis).
+ - add user namespace support. (Christoph Hellwig)
+
+v4:
+ - add goto fail in asn1_oid_decode() (Dan Carpenter)
+ - use memcmp instead of for loop check in oid_eq(). (Dan Carpenter)
+ - add goto fail in neg_token_init_mech_type(). (Dan Carpenter)
+ - move fips_enabled check before the str_to_key(). (Dan Carpenter)
+ - just return smbhash() instead of using rc return value. (Dan Carpenter)
+ - move ret check before the out label. (Dan Carpenter)
+ - simplify error handling in ksmbd_auth_ntlm(). (Dan Carpenter)
+ - remove unneeded type casting. (Dan Carpenter)
+ - set error return value for memcmp() difference. (Dan Carpenter)
+ - return zero in always success case. (Dan Carpenter)
+ - never return 1 on failure. (Dan Carpenter)
+ - add the check if nvec is zero. (Dan Carpenter)
+ - len can never be negative in ksmbd_init_sg(). (Dan Carpenter)
+ - remove unneeded initialization of rc variable in ksmbd_crypt_message(). (Dan Carpenter)
+ - fix wrong return value in ksmbd_crypt_message(). (Dan Carpenter)
+ - change success handling to failure handling. (Dan Carpenter)
+ - add default case in switch statment in alloc_shash_desc().(Dan Carpenter)
+ - call kzalloc() directly instead of wrapper. (Dan Carpenter)
+ - simplify error handling in ksmbd_gen_preauth_integrity_hash(). (Dan Carpenter)
+ - return -ENOMEM about error from ksmbd_crypto_ctx_find_xxx calls. (Dan Carpenter)
+ - alignment match open parenthesis. (Dan Carpenter)
+ - add the check to prevent potential overflow with smb_strtoUTF16() and
+   UNICODE_LEN(). (Dan Carpenter)
+ - braces {} should be used on all arms of this statement.
+ - spaces preferred around that '/'.
+ - don't use multiple blank lines.
+ - No space is necessary after a cast.
+ - Blank lines aren't necessary after an open brace '{'.
+ - remove unnecessary parentheses around.
+ - Prefer kernel type 'u16' over 'uint16_t'.
+ - lookup a file with LOOKUP_FOLLOW only if 'follow symlinks = yes'.
+ - fix Control flow issues in ksmbd_build_ntlmssp_challenge_blob().
+ - fix memleak in ksmbd_vfs_stream_write(). (Yang Yingliang)
+ - fix memleak in ksmbd_vfs_stream_read(). (Yang Yingliang)
+ - check return value of ksmbd_vfs_getcasexattr() correctly.
+ - fix potential read overflow in ksmbd_vfs_stream_read().
+
+v3:
+ - fix boolreturn.cocci warnings. (kernel test robot)
+ - fix xfstests generic/504 test failure.
+ - do not use 0 or 0xFFFFFFFF for TreeID. (Marios Makassikis)
+ - add support for FSCTL_DUPLICATE_EXTENTS_TO_FILE.
+ - fix build error without CONFIG_OID_REGISTRY. (Wei Yongjun)
+ - fix invalid memory access in smb2_write(). (Coverity Scan)
+ - add support for AES256 encryption.
+ - fix potential null-ptr-deref in destroy_previous_session(). (Marios Makassikis).
+ - update out_buf_len in smb2_populate_readdir_entry(). (Marios Makassikis)
+ - handle ksmbd_session_rpc_open() failure in create_smb2_pipe(). (Marios Makassikis)
+ - call smb2_set_err_rsp() in smb2_read/smb2_write error path. (Marios Makassikis)
+ - add ksmbd/nfsd interoperability to feature table. (Amir Goldstein)
+ - fix regression in smb2_get_info. (Sebastian Gottschall)
+ - remove is_attributes_write_allowed() wrapper. (Marios Makassikis)
+ - update access check in set_file_allocation_info/set_end_of_file_info. (Marios Makassikis)
+
+v2:
+ - fix an error code in smb2_read(). (Dan Carpenter)
+ - fix error handling in ksmbd_server_init() (Dan Carpenter)
+ - remove redundant assignment to variable err. (Colin Ian King)
+ - remove unneeded macros.
+ - fix wrong use of rw semaphore in __session_create().
+ - use kmalloc() for small allocations.
+ - add the check to work file lock and rename behaviors like Windows
+   unless POSIX extensions are negotiated.
+ - clean-up codes using chechpatch.pl --strict.
+ - merge time_wrappers.h into smb_common.h.
+ - fix wrong prototype in comment (kernel test robot).
+ - fix implicit declaration of function 'groups_alloc' (kernel test robot).
+ - fix implicit declaration of function 'locks_alloc_lock' (kernel test robot).
+ - remove smack inherit leftovers.
+ - remove calling d_path in error paths.
+ - handle unhashed dentry in ksmbd_vfs_mkdir.
+ - use file_inode() instead of d_inode().
+ - remove useless error handling in ksmbd_vfs_read.
+ - use xarray instead of linked list for tree connect list.
+ - remove stale prototype and variables.
+ - fix memory leak when loop ends (coverity-bot, Muhammad Usama Anjum).
+ - use kfree to free memory allocated by kmalloc or kzalloc (Muhammad Usama Anjum).
+ - fix memdup.cocci warnings (kernel test robot)
+ - remove wrappers of kvmalloc/kvfree.
+ - change the reference to configuration.txt (Mauro Carvalho Chehab).
+ - prevent a integer overflow in wm_alloc().
+ - select SG_POOL for SMB_SERVER_SMBDIRECT. (Zhang Xiaoxu).
+ - remove unused including <linux/version.h> (Tian Tao).
+ - declare ida statically.
+ - add the check if parent is stable by unexpected rename.
+ - get parent dentry from child in ksmbd_vfs_remove_file().
+ - re-implement ksmbd_vfs_kern_path.
+ - fix reference count decrement of unclaimed file in __ksmbd_lookup_fd.
+ - remove smb2_put_name(). (Marios Makassikis).
+ - remove unused smberr.h, nterr.c and netmisc.c.
+ - fix potential null-ptr-deref in smb2_open() (Marios Makassikis).
+ - use d_inode().
+ - remove the dead code of unimplemented durable handle.
+ - use the generic one in lib/asn1_decoder.c
+
+v1:
+ - fix a handful of spelling mistakes (Colin Ian King)
+ - fix a precedence bug in parse_dacl() (Dan Carpenter)
+ - fix a IS_ERR() vs NULL bug (Dan Carpenter)
+ - fix a use after free on error path  (Dan Carpenter)
+ - update cifsd.rst Documentation
+ - remove unneeded FIXME comments
+ - fix static checker warnings (Dan Carpenter)
+ - fix WARNING: unmet direct dependencies detected for CRYPTO_ARC4 (Randy Dunlap)
+ - uniquify extract_sharename() (Stephen Rothwell)
+ - fix WARNING: document isn't included in any toctree (Stephen Rothwell)
+ - fix WARNING: Title overline too short (Stephen Rothwell)
+ - fix warning: variable 'total_ace_size' and 'posix_ccontext'set but not used (kernel test rotbot)
+ - fix incorrect function comments (kernel test robot)
+
+Namjae Jeon (13):
+  ksmbd: add document
+  ksmbd: add server handler
+  ksmbd: add tcp transport layer
+  ksmbd: add ipc transport layer
+  ksmbd: add rdma transport layer
+  ksmbd: add a utility code that tracks (and caches) sessions data
+  ksmbd: add authentication
+  ksmbd: add smb3 engine part 1
+  ksmbd: add smb3 engine part 2
+  ksmbd: add oplock/lease cache mechanism
+  ksmbd: add file operations
+  ksmbd: add Kconfig and Makefile
+  MAINTAINERS: add ksmbd kernel server
+
+ Documentation/filesystems/cifs/index.rst |   10 +
+ Documentation/filesystems/cifs/ksmbd.rst |  164 +
+ Documentation/filesystems/index.rst      |    2 +-
+ MAINTAINERS                              |    9 +
+ fs/Kconfig                               |    1 +
+ fs/Makefile                              |    1 +
+ fs/ksmbd/Kconfig                         |   69 +
+ fs/ksmbd/Makefile                        |   20 +
+ fs/ksmbd/asn1.c                          |  343 +
+ fs/ksmbd/asn1.h                          |   21 +
+ fs/ksmbd/auth.c                          | 1364 ++++
+ fs/ksmbd/auth.h                          |   67 +
+ fs/ksmbd/connection.c                    |  413 ++
+ fs/ksmbd/connection.h                    |  213 +
+ fs/ksmbd/crypto_ctx.c                    |  282 +
+ fs/ksmbd/crypto_ctx.h                    |   74 +
+ fs/ksmbd/glob.h                          |   49 +
+ fs/ksmbd/ksmbd_netlink.h                 |  395 +
+ fs/ksmbd/ksmbd_spnego_negtokeninit.asn1  |   31 +
+ fs/ksmbd/ksmbd_spnego_negtokentarg.asn1  |   19 +
+ fs/ksmbd/ksmbd_work.c                    |   80 +
+ fs/ksmbd/ksmbd_work.h                    |  117 +
+ fs/ksmbd/mgmt/ksmbd_ida.c                |   46 +
+ fs/ksmbd/mgmt/ksmbd_ida.h                |   34 +
+ fs/ksmbd/mgmt/share_config.c             |  238 +
+ fs/ksmbd/mgmt/share_config.h             |   81 +
+ fs/ksmbd/mgmt/tree_connect.c             |  121 +
+ fs/ksmbd/mgmt/tree_connect.h             |   56 +
+ fs/ksmbd/mgmt/user_config.c              |   69 +
+ fs/ksmbd/mgmt/user_config.h              |   66 +
+ fs/ksmbd/mgmt/user_session.c             |  369 +
+ fs/ksmbd/mgmt/user_session.h             |  106 +
+ fs/ksmbd/misc.c                          |  338 +
+ fs/ksmbd/misc.h                          |   35 +
+ fs/ksmbd/ndr.c                           |  340 +
+ fs/ksmbd/ndr.h                           |   22 +
+ fs/ksmbd/nterr.h                         |  543 ++
+ fs/ksmbd/ntlmssp.h                       |  169 +
+ fs/ksmbd/oplock.c                        | 1709 +++++
+ fs/ksmbd/oplock.h                        |  131 +
+ fs/ksmbd/server.c                        |  633 ++
+ fs/ksmbd/server.h                        |   70 +
+ fs/ksmbd/smb2misc.c                      |  438 ++
+ fs/ksmbd/smb2ops.c                       |  312 +
+ fs/ksmbd/smb2pdu.c                       | 8364 ++++++++++++++++++++++
+ fs/ksmbd/smb2pdu.h                       | 1698 +++++
+ fs/ksmbd/smb_common.c                    |  655 ++
+ fs/ksmbd/smb_common.h                    |  543 ++
+ fs/ksmbd/smbacl.c                        | 1344 ++++
+ fs/ksmbd/smbacl.h                        |  212 +
+ fs/ksmbd/smbfsctl.h                      |   91 +
+ fs/ksmbd/smbstatus.h                     | 1822 +++++
+ fs/ksmbd/transport_ipc.c                 |  874 +++
+ fs/ksmbd/transport_ipc.h                 |   47 +
+ fs/ksmbd/transport_rdma.c                | 2057 ++++++
+ fs/ksmbd/transport_rdma.h                |   63 +
+ fs/ksmbd/transport_tcp.c                 |  618 ++
+ fs/ksmbd/transport_tcp.h                 |   13 +
+ fs/ksmbd/unicode.c                       |  384 +
+ fs/ksmbd/unicode.h                       |  357 +
+ fs/ksmbd/uniupr.h                        |  268 +
+ fs/ksmbd/vfs.c                           | 1886 +++++
+ fs/ksmbd/vfs.h                           |  197 +
+ fs/ksmbd/vfs_cache.c                     |  725 ++
+ fs/ksmbd/vfs_cache.h                     |  178 +
+ fs/ksmbd/xattr.h                         |  122 +
+ 66 files changed, 32187 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/filesystems/cifs/index.rst
+ create mode 100644 Documentation/filesystems/cifs/ksmbd.rst
+ create mode 100644 fs/ksmbd/Kconfig
+ create mode 100644 fs/ksmbd/Makefile
+ create mode 100644 fs/ksmbd/asn1.c
+ create mode 100644 fs/ksmbd/asn1.h
+ create mode 100644 fs/ksmbd/auth.c
+ create mode 100644 fs/ksmbd/auth.h
+ create mode 100644 fs/ksmbd/connection.c
+ create mode 100644 fs/ksmbd/connection.h
+ create mode 100644 fs/ksmbd/crypto_ctx.c
+ create mode 100644 fs/ksmbd/crypto_ctx.h
+ create mode 100644 fs/ksmbd/glob.h
+ create mode 100644 fs/ksmbd/ksmbd_netlink.h
+ create mode 100644 fs/ksmbd/ksmbd_spnego_negtokeninit.asn1
+ create mode 100644 fs/ksmbd/ksmbd_spnego_negtokentarg.asn1
+ create mode 100644 fs/ksmbd/ksmbd_work.c
+ create mode 100644 fs/ksmbd/ksmbd_work.h
+ create mode 100644 fs/ksmbd/mgmt/ksmbd_ida.c
+ create mode 100644 fs/ksmbd/mgmt/ksmbd_ida.h
+ create mode 100644 fs/ksmbd/mgmt/share_config.c
+ create mode 100644 fs/ksmbd/mgmt/share_config.h
+ create mode 100644 fs/ksmbd/mgmt/tree_connect.c
+ create mode 100644 fs/ksmbd/mgmt/tree_connect.h
+ create mode 100644 fs/ksmbd/mgmt/user_config.c
+ create mode 100644 fs/ksmbd/mgmt/user_config.h
+ create mode 100644 fs/ksmbd/mgmt/user_session.c
+ create mode 100644 fs/ksmbd/mgmt/user_session.h
+ create mode 100644 fs/ksmbd/misc.c
+ create mode 100644 fs/ksmbd/misc.h
+ create mode 100644 fs/ksmbd/ndr.c
+ create mode 100644 fs/ksmbd/ndr.h
+ create mode 100644 fs/ksmbd/nterr.h
+ create mode 100644 fs/ksmbd/ntlmssp.h
+ create mode 100644 fs/ksmbd/oplock.c
+ create mode 100644 fs/ksmbd/oplock.h
+ create mode 100644 fs/ksmbd/server.c
+ create mode 100644 fs/ksmbd/server.h
+ create mode 100644 fs/ksmbd/smb2misc.c
+ create mode 100644 fs/ksmbd/smb2ops.c
+ create mode 100644 fs/ksmbd/smb2pdu.c
+ create mode 100644 fs/ksmbd/smb2pdu.h
+ create mode 100644 fs/ksmbd/smb_common.c
+ create mode 100644 fs/ksmbd/smb_common.h
+ create mode 100644 fs/ksmbd/smbacl.c
+ create mode 100644 fs/ksmbd/smbacl.h
+ create mode 100644 fs/ksmbd/smbfsctl.h
+ create mode 100644 fs/ksmbd/smbstatus.h
+ create mode 100644 fs/ksmbd/transport_ipc.c
+ create mode 100644 fs/ksmbd/transport_ipc.h
+ create mode 100644 fs/ksmbd/transport_rdma.c
+ create mode 100644 fs/ksmbd/transport_rdma.h
+ create mode 100644 fs/ksmbd/transport_tcp.c
+ create mode 100644 fs/ksmbd/transport_tcp.h
+ create mode 100644 fs/ksmbd/unicode.c
+ create mode 100644 fs/ksmbd/unicode.h
+ create mode 100644 fs/ksmbd/uniupr.h
+ create mode 100644 fs/ksmbd/vfs.c
+ create mode 100644 fs/ksmbd/vfs.h
+ create mode 100644 fs/ksmbd/vfs_cache.c
+ create mode 100644 fs/ksmbd/vfs_cache.h
+ create mode 100644 fs/ksmbd/xattr.h
+
 -- 
-2.33.0.rc0
+2.17.1
 
