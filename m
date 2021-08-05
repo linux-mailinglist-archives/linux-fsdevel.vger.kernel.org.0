@@ -2,62 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AF543E0CA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 05:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0A883E0CBD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 05:24:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238352AbhHEDC5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Aug 2021 23:02:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231326AbhHEDC5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Aug 2021 23:02:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 82D3161050;
-        Thu,  5 Aug 2021 03:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628132563;
-        bh=qDBlW4B4gSwZHvi0mYWCYW7Dr8lxWPIo4xN7SW8CISY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZBMzEmozzYs+RWrxoqVWVhZffhTByzYBLMyWGiZ9EJcz5E96mEGEoOSNYnit26oTX
-         PHNybnEppQ1owSsgoMuJdzxadgi/MBSQjIE5qOtgaWJrb+WsdwezQvvnvgjFKKnqmV
-         eamgeqa2E+ul+d7NskR4SrkgmqYqobpn8FoqLhkvQ07r19vqeCqY9NoJrOi8cJqnub
-         Nr7xb2UW/LfBCNQ50mS+ubNjWcX/loraGSu0TDyHH5rlvAvLrLKhjFoRKW7crtZoZm
-         dW+NTmO0OBF7o3bCKLf08svLWoUUdE+b7tJ0vsYzpUzQDBmwvB26KJ36c6B0xnqGu3
-         T2/r0u7VJFTzg==
-Subject: Re: [PATCH v3 3/3] erofs: convert all uncompressed cases to iomap
-To:     Gao Xiang <hsiangkao@linux.alibaba.com>,
-        linux-erofs@lists.ozlabs.org
-Cc:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        LKML <linux-kernel@vger.kernel.org>,
+        id S234434AbhHEDZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Aug 2021 23:25:00 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:52778 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231321AbhHEDY7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Aug 2021 23:24:59 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R831e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Ui.Qxi0_1628133882;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Ui.Qxi0_1628133882)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 05 Aug 2021 11:24:43 +0800
+Date:   Thu, 5 Aug 2021 11:24:40 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        nvdimm@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
         "Darrick J. Wong" <djwong@kernel.org>,
         Liu Bo <bo.liu@linux.alibaba.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>,
         Liu Jiang <gerry@linux.alibaba.com>,
         Huang Jianan <huangjianan@oppo.com>,
         Tao Ma <boyu.mt@taobao.com>
+Subject: Re: [PATCH v3 2/3] erofs: dax support for non-tailpacking regular
+ file
+Message-ID: <YQtZ+CtvB3P+7Xim@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Liu Jiang <gerry@linux.alibaba.com>,
+        Huang Jianan <huangjianan@oppo.com>, Tao Ma <boyu.mt@taobao.com>
 References: <20210805003601.183063-1-hsiangkao@linux.alibaba.com>
- <20210805003601.183063-4-hsiangkao@linux.alibaba.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <225f3b6b-7a78-5ab8-a356-893caaeb5dcc@kernel.org>
-Date:   Thu, 5 Aug 2021 11:02:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+ <20210805003601.183063-3-hsiangkao@linux.alibaba.com>
+ <7aa650b8-a853-368d-7a81-f435194eec33@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210805003601.183063-4-hsiangkao@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7aa650b8-a853-368d-7a81-f435194eec33@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/8/5 8:36, Gao Xiang wrote:
-> Since tail-packing inline has been supported by iomap now, let's
-> convert all EROFS uncompressed data I/O to iomap, which is pretty
-> straight-forward.
-> 
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Hi Chao,
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+On Thu, Aug 05, 2021 at 11:01:43AM +0800, Chao Yu wrote:
+> On 2021/8/5 8:36, Gao Xiang wrote:
+> > DAX is quite useful for some VM use cases in order to save guest
+> > memory extremely with minimal lightweight EROFS.
+> > 
+> > In order to prepare for such use cases, add preliminary dax support
+> > for non-tailpacking regular files for now.
+> > 
+> > Tested with the DRAM-emulated PMEM and the EROFS image generated by
+> > "mkfs.erofs -Enoinline_data enwik9.fsdax.img enwik9"
+> > 
+> > Cc: nvdimm@lists.linux.dev
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> > ---
+> >   Documentation/filesystems/erofs.rst |  2 +
+> >   fs/erofs/data.c                     | 42 +++++++++++++++++++-
+> >   fs/erofs/inode.c                    |  4 ++
+> >   fs/erofs/internal.h                 |  3 ++
+> >   fs/erofs/super.c                    | 59 ++++++++++++++++++++++++++++-
+> >   5 files changed, 106 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/Documentation/filesystems/erofs.rst b/Documentation/filesystems/erofs.rst
+> > index 832839fcf4c3..ffd2ae7be511 100644
+> > --- a/Documentation/filesystems/erofs.rst
+> > +++ b/Documentation/filesystems/erofs.rst
+> > @@ -84,6 +84,8 @@ cache_strategy=%s      Select a strategy for cached decompression from now on:
+> >                                      It still does in-place I/O decompression
+> >                                      for the rest compressed physical clusters.
+> >   		       ==========  =============================================
+> > +dax                    Use direct access (no page cache).  See
+> 
+> dax or dax=%s
+> 
+> Otherwise, it looks good to me.
+> 
+> Reviewed-by: Chao Yu <chao@kernel.org>
+> 
+
+Thanks, it originally inherited from filesystems/ext2.rst, I will update
+this into
+dax, dax={always,never}      .....
+
+Since for such image vm-shared memory scenario, no need to add per-file
+DAX (at least for now.)
 
 Thanks,
+Gao Xiang
+
+> Thanks,
