@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D5D63E0E0A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 08:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D4D13E0E0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Aug 2021 08:16:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237140AbhHEGQY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Aug 2021 02:16:24 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:21248 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236430AbhHEGQP (ORCPT
+        id S237182AbhHEGQ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Aug 2021 02:16:26 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:38447 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236500AbhHEGQP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 5 Aug 2021 02:16:15 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210805061559epoutp047de5cd2dbbaaaad51158856110637818~YVHyPT1St0292302923epoutp04e
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Aug 2021 06:15:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210805061559epoutp047de5cd2dbbaaaad51158856110637818~YVHyPT1St0292302923epoutp04e
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210805061600epoutp015906f7a14f7e78d9242227e573f049c9~YVHy_Rkxm1456114561epoutp01C
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Aug 2021 06:16:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210805061600epoutp015906f7a14f7e78d9242227e573f049c9~YVHy_Rkxm1456114561epoutp01C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1628144159;
-        bh=t02meZS9/Pt4URHcUtPH7M0SPZTbzuWLY7/dF8Sfda4=;
+        s=mail20170921; t=1628144160;
+        bh=cZGyzJaH2Tkr2mVasydtr/pqhimX2fVenoOlykU7ni8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jMErvWhGX1wyKaj69vcIUhrdh0Xz+mhqTh/YL4S9UhrfSBRffnjB4FuWeOOlkC8jo
-         Ikt4y9is0ZLdh2QNXElCp5r/1wuU0G/RQkv05Cuqmyd6wHEUKJ3+SK/H/NteK3tWXW
-         JViH5zqytRRYE7Qvy6OTKFLrnzvErOVOEtrF803s=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        b=uJyHDsX9vDin4gH4G0Wz2/CYjHDkGseZVM1hFnt92ToddLTNnFYe1ki706qMHETvs
+         s7JnwYLxd0SJHAXT0WQkn1Qldmez+/vmDh3bhj/yV/nly6WckgUMlgw3tLO+Agsof7
+         miz9eFAe3sTUV1f7R5+TOSIS8Np4nUHU52NkSwNY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
         epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20210805061558epcas1p33e10fa63dabd925db4fa2cc1bc57f94e~YVHxv4TAJ3072030720epcas1p3-;
-        Thu,  5 Aug 2021 06:15:58 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.166]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4GgJJY3mRvz4x9Q0; Thu,  5 Aug
-        2021 06:15:57 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5C.71.13454.D128B016; Thu,  5 Aug 2021 15:15:57 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210805061557epcas1p2f4107eb356931b94155772a37466a65b~YVHwJZSq03260632606epcas1p2z;
+        20210805061559epcas1p3f62530c08f4e202913b5997ec137f21c~YVHyaoo2L3078130781epcas1p35;
+        Thu,  5 Aug 2021 06:15:59 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.165]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4GgJJZ1jMyz4x9QP; Thu,  5 Aug
+        2021 06:15:58 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5D.E7.10119.E128B016; Thu,  5 Aug 2021 15:15:58 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210805061557epcas1p3f81728c626775f0aa66faa7796005bd3~YVHwxUp213078130781epcas1p3u;
         Thu,  5 Aug 2021 06:15:57 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210805061556epsmtrp19ee801a210fd4019582c2c343ceb6581~YVHwHXPBN1607716077epsmtrp1h;
-        Thu,  5 Aug 2021 06:15:56 +0000 (GMT)
-X-AuditID: b6c32a39-16fff7000002348e-7e-610b821d7635
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210805061557epsmtrp29be5ff17704575a51e10a4d2155ce7de~YVHwwTIQl0723807238epsmtrp2i;
+        Thu,  5 Aug 2021 06:15:57 +0000 (GMT)
+X-AuditID: b6c32a38-97bff70000002787-16-610b821e1fd2
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B7.DA.08289.C128B016; Thu,  5 Aug 2021 15:15:56 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D5.43.08394.D128B016; Thu,  5 Aug 2021 15:15:57 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.89.31.111]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210805061556epsmtip16e8394b520e25220bafc9c65dc6a2026~YVHv0IqNr0030400304epsmtip1G;
-        Thu,  5 Aug 2021 06:15:56 +0000 (GMT)
+        20210805061557epsmtip1014313e26ff26de5392f9713e9a3e628~YVHwaxPxi0030400304epsmtip1J;
+        Thu,  5 Aug 2021 06:15:57 +0000 (GMT)
 From:   Namjae Jeon <namjae.jeon@samsung.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-cifs@vger.kernel.org
@@ -59,60 +59,61 @@ Cc:     linux-cifsd-devel@lists.sourceforge.net, aurelien.aptel@gmail.com,
         dan.carpenter@oracle.com, metze@samba.org, smfrench@gmail.com,
         hyc.lee@gmail.com, Namjae Jeon <namjae.jeon@samsung.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH v7 04/13] ksmbd: add ipc transport layer
-Date:   Thu,  5 Aug 2021 15:05:37 +0900
-Message-Id: <20210805060546.3268-5-namjae.jeon@samsung.com>
+Subject: [PATCH v7 05/13] ksmbd: add rdma transport layer
+Date:   Thu,  5 Aug 2021 15:05:38 +0900
+Message-Id: <20210805060546.3268-6-namjae.jeon@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210805060546.3268-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxze6e2TreauFThghvU6TSjhUUrrYQN1yJabPTIStuwVxTu4FEZp
-        m7YwhG0gEecqFvAfJtBNwdEBf/AMgQLiaBwqOFZAtuIcIxuMWZ6CWsDiWto9/vvO7/u+3+uc
-        w8UEfexgbqZKT2tVlJJg+zE7raGR4c8VP01F2X6AaNDh4qCTi3uRY6uSiYbKaxmooekaA01M
-        LXHQ3BMLhtafPAKot+8GE41ZatjIVr/ORM7KQnTOeJ+FSsbFqKe1lo3m56xsNFnxNRuNuAZZ
-        aNNZwz4sJF2mFYysLrIxye6quxyy/Vsx2XNxlUH22IvYZEmXi0OuzEwySZPFCEhjRyMgO+qm
-        GeRqWwjZ9scCI4n/vjIug6bSaK2IVqWq0zJVinjiteSUIykyeZQkXBKLDhAiFZVNxxOJryeF
-        v5KpdI9JiHIpZY47lETpdETkwTitOkdPizLUOn08QWvSlBpJlCZCR2XrclSKiFR19guSqKho
-        mVt5XJlx5sIa0NTcBHlLZ3cXgVMNwAB4XIjHQPOanW0AflwB3gXgxLid4T3cB3Ck3+pjVgG0
-        Vbj+tcyODmNewgLgKfM8x0NsW2rXcw2Ay2XjYfBxh78nvBM/Cn/ucmzrMbwag3/23WR6CCGO
-        4K3zVdteJr4PPmwuZXkwH38RlnZu+Yrthk0tVzEP5uFx8F5TO8uTCOK/cKH5VgXHK0qEq6Z6
-        hhcL4b3BDl88GP5VdtqHP4bXb2z4NJ/Alq+ucDyNQlwKS+f0HojhobDZEulV7IHdm6btFjB8
-        B1x84GnNo+bDM6cFXsk+aBy1+hLugobPl32FSGifd/iWWAbg3MYmKAchVf9VuAhAIwigNbps
-        Ba2TaGT/v7E2sP2OxbFdoHJhOWIAMLhgAEAuRuzkp9b5UQJ+GnUin9aqU7Q5Slo3AGTu3VVg
-        wf6pavdHUOlTJLJoqVSKYuQH5DIpEch/ePTBcQGuoPR0Fk1raO0/PgaXF1zEOHEpP6Hz2uDY
-        EePt9LrH04EBlkxD0daXK4UNrYeedWz+VhbjV76WIqqXFUqyvgv56eyu1nen34yovB2PmRNj
-        l3gFiv49mcmhhwhj3XuXzPaJkLdN+x3DwrxmsVYeZA3iGcxt2pJjTo1ydjH4GUdAcfRkIyb4
-        NF0ec+H71dzi5dwC4UuWIOfvz79sC6LPf3GVZXUFFhd2S2OprHXRlMJvNmxm4/B+24zk0Y6c
-        qd75hLtvXDdZjl1eybuSzkrCfhR8cychOQF2XJ4qGOvXjuf3jC1E7836zNl58E76pET5VH38
-        6NSHr8a88+v0SMtw+1yYUvPBuWF/81ttQ0MTvdVbGdUnPyKYugxKIsa0Oupvyw4sNVAEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsWy7bCSnK5ME3eiwYlLhhbHX/9lt2h8p2zx
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPJsWRmVeSWpSXmKPExsWy7bCmnq5cE3eiQcNFdovjr/+yWzS+U7Z4
+        /W86i8XpCYuYLFauPspkce3+e3aLF/93MVv8/P+d0WLP3pMsFpd3zWGzuLjsJ4vFj+n1Fr19
+        n1gtWq9oWezeuIjN4s2Lw2wWtybOZ7M4//c4q8XvH3PYHIQ9/s79yOwxu+Eii8fOWXfZPTav
+        0PLYveAzk8fumw1sHq07/rJ7fHx6i8Vj7q4+Ro++LasYPbYsfsjk8XmTnMemJ2+ZAnijcmwy
+        UhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgN5UUihLzCkF
+        CgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BQYGhToFSfmFpfmpesl5+daGRoYGJkCVSbkZPSe
+        /81S0PqCuWLb4U62BsYrvcxdjJwcEgImEieX32bsYuTiEBLYwShxbcpjKOcTo8SildfZIJxv
+        jBJ3n+1lh2nZfWATK0RiL6PEhHvbmOBaNq1eBNTCwcEmoC3xZ4soSIOIQKzEjR2vmUFqmAVm
+        M0s833uKBSQhLGApsXnOHLCpLAKqEp0dH1hBbF4Ba4mFyz4xQmyTl1i94QDYsZwCNhKvVm8G
+        2ywhcIdD4smNdawQRS4Sm0+/g2oQlnh1fAvUqVISn9/tZYOwyyVOnPzFBGHXSGyYt48d5FAJ
+        AWOJnhclICazgKbE+l36EBWKEjt/zwWbyCzAJ/Huaw8rRDWvREebEESJqkTfpcNQA6Uluto/
+        QC31kNj0vAcaiv2MEoc7FrNOYJSbhbBhASPjKkax1ILi3PTUYsMCE+Q428QITslaFjsY5779
+        oHeIkYmD8RCjBAezkghv8mKuRCHelMTKqtSi/Pii0pzU4kOMpsCwm8gsJZqcD8wKeSXxhqZG
+        xsbGFiZm5mamxkrivN9ivyYICaQnlqRmp6YWpBbB9DFxcEo1MEUyHMpcOOdEcpJramJbK89M
+        0QCZqAAtP8vygv3z/pwyqnY55HH/Yt3SjNuFEuzrzS1T3Dcn/FwYpCAdWTztlk1P4NagXXdO
+        zF515se1cNWt1yK7d3nuZ1H/J9RfbLV4Y0TUo4q4HfzMmm/kQnOseyq/Or9TM3yp9eHrzu+L
+        bbzZnfsvX7O/9zWtLPtf1Av54iMbLh6429DQ+2DL1t63ze5Mn3RiPoXd/6PY1B70OHSrfe+v
+        f6sXbTwv7HzTZeax5Sc/vk1c5bU3W19lep5Jv+q+k4EajYfObOF9mfxsZnm6UMK5FYEr6z+X
+        z7Y86rK1Ye8vnfNfZrUKvd17rftx2dPC27s3zgxxYX20xkTgx2IlluKMREMt5qLiRAAZKFT1
+        UgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnK5sE3eiwfdpchbHX/9lt2h8p2zx
         +t90FovTExYxWaxcfZTJ4tr99+wWL/7vYrb4+f87o8WevSdZLC7vmsNmcXHZTxaLH9PrLXr7
         PrFatF7Rsti9cRGbxZsXh9ksbk2cz2Zx/u9xVovfP+awOQh7/J37kdljdsNFFo+ds+6ye2xe
         oeWxe8FnJo/dNxvYPFp3/GX3+Pj0FovH3F19jB59W1YxemxZ/JDJ4/MmOY9NT94yBfBGcdmk
-        pOZklqUW6dslcGV0zPzCWDDnFGPF+275BsaWlYxdjJwcEgImEs8unWHuYuTiEBLYwSix/fRh
-        doiEtMSxEyAJDiBbWOLw4WKImg+MEp83dLGAxNkEtCX+bBEFKRcRiJe42XCbBaSGWWA9s8TZ
-        100sIAlhAQuJs5Nmgc1kEVCV+La+hxXE5hWwlujZ9g/qCHmJ1RsOMIPYnAI2Eq9WbwarEQKq
-        ef/2GvMERr4FjAyrGCVTC4pz03OLDQuM8lLL9YoTc4tL89L1kvNzNzGC40ZLawfjnlUf9A4x
-        MnEwHmKU4GBWEuFNXsyVKMSbklhZlVqUH19UmpNafIhRmoNFSZz3QtfJeCGB9MSS1OzU1ILU
-        IpgsEwenVANTm3Lm95ovqm7387WXL5Vq3jBh8fdlgsZdBXc3O8rd63m9/M0CfdGWPaGTDz9Q
-        4nEVuNNxnkPgwvvpLCZaucWnw3fdyS2VuTJNz5/3yblT/Fd3zlSe+7/rtt6MFXuyz+66apft
-        IsTRs6ZQJEsq/VLAn1MqYQd2tjU9Ddy3s3JawP900WXuFaKtamnL309jSNx0bfLHrqd8wmY2
-        e8yWLpBT/CV2xcout+0W8+87jS+vJ7B8Dyz8N8syba2dodOV7ls75NrPcSyevJezd1NB6aTy
-        s5Wmk2cqTKra0Hvi5tOug7dmvWlRX3jt4LLXU73/3mOPf7L/+8uyv92zVsT1VN1wF3ztLqF1
-        dUKLU+971l9vZyqxFGckGmoxFxUnAgAaGjNyCgMAAA==
-X-CMS-MailID: 20210805061557epcas1p2f4107eb356931b94155772a37466a65b
+        pOZklqUW6dslcGX0nv/NUtD6grli2+FOtgbGK73MXYycHBICJhK7D2xi7WLk4hAS2M0o8Xr3
+        RUaIhLTEsRNngIo4gGxhicOHiyFqPjBKnOz9wQISZxPQlvizRRSkXEQgXuJmw20WkBpmgfXM
+        EmdfN7GAJIQFLCU2z5nDDmKzCKhKdHZ8YAWxeQWsJRYu+wS1S15i9YYDYAdxCthIvFq9GaxG
+        CKjm/dtrzBMY+RYwMqxilEwtKM5Nzy02LDDMSy3XK07MLS7NS9dLzs/dxAiOHC3NHYzbV33Q
+        O8TIxMF4iFGCg1lJhDd5MVeiEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tSs1NT
+        C1KLYLJMHJxSDUyKAg9atyzMiv+cLzDp76Uw13+Baxudqg4G3Zh8w7N/RZ2Jg+UOsZJDdSeZ
+        plybVzDtdnea3q81b7L2XluZuP5RQMp64VKpmJmJMqwNrj/Ulk/d1b/LSjaoiG2B1GSuD87R
+        3ZcYc6dyuj9NaTs5+/bfZ5enq+3yL/EPSS60OlE3z3/d2bM+lVKNjzRmvGu5LOl0qHrh30MZ
+        Jrdq+i43fPD0ZThU18RntuwWX8T2wENXDj9xEbu2oLNDq/vjy9uefdKXk7uFWibzfbfymqY5
+        7XYIw0bndZXF/mItr5YpZ7BdPW0bNe3qzYTn6dWrg1evW6WUFKBQzl/wbzMLx4XZ6cff/pi+
+        jvX8veZov60x3ReVWIozEg21mIuKEwGD93u2CwMAAA==
+X-CMS-MailID: 20210805061557epcas1p3f81728c626775f0aa66faa7796005bd3
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210805061557epcas1p2f4107eb356931b94155772a37466a65b
+X-CMS-RootMailID: 20210805061557epcas1p3f81728c626775f0aa66faa7796005bd3
 References: <20210805060546.3268-1-namjae.jeon@samsung.com>
-        <CGME20210805061557epcas1p2f4107eb356931b94155772a37466a65b@epcas1p2.samsung.com>
+        <CGME20210805061557epcas1p3f81728c626775f0aa66faa7796005bd3@epcas1p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds ipc transport layer.
+This adds rdma transport layer.
 
 Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
@@ -120,945 +121,2144 @@ Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
 Acked-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
 ---
- fs/ksmbd/transport_ipc.c | 874 +++++++++++++++++++++++++++++++++++++++
- fs/ksmbd/transport_ipc.h |  47 +++
- 2 files changed, 921 insertions(+)
- create mode 100644 fs/ksmbd/transport_ipc.c
- create mode 100644 fs/ksmbd/transport_ipc.h
+ fs/ksmbd/transport_rdma.c | 2057 +++++++++++++++++++++++++++++++++++++
+ fs/ksmbd/transport_rdma.h |   63 ++
+ 2 files changed, 2120 insertions(+)
+ create mode 100644 fs/ksmbd/transport_rdma.c
+ create mode 100644 fs/ksmbd/transport_rdma.h
 
-diff --git a/fs/ksmbd/transport_ipc.c b/fs/ksmbd/transport_ipc.c
+diff --git a/fs/ksmbd/transport_rdma.c b/fs/ksmbd/transport_rdma.c
 new file mode 100644
-index 000000000000..44aea33a67fa
+index 000000000000..f2ae6bae83f1
 --- /dev/null
-+++ b/fs/ksmbd/transport_ipc.c
-@@ -0,0 +1,874 @@
++++ b/fs/ksmbd/transport_rdma.c
+@@ -0,0 +1,2057 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ *   Copyright (C) 2018 Samsung Electronics Co., Ltd.
++ *   Copyright (C) 2017, Microsoft Corporation.
++ *   Copyright (C) 2018, LG Electronics.
++ *
++ *   Author(s): Long Li <longli@microsoft.com>,
++ *		Hyunchul Lee <hyc.lee@gmail.com>
++ *
++ *   This program is free software;  you can redistribute it and/or modify
++ *   it under the terms of the GNU General Public License as published by
++ *   the Free Software Foundation; either version 2 of the License, or
++ *   (at your option) any later version.
++ *
++ *   This program is distributed in the hope that it will be useful,
++ *   but WITHOUT ANY WARRANTY;  without even the implied warranty of
++ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
++ *   the GNU General Public License for more details.
 + */
 +
-+#include <linux/jhash.h>
-+#include <linux/slab.h>
-+#include <linux/rwsem.h>
-+#include <linux/mutex.h>
-+#include <linux/wait.h>
-+#include <linux/hashtable.h>
-+#include <net/net_namespace.h>
-+#include <net/genetlink.h>
-+#include <linux/socket.h>
-+#include <linux/workqueue.h>
++#define SUBMOD_NAME	"smb_direct"
 +
-+#include "vfs_cache.h"
-+#include "transport_ipc.h"
-+#include "server.h"
-+#include "smb_common.h"
++#include <linux/kthread.h>
++#include <linux/rwlock.h>
++#include <linux/list.h>
++#include <linux/mempool.h>
++#include <linux/highmem.h>
++#include <linux/scatterlist.h>
++#include <rdma/ib_verbs.h>
++#include <rdma/rdma_cm.h>
++#include <rdma/rw.h>
 +
-+#include "mgmt/user_config.h"
-+#include "mgmt/share_config.h"
-+#include "mgmt/user_session.h"
-+#include "mgmt/tree_connect.h"
-+#include "mgmt/ksmbd_ida.h"
++#include "glob.h"
 +#include "connection.h"
-+#include "transport_tcp.h"
++#include "smb_common.h"
++#include "smbstatus.h"
++#include "transport_rdma.h"
 +
-+#define IPC_WAIT_TIMEOUT	(2 * HZ)
++#define SMB_DIRECT_PORT	5445
 +
-+#define IPC_MSG_HASH_BITS	3
-+static DEFINE_HASHTABLE(ipc_msg_table, IPC_MSG_HASH_BITS);
-+static DECLARE_RWSEM(ipc_msg_table_lock);
-+static DEFINE_MUTEX(startup_lock);
++#define SMB_DIRECT_VERSION_LE		cpu_to_le16(0x0100)
 +
-+static DEFINE_IDA(ipc_ida);
++/* SMB_DIRECT negotiation timeout in seconds */
++#define SMB_DIRECT_NEGOTIATE_TIMEOUT		120
 +
-+static unsigned int ksmbd_tools_pid;
++#define SMB_DIRECT_MAX_SEND_SGES		8
++#define SMB_DIRECT_MAX_RECV_SGES		1
 +
-+static bool ksmbd_ipc_validate_version(struct genl_info *m)
++/*
++ * Default maximum number of RDMA read/write outstanding on this connection
++ * This value is possibly decreased during QP creation on hardware limit
++ */
++#define SMB_DIRECT_CM_INITIATOR_DEPTH		8
++
++/* Maximum number of retries on data transfer operations */
++#define SMB_DIRECT_CM_RETRY			6
++/* No need to retry on Receiver Not Ready since SMB_DIRECT manages credits */
++#define SMB_DIRECT_CM_RNR_RETRY		0
++
++/*
++ * User configurable initial values per SMB_DIRECT transport connection
++ * as defined in [MS-SMBD] 3.1.1.1
++ * Those may change after a SMB_DIRECT negotiation
++ */
++/* The local peer's maximum number of credits to grant to the peer */
++static int smb_direct_receive_credit_max = 255;
++
++/* The remote peer's credit request of local peer */
++static int smb_direct_send_credit_target = 255;
++
++/* The maximum single message size can be sent to remote peer */
++static int smb_direct_max_send_size = 8192;
++
++/*  The maximum fragmented upper-layer payload receive size supported */
++static int smb_direct_max_fragmented_recv_size = 1024 * 1024;
++
++/*  The maximum single-message size which can be received */
++static int smb_direct_max_receive_size = 8192;
++
++static int smb_direct_max_read_write_size = 1024 * 1024;
++
++static int smb_direct_max_outstanding_rw_ops = 8;
++
++static struct smb_direct_listener {
++	struct rdma_cm_id	*cm_id;
++} smb_direct_listener;
++
++static struct workqueue_struct *smb_direct_wq;
++
++enum smb_direct_status {
++	SMB_DIRECT_CS_NEW = 0,
++	SMB_DIRECT_CS_CONNECTED,
++	SMB_DIRECT_CS_DISCONNECTING,
++	SMB_DIRECT_CS_DISCONNECTED,
++};
++
++struct smb_direct_transport {
++	struct ksmbd_transport	transport;
++
++	enum smb_direct_status	status;
++	bool			full_packet_received;
++	wait_queue_head_t	wait_status;
++
++	struct rdma_cm_id	*cm_id;
++	struct ib_cq		*send_cq;
++	struct ib_cq		*recv_cq;
++	struct ib_pd		*pd;
++	struct ib_qp		*qp;
++
++	int			max_send_size;
++	int			max_recv_size;
++	int			max_fragmented_send_size;
++	int			max_fragmented_recv_size;
++	int			max_rdma_rw_size;
++
++	spinlock_t		reassembly_queue_lock;
++	struct list_head	reassembly_queue;
++	int			reassembly_data_length;
++	int			reassembly_queue_length;
++	int			first_entry_offset;
++	wait_queue_head_t	wait_reassembly_queue;
++
++	spinlock_t		receive_credit_lock;
++	int			recv_credits;
++	int			count_avail_recvmsg;
++	int			recv_credit_max;
++	int			recv_credit_target;
++
++	spinlock_t		recvmsg_queue_lock;
++	struct list_head	recvmsg_queue;
++
++	spinlock_t		empty_recvmsg_queue_lock;
++	struct list_head	empty_recvmsg_queue;
++
++	int			send_credit_target;
++	atomic_t		send_credits;
++	spinlock_t		lock_new_recv_credits;
++	int			new_recv_credits;
++	atomic_t		rw_avail_ops;
++
++	wait_queue_head_t	wait_send_credits;
++	wait_queue_head_t	wait_rw_avail_ops;
++
++	mempool_t		*sendmsg_mempool;
++	struct kmem_cache	*sendmsg_cache;
++	mempool_t		*recvmsg_mempool;
++	struct kmem_cache	*recvmsg_cache;
++
++	wait_queue_head_t	wait_send_payload_pending;
++	atomic_t		send_payload_pending;
++	wait_queue_head_t	wait_send_pending;
++	atomic_t		send_pending;
++
++	struct delayed_work	post_recv_credits_work;
++	struct work_struct	send_immediate_work;
++	struct work_struct	disconnect_work;
++
++	bool			negotiation_requested;
++};
++
++#define KSMBD_TRANS(t) ((struct ksmbd_transport *)&((t)->transport))
++
++enum {
++	SMB_DIRECT_MSG_NEGOTIATE_REQ = 0,
++	SMB_DIRECT_MSG_DATA_TRANSFER
++};
++
++static struct ksmbd_transport_ops ksmbd_smb_direct_transport_ops;
++
++struct smb_direct_send_ctx {
++	struct list_head	msg_list;
++	int			wr_cnt;
++	bool			need_invalidate_rkey;
++	unsigned int		remote_key;
++};
++
++struct smb_direct_sendmsg {
++	struct smb_direct_transport	*transport;
++	struct ib_send_wr	wr;
++	struct list_head	list;
++	int			num_sge;
++	struct ib_sge		sge[SMB_DIRECT_MAX_SEND_SGES];
++	struct ib_cqe		cqe;
++	u8			packet[];
++};
++
++struct smb_direct_recvmsg {
++	struct smb_direct_transport	*transport;
++	struct list_head	list;
++	int			type;
++	struct ib_sge		sge;
++	struct ib_cqe		cqe;
++	bool			first_segment;
++	u8			packet[];
++};
++
++struct smb_direct_rdma_rw_msg {
++	struct smb_direct_transport	*t;
++	struct ib_cqe		cqe;
++	struct completion	*completion;
++	struct rdma_rw_ctx	rw_ctx;
++	struct sg_table		sgt;
++	struct scatterlist	sg_list[0];
++};
++
++static inline int get_buf_page_count(void *buf, int size)
 +{
-+	if (m->genlhdr->version != KSMBD_GENL_VERSION) {
-+		pr_err("%s. ksmbd: %d, kernel module: %d. %s.\n",
-+		       "Daemon and kernel module version mismatch",
-+		       m->genlhdr->version,
-+		       KSMBD_GENL_VERSION,
-+		       "User-space ksmbd should terminate");
-+		return false;
++	return DIV_ROUND_UP((uintptr_t)buf + size, PAGE_SIZE) -
++		(uintptr_t)buf / PAGE_SIZE;
++}
++
++static void smb_direct_destroy_pools(struct smb_direct_transport *transport);
++static void smb_direct_post_recv_credits(struct work_struct *work);
++static int smb_direct_post_send_data(struct smb_direct_transport *t,
++				     struct smb_direct_send_ctx *send_ctx,
++				     struct kvec *iov, int niov,
++				     int remaining_data_length);
++
++static inline struct smb_direct_transport *
++smb_trans_direct_transfort(struct ksmbd_transport *t)
++{
++	return container_of(t, struct smb_direct_transport, transport);
++}
++
++static inline void
++*smb_direct_recvmsg_payload(struct smb_direct_recvmsg *recvmsg)
++{
++	return (void *)recvmsg->packet;
++}
++
++static inline bool is_receive_credit_post_required(int receive_credits,
++						   int avail_recvmsg_count)
++{
++	return receive_credits <= (smb_direct_receive_credit_max >> 3) &&
++		avail_recvmsg_count >= (receive_credits >> 2);
++}
++
++static struct
++smb_direct_recvmsg *get_free_recvmsg(struct smb_direct_transport *t)
++{
++	struct smb_direct_recvmsg *recvmsg = NULL;
++
++	spin_lock(&t->recvmsg_queue_lock);
++	if (!list_empty(&t->recvmsg_queue)) {
++		recvmsg = list_first_entry(&t->recvmsg_queue,
++					   struct smb_direct_recvmsg,
++					   list);
++		list_del(&recvmsg->list);
 +	}
-+	return true;
++	spin_unlock(&t->recvmsg_queue_lock);
++	return recvmsg;
 +}
 +
-+struct ksmbd_ipc_msg {
-+	unsigned int		type;
-+	unsigned int		sz;
-+	unsigned char		payload[];
-+};
-+
-+struct ipc_msg_table_entry {
-+	unsigned int		handle;
-+	unsigned int		type;
-+	wait_queue_head_t	wait;
-+	struct hlist_node	ipc_table_hlist;
-+
-+	void			*response;
-+};
-+
-+static struct delayed_work ipc_timer_work;
-+
-+static int handle_startup_event(struct sk_buff *skb, struct genl_info *info);
-+static int handle_unsupported_event(struct sk_buff *skb, struct genl_info *info);
-+static int handle_generic_event(struct sk_buff *skb, struct genl_info *info);
-+static int ksmbd_ipc_heartbeat_request(void);
-+
-+static const struct nla_policy ksmbd_nl_policy[KSMBD_EVENT_MAX] = {
-+	[KSMBD_EVENT_UNSPEC] = {
-+		.len = 0,
-+	},
-+	[KSMBD_EVENT_HEARTBEAT_REQUEST] = {
-+		.len = sizeof(struct ksmbd_heartbeat),
-+	},
-+	[KSMBD_EVENT_STARTING_UP] = {
-+		.len = sizeof(struct ksmbd_startup_request),
-+	},
-+	[KSMBD_EVENT_SHUTTING_DOWN] = {
-+		.len = sizeof(struct ksmbd_shutdown_request),
-+	},
-+	[KSMBD_EVENT_LOGIN_REQUEST] = {
-+		.len = sizeof(struct ksmbd_login_request),
-+	},
-+	[KSMBD_EVENT_LOGIN_RESPONSE] = {
-+		.len = sizeof(struct ksmbd_login_response),
-+	},
-+	[KSMBD_EVENT_SHARE_CONFIG_REQUEST] = {
-+		.len = sizeof(struct ksmbd_share_config_request),
-+	},
-+	[KSMBD_EVENT_SHARE_CONFIG_RESPONSE] = {
-+		.len = sizeof(struct ksmbd_share_config_response),
-+	},
-+	[KSMBD_EVENT_TREE_CONNECT_REQUEST] = {
-+		.len = sizeof(struct ksmbd_tree_connect_request),
-+	},
-+	[KSMBD_EVENT_TREE_CONNECT_RESPONSE] = {
-+		.len = sizeof(struct ksmbd_tree_connect_response),
-+	},
-+	[KSMBD_EVENT_TREE_DISCONNECT_REQUEST] = {
-+		.len = sizeof(struct ksmbd_tree_disconnect_request),
-+	},
-+	[KSMBD_EVENT_LOGOUT_REQUEST] = {
-+		.len = sizeof(struct ksmbd_logout_request),
-+	},
-+	[KSMBD_EVENT_RPC_REQUEST] = {
-+	},
-+	[KSMBD_EVENT_RPC_RESPONSE] = {
-+	},
-+	[KSMBD_EVENT_SPNEGO_AUTHEN_REQUEST] = {
-+	},
-+	[KSMBD_EVENT_SPNEGO_AUTHEN_RESPONSE] = {
-+	},
-+};
-+
-+static struct genl_ops ksmbd_genl_ops[] = {
-+	{
-+		.cmd	= KSMBD_EVENT_UNSPEC,
-+		.doit	= handle_unsupported_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_HEARTBEAT_REQUEST,
-+		.doit	= handle_unsupported_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_STARTING_UP,
-+		.doit	= handle_startup_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_SHUTTING_DOWN,
-+		.doit	= handle_unsupported_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_LOGIN_REQUEST,
-+		.doit	= handle_unsupported_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_LOGIN_RESPONSE,
-+		.doit	= handle_generic_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_SHARE_CONFIG_REQUEST,
-+		.doit	= handle_unsupported_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_SHARE_CONFIG_RESPONSE,
-+		.doit	= handle_generic_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_TREE_CONNECT_REQUEST,
-+		.doit	= handle_unsupported_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_TREE_CONNECT_RESPONSE,
-+		.doit	= handle_generic_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_TREE_DISCONNECT_REQUEST,
-+		.doit	= handle_unsupported_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_LOGOUT_REQUEST,
-+		.doit	= handle_unsupported_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_RPC_REQUEST,
-+		.doit	= handle_unsupported_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_RPC_RESPONSE,
-+		.doit	= handle_generic_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_SPNEGO_AUTHEN_REQUEST,
-+		.doit	= handle_unsupported_event,
-+	},
-+	{
-+		.cmd	= KSMBD_EVENT_SPNEGO_AUTHEN_RESPONSE,
-+		.doit	= handle_generic_event,
-+	},
-+};
-+
-+static struct genl_family ksmbd_genl_family = {
-+	.name		= KSMBD_GENL_NAME,
-+	.version	= KSMBD_GENL_VERSION,
-+	.hdrsize	= 0,
-+	.maxattr	= KSMBD_EVENT_MAX,
-+	.netnsok	= true,
-+	.module		= THIS_MODULE,
-+	.ops		= ksmbd_genl_ops,
-+	.n_ops		= ARRAY_SIZE(ksmbd_genl_ops),
-+};
-+
-+static void ksmbd_nl_init_fixup(void)
++static void put_recvmsg(struct smb_direct_transport *t,
++			struct smb_direct_recvmsg *recvmsg)
 +{
-+	int i;
++	ib_dma_unmap_single(t->cm_id->device, recvmsg->sge.addr,
++			    recvmsg->sge.length, DMA_FROM_DEVICE);
 +
-+	for (i = 0; i < ARRAY_SIZE(ksmbd_genl_ops); i++)
-+		ksmbd_genl_ops[i].validate = GENL_DONT_VALIDATE_STRICT |
-+						GENL_DONT_VALIDATE_DUMP;
-+
-+	ksmbd_genl_family.policy = ksmbd_nl_policy;
++	spin_lock(&t->recvmsg_queue_lock);
++	list_add(&recvmsg->list, &t->recvmsg_queue);
++	spin_unlock(&t->recvmsg_queue_lock);
 +}
 +
-+static int rpc_context_flags(struct ksmbd_session *sess)
++static struct
++smb_direct_recvmsg *get_empty_recvmsg(struct smb_direct_transport *t)
 +{
-+	if (user_guest(sess->user))
-+		return KSMBD_RPC_RESTRICTED_CONTEXT;
-+	return 0;
++	struct smb_direct_recvmsg *recvmsg = NULL;
++
++	spin_lock(&t->empty_recvmsg_queue_lock);
++	if (!list_empty(&t->empty_recvmsg_queue)) {
++		recvmsg = list_first_entry(&t->empty_recvmsg_queue,
++					   struct smb_direct_recvmsg, list);
++		list_del(&recvmsg->list);
++	}
++	spin_unlock(&t->empty_recvmsg_queue_lock);
++	return recvmsg;
 +}
 +
-+static void ipc_update_last_active(void)
++static void put_empty_recvmsg(struct smb_direct_transport *t,
++			      struct smb_direct_recvmsg *recvmsg)
 +{
-+	if (server_conf.ipc_timeout)
-+		server_conf.ipc_last_active = jiffies;
++	ib_dma_unmap_single(t->cm_id->device, recvmsg->sge.addr,
++			    recvmsg->sge.length, DMA_FROM_DEVICE);
++
++	spin_lock(&t->empty_recvmsg_queue_lock);
++	list_add_tail(&recvmsg->list, &t->empty_recvmsg_queue);
++	spin_unlock(&t->empty_recvmsg_queue_lock);
 +}
 +
-+static struct ksmbd_ipc_msg *ipc_msg_alloc(size_t sz)
++static void enqueue_reassembly(struct smb_direct_transport *t,
++			       struct smb_direct_recvmsg *recvmsg,
++			       int data_length)
 +{
-+	struct ksmbd_ipc_msg *msg;
-+	size_t msg_sz = sz + sizeof(struct ksmbd_ipc_msg);
++	spin_lock(&t->reassembly_queue_lock);
++	list_add_tail(&recvmsg->list, &t->reassembly_queue);
++	t->reassembly_queue_length++;
++	/*
++	 * Make sure reassembly_data_length is updated after list and
++	 * reassembly_queue_length are updated. On the dequeue side
++	 * reassembly_data_length is checked without a lock to determine
++	 * if reassembly_queue_length and list is up to date
++	 */
++	virt_wmb();
++	t->reassembly_data_length += data_length;
++	spin_unlock(&t->reassembly_queue_lock);
++}
 +
-+	msg = kvmalloc(msg_sz, GFP_KERNEL | __GFP_ZERO);
-+	if (msg)
-+		msg->sz = sz;
++static struct smb_direct_recvmsg *get_first_reassembly(struct smb_direct_transport *t)
++{
++	if (!list_empty(&t->reassembly_queue))
++		return list_first_entry(&t->reassembly_queue,
++				struct smb_direct_recvmsg, list);
++	else
++		return NULL;
++}
++
++static void smb_direct_disconnect_rdma_work(struct work_struct *work)
++{
++	struct smb_direct_transport *t =
++		container_of(work, struct smb_direct_transport,
++			     disconnect_work);
++
++	if (t->status == SMB_DIRECT_CS_CONNECTED) {
++		t->status = SMB_DIRECT_CS_DISCONNECTING;
++		rdma_disconnect(t->cm_id);
++	}
++}
++
++static void
++smb_direct_disconnect_rdma_connection(struct smb_direct_transport *t)
++{
++	queue_work(smb_direct_wq, &t->disconnect_work);
++}
++
++static void smb_direct_send_immediate_work(struct work_struct *work)
++{
++	struct smb_direct_transport *t = container_of(work,
++			struct smb_direct_transport, send_immediate_work);
++
++	if (t->status != SMB_DIRECT_CS_CONNECTED)
++		return;
++
++	smb_direct_post_send_data(t, NULL, NULL, 0, 0);
++}
++
++static struct smb_direct_transport *alloc_transport(struct rdma_cm_id *cm_id)
++{
++	struct smb_direct_transport *t;
++	struct ksmbd_conn *conn;
++
++	t = kzalloc(sizeof(*t), GFP_KERNEL);
++	if (!t)
++		return NULL;
++
++	t->cm_id = cm_id;
++	cm_id->context = t;
++
++	t->status = SMB_DIRECT_CS_NEW;
++	init_waitqueue_head(&t->wait_status);
++
++	spin_lock_init(&t->reassembly_queue_lock);
++	INIT_LIST_HEAD(&t->reassembly_queue);
++	t->reassembly_data_length = 0;
++	t->reassembly_queue_length = 0;
++	init_waitqueue_head(&t->wait_reassembly_queue);
++	init_waitqueue_head(&t->wait_send_credits);
++	init_waitqueue_head(&t->wait_rw_avail_ops);
++
++	spin_lock_init(&t->receive_credit_lock);
++	spin_lock_init(&t->recvmsg_queue_lock);
++	INIT_LIST_HEAD(&t->recvmsg_queue);
++
++	spin_lock_init(&t->empty_recvmsg_queue_lock);
++	INIT_LIST_HEAD(&t->empty_recvmsg_queue);
++
++	init_waitqueue_head(&t->wait_send_payload_pending);
++	atomic_set(&t->send_payload_pending, 0);
++	init_waitqueue_head(&t->wait_send_pending);
++	atomic_set(&t->send_pending, 0);
++
++	spin_lock_init(&t->lock_new_recv_credits);
++
++	INIT_DELAYED_WORK(&t->post_recv_credits_work,
++			  smb_direct_post_recv_credits);
++	INIT_WORK(&t->send_immediate_work, smb_direct_send_immediate_work);
++	INIT_WORK(&t->disconnect_work, smb_direct_disconnect_rdma_work);
++
++	conn = ksmbd_conn_alloc();
++	if (!conn)
++		goto err;
++	conn->transport = KSMBD_TRANS(t);
++	KSMBD_TRANS(t)->conn = conn;
++	KSMBD_TRANS(t)->ops = &ksmbd_smb_direct_transport_ops;
++	return t;
++err:
++	kfree(t);
++	return NULL;
++}
++
++static void free_transport(struct smb_direct_transport *t)
++{
++	struct smb_direct_recvmsg *recvmsg;
++
++	wake_up_interruptible(&t->wait_send_credits);
++
++	ksmbd_debug(RDMA, "wait for all send posted to IB to finish\n");
++	wait_event(t->wait_send_payload_pending,
++		   atomic_read(&t->send_payload_pending) == 0);
++	wait_event(t->wait_send_pending,
++		   atomic_read(&t->send_pending) == 0);
++
++	cancel_work_sync(&t->disconnect_work);
++	cancel_delayed_work_sync(&t->post_recv_credits_work);
++	cancel_work_sync(&t->send_immediate_work);
++
++	if (t->qp) {
++		ib_drain_qp(t->qp);
++		ib_destroy_qp(t->qp);
++	}
++
++	ksmbd_debug(RDMA, "drain the reassembly queue\n");
++	do {
++		spin_lock(&t->reassembly_queue_lock);
++		recvmsg = get_first_reassembly(t);
++		if (recvmsg) {
++			list_del(&recvmsg->list);
++			spin_unlock(&t->reassembly_queue_lock);
++			put_recvmsg(t, recvmsg);
++		} else {
++			spin_unlock(&t->reassembly_queue_lock);
++		}
++	} while (recvmsg);
++	t->reassembly_data_length = 0;
++
++	if (t->send_cq)
++		ib_free_cq(t->send_cq);
++	if (t->recv_cq)
++		ib_free_cq(t->recv_cq);
++	if (t->pd)
++		ib_dealloc_pd(t->pd);
++	if (t->cm_id)
++		rdma_destroy_id(t->cm_id);
++
++	smb_direct_destroy_pools(t);
++	ksmbd_conn_free(KSMBD_TRANS(t)->conn);
++	kfree(t);
++}
++
++static struct smb_direct_sendmsg
++*smb_direct_alloc_sendmsg(struct smb_direct_transport *t)
++{
++	struct smb_direct_sendmsg *msg;
++
++	msg = mempool_alloc(t->sendmsg_mempool, GFP_KERNEL);
++	if (!msg)
++		return ERR_PTR(-ENOMEM);
++	msg->transport = t;
++	INIT_LIST_HEAD(&msg->list);
++	msg->num_sge = 0;
 +	return msg;
 +}
 +
-+static void ipc_msg_free(struct ksmbd_ipc_msg *msg)
++static void smb_direct_free_sendmsg(struct smb_direct_transport *t,
++				    struct smb_direct_sendmsg *msg)
 +{
-+	kvfree(msg);
++	int i;
++
++	if (msg->num_sge > 0) {
++		ib_dma_unmap_single(t->cm_id->device,
++				    msg->sge[0].addr, msg->sge[0].length,
++				    DMA_TO_DEVICE);
++		for (i = 1; i < msg->num_sge; i++)
++			ib_dma_unmap_page(t->cm_id->device,
++					  msg->sge[i].addr, msg->sge[i].length,
++					  DMA_TO_DEVICE);
++	}
++	mempool_free(msg, t->sendmsg_mempool);
 +}
 +
-+static void ipc_msg_handle_free(int handle)
++static int smb_direct_check_recvmsg(struct smb_direct_recvmsg *recvmsg)
 +{
-+	if (handle >= 0)
-+		ksmbd_release_id(&ipc_ida, handle);
-+}
-+
-+static int handle_response(int type, void *payload, size_t sz)
-+{
-+	unsigned int handle = *(unsigned int *)payload;
-+	struct ipc_msg_table_entry *entry;
-+	int ret = 0;
-+
-+	ipc_update_last_active();
-+	down_read(&ipc_msg_table_lock);
-+	hash_for_each_possible(ipc_msg_table, entry, ipc_table_hlist, handle) {
-+		if (handle != entry->handle)
-+			continue;
-+
-+		entry->response = NULL;
-+		/*
-+		 * Response message type value should be equal to
-+		 * request message type + 1.
-+		 */
-+		if (entry->type + 1 != type) {
-+			pr_err("Waiting for IPC type %d, got %d. Ignore.\n",
-+			       entry->type + 1, type);
-+		}
-+
-+		entry->response = kvmalloc(sz, GFP_KERNEL | __GFP_ZERO);
-+		if (!entry->response) {
-+			ret = -ENOMEM;
-+			break;
-+		}
-+
-+		memcpy(entry->response, payload, sz);
-+		wake_up_interruptible(&entry->wait);
-+		ret = 0;
++	switch (recvmsg->type) {
++	case SMB_DIRECT_MSG_DATA_TRANSFER: {
++		struct smb_direct_data_transfer *req =
++			(struct smb_direct_data_transfer *)recvmsg->packet;
++		struct smb2_hdr *hdr = (struct smb2_hdr *)(recvmsg->packet
++				+ le32_to_cpu(req->data_offset) - 4);
++		ksmbd_debug(RDMA,
++			    "CreditGranted: %u, CreditRequested: %u, DataLength: %u, RemainingDataLength: %u, SMB: %x, Command: %u\n",
++			    le16_to_cpu(req->credits_granted),
++			    le16_to_cpu(req->credits_requested),
++			    req->data_length, req->remaining_data_length,
++			    hdr->ProtocolId, hdr->Command);
 +		break;
 +	}
-+	up_read(&ipc_msg_table_lock);
++	case SMB_DIRECT_MSG_NEGOTIATE_REQ: {
++		struct smb_direct_negotiate_req *req =
++			(struct smb_direct_negotiate_req *)recvmsg->packet;
++		ksmbd_debug(RDMA,
++			    "MinVersion: %u, MaxVersion: %u, CreditRequested: %u, MaxSendSize: %u, MaxRecvSize: %u, MaxFragmentedSize: %u\n",
++			    le16_to_cpu(req->min_version),
++			    le16_to_cpu(req->max_version),
++			    le16_to_cpu(req->credits_requested),
++			    le32_to_cpu(req->preferred_send_size),
++			    le32_to_cpu(req->max_receive_size),
++			    le32_to_cpu(req->max_fragmented_size));
++		if (le16_to_cpu(req->min_version) > 0x0100 ||
++		    le16_to_cpu(req->max_version) < 0x0100)
++			return -EOPNOTSUPP;
++		if (le16_to_cpu(req->credits_requested) <= 0 ||
++		    le32_to_cpu(req->max_receive_size) <= 128 ||
++		    le32_to_cpu(req->max_fragmented_size) <=
++					128 * 1024)
++			return -ECONNABORTED;
 +
-+	return ret;
-+}
-+
-+static int ipc_server_config_on_startup(struct ksmbd_startup_request *req)
-+{
-+	int ret;
-+
-+	ksmbd_set_fd_limit(req->file_max);
-+	server_conf.flags = req->flags;
-+	server_conf.signing = req->signing;
-+	server_conf.tcp_port = req->tcp_port;
-+	server_conf.ipc_timeout = req->ipc_timeout * HZ;
-+	server_conf.deadtime = req->deadtime * SMB_ECHO_INTERVAL;
-+	server_conf.share_fake_fscaps = req->share_fake_fscaps;
-+	ksmbd_init_domain(req->sub_auth);
-+
-+	if (req->smb2_max_read)
-+		init_smb2_max_read_size(req->smb2_max_read);
-+	if (req->smb2_max_write)
-+		init_smb2_max_write_size(req->smb2_max_write);
-+	if (req->smb2_max_trans)
-+		init_smb2_max_trans_size(req->smb2_max_trans);
-+
-+	ret = ksmbd_set_netbios_name(req->netbios_name);
-+	ret |= ksmbd_set_server_string(req->server_string);
-+	ret |= ksmbd_set_work_group(req->work_group);
-+	ret |= ksmbd_tcp_set_interfaces(KSMBD_STARTUP_CONFIG_INTERFACES(req),
-+					req->ifc_list_sz);
-+	if (ret) {
-+		pr_err("Server configuration error: %s %s %s\n",
-+		       req->netbios_name, req->server_string,
-+		       req->work_group);
-+		return ret;
++		break;
 +	}
-+
-+	if (req->min_prot[0]) {
-+		ret = ksmbd_lookup_protocol_idx(req->min_prot);
-+		if (ret >= 0)
-+			server_conf.min_protocol = ret;
++	default:
++		return -EINVAL;
 +	}
-+	if (req->max_prot[0]) {
-+		ret = ksmbd_lookup_protocol_idx(req->max_prot);
-+		if (ret >= 0)
-+			server_conf.max_protocol = ret;
-+	}
-+
-+	if (server_conf.ipc_timeout)
-+		schedule_delayed_work(&ipc_timer_work, server_conf.ipc_timeout);
 +	return 0;
 +}
 +
-+static int handle_startup_event(struct sk_buff *skb, struct genl_info *info)
++static void recv_done(struct ib_cq *cq, struct ib_wc *wc)
 +{
-+	int ret = 0;
++	struct smb_direct_recvmsg *recvmsg;
++	struct smb_direct_transport *t;
 +
-+#ifdef CONFIG_SMB_SERVER_CHECK_CAP_NET_ADMIN
-+	if (!netlink_capable(skb, CAP_NET_ADMIN))
-+		return -EPERM;
-+#endif
++	recvmsg = container_of(wc->wr_cqe, struct smb_direct_recvmsg, cqe);
++	t = recvmsg->transport;
 +
-+	if (!ksmbd_ipc_validate_version(info))
-+		return -EINVAL;
-+
-+	if (!info->attrs[KSMBD_EVENT_STARTING_UP])
-+		return -EINVAL;
-+
-+	mutex_lock(&startup_lock);
-+	if (!ksmbd_server_configurable()) {
-+		mutex_unlock(&startup_lock);
-+		pr_err("Server reset is in progress, can't start daemon\n");
-+		return -EINVAL;
++	if (wc->status != IB_WC_SUCCESS || wc->opcode != IB_WC_RECV) {
++		if (wc->status != IB_WC_WR_FLUSH_ERR) {
++			pr_err("Recv error. status='%s (%d)' opcode=%d\n",
++			       ib_wc_status_msg(wc->status), wc->status,
++			       wc->opcode);
++			smb_direct_disconnect_rdma_connection(t);
++		}
++		put_empty_recvmsg(t, recvmsg);
++		return;
 +	}
 +
-+	if (ksmbd_tools_pid) {
-+		if (ksmbd_ipc_heartbeat_request() == 0) {
-+			ret = -EINVAL;
-+			goto out;
++	ksmbd_debug(RDMA, "Recv completed. status='%s (%d)', opcode=%d\n",
++		    ib_wc_status_msg(wc->status), wc->status,
++		    wc->opcode);
++
++	ib_dma_sync_single_for_cpu(wc->qp->device, recvmsg->sge.addr,
++				   recvmsg->sge.length, DMA_FROM_DEVICE);
++
++	switch (recvmsg->type) {
++	case SMB_DIRECT_MSG_NEGOTIATE_REQ:
++		t->negotiation_requested = true;
++		t->full_packet_received = true;
++		wake_up_interruptible(&t->wait_status);
++		break;
++	case SMB_DIRECT_MSG_DATA_TRANSFER: {
++		struct smb_direct_data_transfer *data_transfer =
++			(struct smb_direct_data_transfer *)recvmsg->packet;
++		int data_length = le32_to_cpu(data_transfer->data_length);
++		int avail_recvmsg_count, receive_credits;
++
++		if (data_length) {
++			if (t->full_packet_received)
++				recvmsg->first_segment = true;
++
++			if (le32_to_cpu(data_transfer->remaining_data_length))
++				t->full_packet_received = false;
++			else
++				t->full_packet_received = true;
++
++			enqueue_reassembly(t, recvmsg, data_length);
++			wake_up_interruptible(&t->wait_reassembly_queue);
++
++			spin_lock(&t->receive_credit_lock);
++			receive_credits = --(t->recv_credits);
++			avail_recvmsg_count = t->count_avail_recvmsg;
++			spin_unlock(&t->receive_credit_lock);
++		} else {
++			put_empty_recvmsg(t, recvmsg);
++
++			spin_lock(&t->receive_credit_lock);
++			receive_credits = --(t->recv_credits);
++			avail_recvmsg_count = ++(t->count_avail_recvmsg);
++			spin_unlock(&t->receive_credit_lock);
 +		}
 +
-+		pr_err("Reconnect to a new user space daemon\n");
-+	} else {
-+		struct ksmbd_startup_request *req;
++		t->recv_credit_target =
++				le16_to_cpu(data_transfer->credits_requested);
++		atomic_add(le16_to_cpu(data_transfer->credits_granted),
++			   &t->send_credits);
 +
-+		req = nla_data(info->attrs[info->genlhdr->cmd]);
-+		ret = ipc_server_config_on_startup(req);
-+		if (ret)
-+			goto out;
-+		server_queue_ctrl_init_work();
++		if (le16_to_cpu(data_transfer->flags) &
++		    SMB_DIRECT_RESPONSE_REQUESTED)
++			queue_work(smb_direct_wq, &t->send_immediate_work);
++
++		if (atomic_read(&t->send_credits) > 0)
++			wake_up_interruptible(&t->wait_send_credits);
++
++		if (is_receive_credit_post_required(receive_credits, avail_recvmsg_count))
++			mod_delayed_work(smb_direct_wq,
++					 &t->post_recv_credits_work, 0);
++		break;
 +	}
++	default:
++		break;
++	}
++}
 +
-+	ksmbd_tools_pid = info->snd_portid;
-+	ipc_update_last_active();
++static int smb_direct_post_recv(struct smb_direct_transport *t,
++				struct smb_direct_recvmsg *recvmsg)
++{
++	struct ib_recv_wr wr;
++	int ret;
 +
-+out:
-+	mutex_unlock(&startup_lock);
++	recvmsg->sge.addr = ib_dma_map_single(t->cm_id->device,
++					      recvmsg->packet, t->max_recv_size,
++					      DMA_FROM_DEVICE);
++	ret = ib_dma_mapping_error(t->cm_id->device, recvmsg->sge.addr);
++	if (ret)
++		return ret;
++	recvmsg->sge.length = t->max_recv_size;
++	recvmsg->sge.lkey = t->pd->local_dma_lkey;
++	recvmsg->cqe.done = recv_done;
++
++	wr.wr_cqe = &recvmsg->cqe;
++	wr.next = NULL;
++	wr.sg_list = &recvmsg->sge;
++	wr.num_sge = 1;
++
++	ret = ib_post_recv(t->qp, &wr, NULL);
++	if (ret) {
++		pr_err("Can't post recv: %d\n", ret);
++		ib_dma_unmap_single(t->cm_id->device,
++				    recvmsg->sge.addr, recvmsg->sge.length,
++				    DMA_FROM_DEVICE);
++		smb_direct_disconnect_rdma_connection(t);
++		return ret;
++	}
 +	return ret;
 +}
 +
-+static int handle_unsupported_event(struct sk_buff *skb, struct genl_info *info)
++static int smb_direct_read(struct ksmbd_transport *t, char *buf,
++			   unsigned int size)
 +{
-+	pr_err("Unknown IPC event: %d, ignore.\n", info->genlhdr->cmd);
-+	return -EINVAL;
-+}
++	struct smb_direct_recvmsg *recvmsg;
++	struct smb_direct_data_transfer *data_transfer;
++	int to_copy, to_read, data_read, offset;
++	u32 data_length, remaining_data_length, data_offset;
++	int rc;
++	struct smb_direct_transport *st = smb_trans_direct_transfort(t);
 +
-+static int handle_generic_event(struct sk_buff *skb, struct genl_info *info)
-+{
-+	void *payload;
-+	int sz;
-+	int type = info->genlhdr->cmd;
-+
-+#ifdef CONFIG_SMB_SERVER_CHECK_CAP_NET_ADMIN
-+	if (!netlink_capable(skb, CAP_NET_ADMIN))
-+		return -EPERM;
-+#endif
-+
-+	if (type >= KSMBD_EVENT_MAX) {
-+		WARN_ON(1);
-+		return -EINVAL;
++again:
++	if (st->status != SMB_DIRECT_CS_CONNECTED) {
++		pr_err("disconnected\n");
++		return -ENOTCONN;
 +	}
 +
-+	if (!ksmbd_ipc_validate_version(info))
-+		return -EINVAL;
++	/*
++	 * No need to hold the reassembly queue lock all the time as we are
++	 * the only one reading from the front of the queue. The transport
++	 * may add more entries to the back of the queue at the same time
++	 */
++	if (st->reassembly_data_length >= size) {
++		int queue_length;
++		int queue_removed = 0;
 +
-+	if (!info->attrs[type])
-+		return -EINVAL;
++		/*
++		 * Need to make sure reassembly_data_length is read before
++		 * reading reassembly_queue_length and calling
++		 * get_first_reassembly. This call is lock free
++		 * as we never read at the end of the queue which are being
++		 * updated in SOFTIRQ as more data is received
++		 */
++		virt_rmb();
++		queue_length = st->reassembly_queue_length;
++		data_read = 0;
++		to_read = size;
++		offset = st->first_entry_offset;
++		while (data_read < size) {
++			recvmsg = get_first_reassembly(st);
++			data_transfer = smb_direct_recvmsg_payload(recvmsg);
++			data_length = le32_to_cpu(data_transfer->data_length);
++			remaining_data_length =
++				le32_to_cpu(data_transfer->remaining_data_length);
++			data_offset = le32_to_cpu(data_transfer->data_offset);
 +
-+	payload = nla_data(info->attrs[info->genlhdr->cmd]);
-+	sz = nla_len(info->attrs[info->genlhdr->cmd]);
-+	return handle_response(type, payload, sz);
++			/*
++			 * The upper layer expects RFC1002 length at the
++			 * beginning of the payload. Return it to indicate
++			 * the total length of the packet. This minimize the
++			 * change to upper layer packet processing logic. This
++			 * will be eventually remove when an intermediate
++			 * transport layer is added
++			 */
++			if (recvmsg->first_segment && size == 4) {
++				unsigned int rfc1002_len =
++					data_length + remaining_data_length;
++				*((__be32 *)buf) = cpu_to_be32(rfc1002_len);
++				data_read = 4;
++				recvmsg->first_segment = false;
++				ksmbd_debug(RDMA,
++					    "returning rfc1002 length %d\n",
++					    rfc1002_len);
++				goto read_rfc1002_done;
++			}
++
++			to_copy = min_t(int, data_length - offset, to_read);
++			memcpy(buf + data_read, (char *)data_transfer + data_offset + offset,
++			       to_copy);
++
++			/* move on to the next buffer? */
++			if (to_copy == data_length - offset) {
++				queue_length--;
++				/*
++				 * No need to lock if we are not at the
++				 * end of the queue
++				 */
++				if (queue_length) {
++					list_del(&recvmsg->list);
++				} else {
++					spin_lock_irq(&st->reassembly_queue_lock);
++					list_del(&recvmsg->list);
++					spin_unlock_irq(&st->reassembly_queue_lock);
++				}
++				queue_removed++;
++				put_recvmsg(st, recvmsg);
++				offset = 0;
++			} else {
++				offset += to_copy;
++			}
++
++			to_read -= to_copy;
++			data_read += to_copy;
++		}
++
++		spin_lock_irq(&st->reassembly_queue_lock);
++		st->reassembly_data_length -= data_read;
++		st->reassembly_queue_length -= queue_removed;
++		spin_unlock_irq(&st->reassembly_queue_lock);
++
++		spin_lock(&st->receive_credit_lock);
++		st->count_avail_recvmsg += queue_removed;
++		if (is_receive_credit_post_required(st->recv_credits, st->count_avail_recvmsg)) {
++			spin_unlock(&st->receive_credit_lock);
++			mod_delayed_work(smb_direct_wq,
++					 &st->post_recv_credits_work, 0);
++		} else {
++			spin_unlock(&st->receive_credit_lock);
++		}
++
++		st->first_entry_offset = offset;
++		ksmbd_debug(RDMA,
++			    "returning to thread data_read=%d reassembly_data_length=%d first_entry_offset=%d\n",
++			    data_read, st->reassembly_data_length,
++			    st->first_entry_offset);
++read_rfc1002_done:
++		return data_read;
++	}
++
++	ksmbd_debug(RDMA, "wait_event on more data\n");
++	rc = wait_event_interruptible(st->wait_reassembly_queue,
++				      st->reassembly_data_length >= size ||
++				       st->status != SMB_DIRECT_CS_CONNECTED);
++	if (rc)
++		return -EINTR;
++
++	goto again;
 +}
 +
-+static int ipc_msg_send(struct ksmbd_ipc_msg *msg)
++static void smb_direct_post_recv_credits(struct work_struct *work)
 +{
-+	struct genlmsghdr *nlh;
-+	struct sk_buff *skb;
-+	int ret = -EINVAL;
++	struct smb_direct_transport *t = container_of(work,
++		struct smb_direct_transport, post_recv_credits_work.work);
++	struct smb_direct_recvmsg *recvmsg;
++	int receive_credits, credits = 0;
++	int ret;
++	int use_free = 1;
 +
-+	if (!ksmbd_tools_pid)
++	spin_lock(&t->receive_credit_lock);
++	receive_credits = t->recv_credits;
++	spin_unlock(&t->receive_credit_lock);
++
++	if (receive_credits < t->recv_credit_target) {
++		while (true) {
++			if (use_free)
++				recvmsg = get_free_recvmsg(t);
++			else
++				recvmsg = get_empty_recvmsg(t);
++			if (!recvmsg) {
++				if (use_free) {
++					use_free = 0;
++					continue;
++				} else {
++					break;
++				}
++			}
++
++			recvmsg->type = SMB_DIRECT_MSG_DATA_TRANSFER;
++			recvmsg->first_segment = false;
++
++			ret = smb_direct_post_recv(t, recvmsg);
++			if (ret) {
++				pr_err("Can't post recv: %d\n", ret);
++				put_recvmsg(t, recvmsg);
++				break;
++			}
++			credits++;
++		}
++	}
++
++	spin_lock(&t->receive_credit_lock);
++	t->recv_credits += credits;
++	t->count_avail_recvmsg -= credits;
++	spin_unlock(&t->receive_credit_lock);
++
++	spin_lock(&t->lock_new_recv_credits);
++	t->new_recv_credits += credits;
++	spin_unlock(&t->lock_new_recv_credits);
++
++	if (credits)
++		queue_work(smb_direct_wq, &t->send_immediate_work);
++}
++
++static void send_done(struct ib_cq *cq, struct ib_wc *wc)
++{
++	struct smb_direct_sendmsg *sendmsg, *sibling;
++	struct smb_direct_transport *t;
++	struct list_head *pos, *prev, *end;
++
++	sendmsg = container_of(wc->wr_cqe, struct smb_direct_sendmsg, cqe);
++	t = sendmsg->transport;
++
++	ksmbd_debug(RDMA, "Send completed. status='%s (%d)', opcode=%d\n",
++		    ib_wc_status_msg(wc->status), wc->status,
++		    wc->opcode);
++
++	if (wc->status != IB_WC_SUCCESS || wc->opcode != IB_WC_SEND) {
++		pr_err("Send error. status='%s (%d)', opcode=%d\n",
++		       ib_wc_status_msg(wc->status), wc->status,
++		       wc->opcode);
++		smb_direct_disconnect_rdma_connection(t);
++	}
++
++	if (sendmsg->num_sge > 1) {
++		if (atomic_dec_and_test(&t->send_payload_pending))
++			wake_up(&t->wait_send_payload_pending);
++	} else {
++		if (atomic_dec_and_test(&t->send_pending))
++			wake_up(&t->wait_send_pending);
++	}
++
++	/* iterate and free the list of messages in reverse. the list's head
++	 * is invalid.
++	 */
++	for (pos = &sendmsg->list, prev = pos->prev, end = sendmsg->list.next;
++	     prev != end; pos = prev, prev = prev->prev) {
++		sibling = container_of(pos, struct smb_direct_sendmsg, list);
++		smb_direct_free_sendmsg(t, sibling);
++	}
++
++	sibling = container_of(pos, struct smb_direct_sendmsg, list);
++	smb_direct_free_sendmsg(t, sibling);
++}
++
++static int manage_credits_prior_sending(struct smb_direct_transport *t)
++{
++	int new_credits;
++
++	spin_lock(&t->lock_new_recv_credits);
++	new_credits = t->new_recv_credits;
++	t->new_recv_credits = 0;
++	spin_unlock(&t->lock_new_recv_credits);
++
++	return new_credits;
++}
++
++static int smb_direct_post_send(struct smb_direct_transport *t,
++				struct ib_send_wr *wr)
++{
++	int ret;
++
++	if (wr->num_sge > 1)
++		atomic_inc(&t->send_payload_pending);
++	else
++		atomic_inc(&t->send_pending);
++
++	ret = ib_post_send(t->qp, wr, NULL);
++	if (ret) {
++		pr_err("failed to post send: %d\n", ret);
++		if (wr->num_sge > 1) {
++			if (atomic_dec_and_test(&t->send_payload_pending))
++				wake_up(&t->wait_send_payload_pending);
++		} else {
++			if (atomic_dec_and_test(&t->send_pending))
++				wake_up(&t->wait_send_pending);
++		}
++		smb_direct_disconnect_rdma_connection(t);
++	}
++	return ret;
++}
++
++static void smb_direct_send_ctx_init(struct smb_direct_transport *t,
++				     struct smb_direct_send_ctx *send_ctx,
++				     bool need_invalidate_rkey,
++				     unsigned int remote_key)
++{
++	INIT_LIST_HEAD(&send_ctx->msg_list);
++	send_ctx->wr_cnt = 0;
++	send_ctx->need_invalidate_rkey = need_invalidate_rkey;
++	send_ctx->remote_key = remote_key;
++}
++
++static int smb_direct_flush_send_list(struct smb_direct_transport *t,
++				      struct smb_direct_send_ctx *send_ctx,
++				      bool is_last)
++{
++	struct smb_direct_sendmsg *first, *last;
++	int ret;
++
++	if (list_empty(&send_ctx->msg_list))
++		return 0;
++
++	first = list_first_entry(&send_ctx->msg_list,
++				 struct smb_direct_sendmsg,
++				 list);
++	last = list_last_entry(&send_ctx->msg_list,
++			       struct smb_direct_sendmsg,
++			       list);
++
++	last->wr.send_flags = IB_SEND_SIGNALED;
++	last->wr.wr_cqe = &last->cqe;
++	if (is_last && send_ctx->need_invalidate_rkey) {
++		last->wr.opcode = IB_WR_SEND_WITH_INV;
++		last->wr.ex.invalidate_rkey = send_ctx->remote_key;
++	}
++
++	ret = smb_direct_post_send(t, &first->wr);
++	if (!ret) {
++		smb_direct_send_ctx_init(t, send_ctx,
++					 send_ctx->need_invalidate_rkey,
++					 send_ctx->remote_key);
++	} else {
++		atomic_add(send_ctx->wr_cnt, &t->send_credits);
++		wake_up(&t->wait_send_credits);
++		list_for_each_entry_safe(first, last, &send_ctx->msg_list,
++					 list) {
++			smb_direct_free_sendmsg(t, first);
++		}
++	}
++	return ret;
++}
++
++static int wait_for_credits(struct smb_direct_transport *t,
++			    wait_queue_head_t *waitq, atomic_t *credits)
++{
++	int ret;
++
++	do {
++		if (atomic_dec_return(credits) >= 0)
++			return 0;
++
++		atomic_inc(credits);
++		ret = wait_event_interruptible(*waitq,
++					       atomic_read(credits) > 0 ||
++						t->status != SMB_DIRECT_CS_CONNECTED);
++
++		if (t->status != SMB_DIRECT_CS_CONNECTED)
++			return -ENOTCONN;
++		else if (ret < 0)
++			return ret;
++	} while (true);
++}
++
++static int wait_for_send_credits(struct smb_direct_transport *t,
++				 struct smb_direct_send_ctx *send_ctx)
++{
++	int ret;
++
++	if (send_ctx &&
++	    (send_ctx->wr_cnt >= 16 || atomic_read(&t->send_credits) <= 1)) {
++		ret = smb_direct_flush_send_list(t, send_ctx, false);
++		if (ret)
++			return ret;
++	}
++
++	return wait_for_credits(t, &t->wait_send_credits, &t->send_credits);
++}
++
++static int smb_direct_create_header(struct smb_direct_transport *t,
++				    int size, int remaining_data_length,
++				    struct smb_direct_sendmsg **sendmsg_out)
++{
++	struct smb_direct_sendmsg *sendmsg;
++	struct smb_direct_data_transfer *packet;
++	int header_length;
++	int ret;
++
++	sendmsg = smb_direct_alloc_sendmsg(t);
++	if (IS_ERR(sendmsg))
++		return PTR_ERR(sendmsg);
++
++	/* Fill in the packet header */
++	packet = (struct smb_direct_data_transfer *)sendmsg->packet;
++	packet->credits_requested = cpu_to_le16(t->send_credit_target);
++	packet->credits_granted = cpu_to_le16(manage_credits_prior_sending(t));
++
++	packet->flags = 0;
++	packet->reserved = 0;
++	if (!size)
++		packet->data_offset = 0;
++	else
++		packet->data_offset = cpu_to_le32(24);
++	packet->data_length = cpu_to_le32(size);
++	packet->remaining_data_length = cpu_to_le32(remaining_data_length);
++	packet->padding = 0;
++
++	ksmbd_debug(RDMA,
++		    "credits_requested=%d credits_granted=%d data_offset=%d data_length=%d remaining_data_length=%d\n",
++		    le16_to_cpu(packet->credits_requested),
++		    le16_to_cpu(packet->credits_granted),
++		    le32_to_cpu(packet->data_offset),
++		    le32_to_cpu(packet->data_length),
++		    le32_to_cpu(packet->remaining_data_length));
++
++	/* Map the packet to DMA */
++	header_length = sizeof(struct smb_direct_data_transfer);
++	/* If this is a packet without payload, don't send padding */
++	if (!size)
++		header_length =
++			offsetof(struct smb_direct_data_transfer, padding);
++
++	sendmsg->sge[0].addr = ib_dma_map_single(t->cm_id->device,
++						 (void *)packet,
++						 header_length,
++						 DMA_TO_DEVICE);
++	ret = ib_dma_mapping_error(t->cm_id->device, sendmsg->sge[0].addr);
++	if (ret) {
++		smb_direct_free_sendmsg(t, sendmsg);
++		return ret;
++	}
++
++	sendmsg->num_sge = 1;
++	sendmsg->sge[0].length = header_length;
++	sendmsg->sge[0].lkey = t->pd->local_dma_lkey;
++
++	*sendmsg_out = sendmsg;
++	return 0;
++}
++
++static int get_sg_list(void *buf, int size, struct scatterlist *sg_list, int nentries)
++{
++	bool high = is_vmalloc_addr(buf);
++	struct page *page;
++	int offset, len;
++	int i = 0;
++
++	if (nentries < get_buf_page_count(buf, size))
++		return -EINVAL;
++
++	offset = offset_in_page(buf);
++	buf -= offset;
++	while (size > 0) {
++		len = min_t(int, PAGE_SIZE - offset, size);
++		if (high)
++			page = vmalloc_to_page(buf);
++		else
++			page = kmap_to_page(buf);
++
++		if (!sg_list)
++			return -EINVAL;
++		sg_set_page(sg_list, page, len, offset);
++		sg_list = sg_next(sg_list);
++
++		buf += PAGE_SIZE;
++		size -= len;
++		offset = 0;
++		i++;
++	}
++	return i;
++}
++
++static int get_mapped_sg_list(struct ib_device *device, void *buf, int size,
++			      struct scatterlist *sg_list, int nentries,
++			      enum dma_data_direction dir)
++{
++	int npages;
++
++	npages = get_sg_list(buf, size, sg_list, nentries);
++	if (npages <= 0)
++		return -EINVAL;
++	return ib_dma_map_sg(device, sg_list, npages, dir);
++}
++
++static int post_sendmsg(struct smb_direct_transport *t,
++			struct smb_direct_send_ctx *send_ctx,
++			struct smb_direct_sendmsg *msg)
++{
++	int i;
++
++	for (i = 0; i < msg->num_sge; i++)
++		ib_dma_sync_single_for_device(t->cm_id->device,
++					      msg->sge[i].addr, msg->sge[i].length,
++					      DMA_TO_DEVICE);
++
++	msg->cqe.done = send_done;
++	msg->wr.opcode = IB_WR_SEND;
++	msg->wr.sg_list = &msg->sge[0];
++	msg->wr.num_sge = msg->num_sge;
++	msg->wr.next = NULL;
++
++	if (send_ctx) {
++		msg->wr.wr_cqe = NULL;
++		msg->wr.send_flags = 0;
++		if (!list_empty(&send_ctx->msg_list)) {
++			struct smb_direct_sendmsg *last;
++
++			last = list_last_entry(&send_ctx->msg_list,
++					       struct smb_direct_sendmsg,
++					       list);
++			last->wr.next = &msg->wr;
++		}
++		list_add_tail(&msg->list, &send_ctx->msg_list);
++		send_ctx->wr_cnt++;
++		return 0;
++	}
++
++	msg->wr.wr_cqe = &msg->cqe;
++	msg->wr.send_flags = IB_SEND_SIGNALED;
++	return smb_direct_post_send(t, &msg->wr);
++}
++
++static int smb_direct_post_send_data(struct smb_direct_transport *t,
++				     struct smb_direct_send_ctx *send_ctx,
++				     struct kvec *iov, int niov,
++				     int remaining_data_length)
++{
++	int i, j, ret;
++	struct smb_direct_sendmsg *msg;
++	int data_length;
++	struct scatterlist sg[SMB_DIRECT_MAX_SEND_SGES - 1];
++
++	ret = wait_for_send_credits(t, send_ctx);
++	if (ret)
 +		return ret;
 +
-+	skb = genlmsg_new(msg->sz, GFP_KERNEL);
-+	if (!skb)
-+		return -ENOMEM;
++	data_length = 0;
++	for (i = 0; i < niov; i++)
++		data_length += iov[i].iov_len;
 +
-+	nlh = genlmsg_put(skb, 0, 0, &ksmbd_genl_family, 0, msg->type);
-+	if (!nlh)
-+		goto out;
-+
-+	ret = nla_put(skb, msg->type, msg->sz, msg->payload);
++	ret = smb_direct_create_header(t, data_length, remaining_data_length,
++				       &msg);
 +	if (ret) {
-+		genlmsg_cancel(skb, nlh);
-+		goto out;
++		atomic_inc(&t->send_credits);
++		return ret;
 +	}
 +
-+	genlmsg_end(skb, nlh);
-+	ret = genlmsg_unicast(&init_net, skb, ksmbd_tools_pid);
-+	if (!ret)
-+		ipc_update_last_active();
-+	return ret;
++	for (i = 0; i < niov; i++) {
++		struct ib_sge *sge;
++		int sg_cnt;
 +
-+out:
-+	nlmsg_free(skb);
-+	return ret;
-+}
++		sg_init_table(sg, SMB_DIRECT_MAX_SEND_SGES - 1);
++		sg_cnt = get_mapped_sg_list(t->cm_id->device,
++					    iov[i].iov_base, iov[i].iov_len,
++					    sg, SMB_DIRECT_MAX_SEND_SGES - 1,
++					    DMA_TO_DEVICE);
++		if (sg_cnt <= 0) {
++			pr_err("failed to map buffer\n");
++			ret = -ENOMEM;
++			goto err;
++		} else if (sg_cnt + msg->num_sge > SMB_DIRECT_MAX_SEND_SGES - 1) {
++			pr_err("buffer not fitted into sges\n");
++			ret = -E2BIG;
++			ib_dma_unmap_sg(t->cm_id->device, sg, sg_cnt,
++					DMA_TO_DEVICE);
++			goto err;
++		}
 +
-+static void *ipc_msg_send_request(struct ksmbd_ipc_msg *msg, unsigned int handle)
-+{
-+	struct ipc_msg_table_entry entry;
-+	int ret;
++		for (j = 0; j < sg_cnt; j++) {
++			sge = &msg->sge[msg->num_sge];
++			sge->addr = sg_dma_address(&sg[j]);
++			sge->length = sg_dma_len(&sg[j]);
++			sge->lkey  = t->pd->local_dma_lkey;
++			msg->num_sge++;
++		}
++	}
 +
-+	if ((int)handle < 0)
-+		return NULL;
-+
-+	entry.type = msg->type;
-+	entry.response = NULL;
-+	init_waitqueue_head(&entry.wait);
-+
-+	down_write(&ipc_msg_table_lock);
-+	entry.handle = handle;
-+	hash_add(ipc_msg_table, &entry.ipc_table_hlist, entry.handle);
-+	up_write(&ipc_msg_table_lock);
-+
-+	ret = ipc_msg_send(msg);
++	ret = post_sendmsg(t, send_ctx, msg);
 +	if (ret)
++		goto err;
++	return 0;
++err:
++	smb_direct_free_sendmsg(t, msg);
++	atomic_inc(&t->send_credits);
++	return ret;
++}
++
++static int smb_direct_writev(struct ksmbd_transport *t,
++			     struct kvec *iov, int niovs, int buflen,
++			     bool need_invalidate, unsigned int remote_key)
++{
++	struct smb_direct_transport *st = smb_trans_direct_transfort(t);
++	int remaining_data_length;
++	int start, i, j;
++	int max_iov_size = st->max_send_size -
++			sizeof(struct smb_direct_data_transfer);
++	int ret;
++	struct kvec vec;
++	struct smb_direct_send_ctx send_ctx;
++
++	if (st->status != SMB_DIRECT_CS_CONNECTED)
++		return -ENOTCONN;
++
++	//FIXME: skip RFC1002 header..
++	buflen -= 4;
++	iov[0].iov_base += 4;
++	iov[0].iov_len -= 4;
++
++	remaining_data_length = buflen;
++	ksmbd_debug(RDMA, "Sending smb (RDMA): smb_len=%u\n", buflen);
++
++	smb_direct_send_ctx_init(st, &send_ctx, need_invalidate, remote_key);
++	start = i = 0;
++	buflen = 0;
++	while (true) {
++		buflen += iov[i].iov_len;
++		if (buflen > max_iov_size) {
++			if (i > start) {
++				remaining_data_length -=
++					(buflen - iov[i].iov_len);
++				ret = smb_direct_post_send_data(st, &send_ctx,
++								&iov[start], i - start,
++								remaining_data_length);
++				if (ret)
++					goto done;
++			} else {
++				/* iov[start] is too big, break it */
++				int nvec  = (buflen + max_iov_size - 1) /
++						max_iov_size;
++
++				for (j = 0; j < nvec; j++) {
++					vec.iov_base =
++						(char *)iov[start].iov_base +
++						j * max_iov_size;
++					vec.iov_len =
++						min_t(int, max_iov_size,
++						      buflen - max_iov_size * j);
++					remaining_data_length -= vec.iov_len;
++					ret = smb_direct_post_send_data(st, &send_ctx, &vec, 1,
++									remaining_data_length);
++					if (ret)
++						goto done;
++				}
++				i++;
++				if (i == niovs)
++					break;
++			}
++			start = i;
++			buflen = 0;
++		} else {
++			i++;
++			if (i == niovs) {
++				/* send out all remaining vecs */
++				remaining_data_length -= buflen;
++				ret = smb_direct_post_send_data(st, &send_ctx,
++								&iov[start], i - start,
++								remaining_data_length);
++				if (ret)
++					goto done;
++				break;
++			}
++		}
++	}
++
++done:
++	ret = smb_direct_flush_send_list(st, &send_ctx, true);
++
++	/*
++	 * As an optimization, we don't wait for individual I/O to finish
++	 * before sending the next one.
++	 * Send them all and wait for pending send count to get to 0
++	 * that means all the I/Os have been out and we are good to return
++	 */
++
++	wait_event(st->wait_send_payload_pending,
++		   atomic_read(&st->send_payload_pending) == 0);
++	return ret;
++}
++
++static void read_write_done(struct ib_cq *cq, struct ib_wc *wc,
++			    enum dma_data_direction dir)
++{
++	struct smb_direct_rdma_rw_msg *msg = container_of(wc->wr_cqe,
++							  struct smb_direct_rdma_rw_msg, cqe);
++	struct smb_direct_transport *t = msg->t;
++
++	if (wc->status != IB_WC_SUCCESS) {
++		pr_err("read/write error. opcode = %d, status = %s(%d)\n",
++		       wc->opcode, ib_wc_status_msg(wc->status), wc->status);
++		smb_direct_disconnect_rdma_connection(t);
++	}
++
++	if (atomic_inc_return(&t->rw_avail_ops) > 0)
++		wake_up(&t->wait_rw_avail_ops);
++
++	rdma_rw_ctx_destroy(&msg->rw_ctx, t->qp, t->qp->port,
++			    msg->sg_list, msg->sgt.nents, dir);
++	sg_free_table_chained(&msg->sgt, SG_CHUNK_SIZE);
++	complete(msg->completion);
++	kfree(msg);
++}
++
++static void read_done(struct ib_cq *cq, struct ib_wc *wc)
++{
++	read_write_done(cq, wc, DMA_FROM_DEVICE);
++}
++
++static void write_done(struct ib_cq *cq, struct ib_wc *wc)
++{
++	read_write_done(cq, wc, DMA_TO_DEVICE);
++}
++
++static int smb_direct_rdma_xmit(struct smb_direct_transport *t, void *buf,
++				int buf_len, u32 remote_key, u64 remote_offset,
++				u32 remote_len, bool is_read)
++{
++	struct smb_direct_rdma_rw_msg *msg;
++	int ret;
++	DECLARE_COMPLETION_ONSTACK(completion);
++	struct ib_send_wr *first_wr = NULL;
++
++	ret = wait_for_credits(t, &t->wait_rw_avail_ops, &t->rw_avail_ops);
++	if (ret < 0)
++		return ret;
++
++	/* TODO: mempool */
++	msg = kmalloc(offsetof(struct smb_direct_rdma_rw_msg, sg_list) +
++		      sizeof(struct scatterlist) * SG_CHUNK_SIZE, GFP_KERNEL);
++	if (!msg) {
++		atomic_inc(&t->rw_avail_ops);
++		return -ENOMEM;
++	}
++
++	msg->sgt.sgl = &msg->sg_list[0];
++	ret = sg_alloc_table_chained(&msg->sgt,
++				     get_buf_page_count(buf, buf_len),
++				     msg->sg_list, SG_CHUNK_SIZE);
++	if (ret) {
++		atomic_inc(&t->rw_avail_ops);
++		kfree(msg);
++		return -ENOMEM;
++	}
++
++	ret = get_sg_list(buf, buf_len, msg->sgt.sgl, msg->sgt.orig_nents);
++	if (ret <= 0) {
++		pr_err("failed to get pages\n");
++		goto err;
++	}
++
++	ret = rdma_rw_ctx_init(&msg->rw_ctx, t->qp, t->qp->port,
++			       msg->sg_list, get_buf_page_count(buf, buf_len),
++			       0, remote_offset, remote_key,
++			       is_read ? DMA_FROM_DEVICE : DMA_TO_DEVICE);
++	if (ret < 0) {
++		pr_err("failed to init rdma_rw_ctx: %d\n", ret);
++		goto err;
++	}
++
++	msg->t = t;
++	msg->cqe.done = is_read ? read_done : write_done;
++	msg->completion = &completion;
++	first_wr = rdma_rw_ctx_wrs(&msg->rw_ctx, t->qp, t->qp->port,
++				   &msg->cqe, NULL);
++
++	ret = ib_post_send(t->qp, first_wr, NULL);
++	if (ret) {
++		pr_err("failed to post send wr: %d\n", ret);
++		goto err;
++	}
++
++	wait_for_completion(&completion);
++	return 0;
++
++err:
++	atomic_inc(&t->rw_avail_ops);
++	if (first_wr)
++		rdma_rw_ctx_destroy(&msg->rw_ctx, t->qp, t->qp->port,
++				    msg->sg_list, msg->sgt.nents,
++				    is_read ? DMA_FROM_DEVICE : DMA_TO_DEVICE);
++	sg_free_table_chained(&msg->sgt, SG_CHUNK_SIZE);
++	kfree(msg);
++	return ret;
++}
++
++static int smb_direct_rdma_write(struct ksmbd_transport *t, void *buf,
++				 unsigned int buflen, u32 remote_key,
++				 u64 remote_offset, u32 remote_len)
++{
++	return smb_direct_rdma_xmit(smb_trans_direct_transfort(t), buf, buflen,
++				    remote_key, remote_offset,
++				    remote_len, false);
++}
++
++static int smb_direct_rdma_read(struct ksmbd_transport *t, void *buf,
++				unsigned int buflen, u32 remote_key,
++				u64 remote_offset, u32 remote_len)
++{
++	return smb_direct_rdma_xmit(smb_trans_direct_transfort(t), buf, buflen,
++				    remote_key, remote_offset,
++				    remote_len, true);
++}
++
++static void smb_direct_disconnect(struct ksmbd_transport *t)
++{
++	struct smb_direct_transport *st = smb_trans_direct_transfort(t);
++
++	ksmbd_debug(RDMA, "Disconnecting cm_id=%p\n", st->cm_id);
++
++	smb_direct_disconnect_rdma_connection(st);
++	wait_event_interruptible(st->wait_status,
++				 st->status == SMB_DIRECT_CS_DISCONNECTED);
++	free_transport(st);
++}
++
++static int smb_direct_cm_handler(struct rdma_cm_id *cm_id,
++				 struct rdma_cm_event *event)
++{
++	struct smb_direct_transport *t = cm_id->context;
++
++	ksmbd_debug(RDMA, "RDMA CM event. cm_id=%p event=%s (%d)\n",
++		    cm_id, rdma_event_msg(event->event), event->event);
++
++	switch (event->event) {
++	case RDMA_CM_EVENT_ESTABLISHED: {
++		t->status = SMB_DIRECT_CS_CONNECTED;
++		wake_up_interruptible(&t->wait_status);
++		break;
++	}
++	case RDMA_CM_EVENT_DEVICE_REMOVAL:
++	case RDMA_CM_EVENT_DISCONNECTED: {
++		t->status = SMB_DIRECT_CS_DISCONNECTED;
++		wake_up_interruptible(&t->wait_status);
++		wake_up_interruptible(&t->wait_reassembly_queue);
++		wake_up(&t->wait_send_credits);
++		break;
++	}
++	case RDMA_CM_EVENT_CONNECT_ERROR: {
++		t->status = SMB_DIRECT_CS_DISCONNECTED;
++		wake_up_interruptible(&t->wait_status);
++		break;
++	}
++	default:
++		pr_err("Unexpected RDMA CM event. cm_id=%p, event=%s (%d)\n",
++		       cm_id, rdma_event_msg(event->event),
++		       event->event);
++		break;
++	}
++	return 0;
++}
++
++static void smb_direct_qpair_handler(struct ib_event *event, void *context)
++{
++	struct smb_direct_transport *t = context;
++
++	ksmbd_debug(RDMA, "Received QP event. cm_id=%p, event=%s (%d)\n",
++		    t->cm_id, ib_event_msg(event->event), event->event);
++
++	switch (event->event) {
++	case IB_EVENT_CQ_ERR:
++	case IB_EVENT_QP_FATAL:
++		smb_direct_disconnect_rdma_connection(t);
++		break;
++	default:
++		break;
++	}
++}
++
++static int smb_direct_send_negotiate_response(struct smb_direct_transport *t,
++					      int failed)
++{
++	struct smb_direct_sendmsg *sendmsg;
++	struct smb_direct_negotiate_resp *resp;
++	int ret;
++
++	sendmsg = smb_direct_alloc_sendmsg(t);
++	if (IS_ERR(sendmsg))
++		return -ENOMEM;
++
++	resp = (struct smb_direct_negotiate_resp *)sendmsg->packet;
++	if (failed) {
++		memset(resp, 0, sizeof(*resp));
++		resp->min_version = cpu_to_le16(0x0100);
++		resp->max_version = cpu_to_le16(0x0100);
++		resp->status = STATUS_NOT_SUPPORTED;
++	} else {
++		resp->status = STATUS_SUCCESS;
++		resp->min_version = SMB_DIRECT_VERSION_LE;
++		resp->max_version = SMB_DIRECT_VERSION_LE;
++		resp->negotiated_version = SMB_DIRECT_VERSION_LE;
++		resp->reserved = 0;
++		resp->credits_requested =
++				cpu_to_le16(t->send_credit_target);
++		resp->credits_granted = cpu_to_le16(manage_credits_prior_sending(t));
++		resp->max_readwrite_size = cpu_to_le32(t->max_rdma_rw_size);
++		resp->preferred_send_size = cpu_to_le32(t->max_send_size);
++		resp->max_receive_size = cpu_to_le32(t->max_recv_size);
++		resp->max_fragmented_size =
++				cpu_to_le32(t->max_fragmented_recv_size);
++	}
++
++	sendmsg->sge[0].addr = ib_dma_map_single(t->cm_id->device,
++						 (void *)resp, sizeof(*resp),
++						 DMA_TO_DEVICE);
++	ret = ib_dma_mapping_error(t->cm_id->device, sendmsg->sge[0].addr);
++	if (ret) {
++		smb_direct_free_sendmsg(t, sendmsg);
++		return ret;
++	}
++
++	sendmsg->num_sge = 1;
++	sendmsg->sge[0].length = sizeof(*resp);
++	sendmsg->sge[0].lkey = t->pd->local_dma_lkey;
++
++	ret = post_sendmsg(t, NULL, sendmsg);
++	if (ret) {
++		smb_direct_free_sendmsg(t, sendmsg);
++		return ret;
++	}
++
++	wait_event(t->wait_send_pending,
++		   atomic_read(&t->send_pending) == 0);
++	return 0;
++}
++
++static int smb_direct_accept_client(struct smb_direct_transport *t)
++{
++	struct rdma_conn_param conn_param;
++	struct ib_port_immutable port_immutable;
++	u32 ird_ord_hdr[2];
++	int ret;
++
++	memset(&conn_param, 0, sizeof(conn_param));
++	conn_param.initiator_depth = min_t(u8, t->cm_id->device->attrs.max_qp_rd_atom,
++					   SMB_DIRECT_CM_INITIATOR_DEPTH);
++	conn_param.responder_resources = 0;
++
++	t->cm_id->device->ops.get_port_immutable(t->cm_id->device,
++						 t->cm_id->port_num,
++						 &port_immutable);
++	if (port_immutable.core_cap_flags & RDMA_CORE_PORT_IWARP) {
++		ird_ord_hdr[0] = conn_param.responder_resources;
++		ird_ord_hdr[1] = 1;
++		conn_param.private_data = ird_ord_hdr;
++		conn_param.private_data_len = sizeof(ird_ord_hdr);
++	} else {
++		conn_param.private_data = NULL;
++		conn_param.private_data_len = 0;
++	}
++	conn_param.retry_count = SMB_DIRECT_CM_RETRY;
++	conn_param.rnr_retry_count = SMB_DIRECT_CM_RNR_RETRY;
++	conn_param.flow_control = 0;
++
++	ret = rdma_accept(t->cm_id, &conn_param);
++	if (ret) {
++		pr_err("error at rdma_accept: %d\n", ret);
++		return ret;
++	}
++
++	wait_event_interruptible(t->wait_status,
++				 t->status != SMB_DIRECT_CS_NEW);
++	if (t->status != SMB_DIRECT_CS_CONNECTED)
++		return -ENOTCONN;
++	return 0;
++}
++
++static int smb_direct_negotiate(struct smb_direct_transport *t)
++{
++	int ret;
++	struct smb_direct_recvmsg *recvmsg;
++	struct smb_direct_negotiate_req *req;
++
++	recvmsg = get_free_recvmsg(t);
++	if (!recvmsg)
++		return -ENOMEM;
++	recvmsg->type = SMB_DIRECT_MSG_NEGOTIATE_REQ;
++
++	ret = smb_direct_post_recv(t, recvmsg);
++	if (ret) {
++		pr_err("Can't post recv: %d\n", ret);
++		goto out;
++	}
++
++	t->negotiation_requested = false;
++	ret = smb_direct_accept_client(t);
++	if (ret) {
++		pr_err("Can't accept client\n");
++		goto out;
++	}
++
++	smb_direct_post_recv_credits(&t->post_recv_credits_work.work);
++
++	ksmbd_debug(RDMA, "Waiting for SMB_DIRECT negotiate request\n");
++	ret = wait_event_interruptible_timeout(t->wait_status,
++					       t->negotiation_requested ||
++						t->status == SMB_DIRECT_CS_DISCONNECTED,
++					       SMB_DIRECT_NEGOTIATE_TIMEOUT * HZ);
++	if (ret <= 0 || t->status == SMB_DIRECT_CS_DISCONNECTED) {
++		ret = ret < 0 ? ret : -ETIMEDOUT;
++		goto out;
++	}
++
++	ret = smb_direct_check_recvmsg(recvmsg);
++	if (ret == -ECONNABORTED)
 +		goto out;
 +
-+	ret = wait_event_interruptible_timeout(entry.wait,
-+					       entry.response != NULL,
-+					       IPC_WAIT_TIMEOUT);
++	req = (struct smb_direct_negotiate_req *)recvmsg->packet;
++	t->max_recv_size = min_t(int, t->max_recv_size,
++				 le32_to_cpu(req->preferred_send_size));
++	t->max_send_size = min_t(int, t->max_send_size,
++				 le32_to_cpu(req->max_receive_size));
++	t->max_fragmented_send_size =
++			le32_to_cpu(req->max_fragmented_size);
++
++	ret = smb_direct_send_negotiate_response(t, ret);
 +out:
-+	down_write(&ipc_msg_table_lock);
-+	hash_del(&entry.ipc_table_hlist);
-+	up_write(&ipc_msg_table_lock);
-+	return entry.response;
-+}
-+
-+static int ksmbd_ipc_heartbeat_request(void)
-+{
-+	struct ksmbd_ipc_msg *msg;
-+	int ret;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_heartbeat));
-+	if (!msg)
-+		return -EINVAL;
-+
-+	msg->type = KSMBD_EVENT_HEARTBEAT_REQUEST;
-+	ret = ipc_msg_send(msg);
-+	ipc_msg_free(msg);
++	if (recvmsg)
++		put_recvmsg(t, recvmsg);
 +	return ret;
 +}
 +
-+struct ksmbd_login_response *ksmbd_ipc_login_request(const char *account)
++static int smb_direct_init_params(struct smb_direct_transport *t,
++				  struct ib_qp_cap *cap)
 +{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_login_request *req;
-+	struct ksmbd_login_response *resp;
++	struct ib_device *device = t->cm_id->device;
++	int max_send_sges, max_pages, max_rw_wrs, max_send_wrs;
 +
-+	if (strlen(account) >= KSMBD_REQ_MAX_ACCOUNT_NAME_SZ)
-+		return NULL;
++	/* need 2 more sge. because a SMB_DIRECT header will be mapped,
++	 * and maybe a send buffer could be not page aligned.
++	 */
++	t->max_send_size = smb_direct_max_send_size;
++	max_send_sges = DIV_ROUND_UP(t->max_send_size, PAGE_SIZE) + 2;
++	if (max_send_sges > SMB_DIRECT_MAX_SEND_SGES) {
++		pr_err("max_send_size %d is too large\n", t->max_send_size);
++		return -EINVAL;
++	}
 +
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_login_request));
-+	if (!msg)
-+		return NULL;
++	/*
++	 * allow smb_direct_max_outstanding_rw_ops of in-flight RDMA
++	 * read/writes. HCA guarantees at least max_send_sge of sges for
++	 * a RDMA read/write work request, and if memory registration is used,
++	 * we need reg_mr, local_inv wrs for each read/write.
++	 */
++	t->max_rdma_rw_size = smb_direct_max_read_write_size;
++	max_pages = DIV_ROUND_UP(t->max_rdma_rw_size, PAGE_SIZE) + 1;
++	max_rw_wrs = DIV_ROUND_UP(max_pages, SMB_DIRECT_MAX_SEND_SGES);
++	max_rw_wrs += rdma_rw_mr_factor(device, t->cm_id->port_num,
++			max_pages) * 2;
++	max_rw_wrs *= smb_direct_max_outstanding_rw_ops;
 +
-+	msg->type = KSMBD_EVENT_LOGIN_REQUEST;
-+	req = (struct ksmbd_login_request *)msg->payload;
-+	req->handle = ksmbd_acquire_id(&ipc_ida);
-+	strscpy(req->account, account, KSMBD_REQ_MAX_ACCOUNT_NAME_SZ);
++	max_send_wrs = smb_direct_send_credit_target + max_rw_wrs;
++	if (max_send_wrs > device->attrs.max_cqe ||
++	    max_send_wrs > device->attrs.max_qp_wr) {
++		pr_err("consider lowering send_credit_target = %d, or max_outstanding_rw_ops = %d\n",
++		       smb_direct_send_credit_target,
++		       smb_direct_max_outstanding_rw_ops);
++		pr_err("Possible CQE overrun, device reporting max_cqe %d max_qp_wr %d\n",
++		       device->attrs.max_cqe, device->attrs.max_qp_wr);
++		return -EINVAL;
++	}
 +
-+	resp = ipc_msg_send_request(msg, req->handle);
-+	ipc_msg_handle_free(req->handle);
-+	ipc_msg_free(msg);
-+	return resp;
++	if (smb_direct_receive_credit_max > device->attrs.max_cqe ||
++	    smb_direct_receive_credit_max > device->attrs.max_qp_wr) {
++		pr_err("consider lowering receive_credit_max = %d\n",
++		       smb_direct_receive_credit_max);
++		pr_err("Possible CQE overrun, device reporting max_cpe %d max_qp_wr %d\n",
++		       device->attrs.max_cqe, device->attrs.max_qp_wr);
++		return -EINVAL;
++	}
++
++	if (device->attrs.max_send_sge < SMB_DIRECT_MAX_SEND_SGES) {
++		pr_err("warning: device max_send_sge = %d too small\n",
++		       device->attrs.max_send_sge);
++		return -EINVAL;
++	}
++	if (device->attrs.max_recv_sge < SMB_DIRECT_MAX_RECV_SGES) {
++		pr_err("warning: device max_recv_sge = %d too small\n",
++		       device->attrs.max_recv_sge);
++		return -EINVAL;
++	}
++
++	t->recv_credits = 0;
++	t->count_avail_recvmsg = 0;
++
++	t->recv_credit_max = smb_direct_receive_credit_max;
++	t->recv_credit_target = 10;
++	t->new_recv_credits = 0;
++
++	t->send_credit_target = smb_direct_send_credit_target;
++	atomic_set(&t->send_credits, 0);
++	atomic_set(&t->rw_avail_ops, smb_direct_max_outstanding_rw_ops);
++
++	t->max_send_size = smb_direct_max_send_size;
++	t->max_recv_size = smb_direct_max_receive_size;
++	t->max_fragmented_recv_size = smb_direct_max_fragmented_recv_size;
++
++	cap->max_send_wr = max_send_wrs;
++	cap->max_recv_wr = t->recv_credit_max;
++	cap->max_send_sge = SMB_DIRECT_MAX_SEND_SGES;
++	cap->max_recv_sge = SMB_DIRECT_MAX_RECV_SGES;
++	cap->max_inline_data = 0;
++	cap->max_rdma_ctxs = 0;
++	return 0;
 +}
 +
-+struct ksmbd_spnego_authen_response *
-+ksmbd_ipc_spnego_authen_request(const char *spnego_blob, int blob_len)
++static void smb_direct_destroy_pools(struct smb_direct_transport *t)
 +{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_spnego_authen_request *req;
-+	struct ksmbd_spnego_authen_response *resp;
++	struct smb_direct_recvmsg *recvmsg;
 +
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_spnego_authen_request) +
-+			blob_len + 1);
-+	if (!msg)
-+		return NULL;
++	while ((recvmsg = get_free_recvmsg(t)))
++		mempool_free(recvmsg, t->recvmsg_mempool);
++	while ((recvmsg = get_empty_recvmsg(t)))
++		mempool_free(recvmsg, t->recvmsg_mempool);
 +
-+	msg->type = KSMBD_EVENT_SPNEGO_AUTHEN_REQUEST;
-+	req = (struct ksmbd_spnego_authen_request *)msg->payload;
-+	req->handle = ksmbd_acquire_id(&ipc_ida);
-+	req->spnego_blob_len = blob_len;
-+	memcpy(req->spnego_blob, spnego_blob, blob_len);
++	mempool_destroy(t->recvmsg_mempool);
++	t->recvmsg_mempool = NULL;
 +
-+	resp = ipc_msg_send_request(msg, req->handle);
-+	ipc_msg_handle_free(req->handle);
-+	ipc_msg_free(msg);
-+	return resp;
++	kmem_cache_destroy(t->recvmsg_cache);
++	t->recvmsg_cache = NULL;
++
++	mempool_destroy(t->sendmsg_mempool);
++	t->sendmsg_mempool = NULL;
++
++	kmem_cache_destroy(t->sendmsg_cache);
++	t->sendmsg_cache = NULL;
 +}
 +
-+struct ksmbd_tree_connect_response *
-+ksmbd_ipc_tree_connect_request(struct ksmbd_session *sess,
-+			       struct ksmbd_share_config *share,
-+			       struct ksmbd_tree_connect *tree_conn,
-+			       struct sockaddr *peer_addr)
++static int smb_direct_create_pools(struct smb_direct_transport *t)
 +{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_tree_connect_request *req;
-+	struct ksmbd_tree_connect_response *resp;
++	char name[80];
++	int i;
++	struct smb_direct_recvmsg *recvmsg;
 +
-+	if (strlen(user_name(sess->user)) >= KSMBD_REQ_MAX_ACCOUNT_NAME_SZ)
-+		return NULL;
-+
-+	if (strlen(share->name) >= KSMBD_REQ_MAX_SHARE_NAME)
-+		return NULL;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_tree_connect_request));
-+	if (!msg)
-+		return NULL;
-+
-+	msg->type = KSMBD_EVENT_TREE_CONNECT_REQUEST;
-+	req = (struct ksmbd_tree_connect_request *)msg->payload;
-+
-+	req->handle = ksmbd_acquire_id(&ipc_ida);
-+	req->account_flags = sess->user->flags;
-+	req->session_id = sess->id;
-+	req->connect_id = tree_conn->id;
-+	strscpy(req->account, user_name(sess->user), KSMBD_REQ_MAX_ACCOUNT_NAME_SZ);
-+	strscpy(req->share, share->name, KSMBD_REQ_MAX_SHARE_NAME);
-+	snprintf(req->peer_addr, sizeof(req->peer_addr), "%pIS", peer_addr);
-+
-+	if (peer_addr->sa_family == AF_INET6)
-+		req->flags |= KSMBD_TREE_CONN_FLAG_REQUEST_IPV6;
-+	if (test_session_flag(sess, CIFDS_SESSION_FLAG_SMB2))
-+		req->flags |= KSMBD_TREE_CONN_FLAG_REQUEST_SMB2;
-+
-+	resp = ipc_msg_send_request(msg, req->handle);
-+	ipc_msg_handle_free(req->handle);
-+	ipc_msg_free(msg);
-+	return resp;
-+}
-+
-+int ksmbd_ipc_tree_disconnect_request(unsigned long long session_id,
-+				      unsigned long long connect_id)
-+{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_tree_disconnect_request *req;
-+	int ret;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_tree_disconnect_request));
-+	if (!msg)
++	snprintf(name, sizeof(name), "smb_direct_rqst_pool_%p", t);
++	t->sendmsg_cache = kmem_cache_create(name,
++					     sizeof(struct smb_direct_sendmsg) +
++					      sizeof(struct smb_direct_negotiate_resp),
++					     0, SLAB_HWCACHE_ALIGN, NULL);
++	if (!t->sendmsg_cache)
 +		return -ENOMEM;
 +
-+	msg->type = KSMBD_EVENT_TREE_DISCONNECT_REQUEST;
-+	req = (struct ksmbd_tree_disconnect_request *)msg->payload;
-+	req->session_id = session_id;
-+	req->connect_id = connect_id;
++	t->sendmsg_mempool = mempool_create(t->send_credit_target,
++					    mempool_alloc_slab, mempool_free_slab,
++					    t->sendmsg_cache);
++	if (!t->sendmsg_mempool)
++		goto err;
 +
-+	ret = ipc_msg_send(msg);
-+	ipc_msg_free(msg);
-+	return ret;
++	snprintf(name, sizeof(name), "smb_direct_resp_%p", t);
++	t->recvmsg_cache = kmem_cache_create(name,
++					     sizeof(struct smb_direct_recvmsg) +
++					      t->max_recv_size,
++					     0, SLAB_HWCACHE_ALIGN, NULL);
++	if (!t->recvmsg_cache)
++		goto err;
++
++	t->recvmsg_mempool =
++		mempool_create(t->recv_credit_max, mempool_alloc_slab,
++			       mempool_free_slab, t->recvmsg_cache);
++	if (!t->recvmsg_mempool)
++		goto err;
++
++	INIT_LIST_HEAD(&t->recvmsg_queue);
++
++	for (i = 0; i < t->recv_credit_max; i++) {
++		recvmsg = mempool_alloc(t->recvmsg_mempool, GFP_KERNEL);
++		if (!recvmsg)
++			goto err;
++		recvmsg->transport = t;
++		list_add(&recvmsg->list, &t->recvmsg_queue);
++	}
++	t->count_avail_recvmsg = t->recv_credit_max;
++
++	return 0;
++err:
++	smb_direct_destroy_pools(t);
++	return -ENOMEM;
 +}
 +
-+int ksmbd_ipc_logout_request(const char *account)
++static int smb_direct_create_qpair(struct smb_direct_transport *t,
++				   struct ib_qp_cap *cap)
 +{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_logout_request *req;
 +	int ret;
++	struct ib_qp_init_attr qp_attr;
 +
-+	if (strlen(account) >= KSMBD_REQ_MAX_ACCOUNT_NAME_SZ)
-+		return -EINVAL;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_logout_request));
-+	if (!msg)
-+		return -ENOMEM;
-+
-+	msg->type = KSMBD_EVENT_LOGOUT_REQUEST;
-+	req = (struct ksmbd_logout_request *)msg->payload;
-+	strscpy(req->account, account, KSMBD_REQ_MAX_ACCOUNT_NAME_SZ);
-+
-+	ret = ipc_msg_send(msg);
-+	ipc_msg_free(msg);
-+	return ret;
-+}
-+
-+struct ksmbd_share_config_response *
-+ksmbd_ipc_share_config_request(const char *name)
-+{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_share_config_request *req;
-+	struct ksmbd_share_config_response *resp;
-+
-+	if (strlen(name) >= KSMBD_REQ_MAX_SHARE_NAME)
-+		return NULL;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_share_config_request));
-+	if (!msg)
-+		return NULL;
-+
-+	msg->type = KSMBD_EVENT_SHARE_CONFIG_REQUEST;
-+	req = (struct ksmbd_share_config_request *)msg->payload;
-+	req->handle = ksmbd_acquire_id(&ipc_ida);
-+	strscpy(req->share_name, name, KSMBD_REQ_MAX_SHARE_NAME);
-+
-+	resp = ipc_msg_send_request(msg, req->handle);
-+	ipc_msg_handle_free(req->handle);
-+	ipc_msg_free(msg);
-+	return resp;
-+}
-+
-+struct ksmbd_rpc_command *ksmbd_rpc_open(struct ksmbd_session *sess, int handle)
-+{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_rpc_command *req;
-+	struct ksmbd_rpc_command *resp;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_rpc_command));
-+	if (!msg)
-+		return NULL;
-+
-+	msg->type = KSMBD_EVENT_RPC_REQUEST;
-+	req = (struct ksmbd_rpc_command *)msg->payload;
-+	req->handle = handle;
-+	req->flags = ksmbd_session_rpc_method(sess, handle);
-+	req->flags |= KSMBD_RPC_OPEN_METHOD;
-+	req->payload_sz = 0;
-+
-+	resp = ipc_msg_send_request(msg, req->handle);
-+	ipc_msg_free(msg);
-+	return resp;
-+}
-+
-+struct ksmbd_rpc_command *ksmbd_rpc_close(struct ksmbd_session *sess, int handle)
-+{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_rpc_command *req;
-+	struct ksmbd_rpc_command *resp;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_rpc_command));
-+	if (!msg)
-+		return NULL;
-+
-+	msg->type = KSMBD_EVENT_RPC_REQUEST;
-+	req = (struct ksmbd_rpc_command *)msg->payload;
-+	req->handle = handle;
-+	req->flags = ksmbd_session_rpc_method(sess, handle);
-+	req->flags |= KSMBD_RPC_CLOSE_METHOD;
-+	req->payload_sz = 0;
-+
-+	resp = ipc_msg_send_request(msg, req->handle);
-+	ipc_msg_free(msg);
-+	return resp;
-+}
-+
-+struct ksmbd_rpc_command *ksmbd_rpc_write(struct ksmbd_session *sess, int handle,
-+					  void *payload, size_t payload_sz)
-+{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_rpc_command *req;
-+	struct ksmbd_rpc_command *resp;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_rpc_command) + payload_sz + 1);
-+	if (!msg)
-+		return NULL;
-+
-+	msg->type = KSMBD_EVENT_RPC_REQUEST;
-+	req = (struct ksmbd_rpc_command *)msg->payload;
-+	req->handle = handle;
-+	req->flags = ksmbd_session_rpc_method(sess, handle);
-+	req->flags |= rpc_context_flags(sess);
-+	req->flags |= KSMBD_RPC_WRITE_METHOD;
-+	req->payload_sz = payload_sz;
-+	memcpy(req->payload, payload, payload_sz);
-+
-+	resp = ipc_msg_send_request(msg, req->handle);
-+	ipc_msg_free(msg);
-+	return resp;
-+}
-+
-+struct ksmbd_rpc_command *ksmbd_rpc_read(struct ksmbd_session *sess, int handle)
-+{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_rpc_command *req;
-+	struct ksmbd_rpc_command *resp;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_rpc_command));
-+	if (!msg)
-+		return NULL;
-+
-+	msg->type = KSMBD_EVENT_RPC_REQUEST;
-+	req = (struct ksmbd_rpc_command *)msg->payload;
-+	req->handle = handle;
-+	req->flags = ksmbd_session_rpc_method(sess, handle);
-+	req->flags |= rpc_context_flags(sess);
-+	req->flags |= KSMBD_RPC_READ_METHOD;
-+	req->payload_sz = 0;
-+
-+	resp = ipc_msg_send_request(msg, req->handle);
-+	ipc_msg_free(msg);
-+	return resp;
-+}
-+
-+struct ksmbd_rpc_command *ksmbd_rpc_ioctl(struct ksmbd_session *sess, int handle,
-+					  void *payload, size_t payload_sz)
-+{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_rpc_command *req;
-+	struct ksmbd_rpc_command *resp;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_rpc_command) + payload_sz + 1);
-+	if (!msg)
-+		return NULL;
-+
-+	msg->type = KSMBD_EVENT_RPC_REQUEST;
-+	req = (struct ksmbd_rpc_command *)msg->payload;
-+	req->handle = handle;
-+	req->flags = ksmbd_session_rpc_method(sess, handle);
-+	req->flags |= rpc_context_flags(sess);
-+	req->flags |= KSMBD_RPC_IOCTL_METHOD;
-+	req->payload_sz = payload_sz;
-+	memcpy(req->payload, payload, payload_sz);
-+
-+	resp = ipc_msg_send_request(msg, req->handle);
-+	ipc_msg_free(msg);
-+	return resp;
-+}
-+
-+struct ksmbd_rpc_command *ksmbd_rpc_rap(struct ksmbd_session *sess, void *payload,
-+					size_t payload_sz)
-+{
-+	struct ksmbd_ipc_msg *msg;
-+	struct ksmbd_rpc_command *req;
-+	struct ksmbd_rpc_command *resp;
-+
-+	msg = ipc_msg_alloc(sizeof(struct ksmbd_rpc_command) + payload_sz + 1);
-+	if (!msg)
-+		return NULL;
-+
-+	msg->type = KSMBD_EVENT_RPC_REQUEST;
-+	req = (struct ksmbd_rpc_command *)msg->payload;
-+	req->handle = ksmbd_acquire_id(&ipc_ida);
-+	req->flags = rpc_context_flags(sess);
-+	req->flags |= KSMBD_RPC_RAP_METHOD;
-+	req->payload_sz = payload_sz;
-+	memcpy(req->payload, payload, payload_sz);
-+
-+	resp = ipc_msg_send_request(msg, req->handle);
-+	ipc_msg_handle_free(req->handle);
-+	ipc_msg_free(msg);
-+	return resp;
-+}
-+
-+static int __ipc_heartbeat(void)
-+{
-+	unsigned long delta;
-+
-+	if (!ksmbd_server_running())
-+		return 0;
-+
-+	if (time_after(jiffies, server_conf.ipc_last_active)) {
-+		delta = (jiffies - server_conf.ipc_last_active);
-+	} else {
-+		ipc_update_last_active();
-+		schedule_delayed_work(&ipc_timer_work,
-+				      server_conf.ipc_timeout);
-+		return 0;
++	t->pd = ib_alloc_pd(t->cm_id->device, 0);
++	if (IS_ERR(t->pd)) {
++		pr_err("Can't create RDMA PD\n");
++		ret = PTR_ERR(t->pd);
++		t->pd = NULL;
++		return ret;
 +	}
 +
-+	if (delta < server_conf.ipc_timeout) {
-+		schedule_delayed_work(&ipc_timer_work,
-+				      server_conf.ipc_timeout - delta);
-+		return 0;
++	t->send_cq = ib_alloc_cq(t->cm_id->device, t,
++				 t->send_credit_target, 0, IB_POLL_WORKQUEUE);
++	if (IS_ERR(t->send_cq)) {
++		pr_err("Can't create RDMA send CQ\n");
++		ret = PTR_ERR(t->send_cq);
++		t->send_cq = NULL;
++		goto err;
 +	}
 +
-+	if (ksmbd_ipc_heartbeat_request() == 0) {
-+		schedule_delayed_work(&ipc_timer_work,
-+				      server_conf.ipc_timeout);
-+		return 0;
++	t->recv_cq = ib_alloc_cq(t->cm_id->device, t,
++				 cap->max_send_wr + cap->max_rdma_ctxs,
++				 0, IB_POLL_WORKQUEUE);
++	if (IS_ERR(t->recv_cq)) {
++		pr_err("Can't create RDMA recv CQ\n");
++		ret = PTR_ERR(t->recv_cq);
++		t->recv_cq = NULL;
++		goto err;
 +	}
 +
-+	mutex_lock(&startup_lock);
-+	WRITE_ONCE(server_conf.state, SERVER_STATE_RESETTING);
-+	server_conf.ipc_last_active = 0;
-+	ksmbd_tools_pid = 0;
-+	pr_err("No IPC daemon response for %lus\n", delta / HZ);
-+	mutex_unlock(&startup_lock);
-+	return -EINVAL;
-+}
++	memset(&qp_attr, 0, sizeof(qp_attr));
++	qp_attr.event_handler = smb_direct_qpair_handler;
++	qp_attr.qp_context = t;
++	qp_attr.cap = *cap;
++	qp_attr.sq_sig_type = IB_SIGNAL_REQ_WR;
++	qp_attr.qp_type = IB_QPT_RC;
++	qp_attr.send_cq = t->send_cq;
++	qp_attr.recv_cq = t->recv_cq;
++	qp_attr.port_num = ~0;
 +
-+static void ipc_timer_heartbeat(struct work_struct *w)
-+{
-+	if (__ipc_heartbeat())
-+		server_queue_ctrl_reset_work();
-+}
-+
-+int ksmbd_ipc_id_alloc(void)
-+{
-+	return ksmbd_acquire_id(&ipc_ida);
-+}
-+
-+void ksmbd_rpc_id_free(int handle)
-+{
-+	ksmbd_release_id(&ipc_ida, handle);
-+}
-+
-+void ksmbd_ipc_release(void)
-+{
-+	cancel_delayed_work_sync(&ipc_timer_work);
-+	genl_unregister_family(&ksmbd_genl_family);
-+}
-+
-+void ksmbd_ipc_soft_reset(void)
-+{
-+	mutex_lock(&startup_lock);
-+	ksmbd_tools_pid = 0;
-+	cancel_delayed_work_sync(&ipc_timer_work);
-+	mutex_unlock(&startup_lock);
-+}
-+
-+int ksmbd_ipc_init(void)
-+{
-+	int ret = 0;
-+
-+	ksmbd_nl_init_fixup();
-+	INIT_DELAYED_WORK(&ipc_timer_work, ipc_timer_heartbeat);
-+
-+	ret = genl_register_family(&ksmbd_genl_family);
++	ret = rdma_create_qp(t->cm_id, t->pd, &qp_attr);
 +	if (ret) {
-+		pr_err("Failed to register KSMBD netlink interface %d\n", ret);
-+		cancel_delayed_work_sync(&ipc_timer_work);
++		pr_err("Can't create RDMA QP: %d\n", ret);
++		goto err;
 +	}
 +
++	t->qp = t->cm_id->qp;
++	t->cm_id->event_handler = smb_direct_cm_handler;
++
++	return 0;
++err:
++	if (t->qp) {
++		ib_destroy_qp(t->qp);
++		t->qp = NULL;
++	}
++	if (t->recv_cq) {
++		ib_destroy_cq(t->recv_cq);
++		t->recv_cq = NULL;
++	}
++	if (t->send_cq) {
++		ib_destroy_cq(t->send_cq);
++		t->send_cq = NULL;
++	}
++	if (t->pd) {
++		ib_dealloc_pd(t->pd);
++		t->pd = NULL;
++	}
 +	return ret;
 +}
-diff --git a/fs/ksmbd/transport_ipc.h b/fs/ksmbd/transport_ipc.h
++
++static int smb_direct_prepare(struct ksmbd_transport *t)
++{
++	struct smb_direct_transport *st = smb_trans_direct_transfort(t);
++	int ret;
++	struct ib_qp_cap qp_cap;
++
++	ret = smb_direct_init_params(st, &qp_cap);
++	if (ret) {
++		pr_err("Can't configure RDMA parameters\n");
++		return ret;
++	}
++
++	ret = smb_direct_create_pools(st);
++	if (ret) {
++		pr_err("Can't init RDMA pool: %d\n", ret);
++		return ret;
++	}
++
++	ret = smb_direct_create_qpair(st, &qp_cap);
++	if (ret) {
++		pr_err("Can't accept RDMA client: %d\n", ret);
++		return ret;
++	}
++
++	ret = smb_direct_negotiate(st);
++	if (ret) {
++		pr_err("Can't negotiate: %d\n", ret);
++		return ret;
++	}
++
++	st->status = SMB_DIRECT_CS_CONNECTED;
++	return 0;
++}
++
++static bool rdma_frwr_is_supported(struct ib_device_attr *attrs)
++{
++	if (!(attrs->device_cap_flags & IB_DEVICE_MEM_MGT_EXTENSIONS))
++		return false;
++	if (attrs->max_fast_reg_page_list_len == 0)
++		return false;
++	return true;
++}
++
++static int smb_direct_handle_connect_request(struct rdma_cm_id *new_cm_id)
++{
++	struct smb_direct_transport *t;
++
++	if (!rdma_frwr_is_supported(&new_cm_id->device->attrs)) {
++		ksmbd_debug(RDMA,
++			    "Fast Registration Work Requests is not supported. device capabilities=%llx\n",
++			    new_cm_id->device->attrs.device_cap_flags);
++		return -EPROTONOSUPPORT;
++	}
++
++	t = alloc_transport(new_cm_id);
++	if (!t)
++		return -ENOMEM;
++
++	KSMBD_TRANS(t)->handler = kthread_run(ksmbd_conn_handler_loop,
++					      KSMBD_TRANS(t)->conn, "ksmbd:r%u",
++					      SMB_DIRECT_PORT);
++	if (IS_ERR(KSMBD_TRANS(t)->handler)) {
++		int ret = PTR_ERR(KSMBD_TRANS(t)->handler);
++
++		pr_err("Can't start thread\n");
++		free_transport(t);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int smb_direct_listen_handler(struct rdma_cm_id *cm_id,
++				     struct rdma_cm_event *event)
++{
++	switch (event->event) {
++	case RDMA_CM_EVENT_CONNECT_REQUEST: {
++		int ret = smb_direct_handle_connect_request(cm_id);
++
++		if (ret) {
++			pr_err("Can't create transport: %d\n", ret);
++			return ret;
++		}
++
++		ksmbd_debug(RDMA, "Received connection request. cm_id=%p\n",
++			    cm_id);
++		break;
++	}
++	default:
++		pr_err("Unexpected listen event. cm_id=%p, event=%s (%d)\n",
++		       cm_id, rdma_event_msg(event->event), event->event);
++		break;
++	}
++	return 0;
++}
++
++static int smb_direct_listen(int port)
++{
++	int ret;
++	struct rdma_cm_id *cm_id;
++	struct sockaddr_in sin = {
++		.sin_family		= AF_INET,
++		.sin_addr.s_addr	= htonl(INADDR_ANY),
++		.sin_port		= htons(port),
++	};
++
++	cm_id = rdma_create_id(&init_net, smb_direct_listen_handler,
++			       &smb_direct_listener, RDMA_PS_TCP, IB_QPT_RC);
++	if (IS_ERR(cm_id)) {
++		pr_err("Can't create cm id: %ld\n", PTR_ERR(cm_id));
++		return PTR_ERR(cm_id);
++	}
++
++	ret = rdma_bind_addr(cm_id, (struct sockaddr *)&sin);
++	if (ret) {
++		pr_err("Can't bind: %d\n", ret);
++		goto err;
++	}
++
++	smb_direct_listener.cm_id = cm_id;
++
++	ret = rdma_listen(cm_id, 10);
++	if (ret) {
++		pr_err("Can't listen: %d\n", ret);
++		goto err;
++	}
++	return 0;
++err:
++	smb_direct_listener.cm_id = NULL;
++	rdma_destroy_id(cm_id);
++	return ret;
++}
++
++int ksmbd_rdma_init(void)
++{
++	int ret;
++
++	smb_direct_listener.cm_id = NULL;
++
++	/* When a client is running out of send credits, the credits are
++	 * granted by the server's sending a packet using this queue.
++	 * This avoids the situation that a clients cannot send packets
++	 * for lack of credits
++	 */
++	smb_direct_wq = alloc_workqueue("ksmbd-smb_direct-wq",
++					WQ_HIGHPRI | WQ_MEM_RECLAIM, 0);
++	if (!smb_direct_wq)
++		return -ENOMEM;
++
++	ret = smb_direct_listen(SMB_DIRECT_PORT);
++	if (ret) {
++		destroy_workqueue(smb_direct_wq);
++		smb_direct_wq = NULL;
++		pr_err("Can't listen: %d\n", ret);
++		return ret;
++	}
++
++	ksmbd_debug(RDMA, "init RDMA listener. cm_id=%p\n",
++		    smb_direct_listener.cm_id);
++	return 0;
++}
++
++int ksmbd_rdma_destroy(void)
++{
++	if (smb_direct_listener.cm_id)
++		rdma_destroy_id(smb_direct_listener.cm_id);
++	smb_direct_listener.cm_id = NULL;
++
++	if (smb_direct_wq) {
++		flush_workqueue(smb_direct_wq);
++		destroy_workqueue(smb_direct_wq);
++		smb_direct_wq = NULL;
++	}
++	return 0;
++}
++
++bool ksmbd_rdma_capable_netdev(struct net_device *netdev)
++{
++	struct ib_device *ibdev;
++	bool rdma_capable = false;
++
++	ibdev = ib_device_get_by_netdev(netdev, RDMA_DRIVER_UNKNOWN);
++	if (ibdev) {
++		if (rdma_frwr_is_supported(&ibdev->attrs))
++			rdma_capable = true;
++		ib_device_put(ibdev);
++	}
++	return rdma_capable;
++}
++
++static struct ksmbd_transport_ops ksmbd_smb_direct_transport_ops = {
++	.prepare	= smb_direct_prepare,
++	.disconnect	= smb_direct_disconnect,
++	.writev		= smb_direct_writev,
++	.read		= smb_direct_read,
++	.rdma_read	= smb_direct_rdma_read,
++	.rdma_write	= smb_direct_rdma_write,
++};
+diff --git a/fs/ksmbd/transport_rdma.h b/fs/ksmbd/transport_rdma.h
 new file mode 100644
-index 000000000000..9eacc895ffdb
+index 000000000000..0fa8adc0776f
 --- /dev/null
-+++ b/fs/ksmbd/transport_ipc.h
-@@ -0,0 +1,47 @@
++++ b/fs/ksmbd/transport_rdma.h
+@@ -0,0 +1,63 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
 +/*
-+ *   Copyright (C) 2018 Samsung Electronics Co., Ltd.
++ *   Copyright (C) 2017, Microsoft Corporation.
++ *   Copyright (C) 2018, LG Electronics.
 + */
 +
-+#ifndef __KSMBD_TRANSPORT_IPC_H__
-+#define __KSMBD_TRANSPORT_IPC_H__
++#ifndef __KSMBD_TRANSPORT_RDMA_H__
++#define __KSMBD_TRANSPORT_RDMA_H__
 +
-+#include <linux/wait.h>
++#define SMB_DIRECT_PORT	5445
 +
-+#define KSMBD_IPC_MAX_PAYLOAD	4096
++/* SMB DIRECT negotiation request packet [MS-SMBD] 2.2.1 */
++struct smb_direct_negotiate_req {
++	__le16 min_version;
++	__le16 max_version;
++	__le16 reserved;
++	__le16 credits_requested;
++	__le32 preferred_send_size;
++	__le32 max_receive_size;
++	__le32 max_fragmented_size;
++} __packed;
 +
-+struct ksmbd_login_response *
-+ksmbd_ipc_login_request(const char *account);
++/* SMB DIRECT negotiation response packet [MS-SMBD] 2.2.2 */
++struct smb_direct_negotiate_resp {
++	__le16 min_version;
++	__le16 max_version;
++	__le16 negotiated_version;
++	__le16 reserved;
++	__le16 credits_requested;
++	__le16 credits_granted;
++	__le32 status;
++	__le32 max_readwrite_size;
++	__le32 preferred_send_size;
++	__le32 max_receive_size;
++	__le32 max_fragmented_size;
++} __packed;
 +
-+struct ksmbd_session;
-+struct ksmbd_share_config;
-+struct ksmbd_tree_connect;
-+struct sockaddr;
++#define SMB_DIRECT_RESPONSE_REQUESTED 0x0001
 +
-+struct ksmbd_tree_connect_response *
-+ksmbd_ipc_tree_connect_request(struct ksmbd_session *sess,
-+			       struct ksmbd_share_config *share,
-+			       struct ksmbd_tree_connect *tree_conn,
-+			       struct sockaddr *peer_addr);
-+int ksmbd_ipc_tree_disconnect_request(unsigned long long session_id,
-+				      unsigned long long connect_id);
-+int ksmbd_ipc_logout_request(const char *account);
-+struct ksmbd_share_config_response *
-+ksmbd_ipc_share_config_request(const char *name);
-+struct ksmbd_spnego_authen_response *
-+ksmbd_ipc_spnego_authen_request(const char *spnego_blob, int blob_len);
-+int ksmbd_ipc_id_alloc(void);
-+void ksmbd_rpc_id_free(int handle);
-+struct ksmbd_rpc_command *ksmbd_rpc_open(struct ksmbd_session *sess, int handle);
-+struct ksmbd_rpc_command *ksmbd_rpc_close(struct ksmbd_session *sess, int handle);
-+struct ksmbd_rpc_command *ksmbd_rpc_write(struct ksmbd_session *sess, int handle,
-+					  void *payload, size_t payload_sz);
-+struct ksmbd_rpc_command *ksmbd_rpc_read(struct ksmbd_session *sess, int handle);
-+struct ksmbd_rpc_command *ksmbd_rpc_ioctl(struct ksmbd_session *sess, int handle,
-+					  void *payload, size_t payload_sz);
-+struct ksmbd_rpc_command *ksmbd_rpc_rap(struct ksmbd_session *sess, void *payload,
-+					size_t payload_sz);
-+void ksmbd_ipc_release(void);
-+void ksmbd_ipc_soft_reset(void);
-+int ksmbd_ipc_init(void);
-+#endif /* __KSMBD_TRANSPORT_IPC_H__ */
++/* SMB DIRECT data transfer packet with payload [MS-SMBD] 2.2.3 */
++struct smb_direct_data_transfer {
++	__le16 credits_requested;
++	__le16 credits_granted;
++	__le16 flags;
++	__le16 reserved;
++	__le32 remaining_data_length;
++	__le32 data_offset;
++	__le32 data_length;
++	__le32 padding;
++	__u8 buffer[];
++} __packed;
++
++#ifdef CONFIG_SMB_SERVER_SMBDIRECT
++int ksmbd_rdma_init(void);
++int ksmbd_rdma_destroy(void);
++bool ksmbd_rdma_capable_netdev(struct net_device *netdev);
++#else
++static inline int ksmbd_rdma_init(void) { return 0; }
++static inline int ksmbd_rdma_destroy(void) { return 0; }
++static inline bool ksmbd_rdma_capable_netdev(struct net_device *netdev) { return false; }
++#endif
++
++#endif /* __KSMBD_TRANSPORT_RDMA_H__ */
 -- 
 2.17.1
 
