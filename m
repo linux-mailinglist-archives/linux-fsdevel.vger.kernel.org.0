@@ -2,132 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 921123E2D2A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 17:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B9F3E2E78
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 18:42:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243523AbhHFPFd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Aug 2021 11:05:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57889 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243564AbhHFPF1 (ORCPT
+        id S234449AbhHFQm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Aug 2021 12:42:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60860 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229665AbhHFQmz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Aug 2021 11:05:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628262311;
+        Fri, 6 Aug 2021 12:42:55 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C8EC0613CF;
+        Fri,  6 Aug 2021 09:42:39 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1628268155;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=5B073nk1DS+XhzOJ9EAEUKaNTVzIvIbT8CxRSjSpPZU=;
-        b=WbQk/Y3XZCoG2+qhBe/tlrupojF1gle5w0fu2xR0a+jCRlu+8gUV3HEm5wBe486Q3RgmJn
-        843j0TdzoGNcmNF/kqDI8IxPjwvueBTDuKDOGs5OjGLsKcZ5qNHAzZL9f5oa2oMgBhwupX
-        f855jDAyRkJv6WBOWrofQDprgT2KWCE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-306-ky3v8YG6NV-FlJD_H1kZwQ-1; Fri, 06 Aug 2021 11:05:08 -0400
-X-MC-Unique: ky3v8YG6NV-FlJD_H1kZwQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 72BB9107ACF5;
-        Fri,  6 Aug 2021 15:05:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CBEEA10640E8;
-        Fri,  6 Aug 2021 15:04:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YQ1Ei9lv9ov2AheS@casper.infradead.org>
-References: <YQ1Ei9lv9ov2AheS@casper.infradead.org> <YQxh/G0xGl3GtC8y@casper.infradead.org> <YQv+iwmhhZJ+/ndc@casper.infradead.org> <YQvpDP/tdkG4MMGs@casper.infradead.org> <YQvbiCubotHz6cN7@casper.infradead.org> <1017390.1628158757@warthog.procyon.org.uk> <1170464.1628168823@warthog.procyon.org.uk> <1186271.1628174281@warthog.procyon.org.uk> <1219713.1628181333@warthog.procyon.org.uk> <CAHk-=wjyEk9EuYgE3nBnRCRd_AmRYVOGACEjt0X33QnORd5-ig@mail.gmail.com> <1302671.1628257357@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, devel@lists.orangefs.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Canvassing for network filesystem write size vs page size
+        bh=Kk2lzokAVmZhhmkoXQnRu32luG8afaBCbXzoD+9YANs=;
+        b=pke0WyKqyLslgXt8ga5uRGMHIMozL9ODi2HhdKyMRJl/NDaTF74UXoIlbFP4kdYwnvHcCV
+        F7nZnMwmdEg36la0yAhu3/lLoM2kzV8M1c5gEWOqahvdeuAjnJ+xbYiiK2XttOXAzSfMfs
+        cwB3lAFoNnucYlXPk2WtiAJhIgUa8ctfLEKYn0CZABYM6XQIJ3SnJgNrZU6WSKb2LZkoam
+        Rwpyv3rnETO68VCM57ehWLrTyyrUPW/T4FT02VjuUF+lX8sx3N1Q4ifxSL+QLWXSynFQla
+        NaQTLXjvx+YYMZUobc/n4dFRSznQcsGLfXSmDkEEw/MJDyGXtqfZiLW4t/iqEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1628268155;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Kk2lzokAVmZhhmkoXQnRu32luG8afaBCbXzoD+9YANs=;
+        b=YSd5JfAfV6IzC8uvqRz8mwPXcWjMwmovQi+0B7GjCOEKNKr6VEnkIrNTGqqxnDpHV1pUUU
+        h15SW/nRltGrgeBw==
+To:     syzbot <syzbot+66e110c312ed4ae684a8@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [syzbot] KASAN: use-after-free Read in timerfd_clock_was_set
+In-Reply-To: <000000000000fdf3e205c88fa4cf@google.com>
+References: <000000000000fdf3e205c88fa4cf@google.com>
+Date:   Fri, 06 Aug 2021 18:42:34 +0200
+Message-ID: <877dgy5xtx.ffs@tglx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1306893.1628262293.1@warthog.procyon.org.uk>
-Date:   Fri, 06 Aug 2021 16:04:53 +0100
-Message-ID: <1306894.1628262293@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+Hi!
 
-> No, that is very much not the same thing.  Look at what NFS does, like
-> Linus said.  Consider this test program:
-> 
-> 	fd = open();
-> 	lseek(fd, 5, SEEK_SET);
-> 	write(fd, buf, 3);
-> 	write(fd, buf2, 10);
-> 	write(fd, buf3, 2);
-> 	close(fd);
+On Mon, Aug 02 2021 at 01:49, syzbot wrote:
+> syzbot found the following issue on:
+>
+> HEAD commit:    4010a528219e Merge tag 'fixes_for_v5.14-rc4' of git://git...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13611f5c300000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1dee114394f7d2c2
+> dashboard link: https://syzkaller.appspot.com/bug?extid=66e110c312ed4ae684a8
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+66e110c312ed4ae684a8@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KASAN: use-after-free in timerfd_clock_was_set+0x2b8/0x2e0
+> fs/timerfd.c:104
 
-Yes, I get that.  I can do that when there isn't a local cache or content
-encryption.
+103	rcu_read_lock();
+104	list_for_each_entry_rcu(ctx, &cancel_list, clist) {
 
-Note that, currently, if the pages (or cache blocks) being read/modified are
-beyond the EOF at the point when the file is opened, truncated down or last
-subject to 3rd-party invalidation, I don't go to the server at all.
+>  timerfd_clock_was_set+0x2b8/0x2e0 fs/timerfd.c:104
+>  timekeeping_inject_offset+0x4af/0x620 kernel/time/timekeeping.c:1375
+>  do_adjtimex+0x28f/0xa30 kernel/time/timekeeping.c:2406
+>  do_clock_adjtime kernel/time/posix-timers.c:1109 [inline]
+>  __do_sys_clock_adjtime+0x163/0x270 kernel/time/posix-timers.c:1121
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
 
-> > But that kind of screws with local caching.  The local cache might need to
-> > track the missing bits, and we are likely to be using blocks larger than a
-> > page.
-> 
-> There's nothing to cache.  Pages which are !Uptodate aren't going to get
-> locally cached.
+...
 
-Eh?  Of course there is.  You've just written some data.  That need to get
-copied to the cache as well as the server if that file is supposed to be being
-cached (for filesystems that support local caching of files open for writing,
-which AFS does).
+> Allocated by task 1:
+>  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+>  kasan_set_track mm/kasan/common.c:46 [inline]
+>  set_alloc_info mm/kasan/common.c:434 [inline]
+>  ____kasan_kmalloc mm/kasan/common.c:513 [inline]
+>  ____kasan_kmalloc mm/kasan/common.c:472 [inline]
+>  __kasan_kmalloc+0x98/0xc0 mm/kasan/common.c:522
+>  kasan_kmalloc include/linux/kasan.h:264 [inline]
+>  kmem_cache_alloc_trace+0x1e4/0x480 mm/slab.c:3575
+>  kmalloc include/linux/slab.h:591 [inline]
+>  kzalloc include/linux/slab.h:721 [inline]
+>  __do_sys_timerfd_create+0x265/0x370 fs/timerfd.c:412
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
 
-> > Basically, there are a lot of scenarios where not having fully populated
-> > pages sucks.  And for streaming writes, wouldn't it be better if you used
-> > DIO writes?
-> 
-> DIO can't do sub-512-byte writes.
+...
 
-Yes it can - and it works for my AFS client at least with the patches in my
-fscache-iter-2 branch.  This is mainly a restriction for block storage devices
-we're doing DMA to - but we're not doing direct DMA to block storage devices
-typically when talking to a network filesystem.
+> Freed by task 3306:
+>  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+>  kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
+>  kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:360
+>  ____kasan_slab_free mm/kasan/common.c:366 [inline]
+>  ____kasan_slab_free mm/kasan/common.c:328 [inline]
+>  __kasan_slab_free+0xcd/0x100 mm/kasan/common.c:374
+>  kasan_slab_free include/linux/kasan.h:230 [inline]
+>  __cache_free mm/slab.c:3445 [inline]
+>  kfree+0x106/0x2c0 mm/slab.c:3803
+>  kvfree+0x42/0x50 mm/util.c:616
+>  kfree_rcu_work+0x5b7/0x870 kernel/rcu/tree.c:3359
+>  process_one_work+0x98d/0x1630 kernel/workqueue.c:2276
+>  worker_thread+0x658/0x11f0 kernel/workqueue.c:2422
+>  kthread+0x3e5/0x4d0 kernel/kthread.c:319
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
 
-For AFS, at least, I can just make one big FetchData/StoreData RPC that
-reads/writes the entire DIO request in a single op; for other filesystems
-(NFS, ceph for example), it needs breaking up into a sequence of RPCs, but
-there's no particular reason that I know of that requires it to be 512-byte
-aligned on any of these.
+So the free of the timerfd context happens while the context is
+still linked in the cancel list, which does not make sense because
 
-Things get more interesting if you're doing DIO to a content-encrypted file
-because the block size may be 4096 or even a lot larger - in which case we
-would have to do local RMW to handle misaligned writes, but it presents no
-particular difficulty.
+> Last potentially related work creation:
+>  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+>  kasan_record_aux_stack+0xa4/0xd0 mm/kasan/generic.c:348
+>  kvfree_call_rcu+0x74/0x990 kernel/rcu/tree.c:3594
+>  timerfd_release+0x105/0x290 fs/timerfd.c:229
 
-> You might not be trying to do anything for block filesystems, but we
-> should think about what makes sense for block filesystems as well as
-> network filesystems.
+timerfd_release() invokes timerfd_remove_cancel(context) before invoking
+kfree_rcu().
 
-Whilst that's a good principle, they have very different characteristics that
-might make that difficult.
+>  __fput+0x288/0x920 fs/file_table.c:280
+>  task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+>  tracehook_notify_resume include/linux/tracehook.h:189 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:175 [inline]
+>  exit_to_user_mode_prepare+0x27e/0x290 kernel/entry/common.c:209
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
+>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
 
-David
+The only reason why timerfd_remove_cancel() would not remove it from the
+list is when context->might_cancel is false. But that would mean it's a
+memory corruption of some sort which went undetected. I can't spot
+anything in the timerfd code itself which would cause that.
+
+Confused.
+
+Thanks,
+
+        tglx
+
 
