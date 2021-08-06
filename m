@@ -2,223 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 877FD3E28C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 12:37:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 116793E291F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 13:10:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245211AbhHFKhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Aug 2021 06:37:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33424 "EHLO
+        id S245311AbhHFLKQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Aug 2021 07:10:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245198AbhHFKhT (ORCPT
+        with ESMTP id S245261AbhHFLKP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Aug 2021 06:37:19 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A46DC061799
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Aug 2021 03:37:04 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id f13so12362324edq.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Aug 2021 03:37:03 -0700 (PDT)
+        Fri, 6 Aug 2021 07:10:15 -0400
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9377C061799
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Aug 2021 04:09:59 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id t68so9441700qkf.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Aug 2021 04:09:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ohHKSh+HZImpSVaLM9TW5relpABftXO5BlsVkkQC4Nk=;
-        b=XYiFbQ2l+Q6VnSuV3mymGTcQZDcTePXH6XonuZpjEeql1yzQTM9ZnH8pilXV4DIuID
-         wDH6SxZ84yHVSzT+rneEwPYnY764gFXIXf+HhKFw7pmiVPSjBq66l4ZgWjUYSTCwwRHD
-         IPUSw5iy2QAwSXR9NEQ5CBeG7ZOJ+tyXlrZf35KtgHVSkmO5gEgpWhPREtxIAigx7Q54
-         /hu2yhPbubYXMAm1n8gepSozQnWaaEkBbWQywVgce/BXCouIbuLE2sAWeH61kwRES3zS
-         fHjzaJPB1ce1I3VvVfSeTCjBvFwjrnOijjBB/6aF9nibTWs7Gs7GGnIyfOOz03U6K9Op
-         uzKg==
+        bh=cIl2Wt4oswfNZtiSwlBITJEKQL7QvhfH3PJWamUYOSI=;
+        b=OVY18UKsp3ZcaGAI5dwG0qrVmMZNkMsAgISll8qraUlt25JxBNFISaCeVARYu+VrzU
+         mI+hDNyd/qorLSPFP1nTqVGa4lbeemywWlrajl+fuxzGwdBrfupmjf6IieJOKlu2SX6Q
+         Cg83tVIcV9kb2re3BTh3S7/M7v1oNUBCWexiowlW+vdMdILmZ0+tokToJ/RJJqZeQFB5
+         lIqEkHOWIE1CvRFfdZkRpL+5fqO4mfuhbvNVWH8D5r4gblqx45t449zJXjPvId0Ze3Yp
+         dOUSBzQIikBMNVvHEDN3zPb+GyUEzUxOvM0UqqAVSJ6daCRJb5XOQP649nO015Oj3Je3
+         vJWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ohHKSh+HZImpSVaLM9TW5relpABftXO5BlsVkkQC4Nk=;
-        b=ZqxqBeLFl4EeW9C6z8WiwB2LTpSnF5taNGuXRlCJaJoHGQ6zlv+7a5QSb4dlJrwdjC
-         9r2N67BiKgc9aKQ86uNxp6JAXBvdFobzn3iGi7ln0l/gpfhKCz/ViW8d20/BJ/zqEHtG
-         9kwggi5oqw5aD69mnVOSMfrgkHqNk4VHVbSxGtRZTCt0jsvo0b9mqkg51hzZ1wl/J2Kv
-         yObdpzHnlnac/kPoBbgaaQ/GRKf6KnwznOtqohb4mPjGAOa5Cmo76zNRQCaYk0Fh3zkW
-         yVDqMTzEhyenODi9NVEIcIIpHlU8PP616ompix+aI93o+VUC52CFa4q1fmsxPjxuMva7
-         BS2A==
-X-Gm-Message-State: AOAM533/fbKKAXGr90o+yDdNzYycIki9yFfCNGDbq1uv5aC+gXkHcn8m
-        WRIlnfz/FUP7zu6ZNaDyMXv1G10oHKfecXrRBsOVLQ==
-X-Google-Smtp-Source: ABdhPJwngALTFtP2SGuhZhQaLpak7jWhSExOZMtTGHS+YF1ZqsrJ8bWECzb9vFagDm+wJhPNQAl8V06+xBILBLJxK/U=
-X-Received: by 2002:aa7:c805:: with SMTP id a5mr11962205edt.23.1628246222536;
- Fri, 06 Aug 2021 03:37:02 -0700 (PDT)
+        bh=cIl2Wt4oswfNZtiSwlBITJEKQL7QvhfH3PJWamUYOSI=;
+        b=iRvACfjZBFHHTgZugKJzXLzXGLYxT5jj+2q0ow5UTBs+3EC8OrtDQH+kCPNi+O0A0F
+         +lkTyvJwAiS13U6nTgbzbFY49OjkQFxchKYqOJvj2BX7pG7IRVDeoOUa+71GHnzIPRRm
+         Qh1Ncad2VOLDrqd+OUzxgXN2kJBrQsD0AYzhEnYivdnZf0ZLy/Gja2LSIUOTAXxU5xzu
+         0FuCjDJK75X1PIAoTeKFs64o3JpGM2K18xP2qiYoN1Blal7SycilCduEfBlObMl13o9B
+         /u+oCCPuI19G9K6d1emfW5XCmiq1XVcejCZVZv8Xvs5DF3lpKb0F2VieVTttj6NU8Zae
+         TIQQ==
+X-Gm-Message-State: AOAM533n2o6jL29/aZibDIuebRdV3UtW76yAmOmiRR+frLHtbSLPwleY
+        UpmnFQ+P4y2ZPcL9nv6N9y0YPfAudsVjhIuvYqwiKg==
+X-Google-Smtp-Source: ABdhPJwP2g6CP+w9oZrV1I9IIi/KjCS4sNSpPtONtJkbja3XMDl0uJSfrIBwajvCPf6WiPhtfjcLCph+O1yNQUyKQG0=
+X-Received: by 2002:a05:620a:1428:: with SMTP id k8mr9571399qkj.231.1628248198923;
+ Fri, 06 Aug 2021 04:09:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210730062854.3601635-1-svens@linux.ibm.com> <YQn+GomdRCoYc/E8@Ryzen-9-3900X.localdomain>
- <875ywlat5e.fsf@disp2133> <94478003-8259-4b57-6d93-5a07e0750946@kernel.org>
- <87v94jalck.fsf@disp2133> <56b7c0fe-f2e1-7c4f-eb1b-1d9793dea5a8@kernel.org>
-In-Reply-To: <56b7c0fe-f2e1-7c4f-eb1b-1d9793dea5a8@kernel.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 6 Aug 2021 16:06:51 +0530
-Message-ID: <CA+G9fYv+Azmu+_YUv6+C6RRM990k0FhUc0hgSJKssubmsWfvhA@mail.gmail.com>
-Subject: Re: [PATCH v3] ucounts: add missing data type changes
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Sven Schnelle <svens@linux.ibm.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Alexey Gladkov <legion@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        LTP List <ltp@lists.linux.it>, linux-fsdevel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
+References: <000000000000295a6a05b65efe35@google.com> <00000000000029363505c748757d@google.com>
+ <CAJfpegsyFb3bC=dqUbqhs9055TW95EJO2st7iS-4sPME7Y-cmA@mail.gmail.com>
+ <CACT4Y+Zh9Bw8DTZyvoOB_hjXwRQuRN+VHmJ-HfMqOaOu7GyVXA@mail.gmail.com> <CAJfpegu2fR3cP+eR24a1+WBBR=hvz8p2cTfK0x4sNz5c-MMH3Q@mail.gmail.com>
+In-Reply-To: <CAJfpegu2fR3cP+eR24a1+WBBR=hvz8p2cTfK0x4sNz5c-MMH3Q@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 6 Aug 2021 13:09:47 +0200
+Message-ID: <CACT4Y+bh6TGBJAwR5UjoPkCLgiSUypUBWVVMcp9bVEWJbFrASA@mail.gmail.com>
+Subject: Re: [syzbot] INFO: task hung in fuse_simple_request
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     syzbot <syzkaller@googlegroups.com>,
+        syzbot <syzbot+46fe899420456e014d6b@syzkaller.appspotmail.com>,
+        areeba.ahmed@futuregulfpak.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 6 Aug 2021 at 00:56, Nathan Chancellor <nathan@kernel.org> wrote:
+On Fri, 6 Aug 2021 at 11:34, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > > Hi,
+> > >
+> > > I'm not sure what to make of this report.
+> > >
+> > > Does syzbot try to kill all tasks before generating such a hung task report?
+> > >
+> > > Does it use the fuse specific /sys/fs/fuse/connections/*/abort to
+> > > terminate stuck filesystems?
+> >
+> > Hi Miklos,
+> >
+> > Grepping the C reproducer for "/sys/fs/fuse/connections", it seems
+> > that it tries to abort all connections.
 >
-> On 8/5/2021 9:48 AM, Eric W. Biederman wrote:
-> > Nathan Chancellor <nathan@kernel.org> writes:
-> >
-> >> Hi Eric,
-> >>
-> >> On 8/4/2021 12:47 PM, Eric W. Biederman wrote:
-> >>> Nathan Chancellor <nathan@kernel.org> writes:
-> >>>
-> >>>> On Fri, Jul 30, 2021 at 08:28:54AM +0200, Sven Schnelle wrote:
-> >>>>> commit f9c82a4ea89c3 ("Increase size of ucounts to atomic_long_t")
-> >>>>> changed the data type of ucounts/ucounts_max to long, but missed to
-> >>>>> adjust a few other places. This is noticeable on big endian platforms
-> >>>>> from user space because the /proc/sys/user/max_*_names files all
-> >>>>> contain 0.
-> >>>>>
-> >>>>> Fixes: f9c82a4ea89c ("Increase size of ucounts to atomic_long_t")
-> >>>>> Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
-> >>>>
-> >>>> This patch in -next as commit e43fc41d1f7f ("ucounts: add missing data type
-> >>>> changes") causes Windows Subsystem for Linux to fail to start:
+> Hi  Dmitry,
+>
+> So this could indicate a bug in the abort code of fuse, or it could
+> indicate that the test case DoS-es the system so that the abort code
+> simply doesn't get the resources to execute.
+>
+> Can the two be differentiated somehow?
 
-On Linux next-20210802..next-20210805 we have been noticing
-that LTP syscalls inotify06 test case getting failed all architectures.
-
-BAD:
-  Linux next-20210802
-  inotify06.c:57: TBROK: Failed to close FILE
-'/proc/sys/fs/inotify/max_user_instances': EINVAL (22)
-  inotify06.c:107: TWARN: Failed to close FILE
-'/proc/sys/fs/inotify/max_user_instances': EINVAL (22)
-
-GOOD:
-  Linux next-20210730
-  inotify06.c:92: TPASS: kernel survived inotify beating
-
-Investigation:
-Following changes found between good and bad Linux next tags under fs/notify
-git log --oneline --stat next-20210730..next-20210802 fs/notify
-e43fc41d1f7f ucounts: add missing data type changes
- fs/notify/fanotify/fanotify_user.c | 10 ++++++----
- fs/notify/inotify/inotify_user.c   | 10 ++++++----
- 2 files changed, 12 insertions(+), 8 deletions(-)
-
-Conclusion:
-We have confirmed this patch caused the LTP syscalls inotify06 test failure.
-
-After applying your proposed fix patch [1] the reported test getting pass.
-However, I have to run full test plan to confirm this do not cause regressions.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-[1] https://lore.kernel.org/lkml/87v94jalck.fsf@disp2133/
-
-
-> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > index 6576657a1a25..28b67cb9458d 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -54,6 +54,9 @@ static int fanotify_max_queued_events __read_mostly;
-> >
-> >   #include <linux/sysctl.h>
-> >
-> > +static long ft_zero = 0;
-> > +static long ft_int_max = INT_MAX;
-> > +
-> >   struct ctl_table fanotify_table[] = {
-> >       {
-> >               .procname       = "max_user_groups",
-> > @@ -61,8 +64,8 @@ struct ctl_table fanotify_table[] = {
-> >               .maxlen         = sizeof(long),
-> >               .mode           = 0644,
-> >               .proc_handler   = proc_doulongvec_minmax,
-> > -             .extra1         = SYSCTL_ZERO,
-> > -             .extra2         = SYSCTL_INT_MAX,
-> > +             .extra1         = &ft_zero,
-> > +             .extra2         = &ft_int_max,
-> >       },
-> >       {
-> >               .procname       = "max_user_marks",
-> > @@ -70,8 +73,8 @@ struct ctl_table fanotify_table[] = {
-> >               .maxlen         = sizeof(long),
-> >               .mode           = 0644,
-> >               .proc_handler   = proc_doulongvec_minmax,
-> > -             .extra1         = SYSCTL_ZERO,
-> > -             .extra2         = SYSCTL_INT_MAX,
-> > +             .extra1         = &ft_zero,
-> > +             .extra2         = &ft_int_max,
-> >       },
-> >       {
-> >               .procname       = "max_queued_events",
-> > diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-> > index 55fe7cdea2fb..62051247f6d2 100644
-> > --- a/fs/notify/inotify/inotify_user.c
-> > +++ b/fs/notify/inotify/inotify_user.c
-> > @@ -55,6 +55,9 @@ struct kmem_cache *inotify_inode_mark_cachep __read_mostly;
-> >
-> >   #include <linux/sysctl.h>
-> >
-> > +static long it_zero = 0;
-> > +static long it_int_max = INT_MAX;
-> > +
-> >   struct ctl_table inotify_table[] = {
-> >       {
-> >               .procname       = "max_user_instances",
-> > @@ -62,8 +65,8 @@ struct ctl_table inotify_table[] = {
-> >               .maxlen         = sizeof(long),
-> >               .mode           = 0644,
-> >               .proc_handler   = proc_doulongvec_minmax,
-> > -             .extra1         = SYSCTL_ZERO,
-> > -             .extra2         = SYSCTL_INT_MAX,
-> > +             .extra1         = &it_zero,
-> > +             .extra2         = &it_int_max,
-> >       },
-> >       {
-> >               .procname       = "max_user_watches",
-> > @@ -71,8 +74,8 @@ struct ctl_table inotify_table[] = {
-> >               .maxlen         = sizeof(long),
-> >               .mode           = 0644,
-> >               .proc_handler   = proc_doulongvec_minmax,
-> > -             .extra1         = SYSCTL_ZERO,
-> > -             .extra2         = SYSCTL_INT_MAX,
-> > +             .extra1         = &it_zero,
-> > +             .extra2         = &it_int_max,
-> >       },
-> >       {
-> >               .procname       = "max_queued_events",
-> > diff --git a/kernel/ucount.c b/kernel/ucount.c
-> > index 260ae7da815f..bb51849e6375 100644
-> > --- a/kernel/ucount.c
-> > +++ b/kernel/ucount.c
-> > @@ -58,14 +58,17 @@ static struct ctl_table_root set_root = {
-> >       .permissions = set_permissions,
-> >   };
-> >
-> > +static long ue_zero = 0;
-> > +static long ue_int_max = INT_MAX;
-> > +
-> >   #define UCOUNT_ENTRY(name)                                  \
-> >       {                                                       \
-> >               .procname       = name,                         \
-> >               .maxlen         = sizeof(long),                 \
-> >               .mode           = 0644,                         \
-> >               .proc_handler   = proc_doulongvec_minmax,       \
-> > -             .extra1         = SYSCTL_ZERO,                  \
-> > -             .extra2         = SYSCTL_INT_MAX,               \
-> > +             .extra1         = &ue_zero,                     \
-> > +             .extra2         = &ue_int_max,                  \
-> >       }
-> >   static struct ctl_table user_table[] = {
-> >       UCOUNT_ENTRY("max_user_namespaces"),
-
-
---
-Linaro LKFT
-https://lkft.linaro.org
+I think we need to take a closer look at what happens here. I've filed
+https://github.com/google/syzkaller/issues/498#issuecomment-894185550
+for this.
+The overall idea is that DoS should not be possible by construction
+with various sandboxing so that the system does not report what is not
+a bug at all. But it's not always easy to achieve.
