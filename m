@@ -2,97 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D86A93E2A78
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 14:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 804AA3E2B14
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 15:01:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243631AbhHFMUb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Aug 2021 08:20:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57302 "EHLO
+        id S1343913AbhHFNCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Aug 2021 09:02:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240880AbhHFMUa (ORCPT
+        with ESMTP id S244065AbhHFNCN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Aug 2021 08:20:30 -0400
-Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41948C061798
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Aug 2021 05:20:15 -0700 (PDT)
-Received: by mail-ua1-x929.google.com with SMTP id 67so3533597uaq.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Aug 2021 05:20:15 -0700 (PDT)
+        Fri, 6 Aug 2021 09:02:13 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27E89C061798
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Aug 2021 06:01:57 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id a14so8802693ila.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Aug 2021 06:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oiCQmjcuFhGkdG2W1lTVHnyiSQ0DlavkjF9Jf4O0LGs=;
-        b=PSnpv7525v/UcC+LRlNq4ja60owqqXEJNSn8nTAhj5zd8bHJOsJGZ4GjyOyrNudAre
-         NUodOg/sRzfItscJFSKUlw+q69eHED5v0QFX3wa1b3j4uCSqnAtaKspYpWYqpVm2thvT
-         Ox2j1klpkQMgTij8sNIhBpKXXuDj9SSFsTV+Y=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=xQrYULKok+hL+AIRGJuG9CojAZcnV9Xr+it7yxQJVlY=;
+        b=UGBZuc28mvGjpZToO0v+YzKSszHebdc5A9ybvczToI0t5+MIbVCbO+UY+Al53SEZk/
+         X+jc17Im37L0uCuNLaC25F7ntkU6r165Uh+XdToHFeFH0a+hSoDD4UWsfx9TpFgilJ1e
+         uV7vupF81TOrc2FH6GjPG2DvMP7wvsQhGaD64MewaTxDTisjZBijFj3epTKLrLsjux9i
+         tbiyQ+mfCbxAtkPbqSowsgfjS2uJa0d8J/qo27JTNjuasFQVwBHy8wq4hdOSJHcF5A2e
+         hIFwkA6IBscl9oFPsvokHkPSIU9WkyHbeyo7W+01hX4FyAVmkbZvc+s737Zrrv1yLFxV
+         MjBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oiCQmjcuFhGkdG2W1lTVHnyiSQ0DlavkjF9Jf4O0LGs=;
-        b=amZMPVOreekiuRWj37cjXVg3A5yl6i/ZMRFpqBmm0xexHAamWAeNaQUT0znFQL8CTo
-         RUbjjQHHe+Klf3OIF537A21vICvoe0E7lrLyQu27h9jnCSL1gG9HaHWARD/CAlftsPo5
-         5lQ93tZ1MhYF4ifO6DfMmW5ID7DZJsRZGWkAwPJQY/rkLfNQhMqFA+1xhenyNZuBYgjD
-         6b/GKqCB4UkWhHqVp5iOKDxvOvmnI2hBjT9/CcUYUPeUSsuxmxv/xafI6Eny5e8HTh3h
-         hqhNEKkLjhQZc+bDQQjwko3yAC6CyC80IhuySjJMgLMnIrsub/s6cU+wNI2wZH7Z5wbD
-         8qQA==
-X-Gm-Message-State: AOAM530brvrpy/r/1+JDzX3Ay5o3Komk+pFGmwT4EZAZCOhEZLTBTzMx
-        EMD4PSkRomOxbqVSQH9/CSjzrOOCdiBdzkGZlmri5Q==
-X-Google-Smtp-Source: ABdhPJwrfLgulh0XLge+Uu/HEb9j/NXkNu+ozFvgZ7xBgtJwqnb6PkFa0v+3In2UNMAJ0XzGqRwZ0XbSHzwmMBzAGu8=
-X-Received: by 2002:ab0:5e92:: with SMTP id y18mr8056619uag.9.1628252414371;
- Fri, 06 Aug 2021 05:20:14 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=xQrYULKok+hL+AIRGJuG9CojAZcnV9Xr+it7yxQJVlY=;
+        b=JEN8wnMoaGCkknR6hf/7l2sfwDdhEhoknIRVdJKUMIB40m7H99QdIVERVnrsY5u+ST
+         u/xAqmJLRjZcbGIovG5H3P6dXIaZMYxPrrOnIlKJXqj0VALM0u44HRJWnOrYSvHGVapg
+         Vm8BeH5x1iJXFJNS+I78lW03qKIe75G4y2c8L0CkB9q8PsRMf/ZTs/ydonT51Lp8JQfl
+         5TPRZqTL8zOiwqpakBk7tgvC4PiIvr0Rg3Qeq8YZ1HQNZ0Xd1ukIwFFWLP7tzZRs4urR
+         W4J9Du2bwVkCfJ8hwFVJo3vk0v/JcA1WZj9739iOdEd8kuuAIGuIeLzpNTfUOH+meoCQ
+         +vrQ==
+X-Gm-Message-State: AOAM532h0hVYn9q0w06FT3eILSe5+WMtAdFLitX5vt7M2dM9qphbDk5X
+        KiOndRc9GQu0x0sPOnyKX6Unz7Sxl6gUF7rtgdM=
+X-Google-Smtp-Source: ABdhPJzDRgvQw82rUiRxdSR8Vo7382Ub/hcHc1BvdJcii5TBRO8uUM2Adi3P2kFPE667QuC4F8sMb1xJDNfanRM1fJo=
+X-Received: by 2002:a05:6e02:1d8d:: with SMTP id h13mr337248ila.40.1628254916606;
+ Fri, 06 Aug 2021 06:01:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210130085003.1392-1-changfengnan@vivo.com> <CAJfpegutK2HGYUtJOjvceULf2H=hoekNxUbcg=6Su6uteVmDLg@mail.gmail.com>
- <3e740389-9734-a959-a88a-3b1d54b59e22@vivo.com> <CAJfpegtes4CGM68Vj2GxmvK2S8D5sn4Pv_RKyXb33ye=pC+=cg@mail.gmail.com>
- <29a3623f-fb4d-2a2b-af28-26f9ef0b0764@vivo.com>
-In-Reply-To: <29a3623f-fb4d-2a2b-af28-26f9ef0b0764@vivo.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 6 Aug 2021 14:20:03 +0200
-Message-ID: <CAJfpeguErrcKc7CKjnp-uM9VMyUjrtjipv7KGSu5xeY9joOQxQ@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: use newer inode info when writeback cache is enabled
-To:     Fengnan Chang <changfengnan@vivo.com>
-Cc:     linux-fsdevel@vger.kernel.org
+Received: by 2002:a02:cd8b:0:0:0:0:0 with HTTP; Fri, 6 Aug 2021 06:01:56 -0700 (PDT)
+Reply-To: mrsaishag45@gmail.com
+From:   Mrs Aisha Al-Qaddafi <gaddafimrsaisha155@gmail.com>
+Date:   Fri, 6 Aug 2021 06:01:56 -0700
+Message-ID: <CAATVZ=TxL5U_yfb=OzYxdMj_BtoxwE1xBWtA6CA2L_XiqvjoPw@mail.gmail.com>
+Subject: Dear Friend,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 24 Jun 2021 at 09:42, Fengnan Chang <changfengnan@vivo.com> wrote:
->
-> Hi Miklos:
->
-> Thank you for the information, I have been able to reproduce the problem.
->
-> The new version of the patch as below. Previous fsx test is pass now.
-> Need do more test, Can you help to test new patch? or send me your test
-> case, I will test this.
->
-> Here is my test case, and is the problem this patch is trying to solve.
-> Case A:
-> mkdir /tmp/test
-> passthrough_ll -ocache=always,writeback /mnt/test/
-> echo "11111" > /tmp/test/fsx
-> ls -l /mnt/test/tmp/test/
-> echo "2222" >> /tmp/test/fsx
-> ls -l /mnt/test/tmp/test/
->
-> Case B:
-> mkdir /tmp/test
-> passthrough_ll -ocache=always,writeback /mnt/test/
-> passthrough_ll -ocache=always,writeback /mnt/test2/
-> echo "11111" > /tmp/test/fsx
-> ls -l /mnt/test/tmp/test/
-> ls -l /mnt/test2/tmp/test/
-> echo "222" >> /mnt/test/tmp/test/fsx
-> ls -l /mnt/test/tmp/test/
-> ls -l /mnt/test2/tmp/test/
+Dear Friend,
 
-Both these testcases have the "cache=always" option, which means:
-cached values (both data and metadata) are always valid; i.e. changes
-will be made only through this client and not through some other
-channel (like the backing filesystem or another instance).
+I came across your e-mail contact prior to a private search while in
+need of your assistance. I am Aisha Al-Qaddafi, the only biological
+Daughter of Former President of Libya Col. Muammar Al-Qaddafi. Am a
+single Mother and a Widow with three Children.
 
-Why is "cache=always" used?
+I have investment funds worth Twenty Seven Million Five Hundred
+Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
+investment Manager/Partner because of my current refugee status,
+however, I am interested in you for investment project assistance in
+your country, may be from there, we can build business relationship in
+the nearest future.
 
-Thanks,
-Miklos
+I am willing to negotiate an investment/business profit sharing ratio
+with you based on the future investment earning profits.
+
+If you are willing to handle this project on my behalf kindly reply
+urgently to enable me to provide you more information about the
+investment funds.
+
+Your Urgent Reply Will Be Appreciated
+
+Best Regards
+Mrs Aisha Al-Qaddafi
