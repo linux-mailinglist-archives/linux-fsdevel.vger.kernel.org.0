@@ -2,35 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3E23E2C63
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 16:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 921123E2D2A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 17:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238813AbhHFOT2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Aug 2021 10:19:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238431AbhHFOTQ (ORCPT
+        id S243523AbhHFPFd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Aug 2021 11:05:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57889 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243564AbhHFPF1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Aug 2021 10:19:16 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89613C0613CF;
-        Fri,  6 Aug 2021 07:19:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=AIojU9OyEcFpwE1NJjuvzE4uBfRHyEf2CFdTUs7T8kY=; b=aQCFuYjMfZmvdIItkIfG7EIyUL
-        xuIJ9C4tiobJN1yMNBEBjYsSC8QXO0hYNGPowU15nqhg7a/kJH57+PqWeTMX4HufuAxQTsAggaWS5
-        ME1HlzklZZhEV/AnOyoy74T8AjkOjYcYF/uaP4V+Xpez9HjQB54burcKwvyZITCfZYC10Wos2QC5w
-        wVdt7p2nnNP9Puj38Fs+ho752eI4vIKNfSJNnve0Yz26UbAq//TDiQ5Z3KzTI37DU+2S7Q6HpK4E8
-        UAAYFjQc2iw7eS23GDd8Y5JeUjywfgyXF1zu+PS9gZ1VjjcqAthhBS5MighJ9XGjHqi4n+J+WcodS
-        OfOax+ig==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mC0fT-008GBJ-Rm; Fri, 06 Aug 2021 14:17:55 +0000
-Date:   Fri, 6 Aug 2021 15:17:47 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Fri, 6 Aug 2021 11:05:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628262311;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5B073nk1DS+XhzOJ9EAEUKaNTVzIvIbT8CxRSjSpPZU=;
+        b=WbQk/Y3XZCoG2+qhBe/tlrupojF1gle5w0fu2xR0a+jCRlu+8gUV3HEm5wBe486Q3RgmJn
+        843j0TdzoGNcmNF/kqDI8IxPjwvueBTDuKDOGs5OjGLsKcZ5qNHAzZL9f5oa2oMgBhwupX
+        f855jDAyRkJv6WBOWrofQDprgT2KWCE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-306-ky3v8YG6NV-FlJD_H1kZwQ-1; Fri, 06 Aug 2021 11:05:08 -0400
+X-MC-Unique: ky3v8YG6NV-FlJD_H1kZwQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 72BB9107ACF5;
+        Fri,  6 Aug 2021 15:05:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CBEEA10640E8;
+        Fri,  6 Aug 2021 15:04:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YQ1Ei9lv9ov2AheS@casper.infradead.org>
+References: <YQ1Ei9lv9ov2AheS@casper.infradead.org> <YQxh/G0xGl3GtC8y@casper.infradead.org> <YQv+iwmhhZJ+/ndc@casper.infradead.org> <YQvpDP/tdkG4MMGs@casper.infradead.org> <YQvbiCubotHz6cN7@casper.infradead.org> <1017390.1628158757@warthog.procyon.org.uk> <1170464.1628168823@warthog.procyon.org.uk> <1186271.1628174281@warthog.procyon.org.uk> <1219713.1628181333@warthog.procyon.org.uk> <CAHk-=wjyEk9EuYgE3nBnRCRd_AmRYVOGACEjt0X33QnORd5-ig@mail.gmail.com> <1302671.1628257357@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Jeff Layton <jlayton@redhat.com>,
@@ -47,122 +59,75 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: Canvassing for network filesystem write size vs page size
-Message-ID: <YQ1Ei9lv9ov2AheS@casper.infradead.org>
-References: <YQxh/G0xGl3GtC8y@casper.infradead.org>
- <YQv+iwmhhZJ+/ndc@casper.infradead.org>
- <YQvpDP/tdkG4MMGs@casper.infradead.org>
- <YQvbiCubotHz6cN7@casper.infradead.org>
- <1017390.1628158757@warthog.procyon.org.uk>
- <1170464.1628168823@warthog.procyon.org.uk>
- <1186271.1628174281@warthog.procyon.org.uk>
- <1219713.1628181333@warthog.procyon.org.uk>
- <CAHk-=wjyEk9EuYgE3nBnRCRd_AmRYVOGACEjt0X33QnORd5-ig@mail.gmail.com>
- <1302671.1628257357@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1302671.1628257357@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1306893.1628262293.1@warthog.procyon.org.uk>
+Date:   Fri, 06 Aug 2021 16:04:53 +0100
+Message-ID: <1306894.1628262293@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 06, 2021 at 02:42:37PM +0100, David Howells wrote:
-> Matthew Wilcox <willy@infradead.org> wrote:
+Matthew Wilcox <willy@infradead.org> wrote:
+
+> No, that is very much not the same thing.  Look at what NFS does, like
+> Linus said.  Consider this test program:
 > 
-> > > It's fairly important to be able to do streaming writes without having
-> > > to read the old contents for some loads. And read-modify-write cycles
-> > > are death for performance, so you really want to coalesce writes until
-> > > you have the whole page.
-> > 
-> > I completely agree with you.  The context you're missing is that Dave
-> > wants to do RMW twice.  He doesn't do the delaying SetPageUptodate dance.
+> 	fd = open();
+> 	lseek(fd, 5, SEEK_SET);
+> 	write(fd, buf, 3);
+> 	write(fd, buf2, 10);
+> 	write(fd, buf3, 2);
+> 	close(fd);
+
+Yes, I get that.  I can do that when there isn't a local cache or content
+encryption.
+
+Note that, currently, if the pages (or cache blocks) being read/modified are
+beyond the EOF at the point when the file is opened, truncated down or last
+subject to 3rd-party invalidation, I don't go to the server at all.
+
+> > But that kind of screws with local caching.  The local cache might need to
+> > track the missing bits, and we are likely to be using blocks larger than a
+> > page.
 > 
-> Actually, I do the delaying of SetPageUptodate in the new write helpers that
-> I'm working on - at least to some extent.  For a write of any particular size
-> (which may be more than a page), I only read the first and last pages affected
-> if they're not completely changed by the write.  Note that I have my own
-> version of generic_perform_write() that allows me to eliminate write_begin and
-> write_end for any filesystem using it.
+> There's nothing to cache.  Pages which are !Uptodate aren't going to get
+> locally cached.
 
-No, that is very much not the same thing.  Look at what NFS does, like
-Linus said.  Consider this test program:
+Eh?  Of course there is.  You've just written some data.  That need to get
+copied to the cache as well as the server if that file is supposed to be being
+cached (for filesystems that support local caching of files open for writing,
+which AFS does).
 
-	fd = open();
-	lseek(fd, 5, SEEK_SET);
-	write(fd, buf, 3);
-	write(fd, buf2, 10);
-	write(fd, buf3, 2);
-	close(fd);
-
-You're going to do an RMW.  NFS keeps track of which bytes are dirty,
-and writes only those bytes to the server (when that page is eventually
-written-back).  So yes, it's using the page cache, but it's not doing
-an unnecessary read from the server.
-
-> It has occurred to me that I don't actually need the pages to be uptodate and
-> completely filled out.  I'm tracking which bits are dirty - I could defer
-> reading the missing bits till someone wants to read or mmap.
+> > Basically, there are a lot of scenarios where not having fully populated
+> > pages sucks.  And for streaming writes, wouldn't it be better if you used
+> > DIO writes?
 > 
-> But that kind of screws with local caching.  The local cache might need to
-> track the missing bits, and we are likely to be using blocks larger than a
-> page.
+> DIO can't do sub-512-byte writes.
 
-There's nothing to cache.  Pages which are !Uptodate aren't going to get
-locally cached.
+Yes it can - and it works for my AFS client at least with the patches in my
+fscache-iter-2 branch.  This is mainly a restriction for block storage devices
+we're doing DMA to - but we're not doing direct DMA to block storage devices
+typically when talking to a network filesystem.
 
-> Basically, there are a lot of scenarios where not having fully populated pages
-> sucks.  And for streaming writes, wouldn't it be better if you used DIO
-> writes?
+For AFS, at least, I can just make one big FetchData/StoreData RPC that
+reads/writes the entire DIO request in a single op; for other filesystems
+(NFS, ceph for example), it needs breaking up into a sequence of RPCs, but
+there's no particular reason that I know of that requires it to be 512-byte
+aligned on any of these.
 
-DIO can't do sub-512-byte writes.
+Things get more interesting if you're doing DIO to a content-encrypted file
+because the block size may be 4096 or even a lot larger - in which case we
+would have to do local RMW to handle misaligned writes, but it presents no
+particular difficulty.
 
-> > If the write is less than the whole page, AFS, Ceph and anybody else
-> > using netfs_write_begin() will first read the entire page in and mark
-> > it Uptodate.
-> 
-> Indeed - but that function is set to be replaced.  What you're missing is that
-> if someone then tries to read the partially modified page, you may have to do
-> two reads from the server.
+> You might not be trying to do anything for block filesystems, but we
+> should think about what makes sense for block filesystems as well as
+> network filesystems.
 
-NFS doesn't.  It writes back the dirty data from the page and then
-does a single read of the entire page.  And as I said later on, using
-->is_partially_uptodate can avoid that for some cases.
+Whilst that's a good principle, they have very different characteristics that
+might make that difficult.
 
-> > Then he wants to track which parts of the page are dirty (at byte
-> > granularity) and send only those bytes to the server in a write request.
-> 
-> Yes.  Because other constraints may apply, for example the handling of
-> conflicting third-party writes.  The question here is how much we care about
-> that - and that's why I'm trying to write back only what's changed where
-> possible.
+David
 
-If you care about conflicting writes from different clients, you really
-need to establish a cache ownership model.  Or treat the page-cache as
-write-through.
-
-> > > That said, I suspect it's also *very* filesystem-specific, to the
-> > > point where it might not be worth trying to do in some generic manner.
-> > 
-> > It certainly doesn't make sense for block filesystems.  Since they
-> > can only do I/O on block boundaries, a sub-block write has to read in
-> > the surrounding block, and once you're doing that, you might as well
-> > read in the whole page.
-> 
-> I'm not trying to do this for block filesystems!  However, a block filesystem
-> - or even a blockdev - might be involved in terms of the local cache.
-
-You might not be trying to do anything for block filesystems, but we
-should think about what makes sense for block filesystems as well as
-network filesystems.
-
-> > Tracking sub-page dirty bits still makes sense.  It's on my to-do
-> > list for iomap.
-> 
-> /me blinks
-> 
-> "bits" as in parts of a page or "bits" as in the PG_dirty bits on the pages
-> contributing to a folio?
-
-Perhaps I should have said "Tracking dirtiness on a sub-page basis".
-Right now, that looks like a block bitmap, but maybe it should be a
-range-based data structure.
