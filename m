@@ -2,110 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 898513E306E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 22:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD91F3E30ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 23:21:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232909AbhHFUkL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Aug 2021 16:40:11 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51847 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231572AbhHFUkK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Aug 2021 16:40:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628282394;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=aJ1NbDgyUix6sI0pu10YegsxYaaQe+q9Ty47N33Bk3U=;
-        b=DNGqHT5Oc0u9SWe/wJGKxfFVK2/soHFhX7bOp9B/a0ag90kW2V64JlKvr+iRcAplFUBYzJ
-        ZCwSjTLhdH3/ept7Xl9nW/AnQkCf+T7AeSnpA7L15dr92++kSgKHEZl5Y8vZRKvfJSCtdH
-        ecQecTNiEF+uVuf7dijo5W6F96LiMvI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-417-9SwcBtbyMGCEmXHajixaXA-1; Fri, 06 Aug 2021 16:39:52 -0400
-X-MC-Unique: 9SwcBtbyMGCEmXHajixaXA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 07282801AC0;
-        Fri,  6 Aug 2021 20:39:51 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 58E5A5D9D5;
-        Fri,  6 Aug 2021 20:39:50 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     syzbot <syzbot+d40a01556c761b2cb385@syzkaller.appspotmail.com>
-Cc:     bcrl@kvack.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] INFO: task hung in sys_io_destroy
-References: <0000000000007db08f05c79fc81f@google.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Fri, 06 Aug 2021 16:41:14 -0400
-In-Reply-To: <0000000000007db08f05c79fc81f@google.com> (syzbot's message of
-        "Wed, 21 Jul 2021 03:39:20 -0700")
-Message-ID: <x498s1ee26t.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S239507AbhHFVVj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Aug 2021 17:21:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232115AbhHFVVj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Aug 2021 17:21:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A264A60EE8;
+        Fri,  6 Aug 2021 21:21:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628284882;
+        bh=Bchx560CKUF229KPJgM7uqaIc2EZoNRJI+Mks07iNHA=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=hsT5SBu9WiktHQmjlAf031vszOskjOHRl5E3ZRNpWssWT8YkfpKYXmMGPlYPY6o8w
+         QOiuOyOjVe+Osj3J66HLKuDcrlGwNdjG5vGZgGUQgbEGcBurbuIRsns2PsjDRuNZ17
+         dlr5ioNtV/Yvv+YVA6YSDuEU5TDGaLVcOIgAXnVTXj0Ii1ooe5xoh16l+WcrvN8lyK
+         TbnN+Por8sMt01tRSrqNSMGz9x1cxnlaF06iHFFAv6caRFgri7YXQCvDaiZf7jIQHW
+         NpBwpb+sRoCrOV/Qs1r9YAYWS2yO9tTeDaFBfsrgSb/BcLRRLwSygGKZ6tSF4RJ+lH
+         lsB8s1bH3JVCQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id 713095C0546; Fri,  6 Aug 2021 14:21:22 -0700 (PDT)
+Date:   Fri, 6 Aug 2021 14:21:22 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     syzbot <syzbot+66e110c312ed4ae684a8@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] KASAN: use-after-free Read in timerfd_clock_was_set
+Message-ID: <20210806212122.GT4397@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <000000000000fdf3e205c88fa4cf@google.com>
+ <877dgy5xtx.ffs@tglx>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877dgy5xtx.ffs@tglx>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot <syzbot+d40a01556c761b2cb385@syzkaller.appspotmail.com> writes:
+On Fri, Aug 06, 2021 at 06:42:34PM +0200, Thomas Gleixner wrote:
+> Hi!
+> 
+> On Mon, Aug 02 2021 at 01:49, syzbot wrote:
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    4010a528219e Merge tag 'fixes_for_v5.14-rc4' of git://git...
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=13611f5c300000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=1dee114394f7d2c2
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=66e110c312ed4ae684a8
+> > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+66e110c312ed4ae684a8@syzkaller.appspotmail.com
+> >
+> > ==================================================================
+> > BUG: KASAN: use-after-free in timerfd_clock_was_set+0x2b8/0x2e0
+> > fs/timerfd.c:104
+> 
+> 103	rcu_read_lock();
+> 104	list_for_each_entry_rcu(ctx, &cancel_list, clist) {
+> 
+> >  timerfd_clock_was_set+0x2b8/0x2e0 fs/timerfd.c:104
+> >  timekeeping_inject_offset+0x4af/0x620 kernel/time/timekeeping.c:1375
+> >  do_adjtimex+0x28f/0xa30 kernel/time/timekeeping.c:2406
+> >  do_clock_adjtime kernel/time/posix-timers.c:1109 [inline]
+> >  __do_sys_clock_adjtime+0x163/0x270 kernel/time/posix-timers.c:1121
+> >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+> 
+> ...
+> 
+> > Allocated by task 1:
+> >  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+> >  kasan_set_track mm/kasan/common.c:46 [inline]
+> >  set_alloc_info mm/kasan/common.c:434 [inline]
+> >  ____kasan_kmalloc mm/kasan/common.c:513 [inline]
+> >  ____kasan_kmalloc mm/kasan/common.c:472 [inline]
+> >  __kasan_kmalloc+0x98/0xc0 mm/kasan/common.c:522
+> >  kasan_kmalloc include/linux/kasan.h:264 [inline]
+> >  kmem_cache_alloc_trace+0x1e4/0x480 mm/slab.c:3575
+> >  kmalloc include/linux/slab.h:591 [inline]
+> >  kzalloc include/linux/slab.h:721 [inline]
+> >  __do_sys_timerfd_create+0x265/0x370 fs/timerfd.c:412
+> >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+> >  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> 
+> ...
+> 
+> > Freed by task 3306:
+> >  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+> >  kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
+> >  kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:360
+> >  ____kasan_slab_free mm/kasan/common.c:366 [inline]
+> >  ____kasan_slab_free mm/kasan/common.c:328 [inline]
+> >  __kasan_slab_free+0xcd/0x100 mm/kasan/common.c:374
+> >  kasan_slab_free include/linux/kasan.h:230 [inline]
+> >  __cache_free mm/slab.c:3445 [inline]
+> >  kfree+0x106/0x2c0 mm/slab.c:3803
+> >  kvfree+0x42/0x50 mm/util.c:616
+> >  kfree_rcu_work+0x5b7/0x870 kernel/rcu/tree.c:3359
+> >  process_one_work+0x98d/0x1630 kernel/workqueue.c:2276
+> >  worker_thread+0x658/0x11f0 kernel/workqueue.c:2422
+> >  kthread+0x3e5/0x4d0 kernel/kthread.c:319
+> >  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+> 
+> So the free of the timerfd context happens while the context is
+> still linked in the cancel list, which does not make sense because
+> 
+> > Last potentially related work creation:
+> >  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+> >  kasan_record_aux_stack+0xa4/0xd0 mm/kasan/generic.c:348
+> >  kvfree_call_rcu+0x74/0x990 kernel/rcu/tree.c:3594
+> >  timerfd_release+0x105/0x290 fs/timerfd.c:229
+> 
+> timerfd_release() invokes timerfd_remove_cancel(context) before invoking
+> kfree_rcu().
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    1d67c8d993ba Merge tag 'soc-fixes-5.14-1' of git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11b40232300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f1b998c1afc13578
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d40a01556c761b2cb385
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12453812300000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11225922300000
->
-> Bisection is inconclusive: the issue happens on the oldest tested release.
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=127cac6a300000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=117cac6a300000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=167cac6a300000
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d40a01556c761b2cb385@syzkaller.appspotmail.com
->
-> INFO: task syz-executor299:8807 blocked for more than 143 seconds.
->       Not tainted 5.14.0-rc1-syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor299 state:D stack:29400 pid: 8807 ppid:  8806 flags:0x00000000
-> Call Trace:
->  context_switch kernel/sched/core.c:4683 [inline]
->  __schedule+0x93a/0x26f0 kernel/sched/core.c:5940
->  schedule+0xd3/0x270 kernel/sched/core.c:6019
->  schedule_timeout+0x1db/0x2a0 kernel/time/timer.c:1854
->  do_wait_for_common kernel/sched/completion.c:85 [inline]
->  __wait_for_common kernel/sched/completion.c:106 [inline]
->  wait_for_common kernel/sched/completion.c:117 [inline]
->  wait_for_completion+0x176/0x280 kernel/sched/completion.c:138
->  __do_sys_io_destroy fs/aio.c:1402 [inline]
->  __se_sys_io_destroy fs/aio.c:1380 [inline]
->  __x64_sys_io_destroy+0x17e/0x1e0 fs/aio.c:1380
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
+And the list being deleted from is the same list that is being scanned.
 
-The reproducer is creating a thread, issuing a IOCB_CMD_PREAD from a
-pipe in that thread, and then calling io_destroy from another thread.
-Because there is no writer on the other end of the pipe, the read will
-block.  Note that it also is not submitted asynchronously, as that's not
-supported.
+> >  __fput+0x288/0x920 fs/file_table.c:280
+> >  task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+> >  tracehook_notify_resume include/linux/tracehook.h:189 [inline]
+> >  exit_to_user_mode_loop kernel/entry/common.c:175 [inline]
+> >  exit_to_user_mode_prepare+0x27e/0x290 kernel/entry/common.c:209
+> >  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+> >  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
+> >  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+> >  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> 
+> The only reason why timerfd_remove_cancel() would not remove it from the
+> list is when context->might_cancel is false. But that would mean it's a
+> memory corruption of some sort which went undetected. I can't spot
+> anything in the timerfd code itself which would cause that.
+> 
+> Confused.
 
-io_destroy is "hanging" because it's waiting for the read to finish.  If
-the read thread is killed, cleanup happens as usual.  I'm not sure I
-could classify this as a kernel bug.
+You and me!
 
--Jeff
+This kernel is built with CONFIG_PREEMPT_RCU=y, so a stray schedule()
+in the RCU read-side critical section would not cause this to happen
+(as it might on a CONFIG_PREEMPT_RCU=n kernel).  Besides, I am not seeing
+any sign of a stray schedule() in that code.
 
+This could of course be a too-short RCU grace period, but I have been
+hammering RCU rather hard of late.  No guarantee, of course, but...
+
+This kernel is already built with CONFIG_DEBUG_OBJECTS=y and also with
+CONFIG_DEBUG_OBJECTS_RCU_HEAD=y, which is my usual suggestion in this
+situation.
+
+There are a bunch of "Directory bread(block 6) failed" messages before
+this splat.  Are those expected behavior, or might they be related?
+
+							Thanx, Paul
