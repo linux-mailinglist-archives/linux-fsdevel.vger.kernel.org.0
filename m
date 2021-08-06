@@ -2,94 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 116793E291F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 13:10:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01EE33E2973
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 13:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245311AbhHFLKQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Aug 2021 07:10:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40806 "EHLO
+        id S242044AbhHFLXL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Aug 2021 07:23:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245261AbhHFLKP (ORCPT
+        with ESMTP id S231173AbhHFLXJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Aug 2021 07:10:15 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9377C061799
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Aug 2021 04:09:59 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id t68so9441700qkf.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Aug 2021 04:09:59 -0700 (PDT)
+        Fri, 6 Aug 2021 07:23:09 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4F46C061798;
+        Fri,  6 Aug 2021 04:22:52 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id k38-20020a05600c1ca6b029025af5e0f38bso8643180wms.5;
+        Fri, 06 Aug 2021 04:22:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cIl2Wt4oswfNZtiSwlBITJEKQL7QvhfH3PJWamUYOSI=;
-        b=OVY18UKsp3ZcaGAI5dwG0qrVmMZNkMsAgISll8qraUlt25JxBNFISaCeVARYu+VrzU
-         mI+hDNyd/qorLSPFP1nTqVGa4lbeemywWlrajl+fuxzGwdBrfupmjf6IieJOKlu2SX6Q
-         Cg83tVIcV9kb2re3BTh3S7/M7v1oNUBCWexiowlW+vdMdILmZ0+tokToJ/RJJqZeQFB5
-         lIqEkHOWIE1CvRFfdZkRpL+5fqO4mfuhbvNVWH8D5r4gblqx45t449zJXjPvId0Ze3Yp
-         dOUSBzQIikBMNVvHEDN3zPb+GyUEzUxOvM0UqqAVSJ6daCRJb5XOQP649nO015Oj3Je3
-         vJWA==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Jd6SDWe5bP1W9aLKeKIqrkoSJGtHDp+fK9q/kasAchc=;
+        b=TsrhJeomucBYTnCk3vTYAMK/GujB3r3QJHd/WsBX3YzZEcrd5qiU5qSX2nbGkCVxDW
+         dLXVDg3xB3jmBUEIov8a+ILVRvOEq60fjqnUuBpNiJeWY/MRA9CERGfS+WYC25dcdgsv
+         XObImycmWspbAAawI6xgy4W9xf0MN3ggD/le73GCcOtXU7ZXxE0i1VQyw5aeT87k4Ri/
+         +NRHZU2JGFQh7mFz4MpTf4ND18HbEhQct+ZMec4vbpIVtONY8f018adIl+Wc1hho/ou5
+         TcydTpAdtyUUuL/aHyiL6GLa8xOW7k17GJViHZmnPP4WzRWGjeNN1nxi2yov/cq9pGWg
+         MGiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cIl2Wt4oswfNZtiSwlBITJEKQL7QvhfH3PJWamUYOSI=;
-        b=iRvACfjZBFHHTgZugKJzXLzXGLYxT5jj+2q0ow5UTBs+3EC8OrtDQH+kCPNi+O0A0F
-         +lkTyvJwAiS13U6nTgbzbFY49OjkQFxchKYqOJvj2BX7pG7IRVDeoOUa+71GHnzIPRRm
-         Qh1Ncad2VOLDrqd+OUzxgXN2kJBrQsD0AYzhEnYivdnZf0ZLy/Gja2LSIUOTAXxU5xzu
-         0FuCjDJK75X1PIAoTeKFs64o3JpGM2K18xP2qiYoN1Blal7SycilCduEfBlObMl13o9B
-         /u+oCCPuI19G9K6d1emfW5XCmiq1XVcejCZVZv8Xvs5DF3lpKb0F2VieVTttj6NU8Zae
-         TIQQ==
-X-Gm-Message-State: AOAM533n2o6jL29/aZibDIuebRdV3UtW76yAmOmiRR+frLHtbSLPwleY
-        UpmnFQ+P4y2ZPcL9nv6N9y0YPfAudsVjhIuvYqwiKg==
-X-Google-Smtp-Source: ABdhPJwP2g6CP+w9oZrV1I9IIi/KjCS4sNSpPtONtJkbja3XMDl0uJSfrIBwajvCPf6WiPhtfjcLCph+O1yNQUyKQG0=
-X-Received: by 2002:a05:620a:1428:: with SMTP id k8mr9571399qkj.231.1628248198923;
- Fri, 06 Aug 2021 04:09:58 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Jd6SDWe5bP1W9aLKeKIqrkoSJGtHDp+fK9q/kasAchc=;
+        b=RYBIB5AtTec+Efy8fyiIzO2LO1rTVxwlc7FMSXceGKRxjIBjNbWmeytNuMX2r9dSnH
+         Rwz0kGeA7UKJZaH6tfHVKXL3v+NMQWThFYi0adNYTBp46BnkrdwYBt7y1Ke/z3oghqzM
+         VjaY4NZV2fhJeY4Hf2ACrqiZXKVJ3RGOZ3u/dLABUnJDUueQVG2NAJJmNVIqiNxXcZy4
+         xAuVsxPHc/4wVY9YBEfHuyJgS/ScI1gVTbSSSyQkHMlUXwugVXBDT5T5NKjRz9UjYiVW
+         eJXcUekSd0xabsQBrtaxyBJOvfNuXAysjY9upW9CASzSeOcZak27ZbTcLWpvh998NQIE
+         y0Rw==
+X-Gm-Message-State: AOAM532WrhUa8mlN69yTfEnTjvMGDqNZs4B1pWsRgucxaR9N7i4WcUPk
+        Pz5VBKk1EuR/ZNa/kNJjZLQ=
+X-Google-Smtp-Source: ABdhPJyOAVveugaFzsVI0ZfcFSXOUGGnR+OLUhC1bNuCMSh1Jrnlq1ocE5eW5xN3Leps75rxSlynBA==
+X-Received: by 2002:a05:600c:2942:: with SMTP id n2mr20073552wmd.152.1628248971542;
+        Fri, 06 Aug 2021 04:22:51 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.237.205])
+        by smtp.gmail.com with ESMTPSA id j4sm8285654wmi.4.2021.08.06.04.22.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Aug 2021 04:22:51 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: optimise generic_write_check_limits()
+Date:   Fri,  6 Aug 2021 12:22:10 +0100
+Message-Id: <dc92d8ac746eaa95e5c22ca5e366b824c210a3f4.1628248828.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <000000000000295a6a05b65efe35@google.com> <00000000000029363505c748757d@google.com>
- <CAJfpegsyFb3bC=dqUbqhs9055TW95EJO2st7iS-4sPME7Y-cmA@mail.gmail.com>
- <CACT4Y+Zh9Bw8DTZyvoOB_hjXwRQuRN+VHmJ-HfMqOaOu7GyVXA@mail.gmail.com> <CAJfpegu2fR3cP+eR24a1+WBBR=hvz8p2cTfK0x4sNz5c-MMH3Q@mail.gmail.com>
-In-Reply-To: <CAJfpegu2fR3cP+eR24a1+WBBR=hvz8p2cTfK0x4sNz5c-MMH3Q@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 6 Aug 2021 13:09:47 +0200
-Message-ID: <CACT4Y+bh6TGBJAwR5UjoPkCLgiSUypUBWVVMcp9bVEWJbFrASA@mail.gmail.com>
-Subject: Re: [syzbot] INFO: task hung in fuse_simple_request
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     syzbot <syzkaller@googlegroups.com>,
-        syzbot <syzbot+46fe899420456e014d6b@syzkaller.appspotmail.com>,
-        areeba.ahmed@futuregulfpak.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 6 Aug 2021 at 11:34, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > Hi,
-> > >
-> > > I'm not sure what to make of this report.
-> > >
-> > > Does syzbot try to kill all tasks before generating such a hung task report?
-> > >
-> > > Does it use the fuse specific /sys/fs/fuse/connections/*/abort to
-> > > terminate stuck filesystems?
-> >
-> > Hi Miklos,
-> >
-> > Grepping the C reproducer for "/sys/fs/fuse/connections", it seems
-> > that it tries to abort all connections.
->
-> Hi  Dmitry,
->
-> So this could indicate a bug in the abort code of fuse, or it could
-> indicate that the test case DoS-es the system so that the abort code
-> simply doesn't get the resources to execute.
->
-> Can the two be differentiated somehow?
+Even though ->s_maxbytes is used by generic_write_check_limits() only in
+case of O_LARGEFILE, the value is loaded unconditionally, which is heavy
+and takes 4 indirect loads. Optimise it by not touching ->s_maxbytes,
+if it's not going to be used.
 
-I think we need to take a closer look at what happens here. I've filed
-https://github.com/google/syzkaller/issues/498#issuecomment-894185550
-for this.
-The overall idea is that DoS should not be possible by construction
-with various sandboxing so that the system does not report what is not
-a bug at all. But it's not always easy to achieve.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/read_write.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 9db7adf160d2..db662d0c3cfa 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1609,9 +1609,8 @@ SYSCALL_DEFINE6(copy_file_range, int, fd_in, loff_t __user *, off_in,
+  */
+ int generic_write_check_limits(struct file *file, loff_t pos, loff_t *count)
+ {
+-	struct inode *inode = file->f_mapping->host;
+-	loff_t max_size = inode->i_sb->s_maxbytes;
+ 	loff_t limit = rlimit(RLIMIT_FSIZE);
++	loff_t max_size = MAX_NON_LFS;
+ 
+ 	if (limit != RLIM_INFINITY) {
+ 		if (pos >= limit) {
+@@ -1621,8 +1620,11 @@ int generic_write_check_limits(struct file *file, loff_t pos, loff_t *count)
+ 		*count = min(*count, limit - pos);
+ 	}
+ 
+-	if (!(file->f_flags & O_LARGEFILE))
+-		max_size = MAX_NON_LFS;
++	if (file->f_flags & O_LARGEFILE) {
++		struct inode *inode = file->f_mapping->host;
++
++		max_size = inode->i_sb->s_maxbytes;
++	}
+ 
+ 	if (unlikely(pos >= max_size))
+ 		return -EFBIG;
+-- 
+2.32.0
+
