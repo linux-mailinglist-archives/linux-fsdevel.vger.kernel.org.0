@@ -2,139 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07B7B3E22BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 07:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73A933E22D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Aug 2021 07:12:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242920AbhHFFAw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Aug 2021 01:00:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41310 "EHLO
+        id S243012AbhHFFND (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Aug 2021 01:13:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231694AbhHFFAv (ORCPT
+        with ESMTP id S242999AbhHFFNC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Aug 2021 01:00:51 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB1FDC061798;
-        Thu,  5 Aug 2021 22:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-        :In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=mfp3lcLiizP+Ov0M2vzQv+FyVnyAM3p7EE1c6hFSDvk=; b=IyhXPpT63kcorJUwTft/59RsDJ
-        cU2CHG/+cfemuM+XwBi0Q/c4fLiMlVuGUKEDWvJbM1uwwYUwXX5I+H1zcoOlWmE3KHx/jnYztsg7+
-        AO8gm0o1UH/WdMuz4CuCl9u/KJjT/dxCeO5q7rHUIGZJOaMCxNPn+tNy73JEB7doHjUxUuRU+/uG9
-        Urgwvz9cqJUBdVEgrGDGLP3tyLDTJZMWAVm/dy1IPnW/ukLqu8IsOUk18YCrxk17Uba8LOUavdWTk
-        OKGVbEg4KIt5YuOVJo3IUWxkQC+h/RUnDAoWiqne/17TW+4E3zzwORCpVmV6+vPLf9aV/YD2EGRLA
-        YiwcKGZA==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mBrxx-006GOr-3t; Fri, 06 Aug 2021 05:00:17 +0000
-Subject: Re: mmotm 2021-08-05-19-46 uploaded (mm/filemap.c)
-To:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Matthew Wilcox <willy@infradead.org>,
-        SeongJae Park <sjpark@amazon.de>
-References: <20210806024648.V0Ye_YURy%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <43bf8d13-505c-35b3-c865-a62bdcbafcf8@infradead.org>
-Date:   Thu, 5 Aug 2021 22:00:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Fri, 6 Aug 2021 01:13:02 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05A56C061798
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Aug 2021 22:12:46 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id l4-20020a05600c1d04b02902506f89ad2dso6639614wms.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Aug 2021 22:12:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=QJPH05dZT9Z9fnDVZN9MaDEj1KMjdq1GYeoEJyPg0u0=;
+        b=teA8KKYDbIMRXS5S7/F7AQmvz0M4rBDJ4glXsDErm451a7vW5xY748g0ERoF10nTSf
+         ES+Q/fi/KhNCdmcfx4W4SjQYoqBgZy0G7m7UApq6Eh4G9igwVDoJPS8zKjaPUHqJ0Epa
+         hzbTF0uvmu+2cLvDdJqngG1hF1bkDOjrl8EoxF2kue+QeDSgByTbMEt/mkPiQk+pWr1A
+         teqirOhy3ewYt/u851hfE10bxCgo6UOZk8C2vbL5GSRm+d06ubOlg8l4SjFCUUPfDrVd
+         Pqu+Z4kBdLu9ZYuU6Q22QC6GcNsTrxEEsz7W+xboyDKJhxhDFX13H6F3whCIv/cFqB63
+         HOfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=QJPH05dZT9Z9fnDVZN9MaDEj1KMjdq1GYeoEJyPg0u0=;
+        b=VKDVk4y7efqaMIWGzNn8RXmqNDeiWSnZudQ1da5sMir3LJPRuufjrZeKPznzaur6YF
+         xnzcUzP480QNYxJT3pfQnDUN/M/FpUxNzy9rvAFmzOx2ZvVnvV5qFf6C6NXHPTNhTtTq
+         aTgoWyR7vI162WXxLkftIpC3LifuV5GVtX0YaDG7tiZ95gQdv4NQUKXKLXUfaNUm4dYH
+         +1gte6JhcQa9w4+w6KRIyR3KL+2vC0XebbzPcwho7kWhCtqGlKULsoOTUSvM8jR9F+6e
+         5LZleLPoyNajzZsGyNk6EynGzlSOskubhF3RqSlx+eoWUumbwkJbZ1g8+CLfg8wexFrn
+         WruA==
+X-Gm-Message-State: AOAM531bplob39JdqFZSlsb91siKZqQejaaTddhvd9xsTDW+u7BMGg/J
+        c9ClY7rnpSN6yl7bJCUKjF5l906+XGvhxb5Dhls=
+X-Google-Smtp-Source: ABdhPJw6ZiEdKubEiumjPl/tVegaNt9+ePryJhDqAOvR8GrR1BkJoDobORMIrrJ+g0cSUcslE0++s3aRGYhxp/2Hc2o=
+X-Received: by 2002:a7b:cd83:: with SMTP id y3mr1313835wmj.126.1628226764675;
+ Thu, 05 Aug 2021 22:12:44 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210806024648.V0Ye_YURy%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a5d:4992:0:0:0:0:0 with HTTP; Thu, 5 Aug 2021 22:12:44 -0700 (PDT)
+Reply-To: michaelrachid7@gmail.com
+From:   Michael Rachid <cathydampry@gmail.com>
+Date:   Fri, 6 Aug 2021 06:12:44 +0100
+Message-ID: <CAJt1DuKPfpomuq3Uj3+MCrPa1MpRTd+AoAuEtoSLT3i6sAUUOg@mail.gmail.com>
+Subject: Proposal
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/5/21 7:46 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2021-08-05-19-46 has been uploaded to
-> 
->     https://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> https://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> https://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
+Dear friend,
 
-on i386, I am seeing lots of build errors due to references to
-some PAGE_ flags that are only defined for 64BIT:
+I write to inform you about a business proposal I have which I would
+like to handle with you.
+Fifty million dollars is involved. Be rest assured that everything is
+legal and risk free.
+Kindly indicate your interest.
 
-In file included from ../mm/filemap.c:44:0:
-../include/linux/page_idle.h: In function ‘folio_test_young’:
-../include/linux/page_idle.h:25:18: error: ‘PAGE_EXT_YOUNG’ undeclared (first use in this function); did you mean ‘PAGEOUTRUN’?
-   return test_bit(PAGE_EXT_YOUNG, &page_ext->flags);
-                   ^~~~~~~~~~~~~~
-                   PAGEOUTRUN
-../include/linux/page_idle.h:25:18: note: each undeclared identifier is reported only once for each function it appears in
-../include/linux/page_idle.h:25:43: error: dereferencing pointer to incomplete type ‘struct page_ext’
-   return test_bit(PAGE_EXT_YOUNG, &page_ext->flags);
-                                            ^~
-../include/linux/page_idle.h: In function ‘folio_set_young’:
-../include/linux/page_idle.h:35:10: error: ‘PAGE_EXT_YOUNG’ undeclared (first use in this function); did you mean ‘PAGEOUTRUN’?
-   set_bit(PAGE_EXT_YOUNG, &page_ext->flags);
-           ^~~~~~~~~~~~~~
-           PAGEOUTRUN
-../include/linux/page_idle.h: In function ‘folio_test_clear_young’:
-../include/linux/page_idle.h:45:28: error: ‘PAGE_EXT_YOUNG’ undeclared (first use in this function); did you mean ‘PAGEOUTRUN’?
-   return test_and_clear_bit(PAGE_EXT_YOUNG, &page_ext->flags);
-                             ^~~~~~~~~~~~~~
-                             PAGEOUTRUN
-../include/linux/page_idle.h: In function ‘folio_test_idle’:
-../include/linux/page_idle.h:55:18: error: ‘PAGE_EXT_IDLE’ undeclared (first use in this function); did you mean ‘CPU_NOT_IDLE’?
-   return test_bit(PAGE_EXT_IDLE, &page_ext->flags);
-                   ^~~~~~~~~~~~~
-                   CPU_NOT_IDLE
-   AS      arch/x86/crypto/twofish-i586-asm_32.o
-   AR      arch/x86/events/zhaoxin/built-in.a
-../include/linux/page_idle.h: In function ‘folio_set_idle’:
-../include/linux/page_idle.h:65:10: error: ‘PAGE_EXT_IDLE’ undeclared (first use in this function); did you mean ‘CPU_NOT_IDLE’?
-   set_bit(PAGE_EXT_IDLE, &page_ext->flags);
-           ^~~~~~~~~~~~~
-           CPU_NOT_IDLE
-../include/linux/page_idle.h: In function ‘folio_clear_idle’:
-../include/linux/page_idle.h:75:12: error: ‘PAGE_EXT_IDLE’ undeclared (first use in this function); did you mean ‘CPU_NOT_IDLE’?
-   clear_bit(PAGE_EXT_IDLE, &page_ext->flags);
-             ^~~~~~~~~~~~~
-             CPU_NOT_IDLE
-   CC      mm/kfence/kfence_test.o
-   CC      arch/x86/events/intel/uncore_nhmex.o
-   CC      arch/x86/platform/atom/punit_atom_debug.o
-../include/linux/page_idle.h: In function ‘folio_test_idle’:
-../include/linux/page_idle.h:56:1: error: control reaches end of non-void function [-Werror=return-type]
-  }
-
-See:
---- a/include/linux/page_ext.h~mm-idle_page_tracking-make-pg_idle-reusable
-+++ a/include/linux/page_ext.h
-@@ -19,7 +19,7 @@ struct page_ext_operations {
-  enum page_ext_flags {
-  	PAGE_EXT_OWNER,
-  	PAGE_EXT_OWNER_ALLOCATED,
--#if defined(CONFIG_IDLE_PAGE_TRACKING) && !defined(CONFIG_64BIT)
-+#if defined(CONFIG_PAGE_IDLE_FLAG) && !defined(CONFIG_64BIT)
-  	PAGE_EXT_YOUNG,
-  	PAGE_EXT_IDLE,
-  #endif
-
-
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-
+Michael Rachid.
