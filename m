@@ -2,96 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABCE03E34C8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Aug 2021 12:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 939A43E365D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Aug 2021 18:55:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231922AbhHGKcr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Aug 2021 06:32:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60826 "EHLO mail.kernel.org"
+        id S229512AbhHGQ4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Aug 2021 12:56:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231687AbhHGKc3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Aug 2021 06:32:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 18487610FC;
-        Sat,  7 Aug 2021 10:32:04 +0000 (UTC)
+        id S229437AbhHGQ4K (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 7 Aug 2021 12:56:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E104C61058;
+        Sat,  7 Aug 2021 16:55:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628332329;
-        bh=q0JbSC4fX4Crhi1HrqSNaN67de1iCkzSUaCVowYclWc=;
+        s=k20201202; t=1628355353;
+        bh=xneXCef3FRjBCnaNoY9tPBcNVJGns+i3iXDMrVO58mU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fsKTwecZe161gdAJQQnyQfzWRCWKtSI17t3EW2r28Gew517Y3JIG85wSBnFhNDI3r
-         yGBQpyi7/ih3s7Q+f6DT0xIKDfvkzFbjVbBY1WK/mbWYGJRxJlsh1y9LX+FbBh46eV
-         JYiIs0+AXJ/mjkz1PkHvHD7P5i2Wc3h8ZZeelre82v6V3CC02Rqs7WmF2gIZ/IVtuw
-         zxAknc/fQcFuL0DLvtfzYQiaYcoRw1xmG91FwgwYzfzPa2zb9zFs777Tla0VmvJ1WT
-         cXAViWgi2TVIv/pUNGCJZmG8JasYImcSxG/g01QJcscEsR0FzAKD8eTLbclBkET1uh
-         xGUmkqO6QNU9Q==
-Date:   Sat, 7 Aug 2021 13:32:00 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Zi Yan <ziy@nvidia.com>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-        Ying Chen <chenying.kernel@bytedance.com>,
-        Feng Zhou <zhoufeng.zf@bytedance.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 08/15] fs: proc: use PAGES_PER_SECTION for page
- offline checking period.
-Message-ID: <YQ5hIFZX02BMS+Yb@kernel.org>
-References: <20210805190253.2795604-1-zi.yan@sent.com>
- <20210805190253.2795604-9-zi.yan@sent.com>
+        b=U9cRwDNoB6btRNhwTev/FroT9STOvybHbTC5Wd7HQsfk7sHA/LRv2Jz4Ob60iTCW/
+         vzmIgNeKI+7hn91QKZPej+HhOnQebH/rf3tl/mjl57NIoOFNGY0CORfAKiMPACjmOS
+         PZ8VqjW4lyOC4Mq70yCjJYJ9QiLjZdhFC3ajV3x5onW0x0XJI7TsbOBEwAyLd9asNw
+         rO6BXHol6p6s0N0TjMuwKbdmtEIaGSBS9maUDC6DR57GirE9fV2eiZb3XL2C7qchwY
+         vPdsVBfmdSL7eRL002qBnjdFbCj9AoyZDEX8PCp1YzK9i1qlOyJhaQGb9W6K7rFY4f
+         hmJrE1sa3JyxA==
+Date:   Sat, 7 Aug 2021 09:55:51 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Shreeya Patel <shreeya.patel@collabora.com>
+Cc:     krisman@collabora.com, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jaegeuk@kernel.org, chao@kernel.org, drosen@google.com,
+        yuchao0@huawei.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
+        andre.almeida@collabora.com
+Subject: Re: [PATCH] fs: unicode: Add utf8-data module
+Message-ID: <YQ67FxJRlfTj5EGy@sol.localdomain>
+References: <20210730124333.6744-1-shreeya.patel@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210805190253.2795604-9-zi.yan@sent.com>
+In-Reply-To: <20210730124333.6744-1-shreeya.patel@collabora.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 05, 2021 at 03:02:46PM -0400, Zi Yan wrote:
-> From: Zi Yan <ziy@nvidia.com>
-> 
-> It keeps the existing behavior after MAX_ORDER is increased beyond
-> a section size.
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Ying Chen <chenying.kernel@bytedance.com>
-> Cc: Feng Zhou <zhoufeng.zf@bytedance.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  fs/proc/kcore.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index 3f148759a5fd..77b7ba48fb44 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -486,7 +486,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
->  			}
->  		}
+On Fri, Jul 30, 2021 at 06:13:33PM +0530, Shreeya Patel wrote:
+> diff --git a/fs/unicode/utf8n.h b/fs/unicode/utf8n.h
+> index 0acd530c2c79..6843229bcb2b 100644
+> --- a/fs/unicode/utf8n.h
+> +++ b/fs/unicode/utf8n.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/export.h>
+>  #include <linux/string.h>
+>  #include <linux/module.h>
+> +#include <linux/spinlock.h>
 >  
-> -		if (page_offline_frozen++ % MAX_ORDER_NR_PAGES == 0) {
-> +		if (page_offline_frozen++ % PAGES_PER_SECTION == 0) {
+>  /* Encoding a unicode version number as a single unsigned int. */
+>  #define UNICODE_MAJ_SHIFT		(16)
+> @@ -21,6 +22,11 @@
+>  	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
+>  	 ((unsigned int)(REV)))
+>  
+> +extern spinlock_t utf8_lock;
+> +
+> +extern struct utf8_data *utf8_ops;
+> +extern bool utf8data_loaded;
 
-The behavior changes here. E.g. with default configuration on x86 instead
-of cond_resched() every 2M we get cond_resched() every 128M.
+The 'utf8data_loaded' variable is unnecessary, since it's equivalent to
+'utf8_ops != NULL'.
 
-I'm not saying it's wrong but at least it deserves an explanation why.
+Also, there are no function pointer fields anymore, so this really should be
+called utf8_data, not utf8_ops.
 
->  			page_offline_thaw();
->  			cond_resched();
->  			page_offline_freeze();
-> -- 
-> 2.30.2
-> 
-
--- 
-Sincerely yours,
-Mike.
+- Eric
