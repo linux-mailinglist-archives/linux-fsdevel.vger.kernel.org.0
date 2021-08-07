@@ -2,72 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 61BB13E33AC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Aug 2021 07:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 632C33E348F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Aug 2021 12:06:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231126AbhHGFse (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Aug 2021 01:48:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35850 "EHLO
+        id S231718AbhHGKGi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Aug 2021 06:06:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230379AbhHGFsc (ORCPT
+        with ESMTP id S230090AbhHGKG2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Aug 2021 01:48:32 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1486C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Aug 2021 22:48:14 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id a7so15028865ljq.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Aug 2021 22:48:14 -0700 (PDT)
+        Sat, 7 Aug 2021 06:06:28 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A967BC0613CF;
+        Sat,  7 Aug 2021 03:06:08 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id m12so14349532wru.12;
+        Sat, 07 Aug 2021 03:06:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=Aauu7gYvMaBruI9Zt1CgTlkxSZ8evQwPBhKOMH6jf8s=;
-        b=jOlw2dw6L0IOrt54BEQWeMPeh9a0WtrpBNQxzGqfp+aNGY+OqyiRex/tPC/35H6Q8o
-         5QWiBF8GGW/I9DnSsEZJHwGDZvDkIken0+qbabZUf8akuw1y4qtR6ZQ4cB3G56EsPtnC
-         E0T8EsclyjCU9hB1MqNrr7QBlT44Lpbow3FyT1QRP8jheTKi3jJzi4uSEtg3o9/iieMO
-         DmQ/AIr4srBtmIZhWbMrEiliYX32rNLHw0GLf4F4ULG8WPtyA5z7oVWSdthZaCYcZWbU
-         KuTFWtfHJpPuRagwrbfTWpXvhJE4yfInmCcFwiuMjrLPMXvxRVjPviOzX2MjmOrHyNMl
-         7IEw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Ut8/KNFRFcQqrLccjjc1Iq2etNteCks1XWkqaFKEZy0=;
+        b=usi62ZFLaki5oyxywr3g0oprkNmlVIlS1H1gE73a/Z4cuFIRtTU9jPCg5K3BcJ6mK0
+         5Y6EA1+EBznKCDRZbgGFvuxOL/gpT0tgkca3LLsox4bvCYDZhRpT7+r/8mGNqAXON6Ij
+         65BxU2JbSzwid15FD3gCSajZ7mZhMDc9Te2VYBYMvgbEKBf9v+RbAUBpCZn0XUHdSLD5
+         Lm9NoMxxBG1nbjmTXcQlZzgwK5wUKxeg5U0msxD5/e0GMpgBTrSsi8bLrcwRsM+ikBz/
+         zpPiYNBdPHv0k3vj4DuO55jt8aTHz4R+ah0fNHJubybGTLdUgtiTZ/BXt48upN2hmnEy
+         Unmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=Aauu7gYvMaBruI9Zt1CgTlkxSZ8evQwPBhKOMH6jf8s=;
-        b=bz5cD7KyppTOKj25PK04pAKo0nGxpgjm6qhXrh35rJh3XVxdEjv4eUExoBdwKY/fTG
-         +AhQRfsGASMkbwXm1eMSOL15efaZdZYZS9hAt6Pac/BjpBa1ZBNKIF91Jyyzndi9tsN8
-         B+77E8V14M06H6iSzfHrvkviFBPEr8Z+VDl/UweTZlT6oP7IT1qynDSMawkkVraRorsG
-         HnvWBnNIYf1/qU/h63vU4hjYp0+NGbgwn7fbVP5w4gdmdFpPiSItXMPYC4yRYf1CLPdo
-         hucOYCp5AkSjZAqZj/tV31nE/pSN0YynO9yf1n9DtAtW+os6tUpfPofZeg7ixtCbZ1DS
-         nTxg==
-X-Gm-Message-State: AOAM530gZkZoApJ4D7tR7wiIGN+CBLfb+DoQ3SFBZiActYODu5Z+kgsd
-        upNApach2tgjYWLkjQe76rWm2PlPtkadtz3h6eY=
-X-Google-Smtp-Source: ABdhPJwOhZQjq1Ulv2xEuhtLGIMjFEkvnyY9liThII/wNxS3xpFceL2A/3rXhW/H/q/y8HiXSyqmKmevXWc9B6nx3Jk=
-X-Received: by 2002:a2e:740a:: with SMTP id p10mr9198375ljc.196.1628315292989;
- Fri, 06 Aug 2021 22:48:12 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Ut8/KNFRFcQqrLccjjc1Iq2etNteCks1XWkqaFKEZy0=;
+        b=Ro0U4/AMp1vsKCUTxmFBMa+6f87pB/W2yxhSk4InteCjIoQxJCnuuqg4XOSCfazLYZ
+         8WUqQ2AGG+pgZp1olOXDLhk8ZK2SfYUyNDeA7QGxUD/heXCahDhWz+9ba/2xKHah7dgK
+         Wt+Jil3VbuxD14yogA5BiNB2epwqNr7Bo5s1cHCpOaJuv71FDJQK/0KibnupKyN+81+k
+         S3VhC6GKolnw5NpCYXZuiordi2XRCVYyldhXdyaIlxVxSUvKQ/PMbL2zUeFQoLVFPRLv
+         IYYqJPWgTbmfrF0yOjaPq88kWD5KoJljgcvsSeTeEsb0VuesOrPLi/wU7fSbX5grP6d3
+         q2xw==
+X-Gm-Message-State: AOAM533Q+dvCFH4ByDzoh9Ta7h/vF2/6HeJrTNsBC4ZgTMk8QgaG9L/u
+        6LkE0/WITL5z8IkKKMjQkh0dvUw/egs=
+X-Google-Smtp-Source: ABdhPJx7/Of4aEYxyifIy6jnxnLfkit5KMnvUSb3piLbfc6HaMxZ9HglfAqpPChs3qGvX7PpMH7qHw==
+X-Received: by 2002:a05:6000:1106:: with SMTP id z6mr15440031wrw.296.1628330767119;
+        Sat, 07 Aug 2021 03:06:07 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.237.206])
+        by smtp.gmail.com with ESMTPSA id w14sm1425505wrt.23.2021.08.07.03.06.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Aug 2021 03:06:06 -0700 (PDT)
+Subject: Re: [PATCH] fs: optimise generic_write_check_limits()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <dc92d8ac746eaa95e5c22ca5e366b824c210a3f4.1628248828.git.asml.silence@gmail.com>
+ <YQ04/NFn8b6cykPQ@casper.infradead.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <a01568b8-a10c-c260-a0fe-3161a8075dba@gmail.com>
+Date:   Sat, 7 Aug 2021 11:05:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Reply-To: godwinppter@gmail.com
-Sender: info.bfinfo3@gmail.com
-Received: by 2002:aa6:ca09:0:b029:11f:2a9f:2304 with HTTP; Fri, 6 Aug 2021
- 22:48:12 -0700 (PDT)
-From:   Godwin Pete <godwinnpeter@gmail.com>
-Date:   Sat, 7 Aug 2021 07:48:12 +0200
-X-Google-Sender-Auth: bR9gGLxQz2iW-fASkZX2z__kbz4
-Message-ID: <CABCrZeOpyCDU7i94FK12iVBougz2TtnzS8197_QNV0fuN1Nt8Q@mail.gmail.com>
-Subject: Reply Urgently
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YQ04/NFn8b6cykPQ@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-My good friend,
+On 8/6/21 2:28 PM, Matthew Wilcox wrote:
+> On Fri, Aug 06, 2021 at 12:22:10PM +0100, Pavel Begunkov wrote:
+>> Even though ->s_maxbytes is used by generic_write_check_limits() only in
+>> case of O_LARGEFILE, the value is loaded unconditionally, which is heavy
+>> and takes 4 indirect loads. Optimise it by not touching ->s_maxbytes,
+>> if it's not going to be used.
+> 
+> Is this "optimisation" actually worth anything?  Look at how
+> force_o_largefile() is used.  I would suggest that on the vast majority
+> of machines, O_LARGEFILE is always set.
 
-I just want to know if you, can help me to transfer the amount of
-($6Million). After the transfer we have to share it, 50% for me, and
-50% for you. Please let me know if you can help me for more
-information in regards with the transfer. I hope you can work with me
-honestly?
+Makes sense to leave it alone then, thanks
 
-
-Thanks.
-
-Godwin Peter,
+-- 
+Pavel Begunkov
