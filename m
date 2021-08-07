@@ -2,101 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8149C3E34C6
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Aug 2021 12:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABCE03E34C8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Aug 2021 12:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231795AbhHGKbh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Aug 2021 06:31:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40992 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231687AbhHGKbg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Aug 2021 06:31:36 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C9FC0613CF;
-        Sat,  7 Aug 2021 03:31:18 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id n12so4366957wrr.2;
-        Sat, 07 Aug 2021 03:31:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Xz2POERoj03wWLZEE/kDhO0wJ4yd+zaF3oDDbK7OnvA=;
-        b=H2XHvma4LuuSVfBN8ILh6Jp9Pdbm1fXiqibs3HZAbEsSl2t9PmxV++zAVQc3H20S1J
-         o7IRX3aQFf4Hu51bxL2+rQoDOmUElyxC+/cv9kq6OOirBn306UgSQNktK80MTV/7ewUD
-         flytjI+yKhudqqDhG2ZblB/OFBenWkx8apuISOGUkeLkgSL9Dk+ZBZ57FLYTNxlkdHQ/
-         wCoYiIZCpQj7SN/bW7GPLxUa5EaB5nnfsqBeo3DxPgM8nut6+YKOzpcH1Yy95NBXBwRa
-         r9NXjx4m/j24gIPdtchs4FlDitXBdMrojfpcAUPa0E8SECt6Y5zx3h872RH2NCDAHhdk
-         zDDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Xz2POERoj03wWLZEE/kDhO0wJ4yd+zaF3oDDbK7OnvA=;
-        b=p5CE2Jzdhcw5ZaTEdsdxaVB4yeDgSj0+1D81NFNFe8cgvCbf48UIv0F+sVg+Mnuusi
-         /BV5rVEh3ib5rlCMsj8iLum+ivOjuNQL7JxO2tAfmcqt7fbQQTjzBD2TsHItN1hW2oHd
-         2tSofvG9gfOi8rm/r7vNaQzd+JvQosw4b6pN1ThpgBLHOBvDfC2FzDEs+7DPrNpHW459
-         9muJue30eOwg4WalpCPAZnooTuON6GeQ9OGeE+/AhmNTcI2jBOB6Q7mBAF2g8s7tD3gQ
-         nx9ZCAqKp93/D7VUMmtLwETkaUdc3wOloy1OhRYLuLZmTdrjFxxW4twrfsSAp+wMuFo+
-         L8Cg==
-X-Gm-Message-State: AOAM5322jGOM5+lU3T3aEE1LA2743uyUdudjTI+O0QDEE0RzBA16Egjv
-        daB8ywfT40rcN9IPePCi/4kQzpVA45Y=
-X-Google-Smtp-Source: ABdhPJzaxfdJrn/5/vNvO8eZMGRSq0NWEnWYnVHGVQv3O4xWrSyYXv+bhW2iZXMYwhQQZTbFwvfGRQ==
-X-Received: by 2002:adf:f383:: with SMTP id m3mr14747988wro.81.1628332276733;
-        Sat, 07 Aug 2021 03:31:16 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.237.206])
-        by smtp.gmail.com with ESMTPSA id x15sm15023813wmc.13.2021.08.07.03.31.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Aug 2021 03:31:16 -0700 (PDT)
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org
-References: <07bd408d6cad95166b776911823b40044160b434.1628248975.git.asml.silence@gmail.com>
- <YQ09tqMda2ke2qHy@zeniv-ca.linux.org.uk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC] mm: optimise generic_file_read_iter
-Message-ID: <d6d36192-4afa-c8a5-5bc0-43bb667b7694@gmail.com>
-Date:   Sat, 7 Aug 2021 11:30:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S231922AbhHGKcr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Aug 2021 06:32:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60826 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231687AbhHGKc3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 7 Aug 2021 06:32:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 18487610FC;
+        Sat,  7 Aug 2021 10:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628332329;
+        bh=q0JbSC4fX4Crhi1HrqSNaN67de1iCkzSUaCVowYclWc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fsKTwecZe161gdAJQQnyQfzWRCWKtSI17t3EW2r28Gew517Y3JIG85wSBnFhNDI3r
+         yGBQpyi7/ih3s7Q+f6DT0xIKDfvkzFbjVbBY1WK/mbWYGJRxJlsh1y9LX+FbBh46eV
+         JYiIs0+AXJ/mjkz1PkHvHD7P5i2Wc3h8ZZeelre82v6V3CC02Rqs7WmF2gIZ/IVtuw
+         zxAknc/fQcFuL0DLvtfzYQiaYcoRw1xmG91FwgwYzfzPa2zb9zFs777Tla0VmvJ1WT
+         cXAViWgi2TVIv/pUNGCJZmG8JasYImcSxG/g01QJcscEsR0FzAKD8eTLbclBkET1uh
+         xGUmkqO6QNU9Q==
+Date:   Sat, 7 Aug 2021 13:32:00 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Zi Yan <ziy@nvidia.com>
+Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+        Ying Chen <chenying.kernel@bytedance.com>,
+        Feng Zhou <zhoufeng.zf@bytedance.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 08/15] fs: proc: use PAGES_PER_SECTION for page
+ offline checking period.
+Message-ID: <YQ5hIFZX02BMS+Yb@kernel.org>
+References: <20210805190253.2795604-1-zi.yan@sent.com>
+ <20210805190253.2795604-9-zi.yan@sent.com>
 MIME-Version: 1.0
-In-Reply-To: <YQ09tqMda2ke2qHy@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210805190253.2795604-9-zi.yan@sent.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/6/21 2:48 PM, Al Viro wrote:
-> On Fri, Aug 06, 2021 at 12:42:43PM +0100, Pavel Begunkov wrote:
->> Unless direct I/O path of generic_file_read_iter() ended up with an
->> error or a short read, it doesn't use inode. So, load inode and size
->> later, only when they're needed. This cuts two memory reads and also
->> imrpoves code generation, e.g. loads from stack.
+On Thu, Aug 05, 2021 at 03:02:46PM -0400, Zi Yan wrote:
+> From: Zi Yan <ziy@nvidia.com>
 > 
-> ... and the same question here.
+> It keeps the existing behavior after MAX_ORDER is increased beyond
+> a section size.
 > 
->> NOTE: as a side effect, it reads inode->i_size after ->direct_IO(), and
->> I'm not sure whether that's valid, so would be great to get feedback
->> from someone who knows better.
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Ying Chen <chenying.kernel@bytedance.com>
+> Cc: Feng Zhou <zhoufeng.zf@bytedance.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  fs/proc/kcore.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Ought to be safe, I think, but again, how much effect have you observed
-> from the patch?
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index 3f148759a5fd..77b7ba48fb44 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -486,7 +486,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  			}
+>  		}
+>  
+> -		if (page_offline_frozen++ % MAX_ORDER_NR_PAGES == 0) {
+> +		if (page_offline_frozen++ % PAGES_PER_SECTION == 0) {
 
-Answering for both patches -- I haven't benchmarked it and don't expect
-to find anything just from this one, considering variance between runs.
-I took a loot at the assembly (gcc 11.1), it removes 2 reads to get
-i_size, write+read that i_size from stack, because it stashed it on
-the stack.
+The behavior changes here. E.g. with default configuration on x86 instead
+of cond_resched() every 2M we get cond_resched() every 128M.
 
-For example, we've squeezed several percents of throughput before on
-the io_uring side just by cutting sheer number of not too expensive
-individually instructions. IMHO, it's easier to do when you spotted
-something by the way, than rediscovering the same during a performance
-safari.
+I'm not saying it's wrong but at least it deserves an explanation why.
+
+>  			page_offline_thaw();
+>  			cond_resched();
+>  			page_offline_freeze();
+> -- 
+> 2.30.2
+> 
 
 -- 
-Pavel Begunkov
+Sincerely yours,
+Mike.
