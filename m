@@ -2,74 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 939A43E365D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Aug 2021 18:55:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EE7A3E37EF
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Aug 2021 04:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbhHGQ4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Aug 2021 12:56:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229437AbhHGQ4K (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Aug 2021 12:56:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E104C61058;
-        Sat,  7 Aug 2021 16:55:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628355353;
-        bh=xneXCef3FRjBCnaNoY9tPBcNVJGns+i3iXDMrVO58mU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U9cRwDNoB6btRNhwTev/FroT9STOvybHbTC5Wd7HQsfk7sHA/LRv2Jz4Ob60iTCW/
-         vzmIgNeKI+7hn91QKZPej+HhOnQebH/rf3tl/mjl57NIoOFNGY0CORfAKiMPACjmOS
-         PZ8VqjW4lyOC4Mq70yCjJYJ9QiLjZdhFC3ajV3x5onW0x0XJI7TsbOBEwAyLd9asNw
-         rO6BXHol6p6s0N0TjMuwKbdmtEIaGSBS9maUDC6DR57GirE9fV2eiZb3XL2C7qchwY
-         vPdsVBfmdSL7eRL002qBnjdFbCj9AoyZDEX8PCp1YzK9i1qlOyJhaQGb9W6K7rFY4f
-         hmJrE1sa3JyxA==
-Date:   Sat, 7 Aug 2021 09:55:51 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Shreeya Patel <shreeya.patel@collabora.com>
-Cc:     krisman@collabora.com, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jaegeuk@kernel.org, chao@kernel.org, drosen@google.com,
-        yuchao0@huawei.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com
-Subject: Re: [PATCH] fs: unicode: Add utf8-data module
-Message-ID: <YQ67FxJRlfTj5EGy@sol.localdomain>
-References: <20210730124333.6744-1-shreeya.patel@collabora.com>
+        id S229977AbhHHCII (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Aug 2021 22:08:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45452 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229882AbhHHCIH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 7 Aug 2021 22:08:07 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44AE3C061760
+        for <linux-fsdevel@vger.kernel.org>; Sat,  7 Aug 2021 19:07:49 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id mt6so22502588pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Aug 2021 19:07:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wMm/Odyk8MGDnKiGamL4nyRlCLtI3xfxJNTo+Yg9PlE=;
+        b=EuDxBQf33n+JRr0xqbTGg4xkRIWSfJ70s9rmSi7wQGDsaOueK3rIJeDy3xmWbli+D6
+         VtHnyLVlvGS1cysKLBJ12XBJQYUFhnyKejdqDXPQeQgmJRO8tlWhXjKmDh4mYhsC75k2
+         FABvjEGyWU85TGM+FrMTM6CbxgKNnG5rS4pxXme3xLZBpSu0v0Mpt9sY5V6XkyPGxDw4
+         uKl5G+456gzkBMkcZFDYMY+f3qmUeUhm4GvL/pJhGBj82zZNcW659iIXNlp7xVAQdxqh
+         Bh42VdxZBGm/avJdK/s4/WLJY1ggy2qMokOBmF5U5EpOiO6C36Qg+donEit8FrYqmTP+
+         dWiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wMm/Odyk8MGDnKiGamL4nyRlCLtI3xfxJNTo+Yg9PlE=;
+        b=SGtpWeixlGwQFHNz/KAUronj1RD7WHWtY7I/z3ilfPGehVrh8A9/4jsAeMHP45Rro6
+         eLG+0eYV+2sfnQOJ1asL4ONyOAK6PuFbT2WXpKDDtgH+L3dCuqHveS79qmvJWXP1C1EE
+         VWaRaLdnRAfGZVDAs1jPlpZtCoXiSR0mXV0TBpmX7Tm/TPXNgRQKE/5kipi7Keg9vdq0
+         AmPzaWSePJ0Rv8dTkNuedg0mrYx+Nx/v87vOo096qPNgKiG+Lg+E2i3KKT9m5GxOU/fG
+         1KjedpMyR7tfTPYCrXSF3rsoBNSENSo/RpsXhMkOj18e3VF14eugXZ2iazRaL/vrS0oG
+         FEDg==
+X-Gm-Message-State: AOAM533od5NCzmr9B5FiLTy5iqLjaUNTa+vnpGAywTRXImcLJF8b2lR9
+        eV/3n9JYPRDA0sGLwFL7Zq3DsnIa0BG2vw==
+X-Google-Smtp-Source: ABdhPJzgr+BfBh1UqcqF4K/vxCfukmJeGKuNvZHod9NLrn5C6b07IB8Om8kcZJgFWYm7I4VBmSpqYA==
+X-Received: by 2002:a63:120e:: with SMTP id h14mr220165pgl.215.1628388468489;
+        Sat, 07 Aug 2021 19:07:48 -0700 (PDT)
+Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id o18sm3987432pjp.1.2021.08.07.19.07.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Aug 2021 19:07:47 -0700 (PDT)
+From:   Nadav Amit <nadav.amit@gmail.com>
+X-Google-Original-From: Nadav Amit
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Pavel Emelyanov <xemul@parallels.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Nadav Amit <namit@vmware.com>
+Subject: [PATCH 0/3] userfaultfd: minor bug fixes
+Date:   Sat,  7 Aug 2021 19:07:21 -0700
+Message-Id: <20210808020724.1022515-1-namit@vmware.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210730124333.6744-1-shreeya.patel@collabora.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 30, 2021 at 06:13:33PM +0530, Shreeya Patel wrote:
-> diff --git a/fs/unicode/utf8n.h b/fs/unicode/utf8n.h
-> index 0acd530c2c79..6843229bcb2b 100644
-> --- a/fs/unicode/utf8n.h
-> +++ b/fs/unicode/utf8n.h
-> @@ -11,6 +11,7 @@
->  #include <linux/export.h>
->  #include <linux/string.h>
->  #include <linux/module.h>
-> +#include <linux/spinlock.h>
->  
->  /* Encoding a unicode version number as a single unsigned int. */
->  #define UNICODE_MAJ_SHIFT		(16)
-> @@ -21,6 +22,11 @@
->  	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
->  	 ((unsigned int)(REV)))
->  
-> +extern spinlock_t utf8_lock;
-> +
-> +extern struct utf8_data *utf8_ops;
-> +extern bool utf8data_loaded;
+From: Nadav Amit <namit@vmware.com>
 
-The 'utf8data_loaded' variable is unnecessary, since it's equivalent to
-'utf8_ops != NULL'.
+Three unrelated bug fixes. The first two addresses possible issues (not
+too theoretical ones), but I did not encounter them in practice.
 
-Also, there are no function pointer fields anymore, so this really should be
-called utf8_data, not utf8_ops.
+The third patch addresses a test bug that causes the test to fail on my
+system. It has been sent before as part of a bigger RFC. 
 
-- Eric
+Nadav Amit (3):
+  userfaultfd: change mmap_changing to atomic
+  userfaultfd: prevent concurrent API initialization
+  selftests/vm/userfaultfd: wake after copy failure
+
+ fs/userfaultfd.c                         | 116 +++++++++++------------
+ include/linux/userfaultfd_k.h            |   8 +-
+ mm/userfaultfd.c                         |  15 +--
+ tools/testing/selftests/vm/userfaultfd.c |  13 +++
+ 4 files changed, 82 insertions(+), 70 deletions(-)
+
+-- 
+2.25.1
+
