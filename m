@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D68723E3B91
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Aug 2021 18:26:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C5F03E3B8B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Aug 2021 18:25:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232588AbhHHQ0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Aug 2021 12:26:17 -0400
+        id S232563AbhHHQ0N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Aug 2021 12:26:13 -0400
 Received: from mail.kernel.org ([198.145.29.99]:47316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231636AbhHHQZf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Aug 2021 12:25:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D1FFB61052;
-        Sun,  8 Aug 2021 16:25:15 +0000 (UTC)
+        id S231811AbhHHQZg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Aug 2021 12:25:36 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 73D1E61076;
+        Sun,  8 Aug 2021 16:25:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1628439916;
-        bh=+BmbX/XSW9xusxJkV3hvcje6ty+QECDqHCCE2dTid9g=;
+        bh=GasSH2ltMgihtrZxt7291SJqZTLmkcU1VpHCFgltNrc=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=hBdFVWmtoKW3qDy2YkI9Ozq0aWiA3A87LOogadid5XAQYnY8SrfIKnotRBuBd8Hc4
-         +24CsQGAkCHx5OJ+NTfW33EfO1RKDluyXMTyMBUDwYmMixXKZ/LWjXAt6WKwrPdqtl
-         U7e8VzA0yI996uediTk0zfO2tWE8/65yCc4mG+599Bi93qR7Ny6DLjod4sTx0Blsns
-         Q7C8WcR2GrUyn7ZOTk4L/n0TIwLaAmtVHB0L1MCLIlea5cZJDS3mXhDfCpHuL8Ej1B
-         0VmSjoXWV6hCUn7BpLVby8yBy12uymklqQKnGSHqzybXYIEJAAsb+nGNcaidW7fo+W
-         +Xf94xi6iJjcw==
+        b=fObJDeUqrX89ga6U+We2XUcAs9Qg9tGiJvGfL2aHjzN8jvbfNi2YtyJNibOcXef5D
+         9yj4H7y8NNTAWGHsv7/iCq9oha194D9Am4Ok1EUzFLI7aixGqjUy9A81j2CyCWiSZ7
+         wmQ/HGHZSK8aVbnAMs1IU1+f7W00lBFzNdOJLD3lC7NWrsMjtgPKKmhP8ySlOJPZrO
+         WKmNOP2mwxlqbfwZjEO9ABZqLxFs/JLQbGdjupM5CbvqTGMCEuw1Y4zwg+6HhVbSOJ
+         /DFMGe6bvCEy6VgtccycuXSakiQvXW+EpHyRCysn4qElmP9afGuyG02zq/jqyRpOb7
+         Cza5BOQTz6nkg==
 Received: by pali.im (Postfix)
-        id 0C96115AC; Sun,  8 Aug 2021 18:25:14 +0200 (CEST)
+        id 9217115B0; Sun,  8 Aug 2021 18:25:14 +0200 (CEST)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     linux-fsdevel@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
@@ -41,9 +41,9 @@ To:     linux-fsdevel@vger.kernel.org,
         Pavel Machek <pavel@ucw.cz>,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
         Christoph Hellwig <hch@infradead.org>
-Subject: [RFC PATCH 03/20] udf: Fix iocharset=utf8 mount option
-Date:   Sun,  8 Aug 2021 18:24:36 +0200
-Message-Id: <20210808162453.1653-4-pali@kernel.org>
+Subject: [RFC PATCH 04/20] isofs: joliet: Fix iocharset=utf8 mount option
+Date:   Sun,  8 Aug 2021 18:24:37 +0200
+Message-Id: <20210808162453.1653-5-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210808162453.1653-1-pali@kernel.org>
 References: <20210808162453.1653-1-pali@kernel.org>
@@ -60,147 +60,135 @@ it is required to use utf8 mount option.
 Fix iocharset=utf8 mount option to use be equivalent to the utf8 mount
 option.
 
-If UTF-8 as iocharset is used then s_nls_map is set to NULL. So simplify
-code around, remove UDF_FLAG_NLS_MAP and UDF_FLAG_UTF8 flags as to
-distinguish between UTF-8 and non-UTF-8 it is needed just to check if
-s_nls_map set to NULL or not.
+If UTF-8 as iocharset is used then s_nls_iocharset is set to NULL. So
+simplify code around, remove s_utf8 field as to distinguish between UTF-8
+and non-UTF-8 it is needed just to check if s_nls_iocharset is set to NULL
+or not.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- fs/udf/super.c   | 50 ++++++++++++++++++------------------------------
- fs/udf/udf_sb.h  |  2 --
- fs/udf/unicode.c |  4 ++--
- 3 files changed, 21 insertions(+), 35 deletions(-)
+ fs/isofs/inode.c  | 27 +++++++++++++--------------
+ fs/isofs/isofs.h  |  1 -
+ fs/isofs/joliet.c |  4 +---
+ 3 files changed, 14 insertions(+), 18 deletions(-)
 
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index 2f83c1204e20..6e8c29107b04 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -349,10 +349,10 @@ static int udf_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_printf(seq, ",lastblock=%u", sbi->s_last_block);
- 	if (sbi->s_anchor != 0)
- 		seq_printf(seq, ",anchor=%u", sbi->s_anchor);
--	if (UDF_QUERY_FLAG(sb, UDF_FLAG_UTF8))
--		seq_puts(seq, ",utf8");
--	if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP) && sbi->s_nls_map)
-+	if (sbi->s_nls_map)
- 		seq_printf(seq, ",iocharset=%s", sbi->s_nls_map->charset);
-+	else
-+		seq_puts(seq, ",iocharset=utf8");
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index 21edc423b79f..678e2c51b855 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -155,7 +155,6 @@ struct iso9660_options{
+ 	unsigned int overriderockperm:1;
+ 	unsigned int uid_set:1;
+ 	unsigned int gid_set:1;
+-	unsigned int utf8:1;
+ 	unsigned char map;
+ 	unsigned char check;
+ 	unsigned int blocksize;
+@@ -356,7 +355,6 @@ static int parse_options(char *options, struct iso9660_options *popt)
+ 	popt->gid = GLOBAL_ROOT_GID;
+ 	popt->uid = GLOBAL_ROOT_UID;
+ 	popt->iocharset = NULL;
+-	popt->utf8 = 0;
+ 	popt->overriderockperm = 0;
+ 	popt->session=-1;
+ 	popt->sbsector=-1;
+@@ -389,10 +387,13 @@ static int parse_options(char *options, struct iso9660_options *popt)
+ 		case Opt_cruft:
+ 			popt->cruft = 1;
+ 			break;
++#ifdef CONFIG_JOLIET
+ 		case Opt_utf8:
+-			popt->utf8 = 1;
++			kfree(popt->iocharset);
++			popt->iocharset = kstrdup("utf8", GFP_KERNEL);
++			if (!popt->iocharset)
++				return 0;
+ 			break;
+-#ifdef CONFIG_JOLIET
+ 		case Opt_iocharset:
+ 			kfree(popt->iocharset);
+ 			popt->iocharset = match_strdup(&args[0]);
+@@ -495,7 +496,6 @@ static int isofs_show_options(struct seq_file *m, struct dentry *root)
+ 	if (sbi->s_nocompress)		seq_puts(m, ",nocompress");
+ 	if (sbi->s_overriderockperm)	seq_puts(m, ",overriderockperm");
+ 	if (sbi->s_showassoc)		seq_puts(m, ",showassoc");
+-	if (sbi->s_utf8)		seq_puts(m, ",utf8");
  
+ 	if (sbi->s_check)		seq_printf(m, ",check=%c", sbi->s_check);
+ 	if (sbi->s_mapping)		seq_printf(m, ",map=%c", sbi->s_mapping);
+@@ -518,9 +518,10 @@ static int isofs_show_options(struct seq_file *m, struct dentry *root)
+ 		seq_printf(m, ",fmode=%o", sbi->s_fmode);
+ 
+ #ifdef CONFIG_JOLIET
+-	if (sbi->s_nls_iocharset &&
+-	    strcmp(sbi->s_nls_iocharset->charset, CONFIG_NLS_DEFAULT) != 0)
++	if (sbi->s_nls_iocharset)
+ 		seq_printf(m, ",iocharset=%s", sbi->s_nls_iocharset->charset);
++	else
++		seq_puts(m, ",iocharset=utf8");
+ #endif
  	return 0;
  }
-@@ -558,19 +558,24 @@ static int udf_parse_options(char *options, struct udf_options *uopt,
- 			/* Ignored (never implemented properly) */
- 			break;
- 		case Opt_utf8:
--			uopt->flags |= (1 << UDF_FLAG_UTF8);
-+			if (!remount) {
-+				unload_nls(uopt->nls_map);
-+				uopt->nls_map = NULL;
-+			}
- 			break;
- 		case Opt_iocharset:
- 			if (!remount) {
--				if (uopt->nls_map)
--					unload_nls(uopt->nls_map);
--				/*
--				 * load_nls() failure is handled later in
--				 * udf_fill_super() after all options are
--				 * parsed.
--				 */
-+				unload_nls(uopt->nls_map);
-+				uopt->nls_map = NULL;
-+			}
-+			/* When nls_map is not loaded then UTF-8 is used */
-+			if (!remount && strcmp(args[0].from, "utf8") != 0) {
- 				uopt->nls_map = load_nls(args[0].from);
--				uopt->flags |= (1 << UDF_FLAG_NLS_MAP);
-+				if (!uopt->nls_map) {
-+					pr_err("iocharset %s not found\n",
-+						args[0].from);
-+					return 0;
-+				}
- 			}
- 			break;
- 		case Opt_uforget:
-@@ -2139,21 +2144,6 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
- 	if (!udf_parse_options((char *)options, &uopt, false))
- 		goto parse_options_failure;
+@@ -863,14 +864,13 @@ static int isofs_fill_super(struct super_block *s, void *data, int silent)
+ 	sbi->s_nls_iocharset = NULL;
  
--	if (uopt.flags & (1 << UDF_FLAG_UTF8) &&
--	    uopt.flags & (1 << UDF_FLAG_NLS_MAP)) {
--		udf_err(sb, "utf8 cannot be combined with iocharset\n");
--		goto parse_options_failure;
--	}
--	if ((uopt.flags & (1 << UDF_FLAG_NLS_MAP)) && !uopt.nls_map) {
--		uopt.nls_map = load_nls_default();
--		if (!uopt.nls_map)
--			uopt.flags &= ~(1 << UDF_FLAG_NLS_MAP);
--		else
--			udf_debug("Using default NLS map\n");
--	}
--	if (!(uopt.flags & (1 << UDF_FLAG_NLS_MAP)))
--		uopt.flags |= (1 << UDF_FLAG_UTF8);
--
- 	fileset.logicalBlockNum = 0xFFFFFFFF;
- 	fileset.partitionReferenceNum = 0xFFFF;
- 
-@@ -2308,8 +2298,7 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
- error_out:
- 	iput(sbi->s_vat_inode);
- parse_options_failure:
--	if (uopt.nls_map)
--		unload_nls(uopt.nls_map);
-+	unload_nls(uopt.nls_map);
- 	if (lvid_open)
- 		udf_close_lvid(sb);
- 	brelse(sbi->s_lvid_bh);
-@@ -2359,8 +2348,7 @@ static void udf_put_super(struct super_block *sb)
- 	sbi = UDF_SB(sb);
- 
- 	iput(sbi->s_vat_inode);
--	if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP))
--		unload_nls(sbi->s_nls_map);
-+	unload_nls(sbi->s_nls_map);
- 	if (!sb_rdonly(sb))
- 		udf_close_lvid(sb);
- 	brelse(sbi->s_lvid_bh);
-diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
-index 758efe557a19..4fa620543d30 100644
---- a/fs/udf/udf_sb.h
-+++ b/fs/udf/udf_sb.h
-@@ -20,8 +20,6 @@
- #define UDF_FLAG_UNDELETE		6
- #define UDF_FLAG_UNHIDE			7
- #define UDF_FLAG_VARCONV		8
--#define UDF_FLAG_NLS_MAP		9
--#define UDF_FLAG_UTF8			10
- #define UDF_FLAG_UID_FORGET     11    /* save -1 for uid to disk */
- #define UDF_FLAG_GID_FORGET     12
- #define UDF_FLAG_UID_SET	13
-diff --git a/fs/udf/unicode.c b/fs/udf/unicode.c
-index 5fcfa96463eb..622569007b53 100644
---- a/fs/udf/unicode.c
-+++ b/fs/udf/unicode.c
-@@ -177,7 +177,7 @@ static int udf_name_from_CS0(struct super_block *sb,
- 		return 0;
+ #ifdef CONFIG_JOLIET
+-	if (joliet_level && opt.utf8 == 0) {
++	if (joliet_level) {
+ 		char *p = opt.iocharset ? opt.iocharset : CONFIG_NLS_DEFAULT;
+-		sbi->s_nls_iocharset = load_nls(p);
+-		if (! sbi->s_nls_iocharset) {
+-			/* Fail only if explicit charset specified */
+-			if (opt.iocharset)
++		if (strcmp(p, "utf8") != 0) {
++			sbi->s_nls_iocharset = opt.iocharset ?
++				load_nls(opt.iocharset) : load_nls_default();
++			if (!sbi->s_nls_iocharset)
+ 				goto out_freesbi;
+-			sbi->s_nls_iocharset = load_nls_default();
+ 		}
  	}
+ #endif
+@@ -886,7 +886,6 @@ static int isofs_fill_super(struct super_block *s, void *data, int silent)
+ 	sbi->s_gid = opt.gid;
+ 	sbi->s_uid_set = opt.uid_set;
+ 	sbi->s_gid_set = opt.gid_set;
+-	sbi->s_utf8 = opt.utf8;
+ 	sbi->s_nocompress = opt.nocompress;
+ 	sbi->s_overriderockperm = opt.overriderockperm;
+ 	/*
+diff --git a/fs/isofs/isofs.h b/fs/isofs/isofs.h
+index 055ec6c586f7..dcdc191ed183 100644
+--- a/fs/isofs/isofs.h
++++ b/fs/isofs/isofs.h
+@@ -44,7 +44,6 @@ struct isofs_sb_info {
+ 	unsigned char s_session;
+ 	unsigned int  s_high_sierra:1;
+ 	unsigned int  s_rock:2;
+-	unsigned int  s_utf8:1;
+ 	unsigned int  s_cruft:1; /* Broken disks with high byte of length
+ 				  * containing junk */
+ 	unsigned int  s_nocompress:1;
+diff --git a/fs/isofs/joliet.c b/fs/isofs/joliet.c
+index be8b6a9d0b92..c0f04a1e7f69 100644
+--- a/fs/isofs/joliet.c
++++ b/fs/isofs/joliet.c
+@@ -41,14 +41,12 @@ uni16_to_x8(unsigned char *ascii, __be16 *uni, int len, struct nls_table *nls)
+ int
+ get_joliet_filename(struct iso_directory_record * de, unsigned char *outname, struct inode * inode)
+ {
+-	unsigned char utf8;
+ 	struct nls_table *nls;
+ 	unsigned char len = 0;
  
--	if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP))
-+	if (UDF_SB(sb)->s_nls_map)
- 		conv_f = UDF_SB(sb)->s_nls_map->uni2char;
- 	else
- 		conv_f = NULL;
-@@ -285,7 +285,7 @@ static int udf_name_to_CS0(struct super_block *sb,
- 	if (ocu_max_len <= 0)
- 		return 0;
+-	utf8 = ISOFS_SB(inode->i_sb)->s_utf8;
+ 	nls = ISOFS_SB(inode->i_sb)->s_nls_iocharset;
  
--	if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP))
-+	if (UDF_SB(sb)->s_nls_map)
- 		conv_f = UDF_SB(sb)->s_nls_map->char2uni;
- 	else
- 		conv_f = NULL;
+-	if (utf8) {
++	if (!nls) {
+ 		len = utf16s_to_utf8s((const wchar_t *) de->name,
+ 				de->name_len[0] >> 1, UTF16_BIG_ENDIAN,
+ 				outname, PAGE_SIZE);
 -- 
 2.20.1
 
