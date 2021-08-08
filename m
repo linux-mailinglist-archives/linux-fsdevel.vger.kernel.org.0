@@ -2,62 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB7DD3E37F1
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Aug 2021 04:07:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AA183E37F3
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Aug 2021 04:07:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbhHHCIL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Aug 2021 22:08:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45468 "EHLO
+        id S230147AbhHHCIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Aug 2021 22:08:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229882AbhHHCIK (ORCPT
+        with ESMTP id S229882AbhHHCIL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Aug 2021 22:08:10 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BE8C061760
-        for <linux-fsdevel@vger.kernel.org>; Sat,  7 Aug 2021 19:07:52 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id u21-20020a17090a8915b02901782c36f543so19826741pjn.4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Aug 2021 19:07:52 -0700 (PDT)
+        Sat, 7 Aug 2021 22:08:11 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A88B3C061760;
+        Sat,  7 Aug 2021 19:07:53 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id s22-20020a17090a1c16b0290177caeba067so28793796pjs.0;
+        Sat, 07 Aug 2021 19:07:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dwN65lOUWCgfc5FR2xnpIGVNh4f9hPLrdp8V42nRuEI=;
-        b=fgc2EYW7k+YZMwiC/zEHrwd3OX9XXSS0Py/nYlLGpV/s7MzDSslbfB/PwvZoKrLgYF
-         CJI4xqiBVk0DZTaRliobcytVTr2VcgidzWEv7AbclNsCdCqoZq0sh3ZW0I0jqZu5QTCw
-         EN3hBb3ZYzF/nrf78YnpmJrbKVx+n0/6EmnSLcSQNsZ3PUaAs7mvy+aVVgd0FaFr62iP
-         ZBcYYdoEdEFzWVfzDkDL0O0sPC7+9m/h/x31mXWtD+J0IgqBJs8pdYmltiYfrtQMXcez
-         YJKFiOiiKBvBsMrRLb8l3iFbM9cqwdpG+hH8upGSNuXdeaJ2uZcibNVD02MhgwLdLCm7
-         8jQw==
+        bh=1KFCzgzs6/mkJLTZRMdu7KL4aRMw+QDalF1MyA5qyPc=;
+        b=c1jmo4avM+j7qm/Hvn4rEviWxWdp0pbR8TMWAvIa31LCIWFMHOZDm7tiys7Czcb+26
+         CBtHJ07AbujN0rJgMi1sRutrTqJV0PR/Vx5LI3MHcT7nwIjcvyOhVlfqDZdjx+9zCeds
+         nTjLHdGvAfcJoDzCFcdmi4aNHdrP6PF0C72yVYyXjbB88jvhpV1HuNKPlaQlU4Wkrc3F
+         2slbAD7Ve6CiwjOKbnIfKm6JM0BnL20IQvycWHiaNZBJw10ZWYCwqTuvZjt+jZszQSE6
+         wCrGbsO+HvUN/cd4AzMzRZoFrZku4zo8ndOU6uR2CJm0ELT5gvIlDhbF72QvPVUZ7laM
+         v+9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dwN65lOUWCgfc5FR2xnpIGVNh4f9hPLrdp8V42nRuEI=;
-        b=r3PF1vytIh26RHe1s08qeMwPigVMmrHEQH3LTVjs49mQhKDRun3SDy3v/5GDY/Lrow
-         GdQ8pe12f3mhaJ+J6bT3MGCX+Q+lgbqq8uWnhGAB/bx1JpxesT5G4jSStceHztN4rBeH
-         CAZCIpuWKELA6wcZkbZwHyk4kU9rjfmfr6I97lTeYXOu/rAiBQtAOx0Q+r2Sn9boir9f
-         BIHwVHtIc1hJcchAX1avep8uQXXLBL32O1u3N6mshuaiM2OFsJTtAXjhutXtgp5ofO9F
-         RDiLwltuxfMa7E9gxDKB7nBY9XDH2TZAANQwxTx4l+oEXk2Fs0yEJdPXlFfZQ96WnWlK
-         3pyQ==
-X-Gm-Message-State: AOAM531ejOjjq+1P8V8HLL4JkYKXezbqcpiQGwKmO/HCYuPhTnx42JFD
-        nUxwE2BW7TgIdtZ0gB00tB8=
-X-Google-Smtp-Source: ABdhPJyvaJVUQ80nhCy7y9ZgYlCgRAOm1yMl+Lh6vfpO16MOgsEx+0kmVDYeMxlnm9snam5J25lqOQ==
-X-Received: by 2002:a17:90a:b38e:: with SMTP id e14mr17861844pjr.170.1628388471406;
-        Sat, 07 Aug 2021 19:07:51 -0700 (PDT)
+        bh=1KFCzgzs6/mkJLTZRMdu7KL4aRMw+QDalF1MyA5qyPc=;
+        b=j7E62lT9sLDriE33PY3NKP4cOojwZrdNcFXpdsiYNhbR/PDJ4dDxfmVZaCoquU4EZk
+         vnKKNL59PBYq9cjup874xjBiNLivR0suh/2KILqF4LtUhcK6GiE9EDMsvPGtWyVEwII6
+         RDTJ+b9r+a/Qv3VY4X/38VO/rbxY8auZH7uRkmmRzf5Y6ryi+FJst5ys/BSv7gczRnS8
+         FjpcAb9QAW1Qto6bTHAfGaXUHGc0fdqRh8vCrgu6azNtbjFeU0yrg4qeo8bdRbH5CFrQ
+         OW+6j5wrBG8tYVLYnHcmh+F2UgagJ4DWPAiTMA2Nv3J0UwsV3cYiVEZAK6yGu8sZxGXy
+         npuw==
+X-Gm-Message-State: AOAM533ntTnYMK5e+1hb7Kr6MyW9EdoqwZPLxnBKd8mVspSrfRk4PpJA
+        WkjvRbE/9tDABpavtA5vKZFFRpEGtxKD/A==
+X-Google-Smtp-Source: ABdhPJytvGw2/Z+5f1wuXCQ77/SUg5Bv0uYeWV5Hra0kqSaDResaqJ/hxaWnIOzmCfUPHdwMjak1Tg==
+X-Received: by 2002:a05:6a00:c81:b029:30e:21bf:4c15 with SMTP id a1-20020a056a000c81b029030e21bf4c15mr17944810pfv.70.1628388473101;
+        Sat, 07 Aug 2021 19:07:53 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id o18sm3987432pjp.1.2021.08.07.19.07.50
+        by smtp.gmail.com with ESMTPSA id o18sm3987432pjp.1.2021.08.07.19.07.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Aug 2021 19:07:50 -0700 (PDT)
+        Sat, 07 Aug 2021 19:07:52 -0700 (PDT)
 From:   Nadav Amit <nadav.amit@gmail.com>
 X-Google-Original-From: Nadav Amit
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Pavel Emelyanov <xemul@parallels.com>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Nadav Amit <namit@vmware.com>
-Subject: [PATCH 2/3] userfaultfd: prevent concurrent API initialization
-Date:   Sat,  7 Aug 2021 19:07:23 -0700
-Message-Id: <20210808020724.1022515-3-namit@vmware.com>
+        linux-fsdevel@vger.kernel.org, Nadav Amit <namit@vmware.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] selftests/vm/userfaultfd: wake after copy failure
+Date:   Sat,  7 Aug 2021 19:07:24 -0700
+Message-Id: <20210808020724.1022515-4-namit@vmware.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210808020724.1022515-1-namit@vmware.com>
 References: <20210808020724.1022515-1-namit@vmware.com>
@@ -69,211 +73,74 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Nadav Amit <namit@vmware.com>
 
-userfaultfd assumes that the enabled features are set once and never
-changed after UFFDIO_API ioctl succeeded.
+When userfaultfd copy-ioctl fails since the PTE already exists, an
+-EEXIST error is returned and the faulting thread is not woken. The
+current userfaultfd test does not wake the faulting thread in such case.
+The assumption is presumably that another thread set the PTE through
+copy/wp ioctl and would wake the faulting thread or that alternatively
+the fault handler would realize there is no need to "must_wait" and
+continue. This is not necessarily true.
 
-However, currently, UFFDIO_API can be called concurrently from two
-different threads, succeed on both threads and leave userfaultfd's
-features in non-deterministic state. Theoretically, other uffd
-operations (ioctl's and page-faults) can be dispatched while adversely
-affected by such changes of features.
+There is an assumption that the "must_wait" tests in handle_userfault()
+are sufficient to provide definitive answer whether the offending PTE is
+populated or not. However, userfaultfd_must_wait() test is lockless.
+Consequently, concurrent calls to ptep_modify_prot_start(), for
+instance, can clear the PTE and can cause userfaultfd_must_wait()
+to wrongly assume it is not populated and a wait is needed.
 
-Moreover, the writes to ctx->state and ctx->features are not ordered,
-which can - theoretically, again - let userfaultfd_ioctl() think
-that userfaultfd API completed, while the features are still not
-initialized.
+There are therefore 3 options:
+(1) Change the tests to wake on copy failure.
+(2) Wake faulting thread unconditionally on zero/copy ioctls before
+    returning -EEXIST.
+(3) Change the userfaultfd_must_wait() to hold locks.
 
-To avoid races, it is arguably best to get rid of ctx->state. Since
-there are only 2 states, record the API initialization in ctx->features
-as the uppermost bit and remove ctx->state.
+This patch took the first approach, but the others are valid solutions
+with different tradeoffs.
 
-Cc: Pavel Emelyanov <xemul@parallels.com>
-Fixes: 9cd75c3cd4c3d ("userfaultfd: non-cooperative: add ability to report non-PF events from uffd descriptor")
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: io-uring@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- fs/userfaultfd.c | 91 +++++++++++++++++++++++-------------------------
- 1 file changed, 44 insertions(+), 47 deletions(-)
+ tools/testing/selftests/vm/userfaultfd.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 29a3016f16c9..003f0d31743e 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -33,11 +33,6 @@ int sysctl_unprivileged_userfaultfd __read_mostly;
+diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+index 2ea438e6b8b1..10ab56c2484a 100644
+--- a/tools/testing/selftests/vm/userfaultfd.c
++++ b/tools/testing/selftests/vm/userfaultfd.c
+@@ -566,6 +566,18 @@ static void retry_copy_page(int ufd, struct uffdio_copy *uffdio_copy,
+ 	}
+ }
  
- static struct kmem_cache *userfaultfd_ctx_cachep __read_mostly;
- 
--enum userfaultfd_state {
--	UFFD_STATE_WAIT_API,
--	UFFD_STATE_RUNNING,
--};
--
- /*
-  * Start with fault_pending_wqh and fault_wqh so they're more likely
-  * to be in the same cacheline.
-@@ -69,8 +64,6 @@ struct userfaultfd_ctx {
- 	unsigned int flags;
- 	/* features requested from the userspace */
- 	unsigned int features;
--	/* state machine */
--	enum userfaultfd_state state;
- 	/* released */
- 	bool released;
- 	/* memory mappings are changing because of non-cooperative event */
-@@ -104,6 +97,14 @@ struct userfaultfd_wake_range {
- 	unsigned long len;
- };
- 
-+/* internal indication that UFFD_API ioctl was successfully executed */
-+#define UFFD_FEATURE_INITIALIZED		(1u << 31)
-+
-+static bool userfaultfd_is_initialized(struct userfaultfd_ctx *ctx)
++static void wake_range(int ufd, unsigned long addr, unsigned long len)
 +{
-+	return ctx->features & UFFD_FEATURE_INITIALIZED;
++	struct uffdio_range uffdio_wake;
++
++	uffdio_wake.start = addr;
++	uffdio_wake.len = len;
++
++	if (ioctl(ufd, UFFDIO_WAKE, &uffdio_wake))
++		fprintf(stderr, "error waking %lu\n",
++			addr), exit(1);
 +}
 +
- static int userfaultfd_wake_function(wait_queue_entry_t *wq, unsigned mode,
- 				     int wake_flags, void *key)
+ static int __copy_page(int ufd, unsigned long offset, bool retry)
  {
-@@ -667,7 +668,6 @@ int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
- 
- 		refcount_set(&ctx->refcount, 1);
- 		ctx->flags = octx->flags;
--		ctx->state = UFFD_STATE_RUNNING;
- 		ctx->features = octx->features;
- 		ctx->released = false;
- 		atomic_set(&ctx->mmap_changing, 0);
-@@ -944,38 +944,33 @@ static __poll_t userfaultfd_poll(struct file *file, poll_table *wait)
- 
- 	poll_wait(file, &ctx->fd_wqh, wait);
- 
--	switch (ctx->state) {
--	case UFFD_STATE_WAIT_API:
-+	if (!userfaultfd_is_initialized(ctx))
- 		return EPOLLERR;
--	case UFFD_STATE_RUNNING:
--		/*
--		 * poll() never guarantees that read won't block.
--		 * userfaults can be waken before they're read().
--		 */
--		if (unlikely(!(file->f_flags & O_NONBLOCK)))
--			return EPOLLERR;
--		/*
--		 * lockless access to see if there are pending faults
--		 * __pollwait last action is the add_wait_queue but
--		 * the spin_unlock would allow the waitqueue_active to
--		 * pass above the actual list_add inside
--		 * add_wait_queue critical section. So use a full
--		 * memory barrier to serialize the list_add write of
--		 * add_wait_queue() with the waitqueue_active read
--		 * below.
--		 */
--		ret = 0;
--		smp_mb();
--		if (waitqueue_active(&ctx->fault_pending_wqh))
--			ret = EPOLLIN;
--		else if (waitqueue_active(&ctx->event_wqh))
--			ret = EPOLLIN;
- 
--		return ret;
--	default:
--		WARN_ON_ONCE(1);
-+	/*
-+	 * poll() never guarantees that read won't block.
-+	 * userfaults can be waken before they're read().
-+	 */
-+	if (unlikely(!(file->f_flags & O_NONBLOCK)))
- 		return EPOLLERR;
--	}
-+	/*
-+	 * lockless access to see if there are pending faults
-+	 * __pollwait last action is the add_wait_queue but
-+	 * the spin_unlock would allow the waitqueue_active to
-+	 * pass above the actual list_add inside
-+	 * add_wait_queue critical section. So use a full
-+	 * memory barrier to serialize the list_add write of
-+	 * add_wait_queue() with the waitqueue_active read
-+	 * below.
-+	 */
-+	ret = 0;
-+	smp_mb();
-+	if (waitqueue_active(&ctx->fault_pending_wqh))
-+		ret = EPOLLIN;
-+	else if (waitqueue_active(&ctx->event_wqh))
-+		ret = EPOLLIN;
-+
-+	return ret;
- }
- 
- static const struct file_operations userfaultfd_fops;
-@@ -1170,7 +1165,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	int no_wait = file->f_flags & O_NONBLOCK;
- 	struct inode *inode = file_inode(file);
- 
--	if (ctx->state == UFFD_STATE_WAIT_API)
-+	if (!userfaultfd_is_initialized(ctx))
- 		return -EINVAL;
- 
- 	for (;;) {
-@@ -1909,9 +1904,10 @@ static int userfaultfd_continue(struct userfaultfd_ctx *ctx, unsigned long arg)
- static inline unsigned int uffd_ctx_features(__u64 user_features)
- {
- 	/*
--	 * For the current set of features the bits just coincide
-+	 * For the current set of features the bits just coincide. Set
-+	 * UFFD_FEATURE_INITIALIZED to mark the features as enabled.
- 	 */
--	return (unsigned int)user_features;
-+	return (unsigned int)user_features | UFFD_FEATURE_INITIALIZED;
- }
- 
- /*
-@@ -1924,12 +1920,10 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
- {
- 	struct uffdio_api uffdio_api;
- 	void __user *buf = (void __user *)arg;
-+	unsigned int ctx_features;
- 	int ret;
- 	__u64 features;
- 
--	ret = -EINVAL;
--	if (ctx->state != UFFD_STATE_WAIT_API)
--		goto out;
- 	ret = -EFAULT;
- 	if (copy_from_user(&uffdio_api, buf, sizeof(uffdio_api)))
- 		goto out;
-@@ -1953,9 +1947,13 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
- 	ret = -EFAULT;
- 	if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
- 		goto out;
--	ctx->state = UFFD_STATE_RUNNING;
-+
- 	/* only enable the requested features for this uffd context */
--	ctx->features = uffd_ctx_features(features);
-+	ctx_features = uffd_ctx_features(features);
-+	ret = -EINVAL;
-+	if (cmpxchg(&ctx->features, 0, ctx_features) != 0)
-+		goto err_out;
-+
- 	ret = 0;
- out:
- 	return ret;
-@@ -1972,7 +1970,7 @@ static long userfaultfd_ioctl(struct file *file, unsigned cmd,
- 	int ret = -EINVAL;
- 	struct userfaultfd_ctx *ctx = file->private_data;
- 
--	if (cmd != UFFDIO_API && ctx->state == UFFD_STATE_WAIT_API)
-+	if (cmd != UFFDIO_API && !userfaultfd_is_initialized(ctx))
- 		return -EINVAL;
- 
- 	switch(cmd) {
-@@ -2086,7 +2084,6 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	refcount_set(&ctx->refcount, 1);
- 	ctx->flags = flags;
- 	ctx->features = 0;
--	ctx->state = UFFD_STATE_WAIT_API;
- 	ctx->released = false;
- 	atomic_set(&ctx->mmap_changing, 0);
- 	ctx->mm = current->mm;
+ 	struct uffdio_copy uffdio_copy;
+@@ -585,6 +597,7 @@ static int __copy_page(int ufd, unsigned long offset, bool retry)
+ 		if (uffdio_copy.copy != -EEXIST)
+ 			err("UFFDIO_COPY error: %"PRId64,
+ 			    (int64_t)uffdio_copy.copy);
++		wake_range(ufd, uffdio_copy.dst, page_size);
+ 	} else if (uffdio_copy.copy != page_size) {
+ 		err("UFFDIO_COPY error: %"PRId64, (int64_t)uffdio_copy.copy);
+ 	} else {
 -- 
 2.25.1
 
