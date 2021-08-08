@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 101973E3B84
+	by mail.lfdr.de (Postfix) with ESMTP id D78983E3B86
 	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Aug 2021 18:25:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231825AbhHHQ0K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Aug 2021 12:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47530 "EHLO mail.kernel.org"
+        id S232506AbhHHQ0L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Aug 2021 12:26:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231882AbhHHQZg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Aug 2021 12:25:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AC3B6610A1;
-        Sun,  8 Aug 2021 16:25:17 +0000 (UTC)
+        id S231933AbhHHQZh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Aug 2021 12:25:37 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4E7826103B;
+        Sun,  8 Aug 2021 16:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628439917;
-        bh=s8/pegOQ7RYOq+lh3ThWZRo1NRJOC4wAYqGAubgRpOU=;
+        s=k20201202; t=1628439918;
+        bh=Y0Q6rt+tDWZMBi0N4PwxXpAY8aZOyLa7NpaJo/VUL6k=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=jvq5yzqR6RoEecl4y1TjillgIF7I6qPa74Gyb7EtLccaqf3UZZeDSACwA5V9YcoEM
-         +0nDO8hc3r1SW4TEQzWPXRkwesbSyw+Tp6lRiTI9pOMSSoaXB3YY+TEAi5DSvdeJfn
-         oSuaQ+hG8uRvT3ByMfTCH0Dfbyx8RQBKfp9pWCOVYY8Tvi1Gp82FIqIlJsk5jAGFSE
-         kq29jYqwhS+AD9rFH//ptfRxG3SAKEvSWxWq2Br4+Vwo9L6m+a3n+d/HlC5mAsfCET
-         BNC71n1V9DRYoFe0DnjEv2ZqNOoJpCawE4648iyrsqLn4a2m4twkzZpY9jCqLVn7AY
-         2RTQoRtOuv9rg==
+        b=Dvu/AnbAZPEBaBQPuIZJm8QvDcGhRBm08stqQ3DK71DNbQpFCFI7FwsrM2Eyo9xZZ
+         j2lP4/wkv2OB6oYYR1OJ3+BfxNwQBt0tw4umUTB4NXXrekUqFgDqVx/vWKZVTExkB/
+         rpUSKnx3NBChV1HNldnKnFY+0YYUPeWwlSJOH+GwQgiRjeFBA+zqDxVZoGjD8O5kh3
+         HUU5nuvDle+bkxTt2ZJRYOkDcD0KQKr6eY5NF7N6vZdZ0gZOFJvNAhrKLlEmrXMqGD
+         oOKj7wYpSMJZ+dqhTq3aNoePBFFfVjZJRPdM35CrNTCq5nNlKkUx7ZOQXciYfgUbQW
+         Xe9HAz3pDKlcw==
 Received: by pali.im (Postfix)
-        id 6E27613DC; Sun,  8 Aug 2021 18:25:17 +0200 (CEST)
+        id 0FB2B13DC; Sun,  8 Aug 2021 18:25:18 +0200 (CEST)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     linux-fsdevel@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
@@ -41,9 +41,9 @@ To:     linux-fsdevel@vger.kernel.org,
         Pavel Machek <pavel@ucw.cz>,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
         Christoph Hellwig <hch@infradead.org>
-Subject: [RFC PATCH 10/20] befs: Allow to use native UTF-8 mode
-Date:   Sun,  8 Aug 2021 18:24:43 +0200
-Message-Id: <20210808162453.1653-11-pali@kernel.org>
+Subject: [RFC PATCH 11/20] hfs: Explicitly set hsb->nls_disk when hsb->nls_io is set
+Date:   Sun,  8 Aug 2021 18:24:44 +0200
+Message-Id: <20210808162453.1653-12-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210808162453.1653-1-pali@kernel.org>
 References: <20210808162453.1653-1-pali@kernel.org>
@@ -54,58 +54,136 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-befs driver already has a code which avoids usage of NLS when befs_sb->nls
-is not set.
+It does not make any sense to set hsb->nls_io (NLS iocharset used between
+VFS and hfs driver) when hsb->nls_disk (NLS codepage used between hfs
+driver and disk) is not set.
 
-But befs_fill_super() always set befs_sb->nls, so activating native UTF-8
-is not possible.
+Reverse engineering driver code shown what is doing in this special case:
 
-Fix it by not setting befs_sb->nls when iocharset is set to utf8. So now
-after this cgange mount option iocharset=utf8 activates usage of native
-UTF-8 code path in befs driver.
+    When codepage was not defined but iocharset was then
+    hfs driver copied 8bit character from disk directly to
+    16bit unicode wchar_t type. Which means it did conversion
+    from Latin1 (ISO-8859-1) to Unicode because first 256
+    Unicode code points matches 8bit ISO-8859-1 codepage table.
+    So when iocharset was specified and codepage not, then
+    codepage used implicit value "iso8859-1".
+
+So when hsb->nls_disk is not set and hsb->nls_io is then explicitly set
+hsb->nls_disk to "iso8859-1".
+
+Such setup is obviously incompatible with Mac OS systems as they do not
+support iso8859-1 encoding for hfs. So print warning into dmesg about this
+fact.
+
+After this change hsb->nls_disk is always set, so remove code paths for
+case when hsb->nls_disk was not set as they are not needed anymore.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- fs/befs/linuxvfs.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ fs/hfs/super.c | 31 +++++++++++++++++++++++++++++++
+ fs/hfs/trans.c | 38 ++++++++++++++------------------------
+ 2 files changed, 45 insertions(+), 24 deletions(-)
 
-diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
-index 963da3e9ab5d..000f946b92b6 100644
---- a/fs/befs/linuxvfs.c
-+++ b/fs/befs/linuxvfs.c
-@@ -770,6 +770,7 @@ static int befs_show_options(struct seq_file *m, struct dentry *root)
- {
- 	struct befs_sb_info *befs_sb = BEFS_SB(root->d_sb);
- 	struct befs_mount_options *opts = &befs_sb->mount_opts;
-+	struct nls_table *nls = befs_sb->nls;
- 
- 	if (!uid_eq(opts->uid, GLOBAL_ROOT_UID))
- 		seq_printf(m, ",uid=%u",
-@@ -777,8 +778,10 @@ static int befs_show_options(struct seq_file *m, struct dentry *root)
- 	if (!gid_eq(opts->gid, GLOBAL_ROOT_GID))
- 		seq_printf(m, ",gid=%u",
- 			   from_kgid_munged(&init_user_ns, opts->gid));
--	if (opts->iocharset)
--		seq_printf(m, ",iocharset=%s", opts->iocharset);
-+	if (nls)
-+		seq_printf(m, ",iocharset=%s", nls->charset);
-+	else
-+		seq_puts(m, ",iocharset=utf8");
- 	if (opts->debug)
- 		seq_puts(m, ",debug");
- 	return 0;
-@@ -908,8 +911,10 @@ befs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto unacquire_priv_sbp;
+diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+index 12d9bae39363..86bc46746c7f 100644
+--- a/fs/hfs/super.c
++++ b/fs/hfs/super.c
+@@ -351,6 +351,37 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
+ 		}
  	}
  
-+	if (strcmp(opt.iocharset ? opt.iocharset : CONFIG_NLS_DEFAULT, "utf8") == 0) {
-+		befs_debug(sb, "Using native UTF-8 without nls");
- 	/* load nls library */
--	if (befs_sb->mount_opts.iocharset) {
-+	} else if (befs_sb->mount_opts.iocharset) {
- 		befs_debug(sb, "Loading nls: %s",
- 			   befs_sb->mount_opts.iocharset);
- 		befs_sb->nls = load_nls(befs_sb->mount_opts.iocharset);
++	if (hsb->nls_io && !hsb->nls_disk) {
++		/*
++		 * Previous version of hfs driver did something unexpected:
++		 * When codepage was not defined but iocharset was then
++		 * hfs driver copied 8bit character from disk directly to
++		 * 16bit unicode wchar_t type. Which means it did conversion
++		 * from Latin1 (ISO-8859-1) to Unicode because first 256
++		 * Unicode code points matches 8bit ISO-8859-1 codepage table.
++		 * So when iocharset was specified and codepage not, then
++		 * codepage used implicit value "iso8859-1".
++		 *
++		 * To not change this previous default behavior as some users
++		 * may depend on it, we load iso8859-1 NLS table explicitly
++		 * to simplify code and make it more reable what happens.
++		 *
++		 * In context of hfs driver it is really strange to use
++		 * ISO-8859-1 codepage table for storing data to disk, but
++		 * nothing forbids it. Just it is highly incompatible with
++		 * Mac OS systems. So via pr_warn() inform user that this
++		 * is not probably what he wants.
++		 */
++		pr_warn("iocharset was specified but codepage not, "
++			"using default codepage=iso8859-1\n");
++		pr_warn("this default codepage=iso8859-1 is incompatible with "
++			"Mac OS systems and may be changed in the future");
++		hsb->nls_disk = load_nls("iso8859-1");
++		if (!hsb->nls_disk) {
++			pr_err("unable to load iso8859-1 codepage\n");
++			return 0;
++		}
++	}
+ 	if (hsb->nls_disk && !hsb->nls_io) {
+ 		hsb->nls_io = load_nls_default();
+ 		if (!hsb->nls_io) {
+diff --git a/fs/hfs/trans.c b/fs/hfs/trans.c
+index 39f5e343bf4d..c75682c61b06 100644
+--- a/fs/hfs/trans.c
++++ b/fs/hfs/trans.c
+@@ -48,18 +48,13 @@ int hfs_mac2asc(struct super_block *sb, char *out, const struct hfs_name *in)
+ 		wchar_t ch;
+ 
+ 		while (srclen > 0) {
+-			if (nls_disk) {
+-				size = nls_disk->char2uni(src, srclen, &ch);
+-				if (size <= 0) {
+-					ch = '?';
+-					size = 1;
+-				}
+-				src += size;
+-				srclen -= size;
+-			} else {
+-				ch = *src++;
+-				srclen--;
++			size = nls_disk->char2uni(src, srclen, &ch);
++			if (size <= 0) {
++				ch = '?';
++				size = 1;
+ 			}
++			src += size;
++			srclen -= size;
+ 			if (ch == '/')
+ 				ch = ':';
+ 			size = nls_io->uni2char(ch, dst, dstlen);
+@@ -119,20 +114,15 @@ void hfs_asc2mac(struct super_block *sb, struct hfs_name *out, const struct qstr
+ 			srclen -= size;
+ 			if (ch == ':')
+ 				ch = '/';
+-			if (nls_disk) {
+-				size = nls_disk->uni2char(ch, dst, dstlen);
+-				if (size < 0) {
+-					if (size == -ENAMETOOLONG)
+-						goto out;
+-					*dst = '?';
+-					size = 1;
+-				}
+-				dst += size;
+-				dstlen -= size;
+-			} else {
+-				*dst++ = ch > 0xff ? '?' : ch;
+-				dstlen--;
++			size = nls_disk->uni2char(ch, dst, dstlen);
++			if (size < 0) {
++				if (size == -ENAMETOOLONG)
++					goto out;
++				*dst = '?';
++				size = 1;
+ 			}
++			dst += size;
++			dstlen -= size;
+ 		}
+ 	} else {
+ 		char ch;
 -- 
 2.20.1
 
