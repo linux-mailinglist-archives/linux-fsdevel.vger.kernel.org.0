@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 345973E3B8D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Aug 2021 18:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3955B3E3B88
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Aug 2021 18:25:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232564AbhHHQ0P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Aug 2021 12:26:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47462 "EHLO mail.kernel.org"
+        id S232528AbhHHQ0L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Aug 2021 12:26:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231855AbhHHQZg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S231859AbhHHQZg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 8 Aug 2021 12:25:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C35526108B;
-        Sun,  8 Aug 2021 16:25:16 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 478D9610E7;
+        Sun,  8 Aug 2021 16:25:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628439916;
-        bh=eQPs0LWQBuazOmvJGjLKlWpE+0zkH3dOJ2O1oXtwFzM=;
+        s=k20201202; t=1628439917;
+        bh=xmLXv5i7UZvG04SFDJpgGHD2RFkBzJD+zP5l8qNjoBE=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=rBnMdtsDqCiZ07/1G7BoaxjN9KW9K9BBqT4CeO2Jf4bRJ3o+HSXXEE/EU5Bok9tIx
-         QsYTZG/e7lcYWC8p4IGZtSEuW2SyNi8HaNiv9qC0nhtB3m29MswTxgB1o7IQMepx7H
-         claKQxNQrKzpLoHC5hA0Mfd60A5af//SEHJXwBfa0Rb3gd0BuhdNK6HNXXGWmhNqhy
-         LM6o0H+o1weTWOlRI6iZCvyW4F5AY+xmD6EazJhHOeS5Q1N+xbHdu3jju/ycLftuTy
-         XUZs6RgaRZr4mBNbUzcf2ufuuN2zKd4qy6JSnC0ll8wkEegoGKB7DkPSqrJuv/Iymn
-         4zJcvXv2tH13Q==
+        b=AMesRXMciqTy9Z+x+pnrhCk8JGOS/orqjtIWJcARwaLKeo6rCnwvABVawy59SFgk3
+         58vuidq58/vYYQVZ+riALGfKfsJIS5PrE1PjmxNL+rwInsZcUzEhOTDlAux/oGtpUo
+         4SqVdxzndy8XgVRDYzPds6thgt7O0V5uaQG7dimlyktHJLz1fqjGbJFm8+MShhiLRN
+         NJh+EfeSiMGjOdn28KEE4QID6GsT5oUYPjAsm9Y50PblNrgSYR5U+wm8vfKtOu1lL5
+         BVC4WyAZlmciw14uVn4tWe23S14Z4WC/tgNVFGFO/RBJq7f+s7/seeKfpKqU/oGWpk
+         yHIzD0DrI+5AA==
 Received: by pali.im (Postfix)
-        id 841DD13DC; Sun,  8 Aug 2021 18:25:16 +0200 (CEST)
+        id 0316F1430; Sun,  8 Aug 2021 18:25:17 +0200 (CEST)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     linux-fsdevel@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
@@ -41,9 +41,9 @@ To:     linux-fsdevel@vger.kernel.org,
         Pavel Machek <pavel@ucw.cz>,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
         Christoph Hellwig <hch@infradead.org>
-Subject: [RFC PATCH 08/20] befs: Rename enum value Opt_charset to Opt_iocharset to match mount option
-Date:   Sun,  8 Aug 2021 18:24:41 +0200
-Message-Id: <20210808162453.1653-9-pali@kernel.org>
+Subject: [RFC PATCH 09/20] befs: Fix error processing when load_nls() fails
+Date:   Sun,  8 Aug 2021 18:24:42 +0200
+Message-Id: <20210808162453.1653-10-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210808162453.1653-1-pali@kernel.org>
 References: <20210808162453.1653-1-pali@kernel.org>
@@ -54,42 +54,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Mount option is named iocharset= and not charset=
+Ensure that specified charset in iocharset= mount option is used. On error
+correctly propagate error code back to the caller.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- fs/befs/linuxvfs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/befs/linuxvfs.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
-index ed4d3afb8638..e071157bdaa3 100644
+index e071157bdaa3..963da3e9ab5d 100644
 --- a/fs/befs/linuxvfs.c
 +++ b/fs/befs/linuxvfs.c
-@@ -678,13 +678,13 @@ static struct dentry *befs_get_parent(struct dentry *child)
- }
- 
- enum {
--	Opt_uid, Opt_gid, Opt_charset, Opt_debug, Opt_err,
-+	Opt_uid, Opt_gid, Opt_iocharset, Opt_debug, Opt_err,
- };
- 
- static const match_table_t befs_tokens = {
- 	{Opt_uid, "uid=%d"},
- 	{Opt_gid, "gid=%d"},
--	{Opt_charset, "iocharset=%s"},
-+	{Opt_iocharset, "iocharset=%s"},
- 	{Opt_debug, "debug"},
- 	{Opt_err, NULL}
- };
-@@ -745,7 +745,7 @@ parse_options(char *options, struct befs_mount_options *opts)
- 			opts->gid = gid;
- 			opts->use_gid = 1;
- 			break;
--		case Opt_charset:
-+		case Opt_iocharset:
- 			kfree(opts->iocharset);
- 			opts->iocharset = match_strdup(&args[0]);
- 			if (!opts->iocharset) {
+@@ -914,10 +914,9 @@ befs_fill_super(struct super_block *sb, void *data, int silent)
+ 			   befs_sb->mount_opts.iocharset);
+ 		befs_sb->nls = load_nls(befs_sb->mount_opts.iocharset);
+ 		if (!befs_sb->nls) {
+-			befs_warning(sb, "Cannot load nls %s"
+-					" loading default nls",
++			befs_error(sb, "Cannot load nls %s",
+ 					befs_sb->mount_opts.iocharset);
+-			befs_sb->nls = load_nls_default();
++			goto unacquire_priv_sbp;
+ 		}
+ 	/* load default nls if none is specified  in mount options */
+ 	} else {
 -- 
 2.20.1
 
