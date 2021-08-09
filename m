@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 721F13E3FF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C86A03E3FFE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:30:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233260AbhHIG3e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 02:29:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47674 "EHLO
+        id S233277AbhHIGa3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 02:30:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233136AbhHIG3e (ORCPT
+        with ESMTP id S233235AbhHIGa2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 02:29:34 -0400
+        Mon, 9 Aug 2021 02:30:28 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA21C0613CF;
-        Sun,  8 Aug 2021 23:29:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB415C0613CF;
+        Sun,  8 Aug 2021 23:30:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=m9b6YNvsLzNONFanU6RhGrYZvY35bdAagUM7E3HgPsI=; b=aROZ8XoAPCzn836VduwppxbNuF
-        BAItc06YLhnqSHJsnoCJNYquGN6CZJunqz8MJHjmLGDsxoD6CniNFtwL5wa7j2+aAAaoz9aGQrDFh
-        NpfjLMgAtvaCdAY9TWo6igRfjofSiCqYEVLolz59arnO4vWwjquJcXNwt4qLVcQ2kpN38e640CmzR
-        wfm0tzLBsoYnm9SZPwflS2cqBykd8RL9qyNABPJXPULlugE0BLT/gm5W8HycFo/0lEH6HjT2YrvBC
-        /FtLS6nsa8efMt/+x5nOkQq0/2EH1sebyt0cwvOELiUSM8rD2wMFJOiN4onbnY4mQc6kwjZg/L+Mc
-        tYvKBhvg==;
+        bh=pIweo/AL/gcZqzgCAsUa+XaqbXIAEc0CYS2F7Cx/rGI=; b=JRbW7pvPCgOnlXjYzyUB9nCvFr
+        DwBTMasgOuoV4MaPJ6TeBkC/f2j7jcpzDWrPT52kWlSXsoNDWIZY9boCcYoTc/LrBgZwNCG64nEhd
+        fl/UEsY4mGb34ANHrxdrTAhgizpn1/NSwaH/cddp7MVXTh3MZ/0gHd/h2DnoymE3Du2KlPQwCRKuS
+        8rxgerMHCH/nEcFHDiHMcEE2CCG+EaxE+81E6hYZt85TLCX0C2aJnNVXXfLJ8C0puPBWmgwaYQMdX
+        eje1sjIa/mS8zmYyI6F3g8gg7BYSaQ/eGmcyS5plYa75Vd7wYwNEbUYJFcK1VJCreB3c9FRRkEsJ4
+        i+uPfo7g==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCyke-00AhQ0-Mq; Mon, 09 Aug 2021 06:27:38 +0000
+        id 1mCylY-00AhU4-TN; Mon, 09 Aug 2021 06:28:18 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -37,9 +37,9 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: [PATCH 18/30] iomap: switch iomap_fiemap to use iomap_iter
-Date:   Mon,  9 Aug 2021 08:12:32 +0200
-Message-Id: <20210809061244.1196573-19-hch@lst.de>
+Subject: [PATCH 19/30] iomap: switch iomap_bmap to use iomap_iter
+Date:   Mon,  9 Aug 2021 08:12:33 +0200
+Message-Id: <20210809061244.1196573-20-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210809061244.1196573-1-hch@lst.de>
 References: <20210809061244.1196573-1-hch@lst.de>
@@ -50,131 +50,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rewrite the ->fiemap implementation based on iomap_iter.
+Rewrite the ->bmap implementation based on iomap_iter.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/fiemap.c | 70 ++++++++++++++++++++---------------------------
- 1 file changed, 29 insertions(+), 41 deletions(-)
+ fs/iomap/fiemap.c | 31 +++++++++++++------------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
 
 diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-index aab070df4a2175..acad09a8c188df 100644
+index acad09a8c188df..60daadba16c149 100644
 --- a/fs/iomap/fiemap.c
 +++ b/fs/iomap/fiemap.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2016-2018 Christoph Hellwig.
-+ * Copyright (c) 2016-2021 Christoph Hellwig.
-  */
- #include <linux/module.h>
- #include <linux/compiler.h>
-@@ -8,13 +8,8 @@
- #include <linux/iomap.h>
- #include <linux/fiemap.h>
- 
--struct fiemap_ctx {
--	struct fiemap_extent_info *fi;
--	struct iomap prev;
--};
--
- static int iomap_to_fiemap(struct fiemap_extent_info *fi,
--		struct iomap *iomap, u32 flags)
-+		const struct iomap *iomap, u32 flags)
- {
- 	switch (iomap->type) {
- 	case IOMAP_HOLE:
-@@ -43,24 +38,22 @@ static int iomap_to_fiemap(struct fiemap_extent_info *fi,
- 			iomap->length, flags);
- }
- 
--static loff_t
--iomap_fiemap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
--		struct iomap *iomap, struct iomap *srcmap)
-+static loff_t iomap_fiemap_iter(const struct iomap_iter *iter,
-+		struct fiemap_extent_info *fi, struct iomap *prev)
- {
--	struct fiemap_ctx *ctx = data;
--	loff_t ret = length;
-+	int ret;
- 
--	if (iomap->type == IOMAP_HOLE)
--		return length;
-+	if (iter->iomap.type == IOMAP_HOLE)
-+		return iomap_length(iter);
- 
--	ret = iomap_to_fiemap(ctx->fi, &ctx->prev, 0);
--	ctx->prev = *iomap;
-+	ret = iomap_to_fiemap(fi, prev, 0);
-+	*prev = iter->iomap;
- 	switch (ret) {
- 	case 0:		/* success */
--		return length;
-+		return iomap_length(iter);
- 	case 1:		/* extent array full */
- 		return 0;
--	default:
-+	default:	/* error */
- 		return ret;
- 	}
- }
-@@ -68,38 +61,33 @@ iomap_fiemap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi,
- 		u64 start, u64 len, const struct iomap_ops *ops)
- {
--	struct fiemap_ctx ctx;
--	loff_t ret;
--
--	memset(&ctx, 0, sizeof(ctx));
--	ctx.fi = fi;
--	ctx.prev.type = IOMAP_HOLE;
-+	struct iomap_iter iter = {
-+		.inode		= inode,
-+		.pos		= start,
-+		.len		= len,
-+		.flags		= IOMAP_REPORT,
-+	};
-+	struct iomap prev = {
-+		.type		= IOMAP_HOLE,
-+	};
-+	int ret;
- 
--	ret = fiemap_prep(inode, fi, start, &len, 0);
-+	ret = fiemap_prep(inode, fi, start, &iter.len, 0);
- 	if (ret)
- 		return ret;
- 
--	while (len > 0) {
--		ret = iomap_apply(inode, start, len, IOMAP_REPORT, ops, &ctx,
--				iomap_fiemap_actor);
--		/* inode with no (attribute) mapping will give ENOENT */
--		if (ret == -ENOENT)
--			break;
--		if (ret < 0)
--			return ret;
--		if (ret == 0)
--			break;
-+	while ((ret = iomap_iter(&iter, ops)) > 0)
-+		iter.processed = iomap_fiemap_iter(&iter, fi, &prev);
- 
--		start += ret;
--		len -= ret;
--	}
--
--	if (ctx.prev.type != IOMAP_HOLE) {
--		ret = iomap_to_fiemap(fi, &ctx.prev, FIEMAP_EXTENT_LAST);
-+	if (prev.type != IOMAP_HOLE) {
-+		ret = iomap_to_fiemap(fi, &prev, FIEMAP_EXTENT_LAST);
- 		if (ret < 0)
- 			return ret;
- 	}
- 
-+	/* inode with no (attribute) mapping will give ENOENT */
-+	if (ret < 0 && ret != -ENOENT)
-+		return ret;
- 	return 0;
+@@ -92,35 +92,30 @@ int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi,
  }
  EXPORT_SYMBOL_GPL(iomap_fiemap);
+ 
+-static loff_t
+-iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
+-		void *data, struct iomap *iomap, struct iomap *srcmap)
+-{
+-	sector_t *bno = data, addr;
+-
+-	if (iomap->type == IOMAP_MAPPED) {
+-		addr = (pos - iomap->offset + iomap->addr) >> inode->i_blkbits;
+-		*bno = addr;
+-	}
+-	return 0;
+-}
+-
+ /* legacy ->bmap interface.  0 is the error return (!) */
+ sector_t
+ iomap_bmap(struct address_space *mapping, sector_t bno,
+ 		const struct iomap_ops *ops)
+ {
+-	struct inode *inode = mapping->host;
+-	loff_t pos = bno << inode->i_blkbits;
+-	unsigned blocksize = i_blocksize(inode);
++	struct iomap_iter iter = {
++		.inode	= mapping->host,
++		.pos	= (loff_t)bno << mapping->host->i_blkbits,
++		.len	= i_blocksize(mapping->host),
++		.flags	= IOMAP_REPORT,
++	};
+ 	int ret;
+ 
+ 	if (filemap_write_and_wait(mapping))
+ 		return 0;
+ 
+ 	bno = 0;
+-	ret = iomap_apply(inode, pos, blocksize, 0, ops, &bno,
+-			  iomap_bmap_actor);
++	while ((ret = iomap_iter(&iter, ops)) > 0) {
++		if (iter.iomap.type != IOMAP_MAPPED)
++			continue;
++		bno = (iter.pos - iter.iomap.offset + iter.iomap.addr) >>
++				mapping->host->i_blkbits;
++	}
++
+ 	if (ret)
+ 		return 0;
+ 	return bno;
 -- 
 2.30.2
 
