@@ -2,179 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A113E3B6F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Aug 2021 18:25:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 825153E3DC1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 03:42:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232280AbhHHQZv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Aug 2021 12:25:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47462 "EHLO mail.kernel.org"
+        id S232674AbhHIBmV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Aug 2021 21:42:21 -0400
+Received: from mga12.intel.com ([192.55.52.136]:16048 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232024AbhHHQZm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Aug 2021 12:25:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E395261181;
-        Sun,  8 Aug 2021 16:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628439923;
-        bh=5u2bH7VJtM/e+LvuxtpQp+PsRT4F9kDqvViUS/4AlLc=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=VNZD/+/toD+1ZXHutTrnUuA/X4YKv2DDfY8fFHiCGmZWaj/BO1eAHk4zAGDvdTs9D
-         nL40mtNrXob1hY4WSEBkih48b7aVpNXD1XdIwBPUjHu+R+ompbR+FElwH1aU4K9IS3
-         FrnfKMNx8S+WFLrSMlR7BOwcrH1hL5kwJpLOH8ZCw6VbJGOkBmIoamPXUvgZMAda6H
-         06h3CtuWa/Sq8XQ9YbhKlUxq3l/ixjgf+QswdEOR2nieVKCdtX3HCjcBphPjNrs9a6
-         K6gMmRS4+yl1Ub+EDMytsUCZvrdQx+KbsP8rAa+TTWx0t5M5nPDdxt3MWBJV14yDfk
-         Et1t9ytlsTEaQ==
-Received: by pali.im (Postfix)
-        id A155D1430; Sun,  8 Aug 2021 18:25:22 +0200 (CEST)
-From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To:     linux-fsdevel@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [RFC PATCH 20/20] nls: Drop broken nls_utf8 module
-Date:   Sun,  8 Aug 2021 18:24:53 +0200
-Message-Id: <20210808162453.1653-21-pali@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210808162453.1653-1-pali@kernel.org>
-References: <20210808162453.1653-1-pali@kernel.org>
+        id S232678AbhHIBmU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Aug 2021 21:42:20 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10070"; a="194200409"
+X-IronPort-AV: E=Sophos;i="5.84,305,1620716400"; 
+   d="scan'208";a="194200409"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2021 18:41:59 -0700
+X-IronPort-AV: E=Sophos;i="5.84,305,1620716400"; 
+   d="scan'208";a="670624711"
+Received: from ctrondse-mobl.amr.corp.intel.com (HELO skuppusw-mobl5.amr.corp.intel.com) ([10.212.77.4])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2021 18:41:57 -0700
+Subject: Re: [PATCH 00/11] Implement generic prot_guest_has() helper function
+To:     Tom Lendacky <thomas.lendacky@amd.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dave Young <dyoung@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Will Deacon <will@kernel.org>
+References: <cover.1627424773.git.thomas.lendacky@amd.com>
+From:   "Kuppuswamy, Sathyanarayanan" 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Message-ID: <0d75f283-50b7-460d-3165-185cb955bd70@linux.intel.com>
+Date:   Sun, 8 Aug 2021 18:41:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1627424773.git.thomas.lendacky@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-NLS table for utf8 is broken and cannot be fixed.
+Hi Tom,
 
-Now that all filesystems are using utf8s_to_utf16s()/utf16s_to_utf8s()
-functions for converting between UTF-8 and UTF-16, and functions
-utf8_to_utf32()/utf32_to_utf8() for converting between UTF-8 and Unicode
-code points, there is no need to have this broken utf8 NLS module in kernel
-tree anymore.
+On 7/27/21 3:26 PM, Tom Lendacky wrote:
+> This patch series provides a generic helper function, prot_guest_has(),
+> to replace the sme_active(), sev_active(), sev_es_active() and
+> mem_encrypt_active() functions.
+> 
+> It is expected that as new protected virtualization technologies are
+> added to the kernel, they can all be covered by a single function call
+> instead of a collection of specific function calls all called from the
+> same locations.
+> 
+> The powerpc and s390 patches have been compile tested only. Can the
+> folks copied on this series verify that nothing breaks for them.
 
-There is no user of this utf8 NLS module, so completely drop it,
+With this patch set, select ARCH_HAS_PROTECTED_GUEST and set
+CONFIG_AMD_MEM_ENCRYPT=n, creates following error.
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/nls/Kconfig    |  9 -------
- fs/nls/Makefile   |  1 -
- fs/nls/nls_utf8.c | 67 -----------------------------------------------
- 3 files changed, 77 deletions(-)
- delete mode 100644 fs/nls/nls_utf8.c
+ld: arch/x86/mm/ioremap.o: in function `early_memremap_is_setup_data':
+arch/x86/mm/ioremap.c:672: undefined reference to `early_memremap_decrypted'
 
-diff --git a/fs/nls/Kconfig b/fs/nls/Kconfig
-index c7857e36adbb..8f82cf30a493 100644
---- a/fs/nls/Kconfig
-+++ b/fs/nls/Kconfig
-@@ -608,13 +608,4 @@ config NLS_MAC_TURKISH
- 
- 	  If unsure, say Y.
- 
--config NLS_UTF8
--	tristate "NLS UTF-8"
--	help
--	  If you want to display filenames with native language characters
--	  from the Microsoft FAT file system family or from JOLIET CD-ROMs
--	  correctly on the screen, you need to include the appropriate
--	  input/output character sets. Say Y here for the UTF-8 encoding of
--	  the Unicode/ISO9646 universal character set.
--
- endif # NLS
-diff --git a/fs/nls/Makefile b/fs/nls/Makefile
-index ac54db297128..e573db7fc173 100644
---- a/fs/nls/Makefile
-+++ b/fs/nls/Makefile
-@@ -42,7 +42,6 @@ obj-$(CONFIG_NLS_ISO8859_14)	+= nls_iso8859-14.o
- obj-$(CONFIG_NLS_ISO8859_15)	+= nls_iso8859-15.o
- obj-$(CONFIG_NLS_KOI8_R)	+= nls_koi8-r.o
- obj-$(CONFIG_NLS_KOI8_U)	+= nls_koi8-u.o nls_koi8-ru.o
--obj-$(CONFIG_NLS_UTF8)		+= nls_utf8.o
- obj-$(CONFIG_NLS_MAC_CELTIC)    += mac-celtic.o
- obj-$(CONFIG_NLS_MAC_CENTEURO)  += mac-centeuro.o
- obj-$(CONFIG_NLS_MAC_CROATIAN)  += mac-croatian.o
-diff --git a/fs/nls/nls_utf8.c b/fs/nls/nls_utf8.c
-deleted file mode 100644
-index afcfbc4a14db..000000000000
---- a/fs/nls/nls_utf8.c
-+++ /dev/null
-@@ -1,67 +0,0 @@
--/*
-- * Module for handling utf8 just like any other charset.
-- * By Urban Widmark 2000
-- */
--
--#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/string.h>
--#include <linux/nls.h>
--#include <linux/errno.h>
--
--static unsigned char identity[256];
--
--static int uni2char(wchar_t uni, unsigned char *out, int boundlen)
--{
--	int n;
--
--	if (boundlen <= 0)
--		return -ENAMETOOLONG;
--
--	n = utf32_to_utf8(uni, out, boundlen);
--	if (n < 0) {
--		*out = '?';
--		return -EINVAL;
--	}
--	return n;
--}
--
--static int char2uni(const unsigned char *rawstring, int boundlen, wchar_t *uni)
--{
--	int n;
--	unicode_t u;
--
--	n = utf8_to_utf32(rawstring, boundlen, &u);
--	if (n < 0 || u > MAX_WCHAR_T) {
--		*uni = 0x003f;	/* ? */
--		return -EINVAL;
--	}
--	*uni = (wchar_t) u;
--	return n;
--}
--
--static struct nls_table table = {
--	.charset	= "utf8",
--	.uni2char	= uni2char,
--	.char2uni	= char2uni,
--	.charset2lower	= identity,	/* no conversion */
--	.charset2upper	= identity,
--};
--
--static int __init init_nls_utf8(void)
--{
--	int i;
--	for (i=0; i<256; i++)
--		identity[i] = i;
--
--        return register_nls(&table);
--}
--
--static void __exit exit_nls_utf8(void)
--{
--        unregister_nls(&table);
--}
--
--module_init(init_nls_utf8)
--module_exit(exit_nls_utf8)
--MODULE_LICENSE("Dual BSD/GPL");
+It looks like early_memremap_is_setup_data() is not protected with
+appropriate config.
+
+
+> 
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: VMware Graphics <linux-graphics-maintainer@vmware.com>
+> Cc: Will Deacon <will@kernel.org>
+> 
+> ---
+> 
+> Patches based on:
+>    https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+>    commit 79e920060fa7 ("Merge branch 'WIP/fixes'")
+> 
+> Tom Lendacky (11):
+>    mm: Introduce a function to check for virtualization protection
+>      features
+>    x86/sev: Add an x86 version of prot_guest_has()
+>    powerpc/pseries/svm: Add a powerpc version of prot_guest_has()
+>    x86/sme: Replace occurrences of sme_active() with prot_guest_has()
+>    x86/sev: Replace occurrences of sev_active() with prot_guest_has()
+>    x86/sev: Replace occurrences of sev_es_active() with prot_guest_has()
+>    treewide: Replace the use of mem_encrypt_active() with
+>      prot_guest_has()
+>    mm: Remove the now unused mem_encrypt_active() function
+>    x86/sev: Remove the now unused mem_encrypt_active() function
+>    powerpc/pseries/svm: Remove the now unused mem_encrypt_active()
+>      function
+>    s390/mm: Remove the now unused mem_encrypt_active() function
+> 
+>   arch/Kconfig                               |  3 ++
+>   arch/powerpc/include/asm/mem_encrypt.h     |  5 --
+>   arch/powerpc/include/asm/protected_guest.h | 30 +++++++++++
+>   arch/powerpc/platforms/pseries/Kconfig     |  1 +
+>   arch/s390/include/asm/mem_encrypt.h        |  2 -
+>   arch/x86/Kconfig                           |  1 +
+>   arch/x86/include/asm/kexec.h               |  2 +-
+>   arch/x86/include/asm/mem_encrypt.h         | 13 +----
+>   arch/x86/include/asm/protected_guest.h     | 27 ++++++++++
+>   arch/x86/kernel/crash_dump_64.c            |  4 +-
+>   arch/x86/kernel/head64.c                   |  4 +-
+>   arch/x86/kernel/kvm.c                      |  3 +-
+>   arch/x86/kernel/kvmclock.c                 |  4 +-
+>   arch/x86/kernel/machine_kexec_64.c         | 19 +++----
+>   arch/x86/kernel/pci-swiotlb.c              |  9 ++--
+>   arch/x86/kernel/relocate_kernel_64.S       |  2 +-
+>   arch/x86/kernel/sev.c                      |  6 +--
+>   arch/x86/kvm/svm/svm.c                     |  3 +-
+>   arch/x86/mm/ioremap.c                      | 16 +++---
+>   arch/x86/mm/mem_encrypt.c                  | 60 +++++++++++++++-------
+>   arch/x86/mm/mem_encrypt_identity.c         |  3 +-
+>   arch/x86/mm/pat/set_memory.c               |  3 +-
+>   arch/x86/platform/efi/efi_64.c             |  9 ++--
+>   arch/x86/realmode/init.c                   |  8 +--
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    |  4 +-
+>   drivers/gpu/drm/drm_cache.c                |  4 +-
+>   drivers/gpu/drm/vmwgfx/vmwgfx_drv.c        |  4 +-
+>   drivers/gpu/drm/vmwgfx/vmwgfx_msg.c        |  6 +--
+>   drivers/iommu/amd/init.c                   |  7 +--
+>   drivers/iommu/amd/iommu.c                  |  3 +-
+>   drivers/iommu/amd/iommu_v2.c               |  3 +-
+>   drivers/iommu/iommu.c                      |  3 +-
+>   fs/proc/vmcore.c                           |  6 +--
+>   include/linux/mem_encrypt.h                |  4 --
+>   include/linux/protected_guest.h            | 37 +++++++++++++
+>   kernel/dma/swiotlb.c                       |  4 +-
+>   36 files changed, 218 insertions(+), 104 deletions(-)
+>   create mode 100644 arch/powerpc/include/asm/protected_guest.h
+>   create mode 100644 arch/x86/include/asm/protected_guest.h
+>   create mode 100644 include/linux/protected_guest.h
+> 
+
 -- 
-2.20.1
-
+Sathyanarayanan Kuppuswamy
+Linux Kernel Developer
