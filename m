@@ -2,153 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 489F93E4E0B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 22:43:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E733E4E0F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 22:44:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235844AbhHIUno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 16:43:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46804 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233348AbhHIUno (ORCPT
+        id S236283AbhHIUof (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 16:44:35 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:39308 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233348AbhHIUoe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 16:43:44 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0040CC0613D3;
-        Mon,  9 Aug 2021 13:43:21 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id n6so12275994ljp.9;
-        Mon, 09 Aug 2021 13:43:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yUAKaSGW5DdJ2RQz+ROMjXDXwUd8MZUwEP7Sv67Rnfk=;
-        b=jh1XmlgBHk4jrsPf4DmxJqM7pfrZrb8mFMTTROvMv7UPd9y4citm0IW9YSZRJLWznV
-         OjEdXF16tyIN0ETuDIWCMPyL1YaCZzppNNSddWmpaxz33hK0tKLOGxZsCw9SvptX4eSJ
-         1SeJB5uZbLDT3IeCj73sMQs0ibVjz5HeYMon+l4+5ByC2VE6KSjfkVGBZrlVw3CMYk5C
-         MMe4u6T9QfcmG4Ay/vl2FAzJtQpGYPkxCc35j5H+FLOe/ydJQZJ5SCtAWRkdwA/kBZsZ
-         u69OGl2BgZ/6mo4cIHpuCinTYdyUrYKmtNv9C5FulPf5LSJzMr/+8MZuJzjXgOro2Qg9
-         QVKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yUAKaSGW5DdJ2RQz+ROMjXDXwUd8MZUwEP7Sv67Rnfk=;
-        b=FAvmgSfUDQFmVjoOQonyk+VvkVO/e5+WShltR1MAmYwgnMFXtaIwKGkXmjOS3oQFyo
-         yI3eOpI1MwymxHOEJ989W84p5ymrB8hi/lFQRwzUYjf67IXLtkHsS/AiduW6iuZ9Y37h
-         7xiM5RezfuZWW2w+waVtGvHqReJEP/7/A+K9BjV0wLXwB3RkNKD5F8k5dVr6sVp+D0p3
-         W8jRtl1WJOeVzbQWCXZFeLFV2BJveqNwV3m9syjXDmSZPIF/nf/Tuq2MWwPrJOMJe/4T
-         WB+P2GimiN0mOpXpV4snSTcqkkFwTrqtBUITqPe9j6z4Qt76HkK/VETXQIZ+ioIOuGrQ
-         GqkA==
-X-Gm-Message-State: AOAM533z75lG4MLanE52HH3ixjlMsGFRJf4c6up6840c7n8u1Pk4xzsE
-        +NOu40SuifooCIEp+e3H8FkqD75w+FaY6kNrwRs=
-X-Google-Smtp-Source: ABdhPJy8ej9SUjeGIWuogdO/3shhi/7En+oCEa5tTqZf2hp+d/UjsUbfLSRI2keSqvFXPLnxjriUbvils/jCtnY/FYQ=
-X-Received: by 2002:a2e:b1d3:: with SMTP id e19mr10504370lja.6.1628541800135;
- Mon, 09 Aug 2021 13:43:20 -0700 (PDT)
+        Mon, 9 Aug 2021 16:44:34 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52]:42266)
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mDC84-006eur-13; Mon, 09 Aug 2021 14:44:12 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95]:51854 helo=email.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mDC82-003SLf-2z; Mon, 09 Aug 2021 14:44:11 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Sven Schnelle <svens@linux.ibm.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Alexey Gladkov <legion@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        LTP List <ltp@lists.linux.it>, linux-fsdevel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+In-Reply-To: <CA+G9fYv+Azmu+_YUv6+C6RRM990k0FhUc0hgSJKssubmsWfvhA@mail.gmail.com>
+        (Naresh Kamboju's message of "Fri, 6 Aug 2021 16:06:51 +0530")
+References: <20210730062854.3601635-1-svens@linux.ibm.com>
+        <YQn+GomdRCoYc/E8@Ryzen-9-3900X.localdomain> <875ywlat5e.fsf@disp2133>
+        <94478003-8259-4b57-6d93-5a07e0750946@kernel.org>
+        <87v94jalck.fsf@disp2133>
+        <56b7c0fe-f2e1-7c4f-eb1b-1d9793dea5a8@kernel.org>
+        <CA+G9fYv+Azmu+_YUv6+C6RRM990k0FhUc0hgSJKssubmsWfvhA@mail.gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+Date:   Mon, 09 Aug 2021 15:43:56 -0500
+Message-ID: <8735rijqlv.fsf_-_@disp2133>
 MIME-Version: 1.0
-References: <20210808162453.1653-1-pali@kernel.org> <20210808162453.1653-12-pali@kernel.org>
- <D0302F93-BAE5-48F0-87D0-B68B10D7757B@dubeyko.com> <YRFnz6kn1UbSCN/S@casper.infradead.org>
- <20210809174741.4wont2drya3rvpsr@pali>
-In-Reply-To: <20210809174741.4wont2drya3rvpsr@pali>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 9 Aug 2021 15:43:09 -0500
-Message-ID: <CAH2r5ms2wK4P9=J4q7OJ4fLhi=e981TY1+Ue7yawyQiCzS9ThQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 11/20] hfs: Explicitly set hsb->nls_disk when
- hsb->nls_io is set
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-ntfs-dev@lists.sourceforge.net,
-        CIFS <linux-cifs@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
-        Christoph Hellwig <hch@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-XM-SPF: eid=1mDC82-003SLf-2z;;;mid=<8735rijqlv.fsf_-_@disp2133>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+R3wCFlQLiMNmQm42YcNlMYC9wsvdUJNU=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4999]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Naresh Kamboju <naresh.kamboju@linaro.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 558 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 10 (1.7%), b_tie_ro: 8 (1.5%), parse: 1.07 (0.2%),
+         extract_message_metadata: 17 (3.0%), get_uri_detail_list: 3.2 (0.6%),
+        tests_pri_-1000: 28 (5.0%), tests_pri_-950: 1.31 (0.2%),
+        tests_pri_-900: 1.09 (0.2%), tests_pri_-90: 90 (16.2%), check_bayes:
+        88 (15.8%), b_tokenize: 11 (1.9%), b_tok_get_all: 8 (1.5%),
+        b_comp_prob: 2.4 (0.4%), b_tok_touch_all: 62 (11.1%), b_finish: 0.96
+        (0.2%), tests_pri_0: 398 (71.3%), check_dkim_signature: 0.71 (0.1%),
+        check_dkim_adsp: 2.7 (0.5%), poll_dns_idle: 0.81 (0.1%), tests_pri_10:
+        2.3 (0.4%), tests_pri_500: 7 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH v4] ucounts: add missing data type changes
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For cifs.ko, I don't mind running our automated regression tests on
-this patch when the patch (or patches) is ready, but was thinking
-about an earlier discussion a few months about parth conversion in
-cifs.ko prompted by Al Viro, and whether additional changes should be
-made to move the character conversion later as well (e.g. for
-characters in the reserved range such as '\' to 0xF026, and'':' to
-0xF022  and '>' to 0xF024 and '?' to 0xF025 etc) for the 10 special
-characters which have to get remapped into the UCS-2 reserved
-character range.
 
-On Mon, Aug 9, 2021 at 12:49 PM Pali Roh=C3=A1r <pali@kernel.org> wrote:
->
-> On Monday 09 August 2021 18:37:19 Matthew Wilcox wrote:
-> > On Mon, Aug 09, 2021 at 10:31:55AM -0700, Viacheslav Dubeyko wrote:
-> > > > On Aug 8, 2021, at 9:24 AM, Pali Roh=C3=A1r <pali@kernel.org> wrote=
-:
-> > > >
-> > > > It does not make any sense to set hsb->nls_io (NLS iocharset used b=
-etween
-> > > > VFS and hfs driver) when hsb->nls_disk (NLS codepage used between h=
-fs
-> > > > driver and disk) is not set.
-> > > >
-> > > > Reverse engineering driver code shown what is doing in this special=
- case:
-> > > >
-> > > >    When codepage was not defined but iocharset was then
-> > > >    hfs driver copied 8bit character from disk directly to
-> > > >    16bit unicode wchar_t type. Which means it did conversion
-> > > >    from Latin1 (ISO-8859-1) to Unicode because first 256
-> > > >    Unicode code points matches 8bit ISO-8859-1 codepage table.
-> > > >    So when iocharset was specified and codepage not, then
-> > > >    codepage used implicit value "iso8859-1".
-> > > >
-> > > > So when hsb->nls_disk is not set and hsb->nls_io is then explicitly=
- set
-> > > > hsb->nls_disk to "iso8859-1".
-> > > >
-> > > > Such setup is obviously incompatible with Mac OS systems as they do=
- not
-> > > > support iso8859-1 encoding for hfs. So print warning into dmesg abo=
-ut this
-> > > > fact.
-> > > >
-> > > > After this change hsb->nls_disk is always set, so remove code paths=
- for
-> > > > case when hsb->nls_disk was not set as they are not needed anymore.
-> > >
-> > >
-> > > Sounds reasonable. But it will be great to know that the change has b=
-een tested reasonably well.
-> >
-> > I don't think it's reasonable to ask Pali to test every single filesyst=
-em.
-> > That's something the maintainer should do, as you're more likely to hav=
-e
-> > the infrastructure already set up to do testing of your filesystem and
-> > be aware of fun corner cases and use cases than someone who's working
-> > across all filesystems.
->
-> This patch series is currently in RFC form, as stated in cover letter
-> mostly untested. So they are not in form for merging or detailed
-> reviewing. I just would like to know if this is the right direction with
-> filesystems and if I should continue with this my effort or not.
-> And I thought that sending RFC "incomplete" patches is better way than
-> just describing what to do and how...
+commit f9c82a4ea89c3 ("Increase size of ucounts to atomic_long_t")
+changed the data type of ucounts/ucounts_max to long, but missed to
+adjust a few other places. This is noticeable on big endian platforms
+from user space because the /proc/sys/user/max_*_names files all
+contain 0.
 
+v4 - Made the min and max constants long so the sysctl values
+     are actually settable on little endian machines.
+     -- EWB
 
+Fixes: f9c82a4ea89c ("Increase size of ucounts to atomic_long_t")
+Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Acked-by: Alexey Gladkov <legion@kernel.org>
+v1: https://lkml.kernel.org/r/20210721115800.910778-1-svens@linux.ibm.com
+v2: https://lkml.kernel.org/r/20210721125233.1041429-1-svens@linux.ibm.com
+v3: https://lkml.kernel.org/r/20210730062854.3601635-1-svens@linux.ibm.com
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+---
 
---=20
-Thanks,
+Thanks everyone for testing and helping find the cause of this bug.  I
+will push this out to linux-next shortly.
 
-Steve
+ fs/notify/fanotify/fanotify_user.c | 17 +++++++++++------
+ fs/notify/inotify/inotify_user.c   | 17 +++++++++++------
+ kernel/ucount.c                    | 19 +++++++++++--------
+ 3 files changed, 33 insertions(+), 20 deletions(-)
+
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 64864fb40b40..28b67cb9458d 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -54,22 +54,27 @@ static int fanotify_max_queued_events __read_mostly;
+ 
+ #include <linux/sysctl.h>
+ 
++static long ft_zero = 0;
++static long ft_int_max = INT_MAX;
++
+ struct ctl_table fanotify_table[] = {
+ 	{
+ 		.procname	= "max_user_groups",
+ 		.data	= &init_user_ns.ucount_max[UCOUNT_FANOTIFY_GROUPS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(long),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
++		.proc_handler	= proc_doulongvec_minmax,
++		.extra1		= &ft_zero,
++		.extra2		= &ft_int_max,
+ 	},
+ 	{
+ 		.procname	= "max_user_marks",
+ 		.data	= &init_user_ns.ucount_max[UCOUNT_FANOTIFY_MARKS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(long),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
++		.proc_handler	= proc_doulongvec_minmax,
++		.extra1		= &ft_zero,
++		.extra2		= &ft_int_max,
+ 	},
+ 	{
+ 		.procname	= "max_queued_events",
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 98f61b31745a..62051247f6d2 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -55,22 +55,27 @@ struct kmem_cache *inotify_inode_mark_cachep __read_mostly;
+ 
+ #include <linux/sysctl.h>
+ 
++static long it_zero = 0;
++static long it_int_max = INT_MAX;
++
+ struct ctl_table inotify_table[] = {
+ 	{
+ 		.procname	= "max_user_instances",
+ 		.data		= &init_user_ns.ucount_max[UCOUNT_INOTIFY_INSTANCES],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(long),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
++		.proc_handler	= proc_doulongvec_minmax,
++		.extra1		= &it_zero,
++		.extra2		= &it_int_max,
+ 	},
+ 	{
+ 		.procname	= "max_user_watches",
+ 		.data		= &init_user_ns.ucount_max[UCOUNT_INOTIFY_WATCHES],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(long),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
++		.proc_handler	= proc_doulongvec_minmax,
++		.extra1		= &it_zero,
++		.extra2		= &it_int_max,
+ 	},
+ 	{
+ 		.procname	= "max_queued_events",
+diff --git a/kernel/ucount.c b/kernel/ucount.c
+index 77be3bbe3cc4..bb51849e6375 100644
+--- a/kernel/ucount.c
++++ b/kernel/ucount.c
+@@ -58,14 +58,17 @@ static struct ctl_table_root set_root = {
+ 	.permissions = set_permissions,
+ };
+ 
+-#define UCOUNT_ENTRY(name)				\
+-	{						\
+-		.procname	= name,			\
+-		.maxlen		= sizeof(int),		\
+-		.mode		= 0644,			\
+-		.proc_handler	= proc_dointvec_minmax,	\
+-		.extra1		= SYSCTL_ZERO,		\
+-		.extra2		= SYSCTL_INT_MAX,	\
++static long ue_zero = 0;
++static long ue_int_max = INT_MAX;
++
++#define UCOUNT_ENTRY(name)					\
++	{							\
++		.procname	= name,				\
++		.maxlen		= sizeof(long),			\
++		.mode		= 0644,				\
++		.proc_handler	= proc_doulongvec_minmax,	\
++		.extra1		= &ue_zero,			\
++		.extra2		= &ue_int_max,			\
+ 	}
+ static struct ctl_table user_table[] = {
+ 	UCOUNT_ENTRY("max_user_namespaces"),
+-- 
+2.20.1
+
