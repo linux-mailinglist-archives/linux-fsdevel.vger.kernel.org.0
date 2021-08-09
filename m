@@ -2,289 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE2023E4B29
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 19:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 070FE3E4B33
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 19:50:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234552AbhHIRuC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 13:50:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34948 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234388AbhHIRuB (ORCPT
+        id S234786AbhHIRvF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 13:51:05 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:57452 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234749AbhHIRvD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 13:50:01 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B74FC061796
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Aug 2021 10:49:41 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id a19so19319516qkg.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Aug 2021 10:49:41 -0700 (PDT)
+        Mon, 9 Aug 2021 13:51:03 -0400
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 179HkOGq001586;
+        Mon, 9 Aug 2021 17:50:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=3xhsy4uuZJLG4lyzGTY4jQyrr0SbaWwXY0j71VHFisk=;
+ b=IAu8UDn0O9a/FdKoEpKNHw246NOs9/t6bhWFSfAxPaJ5zv4JDbkxwUGriocdh3zKP0o+
+ s8/bFL9KvMqh/9NQn6wBdnT/+bAZdMwFRFbRWGgKvA+HrguLGVNMtMnjctoE5/8zaxac
+ yMYt7LXqFfO6w66ccSWr+0msm3adM2n/DRcGRgN1KhVywLS7rwosDLwDF0Kqh4rs0iGk
+ FYmDvKC7DUwAEQFZK+wofeTIZSktYZyK0Yg5e1rGieNMnqrjg+xc0WVkGsveT21fpW0w
+ C3umkBVbnKRSPk/neGAaGGRj8p6kaCV/vVe2pP/uNVwS/9mITsqc2Ahyad4AENGTR014 eg== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=3xhsy4uuZJLG4lyzGTY4jQyrr0SbaWwXY0j71VHFisk=;
+ b=P38HoIu6gFUDO4T/IV5FsSOoNOW+EvQTUFpgkM+2V6X5S3FmuV4uwgWzBInvqS94AO3v
+ Jy2ulekEa3ZFhmHyo1qC5KiMwYl/0OTS4MjcF6qxgCfNWE3qMMOFnWZ7iMN8BjhEBc4O
+ 1aC59LKFAxh/4RGcXBCnoGtXjZqwYZHcZUjEbjmWuSd4mFbMQFU6wfeN7d2G/zIr3jTc
+ jMmVwk7kCAy7NcVvAA1OK8hxAa++ngOmc2pHI+lDupf2sQI56+PGAxToKzD7EZvQrfoT
+ nAPEP5kLfKW6vVuSGytZTGGD047b7XRiZrozcz/hr3SQcPSOSrygmKKDWFzHsd2MRvhu og== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ab17ds996-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Aug 2021 17:50:33 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 179HoS3M028155;
+        Mon, 9 Aug 2021 17:50:32 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2171.outbound.protection.outlook.com [104.47.57.171])
+        by aserp3030.oracle.com with ESMTP id 3aa8qrqcq1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Aug 2021 17:50:32 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hdmkTgLxTqswxv2R4LLb+xTELURE1B7vP0Nn0vhX8cGsSk32koLFefqJXtSob9mpEVmjpIL8lYCulBFpfIRI2r29Fdxt+gWvF/mIPEStyWOOIUKL9F/vfUPQSGKXfb9UmCdPHrhrdRTFXYEtPQVMpUgsMZrQHwrGplBdefxuyKLZDD/B7/NioeQ4ySKF7FuI63NLfn2aGUsvcHQ0PBbco9RDceIZFy0rVjEsqYt2UDILIZ+tauC8MSAu5YcNM+j9Yj1YPSIb0dWsVyH49lji9NwdNdU82mazsrZLwAOJGZVZDNzCareGFH4eI34JZpFS2dWY+j5Hp0c8NfrGmm2rng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3xhsy4uuZJLG4lyzGTY4jQyrr0SbaWwXY0j71VHFisk=;
+ b=iw6OV4vZ1fd9eJ+AkwxiW4Mub6HIFS400GhMieNk+6IzKA6jQlKX3re/q/0cXRUWVPASXvsfegqYlaqaBV2GMRMsO96uoeuRpOXRnP764kiRywxhJiX0z8ECTb0nDviUG8qE2ehHj/mZ+LH2IuqZ/vQRIX3LSqk33i6N6FYbmBFTqjB2Wvw+oyrp7/FLc/rPHzv+OdloZKlINAzBLxwoua2PAcTQ1TPexrsGJzAcKZAz8+qavgAto663G91ydA81YVUrsRwWji8mKFbbqW3042zoc/vaFQ1tJxl3cMQCbBwFM7n0KnDEFQbhrtNz0r7ONcsKktFDMr8121mH7/mNDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=jpfIGx2EzYaUOkGK/YPaLej8O5uKozVOIfYq7wV/cTQ=;
-        b=Tj7RAOmM1x2cET3pYHKg6cLSxjzwEmOYMIpGiMmjmkZHludn4vfEy5dyhIf3mMCMG3
-         fndz4DvX7LH/eCPn453Ic3kGMhGSareukjsqhkN3I46oL21egiPsE5H0acE4fUc9ABYB
-         iDxJGa8pi5M7Xd7x6CNHNWSYZEJJOxbf8shbEK53dwP+akOODp/rRjWTszoaquPBeXWd
-         9hsdgEWotN4xK1oqzCUtlnJ6Bz7hyS/ZWSFZ0SAy+iFX8u75i1wpTtvEtENsVNSVZoBv
-         Gt1FGzTBknfRVQLco9vYwXInh8Xy+xBS/7uZQ+zRHb5GazZF2jD9V/r5ozx7q6FBDjnq
-         K5OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=jpfIGx2EzYaUOkGK/YPaLej8O5uKozVOIfYq7wV/cTQ=;
-        b=hIL6OTpkpHnzuDnuo2SrxUMN1WjFNLreQe+d5Z63PurG9EomYQe3jTwcKzkLgJWlVN
-         YyblMhck3gUjlPKnrYgOqKcqDjNxzvP2khs6eJRTl5WUESzQyhbT5frCu3/F88wsb6Wq
-         U4AI6CVn1TqSs/cGZpKUjUfP+nI7JydSZpcE22CLkW7lqx61wf91BX52UwvlBC7msA+G
-         tIBvDZBh++w0+aZq+RNhA/H59htY05se5PN/q1D9i0nDTZZMIkT7sYThNwL5Hlnk/fPX
-         5oLt1db8rNmtFP/BCetE3m/FwK56oRtSL5uyciUOb1XYi0m3dCk90B4SqVxDBsp4hS4P
-         84Yw==
-X-Gm-Message-State: AOAM53058J3LxPTL4JSQXKSNZ/j8AdOPjQc440iA213dQN4rASmtYGvf
-        oq1aLrCuGxVvrnWHOG+7dfBpbw==
-X-Google-Smtp-Source: ABdhPJz2058dUuvRBlMStlQcuOvywn5SOSNHYuAFINAcfE0R3v56luVgJPI9khFKBeN8xtsVzZxpoA==
-X-Received: by 2002:a37:8306:: with SMTP id f6mr24935656qkd.82.1628531380217;
-        Mon, 09 Aug 2021 10:49:40 -0700 (PDT)
-Received: from smtpclient.apple ([2600:1700:42f0:6600:615b:6e84:29a:3bc6])
-        by smtp.gmail.com with ESMTPSA id a8sm8629059qkn.63.2021.08.09.10.49.37
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Aug 2021 10:49:39 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.13\))
-Subject: Re: [RFC PATCH 12/20] hfs: Do not use broken utf8 NLS table for
- iocharset=utf8 mount option
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <20210808162453.1653-13-pali@kernel.org>
-Date:   Mon, 9 Aug 2021 10:49:34 -0700
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        =?utf-8?Q?Marek_Beh=C3=BAn?= <marek.behun@nic.cz>,
-        Christoph Hellwig <hch@infradead.org>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3xhsy4uuZJLG4lyzGTY4jQyrr0SbaWwXY0j71VHFisk=;
+ b=n3DntOE8B9d9Vqv4gKy6F+v9YX7zkVuoEu/BNxuNYmjDIPYf8PyOQq6efD9ySVbHjuc/wALws2vBGUB/8PyXHaG0c/dqgGlG9diu0t9Klm81pf92ooyOX4pBWpmDbKnIhVCmqMP9P4B8GJf/L/0BIXgOX0PCaJUrrVHd48e4+MM=
+Received: from SJ0PR10MB4688.namprd10.prod.outlook.com (2603:10b6:a03:2db::24)
+ by SJ0PR10MB5454.namprd10.prod.outlook.com (2603:10b6:a03:304::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.16; Mon, 9 Aug
+ 2021 17:50:17 +0000
+Received: from SJ0PR10MB4688.namprd10.prod.outlook.com
+ ([fe80::a8db:4fc8:ded5:e64]) by SJ0PR10MB4688.namprd10.prod.outlook.com
+ ([fe80::a8db:4fc8:ded5:e64%5]) with mapi id 15.20.4394.023; Mon, 9 Aug 2021
+ 17:50:17 +0000
+From:   Chuck Lever III <chuck.lever@oracle.com>
+To:     Thomas Huth <thuth@redhat.com>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Bruce Fields <bfields@fieldses.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        Jia He <hejianet@gmail.com>,
+        Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>
+Subject: Re: [PATCH 0/2] Fix /proc/sys/fs/nfs/nsm_use_hostnames on big endian
+ machines
+Thread-Topic: [PATCH 0/2] Fix /proc/sys/fs/nfs/nsm_use_hostnames on big endian
+ machines
+Thread-Index: AQHXiFazbCL8ap5xPUS5u/husB93VqtrfVgA
+Date:   Mon, 9 Aug 2021 17:50:17 +0000
+Message-ID: <00D67F02-1AA6-43FD-B2F4-EC5015D59A7E@oracle.com>
+References: <20210803105937.52052-1-thuth@redhat.com>
+In-Reply-To: <20210803105937.52052-1-thuth@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: redhat.com; dkim=none (message not signed)
+ header.d=none;redhat.com; dmarc=none action=none header.from=oracle.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d23f6091-77c9-4278-9449-08d95b5e2643
+x-ms-traffictypediagnostic: SJ0PR10MB5454:
+x-microsoft-antispam-prvs: <SJ0PR10MB5454DFB73500721202CAAAA293F69@SJ0PR10MB5454.namprd10.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: i7PBivYbZn3dCFMGu/Rj0Stck7dk0xHlVB3xXvKz6PBKH8pTm/MLT4SXWfP+pzBPsRVWiS2SLc7PLF0I8soNFlJz6Df/jsXf5OtJfVjUkb1PD0stFb5fKV5CUJMqlKR57mnpkVy2V6pS0VuRGThA+dlg5yKQKrLQ1ifCSMu6B/LnwLbXFaBNRSizLDjGrYDX/E0W8r0z1IFPqA4HDvUNJJ5jRWIcJs2PL6y/GWoWozNbYjvzJqO+b6MUAxeuIuzcGqiE7iU/44Xi4hGHcsY97X6SnBzTQn9Qp4UgXN5R0wnStI21KHd4pFKNCOyG+568oCCUv+RcvAKKeOxCIOHKLm09rnmTQHx0Oq83H8i7Oei8Tj6AihjxvpKshISrTBvDnVKwdYmihxcvItWGuuA6nGPTt8IfPx6F63xEBUkiz9KX7PeyV8po95zExyJwVkNw0NFN4Mpukx7dOuIVeZmfXgbjJtJjck5qkbTSXxq/gIVIac275sSLTkFlJqxcikYMmPl6IPKHJGwo9+czo/4wn2uknBNaTf0FFpT/hqtt4zO62w9CBDOvIZmfd3BOSamkt7CprjXPN8fKTg/GXxAsnI9ZZpVdzGAxqW8WNY3wvfBI5ZwiPRlHqmiY3FFgZTzvJva6ofLgx8BdPrE5jl9kHFSOTCzqxunyAHF/IymIvkfuM3sKnkbfrwsKdwPN2m/piClCUZcZD1r/4qvs8RO8Ln/BcY1SQAXI0DOoxDoB51k0tBZ0VYhigzEwOrnNvAReacJNOBG38eNehD35/BwCGY4/KUije3ZfoYXsxLhW+0K+wKs/KwAZs+YOPi8JMbK9lfQ0oBqVC5TmoVrhnEFdfBuJ8HScgWP+SoLE0FfKTXs=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4688.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(76116006)(8936002)(36756003)(186003)(508600001)(7416002)(91956017)(66556008)(54906003)(316002)(71200400001)(8676002)(66476007)(66446008)(966005)(66946007)(64756008)(5660300002)(6512007)(6506007)(6916009)(33656002)(53546011)(2906002)(86362001)(38100700002)(122000001)(38070700005)(4326008)(6486002)(2616005)(26005)(83380400001)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?/nqNI/cH/6BtFlfozVfRFyG0BoyiXEm6uRb82d3+pSRq1aQKwaAWX6Eoirw9?=
+ =?us-ascii?Q?A8qeMhXY7Bum/78DtpZjfiweZmgqPhDgFwdbkVRKtXHKnw00m8QTr/3Ev6Vm?=
+ =?us-ascii?Q?dxJcz1wtqwEor7yXkrgkZtKq8A8zadZWZRfz/40JecRlNOXOFnK/abVIj5yg?=
+ =?us-ascii?Q?M99lpQ0+tJIqSZij0VBC1mOFtgcuQmcF/sPjR0MiM97300Z0L0/7QG8u6R5K?=
+ =?us-ascii?Q?/GQ38KmVS1Di2uMDOVca2ItTJGOWUuxy4vcL2Re2f/LEhmzRqC5JwUSH55N/?=
+ =?us-ascii?Q?7hzDM2GapnGW7OkOAI8PfXMU2PnAm0rYrYWFsljVpr1j+MQcs2xG4ze6ZszG?=
+ =?us-ascii?Q?mgf3bIMK437eehl9mi319fj7E6hqT1FC61bsTUuR4Yj4p7xoavUn+QHNgZvt?=
+ =?us-ascii?Q?HQxXHi/QrfuHvlhVcGWFW4ovoNHc0yQsFFjHrvGFm+bGfsqoS900x3nXYkMK?=
+ =?us-ascii?Q?r3Wm9tjpF/a1lw6zaQ0oMW7lwt/EhkDX82KLSJDYD7ieZoJRjL8gePQEV42d?=
+ =?us-ascii?Q?DuJCqyYRFyXzuvIDWR0bI3JhigLUW3QhY4LKt7S6cF0sHGRJYqah46XFedJO?=
+ =?us-ascii?Q?mxQh541wK4Vw7N0ZraeaG8dbYTlJNrMbGCub2ax+1UdgTyEa7AsK1mgiIXsb?=
+ =?us-ascii?Q?i+qCZ0DPlTL6brezJIIeipqwDouEL0AwdYfN3JLWCw3eKzwArfogLnv82fri?=
+ =?us-ascii?Q?vK39JE5vQmDHd1GiuEixa34MkN0VJoSnS1LvuG5m9p9all4XBd5jaPT5SAFp?=
+ =?us-ascii?Q?XfaPNs7rl47p1QuRbaoWQWLBhDAgJiEkRj5eTliM+Tdob0KqnUcPqoXt797r?=
+ =?us-ascii?Q?cSzO8MdRxz9WD4ktbYzE+vP5L5Uh2f1ic0us20wdk3yTpQ6BF6ALdM2jFogL?=
+ =?us-ascii?Q?zq/6BzN3KAvy7PxtaZ27CSe+7eGeqa3ryN2cJnLXSSYqkPfMX/iOyi1TVhPI?=
+ =?us-ascii?Q?ErAL1Ai6s4eYyznfmmZZyMFZpKfCzdz4XyhxOqCAENxBHF2a0VqyAqcOK0Ss?=
+ =?us-ascii?Q?y7genk/SAXdodcgnVxY8lzs9J+GMQ0roTQzAUMr/FZ1eZ4eHIIK9y5sHcLMa?=
+ =?us-ascii?Q?vbqmv3gLTO2XjpW/k/scQ57CIGLo3/n5309Fs+24Kk3HtlSWYVeF3j6qQgWn?=
+ =?us-ascii?Q?0BOBPBdLCWHV/C2eVEODXnUi+v/hwKvk4QoTsxd6v1FAQumv30OnsvkoclfY?=
+ =?us-ascii?Q?3DPz5qXjMnrkNL5N6+b0SBtfzsyejjfFFN2ni3SiD8dDta/dSrhE4EBR15aC?=
+ =?us-ascii?Q?hyP5n6RF1tQHgsYLRAGcvd8RyXYOoBn8FoclqQVqwdrmaiFHNQQGPyp0+5Oq?=
+ =?us-ascii?Q?UpPSV90Fx6+k9P9WQ9W4wv+7e4AKzdaaBrc9akpnNwlEWg=3D=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D08953FEDCCDF24EA43539FDE271F485@namprd10.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <4B1987C7-F6D9-4493-ACD0-846B92F86037@dubeyko.com>
-References: <20210808162453.1653-1-pali@kernel.org>
- <20210808162453.1653-13-pali@kernel.org>
-To:     =?utf-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-X-Mailer: Apple Mail (2.3654.120.0.1.13)
+MIME-Version: 1.0
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4688.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d23f6091-77c9-4278-9449-08d95b5e2643
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2021 17:50:17.5467
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: KA4i5kUp6T+ohJPeDxOiXdyE+hEzp4n9GJh1zxOqhgrcm7RGWdAzEXHb407ZlfmDdG+1t1N3F4OmFTURWzVSgQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5454
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10071 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 mlxscore=0
+ spamscore=0 adultscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
+ definitions=main-2108090126
+X-Proofpoint-GUID: NYHpcgp8-rSSOLjDL9VjfJLN2cT_9ca3
+X-Proofpoint-ORIG-GUID: NYHpcgp8-rSSOLjDL9VjfJLN2cT_9ca3
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-> On Aug 8, 2021, at 9:24 AM, Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> On Aug 3, 2021, at 6:59 AM, Thomas Huth <thuth@redhat.com> wrote:
 >=20
-> NLS table for utf8 is broken and cannot be fixed.
+> There is an endianess problem with /proc/sys/fs/nfs/nsm_use_hostnames
+> (which can e.g. be seen on an s390x host) :
 >=20
-> So instead of broken utf8 nls functions char2uni() and uni2char() use
-> functions utf8_to_utf32() and utf32_to_utf8() which implements correct
-> encoding and decoding between Unicode code points and UTF-8 sequence.
+> # modprobe lockd nsm_use_hostnames=3D1
+> # cat /proc/sys/fs/nfs/nsm_use_hostnames
+> 16777216
 >=20
-> When iochatset=3Dutf8 is used then set hsb->nls_io to NULL and use it =
-for
-> distinguish between the fact if NLS table or native UTF-8 functions =
-should
-> be used.
+> The nsm_use_hostnames variable is declared as "bool" which is required
+> for the correct type for the module parameter. However, this does not
+> work correctly with the entry in the /proc filesystem since this
+> currently requires "int".
 >=20
-> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> ---
-> fs/hfs/super.c | 33 ++++++++++++++++++++++-----------
-> fs/hfs/trans.c | 24 ++++++++++++++++++++----
-> 2 files changed, 42 insertions(+), 15 deletions(-)
+> Jia He already provided patches for this problem a couple of years ago,
+> but apparently they felt through the cracks and never got merged. So
+> here's a rebased version to finally fix this issue.
 >=20
-> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-> index 86bc46746c7f..076308df41cf 100644
-> --- a/fs/hfs/super.c
-> +++ b/fs/hfs/super.c
-> @@ -149,10 +149,13 @@ static int hfs_show_options(struct seq_file =
-*seq, struct dentry *root)
-> 		seq_printf(seq, ",part=3D%u", sbi->part);
-> 	if (sbi->session >=3D 0)
-> 		seq_printf(seq, ",session=3D%u", sbi->session);
-> -	if (sbi->nls_disk)
-> +	if (sbi->nls_disk) {
-> 		seq_printf(seq, ",codepage=3D%s", =
-sbi->nls_disk->charset);
-
-Maybe, I am missing something. But where is the closing =E2=80=9C}=E2=80=9D=
-?
-
-
-> -	if (sbi->nls_io)
-> -		seq_printf(seq, ",iocharset=3D%s", =
-sbi->nls_io->charset);
-> +		if (sbi->nls_io)
-> +			seq_printf(seq, ",iocharset=3D%s", =
-sbi->nls_io->charset);
-> +		else
-> +			seq_puts(seq, ",iocharset=3Dutf8");
-> +	}
-> 	if (sbi->s_quiet)
-> 		seq_printf(seq, ",quiet");
-> 	return 0;
-> @@ -225,6 +228,7 @@ static int parse_options(char *options, struct =
-hfs_sb_info *hsb)
-> 	char *p;
-> 	substring_t args[MAX_OPT_ARGS];
-> 	int tmp, token;
-> +	int have_iocharset;
-
-What=E2=80=99s about boolean type?
-
+> Buglink: https://bugzilla.redhat.com/show_bug.cgi?id=3D1764075
 >=20
-> 	/* initialize the sb with defaults */
-> 	hsb->s_uid =3D current_uid();
-> @@ -239,6 +243,8 @@ static int parse_options(char *options, struct =
-hfs_sb_info *hsb)
-> 	if (!options)
-> 		return 1;
+> Jia He (2):
+>  sysctl: introduce new proc handler proc_dobool
+>  lockd: change the proc_handler for nsm_use_hostnames
 >=20
-> +	have_iocharset =3D 0;
-
-What=E2=80=99s about false here?
-
-> +
-> 	while ((p =3D strsep(&options, ",")) !=3D NULL) {
-> 		if (!*p)
-> 			continue;
-> @@ -332,18 +338,22 @@ static int parse_options(char *options, struct =
-hfs_sb_info *hsb)
-> 			kfree(p);
-> 			break;
-> 		case opt_iocharset:
-> -			if (hsb->nls_io) {
-> +			if (have_iocharset) {
-> 				pr_err("unable to change iocharset\n");
-> 				return 0;
-> 			}
-> 			p =3D match_strdup(&args[0]);
-> -			if (p)
-> -				hsb->nls_io =3D load_nls(p);
-> -			if (!hsb->nls_io) {
-> -				pr_err("unable to load iocharset =
-\"%s\"\n", p);
-> -				kfree(p);
-> +			if (!p)
-> 				return 0;
-> +			if (strcmp(p, "utf8") !=3D 0) {
-> +				hsb->nls_io =3D load_nls(p);
-> +				if (!hsb->nls_io) {
-> +					pr_err("unable to load iocharset =
-\"%s\"\n", p);
-> +					kfree(p);
-> +					return 0;
-> +				}
-> 			}
-> +			have_iocharset =3D 1;
-
-What=E2=80=99s about true here?
-
-> 			kfree(p);
-> 			break;
-> 		default:
-> @@ -351,7 +361,7 @@ static int parse_options(char *options, struct =
-hfs_sb_info *hsb)
-> 		}
-> 	}
+> fs/lockd/svc.c         |  2 +-
+> include/linux/sysctl.h |  2 ++
+> kernel/sysctl.c        | 42 ++++++++++++++++++++++++++++++++++++++++++
+> 3 files changed, 45 insertions(+), 1 deletion(-)
 >=20
-> -	if (hsb->nls_io && !hsb->nls_disk) {
-> +	if (have_iocharset && !hsb->nls_disk) {
-> 		/*
-> 		 * Previous version of hfs driver did something =
-unexpected:
-> 		 * When codepage was not defined but iocharset was then
-> @@ -382,7 +392,8 @@ static int parse_options(char *options, struct =
-hfs_sb_info *hsb)
-> 			return 0;
-> 		}
-> 	}
-> -	if (hsb->nls_disk && !hsb->nls_io) {
-> +	if (hsb->nls_disk &&
-> +	    !have_iocharset && strcmp(CONFIG_NLS_DEFAULT, "utf8") !=3D =
-0) {
-
-Maybe, introduce the variable to calculate the boolean value here? Then =
-if statement will look much cleaner.
-
-> 		hsb->nls_io =3D load_nls_default();
-> 		if (!hsb->nls_io) {
-> 			pr_err("unable to load default iocharset\n");
-> diff --git a/fs/hfs/trans.c b/fs/hfs/trans.c
-> index c75682c61b06..bff8e54003ab 100644
-> --- a/fs/hfs/trans.c
-> +++ b/fs/hfs/trans.c
-> @@ -44,7 +44,7 @@ int hfs_mac2asc(struct super_block *sb, char *out, =
-const struct hfs_name *in)
-> 		srclen =3D HFS_NAMELEN;
-> 	dst =3D out;
-> 	dstlen =3D HFS_MAX_NAMELEN;
-> -	if (nls_io) {
-> +	if (nls_disk) {
-> 		wchar_t ch;
->=20
-
-I could miss something here. But what=E2=80=99s about the closing =
-=E2=80=9C}=E2=80=9D?
-
-Thanks,
-Slava.
-
-> 		while (srclen > 0) {
-> @@ -57,7 +57,12 @@ int hfs_mac2asc(struct super_block *sb, char *out, =
-const struct hfs_name *in)
-> 			srclen -=3D size;
-> 			if (ch =3D=3D '/')
-> 				ch =3D ':';
-> -			size =3D nls_io->uni2char(ch, dst, dstlen);
-> +			if (nls_io)
-> +				size =3D nls_io->uni2char(ch, dst, =
-dstlen);
-> +			else if (dstlen > 0)
-> +				size =3D utf32_to_utf8(ch, dst, dstlen);
-> +			else
-> +				size =3D -ENAMETOOLONG;
-> 			if (size < 0) {
-> 				if (size =3D=3D -ENAMETOOLONG)
-> 					goto out;
-> @@ -101,11 +106,22 @@ void hfs_asc2mac(struct super_block *sb, struct =
-hfs_name *out, const struct qstr
-> 	srclen =3D in->len;
-> 	dst =3D out->name;
-> 	dstlen =3D HFS_NAMELEN;
-> -	if (nls_io) {
-> +	if (nls_disk) {
-> 		wchar_t ch;
-> +		unicode_t u;
->=20
-> 		while (srclen > 0) {
-> -			size =3D nls_io->char2uni(src, srclen, &ch);
-> +			if (nls_io)
-> +				size =3D nls_io->char2uni(src, srclen, =
-&ch);
-> +			else {
-> +				size =3D utf8_to_utf32(str, strlen, &u);
-> +				if (size >=3D 0) {
-> +					if (u <=3D MAX_WCHAR_T)
-> +						ch =3D u;
-> +					else
-> +						size =3D -EINVAL;
-> +				}
-> +			}
-> 			if (size < 0) {
-> 				ch =3D '?';
-> 				size =3D 1;
 > --=20
-> 2.20.1
->=20
+> 2.27.0
+
+To get these patches in front of our zero-day apparatus,
+I've applied them to the for-next topic branch here:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git/log/?h=3Dfor-=
+next
+
+However I haven't seen an Ack for the kernel/sysctl.c change yet.
+
+
+--
+Chuck Lever
+
+
 
