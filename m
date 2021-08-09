@@ -2,97 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC2D3E444F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 12:59:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25D2D3E4512
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 13:53:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234738AbhHILAG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 07:00:06 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:59142 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233254AbhHILAG (ORCPT
+        id S235058AbhHILxf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 07:53:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37636 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234506AbhHILxf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 07:00:06 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id E505B21E7F;
-        Mon,  9 Aug 2021 10:59:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1628506784;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=i+819Y6QMhTvZXoFwSHV0pNp7MewP22hxJjnmmnW1lo=;
-        b=L7iNq+QO8kIx+jtgLE41cT9LClu7YvI3duAku3cSfi2XbLnSP9Mq6IN0gMHqcDHJFUKt4z
-        NdpUZLJrbhDPbMvYUziR6TGqxej/USUzLzRRjpbXnAI1LefQ3GQz7WjAWeeUl6cEeCv3BV
-        qHQkiKxJCi2OAlHQ0xWizHz9kCzQPUc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1628506784;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=i+819Y6QMhTvZXoFwSHV0pNp7MewP22hxJjnmmnW1lo=;
-        b=be7gYdlgEviTolWcfsfJdFKIzb9Tns6XSfUJrxWftZ5oEHJ33Gvm4ikYyglqluZyBuObX4
-        PzZmXavwV+bJcjAg==
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
-        by relay2.suse.de (Postfix) with ESMTP id 3355BA3B89;
-        Mon,  9 Aug 2021 10:59:44 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 7F240DA880; Mon,  9 Aug 2021 12:56:52 +0200 (CEST)
-Date:   Mon, 9 Aug 2021 12:56:52 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com, kari.argillander@gmail.com,
-        oleksandr@natalenko.name
-Subject: Re: [PATCH v27 10/10] fs/ntfs3: Add MAINTAINERS
-Message-ID: <20210809105652.GK5047@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, aaptel@suse.com,
-        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
-        mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com, kari.argillander@gmail.com,
-        oleksandr@natalenko.name
-References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
- <20210729134943.778917-11-almaz.alexandrovich@paragon-software.com>
+        Mon, 9 Aug 2021 07:53:35 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FEF9C0613D3;
+        Mon,  9 Aug 2021 04:53:14 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id l14so4055953wrw.4;
+        Mon, 09 Aug 2021 04:53:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=F7px3/RhhfdEQF1GCZtJ+l7Qs0X8n7TnykM1fetOVG0=;
+        b=Ip81nm8TIohzme1FL99Mnae76HMIpXm6YRYKJSYKq8a7Xh8bjM5Fml9R4+FLewtWun
+         9uomycwLZbn0i4C/UsJKY6h5lNuiy9cRQUEjOij+FNM/BglKG8vPNGRII4yv727yxcg4
+         eS8KDezFVDiMFM34MGymXDCenUHhZPaYj0rsbdFqbfUZHMcfTGTZ7JgYw/3nHPKoWRyD
+         FrMB6GX/gD5lpSBk5SfaIXhe1k2JF+P6mblrdYiUtPB2CNPEfrNrWwp3RrNR6eLSBQ6D
+         6w7ZuG01VoSmLH60kxJqR+XTvfTeTaiq1wdAvPN+is7nbToIC2p0DHIQfUsvFfRAmUfo
+         KNdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=F7px3/RhhfdEQF1GCZtJ+l7Qs0X8n7TnykM1fetOVG0=;
+        b=KEdF5keCk3ZT0TeWSEophFmSj3s1ZmiTJLtAteJC8z0cv+tX08tjXxLq/b+Fv5FBVJ
+         0WofNkleo9IYlBx/dj9YOBODN+GsP+tRh+ImT0/VY0225Ou6mw6HQVd9yDKp1G5SndjI
+         vwI4fLczkbCMVUMQIk7EDQ1FUy0P+7+dMxtso3b1DI77Rl3MOOKDl9a5G0cqKEF/cX56
+         1RWzlKgWuyL5P8kcHwNaRWXW2Du1oMsSK2wkR/+vu0/W2z5AZ0HowQsKbiHU+ARIKT4h
+         te7SBUaADVeYp/l5ca2Yd4b4HwdfP2iWGwy9ba+HEyW6bDcnrwL/EAhCcS0UKGBHdwqP
+         JHQw==
+X-Gm-Message-State: AOAM533nWRWahB6AItpv7XKTR8GplAUyDTM71nULGKZjkM3BN3vsQNat
+        L19weuqqvQTqOICRoFOwqOkB5kk80ak=
+X-Google-Smtp-Source: ABdhPJwISBEJDYiL9EQjEdEjcWaKg904G1jcSrpfXgLSDjfRcrjAwioIz4x5Dx286nV1QTkGyDHPQQ==
+X-Received: by 2002:adf:fb8f:: with SMTP id a15mr24916254wrr.92.1628509993282;
+        Mon, 09 Aug 2021 04:53:13 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.236.119])
+        by smtp.gmail.com with ESMTPSA id f17sm22876828wrt.18.2021.08.09.04.53.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Aug 2021 04:53:12 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, asml.silence@gmail.com
+Subject: [PATCH 0/2] iter revert problems
+Date:   Mon,  9 Aug 2021 12:52:35 +0100
+Message-Id: <cover.1628509745.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210729134943.778917-11-almaz.alexandrovich@paragon-software.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 29, 2021 at 04:49:43PM +0300, Konstantin Komarov wrote:
-> This adds MAINTAINERS
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9c3428380..3b6b48537 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13279,6 +13279,13 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
->  F:	Documentation/filesystems/ntfs.rst
->  F:	fs/ntfs/
->  
-> +NTFS3 FILESYSTEM
-> +M:	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> +S:	Supported
-> +W:	http://www.paragon-software.com/
-> +F:	Documentation/filesystems/ntfs3.rst
-> +F:	fs/ntfs3/
+For the bug description see 2/2. As mentioned there the current problems
+is because of generic_write_checks(), but there was also a similar case
+fixed in 5.12, which should have been triggerable by normal
+write(2)/read(2) and others.
 
-Can you please add a git tree and mailing list entries?
+It may be better to enforce reexpands as a long term solution, but for
+now this patchset is quickier and easier to backport.
+
+Pavel Begunkov (2):
+  iov_iter: mark truncated iters
+  io_uring: don't retry with truncated iter
+
+ fs/io_uring.c       | 6 ++++++
+ include/linux/uio.h | 5 ++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+-- 
+2.32.0
+
