@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D94F3E3FDF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:25:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DE53E3FE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233235AbhHIG0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 02:26:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46956 "EHLO
+        id S233247AbhHIG1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 02:27:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233136AbhHIG0Q (ORCPT
+        with ESMTP id S233136AbhHIG1R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 02:26:16 -0400
+        Mon, 9 Aug 2021 02:27:17 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4F3C0613CF;
-        Sun,  8 Aug 2021 23:25:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3F6C0613CF;
+        Sun,  8 Aug 2021 23:26:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=apzfbAVQKWbGrKYMT3DIf/EpeYrpBdh35Pn+VTLrfXQ=; b=NcZFD3NNNPGQlPbrjZG1a1dc4G
-        x3FGFiNiWHX5318wEvkztp4HGFYFdPDHODJ7nuVObRZNU47m8v7/U8FJ8WxM7yXsAZ/gteG6hd7Rv
-        tQ9tzDFQ47cTVGGTZwZPmWSBOnr06RVmZXZ+GslaKRVK3YujwF7s4qcpqEKtCjJHSwp0h9Txkc/RQ
-        Dn+r7GZ9JYGV1L5BAujplk8mlvGcnItTOtgmaMqycuvQn14GJovJ6fKwgIwR7ryugG0J4fS53H7MX
-        CcJ0NTOZ7wcrnNOT9feUxU58AyuNR+9T8aT7KNZRAsul/M+uBcQIHNkLEB5ZeR2XsA2bfi+ikVTu1
-        5iso1S7A==;
+        bh=5mmSDcz0zlNa1bJPvEzM77FyPN1YuawnYHfKP4XtUdQ=; b=WqaXL+CLIvil7cs+NVP0Wzxl3p
+        El2/twZ8DW0kIx/tt+BYcYzFNh2q6LR2iCQK+EzFZE2HWM+wcUE5XYUaCGIuKtjg2zLNaLWnvcMNE
+        BdFuIMMAqYWy8zTRoSh/Ugzqbb7mA43DQlVF0bVjSJtt083j9NuLDLdUJFugFca53OWaZCvvvY50G
+        7vB0Ql8XoTwFNxkVO7+YYtzle8deuLUKKy0MiVVVmbjiSsffk1fmdiInQp3SdFeeIWn/gmOJVXvgs
+        HMuzrNq8ChqP7uSajuzAQ1WrctHj8a2ylrQ7/ssDDBpePCSZAD7FyPIDgG1H3A8z54tB9SWEnXDbB
+        ZXlXU9Eg==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCyhG-00AhAq-Mc; Mon, 09 Aug 2021 06:23:52 +0000
+        id 1mCyi0-00AhEN-Tl; Mon, 09 Aug 2021 06:24:42 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -37,9 +37,9 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: [PATCH 14/30] iomap: switch iomap_file_unshare to use iomap_iter
-Date:   Mon,  9 Aug 2021 08:12:28 +0200
-Message-Id: <20210809061244.1196573-15-hch@lst.de>
+Subject: [PATCH 15/30] iomap: switch iomap_zero_range to use iomap_iter
+Date:   Mon,  9 Aug 2021 08:12:29 +0200
+Message-Id: <20210809061244.1196573-16-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210809061244.1196573-1-hch@lst.de>
 References: <20210809061244.1196573-1-hch@lst.de>
@@ -50,68 +50,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Switch iomap_file_unshare to use iomap_iter.
+Switch iomap_zero_range to use iomap_iter.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/buffered-io.c | 35 ++++++++++++++++++-----------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+ fs/iomap/buffered-io.c | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4c7e82928cc546..4f525727462f33 100644
+index 4f525727462f33..3a23f7346938fb 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -817,10 +817,12 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+@@ -896,11 +896,12 @@ static s64 iomap_zero(struct inode *inode, loff_t pos, u64 length,
+ 	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
  }
- EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
  
--static loff_t
--iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
--		struct iomap *iomap, struct iomap *srcmap)
-+static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+-static loff_t iomap_zero_range_actor(struct inode *inode, loff_t pos,
+-		loff_t length, void *data, struct iomap *iomap,
+-		struct iomap *srcmap)
++static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
  {
+-	bool *did_zero = data;
 +	struct iomap *iomap = &iter->iomap;
 +	struct iomap *srcmap = iomap_iter_srcmap(iter);
 +	loff_t pos = iter->pos;
 +	loff_t length = iomap_length(iter);
- 	long status = 0;
  	loff_t written = 0;
  
-@@ -836,12 +838,12 @@ iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 		unsigned long bytes = min_t(loff_t, PAGE_SIZE - offset, length);
- 		struct page *page;
+ 	/* already zeroed?  we're done. */
+@@ -910,10 +911,11 @@ static loff_t iomap_zero_range_actor(struct inode *inode, loff_t pos,
+ 	do {
+ 		s64 bytes;
  
--		status = iomap_write_begin(inode, pos, bytes,
-+		status = iomap_write_begin(iter->inode, pos, bytes,
- 				IOMAP_WRITE_F_UNSHARE, &page, iomap, srcmap);
- 		if (unlikely(status))
- 			return status;
+-		if (IS_DAX(inode))
++		if (IS_DAX(iter->inode))
+ 			bytes = dax_iomap_zero(pos, length, iomap);
+ 		else
+-			bytes = iomap_zero(inode, pos, length, iomap, srcmap);
++			bytes = iomap_zero(iter->inode, pos, length, iomap,
++					   srcmap);
+ 		if (bytes < 0)
+ 			return bytes;
  
--		status = iomap_write_end(inode, pos, bytes, bytes, page, iomap,
-+		status = iomap_write_end(iter->inode, pos, bytes, bytes, page, iomap,
- 				srcmap);
- 		if (WARN_ON_ONCE(status == 0))
- 			return -EIO;
-@@ -852,7 +854,7 @@ iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 		written += status;
- 		length -= status;
- 
--		balance_dirty_pages_ratelimited(inode->i_mapping);
-+		balance_dirty_pages_ratelimited(iter->inode->i_mapping);
- 	} while (length);
- 
- 	return written;
-@@ -862,18 +864,17 @@ int
- iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+@@ -931,19 +933,17 @@ int
+ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
  		const struct iomap_ops *ops)
  {
 -	loff_t ret;
 -
--	while (len) {
--		ret = iomap_apply(inode, pos, len, IOMAP_WRITE, ops, NULL,
--				iomap_unshare_actor);
+-	while (len > 0) {
+-		ret = iomap_apply(inode, pos, len, IOMAP_ZERO,
+-				ops, did_zero, iomap_zero_range_actor);
 -		if (ret <= 0)
 -			return ret;
+-
 -		pos += ret;
 -		len -= ret;
 -	}
@@ -119,16 +111,16 @@ index 4c7e82928cc546..4f525727462f33 100644
 +		.inode		= inode,
 +		.pos		= pos,
 +		.len		= len,
-+		.flags		= IOMAP_WRITE,
++		.flags		= IOMAP_ZERO,
 +	};
 +	int ret;
  
 -	return 0;
 +	while ((ret = iomap_iter(&iter, ops)) > 0)
-+		iter.processed = iomap_unshare_iter(&iter);
++		iter.processed = iomap_zero_iter(&iter, did_zero);
 +	return ret;
  }
- EXPORT_SYMBOL_GPL(iomap_file_unshare);
+ EXPORT_SYMBOL_GPL(iomap_zero_range);
  
 -- 
 2.30.2
