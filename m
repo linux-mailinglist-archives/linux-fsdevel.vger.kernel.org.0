@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C81A63E4011
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 513EC3E4018
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233310AbhHIGdF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 02:33:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48514 "EHLO
+        id S233278AbhHIGee (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 02:34:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233265AbhHIGdE (ORCPT
+        with ESMTP id S233234AbhHIGee (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 02:33:04 -0400
+        Mon, 9 Aug 2021 02:34:34 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93CA7C0613CF;
-        Sun,  8 Aug 2021 23:32:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C226C0613CF;
+        Sun,  8 Aug 2021 23:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=nYO7cnuv0Th0s4KtBKiBkzxE8Vhba6ah/Rs5J4rme2A=; b=RzpCdfIFzm0U4yAgygK7bC7afc
-        oETa9AreGInO4ce6I5WmI5i54DRoPe9l7I85N04BgbQCeZu+0rM1uBBokotGnbKbMPlREIoXKjqBc
-        40Ksc+8rp/CTxbO43VlbU2z4tx85/U2Rgiy+3UTVggDy/cU0FamTxjaNEB96u0lwd6jd0wZBTA0MX
-        hnJ1zrrAGQz404FBrwgUoVnxFPdWmqC2psYK7vs0utDqvoQZw4hcdZICGj189ifQlBgmLqHHkNw9K
-        /xh6NICxdpAgUhulYZN01m/iMlnCRU/c4lycKyneWUJS1rE5KosNfyZMkQUciEmVnc2kXetrsMlcG
-        hUg7JvjA==;
+        bh=UxBtPmDy4DIybU1SgbXva6a1UPnFEyqj7JCXf4/Yuj0=; b=eCORjvjVf1W6pHG1wx9hoIrVHB
+        WMNa2hP3L3cd8bFjNE5ciAgi4A3FjeZsHL1hJANeCUtNTQxhHetf/dXt8nKKcaRMebk3L/xO1Zf7P
+        3iLTLAehx/IOZMqk3VIcu46VBNlfrLYhOhGiFAG6orC0J+Da/tvI5DGOR/vsn4Vg4sanOqlnZ33Z0
+        axpMAeA9rxZbzJyivda/zjEIlrjyT+EWtFMu+HBHnIjseYzXKaIbLKvprdnWHO1Mlzm7CwKZD+I0U
+        pp0xefBVVX+o6vuJJiXp9bpVoTZPTh1V2zBUgoKVjAsbjjCM/bnIxnE7uaADruO2WjzW7q+uJDuly
+        e3Yf36pw==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCyo8-00Ahix-Ga; Mon, 09 Aug 2021 06:30:59 +0000
+        id 1mCyp2-00AhnG-2b; Mon, 09 Aug 2021 06:31:49 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -37,9 +37,9 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: [PATCH 22/30] iomap: switch iomap_swapfile_activate to use iomap_iter
-Date:   Mon,  9 Aug 2021 08:12:36 +0200
-Message-Id: <20210809061244.1196573-23-hch@lst.de>
+Subject: [PATCH 23/30] fsdax: switch dax_iomap_rw to use iomap_iter
+Date:   Mon,  9 Aug 2021 08:12:37 +0200
+Message-Id: <20210809061244.1196573-24-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210809061244.1196573-1-hch@lst.de>
 References: <20210809061244.1196573-1-hch@lst.de>
@@ -50,93 +50,118 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Switch iomap_swapfile_activate to use iomap_iter.
+Switch the dax_iomap_rw implementation to use iomap_iter.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/swapfile.c | 38 ++++++++++++++++----------------------
- 1 file changed, 16 insertions(+), 22 deletions(-)
+ fs/dax.c | 49 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
 
-diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
-index 6250ca6a1f851d..7069606eca85b2 100644
---- a/fs/iomap/swapfile.c
-+++ b/fs/iomap/swapfile.c
-@@ -88,13 +88,9 @@ static int iomap_swapfile_fail(struct iomap_swapfile_info *isi, const char *str)
-  * swap only cares about contiguous page-aligned physical extents and makes no
-  * distinction between written and unwritten extents.
-  */
--static loff_t iomap_swapfile_activate_actor(struct inode *inode, loff_t pos,
--		loff_t count, void *data, struct iomap *iomap,
--		struct iomap *srcmap)
-+static loff_t iomap_swapfile_iter(const struct iomap_iter *iter,
-+		struct iomap *iomap, struct iomap_swapfile_info *isi)
- {
--	struct iomap_swapfile_info *isi = data;
--	int error;
--
- 	switch (iomap->type) {
- 	case IOMAP_MAPPED:
- 	case IOMAP_UNWRITTEN:
-@@ -125,12 +121,12 @@ static loff_t iomap_swapfile_activate_actor(struct inode *inode, loff_t pos,
- 		isi->iomap.length += iomap->length;
- 	} else {
- 		/* Otherwise, add the retained iomap and store this one. */
--		error = iomap_swapfile_add_extent(isi);
-+		int error = iomap_swapfile_add_extent(isi);
- 		if (error)
- 			return error;
- 		memcpy(&isi->iomap, iomap, sizeof(isi->iomap));
- 	}
--	return count;
-+	return iomap_length(iter);
+diff --git a/fs/dax.c b/fs/dax.c
+index 4d63040fd71f56..51da45301350a6 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1103,20 +1103,21 @@ s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
+ 	return size;
  }
  
- /*
-@@ -141,16 +137,19 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
- 		struct file *swap_file, sector_t *pagespan,
+-static loff_t
+-dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+-		struct iomap *iomap, struct iomap *srcmap)
++static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
++		struct iov_iter *iter)
+ {
++	const struct iomap *iomap = &iomi->iomap;
++	loff_t length = iomap_length(iomi);
++	loff_t pos = iomi->pos;
+ 	struct block_device *bdev = iomap->bdev;
+ 	struct dax_device *dax_dev = iomap->dax_dev;
+-	struct iov_iter *iter = data;
+ 	loff_t end = pos + length, done = 0;
+ 	ssize_t ret = 0;
+ 	size_t xfer;
+ 	int id;
+ 
+ 	if (iov_iter_rw(iter) == READ) {
+-		end = min(end, i_size_read(inode));
++		end = min(end, i_size_read(iomi->inode));
+ 		if (pos >= end)
+ 			return 0;
+ 
+@@ -1133,7 +1134,7 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	 * written by write(2) is visible in mmap.
+ 	 */
+ 	if (iomap->flags & IOMAP_F_NEW) {
+-		invalidate_inode_pages2_range(inode->i_mapping,
++		invalidate_inode_pages2_range(iomi->inode->i_mapping,
+ 					      pos >> PAGE_SHIFT,
+ 					      (end - 1) >> PAGE_SHIFT);
+ 	}
+@@ -1209,31 +1210,29 @@ ssize_t
+ dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
  		const struct iomap_ops *ops)
  {
-+	struct inode *inode = swap_file->f_mapping->host;
-+	struct iomap_iter iter = {
-+		.inode	= inode,
-+		.pos	= 0,
-+		.len	= ALIGN_DOWN(i_size_read(inode), PAGE_SIZE),
-+		.flags	= IOMAP_REPORT,
-+	};
- 	struct iomap_swapfile_info isi = {
- 		.sis = sis,
- 		.lowest_ppage = (sector_t)-1ULL,
- 		.file = swap_file,
- 	};
--	struct address_space *mapping = swap_file->f_mapping;
+-	struct address_space *mapping = iocb->ki_filp->f_mapping;
 -	struct inode *inode = mapping->host;
--	loff_t pos = 0;
--	loff_t len = ALIGN_DOWN(i_size_read(inode), PAGE_SIZE);
--	loff_t ret;
+-	loff_t pos = iocb->ki_pos, ret = 0, done = 0;
+-	unsigned flags = 0;
++	struct iomap_iter iomi = {
++		.inode		= iocb->ki_filp->f_mapping->host,
++		.pos		= iocb->ki_pos,
++		.len		= iov_iter_count(iter),
++	};
++	loff_t done = 0;
 +	int ret;
  
- 	/*
- 	 * Persist all file mapping metadata so that we won't have any
-@@ -160,15 +159,10 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
- 	if (ret)
- 		return ret;
+ 	if (iov_iter_rw(iter) == WRITE) {
+-		lockdep_assert_held_write(&inode->i_rwsem);
+-		flags |= IOMAP_WRITE;
++		lockdep_assert_held_write(&iomi.inode->i_rwsem);
++		iomi.flags |= IOMAP_WRITE;
+ 	} else {
+-		lockdep_assert_held(&inode->i_rwsem);
++		lockdep_assert_held(&iomi.inode->i_rwsem);
+ 	}
  
--	while (len > 0) {
--		ret = iomap_apply(inode, pos, len, IOMAP_REPORT,
--				ops, &isi, iomap_swapfile_activate_actor);
+ 	if (iocb->ki_flags & IOCB_NOWAIT)
+-		flags |= IOMAP_NOWAIT;
++		iomi.flags |= IOMAP_NOWAIT;
+ 
+-	while (iov_iter_count(iter)) {
+-		ret = iomap_apply(inode, pos, iov_iter_count(iter), flags, ops,
+-				iter, dax_iomap_actor);
 -		if (ret <= 0)
--			return ret;
--
+-			break;
 -		pos += ret;
--		len -= ret;
+-		done += ret;
 -	}
-+	while ((ret = iomap_iter(&iter, ops)) > 0)
-+		iter.processed = iomap_swapfile_iter(&iter, &iter.iomap, &isi);
-+	if (ret < 0)
-+		return ret;
++	while ((ret = iomap_iter(&iomi, ops)) > 0)
++		iomi.processed = dax_iomap_iter(&iomi, iter);
  
- 	if (isi.iomap.length) {
- 		ret = iomap_swapfile_add_extent(&isi);
+-	iocb->ki_pos += done;
++	done = iomi.pos - iocb->ki_pos;
++	iocb->ki_pos = iomi.pos;
+ 	return done ? done : ret;
+ }
+ EXPORT_SYMBOL_GPL(dax_iomap_rw);
+@@ -1307,7 +1306,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	}
+ 
+ 	/*
+-	 * Note that we don't bother to use iomap_apply here: DAX required
++	 * Note that we don't bother to use iomap_iter here: DAX required
+ 	 * the file system block size to be equal the page size, which means
+ 	 * that we never have to deal with more than a single extent here.
+ 	 */
+@@ -1561,7 +1560,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	}
+ 
+ 	/*
+-	 * Note that we don't use iomap_apply here.  We aren't doing I/O, only
++	 * Note that we don't use iomap_iter here.  We aren't doing I/O, only
+ 	 * setting up a mapping, so really we're using iomap_begin() as a way
+ 	 * to look up our filesystem block.
+ 	 */
 -- 
 2.30.2
 
