@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 459F53E3E8C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 05:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 903643E3E94
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 05:58:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232948AbhHID6p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Aug 2021 23:58:45 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:56424 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232939AbhHID6n (ORCPT
+        id S232982AbhHID7B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Aug 2021 23:59:01 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:58028 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232908AbhHID7A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Aug 2021 23:58:43 -0400
+        Sun, 8 Aug 2021 23:59:00 -0400
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 956AD21E55;
-        Mon,  9 Aug 2021 03:58:22 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 629D71FD81;
+        Mon,  9 Aug 2021 03:58:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1628481502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1628481519; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6SJIIFAGYYrXWu0yL4lrEb59SFTJAF7UUSPmCVWCYek=;
-        b=b3rpNXxp5yA0jam+f21PdLlC2NAS6L/vRvVmrGdIWnEAj/ExkGMTRaaLjlDjGxzIte1CTm
-        F3Wd5VXHNrEFiVaQa8rEDCNafjGObkY+zjrmeV4nRt9TTMoICzeDFFm0xk4mdtabVP+jb4
-        Yvc60Ky+vxSClTxnKRIh72+ZUVfJvGI=
+        bh=3tq+jPyM+goLmgxw4liv9qhmUugdd+4Dbde/VvyuKNE=;
+        b=vlMZ6D0KmLQnOJIEYKX+HN+1aMvHQnzr6DEEnhky1podQUy3UhqHiYiI20ikVYrAU7NB0I
+        /yfEOb4DvnZd61TQXNrmu3GxeTDbN8RY16FHFlK8H5GblPNM/0vK1EICeZO2XjmoQ8whGQ
+        ugPqZcDVOwBQB2smY9eqezBwFjznnUY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1628481502;
+        s=susede2_ed25519; t=1628481519;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6SJIIFAGYYrXWu0yL4lrEb59SFTJAF7UUSPmCVWCYek=;
-        b=29bUcUYxaNzJ/EQw8ZfyhV9NKa9nCGCxJkGRvPGBEaPCOsDx9u1bWqx8BMR1RYVTJm7XvY
-        ij2SZ6A29i/P/QDg==
+        bh=3tq+jPyM+goLmgxw4liv9qhmUugdd+4Dbde/VvyuKNE=;
+        b=h8QIDoFOLflmvPCnOPnaKVPgHRlsVjLePQXPxWlfxwajaWlN86JyQzFwlz+A3exnNfrESZ
+        IVyrdN7tGuF9upAQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 725D513A9F;
-        Mon,  9 Aug 2021 03:58:20 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 49C8D13A9F;
+        Mon,  9 Aug 2021 03:58:37 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id zSpkDNynEGHFBgAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 09 Aug 2021 03:58:20 +0000
-Subject: [PATCH 1/4] btrfs: include subvol identifier in inode number if -o
- inumbits=...
+        id fUNyAu2nEGHgBgAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 09 Aug 2021 03:58:37 +0000
+Subject: [PATCH 4/4] Add "tree" number to "inode" number in various /proc
+ files.
 From:   NeilBrown <neilb@suse.de>
 To:     Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
         David Sterba <dsterba@suse.com>
@@ -55,7 +55,7 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Linux NFS list <linux-nfs@vger.kernel.org>,
         Btrfs BTRFS <linux-btrfs@vger.kernel.org>
 Date:   Mon, 09 Aug 2021 13:55:27 +1000
-Message-ID: <162848132771.25823.16399620921119050413.stgit@noble.brown>
+Message-ID: <162848132776.25823.928326716860337875.stgit@noble.brown>
 In-Reply-To: <162848123483.25823.15844774651164477866.stgit@noble.brown>
 References: <162848123483.25823.15844774651164477866.stgit@noble.brown>
 User-Agent: StGit/0.23
@@ -66,338 +66,313 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A btrfs filesystem uses 112 bits to identify an object: 48 for the
-object-id of the subvolume (really a 'subtree') and 64 for the object
-within that tree.
+Various /proc files reporting locks, inotify status, or memory mappings
+currently report device number and inode node.
 
-It only exposes the 64bits in i_ino (and st_ino for stat()) and attempts
-to hide the non-uniqueness by reporting a different st_dev in stat() for
-each different subvol.
+These are already "broken" for btrfs as the device number is not one
+that is reported by "stat()" (though a program could find a way to map a
+file to an entry in /proc/self/mountinfo, and get the device number that
+way).
 
-This is incomplete and doesn't scale.
+This patch changes all the inode number is those files to "tree:inode"
+when the treeid is non-zero.  This it only affect btrfs (at this stage),
+and then only when mounted with "-o numdevs=1", as in other cases there
+is no value in changing the proc files.
 
-It is incomplete because there are places other than 'stat()' where the
-device number is visible to user-space, including /proc/$PID/mountinfo,
-/proc/$PID/maps and /proc/locks.  These report the device-number for the
-whole filesystem together with i_ino, and so do not match the
-st_dev+st_ino reported by stat().
+As none of these call ->getattr() to get ino or dev, I have added i_tree
+to struct inode so they can get it directly from there.  This isn't
+ideal, but is consistent with current code.
 
-It is also incomplete because nfsd doesn't notice the st_dev value,
-depending only of the existence of mount points to discover filesystem
-changes.
+Programs that looks for dev:ino based in information from stat(), and
+which don't crash on "badly" formatted entries will continue to work as
+well as they ever did.
 
-It doesn't scale because there are a limited number of anon device
-numbers that can be allocated, which is approximately 20 bits, much less
-than the 48 bits worth of subvols which btrfs supports.
+Programs which crash when an entry looks wrong should be fixed anyway.
 
-I believe that we *must* extend the user-space API to properly support
-btrfs - trying to fit within it will always cause pain, at least in the
-extremes.  I believe that the use of varying device numbers is not a
-viable long-term solution and must be deprecated.
-
-This patch is a first step towards deprecating the use of device numbers
-to add uniqueness.  It changes the inode numbers reported so they are
-unique across all subvols for modest sized filesystems.  It does this
-by creating an 'overlay' from the subvol number and xor-ing that into
-the file's object id.  This results in reported inode numbers being
-completely unique within a subvol, and mostly unique between subvols.
-
-The overlay is *not* xor-ed in when it exactly matches the objectid, as
-that would produce zero.
-
-A few placed in the code assume that ->i_ino is the objectid.  Those few
-are changed to call btrfs_ino(), and ino now subtracts the overlay.
-
-The "overlay" is created by byte-swapping the subvol identifier, then
-optionally shifting down a few bits so there is unused space at the
-top-end.  When the maximum objectid in use requires many fewer than 64
-bits, and the maximum subvol id in use does not use all of the
-remaining bits, complete uniqueness can be provided.  For larger
-fileystems, complete uniqueness cannot be guaranteed.
-
-The size of the shift can be set using the "inumbits" mount option.  A
-value of 64 suppresses any shift and maximum uniqueness is provided.  A
-value of 0 (the default) disables the overlay functionality.
-
-A generally good value on 64bit systems which might use overlayfs with
-btrdfs is 56, as this provides broad uniqueness, while leaving some bits
-for overlayfs to differentiate between merged filesystems.
-
-The only material improvement from this patch alone will come to
-applications and tools which do not pay attention to st_dev (as that is
-unchanged).  In particular, nfsd will, when "-o inumbits=56", report
-(mostly) unique inode numbers to the NFS client, and some problems
-caused by "find" and related tools detecting that the root of a subvol
-has the name inode number as the root of its parent - both of which
-appear to NFS to be in the same filesystem.
-
-Subsequent patches will build on this base to allow the use of multiple
-devices to be controlled, and then to allow complete uniqueness through
-interface extensions.
-
-ISSUE: In btrfs, inode numbers below the highest-currently-allocated are
-   never reused.  This allows the highest inode number to be arbitrarily
-   higher than the number of inodes.  This means that an "old"
-   filesystem can trigger a risk of non-uniqueness just as a large
-   filesystem can.
-
-ISSUE: I don't understand the role of BTRFS_EMPTY_SUBVOL_DIR_OBJECTID
-   so I don't know if I have to do anything when that value is assigned
-   to i_ino.
+Programs which correlate a file with /proc/self/mountinfo to find the
+"real" device number .... would make me sad.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/btrfs/btrfs_inode.h |   22 ++++++++++++++--------
- fs/btrfs/ctree.h       |    4 ++++
- fs/btrfs/disk-io.c     |   15 +++++++++++++++
- fs/btrfs/inode.c       |   17 ++++++++++++++---
- fs/btrfs/ioctl.c       |    2 +-
- fs/btrfs/super.c       |   24 +++++++++++++++++++++++-
- 6 files changed, 71 insertions(+), 13 deletions(-)
+ fs/btrfs/inode.c     |    6 ++++++
+ fs/inode.c           |    1 +
+ fs/locks.c           |   12 +++++++++---
+ fs/notify/fdinfo.c   |   19 ++++++++++++++-----
+ fs/proc/nommu.c      |   11 ++++++++---
+ fs/proc/task_mmu.c   |   17 ++++++++++++-----
+ fs/proc/task_nommu.c |   11 ++++++++---
+ fs/stat.c            |    1 +
+ include/linux/fs.h   |    1 +
+ 9 files changed, 60 insertions(+), 19 deletions(-)
 
-diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-index c652e19ad74e..18e1b071bb69 100644
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -246,13 +246,6 @@ static inline unsigned long btrfs_inode_hash(u64 objectid,
- 	return (unsigned long)h;
- }
- 
--static inline void btrfs_insert_inode_hash(struct inode *inode)
--{
--	unsigned long h = btrfs_inode_hash(inode->i_ino, BTRFS_I(inode)->root);
--
--	__insert_inode_hash(inode, h);
--}
--
- static inline u64 btrfs_ino(const struct btrfs_inode *inode)
- {
- 	u64 ino = inode->location.objectid;
-@@ -261,11 +254,24 @@ static inline u64 btrfs_ino(const struct btrfs_inode *inode)
- 	 * !ino: btree_inode
- 	 * type == BTRFS_ROOT_ITEM_KEY: subvol dir
- 	 */
--	if (!ino || inode->location.type == BTRFS_ROOT_ITEM_KEY)
-+	if (!ino || inode->location.type == BTRFS_ROOT_ITEM_KEY) {
-+		/* vfs_inode.i_ino has inum_overlay merged in, when
-+		 * that wouldn't produce zero. We need to remove it here.
-+		 */
- 		ino = inode->vfs_inode.i_ino;
-+		if (ino != inode->root->inum_overlay)
-+			ino ^= inode->root->inum_overlay;
-+	}
- 	return ino;
- }
- 
-+static inline void btrfs_insert_inode_hash(struct inode *inode)
-+{
-+	unsigned long h = btrfs_inode_hash(btrfs_ino(BTRFS_I(inode)), BTRFS_I(inode)->root);
-+
-+	__insert_inode_hash(inode, h);
-+}
-+
- static inline void btrfs_i_size_write(struct btrfs_inode *inode, u64 size)
- {
- 	i_size_write(&inode->vfs_inode, size);
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index e5e53e592d4f..0ef557db3a8b 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -987,6 +987,8 @@ struct btrfs_fs_info {
- 	u32 csums_per_leaf;
- 	u32 stripesize;
- 
-+	unsigned short inumbits;
-+
- 	/* Block groups and devices containing active swapfiles. */
- 	spinlock_t swapfile_pins_lock;
- 	struct rb_root swapfile_pins;
-@@ -1145,6 +1147,8 @@ struct btrfs_root {
- 
- 	u64 last_trans;
- 
-+	u64 inum_overlay;
-+
- 	u32 type;
- 
- 	u64 free_objectid;
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index a59ab7b9aea0..7f3bfa042d66 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1202,6 +1202,12 @@ static void __setup_root(struct btrfs_root *root, struct btrfs_fs_info *fs_info,
- 	memset(&root->defrag_progress, 0, sizeof(root->defrag_progress));
- 	root->root_key.objectid = objectid;
- 	root->anon_dev = 0;
-+	if (fs_info->inumbits &&
-+	    objectid != BTRFS_FS_TREE_OBJECTID &&
-+	    is_fstree(objectid))
-+		root->inum_overlay = swab64(objectid) >> (64 - fs_info->inumbits);
-+	else
-+		root->inum_overlay = 0;
- 
- 	spin_lock_init(&root->root_item_lock);
- 	btrfs_qgroup_init_swapped_blocks(&root->swapped_blocks);
-@@ -3314,12 +3320,21 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
- 	 */
- 	fs_info->compress_type = BTRFS_COMPRESS_ZLIB;
- 
-+	fs_info->inumbits = BITS_PER_LONG + 1; /* impossible value */
-+
- 	ret = btrfs_parse_options(fs_info, options, sb->s_flags);
- 	if (ret) {
- 		err = ret;
- 		goto fail_alloc;
- 	}
- 
-+	/* By default, use inumbits=0 to avoid behaviour change.
-+	 * "-o inumbits" can over-ride this default.
-+	 * BITS_PER_LONG * 7 / 8 is a good value to use
-+	 */
-+	if (fs_info->inumbits > BITS_PER_LONG)
-+		fs_info->inumbits = 0;
-+
- 	features = btrfs_super_incompat_flags(disk_super) &
- 		~BTRFS_FEATURE_INCOMPAT_SUPP;
- 	if (features) {
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 01099bf602fb..860cb5045123 100644
+index c878726d090c..98ba5f32a2b8 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -5782,6 +5782,11 @@ static int btrfs_init_locked_inode(struct inode *inode, void *p)
- 	struct btrfs_iget_args *args = p;
- 
- 	inode->i_ino = args->ino;
-+	if (args->root && args->ino != args->root->inum_overlay)
-+		/* This inode number will still be unique within this
-+		 * 'root', and should be nearly unique across the filesystem.
-+		 */
-+		inode->i_ino ^= args->root->inum_overlay;
+@@ -5787,6 +5787,8 @@ static int btrfs_init_locked_inode(struct inode *inode, void *p)
+ 		 * 'root', and should be nearly unique across the filesystem.
+ 		 */
+ 		inode->i_ino ^= args->root->inum_overlay;
++	if (args->root && args->root->fs_info->num_devs == 1)
++		inode->i_tree = args->root->root_key.objectid;
  	BTRFS_I(inode)->location.objectid = args->ino;
  	BTRFS_I(inode)->location.type = BTRFS_INODE_ITEM_KEY;
  	BTRFS_I(inode)->location.offset = 0;
-@@ -6092,6 +6097,7 @@ static int btrfs_real_readdir(struct file *file, struct dir_context *ctx)
+@@ -5876,6 +5878,8 @@ static struct inode *new_simple_dir(struct super_block *s,
+ 	set_bit(BTRFS_INODE_DUMMY, &BTRFS_I(inode)->runtime_flags);
  
- 	while (1) {
- 		struct dir_entry *entry;
-+		u64 inum;
- 
- 		leaf = path->nodes[0];
- 		slot = path->slots[0];
-@@ -6136,7 +6142,10 @@ static int btrfs_real_readdir(struct file *file, struct dir_context *ctx)
- 		put_unaligned(fs_ftype_to_dtype(btrfs_dir_type(leaf, di)),
- 				&entry->type);
- 		btrfs_dir_item_key_to_cpu(leaf, di, &location);
--		put_unaligned(location.objectid, &entry->ino);
-+		inum = location.objectid;
-+		if (inum != root->inum_overlay)
-+			inum ^= root->inum_overlay;
-+		put_unaligned(inum, &entry->ino);
- 		put_unaligned(found_key.offset, &entry->offset);
- 		entries++;
- 		addr += sizeof(struct dir_entry) + name_len;
-@@ -6333,7 +6342,7 @@ static int btrfs_insert_inode_locked(struct inode *inode)
- 	args.root = BTRFS_I(inode)->root;
- 
- 	return insert_inode_locked4(inode,
--		   btrfs_inode_hash(inode->i_ino, BTRFS_I(inode)->root),
-+		   btrfs_inode_hash(btrfs_ino(BTRFS_I(inode)), BTRFS_I(inode)->root),
- 		   btrfs_find_actor, &args);
- }
- 
-@@ -6412,6 +6421,8 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
- 	 * number if we fail afterwards in this function.
- 	 */
+ 	inode->i_ino = BTRFS_EMPTY_SUBVOL_DIR_OBJECTID;
++	if (root->fs_info->num_devs == 1)
++		inode->i_tree = root->root_key.objectid;
+ 	/*
+ 	 * We only need lookup, the rest is read-only and there's no inode
+ 	 * associated with the dentry
+@@ -6425,6 +6429,8 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
  	inode->i_ino = objectid;
-+	if (objectid != root->inum_overlay)
-+		inode->i_ino ^= root->inum_overlay;
+ 	if (objectid != root->inum_overlay)
+ 		inode->i_ino ^= root->inum_overlay;
++	if (root->fs_info->num_devs == 1)
++		inode->i_tree = root->root_key.objectid;
  
  	if (dir && name) {
  		trace_btrfs_inode_request(dir);
-@@ -9515,7 +9526,7 @@ static int btrfs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 
- 	/* check for collisions, even if the  name isn't there */
--	ret = btrfs_check_dir_item_collision(dest, new_dir->i_ino,
-+	ret = btrfs_check_dir_item_collision(dest, btrfs_ino(BTRFS_I(new_dir)),
- 			     new_dentry->d_name.name,
- 			     new_dentry->d_name.len);
- 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 0ba98e08a029..e008a9ceb827 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -907,7 +907,7 @@ static noinline int btrfs_mksubvol(const struct path *parent,
- 	 * check for them now when we can safely fail
- 	 */
- 	error = btrfs_check_dir_item_collision(BTRFS_I(dir)->root,
--					       dir->i_ino, name,
-+					       btrfs_ino(BTRFS_I(dir)), name,
- 					       namelen);
- 	if (error)
- 		goto out_dput;
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index d07b18b2b250..5f3350e2f7ec 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -359,6 +359,7 @@ enum {
- 	Opt_defrag, Opt_nodefrag,
- 	Opt_discard, Opt_nodiscard,
- 	Opt_discard_mode,
-+	Opt_inumbits,
- 	Opt_norecovery,
- 	Opt_ratio,
- 	Opt_rescan_uuid_tree,
-@@ -427,6 +428,7 @@ static const match_table_t tokens = {
- 	{Opt_nodefrag, "noautodefrag"},
- 	{Opt_discard, "discard"},
- 	{Opt_discard_mode, "discard=%s"},
-+	{Opt_inumbits, "inumbits=%u"},
- 	{Opt_nodiscard, "nodiscard"},
- 	{Opt_norecovery, "norecovery"},
- 	{Opt_ratio, "metadata_ratio=%u"},
-@@ -830,6 +832,25 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
- 			btrfs_clear_and_info(info, FLUSHONCOMMIT,
- 					     "turning off flush-on-commit");
- 			break;
-+		case Opt_inumbits:
-+			if (info->inumbits <= BITS_PER_LONG)
-+				/* silently ignore subsequent change
-+				 * e.g. on remount
-+				 */
-+				break;
-+			ret = match_int(&args[0], &intarg);
-+			if (ret)
-+				goto out;
-+			if (intarg > BITS_PER_LONG ||
-+			    (intarg && intarg < BITS_PER_LONG / 2)) {
-+				btrfs_err(info,
-+					  "inumbits must be 0 or in range [%d..%d]",
-+					  BITS_PER_LONG/2, BITS_PER_LONG);
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+			info->inumbits = intarg;
-+			break;
- 		case Opt_ratio:
- 			ret = match_int(&args[0], &intarg);
- 			if (ret)
-@@ -1537,6 +1558,7 @@ static int btrfs_show_options(struct seq_file *seq, struct dentry *dentry)
- #endif
- 	if (btrfs_test_opt(info, REF_VERIFY))
- 		seq_puts(seq, ",ref_verify");
-+	seq_printf(seq, ",inumbits=%u", info->inumbits);
- 	seq_printf(seq, ",subvolid=%llu",
- 		  BTRFS_I(d_inode(dentry))->root->root_key.objectid);
- 	subvol_name = btrfs_get_subvol_name_from_objectid(info,
-@@ -1570,7 +1592,7 @@ static int btrfs_set_super(struct super_block *s, void *data)
+diff --git a/fs/inode.c b/fs/inode.c
+index c93500d84264..7f62ac35de02 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -142,6 +142,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+ 	inode->i_op = &empty_iops;
+ 	inode->i_fop = &no_open_fops;
+ 	inode->i_ino = 0;
++	inode->i_tree = 0;
+ 	inode->__i_nlink = 1;
+ 	inode->i_opflags = 0;
+ 	if (sb->s_xattr)
+diff --git a/fs/locks.c b/fs/locks.c
+index 74b2a1dfe8d8..21b28c019052 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -2893,9 +2893,15 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+ 	}
+ 	if (inode) {
+ 		/* userspace relies on this representation of dev_t */
+-		seq_printf(f, "%d %02x:%02x:%lu ", fl_pid,
+-				MAJOR(inode->i_sb->s_dev),
+-				MINOR(inode->i_sb->s_dev), inode->i_ino);
++		if (inode->i_tree)
++			seq_printf(f, "%d %02x:%02x:%lu:%lu ", fl_pid,
++				   MAJOR(inode->i_sb->s_dev),
++				   MINOR(inode->i_sb->s_dev),
++				   inode->i_tree, inode->i_ino);
++		else
++			seq_printf(f, "%d %02x:%02x:%lu ", fl_pid,
++				   MAJOR(inode->i_sb->s_dev),
++				   MINOR(inode->i_sb->s_dev), inode->i_ino);
+ 	} else {
+ 		seq_printf(f, "%d <none>:0 ", fl_pid);
+ 	}
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index 57f0d5d9f934..4e8a363d171b 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -90,9 +90,13 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
+ 		 * used only internally to the kernel.
+ 		 */
+ 		u32 mask = mark->mask & IN_ALL_EVENTS;
+-		seq_printf(m, "inotify wd:%x ino:%lx sdev:%x mask:%x ignored_mask:%x ",
+-			   inode_mark->wd, inode->i_ino, inode->i_sb->s_dev,
+-			   mask, mark->ignored_mask);
++		seq_printf(m, "inotify wd:%x ", inode_mark->wd);
++		if (inode->i_tree)
++			seq_printf(m, "ino:%lx:%lx ", inode->i_tree, inode->i_ino);
++		else
++			seq_printf(m, "ino:%lx ", inode->i_ino);
++		seq_printf(m, "sdev:%x mask:%x ignored_mask:%x ",
++			   inode->i_sb->s_dev, mask, mark->ignored_mask);
+ 		show_mark_fhandle(m, inode);
+ 		seq_putc(m, '\n');
+ 		iput(inode);
+@@ -120,8 +124,13 @@ static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
+ 		inode = igrab(fsnotify_conn_inode(mark->connector));
+ 		if (!inode)
+ 			return;
+-		seq_printf(m, "fanotify ino:%lx sdev:%x mflags:%x mask:%x ignored_mask:%x ",
+-			   inode->i_ino, inode->i_sb->s_dev,
++		if (inode->i_tree)
++			seq_printf(m, "fanotify ino:%lx:%lx", inode->i_tree,
++				   inode->i_ino);
++		else
++			seq_printf(m, "fanotify ino:%lx", inode->i_ino);
++		seq_printf(m, " sdev:%x mflags:%x mask:%x ignored_mask:%x ",
++			   inode->i_sb->s_dev,
+ 			   mflags, mark->mask, mark->ignored_mask);
+ 		show_mark_fhandle(m, inode);
+ 		seq_putc(m, '\n');
+diff --git a/fs/proc/nommu.c b/fs/proc/nommu.c
+index 13452b32e2bd..371caf60d4a4 100644
+--- a/fs/proc/nommu.c
++++ b/fs/proc/nommu.c
+@@ -31,7 +31,7 @@
   */
- static inline int is_subvolume_inode(struct inode *inode)
+ static int nommu_region_show(struct seq_file *m, struct vm_region *region)
  {
--	if (inode && inode->i_ino == BTRFS_FIRST_FREE_OBJECTID)
-+	if (inode && btrfs_ino(BTRFS_I(inode)) == BTRFS_FIRST_FREE_OBJECTID)
- 		return 1;
- 	return 0;
+-	unsigned long ino = 0;
++	unsigned long ino = 0, tree = 0;
+ 	struct file *file;
+ 	dev_t dev = 0;
+ 	int flags;
+@@ -43,11 +43,12 @@ static int nommu_region_show(struct seq_file *m, struct vm_region *region)
+ 		struct inode *inode = file_inode(region->vm_file);
+ 		dev = inode->i_sb->s_dev;
+ 		ino = inode->i_ino;
++		tree = inode->i_tree;
+ 	}
+ 
+ 	seq_setwidth(m, 25 + sizeof(void *) * 6 - 1);
+ 	seq_printf(m,
+-		   "%08lx-%08lx %c%c%c%c %08llx %02x:%02x %lu ",
++		   "%08lx-%08lx %c%c%c%c %08llx %02x:%02x ",
+ 		   region->vm_start,
+ 		   region->vm_end,
+ 		   flags & VM_READ ? 'r' : '-',
+@@ -55,7 +56,11 @@ static int nommu_region_show(struct seq_file *m, struct vm_region *region)
+ 		   flags & VM_EXEC ? 'x' : '-',
+ 		   flags & VM_MAYSHARE ? flags & VM_SHARED ? 'S' : 's' : 'p',
+ 		   ((loff_t)region->vm_pgoff) << PAGE_SHIFT,
+-		   MAJOR(dev), MINOR(dev), ino);
++		   MAJOR(dev), MINOR(dev));
++	if (tree)
++		seq_printf(m, "%lu:%lu ", tree, ino);
++	else
++		seq_printf(m, "%lu ", ino);
+ 
+ 	if (file) {
+ 		seq_pad(m, ' ');
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index eb97468dfe4c..9e6439d7939b 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -250,7 +250,8 @@ static int is_stack(struct vm_area_struct *vma)
+ static void show_vma_header_prefix(struct seq_file *m,
+ 				   unsigned long start, unsigned long end,
+ 				   vm_flags_t flags, unsigned long long pgoff,
+-				   dev_t dev, unsigned long ino)
++				   dev_t dev, unsigned long ino,
++				   unsigned long tree)
+ {
+ 	seq_setwidth(m, 25 + sizeof(void *) * 6 - 1);
+ 	seq_put_hex_ll(m, NULL, start, 8);
+@@ -263,7 +264,12 @@ static void show_vma_header_prefix(struct seq_file *m,
+ 	seq_put_hex_ll(m, " ", pgoff, 8);
+ 	seq_put_hex_ll(m, " ", MAJOR(dev), 2);
+ 	seq_put_hex_ll(m, ":", MINOR(dev), 2);
+-	seq_put_decimal_ull(m, " ", ino);
++	if (tree) {
++		seq_put_decimal_ull(m, " ", tree);
++		seq_put_decimal_ull(m, ":", ino);
++	} else {
++		seq_put_decimal_ull(m, " ", ino);
++	}
+ 	seq_putc(m, ' ');
  }
+ 
+@@ -273,7 +279,7 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	struct file *file = vma->vm_file;
+ 	vm_flags_t flags = vma->vm_flags;
+-	unsigned long ino = 0;
++	unsigned long ino = 0, tree = 0;
+ 	unsigned long long pgoff = 0;
+ 	unsigned long start, end;
+ 	dev_t dev = 0;
+@@ -283,12 +289,13 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+ 		struct inode *inode = file_inode(vma->vm_file);
+ 		dev = inode->i_sb->s_dev;
+ 		ino = inode->i_ino;
++		tree = inode->i_tree;
+ 		pgoff = ((loff_t)vma->vm_pgoff) << PAGE_SHIFT;
+ 	}
+ 
+ 	start = vma->vm_start;
+ 	end = vma->vm_end;
+-	show_vma_header_prefix(m, start, end, flags, pgoff, dev, ino);
++	show_vma_header_prefix(m, start, end, flags, pgoff, dev, ino, tree);
+ 
+ 	/*
+ 	 * Print the dentry name for named mappings, and a
+@@ -934,7 +941,7 @@ static int show_smaps_rollup(struct seq_file *m, void *v)
+ 	}
+ 
+ 	show_vma_header_prefix(m, priv->mm->mmap->vm_start,
+-			       last_vma_end, 0, 0, 0, 0);
++			       last_vma_end, 0, 0, 0, 0, 0);
+ 	seq_pad(m, ' ');
+ 	seq_puts(m, "[rollup]\n");
+ 
+diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+index a6d21fc0033c..c33d7aad3927 100644
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -145,7 +145,7 @@ static int is_stack(struct vm_area_struct *vma)
+ static int nommu_vma_show(struct seq_file *m, struct vm_area_struct *vma)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+-	unsigned long ino = 0;
++	unsigned long ino = 0, tree = 0;
+ 	struct file *file;
+ 	dev_t dev = 0;
+ 	int flags;
+@@ -158,12 +158,13 @@ static int nommu_vma_show(struct seq_file *m, struct vm_area_struct *vma)
+ 		struct inode *inode = file_inode(vma->vm_file);
+ 		dev = inode->i_sb->s_dev;
+ 		ino = inode->i_ino;
++		tree = inode->i_tree;
+ 		pgoff = (loff_t)vma->vm_pgoff << PAGE_SHIFT;
+ 	}
+ 
+ 	seq_setwidth(m, 25 + sizeof(void *) * 6 - 1);
+ 	seq_printf(m,
+-		   "%08lx-%08lx %c%c%c%c %08llx %02x:%02x %lu ",
++		   "%08lx-%08lx %c%c%c%c %08llx %02x:%02x ",
+ 		   vma->vm_start,
+ 		   vma->vm_end,
+ 		   flags & VM_READ ? 'r' : '-',
+@@ -171,7 +172,11 @@ static int nommu_vma_show(struct seq_file *m, struct vm_area_struct *vma)
+ 		   flags & VM_EXEC ? 'x' : '-',
+ 		   flags & VM_MAYSHARE ? flags & VM_SHARED ? 'S' : 's' : 'p',
+ 		   pgoff,
+-		   MAJOR(dev), MINOR(dev), ino);
++		   MAJOR(dev), MINOR(dev));
++	if (tree)
++		seq_printf(m, "%lu:%lu ", ino, tree);
++	else
++		seq_printf(m, "%lu ", ino);
+ 
+ 	if (file) {
+ 		seq_pad(m, ' ');
+diff --git a/fs/stat.c b/fs/stat.c
+index 2dd5d3d67793..4aa402858f64 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -45,6 +45,7 @@ void generic_fillattr(struct user_namespace *mnt_userns, struct inode *inode,
+ {
+ 	stat->dev = inode->i_sb->s_dev;
+ 	stat->ino = inode->i_ino;
++	stat->tree_id = inode->i_tree;
+ 	stat->mode = inode->i_mode;
+ 	stat->nlink = inode->i_nlink;
+ 	stat->uid = i_uid_into_mnt(mnt_userns, inode);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index a777c1b1706a..86dc586c408b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -630,6 +630,7 @@ struct inode {
+ 
+ 	/* Stat data, not accessed from path walking */
+ 	unsigned long		i_ino;
++	unsigned long		i_tree;
+ 	/*
+ 	 * Filesystems may only read i_nlink directly.  They shall use the
+ 	 * following functions for modification:
 
 
