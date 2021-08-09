@@ -2,43 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 767883E4862
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 17:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 506463E4885
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 17:17:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235358AbhHIPLN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 11:11:13 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:50882 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235266AbhHIPLM (ORCPT
+        id S235558AbhHIPR6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 11:17:58 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:51370 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235563AbhHIPRy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 11:11:12 -0400
+        Mon, 9 Aug 2021 11:17:54 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 300281FFFE;
-        Mon,  9 Aug 2021 15:10:51 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id 9D3F221EB9;
+        Mon,  9 Aug 2021 15:17:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1628521851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1628522252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=atlo+NKpDCTCwZ+7e0Seb6ZvJdkbk7+6VcZA+tEAelY=;
-        b=c/zsLCNQKeumCIxTiEcdWgfEDGcQHDy91K994MFxGQ4076JkmRJZlYy8Pma2zcJoGNt73A
-        +vjbUfTuU6Pl5Thm5zvxkFVY2fYtIKGsrDmAxnbqDLT+cZtc9qgNh+lM8L7NcNNS2ZJL1w
-        ZzOCvYkKEeCQ2KLICXZWRuoH7mr94b0=
+        bh=7zL5iFOCNlqpnOgojUr8MEx35+sJRZ9IY3kqNUTz69w=;
+        b=kw6i16i0g37hIjasF/QFKC3nj8G4OWm1HFOmAIhTsp7EZd8DrvVvlZOy4pmVV4AulCs0Mt
+        C3tHpa3x0X66+DFrn1Fzm9rP0Bbs61uRuwtkFQCXRwIFnTYUJ81aQfqHeF2ExDf9sFbDKi
+        BWoJa2WNGL5MlW8Dt9JdV+/8IbW8GGQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1628521851;
+        s=susede2_ed25519; t=1628522252;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=atlo+NKpDCTCwZ+7e0Seb6ZvJdkbk7+6VcZA+tEAelY=;
-        b=Dwdl7Ioju78ovvw3zBk5O60RylkYJghFcimUW6fMrUywG8vev4HpLDT8neW8a5v/GqlI9a
-        xSkpv15AFa2NQwBA==
-Received: from quack2.suse.cz (jack.udp.ovpn1.prg.suse.de [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 1B08FA3B8E;
-        Mon,  9 Aug 2021 15:10:51 +0000 (UTC)
+        bh=7zL5iFOCNlqpnOgojUr8MEx35+sJRZ9IY3kqNUTz69w=;
+        b=YfrR8LOFEkRRgYmUiGBh97iwJZJeZqfYXF1sBmdDibxeuFR3Suk4zhAEY4FYbIU46mR12+
+        xaH9eaKX6DoIYPBA==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 8078AA3B81;
+        Mon,  9 Aug 2021 15:17:32 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 70ACF1E3BFC; Mon,  9 Aug 2021 17:10:48 +0200 (CEST)
-Date:   Mon, 9 Aug 2021 17:10:48 +0200
+        id 40BEE1E3BFC; Mon,  9 Aug 2021 17:17:32 +0200 (CEST)
+Date:   Mon, 9 Aug 2021 17:17:32 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
@@ -46,26 +44,22 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 1/5] mm: hide laptop_mode_wb_timer entirely behind the
- BDI API
-Message-ID: <20210809151048.GE30319@quack2.suse.cz>
+Subject: Re: [PATCH 2/5] block: pass a gendisk to blk_queue_update_readahead
+Message-ID: <20210809151732.GF30319@quack2.suse.cz>
 References: <20210809141744.1203023-1-hch@lst.de>
- <20210809141744.1203023-2-hch@lst.de>
+ <20210809141744.1203023-3-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210809141744.1203023-2-hch@lst.de>
+In-Reply-To: <20210809141744.1203023-3-hch@lst.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 09-08-21 16:17:40, Christoph Hellwig wrote:
-> Don't leak the detaіls of the timer into the block layer, instead
-> initialize the timer in bdi_alloc and delete it in bdi_unregister.
-> Note that this means the timer is initialized (but not armed) for
-> non-block queues as well now.
+On Mon 09-08-21 16:17:41, Christoph Hellwig wrote:
+> .. and rename the function to disk_update_readahead.  This is in
+> preparation for moving the BDI from the request_queue to the gendisk.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
@@ -76,76 +70,113 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  block/blk-core.c    | 5 -----
->  mm/backing-dev.c    | 3 +++
->  mm/page-writeback.c | 2 --
->  3 files changed, 3 insertions(+), 7 deletions(-)
+>  block/blk-settings.c         | 8 +++++---
+>  block/blk-sysfs.c            | 2 +-
+>  drivers/block/drbd/drbd_nl.c | 2 +-
+>  drivers/md/dm-table.c        | 2 +-
+>  drivers/nvme/host/core.c     | 2 +-
+>  include/linux/blkdev.h       | 2 +-
+>  6 files changed, 10 insertions(+), 8 deletions(-)
 > 
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index 04477697ee4b..5897bc37467d 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -394,10 +394,7 @@ void blk_cleanup_queue(struct request_queue *q)
->  	/* for synchronous bio-based driver finish in-flight integrity i/o */
->  	blk_flush_integrity();
->  
-> -	/* @q won't process any more request, flush async actions */
-> -	del_timer_sync(&q->backing_dev_info->laptop_mode_wb_timer);
->  	blk_sync_queue(q);
-> -
->  	if (queue_is_mq(q))
->  		blk_mq_exit_queue(q);
->  
-> @@ -546,8 +543,6 @@ struct request_queue *blk_alloc_queue(int node_id)
->  
->  	atomic_set(&q->nr_active_requests_shared_sbitmap, 0);
->  
-> -	timer_setup(&q->backing_dev_info->laptop_mode_wb_timer,
-> -		    laptop_mode_timer_fn, 0);
->  	timer_setup(&q->timeout, blk_rq_timed_out_timer, 0);
->  	INIT_WORK(&q->timeout_work, blk_timeout_work);
->  	INIT_LIST_HEAD(&q->icq_list);
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index f5561ea7d90a..cd06dca232c3 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -807,6 +807,7 @@ struct backing_dev_info *bdi_alloc(int node_id)
->  	bdi->capabilities = BDI_CAP_WRITEBACK | BDI_CAP_WRITEBACK_ACCT;
->  	bdi->ra_pages = VM_READAHEAD_PAGES;
->  	bdi->io_pages = VM_READAHEAD_PAGES;
-> +	timer_setup(&bdi->laptop_mode_wb_timer, laptop_mode_timer_fn, 0);
->  	return bdi;
+> diff --git a/block/blk-settings.c b/block/blk-settings.c
+> index 109012719aa0..44aaef9bf736 100644
+> --- a/block/blk-settings.c
+> +++ b/block/blk-settings.c
+> @@ -380,8 +380,10 @@ void blk_queue_alignment_offset(struct request_queue *q, unsigned int offset)
 >  }
->  EXPORT_SYMBOL(bdi_alloc);
-> @@ -928,6 +929,8 @@ static void bdi_remove_from_list(struct backing_dev_info *bdi)
+>  EXPORT_SYMBOL(blk_queue_alignment_offset);
 >  
->  void bdi_unregister(struct backing_dev_info *bdi)
+> -void blk_queue_update_readahead(struct request_queue *q)
+> +void disk_update_readahead(struct gendisk *disk)
 >  {
-> +	del_timer_sync(&bdi->laptop_mode_wb_timer);
+> +	struct request_queue *q = disk->queue;
 > +
->  	/* make sure nobody finds us on the bdi_list anymore */
->  	bdi_remove_from_list(bdi);
->  	wb_shutdown(&bdi->wb);
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 9f63548f247c..c12f67cbfa19 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2010,7 +2010,6 @@ int dirty_writeback_centisecs_handler(struct ctl_table *table, int write,
->  	return ret;
+>  	/*
+>  	 * For read-ahead of large files to be effective, we need to read ahead
+>  	 * at least twice the optimal I/O size.
+> @@ -391,7 +393,7 @@ void blk_queue_update_readahead(struct request_queue *q)
+>  	q->backing_dev_info->io_pages =
+>  		queue_max_sectors(q) >> (PAGE_SHIFT - 9);
 >  }
+> -EXPORT_SYMBOL_GPL(blk_queue_update_readahead);
+> +EXPORT_SYMBOL_GPL(disk_update_readahead);
 >  
-> -#ifdef CONFIG_BLOCK
->  void laptop_mode_timer_fn(struct timer_list *t)
->  {
->  	struct backing_dev_info *backing_dev_info =
-> @@ -2045,7 +2044,6 @@ void laptop_sync_completion(void)
+>  /**
+>   * blk_limits_io_min - set minimum request size for a device
+> @@ -665,7 +667,7 @@ void disk_stack_limits(struct gendisk *disk, struct block_device *bdev,
+>  		pr_notice("%s: Warning: Device %pg is misaligned\n",
+>  			disk->disk_name, bdev);
 >  
->  	rcu_read_unlock();
+> -	blk_queue_update_readahead(disk->queue);
+> +	disk_update_readahead(disk);
 >  }
-> -#endif
+>  EXPORT_SYMBOL(disk_stack_limits);
 >  
->  /*
->   * If ratelimit_pages is too high then we can get into dirty-data overload
+> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> index 370d83c18057..3af2ab7d5086 100644
+> --- a/block/blk-sysfs.c
+> +++ b/block/blk-sysfs.c
+> @@ -866,7 +866,7 @@ int blk_register_queue(struct gendisk *disk)
+>  		  "%s is registering an already registered queue\n",
+>  		  kobject_name(&dev->kobj));
+>  
+> -	blk_queue_update_readahead(q);
+> +	disk_update_readahead(disk);
+>  
+>  	ret = blk_trace_init_sysfs(dev);
+>  	if (ret)
+> diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+> index e7d0e637e632..44ccf8b4f4b2 100644
+> --- a/drivers/block/drbd/drbd_nl.c
+> +++ b/drivers/block/drbd/drbd_nl.c
+> @@ -1364,7 +1364,7 @@ static void drbd_setup_queue_param(struct drbd_device *device, struct drbd_backi
+>  
+>  	if (b) {
+>  		blk_stack_limits(&q->limits, &b->limits, 0);
+> -		blk_queue_update_readahead(q);
+> +		disk_update_readahead(device->vdisk);
+>  	}
+>  	fixup_discard_if_not_supported(q);
+>  	fixup_write_zeroes(device, q);
+> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+> index 0543cdf89e92..b03eabc1ed7c 100644
+> --- a/drivers/md/dm-table.c
+> +++ b/drivers/md/dm-table.c
+> @@ -2076,7 +2076,7 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+>  	}
+>  
+>  	dm_update_keyslot_manager(q, t);
+> -	blk_queue_update_readahead(q);
+> +	disk_update_readahead(t->md->disk);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index dfd9dec0c1f6..f6c0a59c4b53 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -1890,7 +1890,7 @@ static int nvme_update_ns_info(struct nvme_ns *ns, struct nvme_id_ns *id)
+>  		nvme_update_disk_info(ns->head->disk, ns, id);
+>  		blk_stack_limits(&ns->head->disk->queue->limits,
+>  				 &ns->queue->limits, 0);
+> -		blk_queue_update_readahead(ns->head->disk->queue);
+> +		disk_update_readahead(ns->head->disk);
+>  		blk_mq_unfreeze_queue(ns->head->disk->queue);
+>  	}
+>  	return 0;
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index b5c033cf5f26..ac3642c88a4d 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -1139,7 +1139,7 @@ void blk_queue_zone_write_granularity(struct request_queue *q,
+>  				      unsigned int size);
+>  extern void blk_queue_alignment_offset(struct request_queue *q,
+>  				       unsigned int alignment);
+> -void blk_queue_update_readahead(struct request_queue *q);
+> +void disk_update_readahead(struct gendisk *disk);
+>  extern void blk_limits_io_min(struct queue_limits *limits, unsigned int min);
+>  extern void blk_queue_io_min(struct request_queue *q, unsigned int min);
+>  extern void blk_limits_io_opt(struct queue_limits *limits, unsigned int opt);
 > -- 
 > 2.30.2
 > 
