@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 510633E3FBD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 478DA3E3FC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233220AbhHIGUl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 02:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45734 "EHLO
+        id S233224AbhHIGWE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 02:22:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233188AbhHIGUk (ORCPT
+        with ESMTP id S233188AbhHIGWE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 02:20:40 -0400
+        Mon, 9 Aug 2021 02:22:04 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CC1EC0613CF;
-        Sun,  8 Aug 2021 23:20:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C105C0613CF;
+        Sun,  8 Aug 2021 23:21:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=SpLa8xXiLETp482f8TpSRj3+HkNL4ciTetnk4qLMMXw=; b=mHdHdUrJlcIc6ESaFKdhQAawPn
-        xz0iqi09VROOHtse6qm8Y3s/y1xzvMzeLG01UTRYYFxs90MPHtcEQhEBU9ymW9hclbo32Bbrx9ufb
-        XTXg/c16sdqFEPriHlsFM1eg9yioXtRTZw5/ETk27QJW7hIMvn0jO+qlk1z/QnLeJyZfx58nXFsIv
-        h7aQ4FYAusw9lKK9/dYqyEYFGIdCVsNdn7PcHLkuOjK9cNmwy7/6Hq5BuV7ddsdlyE/2cYYUBnqVC
-        nRMNn3P57qbEqJzOetQlVsIrDSl2/nDvVcWonB1Dq4ywampCoQyve8jXHvRSeFq32zZ+rvYLAYt+E
-        cP9wzFJw==;
+        bh=0jwSqDlw705sVTusKaT0PBreeftKviX8VMT3qlT9gus=; b=ojg9OncCLLFCtaLi6ZKutZy9g1
+        u6g6geKfouedy2Yx424TC82A4BZU44oZXzxPKRQTcSXeUGiFfv3G64jiSaeaDNSUzb8e1xS9+J3Iv
+        z8NMIcWzRGbHjzTZxgCYN9QTy8pfPLQLwFQOMfM4o3UyKRsZDnqMT2csBHlpvtCIoxQ6zckDqjsXO
+        GP13KJMydolByv3IgbbWel01mWyBPVXGxAY4Q6VcgbUi1+VbbLJ9dBVe0qeyhCeYhcZbP6w2ep7KP
+        PTXPsLRkHkCorvVE679Qh7L6s0jni53prnJJRI17dFM6OfXNSpB2X9f30a77JvQTLIXXzyCIvxviy
+        exgUiABg==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCycj-00Agjm-EB; Mon, 09 Aug 2021 06:19:08 +0000
+        id 1mCydC-00AgmY-9F; Mon, 09 Aug 2021 06:19:38 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -37,9 +37,9 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: [PATCH 08/30] iomap: mark the iomap argument to iomap_read_inline_data const
-Date:   Mon,  9 Aug 2021 08:12:22 +0200
-Message-Id: <20210809061244.1196573-9-hch@lst.de>
+Subject: [PATCH 09/30] iomap: mark the iomap argument to iomap_read_page_sync const
+Date:   Mon,  9 Aug 2021 08:12:23 +0200
+Message-Id: <20210809061244.1196573-10-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210809061244.1196573-1-hch@lst.de>
 References: <20210809061244.1196573-1-hch@lst.de>
@@ -50,7 +50,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-iomap_read_inline_data never modifies the passed in iomap, so mark
+iomap_read_page_sync never modifies the passed in iomap, so mark
 it const.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
@@ -60,18 +60,18 @@ Reviewed-by: Darrick J. Wong <djwong@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 8a7746433bc719..eda8892b8c5741 100644
+index eda8892b8c5741..44587209e6d7c7 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -206,7 +206,7 @@ struct iomap_readpage_ctx {
- };
+@@ -531,7 +531,7 @@ iomap_write_failed(struct inode *inode, loff_t pos, unsigned len)
  
- static int iomap_read_inline_data(struct inode *inode, struct page *page,
--		struct iomap *iomap)
-+		const struct iomap *iomap)
+ static int
+ iomap_read_page_sync(loff_t block_start, struct page *page, unsigned poff,
+-		unsigned plen, struct iomap *iomap)
++		unsigned plen, const struct iomap *iomap)
  {
- 	size_t size = i_size_read(inode) - iomap->offset;
- 	size_t poff = offset_in_page(iomap->offset);
+ 	struct bio_vec bvec;
+ 	struct bio bio;
 -- 
 2.30.2
 
