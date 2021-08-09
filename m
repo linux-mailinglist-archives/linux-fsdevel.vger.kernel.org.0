@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27DE53E3FE5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 633733E3FEA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:27:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233247AbhHIG1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 02:27:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47174 "EHLO
+        id S233247AbhHIG2A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 02:28:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233136AbhHIG1R (ORCPT
+        with ESMTP id S233136AbhHIG2A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 02:27:17 -0400
+        Mon, 9 Aug 2021 02:28:00 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3F6C0613CF;
-        Sun,  8 Aug 2021 23:26:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A2EAC0613CF;
+        Sun,  8 Aug 2021 23:27:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=5mmSDcz0zlNa1bJPvEzM77FyPN1YuawnYHfKP4XtUdQ=; b=WqaXL+CLIvil7cs+NVP0Wzxl3p
-        El2/twZ8DW0kIx/tt+BYcYzFNh2q6LR2iCQK+EzFZE2HWM+wcUE5XYUaCGIuKtjg2zLNaLWnvcMNE
-        BdFuIMMAqYWy8zTRoSh/Ugzqbb7mA43DQlVF0bVjSJtt083j9NuLDLdUJFugFca53OWaZCvvvY50G
-        7vB0Ql8XoTwFNxkVO7+YYtzle8deuLUKKy0MiVVVmbjiSsffk1fmdiInQp3SdFeeIWn/gmOJVXvgs
-        HMuzrNq8ChqP7uSajuzAQ1WrctHj8a2ylrQ7/ssDDBpePCSZAD7FyPIDgG1H3A8z54tB9SWEnXDbB
-        ZXlXU9Eg==;
+        bh=gV3p5HVJ8FmxgQY9sNFvfUl5Pqu5FwTdLFprH/w8EkQ=; b=gLi43Atl5eV6fIG2RAfQwMJQzD
+        8ZycFifZNxYX1tGY5zPtI03k1IcR2uBZIGPUz7fk2YoHhdapLtScFQ1rxSWyQLutmLkjjjds7yoMz
+        dxBfkgDbL5L2aEppgSLNDoJiKMvpHf1Trpj4s5pRFteEHlHU8A2143S08PR8e1NUbuaWsLFojyXaH
+        0/Y7EUynnajnSmCKbAJ1x8F53gwixYsjct5KoUmdsxMEsM4HXq5c+3HxHcWN3NmAbcEcix5I/WKY6
+        mW2NZEC2YzSSWu0/UZIUbhh8hs/zVc39k3en47/WXdwkEVgEuiXkOKgWfOVB53OjRtXxi5opPIvn4
+        PY31F50Q==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCyi0-00AhEN-Tl; Mon, 09 Aug 2021 06:24:42 +0000
+        id 1mCyj9-00AhJ4-Pb; Mon, 09 Aug 2021 06:25:55 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -37,9 +37,9 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: [PATCH 15/30] iomap: switch iomap_zero_range to use iomap_iter
-Date:   Mon,  9 Aug 2021 08:12:29 +0200
-Message-Id: <20210809061244.1196573-16-hch@lst.de>
+Subject: [PATCH 16/30] iomap: switch iomap_page_mkwrite to use iomap_iter
+Date:   Mon,  9 Aug 2021 08:12:30 +0200
+Message-Id: <20210809061244.1196573-17-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210809061244.1196573-1-hch@lst.de>
 References: <20210809061244.1196573-1-hch@lst.de>
@@ -50,78 +50,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Switch iomap_zero_range to use iomap_iter.
+Switch iomap_page_mkwrite to use iomap_iter.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/buffered-io.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ fs/iomap/buffered-io.c | 39 +++++++++++++++++----------------------
+ 1 file changed, 17 insertions(+), 22 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4f525727462f33..3a23f7346938fb 100644
+index 3a23f7346938fb..5ab464937d4886 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -896,11 +896,12 @@ static s64 iomap_zero(struct inode *inode, loff_t pos, u64 length,
- 	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
+@@ -961,15 +961,15 @@ iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
  }
+ EXPORT_SYMBOL_GPL(iomap_truncate_page);
  
--static loff_t iomap_zero_range_actor(struct inode *inode, loff_t pos,
--		loff_t length, void *data, struct iomap *iomap,
--		struct iomap *srcmap)
-+static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+-static loff_t
+-iomap_page_mkwrite_actor(struct inode *inode, loff_t pos, loff_t length,
+-		void *data, struct iomap *iomap, struct iomap *srcmap)
++static loff_t iomap_page_mkwrite_iter(struct iomap_iter *iter,
++		struct page *page)
  {
--	bool *did_zero = data;
-+	struct iomap *iomap = &iter->iomap;
-+	struct iomap *srcmap = iomap_iter_srcmap(iter);
-+	loff_t pos = iter->pos;
+-	struct page *page = data;
 +	loff_t length = iomap_length(iter);
- 	loff_t written = 0;
+ 	int ret;
  
- 	/* already zeroed?  we're done. */
-@@ -910,10 +911,11 @@ static loff_t iomap_zero_range_actor(struct inode *inode, loff_t pos,
- 	do {
- 		s64 bytes;
+-	if (iomap->flags & IOMAP_F_BUFFER_HEAD) {
+-		ret = __block_write_begin_int(page, pos, length, NULL, iomap);
++	if (iter->iomap.flags & IOMAP_F_BUFFER_HEAD) {
++		ret = __block_write_begin_int(page, iter->pos, length, NULL,
++					      &iter->iomap);
+ 		if (ret)
+ 			return ret;
+ 		block_commit_write(page, 0, length);
+@@ -983,29 +983,24 @@ iomap_page_mkwrite_actor(struct inode *inode, loff_t pos, loff_t length,
  
--		if (IS_DAX(inode))
-+		if (IS_DAX(iter->inode))
- 			bytes = dax_iomap_zero(pos, length, iomap);
- 		else
--			bytes = iomap_zero(inode, pos, length, iomap, srcmap);
-+			bytes = iomap_zero(iter->inode, pos, length, iomap,
-+					   srcmap);
- 		if (bytes < 0)
- 			return bytes;
- 
-@@ -931,19 +933,17 @@ int
- iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
- 		const struct iomap_ops *ops)
+ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
  {
--	loff_t ret;
--
--	while (len > 0) {
--		ret = iomap_apply(inode, pos, len, IOMAP_ZERO,
--				ops, did_zero, iomap_zero_range_actor);
--		if (ret <= 0)
--			return ret;
--
--		pos += ret;
--		len -= ret;
--	}
 +	struct iomap_iter iter = {
-+		.inode		= inode,
-+		.pos		= pos,
-+		.len		= len,
-+		.flags		= IOMAP_ZERO,
++		.inode		= file_inode(vmf->vma->vm_file),
++		.flags		= IOMAP_WRITE | IOMAP_FAULT,
 +	};
-+	int ret;
+ 	struct page *page = vmf->page;
+-	struct inode *inode = file_inode(vmf->vma->vm_file);
+-	unsigned long length;
+-	loff_t offset;
+ 	ssize_t ret;
  
--	return 0;
+ 	lock_page(page);
+-	ret = page_mkwrite_check_truncate(page, inode);
++	ret = page_mkwrite_check_truncate(page, iter.inode);
+ 	if (ret < 0)
+ 		goto out_unlock;
+-	length = ret;
+-
+-	offset = page_offset(page);
+-	while (length > 0) {
+-		ret = iomap_apply(inode, offset, length,
+-				IOMAP_WRITE | IOMAP_FAULT, ops, page,
+-				iomap_page_mkwrite_actor);
+-		if (unlikely(ret <= 0))
+-			goto out_unlock;
+-		offset += ret;
+-		length -= ret;
+-	}
++	iter.pos = page_offset(page);
++	iter.len = ret;
 +	while ((ret = iomap_iter(&iter, ops)) > 0)
-+		iter.processed = iomap_zero_iter(&iter, did_zero);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(iomap_zero_range);
++		iter.processed = iomap_page_mkwrite_iter(&iter, page);
  
++	if (ret < 0)
++		goto out_unlock;
+ 	wait_for_stable_page(page);
+ 	return VM_FAULT_LOCKED;
+ out_unlock:
 -- 
 2.30.2
 
