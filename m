@@ -2,71 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C2B73E4EF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 00:08:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 876223E4EFD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 00:10:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236570AbhHIWJS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 18:09:18 -0400
-Received: from mga09.intel.com ([134.134.136.24]:9597 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232683AbhHIWJS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 18:09:18 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10070"; a="214777623"
-X-IronPort-AV: E=Sophos;i="5.84,308,1620716400"; 
-   d="scan'208";a="214777623"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2021 15:08:56 -0700
-X-IronPort-AV: E=Sophos;i="5.84,308,1620716400"; 
-   d="scan'208";a="674425257"
-Received: from pmmonter-mobl1.amr.corp.intel.com (HELO skuppusw-mobl5.amr.corp.intel.com) ([10.212.72.120])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2021 15:08:55 -0700
-Subject: Re: [PATCH 06/11] x86/sev: Replace occurrences of sev_es_active()
- with prot_guest_has()
-To:     Tom Lendacky <thomas.lendacky@amd.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Borislav Petkov <bp@alien8.de>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-References: <cover.1627424773.git.thomas.lendacky@amd.com>
- <ba565128b88661a656fc3972f01bb2e295158a15.1627424774.git.thomas.lendacky@amd.com>
- <YQfMw2FRO5M1osGF@8bytes.org> <934f3e72-49d1-be56-6fa2-f37a02413fb2@amd.com>
-From:   "Kuppuswamy, Sathyanarayanan" 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Message-ID: <e63c166f-fd56-4aba-3d4f-b2d10051769a@linux.intel.com>
-Date:   Mon, 9 Aug 2021 15:08:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.11.0
+        id S236601AbhHIWLO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 18:11:14 -0400
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:45800 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232683AbhHIWLO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Aug 2021 18:11:14 -0400
+Received: from dread.disaster.area (pa49-195-182-146.pa.nsw.optusnet.com.au [49.195.182.146])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 919098552B;
+        Tue, 10 Aug 2021 08:10:49 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mDDTr-00GSfc-Td; Tue, 10 Aug 2021 08:10:47 +1000
+Date:   Tue, 10 Aug 2021 08:10:47 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        cluster-devel@redhat.com
+Subject: Re: [PATCH 11/30] iomap: add the new iomap_iter model
+Message-ID: <20210809221047.GC3657114@dread.disaster.area>
+References: <20210809061244.1196573-1-hch@lst.de>
+ <20210809061244.1196573-12-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <934f3e72-49d1-be56-6fa2-f37a02413fb2@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210809061244.1196573-12-hch@lst.de>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
+        a=QpfB3wCSrn/dqEBSktpwZQ==:117 a=QpfB3wCSrn/dqEBSktpwZQ==:17
+        a=kj9zAlcOel0A:10 a=MhDmnRu9jo8A:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
+        a=c-sO9qzMkAf5MM67-4kA:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Aug 09, 2021 at 08:12:25AM +0200, Christoph Hellwig wrote:
+> The iomap_iter struct provides a convenient way to package up and
+> maintain all the arguments to the various mapping and operation
+> functions.  It is operated on using the iomap_iter() function that
+> is called in loop until the whole range has been processed.  Compared
+> to the existing iomap_apply() function this avoid an indirect call
+> for each iteration.
+> 
+> For now iomap_iter() calls back into the existing ->iomap_begin and
+> ->iomap_end methods, but in the future this could be further optimized
+> to avoid indirect calls entirely.
+> 
+> Based on an earlier patch from Matthew Wilcox <willy@infradead.org>.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/Makefile     |  1 +
+>  fs/iomap/core.c       | 79 +++++++++++++++++++++++++++++++++++++++++++
+>  fs/iomap/trace.h      | 37 +++++++++++++++++++-
+>  include/linux/iomap.h | 56 ++++++++++++++++++++++++++++++
+>  4 files changed, 172 insertions(+), 1 deletion(-)
+>  create mode 100644 fs/iomap/core.c
+> 
+> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
+> index eef2722d93a183..6b56b10ded347a 100644
+> --- a/fs/iomap/Makefile
+> +++ b/fs/iomap/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_FS_IOMAP)		+= iomap.o
+>  
+>  iomap-y				+= trace.o \
+>  				   apply.o \
+> +				   core.o \
 
+This creates a discontinuity in the iomap git history. Can you add
+these new functions to iomap/apply.c, then when the old apply code
+is removed later in the series rename the file to core.c? At least
+that way 'git log --follow fs/iomap/core.c' will walk back into the
+current history of fs/iomap/apply.c and the older pre-disaggregation
+fs/iomap.c without having to take the tree back in time to find
+those files...
 
-On 8/9/21 2:59 PM, Tom Lendacky wrote:
->> Not sure how TDX will handle AP booting, are you sure it needs this
->> special setup as well? Otherwise a check for SEV-ES would be better
->> instead of the generic PATTR_GUEST_PROT_STATE.
-> Yes, I'm not sure either. I figure that change can be made, if needed, as
-> part of the TDX support.
+Cheers,
 
-We don't plan to set PROT_STATE. So it does not affect TDX.
-For SMP, we use MADT ACPI table for AP booting.
-
+Dave.
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+Dave Chinner
+david@fromorbit.com
