@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 513EC3E4018
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:34:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 410453E401E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:34:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233278AbhHIGee (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 02:34:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48842 "EHLO
+        id S233294AbhHIGfF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 02:35:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233234AbhHIGee (ORCPT
+        with ESMTP id S233234AbhHIGfE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 02:34:34 -0400
+        Mon, 9 Aug 2021 02:35:04 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C226C0613CF;
-        Sun,  8 Aug 2021 23:34:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEFC4C0613CF;
+        Sun,  8 Aug 2021 23:34:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=UxBtPmDy4DIybU1SgbXva6a1UPnFEyqj7JCXf4/Yuj0=; b=eCORjvjVf1W6pHG1wx9hoIrVHB
-        WMNa2hP3L3cd8bFjNE5ciAgi4A3FjeZsHL1hJANeCUtNTQxhHetf/dXt8nKKcaRMebk3L/xO1Zf7P
-        3iLTLAehx/IOZMqk3VIcu46VBNlfrLYhOhGiFAG6orC0J+Da/tvI5DGOR/vsn4Vg4sanOqlnZ33Z0
-        axpMAeA9rxZbzJyivda/zjEIlrjyT+EWtFMu+HBHnIjseYzXKaIbLKvprdnWHO1Mlzm7CwKZD+I0U
-        pp0xefBVVX+o6vuJJiXp9bpVoTZPTh1V2zBUgoKVjAsbjjCM/bnIxnE7uaADruO2WjzW7q+uJDuly
-        e3Yf36pw==;
+        bh=WFHSwwVV5xYPJEgpRd9GzRzi3N/r3sDEVEA+LAVvtT4=; b=kcQy4iGmsMacdKEby84lIQE1b5
+        Igqw/k2OZP7oTo1q2BR4QQk7OzPVfDKeOXn9OrJex6/RpXB4daNxX+HNWqJw47lxz6DxZsW4Kj/Zq
+        Uo9nXa5O8B2x/CCKgd3TMUp/+ngC6YeMLfMR1KVk9cTC/R4inGsR2Nd+7Ma35KoJmpPpjjSAP3Q7y
+        /HrpdOKtTnn4tMTg6n5ng6SWXuXu2ZK1/vuB/Ix1+hR9XID3hfiy1Fx2T8K9rAOBTBTeI4mrxZAUd
+        EpaQNqA3+nVE9JeNiwbKMXmrKUIRG4ajGqyi9mfsXt9F24DHKl+bfM6yWOEeEhp85LrlD9Mi465e2
+        HQumxvCw==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCyp2-00AhnG-2b; Mon, 09 Aug 2021 06:31:49 +0000
+        id 1mCypt-00Ahrz-Gb; Mon, 09 Aug 2021 06:32:54 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -37,9 +37,9 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: [PATCH 23/30] fsdax: switch dax_iomap_rw to use iomap_iter
-Date:   Mon,  9 Aug 2021 08:12:37 +0200
-Message-Id: <20210809061244.1196573-24-hch@lst.de>
+Subject: [PATCH 24/30] iomap: remove iomap_apply
+Date:   Mon,  9 Aug 2021 08:12:38 +0200
+Message-Id: <20210809061244.1196573-25-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210809061244.1196573-1-hch@lst.de>
 References: <20210809061244.1196573-1-hch@lst.de>
@@ -50,118 +50,210 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Switch the dax_iomap_rw implementation to use iomap_iter.
+iomap_apply is unused now, so remove it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/dax.c | 49 ++++++++++++++++++++++++-------------------------
- 1 file changed, 24 insertions(+), 25 deletions(-)
+ fs/iomap/Makefile     |  1 -
+ fs/iomap/apply.c      | 99 -------------------------------------------
+ fs/iomap/trace.h      | 40 -----------------
+ include/linux/iomap.h | 10 -----
+ 4 files changed, 150 deletions(-)
+ delete mode 100644 fs/iomap/apply.c
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 4d63040fd71f56..51da45301350a6 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1103,20 +1103,21 @@ s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
- 	return size;
- }
+diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
+index 6b56b10ded347a..721e800807a652 100644
+--- a/fs/iomap/Makefile
++++ b/fs/iomap/Makefile
+@@ -9,7 +9,6 @@ ccflags-y += -I $(srctree)/$(src)		# needed for trace events
+ obj-$(CONFIG_FS_IOMAP)		+= iomap.o
  
--static loff_t
--dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
--		struct iomap *iomap, struct iomap *srcmap)
-+static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
-+		struct iov_iter *iter)
- {
-+	const struct iomap *iomap = &iomi->iomap;
-+	loff_t length = iomap_length(iomi);
-+	loff_t pos = iomi->pos;
- 	struct block_device *bdev = iomap->bdev;
- 	struct dax_device *dax_dev = iomap->dax_dev;
--	struct iov_iter *iter = data;
- 	loff_t end = pos + length, done = 0;
- 	ssize_t ret = 0;
- 	size_t xfer;
- 	int id;
- 
- 	if (iov_iter_rw(iter) == READ) {
--		end = min(end, i_size_read(inode));
-+		end = min(end, i_size_read(iomi->inode));
- 		if (pos >= end)
- 			return 0;
- 
-@@ -1133,7 +1134,7 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 	 * written by write(2) is visible in mmap.
- 	 */
- 	if (iomap->flags & IOMAP_F_NEW) {
--		invalidate_inode_pages2_range(inode->i_mapping,
-+		invalidate_inode_pages2_range(iomi->inode->i_mapping,
- 					      pos >> PAGE_SHIFT,
- 					      (end - 1) >> PAGE_SHIFT);
- 	}
-@@ -1209,31 +1210,29 @@ ssize_t
- dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		const struct iomap_ops *ops)
- {
--	struct address_space *mapping = iocb->ki_filp->f_mapping;
--	struct inode *inode = mapping->host;
--	loff_t pos = iocb->ki_pos, ret = 0, done = 0;
--	unsigned flags = 0;
-+	struct iomap_iter iomi = {
-+		.inode		= iocb->ki_filp->f_mapping->host,
-+		.pos		= iocb->ki_pos,
-+		.len		= iov_iter_count(iter),
-+	};
-+	loff_t done = 0;
-+	int ret;
- 
- 	if (iov_iter_rw(iter) == WRITE) {
--		lockdep_assert_held_write(&inode->i_rwsem);
--		flags |= IOMAP_WRITE;
-+		lockdep_assert_held_write(&iomi.inode->i_rwsem);
-+		iomi.flags |= IOMAP_WRITE;
- 	} else {
--		lockdep_assert_held(&inode->i_rwsem);
-+		lockdep_assert_held(&iomi.inode->i_rwsem);
- 	}
- 
- 	if (iocb->ki_flags & IOCB_NOWAIT)
--		flags |= IOMAP_NOWAIT;
-+		iomi.flags |= IOMAP_NOWAIT;
- 
--	while (iov_iter_count(iter)) {
--		ret = iomap_apply(inode, pos, iov_iter_count(iter), flags, ops,
--				iter, dax_iomap_actor);
--		if (ret <= 0)
--			break;
--		pos += ret;
--		done += ret;
+ iomap-y				+= trace.o \
+-				   apply.o \
+ 				   core.o \
+ 				   buffered-io.o \
+ 				   direct-io.o \
+diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
+deleted file mode 100644
+index 26ab6563181fc6..00000000000000
+--- a/fs/iomap/apply.c
++++ /dev/null
+@@ -1,99 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Copyright (C) 2010 Red Hat, Inc.
+- * Copyright (c) 2016-2018 Christoph Hellwig.
+- */
+-#include <linux/module.h>
+-#include <linux/compiler.h>
+-#include <linux/fs.h>
+-#include <linux/iomap.h>
+-#include "trace.h"
+-
+-/*
+- * Execute a iomap write on a segment of the mapping that spans a
+- * contiguous range of pages that have identical block mapping state.
+- *
+- * This avoids the need to map pages individually, do individual allocations
+- * for each page and most importantly avoid the need for filesystem specific
+- * locking per page. Instead, all the operations are amortised over the entire
+- * range of pages. It is assumed that the filesystems will lock whatever
+- * resources they require in the iomap_begin call, and release them in the
+- * iomap_end call.
+- */
+-loff_t
+-iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+-		const struct iomap_ops *ops, void *data, iomap_actor_t actor)
+-{
+-	struct iomap iomap = { .type = IOMAP_HOLE };
+-	struct iomap srcmap = { .type = IOMAP_HOLE };
+-	loff_t written = 0, ret;
+-	u64 end;
+-
+-	trace_iomap_apply(inode, pos, length, flags, ops, actor, _RET_IP_);
+-
+-	/*
+-	 * Need to map a range from start position for length bytes. This can
+-	 * span multiple pages - it is only guaranteed to return a range of a
+-	 * single type of pages (e.g. all into a hole, all mapped or all
+-	 * unwritten). Failure at this point has nothing to undo.
+-	 *
+-	 * If allocation is required for this range, reserve the space now so
+-	 * that the allocation is guaranteed to succeed later on. Once we copy
+-	 * the data into the page cache pages, then we cannot fail otherwise we
+-	 * expose transient stale data. If the reserve fails, we can safely
+-	 * back out at this point as there is nothing to undo.
+-	 */
+-	ret = ops->iomap_begin(inode, pos, length, flags, &iomap, &srcmap);
+-	if (ret)
+-		return ret;
+-	if (WARN_ON(iomap.offset > pos)) {
+-		written = -EIO;
+-		goto out;
 -	}
-+	while ((ret = iomap_iter(&iomi, ops)) > 0)
-+		iomi.processed = dax_iomap_iter(&iomi, iter);
+-	if (WARN_ON(iomap.length == 0)) {
+-		written = -EIO;
+-		goto out;
+-	}
+-
+-	trace_iomap_apply_dstmap(inode, &iomap);
+-	if (srcmap.type != IOMAP_HOLE)
+-		trace_iomap_apply_srcmap(inode, &srcmap);
+-
+-	/*
+-	 * Cut down the length to the one actually provided by the filesystem,
+-	 * as it might not be able to give us the whole size that we requested.
+-	 */
+-	end = iomap.offset + iomap.length;
+-	if (srcmap.type != IOMAP_HOLE)
+-		end = min(end, srcmap.offset + srcmap.length);
+-	if (pos + length > end)
+-		length = end - pos;
+-
+-	/*
+-	 * Now that we have guaranteed that the space allocation will succeed,
+-	 * we can do the copy-in page by page without having to worry about
+-	 * failures exposing transient data.
+-	 *
+-	 * To support COW operations, we read in data for partially blocks from
+-	 * the srcmap if the file system filled it in.  In that case we the
+-	 * length needs to be limited to the earlier of the ends of the iomaps.
+-	 * If the file system did not provide a srcmap we pass in the normal
+-	 * iomap into the actors so that they don't need to have special
+-	 * handling for the two cases.
+-	 */
+-	written = actor(inode, pos, length, data, &iomap,
+-			srcmap.type != IOMAP_HOLE ? &srcmap : &iomap);
+-
+-out:
+-	/*
+-	 * Now the data has been copied, commit the range we've copied.  This
+-	 * should not fail unless the filesystem has had a fatal error.
+-	 */
+-	if (ops->iomap_end) {
+-		ret = ops->iomap_end(inode, pos, length,
+-				     written > 0 ? written : 0,
+-				     flags, &iomap);
+-	}
+-
+-	return written ? written : ret;
+-}
+diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+index 1012d7af6b689b..f1519f9a140320 100644
+--- a/fs/iomap/trace.h
++++ b/fs/iomap/trace.h
+@@ -138,49 +138,9 @@ DECLARE_EVENT_CLASS(iomap_class,
+ DEFINE_EVENT(iomap_class, name,	\
+ 	TP_PROTO(struct inode *inode, struct iomap *iomap), \
+ 	TP_ARGS(inode, iomap))
+-DEFINE_IOMAP_EVENT(iomap_apply_dstmap);
+-DEFINE_IOMAP_EVENT(iomap_apply_srcmap);
+ DEFINE_IOMAP_EVENT(iomap_iter_dstmap);
+ DEFINE_IOMAP_EVENT(iomap_iter_srcmap);
  
--	iocb->ki_pos += done;
-+	done = iomi.pos - iocb->ki_pos;
-+	iocb->ki_pos = iomi.pos;
- 	return done ? done : ret;
+-TRACE_EVENT(iomap_apply,
+-	TP_PROTO(struct inode *inode, loff_t pos, loff_t length,
+-		unsigned int flags, const void *ops, void *actor,
+-		unsigned long caller),
+-	TP_ARGS(inode, pos, length, flags, ops, actor, caller),
+-	TP_STRUCT__entry(
+-		__field(dev_t, dev)
+-		__field(u64, ino)
+-		__field(loff_t, pos)
+-		__field(loff_t, length)
+-		__field(unsigned int, flags)
+-		__field(const void *, ops)
+-		__field(void *, actor)
+-		__field(unsigned long, caller)
+-	),
+-	TP_fast_assign(
+-		__entry->dev = inode->i_sb->s_dev;
+-		__entry->ino = inode->i_ino;
+-		__entry->pos = pos;
+-		__entry->length = length;
+-		__entry->flags = flags;
+-		__entry->ops = ops;
+-		__entry->actor = actor;
+-		__entry->caller = caller;
+-	),
+-	TP_printk("dev %d:%d ino 0x%llx pos %lld length %lld flags %s (0x%x) "
+-		  "ops %ps caller %pS actor %ps",
+-		  MAJOR(__entry->dev), MINOR(__entry->dev),
+-		   __entry->ino,
+-		   __entry->pos,
+-		   __entry->length,
+-		   __print_flags(__entry->flags, "|", IOMAP_FLAGS_STRINGS),
+-		   __entry->flags,
+-		   __entry->ops,
+-		   (void *)__entry->caller,
+-		   __entry->actor)
+-);
+-
+ TRACE_EVENT(iomap_iter,
+ 	TP_PROTO(struct iomap_iter *iter, const void *ops,
+ 		 unsigned long caller),
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 66e04aedd2ca83..6784a8b6471449 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -217,16 +217,6 @@ static inline struct iomap *iomap_iter_srcmap(struct iomap_iter *i)
+ 	return &i->iomap;
  }
- EXPORT_SYMBOL_GPL(dax_iomap_rw);
-@@ -1307,7 +1306,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	}
  
- 	/*
--	 * Note that we don't bother to use iomap_apply here: DAX required
-+	 * Note that we don't bother to use iomap_iter here: DAX required
- 	 * the file system block size to be equal the page size, which means
- 	 * that we never have to deal with more than a single extent here.
- 	 */
-@@ -1561,7 +1560,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	}
- 
- 	/*
--	 * Note that we don't use iomap_apply here.  We aren't doing I/O, only
-+	 * Note that we don't use iomap_iter here.  We aren't doing I/O, only
- 	 * setting up a mapping, so really we're using iomap_begin() as a way
- 	 * to look up our filesystem block.
- 	 */
+-/*
+- * Main iomap iterator function.
+- */
+-typedef loff_t (*iomap_actor_t)(struct inode *inode, loff_t pos, loff_t len,
+-		void *data, struct iomap *iomap, struct iomap *srcmap);
+-
+-loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
+-		unsigned flags, const struct iomap_ops *ops, void *data,
+-		iomap_actor_t actor);
+-
+ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+ 		const struct iomap_ops *ops);
+ int iomap_readpage(struct page *page, const struct iomap_ops *ops);
 -- 
 2.30.2
 
