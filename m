@@ -2,144 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A46F53E4BB5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 20:00:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C3293E4C84
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 20:56:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233747AbhHISBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 14:01:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36604 "EHLO
+        id S235960AbhHIS5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 14:57:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231270AbhHISAz (ORCPT
+        with ESMTP id S235656AbhHIS5N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 14:00:55 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9EE9C06179C
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Aug 2021 11:00:34 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id d2so13210150qto.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Aug 2021 11:00:34 -0700 (PDT)
+        Mon, 9 Aug 2021 14:57:13 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8112BC0613D3;
+        Mon,  9 Aug 2021 11:56:52 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id m12so22728431wru.12;
+        Mon, 09 Aug 2021 11:56:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=AAhrsJC66Dx61Rd+R0En9xSeyn+Y7a3fdKNMwl3SmV8=;
-        b=C0z7fOVtv7xwyNq2ULxDTWBgiDiksaU5+3HrkSSE0+YAMfOwDGb3z2QxgMzpBwRhPv
-         IJIv8Jcn2zdkSUNM5svDTPmzFJom/BDy2o4AuFQLhDPHTF6I15WVw/dSxJoqsVOSZ1Cb
-         W4oQq3okSZ+c6t9/tXu1mtxGEjfyOfLs5PO3JPTOAzr1aESarTGuxT4PlJIfCs78j5tf
-         EJr6/POmRH4eknj1regIdXrAR5fCHCeWaaDHnTNfXNqLroOKMPWZWQrn4b1SAFksBLPj
-         3ozwqoWMzQNUQaaWHVTFNsV2eGVzErWUtSvwp7srUzrIDAjM/UP1OEZMwfJ6NvEMbgyW
-         6e0A==
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jsAE4Gv7bcFVFL/kndy9dN7NqtFtPpLY5RgCYDsjOwA=;
+        b=hNc3joHegyU3MtdqFSJY7zG87gPJbVs4FxIVqOb84CCMI43vkbX6D2dljGCpWJwEqv
+         Sp+nwVp+ZRLp5/1QxRRKNEFbi2wL8/5/D3cVhArRvs7AMvJi/T0AJc/czhqmd7+Vyimb
+         QYMI10tvHMZm2OG/qtz4DS79iF389Fro4ya55IpxEGtU+/5Bx7vKBgRUIxzEqrkjO/G+
+         9tjsj0r0A0E6MY/M41lz4lvj8cnlB0odtUbLdL944qlxmJZMhdidWKs8xp+TAoV4rfis
+         TlDLrCDxukwMJI2xOm9hyxNeGEUjszoCIg49bGDZ5XrJzlLKzpIiDBSW01T7w4vC/SpN
+         bkvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=AAhrsJC66Dx61Rd+R0En9xSeyn+Y7a3fdKNMwl3SmV8=;
-        b=Sl35/zZGVxYUI0XICoKnN0+Sg1dIcBfTCqA14V0fkKeR1lwiKvwv7HCAyUl21BAWHA
-         hiImOD3x0uCOSPoZaHr5O6zaohbq2ggGWQqFEFvM6yeihfRYTCFwi068wbBVI4OVjPRL
-         E5p45S/Vu5ZQy0b9gbTt9sjY7SN6yksxHtg3fFO0rsyumDJPeifeS6PP0DMvo7p1xRdk
-         vbHwohDgafB5QGnQ2KNuiB1qvL1+zEVlfbS0tyNQ3l5yc+527iLC0T+Pe8kU908xch0o
-         szHc8mlpJL25eNm3Z44A07jSytS1n3IMjtxuMnhZGlhwdk6zm2PH3uOeu3NXT51n7Ynw
-         VRUQ==
-X-Gm-Message-State: AOAM5301r2AOa7xFpRvmrI8a8rtYUc01fAYhjZSY00CNY50oVEvujQQ8
-        nfqn4tSUUOfPjMPdlz8WYsVSXQ==
-X-Google-Smtp-Source: ABdhPJzBGaMUF7I+EqzTqVqs/l3Cby4L23FljkyG1TqQehnViMfTh5LhLZoOh/mvaEH+yytNB+IJ1g==
-X-Received: by 2002:a05:622a:243:: with SMTP id c3mr10162127qtx.61.1628532033991;
-        Mon, 09 Aug 2021 11:00:33 -0700 (PDT)
-Received: from smtpclient.apple ([2600:1700:42f0:6600:615b:6e84:29a:3bc6])
-        by smtp.gmail.com with ESMTPSA id m188sm9658536qkc.99.2021.08.09.11.00.31
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Aug 2021 11:00:33 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.13\))
-Subject: Re: [RFC PATCH 11/20] hfs: Explicitly set hsb->nls_disk when
- hsb->nls_io is set
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <YRFnz6kn1UbSCN/S@casper.infradead.org>
-Date:   Mon, 9 Aug 2021 11:00:29 -0700
-Cc:     =?utf-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        =?utf-8?Q?Marek_Beh=C3=BAn?= <marek.behun@nic.cz>,
-        Christoph Hellwig <hch@infradead.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E85E6FF7-AA14-4FA6-82AA-859D93BD0069@dubeyko.com>
-References: <20210808162453.1653-1-pali@kernel.org>
- <20210808162453.1653-12-pali@kernel.org>
- <D0302F93-BAE5-48F0-87D0-B68B10D7757B@dubeyko.com>
- <YRFnz6kn1UbSCN/S@casper.infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-X-Mailer: Apple Mail (2.3654.120.0.1.13)
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jsAE4Gv7bcFVFL/kndy9dN7NqtFtPpLY5RgCYDsjOwA=;
+        b=NBKGpV4ZX0AgC/U0pLrYXjcQpI147d27jZDVO1SgoEZL41S4+yBj/BPNr/5UpQK6hS
+         5+PJ7xRBy9RgubgzpTry/LGnc1CZDh2lgOTOUpe4u0zQ59jq2YA/C4/1Zs7IfWQ/x04t
+         +diLq6DLz9Dp/Gw0v3bKowKif2TE+/Ln3JQyEKInC+KzbjXaXGg9bapIxKB7Sp+V+wUv
+         qOmpWZ20jnYkFI4zfoDYVXJnJVlihzLqU7LFI3Rg8utvgaEc6IdJx423+x4a4h8dHbaI
+         55OuZI0AVvsPP9+7dNFslTVCEEPEmTbyzKUiXPNsMlg6ufq9bjxtwGNQ/yAbtCPUZfmp
+         e4Tw==
+X-Gm-Message-State: AOAM532J/7FunHYJH1WenRVwrFruN0nU0zLuTKs/3uQDdAEV9z8IQZWZ
+        X7gW4zoj7WDlrZaFipmxY3v4TcPWBjc=
+X-Google-Smtp-Source: ABdhPJzZJHBtpnUuAwZiDckkC63OiiC6dRcu7Zdp9+yK8fU+DOwmNrxSv0JSCRiaHBuA+zlq+FiYjQ==
+X-Received: by 2002:adf:9063:: with SMTP id h90mr27339045wrh.121.1628535410961;
+        Mon, 09 Aug 2021 11:56:50 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.236.119])
+        by smtp.gmail.com with ESMTPSA id x18sm20000910wrw.19.2021.08.09.11.56.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Aug 2021 11:56:50 -0700 (PDT)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1628509745.git.asml.silence@gmail.com>
+ <YRFPR25scNRYaRzW@zeniv-ca.linux.org.uk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH 0/2] iter revert problems
+Message-ID: <a03abd9e-82c1-7a63-a0dc-c7319f0c0751@gmail.com>
+Date:   Mon, 9 Aug 2021 19:56:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
+MIME-Version: 1.0
+In-Reply-To: <YRFPR25scNRYaRzW@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 8/9/21 4:52 PM, Al Viro wrote:
+> On Mon, Aug 09, 2021 at 12:52:35PM +0100, Pavel Begunkov wrote:
+>> For the bug description see 2/2. As mentioned there the current problems
+>> is because of generic_write_checks(), but there was also a similar case
+>> fixed in 5.12, which should have been triggerable by normal
+>> write(2)/read(2) and others.
+>>
+>> It may be better to enforce reexpands as a long term solution, but for
+>> now this patchset is quickier and easier to backport.
+> 
+> 	Umm...  Won't that screw the cases where we *are* doing proper
+> reexpands?  AFAICS, with your patches that flag doesn't go away once
+> it had been set...
+
+In general, the userspace should already expecting and retrying on
+EAGAIN, and it seems to me, truncates should be rare enough to not
+care much about performance. However, it'd better to be more careful
+with nowait attempts.
+
+For instance, we can avoid failing reexpanded and reverted iters.
+
+if (i->truncated && iov_iter_count(i) != orig_size)
+	// fail;
+
+Or even re-import iov+iter, if still in the right context.
 
 
-> On Aug 9, 2021, at 10:37 AM, Matthew Wilcox <willy@infradead.org> =
-wrote:
->=20
-> On Mon, Aug 09, 2021 at 10:31:55AM -0700, Viacheslav Dubeyko wrote:
->>> On Aug 8, 2021, at 9:24 AM, Pali Roh=C3=A1r <pali@kernel.org> wrote:
->>>=20
->>> It does not make any sense to set hsb->nls_io (NLS iocharset used =
-between
->>> VFS and hfs driver) when hsb->nls_disk (NLS codepage used between =
-hfs
->>> driver and disk) is not set.
->>>=20
->>> Reverse engineering driver code shown what is doing in this special =
-case:
->>>=20
->>>   When codepage was not defined but iocharset was then
->>>   hfs driver copied 8bit character from disk directly to
->>>   16bit unicode wchar_t type. Which means it did conversion
->>>   from Latin1 (ISO-8859-1) to Unicode because first 256
->>>   Unicode code points matches 8bit ISO-8859-1 codepage table.
->>>   So when iocharset was specified and codepage not, then
->>>   codepage used implicit value "iso8859-1".
->>>=20
->>> So when hsb->nls_disk is not set and hsb->nls_io is then explicitly =
-set
->>> hsb->nls_disk to "iso8859-1".
->>>=20
->>> Such setup is obviously incompatible with Mac OS systems as they do =
-not
->>> support iso8859-1 encoding for hfs. So print warning into dmesg =
-about this
->>> fact.
->>>=20
->>> After this change hsb->nls_disk is always set, so remove code paths =
-for
->>> case when hsb->nls_disk was not set as they are not needed anymore.
->>=20
->>=20
->> Sounds reasonable. But it will be great to know that the change has =
-been tested reasonably well.
->=20
-> I don't think it's reasonable to ask Pali to test every single =
-filesystem.
-> That's something the maintainer should do, as you're more likely to =
-have
-> the infrastructure already set up to do testing of your filesystem and
-> be aware of fun corner cases and use cases than someone who's working
-> across all filesystems.
+Al, is that viable to you on the iov side?
 
-I see the point. But the whole approach needs to be tested as minimum =
-for one particular file system. :) And it could be any favorite one.
-
-Thanks,
-Slava.
-
-
+-- 
+Pavel Begunkov
