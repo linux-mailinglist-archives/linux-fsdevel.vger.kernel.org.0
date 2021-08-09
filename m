@@ -2,153 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D2403E4D3D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 21:45:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 489F93E4E0B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 22:43:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235548AbhHITpk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 15:45:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33336 "EHLO
+        id S235844AbhHIUno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 16:43:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235001AbhHITpj (ORCPT
+        with ESMTP id S233348AbhHIUno (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 15:45:39 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FA1BC0613D3;
-        Mon,  9 Aug 2021 12:45:18 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id p38so8792346lfa.0;
-        Mon, 09 Aug 2021 12:45:18 -0700 (PDT)
+        Mon, 9 Aug 2021 16:43:44 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0040CC0613D3;
+        Mon,  9 Aug 2021 13:43:21 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id n6so12275994ljp.9;
+        Mon, 09 Aug 2021 13:43:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DOED0VotuCVEYcyrGmWcGuG5s/v4y1T9PJdVveabexo=;
-        b=ncYmL4TN/lwzhXZo7hrhqvxwuUWaobMvpmlvy1k10IGkDGaSav8yqJ7S6NcvVM5hzw
-         ARi49oOKqFNU04F7xPq/paptaktZa2GKjb9hvPlv6z0PT8hNWFpeC2nmagbhEBIh5VZH
-         rXOuH90hsD/UMOYTqdorHn2L5OFhV1WvWuBGerp48bPxblFv6Ej3FTxK39DaAmnxRMB7
-         +aHR/3/z1J6WckcPsZtpVr5hACrBj58792phXWFerzTtMh8ZATvkPpWUEzREmV2SoQrP
-         iG1FK04lnIkb0F/376e319tdo1giCyRXHmy0wT0rVlTwx4uicCPF3yg3bVOo8WKUXwqM
-         Up3A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=yUAKaSGW5DdJ2RQz+ROMjXDXwUd8MZUwEP7Sv67Rnfk=;
+        b=jh1XmlgBHk4jrsPf4DmxJqM7pfrZrb8mFMTTROvMv7UPd9y4citm0IW9YSZRJLWznV
+         OjEdXF16tyIN0ETuDIWCMPyL1YaCZzppNNSddWmpaxz33hK0tKLOGxZsCw9SvptX4eSJ
+         1SeJB5uZbLDT3IeCj73sMQs0ibVjz5HeYMon+l4+5ByC2VE6KSjfkVGBZrlVw3CMYk5C
+         MMe4u6T9QfcmG4Ay/vl2FAzJtQpGYPkxCc35j5H+FLOe/ydJQZJ5SCtAWRkdwA/kBZsZ
+         u69OGl2BgZ/6mo4cIHpuCinTYdyUrYKmtNv9C5FulPf5LSJzMr/+8MZuJzjXgOro2Qg9
+         QVKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DOED0VotuCVEYcyrGmWcGuG5s/v4y1T9PJdVveabexo=;
-        b=cH3GjRvv1wJko/IuIX+ZrHOy6A3ZFP4wPeIcGY7Uk7eqtA7EqGkXCTXwAIh+/mcmAt
-         ZlatfJZysOwdKkRNPuIvmRarzrrcYCW0EKWf2ea7DoXW3XOeNo1u1W91gsSNOhj7qh7M
-         LE8iKKv446CWe8+LAZRud69wpKlv7bMDWk1dNLMImAMuGo3UpfOfyMnUhbcdJYU+Iwdj
-         0ay6yU3c9TXyrQqHZ/IROAuHl5ApE1NjEzZXXMJ0vNIRg08Tny+tuqxbvXpURlXNocuf
-         E4gGIBGWQo45GFf/zh5m3cXW6H69MTcf8tlukP7qObsyUMvV0H2N2AyUHMe1R4UIIJbU
-         eRSw==
-X-Gm-Message-State: AOAM530qDOX7UrhDsDUCsbAvuX6gvTj59LCpOdFDZSBVzfSTia+4QJ7J
-        W0mGi6XHs6jmSfC6NuAVdgk=
-X-Google-Smtp-Source: ABdhPJy8YN684aOpruQcDApFcrRq66E/1m/l6HR9maI4geKmr/ljnATCJdremPLHl7GozfW3rw3mcA==
-X-Received: by 2002:a05:6512:74a:: with SMTP id c10mr18623358lfs.533.1628538317030;
-        Mon, 09 Aug 2021 12:45:17 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id j10sm1699950lfm.299.2021.08.09.12.45.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 12:45:16 -0700 (PDT)
-Date:   Mon, 9 Aug 2021 22:45:14 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        "dsterba@suse.cz" <dsterba@suse.cz>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pali@kernel.org" <pali@kernel.org>,
-        "aaptel@suse.com" <aaptel@suse.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "joe@perches.com" <joe@perches.com>,
-        "mark@harmstone.com" <mark@harmstone.com>,
-        "nborisov@suse.com" <nborisov@suse.com>,
-        "linux-ntfs-dev@lists.sourceforge.net" 
-        <linux-ntfs-dev@lists.sourceforge.net>,
-        "anton@tuxera.com" <anton@tuxera.com>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "ebiggers@kernel.org" <ebiggers@kernel.org>,
-        "andy.lavr@gmail.com" <andy.lavr@gmail.com>,
-        "oleksandr@natalenko.name" <oleksandr@natalenko.name>
-Subject: Re: [PATCH v27 10/10] fs/ntfs3: Add MAINTAINERS
-Message-ID: <20210809194514.zdc2br3tonoe4zcu@kari-VirtualBox>
-References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
- <20210729134943.778917-11-almaz.alexandrovich@paragon-software.com>
- <20210809105652.GK5047@twin.jikos.cz>
- <918ff89414fa49f8bcb2dfd00a7b0f0b@paragon-software.com>
- <20210809164425.rcxtftvb2dq644k5@kari-VirtualBox>
- <305bdb56-d40f-2774-12fe-5113f15df5c6@infradead.org>
- <CAA9_cmeK==ZS1wdiOM70L-=z9vQWHiwReS103RfDbCs8weaAzw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=yUAKaSGW5DdJ2RQz+ROMjXDXwUd8MZUwEP7Sv67Rnfk=;
+        b=FAvmgSfUDQFmVjoOQonyk+VvkVO/e5+WShltR1MAmYwgnMFXtaIwKGkXmjOS3oQFyo
+         yI3eOpI1MwymxHOEJ989W84p5ymrB8hi/lFQRwzUYjf67IXLtkHsS/AiduW6iuZ9Y37h
+         7xiM5RezfuZWW2w+waVtGvHqReJEP/7/A+K9BjV0wLXwB3RkNKD5F8k5dVr6sVp+D0p3
+         W8jRtl1WJOeVzbQWCXZFeLFV2BJveqNwV3m9syjXDmSZPIF/nf/Tuq2MWwPrJOMJe/4T
+         WB+P2GimiN0mOpXpV4snSTcqkkFwTrqtBUITqPe9j6z4Qt76HkK/VETXQIZ+ioIOuGrQ
+         GqkA==
+X-Gm-Message-State: AOAM533z75lG4MLanE52HH3ixjlMsGFRJf4c6up6840c7n8u1Pk4xzsE
+        +NOu40SuifooCIEp+e3H8FkqD75w+FaY6kNrwRs=
+X-Google-Smtp-Source: ABdhPJy8ej9SUjeGIWuogdO/3shhi/7En+oCEa5tTqZf2hp+d/UjsUbfLSRI2keSqvFXPLnxjriUbvils/jCtnY/FYQ=
+X-Received: by 2002:a2e:b1d3:: with SMTP id e19mr10504370lja.6.1628541800135;
+ Mon, 09 Aug 2021 13:43:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA9_cmeK==ZS1wdiOM70L-=z9vQWHiwReS103RfDbCs8weaAzw@mail.gmail.com>
+References: <20210808162453.1653-1-pali@kernel.org> <20210808162453.1653-12-pali@kernel.org>
+ <D0302F93-BAE5-48F0-87D0-B68B10D7757B@dubeyko.com> <YRFnz6kn1UbSCN/S@casper.infradead.org>
+ <20210809174741.4wont2drya3rvpsr@pali>
+In-Reply-To: <20210809174741.4wont2drya3rvpsr@pali>
+From:   Steve French <smfrench@gmail.com>
+Date:   Mon, 9 Aug 2021 15:43:09 -0500
+Message-ID: <CAH2r5ms2wK4P9=J4q7OJ4fLhi=e981TY1+Ue7yawyQiCzS9ThQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 11/20] hfs: Explicitly set hsb->nls_disk when
+ hsb->nls_io is set
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-ntfs-dev@lists.sourceforge.net,
+        CIFS <linux-cifs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
+        Christoph Hellwig <hch@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 09, 2021 at 11:56:30AM -0700, Dan Williams wrote:
-> On Mon, Aug 9, 2021 at 9:58 AM Randy Dunlap <rdunlap@infradead.org> wrote:
-> >
-> > On 8/9/21 9:44 AM, Kari Argillander wrote:
-> > > On Mon, Aug 09, 2021 at 04:16:32PM +0000, Konstantin Komarov wrote:
-> > >> From: David Sterba <dsterba@suse.cz>
-> > >> Sent: Monday, August 9, 2021 1:57 PM
-> > >>> On Thu, Jul 29, 2021 at 04:49:43PM +0300, Konstantin Komarov wrote:
-> > >>>> This adds MAINTAINERS
-> > >>>>
-> > >>>> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> > >>>> ---
-> > >>>>   MAINTAINERS | 7 +++++++
-> > >>>>   1 file changed, 7 insertions(+)
-> > >>>>
-> > >>>> diff --git a/MAINTAINERS b/MAINTAINERS
-> > >>>> index 9c3428380..3b6b48537 100644
-> > >>>> --- a/MAINTAINERS
-> > >>>> +++ b/MAINTAINERS
-> > >>>> @@ -13279,6 +13279,13 @@ T:        git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
-> > >>>>   F:       Documentation/filesystems/ntfs.rst
-> > >>>>   F:       fs/ntfs/
-> > >>>>
-> > >>>> +NTFS3 FILESYSTEM
-> > >>>> +M:        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> > >>>> +S:        Supported
-> > >>>> +W:        http://www.paragon-software.com/
-> > >>>> +F:        Documentation/filesystems/ntfs3.rst
-> > >>>> +F:        fs/ntfs3/
-> > >>>
-> > >>> Can you please add a git tree and mailing list entries?
-> > >
-> > >> Hi David, I'll add the git tree link for the sources to MAINTAINERS in the next patch. As for the mailing list,
-> > >> apologies for the newbie question here, but will it possible to have the @vger.kernel.org list for the ntfs3,
-> > >> or it must be external for our case?
-> > >> Thanks!
-> > >
-> > > Good question and I also do not have absolute truth about it but I try
-> > > to help. It should be possible. I think you can request new list from
-> > > postmaster@vger.kernel.org
-> > >
-> > > If you need public git tree then kernel.org can maybe provide that. They
-> > > also host ntfs so I think no problem with ntfs3. This way you self
-> > > do not have to worry public list. But I'm not sure how strict is now
-> > > days get account. But if you say that it would be nice that you need
-> > > kernel git then maybe someone can help with that.
-> > > See more info https://www.kernel.org/faq.html
-> >
-> > If postmaster@vger.kernel.org isn't helpful or you just want to use
-> > kernel.org (note that vger.kernel.org isn't part of kernel.org),
-> > you can contact: helpdesk@kernel.org  for git tree or mailing list
-> > requests.  Wherever you have a mailing list, you probably should
-> > have it archived at lore.kernel.org (see next URL for that).
-> >
-> > Also you may want to read  https://korg.wiki.kernel.org
-> 
-> There is also lists.linux.dev for kernel development focused lists:
-> 
-> https://subspace.kernel.org/lists.linux.dev.html
+For cifs.ko, I don't mind running our automated regression tests on
+this patch when the patch (or patches) is ready, but was thinking
+about an earlier discussion a few months about parth conversion in
+cifs.ko prompted by Al Viro, and whether additional changes should be
+made to move the character conversion later as well (e.g. for
+characters in the reserved range such as '\' to 0xF026, and'':' to
+0xF022  and '>' to 0xF024 and '?' to 0xF025 etc) for the 10 special
+characters which have to get remapped into the UCS-2 reserved
+character range.
 
-That seems to be "new vger" so this is the way to go. Good that you bring it
-up. More info here https://www.kernel.org/lists-linux-dev.html This was just
-in site news so it was kinda hard to find.
+On Mon, Aug 9, 2021 at 12:49 PM Pali Roh=C3=A1r <pali@kernel.org> wrote:
+>
+> On Monday 09 August 2021 18:37:19 Matthew Wilcox wrote:
+> > On Mon, Aug 09, 2021 at 10:31:55AM -0700, Viacheslav Dubeyko wrote:
+> > > > On Aug 8, 2021, at 9:24 AM, Pali Roh=C3=A1r <pali@kernel.org> wrote=
+:
+> > > >
+> > > > It does not make any sense to set hsb->nls_io (NLS iocharset used b=
+etween
+> > > > VFS and hfs driver) when hsb->nls_disk (NLS codepage used between h=
+fs
+> > > > driver and disk) is not set.
+> > > >
+> > > > Reverse engineering driver code shown what is doing in this special=
+ case:
+> > > >
+> > > >    When codepage was not defined but iocharset was then
+> > > >    hfs driver copied 8bit character from disk directly to
+> > > >    16bit unicode wchar_t type. Which means it did conversion
+> > > >    from Latin1 (ISO-8859-1) to Unicode because first 256
+> > > >    Unicode code points matches 8bit ISO-8859-1 codepage table.
+> > > >    So when iocharset was specified and codepage not, then
+> > > >    codepage used implicit value "iso8859-1".
+> > > >
+> > > > So when hsb->nls_disk is not set and hsb->nls_io is then explicitly=
+ set
+> > > > hsb->nls_disk to "iso8859-1".
+> > > >
+> > > > Such setup is obviously incompatible with Mac OS systems as they do=
+ not
+> > > > support iso8859-1 encoding for hfs. So print warning into dmesg abo=
+ut this
+> > > > fact.
+> > > >
+> > > > After this change hsb->nls_disk is always set, so remove code paths=
+ for
+> > > > case when hsb->nls_disk was not set as they are not needed anymore.
+> > >
+> > >
+> > > Sounds reasonable. But it will be great to know that the change has b=
+een tested reasonably well.
+> >
+> > I don't think it's reasonable to ask Pali to test every single filesyst=
+em.
+> > That's something the maintainer should do, as you're more likely to hav=
+e
+> > the infrastructure already set up to do testing of your filesystem and
+> > be aware of fun corner cases and use cases than someone who's working
+> > across all filesystems.
+>
+> This patch series is currently in RFC form, as stated in cover letter
+> mostly untested. So they are not in form for merging or detailed
+> reviewing. I just would like to know if this is the right direction with
+> filesystems and if I should continue with this my effort or not.
+> And I thought that sending RFC "incomplete" patches is better way than
+> just describing what to do and how...
 
+
+
+--=20
+Thanks,
+
+Steve
