@@ -2,365 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2945B3E3E8F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 05:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2CE23E3F75
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 07:56:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232964AbhHID6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Aug 2021 23:58:52 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:58002 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232973AbhHID6u (ORCPT
+        id S233161AbhHIF5E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 01:57:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40612 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233145AbhHIF5D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Aug 2021 23:58:50 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id EAD0E1FD81;
-        Mon,  9 Aug 2021 03:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1628481507; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mBKlJwh6qPUtRQ+E2HqkVTJHsO/u/MDxgQK6gIYa7VU=;
-        b=vZK3Xk4amyGrprNAMoKyqaNBQzWd0n3dO2fy7u6Ty7bxFbLqsVr5jVN7al279PJNVKtVYD
-        A1VUXF/FZpn3y8DwXwlsYvR+30GAt9Qt6M9zGwbPmqBK8F4kj4R8avCu47bn4HfrkAooH6
-        wCeJwSKyW52qtp1vJRZn3+txeaTJDP8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1628481507;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mBKlJwh6qPUtRQ+E2HqkVTJHsO/u/MDxgQK6gIYa7VU=;
-        b=IA3WdHiugszLWTzSvxTOl2R9nYP3665i6nmXfjW9/ASLm4hoedmQSOY4zLWqMiF6werPtp
-        hUr+B305+yTYLeDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CAE8F13A9F;
-        Mon,  9 Aug 2021 03:58:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id EHv9IeGnEGHPBgAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 09 Aug 2021 03:58:25 +0000
-Subject: [PATCH 2/4] btrfs: add numdevs= mount option.
-From:   NeilBrown <neilb@suse.de>
-To:     Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
-Date:   Mon, 09 Aug 2021 13:55:27 +1000
-Message-ID: <162848132773.25823.8504921416553051353.stgit@noble.brown>
-In-Reply-To: <162848123483.25823.15844774651164477866.stgit@noble.brown>
-References: <162848123483.25823.15844774651164477866.stgit@noble.brown>
-User-Agent: StGit/0.23
+        Mon, 9 Aug 2021 01:57:03 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD99C061798
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Aug 2021 22:56:43 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id d11so2538377eja.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Aug 2021 22:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1QKCwJXH7b2bV95pG+j9QIMKAhZHvf1ykyTmniZz1n8=;
+        b=Tz23BY9lPnQ3vIL8d7cY3bYV2IhYyaRUOu6xQBORJN4cz8W0au9Gfbaf8lAUsNVPjB
+         tAe8PYHGpUriBFSopttHCQqPoMMqR1rexL5EnAAhvV7l1kBuiWYPDjMEaayMcy4xi6aA
+         5uuCDZ/qs9RJhz3WH8weHBsQyMPk7q4EdO+FETqAWaWTUAwpTlufojrgm+S4Uy1A1zXZ
+         ZIxfVRVGOJA3AjSm25fOEwYePUK2HcOeOIwdB6uMCtposnKf/XtfViVOX2BxRLFe5OIJ
+         L4Gu9IBkOOJTcyhBSto5DUifQ4gSNns3GbgdZ0iDqXV+q6HNfQZu9lYsJfT7RE/U4CCP
+         sTvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1QKCwJXH7b2bV95pG+j9QIMKAhZHvf1ykyTmniZz1n8=;
+        b=HSuJ7J3jfku9DPmBm7c11ljvr543MDwJaKfSOniyUBGUSoL8xY3jqwaFPQOBlSRPNf
+         41AYvF26k9ATc1ZTN3LS4rlauC+BzA2aGVVKNc8Kml8SyoSWzALPRVXzanmYsdqtnuE/
+         FRh2CCwy2iDH/7SvkA0nfylxbqxPhNwv4YS4xT9at/Ve0GBWB72CKNgzYw7KfZ34EiSQ
+         49o0kV0SvyngtQhfcE5HXyZyjrHpWs4u6eTiSowGLKvDvtofhcpPzkxGcDyyqWa6e8lj
+         gDItKMbqMZ1K/9Za4JV6aVnx7THA0igVA8flVa7PuMh7Obbus4plDYBNCEb6LNruv0F5
+         Hosw==
+X-Gm-Message-State: AOAM5328kCl2AQ+52ZNICwliZlbE37mqYBOuMU/T8NQPW0gk+/5+k3m/
+        9NydUP9OQpbprhw3DVBCiiKlMCUqlzF1W2RFF2hS
+X-Google-Smtp-Source: ABdhPJytSHJOcxF9+rpBixPa7fMmae2NjP3sPUJopLOrs0pFpyMSkYVK2NfzI4kxhNLm4dqCFsDdPFoJRqjc++Vk9j4=
+X-Received: by 2002:a17:907:3e0d:: with SMTP id hp13mr20504923ejc.372.1628488602064;
+ Sun, 08 Aug 2021 22:56:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-2-xieyongji@bytedance.com>
+ <43d88942-1cd3-c840-6fec-4155fd544d80@redhat.com> <CACycT3vcpwyA3xjD29f1hGnYALyAd=-XcWp8+wJiwSqpqUu00w@mail.gmail.com>
+ <6e05e25e-e569-402e-d81b-8ac2cff1c0e8@arm.com> <CACycT3sm2r8NMMUPy1k1PuSZZ3nM9aic-O4AhdmRRCwgmwGj4Q@mail.gmail.com>
+ <417ce5af-4deb-5319-78ce-b74fb4dd0582@arm.com> <CACycT3vARzvd4-dkZhDHqUkeYoSxTa2ty0z0ivE1znGti+n1-g@mail.gmail.com>
+ <8c381d3d-9bbd-73d6-9733-0f0b15c40820@redhat.com>
+In-Reply-To: <8c381d3d-9bbd-73d6-9733-0f0b15c40820@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Mon, 9 Aug 2021 13:56:31 +0800
+Message-ID: <CACycT3steXFeg7NRbWpo2J59dpYcumzcvM2zcPJAVe40-EvvEg@mail.gmail.com>
+Subject: Re: [PATCH v10 01/17] iova: Export alloc_iova_fast() and free_iova_fast()
+To:     Jason Wang <jasowang@redhat.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     kvm <kvm@vger.kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Liu Xiaodong <xiaodong.liu@intel.com>,
+        Joe Perches <joe@perches.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        songmuchun@bytedance.com, Jens Axboe <axboe@kernel.dk>,
+        He Zhe <zhe.he@windriver.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, bcrl@kvack.org,
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-btrfs currently allocates multiple anonymous bdev numbers to hide the
-fact that inode numbers are not unique across "subvolumes".
-Each subvol gets a different device number.
+On Thu, Aug 5, 2021 at 9:31 PM Jason Wang <jasowang@redhat.com> wrote:
+>
+>
+> =E5=9C=A8 2021/8/5 =E4=B8=8B=E5=8D=888:34, Yongji Xie =E5=86=99=E9=81=93:
+> >> My main point, though, is that if you've already got something else
+> >> keeping track of the actual addresses, then the way you're using an
+> >> iova_domain appears to be something you could do with a trivial bitmap
+> >> allocator. That's why I don't buy the efficiency argument. The main
+> >> design points of the IOVA allocator are to manage large address spaces
+> >> while trying to maximise spatial locality to minimise the underlying
+> >> pagetable usage, and allocating with a flexible limit to support
+> >> multiple devices with different addressing capabilities in the same
+> >> address space. If none of those aspects are relevant to the use-case -
+> >> which AFAICS appears to be true here - then as a general-purpose
+> >> resource allocator it's rubbish and has an unreasonably massive memory
+> >> overhead and there are many, many better choices.
+> >>
+> > OK, I get your point. Actually we used the genpool allocator in the
+> > early version. Maybe we can fall back to using it.
+>
+>
+> I think maybe you can share some perf numbers to see how much
+> alloc_iova_fast() can help.
+>
 
-As described in a previous patch, this is incomplete, doesn't scale, and
-should be deprecated.  This patch is another step to deprecation.
+I did some fio tests[1] with a ram-backend vduse block device[2].
 
-With mount option "-o numdevs=many", which is the default, the current
-behaviour is preserved.
+Following are some performance data:
 
-With mount option "-o numdevs=1", the st_dev reported by stat() is
-exactly the number that appears in /proc/$PID/mountinfo (i.e.
-sb->s_dev).  This will prevent "du -x", "find -xdev" and similar tools
-from keeping within a subvol, but is otherwise quite functional.
+                            numjobs=3D1   numjobs=3D2    numjobs=3D4   numj=
+obs=3D8
+iova_alloc_fast    145k iops      265k iops      514k iops      758k iops
 
-If numdevs=1 and inumbits=0, then there will often be inode number
-reuse, so that combination is forbidden and the default fo inumbits
-changes to BITS_PER_LONG*7/8.  With larger inumbits (close to
-BITS_PER_LONG), inode number reuse is still possible, but only with
-large or old filesystems.
+iova_alloc            137k iops     170k iops      128k iops      113k iops
 
-With mount option "-o numdevs=2", precisely two anon device numbers are
-allocated.  Each subvol gets the number that its parent isn't using.
-When subvols are moved, the device number reported will change if needed
-to differentiate from its parent.
-If a subvol with dependent subvols is moved and the device numbers need
-to change, the numbers in dependent subvols that are currently in cache
-will NOT change.  Fixing this is a stretch goal.
+gen_pool_alloc   143k iops      270k iops      458k iops      521k iops
 
-Using numdevs=2 removes any problems with exhausting the number of
-available anon devs, and preserves the functionality of "du -x" and
-similar.  It may be a useful option for sites that experience exhaustion
-problems.
+The iova_alloc_fast() has the best performance since we always hit the
+per-cpu cache. Regardless of the per-cpu cache, the genpool allocator
+should be better than the iova allocator.
 
-numdevs=1 is, at this stage, most useful for exploring the consequences
-of fully deprecating the use of multiple device numbers.  It may also be
-useful for site that find they have no dependency on multiple device
-numbers.
+[1] fio jobfile:
 
-Signed-off-by: NeilBrown <neilb@suse.de>
----
- fs/btrfs/ctree.h   |   17 +++++++++++++++--
- fs/btrfs/disk-io.c |   24 +++++++++++++++++++++---
- fs/btrfs/inode.c   |   29 ++++++++++++++++++++++++++++-
- fs/btrfs/ioctl.c   |    6 ++++--
- fs/btrfs/super.c   |   30 ++++++++++++++++++++++++++++++
- 5 files changed, 98 insertions(+), 8 deletions(-)
+[global]
+rw=3Drandread
+direct=3D1
+ioengine=3Dlibaio
+iodepth=3D16
+time_based=3D1
+runtime=3D60s
+group_reporting
+bs=3D4k
+filename=3D/dev/vda
+[job]
+numjobs=3D..
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 0ef557db3a8b..2caedb8c8c6d 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -988,6 +988,14 @@ struct btrfs_fs_info {
- 	u32 stripesize;
- 
- 	unsigned short inumbits;
-+	/* num_devs can be:
-+	 * 1 - all files in all trees use sb->s_dev
-+	 * 2 - file trees alternate between using sb->s_dev and
-+	 *     secondary_anon_dev.
-+	 * 3 (BTTSF_MANY_DEVS) - Each subtree uses a unique ->anon_dev
-+	 */
-+	unsigned short num_devs;
-+	dev_t secondary_anon_dev;
- 
- 	/* Block groups and devices containing active swapfiles. */
- 	spinlock_t swapfile_pins_lock;
-@@ -1035,6 +1043,8 @@ struct btrfs_fs_info {
- #endif
- };
- 
-+#define BTRFS_MANY_DEVS	(3)
-+
- static inline struct btrfs_fs_info *btrfs_sb(struct super_block *sb)
- {
- 	return sb->s_fs_info;
-@@ -1176,10 +1186,13 @@ struct btrfs_root {
- 	 */
- 	struct radix_tree_root delayed_nodes_tree;
- 	/*
--	 * right now this just gets used so that a root has its own devid
--	 * for stat.  It may be used for more later
-+	 * If fs_info->num_devs == 3 (BTRFS_MANY_DEVS) anon_dev holds a device
-+	 * number to be reported by ->getattr().
-+	 * If fs_info->num_devs == 2, anon_dev is 0 and use_secondary_dev
-+	 * is true when this root uses the secondary, not primary, dev.
- 	 */
- 	dev_t anon_dev;
-+	bool use_secondary_dev;
- 
- 	spinlock_t root_item_lock;
- 	refcount_t refs;
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 7f3bfa042d66..5127e2689756 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1516,7 +1516,8 @@ static int btrfs_init_fs_root(struct btrfs_root *root, dev_t anon_dev)
- 	 * userspace, the id pool is limited to 1M
- 	 */
- 	if (is_fstree(root->root_key.objectid) &&
--	    btrfs_root_refs(&root->root_item) > 0) {
-+	    btrfs_root_refs(&root->root_item) > 0 &&
-+	    root->fs_info->num_devs == BTRFS_MANY_DEVS) {
- 		if (!anon_dev) {
- 			ret = get_anon_bdev(&root->anon_dev);
- 			if (ret)
-@@ -3332,8 +3333,12 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
- 	 * "-o inumbits" can over-ride this default.
- 	 * BITS_PER_LONG * 7 / 8 is a good value to use
- 	 */
--	if (fs_info->inumbits > BITS_PER_LONG)
--		fs_info->inumbits = 0;
-+	if (fs_info->inumbits > BITS_PER_LONG) {
-+		if (fs_info->num_devs == 1)
-+			fs_info->inumbits = BITS_PER_LONG * 7 / 8;
-+		else
-+			fs_info->inumbits = 0;
-+	}
- 
- 	features = btrfs_super_incompat_flags(disk_super) &
- 		~BTRFS_FEATURE_INCOMPAT_SUPP;
-@@ -3379,6 +3384,15 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
- 	fs_info->csums_per_leaf = BTRFS_MAX_ITEM_SIZE(fs_info) / fs_info->csum_size;
- 	fs_info->stripesize = stripesize;
- 
-+	if (fs_info->num_devs == 0)
-+		/* set default value */
-+		fs_info->num_devs = BTRFS_MANY_DEVS;
-+
-+	if (fs_info->num_devs == 2) {
-+		err = get_anon_bdev(&fs_info->secondary_anon_dev);
-+		if (err)
-+			goto fail_alloc;
-+	}
- 	/*
- 	 * mixed block groups end up with duplicate but slightly offset
- 	 * extent buffers for the same range.  It leads to corruptions
-@@ -4446,6 +4460,10 @@ void __cold close_ctree(struct btrfs_fs_info *fs_info)
- 
- 	btrfs_mapping_tree_free(&fs_info->mapping_tree);
- 	btrfs_close_devices(fs_info->fs_devices);
-+
-+	if (fs_info->secondary_anon_dev)
-+		free_anon_bdev(fs_info->secondary_anon_dev);
-+	fs_info->secondary_anon_dev = 0;
- }
- 
- int btrfs_buffer_uptodate(struct extent_buffer *buf, u64 parent_transid,
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 860cb5045123..30fa64cbe6dc 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5966,6 +5966,8 @@ struct inode *btrfs_lookup_dentry(struct inode *dir, struct dentry *dentry)
- 			iput(inode);
- 			inode = ERR_PTR(ret);
- 		}
-+		if (fs_info->num_devs == 2)
-+			sub_root->use_secondary_dev = !root->use_secondary_dev;
- 	}
- 
- 	return inode;
-@@ -9204,7 +9206,15 @@ static int btrfs_getattr(struct user_namespace *mnt_userns,
- 				  STATX_ATTR_NODUMP);
- 
- 	generic_fillattr(&init_user_ns, inode, stat);
--	stat->dev = BTRFS_I(inode)->root->anon_dev;
-+	/* If we don't set stat->dev here, sb->s_dev will be used */
-+	switch (btrfs_sb(inode->i_sb)->num_devs) {
-+	case 2:
-+		if (BTRFS_I(inode)->root->use_secondary_dev)
-+			stat->dev = btrfs_sb(inode->i_sb)->secondary_anon_dev;
-+		break;
-+	case BTRFS_MANY_DEVS:
-+		stat->dev = BTRFS_I(inode)->root->anon_dev;
-+	}
- 
- 	spin_lock(&BTRFS_I(inode)->lock);
- 	delalloc_bytes = BTRFS_I(inode)->new_delalloc_bytes;
-@@ -9390,6 +9400,15 @@ static int btrfs_rename_exchange(struct inode *old_dir,
- 	if (new_inode->i_nlink == 1)
- 		BTRFS_I(new_inode)->dir_index = new_idx;
- 
-+	if (fs_info->num_devs == 2 &&
-+	    root->use_secondary_dev != dest->use_secondary_dev) {
-+		BTRFS_I(old_inode)->root->use_secondary_dev =
-+				!dest->use_secondary_dev;
-+		BTRFS_I(new_inode)->root->use_secondary_dev =
-+				!root->use_secondary_dev;
-+		// FIXME any subvols beneeath 'old_inode' or 'new_inode'
-+		// that are in cache are now wrong.
-+	}
- 	if (root_log_pinned) {
- 		btrfs_log_new_name(trans, BTRFS_I(old_inode), BTRFS_I(old_dir),
- 				   new_dentry->d_parent);
-@@ -9656,6 +9675,14 @@ static int btrfs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		goto out_fail;
- 	}
- 
-+	if (fs_info->num_devs == 2 &&
-+	    root->use_secondary_dev != dest->use_secondary_dev) {
-+		BTRFS_I(old_inode)->root->use_secondary_dev =
-+				!dest->use_secondary_dev;
-+		// FIXME any subvols beneeath 'old_inode' that are
-+		// in cache are now wrong.
-+	}
-+
- 	if (old_inode->i_nlink == 1)
- 		BTRFS_I(old_inode)->dir_index = index;
- 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index e008a9ceb827..a246f91b4df4 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -522,7 +522,8 @@ static noinline int create_subvol(struct inode *dir,
- 	if (ret)
- 		goto fail_free;
- 
--	ret = get_anon_bdev(&anon_dev);
-+	if (fs_info->num_devs == BTRFS_MANY_DEVS)
-+		ret = get_anon_bdev(&anon_dev);
- 	if (ret < 0)
- 		goto fail_free;
- 
-@@ -729,7 +730,8 @@ static int create_snapshot(struct btrfs_root *root, struct inode *dir,
- 	if (!pending_snapshot)
- 		return -ENOMEM;
- 
--	ret = get_anon_bdev(&pending_snapshot->anon_dev);
-+	if (fs_info->num_devs == BTRFS_MANY_DEVS)
-+		ret = get_anon_bdev(&pending_snapshot->anon_dev);
- 	if (ret < 0)
- 		goto free_pending;
- 	pending_snapshot->root_item = kzalloc(sizeof(struct btrfs_root_item),
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 5f3350e2f7ec..b1aecb834234 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -361,6 +361,7 @@ enum {
- 	Opt_discard_mode,
- 	Opt_inumbits,
- 	Opt_norecovery,
-+	Opt_numdevs,
- 	Opt_ratio,
- 	Opt_rescan_uuid_tree,
- 	Opt_skip_balance,
-@@ -431,6 +432,7 @@ static const match_table_t tokens = {
- 	{Opt_inumbits, "inumbits=%u"},
- 	{Opt_nodiscard, "nodiscard"},
- 	{Opt_norecovery, "norecovery"},
-+	{Opt_numdevs, "numdevs=%s"},
- 	{Opt_ratio, "metadata_ratio=%u"},
- 	{Opt_rescan_uuid_tree, "rescan_uuid_tree"},
- 	{Opt_skip_balance, "skip_balance"},
-@@ -849,8 +851,35 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
- 				ret = -EINVAL;
- 				goto out;
- 			}
-+			if (intarg == 0 && info->num_devs == 1) {
-+				btrfs_err(info,
-+					  "inumbits=0 not permitted when numdevs=1");
-+				ret = -EINVAL;
-+				goto out;
-+			}
- 			info->inumbits = intarg;
- 			break;
-+		case Opt_numdevs:
-+			if (info->num_devs) {
-+				; /* silently ignore attempts to change this */
-+			} else if (strcmp(args[0].from, "many") == 0) {
-+				info->num_devs = BTRFS_MANY_DEVS;
-+			} else if (strcmp(args[0].from, "1") == 0) {
-+				if (info->inumbits == 0) {
-+					btrfs_err(info,
-+"numdevs=1 not permitted with inumbits=0");
-+					ret = -EINVAL;
-+				}
-+				info->num_devs = 1;
-+			} else if (strcmp(args[0].from, "2") == 0) {
-+				info->num_devs = 2;
-+			} else {
-+				btrfs_err(info,
-+					  "numdevs must be \"1\", \"2\", or \"many\".");
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+			break;
- 		case Opt_ratio:
- 			ret = match_int(&args[0], &intarg);
- 			if (ret)
-@@ -1559,6 +1588,7 @@ static int btrfs_show_options(struct seq_file *seq, struct dentry *dentry)
- 	if (btrfs_test_opt(info, REF_VERIFY))
- 		seq_puts(seq, ",ref_verify");
- 	seq_printf(seq, ",inumbits=%u", info->inumbits);
-+	seq_printf(seq, ",numdevs=%u", info->num_devs);
- 	seq_printf(seq, ",subvolid=%llu",
- 		  BTRFS_I(d_inode(dentry))->root->root_key.objectid);
- 	subvol_name = btrfs_get_subvol_name_from_objectid(info,
+[2]  $ qemu-storage-daemon \
+      --chardev socket,id=3Dcharmonitor,path=3D/tmp/qmp.sock,server,nowait =
+\
+      --monitor chardev=3Dcharmonitor \
+      --blockdev
+driver=3Dhost_device,cache.direct=3Don,aio=3Dnative,filename=3D/dev/nullb0,=
+node-name=3Ddisk0
+\
+      --export type=3Dvduse-blk,id=3Dtest,node-name=3Ddisk0,writable=3Don,n=
+ame=3Dvduse-null,num-queues=3D16,queue-size=3D128
 
+The qemu-storage-daemon can be builded based on the repo:
+https://github.com/bytedance/qemu/tree/vduse-test.
 
+Thanks,
+Yongji
