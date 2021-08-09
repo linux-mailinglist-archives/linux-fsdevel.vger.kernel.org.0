@@ -2,156 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2CE23E3F75
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 07:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F103E3E3F95
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:14:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233161AbhHIF5E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 01:57:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40612 "EHLO
+        id S233136AbhHIGO3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 02:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233145AbhHIF5D (ORCPT
+        with ESMTP id S233018AbhHIGO3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 01:57:03 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD99C061798
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Aug 2021 22:56:43 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id d11so2538377eja.8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Aug 2021 22:56:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1QKCwJXH7b2bV95pG+j9QIMKAhZHvf1ykyTmniZz1n8=;
-        b=Tz23BY9lPnQ3vIL8d7cY3bYV2IhYyaRUOu6xQBORJN4cz8W0au9Gfbaf8lAUsNVPjB
-         tAe8PYHGpUriBFSopttHCQqPoMMqR1rexL5EnAAhvV7l1kBuiWYPDjMEaayMcy4xi6aA
-         5uuCDZ/qs9RJhz3WH8weHBsQyMPk7q4EdO+FETqAWaWTUAwpTlufojrgm+S4Uy1A1zXZ
-         ZIxfVRVGOJA3AjSm25fOEwYePUK2HcOeOIwdB6uMCtposnKf/XtfViVOX2BxRLFe5OIJ
-         L4Gu9IBkOOJTcyhBSto5DUifQ4gSNns3GbgdZ0iDqXV+q6HNfQZu9lYsJfT7RE/U4CCP
-         sTvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1QKCwJXH7b2bV95pG+j9QIMKAhZHvf1ykyTmniZz1n8=;
-        b=HSuJ7J3jfku9DPmBm7c11ljvr543MDwJaKfSOniyUBGUSoL8xY3jqwaFPQOBlSRPNf
-         41AYvF26k9ATc1ZTN3LS4rlauC+BzA2aGVVKNc8Kml8SyoSWzALPRVXzanmYsdqtnuE/
-         FRh2CCwy2iDH/7SvkA0nfylxbqxPhNwv4YS4xT9at/Ve0GBWB72CKNgzYw7KfZ34EiSQ
-         49o0kV0SvyngtQhfcE5HXyZyjrHpWs4u6eTiSowGLKvDvtofhcpPzkxGcDyyqWa6e8lj
-         gDItKMbqMZ1K/9Za4JV6aVnx7THA0igVA8flVa7PuMh7Obbus4plDYBNCEb6LNruv0F5
-         Hosw==
-X-Gm-Message-State: AOAM5328kCl2AQ+52ZNICwliZlbE37mqYBOuMU/T8NQPW0gk+/5+k3m/
-        9NydUP9OQpbprhw3DVBCiiKlMCUqlzF1W2RFF2hS
-X-Google-Smtp-Source: ABdhPJytSHJOcxF9+rpBixPa7fMmae2NjP3sPUJopLOrs0pFpyMSkYVK2NfzI4kxhNLm4dqCFsDdPFoJRqjc++Vk9j4=
-X-Received: by 2002:a17:907:3e0d:: with SMTP id hp13mr20504923ejc.372.1628488602064;
- Sun, 08 Aug 2021 22:56:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-2-xieyongji@bytedance.com>
- <43d88942-1cd3-c840-6fec-4155fd544d80@redhat.com> <CACycT3vcpwyA3xjD29f1hGnYALyAd=-XcWp8+wJiwSqpqUu00w@mail.gmail.com>
- <6e05e25e-e569-402e-d81b-8ac2cff1c0e8@arm.com> <CACycT3sm2r8NMMUPy1k1PuSZZ3nM9aic-O4AhdmRRCwgmwGj4Q@mail.gmail.com>
- <417ce5af-4deb-5319-78ce-b74fb4dd0582@arm.com> <CACycT3vARzvd4-dkZhDHqUkeYoSxTa2ty0z0ivE1znGti+n1-g@mail.gmail.com>
- <8c381d3d-9bbd-73d6-9733-0f0b15c40820@redhat.com>
-In-Reply-To: <8c381d3d-9bbd-73d6-9733-0f0b15c40820@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Mon, 9 Aug 2021 13:56:31 +0800
-Message-ID: <CACycT3steXFeg7NRbWpo2J59dpYcumzcvM2zcPJAVe40-EvvEg@mail.gmail.com>
-Subject: Re: [PATCH v10 01/17] iova: Export alloc_iova_fast() and free_iova_fast()
-To:     Jason Wang <jasowang@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     kvm <kvm@vger.kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Mon, 9 Aug 2021 02:14:29 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FB19C0613CF;
+        Sun,  8 Aug 2021 23:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=7FmgXzovyc5phIOk3kLbdD7QAz86Q3F4B8c/fhn138E=; b=AQm6rpTIzS8vUg89mB+/TNq77+
+        u8XQ7o6eWID+fuPGA9NElU7fOwmtfywI5W/1l7fljBEy6Z3wXRepnzRUUS6DznuzZuXJMfDBK4aDg
+        NiWZ7f1QNm/gSEi1b3btLVx3dCWeL7UC06aeNgmk39fWmM9uO9JJSQ0VfQLWP17gamqMenHBssPH4
+        uR6IJwWd2qF1K7Y1s6b6IrG1YC3ZbpCQPlZil3ldKOLbmhCgXSp0gl208oG6PNckpAToZUYiaBwXw
+        XcK6A7XsadRIN4YZV7HZMDUEhl9HlMaPLtDfnrisObaAiYzUv45U+KY9Edp3UQM+bVd/LzKIbnVRA
+        t9n5nBHg==;
+Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mCyWj-00AgKi-5E; Mon, 09 Aug 2021 06:12:53 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Liu Xiaodong <xiaodong.liu@intel.com>,
-        Joe Perches <joe@perches.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        songmuchun@bytedance.com, Jens Axboe <axboe@kernel.dk>,
-        He Zhe <zhe.he@windriver.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, bcrl@kvack.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        cluster-devel@redhat.com
+Subject: switch iomap to an iterator model v2
+Date:   Mon,  9 Aug 2021 08:12:14 +0200
+Message-Id: <20210809061244.1196573-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 5, 2021 at 9:31 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> =E5=9C=A8 2021/8/5 =E4=B8=8B=E5=8D=888:34, Yongji Xie =E5=86=99=E9=81=93:
-> >> My main point, though, is that if you've already got something else
-> >> keeping track of the actual addresses, then the way you're using an
-> >> iova_domain appears to be something you could do with a trivial bitmap
-> >> allocator. That's why I don't buy the efficiency argument. The main
-> >> design points of the IOVA allocator are to manage large address spaces
-> >> while trying to maximise spatial locality to minimise the underlying
-> >> pagetable usage, and allocating with a flexible limit to support
-> >> multiple devices with different addressing capabilities in the same
-> >> address space. If none of those aspects are relevant to the use-case -
-> >> which AFAICS appears to be true here - then as a general-purpose
-> >> resource allocator it's rubbish and has an unreasonably massive memory
-> >> overhead and there are many, many better choices.
-> >>
-> > OK, I get your point. Actually we used the genpool allocator in the
-> > early version. Maybe we can fall back to using it.
->
->
-> I think maybe you can share some perf numbers to see how much
-> alloc_iova_fast() can help.
->
+Hi all,
 
-I did some fio tests[1] with a ram-backend vduse block device[2].
+this series replies the existing callback-based iomap_apply to an iter based
+model.  The prime aim here is to simply the DAX reflink support, which
+requires iterating through two inodes, something that is rather painful
+with the apply model.  It also helps to kill an indirect call per segment
+as-is.  Compared to the earlier patchset from Matthew Wilcox that this
+series is based upon it does not eliminate all indirect calls, but as the
+upside it does not change the file systems at all (except for the btrfs
+and gfs2 hooks which have slight prototype changes).
 
-Following are some performance data:
 
-                            numjobs=3D1   numjobs=3D2    numjobs=3D4   numj=
-obs=3D8
-iova_alloc_fast    145k iops      265k iops      514k iops      758k iops
+Changes since v1:
+ - rebased to the lastes iomap-for-next tree
+ - rename iter.c to core.c
+ - turn iomap_iter.processed into a s64
+ - rename a few variables
+ - error out instead of just warn when a loop processed too much data
+ - fix the readpage iter return value for inline data
+ - better document the iomap_iter() calling conventions
 
-iova_alloc            137k iops     170k iops      128k iops      113k iops
-
-gen_pool_alloc   143k iops      270k iops      458k iops      521k iops
-
-The iova_alloc_fast() has the best performance since we always hit the
-per-cpu cache. Regardless of the per-cpu cache, the genpool allocator
-should be better than the iova allocator.
-
-[1] fio jobfile:
-
-[global]
-rw=3Drandread
-direct=3D1
-ioengine=3Dlibaio
-iodepth=3D16
-time_based=3D1
-runtime=3D60s
-group_reporting
-bs=3D4k
-filename=3D/dev/vda
-[job]
-numjobs=3D..
-
-[2]  $ qemu-storage-daemon \
-      --chardev socket,id=3Dcharmonitor,path=3D/tmp/qmp.sock,server,nowait =
-\
-      --monitor chardev=3Dcharmonitor \
-      --blockdev
-driver=3Dhost_device,cache.direct=3Don,aio=3Dnative,filename=3D/dev/nullb0,=
-node-name=3Ddisk0
-\
-      --export type=3Dvduse-blk,id=3Dtest,node-name=3Ddisk0,writable=3Don,n=
-ame=3Dvduse-null,num-queues=3D16,queue-size=3D128
-
-The qemu-storage-daemon can be builded based on the repo:
-https://github.com/bytedance/qemu/tree/vduse-test.
-
-Thanks,
-Yongji
+Diffstat:
+ b/fs/btrfs/inode.c       |    5 
+ b/fs/buffer.c            |    4 
+ b/fs/dax.c               |  578 ++++++++++++++++++++++-------------------------
+ b/fs/gfs2/bmap.c         |    5 
+ b/fs/internal.h          |    4 
+ b/fs/iomap/Makefile      |    2 
+ b/fs/iomap/buffered-io.c |  359 +++++++++++++----------------
+ b/fs/iomap/core.c        |   79 ++++++
+ b/fs/iomap/direct-io.c   |  164 ++++++-------
+ b/fs/iomap/fiemap.c      |  101 +++-----
+ b/fs/iomap/seek.c        |   98 ++++---
+ b/fs/iomap/swapfile.c    |   38 +--
+ b/fs/iomap/trace.h       |   35 +-
+ b/include/linux/iomap.h  |   77 ++++--
+ fs/iomap/apply.c         |   99 --------
+ 15 files changed, 799 insertions(+), 849 deletions(-)
