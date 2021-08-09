@@ -2,101 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C3293E4C84
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 20:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29DC83E4C7E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 20:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235960AbhHIS5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 14:57:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
+        id S235927AbhHIS5G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 14:57:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235656AbhHIS5N (ORCPT
+        with ESMTP id S235907AbhHIS5C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 14:57:13 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8112BC0613D3;
-        Mon,  9 Aug 2021 11:56:52 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id m12so22728431wru.12;
-        Mon, 09 Aug 2021 11:56:52 -0700 (PDT)
+        Mon, 9 Aug 2021 14:57:02 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C44F1C0613D3;
+        Mon,  9 Aug 2021 11:56:41 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id h1so28798571iol.9;
+        Mon, 09 Aug 2021 11:56:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jsAE4Gv7bcFVFL/kndy9dN7NqtFtPpLY5RgCYDsjOwA=;
-        b=hNc3joHegyU3MtdqFSJY7zG87gPJbVs4FxIVqOb84CCMI43vkbX6D2dljGCpWJwEqv
-         Sp+nwVp+ZRLp5/1QxRRKNEFbi2wL8/5/D3cVhArRvs7AMvJi/T0AJc/czhqmd7+Vyimb
-         QYMI10tvHMZm2OG/qtz4DS79iF389Fro4ya55IpxEGtU+/5Bx7vKBgRUIxzEqrkjO/G+
-         9tjsj0r0A0E6MY/M41lz4lvj8cnlB0odtUbLdL944qlxmJZMhdidWKs8xp+TAoV4rfis
-         TlDLrCDxukwMJI2xOm9hyxNeGEUjszoCIg49bGDZ5XrJzlLKzpIiDBSW01T7w4vC/SpN
-         bkvw==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lpaU+dGx63Twhkj2mgwC+GFyqAsKgN0ZWlxIu6Y5jqY=;
+        b=OJPZrhQTjHql535iPfgVVBClk63cKVbEh8jUlh4GcGfxX/orw3bDg7p5Xbyo0czO0i
+         K6Sl9iT99rS8rJGmu9ms9/utCrtZQS3mmZ9iY3j6vbD65kwmaZ/MdiQUIZz+bOTR87L1
+         qSAeZd35g8E8u/7z//VH80+nJGoTkb47gTQ/ruBAnYL3FrRsk3YyreRtU5L2cFLB1sHo
+         xid7p6SgVJDYuI4+YTWZykxbThr/wgNue7BZ9NA/nu1VU/LdUYaMvA0DmQldrHxtamA8
+         /8jyVb04ncwzN84eAFw4Nhpt55rafhMYUDzpmuDpXHDdJ71qz/wVsQHIJJjPmUfbJ2bM
+         ZP3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jsAE4Gv7bcFVFL/kndy9dN7NqtFtPpLY5RgCYDsjOwA=;
-        b=NBKGpV4ZX0AgC/U0pLrYXjcQpI147d27jZDVO1SgoEZL41S4+yBj/BPNr/5UpQK6hS
-         5+PJ7xRBy9RgubgzpTry/LGnc1CZDh2lgOTOUpe4u0zQ59jq2YA/C4/1Zs7IfWQ/x04t
-         +diLq6DLz9Dp/Gw0v3bKowKif2TE+/Ln3JQyEKInC+KzbjXaXGg9bapIxKB7Sp+V+wUv
-         qOmpWZ20jnYkFI4zfoDYVXJnJVlihzLqU7LFI3Rg8utvgaEc6IdJx423+x4a4h8dHbaI
-         55OuZI0AVvsPP9+7dNFslTVCEEPEmTbyzKUiXPNsMlg6ufq9bjxtwGNQ/yAbtCPUZfmp
-         e4Tw==
-X-Gm-Message-State: AOAM532J/7FunHYJH1WenRVwrFruN0nU0zLuTKs/3uQDdAEV9z8IQZWZ
-        X7gW4zoj7WDlrZaFipmxY3v4TcPWBjc=
-X-Google-Smtp-Source: ABdhPJzZJHBtpnUuAwZiDckkC63OiiC6dRcu7Zdp9+yK8fU+DOwmNrxSv0JSCRiaHBuA+zlq+FiYjQ==
-X-Received: by 2002:adf:9063:: with SMTP id h90mr27339045wrh.121.1628535410961;
-        Mon, 09 Aug 2021 11:56:50 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.236.119])
-        by smtp.gmail.com with ESMTPSA id x18sm20000910wrw.19.2021.08.09.11.56.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Aug 2021 11:56:50 -0700 (PDT)
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1628509745.git.asml.silence@gmail.com>
- <YRFPR25scNRYaRzW@zeniv-ca.linux.org.uk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH 0/2] iter revert problems
-Message-ID: <a03abd9e-82c1-7a63-a0dc-c7319f0c0751@gmail.com>
-Date:   Mon, 9 Aug 2021 19:56:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lpaU+dGx63Twhkj2mgwC+GFyqAsKgN0ZWlxIu6Y5jqY=;
+        b=dwPg9WhVUkjXUI32oKMnAafwXVLk0xC5s03Y0t7gPWKwuY7+Yi9xJn3YB2Un1vLi5/
+         +RoeQreMojQ7GZou5m+O4YqPomKjchJ2EqeqDWcWRERjDGHeWnBR06KW55FTAqowPrZn
+         PkBP1irnFjl/eR7Tcubhu7aLoylQm1XhGP7L4SMF5Gp/HtwfYyigRSX15jcFwGNGXouH
+         osVBZwa+Tu1FrePumflmUr+qcTUlRQVuAiMR6WGD9hJOUfCyKuXL/DCfIwtjMV4E1I/x
+         PigtP9FM+enob25kVnCpNGV2JDwiYsrMEFzi8+/w3yNRuFYoRia15cGiwJfCcN7uOaNV
+         /6NQ==
+X-Gm-Message-State: AOAM530M0DB8GxAeArqZvyAbmDhWsxN7O0d2WjrB9d335tUDtHKRp2eX
+        98p54uKjmmQTaH/kj2qBUws7X2E+wY1L9upY+hY=
+X-Google-Smtp-Source: ABdhPJwrKjLI1YC00YC1aQ2xOe8GNB8pr0ud9Ef9/Hknw9Cjlw0oZ8BngSgPAHbVLp9oSjdsgbTOMKt6AMD1GpY983w=
+X-Received: by 2002:a02:b799:: with SMTP id f25mr23765211jam.143.1628535401210;
+ Mon, 09 Aug 2021 11:56:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YRFPR25scNRYaRzW@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
+ <20210729134943.778917-11-almaz.alexandrovich@paragon-software.com>
+ <20210809105652.GK5047@twin.jikos.cz> <918ff89414fa49f8bcb2dfd00a7b0f0b@paragon-software.com>
+ <20210809164425.rcxtftvb2dq644k5@kari-VirtualBox> <305bdb56-d40f-2774-12fe-5113f15df5c6@infradead.org>
+In-Reply-To: <305bdb56-d40f-2774-12fe-5113f15df5c6@infradead.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 9 Aug 2021 11:56:30 -0700
+Message-ID: <CAA9_cmeK==ZS1wdiOM70L-=z9vQWHiwReS103RfDbCs8weaAzw@mail.gmail.com>
+Subject: Re: [PATCH v27 10/10] fs/ntfs3: Add MAINTAINERS
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Kari Argillander <kari.argillander@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "dsterba@suse.cz" <dsterba@suse.cz>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pali@kernel.org" <pali@kernel.org>,
+        "aaptel@suse.com" <aaptel@suse.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "joe@perches.com" <joe@perches.com>,
+        "mark@harmstone.com" <mark@harmstone.com>,
+        "nborisov@suse.com" <nborisov@suse.com>,
+        "linux-ntfs-dev@lists.sourceforge.net" 
+        <linux-ntfs-dev@lists.sourceforge.net>,
+        "anton@tuxera.com" <anton@tuxera.com>,
+        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        "andy.lavr@gmail.com" <andy.lavr@gmail.com>,
+        "oleksandr@natalenko.name" <oleksandr@natalenko.name>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/9/21 4:52 PM, Al Viro wrote:
-> On Mon, Aug 09, 2021 at 12:52:35PM +0100, Pavel Begunkov wrote:
->> For the bug description see 2/2. As mentioned there the current problems
->> is because of generic_write_checks(), but there was also a similar case
->> fixed in 5.12, which should have been triggerable by normal
->> write(2)/read(2) and others.
->>
->> It may be better to enforce reexpands as a long term solution, but for
->> now this patchset is quickier and easier to backport.
-> 
-> 	Umm...  Won't that screw the cases where we *are* doing proper
-> reexpands?  AFAICS, with your patches that flag doesn't go away once
-> it had been set...
+On Mon, Aug 9, 2021 at 9:58 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 8/9/21 9:44 AM, Kari Argillander wrote:
+> > On Mon, Aug 09, 2021 at 04:16:32PM +0000, Konstantin Komarov wrote:
+> >> From: David Sterba <dsterba@suse.cz>
+> >> Sent: Monday, August 9, 2021 1:57 PM
+> >>> On Thu, Jul 29, 2021 at 04:49:43PM +0300, Konstantin Komarov wrote:
+> >>>> This adds MAINTAINERS
+> >>>>
+> >>>> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> >>>> ---
+> >>>>   MAINTAINERS | 7 +++++++
+> >>>>   1 file changed, 7 insertions(+)
+> >>>>
+> >>>> diff --git a/MAINTAINERS b/MAINTAINERS
+> >>>> index 9c3428380..3b6b48537 100644
+> >>>> --- a/MAINTAINERS
+> >>>> +++ b/MAINTAINERS
+> >>>> @@ -13279,6 +13279,13 @@ T:        git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
+> >>>>   F:       Documentation/filesystems/ntfs.rst
+> >>>>   F:       fs/ntfs/
+> >>>>
+> >>>> +NTFS3 FILESYSTEM
+> >>>> +M:        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> >>>> +S:        Supported
+> >>>> +W:        http://www.paragon-software.com/
+> >>>> +F:        Documentation/filesystems/ntfs3.rst
+> >>>> +F:        fs/ntfs3/
+> >>>
+> >>> Can you please add a git tree and mailing list entries?
+> >
+> >> Hi David, I'll add the git tree link for the sources to MAINTAINERS in the next patch. As for the mailing list,
+> >> apologies for the newbie question here, but will it possible to have the @vger.kernel.org list for the ntfs3,
+> >> or it must be external for our case?
+> >> Thanks!
+> >
+> > Good question and I also do not have absolute truth about it but I try
+> > to help. It should be possible. I think you can request new list from
+> > postmaster@vger.kernel.org
+> >
+> > If you need public git tree then kernel.org can maybe provide that. They
+> > also host ntfs so I think no problem with ntfs3. This way you self
+> > do not have to worry public list. But I'm not sure how strict is now
+> > days get account. But if you say that it would be nice that you need
+> > kernel git then maybe someone can help with that.
+> > See more info https://www.kernel.org/faq.html
+>
+> If postmaster@vger.kernel.org isn't helpful or you just want to use
+> kernel.org (note that vger.kernel.org isn't part of kernel.org),
+> you can contact: helpdesk@kernel.org  for git tree or mailing list
+> requests.  Wherever you have a mailing list, you probably should
+> have it archived at lore.kernel.org (see next URL for that).
+>
+> Also you may want to read  https://korg.wiki.kernel.org
 
-In general, the userspace should already expecting and retrying on
-EAGAIN, and it seems to me, truncates should be rare enough to not
-care much about performance. However, it'd better to be more careful
-with nowait attempts.
+There is also lists.linux.dev for kernel development focused lists:
 
-For instance, we can avoid failing reexpanded and reverted iters.
-
-if (i->truncated && iov_iter_count(i) != orig_size)
-	// fail;
-
-Or even re-import iov+iter, if still in the right context.
-
-
-Al, is that viable to you on the iov side?
-
--- 
-Pavel Begunkov
+https://subspace.kernel.org/lists.linux.dev.html
