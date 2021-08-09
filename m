@@ -2,79 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 037B13E4E79
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 23:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 731363E4E7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 23:29:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236449AbhHIV1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 17:27:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56692 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235957AbhHIV1e (ORCPT
+        id S233558AbhHIVaA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 17:30:00 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:57106 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232334AbhHIV37 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 17:27:34 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C421DC061798
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Aug 2021 14:27:13 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id h17so14374672ljh.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Aug 2021 14:27:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jggCUuylUTp8Qazkw4vyHQk7Sx27WnHOaFstAIevKbw=;
-        b=ahusbhrQOwPDpp9d7umFODX39riwpah9xsJFNwdPYjW/4+UDVTFy/QrRYOBOclHXAu
-         UHM/hA3SaIXz8Vcb8Cfiy84Yqm/VgSkEy88uT4fFKLuWgcfwrFLk5f0x7mzSBcZgc1uu
-         Xb+wv2gYe2MI+DuWdQnYwvY8TTDG7CPECRQHo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jggCUuylUTp8Qazkw4vyHQk7Sx27WnHOaFstAIevKbw=;
-        b=U+3ISxuMt2DvOZ/9pHhLp2zsvbFKreSbn+apids0g4CSLfewSXl7WY1rJuqv+z1+m4
-         W5KT5X+YS/O52MBSf7yVMFGETxotFMY1fsvqN1O2GInpbns+hR8mIftchUYhJzlNJ00M
-         k9VrZJOyjmkkmKoYn5HiwTKOaxB4RbOavNbLBOwMEs7iwPtQEmZurwiSl7cfgJJGvqYZ
-         TIlYfQlB6fIjbXh9Tdgwztd+zYwIpgcVnw1ve9xKdjwyfeudF0wPGXfZHckCyxNUGu/I
-         aUiwx7+bQAQRjCetyJSniOmckFIGuRxunQ9PFjjGKB9EZ1nO2rZk3UaeKj1KIA9yrmJu
-         guuA==
-X-Gm-Message-State: AOAM530Ue7fCUrUhSijCMjh796ouR4MHZKhFnaIZ9sJqikXFqlYxHD3M
-        Izos1SaBC3MwtG0qdo8eI1qPEDp1e1eXWP/X
-X-Google-Smtp-Source: ABdhPJxvuxf8I7kW/t6xkWbvPG7AqKzQuA4914r1EPSpoB87zQBrLKYUCmcgj9+Q0xYoOnRGSGmJPg==
-X-Received: by 2002:a2e:8155:: with SMTP id t21mr3557836ljg.168.1628544432095;
-        Mon, 09 Aug 2021 14:27:12 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id h7sm580470lji.23.2021.08.09.14.27.11
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Aug 2021 14:27:11 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id u13so25683874lje.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Aug 2021 14:27:11 -0700 (PDT)
-X-Received: by 2002:a2e:80cb:: with SMTP id r11mr3942175ljg.48.1628544431464;
- Mon, 09 Aug 2021 14:27:11 -0700 (PDT)
+        Mon, 9 Aug 2021 17:29:59 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 7C2FB21F6C;
+        Mon,  9 Aug 2021 21:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1628544577; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HMQNCsfM55EcDNGyuVeZ/Y95f0u1E88irWEda0U0VhM=;
+        b=Qyhsi29JZSoTngsj/2wl6iGcB+tfYHcXf9Ibdj+Ogl0+YMIdj/OQQtMaOPJKbd5P2fcrsk
+        x34It64TOdssJNHD7D20il83KqmH2nMT5KrNzMP1XnqA86V3DOyWeqGIR1LE/BRoGCkKJj
+        UGhvprc0zfFwj2dypqr5JDNQFfLgeTY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1628544577;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HMQNCsfM55EcDNGyuVeZ/Y95f0u1E88irWEda0U0VhM=;
+        b=j/p5lE3P0VRMmomkyOqEGMqgyc6eC5IkwVwcnBe9Wd0S4rFC5df1no8lez/Y4/5kbgyQR9
+        BZLBIkZcvF54ELCA==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 692E8A3B81;
+        Mon,  9 Aug 2021 21:29:37 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 16E9C1E3BFC; Mon,  9 Aug 2021 23:29:34 +0200 (CEST)
+Date:   Mon, 9 Aug 2021 23:29:34 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Tejun Heo <tj@kernel.org>, linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 4/5] block: move the bdi from the request_queue to the
+ gendisk
+Message-ID: <20210809212934.GK30319@quack2.suse.cz>
+References: <20210809141744.1203023-1-hch@lst.de>
+ <20210809141744.1203023-5-hch@lst.de>
+ <20210809154728.GH30319@quack2.suse.cz>
+ <2c007f99-b8f1-3f84-7575-cb6934704388@kernel.dk>
 MIME-Version: 1.0
-References: <YRFfGk5lHL0W27oU@miu.piliscsaba.redhat.com> <CAHk-=wigKQqEqt9ev_1k5b_DwFGp7JmCdCR1xFSJjOyisEJ61A@mail.gmail.com>
-In-Reply-To: <CAHk-=wigKQqEqt9ev_1k5b_DwFGp7JmCdCR1xFSJjOyisEJ61A@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 9 Aug 2021 14:26:55 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjhm9CV+sLiA9wWUJS2mQ1ZUcbr1B_jm7Wv8fJdGJbVYA@mail.gmail.com>
-Message-ID: <CAHk-=wjhm9CV+sLiA9wWUJS2mQ1ZUcbr1B_jm7Wv8fJdGJbVYA@mail.gmail.com>
-Subject: Re: [GIT PULL] overlayfs fixes for 5.14-rc6
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2c007f99-b8f1-3f84-7575-cb6934704388@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 9, 2021 at 2:25 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I've pulled this,
+On Mon 09-08-21 11:57:42, Jens Axboe wrote:
+> On 8/9/21 9:47 AM, Jan Kara wrote:
+> > On Mon 09-08-21 16:17:43, Christoph Hellwig wrote:
+> >> The backing device information only makes sense for file system I/O,
+> >> and thus belongs into the gendisk and not the lower level request_queue
+> >> structure.  Move it there.
+> >>
+> >> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > 
+> > Looks mostly good. I'm just unsure whether some queue_to_disk() calls are
+> > safe.
+> > 
+> >> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> >> index 2c4ac51e54eb..d2725f94491d 100644
+> >> --- a/block/blk-mq.c
+> >> +++ b/block/blk-mq.c
+> >> @@ -525,7 +525,7 @@ void blk_mq_free_request(struct request *rq)
+> >>  		__blk_mq_dec_active_requests(hctx);
+> >>  
+> >>  	if (unlikely(laptop_mode && !blk_rq_is_passthrough(rq)))
+> >> -		laptop_io_completion(q->backing_dev_info);
+> >> +		laptop_io_completion(queue_to_disk(q)->bdi);
+> >>
+> > 
+> > E.g. cannot this get called for a queue that is without a disk?
+> 
+> Should be fine, as it's checking for passthrough. Maybe famous last
+> words, but we should not be seeing regular IO before disk is setup.
+> 
+> >> @@ -359,8 +359,8 @@ static void wb_timer_fn(struct blk_stat_callback *cb)
+> >>  
+> >>  	status = latency_exceeded(rwb, cb->stat);
+> >>  
+> >> -	trace_wbt_timer(rwb->rqos.q->backing_dev_info, status, rqd->scale_step,
+> >> -			inflight);
+> >> +	trace_wbt_timer(queue_to_disk(rwb->rqos.q)->bdi, status,
+> >> +			rqd->scale_step, inflight);
+> >>  
+> >>  	/*
+> >>  	 * If we exceeded the latency target, step down. If we did not,
+> > 
+> > Or all these calls - is wbt guaranteed to only be setup for a queue with
+> > disk?
+> 
+> Same for this one.
 
-Actually, I take that back.
+OK, fair enough then. Feel free to add:
 
-None of those things have been in linux-next either, and considering
-my worries about it, I want to see more actual testing of this.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-                Linus
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
