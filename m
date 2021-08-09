@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F20203E3FA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:17:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DB333E3FAF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Aug 2021 08:18:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233169AbhHIGSC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Aug 2021 02:18:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45152 "EHLO
+        id S233194AbhHIGSh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Aug 2021 02:18:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233018AbhHIGSB (ORCPT
+        with ESMTP id S233018AbhHIGSg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Aug 2021 02:18:01 -0400
+        Mon, 9 Aug 2021 02:18:36 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ADCEC0613CF;
-        Sun,  8 Aug 2021 23:17:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBFE8C0613CF;
+        Sun,  8 Aug 2021 23:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=D1DrTl7p0ZP9ybZiGeaO0Rt2UyAZRiquLkgdxcnWHpw=; b=hWqyNP4eNGgZKXb5qSQfA/DvDw
-        kz82MY+mNhamxb+284ckFoHQcxRRbiyGUQufd6EQeRRPqjEjvc2tMkHmi5t7Xqn5S+x0He8RpvVjV
-        1W0Uh+cEcU78qB3VMfJf1dfmZkoZ9f/2SmWcnVBQUDPMLuvz+p3e/X6sa6WGET1mFBQQ2g8HshcpR
-        DQJFbC8nZ7XeIU3oW9vdyTkGnwXWjFR8sh4eWdE+68d6lx+JMcJwVrdv9WCEVOKXAe6cjhsqYu5+B
-        mPp4HGq0ozDPTEUnAd1KE5aBKXgnwsnNsZw10n8nHGxlT/sCP+ilbvmLyHuYWEQ9jSXoJocW62I72
-        Z9+b8O5Q==;
+        bh=ULc93SsR0oFAbcorhcrkpFeyrZ44RhHMjBbf3slQRNk=; b=KuxRfsFSfwtRwpyjNugPsO6n/J
+        gt4oI3L96fDSgdvKTTeoEfJex/OZ2h9JQPFeolffpp4n5iV1xoBksAQijhj/42mS+Cq2o9/fCg91V
+        RRsfRg94yhnbWUG3zuDgt8kSWonG3vTc5oOR5TVvr5ALYRncjNMYxV2APcRTrK02VtikM/2nJvWEv
+        f95k0cMO+C9KFObvuyAQ+0o03zIoKCvkMGmIqaV2eD5Le8aHYjIBcELyO6YuTd7IXtrIvOaz/xcFK
+        bFfBTejf0FkBpbghEWTQK0yGee/TBinkZ1jkrCwA39PWjbqCM6ndSGNeDeDNv9KgJHKR/eft/PUOi
+        PYiOv6CQ==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCyZ1-00AgS0-Tp; Mon, 09 Aug 2021 06:15:37 +0000
+        id 1mCyaH-00AgWJ-I8; Mon, 09 Aug 2021 06:16:40 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -37,9 +37,9 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: [PATCH 04/30] iomap: mark the iomap argument to iomap_inline_data const
-Date:   Mon,  9 Aug 2021 08:12:18 +0200
-Message-Id: <20210809061244.1196573-5-hch@lst.de>
+Subject: [PATCH 05/30] iomap: mark the iomap argument to iomap_inline_data_valid const
+Date:   Mon,  9 Aug 2021 08:12:19 +0200
+Message-Id: <20210809061244.1196573-6-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210809061244.1196573-1-hch@lst.de>
 References: <20210809061244.1196573-1-hch@lst.de>
@@ -56,17 +56,17 @@ Signed-off-by: Christoph Hellwig <hch@lst.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 8030483331d17f..560247130357b5 100644
+index 560247130357b5..76bfc5d16ef49d 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -99,7 +99,7 @@ static inline sector_t iomap_sector(const struct iomap *iomap, loff_t pos)
- /*
-  * Returns the inline data pointer for logical offset @pos.
+@@ -109,7 +109,7 @@ static inline void *iomap_inline_data(const struct iomap *iomap, loff_t pos)
+  * This is used to guard against accessing data beyond the page inline_data
+  * points at.
   */
--static inline void *iomap_inline_data(struct iomap *iomap, loff_t pos)
-+static inline void *iomap_inline_data(const struct iomap *iomap, loff_t pos)
+-static inline bool iomap_inline_data_valid(struct iomap *iomap)
++static inline bool iomap_inline_data_valid(const struct iomap *iomap)
  {
- 	return iomap->inline_data + pos - iomap->offset;
+ 	return iomap->length <= PAGE_SIZE - offset_in_page(iomap->inline_data);
  }
 -- 
 2.30.2
