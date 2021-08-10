@@ -2,72 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97AA63E5CA0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 16:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEC843E5DE1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 16:28:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242142AbhHJONI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 10:13:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60420 "EHLO
+        id S240734AbhHJO2V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 10:28:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240580AbhHJONI (ORCPT
+        with ESMTP id S240801AbhHJO2T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 10:13:08 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B571C0613C1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 07:12:46 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id y1so32388298iod.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 07:12:46 -0700 (PDT)
+        Tue, 10 Aug 2021 10:28:19 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084AAC09B074
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 07:22:34 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id f8so15557858ilr.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 07:22:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=BAJ/Axbv07FPT/IrChwgADPqrv2/36sA2pNBTcAesMo=;
-        b=uc9tB/R5sJ7WHUW4MwKuq3Pv3BDN6QRytc3mNSV8NLVea7vQFRe+xHa4HrS0vcC+wn
-         IPUVu+iKUM+8Z4F4ovnoPw70LT3eg4DfCcEwUyRrXLIIGY4x+/MrseNXejvk2oBENVZP
-         m2KenSpzicTPfLhy9refXkcDZF+AvayDqb8tzKf+IM2cv8W3nPNhnBzVIxoPSjMFE3Jd
-         mkxu7faOt2soi6msSjqYyZUOVGB0m/IFSmxOXs76PrvmkEuc9I1m/MXvmWnVrlTBTycQ
-         QlShljiTL+13fWbEAVzF3QSNrSA6L+pQ2VX+RlRfDOv+6pXGjx7qy50WQoH7BwxlmXyx
-         wnHw==
+        bh=i8OIgcucCMQQFi7YtWUXvKPJW8qPj3/vRfmk/ggO800=;
+        b=E+VW+alznpP8gdT7FpjNbpAgc56gXpBBh/b58dJJsqv2UZhv20p+d5pUu38xBkldtX
+         if1nfrYeCBUzPJezL+jmziBACsmAANe+hRU2cqNOn2+uOqgi5AkhGFH+3FOk4MsXgkyB
+         9Yoy71mZ2qk1YxFcObZ0blvpeZZYnx4GOptEhqp6XHqHLkjxyN3ddBELbmjgoB2zXURK
+         21hPR4RY+w0/fQXbKxYXLZwpU640CN0VVhpUZx43enrd/IPKK2dRxTTktjJBdTfLBvZd
+         tjTm7q5R9+ME5hgm4BMkdWGZkFJdJwQCqz5Gp1B5QmzDQsQfWS6fskK9yZ8Mo5OErwzb
+         SHRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=BAJ/Axbv07FPT/IrChwgADPqrv2/36sA2pNBTcAesMo=;
-        b=ECNPJQy/wDiW+ls533bfp+7g7pxjllH2sc1M/vlT+gD21ccPQtU/qTbAWD4MwXJ0bC
-         V/Rl4UXbPrW8gJ/ArxRPHRc1cdaspidUnpFdJgHXIBYwnwnQ+gSoljFU1fn1MRG76bEz
-         4ADl0u1M2GKxJzrDGsBhsRxV+CW9iY40Q+H7kzFkTq/Pb6RflaiANCneaQq/AIWl3JLH
-         zqh17QC20uXdH7Xc5lce8zImkUVg7D61lg7lS8EjoOeKM0O0EYjkH37QrW2uP/NSoAvz
-         j5Z/uNgPszIbaVrs0oSMGwuXktntwzk2ikx+FVMUg+5emV9E9WjcilDmbZLkyFDag57D
-         BSzg==
-X-Gm-Message-State: AOAM531lqkNV8zoK014ebPMeqTRuPQkbEVnQNzAHMjQ7ibFaC+hHBQWW
-        C7U0YoyA3NqXyJe2C1ZNtc+R6S8AxqbDwZ1W978=
-X-Google-Smtp-Source: ABdhPJxMXPXIlswFhERGtYu4fTUMWBugDyynWySGLJJTGeJvF0m/QEWboUbPxHJ+Q6zLETMS8QPDgv0yu9q9ZgSyZ6w=
-X-Received: by 2002:a05:6638:1036:: with SMTP id n22mr27470966jan.81.1628604765414;
- Tue, 10 Aug 2021 07:12:45 -0700 (PDT)
+        bh=i8OIgcucCMQQFi7YtWUXvKPJW8qPj3/vRfmk/ggO800=;
+        b=e+RWPE9sGS77Rpj+TYr5I+bv76AcN+tYKYQ7aNY8Q4qLhYksy3Zp+7ALOJJFwe1L03
+         4Rb6NVJ9qJjhKA1e4F7L93Fnn0iVSZu4To9TWOOeYk0fvMx+HAKADIzQrajhCHvr1WgN
+         Kvv3QMcF9ye42ITPQ6Ure0W8wnPs3Dw5hXX0DfOtMdJV61zMkP7YLlC74tFijOhZTXeR
+         z+FbzhhOJ32mM4yRGdqRVEEFKNVaNejr4bqyD91mJBaJlExEq2GkZgIVFkUU4xFi4sNR
+         JIWl9rqMCyEDQj20FmCDwL57Cv3o5DavR7tIJiYMU79CQvob185Cmd/NWYDuqY3hsBBL
+         qK3g==
+X-Gm-Message-State: AOAM532DXA4hhneSyTcul8AdwAh/eN/Q/81sniklOr3Fj5vFlxKZob1J
+        dxrr7+SUWTGtw8zAsY3YlMIXqA+sBEmdGmefikU=
+X-Google-Smtp-Source: ABdhPJxPpFlhbscgETq4ujGHGc5rTtgn1Fi/nR739lblM7K+MtRIZfoBe8RcaN9l36BtQFmkqTIDNcHVLEzXqlLookM=
+X-Received: by 2002:a05:6e02:1c02:: with SMTP id l2mr847181ilh.9.1628605353461;
+ Tue, 10 Aug 2021 07:22:33 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210803180344.2398374-1-amir73il@gmail.com> <20210803180344.2398374-4-amir73il@gmail.com>
- <YRIdVGmgAY+HOJYY@google.com>
-In-Reply-To: <YRIdVGmgAY+HOJYY@google.com>
+ <20210810104734.GC18722@quack2.suse.cz>
+In-Reply-To: <20210810104734.GC18722@quack2.suse.cz>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 10 Aug 2021 17:12:34 +0300
-Message-ID: <CAOQ4uxh_5oRv5v0=tYJDS2jFnOFhdQ2Y1ZwB3ONxj+ydbFZddw@mail.gmail.com>
+Date:   Tue, 10 Aug 2021 17:22:22 +0300
+Message-ID: <CAOQ4uxgLPt=7g+K5Tg9ee6uZBpn_RgO5b0W-mhpmF_bxnb3q7Q@mail.gmail.com>
 Subject: Re: [PATCH 3/4] fsnotify: count all objects with attached connectors
-To:     Matthew Bobrowski <repnop@google.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 10, 2021 at 9:32 AM Matthew Bobrowski <repnop@google.com> wrote:
+On Tue, Aug 10, 2021 at 1:47 PM Jan Kara <jack@suse.cz> wrote:
 >
-> On Tue, Aug 03, 2021 at 09:03:43PM +0300, Amir Goldstein wrote:
+> On Tue 03-08-21 21:03:43, Amir Goldstein wrote:
 > > Rename s_fsnotify_inode_refs to s_fsnotify_conectors and count all
->
-> s/s_fsnotify_conectors/s_fsnotify_connectors ;)
->
 > > objects with attached connectors, not only inodes with attached
 > > connectors.
 > >
@@ -75,9 +71,6 @@ On Tue, Aug 10, 2021 at 9:32 AM Matthew Bobrowski <repnop@google.com> wrote:
 > > type of marks.
 > >
 > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> Have one question below.
->
 > > ---
 > >  fs/notify/fsnotify.c |  6 +++---
 > >  fs/notify/mark.c     | 45 +++++++++++++++++++++++++++++++++++++++++---
@@ -99,62 +92,12 @@ On Tue, Aug 10, 2021 at 9:32 AM Matthew Bobrowski <repnop@google.com> wrote:
 > > +     wait_var_event(&sb->s_fsnotify_connectors,
 > > +                    !atomic_long_read(&sb->s_fsnotify_connectors));
 > >  }
-> >
-> >  void fsnotify_sb_delete(struct super_block *sb)
-> > diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-> > index 2d8c46e1167d..622bcbface4f 100644
-> > --- a/fs/notify/mark.c
-> > +++ b/fs/notify/mark.c
-> > @@ -172,7 +172,7 @@ static void fsnotify_connector_destroy_workfn(struct work_struct *work)
-> >  static void fsnotify_get_inode_ref(struct inode *inode)
-> >  {
-> >       ihold(inode);
-> > -     atomic_long_inc(&inode->i_sb->s_fsnotify_inode_refs);
-> > +     atomic_long_inc(&inode->i_sb->s_fsnotify_connectors);
-> >  }
-> >
-> >  static void fsnotify_put_inode_ref(struct inode *inode)
-> > @@ -180,8 +180,45 @@ static void fsnotify_put_inode_ref(struct inode *inode)
-> >       struct super_block *sb = inode->i_sb;
-> >
-> >       iput(inode);
-> > -     if (atomic_long_dec_and_test(&sb->s_fsnotify_inode_refs))
-> > -             wake_up_var(&sb->s_fsnotify_inode_refs);
-> > +     if (atomic_long_dec_and_test(&sb->s_fsnotify_connectors))
-> > +             wake_up_var(&sb->s_fsnotify_connectors);
-> > +}
-> > +
-> > +static void fsnotify_get_sb_connectors(struct fsnotify_mark_connector *conn)
-> > +{
-> > +     struct super_block *sb;
-> > +
-> > +     if (conn->type == FSNOTIFY_OBJ_TYPE_DETACHED)
-> > +             return;
-> > +
-> > +     if (conn->type == FSNOTIFY_OBJ_TYPE_INODE)
-> > +             sb = fsnotify_conn_inode(conn)->i_sb;
-> > +     else if (conn->type == FSNOTIFY_OBJ_TYPE_VFSMOUNT)
-> > +             sb = fsnotify_conn_mount(conn)->mnt.mnt_sb;
-> > +     else if (conn->type == FSNOTIFY_OBJ_TYPE_SB)
-> > +             sb = fsnotify_conn_sb(conn);
 >
-> I noticed that you haven't provided an explicit case when no conditions are
-> matched, however this scenario appears to be handled in
-> fsnotify_put_sb_connectors() below. Why is this the case here and not in
-> fsnotify_put_sb_connectors()?
+> I think this is wrong and will deadlock unmount if there's pending sb mark
+> because s_fsnotify_connectors won't drop to 0. I think you need to move
+> this wait to fsnotify_sb_delete() after fsnotify_clear_marks_by_sb().
 
-No reason. I fixed a warning reported by a static checker here and didn't
-notice the other one.
+Oops.
+Thanks for catching this.
 
->
-> Also, I'm wondering if these blocks of code would be better expressed in a
-> switch statement. Alternatively, if these conditionals are shared across
-> the two helpers, why not factor out the super_block retrieval into an
-> inline helper just to simplify the callsite and not duplicate code? That's
-> of course if there is commonality between the two helpers.
->
-
-Makes sense. Will do.
-
-Thanks,
 Amir.
