@@ -2,93 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0B4B3E5229
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 06:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D45263E5291
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 07:14:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235616AbhHJEZz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 00:25:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36826 "EHLO
+        id S237503AbhHJFOZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 01:14:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229991AbhHJEZw (ORCPT
+        with ESMTP id S234999AbhHJFOY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 00:25:52 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C406C0613D3;
-        Mon,  9 Aug 2021 21:25:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=NEGF5gDAt4pUq5a1i0sb0u/njmzgcJkcsNysFdjs6Ds=; b=cCdkc11sAU8lof2Ri5/OeyAj+c
-        lsJc+gaVGkKfob+Bq5asqITNBoKBwsSbgCjL8imznn9NPNXhNhjZo22FEi3V9nt6t46vXiBp0yHY2
-        PDYBltHpjuBUpvSH+v0jtiDUZjfCUmquWZtxFeTrUM6CivxlJQwNKE/BCSuKZkjxWhpSYgi/i/6/g
-        2ZK++S85SGsTBvaWFAyCJf/oO8tyKrC/r20P0+jyT3ZuZXYpGLsfs65lMHz5i5j7RqqkkZ0kpnuGL
-        kyMKSOoePFAts0Hnx7f/8VYYx1r+sA+KQEF1nVCy78XNfkHVtCgYxPMrVjx2rRTMkxsBPL4r4oIFd
-        M+7V+CRA==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mDJKS-002OMd-R5; Tue, 10 Aug 2021 04:25:28 +0000
-Subject: Re: mmotm 2021-08-09-19-18 uploaded
-To:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-References: <20210810021934.XcpwGUEMn%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <3bc14281-4cfe-7cd6-1b88-128e51d08c3a@infradead.org>
-Date:   Mon, 9 Aug 2021 21:25:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Tue, 10 Aug 2021 01:14:24 -0400
+Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C60BC0613D3
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Aug 2021 22:14:03 -0700 (PDT)
+Received: by mail-vk1-xa2b.google.com with SMTP id q3so4512642vkd.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Aug 2021 22:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zbj2YIoq+E9w00zYigZfnEN2+DZS/6bH7EkHmJaJ7+4=;
+        b=W2e6d7tANNuZvnWrmp6EN6PiiHeqThHUisatkH1a/4EL21ldzCzpHeXzGPY/9224BN
+         Z/CiGZ7mZ32SpUG876YtQApfpUprIqF/xqEBvS7noMQ2n7FVPdaNK2oJscvnwdfI8Rui
+         EDb1N2EJDvgQD5KJqrgWTMAVPLLaVNvPnUQHA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zbj2YIoq+E9w00zYigZfnEN2+DZS/6bH7EkHmJaJ7+4=;
+        b=I4abQlJUN71df4KeQWC9DGlQq4fcTpuSDm2tLI+utAETf3ihDB3sfSN+VrIzzWJ0mj
+         jXWcnCo9k8bmy2zKOORm8w5++MjlXvpc1QmBQbgOcSgdFFPX0CSaaUFQV03PziMpge5y
+         lsCebFbbsAOrcUnKC+hPIqH5vrCsg96A7AlPCdGaoej3dFF5718UL66o0uRYNFWqY66o
+         N568FS+1qFP8sNnRkwsmuet+eR7LdlkDWb8gryFlV26Bdp+1aim4aqGJG++l5/DhSuYu
+         TYBsJoGJ+aB83i/goEvY7uwygrzUSTtQZxJMDRZA/utlMQXGoobW0/YmML83F5vbshvB
+         2E3Q==
+X-Gm-Message-State: AOAM533cp3T44y1QtTnEwulEC2lALfyNiH2lleuNbdytcJbZSZfwPJaF
+        CDQqtEC+xkDkXxX5gi9PlQBp+M0S0Ed8qgudzrf3Uw==
+X-Google-Smtp-Source: ABdhPJyK6yckKurEBP3/dfOsOeLJXctvCuX/cIs5kTcfm8Je/8pZ6c+cyun3iM9fbLfjpMMG2FXHjhz8Ez7yxBUxsWo=
+X-Received: by 2002:a05:6122:696:: with SMTP id n22mr15132849vkq.19.1628572442200;
+ Mon, 09 Aug 2021 22:14:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210810021934.XcpwGUEMn%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <YRFfGk5lHL0W27oU@miu.piliscsaba.redhat.com> <CAHk-=wigKQqEqt9ev_1k5b_DwFGp7JmCdCR1xFSJjOyisEJ61A@mail.gmail.com>
+ <CAHk-=wjhm9CV+sLiA9wWUJS2mQ1ZUcbr1B_jm7Wv8fJdGJbVYA@mail.gmail.com> <YRGtF69Z8kjsaSkb@casper.infradead.org>
+In-Reply-To: <YRGtF69Z8kjsaSkb@casper.infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 10 Aug 2021 07:13:51 +0200
+Message-ID: <CAJfpegvD-n-Gb850wiB6J62CqGOtvV9LVWGfkXqqcB_UpJnBeA@mail.gmail.com>
+Subject: Re: [GIT PULL] overlayfs fixes for 5.14-rc6
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/9/21 7:19 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2021-08-09-19-18 has been uploaded to
-> 
->     https://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> https://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> https://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
+On Tue, 10 Aug 2021 at 00:34, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Mon, Aug 09, 2021 at 02:26:55PM -0700, Linus Torvalds wrote:
+> > On Mon, Aug 9, 2021 at 2:25 PM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > >
+> > > I've pulled this,
+> >
+> > Actually, I take that back.
+> >
+> > None of those things have been in linux-next either, and considering
+> > my worries about it, I want to see more actual testing of this.
 
-Hm, my patch scripts usually work, but this one gives me:
+The denywrite patch has been in -next for three weeks, the others
+less, but also spent some time in there.  The reason the commit
+timestamp is so recent is that the fixes have been pulled to the front
+of the queue.
 
-Hunk #5 FAILED at 603.
-Hunk #6 FAILED at 701.
-2 out of 19 hunks FAILED -- rejects in file include/linux/memcontrol.h
-Hunk #6 FAILED at 65.
-1 out of 6 hunks FAILED -- rejects in file include/linux/page_idle.h
-Hunk #25 FAILED at 6691.
-Hunk #26 FAILED at 6702.
-Hunk #27 FAILED at 6735.
-Hunk #29 FAILED at 6771.
-Hunk #33 FAILED at 6900.
-Hunk #34 FAILED at 6938.
-6 out of 36 hunks FAILED -- rejects in file mm/memcontrol.c
-Hunk #9 FAILED at 2711.
-Hunk #11 FAILED at 2820.
-2 out of 11 hunks FAILED -- rejects in file mm/page-writeback.c
+But okay, I can drop that patch from this pull request.
 
--- 
-~Randy
+> Not only that, the changes to fs/namespace.c and mm/util.c haven't been
+> posted to linux-mm or linux-fsdevel, as far as I can tell.
 
+It has been posted to both and got an ACK from an MM person:
+
+ https://lore.kernel.org/linux-mm/YOhTrVWYi1aFY3o0@miu.piliscsaba.redhat.com/
+
+Thanks,
+Miklos
