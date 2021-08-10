@@ -2,84 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF3453E8410
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 22:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFA7B3E8416
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 22:06:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232801AbhHJUDW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 16:03:22 -0400
-Received: from verein.lst.de ([213.95.11.211]:37977 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232782AbhHJUDW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 16:03:22 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id EE1306736F; Tue, 10 Aug 2021 22:02:56 +0200 (CEST)
-Date:   Tue, 10 Aug 2021 22:02:56 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Qian Cai <quic_qiancai@quicinc.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
-        linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: move the bdi from the request_queue to the gendisk
-Message-ID: <20210810200256.GA30809@lst.de>
-References: <20210809141744.1203023-1-hch@lst.de> <e5e19d15-7efd-31f4-941a-a5eb2f94b898@quicinc.com>
+        id S232807AbhHJUHU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 16:07:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24051 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231398AbhHJUHU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Aug 2021 16:07:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628626017;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Mb5VBTkb8S88umgyEx90HwHXvZnu9/1GybLMu7zbg4A=;
+        b=L0vNBCB2iPiDhkOU1X4nCExathck4D1hamCC6CKQEZOenV/WXV5GMSPcMxQhHLOtDO9Bpx
+        1IexgTsx+BMQaD+aBA+7NSJkdjz2MQteckf+/kVdkZrI9FMubAH4gIYY8s1OSgh8T+LcZB
+        jtoJ6VGNNVAmxw6zskWGNaTb5M44gAE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-456-kHx-yYzKO2meQHTDf3jW6w-1; Tue, 10 Aug 2021 16:06:55 -0400
+X-MC-Unique: kHx-yYzKO2meQHTDf3jW6w-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6D0B53639F;
+        Tue, 10 Aug 2021 20:06:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EEFE5100EBB0;
+        Tue, 10 Aug 2021 20:06:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210715033704.692967-36-willy@infradead.org>
+References: <20210715033704.692967-36-willy@infradead.org> <20210715033704.692967-1-willy@infradead.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     dhowells@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v14 035/138] mm/memcg: Use the node id in mem_cgroup_update_tree()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e5e19d15-7efd-31f4-941a-a5eb2f94b898@quicinc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1809567.1628626012.1@warthog.procyon.org.uk>
+Date:   Tue, 10 Aug 2021 21:06:52 +0100
+Message-ID: <1809568.1628626012@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 10, 2021 at 03:36:39PM -0400, Qian Cai wrote:
-> 
-> 
-> On 8/9/2021 10:17 AM, Christoph Hellwig wrote:
-> > Hi Jens,
-> > 
-> > this series moves the pointer to the bdi from the request_queue
-> > to the bdi, better matching the life time rules of the different
-> > objects.
-> 
-> Reverting this series fixed an use-after-free in bdev_evict_inode().
+Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
 
-Please try the patch below as a band-aid.  Although the proper fix is
-that non-default bdi_writeback structures grab a reference to the bdi,
-as this was a landmine that might have already caused spurious issues
-before.
+> By using the node id in mem_cgroup_update_tree(), we can delete
+> soft_limit_tree_from_page() and mem_cgroup_page_nodeinfo().  Saves 42
+> bytes of kernel text on my config.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-diff --git a/block/genhd.c b/block/genhd.c
-index f8def1129501..2e4a9d187196 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -1086,7 +1086,6 @@ static void disk_release(struct device *dev)
- 
- 	might_sleep();
- 
--	bdi_put(disk->bdi);
- 	if (MAJOR(dev->devt) == BLOCK_EXT_MAJOR)
- 		blk_free_ext_minor(MINOR(dev->devt));
- 	disk_release_events(disk);
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 7c969f81327a..c6087dbae6cf 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -849,11 +849,15 @@ static void init_once(void *data)
- 
- static void bdev_evict_inode(struct inode *inode)
- {
-+	struct block_device *bdev = I_BDEV(inode);
-+
- 	truncate_inode_pages_final(&inode->i_data);
- 	invalidate_inode_buffers(inode); /* is it needed here? */
- 	clear_inode(inode);
- 	/* Detach inode from wb early as bdi_put() may free bdi->wb */
- 	inode_detach_wb(inode);
-+	if (!bdev_is_partition(bdev))
-+		bdi_put(bdev->bd_disk->bdi);
- }
- 
- static const struct super_operations bdev_sops = {
+Reviewed-by: David Howells <dhowells@redhat.com>
+
+Though I wonder if:
+
+> -		mz = mem_cgroup_page_nodeinfo(memcg, page);
+> +		mz = memcg->nodeinfo[nid];
+
+should still have some sort of wrapper function.
+
