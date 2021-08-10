@@ -2,133 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 408013E53A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 08:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A774E3E53B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 08:44:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236686AbhHJGkN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 02:40:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42190 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231229AbhHJGkN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 02:40:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B50DD60238;
-        Tue, 10 Aug 2021 06:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628577591;
-        bh=Rt8OufpkIbsLyiXRCpS3gkfeWehc9wTsVDBkYN0Fyqw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Yjvl1922O0SS+tM6M/cH/Wh4ac8k7jnNBYQI3W7s14ozjpLmppXWgCgcwDZmjlBLM
-         o+MaylInt6EJVnKD3CsZrxrFU3sPk6A+SW5cQEVZkEspbXEbfD5f4dZe9MSMq6BHla
-         A3XuxUgpFM2zg8w5+tyHXXyAV6QREHdO/ehKjJ2t+dAwYvaYaNW8cUyDdsyuJWWFJV
-         w61ks7bG17YL0r48We5YJMifOo7sO+ZcnZDyPladHWOYABbCHRR4MPW9Bf/9SyuVHn
-         3Dn1LvlTmCYKzxbPAeYKZO2r1r+rG2JozMzYUzO/QJjzzAMq6Di8Gkv50b5sSfCZ1Y
-         6hKVXKdBIY4Mw==
-Date:   Mon, 9 Aug 2021 23:39:51 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
-        cluster-devel@redhat.com
-Subject: Re: [PATCH 19/30] iomap: switch iomap_bmap to use iomap_iter
-Message-ID: <20210810063951.GH3601443@magnolia>
-References: <20210809061244.1196573-1-hch@lst.de>
- <20210809061244.1196573-20-hch@lst.de>
+        id S236716AbhHJGoV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 02:44:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39316 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236506AbhHJGoV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Aug 2021 02:44:21 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDBE8C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Aug 2021 23:43:59 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id bo18so9642200pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Aug 2021 23:43:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Dt9Z2kNoAjwNvhojQa8fzEPO+Lfu62+yOG35U73emvA=;
+        b=EOBa7LhLykicmZRjCh80EaPfdWYNsv6HA6ivBseULBa7TPZ4vDLbuGfrEkyp92awoN
+         vwb6b2HDZJKvI7vyHSRaNCy8fBZaaoKCbJzI4w3IkDTdMGV2y+kDZxzs8nK84l2ISG1M
+         fDFPg4cpFM42kpxGGaIL+wO1TBuIrrk0XUD1uCIZvimyU0stnXkF284AwOpPyeiUlSn7
+         c8EzP1g7Dnbn3teTFVLNe5tqEjFuZHfMPz0PiODZgTParevH6SHaz7n0Zh7Lh8OZbjbb
+         l/RrGTO+oSTq9vEH4DUkGe7H//xGtvR5/rHWVz7vCvCu322GeWbQXENE9sYmYxlEcGr5
+         GVew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Dt9Z2kNoAjwNvhojQa8fzEPO+Lfu62+yOG35U73emvA=;
+        b=aqWygKa/b+dT5wX8Lhpy1f7VpqN5g4s7AFQBJC7iEZ9AGzpp6L3hpwQwoADvde/g7k
+         rQB1NnCu8V/rXLDqL+P5akuaz4Jk4lJBrLkSfX6D656s3ARDDXXjhX09gNMD4dM5kZUn
+         78vpbgrCyvw0lx4VkjQaKXattCVV4R8DyLITeTfc0GTB/ZQh/wOqzyHXq6egtph+A0IN
+         eCdd4pCOb6QOUeawrwaJdCNZbWBsJjjsUjT04w50W7aTGXiKJYEUR0Ajb20shuBnrYES
+         QdPh16XewFGFB3igZiIpyUXo7tXH4pT9SbgFtV4nkiPithC5SlO3y9x0PDIzoPWnO9E+
+         9MSw==
+X-Gm-Message-State: AOAM5329H8Ov367sF8J8eo/hW+6gOf1GJMn8t7Xo+W6IfdsrcgpuZyOn
+        ht2LIvp4tQxdTe50zkG+gyIVnA==
+X-Google-Smtp-Source: ABdhPJwI6LIr356jRNCvxsR+mbeop6rKgrLKbwwm8nKzD5FkqMIv+98dWOJpTK3XNdUlZdNMOBIqrA==
+X-Received: by 2002:a62:1c84:0:b029:39a:87b9:91e with SMTP id c126-20020a621c840000b029039a87b9091emr21729806pfc.7.1628577839103;
+        Mon, 09 Aug 2021 23:43:59 -0700 (PDT)
+Received: from google.com ([2401:fa00:9:211:46f7:f8ea:5192:59e7])
+        by smtp.gmail.com with ESMTPSA id i6sm22481052pfa.44.2021.08.09.23.43.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Aug 2021 23:43:58 -0700 (PDT)
+Date:   Tue, 10 Aug 2021 16:43:47 +1000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/4] fsnotify: optimize the case of no marks of any type
+Message-ID: <YRIgI2HisRLS3ILA@google.com>
+References: <20210803180344.2398374-1-amir73il@gmail.com>
+ <20210803180344.2398374-5-amir73il@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210809061244.1196573-20-hch@lst.de>
+In-Reply-To: <20210803180344.2398374-5-amir73il@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 09, 2021 at 08:12:33AM +0200, Christoph Hellwig wrote:
-> Rewrite the ->bmap implementation based on iomap_iter.
+On Tue, Aug 03, 2021 at 09:03:44PM +0300, Amir Goldstein wrote:
+> Add a simple check in the inline helpers to avoid calling fsnotify()
+> and __fsnotify_parent() in case there are no marks of any type
+> (inode/sb/mount) for an inode's sb, so there can be no objects
+> of any type interested in the event.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+
+LGTM.
+
+Reviewed-by: Matthew Bobrowski <repnop@google.com>
+
 > ---
->  fs/iomap/fiemap.c | 31 +++++++++++++------------------
->  1 file changed, 13 insertions(+), 18 deletions(-)
+>  include/linux/fsnotify.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-> index acad09a8c188df..60daadba16c149 100644
-> --- a/fs/iomap/fiemap.c
-> +++ b/fs/iomap/fiemap.c
-> @@ -92,35 +92,30 @@ int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi,
->  }
->  EXPORT_SYMBOL_GPL(iomap_fiemap);
->  
-> -static loff_t
-> -iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap, struct iomap *srcmap)
-> -{
-> -	sector_t *bno = data, addr;
-> -
-> -	if (iomap->type == IOMAP_MAPPED) {
-> -		addr = (pos - iomap->offset + iomap->addr) >> inode->i_blkbits;
-> -		*bno = addr;
-> -	}
-> -	return 0;
-> -}
-> -
->  /* legacy ->bmap interface.  0 is the error return (!) */
->  sector_t
->  iomap_bmap(struct address_space *mapping, sector_t bno,
->  		const struct iomap_ops *ops)
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index f8acddcf54fb..12d3a7d308ab 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -30,6 +30,9 @@ static inline void fsnotify_name(struct inode *dir, __u32 mask,
+>  				 struct inode *child,
+>  				 const struct qstr *name, u32 cookie)
 >  {
-> -	struct inode *inode = mapping->host;
-> -	loff_t pos = bno << inode->i_blkbits;
-> -	unsigned blocksize = i_blocksize(inode);
-> +	struct iomap_iter iter = {
-> +		.inode	= mapping->host,
-> +		.pos	= (loff_t)bno << mapping->host->i_blkbits,
-> +		.len	= i_blocksize(mapping->host),
-> +		.flags	= IOMAP_REPORT,
-> +	};
->  	int ret;
->  
->  	if (filemap_write_and_wait(mapping))
->  		return 0;
->  
->  	bno = 0;
-> -	ret = iomap_apply(inode, pos, blocksize, 0, ops, &bno,
-> -			  iomap_bmap_actor);
-> +	while ((ret = iomap_iter(&iter, ops)) > 0) {
-> +		if (iter.iomap.type != IOMAP_MAPPED)
-> +			continue;
-
-I still feel uncomfortable about this use of "continue" here, because it
-really means "call iomap_iter again to clean up and exit even though we
-know it won't even look for more iomaps to iterate".
-
-To me that feels subtly broken (I usually associate 'continue' with
-'go run the loop body again'), and even though bmap has been a quirky
-hot mess for 45 years, we don't need to make it even moreso.
-
-Can't this at least be rephrased as:
-
-	const uint bno_shift = (mapping->host->i_blkbits - SECTOR_SHIFT);
-
-	while ((ret = iomap_iter(&iter, ops)) > 0) {
-		if (iter.iomap.type == IOMAP_MAPPED)
-			bno = iomap_sector(iomap, iter.pos) << bno_shift;
-		/* leave iter.processed unset to stop iteration */
-	}
-
-to make the loop exit more explicit?
-
---D
-
-> +		bno = (iter.pos - iter.iomap.offset + iter.iomap.addr) >>
-> +				mapping->host->i_blkbits;
-> +	}
+> +	if (atomic_long_read(&dir->i_sb->s_fsnotify_connectors) == 0)
+> +		return;
 > +
->  	if (ret)
->  		return 0;
->  	return bno;
+>  	fsnotify(mask, child, FSNOTIFY_EVENT_INODE, dir, name, NULL, cookie);
+>  }
+>  
+> @@ -41,6 +44,9 @@ static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
+>  
+>  static inline void fsnotify_inode(struct inode *inode, __u32 mask)
+>  {
+> +	if (atomic_long_read(&inode->i_sb->s_fsnotify_connectors) == 0)
+> +		return;
+> +
+>  	if (S_ISDIR(inode->i_mode))
+>  		mask |= FS_ISDIR;
+>  
+> @@ -53,6 +59,9 @@ static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
+>  {
+>  	struct inode *inode = d_inode(dentry);
+>  
+> +	if (atomic_long_read(&inode->i_sb->s_fsnotify_connectors) == 0)
+> +		return 0;
+> +
+>  	if (S_ISDIR(inode->i_mode)) {
+>  		mask |= FS_ISDIR;
+>  
 > -- 
-> 2.30.2
+> 2.25.1
 > 
+/M
