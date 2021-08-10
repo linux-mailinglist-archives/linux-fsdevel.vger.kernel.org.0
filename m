@@ -2,71 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C5113E85EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 00:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34A9E3E8630
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 00:47:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235105AbhHJWHu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 18:07:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49481 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235066AbhHJWHu (ORCPT
+        id S235224AbhHJWro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 18:47:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38658 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231380AbhHJWrn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 18:07:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628633247;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hmzm8caQt3TdVyNzd3tgJRC0GlnTJtY3kcYH2J6COrc=;
-        b=Rfw2fKZGJAa9+CpfnrmbMZyDMXWq6lrYriQcXIPjYp8i94s6+s2uEDuyshR8iz0Qq1jQds
-        0J9+8r9+isPXArdNaGdb5tKWmbJlaY3COub2YS1avJrWopdTtVCi5jrnc6jxqv2CDq4e70
-        /0qlhUnWCeBCGcfjQxVUqk7QBJQ9aSw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-509-YUI6OfTyOci4zi2LL-OQ9A-1; Tue, 10 Aug 2021 18:07:25 -0400
-X-MC-Unique: YUI6OfTyOci4zi2LL-OQ9A-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9D1B62E74;
-        Tue, 10 Aug 2021 22:07:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8894E10016FB;
-        Tue, 10 Aug 2021 22:07:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210715033704.692967-90-willy@infradead.org>
-References: <20210715033704.692967-90-willy@infradead.org> <20210715033704.692967-1-willy@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     dhowells@redhat.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 089/138] mm/filemap: Add FGP_STABLE
+        Tue, 10 Aug 2021 18:47:43 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03151C061765;
+        Tue, 10 Aug 2021 15:47:21 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id cp15-20020a17090afb8fb029017891959dcbso6571272pjb.2;
+        Tue, 10 Aug 2021 15:47:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yIH0KUnZv7CbUNuLVwKk6Yjj2btfYGCd33gAi0qy9lk=;
+        b=ocbTw3+op+JN/IWY/wUmffxiA+QAfcrR9mImsaFZDuNkDLCwp+PxLcwflgxgjz3wst
+         ckQs+f9MjZuAzdFfR2VLgZ9+lgaITXcI66cBDksKJWBpJXQMUX4n9TPIaa/cdcPAKnOg
+         URRXWcuppxAnjw88ww3w7VnoRRrNWKDlrVb+9lRBe5NlySmaZq7x5SeYQgkDNHTEv/kH
+         XbISyjnk2ZcWk0jRK++PeGVZbGWzK/+B4gKpkfrcCi1Bjbatfeyqr73THSUUXjg+wr32
+         kCkFWKX8VbpzhZ7iLVQgxviwRSXY7AVu2bUTc4L4sLNmGnRZIUzOlk3GsxLayj2svRPP
+         msXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yIH0KUnZv7CbUNuLVwKk6Yjj2btfYGCd33gAi0qy9lk=;
+        b=Yj1d/vjexaciN+AMlT27hv/0SeMCVBTkh6CSjwn55p4P6xXO5pZwmlTtoSpYzviBmv
+         p3fMMDInBTI/0GqWpXu+sZ7do5+9SxZ0AxpEUBI4hk3PbonqLcGD6Au5/rJ+YuC1nx6U
+         RQ8X6WhstXs3hoNI6vdDbfq4+ujazpOgHHF6i5jurusJNk+wzeFji2Zv54TXkEo7AwRv
+         hZSwpYE6c3HrxdjPrWPoQYk4z048kSpunBixbg6+sgE9LTD3j7gPiyrvxjGOTyksSAgg
+         Hj7UAubCtLgR0vHoToAIbdlLhCZe/O3PTrYakFeXYwP7kP651RmaE13ZlL4zVwO1W0xn
+         gM7Q==
+X-Gm-Message-State: AOAM531BdonvfkDfKIqzMJdtDzE1+StfOtl8DVJK1KYqNu88/7AogGjG
+        v6Tyst2b5D1AhvJ7RQ45Vqg=
+X-Google-Smtp-Source: ABdhPJwUU92PjtwHfiGs9aAvP9MCKxajQoXjy2XBtLRBugTZJRlm3qbIOI131sqrg4GwWhjhqmA6vw==
+X-Received: by 2002:aa7:8387:0:b029:395:a683:a0e6 with SMTP id u7-20020aa783870000b0290395a683a0e6mr31367561pfm.12.1628635640525;
+        Tue, 10 Aug 2021 15:47:20 -0700 (PDT)
+Received: from [192.168.1.71] (122-61-176-117-fibre.sparkbb.co.nz. [122.61.176.117])
+        by smtp.gmail.com with ESMTPSA id a20sm4208799pjh.46.2021.08.10.15.47.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Aug 2021 15:47:19 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com, Alejandro Colomar <alx.manpages@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: Questions re the new mount_setattr(2) manual page
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+References: <b58e2537-03f4-6f6c-4e1b-8ddd989624cc@gmail.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <d5a8061a-3d8a-6353-5158-8feee0156c6b@gmail.com>
+Date:   Wed, 11 Aug 2021 00:47:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1815219.1628633242.1@warthog.procyon.org.uk>
-Date:   Tue, 10 Aug 2021 23:07:22 +0100
-Message-ID: <1815220.1628633242@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <b58e2537-03f4-6f6c-4e1b-8ddd989624cc@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
+Hi Christian,
 
-> Allow filemap_get_folio() to wait for writeback to complete (if the
-> filesystem wants that behaviour).  This is the folio equivalent of
-> grab_cache_page_write_begin(), which is moved into the folio-compat
-> file as a reminder to migrate all the code using it.  This paves the
-> way for getting rid of AOP_FLAG_NOFS once grab_cache_page_write_begin()
-> is removed.
-> 
-> Kernel grows by 11 bytes.  filemap_get_folio() grows by 33 bytes but
-> grab_cache_page_write_begin() shrinks by 22 bytes to make up for it.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Some further questions...
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+In ERRORS there is:
 
+       EINVAL The underlying filesystem is mounted in a user namespace.
+
+I don't understand this. What does it mean?
+
+Also, there is this:
+
+       ENOMEM When  changing  mount  propagation to MS_SHARED, a new peer
+              group ID needs to be allocated for  all  mounts  without  a
+              peer  group  ID  set.  Allocation of this peer group ID has
+              failed.
+
+       ENOSPC When changing mount propagation to MS_SHARED,  a  new  peer
+              group  ID  needs  to  be allocated for all mounts without a
+              peer group ID set.  Allocation of this peer  group  ID  can
+              fail.  Note that technically further error codes are possi‐
+              ble that are specific to the ID  allocation  implementation
+              used.
+
+What is the difference between these two error cases? (That is, in what 
+circumstances will one get ENOMEM vs ENOSPC and vice versa?)
+
+And then:
+
+       EPERM  One  of  the mounts had at least one of MOUNT_ATTR_NOATIME,
+              MOUNT_ATTR_NODEV, MOUNT_ATTR_NODIRATIME, MOUNT_ATTR_NOEXEC,
+              MOUNT_ATTR_NOSUID, or MOUNT_ATTR_RDONLY set and the flag is
+              locked.  Mount attributes become locked on a mount if:
+
+              •  A new mount or mount tree is created causing mount prop‐
+                 agation  across  user  namespaces.  The kernel will lock
+
+Propagation is done across mont points, not user namespaces.
+should "across user namespaces" be "to a mount namespace owned 
+by a different user namespace"? Or something else?
+
+                 the aforementioned  flags  to  protect  these  sensitive
+                 properties from being altered.
+
+              •  A  new  mount  and user namespace pair is created.  This
+                 happens for  example  when  specifying  CLONE_NEWUSER  |
+                 CLONE_NEWNS  in unshare(2), clone(2), or clone3(2).  The
+                 aforementioned flags become locked to protect user name‐
+                 spaces from altering sensitive mount properties.
+
+Again, this seems imprecise. Should it say something like:
+"... to prevent changes to sensitive mount properties in the new 
+mount namespace" ? Or perhaps you have a better wording.
+
+Thanks,
+
+Michael
