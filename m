@@ -2,73 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2087E3E8514
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 23:18:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 490343E8516
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 23:18:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233410AbhHJVSp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 17:18:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36376 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234009AbhHJVSo (ORCPT
+        id S234189AbhHJVTE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 17:19:04 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:46010 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233410AbhHJVTD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 17:18:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628630301;
+        Tue, 10 Aug 2021 17:19:03 -0400
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1628630319;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Kd5sOM2lE8G16kwKZ2yuKZ958xSbsd3EPAS6DFRskxc=;
-        b=Tu8VMfHSKYQkwRAYsqXUo8HHHSoWOqzMlLYlhbFM0+96ljuM7GemTFFqFCrMrOCYke04et
-        aR85w9R0MdWycsgpJeTf8KyTEHILjIx3vriD0AGtyRTV/0FYLLfk/TtHm4WR+XLZEL3UMu
-        KXJCMJSvVxbAYKzdcT0iZQDheXm3Bu4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-514-yC7zaF9kPhe3PLmfplJmDw-1; Tue, 10 Aug 2021 17:18:20 -0400
-X-MC-Unique: yC7zaF9kPhe3PLmfplJmDw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0D9F4801AEB;
-        Tue, 10 Aug 2021 21:18:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DDC5B10016FF;
-        Tue, 10 Aug 2021 21:18:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210715033704.692967-69-willy@infradead.org>
-References: <20210715033704.692967-69-willy@infradead.org> <20210715033704.692967-1-willy@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     dhowells@redhat.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        bh=6HvQmuAr7zH8MRjkD0GpzlB1BXRdBBbNp7feKrK3i+U=;
+        b=hOzvYeGsi0KBYeat3TbMXKfpVjhUQPZ0eVcYjCW2NyjygELL7lLoL9IQp9IftaCHXCip3i
+        GIjgyHRumkpaONHfD+TKNmOlYLUeYLGGEw8FFyAcAFq+aUTAWIAIeIwNH2/aI2dVJS9+zp
+        t7Gf/v1aqTTFnWpQvZVMwQjXX5Wje3oCuaRtdnNy3z6uy8mLapsmMLiVv9R6mxOa8k0ZBu
+        N3umWNQXi4xX/L1XFrnFNGSogAWkLkkrz5KDqCRfnOOIoFcfGYUyLtuFUJZkWSFnvkxl7+
+        pFhpGKaYzZNkrp17B6yxAGOA5quZyEWhCwGO2bEd0750OCJgp9nUfvQWpdiYfw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1628630319;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6HvQmuAr7zH8MRjkD0GpzlB1BXRdBBbNp7feKrK3i+U=;
+        b=feDyEsBeq6VikFaGcfDfIUhKH6CHLmS+nXHbyAEWCtD30w2Lcl/ICDaJKbz3KfyhOGDGpv
+        AZ+zgQ8NSvUi/KAg==
+To:     Matthew Wilcox <willy@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v14 068/138] mm/writeback: Add folio_mark_dirty()
+Subject: Re: [PATCH 1/2] iomap: Use kmap_local_page instead of kmap_atomic
+In-Reply-To: <YQws3DQyk6pnyiBY@casper.infradead.org>
+References: <20210803193134.1198733-1-willy@infradead.org>
+ <20210805173104.GF3601405@magnolia> <20210805173903.GH3601405@magnolia>
+ <YQws3DQyk6pnyiBY@casper.infradead.org>
+Date:   Tue, 10 Aug 2021 23:18:38 +0200
+Message-ID: <87mtppov69.ffs@tglx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1812968.1628630297.1@warthog.procyon.org.uk>
-Date:   Tue, 10 Aug 2021 22:18:17 +0100
-Message-ID: <1812969.1628630297@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
+On Thu, Aug 05 2021 at 19:24, Matthew Wilcox wrote:
+> On Thu, Aug 05, 2021 at 10:39:03AM -0700, Darrick J. Wong wrote:
+>> Though now that I think about it: Why does iomap_write_actor still use
+>> copy_page_from_iter_atomic?  Can that be converted to use regular
+>> copy_page_from_iter, which at least sometimes uses kmap_local_page?
+>
+> I suspect copy_page_from_iter_atomic() should be converted to use
+> kmap_local_page(), but I don't know.  generic_perform_write() uses
+> the _atomic() version, so I'm not doing anything different without
+> understanding more than I currently do.
 
-> Reimplement set_page_dirty() as a wrapper around folio_mark_dirty().
-> There is no change to filesystems as they were already being called
-> with the compound_head of the page being marked dirty.  We avoid
-> several calls to compound_head(), both statically (through
-> using folio_test_dirty() instead of PageDirty() and dynamically by
-> calling folio_mapping() instead of page_mapping().
-> 
-> Also return bool instead of int to show the range of values actually
-> returned, and add kernel-doc.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+Most of the kmap_atomic() usage can be converted to kmap_local(). There
+are only a few usage sites which really depend on the implicit preempt
+disable.
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+The reason why we cannot convert the bulk blindly is that quite some
+usage sites have user memory access nested inside. As kmap_atomic()
+disables preemption and page faults the error handling needs to be
+outside the atomic section, i.e. after kunmap_atomic(). So if you
+convert that you have to get rid of that extra error handling and just
+use the regular user memory accessors.
 
+IIRC there are a few places which really want pagefaults disabled, but
+those do not necessarily need preemption disabled. So they need to be
+converted to kmap_local(); pagefault_disable(); err = dostuff(); ....
+
+Hope that helps.
+
+Thanks
+
+        tglx
