@@ -2,162 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A13843E57B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 11:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A8A43E588F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 12:47:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239477AbhHJJ7v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 05:59:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57308 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237938AbhHJJ7t (ORCPT
+        id S239903AbhHJKr6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 06:47:58 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:58422 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236505AbhHJKr5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 05:59:49 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEF93C061798;
-        Tue, 10 Aug 2021 02:59:27 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id q10so2192656wro.2;
-        Tue, 10 Aug 2021 02:59:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Nrbgjy+J0hwnSS2Ng90yTRhZWRCkLTPqhbhkiTM36K8=;
-        b=tzECu/9sGhtYCxjGcQH8+zj4h4SbBTWvoKZYVer0rYvWSAXHarAe1LfdUFuBLla8UI
-         bGPcWcAK+OFrRHo6abWwcD+6ZyfRmiMGe2s2FNloWACQUD4FvC7i4QiJl2Fn4rpOPPnD
-         CFm80m2srnzTW0moXzO3153ZtVhr8LECw8r1BRPqZEWDWBji7XjpmzWm6peH5m38+H78
-         tNMoBybhZT4qDBPKd7dCHfQDg1Ti6uXciNMF9VMF/5C5NjQdVsUXb1AKKfG4mWAZUXkz
-         AAy+V+jjfXaktt9s0GAFU05CL/tVzkOkzKRyygQJTPOuFj+E1DzENldeX7nnNa8yqD+n
-         Im2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Nrbgjy+J0hwnSS2Ng90yTRhZWRCkLTPqhbhkiTM36K8=;
-        b=ZdJy42MtHVjipW+XfHRTspz7zTziaOxpP8eBJPM6smppg52pP/hXU7WGF1enhLIKMF
-         VDKi7+tWGb8LeycjnCWHNNZmY2VsE3YRv8YxqxPo4BxfdaQZ78WLdCPqcu0MwlJGxw2X
-         x3TT4YXm+isdQTyOsVzD1axVkx0YSjZ4MsvjeQ6gJ1xcVHHR3o8DFsfrDZ8OmBXp7uXq
-         Rc3EAFDPhNsCjcubAxIus7c+z46V9qhYzc6xgwiJxmfSOAivYBkxxF0i7hBpMbB8zYos
-         c4BMvrBI7B+JHYdQ0Y+z1Mg8XVfoFmQa3KqiwVwjUJf25YLDkAQD4xHRigsZvQRPSJZS
-         /zEQ==
-X-Gm-Message-State: AOAM530NzOpko0noYpr5u6+RIpPp/grYbGRl9BJT6G2y0YuqWpCne7MO
-        duKDcZQk3FXKGRnltr+qsnA=
-X-Google-Smtp-Source: ABdhPJyWVin14dRLcO2iqKYpTS/vjIumCVOOi8J5uOyr2dQBXTfPWhGnRrlTz+S+qIvjS3Zc2TWRyw==
-X-Received: by 2002:a5d:4983:: with SMTP id r3mr12314822wrq.232.1628589566075;
-        Tue, 10 Aug 2021 02:59:26 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.133.97])
-        by smtp.gmail.com with ESMTPSA id t1sm2321076wma.25.2021.08.10.02.59.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Aug 2021 02:59:25 -0700 (PDT)
-Subject: Re: [BUG] io-uring triggered lockdep splat
-To:     Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <87r1f1speh.ffs@tglx>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <f9260055-745a-4683-083a-a5e18f5ee073@gmail.com>
-Date:   Tue, 10 Aug 2021 10:58:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Tue, 10 Aug 2021 06:47:57 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 016A520096;
+        Tue, 10 Aug 2021 10:47:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1628592455; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3J83bcO0i1dHIsOo7hfq+MCoQEef3eTo0VJ8omEls64=;
+        b=0m6sOIZJLcfgeL6bA1sfbJaeP7ZazbHOFK6E9Kwt1pGeDwRfhltJOiZQ+YKmMtIky2RT/M
+        KKI/BzXhDU/+VR5+x5Umr8JiPIMlH8JoF8lsg0Ic0V0bBR+3LdRu20GMFVQHRzTOiIRPZh
+        1jt4PVV62vqLd62Sjbxy7nyRUoAWt5k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1628592455;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3J83bcO0i1dHIsOo7hfq+MCoQEef3eTo0VJ8omEls64=;
+        b=n6G3l2/Ij7We0XtQWgy6+MTE4gXWkmms3wCykAD/+FOKk6a0ky1A4aOUIRw/831qSwzw9J
+        aN6uPQ4Bh9gH5JDQ==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id AD9A9A3C69;
+        Tue, 10 Aug 2021 10:47:34 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 86FE21E3BFC; Tue, 10 Aug 2021 12:47:34 +0200 (CEST)
+Date:   Tue, 10 Aug 2021 12:47:34 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/4] fsnotify: count all objects with attached connectors
+Message-ID: <20210810104734.GC18722@quack2.suse.cz>
+References: <20210803180344.2398374-1-amir73il@gmail.com>
+ <20210803180344.2398374-4-amir73il@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <87r1f1speh.ffs@tglx>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210803180344.2398374-4-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/10/21 8:57 AM, Thomas Gleixner wrote:
-> Jens,
+On Tue 03-08-21 21:03:43, Amir Goldstein wrote:
+> Rename s_fsnotify_inode_refs to s_fsnotify_conectors and count all
+> objects with attached connectors, not only inodes with attached
+> connectors.
 > 
-> running 'rsrc_tags' from the liburing tests on v5.14-rc5 triggers the
-> following lockdep splat:
+> This will be used to optimize fsnotify() calls on sb without any
+> type of marks.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/notify/fsnotify.c |  6 +++---
+>  fs/notify/mark.c     | 45 +++++++++++++++++++++++++++++++++++++++++---
+>  include/linux/fs.h   |  4 ++--
+>  3 files changed, 47 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 30d422b8c0fc..a5de7f32c493 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -87,9 +87,9 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
+>  
+>  	if (iput_inode)
+>  		iput(iput_inode);
+> -	/* Wait for outstanding inode references from connectors */
+> -	wait_var_event(&sb->s_fsnotify_inode_refs,
+> -		       !atomic_long_read(&sb->s_fsnotify_inode_refs));
+> +	/* Wait for outstanding object references from connectors */
+> +	wait_var_event(&sb->s_fsnotify_connectors,
+> +		       !atomic_long_read(&sb->s_fsnotify_connectors));
+>  }
 
-Got addressed yesterday, thanks
+I think this is wrong and will deadlock unmount if there's pending sb mark
+because s_fsnotify_connectors won't drop to 0. I think you need to move
+this wait to fsnotify_sb_delete() after fsnotify_clear_marks_by_sb().
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.14&id=c018db4a57f3e31a9cb24d528e9f094eda89a499
+Otherwise the patch looks good to me.
 
+								Honza
 
-> [  265.866713] ======================================================
-> [  265.867585] WARNING: possible circular locking dependency detected
-> [  265.868450] 5.14.0-rc5 #69 Tainted: G            E    
-> [  265.869174] ------------------------------------------------------
-> [  265.870050] kworker/3:1/86 is trying to acquire lock:
-> [  265.870759] ffff88812100f0a8 (&ctx->uring_lock){+.+.}-{3:3}, at: io_rsrc_put_work+0x142/0x1b0
-> [  265.871957] 
->                but task is already holding lock:
-> [  265.872777] ffffc900004a3e70 ((work_completion)(&(&ctx->rsrc_put_work)->work)){+.+.}-{0:0}, at: process_one_work+0x218/0x590
-> [  265.874334] 
->                which lock already depends on the new lock.
+>  
+>  void fsnotify_sb_delete(struct super_block *sb)
+> diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+> index 2d8c46e1167d..622bcbface4f 100644
+> --- a/fs/notify/mark.c
+> +++ b/fs/notify/mark.c
+> @@ -172,7 +172,7 @@ static void fsnotify_connector_destroy_workfn(struct work_struct *work)
+>  static void fsnotify_get_inode_ref(struct inode *inode)
+>  {
+>  	ihold(inode);
+> -	atomic_long_inc(&inode->i_sb->s_fsnotify_inode_refs);
+> +	atomic_long_inc(&inode->i_sb->s_fsnotify_connectors);
+>  }
+>  
+>  static void fsnotify_put_inode_ref(struct inode *inode)
+> @@ -180,8 +180,45 @@ static void fsnotify_put_inode_ref(struct inode *inode)
+>  	struct super_block *sb = inode->i_sb;
+>  
+>  	iput(inode);
+> -	if (atomic_long_dec_and_test(&sb->s_fsnotify_inode_refs))
+> -		wake_up_var(&sb->s_fsnotify_inode_refs);
+> +	if (atomic_long_dec_and_test(&sb->s_fsnotify_connectors))
+> +		wake_up_var(&sb->s_fsnotify_connectors);
+> +}
+> +
+> +static void fsnotify_get_sb_connectors(struct fsnotify_mark_connector *conn)
+> +{
+> +	struct super_block *sb;
+> +
+> +	if (conn->type == FSNOTIFY_OBJ_TYPE_DETACHED)
+> +		return;
+> +
+> +	if (conn->type == FSNOTIFY_OBJ_TYPE_INODE)
+> +		sb = fsnotify_conn_inode(conn)->i_sb;
+> +	else if (conn->type == FSNOTIFY_OBJ_TYPE_VFSMOUNT)
+> +		sb = fsnotify_conn_mount(conn)->mnt.mnt_sb;
+> +	else if (conn->type == FSNOTIFY_OBJ_TYPE_SB)
+> +		sb = fsnotify_conn_sb(conn);
+> +
+> +	atomic_long_inc(&sb->s_fsnotify_connectors);
+> +}
+> +
+> +static void fsnotify_put_sb_connectors(struct fsnotify_mark_connector *conn)
+> +{
+> +	struct super_block *sb;
+> +
+> +	if (conn->type == FSNOTIFY_OBJ_TYPE_DETACHED)
+> +		return;
+> +
+> +	if (conn->type == FSNOTIFY_OBJ_TYPE_INODE)
+> +		sb = fsnotify_conn_inode(conn)->i_sb;
+> +	else if (conn->type == FSNOTIFY_OBJ_TYPE_VFSMOUNT)
+> +		sb = fsnotify_conn_mount(conn)->mnt.mnt_sb;
+> +	else if (conn->type == FSNOTIFY_OBJ_TYPE_SB)
+> +		sb = fsnotify_conn_sb(conn);
+> +	else
+> +		return;
+> +
+> +	if (atomic_long_dec_and_test(&sb->s_fsnotify_connectors))
+> +		wake_up_var(&sb->s_fsnotify_connectors);
+>  }
+>  
+>  static void *fsnotify_detach_connector_from_object(
+> @@ -203,6 +240,7 @@ static void *fsnotify_detach_connector_from_object(
+>  		fsnotify_conn_sb(conn)->s_fsnotify_mask = 0;
+>  	}
+>  
+> +	fsnotify_put_sb_connectors(conn);
+>  	rcu_assign_pointer(*(conn->obj), NULL);
+>  	conn->obj = NULL;
+>  	conn->type = FSNOTIFY_OBJ_TYPE_DETACHED;
+> @@ -504,6 +542,7 @@ static int fsnotify_attach_connector_to_object(fsnotify_connp_t *connp,
+>  		inode = fsnotify_conn_inode(conn);
+>  		fsnotify_get_inode_ref(inode);
+>  	}
+> +	fsnotify_get_sb_connectors(conn);
+>  
+>  	/*
+>  	 * cmpxchg() provides the barrier so that readers of *connp can see
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 640574294216..d48d2018dfa4 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1507,8 +1507,8 @@ struct super_block {
+>  	/* Number of inodes with nlink == 0 but still referenced */
+>  	atomic_long_t s_remove_count;
+>  
+> -	/* Pending fsnotify inode refs */
+> -	atomic_long_t s_fsnotify_inode_refs;
+> +	/* Number of inode/mount/sb objects that are being watched */
+> +	atomic_long_t s_fsnotify_connectors;
+>  
+>  	/* Being remounted read-only */
+>  	int s_readonly_remount;
+> -- 
+> 2.25.1
 > 
-> [  265.875474] 
->                the existing dependency chain (in reverse order) is:
-> [  265.876512] 
->                -> #1 ((work_completion)(&(&ctx->rsrc_put_work)->work)){+.+.}-{0:0}:
-> [  265.877750]        __flush_work+0x372/0x4f0
-> [  265.878343]        io_rsrc_ref_quiesce.part.0.constprop.0+0x35/0xb0
-> [  265.879227]        __do_sys_io_uring_register+0x652/0x1080
-> [  265.880009]        do_syscall_64+0x3b/0x90
-> [  265.880598]        entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [  265.881383] 
->                -> #0 (&ctx->uring_lock){+.+.}-{3:3}:
-> [  265.882257]        __lock_acquire+0x1130/0x1df0
-> [  265.882903]        lock_acquire+0xc8/0x2d0
-> [  265.883485]        __mutex_lock+0x88/0x780
-> [  265.884067]        io_rsrc_put_work+0x142/0x1b0
-> [  265.884713]        process_one_work+0x2a2/0x590
-> [  265.885357]        worker_thread+0x55/0x3c0
-> [  265.885958]        kthread+0x143/0x160
-> [  265.886493]        ret_from_fork+0x22/0x30
-> [  265.887079] 
->                other info that might help us debug this:
-> 
-> [  265.888206]  Possible unsafe locking scenario:
-> 
-> [  265.889043]        CPU0                    CPU1
-> [  265.889687]        ----                    ----
-> [  265.890328]   lock((work_completion)(&(&ctx->rsrc_put_work)->work));
-> [  265.891211]                                lock(&ctx->uring_lock);
-> [  265.892074]                                lock((work_completion)(&(&ctx->rsrc_put_work)->work));
-> [  265.893310]   lock(&ctx->uring_lock);
-> [  265.893833] 
->                 *** DEADLOCK ***
-> 
-> [  265.894660] 2 locks held by kworker/3:1/86:
-> [  265.895252]  #0: ffff888100059738 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x218/0x590
-> [  265.896561]  #1: ffffc900004a3e70 ((work_completion)(&(&ctx->rsrc_put_work)->work)){+.+.}-{0:0}, at: process_one_work+0x218/0x590
-> [  265.898178] 
->                stack backtrace:
-> [  265.898789] CPU: 3 PID: 86 Comm: kworker/3:1 Kdump: loaded Tainted: G            E     5.14.0-rc5 #69
-> [  265.900072] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-> [  265.901195] Workqueue: events io_rsrc_put_work
-> [  265.901825] Call Trace:
-> [  265.902173]  dump_stack_lvl+0x57/0x72
-> [  265.902698]  check_noncircular+0xf2/0x110
-> [  265.903270]  ? __lock_acquire+0x380/0x1df0
-> [  265.903889]  __lock_acquire+0x1130/0x1df0
-> [  265.904462]  lock_acquire+0xc8/0x2d0
-> [  265.904967]  ? io_rsrc_put_work+0x142/0x1b0
-> [  265.905596]  ? lock_is_held_type+0xa5/0x120
-> [  265.906193]  __mutex_lock+0x88/0x780
-> [  265.906700]  ? io_rsrc_put_work+0x142/0x1b0
-> [  265.907286]  ? io_rsrc_put_work+0x142/0x1b0
-> [  265.907877]  ? lock_acquire+0xc8/0x2d0
-> [  265.908408]  io_rsrc_put_work+0x142/0x1b0
-> [  265.908976]  process_one_work+0x2a2/0x590
-> [  265.909544]  worker_thread+0x55/0x3c0
-> [  265.910061]  ? process_one_work+0x590/0x590
-> [  265.910655]  kthread+0x143/0x160
-> [  265.911114]  ? set_kthread_struct+0x40/0x40
-> [  265.911704]  ret_from_fork+0x22/0x30
-> 
-> Thanks,
-> 
->         tglx
-> 
-
 -- 
-Pavel Begunkov
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
