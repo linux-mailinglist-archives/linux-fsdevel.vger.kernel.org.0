@@ -2,169 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7562A3E548D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 09:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3284D3E54AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 09:57:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237269AbhHJHsH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 03:48:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53946 "EHLO
+        id S237963AbhHJH5w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 03:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231705AbhHJHsH (ORCPT
+        with ESMTP id S236329AbhHJH5v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 03:48:07 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 815D4C0613D3;
-        Tue, 10 Aug 2021 00:47:45 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id x27so16987415lfu.5;
-        Tue, 10 Aug 2021 00:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9ho5vi/DVYwm8HX90yRCWh3kL6ZbH0pPpPt+rtsTu+E=;
-        b=Tq25JJsTwzCuLHsWd9rZoCPk3z64mDLARlSk6+OF1bu8+lJF6AiA2eUxq1xjeaH0rY
-         rQILgAW4IsPYmnv2U/XsUxcbpintogfNKMqmMOG2SbcVjUt3MJ4fHJ8mtJzfGOx+TZ9e
-         uc8L76lsWJU4YsBdWpxtXKDH+/G24jsxOdJHRqzrFOOeUpgwY96/T+HasQKBHlBmrOj1
-         rqocaSnG9epHbk/fQ1lWBux5srmnIX1Pf4+ALLz+qQElDi69NJzlYFvTcwh+w9UDCQ5X
-         PqiPbkwOZEYVyAQjqJ+fYNiDuBhK7bJYBJ9U7ftfnftbJh0xHrmOWyF4O0NYARUXgEAX
-         bGiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9ho5vi/DVYwm8HX90yRCWh3kL6ZbH0pPpPt+rtsTu+E=;
-        b=uSGa9+fID7eyUS4X++NT6kIGi6qMJnh4L5AROLuggroC7Z8AwBw1GNnLdAkQql19lu
-         9rhCYSmCoAYO1s5vBOO0SYI7WLXghS9XwJEOq+YGGNGJLHYxgYSaRXtbpT5DhdUHOc3V
-         g+AHZiny+z6IAV7vy25a3Yzx4PLU4cQ0v2iZWQDmlbzsIOXO6qoIZwP24Nqd2CQ6Zc4q
-         2sCbJjgzy7A18Cza5LYV6Ii13NZCsldWhvXd3UWjlMFmzHqQ8ATu/KkiqZQnGNrD4Wtq
-         /9RcDfOHA42DyWtKJeL0PsJyqnKIAhwfaBkvKvi3M/TK/A21aYsqvN78Z1wZFofkVOyJ
-         SY/A==
-X-Gm-Message-State: AOAM5309j8hJPt/jybm95KGLpilQj3t3Rpxguq+5rtreQpoam9xxNG16
-        JO3PZjq5UQtodpI5uroLLpA=
-X-Google-Smtp-Source: ABdhPJwNu3wAQ5xPPvZPKr1/VluV1GfO/Sd7e30s19zJ3T6BV3QajBVWSPz5ccTJyW7KMMhPLGgKug==
-X-Received: by 2002:a05:6512:2354:: with SMTP id p20mr20919562lfu.26.1628581663777;
-        Tue, 10 Aug 2021 00:47:43 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id u14sm2153481lfu.120.2021.08.10.00.47.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Aug 2021 00:47:43 -0700 (PDT)
-Date:   Tue, 10 Aug 2021 10:47:40 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com, oleksandr@natalenko.name
-Subject: Re: [PATCH v27 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
-Message-ID: <20210810074740.mkjcow2inyjaakch@kari-VirtualBox>
-References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
- <20210729134943.778917-9-almaz.alexandrovich@paragon-software.com>
+        Tue, 10 Aug 2021 03:57:51 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B81AC0613D3;
+        Tue, 10 Aug 2021 00:57:29 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1628582247;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=Mza2s0hm1qVtAaBGYnBCXAXHeBZ/4aPM0t6W/sYyXXY=;
+        b=fAmwgxXwWSdLPBh3uuJn2ML24/LvHPO3T7WD8eqWgdqm86EhdBiXpiDMzTfbg4gyVYmV9t
+        vh9Bs0QxAEoEBbAoO9yhEEUJFGuimwV65o5VdA2lRMiiNqz6IDyZ4Tv23K5y7fOM7x3/Ct
+        IHf/TRM/UcUMFTwSP7cgJtZzqqq3EZnseLa/EJn3XzmcV+QdvPVb3+GcepZdhBfkIiGAPq
+        Dh5m3LqGdSpuGlKXtMkGjHPk4pGxVXFD+0eaChe3KqmcMb2BQWwnmmLaqP/pfjMaKtmAlk
+        WYbaP9R5PBOLRZaBORKstvSwpJdvp7VoxwQQGBXZAq2fRlTKQsNC6UO0HnkFgA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1628582247;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=Mza2s0hm1qVtAaBGYnBCXAXHeBZ/4aPM0t6W/sYyXXY=;
+        b=bY+arYJmjcY7Ut/HTS6dDzHOoQwD9gKOjY1dIbw7L+zRZhJRD5oASp7A/R5Kw5nsJkh8cY
+        xWHoC/BgeHeTJXBA==
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [BUG] io-uring triggered lockdep splat
+Date:   Tue, 10 Aug 2021 09:57:26 +0200
+Message-ID: <87r1f1speh.ffs@tglx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210729134943.778917-9-almaz.alexandrovich@paragon-software.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 29, 2021 at 04:49:41PM +0300, Konstantin Komarov wrote:
-> This adds Kconfig, Makefile and doc
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> ---
->  Documentation/filesystems/ntfs3.rst | 107 ++++++++++++++++++++++++++++
+Jens,
 
-Still missing Documentation/filesystems/index.rst as I stated before
-https://lore.kernel.org/linux-fsdevel/20210103220739.2gkh6gy3iatv4fog@kari-VirtualBox/
+running 'rsrc_tags' from the liburing tests on v5.14-rc5 triggers the
+following lockdep splat:
 
->  fs/ntfs3/Kconfig                    |  46 ++++++++++++
->  fs/ntfs3/Makefile                   |  36 ++++++++++
->  3 files changed, 189 insertions(+)
->  create mode 100644 Documentation/filesystems/ntfs3.rst
->  create mode 100644 fs/ntfs3/Kconfig
->  create mode 100644 fs/ntfs3/Makefile
-> 
-> diff --git a/Documentation/filesystems/ntfs3.rst b/Documentation/filesystems/ntfs3.rst
+[  265.866713] ======================================================
+[  265.867585] WARNING: possible circular locking dependency detected
+[  265.868450] 5.14.0-rc5 #69 Tainted: G            E    
+[  265.869174] ------------------------------------------------------
+[  265.870050] kworker/3:1/86 is trying to acquire lock:
+[  265.870759] ffff88812100f0a8 (&ctx->uring_lock){+.+.}-{3:3}, at: io_rsrc_put_work+0x142/0x1b0
+[  265.871957] 
+               but task is already holding lock:
+[  265.872777] ffffc900004a3e70 ((work_completion)(&(&ctx->rsrc_put_work)->work)){+.+.}-{0:0}, at: process_one_work+0x218/0x590
+[  265.874334] 
+               which lock already depends on the new lock.
 
+[  265.875474] 
+               the existing dependency chain (in reverse order) is:
+[  265.876512] 
+               -> #1 ((work_completion)(&(&ctx->rsrc_put_work)->work)){+.+.}-{0:0}:
+[  265.877750]        __flush_work+0x372/0x4f0
+[  265.878343]        io_rsrc_ref_quiesce.part.0.constprop.0+0x35/0xb0
+[  265.879227]        __do_sys_io_uring_register+0x652/0x1080
+[  265.880009]        do_syscall_64+0x3b/0x90
+[  265.880598]        entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  265.881383] 
+               -> #0 (&ctx->uring_lock){+.+.}-{3:3}:
+[  265.882257]        __lock_acquire+0x1130/0x1df0
+[  265.882903]        lock_acquire+0xc8/0x2d0
+[  265.883485]        __mutex_lock+0x88/0x780
+[  265.884067]        io_rsrc_put_work+0x142/0x1b0
+[  265.884713]        process_one_work+0x2a2/0x590
+[  265.885357]        worker_thread+0x55/0x3c0
+[  265.885958]        kthread+0x143/0x160
+[  265.886493]        ret_from_fork+0x22/0x30
+[  265.887079] 
+               other info that might help us debug this:
 
-> +Mount Options
-> +=============
-> +
-> +The list below describes mount options supported by NTFS3 driver in addition to
-> +generic ones.
-> +
-> +===============================================================================
-> +
-> +nls=name		This option informs the driver how to interpret path
-> +			strings and translate them to Unicode and back. If
-> +			this option is not set, the default codepage will be
-> +			used (CONFIG_NLS_DEFAULT).
-> +			Examples:
-> +				'nls=utf8'
+[  265.888206]  Possible unsafe locking scenario:
 
-It seems that kernel community will start use iocharset= as default. nls
-option can still be alias but will need deprecated message. See message
-https://lore.kernel.org/linux-fsdevel/20200102211855.gg62r7jshp742d6i@pali/
+[  265.889043]        CPU0                    CPU1
+[  265.889687]        ----                    ----
+[  265.890328]   lock((work_completion)(&(&ctx->rsrc_put_work)->work));
+[  265.891211]                                lock(&ctx->uring_lock);
+[  265.892074]                                lock((work_completion)(&(&ctx->rsrc_put_work)->work));
+[  265.893310]   lock(&ctx->uring_lock);
+[  265.893833] 
+                *** DEADLOCK ***
 
-and current work from Pali
-https://lore.kernel.org/linux-fsdevel/20210808162453.1653-1-pali@kernel.org/
+[  265.894660] 2 locks held by kworker/3:1/86:
+[  265.895252]  #0: ffff888100059738 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x218/0x590
+[  265.896561]  #1: ffffc900004a3e70 ((work_completion)(&(&ctx->rsrc_put_work)->work)){+.+.}-{0:0}, at: process_one_work+0x218/0x590
+[  265.898178] 
+               stack backtrace:
+[  265.898789] CPU: 3 PID: 86 Comm: kworker/3:1 Kdump: loaded Tainted: G            E     5.14.0-rc5 #69
+[  265.900072] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+[  265.901195] Workqueue: events io_rsrc_put_work
+[  265.901825] Call Trace:
+[  265.902173]  dump_stack_lvl+0x57/0x72
+[  265.902698]  check_noncircular+0xf2/0x110
+[  265.903270]  ? __lock_acquire+0x380/0x1df0
+[  265.903889]  __lock_acquire+0x1130/0x1df0
+[  265.904462]  lock_acquire+0xc8/0x2d0
+[  265.904967]  ? io_rsrc_put_work+0x142/0x1b0
+[  265.905596]  ? lock_is_held_type+0xa5/0x120
+[  265.906193]  __mutex_lock+0x88/0x780
+[  265.906700]  ? io_rsrc_put_work+0x142/0x1b0
+[  265.907286]  ? io_rsrc_put_work+0x142/0x1b0
+[  265.907877]  ? lock_acquire+0xc8/0x2d0
+[  265.908408]  io_rsrc_put_work+0x142/0x1b0
+[  265.908976]  process_one_work+0x2a2/0x590
+[  265.909544]  worker_thread+0x55/0x3c0
+[  265.910061]  ? process_one_work+0x590/0x590
+[  265.910655]  kthread+0x143/0x160
+[  265.911114]  ? set_kthread_struct+0x40/0x40
+[  265.911704]  ret_from_fork+0x22/0x30
 
-This is still RFC state so probably no horry, but good to know stuff. I
-also added Pali so he also knows.
+Thanks,
 
-> diff --git a/fs/ntfs3/Makefile b/fs/ntfs3/Makefile
-> new file mode 100644
-> index 000000000..279701b62
-> --- /dev/null
-> +++ b/fs/ntfs3/Makefile
-> @@ -0,0 +1,36 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Makefile for the ntfs3 filesystem support.
-> +#
-> +
-> +# to check robot warnings
-> +ccflags-y += -Wint-to-pointer-cast \
-> +	$(call cc-option,-Wunused-but-set-variable,-Wunused-const-variable) \
-> +	$(call cc-option,-Wold-style-declaration,-Wout-of-line-declaration)
-
-It is good idea to include this url in commit message.
-https://lore.kernel.org/linux-fsdevel/212218590.13874.1621431781547@office.mailbox.org/
-
-And also add that signed off tag from Tor Vic.
-
-> +
-> +obj-$(CONFIG_NTFS3_FS) += ntfs3.o
-> +
-> +ntfs3-y :=	attrib.o \
-> +		attrlist.o \
-> +		bitfunc.o \
-> +		bitmap.o \
-> +		dir.o \
-> +		fsntfs.o \
-> +		frecord.o \
-> +		file.o \
-> +		fslog.o \
-> +		inode.o \
-> +		index.o \
-> +		lznt.o \
-> +		namei.o \
-> +		record.o \
-> +		run.o \
-> +		super.o \
-> +		upcase.o \
-> +		xattr.o
-> +
-> +ntfs3-$(CONFIG_NTFS3_LZX_XPRESS) += $(addprefix lib/,\
-> +		decompress_common.o \
-> +		lzx_decompress.o \
-> +		xpress_decompress.o \
-> +		)
-> \ No newline at end of file
-> -- 
-> 2.25.4
-> 
+        tglx
