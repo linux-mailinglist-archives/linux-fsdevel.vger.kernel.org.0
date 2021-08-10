@@ -2,60 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FE903E7DDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 18:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B60683E7E0B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 19:12:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229902AbhHJQ4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 12:56:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56276 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230455AbhHJQzD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 12:55:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 971EC60462;
-        Tue, 10 Aug 2021 16:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628614446;
-        bh=yDyCnF9kOpqMQUvBKRiGkqMShf1t7P8gpGlvnG14Dss=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=jrXqDDDXJjVoYx/Z1bT1JEevH6bg/txHWDVMiEi+Qc+/7XNURyHUNeP1XQSJtGESC
-         SI26Xfwax8Y5CX4PyOpcsXdTIlCVRfecTHGFrmZhJEqwGU+8QZKNVp62UvUz+QNOLm
-         nxIX4lFQj1siP5IBXnEXwtZS9iPr6+fsZMvMYnTrYVZV4U3hrNFbJtdV341+LT0j51
-         1lLlkovHUCLiMPWg3CpSVsTi3OPZEyvAbDjpS2Lv5guwTqdUzDhLDCSm5ozj6LIOkv
-         k2GW65twSH16KEeqCWhR+tNw1ZFtE6cKi+mW0RB9V9hrIZ7x3j3ZbS1bxKC8e53QOg
-         kwN8ERgH9MipA==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 8193960986;
-        Tue, 10 Aug 2021 16:54:06 +0000 (UTC)
-Subject: Re: [GIT PULL v2] overlayfs fixes for 5.14-rc6
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <YRKVYyeAUqJSJ5rk@miu.piliscsaba.redhat.com>
-References: <YRKVYyeAUqJSJ5rk@miu.piliscsaba.redhat.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <YRKVYyeAUqJSJ5rk@miu.piliscsaba.redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-fixes-5.14-rc6-v2
-X-PR-Tracked-Commit-Id: 427215d85e8d1476da1a86b8d67aceb485eb3631
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b3f0ccc59cfeb508a3774e8653069d76ffadc37e
-Message-Id: <162861444647.12822.547943425823515144.pr-tracker-bot@kernel.org>
-Date:   Tue, 10 Aug 2021 16:54:06 +0000
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
+        id S231382AbhHJRMu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 13:12:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45990 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229663AbhHJRMu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Aug 2021 13:12:50 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F3C4C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 10:12:28 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id b13so27312584wrs.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 10:12:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=+MDYu2cZk5y6qEtCDaD7IWEU7wQ5JsJjonx7gGHCu64=;
+        b=GRNUIHc7UR6+JAiNxr0XByUIrbOVZHH0ol4G8bTa4UFEMX7F38BEwOYwLzJcmAkrLL
+         04+esfkuJ5d9If8JZ77uqLKxk8MXHPA4OT+M3c25h2E5qpljlG1oqFQa6ywvpeq9qu+C
+         fwRIUtNmrRGklk5s3pVSN8QfdK5XeOlLmFSBO6cNUNefKTCGzJSFb2UBNbWt/9nDYUV4
+         OJpTYlXYqDTkXejRwJRzBzqq+ZKRJNubt3jbKi6kqZUrAtqF7p+FVjSxvoxDHr3oW5pa
+         esP1yqdWeL2tnbQwy8YAdaKA/94OcaskJY4EQZegysayOw4eqFegjvRl9olhQ+BFiSYb
+         r4Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=+MDYu2cZk5y6qEtCDaD7IWEU7wQ5JsJjonx7gGHCu64=;
+        b=jaCBt5U1w6wtB0b4hYMnaN5UiDxp4NghZ1elkSnjoCVudfq5WOGJ2qoymNBLyZI/8b
+         lRhRga3gykdaXZGF7YoKBaeizyHCs3edQssI1ut4saa/qeNb7516f7p7P/dHL8A6p9PG
+         guymCrpEdZz5PpWWSh8+yS5ko/r5qzyDhk/JESgpWStegkkxNjpi+tbrIL1KrnFREXMF
+         gSgFpO/GhNmmgD31zylG1tp0c/1byh7PoW4xDRnDn/CMRn7K8p47CrJoPGekRCvbRpXd
+         X4tHfPpafHUlvnOHJh+rI2BcpNs44yHjFJ3RISOVR+FpDWTnQB3eSa8RzoWDcggzlOdQ
+         ORlg==
+X-Gm-Message-State: AOAM532BCBVlYLYgVvNJJuiFe9PhgxZSVSmNIJsA8EBHz8o95F6cJsfD
+        HHVS3fn9lZ1DCFcvlLKJf4r8JtJdMexEh6A1URA=
+X-Google-Smtp-Source: ABdhPJxTm3qKUELiMFxpvNv4nvf6lVtpHDTCKb7mW2HjPHktnoVdnsfVyzN5GWoFNEmjSNN8TvEUm6DA9OalsABMDd4=
+X-Received: by 2002:adf:e107:: with SMTP id t7mr32349301wrz.165.1628615546574;
+ Tue, 10 Aug 2021 10:12:26 -0700 (PDT)
+MIME-Version: 1.0
+Reply-To: mrakainkarim7@gmail.com
+Sender: duobnezwo@gmail.com
+Received: by 2002:adf:ba4d:0:0:0:0:0 with HTTP; Tue, 10 Aug 2021 10:12:26
+ -0700 (PDT)
+From:   Mr Akain Karim <aeyuhlmy739@gmail.com>
+Date:   Tue, 10 Aug 2021 10:12:26 -0700
+X-Google-Sender-Auth: iCGS4b5YBnbqUkEGUh0vE-A3eWM
+Message-ID: <CAA0PdhY6HAnV=i6xn+X=N6xxGGJac0KE_uyAwEUCWwkpLhOymQ@mail.gmail.com>
+Subject: Greetings
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Tue, 10 Aug 2021 17:04:03 +0200:
-
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-fixes-5.14-rc6-v2
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b3f0ccc59cfeb508a3774e8653069d76ffadc37e
-
-Thank you!
-
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+*Compliment of the day,I am Mr. Akain Karim,  I Have a Business Proposal of
+$10.5million for you and I  was compelled to use this medium due to the
+nature of this project, I have access to very vital information that can be
+used to transfer this huge amount of money, which may culminate into the
+investment of the said funds into your company or any lucrative venture in
+your country. If you will like to assist me as a partner then indicate your
+interest, after which we shall both discuss the modalities and the sharing
+percentage.Upon receipt of your reply on your expression of Interest.I will
+give you full details on how the business will be executed and I am open
+for negotiation.Thanks for your anticipated cooperation.Best RegardsMr. 	
+Akain Karim*  Please feel free to reach me on my e-mail:mrakainkarim7@gmail.com
