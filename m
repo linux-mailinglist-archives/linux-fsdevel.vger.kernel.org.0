@@ -2,99 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F03703E5890
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 12:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABA4A3E5929
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 13:33:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239895AbhHJKtr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 06:49:47 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:58732 "EHLO
+        id S238378AbhHJLeO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 07:34:14 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:34604 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236505AbhHJKtq (ORCPT
+        with ESMTP id S237365AbhHJLeM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 06:49:46 -0400
+        Tue, 10 Aug 2021 07:34:12 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 556CF1FE42;
-        Tue, 10 Aug 2021 10:49:24 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 83AB92009E;
+        Tue, 10 Aug 2021 11:33:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1628592564; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1628595229; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=KYnLfe8rxI2RgTfuKMaTKdPyUMNVBbFDlBySJHYvHZA=;
-        b=p3Hk7hAC8JMFRrSCdJxIli4cfJqhRCjYZJGXLJuk6TuQ/sf4E4vWo3KPBg65VffhaY6isQ
-        9KSd6tDx666fpkYGkTPX1gUs5qpKDieXYhqu1QPY+Bg5F+9l4SDhnEB+gIq5b/LVd3ljPg
-        FrwnCuyckhfGNny2th74JoOraxEMnus=
+        bh=aGHQoxFgLxzrAyVEvKxaCUt+s4AACK8ClH0C6z1y2uQ=;
+        b=pH0mWjcf96HRpsrC0a3PRfKNZs7kdyxtskfolLcI6rf9pr+zfzBfIz9plCDNYwGkcYnswp
+        ks9Tft/MSU7VIQTSAFn27rgeZtGYll2jna2JfyFUdXTKtE0ejTfkdYnL/2skVPYErK0+Ev
+        wyoarCd5/DZqId/b2VdC5s/X4NoCij8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1628592564;
+        s=susede2_ed25519; t=1628595229;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=KYnLfe8rxI2RgTfuKMaTKdPyUMNVBbFDlBySJHYvHZA=;
-        b=Om0GxUCoB+RFDRlZR4sSXhx3rgcg5a+StNk7YTgulVyKgxjPFf19o/42JGDO3jfge6fPxd
-        qQ74sYD8QOxnayCw==
+        bh=aGHQoxFgLxzrAyVEvKxaCUt+s4AACK8ClH0C6z1y2uQ=;
+        b=8OTIdUaUUGFf7+DABViXEEcLQx9Q1vS7HVep007te9+/iNfhrMPajU+ElZb4MN9mH6ZfG8
+        Mi3WcL/hc4FeUMAA==
 Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 341D1A3C69;
-        Tue, 10 Aug 2021 10:49:24 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id 5192FA3BAF;
+        Tue, 10 Aug 2021 11:33:49 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 12EDE1E3BFC; Tue, 10 Aug 2021 12:49:24 +0200 (CEST)
-Date:   Tue, 10 Aug 2021 12:49:24 +0200
+        id F19F41F2AC2; Tue, 10 Aug 2021 13:33:48 +0200 (CEST)
+Date:   Tue, 10 Aug 2021 13:33:48 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: Re: [PATCH 0/4] Performance optimization for no fsnotify marks
-Message-ID: <20210810104924.GD18722@quack2.suse.cz>
-References: <20210803180344.2398374-1-amir73il@gmail.com>
+To:     Matthew Bobrowski <repnop@google.com>
+Cc:     jack@suse.cz, amir73il@gmail.com, christian.brauner@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] Add pidfd support to the fanotify API
+Message-ID: <20210810113348.GE18722@quack2.suse.cz>
+References: <cover.1628398044.git.repnop@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210803180344.2398374-1-amir73il@gmail.com>
+In-Reply-To: <cover.1628398044.git.repnop@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Amir!
+Hello Matthew!
 
-On Tue 03-08-21 21:03:40, Amir Goldstein wrote:
-> This idea was suggested on year ago [1], but I never got to test
-> its performance benefits.
+On Sun 08-08-21 15:23:59, Matthew Bobrowski wrote:
+> This is V5 of the FAN_REPORT_PIDFD patch series. It contains the minor
+> comment/commit description fixes that were picked up by Amir in the
+> last series review [0, 1].
 > 
-> Following the performance improvement report from kernel robot [2],
-> please consider these changes.
+> LTP tests for this API change can be found here [2]. Man page updates
+> for this change can be found here [3].
 > 
-> I have other optimization patches for no ignored mask etc, but the
-> "no marks" case is the most low hanging improvement.
+> [0] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhnCk+FXK_e_GA=jC_0HWO+3ZdwHSi=zCa2Kpb0NDxBSg@mail.gmail.com/
+> [1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxgO3oViTSFZ0zs6brrHrmw362r1C9SQ7g6=XgRwyrzMuw@mail.gmail.com/
+> [2] https://github.com/matthewbobrowski/ltp/tree/fanotify_pidfd_v2
+> [3] https://github.com/matthewbobrowski/man-pages/tree/fanotify_pidfd_v1
+> 
+> Matthew Bobrowski (5):
+>   kernel/pid.c: remove static qualifier from pidfd_create()
+>   kernel/pid.c: implement additional checks upon pidfd_create()
+>     parameters
+>   fanotify: minor cosmetic adjustments to fid labels
+>   fanotify: introduce a generic info record copying helper
+>   fanotify: add pidfd support to the fanotify API
 
-Thanks for the improvement! The series looks good except for that one
-comment I had. If you respin the series with that addressed, I can take it
-to my tree.
+Thanks! I've pulled the series into my tree. Note that your fanotify21 LTP
+testcase is broken with the current kernel because 'ino' entry got added to
+fdinfo. I think having to understand all possible keys that can occur in
+fdinfo is too fragile. I understand why you want to do that but I guess the
+test would be too faulty to be practical. So I'd just ignore unknown keys
+in fdinfo for that test.
 
-									Honza
+								Honza
 
-> 
-> Thanks,
-> Amir.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxgYpufPyhivOQyEhUQ0g+atKLwAAuefkSwaWXYAyMgw5Q@mail.gmail.com/
-> [2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxisyDjVpWX1M6O4ugxBbcX+LWWf4NQJ+LQY1-3-9tN+BA@mail.gmail.com/
-> 
-> Amir Goldstein (4):
->   fsnotify: replace igrab() with ihold() on attach connector
->   fsnotify: count s_fsnotify_inode_refs for attached connectors
->   fsnotify: count all objects with attached connectors
->   fsnotify: optimize the case of no marks of any type
-> 
->  fs/notify/fsnotify.c     |  6 ++--
->  fs/notify/mark.c         | 73 +++++++++++++++++++++++++++++++++-------
->  include/linux/fs.h       |  4 +--
->  include/linux/fsnotify.h |  9 +++++
->  4 files changed, 75 insertions(+), 17 deletions(-)
-> 
-> -- 
-> 2.25.1
-> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
