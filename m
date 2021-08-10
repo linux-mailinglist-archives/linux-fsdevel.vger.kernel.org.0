@@ -2,219 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95A5B3E83D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 21:36:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9226C3E83E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 21:49:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230331AbhHJThF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 15:37:05 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:56203 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229788AbhHJThE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 15:37:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1628624202; x=1660160202;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=OENhXJP57mLYLukgJGz50I0jHh6p6SELiMOo4VCXnT4=;
-  b=NcPqIDGgzlAt9xFl/fNRVjGMqLfxM8otHD4Sx8SsLT1jwbkkkYrguR2c
-   bXfjfg3Iik6G13oIZoCOZEIuMqSA8xBFZD80Elt6/M66zErLq3ybttVfi
-   /DhlueG9Q2dY5sxbGXAfKpzIRAI+/MBYq7Wl3wL0HM9GknKvBlctUo20H
-   0=;
-Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 10 Aug 2021 12:36:42 -0700
-X-QCInternal: smtphost
-Received: from nasanexm03e.na.qualcomm.com ([10.85.0.48])
-  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/AES256-SHA; 10 Aug 2021 12:36:41 -0700
-Received: from [10.111.168.10] (10.80.80.8) by nasanexm03e.na.qualcomm.com
- (10.85.0.48) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Tue, 10 Aug
- 2021 12:36:40 -0700
-Subject: Re: move the bdi from the request_queue to the gendisk
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-CC:     Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
-        <linux-block@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <cgroups@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mm@kvack.org>
-References: <20210809141744.1203023-1-hch@lst.de>
-From:   Qian Cai <quic_qiancai@quicinc.com>
-Message-ID: <e5e19d15-7efd-31f4-941a-a5eb2f94b898@quicinc.com>
-Date:   Tue, 10 Aug 2021 15:36:39 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
-MIME-Version: 1.0
-In-Reply-To: <20210809141744.1203023-1-hch@lst.de>
-Content-Type: text/plain; charset="utf-8"
+        id S231143AbhHJTtZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 15:49:25 -0400
+Received: from mail-bn8nam12on2058.outbound.protection.outlook.com ([40.107.237.58]:32944
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230077AbhHJTtY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Aug 2021 15:49:24 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BZ+3qyej49za+0VS+FD0wQ6mn8leKkX2WPHFmxDsYkJ3C99PZj6HMFOXtTlXIfB59M7CEZs6CxLLDfLbFeE7qYhIeEdozRBnnbstqaA7e2hj6JeFZWue83dfjNO4uX1zXIIP+M1xO3+aSKP7UBdYwFWvxy7dX7qc4VEJvtgzr14bC5kDmcp0hPwOvhiQdeUNknZIqQylUPK9lhmAiEDtAHR8HuMhmWt9b0FSh5hIfeXRXeRIquwBxMoj1QiJ+2I3cn7kfVR7i2tgxjZIuYA/7wxsab52xInwOjsMGNpYSB9w8eJi+AROIRlzyaPkOvLNpVdZAouQN6H367+E2zbuDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zh+wIW78M8BTE50i5ZnMzfjoH3JWoQ2z4zwDegZcjTw=;
+ b=KDHD2sKkMdWQ9JMKZSZCWKf9fOX2IjzvRCFn5KIcvJq9QU/vKiHqh1wtOCUdvCyQpmbMoiBcaG7a6xasYRC8oWWtfSFFWIfuqc0WsqWxweIAnNuWaMwZ5Xj3HbAwql752qIijPSazho8hJGhbERZDZ2rA3x1PtP28AqbXaz8vjQuh0wIijsNW+N3WOZnn1/m8B/3+/dac0BaahP9PSXjCWCuK2Sbg0AhAAkZhHVQtsjAbTF+D1mpme4pq0t1OT5otqpqjXKg/uDJh6dXg/MOkm8lYYvR4/V6RIE9CAPKTUA5c//m4abSaAw9ZWnorwyThbnIpWICVfK39nQ+qe/IuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zh+wIW78M8BTE50i5ZnMzfjoH3JWoQ2z4zwDegZcjTw=;
+ b=RJ3Whm8Dil40S3MwjVoL8Ot4+SIib44VjBGVtC7vbK9LLgmdSb1XOzN/cOMTjxX+jdQjvpCVBElu3F3/rUUTir1zh9+UGitv4ZF3nm2mepQasce6vsuzSR4DEO6JQLK3W4kGGEjXW9jyUEmkD2JNkkgjbjn75FdHgV+hbHtkPAw=
+Authentication-Results: redhat.com; dkim=none (message not signed)
+ header.d=none;redhat.com; dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5229.namprd12.prod.outlook.com (2603:10b6:5:398::12)
+ by DM4PR12MB5213.namprd12.prod.outlook.com (2603:10b6:5:394::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.17; Tue, 10 Aug
+ 2021 19:48:57 +0000
+Received: from DM4PR12MB5229.namprd12.prod.outlook.com
+ ([fe80::73:2581:970b:3208]) by DM4PR12MB5229.namprd12.prod.outlook.com
+ ([fe80::73:2581:970b:3208%3]) with mapi id 15.20.4394.023; Tue, 10 Aug 2021
+ 19:48:57 +0000
+Subject: Re: [PATCH 07/11] treewide: Replace the use of mem_encrypt_active()
+ with prot_guest_has()
+To:     "Kuppuswamy, Sathyanarayanan" 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Will Deacon <will@kernel.org>, Dave Young <dyoung@redhat.com>,
+        Baoquan He <bhe@redhat.com>
+References: <cover.1627424773.git.thomas.lendacky@amd.com>
+ <029791b24c6412f9427cfe6ec598156c64395964.1627424774.git.thomas.lendacky@amd.com>
+ <166f30d8-9abb-02de-70d8-6e97f44f85df@linux.intel.com>
+From:   Tom Lendacky <thomas.lendacky@amd.com>
+Message-ID: <4b885c52-f70a-147e-86bd-c71a8f4ef564@amd.com>
+Date:   Tue, 10 Aug 2021 14:48:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+In-Reply-To: <166f30d8-9abb-02de-70d8-6e97f44f85df@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanexm03e.na.qualcomm.com (10.85.0.48) To
- nasanexm03e.na.qualcomm.com (10.85.0.48)
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA9PR10CA0003.namprd10.prod.outlook.com
+ (2603:10b6:806:a7::8) To DM4PR12MB5229.namprd12.prod.outlook.com
+ (2603:10b6:5:398::12)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [10.236.30.241] (165.204.77.1) by SA9PR10CA0003.namprd10.prod.outlook.com (2603:10b6:806:a7::8) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.14 via Frontend Transport; Tue, 10 Aug 2021 19:48:56 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c7519805-b04f-44e9-0267-08d95c37e478
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5213:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM4PR12MB5213808E81BF3C9D4453E6ABECF79@DM4PR12MB5213.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: dnNi92GSpZMslhiJrfA3rObWOy/Id+q1gKm6thqBC060XYwLZe3GyzbHxgGkUNk+wdDB54v7EICc2ePegDwKUVeIDWdwhvekpABUuvATXrDiMI61I+GaorVEfOjYCHuSMlsA9wDeZL1bLmuTZKQj5IFitAjkp4VMlkr2j+wwsgt88F2tEpfBvkezJV7bb1aA5jWOE68pfUkK/1yK0sSmRc0tWOgDhAJFZsvjpKYvendWlZxekxJMIHfk2V17Redu26emXLnu5ls/D8YeTO1cJG80QslBjpzrgZi03VKK5vkzwUs+WGDYRIjqwEP+tXOVZD2vNT/vAjy9VGPROLEV45Q+OKVJxuQL+uQcvptiOmRxvYeJhvI91mt77eGnYDif0Sfstz9v1mBaglWw397KFtF5JvHE/r+tRZbhPDa+bnMrAmWd3sR6CkI2pruLC+eak1Y2sSM5JPhVwTyGV65WccTsePjRbmXt9kdt717rld973FpbqYxeuAYtPCaoTRh2DhmHCzbA6Y7MPb0XnEHyGD4EzJd51+0p3jb9mXM1eL/zDZv+uiJ8+NjnOrfaG8QnhHX6DD+eLBcbDuMyN4dV11BriDVTj6t5cyPjnE3vlu3DDhVnolDffVc963g9xuGGR/uG5ElqGjGYS7bLialLp230ItD3vgYgjpy4ZqkxpkGM58VL4Fjc0+ffnOn0qfCoRUFv4nlqzIgg63QKSHzxF50VH0SiO9vCVIdhoq0F0ay6XaI4/+X2m/9MNYK24vmA
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5229.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(4326008)(2906002)(83380400001)(316002)(16576012)(26005)(53546011)(186003)(54906003)(508600001)(66476007)(36756003)(31696002)(86362001)(8936002)(8676002)(66556008)(921005)(66946007)(6486002)(7416002)(38100700002)(5660300002)(31686004)(2616005)(956004)(7406005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R01YRS8ydDdKVjY4QmV4UStDYy94VjVRS1pOeXVleGNkdDBKd0xKM2FlR0xM?=
+ =?utf-8?B?cDBMSUIxMHFHSXdURy9UY3JZVFN0VnE0NEt1cTBXU2Y3L3VoUFpVYnpWc0d4?=
+ =?utf-8?B?VndNK3FHSytDdTRkbU5YZDRGTTNTNjZzU0pFdGI3TWhPRmhlYXVMREoxSmZi?=
+ =?utf-8?B?WHpTSjBpLzFBVFBkdVl2Z0VCalIwc3J3QjB2Q1dkUjV0MFExMmRtSW5EbTUx?=
+ =?utf-8?B?cG8rMkdWOGl1TmdVTGkzRE1ZQ09XQm8zWWVxeStnYXBGcTA3NmRGS0hRNzNE?=
+ =?utf-8?B?c2w1ZlRjUmZYY1FReTZIcklnUWtGK0w3VjRYYlpYMG1JQ2NlZTEvTkhQY3BL?=
+ =?utf-8?B?SVNtU1o1TlllNTZrS3ZrbGNIK25hNXZnSG1XbE9zMk5sUEZJNlB4Z2ZtNHBi?=
+ =?utf-8?B?ODVWOGFDREtzdXptS3lvWDFnKzNQTXZubjRodExLQU0vZ05UeG9la2F0ckxi?=
+ =?utf-8?B?NXdJSTd3eEhLZEU5Vit1WWdKenVXWjhVL0IybWRnREtUM1VtaEdNNnJGV2lL?=
+ =?utf-8?B?UFNNY0ZIdWlRTXBXMzF1TStidjlYL2JHTFNJVm16SWY2OVBvRXZtYmk1djd2?=
+ =?utf-8?B?SHJ5cFdGLzg4LytKS0JrcnA5SnhNU0U5MkVXbEVjcXd4MzhPVXNXc0dmaWxX?=
+ =?utf-8?B?QWgvNldpVFRta2R0cVpPZ1dQK3U3eWMrTmlaa25MSHR3WDJCc25BL29EdytH?=
+ =?utf-8?B?WWlOK3V4UDJMSlk5WGhCRWZDajk3NUlRKzRGRnZVNmdtY2dGRmlOY1NYTlpq?=
+ =?utf-8?B?VUp1cEp5dHhjbUdNQUkrR1RpUzBUcmhDaVZLOGlDZVR6MTE3Z0I1M1c3a0t5?=
+ =?utf-8?B?Z2NQamt6Ujl1QWlwMURxUVIxdmFteE83eEljMUtFRGdzekdKUi9BMkZnam51?=
+ =?utf-8?B?bXViTjlrZWVXTHozcFpKY1lYaHVEZWJ6RVpzeG9zMnBaMHlBanc5Y1JoeCtq?=
+ =?utf-8?B?eGJReU4wcTNBbUgrT1lqMllKQ1NKRUg1OVl1UnE4VmdFSjZ4VnVOQkd3aU9W?=
+ =?utf-8?B?bkNudHhKSmJnZUVWd2Y0Ri9nc1lySkZHdEovNk1vRTdaMHhIWGU2NFNTTkhr?=
+ =?utf-8?B?NlZGNEdEQy8welBLT1cvMmcvUW5ybVIvcitXdkdETlZyc2I1NWd2T1BYbk93?=
+ =?utf-8?B?M3h6VnU1dWZnUlNDMXUzOVlOdzhENTZrK1F1bGpONm9YcVN3aWlrSSt2WHFm?=
+ =?utf-8?B?REpOSFVLQ2swL1Y2YjdJZlBsby9MVjlSZHI4aE85blBURWVlOVhOY1llSTdp?=
+ =?utf-8?B?TTJXdk5xa3JLanlBVEZhdzNTaUtJVzE4VnhORjlEcDVXam9RUmZHTTA1K2hZ?=
+ =?utf-8?B?TCtiYklYV05oNGlCNFJteHN0S1d2M0REeXNXNXBHeUNneGdRbWhESDRsNEls?=
+ =?utf-8?B?Ymw1SlZTRWoxZjVzMk5JRmxKUjZIQjVsWmZadUN5UjRtYXpzcGNxb1Y5ZElR?=
+ =?utf-8?B?Z1l4OE94OWgvSmdEcGNteEJObUFTaW1IWHVBRTkvcThMb0wxaWJBM2FydVdo?=
+ =?utf-8?B?UXpIczRZcmhzWjFGanNNbUtuWHl6TGxKSWtHTmZuWDVPTmVXaG8vc1h1VnNo?=
+ =?utf-8?B?UC9qcUJPL2tTY0dsYm5tRytaeDhjdndzZmNTZGltdWw0S3N5Q0dkZWZwN01V?=
+ =?utf-8?B?MTY0WWV1TmtERHZ6ZnlTZEE1ZitFMXRrQTF5a01WK1hDWHdDYXBOdFdtU2F3?=
+ =?utf-8?B?NUVpUFRPTGwxeEI4Ti94V0QwYXJzbEcwUktJSmpuODRGNm1mdG1tM1NqYUNG?=
+ =?utf-8?Q?fQ9evLIdYd8zEwDHlrF8On6CF1u6qb8BapODFJ7?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7519805-b04f-44e9-0267-08d95c37e478
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5229.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2021 19:48:57.8699
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LkQmC0BMFabM+hD+NZCRsqRDlnlmUWZdnM+SN3S137DV+6ebAPKAIvjN9s/s+GoNlwKXx1Ivo44BngEr7cMMzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5213
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 8/9/2021 10:17 AM, Christoph Hellwig wrote:
-> Hi Jens,
+On 8/10/21 1:45 PM, Kuppuswamy, Sathyanarayanan wrote:
 > 
-> this series moves the pointer to the bdi from the request_queue
-> to the bdi, better matching the life time rules of the different
-> objects.
-
-Reverting this series fixed an use-after-free in bdev_evict_inode().
-
-[ 3710.755078][    T1] BUG: KASAN: use-after-free in bdev_evict_inode+0x454/0x4d0
-wb_put_many at /root/linux-next/./include/linux/backing-dev-defs.h:250
-(inlined by) wb_put at /root/linux-next/./include/linux/backing-dev-defs.h:268
-(inlined by) inode_detach_wb at /root/linux-next/./include/linux/writeback.h:251
-(inlined by) bdev_evict_inode at /root/linux-next/fs/block_dev.c:832
-[ 3710.762312][    T1] Read of size 8 at addr ffff000859ff6060 by task shutdown/1
-[ 3710.769533][    T1] 
-[ 3710.771721][    T1] CPU: 29 PID: 1 Comm: shutdown Not tainted 5.14.0-rc5-next-20210810+ #88
-[ 3710.780073][    T1] Hardware name: MiTAC RAPTOR EV-883832-X3-0001/RAPTOR, BIOS 1.6 06/28/2020
-[ 3710.788600][    T1] Call trace:
-[ 3710.791741][    T1]  dump_backtrace+0x0/0x3b8
-[ 3710.796103][    T1]  show_stack+0x20/0x30
-[ 3710.800115][    T1]  dump_stack_lvl+0x8c/0xb8
-[ 3710.804472][    T1]  print_address_description.constprop.0+0x74/0x3c8
-[ 3710.810913][    T1]  kasan_report+0x1f0/0x208
-[ 3710.815270][    T1]  __asan_report_load8_noabort+0x34/0x60
-[ 3710.820755][    T1]  bdev_evict_inode+0x454/0x4d0
-[ 3710.825459][    T1]  evict+0x20c/0x400
-evict at /root/linux-next/fs/inode.c:595
-[ 3710.829208][    T1]  iput.part.0+0x53c/0x7a8
-[ 3710.833477][    T1]  iput+0x48/0x68
-[ 3710.836964][    T1]  disk_release+0x168/0x1d8
-[ 3710.841322][    T1]  device_release+0xec/0x1f0
-[ 3710.845766][    T1]  kobject_release+0xe4/0x360
-[ 3710.850299][    T1]  kobject_put+0x7c/0x138
-[ 3710.854481][    T1]  put_device+0x1c/0x30
-[ 3710.858489][    T1]  blk_cleanup_disk+0x64/0x88
-[ 3710.863021][    T1]  cleanup_mapped_device+0x128/0x1e8 [dm_mod]
-[ 3710.868974][    T1]  __dm_destroy+0x314/0x618 [dm_mod]
-[ 3710.874140][    T1]  dm_destroy+0x1c/0x28 [dm_mod]
-[ 3710.878955][    T1]  dev_remove+0x214/0x2f8 [dm_mod]
-[ 3710.883947][    T1]  ctl_ioctl+0x490/0xb58 [dm_mod]
-[ 3710.888850][    T1]  dm_ctl_ioctl+0x18/0x28 [dm_mod]
-[ 3710.893842][    T1]  __arm64_sys_ioctl+0x114/0x180
-[ 3710.898636][    T1]  invoke_syscall.constprop.0+0xdc/0x1d8
-[ 3710.904123][    T1]  do_el0_svc+0xe4/0x2a8
-[ 3710.908219][    T1]  el0_svc+0x64/0x130
-[ 3710.912057][    T1]  el0t_64_sync_handler+0xb0/0xb8
-[ 3710.916934][    T1]  el0t_64_sync+0x180/0x184
-[ 3711.007417][    T1] 
-[ 3711.009600][    T1] Freed by task 1:
-[ 3711.013172][    T1]  kasan_save_stack+0x28/0x58
-[ 3711.017702][    T1]  kasan_set_track+0x28/0x40
-[ 3711.022144][    T1]  kasan_set_free_info+0x28/0x50
-[ 3711.026933][    T1]  __kasan_slab_free+0xfc/0x150
-[ 3711.031636][    T1]  slab_free_freelist_hook+0x108/0x208
-[ 3711.036947][    T1]  kfree+0x154/0x3c8
-[ 3711.040695][    T1]  release_bdi+0x80/0xc0
-[ 3711.044790][    T1]  bdi_put+0x54/0xb0
-[ 3711.048537][    T1]  disk_release+0x70/0x1d8
-[ 3711.052807][    T1]  device_release+0xec/0x1f0
-[ 3711.057251][    T1]  kobject_release+0xe4/0x360
-[ 3711.061782][    T1]  kobject_put+0x7c/0x138
-[ 3711.065964][    T1]  put_device+0x1c/0x30
-[ 3711.069974][    T1]  blk_cleanup_disk+0x64/0x88
-blk_cleanup_disk at /root/linux-next/block/genhd.c:1355
-[ 3711.074503][    T1]  cleanup_mapped_device+0x128/0x1e8 [dm_mod]
-[ 3711.080451][    T1]  __dm_destroy+0x314/0x618 [dm_mod]
-[ 3711.085617][    T1]  dm_destroy+0x1c/0x28 [dm_mod]
-[ 3711.090434][    T1]  dev_remove+0x214/0x2f8 [dm_mod]
-[ 3711.095424][    T1]  ctl_ioctl+0x490/0xb58 [dm_mod]
-[ 3711.100328][    T1]  dm_ctl_ioctl+0x18/0x28 [dm_mod]
-[ 3711.105317][    T1]  __arm64_sys_ioctl+0x114/0x180
-[ 3711.110108][    T1]  invoke_syscall.constprop.0+0xdc/0x1d8
-[ 3711.115594][    T1]  do_el0_svc+0xe4/0x2a8
-[ 3711.119691][    T1]  el0_svc+0x64/0x130
-[ 3711.123527][    T1]  el0t_64_sync_handler+0xb0/0xb8
-[ 3711.128402][    T1]  el0t_64_sync+0x180/0x184
-[ 3711.132759][    T1] 
-[ 3711.134941][    T1] Last potentially related work creation:
-[ 3711.140511][    T1]  kasan_save_stack+0x28/0x58
-[ 3711.145041][    T1]  kasan_record_aux_stack+0xf4/0x128
-[ 3711.150179][    T1]  insert_work+0x58/0x2c0
-[ 3711.154361][    T1]  __queue_work+0x644/0x18d0
-[ 3711.158802][    T1]  __queue_delayed_work+0x14c/0x228
-[ 3711.163853][    T1]  mod_delayed_work_on+0xc0/0x128
-[ 3711.168729][    T1]  wb_shutdown+0x174/0x230
-[ 3711.172999][    T1]  bdi_unregister+0x158/0x480
-[ 3711.177527][    T1]  del_gendisk+0x410/0x548
-[ 3711.181797][    T1]  cleanup_mapped_device+0x190/0x1e8 [dm_mod]
-[ 3711.187745][    T1]  __dm_destroy+0x314/0x618 [dm_mod]
-[ 3711.192909][    T1]  dm_destroy+0x1c/0x28 [dm_mod]
-[ 3711.197725][    T1]  dev_remove+0x214/0x2f8 [dm_mod]
-[ 3711.202716][    T1]  ctl_ioctl+0x490/0xb58 [dm_mod]
-[ 3711.207620][    T1]  dm_ctl_ioctl+0x18/0x28 [dm_mod]
-[ 3711.212611][    T1]  __arm64_sys_ioctl+0x114/0x180
-[ 3711.217402][    T1]  invoke_syscall.constprop.0+0xdc/0x1d8
-[ 3711.222889][    T1]  do_el0_svc+0xe4/0x2a8
-[ 3711.226985][    T1]  el0_svc+0x64/0x130
-[ 3711.230823][    T1]  el0t_64_sync_handler+0xb0/0xb8
-[ 3711.235699][    T1]  el0t_64_sync+0x180/0x184
-[ 3711.240055][    T1] 
-[ 3711.242237][    T1] Second to last potentially related work creation:
-[ 3711.248673][    T1]  kasan_save_stack+0x28/0x58
-[ 3711.253203][    T1]  kasan_record_aux_stack+0xf4/0x128
-[ 3711.258340][    T1]  insert_work+0x58/0x2c0
-[ 3711.262522][    T1]  __queue_work+0x644/0x18d0
-[ 3711.266964][    T1]  delayed_work_timer_fn+0x6c/0xa0
-[ 3711.271927][    T1]  call_timer_fn+0x224/0xbb0
-[ 3711.276371][    T1]  __run_timers.part.0+0x548/0xb58
-[ 3711.281336][    T1]  run_timer_softirq+0x80/0x118
-[ 3711.286039][    T1]  _stext+0x2d4/0x11ac
-[ 3711.289961][    T1] 
-[ 3711.292142][    T1] The buggy address belongs to the object at ffff000859ff6000
-[ 3711.292142][    T1]  which belongs to the cache kmalloc-4k of size 4096
-[ 3711.306045][    T1] The buggy address is located 96 bytes inside of
-[ 3711.306045][    T1]  4096-byte region [ffff000859ff6000, ffff000859ff7000)
-[ 3711.319169][    T1] The buggy address belongs to the page:
-[ 3711.324653][    T1] page:ffffffc002167e00 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff000859fd2000 pfn:0x8d9f8
-[ 3711.335954][    T1] head:ffffffc002167e00 order:3 compound_mapcount:0 compound_pincount:0
-[ 3711.344129][    T1] flags: 0x7ffff800010200(slab|head|node=0|zone=0|lastcpupid=0xfffff)
-[ 3711.352137][    T1] raw: 007ffff800010200 ffffffc002168208 ffffffc002140e08 ffff000012911580
-[ 3711.360574][    T1] raw: ffff000859fd2000 00000000002a0002 00000001ffffffff 0000000000000000
-[ 3711.369008][    T1] page dumped because: kasan: bad access detected
-[ 3711.375272][    T1] 
-[ 3711.377454][    T1] Memory state around the buggy address:
-[ 3711.382936][    T1]  ffff000859ff5f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 3711.390848][    T1]  ffff000859ff5f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 3711.398762][    T1] >ffff000859ff6000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-[ 3711.406674][    T1]                                                        ^
-[ 3711.413719][    T1]  ffff000859ff6080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-[ 3711.421632][    T1]  ffff000859ff6100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-
 > 
-> Diffstat:
->  block/bfq-iosched.c           |    4 ++--
->  block/blk-cgroup.c            |    7 +++----
->  block/blk-core.c              |   18 +++---------------
->  block/blk-mq.c                |    2 +-
->  block/blk-settings.c          |   22 ++++++++++++++--------
->  block/blk-sysfs.c             |   28 +++++++++++++---------------
->  block/blk-wbt.c               |   10 +++++-----
->  block/genhd.c                 |   23 ++++++++++++++---------
->  block/ioctl.c                 |    7 ++++---
->  drivers/block/drbd/drbd_nl.c  |    2 +-
->  drivers/block/drbd/drbd_req.c |    5 ++---
->  drivers/block/pktcdvd.c       |    8 +++-----
->  drivers/md/dm-table.c         |    2 +-
->  drivers/nvme/host/core.c      |    2 +-
->  fs/block_dev.c                |   13 +------------
->  fs/fat/fatent.c               |    1 +
->  fs/nilfs2/super.c             |    2 +-
->  fs/super.c                    |    2 +-
->  fs/xfs/xfs_buf.c              |    2 +-
->  include/linux/backing-dev.h   |    2 +-
->  include/linux/blk_types.h     |    1 -
->  include/linux/blkdev.h        |    6 ++----
->  include/linux/genhd.h         |    1 +
->  mm/backing-dev.c              |    3 +++
->  mm/page-writeback.c           |    2 --
->  25 files changed, 79 insertions(+), 96 deletions(-)
+> On 7/27/21 3:26 PM, Tom Lendacky wrote:
+>> diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+>> index de01903c3735..cafed6456d45 100644
+>> --- a/arch/x86/kernel/head64.c
+>> +++ b/arch/x86/kernel/head64.c
+>> @@ -19,7 +19,7 @@
+>>   #include <linux/start_kernel.h>
+>>   #include <linux/io.h>
+>>   #include <linux/memblock.h>
+>> -#include <linux/mem_encrypt.h>
+>> +#include <linux/protected_guest.h>
+>>   #include <linux/pgtable.h>
+>>     #include <asm/processor.h>
+>> @@ -285,7 +285,7 @@ unsigned long __head __startup_64(unsigned long
+>> physaddr,
+>>        * there is no need to zero it after changing the memory encryption
+>>        * attribute.
+>>        */
+>> -    if (mem_encrypt_active()) {
+>> +    if (prot_guest_has(PATTR_MEM_ENCRYPT)) {
+>>           vaddr = (unsigned long)__start_bss_decrypted;
+>>           vaddr_end = (unsigned long)__end_bss_decrypted;
+> 
+> 
+> Since this change is specific to AMD, can you replace PATTR_MEM_ENCRYPT with
+> prot_guest_has(PATTR_SME) || prot_guest_has(PATTR_SEV). It is not used in
+> TDX.
+
+This is a direct replacement for now. I think the change you're requesting
+should be done as part of the TDX support patches so it's clear why it is
+being changed.
+
+But, wouldn't TDX still need to do something with this shared/unencrypted
+area, though? Or since it is shared, there's actually nothing you need to
+do (the bss decrpyted section exists even if CONFIG_AMD_MEM_ENCRYPT is not
+configured)?
+
+Thanks,
+Tom
+
 > 
