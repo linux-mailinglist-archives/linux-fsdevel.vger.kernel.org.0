@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 058423E86A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 01:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D1F83E86CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 01:53:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235456AbhHJXrP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 19:47:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56258 "EHLO mail.kernel.org"
+        id S235600AbhHJXxx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 19:53:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235242AbhHJXrO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 19:47:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DFEBB60F38;
-        Tue, 10 Aug 2021 23:46:51 +0000 (UTC)
+        id S235708AbhHJXxt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Aug 2021 19:53:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0155060F55;
+        Tue, 10 Aug 2021 23:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628639212;
-        bh=C7Tb00L3AYDe5UX5I/aSJ4moatYSSEUUbrO/R+mcAzE=;
+        s=k20201202; t=1628639607;
+        bh=VuC14IWrypcQZbYXPu3Lw2huX+WjjiahTYa2Uojq8Tg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RGcOduW/GjQpfsXvnN/9wlZtF1ZtfYKiqWffBYykFptTkVsRGma7c8dr6/zKHoVMQ
-         qJWCUdki0wrc+B2I8NvnTso9/vf3EkRu9wo7GbCP6h9GQqvzQnoOPxaQDnUxbXvMzs
-         0vdHDnD+HOE/GxM3qoIIZS5H1dMgbHmRWw5zYKa8LlOEdAzoR8g6mKgDOvUhuuAz9n
-         ZSe2od99X5wMGDHPyOkkHKmnWWWI5MWuORLkI5WjJHhpeDjv1Dlrehvq+FQYNK5ibo
-         hHroy65dsdyXAnh0e41nHAaYxhD46pf2Qc8bhvBcadvDJRDM9ejpYmyAoKoaDMIBvm
-         cqYrZkOhmZX9w==
-Date:   Tue, 10 Aug 2021 16:46:51 -0700
+        b=T1fkqhCIp/tPJX8BV1QzFNiKRDkSGVa1NrL9zxypp81HfypD/HOxF6IZwzR96TTb4
+         tqIgkzFy+2xGVRhWZongW4jDMeTcUBpU7JDkbWjF+RQO4GJY28gRn5K96GQ2+Z1Xf0
+         XijcJROq7Q4BaiEvAmf7J0X7t4i9sblfwlPWSBlFlqM6lQLuEcKT4JCAtEeRcAuUsp
+         rT7i9G1+IGT82UETFg9WNFvJhA1lzxz2d9ulg6j+cVsZTGmoryO4y9/KVFXWTCTONa
+         mmRxA4386demxJHCT3yrAk6UuAaTZlm3lSozFvhdagAQy9n6ShTVeoIERcYj5ns5yX
+         QGxZ+WEe8baVw==
+Date:   Tue, 10 Aug 2021 16:53:26 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -33,178 +33,125 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: Re: [PATCH 12/30] iomap: switch readahead and readpage to use
+Subject: Re: [PATCH 13/30] iomap: switch iomap_file_buffered_write to use
  iomap_iter
-Message-ID: <20210810234651.GK3601443@magnolia>
+Message-ID: <20210810235326.GL3601443@magnolia>
 References: <20210809061244.1196573-1-hch@lst.de>
- <20210809061244.1196573-13-hch@lst.de>
+ <20210809061244.1196573-14-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210809061244.1196573-13-hch@lst.de>
+In-Reply-To: <20210809061244.1196573-14-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 09, 2021 at 08:12:26AM +0200, Christoph Hellwig wrote:
-> Switch the page cache read functions to use iomap_iter instead of
-> iomap_apply.
+On Mon, Aug 09, 2021 at 08:12:27AM +0200, Christoph Hellwig wrote:
+> Switch iomap_file_buffered_write to use iomap_iter.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Looks reasonable,
+Seems pretty straightforward.
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
 > ---
->  fs/iomap/buffered-io.c | 80 +++++++++++++++++++-----------------------
->  1 file changed, 37 insertions(+), 43 deletions(-)
+>  fs/iomap/buffered-io.c | 49 +++++++++++++++++++++---------------------
+>  1 file changed, 25 insertions(+), 24 deletions(-)
 > 
 > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 26e16cc9d44931..9cda461887afad 100644
+> index 9cda461887afad..4c7e82928cc546 100644
 > --- a/fs/iomap/buffered-io.c
 > +++ b/fs/iomap/buffered-io.c
-> @@ -241,11 +241,12 @@ static inline bool iomap_block_needs_zeroing(struct inode *inode,
->  		pos >= i_size_read(inode);
+> @@ -726,13 +726,14 @@ static size_t iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  	return ret;
 >  }
 >  
 > -static loff_t
-> -iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> -iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
 > -		struct iomap *iomap, struct iomap *srcmap)
-> +static loff_t iomap_readpage_iter(struct iomap_iter *iter,
-> +		struct iomap_readpage_ctx *ctx, loff_t offset)
+> +static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
 >  {
-> -	struct iomap_readpage_ctx *ctx = data;
+> -	struct iov_iter *i = data;
+> -	long status = 0;
+> +	struct iomap *srcmap = iomap_iter_srcmap(iter);
 > +	struct iomap *iomap = &iter->iomap;
-> +	loff_t pos = iter->pos + offset;
-> +	loff_t length = iomap_length(iter) - offset;
->  	struct page *page = ctx->cur_page;
->  	struct iomap_page *iop;
->  	loff_t orig_pos = pos;
-> @@ -253,15 +254,16 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  	sector_t sector;
+> +	loff_t length = iomap_length(iter);
+> +	loff_t pos = iter->pos;
+>  	ssize_t written = 0;
+> +	long status = 0;
 >  
->  	if (iomap->type == IOMAP_INLINE)
-> -		return min(iomap_read_inline_data(inode, page, iomap), length);
-> +		return min(iomap_read_inline_data(iter->inode, page, iomap),
-> +						  length);
+>  	do {
+>  		struct page *page;
+> @@ -758,18 +759,18 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  			break;
+>  		}
 >  
->  	/* zero post-eof blocks as the page may be mapped */
-> -	iop = iomap_page_create(inode, page);
-> -	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
-> +	iop = iomap_page_create(iter->inode, page);
-> +	iomap_adjust_read_range(iter->inode, iop, &pos, length, &poff, &plen);
->  	if (plen == 0)
->  		goto done;
+> -		status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap,
+> -				srcmap);
+> +		status = iomap_write_begin(iter->inode, pos, bytes, 0, &page,
+> +					   iomap, srcmap);
+>  		if (unlikely(status))
+>  			break;
 >  
-> -	if (iomap_block_needs_zeroing(inode, iomap, pos)) {
-> +	if (iomap_block_needs_zeroing(iter->inode, iomap, pos)) {
->  		zero_user(page, poff, plen);
->  		iomap_set_range_uptodate(page, poff, plen);
->  		goto done;
-> @@ -313,23 +315,23 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  int
->  iomap_readpage(struct page *page, const struct iomap_ops *ops)
+> -		if (mapping_writably_mapped(inode->i_mapping))
+> +		if (mapping_writably_mapped(iter->inode->i_mapping))
+>  			flush_dcache_page(page);
+>  
+>  		copied = copy_page_from_iter_atomic(page, offset, bytes, i);
+>  
+> -		status = iomap_write_end(inode, pos, bytes, copied, page, iomap,
+> -				srcmap);
+> +		status = iomap_write_end(iter->inode, pos, bytes, copied, page,
+> +					 iomap, srcmap);
+>  
+>  		if (unlikely(copied != status))
+>  			iov_iter_revert(i, copied - status);
+> @@ -790,29 +791,29 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  		written += status;
+>  		length -= status;
+>  
+> -		balance_dirty_pages_ratelimited(inode->i_mapping);
+> +		balance_dirty_pages_ratelimited(iter->inode->i_mapping);
+>  	} while (iov_iter_count(i) && length);
+>  
+>  	return written ? written : status;
+>  }
+>  
+>  ssize_t
+> -iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *iter,
+> +iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+>  		const struct iomap_ops *ops)
 >  {
-> -	struct iomap_readpage_ctx ctx = { .cur_page = page };
-> -	struct inode *inode = page->mapping->host;
-> -	unsigned poff;
-> -	loff_t ret;
+> -	struct inode *inode = iocb->ki_filp->f_mapping->host;
+> -	loff_t pos = iocb->ki_pos, ret = 0, written = 0;
+> -
+> -	while (iov_iter_count(iter)) {
+> -		ret = iomap_apply(inode, pos, iov_iter_count(iter),
+> -				IOMAP_WRITE, ops, iter, iomap_write_actor);
+> -		if (ret <= 0)
+> -			break;
+> -		pos += ret;
+> -		written += ret;
+> -	}
 > +	struct iomap_iter iter = {
-> +		.inode		= page->mapping->host,
-> +		.pos		= page_offset(page),
-> +		.len		= PAGE_SIZE,
-> +	};
-> +	struct iomap_readpage_ctx ctx = {
-> +		.cur_page	= page,
+> +		.inode		= iocb->ki_filp->f_mapping->host,
+> +		.pos		= iocb->ki_pos,
+> +		.len		= iov_iter_count(i),
+> +		.flags		= IOMAP_WRITE,
 > +	};
 > +	int ret;
 >  
->  	trace_iomap_readpage(page->mapping->host, 1);
->  
-> -	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
-> -		ret = iomap_apply(inode, page_offset(page) + poff,
-> -				PAGE_SIZE - poff, 0, ops, &ctx,
-> -				iomap_readpage_actor);
-> -		if (ret <= 0) {
-> -			WARN_ON_ONCE(ret == 0);
-> -			SetPageError(page);
-> -			break;
-> -		}
-> -	}
+> -	return written ? written : ret;
 > +	while ((ret = iomap_iter(&iter, ops)) > 0)
-> +		iter.processed = iomap_readpage_iter(&iter, &ctx, 0);
-> +
-> +	if (ret < 0)
-> +		SetPageError(page);
->  
->  	if (ctx.bio) {
->  		submit_bio(ctx.bio);
-> @@ -348,15 +350,14 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
+> +		iter.processed = iomap_write_iter(&iter, i);
+> +	if (iter.pos == iocb->ki_pos)
+> +		return ret;
+> +	return iter.pos - iocb->ki_pos;
 >  }
->  EXPORT_SYMBOL_GPL(iomap_readpage);
+>  EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
 >  
-> -static loff_t
-> -iomap_readahead_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap, struct iomap *srcmap)
-> +static loff_t iomap_readahead_iter(struct iomap_iter *iter,
-> +		struct iomap_readpage_ctx *ctx)
->  {
-> -	struct iomap_readpage_ctx *ctx = data;
-> +	loff_t length = iomap_length(iter);
->  	loff_t done, ret;
->  
->  	for (done = 0; done < length; done += ret) {
-> -		if (ctx->cur_page && offset_in_page(pos + done) == 0) {
-> +		if (ctx->cur_page && offset_in_page(iter->pos + done) == 0) {
->  			if (!ctx->cur_page_in_bio)
->  				unlock_page(ctx->cur_page);
->  			put_page(ctx->cur_page);
-> @@ -366,8 +367,7 @@ iomap_readahead_actor(struct inode *inode, loff_t pos, loff_t length,
->  			ctx->cur_page = readahead_page(ctx->rac);
->  			ctx->cur_page_in_bio = false;
->  		}
-> -		ret = iomap_readpage_actor(inode, pos + done, length - done,
-> -				ctx, iomap, srcmap);
-> +		ret = iomap_readpage_iter(iter, ctx, done);
->  	}
->  
->  	return done;
-> @@ -390,25 +390,19 @@ iomap_readahead_actor(struct inode *inode, loff_t pos, loff_t length,
->   */
->  void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
->  {
-> -	struct inode *inode = rac->mapping->host;
-> -	loff_t pos = readahead_pos(rac);
-> -	size_t length = readahead_length(rac);
-> +	struct iomap_iter iter = {
-> +		.inode	= rac->mapping->host,
-> +		.pos	= readahead_pos(rac),
-> +		.len	= readahead_length(rac),
-> +	};
->  	struct iomap_readpage_ctx ctx = {
->  		.rac	= rac,
->  	};
->  
-> -	trace_iomap_readahead(inode, readahead_count(rac));
-> +	trace_iomap_readahead(rac->mapping->host, readahead_count(rac));
->  
-> -	while (length > 0) {
-> -		ssize_t ret = iomap_apply(inode, pos, length, 0, ops,
-> -				&ctx, iomap_readahead_actor);
-> -		if (ret <= 0) {
-> -			WARN_ON_ONCE(ret == 0);
-> -			break;
-> -		}
-> -		pos += ret;
-> -		length -= ret;
-> -	}
-> +	while (iomap_iter(&iter, ops) > 0)
-> +		iter.processed = iomap_readahead_iter(&iter, &ctx);
->  
->  	if (ctx.bio)
->  		submit_bio(ctx.bio);
 > -- 
 > 2.30.2
 > 
