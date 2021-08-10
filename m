@@ -2,146 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BDBE3E5486
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 09:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7562A3E548D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 09:47:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236795AbhHJHob (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 03:44:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53130 "EHLO
+        id S237269AbhHJHsH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 03:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236476AbhHJHoa (ORCPT
+        with ESMTP id S231705AbhHJHsH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 03:44:30 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB1BEC061798
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 00:44:08 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id qk33so33720514ejc.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 00:44:08 -0700 (PDT)
+        Tue, 10 Aug 2021 03:48:07 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 815D4C0613D3;
+        Tue, 10 Aug 2021 00:47:45 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id x27so16987415lfu.5;
+        Tue, 10 Aug 2021 00:47:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=elqUT9stw2J3iR2l4RxHnGypplqsV8TkYIJkIMW8hsY=;
-        b=Dw2anpOlrs9rV2RbKN404Zn18rw9HV6mvfkE8M1kGMV2Ah+OI2rfEhpzsA9qdOawIF
-         k8THbB9AABfuNY1MbNdd0AcLrxpPD246ArW/bPUC+pr03hqytJJD7OFvzo3N0q/tpZGO
-         tH48kCvdWiYFfAcIV1f5yS5oQiNePxkq4fi3pXrnB2oNtBTWdXNxRQpFSbu0OmyXCusR
-         +W05Ly+4a2nE2bv8/HwAQbH8fmJcv8+1juWLj995sdhCvh4wbwIAVnm3NRBqnxRlLOyy
-         KEmSTLyK4NbrCSV7j939f/4v7zlRHpFqgOALTvOj2N1xjrfa63r8X64WZ/4zirZ1FwSG
-         ug5Q==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=9ho5vi/DVYwm8HX90yRCWh3kL6ZbH0pPpPt+rtsTu+E=;
+        b=Tq25JJsTwzCuLHsWd9rZoCPk3z64mDLARlSk6+OF1bu8+lJF6AiA2eUxq1xjeaH0rY
+         rQILgAW4IsPYmnv2U/XsUxcbpintogfNKMqmMOG2SbcVjUt3MJ4fHJ8mtJzfGOx+TZ9e
+         uc8L76lsWJU4YsBdWpxtXKDH+/G24jsxOdJHRqzrFOOeUpgwY96/T+HasQKBHlBmrOj1
+         rqocaSnG9epHbk/fQ1lWBux5srmnIX1Pf4+ALLz+qQElDi69NJzlYFvTcwh+w9UDCQ5X
+         PqiPbkwOZEYVyAQjqJ+fYNiDuBhK7bJYBJ9U7ftfnftbJh0xHrmOWyF4O0NYARUXgEAX
+         bGiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=elqUT9stw2J3iR2l4RxHnGypplqsV8TkYIJkIMW8hsY=;
-        b=gvNumz9Il7XU+q1RNtGw60HHbteX/xtqm/FcaJMgxlM2uHHFM4EFaycG7rISrsF5e5
-         rtqpSlgsfL8wsftsSr7eTkB+daMzysg50wGpKHIeY5jRRSzg9mLr+xjQthQfuVrLNI0w
-         05FmmQORoow9JaoqHC+d8scWushVYjw6ZwYf+OmsS5yKjLR3pNEQDN5IS3mEKIptBOmP
-         wl0mCwb3AlckPwmS2uMDAs2TttjtptncBsYxerjN7KMjT5aAhAS/Wf/EbShn1yn6zOsW
-         UWuyO7Yq1e462lt0qT64x61g7o/wB8j0HY+VfJb0DhjVOTzzgi7cCrXDpmjQjVDrWDw6
-         E8Ug==
-X-Gm-Message-State: AOAM531gewepWx85FuDhDTjmEVfmwKwhDxV8CExQuowsu7N6X0DtTp30
-        grMSFNydKXpAnJC1RhazxIV+ljXhktIB9ZIg63z5
-X-Google-Smtp-Source: ABdhPJx/TbMGjhieQzq1YqRjJBN7a9WTaXbFyhJM7EzEX+MXvLMAXR31L8+X5gM3dqLz8GqZFLUy0w3uIoYuvmPOUqE=
-X-Received: by 2002:a17:906:8606:: with SMTP id o6mr26642389ejx.247.1628581447154;
- Tue, 10 Aug 2021 00:44:07 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9ho5vi/DVYwm8HX90yRCWh3kL6ZbH0pPpPt+rtsTu+E=;
+        b=uSGa9+fID7eyUS4X++NT6kIGi6qMJnh4L5AROLuggroC7Z8AwBw1GNnLdAkQql19lu
+         9rhCYSmCoAYO1s5vBOO0SYI7WLXghS9XwJEOq+YGGNGJLHYxgYSaRXtbpT5DhdUHOc3V
+         g+AHZiny+z6IAV7vy25a3Yzx4PLU4cQ0v2iZWQDmlbzsIOXO6qoIZwP24Nqd2CQ6Zc4q
+         2sCbJjgzy7A18Cza5LYV6Ii13NZCsldWhvXd3UWjlMFmzHqQ8ATu/KkiqZQnGNrD4Wtq
+         /9RcDfOHA42DyWtKJeL0PsJyqnKIAhwfaBkvKvi3M/TK/A21aYsqvN78Z1wZFofkVOyJ
+         SY/A==
+X-Gm-Message-State: AOAM5309j8hJPt/jybm95KGLpilQj3t3Rpxguq+5rtreQpoam9xxNG16
+        JO3PZjq5UQtodpI5uroLLpA=
+X-Google-Smtp-Source: ABdhPJwNu3wAQ5xPPvZPKr1/VluV1GfO/Sd7e30s19zJ3T6BV3QajBVWSPz5ccTJyW7KMMhPLGgKug==
+X-Received: by 2002:a05:6512:2354:: with SMTP id p20mr20919562lfu.26.1628581663777;
+        Tue, 10 Aug 2021 00:47:43 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id u14sm2153481lfu.120.2021.08.10.00.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Aug 2021 00:47:43 -0700 (PDT)
+Date:   Tue, 10 Aug 2021 10:47:40 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
+        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
+        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
+        andy.lavr@gmail.com, oleksandr@natalenko.name
+Subject: Re: [PATCH v27 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
+Message-ID: <20210810074740.mkjcow2inyjaakch@kari-VirtualBox>
+References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
+ <20210729134943.778917-9-almaz.alexandrovich@paragon-software.com>
 MIME-Version: 1.0
-References: <20210729073503.187-1-xieyongji@bytedance.com> <20210729073503.187-2-xieyongji@bytedance.com>
- <43d88942-1cd3-c840-6fec-4155fd544d80@redhat.com> <CACycT3vcpwyA3xjD29f1hGnYALyAd=-XcWp8+wJiwSqpqUu00w@mail.gmail.com>
- <6e05e25e-e569-402e-d81b-8ac2cff1c0e8@arm.com> <CACycT3sm2r8NMMUPy1k1PuSZZ3nM9aic-O4AhdmRRCwgmwGj4Q@mail.gmail.com>
- <417ce5af-4deb-5319-78ce-b74fb4dd0582@arm.com> <CACycT3vARzvd4-dkZhDHqUkeYoSxTa2ty0z0ivE1znGti+n1-g@mail.gmail.com>
- <8c381d3d-9bbd-73d6-9733-0f0b15c40820@redhat.com> <CACycT3steXFeg7NRbWpo2J59dpYcumzcvM2zcPJAVe40-EvvEg@mail.gmail.com>
- <b427cf12-2ff6-e5cd-fe6a-3874d8622a29@redhat.com>
-In-Reply-To: <b427cf12-2ff6-e5cd-fe6a-3874d8622a29@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 10 Aug 2021 15:43:56 +0800
-Message-ID: <CACycT3vuBdmWdu4X9wjCO0hm+O0xH2Uf0S2ZTk4O_pL2jX6Y5g@mail.gmail.com>
-Subject: Re: [PATCH v10 01/17] iova: Export alloc_iova_fast() and free_iova_fast()
-To:     Jason Wang <jasowang@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     kvm <kvm@vger.kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Liu Xiaodong <xiaodong.liu@intel.com>,
-        Joe Perches <joe@perches.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        songmuchun@bytedance.com, Jens Axboe <axboe@kernel.dk>,
-        He Zhe <zhe.he@windriver.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, bcrl@kvack.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210729134943.778917-9-almaz.alexandrovich@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 10, 2021 at 11:02 AM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> =E5=9C=A8 2021/8/9 =E4=B8=8B=E5=8D=881:56, Yongji Xie =E5=86=99=E9=81=93:
-> > On Thu, Aug 5, 2021 at 9:31 PM Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >> =E5=9C=A8 2021/8/5 =E4=B8=8B=E5=8D=888:34, Yongji Xie =E5=86=99=E9=81=
-=93:
-> >>>> My main point, though, is that if you've already got something else
-> >>>> keeping track of the actual addresses, then the way you're using an
-> >>>> iova_domain appears to be something you could do with a trivial bitm=
-ap
-> >>>> allocator. That's why I don't buy the efficiency argument. The main
-> >>>> design points of the IOVA allocator are to manage large address spac=
-es
-> >>>> while trying to maximise spatial locality to minimise the underlying
-> >>>> pagetable usage, and allocating with a flexible limit to support
-> >>>> multiple devices with different addressing capabilities in the same
-> >>>> address space. If none of those aspects are relevant to the use-case=
- -
-> >>>> which AFAICS appears to be true here - then as a general-purpose
-> >>>> resource allocator it's rubbish and has an unreasonably massive memo=
-ry
-> >>>> overhead and there are many, many better choices.
-> >>>>
-> >>> OK, I get your point. Actually we used the genpool allocator in the
-> >>> early version. Maybe we can fall back to using it.
-> >>
-> >> I think maybe you can share some perf numbers to see how much
-> >> alloc_iova_fast() can help.
-> >>
-> > I did some fio tests[1] with a ram-backend vduse block device[2].
-> >
-> > Following are some performance data:
-> >
-> >                              numjobs=3D1   numjobs=3D2    numjobs=3D4  =
- numjobs=3D8
-> > iova_alloc_fast    145k iops      265k iops      514k iops      758k io=
-ps
-> >
-> > iova_alloc            137k iops     170k iops      128k iops      113k =
-iops
-> >
-> > gen_pool_alloc   143k iops      270k iops      458k iops      521k iops
-> >
-> > The iova_alloc_fast() has the best performance since we always hit the
-> > per-cpu cache. Regardless of the per-cpu cache, the genpool allocator
-> > should be better than the iova allocator.
->
->
-> I think we see convincing numbers for using iova_alloc_fast() than the
-> gen_poll_alloc() (45% improvement on job=3D8).
->
+On Thu, Jul 29, 2021 at 04:49:41PM +0300, Konstantin Komarov wrote:
+> This adds Kconfig, Makefile and doc
+> 
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> ---
+>  Documentation/filesystems/ntfs3.rst | 107 ++++++++++++++++++++++++++++
 
-Yes, so alloc_iova_fast() still seems to be the best choice based on
-performance considerations.
+Still missing Documentation/filesystems/index.rst as I stated before
+https://lore.kernel.org/linux-fsdevel/20210103220739.2gkh6gy3iatv4fog@kari-VirtualBox/
 
-Hi Robin, any comments?
+>  fs/ntfs3/Kconfig                    |  46 ++++++++++++
+>  fs/ntfs3/Makefile                   |  36 ++++++++++
+>  3 files changed, 189 insertions(+)
+>  create mode 100644 Documentation/filesystems/ntfs3.rst
+>  create mode 100644 fs/ntfs3/Kconfig
+>  create mode 100644 fs/ntfs3/Makefile
+> 
+> diff --git a/Documentation/filesystems/ntfs3.rst b/Documentation/filesystems/ntfs3.rst
 
-Thanks,
-Yongji
+
+> +Mount Options
+> +=============
+> +
+> +The list below describes mount options supported by NTFS3 driver in addition to
+> +generic ones.
+> +
+> +===============================================================================
+> +
+> +nls=name		This option informs the driver how to interpret path
+> +			strings and translate them to Unicode and back. If
+> +			this option is not set, the default codepage will be
+> +			used (CONFIG_NLS_DEFAULT).
+> +			Examples:
+> +				'nls=utf8'
+
+It seems that kernel community will start use iocharset= as default. nls
+option can still be alias but will need deprecated message. See message
+https://lore.kernel.org/linux-fsdevel/20200102211855.gg62r7jshp742d6i@pali/
+
+and current work from Pali
+https://lore.kernel.org/linux-fsdevel/20210808162453.1653-1-pali@kernel.org/
+
+This is still RFC state so probably no horry, but good to know stuff. I
+also added Pali so he also knows.
+
+> diff --git a/fs/ntfs3/Makefile b/fs/ntfs3/Makefile
+> new file mode 100644
+> index 000000000..279701b62
+> --- /dev/null
+> +++ b/fs/ntfs3/Makefile
+> @@ -0,0 +1,36 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Makefile for the ntfs3 filesystem support.
+> +#
+> +
+> +# to check robot warnings
+> +ccflags-y += -Wint-to-pointer-cast \
+> +	$(call cc-option,-Wunused-but-set-variable,-Wunused-const-variable) \
+> +	$(call cc-option,-Wold-style-declaration,-Wout-of-line-declaration)
+
+It is good idea to include this url in commit message.
+https://lore.kernel.org/linux-fsdevel/212218590.13874.1621431781547@office.mailbox.org/
+
+And also add that signed off tag from Tor Vic.
+
+> +
+> +obj-$(CONFIG_NTFS3_FS) += ntfs3.o
+> +
+> +ntfs3-y :=	attrib.o \
+> +		attrlist.o \
+> +		bitfunc.o \
+> +		bitmap.o \
+> +		dir.o \
+> +		fsntfs.o \
+> +		frecord.o \
+> +		file.o \
+> +		fslog.o \
+> +		inode.o \
+> +		index.o \
+> +		lznt.o \
+> +		namei.o \
+> +		record.o \
+> +		run.o \
+> +		super.o \
+> +		upcase.o \
+> +		xattr.o
+> +
+> +ntfs3-$(CONFIG_NTFS3_LZX_XPRESS) += $(addprefix lib/,\
+> +		decompress_common.o \
+> +		lzx_decompress.o \
+> +		xpress_decompress.o \
+> +		)
+> \ No newline at end of file
+> -- 
+> 2.25.4
+> 
