@@ -2,129 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34A9E3E8630
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 00:47:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 102553E868F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 01:31:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235224AbhHJWro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 18:47:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38658 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231380AbhHJWrn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 18:47:43 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03151C061765;
-        Tue, 10 Aug 2021 15:47:21 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id cp15-20020a17090afb8fb029017891959dcbso6571272pjb.2;
-        Tue, 10 Aug 2021 15:47:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yIH0KUnZv7CbUNuLVwKk6Yjj2btfYGCd33gAi0qy9lk=;
-        b=ocbTw3+op+JN/IWY/wUmffxiA+QAfcrR9mImsaFZDuNkDLCwp+PxLcwflgxgjz3wst
-         ckQs+f9MjZuAzdFfR2VLgZ9+lgaITXcI66cBDksKJWBpJXQMUX4n9TPIaa/cdcPAKnOg
-         URRXWcuppxAnjw88ww3w7VnoRRrNWKDlrVb+9lRBe5NlySmaZq7x5SeYQgkDNHTEv/kH
-         XbISyjnk2ZcWk0jRK++PeGVZbGWzK/+B4gKpkfrcCi1Bjbatfeyqr73THSUUXjg+wr32
-         kCkFWKX8VbpzhZ7iLVQgxviwRSXY7AVu2bUTc4L4sLNmGnRZIUzOlk3GsxLayj2svRPP
-         msXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yIH0KUnZv7CbUNuLVwKk6Yjj2btfYGCd33gAi0qy9lk=;
-        b=Yj1d/vjexaciN+AMlT27hv/0SeMCVBTkh6CSjwn55p4P6xXO5pZwmlTtoSpYzviBmv
-         p3fMMDInBTI/0GqWpXu+sZ7do5+9SxZ0AxpEUBI4hk3PbonqLcGD6Au5/rJ+YuC1nx6U
-         RQ8X6WhstXs3hoNI6vdDbfq4+ujazpOgHHF6i5jurusJNk+wzeFji2Zv54TXkEo7AwRv
-         hZSwpYE6c3HrxdjPrWPoQYk4z048kSpunBixbg6+sgE9LTD3j7gPiyrvxjGOTyksSAgg
-         Hj7UAubCtLgR0vHoToAIbdlLhCZe/O3PTrYakFeXYwP7kP651RmaE13ZlL4zVwO1W0xn
-         gM7Q==
-X-Gm-Message-State: AOAM531BdonvfkDfKIqzMJdtDzE1+StfOtl8DVJK1KYqNu88/7AogGjG
-        v6Tyst2b5D1AhvJ7RQ45Vqg=
-X-Google-Smtp-Source: ABdhPJwUU92PjtwHfiGs9aAvP9MCKxajQoXjy2XBtLRBugTZJRlm3qbIOI131sqrg4GwWhjhqmA6vw==
-X-Received: by 2002:aa7:8387:0:b029:395:a683:a0e6 with SMTP id u7-20020aa783870000b0290395a683a0e6mr31367561pfm.12.1628635640525;
-        Tue, 10 Aug 2021 15:47:20 -0700 (PDT)
-Received: from [192.168.1.71] (122-61-176-117-fibre.sparkbb.co.nz. [122.61.176.117])
-        by smtp.gmail.com with ESMTPSA id a20sm4208799pjh.46.2021.08.10.15.47.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Aug 2021 15:47:19 -0700 (PDT)
-Cc:     mtk.manpages@gmail.com, Alejandro Colomar <alx.manpages@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: Questions re the new mount_setattr(2) manual page
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-References: <b58e2537-03f4-6f6c-4e1b-8ddd989624cc@gmail.com>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <d5a8061a-3d8a-6353-5158-8feee0156c6b@gmail.com>
-Date:   Wed, 11 Aug 2021 00:47:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S235501AbhHJXcA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 19:32:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235456AbhHJXb6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Aug 2021 19:31:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1977C60FDA;
+        Tue, 10 Aug 2021 23:31:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628638296;
+        bh=FSj08AAW3P9O++pzNdzS3oQBdehBQ/2Enk0U0D8H4u0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r3ByM0IXWzKuftFGqKcUgnsHAJtTMQzrbXKsUPUzERT/dKkvvEUL4hN6lbuGtyNXR
+         3MpQdFKh/2aReHr8i51DmiVXL9Lslec4LmUKH8eWJhMcK6sjzi0ILG4GEPfrD5c4UK
+         xi6w+9w6JjNIuA6tAzTgrvLeYlomrV/gHgNfDU2H6aIyVlVOFnayVlemAn0X1PuR+y
+         bAlQ9QrfHi8ua+h/dTSEhLhDJfjBZLJx1YpPMOIdRw1aS4HYULeXPzb1kJ3p1G0BUe
+         GOC4rSlDwHn4vsZyC8MekyIiBcuvqyyN28lddFLr87z/iTaOPMvQoKRimPBiTZHWPV
+         BXQuLQPbonTOg==
+Date:   Tue, 10 Aug 2021 16:31:35 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        cluster-devel@redhat.com
+Subject: Re: [PATCH 10/30] iomap: fix the iomap_readpage_actor return value
+ for inline data
+Message-ID: <20210810233135.GJ3601443@magnolia>
+References: <20210809061244.1196573-1-hch@lst.de>
+ <20210809061244.1196573-11-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <b58e2537-03f4-6f6c-4e1b-8ddd989624cc@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210809061244.1196573-11-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christian,
+On Mon, Aug 09, 2021 at 08:12:24AM +0200, Christoph Hellwig wrote:
+> The actor should never return a larger value than the length that was
+> passed in.  The current code handles this gracefully, but the opcoming
+> iter model will be more picky.
 
-Some further questions...
+s/opcoming/upcoming/
 
-In ERRORS there is:
+With that fixed,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-       EINVAL The underlying filesystem is mounted in a user namespace.
+--D
 
-I don't understand this. What does it mean?
-
-Also, there is this:
-
-       ENOMEM When  changing  mount  propagation to MS_SHARED, a new peer
-              group ID needs to be allocated for  all  mounts  without  a
-              peer  group  ID  set.  Allocation of this peer group ID has
-              failed.
-
-       ENOSPC When changing mount propagation to MS_SHARED,  a  new  peer
-              group  ID  needs  to  be allocated for all mounts without a
-              peer group ID set.  Allocation of this peer  group  ID  can
-              fail.  Note that technically further error codes are possi‐
-              ble that are specific to the ID  allocation  implementation
-              used.
-
-What is the difference between these two error cases? (That is, in what 
-circumstances will one get ENOMEM vs ENOSPC and vice versa?)
-
-And then:
-
-       EPERM  One  of  the mounts had at least one of MOUNT_ATTR_NOATIME,
-              MOUNT_ATTR_NODEV, MOUNT_ATTR_NODIRATIME, MOUNT_ATTR_NOEXEC,
-              MOUNT_ATTR_NOSUID, or MOUNT_ATTR_RDONLY set and the flag is
-              locked.  Mount attributes become locked on a mount if:
-
-              •  A new mount or mount tree is created causing mount prop‐
-                 agation  across  user  namespaces.  The kernel will lock
-
-Propagation is done across mont points, not user namespaces.
-should "across user namespaces" be "to a mount namespace owned 
-by a different user namespace"? Or something else?
-
-                 the aforementioned  flags  to  protect  these  sensitive
-                 properties from being altered.
-
-              •  A  new  mount  and user namespace pair is created.  This
-                 happens for  example  when  specifying  CLONE_NEWUSER  |
-                 CLONE_NEWNS  in unshare(2), clone(2), or clone3(2).  The
-                 aforementioned flags become locked to protect user name‐
-                 spaces from altering sensitive mount properties.
-
-Again, this seems imprecise. Should it say something like:
-"... to prevent changes to sensitive mount properties in the new 
-mount namespace" ? Or perhaps you have a better wording.
-
-Thanks,
-
-Michael
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/buffered-io.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 44587209e6d7c7..26e16cc9d44931 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -205,7 +205,7 @@ struct iomap_readpage_ctx {
+>  	struct readahead_control *rac;
+>  };
+>  
+> -static int iomap_read_inline_data(struct inode *inode, struct page *page,
+> +static loff_t iomap_read_inline_data(struct inode *inode, struct page *page,
+>  		const struct iomap *iomap)
+>  {
+>  	size_t size = i_size_read(inode) - iomap->offset;
+> @@ -253,7 +253,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	sector_t sector;
+>  
+>  	if (iomap->type == IOMAP_INLINE)
+> -		return iomap_read_inline_data(inode, page, iomap);
+> +		return min(iomap_read_inline_data(inode, page, iomap), length);
+>  
+>  	/* zero post-eof blocks as the page may be mapped */
+>  	iop = iomap_page_create(inode, page);
+> -- 
+> 2.30.2
+> 
