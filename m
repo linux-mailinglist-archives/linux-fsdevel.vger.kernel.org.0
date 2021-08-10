@@ -2,72 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B60683E7E0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 19:12:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE6683E7EB6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Aug 2021 19:34:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231382AbhHJRMu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 13:12:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45990 "EHLO
+        id S233192AbhHJRfA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 13:35:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbhHJRMu (ORCPT
+        with ESMTP id S232888AbhHJRe1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 13:12:50 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F3C4C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 10:12:28 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id b13so27312584wrs.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 10:12:27 -0700 (PDT)
+        Tue, 10 Aug 2021 13:34:27 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BFCDC061299
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 10:33:14 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id h17so18970346ljh.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Aug 2021 10:33:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=+MDYu2cZk5y6qEtCDaD7IWEU7wQ5JsJjonx7gGHCu64=;
-        b=GRNUIHc7UR6+JAiNxr0XByUIrbOVZHH0ol4G8bTa4UFEMX7F38BEwOYwLzJcmAkrLL
-         04+esfkuJ5d9If8JZ77uqLKxk8MXHPA4OT+M3c25h2E5qpljlG1oqFQa6ywvpeq9qu+C
-         fwRIUtNmrRGklk5s3pVSN8QfdK5XeOlLmFSBO6cNUNefKTCGzJSFb2UBNbWt/9nDYUV4
-         OJpTYlXYqDTkXejRwJRzBzqq+ZKRJNubt3jbKi6kqZUrAtqF7p+FVjSxvoxDHr3oW5pa
-         esP1yqdWeL2tnbQwy8YAdaKA/94OcaskJY4EQZegysayOw4eqFegjvRl9olhQ+BFiSYb
-         r4Ww==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=y3BZ+wT7TMDVjM2/WQcyPOhYkG/NWjvDbJIsMqFI2RA=;
+        b=RsiBBdA9QKOcTCF5lGXKVsjmClQ3sMV8nYRHi5UzQ6RFRdaZ6t981j56diJ7q3WLiT
+         dSrogDmRt6kwHS+J+pcIdphvlu5Vk62bOJudqb0dzEOf5Tr6sAVMWTY2NbEn++ZnSdaf
+         F4yj6h4F7VBk6uVCXN4p2StSiBpSckLhr0NJoCtUTvVh+gCrpSdvA2dss+nT8Q4XWg+b
+         4x9fMuBGMminOSzPCK8njOsWexpWsfb2omBFXa3GLhHqzUauC1r8oyB3fDvFuiS7qNjT
+         fDqijYMWxjmP3EeBvtWaIUY7Z5YEma/9OhqmI5Ya7ZKqW/5hzlkm8xAdNsqyzESz/5Xj
+         5sZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=+MDYu2cZk5y6qEtCDaD7IWEU7wQ5JsJjonx7gGHCu64=;
-        b=jaCBt5U1w6wtB0b4hYMnaN5UiDxp4NghZ1elkSnjoCVudfq5WOGJ2qoymNBLyZI/8b
-         lRhRga3gykdaXZGF7YoKBaeizyHCs3edQssI1ut4saa/qeNb7516f7p7P/dHL8A6p9PG
-         guymCrpEdZz5PpWWSh8+yS5ko/r5qzyDhk/JESgpWStegkkxNjpi+tbrIL1KrnFREXMF
-         gSgFpO/GhNmmgD31zylG1tp0c/1byh7PoW4xDRnDn/CMRn7K8p47CrJoPGekRCvbRpXd
-         X4tHfPpafHUlvnOHJh+rI2BcpNs44yHjFJ3RISOVR+FpDWTnQB3eSa8RzoWDcggzlOdQ
-         ORlg==
-X-Gm-Message-State: AOAM532BCBVlYLYgVvNJJuiFe9PhgxZSVSmNIJsA8EBHz8o95F6cJsfD
-        HHVS3fn9lZ1DCFcvlLKJf4r8JtJdMexEh6A1URA=
-X-Google-Smtp-Source: ABdhPJxTm3qKUELiMFxpvNv4nvf6lVtpHDTCKb7mW2HjPHktnoVdnsfVyzN5GWoFNEmjSNN8TvEUm6DA9OalsABMDd4=
-X-Received: by 2002:adf:e107:: with SMTP id t7mr32349301wrz.165.1628615546574;
- Tue, 10 Aug 2021 10:12:26 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=y3BZ+wT7TMDVjM2/WQcyPOhYkG/NWjvDbJIsMqFI2RA=;
+        b=a9HfWamiFZ0Jk+22YV805sJgVTZBdrnzHTnnPd0uxFO36B2SOKFzPoQQv+qsf3n/hk
+         LgbEzNnWNTGflBC4SsW5weIj8u39VvhjzoJEzx0kjlhxaNg6oMMyQPblKQnQw0M3KXbO
+         Re8E5Tk+DNzFt74quKF/Z8pHfVYYufh/UjFLSBSRcSqVjahbetpBgJa9RiPNpQ8rxqlW
+         IMsTSu5FPHh4v1+AvQP6zmjhJu55wXR4zq8O26YwxQ8Xsb9ukkihX+uQwVM4gVXLi8aB
+         GBxEAPgrqYxp+OFqAaqXRG72dpswm4lWNTc7lKAiFpp3oErZhQfYeTxMdzVWLR77uK3O
+         wS0w==
+X-Gm-Message-State: AOAM533vSDOTPcCeJMQy73mKXVfxbhisNwFa5xIYQNVq9+AfdzBDrl87
+        fxTbfDEvtSuj3hCV2jBWVeoiiaSoeQrK/UgHGgg=
+X-Google-Smtp-Source: ABdhPJw+sC+pBQw0G+0ULVvin/r/jCVVb1V7XUqN67UCoWrnBzyIXnaSzK5br1SZrCupI/L0LIZWgMfi7vhpZK+Wcm0=
+X-Received: by 2002:a05:651c:32c:: with SMTP id b12mr1745558ljp.198.1628616792032;
+ Tue, 10 Aug 2021 10:33:12 -0700 (PDT)
 MIME-Version: 1.0
-Reply-To: mrakainkarim7@gmail.com
-Sender: duobnezwo@gmail.com
-Received: by 2002:adf:ba4d:0:0:0:0:0 with HTTP; Tue, 10 Aug 2021 10:12:26
+Received: by 2002:ac2:5d2e:0:0:0:0:0 with HTTP; Tue, 10 Aug 2021 10:33:10
  -0700 (PDT)
-From:   Mr Akain Karim <aeyuhlmy739@gmail.com>
-Date:   Tue, 10 Aug 2021 10:12:26 -0700
-X-Google-Sender-Auth: iCGS4b5YBnbqUkEGUh0vE-A3eWM
-Message-ID: <CAA0PdhY6HAnV=i6xn+X=N6xxGGJac0KE_uyAwEUCWwkpLhOymQ@mail.gmail.com>
-Subject: Greetings
+Reply-To: majidmuzaffar8@gmail.com
+From:   Majid Muzaffar <ing.abdullabin.rishid.me@gmail.com>
+Date:   Tue, 10 Aug 2021 20:33:10 +0300
+Message-ID: <CAFsu49XXzY7ugKhGzJm5OPKe2LG1R35c-Dkp83VgS3+u27y=sQ@mail.gmail.com>
+Subject: Proposal
 To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
--- 
-*Compliment of the day,I am Mr. Akain Karim,  I Have a Business Proposal of
-$10.5million for you and I  was compelled to use this medium due to the
-nature of this project, I have access to very vital information that can be
-used to transfer this huge amount of money, which may culminate into the
-investment of the said funds into your company or any lucrative venture in
-your country. If you will like to assist me as a partner then indicate your
-interest, after which we shall both discuss the modalities and the sharing
-percentage.Upon receipt of your reply on your expression of Interest.I will
-give you full details on how the business will be executed and I am open
-for negotiation.Thanks for your anticipated cooperation.Best RegardsMr. 	
-Akain Karim*  Please feel free to reach me on my e-mail:mrakainkarim7@gmail.com
+Salam alaikum,
+
+I am the investment officer of UAE based investment company who are
+ready to fund projects outside UAE, in the form of debt finance. We
+grant loan to both Corporate and private entities at a low interest
+rate of 3% ROI per annum. The terms are very flexible and interesting.
+Kindly revert back if you have projects that needs funding for further
+discussion and negotiation.
+
+Thanks
+
+investment officer
