@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2B8C3E871C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 02:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB2223E8743
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 02:31:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235678AbhHKASI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 20:18:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34114 "EHLO mail.kernel.org"
+        id S235757AbhHKAbm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 20:31:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235600AbhHKASG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 20:18:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E2A2D60F25;
-        Wed, 11 Aug 2021 00:17:43 +0000 (UTC)
+        id S231423AbhHKAbl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Aug 2021 20:31:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D366860EB9;
+        Wed, 11 Aug 2021 00:31:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628641064;
-        bh=d0DesKDXWr7xpRbrzvzASZdQvrSeDD/FLh4i2jT+pXY=;
+        s=k20201202; t=1628641878;
+        bh=gBI34d3C+kxYXbvJ/grq+YaqzvQXqhA5HY0T+jbkLgE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tSLYssCudXqzhX2hF6Y2aGLsb3zz0JzfJpLBVvh8O53gp8WSmFuWI1Wng0WqY+txY
-         v0s2JRJwlMwvXHiphurulu2fGHs23HOhYvmnRMqPtTIJTMUKwxNzsWKPLSh/j24AyI
-         cZvZq65T0xEbPd4K5g7NfCjkipOiV31FDP/ITPBTRWKKXXBcTmcWEAyi/jpGXwpYDC
-         t2T+y5PJsvU3A+qymT6/SEsH+0BvxGDv9d7OQYDP5S24PLlWI9mSrqNxuzF5fn72AL
-         7orAkESm3jCeCw35hzpmc6AGhtaZmBjdR6K2dgH+xYltjV4oLUQkFXI0FMsKGYImhY
-         zrLc1Rh1XWggQ==
-Date:   Tue, 10 Aug 2021 17:17:43 -0700
+        b=nKze7mBDFVcCSar0LHAm8ewmyshJaDLeBhF8/Ch7M1p2CiB5A86HFpOKW7lMfCCtS
+         qbqdyDNoVm2l2MyhtFhuFTpa8lLdHU2XUPJZWL3YlI18vxr9dMB7Nxk+BGhN2ZqFRl
+         x+Ev9SNarHvCGvuMpffGjjDo7TsCzN3cdPieEzfUgtrQRfbQCNA1jrO8vvvsFvUyMu
+         i0pqXLZfDUmAYCUo2NWe1qNhTJWnoxXGUwLUUjxytKPrtoPDZEt8mjlKfNIWI321AF
+         66F+4eFE9SivNFNmWthiaeVBFu9FNOJog8hRII4rQuxemw2km1vFjX0tGySEVss+lX
+         TAHBnfJeaAF2A==
+Date:   Tue, 10 Aug 2021 17:31:18 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -33,430 +33,281 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: Re: [PATCH 17/30] iomap: switch __iomap_dio_rw to use iomap_iter
-Message-ID: <20210811001743.GU3601443@magnolia>
+Subject: Re: [PATCH 11/30] iomap: add the new iomap_iter model
+Message-ID: <20210811003118.GT3601466@magnolia>
 References: <20210809061244.1196573-1-hch@lst.de>
- <20210809061244.1196573-18-hch@lst.de>
+ <20210809061244.1196573-12-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210809061244.1196573-18-hch@lst.de>
+In-Reply-To: <20210809061244.1196573-12-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 09, 2021 at 08:12:31AM +0200, Christoph Hellwig wrote:
-> Switch __iomap_dio_rw to use iomap_iter.
+On Mon, Aug 09, 2021 at 08:12:25AM +0200, Christoph Hellwig wrote:
+> The iomap_iter struct provides a convenient way to package up and
+> maintain all the arguments to the various mapping and operation
+> functions.  It is operated on using the iomap_iter() function that
+> is called in loop until the whole range has been processed.  Compared
+> to the existing iomap_apply() function this avoid an indirect call
+> for each iteration.
+> 
+> For now iomap_iter() calls back into the existing ->iomap_begin and
+> ->iomap_end methods, but in the future this could be further optimized
+> to avoid indirect calls entirely.
+> 
+> Based on an earlier patch from Matthew Wilcox <willy@infradead.org>.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/Makefile     |  1 +
+>  fs/iomap/core.c       | 79 +++++++++++++++++++++++++++++++++++++++++++
+>  fs/iomap/trace.h      | 37 +++++++++++++++++++-
+>  include/linux/iomap.h | 56 ++++++++++++++++++++++++++++++
+>  4 files changed, 172 insertions(+), 1 deletion(-)
+>  create mode 100644 fs/iomap/core.c
+> 
+> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
+> index eef2722d93a183..6b56b10ded347a 100644
+> --- a/fs/iomap/Makefile
+> +++ b/fs/iomap/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_FS_IOMAP)		+= iomap.o
+>  
+>  iomap-y				+= trace.o \
+>  				   apply.o \
+> +				   core.o \
+>  				   buffered-io.o \
+>  				   direct-io.o \
+>  				   fiemap.o \
+> diff --git a/fs/iomap/core.c b/fs/iomap/core.c
+> new file mode 100644
+> index 00000000000000..89a87a1654e8e6
+> --- /dev/null
+> +++ b/fs/iomap/core.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2021 Christoph Hellwig.
+> + */
+> +#include <linux/fs.h>
+> +#include <linux/iomap.h>
+> +#include "trace.h"
+> +
+> +static inline int iomap_iter_advance(struct iomap_iter *iter)
+> +{
+> +	/* handle the previous iteration (if any) */
+> +	if (iter->iomap.length) {
+> +		if (iter->processed <= 0)
+> +			return iter->processed;
+> +		if (WARN_ON_ONCE(iter->processed > iomap_length(iter)))
+> +			return -EIO;
+> +		iter->pos += iter->processed;
+> +		iter->len -= iter->processed;
+> +		if (!iter->len)
+> +			return 0;
+> +	}
+> +
+> +	/* clear the state for the next iteration */
+> +	iter->processed = 0;
+> +	memset(&iter->iomap, 0, sizeof(iter->iomap));
+> +	memset(&iter->srcmap, 0, sizeof(iter->srcmap));
+> +	return 1;
+> +}
+> +
+> +static inline void iomap_iter_done(struct iomap_iter *iter)
 
-I like the reduction in ->submit_io arguments.  The conversion seems
-straightforward enough.
+I wonder why this is a separate function, since it only has debugging
+warnings and tracepoints?
+
+> +{
+> +	WARN_ON_ONCE(iter->iomap.offset > iter->pos);
+> +	WARN_ON_ONCE(iter->iomap.length == 0);
+> +	WARN_ON_ONCE(iter->iomap.offset + iter->iomap.length <= iter->pos);
+> +
+> +	trace_iomap_iter_dstmap(iter->inode, &iter->iomap);
+> +	if (iter->srcmap.type != IOMAP_HOLE)
+> +		trace_iomap_iter_srcmap(iter->inode, &iter->srcmap);
+> +}
+> +
+> +/**
+> + * iomap_iter - iterate over a ranges in a file
+> + * @iter: iteration structue
+> + * @ops: iomap ops provided by the file system
+> + *
+> + * Iterate over filesystem-provided space mappings for the provided file range.
+> + *
+> + * This function handles cleanup of resources acquired for iteration when the
+> + * filesystem indicates there are no more space mappings, which means that this
+> + * function must be called in a loop that continues as long it returns a
+> + * positive value.  If 0 or a negative value is returned, the caller must not
+> + * return to the loop body.  Within a loop body, there are two ways to break out
+> + * of the loop body:  leave @iter.processed unchanged, or set it to a negative
+> + * errno.
+
+Thanks for improving the documentation.
+
+Modulo the question about iomap_iter_done, I guess this looks all right
+to me.  As far as apply.c vs. core.c, I'm not wildly passionate about
+either naming choice (I would have called it iter.c) but ... fmeh.
 
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
-> ---
->  fs/btrfs/inode.c      |   5 +-
->  fs/iomap/direct-io.c  | 164 +++++++++++++++++++++---------------------
->  include/linux/iomap.h |   4 +-
->  3 files changed, 86 insertions(+), 87 deletions(-)
-> 
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 0117d867ecf876..3b0595e8bdd929 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -8194,9 +8194,10 @@ static struct btrfs_dio_private *btrfs_create_dio_private(struct bio *dio_bio,
->  	return dip;
->  }
->  
-> -static blk_qc_t btrfs_submit_direct(struct inode *inode, struct iomap *iomap,
-> +static blk_qc_t btrfs_submit_direct(const struct iomap_iter *iter,
->  		struct bio *dio_bio, loff_t file_offset)
->  {
-> +	struct inode *inode = iter->inode;
->  	const bool write = (btrfs_op(dio_bio) == BTRFS_MAP_WRITE);
->  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
->  	const bool raid56 = (btrfs_data_alloc_profile(fs_info) &
-> @@ -8212,7 +8213,7 @@ static blk_qc_t btrfs_submit_direct(struct inode *inode, struct iomap *iomap,
->  	int ret;
->  	blk_status_t status;
->  	struct btrfs_io_geometry geom;
-> -	struct btrfs_dio_data *dio_data = iomap->private;
-> +	struct btrfs_dio_data *dio_data = iter->iomap.private;
->  	struct extent_map *em = NULL;
->  
->  	dip = btrfs_create_dio_private(dio_bio, inode, file_offset);
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 41ccbfc9dc820a..4ecd255e0511ce 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -1,7 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (C) 2010 Red Hat, Inc.
-> - * Copyright (c) 2016-2018 Christoph Hellwig.
-> + * Copyright (c) 2016-2021 Christoph Hellwig.
->   */
->  #include <linux/module.h>
->  #include <linux/compiler.h>
-> @@ -59,19 +59,17 @@ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin)
->  }
->  EXPORT_SYMBOL_GPL(iomap_dio_iopoll);
->  
-> -static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
-> -		struct bio *bio, loff_t pos)
-> +static void iomap_dio_submit_bio(const struct iomap_iter *iter,
-> +		struct iomap_dio *dio, struct bio *bio, loff_t pos)
->  {
->  	atomic_inc(&dio->ref);
->  
->  	if (dio->iocb->ki_flags & IOCB_HIPRI)
->  		bio_set_polled(bio, dio->iocb);
->  
-> -	dio->submit.last_queue = bdev_get_queue(iomap->bdev);
-> +	dio->submit.last_queue = bdev_get_queue(iter->iomap.bdev);
->  	if (dio->dops && dio->dops->submit_io)
-> -		dio->submit.cookie = dio->dops->submit_io(
-> -				file_inode(dio->iocb->ki_filp),
-> -				iomap, bio, pos);
-> +		dio->submit.cookie = dio->dops->submit_io(iter, bio, pos);
->  	else
->  		dio->submit.cookie = submit_bio(bio);
->  }
-> @@ -181,24 +179,23 @@ static void iomap_dio_bio_end_io(struct bio *bio)
->  	}
->  }
->  
-> -static void
-> -iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
-> -		unsigned len)
-> +static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-> +		loff_t pos, unsigned len)
->  {
->  	struct page *page = ZERO_PAGE(0);
->  	int flags = REQ_SYNC | REQ_IDLE;
->  	struct bio *bio;
->  
->  	bio = bio_alloc(GFP_KERNEL, 1);
-> -	bio_set_dev(bio, iomap->bdev);
-> -	bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
-> +	bio_set_dev(bio, iter->iomap.bdev);
-> +	bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
->  	bio->bi_private = dio;
->  	bio->bi_end_io = iomap_dio_bio_end_io;
->  
->  	get_page(page);
->  	__bio_add_page(bio, page, len, 0);
->  	bio_set_op_attrs(bio, REQ_OP_WRITE, flags);
-> -	iomap_dio_submit_bio(dio, iomap, bio, pos);
-> +	iomap_dio_submit_bio(iter, dio, bio, pos);
->  }
->  
->  /*
-> @@ -206,8 +203,8 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
->   * mapping, and whether or not we want FUA.  Note that we can end up
->   * clearing the WRITE_FUA flag in the dio request.
->   */
-> -static inline unsigned int
-> -iomap_dio_bio_opflags(struct iomap_dio *dio, struct iomap *iomap, bool use_fua)
-> +static inline unsigned int iomap_dio_bio_opflags(struct iomap_dio *dio,
-> +		const struct iomap *iomap, bool use_fua)
->  {
->  	unsigned int opflags = REQ_SYNC | REQ_IDLE;
->  
-> @@ -229,13 +226,16 @@ iomap_dio_bio_opflags(struct iomap_dio *dio, struct iomap *iomap, bool use_fua)
->  	return opflags;
->  }
->  
-> -static loff_t
-> -iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		struct iomap_dio *dio, struct iomap *iomap)
-> +static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> +		struct iomap_dio *dio)
->  {
-> +	const struct iomap *iomap = &iter->iomap;
-> +	struct inode *inode = iter->inode;
->  	unsigned int blkbits = blksize_bits(bdev_logical_block_size(iomap->bdev));
->  	unsigned int fs_block_size = i_blocksize(inode), pad;
->  	unsigned int align = iov_iter_alignment(dio->submit.iter);
-> +	loff_t length = iomap_length(iter);
-> +	loff_t pos = iter->pos;
->  	unsigned int bio_opf;
->  	struct bio *bio;
->  	bool need_zeroout = false;
-> @@ -286,7 +286,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		/* zero out from the start of the block to the write offset */
->  		pad = pos & (fs_block_size - 1);
->  		if (pad)
-> -			iomap_dio_zero(dio, iomap, pos - pad, pad);
-> +			iomap_dio_zero(iter, dio, pos - pad, pad);
->  	}
->  
->  	/*
-> @@ -339,7 +339,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  
->  		nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter,
->  						 BIO_MAX_VECS);
-> -		iomap_dio_submit_bio(dio, iomap, bio, pos);
-> +		iomap_dio_submit_bio(iter, dio, bio, pos);
->  		pos += n;
->  	} while (nr_pages);
->  
-> @@ -355,7 +355,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		/* zero out from the end of the write to the end of the block */
->  		pad = pos & (fs_block_size - 1);
->  		if (pad)
-> -			iomap_dio_zero(dio, iomap, pos, fs_block_size - pad);
-> +			iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
->  	}
->  out:
->  	/* Undo iter limitation to current extent */
-> @@ -365,35 +365,38 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  	return ret;
->  }
->  
-> -static loff_t
-> -iomap_dio_hole_actor(loff_t length, struct iomap_dio *dio)
-> +static loff_t iomap_dio_hole_iter(const struct iomap_iter *iter,
-> +		struct iomap_dio *dio)
->  {
-> -	length = iov_iter_zero(length, dio->submit.iter);
-> +	loff_t length = iov_iter_zero(iomap_length(iter), dio->submit.iter);
+> + */
+> +int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+> +{
+> +	int ret;
 > +
->  	dio->size += length;
->  	return length;
->  }
->  
-> -static loff_t
-> -iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		struct iomap_dio *dio, struct iomap *iomap)
-> +static loff_t iomap_dio_inline_iter(const struct iomap_iter *iomi,
-> +		struct iomap_dio *dio)
->  {
-> +	const struct iomap *iomap = &iomi->iomap;
->  	struct iov_iter *iter = dio->submit.iter;
-> -	void *inline_data = iomap_inline_data(iomap, pos);
-> +	void *inline_data = iomap_inline_data(iomap, iomi->pos);
-> +	loff_t length = iomap_length(iomi);
-> +	loff_t pos = iomi->pos;
->  	size_t copied;
->  
->  	if (WARN_ON_ONCE(!iomap_inline_data_valid(iomap)))
->  		return -EIO;
->  
->  	if (dio->flags & IOMAP_DIO_WRITE) {
-> -		loff_t size = inode->i_size;
-> +		loff_t size = iomi->inode->i_size;
->  
->  		if (pos > size)
->  			memset(iomap_inline_data(iomap, size), 0, pos - size);
->  		copied = copy_from_iter(inline_data, length, iter);
->  		if (copied) {
->  			if (pos + copied > size)
-> -				i_size_write(inode, pos + copied);
-> -			mark_inode_dirty(inode);
-> +				i_size_write(iomi->inode, pos + copied);
-> +			mark_inode_dirty(iomi->inode);
->  		}
->  	} else {
->  		copied = copy_to_iter(inline_data, length, iter);
-> @@ -402,30 +405,27 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
->  	return copied;
->  }
->  
-> -static loff_t
-> -iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap, struct iomap *srcmap)
-> +static loff_t iomap_dio_iter(const struct iomap_iter *iter,
-> +		struct iomap_dio *dio)
->  {
-> -	struct iomap_dio *dio = data;
-> -
-> -	switch (iomap->type) {
-> +	switch (iter->iomap.type) {
->  	case IOMAP_HOLE:
->  		if (WARN_ON_ONCE(dio->flags & IOMAP_DIO_WRITE))
->  			return -EIO;
-> -		return iomap_dio_hole_actor(length, dio);
-> +		return iomap_dio_hole_iter(iter, dio);
->  	case IOMAP_UNWRITTEN:
->  		if (!(dio->flags & IOMAP_DIO_WRITE))
-> -			return iomap_dio_hole_actor(length, dio);
-> -		return iomap_dio_bio_actor(inode, pos, length, dio, iomap);
-> +			return iomap_dio_hole_iter(iter, dio);
-> +		return iomap_dio_bio_iter(iter, dio);
->  	case IOMAP_MAPPED:
-> -		return iomap_dio_bio_actor(inode, pos, length, dio, iomap);
-> +		return iomap_dio_bio_iter(iter, dio);
->  	case IOMAP_INLINE:
-> -		return iomap_dio_inline_actor(inode, pos, length, dio, iomap);
-> +		return iomap_dio_inline_iter(iter, dio);
->  	case IOMAP_DELALLOC:
->  		/*
->  		 * DIO is not serialised against mmap() access at all, and so
->  		 * if the page_mkwrite occurs between the writeback and the
-> -		 * iomap_apply() call in the DIO path, then it will see the
-> +		 * iomap_iter() call in the DIO path, then it will see the
->  		 * DELALLOC block that the page-mkwrite allocated.
->  		 */
->  		pr_warn_ratelimited("Direct I/O collision with buffered writes! File: %pD4 Comm: %.20s\n",
-> @@ -456,16 +456,19 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  {
->  	struct address_space *mapping = iocb->ki_filp->f_mapping;
->  	struct inode *inode = file_inode(iocb->ki_filp);
-> -	size_t count = iov_iter_count(iter);
-> -	loff_t pos = iocb->ki_pos;
-> -	loff_t end = iocb->ki_pos + count - 1, ret = 0;
-> +	struct iomap_iter iomi = {
-> +		.inode		= inode,
-> +		.pos		= iocb->ki_pos,
-> +		.len		= iov_iter_count(iter),
-> +		.flags		= IOMAP_DIRECT,
-> +	};
-> +	loff_t end = iomi.pos + iomi.len - 1, ret = 0;
->  	bool wait_for_completion =
->  		is_sync_kiocb(iocb) || (dio_flags & IOMAP_DIO_FORCE_WAIT);
-> -	unsigned int iomap_flags = IOMAP_DIRECT;
->  	struct blk_plug plug;
->  	struct iomap_dio *dio;
->  
-> -	if (!count)
-> +	if (!iomi.len)
->  		return NULL;
->  
->  	dio = kmalloc(sizeof(*dio), GFP_KERNEL);
-> @@ -486,29 +489,30 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	dio->submit.last_queue = NULL;
->  
->  	if (iov_iter_rw(iter) == READ) {
-> -		if (pos >= dio->i_size)
-> +		if (iomi.pos >= dio->i_size)
->  			goto out_free_dio;
->  
->  		if (iocb->ki_flags & IOCB_NOWAIT) {
-> -			if (filemap_range_needs_writeback(mapping, pos, end)) {
-> +			if (filemap_range_needs_writeback(mapping, iomi.pos,
-> +					end)) {
->  				ret = -EAGAIN;
->  				goto out_free_dio;
->  			}
-> -			iomap_flags |= IOMAP_NOWAIT;
-> +			iomi.flags |= IOMAP_NOWAIT;
->  		}
->  
->  		if (iter_is_iovec(iter))
->  			dio->flags |= IOMAP_DIO_DIRTY;
->  	} else {
-> -		iomap_flags |= IOMAP_WRITE;
-> +		iomi.flags |= IOMAP_WRITE;
->  		dio->flags |= IOMAP_DIO_WRITE;
->  
->  		if (iocb->ki_flags & IOCB_NOWAIT) {
-> -			if (filemap_range_has_page(mapping, pos, end)) {
-> +			if (filemap_range_has_page(mapping, iomi.pos, end)) {
->  				ret = -EAGAIN;
->  				goto out_free_dio;
->  			}
-> -			iomap_flags |= IOMAP_NOWAIT;
-> +			iomi.flags |= IOMAP_NOWAIT;
->  		}
->  
->  		/* for data sync or sync, we need sync completion processing */
-> @@ -527,12 +531,13 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  
->  	if (dio_flags & IOMAP_DIO_OVERWRITE_ONLY) {
->  		ret = -EAGAIN;
-> -		if (pos >= dio->i_size || pos + count > dio->i_size)
-> +		if (iomi.pos >= dio->i_size ||
-> +		    iomi.pos + iomi.len > dio->i_size)
->  			goto out_free_dio;
-> -		iomap_flags |= IOMAP_OVERWRITE_ONLY;
-> +		iomi.flags |= IOMAP_OVERWRITE_ONLY;
->  	}
->  
-> -	ret = filemap_write_and_wait_range(mapping, pos, end);
-> +	ret = filemap_write_and_wait_range(mapping, iomi.pos, end);
->  	if (ret)
->  		goto out_free_dio;
->  
-> @@ -542,9 +547,10 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  		 * If this invalidation fails, let the caller fall back to
->  		 * buffered I/O.
->  		 */
-> -		if (invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
-> -				end >> PAGE_SHIFT)) {
-> -			trace_iomap_dio_invalidate_fail(inode, pos, count);
-> +		if (invalidate_inode_pages2_range(mapping,
-> +				iomi.pos >> PAGE_SHIFT, end >> PAGE_SHIFT)) {
-> +			trace_iomap_dio_invalidate_fail(inode, iomi.pos,
-> +							iomi.len);
->  			ret = -ENOTBLK;
->  			goto out_free_dio;
->  		}
-> @@ -559,31 +565,23 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	inode_dio_begin(inode);
->  
->  	blk_start_plug(&plug);
-> -	do {
-> -		ret = iomap_apply(inode, pos, count, iomap_flags, ops, dio,
-> -				iomap_dio_actor);
-> -		if (ret <= 0) {
-> -			/* magic error code to fall back to buffered I/O */
-> -			if (ret == -ENOTBLK) {
-> -				wait_for_completion = true;
-> -				ret = 0;
-> -			}
-> -			break;
-> -		}
-> -		pos += ret;
-> -
-> -		if (iov_iter_rw(iter) == READ && pos >= dio->i_size) {
-> -			/*
-> -			 * We only report that we've read data up to i_size.
-> -			 * Revert iter to a state corresponding to that as
-> -			 * some callers (such as splice code) rely on it.
-> -			 */
-> -			iov_iter_revert(iter, pos - dio->i_size);
-> -			break;
-> -		}
-> -	} while ((count = iov_iter_count(iter)) > 0);
-> +	while ((ret = iomap_iter(&iomi, ops)) > 0)
-> +		iomi.processed = iomap_dio_iter(&iomi, dio);
->  	blk_finish_plug(&plug);
->  
-> +	/*
-> +	 * We only report that we've read data up to i_size.
-> +	 * Revert iter to a state corresponding to that as some callers (such
-> +	 * as the splice code) rely on it.
-> +	 */
-> +	if (iov_iter_rw(iter) == READ && iomi.pos >= dio->i_size)
-> +		iov_iter_revert(iter, iomi.pos - dio->i_size);
-> +
-> +	/* magic error code to fall back to buffered I/O */
-> +	if (ret == -ENOTBLK) {
-> +		wait_for_completion = true;
-> +		ret = 0;
+> +	if (iter->iomap.length && ops->iomap_end) {
+> +		ret = ops->iomap_end(iter->inode, iter->pos, iomap_length(iter),
+> +				iter->processed > 0 ? iter->processed : 0,
+> +				iter->flags, &iter->iomap);
+> +		if (ret < 0 && !iter->processed)
+> +			return ret;
 > +	}
->  	if (ret < 0)
->  		iomap_dio_set_error(dio, ret);
+> +
+> +	trace_iomap_iter(iter, ops, _RET_IP_);
+> +	ret = iomap_iter_advance(iter);
+> +	if (ret <= 0)
+> +		return ret;
+> +
+> +	ret = ops->iomap_begin(iter->inode, iter->pos, iter->len, iter->flags,
+> +			       &iter->iomap, &iter->srcmap);
+> +	if (ret < 0)
+> +		return ret;
+> +	iomap_iter_done(iter);
+> +	return 1;
+> +}
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index e9cd5cc0d6ba40..1012d7af6b689b 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+> - * Copyright (c) 2009-2019 Christoph Hellwig
+> + * Copyright (c) 2009-2021 Christoph Hellwig
+>   *
+>   * NOTE: none of these tracepoints shall be considered a stable kernel ABI
+>   * as they can change at any time.
+> @@ -140,6 +140,8 @@ DEFINE_EVENT(iomap_class, name,	\
+>  	TP_ARGS(inode, iomap))
+>  DEFINE_IOMAP_EVENT(iomap_apply_dstmap);
+>  DEFINE_IOMAP_EVENT(iomap_apply_srcmap);
+> +DEFINE_IOMAP_EVENT(iomap_iter_dstmap);
+> +DEFINE_IOMAP_EVENT(iomap_iter_srcmap);
 >  
+>  TRACE_EVENT(iomap_apply,
+>  	TP_PROTO(struct inode *inode, loff_t pos, loff_t length,
+> @@ -179,6 +181,39 @@ TRACE_EVENT(iomap_apply,
+>  		   __entry->actor)
+>  );
+>  
+> +TRACE_EVENT(iomap_iter,
+> +	TP_PROTO(struct iomap_iter *iter, const void *ops,
+> +		 unsigned long caller),
+> +	TP_ARGS(iter, ops, caller),
+> +	TP_STRUCT__entry(
+> +		__field(dev_t, dev)
+> +		__field(u64, ino)
+> +		__field(loff_t, pos)
+> +		__field(loff_t, length)
+> +		__field(unsigned int, flags)
+> +		__field(const void *, ops)
+> +		__field(unsigned long, caller)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->dev = iter->inode->i_sb->s_dev;
+> +		__entry->ino = iter->inode->i_ino;
+> +		__entry->pos = iter->pos;
+> +		__entry->length = iomap_length(iter);
+> +		__entry->flags = iter->flags;
+> +		__entry->ops = ops;
+> +		__entry->caller = caller;
+> +	),
+> +	TP_printk("dev %d:%d ino 0x%llx pos %lld length %lld flags %s (0x%x) ops %ps caller %pS",
+> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
+> +		   __entry->ino,
+> +		   __entry->pos,
+> +		   __entry->length,
+> +		   __print_flags(__entry->flags, "|", IOMAP_FLAGS_STRINGS),
+> +		   __entry->flags,
+> +		   __entry->ops,
+> +		   (void *)__entry->caller)
+> +);
+> +
+>  #endif /* _IOMAP_TRACE_H */
+>  
+>  #undef TRACE_INCLUDE_PATH
 > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index aac4176ea16439..66e04aedd2ca83 100644
+> index 76bfc5d16ef49d..aac4176ea16439 100644
 > --- a/include/linux/iomap.h
 > +++ b/include/linux/iomap.h
-> @@ -322,8 +322,8 @@ int iomap_writepages(struct address_space *mapping,
->  struct iomap_dio_ops {
->  	int (*end_io)(struct kiocb *iocb, ssize_t size, int error,
->  		      unsigned flags);
-> -	blk_qc_t (*submit_io)(struct inode *inode, struct iomap *iomap,
-> -			struct bio *bio, loff_t file_offset);
-> +	blk_qc_t (*submit_io)(const struct iomap_iter *iter, struct bio *bio,
-> +			      loff_t file_offset);
+> @@ -161,6 +161,62 @@ struct iomap_ops {
+>  			ssize_t written, unsigned flags, struct iomap *iomap);
 >  };
 >  
+> +/**
+> + * struct iomap_iter - Iterate through a range of a file
+> + * @inode: Set at the start of the iteration and should not change.
+> + * @pos: The current file position we are operating on.  It is updated by
+> + *	calls to iomap_iter().  Treat as read-only in the body.
+> + * @len: The remaining length of the file segment we're operating on.
+> + *	It is updated at the same time as @pos.
+> + * @processed: The number of bytes processed by the body in the most recent
+> + *	iteration, or a negative errno. 0 causes the iteration to stop.
+> + * @flags: Zero or more of the iomap_begin flags above.
+> + * @iomap: Map describing the I/O iteration
+> + * @srcmap: Source map for COW operations
+> + */
+> +struct iomap_iter {
+> +	struct inode *inode;
+> +	loff_t pos;
+> +	u64 len;
+> +	s64 processed;
+> +	unsigned flags;
+> +	struct iomap iomap;
+> +	struct iomap srcmap;
+> +};
+> +
+> +int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops);
+> +
+> +/**
+> + * iomap_length - length of the current iomap iteration
+> + * @iter: iteration structure
+> + *
+> + * Returns the length that the operation applies to for the current iteration.
+> + */
+> +static inline u64 iomap_length(const struct iomap_iter *iter)
+> +{
+> +	u64 end = iter->iomap.offset + iter->iomap.length;
+> +
+> +	if (iter->srcmap.type != IOMAP_HOLE)
+> +		end = min(end, iter->srcmap.offset + iter->srcmap.length);
+> +	return min(iter->len, end - iter->pos);
+> +}
+> +
+> +/**
+> + * iomap_iter_srcmap - return the source map for the current iomap iteration
+> + * @i: iteration structure
+> + *
+> + * Write operations on file systems with reflink support might require a
+> + * source and a destination map.  This function retourns the source map
+> + * for a given operation, which may or may no be identical to the destination
+> + * map in &i->iomap.
+> + */
+> +static inline struct iomap *iomap_iter_srcmap(struct iomap_iter *i)
+> +{
+> +	if (i->srcmap.type != IOMAP_HOLE)
+> +		return &i->srcmap;
+> +	return &i->iomap;
+> +}
+> +
 >  /*
+>   * Main iomap iterator function.
+>   */
 > -- 
 > 2.30.2
 > 
