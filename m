@@ -2,262 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD933E97CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 20:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F045A3E983F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 21:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230270AbhHKSmB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 14:42:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51464 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229802AbhHKSmB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 14:42:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628707296;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WCRvG0nT8eYow76GIS0OaHgCKSzTjyOv3zg2eLrvx08=;
-        b=gKdUru/B+roffLYcmfmmdV9fvGmHg44Q/YD/upF914mGmeTWU17QRgp2j2y3fmj1Dn5/Y2
-        WS8HQLod6eh+IYvHMr1caTAifzuplxF17mnxqt2hFzsryhorzwe/mI4ADFsDSXrROfHWnc
-        ZRBCOZIAYud9bh1sIGD6WsDxoFXUI5k=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-106-5P-hk1WpM1q_VXB6yY9Caw-1; Wed, 11 Aug 2021 14:41:35 -0400
-X-MC-Unique: 5P-hk1WpM1q_VXB6yY9Caw-1
-Received: by mail-wr1-f71.google.com with SMTP id o10-20020a5d684a0000b0290154758805bcso1055081wrw.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Aug 2021 11:41:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:organization:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=WCRvG0nT8eYow76GIS0OaHgCKSzTjyOv3zg2eLrvx08=;
-        b=tvlL+jMZ7cedIYhWJOcu2sBDNJzAl5f4cTZMgHxBetNEiBCTwZx57Q/qfxl0+lf0xO
-         KSgzO40KDkw6z5ie3lZFHtwNH1hsBy4TKeqWxgjmUUULhBGtN6JZOBbJikePqk2NYCkl
-         8m0Jy3VS5nXxbeJk/WQdBCiWHi9D9dtAEA9/pE0WvkNUWwfdEsXXxvBXaPIuSQr2rn/g
-         +TEmLo0l6taiczyl/TVOZqJ+7Ye+9NDiVjFKqygHg08wp7tmaWXgYAGssscXEGWvp50R
-         G8/vQj7IVKHjNqH4ARoQia4EjablWGsUvK7T46wQ8/LtaLYmVWZci6TaHqMPWMCk0ftp
-         XaDQ==
-X-Gm-Message-State: AOAM530OWT8YVj5qHB5Vn9GKwPpAAd0OE+09wZGTY/12rOenevQOyQXv
-        aOusy+xTNDLFXNVEZI8L+Ir8YC149NsPYsblb0xJbiDBG+atc5HVtF+2l2F/cpwE8mUP5AVK84k
-        6AaeJh2u9gRSzftYffo1LibXMIQ==
-X-Received: by 2002:adf:f809:: with SMTP id s9mr15372715wrp.370.1628707294119;
-        Wed, 11 Aug 2021 11:41:34 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx7wrpBeaVSdpk1ugNUDz3E+k+d0gSiok+JgAMK0Drg4isHn2j/Vx/tUMwB8MNipqDJBnMefA==
-X-Received: by 2002:adf:f809:: with SMTP id s9mr15372696wrp.370.1628707293804;
-        Wed, 11 Aug 2021 11:41:33 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c64a0.dip0.t-ipconnect.de. [91.12.100.160])
-        by smtp.gmail.com with ESMTPSA id c9sm143103wrm.43.2021.08.11.11.41.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Aug 2021 11:41:33 -0700 (PDT)
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Tiberiu A Georgescu <tiberiu.georgescu@nutanix.com>,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        christian.brauner@ubuntu.com, ebiederm@xmission.com,
-        adobriyan@gmail.com, songmuchun@bytedance.com, axboe@kernel.dk,
-        vincenzo.frascino@arm.com, catalin.marinas@arm.com,
-        peterz@infradead.org, chinwen.chang@mediatek.com,
-        linmiaohe@huawei.com, jannh@google.com, apopple@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, ivan.teterevkov@nutanix.com,
-        florian.schmidt@nutanix.com, carl.waldspurger@nutanix.com,
-        jonathan.davies@nutanix.com
-References: <20210730160826.63785-1-tiberiu.georgescu@nutanix.com>
- <YQrdY5zQOVgQJ1BI@t490s> <839e82f7-2c54-d1ef-8371-0a332a4cb447@redhat.com>
- <YQrn33pOlpdl662i@t490s> <0beb1386-d670-aab1-6291-5c3cb0d661e0@redhat.com>
- <YRQWMIBwkdBK12Z3@t490s>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH 0/1] pagemap: swap location for shared pages
-Message-ID: <253e7067-1c62-19bd-d395-d5c0495610d7@redhat.com>
-Date:   Wed, 11 Aug 2021 20:41:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S230207AbhHKTEe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 15:04:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229802AbhHKTEd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Aug 2021 15:04:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C2C3461077;
+        Wed, 11 Aug 2021 19:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628708649;
+        bh=jScylGJuwjKMORyLGXSXMDTyjRrlSYsq/C10m9K+XeM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=KexzI3E1dNjTjZieeWppa1roWWQuXrcbEo3FYd8LpBIKXMJ27Y9yKR8YFn4D7JvTE
+         KCRywyT9P1WLLDONixgy4eZpi8jejoyWFXoRkGe69muLJLQqmX4kNKdJV8Tu4B5VMz
+         3XdHtfx8HJckJu9o+ergU++8RYYWqppYf13jGp50CKQ4xGYXVqjTcNxjaKIOZztk40
+         O1SVqYvu4Ov3gteWLKbJ1q24+I2Lgx+r1H/GdTUQ3JC6JoiQcfEAFlB2X1uGrwwMHx
+         sKD5J9u7OScJyHP9HKg4XAQJamhvXX///PkslLxq5fzeobPBun3keHuFMkvJaHqfY3
+         nzkvzE74+qLhQ==
+Message-ID: <68817121af70e4c370c541b6d5cc48fe0f11e312.camel@kernel.org>
+Subject: Re: Dirty bits and sync writes
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Zhengyuan Liu <liuzhengyuang521@gmail.com>, yukuai3@huawei.com,
+        Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>, linux-xfs@vger.kernel.org
+Date:   Wed, 11 Aug 2021 15:04:07 -0400
+In-Reply-To: <YRFKB0rBU51O1YpD@casper.infradead.org>
+References: <YQlgjh2R8OzJkFoB@casper.infradead.org>
+         <YRFAWPdMHp8Wpds/@infradead.org> <YRFKB0rBU51O1YpD@casper.infradead.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
 MIME-Version: 1.0
-In-Reply-To: <YRQWMIBwkdBK12Z3@t490s>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11.08.21 20:25, Peter Xu wrote:
-> On Wed, Aug 11, 2021 at 06:15:37PM +0200, David Hildenbrand wrote:
->> On 04.08.21 21:17, Peter Xu wrote:
->>> On Wed, Aug 04, 2021 at 08:49:14PM +0200, David Hildenbrand wrote:
->>>> TBH, I tend to really dislike the PTE marker idea. IMHO, we shouldn't store
->>>> any state information regarding shared memory in per-process page tables: it
->>>> just doesn't make too much sense.
->>>>
->>>> And this is similar to SOFTDIRTY or UFFD_WP bits: this information actually
->>>> belongs to the shared file ("did *someone* write to this page", "is
->>>> *someone* interested into changes to that page", "is there something"). I
->>>> know, that screams for a completely different design in respect to these
->>>> features.
->>>>
->>>> I guess we start learning the hard way that shared memory is just different
->>>> and requires different interfaces than per-process page table interfaces we
->>>> have (pagemap, userfaultfd).
->>>>
->>>> I didn't have time to explore any alternatives yet, but I wonder if tracking
->>>> such stuff per an actual fd/memfd and not via process page tables is
->>>> actually the right and clean approach. There are certainly many issues to
->>>> solve, but conceptually to me it feels more natural to have these shared
->>>> memory features not mangled into process page tables.
->>>
->>> Yes, we can explore all the possibilities, I'm totally fine with it.
->>>
->>> I just want to say I still don't think when there's page cache then we must put
->>> all the page-relevant things into the page cache.
->>
->> [sorry for the late reply]
->>
->> Right, but for the case of shared, swapped out pages, the information is
->> already there, in the page cache :)
->>
->>>
->>> They're shared by processes, but process can still have its own way to describe
->>> the relationship to that page in the cache, to me it's as simple as "we allow
->>> process A to write to page cache P", while "we don't allow process B to write
->>> to the same page" like the write bit.
->>
->> The issue I'm having uffd-wp as it was proposed for shared memory is that
->> there is hardly a sane use case where we would *want* it to work that way.
->>
->> A UFFD-WP flag in a page table for shared memory means "please notify once
->> this process modifies the shared memory (via page tables, not via any other
->> fd modification)". Do we have an example application where these semantics
->> makes sense and don't over-complicate the whole approach? I don't know any,
->> thus I'm asking dumb questions :)
->>
->>
->> For background snapshots in QEMU the flow would currently be like this,
->> assuming all processes have the shared guest memory mapped.
->>
->> 1. Background snapshot preparation: QEMU requests all processes
->>     to uffd-wp the range
->> a) All processes register a uffd handler on guest RAM
+On Mon, 2021-08-09 at 16:30 +0100, Matthew Wilcox wrote:
+> On Mon, Aug 09, 2021 at 03:48:56PM +0100, Christoph Hellwig wrote:
+> > On Tue, Aug 03, 2021 at 04:28:14PM +0100, Matthew Wilcox wrote:
+> > > Solution 1: Add an array of dirty bits to the iomap_page
+> > > data structure.  This patch already exists; would need
+> > > to be adjusted slightly to apply to the current tree.
+> > > https://lore.kernel.org/linux-xfs/7fb4bb5a-adc7-5914-3aae-179dd8f3adb1@huawei.com/
+> > 
+> > > Solution 2a: Replace the array of uptodate bits with an array of
+> > > dirty bits.  It is not often useful to know which parts of the page are
+> > > uptodate; usually the entire page is uptodate.  We can actually use the
+> > > dirty bits for the same purpose as uptodate bits; if a block is dirty, it
+> > > is definitely uptodate.  If a block is !dirty, and the page is !uptodate,
+> > > the block may or may not be uptodate, but it can be safely re-read from
+> > > storage without losing any data.
+> > 
+> > 1 or 2a seems like something we should do once we have lage folio
+> > support.
+> > 
+> > 
+> > > Solution 2b: Lose the concept of partially uptodate pages.  If we're
+> > > going to write to a partial page, just bring the entire page uptodate
+> > > first, then write to it.  It's not clear to me that partially-uptodate
+> > > pages are really useful.  I don't know of any network filesystems that
+> > > support partially-uptodate pages, for example.  It seems to have been
+> > > something we did for buffer_head based filesystems "because we could"
+> > > rather than finding a workload that actually cares.
+> > 
+
+I may be wrong, but I thought NFS actually could deal with partially
+uptodate pages. In some cases it can opt to just do a write to a page
+w/o reading first and flush just that section when the time comes.
+
+I think the heuristics are in nfs_want_read_modify_write(). #3 may be a
+better way though.
+
+> > The uptodate bit is important for the use case of a smaller than page
+> > size buffered write into a page that hasn't been read in already, which
+> > is fairly common for things like log writes.  So I'd hate to lose this
+> > optimization.
+> > 
+> > > (it occurs to me that solution 3 actually allows us to do IOs at storage
+> > > block size instead of filesystem block size, potentially reducing write
+> > > amplification even more, although we will need to be a bit careful if
+> > > we're doing a CoW.)
+> > 
+> > number 3 might be nice optimization.  The even better version would
+> > be a disk format change to just log those updates in the log and
+> > otherwise use the normal dirty mechanism.  I once had a crude prototype
+> > for that.
 > 
-> To be explicit: not a handler; just register with uffd-wp and pass over the fd
-> to the main process.
-
-Good point.
-
+> That's a bit beyond my scope at this point.  I'm currently working on
+> write-through.  Once I have that working, I think the next step is:
 > 
->> b) All processes fault in all guest memory (essentially populating all
->>     memory): with a uffd-WP extensions we might be able to get rid of
->>     that, I remember you were working on that.
->> c) All processes uffd-WP the range to set the bit in their page table
->>
->> 2. Background snapshot runs:
->> a) A process either receives a UFFD-WP event and forwards it to QEMU or
->>     QEMU polls all other processes for UFFD events.
->> b) QEMU writes the to-be-changed page to the migration stream.
->> c) QEMU triggers all processes to un-protect the page and wake up any
->>     waiters. All processes clear the uffd-WP bit in their page tables.
->>
->> 3. Background snapshot completes:
->> a) All processes unregister the uffd handler
->>
->>
->> Now imagine something like this:
->>
->> 1. Background snapshot preparation:
->> a) QEMU registers a UFFD-WP handler on a *memfd file* that corresponds
->>     to guest memory.
->> b) QEMU uffd-wp's the whole file
->>
->> 2. Background snapshot runs:
->> a) QEMU receives a UFFD-WP event.
->> b) QEMU writes the to-be-changed page to the migration stream.
->> c) QEMU un-protect the page and wake up any waiters.
->>
->> 3. Background snapshot completes:
->> a) QEMU unregister the uffd handler
->>
->>
->> Wouldn't that be much nicer and much easier to handle? Yes, it is much
->> harder to implement because such an infrastructure does not exist yet, and
->> it most probably wouldn't be called uffd anymore, because we are dealing
->> with file access. But this way, it would actually be super easy to use the
->> feature across multiple processes and eventually to even catch other file
->> modifications.
+>  - Replace the ->uptodate array with a ->dirty array
+>  - If the entire page is Uptodate, drop the iomap_page.  That means that
+>    writebacks will write back the entire folio, not just the dirty
+>    pieces.
+>  - If doing a partial page write
+>    - If the write is block-aligned (offset & length), leave the page
+>      !Uptodate and mark the dirty blocks
+>    - Otherwise bring the entire page Uptodate first, then mark it dirty
 > 
-> I can totally understand how you see this.  We've discussed about that, isn't
-> it? About the ideal worlds. :)
-
-Well, let's dream big :)
-
+> To take an example of a 512-byte block size file accepting a 520 byte
+> write at offset 500, we currently submit two reads, one for bytes 0-511
+> and the second for 1024-1535.  We're better off submitting a read for
+> bytes 0-4095 and then overwriting the entire thing.
 > 
-> It would be great if this can work out, I hope so.  So far I'm not that
-> ambicious, and as I said, I don't know whether there will be other concerns
-> when it goes into the page cache layer, and when it's a behavior of multiple
-> processes where one of them can rule others without others being notice of it.
+> But it's still better to do no reads at all if someone submits a write
+> for bytes 512-1023, or 512-N where N is past EOF.  And I'd preserve
+> that behaviour.
 > 
-> Even if we want to go that way, I think we should first come up with some way
-> to describe the domains that one uffd-wp registered file should behave upon.
-> It shouldn't be "any process touching this file".
-> 
-> One quick example in my mind is when a malicious process wants to stop another
-> daemon process, it'll be easier as long as the malicious process can delete a
-> file that the daemon used to read/write, replace it with a shmem with uffd-wp
-> registered (or maybe just a regular file on file systems, if your proposal will
-> naturally work on them).  The problem is, is it really "legal" to be able to
-> stop the daemon running like that?
 
-Good question, I'd imagine e.g., file sealing could forbid uffd (or 
-however it is called) registration on a file, and there would have to be 
-a way to reject files that have uffd registered. But it's certainly a 
-valid concern - and it raises the question to *what* we actually want to 
-apply such a concept. Random files? random memfd? most probably not. 
-Special memfds created with an ALLOW_UFFD flag? sounds like a good idea.
+I like this idea too.
 
-> 
-> I also don't know the initial concept when uffd is designed and why it's
-> designed at pte level.  Avoid vma manipulation should be a major factor, but I
-> can't say I understand all of them.  Not sure whether Andrea has any input here.
+I'd also point out that both cifs and ceph (at least) can read and write
+"around" the cache in some cases (using non-pagecache pages) when they
+can't get the proper oplock/lease/caps from the server. Both of them
+have completely separate "uncached" codepaths, that are distinct from
+the O_DIRECT cases.
 
-AFAIU originally a) avoid signal handler madness and b) avoid VMA 
-modifications and c) avoid taking the mmap lock in write (well, that 
-didn't work out completely for uffd-wp for now IIRC).
-
-> 
-> That's why I think current uffd can still make sense with per-process concepts
-> and keep it that way.  When register uffd-wp yes we need to do that for
-> multiple processes, but it also means each process is fully aware that this is
-> happening so it's kind of verified that this is wanted behavior for that
-> process.  It'll happen with less "surprises", and smells safer.
-> 
-> I don't think that will not work out.  It may require all the process to
-> support uffd-wp apis and cooperate, but that's so far how it should work for me
-> in a safe and self-contained way.  Say, every process should be aware of what's
-> going to happen on blocked page faults.
-
-That's a valid concern, although I wonder if it can just be handled via 
-specially marked memfds ("this memfd might get a uffd handler registered 
-later").
-
->>
->> Again, I am not sure if uffd-wp or softdirty make too much sense in general
->> when applied to shmem. But I'm happy to learn more.
-> 
-> Me too, I'm more than glad to know whether the page cache idea could be
-> welcomed or am I just wrong about it.  Before I understand more things around
-> this, so far I still think the per-process based and fd-based solution of uffd
-> still makes sense.
-
-I'd be curious about applications where the per-process approach would 
-actually solve something a per-fd approach couldn't solve. Maybe there 
-are some that I just can't envision.
-
-(using shmem for a single process only isn't a use case I consider 
-important :) )
-
+This scheme could potentially be a saner method of dealing with those
+situations too.
 -- 
-Thanks,
-
-David / dhildenb
+Jeff Layton <jlayton@kernel.org>
 
