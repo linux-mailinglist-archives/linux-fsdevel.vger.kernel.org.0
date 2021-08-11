@@ -2,59 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97CF23E8ABF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 09:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A63D53E8AB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 09:05:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234855AbhHKHGV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 03:06:21 -0400
-Received: from mail-dm6nam12on2078.outbound.protection.outlook.com ([40.107.243.78]:24205
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235158AbhHKHGP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S235137AbhHKHGP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 11 Aug 2021 03:06:15 -0400
+Received: from mail-mw2nam12on2056.outbound.protection.outlook.com ([40.107.244.56]:11361
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S234971AbhHKHGN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Aug 2021 03:06:13 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RTmLssVWQAT1GE2SKl52o2tBqJ1ASUFjJkzoaQfw9D5W7vB0gyVSi9t4NtygRSIVMAjq6kkUgxoHlv7knpBmuEhFyjAiRObC+26J/26IyJSHRxxKcy1GzasZ6AFodX3Me92ox7/VMAACN0ZZEXyAmwRtJ2RPSkhEET2BS82fpv2GayPCnCGxMR66aH/0YHpy8qaoy2bIsxA9VoiIQx0vK2SdAXY6Bzuklb/ax3ao1qxB2QiMt7ktkVyJtZwrCWQ802wbpL0wlJfM0oUauYa1S6BPK+G5NsqMB+YGE7C3pkAIo0mtXSaYxyUAVSW2VWj3E2oZtz1dZ6d6jY5lJSne9w==
+ b=HkCdko77t2ym6I5y0k3NkriOk8EuBNeJmXj0Oifr/fYbvQBn4Qlj8uAC5h8VCTDm+SnUeN9xthn2kd+SPmH+Q6eRBzoZApHoP110iQlxJzsM7awiyCkHmfLhX8lsqPcjIELikbGMucu8i+0uEAwlXxWuUU1W07OJ1G1opiIVSt5NkChT4xE4mpMXUbRdd2NJSKLg5xNU6kZdw1yL6EZZ/s91AQCUpP3cPp101cG/bQZ0Amx1EIh3/V9LmzJw6Uk0F7GiAi4PFKEkGk6lKmX+Mrozez+N++IEQ76f96Ib9QIShun4O3gXRmdO62ymPkZffR229WcA1xzh7sKej8gCQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ybaz60lPgObJjALvuFbUJNUk2hvE8HGH24rzOkrOWo4=;
- b=UKr9ofj7JeqgQxHbffrfA5G1ek0ASjPydcrfGwAKNgKXZ2eYZZH2jLijSm+7x5POnyN/SFSmGlG5WU2K/A7O2Eq0IB411yC0ToNK90pEseyc3PrnTqGFM5qm+LQSY1Hb1R7wp0r18RqHiMq5bobPe/wJXo3KASg1FtFmIexFv2adyuTMqU6ahfF37xrF3w6OB/sIzRDOndEuKSkSOlYGdbrbv2nlVm4vltbh9n+o1dQRHLd23WdWRSjrWgmY8wNnmsaztO7lwzhkF2YH7PeU5j548bOGx/L2mWFFmFVcrhgPsUPHwlRoFRp8SiVUQqhwtJcV2ALYZC+YDl3BM/1Qrg==
+ bh=qFurwPO74LxxFQUVsB1P0L5yzk54kCcbKJ4Ol1Hsap0=;
+ b=ZkgV2PTmi2JjQVmBPgsMHkDRQrJYwWMAgPalnnzYh7395zBa9tGoj42aM5NA4CHb+62U6ioVzq0ykkNHuCZkykBLEndwH36E67cNYMNzXkJTvptooxRywOo0lEOOsRigwVajKpqrl2d6n7JS+tdF9zhjW+Elp7s6aiOSeAPBvYVSk77bFOkLk8cvijGyFKPZUHdCY6IHSw7K9LbwF5szzhV2EFqkwvD9reFgo1HJB+EJq4BA2mLCG9J5FbWMz2ux8XiAr+4l6+E6rwE49sQQEA4H1hPuEmZkXVfKsB7uUP6E/36XRODgx2TD3tfPN9NaselvRtSStbZF4+oCoWWG9g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=linux-foundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=quarantine sp=none pct=100)
- action=none header.from=nvidia.com; dkim=none (message not signed); arc=none
+ 216.228.112.36) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ybaz60lPgObJjALvuFbUJNUk2hvE8HGH24rzOkrOWo4=;
- b=VC+2aAMk92IW4YjyKTahm2XESyIxuNG8QalMY2QZhwr+ZqjhPw42175JLHrpSWlpbmrHwxxe2sN1xma6vmsM/s7LVmYMy8jM1wJlIyiApy3KC1GcxAs6oX9SDlNuSpaPeSy+I0e/+7RmMN0cP0l9e9zB/zyPDZ07I4Jn3/WwsRPKD1lEuiVQCLH06yzMNIOk6um9kBsQQ258+m/WDMF6IA/3+Ups9akSg1569XBbcThNttQ9qMOEenBulRjfbynpumFBMS0fDy29zVNxiFIM1Hd6AZB8OoJWzwBEsd5w1L+uI83xnW9YRu1xisT8e1jhbnC2bd8DionMHfOiyjBrIQ==
-Received: from DM3PR03CA0017.namprd03.prod.outlook.com (2603:10b6:0:50::27) by
- BN6PR1201MB0193.namprd12.prod.outlook.com (2603:10b6:405:56::13) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=qFurwPO74LxxFQUVsB1P0L5yzk54kCcbKJ4Ol1Hsap0=;
+ b=sQ+CwR1EwQ/iAVWOCKqFau9POzrvSYs4JJOK+DFgY80v9ODRCHII4EBs59JYd1MGfwtNNaCctHZRAWvDEuNK77l9pcJDbgdNjMK5nrxWyZMdrjK+NAmLmQBHkfAVWn3ecFTjFm4XAdLbgs4An75TSV+kuKue83FgTmCsPZlfffor6EQIAYWpEOiQMB8c1IhIUWrwkVolkBCIbMpDPg24ORTb6XC/R+KPPKEYvjZbGxG2tYS02T1rB72ccwTXT6qbjgAlYows54M3EO+x4e4pX/p/zEW+0w2//pCOTN8tbHe21ue/y/l3yHBm7XQfhRDD9ZiFIohQeI/YHEDjX1Vy6Q==
+Received: from BN6PR1401CA0020.namprd14.prod.outlook.com
+ (2603:10b6:405:4b::30) by DM6PR12MB4220.namprd12.prod.outlook.com
+ (2603:10b6:5:21d::7) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.21; Wed, 11 Aug
- 2021 07:05:50 +0000
-Received: from DM6NAM11FT040.eop-nam11.prod.protection.outlook.com
- (2603:10b6:0:50:cafe::42) by DM3PR03CA0017.outlook.office365.com
- (2603:10b6:0:50::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.16 via Frontend
- Transport; Wed, 11 Aug 2021 07:05:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; linux-foundation.org; dkim=none (message not
- signed) header.d=none;linux-foundation.org; dmarc=pass action=none
- header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- DM6NAM11FT040.mail.protection.outlook.com (10.13.173.133) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4415.16 via Frontend Transport; Wed, 11 Aug 2021 07:05:50 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 11 Aug
- 2021 00:05:47 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 11 Aug
  2021 07:05:48 +0000
+Received: from BN8NAM11FT013.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:405:4b:cafe::8c) by BN6PR1401CA0020.outlook.office365.com
+ (2603:10b6:405:4b::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.13 via Frontend
+ Transport; Wed, 11 Aug 2021 07:05:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.36; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.36) by
+ BN8NAM11FT013.mail.protection.outlook.com (10.13.176.182) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4415.16 via Frontend Transport; Wed, 11 Aug 2021 07:05:48 +0000
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 11 Aug
+ 2021 07:05:47 +0000
 Received: from sandstorm.attlocal.net (172.20.187.6) by mail.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
  Transport; Wed, 11 Aug 2021 00:05:47 -0700
@@ -68,9 +64,9 @@ CC:     Heiko Carstens <hca@linux.ibm.com>,
         John Hubbard <jhubbard@nvidia.com>,
         Christoph Hellwig <hch@lst.de>,
         Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v2 2/3] mm/gup: small refactoring: simplify try_grab_page()
-Date:   Wed, 11 Aug 2021 00:05:41 -0700
-Message-ID: <20210811070542.3403116-3-jhubbard@nvidia.com>
+Subject: [PATCH v2 3/3] mm/gup: Remove try_get_page(), call try_get_compound_head() directly
+Date:   Wed, 11 Aug 2021 00:05:42 -0700
+Message-ID: <20210811070542.3403116-4-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210811070542.3403116-1-jhubbard@nvidia.com>
 References: <20210811070542.3403116-1-jhubbard@nvidia.com>
@@ -80,86 +76,131 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1d952777-b2b2-43ed-7b4d-08d95c9673a4
-X-MS-TrafficTypeDiagnostic: BN6PR1201MB0193:
-X-Microsoft-Antispam-PRVS: <BN6PR1201MB0193334E870564FBA7442874A8F89@BN6PR1201MB0193.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4714;
+X-MS-Office365-Filtering-Correlation-Id: 2196168a-7b6d-49ec-052b-08d95c967294
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4220:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB422014BC6FA36A0BEFB24B44A8F89@DM6PR12MB4220.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: WvcWm3QO1yCCdMOjeUYVkDh5NKvu4ER2Dhya7XuU/E3tYJTyXOSMxudmATrZGdw2r6lAk5rbOz3JGoXpv6NCXzQ4EIQSQ4jRe/m+frYblcFCNyBcLjA5exCjb9n0j9+42SX2fTegH3lwaGemgoeKbQnISambheCBadhW0Doefu9su/H10BKyp0QjctKgxrVk6a2c7CuBUqKPs7ZsnoBJw5fuPPNH3dK18iJeNN3Mq1XAZE8jFY8Azu54gVpzRaXpGpVivcrKjE+Fx8kUksaLW3QmAj5UJIQIKjRObf+sTgaxfp9e8ZKDkBYA/6MyfFa6ROKIssrVGWJUeOj9b83AZjezqITxXxD15Docpo26j8aRilhrXyXzyk0LzYHaYQdAGTohjyYlBwD2mLTB3ReG4K0plGipa++73dTttuHL6H+gmZE+WInhFzos5wbbKOv1bOtDFOdeH8mnaV5kwTNSFGvCx+7Aa8+bwXi8+wsN6ex9Sy4VqDKhYLos9c2VmBI8gjvCkMWf4fofqYPBC9DIplFFU/BsZfNirH6K/+XRxtMCnzD1v7KIxdX/vaVDNxvirXoVAj27eDt7YIAxJETL1VmAaSVsM3O3H+HtdYMqGhvY6jAqdPg8PYRGe28Am6CWd925zjCG+Btlkcnd7vsanf0kXllqIhJh4/UOvpTiqlvByM3h0eGRiITbqK3ggFt4qPAv8yR9N6ETjpBKnIOQqQ==
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(376002)(136003)(396003)(346002)(46966006)(36840700001)(478600001)(54906003)(426003)(1076003)(7416002)(83380400001)(47076005)(82740400003)(6916009)(2906002)(5660300002)(186003)(2616005)(36756003)(8676002)(4326008)(336012)(316002)(356005)(70206006)(7636003)(70586007)(86362001)(8936002)(6666004)(36860700001)(26005)(82310400003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: WR4p5gupux636D7g92qVjr5vHjGpjXD+sPBVpIpyvBo/xbtcy0KS/JX2G4qQkab60xJyA/Bd/g/Fp8hRM1L6/eldOkFv/hvKNyHle+tMKeP3ZGi5O67WzPpTkajCmwROkfV/eiLoNwyqYzUQXDn0eWP+rUPKxbT+8lmtk1S8x/SpzCnubzC9MDlwttsxwVSFRv/6eeuACXDD3mMdfWet7/tHqKxsiuzT8H8pz2OMVVtjfxMwVq2Xv25R4xso6H6qrZ3kZfeyKcP9uhIHRt23vvY71RA8JlirQ7WhPtrSAJ5pWwhk+BlICgSHw8/89sMbMV5RKaOuUlyptqOkn5hbm7fHYhu5LlWRql3vvrvZULY6jChrDus+sfZ+HA4qiz/+0wjYD+MIakjUiDhsqjMKfM5gStuc/gevMIsuZJGeBKa0VVmyN6zPLie1SUIr3unMU6Wu5XbF0+xOAKy/rjanw3Wzhfvj7pXPB4KtkgNvs3NkYKAB0FiJcoNcLeaAwfcTgOCRkg0r8akS7lD+XJsSVSsABF4eY0hR2OC0/6kDvvKWtn0NAILiyrHVsS2WV9J64Qz90Ao+wWMmqW7EKwcZKrsYpPBFbAmvsAaIcaPAPcvJ0DqSQftzRHDvQlsOUFnDkZJWg1bdAJVtpUz+TRLKiTPfz9YZpEuBytoPMPB+e0rYw2nVBLXvtPhcdTP9nbE7nSPd0GQNADFUQRC+qNdYtg==
+X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(39860400002)(346002)(396003)(136003)(46966006)(36840700001)(2616005)(6666004)(186003)(426003)(70206006)(70586007)(356005)(2906002)(1076003)(26005)(82310400003)(6916009)(478600001)(47076005)(8936002)(36756003)(8676002)(336012)(36906005)(82740400003)(316002)(36860700001)(83380400001)(7636003)(54906003)(5660300002)(86362001)(4326008)(7416002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2021 07:05:50.3535
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2021 07:05:48.5269
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d952777-b2b2-43ed-7b4d-08d95c9673a4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2196168a-7b6d-49ec-052b-08d95c967294
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT040.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT013.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1201MB0193
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4220
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-try_grab_page() does the same thing as try_grab_compound_head(...,
-refs=1, ...), just with a different API. So there is a lot of code
-duplication there.
+try_get_page() is very similar to try_get_compound_head(), and in fact
+try_get_page() has fallen a little behind in terms of maintenance:
+try_get_compound_head() handles speculative page references more
+thoroughly.
 
-Change try_grab_page() to call try_grab_compound_head(), while keeping
-the API contract identical for callers.
+There are only two try_get_page() callsites, so just call
+try_get_compound_head() directly from those, and remove try_get_page()
+entirely.
+
+Also, seeing as how this changes try_get_compound_head() into a
+non-static function, provide some kerneldoc documentation for it.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- mm/gup.c | 31 +++----------------------------
- 1 file changed, 3 insertions(+), 28 deletions(-)
+ arch/s390/mm/fault.c |  2 +-
+ fs/pipe.c            |  2 +-
+ include/linux/mm.h   | 10 +---------
+ mm/gup.c             | 21 +++++++++++++++++----
+ 4 files changed, 20 insertions(+), 15 deletions(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 52f08e3177e9..64798d6b5043 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -208,35 +208,10 @@ static void put_compound_head(struct page *page, int refs, unsigned int flags)
+diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
+index 212632d57db9..fe1d2c1dbe3b 100644
+--- a/arch/s390/mm/fault.c
++++ b/arch/s390/mm/fault.c
+@@ -822,7 +822,7 @@ void do_secure_storage_access(struct pt_regs *regs)
+ 		break;
+ 	case KERNEL_FAULT:
+ 		page = phys_to_page(addr);
+-		if (unlikely(!try_get_page(page)))
++		if (unlikely(try_get_compound_head(page, 1) == NULL))
+ 			break;
+ 		rc = arch_make_page_accessible(page);
+ 		put_page(page);
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 8e6ef62aeb1c..06ba9df37410 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -191,7 +191,7 @@ EXPORT_SYMBOL(generic_pipe_buf_try_steal);
   */
- bool __must_check try_grab_page(struct page *page, unsigned int flags)
+ bool generic_pipe_buf_get(struct pipe_inode_info *pipe, struct pipe_buffer *buf)
  {
--	WARN_ON_ONCE((flags & (FOLL_GET | FOLL_PIN)) == (FOLL_GET | FOLL_PIN));
-+	if (!(flags & (FOLL_GET | FOLL_PIN)))
-+		return true;
- 
--	if (flags & FOLL_GET)
--		return try_get_page(page);
--	else if (flags & FOLL_PIN) {
--		int refs = 1;
--
--		page = compound_head(page);
--
--		if (WARN_ON_ONCE(page_ref_count(page) <= 0))
--			return false;
--
--		if (hpage_pincount_available(page))
--			hpage_pincount_add(page, 1);
--		else
--			refs = GUP_PIN_COUNTING_BIAS;
--
--		/*
--		 * Similar to try_grab_compound_head(): even if using the
--		 * hpage_pincount_add/_sub() routines, be sure to
--		 * *also* increment the normal page refcount field at least
--		 * once, so that the page really is pinned.
--		 */
--		page_ref_add(page, refs);
--
--		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_ACQUIRED, 1);
--	}
--
--	return true;
-+	return try_grab_compound_head(page, 1, flags) != NULL;
+-	return try_get_page(buf->page);
++	return try_get_compound_head(buf->page, 1) != NULL;
  }
+ EXPORT_SYMBOL(generic_pipe_buf_get);
+ 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ce8fc0fd6d6e..cd00d1222235 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1207,15 +1207,7 @@ bool __must_check try_grab_page(struct page *page, unsigned int flags);
+ __maybe_unused struct page *try_grab_compound_head(struct page *page, int refs,
+ 						   unsigned int flags);
+ 
+-
+-static inline __must_check bool try_get_page(struct page *page)
+-{
+-	page = compound_head(page);
+-	if (WARN_ON_ONCE(page_ref_count(page) <= 0))
+-		return false;
+-	page_ref_inc(page);
+-	return true;
+-}
++struct page *try_get_compound_head(struct page *page, int refs);
  
  /**
+  * folio_put - Decrement the reference count on a folio.
+diff --git a/mm/gup.c b/mm/gup.c
+index 64798d6b5043..c2d19d370c99 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -62,11 +62,24 @@ static void put_page_refs(struct page *page, int refs)
+ 	put_page(page);
+ }
+ 
+-/*
+- * Return the compound head page with ref appropriately incremented,
+- * or NULL if that failed.
++/**
++ * try_get_compound_head() - return the compound head page with refcount
++ * appropriately incremented, or NULL if that failed.
++ *
++ * This handles potential refcount overflow correctly. It also works correctly
++ * for various lockless get_user_pages()-related callers, due to the use of
++ * page_cache_add_speculative().
++ *
++ * Even though the name includes "compound_head", this function is still
++ * appropriate for callers that have a non-compound @page to get.
++ *
++ * @page:  pointer to page to be gotten
++ * @refs:  the value to add to the page's refcount
++ *
++ * Return: head page (with refcount appropriately incremented) for success, or
++ * NULL upon failure.
+  */
+-static inline struct page *try_get_compound_head(struct page *page, int refs)
++struct page *try_get_compound_head(struct page *page, int refs)
+ {
+ 	struct page *head = compound_head(page);
+ 
 -- 
 2.32.0
 
