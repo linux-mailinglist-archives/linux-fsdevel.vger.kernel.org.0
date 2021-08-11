@@ -2,59 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE8E3E89D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 07:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92EE03E8A9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 08:56:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234408AbhHKFjY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 01:39:24 -0400
-Received: from verein.lst.de ([213.95.11.211]:39147 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234285AbhHKFjW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 01:39:22 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 66E0A6736F; Wed, 11 Aug 2021 07:38:56 +0200 (CEST)
-Date:   Wed, 11 Aug 2021 07:38:56 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
-        cluster-devel@redhat.com
-Subject: Re: [PATCH 11/30] iomap: add the new iomap_iter model
-Message-ID: <20210811053856.GA1934@lst.de>
-References: <20210809061244.1196573-1-hch@lst.de> <20210809061244.1196573-12-hch@lst.de> <20210811003118.GT3601466@magnolia>
+        id S235061AbhHKG4r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 02:56:47 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:47324 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234878AbhHKG4q (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Aug 2021 02:56:46 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R691e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UifQe5k_1628664981;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UifQe5k_1628664981)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 11 Aug 2021 14:56:21 +0800
+From:   Jeffle Xu <jefflexu@linux.alibaba.com>
+To:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, virtio-fs@redhat.com,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com
+Subject: [virtiofsd PATCH v2 0/4] virtiofsd: support per-file DAX
+Date:   Wed, 11 Aug 2021 14:56:17 +0800
+Message-Id: <20210811065621.12737-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210804070653.118123-1-jefflexu@linux.alibaba.com>
+References: <20210804070653.118123-1-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210811003118.GT3601466@magnolia>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 10, 2021 at 05:31:18PM -0700, Darrick J. Wong wrote:
-> > +static inline void iomap_iter_done(struct iomap_iter *iter)
-> 
-> I wonder why this is a separate function, since it only has debugging
-> warnings and tracepoints?
+I mentioned in virtiofsd PATCH v1 that virtiofsd exits once ioctl() is
+called. After depper investigation into this issue, I find that it is
+because ioctl() is blocked out the whitelist of seccomp of virtiofsd.
 
-The reason for these two sub-helpers was to force me to structure the
-code so that Matthews original idea of replacing ->iomap_begin and
-->iomap_end with a single next callback so that iomap_iter could
-be inlined into callers and the indirect calls could be elided is
-still possible.  This would only be useful for a few specific
-methods (probably dax and direct I/O) where we care so much, but it
-seemed like a nice idea conceptually so I would not want to break it.
+To support ioctl, ioctl syscall shall be added into the whitelist (see patch
+1).
 
-OTOH we could just remove this function for now and do that once needed.
+And this is the complete workable version for virtiofsd:
+- virtiofsd now supports FUSE_IOCTL now, though currently only
+  FS_IOC_G[S]ETFLAGS/FS_IOC_FSG[S]ETXATTR are supported.
+- During FUSE_INIT, virtiofsd advertise support for per-file DAX only
+  when the backend fs is ext4/xfs.
+- FS_IOC_SETFLAGS/FS_IOC_FSSETXATTR FUSE_IOCTL will be directed to host,
+  so that FS_DAX_FL could be flushed to backed fs persistently.
+- During FUSE_LOOKUP, virtiofsd will decide DAX shall be enabled for
+  current file according to if this file is marked with FS_DAX_FL in the
+  backend fs.
 
-> Modulo the question about iomap_iter_done, I guess this looks all right
-> to me.  As far as apply.c vs. core.c, I'm not wildly passionate about
-> either naming choice (I would have called it iter.c) but ... fmeh.
 
-iter.c is also my preference, but in the end I don't care too much.
+PS.
+In the current implementation, the kernel always advertise
+FUSE_PERFILE_DAX no matter whether it's mounted with '-o dax=inode' or
+not. It can be fixed in the next version, and I need more feedbacks so far.
+
+Any comment on this whole series is welcome.
+
+Jeffle Xu (4):
+  virtiofsd: add .ioctl() support
+  virtiofsd: expand fuse protocol to support per-file DAX
+  virtiofsd: support per-file DAX negotiation in FUSE_INIT
+  virtiofsd: support per-file DAX in FUSE_LOOKUP
+
+ include/standard-headers/linux/fuse.h |   2 +
+ tools/virtiofsd/fuse_common.h         |   5 ++
+ tools/virtiofsd/fuse_lowlevel.c       |   6 ++
+ tools/virtiofsd/passthrough_ll.c      | 115 ++++++++++++++++++++++++++
+ tools/virtiofsd/passthrough_seccomp.c |   1 +
+ 5 files changed, 129 insertions(+)
+
+-- 
+2.27.0
 
