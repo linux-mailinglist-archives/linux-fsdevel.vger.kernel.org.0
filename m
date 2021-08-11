@@ -2,131 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F045A3E983F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 21:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AC9B3E987E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 21:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbhHKTEe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 15:04:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32942 "EHLO mail.kernel.org"
+        id S231366AbhHKTRf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 15:17:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229802AbhHKTEd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 15:04:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C2C3461077;
-        Wed, 11 Aug 2021 19:04:08 +0000 (UTC)
+        id S229802AbhHKTRd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Aug 2021 15:17:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2319261008;
+        Wed, 11 Aug 2021 19:17:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628708649;
-        bh=jScylGJuwjKMORyLGXSXMDTyjRrlSYsq/C10m9K+XeM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=KexzI3E1dNjTjZieeWppa1roWWQuXrcbEo3FYd8LpBIKXMJ27Y9yKR8YFn4D7JvTE
-         KCRywyT9P1WLLDONixgy4eZpi8jejoyWFXoRkGe69muLJLQqmX4kNKdJV8Tu4B5VMz
-         3XdHtfx8HJckJu9o+ergU++8RYYWqppYf13jGp50CKQ4xGYXVqjTcNxjaKIOZztk40
-         O1SVqYvu4Ov3gteWLKbJ1q24+I2Lgx+r1H/GdTUQ3JC6JoiQcfEAFlB2X1uGrwwMHx
-         sKD5J9u7OScJyHP9HKg4XAQJamhvXX///PkslLxq5fzeobPBun3keHuFMkvJaHqfY3
-         nzkvzE74+qLhQ==
-Message-ID: <68817121af70e4c370c541b6d5cc48fe0f11e312.camel@kernel.org>
-Subject: Re: Dirty bits and sync writes
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Zhengyuan Liu <liuzhengyuang521@gmail.com>, yukuai3@huawei.com,
-        Dave Chinner <david@fromorbit.com>,
-        David Howells <dhowells@redhat.com>, linux-xfs@vger.kernel.org
-Date:   Wed, 11 Aug 2021 15:04:07 -0400
-In-Reply-To: <YRFKB0rBU51O1YpD@casper.infradead.org>
-References: <YQlgjh2R8OzJkFoB@casper.infradead.org>
-         <YRFAWPdMHp8Wpds/@infradead.org> <YRFKB0rBU51O1YpD@casper.infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
+        s=k20201202; t=1628709429;
+        bh=HYP5EtxajWkABNMFHRo45yMkJeoxaVDZxIAzfo20Yl4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EHq64V+fcbZHO4BnMB9448Da/s+hxcL9tiIdwZ8DH2YrLm/XprjNCo2fG7aZHgprw
+         HDxN96m9CxBIHQ1tu3wY6Xq+bV2rVg/zHik0pQrHqPK9jbyleF3QktTRpRkAOljNUV
+         B7uToFKKyH7LMmroHSjtx3CVjX13SAXcnaGA4ldaES5GurlL2zZoYCCrqVvYYkxOmV
+         3r5jJxNzLLKZGsG6a9BDCIL2/2DDR/fvmnvlPThE6MCsVyscBcaPwtuy9oH9pknQfG
+         DoqpwN42fIQZ2/cY1xmmyF4C4dCzSZ9h5mODYadiKbzuXyNjj0Z2OJzxNoC1bS0cde
+         4rMxFhNWIuxXA==
+Date:   Wed, 11 Aug 2021 12:17:08 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        cluster-devel@redhat.com
+Subject: Re: [PATCH 11/30] iomap: add the new iomap_iter model
+Message-ID: <20210811191708.GF3601443@magnolia>
+References: <20210809061244.1196573-1-hch@lst.de>
+ <20210809061244.1196573-12-hch@lst.de>
+ <20210811003118.GT3601466@magnolia>
+ <20210811053856.GA1934@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210811053856.GA1934@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2021-08-09 at 16:30 +0100, Matthew Wilcox wrote:
-> On Mon, Aug 09, 2021 at 03:48:56PM +0100, Christoph Hellwig wrote:
-> > On Tue, Aug 03, 2021 at 04:28:14PM +0100, Matthew Wilcox wrote:
-> > > Solution 1: Add an array of dirty bits to the iomap_page
-> > > data structure.  This patch already exists; would need
-> > > to be adjusted slightly to apply to the current tree.
-> > > https://lore.kernel.org/linux-xfs/7fb4bb5a-adc7-5914-3aae-179dd8f3adb1@huawei.com/
+On Wed, Aug 11, 2021 at 07:38:56AM +0200, Christoph Hellwig wrote:
+> On Tue, Aug 10, 2021 at 05:31:18PM -0700, Darrick J. Wong wrote:
+> > > +static inline void iomap_iter_done(struct iomap_iter *iter)
 > > 
-> > > Solution 2a: Replace the array of uptodate bits with an array of
-> > > dirty bits.  It is not often useful to know which parts of the page are
-> > > uptodate; usually the entire page is uptodate.  We can actually use the
-> > > dirty bits for the same purpose as uptodate bits; if a block is dirty, it
-> > > is definitely uptodate.  If a block is !dirty, and the page is !uptodate,
-> > > the block may or may not be uptodate, but it can be safely re-read from
-> > > storage without losing any data.
-> > 
-> > 1 or 2a seems like something we should do once we have lage folio
-> > support.
-> > 
-> > 
-> > > Solution 2b: Lose the concept of partially uptodate pages.  If we're
-> > > going to write to a partial page, just bring the entire page uptodate
-> > > first, then write to it.  It's not clear to me that partially-uptodate
-> > > pages are really useful.  I don't know of any network filesystems that
-> > > support partially-uptodate pages, for example.  It seems to have been
-> > > something we did for buffer_head based filesystems "because we could"
-> > > rather than finding a workload that actually cares.
-> > 
-
-I may be wrong, but I thought NFS actually could deal with partially
-uptodate pages. In some cases it can opt to just do a write to a page
-w/o reading first and flush just that section when the time comes.
-
-I think the heuristics are in nfs_want_read_modify_write(). #3 may be a
-better way though.
-
-> > The uptodate bit is important for the use case of a smaller than page
-> > size buffered write into a page that hasn't been read in already, which
-> > is fairly common for things like log writes.  So I'd hate to lose this
-> > optimization.
-> > 
-> > > (it occurs to me that solution 3 actually allows us to do IOs at storage
-> > > block size instead of filesystem block size, potentially reducing write
-> > > amplification even more, although we will need to be a bit careful if
-> > > we're doing a CoW.)
-> > 
-> > number 3 might be nice optimization.  The even better version would
-> > be a disk format change to just log those updates in the log and
-> > otherwise use the normal dirty mechanism.  I once had a crude prototype
-> > for that.
+> > I wonder why this is a separate function, since it only has debugging
+> > warnings and tracepoints?
 > 
-> That's a bit beyond my scope at this point.  I'm currently working on
-> write-through.  Once I have that working, I think the next step is:
+> The reason for these two sub-helpers was to force me to structure the
+> code so that Matthews original idea of replacing ->iomap_begin and
+> ->iomap_end with a single next callback so that iomap_iter could
+> be inlined into callers and the indirect calls could be elided is
+> still possible.  This would only be useful for a few specific
+> methods (probably dax and direct I/O) where we care so much, but it
+> seemed like a nice idea conceptually so I would not want to break it.
 > 
->  - Replace the ->uptodate array with a ->dirty array
->  - If the entire page is Uptodate, drop the iomap_page.  That means that
->    writebacks will write back the entire folio, not just the dirty
->    pieces.
->  - If doing a partial page write
->    - If the write is block-aligned (offset & length), leave the page
->      !Uptodate and mark the dirty blocks
->    - Otherwise bring the entire page Uptodate first, then mark it dirty
+> OTOH we could just remove this function for now and do that once needed.
+
+<shrug>
+
+> > Modulo the question about iomap_iter_done, I guess this looks all right
+> > to me.  As far as apply.c vs. core.c, I'm not wildly passionate about
+> > either naming choice (I would have called it iter.c) but ... fmeh.
 > 
-> To take an example of a 512-byte block size file accepting a 520 byte
-> write at offset 500, we currently submit two reads, one for bytes 0-511
-> and the second for 1024-1535.  We're better off submitting a read for
-> bytes 0-4095 and then overwriting the entire thing.
-> 
-> But it's still better to do no reads at all if someone submits a write
-> for bytes 512-1023, or 512-N where N is past EOF.  And I'd preserve
-> that behaviour.
-> 
+> iter.c is also my preference, but in the end I don't care too much.
 
-I like this idea too.
+Ok.  My plan for this is to change this patch to add the new iter code
+to apply.c, and change patch 24 to remove iomap_apply.  I'll add a patch
+on the end to rename apply.c to iter.c, which will avoid breaking the
+history.
 
-I'd also point out that both cifs and ceph (at least) can read and write
-"around" the cache in some cases (using non-pagecache pages) when they
-can't get the proper oplock/lease/caps from the server. Both of them
-have completely separate "uncached" codepaths, that are distinct from
-the O_DIRECT cases.
+I'll send the updated patches as replies to this series to avoid
+spamming the list, since I also have a patchset of bugfixes to send out
+and don't want to overwhelm everyone.
 
-This scheme could potentially be a saner method of dealing with those
-situations too.
--- 
-Jeff Layton <jlayton@kernel.org>
-
+--D
