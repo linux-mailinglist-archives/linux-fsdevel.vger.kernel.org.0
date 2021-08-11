@@ -2,79 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DD273E8800
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 04:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E6333E882A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 04:47:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231650AbhHKC2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 22:28:39 -0400
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:57595 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231233AbhHKC2i (ORCPT
+        id S231828AbhHKCsM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 22:48:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36122 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231634AbhHKCsL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 22:28:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1628648895; x=1660184895;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=mqrHT7lSpTYubUb4Uun7g5pFgQ69qr5SKKRD11vsmq0=;
-  b=cdpMn0NbdlMX8mp1KU9fWzZ5lmzHKsv6m0vp7L4C5DvWtjqynyG0V/sG
-   6qauRtKuziRD9TssNytxIXmZQWl+1hmYK5brB12d7T0bU/78u/RauZHLY
-   wkBq5PPqpdwzgoycHsnVLpLHYBozSu7WN3saxAeRSPDqe6fkuP/+Uns3Q
-   Q=;
-Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 10 Aug 2021 19:28:15 -0700
-X-QCInternal: smtphost
-Received: from nasanexm03e.na.qualcomm.com ([10.85.0.48])
-  by ironmsg02-sd.qualcomm.com with ESMTP/TLS/AES256-SHA; 10 Aug 2021 19:28:15 -0700
-Received: from [10.111.168.10] (10.80.80.8) by nasanexm03e.na.qualcomm.com
- (10.85.0.48) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Tue, 10 Aug
- 2021 19:28:13 -0700
-Subject: Re: move the bdi from the request_queue to the gendisk
-To:     Christoph Hellwig <hch@lst.de>
-CC:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Jan Kara <jack@suse.cz>, <linux-block@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <cgroups@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mm@kvack.org>
-References: <20210809141744.1203023-1-hch@lst.de>
- <e5e19d15-7efd-31f4-941a-a5eb2f94b898@quicinc.com>
- <20210810200256.GA30809@lst.de>
-From:   Qian Cai <quic_qiancai@quicinc.com>
-Message-ID: <4e108ea6-b1dd-510e-afc4-757eae697dab@quicinc.com>
-Date:   Tue, 10 Aug 2021 22:28:12 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Tue, 10 Aug 2021 22:48:11 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F74C061765;
+        Tue, 10 Aug 2021 19:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=2XuCxlz/1YTqakbASVBX4xXFDeh/5u+JwQTEabNEucE=; b=bmKKXtsyjI0D7yhF7nLVL5U7Uv
+        rnZhA9yupgDi0muRLGZW5tYsGBggZr1saCuQbKCY7yJz4JeeOe7BSpTytIVSpj+hQPBbivgdsjaWl
+        DlN0xL0hiOJlwVceOCWLbY+l4D/YI/Q3uMvncML3q/YrahnGOAVI+SMUaDAgEP2uj42DgLSflLFqo
+        mIJacEKKAJtf+8dm9sjS4u7OSmZlnXhY27JJNNM253HGtsc3L1TbtImH6q8+5SgNC9yhrpIMkYqB3
+        VK87AdQTKOyVynoX08HOXr9HcqhQMV2qrd7iQGH7Ht6GBJOxp7ou9n67GppGz9NMc6gJNCewQ9jNh
+        M7NqZfUQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mDeGW-00Cs4P-Ex; Wed, 11 Aug 2021 02:46:55 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 0/8] iomap writethrough for O_SYNC writes
+Date:   Wed, 11 Aug 2021 03:46:39 +0100
+Message-Id: <20210811024647.3067739-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210810200256.GA30809@lst.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanexm03c.na.qualcomm.com (10.85.0.106) To
- nasanexm03e.na.qualcomm.com (10.85.0.48)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Files opened with O_SYNC (... or similar) are currently handled by writing
+to the page, marking it dirty, then finding all dirty pages, clearing
+their dirty bit, marking them as writeback and waiting for the writeback
+to complete.  This patchset bypasses two of those steps by marking the
+pages as writeback from the beginning.  It can also be more precise about
+which bytes in the page are dirty, reducing the number of bytes written.
 
+This whole patchset will have to be redone on top of Christoph's recent
+iomap_iter patches.  That's OK, but it's partly why I've added some
+forward declarations instead of reorganising the file so they're not
+needed.
 
-On 8/10/2021 4:02 PM, Christoph Hellwig wrote:
-> On Tue, Aug 10, 2021 at 03:36:39PM -0400, Qian Cai wrote:
->>
->>
->> On 8/9/2021 10:17 AM, Christoph Hellwig wrote:
->>> Hi Jens,
->>>
->>> this series moves the pointer to the bdi from the request_queue
->>> to the bdi, better matching the life time rules of the different
->>> objects.
->>
->> Reverting this series fixed an use-after-free in bdev_evict_inode().
-> 
-> Please try the patch below as a band-aid.  Although the proper fix is
-> that non-default bdi_writeback structures grab a reference to the bdi,
-> as this was a landmine that might have already caused spurious issues
-> before.
+Matthew Wilcox (Oracle) (8):
+  iomap: Pass struct iomap to iomap_alloc_ioend()
+  iomap: Remove iomap_writepage_ctx from iomap_can_add_to_ioend()
+  iomap: Do not pass iomap_writepage_ctx to iomap_add_to_ioend()
+  iomap: Accept a NULL iomap_writepage_ctx in iomap_submit_ioend()
+  iomap: Pass iomap_write_ctx to iomap_write_actor()
+  iomap: Allow a NULL writeback_control argument to iomap_alloc_ioend()
+  iomap: Pass a length to iomap_add_to_ioend()
+  iomap: Add writethrough for O_SYNC
 
-This works fine with a quick test.
+ fs/iomap/buffered-io.c | 168 +++++++++++++++++++++++++++++------------
+ 1 file changed, 120 insertions(+), 48 deletions(-)
+
+-- 
+2.30.2
+
