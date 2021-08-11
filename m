@@ -2,83 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 936AA3E9118
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 14:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15E483E91D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 14:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231739AbhHKMbL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 08:31:11 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58972 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230109AbhHKMao (ORCPT
+        id S230033AbhHKMrj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 08:47:39 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:52654 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229719AbhHKMri (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 08:30:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628685020;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Wed, 11 Aug 2021 08:47:38 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id ACA1A20170;
+        Wed, 11 Aug 2021 12:47:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1628686033; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=++F32s6NyzrMcJ6QkU/iMFSAu/4raHLUOF3ZnxBpv3o=;
-        b=etX3rjeP6LkLcii1BF4byojm0kkJvrnpmLn7Or2fBkSxHCyEGokk1pK6vyjGB8TysA2MvI
-        d3u3Ya94duaYG2oPJEpGAWY4TbX4Pc7EcNX1ri5fQnZuAD9p6mQzQWBA/tYVoJmSLnxixN
-        i4a/24jMSuAHueLVp/wgzeUb446zDcQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-259-V34PEIdXOKO4kGMbz2BpBg-1; Wed, 11 Aug 2021 08:30:18 -0400
-X-MC-Unique: V34PEIdXOKO4kGMbz2BpBg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 54F8F1009E39;
-        Wed, 11 Aug 2021 12:30:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 18988620DE;
-        Wed, 11 Aug 2021 12:30:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210715033704.692967-80-willy@infradead.org>
-References: <20210715033704.692967-80-willy@infradead.org> <20210715033704.692967-1-willy@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     dhowells@redhat.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v14 079/138] mm/filemap: Add readahead_folio()
+        bh=nwQ4TvjjMcZX7eWrYwBnPN10bqbjG9P7T2eCYAyJQXk=;
+        b=vRr9euvpwMXH0RWDfUD0ywdhH4vM2NdmgSzf1xS2x1Ed90rCAO5rygcPXkH0xi9auM1aWN
+        5CaPl0CL/LM23oND21hPH1suDmy0Qplk2ZFKkV4XOw3A4+GFei+wWFEYqgwWNJukodF7Ke
+        IDjzdq6WV6fUBS0BE8mFP0B+h9T/hJ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1628686033;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nwQ4TvjjMcZX7eWrYwBnPN10bqbjG9P7T2eCYAyJQXk=;
+        b=pgVKegl+OIMR6AYcPyFrMsuOvSOI1CrVWEt2HwgM9Qn+HEPXhkidnjAdoKFQ64w2yOrr0q
+        cHhEhY1mmpn2KoDw==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 98216A3C59;
+        Wed, 11 Aug 2021 12:47:13 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 680061E6204; Wed, 11 Aug 2021 14:47:13 +0200 (CEST)
+Date:   Wed, 11 Aug 2021 14:47:13 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jan Kara <jack@suse.cz>, Qian Cai <quic_qiancai@quicinc.com>,
+        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: move the bdi from the request_queue to the gendisk
+Message-ID: <20210811124713.GF14725@quack2.suse.cz>
+References: <20210809141744.1203023-1-hch@lst.de>
+ <e5e19d15-7efd-31f4-941a-a5eb2f94b898@quicinc.com>
+ <20210810200256.GA30809@lst.de>
+ <20210811112514.GC14725@quack2.suse.cz>
+ <20210811115147.GA27860@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2384707.1628685015.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 11 Aug 2021 13:30:15 +0100
-Message-ID: <2384708.1628685015@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210811115147.GA27860@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
+On Wed 11-08-21 13:51:47, Christoph Hellwig wrote:
+> On Wed, Aug 11, 2021 at 01:25:14PM +0200, Jan Kara wrote:
+> > Well, non-default bdi_writeback structures do hold bdi reference - see
+> > wb_exit() which drops the reference. I think the problem rather was that a
+> > block device's inode->i_wb was pointing to the default bdi_writeback
+> > structure and that got freed after bdi_put() before block device inode was
+> > shutdown through bdput()... So what I think we need is that if the inode
+> > references the default writeback structure, it actually holds a reference
+> > to the bdi.
+> 
+> Qian, can you test the patch below instead of the one I sent yesterday?
 
-> +/**
-> + * readahead_folio - Get the next folio to read.
-> + * @ractl: The current readahead request.
-> + *
-> + * Context: The folio is locked.  The caller should unlock the folio on=
-ce
-> + * all I/O to that folio has completed.
-> + * Return: A pointer to the next folio, or %NULL if we are done.
-> + */
-> +static inline struct folio *readahead_folio(struct readahead_control *r=
-actl)
-> +{
-> +	struct folio *folio =3D __readahead_folio(ractl);
->  =
+Sadly the patch below will not work because the bdi refcount will never
+drop to 0. wb_exit() for the default writeback structure is called only
+from release_bdi() (i.e., after the bdi refcount is 0). That is why I wrote
+above that references to default wb from inodes would hold the ref, not the
+default wb structure itself. So we would need to explicitely hack this into
+__inode_attach_wb() and inode_detach_wb().
 
-> -	return page;
-> +	folio_put(folio);
+Somewhat cleaner approach might be to modify wb_get(), wb_tryget(),
+wb_put() to get reference to bdi instead of doing nothing for the default
+wb. And drop a lot of special-casing of the default wb from various
+functions. But I guess the special cases are there to avoid the performance
+overhead for the common case because getting wb ref is common. Also that's
+why wbs use percpu refcount and we would need something similar for bdis.
+I guess this needs more thinking and your quick workaround is OK for now.
 
-This will oops if __readahead_folio() returns NULL.
+								Honza
 
-> +	return folio;
+> 
+> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+> index cd06dca232c3..edfb7ce2cc93 100644
+> --- a/mm/backing-dev.c
+> +++ b/mm/backing-dev.c
+> @@ -283,8 +283,7 @@ static int wb_init(struct bdi_writeback *wb, struct backing_dev_info *bdi,
+>  
+>  	memset(wb, 0, sizeof(*wb));
+>  
+> -	if (wb != &bdi->wb)
+> -		bdi_get(bdi);
+> +	bdi_get(bdi);
+>  	wb->bdi = bdi;
+>  	wb->last_old_flush = jiffies;
+>  	INIT_LIST_HEAD(&wb->b_dirty);
+> @@ -362,8 +361,7 @@ static void wb_exit(struct bdi_writeback *wb)
+>  		percpu_counter_destroy(&wb->stat[i]);
+>  
+>  	fprop_local_destroy_percpu(&wb->completions);
+> -	if (wb != &wb->bdi->wb)
+> -		bdi_put(wb->bdi);
+> +	bdi_put(wb->bdi);
 >  }
-
+>  
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
