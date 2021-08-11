@@ -2,105 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2ED53E8EC3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 12:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51CA23E8ED9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 12:40:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237036AbhHKKdL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 06:33:11 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:48756 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231752AbhHKKdK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 06:33:10 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id E1ED1221D1;
-        Wed, 11 Aug 2021 10:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1628677965; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=h0IOg7NR69YsOCPb2F2+XbGSCne9GswMDQ6Ct/w6xk0=;
-        b=arNPy9+c9zlxKrC9LXa0fOXS2sQDJzCp4BoJgWZUBkfFO/9rtgdaI9AMh+9R2blC/3uAb/
-        QrOxXZ29/Jf67CbQ+6LWDR8iRBWf+g6dqZRdyMiqByVrHEE8RV/Pg0q2U/OMB3Kdm3G++2
-        IVUYQ07Y7mAvV0ofM9qGEDyUupaOFv8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1628677965;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=h0IOg7NR69YsOCPb2F2+XbGSCne9GswMDQ6Ct/w6xk0=;
-        b=VrjbUvhxHK82obxp+Y+Sq9yhmbTdVvXLf12WqiCQH2wlo8kJjryDqpvjwS3evruf3bZfDG
-        Ww9ApOH6BXC1/6CQ==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id C03A0131F5;
-        Wed, 11 Aug 2021 10:32:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id 6QVELk2nE2FREAAAGKfGzw
-        (envelope-from <vbabka@suse.cz>); Wed, 11 Aug 2021 10:32:45 +0000
-Subject: Re: [PATCH v14 038/138] mm/memcg: Add folio_memcg() and related
- functions
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-39-willy@infradead.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <1eb08e30-3a84-eaae-e9ee-07d59cbde807@suse.cz>
-Date:   Wed, 11 Aug 2021 12:32:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S236951AbhHKKlB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 06:41:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32790 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236855AbhHKKk6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Aug 2021 06:40:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C33EB60560;
+        Wed, 11 Aug 2021 10:40:32 +0000 (UTC)
+Date:   Wed, 11 Aug 2021 12:40:30 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Alejandro Colomar <alx.manpages@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: Questions re the new mount_setattr(2) manual page
+Message-ID: <20210811104030.in6f25hw5h5cotti@wittgenstein>
+References: <b58e2537-03f4-6f6c-4e1b-8ddd989624cc@gmail.com>
+ <d5a8061a-3d8a-6353-5158-8feee0156c6b@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210715033704.692967-39-willy@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d5a8061a-3d8a-6353-5158-8feee0156c6b@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/15/21 5:35 AM, Matthew Wilcox (Oracle) wrote:
-> memcg information is only stored in the head page, so the memcg
-> subsystem needs to assure that all accesses are to the head page.
-> The first step is converting page_memcg() to folio_memcg().
+On Wed, Aug 11, 2021 at 12:47:14AM +0200, Michael Kerrisk (man-pages) wrote:
+> Hi Christian,
 > 
-> The callers of page_memcg() and PageMemcgKmem() are not yet ready to be
-> converted to use folios, so retain them as wrappers around folio_memcg()
-> and folio_memcg_kmem().  They will be converted in a later patch set.
+> Some further questions...
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-
-Nit:
-
-> ---
->  include/linux/memcontrol.h | 109 ++++++++++++++++++++++---------------
->  mm/memcontrol.c            |  21 ++++---
->  2 files changed, 77 insertions(+), 53 deletions(-)
+> In ERRORS there is:
 > 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index bfe5c486f4ad..eabae5874161 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -372,6 +372,7 @@ enum page_memcg_data_flags {
->  #define MEMCG_DATA_FLAGS_MASK (__NR_MEMCG_DATA_FLAGS - 1)
->  
->  static inline bool PageMemcgKmem(struct page *page);
+>        EINVAL The underlying filesystem is mounted in a user namespace.
+> 
+> I don't understand this. What does it mean?
 
-I think this fwd declaration is no longer needed.
+The underlying filesystem has been mounted in a mount namespace that is
+owned by a non-initial user namespace (Think of sysfs, overlayfs etc.).
 
-> +static inline bool folio_memcg_kmem(struct folio *folio);
->  
+> 
+> Also, there is this:
+> 
+>        ENOMEM When  changing  mount  propagation to MS_SHARED, a new peer
+>               group ID needs to be allocated for  all  mounts  without  a
+>               peer  group  ID  set.  Allocation of this peer group ID has
+>               failed.
+> 
+>        ENOSPC When changing mount propagation to MS_SHARED,  a  new  peer
+>               group  ID  needs  to  be allocated for all mounts without a
+>               peer group ID set.  Allocation of this peer  group  ID  can
+>               fail.  Note that technically further error codes are possi‐
+>               ble that are specific to the ID  allocation  implementation
+>               used.
+> 
+> What is the difference between these two error cases? (That is, in what 
+> circumstances will one get ENOMEM vs ENOSPC and vice versa?)
+
+I did really wonder whether to even include those errors and I regret
+having included them because they aren't worth a detailed discussion as
+I'd consider them kernel internal relevant errors rather than userspace
+relevant errors. In essence, peer group ids are allocated using the id
+infrastructure of the kernel. It can fail for two main reasons:
+
+1. ENOMEM there's not enough memory to allocate the relevant internal
+   structures needed for the bitmap.
+2. ENOSPC we ran out of ids, i.e. someone has somehow managed to
+   allocate so many peer groups and managed to keep the kernel running
+   (???) that the ida has ran out of ids.
+
+Feel free to just drop those errors.
+
+> 
+> And then:
+> 
+>        EPERM  One  of  the mounts had at least one of MOUNT_ATTR_NOATIME,
+>               MOUNT_ATTR_NODEV, MOUNT_ATTR_NODIRATIME, MOUNT_ATTR_NOEXEC,
+>               MOUNT_ATTR_NOSUID, or MOUNT_ATTR_RDONLY set and the flag is
+>               locked.  Mount attributes become locked on a mount if:
+> 
+>               •  A new mount or mount tree is created causing mount prop‐
+>                  agation  across  user  namespaces.  The kernel will lock
+> 
+> Propagation is done across mont points, not user namespaces.
+> should "across user namespaces" be "to a mount namespace owned 
+> by a different user namespace"? Or something else?
+
+That's really splitting hairs. Of course this means that we're
+propagating into a mount namespace that is owned by a different user
+namespace though "crossing user namespaces" might have been the better
+choice.
+
+> 
+>                  the aforementioned  flags  to  protect  these  sensitive
+>                  properties from being altered.
+> 
+>               •  A  new  mount  and user namespace pair is created.  This
+>                  happens for  example  when  specifying  CLONE_NEWUSER  |
+>                  CLONE_NEWNS  in unshare(2), clone(2), or clone3(2).  The
+>                  aforementioned flags become locked to protect user name‐
+>                  spaces from altering sensitive mount properties.
+> 
+> Again, this seems imprecise. Should it say something like:
+> "... to prevent changes to sensitive mount properties in the new 
+> mount namespace" ? Or perhaps you have a better wording.
+
+That's not imprecise. What you want to protect against is altering
+sensitive mount properties from within a user namespace irrespective of
+whether or not the user namespace actually owns the mount namespace,
+i.e. even if you own the mount namespace you shouldn't be able to alter
+those properties. I concede though that "protect" should've been
+"prevent".
+
+You could probably say:
+
+	A  new  mount  and user namespace pair is created.  This
+	happens for  example  when  specifying  CLONE_NEWUSER  |
+	CLONE_NEWNS  in unshare(2), clone(2), or clone3(2).
+	The aforementioned flags become locked in the new mount
+	namespace to prevent sensitive mount properties from being
+	altered.
+	Since the newly created mount namespace will be owned by the
+	newly created user namespace a caller privileged in the newly
+	created user namespace would be able to alter senstive
+	mount properties. For example, without locking the read-only
+	property for the mounts in the new mount namespace such a caller
+	would be able to remount them read-write.
+
+(Fwiw, in this scenario there's a bit of (moderately sane) strangeness.
+ A CLONE_NEWUSER | CLONE_NEWMNT will cause even stronger protection to
+ kick in. For all mounts not marked as expired MNT_LOCKED will be set
+ which means that a umount() on any such mount copied from the previous
+ mount namespace will yield EINVAL implying from userspace' perspective
+ it's not mounted - granted EINVAL is the ioctl() of multiplexing errnos
+ - whereas a remount to alter a locked flag will yield EPERM.)
+
+Christian
