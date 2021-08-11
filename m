@@ -2,229 +2,289 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26BA73E9970
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 22:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E213E99CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 22:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231824AbhHKUO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 16:14:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39521 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231822AbhHKUO1 (ORCPT
+        id S230433AbhHKUlM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 16:41:12 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:25770 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230160AbhHKUlL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 16:14:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628712843;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gz4tyz8ZCc1bDCBSeK8pMb5/FKvZCosp7jg60St3cH4=;
-        b=GTD256IHryDs/g0+NSlqZIDqzIQ7CEgnBr4U3oL/VbwHd/oT7rXmsnpc76F+LJsmrXIwAO
-        D+mZ4SzNNqBlKK/Bq1egkifeL3oVeD6oJq7QDOUMqCcnNR6gfNCGac1ezI3H9bdd48L/zV
-        dVV6eR8QVxobOjip4ujlc1YlUn3kYyM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-378-BIiNtjatMy-ZNDMxujyKFA-1; Wed, 11 Aug 2021 16:14:02 -0400
-X-MC-Unique: BIiNtjatMy-ZNDMxujyKFA-1
-Received: by mail-wr1-f70.google.com with SMTP id m5-20020a5d6a050000b0290154e83dce73so1074803wru.19
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Aug 2021 13:14:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:organization:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=gz4tyz8ZCc1bDCBSeK8pMb5/FKvZCosp7jg60St3cH4=;
-        b=kljgEtQTkueGPUeGIltInfH8NjWS2SnLCk55PlN/QNiWhtLzDUaqB6Aocrglrb2mTY
-         +7cPeYU62EvhcsZK2d6vvK/fO0tHfJSbopXlcJFYIwM2Vb1JSE9sN4GcHjCzKpDpLzum
-         hfoU3CFWGqZNh1sfAUbk0ZR0CKSHqB0+4dZPya+DZX3Tb3GfK2XGv2RlDB0dExSO9vJ1
-         FTuskj9ePZZjQeoh71AosJRCTy31Lyjm+WlxY5mXpiHjzDkf5asqiN22HI+D+gVcYTZ9
-         G/FAzvbsAqLocWJbTatK3SsOgBKKpQHHmNthZieaI/HK1Dg5IXC6CM9T0DkOknsz6Q7T
-         OfcQ==
-X-Gm-Message-State: AOAM532bNJaCPWFnIGQjfH4yl3dwK0r3U7IoYJ9rfGcDSrH+RVY63Sz8
-        eg+EJIXuHXKixxN2EhDu6P9/r5rdJKit8E0q4By5MPu3n1Wx0GC2gDA06cWK4sIR9GNWcGgpL4k
-        PwbZTl/ANlAulFq7AjN06sYMQ9Q==
-X-Received: by 2002:adf:f08b:: with SMTP id n11mr211103wro.270.1628712840960;
-        Wed, 11 Aug 2021 13:14:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxiy6DNhuXIQ8jelBcikSubWXLGiIioDLtl8+n4g6o4yzcrLAkdqP0pCWQkcLUN17rtO59wBg==
-X-Received: by 2002:adf:f08b:: with SMTP id n11mr211077wro.270.1628712840679;
-        Wed, 11 Aug 2021 13:14:00 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c64a0.dip0.t-ipconnect.de. [91.12.100.160])
-        by smtp.gmail.com with ESMTPSA id y11sm452620wru.0.2021.08.11.13.13.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Aug 2021 13:14:00 -0700 (PDT)
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Tiberiu A Georgescu <tiberiu.georgescu@nutanix.com>,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        christian.brauner@ubuntu.com, ebiederm@xmission.com,
-        adobriyan@gmail.com, songmuchun@bytedance.com, axboe@kernel.dk,
-        vincenzo.frascino@arm.com, catalin.marinas@arm.com,
-        peterz@infradead.org, chinwen.chang@mediatek.com,
-        linmiaohe@huawei.com, jannh@google.com, apopple@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, ivan.teterevkov@nutanix.com,
-        florian.schmidt@nutanix.com, carl.waldspurger@nutanix.com,
-        jonathan.davies@nutanix.com, Andrea Arcangeli <aarcange@redhat.com>
-References: <20210730160826.63785-1-tiberiu.georgescu@nutanix.com>
- <YQrdY5zQOVgQJ1BI@t490s> <839e82f7-2c54-d1ef-8371-0a332a4cb447@redhat.com>
- <YQrn33pOlpdl662i@t490s> <0beb1386-d670-aab1-6291-5c3cb0d661e0@redhat.com>
- <YRQWMIBwkdBK12Z3@t490s> <253e7067-1c62-19bd-d395-d5c0495610d7@redhat.com>
- <YRQrCrOCbVkJJ6Ph@t490s>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH 0/1] pagemap: swap location for shared pages
-Message-ID: <154c2804-9861-ab91-4bfe-5354683fdfd3@redhat.com>
-Date:   Wed, 11 Aug 2021 22:13:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-MIME-Version: 1.0
-In-Reply-To: <YRQrCrOCbVkJJ6Ph@t490s>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Wed, 11 Aug 2021 16:41:11 -0400
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17BKH5Bp008658;
+        Wed, 11 Aug 2021 20:35:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=w9G/iSGuixW/fGfmUnMpNmv2gMSO5RmQQ5uKeA6o4QM=;
+ b=baYrbFioQuw9nAHanxw4MQRwpD5+3TiNGkdSYIOoHvn7beTydWljWTz0ai4d/hCFsgjN
+ atJnQ6krBUkAk2dpiaYAHwR/xKemdTx6MBqA+h3Q1lD1TskJkxWFVzDfXHh5eVEK03oR
+ iyHo+nbVgO4kqbHFXeML1eECPJFG3UALWsqqTq37Bb9dI/gmiL683OJ7oZi0TJZhlqPa
+ 2pTHncxsepsB6B4SfTzYT8sj8JXYrA/xV25VHVxFCj88KyxaClB/sK3FcbvMn6NUlFYz
+ kp5sY+Bz0q7+65yGSLk4tBbv2sSh7zlEtXiF3CSJM9wOD4nafSnvk0iS4fdCsxDToPew Eg== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=w9G/iSGuixW/fGfmUnMpNmv2gMSO5RmQQ5uKeA6o4QM=;
+ b=YYQfSZBeXTXSG3oGuxY6vbhqlRbjfbfFYRR0Oo+oh/M++QieZYYdEbLZzWtY9ykJ7AkF
+ KPbmeWC6GF8x29MmITZyYXfKhGgEga1ND3CJj7zj6Q2hUyYnA4fk04hWFVMsvTf+Kul6
+ bxizAwVli6g7Z3jvrKdvuzpu/t9HVPCu7/ThYtiPnYSIPSjWjdCLbdea6KwZhj5ymbx4
+ PDs94VClkBbAE0N667P3N9Wa/21x4hVEpvQn2KSJ2G1i7YLuGFJnZZBQLiqfMlZIde5a
+ p4VdMWq4CbZeeXa8TvnCBkehSRmqHJwLC4U4ObelDKemI6e8UZrojm5R8wkg6gOkqHgz +g== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3acd649d15-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Aug 2021 20:35:09 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17BKGIoh112245;
+        Wed, 11 Aug 2021 20:35:08 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+        by userp3020.oracle.com with ESMTP id 3aa3xvsbd0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Aug 2021 20:35:07 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j4rJqGraOLxh4xiLur8hXm3vn9Px5SPJKfrgtbk+qn0AgN9oMrvUe2bPpgGglFf3Rem1oXVE+aP13MTHutzYq7WA8CtWyyhE0tIGMiO0Pu13csY9nhJASW0ylwMClR1A3SeRa/mUnxrHoJv9A9nzfqZtHGOMu7A1AUy6WpF+S8lYtXCqNMxjALBfYSl/5CzSxqSVfe1UKyTl9pkpRXdBIaeQExxo5ZHFKK75fRxJN6eOi+oWkWCIBgw1ddveb++s8CFWjJ3ueCGod/HO9cLIJ6zb+u5bNqH4yj6Dg7WYOBo16hIEOpPLk48OyX09QHlcu9pE0909Hn46v2hWzdCIUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w9G/iSGuixW/fGfmUnMpNmv2gMSO5RmQQ5uKeA6o4QM=;
+ b=g+OjhUr0mbkiBYFeNuM/8mxcWzzPLRe1vDzYacY3aCVq8jlVg88MIN0eje5a5Ti0mstV9vbP6oqxZ+v1MRXE6WzHJPvC0kelxIBUCniZNtaXL/GU5uvIb8VOux0U1YBKUzUaXn3n6+uDPmHOQFVY5msCy+j2xgseOPmvy5mElyBR/C5AwWNwy6NwtfeFGRHc5PRZDAugZ5kzZ3XNV5COEs3wlc6ffzwHlPlx5WOAws7cQEtFN2MpWBK5gBtHSwCno/H6im1bP9MAX3bRhEbuQUxS26R8e5exJl1E0C8OVIqkILGdXLtAC5ZrVAlgqEfCBnkwm0VueJLz+uuc38xnTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w9G/iSGuixW/fGfmUnMpNmv2gMSO5RmQQ5uKeA6o4QM=;
+ b=ibBm4H9KaUOx3AQGIy9Npi+es84krRVdIFWsDYElaSZ/frW76UDxwL6Wn2Wc17CJpbvObE69dvgp4xFsrT4HiWE3aN69lYRKkD0iyPjk1s9aLwbLG0QAva4Ve90m8eXuGkyzzjCL+xUGYyf1/uSNmFrAv0kJj/ZUozfBdjp0F64=
+Received: from CY4PR1001MB2357.namprd10.prod.outlook.com
+ (2603:10b6:910:42::14) by CY4PR10MB1702.namprd10.prod.outlook.com
+ (2603:10b6:910:b::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.14; Wed, 11 Aug
+ 2021 20:35:05 +0000
+Received: from CY4PR1001MB2357.namprd10.prod.outlook.com
+ ([fe80::e4de:77e7:9d08:9f5f]) by CY4PR1001MB2357.namprd10.prod.outlook.com
+ ([fe80::e4de:77e7:9d08:9f5f%6]) with mapi id 15.20.4394.023; Wed, 11 Aug 2021
+ 20:35:05 +0000
+From:   William Kucharski <william.kucharski@oracle.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 3/3] mm/gup: Remove try_get_page(), call
+ try_get_compound_head() directly
+Thread-Topic: [PATCH v2 3/3] mm/gup: Remove try_get_page(), call
+ try_get_compound_head() directly
+Thread-Index: AQHXjvBecLHj6CuNF0ypEXBwDT9dtg==
+Date:   Wed, 11 Aug 2021 20:35:05 +0000
+Message-ID: <20FB1F52-61FB-47DB-8777-E7C880FD875E@oracle.com>
+References: <20210811070542.3403116-1-jhubbard@nvidia.com>
+ <20210811070542.3403116-4-jhubbard@nvidia.com>
+In-Reply-To: <20210811070542.3403116-4-jhubbard@nvidia.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3689.0.4)
+authentication-results: nvidia.com; dkim=none (message not signed)
+ header.d=none;nvidia.com; dmarc=none action=none header.from=oracle.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8a92e4ef-d080-43ca-aca0-08d95d0780ec
+x-ms-traffictypediagnostic: CY4PR10MB1702:
+x-microsoft-antispam-prvs: <CY4PR10MB1702664DAE730E707999476D81F89@CY4PR10MB1702.namprd10.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: pTuBX3jZe2XmD10VqH0ZDSlE/aBoAjLOzzxubbKMkNzsprlzGEfx+S1y+aheaQiCqu/+i/Uz6oIUwE33sccmELWNqTJD+ly4Eawa8sD5pRz93J7k4+ewAEg/tvKqs1YBcW2RyLTyRPdUk827GyC5TWUzZX2tn1ugJopG7r1rvulQMjvsqOKEIqIcF5vW0giDj1Lw9t2A7TDG/XyeEhzTCJsFSQSuA5iaIvBRjHjCRpRY/hgJXUf0lcgK8c+SFR3EIeGjp9a6fcEDuQLcB39/zpJFF2aweMoOGqZ1iJgAuFfS6GkLQS0uNB+mCmsZ8qdkq19PlSLytQgOyabzhJ+ZCToK3coqL8DE46yf3mFHn1xlZntiWTj9E0ZrRll5eC8nKARv9JAay80o8roYaP8fz7S8jK26qdNc9IB8JckfHNx8IWKkc9iqNEV58NCvqF3V1pE9cDpbHPN8AXccU5tD/b/3PKLCxOqNS4ZNgkMnDjjSpWVXx8C0las73hdX9xtRcxqS5XvYJiLJGqOoj2bzstZS2K6o71GHzFRwEv0aajOpF882vjc2F6JXFLGc1Lsx5CpTwRvc6ZN253oDggxLGSadgMR8xf2Rl50Cvn2Siz9BlwGmm11ECkEGhPoqTJ5Gj7HpjRnhf46Rc61HcVH1S+k3qs4vsO51COWn5yYBY3UzSutdwOFnXG/atz0qjQiVV1zrugSZJTmDNrdsORwMW6X/rkGu9Jda63iyg5Yo/G0=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1001MB2357.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(39860400002)(396003)(366004)(346002)(376002)(6486002)(6506007)(66446008)(53546011)(8676002)(4326008)(71200400001)(5660300002)(38070700005)(6512007)(478600001)(33656002)(66476007)(64756008)(86362001)(186003)(7416002)(38100700002)(6916009)(2906002)(66556008)(8936002)(83380400001)(44832011)(2616005)(54906003)(66946007)(36756003)(316002)(122000001)(76116006)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?wE35fMa2fgF5dj+lWRxlrafURl44SN6ngEkztihNibM96IMH30RokYDm5I9W?=
+ =?us-ascii?Q?DHbV45Z9fbZ1Guh9Q1dNjzyWZSHtjjQadyRE2Ovz4TklLgEcWrXMWDNNaD4o?=
+ =?us-ascii?Q?erTk1A67FnSv+cFtD9+iL+O3zxoFb0mbOxxcLb7H43LJeUKsGyWY+/3vLZiz?=
+ =?us-ascii?Q?5Dfm92Olt3G/+y5Hn0XEygsKzy1iCTvrM7rbP/w5TVjHMbgQxSIjLB/km/ra?=
+ =?us-ascii?Q?p1ZiBx2g0ocxIyv6qgSBjKypvn0hxgHbMMnKxeEd+5jQKO6n7592vho+6/rQ?=
+ =?us-ascii?Q?krJ+xMqMjrKWjTVM72GNDiQYHuXZRr4emWIWIN39rCMy5rUNXXl4Qd9sKzyh?=
+ =?us-ascii?Q?C91E+gljevOctJ0xnqsX54TR+1P9hbKvGMg0g91VupewiOA3t2L6ZQRYbBsF?=
+ =?us-ascii?Q?B2XOnyDlOhPNZKXtptkDf06g6VlLkgaKLV/D2d11aNSmp6cL6Dpeion2nFQv?=
+ =?us-ascii?Q?4G74PXYkRflS1VTMj5+Dc/O3ZSy9zaRFWMgj++KRo3Jcft/12bOMSsx4chjp?=
+ =?us-ascii?Q?ZDu9ZESqypddtQWLMh2xClzxC6k1HrsX5zHZbPl5bYtXGY9jEIeHSoUGOQaO?=
+ =?us-ascii?Q?IvjEMfF23s5SUs41GiacYBZ7X+7FzqizwIeIoTA7czw5qJdRxCN3ihA35l+0?=
+ =?us-ascii?Q?9Mibwveb9XnFZEcFNRe2cI4kRuc1Ewkm4ScfWZBkAtiCzwi/J5IWHXo3XcKX?=
+ =?us-ascii?Q?Ke+tid57GynyHo109HhkARuab2W4zuoH5/M9JymgO5SceGavqv3KIs715AHJ?=
+ =?us-ascii?Q?wJhu760J/tbDOglZ0mvOvQQwwFnJyTbBTCFyTOP96u3FOWB/Ya5b5EyQ/Fu3?=
+ =?us-ascii?Q?QaJOi5Yr8szAkRTgv8AWFaDiMVOb+shD+4x2cUiO+u46BfCD1bHM+EJlP9Qx?=
+ =?us-ascii?Q?9kwwf2UJ2THFiFLuir/x2pJ/dBUrZMOx9IaCyAZj4F194kJSpPeAyMCOaFrR?=
+ =?us-ascii?Q?AoBaQsWL5XI8lJYZWUOt2oNCkg54/ke7T9NjpTWIRcDb3hmPQgsb2/2vbVWP?=
+ =?us-ascii?Q?BwGcwSsnG1UlbuIOfwsaY+hsP7s4IUjVkka6Kt1/r9AA4GzFt7S05zHd+Z3u?=
+ =?us-ascii?Q?HT0/DvniSfRLwjNk0EsgNLvT09oVTQJk01lSNDLnc5yEXq5y7abmFzwSuzBV?=
+ =?us-ascii?Q?h+h+D5Iz1ns+M+W8iNhc25Yyu8QWXlpT72IS06HUIrmGGUfnJT5SkQNE99ra?=
+ =?us-ascii?Q?ubmPQdnDoNS+Hq3+K+R4ecrkUU+gKolR65wpSDZYsfODPka3ydbt+9Yyjaqn?=
+ =?us-ascii?Q?lJ0PO+aTD6caBGkhwZ4Njo7tSyA9IH+bWifz3qXsJ6NUalXXe/NT0W3bmseF?=
+ =?us-ascii?Q?MA7ZoIqlas6bGB0mVGck9t4nDR8b8R3wUasWwOuUub1Q0ydzzvLL0cIgDD0B?=
+ =?us-ascii?Q?emjOURErCF54REYahTmCxikC3+q+?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <46A3989F798F22439104A567DE57BF0A@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR1001MB2357.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a92e4ef-d080-43ca-aca0-08d95d0780ec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Aug 2021 20:35:05.7874
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tfeJARspy+5tL75048TRSSHou29ClD2JXV/tgt2GzvqIJcErXI0FHh9LX3ykKdzCadexedW1b7HqxsxfN1kad7FDb2HKIknurv4j8KkPs1c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR10MB1702
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10073 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 adultscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2108110139
+X-Proofpoint-GUID: uubmqvfjN-TfzC0r1s03azEgssFGUN9V
+X-Proofpoint-ORIG-GUID: uubmqvfjN-TfzC0r1s03azEgssFGUN9V
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->>
->> Good question, I'd imagine e.g., file sealing could forbid uffd (or however
->> it is called) registration on a file, and there would have to be a way to
->> reject files that have uffd registered. But it's certainly a valid concern -
->> and it raises the question to *what* we actually want to apply such a
->> concept. Random files? random memfd? most probably not. Special memfds
->> created with an ALLOW_UFFD flag? sounds like a good idea.
-> 
-> Note that when daemons open files, they may not be aware of what's underneath
-> but read that file directly.  The attacker could still create the file with
-> uffd-wp enabled with any flag we introduce.
+I agree that try_get_page() should probably be removed entirely; is there
+a reason you didn't in v2 of the patch?
 
-Right, but we could, for example, use a prctrl to make a process to opt 
-in to opening possibly-uffd-wp-protected files at all. I guess securing 
-that aspect shouldn't be a hard nut to crack. At least with my thinking.
+I'm also curious why you changed try_get_compound_head() into a routine
+from an inline.
 
-> 
->>
->>>
->>> I also don't know the initial concept when uffd is designed and why it's
->>> designed at pte level.  Avoid vma manipulation should be a major factor, but I
->>> can't say I understand all of them.  Not sure whether Andrea has any input here.
->>
->> AFAIU originally a) avoid signal handler madness and b) avoid VMA
->> modifications and c) avoid taking the mmap lock in write (well, that didn't
->> work out completely for uffd-wp for now IIRC).
-> 
-> Nadav fixed that; it's with read lock now just like when it's introduced.
-> Please see mwriteprotect_range() and commit 6ce64428d62026a10c.
+If you want to retain try_get_page() it should be an inline as well, especi=
+ally
+in its current implementation.
 
-Oh, rings a bell, thanks!
+    William Kucharski
 
->>
->>>
->>> That's why I think current uffd can still make sense with per-process concepts
->>> and keep it that way.  When register uffd-wp yes we need to do that for
->>> multiple processes, but it also means each process is fully aware that this is
->>> happening so it's kind of verified that this is wanted behavior for that
->>> process.  It'll happen with less "surprises", and smells safer.
->>>
->>> I don't think that will not work out.  It may require all the process to
->>> support uffd-wp apis and cooperate, but that's so far how it should work for me
->>> in a safe and self-contained way.  Say, every process should be aware of what's
->>> going to happen on blocked page faults.
->>
->> That's a valid concern, although I wonder if it can just be handled via
->> specially marked memfds ("this memfd might get a uffd handler registered
->> later").
-> 
-> Yes, please see my above concern.  So I think we at least reached concensus on:
-> (1) that idea is already not userfaultfd but something else; what's that is
-> still to be defined.  And, (2) that definitely needs further thoughts and
-> context to support its validity and safety.  Now uffd got people worried about
-> safety already, that's why all the uffd selinux and privileged_userfaultfd
-> sysctl comes to mainline; we'd wish good luck with the new concept!
-
-Sure, whenever you introduce random ever-lasting delays, we have to be 
-very careful what we support. And if means not supporting some ioctls 
-for such a special memfd (hello secretmem :)).
-
-> 
-> OTOH, uffd whole idea is already in mainline, it has limitations on requiring
-> to rework all processes to support uffd-wp, but actually the same to MISSING
-> messages has already happened and our QE is testing those: that's what we do
-> with e.g. postcopy-migrating vhost-user enabled OVS-DPDK - we pass over uffd
-> registered with missing mode and let QEMU handle the page fault.  So it's a bit
-> complicated but it should work.  And I hope you can also agree we don't need to
-> block uffd before that idea settles.
-
-Let's phrase it that way: instead of extending something that just 
-doesn't fit cleanly and feels kind of hackish (see my approach to 
-teaching QEMU background snapshots above), I'd much rather see something 
-clean and actually performant for the use cases I am aware of.
-
-That doesn't mean that your current uffd-wp approach on shmem is all bad 
-IMHO  (well, I make no decisions either way :) ), I'd just like us to 
-look into finding eventually an approach to handle this cleanly instead 
-of trying to solve problems we might not have to solve after all (pte 
-markers) when things are done differently.
-
-> 
-> The pte markers idea need comment; that's about implementation, and it'll be
-> great to have comments there or even NACK (better with a better suggestion,
-> though :).  But the original idea of uffd that is pte-based has never changed.
-
-Right, I hope some other people can comment. If we want to go down that 
-path for uffd-wp, pte makers make sense. I'm not convinced we want them 
-to handle swapped shared pages, but that discussion is better off in 
-your posting.
-
-
->>
->>>>
->>>> Again, I am not sure if uffd-wp or softdirty make too much sense in general
->>>> when applied to shmem. But I'm happy to learn more.
->>>
->>> Me too, I'm more than glad to know whether the page cache idea could be
->>> welcomed or am I just wrong about it.  Before I understand more things around
->>> this, so far I still think the per-process based and fd-based solution of uffd
->>> still makes sense.
->>
->> I'd be curious about applications where the per-process approach would
->> actually solve something a per-fd approach couldn't solve. Maybe there are
->> some that I just can't envision.
-> 
-> Right, that's a good point.
-> 
-> Actually it could be when like virtio-mem that some process shouldn't have
-> write privilege, but we still allow some other process writting to the shmem.
-> Something like that.
-
-With virtio-mem, you most probably wouldn't want anybody writing to it, 
-at least from what I can tell. But I understand the rough idea -- just 
-that you cannot enforce something on another process that doesn't play 
-along (at least with the current uffd-wp approach! you could with an 
-fd-based approach).
-
-> 
->>
->> (using shmem for a single process only isn't a use case I consider important
->> :) )
-> 
-> If you still remember the discussion about "having qemu start to use memfd and
-> shmem as default"? :)
-
-Oh yes :)
-
-> 
-> shmem is hard but it's indeed useful in many cases, even if single threaded.
-> For example, shmem-based VMs can do local binary update without migrating guest
-> RAMs (because memory is shared between old/new binaries!).  To me it's always a
-> valid request to enable both shmem and write protect.
-
-Right, but it would also just work with an fd-based approach. (well, 
-unless we're dealing with shared anonymous RAM, but that is just some 
-weird stuff for really exotic use cases)
-
-
--- 
-Thanks,
-
-David / dhildenb
+> On Aug 11, 2021, at 1:05 AM, John Hubbard <jhubbard@nvidia.com> wrote:
+>=20
+> try_get_page() is very similar to try_get_compound_head(), and in fact
+> try_get_page() has fallen a little behind in terms of maintenance:
+> try_get_compound_head() handles speculative page references more
+> thoroughly.
+>=20
+> There are only two try_get_page() callsites, so just call
+> try_get_compound_head() directly from those, and remove try_get_page()
+> entirely.
+>=20
+> Also, seeing as how this changes try_get_compound_head() into a
+> non-static function, provide some kerneldoc documentation for it.
+>=20
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+> arch/s390/mm/fault.c |  2 +-
+> fs/pipe.c            |  2 +-
+> include/linux/mm.h   | 10 +---------
+> mm/gup.c             | 21 +++++++++++++++++----
+> 4 files changed, 20 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
+> index 212632d57db9..fe1d2c1dbe3b 100644
+> --- a/arch/s390/mm/fault.c
+> +++ b/arch/s390/mm/fault.c
+> @@ -822,7 +822,7 @@ void do_secure_storage_access(struct pt_regs *regs)
+> 		break;
+> 	case KERNEL_FAULT:
+> 		page =3D phys_to_page(addr);
+> -		if (unlikely(!try_get_page(page)))
+> +		if (unlikely(try_get_compound_head(page, 1) =3D=3D NULL))
+> 			break;
+> 		rc =3D arch_make_page_accessible(page);
+> 		put_page(page);
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 8e6ef62aeb1c..06ba9df37410 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -191,7 +191,7 @@ EXPORT_SYMBOL(generic_pipe_buf_try_steal);
+>  */
+> bool generic_pipe_buf_get(struct pipe_inode_info *pipe, struct pipe_buffe=
+r *buf)
+> {
+> -	return try_get_page(buf->page);
+> +	return try_get_compound_head(buf->page, 1) !=3D NULL;
+> }
+> EXPORT_SYMBOL(generic_pipe_buf_get);
+>=20
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ce8fc0fd6d6e..cd00d1222235 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1207,15 +1207,7 @@ bool __must_check try_grab_page(struct page *page,=
+ unsigned int flags);
+> __maybe_unused struct page *try_grab_compound_head(struct page *page, int=
+ refs,
+> 						   unsigned int flags);
+>=20
+> -
+> -static inline __must_check bool try_get_page(struct page *page)
+> -{
+> -	page =3D compound_head(page);
+> -	if (WARN_ON_ONCE(page_ref_count(page) <=3D 0))
+> -		return false;
+> -	page_ref_inc(page);
+> -	return true;
+> -}
+> +struct page *try_get_compound_head(struct page *page, int refs);
+>=20
+> /**
+>  * folio_put - Decrement the reference count on a folio.
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 64798d6b5043..c2d19d370c99 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -62,11 +62,24 @@ static void put_page_refs(struct page *page, int refs=
+)
+> 	put_page(page);
+> }
+>=20
+> -/*
+> - * Return the compound head page with ref appropriately incremented,
+> - * or NULL if that failed.
+> +/**
+> + * try_get_compound_head() - return the compound head page with refcount
+> + * appropriately incremented, or NULL if that failed.
+> + *
+> + * This handles potential refcount overflow correctly. It also works cor=
+rectly
+> + * for various lockless get_user_pages()-related callers, due to the use=
+ of
+> + * page_cache_add_speculative().
+> + *
+> + * Even though the name includes "compound_head", this function is still
+> + * appropriate for callers that have a non-compound @page to get.
+> + *
+> + * @page:  pointer to page to be gotten
+> + * @refs:  the value to add to the page's refcount
+> + *
+> + * Return: head page (with refcount appropriately incremented) for succe=
+ss, or
+> + * NULL upon failure.
+>  */
+> -static inline struct page *try_get_compound_head(struct page *page, int =
+refs)
+> +struct page *try_get_compound_head(struct page *page, int refs)
+> {
+> 	struct page *head =3D compound_head(page);
+>=20
+> --=20
+> 2.32.0
+>=20
+>=20
 
