@@ -2,93 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15E403E8F8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 13:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF6DB3E8FD6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 13:51:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237373AbhHKLiH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 07:38:07 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:59482 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237329AbhHKLiG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 07:38:06 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id B7AD7221C8;
-        Wed, 11 Aug 2021 11:37:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1628681861; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4Qg256a2cRijtU4ToakVHy7eaZvLeHLKe/OB/WYR1yU=;
-        b=XMvQLX/opMEmdc/KG3IyuO3vhruRZi3Kr3Xah6jKaqufWH+xv9YB+NUZ4hAV7gNUKTazaO
-        J63bhc8LlT99kDlqYx0MRwIomTsAYf0LIh/819C873cGlNfWc94T+i0oVA+rB9DjtkwjEl
-        uymgoEqp5r5u/78bpDbkFLfGcYJPqnE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1628681861;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4Qg256a2cRijtU4ToakVHy7eaZvLeHLKe/OB/WYR1yU=;
-        b=yzeRnc0Mxnij4E+0SJ46x4lrjkVK1W+6dFidWytbYflh6jI8M/Exh8RL5QI3OB1ncqDKkt
-        pWb6kdxCKBLsREDA==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 71E38A3C27;
-        Wed, 11 Aug 2021 11:37:41 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 4DEDC1E6204; Wed, 11 Aug 2021 13:37:41 +0200 (CEST)
-Date:   Wed, 11 Aug 2021 13:37:41 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] fsnotify: count all objects with attached
- connectors
-Message-ID: <20210811113741.GD14725@quack2.suse.cz>
-References: <20210810151220.285179-1-amir73il@gmail.com>
- <20210810151220.285179-4-amir73il@gmail.com>
+        id S232160AbhHKLwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 07:52:14 -0400
+Received: from verein.lst.de ([213.95.11.211]:40261 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229836AbhHKLwO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Aug 2021 07:52:14 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C07CA67373; Wed, 11 Aug 2021 13:51:47 +0200 (CEST)
+Date:   Wed, 11 Aug 2021 13:51:47 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Qian Cai <quic_qiancai@quicinc.com>,
+        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: move the bdi from the request_queue to the gendisk
+Message-ID: <20210811115147.GA27860@lst.de>
+References: <20210809141744.1203023-1-hch@lst.de> <e5e19d15-7efd-31f4-941a-a5eb2f94b898@quicinc.com> <20210810200256.GA30809@lst.de> <20210811112514.GC14725@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210810151220.285179-4-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210811112514.GC14725@quack2.suse.cz>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 10-08-21 18:12:19, Amir Goldstein wrote:
-> Rename s_fsnotify_inode_refs to s_fsnotify_connectors and count all
-> objects with attached connectors, not only inodes with attached
-> connectors.
-> 
-> This will be used to optimize fsnotify() calls on sb without any
-> type of marks.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+On Wed, Aug 11, 2021 at 01:25:14PM +0200, Jan Kara wrote:
+> Well, non-default bdi_writeback structures do hold bdi reference - see
+> wb_exit() which drops the reference. I think the problem rather was that a
+> block device's inode->i_wb was pointing to the default bdi_writeback
+> structure and that got freed after bdi_put() before block device inode was
+> shutdown through bdput()... So what I think we need is that if the inode
+> references the default writeback structure, it actually holds a reference
+> to the bdi.
 
-... just a minor nit below ...
+Qian, can you test the patch below instead of the one I sent yesterday?
 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 640574294216..d48d2018dfa4 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1507,8 +1507,8 @@ struct super_block {
->  	/* Number of inodes with nlink == 0 but still referenced */
->  	atomic_long_t s_remove_count;
->  
-> -	/* Pending fsnotify inode refs */
-> -	atomic_long_t s_fsnotify_inode_refs;
-> +	/* Number of inode/mount/sb objects that are being watched */
-> +	atomic_long_t s_fsnotify_connectors;
-
-I've realized inode watches will be double-accounted because we increment
-s_fsnotify_connectors both when attaching a connector and when grabbing
-inode reference. It doesn't really matter and avoiding this would require
-special treatment of inode connectors (we need to decrement
-s_fsnotify_connectors only after dropping inode reference). So I'll just
-reflect this in the comment here so that we don't forget.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index cd06dca232c3..edfb7ce2cc93 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -283,8 +283,7 @@ static int wb_init(struct bdi_writeback *wb, struct backing_dev_info *bdi,
+ 
+ 	memset(wb, 0, sizeof(*wb));
+ 
+-	if (wb != &bdi->wb)
+-		bdi_get(bdi);
++	bdi_get(bdi);
+ 	wb->bdi = bdi;
+ 	wb->last_old_flush = jiffies;
+ 	INIT_LIST_HEAD(&wb->b_dirty);
+@@ -362,8 +361,7 @@ static void wb_exit(struct bdi_writeback *wb)
+ 		percpu_counter_destroy(&wb->stat[i]);
+ 
+ 	fprop_local_destroy_percpu(&wb->completions);
+-	if (wb != &wb->bdi->wb)
+-		bdi_put(wb->bdi);
++	bdi_put(wb->bdi);
+ }
+ 
+ #ifdef CONFIG_CGROUP_WRITEBACK
