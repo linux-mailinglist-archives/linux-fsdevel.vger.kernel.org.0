@@ -2,43 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA773E94B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 17:40:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A32993E9517
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 17:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233178AbhHKPkY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 11:40:24 -0400
-Received: from mail-dm6nam08on2043.outbound.protection.outlook.com ([40.107.102.43]:22575
-        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
+        id S233599AbhHKPx7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 11:53:59 -0400
+Received: from mail-dm6nam12on2063.outbound.protection.outlook.com ([40.107.243.63]:57576
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232120AbhHKPkX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 11:40:23 -0400
+        id S233491AbhHKPxY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Aug 2021 11:53:24 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=daLEHybPecI6ZRHIqH2cWATVIfPB+WooynNVSuvLkAtnRwsGnHNpn3k78Oh+gBP8L59PRPP2nBUqJt+Bfer9wZOhl4a1j4NqMFiiqXjL9O9YvADSKo8pjnU9IxV166s07Gm+zWT+JZzYXX59TlPnLlMCetnw/TKr/P48K9eCA1Z4I/sngLElIb9YUZavHVRKdrE1onEf7g6L3p9apkiSdy1wLbssK2NkXGgsoKSxZpaP30A0qur2zgFsflgJHxCzAKjjpKUxJjaUw4BHJ+FPQPTNen9QCCBJHgdLBNaaXxnuBm/cOdgnRp7JRZIJZq49/geQLv0nSy9tckgYqmRa8A==
+ b=TVxXJjaHSdRiohwAE+8zNVbsf3D54dQHusnRJVSSwi4FlpEM6/7A8MLTjQ8ByxSEs8bNYlvTx8hmaWEVY/PCx06TI7GboiiErn4WKFLfuFaOENpCcCoKbgDEBNyP+4K6TkJWZKtdZweUNlb5x2vfuYb8afG0nN2PebS9PhOLj3Bu35Mo65vXIlY76mNIPmZ+V1JivRGDt3ANe1vcYFb14gyJEdwPnbpsKFcHFuzptTMh9gU8rJJXNhYjl4l/puSwUuDPsDr1ZOSmqsJbB7QJPr0J6ZP6BDDixl29W90sgSn96S/iLiQ46pk1n+fKxuPiIngydBdw4ZBLWUHoIRcijg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2evfU3JKF12i+CHIj3gsXs8GalyqMJpNfF6tW4wUq2o=;
- b=YsjP+FkVvQzAPeqmTMzAOI9rlxik8Fapr8uLmUgc8SPWzBmIuQn4tnloY0ZMtzyUVOXS2/PbcQgFxngzEp4BXlMeUWqoPbHInwGzG3tYh1Q7+eLhvnADEh9s4vzMPr+/i2S5syNC1WlBuTBkWLs53OHFdiVoLTg5RRWcxJKravJuwSlGyypN9InJ4gaZAzqBV7w/z0otj1uWX3e8uJskf3kRTnekM1TvaOOWC+hDjAvL7TGl6unufyADcbZn245m1QW6ZBjtvvHxNTvy4vFLPa26tlRkn5qLge2279CsTzc0CrM35z71XdN4gtgrT7cfh5lRzgzQv7m7WPHnQg9aRg==
+ bh=C49rqTyfz3/bdpRcw7lWMxc9BXCwJJccswQylOwMjKA=;
+ b=RAqKTMcfArEHEAUu7QneQjF7TcJn1x6wgtwcpOT/7iy8vqK6M9LMcD8R60lIieMP33wo9ZCzC87YbWZo7klVfW2fzaNraEIE7pFfm8MBO5TNLEpQ3cPZz5MSDNRPzxstu27UnhRB9lrlVGNDxRZqof7ndWT05vKzKhkWgPA7DAVvwHe6FEfPWwfQMareaJD+J/5mps/q+/uxVzGUfjutgkbde6i3wK6gg8IZ2L4tqIaPzdJehcnPvjMzi+8tqc0I4FHkoVUUOm4z0/cfkr8Y6PRAvjlAYPuKAA9NKLB7qdKgGRjB961IQpj5WE+8YKu2n49OL0xYEL7BZC6OxSF4wA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2evfU3JKF12i+CHIj3gsXs8GalyqMJpNfF6tW4wUq2o=;
- b=V8IePYDNxlfzfQdtdtha00szkrEQwwgv+NXNgJ4tlOcyTgsoMxTTfNqSPuxFP4bN/zQGAQRtNV5NNFtUzM/pIdq7Ht70s1yUh2GO/1wQ8K8jEz/p4SqROPRsskmIsCdPkGCCewt+g4kMSH5+QqCD96gcEdUOr7HW0n3eDqs26Qg=
-Authentication-Results: microsoft.com; dkim=none (message not signed)
- header.d=none;microsoft.com; dmarc=none action=none header.from=amd.com;
+ bh=C49rqTyfz3/bdpRcw7lWMxc9BXCwJJccswQylOwMjKA=;
+ b=0L7NJW1lPcU0elmdj23auZMGESKK2ZOB1uoaFPWc5tkKmv26YZw3humrz816GR/KZ4Mnzjr4NswnpH22OuGrGFsFjX1CDWEcvq6LemIppHbCds9P1Jl74AzeylVmzMiKYwklN43zkQaRRMp+GivmZuKXEvk7g+ELQJMP6PfUs+8=
+Authentication-Results: redhat.com; dkim=none (message not signed)
+ header.d=none;redhat.com; dmarc=none action=none header.from=amd.com;
 Received: from DM4PR12MB5229.namprd12.prod.outlook.com (2603:10b6:5:398::12)
- by DM8PR12MB5447.namprd12.prod.outlook.com (2603:10b6:8:36::7) with Microsoft
+ by DM8PR12MB5431.namprd12.prod.outlook.com (2603:10b6:8:34::8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4415.13; Wed, 11 Aug 2021 15:39:58 +0000
+ 15.20.4415.16; Wed, 11 Aug 2021 15:52:58 +0000
 Received: from DM4PR12MB5229.namprd12.prod.outlook.com
  ([fe80::d560:d21:cd59:9418]) by DM4PR12MB5229.namprd12.prod.outlook.com
  ([fe80::d560:d21:cd59:9418%6]) with mapi id 15.20.4415.016; Wed, 11 Aug 2021
- 15:39:58 +0000
-Subject: Re: [PATCH 01/11] mm: Introduce a function to check for
- virtualization protection features
-To:     "Kuppuswamy, Sathyanarayanan" 
+ 15:52:58 +0000
+Subject: Re: [PATCH 07/11] treewide: Replace the use of mem_encrypt_active()
+ with prot_guest_has()
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     "Kuppuswamy, Sathyanarayanan" 
         <sathyanarayanan.kuppuswamy@linux.intel.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
         linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
@@ -46,130 +47,187 @@ To:     "Kuppuswamy, Sathyanarayanan"
         linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         linux-graphics-maintainer@vmware.com,
         amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Cc:     Borislav Petkov <bp@alien8.de>,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>,
         Brijesh Singh <brijesh.singh@amd.com>,
         Joerg Roedel <joro@8bytes.org>,
         Andi Kleen <ak@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Will Deacon <will@kernel.org>, Dave Young <dyoung@redhat.com>,
+        Baoquan He <bhe@redhat.com>
 References: <cover.1627424773.git.thomas.lendacky@amd.com>
- <cbc875b1d2113225c2b44a2384d5b303d0453cf7.1627424774.git.thomas.lendacky@amd.com>
- <805946e3-5138-3565-65eb-3cb8ac6f0b3e@linux.intel.com>
+ <029791b24c6412f9427cfe6ec598156c64395964.1627424774.git.thomas.lendacky@amd.com>
+ <166f30d8-9abb-02de-70d8-6e97f44f85df@linux.intel.com>
+ <4b885c52-f70a-147e-86bd-c71a8f4ef564@amd.com>
+ <20210811121917.ghxi7g4mctuybhbk@box.shutemov.name>
 From:   Tom Lendacky <thomas.lendacky@amd.com>
-Message-ID: <e7208040-9ccc-b2df-b2d3-a06ed793908b@amd.com>
-Date:   Wed, 11 Aug 2021 10:39:54 -0500
+Message-ID: <0a819549-e481-c004-7da8-82ba427b13ce@amd.com>
+Date:   Wed, 11 Aug 2021 10:52:55 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
-In-Reply-To: <805946e3-5138-3565-65eb-3cb8ac6f0b3e@linux.intel.com>
+In-Reply-To: <20210811121917.ghxi7g4mctuybhbk@box.shutemov.name>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA0PR11CA0050.namprd11.prod.outlook.com
- (2603:10b6:806:d0::25) To DM4PR12MB5229.namprd12.prod.outlook.com
+X-ClientProxiedBy: SN1PR12CA0061.namprd12.prod.outlook.com
+ (2603:10b6:802:20::32) To DM4PR12MB5229.namprd12.prod.outlook.com
  (2603:10b6:5:398::12)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.236.30.241] (165.204.77.1) by SA0PR11CA0050.namprd11.prod.outlook.com (2603:10b6:806:d0::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.14 via Frontend Transport; Wed, 11 Aug 2021 15:39:56 +0000
+Received: from [10.236.30.241] (165.204.77.1) by SN1PR12CA0061.namprd12.prod.outlook.com (2603:10b6:802:20::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.16 via Frontend Transport; Wed, 11 Aug 2021 15:52:56 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0dc406e1-0586-4eca-cb83-08d95cde45f9
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5447:
+X-MS-Office365-Filtering-Correlation-Id: 7e687563-770c-45e3-d65c-08d95ce0175c
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5431:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM8PR12MB5447EBEF2583098748EDDEC9ECF89@DM8PR12MB5447.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1013;
+X-Microsoft-Antispam-PRVS: <DM8PR12MB543199BEF36F29E3840ABFD6ECF89@DM8PR12MB5431.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: GbpvZHrEktXDOQPMRWHMYiyUuTlNMQ6O97bArWsUpsez9UrKjNMsVtXUVMkdTpTToQA7kNzulOyAVG9RqiQKxhWV6tgQDqTBFPqpRZiAfHwsXEtAq1jVtjb1IC51fOHT2KR5+2gsHs+FvusJR9HkXxblK5nslI0w+2y9tHdH4kZatggMfQw+gskbQxLFMkYyCZ2Bmf4Zzoo7Y55zv8kx+f1XBXeqUj1G/KEkXimTbq/L0I4QxhDkeY/LT8D8Il2sFoELSVY4x7zNzPhqIWy2h2ADJfzSqguJAgpTSUQUfl0A2exnWt9qJmYqWFHfkkRCLStYlOWF9rsO397jYxDT4KdfEjpSaxI+CRle5jloFYCYQiQo+r+ZlVmiaDe6O1xFscV98V+BB455lX2cB1W1Zm2ku4WYNrNgY6WfeoguRM5i2yL2FAYiRgiBli6djLvYKGr9axkeZ5vxHMQZyBU0slxvA87yZIfln+Ot/yCrJh3bwS8Loc8+/60vUGJLhR53oPFxinWlZT4u2DchHPE87DWwM3oLo1zojFEbVfJmsATJERlD6EPdgGvDwauUpoV2Hte9wi5TgPNEvWqxm8yCyj7Pk4Wgjry5iXKfFgnDdhAcWCxAwvVtqirs1hurFf+8GhH4xNyqXulJWFHDyGsdNNCLWaZhWRjtBz9JjO/s6X1S7OyGsgcaem58mY/zbJTG6IWqjsaPgivu5mxJ3BlLfa+bJN8F+JL9/8IQ0eP4JC2IqVLn0+YAN+UFV4ClE5jL
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5229.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(346002)(396003)(136003)(39860400002)(376002)(31686004)(26005)(478600001)(53546011)(54906003)(186003)(36756003)(16576012)(2906002)(2616005)(7416002)(4326008)(956004)(316002)(86362001)(5660300002)(921005)(38100700002)(66476007)(66946007)(8936002)(6486002)(8676002)(31696002)(66556008)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: lIs6pFyzfEbI1sSDg110Vyq4ekjEacZhpksNjWqlRVa3iscvvqsWl0yYG/1eyCmYp76Raq8v57Gb/CVJw3Azw8HEQVoEaq5Thx2vbGcOq+o252Owo5UvK6qWL25Zrxi8PuOD3hkirYlIuN16HwHgscJSl1gkfhWWJ+tgIjOCuy9IPlRr/w0GuiLta5pf3Pa5xgeet6tYJ4Bl0qidOz5Dg/DeXaiHaslXYoShv4gf36GqOZjt7OVBHL0CcUKLLE5BX9vEjcLs9L8xzJ3LIZNbgD6sF4TiQc1NVgI2If0QT0apr4XF7PVFWbuBKbMWORwiq/k3DVPSMmRvQJ0Sj4ajUMUfiYed3phlTw0ma14v/MLar3DXPEMPkoraDDkVTFqJCmqlLNaCMiJ7KWn4G7ABOiaOw/PtDkREBrgfp7y1pXpmiTAxJ37f8nv7FTSaIqwOQYle7zjdxABeFkOUGiKVWHAIV3VwjsPtva/gytPiDXBngieb9pNTfqjqslUcpbquE5VNNfzrQpo/mAUPWTCW7/Hu8mXZISL0/1jRU1di2XEp2fpD8BMclqx6M8wtgBunrnc/I0MFR3YU0rkTsHRNeKbOzP5toHxiiXBWgQ3YTYCUDO+cUAajBP/GCFAyXDaEU46ApzPiWI8GMXC3jj1A8O5dVEWbP8I9AF4Irnk5vptD4uwvHRigvbpgHaUrIYn47H+vNKBD29pKWeFXdsPc2Ndusema059/N0MezM6QHA4=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5229.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(366004)(346002)(39860400002)(376002)(396003)(26005)(2616005)(66476007)(66556008)(478600001)(38100700002)(186003)(66946007)(36756003)(54906003)(31696002)(6486002)(8676002)(8936002)(7406005)(4326008)(316002)(6916009)(2906002)(86362001)(7416002)(5660300002)(31686004)(83380400001)(956004)(53546011)(16576012)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RTJFanZpMUZGa3pNZ2hERXpwQlNsQTBxUTZNWWJQUDBaeUs0QVhSRXMwVDlL?=
- =?utf-8?B?Qmt3Y1hHUmVpYVo5QzVyczZvTlZ4VTBYTTZpdy9WS2dWdTh6SFVEaUt2R05s?=
- =?utf-8?B?YXozRm5hUVBYaTYxVzRMUWg2ZFAxOW5UbjhPOVlGQXd4Z21pYlFEbGpKR0kx?=
- =?utf-8?B?YUpadXE1NWRURUdiM2JIRjNyVUpPR1RQTnpuTW9PN1dhVGZJK1VCU2hqTkdK?=
- =?utf-8?B?dlhFWnFqOUMxY3VBUVpRR2pKRyt1TVVraXNtNk1jc3FMSVl4dWtPNk5ibDhS?=
- =?utf-8?B?WnpEdmxQMldBM0ZlZk1Pb1hDRzNaakVNaDVhWE50djBldW9NbWZORzduNE9W?=
- =?utf-8?B?MTFDcml4SUt5QnE3SGdBRE9iZHcwemgra0pKS3RSakl1b3hJbHovMlR3RFNW?=
- =?utf-8?B?VnpTelplT2tNVkcwMkpZVEtjTks2Tk5ZTmlacExBUCtDT1o4QnJKclozSlJ5?=
- =?utf-8?B?ZndLeXd2VFptdTBDVTdSbUdhcHM3a2RSOGtBUk9nc1AwajdkNVJDUERyMDU4?=
- =?utf-8?B?T1pqK0QzTEluRGkxYzMxczFFdXpSSFBib25MaTlVSzlxdkliTHpJTERzSXFN?=
- =?utf-8?B?VUJBelNQVUJ6VDZKQlhzK2s0bjZOai9sRDJMV1pXcVc2dnEycmJiM1hyV1ZQ?=
- =?utf-8?B?Wmp4cnAzeURjS0FENUlJRVNJb29zb1BKVXRyc2hUMFY4Y24vQlVyUStQNDZV?=
- =?utf-8?B?cFJxMWZxR2dGQ3J5ZU9FYjRrTkRXRlN6b2pxTzB2di9ycEd6ZUd6ajgrOGxI?=
- =?utf-8?B?bVROTmJzbGRuY2NaNHkwcFlidDA3U2VrUWdoU2xpaUk3dG1yclg2NkY4NEhI?=
- =?utf-8?B?STQ4NmUvN2xVSk5lZDQ1SFc0RE94RkdUbXBleEFhWVp4dnphRjBPVXhLTHhy?=
- =?utf-8?B?K3lZYVNiNDZsaTFUeE9WK1djblF6Y3Bhd1dyeEpoSUJnUnhGMjBEbHhPamJ6?=
- =?utf-8?B?UWNvcEUrMEJMNi8ySXQvaHdoNW8wUGo1L0ZqNkZnSHdoaWV6MllOU0NrVi9w?=
- =?utf-8?B?RkJodDV2Sk85aTcyOFRjOFRvVE4ydW5EczZLcnpaaHdscUNNK3FJelJVZDNk?=
- =?utf-8?B?WnVZVFVwMk9UVGE3OEF0d1dVcmp1cmZydUFuQVREdE9UU1pRQzJCM3FGeTg2?=
- =?utf-8?B?Ti9XMXdoQTl4TU1HM2FwU3FrTzZmTkVyRkNQd3pYYkRpSGR3WHFYeUJEbUlH?=
- =?utf-8?B?a055SnlIMGNxNFJ2KzdEbXQray9mU0JsVEZqb2xicDlMd0Q4YWxCR0grcGtl?=
- =?utf-8?B?cmhZV0xWOTNGK20vV3lwb1lpeWFlaEhYekpWdEVUTlgwME12UkNVZHNRblpk?=
- =?utf-8?B?Z05NcFU0am5yRWcrK2JyT3JMQ2xIeEp5cGlCejBYL3UwVmVQOTVqVCs0Y0dU?=
- =?utf-8?B?SURCeEZJTXFUMk0yc0JaM1RZMmNjNDF3UUJUYkhoSmlRYkFnbjVzV3AvTkpn?=
- =?utf-8?B?bWp2R3IrSnh6VytMWmw2RGNUdzVOdFpDWTJ2Y2RJUDdZT1lFVjhRZm5qZjFx?=
- =?utf-8?B?VVhkUVQxVytJdmdsVlpnOWZmZ05PZmplckJlUEh3bXJMUVNkSkt1YTk1L2xn?=
- =?utf-8?B?NWc1UWZSSk9jdVRsV1l6UHdySzNaNCtHQkVBNFNKV2UreTFlVzFyS3djMlhE?=
- =?utf-8?B?WnBxZSs5b2R5dlRVS2lNZWlpUVg5ZU1XUlRjSlc5cGJyWEhRY01YV0ZzRE1u?=
- =?utf-8?B?T3pUck1uTVpDNU94eTg3OXBSS3V2eWtJTzdsc3d6QWdiZk9mdk9XVTJTdkJy?=
- =?utf-8?Q?QoSrilrwpTZt6Dqeo2Wtk6LZbxABIZJ1LolbsoS?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?REY0eis4c2JROTJ4U0pDcCs5UWZGaVA1c2RGRkNPVm1JakVBWHRjRUt0aWpO?=
+ =?utf-8?B?RHBlQkppQklNUWJVSEptUWtuc0xLaDlDRW13TUhlWjdBRDd2T29YQWZxOUNx?=
+ =?utf-8?B?d2Q5VlBTYzVYVWYxMUd1eTlpajIyUlJqdlluL0pFMW8veDg0YlNqZDkvUGh0?=
+ =?utf-8?B?S2d4aHFCS3pMUDJPS2trYitORnRkNTJ0ZWZrV3ZUR3FVcXBZUWVwcjV0djYw?=
+ =?utf-8?B?M1dvRWxodmZOeGhXak1ZYXgyMms1YjZUUDMvbFNxeFRkY0NsUC8vNDVGMDA2?=
+ =?utf-8?B?TjhaYnRvUUhnZEcvbkh5RHl0Y2N5L1pQZ0IzNzZLYTBDeEdHNXVueWJIQzRx?=
+ =?utf-8?B?a1lFd1h0QnVnM0h2SC9HTFpZMXorMnZtNkdKZHREb0dFbzZyZXNOd29vVkx4?=
+ =?utf-8?B?ZTFpTVgwV2NKcU50bTFsbjlJT1UwMTFsdnZlYkw1QzJrQ3YxTm96ZHZXZk5E?=
+ =?utf-8?B?bU93UThGNmwzVGRGdFFiTURIS2xBcTJkQ1MwOUlTSGwwbDZIU0QrTzBHZVBx?=
+ =?utf-8?B?WmhDZVZ3ZlNLcGt1Ujdsd0VRd0RwQVFHdjBIL09vOGtGMHZiMHpNNnVQc2Z3?=
+ =?utf-8?B?R0NFVi9XVDNqWHlja01PMVdSdjA4cWVEVWtJKzdpV2JkUzJOZURRSmNTbnA3?=
+ =?utf-8?B?RlVlT0xpQ2FNRkpQUUhNMHUyRHkrcENpSk55LzFWTTEzMGxQSlRNL3dBYVl1?=
+ =?utf-8?B?ZjZTY09yb1AwMXI3T3dMT1lnakhscUVkYXl3WUNZOEJ4c3NFUjhMbDdKTE11?=
+ =?utf-8?B?YU1oT1FVaGZiNGUvL29nRzM0RWE1Ujl5RXpwL2VwRVJtczl3Q2xLQldwdlQ0?=
+ =?utf-8?B?L0wwU25xQjQ2NUVubDVZbUZIRUpUUks2MUUrKzBWZ1Vzak1KYk04V3hybTZM?=
+ =?utf-8?B?RXZEQnNhMmtXTHE4Sm1LVjFlT3J2UFFuYVVGVXRxS3R4MUQzeHdLdGZYQk5F?=
+ =?utf-8?B?YUk4ZFRaVUJVKzBCS0xTek56YzZRVzMrbndMb0RNYituWUZWMlJVZFc5bW00?=
+ =?utf-8?B?WFBDRTJzMGZ1K0Vka0FxRng3QURCSjFLVkhoczF4dElOWWFrdjdUVm5Uekox?=
+ =?utf-8?B?Sm5tbmRXUDNSUmdRWHNKdTNIS1ZhUDdCOS8zS2d5dlpSNzJ2Y2JYR2czdTFU?=
+ =?utf-8?B?KytSTHByeEtQVEhtVXZHcFN4STQyaXRzbmFqSnYzbFdMeGVCdjgyd2VIOU1H?=
+ =?utf-8?B?cjJJVjVXZUZCeWRTcnM3TFVHZHloYkRCQXFKcTBrTEtqbUtGeEMxYWl1YzlE?=
+ =?utf-8?B?bUdocE55ZERNRGNXc2s2eGFxTVNaZEhEaldVbkRNMkZVODB5NjlHM1FKOEJ1?=
+ =?utf-8?B?dDZ5eGpMMUFaOWZWV2NsMWRPMkhUN1Y3ZHZpNHdKcEVNZXVZRzM1UFhpcTQx?=
+ =?utf-8?B?SFlhbUhOZGsvTmRoK2paWWZpUkNOSVl2T0JoUUxkMGlYUFlrV3dkcGw2VDZC?=
+ =?utf-8?B?b0kxN2p5TUx4SVJIQmFxWnpmaURudU9RaU1MZW1uY1BqSitLR1FoZUtud0NC?=
+ =?utf-8?B?Zkc2d1UvLzZ5YnZBQlhrem9iVnVOWkVMV3BTTmJTY01qdkxMNXRrYTVNMDhK?=
+ =?utf-8?B?NHBMZGdWQU96b3pIamxYMGE0bk4wUjdTS1RiR2dnbTMyU3JpdXZlMS8wcTNa?=
+ =?utf-8?B?Ykk3NGYvaFFEb1ROUTV2YUhsVDYxWUJhTkxBc2NWdEF6QXNxaTBoSXovSnEy?=
+ =?utf-8?B?RkN6Y1ZCUEJTcTNOdmV6ZXRhZ3lGTlJUSUh6K0dwK3lrUnkxcENHZUpYY2s1?=
+ =?utf-8?Q?ypRlcF5FeAfEhWsnoICXRzLomNBmaC1bm+lcTDj?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dc406e1-0586-4eca-cb83-08d95cde45f9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e687563-770c-45e3-d65c-08d95ce0175c
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5229.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2021 15:39:57.9206
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2021 15:52:58.7420
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OELy2RTyEG0+9O72k8UtSUmgfgE4amU/1OUQMRVL6kZ0hhl35eyfyQBhQcHDk0XEIE1+XWScyv+bWtCGRlebiQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5447
+X-MS-Exchange-CrossTenant-UserPrincipalName: 584esTti7o/5qkD1Os1NRjUfCdW4Sj5anUfUsR50eGnvfwGD5aGvUGjrOq3sJcZZ9e+qkr0NVlAYoU1YOAdy5A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5431
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/11/21 9:53 AM, Kuppuswamy, Sathyanarayanan wrote:
-> On 7/27/21 3:26 PM, Tom Lendacky wrote:
->> diff --git a/include/linux/protected_guest.h
->> b/include/linux/protected_guest.h
->> new file mode 100644
->> index 000000000000..f8ed7b72967b
->> --- /dev/null
->> +++ b/include/linux/protected_guest.h
->> @@ -0,0 +1,32 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Protected Guest (and Host) Capability checks
->> + *
->> + * Copyright (C) 2021 Advanced Micro Devices, Inc.
->> + *
->> + * Author: Tom Lendacky<thomas.lendacky@amd.com>
->> + */
->> +
->> +#ifndef _PROTECTED_GUEST_H
->> +#define _PROTECTED_GUEST_H
->> +
->> +#ifndef __ASSEMBLY__
+On 8/11/21 7:19 AM, Kirill A. Shutemov wrote:
+> On Tue, Aug 10, 2021 at 02:48:54PM -0500, Tom Lendacky wrote:
+>> On 8/10/21 1:45 PM, Kuppuswamy, Sathyanarayanan wrote:
+>>>
+>>>
+>>> On 7/27/21 3:26 PM, Tom Lendacky wrote:
+>>>> diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+>>>> index de01903c3735..cafed6456d45 100644
+>>>> --- a/arch/x86/kernel/head64.c
+>>>> +++ b/arch/x86/kernel/head64.c
+>>>> @@ -19,7 +19,7 @@
+>>>>   #include <linux/start_kernel.h>
+>>>>   #include <linux/io.h>
+>>>>   #include <linux/memblock.h>
+>>>> -#include <linux/mem_encrypt.h>
+>>>> +#include <linux/protected_guest.h>
+>>>>   #include <linux/pgtable.h>
+>>>>     #include <asm/processor.h>
+>>>> @@ -285,7 +285,7 @@ unsigned long __head __startup_64(unsigned long
+>>>> physaddr,
+>>>>        * there is no need to zero it after changing the memory encryption
+>>>>        * attribute.
+>>>>        */
+>>>> -    if (mem_encrypt_active()) {
+>>>> +    if (prot_guest_has(PATTR_MEM_ENCRYPT)) {
+>>>>           vaddr = (unsigned long)__start_bss_decrypted;
+>>>>           vaddr_end = (unsigned long)__end_bss_decrypted;
+>>>
+>>>
+>>> Since this change is specific to AMD, can you replace PATTR_MEM_ENCRYPT with
+>>> prot_guest_has(PATTR_SME) || prot_guest_has(PATTR_SEV). It is not used in
+>>> TDX.
+>>
+>> This is a direct replacement for now.
 > 
-> Can you include headers for bool type and false definition?
+> With current implementation of prot_guest_has() for TDX it breaks boot for
+> me.
+> 
+> Looking at code agains, now I *think* the reason is accessing a global
+> variable from __startup_64() inside TDX version of prot_guest_has().
+> 
+> __startup_64() is special. If you access any global variable you need to
+> use fixup_pointer(). See comment before __startup_64().
+> 
+> I'm not sure how you get away with accessing sme_me_mask directly from
+> there. Any clues? Maybe just a luck and complier generates code just right
+> for your case, I donno.
 
-Can do.
+Hmm... yeah, could be that the compiler is using rip-relative addressing
+for it because it lives in the .data section?
+
+For the static variables in mem_encrypt_identity.c I did an assembler rip
+relative LEA, but probably could have passed physaddr to sme_enable() and
+used a fixup_pointer() style function, instead.
+
+> 
+> A separate point is that TDX version of prot_guest_has() relies on
+> cpu_feature_enabled() which is not ready at this point.
+
+Does TDX have to do anything special to make memory able to be shared with
+the hypervisor?  You might have to use something that is available earlier
+than cpu_feature_enabled() in that case (should you eventually support
+kvmclock).
+
+> 
+> I think __bss_decrypted fixup has to be done if sme_me_mask is non-zero.
+> Or just do it uncoditionally because it's NOP for sme_me_mask == 0.
+
+For SNP, we'll have to additionally call the HV to update the RMP to make
+the memory shared. But that could also be done unconditionally since the
+early_snp_set_memory_shared() routine will check for SNP before doing
+anything.
 
 Thanks,
 Tom
 
 > 
-> --- a/include/linux/protected_guest.h
-> +++ b/include/linux/protected_guest.h
-> @@ -12,6 +12,9 @@
+>> I think the change you're requesting
+>> should be done as part of the TDX support patches so it's clear why it is
+>> being changed.
+>>
+>> But, wouldn't TDX still need to do something with this shared/unencrypted
+>> area, though? Or since it is shared, there's actually nothing you need to
+>> do (the bss decrpyted section exists even if CONFIG_AMD_MEM_ENCRYPT is not
+>> configured)?
 > 
->  #ifndef __ASSEMBLY__
-> 
-> +#include <linux/types.h>
-> +#include <linux/stddef.h>
-> 
-> Otherwise, I see following errors in multi-config auto testing.
-> 
-> include/linux/protected_guest.h:40:15: error: unknown type name 'bool'
-> include/linux/protected_guest.h:40:63: error: 'false' undeclared (first
-> use in this functi
+> AFAICS, only kvmclock uses __bss_decrypted. We don't enable kvmclock in
+> TDX at the moment. It may change in the future.
 > 
