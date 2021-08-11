@@ -2,121 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 432413E9319
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 15:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DF3B3E9321
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 15:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231714AbhHKN4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 09:56:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50592 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231176AbhHKN4j (ORCPT
+        id S231902AbhHKN7b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 09:59:31 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:53060 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230479AbhHKN7b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 09:56:39 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA349C061765;
-        Wed, 11 Aug 2021 06:56:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MT3bL/CGD5B/Mm/makQi9BAHexMScUACD6ZuAagwh7I=; b=dsk5YLcRQvQjKLveuI97OFEV5C
-        5iHj/ZAa2Qn6pC0YvZ4R+Escf+J/8G3CXvbNAkxbYKTshfVtUQg/OXkpMuuvq9bMYaO7YE0XVDKLG
-        5Ht5LRawTbVOu1j3kBnJs7cVBL0YpO01cVqPB51LVRe21KkknEQOOe/e4v+hz9yMfMDeJ8C+MDPZ1
-        e50K6vdO5mHWeVtqw7H34/XgBN3dALZAZ6J0+s0SDCzVEamzQI3FLa3YR9CoYOO6JpNpdw+lHVgok
-        VJaTKyaFDg+2j5R+p3wEbnX3jlPYayQgFuV1I56l57CxC71uNSKbH0uIB6bhI2T7FhD/MLMTzsi+f
-        yoXH1PHw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mDogz-00DTvn-6N; Wed, 11 Aug 2021 13:55:02 +0000
-Date:   Wed, 11 Aug 2021 14:54:49 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC][PATCH] netfs, afs, ceph: Use folios
-Message-ID: <YRPWqRVfRLtY7CyF@casper.infradead.org>
-References: <2408234.1628687271@warthog.procyon.org.uk>
+        Wed, 11 Aug 2021 09:59:31 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id E620222213;
+        Wed, 11 Aug 2021 13:59:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1628690346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+xIMLqqj+ACXa30EMHHZHuSRAZbV1Yhwen5eQ3Ve574=;
+        b=AfhtDVLLi5FNvHNlaB5Ew1nyvka4XVmzVYmU+M/4xA0c4H9y+DqcxSn5t6SaMKJ+ePMMfj
+        pfg3aj7U1kKeBVgmYgxv2DH8oVrxhq5ln05kipgvssq4mdMk969iIAh6slkQIJnYVMDQF3
+        mGWDUxxyICXt8P4Do5gx9ycPOjygNRM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1628690346;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+xIMLqqj+ACXa30EMHHZHuSRAZbV1Yhwen5eQ3Ve574=;
+        b=x1coYBARjAB+eC0nSKfchs83K57x4S3n07TEmWqTTC69fAN1LRccCxdX2p7C188G0wgHGE
+        9bDBspiXtR4P7ZCw==
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id D391213969;
+        Wed, 11 Aug 2021 13:59:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id vIT5MqrXE2F6QwAAGKfGzw
+        (envelope-from <vbabka@suse.cz>); Wed, 11 Aug 2021 13:59:06 +0000
+Subject: Re: [PATCH v14 052/138] mm: Add folio_raw_mapping()
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+References: <20210715033704.692967-1-willy@infradead.org>
+ <20210715033704.692967-53-willy@infradead.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <ceeeaac4-c8c5-3b03-66da-6deec35c501b@suse.cz>
+Date:   Wed, 11 Aug 2021 15:59:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2408234.1628687271@warthog.procyon.org.uk>
+In-Reply-To: <20210715033704.692967-53-willy@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 11, 2021 at 02:07:51PM +0100, David Howells wrote:
-> Convert the netfs helper library and the afs filesystem to use folios.
-> 
-> NOTE: This patch will also need to alter the ceph filesystem, but as that's
-> not been done that yet, ceph will fail to build.
-> 
-> The patch makes two alterations to the mm headers:
-> 
->  (1) Fix a bug in readahead_folio() where a NULL return from
->      __readahead_folio() will cause folio_put() to oops.
+On 7/15/21 5:35 AM, Matthew Wilcox (Oracle) wrote:
+> Convert __page_rmapping to folio_raw_mapping and move it to mm/internal.h.
+> It's only a couple of instructions (load and mask), so it's definitely
+> going to be cheaper to inline it than call it.  Leave page_rmapping
+> out of line.
 
-I'll fold that in.
+Maybe mention the page_anon_vma() in changelog too?
 
->  (2) Add folio_change_private() to change the private data on the folio
->      without adjusting the page refcount or changing the flag.  This
->      assumes folio_attach_private() was already called.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Makes sense.
-
->  (*) Should I be using page_mapping() or page_file_mapping()?
-
-Depends if you can have a swapfile on your filesystem.  I'd like to
-get rid of this and only use the directIO path for swap, but that's a
-far-distant project.
-
->  (*) Can page_endio() be split into two separate functions, one for read
->      and one for write?  If seems a waste of time to conditionally switch
->      between two different branches.
-
-So you'd like a folio_end_write() and folio_end_read()?
-
->  (*) Is there a better way to implement afs_kill_pages() and
->      afs_redirty_pages()?  I was previously using find_get_pages_contig()
->      into a pagevec, but that doesn't look like it'll work with folios, so
->      I'm now calling filemap_get_folio() a lot more - not that it matters
->      so much, as these are failure paths.
-
-I always disliked the _contig variants.  Block filesystems tend to
-follow the pattern
-
-	for-each-page-in-range
-		if page-is-contig-with-prev
-			append-to-bio
-		else
-			start-new-bio
-
-while network filesystems tend to use the pattern
-
-	for-range
-		get-a-batch-of-contig-pages
-			submit-an-io-using-these-pages
-
-it'd be nice to follow the same pattern for both.  Would reduce the
-amount of duplicated infrastructure.
-
->      Also, should these be moved into generic code?
-
-I'd have to figure out what they do to answer this question.
-
->  (*) Can ->page_mkwrite() see which subpage of a folio got hit?
-
-It already does -- you're passed a page, not a folio.  Are you trying
-to optimise by only marking part of a folio as dirty?  If so, that's a
-bad idea because we're going to want to, eg, map 64KB chunks of a folio
-with a single TLB entry on ARM, so you'll only get one notification for
-that page.
-
->  (*) __filemap_get_folio() should be used instead of
->      grab_cache_page_write_begin()?  What should be done if xa_is_value()
->      returns true on the value returned by that?
-
-If you don't pass FGP_ENTRY, it won't return you an xa_is_value() ...
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
