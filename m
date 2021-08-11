@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D97203E86F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 02:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24E083E8701
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Aug 2021 02:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235701AbhHKAGB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Aug 2021 20:06:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60438 "EHLO mail.kernel.org"
+        id S235652AbhHKAIW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Aug 2021 20:08:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234289AbhHKAGA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Aug 2021 20:06:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F340861019;
-        Wed, 11 Aug 2021 00:05:37 +0000 (UTC)
+        id S235537AbhHKAIV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Aug 2021 20:08:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D3F9D600CD;
+        Wed, 11 Aug 2021 00:07:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628640338;
-        bh=WOt9HlI6bm2svbXnH2JhtreKegkyLKTBhiqXzndv+84=;
+        s=k20201202; t=1628640478;
+        bh=fbMv564d/h7xq+40JXS/+17OpmGr84wJa0rzOUfg/Bs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tuBMp4izhgJTlVOiLT5X+xMRSMdaPbYH9TUQA/5NpjT+rNjx2qtbsNRsX6WPbwPVN
-         +xdcdjB8xkpxExs/3tsVdY7hxt5R4RX8fdZARBPMhLD0DzLI87AXcvUxUzfDv/6Y88
-         zTpT4mrzt32OWmEPPoB8YMque912w7xySssU3Md4dyL8MYhRtNDB8dSjO7Zm6mSWcm
-         cv95tQGgxQ7362fAwYmm+rLHlkoLO0vxOZvGJy3zY09KQ/tVd9WJI6qMxeYqzoTt2Z
-         Ejbq903wP8BP1jvFqDJbglMNT9vtATyFg1lQAVNFL1hmxv6d3WaIYwf4xUsGsCmR38
-         dpNBjd/fqY5nw==
-Date:   Tue, 10 Aug 2021 17:05:37 -0700
+        b=U3yIRj8YznQ1y/FyYLGexH6gy6OVI3HrDl4Ua2tjhfi/dfvGh+MjNICJaBb7QEzHX
+         CBDQD9GHoDOOTzdfCXFyAjfFh/JRKDPyQ5Zi0BMufHS76eYPjASPdTw3AW5NLaCsw/
+         0hcNVG8A8rfjyQilBZCxsFOLpXhFuF/7JXmA7OhwExMxB1pdZnEjIVktXuWw7EJz5Y
+         YpP297ASOHUSvjVHaE1KxOisElNjtQW0+KQoDk/1Gb9RDWEIieoOrKAmWnFP7dO5HB
+         duH6VvbFQLqTpB0xCHiLp5VnWLCtIUYVTNjsOf9ZywFqGTcXDXHf7YrdBUuIKZgvI9
+         +sAtLdSSXL8rw==
+Date:   Tue, 10 Aug 2021 17:07:58 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -33,150 +33,137 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: Re: [PATCH 18/30] iomap: switch iomap_fiemap to use iomap_iter
-Message-ID: <20210811000537.GP3601443@magnolia>
+Subject: Re: [PATCH 23/30] fsdax: switch dax_iomap_rw to use iomap_iter
+Message-ID: <20210811000758.GQ3601443@magnolia>
 References: <20210809061244.1196573-1-hch@lst.de>
- <20210809061244.1196573-19-hch@lst.de>
+ <20210809061244.1196573-24-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210809061244.1196573-19-hch@lst.de>
+In-Reply-To: <20210809061244.1196573-24-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 09, 2021 at 08:12:32AM +0200, Christoph Hellwig wrote:
-> Rewrite the ->fiemap implementation based on iomap_iter.
+On Mon, Aug 09, 2021 at 08:12:37AM +0200, Christoph Hellwig wrote:
+> Switch the dax_iomap_rw implementation to use iomap_iter.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Nice cleanups!
+/me gets excited about this file getting cleaned up
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
 > ---
->  fs/iomap/fiemap.c | 70 ++++++++++++++++++++---------------------------
->  1 file changed, 29 insertions(+), 41 deletions(-)
+>  fs/dax.c | 49 ++++++++++++++++++++++++-------------------------
+>  1 file changed, 24 insertions(+), 25 deletions(-)
 > 
-> diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-> index aab070df4a2175..acad09a8c188df 100644
-> --- a/fs/iomap/fiemap.c
-> +++ b/fs/iomap/fiemap.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
-> - * Copyright (c) 2016-2018 Christoph Hellwig.
-> + * Copyright (c) 2016-2021 Christoph Hellwig.
->   */
->  #include <linux/module.h>
->  #include <linux/compiler.h>
-> @@ -8,13 +8,8 @@
->  #include <linux/iomap.h>
->  #include <linux/fiemap.h>
->  
-> -struct fiemap_ctx {
-> -	struct fiemap_extent_info *fi;
-> -	struct iomap prev;
-> -};
-> -
->  static int iomap_to_fiemap(struct fiemap_extent_info *fi,
-> -		struct iomap *iomap, u32 flags)
-> +		const struct iomap *iomap, u32 flags)
->  {
->  	switch (iomap->type) {
->  	case IOMAP_HOLE:
-> @@ -43,24 +38,22 @@ static int iomap_to_fiemap(struct fiemap_extent_info *fi,
->  			iomap->length, flags);
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 4d63040fd71f56..51da45301350a6 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -1103,20 +1103,21 @@ s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
+>  	return size;
 >  }
 >  
 > -static loff_t
-> -iomap_fiemap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> -dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
 > -		struct iomap *iomap, struct iomap *srcmap)
-> +static loff_t iomap_fiemap_iter(const struct iomap_iter *iter,
-> +		struct fiemap_extent_info *fi, struct iomap *prev)
+> +static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+> +		struct iov_iter *iter)
 >  {
-> -	struct fiemap_ctx *ctx = data;
-> -	loff_t ret = length;
-> +	int ret;
+> +	const struct iomap *iomap = &iomi->iomap;
+> +	loff_t length = iomap_length(iomi);
+> +	loff_t pos = iomi->pos;
+>  	struct block_device *bdev = iomap->bdev;
+>  	struct dax_device *dax_dev = iomap->dax_dev;
+> -	struct iov_iter *iter = data;
+>  	loff_t end = pos + length, done = 0;
+>  	ssize_t ret = 0;
+>  	size_t xfer;
+>  	int id;
 >  
-> -	if (iomap->type == IOMAP_HOLE)
-> -		return length;
-> +	if (iter->iomap.type == IOMAP_HOLE)
-> +		return iomap_length(iter);
+>  	if (iov_iter_rw(iter) == READ) {
+> -		end = min(end, i_size_read(inode));
+> +		end = min(end, i_size_read(iomi->inode));
+>  		if (pos >= end)
+>  			return 0;
 >  
-> -	ret = iomap_to_fiemap(ctx->fi, &ctx->prev, 0);
-> -	ctx->prev = *iomap;
-> +	ret = iomap_to_fiemap(fi, prev, 0);
-> +	*prev = iter->iomap;
->  	switch (ret) {
->  	case 0:		/* success */
-> -		return length;
-> +		return iomap_length(iter);
->  	case 1:		/* extent array full */
->  		return 0;
-> -	default:
-> +	default:	/* error */
->  		return ret;
+> @@ -1133,7 +1134,7 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	 * written by write(2) is visible in mmap.
+>  	 */
+>  	if (iomap->flags & IOMAP_F_NEW) {
+> -		invalidate_inode_pages2_range(inode->i_mapping,
+> +		invalidate_inode_pages2_range(iomi->inode->i_mapping,
+>  					      pos >> PAGE_SHIFT,
+>  					      (end - 1) >> PAGE_SHIFT);
 >  	}
->  }
-> @@ -68,38 +61,33 @@ iomap_fiemap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi,
->  		u64 start, u64 len, const struct iomap_ops *ops)
+> @@ -1209,31 +1210,29 @@ ssize_t
+>  dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops)
 >  {
-> -	struct fiemap_ctx ctx;
-> -	loff_t ret;
-> -
-> -	memset(&ctx, 0, sizeof(ctx));
-> -	ctx.fi = fi;
-> -	ctx.prev.type = IOMAP_HOLE;
-> +	struct iomap_iter iter = {
-> +		.inode		= inode,
-> +		.pos		= start,
-> +		.len		= len,
-> +		.flags		= IOMAP_REPORT,
+> -	struct address_space *mapping = iocb->ki_filp->f_mapping;
+> -	struct inode *inode = mapping->host;
+> -	loff_t pos = iocb->ki_pos, ret = 0, done = 0;
+> -	unsigned flags = 0;
+> +	struct iomap_iter iomi = {
+> +		.inode		= iocb->ki_filp->f_mapping->host,
+> +		.pos		= iocb->ki_pos,
+> +		.len		= iov_iter_count(iter),
 > +	};
-> +	struct iomap prev = {
-> +		.type		= IOMAP_HOLE,
-> +	};
+> +	loff_t done = 0;
 > +	int ret;
 >  
-> -	ret = fiemap_prep(inode, fi, start, &len, 0);
-> +	ret = fiemap_prep(inode, fi, start, &iter.len, 0);
->  	if (ret)
->  		return ret;
+>  	if (iov_iter_rw(iter) == WRITE) {
+> -		lockdep_assert_held_write(&inode->i_rwsem);
+> -		flags |= IOMAP_WRITE;
+> +		lockdep_assert_held_write(&iomi.inode->i_rwsem);
+> +		iomi.flags |= IOMAP_WRITE;
+>  	} else {
+> -		lockdep_assert_held(&inode->i_rwsem);
+> +		lockdep_assert_held(&iomi.inode->i_rwsem);
+>  	}
 >  
-> -	while (len > 0) {
-> -		ret = iomap_apply(inode, start, len, IOMAP_REPORT, ops, &ctx,
-> -				iomap_fiemap_actor);
-> -		/* inode with no (attribute) mapping will give ENOENT */
-> -		if (ret == -ENOENT)
-> -			break;
-> -		if (ret < 0)
-> -			return ret;
-> -		if (ret == 0)
-> -			break;
-> +	while ((ret = iomap_iter(&iter, ops)) > 0)
-> +		iter.processed = iomap_fiemap_iter(&iter, fi, &prev);
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+> -		flags |= IOMAP_NOWAIT;
+> +		iomi.flags |= IOMAP_NOWAIT;
 >  
-> -		start += ret;
-> -		len -= ret;
+> -	while (iov_iter_count(iter)) {
+> -		ret = iomap_apply(inode, pos, iov_iter_count(iter), flags, ops,
+> -				iter, dax_iomap_actor);
+> -		if (ret <= 0)
+> -			break;
+> -		pos += ret;
+> -		done += ret;
 > -	}
-> -
-> -	if (ctx.prev.type != IOMAP_HOLE) {
-> -		ret = iomap_to_fiemap(fi, &ctx.prev, FIEMAP_EXTENT_LAST);
-> +	if (prev.type != IOMAP_HOLE) {
-> +		ret = iomap_to_fiemap(fi, &prev, FIEMAP_EXTENT_LAST);
->  		if (ret < 0)
->  			return ret;
+> +	while ((ret = iomap_iter(&iomi, ops)) > 0)
+> +		iomi.processed = dax_iomap_iter(&iomi, iter);
+>  
+> -	iocb->ki_pos += done;
+> +	done = iomi.pos - iocb->ki_pos;
+> +	iocb->ki_pos = iomi.pos;
+>  	return done ? done : ret;
+>  }
+>  EXPORT_SYMBOL_GPL(dax_iomap_rw);
+> @@ -1307,7 +1306,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
 >  	}
 >  
-> +	/* inode with no (attribute) mapping will give ENOENT */
-> +	if (ret < 0 && ret != -ENOENT)
-> +		return ret;
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(iomap_fiemap);
+>  	/*
+> -	 * Note that we don't bother to use iomap_apply here: DAX required
+> +	 * Note that we don't bother to use iomap_iter here: DAX required
+>  	 * the file system block size to be equal the page size, which means
+>  	 * that we never have to deal with more than a single extent here.
+>  	 */
+> @@ -1561,7 +1560,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+>  	}
+>  
+>  	/*
+> -	 * Note that we don't use iomap_apply here.  We aren't doing I/O, only
+> +	 * Note that we don't use iomap_iter here.  We aren't doing I/O, only
+>  	 * setting up a mapping, so really we're using iomap_begin() as a way
+>  	 * to look up our filesystem block.
+>  	 */
 > -- 
 > 2.30.2
 > 
