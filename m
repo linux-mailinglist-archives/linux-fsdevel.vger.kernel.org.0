@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 471C73EACA3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 23:41:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 988AF3EACA6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 23:41:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237921AbhHLVlq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 17:41:46 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:45842 "EHLO
+        id S238024AbhHLVlu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 17:41:50 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45860 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbhHLVlp (ORCPT
+        with ESMTP id S229883AbhHLVlt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 17:41:45 -0400
+        Thu, 12 Aug 2021 17:41:49 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id 3C0221F41890
+        with ESMTPSA id 45AF81F41890
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com, jack@suse.com
 Cc:     linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
@@ -23,9 +23,9 @@ Cc:     linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
         djwong@kernel.org, repnop@google.com,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com, Jan Kara <jack@suse.cz>
-Subject: [PATCH v6 13/21] fanotify: Require fid_mode for any non-fd event
-Date:   Thu, 12 Aug 2021 17:40:02 -0400
-Message-Id: <20210812214010.3197279-14-krisman@collabora.com>
+Subject: [PATCH v6 14/21] fanotify: Reserve UAPI bits for FAN_FS_ERROR
+Date:   Thu, 12 Aug 2021 17:40:03 -0400
+Message-Id: <20210812214010.3197279-15-krisman@collabora.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210812214010.3197279-1-krisman@collabora.com>
 References: <20210812214010.3197279-1-krisman@collabora.com>
@@ -35,63 +35,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Like inode events, FAN_FS_ERROR will require fid mode.  Therefore,
-convert the verification during fanotify_mark(2) to require fid for any
-non-fd event.  This means fid_mode will not only be required for inode
-events, but for any event that doesn't provide a descriptor.
+FAN_FS_ERROR allows reporting of event type FS_ERROR to userspace, which
+a mechanism to report file system wide problems via fanotify.  This
+commit preallocate userspace visible bits to match the FS_ERROR event.
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
 ---
-changes since v5:
-  - Fix condition to include FANOTIFY_EVENT_FLAGS. (me)
-  - Fix comment identation  (jan)
----
- fs/notify/fanotify/fanotify_user.c | 12 ++++++------
- include/linux/fanotify.h           |  3 +++
- 2 files changed, 9 insertions(+), 6 deletions(-)
+ fs/notify/fanotify/fanotify.c | 1 +
+ include/uapi/linux/fanotify.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 4cacea5fcaca..54107f1533d5 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1387,14 +1387,14 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 		goto fput_and_out;
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 2b1ab031fbe5..ebb6c557cea1 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -760,6 +760,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	BUILD_BUG_ON(FAN_ONDIR != FS_ISDIR);
+ 	BUILD_BUG_ON(FAN_OPEN_EXEC != FS_OPEN_EXEC);
+ 	BUILD_BUG_ON(FAN_OPEN_EXEC_PERM != FS_OPEN_EXEC_PERM);
++	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
  
- 	/*
--	 * Events with data type inode do not carry enough information to report
--	 * event->fd, so we do not allow setting a mask for inode events unless
--	 * group supports reporting fid.
--	 * inode events are not supported on a mount mark, because they do not
--	 * carry enough information (i.e. path) to be filtered by mount point.
-+	 * Events that do not carry enough information to report
-+	 * event->fd require a group that supports reporting fid.  Those
-+	 * events are not supported on a mount mark, because they do not
-+	 * carry enough information (i.e. path) to be filtered by mount
-+	 * point.
- 	 */
- 	fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
--	if (mask & FANOTIFY_INODE_EVENTS &&
-+	if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_EVENT_FLAGS) &&
- 	    (!fid_mode || mark_type == FAN_MARK_MOUNT))
- 		goto fput_and_out;
+ 	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 19);
  
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index a16dbeced152..c05d45bde8b8 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -81,6 +81,9 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
-  */
- #define FANOTIFY_DIRENT_EVENTS	(FAN_MOVE | FAN_CREATE | FAN_DELETE)
+diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+index fbf9c5c7dd59..16402037fc7a 100644
+--- a/include/uapi/linux/fanotify.h
++++ b/include/uapi/linux/fanotify.h
+@@ -20,6 +20,7 @@
+ #define FAN_OPEN_EXEC		0x00001000	/* File was opened for exec */
  
-+/* Events that can be reported with event->fd */
-+#define FANOTIFY_FD_EVENTS (FANOTIFY_PATH_EVENTS | FANOTIFY_PERM_EVENTS)
-+
- /* Events that can only be reported with data type FSNOTIFY_EVENT_INODE */
- #define FANOTIFY_INODE_EVENTS	(FANOTIFY_DIRENT_EVENTS | \
- 				 FAN_ATTRIB | FAN_MOVE_SELF | FAN_DELETE_SELF)
+ #define FAN_Q_OVERFLOW		0x00004000	/* Event queued overflowed */
++#define FAN_FS_ERROR		0x00008000	/* Filesystem error */
+ 
+ #define FAN_OPEN_PERM		0x00010000	/* File open in perm check */
+ #define FAN_ACCESS_PERM		0x00020000	/* File accessed in perm check */
 -- 
 2.32.0
 
