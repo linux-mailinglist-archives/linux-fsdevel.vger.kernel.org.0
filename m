@@ -2,348 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 325153EA0B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 10:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7B653EA0C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 10:44:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235355AbhHLIjC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 04:39:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235350AbhHLIiz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 04:38:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F36466103E;
-        Thu, 12 Aug 2021 08:38:28 +0000 (UTC)
-Date:   Thu, 12 Aug 2021 10:38:26 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     Alejandro Colomar <alx.manpages@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: Questions re the new mount_setattr(2) manual page
-Message-ID: <20210812083826.bfuqiwjlshjdwdby@wittgenstein>
-References: <b58e2537-03f4-6f6c-4e1b-8ddd989624cc@gmail.com>
- <d5a8061a-3d8a-6353-5158-8feee0156c6b@gmail.com>
- <20210811104030.in6f25hw5h5cotti@wittgenstein>
- <2f640877-dd82-6827-dfd0-c7f8fd5acbbc@gmail.com>
+        id S234600AbhHLIop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 04:44:45 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26338 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234153AbhHLIol (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Aug 2021 04:44:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628757855;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=M39zbsaS2KZL2Rdtv+g1mE9Yxte2yzqnEHMfKrq3Rbk=;
+        b=ZcN8zeGKG/MKsCYKJKQovLb1bz2A4nFqk+DPisr8h3ZU4eos2q/25ecsPIM6PXm9XVo8hn
+        2muxYOUfYIoPiK5t4urKE4uGaWFyfGGWRqS/5ZWywwyXmdANLYSlqzTTVpoRlMda772J/O
+        UFJAjasbxEd9oJLqLwtjdAqnGr0hV7Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-17-7fdL4v-iM_6gXav43YmE2Q-1; Thu, 12 Aug 2021 04:44:13 -0400
+X-MC-Unique: 7fdL4v-iM_6gXav43YmE2Q-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3DDF21082926;
+        Thu, 12 Aug 2021 08:44:12 +0000 (UTC)
+Received: from t480s.redhat.com (unknown [10.39.193.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C18B05C23A;
+        Thu, 12 Aug 2021 08:43:49 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     David Hildenbrand <david@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>, linux-unionfs@vger.kernel.org,
+        linux-api@vger.kernel.org, x86@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
+Date:   Thu, 12 Aug 2021 10:43:41 +0200
+Message-Id: <20210812084348.6521-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2f640877-dd82-6827-dfd0-c7f8fd5acbbc@gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 07:36:54AM +0200, Michael Kerrisk (man-pages) wrote:
-> [CC += Eric, in case he has a comment on the last piece]
-> 
-> Hi Christian,
-> 
-> (A few questions below.)
-> 
-> On 8/11/21 12:40 PM, Christian Brauner wrote:
-> > On Wed, Aug 11, 2021 at 12:47:14AM +0200, Michael Kerrisk (man-pages) wrote:
-> >> Hi Christian,
-> >>
-> >> Some further questions...
-> >>
-> >> In ERRORS there is:
-> >>
-> >>        EINVAL The underlying filesystem is mounted in a user namespace.
-> >>
-> >> I don't understand this. What does it mean?
-> > 
-> > The underlying filesystem has been mounted in a mount namespace that is
-> > owned by a non-initial user namespace (Think of sysfs, overlayfs etc.).
-> 
-> Thanks!
-> 
-> >> Also, there is this:
-> >>
-> >>        ENOMEM When  changing  mount  propagation to MS_SHARED, a new peer
-> >>               group ID needs to be allocated for  all  mounts  without  a
-> >>               peer  group  ID  set.  Allocation of this peer group ID has
-> >>               failed.
-> >>
-> >>        ENOSPC When changing mount propagation to MS_SHARED,  a  new  peer
-> >>               group  ID  needs  to  be allocated for all mounts without a
-> >>               peer group ID set.  Allocation of this peer  group  ID  can
-> >>               fail.  Note that technically further error codes are possi‐
-> >>               ble that are specific to the ID  allocation  implementation
-> >>               used.
-> >>
-> >> What is the difference between these two error cases? (That is, in what 
-> >> circumstances will one get ENOMEM vs ENOSPC and vice versa?)
-> > 
-> > I did really wonder whether to even include those errors and I regret
-> > having included them because they aren't worth a detailed discussion as
-> > I'd consider them kernel internal relevant errors rather than userspace
-> > relevant errors. In essence, peer group ids are allocated using the id
-> > infrastructure of the kernel. It can fail for two main reasons:
-> > 
-> > 1. ENOMEM there's not enough memory to allocate the relevant internal
-> >    structures needed for the bitmap.
-> > 2. ENOSPC we ran out of ids, i.e. someone has somehow managed to
-> >    allocate so many peer groups and managed to keep the kernel running
-> >    (???) that the ida has ran out of ids.
-> > 
-> > Feel free to just drop those errors.
-> 
-> Because they can at least theoretically be visible to user space, I
-> prefer to keep them. But I've reworked a bit:
-> 
->        ENOMEM When changing mount propagation to MS_SHARED, a new
->               peer group ID needs to be allocated for all mounts
->               without a peer group ID set.  This allocation failed
->               because there was not enough memory to allocate the
->               relevant internal structures.
-> 
->        ENOSPC When changing mount propagation to MS_SHARED, a new
->               peer group ID needs to be allocated for all mounts
->               without a peer group ID set.  This allocation failed
->               because the kernel has run out of IDs.
-> 
-> >> And then:
-> >>
-> >>        EPERM  One  of  the mounts had at least one of MOUNT_ATTR_NOATIME,
-> >>               MOUNT_ATTR_NODEV, MOUNT_ATTR_NODIRATIME, MOUNT_ATTR_NOEXEC,
-> >>               MOUNT_ATTR_NOSUID, or MOUNT_ATTR_RDONLY set and the flag is
-> >>               locked.  Mount attributes become locked on a mount if:
-> >>
-> >>               •  A new mount or mount tree is created causing mount prop‐
-> >>                  agation  across  user  namespaces.  The kernel will lock
-> >>
-> >> Propagation is done across mont points, not user namespaces.
-> >> should "across user namespaces" be "to a mount namespace owned 
-> >> by a different user namespace"? Or something else?
-> > 
-> > That's really splitting hairs.
-> 
-> To be clear, I'm not trying to split hairs :-). It's just that
-> I'm struggling a little to understand. (In particular, the notion
-> of locked mounts is one where my understanding is weak.) 
-> 
-> And think of it like this: I am the first line of defense for the
-> user-space reader. If I am having trouble to understand the text,
-> I wont be alone. And often, the problem is not so much that the
-> text is "wrong", it's that there's a difference in background
-> knowledge between what you know and what the reader (in this case
-> me) knows. Part of my task is to fill that gap, by adding info
-> that I think is necessary to the page (with the happy side
-> effect that I learn along the way.)
+This series is based on v5.14-rc5 and corresponds code-wise to the
+previously sent RFC [1] (the RFC still applied cleanly).
 
-All very good points.
-I didn't mean to complain btw. Sorry that it seemed that way. :)
+This series removes all in-tree usage of MAP_DENYWRITE from the kernel
+and removes VM_DENYWRITE. We stopped supporting MAP_DENYWRITE for
+user space applications a while ago because of the chance for DoS.
+The last renaming user is binfmt binary loading during exec and
+legacy library loading via uselib().
 
-> 
-> > Of course this means that we're
-> > propagating into a mount namespace that is owned by a different user
-> > namespace though "crossing user namespaces" might have been the better
-> > choice.
-> 
-> This is a perfect example of the point I make above. You say "of course",
-> but I don't have the background knowledge that you do :-). From my
-> perspective, I want to make sure that I understand your meaning, so
-> that that meaning can (IMHO) be made easier for the average reader
-> of the manual page.
-> 
-> >>                  the aforementioned  flags  to  protect  these  sensitive
-> >>                  properties from being altered.
-> >>
-> >>               •  A  new  mount  and user namespace pair is created.  This
-> >>                  happens for  example  when  specifying  CLONE_NEWUSER  |
-> >>                  CLONE_NEWNS  in unshare(2), clone(2), or clone3(2).  The
-> >>                  aforementioned flags become locked to protect user name‐
-> >>                  spaces from altering sensitive mount properties.
-> >>
-> >> Again, this seems imprecise. Should it say something like:
-> >> "... to prevent changes to sensitive mount properties in the new 
-> >> mount namespace" ? Or perhaps you have a better wording.
-> > 
-> > That's not imprecise. 
-> 
-> Okay -- poor choice of wording on my part:
-> 
-> s/this seems imprecise/I'm having trouble understanding this/
-> 
-> > What you want to protect against is altering
-> > sensitive mount properties from within a user namespace irrespective of
-> > whether or not the user namespace actually owns the mount namespace,
-> > i.e. even if you own the mount namespace you shouldn't be able to alter
-> > those properties. I concede though that "protect" should've been
-> > "prevent".
-> 
-> Can I check my education here please. The point is this:
-> 
-> * The mount point was created in a mount NS that was owned by
->   a more privileged user NS (e.g., the initial user NS).
-> * A CLONE_NEWUSER|CLONE_NEWNS step occurs to create a new (user and) 
->   mount NS.
-> * In the new mount NS, the mounts become locked.
-> 
-> And, help me here: is it correct that the reason the properties
-> need to be locked is because they are shared between the mounts?
+With this change, MAP_DENYWRITE is effectively ignored throughout the
+kernel. Although the net change is small, I think the cleanup in mmap()
+is quite nice.
 
-Yes, basically.
-The new mount namespace contains a copy of all the mounts in the
-previous mount namespace. So they are separate mounts which you can best
-see when you do unshare --mount --propagation=private. An unmount in the
-new mount namespace won't affect the mount in the previous mount
-namespace. Which can only nicely work if they are separate mounts.
-Propagation relies (among other things) on the fact that mount
-namespaces have copies of the mounts.
+There are some (minor) user-visible changes with this series:
+1. We no longer deny write access to shared libaries loaded via legacy
+   uselib(); this behavior matches modern user space e.g., via dlopen().
+2. We no longer deny write access to the elf interpreter after exec
+   completed, treating it just like shared libraries (which it often is).
+3. We always deny write access to the file linked via /proc/pid/exe:
+   sys_prctl(PR_SET_MM_EXE_FILE) will fail if write access to the file
+   cannot be denied, and write access to the file will remain denied
+   until the link is effectivel gone (exec, termination,
+   PR_SET_MM_EXE_FILE) -- just as if exec'ing the file.
 
-The copied mounts in the new mount namespace will have inherited all
-properties they had at the time when copy_namespaces() and specifically
-copy_mnt_ns() was called. Which calls into copy_tree() and ultimately
-into the appropriately named clone_mnt(). This is the low-level routine
-that is responsible for cloning the mounts including their mount
-properties.
+I was wondering if we really care about permanently disabling write access
+to the executable, or if it would be good enough to just disable write
+access while loading the new executable during exec; but I don't know
+the history of that -- and it somewhat makes sense to deny write access
+at least to the main executable. With modern user space -- dlopen() -- we
+can effectively modify the content of shared libraries while being used.
 
-Some mount properties such as read-only, nodev, noexec, nosuid, atime -
-while arguably not per se security mechanisms - are used for protection
-or as security measures in userspace applications. The most obvious one
-might be the read-only property. One wouldn't want to expose a set of
-files as read-only only for someone else to trivially gain write access
-to them. An example of where that could happen is when creating a new
-mount namespaces and user namespace pair where the new mount namespace
-is owned by the new user namespace in which the caller is privileged and
-thus the caller would also able to alter the new mount namespace. So
-without locking flags all it would take to turn a read-only into a
-read-write mount is:
-unshare -U --map-root --propagation=private -- mount -o remount,rw /some/mnt
-locking such flags prevents that from happening.
+There is a related problem [2] with overlayfs, that should at least partly
+be tackled by this series. I don't quite understand the interaction of
+overlayfs and deny_write_access()/allow_write_access() at exec time:
 
-> 
-> > You could probably say:
-> > 
-> > 	A  new  mount  and user namespace pair is created.  This
-> > 	happens for  example  when  specifying  CLONE_NEWUSER  |
-> > 	CLONE_NEWNS  in unshare(2), clone(2), or clone3(2).
-> > 	The aforementioned flags become locked in the new mount
-> > 	namespace to prevent sensitive mount properties from being
-> > 	altered.
-> > 	Since the newly created mount namespace will be owned by the
-> > 	newly created user namespace a caller privileged in the newly
-> > 	created user namespace would be able to alter senstive
-> > 	mount properties. For example, without locking the read-only
-> > 	property for the mounts in the new mount namespace such a caller
-> > 	would be able to remount them read-write.
-> 
-> So, I've now made the text:
-> 
->        EPERM  One of the mounts had at least one of MOUNT_ATTR_NOATIME,
->               MOUNT_ATTR_NODEV, MOUNT_ATTR_NODIRATIME, MOUNT_ATTR_NOEXEC,
->               MOUNT_ATTR_NOSUID, or MOUNT_ATTR_RDONLY set and the flag is
->               locked.  Mount attributes become locked on a mount if:
-> 
->               •  A new mount or mount tree is created causing mount
->                  propagation across user namespaces (i.e., propagation to
->                  a mount namespace owned by a different user namespace).
->                  The kernel will lock the aforementioned flags to prevent
->                  these sensitive properties from being altered.
-> 
->               •  A new mount and user namespace pair is created.  This
->                  happens for example when specifying CLONE_NEWUSER |
->                  CLONE_NEWNS in unshare(2), clone(2), or clone3(2).  The
->                  aforementioned flags become locked in the new mount
->                  namespace to prevent sensitive mount properties from
->                  being altered.  Since the newly created mount namespace
->                  will be owned by the newly created user namespace, a
->                  calling process that is privileged in the new user
->                  namespace would—in the absence of such locking—be able
->                  to alter senstive mount properties (e.g., to remount a
->                  mount that was marked read-only as read-write in the new
->                  mount namespace).
-> 
-> Okay?
+If we end up denying write access to the wrong file and not to the
+realfile, that would be fundamentally broken. We would have to reroute
+our deny_write_access()/ allow_write_access() calls for the exec file to
+the realfile -- but I leave figuring out the details to overlayfs guys, as
+that would be a related but different issue.
 
-Sounds good.
+RFC -> v1:
+- "binfmt: remove in-tree usage of MAP_DENYWRITE"
+-- Add a note that this should fix part of a problem with overlayfs
 
-> 
-> > (Fwiw, in this scenario there's a bit of (moderately sane) strangeness.
-> >  A CLONE_NEWUSER | CLONE_NEWMNT will cause even stronger protection to
-> >  kick in. For all mounts not marked as expired MNT_LOCKED will be set
-> >  which means that a umount() on any such mount copied from the previous
-> >  mount namespace will yield EINVAL implying from userspace' perspective
-> >  it's not mounted - granted EINVAL is the ioctl() of multiplexing errnos
-> >  - whereas a remount to alter a locked flag will yield EPERM.)
-> 
-> Thanks for educating me! So, is that what we are seeing below?
-> 
-> $ sudo umount /mnt/m1
-> $ sudo mount -t tmpfs none /mnt/m1
-> $ sudo unshare -pf -Ur -m --mount-proc strace -o /tmp/log umount /mnt/m1
-> umount: /mnt/m1: not mounted.
-> $ grep ^umount /tmp/log
-> umount2("/mnt/m1", 0)                   = -1 EINVAL (Invalid argument)
-> 
-> The mount_namespaces(7) page has for a log time had this text:
-> 
->        *  Mounts that come as a single unit from a more privileged mount
->           namespace are locked together and may not be separated in a
->           less privileged mount namespace.  (The unshare(2) CLONE_NEWNS
->           operation brings across all of the mounts from the original
->           mount namespace as a single unit, and recursive mounts that
->           propagate between mount namespaces propagate as a single unit.)
-> 
-> I have had trouble understanding that. But maybe you just helped.
-> Is that text relevant to what you just wrote above? In particular,
-> I have trouble understanding what "separated" means. But, perhaps
+[1] https://lore.kernel.org/r/20210423131640.20080-1-david@redhat.com/
+[2] https://lore.kernel.org/r/YNHXzBgzRrZu1MrD@miu.piliscsaba.redhat.com/
 
-The text gives the "how" not the "why".
-Consider a more elaborate mount tree where e.g., you have bind-mounted a
-mount over a subdirectory of another mount:
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Greg Ungerer <gerg@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Chinwen Chang <chinwen.chang@mediatek.com>
+Cc: Michel Lespinasse <walken@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Feng Tang <feng.tang@intel.com>
+Cc: Kevin Brodsky <Kevin.Brodsky@arm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Shawn Anastasio <shawn@anastas.io>
+Cc: Steven Price <steven.price@arm.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: Marco Elver <elver@google.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Nicolas Viennot <Nicolas.Viennot@twosigma.com>
+Cc: Thomas Cedeno <thomascedeno@google.com>
+Cc: Collin Fijalkovich <cfijalkovich@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Chengguang Xu <cgxu519@mykernel.net>
+Cc: "Christian König" <ckoenig.leichtzumerken@gmail.com>
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-api@vger.kernel.org
+Cc: x86@kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
 
-sudo mount -t tmpfs /mnt
-sudo mkdir /mnt/my-dir/
-sudo touch /mnt/my-dir/my-file
-sudo mount --bind /opt /mnt/my-dir
+David Hildenbrand (7):
+  binfmt: don't use MAP_DENYWRITE when loading shared libraries via
+    uselib()
+  kernel/fork: factor out atomcially replacing the current MM exe_file
+  kernel/fork: always deny write access to current MM exe_file
+  binfmt: remove in-tree usage of MAP_DENYWRITE
+  mm: remove VM_DENYWRITE
+  mm: ignore MAP_DENYWRITE in ksys_mmap_pgoff()
+  fs: update documentation of get_write_access() and friends
 
-The files underneath /mnt/my-dir are now hidden. Consider what would
-happen if one would allow to address those mounts separately. A user
-could then do:
+ arch/x86/ia32/ia32_aout.c      |  8 ++--
+ fs/binfmt_aout.c               |  7 ++--
+ fs/binfmt_elf.c                |  6 +--
+ fs/binfmt_elf_fdpic.c          |  2 +-
+ fs/proc/task_mmu.c             |  1 -
+ include/linux/fs.h             | 19 +++++----
+ include/linux/mm.h             |  3 +-
+ include/linux/mman.h           |  4 +-
+ include/trace/events/mmflags.h |  1 -
+ kernel/events/core.c           |  2 -
+ kernel/fork.c                  | 75 ++++++++++++++++++++++++++++++----
+ kernel/sys.c                   | 33 +--------------
+ lib/test_printf.c              |  5 +--
+ mm/mmap.c                      | 29 ++-----------
+ mm/nommu.c                     |  2 -
+ 15 files changed, 98 insertions(+), 99 deletions(-)
 
-unshare -U --map-root --mount
-umount /mnt/my-dir
-cat /mnt/my-dir/my-file
 
-giving them access to what's in my-dir.
+base-commit: 36a21d51725af2ce0700c6ebcb6b9594aac658a6
+-- 
+2.31.1
 
-Treating such mount trees as a unit in less privileged mount namespaces
-(cf. [1]) prevents that, i.e., prevents revealing files and directories
-that were overmounted.
-
-Treating such mounts as a unit is also relevant when e.g. bind-mounting
-a mount tree containing locked mounts. Sticking with the example above:
-
-unshare -U --map-root --mount
-
-# non-recursive bind-mount will fail
-mount --bind /mnt /tmp
-
-# recursive bind-mount will succeed
-mount --rbind /mnt /tmp
-
-The reason is again that the mount tree at /mnt is treated as a mount
-unit because it is locked. If one were to allow to non-recursively
-bind-mountng /mnt somewhere it would mean revealing what's underneath
-the mount at my-dir (This is in some sense the inverse of preventing a
-filesystem from being mounted that isn't fully visible, i.e. contains
-hidden or over-mounted mounts.).
-
-These semantics, in addition to being security relevant, also allow a
-more privileged mount namespace to create a restricted view of the
-filesystem hierarchy that can't be circumvented in a less privileged
-mount namespace (Otherwise pivot_root would have to be used which can
-also be used to guarantee a restriced view on the filesystem hierarchy
-especially when combined with a separate rootfs.).
-
-Christian
-
-[1]: I'll avoid jumping through the hoops of speaking about ownership
-     all the time now for the sake of brevity. Otherwise I'll still sit
-     here at lunchtime.
