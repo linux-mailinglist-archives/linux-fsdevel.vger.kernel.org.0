@@ -2,163 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 733E03EABF6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 22:41:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5C373EAC0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 22:42:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231838AbhHLUl4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 16:41:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50028 "EHLO
+        id S238126AbhHLUnI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 16:43:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237746AbhHLUly (ORCPT
+        with ESMTP id S238134AbhHLUnB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 16:41:54 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 324E9C0617A8;
-        Thu, 12 Aug 2021 13:41:28 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id l18so10096648wrv.5;
-        Thu, 12 Aug 2021 13:41:28 -0700 (PDT)
+        Thu, 12 Aug 2021 16:43:01 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04208C06124C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 13:42:36 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id o126so6181485ybo.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 13:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=syTDIp7PiP+AZjzDYgWMScbh9JnkTpS8wJ/cVx+Gs1M=;
-        b=Q5WRUJ3myVlg59GgTCXeJx00IHuP+JQt6euiBQoSPgwLoiKHe3doy6cRbgODFU/zbt
-         PctWu5EoqQPnZ0mNq9RaPWIpQXlRPIBciLriVDOig46D28yNGrx9VKSy9P17IkS2W5J5
-         JAR7qTrrQC7JKQJkuP3ev6nXOdoAh0hHFJzb9AteZ2hTrze331Caa7QXhfIDo/TyJCg4
-         fnX7mksG50YGQ7BQHOSv5JBgzgQ1wR4y6riU4BAEGj9HVcePywbIS2Oi47aaHRp5j2vn
-         Gvglw1UrNz2crqp4JP+jOA62ymhtF/HJIVc/7NfDNULlebqNwdkIJbNDYlntlCh6qAO/
-         B1Hw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SocJctGaI1z5Y2V/7vECrCscsCsQ4+Z36X400HrEw90=;
+        b=MCNby1XiS34HtYanu4HEMdBBHb3yopMV+ncDfXZPodXtOcrBLr22b4Ls/BfzbM0orx
+         TqWQKlFF8n3hldLltBeAiIuRiSueXGuR/x6wcKtQeIgY/OG+ScEbKhwPxWoI0qGWrurb
+         kiGMVfasnwjaeCnwtMBVGUFibsTbivcP5DJBWTQD6rwAe5AGcxzA6Mnkl/CvWSac4XRb
+         YiwMTW85eHqLcg+YmYX0CvbbhkOF6naVhEq8CtV16QYgDMxcjI4jZ08tesEszudmUeNC
+         1yFv4FlBVwzeYuw+XFWEQjr8VdpUhfofcBPc7LX8p0I64vx950IJ6NgchwjIyMzAg1fE
+         3Hxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=syTDIp7PiP+AZjzDYgWMScbh9JnkTpS8wJ/cVx+Gs1M=;
-        b=Z2v+oGEtdafqxOTWUDwCO1q6IXkSM9jW0Ke2eOeb0PVc6IQ5phTb7q61uOi236BRQX
-         6DWSD9alKMEG5rpspE73aum7FytQHHfqXnnGt7VQ4Cx6iFQTUQ6Lxzo3ZGGHxGO/lgO1
-         KN8Y4gUO9NHGSa7hFIzKow7TcDLENIbLlsfrkoOZeDmW9RnLocMmGB12maHrlrIbH+MD
-         alebtErpYg+ctacjWyiuntGy+o1iPKtAbDlhyigGqCA4wQP0IpzbiVchbYj5I5sCjvjK
-         LmynYFeHYVxyXlcYvWDYfdXf4y2hgn45LN589BefXGpWprtmaTzIVXnFvn/yjSKMJjcc
-         xiog==
-X-Gm-Message-State: AOAM533Zu7dzehVxDHLzEB2kaXttikK4w98Ne5St22XY5mH5bKvGkHLe
-        AlaBTVu/mqAfJmksJ/IZSeM=
-X-Google-Smtp-Source: ABdhPJw8cXFyTyLdG6JCAtbc4sjRmCNTK77Ir+mIF3DcL3bP6srisXk3GfWyXEwIMY1ekRG9lqltNg==
-X-Received: by 2002:adf:9d92:: with SMTP id p18mr5984751wre.20.1628800886867;
-        Thu, 12 Aug 2021 13:41:26 -0700 (PDT)
-Received: from localhost.localdomain ([148.252.132.210])
-        by smtp.gmail.com with ESMTPSA id i10sm10296556wmq.21.2021.08.12.13.41.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Aug 2021 13:41:26 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Palash Oswal <oswalpalash@gmail.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com,
-        asml.silence@gmail.com
-Subject: [PATCH v2 2/2] io_uring: don't retry with truncated iter
-Date:   Thu, 12 Aug 2021 21:40:47 +0100
-Message-Id: <71d0711b4e28d01cd06e2c96db5adf0b766ac27f.1628780390.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1628780390.git.asml.silence@gmail.com>
-References: <cover.1628780390.git.asml.silence@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SocJctGaI1z5Y2V/7vECrCscsCsQ4+Z36X400HrEw90=;
+        b=YgCJkEd9OIv7m72jrsZB9fdDluxey78QyAhuveecaIEI8hzSDgHTs+bZGRuoxNVvax
+         ZXv4ZHJ1SLeyBsGtlEAczp8y4SLrXhImGy50i9srtNfDvFTzAI3SVwMAf5+Jg2L1cUub
+         y6S/THZBvo7pd19CKqkEwCL/pYDav1IzIrLrS6cyL3PCdfsznXJuqON6+QHA+TCN0A+U
+         dazr0qnKVhZ5Mapbf6WORTqY36aeXWBUtux2O+lVFfAtfRUn02mnWB7d9idqJHzeQ0qC
+         x/7LCLIY5fia153k1u60X8USGltVI1O19gZ/sQMYjY0CVnHBW1evXcJitw7rVrlWWinr
+         Y2sA==
+X-Gm-Message-State: AOAM5308i0WqQiw35xG4zhQXkA7AR9Dpjq64gdnx1HY61LH6rW1cdBFL
+        vAX7zH70R8bWaMRmW2skVEPX9OXAgS3NjJy2Psc4OQ==
+X-Google-Smtp-Source: ABdhPJzIgj0CrwWUnOBFfrhyb8EUrtawZ0J3NKD3b1jYgEH5AUQqaCmnuiuSctcAx1ohrVe08vfPNjodqk7WcRj2tmg=
+X-Received: by 2002:a25:bec2:: with SMTP id k2mr7239053ybm.234.1628800954923;
+ Thu, 12 Aug 2021 13:42:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210812203137.2880834-1-joshdon@google.com>
+In-Reply-To: <20210812203137.2880834-1-joshdon@google.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Thu, 12 Aug 2021 22:42:23 +0200
+Message-ID: <CANn89iJK-PzFrN2S_jojN2rvZBfBJY4cLTg6q+uzF-vcrfrAeQ@mail.gmail.com>
+Subject: Re: [PATCH] fs/proc/uptime.c: fix idle time reporting in /proc/uptime
+To:     Josh Don <joshdon@google.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Luigi Rizzo <lrizzo@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[   74.211232] BUG: KASAN: stack-out-of-bounds in iov_iter_revert+0x809/0x900
-[   74.212778] Read of size 8 at addr ffff888025dc78b8 by task
-syz-executor.0/828
-[   74.214756] CPU: 0 PID: 828 Comm: syz-executor.0 Not tainted
-5.14.0-rc3-next-20210730 #1
-[   74.216525] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-[   74.219033] Call Trace:
-[   74.219683]  dump_stack_lvl+0x8b/0xb3
-[   74.220706]  print_address_description.constprop.0+0x1f/0x140
-[   74.224226]  kasan_report.cold+0x7f/0x11b
-[   74.226085]  iov_iter_revert+0x809/0x900
-[   74.227960]  io_write+0x57d/0xe40
-[   74.232647]  io_issue_sqe+0x4da/0x6a80
-[   74.242578]  __io_queue_sqe+0x1ac/0xe60
-[   74.245358]  io_submit_sqes+0x3f6e/0x76a0
-[   74.248207]  __do_sys_io_uring_enter+0x90c/0x1a20
-[   74.257167]  do_syscall_64+0x3b/0x90
-[   74.257984]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+On Thu, Aug 12, 2021 at 10:31 PM Josh Don <joshdon@google.com> wrote:
+>
+> /proc/uptime reports idle time by reading the CPUTIME_IDLE field from
+> the per-cpu kcpustats. However, on NO_HZ systems, idle time is not
+> continually updated on idle cpus, leading this value to appear
+> incorrectly small.
+>
+> /proc/stat performs an accounting update when reading idle time; we can
+> use the same approach for uptime.
+>
+> With this patch, /proc/stat and /proc/uptime now agree on idle time.
+> Additionally, the following shows idle time tick up consistently on an
+> idle machine:
+> (while true; do cat /proc/uptime; sleep 1; done) | awk '{print $2-prev; prev=$2}'
+>
+> Reported-by: Luigi Rizzo <lrizzo@google.com>
+> Signed-off-by: Josh Don <joshdon@google.com>
+> ---
+>  fs/proc/stat.c              | 26 --------------------------
+>  fs/proc/uptime.c            | 13 ++++++++-----
+>  include/linux/kernel_stat.h |  1 +
+>  kernel/sched/cputime.c      | 28 ++++++++++++++++++++++++++++
+>  4 files changed, 37 insertions(+), 31 deletions(-)
+>
+> diff --git a/fs/proc/stat.c b/fs/proc/stat.c
+> index 6561a06ef905..99796a8a5223 100644
+> --- a/fs/proc/stat.c
+> +++ b/fs/proc/stat.c
+> @@ -24,16 +24,6 @@
+>
+>  #ifdef arch_idle_time
+>
+> -static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
+> -{
+> -       u64 idle;
+> -
+> -       idle = kcs->cpustat[CPUTIME_IDLE];
+> -       if (cpu_online(cpu) && !nr_iowait_cpu(cpu))
+> -               idle += arch_idle_time(cpu);
+> -       return idle;
+> -}
+> -
+>  static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
+>  {
+>         u64 iowait;
+> @@ -46,22 +36,6 @@ static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
+>
+>  #else
+>
+> -static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
+> -{
+> -       u64 idle, idle_usecs = -1ULL;
+> -
+> -       if (cpu_online(cpu))
+> -               idle_usecs = get_cpu_idle_time_us(cpu, NULL);
+> -
+> -       if (idle_usecs == -1ULL)
+> -               /* !NO_HZ or cpu offline so we can rely on cpustat.idle */
+> -               idle = kcs->cpustat[CPUTIME_IDLE];
+> -       else
+> -               idle = idle_usecs * NSEC_PER_USEC;
+> -
+> -       return idle;
+> -}
+> -
+>  static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
+>  {
+>         u64 iowait, iowait_usecs = -1ULL;
 
-old_size = iov_iter_count();
 ...
-iov_iter_revert(old_size - iov_iter_count());
 
-If iov_iter_revert() is done base on the initial size as above, and the
-iter is truncated and not reexpanded in the middle, it miscalculates
-borders causing problems. This trace is due to no one reexpanding after
-generic_write_checks().
+> diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+> index 872e481d5098..9d7629e21164 100644
+> --- a/kernel/sched/cputime.c
+> +++ b/kernel/sched/cputime.c
+> @@ -227,6 +227,34 @@ void account_idle_time(u64 cputime)
+>                 cpustat[CPUTIME_IDLE] += cputime;
+>  }
+>
+> +/*
+> + * Returns the total idle time for the given cpu.
+> + * @kcs: The kernel_cpustat for the desired cpu.
+> + * @cpu: The desired cpu.
+> + */
+> +u64 get_idle_time(const struct kernel_cpustat *kcs, int cpu)
+> +{
+> +       u64 idle;
+> +       u64 __maybe_unused idle_usecs = -1ULL;
+> +
+> +#ifdef arch_idle_time
+> +       idle = kcs->cpustat[CPUTIME_IDLE];
+> +       if (cpu_online(cpu) && !nr_iowait_cpu(cpu))
+> +               idle += arch_idle_time(cpu);
+> +#else
+> +       if (cpu_online(cpu))
+> +               idle_usecs = get_cpu_idle_time_us(cpu, NULL);
+> +
+> +       if (idle_usecs == -1ULL)
+> +               /* !NO_HZ or cpu offline so we can rely on cpustat.idle */
+> +               idle = kcs->cpustat[CPUTIME_IDLE];
+> +       else
+> +               idle = idle_usecs * NSEC_PER_USEC;
+> +#endif
+> +
+> +       return idle;
+> +}
+> +
+>
 
-Avoid reverting truncated iterators, so io_uring would fail requests
-with EAGAIN instead of retrying them.
+Not sure why you moved get_idle_time() in kernel/sched/cputime.c
 
-Cc: stable@vger.kernel.org
-Reported-by: Palash Oswal <oswalpalash@gmail.com>
-Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Reported-and-tested-by: syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
-Suggested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index efd818419014..2e168051262d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2462,6 +2462,16 @@ static void kiocb_end_write(struct io_kiocb *req)
- 	}
- }
- 
-+static inline bool io_check_truncated(struct iov_iter *i, size_t len)
-+{
-+	if (unlikely(i->truncated)) {
-+		if (iov_iter_count(i) != len)
-+			return false;
-+		i->truncated = false;
-+	}
-+	return true;
-+}
-+
- #ifdef CONFIG_BLOCK
- static bool io_resubmit_prep(struct io_kiocb *req)
- {
-@@ -2469,6 +2479,8 @@ static bool io_resubmit_prep(struct io_kiocb *req)
- 
- 	if (!rw)
- 		return !io_req_prep_async(req);
-+	if (!io_check_truncated(&rw->iter, req->result))
-+		return false;
- 	/* may have left rw->iter inconsistent on -EIOCBQUEUED */
- 	iov_iter_revert(&rw->iter, req->result - iov_iter_count(&rw->iter));
- 	return true;
-@@ -3328,6 +3340,8 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
- 		/* no retry on NONBLOCK nor RWF_NOWAIT */
- 		if (req->flags & REQ_F_NOWAIT)
- 			goto done;
-+		if (!io_check_truncated(iter, io_size))
-+			goto done;
- 		/* some cases will consume bytes even on error returns */
- 		iov_iter_revert(iter, io_size - iov_iter_count(iter));
- 		ret = 0;
-@@ -3467,6 +3481,8 @@ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
- 		kiocb_done(kiocb, ret2, issue_flags);
- 	} else {
- copy_iov:
-+		if (!io_check_truncated(iter, io_size))
-+			goto done;
- 		/* some cases will consume bytes even on error returns */
- 		iov_iter_revert(iter, io_size - iov_iter_count(iter));
- 		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
--- 
-2.32.0
-
+For builds where CONFIG_PROC_FS is not set, this function is not used/needed.
