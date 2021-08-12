@@ -2,328 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3934F3EABBA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 22:23:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 330433EABCA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 22:31:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237477AbhHLUXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 16:23:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34477 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237645AbhHLUXP (ORCPT
+        id S235654AbhHLUcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 16:32:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47790 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232706AbhHLUcT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 16:23:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628799769;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ky+LOtMAnxfOrF4U8ZetcHe2dR1USBrS9gYy/2Wr6Ig=;
-        b=Izku0CvWzLUvUdIA5Qdu4qiJ11OMOjtOc26xfUhZDZ6KeRCntIqnxip1bw2xmpQFA3MBdT
-        YgTcCf28DAd//uuoPotsnUZLMdRE1hHXD9lORgD9S2xwkf8r/fNvorRyryiq+eNdoHKDIi
-        7hYa9y2SlACXhiDPWoakJMmIX2BFVLE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-599-cIGfTAv2MU-tGSQChAlpyQ-1; Thu, 12 Aug 2021 16:22:46 -0400
-X-MC-Unique: cIGfTAv2MU-tGSQChAlpyQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8A8F88799E0;
-        Thu, 12 Aug 2021 20:22:44 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 336435D9D5;
-        Thu, 12 Aug 2021 20:22:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH v2 5/5] mm: Remove swap BIO paths and only use DIO paths
- [BROKEN]
-From:   David Howells <dhowells@redhat.com>
-To:     willy@infradead.org
-Cc:     dhowells@redhat.com, dhowells@redhat.com,
-        trond.myklebust@primarydata.com, darrick.wong@oracle.com,
-        hch@lst.de, viro@zeniv.linux.org.uk, jlayton@kernel.org,
-        sfrench@samba.org, torvalds@linux-foundation.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 12 Aug 2021 21:22:41 +0100
-Message-ID: <162879976139.3306668.12495248062404308890.stgit@warthog.procyon.org.uk>
-In-Reply-To: <162879971699.3306668.8977537647318498651.stgit@warthog.procyon.org.uk>
-References: <162879971699.3306668.8977537647318498651.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        Thu, 12 Aug 2021 16:32:19 -0400
+Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 733AAC0613D9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 13:31:53 -0700 (PDT)
+Received: by mail-qk1-x74a.google.com with SMTP id s16-20020a05620a0810b02903d250dfc6a7so4403625qks.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 13:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=zD3YqN3uKrjqq7dXEXETUikzHIusIdXQADNng2MRWg0=;
+        b=k0zAa1liZuKENSSN0W4s5uib7EonBbTNvp/dQ9cPRlx2IJwJ0H6qU972+G8uODGSXZ
+         lRATx42r4Z7mdMj4OaGnd4kzU/TvFMKH2tWVGub3E6MN7VgscyZ7Na55GeJGA0BkYuJQ
+         PMKLMZZiQJKVEUl8eDgzWD2FSVqH7qc9izOka2DbQAI7JLAy3LXQiTw+/HAxnF1l94ac
+         BI3Kb+uiRQRgc5ktQkKKO/oWg4sMQxCXKl+Advsc8iorvoBLAiRiUjb0qbe/MPrgT5Hp
+         mjBpZBSnAWsm7ZeZIwC7CpEPPhK3ergL2pvG7jIaqI3qWnc0n9XGO4srUXP1DZtN3VFp
+         1qbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=zD3YqN3uKrjqq7dXEXETUikzHIusIdXQADNng2MRWg0=;
+        b=lgbmM9c3l89XT8nbxv2+GkDsQ2GvxkYvkmvmI8v54ug72LjtcIgie1mmNponG81m+C
+         sjjEAN0yI4zswWcEt5ZVspXtjqdhpwfsJ1x9XUdQRowFPRYexOSf1Duz0Y2iG8vZ+aMD
+         WplkPXbVzj49UUUSqw4J3u/V0J/NNM0setrgRAR1FFu2F5NNLoSphWlvJUgVCh9mEG/8
+         zIacjyIEJ1q5gLTtyog4uc6sTsqV3GZYagb29eYJbKKUF71khkKdbchNHoPqq9qPr7yP
+         zpntUNBD5GphT62yn4Yb/bgNQwImjB/QF4cxM2f/PmkLsPdhHxlkom0CZDMCF9GBWUgD
+         Mr5g==
+X-Gm-Message-State: AOAM533h32Xi9b+ax0KszIrChrzEn81x66k3v/kbxHCwbkimagdCUA+h
+        IBtS/YCy0KLoEkaBK2VU7RD7Owyr80Cr
+X-Google-Smtp-Source: ABdhPJxPrujZoCKXu0Y0JWTKDXJbusKVULjrqEkfyGMlUiS7SCtxgy6kV+FIsrpHAX9hDYwMaqEW19T065RI
+X-Received: from joshdon.svl.corp.google.com ([2620:15c:2cd:202:d977:cec1:ae4a:f50e])
+ (user=joshdon job=sendgmr) by 2002:a05:6214:4a8:: with SMTP id
+ w8mr3939270qvz.25.1628800312377; Thu, 12 Aug 2021 13:31:52 -0700 (PDT)
+Date:   Thu, 12 Aug 2021 13:31:37 -0700
+Message-Id: <20210812203137.2880834-1-joshdon@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.33.0.rc1.237.g0d66db33f3-goog
+Subject: [PATCH] fs/proc/uptime.c: fix idle time reporting in /proc/uptime
+From:   Josh Don <joshdon@google.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Josh Don <joshdon@google.com>, Luigi Rizzo <lrizzo@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[!] NOTE: This doesn't work and might damage your disk's contents.
+/proc/uptime reports idle time by reading the CPUTIME_IDLE field from
+the per-cpu kcpustats. However, on NO_HZ systems, idle time is not
+continually updated on idle cpus, leading this value to appear
+incorrectly small.
 
-Delete the BIO-generating swap read/write paths and always use
-->direct_IO().  This puts the mapping layer in the filesystem.
+/proc/stat performs an accounting update when reading idle time; we can
+use the same approach for uptime.
 
-This doesn't work - probably due to ki_pos being set to
-page_file_offset(page) which then gets remapped.
+With this patch, /proc/stat and /proc/uptime now agree on idle time.
+Additionally, the following shows idle time tick up consistently on an
+idle machine:
+(while true; do cat /proc/uptime; sleep 1; done) | awk '{print $2-prev; prev=$2}'
 
-Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Reported-by: Luigi Rizzo <lrizzo@google.com>
+Signed-off-by: Josh Don <joshdon@google.com>
 ---
+ fs/proc/stat.c              | 26 --------------------------
+ fs/proc/uptime.c            | 13 ++++++++-----
+ include/linux/kernel_stat.h |  1 +
+ kernel/sched/cputime.c      | 28 ++++++++++++++++++++++++++++
+ 4 files changed, 37 insertions(+), 31 deletions(-)
 
- fs/direct-io.c      |    2 +
- include/linux/bio.h |    2 +
- mm/page_io.c        |  156 ++-------------------------------------------------
- 3 files changed, 9 insertions(+), 151 deletions(-)
-
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index b2e86e739d7a..76eec0a68fa4 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1216,6 +1216,8 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	}
- 	if (iocb->ki_flags & IOCB_HIPRI)
- 		dio->op_flags |= REQ_HIPRI;
-+	if (iocb->ki_flags & IOCB_SWAP)
-+		dio->op_flags |= REQ_SWAP;
+diff --git a/fs/proc/stat.c b/fs/proc/stat.c
+index 6561a06ef905..99796a8a5223 100644
+--- a/fs/proc/stat.c
++++ b/fs/proc/stat.c
+@@ -24,16 +24,6 @@
  
- 	/*
- 	 * For AIO O_(D)SYNC writes we need to defer completions to a workqueue
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 2203b686e1f0..da75cfa72ed3 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -816,6 +816,8 @@ static inline void bio_set_polled(struct bio *bio, struct kiocb *kiocb)
- 	bio->bi_opf |= REQ_HIPRI;
- 	if (!is_sync_kiocb(kiocb))
- 		bio->bi_opf |= REQ_NOWAIT;
-+	if (kiocb->ki_flags & IOCB_SWAP)
-+		bio->bi_opf |= REQ_SWAP;
- }
+ #ifdef arch_idle_time
  
- struct bio *blk_next_bio(struct bio *bio, unsigned int nr_pages, gfp_t gfp);
-diff --git a/mm/page_io.c b/mm/page_io.c
-index dae7bbd7a842..fb260d9c3973 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -44,30 +44,6 @@ static void swapfile_put_kiocb(struct swapfile_kiocb *ki)
- 	}
- }
- 
--static void end_swap_bio_write(struct bio *bio)
+-static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
 -{
--	struct page *page = bio_first_page_all(bio);
+-	u64 idle;
 -
--	if (bio->bi_status) {
--		SetPageError(page);
--		/*
--		 * We failed to write the page out to swap-space.
--		 * Re-dirty the page in order to avoid it being reclaimed.
--		 * Also print a dire warning that things will go BAD (tm)
--		 * very quickly.
--		 *
--		 * Also clear PG_reclaim to avoid folio_rotate_reclaimable()
--		 */
--		set_page_dirty(page);
--		pr_alert_ratelimited("Write-error on swap-device (%u:%u:%llu)\n",
--				     MAJOR(bio_dev(bio)), MINOR(bio_dev(bio)),
--				     (unsigned long long)bio->bi_iter.bi_sector);
--		ClearPageReclaim(page);
--	}
--	end_page_writeback(page);
--	bio_put(bio);
+-	idle = kcs->cpustat[CPUTIME_IDLE];
+-	if (cpu_online(cpu) && !nr_iowait_cpu(cpu))
+-		idle += arch_idle_time(cpu);
+-	return idle;
 -}
 -
- static void swap_slot_free_notify(struct page *page)
+ static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
  {
- 	struct swap_info_struct *sis;
-@@ -116,32 +92,6 @@ static void swap_slot_free_notify(struct page *page)
- 	}
- }
+ 	u64 iowait;
+@@ -46,22 +36,6 @@ static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
  
--static void end_swap_bio_read(struct bio *bio)
+ #else
+ 
+-static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
 -{
--	struct page *page = bio_first_page_all(bio);
--	struct task_struct *waiter = bio->bi_private;
+-	u64 idle, idle_usecs = -1ULL;
 -
--	if (bio->bi_status) {
--		SetPageError(page);
--		ClearPageUptodate(page);
--		pr_alert_ratelimited("Read-error on swap-device (%u:%u:%llu)\n",
--				     MAJOR(bio_dev(bio)), MINOR(bio_dev(bio)),
--				     (unsigned long long)bio->bi_iter.bi_sector);
--		goto out;
--	}
+-	if (cpu_online(cpu))
+-		idle_usecs = get_cpu_idle_time_us(cpu, NULL);
 -
--	SetPageUptodate(page);
--	swap_slot_free_notify(page);
--out:
--	unlock_page(page);
--	WRITE_ONCE(bio->bi_private, NULL);
--	bio_put(bio);
--	if (waiter) {
--		blk_wake_io_task(waiter);
--		put_task_struct(waiter);
--	}
+-	if (idle_usecs == -1ULL)
+-		/* !NO_HZ or cpu offline so we can rely on cpustat.idle */
+-		idle = kcs->cpustat[CPUTIME_IDLE];
+-	else
+-		idle = idle_usecs * NSEC_PER_USEC;
+-
+-	return idle;
 -}
 -
- int generic_swapfile_activate(struct swap_info_struct *sis,
- 				struct file *swap_file,
- 				sector_t *span)
-@@ -281,31 +231,12 @@ static inline void count_swpout_vm_event(struct page *page)
- 	count_vm_events(PSWPOUT, thp_nr_pages(page));
+ static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
+ {
+ 	u64 iowait, iowait_usecs = -1ULL;
+diff --git a/fs/proc/uptime.c b/fs/proc/uptime.c
+index 5a1b228964fb..c900f354ef93 100644
+--- a/fs/proc/uptime.c
++++ b/fs/proc/uptime.c
+@@ -12,18 +12,21 @@ static int uptime_proc_show(struct seq_file *m, void *v)
+ {
+ 	struct timespec64 uptime;
+ 	struct timespec64 idle;
+-	u64 nsec;
++	const struct kernel_cpustat *kcs;
++	u64 idle_nsec;
+ 	u32 rem;
+ 	int i;
+ 
+-	nsec = 0;
+-	for_each_possible_cpu(i)
+-		nsec += (__force u64) kcpustat_cpu(i).cpustat[CPUTIME_IDLE];
++	idle_nsec = 0;
++	for_each_possible_cpu(i) {
++		kcs = &kcpustat_cpu(i);
++		idle_nsec += get_idle_time(kcs, i);
++	}
+ 
+ 	ktime_get_boottime_ts64(&uptime);
+ 	timens_add_boottime(&uptime);
+ 
+-	idle.tv_sec = div_u64_rem(nsec, NSEC_PER_SEC, &rem);
++	idle.tv_sec = div_u64_rem(idle_nsec, NSEC_PER_SEC, &rem);
+ 	idle.tv_nsec = rem;
+ 	seq_printf(m, "%lu.%02lu %lu.%02lu\n",
+ 			(unsigned long) uptime.tv_sec,
+diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
+index 44ae1a7eb9e3..9a5f5c6239c7 100644
+--- a/include/linux/kernel_stat.h
++++ b/include/linux/kernel_stat.h
+@@ -102,6 +102,7 @@ extern void account_system_index_time(struct task_struct *, u64,
+ 				      enum cpu_usage_stat);
+ extern void account_steal_time(u64);
+ extern void account_idle_time(u64);
++extern u64 get_idle_time(const struct kernel_cpustat *kcs, int cpu);
+ 
+ #ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+ static inline void account_process_tick(struct task_struct *tsk, int user)
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index 872e481d5098..9d7629e21164 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -227,6 +227,34 @@ void account_idle_time(u64 cputime)
+ 		cpustat[CPUTIME_IDLE] += cputime;
  }
  
--#if defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
--static void bio_associate_blkg_from_page(struct bio *bio, struct page *page)
--{
--	struct cgroup_subsys_state *css;
--	struct mem_cgroup *memcg;
--
--	memcg = page_memcg(page);
--	if (!memcg)
--		return;
--
--	rcu_read_lock();
--	css = cgroup_e_css(memcg->css.cgroup, &io_cgrp_subsys);
--	bio_associate_blkg_from_css(bio, css);
--	rcu_read_unlock();
--}
--#else
--#define bio_associate_blkg_from_page(bio, page)		do { } while (0)
--#endif /* CONFIG_MEMCG && CONFIG_BLK_CGROUP */
--
- static void __swapfile_write_complete(struct kiocb *iocb, long ret, long ret2)
- {
- 	struct page *page = iocb->ki_swap_page;
- 
- 	if (ret == thp_size(page)) {
--		count_vm_event(PSWPOUT);
-+		count_swpout_vm_event(page);
- 		ret = 0;
- 	} else {
- 		/*
-@@ -401,34 +332,10 @@ static int swapfile_write(struct swap_info_struct *sis,
- 
- int __swap_writepage(struct page *page, struct writeback_control *wbc)
- {
--	struct bio *bio;
--	int ret;
- 	struct swap_info_struct *sis = page_swap_info(page);
- 
- 	VM_BUG_ON_PAGE(!PageSwapCache(page), page);
--	if (data_race(sis->flags & SWP_FS_OPS))
--		return swapfile_write(sis, page, wbc);
--
--	ret = bdev_write_page(sis->bdev, swap_page_sector(page), page, wbc);
--	if (!ret) {
--		count_swpout_vm_event(page);
--		return 0;
--	}
--
--	bio = bio_alloc(GFP_NOIO, 1);
--	bio_set_dev(bio, sis->bdev);
--	bio->bi_iter.bi_sector = swap_page_sector(page);
--	bio->bi_opf = REQ_OP_WRITE | REQ_SWAP | wbc_to_write_flags(wbc);
--	bio->bi_end_io = end_swap_bio_write;
--	bio_add_page(bio, page, thp_size(page), 0);
--
--	bio_associate_blkg_from_page(bio, page);
--	count_swpout_vm_event(page);
--	set_page_writeback(page);
--	unlock_page(page);
--	submit_bio(bio);
--
--	return 0;
-+	return swapfile_write(sis, page, wbc);
- }
- 
- static void __swapfile_read_complete(struct kiocb *iocb, long ret, long ret2)
-@@ -437,6 +344,7 @@ static void __swapfile_read_complete(struct kiocb *iocb, long ret, long ret2)
- 
- 	if (ret == PAGE_SIZE) {
- 		count_vm_event(PSWPIN);
-+		swap_slot_free_notify(page);
- 		SetPageUptodate(page);
- 	} else {
- 		SetPageError(page);
-@@ -522,12 +430,9 @@ static int swapfile_read(struct swap_info_struct *sis, struct page *page,
- 
- int swap_readpage(struct page *page, bool synchronous)
- {
--	struct bio *bio;
--	int ret = 0;
- 	struct swap_info_struct *sis = page_swap_info(page);
--	blk_qc_t qc;
--	struct gendisk *disk;
- 	unsigned long pflags;
-+	int ret = 0;
- 
- 	VM_BUG_ON_PAGE(!PageSwapCache(page) && !synchronous, page);
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
-@@ -543,60 +448,9 @@ int swap_readpage(struct page *page, bool synchronous)
- 	if (frontswap_load(page) == 0) {
- 		SetPageUptodate(page);
- 		unlock_page(page);
--		goto out;
--	}
--
--	if (data_race(sis->flags & SWP_FS_OPS)) {
-+	} else {
- 		ret = swapfile_read(sis, page, synchronous);
--		goto out;
--	}
--
--	if (sis->flags & SWP_SYNCHRONOUS_IO) {
--		ret = bdev_read_page(sis->bdev, swap_page_sector(page), page);
--		if (!ret) {
--			if (trylock_page(page)) {
--				swap_slot_free_notify(page);
--				unlock_page(page);
--			}
--
--			count_vm_event(PSWPIN);
--			goto out;
--		}
- 	}
--
--	ret = 0;
--	bio = bio_alloc(GFP_KERNEL, 1);
--	bio_set_dev(bio, sis->bdev);
--	bio->bi_opf = REQ_OP_READ;
--	bio->bi_iter.bi_sector = swap_page_sector(page);
--	bio->bi_end_io = end_swap_bio_read;
--	bio_add_page(bio, page, thp_size(page), 0);
--
--	disk = bio->bi_bdev->bd_disk;
--	/*
--	 * Keep this task valid during swap readpage because the oom killer may
--	 * attempt to access it in the page fault retry time check.
--	 */
--	if (synchronous) {
--		bio->bi_opf |= REQ_HIPRI;
--		get_task_struct(current);
--		bio->bi_private = current;
--	}
--	count_vm_event(PSWPIN);
--	bio_get(bio);
--	qc = submit_bio(bio);
--	while (synchronous) {
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		if (!READ_ONCE(bio->bi_private))
--			break;
--
--		if (!blk_poll(disk->queue, qc, true))
--			blk_io_schedule();
--	}
--	__set_current_state(TASK_RUNNING);
--	bio_put(bio);
--
--out:
- 	psi_memstall_leave(&pflags);
- 	return ret;
- }
-
++/*
++ * Returns the total idle time for the given cpu.
++ * @kcs: The kernel_cpustat for the desired cpu.
++ * @cpu: The desired cpu.
++ */
++u64 get_idle_time(const struct kernel_cpustat *kcs, int cpu)
++{
++	u64 idle;
++	u64 __maybe_unused idle_usecs = -1ULL;
++
++#ifdef arch_idle_time
++	idle = kcs->cpustat[CPUTIME_IDLE];
++	if (cpu_online(cpu) && !nr_iowait_cpu(cpu))
++		idle += arch_idle_time(cpu);
++#else
++	if (cpu_online(cpu))
++		idle_usecs = get_cpu_idle_time_us(cpu, NULL);
++
++	if (idle_usecs == -1ULL)
++		/* !NO_HZ or cpu offline so we can rely on cpustat.idle */
++		idle = kcs->cpustat[CPUTIME_IDLE];
++	else
++		idle = idle_usecs * NSEC_PER_USEC;
++#endif
++
++	return idle;
++}
++
+ /*
+  * When a guest is interrupted for a longer amount of time, missed clock
+  * ticks are not redelivered later. Due to that, this function may on
+-- 
+2.33.0.rc1.237.g0d66db33f3-goog
 
