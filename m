@@ -2,80 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5022C3EA9B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 19:44:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F22A53EA9BF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 19:48:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234417AbhHLRot (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 13:44:49 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:34220 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbhHLRor (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 13:44:47 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 74BD01FF6B;
-        Thu, 12 Aug 2021 17:44:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1628790261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GjLy5j1wsZgYsAkLWE9gwStplnP2fdyuvJK9X16Uwc8=;
-        b=lIGzCv0I8YlOs2Tk2VETsdI2n1dTG/ArBJfNeNJFTeMjmkytmU7iuhnI4Hah/yIKhWdE28
-        gLQyvfbqGHLzxnlKFj9KAEfaJh3iyx6gZqwWDvdHjF1cx0Np6YOSWfDUm3gHF/dJLnXzTy
-        ipCbzwnH4F+u5qrGq6VOQm/cMHY0EBQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1628790261;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GjLy5j1wsZgYsAkLWE9gwStplnP2fdyuvJK9X16Uwc8=;
-        b=I/Uzb8Q04U6W2dEIIemlNVY5uSsyU6ekttk7DxiEItevPv0hjzKqeecSVS9qlZFo8NwDdV
-        MRb0px56gIljIiAg==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 5229D13AC3;
-        Thu, 12 Aug 2021 17:44:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id H6AHE/VdFWFcEwAAGKfGzw
-        (envelope-from <vbabka@suse.cz>); Thu, 12 Aug 2021 17:44:21 +0000
-Subject: Re: [PATCH v14 088/138] mm/filemap: Add filemap_get_folio
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        id S235218AbhHLRso (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 13:48:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52524 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229851AbhHLRso (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Aug 2021 13:48:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D119E60FED;
+        Thu, 12 Aug 2021 17:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628790498;
+        bh=hP/339ZqVkiXxXmDbT5cZGbifJvy2J+ZAv1wWKZbOxc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iLRzb+hJIJSjc0JuOvlwwrJKSPEFw0kNkvr8cfkpZTBB0+g5+8+8oIhoQABfsbKHt
+         iJKgd/3hgOKnVM3XM8zy8ldDGeC7+JYcU+k0zDezfEOU9ofQjNUSwS2+jUI23nDwoQ
+         2WLN+HqxStGNfA2W/Zf/jM1M/cuH/Xq2xasj4gVLee5uOsVwZVyT/heAVoUweEw5lb
+         QgZuWiXcrXolxVmtmWqYYokOtI9F5Xq4N7ke0DmgZ4JroYfHKVxV1u4jb69/v8XIRn
+         NIJ0sMb02DvqjLUP7qrnTQtOXJjkss/p1+Cfx0sd2Fo8gNAozACXfhcScN1Fa1JTCr
+         l1ZsdJ1CaGQLQ==
+Date:   Thu, 12 Aug 2021 10:48:18 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        trond.myklebust@primarydata.com, darrick.wong@oracle.com,
+        jlayton@kernel.org, sfrench@samba.org,
+        torvalds@linux-foundation.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-89-willy@infradead.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <8117c1fa-deeb-c90e-be11-a445d314caed@suse.cz>
-Date:   Thu, 12 Aug 2021 19:44:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+Subject: Re: [PATCH 2/2] mm: Make swap_readpage() for SWP_FS_OPS use
+ ->direct_IO() not ->readpage()
+Message-ID: <20210812174818.GK3601405@magnolia>
+References: <20210812122104.GB18532@lst.de>
+ <162876946134.3068428.15475611190876694695.stgit@warthog.procyon.org.uk>
+ <162876947840.3068428.12591293664586646085.stgit@warthog.procyon.org.uk>
+ <3085432.1628773025@warthog.procyon.org.uk>
+ <YRVAvKPn8SjczqrD@casper.infradead.org>
+ <20210812170233.GA4987@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20210715033704.692967-89-willy@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210812170233.GA4987@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/15/21 5:36 AM, Matthew Wilcox (Oracle) wrote:
-> filemap_get_folio() is a replacement for find_get_page().
-> Turn pagecache_get_page() into a wrapper around __filemap_get_folio().
-> Remove find_lock_head() as this use case is now covered by
-> filemap_get_folio().
+On Thu, Aug 12, 2021 at 07:02:33PM +0200, Christoph Hellwig wrote:
+> On Thu, Aug 12, 2021 at 04:39:40PM +0100, Matthew Wilcox wrote:
+> > I agree with David; we want something lower-level for swap to call into.
+> > I'd suggest aops->swap_rw and an implementation might well look
+> > something like:
+> > 
+> > static ssize_t ext4_swap_rw(struct kiocb *iocb, struct iov_iter *iter)
+> > {
+> > 	return iomap_dio_rw(iocb, iter, &ext4_iomap_ops, NULL, 0);
+> > }
 > 
-> Reduces overall kernel size by 209 bytes.  __filemap_get_folio() is
-> 316 bytes shorter than pagecache_get_page() was, but the new
-> pagecache_get_page() is 99 bytes.
+> Yes, that might make sense and would also replace the awkward IOCB_SWAP
+> flag for the write side.
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> For file systems like ext4 and xfs that have an in-memory block mapping
+> tree this would be way better than the current version and also support
+> swap on say multi-device file systems properly.  We'd just need to be
+> careful to read the extent information in at extent_activate time,
+> by doing xfs_iread_extents for XFS or the equivalents in other file
+> systems.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+You'd still want to walk the extent map at activation time to reject
+swapfiles with holes, shared extents, etc., right?
+
+--D
