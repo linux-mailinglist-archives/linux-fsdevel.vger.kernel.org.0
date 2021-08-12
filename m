@@ -2,22 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D8D53EAC7C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 23:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79A883EAC7E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 23:40:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237397AbhHLVlC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 17:41:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35278 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237348AbhHLVk5 (ORCPT
+        id S237450AbhHLVlD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 17:41:03 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45628 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237290AbhHLVlB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 17:40:57 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F91EC061756;
-        Thu, 12 Aug 2021 14:40:32 -0700 (PDT)
+        Thu, 12 Aug 2021 17:41:01 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id 821761F441EF
+        with ESMTPSA id 7C9561F44224
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com, jack@suse.com
 Cc:     linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
@@ -26,9 +23,9 @@ Cc:     linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
         djwong@kernel.org, repnop@google.com,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com, Jan Kara <jack@suse.cz>
-Subject: [PATCH v6 01/21] fsnotify: Don't insert unmergeable events in hashtable
-Date:   Thu, 12 Aug 2021 17:39:50 -0400
-Message-Id: <20210812214010.3197279-2-krisman@collabora.com>
+Subject: [PATCH v6 02/21] fanotify: Fold event size calculation to its own function
+Date:   Thu, 12 Aug 2021 17:39:51 -0400
+Message-Id: <20210812214010.3197279-3-krisman@collabora.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210812214010.3197279-1-krisman@collabora.com>
 References: <20210812214010.3197279-1-krisman@collabora.com>
@@ -38,48 +35,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some events, like the overflow event, are not mergeable, so they are not
-hashed.  But, when failing inside fsnotify_add_event for lack of space,
-fsnotify_add_event() still calls the insert hook, which adds the
-overflow event to the merge list.  Add a check to prevent any kind of
-unmergeable event to be inserted in the hashtable.
+Every time this function is invoked, it is immediately added to
+FAN_EVENT_METADATA_LEN, since there is no need to just calculate the
+length of info records. This minor clean up folds the rest of the
+calculation into the function, which now operates in terms of events,
+returning the size of the entire event, including metadata.
 
-Fixes: 94e00d28a680 ("fsnotify: use hash table for faster events merge")
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
 ---
-Changes since v2:
-  - Do check for hashed events inside the insert hook (Amir)
+Changes since v1:
+  - rebased on top of hashing patches
 ---
- fs/notify/fanotify/fanotify.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/notify/fanotify/fanotify_user.c | 33 +++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 057abd2cf887..310246f8d3f1 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -702,6 +702,9 @@ static void fanotify_insert_event(struct fsnotify_group *group,
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 64864fb40b40..68a53d3534f8 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -117,17 +117,24 @@ static int fanotify_fid_info_len(int fh_len, int name_len)
+ 	return roundup(FANOTIFY_INFO_HDR_LEN + info_len, FANOTIFY_EVENT_ALIGN);
+ }
  
- 	assert_spin_locked(&group->notification_lock);
+-static int fanotify_event_info_len(unsigned int fid_mode,
+-				   struct fanotify_event *event)
++static size_t fanotify_event_len(struct fanotify_event *event,
++				 unsigned int fid_mode)
+ {
+-	struct fanotify_info *info = fanotify_event_info(event);
+-	int dir_fh_len = fanotify_event_dir_fh_len(event);
+-	int fh_len = fanotify_event_object_fh_len(event);
+-	int info_len = 0;
++	size_t event_len = FAN_EVENT_METADATA_LEN;
++	struct fanotify_info *info;
++	int dir_fh_len;
++	int fh_len;
+ 	int dot_len = 0;
  
-+	if (!fanotify_is_hashed_event(event->mask))
-+		return;
++	if (!fid_mode)
++		return event_len;
 +
- 	pr_debug("%s: group=%p event=%p bucket=%u\n", __func__,
- 		 group, event, bucket);
++	info = fanotify_event_info(event);
++	dir_fh_len = fanotify_event_dir_fh_len(event);
++	fh_len = fanotify_event_object_fh_len(event);
++
+ 	if (dir_fh_len) {
+-		info_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
++		event_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
+ 	} else if ((fid_mode & FAN_REPORT_NAME) && (event->mask & FAN_ONDIR)) {
+ 		/*
+ 		 * With group flag FAN_REPORT_NAME, if name was not recorded in
+@@ -137,9 +144,9 @@ static int fanotify_event_info_len(unsigned int fid_mode,
+ 	}
  
-@@ -779,8 +782,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	if (fh_len)
+-		info_len += fanotify_fid_info_len(fh_len, dot_len);
++		event_len += fanotify_fid_info_len(fh_len, dot_len);
  
- 	fsn_event = &event->fse;
- 	ret = fsnotify_add_event(group, fsn_event, fanotify_merge,
--				 fanotify_is_hashed_event(mask) ?
--				 fanotify_insert_event : NULL);
-+				 fanotify_insert_event);
- 	if (ret) {
- 		/* Permission events shouldn't be merged */
- 		BUG_ON(ret == 1 && mask & FANOTIFY_PERM_EVENTS);
+-	return info_len;
++	return event_len;
+ }
+ 
+ /*
+@@ -168,7 +175,7 @@ static void fanotify_unhash_event(struct fsnotify_group *group,
+ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+ 					    size_t count)
+ {
+-	size_t event_size = FAN_EVENT_METADATA_LEN;
++	size_t event_size;
+ 	struct fanotify_event *event = NULL;
+ 	struct fsnotify_event *fsn_event;
+ 	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+@@ -181,8 +188,7 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+ 		goto out;
+ 
+ 	event = FANOTIFY_E(fsn_event);
+-	if (fid_mode)
+-		event_size += fanotify_event_info_len(fid_mode, event);
++	event_size = fanotify_event_len(event, fid_mode);
+ 
+ 	if (event_size > count) {
+ 		event = ERR_PTR(-EINVAL);
+@@ -412,8 +418,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 
+ 	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+ 
+-	metadata.event_len = FAN_EVENT_METADATA_LEN +
+-				fanotify_event_info_len(fid_mode, event);
++	metadata.event_len = fanotify_event_len(event, fid_mode);
+ 	metadata.metadata_len = FAN_EVENT_METADATA_LEN;
+ 	metadata.vers = FANOTIFY_METADATA_VERSION;
+ 	metadata.reserved = 0;
 -- 
 2.32.0
 
