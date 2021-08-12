@@ -2,100 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 583573EA4FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 14:57:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B09A3EA514
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 15:03:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237578AbhHLM5i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 08:57:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31736 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237350AbhHLM5h (ORCPT
+        id S237613AbhHLNCu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 09:02:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56396 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235971AbhHLNCt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 08:57:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628773031;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mCn72IsR7SruuxmCk9O65PvV6CJhIOfP9bZiMHWXYvw=;
-        b=ZQZogHzwBT5ynmxHl8I9uMNBbuoXMjZxrkWq4Bue2OmTV5zf4F3VivT+KhpcQ9WyHoMM8a
-        q7SnBhGg98hV7PgY5LdeNaKrif97Ven8R2RRGN5A8L3XiAqBMiAYQwdt7Io05h5xogMZ3W
-        3uzzVj6miB4bKuZ8sIfWaV+gmHdtQi8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-391-hBfPyN1kPIaWh0iRWiHLJw-1; Thu, 12 Aug 2021 08:57:10 -0400
-X-MC-Unique: hBfPyN1kPIaWh0iRWiHLJw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D465E8799EC;
-        Thu, 12 Aug 2021 12:57:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C811060C05;
-        Thu, 12 Aug 2021 12:57:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210812122104.GB18532@lst.de>
-References: <20210812122104.GB18532@lst.de> <162876946134.3068428.15475611190876694695.stgit@warthog.procyon.org.uk> <162876947840.3068428.12591293664586646085.stgit@warthog.procyon.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dhowells@redhat.com, willy@infradead.org,
-        trond.myklebust@primarydata.com, darrick.wong@oracle.com,
-        jlayton@kernel.org, sfrench@samba.org,
+        Thu, 12 Aug 2021 09:02:49 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C797C061765;
+        Thu, 12 Aug 2021 06:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KapCwCgb5M/iDHR5WR0+lkw3WeXDUWMNBxTJHFQJfdk=; b=mUxh/OAAFJWkKC9+tghFkWl6hg
+        SZiBaIayBiLszQP6Y6dHB8UvkrxEK3sQ9wab2rBSWRK2bhYHSwZa129SIRI2avRPZfWPJeGzG060b
+        T3zCuCccJk3aevzfE5d6a/3Hb7gnv/gNqQweiqHELVODBTwRc4Rwr1y2FVZswU170C5YfHboMqiXS
+        5dR3EmfcarVaOGLY+8q5RBjYsga667g5MwbuNeieBs98bD8acNKTJhoW8UyYEG5U92f4IWX+uNy3u
+        X9Psw1hLChFTCFrgqcNzV0/rKUbyOKhVzTYsko3pZGzje14uic6S4HZdHO29oLJxYBi0xWoIrfK1t
+        fUfKRYvw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mEAJi-00EaEh-DM; Thu, 12 Aug 2021 13:00:28 +0000
+Date:   Thu, 12 Aug 2021 14:00:14 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     trond.myklebust@primarydata.com, darrick.wong@oracle.com,
+        hch@lst.de, jlayton@kernel.org, sfrench@samba.org,
         torvalds@linux-foundation.org, linux-nfs@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm: Make swap_readpage() for SWP_FS_OPS use ->direct_IO() not ->readpage()
+Subject: Re: [PATCH 2/2] mm: Make swap_readpage() for SWP_FS_OPS use
+ ->direct_IO() not ->readpage()
+Message-ID: <YRUbXoMzWVX9X/Vf@casper.infradead.org>
+References: <162876946134.3068428.15475611190876694695.stgit@warthog.procyon.org.uk>
+ <162876947840.3068428.12591293664586646085.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3085431.1628773025.1@warthog.procyon.org.uk>
-Date:   Thu, 12 Aug 2021 13:57:05 +0100
-Message-ID: <3085432.1628773025@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <162876947840.3068428.12591293664586646085.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> wrote:
+On Thu, Aug 12, 2021 at 12:57:58PM +0100, David Howells wrote:
 
-> On Thu, Aug 12, 2021 at 12:57:58PM +0100, David Howells wrote:
-> > Make swap_readpage(), when accessing a swap file (SWP_FS_OPS) use
-> > the ->direct_IO() method on the filesystem rather then ->readpage().
-> 
-> ->direct_IO is just a helper for ->read_iter and ->write_iter, so please
-> don't call it directly.  It actually is slowly on its way out, with at
-> at least all of the iomap implementations not using it, as well as various
-> other file systems.
+I'm not quite sure why we need the refcount.
 
-[Note that __swap_writepage() uses ->direct_IO().]
+> +	refcount_set(&ki->ki_refcnt, 2);
+> +	init_sync_kiocb(&ki->iocb, swap_file);
+> +	ki->page = page;
+> +	ki->iocb.ki_flags = IOCB_DIRECT | IOCB_SWAP;
+> +	ki->iocb.ki_pos	= page_file_offset(page);
+> +	ki->iocb.ki_filp = get_file(swap_file);
+> +	if (!synchronous)
+> +		ki->iocb.ki_complete = swapfile_read_complete;
+> +
+> +	iov_iter_bvec(&to, READ, &bv, 1, PAGE_SIZE);
+> +	ret = swap_file->f_mapping->a_ops->direct_IO(&ki->iocb, &to);
 
-Calling ->write_iter is probably a bad idea here.  Imagine that it goes
-through, say, generic_file_write_iter(), then __generic_file_write_iter() and
-then generic_file_direct_write().  It adds a number of delays into the system,
-including:
+After submitting the IO here ...
 
-	- Taking the inode lock
-	- Removing file privs
-	- Cranking mtime, ctime, file version
-	  - Doing mnt_want_write
-	  - Setting the inode dirty
-	- Waiting on pages in the range that are being written 
-	- Walking over the pagecache to invalidate the range
-	- Redoing the invalidation (can't be skipped since page 0 is pinned)
+> +	if (ret != -EIOCBQUEUED)
+> +		swapfile_read_complete(&ki->iocb, ret, 0);
 
-that we might want to skip as they'll end up being done for every page swapped
-out.
+We only touch the 'ki' here ... if the caller didn't call read_complete
 
-> > +	ki = kzalloc(sizeof(*ki), GFP_KERNEL);
-> > +	if (!ki)
-> > +		return -ENOMEM;
-> 
-> for the synchronous case we could avoid this allocation and just use
-> arguments on stack.
+> +	swapfile_put_kiocb(ki);
 
-True.
+Except for here, which is only touched in order to put the refcount.
 
-David
+So why can't swapfile_read_complete() do the work of freeing the ki?
 
