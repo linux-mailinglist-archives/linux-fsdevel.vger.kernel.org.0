@@ -2,272 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15D843E9C18
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 03:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A5C43E9C2C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 04:17:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233506AbhHLB4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 21:56:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45754 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233460AbhHLB4L (ORCPT
+        id S233456AbhHLCSL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 22:18:11 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:23352 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229729AbhHLCSK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 21:56:11 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8941DC0613D3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Aug 2021 18:55:46 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id gz13-20020a17090b0ecdb0290178c0e0ce8bso7543235pjb.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Aug 2021 18:55:46 -0700 (PDT)
+        Wed, 11 Aug 2021 22:18:10 -0400
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17C2B7YN031562;
+        Thu, 12 Aug 2021 02:17:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=MjZyemJTt9EE2Aqs4CopyfVADNKpH/pMRK3W8xT6G1Q=;
+ b=kbWrsL+XGHsNDf0JIIFyqdEeI+7fFaKJcFCPmKnVPcGgrCihc5IEQZweyzCrdOnu/ilZ
+ 9u28od5qz+4yvklIxGK2Mr0AFNsWNQCJA27m9pvteAnw9UwhuDItF86CdNa1X5glwDX1
+ 95+AcnkETjuQvc4pM47Y0bwiMDPK/bJ+aqqUQBuIdayQiHXPEbv8M/OmWrPKDDw9uw9z
+ cobh0oF2s/9GVpRYdBCfAJVGDWwD7WcpeX03jUlcQ4Nehz305e3Ci3kK8oicqiSzo6Ls
+ 8+eG3+2lqdkHDDZVPe9gr3pSG8StkS5mqalBTNG/qXfzvYLa8zPASrjVtWufrGSQPyE3 iQ== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=MjZyemJTt9EE2Aqs4CopyfVADNKpH/pMRK3W8xT6G1Q=;
+ b=Ymz9gVESLlCYSkR01f9AlzAFb/Y77rl9ML//RNANh4yHcNgr1mTNnWcPH6noQz+HmVb5
+ eUKua47KaJsCtx7psF1mSsiMxDdsyp696xhqo7xa0XpSglUMhKyN80bLyrbdQLFTqLgU
+ xEtxL5RQpM7fQmYUegfG8ht/vLMsaNDmgMr7QZqsp4lgV0nmlHGHnAvVTs6sO0+7O4p/
+ qgZe/ChuDxJOOAi77OYMvQ6jBhF3uJQxtva8KgnHVv7VfklUGrjD5xdY0y3kBOqW6adv
+ f3I+pw3BCNGmlSzEQEev+0W48dwh9yVoUlIhKlsbcJkVJtcdAjkEItDOa7cMV5oUwpGX jA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3acd649ux9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Aug 2021 02:17:32 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17C2GTua117945;
+        Thu, 12 Aug 2021 02:17:31 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2043.outbound.protection.outlook.com [104.47.66.43])
+        by aserp3020.oracle.com with ESMTP id 3accrb4kwe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Aug 2021 02:17:31 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AJDYTJht2JlwuUHCrh3pBAmh6EzB3ubk8W0RSW/FptR80rNTXzQvJpWWE3I67/5dPFSqWbgGO2Z2hRoeYbpz6U7SFeaeC0mW+Iis03JQ/O/VgqyAV9rK6jRcZQ7WJ266fXllgdFeRhWCH6uYSmEh7vGpGM0Tz2Nsn7xvNKxVIjwteF5e2FpNwTgsrJB4ItGKuzyMGBUKdHNe+m+IM9Pm9/srzFOQMKBgyskzrAR7TqgP524ir7Dww2dK6pvYLncFqaRY+cI269/hKxgLLRT6kYNLc4u5kg36dB1rzNq2lr1E4aB2n/WLjG7MM5tFmB7f3En1Cbcq7Dy6qDej/b62Uw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MjZyemJTt9EE2Aqs4CopyfVADNKpH/pMRK3W8xT6G1Q=;
+ b=Xqp2GjjwJ0T3Fb8sF1T0xxh8iKcEwJ1QIyqU1Au4V7sG8b6i5J0vTZOZr3Y/AIEripcFpqyU7DGW6voGt2IqXBPS4kj1N4WCjmnXLDc5H6VBD9JiM3SbZDP/wqSVS1FT0oPqN0A06SVXlBSj+o0nxQ8ATVU29Mger1J6Y57Ro5KbfC7Q+JyF0GMtjHXEUfumnItmTi48Vm9l7OdetkGUbd9dqiOdvZfF5mg35g/KJpJ9y5a7fy+HszG6UCVjxLadK2X5MXdGaBKk/yRIetIyE6QgCNrNKrO/NZsWXj2k/md0zH6dQ7+3kTv98GY6d1eYDXoX1pEEQQzbDTEvlQkbWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AvmVfp9N9MzqpOduup5SUe14deW7P1+4cBwPLxHZyI0=;
-        b=qIda0a4Y89WIe90e5r4pUE+NwvmkKtGRQtqay1+MwXoRGcqsb2AcnzKFkvrtPq2EIN
-         zFgZCym+r0Cyt8Ibdqsjd+jHPtYLs0O/OA+PWULbPrFQK/4Wp/Fx8Y0vKtOHY84/Kdr2
-         Gl/KF+A8hZO5xN96X1t+doKQiGKtY+VDi+YegrNm5THWT0T8z9ZELZZE4Y1F84zP9WFF
-         qYTDHrs13FP5H42YMt+I6WnBH0FlwoVS6EulJLwvXAUbOYEiHvxs0IwQUD6PHdYOsvbn
-         X9+ivLbUwiWkVhw6gAZwigIdKfUoQ0AoE0iW87q68tA5Z5Y2Ba69AzhZuZSRpvbBQx++
-         eaeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AvmVfp9N9MzqpOduup5SUe14deW7P1+4cBwPLxHZyI0=;
-        b=tpULh3g16IxfPcNgaPjHXhDVQH9QGrwZkE51Oz491Aeo2NDBSpKbHgHKi/Vz9rg5kd
-         UTQHXZQSiHej0B4TYtvaFxytILNOtSPZ7EH92jmzdbDmX0w0OsDuF0GNOl92LrI03dzv
-         wsKRpW4cfl8WxARe0iz8uY8kZ7ZmTkwxA7NmaSmAEAiCw9Kg+hhORL/Ipdzi2r96MeaT
-         miTGEvjAz4XQTlnb+LfjmLLJlwm529gxJwz6l4H5J9AqcjttU361zQISwQoMenm8JYQq
-         V+r3JIYfwCFfDGvttz+cANoYwzRRh9dOmerZfpR5GECVe1bpij4gB+G704HfJ8SCPlMW
-         Hzsg==
-X-Gm-Message-State: AOAM533FyzZUAyfcFKNlr57ZmK/TZungtsgZ/5gILr32JhywftRQrI69
-        5touQA6EK+Kkz0JIqZ1zWIHMNw==
-X-Google-Smtp-Source: ABdhPJzSlg8XoSaxnKbdDitc17sMUu6ysUF9pCLIBR3zfnhLu6/NAumvK5Q/jrV8OPfz3THOTqxIxQ==
-X-Received: by 2002:a65:67d5:: with SMTP id b21mr1529667pgs.315.1628733345972;
-        Wed, 11 Aug 2021 18:55:45 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id a17sm523242pff.30.2021.08.11.18.55.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Aug 2021 18:55:45 -0700 (PDT)
-Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
-To:     Tony Battersby <tonyb@cybernetics.com>,
-        Olivier Langlois <olivier@trillion01.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Pavel Begunkov>" <asml.silence@gmail.com>
-References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
- <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
- <87eeda7nqe.fsf@disp2133>
- <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
- <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
- <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
- <87y2bh4jg5.fsf@disp2133>
- <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
- <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
- <87pmwmn5m0.fsf@disp2133>
- <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
- <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
-Date:   Wed, 11 Aug 2021 19:55:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
-Content-Type: text/plain; charset=utf-8
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MjZyemJTt9EE2Aqs4CopyfVADNKpH/pMRK3W8xT6G1Q=;
+ b=kDzxdohEeHzRHbp+5IgHIXQ0mWPnOPJ4tNwBdiJwBcNOXRTVw2kpSx3qSvkPrq4VJ2w0zuTPNCWJpqDZkq4IgY0lcasFONMAjjwGxbjSfxJyaQgSYTnc5zMKIRtgk3Ekhb0pdBDAUVhPkUWuDJ/FgBwa5J6UyMkWZuqFE3SxVNw=
+Received: from CY4PR1001MB2357.namprd10.prod.outlook.com
+ (2603:10b6:910:42::14) by CY4PR1001MB2053.namprd10.prod.outlook.com
+ (2603:10b6:910:3f::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.21; Thu, 12 Aug
+ 2021 02:17:29 +0000
+Received: from CY4PR1001MB2357.namprd10.prod.outlook.com
+ ([fe80::e4de:77e7:9d08:9f5f]) by CY4PR1001MB2357.namprd10.prod.outlook.com
+ ([fe80::e4de:77e7:9d08:9f5f%6]) with mapi id 15.20.4394.023; Thu, 12 Aug 2021
+ 02:17:29 +0000
+From:   William Kucharski <william.kucharski@oracle.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 3/3] mm/gup: Remove try_get_page(), call
+ try_get_compound_head() directly
+Thread-Topic: [PATCH v2 3/3] mm/gup: Remove try_get_page(), call
+ try_get_compound_head() directly
+Thread-Index: AQHXjvBdcLHj6CuNF0ypEXBwDT9dtqtu3JwAgABF6AA=
+Date:   Thu, 12 Aug 2021 02:17:28 +0000
+Message-ID: <1BBAB7A1-6334-4462-8E2C-A878B3E902A1@oracle.com>
+References: <20210811070542.3403116-1-jhubbard@nvidia.com>
+ <20210811070542.3403116-4-jhubbard@nvidia.com>
+ <20FB1F52-61FB-47DB-8777-E7C880FD875E@oracle.com>
+ <0253d7e6-8377-a197-f131-e73249d8dbe8@nvidia.com>
+In-Reply-To: <0253d7e6-8377-a197-f131-e73249d8dbe8@nvidia.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3691.0.3)
+authentication-results: nvidia.com; dkim=none (message not signed)
+ header.d=none;nvidia.com; dmarc=none action=none header.from=oracle.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4de715c9-bbae-4f3e-cce0-08d95d3755a7
+x-ms-traffictypediagnostic: CY4PR1001MB2053:
+x-microsoft-antispam-prvs: <CY4PR1001MB20532AA1B06C86DCE4D4E1A281F99@CY4PR1001MB2053.namprd10.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Ru+0Ls4mqF/2HJwf5a+fEsfyvny7v9FzZd8WQEO6FWCllT77Ipp8PUKmvyJoEvMBtekiFdpGyupiAzuO+yjWIcVNiQxoxGEQ0pFNBYkYHpU0O7rpBUtPPYJ2X+Q+diPSpgcnE+RzcSzqJ3T0EFZJb6frQKZVWATXHk6DPgzrR4WLgo9t/YlDGHOte/P5YNLpaqjizRc1AMoR1GLQ+jmCbob1F5Nl2Ep+zLdCeBJ4xyQhZh41zJnt6na52DgQPuqT1Py56HYFkOWXdPq1G9FaLu94rOeg4Tp6xl2qbVdwABFyGCoZ3TTw8EPtrX5D3svFDQ+MRDLCXfoKwl6Le8fjUX/I77QCslZ8T9aQ+/3HLYX7w0kPAoMvxoybrQ1Rzao6AH4+QHZIsEXq+sCiS9iR0SDUM6mAnIZNmfLOGVIoDis5dlS0VrZDouX5qjhaFdaOKq51rO0FlD+QzuA9+TU3nPShp01qBD1ygzvOViBd6Je1TiMxkgPLIM/BH9cpVpv4vYThc7eLQijLYHLHXnU98NlF+1zi5FnaJY2ioMRweci0PFiXaHH7D2r4bL1MY616ezeM/Tmqq7y8OxMzDvt0RRRwVqoOvj5oxYLWPBnSxQAqx33KLAxgboNQc8d7FXjqIPNWBMKCj3XemAe1p7OiAtDNZmKfgkG34jwWTDTd/OsNM7h3v6YXnsa6Y3aw3k2ie6zWYS+wY1pdRaeU38APGPTokRu2D+cclH4+VKULw94=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1001MB2357.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(366004)(376002)(396003)(136003)(346002)(186003)(5660300002)(122000001)(316002)(6486002)(4744005)(86362001)(36756003)(478600001)(44832011)(33656002)(54906003)(53546011)(66556008)(66476007)(71200400001)(4326008)(8676002)(6512007)(38100700002)(76116006)(66446008)(64756008)(2616005)(2906002)(66946007)(6506007)(7416002)(6916009)(38070700005)(8936002)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?zfjHjQd3x5AuQqT66EPXDo6mpfSvMOe37l+0wbr5sq61oOhcg69N50Y7V38R?=
+ =?us-ascii?Q?KR5TE3Bc35VN6EkoUDan8MsN0y6ip+/cwExrLwyaXH8uwfhYs6Lhbw4rGTg/?=
+ =?us-ascii?Q?EhC5Uq613XkSMEYJtq3R/msIQ8UxxXqR5yo97T+U2Vb4v8ATLeFTU+bPvtzc?=
+ =?us-ascii?Q?BQ+26sMQTSnS6eEhmewbgpNsGerOCSseSMZIwgo1ASli1KKfK/CCwE1GkooQ?=
+ =?us-ascii?Q?U/XuyCHstCEploEJwegMUwWvIHZL4r9mXyaf6KBAXPRWgWvRDdk3snoJoMXB?=
+ =?us-ascii?Q?W23xMErDB5wEyz8VdSG7zA4VvhoFER8Z/L1YBUZJXUGwXllBcc0cCOeNGoUC?=
+ =?us-ascii?Q?NPOUzWZDenzn/nIrb+XeZN3+wWRibjv88ven0QUkQ23rhR0DUmBtz2BBMcqb?=
+ =?us-ascii?Q?Xn+eVqC+4hq+80/hPOJQe2SQcLPlA5adgi0pWLI++tmtm9mR7cGMSCbmhh3Z?=
+ =?us-ascii?Q?OS6q3uvmj7VPiJ47RjljZY9KTMAmYw6jkfgTCkIFX4fqujnTfnzTsCn36lHG?=
+ =?us-ascii?Q?PluDSJQoau1D/x/vDrovr4VWZepv810mALjTPOjk0yM2Wz/tbNmzsG/YvTeH?=
+ =?us-ascii?Q?C9kTwNxFOpyJXDcpQlajbL4pa0Zft7COIe6ltBpdj25sKmCmQDuvSFnpeF5D?=
+ =?us-ascii?Q?W/p/Y+MTt+8bsQlSqVDZaLm8c/ZlmgeHCEAg3f42PDVnyg6G6VqHJyUGFq/W?=
+ =?us-ascii?Q?K8R0RQjn+ldz8faDPoeVjEiIV0kv+xVilWbqvJZXA6TO84ZWdq4kAM/ko7Wp?=
+ =?us-ascii?Q?XGSSX3SDE1gbF+W4FCbQoFxkFEHriPteWEbV1l1WoK+VrtvNaV47hkKmxew/?=
+ =?us-ascii?Q?4OMgJwfqhAyQ7Nu5GZMIoJlty2ybaFaWgP9U0QR+fWbM24dQFvM8REFQGbuo?=
+ =?us-ascii?Q?uZZWioGh4N1cnwcc1urVuteM7Wtgfd2Irv6uXwrOp9JloscGmONG9uXSikri?=
+ =?us-ascii?Q?sYwAtQUf88Lsq+JptpD35JjianMi8VdVOlfubiS107aGqoX28fPNCT84/eiT?=
+ =?us-ascii?Q?SZahumjMllOCySSkfHNZOIWNbnsrA24GmyP3WTZIsHIF8uqGnXNizvEi3PIk?=
+ =?us-ascii?Q?wl/RWDC0jY2fvfo8McGHANhWbItqkiDQOrtF58so/qe18pNSbCrajEY5ScRg?=
+ =?us-ascii?Q?HCn88X1CPp8lj2ti0VS2kx8znkXoCqOPdmhAksuW4l6qSkW2bCO9kpmcrm94?=
+ =?us-ascii?Q?No1x/k2990cn+cmdRwmaDv0paT7trFlfwcOWVwEc55uHWayR7SEgeHsvy2rd?=
+ =?us-ascii?Q?anxZkYvdR+cS/4kRvMRuy9b//D3+OrQ4p2HgAnI60938PzOC2wwrLRJFPaqC?=
+ =?us-ascii?Q?YUQMi+c25RBqzdt/d3hZgcTfMSHXgdldpWhKTM6tvoXOF/54c1McvnHVRZxb?=
+ =?us-ascii?Q?meQUlswjyrn4JHqmrSVI6IfKXK+w?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <6FFA5E276807E341862A1A32AFA339E0@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR1001MB2357.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4de715c9-bbae-4f3e-cce0-08d95d3755a7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2021 02:17:28.9771
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TcjhUuIdcOxAv4otQ/fWGSi3OuMHvzH1gYUPgeBhnWh91wfRDPsiWlKy8JLAfw8U30vgGxNs3xSKq/erVuxUCghSd+L/vamenb9k67ll1gU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1001MB2053
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10073 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=919
+ malwarescore=0 adultscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2108120013
+X-Proofpoint-GUID: Buq3OJzll9nODs8oFoS690urc94q_SFv
+X-Proofpoint-ORIG-GUID: Buq3OJzll9nODs8oFoS690urc94q_SFv
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/10/21 3:48 PM, Tony Battersby wrote:
-> On 8/5/21 9:06 AM, Olivier Langlois wrote:
->> On Tue, 2021-06-15 at 17:08 -0500, Eric W. Biederman wrote:
->>> Oleg Nesterov <oleg@redhat.com> writes:
->>>
->>>>> --- a/fs/coredump.c
->>>>> +++ b/fs/coredump.c
->>>>> @@ -519,7 +519,7 @@ static bool dump_interrupted(void)
->>>>>          * but then we need to teach dump_write() to restart and
->>>>> clear
->>>>>          * TIF_SIGPENDING.
->>>>>          */
->>>>> -       return signal_pending(current);
->>>>> +       return fatal_signal_pending(current) || freezing(current);
->>>>>  }
->>>> Well yes, this is what the comment says.
->>>>
->>>> But note that there is another reason why dump_interrupted() returns
->>>> true
->>>> if signal_pending(), it assumes thagt __dump_emit()->__kernel_write()
->>>> may
->>>> fail anyway if signal_pending() is true. Say, pipe_write(), or iirc
->>>> nfs,
->>>> perhaps something else...
->>>>
->>>> That is why zap_threads() clears TIF_SIGPENDING. Perhaps it should
->>>> clear
->>>> TIF_NOTIFY_SIGNAL as well and we should change io-uring to not abuse
->>>> the
->>>> dumping threads?
->>>>
->>>> Or perhaps we should change __dump_emit() to clear signal_pending()
->>>> and
->>>> restart __kernel_write() if it fails or returns a short write.
->>>>
->>>> Otherwise the change above doesn't look like a full fix to me.
->>> Agreed.  The coredump to a pipe will still be short.  That needs
->>> something additional.
->>>
->>> The problem Olivier Langlois <olivier@trillion01.com> reported was
->>> core dumps coming up short because TIF_NOTIFY_SIGNAL was being
->>> set during a core dump.
->>>
->>> We can see this with pipe_write returning -ERESTARTSYS
->>> on a full pipe if signal_pending which includes TIF_NOTIFY_SIGNAL
->>> is true.
->>>
->>> Looking further if the thread that is core dumping initiated
->>> any io_uring work then io_ring_exit_work will use task_work_add
->>> to request that thread clean up it's io_uring state.
->>>
->>> Perhaps we can put a big comment in dump_emit and if we
->>> get back -ERESTARTSYS run tracework_notify_signal.  I am not
->>> seeing any locks held at that point in the coredump, so it
->>> should be safe.  The coredump is run inside of file_start_write
->>> which is the only potential complication.
->>>
->>>
->>>
->>> The code flow is complicated but it looks like the entire
->>> point of the exercise is to call io_uring_del_task_file
->>> on the originating thread.  I suppose that keeps the
->>> locking of the xarray in io_uring_task simple.
->>>
->>>
->>> Hmm.   All of this comes from io_uring_release.
->>> How do we get to io_uring_release?  The coredump should
->>> be catching everything in exit_mm before exit_files?
->>>
->>> Confused and hopeful someone can explain to me what is going on,
->>> and perhaps simplify it.
->>>
->>> Eric
->> Hi all,
->>
->> I didn't forgot about this remaining issue and I have kept thinking
->> about it on and off.
->>
->> I did try the following on 5.12.19:
->>
->> diff --git a/fs/coredump.c b/fs/coredump.c
->> index 07afb5ddb1c4..614fe7a54c1a 100644
->> --- a/fs/coredump.c
->> +++ b/fs/coredump.c
->> @@ -41,6 +41,7 @@
->>  #include <linux/fs.h>
->>  #include <linux/path.h>
->>  #include <linux/timekeeping.h>
->> +#include <linux/io_uring.h>
->>  
->>  #include <linux/uaccess.h>
->>  #include <asm/mmu_context.h>
->> @@ -625,6 +626,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->>  		need_suid_safe = true;
->>  	}
->>  
->> +	io_uring_files_cancel(current->files);
->> +
->>  	retval = coredump_wait(siginfo->si_signo, &core_state);
->>  	if (retval < 0)
->>  		goto fail_creds;
->> --
->> 2.32.0
->>
->> with my current understanding, io_uring_files_cancel is supposed to
->> cancel everything that might set the TIF_NOTIFY_SIGNAL.
->>
->> I must report that in my testing with generating a core dump through a
->> pipe with the modif above, I still get truncated core dumps.
->>
->> systemd is having a weird error:
->> [ 2577.870742] systemd-coredump[4056]: Failed to get COMM: No such
->> process
->>
->> and nothing is captured
->>
->> so I have replaced it with a very simple shell:
->> $ cat /proc/sys/kernel/core_pattern 
->> |/home/lano1106/bin/pipe_core.sh %e %p
->>
->> ~/bin $ cat pipe_core.sh 
->> #!/bin/sh
->>
->> cat > /home/lano1106/core/core.$1.$2
->>
->> BFD: warning: /home/lano1106/core/core.test.10886 is truncated:
->> expected core file size >= 24129536, found: 61440
->>
->> I conclude from my attempt that maybe io_uring_files_cancel is not 100%
->> cleaning everything that it should clean.
->>
->>
->>
-> I just ran into this problem also - coredumps from an io_uring program
-> to a pipe are truncated.  But I am using kernel 5.10.57, which does NOT
-> have commit 12db8b690010 ("entry: Add support for TIF_NOTIFY_SIGNAL") or
-> commit 06af8679449d ("coredump: Limit what can interrupt coredumps"). 
-> Kernel 5.4 works though, so I bisected the problem to commit
-> f38c7e3abfba ("io_uring: ensure async buffered read-retry is setup
-> properly") in kernel 5.9.  Note that my io_uring program uses only async
-> buffered reads, which may be why this particular commit makes a
-> difference to my program.
-> 
-> My io_uring program is a multi-purpose long-running program with many
-> threads.  Most threads don't use io_uring but a few of them do. 
-> Normally, my core dumps are piped to a program so that they can be
-> compressed before being written to disk, but I can also test writing the
-> core dumps directly to disk.  This is what I have found:
-> 
-> *) Unpatched 5.10.57: if a thread that doesn't use io_uring triggers a
-> coredump, the core file is written correctly, whether it is written to
-> disk or piped to a program, even if another thread is using io_uring at
-> the same time.
-> 
-> *) Unpatched 5.10.57: if a thread that uses io_uring triggers a
-> coredump, the core file is truncated, whether written directly to disk
-> or piped to a program.
-> 
-> *) 5.10.57+backport 06af8679449d: if a thread that uses io_uring
-> triggers a coredump, and the core is written directly to disk, then it
-> is written correctly.
-> 
-> *) 5.10.57+backport 06af8679449d: if a thread that uses io_uring
-> triggers a coredump, and the core is piped to a program, then it is
-> truncated.
-> 
-> *) 5.10.57+revert f38c7e3abfba: core dumps are written correctly,
-> whether written directly to disk or piped to a program.
 
-That is very interesting. Like Olivier mentioned, it's not that actual
-commit, but rather the change of behavior implemented by it. Before that
-commit, we'd hit the async workers more often, whereas after we do the
-correct retry method where it's driven by the wakeup when the page is
-unlocked. This is purely speculation, but perhaps the fact that the
-process changes state potentially mid dump is why the dump ends up being
-truncated?
 
-I'd love to dive into this and try and figure it out. Absent a test
-case, at least the above gives me an idea of what to try out. I'll see
-if it makes it easier for me to create a case that does result in a
-truncated core dump.
+> On Aug 11, 2021, at 4:07 PM, John Hubbard <jhubbard@nvidia.com> wrote:
+>=20
+> On 8/11/21 1:35 PM, William Kucharski wrote:
+>> I agree that try_get_page() should probably be removed entirely; is ther=
+e
+>> a reason you didn't in v2 of the patch?
+>=20
+> Hi William,
+>=20
+> This patch *does* remove try_get_page() entirely! Look below. I'll reply
+> inline, below, to show where that happens.
 
--- 
-Jens Axboe
+Ah, my bad.  I was conflating it with try_grab_page() in patch 2/3, which
+also seems like it should be an inline, but given your explanation re:
+try_get_compound_head() it makes perfect sense.
+=20
+For the series:
+
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 
