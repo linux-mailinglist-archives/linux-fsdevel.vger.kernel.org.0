@@ -2,86 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 454BB3EAD40
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 00:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE1A33EAD51
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 00:45:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237933AbhHLWhm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 18:37:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42933 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232348AbhHLWhm (ORCPT
+        id S238363AbhHLWpy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 18:45:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49860 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236979AbhHLWpx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 18:37:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628807836;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=X8pC6zft1u0jrmvxukf6f2MWPhq7U/n7anHjyZsGeTk=;
-        b=GQ69x/8nmYh95rGgKAQ8s6kgqhAhDihdbkQR/G+vN/wdmMxmdN3rAJNXW/Rcmk26Vk4Ril
-        AYj64xFh1Ni0aWMkioxNe4IbIp2dj6nFs4h4NdcAgN5q/m8lVIxn6ekVteLwozqbBY3XMx
-        zCaFJC8ASvtIeMAR8nrFsuLJdopCwLk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-508-DpUuhvR5NfmsefZ8bCQAcQ-1; Thu, 12 Aug 2021 18:37:14 -0400
-X-MC-Unique: DpUuhvR5NfmsefZ8bCQAcQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9D59887511E;
-        Thu, 12 Aug 2021 22:37:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AB13D60657;
-        Thu, 12 Aug 2021 22:37:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix afs_launder_page() to set correct start file
- position
-From:   David Howells <dhowells@redhat.com>
-To:     linux-afs@lists.infradead.org
-Cc:     dhowells@redhat.com, marc.dionne@auristor.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 12 Aug 2021 23:37:11 +0100
-Message-ID: <162880783179.3421678.7795105718190440134.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Thu, 12 Aug 2021 18:45:53 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3175AC061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 15:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5RoOrc/QeHUmwLj7isOrdmem34xlMg7fy/9RJonqboo=; b=tn0kUdHE5nqI4VUhzR7IBrZn6w
+        Pv+lIZ/1IQZe+iGQ/InKWJ25XSq+Jx2bRDTgnCJ+IysbWsPH0IzikCY/kJ/21BvQVqn6n38bD0hQc
+        sWFmXEbiWc10iBh8HUzknD7lH59UOKJoMeZpdQjc/BZOATmWlsE5SXZ4+fkc7nRuIq3BE5gw5EQie
+        3NoUWU6Tdqv/2c+I4cuNCaWHrV2yaMyCXFcLe2gdtihUt0ydTrpxCcqYbx7U8tMtrVQFAR9cUvRS4
+        h4YHHBdo6hXkxXCOWa5IOUiH5+4P0cA11r8EVLmyWLTP6vhVbXEHjw2zmQyJW1IJTmgnlkSfPsywg
+        gZJZhXhQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mEJR2-00F43C-Dd; Thu, 12 Aug 2021 22:44:37 +0000
+Date:   Thu, 12 Aug 2021 23:44:24 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] folio: Add a function to get the host inode for a
+ folio
+Message-ID: <YRWkSGnk6M+6H/Oh@casper.infradead.org>
+References: <162880453171.3369675.3704943108660112470.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <162880453171.3369675.3704943108660112470.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix afs_launder_page() to set the starting position of the StoreData RPC at
-the offset into the page at which the modified data starts instead of at
-the beginning of the page (the iov_iter is correctly offset).
+On Thu, Aug 12, 2021 at 10:42:11PM +0100, David Howells wrote:
+> Add a convenience function, folio_inode() that will get the host inode from
+> a folio's mapping.
+> 
+> [Includes netfs and afs changes for illustration, but I'd move those to a
+> different patch].
 
-The offset got lost during the conversion to passing an iov_iter into
-afs_store_data().
+Seems like a good idea.  Across my entire devel tree, I find 36
+occurrences:
 
-Fixes: bd80d8a80e12 ("afs: Use ITER_XARRAY for writing")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+$ git log -p origin..devel |grep folio.*mapping.*host
++	struct inode *inode = folio->mapping->host;
++	struct inode *dir = folio->mapping->host;
++	unsigned int nr_blocks = i_blocks_per_folio(page->mapping->host, folio);
++	struct btrfs_fs_info *fs_info = btrfs_sb(folio->mapping->host->i_sb);
++	struct afs_vnode *dvnode = AFS_FS_I(folio->mapping->host);
++	tree = &BTRFS_I(folio->mapping->host)->io_tree;
++		btrfs_warn(BTRFS_I(folio->mapping->host)->root->fs_info,
++	struct btrfs_inode *inode = BTRFS_I(folio->mapping->host);
++	inode = folio->mapping->host;
++	struct cifsInodeInfo *cifsi = CIFS_I(folio->mapping->host);
++	struct inode *inode = folio->mapping->host;
++	struct gfs2_sbd *sdp = GFS2_SB(folio->mapping->host);
++	trace_iomap_invalidate_folio(folio->mapping->host, offset, len);
++	nfs_wb_page_cancel(folio_file_mapping(folio)->host, &folio->page);
++	nfs_fscache_invalidate_page(&folio->page, folio->mapping->host);
++	struct inode *inode = folio->mapping->host;
++	struct inode *inode = folio->mapping->host;
++	struct inode *inode = folio->mapping->host;
++	struct inode *inode = folio->mapping->host;
++	struct inode *inode = folio->mapping->host;
++	int err = fuse_readlink_page(folio->mapping->host, &folio->page);
++	struct inode *inode = folio->mapping->host;
++	struct btrfs_inode *inode = BTRFS_I(folios[0]->mapping->host);
++	struct inode *inode = folio->mapping->host;
++		__entry->i_ino = folio->mapping->host->i_ino;
++		if (folio->mapping->host->i_sb)
++			__entry->s_dev = folio->mapping->host->i_sb->s_dev;
++			__entry->s_dev = folio->mapping->host->i_rdev;
++	struct inode *inode = folio->mapping->host;
++	struct inode		*inode = folio->mapping->host;
++	struct inode *inode = folio->mapping->host;
++	struct inode *inode = folio->mapping->host;
++	trace_iomap_invalidatepage(folio->mapping->host, offset, len);
++	trace_iomap_releasepage(folio->mapping->host, folio_pos(folio),
++	struct inode *inode = folio->mapping->host;
++	if (folio->mapping->host->i_sb->s_iflags & SB_I_STABLE_WRITES)
 
- fs/afs/write.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index fb7d5c1cabde..fff4c7d88e0d 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -950,8 +950,8 @@ int afs_launder_page(struct page *page)
- 		iov_iter_bvec(&iter, WRITE, bv, 1, bv[0].bv_len);
- 
- 		trace_afs_page_dirty(vnode, tracepoint_string("launder"), page);
--		ret = afs_store_data(vnode, &iter, (loff_t)page->index * PAGE_SIZE,
--				     true);
-+		ret = afs_store_data(vnode, &iter,
-+				     (loff_t)page->index * PAGE_SIZE + f, true);
- 	}
- 
- 	trace_afs_page_dirty(vnode, tracepoint_string("laundered"), page);
-
-
+It's only two characters less, but it seems worth doing.
