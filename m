@@ -2,133 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 218113EA608
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 15:55:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 678583EA60E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 15:55:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237731AbhHLNxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 09:53:45 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:37617 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237618AbhHLNxn (ORCPT
+        id S237770AbhHLNz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 09:55:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40410 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237795AbhHLNzY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 09:53:43 -0400
-Received: by mail-il1-f197.google.com with SMTP id a2-20020a9266020000b0290222005f354cso3200923ilc.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 06:53:18 -0700 (PDT)
+        Thu, 12 Aug 2021 09:55:24 -0400
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F4209C0613D9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 06:54:57 -0700 (PDT)
+Received: by mail-qv1-xf2f.google.com with SMTP id g6so3143768qvj.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 06:54:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Ll3gJ2kWTJ1Ddm5xPCWd0fQRm1CZSo4h409/G1+k1XQ=;
+        b=G9AudWhNticUyEE9OKaig1qZDgxUdA6TrvuNS7xs+5+AQeYm/JbQW1Ao7qjJ7Ameve
+         qgU9tiTbZRdTTAsTu79ZSiztZOpLCuYzinoWn4GUKcaMwbWr3v50V0BKfypAH4KHUQ4Q
+         yHAAgBkaFGVMkx3I33q5cihVmSomx2oFde6OyO289Svuj0DaqLU+tmHgDrTrAciuhXKg
+         80VpoF/x7IkUNklk/WZTHWhyiDdTdbZfpIwbX5sEwwbOY8xs5+1yBa7ZpHt9vhB76n81
+         vgB8NTNdeXnZqXAVgprUSJ0XzJMdOy2MYznfLAeiuodzOU716rl+K2VvxH9XdMW6LBIj
+         Bh5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=NHD5PuVjimqiuByepyLI1iYdpcKAnKHFp093aOhp+fc=;
-        b=siTiFDDVEO6JhiiRszXzn5zYb0RME7xhY1OwEkoyp4VHkfN+Vaac8CyaVDTVwDfnGZ
-         mbTeWkSNI/lI+bhQueAGmaSLJra5+b48EjrRpxaJaSUMzAikW2tgSacD2F4ww1BMhiJ2
-         KX6pi9Y3FKnrC0mPWBDwPUp90w8t32Ar3UAXraQvhUtPZ7+ogyA6jLKzqpD9H3NX2xp9
-         8+vjHeXpfnwyM7D+6uRhTzQAcZgEgNeJRs98BXw0AzKnc61MXl8+KWnTMqDZ64DX7NyO
-         MLMTsfhIYf/EEzzHK5sYoFG3j6Zw1FRreMWZGgrgCOzNUbWKp8NMFwDEbwa6LyQUKBfr
-         FOTQ==
-X-Gm-Message-State: AOAM530QHk9JE2yHlsM0uHTr5q3wVi1hDxoQD2g2wjzhNNmHk2C9ehbX
-        5iiihQb0TcmPH1hdNnHI0SQqNOnET/bAD21NJDgD9iGlwAUb
-X-Google-Smtp-Source: ABdhPJx36dk15xIOglreLdknX9VSaCmfKbYSSAGlkETSNaqlt6hbhu0XHLE6tPr9u8iJoyh07RIkiewJJhf0cipeaxwFsdXKdXVV
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Ll3gJ2kWTJ1Ddm5xPCWd0fQRm1CZSo4h409/G1+k1XQ=;
+        b=F/0uz5HRjb//sQ7AZ8RCv3SbYH2E2NVd8FUdr5wAKKxktAQffuH8boh2r3HSigu4ka
+         lraAnsC2U3x/L3n974gVHc7towp6+sp2nQmvPVOzT5iQYEEUtkX4X/kPxxFixjCToP3Z
+         5N1OuNGqnf6dDsGgmmMD/97LYmi0TBjvQYVQKK+RCAUN8X24kiXrjsdWrnD2a/xmKbx4
+         WhSCSprZnp/pSifVWNY8YP9zkKljFXeFbghz+YtXte816H/HB0PWnHJa03oEuCt89a+h
+         0HLlHDg8WypAyNMce6Dpxa6pwibC+Hb6oUgSkpgpclNNKO/j2pFh0+U68oaDGbiV1Z8W
+         p5dw==
+X-Gm-Message-State: AOAM532//c/F8rO5CIPpE7hY4LUAhofT0oF2IMi93rvgl0b92nQYqVtk
+        O0AKULrwYSxqHBL11l27wdWVaQ==
+X-Google-Smtp-Source: ABdhPJyHTHpSJyITjiOPCkH+9qLxvHn7fErOIMq6FjPyWkOIoMB/2n9TOv/bIlPVFumWYV5hVYA5ZQ==
+X-Received: by 2002:a0c:8525:: with SMTP id n34mr3997200qva.19.1628776496865;
+        Thu, 12 Aug 2021 06:54:56 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c0a8:11c1::110c? ([2620:10d:c091:480::1:4885])
+        by smtp.gmail.com with ESMTPSA id bl26sm1317894qkb.34.2021.08.12.06.54.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Aug 2021 06:54:56 -0700 (PDT)
+Subject: Re: [PATCH/RFC 0/4] Attempt to make progress with btrfs dev number
+ strangeness.
+To:     NeilBrown <neilb@suse.de>
+Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        linux-fsdevel@vger.kernel.org,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
+References: <162848123483.25823.15844774651164477866.stgit@noble.brown>
+ <e6496956-0df3-6232-eecb-5209b28ca790@toxicpanda.com>
+ <162872000356.22261.854151210687377005@noble.neil.brown.name>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <6571d3fb-34ea-0f22-4fbe-995e5568e044@toxicpanda.com>
+Date:   Thu, 12 Aug 2021 09:54:54 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3048:: with SMTP id u8mr3849512jak.91.1628776398374;
- Thu, 12 Aug 2021 06:53:18 -0700 (PDT)
-Date:   Thu, 12 Aug 2021 06:53:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a4cc9405c95d0e1c@google.com>
-Subject: [syzbot] possible deadlock in fuse_reverse_inval_entry
-From:   syzbot <syzbot+9f747458f5990eaa8d43@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <162872000356.22261.854151210687377005@noble.neil.brown.name>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 8/11/21 6:13 PM, NeilBrown wrote:
+> On Wed, 11 Aug 2021, Josef Bacik wrote:
+>>
+>> I think this is a step in the right direction, but I want to figure out a way to
+>> accomplish this without magical mount points that users must be aware of.
+> 
+> magic mount *options* ???
+> 
+>>
+>> I think the stat() st_dev ship as sailed, we're stuck with that.  However
+>> Christoph does have a valid point where it breaks the various info spit out by
+>> /proc.  You've done a good job with the treeid here, but it still makes it
+>> impossible for somebody to map the st_dev back to the correct mount.
+> 
+> The ship might have sailed, but it is not water tight.  And as the world
+> it round, it can still come back to bite us from behind.
+> Anything can be transitioned away from, whether it is devfs or 32-bit
+> time or giving different device numbers to different file-trees.
+> 
+> The linkage between device number and and filesystem is quite strong.
+> We could modified all of /proc and /sys/ and audit and whatever else to
+> report the fake device number, but we cannot get the fake device number
+> into the mount table (without making the mount table unmanageablely
+> large).
+> And if subtrees aren't in the mount-table for the NFS server, I don't
+> think they should be in the mount-table of the NFS client.  So we cannot
+> export them to NFS.
+> 
+> I understand your dislike for mount options.  An alternative with
+> different costs and benefits would be to introduce a new filesystem type
+> - btrfs2 or maybe betrfs.  This would provide numdevs=1 semantics and do
+> whatever we decided was best with inode numbers.  How much would you
+> hate that?
+> 
 
-syzbot found the following issue on:
+A lot more ;).
 
-HEAD commit:    85a90500f9a1 Merge tag 'io_uring-5.14-2021-08-07' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10bc00c2300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=343fd21f6f4da2d6
-dashboard link: https://syzkaller.appspot.com/bug?extid=9f747458f5990eaa8d43
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1427c9aa300000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1540a2f6300000
+>>
+>> I think we aren't going to solve that problem, at least not with stat().  I
+>> think with statx() spitting out treeid we have given userspace a way to
+>> differentiate subvolumes, and so we should fix statx() to spit out the the super
+>> block device, that way new userspace things can do their appropriate lookup if
+>> they so choose.
+> 
+> I don't think we should normalize having multiple devnums per filesystem
+> by encoding it in statx().  It *would* make sense to add a btrfs ioctl
+> which reports the real device number of a file.  Tools that really need
+> to work with btrfs could use that, but it would always be obvious that
+> it was an exception.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9f747458f5990eaa8d43@syzkaller.appspotmail.com
+That's not what I'm saying.  I'm saying that stat() continues to behave the way 
+it currently does, for legacy users.
 
-============================================
-WARNING: possible recursive locking detected
-5.14.0-rc4-syzkaller #0 Not tainted
---------------------------------------------
-syz-executor799/8433 is trying to acquire lock:
-ffff888039930ed0 (&type->i_mutex_dir_key#7){++++}-{3:3}, at: inode_lock include/linux/fs.h:774 [inline]
-ffff888039930ed0 (&type->i_mutex_dir_key#7){++++}-{3:3}, at: fuse_reverse_inval_entry+0x1f5/0x530 fs/fuse/dir.c:1093
+And then for statx() it returns the correct devnum like any other file system, 
+with the augmentation of the treeid so that future userspace programs can use 
+the treeid to decide if they want to wander into a subvolume.
 
-but task is already holding lock:
-ffff888039930150 (&type->i_mutex_dir_key#7){++++}-{3:3}, at: inode_lock include/linux/fs.h:774 [inline]
-ffff888039930150 (&type->i_mutex_dir_key#7){++++}-{3:3}, at: fuse_reverse_inval_entry+0x4c/0x530 fs/fuse/dir.c:1074
+This way moving forward we have a way to map back to a mount point because 
+statx() will return the actual devnum for the mountpoint, and then we can use 
+the treeid to be smart about when we wander into a subvolume.
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+And if we're going to add a treeid, I would actually like to add a parent_treeid 
+as well so we could tell if we're a snapshot or just a normal subvolume.
 
-       CPU0
-       ----
-  lock(&type->i_mutex_dir_key#7);
-  lock(&type->i_mutex_dir_key#7);
+> 
+>>
+>> This leaves the problem of nfsd.  Can you just integrate this new treeid into
+>> nfsd, and use that to either change the ino within nfsd itself, or do something
+>> similar to what your first patchset did and generate a fsid based on the treeid?
+> 
+> I would only want nfsd to change the inode number.  I no longer think it
+> is acceptable for nfsd to report different device number (as I mention
+> above).
+> I would want the new inode number to be explicitly provided by the
+> filesystem.  Whether that is a new export_operation or a new field in
+> 'struct kstat' doesn't really bother me.  I'd *prefer* it to be st_ino,
+> but I can live without that.
+>
 
- *** DEADLOCK ***
+Right, I'm not saying nfsd has to propagate our dev_t thing, I'm saying that you 
+could accomplish the same behavior without the mount options.  We add either a 
+new SB_I_HAS_TREEID or FS_HAS_TREEID, depending on if you prefer to tag the sb 
+or the fs_type, and then NFS does the inode number magic transformation 
+automatically and we are good to go.
 
- May be due to missing lock nesting notation
+> On the topic of inode numbers....  I've recently learned that btrfs
+> never reuses inode (objectid) numbers (except possibly after an
+> unmount).  Equally it doesn't re-use subvol numbers.  How much does this
+> contribute to the 64 bits not being enough for subtree+inode?
+> 
+> It would be nice if we could be comfortable limiting the objectid number
+> to 40 bits and the root.objectid (filetree) number to 24 bits, and
+> combine them into a 64bit inode number.
+> 
+> If we added a inode number reuse scheme that was suitably performant,
+> would that make this possible?  That would remove the need for a treeid,
+> and allow us to use project-id to identify subtrees.
+> 
 
-2 locks held by syz-executor799/8433:
- #0: ffff888022b6bb38 (&fc->killsb){.+.+}-{3:3}, at: fuse_notify_delete fs/fuse/dev.c:1540 [inline]
- #0: ffff888022b6bb38 (&fc->killsb){.+.+}-{3:3}, at: fuse_notify fs/fuse/dev.c:1790 [inline]
- #0: ffff888022b6bb38 (&fc->killsb){.+.+}-{3:3}, at: fuse_dev_do_write+0x285f/0x2bd0 fs/fuse/dev.c:1865
- #1: ffff888039930150 (&type->i_mutex_dir_key#7){++++}-{3:3}, at: inode_lock include/linux/fs.h:774 [inline]
- #1: ffff888039930150 (&type->i_mutex_dir_key#7){++++}-{3:3}, at: fuse_reverse_inval_entry+0x4c/0x530 fs/fuse/dir.c:1074
+We had a resuse scheme, we deprecated and deleted it.  I don't want to 
+arbitrarily limit objectid's to work around this issue.
 
-stack backtrace:
-CPU: 1 PID: 8433 Comm: syz-executor799 Not tainted 5.14.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:105
- print_deadlock_bug kernel/locking/lockdep.c:2944 [inline]
- check_deadlock kernel/locking/lockdep.c:2987 [inline]
- validate_chain kernel/locking/lockdep.c:3776 [inline]
- __lock_acquire.cold+0x149/0x3ab kernel/locking/lockdep.c:5015
- lock_acquire kernel/locking/lockdep.c:5625 [inline]
- lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5590
- down_write+0x92/0x150 kernel/locking/rwsem.c:1406
- inode_lock include/linux/fs.h:774 [inline]
- fuse_reverse_inval_entry+0x1f5/0x530 fs/fuse/dir.c:1093
- fuse_notify_delete fs/fuse/dev.c:1541 [inline]
- fuse_notify fs/fuse/dev.c:1790 [inline]
- fuse_dev_do_write+0x287f/0x2bd0 fs/fuse/dev.c:1865
- fuse_dev_write+0x144/0x1d0 fs/fuse/dev.c:1949
- call_write_iter include/linux/fs.h:2114 [inline]
- new_sync_write+0x426/0x650 fs/read_write.c:518
- vfs_write+0x75a/0xa40 fs/read_write.c:605
- ksys_write+0x12d/0x250 fs/read_write.c:658
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x4455e9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f64ac9752f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000004ce4e0 RCX: 00000000004455e9
-RDX: 000000000000002e RSI: 00000000200000c0 RDI: 0000000000000003
+>>
+>> Mount options are messy, and are just going to lead to distro's turning them on
+>> without understanding what's going on and then we have to support them forever.
+>>    I want to get this fixed in a way that we all hate the least with as little
+>> opportunity for confused users to make bad decisions.  Thanks,
+> 
+> Hence my question: how much do you hate creating a new filesystem type
+> to fix the problems?
+> 
 
+I'm still not convinced we can't solve this without adding new options or 
+fstypes.  I think flags to indicate that we're special and to use a treeid that 
+we stuff into the inode would be a reasonable solution.  That being said I'm a 
+little sleep deprived so I could be missing why my plan is a bad one, so I'm 
+willing to be convinced that mount options are the solution to this, but I want 
+to make sure we're damned certain that's the best way forward.  Thanks,
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Josef
