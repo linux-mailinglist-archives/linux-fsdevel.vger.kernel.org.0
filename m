@@ -2,152 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EE2A3EA6A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 16:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97FF03EA746
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 17:14:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238093AbhHLOd2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 10:33:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49256 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238077AbhHLOd1 (ORCPT
+        id S236547AbhHLPPA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 11:15:00 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41264 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230369AbhHLPO7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 10:33:27 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA57C0617AD
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 07:33:02 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id gs8so11940302ejc.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 07:33:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Tf3TpEvP9E7186InLyyaf92hJ3EmJ36m+RywVZpSgPY=;
-        b=R/MuhpWp9RvhseRjm4R0jGRMhlHQsOmEJE1n2UUz0eGJ/hijPkEUFgXK1gUyCDZsN4
-         GOJMZdHsaYi6ZpN2Qg2ML12TUevHGmF40wJBD3TVT612ErE7duytSyU5zvwCRExQTL8m
-         5gkvg3x8jeY8EFUNS3dfNUKLt31Zot49diHU1ua9oWvrU2f5P1DwegTgSdWXMqoLeTV0
-         FRCueROZZsOmtAmIT9Zm7916s1YUYohTZzvUvjdDlrTLl0iBlkS0K80nyMKP+AVY0sqg
-         n3gQDqdWk7cPkxkXRfkLunbkGT6cAAaTGP3BC7O3rwIQuNWWx9PcPczRmfwKJ+D1U3B0
-         NzOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Tf3TpEvP9E7186InLyyaf92hJ3EmJ36m+RywVZpSgPY=;
-        b=Wmyq4hEZJq1gSeK0c6qjApDULvUk/X9qQlLbPjj+/RKPCnZqNFZWzKydH+aELOBtPF
-         i9ZTHvjy0JInkOSbADajmUp5FouHN4PCehEqVGsOOrMQ0GX4lBYm3xrAPycrUQaJrOfE
-         QhLnBCpB534GgeBTRL4fABi2j1E5jlTttgjCzrHbPCihmSouzoSCIVcm39GTxUyeAZJD
-         h0aKqr0wDooJMcwn23raxbW/eJhfREVwsQdgHJuObFtJAmfOHaNKxcOPIwKXDxJWZL6r
-         5/vBy9PCAdDgS6QiyyYqBvkHlO8CoZgpPfvenuCruUP/+fRrxubF/fwKOO6huu4YukBq
-         IjXA==
-X-Gm-Message-State: AOAM530e2lcMJVk6Km8shAwrdlrCSvJRLa/uJIZlo1I6MSoF8P4GRGiT
-        a1jjNWpt+8GntQrfnmBC9MfvBSdB4mCGF/U6+Ftk
-X-Google-Smtp-Source: ABdhPJzAG+KxRcFQg5frwrLx7u2ThZW6azkYAv7FMiBSgbLG3jxMShQvp886ILKHc2KwMX5wMmNXVbVHSV9qauldwmg=
-X-Received: by 2002:a17:907:3345:: with SMTP id yr5mr3971377ejb.542.1628778780618;
- Thu, 12 Aug 2021 07:33:00 -0700 (PDT)
+        Thu, 12 Aug 2021 11:14:59 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id BC09C1F44053
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
+        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v5 14/23] fanotify: Encode invalid file handler when no
+ inode is provided
+Organization: Collabora
+References: <20210804160612.3575505-1-krisman@collabora.com>
+        <20210804160612.3575505-15-krisman@collabora.com>
+        <20210805095618.GF14483@quack2.suse.cz> <87fsvf65zu.fsf@collabora.com>
+        <20210812142047.GG14675@quack2.suse.cz>
+Date:   Thu, 12 Aug 2021 11:14:29 -0400
+In-Reply-To: <20210812142047.GG14675@quack2.suse.cz> (Jan Kara's message of
+        "Thu, 12 Aug 2021 16:20:47 +0200")
+Message-ID: <875ywa66ga.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <162871492283.63873.8743976556992924333.stgit@olly> <1d19ca85-c6f9-7aa5-162a-f9728e0a8ccd@digikod.net>
-In-Reply-To: <1d19ca85-c6f9-7aa5-162a-f9728e0a8ccd@digikod.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 12 Aug 2021 10:32:49 -0400
-Message-ID: <CAHC9VhRe3cgYuaV7w-BUwj_i=8_uuy3+5-8oA6QVsdXp3JgVtw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 5/9] fs: add anon_inode_getfile_secure() similar to anon_inode_getfd_secure()
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 5:32 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
-> On 11/08/2021 22:48, Paul Moore wrote:
-> > Extending the secure anonymous inode support to other subsystems
-> > requires that we have a secure anon_inode_getfile() variant in
-> > addition to the existing secure anon_inode_getfd() variant.
-> >
-> > Thankfully we can reuse the existing __anon_inode_getfile() function
-> > and just wrap it with the proper arguments.
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> >
-> > ---
-> > v2:
-> > - no change
-> > v1:
-> > - initial draft
-> > ---
-> >  fs/anon_inodes.c            |   29 +++++++++++++++++++++++++++++
-> >  include/linux/anon_inodes.h |    4 ++++
-> >  2 files changed, 33 insertions(+)
-> >
-> > diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> > index a280156138ed..e0c3e33c4177 100644
-> > --- a/fs/anon_inodes.c
-> > +++ b/fs/anon_inodes.c
-> > @@ -148,6 +148,35 @@ struct file *anon_inode_getfile(const char *name,
-> >  }
-> >  EXPORT_SYMBOL_GPL(anon_inode_getfile);
-> >
-> > +/**
-> > + * anon_inode_getfile_secure - Like anon_inode_getfile(), but creates =
-a new
-> > + *                             !S_PRIVATE anon inode rather than reuse=
- the
-> > + *                             singleton anon inode and calls the
-> > + *                             inode_init_security_anon() LSM hook.  T=
-his
-> > + *                             allows for both the inode to have its o=
-wn
-> > + *                             security context and for the LSM to enf=
-orce
-> > + *                             policy on the inode's creation.
-> > + *
-> > + * @name:    [in]    name of the "class" of the new file
-> > + * @fops:    [in]    file operations for the new file
-> > + * @priv:    [in]    private data for the new file (will be file's pri=
-vate_data)
-> > + * @flags:   [in]    flags
-> > + * @context_inode:
-> > + *           [in]    the logical relationship with the new inode (opti=
-onal)
-> > + *
-> > + * The LSM may use @context_inode in inode_init_security_anon(), but a
-> > + * reference to it is not held.  Returns the newly created file* or an=
- error
-> > + * pointer.  See the anon_inode_getfile() documentation for more infor=
-mation.
-> > + */
-> > +struct file *anon_inode_getfile_secure(const char *name,
-> > +                                    const struct file_operations *fops=
-,
-> > +                                    void *priv, int flags,
-> > +                                    const struct inode *context_inode)
-> > +{
-> > +     return __anon_inode_getfile(name, fops, priv, flags,
-> > +                                 context_inode, true);
+Jan Kara <jack@suse.cz> writes:
+
+> On Wed 11-08-21 17:12:05, Gabriel Krisman Bertazi wrote:
+>> Jan Kara <jack@suse.cz> writes:
+>> >> @@ -376,14 +371,24 @@ static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
+>> >>  		fh->flags |= FANOTIFY_FH_FLAG_EXT_BUF;
+>> >>  	}
+>> >>  
+>> >> -	dwords = fh_len >> 2;
+>> >> -	type = exportfs_encode_inode_fh(inode, buf, &dwords, NULL);
+>> >> -	err = -EINVAL;
+>> >> -	if (!type || type == FILEID_INVALID || fh_len != dwords << 2)
+>> >> -		goto out_err;
+>> >> -
+>> >> -	fh->type = type;
+>> >> -	fh->len = fh_len;
+>> >> +	if (inode) {
+>> >> +		dwords = fh_len >> 2;
+>> >> +		type = exportfs_encode_inode_fh(inode, buf, &dwords, NULL);
+>> >> +		err = -EINVAL;
+>> >> +		if (!type || type == FILEID_INVALID || fh_len != dwords << 2)
+>> >> +			goto out_err;
+>> >> +		fh->type = type;
+>> >> +		fh->len = fh_len;
+>> >> +	} else {
+>> >> +		/*
+>> >> +		 * Invalid FHs are used on FAN_FS_ERROR for errors not
+>> >> +		 * linked to any inode. Caller needs to guarantee the fh
+>> >> +		 * has at least FANOTIFY_NULL_FH_LEN bytes of space.
+>> >> +		 */
+>> >> +		fh->type = FILEID_INVALID;
+>> >> +		fh->len = FANOTIFY_NULL_FH_LEN;
+>> >> +		memset(buf, 0, FANOTIFY_NULL_FH_LEN);
+>> >> +	}
+>> >
+>> > Maybe it will become clearer later during the series but why do you set
+>> > fh->len to FANOTIFY_NULL_FH_LEN and not 0?
+>> 
+>> Jan,
+>> 
+>> That is how we encode a NULL file handle (i.e. superblock error).  Amir
+>> suggested it would be an invalid FILEID_INVALID, with a zeroed handle of
+>> size 8.  I will improve the comment on the next iteration.
 >
-> This is not directly related to this patch but why using the "secure"
-> boolean in __anon_inode_getfile() and __anon_inode_getfd() instead of
-> checking that context_inode is not NULL? This would simplify the code,
-> remove this anon_inode_getfile_secure() wrapper and avoid potential
-> inconsistencies.
+> Thanks for info. Then I have a question for Amir I guess :) Amir, what's
+> the advantage of zeroed handle of size 8 instead of just 0 length file
+> handle?
 
-The issue is that it is acceptable for the context_inode to be either
-valid or NULL for callers who request the "secure" code path.
+Jan,
 
-Look at the SELinux implementation of the anonymous inode hook in
-selinux_inode_init_security_anon() and you will see that in cases
-where the context_inode is valid we simply inherit the label from the
-given inode, whereas if context_inode is NULL we do a type transition
-using the requesting task and the anonymous inode's "name".
+Looking back at the email from Amir, I realize I misunderstood his
+original suggestion.  Amir suggested it be FILEID_INVALID with 0-len OR
+FILEID_INO32_GEN with zeroed fields.  I mixed the two suggestions.
 
---=20
-paul moore
-www.paul-moore.com
+The advantage of doing FILEID_INO32_GEN with zeroed field is to avoid
+special casing the test program.  But I don't have a good reason to use
+FILEID_INVALID with a len > 0.
+
+I'm sending a v6 with everything, including this, addressed.  testcase
+and man pages will be updated as well.
+
+-- 
+Gabriel Krisman Bertazi
