@@ -2,124 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 288883EAA18
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 20:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77D823EAA1B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 20:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237804AbhHLSTd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 14:19:33 -0400
-Received: from mail-sn1anam02on2078.outbound.protection.outlook.com ([40.107.96.78]:54525
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S237823AbhHLST3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 14:19:29 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cc3OXdKui25ckuds/5qnA9ZyfdpDOQkLoTbM/i4Qzek/yhvi6i/1JsJTlBx7K/ApdaXCB3sVEMEHDxmZu4f4KLTErVYNFgvnbSmYeaiCg4Fk9Kv2zGtJ00LG4MoqO8VmZWck2PqD17aQQO5f4U8Qkq0fYnAFR7l/FklRvIG7NOdLICvMimzn73pOZ6xeaNkXYZbZUzYk+A3RLLFYGw3KJfGdt6vjLEZnR8JvE7NfKidKRhkuop9Ixd0m+yYJX7JmRcCjP4gHc7zkQGdxHxHXe6pZ4Xa4nGnO4Ut9EosJ0QbVqnGXiy5DVzAVatN3GkBPQ9Qf7pbCBAwEpgVM8GePKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5JWYeeyM7revPmQjm60r7erg/lrzCS7PXXvywT8khb8=;
- b=gnydB2dDF3xvRTb/SHLijFldbrF8Ii8CBa28dJBOyzU4Ui3XqtyV4XWGzPliIgfMemLZbQ5UzZh9qZycRLWu43g6zGGehrBppokKL9BXvGlU/RH+hxdNKhTptKUeyB8i2B2Y6c0m6jRnG2S7/sUyPHSAJlG+IVY/RyXBYvf6IEn4d1Qb07TUSGQuIbmdls5pol9hppnxrPOgooZnMm2VhqIEgq7n7oikAoJ6h92ucyyz9I3RqIry7xajrozjvEWBWeWG7SeG8hndp9jgxnD7MXnziWp5r3FEystFnumY36PscoUQ6PW3WiThSWWBO6KPqzA1uJobOzq6k/tOEIUVnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=linux.ibm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5JWYeeyM7revPmQjm60r7erg/lrzCS7PXXvywT8khb8=;
- b=WjpZylqRHcoKsQ5/uvv8se8QVSn5VaEfkQqyRcGdkH3BOW8fq8ORw/ZWqL7Yd6XmW2Nyd1rGIFaGmgtmc3V4FVE4hVJxQ1J7QR/FO1OPFZdCddiYxdBtkSOJ7eEHvcAlvFX6LCoo1pd/CWfjBi6xBksvoSdBN6mgsBRGIdt23rXV9Gn2HzH7pvqvd6/yaGB53z1WnrDjAhCzg/+R9NB3ItdFbxFX3q9s0zLXjcfGSQ9q/XN1oR3/odNJ98S+so1UbF4Iex6aMoId44qGyLylDRDB32MemuiBN2OMNdKNXquieLgQ68lY2d56ryctPFvdZkJ3fu7MLLqsLjzGB4nf1A==
-Received: from MW4PR03CA0231.namprd03.prod.outlook.com (2603:10b6:303:b9::26)
- by CY4PR12MB1448.namprd12.prod.outlook.com (2603:10b6:910:f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.22; Thu, 12 Aug
- 2021 18:19:02 +0000
-Received: from CO1NAM11FT058.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:b9:cafe::9e) by MW4PR03CA0231.outlook.office365.com
- (2603:10b6:303:b9::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.13 via Frontend
- Transport; Thu, 12 Aug 2021 18:19:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; linux.ibm.com; dkim=none (message not signed)
- header.d=none;linux.ibm.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- CO1NAM11FT058.mail.protection.outlook.com (10.13.174.164) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4415.16 via Frontend Transport; Thu, 12 Aug 2021 18:19:02 +0000
-Received: from [10.2.53.40] (172.20.187.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 12 Aug
- 2021 18:19:01 +0000
-Subject: Re: [PATCH v2 3/3] mm/gup: Remove try_get_page(), call
- try_get_compound_head() directly
-To:     Christoph Hellwig <hch@lst.de>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-s390@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20210811070542.3403116-1-jhubbard@nvidia.com>
- <20210811070542.3403116-4-jhubbard@nvidia.com> <20210812092204.GB4827@lst.de>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <5bf6d220-1126-97a6-c7cc-3c198612c5c2@nvidia.com>
-Date:   Thu, 12 Aug 2021 11:19:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S237790AbhHLSUO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 14:20:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45778 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230110AbhHLSUN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Aug 2021 14:20:13 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7C3C061756;
+        Thu, 12 Aug 2021 11:19:48 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id w5so13297529ejq.2;
+        Thu, 12 Aug 2021 11:19:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8nzZyrKMG5TvZzfbf2DLNKR6Jtfcs5c5EesoZusA2AY=;
+        b=T9KK0Hg/ncYGvFpuJf1onKvfAmh032mxqNoQxxDccdXc/LZQyFFuQ3vB6xNpz8szEg
+         PX23xmhiSis4EHAeZY9QHbnay9hENt9ixpzGFNjMCHRVD8wcJnQAgYtsngVaBlf7ZZ32
+         Z90sESGr+S82m+dmANG/y67aKAHecjvzbzutg7COYRcQrouY5yhuSDisolLuuWcycnxz
+         JA59o02qWy9dhI6tzvm5ATAYtYLzXPn8x62EzJzOe9zAFQQTc6Pb2CNk0PP/XZgRyaG2
+         eOQGWp+Ma6wAQp9ZYddxWtaxM1h35yGBjtDgIZwnAMz7z3pkAwRBO3XmEX4y2zO8bqW2
+         t2vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8nzZyrKMG5TvZzfbf2DLNKR6Jtfcs5c5EesoZusA2AY=;
+        b=C3+V2wPyqKNpCrO53skLwO7RHEVArt4VUlVGNZKeI5lHWIKvyQ+ndKXOFYjGyqlk8R
+         c5ar6YUBGW3xF/qEQwmVfH8Y0o1IIS889LM26I23vjpkOiLPjMQH615RKyeeRoYSh2W+
+         rbwKgY4RrnV++O7MuHMzfQuySpNe3dT1jB0BV6QXs4hhSFqsr0ukAounKdOLtsK+kqq+
+         r+03OqYxIpquvnE9bD1BhPH90VLIDapUhbYaCv9p3J2tjuyD9G8qvxAr4hCqT7TIS4Ot
+         Eqpe0QIhJbNPqY/OLdct2Kr1dUrJrn5qO9/66iv937zwf9vydnDVXbpQxo3NcEcaBROg
+         8cIg==
+X-Gm-Message-State: AOAM5320xq8+jrlVyGpHpuiaHijFEQMGokrMIE0c937fJFQiLYJYMBn/
+        eZY+klvJNYPBxAMgR/G1O9ZYzNgOSzFVWqridnk=
+X-Google-Smtp-Source: ABdhPJzVb8Ly7AuiUHCY8iVDKVjkusJJzpLqX0GR+dzzhsa0I2l70v548ZkgUFHNHkulXbMmvrnJb/V7KyfLVsjBK1Y=
+X-Received: by 2002:a17:906:491a:: with SMTP id b26mr5005149ejq.25.1628792386664;
+ Thu, 12 Aug 2021 11:19:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210812092204.GB4827@lst.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.187.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 301ff135-5351-4b57-abe9-08d95dbda9b3
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1448:
-X-Microsoft-Antispam-PRVS: <CY4PR12MB144890BF79C849A4D23B78F8A8F99@CY4PR12MB1448.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2582;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: zxTaqPiP1T/OwxyqfodGSeGGDnMv44N7+UdA8EK2Mf5ksmVPRZ2k9GgKlphkFMqBvD6zUW4KlE/qLMNjcAdzFKbBsgRF1CTK+ShjPDeXoWOyEBumSfB203zzpqS9XaorWILRK4je6+AU/HL0N4dVgEBQE4EmDp6L8+NR5S0Nq0ML9/lM/2WCw0ZXQRqb94BCA2aVInCYyiz1FfKebJZygFEXw58b0pTmhsx3NXnu1ctA65eDo7l7FCbH0iWE2jDA9Xbko15Bfil36ywGIEPOyN/5qrPvKE94fl4IhbO29ZU6Si05D68jjcBvC5WU9TbaKzHM2jSKMNJ3GK4g6pokwgprobSB018ooiyS65Kz2yNEBezUVh8Efc/hYyR8xB8SYmBxpochxDkpKIczpo4TowDretGXEsbfHTc8Krm5keSf1BIVw/ar68Xfw4bWeFOpVHIcyTafBfCaGQUWHpt3ukrV9lu4fhm7QPPHSUsgaS0SGTNBSCRs9fnyVG+dnf0z7gyFr+a83T4VxbpL6UvpMnI1JqSKs2X0/kx2NGI/DxQgJWPVuxzJAuQ319ul46O+TGKCIOv+wNxwhxDmHRNjLy4tc+nJ+/hjyOVWmAEkdkv0by1B8zFtUgRXMAdId8BVDrlKa/MNLwwPFSqtoQEcsCJPSVuMqfTOa2wgi+Y5vQKBBGwliNGJUItPX9WTJiC1Hfml2/pGlWFkr9UeYNpTFjKmsHD2QuqRWjAGdWG3zgA=
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(396003)(346002)(136003)(376002)(36840700001)(46966006)(54906003)(2906002)(356005)(478600001)(5660300002)(31686004)(36756003)(8936002)(6916009)(36860700001)(316002)(7636003)(70586007)(70206006)(7416002)(8676002)(16576012)(36906005)(4326008)(82740400003)(4744005)(86362001)(426003)(2616005)(53546011)(26005)(336012)(47076005)(186003)(16526019)(82310400003)(31696002)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2021 18:19:02.4333
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 301ff135-5351-4b57-abe9-08d95dbda9b3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT058.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1448
+References: <2862852d-badd-7486-3a8e-c5ea9666d6fb@google.com>
+ <dae523ab-c75b-f532-af9d-8b6a1d4e29b@google.com> <CAHbLzkoKZ9OdUfP5DX81CKOJWrRZ0GANrmenNeKWNmSOgUh0bQ@mail.gmail.com>
+ <e7374d7e-4773-aba1-763-8fa2c953f917@google.com> <CAHbLzko_wg4mx-LTbJ6JcJo-6VzMh5BAcuMV8PXKPsFXOBVASw@mail.gmail.com>
+ <CAHbLzkqKQ_k_aipojZd=UiHyivaweCpCFJJn7WCWVcxhTijqAQ@mail.gmail.com>
+ <749bcf72-efbd-d6c-db30-e9ff98242390@google.com> <CAHbLzkou+6m+htMNzSQrHfd6U0yURWiewK=Pvg30XSdiW=t+-w@mail.gmail.com>
+In-Reply-To: <CAHbLzkou+6m+htMNzSQrHfd6U0yURWiewK=Pvg30XSdiW=t+-w@mail.gmail.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 12 Aug 2021 11:19:34 -0700
+Message-ID: <CAHbLzkpd1r1kLhNP7=Una_Fxpdgx7vE9aeyBgqHRE8M5e9j-qQ@mail.gmail.com>
+Subject: Re: [PATCH 06/16] huge tmpfs: shmem_is_huge(vma, inode, index)
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Matthew Auld <matthew.auld@intel.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/12/21 2:22 AM, Christoph Hellwig wrote:
-> On Wed, Aug 11, 2021 at 12:05:42AM -0700, John Hubbard wrote:
->> -		if (unlikely(!try_get_page(page)))
->> +		if (unlikely(try_get_compound_head(page, 1) == NULL))
-> 
-> Why not a simple ! instead of the == NULL?
+On Fri, Aug 6, 2021 at 10:57 AM Yang Shi <shy828301@gmail.com> wrote:
+>
+> On Thu, Aug 5, 2021 at 10:43 PM Hugh Dickins <hughd@google.com> wrote:
+> >
+> > On Thu, 5 Aug 2021, Yang Shi wrote:
+> > >
+> > > By rereading the code, I think you are correct. Both cases do work
+> > > correctly without leaking. And the !CONFIG_NUMA case may carry the
+> > > huge page indefinitely.
+> > >
+> > > I think it is because khugepaged may collapse memory for another NUMA
+> > > node in the next loop, so it doesn't make too much sense to carry the
+> > > huge page, but it may be an optimization for !CONFIG_NUMA case.
+> >
+> > Yes, that is its intention.
+> >
+> > >
+> > > However, as I mentioned in earlier email the new pcp implementation
+> > > could cache THP now, so we might not need keep this convoluted logic
+> > > anymore. Just free the page if collapse is failed then re-allocate
+> > > THP. The carried THP might improve the success rate a little bit but I
+> > > doubt how noticeable it would be, may be not worth for the extra
+> > > complexity at all.
+> >
+> > It would be great if the new pcp implementation is good enough to
+> > get rid of khugepaged's confusing NUMA=y/NUMA=n differences; and all
+> > the *hpage stuff too, I hope.  That would be a welcome cleanup.
+>
+>  The other question is if that optimization is worth it nowadays or
+> not. I bet not too many users build NUMA=n kernel nowadays even though
+> the kernel is actually running on a non-NUMA machine. Some small
+> devices may run NUMA=n kernel, but I don't think they actually use
+> THP. So such code complexity could be removed from this point of view
+> too.
+>
+> >
+> > > > > Collapse failure is not uncommon and leaking huge pages gets noticed.
+> >
+> > After writing that, I realized how I'm almost always testing a NUMA=y
+> > kernel (though on non-NUMA machines), and seldom try the NUMA=n build.
+> > So did so to check no leak, indeed; but was surprised, when comparing
+> > vmstats, that the NUMA=n run had done 5 times as much thp_collapse_alloc
+> > as the NUMA=y run.  I've merely made a note to look into that one day:
+> > maybe it was just a one-off oddity, or maybe the incrementing of stats
+> > is wrong down one path or the other.
 
-I'll fix those up and post a v4.
+I came up with a patch to remove !CONFIG_NUMA case, and my test found
+the same problem. NUMA=n run had done 5 times as much
+thp_collapse_alloc as NUMA=y run with vanilla kernel just exactly as
+what you saw.
 
-> 
-> Otherwise looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
+A quick look shows the huge page allocation timing is different for
+the two cases. For NUMA=n, the huge page is allocated by
+khugepaged_prealloc_page() before scanning the address space, so it
+means huge page may be allocated even though there is no suitable
+range for collapsing. Then the page would be just freed if khugepaged
+already made enough progress then try to reallocate again. The problem
+should be more noticeable if you have a shorter scan interval
+(scan_sleep_millisecs). I set it to 100ms for my test.
 
-Thanks for the reviews!
+We could carry the huge page across scan passes for NUMA=n, but this
+would make the code more complicated. I don't think it is really
+worth, so just removing the special case for NUMA=n sounds more
+reasonable to me.
 
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+>
+> Yeah, probably.
+>
+> >
+> > Hugh
