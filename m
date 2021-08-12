@@ -2,111 +2,244 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DCA93EA489
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 14:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A31923EA4C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 14:32:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237432AbhHLMVg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 08:21:36 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:55882 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235924AbhHLMVf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 08:21:35 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D82C222267;
-        Thu, 12 Aug 2021 12:21:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1628770869; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0C2zUbxltGUJk1SUgKjpetkRJDpnuUmzosGCKxRTHCQ=;
-        b=HT1ZcklwtAWuX3+FcePglJdOXCqU9OXgr6/svgENJd3qke0Fn6TnCM1103YVAWhggLHhcG
-        7OzDHITF5eM5Sht3i0l5qW3Ll5ovcPzSkaDY95jaYCuvJ5BDc8BuljG7uReRo/JhtdikCW
-        A5eUN6PNKS2V69ghqrj+uxmeZs4f5Q8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1628770869;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0C2zUbxltGUJk1SUgKjpetkRJDpnuUmzosGCKxRTHCQ=;
-        b=OHtpAb1ihAZ/W9JpmR9k8sf+CvrZFalqDiCWk2SHZmmc2TnphxZNvAJdZng4OuSJsfLOd8
-        P4Lo3Qg58KSYEvCw==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id BC50C13846;
-        Thu, 12 Aug 2021 12:21:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id L2qYLDUSFWERRAAAGKfGzw
-        (envelope-from <vbabka@suse.cz>); Thu, 12 Aug 2021 12:21:09 +0000
-Subject: Re: [PATCH v14 063/138] mm/writeback: Rename __add_wb_stat() to
- wb_stat_mod()
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-64-willy@infradead.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <4ed4b6a3-bd9a-c308-0c20-b1a3063d7728@suse.cz>
-Date:   Thu, 12 Aug 2021 14:21:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S237038AbhHLMdU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 08:33:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233956AbhHLMdT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Aug 2021 08:33:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D1E560724;
+        Thu, 12 Aug 2021 12:32:41 +0000 (UTC)
+Date:   Thu, 12 Aug 2021 14:32:39 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>,
+        linux-unionfs@vger.kernel.org, linux-api@vger.kernel.org,
+        x86@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Andrei Vagin <avagin@gmail.com>
+Subject: Re: [PATCH v1 3/7] kernel/fork: always deny write access to current
+ MM exe_file
+Message-ID: <20210812123239.trksnm57owzwzokj@wittgenstein>
+References: <20210812084348.6521-1-david@redhat.com>
+ <20210812084348.6521-4-david@redhat.com>
+ <20210812100544.uhsfp75b4jcrv3qx@wittgenstein>
+ <1b6d27cf-2238-0c1c-c563-b38728fbabc2@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20210715033704.692967-64-willy@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <1b6d27cf-2238-0c1c-c563-b38728fbabc2@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/15/21 5:35 AM, Matthew Wilcox (Oracle) wrote:
-> Make this look like the newly renamed vmstat functions.
+On Thu, Aug 12, 2021 at 12:13:44PM +0200, David Hildenbrand wrote:
+> On 12.08.21 12:05, Christian Brauner wrote:
+> > [+Cc Andrei]
+> > 
+> > On Thu, Aug 12, 2021 at 10:43:44AM +0200, David Hildenbrand wrote:
+> > > We want to remove VM_DENYWRITE only currently only used when mapping the
+> > > executable during exec. During exec, we already deny_write_access() the
+> > > executable, however, after exec completes the VMAs mapped
+> > > with VM_DENYWRITE effectively keeps write access denied via
+> > > deny_write_access().
+> > > 
+> > > Let's deny write access when setting the MM exe_file. With this change, we
+> > > can remove VM_DENYWRITE for mapping executables.
+> > > 
+> > > This represents a minor user space visible change:
+> > > sys_prctl(PR_SET_MM_EXE_FILE) can now fail if the file is already
+> > > opened writable. Also, after sys_prctl(PR_SET_MM_EXE_FILE), the file
+> > 
+> > Just for completeness, this also affects PR_SET_MM_MAP when exe_fd is
+> > set.
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-> ---
->  include/linux/backing-dev.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Correct.
 > 
-> diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-> index 44df4fcef65c..a852876bb6e2 100644
-> --- a/include/linux/backing-dev.h
-> +++ b/include/linux/backing-dev.h
-> @@ -64,7 +64,7 @@ static inline bool bdi_has_dirty_io(struct backing_dev_info *bdi)
->  	return atomic_long_read(&bdi->tot_write_bandwidth);
->  }
->  
-> -static inline void __add_wb_stat(struct bdi_writeback *wb,
-> +static inline void wb_stat_mod(struct bdi_writeback *wb,
->  				 enum wb_stat_item item, s64 amount)
->  {
->  	percpu_counter_add_batch(&wb->stat[item], amount, WB_STAT_BATCH);
-> @@ -72,12 +72,12 @@ static inline void __add_wb_stat(struct bdi_writeback *wb,
->  
->  static inline void inc_wb_stat(struct bdi_writeback *wb, enum wb_stat_item item)
->  {
-> -	__add_wb_stat(wb, item, 1);
-> +	wb_stat_mod(wb, item, 1);
->  }
->  
->  static inline void dec_wb_stat(struct bdi_writeback *wb, enum wb_stat_item item)
->  {
-> -	__add_wb_stat(wb, item, -1);
-> +	wb_stat_mod(wb, item, -1);
->  }
->  
->  static inline s64 wb_stat(struct bdi_writeback *wb, enum wb_stat_item item)
+> > 
+> > > cannot be opened writable. Note that we can already fail with -EACCES if
+> > > the file doesn't have execute permissions.
+> > > 
+> > > Signed-off-by: David Hildenbrand <david@redhat.com>
+> > > ---
+> > 
+> > The biggest user I know and that I'm involved in is CRIU which heavily
+> > uses PR_SET_MM_MAP (with a fallback to PR_SET_MM_EXE_FILE on older
+> > kernels) during restore. Afair, criu opens the exe fd as an O_PATH
+> > during dump and thus will use the same flag during restore when
+> > opening it. So that should be fine.
 > 
+> Yes.
+> 
+> > 
+> > However, if I understand the consequences of this change correctly, a
+> > problem could be restoring workloads that hold a writable fd open to
+> > their exe file at dump time which would mean that during restore that fd
+> > would be reopened writable causing CRIU to fail when setting the exe
+> > file for the task to be restored.
+> 
+> If it's their exe file, then the existing VM_DENYWRITE handling would have
+> forbidden these workloads to open the fd of their exe file writable, right?
 
+Yes.
+
+> At least before doing any PR_SET_MM_MAP/PR_SET_MM_EXE_FILE. But that should
+> rule out quite a lot of cases we might be worried about, right?
+
+Yes, it rules out the most obvious cases. The problem is really just
+that we don't know how common weirder cases are. But that doesn't mean
+we shouldn't try and risk it. This is a nice cleanup and playing
+/proc/self/exe games isn't super common.
+
+> 
+> > 
+> > Which honestly, no idea how many such workloads exist. (I know at least
+> > of runC and LXC need to sometimes reopen to rexec themselves (weird bug
+> > to protect against attacking the exe file) and thus re-open
+> > /proc/self/exe but read-only.)
+> > 
+> > >   kernel/fork.c | 39 ++++++++++++++++++++++++++++++++++-----
+> > >   1 file changed, 34 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/kernel/fork.c b/kernel/fork.c
+> > > index 6bd2e52bcdfb..5d904878f19b 100644
+> > > --- a/kernel/fork.c
+> > > +++ b/kernel/fork.c
+> > > @@ -476,6 +476,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+> > >   {
+> > >   	struct vm_area_struct *mpnt, *tmp, *prev, **pprev;
+> > >   	struct rb_node **rb_link, *rb_parent;
+> > > +	struct file *exe_file;
+> > >   	int retval;
+> > >   	unsigned long charge;
+> > >   	LIST_HEAD(uf);
+> > > @@ -493,7 +494,10 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+> > >   	mmap_write_lock_nested(mm, SINGLE_DEPTH_NESTING);
+> > >   	/* No ordering required: file already has been exposed. */
+> > > -	RCU_INIT_POINTER(mm->exe_file, get_mm_exe_file(oldmm));
+> > > +	exe_file = get_mm_exe_file(oldmm);
+> > > +	RCU_INIT_POINTER(mm->exe_file, exe_file);
+> > > +	if (exe_file)
+> > > +		deny_write_access(exe_file);
+> > >   	mm->total_vm = oldmm->total_vm;
+> > >   	mm->data_vm = oldmm->data_vm;
+> > > @@ -638,8 +642,13 @@ static inline void mm_free_pgd(struct mm_struct *mm)
+> > >   #else
+> > >   static int dup_mmap(struct mm_struct *mm, struct mm_struct *oldmm)
+> > >   {
+> > > +	struct file *exe_file;
+> > > +
+> > >   	mmap_write_lock(oldmm);
+> > > -	RCU_INIT_POINTER(mm->exe_file, get_mm_exe_file(oldmm));
+> > > +	exe_file = get_mm_exe_file(oldmm);
+> > > +	RCU_INIT_POINTER(mm->exe_file, exe_file);
+> > > +	if (exe_file)
+> > > +		deny_write_access(exe_file);
+> > >   	mmap_write_unlock(oldmm);
+> > >   	return 0;
+> > >   }
+> > > @@ -1163,11 +1172,19 @@ void set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
+> > >   	 */
+> > >   	old_exe_file = rcu_dereference_raw(mm->exe_file);
+> > > -	if (new_exe_file)
+> > > +	if (new_exe_file) {
+> > >   		get_file(new_exe_file);
+> > > +		/*
+> > > +		 * exec code is required to deny_write_access() successfully,
+> > > +		 * so this cannot fail
+> > > +		 */
+> > > +		deny_write_access(new_exe_file);
+> > > +	}
+> > >   	rcu_assign_pointer(mm->exe_file, new_exe_file);
+> > > -	if (old_exe_file)
+> > > +	if (old_exe_file) {
+> > > +		allow_write_access(old_exe_file);
+> > >   		fput(old_exe_file);
+> > > +	}
+> > >   }
+> > >   int atomic_set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
+> > > @@ -1194,10 +1211,22 @@ int atomic_set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
+> > >   	}
+> > >   	/* set the new file, lockless */
+> > > +	ret = deny_write_access(new_exe_file);
+> > > +	if (ret)
+> > > +		return -EACCES;
+> > >   	get_file(new_exe_file);
+> > > +
+> > >   	old_exe_file = xchg(&mm->exe_file, new_exe_file);
+> > > -	if (old_exe_file)
+> > > +	if (old_exe_file) {
+> > > +		/*
+> > > +		 * Don't race with dup_mmap() getting the file and disallowing
+> > > +		 * write access while someone might open the file writable.
+> > > +		 */
+> > > +		mmap_read_lock(mm);
+> > > +		allow_write_access(old_exe_file);
+> > >   		fput(old_exe_file);
+> > > +		mmap_read_unlock(mm);
+> > > +	}
+> > >   	return 0;
+> > >   }
+> > > -- 
+> > > 2.31.1
+> > > 
+> > 
+> 
+> 
+> -- 
+> Thanks,
+> 
+> David / dhildenb
+> 
