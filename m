@@ -2,181 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5C373EAC0A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 22:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB51D3EAC12
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 22:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238126AbhHLUnI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 16:43:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50356 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238134AbhHLUnB (ORCPT
+        id S232975AbhHLUs3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 16:48:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41761 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229703AbhHLUs3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 16:43:01 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04208C06124C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 13:42:36 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id o126so6181485ybo.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 13:42:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SocJctGaI1z5Y2V/7vECrCscsCsQ4+Z36X400HrEw90=;
-        b=MCNby1XiS34HtYanu4HEMdBBHb3yopMV+ncDfXZPodXtOcrBLr22b4Ls/BfzbM0orx
-         TqWQKlFF8n3hldLltBeAiIuRiSueXGuR/x6wcKtQeIgY/OG+ScEbKhwPxWoI0qGWrurb
-         kiGMVfasnwjaeCnwtMBVGUFibsTbivcP5DJBWTQD6rwAe5AGcxzA6Mnkl/CvWSac4XRb
-         YiwMTW85eHqLcg+YmYX0CvbbhkOF6naVhEq8CtV16QYgDMxcjI4jZ08tesEszudmUeNC
-         1yFv4FlBVwzeYuw+XFWEQjr8VdpUhfofcBPc7LX8p0I64vx950IJ6NgchwjIyMzAg1fE
-         3Hxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SocJctGaI1z5Y2V/7vECrCscsCsQ4+Z36X400HrEw90=;
-        b=YgCJkEd9OIv7m72jrsZB9fdDluxey78QyAhuveecaIEI8hzSDgHTs+bZGRuoxNVvax
-         ZXv4ZHJ1SLeyBsGtlEAczp8y4SLrXhImGy50i9srtNfDvFTzAI3SVwMAf5+Jg2L1cUub
-         y6S/THZBvo7pd19CKqkEwCL/pYDav1IzIrLrS6cyL3PCdfsznXJuqON6+QHA+TCN0A+U
-         dazr0qnKVhZ5Mapbf6WORTqY36aeXWBUtux2O+lVFfAtfRUn02mnWB7d9idqJHzeQ0qC
-         x/7LCLIY5fia153k1u60X8USGltVI1O19gZ/sQMYjY0CVnHBW1evXcJitw7rVrlWWinr
-         Y2sA==
-X-Gm-Message-State: AOAM5308i0WqQiw35xG4zhQXkA7AR9Dpjq64gdnx1HY61LH6rW1cdBFL
-        vAX7zH70R8bWaMRmW2skVEPX9OXAgS3NjJy2Psc4OQ==
-X-Google-Smtp-Source: ABdhPJzIgj0CrwWUnOBFfrhyb8EUrtawZ0J3NKD3b1jYgEH5AUQqaCmnuiuSctcAx1ohrVe08vfPNjodqk7WcRj2tmg=
-X-Received: by 2002:a25:bec2:: with SMTP id k2mr7239053ybm.234.1628800954923;
- Thu, 12 Aug 2021 13:42:34 -0700 (PDT)
+        Thu, 12 Aug 2021 16:48:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628801283;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XaXJ+kisbU7RF44zBuHYJFOtJx6fm37DGb251FmYx3Q=;
+        b=NgzWg6t2j6NdfAt2wll6K4u94LPjP03Ik7bmcK1ZMdrTXt01gzRc+j/Q1DV4pJHGd3wIKG
+        cpC2M6rDiY4KsuNpdxmHL3+wXO68RKZCskaf2kMgZnhu58TSJmQ3NsRFvE0DQP0+5QLJxm
+        P0d7Cm4/ZgAYEsg28U3dXVH1p9NqLds=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-188-vrcMW8cdOh2glB2SgLT-hA-1; Thu, 12 Aug 2021 16:48:02 -0400
+X-MC-Unique: vrcMW8cdOh2glB2SgLT-hA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7D3A487D541;
+        Thu, 12 Aug 2021 20:48:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 158125D9D5;
+        Thu, 12 Aug 2021 20:47:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YRVHLu3OAwylCONm@casper.infradead.org>
+References: <YRVHLu3OAwylCONm@casper.infradead.org> <2408234.1628687271@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC][PATCH] netfs, afs, ceph: Use folios
 MIME-Version: 1.0
-References: <20210812203137.2880834-1-joshdon@google.com>
-In-Reply-To: <20210812203137.2880834-1-joshdon@google.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Thu, 12 Aug 2021 22:42:23 +0200
-Message-ID: <CANn89iJK-PzFrN2S_jojN2rvZBfBJY4cLTg6q+uzF-vcrfrAeQ@mail.gmail.com>
-Subject: Re: [PATCH] fs/proc/uptime.c: fix idle time reporting in /proc/uptime
-To:     Josh Don <joshdon@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Luigi Rizzo <lrizzo@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3308342.1628801274.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 12 Aug 2021 21:47:54 +0100
+Message-ID: <3308343.1628801274@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 10:31 PM Josh Don <joshdon@google.com> wrote:
->
-> /proc/uptime reports idle time by reading the CPUTIME_IDLE field from
-> the per-cpu kcpustats. However, on NO_HZ systems, idle time is not
-> continually updated on idle cpus, leading this value to appear
-> incorrectly small.
->
-> /proc/stat performs an accounting update when reading idle time; we can
-> use the same approach for uptime.
->
-> With this patch, /proc/stat and /proc/uptime now agree on idle time.
-> Additionally, the following shows idle time tick up consistently on an
-> idle machine:
-> (while true; do cat /proc/uptime; sleep 1; done) | awk '{print $2-prev; prev=$2}'
->
-> Reported-by: Luigi Rizzo <lrizzo@google.com>
-> Signed-off-by: Josh Don <joshdon@google.com>
-> ---
->  fs/proc/stat.c              | 26 --------------------------
->  fs/proc/uptime.c            | 13 ++++++++-----
->  include/linux/kernel_stat.h |  1 +
->  kernel/sched/cputime.c      | 28 ++++++++++++++++++++++++++++
->  4 files changed, 37 insertions(+), 31 deletions(-)
->
-> diff --git a/fs/proc/stat.c b/fs/proc/stat.c
-> index 6561a06ef905..99796a8a5223 100644
-> --- a/fs/proc/stat.c
-> +++ b/fs/proc/stat.c
-> @@ -24,16 +24,6 @@
->
->  #ifdef arch_idle_time
->
-> -static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
-> -{
-> -       u64 idle;
-> -
-> -       idle = kcs->cpustat[CPUTIME_IDLE];
-> -       if (cpu_online(cpu) && !nr_iowait_cpu(cpu))
-> -               idle += arch_idle_time(cpu);
-> -       return idle;
-> -}
-> -
->  static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
->  {
->         u64 iowait;
-> @@ -46,22 +36,6 @@ static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
->
->  #else
->
-> -static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
-> -{
-> -       u64 idle, idle_usecs = -1ULL;
-> -
-> -       if (cpu_online(cpu))
-> -               idle_usecs = get_cpu_idle_time_us(cpu, NULL);
-> -
-> -       if (idle_usecs == -1ULL)
-> -               /* !NO_HZ or cpu offline so we can rely on cpustat.idle */
-> -               idle = kcs->cpustat[CPUTIME_IDLE];
-> -       else
-> -               idle = idle_usecs * NSEC_PER_USEC;
-> -
-> -       return idle;
-> -}
-> -
->  static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
->  {
->         u64 iowait, iowait_usecs = -1ULL;
+Matthew Wilcox <willy@infradead.org> wrote:
 
-...
+> >  (*) Can page_endio() be split into two separate functions, one for re=
+ad
+> >      and one for write?  If seems a waste of time to conditionally swi=
+tch
+> >      between two different branches.
+> =
 
-> diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-> index 872e481d5098..9d7629e21164 100644
-> --- a/kernel/sched/cputime.c
-> +++ b/kernel/sched/cputime.c
-> @@ -227,6 +227,34 @@ void account_idle_time(u64 cputime)
->                 cpustat[CPUTIME_IDLE] += cputime;
->  }
->
-> +/*
-> + * Returns the total idle time for the given cpu.
-> + * @kcs: The kernel_cpustat for the desired cpu.
-> + * @cpu: The desired cpu.
-> + */
-> +u64 get_idle_time(const struct kernel_cpustat *kcs, int cpu)
-> +{
-> +       u64 idle;
-> +       u64 __maybe_unused idle_usecs = -1ULL;
-> +
-> +#ifdef arch_idle_time
-> +       idle = kcs->cpustat[CPUTIME_IDLE];
-> +       if (cpu_online(cpu) && !nr_iowait_cpu(cpu))
-> +               idle += arch_idle_time(cpu);
-> +#else
-> +       if (cpu_online(cpu))
-> +               idle_usecs = get_cpu_idle_time_us(cpu, NULL);
-> +
-> +       if (idle_usecs == -1ULL)
-> +               /* !NO_HZ or cpu offline so we can rely on cpustat.idle */
-> +               idle = kcs->cpustat[CPUTIME_IDLE];
-> +       else
-> +               idle = idle_usecs * NSEC_PER_USEC;
-> +#endif
-> +
-> +       return idle;
-> +}
-> +
->
+> At this point I'm thinking ...
+> =
 
-Not sure why you moved get_idle_time() in kernel/sched/cputime.c
+> static inline void folio_end_read(struct folio *folio, int err)
+> {
+> 	if (!err)
+> 		folio_set_uptodate(folio);
+> 	folio_unlock(folio);
+> }
+> =
 
-For builds where CONFIG_PROC_FS is not set, this function is not used/needed.
+> Clearly the page isn't uptodate at this point, or ->readpage wouldn't've
+> been called.  So there's no need to clear it.  And PageError is
+> completely useless.
+
+Seems reasonable.
+
+> > -	*_page =3D page;
+> > +	*_page =3D &folio->page;
+> =
+
+> Can't do anything about this one; the write_begin API needs to be fixed.
+
+That's fine.  I expected things like this at this stage.
+
+> > @@ -174,40 +175,32 @@ static void afs_kill_pages(struct address_space =
+*mapping,
+> [...]
+> > +		folio_clear_uptodate(folio);
+> > +		folio_end_writeback(folio);
+> > +		folio_lock(folio);
+> > +		generic_error_remove_page(mapping, &folio->page);
+> > +		folio_unlock(folio);
+> > +		folio_put(folio);
+> =
+
+> This one I'm entirely missing.  It's awkward.  I'll work on it.
+
+afs_kill_pages() is just a utility to end writeback, clear uptodate and do
+generic_error_remove_page() over a range of pages and afs_redirty_pages() =
+is a
+utility that to end writeback and redirty a range of pages - hence why I w=
+as
+thinking it might make sense to put them into common code.
+
+> > -			index +=3D thp_nr_pages(page);
+> > -			if (!pagevec_add(&pvec, page))
+> > +			index +=3D folio_nr_pages(folio);
+> > +			if (!pagevec_add(&pvec, &folio->page))
+> =
+
+> Pagevecs are also awkward.  I haven't quite figured out how to
+> transition them to folios.
+
+Maybe provide pagevec_add_folio(struct pagevec *, struct folio *)?
+
+> >  zero_out:
+> > -	zero_user_segments(page, 0, offset, offset + len, thp_size(page));
+> > +	zero_user_segments(&folio->page, 0, offset, offset + len, folio_size=
+(folio));
+> =
+
+> Yeah, that's ugly.
+
+Maybe:
+
+	folio_clear_around(folio, keep_from, keep_to);
+
+clearing the bits of the folio outside the specified section?
+
+David
+
