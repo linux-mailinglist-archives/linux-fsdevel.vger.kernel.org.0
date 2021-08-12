@@ -2,19 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FFA73EACAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 23:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04BA13EACB1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 23:41:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238052AbhHLVmC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 17:42:02 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:45930 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235297AbhHLVmB (ORCPT
+        id S238056AbhHLVmH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 17:42:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35534 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235297AbhHLVmG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 17:42:01 -0400
+        Thu, 12 Aug 2021 17:42:06 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C692BC061756;
+        Thu, 12 Aug 2021 14:41:40 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id 052B21F41890
+        with ESMTPSA id 538831F41890
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com, jack@suse.com
 Cc:     linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
@@ -23,9 +26,9 @@ Cc:     linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
         djwong@kernel.org, repnop@google.com,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH v6 17/21] fanotify: Report fid info for file related file system errors
-Date:   Thu, 12 Aug 2021 17:40:06 -0400
-Message-Id: <20210812214010.3197279-18-krisman@collabora.com>
+Subject: [PATCH v6 18/21] fanotify: Emit generic error info type for error event
+Date:   Thu, 12 Aug 2021 17:40:07 -0400
+Message-Id: <20210812214010.3197279-19-krisman@collabora.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210812214010.3197279-1-krisman@collabora.com>
 References: <20210812214010.3197279-1-krisman@collabora.com>
@@ -35,113 +38,146 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Plumb the pieces to add a FID report to error records.  Since all error
-event memory must be pre-allocated, we estimate a file handle size and
-if it is insuficient, we report an invalid FID and increase the
-prediction for the next error slot allocation.
-
-For errors that don't expose a file handle report it with an invalid
-FID.
+The Error info type is a record sent to users on FAN_FS_ERROR events
+documenting the type of error.  It also carries an error count,
+documenting how many errors were observed since the last reporting.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
 ---
 Changes since v5:
-  - Use preallocated MAX_HANDLE_SZ FH buffer
-  - Report superblock errors with a zerolength INVALID FID (jan, amir)
+  - Move error code here
 ---
- fs/notify/fanotify/fanotify.c      | 15 +++++++++++++++
- fs/notify/fanotify/fanotify.h      | 11 +++++++++++
- fs/notify/fanotify/fanotify_user.c |  7 +++++++
- 3 files changed, 33 insertions(+)
+ fs/notify/fanotify/fanotify.c      |  1 +
+ fs/notify/fanotify/fanotify.h      |  1 +
+ fs/notify/fanotify/fanotify_user.c | 36 ++++++++++++++++++++++++++++++
+ include/uapi/linux/fanotify.h      |  7 ++++++
+ 4 files changed, 45 insertions(+)
 
 diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 0c7667d3f5d1..f5c16ac37835 100644
+index f5c16ac37835..b49a474c1d7f 100644
 --- a/fs/notify/fanotify/fanotify.c
 +++ b/fs/notify/fanotify/fanotify.c
-@@ -734,6 +734,8 @@ static int fanotify_handle_error_event(struct fsnotify_iter_info *iter_info,
- 	struct fanotify_sb_mark *sb_mark =
- 		FANOTIFY_SB_MARK(fsnotify_iter_sb_mark(iter_info));
- 	struct fanotify_error_event *fee = sb_mark->fee_slot;
-+	struct inode *inode = report->inode;
-+	int fh_len;
- 
- 	spin_lock(&group->notification_lock);
- 	if (fee->err_count++) {
-@@ -743,6 +745,19 @@ static int fanotify_handle_error_event(struct fsnotify_iter_info *iter_info,
+@@ -745,6 +745,7 @@ static int fanotify_handle_error_event(struct fsnotify_iter_info *iter_info,
  	spin_unlock(&group->notification_lock);
  
  	fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
-+	fee->fsid = fee->sb_mark->fsn_mark.connector->fsid;
-+
-+	fh_len = fanotify_encode_fh_len(inode);
-+	if (WARN_ON(fh_len > MAX_HANDLE_SZ)) {
-+		/*
-+		 * Fallback to reporting the error against the super
-+		 * block.  It should never happen.
-+		 */
-+		inode = NULL;
-+		fh_len = fanotify_encode_fh_len(NULL);
-+	}
-+
-+	fanotify_encode_fh(&fee->object_fh, inode, fh_len, NULL, 0);
++	fee->error = report->error;
+ 	fee->fsid = fee->sb_mark->fsn_mark.connector->fsid;
  
- 	if (fsnotify_insert_event(group, &fee->fae.fse,
- 				  NULL, fanotify_insert_error_event)) {
+ 	fh_len = fanotify_encode_fh_len(inode);
 diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-index eeb4a85af74e..158cf0c4b0bd 100644
+index 158cf0c4b0bd..0cfe376c6fd9 100644
 --- a/fs/notify/fanotify/fanotify.h
 +++ b/fs/notify/fanotify/fanotify.h
-@@ -223,6 +223,13 @@ struct fanotify_error_event {
+@@ -220,6 +220,7 @@ FANOTIFY_NE(struct fanotify_event *event)
+ 
+ struct fanotify_error_event {
+ 	struct fanotify_event fae;
++	s32 error; /* Error reported by the Filesystem. */
  	u32 err_count; /* Suppressed errors count */
  
  	struct fanotify_sb_mark *sb_mark; /* Back reference to the mark. */
-+
-+	__kernel_fsid_t fsid; /* FSID this error refers to. */
-+
-+	/* object_fh must be followed by the inline handle buffer. */
-+	struct fanotify_fh object_fh;
-+	/* Reserve space in object_fh.buf[] - access with fanotify_fh_buf() */
-+	unsigned char _inline_fh_buf[MAX_HANDLE_SZ];
- };
- 
- static inline struct fanotify_error_event *
-@@ -237,6 +244,8 @@ static inline __kernel_fsid_t *fanotify_event_fsid(struct fanotify_event *event)
- 		return &FANOTIFY_FE(event)->fsid;
- 	else if (event->type == FANOTIFY_EVENT_TYPE_FID_NAME)
- 		return &FANOTIFY_NE(event)->fsid;
-+	else if (event->type == FANOTIFY_EVENT_TYPE_FS_ERROR)
-+		return &FANOTIFY_EE(event)->fsid;
- 	else
- 		return NULL;
- }
-@@ -248,6 +257,8 @@ static inline struct fanotify_fh *fanotify_event_object_fh(
- 		return &FANOTIFY_FE(event)->object_fh;
- 	else if (event->type == FANOTIFY_EVENT_TYPE_FID_NAME)
- 		return fanotify_info_file_fh(&FANOTIFY_NE(event)->info);
-+	else if (event->type == FANOTIFY_EVENT_TYPE_FS_ERROR)
-+		return &FANOTIFY_EE(event)->object_fh;
- 	else
- 		return NULL;
- }
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 3fff0c994dc8..1ab8f9d8b3ac 100644
+index 1ab8f9d8b3ac..ca53159ce673 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -177,6 +177,13 @@ static struct fanotify_event *fanotify_dup_error_to_stack(
+@@ -107,6 +107,8 @@ struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
+ #define FANOTIFY_EVENT_ALIGN 4
+ #define FANOTIFY_INFO_HDR_LEN \
+ 	(sizeof(struct fanotify_event_info_fid) + sizeof(struct file_handle))
++#define FANOTIFY_INFO_ERROR_LEN \
++	(sizeof(struct fanotify_event_info_error))
+ 
+ static int fanotify_fid_info_len(int fh_len, int name_len)
+ {
+@@ -130,6 +132,9 @@ static size_t fanotify_event_len(struct fanotify_event *event,
+ 	if (!fid_mode)
+ 		return event_len;
+ 
++	if (fanotify_is_error_event(event->mask))
++		event_len += FANOTIFY_INFO_ERROR_LEN;
++
+ 	info = fanotify_event_info(event);
+ 	dir_fh_len = fanotify_event_dir_fh_len(event);
+ 	fh_len = fanotify_event_object_fh_len(event);
+@@ -176,6 +181,7 @@ static struct fanotify_event *fanotify_dup_error_to_stack(
+ 	error_on_stack->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
  	error_on_stack->err_count = fee->err_count;
  	error_on_stack->sb_mark = fee->sb_mark;
++	error_on_stack->error = fee->error;
  
-+	error_on_stack->fsid = fee->fsid;
-+
-+	memcpy(&error_on_stack->object_fh, &fee->object_fh,
-+	       sizeof(fee->object_fh));
-+	memcpy(error_on_stack->object_fh.buf, fee->object_fh.buf,
-+		fee->object_fh.len);
-+
- 	return &error_on_stack->fae;
+ 	error_on_stack->fsid = fee->fsid;
+ 
+@@ -342,6 +348,28 @@ static int process_access_response(struct fsnotify_group *group,
+ 	return -ENOENT;
  }
  
++static size_t copy_error_info_to_user(struct fanotify_event *event,
++				      char __user *buf, int count)
++{
++	struct fanotify_event_info_error info;
++	struct fanotify_error_event *fee = FANOTIFY_EE(event);
++
++	info.hdr.info_type = FAN_EVENT_INFO_TYPE_ERROR;
++	info.hdr.pad = 0;
++	info.hdr.len = FANOTIFY_INFO_ERROR_LEN;
++
++	if (WARN_ON(count < info.hdr.len))
++		return -EFAULT;
++
++	info.error = fee->error;
++	info.error_count = fee->err_count;
++
++	if (copy_to_user(buf, &info, sizeof(info)))
++		return -EFAULT;
++
++	return info.hdr.len;
++}
++
+ static int copy_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+ 			     int info_type, const char *name, size_t name_len,
+ 			     char __user *buf, size_t count)
+@@ -505,6 +533,14 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	if (f)
+ 		fd_install(fd, f);
+ 
++	if (fanotify_is_error_event(event->mask)) {
++		ret = copy_error_info_to_user(event, buf, count);
++		if (ret < 0)
++			goto out_close_fd;
++		buf += ret;
++		count -= ret;
++	}
++
+ 	/* Event info records order is: dir fid + name, child fid */
+ 	if (fanotify_event_dir_fh_len(event)) {
+ 		info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
+diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+index 16402037fc7a..80040a92e9d9 100644
+--- a/include/uapi/linux/fanotify.h
++++ b/include/uapi/linux/fanotify.h
+@@ -124,6 +124,7 @@ struct fanotify_event_metadata {
+ #define FAN_EVENT_INFO_TYPE_FID		1
+ #define FAN_EVENT_INFO_TYPE_DFID_NAME	2
+ #define FAN_EVENT_INFO_TYPE_DFID	3
++#define FAN_EVENT_INFO_TYPE_ERROR	4
+ 
+ /* Variable length info record following event metadata */
+ struct fanotify_event_info_header {
+@@ -149,6 +150,12 @@ struct fanotify_event_info_fid {
+ 	unsigned char handle[0];
+ };
+ 
++struct fanotify_event_info_error {
++	struct fanotify_event_info_header hdr;
++	__s32 error;
++	__u32 error_count;
++};
++
+ struct fanotify_response {
+ 	__s32 fd;
+ 	__u32 response;
 -- 
 2.32.0
 
