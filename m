@@ -2,162 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12B3D3E9AC6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 00:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED843E9BCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 03:08:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232434AbhHKWNy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Aug 2021 18:13:54 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:55910 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232226AbhHKWNy (ORCPT
+        id S232704AbhHLBJI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Aug 2021 21:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35346 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229773AbhHLBJH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Aug 2021 18:13:54 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C89C71FEF2;
-        Wed, 11 Aug 2021 22:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1628720008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FeGzUTvoCN8Wlt5hyL5qJ6Nm2upHl5bZr9FlYzW5TQ0=;
-        b=yIgC1og83IS8ikDuUa+qhuKWoRiaFZpJQmCJxxkDPM8DsMrrvq5GROc6puqtu3oDd3jOTq
-        DwVI/+GcUIDgt2Jfxdv8k904Utq59utZDQWjNG+amg5vxH2zsmMUVfk35LCfJyJFB8PEbU
-        eIDLG5MRhGprNTj4px4r0NpIl3c+TQ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1628720008;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FeGzUTvoCN8Wlt5hyL5qJ6Nm2upHl5bZr9FlYzW5TQ0=;
-        b=8W2baWzFIFgDvTP8YHv8VfmQD59nHIEjVMGlpp67VhTsoI5tbZnt9ZATQRtUnjXKW4mSse
-        tDnOxeGJjByd16DA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EBC4A13AE6;
-        Wed, 11 Aug 2021 22:13:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id C9QcKoZLFGHxKwAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 11 Aug 2021 22:13:26 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 11 Aug 2021 21:09:07 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A5ADC061765;
+        Wed, 11 Aug 2021 18:08:43 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id z20so9973401lfd.2;
+        Wed, 11 Aug 2021 18:08:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=6MbjmzBnwM6gjnG7Cc/YOmrr7HwaCTb5NruG7e2TxrA=;
+        b=PrVUN0df8cRryRb5/kqtkJINDrWtN1NPNMcAoKTLIrZKL77uTNxavXiQUBdjBxnWz3
+         uXEYlfVZ0s1Mqa1RrOuucScEjH004NB3c66AfPgQMXmxizngv6kSEd1Lb/FZtEQgwRSN
+         MOLwi3vPgtqQhiarGvyEiPwl9+UNp6uIkDU5/Y1BETL0B5j8V3vKim/LR13I2QdB+tHW
+         OSTiCOYXzo4nSVHsRGYPAjLOYdEas58VlZI5N/33396iglmOZl+cF/eQszlJecSKTYWj
+         PVo0VYWo2L6viWgTkQuyDbY4oxTQHWvZYwscVMlJULxOXt6fL/yEu4Z9u8N9iJIi/qZd
+         sbkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=6MbjmzBnwM6gjnG7Cc/YOmrr7HwaCTb5NruG7e2TxrA=;
+        b=EM/QBk2d698bbrToPDhgF1u0USaTwD3uRIL/3gSAwazFNrdWy+fcUsNWIctYw9A+VR
+         fWA2fz/hRtQe2lixj8VhLUvn5nBythTc9VWGlMweddYrPZgt0B1AHCIH6p6kytErFvnb
+         Rg4KvPTIYwn/K3tDjrxOB6+mGu4iiGm6xH3MSt3yo1VNbiILS3Vp3X6S2MsHT/e18O8d
+         xhO+OK+GZPDu8aG/36Et6Q+SbX1z/vxIYAIWF/m94e0roslKEFs/Q6zXc+uABfLjqxXL
+         dpQzZqVCW5Irz4BPs0DfnsgAddbSbSpNCflLIU0AXRXlrh+EGzcMGgvAfn6TGoKefuNC
+         +YDg==
+X-Gm-Message-State: AOAM530n0R5yxHt0qg+Gl7KfYmyW+fWhPHpW1EdGByNuEWB/RiB0vR5h
+        HtBwQtI5vh6Mh1IGfdtJwFHeif3uYK1A+nQDkH1wsZT9lrIKzA==
+X-Google-Smtp-Source: ABdhPJwU5pjiW19vxq1Fb7/Ubjv2aygoXSH5qEL0ldvB751wg0FPw+dTekqs8olQYHv56ya7p9oAFx/91l1avig4t0U=
+X-Received: by 2002:ac2:4ed3:: with SMTP id p19mr645487lfr.307.1628730521167;
+ Wed, 11 Aug 2021 18:08:41 -0700 (PDT)
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Josef Bacik" <josef@toxicpanda.com>
-Cc:     "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>,
-        linux-fsdevel@vger.kernel.org,
-        "Linux NFS list" <linux-nfs@vger.kernel.org>,
-        "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH/RFC 0/4] Attempt to make progress with btrfs dev number
- strangeness.
-In-reply-to: <e6496956-0df3-6232-eecb-5209b28ca790@toxicpanda.com>
-References: <162848123483.25823.15844774651164477866.stgit@noble.brown>,
- <e6496956-0df3-6232-eecb-5209b28ca790@toxicpanda.com>
-Date:   Thu, 12 Aug 2021 08:13:23 +1000
-Message-id: <162872000356.22261.854151210687377005@noble.neil.brown.name>
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 11 Aug 2021 20:08:30 -0500
+Message-ID: <CAH2r5mv_YRkGCs_qhmUje_qvUkPJpurdYw1W88VQ17CzKVhhGQ@mail.gmail.com>
+Subject: signed integer overflow bug in truncate_pagecache
+To:     linux-mm <linux-mm@kvack.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 11 Aug 2021, Josef Bacik wrote:
->=20
-> I think this is a step in the right direction, but I want to figure out a w=
-ay to=20
-> accomplish this without magical mount points that users must be aware of.
+Running a debug build of the kernel while running regression tests for
+cifs.ko on 5.11, I noticed this message logged which looks like it is
+still a probably valid bug in truncate_pagecache in mm/truncate.c in
+current kernel as well
 
-magic mount *options* ???
+     loff_t holebegin = round_up(newsize, PAGE_SIZE);
 
->=20
-> I think the stat() st_dev ship as sailed, we're stuck with that.  However=20
-> Christoph does have a valid point where it breaks the various info spit out=
- by=20
-> /proc.  You've done a good job with the treeid here, but it still makes it =
+This was what was in dmesg:
 
-> impossible for somebody to map the st_dev back to the correct mount.
+[23907.325526] UBSAN: signed-integer-overflow in mm/truncate.c:833:9
+[23907.325532] 9223372036854775807 + 1 cannot be represented in type
+'long long int'
+[23907.325536] CPU: 2 PID: 13007 Comm: xfs_io Not tainted 5.11.22 #1
+[23907.325540] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+[23907.325543] Call Trace:
+[23907.325548]  dump_stack+0x8d/0xb5
+[23907.325560]  ubsan_epilogue+0x5/0x50
+[23907.325568]  handle_overflow+0xa3/0xb0
+[23907.325581]  truncate_pagecache+0x8a/0x90
+[23907.325587]  cifs_set_file_size+0xdb/0x2c0 [cifs]
+[23907.325749]  cifs_setattr+0xc93/0x1260 [cifs]
+[23907.325799]  notify_change+0x35b/0x4a0
+[23907.325811]  ? do_truncate+0x5e/0x90
+[23907.325817]  do_truncate+0x5e/0x90
+[23907.325828]  do_sys_ftruncate+0x143/0x280
+[23907.325837]  do_syscall_64+0x33/0x40
+[23907.325842]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-The ship might have sailed, but it is not water tight.  And as the world
-it round, it can still come back to bite us from behind.
-Anything can be transitioned away from, whether it is devfs or 32-bit
-time or giving different device numbers to different file-trees.
-
-The linkage between device number and and filesystem is quite strong.
-We could modified all of /proc and /sys/ and audit and whatever else to
-report the fake device number, but we cannot get the fake device number
-into the mount table (without making the mount table unmanageablely
-large). =20
-And if subtrees aren't in the mount-table for the NFS server, I don't
-think they should be in the mount-table of the NFS client.  So we cannot
-export them to NFS.
-
-I understand your dislike for mount options.  An alternative with
-different costs and benefits would be to introduce a new filesystem type
-- btrfs2 or maybe betrfs.  This would provide numdevs=3D1 semantics and do
-whatever we decided was best with inode numbers.  How much would you
-hate that?
-
->=20
-> I think we aren't going to solve that problem, at least not with stat().  I=
-=20
-> think with statx() spitting out treeid we have given userspace a way to=20
-> differentiate subvolumes, and so we should fix statx() to spit out the the =
-super=20
-> block device, that way new userspace things can do their appropriate lookup=
- if=20
-> they so choose.
-
-I don't think we should normalize having multiple devnums per filesystem
-by encoding it in statx().  It *would* make sense to add a btrfs ioctl
-which reports the real device number of a file.  Tools that really need
-to work with btrfs could use that, but it would always be obvious that
-it was an exception.
-
->=20
-> This leaves the problem of nfsd.  Can you just integrate this new treeid in=
-to=20
-> nfsd, and use that to either change the ino within nfsd itself, or do somet=
-hing=20
-> similar to what your first patchset did and generate a fsid based on the tr=
-eeid?
-
-I would only want nfsd to change the inode number.  I no longer think it
-is acceptable for nfsd to report different device number (as I mention
-above).
-I would want the new inode number to be explicitly provided by the
-filesystem.  Whether that is a new export_operation or a new field in
-'struct kstat' doesn't really bother me.  I'd *prefer* it to be st_ino,
-but I can live without that.
-
-On the topic of inode numbers....  I've recently learned that btrfs
-never reuses inode (objectid) numbers (except possibly after an
-unmount).  Equally it doesn't re-use subvol numbers.  How much does this
-contribute to the 64 bits not being enough for subtree+inode?
-
-It would be nice if we could be comfortable limiting the objectid number
-to 40 bits and the root.objectid (filetree) number to 24 bits, and
-combine them into a 64bit inode number.
-
-If we added a inode number reuse scheme that was suitably performant,
-would that make this possible?  That would remove the need for a treeid,
-and allow us to use project-id to identify subtrees.
-
->=20
-> Mount options are messy, and are just going to lead to distro's turning the=
-m on=20
-> without understanding what's going on and then we have to support them fore=
-ver.=20
->   I want to get this fixed in a way that we all hate the least with as litt=
-le=20
-> opportunity for confused users to make bad decisions.  Thanks,
-
-Hence my question: how much do you hate creating a new filesystem type
-to fix the problems?
-
+-- 
 Thanks,
-NeilBrown
+
+Steve
