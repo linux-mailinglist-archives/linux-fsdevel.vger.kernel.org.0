@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0ABC3EAC91
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 23:41:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF343EAC93
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 23:41:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237787AbhHLVlZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 17:41:25 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:45732 "EHLO
+        id S237838AbhHLVl3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 17:41:29 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45752 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237732AbhHLVlZ (ORCPT
+        with ESMTP id S229919AbhHLVl3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 17:41:25 -0400
+        Thu, 12 Aug 2021 17:41:29 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id 11E831F44220
+        with ESMTPSA id 1077D1F44220
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com, jack@suse.com
 Cc:     linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
@@ -22,10 +22,10 @@ Cc:     linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
         dhowells@redhat.com, david@fromorbit.com, tytso@mit.edu,
         djwong@kernel.org, repnop@google.com,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com, Jan Kara <jack@suse.cz>
-Subject: [PATCH v6 08/21] fsnotify: Add wrapper around fsnotify_add_event
-Date:   Thu, 12 Aug 2021 17:39:57 -0400
-Message-Id: <20210812214010.3197279-9-krisman@collabora.com>
+        kernel@collabora.com
+Subject: [PATCH v6 09/21] fsnotify: Allow events reported with an empty inode
+Date:   Thu, 12 Aug 2021 17:39:58 -0400
+Message-Id: <20210812214010.3197279-10-krisman@collabora.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210812214010.3197279-1-krisman@collabora.com>
 References: <20210812214010.3197279-1-krisman@collabora.com>
@@ -35,110 +35,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fsnotify_add_event is growing in number of parameters, which in most
-case are just passed a NULL pointer.  So, split out a new
-fsnotify_insert_event function to clean things up for users who don't
-need an insert hook.
+Some file system events (i.e. FS_ERROR) might not be associated with an
+inode.  For these, it makes sense to associate them directly with the
+super block of the file system they apply to.  This patch allows the
+event to be reported with a NULL inode, by recovering the superblock
+directly from the data field, if needed.
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- fs/notify/fanotify/fanotify.c        |  4 ++--
- fs/notify/inotify/inotify_fsnotify.c |  2 +-
- fs/notify/notification.c             | 12 ++++++------
- include/linux/fsnotify_backend.h     | 23 ++++++++++++++++-------
- 4 files changed, 25 insertions(+), 16 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index c3eefe3f6494..acf78c0ed219 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -781,8 +781,8 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
- 	}
- 
- 	fsn_event = &event->fse;
--	ret = fsnotify_add_event(group, fsn_event, fanotify_merge,
--				 fanotify_insert_event);
-+	ret = fsnotify_insert_event(group, fsn_event, fanotify_merge,
-+				    fanotify_insert_event);
- 	if (ret) {
- 		/* Permission events shouldn't be merged */
- 		BUG_ON(ret == 1 && mask & FANOTIFY_PERM_EVENTS);
-diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
-index d1a64daa0171..a96582cbfad1 100644
---- a/fs/notify/inotify/inotify_fsnotify.c
-+++ b/fs/notify/inotify/inotify_fsnotify.c
-@@ -116,7 +116,7 @@ int inotify_handle_inode_event(struct fsnotify_mark *inode_mark, u32 mask,
- 	if (len)
- 		strcpy(event->name, name->name);
- 
--	ret = fsnotify_add_event(group, fsn_event, inotify_merge, NULL);
-+	ret = fsnotify_add_event(group, fsn_event, inotify_merge);
- 	if (ret) {
- 		/* Our event wasn't used in the end. Free it. */
- 		fsnotify_destroy_event(group, fsn_event);
-diff --git a/fs/notify/notification.c b/fs/notify/notification.c
-index 32f45543b9c6..44bb10f50715 100644
---- a/fs/notify/notification.c
-+++ b/fs/notify/notification.c
-@@ -78,12 +78,12 @@ void fsnotify_destroy_event(struct fsnotify_group *group,
-  * 2 if the event was not queued - either the queue of events has overflown
-  *   or the group is shutting down.
-  */
--int fsnotify_add_event(struct fsnotify_group *group,
--		       struct fsnotify_event *event,
--		       int (*merge)(struct fsnotify_group *,
--				    struct fsnotify_event *),
--		       void (*insert)(struct fsnotify_group *,
--				      struct fsnotify_event *))
-+int fsnotify_insert_event(struct fsnotify_group *group,
-+			  struct fsnotify_event *event,
-+			  int (*merge)(struct fsnotify_group *,
-+				       struct fsnotify_event *),
-+			  void (*insert)(struct fsnotify_group *,
-+					 struct fsnotify_event *))
- {
- 	int ret = 0;
- 	struct list_head *list = &group->notification_list;
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index cb75fb6d130a..e027af3cd8dd 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -494,16 +494,25 @@ extern int fsnotify_fasync(int fd, struct file *file, int on);
- extern void fsnotify_destroy_event(struct fsnotify_group *group,
- 				   struct fsnotify_event *event);
- /* attach the event to the group notification queue */
--extern int fsnotify_add_event(struct fsnotify_group *group,
--			      struct fsnotify_event *event,
--			      int (*merge)(struct fsnotify_group *,
--					   struct fsnotify_event *),
--			      void (*insert)(struct fsnotify_group *,
--					     struct fsnotify_event *));
-+extern int fsnotify_insert_event(struct fsnotify_group *group,
-+				 struct fsnotify_event *event,
-+				 int (*merge)(struct fsnotify_group *,
-+					      struct fsnotify_event *),
-+				 void (*insert)(struct fsnotify_group *,
-+						struct fsnotify_event *));
-+
-+static inline int fsnotify_add_event(struct fsnotify_group *group,
-+				     struct fsnotify_event *event,
-+				     int (*merge)(struct fsnotify_group *,
-+						  struct fsnotify_event *))
-+{
-+	return fsnotify_insert_event(group, event, merge, NULL);
-+}
-+
- /* Queue overflow event to a notification group */
- static inline void fsnotify_queue_overflow(struct fsnotify_group *group)
- {
--	fsnotify_add_event(group, group->overflow_event, NULL, NULL);
-+	fsnotify_add_event(group, group->overflow_event, NULL);
+--
+Changes since v5:
+  - add fsnotify_data_sb handle to retrieve sb from the data field. (jan)
+---
+ fs/notify/fsnotify.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 30d422b8c0fc..536db02cb26e 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -98,6 +98,14 @@ void fsnotify_sb_delete(struct super_block *sb)
+ 	fsnotify_clear_marks_by_sb(sb);
  }
  
- static inline bool fsnotify_is_overflow_event(u32 mask)
++static struct super_block *fsnotify_data_sb(const void *data, int data_type)
++{
++	struct inode *inode = fsnotify_data_inode(data, data_type);
++	struct super_block *sb = inode ? inode->i_sb : NULL;
++
++	return sb;
++}
++
+ /*
+  * Given an inode, first check if we care what happens to our children.  Inotify
+  * and dnotify both tell their parents about events.  If we care about any event
+@@ -455,8 +463,10 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
+  *		@file_name is relative to
+  * @file_name:	optional file name associated with event
+  * @inode:	optional inode associated with event -
+- *		either @dir or @inode must be non-NULL.
+- *		if both are non-NULL event may be reported to both.
++ *		If @dir and @inode are NULL, @data must have a type that
++ *		allows retrieving the file system associated with this
++ *		event.  if both are non-NULL event may be reported to
++ *		both.
+  * @cookie:	inotify rename cookie
+  */
+ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+@@ -483,7 +493,7 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+ 		 */
+ 		parent = dir;
+ 	}
+-	sb = inode->i_sb;
++	sb = inode ? inode->i_sb : fsnotify_data_sb(data, data_type);
+ 
+ 	/*
+ 	 * Optimization: srcu_read_lock() has a memory barrier which can
 -- 
 2.32.0
 
