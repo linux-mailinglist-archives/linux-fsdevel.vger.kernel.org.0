@@ -2,131 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 377B43EA758
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 17:17:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E99423EA7D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 17:42:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237915AbhHLPRs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 11:17:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59712 "EHLO
+        id S238361AbhHLPma (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 11:42:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236349AbhHLPRr (ORCPT
+        with ESMTP id S238231AbhHLPmZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 11:17:47 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFDF3C061756;
-        Thu, 12 Aug 2021 08:17:21 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id d22so8845109ioy.11;
-        Thu, 12 Aug 2021 08:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GKF7LrLlAMLrMH2jjtDnlDfaAEBjd6hDHDkqDzyH70U=;
-        b=VfbKknBhm2fGwdJTot0711RnnL7y6Qhgs9e2zfiOwrkNpi0rea3ye3tAgh3L7WpQjm
-         xbPwQmZja5ypeB5Z87gMwRpTT/4H9pBP6hRkjglD70bJqwPynQYtPjov63i4O74+jTxy
-         l9Etp06qnsoWBueKRO4Yp6hF/0Dug9vfoonHl67VCf+lQc+P7gwCmU3sKeQd4GmY5lGj
-         NimPHZSFkF5V8Gv2X4q/aHAvZ1sclp7UV86RaxMOMhfGX3uvcLWag5WQBrQhT13mqxkc
-         xqwqVAWYLARBLtH75y4PLlK+OgnZyYnTHFEvjE+Bd9axwrgOUlbfGfahiBrrmbNJUj7x
-         UHFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GKF7LrLlAMLrMH2jjtDnlDfaAEBjd6hDHDkqDzyH70U=;
-        b=Zc8u2+KBe0D4rR8aUK5zVSiUepSNDeKBws0rYT2ifp0WULvmtyilTaOigcjw/DHb9b
-         69iwTCuI/4/lxUq2GhvyhMbnZ5fASjRVcb2M/fHVQcvabIJnCKTGyI+/7R3A1/yhqOmM
-         r0io4wcDgzkcVYcCEOuJYlmKXH1A3fJQjOumz69VS+4MIZbvKUZ1vlpiTzaJEHgHV0MZ
-         KPm9W40XlCCFwCA6T3mZpavbb/b92x8tHGVPLnOqemy8Ly3khAHHET3od4KHNkt0e8JN
-         wlclasQN2yLKhZn0oeW6QXgzK/ao9+1pE5tuyraLIqSrrIRQoGOnj9vx+0DoNX0gl+6z
-         Moaw==
-X-Gm-Message-State: AOAM5334PH4cadPO9DMfMqP9kP+Gxh5K9kvOtLGHVbMQkJuqcgqw/qw9
-        wbpohHFJdSBSnu1RgCiEONj7bzzOxDQwjlL/JOM=
-X-Google-Smtp-Source: ABdhPJw+JMdbedFr5jKVfRwQWQa5uSVt3hUyO+7+Bpv9tLQuffuWwfvREG0GcQZMPPxQZvb9p/ft4/pRqijFisF7tJE=
-X-Received: by 2002:a02:a390:: with SMTP id y16mr4378166jak.120.1628781441440;
- Thu, 12 Aug 2021 08:17:21 -0700 (PDT)
+        Thu, 12 Aug 2021 11:42:25 -0400
+X-Greylist: delayed 382 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 12 Aug 2021 08:42:00 PDT
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 969B8C061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 08:42:00 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4GlrNw1RpnzMqK32;
+        Thu, 12 Aug 2021 17:35:28 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4GlrNv22RMzlh8Tf;
+        Thu, 12 Aug 2021 17:35:27 +0200 (CEST)
+Subject: Re: [RFC PATCH v2 5/9] fs: add anon_inode_getfile_secure() similar to
+ anon_inode_getfd_secure()
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+References: <162871480969.63873.9434591871437326374.stgit@olly>
+ <162871492283.63873.8743976556992924333.stgit@olly>
+ <1d19ca85-c6f9-7aa5-162a-f9728e0a8ccd@digikod.net>
+ <CAHC9VhRe3cgYuaV7w-BUwj_i=8_uuy3+5-8oA6QVsdXp3JgVtw@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <5daa09d2-c4f8-3c57-5643-93d2df00d503@digikod.net>
+Date:   Thu, 12 Aug 2021 17:35:27 +0200
+User-Agent: 
 MIME-Version: 1.0
-References: <20210804160612.3575505-1-krisman@collabora.com>
- <20210804160612.3575505-15-krisman@collabora.com> <20210805095618.GF14483@quack2.suse.cz>
- <87fsvf65zu.fsf@collabora.com> <20210812142047.GG14675@quack2.suse.cz>
-In-Reply-To: <20210812142047.GG14675@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 12 Aug 2021 18:17:10 +0300
-Message-ID: <CAOQ4uxjy2FOt6r5=x9FO3YXs8_FWwew055ZfrumDjSz0HCgz3w@mail.gmail.com>
-Subject: Re: [PATCH v5 14/23] fanotify: Encode invalid file handler when no
- inode is provided
-To:     Jan Kara <jack@suse.cz>
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Jan Kara <jack@suse.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHC9VhRe3cgYuaV7w-BUwj_i=8_uuy3+5-8oA6QVsdXp3JgVtw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 5:20 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 11-08-21 17:12:05, Gabriel Krisman Bertazi wrote:
-> > Jan Kara <jack@suse.cz> writes:
-> > >> @@ -376,14 +371,24 @@ static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
-> > >>            fh->flags |= FANOTIFY_FH_FLAG_EXT_BUF;
-> > >>    }
-> > >>
-> > >> -  dwords = fh_len >> 2;
-> > >> -  type = exportfs_encode_inode_fh(inode, buf, &dwords, NULL);
-> > >> -  err = -EINVAL;
-> > >> -  if (!type || type == FILEID_INVALID || fh_len != dwords << 2)
-> > >> -          goto out_err;
-> > >> -
-> > >> -  fh->type = type;
-> > >> -  fh->len = fh_len;
-> > >> +  if (inode) {
-> > >> +          dwords = fh_len >> 2;
-> > >> +          type = exportfs_encode_inode_fh(inode, buf, &dwords, NULL);
-> > >> +          err = -EINVAL;
-> > >> +          if (!type || type == FILEID_INVALID || fh_len != dwords << 2)
-> > >> +                  goto out_err;
-> > >> +          fh->type = type;
-> > >> +          fh->len = fh_len;
-> > >> +  } else {
-> > >> +          /*
-> > >> +           * Invalid FHs are used on FAN_FS_ERROR for errors not
-> > >> +           * linked to any inode. Caller needs to guarantee the fh
-> > >> +           * has at least FANOTIFY_NULL_FH_LEN bytes of space.
-> > >> +           */
-> > >> +          fh->type = FILEID_INVALID;
-> > >> +          fh->len = FANOTIFY_NULL_FH_LEN;
-> > >> +          memset(buf, 0, FANOTIFY_NULL_FH_LEN);
-> > >> +  }
-> > >
-> > > Maybe it will become clearer later during the series but why do you set
-> > > fh->len to FANOTIFY_NULL_FH_LEN and not 0?
-> >
-> > Jan,
-> >
-> > That is how we encode a NULL file handle (i.e. superblock error).  Amir
-> > suggested it would be an invalid FILEID_INVALID, with a zeroed handle of
-> > size 8.  I will improve the comment on the next iteration.
->
-> Thanks for info. Then I have a question for Amir I guess :) Amir, what's
-> the advantage of zeroed handle of size 8 instead of just 0 length file
-> handle?
 
-With current code, zero fh->len means we are not reporting an FID info
-record (e.g. due to encode error), see copy_info_records_to_user().
+On 12/08/2021 16:32, Paul Moore wrote:
+> On Thu, Aug 12, 2021 at 5:32 AM Mickaël Salaün <mic@digikod.net> wrote:
+>> On 11/08/2021 22:48, Paul Moore wrote:
+>>> Extending the secure anonymous inode support to other subsystems
+>>> requires that we have a secure anon_inode_getfile() variant in
+>>> addition to the existing secure anon_inode_getfd() variant.
+>>>
+>>> Thankfully we can reuse the existing __anon_inode_getfile() function
+>>> and just wrap it with the proper arguments.
+>>>
+>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>>>
+>>> ---
+>>> v2:
+>>> - no change
+>>> v1:
+>>> - initial draft
+>>> ---
+>>>  fs/anon_inodes.c            |   29 +++++++++++++++++++++++++++++
+>>>  include/linux/anon_inodes.h |    4 ++++
+>>>  2 files changed, 33 insertions(+)
+>>>
+>>> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+>>> index a280156138ed..e0c3e33c4177 100644
+>>> --- a/fs/anon_inodes.c
+>>> +++ b/fs/anon_inodes.c
+>>> @@ -148,6 +148,35 @@ struct file *anon_inode_getfile(const char *name,
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(anon_inode_getfile);
+>>>
+>>> +/**
+>>> + * anon_inode_getfile_secure - Like anon_inode_getfile(), but creates a new
+>>> + *                             !S_PRIVATE anon inode rather than reuse the
+>>> + *                             singleton anon inode and calls the
+>>> + *                             inode_init_security_anon() LSM hook.  This
+>>> + *                             allows for both the inode to have its own
+>>> + *                             security context and for the LSM to enforce
+>>> + *                             policy on the inode's creation.
+>>> + *
+>>> + * @name:    [in]    name of the "class" of the new file
+>>> + * @fops:    [in]    file operations for the new file
+>>> + * @priv:    [in]    private data for the new file (will be file's private_data)
+>>> + * @flags:   [in]    flags
+>>> + * @context_inode:
+>>> + *           [in]    the logical relationship with the new inode (optional)
+>>> + *
+>>> + * The LSM may use @context_inode in inode_init_security_anon(), but a
+>>> + * reference to it is not held.  Returns the newly created file* or an error
+>>> + * pointer.  See the anon_inode_getfile() documentation for more information.
+>>> + */
+>>> +struct file *anon_inode_getfile_secure(const char *name,
+>>> +                                    const struct file_operations *fops,
+>>> +                                    void *priv, int flags,
+>>> +                                    const struct inode *context_inode)
+>>> +{
+>>> +     return __anon_inode_getfile(name, fops, priv, flags,
+>>> +                                 context_inode, true);
+>>
+>> This is not directly related to this patch but why using the "secure"
+>> boolean in __anon_inode_getfile() and __anon_inode_getfd() instead of
+>> checking that context_inode is not NULL? This would simplify the code,
+>> remove this anon_inode_getfile_secure() wrapper and avoid potential
+>> inconsistencies.
+> 
+> The issue is that it is acceptable for the context_inode to be either
+> valid or NULL for callers who request the "secure" code path.
+> 
+> Look at the SELinux implementation of the anonymous inode hook in
+> selinux_inode_init_security_anon() and you will see that in cases
+> where the context_inode is valid we simply inherit the label from the
+> given inode, whereas if context_inode is NULL we do a type transition
+> using the requesting task and the anonymous inode's "name".
+> 
 
-This is because fh->len plays a dual role for indicating the length of the
-file handle and the existence of FID info.
+Indeed.
 
-I figured that keeping a positive length for the special NULL_FH is an
-easy way to workaround this ambiguity and keep the code simpler.
-We don't really need to pay any cost for keeping the 8 bytes zero buffer.
-
-Thanks,
-Amir.
+Acked-by: Mickaël Salaün <mic@linux.microsoft.com>
