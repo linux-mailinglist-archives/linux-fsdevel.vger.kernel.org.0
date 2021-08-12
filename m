@@ -2,93 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE1A33EAD51
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 00:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E983EAD66
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 00:51:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238363AbhHLWpy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 18:45:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49860 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236979AbhHLWpx (ORCPT
+        id S238393AbhHLWwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 18:52:14 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:33114 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237013AbhHLWwN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 18:45:53 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3175AC061756
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 15:45:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=5RoOrc/QeHUmwLj7isOrdmem34xlMg7fy/9RJonqboo=; b=tn0kUdHE5nqI4VUhzR7IBrZn6w
-        Pv+lIZ/1IQZe+iGQ/InKWJ25XSq+Jx2bRDTgnCJ+IysbWsPH0IzikCY/kJ/21BvQVqn6n38bD0hQc
-        sWFmXEbiWc10iBh8HUzknD7lH59UOKJoMeZpdQjc/BZOATmWlsE5SXZ4+fkc7nRuIq3BE5gw5EQie
-        3NoUWU6Tdqv/2c+I4cuNCaWHrV2yaMyCXFcLe2gdtihUt0ydTrpxCcqYbx7U8tMtrVQFAR9cUvRS4
-        h4YHHBdo6hXkxXCOWa5IOUiH5+4P0cA11r8EVLmyWLTP6vhVbXEHjw2zmQyJW1IJTmgnlkSfPsywg
-        gZJZhXhQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mEJR2-00F43C-Dd; Thu, 12 Aug 2021 22:44:37 +0000
-Date:   Thu, 12 Aug 2021 23:44:24 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] folio: Add a function to get the host inode for a
- folio
-Message-ID: <YRWkSGnk6M+6H/Oh@casper.infradead.org>
-References: <162880453171.3369675.3704943108660112470.stgit@warthog.procyon.org.uk>
+        Thu, 12 Aug 2021 18:52:13 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id BF9161FF3A;
+        Thu, 12 Aug 2021 22:51:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1628808704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=yMjGWJMZOmKrtApgIYOF47KeiAV23NtZqDPvEm6p/Vg=;
+        b=x1aZ2a2MNTYNKQqb3nVJURHIBmZz6ETb5i8qeZ918cksrKYzDU3+XBfGMJGnclztqgu5C9
+        XrOY1E73GjXskk7mhzr2DVsPlbJ8KvIqz1onuDtFaDLvKR1R2HwP2uMKYYVqq1czVzjYW7
+        B4v7zDn3kRNtgZ6UoNy4Yy6UX6bss1o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1628808704;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=yMjGWJMZOmKrtApgIYOF47KeiAV23NtZqDPvEm6p/Vg=;
+        b=UvzNzAqGlEPHeyh94Ayh0+lzq3vP6L3LvSSN9Q7mT9g6AuNyQMNZEvTc9jfRIjQXCDLxoc
+        Phq7zs08nW9vlhCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2EB6413C80;
+        Thu, 12 Aug 2021 22:51:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id +LdzN/6lFWFuewAAMHmgww
+        (envelope-from <neilb@suse.de>); Thu, 12 Aug 2021 22:51:42 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <162880453171.3369675.3704943108660112470.stgit@warthog.procyon.org.uk>
+From:   NeilBrown <neilb@suse.de>
+Date:   Fri, 13 Aug 2021 08:46:47 +1000
+Subject: [PATCH man-pages] statx.2: Add STATX_MNT_ID
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>
+Message-id: <162880868648.15074.7283929646453264436@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 10:42:11PM +0100, David Howells wrote:
-> Add a convenience function, folio_inode() that will get the host inode from
-> a folio's mapping.
-> 
-> [Includes netfs and afs changes for illustration, but I'd move those to a
-> different patch].
 
-Seems like a good idea.  Across my entire devel tree, I find 36
-occurrences:
+Linux 5.8 adds STATX_MNT_ID and stx_mnt_id.
+Add description to statx.2
 
-$ git log -p origin..devel |grep folio.*mapping.*host
-+	struct inode *inode = folio->mapping->host;
-+	struct inode *dir = folio->mapping->host;
-+	unsigned int nr_blocks = i_blocks_per_folio(page->mapping->host, folio);
-+	struct btrfs_fs_info *fs_info = btrfs_sb(folio->mapping->host->i_sb);
-+	struct afs_vnode *dvnode = AFS_FS_I(folio->mapping->host);
-+	tree = &BTRFS_I(folio->mapping->host)->io_tree;
-+		btrfs_warn(BTRFS_I(folio->mapping->host)->root->fs_info,
-+	struct btrfs_inode *inode = BTRFS_I(folio->mapping->host);
-+	inode = folio->mapping->host;
-+	struct cifsInodeInfo *cifsi = CIFS_I(folio->mapping->host);
-+	struct inode *inode = folio->mapping->host;
-+	struct gfs2_sbd *sdp = GFS2_SB(folio->mapping->host);
-+	trace_iomap_invalidate_folio(folio->mapping->host, offset, len);
-+	nfs_wb_page_cancel(folio_file_mapping(folio)->host, &folio->page);
-+	nfs_fscache_invalidate_page(&folio->page, folio->mapping->host);
-+	struct inode *inode = folio->mapping->host;
-+	struct inode *inode = folio->mapping->host;
-+	struct inode *inode = folio->mapping->host;
-+	struct inode *inode = folio->mapping->host;
-+	struct inode *inode = folio->mapping->host;
-+	int err = fuse_readlink_page(folio->mapping->host, &folio->page);
-+	struct inode *inode = folio->mapping->host;
-+	struct btrfs_inode *inode = BTRFS_I(folios[0]->mapping->host);
-+	struct inode *inode = folio->mapping->host;
-+		__entry->i_ino = folio->mapping->host->i_ino;
-+		if (folio->mapping->host->i_sb)
-+			__entry->s_dev = folio->mapping->host->i_sb->s_dev;
-+			__entry->s_dev = folio->mapping->host->i_rdev;
-+	struct inode *inode = folio->mapping->host;
-+	struct inode		*inode = folio->mapping->host;
-+	struct inode *inode = folio->mapping->host;
-+	struct inode *inode = folio->mapping->host;
-+	trace_iomap_invalidatepage(folio->mapping->host, offset, len);
-+	trace_iomap_releasepage(folio->mapping->host, folio_pos(folio),
-+	struct inode *inode = folio->mapping->host;
-+	if (folio->mapping->host->i_sb->s_iflags & SB_I_STABLE_WRITES)
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ man2/statx.2 | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-It's only two characters less, but it seems worth doing.
+diff --git a/man2/statx.2 b/man2/statx.2
+index 9e3aeaa36fa3..c41ee45f9bc4 100644
+--- a/man2/statx.2
++++ b/man2/statx.2
+@@ -77,6 +77,7 @@ struct statx {
+        containing the filesystem where the file resides */
+     __u32 stx_dev_major;   /* Major ID */
+     __u32 stx_dev_minor;   /* Minor ID */
++    __u64 stx_mnt_id;      /* Mount ID */
+ };
+ .EE
+ .in
+@@ -258,6 +259,7 @@ STATX_SIZE	Want stx_size
+ STATX_BLOCKS	Want stx_blocks
+ STATX_BASIC_STATS	[All of the above]
+ STATX_BTIME	Want stx_btime
++STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
+ STATX_ALL	[All currently available fields]
+ .TE
+ .in
+@@ -411,6 +413,13 @@ The device on which this file (inode) resides.
+ .IR stx_rdev_major " and "  stx_rdev_minor
+ The device that this file (inode) represents if the file is of block or
+ character device type.
++.TP
++.I stx_mnt_id
++.\" commit fa2fcf4f1df1559a0a4ee0f46915b496cc2ebf60
++The mount ID of the mount containing the file.  This is the same number repo=
+rted by
++.BR name_to_handle_at (2)
++and corresponds to the number in the first field in one of the records in
++.IR /proc/self/mountinfo .
+ .PP
+ For further information on the above fields, see
+ .BR inode (7).
+@@ -573,9 +582,11 @@ is Linux-specific.
+ .BR access (2),
+ .BR chmod (2),
+ .BR chown (2),
++.BR name_to_handle_at (2),
+ .BR readlink (2),
+ .BR stat (2),
+ .BR utime (2),
++.BR proc (5),
+ .BR capabilities (7),
+ .BR inode (7),
+ .BR symlink (7)
+--=20
+2.32.0
+
