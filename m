@@ -2,59 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE6423EA4C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 14:39:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C7C3EA4DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Aug 2021 14:47:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237054AbhHLMje (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 08:39:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:20106 "EHLO
+        id S237526AbhHLMsS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 08:48:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:54378 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235563AbhHLMja (ORCPT
+        by vger.kernel.org with ESMTP id S237163AbhHLMsR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 08:39:30 -0400
+        Thu, 12 Aug 2021 08:48:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628771945;
+        s=mimecast20190719; t=1628772472;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=sbqGKseWRRYhbY2LGrYsEOQPjgQ6ehV+W5zF3jgNGfg=;
-        b=cyMImLTLaArjT4LGx0T0mtmk4mEV59XFkyZlVepb5PTUKQ5Gz+CPnKK/jbEVGrNMNCULJi
-        mwb+8sUz1bUgBg7zwlaQ3Crzv+m+rI+x5UMgxGlByD8YL5/sCeWQh9mN9dNKdTtavREJvA
-        0rfno5rxB+EptaNxrLi0ttX+qKyisfY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-564-AeOQ-rpKPO6w26TwvTb1RA-1; Thu, 12 Aug 2021 08:39:04 -0400
-X-MC-Unique: AeOQ-rpKPO6w26TwvTb1RA-1
-Received: by mail-wm1-f72.google.com with SMTP id z18-20020a1c7e120000b02902e69f6fa2e0so1782969wmc.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 05:39:03 -0700 (PDT)
+        bh=+Q2PV7VnI4EE36Yroitk5R4cnOmAOmNpL3oeGGqR8U8=;
+        b=LW+ut9O0mSQGb0a8qs7oLY2n18S22PavAwktLoGbdleut2wO8w9rBVp1l3/nzaCk3eXt6W
+        OkZ+s+/WxvckBC4QeQINlcPevcuxmHfhYjMsGfbGY/+rwYQ9dNVaasGEdxRlEHJCDQwZqM
+        +52ExREyYMgPgT6y3vsuVew1QMf7enU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-176-zc3XIWQlNTasE3qdVVAEgg-1; Thu, 12 Aug 2021 08:47:51 -0400
+X-MC-Unique: zc3XIWQlNTasE3qdVVAEgg-1
+Received: by mail-wm1-f69.google.com with SMTP id f25-20020a1c6a190000b029024fa863f6b0so3331401wmc.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Aug 2021 05:47:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=sbqGKseWRRYhbY2LGrYsEOQPjgQ6ehV+W5zF3jgNGfg=;
-        b=GFqIKNBhDu77fGyJho6i7mwbRKln2MVgz9UmDe6LXnfvqAfKDyg1umygpi8OSQINLI
-         +EaZCDbwWOOQJKp+8QVw/dBbPm+uKbbxnuQ9buT38A3YEclcCZOiriLq/0/IRPtBrSYS
-         H8Z/zbhyZ3QS2smWWgnSTJZiLm04czThxWFXD6/d55ku48tH/yVIy8UJ5m0lcYEZu0Bg
-         4diSmCyi5P3xt9GTQuiiEtayXYTHHT2iEYgpYjAZlPoP8PtEj+bDiO59DolPRz8oNDQY
-         l2qWnlBa37gwYKN+gVMXz7g0l603V4FfHWYOvz4vxe6TOHckJr2yYdv0vn5JeI13lXLz
-         Rv7A==
-X-Gm-Message-State: AOAM530+930HHfeQK65gYVgoYGAgHxdaBeF3/2P5P5JHl6YZcBPZyPc/
-        b/F6w5EwgM1Qtmv7dccZKxFeBURc4KTE37Cp4jjL2rBz614RclfWyoVUo3MVdwWvpxdjlrRNW9y
-        0nPU0t3gG4ni8u1LBozJExMjIVg==
-X-Received: by 2002:adf:db83:: with SMTP id u3mr3880775wri.363.1628771942739;
-        Thu, 12 Aug 2021 05:39:02 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxDcYmjDSU043EHzDh1omoow7kdOXdSFpNIKh9fkmzaYfVhQ8MrQo4AHUXle/AZphgQiUXdsA==
-X-Received: by 2002:adf:db83:: with SMTP id u3mr3880754wri.363.1628771942458;
-        Thu, 12 Aug 2021 05:39:02 -0700 (PDT)
+        bh=+Q2PV7VnI4EE36Yroitk5R4cnOmAOmNpL3oeGGqR8U8=;
+        b=IRuUL+ucpjqAn9NBM/iY8OnB4f8UKqgg5HtgdhLKoIswbIH4dG8VHk1TGczZ/NLxJ+
+         dDl2dwf4Rpa8lX4USOKQKJJO9cN0hY7xXy49oBA8nw9hVYb5AHp8KXqYGIzub8/hg5Fc
+         VqF0YPz4w9/vNWCjO2/d0cXJ6CDOcag8eL2C023vGy8QMEq2pFOVO2xz+i5pVk1TyHEI
+         PGfhnsUwG1Ykk3l29Yzkr8u10/TIxWgN40VvGPeuoHdmgetFcTZt8JD2Mle15YC382hN
+         blbJAe/reHjZOO2Yyt7OZrOWwX6+ZfN6IS129Q2mVL2+489PQkh7gP+Vn9CMppiAU5Su
+         DXjw==
+X-Gm-Message-State: AOAM533LIlj+5wUZK1Ig8JD3e5qoTkcK96l9pOz5ng9eZXjOuMMwuWkV
+        t0lZ1kVc+X1lzLbxDJcB3gIGwX9lS0wG1DrCBDGGX1ry7yHINS8NgDxNBxGszL9Wl893jsfyRjm
+        39h3ipBPCZNb9ZHR0YnIZsafbtQ==
+X-Received: by 2002:a05:600c:3644:: with SMTP id y4mr10313605wmq.156.1628772469969;
+        Thu, 12 Aug 2021 05:47:49 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzVQ12ODWZtcTQdX51baaEDiT/qZqZ0A623jE9FyRBicdlISiUu/+dSjRRCSRweYcYjSAvmxQ==
+X-Received: by 2002:a05:600c:3644:: with SMTP id y4mr10313541wmq.156.1628772469723;
+        Thu, 12 Aug 2021 05:47:49 -0700 (PDT)
 Received: from [192.168.3.132] (p4ff23d8b.dip0.t-ipconnect.de. [79.242.61.139])
-        by smtp.gmail.com with ESMTPSA id d18sm2297940wrb.16.2021.08.12.05.38.59
+        by smtp.gmail.com with ESMTPSA id f2sm1958077wru.31.2021.08.12.05.47.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Aug 2021 05:39:01 -0700 (PDT)
-Subject: Re: [PATCH v1 3/7] kernel/fork: always deny write access to current
- MM exe_file
-To:     Christian Brauner <christian.brauner@ubuntu.com>
+        Thu, 12 Aug 2021 05:47:48 -0700 (PDT)
+Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
+To:     Florian Weimer <fweimer@redhat.com>
 Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -92,6 +91,7 @@ Cc:     linux-kernel@vger.kernel.org,
         Shawn Anastasio <shawn@anastas.io>,
         Steven Price <steven.price@arm.com>,
         Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
         Jens Axboe <axboe@kernel.dk>,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         Peter Xu <peterx@redhat.com>,
@@ -107,21 +107,17 @@ Cc:     linux-kernel@vger.kernel.org,
         Chengguang Xu <cgxu519@mykernel.net>,
         =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
         linux-unionfs@vger.kernel.org, linux-api@vger.kernel.org,
-        x86@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Andrei Vagin <avagin@gmail.com>
+        x86@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 References: <20210812084348.6521-1-david@redhat.com>
- <20210812084348.6521-4-david@redhat.com>
- <20210812100544.uhsfp75b4jcrv3qx@wittgenstein>
- <1b6d27cf-2238-0c1c-c563-b38728fbabc2@redhat.com>
- <20210812123239.trksnm57owzwzokj@wittgenstein>
+ <87r1eyg8h6.fsf@oldenburg.str.redhat.com>
 From:   David Hildenbrand <david@redhat.com>
 Organization: Red Hat
-Message-ID: <59b6be94-c7d0-0535-1348-4e9c7f188d20@redhat.com>
-Date:   Thu, 12 Aug 2021 14:38:59 +0200
+Message-ID: <a57e5120-866c-0b27-8203-0632edda2717@redhat.com>
+Date:   Thu, 12 Aug 2021 14:47:46 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20210812123239.trksnm57owzwzokj@wittgenstein>
+In-Reply-To: <87r1eyg8h6.fsf@oldenburg.str.redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -129,73 +125,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12.08.21 14:32, Christian Brauner wrote:
-> On Thu, Aug 12, 2021 at 12:13:44PM +0200, David Hildenbrand wrote:
->> On 12.08.21 12:05, Christian Brauner wrote:
->>> [+Cc Andrei]
->>>
->>> On Thu, Aug 12, 2021 at 10:43:44AM +0200, David Hildenbrand wrote:
->>>> We want to remove VM_DENYWRITE only currently only used when mapping the
->>>> executable during exec. During exec, we already deny_write_access() the
->>>> executable, however, after exec completes the VMAs mapped
->>>> with VM_DENYWRITE effectively keeps write access denied via
->>>> deny_write_access().
->>>>
->>>> Let's deny write access when setting the MM exe_file. With this change, we
->>>> can remove VM_DENYWRITE for mapping executables.
->>>>
->>>> This represents a minor user space visible change:
->>>> sys_prctl(PR_SET_MM_EXE_FILE) can now fail if the file is already
->>>> opened writable. Also, after sys_prctl(PR_SET_MM_EXE_FILE), the file
->>>
->>> Just for completeness, this also affects PR_SET_MM_MAP when exe_fd is
->>> set.
->>
->> Correct.
->>
->>>
->>>> cannot be opened writable. Note that we can already fail with -EACCES if
->>>> the file doesn't have execute permissions.
->>>>
->>>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>>> ---
->>>
->>> The biggest user I know and that I'm involved in is CRIU which heavily
->>> uses PR_SET_MM_MAP (with a fallback to PR_SET_MM_EXE_FILE on older
->>> kernels) during restore. Afair, criu opens the exe fd as an O_PATH
->>> during dump and thus will use the same flag during restore when
->>> opening it. So that should be fine.
->>
->> Yes.
->>
->>>
->>> However, if I understand the consequences of this change correctly, a
->>> problem could be restoring workloads that hold a writable fd open to
->>> their exe file at dump time which would mean that during restore that fd
->>> would be reopened writable causing CRIU to fail when setting the exe
->>> file for the task to be restored.
->>
->> If it's their exe file, then the existing VM_DENYWRITE handling would have
->> forbidden these workloads to open the fd of their exe file writable, right?
+On 12.08.21 14:20, Florian Weimer wrote:
+> * David Hildenbrand:
 > 
-> Yes.
+>> There are some (minor) user-visible changes with this series:
+>> 1. We no longer deny write access to shared libaries loaded via legacy
+>>     uselib(); this behavior matches modern user space e.g., via dlopen().
+>> 2. We no longer deny write access to the elf interpreter after exec
+>>     completed, treating it just like shared libraries (which it often is).
 > 
->> At least before doing any PR_SET_MM_MAP/PR_SET_MM_EXE_FILE. But that should
->> rule out quite a lot of cases we might be worried about, right?
+> We have a persistent issue with people using cp (or similar tools) to
+> replace system libraries.  Since the file is truncated first, all
+> relocations and global data are replaced by file contents, result in
+> difficult-to-diagnose crashes.  It would be nice if we had a way to
+> prevent this mistake.  It doesn't have to be MAP_DENYWRITE or MAP_COPY.
+> It could be something completely new, like an option that turns every
+> future access beyond the truncation point into a signal (rather than
+> getting bad data or bad code and crashing much later).
 > 
-> Yes, it rules out the most obvious cases. The problem is really just
-> that we don't know how common weirder cases are. But that doesn't mean
-> we shouldn't try and risk it. This is a nice cleanup and playing
-> /proc/self/exe games isn't super common.
+> I don't know how many invalid copy operations are currently thwarted by
+> the current program interpreter restriction.  I doubt that lifting the
+> restriction matters.
 > 
+>> 3. We always deny write access to the file linked via /proc/pid/exe:
+>>     sys_prctl(PR_SET_MM_EXE_FILE) will fail if write access to the file
+>>     cannot be denied, and write access to the file will remain denied
+>>     until the link is effectivel gone (exec, termination,
+>>     PR_SET_MM_EXE_FILE) -- just as if exec'ing the file.
+>>
+>> I was wondering if we really care about permanently disabling write access
+>> to the executable, or if it would be good enough to just disable write
+>> access while loading the new executable during exec; but I don't know
+>> the history of that -- and it somewhat makes sense to deny write access
+>> at least to the main executable. With modern user space -- dlopen() -- we
+>> can effectively modify the content of shared libraries while being used.
+> 
+> Is there a difference between ET_DYN and ET_EXEC executables?
 
-Right, and having the file your executing opened writable isn't 
-something very common as well.
-
-If we really run into problems, we could not protect the new file when 
-issuing PR_SET_MM_MAP/PR_SET_MM_EXE_FILE. But I'd like to avoid that, if 
-possible, because it feels like working around something that never 
-should have worked that way and is quite inconsistent.
+No, I don't think so. When exec'ing, the main executable will see a 
+deny_write_access(file); AFAIKT, that can either be ET_DYN or ET_EXEC.
 
 -- 
 Thanks,
