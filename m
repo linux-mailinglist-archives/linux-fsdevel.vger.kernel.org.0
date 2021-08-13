@@ -2,68 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23B0C3EBE98
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Aug 2021 01:15:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3DF73EBEE0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Aug 2021 01:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235411AbhHMXQF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Aug 2021 19:16:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44822 "EHLO
+        id S235709AbhHMXuU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Aug 2021 19:50:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235029AbhHMXQE (ORCPT
+        with ESMTP id S235676AbhHMXuU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Aug 2021 19:16:04 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39093C061756;
-        Fri, 13 Aug 2021 16:15:37 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id h13so15344653wrp.1;
-        Fri, 13 Aug 2021 16:15:37 -0700 (PDT)
+        Fri, 13 Aug 2021 19:50:20 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2247C0617AE;
+        Fri, 13 Aug 2021 16:49:52 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id i9so2189265lfg.10;
+        Fri, 13 Aug 2021 16:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=message-id:from:mime-version:content-transfer-encoding
-         :content-description:subject:to:date:reply-to;
-        bh=5NTJSky9UX3JbuB9riY3wCYfXDpCwy2c7hzO0kF4AHA=;
-        b=m3kaznv5RSK1BWuewGhPniRCVZRVtmLhiMQc82NPgV1lbpig4IpWDqLHfRFQWep4uV
-         u9USJqn0i117kVuZbpQRiaKoPduf5vBv+5n2XCJ1Zi/PiOCPtxBqSNRCAQP5kaQ2mAsU
-         Y5bZ9l/Ywh28JmGvLJoxqM6Ul1ffDV3u/hGNUkAkuLBi6/5lvfo3cx5uV4E7YqFcrVoD
-         P473X5jZVfA8ng+UmAQBhFJnNm0tghQFe9GY6EPJCAtfH7J6uWDWXNiLZGtU9MevCUW5
-         DRowXfKzl2fu1GqCIZqK9osnArGXXSweMNTjsEvEIs/LZ9N5qS/xKejKJQ4am+tM4765
-         6D3g==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=6yFTZIaEgp5H00dOMerBFBCLeoc8spOxtK7FHqbj7Z8=;
+        b=AOynv45tzmtsW0Bi2SASWB9SqD81av84eAjiWkLfpy1LS3wdZCCTAKknaAePocoWv0
+         sTK7ReQ+KN+EqE4+e/aWycphoD/Ki9Sh1KqT0jUy7WDCmnJTY4TE/wVmNmuPkcGng/1h
+         EaGZiG0e8CizEeZQPJuRyiF1zVb8lKPOuKGoMQzOScuGtJ338lxuk+K2Vb2KVhDscj0o
+         ySeRr13j6ILkF2oQkkjdWKMnpyglZNGYAYmbgGsmZVqESDcObwsaXCR7oLcM6DJWqS6O
+         Qf6nbyPCea5rcy98MkwoRDDdH5WR4OYn8PYBPtPR9EuU7ZgVu7See8jnuGozKWOgZF4M
+         1iQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:from:mime-version
-         :content-transfer-encoding:content-description:subject:to:date
-         :reply-to;
-        bh=5NTJSky9UX3JbuB9riY3wCYfXDpCwy2c7hzO0kF4AHA=;
-        b=kY2WU6JKkqW14/hBfsBCO7KzhB6k0DCzrPgFmhWabjMHMoS/ln/38s8LS3Mdv8KAuy
-         kzWZOK1ARLp6s5mstu+MsdF9HlSqkhthDUBjLpmH67OIjnBrMPiyKW5xawtISRBhgZEB
-         pMZzDP/6QFuOpd/MeuLg6QCUCqcCsGRdTh2K9eqgm0Ii+U1TnmkgYN36leSoWdOEsGCz
-         SD7gBL3LFRPdgtrx5BsxErDq4uAt1ywl5PF5jlVRoCVo9Xh9EWVdxiY7jA/TDizkO53y
-         jTxBxjQt27OeiODaL9uhzzIZwE+YNmAMUFp0gMzxjte/OYqzCZ7w/leIEHdi2pFL0vwC
-         CxPQ==
-X-Gm-Message-State: AOAM531e/pX1DNTNWQnXBiHUtkds4/4E7wKbDpuVn+KyVouNLjCyJymD
-        2nvav++5bEmW+kzUx6qnx84=
-X-Google-Smtp-Source: ABdhPJzo+/68/RbgwmMkWN69xSAJ9ge9jJs+Ht3ETckBqMN9U4gb0ZjAmsERXteo+OUcF7kI6kbhSQ==
-X-Received: by 2002:a5d:45c2:: with SMTP id b2mr5463075wrs.188.1628896535899;
-        Fri, 13 Aug 2021 16:15:35 -0700 (PDT)
-Received: from [192.168.1.70] ([102.64.163.193])
-        by smtp.gmail.com with ESMTPSA id a18sm2566962wmg.43.2021.08.13.16.15.31
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Fri, 13 Aug 2021 16:15:35 -0700 (PDT)
-Message-ID: <6116fd17.1c69fb81.4edbd.f5df@mx.google.com>
-From:   Vanina curth <akoelekouevidjin95@gmail.com>
-X-Google-Original-From: Vanina  curth
-Content-Type: text/plain; charset="iso-8859-1"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=6yFTZIaEgp5H00dOMerBFBCLeoc8spOxtK7FHqbj7Z8=;
+        b=Z1xshl6UETD6ixNgpGeBENw/w05tJ/vVWCBpT5Ps1mIbqQchcEbEKmEsb2o6DQI3DW
+         Oh3ezEO6hgu4m44KmYErs+tHladZGf3VcklHc5WV0XyjDR9C0W2S/OLSfBXvc3dsP/Zk
+         GxRuHKCYpEsyYj2fmEYNSkaoSzwKPfqh/eX58TRej7/DVnZ38bebDcocym6sQjCz80CK
+         a8n7CNj5kn7z42s7+C+loj2SMurQJZH28VuMicbPG/4lPIyg7pd932/rjkp1ePyXPC/X
+         XPl6cX3DROZJnZJHuxggAP3Ek5A5/HgS3frrN6uaLgOPWnHCXQnd4bOlcywXrBRG9nI8
+         8rxQ==
+X-Gm-Message-State: AOAM533VKOF06EHhj4tQsLQRwIwFNpqzCIML/BqEiF/6eA2DXFXoN32n
+        9GX49y2RNFSZIFjAutAXwak=
+X-Google-Smtp-Source: ABdhPJyfzZ1Iq1e0y7zeNo0ac8SUpfcsVh6aK2rPlhPmD5Hsta9LcD2g3zz+E454DTpRZc31uXBucA==
+X-Received: by 2002:a05:6512:398e:: with SMTP id j14mr3343870lfu.573.1628898590894;
+        Fri, 13 Aug 2021 16:49:50 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id v1sm305584ljb.44.2021.08.13.16.49.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Aug 2021 16:49:50 -0700 (PDT)
+Date:   Sat, 14 Aug 2021 02:49:48 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        linux-fsdevel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net
+Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        pali@kernel.org, djwong@kernel.org, ebiggers@kernel.org,
+        dsterba@suse.cz, aaptel@suse.com, nborisov@suse.com,
+        dan.carpenter@oracle.com, willy@infradead.org,
+        rdunlap@infradead.org, mark@harmstone.com, joe@perches.com,
+        anton@tuxera.com, hch@lst.de, andy.lavr@gmail.com,
+        oleksandr@natalenko.name
+Subject: New mailing list for ntfs3 driver
+Message-ID: <20210813234948.6b46jafsosgdoec4@kari-VirtualBox>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Dear
-To:     Recipients <Vanina@vger.kernel.org>
-Date:   Fri, 13 Aug 2021 23:15:10 +0000
-Reply-To: curtisvani9008@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-How are you? I'm Vanina. I'm interested to know you and I would like to kno=
-w more about you and establish relationship with you. i will wait for your =
-response. thank you.
+New mailing list ntfs3@lists.linux.dev has opened. If you have any
+intrest for this driver please consider subscribing.
+https://subspace.kernel.org/lists.linux.dev.html
+
+I have included cc list from ntfs3 v27 patch series and also ntfs,
+fsdevel and linux-kernel mailing lists. If you think anyone else is
+intrested please forward email.
+
