@@ -2,150 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A5303EBDA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 22:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C0A13EBE1C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Aug 2021 00:01:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234719AbhHMUwF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Aug 2021 16:52:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52323 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233915AbhHMUwE (ORCPT
+        id S235077AbhHMWCB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Aug 2021 18:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56464 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234831AbhHMWCA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Aug 2021 16:52:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628887897;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=m2X6nzOXxo3H0EdqupppVKuVb2Pe4/bVUTDNmqoeLdE=;
-        b=W8LIVHwvIaZOwMMIqMzpnh9nR+BugJJiua54Z7qqEJQFzZodEQbRqQwgWMTNrE8CPc12h7
-        VLWqY8ui7zx20vH4OTAQKN6Rk/W9VfLPf/CYwnoR3SuC4OEFFlHuaJYUFU971aSDruhosK
-        rBlN0X/IHz8GswXR6rmRnY9JYsWEMe4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-183-Y3LCxE_EOcGvjoJz3lSDhA-1; Fri, 13 Aug 2021 16:51:35 -0400
-X-MC-Unique: Y3LCxE_EOcGvjoJz3lSDhA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E9ADC1008060;
-        Fri, 13 Aug 2021 20:51:33 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.39.194.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 795DB1BCF0;
-        Fri, 13 Aug 2021 20:51:11 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     ebiederm@xmission.com (Eric W. Biederman)
-Cc:     David Laight <David.Laight@ACULAB.COM>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        "Namhyung Kim" <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Mike Rapoport" <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Michel Lespinasse <walken@google.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Shawn Anastasio" <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        "Nicholas Piggin" <npiggin@gmail.com>,
+        Fri, 13 Aug 2021 18:02:00 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EDB7C061756;
+        Fri, 13 Aug 2021 15:01:33 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id bo18so17441573pjb.0;
+        Fri, 13 Aug 2021 15:01:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TOBVJrjsgyyHnpcMAvT9Ogq8QQ7Hb9vvqmUruVxXN2o=;
+        b=WpsQYA0E3J2TT9mQW6fdKOlZNQl/NE1m98+rQUoh9fdPBOCIxv8dVlFOyveBL/7gYK
+         TDgEzV1GrWXVCANagZTxNWsqZ4qK6sKfkiVL6n2OpAUKQQ0lMx+gyfoq7Jhv3CrUdVlW
+         FF0bKNNkDEJ8kSxKO6Xe9thMxclcINLm4INeoB5ANkYa8LqmFof2YZT5Ti8tNBo5d/Ig
+         2G9GXjS/zVbcvB8KJqvU28T4lUfC/64t8yqT20Kh2d1nqqvDaId1hkh5FV7jsJFdpXBs
+         fcyc6v1huWNqth+VHzKXsJlaCNx7aLgcLpbOU/xnUA/Xsk8i3EeuopWlVdVrJOT0XHqj
+         /Znw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TOBVJrjsgyyHnpcMAvT9Ogq8QQ7Hb9vvqmUruVxXN2o=;
+        b=ZlCnYU5ThZcWDXhRypxC1Vz+7pK/sZRH4pRgeJtgN2wptFMt+eFR3djOCl6HzlBdKJ
+         v4yTF3fFthP1wf8qG9QdtbMSi2hyRW9lamBu3jgtUMAZFRwBK1SBUtCmLne4bBznXhCp
+         AYzJT80w/iIK4ohrN2FHpA0GmHnAPT5FULaqSeJY6v6iv5FABWUhvJzqrBss3rJ5oRp2
+         V5nK97hGbdsFZGu9DBwlkdL2byzmjXGzdoelN42i59EsROuvv7N1wVbqHmKyGGh6zoI6
+         31IE6wAyWKv5niFdNrBmhmkuSz0XWMOsOWgncIrb1xcZf483HokMusghl39QMhO99D8j
+         18uA==
+X-Gm-Message-State: AOAM531PXQzEJdKwh6/KrANylDWT/6CruGRv0WgWaTh0NPMO9eHPzDjz
+        L/IeuZk/3OsxXRuiOhi4gPA=
+X-Google-Smtp-Source: ABdhPJz06GYCYcbTM9vb10baLeuZjhugn9W2fiof/+WqIneri+SIorNSFtGKGhEYsbS2WvXgkW+aJw==
+X-Received: by 2002:a17:90a:4383:: with SMTP id r3mr4559762pjg.223.1628892092762;
+        Fri, 13 Aug 2021 15:01:32 -0700 (PDT)
+Received: from localhost.localdomain (122-61-176-117-fibre.sparkbb.co.nz. [122.61.176.117])
+        by smtp.gmail.com with ESMTPSA id n32sm3804262pgl.69.2021.08.13.15.01.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Aug 2021 15:01:32 -0700 (PDT)
+From:   Michael Kerrisk <mtk.manpages@gmail.com>
+To:     ebiederm@xmission.com
+Cc:     Michael Kerrisk <mtk.manpages@gmail.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Alejandro Colomar <alx.manpages@gmail.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Gabriel Krisman Bertazi" <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        "Suren Baghdasaryan" <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        "Marco Elver" <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Collin Fijalkovich <cfijalkovich@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christian =?utf-8?Q?K=C3=B6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>,
-        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
-References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
-        <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
-        <87lf56bllc.fsf@disp2133>
-        <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
-        <87eeay8pqx.fsf@disp2133>
-        <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
-        <87h7ft2j68.fsf@disp2133>
-Date:   Fri, 13 Aug 2021 22:51:09 +0200
-In-Reply-To: <87h7ft2j68.fsf@disp2133> (Eric W. Biederman's message of "Fri,
-        13 Aug 2021 15:17:51 -0500")
-Message-ID: <871r6xdq6a.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+Subject: [PATCHi, man-pages] mount_namespaces.7: More clearly explain "locked mounts"
+Date:   Sat, 14 Aug 2021 00:01:20 +0200
+Message-Id: <20210813220120.502058-1-mtk.manpages@gmail.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Eric W. Biederman:
+For a long time, this manual page has had a brief discussion of
+"locked" mounts, without clearly saying what this concept is, or
+why it exists. Expand the discussion with an explanation of what
+locked mounts are, why mounts are locked, and some examples of the
+effect of locking.
 
-> Florian Weimer, would it be possible to get glibc's ld.so implementation to use
-> MAP_SHARED?  Just so people reading the code know what to expect of the
-> kernel?  As far as I can tell there is not a practical difference
-> between a read-only MAP_PRIVATE and a read-only MAP_SHARED.
+Thanks to Christian Brauner for a lot of help in understanding
+these details.
 
-Some applications use mprotect to change page protections behind glibc's
-back.  Using MAP_SHARED would break fork pretty badly.
+Reported-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Michael Kerrisk <mtk.manpages@gmail.com>
+---
 
-Most of the hard-to-diagnose crashes seem to come from global data or
-relocations because they are wiped by truncation.  And we certainly
-can't use MAP_SHARED for those.  Code often seems to come back unchanged
-after the truncation because the overwritten file hasn't actually
-changed.  File attributes don't help because the copying is an
-adminstrative action in the context of the application (maybe the result
-of some automation).
+Hello Eric and others,
 
-I think avoiding the crashes isn't the right approach.  What I'd like to
-see is better diagnostics.  Writing mtime and ctime to the core file
-might help.  Or adding a flag to the core file and /proc/PID/smaps that
-indicates if the file has been truncated across the mapping since the
-mapping was created.
+After some quite helpful info from Chrstian Brauner, I've expanded
+the discussion of locked mounts (a concept I didn't really have a
+good grasp on) in the mount_namespaces(7) manual page. I would be
+grateful to receive review comments, acks, etc., on the patch below.
+Could you take a look please?
 
-A bit less conservative and even more obvious to diagnose would be a new
-flag for the mapping (perhaps set via madvise) that causes any future
-access to the mapping to fault with SIGBUS and a special si_code value
-after the file has been truncated across the mapping.  I think we would
-set that in the glibc dynamic loader.  It would make the crashes much
-less weird.
+Cheers,
 
-Thanks,
-Florian
+Michael
+
+ man7/mount_namespaces.7 | 73 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+
+diff --git a/man7/mount_namespaces.7 b/man7/mount_namespaces.7
+index e3468bdb7..97427c9ea 100644
+--- a/man7/mount_namespaces.7
++++ b/man7/mount_namespaces.7
+@@ -107,6 +107,62 @@ operation brings across all of the mounts from the original
+ mount namespace as a single unit,
+ and recursive mounts that propagate between
+ mount namespaces propagate as a single unit.)
++.IP
++In this context, "may not be separated" means that the mounts
++are locked so that they may not be individually unmounted.
++Consider the following example:
++.IP
++.RS
++.in +4n
++.EX
++$ \fBsudo mkdir /mnt/dir\fP
++$ \fBsudo sh \-c \(aqecho "aaaaaa" > /mnt/dir/a\(aq\fP
++$ \fBsudo mount \-\-bind -o ro /some/path /mnt/dir\fP
++$ \fBls /mnt/dir\fP   # Former contents of directory are invisible
++.EE
++.in
++.RE
++.IP
++The above steps, performed in a more privileged user namespace,
++have created a (read-only) bind mount that
++obscures the contents of the directory
++.IR /mnt/dir .
++For security reasons, it should not be possible to unmount
++that mount in a less privileged user namespace,
++since that would reveal the contents of the directory
++.IR /mnt/dir .
++.IP
++Suppose we now create a new mount namespace
++owned by a (new) subordinate user namespace.
++The new mount namespace will inherit copies of all of the mounts
++from the previous mount namespace.
++However, those mounts will be locked because the new mount namespace
++is owned by a less privileged user namespace.
++Consequently, an attempt to unmount the mount fails:
++.IP
++.RS
++.in +4n
++.EX
++$ \fBsudo unshare \-\-user \-\-map\-root\-user \-\-mount \e\fP
++               \fBstrace \-o /tmp/log \e\fP
++               \fBumount /mnt/dir\fP
++umount: /mnt/dir: not mounted.
++$ \fBgrep \(aq^umount\(aq /tmp/log\fP
++umount2("/mnt/dir", 0)     = \-1 EINVAL (Invalid argument)
++.EE
++.in
++.RE
++.IP
++The error message from
++.BR mount (8)
++is a little confusing, but the
++.BR strace (1)
++output reveals that the underlying
++.BR umount2 (2)
++system call failed with the error
++.BR EINVAL ,
++which is the error that the kernel returns to indicate that
++the mount is locked.
+ .IP *
+ The
+ .BR mount (2)
+@@ -128,6 +184,23 @@ settings become locked
+ when propagated from a more privileged to
+ a less privileged mount namespace,
+ and may not be changed in the less privileged mount namespace.
++.IP
++This point can be illustrated by a continuation of the previous example.
++In that example, the bind mount was marked as read-only.
++For security reasons,
++it should not be possible to make the mount writable in
++a less privileged namespace, and indeed the kernel prevents this,
++as illustrated by the following:
++.IP
++.RS
++.in +4n
++.EX
++$ \fBsudo unshare \-\-user \-\-map\-root\-user \-\-mount \e\fP
++               \fBmount \-o remount,rw /mnt/dir\fP
++mount: /mnt/dir: permission denied.
++.EE
++.in
++.RE
+ .IP *
+ .\" (As of 3.18-rc1 (in Al Viro's 2014-08-30 vfs.git#for-next tree))
+ A file or directory that is a mount point in one namespace that is not
+-- 
+2.31.1
 
