@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1553EBA88
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 19:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACD4E3EBA92
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 19:00:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbhHMRA1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Aug 2021 13:00:27 -0400
-Received: from mail-bn1nam07on2069.outbound.protection.outlook.com ([40.107.212.69]:7591
+        id S231823AbhHMRAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Aug 2021 13:00:39 -0400
+Received: from mail-bn1nam07on2064.outbound.protection.outlook.com ([40.107.212.64]:1622
         "EHLO NAM02-BN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229841AbhHMRAZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Aug 2021 13:00:25 -0400
+        id S229528AbhHMRAd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 13 Aug 2021 13:00:33 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=flWRAT8fnukugsURVuo2WbUPXpwDWendO4ukKnsHjcWpY8A9QAkJJtY4iJlPI4VIu/lZFacuI+WkdLT6dZu3xY1JjormMK2Rc6mtKzDMsbcjYnsYwzX9YomVVEOfL4y9ZD/jTY3Nt8NLk0m6BFUwqZsTIIZWj2YSfs2yIzQMa35NBHUMILWxp1ht3p2xNnJb/ClcXI17wQBfJKkqXwcLCeK5pl9pfewySUXhDwUh4eXwuZ1K9GDPPrm3Y7qRZv591Uhc5m7Ba2/9ncXCPqLzsvYTT5/9YbZ4Fwo8JOA+kbnD8BKIw5Le+RahuCG9PdRBG266pmDVgQ1uYbFqYp1Ycg==
+ b=By1S6b2t+C6GuySHIujw+UCwazL4Zh8BYNvwWxeinfM5bml8H1jwQa/mVDUzRU6z150pguR0a49SR5clgJWcZD1AlrzDffxnwziTd1WNb9HftchbnsxlsG/dKCyCezmgD2XxpuINKkfb7RsklUbC8Wtj9osNx/dhCd8cZ7lL/tu/gO7YgIZCOBbd4x0hNG5q74ywUD2PHZcx3XfxucWx9ledPisLVEJRsDlXPkTAGNQ7klp0jPKzhXx0B7EINICMdmJpfZbZhtoeZs+V9e0m1oCRR5ZtWUmoU9/1TPWHf6w9PsDK2ZSE9eK1OfFIQnmAaA2czLNAaO9ZPQfWStfdDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TejLyUpzQ6IZ/s6ownAXRi5rr4cs8ph09jrUknc3bNM=;
- b=Eovxw3Y1p+BqOOOMzTrBcsS8nGtmdw1qL+1IztB2B/R/VIbuJ98vbgr6IylGs/x4/EvHg+LjB6YrEy4O+y+sXLQaZqJCGusM+EC0cvUm2JzGSQVA1sC4xRUWn/b7KG+naKYGg3OW2jssnO+5uK8cJKbX5uQytTCgddrHO/rksHd4bjuh6d5WvzpBNVsMwfMO84YN2bbDKBW7Q23reZsIutlYtke0gqnRrva5pFwFICfS763h46golsioraO6ifVeOy0tjwr0loHSndm0kyB5tL6CY2375GqdU7dB8knkxs1hxG4pN0UuRww+kZGVRywbplKEEPcs9Vmu+o/BkgliKQ==
+ bh=00Q2fjJJ/6vok9IspBpmlVulXhi5VqfUNQviROdL1Z4=;
+ b=AiQFe1jrmVOArYtZo8Mzlojcg1TQs43A41G4W295oDDROn4Gd/Q111Qh1+fkUl2vsXSbwJ2nykh9R2Nzw8Jz/ke5flsGOC6bil/0uQwJsWLW82lH3sQ0Tu+PYTJzYiwMbSO57LaReDgO9EEXz8AKPj5SH3uyu8tXas6pF9SJVev8VpPTyrP4RB5k2/eM+VmN6UpfsDXcBIK2xhCvy/CHL3nJceHXsxHlA/GCiK9gdzWNZQjwFRMzRpJnhEdSQBwAY3iWdeLmx5MgHG2AtgV3TDC0rp4mkj3YoHj83CkaahF1P1c+bfgdxHFB4xHEmSs5Jl6SJ9cIdYxxOGSEVUxZSQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TejLyUpzQ6IZ/s6ownAXRi5rr4cs8ph09jrUknc3bNM=;
- b=RglP/G+LcNi0YHCOgvnduuygjDSeuu5hRUB1mj+L8bcopCm1WpI7qqP7ozBGf+uq7jzlMVSm9A+Xlb7PHwLu3Ll5A+MD3q+tbFSlB+J8zjK7MXlj1+K9AFj8QL7GmvzEZc453JqFvTIX1MsYH6Hjm5RSre3Ctc5HTHF53Jf5xdo=
+ bh=00Q2fjJJ/6vok9IspBpmlVulXhi5VqfUNQviROdL1Z4=;
+ b=LVejQMSFsp4d5gxxnWSyMnEOFNdW2cLFPh0q8a2r7Wr/dzoK/QvuwkNiTqnIAXBwgCh0bFH/HqrOvXtXU9SCGl22Nwty6noTtVHCJwVnvCMH6X0+zvEwy8mgsMFHPt/suqrVWrgD60RFBWzG7Kn2bD0UX/TiqTW7mPu4sza1eJ4=
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
 Received: from DM4PR12MB5229.namprd12.prod.outlook.com (2603:10b6:5:398::12)
  by DM6PR12MB5518.namprd12.prod.outlook.com (2603:10b6:5:1b9::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.14; Fri, 13 Aug
- 2021 16:59:56 +0000
+ 2021 17:00:04 +0000
 Received: from DM4PR12MB5229.namprd12.prod.outlook.com
  ([fe80::d560:d21:cd59:9418]) by DM4PR12MB5229.namprd12.prod.outlook.com
  ([fe80::d560:d21:cd59:9418%6]) with mapi id 15.20.4415.019; Fri, 13 Aug 2021
- 16:59:56 +0000
+ 17:00:04 +0000
 From:   Tom Lendacky <thomas.lendacky@amd.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
@@ -52,151 +52,144 @@ Cc:     Borislav Petkov <bp@alien8.de>,
         Sathyanarayanan Kuppuswamy 
         <sathyanarayanan.kuppuswamy@linux.intel.com>,
         Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v2 01/12] x86/ioremap: Selectively build arch override encryption functions
-Date:   Fri, 13 Aug 2021 11:59:20 -0500
-Message-Id: <a4338245609a6be63b162e3516d3f6614db782a4.1628873970.git.thomas.lendacky@amd.com>
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH v2 02/12] mm: Introduce a function to check for virtualization protection features
+Date:   Fri, 13 Aug 2021 11:59:21 -0500
+Message-Id: <482fe51f1671c1cd081039801b03db7ec0036332.1628873970.git.thomas.lendacky@amd.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1628873970.git.thomas.lendacky@amd.com>
 References: <cover.1628873970.git.thomas.lendacky@amd.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SN4PR0801CA0017.namprd08.prod.outlook.com
- (2603:10b6:803:29::27) To DM4PR12MB5229.namprd12.prod.outlook.com
+X-ClientProxiedBy: SN4PR0201CA0071.namprd02.prod.outlook.com
+ (2603:10b6:803:20::33) To DM4PR12MB5229.namprd12.prod.outlook.com
  (2603:10b6:5:398::12)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from tlendack-t1.amd.com (165.204.77.1) by SN4PR0801CA0017.namprd08.prod.outlook.com (2603:10b6:803:29::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.16 via Frontend Transport; Fri, 13 Aug 2021 16:59:54 +0000
+Received: from tlendack-t1.amd.com (165.204.77.1) by SN4PR0201CA0071.namprd02.prod.outlook.com (2603:10b6:803:20::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.14 via Frontend Transport; Fri, 13 Aug 2021 17:00:03 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f6594ab2-8c4e-4483-e4aa-08d95e7bc6dd
+X-MS-Office365-Filtering-Correlation-Id: b2fa8f5f-8482-4797-61f9-08d95e7bcbbe
 X-MS-TrafficTypeDiagnostic: DM6PR12MB5518:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR12MB551841987EBF0DFFF8EFF5DEECFA9@DM6PR12MB5518.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Microsoft-Antispam-PRVS: <DM6PR12MB551813422E5943BA46922952ECFA9@DM6PR12MB5518.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YKOeCVWLQxbtanGHAmPBV5sIWlHP6OHhnoq0XBmHo4/PdrH+PBsrxVWM8o+3rzk1sR5fAwf95B7niVB3W6Da7+OznKMOyazCckXkvRWDOROkp6zOjl8c5mPJDv/dfjsJtzhyjAM3ATVuO3SgBEhm1AdVIFwAzIUDFNfhcfFWM96SNgvwnfpxWdMYZW6EwB4pxilBREjEQ0jMxl63zGOORpRONthh+EeVY+P0GGg88spXGiOFBnynfNClUNSwZlseoUIcOK5UbhoSE4ywgwRCTQqVrf8Xsafx3wZCKrqxOKUjzeWxdIAEKA/8YD6+7M6T0t879L/Zbrw/LN/brqbevnWTCWx0YxWKBGgjcPUNYYRHT/10KgVVQ5/11BXqtdFF5oTUTBBZsbK6WgAOrVyP/q8RwVtf5VKPcvf5Py27MBtLGONaBQzluTg+ARisiatIsqtp05pVWqhDSLaCNGg+VRmHgEDTn5qGNAKcz0bIO1+BalckIrpSuFOnq7+++aa0LNYhPTD+qWImYxAYABjhAuHl23BcHJnvupXYsw6M4uYJspzk6jLqRCutLVyC3ORNrLz9yFbdjIS3UHj47EirHndCrA86QG3I986GwpLCOz3bgu4lIZivsBxPe+3puEW3QMm11I92+rtG6aiQx9fqclmJecVEI1umO63c4JuFqe5l+kmxY7hY/+NH5/KpB7I0PUFYg+XoSMSEsKNExmovfrL6O0kD94ucZxt3mEIlxF0=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5229.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(366004)(136003)(346002)(396003)(376002)(66946007)(66476007)(66556008)(478600001)(921005)(7696005)(8936002)(8676002)(26005)(52116002)(6666004)(36756003)(186003)(86362001)(2906002)(7416002)(83380400001)(2616005)(38100700002)(956004)(38350700002)(5660300002)(4326008)(6486002)(316002)(54906003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: hqPpLjptCS1EeeWFfaUU0HoaSPthfCx+h4fNTD/x3KbKXPjT5FKSy/1COkyMpmdDGttxGcBxadYhGSOhU8LvwAELh59P7dhVECukP6UHKnvwkvUY+Vd1mWfVhSUeB7d12BS/HJ6+p/65g1292ccn39l5t7IEOFQk6oCqZaG5c1wh7CkYQGuxADctDzNvkOIIlojL2Hf0KgBYjuolcFY75zbgBp1y807SqNpDlantJ199pcXT9+yLkbt+KWkEhcBHTFsqXI8vamb6MkMNLuCh/PixOhQGDGhSLr9l42pJl6Q1AIjMgNJc1wuer6/b8bFwmwXAQSYwkD7r81HddbECZSyRJd8SeI6sdWoWCh7rYxfVXGCXVK+P/SZ2NwIG8EcAFu/eZxm40JhEs8rHYGGFxVsqsqoTyg6emp+crYCUanPV98Y6Y78G2vlzU6J4VYbAKzLrIFM8g7N+cihmrbwGZpOzPHUxu8erb6IQPXWwysW49MG4rOlu2FNheBY/o/6vs6kQNoQYfELbZPaRDAzcQVkoxZFrvU8sbHm/ZsscXA/mptx4ixltfHvP3kVaH0PXNHCGAOoZ6g1XIggww71dAbwKPy7U5RQAVwlO5boMC0aMaQn1HjEnzHxWLtNJrVVIp4NUEHOBPdeg/piHnQuc1LHDGQrX6kNvb4TJJgOMD6iNlmcNMzjTpUcgm2hScfU8yoMHpwbfIZpptgKOLYAgOs4UIWqM3hM3LBpGpcy2PQc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5229.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(39850400004)(136003)(346002)(396003)(376002)(66946007)(66476007)(66556008)(478600001)(921005)(7696005)(8936002)(8676002)(26005)(52116002)(6666004)(36756003)(186003)(86362001)(2906002)(7416002)(2616005)(38100700002)(956004)(38350700002)(5660300002)(4326008)(6486002)(316002)(54906003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?k2uuyrFNe794i9ZdcxzXMnabqnIA3Q49tsutonfhvqTHsXiHHXoPOvBVfkxh?=
- =?us-ascii?Q?NYn/E26ALsENT1KX3eTFKB8gTErrnqCshkYd+KQDL2a5O5s0t8WbpoZ2arbS?=
- =?us-ascii?Q?Zn9ST09FaWtH8HH9in7UVoorySmCYHdIeNmrpK5pi2O/sbpcta7tGul1Q3gG?=
- =?us-ascii?Q?8u0VDTfK6JLTBz1LYBVQ0pPQxKS+cFzXiH2ZLZzTqFmgfw+6TNNAlXUajcJ6?=
- =?us-ascii?Q?N3mYcwt1refTvd9492Kn9SMg/CH6L8r0SHHjmYKa+8O/oxTs2qwQh4b0JB5P?=
- =?us-ascii?Q?wBj/X1KrDQBFo/ABLSyyonIMCfW/+Psbvv1+DKwp+UY9EFRj4EZiwkx1xsnU?=
- =?us-ascii?Q?CdSMRADfqbTqWHlJZZme/4IYLCepNAkKgmI2ttCZWxxnL/lQ7PMYAh4yqa02?=
- =?us-ascii?Q?51lstnffzSHtabkvQCI7MPdQZsAc/EYagxX+i+QGeMWKmh5rOjcz8nSVboXU?=
- =?us-ascii?Q?52tSRKVUdVYZnqO8fW1Yt1+lM1WbZqYvhVYZY05EIt57TQKR0Nzx2inn4ARS?=
- =?us-ascii?Q?GNwlektUBGExYyVP4dg2+fgHl/P3Oazx2g6R199y3djMDizzP1YG/tx8zOMb?=
- =?us-ascii?Q?EllOPnWC3mc2iBm6FyLoDPmfjMbeIKManNzku+hCMUQyyf8GnFj/azoP3ynw?=
- =?us-ascii?Q?CcPG/zZYbtCqNgoWte9dNXwI3V83pxBQ6AHry44R3Fsa+hC1/ByA2CmjH7rA?=
- =?us-ascii?Q?qcbfUYh6K6BeVMO258ZnteuCGEi+x5q+TVIjIImMi03XTXD1Ek9cbk2rVjgW?=
- =?us-ascii?Q?GNBFq4+biPEK70v1/+h5Dh7dco/AXttUQFa8v/OaH7s7ItdNn9N7G/iS6guw?=
- =?us-ascii?Q?iShhsQ2r0fsVIXaBNudCs4qk4tILFmunZLaOWtCigzWH2XF5+amjKJFMULM1?=
- =?us-ascii?Q?fx3r8DENksp3E7OuUzKfT7jI+gY9rDqhRYwWiRUWTWArQzZDVPddveNI0Upt?=
- =?us-ascii?Q?yLdle3rDYW0q2kKr8LxYpbKXk4N5YpD3+t4LqdZa90hPjZknS1JdTrY+4tYo?=
- =?us-ascii?Q?CvvGO+X3nppKhzIGhvTT+eJAk15w84e+MmcPrhLHhVLa3HYY93JmHGquqck3?=
- =?us-ascii?Q?2ifypPw3iPHb8BAMXDga1RhqQSOGFeh2IzvtHQxe3B4ecO00NMxbtCuY/Ff7?=
- =?us-ascii?Q?bSCaFXKz8XnZOYcfvweZWmQ2oXWgGY8/GzB2JSVD2+hhqNLY/yAKyIFNfuut?=
- =?us-ascii?Q?4aco6xe8bgIAsU7ZeY5sDyz+xw2iw1Jh1tZ+TT5vswFHQmuupOryLlZAtZ97?=
- =?us-ascii?Q?+1TWugC5Behm/wEBSXob3k9crZc4/E03YHEp4xGvnKX1DkizSA7jNY+m28sd?=
- =?us-ascii?Q?9upG9TkMiEJXCLjdl07kd5mT?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?QSiiEMt0H/c7gMmp/6TvvoJgJwt3VKzqTO+Sz1e0KiqUiNoozOTK9rG7xuRK?=
+ =?us-ascii?Q?xFlSR5DkfcvRWFQawNUCx1/lNi1GHwvbMQV2K+CwRgBMTwcJAiFwjvqAPu1Y?=
+ =?us-ascii?Q?9ff/dd/zgpN36ofslpUgImr08FB+QreRwQV/PXZQTw01uiZoWTwEjRgBFZBl?=
+ =?us-ascii?Q?LCv4QujCe4KQ+YFV86eEPA9hJ8o6h3cfBRATclBxdZr5dNZJxE2lE/MXFpPh?=
+ =?us-ascii?Q?s4LAbymOJPf2k+GAIwmZhKhkTqZgOOKO+v0G4wk5BHUrESd+nUqjuoDMveLj?=
+ =?us-ascii?Q?UNWwUxoZSLKOf8Hombp9Rv0jABl5r3v1iUG8TCW7b8s/DV3FdojviDzvUgma?=
+ =?us-ascii?Q?tDwrLZa5jQswXL5kyML98K4SItsbDQBL3OupK0u+43lCiyIjcU2ow9CerddY?=
+ =?us-ascii?Q?Hv5IfF+LceImHmQHS73rvxfxK5wu3agoynhFMMAWdfBCOr2qgEldxPVCyAYI?=
+ =?us-ascii?Q?4Fk32bGmf6mMYlB0edf/RuDB1adgU3hlefKWimIo4XOClRcmLTUuM8YYrJRY?=
+ =?us-ascii?Q?TBZLqBRBoErFlFAdVroDEEgVB5WGjgLJiMPT7GhJZcXKmBZRNk5vSgHUiYXT?=
+ =?us-ascii?Q?Qlx53xg2SV5FCd+NJaN46uhiw+iPdFHsVcQiHvIGfAjltexx5rq4pV9zS/Wq?=
+ =?us-ascii?Q?UrZfrI6vJnUY2UmZoBkrxLUNqZtWHE+9Swsi0yIj+BDGX2K7D988g8zAbDym?=
+ =?us-ascii?Q?5qhbVcS7biJDV6ubKATPI3UdGaHHVPMhaaBbpjElfa8ntfyApYplAw7MwD31?=
+ =?us-ascii?Q?9uG8ccY5d3YcmG7qz5wB/utxaY7KSpz6tsbMeFt+wlTPF+wHx8BqIK1P7x53?=
+ =?us-ascii?Q?tQHil/0aQFlPxJrRgSTBVg0STIO184nXeoArV2IzM0uiNeh+L8VnKWibBIMZ?=
+ =?us-ascii?Q?Oa//mwRwbhu4+fT2E5jK3Tzulo80aLTaYwxGYRc7ws90mSOnFwW8z1f0+urK?=
+ =?us-ascii?Q?DovQ6cf81XIaPSmiZRoBDw6AqO62nrWH8OizyMnQaUMwo7Dy99R/XO77xQJZ?=
+ =?us-ascii?Q?m0CIZyDwZ72+i6E466R3Xy0rtf9ualnc1qgdhtmW95dwoKMGLc+VuHvWKv65?=
+ =?us-ascii?Q?5M3liKMdAusWgUkL5DO/vvn36riUhZIJxXDR9tjIV5ZEoG8lnvlJxEaEAymB?=
+ =?us-ascii?Q?dH7xHjW0F6jBHBPY7kfi/8gyIzo9xlozRgUuPyGvONR6eWI2jO5P60fm6vM1?=
+ =?us-ascii?Q?UysOLEbw9rYADNWZVGUanIzio0sSAItSNYsMo1uxwqxw0dF4I9WmOefnGh5I?=
+ =?us-ascii?Q?xDni5Wf0Oq0H0oSc5V1wMxI12M9swR73c7/ulxqx4EuA6Tl3SSvlAMRvbHvL?=
+ =?us-ascii?Q?0HLI2et/HTZX8Puq44lCicL9?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6594ab2-8c4e-4483-e4aa-08d95e7bc6dd
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2fa8f5f-8482-4797-61f9-08d95e7bcbbe
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5229.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2021 16:59:56.0771
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2021 17:00:04.2762
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T9NlcWMTlrVaBAyUizVvPvLOMQQ0pIyEWQVdbL8QkKK29ZIS24x7X1mfitpwkh5+PzcCMhzqmp4EtNAM5lbopA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: Txupxb2+5R9WAVgwG22f1MQTDZ0epN+V2Tn5+tv+USGJFMK/9UpQr/RBjl1dyp3WoYm44TWBlTZbZGAbsLUokg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB5518
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In prep for other uses of the prot_guest_has() function besides AMD's
-memory encryption support, selectively build the AMD memory encryption
-architecture override functions only when CONFIG_AMD_MEM_ENCRYPT=y. These
-functions are:
-- early_memremap_pgprot_adjust()
-- arch_memremap_can_ram_remap()
+In prep for other protected virtualization technologies, introduce a
+generic helper function, prot_guest_has(), that can be used to check
+for specific protection attributes, like memory encryption. This is
+intended to eliminate having to add multiple technology-specific checks
+to the code (e.g. if (sev_active() || tdx_active())).
 
-Additionally, routines that are only invoked by these architecture
-override functions can also be conditionally built. These functions are:
-- memremap_should_map_decrypted()
-- memremap_is_efi_data()
-- memremap_is_setup_data()
-- early_memremap_is_setup_data()
-
-And finally, phys_mem_access_encrypted() is conditionally built as well,
-but requires a static inline version of it when CONFIG_AMD_MEM_ENCRYPT is
-not set.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Co-developed-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Co-developed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
- arch/x86/include/asm/io.h | 8 ++++++++
- arch/x86/mm/ioremap.c     | 2 +-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ arch/Kconfig                    |  3 +++
+ include/linux/protected_guest.h | 35 +++++++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+ create mode 100644 include/linux/protected_guest.h
 
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index 841a5d104afa..5c6a4af0b911 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -391,6 +391,7 @@ extern void arch_io_free_memtype_wc(resource_size_t start, resource_size_t size)
- #define arch_io_reserve_memtype_wc arch_io_reserve_memtype_wc
- #endif
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 98db63496bab..bd4f60c581f1 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -1231,6 +1231,9 @@ config RELR
+ config ARCH_HAS_MEM_ENCRYPT
+ 	bool
  
-+#ifdef CONFIG_AMD_MEM_ENCRYPT
- extern bool arch_memremap_can_ram_remap(resource_size_t offset,
- 					unsigned long size,
- 					unsigned long flags);
-@@ -398,6 +399,13 @@ extern bool arch_memremap_can_ram_remap(resource_size_t offset,
- 
- extern bool phys_mem_access_encrypted(unsigned long phys_addr,
- 				      unsigned long size);
-+#else
-+static inline bool phys_mem_access_encrypted(unsigned long phys_addr,
-+					     unsigned long size)
-+{
-+	return true;
-+}
-+#endif
- 
- /**
-  * iosubmit_cmds512 - copy data to single MMIO location, in 512-bit units
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 60ade7dd71bd..ccff76cedd8f 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -508,6 +508,7 @@ void unxlate_dev_mem_ptr(phys_addr_t phys, void *addr)
- 	memunmap((void *)((unsigned long)addr & PAGE_MASK));
- }
- 
-+#ifdef CONFIG_AMD_MEM_ENCRYPT
- /*
-  * Examine the physical address to determine if it is an area of memory
-  * that should be mapped decrypted.  If the memory is not part of the
-@@ -746,7 +747,6 @@ bool phys_mem_access_encrypted(unsigned long phys_addr, unsigned long size)
- 	return arch_memremap_can_ram_remap(phys_addr, size, 0);
- }
- 
--#ifdef CONFIG_AMD_MEM_ENCRYPT
- /* Remap memory with encryption */
- void __init *early_memremap_encrypted(resource_size_t phys_addr,
- 				      unsigned long size)
++config ARCH_HAS_PROTECTED_GUEST
++	bool
++
+ config HAVE_SPARSE_SYSCALL_NR
+        bool
+        help
+diff --git a/include/linux/protected_guest.h b/include/linux/protected_guest.h
+new file mode 100644
+index 000000000000..43d4dde94793
+--- /dev/null
++++ b/include/linux/protected_guest.h
+@@ -0,0 +1,35 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Protected Guest (and Host) Capability checks
++ *
++ * Copyright (C) 2021 Advanced Micro Devices, Inc.
++ *
++ * Author: Tom Lendacky <thomas.lendacky@amd.com>
++ */
++
++#ifndef _PROTECTED_GUEST_H
++#define _PROTECTED_GUEST_H
++
++#ifndef __ASSEMBLY__
++
++#include <linux/types.h>
++#include <linux/stddef.h>
++
++#define PATTR_MEM_ENCRYPT		0	/* Encrypted memory */
++#define PATTR_HOST_MEM_ENCRYPT		1	/* Host encrypted memory */
++#define PATTR_GUEST_MEM_ENCRYPT		2	/* Guest encrypted memory */
++#define PATTR_GUEST_PROT_STATE		3	/* Guest encrypted state */
++
++#ifdef CONFIG_ARCH_HAS_PROTECTED_GUEST
++
++#include <asm/protected_guest.h>
++
++#else	/* !CONFIG_ARCH_HAS_PROTECTED_GUEST */
++
++static inline bool prot_guest_has(unsigned int attr) { return false; }
++
++#endif	/* CONFIG_ARCH_HAS_PROTECTED_GUEST */
++
++#endif	/* __ASSEMBLY__ */
++
++#endif	/* _PROTECTED_GUEST_H */
 -- 
 2.32.0
 
