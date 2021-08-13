@@ -2,122 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CAF33EB721
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 16:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C783EB994
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 17:54:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240956AbhHMOzy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Aug 2021 10:55:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42522 "EHLO
+        id S241479AbhHMPyY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Aug 2021 11:54:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240795AbhHMOzx (ORCPT
+        with ESMTP id S241457AbhHMPyW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Aug 2021 10:55:53 -0400
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B03C061756
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Aug 2021 07:55:26 -0700 (PDT)
-Received: by mail-qt1-x82e.google.com with SMTP id z24so8444959qtn.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Aug 2021 07:55:26 -0700 (PDT)
+        Fri, 13 Aug 2021 11:54:22 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5BFC061756;
+        Fri, 13 Aug 2021 08:53:55 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id h2so16282667lji.6;
+        Fri, 13 Aug 2021 08:53:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ord6dLO+z3tSqMluPoWbEXl83RV8BHZzW5vBO+d0n/Q=;
-        b=hgkSPbVdYXzvqli8P66Phz0CPr9SOyrnkiDQZlIalXmD+R4Tv6F4Q0mdTZ8ba/5gfw
-         oW1EGDpsyyxofq3osqzZ0JTzPhDrpqZlP+vn8bYROr23Q+UBOPDDdnyWVVohWCxzq1hx
-         bRkxlkTqNb8//cOL3t3dD52d/bzIZ0z4eWv3bMCJkpCRPRwOvahUZJeBavJL9uzVAzMq
-         15aM0SGYrjQ3iAfBA0zor5ytYemmWvJcLG8bvIENG1Nn7zn+fQLal6SGG4TMtX6/fCSd
-         vkemQr4G5bYEe8mP8fIrGiXexmOMyZ2/KfQt8ph/u2OLc36usfiyMeRhtQupbr3eGVKV
-         SJ0w==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=aMX+a6wP1iCii8UfZRNRB0ftn/+EsmPtpxrSR4YPCHE=;
+        b=W9cMdo1w90Diw8YIJIySfXDhuAHRZl6bLlzMy7C/GZlgThteZ87DT6k5EUWIuabAlB
+         tWt1TPSHNg3bXs7ax5kd/61lL5jmXO/MLvYPb/JLvZnqyVDQZvQm94gmr5qyThFmP+x2
+         3wFXB4sG8RpIOCrplGiQkG2WJsXqOmzRET/iPhQQH1yHgWiMADGibwzGgVEWl1uYAQ+B
+         /HwQ76FVke+ne4Mmafgmbgmr+J8vqnZEL0lKzCdukKFOBNU0Qd9MdJ7/63EqDtGva0p2
+         JU6fQTQUTqfWd30QLLNwANN+cLyFzyiDrKcdkpiSyMawhwpxOvkLnaT+l0oVLfVA9wa5
+         rkLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ord6dLO+z3tSqMluPoWbEXl83RV8BHZzW5vBO+d0n/Q=;
-        b=ld2Ic1EilrQ/kh2hcjJob3OInPimdQD8mXPZ5FBjbjLfPL9aE1t+cfHpuw8dK2uAJg
-         kUqPKPmIPbMiXu9fCulqDumJ3Iflkj0VFv4TTlrntzXbe9rCHDP44eIn9LxQHa4nQecF
-         MJxdUEMLPNnVlsN4tpWEr26133xDrIz6uoMQZj2db1vdOwVfnq6P+1w85ILlJKK6k3OS
-         VpI0ZmJMtRS30NGZesUHKN7A/x5ND/grAwHQ3/pybIUIP2GENXB7u6FYpGCIp7/c4wYD
-         CIQsYJs0JTJtKfxpIRRiG/CI0ePzVXI+O3391dMgfhyFevEFda8F78bbzBC4rfmhGRMw
-         8b3g==
-X-Gm-Message-State: AOAM531G6+R/hW2gYJd5s6nkY4OLX3bwKxIzM1GQVzvjFQaQPsAT3zTT
-        fxRR47EBakMs/DgRNCgkBAgxSA==
-X-Google-Smtp-Source: ABdhPJzAQXuY0uNisq+xRrRLyGeEvUigyuZkaRswLSO2w1GpIjgHghfO6ezxij4RdEixPivFf9pV8Q==
-X-Received: by 2002:ac8:682:: with SMTP id f2mr2289567qth.55.1628866526046;
-        Fri, 13 Aug 2021 07:55:26 -0700 (PDT)
-Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id o63sm1090299qkf.4.2021.08.13.07.55.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Aug 2021 07:55:25 -0700 (PDT)
-Subject: Re: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for
- btrfs export
-To:     NeilBrown <neilb@suse.de>, Christoph Hellwig <hch@infradead.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
- <162881913686.1695.12479588032010502384@noble.neil.brown.name>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <ebffa324-0d42-4227-b162-0dad19144943@toxicpanda.com>
-Date:   Fri, 13 Aug 2021 10:55:23 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=aMX+a6wP1iCii8UfZRNRB0ftn/+EsmPtpxrSR4YPCHE=;
+        b=iYtnn9iAFcU4dQGOhphAkTOeyYk5MSQGAbOLBe4rOv68XP6HXMLhfQEhikl4yuQNK1
+         ZCDCr5dbUbHJ8Te8Ewcxsb9WCb+rPpn+HYHurGV3xwNgiw3rEYFymwESW8kVEbZqs3ju
+         s/uBWKepSjFDlzUQxHcrDAlZJ8S9g7lVtLP6IjBd89qqykVn9y9bK+Nf2MROmXhDZdob
+         9RsknuPUIrrL9YtHj+T54zUzzObCcgRzJG0BaJTJJ8AInaIPpnx9d6r5GATkrD+lI9e9
+         qJVux/87dAB5J7xTA0rx4nDkGdVuiSsdmluwVFTLxhiMlpZ7N6BJhS2CrU1QIxA08zER
+         z/SA==
+X-Gm-Message-State: AOAM532sU0+guriPBlCwwj51FOc8VCImQqj5H1LfrGNkGyWnfea3QYXR
+        JtcWG9T2Bzi6SX/G9L0tv2A=
+X-Google-Smtp-Source: ABdhPJxY3aZpHjI5xq9CX1t4DztTg0tQ+aaWxIsVh57v1CyenE1WGSs5BEGkZhD5t5ELqtbCF6HAsw==
+X-Received: by 2002:a2e:8688:: with SMTP id l8mr2308140lji.157.1628870033611;
+        Fri, 13 Aug 2021 08:53:53 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id i23sm188939lfo.76.2021.08.13.08.53.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Aug 2021 08:53:52 -0700 (PDT)
+Date:   Fri, 13 Aug 2021 18:53:50 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, ntfs3@lists.linux.dev,
+        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        pali@kernel.org, dsterba@suse.cz, aaptel@suse.com,
+        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
+        mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
+        andy.lavr@gmail.com, oleksandr@natalenko.name
+Subject: Re: [PATCH v27 00/10] NTFS read-write driver GPL implementation by
+ Paragon Software
+Message-ID: <20210813155350.vcoxqtox2ezvybgb@kari-VirtualBox>
+References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
+ <20210729162459.GA3601405@magnolia>
+ <YQdlJM6ngxPoeq4U@mit.edu>
+ <20210812170326.6szm7us5kfdte52u@kari-VirtualBox>
 MIME-Version: 1.0
-In-Reply-To: <162881913686.1695.12479588032010502384@noble.neil.brown.name>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210812170326.6szm7us5kfdte52u@kari-VirtualBox>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/12/21 9:45 PM, NeilBrown wrote:
+On Thu, Aug 12, 2021 at 08:03:26PM +0300, Kari Argillander wrote:
+> On Sun, Aug 01, 2021 at 11:23:16PM -0400, Theodore Ts'o wrote:
+> > On Thu, Jul 29, 2021 at 09:24:59AM -0700, Darrick J. Wong wrote:
+> > > 
+> > > I have the same (still unanswered) questions as last time:
+> > > 
+> > > 1. What happens when you run ntfs3 through fstests with '-g all'?  I get
+> > > that the pass rate isn't going to be as high with ntfs3 as it is with
+> > > ext4/xfs/btrfs, but fstests can be adapted (see the recent attempts to
+> > > get exfat under test).
+> > 
+> > Indeed, it's not that hard at all.  I've included a patch to
+> > xfstests-bld[1] so that you can just run "kvm-xfstests -c ntfs3 -g
+> > auto".
+> > 
+> > Konstantin, I would *strongly* encourage you to try running fstests,
+> > about 60 seconds into a run, we discover that generic/013 will trigger
+> > locking problems that could lead to deadlocks.
 > 
-> [[This patch is a minimal patch which addresses the current problems
->    with nfsd and btrfs, in a way which I think is most supportable, least
->    surprising, and least likely to impact any future attempts to more
->    completely fix the btrfs file-identify problem]]
+> It seems at least at my testing that if acl option is used then
+> generic/013 will pass. I have tested this with old linux-next commit
+> 5a4cee98ea757e1a2a1354b497afdf8fafc30a20 I have still some of my own
+> code in it but I will test this tomorrow so I can be sure.
 > 
-> BTRFS does not provide unique inode numbers across a filesystem.
-> It *does* provide unique inode numbers with a subvolume and
-> uses synthetic device numbers for different subvolumes to ensure
-> uniqueness for device+inode.
-> 
-> nfsd cannot use these varying device numbers.  If nfsd were to
-> synthesise different stable filesystem ids to give to the client, that
-> would cause subvolumes to appear in the mount table on the client, even
-> though they don't appear in the mount table on the server.  Also, NFSv3
-> doesn't support changing the filesystem id without a new explicit
-> mount on the client (this is partially supported in practice, but
-> violates the protocol specification).
-> 
-> So currently, the roots of all subvolumes report the same inode number
-> in the same filesystem to NFS clients and tools like 'find' notice that
-> a directory has the same identity as an ancestor, and so refuse to
-> enter that directory.
-> 
-> This patch allows btrfs (or any filesystem) to provide a 64bit number
-> that can be xored with the inode number to make the number more unique.
-> Rather than the client being certain to see duplicates, with this patch
-> it is possible but extremely rare.
-> 
-> The number than btrfs provides is a swab64() version of the subvolume
-> identifier.  This has most entropy in the high bits (the low bits of the
-> subvolume identifer), while the inoe has most entropy in the low bits.
-> The result will always be unique within a subvolume, and will almost
-> always be unique across the filesystem.
-> 
+> It also seems that acl support is broken. I also suspect ntfs-3g mkfs in
+> some failure cases. So maybe ntfs-3g mkfs will give different result than
+> Paragons mkfs. It would be nice to test with Paragons mkfs software or
+> that Paragon will test with ntfs-3g.
 
-This is a reasonable approach to me, solves the problem without being overly 
-complicated and side-steps the thornier issues around how we deal with 
-subvolumes.  I'll leave it up to the other maintainers of the other fs'es to 
-weigh in, but for me you can add
+I have made more testing and it was actually my code which cause 013 not
+fail. It is still pretty strange. I have made code for new mount api (fs
+context) and 013 still get deadlock but still test will pass. This only
+happends if acl is on. Though this is intresting why this happends. I
+will not use more time for this now. I will try to focus fs context
+mount api for now.
 
-Acked-by: Josef Bacik <josef@toxicpanda.com>
-
-Thanks,
-
-Josef
