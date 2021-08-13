@@ -2,348 +2,249 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FF233EAE1E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 03:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD2EE3EAE3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 03:45:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238157AbhHMBZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Aug 2021 21:25:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56744 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238143AbhHMBZd (ORCPT
+        id S238296AbhHMBqK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Aug 2021 21:46:10 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:47116 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238266AbhHMBqJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Aug 2021 21:25:33 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB295C061756;
-        Thu, 12 Aug 2021 18:25:07 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id fa24-20020a17090af0d8b0290178bfa69d97so13703371pjb.0;
-        Thu, 12 Aug 2021 18:25:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ytp7j4tvDqB8JRsA43hK2XfyaSDtDGizfAgSYtOwnqQ=;
-        b=dcyNcuPYwGn99N/iOhVwFBCjxqRDa168WIlpvwIMgqjRyrh0JSG7GkyQ+3uJnZC244
-         Lzr22wtWMkN6Lr4IB2FQ820WE3i+9wmb4oRs6NBoK1NaNqqamWd1Syj4w4825YxSAnGa
-         CdNwDo1P+HbAcE/PPOeNMYmtS+NDfCT6shjs3DlkFfYSv+Qd74BbblMmEfJMiw2BS91M
-         nWKKdB+jc/efJRmDcryV6CnwsmubvMd2Ppho3A90Mwn3wEuy3W6bTTzZEHVOIzCEYGOE
-         LqoShVc6KPUABLuthriGq7eRHXr2V9t0cA1E0aqXoXxqKDkmg1hwhyIZLc+QPD6YDVft
-         xz8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ytp7j4tvDqB8JRsA43hK2XfyaSDtDGizfAgSYtOwnqQ=;
-        b=JDJUY/LwreqCEBH8TZrrR8DFfmDta218QM6Bg9bKoSZAg3XoD9KfLo6FxXAjjji1vJ
-         7vmRfdCt1Z5O18DktJ0CExnkO9lbHUBT4UUieduASe9Val5ZFk/2/9UlQyDgW1/3PdUH
-         HT3yeZPOhiuY0Mn7AIVzglrXYC8yRFasGpf5CijnTWfi2eST/ClAU5ACVUjKerecaoHR
-         CL1CzcSz1NSLxVFYHCRBlKvcRje+wbPK8Kb0yYEloLljuGpDwelrEYXdtQ/xEfek3FV/
-         d5CEuKRHZw65EffZEmfXtlHo5eJVN2RCq6AB8D8XCeointCB4L+H2bETF1gOzYAl2Bok
-         5wlg==
-X-Gm-Message-State: AOAM533vu7N/XG3U1iGuzBEy6tmZBptFNWLsmqaOM7aUFu3hkUvBbMO2
-        c+/BK5hP4lfasxHBqXZ946Q=
-X-Google-Smtp-Source: ABdhPJxnbn9PZ8ieYqblXX18DNWm5ZoR51uNZ62h39Iu+dJQQsLFUyRkQvfBTamHdjUo//Yo6+ZuPw==
-X-Received: by 2002:a63:464b:: with SMTP id v11mr6418350pgk.26.1628817907434;
-        Thu, 12 Aug 2021 18:25:07 -0700 (PDT)
-Received: from [192.168.1.71] (122-61-176-117-fibre.sparkbb.co.nz. [122.61.176.117])
-        by smtp.gmail.com with ESMTPSA id u13sm4135pfn.94.2021.08.12.18.25.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Aug 2021 18:25:06 -0700 (PDT)
-Cc:     mtk.manpages@gmail.com, Alejandro Colomar <alx.manpages@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: Questions re the new mount_setattr(2) manual page
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-References: <b58e2537-03f4-6f6c-4e1b-8ddd989624cc@gmail.com>
- <d5a8061a-3d8a-6353-5158-8feee0156c6b@gmail.com>
- <20210811104030.in6f25hw5h5cotti@wittgenstein>
- <2f640877-dd82-6827-dfd0-c7f8fd5acbbc@gmail.com>
- <20210812083826.bfuqiwjlshjdwdby@wittgenstein>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <a58d8751-8a9e-5543-fafc-227d3873a31e@gmail.com>
-Date:   Fri, 13 Aug 2021 03:25:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Thu, 12 Aug 2021 21:46:09 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id CB45F1FF80;
+        Fri, 13 Aug 2021 01:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1628819142; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LamDGYFppAFdL7WCvYoQSTIDfJ7v5NOZ+rmKtnq+i8o=;
+        b=ApNf9lb0Q7HdntXHacOQkOGQ6oxP2VJSVLUgv8JqWyY124KVBpb/BNVeIFlY934SZ5w9mO
+        VYHg2stE4hINYwm9bH3C0TPkq2apKhKCUAo9ld4owkRzFcSHdH5xfL/pr4fU7tNsnSHhxi
+        davfFx52nHTYCzSm3sfjlUJI+QA+tZI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1628819142;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LamDGYFppAFdL7WCvYoQSTIDfJ7v5NOZ+rmKtnq+i8o=;
+        b=auLJcE/GO4pW3gWrYHGNqNuOeSqcgRU5a5HQnGqpFj2lGLJhXsvARY6SDS/oQmRHrej/On
+        mZRsHneH0bhQufDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E2F9113BB4;
+        Fri, 13 Aug 2021 01:45:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id POzTJ8POFWEWIAAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 13 Aug 2021 01:45:39 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20210812083826.bfuqiwjlshjdwdby@wittgenstein>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for btrfs export
+In-reply-to: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+Date:   Fri, 13 Aug 2021 11:45:36 +1000
+Message-id: <162881913686.1695.12479588032010502384@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Christian,
 
-On 8/12/21 10:38 AM, Christian Brauner wrote:
-> On Thu, Aug 12, 2021 at 07:36:54AM +0200, Michael Kerrisk (man-pages) wrote:
->> [CC += Eric, in case he has a comment on the last piece]
+[[This patch is a minimal patch which addresses the current problems
+  with nfsd and btrfs, in a way which I think is most supportable, least
+  surprising, and least likely to impact any future attempts to more
+  completely fix the btrfs file-identify problem]]
 
-[...]
+BTRFS does not provide unique inode numbers across a filesystem.
+It *does* provide unique inode numbers with a subvolume and
+uses synthetic device numbers for different subvolumes to ensure
+uniqueness for device+inode.
 
->>> That's really splitting hairs.
->>
->> To be clear, I'm not trying to split hairs :-). It's just that
->> I'm struggling a little to understand. (In particular, the notion
->> of locked mounts is one where my understanding is weak.) 
->>
->> And think of it like this: I am the first line of defense for the
->> user-space reader. If I am having trouble to understand the text,
->> I wont be alone. And often, the problem is not so much that the
->> text is "wrong", it's that there's a difference in background
->> knowledge between what you know and what the reader (in this case
->> me) knows. Part of my task is to fill that gap, by adding info
->> that I think is necessary to the page (with the happy side
->> effect that I learn along the way.)
-> 
-> All very good points.
-> I didn't mean to complain btw. Sorry that it seemed that way. :)
+nfsd cannot use these varying device numbers.  If nfsd were to
+synthesise different stable filesystem ids to give to the client, that
+would cause subvolumes to appear in the mount table on the client, even
+though they don't appear in the mount table on the server.  Also, NFSv3
+doesn't support changing the filesystem id without a new explicit
+mount on the client (this is partially supported in practice, but
+violates the protocol specification).
 
-No problem. I need to think more carefully about my words 
-sometimes in mails too :-)
+So currently, the roots of all subvolumes report the same inode number
+in the same filesystem to NFS clients and tools like 'find' notice that
+a directory has the same identity as an ancestor, and so refuse to
+enter that directory.
 
->>> Of course this means that we're
->>> propagating into a mount namespace that is owned by a different user
->>> namespace though "crossing user namespaces" might have been the better
->>> choice.
->>
->> This is a perfect example of the point I make above. You say "of course",
->> but I don't have the background knowledge that you do :-). From my
->> perspective, I want to make sure that I understand your meaning, so
->> that that meaning can (IMHO) be made easier for the average reader
->> of the manual page.
->>
->>>>                  the aforementioned  flags  to  protect  these  sensitive
->>>>                  properties from being altered.
->>>>
->>>>               •  A  new  mount  and user namespace pair is created.  This
->>>>                  happens for  example  when  specifying  CLONE_NEWUSER  |
->>>>                  CLONE_NEWNS  in unshare(2), clone(2), or clone3(2).  The
->>>>                  aforementioned flags become locked to protect user name‐
->>>>                  spaces from altering sensitive mount properties.
->>>>
->>>> Again, this seems imprecise. Should it say something like:
->>>> "... to prevent changes to sensitive mount properties in the new 
->>>> mount namespace" ? Or perhaps you have a better wording.
->>>
->>> That's not imprecise. 
->>
->> Okay -- poor choice of wording on my part:
->>
->> s/this seems imprecise/I'm having trouble understanding this/
->>
->>> What you want to protect against is altering
->>> sensitive mount properties from within a user namespace irrespective of
->>> whether or not the user namespace actually owns the mount namespace,
->>> i.e. even if you own the mount namespace you shouldn't be able to alter
->>> those properties. I concede though that "protect" should've been
->>> "prevent".
->>
->> Can I check my education here please. The point is this:
->>
->> * The mount point was created in a mount NS that was owned by
->>   a more privileged user NS (e.g., the initial user NS).
->> * A CLONE_NEWUSER|CLONE_NEWNS step occurs to create a new (user and) 
->>   mount NS.
->> * In the new mount NS, the mounts become locked.
->>
->> And, help me here: is it correct that the reason the properties
->> need to be locked is because they are shared between the mounts?
-> 
-> Yes, basically.
+This patch allows btrfs (or any filesystem) to provide a 64bit number
+that can be xored with the inode number to make the number more unique.
+Rather than the client being certain to see duplicates, with this patch
+it is possible but extremely rare.
 
-Yes, but that last sentence of mine was wrong, wasn't it? The 
-properties are not actually shared between the mounts, right?
-(Earlier, I had done in experiment which misled e into thinking
-there was sharing, but now it looks to me like there is not.)
+The number than btrfs provides is a swab64() version of the subvolume
+identifier.  This has most entropy in the high bits (the low bits of the
+subvolume identifer), while the inoe has most entropy in the low bits.
+The result will always be unique within a subvolume, and will almost
+always be unique across the filesystem.
 
-> The new mount namespace contains a copy of all the mounts in the
-> previous mount namespace. So they are separate mounts which you can best
-> see when you do unshare --mount --propagation=private. An unmount in the
-> new mount namespace won't affect the mount in the previous mount
-> namespace. Which can only nicely work if they are separate mounts.
-> Propagation relies (among other things) on the fact that mount
-> namespaces have copies of the mounts.
-> 
-> The copied mounts in the new mount namespace will have inherited all
-> properties they had at the time when copy_namespaces() and specifically
-> copy_mnt_ns() was called. Which calls into copy_tree() and ultimately
-> into the appropriately named clone_mnt(). This is the low-level routine
-> that is responsible for cloning the mounts including their mount
-> properties.
-> 
-> Some mount properties such as read-only, nodev, noexec, nosuid, atime -
-> while arguably not per se security mechanisms - are used for protection
-> or as security measures in userspace applications. The most obvious one
-> might be the read-only property. One wouldn't want to expose a set of
-> files as read-only only for someone else to trivially gain write access
-> to them. An example of where that could happen is when creating a new
-> mount namespaces and user namespace pair where the new mount namespace
-> is owned by the new user namespace in which the caller is privileged and
-> thus the caller would also able to alter the new mount namespace. So
-> without locking flags all it would take to turn a read-only into a
-> read-write mount is:
-> unshare -U --map-root --propagation=private -- mount -o remount,rw /some/mnt
-> locking such flags prevents that from happening.
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ fs/btrfs/inode.c     |  4 ++++
+ fs/nfsd/nfs3xdr.c    | 17 ++++++++++++++++-
+ fs/nfsd/nfs4xdr.c    |  9 ++++++++-
+ fs/nfsd/xdr3.h       |  2 ++
+ include/linux/stat.h | 17 +++++++++++++++++
+ 5 files changed, 47 insertions(+), 2 deletions(-)
 
-Thanks for the detailed explanation; it's very helpful.
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 0117d867ecf8..989fdf2032d5 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9195,6 +9195,10 @@ static int btrfs_getattr(struct user_namespace *mnt_us=
+erns,
+ 	generic_fillattr(&init_user_ns, inode, stat);
+ 	stat->dev =3D BTRFS_I(inode)->root->anon_dev;
+=20
++	if (BTRFS_I(inode)->root->root_key.objectid !=3D BTRFS_FS_TREE_OBJECTID)
++		stat->ino_uniquifier =3D
++			swab64(BTRFS_I(inode)->root->root_key.objectid);
++
+ 	spin_lock(&BTRFS_I(inode)->lock);
+ 	delalloc_bytes =3D BTRFS_I(inode)->new_delalloc_bytes;
+ 	inode_bytes =3D inode_get_bytes(inode);
+diff --git a/fs/nfsd/nfs3xdr.c b/fs/nfsd/nfs3xdr.c
+index 0a5ebc52e6a9..669e2437362a 100644
+--- a/fs/nfsd/nfs3xdr.c
++++ b/fs/nfsd/nfs3xdr.c
+@@ -340,6 +340,7 @@ svcxdr_encode_fattr3(struct svc_rqst *rqstp, struct xdr_s=
+tream *xdr,
+ {
+ 	struct user_namespace *userns =3D nfsd_user_namespace(rqstp);
+ 	__be32 *p;
++	u64 ino;
+ 	u64 fsid;
+=20
+ 	p =3D xdr_reserve_space(xdr, XDR_UNIT * 21);
+@@ -377,7 +378,10 @@ svcxdr_encode_fattr3(struct svc_rqst *rqstp, struct xdr_=
+stream *xdr,
+ 	p =3D xdr_encode_hyper(p, fsid);
+=20
+ 	/* fileid */
+-	p =3D xdr_encode_hyper(p, stat->ino);
++	ino =3D stat->ino;
++	if (stat->ino_uniquifier && stat->ino_uniquifier !=3D ino)
++		ino ^=3D stat->ino_uniquifier;
++	p =3D xdr_encode_hyper(p, ino);
+=20
+ 	p =3D encode_nfstime3(p, &stat->atime);
+ 	p =3D encode_nfstime3(p, &stat->mtime);
+@@ -1151,6 +1155,17 @@ svcxdr_encode_entry3_common(struct nfsd3_readdirres *r=
+esp, const char *name,
+ 	if (xdr_stream_encode_item_present(xdr) < 0)
+ 		return false;
+ 	/* fileid */
++	if (!resp->dir_have_uniquifier) {
++		struct kstat stat;
++		if (fh_getattr(&resp->fh, &stat) =3D=3D nfs_ok)
++			resp->dir_ino_uniquifier =3D stat.ino_uniquifier;
++		else
++			resp->dir_ino_uniquifier =3D 0;
++		resp->dir_have_uniquifier =3D 1;
++	}
++	if (resp->dir_ino_uniquifier &&
++	    resp->dir_ino_uniquifier !=3D ino)
++		ino ^=3D resp->dir_ino_uniquifier;
+ 	if (xdr_stream_encode_u64(xdr, ino) < 0)
+ 		return false;
+ 	/* name */
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index 7abeccb975b2..ddccf849c29c 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -3114,10 +3114,14 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc=
+_fh *fhp,
+ 					fhp->fh_handle.fh_size);
+ 	}
+ 	if (bmval0 & FATTR4_WORD0_FILEID) {
++		u64 ino =3D stat.ino;
++		if (stat.ino_uniquifier &&
++		    stat.ino_uniquifier !=3D stat.ino)
++			ino ^=3D stat.ino_uniquifier;
+ 		p =3D xdr_reserve_space(xdr, 8);
+ 		if (!p)
+ 			goto out_resource;
+-		p =3D xdr_encode_hyper(p, stat.ino);
++		p =3D xdr_encode_hyper(p, ino);
+ 	}
+ 	if (bmval0 & FATTR4_WORD0_FILES_AVAIL) {
+ 		p =3D xdr_reserve_space(xdr, 8);
+@@ -3285,6 +3289,9 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_f=
+h *fhp,
+ 			if (err)
+ 				goto out_nfserr;
+ 			ino =3D parent_stat.ino;
++			if (parent_stat.ino_uniquifier &&
++			    parent_stat.ino_uniquifier !=3D ino)
++				ino ^=3D parent_stat.ino_uniquifier;
+ 		}
+ 		p =3D xdr_encode_hyper(p, ino);
+ 	}
+diff --git a/fs/nfsd/xdr3.h b/fs/nfsd/xdr3.h
+index 933008382bbe..b4f9f3c71f72 100644
+--- a/fs/nfsd/xdr3.h
++++ b/fs/nfsd/xdr3.h
+@@ -179,6 +179,8 @@ struct nfsd3_readdirres {
+ 	struct xdr_buf		dirlist;
+ 	struct svc_fh		scratch;
+ 	struct readdir_cd	common;
++	u64			dir_ino_uniquifier;
++	int			dir_have_uniquifier;
+ 	unsigned int		cookie_offset;
+ 	struct svc_rqst *	rqstp;
+=20
+diff --git a/include/linux/stat.h b/include/linux/stat.h
+index fff27e603814..a5188f42ed81 100644
+--- a/include/linux/stat.h
++++ b/include/linux/stat.h
+@@ -46,6 +46,23 @@ struct kstat {
+ 	struct timespec64 btime;			/* File creation time */
+ 	u64		blocks;
+ 	u64		mnt_id;
++	/*
++	 * BTRFS does not provide unique inode numbers within a filesystem,
++	 * depending on a synthetic 'dev' to provide uniqueness.
++	 * NFSd cannot make use of this 'dev' number so clients often see
++	 * duplicate inode numbers.
++	 * For BTRFS, 'ino' is unlikely to use the high bits.  It puts
++	 * another number in ino_uniquifier which:
++	 * - has most entropy in the high bits
++	 * - is different precisely when 'dev' is different
++	 * - is stable across unmount/remount
++	 * NFSd can xor this with 'ino' to get a substantially more unique
++	 * number for reporting to the client.
++	 * The ino_uniquifier for a directory can reasonably be applied
++	 * to inode numbers reported by the readdir filldir callback.
++	 * It is NOT currently exported to user-space.
++	 */
++	u64		ino_uniquifier;
+ };
+=20
+ #endif
+--=20
+2.32.0
 
->>> You could probably say:
->>>
->>> 	A  new  mount  and user namespace pair is created.  This
->>> 	happens for  example  when  specifying  CLONE_NEWUSER  |
->>> 	CLONE_NEWNS  in unshare(2), clone(2), or clone3(2).
->>> 	The aforementioned flags become locked in the new mount
->>> 	namespace to prevent sensitive mount properties from being
->>> 	altered.
->>> 	Since the newly created mount namespace will be owned by the
->>> 	newly created user namespace a caller privileged in the newly
->>> 	created user namespace would be able to alter senstive
->>> 	mount properties. For example, without locking the read-only
->>> 	property for the mounts in the new mount namespace such a caller
->>> 	would be able to remount them read-write.
->>
->> So, I've now made the text:
->>
->>        EPERM  One of the mounts had at least one of MOUNT_ATTR_NOATIME,
->>               MOUNT_ATTR_NODEV, MOUNT_ATTR_NODIRATIME, MOUNT_ATTR_NOEXEC,
->>               MOUNT_ATTR_NOSUID, or MOUNT_ATTR_RDONLY set and the flag is
->>               locked.  Mount attributes become locked on a mount if:
->>
->>               •  A new mount or mount tree is created causing mount
->>                  propagation across user namespaces (i.e., propagation to
->>                  a mount namespace owned by a different user namespace).
->>                  The kernel will lock the aforementioned flags to prevent
->>                  these sensitive properties from being altered.
->>
->>               •  A new mount and user namespace pair is created.  This
->>                  happens for example when specifying CLONE_NEWUSER |
->>                  CLONE_NEWNS in unshare(2), clone(2), or clone3(2).  The
->>                  aforementioned flags become locked in the new mount
->>                  namespace to prevent sensitive mount properties from
->>                  being altered.  Since the newly created mount namespace
->>                  will be owned by the newly created user namespace, a
->>                  calling process that is privileged in the new user
->>                  namespace would—in the absence of such locking—be able
->>                  to alter senstive mount properties (e.g., to remount a
->>                  mount that was marked read-only as read-write in the new
->>                  mount namespace).
->>
->> Okay?
-> 
-> Sounds good.
-
-Okay.
-
->>> (Fwiw, in this scenario there's a bit of (moderately sane) strangeness.
->>>  A CLONE_NEWUSER | CLONE_NEWMNT will cause even stronger protection to
->>>  kick in. For all mounts not marked as expired MNT_LOCKED will be set
->>>  which means that a umount() on any such mount copied from the previous
->>>  mount namespace will yield EINVAL implying from userspace' perspective
->>>  it's not mounted - granted EINVAL is the ioctl() of multiplexing errnos
->>>  - whereas a remount to alter a locked flag will yield EPERM.)
->>
->> Thanks for educating me! So, is that what we are seeing below?
-
-(Was your silence to the above question an implicit "yes"?)
-
->> $ sudo umount /mnt/m1
->> $ sudo mount -t tmpfs none /mnt/m1
->> $ sudo unshare -pf -Ur -m --mount-proc strace -o /tmp/log umount /mnt/m1
->> umount: /mnt/m1: not mounted.
->> $ grep ^umount /tmp/log
->> umount2("/mnt/m1", 0)                   = -1 EINVAL (Invalid argument)
->>
->> The mount_namespaces(7) page has for a log time had this text:
->>
->>        *  Mounts that come as a single unit from a more privileged mount
->>           namespace are locked together and may not be separated in a
->>           less privileged mount namespace.  (The unshare(2) CLONE_NEWNS
->>           operation brings across all of the mounts from the original
->>           mount namespace as a single unit, and recursive mounts that
->>           propagate between mount namespaces propagate as a single unit.)
->>
->> I have had trouble understanding that. But maybe you just helped.
->> Is that text relevant to what you just wrote above? In particular,
->> I have trouble understanding what "separated" means. But, perhaps
-> 
-> The text gives the "how" not the "why".
-
-Yes, that's a big problem :-}.
-
-> Consider a more elaborate mount tree where e.g., you have bind-mounted a
-> mount over a subdirectory of another mount:
-> 
-> sudo mount -t tmpfs /mnt
-> sudo mkdir /mnt/my-dir/
-> sudo touch /mnt/my-dir/my-file
-> sudo mount --bind /opt /mnt/my-dir
-> 
-> The files underneath /mnt/my-dir are now hidden. Consider what would
-> happen if one would allow to address those mounts separately. A user
-> could then do:
-> 
-> unshare -U --map-root --mount
-> umount /mnt/my-dir
-> cat /mnt/my-dir/my-file
-> 
-> giving them access to what's in my-dir.
-> 
-> Treating such mount trees as a unit in less privileged mount namespaces
-> (cf. [1]) prevents that, i.e., prevents revealing files and directories
-> that were overmounted.
-
-Got it!
- 
-> Treating such mounts as a unit is also relevant when e.g. bind-mounting
-> a mount tree containing locked mounts. Sticking with the example above:
-> 
-> unshare -U --map-root --mount
-> 
-> # non-recursive bind-mount will fail
-> mount --bind /mnt /tmp
-> 
-> # recursive bind-mount will succeed
-> mount --rbind /mnt /tmp
-> 
-> The reason is again that the mount tree at /mnt is treated as a mount
-> unit because it is locked. If one were to allow to non-recursively
-> bind-mountng /mnt somewhere it would mean revealing what's underneath
-> the mount at my-dir (This is in some sense the inverse of preventing a
-> filesystem from being mounted that isn't fully visible, i.e. contains
-> hidden or over-mounted mounts.).
-
-Got it!
-
-> These semantics, in addition to being security relevant, also allow a
-> more privileged mount namespace to create a restricted view of the
-> filesystem hierarchy that can't be circumvented in a less privileged
-> mount namespace (Otherwise pivot_root would have to be used which can
-> also be used to guarantee a restriced view on the filesystem hierarchy
-> especially when combined with a separate rootfs.).
-
-Okay.
-
-Christian, thanks for so generously taking the time to write this up.
-It really helped me a lot! I will do some work on the mount namespaces
-manual page, to cover at least part of what you said.
-
-Thanks,
-
-Michael
-
-> Christian
-> 
-> [1]: I'll avoid jumping through the hoops of speaking about ownership
->      all the time now for the sake of brevity. Otherwise I'll still sit
->      here at lunchtime.
-> 
-
-
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
