@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 641B13EB2BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 10:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C7DE3EB2DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 10:49:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239244AbhHMIlJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Aug 2021 04:41:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41756 "EHLO
+        id S239708AbhHMIsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Aug 2021 04:48:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238688AbhHMIlI (ORCPT
+        with ESMTP id S238799AbhHMIsc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Aug 2021 04:41:08 -0400
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B128C061756;
-        Fri, 13 Aug 2021 01:40:42 -0700 (PDT)
-Received: by mail-il1-x130.google.com with SMTP id f15so6040020ilk.4;
-        Fri, 13 Aug 2021 01:40:42 -0700 (PDT)
+        Fri, 13 Aug 2021 04:48:32 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC93AC061756;
+        Fri, 13 Aug 2021 01:48:05 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id n17so10731663ioc.7;
+        Fri, 13 Aug 2021 01:48:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=//14LGuNLlUtJO8ZuTsuudem0p3ym1bzgNa9Q4lrwv4=;
-        b=gCXCIgMEKrMj+covUc+7TMS6TQ02ugY21ERYSh4ktwWWkAhFgj9GHVNwaPcMeM/jKW
-         mGCl9ncsuuiUpadGYkbCV8WdcmpZ4MRGh2ERx2W8zp3rHMM55Umyz9rlQsoV8mnzJMF8
-         +zlx0WuyHBg7obpWJpkAwQbYz9FjSngdK4sIpBJ/gAUZIebdeLhwiBjZjXhUZwMJualO
-         kvQRUZozUJYSgglLOxRWhCxYnU3T+ROAlx4pYjtQ5V7zs9AV2KCfhlK+zJM8sSFAAvfJ
-         70MBWlREdUagSL9t0d94fdi5PyaBLaS891K1TuTZExh83Q4B+6Eck2nyj2Srvo/TND4h
-         MjDQ==
+        bh=HsvqmOcg7ghrpmVCq63zefkNu8uaiwPfBKTMCXYdiqY=;
+        b=LhkVJh1B78ivwTakdmeUvUVL/gJzPip9TiT4S1A7vWbeHkF09Tb5Fr0ty9xgCYFzw5
+         cSqzjVN7s1cz7kG1zg8+1EhGC9gSuRFc5h2fbZaFzH48JnOaJw+erZAwY2yzlpGMGlfL
+         PLGBhsScB4gsLWkErEXtth1ncsccZ52pLNdzI+Ic4AHz4HI6tTZkeNeZ55niEBk7uEXm
+         hgufwWzlzn0Cp/eHCcjpxGHfisFNGCG+uZjQh1avuKCoSiim8kBj9b/oFBTE2+DLwii0
+         M3Nct6lGPt1e7oiMYPPbgs5Qft90SbSXVPM3SreaUuGt623wPaF8hh6ETQH0meCcQSyk
+         rh5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=//14LGuNLlUtJO8ZuTsuudem0p3ym1bzgNa9Q4lrwv4=;
-        b=t7kBV9DWNEtfPcT37zdq2fNjwRugQSCuUAw/4mpGveH7kkS4BZ6oRJkcOvKk5LPJme
-         0kNeklM8MiS6xxWJZSUkS8rBiBLWRXc+OypA3JmX8Ut1jGtrfE5wqMC6CthkQ1Mfnnok
-         oMXNphwayJ1bzRLEQUEK2koNZ+CrZ6Ir2S4YjBuUgYNI74Zk31/8h83jpa80rMATJRl8
-         oxSaqY7j98dr+HOXRytfp+jfWsSALFj4B9DzdxR45qRuNT0vTRcwIqe1HDfSMhyUneN2
-         ro5uIymYdZjEWwWMhlEGert9iwlK4NjjEc3BojMHbeUfrb4qDEY2ScLSuPGjWZD6XJEx
-         AeTA==
-X-Gm-Message-State: AOAM531bzdPokzUVk3X+6JxkXsQr4kzrzewX4MylK3Y49vNW5Lh9DCEr
-        0oMjQo4S6EKFVjdicUDJzW7Ize6VbVjAdyIgeeA=
-X-Google-Smtp-Source: ABdhPJwazYPentWqY5uT39FGKeuVIVBot/7WzWF67MCvCdwahcFZ/1/ZLfbDDPMlRpW2oQ1M+7At1VGzN00c15I/LMk=
-X-Received: by 2002:a92:c0ce:: with SMTP id t14mr1039665ilf.72.1628844041615;
- Fri, 13 Aug 2021 01:40:41 -0700 (PDT)
+        bh=HsvqmOcg7ghrpmVCq63zefkNu8uaiwPfBKTMCXYdiqY=;
+        b=eXF6LQUxBevU5xmcHAfXsKiyjvVikO6UYOJyonRRXItt1ANGyI/c3HETITfLgqyw5s
+         D8eJF6mFT2HOh0rO0GZQRQE0TxMQFO5iwL9zoVVKkhRgYeHwVq0l6LwOHzjhgMtethSg
+         Z0Wg95z7xoj2qfn8JawDLgRpptuNO4tnxFmLwebTq2MGD31AMSe/frGS3u5TdFyn2hXJ
+         2Fq6yP5MtyD52vmNaGJi2mqQQsejk+TsMYATeF2uYiX4oLhAqDyzpx2jba+Tojo8BYLP
+         7e8q15Gzufdj9+BZAW/ScCYcIgH6vGtTvzP4aW6i6Pu/QPPu/N99Wr6mM+jRaZcQbZOR
+         xFTA==
+X-Gm-Message-State: AOAM532iwnJ0bbTePiw7A0Au8jvd5KV5QTX791/XTao80HRiLPQXCEl/
+        IT36mcRnEEM0JPlDVa8+6QpL2WwCjXRdWx0rqrw=
+X-Google-Smtp-Source: ABdhPJzZCzCrr1guu0DcfYv30Elnd8o2a6pb9g1AV4bLvDIFgpHFeDDhdc2qVcB+oCoCdngt2SdVG0/kOhvn1rALLMQ=
+X-Received: by 2002:a05:6602:1848:: with SMTP id d8mr1226287ioi.72.1628844485272;
+ Fri, 13 Aug 2021 01:48:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210812214010.3197279-1-krisman@collabora.com> <20210812214010.3197279-16-krisman@collabora.com>
-In-Reply-To: <20210812214010.3197279-16-krisman@collabora.com>
+References: <20210812214010.3197279-1-krisman@collabora.com> <20210812214010.3197279-19-krisman@collabora.com>
+In-Reply-To: <20210812214010.3197279-19-krisman@collabora.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 13 Aug 2021 11:40:30 +0300
-Message-ID: <CAOQ4uxhAhmWTieCx0BJKde14gwJJe6DH-Xv2wg7On5Ley99Hqg@mail.gmail.com>
-Subject: Re: [PATCH v6 15/21] fanotify: Preallocate per superblock mark error event
+Date:   Fri, 13 Aug 2021 11:47:54 +0300
+Message-ID: <CAOQ4uxjCmdUpfVgQzaFgaQCe+H8BzTi7MAf6Y=qN3e832_aVPA@mail.gmail.com>
+Subject: Re: [PATCH v6 18/21] fanotify: Emit generic error info type for error event
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     Jan Kara <jack@suse.com>, Linux API <linux-api@vger.kernel.org>,
         Ext4 <linux-ext4@vger.kernel.org>,
@@ -69,148 +69,149 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Fri, Aug 13, 2021 at 12:41 AM Gabriel Krisman Bertazi
 <krisman@collabora.com> wrote:
 >
-> Error reporting needs to be done in an atomic context.  This patch
-> introduces a single error slot for superblock marks that report the
-> FAN_FS_ERROR event, to be used during event submission.
+> The Error info type is a record sent to users on FAN_FS_ERROR events
+> documenting the type of error.  It also carries an error count,
+> documenting how many errors were observed since the last reporting.
 >
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 >
+
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+
 > ---
-> Changes v5:
->   - Restore mark references. (jan)
->   - Tie fee slot to the mark lifetime.(jan)
->   - Don't reallocate event(jan)
+> Changes since v5:
+>   - Move error code here
 > ---
->  fs/notify/fanotify/fanotify.c      | 12 ++++++++++++
->  fs/notify/fanotify/fanotify.h      | 13 +++++++++++++
->  fs/notify/fanotify/fanotify_user.c | 31 ++++++++++++++++++++++++++++--
->  3 files changed, 54 insertions(+), 2 deletions(-)
+>  fs/notify/fanotify/fanotify.c      |  1 +
+>  fs/notify/fanotify/fanotify.h      |  1 +
+>  fs/notify/fanotify/fanotify_user.c | 36 ++++++++++++++++++++++++++++++
+>  include/uapi/linux/fanotify.h      |  7 ++++++
+>  4 files changed, 45 insertions(+)
 >
 > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index ebb6c557cea1..3bf6fd85c634 100644
+> index f5c16ac37835..b49a474c1d7f 100644
 > --- a/fs/notify/fanotify/fanotify.c
 > +++ b/fs/notify/fanotify/fanotify.c
-> @@ -855,6 +855,14 @@ static void fanotify_free_name_event(struct fanotify_event *event)
->         kfree(FANOTIFY_NE(event));
->  }
+> @@ -745,6 +745,7 @@ static int fanotify_handle_error_event(struct fsnotify_iter_info *iter_info,
+>         spin_unlock(&group->notification_lock);
 >
-> +static void fanotify_free_error_event(struct fanotify_event *event)
-> +{
-> +       /*
-> +        * The actual event is tied to a mark, and is released on mark
-> +        * removal
-> +        */
-> +}
-> +
->  static void fanotify_free_event(struct fsnotify_event *fsn_event)
->  {
->         struct fanotify_event *event;
-> @@ -877,6 +885,9 @@ static void fanotify_free_event(struct fsnotify_event *fsn_event)
->         case FANOTIFY_EVENT_TYPE_OVERFLOW:
->                 kfree(event);
->                 break;
-> +       case FANOTIFY_EVENT_TYPE_FS_ERROR:
-> +               fanotify_free_error_event(event);
-> +               break;
->         default:
->                 WARN_ON_ONCE(1);
->         }
-> @@ -894,6 +905,7 @@ static void fanotify_free_mark(struct fsnotify_mark *mark)
->         if (mark->flags & FANOTIFY_MARK_FLAG_SB_MARK) {
->                 struct fanotify_sb_mark *fa_mark = FANOTIFY_SB_MARK(mark);
+>         fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
+> +       fee->error = report->error;
+>         fee->fsid = fee->sb_mark->fsn_mark.connector->fsid;
 >
-> +               kfree(fa_mark->fee_slot);
->                 kmem_cache_free(fanotify_sb_mark_cache, fa_mark);
->         } else {
->                 kmem_cache_free(fanotify_mark_cache, mark);
+>         fh_len = fanotify_encode_fh_len(inode);
 > diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> index b3ab620822c2..3f03333df32f 100644
+> index 158cf0c4b0bd..0cfe376c6fd9 100644
 > --- a/fs/notify/fanotify/fanotify.h
 > +++ b/fs/notify/fanotify/fanotify.h
-> @@ -139,6 +139,7 @@ enum fanotify_mark_bits {
+> @@ -220,6 +220,7 @@ FANOTIFY_NE(struct fanotify_event *event)
 >
->  struct fanotify_sb_mark {
->         struct fsnotify_mark fsn_mark;
-> +       struct fanotify_error_event *fee_slot;
->  };
+>  struct fanotify_error_event {
+>         struct fanotify_event fae;
+> +       s32 error; /* Error reported by the Filesystem. */
+>         u32 err_count; /* Suppressed errors count */
 >
->  static inline
-> @@ -161,6 +162,7 @@ enum fanotify_event_type {
->         FANOTIFY_EVENT_TYPE_PATH,
->         FANOTIFY_EVENT_TYPE_PATH_PERM,
->         FANOTIFY_EVENT_TYPE_OVERFLOW, /* struct fanotify_event */
-> +       FANOTIFY_EVENT_TYPE_FS_ERROR, /* struct fanotify_error_event */
->         __FANOTIFY_EVENT_TYPE_NUM
->  };
->
-> @@ -216,6 +218,17 @@ FANOTIFY_NE(struct fanotify_event *event)
->         return container_of(event, struct fanotify_name_event, fae);
->  }
->
-> +struct fanotify_error_event {
-> +       struct fanotify_event fae;
-> +       struct fanotify_sb_mark *sb_mark; /* Back reference to the mark. */
-> +};
-> +
-> +static inline struct fanotify_error_event *
-> +FANOTIFY_EE(struct fanotify_event *event)
-> +{
-> +       return container_of(event, struct fanotify_error_event, fae);
-> +}
-> +
->  static inline __kernel_fsid_t *fanotify_event_fsid(struct fanotify_event *event)
->  {
->         if (event->type == FANOTIFY_EVENT_TYPE_FID)
+>         struct fanotify_sb_mark *sb_mark; /* Back reference to the mark. */
 > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 54107f1533d5..b77030386d7f 100644
+> index 1ab8f9d8b3ac..ca53159ce673 100644
 > --- a/fs/notify/fanotify/fanotify_user.c
 > +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -947,8 +947,10 @@ static struct fsnotify_mark *fanotify_alloc_mark(struct fsnotify_group *group,
+> @@ -107,6 +107,8 @@ struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
+>  #define FANOTIFY_EVENT_ALIGN 4
+>  #define FANOTIFY_INFO_HDR_LEN \
+>         (sizeof(struct fanotify_event_info_fid) + sizeof(struct file_handle))
+> +#define FANOTIFY_INFO_ERROR_LEN \
+> +       (sizeof(struct fanotify_event_info_error))
 >
->         fsnotify_init_mark(mark, group);
->
-> -       if (type == FSNOTIFY_OBJ_TYPE_SB)
-> +       if (type == FSNOTIFY_OBJ_TYPE_SB) {
->                 mark->flags |= FANOTIFY_MARK_FLAG_SB_MARK;
-> +               sb_mark->fee_slot = NULL;
-> +       }
->
->         return mark;
->  }
-> @@ -999,6 +1001,7 @@ static int fanotify_add_mark(struct fsnotify_group *group,
+>  static int fanotify_fid_info_len(int fh_len, int name_len)
 >  {
->         struct fsnotify_mark *fsn_mark;
->         __u32 added;
-> +       int ret = 0;
+> @@ -130,6 +132,9 @@ static size_t fanotify_event_len(struct fanotify_event *event,
+>         if (!fid_mode)
+>                 return event_len;
 >
->         mutex_lock(&group->mark_mutex);
->         fsn_mark = fsnotify_find_mark(connp, group);
-> @@ -1009,13 +1012,37 @@ static int fanotify_add_mark(struct fsnotify_group *group,
->                         return PTR_ERR(fsn_mark);
->                 }
->         }
+> +       if (fanotify_is_error_event(event->mask))
+> +               event_len += FANOTIFY_INFO_ERROR_LEN;
 > +
-> +       /*
-> +        * Error events are allocated per super-block mark only if
-> +        * strictly needed (i.e. FAN_FS_ERROR was requested).
-> +        */
-> +       if (type == FSNOTIFY_OBJ_TYPE_SB && !(flags & FAN_MARK_IGNORED_MASK) &&
-> +           (mask & FAN_FS_ERROR)) {
-> +               struct fanotify_sb_mark *sb_mark = FANOTIFY_SB_MARK(fsn_mark);
+>         info = fanotify_event_info(event);
+>         dir_fh_len = fanotify_event_dir_fh_len(event);
+>         fh_len = fanotify_event_object_fh_len(event);
+> @@ -176,6 +181,7 @@ static struct fanotify_event *fanotify_dup_error_to_stack(
+>         error_on_stack->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
+>         error_on_stack->err_count = fee->err_count;
+>         error_on_stack->sb_mark = fee->sb_mark;
+> +       error_on_stack->error = fee->error;
+>
+>         error_on_stack->fsid = fee->fsid;
+>
+> @@ -342,6 +348,28 @@ static int process_access_response(struct fsnotify_group *group,
+>         return -ENOENT;
+>  }
+>
+> +static size_t copy_error_info_to_user(struct fanotify_event *event,
+> +                                     char __user *buf, int count)
+> +{
+> +       struct fanotify_event_info_error info;
+> +       struct fanotify_error_event *fee = FANOTIFY_EE(event);
 > +
-> +               if (!sb_mark->fee_slot) {
-> +                       struct fanotify_error_event *fee =
-> +                               kzalloc(sizeof(*fee), GFP_KERNEL_ACCOUNT);
-> +                       if (!fee) {
-> +                               ret = -ENOMEM;
-> +                               goto out;
-> +                       }
-> +                       fanotify_init_event(&fee->fae, 0, FS_ERROR);
-> +                       fee->sb_mark = sb_mark;
-
-I think Jan wanted to avoid zalloc()?
-Please use kmalloc() and init the rest of the fee-> members.
-We do not need to fill the entire fh buf with zeroes.
-
-Thanks,
-Amir.
+> +       info.hdr.info_type = FAN_EVENT_INFO_TYPE_ERROR;
+> +       info.hdr.pad = 0;
+> +       info.hdr.len = FANOTIFY_INFO_ERROR_LEN;
+> +
+> +       if (WARN_ON(count < info.hdr.len))
+> +               return -EFAULT;
+> +
+> +       info.error = fee->error;
+> +       info.error_count = fee->err_count;
+> +
+> +       if (copy_to_user(buf, &info, sizeof(info)))
+> +               return -EFAULT;
+> +
+> +       return info.hdr.len;
+> +}
+> +
+>  static int copy_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+>                              int info_type, const char *name, size_t name_len,
+>                              char __user *buf, size_t count)
+> @@ -505,6 +533,14 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>         if (f)
+>                 fd_install(fd, f);
+>
+> +       if (fanotify_is_error_event(event->mask)) {
+> +               ret = copy_error_info_to_user(event, buf, count);
+> +               if (ret < 0)
+> +                       goto out_close_fd;
+> +               buf += ret;
+> +               count -= ret;
+> +       }
+> +
+>         /* Event info records order is: dir fid + name, child fid */
+>         if (fanotify_event_dir_fh_len(event)) {
+>                 info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
+> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+> index 16402037fc7a..80040a92e9d9 100644
+> --- a/include/uapi/linux/fanotify.h
+> +++ b/include/uapi/linux/fanotify.h
+> @@ -124,6 +124,7 @@ struct fanotify_event_metadata {
+>  #define FAN_EVENT_INFO_TYPE_FID                1
+>  #define FAN_EVENT_INFO_TYPE_DFID_NAME  2
+>  #define FAN_EVENT_INFO_TYPE_DFID       3
+> +#define FAN_EVENT_INFO_TYPE_ERROR      4
+>
+>  /* Variable length info record following event metadata */
+>  struct fanotify_event_info_header {
+> @@ -149,6 +150,12 @@ struct fanotify_event_info_fid {
+>         unsigned char handle[0];
+>  };
+>
+> +struct fanotify_event_info_error {
+> +       struct fanotify_event_info_header hdr;
+> +       __s32 error;
+> +       __u32 error_count;
+> +};
+> +
+>  struct fanotify_response {
+>         __s32 fd;
+>         __u32 response;
+> --
+> 2.32.0
+>
