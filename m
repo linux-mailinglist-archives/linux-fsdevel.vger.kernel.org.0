@@ -2,114 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2712F3EB693
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 16:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF77A3EB6F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Aug 2021 16:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240167AbhHMOMk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Aug 2021 10:12:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60810 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239559AbhHMOMh (ORCPT
+        id S240366AbhHMOrw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Aug 2021 10:47:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21630 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240830AbhHMOrv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Aug 2021 10:12:37 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F33ADC061756
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Aug 2021 07:12:10 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id a8so15405820pjk.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Aug 2021 07:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sM9iZQWOpgXtCBxdiAH87a4w4pD1Hwf0Q/waRT60trY=;
-        b=L4fbcQ/XtI8L4Dwr6IgeN+D/hs24frS3q4t7H7qlyDb7LBWVIjTli59tuqeZ0bVK+I
-         +m4RqhoDbSfmXaOlRVCvuoUArFRgWaDPl+DlYdW/RnQ1WW8YDGIRBECQrWLsj6vZx2aI
-         yQ9y7XQ+Heop80RAY0Oz0LRfdNPE4f2Bf1fT5V06dbG1vYHHjJFLJ0ztMRKkQX5IFyNo
-         g3rP4zcxGVj0yUQbM38kAvfemHMN5DPL09kdgJK/TB0uNl9GWYc+J9DLEmf87nr2vh/a
-         Y1ehh2KRphTB4BGJeMGwU56uPGPlcNYGPsHNAu9Pb6XPp5klfdTcRvdTlGN3bf1w+ZXC
-         50Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sM9iZQWOpgXtCBxdiAH87a4w4pD1Hwf0Q/waRT60trY=;
-        b=lUnPKL21hshDuz37LkoUV/sAM9XbDH56kLPyRrykiB5v15Lj++0LX3BgPqU7+ADxOk
-         icR7jznMcdYwPj9m9hfNw2yG4sgRI90AYQ8N0sYJanGDfr4eJAAO0FokSoY6dWJQzNr4
-         6FbaDoFKSwCIU3MoUQxrAI3aAbVS2SAuT9fWtQoedX6WRr4Lxux0BJj19FjopcaRkpCA
-         GLnY+/unFZQxwFBTcj60/ogUKQl6qf873f7jlobC9MSIvbjDQR39BqXyErzyr5fagKTW
-         S6UaJLTKPjUc3r5oITh+rQzBhKH4g9QNTKGBOis+Ya3IwgGVD85YPaOLDIJvZPqA1XHz
-         IdvA==
-X-Gm-Message-State: AOAM533mfoa5OSoiCZ2DBHk0xOtPvq/vf7D6ZZM6VH+M5I8j09cWN+8e
-        8sSXlPOCzLDtTFV0vnU6xtiHlA==
-X-Google-Smtp-Source: ABdhPJxk/6mubsgRh4KoiPUmDR+lqAmlG7SCS2sNtmMzaLRGB7vL6TfeFPyTxgoPtBChlKsE0Q5Utg==
-X-Received: by 2002:a17:902:e851:b029:12c:9284:8c2b with SMTP id t17-20020a170902e851b029012c92848c2bmr2099685plg.57.1628863930374;
-        Fri, 13 Aug 2021 07:12:10 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id z15sm2982341pgc.13.2021.08.13.07.12.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Aug 2021 07:12:09 -0700 (PDT)
-Subject: Re: [PATCH v9 00/11] io_uring: add mkdir and [sym]linkat support
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-References: <20210708063447.3556403-1-dkadashev@gmail.com>
- <CAHk-=wjMFZ98ERV7V5u6R4FbYi3vRRf8_Uev493qeYCa1vqV3Q@mail.gmail.com>
- <cbddca99-d9b1-d545-e2eb-a243ce38270b@kernel.dk>
- <CAOKbgA5jHtR=tLAYS_rs77QppRm37HV1bqSLQEMv8GusQNDrAg@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <506f544a-cb0b-68a2-f107-c77d9f7f34ed@kernel.dk>
-Date:   Fri, 13 Aug 2021 08:12:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 13 Aug 2021 10:47:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628866044;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+F5e/QJCQvTQyfdm+mXX5RdrWpejQYPMUGSZ/zRGUYg=;
+        b=HPWZiPabWoPFTO8P0obg/vGBtv+t7kxFRU5KXCYTKj2XNmi0LZHtBSqRD4botQ2j9sBqaa
+        9Px6PMrUv9erOt/G9aI0FBKFIqkSSohzcokugVdh1DLRhcKMQgQ4JfPNXO+bb9ib3AHTTF
+        sH2HM+WmFpZmwsfi69jUwzAcbPvnZVI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-524-lV9q3wEuNu2HaooDE1H1AA-1; Fri, 13 Aug 2021 10:47:23 -0400
+X-MC-Unique: lV9q3wEuNu2HaooDE1H1AA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A77DC1008061;
+        Fri, 13 Aug 2021 14:47:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B9DC060853;
+        Fri, 13 Aug 2021 14:47:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] netfs: Fix READ/WRITE confusion when calling
+ iov_iter_xarray()
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        dhowells@redhat.com, linux-kernel@vger.kernel.org
+Date:   Fri, 13 Aug 2021 15:47:14 +0100
+Message-ID: <162886603464.3940407.3790841170414793899.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-In-Reply-To: <CAOKbgA5jHtR=tLAYS_rs77QppRm37HV1bqSLQEMv8GusQNDrAg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/13/21 3:32 AM, Dmitry Kadashev wrote:
-> On Fri, Jul 9, 2021 at 2:25 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 7/8/21 12:34 PM, Linus Torvalds wrote:
->>> On Wed, Jul 7, 2021 at 11:35 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
->>>>
->>>> v9:
->>>> - reorder commits to keep io_uring ones nicely grouped at the end
->>>> - change 'fs:' to 'namei:' in related commit subjects, since this is
->>>>   what seems to be usually used in such cases
->>>
->>> Ok, ack from me on this series, and as far as I'm concerned it can go
->>> through the io_uring branch.
->>
->> I'll queue it up in a separate branch. I'm assuming we're talking 5.15
->> at this point.
-> 
-> Is this going to be merged into 5.15? I'm still working on the follow-up
-> patch (well, right at this moment I'm actually on vacation, but will be
-> working on it when I'm back), but hopefully it does not have to be
-> merged in the same merge window / version? Especially given the fact
-> that Al prefers it to be a bigger refactoring of the ESTALE retries
-> rather than just moving bits and pieces to helper functions to simplify
-> the flow, see here:
-> 
-> https://lore.kernel.org/io-uring/20210715103600.3570667-1-dkadashev@gmail.com/
+Fix netfs_clear_unread() to pass READ to iov_iter_xarray() instead of WRITE
+(the flag is about the operation accessing the buffer, not what sort of
+access it is doing to the buffer).
 
-I added this to the for-5.15/io_uring-vfs branch:
+Fixes: 3d3c95046742 ("netfs: Provide readahead and readpage netfs helpers")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+cc: linux-cachefs@redhat.com
+cc: linux-afs@lists.infradead.org
+cc: ceph-devel@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-nfs@vger.kernel.org
+cc: v9fs-developer@lists.sourceforge.net
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+Link: https://lore.kernel.org/r/162729351325.813557.9242842205308443901.stgit@warthog.procyon.org.uk/
+---
 
-https://git.kernel.dk/cgit/linux-block/log/?h=for-5.15/io_uring-vfs
+ fs/netfs/read_helper.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-had one namei.c conflict, set_nameidata() taking one more parameter, and
-just a trivial conflict in each io_uring patch at the end. Can you double
-check them?
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index 2ad91f9e2a45..9320a42dfaf9 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -150,7 +150,7 @@ static void netfs_clear_unread(struct netfs_read_subrequest *subreq)
+ {
+ 	struct iov_iter iter;
+ 
+-	iov_iter_xarray(&iter, WRITE, &subreq->rreq->mapping->i_pages,
++	iov_iter_xarray(&iter, READ, &subreq->rreq->mapping->i_pages,
+ 			subreq->start + subreq->transferred,
+ 			subreq->len   - subreq->transferred);
+ 	iov_iter_zero(iov_iter_count(&iter), &iter);
 
--- 
-Jens Axboe
 
