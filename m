@@ -2,122 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 409D53EBF8B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Aug 2021 04:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2F9F3EBF95
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Aug 2021 04:06:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236411AbhHNCF6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Aug 2021 22:05:58 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:54920 "EHLO
-        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232651AbhHNCF5 (ORCPT
+        id S236567AbhHNCGp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Aug 2021 22:06:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54592 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236506AbhHNCGo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Aug 2021 22:05:57 -0400
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mEj0c-00BTXs-As; Sat, 14 Aug 2021 02:02:50 +0000
-Date:   Sat, 14 Aug 2021 02:02:50 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Laight <David.Laight@aculab.com>,
-        David Hildenbrand <david@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Michel Lespinasse <walken@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Collin Fijalkovich <cfijalkovich@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christian =?iso-8859-1?Q?K=F6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>,
-        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
-Message-ID: <YRckSj32tCO3nPYI@zeniv-ca.linux.org.uk>
-References: <87lf56bllc.fsf@disp2133>
- <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
- <87eeay8pqx.fsf@disp2133>
- <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
- <87h7ft2j68.fsf@disp2133>
- <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
- <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
- <CAHk-=wiJ0u33h2CXAO4b271Diik=z4jRt64=Gt6YV2jV4ef27g@mail.gmail.com>
- <CAHk-=wgi2+OSk2_uYwhL56NGzN8t2To8hm+c0BdBEbuBuzhg6g@mail.gmail.com>
- <YRcjCwfHvUZhcKf3@zeniv-ca.linux.org.uk>
+        Fri, 13 Aug 2021 22:06:44 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DAEC0617AF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Aug 2021 19:06:16 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id x7so18333561ljn.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Aug 2021 19:06:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=7Xq9jb2sUMv3xaNw7Q5Cgt7yCkc3M0xn16Wn4AtIDKI=;
+        b=bMjFQnnAZpaPHPewg53a/655rlJcZF3F6tOCYZw1vRKDz/xIJdx97rNr27JLkW56nx
+         /iUhkVkrv2vt56YQtzEazhRgIPy/DINH4WyHeEexrKrG7liGbayL7Temc7NGvW0bB8Ad
+         jYLKY+nfNSoS1rYKoflW5LtIinkjSZBTTSJCtk74RyRz5/H1kPwLgMirqvm1jZ9Q2lvS
+         mysy6xLOxs0wYu9KWpVs3ZVzmyzuM6cY3iz+yVlGPkz3Lkb+v57sIQRRUb+ypy4gjifF
+         STYdF7upxk4m3MFQNQv0T7Zw+Yt5F/OYhuRsX60kpa6PLdNBh1LpNqMT51M2pasOSTPy
+         0wUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=7Xq9jb2sUMv3xaNw7Q5Cgt7yCkc3M0xn16Wn4AtIDKI=;
+        b=GS1nj8f8GIx/AD7a/oC5ASEAA72bMtrTS6tSpvStgJ8SJqhQhAkVwCXhIRlHQtZ3Bk
+         lBCK6hZkjjBakv1nR6Wl1Eoh6rzxcWl69eqGIiB//6/UiGhUb8ZtgNHTF2EAq9V/Rdvm
+         9N0Ul8iWjNFYJaM29fzhmI/3B699duAGnAsBjaX6PtIpcmb/0Vpvc1MEqI/xxZUhv4yy
+         s5AFG1FHRDiMZjzpOiuMDs3Tf2QSNIX0NTovPs55p6J2HOpj7u1fWVKr0Xa1myXZN3l+
+         L5exCkFcZg4HUnz6shyjGFCLt2zsxn1nYtFyFwqzzT6zgpXeKQ6PAOiN3QmlofrKm5pn
+         pQKw==
+X-Gm-Message-State: AOAM5315VrP22AmbTWeZ6r1oncPr3b85oV07n/smS31HcAiSSoY0dl7H
+        FXC694X+Ud5sIgwu8GGPXxlhEiZhi4LwoQ1Sz/Q=
+X-Google-Smtp-Source: ABdhPJynvegPmhEjUi/stm1v/NRwCcvEqe4+RCpcxOCwnF//w8aRyIcHmBxFidm29bl0vBPsC1zhmU0XtHDcktPhkc0=
+X-Received: by 2002:a2e:b1d3:: with SMTP id e19mr3920584lja.6.1628906774714;
+ Fri, 13 Aug 2021 19:06:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YRcjCwfHvUZhcKf3@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Received: by 2002:a05:6520:380d:b029:132:4f79:3ded with HTTP; Fri, 13 Aug 2021
+ 19:06:14 -0700 (PDT)
+Reply-To: deedeepaul@yandex.com
+From:   Deedee Paul <deedeepaul212@gmail.com>
+Date:   Sat, 14 Aug 2021 02:06:14 +0000
+Message-ID: <CADS-zP8AceijWYuKjjfFaC4WB2nM3FQqvpU1ob6Xb=P4w5FpkA@mail.gmail.com>
+Subject: Hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 14, 2021 at 01:57:31AM +0000, Al Viro wrote:
-> On Fri, Aug 13, 2021 at 02:58:57PM -1000, Linus Torvalds wrote:
-> > On Fri, Aug 13, 2021 at 2:54 PM Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > >
-> > > And nobody really complained when we weakened it, so maybe removing it
-> > > entirely might be acceptable.
-> > 
-> > I guess we could just try it and see... Worst comes to worst, we'll
-> > have to put it back, but at least we'd know what crazy thing still
-> > wants it..
-> 
-> Umm...  I'll need to go back and look through the thread, but I'm
-> fairly sure that there used to be suckers that did replacement of
-> binary that way (try to write, count on exclusion with execve while
-> it's being written to) instead of using rename.  Install scripts
-> of weird crap and stuff like that...
+Attention: Beneficiary,
 
-... and before anyone goes off - I certainly agree that using that
-behaviour is not a good idea and had never been one.  All I'm saying
-is that there at least used to be very random (and rarely exercised)
-bits of userland relying upon that behaviour.
+This is to officially inform you that we have been having meetings for
+the past weeks now which ended Two days ago with Mr. John W. Ashe,
+President of the 68th session of the UN General Assembly, Mr. David
+R.Malpass. the World Bank President and Hon. Mrs. Christine Laggard
+(IMF) Director General, in the meeting we talked about how to
+compensate Scam victim's people and all the people that were affected
+the most by this Coronavirus pandemic.
+
+Your email address was successfully selected for this donation with others.
+
+The United Nations have agreed to compensate you with the sum of
+($150,000.00) One hundred and fifty thousand United States Dollars. We
+have arranged your payment through WORLD ATM MASTERCARD which is the
+latest instruction from the World Bank Group.
+
+For the collection of your WORLD ATM MASTERCARD contact our
+representative Rev. David Wood, send to him your contact address where
+you want your MASTERCARD to be sent to you, like
+
+1. Your Full Name: .........
+2. Your Country and Your Delivery Home Address: ........
+3. Your Telephone: ..............
+
+His e-mail address: (ddavidwood1@yandex.com) He is a Canadian (UN)
+representative Agent.
+
+Thanks.
+Tel: 1 513 452 4352.
+Mr. Michael M=C3=B8ller Director-General of the United Nations Office
