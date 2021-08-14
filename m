@@ -2,86 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E67F33EC3D5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Aug 2021 18:27:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A89413EC3E3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Aug 2021 18:38:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235567AbhHNQ2K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Aug 2021 12:28:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46338 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234875AbhHNQ2K (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Aug 2021 12:28:10 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08EC3C061764
-        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Aug 2021 09:27:41 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id c12so7393797ljr.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Aug 2021 09:27:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ortWZphuXKFhjpOhthwIn3N+WyaFpzYFJ+AvGHbJUDQ=;
-        b=cEB9iQ/ARK3yzJQnjgrabwC9VKujOH+Tl0AjsL2eQ9xl3auLSIojiuRRElQZkWEz+h
-         xJF/IQcjKQScPAAJiScE6Bp+ElFvbyGy3MtPsTDCDzYwENHk2+Dj0lsoH/eHs7sjFMCt
-         PIzqaqF6AqUQ2q1haG3pE3mnJ0pBbpJRJBKaw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ortWZphuXKFhjpOhthwIn3N+WyaFpzYFJ+AvGHbJUDQ=;
-        b=lRgc2zTaIiOS+wUK37u1LJ7nmnyRvZMFea0+xIb6Tz6MNSdFoYCsO33aDvL5pHTjhW
-         Fi7JmBRB4kuczFhJuSRGqHpBehrXSvZuiFB6D0DNS24HXK8NVmModyrwA8wfRrAjHBb1
-         C7GWA0SOLy/X/+SdEe4inDv1Tu+dsvE/M6OOtmLHYX+xflsIXzwEQOqSTy/rXpBklq+i
-         c6mpmOXajTAUo9wR7JtuVl+km4vsqqjPQrxEQRH5XqE480KFxnVGq6/muc0HvPXluUqX
-         9NsOFI26HC/9lfRBfSPS/Z4MA9Nh0d8mxNYVeF7aKygEsJNJrjqK6PFdLGDwVPdRwd7N
-         S83g==
-X-Gm-Message-State: AOAM531ObhoquKeauMJlmu/81IkNzt3Lmn6j1C09hdfbUCn3xAcLAE2j
-        1XVB+WYpvIaej555M/tgSs58izZ6eWlx3fJWZpw=
-X-Google-Smtp-Source: ABdhPJwoHkvRmFhVSHhYnXBIKhv+GsCcyjIZaXTNq7VLAG4+RKkDvylI9bnc/TGyEiXavcJhT9s9Wg==
-X-Received: by 2002:a2e:a40a:: with SMTP id p10mr5898630ljn.264.1628958459160;
-        Sat, 14 Aug 2021 09:27:39 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id y11sm452414lfh.185.2021.08.14.09.27.38
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Aug 2021 09:27:38 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id h9so20434609ljq.8
-        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Aug 2021 09:27:38 -0700 (PDT)
-X-Received: by 2002:a2e:84c7:: with SMTP id q7mr5844285ljh.61.1628958458159;
- Sat, 14 Aug 2021 09:27:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <YRdp2yz+4Oo2/zHy@infradead.org>
-In-Reply-To: <YRdp2yz+4Oo2/zHy@infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 14 Aug 2021 06:27:22 -1000
-X-Gmail-Original-Message-ID: <CAHk-=whh8F-9Q=h=V=bKczqfRPbUN_A3h21aVfkk2HNhCWF+Pw@mail.gmail.com>
-Message-ID: <CAHk-=whh8F-9Q=h=V=bKczqfRPbUN_A3h21aVfkk2HNhCWF+Pw@mail.gmail.com>
+        id S237275AbhHNQi6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Aug 2021 12:38:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235606AbhHNQiz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 14 Aug 2021 12:38:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id E9F2460E8D;
+        Sat, 14 Aug 2021 16:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628959107;
+        bh=ZuDtNB82k7DqQosN72ce26UlMpAGCpkhcFDpESby54I=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=Rvyhz1E+yRWobxGjK4r18iCg86Rp/DK+/v6RT+fR3Xgz84i6boq9pUCbvG8ey0Klv
+         OIU7qJT73BGjKBmPdy3EYgA5B2rdVEyP/nG3jqceNxEFzmT611cdMVs2/z8JrtbYSZ
+         M3Jog6H1xx+/wyRWWI2c38YPtrsjS5lf6qZP/A/IqYGTeex7KEEsS7FIeJQq8iZwLB
+         RUlGDQ3CZyxZtFN9EBNJoSsHFXONR+m/l3+6xMU8/pHWFygAdedNCrAxaHk40ZAqnt
+         /t5f98NuRHP3N/j1PGheAfLz70Em+QZOaB2gTZdTmXi0vd7BOXmdn+R5qRovmwjaD4
+         qrXIECN2H+qOA==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id E3968609AF;
+        Sat, 14 Aug 2021 16:38:26 +0000 (UTC)
 Subject: Re: [GIT PULL] configfs fix for Linux 5.14
-To:     Christoph Hellwig <hch@infradead.org>,
-        Bodo Stroesser <bostroesser@gmail.com>,
-        Bart Van Assche <bvanassche@acm.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joel Becker <jlbec@evilplan.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <YRdp2yz+4Oo2/zHy@infradead.org>
+References: <YRdp2yz+4Oo2/zHy@infradead.org>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <YRdp2yz+4Oo2/zHy@infradead.org>
+X-PR-Tracked-Remote: git://git.infradead.org/users/hch/configfs.git tags/configfs-5.14
+X-PR-Tracked-Commit-Id: 769f52676756b8c5feb302d2d95af59577fc69ec
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 118516e2127722e46c5c029010df4e8743bc9722
+Message-Id: <162895910692.32142.13242510525578888067.pr-tracker-bot@kernel.org>
+Date:   Sat, 14 Aug 2021 16:38:26 +0000
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Joel Becker <jlbec@evilplan.org>,
+        linux-fsdevel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 13, 2021 at 9:00 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> configfs fix for Linux 5.14
->
->  - fix to revert to the historic write behavior (Bart Van Assche)
+The pull request you sent on Sat, 14 Aug 2021 08:59:39 +0200:
 
-It would have been lovely to see what the problem was, but the commit
-doesn't actually explain that.
+> git://git.infradead.org/users/hch/configfs.git tags/configfs-5.14
 
-I suspect it's this
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/118516e2127722e46c5c029010df4e8743bc9722
 
-    https://lkml.org/lkml/2021/7/26/581
+Thank you!
 
-but there might have been more.
-
-            Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
