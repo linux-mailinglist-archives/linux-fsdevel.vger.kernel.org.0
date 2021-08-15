@@ -2,160 +2,270 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64A4B3ECAF2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Aug 2021 22:32:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86C1F3ECAFF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Aug 2021 22:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbhHOUdE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Aug 2021 16:33:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbhHOUdE (ORCPT
+        id S231295AbhHOUmy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Aug 2021 16:42:54 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:41862 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229760AbhHOUmy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Aug 2021 16:33:04 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D017EC061764;
-        Sun, 15 Aug 2021 13:32:33 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4GnprD250wz9sT6;
-        Mon, 16 Aug 2021 06:32:28 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1629059550;
-        bh=klHHQ9z9GKs3lX1MqIe6u7DuwKvRYcvA7swPOyG2u3Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TpCl9Nx8G2SExc9Qp9MEF6XRZ83Gg2nvrKTjNHOaJWkUw6rozloTK+GivG/GLzr8g
-         AT8eEyj7ZocYZ/AnBDMW3UTy56Dff9fCEfhO1EV0KmIcfFIU/L0b2ePL2y3o4R6Vuk
-         DAEuyBC42zalBn+gPDTUcgA/lon0YGV5AN7/iBZMuy1v2hCdfVHaN+FaiJ9ZKEVoAR
-         7N+tiLJd9qRxFdq+3ZNpgxP8rS4XVN0t2KkvVGy6x5OG5mvy0ilcxhjiLqZC6A7UPR
-         cwjSGSWshHCy8BwnfKnXzjlF7Jvd5HDpPFo/WpvogvkryabJLGjNxDGqV5KC9UuYLw
-         HyifnjzpRqrOQ==
-Date:   Mon, 16 Aug 2021 06:32:25 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+        Sun, 15 Aug 2021 16:42:54 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:55020 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1mFMxZ-0001Ce-MH; Sun, 15 Aug 2021 16:42:21 -0400
+Message-ID: <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Tony Battersby <tonyb@cybernetics.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Leonidas P. Papadakos" <papadakospan@gmail.com>,
-        "zajec5@gmail.com" <zajec5@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Matthew Wilcox" <willy@infradead.org>,
-        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>
-Subject: Re: Paragon NTFSv3 (was Re: [GIT PULL] vboxsf fixes for 5.14-1)
-Message-ID: <20210816063225.22d992ff@canb.auug.org.au>
-In-Reply-To: <a9114805f777461eac6fbb0e8e5c46f6@paragon-software.com>
-References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
-        <20210716114635.14797-1-papadakospan@gmail.com>
-        <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com>
-        <afd62ae457034c3fbc4f2d38408d359d@paragon-software.com>
-        <CAHk-=wjn4W-7ZbHrw08cWy=12DgheFUKLO5YLgG6in5TA5HxqQ@mail.gmail.com>
-        <a9114805f777461eac6fbb0e8e5c46f6@paragon-software.com>
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+Date:   Sun, 15 Aug 2021 16:42:20 -0400
+In-Reply-To: <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+         <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
+         <87eeda7nqe.fsf@disp2133>
+         <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+         <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+         <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+         <87y2bh4jg5.fsf@disp2133>
+         <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+         <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+         <87pmwmn5m0.fsf@disp2133>
+         <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
+         <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
+         <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4 
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/K=b9Pf+l2P0E7k_xtah2jkH";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/K=b9Pf+l2P0E7k_xtah2jkH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2021-08-11 at 19:55 -0600, Jens Axboe wrote:
+> On 8/10/21 3:48 PM, Tony Battersby wrote:
+> > On 8/5/21 9:06 AM, Olivier Langlois wrote:
+> > > 
+> > > Hi all,
+> > > 
+> > > I didn't forgot about this remaining issue and I have kept thinking
+> > > about it on and off.
+> > > 
+> > > I did try the following on 5.12.19:
+> > > 
+> > > diff --git a/fs/coredump.c b/fs/coredump.c
+> > > index 07afb5ddb1c4..614fe7a54c1a 100644
+> > > --- a/fs/coredump.c
+> > > +++ b/fs/coredump.c
+> > > @@ -41,6 +41,7 @@
+> > >  #include <linux/fs.h>
+> > >  #include <linux/path.h>
+> > >  #include <linux/timekeeping.h>
+> > > +#include <linux/io_uring.h>
+> > >  
+> > >  #include <linux/uaccess.h>
+> > >  #include <asm/mmu_context.h>
+> > > @@ -625,6 +626,8 @@ void do_coredump(const kernel_siginfo_t
+> > > *siginfo)
+> > >                 need_suid_safe = true;
+> > >         }
+> > >  
+> > > +       io_uring_files_cancel(current->files);
+> > > +
+> > >         retval = coredump_wait(siginfo->si_signo, &core_state);
+> > >         if (retval < 0)
+> > >                 goto fail_creds;
+> > > --
+> > > 2.32.0
+> > > 
+> > > with my current understanding, io_uring_files_cancel is supposed to
+> > > cancel everything that might set the TIF_NOTIFY_SIGNAL.
+> > > 
+> > > I must report that in my testing with generating a core dump
+> > > through a
+> > > pipe with the modif above, I still get truncated core dumps.
+> > > 
+> > > systemd is having a weird error:
+> > > [ 2577.870742] systemd-coredump[4056]: Failed to get COMM: No such
+> > > process
+> > > 
+> > > and nothing is captured
+> > > 
+> > > so I have replaced it with a very simple shell:
+> > > $ cat /proc/sys/kernel/core_pattern 
+> > > > /home/lano1106/bin/pipe_core.sh %e %p
+> > > 
+> > > ~/bin $ cat pipe_core.sh 
+> > > #!/bin/sh
+> > > 
+> > > cat > /home/lano1106/core/core.$1.$2
+> > > 
+> > > BFD: warning: /home/lano1106/core/core.test.10886 is truncated:
+> > > expected core file size >= 24129536, found: 61440
+> > > 
+> > > I conclude from my attempt that maybe io_uring_files_cancel is not
+> > > 100%
+> > > cleaning everything that it should clean.
+> > > 
+> > > 
+> > > 
+> > I just ran into this problem also - coredumps from an io_uring
+> > program
+> > to a pipe are truncated.  But I am using kernel 5.10.57, which does
+> > NOT
+> > have commit 12db8b690010 ("entry: Add support for TIF_NOTIFY_SIGNAL")
+> > or
+> > commit 06af8679449d ("coredump: Limit what can interrupt coredumps").
+> > Kernel 5.4 works though, so I bisected the problem to commit
+> > f38c7e3abfba ("io_uring: ensure async buffered read-retry is setup
+> > properly") in kernel 5.9.  Note that my io_uring program uses only
+> > async
+> > buffered reads, which may be why this particular commit makes a
+> > difference to my program.
+> > 
+> > My io_uring program is a multi-purpose long-running program with many
+> > threads.  Most threads don't use io_uring but a few of them do. 
+> > Normally, my core dumps are piped to a program so that they can be
+> > compressed before being written to disk, but I can also test writing
+> > the
+> > core dumps directly to disk.  This is what I have found:
+> > 
+> > *) Unpatched 5.10.57: if a thread that doesn't use io_uring triggers
+> > a
+> > coredump, the core file is written correctly, whether it is written
+> > to
+> > disk or piped to a program, even if another thread is using io_uring
+> > at
+> > the same time.
+> > 
+> > *) Unpatched 5.10.57: if a thread that uses io_uring triggers a
+> > coredump, the core file is truncated, whether written directly to
+> > disk
+> > or piped to a program.
+> > 
+> > *) 5.10.57+backport 06af8679449d: if a thread that uses io_uring
+> > triggers a coredump, and the core is written directly to disk, then
+> > it
+> > is written correctly.
+> > 
+> > *) 5.10.57+backport 06af8679449d: if a thread that uses io_uring
+> > triggers a coredump, and the core is piped to a program, then it is
+> > truncated.
+> > 
+> > *) 5.10.57+revert f38c7e3abfba: core dumps are written correctly,
+> > whether written directly to disk or piped to a program.
+> 
+> That is very interesting. Like Olivier mentioned, it's not that actual
+> commit, but rather the change of behavior implemented by it. Before
+> that
+> commit, we'd hit the async workers more often, whereas after we do the
+> correct retry method where it's driven by the wakeup when the page is
+> unlocked. This is purely speculation, but perhaps the fact that the
+> process changes state potentially mid dump is why the dump ends up
+> being
+> truncated?
+> 
+> I'd love to dive into this and try and figure it out. Absent a test
+> case, at least the above gives me an idea of what to try out. I'll see
+> if it makes it easier for me to create a case that does result in a
+> truncated core dump.
+> 
+Jens,
 
-Hi Konstantin,
+When I have first encountered the issue, the very first thing that I
+did try was to create a simple test program that would synthetize the
+problem.
 
-On Fri, 13 Aug 2021 16:11:10 +0000 Konstantin Komarov <almaz.alexandrovich@=
-paragon-software.com> wrote:
->
-> > From: Linus Torvalds <torvalds@linux-foundation.org>
-> > Sent: Friday, July 30, 2021 8:24 PM
-> > To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>; Step=
-hen Rothwell <sfr@canb.auug.org.au>
-> > Cc: Leonidas P. Papadakos <papadakospan@gmail.com>; zajec5@gmail.com; D=
-arrick J. Wong <djwong@kernel.org>; Greg Kroah-
-> > Hartman <gregkh@linuxfoundation.org>; Hans de Goede <hdegoede@redhat.co=
-m>; linux-fsdevel <linux-fsdevel@vger.kernel.org>;
-> > Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Al Viro <viro=
-@zeniv.linux.org.uk>; Matthew Wilcox <willy@infradead.org>
-> > Subject: Paragon NTFSv3 (was Re: [GIT PULL] vboxsf fixes for 5.14-1)
-> >=20
-> > On Fri, Jul 30, 2021 at 8:55 AM Konstantin Komarov
-> > <almaz.alexandrovich@paragon-software.com> wrote: =20
-> > >
-> > > We've just sent the 27th patch series which fixes to the buildability=
- against
-> > > current linux-next. And we'll need several days to prepare a proper p=
-ull request
-> > > before sending it to you. =20
-> >=20
-> > Well, I won't pull until the next merge window opens anyway (about a
-> > month away). But it would be good to have your tree in linux-next for
-> > at least a couple of weeks before that happens.
-> >=20
-> > Added Stephen to the participants list as a heads-up for him - letting
-> > him know where to fetch the git tree from will allow that to happen if
-> > you haven't done so already.
-> >  =20
->=20
-> Thanks for this clarification, Linus!
-> Stephen, please find the tree here:
-> https://github.com/Paragon-Software-Group/linux-ntfs3.git
-> It is the fork from 5.14-rc5 tag with ntfs3 patches applied.
-> Also, the latest changes
-> - fix some generic/XYZ xfstests, which were discussed
-> with Theodore, Darrick and others
-> - updates the MAINTAINERS with mailing list (also added to CC here) and s=
-cm tree link.
->=20
-> Please let me know if additional changes requred to get fetched into linu=
-x-next.
+After few time consumming failed attempts, I just gave up the idea and
+simply settle to my prod program that showcase systematically the
+problem every time that I kill the process with a SEGV signal.
 
-Added from today.  It looks good, we will see how it goes when integrated/b=
-uilt.
+In a nutshell, all the program does is to issue read operations with
+io_uring on a TCP socket on which there is a constant data stream.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+Now that I have a better understanding of what is going on, I think
+that one way that could reproduce the problem consistently could be
+along those lines:
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+1. Create a pipe
+2. fork a child
+3. Initiate a read operation on the pipe with io_uring from the child
+4. Let the parent kill its child with a core dump generating signal.
+5. Write something in the pipe from the parent so that the io_uring
+read operation completes while the core dump is generated.
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+I guess that I'll end up doing that if I cannot fix the issue with my
+current setup but here is what I have attempted so far:
 
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+1. Call io_uring_files_cancel from do_coredump
+2. Same as #1 but also make sure that TIF_NOTIFY_SIGNAL is cleared on
+returning from io_uring_files_cancel
 
---=20
-Cheers,
-Stephen Rothwell
+Those attempts didn't work but lurking in the io_uring dev mailing list
+is starting to pay off. I thought that I did reach the bottom of the
+rabbit hole in my journey of understanding io_uring but the recent
+patch set sent by Hao Xu
 
---Sig_/K=b9Pf+l2P0E7k_xtah2jkH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+https://lore.kernel.org/io-uring/90fce498-968e-6812-7b6a-fdf8520ea8d9@kernel.dk/T/#t
 
------BEGIN PGP SIGNATURE-----
+made me realize that I still haven't assimilated all the small io_uring
+nuances...
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmEZedkACgkQAVBC80lX
-0GxprAf/SBzaK8sX8zNMX6JSgph/ESO9fU4/kwPPZ8MrhayR7+1nI433dLmDb3xO
-MU3o+3/o4tkyoZkasyMzgJPRPeXP0xLlr7hA1rvQfwN9IZvgUiXiv8IDUVymZiGn
-+xn8fedA3/XEpHcSpOarVVo7SAcEbPbY1M18dRTXX2ok84GjLR5aUQvsR3yYZOWI
-pb9m2u8xdWMz4Zxr3A5tvon56apfeX7fX9dLaI8k7/Wv1VKqZfVmW3YeVIxYkfsM
-fEJATxBXPeWeuF47MFWzW1zfSAyXCA7AvQE/gFtWogODLwpwMgcZhcdA5xOVIYfR
-VlNH7G0udZ+LJDvlf44Y3UVl/PWWrQ==
-=cB5h
------END PGP SIGNATURE-----
+Here is my feedback. From my casual io_uring code reader point of view,
+it is not 100% obvious what the difference is between
+io_uring_files_cancel and io_uring_task_cancel
 
---Sig_/K=b9Pf+l2P0E7k_xtah2jkH--
+It seems like io_uring_files_cancel is cancelling polls only if they
+have the REQ_F_INFLIGHT flag set.
+
+I have no idea what an inflight request means and why someone would
+want to call io_uring_files_cancel over io_uring_task_cancel.
+
+I guess that if I was to meditate on the question for few hours, I
+would at some point get some illumination strike me but I believe that
+it could be a good idea to document in the code those concepts for
+helping casual readers...
+
+Bottomline, I now understand that io_uring_files_cancel does not cancel
+all the requests. Therefore, without fully understanding what I am
+doing, I am going to replace my call to io_uring_files_cancel from
+do_coredump with io_uring_task_cancel and see if this finally fix the
+issue for good.
+
+What I am trying to do is to cancel pending io_uring requests to make
+sure that TIF_NOTIFY_SIGNAL isn't set while core dump is generated.
+
+Maybe another solution would simply be to modify __dump_emit to make it
+resilient to TIF_NOTIFY_SIGNAL as Eric W. Biederman originally
+suggested.
+
+or maybe do both...
+
+Not sure which approach is best. If someone has an opinion, I would be
+curious to hear it.
+
+Greetings,
+
+
