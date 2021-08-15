@@ -2,96 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5A173ECAB1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Aug 2021 21:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30BA63ECAB9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Aug 2021 21:50:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229812AbhHOTnW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Aug 2021 15:43:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36760 "EHLO
+        id S229812AbhHOTuf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Aug 2021 15:50:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbhHOTnW (ORCPT
+        with ESMTP id S229502AbhHOTud (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Aug 2021 15:43:22 -0400
-X-Greylist: delayed 459 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 15 Aug 2021 12:42:51 PDT
-Received: from rin.romanrm.net (rin.romanrm.net [IPv6:2001:bc8:2dd2:1000::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1373C061764;
-        Sun, 15 Aug 2021 12:42:51 -0700 (PDT)
-Received: from natsu (natsu2.home.romanrm.net [IPv6:fd39::e99e:8f1b:cfc9:ccb8])
-        by rin.romanrm.net (Postfix) with SMTP id 105091A0;
-        Sun, 15 Aug 2021 19:35:05 +0000 (UTC)
-Date:   Mon, 16 Aug 2021 00:35:05 +0500
-From:   Roman Mamedov <rm@romanrm.net>
-To:     Goffredo Baroncelli <kreijack@libero.it>
-Cc:     NeilBrown <neilb@suse.de>, Christoph Hellwig <hch@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for
- btrfs export
-Message-ID: <20210816003505.7b3e9861@natsu>
-In-Reply-To: <bf49ef31-0c86-62c8-7862-719935764036@libero.it>
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
-        <162881913686.1695.12479588032010502384@noble.neil.brown.name>
-        <bf49ef31-0c86-62c8-7862-719935764036@libero.it>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        Sun, 15 Aug 2021 15:50:33 -0400
+Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF00CC061764
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 12:50:02 -0700 (PDT)
+Received: by mail-qv1-xf31.google.com with SMTP id bl13so8244519qvb.5
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 12:50:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cs-stonybrook-edu.20150623.gappssmtp.com; s=20150623;
+        h=from:content-transfer-encoding:mime-version:subject:message-id:date
+         :to;
+        bh=ocoSTScZfDAhY8MwUiGktXzPmGF5YW6e35P+/QZF/gU=;
+        b=vdSXTqBFbAg/Cj7Lu1y0HKeVftWylary8q40nRGwqcDAgkOsRYtuZBWyRLWKKCPdDW
+         36Bq3KE8pH36CEU55I3FMWvcCU+TYLlwuuEb8xWy4Q66JxZX8pBYdjXorwRHQG4VQnhf
+         urwadt7jsyszWm9Z3xQg3xBLiiZ8grGocJLkZYzpnArLDH/f1zX7egFNrvb4U7SSQMCc
+         sHyTAEC0KziSECYoTHTrzfyJgaiHtxKBrFs8LkXxmYuuAqKZI52gGdjTrb2VAie81lQM
+         fJtZELLHduWq/pUW2BoyHdeAw50gkQlI37Kt6npJHagU2JiWVQv1q0VnEwqje2TGOe/o
+         5KGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:content-transfer-encoding:mime-version
+         :subject:message-id:date:to;
+        bh=ocoSTScZfDAhY8MwUiGktXzPmGF5YW6e35P+/QZF/gU=;
+        b=lGuuijPsBXK/ujWm03gTwf/W8PSY5nc1Kh1++jxS3EEY0PwQtr4FiX/YnZ1gA+UhFS
+         o0WdKgaP0Jrl3iNgDbTv4n2xar8E2C/+PYsehtAf5gfjuigu/yqsxk5QIbePGbh/Nx29
+         swhXs4EO03kmvC8GDfu1naIIpgOk6iDBxUvwfQKuIkdw3KCfQ+W8OUh+bTZOlSSlwE67
+         /Znbc7YdJ1B5ju2ZMFC+NTZWDc+UJI96b4MHjcn5WU1KJB5kQHXh+6nCeHX4xQw5uwnW
+         UQ/F9yPem3mpjzaxEqL60zlFCLs3wOgUakd5+Jebd+nSu67q3onSsw644wnT7zP/tHqi
+         3SYg==
+X-Gm-Message-State: AOAM533ALGVN8/tROOiJqaVqskEpIhyasLt8RdBP0kGMrycvplHFqKBG
+        Ly8rONsWqzztwYEONOg6LSAstzIOxZ5PpA==
+X-Google-Smtp-Source: ABdhPJyQVfHqC5yyQ+E+fOc6b0gAsUlZcXa/9YxokuQEYzKWEUx/Y8oGcOxCKa7yV1Mx7ESrcP8LwQ==
+X-Received: by 2002:a0c:be8e:: with SMTP id n14mr12803207qvi.16.1629057001949;
+        Sun, 15 Aug 2021 12:50:01 -0700 (PDT)
+Received: from smtpclient.apple (ool-4573eead.dyn.optonline.net. [69.115.238.173])
+        by smtp.gmail.com with ESMTPSA id d8sm2201518qtr.0.2021.08.15.12.50.01
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 15 Aug 2021 12:50:01 -0700 (PDT)
+From:   Yifei Liu <yifeliu@cs.stonybrook.edu>
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.13\))
+Subject: Save and restore full file system states via ioctl
+Message-Id: <881E5EA5-BE75-4EEA-BC2D-F4574A56D3DC@cs.stonybrook.edu>
+Date:   Sun, 15 Aug 2021 15:50:01 -0400
+To:     linux-fsdevel@vger.kernel.org
+X-Mailer: Apple Mail (2.3654.120.0.1.13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 15 Aug 2021 09:39:08 +0200
-Goffredo Baroncelli <kreijack@libero.it> wrote:
+I am a graduate student researcher at Stony Brook University.  Our team =
+is working on applying model checking to detect file system bugs in the =
+Linux kernel.  The problem now is that we need to restore a file =
+system's previous state, including on-disk (persistent) and in-memory =
+(in-kernel) states.  However, the in-memory states (e.g., page cache, =
+kernel memory) are not easily saved and restored.  We investigated =
+virtual-machine snapshotting, but VM snapshot is slow.  Then we plan to =
+implement our own customized checkpoint/restore API for kernel file =
+systems via unlocked_ioctl.  Checkpoint API copies important filesystem =
+data structures in VFS (e.g., super_block, inode, dentry, file), while =
+restore API replaces the current data structures with the copied =
+version. =20
 
-> I am sure that it was discussed already but I was unable to find any track
-> of this discussion. But if the problem is the collision between the inode
-> number of different subvolume in the nfd export, is it simpler if the export
-> is truncated to the subvolume boundary ? It would be more coherent with the
-> current behavior of vfs+nfsd.
+I want to ask if this objective is feasible.  Basically, we hope to =
+implement a file system snapshot to save and restore all the file system =
+states using ioctl.  The concern is that structures like inode and =
+dentry are interconnected with other kernel components, which might =
+cause inconsistent kernel states after restoration.  Any ideas or =
+thoughts?  Thank you!
 
-See this bugreport thread which started it all:
-https://www.spinics.net/lists/linux-btrfs/msg111172.html
+Best Regards,
+Yifei
 
-In there the reporting user replied that it is strongly not feasible for them
-to export each individual snapshot.
-
-> In fact in btrfs a subvolume is a complete filesystem, with an "own
-> synthetic" device. We could like or not this solution, but this solution is
-> the more aligned to the unix standard, where for each filesystem there is a
-> pair (device, inode-set). NFS (by default) avoids to cross the boundary
-> between the filesystems. So why in BTRFS this should be different ?
-
-From the user point of view subvolumes are basically directories; that they
-are "complete filesystems"* is merely a low-level implementation detail.
-
-* well except they are not, as you cannot 'dd' a subvolume to another
-blockdevice.
-
-> Why don't rename "ino_uniquifier" as "ino_and_subvolume" and leave to the
-> filesystem the work to combine the inode and the subvolume-id ?
->
-> I am worried that the logic is split between the filesystem, which
-> synthesizes the ino_uniquifier, and to NFS which combine to the inode. I am
-> thinking that this combination is filesystem specific; for BTRFS is a simple
-> xor but for other filesystem may be a more complex operation, so leaving an
-> half in the filesystem and another half to the NFS seems to not optimal if
-> other filesystem needs to use ino_uniquifier.
-
-I wondered a bit myself, what are the downsides of just doing the
-uniquefication inside Btrfs, not leaving that to NFSD?
-
-I mean not even adding the extra stat field, just return the inode itself with
-that already applied. Surely cannot be any worse collision-wise, than
-different subvolumes straight up having the same inode numbers as right now?
-
-Or is it a performance concern, always doing more work, for something which
-only NFSD has needed so far.
-
--- 
-With respect,
-Roman
