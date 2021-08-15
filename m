@@ -2,104 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F8223EC6E1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Aug 2021 05:32:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4342D3EC70B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Aug 2021 05:53:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235172AbhHODch (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Aug 2021 23:32:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51174 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234528AbhHODcg (ORCPT
+        id S235656AbhHODx3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Aug 2021 23:53:29 -0400
+Received: from mail.parknet.co.jp ([210.171.160.6]:60986 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233848AbhHODx3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Aug 2021 23:32:36 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4086DC061764;
-        Sat, 14 Aug 2021 20:32:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=myN/3ktl6FFXkebMKIg+oytfpFhkg7CNnOU5Il6HFzs=; b=m9c9/qWRcdjSRQ6g5Wh/GFTqBw
-        ybJTWwwMKF4g5qPy3pOZjSzNxPMwGljYeaCc5M2l8cJfSXPIgjXmTQe+uVlCjpeHCRpKUXNIPBB1r
-        NtbB8JCeOQBQQ1yrISnvDQQlWTdnQ9ksC+GQspSuQTEvpq+bb1Lw7kDXn30cXgTUEGxxtxyZTRNTc
-        jWl9mlYIRdEY6DBk8vvQWuMAHRTRjrSu8SBMR2a9LN+QjAfHEfRMf+zoCbAcdNpHJGrqwK0HUfj6E
-        6w4/jZQJ9/5Ecn71NDO4qfoz0uD1vyRPRcVuh1dBWdolAr6jw9r7WDVDWY7YWY2qjV/W+9t4g1utp
-        258jXAGQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mF6rU-00HN19-HY; Sun, 15 Aug 2021 03:31:11 +0000
-Date:   Sun, 15 Aug 2021 04:31:00 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v14 071/138] mm/writeback: Add filemap_dirty_folio()
-Message-ID: <YRiKdCEDHKZ4T0JY@casper.infradead.org>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-72-willy@infradead.org>
- <e393b874-eb35-7b78-8919-838a8149d259@suse.cz>
+        Sat, 14 Aug 2021 23:53:29 -0400
+X-Greylist: delayed 596 seconds by postgrey-1.27 at vger.kernel.org; Sat, 14 Aug 2021 23:53:27 EDT
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id 8176115F93A;
+        Sun, 15 Aug 2021 12:43:01 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-22) with ESMTPS id 17F3gtqK259876
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Sun, 15 Aug 2021 12:42:56 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-22) with ESMTPS id 17F3gtTX1634462
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Sun, 15 Aug 2021 12:42:55 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id 17F3glQI1634454;
+        Sun, 15 Aug 2021 12:42:47 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>, "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [RFC PATCH 01/20] fat: Fix iocharset=utf8 mount option
+References: <20210808162453.1653-1-pali@kernel.org>
+        <20210808162453.1653-2-pali@kernel.org>
+Date:   Sun, 15 Aug 2021 12:42:47 +0900
+In-Reply-To: <20210808162453.1653-2-pali@kernel.org> ("Pali
+ =?iso-8859-1?Q?Roh=E1r=22's?= message
+        of "Sun, 8 Aug 2021 18:24:34 +0200")
+Message-ID: <87h7frtlu0.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e393b874-eb35-7b78-8919-838a8149d259@suse.cz>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 06:07:05PM +0200, Vlastimil Babka wrote:
-> On 7/15/21 5:35 AM, Matthew Wilcox (Oracle) wrote:
-> > Reimplement __set_page_dirty_nobuffers() as a wrapper around
-> > filemap_dirty_folio().
-> 
-> I assume it becomes obvious later why the new "mapping" parameter instead of
-> taking it from the folio, but maybe the changelog should say it here?
+Pali Rohár <pali@kernel.org> writes:
 
----
+> Currently iocharset=utf8 mount option is broken and error is printed to
+> dmesg when it is used. To use UTF-8 as iocharset, it is required to use
+> utf8=1 mount option.
+>
+> Fix iocharset=utf8 mount option to use be equivalent to the utf8=1 mount
+> option and remove printing error from dmesg.
 
-mm/writeback: Add filemap_dirty_folio()
+This change is not equivalent to utf8=1. In the case of utf8=1, vfat
+uses iocharset's conversion table and it can handle more than ascii.
 
-Reimplement __set_page_dirty_nobuffers() as a wrapper around
-filemap_dirty_folio().  Eventually folio_mark_dirty() will pass
-the folio's mapping to the address space's ->dirty_folio()
-operation, so add the parameter to filemap_dirty_folio() now.
+So this patch is incompatible changes, and handles less chars than
+utf8=1. So I think this is clean though, but this would be regression
+for user of utf8=1.
 
----
-
-Nobody seems quite sure whether it's possible to truncate (or otherwise
-remove) a page from a file while it's being marked as dirty.  viz:
-
-int set_page_dirty(struct page *page)
-{
-        struct address_space *mapping = page_mapping(page);
-        if (likely(mapping)) {
-...
-                return mapping->a_ops->set_page_dirty(page);
-}
-
-so ->set_page_dirty can only be called if page has a mapping (obviously,
-otherwise we wouldn't know whose ->set_page_dirty to call).  But then
-in __set_page_dirty_nobuffers(), we check to see if mapping has
-become unset:
-
-        if (!TestSetPageDirty(page)) {
-                struct address_space *mapping = page_mapping(page);
-
-                if (!mapping) {
-                        unlock_page_memcg(page);
-                        return 1;
-                }
-
-Confusingly, the comment to __set_page_dirty_nobuffers says:
-
- * The caller must ensure this doesn't race with truncation.  Most will simply
- * hold the page lock, but e.g. zap_pte_range() calls with the page mapped and
- * the pte lock held, which also locks out truncation.
-
-I believe this is left-over from commit 2d6d7f982846 in 2015.
-
-Anyway, passing mapping as a parameter is something we already do for
-just about every other address_space operation, and we already called
-page_mapping() to get it, so why make the callee call it again?  Not to
-mention people get confused about whether to call page_mapping() or just
-look at page->mapping.  Changing the ->set_page_dirty() operation to
-->dirty_folio() is something I've postponed until the 5.17/5.18 timeframe,
-but we might as well pass the parameter to filemap_dirty_folio() now.
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
