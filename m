@@ -2,82 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D143ED44A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 14:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07CCA3ED482
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 15:03:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbhHPMtW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 08:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41032 "EHLO
+        id S235912AbhHPNDm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 09:03:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229716AbhHPMtV (ORCPT
+        with ESMTP id S235519AbhHPNDl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 08:49:21 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8911C061764;
-        Mon, 16 Aug 2021 05:48:49 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id d16so8864230ljq.4;
-        Mon, 16 Aug 2021 05:48:49 -0700 (PDT)
+        Mon, 16 Aug 2021 09:03:41 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB386C061764;
+        Mon, 16 Aug 2021 06:03:09 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id f5so23452107wrm.13;
+        Mon, 16 Aug 2021 06:03:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=IAseUJzCEH3EGqR891+PdvwcBt5uEgyLMqq+opj8S3M=;
-        b=CWHqECygy9DQCAIDNbOx5cSJT7oXu06wN1f6J4ZzT3BxRAOmR+JDHcEohf/xjXMDEZ
-         tr++ZkV/+vnNEs4frOREIBmWE7GCvZPInjym1EClTRJddOiVWTDxv1r3p9sopMwPMBpk
-         ny6Ydi28Cw34Uqkc6Njg0IbTl1N3a5bNYjKVhYAIZkjsh0WvgMQFBY/9IEBBk/2Ql4h3
-         /fjGwz8QZSXLlsVhL7q63/G3JHbkG4rZXll7h+NjA025Ru2rhFlO2NwU+WNUw7AS9okm
-         XZTXcvOkmxx1M77iJLlKwbmHerLS+Pkv+kyZK3sEvoZANVY+Z5iC95J6PQejwqSV+rCO
-         9wrw==
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4ey74r9h5B4FsleU6ivv3WvBZFvF09kXQTJf5FkLGKg=;
+        b=kiowXfPOnvNLxiobCImqWlbPdEaYpfeeS7uTkrbVyfLPq2Ww2H2+rjHOU4oKlIBEH2
+         gMX7ddNGCAbi2fRmWxquoAxbIJwq/cewfhkyBpQ5e0tACbl1YU/oWO1v6E4kWZFLQxI2
+         jJbLXt3KRjTjjhgDCHGH/xL1ArHmtZAXvpKlkeiPDqdHd6rjjThMz9sGpDsZUuYrOCdg
+         rZZTI6Mm4ogmvEK1oi3Om9S4bK8WJGqt7wA5sFiGMPWvb91tQ8xRg4tHbPPpoFngBbfq
+         jva28tvoUANUIDGuQg1j2PB+5dFLRSi1BxgL0XvMozIh2KjWUJ+vH4J0nP/2eBRNznta
+         rkVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=IAseUJzCEH3EGqR891+PdvwcBt5uEgyLMqq+opj8S3M=;
-        b=iwUZoyPYNv9V0wEDxba1oczls6vBfdryS6Oouiuyn6WN4E+WAp1EQPnTXWrhdZmWx/
-         zS0wIjNKD+qZsy5jJTZi0wEQHzyr4hDbf5eXuwITqHcpgnTGBPmDVoxEVUaKir9usryU
-         HKQjQ/cYpq/MJTJb4cElHaFR8oEaaf9+7VvpZbeu2K8ZbAvJbaRIsoFSgHkz/Zk+U9Pm
-         DI4ufi1DwaxjTqK8D1BqwvhLBd9VpGCL7B2LXER4YDgSdtRomQlpmfWmY68k57XE84XN
-         HGK9cQisYrvTZ1jYKY8CzSzb6CqC0IriziHYMUDuRXEvSljDqce373ayGY98o8yFDT85
-         hyKg==
-X-Gm-Message-State: AOAM530uyhIxy9HySr6prwxv/tU798jFCGl+MQs7ZpJo8wzYhBgbFdKQ
-        5opcxsKeWXVvuk6Y2v/jOsY=
-X-Google-Smtp-Source: ABdhPJyokRtXOdYbc9fYHAFaKAkBRDUCseGttle5YbiP+rZH54yqMi8rEAeCFs1cVaLKFF3KsiIi1A==
-X-Received: by 2002:a2e:a811:: with SMTP id l17mr11921981ljq.456.1629118128250;
-        Mon, 16 Aug 2021 05:48:48 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id h1sm940645lfv.226.2021.08.16.05.48.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 05:48:47 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 15:48:46 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [RFC PATCH 0/4] fs/ntfs3: Use new mount api and change some opts
-Message-ID: <20210816124846.sp4topnxfyamc62y@kari-VirtualBox>
-References: <20210816024703.107251-1-kari.argillander@gmail.com>
- <20210816122721.GA17355@lst.de>
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4ey74r9h5B4FsleU6ivv3WvBZFvF09kXQTJf5FkLGKg=;
+        b=gcq2Cjir1Z9q68JJaUQO9At7WTeUpqin7mw7Z/J3ctwN3EgNDVt2aHuwOKE3MxIFv2
+         dynWKmnF68yqdzKNW5oxGxKr5cpi2OP9Lyoh51XvlTFsy0PUh+bU0PKV32nnfH0zAfYe
+         LW8dBWc1VhHq5hH6gMWHGZc7sXTOsemoQ8cq3xDyuBMMigAUYcMfDk9Rpm2S1aRyzK+o
+         qFo3IWfTXyG6GLzBCi0HCexklKhkgQJcmhuu8iWjPMDOsk+fHE9MShEesEQ6TFR82ilO
+         EWB8FLSIGCYTvQT8jJI+H66jO7cFHsMwKjWM1GRLeVN7lHRcdopwMyeBdU4iplDi76aG
+         e7aA==
+X-Gm-Message-State: AOAM530Yxr5VV2R+ejR66zVjgtYTDggGqJurg91/FynLDSzk+ye0KzDz
+        AwqzAZY+GKzLMqmDrjN+P/w=
+X-Google-Smtp-Source: ABdhPJzFHwwFH6z6Bs4J55RWCb/F7PeZ8LNy8QhQCco09FhXUf52kwHWLCmhkL7pQSLENuUV93k4Gw==
+X-Received: by 2002:a5d:574d:: with SMTP id q13mr18764483wrw.425.1629118988423;
+        Mon, 16 Aug 2021 06:03:08 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.233.12])
+        by smtp.gmail.com with ESMTPSA id q75sm11125774wme.40.2021.08.16.06.03.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Aug 2021 06:03:01 -0700 (PDT)
+To:     Olivier Langlois <olivier@trillion01.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Tony Battersby <tonyb@cybernetics.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+ <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
+ <87eeda7nqe.fsf@disp2133>
+ <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+ <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+ <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+ <87y2bh4jg5.fsf@disp2133>
+ <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+ <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+ <87pmwmn5m0.fsf@disp2133>
+ <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
+ <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
+ <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
+ <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+Message-ID: <b9f92bf3-77aa-8cdd-6db7-95c86e5a6946@gmail.com>
+Date:   Mon, 16 Aug 2021 14:02:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210816122721.GA17355@lst.de>
+In-Reply-To: <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 02:27:21PM +0200, Christoph Hellwig wrote:
-> On Mon, Aug 16, 2021 at 05:46:59AM +0300, Kari Argillander wrote:
-> > I would like really like to get fsparam_flag_no also for no_acs_rules
-> > but then we have to make new name for it. Other possibility is to
-> > modify mount api so it mount option can be no/no_. I think that would
-> > maybe be good change. 
+On 8/15/21 9:42 PM, Olivier Langlois wrote:
+[...]
+> When I have first encountered the issue, the very first thing that I
+> did try was to create a simple test program that would synthetize the
+> problem.
 > 
-> I don't think adding another no_ alias is a good idea.  I'd suggest
-> to just rename the existing flag before the ntfs3 driver ever hits
-> mainline.
+> After few time consumming failed attempts, I just gave up the idea and
+> simply settle to my prod program that showcase systematically the
+> problem every time that I kill the process with a SEGV signal.
+> 
+> In a nutshell, all the program does is to issue read operations with
+> io_uring on a TCP socket on which there is a constant data stream.
+> 
+> Now that I have a better understanding of what is going on, I think
+> that one way that could reproduce the problem consistently could be
+> along those lines:
+> 
+> 1. Create a pipe
+> 2. fork a child
+> 3. Initiate a read operation on the pipe with io_uring from the child
+> 4. Let the parent kill its child with a core dump generating signal.
+> 5. Write something in the pipe from the parent so that the io_uring
+> read operation completes while the core dump is generated.
+> 
+> I guess that I'll end up doing that if I cannot fix the issue with my
+> current setup but here is what I have attempted so far:
+> 
+> 1. Call io_uring_files_cancel from do_coredump
+> 2. Same as #1 but also make sure that TIF_NOTIFY_SIGNAL is cleared on
+> returning from io_uring_files_cancel
+> 
+> Those attempts didn't work but lurking in the io_uring dev mailing list
+> is starting to pay off. I thought that I did reach the bottom of the
+> rabbit hole in my journey of understanding io_uring but the recent
+> patch set sent by Hao Xu
+> 
+> https://lore.kernel.org/io-uring/90fce498-968e-6812-7b6a-fdf8520ea8d9@kernel.dk/T/#t
+> 
+> made me realize that I still haven't assimilated all the small io_uring
+> nuances...
+> 
+> Here is my feedback. From my casual io_uring code reader point of view,
+> it is not 100% obvious what the difference is between
+> io_uring_files_cancel and io_uring_task_cancel
 
-Konstantin can suggest what should we call this.
+As you mentioned, io_uring_task_cancel() cancels and waits for all
+requests submitted by current task, used in exec() and SQPOLL because
+of potential races.
 
+io_uring_task_cancel() cancels only selected ones and
+
+
+io_uring_files_cancel()
+cancels and waits only some specific requests that we absolutely have
+to, e.g. in 5.15 it'll be only requests referencing the ring itself.
+It's used on normal task exit.
+
+io_uring_task_cancel() cancels and waits all requests submitted by
+current task, used on exec() because of races.
+
+
+
+As you mentioned 
+
+> 
+> It seems like io_uring_files_cancel is cancelling polls only if they
+> have the REQ_F_INFLIGHT flag set.
+> 
+> I have no idea what an inflight request means and why someone would
+> want to call io_uring_files_cancel over io_uring_task_cancel.
+> 
+> I guess that if I was to meditate on the question for few hours, I
+> would at some point get some illumination strike me but I believe that
+> it could be a good idea to document in the code those concepts for
+> helping casual readers...
+> 
+> Bottomline, I now understand that io_uring_files_cancel does not cancel
+> all the requests. Therefore, without fully understanding what I am
+> doing, I am going to replace my call to io_uring_files_cancel from
+> do_coredump with io_uring_task_cancel and see if this finally fix the
+> issue for good.
+> 
+> What I am trying to do is to cancel pending io_uring requests to make
+> sure that TIF_NOTIFY_SIGNAL isn't set while core dump is generated.
+> 
+> Maybe another solution would simply be to modify __dump_emit to make it
+> resilient to TIF_NOTIFY_SIGNAL as Eric W. Biederman originally
+> suggested.
+> 
+> or maybe do both...
+> 
+> Not sure which approach is best. If someone has an opinion, I would be
+> curious to hear it.
+> 
+> Greetings,
+> 
+> 
+
+-- 
+Pavel Begunkov
