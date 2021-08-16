@@ -2,180 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C3F03EDDA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 21:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BAFF3EDDAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 21:13:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbhHPTMQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 15:12:16 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28540 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229699AbhHPTMP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 15:12:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629141102;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7YlXwlqIMFjxEcCuzBk05B0XnLJDSfPdEFh85EFRYA8=;
-        b=NrB0uo94iNt5NuZl/q7a/UN1geWd5dAYNsUlUEn3hUmy5N1YidVsyTgXdO3lSSCfBi0JBv
-        nnk5g4p7l7/xbC6XpLpV7h00vMJ8OgImTbbNj6ECHL2sIn+LqquhAQL+rLs3BMMxr3SOOL
-        +ongq7Qa1OGw6vFdI6VZ0zaaM6mKMxo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-229-Wu5iE0PxP5KQNZf89IvS5w-1; Mon, 16 Aug 2021 15:11:41 -0400
-X-MC-Unique: Wu5iE0PxP5KQNZf89IvS5w-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B841394EE1;
-        Mon, 16 Aug 2021 19:11:39 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.133])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E48BD5D9DD;
-        Mon, 16 Aug 2021 19:11:23 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 6A0EA2237F5; Mon, 16 Aug 2021 15:11:23 -0400 (EDT)
-Date:   Mon, 16 Aug 2021 15:11:23 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Greg Kurz <groug@kaod.org>, Miklos Szeredi <miklos@szeredi.hu>,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Max Reitz <mreitz@redhat.com>, Robert Krawitz <rlk@redhat.com>
-Subject: Re: [PATCH v4 5/5] virtiofs: propagate sync() to file server
-Message-ID: <YRq4W1zcsAZh3FLX@redhat.com>
-References: <20210520154654.1791183-1-groug@kaod.org>
- <20210520154654.1791183-6-groug@kaod.org>
- <CAOQ4uxh69ii5Yk-DgFAq+TrrvJ6xCv9s8sKLfo3aBCSWjJvp9Q@mail.gmail.com>
- <YRqEPjzHg9IlifBo@redhat.com>
- <CAOQ4uxg+UX6MWRv9JTQDmf6Yf_NyD+pJ438Ds270vGr9YSSPZw@mail.gmail.com>
+        id S230051AbhHPTNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 15:13:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60830 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229556AbhHPTNu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Aug 2021 15:13:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 59BB760F35;
+        Mon, 16 Aug 2021 19:13:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629141197;
+        bh=MfGn258aaLrPNsfLMxzJS8p/bCXZ4kpH5puOFp2U4Dc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Zp1kSM412nk5X3DdnzZF8VfqIEw4yt6YgXdnhp33+Ya/TNhc9N254nTUF9Z8ErNsn
+         CIbOiVOWqVcUhGFqbQ1+OhpiFyg3cZ7Qv+JjEqC073qOAkcp3ReRIy3OMJow+b1lWC
+         K8Q6DFyB/3yvdJFhOHl0DEu4ZLMWy1dA3kheiEMfTL5KLqbxUlNT4W6fA/Oay//Kde
+         Kxbl6FzEi1lW83gS/LXMlFVuReAiUaxZJo6T+hbsxY2ymWjTc8ew3vmH6khCkMU+tr
+         pzXDsjsr+ZS5Q88sDmQ7QwLX3Yyg0pkyW5Io5BZRwOVDvEXm+1FK0N+wvzoEPTf5kq
+         li9E/E/0RBpKQ==
+Date:   Mon, 16 Aug 2021 22:12:55 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [BUG] general protection fault when reading /proc/kcore
+Message-ID: <YRq4typgRn342B4i@kernel.org>
+References: <YRqhqz35tm3hA9CG@krava>
+ <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com>
+ <YRqqqvaZHDu1IKrD@krava>
+ <2b83f03c-e782-138d-6010-1e4da5829b9a@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxg+UX6MWRv9JTQDmf6Yf_NyD+pJ438Ds270vGr9YSSPZw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2b83f03c-e782-138d-6010-1e4da5829b9a@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 09:57:08PM +0300, Amir Goldstein wrote:
-> On Mon, Aug 16, 2021 at 6:29 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Sun, Aug 15, 2021 at 05:14:06PM +0300, Amir Goldstein wrote:
-> > > Hi Greg,
-> > >
-> > > Sorry for the late reply, I have some questions about this change...
-> > >
-> > > On Fri, May 21, 2021 at 9:12 AM Greg Kurz <groug@kaod.org> wrote:
-> > > >
-> > > > Even if POSIX doesn't mandate it, linux users legitimately expect
-> > > > sync() to flush all data and metadata to physical storage when it
-> > > > is located on the same system. This isn't happening with virtiofs
-> > > > though : sync() inside the guest returns right away even though
-> > > > data still needs to be flushed from the host page cache.
-> > > >
-> > > > This is easily demonstrated by doing the following in the guest:
-> > > >
-> > > > $ dd if=/dev/zero of=/mnt/foo bs=1M count=5K ; strace -T -e sync sync
-> > > > 5120+0 records in
-> > > > 5120+0 records out
-> > > > 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 5.22224 s, 1.0 GB/s
-> > > > sync()                                  = 0 <0.024068>
-> > > > +++ exited with 0 +++
-> > > >
-> > > > and start the following in the host when the 'dd' command completes
-> > > > in the guest:
-> > > >
-> > > > $ strace -T -e fsync /usr/bin/sync virtiofs/foo
-> > > > fsync(3)                                = 0 <10.371640>
-> > > > +++ exited with 0 +++
-> > > >
-> > > > There are no good reasons not to honor the expected behavior of
-> > > > sync() actually : it gives an unrealistic impression that virtiofs
-> > > > is super fast and that data has safely landed on HW, which isn't
-> > > > the case obviously.
-> > > >
-> > > > Implement a ->sync_fs() superblock operation that sends a new
-> > > > FUSE_SYNCFS request type for this purpose. Provision a 64-bit
-> > > > placeholder for possible future extensions. Since the file
-> > > > server cannot handle the wait == 0 case, we skip it to avoid a
-> > > > gratuitous roundtrip. Note that this is per-superblock : a
-> > > > FUSE_SYNCFS is send for the root mount and for each submount.
-> > > >
-> > > > Like with FUSE_FSYNC and FUSE_FSYNCDIR, lack of support for
-> > > > FUSE_SYNCFS in the file server is treated as permanent success.
-> > > > This ensures compatibility with older file servers : the client
-> > > > will get the current behavior of sync() not being propagated to
-> > > > the file server.
-> > >
-> > > I wonder - even if the server does not support SYNCFS or if the kernel
-> > > does not trust the server with SYNCFS, fuse_sync_fs() can wait
-> > > until all pending requests up to this call have been completed, either
-> > > before or after submitting the SYNCFS request. No?
-> >
-> > >
-> > > Does virtiofsd track all requests prior to SYNCFS request to make
-> > > sure that they were executed on the host filesystem before calling
-> > > syncfs() on the host filesystem?
-> >
-> > Hi Amir,
-> >
-> > I don't think virtiofsd has any such notion. I would think, that
-> > client should make sure all pending writes have completed and
-> > then send SYNCFS request.
-> >
-> > Looking at the sync_filesystem(), I am assuming vfs will take care
-> > of flushing out all dirty pages and then call ->sync_fs.
-> >
-> > Having said that, I think fuse queues the writeback request internally
-> > and signals completion of writeback to mm(end_page_writeback()). And
-> > that's why fuse_fsync() has notion of waiting for all pending
-> > writes to finish on an inode (fuse_sync_writes()).
-> >
-> > So I think you have raised a good point. That is if there are pending
-> > writes at the time of syncfs(), we don't seem to have a notion of
-> > first waiting for all these writes to finish before we send
-> > FUSE_SYNCFS request to server.
-> 
-> Maybe, but I was not referring to inode writeback requests.
-> I had assumed that those were handled correctly.
-> I was referring to pending metadata requests.
-> 
-> ->sync_fs() in local fs also takes care of flushing metadata
-> (e.g. journal). I assumed that virtiofsd implements FUSE_SYNCFS
-> request by calling syncfs() on host fs,
+On Mon, Aug 16, 2021 at 08:38:43PM +0200, David Hildenbrand wrote:
+> On 16.08.21 20:12, Jiri Olsa wrote:
+> > On Mon, Aug 16, 2021 at 07:49:15PM +0200, David Hildenbrand wrote:
+> > > On 16.08.21 19:34, Jiri Olsa wrote:
+> > > > hi,
+> > > > I'm getting fault below when running:
+> > > >=20
+> > > > 	# cat /proc/kallsyms | grep ksys_read
+> > > > 	ffffffff8136d580 T ksys_read
+> > > > 	# objdump -d --start-address=3D0xffffffff8136d580 --stop-address=
+=3D0xffffffff8136d590 /proc/kcore
+> > > >=20
+> > > > 	/proc/kcore:     file format elf64-x86-64
+> > > >=20
+> > > > 	Segmentation fault
+> > > >=20
+> > > > any idea? config is attached
+> > >=20
+> > > Just tried with a different config on 5.14.0-rc6+
+> > >=20
+> > > [root@localhost ~]# cat /proc/kallsyms | grep ksys_read
+> > > ffffffff8927a800 T ksys_readahead
+> > > ffffffff89333660 T ksys_read
+> > >=20
+> > > [root@localhost ~]# objdump -d --start-address=3D0xffffffff89333660
+> > > --stop-address=3D0xffffffff89333670
+> > >=20
+> > > a.out:     file format elf64-x86-64
+> > >=20
+> > >=20
+> > >=20
+> > > The kern_addr_valid(start) seems to fault in your case, which is weir=
+d,
+> > > because it merely walks the page tables. But it seems to complain abo=
+ut a
+> > > non-canonical address 0xf887ffcbff000
+> > >=20
+> > > Can you post your QEMU cmdline? Did you test this on other kernel ver=
+sions?
+> >=20
+> > I'm using virt-manager so:
+> >=20
+> > /usr/bin/qemu-system-x86_64 -name guest=3Dfedora33,debug-threads=3Don -=
+S -object secret,id=3DmasterKey0,format=3Draw,file=3D/var/lib/libvirt/qemu/=
+domain-13-fedora33/master-key.aes -machine pc-q35-5.1,accel=3Dkvm,usb=3Doff=
+,vmport=3Doff,dump-guest-core=3Doff,memory-backend=3Dpc.ram -cpu Skylake-Se=
+rver-IBRS,ss=3Don,vmx=3Don,pdcm=3Don,hypervisor=3Don,tsc-adjust=3Don,clflus=
+hopt=3Don,umip=3Don,pku=3Don,stibp=3Don,arch-capabilities=3Don,ssbd=3Don,xs=
+aves=3Don,ibpb=3Don,amd-stibp=3Don,amd-ssbd=3Don,skip-l1dfl-vmentry=3Don,ps=
+change-mc-no=3Don -m 8192 -object memory-backend-ram,id=3Dpc.ram,size=3D858=
+9934592 -overcommit mem-lock=3Doff -smp 20,sockets=3D20,cores=3D1,threads=
+=3D1 -uuid 2185d5a9-dbad-4d61-aa4e-97af9fd7ebca -no-user-config -nodefaults=
+ -chardev socket,id=3Dcharmonitor,fd=3D36,server,nowait -mon chardev=3Dchar=
+monitor,id=3Dmonitor,mode=3Dcontrol -rtc base=3Dutc,driftfix=3Dslew -global=
+ kvm-pit.lost_tick_policy=3Ddelay -no-hpet -no-shutdown -global ICH9-LPC.di=
+sable_s3=3D1 -global ICH9-LPC.disable_s4=3D1 -boot strict=3Don -kernel /hom=
+e/jolsa/qemu/run/vmlinux -initrd /home/jolsa/qemu/run/initrd -append root=
+=3D/dev/mapper/fedora_fedora-root ro rd.lvm.lv=3Dfedora_fedora/root console=
+=3Dtty0 console=3DttyS0,115200 -device pcie-root-port,port=3D0x10,chassis=
+=3D1,id=3Dpci.1,bus=3Dpcie.0,multifunction=3Don,addr=3D0x2 -device pcie-roo=
+t-port,port=3D0x11,chassis=3D2,id=3Dpci.2,bus=3Dpcie.0,addr=3D0x2.0x1 -devi=
+ce pcie-root-port,port=3D0x12,chassis=3D3,id=3Dpci.3,bus=3Dpcie.0,addr=3D0x=
+2.0x2 -device pcie-root-port,port=3D0x13,chassis=3D4,id=3Dpci.4,bus=3Dpcie.=
+0,addr=3D0x2.0x3 -device pcie-root-port,port=3D0x14,chassis=3D5,id=3Dpci.5,=
+bus=3Dpcie.0,addr=3D0x2.0x4 -device pcie-root-port,port=3D0x15,chassis=3D6,=
+id=3Dpci.6,bus=3Dpcie.0,addr=3D0x2.0x5 -device pcie-root-port,port=3D0x16,c=
+hassis=3D7,id=3Dpci.7,bus=3Dpcie.0,addr=3D0x2.0x6 -device qemu-xhci,p2=3D15=
+,p3=3D15,id=3Dusb,bus=3Dpci.2,addr=3D0x0 -device virtio-serial-pci,id=3Dvir=
+tio-serial0,bus=3Dpci.3,addr=3D0x0 -blockdev {"driver":"file","filename":"/=
+var/lib/libvirt/images/fedora33.qcow2","node-name":"libvirt-2-storage","aut=
+o-read-only":true,"discard":"unmap"} -blockdev {"node-name":"libvirt-2-form=
+at","read-only":false,"driver":"qcow2","file":"libvirt-2-storage","backing"=
+:null} -device virtio-blk-pci,bus=3Dpci.4,addr=3D0x0,drive=3Dlibvirt-2-form=
+at,id=3Dvirtio-disk0,bootindex=3D1 -device ide-cd,bus=3Dide.0,id=3Dsata0-0-=
+0 -netdev tap,fd=3D38,id=3Dhostnet0,vhost=3Don,vhostfd=3D39 -device virtio-=
+net-pci,netdev=3Dhostnet0,id=3Dnet0,mac=3D52:54:00:f3:c6:e7,bus=3Dpci.1,add=
+r=3D0x0 -chardev pty,id=3Dcharserial0 -device isa-serial,chardev=3Dcharseri=
+al0,id=3Dserial0 -chardev socket,id=3Dcharchannel0,fd=3D40,server,nowait -d=
+evice virtserialport,bus=3Dvirtio-serial0.0,nr=3D1,chardev=3Dcharchannel0,i=
+d=3Dchannel0,name=3Dorg.qemu.guest_agent.0 -chardev spicevmc,id=3Dcharchann=
+el1,name=3Dvdagent -device virtserialport,bus=3Dvirtio-serial0.0,nr=3D2,cha=
+rdev=3Dcharchannel1,id=3Dchannel1,name=3Dcom.redhat.spice.0 -device usb-tab=
+let,id=3Dinput0,bus=3Dusb.0,port=3D1 -spice port=3D5900,addr=3D127.0.0.1,di=
+sable-ticketing,image-compression=3Doff,seamless-migration=3Don -device qxl=
+-vga,id=3Dvideo0,ram_size=3D67108864,vram_size=3D67108864,vram64_size_mb=3D=
+0,vgamem_mb=3D16,max_outputs=3D1,bus=3Dpcie.0,addr=3D0x1 -device ich9-intel=
+-hda,id=3Dsound0,bus=3Dpcie.0,addr=3D0x1b -device hda-duplex,id=3Dsound0-co=
+dec0,bus=3Dsound0.0,cad=3D0 -chardev spicevmc,id=3Dcharredir0,name=3Dusbred=
+ir -device usb-redir,chardev=3Dcharredir0,id=3Dredir0,bus=3Dusb.0,port=3D2 =
+-chardev spicevmc,id=3Dcharredir1,name=3Dusbredir -device usb-redir,chardev=
+=3Dcharredir1,id=3Dredir1,bus=3Dusb.0,port=3D3 -device virtio-balloon-pci,i=
+d=3Dballoon0,bus=3Dpci.5,addr=3D0x0 -object rng-random,id=3Dobjrng0,filenam=
+e=3D/dev/urandom -device virtio-rng-pci,rng=3Dobjrng0,id=3Drng0,bus=3Dpci.6=
+,addr=3D0x0 -sandbox on,obsolete=3Ddeny,elevateprivileges=3Ddeny,spawn=3Dde=
+ny,resourcecontrol=3Ddeny -msg timestamp=3Don
+=20
 
-Yes virtiofsd calls syncfs() on host fs.
 
-> but it is does that than
-> there is no guarantee that all metadata requests have reached the
-> host fs from virtiofs unless client or server take care of waiting
-> for all pending metadata requests before issuing FUSE_SYNCFS.
+> > so far I tested just bpf-next/master:
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+> >=20
+>=20
+> Just tried with upstream Linux (5.14.0-rc6) and your config without
+> triggering it. I'm using "-cpu host", though, on an AMD Ryzen 9 3900X
 
-We don't have any journal in virtiofs. In fact we don't seem to
-cache any metadta. Except probably the case when "-o writeback" 
-where we can trust local time stamps.
+With Jiri's config and '-cpu <very long string>' it triggers for me on
+v5.14-rc6.
 
-If "-o writeback" is not enabled, i am not sure what metadata
-we will be caching that we will need to worry about. Do you have
-something specific in mind. (Atleast from virtiofs point of view,
-I can't seem to think what metadata we are caching which we need
-to worry about).
-
-Thanks
-Vivek
-
-> 
-> But maybe I am missing something.
-> 
-> It might be worth mentioning that I did not find any sync_fs()
-> commands that request to flush metadata caches on the server in
-> NFS or SMB protocols either.
-> 
+I'll also try to take a look tomorrow.
+=20
+> > and jsut removed my changes to make sure it wasn't me ;-)
+>=20
+> :)
+>=20
+> >=20
+> > I'll try to find a version that worked for me before
+>=20
+> Can you try with upstream Linux as well?
+>=20
+>=20
+> --=20
 > Thanks,
-> Amir.
-> 
+>=20
+> David / dhildenb
 
+--=20
+Sincerely yours,
+Mike.
