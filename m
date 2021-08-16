@@ -2,174 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BAFF3EDDAB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 21:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73A4A3EDDB5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 21:14:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230051AbhHPTNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 15:13:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229556AbhHPTNu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 15:13:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 59BB760F35;
-        Mon, 16 Aug 2021 19:13:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629141197;
-        bh=MfGn258aaLrPNsfLMxzJS8p/bCXZ4kpH5puOFp2U4Dc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Zp1kSM412nk5X3DdnzZF8VfqIEw4yt6YgXdnhp33+Ya/TNhc9N254nTUF9Z8ErNsn
-         CIbOiVOWqVcUhGFqbQ1+OhpiFyg3cZ7Qv+JjEqC073qOAkcp3ReRIy3OMJow+b1lWC
-         K8Q6DFyB/3yvdJFhOHl0DEu4ZLMWy1dA3kheiEMfTL5KLqbxUlNT4W6fA/Oay//Kde
-         Kxbl6FzEi1lW83gS/LXMlFVuReAiUaxZJo6T+hbsxY2ymWjTc8ew3vmH6khCkMU+tr
-         pzXDsjsr+ZS5Q88sDmQ7QwLX3Yyg0pkyW5Io5BZRwOVDvEXm+1FK0N+wvzoEPTf5kq
-         li9E/E/0RBpKQ==
-Date:   Mon, 16 Aug 2021 22:12:55 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [BUG] general protection fault when reading /proc/kcore
-Message-ID: <YRq4typgRn342B4i@kernel.org>
-References: <YRqhqz35tm3hA9CG@krava>
- <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com>
- <YRqqqvaZHDu1IKrD@krava>
- <2b83f03c-e782-138d-6010-1e4da5829b9a@redhat.com>
+        id S230386AbhHPTO4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 15:14:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50041 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230231AbhHPTOz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Aug 2021 15:14:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629141263;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lWy3l2+IfO7xO6oKpqVQHj7y0vYczHZZ4SIluKLQLb8=;
+        b=YJyhDttYZdTjcGRCCm6w9yFTHcwG8r/HoEac9mMvlxx7UtCgjfeKes8aFtyh1ixUN5fn5Z
+        JdcjMdiAEd7K1ifY5QuMV1Oi5JZponCffUDVcGiXgmHc9I9e8TeiBWt0w/iIAW13Yz15y8
+        7YbDF7xQJXld5QsPZ2UluZg8bykBwYg=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-602-3WJOsJEhMVu3CMXpKcarSA-1; Mon, 16 Aug 2021 15:14:22 -0400
+X-MC-Unique: 3WJOsJEhMVu3CMXpKcarSA-1
+Received: by mail-wr1-f70.google.com with SMTP id n18-20020adfe792000000b00156ae576abdso2075055wrm.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Aug 2021 12:14:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lWy3l2+IfO7xO6oKpqVQHj7y0vYczHZZ4SIluKLQLb8=;
+        b=sSTs1mfptoNchaafAxkSNWQPyiSj+1F1pFgnlIK8ZOBL1gvL7cSyDqwUmQRFkwrRg8
+         m/PjTnA6w8UAvZ7Rd2FIEJ1VKL3JzAMhGWJhizSThu3c37DmFXDQLlnsW/YRYv9hJDF/
+         VCzuZqGV1GJDBHbcVMaONrW88MTY9WU3MN7HFLvgX4tUAZguTT/kavIbuOgm6O0+5mRn
+         qUQkdOVRk7UJMhE1mHNIvDtWhfd3YkYIyFcfLO5iW8yExkqqY/jQIiPwySY7KpUKPT+f
+         5GklDzMMHL4aegVxyHuZ2AS1iSh2L7VoIP/nVizN3JUhLK2DL2GYlOnOGHhNdetYbPoS
+         bL1Q==
+X-Gm-Message-State: AOAM531RCh4SN/gH1nSAjAXU+Ic6mNPXwAyhnCqpFz8mAhzkbeqi4gjY
+        RzuvVwzUd0M1Ywc9ZBAsP9v7PPgcOizWFhDH5k01pw5MunwfUtdeJ0AztmlW2yBVkkEuume7gmV
+        A6pnxbLdPArEvPPJubSeAY2eu43oyyE8q+mGoRCSeBg==
+X-Received: by 2002:a5d:674b:: with SMTP id l11mr18978887wrw.357.1629141260957;
+        Mon, 16 Aug 2021 12:14:20 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx3e2hMfKU0iq3mIOu2m32crL3qBkqbuiWv8L806qkeQbGdArMICY3wU0R/Jc0O1nkrsAQGzAuFreIkqVtHZaU=
+X-Received: by 2002:a5d:674b:: with SMTP id l11mr18978869wrw.357.1629141260774;
+ Mon, 16 Aug 2021 12:14:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2b83f03c-e782-138d-6010-1e4da5829b9a@redhat.com>
+References: <20210803191818.993968-1-agruenba@redhat.com> <CAHk-=wj+_Y7NQ-NhhE0jk52c9ZB0VJbO1AjtMJFB8wP=PO+bdw@mail.gmail.com>
+In-Reply-To: <CAHk-=wj+_Y7NQ-NhhE0jk52c9ZB0VJbO1AjtMJFB8wP=PO+bdw@mail.gmail.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Mon, 16 Aug 2021 21:14:09 +0200
+Message-ID: <CAHc6FU6H5q20qiQ5FX1726i0FJHyh=Y46huWkCBZTR3sk+3Dhg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/12] gfs2: Fix mmap + page fault deadlocks
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 08:38:43PM +0200, David Hildenbrand wrote:
-> On 16.08.21 20:12, Jiri Olsa wrote:
-> > On Mon, Aug 16, 2021 at 07:49:15PM +0200, David Hildenbrand wrote:
-> > > On 16.08.21 19:34, Jiri Olsa wrote:
-> > > > hi,
-> > > > I'm getting fault below when running:
-> > > >=20
-> > > > 	# cat /proc/kallsyms | grep ksys_read
-> > > > 	ffffffff8136d580 T ksys_read
-> > > > 	# objdump -d --start-address=3D0xffffffff8136d580 --stop-address=
-=3D0xffffffff8136d590 /proc/kcore
-> > > >=20
-> > > > 	/proc/kcore:     file format elf64-x86-64
-> > > >=20
-> > > > 	Segmentation fault
-> > > >=20
-> > > > any idea? config is attached
-> > >=20
-> > > Just tried with a different config on 5.14.0-rc6+
-> > >=20
-> > > [root@localhost ~]# cat /proc/kallsyms | grep ksys_read
-> > > ffffffff8927a800 T ksys_readahead
-> > > ffffffff89333660 T ksys_read
-> > >=20
-> > > [root@localhost ~]# objdump -d --start-address=3D0xffffffff89333660
-> > > --stop-address=3D0xffffffff89333670
-> > >=20
-> > > a.out:     file format elf64-x86-64
-> > >=20
-> > >=20
-> > >=20
-> > > The kern_addr_valid(start) seems to fault in your case, which is weir=
-d,
-> > > because it merely walks the page tables. But it seems to complain abo=
-ut a
-> > > non-canonical address 0xf887ffcbff000
-> > >=20
-> > > Can you post your QEMU cmdline? Did you test this on other kernel ver=
-sions?
-> >=20
-> > I'm using virt-manager so:
-> >=20
-> > /usr/bin/qemu-system-x86_64 -name guest=3Dfedora33,debug-threads=3Don -=
-S -object secret,id=3DmasterKey0,format=3Draw,file=3D/var/lib/libvirt/qemu/=
-domain-13-fedora33/master-key.aes -machine pc-q35-5.1,accel=3Dkvm,usb=3Doff=
-,vmport=3Doff,dump-guest-core=3Doff,memory-backend=3Dpc.ram -cpu Skylake-Se=
-rver-IBRS,ss=3Don,vmx=3Don,pdcm=3Don,hypervisor=3Don,tsc-adjust=3Don,clflus=
-hopt=3Don,umip=3Don,pku=3Don,stibp=3Don,arch-capabilities=3Don,ssbd=3Don,xs=
-aves=3Don,ibpb=3Don,amd-stibp=3Don,amd-ssbd=3Don,skip-l1dfl-vmentry=3Don,ps=
-change-mc-no=3Don -m 8192 -object memory-backend-ram,id=3Dpc.ram,size=3D858=
-9934592 -overcommit mem-lock=3Doff -smp 20,sockets=3D20,cores=3D1,threads=
-=3D1 -uuid 2185d5a9-dbad-4d61-aa4e-97af9fd7ebca -no-user-config -nodefaults=
- -chardev socket,id=3Dcharmonitor,fd=3D36,server,nowait -mon chardev=3Dchar=
-monitor,id=3Dmonitor,mode=3Dcontrol -rtc base=3Dutc,driftfix=3Dslew -global=
- kvm-pit.lost_tick_policy=3Ddelay -no-hpet -no-shutdown -global ICH9-LPC.di=
-sable_s3=3D1 -global ICH9-LPC.disable_s4=3D1 -boot strict=3Don -kernel /hom=
-e/jolsa/qemu/run/vmlinux -initrd /home/jolsa/qemu/run/initrd -append root=
-=3D/dev/mapper/fedora_fedora-root ro rd.lvm.lv=3Dfedora_fedora/root console=
-=3Dtty0 console=3DttyS0,115200 -device pcie-root-port,port=3D0x10,chassis=
-=3D1,id=3Dpci.1,bus=3Dpcie.0,multifunction=3Don,addr=3D0x2 -device pcie-roo=
-t-port,port=3D0x11,chassis=3D2,id=3Dpci.2,bus=3Dpcie.0,addr=3D0x2.0x1 -devi=
-ce pcie-root-port,port=3D0x12,chassis=3D3,id=3Dpci.3,bus=3Dpcie.0,addr=3D0x=
-2.0x2 -device pcie-root-port,port=3D0x13,chassis=3D4,id=3Dpci.4,bus=3Dpcie.=
-0,addr=3D0x2.0x3 -device pcie-root-port,port=3D0x14,chassis=3D5,id=3Dpci.5,=
-bus=3Dpcie.0,addr=3D0x2.0x4 -device pcie-root-port,port=3D0x15,chassis=3D6,=
-id=3Dpci.6,bus=3Dpcie.0,addr=3D0x2.0x5 -device pcie-root-port,port=3D0x16,c=
-hassis=3D7,id=3Dpci.7,bus=3Dpcie.0,addr=3D0x2.0x6 -device qemu-xhci,p2=3D15=
-,p3=3D15,id=3Dusb,bus=3Dpci.2,addr=3D0x0 -device virtio-serial-pci,id=3Dvir=
-tio-serial0,bus=3Dpci.3,addr=3D0x0 -blockdev {"driver":"file","filename":"/=
-var/lib/libvirt/images/fedora33.qcow2","node-name":"libvirt-2-storage","aut=
-o-read-only":true,"discard":"unmap"} -blockdev {"node-name":"libvirt-2-form=
-at","read-only":false,"driver":"qcow2","file":"libvirt-2-storage","backing"=
-:null} -device virtio-blk-pci,bus=3Dpci.4,addr=3D0x0,drive=3Dlibvirt-2-form=
-at,id=3Dvirtio-disk0,bootindex=3D1 -device ide-cd,bus=3Dide.0,id=3Dsata0-0-=
-0 -netdev tap,fd=3D38,id=3Dhostnet0,vhost=3Don,vhostfd=3D39 -device virtio-=
-net-pci,netdev=3Dhostnet0,id=3Dnet0,mac=3D52:54:00:f3:c6:e7,bus=3Dpci.1,add=
-r=3D0x0 -chardev pty,id=3Dcharserial0 -device isa-serial,chardev=3Dcharseri=
-al0,id=3Dserial0 -chardev socket,id=3Dcharchannel0,fd=3D40,server,nowait -d=
-evice virtserialport,bus=3Dvirtio-serial0.0,nr=3D1,chardev=3Dcharchannel0,i=
-d=3Dchannel0,name=3Dorg.qemu.guest_agent.0 -chardev spicevmc,id=3Dcharchann=
-el1,name=3Dvdagent -device virtserialport,bus=3Dvirtio-serial0.0,nr=3D2,cha=
-rdev=3Dcharchannel1,id=3Dchannel1,name=3Dcom.redhat.spice.0 -device usb-tab=
-let,id=3Dinput0,bus=3Dusb.0,port=3D1 -spice port=3D5900,addr=3D127.0.0.1,di=
-sable-ticketing,image-compression=3Doff,seamless-migration=3Don -device qxl=
--vga,id=3Dvideo0,ram_size=3D67108864,vram_size=3D67108864,vram64_size_mb=3D=
-0,vgamem_mb=3D16,max_outputs=3D1,bus=3Dpcie.0,addr=3D0x1 -device ich9-intel=
--hda,id=3Dsound0,bus=3Dpcie.0,addr=3D0x1b -device hda-duplex,id=3Dsound0-co=
-dec0,bus=3Dsound0.0,cad=3D0 -chardev spicevmc,id=3Dcharredir0,name=3Dusbred=
-ir -device usb-redir,chardev=3Dcharredir0,id=3Dredir0,bus=3Dusb.0,port=3D2 =
--chardev spicevmc,id=3Dcharredir1,name=3Dusbredir -device usb-redir,chardev=
-=3Dcharredir1,id=3Dredir1,bus=3Dusb.0,port=3D3 -device virtio-balloon-pci,i=
-d=3Dballoon0,bus=3Dpci.5,addr=3D0x0 -object rng-random,id=3Dobjrng0,filenam=
-e=3D/dev/urandom -device virtio-rng-pci,rng=3Dobjrng0,id=3Drng0,bus=3Dpci.6=
-,addr=3D0x0 -sandbox on,obsolete=3Ddeny,elevateprivileges=3Ddeny,spawn=3Dde=
-ny,resourcecontrol=3Ddeny -msg timestamp=3Don
-=20
+On Tue, Aug 3, 2021 at 9:45 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, Aug 3, 2021 at 12:18 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+> > With this patch queue, fstest generic/208 (aio-dio-invalidate-failure.c)
+> > endlessly spins in gfs2_file_direct_write.  It looks as if there's a bug
+> > in get_user_pages_fast when called with FOLL_FAST_ONLY:
+> >
+> >  (1) The test case performs an aio write into a 32 MB buffer.
+> >
+> >  (2) The buffer is initially not in memory, so when iomap_dio_rw() ->
+> >      ... -> bio_iov_iter_get_pages() is called with the iter->noio flag
+> >      set, we get to get_user_pages_fast() with FOLL_FAST_ONLY set.
+> >      get_user_pages_fast() returns 0, which causes
+> >      bio_iov_iter_get_pages to return -EFAULT.
+> >
+> >  (3) Then gfs2_file_direct_write faults in the entire buffer with
+> >      fault_in_iov_iter_readable(), which succeeds.
+> >
+> >  (4) With the buffer in memory, we retry the iomap_dio_rw() ->
+> >      ... -> bio_iov_iter_get_pages() -> ... -> get_user_pages_fast().
+> >      This should succeed now, but get_user_pages_fast() still returns 0.
+>
+> Hmm. Have you tried to figure out why that "still returns 0" happens?
 
+The call stack is:
 
-> > so far I tested just bpf-next/master:
-> >    git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-> >=20
->=20
-> Just tried with upstream Linux (5.14.0-rc6) and your config without
-> triggering it. I'm using "-cpu host", though, on an AMD Ryzen 9 3900X
+gup_pte_range
+gup_pmd_range
+gup_pud_range
+gup_p4d_range
+gup_pgd_range
+lockless_pages_from_mm
+internal_get_user_pages_fast
+get_user_pages_fast
+iov_iter_get_pages
+__bio_iov_iter_get_pages
+bio_iov_iter_get_pages
+iomap_dio_bio_actor
+iomap_dio_actor
+iomap_apply
+iomap_dio_rw
+gfs2_file_direct_write
 
-With Jiri's config and '-cpu <very long string>' it triggers for me on
-v5.14-rc6.
+In gup_pte_range, pte_special(pte) is true and so we return 0.
 
-I'll also try to take a look tomorrow.
-=20
-> > and jsut removed my changes to make sure it wasn't me ;-)
->=20
-> :)
->=20
-> >=20
-> > I'll try to find a version that worked for me before
->=20
-> Can you try with upstream Linux as well?
->=20
->=20
-> --=20
-> Thanks,
->=20
-> David / dhildenb
+> One option - for debugging only - would be to introduce a new flag to
+> get_user_pages_fast() that says "print out reason if failed" and make
+> the retry (but not the original one) have that flag set.
+>
+> There are a couple of things of note when it comes to "get_user_pages_fast()":
+>
+>  (a) some architectures don't even enable it
+>
+>  (b) it can be very picky about the page table contents, and wants the
+> accessed bit to already be set (or the dirty bit, in the case of a
+> write).
+>
+> but (a) shouldn't be an issue on any common platform and (b) shouldn't
+> be an issue with  fault_in_iov_iter_readable() that actually does a
+> __get_user() so it will access through the page tables.
+>
+> (It might be more of an issue with fault_in_iov_iter_writable() due to
+> walking the page tables by hand - if we don't do the proper
+> access/dirty setting, I could see get_user_pages_fast() failing).
+>
+> Anyway, for reason (a) I do think that eventually we should probably
+> introduce FOLL_NOFAULT, and allow the full "slow" page table walk -
+> just not calling down to handle_mm_fault() if it fails.
+>
+> But (a) should be a non-issue in your test environment, and so it
+> would be interesting to hear what it is that fails. Because scanning
+> through the patches, they all _look_ fine to me (apart from the one
+> comment about return values, which is more about being consistent with
+> copy_to/from_user() and making the code simpler - not about
+> correctness)
+>
+>                        Linus
+>
 
---=20
-Sincerely yours,
-Mike.
+Thanks,
+Andreas
+
