@@ -2,107 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4E8E3ED7A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 15:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DED153ED6FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 15:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236734AbhHPNkM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 09:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240716AbhHPNjj (ORCPT
+        id S240838AbhHPNZp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 09:25:45 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:52334 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238754AbhHPNYF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 09:39:39 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 676ADC061155;
-        Mon, 16 Aug 2021 06:19:37 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id d4so34302643lfk.9;
-        Mon, 16 Aug 2021 06:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4xjy2k/+Hr19yNQ4XBrfvelrlltpvX1jEjhtBSNo+VM=;
-        b=EI1iN9/WimUKqzMZTG8PvwiDfzmpgSiLseyzGHdfhYt30zb02LS8FhQjawjCw73REI
-         bl5A9GD8GeVHAeYpp1nxWJ6mRUe3NTRFrAFXiPfvhaBLJ9UtdbLACNWRi4HR8msEo0yW
-         6bC7HZ33/ZP+D48JF3+jxrfdLiCAeur61DLOzjgTgdczQFFxScEQOeW8KLHSlPb2i9IN
-         tzHXCtyx6wWQgnklo4WlXgjPhqbUIx22Tcc2qkkRYTZ89n7zQImRUErYbVkeLUW/ydXo
-         edWkV56Ed2nCo9btO4zlWnQE950IUo5j7dr+/3tW4A0/+7hl35wyChYN8jzwFWB7Q/OR
-         UWvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4xjy2k/+Hr19yNQ4XBrfvelrlltpvX1jEjhtBSNo+VM=;
-        b=qNeyDKWUZ2hEfcF2XKZ9L5pmm8oU0d4kDJAxWO5z5oN2ffGInYEVqqIwl0OHW3oz6J
-         fylFkJk4gaDry/5rV3aTpIRZFt1sRvL76fqkVeyk8s6kzZNAKV4j75IPF5y1ch7lNblN
-         mERaSsw3MQj+rFVcC6xGQQj2OfAl0/y26eaZFGtdmQ479TzqGzI5P3gX4m9fI4D8psYr
-         WTNnPwis6A521sNuVifaBw2JAmKWqu7eC34AtftoR7bDmM8AL7MNov1n8Jl8y6i22BVf
-         kH6a9/VQzqxoXdqgz0y11OgYZ+Oy2xwk8cjIXMrXbjY7BbOGRKuGNBKB32GnqFumCnJ7
-         y/CA==
-X-Gm-Message-State: AOAM5310RujQ1b8q/knINNL5qH3Ad75Ph3dHa18HpNMnynRVv8NiDkNE
-        gzZ5+d1apidsAfWG90XbTr0=
-X-Google-Smtp-Source: ABdhPJy/UQO+uCDnyVfenOBhD7j6LKkn57XI/lwxIEuysHSGfmkvQ7BHpIXw0NbJ9cgQ0wTusKLw6g==
-X-Received: by 2002:ac2:5192:: with SMTP id u18mr11820985lfi.527.1629119975363;
-        Mon, 16 Aug 2021 06:19:35 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id v1sm921776lfg.106.2021.08.16.06.19.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 06:19:34 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 16:19:32 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [RFC PATCH 1/4] fs/ntfs3: Use new api for mounting
-Message-ID: <20210816131932.ri2fpog5tncd4xbt@kari-VirtualBox>
-References: <20210816024703.107251-1-kari.argillander@gmail.com>
- <20210816024703.107251-2-kari.argillander@gmail.com>
- <20210816032351.yo7lkfrwsio3qvjw@kari-VirtualBox>
- <20210816121752.GA16815@lst.de>
+        Mon, 16 Aug 2021 09:24:05 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 2109B21DA5;
+        Mon, 16 Aug 2021 13:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1629120213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=22mScugL1fLxQzYMhho9jmQhIvvc4nXeZ8bD48Nn3Rw=;
+        b=UukOSQOneF2D+37ccVX3RdNLjDGOxLA8XsbfjUTGpmuNCWgWnqv1i933o+EPUnvtDe2Bzs
+        XI1uxNFsGfKIYqa/FTtfFFB5DK9iPDuXzKwc3FR05W2UXMcai5ADYqBy/2qkY+jgOSEefz
+        oMLqnAmo8NHR6irNhn3z8eDAqvfwbOs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1629120213;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=22mScugL1fLxQzYMhho9jmQhIvvc4nXeZ8bD48Nn3Rw=;
+        b=1BnzC6mXJijnrk2+4keyfNEEUCxjzL3/LBKdZumik0bSvMEh+/VCDJyTi8nG5C0pJiOB/L
+        qbCb1swfEPiDLTAQ==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 01AE5A3B97;
+        Mon, 16 Aug 2021 13:23:33 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id B7FC81E0426; Mon, 16 Aug 2021 15:23:32 +0200 (CEST)
+Date:   Mon, 16 Aug 2021 15:23:32 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     amir73il@gmail.com, jack@suse.com, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        khazhy@google.com, dhowells@redhat.com, david@fromorbit.com,
+        tytso@mit.edu, djwong@kernel.org, repnop@google.com,
+        kernel@collabora.com
+Subject: Re: [PATCH v6 10/21] fsnotify: Support FS_ERROR event type
+Message-ID: <20210816132332.GD30215@quack2.suse.cz>
+References: <20210812214010.3197279-1-krisman@collabora.com>
+ <20210812214010.3197279-11-krisman@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210816121752.GA16815@lst.de>
+In-Reply-To: <20210812214010.3197279-11-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 02:17:52PM +0200, Christoph Hellwig wrote:
-> On Mon, Aug 16, 2021 at 06:23:51AM +0300, Kari Argillander wrote:
-> > > Nls loading is changed a little bit because new api not have default
-> > > optioni for mount parameters. So we need to load nls table before and
-> > > change that if user specifie someting else.
-> > > 
-> > > Also try to use fsparam_flag_no as much as possible. This is just nice
-> > > little touch and is not mandatory but it should not make any harm. It
-> > > is just convenient that we can use example acl/noacl mount options.
-> >  
-> > I would like that if someone can comment can we do reconfigure so that
-> > we change mount options? Can we example change iocharset and be ok after
-> > that? I have look some other fs drivers and in my eyes it seems to be
-> > quite random if driver should let reconfigure all parameters. Right now
-> > code is that we can reconfigure every mount parameter but I do not know
-> > if this is right call.
+On Thu 12-08-21 17:39:59, Gabriel Krisman Bertazi wrote:
+> Expose a new type of fsnotify event for filesystems to report errors for
+> userspace monitoring tools.  fanotify will send this type of
+> notification for FAN_FS_ERROR events.  This also introduce a helper for
+> generating the new event.
 > 
-> Reconfiguring non-trivial mount parameters is hard.  In general I'd
-> recommend to only allow reconfiguring paramters that
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > 
->  a) have user demand for that
->  b) you know what you're actually doing.
+> ---
+> Changes since v5:
+>   - pass sb inside data field (jan)
+> Changes since v3:
+>   - Squash patch ("fsnotify: Introduce helpers to send error_events")
+>   - Drop reviewed-bys!
 > 
-> Something like the iocharset clearly isn't something that makes sense
-> to be changed.
-
-I will probably do this series so that nothing can be changed but that
-there will be easy way to enable changing in code. So after I can send
-small patch which will enable changing and I can test each option
-separately. 
-
-If Konstantin can comment if there is some parameters which have real
-demand then I will of course implement those.
-
-Thanks for comments.
-
+> Changes since v2:
+>   - FAN_ERROR->FAN_FS_ERROR (Amir)
+> 
+> Changes since v1:
+>   - Overload FS_ERROR with FS_IN_IGNORED
+>   - Implement support for this type on fsnotify_data_inode (Amir)
+> ---
+>  fs/notify/fsnotify.c             |  3 +++
+>  include/linux/fsnotify.h         | 13 +++++++++++++
+>  include/linux/fsnotify_backend.h | 18 +++++++++++++++++-
+>  3 files changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 536db02cb26e..6d3b3de4f8ee 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -103,6 +103,9 @@ static struct super_block *fsnotify_data_sb(const void *data, int data_type)
+>  	struct inode *inode = fsnotify_data_inode(data, data_type);
+>  	struct super_block *sb = inode ? inode->i_sb : NULL;
+>  
+> +	if (!sb && data_type == FSNOTIFY_EVENT_ERROR)
+> +		sb = ((struct fs_error_report *) data)->sb;
+> +
+>  	return sb;
+>  }
+>  
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index f8acddcf54fb..521234af1827 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -317,4 +317,17 @@ static inline void fsnotify_change(struct dentry *dentry, unsigned int ia_valid)
+>  		fsnotify_dentry(dentry, mask);
+>  }
+>  
+> +static inline int fsnotify_sb_error(struct super_block *sb, struct inode *inode,
+> +				    int error)
+> +{
+> +	struct fs_error_report report = {
+> +		.error = error,
+> +		.inode = inode,
+> +		.sb = sb,
+> +	};
+> +
+> +	return fsnotify(FS_ERROR, &report, FSNOTIFY_EVENT_ERROR,
+> +			NULL, NULL, NULL, 0);
+> +}
+> +
+>  #endif	/* _LINUX_FS_NOTIFY_H */
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index e027af3cd8dd..277b6f3e0998 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -42,6 +42,12 @@
+>  
+>  #define FS_UNMOUNT		0x00002000	/* inode on umount fs */
+>  #define FS_Q_OVERFLOW		0x00004000	/* Event queued overflowed */
+> +#define FS_ERROR		0x00008000	/* Filesystem Error (fanotify) */
+> +
+> +/*
+> + * FS_IN_IGNORED overloads FS_ERROR.  It is only used internally by inotify
+> + * which does not support FS_ERROR.
+> + */
+>  #define FS_IN_IGNORED		0x00008000	/* last inotify event here */
+>  
+>  #define FS_OPEN_PERM		0x00010000	/* open event in an permission hook */
+> @@ -95,7 +101,8 @@
+>  #define ALL_FSNOTIFY_EVENTS (ALL_FSNOTIFY_DIRENT_EVENTS | \
+>  			     FS_EVENTS_POSS_ON_CHILD | \
+>  			     FS_DELETE_SELF | FS_MOVE_SELF | FS_DN_RENAME | \
+> -			     FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED)
+> +			     FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED | \
+> +			     FS_ERROR)
+>  
+>  /* Extra flags that may be reported with event or control handling of events */
+>  #define ALL_FSNOTIFY_FLAGS  (FS_EXCL_UNLINK | FS_ISDIR | FS_IN_ONESHOT | \
+> @@ -248,6 +255,13 @@ enum fsnotify_data_type {
+>  	FSNOTIFY_EVENT_NONE,
+>  	FSNOTIFY_EVENT_PATH,
+>  	FSNOTIFY_EVENT_INODE,
+> +	FSNOTIFY_EVENT_ERROR,
+> +};
+> +
+> +struct fs_error_report {
+> +	int error;
+> +	struct inode *inode;
+> +	struct super_block *sb;
+>  };
+>  
+>  static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
+> @@ -257,6 +271,8 @@ static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
+>  		return (struct inode *)data;
+>  	case FSNOTIFY_EVENT_PATH:
+>  		return d_inode(((const struct path *)data)->dentry);
+> +	case FSNOTIFY_EVENT_ERROR:
+> +		return ((struct fs_error_report *)data)->inode;
+>  	default:
+>  		return NULL;
+>  	}
+> -- 
+> 2.32.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
