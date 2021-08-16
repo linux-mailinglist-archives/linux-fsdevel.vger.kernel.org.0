@@ -2,186 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8485D3ECE64
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 08:05:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE0653ECE8C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 08:20:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233709AbhHPGFc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 02:05:32 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:38883 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233477AbhHPGFY (ORCPT
+        id S233077AbhHPGUs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 02:20:48 -0400
+Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:44145 "EHLO
+        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229774AbhHPGUs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 02:05:24 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AOV8yt65SIuBaGD4ywAPXwPTXdLJyesId70hD?=
- =?us-ascii?q?6qkRc20wTiX8ra2TdZsguyMc9wx6ZJhNo7G90cq7MBbhHPxOkOos1N6ZNWGIhI?=
- =?us-ascii?q?LCFvAB0WKN+V3dMhy73utc+IMlSKJmFeD3ZGIQse/KpCW+DPYsqePqzJyV?=
-X-IronPort-AV: E=Sophos;i="5.84,324,1620662400"; 
-   d="scan'208";a="112944888"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 16 Aug 2021 14:04:47 +0800
-Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
-        by cn.fujitsu.com (Postfix) with ESMTP id 4E47F4D0D4BB;
-        Mon, 16 Aug 2021 14:04:43 +0800 (CST)
-Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Mon, 16 Aug 2021 14:04:42 +0800
-Received: from irides.mr.mr.mr (10.167.225.141) by
- G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Mon, 16 Aug 2021 14:04:41 +0800
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     <djwong@kernel.org>, <hch@lst.de>, <linux-xfs@vger.kernel.org>
-CC:     <ruansy.fnst@fujitsu.com>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-        <rgoldwyn@suse.de>, <viro@zeniv.linux.org.uk>,
-        <willy@infradead.org>
-Subject: [PATCH v7 8/8] fs/xfs: Add dax dedupe support
-Date:   Mon, 16 Aug 2021 14:03:59 +0800
-Message-ID: <20210816060359.1442450-9-ruansy.fnst@fujitsu.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210816060359.1442450-1-ruansy.fnst@fujitsu.com>
-References: <20210816060359.1442450-1-ruansy.fnst@fujitsu.com>
+        Mon, 16 Aug 2021 02:20:48 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id 54A722B01164;
+        Mon, 16 Aug 2021 02:20:16 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 16 Aug 2021 02:20:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=zAhcmoFeElgK3R417Gl8Vdkr7ur
+        r8yT41iKEe+enZr4=; b=djYWA5WiaNiydcMcKdOfh/wXCjq+ArKRzHl/0OOfhTM
+        jgYt9WNL2SomPv2wJ/I4iD7jZ/yEdvEcKn0ciI1GHSUV9oV1ZgOXycbBcWlPhDSp
+        zUawZG7SzJm8Z4JXYy+/T95+pE1bLD/d+YUh0f4MdWBEMD4BXB+qWalPGPYGrRvq
+        6F+nsfAAS1h0MQZKlfsSsEgVJgY5ni06aPUX4qFk6cIdrqVgWYtbejpZxTn8BHcz
+        4y/4V7FyRnK+yBEgC1lHirgXNyThOdJ/ZLgo9irkhX5Xh4UJw1MJYtV98Ps4dV0/
+        tUtgrDZ/1HLJH3m30v8KFvHNAF4toGqT0eJF77vwcUQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=zAhcmo
+        FeElgK3R417Gl8Vdkr7urr8yT41iKEe+enZr4=; b=gbLMaSpSTLXHaNsruyMh5o
+        yfL+5b6yKn91H7AekAM9u2h0uye9ZuDb5Yd3lUjXXV+jTTU5SeJ+fA6/pLqH0uFn
+        oQqiOkR/nOohs2hbic0BWENL24qzU3+6aQP+xC4nrf9r6V4USd48hYRd/8/Wdd7G
+        EcLZwZMQzUavib+UWGbWCnPPDDzl8Vz3RgeBWlkq8GKFpVv7ldvs+L87fg7aA6Xp
+        dqQf/ncJPZMi82I/C7MzHn1233/bPZCe4jo8Qdv7oIZwc5rVqU4XZ3NenxCGujT7
+        mFO3/LqeYvLuGzE948CwRF+C696Hgf/eTLR9sLLUCP3EaycDFLz5vynBRD+1lC5g
+        ==
+X-ME-Sender: <xms:nwMaYUPCn5v7Njbt3azN3VyrLRQy9l53B12BSEGxqsqnZ2DjLB9kZA>
+    <xme:nwMaYa8ESEMBFh8bG6l0QWbiV5aUd9WVEkCheBfVkXMMi0Oixk662j2PGCbmdHbIM
+    dZe91ZPit5_kg>
+X-ME-Received: <xmr:nwMaYbSQk2SnarektIuobI-i4i0vqfLoxiSqhHh1ysle5FOHCdvzlhZUmsC4CLy8r9brZsDSfWqctpMeWhwlfXbTQlTluX0Y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrledtgddutdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujgesthdtre
+    dttddtvdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheq
+    necuggftrfgrthhtvghrnhepveeuheejgfffgfeivddukedvkedtleelleeghfeljeeiue
+    eggeevueduudekvdetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
+X-ME-Proxy: <xmx:nwMaYcvAqSlxbWgCzjZ8bgkMz6qJsXgZjfSlmAmOvSA0cxiqEvKnVQ>
+    <xmx:nwMaYcc85UHVT1PGkoQBZzXNoLnNZEv-6KscJLzFQ9O8C7letBkH5g>
+    <xmx:nwMaYQ1HkB0YYyJCbWbpGBNONkL4SwocYin-m2ad69nTvRsQ0UGANg>
+    <xmx:nwMaYS2itS4bAunB7bQK9C47H3adcmUAbQISwLnm0cSlqcAV9sK3IjCJ-Wk>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 16 Aug 2021 02:20:14 -0400 (EDT)
+Date:   Mon, 16 Aug 2021 08:20:11 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Itay Iellin <ieitayie@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, torvalds@linuxfoundation.org,
+        ebiederm@xmission.com, security@kernel.org,
+        viro@zeniv.linux.org.uk, jannh@google.com
+Subject: Re: fs/binfmt_elf: Integer Overflow vulnerability report
+Message-ID: <YRoDm2emnm0VEgj/@kroah.com>
+References: <YRnun9418g70VyJT@itaypc>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 4E47F4D0D4BB.A23D4
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YRnun9418g70VyJT@itaypc>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce xfs_mmaplock_two_inodes_and_break_dax_layout() for dax files
-who are going to be deduped.  After that, call compare range function
-only when files are both DAX or not.
+On Mon, Aug 16, 2021 at 07:50:39AM +0300, Itay Iellin wrote:
+> Bcc: 
+> Subject: fs/binfmt_elf: Integer Overflow vulnerability report
+> Reply-To: 
+> I'm sharing a report of an integer overflow vulnerability I found (in 
+> fs/binfmt_elf.c). I sent and discussed this vulnerability report with members
+> of security@kernel.org. I'm raising this for public discussion, with approval
+> from Greg (greg@kroah.com).
+> 
+> On Sun, Aug 01, 2021 at 04:30:30PM +0300, Itay Iellin wrote:
+> > In fs/binfmt_elf.c, line 1193, e_entry value can be overflowed. This
+> > potentially allows to create a fake entry point field for an ELF file.
+> > 
+> > The local variable e_entry is set to elf_ex->e_entry + load_bias.
+> > Given an ET_DYN ELF file, without a PT_INTERP program header, with an 
+> > elf_ex->e_entry field in the ELF header, which equals to
+> > 0xffffffffffffffff(in x86_64 for example), and a load_bias which is greater 
+> > than 0, e_entry(the local variable) overflows. This bypasses the check of 
+> > BAD_ADDR macro in line 1241.
+> > 
+> > It is possible to set a large enough NO-OP(NOP) sled, before the
+> > actual code, modify the elf_ex->e_entry field so that elf_ex->e_entry+load_bias
+> > will be in the range where the NO-OP sled is mapped(because the offset
+> > of the PT_LOAD program header of the text segment can be controlled). 
+> > This is practically a guess, because load_bias is randomized, the ELF file can
+> > be loaded a large amount of times until elf_ex->e_entry + load_bias 
+> > is in the range of the NO-OP sled.
+> > To conclude, this bug potentially allows the creation of a "fake" entry point
+> > field in the ELF file header. 
+> > 
+> > Suggested git diff:
+> > 
+> > Add a BAD_ADDR test to elf_ex->e_entry to prevent from using an
+> > overflowed elf_entry value.
+> > 
+> > Signed-off-by: Itay Iellin <ieitayie@gmail.com>
+> > ---
+> >  fs/binfmt_elf.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > index 439ed81e755a..b59dcd5857db 100644
+> > --- a/fs/binfmt_elf.c
+> > +++ b/fs/binfmt_elf.c
+> > @@ -1238,7 +1238,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+> >  		kfree(interp_elf_phdata);
+> >  	} else {
+> >  		elf_entry = e_entry;
+> > -		if (BAD_ADDR(elf_entry)) {
+> > +		if (BAD_ADDR(elf_entry) || BAD_ADDR(elf_ex->e_entry)) {
+> >  			retval = -EINVAL;
+> >  			goto out_free_dentry;
+> >  		}
+> > -- 
+> > 2.32.0
+> > 
+> 
+> I am not attaching the replies to my initial report from the discussion with
+> members of security@kernel.org, only when or if I will be given permission
+> from the repliers to do so.
 
-Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
----
- fs/xfs/xfs_file.c    |  2 +-
- fs/xfs/xfs_inode.c   | 57 ++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_inode.h   |  1 +
- fs/xfs/xfs_reflink.c |  4 ++--
- 4 files changed, 61 insertions(+), 3 deletions(-)
+The replies can be summarized as "are you sure this is an issue, and
+if so, that this is really the correct fix at all?"
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 226e3fbaf405..4765abfe777e 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -846,7 +846,7 @@ xfs_wait_dax_page(
- 	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
- }
- 
--static int
-+int
- xfs_break_dax_layouts(
- 	struct inode		*inode,
- 	bool			*retry)
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 990b72ae3635..4b44d9d1e42a 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -3727,6 +3727,59 @@ xfs_iolock_two_inodes_and_break_layout(
- 	return 0;
- }
- 
-+static int
-+xfs_mmaplock_two_inodes_and_break_dax_layout(
-+	struct xfs_inode	*ip1,
-+	struct xfs_inode	*ip2)
-+{
-+	int			error, attempts = 0;
-+	bool			retry;
-+	struct page		*page;
-+	struct xfs_log_item	*lp;
-+
-+	if (ip1->i_ino > ip2->i_ino)
-+		swap(ip1, ip2);
-+
-+again:
-+	retry = false;
-+	/* Lock the first inode */
-+	xfs_ilock(ip1, XFS_MMAPLOCK_EXCL);
-+	error = xfs_break_dax_layouts(VFS_I(ip1), &retry);
-+	if (error || retry) {
-+		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-+		goto again;
-+	}
-+
-+	if (ip1 == ip2)
-+		return 0;
-+
-+	/* Nested lock the second inode */
-+	lp = &ip1->i_itemp->ili_item;
-+	if (lp && test_bit(XFS_LI_IN_AIL, &lp->li_flags)) {
-+		if (!xfs_ilock_nowait(ip2,
-+		    xfs_lock_inumorder(XFS_MMAPLOCK_EXCL, 1))) {
-+			xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-+			if ((++attempts % 5) == 0)
-+				delay(1); /* Don't just spin the CPU */
-+			goto again;
-+		}
-+	} else
-+		xfs_ilock(ip2, xfs_lock_inumorder(XFS_MMAPLOCK_EXCL, 1));
-+	/*
-+	 * We cannot use xfs_break_dax_layouts() directly here because it may
-+	 * need to unlock & lock the XFS_MMAPLOCK_EXCL which is not suitable
-+	 * for this nested lock case.
-+	 */
-+	page = dax_layout_busy_page(VFS_I(ip2)->i_mapping);
-+	if (page && page_ref_count(page) != 1) {
-+		xfs_iunlock(ip2, XFS_MMAPLOCK_EXCL);
-+		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-+		goto again;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Lock two inodes so that userspace cannot initiate I/O via file syscalls or
-  * mmap activity.
-@@ -3741,6 +3794,10 @@ xfs_ilock2_io_mmap(
- 	ret = xfs_iolock_two_inodes_and_break_layout(VFS_I(ip1), VFS_I(ip2));
- 	if (ret)
- 		return ret;
-+
-+	if (IS_DAX(VFS_I(ip1)) && IS_DAX(VFS_I(ip2)))
-+		return xfs_mmaplock_two_inodes_and_break_dax_layout(ip1, ip2);
-+
- 	if (ip1 == ip2)
- 		xfs_ilock(ip1, XFS_MMAPLOCK_EXCL);
- 	else
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 4b6703dbffb8..f1547330b087 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -456,6 +456,7 @@ enum xfs_prealloc_flags {
- 
- int	xfs_update_prealloc_flags(struct xfs_inode *ip,
- 				  enum xfs_prealloc_flags flags);
-+int	xfs_break_dax_layouts(struct inode *inode, bool *retry);
- int	xfs_break_layouts(struct inode *inode, uint *iolock,
- 		enum layout_break_reason reason);
- 
-diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-index 13e461cf2055..86c737c2baeb 100644
---- a/fs/xfs/xfs_reflink.c
-+++ b/fs/xfs/xfs_reflink.c
-@@ -1327,8 +1327,8 @@ xfs_reflink_remap_prep(
- 	if (XFS_IS_REALTIME_INODE(src) || XFS_IS_REALTIME_INODE(dest))
- 		goto out_unlock;
- 
--	/* Don't share DAX file data for now. */
--	if (IS_DAX(inode_in) || IS_DAX(inode_out))
-+	/* Don't share DAX file data with non-DAX file. */
-+	if (IS_DAX(inode_in) != IS_DAX(inode_out))
- 		goto out_unlock;
- 
- 	if (!IS_DAX(inode_in))
--- 
-2.32.0
+So I think you need to provide a bit more information here as to why
+this really is a problem and how this would not harm valid elf programs.
 
+thanks,
 
-
+greg k-h
