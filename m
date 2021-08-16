@@ -2,58 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D5B43ECE31
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 07:55:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE0733ECE37
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 08:00:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233158AbhHPF4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 01:56:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58534 "EHLO
+        id S233116AbhHPGA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 02:00:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbhHPF4E (ORCPT
+        with ESMTP id S231680AbhHPGAt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 01:56:04 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5127AC061764
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 22:55:33 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id g138so10801208wmg.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 22:55:33 -0700 (PDT)
+        Mon, 16 Aug 2021 02:00:49 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39AE6C061764
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 22:59:39 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id c8-20020a7bc008000000b002e6e462e95fso1307587wmb.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 22:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:message-id:mime-version:content-disposition;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
         bh=jqBY/ebZYRvdLqk7Wp1d8f7rPHyH1R6AhCB+qEOVxBk=;
-        b=m6/l0wGvzFsXShw6tyTgmU0bniaWVrIQtihsSaY/670SGadcIgtQtT0rV7ckBYR07g
-         M02HTe1WETgliRbcw49VKOiEfvvJRy/Jn1xfM4gbCZrvLCv9TbwJCdIO16gAUW9TzNZG
-         CYUCmJhADuIgF9fgLgvhY/eO5ZebRvVSyGF8PVVvuHaiFg2DGUdosnF3lM/wD3XmjU+L
-         4BKEBgGDMZzZ3ZGeCHBsj2hXCg9LRCbb5FHz61KUemkdwU/FtmU+xhk1NdWlaNb/HQI+
-         /dSHPIutDXfrpZVhW1/sb3H1C0NeG5Unhk7vk13Sw4B+WFoHfQaZPgIO/X4w0+G1adA3
-         7kZw==
+        b=Glpr0hJZ91J8FXz/69q+WNxyCYHKJuYOVUSNs/S6JJFDpVcBfcWeGeEQABi2hsqiVh
+         vRJPABKgXnoNDdoC9CzoTQPIxCozwRu69kRZE7y3bFnJuMeSsvpyGnpPl19U1YnATryy
+         +AxtshNrCHt2j8V6vODYk64hckG8BgP4kPAcP3obm5qzzSozeHqWu4rGW64K6s33N5NA
+         Bkv7q24eelzXdkrJETFGqYl2TJvcOBEEC6FWBilwEHAjtOwTRNLGEieqKAvkF1QhE1Wt
+         zGrr2JM4dEY0fw0O1J4Y97S5k1UZNsPF+WP0KOKgAchq8inB7L8vQ4AaNUcwVtzLItmi
+         jJvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:message-id:mime-version
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition;
         bh=jqBY/ebZYRvdLqk7Wp1d8f7rPHyH1R6AhCB+qEOVxBk=;
-        b=E1BUtMCHsz5bWxjYet+Exvn2RWQmwLVwB3OVPeI5sOjJLpznT7eXqBalK4ZAHNYlAB
-         Y97bHtgZwO1lvsHpr1VbKrZx04r/ENoTpiY5RyHyXUJEnoIKJ5QvejJ4FD5b6MScA97Z
-         ATLc8xahIiJw7tVHxM8m+5ubv0akj1VGaSdzrQDaJplQbdjD+9nv/UCIh4qNgPf10lX/
-         wClU4ukQYjjVZ4Ai+WB7dlUziuc/Wwh7ZkTQlqan3j5r4qo4+t8OszvlLwCPsqypjYpZ
-         irzUgDF4ZhTEPjDBjX0OMLf1zAbIoKLgekK8eyYllw1461eG/4yECuN+75NxeWkLx+hG
-         Af5Q==
-X-Gm-Message-State: AOAM530QtF0GL9vJ0fiaY9RaAen5SXAGYlNEDgsEef0qqmLKciGE8H2m
-        cw5+cucEfpQItIEPNr5h077saL/W6vc=
-X-Google-Smtp-Source: ABdhPJwYdBKmjB9xn4sg19s2cGWKhL8NzrqytAkKD2a+wiuXWmIS0cIwHIGn6Y9jSUeOED8kS2xeTw==
-X-Received: by 2002:a05:600c:3793:: with SMTP id o19mr8907068wmr.53.1629093331731;
-        Sun, 15 Aug 2021 22:55:31 -0700 (PDT)
+        b=MLpvyIiTqEj6/24eENm50Yl4+pEsKgSea717PG+oTw6ZCetomu8uNI/u0Mxh+RvGP2
+         Vu5VOIjTpn7bSERiMqVxjgiVHpRAivkQQ7s74G/3gwmXB2kIQdqo7+/cHhqXJoG6lmpB
+         DzUamkoHbKMizVBn0fwCwpIROazorPxbIFmDmFoXzBkEuDl4iWc8SdKXeTcWrS5C4WXr
+         u098NOg1u+V98OZb5lAtj2E2KPw/DNc1YS2ibciV5wpevTLFxp261tVo3oLtLNCC/GM5
+         jRCFjp02B1qIehlicF/gsQ9QKYAsyjeE020vNwdHWLpL5E0hPdpKqRcXwzAX7xg4LKuS
+         yx/w==
+X-Gm-Message-State: AOAM5301a3uLreIBHgBlRXiU4K2+ihHGfZTAx15ABVHEuwCBGl7MsKLd
+        aStySNVRQ34SrxgshRR2Ge4XofoId5Q=
+X-Google-Smtp-Source: ABdhPJwMCoCSOLikLsqMteInPRSqQ+xQdjKVRQpT3qzIPgO62sh0Su0wGTqRf/SOA11bnSCD8kF+9Q==
+X-Received: by 2002:a1c:8093:: with SMTP id b141mr13320314wmd.177.1629093577580;
+        Sun, 15 Aug 2021 22:59:37 -0700 (PDT)
 Received: from itaypc ([176.228.32.241])
-        by smtp.gmail.com with ESMTPSA id o11sm9282463wrj.47.2021.08.15.22.55.30
+        by smtp.gmail.com with ESMTPSA id p6sm10094576wrw.50.2021.08.15.22.59.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Aug 2021 22:55:31 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 07:46:33 +0300
+        Sun, 15 Aug 2021 22:59:37 -0700 (PDT)
+Date:   Mon, 16 Aug 2021 07:50:39 +0300
 From:   Itay Iellin <ieitayie@gmail.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     torvalds@linuxfoundation.org, greg@kroah.com,
         ebiederm@xmission.com, security@kernel.org,
         viro@zeniv.linux.org.uk, jannh@google.com
-Message-ID: <YRntqf83j2KzHoUm@itaypc>
+Subject: fs/binfmt_elf: Integer Overflow vulnerability report
+Message-ID: <YRnun9418g70VyJT@itaypc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
