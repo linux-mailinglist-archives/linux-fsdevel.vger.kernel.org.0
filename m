@@ -2,112 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD7373EDC95
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 19:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D75E3EDCAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 19:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231694AbhHPRtv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 13:49:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44074 "EHLO
+        id S230398AbhHPRzA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 13:55:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35422 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231497AbhHPRtv (ORCPT
+        by vger.kernel.org with ESMTP id S229590AbhHPRzA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 13:49:51 -0400
+        Mon, 16 Aug 2021 13:55:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629136159;
+        s=mimecast20190719; t=1629136468;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=plJNW7Y67eXvnax8oo8FvgYyj0Iw4c1g2Thy+LmnVB4=;
-        b=IVWtlu5NVqaHmoEvbNQ2sRc2Y/7IIXo9aDuZveJo7vlg+rVj3wFmZvowcISMNV5+nHKhJB
-        7oZz9YyAXC/7mfpp0MYCVaPeDvFlMFY4pjp+cVXq0v1aG5Py7JaivMu6Yx+AE66Og6sFT4
-        A8fZ5GMoQB+/+ANUrU7cVqW3D28wR4I=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-576-6zSW5F_mOfaVGKsyRDAv_A-1; Mon, 16 Aug 2021 13:49:17 -0400
-X-MC-Unique: 6zSW5F_mOfaVGKsyRDAv_A-1
-Received: by mail-wm1-f69.google.com with SMTP id m13-20020a7bcf2d000000b002e6cd9941a9so1529wmg.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Aug 2021 10:49:17 -0700 (PDT)
+        bh=2v98zOI2BiyS+Z7E5GTSTF3ORDqhfzMWN2Ky3NfunAk=;
+        b=hMMBa1c+mrzWBLMcme/7uju3/tpoJUf3Nk+s61ByGQkR7MggVQ0RB9BT2wsbdzJoo8hgXa
+        emf3WE1STqRxULvcJ+sm5Bq0IPqd8GvLFmYfADC+oG1fhU76pcY+bO7H0lfv6BeEd/erNk
+        MkWKrKBZr5MRmCiEjzHVCirc2GdRNg4=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-406-f4eD38kOMxiA-OchSR6mZw-1; Mon, 16 Aug 2021 13:54:27 -0400
+X-MC-Unique: f4eD38kOMxiA-OchSR6mZw-1
+Received: by mail-wm1-f70.google.com with SMTP id w25-20020a1cf6190000b0290252505ddd56so4323917wmc.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Aug 2021 10:54:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:organization:subject
+        h=x-gm-message-state:subject:from:to:cc:references:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=plJNW7Y67eXvnax8oo8FvgYyj0Iw4c1g2Thy+LmnVB4=;
-        b=K9MpTiI8aLatEW11cX5jMQbofu5T7yJnMEI3Tw+J5xzRFdD2QE2e/yuMHOHmXib69w
-         mZ8dJA5v8dnCP0pu2SqHTFEjQZIQETNeS0RIUYnK3FIQ2qD2DzP1L8/7Gjoh4n+DkyOJ
-         okrd/zy3PxbFT7qjUkcv3FlId7nZvSsGumW2R89nWuLjTY+G4E0HqsVNR3SiJkOtmLAp
-         Rix3T/eODuZhliCYgOBglMZHrL8G+W7Opm3vAx7KYBUBG9xcX+MOrTutMw93Qx4hlUcC
-         gPE67qHtksuaW6JyMsGiUswEd52vFX5lya9u4OznIOF0orGVJT///9T9OLGm5LU0CiDk
-         jj5w==
-X-Gm-Message-State: AOAM531Qg/LIUD22zhd7uAKp0ViGnCVc3VYUoeUEYJWNdCnSFYkzNBSb
-        G570H1UZLUPQzdF8QtR8p8nSbuedcuSwxhTgvWzRGC6fI1nCYGl4McuMH9tyruia9MOCHy9vdlo
-        vQ8IrX+mEkbRhQ3ZoOFxuwuqMIKcDNshmNRQ6uX7pMQW+1zPmUHv1A6+ZqVFaorEoG+/+LJzj7A
+        bh=2v98zOI2BiyS+Z7E5GTSTF3ORDqhfzMWN2Ky3NfunAk=;
+        b=NJyMegKosVFLv5bNfE7B9E2vqoojojoJBffnQThyJ+KEgC1yuUBJAvwDOC8xUbb1N4
+         9Ax/6E1dVugQsjA73FYRmwgRj7juHhA3DBX28aP2W54e/dhDVESEg3avum+tJx/mP9w0
+         fQf6vYlRwGcbsX/j5FQivNFOvj/jKAddGTZfQ7mB4LUhNI1IauPRErM5vZ9DyEREiXyi
+         p6EkCJavkxRWbXM93zo9IbkFU3LlBlwFPlq47l/26sL74mGchchvMEPIAC/xpzsefd1B
+         vQMj/RlhY9LsbU7u41OT2lEtLklB7niVYoDUR4yi0/JE/ccn/Mrtx6iF+CaZDA+fzv65
+         hmAQ==
+X-Gm-Message-State: AOAM530bQXteT73Z+3ZmMJ6NQaxXi9USdlHSLk81OXBsfcwZQnv4tvof
+        e1Q7E1PW+7EMdnB6qMLUev/b4RhDcuEhgqezT55o8klAL7lVkbw1S6UYscMmBUD9259jrFZAuuw
+        M8KCf32hiCOffua//XyVupSY8pN9V9rpYUE9A5wJDclqZ3FlWb7NIm+0BhfNAvrbxbl+pUi2KSg
         ==
-X-Received: by 2002:a5d:4852:: with SMTP id n18mr19855639wrs.10.1629136156691;
-        Mon, 16 Aug 2021 10:49:16 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwGGjFxu2Sr4hF+9rlDSFKl2PRwrlX7LDhBhekAWq72hyPIIxvsoLI+OzsZA9j8gnxfP8E0Pg==
-X-Received: by 2002:a5d:4852:: with SMTP id n18mr19855622wrs.10.1629136156447;
-        Mon, 16 Aug 2021 10:49:16 -0700 (PDT)
+X-Received: by 2002:a1c:f206:: with SMTP id s6mr279801wmc.15.1629136465834;
+        Mon, 16 Aug 2021 10:54:25 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxAZnCmIeVVhzPxv52QvlEF7twuHTqS2Vw3CmpN+7OAFGbJOmsh5IWtA/rvCBhwF8R5G49Lag==
+X-Received: by 2002:a1c:f206:: with SMTP id s6mr279784wmc.15.1629136465644;
+        Mon, 16 Aug 2021 10:54:25 -0700 (PDT)
 Received: from [192.168.3.132] (p5b0c67f1.dip0.t-ipconnect.de. [91.12.103.241])
-        by smtp.gmail.com with ESMTPSA id l2sm11417288wrx.2.2021.08.16.10.49.15
+        by smtp.gmail.com with ESMTPSA id h4sm12872990wrm.42.2021.08.16.10.54.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Aug 2021 10:49:16 -0700 (PDT)
+        Mon, 16 Aug 2021 10:54:25 -0700 (PDT)
+Subject: Re: [BUG] general protection fault when reading /proc/kcore
+From:   David Hildenbrand <david@redhat.com>
 To:     Jiri Olsa <jolsa@redhat.com>, Mike Rapoport <rppt@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Oscar Salvador <osalvador@suse.de>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 References: <YRqhqz35tm3hA9CG@krava>
-From:   David Hildenbrand <david@redhat.com>
+ <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com>
 Organization: Red Hat
-Subject: Re: [BUG] general protection fault when reading /proc/kcore
-Message-ID: <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com>
-Date:   Mon, 16 Aug 2021 19:49:15 +0200
+Message-ID: <d05f4d38-fdb8-29a6-202e-19d65cd0b1f1@redhat.com>
+Date:   Mon, 16 Aug 2021 19:54:24 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <YRqhqz35tm3hA9CG@krava>
+In-Reply-To: <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com>
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 16.08.21 19:34, Jiri Olsa wrote:
-> hi,
-> I'm getting fault below when running:
+On 16.08.21 19:49, David Hildenbrand wrote:
+> On 16.08.21 19:34, Jiri Olsa wrote:
+>> hi,
+>> I'm getting fault below when running:
+>>
+>> 	# cat /proc/kallsyms | grep ksys_read
+>> 	ffffffff8136d580 T ksys_read
+>> 	# objdump -d --start-address=0xffffffff8136d580 --stop-address=0xffffffff8136d590 /proc/kcore
+>>
+>> 	/proc/kcore:     file format elf64-x86-64
+>>
+>> 	Segmentation fault
+>>
+>> any idea? config is attached
 > 
-> 	# cat /proc/kallsyms | grep ksys_read
-> 	ffffffff8136d580 T ksys_read
-> 	# objdump -d --start-address=0xffffffff8136d580 --stop-address=0xffffffff8136d590 /proc/kcore
+> Just tried with a different config on 5.14.0-rc6+
 > 
-> 	/proc/kcore:     file format elf64-x86-64
+> [root@localhost ~]# cat /proc/kallsyms | grep ksys_read
+> ffffffff8927a800 T ksys_readahead
+> ffffffff89333660 T ksys_read
 > 
-> 	Segmentation fault
+> [root@localhost ~]# objdump -d --start-address=0xffffffff89333660
+> --stop-address=0xffffffff89333670
 > 
-> any idea? config is attached
+> a.out:     file format elf64-x86-64
 
-Just tried with a different config on 5.14.0-rc6+
+
+Sorry, missed the /proc/kcore part:
 
 [root@localhost ~]# cat /proc/kallsyms | grep ksys_read
-ffffffff8927a800 T ksys_readahead
-ffffffff89333660 T ksys_read
+ffffffffba27a800 T ksys_readahead
+ffffffffba333660 T ksys_read
+[root@localhost ~]# objdump -d --start-address=0xffffffffba333660 
+--stop-address=0xffffffffba333670 /proc/kcore
 
-[root@localhost ~]# objdump -d --start-address=0xffffffff89333660 
---stop-address=0xffffffff89333670
-
-a.out:     file format elf64-x86-64
-
+/proc/kcore:     file format elf64-x86-64
 
 
-The kern_addr_valid(start) seems to fault in your case, which is weird, 
-because it merely walks the page tables. But it seems to complain about 
-a non-canonical address 0xf887ffcbff000
+Disassembly of section load1:
 
-Can you post your QEMU cmdline? Did you test this on other kernel versions?
+ffffffffba333660 <load1+0x333660>:
+ffffffffba333660:       0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
+ffffffffba333665:       41 55                   push   %r13
+ffffffffba333667:       49 89 d5                mov    %rdx,%r13
+ffffffffba33366a:       41 54                   push   %r12
+ffffffffba33366c:       49 89 f4                mov    %rsi,%r12
+ffffffffba33366f:       55                      push   %rbp
 
-Thanks!
 
 -- 
 Thanks,
