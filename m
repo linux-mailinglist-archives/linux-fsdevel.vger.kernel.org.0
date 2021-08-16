@@ -2,124 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE0733ECE37
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 08:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C51C73ECDE8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 07:03:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233116AbhHPGA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 02:00:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59418 "EHLO
+        id S229795AbhHPFEG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 01:04:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231680AbhHPGAt (ORCPT
+        with ESMTP id S229586AbhHPFEF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 02:00:49 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39AE6C061764
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 22:59:39 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id c8-20020a7bc008000000b002e6e462e95fso1307587wmb.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 22:59:39 -0700 (PDT)
+        Mon, 16 Aug 2021 01:04:05 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28C23C0613C1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 22:03:35 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id oa17so24622568pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 22:03:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=jqBY/ebZYRvdLqk7Wp1d8f7rPHyH1R6AhCB+qEOVxBk=;
-        b=Glpr0hJZ91J8FXz/69q+WNxyCYHKJuYOVUSNs/S6JJFDpVcBfcWeGeEQABi2hsqiVh
-         vRJPABKgXnoNDdoC9CzoTQPIxCozwRu69kRZE7y3bFnJuMeSsvpyGnpPl19U1YnATryy
-         +AxtshNrCHt2j8V6vODYk64hckG8BgP4kPAcP3obm5qzzSozeHqWu4rGW64K6s33N5NA
-         Bkv7q24eelzXdkrJETFGqYl2TJvcOBEEC6FWBilwEHAjtOwTRNLGEieqKAvkF1QhE1Wt
-         zGrr2JM4dEY0fw0O1J4Y97S5k1UZNsPF+WP0KOKgAchq8inB7L8vQ4AaNUcwVtzLItmi
-         jJvw==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=G0FDtIMfLpNbCJZ4VkpckuNvikaSN4A0fZUcwO8aW2A=;
+        b=BVbolKMQAGpnV4kZ03/DYFBiVkcmZagBmMd6aKH4qcEe6J/uZf/bXIGHdUzERNkwov
+         Ap3dcmIlCPYD8qG3tvlB84YPU6IxvEN/Ljphq706feNaE5ghpW7i4+2KFC62rUclFYge
+         KQe3uMV9gSnVjbxv1FdKYuaCAHxIJtKto2enO9K2Gy4Txd42629+CKhTDhS/9ARvPciB
+         aW1NGPDb/kJhl2HqFVInjUlQiMlXYJbJAmBh2WSh8yIpqR0Bj23s02tGkUx2UxjuoOdJ
+         4kizOGczBnAA1O+7pDp45yhd7QFE6yN2R+BzXIJpWqKzJ640v4DDKekBj+f7MpJ1kD2X
+         yVkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=jqBY/ebZYRvdLqk7Wp1d8f7rPHyH1R6AhCB+qEOVxBk=;
-        b=MLpvyIiTqEj6/24eENm50Yl4+pEsKgSea717PG+oTw6ZCetomu8uNI/u0Mxh+RvGP2
-         Vu5VOIjTpn7bSERiMqVxjgiVHpRAivkQQ7s74G/3gwmXB2kIQdqo7+/cHhqXJoG6lmpB
-         DzUamkoHbKMizVBn0fwCwpIROazorPxbIFmDmFoXzBkEuDl4iWc8SdKXeTcWrS5C4WXr
-         u098NOg1u+V98OZb5lAtj2E2KPw/DNc1YS2ibciV5wpevTLFxp261tVo3oLtLNCC/GM5
-         jRCFjp02B1qIehlicF/gsQ9QKYAsyjeE020vNwdHWLpL5E0hPdpKqRcXwzAX7xg4LKuS
-         yx/w==
-X-Gm-Message-State: AOAM5301a3uLreIBHgBlRXiU4K2+ihHGfZTAx15ABVHEuwCBGl7MsKLd
-        aStySNVRQ34SrxgshRR2Ge4XofoId5Q=
-X-Google-Smtp-Source: ABdhPJwMCoCSOLikLsqMteInPRSqQ+xQdjKVRQpT3qzIPgO62sh0Su0wGTqRf/SOA11bnSCD8kF+9Q==
-X-Received: by 2002:a1c:8093:: with SMTP id b141mr13320314wmd.177.1629093577580;
-        Sun, 15 Aug 2021 22:59:37 -0700 (PDT)
-Received: from itaypc ([176.228.32.241])
-        by smtp.gmail.com with ESMTPSA id p6sm10094576wrw.50.2021.08.15.22.59.36
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=G0FDtIMfLpNbCJZ4VkpckuNvikaSN4A0fZUcwO8aW2A=;
+        b=sG3PQl8WvlC5Q8hniuychDBI4K2LrM0A9K6Pr7HNclDF2V8Evt4NmPzD9n2AO9geX3
+         3G2pUDTWpqidCGnLiKFnvpcz9uwCrQfsT/SvuAnL+vMBSoM53EcKByRWB0d4nvvzx6JV
+         5z/TsbOtcVhjxzASkKoqw9FZhi0VQKhmSPrvYvrNv0fCZwKs5yyT5V2QQHw8d3bBM8YK
+         NfMokrQIxTs/50p4zrBYW+PyrhNLhaFyjkpCG/U+XB66JxYewUkHt41NuoWMyVuuAdGS
+         kKTGXOtCdorJx6UIYM/oYHRiiRRmO+6dP632z75Uv+4aC4fn26mN18pRkUIdLJ4JqqEb
+         0E2w==
+X-Gm-Message-State: AOAM533wZ2n65mgnNveltDZYvWfkHsvgZqj+RZh6iO4fuYBEjYXCV8Gj
+        qLROjat10874fcg9vAvyuSVZNQ==
+X-Google-Smtp-Source: ABdhPJx8/Nxjzkjug91UFk98u1oZB05hYYWjCYLRAs6aTq2Fd/zBm9w+iu4VTz8AEA9ULOWY+bHWPA==
+X-Received: by 2002:a65:670f:: with SMTP id u15mr14148221pgf.205.1629090214334;
+        Sun, 15 Aug 2021 22:03:34 -0700 (PDT)
+Received: from google.com ([2401:fa00:9:211:2d6c:8736:2020:8925])
+        by smtp.gmail.com with ESMTPSA id u62sm9942538pfb.19.2021.08.15.22.03.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Aug 2021 22:59:37 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 07:50:39 +0300
-From:   Itay Iellin <ieitayie@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     torvalds@linuxfoundation.org, greg@kroah.com,
-        ebiederm@xmission.com, security@kernel.org,
-        viro@zeniv.linux.org.uk, jannh@google.com
-Subject: fs/binfmt_elf: Integer Overflow vulnerability report
-Message-ID: <YRnun9418g70VyJT@itaypc>
+        Sun, 15 Aug 2021 22:03:33 -0700 (PDT)
+Date:   Mon, 16 Aug 2021 15:03:19 +1000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     amir73il@gmail.com, christian.brauner@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] Add pidfd support to the fanotify API
+Message-ID: <YRnxl1wKImPQSUpy@google.com>
+References: <cover.1628398044.git.repnop@google.com>
+ <20210810113348.GE18722@quack2.suse.cz>
+ <YRMmYWHSno/IGhTN@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <YRMmYWHSno/IGhTN@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Bcc: 
-Subject: fs/binfmt_elf: Integer Overflow vulnerability report
-Reply-To: 
-I'm sharing a report of an integer overflow vulnerability I found (in 
-fs/binfmt_elf.c). I sent and discussed this vulnerability report with members
-of security@kernel.org. I'm raising this for public discussion, with approval
-from Greg (greg@kroah.com).
+Hey Jan,
 
-On Sun, Aug 01, 2021 at 04:30:30PM +0300, Itay Iellin wrote:
-> In fs/binfmt_elf.c, line 1193, e_entry value can be overflowed. This
-> potentially allows to create a fake entry point field for an ELF file.
+On Wed, Aug 11, 2021 at 11:22:41AM +1000, Matthew Bobrowski wrote:
+> On Tue, Aug 10, 2021 at 01:33:48PM +0200, Jan Kara wrote:
+> > Hello Matthew!
+> > 
+> > On Sun 08-08-21 15:23:59, Matthew Bobrowski wrote:
+> > > This is V5 of the FAN_REPORT_PIDFD patch series. It contains the minor
+> > > comment/commit description fixes that were picked up by Amir in the
+> > > last series review [0, 1].
+> > > 
+> > > LTP tests for this API change can be found here [2]. Man page updates
+> > > for this change can be found here [3].
+> > > 
+> > > [0] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhnCk+FXK_e_GA=jC_0HWO+3ZdwHSi=zCa2Kpb0NDxBSg@mail.gmail.com/
+> > > [1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxgO3oViTSFZ0zs6brrHrmw362r1C9SQ7g6=XgRwyrzMuw@mail.gmail.com/
+> > > [2] https://github.com/matthewbobrowski/ltp/tree/fanotify_pidfd_v2
+> > > [3] https://github.com/matthewbobrowski/man-pages/tree/fanotify_pidfd_v1
+> > > 
+> > > Matthew Bobrowski (5):
+> > >   kernel/pid.c: remove static qualifier from pidfd_create()
+> > >   kernel/pid.c: implement additional checks upon pidfd_create()
+> > >     parameters
+> > >   fanotify: minor cosmetic adjustments to fid labels
+> > >   fanotify: introduce a generic info record copying helper
+> > >   fanotify: add pidfd support to the fanotify API
+> > 
+> > Thanks! I've pulled the series into my tree. Note that your fanotify21 LTP
+> > testcase is broken with the current kernel because 'ino' entry got added to
+> > fdinfo. I think having to understand all possible keys that can occur in
+> > fdinfo is too fragile. I understand why you want to do that but I guess the
+> > test would be too faulty to be practical. So I'd just ignore unknown keys
+> > in fdinfo for that test.
 > 
-> The local variable e_entry is set to elf_ex->e_entry + load_bias.
-> Given an ET_DYN ELF file, without a PT_INTERP program header, with an 
-> elf_ex->e_entry field in the ELF header, which equals to
-> 0xffffffffffffffff(in x86_64 for example), and a load_bias which is greater 
-> than 0, e_entry(the local variable) overflows. This bypasses the check of 
-> BAD_ADDR macro in line 1241.
+> Excellent, for merging these changes!
 > 
-> It is possible to set a large enough NO-OP(NOP) sled, before the
-> actual code, modify the elf_ex->e_entry field so that elf_ex->e_entry+load_bias
-> will be in the range where the NO-OP sled is mapped(because the offset
-> of the PT_LOAD program header of the text segment can be controlled). 
-> This is practically a guess, because load_bias is randomized, the ELF file can
-> be loaded a large amount of times until elf_ex->e_entry + load_bias 
-> is in the range of the NO-OP sled.
-> To conclude, this bug potentially allows the creation of a "fake" entry point
-> field in the ELF file header. 
+> In regards to the LTP test (fanotify21), at the time of writing I had also
+> shared a similar thought in the sense that it was too fragile, but wrongly
+> so I weighed up my decision based on the likelihood and frequency of fields
+> being changed/added to fdinfo. I was very wrong...
 > 
-> Suggested git diff:
-> 
-> Add a BAD_ADDR test to elf_ex->e_entry to prevent from using an
-> overflowed elf_entry value.
-> 
-> Signed-off-by: Itay Iellin <ieitayie@gmail.com>
-> ---
->  fs/binfmt_elf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 439ed81e755a..b59dcd5857db 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -1238,7 +1238,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  		kfree(interp_elf_phdata);
->  	} else {
->  		elf_entry = e_entry;
-> -		if (BAD_ADDR(elf_entry)) {
-> +		if (BAD_ADDR(elf_entry) || BAD_ADDR(elf_ex->e_entry)) {
->  			retval = -EINVAL;
->  			goto out_free_dentry;
->  		}
-> -- 
-> 2.32.0
-> 
+> Anyway, I will fix it so that any "unknown" fields are ignored.
 
-I am not attaching the replies to my initial report from the discussion with
-members of security@kernel.org, only when or if I will be given permission
-from the repliers to do so.
+FWIW, I've dropped that last else statement in the
+parse_pidfd_fdinfo_line() helper in LTP fanotify21. An updated branch has
+been pushed here [0].
 
-Itay Iellin
+[0] https://github.com/matthewbobrowski/ltp/commits/fanotify_pidfd_v3
+
+/M
