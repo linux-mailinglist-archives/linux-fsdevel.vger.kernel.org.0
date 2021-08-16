@@ -2,589 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E331F3ED8D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 16:21:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F11823ED9DC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 17:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231604AbhHPOWO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 10:22:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229880AbhHPOWN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 10:22:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 158F761078;
-        Mon, 16 Aug 2021 14:21:38 +0000 (UTC)
-Date:   Mon, 16 Aug 2021 16:21:34 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Kari Argillander <kari.argillander@gmail.com>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Christoph Hellwig <hch@lst.de>, ntfs3@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [RFC PATCH 1/4] fs/ntfs3: Use new api for mounting
-Message-ID: <20210816142134.x4hmb7eupksvtprx@wittgenstein>
-References: <20210816024703.107251-1-kari.argillander@gmail.com>
- <20210816024703.107251-2-kari.argillander@gmail.com>
- <20210816134030.r63djan72nbrx66k@wittgenstein>
- <20210816135927.rkr73agluihdb4hw@kari-VirtualBox>
+        id S232884AbhHPP3z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 11:29:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41155 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229880AbhHPP3x (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Aug 2021 11:29:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629127761;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wKQWJP2CL88WYigQwy4KZTVcvSxL90N4z38eoJblzK4=;
+        b=ZjPybrjIrPKP0gKPX+/srPPhQlBDok4+np0SXhO9q1EpGpFcvpSs/Hx5jMnO5E+5kXfD7c
+        34VJBn903R1G/RU+VQVAhwbIZr7CmzvUTsxHxjQbvgYhXEL/cD/9JL/aCAg5XDhU/fpd2m
+        zHMRB8ulj6piivi719lyx1XnmN5L73o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-418-fzRKeABpPr2KdlOVJxxupw-1; Mon, 16 Aug 2021 11:29:20 -0400
+X-MC-Unique: fzRKeABpPr2KdlOVJxxupw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1B3431019630;
+        Mon, 16 Aug 2021 15:29:19 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.17.133])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F0C692CD33;
+        Mon, 16 Aug 2021 15:29:02 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 851462237F5; Mon, 16 Aug 2021 11:29:02 -0400 (EDT)
+Date:   Mon, 16 Aug 2021 11:29:02 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Greg Kurz <groug@kaod.org>, Miklos Szeredi <miklos@szeredi.hu>,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Max Reitz <mreitz@redhat.com>, Robert Krawitz <rlk@redhat.com>
+Subject: Re: [PATCH v4 5/5] virtiofs: propagate sync() to file server
+Message-ID: <YRqEPjzHg9IlifBo@redhat.com>
+References: <20210520154654.1791183-1-groug@kaod.org>
+ <20210520154654.1791183-6-groug@kaod.org>
+ <CAOQ4uxh69ii5Yk-DgFAq+TrrvJ6xCv9s8sKLfo3aBCSWjJvp9Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210816135927.rkr73agluihdb4hw@kari-VirtualBox>
+In-Reply-To: <CAOQ4uxh69ii5Yk-DgFAq+TrrvJ6xCv9s8sKLfo3aBCSWjJvp9Q@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 04:59:27PM +0300, Kari Argillander wrote:
-> On Mon, Aug 16, 2021 at 03:40:30PM +0200, Christian Brauner wrote:
-> > On Mon, Aug 16, 2021 at 05:47:00AM +0300, Kari Argillander wrote:
-> > > We have now new mount api as described in Documentation/filesystems. We
-> > > should use it as it gives us some benefits which are desribed here
-> > > https://lore.kernel.org/linux-fsdevel/159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk/
-> > > 
-> > > Nls loading is changed a little bit because new api not have default
-> > > optioni for mount parameters. So we need to load nls table before and
-> > > change that if user specifie someting else.
-> > > 
-> > > Also try to use fsparam_flag_no as much as possible. This is just nice
-> > > little touch and is not mandatory but it should not make any harm. It
-> > > is just convenient that we can use example acl/noacl mount options.
-> > > 
-> > > Signed-off-by: Kari Argillander <kari.argillander@gmail.com>
-> > > ---
-> > >  fs/ntfs3/super.c | 382 ++++++++++++++++++++++++-----------------------
-> > >  1 file changed, 193 insertions(+), 189 deletions(-)
-> > > 
-> > > diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-> > > index 6be13e256c1a..d805e0b31404 100644
-> > > --- a/fs/ntfs3/super.c
-> > > +++ b/fs/ntfs3/super.c
-> > > @@ -28,10 +28,11 @@
-> > >  #include <linux/buffer_head.h>
-> > >  #include <linux/exportfs.h>
-> > >  #include <linux/fs.h>
-> > > +#include <linux/fs_context.h>
-> > > +#include <linux/fs_parser.h>
-> > >  #include <linux/iversion.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/nls.h>
-> > > -#include <linux/parser.h>
-> > >  #include <linux/seq_file.h>
-> > >  #include <linux/statfs.h>
-> > >  
-> > > @@ -197,6 +198,30 @@ void *ntfs_put_shared(void *ptr)
-> > >  	return ret;
-> > >  }
-> > >  
-> > > +/*
-> > > + * ntfs_load_nls
-> > > + *
-> > > + * Load nls table or if @nls is utf8 then return NULL because
-> > > + * nls=utf8 is totally broken.
-> > > + */
-> > > +static struct nls_table *ntfs_load_nls(char *nls)
-> > > +{
-> > > +	struct nls_table *ret;
-> > > +
-> > > +	if (!nls)
-> > > +		return ERR_PTR(-EINVAL);
-> > > +	if (strcmp(nls, "utf8"))
-> > > +		return NULL;
-> > > +	if (strcmp(nls, CONFIG_NLS_DEFAULT))
-> > > +		return load_nls_default();
-> > > +
-> > > +	ret = load_nls(nls);
-> > > +	if (!ret)
-> > > +		return ERR_PTR(-EINVAL);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > >  static inline void clear_mount_options(struct ntfs_mount_options *options)
-> > >  {
-> > >  	unload_nls(options->nls);
-> > > @@ -222,208 +247,164 @@ enum Opt {
-> > >  	Opt_err,
-> > >  };
-> > >  
-> > > -static const match_table_t ntfs_tokens = {
-> > > -	{ Opt_uid, "uid=%u" },
-> > > -	{ Opt_gid, "gid=%u" },
-> > > -	{ Opt_umask, "umask=%o" },
-> > > -	{ Opt_dmask, "dmask=%o" },
-> > > -	{ Opt_fmask, "fmask=%o" },
-> > > -	{ Opt_immutable, "sys_immutable" },
-> > > -	{ Opt_discard, "discard" },
-> > > -	{ Opt_force, "force" },
-> > > -	{ Opt_sparse, "sparse" },
-> > > -	{ Opt_nohidden, "nohidden" },
-> > > -	{ Opt_acl, "acl" },
-> > > -	{ Opt_noatime, "noatime" },
-> > > -	{ Opt_showmeta, "showmeta" },
-> > > -	{ Opt_nls, "nls=%s" },
-> > > -	{ Opt_prealloc, "prealloc" },
-> > > -	{ Opt_no_acs_rules, "no_acs_rules" },
-> > > -	{ Opt_err, NULL },
-> > > +// clang-format off
-> > > +static const struct fs_parameter_spec ntfs_fs_parameters[] = {
-> > > +	fsparam_u32("uid",			Opt_uid),
-> > > +	fsparam_u32("gid",			Opt_gid),
-> > > +	fsparam_u32oct("umask",			Opt_umask),
-> > > +	fsparam_u32oct("dmask",			Opt_dmask),
-> > > +	fsparam_u32oct("fmask",			Opt_fmask),
-> > > +	fsparam_flag_no("sys_immutable",	Opt_immutable),
-> > > +	fsparam_flag_no("discard",		Opt_discard),
-> > > +	fsparam_flag_no("force",		Opt_force),
-> > > +	fsparam_flag_no("sparse",		Opt_sparse),
-> > > +	fsparam_flag("nohidden",		Opt_nohidden),
-> > > +	fsparam_flag_no("acl",			Opt_acl),
-> > > +	fsparam_flag("noatime",			Opt_noatime),
-> > > +	fsparam_flag_no("showmeta",		Opt_showmeta),
-> > > +	fsparam_string("nls",			Opt_nls),
-> > > +	fsparam_flag_no("prealloc",		Opt_prealloc),
-> > > +	fsparam_flag("no_acs_rules",		Opt_no_acs_rules),
-> > > +	{}
-> > >  };
-> > > +// clang-format on
-> > >  
-> > > -static noinline int ntfs_parse_options(struct super_block *sb, char *options,
-> > > -				       int silent,
-> > > -				       struct ntfs_mount_options *opts)
-> > > +static void ntfs_default_options(struct ntfs_mount_options *opts)
-> > >  {
-> > > -	char *p;
-> > > -	substring_t args[MAX_OPT_ARGS];
-> > > -	int option;
-> > > -	char nls_name[30];
-> > > -	struct nls_table *nls;
-> > > -
-> > >  	opts->fs_uid = current_uid();
-> > >  	opts->fs_gid = current_gid();
-> > > -	opts->fs_fmask_inv = opts->fs_dmask_inv = ~current_umask();
-> > > -	nls_name[0] = 0;
-> > > -
-> > > -	if (!options)
-> > > -		goto out;
-> > > +	opts->fs_fmask_inv = ~current_umask();
-> > > +	opts->fs_dmask_inv = ~current_umask();
-> > > +	opts->nls = ntfs_load_nls(CONFIG_NLS_DEFAULT);
-> > > +}
-> > >  
-> > > -	while ((p = strsep(&options, ","))) {
-> > > -		int token;
-> > > +static int ntfs_fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
-> > > +{
-> > > +	struct ntfs_sb_info *sbi = fc->s_fs_info;
-> > > +	struct ntfs_mount_options *opts = &sbi->options;
-> > > +	struct fs_parse_result result;
-> > > +	int opt;
-> > >  
-> > > -		if (!*p)
-> > > -			continue;
-> > > +	opt = fs_parse(fc, ntfs_fs_parameters, param, &result);
-> > > +	if (opt < 0)
-> > > +		return opt;
-> > >  
-> > > -		token = match_token(p, ntfs_tokens, args);
-> > > -		switch (token) {
-> > > -		case Opt_immutable:
-> > > -			opts->sys_immutable = 1;
-> > > -			break;
-> > > -		case Opt_uid:
-> > > -			if (match_int(&args[0], &option))
-> > > -				return -EINVAL;
-> > > -			opts->fs_uid = make_kuid(current_user_ns(), option);
-> > > -			if (!uid_valid(opts->fs_uid))
-> > > -				return -EINVAL;
-> > > -			opts->uid = 1;
-> > > -			break;
-> > > -		case Opt_gid:
-> > > -			if (match_int(&args[0], &option))
-> > > -				return -EINVAL;
-> > > -			opts->fs_gid = make_kgid(current_user_ns(), option);
-> > > -			if (!gid_valid(opts->fs_gid))
-> > > -				return -EINVAL;
-> > > -			opts->gid = 1;
-> > > -			break;
-> > > -		case Opt_umask:
-> > > -			if (match_octal(&args[0], &option))
-> > > -				return -EINVAL;
-> > > -			opts->fs_fmask_inv = opts->fs_dmask_inv = ~option;
-> > > -			opts->fmask = opts->dmask = 1;
-> > > -			break;
-> > > -		case Opt_dmask:
-> > > -			if (match_octal(&args[0], &option))
-> > > -				return -EINVAL;
-> > > -			opts->fs_dmask_inv = ~option;
-> > > -			opts->dmask = 1;
-> > > -			break;
-> > > -		case Opt_fmask:
-> > > -			if (match_octal(&args[0], &option))
-> > > -				return -EINVAL;
-> > > -			opts->fs_fmask_inv = ~option;
-> > > -			opts->fmask = 1;
-> > > -			break;
-> > > -		case Opt_discard:
-> > > -			opts->discard = 1;
-> > > -			break;
-> > > -		case Opt_force:
-> > > -			opts->force = 1;
-> > > -			break;
-> > > -		case Opt_sparse:
-> > > -			opts->sparse = 1;
-> > > -			break;
-> > > -		case Opt_nohidden:
-> > > -			opts->nohidden = 1;
-> > > -			break;
-> > > -		case Opt_acl:
-> > > +	switch (opt) {
-> > > +	case Opt_uid:
-> > > +		opts->fs_uid = make_kuid(current_user_ns(), result.uint_32);
-> > > +		if (!uid_valid(opts->fs_uid))
-> > > +			return -EINVAL;
-> > > +		opts->uid = 1;
-> > > +		break;
-> > > +	case Opt_gid:
-> > > +		opts->fs_gid = make_kgid(current_user_ns(), result.uint_32);
-> > > +		if (!gid_valid(opts->fs_gid))
-> > > +			return -EINVAL;
-> > > +		opts->gid = 1;
-> > > +		break;
-> > > +	case Opt_umask:
-> > > +		opts->fs_fmask_inv = ~result.uint_32;
-> > > +		opts->fs_dmask_inv = ~result.uint_32;
-> > > +		opts->fmask = 1;
-> > > +		opts->dmask = 1;
-> > > +		break;
-> > > +	case Opt_dmask:
-> > > +		opts->fs_dmask_inv = ~result.uint_32;
-> > > +		opts->dmask = 1;
-> > > +		break;
-> > > +	case Opt_fmask:
-> > > +		opts->fs_fmask_inv = ~result.uint_32;
-> > > +		opts->fmask = 1;
-> > > +		break;
-> > > +	case Opt_immutable:
-> > > +		opts->sys_immutable = result.negated ? 0 : 1;
-> > > +		break;
-> > > +	case Opt_discard:
-> > > +		opts->discard = result.negated ? 0 : 1;
-> > > +		break;
-> > > +	case Opt_force:
-> > > +		opts->force = result.negated ? 0 : 1;
-> > > +		break;
-> > > +	case Opt_sparse:
-> > > +		opts->sparse = result.negated ? 0 : 1;
-> > > +		break;
-> > > +	case Opt_nohidden:
-> > > +		opts->nohidden = 1;
-> > > +		break;
-> > > +	case Opt_acl:
-> > > +		if (!result.negated)
-> > >  #ifdef CONFIG_NTFS3_FS_POSIX_ACL
-> > > -			sb->s_flags |= SB_POSIXACL;
-> > > -			break;
-> > > +			fc->sb_flags |= SB_POSIXACL;
-> > >  #else
-> > > -			ntfs_err(sb, "support for ACL not compiled in!");
-> > > -			return -EINVAL;
-> > > +			return invalf(fc, "ntfs3: Support for ACL not compiled in!");
-> > >  #endif
-> > > -		case Opt_noatime:
-> > > -			sb->s_flags |= SB_NOATIME;
-> > > -			break;
-> > > -		case Opt_showmeta:
-> > > -			opts->showmeta = 1;
-> > > -			break;
-> > > -		case Opt_nls:
-> > > -			match_strlcpy(nls_name, &args[0], sizeof(nls_name));
-> > > -			break;
-> > > -		case Opt_prealloc:
-> > > -			opts->prealloc = 1;
-> > > -			break;
-> > > -		case Opt_no_acs_rules:
-> > > -			opts->no_acs_rules = 1;
-> > > -			break;
-> > > -		default:
-> > > -			if (!silent)
-> > > -				ntfs_err(
-> > > -					sb,
-> > > -					"Unrecognized mount option \"%s\" or missing value",
-> > > -					p);
-> > > -			//return -EINVAL;
-> > > +		else
-> > > +			fc->sb_flags &= ~SB_POSIXACL;
-> > > +		break;
-> > > +	case Opt_noatime:
-> > > +		fc->sb_flags |= SB_NOATIME;
-> > > +		break;
-> > > +	case Opt_showmeta:
-> > > +		opts->showmeta = result.negated ? 0 : 1;
-> > > +		break;
-> > > +	case Opt_nls:
-> > > +		unload_nls(opts->nls);
-> > > +
-> > > +		opts->nls = ntfs_load_nls(param->string);
-> > > +		if (IS_ERR(opts->nls)) {
-> > > +			return invalf(fc, "ntfs3: Cannot load nls %s",
-> > > +				      param->string);
-> > >  		}
-> > > -	}
-> > >  
-> > > -out:
-> > > -	if (!strcmp(nls_name[0] ? nls_name : CONFIG_NLS_DEFAULT, "utf8")) {
-> > > -		/* For UTF-8 use utf16s_to_utf8s/utf8s_to_utf16s instead of nls */
-> > > -		nls = NULL;
-> > > -	} else if (nls_name[0]) {
-> > > -		nls = load_nls(nls_name);
-> > > -		if (!nls) {
-> > > -			ntfs_err(sb, "failed to load \"%s\"", nls_name);
-> > > -			return -EINVAL;
-> > > -		}
-> > > -	} else {
-> > > -		nls = load_nls_default();
-> > > -		if (!nls) {
-> > > -			ntfs_err(sb, "failed to load default nls");
-> > > -			return -EINVAL;
-> > > -		}
-> > > +		param->string = NULL;
-> > > +		break;
-> > > +	case Opt_prealloc:
-> > > +		opts->prealloc = result.negated ? 0 : 1;
-> > > +		break;
-> > > +	case Opt_no_acs_rules:
-> > > +		opts->no_acs_rules = 1;
-> > > +		break;
-> > > +	default:
-> > > +		/* Should not be here unless we forget add case. */
-> > > +		return -EINVAL;
-> > >  	}
-> > > -	opts->nls = nls;
-> > > -
-> > >  	return 0;
-> > >  }
-> > >  
-> > > -static int ntfs_remount(struct super_block *sb, int *flags, char *data)
-> > > +static int ntfs_fs_reconfigure(struct fs_context *fc)
-> > >  {
-> > > -	int err, ro_rw;
-> > > +	int ro_rw;
-> > > +	struct super_block *sb = fc->root->d_sb;
-> > >  	struct ntfs_sb_info *sbi = sb->s_fs_info;
-> > > -	struct ntfs_mount_options old_opts;
-> > > -	char *orig_data = kstrdup(data, GFP_KERNEL);
-> > > -
-> > > -	if (data && !orig_data)
-> > > -		return -ENOMEM;
-> > > -
-> > > -	/* Store  original options */
-> > > -	memcpy(&old_opts, &sbi->options, sizeof(old_opts));
-> > > -	clear_mount_options(&sbi->options);
-> > > -	memset(&sbi->options, 0, sizeof(sbi->options));
-> > > -
-> > > -	err = ntfs_parse_options(sb, data, 0, &sbi->options);
-> > > -	if (err)
-> > > -		goto restore_opts;
-> > > +	struct ntfs_mount_options *new_opts = fc->s_fs_info;
-> > > +	int *flags = &fc->sb_flags;
-> > 
-> > Afaict this doesn't need to be a pointer anymore.
-> > fscontext->reconfigure() doesn't have a int *flags parameter.
+On Sun, Aug 15, 2021 at 05:14:06PM +0300, Amir Goldstein wrote:
+> Hi Greg,
 > 
-> Yeah.
+> Sorry for the late reply, I have some questions about this change...
 > 
-> > >  
-> > >  	ro_rw = sb_rdonly(sb) && !(*flags & SB_RDONLY);
-> > >  	if (ro_rw && (sbi->flags & NTFS_FLAGS_NEED_REPLAY)) {
-> > > -		ntfs_warn(
-> > > -			sb,
-> > > +		ntfs_warn(sb,
-> > >  			"Couldn't remount rw because journal is not replayed. Please umount/remount instead\n");
-> > > -		err = -EINVAL;
-> > > -		goto restore_opts;
-> > > +		goto clear_new_mount;
-> > >  	}
-> > >  
-> > >  	sync_filesystem(sb);
-> > >  
-> > >  	if (ro_rw && (sbi->volume.flags & VOLUME_FLAG_DIRTY) &&
-> > > -	    !sbi->options.force) {
-> > > +	    !new_opts->force) {
-> > >  		ntfs_warn(sb, "volume is dirty and \"force\" flag is not set!");
-> > > -		err = -EINVAL;
-> > > -		goto restore_opts;
-> > > +		goto clear_new_mount;
-> > >  	}
-> > >  
-> > > -	clear_mount_options(&old_opts);
-> > > +	*flags |= (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME) |
-> > > +		  SB_NODIRATIME | SB_NOATIME;
-> > >  
-> > > -	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME) |
-> > > -		 SB_NODIRATIME | SB_NOATIME;
-> > > -	ntfs_info(sb, "re-mounted. Opts: %s", orig_data);
-> > > -	err = 0;
-> > > -	goto out;
-> > > -
-> > > -restore_opts:
-> > >  	clear_mount_options(&sbi->options);
-> > > -	memcpy(&sbi->options, &old_opts, sizeof(old_opts));
-> > > +	sbi->options = *new_opts;
-> > >  
-> > > -out:
-> > > -	kfree(orig_data);
-> > > -	return err;
-> > > +	return 0;
-> > > +
-> > > +clear_new_mount:
-> > > +	clear_mount_options(new_opts);
-> > > +	return -EINVAL;
-> > >  }
-> > >  
-> > >  static struct kmem_cache *ntfs_inode_cachep;
-> > > @@ -628,7 +609,6 @@ static const struct super_operations ntfs_sops = {
-> > >  	.statfs = ntfs_statfs,
-> > >  	.show_options = ntfs_show_options,
-> > >  	.sync_fs = ntfs_sync_fs,
-> > > -	.remount_fs = ntfs_remount,
-> > >  	.write_inode = ntfs3_write_inode,
-> > >  };
-> > >  
-> > > @@ -892,10 +872,10 @@ static int ntfs_init_from_boot(struct super_block *sb, u32 sector_size,
-> > >  }
-> > >  
-> > >  /* try to mount*/
-> > > -static int ntfs_fill_super(struct super_block *sb, void *data, int silent)
-> > > +static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
-> > >  {
-> > >  	int err;
-> > > -	struct ntfs_sb_info *sbi;
-> > > +	struct ntfs_sb_info *sbi = sb->s_fs_info;
-> > >  	struct block_device *bdev = sb->s_bdev;
-> > >  	struct inode *bd_inode = bdev->bd_inode;
-> > >  	struct request_queue *rq = bdev_get_queue(bdev);
-> > > @@ -914,11 +894,6 @@ static int ntfs_fill_super(struct super_block *sb, void *data, int silent)
-> > >  
-> > >  	ref.high = 0;
-> > >  
-> > > -	sbi = ntfs_zalloc(sizeof(struct ntfs_sb_info));
-> > > -	if (!sbi)
-> > > -		return -ENOMEM;
-> > > -
-> > > -	sb->s_fs_info = sbi;
-> > >  	sbi->sb = sb;
-> > >  	sb->s_flags |= SB_NODIRATIME;
-> > >  	sb->s_magic = 0x7366746e; // "ntfs"
-> > > @@ -930,10 +905,6 @@ static int ntfs_fill_super(struct super_block *sb, void *data, int silent)
-> > >  	ratelimit_state_init(&sbi->msg_ratelimit, DEFAULT_RATELIMIT_INTERVAL,
-> > >  			     DEFAULT_RATELIMIT_BURST);
-> > >  
-> > > -	err = ntfs_parse_options(sb, data, silent, &sbi->options);
-> > > -	if (err)
-> > > -		goto out;
-> > > -
-> > >  	if (!rq || !blk_queue_discard(rq) || !rq->limits.discard_granularity) {
-> > >  		;
-> > >  	} else {
-> > > @@ -1409,19 +1380,52 @@ int ntfs_discard(struct ntfs_sb_info *sbi, CLST lcn, CLST len)
-> > >  	return err;
-> > >  }
-> > >  
-> > > -static struct dentry *ntfs_mount(struct file_system_type *fs_type, int flags,
-> > > -				 const char *dev_name, void *data)
-> > > +static int ntfs_fs_get_tree(struct fs_context *fc)
-> > > +{
-> > > +	return get_tree_bdev(fc, ntfs_fill_super);
-> > > +}
-> > > +
-> > > +static void ntfs_fs_free(struct fs_context *fc)
-> > >  {
-> > > -	return mount_bdev(fs_type, flags, dev_name, data, ntfs_fill_super);
-> > > +	struct ntfs_sb_info *sbi = fc->s_fs_info;
-> > > +
-> > > +	if (sbi)
-> > > +		put_ntfs(sbi);
-> > > +}
-> > > +
-> > > +static const struct fs_context_operations ntfs_context_ops = {
-> > > +	.parse_param	= ntfs_fs_parse_param,
-> > > +	.get_tree	= ntfs_fs_get_tree,
-> > > +	.reconfigure	= ntfs_fs_reconfigure,
-> > > +	.free		= ntfs_fs_free,
-> > > +};
-> > > +
-> > > +/*
-> > > + * Set up the filesystem mount context.
-> > > + */
-> > > +static int ntfs_init_fs_context(struct fs_context *fc)
-> > > +{
-> > > +	struct ntfs_sb_info *sbi;
-> > > +
-> > > +	sbi = ntfs_zalloc(sizeof(struct ntfs_sb_info));
-> > > +	if (!sbi)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	ntfs_default_options(&sbi->options);
-> > > +
-> > > +	fc->s_fs_info = sbi;
-> > > +	fc->ops = &ntfs_context_ops;
-> > > +	return 0;
-> > >  }
-> > >  
-> > >  // clang-format off
-> > >  static struct file_system_type ntfs_fs_type = {
-> > > -	.owner		= THIS_MODULE,
-> > > -	.name		= "ntfs3",
-> > > -	.mount		= ntfs_mount,
-> > > -	.kill_sb	= kill_block_super,
-> > > -	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+> On Fri, May 21, 2021 at 9:12 AM Greg Kurz <groug@kaod.org> wrote:
+> >
+> > Even if POSIX doesn't mandate it, linux users legitimately expect
+> > sync() to flush all data and metadata to physical storage when it
+> > is located on the same system. This isn't happening with virtiofs
+> > though : sync() inside the guest returns right away even though
+> > data still needs to be flushed from the host page cache.
+> >
+> > This is easily demonstrated by doing the following in the guest:
+> >
+> > $ dd if=/dev/zero of=/mnt/foo bs=1M count=5K ; strace -T -e sync sync
+> > 5120+0 records in
+> > 5120+0 records out
+> > 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 5.22224 s, 1.0 GB/s
+> > sync()                                  = 0 <0.024068>
+> > +++ exited with 0 +++
+> >
+> > and start the following in the host when the 'dd' command completes
+> > in the guest:
+> >
+> > $ strace -T -e fsync /usr/bin/sync virtiofs/foo
+> > fsync(3)                                = 0 <10.371640>
+> > +++ exited with 0 +++
+> >
+> > There are no good reasons not to honor the expected behavior of
+> > sync() actually : it gives an unrealistic impression that virtiofs
+> > is super fast and that data has safely landed on HW, which isn't
+> > the case obviously.
+> >
+> > Implement a ->sync_fs() superblock operation that sends a new
+> > FUSE_SYNCFS request type for this purpose. Provision a 64-bit
+> > placeholder for possible future extensions. Since the file
+> > server cannot handle the wait == 0 case, we skip it to avoid a
+> > gratuitous roundtrip. Note that this is per-superblock : a
+> > FUSE_SYNCFS is send for the root mount and for each submount.
+> >
+> > Like with FUSE_FSYNC and FUSE_FSYNCDIR, lack of support for
+> > FUSE_SYNCFS in the file server is treated as permanent success.
+> > This ensures compatibility with older file servers : the client
+> > will get the current behavior of sync() not being propagated to
+> > the file server.
 > 
-> Note FS_ALLOW_IDMAP here.
-> 
-> > > +	.owner			= THIS_MODULE,
-> > > +	.name			= "ntfs3",
-> > > +	.init_fs_context	= ntfs_init_fs_context,
-> > > +	.parameters		= ntfs_fs_parameters,
-> > > +	.kill_sb		= kill_block_super,
-> > > +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-> > 
-> > If you add idmapped mount support right away please try to make sure and
-> > enable ntfs3 with xfstests if that's all possible.
-> 
-> This is already implemented by Komarov in new series. He haven't yet
-> sended it to mailing list. It is already in linux-next.
-> 
-> Komarov has also stated that they use xfstests (link). And he has showed
-> test results.
-> https://lore.kernel.org/linux-fsdevel/0e175373cef24e2abe76e203bb36d260@paragon-software.com/
-> 
-> I have tested these with kvm-xfstests which has support for ntfs3 made
-> by Theodore Ts'o. Current results:
-> 
-> ./kvm-xfstests -c ntfs3 -X "generic/014,generic/129,generic/405,generic/476" -g auto
-> ntfs3/default: 662 tests, 43 failures, 207 skipped, 7442 seconds
->   Failures: generic/012 generic/013 generic/016 generic/021 
->     generic/022 generic/040 generic/041 generic/065 generic/066 
->     generic/092 generic/094 generic/104 generic/130 generic/177 
->     generic/225 generic/228 generic/240 generic/255 generic/258 
->     generic/316 generic/321 generic/322 generic/335 generic/336 
->     generic/341 generic/342 generic/343 generic/348 generic/360 
->     generic/401 generic/423 generic/475 generic/483 generic/498 
->     generic/510 generic/526 generic/527 generic/538 generic/551 
->     generic/552 generic/631 generic/633 generic/640 
-> Totals: 455 tests, 207 skipped, 43 failures, 0 errors, 7088s
-> 
-> ACL support seems broken. Notice that many of these are in group "punch"
-> and punch a hole for regular files was added in "V28" but maybe that
-> does not work correctly as showed by xfstests.
-> 
-> There is also on going patch set by Theodore for support ntfs3 and fuse
-> based filesystem in straight in xfstests (link). And after that gets
-> there then we can ask 01 project to include ntfs3 to their testing.
-> And hopefully Paragon will send some ntfs related test to upstream.
-> https://lore.kernel.org/fstests/YQoVXWRFGeY19onQ@mit.edu/
+> I wonder - even if the server does not support SYNCFS or if the kernel
+> does not trust the server with SYNCFS, fuse_sync_fs() can wait
+> until all pending requests up to this call have been completed, either
+> before or after submitting the SYNCFS request. No?
 
-Ok, cool. I can help you fix the failures in generic/633 and generic/640
-once that work has progressed.
+> 
+> Does virtiofsd track all requests prior to SYNCFS request to make
+> sure that they were executed on the host filesystem before calling
+> syncfs() on the host filesystem?
 
-Christian
+Hi Amir,
+
+I don't think virtiofsd has any such notion. I would think, that
+client should make sure all pending writes have completed and
+then send SYNCFS request.
+
+Looking at the sync_filesystem(), I am assuming vfs will take care
+of flushing out all dirty pages and then call ->sync_fs.
+
+Having said that, I think fuse queues the writeback request internally
+and signals completion of writeback to mm(end_page_writeback()). And
+that's why fuse_fsync() has notion of waiting for all pending
+writes to finish on an inode (fuse_sync_writes()).
+
+So I think you have raised a good point. That is if there are pending
+writes at the time of syncfs(), we don't seem to have a notion of
+first waiting for all these writes to finish before we send
+FUSE_SYNCFS request to server. 
+
+In case of virtiofs, we could probably move away from the notion
+of ending writeback immediately. IIUC, this was needed for regular
+fuse where we wanted to make sure rouge/malfunctining fuse server
+could not affect processes on system which are not dealing with
+fuse. But in case of virtiofs, guest is trusting file server. I
+had tried to get rid of this for virtiofs but ran into some
+other issues which I could not resolve easily at the time and
+then I got distracted in other things.
+
+Anyway, irrespective of that, we probably need a way to flush
+out all pending writes with fuse and then send FUSE_SYNCFS. (And
+lost make sure writes coming after call to fuse_sync_fs(), continue
+to be queued and we don't livelock.
+
+BTW, in the context of virtiofs, this probably is problem only with
+mmaped writes. otherwise cache=auto and cache=none are basically
+writethrough caches. So write is sent to server immediately. So there
+is nothing to be written back when syncfs() comes along. But mmaped()
+writes are different and even with cache=auto there can be dirty pages.
+(cache=none does not support mmap() at all).
+
+> 
+> I am not familiar enough with FUSE internals so there may already
+> be a mechanism to track/wait for all pending requests?
+
+fuse_sync_writes() does it for inode. I am not aware of anything
+which can do it for the whole filesystem (all the inodes).
+
+> 
+> >
+> > Note that such an operation allows the file server to DoS sync().
+> > Since a typical FUSE file server is an untrusted piece of software
+> > running in userspace, this is disabled by default.  Only enable it
+> > with virtiofs for now since virtiofsd is supposedly trusted by the
+> > guest kernel.
+> 
+> Isn't there already a similar risk of DoS to sync() from the ability of any
+> untrusted (or malfunctioning) server to block writes?
+
+I think fuse has some safeguards for this. Fuse signals completion
+of writeback immediately so that vfs/mm/fs does not blocking trying
+to writeback and if server is not finishing WRITES fast enough, the
+there will be enough dirty pages in bdi that it will create back
+pressure and block process dirtying pages.
+
+Thanks
+Vivek
+
