@@ -2,188 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F1813ED797
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 15:37:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AA9B3ED62C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 15:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236898AbhHPNiH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 09:38:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236446AbhHPNh3 (ORCPT
+        id S240095AbhHPNSP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 09:18:15 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:45690 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237173AbhHPNQJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 09:37:29 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D277CC0612A7;
-        Mon, 16 Aug 2021 06:14:21 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id x27so34343104lfu.5;
-        Mon, 16 Aug 2021 06:14:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=v+/TSYpQmBgEhEstfES6J/h5GgRRcYAB0YCuOv/QsxA=;
-        b=JZjUH4qBCLZ0YOQHOvvdL5vqYKxzCRnYRD3YKuSVQrrE4bK3WBJp30ljOMfaz0qgFo
-         ak314QTJetdnwoN6A9/u/hkROJOtpkThQpsqGU31FykHu5/PlrvPFju0e9BFnDlbDzgy
-         szNgCy57oavn/DtoXzXksW8efm9RewhFgB42WaHWshjk2Pl2Mh5jEGfHqe29aaxliD2k
-         J+IyEbvHQjdLfIPpVuq2XP7eovQ+C5L452GMVHDT3M9byr+dZTY8gVKz0jIAvLF/t/p8
-         hgV+JWyKYx/uZgDgOB86+zcfXdPyPotDAuC0KnJN/xOvu9dEj07ya2qJwu/HvDQnnLr6
-         sIUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=v+/TSYpQmBgEhEstfES6J/h5GgRRcYAB0YCuOv/QsxA=;
-        b=ivNNHqqhTCHVSTaYu9Qd1m28Hq7nCvaOfew04jzf9NkR0ExCwwkAz9aVaA+7v7b4iX
-         xsP34tvNaNHN009i3pqeIE8mmpyR2l7rgrrfDG890aMRrhgFxlzRWItJcQacc84pT7Lw
-         678YGhTwVDc/24UbVlhGo/0HubZU7lQjNiP7dJwJWuiPJtRwMwzYJOOM4MJzCOfqqO/Q
-         gO/hufFrvS963yqd78hHethqqiAq7EAA2Cm/MgOM9hJhXkQvJpMjnIzKCSf8C//xAp9g
-         AwYMIP3LALTxmf/Z8rWaxBmO7gl1SzV62RZYF4/RcSJA1GAgNCRZD3xXQrRiXpneiWyo
-         Fv2g==
-X-Gm-Message-State: AOAM530T9dqArQoYWjqtydrMqpmJyDDYJPjL+RHfr2imr1uVp+Tfz1PE
-        AlC1Xl3J2QNuUeL66hS06Ug=
-X-Google-Smtp-Source: ABdhPJzY2NCOWAd21DmP22EXneTgAJ5tNa6htKpMSXf3WBvG0Wo1YFCTBcvoYQSSLol/8hPaOhrqqw==
-X-Received: by 2002:a05:6512:1689:: with SMTP id bu9mr11893633lfb.147.1629119660263;
-        Mon, 16 Aug 2021 06:14:20 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id g19sm802728lfr.255.2021.08.16.06.14.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 06:14:19 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 16:14:17 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [RFC PATCH 1/4] fs/ntfs3: Use new api for mounting
-Message-ID: <20210816131417.4mix6s2nzuxhkh53@kari-VirtualBox>
-References: <20210816024703.107251-1-kari.argillander@gmail.com>
- <20210816024703.107251-2-kari.argillander@gmail.com>
- <20210816123619.GB17355@lst.de>
+        Mon, 16 Aug 2021 09:16:09 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 1FD131FE5F;
+        Mon, 16 Aug 2021 13:15:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1629119737; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kFqrL9tlo3vHH2OdCMbi/CRA3pJJfS/41yIA8FjXzf0=;
+        b=Y+/b46UOpoHG8J+Den7D1I/U91wSOlxhsn4uivMO+Um52pZb4o1wu3i9pSHbwFY003kxJK
+        kPOLDVKsavKS3HPLJIvRjNoc6/OBKQliGpPOfuNPqY/GvYA0yB3R9ZwQdyfqtPYTk3sv0O
+        3jDtlS6KKuQ/rW8m8bCC1m04jU6inNQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1629119737;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kFqrL9tlo3vHH2OdCMbi/CRA3pJJfS/41yIA8FjXzf0=;
+        b=K9F1H0giDC5X/udipaLGIVqN+I2jMVsptFImKLYPW//ApiZGVPXmfixcCOcXe7vKoEHmgT
+        szNwcQFVyAmS1lBw==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 058AEA3B8F;
+        Mon, 16 Aug 2021 13:15:37 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E21741E0426; Mon, 16 Aug 2021 15:15:36 +0200 (CEST)
+Date:   Mon, 16 Aug 2021 15:15:36 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Jan Kara <jack@suse.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
+Subject: Re: [PATCH v6 04/21] fsnotify: Reserve mark flag bits for backends
+Message-ID: <20210816131536.GB30215@quack2.suse.cz>
+References: <20210812214010.3197279-1-krisman@collabora.com>
+ <20210812214010.3197279-5-krisman@collabora.com>
+ <CAOQ4uxh0WNxsuwtfv_iDCaZbmJEDB700D5_v==ffm2-WAg_V7w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210816123619.GB17355@lst.de>
+In-Reply-To: <CAOQ4uxh0WNxsuwtfv_iDCaZbmJEDB700D5_v==ffm2-WAg_V7w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thank you for taking time to review. I really appreciated it.
-
-On Mon, Aug 16, 2021 at 02:36:19PM +0200, Christoph Hellwig wrote:
-> > +/*
-> > + * ntfs_load_nls
-> > + *
-> 
-> No need to state the function name here.
-
-This is current way of doing this in fs/ntfs3. I just like that things
-are same kind in one driver. I agree that this may not be good way.
-
-> > + * Load nls table or if @nls is utf8 then return NULL because
-> > + * nls=utf8 is totally broken.
-> > + */
-> > +static struct nls_table *ntfs_load_nls(char *nls)
-> > +{
-> > +	struct nls_table *ret;
+On Fri 13-08-21 10:28:27, Amir Goldstein wrote:
+> On Fri, Aug 13, 2021 at 12:40 AM Gabriel Krisman Bertazi
+> <krisman@collabora.com> wrote:
+> >
+> > Split out the final bits of struct fsnotify_mark->flags for use by a
+> > backend.
+> >
+> > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> >
+> > Changes since v1:
+> >   - turn consts into defines (jan)
+> > ---
+> >  include/linux/fsnotify_backend.h | 18 +++++++++++++++---
+> >  1 file changed, 15 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> > index 1ce66748a2d2..ae1bd9f06808 100644
+> > --- a/include/linux/fsnotify_backend.h
+> > +++ b/include/linux/fsnotify_backend.h
+> > @@ -363,6 +363,20 @@ struct fsnotify_mark_connector {
+> >         struct hlist_head list;
+> >  };
+> >
+> > +enum fsnotify_mark_bits {
+> > +       FSN_MARK_FL_BIT_IGNORED_SURV_MODIFY,
+> > +       FSN_MARK_FL_BIT_ALIVE,
+> > +       FSN_MARK_FL_BIT_ATTACHED,
+> > +       FSN_MARK_PRIVATE_FLAGS,
+> > +};
 > > +
-> > +	if (!nls)
-> > +		return ERR_PTR(-EINVAL);
-> > +	if (strcmp(nls, "utf8"))
-> > +		return NULL;
-> > +	if (strcmp(nls, CONFIG_NLS_DEFAULT))
-> > +		return load_nls_default();
+> > +#define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY \
+> > +       (1 << FSN_MARK_FL_BIT_IGNORED_SURV_MODIFY)
+> > +#define FSNOTIFY_MARK_FLAG_ALIVE \
+> > +       (1 << FSN_MARK_FL_BIT_ALIVE)
+> > +#define FSNOTIFY_MARK_FLAG_ATTACHED \
+> > +       (1 << FSN_MARK_FL_BIT_ATTACHED)
 > > +
-> > +	ret = load_nls(nls);
-> > +	if (!ret)
-> > +		return ERR_PTR(-EINVAL);
-> > +
-> > +	return ret;
-> > +}
+> >  /*
+> >   * A mark is simply an object attached to an in core inode which allows an
+> >   * fsnotify listener to indicate they are either no longer interested in events
+> > @@ -398,9 +412,7 @@ struct fsnotify_mark {
+> >         struct fsnotify_mark_connector *connector;
+> >         /* Events types to ignore [mark->lock, group->mark_mutex] */
+> >         __u32 ignored_mask;
+> > -#define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY 0x01
+> > -#define FSNOTIFY_MARK_FLAG_ALIVE               0x02
+> > -#define FSNOTIFY_MARK_FLAG_ATTACHED            0x04
+> > +       /* Upper bits [31:PRIVATE_FLAGS] are reserved for backend usage */
 > 
-> This looks like something quite generic and not file system specific.
-> But I haven't found time to look at the series from Pali how this all
-> fits together.
+> I don't understand what [31:PRIVATE_FLAGS] means
 
-It is quite generic I agree. Pali's series not implemeted any new way
-doing this thing. In many cases Pali uses just load_nls and not
-load_nls_default. This function basically use that if possible. It seems
-that load_nls_default does not need error path so that's why it is nicer
-to use.
+I think it should be [FSN_MARK_PRIVATE_FLAGS:31] (identifying a range of
+bits). I'd maybe write just "Bits starting from FSN_MARK_PRIVATE_FLAGS are
+reserved for backend usage". With this fixed feel free to add:
 
-One though is to implement api function load_nls_or_utf8(). Then we do not
-need to test this utf8 stuff in all places.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> > +// clang-format off
-> 
-> Please don't use C++ comments.  And we also should not put weird
-> formatter annotations into the kernel source anyway.
-
-This is just a way ntfs3 do this but I agree totally and will take this
-off. I did not even like it myself.
-
-> > +static void ntfs_default_options(struct ntfs_mount_options *opts)
-> >  {
-> >  	opts->fs_uid = current_uid();
-> >  	opts->fs_gid = current_gid();
-> > +	opts->fs_fmask_inv = ~current_umask();
-> > +	opts->fs_dmask_inv = ~current_umask();
-> > +	opts->nls = ntfs_load_nls(CONFIG_NLS_DEFAULT);
-> > +}
-> 
-> This function seems pretty pointless with a single trivial caller.
-
-Yeah it is just because then no comment needed and other reason was that
-I can but this closer to ntfs_fs_parse_param() so that when reading code
-all parameter code is one place.
-
-> > +static int ntfs_fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
-> 
-> Please avoid the overly long line.
-
-Thanks will fix.
-
-> 
-> > +		break;
-> > +	case Opt_showmeta:
-> > +		opts->showmeta = result.negated ? 0 : 1;
-> > +		break;
-> > +	case Opt_nls:
-> > +		unload_nls(opts->nls);
-> > +
-> > +		opts->nls = ntfs_load_nls(param->string);
-> > +		if (IS_ERR(opts->nls)) {
-> > +			return invalf(fc, "ntfs3: Cannot load nls %s",
-> > +				      param->string);
-> >  		}
-> 
-> So instead of unloading here, why not set keep a copy of the string
-> in the mount options structure and only load the actual table after
-> option parsing has finished?
-
-I did actually do this first but then I test this way and code get lot
-cleaner. But I can totally change it back to "string loading".
-
-> 
-> > +     struct ntfs_mount_options *new_opts = fc->s_fs_info;
-> 
-> Does this rely on the mount_options being the first member in struct
-> ntfs_sb_info?  If so that is a landmine for future changes.
-> 
-> > +/*
-> > + * Set up the filesystem mount context.
-> > + */
-> > +static int ntfs_init_fs_context(struct fs_context *fc)
-> > +{
-> > +	struct ntfs_sb_info *sbi;
-> > +
-> > +	sbi = ntfs_zalloc(sizeof(struct ntfs_sb_info));
-> 
-> Not related to your patch, but why does ntfs3 have kmalloc wrappers
-> like this?
-
-I do not know. I actually also suggested changing this (link). This might
-even confuse some static analyzer tools.
-https://lore.kernel.org/linux-fsdevel/20210103231755.bcmyalz3maq4ama2@kari-VirtualBox/
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
