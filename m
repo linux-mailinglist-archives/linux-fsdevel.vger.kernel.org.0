@@ -2,189 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 129F23ED549
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 15:11:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F1813ED797
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 15:37:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238655AbhHPNKn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 09:10:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45860 "EHLO
+        id S236898AbhHPNiH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 09:38:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239769AbhHPNKL (ORCPT
+        with ESMTP id S236446AbhHPNh3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 09:10:11 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52C8C0363C7;
-        Mon, 16 Aug 2021 06:06:54 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id k29so23513670wrd.7;
-        Mon, 16 Aug 2021 06:06:54 -0700 (PDT)
+        Mon, 16 Aug 2021 09:37:29 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D277CC0612A7;
+        Mon, 16 Aug 2021 06:14:21 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id x27so34343104lfu.5;
+        Mon, 16 Aug 2021 06:14:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wvgUJiUW1naT+DW3zwINBggYbB2TOutmBqo2wsEseRc=;
-        b=RVvoxPfmnySYBMjI9Cezd0eFLQChKRbGoquGQX5qUMaWQmbVUAuxX47eS8VxSteK2B
-         SlO9hiqXPPNn+f9E57VKNQgofCUnd93kmzOEOHBz7YD7g+3n4MAjTs75vi4SKFSpD0lR
-         gyvE70oDZ3JoCW16C8lV1fOBWBlNG4pKlk6+9kP0qTE7kKoqERZVOzoiHIi+zFNG3Lqt
-         nqgXCNqRHo0G3nrNZBQUnsGfzFdgiaMIuTQKCGLtmV2RXqgFZvj/CvPHuXlQ/fgzFs1p
-         fVROVCa6MY2a42zj3ysZVkHqo01J9OO9rZZouu6hayzG4Tkl+rgjWpr4JTrRvICJ3wA6
-         p10g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=v+/TSYpQmBgEhEstfES6J/h5GgRRcYAB0YCuOv/QsxA=;
+        b=JZjUH4qBCLZ0YOQHOvvdL5vqYKxzCRnYRD3YKuSVQrrE4bK3WBJp30ljOMfaz0qgFo
+         ak314QTJetdnwoN6A9/u/hkROJOtpkThQpsqGU31FykHu5/PlrvPFju0e9BFnDlbDzgy
+         szNgCy57oavn/DtoXzXksW8efm9RewhFgB42WaHWshjk2Pl2Mh5jEGfHqe29aaxliD2k
+         J+IyEbvHQjdLfIPpVuq2XP7eovQ+C5L452GMVHDT3M9byr+dZTY8gVKz0jIAvLF/t/p8
+         hgV+JWyKYx/uZgDgOB86+zcfXdPyPotDAuC0KnJN/xOvu9dEj07ya2qJwu/HvDQnnLr6
+         sIUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wvgUJiUW1naT+DW3zwINBggYbB2TOutmBqo2wsEseRc=;
-        b=QZh0iO8XdrC6nwk8562F1ixCtm/XK3t9MTloLKEAl30ChaQLkERwgpIOXF/owZf6Gd
-         GRUDChiBFXKBnLquQKiRHIE6PZ1GIIgHFLKbzC1sIM7YdtGXY4dZomg2GXGlLcz5msJs
-         xIoaqSb0DuxRCfzg0TsdU9/ba1BeLb36CkpuvRMW/JZ6/12SCT1fIuWr1wyauWCJnYZw
-         4ZAw5ptaUSJ9tgpANlnBTbDLW6wEClS10qaBTMK+p8u6nL+EdoIJ96n25vJ8mqG4RSJH
-         CgCTP6+zA7owdtKQALPN2AUsIrRdMytxyjYO0sHtNpDIQJF0RlUmtITO0d7mD2+vtfrM
-         jzzg==
-X-Gm-Message-State: AOAM530rI7bwUjNZIAXeONiiBwvBkDuFqmvY5SElXAdtxhI/2sOqy28Y
-        FcP8idQRQba9kjZ3e8gu99Q=
-X-Google-Smtp-Source: ABdhPJzKZKjj43V9XRQbHEbi60duXuEN1+dtYpRGC1ZWcSynKPZSLcKV+hwZra34/G6oAiqsZQuscA==
-X-Received: by 2002:a5d:4442:: with SMTP id x2mr18266693wrr.60.1629119213515;
-        Mon, 16 Aug 2021 06:06:53 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.233.12])
-        by smtp.gmail.com with ESMTPSA id p4sm13354694wrq.81.2021.08.16.06.06.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Aug 2021 06:06:53 -0700 (PDT)
-Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Olivier Langlois <olivier@trillion01.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Tony Battersby <tonyb@cybernetics.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
- <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
- <87eeda7nqe.fsf@disp2133>
- <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
- <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
- <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
- <87y2bh4jg5.fsf@disp2133>
- <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
- <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
- <87pmwmn5m0.fsf@disp2133>
- <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
- <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
- <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
- <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
- <b9f92bf3-77aa-8cdd-6db7-95c86e5a6946@gmail.com>
-Message-ID: <ca4008f6-91f7-7623-7d15-7d5ef5363cd6@gmail.com>
-Date:   Mon, 16 Aug 2021 14:06:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=v+/TSYpQmBgEhEstfES6J/h5GgRRcYAB0YCuOv/QsxA=;
+        b=ivNNHqqhTCHVSTaYu9Qd1m28Hq7nCvaOfew04jzf9NkR0ExCwwkAz9aVaA+7v7b4iX
+         xsP34tvNaNHN009i3pqeIE8mmpyR2l7rgrrfDG890aMRrhgFxlzRWItJcQacc84pT7Lw
+         678YGhTwVDc/24UbVlhGo/0HubZU7lQjNiP7dJwJWuiPJtRwMwzYJOOM4MJzCOfqqO/Q
+         gO/hufFrvS963yqd78hHethqqiAq7EAA2Cm/MgOM9hJhXkQvJpMjnIzKCSf8C//xAp9g
+         AwYMIP3LALTxmf/Z8rWaxBmO7gl1SzV62RZYF4/RcSJA1GAgNCRZD3xXQrRiXpneiWyo
+         Fv2g==
+X-Gm-Message-State: AOAM530T9dqArQoYWjqtydrMqpmJyDDYJPjL+RHfr2imr1uVp+Tfz1PE
+        AlC1Xl3J2QNuUeL66hS06Ug=
+X-Google-Smtp-Source: ABdhPJzY2NCOWAd21DmP22EXneTgAJ5tNa6htKpMSXf3WBvG0Wo1YFCTBcvoYQSSLol/8hPaOhrqqw==
+X-Received: by 2002:a05:6512:1689:: with SMTP id bu9mr11893633lfb.147.1629119660263;
+        Mon, 16 Aug 2021 06:14:20 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id g19sm802728lfr.255.2021.08.16.06.14.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Aug 2021 06:14:19 -0700 (PDT)
+Date:   Mon, 16 Aug 2021 16:14:17 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [RFC PATCH 1/4] fs/ntfs3: Use new api for mounting
+Message-ID: <20210816131417.4mix6s2nzuxhkh53@kari-VirtualBox>
+References: <20210816024703.107251-1-kari.argillander@gmail.com>
+ <20210816024703.107251-2-kari.argillander@gmail.com>
+ <20210816123619.GB17355@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <b9f92bf3-77aa-8cdd-6db7-95c86e5a6946@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210816123619.GB17355@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/16/21 2:02 PM, Pavel Begunkov wrote:
-> On 8/15/21 9:42 PM, Olivier Langlois wrote:
-> [...]
->> When I have first encountered the issue, the very first thing that I
->> did try was to create a simple test program that would synthetize the
->> problem.
->>
->> After few time consumming failed attempts, I just gave up the idea and
->> simply settle to my prod program that showcase systematically the
->> problem every time that I kill the process with a SEGV signal.
->>
->> In a nutshell, all the program does is to issue read operations with
->> io_uring on a TCP socket on which there is a constant data stream.
->>
->> Now that I have a better understanding of what is going on, I think
->> that one way that could reproduce the problem consistently could be
->> along those lines:
->>
->> 1. Create a pipe
->> 2. fork a child
->> 3. Initiate a read operation on the pipe with io_uring from the child
->> 4. Let the parent kill its child with a core dump generating signal.
->> 5. Write something in the pipe from the parent so that the io_uring
->> read operation completes while the core dump is generated.
->>
->> I guess that I'll end up doing that if I cannot fix the issue with my
->> current setup but here is what I have attempted so far:
->>
->> 1. Call io_uring_files_cancel from do_coredump
->> 2. Same as #1 but also make sure that TIF_NOTIFY_SIGNAL is cleared on
->> returning from io_uring_files_cancel
->>
->> Those attempts didn't work but lurking in the io_uring dev mailing list
->> is starting to pay off. I thought that I did reach the bottom of the
->> rabbit hole in my journey of understanding io_uring but the recent
->> patch set sent by Hao Xu
->>
->> https://lore.kernel.org/io-uring/90fce498-968e-6812-7b6a-fdf8520ea8d9@kernel.dk/T/#t
->>
->> made me realize that I still haven't assimilated all the small io_uring
->> nuances...
->>
->> Here is my feedback. From my casual io_uring code reader point of view,
->> it is not 100% obvious what the difference is between
->> io_uring_files_cancel and io_uring_task_cancel
+Thank you for taking time to review. I really appreciated it.
+
+On Mon, Aug 16, 2021 at 02:36:19PM +0200, Christoph Hellwig wrote:
+> > +/*
+> > + * ntfs_load_nls
+> > + *
 > 
-> As you mentioned, io_uring_task_cancel() cancels and waits for all
-> requests submitted by current task, used in exec() and SQPOLL because
-> of potential races.
+> No need to state the function name here.
 
-Apologies for this draft rumbling...
+This is current way of doing this in fs/ntfs3. I just like that things
+are same kind in one driver. I agree that this may not be good way.
 
-As you mentioned, io_uring_task_cancel() cancels and waits for all
-requests submitted by current task, used in exec() and SQPOLL because
-of potential races.
-
-io_uring_task_cancel() cancels only selected ones, e.g. in 5.15
-will be only requests operating on io_uring, and used during normal
-exit.
-
-Agree that the names may be not too descriptive.
-
->>
->> It seems like io_uring_files_cancel is cancelling polls only if they
->> have the REQ_F_INFLIGHT flag set.
->>
->> I have no idea what an inflight request means and why someone would
->> want to call io_uring_files_cancel over io_uring_task_cancel.
->>
->> I guess that if I was to meditate on the question for few hours, I
->> would at some point get some illumination strike me but I believe that
->> it could be a good idea to document in the code those concepts for
->> helping casual readers...
->>
->> Bottomline, I now understand that io_uring_files_cancel does not cancel
->> all the requests. Therefore, without fully understanding what I am
->> doing, I am going to replace my call to io_uring_files_cancel from
->> do_coredump with io_uring_task_cancel and see if this finally fix the
->> issue for good.
->>
->> What I am trying to do is to cancel pending io_uring requests to make
->> sure that TIF_NOTIFY_SIGNAL isn't set while core dump is generated.
->>
->> Maybe another solution would simply be to modify __dump_emit to make it
->> resilient to TIF_NOTIFY_SIGNAL as Eric W. Biederman originally
->> suggested.
->>
->> or maybe do both...
->>
->> Not sure which approach is best. If someone has an opinion, I would be
->> curious to hear it.
->>
->> Greetings,
->>
->>
+> > + * Load nls table or if @nls is utf8 then return NULL because
+> > + * nls=utf8 is totally broken.
+> > + */
+> > +static struct nls_table *ntfs_load_nls(char *nls)
+> > +{
+> > +	struct nls_table *ret;
+> > +
+> > +	if (!nls)
+> > +		return ERR_PTR(-EINVAL);
+> > +	if (strcmp(nls, "utf8"))
+> > +		return NULL;
+> > +	if (strcmp(nls, CONFIG_NLS_DEFAULT))
+> > +		return load_nls_default();
+> > +
+> > +	ret = load_nls(nls);
+> > +	if (!ret)
+> > +		return ERR_PTR(-EINVAL);
+> > +
+> > +	return ret;
+> > +}
 > 
+> This looks like something quite generic and not file system specific.
+> But I haven't found time to look at the series from Pali how this all
+> fits together.
 
--- 
-Pavel Begunkov
+It is quite generic I agree. Pali's series not implemeted any new way
+doing this thing. In many cases Pali uses just load_nls and not
+load_nls_default. This function basically use that if possible. It seems
+that load_nls_default does not need error path so that's why it is nicer
+to use.
+
+One though is to implement api function load_nls_or_utf8(). Then we do not
+need to test this utf8 stuff in all places.
+
+> > +// clang-format off
+> 
+> Please don't use C++ comments.  And we also should not put weird
+> formatter annotations into the kernel source anyway.
+
+This is just a way ntfs3 do this but I agree totally and will take this
+off. I did not even like it myself.
+
+> > +static void ntfs_default_options(struct ntfs_mount_options *opts)
+> >  {
+> >  	opts->fs_uid = current_uid();
+> >  	opts->fs_gid = current_gid();
+> > +	opts->fs_fmask_inv = ~current_umask();
+> > +	opts->fs_dmask_inv = ~current_umask();
+> > +	opts->nls = ntfs_load_nls(CONFIG_NLS_DEFAULT);
+> > +}
+> 
+> This function seems pretty pointless with a single trivial caller.
+
+Yeah it is just because then no comment needed and other reason was that
+I can but this closer to ntfs_fs_parse_param() so that when reading code
+all parameter code is one place.
+
+> > +static int ntfs_fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> 
+> Please avoid the overly long line.
+
+Thanks will fix.
+
+> 
+> > +		break;
+> > +	case Opt_showmeta:
+> > +		opts->showmeta = result.negated ? 0 : 1;
+> > +		break;
+> > +	case Opt_nls:
+> > +		unload_nls(opts->nls);
+> > +
+> > +		opts->nls = ntfs_load_nls(param->string);
+> > +		if (IS_ERR(opts->nls)) {
+> > +			return invalf(fc, "ntfs3: Cannot load nls %s",
+> > +				      param->string);
+> >  		}
+> 
+> So instead of unloading here, why not set keep a copy of the string
+> in the mount options structure and only load the actual table after
+> option parsing has finished?
+
+I did actually do this first but then I test this way and code get lot
+cleaner. But I can totally change it back to "string loading".
+
+> 
+> > +     struct ntfs_mount_options *new_opts = fc->s_fs_info;
+> 
+> Does this rely on the mount_options being the first member in struct
+> ntfs_sb_info?  If so that is a landmine for future changes.
+> 
+> > +/*
+> > + * Set up the filesystem mount context.
+> > + */
+> > +static int ntfs_init_fs_context(struct fs_context *fc)
+> > +{
+> > +	struct ntfs_sb_info *sbi;
+> > +
+> > +	sbi = ntfs_zalloc(sizeof(struct ntfs_sb_info));
+> 
+> Not related to your patch, but why does ntfs3 have kmalloc wrappers
+> like this?
+
+I do not know. I actually also suggested changing this (link). This might
+even confuse some static analyzer tools.
+https://lore.kernel.org/linux-fsdevel/20210103231755.bcmyalz3maq4ama2@kari-VirtualBox/
+
