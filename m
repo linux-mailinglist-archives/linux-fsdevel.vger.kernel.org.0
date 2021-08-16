@@ -2,114 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CAFA3ECCAC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 04:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32C2A3ECCAD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 04:35:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231157AbhHPCf6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Aug 2021 22:35:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42492 "EHLO
+        id S231513AbhHPCgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Aug 2021 22:36:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbhHPCf5 (ORCPT
+        with ESMTP id S229663AbhHPCgL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Aug 2021 22:35:57 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C938C061764
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 19:35:27 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id fa24-20020a17090af0d8b0290178bfa69d97so25162618pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Aug 2021 19:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8BG1jpF7K7ycQj0szNGgHmXjOsN8iFLcn1IX7qfG96Y=;
-        b=cfseYDmellPtFEmUVBGI2iD3WPvWIfmepXi1pujDwhgirfGiRF+vin6DbM2nhm5JYJ
-         hMOkYvRi29GrX496sMn27c/pIwpbkBdTw7/hQTbasvAlV85bmqRH5Cb3c1GikXXlpIUc
-         AwR7/Ynpa3YSEysdNclME10FB7o0fOW+jXlmm8jw/3EZbRZgQZh0ni7EAsOQPPChdWOW
-         /YGY4nHHd3ybwaVVHhYHiIgTfBRsSmW9EKjtQNUmmE+IZUryAHNXBUu3tViYzMnxgrV1
-         UwQNMMgYm6O2TNc9npEAUWzUqJnvYJfnYHYmROaKrw7LYLTyErYOxcHu5OqtPwnYYmyS
-         buzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8BG1jpF7K7ycQj0szNGgHmXjOsN8iFLcn1IX7qfG96Y=;
-        b=JwQBaoJtPBfEeVd1X3is1zNNLo0ZzGbiAX+wRvyCmY/vn59eDb9pYvkMcF6lr85fvf
-         Y1bOOF5+twcsFlDSwj/ejF3kEVAuu3b/CBmvVhUl7r6z7ginsFEjYtYXFe3JG6nXbvS9
-         sRoIa9pbT8dZTxR87+4uhpcDemPLSN062xC2fiUNs9eDjSci0KgXj4jf6HEhnUvnY170
-         QdtuX6oYo9YiBmvhGmmafzB9ntMrdmEfFLg13m1oruteNzUu5ZnmSNakieOahCP6JjA1
-         G9X+0nyHvl+xLNfteYzYUQrl2oUbHmJzMQt9SpOsndXmXhDFs18srW6FRLRovhV1Rmi9
-         ncqQ==
-X-Gm-Message-State: AOAM5328XtANYf6pRdpoaysP4DWKXftED9JCQ6elfuZI9c2AGU3Nm9E7
-        k7ZrZKZ4xRP0esKHZjQ7k0wmnjD7BMCSOAdyIYI=
-X-Google-Smtp-Source: ABdhPJwXVRBRTmJ20Spxd4NjKYTLMA7qrUO2HMYtgTrMSNRPg3HTTdfXSRgP/J0r76SXzkVQSfSVLl60A0kAMyGngM0=
-X-Received: by 2002:a17:90b:392:: with SMTP id ga18mr14966218pjb.156.1629081326642;
- Sun, 15 Aug 2021 19:35:26 -0700 (PDT)
+        Sun, 15 Aug 2021 22:36:11 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B524EC061764;
+        Sun, 15 Aug 2021 19:35:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=vMl2VNdGk09tKhD3GllFTX36GUewTvfnz70jPsRuisE=; b=I3HcwZSzqquYk2qrb9TMsXbbdU
+        OFiZRP8wFNRyufteckPxWtUxpKV1lJeMBslJpcH1rVMm6iV61ZJ7PjM/Fjylv67sH3QLhnLTgIVwA
+        hhGdH08VdNX20AFLVNGNjTVN22axpgchV23w17JTqVdUD4QtYs+acCcY3SUlb5zRhw7ijpKwboajS
+        KdPL7lDSSchtlK3+6lgG/9dfDpgKabc5CPbVcSfsKSvR4JggPgobfdgZUS2noRgb9tqn1mVy1rRHX
+        ba9T8YGprwqE8WRX0sY+72or6f3XnESvJhl5QM4yVFhsXVkMZNkh2omwaOBbc//tlkDHGljqrnowE
+        B4hTnZsw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mFST8-000sTw-Bg; Mon, 16 Aug 2021 02:35:28 +0000
+Date:   Mon, 16 Aug 2021 03:35:18 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v14 084/138] mm/page_alloc: Add folio allocation functions
+Message-ID: <YRnO5gudWRvGjxW4@casper.infradead.org>
+References: <20210715033704.692967-85-willy@infradead.org>
+ <20210715033704.692967-1-willy@infradead.org>
+ <1814546.1628632283@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <20210813093155.45-1-xieyongji@bytedance.com>
-In-Reply-To: <20210813093155.45-1-xieyongji@bytedance.com>
-From:   Peng Tao <bergwolf@gmail.com>
-Date:   Mon, 16 Aug 2021 10:35:15 +0800
-Message-ID: <CA+a=Yy674ff4r-cVQ_QLyt0D1vh_6OdSeGXCPgNGHQ303mRV0Q@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Fix deadlock on open(O_TRUNC)
-To:     Xie Yongji <xieyongji@bytedance.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1814546.1628632283@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 13, 2021 at 5:57 PM Xie Yongji <xieyongji@bytedance.com> wrote:
->
-> The invalidate_inode_pages2() might be called with FUSE_NOWRITE
-> set in fuse_finish_open(), which can lead to deadlock in
-> fuse_launder_page().
->
-> To fix it, this tries to delay calling invalidate_inode_pages2()
-> until FUSE_NOWRITE is removed.
->
-> Fixes: e4648309b85a ("fuse: truncate pending writes on O_TRUNC")
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> ---
->  fs/fuse/dir.c    |  2 +-
->  fs/fuse/file.c   | 19 +++++++++++++++----
->  fs/fuse/fuse_i.h |  2 +-
->  3 files changed, 17 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index eade6f965b2e..d919c3e89cb0 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -548,7 +548,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
->                 fuse_sync_release(fi, ff, flags);
->         } else {
->                 file->private_data = ff;
-> -               fuse_finish_open(inode, file);
-> +               fuse_finish_open(inode, file, false);
->         }
->         return err;
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 97f860cfc195..035af9c88eaf 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -193,12 +193,12 @@ static void fuse_link_write_file(struct file *file)
->         spin_unlock(&fi->lock);
->  }
->
-> -void fuse_finish_open(struct inode *inode, struct file *file)
-> +void fuse_finish_open(struct inode *inode, struct file *file, bool no_write)
->  {
->         struct fuse_file *ff = file->private_data;
->         struct fuse_conn *fc = get_fuse_conn(inode);
->
-> -       if (!(ff->open_flags & FOPEN_KEEP_CACHE))
-> +       if (!(ff->open_flags & FOPEN_KEEP_CACHE) && !no_write)
->                 invalidate_inode_pages2(inode->i_mapping);
-It would break !FOPEN_KEEP_CACHE semantics, right? Fuse server asks
-the kernel not to keep cache across open but kernel still keeps it?
+On Tue, Aug 10, 2021 at 10:51:23PM +0100, David Howells wrote:
+> Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
+> 
+> > +struct folio *folio_alloc(gfp_t gfp, unsigned order)
+> > +{
+> > +	struct page *page = alloc_pages(gfp | __GFP_COMP, order);
+> > +
+> > +	if (page && order > 1)
+> > +		prep_transhuge_page(page);
+> 
+> Ummm...  Shouldn't order==1 pages (two page folios) be prep'd also?
 
-Cheers,
-Tao
--- 
-Into Sth. Rich & Strange
+No.  The deferred list is stored in the second tail page, so there's
+nowhere to store one if there are only two pages.
+
+The free_transhuge_page() dtor only handles the deferred list, so
+it's fine to skip setting the DTOR in the page too.
+
+> Would it be better to just jump to alloc_pages() if order <= 1?  E.g.:
+> 
+> struct folio *folio_alloc(gfp_t gfp, unsigned order)
+> {
+> 	struct page *page;
+> 
+> 	if (order <= 1)
+> 		return (struct folio *)alloc_pages(gfp | __GFP_COMP, order);
+> 
+> 	page = alloc_pages(gfp | __GFP_COMP, order);
+> 	if (page)
+> 		prep_transhuge_page(page);
+> 	return (struct folio *)page;
+> }
+
+That doesn't look simpler to me?
