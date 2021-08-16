@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5A913EDE2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 21:51:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8FA53EDE30
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 21:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231640AbhHPTvZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 15:51:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57627 "EHLO
+        id S231670AbhHPTvq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 15:51:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39015 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231288AbhHPTvX (ORCPT
+        by vger.kernel.org with ESMTP id S231646AbhHPTvp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 15:51:23 -0400
+        Mon, 16 Aug 2021 15:51:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629143451;
+        s=mimecast20190719; t=1629143473;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Gs3y/a2DCKk81G5bIWP/wpRKwhslZEVKrtw3Fq3vrSs=;
-        b=Rv75YnjQJQlkH9OkCC3zNQ0wuSrzB+Apm3sEN7YxO4H+rwhqadDq1bnrlJh1hWx/EOYr4w
-        7sa2w9MbEiA9HvmJ5gcWuNX1M0WOI5s5YRdCqa8S4CKyzw34xFXSrWXj8+bC3uauB0aoQM
-        YlHIYCLvxifklchcC3dWJWLTuMMTgug=
+        bh=hJpZHLDKvzGPtPhMPjr76EVS+xDwvDkriAy1eTHJ9n4=;
+        b=JABHp3osTGE2qVhTKf1rR2tZpzN70PAcI7QDEeAwbIrYKkC/J2HbqAliE/6YuOOVYaA4hC
+        MUcbYQx/52pCitfj2VPs3PuzDlD2B0NBv9N1gndaAp1z3g0Z6FdP84pshxfIDS3oXX52sk
+        nMFkW6CfwIAshlmzvWeu6vFhKTdLIFw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-416-gTboXFDsNZK8F-hieBIhqQ-1; Mon, 16 Aug 2021 15:50:50 -0400
-X-MC-Unique: gTboXFDsNZK8F-hieBIhqQ-1
+ us-mta-357-HOo_TwmXOV2DyJXtQCaRxw-1; Mon, 16 Aug 2021 15:51:11 -0400
+X-MC-Unique: HOo_TwmXOV2DyJXtQCaRxw-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 674C7100A605;
-        Mon, 16 Aug 2021 19:50:45 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 658AB107ACF5;
+        Mon, 16 Aug 2021 19:51:06 +0000 (UTC)
 Received: from t480s.redhat.com (unknown [10.39.192.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B35DB5C1D5;
-        Mon, 16 Aug 2021 19:50:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C44C51803B;
+        Mon, 16 Aug 2021 19:50:45 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     David Hildenbrand <david@redhat.com>,
@@ -91,9 +91,9 @@ Cc:     David Hildenbrand <david@redhat.com>,
         David Laight <David.Laight@ACULAB.COM>,
         linux-unionfs@vger.kernel.org, linux-api@vger.kernel.org,
         x86@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH v2 4/7] binfmt: remove in-tree usage of MAP_DENYWRITE
-Date:   Mon, 16 Aug 2021 21:48:37 +0200
-Message-Id: <20210816194840.42769-5-david@redhat.com>
+Subject: [PATCH v2 5/7] mm: remove VM_DENYWRITE
+Date:   Mon, 16 Aug 2021 21:48:38 +0200
+Message-Id: <20210816194840.42769-6-david@redhat.com>
 In-Reply-To: <20210816194840.42769-1-david@redhat.com>
 References: <20210816194840.42769-1-david@redhat.com>
 MIME-Version: 1.0
@@ -103,128 +103,188 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-At exec time when we mmap the new executable via MAP_DENYWRITE we have it
-opened via do_open_execat() and already deny_write_access()'ed the file
-successfully. Once exec completes, we allow_write_acces(); however,
-we set mm->exe_file in begin_new_exec() via set_mm_exe_file() and
-also deny_write_access() as long as mm->exe_file remains set. We'll
-effectively deny write access to our executable via mm->exe_file
-until mm->exe_file is changed -- when the process is removed, on new
-exec, or via sys_prctl(PR_SET_MM_MAP/EXE_FILE).
+All in-tree users of MAP_DENYWRITE are gone. MAP_DENYWRITE cannot be
+set from user space, so all users are gone; let's remove it.
 
-Let's remove all usage of MAP_DENYWRITE, it's no longer necessary for
-mm->exe_file.
-
-In case of an elf interpreter, we'll now only deny write access to the file
-during exec. This is somewhat okay, because the interpreter behaves
-(and sometime is) a shared library; all shared libraries, especially the
-ones loaded directly in user space like via dlopen() won't ever be mapped
-via MAP_DENYWRITE, because we ignore that from user space completely;
-these shared libraries can always be modified while mapped and executed.
-Let's only special-case the main executable, denying write access while
-being executed by a process. This can be considered a minor user space
-visible change.
-
-While this is a cleanup, it also fixes part of a problem reported with
-VM_DENYWRITE on overlayfs, as VM_DENYWRITE is effectively unused with
-this patch and will be removed next:
-  "Overlayfs did not honor positive i_writecount on realfile for
-   VM_DENYWRITE mappings." [1]
-
-[1] https://lore.kernel.org/r/YNHXzBgzRrZu1MrD@miu.piliscsaba.redhat.com/
-
-Reported-by: Chengguang Xu <cgxu519@mykernel.net>
 Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/x86/ia32/ia32_aout.c | 6 ++----
- fs/binfmt_aout.c          | 5 ++---
- fs/binfmt_elf.c           | 4 ++--
- fs/binfmt_elf_fdpic.c     | 2 +-
- 4 files changed, 7 insertions(+), 10 deletions(-)
+ fs/proc/task_mmu.c             |  1 -
+ include/linux/mm.h             |  1 -
+ include/linux/mman.h           |  1 -
+ include/trace/events/mmflags.h |  1 -
+ kernel/events/core.c           |  2 --
+ kernel/fork.c                  |  3 ---
+ lib/test_printf.c              |  5 ++---
+ mm/mmap.c                      | 27 +++------------------------
+ 8 files changed, 5 insertions(+), 36 deletions(-)
 
-diff --git a/arch/x86/ia32/ia32_aout.c b/arch/x86/ia32/ia32_aout.c
-index 321d7b22ad2d..9bd15241fadb 100644
---- a/arch/x86/ia32/ia32_aout.c
-+++ b/arch/x86/ia32/ia32_aout.c
-@@ -202,8 +202,7 @@ static int load_aout_binary(struct linux_binprm *bprm)
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index eb97468dfe4c..cf25be3e0321 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -619,7 +619,6 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ 		[ilog2(VM_MAYSHARE)]	= "ms",
+ 		[ilog2(VM_GROWSDOWN)]	= "gd",
+ 		[ilog2(VM_PFNMAP)]	= "pf",
+-		[ilog2(VM_DENYWRITE)]	= "dw",
+ 		[ilog2(VM_LOCKED)]	= "lo",
+ 		[ilog2(VM_IO)]		= "io",
+ 		[ilog2(VM_SEQ_READ)]	= "sr",
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 56b1cd41db61..257995f62e83 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -281,7 +281,6 @@ extern unsigned int kobjsize(const void *objp);
+ #define VM_GROWSDOWN	0x00000100	/* general info on the segment */
+ #define VM_UFFD_MISSING	0x00000200	/* missing pages tracking */
+ #define VM_PFNMAP	0x00000400	/* Page-ranges managed without "struct page", just pure PFN */
+-#define VM_DENYWRITE	0x00000800	/* ETXTBSY on write attempts.. */
+ #define VM_UFFD_WP	0x00001000	/* wrprotect pages tracking */
  
- 		error = vm_mmap(bprm->file, N_TXTADDR(ex), ex.a_text,
- 				PROT_READ | PROT_EXEC,
--				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE |
--				MAP_32BIT,
-+				MAP_FIXED | MAP_PRIVATE | MAP_32BIT,
- 				fd_offset);
+ #define VM_LOCKED	0x00002000
+diff --git a/include/linux/mman.h b/include/linux/mman.h
+index ebb09a964272..bd9aadda047b 100644
+--- a/include/linux/mman.h
++++ b/include/linux/mman.h
+@@ -153,7 +153,6 @@ static inline unsigned long
+ calc_vm_flag_bits(unsigned long flags)
+ {
+ 	return _calc_vm_trans(flags, MAP_GROWSDOWN,  VM_GROWSDOWN ) |
+-	       _calc_vm_trans(flags, MAP_DENYWRITE,  VM_DENYWRITE ) |
+ 	       _calc_vm_trans(flags, MAP_LOCKED,     VM_LOCKED    ) |
+ 	       _calc_vm_trans(flags, MAP_SYNC,	     VM_SYNC      ) |
+ 	       arch_calc_vm_flag_bits(flags);
+diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+index 390270e00a1d..f44c3fb8da1a 100644
+--- a/include/trace/events/mmflags.h
++++ b/include/trace/events/mmflags.h
+@@ -163,7 +163,6 @@ IF_HAVE_PG_SKIP_KASAN_POISON(PG_skip_kasan_poison, "skip_kasan_poison")
+ 	{VM_UFFD_MISSING,		"uffd_missing"	},		\
+ IF_HAVE_UFFD_MINOR(VM_UFFD_MINOR,	"uffd_minor"	)		\
+ 	{VM_PFNMAP,			"pfnmap"	},		\
+-	{VM_DENYWRITE,			"denywrite"	},		\
+ 	{VM_UFFD_WP,			"uffd_wp"	},		\
+ 	{VM_LOCKED,			"locked"	},		\
+ 	{VM_IO,				"io"		},		\
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 1cb1f9b8392e..19767bb9933c 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8307,8 +8307,6 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
+ 	else
+ 		flags = MAP_PRIVATE;
  
- 		if (error != N_TXTADDR(ex))
-@@ -211,8 +210,7 @@ static int load_aout_binary(struct linux_binprm *bprm)
+-	if (vma->vm_flags & VM_DENYWRITE)
+-		flags |= MAP_DENYWRITE;
+ 	if (vma->vm_flags & VM_LOCKED)
+ 		flags |= MAP_LOCKED;
+ 	if (is_vm_hugetlb_page(vma))
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 543541764865..34d21642c44f 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -570,12 +570,9 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+ 		tmp->vm_flags &= ~(VM_LOCKED | VM_LOCKONFAULT);
+ 		file = tmp->vm_file;
+ 		if (file) {
+-			struct inode *inode = file_inode(file);
+ 			struct address_space *mapping = file->f_mapping;
  
- 		error = vm_mmap(bprm->file, N_DATADDR(ex), ex.a_data,
- 				PROT_READ | PROT_WRITE | PROT_EXEC,
--				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE |
--				MAP_32BIT,
-+				MAP_FIXED | MAP_PRIVATE | MAP_32BIT,
- 				fd_offset + ex.a_text);
- 		if (error != N_DATADDR(ex))
- 			return error;
-diff --git a/fs/binfmt_aout.c b/fs/binfmt_aout.c
-index d29de971d3f3..a47496d0f123 100644
---- a/fs/binfmt_aout.c
-+++ b/fs/binfmt_aout.c
-@@ -221,8 +221,7 @@ static int load_aout_binary(struct linux_binprm * bprm)
+ 			get_file(file);
+-			if (tmp->vm_flags & VM_DENYWRITE)
+-				put_write_access(inode);
+ 			i_mmap_lock_write(mapping);
+ 			if (tmp->vm_flags & VM_SHARED)
+ 				mapping_allow_writable(mapping);
+diff --git a/lib/test_printf.c b/lib/test_printf.c
+index 8ac71aee46af..8a48b61c3763 100644
+--- a/lib/test_printf.c
++++ b/lib/test_printf.c
+@@ -675,9 +675,8 @@ flags(void)
+ 			"uptodate|dirty|lru|active|swapbacked",
+ 			cmp_buffer);
+ 
+-	flags = VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC
+-			| VM_DENYWRITE;
+-	test("read|exec|mayread|maywrite|mayexec|denywrite", "%pGv", &flags);
++	flags = VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;
++	test("read|exec|mayread|maywrite|mayexec", "%pGv", &flags);
+ 
+ 	gfp = GFP_TRANSHUGE;
+ 	test("GFP_TRANSHUGE", "%pGg", &gfp);
+diff --git a/mm/mmap.c b/mm/mmap.c
+index ca54d36d203a..589dc1dc13db 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -148,8 +148,6 @@ void vma_set_page_prot(struct vm_area_struct *vma)
+ static void __remove_shared_vm_struct(struct vm_area_struct *vma,
+ 		struct file *file, struct address_space *mapping)
+ {
+-	if (vma->vm_flags & VM_DENYWRITE)
+-		allow_write_access(file);
+ 	if (vma->vm_flags & VM_SHARED)
+ 		mapping_unmap_writable(mapping);
+ 
+@@ -666,8 +664,6 @@ static void __vma_link_file(struct vm_area_struct *vma)
+ 	if (file) {
+ 		struct address_space *mapping = file->f_mapping;
+ 
+-		if (vma->vm_flags & VM_DENYWRITE)
+-			put_write_access(file_inode(file));
+ 		if (vma->vm_flags & VM_SHARED)
+ 			mapping_allow_writable(mapping);
+ 
+@@ -1788,22 +1784,12 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	vma->vm_pgoff = pgoff;
+ 
+ 	if (file) {
+-		if (vm_flags & VM_DENYWRITE) {
+-			error = deny_write_access(file);
+-			if (error)
+-				goto free_vma;
+-		}
+ 		if (vm_flags & VM_SHARED) {
+ 			error = mapping_map_writable(file->f_mapping);
+ 			if (error)
+-				goto allow_write_and_free_vma;
++				goto free_vma;
  		}
  
- 		error = vm_mmap(bprm->file, N_TXTADDR(ex), ex.a_text,
--			PROT_READ | PROT_EXEC,
--			MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE,
-+			PROT_READ | PROT_EXEC, MAP_FIXED | MAP_PRIVATE,
- 			fd_offset);
+-		/* ->mmap() can change vma->vm_file, but must guarantee that
+-		 * vma_link() below can deny write-access if VM_DENYWRITE is set
+-		 * and map writably if VM_SHARED is set. This usually means the
+-		 * new file must not have been exposed to user-space, yet.
+-		 */
+ 		vma->vm_file = get_file(file);
+ 		error = call_mmap(file, vma);
+ 		if (error)
+@@ -1860,13 +1846,9 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
  
- 		if (error != N_TXTADDR(ex))
-@@ -230,7 +229,7 @@ static int load_aout_binary(struct linux_binprm * bprm)
- 
- 		error = vm_mmap(bprm->file, N_DATADDR(ex), ex.a_data,
- 				PROT_READ | PROT_WRITE | PROT_EXEC,
--				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE,
-+				MAP_FIXED | MAP_PRIVATE,
- 				fd_offset + ex.a_text);
- 		if (error != N_DATADDR(ex))
- 			return error;
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 6d2c79533631..69d900a8473d 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -622,7 +622,7 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
- 	eppnt = interp_elf_phdata;
- 	for (i = 0; i < interp_elf_ex->e_phnum; i++, eppnt++) {
- 		if (eppnt->p_type == PT_LOAD) {
--			int elf_type = MAP_PRIVATE | MAP_DENYWRITE;
-+			int elf_type = MAP_PRIVATE;
- 			int elf_prot = make_prot(eppnt->p_flags, arch_state,
- 						 true, true);
- 			unsigned long vaddr = 0;
-@@ -1070,7 +1070,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		elf_prot = make_prot(elf_ppnt->p_flags, &arch_state,
- 				     !!interpreter, false);
- 
--		elf_flags = MAP_PRIVATE | MAP_DENYWRITE;
-+		elf_flags = MAP_PRIVATE;
- 
- 		vaddr = elf_ppnt->p_vaddr;
- 		/*
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index cf4028487dcc..6d8fd6030cbb 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -1041,7 +1041,7 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
- 		if (phdr->p_flags & PF_W) prot |= PROT_WRITE;
- 		if (phdr->p_flags & PF_X) prot |= PROT_EXEC;
- 
--		flags = MAP_PRIVATE | MAP_DENYWRITE;
-+		flags = MAP_PRIVATE;
- 		maddr = 0;
- 
- 		switch (params->flags & ELF_FDPIC_FLAG_ARRANGEMENT) {
+ 	vma_link(mm, vma, prev, rb_link, rb_parent);
+ 	/* Once vma denies write, undo our temporary denial count */
+-	if (file) {
+ unmap_writable:
+-		if (vm_flags & VM_SHARED)
+-			mapping_unmap_writable(file->f_mapping);
+-		if (vm_flags & VM_DENYWRITE)
+-			allow_write_access(file);
+-	}
++	if (file && vm_flags & VM_SHARED)
++		mapping_unmap_writable(file->f_mapping);
+ 	file = vma->vm_file;
+ out:
+ 	perf_event_mmap(vma);
+@@ -1906,9 +1888,6 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	charged = 0;
+ 	if (vm_flags & VM_SHARED)
+ 		mapping_unmap_writable(file->f_mapping);
+-allow_write_and_free_vma:
+-	if (vm_flags & VM_DENYWRITE)
+-		allow_write_access(file);
+ free_vma:
+ 	vm_area_free(vma);
+ unacct_error:
 -- 
 2.31.1
 
