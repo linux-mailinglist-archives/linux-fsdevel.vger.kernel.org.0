@@ -2,50 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BF413ECE4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 08:04:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB0A33ECE57
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 08:04:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233370AbhHPGFC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 02:05:02 -0400
+        id S233396AbhHPGFO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 02:05:14 -0400
 Received: from mail.cn.fujitsu.com ([183.91.158.132]:38862 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233376AbhHPGFB (ORCPT
+        with ESMTP id S233497AbhHPGFN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 02:05:01 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AZ6rcZa82sk4fShoPMLduk+DkI+orL9Y04lQ7?=
- =?us-ascii?q?vn2ZKCYlFvBw8vrCoB1173HJYUkqMk3I9ergBEDiewK4yXcW2/hzAV7KZmCP11?=
- =?us-ascii?q?dAR7sSj7cKrQeBJwTOssZZ1YpFN5N1EcDMCzFB5vrS0U2VFMkBzbC8nJyVuQ?=
- =?us-ascii?q?=3D=3D?=
+        Mon, 16 Aug 2021 02:05:13 -0400
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AFwGloqpC1aVYApE6Xo4ThpkaV5oXeYIsimQD?=
+ =?us-ascii?q?101hICG9E/bo8/xG+c536faaslgssQ4b8+xoVJPgfZq+z+8R3WByB8bAYOCOgg?=
+ =?us-ascii?q?LBQ72KhrGSoQEIdRefysdtkY9kc4VbTOb7FEVGi6/BizWQIpINx8am/cmT6dvj?=
+ =?us-ascii?q?8w=3D=3D?=
 X-IronPort-AV: E=Sophos;i="5.84,324,1620662400"; 
-   d="scan'208";a="112944860"
+   d="scan'208";a="112944870"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 16 Aug 2021 14:04:29 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 82D764D0D4BF;
-        Mon, 16 Aug 2021 14:04:28 +0800 (CST)
+  by heian.cn.fujitsu.com with ESMTP; 16 Aug 2021 14:04:35 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 767A74D0D4BF;
+        Mon, 16 Aug 2021 14:04:33 +0800 (CST)
+Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Mon, 16 Aug 2021 14:04:35 +0800
 Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Mon, 16 Aug 2021 14:04:25 +0800
+ G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Mon, 16 Aug 2021 14:04:31 +0800
 Received: from irides.mr.mr.mr (10.167.225.141) by
  G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Mon, 16 Aug 2021 14:04:21 +0800
+ id 15.0.1497.23 via Frontend Transport; Mon, 16 Aug 2021 14:04:28 +0800
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <djwong@kernel.org>, <hch@lst.de>, <linux-xfs@vger.kernel.org>
 CC:     <ruansy.fnst@fujitsu.com>, <dan.j.williams@intel.com>,
         <david@fromorbit.com>, <linux-fsdevel@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
         <rgoldwyn@suse.de>, <viro@zeniv.linux.org.uk>,
-        <willy@infradead.org>, Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: [PATCH v7 4/8] fsdax: Add dax_iomap_cow_copy() for dax_iomap_zero
-Date:   Mon, 16 Aug 2021 14:03:55 +0800
-Message-ID: <20210816060359.1442450-5-ruansy.fnst@fujitsu.com>
+        <willy@infradead.org>
+Subject: [PATCH v7 5/8] iomap: Introduce iomap_iter2 for two files
+Date:   Mon, 16 Aug 2021 14:03:56 +0800
+Message-ID: <20210816060359.1442450-6-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210816060359.1442450-1-ruansy.fnst@fujitsu.com>
 References: <20210816060359.1442450-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 82D764D0D4BF.A3AC4
+X-yoursite-MailScanner-ID: 767A74D0D4BF.A1610
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No
@@ -53,102 +56,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Punch hole on a reflinked file needs dax_iomap_cow_copy() too.
-Otherwise, data in not aligned area will be not correct.  So, add the
-srcmap to dax_iomap_zero() and replace memset() as dax_iomap_cow_copy().
+Some operations, such as comparing a range of data in two files under
+fsdax mode, requires nested iomap_begin()/iomap_end() on two files.
+Thus, we introduce iomap_iter2() to accept two iteraters to operate
+action on two files.
 
 Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/dax.c               | 25 +++++++++++++++----------
- fs/iomap/buffered-io.c |  4 ++--
- include/linux/dax.h    |  3 ++-
- 3 files changed, 19 insertions(+), 13 deletions(-)
+ fs/iomap/core.c       | 51 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/iomap.h |  2 ++
+ 2 files changed, 53 insertions(+)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index e49ba68cc7e4..91ceb518f66a 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1198,7 +1198,8 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
+diff --git a/fs/iomap/core.c b/fs/iomap/core.c
+index 89a87a1654e8..214538a25110 100644
+--- a/fs/iomap/core.c
++++ b/fs/iomap/core.c
+@@ -77,3 +77,54 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+ 	iomap_iter_done(iter);
+ 	return 1;
  }
- #endif /* CONFIG_FS_DAX_PMD */
- 
--s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
-+s64 dax_iomap_zero(loff_t pos, u64 length, const struct iomap *iomap,
-+		const struct iomap *srcmap)
- {
- 	sector_t sector = iomap_sector(iomap, pos & PAGE_MASK);
- 	pgoff_t pgoff;
-@@ -1220,19 +1221,23 @@ s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
- 
- 	if (page_aligned)
- 		rc = dax_zero_page_range(iomap->dax_dev, pgoff, 1);
--	else
-+	else {
- 		rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL);
--	if (rc < 0) {
--		dax_read_unlock(id);
--		return rc;
--	}
--
--	if (!page_aligned) {
--		memset(kaddr + offset, 0, size);
-+		if (rc < 0)
-+			goto out;
-+		if (iomap->addr != srcmap->addr) {
-+			rc = dax_iomap_cow_copy(pos, size, PAGE_SIZE, srcmap,
-+						kaddr);
-+			if (rc < 0)
-+				goto out;
-+		} else
-+			memset(kaddr + offset, 0, size);
- 		dax_flush(iomap->dax_dev, kaddr + offset, size);
- 	}
 +
-+out:
- 	dax_read_unlock(id);
--	return size;
-+	return rc < 0 ? rc : size;
- }
++/**
++ * iomap_iter2 - iterate over a ranges in two files
++ * @iter1:  the first iteration structure
++ * @iter2: the second iteration structure
++ * @ops:   iomap ops provided by the file system
++ *
++ * Iterate two files once.
++ */
++int iomap_iter2(struct iomap_iter *iter1, struct iomap_iter *iter2,
++		const struct iomap_ops *ops)
++{
++	int ret;
++
++	if (iter2->iomap.length && ops->iomap_end) {
++		ret = ops->iomap_end(iter2->inode, iter2->pos, iomap_length(iter2),
++				iter2->processed > 0 ? iter2->processed : 0,
++				iter2->flags, &iter2->iomap);
++		if (ret < 0 && !iter2->processed)
++			return ret;
++	}
++
++	if (iter1->iomap.length && ops->iomap_end) {
++		ret = ops->iomap_end(iter1->inode, iter1->pos, iomap_length(iter1),
++				iter1->processed > 0 ? iter1->processed : 0,
++				iter1->flags, &iter1->iomap);
++		if (ret < 0 && !iter1->processed)
++			return ret;
++	}
++
++	trace_iomap_iter(iter1, ops, _RET_IP_);
++	ret = iomap_iter_advance(iter1);
++	if (ret <= 0)
++		return ret;
++	ret = iomap_iter_advance(iter2);
++	if (ret <= 0)
++		return ret;
++
++	ret = ops->iomap_begin(iter1->inode, iter1->pos, iter1->len, iter1->flags,
++			       &iter1->iomap, &iter1->srcmap);
++	if (ret < 0)
++		return ret;
++	iomap_iter_done(iter1);
++
++	ret = ops->iomap_begin(iter2->inode, iter2->pos, iter2->len, iter2->flags,
++			       &iter2->iomap, &iter2->srcmap);
++	if (ret < 0)
++		return ret;
++	iomap_iter_done(iter2);
++	return 1;
++}
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 24f8489583ca..ebef060c65cd 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -186,6 +186,8 @@ struct iomap_iter {
+ };
  
- static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 71b4806266d7..6e8d40877d01 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -889,7 +889,7 @@ static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
+ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops);
++int iomap_iter2(struct iomap_iter *iter, struct iomap_iter *iter2,
++		const struct iomap_ops *ops);
  
- static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- {
--	struct iomap *iomap = &iter->iomap;
-+	const struct iomap *iomap = &iter->iomap;
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
- 	loff_t pos = iter->pos;
- 	loff_t length = iomap_length(iter);
-@@ -903,7 +903,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		s64 bytes;
- 
- 		if (IS_DAX(iter->inode))
--			bytes = dax_iomap_zero(pos, length, iomap);
-+			bytes = dax_iomap_zero(pos, length, iomap, srcmap);
- 		else
- 			bytes = __iomap_zero_iter(iter, pos, length);
- 		if (bytes < 0)
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index b52f084aa643..c63559605369 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -237,7 +237,8 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
- int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
- int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
- 				      pgoff_t index);
--s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap);
-+s64 dax_iomap_zero(loff_t pos, u64 length, const struct iomap *iomap,
-+		const struct iomap *srcmap);
- static inline bool dax_mapping(struct address_space *mapping)
- {
- 	return mapping->host && IS_DAX(mapping->host);
+ /**
+  * iomap_length - length of the current iomap iteration
 -- 
 2.32.0
 
