@@ -2,176 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BCF83EDCEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 20:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC9C13EDD32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 20:38:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbhHPSNf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 14:13:35 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50172 "EHLO
+        id S230307AbhHPSjU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 14:39:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57372 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229481AbhHPSNf (ORCPT
+        by vger.kernel.org with ESMTP id S229921AbhHPSjT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 14:13:35 -0400
+        Mon, 16 Aug 2021 14:39:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629137582;
+        s=mimecast20190719; t=1629139127;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ObwAiK1SanC6EIqEOVjwPOQt8lDrmZK5pIQ+0d+6crA=;
-        b=hF7d7WA7LassJAtAtYwSrMb7EApID1B0E2mC1Ovm2o1JyjcnGmFLRK60dWQFcMCzdb3yU4
-        GVIrHNtxRfW+rQjQ/i3KAPNh0frrk3tiebVm3Rbvgqw2tizWRmVQDjVMVMVBpgOWpl6Rz9
-        a3d6UdcVhv8ZmKnWG+EjyUc7Kbfdros=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-173-G99DOzw_MNqo06G3sC1sJQ-1; Mon, 16 Aug 2021 14:13:01 -0400
-X-MC-Unique: G99DOzw_MNqo06G3sC1sJQ-1
-Received: by mail-wr1-f70.google.com with SMTP id n18-20020adfe792000000b00156ae576abdso2045753wrm.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Aug 2021 11:13:01 -0700 (PDT)
+        bh=FA6yIOrGFNdlfE76sJx2b7lSTjBBLY6+orZoIeN8qMc=;
+        b=dAwKZOG+0SDoooBSMZdOMLG/r6uSDPliktN5u1WFXX2wlpR4pOGkgLxXYBa8p6whECaH7L
+        wGRTcvYXGKObVARL4E2337AjZQmwOLKWNzpWNNZUYaGLyYyokrY0DqJICPuaVObjnXfQ7J
+        kYLMDEyVGoWo5t+5FeBei5UO7yG9JgA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-405-zulmZe3XPpOj1ZvbWmklZA-1; Mon, 16 Aug 2021 14:38:45 -0400
+X-MC-Unique: zulmZe3XPpOj1ZvbWmklZA-1
+Received: by mail-wm1-f70.google.com with SMTP id r21-20020a05600c35d5b02902e685ef1f76so236636wmq.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Aug 2021 11:38:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ObwAiK1SanC6EIqEOVjwPOQt8lDrmZK5pIQ+0d+6crA=;
-        b=ggQf8VuYo98hsMiyqmYS4whe99ktvYKPNBckwItYzZqjFY5Yge6ODtvLkoKMPIKy2W
-         pUoWu107f29Ll5K7fU7gilXWQMHaDfgxvJCsO14veVHnAYvDLuv9WEPLUYm5Rb1ZT6Y6
-         39LMmD++QRJMzBvL0LexsCAGtIUut9PlsOHzRC+bxtHqa8gfI7/Zj/ct3j4G20Xnyk0s
-         RxLw9PH1e8G9dooeuIFo1gZURSYo6mbGG4ttU6Z0L5FYaUQ0R6YvtGT4tHlaRMiVm2Th
-         Mf1ixZkypHIwL+ykwmVxxwHZTm5kbhCRSTRhoWz/mJ7HLJSGjUCtTMkvk28CDWvjQE41
-         nVfg==
-X-Gm-Message-State: AOAM531HeT4E7lcxoJmy2jVRWOk6YYL2RnhlN1kmWYIp68ssYKEgmxgx
-        oOVH438bDvlBpVfUKUDjrxu5IYQXNN4LEEZ/JVcQR0C6pIoFXUESfjzgFQByQQkV3XSJd5K1y4P
-        yKwbkWakBIqQ08zJVtmiw6H4XmA==
-X-Received: by 2002:adf:f403:: with SMTP id g3mr20183222wro.222.1629137580034;
-        Mon, 16 Aug 2021 11:13:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxSkkSVax500dJoptbIZkzkC8VGwiA1i59fRi1lf7+73SVVl22U3bvekg7+YoUHgubxd2vmww==
-X-Received: by 2002:adf:f403:: with SMTP id g3mr20183201wro.222.1629137579804;
-        Mon, 16 Aug 2021 11:12:59 -0700 (PDT)
-Received: from krava ([83.240.61.5])
-        by smtp.gmail.com with ESMTPSA id n16sm12471749wru.79.2021.08.16.11.12.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 11:12:59 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 20:12:58 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
+        h=x-gm-message-state:to:cc:references:from:organization:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=FA6yIOrGFNdlfE76sJx2b7lSTjBBLY6+orZoIeN8qMc=;
+        b=psjAWOnCiJafHgQPUa4yrnMiIRNhigNqkUO/2jdchymMAvo54R5qZYeXq2+msFBXXs
+         uP/sPOL02D7kIbK49lPlQeGpUAEd7M+l5TSV6llL99NrBAwPmmuYeHW9WH2QPgwkTizs
+         CS73SFoGjJXR/ioafwIk8Re7EO9Kg36mv1tKy6zxNO1urYE1X5/gUNJJDgUez0m8oCAR
+         vIhos6DderX+ILi/KdWJS+OzzMer5HVc/peR7sFSUm0eFCT3sg9djYNXKj7NMvyiRQiD
+         4ZMDywqWeKzDntI91g8T8CCJBMnHueZLIv+S9ABWEWNC8PcVQQisZ63f7l/mdV/t8OE/
+         zwnA==
+X-Gm-Message-State: AOAM5301dZx+7MbbmbgpGzZSekFSrgOOiOThDsQlID2oFIO0Dy/P68/j
+        iEVMjI0nUv21yhgOzIRSOGtplSZ/1xPrDuaov/QDHowpvQWWPBGU3fA9jBAwSawGGT+ms7IHIne
+        iubRaPo6eWp87syNay6pPFl53sPK6ZgZIJo7ajPAuW11J7tBrW8kH/9ypnM5VJj1JLi0ygij5RA
+        ==
+X-Received: by 2002:a05:600c:895:: with SMTP id l21mr409333wmp.173.1629139124617;
+        Mon, 16 Aug 2021 11:38:44 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxYCZW810CZv5LtOzXX2ljYIVlkPsa1xdjvzjO9BLHiKaFa7fSwR2MSxhZ1fd8KyQVgpy4qAg==
+X-Received: by 2002:a05:600c:895:: with SMTP id l21mr409309wmp.173.1629139124360;
+        Mon, 16 Aug 2021 11:38:44 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c67f1.dip0.t-ipconnect.de. [91.12.103.241])
+        by smtp.gmail.com with ESMTPSA id u5sm12253671wrr.94.2021.08.16.11.38.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Aug 2021 11:38:44 -0700 (PDT)
+To:     Jiri Olsa <jolsa@redhat.com>
 Cc:     Mike Rapoport <rppt@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Oscar Salvador <osalvador@suse.de>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [BUG] general protection fault when reading /proc/kcore
-Message-ID: <YRqqqvaZHDu1IKrD@krava>
 References: <YRqhqz35tm3hA9CG@krava>
- <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com>
+ <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com> <YRqqqvaZHDu1IKrD@krava>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [BUG] general protection fault when reading /proc/kcore
+Message-ID: <2b83f03c-e782-138d-6010-1e4da5829b9a@redhat.com>
+Date:   Mon, 16 Aug 2021 20:38:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com>
+In-Reply-To: <YRqqqvaZHDu1IKrD@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 07:49:15PM +0200, David Hildenbrand wrote:
-> On 16.08.21 19:34, Jiri Olsa wrote:
-> > hi,
-> > I'm getting fault below when running:
-> >=20
-> > 	# cat /proc/kallsyms | grep ksys_read
-> > 	ffffffff8136d580 T ksys_read
-> > 	# objdump -d --start-address=3D0xffffffff8136d580 --stop-address=3D0xf=
-fffffff8136d590 /proc/kcore
-> >=20
-> > 	/proc/kcore:     file format elf64-x86-64
-> >=20
-> > 	Segmentation fault
-> >=20
-> > any idea? config is attached
->=20
-> Just tried with a different config on 5.14.0-rc6+
->=20
-> [root@localhost ~]# cat /proc/kallsyms | grep ksys_read
-> ffffffff8927a800 T ksys_readahead
-> ffffffff89333660 T ksys_read
->=20
-> [root@localhost ~]# objdump -d --start-address=3D0xffffffff89333660
-> --stop-address=3D0xffffffff89333670
->=20
-> a.out:     file format elf64-x86-64
->=20
->=20
->=20
-> The kern_addr_valid(start) seems to fault in your case, which is weird,
-> because it merely walks the page tables. But it seems to complain about a
-> non-canonical address 0xf887ffcbff000
->=20
-> Can you post your QEMU cmdline? Did you test this on other kernel version=
-s?
-
-I'm using virt-manager so:
-
-/usr/bin/qemu-system-x86_64 -name guest=3Dfedora33,debug-threads=3Don -S -o=
-bject secret,id=3DmasterKey0,format=3Draw,file=3D/var/lib/libvirt/qemu/doma=
-in-13-fedora33/master-key.aes -machine pc-q35-5.1,accel=3Dkvm,usb=3Doff,vmp=
-ort=3Doff,dump-guest-core=3Doff,memory-backend=3Dpc.ram -cpu Skylake-Server=
--IBRS,ss=3Don,vmx=3Don,pdcm=3Don,hypervisor=3Don,tsc-adjust=3Don,clflushopt=
-=3Don,umip=3Don,pku=3Don,stibp=3Don,arch-capabilities=3Don,ssbd=3Don,xsaves=
-=3Don,ibpb=3Don,amd-stibp=3Don,amd-ssbd=3Don,skip-l1dfl-vmentry=3Don,pschan=
-ge-mc-no=3Don -m 8192 -object memory-backend-ram,id=3Dpc.ram,size=3D8589934=
-592 -overcommit mem-lock=3Doff -smp 20,sockets=3D20,cores=3D1,threads=3D1 -=
-uuid 2185d5a9-dbad-4d61-aa4e-97af9fd7ebca -no-user-config -nodefaults -char=
-dev socket,id=3Dcharmonitor,fd=3D36,server,nowait -mon chardev=3Dcharmonito=
-r,id=3Dmonitor,mode=3Dcontrol -rtc base=3Dutc,driftfix=3Dslew -global kvm-p=
-it.lost_tick_policy=3Ddelay -no-hpet -no-shutdown -global ICH9-LPC.disable_=
-s3=3D1 -global ICH9-LPC.disable_s4=3D1 -boot strict=3Don -kernel /home/jols=
-a/qemu/run/vmlinux -initrd /home/jolsa/qemu/run/initrd -append root=3D/dev/=
-mapper/fedora_fedora-root ro rd.lvm.lv=3Dfedora_fedora/root console=3Dtty0 =
-console=3DttyS0,115200 -device pcie-root-port,port=3D0x10,chassis=3D1,id=3D=
-pci.1,bus=3Dpcie.0,multifunction=3Don,addr=3D0x2 -device pcie-root-port,por=
-t=3D0x11,chassis=3D2,id=3Dpci.2,bus=3Dpcie.0,addr=3D0x2.0x1 -device pcie-ro=
-ot-port,port=3D0x12,chassis=3D3,id=3Dpci.3,bus=3Dpcie.0,addr=3D0x2.0x2 -dev=
-ice pcie-root-port,port=3D0x13,chassis=3D4,id=3Dpci.4,bus=3Dpcie.0,addr=3D0=
-x2.0x3 -device pcie-root-port,port=3D0x14,chassis=3D5,id=3Dpci.5,bus=3Dpcie=
-=2E0,addr=3D0x2.0x4 -device pcie-root-port,port=3D0x15,chassis=3D6,id=3Dpci=
-=2E6,bus=3Dpcie.0,addr=3D0x2.0x5 -device pcie-root-port,port=3D0x16,chassis=
-=3D7,id=3Dpci.7,bus=3Dpcie.0,addr=3D0x2.0x6 -device qemu-xhci,p2=3D15,p3=3D=
-15,id=3Dusb,bus=3Dpci.2,addr=3D0x0 -device virtio-serial-pci,id=3Dvirtio-se=
-rial0,bus=3Dpci.3,addr=3D0x0 -blockdev {"driver":"file","filename":"/var/li=
-b/libvirt/images/fedora33.qcow2","node-name":"libvirt-2-storage","auto-read=
--only":true,"discard":"unmap"} -blockdev {"node-name":"libvirt-2-format","r=
-ead-only":false,"driver":"qcow2","file":"libvirt-2-storage","backing":null}=
- -device virtio-blk-pci,bus=3Dpci.4,addr=3D0x0,drive=3Dlibvirt-2-format,id=
-=3Dvirtio-disk0,bootindex=3D1 -device ide-cd,bus=3Dide.0,id=3Dsata0-0-0 -ne=
-tdev tap,fd=3D38,id=3Dhostnet0,vhost=3Don,vhostfd=3D39 -device virtio-net-p=
-ci,netdev=3Dhostnet0,id=3Dnet0,mac=3D52:54:00:f3:c6:e7,bus=3Dpci.1,addr=3D0=
-x0 -chardev pty,id=3Dcharserial0 -device isa-serial,chardev=3Dcharserial0,i=
-d=3Dserial0 -chardev socket,id=3Dcharchannel0,fd=3D40,server,nowait -device=
- virtserialport,bus=3Dvirtio-serial0.0,nr=3D1,chardev=3Dcharchannel0,id=3Dc=
-hannel0,name=3Dorg.qemu.guest_agent.0 -chardev spicevmc,id=3Dcharchannel1,n=
-ame=3Dvdagent -device virtserialport,bus=3Dvirtio-serial0.0,nr=3D2,chardev=
-=3Dcharchannel1,id=3Dchannel1,name=3Dcom.redhat.spice.0 -device usb-tablet,=
-id=3Dinput0,bus=3Dusb.0,port=3D1 -spice port=3D5900,addr=3D127.0.0.1,disabl=
-e-ticketing,image-compression=3Doff,seamless-migration=3Don -device qxl-vga=
-,id=3Dvideo0,ram_size=3D67108864,vram_size=3D67108864,vram64_size_mb=3D0,vg=
-amem_mb=3D16,max_outputs=3D1,bus=3Dpcie.0,addr=3D0x1 -device ich9-intel-hda=
-,id=3Dsound0,bus=3Dpcie.0,addr=3D0x1b -device hda-duplex,id=3Dsound0-codec0=
-,bus=3Dsound0.0,cad=3D0 -chardev spicevmc,id=3Dcharredir0,name=3Dusbredir -=
-device usb-redir,chardev=3Dcharredir0,id=3Dredir0,bus=3Dusb.0,port=3D2 -cha=
-rdev spicevmc,id=3Dcharredir1,name=3Dusbredir -device usb-redir,chardev=3Dc=
-harredir1,id=3Dredir1,bus=3Dusb.0,port=3D3 -device virtio-balloon-pci,id=3D=
-balloon0,bus=3Dpci.5,addr=3D0x0 -object rng-random,id=3Dobjrng0,filename=3D=
-/dev/urandom -device virtio-rng-pci,rng=3Dobjrng0,id=3Drng0,bus=3Dpci.6,add=
-r=3D0x0 -sandbox on,obsolete=3Ddeny,elevateprivileges=3Ddeny,spawn=3Ddeny,r=
-esourcecontrol=3Ddeny -msg timestamp=3Don
-
-so far I tested just bpf-next/master:
-  git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-
-and jsut removed my changes to make sure it wasn't me ;-)
-
-I'll try to find a version that worked for me before
-
-
-thanks,
-jirka
+T24gMTYuMDguMjEgMjA6MTIsIEppcmkgT2xzYSB3cm90ZToNCj4gT24gTW9uLCBBdWcgMTYs
+IDIwMjEgYXQgMDc6NDk6MTVQTSArMDIwMCwgRGF2aWQgSGlsZGVuYnJhbmQgd3JvdGU6DQo+
+PiBPbiAxNi4wOC4yMSAxOTozNCwgSmlyaSBPbHNhIHdyb3RlOg0KPj4+IGhpLA0KPj4+IEkn
+bSBnZXR0aW5nIGZhdWx0IGJlbG93IHdoZW4gcnVubmluZzoNCj4+Pg0KPj4+IAkjIGNhdCAv
+cHJvYy9rYWxsc3ltcyB8IGdyZXAga3N5c19yZWFkDQo+Pj4gCWZmZmZmZmZmODEzNmQ1ODAg
+VCBrc3lzX3JlYWQNCj4+PiAJIyBvYmpkdW1wIC1kIC0tc3RhcnQtYWRkcmVzcz0weGZmZmZm
+ZmZmODEzNmQ1ODAgLS1zdG9wLWFkZHJlc3M9MHhmZmZmZmZmZjgxMzZkNTkwIC9wcm9jL2tj
+b3JlDQo+Pj4NCj4+PiAJL3Byb2Mva2NvcmU6ICAgICBmaWxlIGZvcm1hdCBlbGY2NC14ODYt
+NjQNCj4+Pg0KPj4+IAlTZWdtZW50YXRpb24gZmF1bHQNCj4+Pg0KPj4+IGFueSBpZGVhPyBj
+b25maWcgaXMgYXR0YWNoZWQNCj4+DQo+PiBKdXN0IHRyaWVkIHdpdGggYSBkaWZmZXJlbnQg
+Y29uZmlnIG9uIDUuMTQuMC1yYzYrDQo+Pg0KPj4gW3Jvb3RAbG9jYWxob3N0IH5dIyBjYXQg
+L3Byb2Mva2FsbHN5bXMgfCBncmVwIGtzeXNfcmVhZA0KPj4gZmZmZmZmZmY4OTI3YTgwMCBU
+IGtzeXNfcmVhZGFoZWFkDQo+PiBmZmZmZmZmZjg5MzMzNjYwIFQga3N5c19yZWFkDQo+Pg0K
+Pj4gW3Jvb3RAbG9jYWxob3N0IH5dIyBvYmpkdW1wIC1kIC0tc3RhcnQtYWRkcmVzcz0weGZm
+ZmZmZmZmODkzMzM2NjANCj4+IC0tc3RvcC1hZGRyZXNzPTB4ZmZmZmZmZmY4OTMzMzY3MA0K
+Pj4NCj4+IGEub3V0OiAgICAgZmlsZSBmb3JtYXQgZWxmNjQteDg2LTY0DQo+Pg0KPj4NCj4+
+DQo+PiBUaGUga2Vybl9hZGRyX3ZhbGlkKHN0YXJ0KSBzZWVtcyB0byBmYXVsdCBpbiB5b3Vy
+IGNhc2UsIHdoaWNoIGlzIHdlaXJkLA0KPj4gYmVjYXVzZSBpdCBtZXJlbHkgd2Fsa3MgdGhl
+IHBhZ2UgdGFibGVzLiBCdXQgaXQgc2VlbXMgdG8gY29tcGxhaW4gYWJvdXQgYQ0KPj4gbm9u
+LWNhbm9uaWNhbCBhZGRyZXNzIDB4Zjg4N2ZmY2JmZjAwMA0KPj4NCj4+IENhbiB5b3UgcG9z
+dCB5b3VyIFFFTVUgY21kbGluZT8gRGlkIHlvdSB0ZXN0IHRoaXMgb24gb3RoZXIga2VybmVs
+IHZlcnNpb25zPw0KPiANCj4gSSdtIHVzaW5nIHZpcnQtbWFuYWdlciBzbzoNCj4gDQo+IC91
+c3IvYmluL3FlbXUtc3lzdGVtLXg4Nl82NCAtbmFtZSBndWVzdD1mZWRvcmEzMyxkZWJ1Zy10
+aHJlYWRzPW9uIC1TIC1vYmplY3Qgc2VjcmV0LGlkPW1hc3RlcktleTAsZm9ybWF0PXJhdyxm
+aWxlPS92YXIvbGliL2xpYnZpcnQvcWVtdS9kb21haW4tMTMtZmVkb3JhMzMvbWFzdGVyLWtl
+eS5hZXMgLW1hY2hpbmUgcGMtcTM1LTUuMSxhY2NlbD1rdm0sdXNiPW9mZix2bXBvcnQ9b2Zm
+LGR1bXAtZ3Vlc3QtY29yZT1vZmYsbWVtb3J5LWJhY2tlbmQ9cGMucmFtIC1jcHUgU2t5bGFr
+ZS1TZXJ2ZXItSUJSUyxzcz1vbix2bXg9b24scGRjbT1vbixoeXBlcnZpc29yPW9uLHRzYy1h
+ZGp1c3Q9b24sY2xmbHVzaG9wdD1vbix1bWlwPW9uLHBrdT1vbixzdGlicD1vbixhcmNoLWNh
+cGFiaWxpdGllcz1vbixzc2JkPW9uLHhzYXZlcz1vbixpYnBiPW9uLGFtZC1zdGlicD1vbixh
+bWQtc3NiZD1vbixza2lwLWwxZGZsLXZtZW50cnk9b24scHNjaGFuZ2UtbWMtbm89b24gLW0g
+ODE5MiAtb2JqZWN0IG1lbW9yeS1iYWNrZW5kLXJhbSxpZD1wYy5yYW0sc2l6ZT04NTg5OTM0
+NTkyIC1vdmVyY29tbWl0IG1lbS1sb2NrPW9mZiAtc21wIDIwLHNvY2tldHM9MjAsY29yZXM9
+MSx0aHJlYWRzPTEgLXV1aWQgMjE4NWQ1YTktZGJhZC00ZDYxLWFhNGUtOTdhZjlmZDdlYmNh
+IC1uby11c2VyLWNvbmZpZyAtbm9kZWZhdWx0cyAtY2hhcmRldiBzb2NrZXQsaWQ9Y2hhcm1v
+bml0b3IsZmQ9MzYsc2VydmVyLG5vd2FpdCAtbW9uIGNoYXJkZXY9Y2hhcm1vbml0b3IsaWQ9
+bW9uaXRvcixtb2RlPWNvbnRyb2wgLXJ0YyBiYXNlPXV0YyxkcmlmdGZpeD1zbGV3IC1nbG9i
+YWwga3ZtLXBpdC5sb3N0X3RpY2tfcG9saWN5PWRlbGF5IC1uby1ocGV0IC1uby1zaHV0ZG93
+biAtZ2xvYmFsIElDSDktTFBDLmRpc2FibGVfczM9MSAtZ2xvYmFsIElDSDktTFBDLmRpc2Fi
+bGVfczQ9MSAtYm9vdCBzdHJpY3Q9b24gLWtlcm5lbCAvaG9tZS9qb2xzYS9xZW11L3J1bi92
+bWxpbnV4IC1pbml0cmQgL2hvbWUvam9sc2EvcWVtdS9ydW4vaW5pdHJkIC1hcHBlbmQgcm9v
+dD0vZGV2L21hcHBlci9mZWRvcmFfZmVkb3JhLXJvb3Qgcm8gcmQubHZtLmx2PWZlZG9yYV9m
+ZWRvcmEvcm9vdCBjb25zb2xlPXR0eTAgY29uc29sZT10dHlTMCwxMTUyMDAgLWRldmljZSBw
+Y2llLXJvb3QtcG9ydCxwb3J0PTB4MTAsY2hhc3Npcz0xLGlkPXBjaS4xLGJ1cz1wY2llLjAs
+bXVsdGlmdW5jdGlvbj1vbixhZGRyPTB4MiAtZGV2aWNlIHBjaWUtcm9vdC1wb3J0LHBvcnQ9
+MHgxMSxjaGFzc2lzPTIsaWQ9cGNpLjIsYnVzPXBjaWUuMCxhZGRyPTB4Mi4weDEgLWRldmlj
+ZSBwY2llLXJvb3QtcG9ydCxwb3J0PTB4MTIsY2hhc3Npcz0zLGlkPXBjaS4zLGJ1cz1wY2ll
+LjAsYWRkcj0weDIuMHgyIC1kZXZpY2UgcGNpZS1yb290LXBvcnQscG9ydD0weDEzLGNoYXNz
+aXM9NCxpZD1wY2kuNCxidXM9cGNpZS4wLGFkZHI9MHgyLjB4MyAtZGV2aWNlIHBjaWUtcm9v
+dC1wb3J0LHBvcnQ9MHgxNCxjaGFzc2lzPTUsaWQ9cGNpLjUsYnVzPXBjaWUuMCxhZGRyPTB4
+Mi4weDQgLWRldmljZSBwY2llLXJvb3QtcG9ydCxwb3J0PTB4MTUsY2hhc3Npcz02LGlkPXBj
+aS42LGJ1cz1wY2llLjAsYWRkcj0weDIuMHg1IC1kZXZpY2UgcGNpZS1yb290LXBvcnQscG9y
+dD0weDE2LGNoYXNzaXM9NyxpZD1wY2kuNyxidXM9cGNpZS4wLGFkZHI9MHgyLjB4NiAtZGV2
+aWNlIHFlbXUteGhjaSxwMj0xNSxwMz0xNSxpZD11c2IsYnVzPXBjaS4yLGFkZHI9MHgwIC1k
+ZXZpY2UgdmlydGlvLXNlcmlhbC1wY2ksaWQ9dmlydGlvLXNlcmlhbDAsYnVzPXBjaS4zLGFk
+ZHI9MHgwIC1ibG9ja2RldiB7ImRyaXZlciI6ImZpbGUiLCJmaWxlbmFtZSI6Ii92YXIvbGli
+L2xpYnZpcnQvaW1hZ2VzL2ZlZG9yYTMzLnFjb3cyIiwibm9kZS1uYW1lIjoibGlidmlydC0y
+LXN0b3JhZ2UiLCJhdXRvLXJlYWQtb25seSI6dHJ1ZSwiZGlzY2FyZCI6InVubWFwIn0gLWJs
+b2NrZGV2IHsibm9kZS1uYW1lIjoibGlidmlydC0yLWZvcm1hdCIsInJlYWQtb25seSI6ZmFs
+c2UsImRyaXZlciI6InFjb3cyIiwiZmlsZSI6ImxpYnZpcnQtMi1zdG9yYWdlIiwiYmFja2lu
+ZyI6bnVsbH0gLWRldmljZSB2aXJ0aW8tYmxrLXBjaSxidXM9cGNpLjQsYWRkcj0weDAsZHJp
+dmU9bGlidmlydC0yLWZvcm1hdCxpZD12aXJ0aW8tZGlzazAsYm9vdGluZGV4PTEgLWRldmlj
+ZSBpZGUtY2QsYnVzPWlkZS4wLGlkPXNhdGEwLTAtMCAtbmV0ZGV2IHRhcCxmZD0zOCxpZD1o
+b3N0bmV0MCx2aG9zdD1vbix2aG9zdGZkPTM5IC1kZXZpY2UgdmlydGlvLW5ldC1wY2ksbmV0
+ZGV2PWhvc3RuZXQwLGlkPW5ldDAsbWFjPTUyOjU0OjAwOmYzOmM2OmU3LGJ1cz1wY2kuMSxh
+ZGRyPTB4MCAtY2hhcmRldiBwdHksaWQ9Y2hhcnNlcmlhbDAgLWRldmljZSBpc2Etc2VyaWFs
+LGNoYXJkZXY9Y2hhcnNlcmlhbDAsaWQ9c2VyaWFsMCAtY2hhcmRldiBzb2NrZXQsaWQ9Y2hh
+cmNoYW5uZWwwLGZkPTQwLHNlcnZlcixub3dhaXQgLWRldmljZSB2aXJ0c2VyaWFscG9ydCxi
+dXM9dmlydGlvLXNlcmlhbDAuMCxucj0xLGNoYXJkZXY9Y2hhcmNoYW5uZWwwLGlkPWNoYW5u
+ZWwwLG5hbWU9b3JnLnFlbXUuZ3Vlc3RfYWdlbnQuMCAtY2hhcmRldiBzcGljZXZtYyxpZD1j
+aGFyY2hhbm5lbDEsbmFtZT12ZGFnZW50IC1kZXZpY2UgdmlydHNlcmlhbHBvcnQsYnVzPXZp
+cnRpby1zZXJpYWwwLjAsbnI9MixjaGFyZGV2PWNoYXJjaGFubmVsMSxpZD1jaGFubmVsMSxu
+YW1lPWNvbS5yZWRoYXQuc3BpY2UuMCAtZGV2aWNlIHVzYi10YWJsZXQsaWQ9aW5wdXQwLGJ1
+cz11c2IuMCxwb3J0PTEgLXNwaWNlIHBvcnQ9NTkwMCxhZGRyPTEyNy4wLjAuMSxkaXNhYmxl
+LXRpY2tldGluZyxpbWFnZS1jb21wcmVzc2lvbj1vZmYsc2VhbWxlc3MtbWlncmF0aW9uPW9u
+IC1kZXZpY2UgcXhsLXZnYSxpZD12aWRlbzAscmFtX3NpemU9NjcxMDg4NjQsdnJhbV9zaXpl
+PTY3MTA4ODY0LHZyYW02NF9zaXplX21iPTAsdmdhbWVtX21iPTE2LG1heF9vdXRwdXRzPTEs
+YnVzPXBjaWUuMCxhZGRyPTB4MSAtZGV2aWNlIGljaDktaW50ZWwtaGRhLGlkPXNvdW5kMCxi
+dXM9cGNpZS4wLGFkZHI9MHgxYiAtZGV2aWNlIGhkYS1kdXBsZXgsaWQ9c291bmQwLWNvZGVj
+MCxidXM9c291bmQwLjAsY2FkPTAgLWNoYXJkZXYgc3BpY2V2bWMsaWQ9Y2hhcnJlZGlyMCxu
+YW1lPXVzYnJlZGlyIC1kZXZpY2UgdXNiLXJlZGlyLGNoYXJkZXY9Y2hhcnJlZGlyMCxpZD1y
+ZWRpcjAsYnVzPXVzYi4wLHBvcnQ9MiAtY2hhcmRldiBzcGljZXZtYyxpZD1jaGFycmVkaXIx
+LG5hbWU9dXNicmVkaXIgLWRldmljZSB1c2ItcmVkaXIsY2hhcmRldj1jaGFycmVkaXIxLGlk
+PXJlZGlyMSxidXM9dXNiLjAscG9ydD0zIC1kZXZpY2UgdmlydGlvLWJhbGxvb24tcGNpLGlk
+PWJhbGxvb24wLGJ1cz1wY2kuNSxhZGRyPTB4MCAtb2JqZWN0IHJuZy1yYW5kb20saWQ9b2Jq
+cm5nMCxmaWxlbmFtZT0vZGV2L3VyYW5kb20gLWRldmljZSB2aXJ0aW8tcm5nLXBjaSxybmc9
+b2Jqcm5nMCxpZD1ybmcwLGJ1cz1wY2kuNixhZGRyPTB4MCAtc2FuZGJveCBvbixvYnNvbGV0
+ZT1kZW55LGVsZXZhdGVwcml2aWxlZ2VzPWRlbnksc3Bhd249ZGVueSxyZXNvdXJjZWNvbnRy
+b2w9ZGVueSAtbXNnIHRpbWVzdGFtcD1vbg0KPiANCj4gc28gZmFyIEkgdGVzdGVkIGp1c3Qg
+YnBmLW5leHQvbWFzdGVyOg0KPiAgICBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xp
+bnV4L2tlcm5lbC9naXQvYnBmL2JwZi1uZXh0LmdpdA0KPiANCg0KSnVzdCB0cmllZCB3aXRo
+IHVwc3RyZWFtIExpbnV4ICg1LjE0LjAtcmM2KSBhbmQgeW91ciBjb25maWcgd2l0aG91dCAN
+CnRyaWdnZXJpbmcgaXQuIEknbSB1c2luZyAiLWNwdSBob3N0IiwgdGhvdWdoLCBvbiBhbiBB
+TUQgUnl6ZW4gOSAzOTAwWA0KDQo+IGFuZCBqc3V0IHJlbW92ZWQgbXkgY2hhbmdlcyB0byBt
+YWtlIHN1cmUgaXQgd2Fzbid0IG1lIDstKQ0KDQo6KQ0KDQo+IA0KPiBJJ2xsIHRyeSB0byBm
+aW5kIGEgdmVyc2lvbiB0aGF0IHdvcmtlZCBmb3IgbWUgYmVmb3JlDQoNCkNhbiB5b3UgdHJ5
+IHdpdGggdXBzdHJlYW0gTGludXggYXMgd2VsbD8NCg0KDQotLSANClRoYW5rcywNCg0KRGF2
+aWQgLyBkaGlsZGVuYg0K
 
