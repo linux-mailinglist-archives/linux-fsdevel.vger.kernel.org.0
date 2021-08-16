@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA99C3EDE27
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 21:50:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5A913EDE2B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 21:51:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230515AbhHPTvI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 15:51:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20811 "EHLO
+        id S231640AbhHPTvZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 15:51:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57627 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231609AbhHPTvF (ORCPT
+        by vger.kernel.org with ESMTP id S231288AbhHPTvX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 15:51:05 -0400
+        Mon, 16 Aug 2021 15:51:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629143432;
+        s=mimecast20190719; t=1629143451;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kP9Ruk7HoVFrsIOE9R+legB98IpgGisc7R6rrwUCgRc=;
-        b=KrafWbe74Z6kBMP4N1wq+I5FwjZSgNB2qAApxH8WsANrnp0jlC8zzt6bMaTjfUlUh//K9R
-        B9NQdfDZb65Xw0Lj7LE93rpZeyAfndkkQRoiAJgw2W2dG1eaQW2vX3jxPl/pqumNkCezp1
-        LrDma+p206ppc0RFmtzsZ8GLLBuILrM=
+        bh=Gs3y/a2DCKk81G5bIWP/wpRKwhslZEVKrtw3Fq3vrSs=;
+        b=Rv75YnjQJQlkH9OkCC3zNQ0wuSrzB+Apm3sEN7YxO4H+rwhqadDq1bnrlJh1hWx/EOYr4w
+        7sa2w9MbEiA9HvmJ5gcWuNX1M0WOI5s5YRdCqa8S4CKyzw34xFXSrWXj8+bC3uauB0aoQM
+        YlHIYCLvxifklchcC3dWJWLTuMMTgug=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-453-VYoUJnKgNyGGcj_-48ogbw-1; Mon, 16 Aug 2021 15:50:31 -0400
-X-MC-Unique: VYoUJnKgNyGGcj_-48ogbw-1
+ us-mta-416-gTboXFDsNZK8F-hieBIhqQ-1; Mon, 16 Aug 2021 15:50:50 -0400
+X-MC-Unique: gTboXFDsNZK8F-hieBIhqQ-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 59F97107ACF5;
-        Mon, 16 Aug 2021 19:50:25 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 674C7100A605;
+        Mon, 16 Aug 2021 19:50:45 +0000 (UTC)
 Received: from t480s.redhat.com (unknown [10.39.192.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 264AE5C1D5;
-        Mon, 16 Aug 2021 19:50:00 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B35DB5C1D5;
+        Mon, 16 Aug 2021 19:50:25 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     David Hildenbrand <david@redhat.com>,
@@ -91,9 +91,9 @@ Cc:     David Hildenbrand <david@redhat.com>,
         David Laight <David.Laight@ACULAB.COM>,
         linux-unionfs@vger.kernel.org, linux-api@vger.kernel.org,
         x86@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH v2 3/7] kernel/fork: always deny write access to current MM exe_file
-Date:   Mon, 16 Aug 2021 21:48:36 +0200
-Message-Id: <20210816194840.42769-4-david@redhat.com>
+Subject: [PATCH v2 4/7] binfmt: remove in-tree usage of MAP_DENYWRITE
+Date:   Mon, 16 Aug 2021 21:48:37 +0200
+Message-Id: <20210816194840.42769-5-david@redhat.com>
 In-Reply-To: <20210816194840.42769-1-david@redhat.com>
 References: <20210816194840.42769-1-david@redhat.com>
 MIME-Version: 1.0
@@ -103,166 +103,128 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We want to remove VM_DENYWRITE only currently only used when mapping the
-executable during exec. During exec, we already deny_write_access() the
-executable, however, after exec completes the VMAs mapped
-with VM_DENYWRITE effectively keeps write access denied via
-deny_write_access().
+At exec time when we mmap the new executable via MAP_DENYWRITE we have it
+opened via do_open_execat() and already deny_write_access()'ed the file
+successfully. Once exec completes, we allow_write_acces(); however,
+we set mm->exe_file in begin_new_exec() via set_mm_exe_file() and
+also deny_write_access() as long as mm->exe_file remains set. We'll
+effectively deny write access to our executable via mm->exe_file
+until mm->exe_file is changed -- when the process is removed, on new
+exec, or via sys_prctl(PR_SET_MM_MAP/EXE_FILE).
 
-Let's deny write access when setting or replacing the MM exe_file. With
-this change, we can remove VM_DENYWRITE for mapping executables.
+Let's remove all usage of MAP_DENYWRITE, it's no longer necessary for
+mm->exe_file.
 
-Make set_mm_exe_file() return an error in case deny_write_access()
-fails; note that this should never happen, because exec code does a
-deny_write_access() early and keeps write access denied when calling
-set_mm_exe_file. However, it makes the code easier to read and makes
-set_mm_exe_file() and replace_mm_exe_file() look more similar.
+In case of an elf interpreter, we'll now only deny write access to the file
+during exec. This is somewhat okay, because the interpreter behaves
+(and sometime is) a shared library; all shared libraries, especially the
+ones loaded directly in user space like via dlopen() won't ever be mapped
+via MAP_DENYWRITE, because we ignore that from user space completely;
+these shared libraries can always be modified while mapped and executed.
+Let's only special-case the main executable, denying write access while
+being executed by a process. This can be considered a minor user space
+visible change.
 
-This represents a minor user space visible change:
-sys_prctl(PR_SET_MM_MAP/EXE_FILE) can now fail if the file is already
-opened writable. Also, after sys_prctl(PR_SET_MM_MAP/EXE_FILE) the file
-cannot be opened writable. Note that we can already fail with -EACCES if
-the file doesn't have execute permissions.
+While this is a cleanup, it also fixes part of a problem reported with
+VM_DENYWRITE on overlayfs, as VM_DENYWRITE is effectively unused with
+this patch and will be removed next:
+  "Overlayfs did not honor positive i_writecount on realfile for
+   VM_DENYWRITE mappings." [1]
 
+[1] https://lore.kernel.org/r/YNHXzBgzRrZu1MrD@miu.piliscsaba.redhat.com/
+
+Reported-by: Chengguang Xu <cgxu519@mykernel.net>
 Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- fs/exec.c          |  4 +++-
- include/linux/mm.h |  2 +-
- kernel/fork.c      | 50 ++++++++++++++++++++++++++++++++++++++++------
- 3 files changed, 48 insertions(+), 8 deletions(-)
+ arch/x86/ia32/ia32_aout.c | 6 ++----
+ fs/binfmt_aout.c          | 5 ++---
+ fs/binfmt_elf.c           | 4 ++--
+ fs/binfmt_elf_fdpic.c     | 2 +-
+ 4 files changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 38f63451b928..9294049f5487 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1270,7 +1270,9 @@ int begin_new_exec(struct linux_binprm * bprm)
- 	 * not visibile until then. This also enables the update
- 	 * to be lockless.
- 	 */
--	set_mm_exe_file(bprm->mm, bprm->file);
-+	retval = set_mm_exe_file(bprm->mm, bprm->file);
-+	if (retval)
-+		goto out;
+diff --git a/arch/x86/ia32/ia32_aout.c b/arch/x86/ia32/ia32_aout.c
+index 321d7b22ad2d..9bd15241fadb 100644
+--- a/arch/x86/ia32/ia32_aout.c
++++ b/arch/x86/ia32/ia32_aout.c
+@@ -202,8 +202,7 @@ static int load_aout_binary(struct linux_binprm *bprm)
  
- 	/* If the binary is not readable then enforce mm->dumpable=0 */
- 	would_dump(bprm, bprm->file);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 48c6fa9ab792..56b1cd41db61 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2580,7 +2580,7 @@ static inline int check_data_rlimit(unsigned long rlim,
- extern int mm_take_all_locks(struct mm_struct *mm);
- extern void mm_drop_all_locks(struct mm_struct *mm);
+ 		error = vm_mmap(bprm->file, N_TXTADDR(ex), ex.a_text,
+ 				PROT_READ | PROT_EXEC,
+-				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE |
+-				MAP_32BIT,
++				MAP_FIXED | MAP_PRIVATE | MAP_32BIT,
+ 				fd_offset);
  
--extern void set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file);
-+extern int set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file);
- extern int replace_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file);
- extern struct file *get_mm_exe_file(struct mm_struct *mm);
- extern struct file *get_task_exe_file(struct task_struct *task);
-diff --git a/kernel/fork.c b/kernel/fork.c
-index eedce5c77041..543541764865 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -470,6 +470,20 @@ void free_task(struct task_struct *tsk)
- }
- EXPORT_SYMBOL(free_task);
+ 		if (error != N_TXTADDR(ex))
+@@ -211,8 +210,7 @@ static int load_aout_binary(struct linux_binprm *bprm)
  
-+static void dup_mm_exe_file(struct mm_struct *mm, struct mm_struct *oldmm)
-+{
-+	struct file *exe_file;
-+
-+	exe_file = get_mm_exe_file(oldmm);
-+	RCU_INIT_POINTER(mm->exe_file, exe_file);
-+	/*
-+	 * We depend on the oldmm having properly denied write access to the
-+	 * exe_file already.
-+	 */
-+	if (exe_file && deny_write_access(exe_file))
-+		pr_warn_once("deny_write_access() failed in %s\n", __func__);
-+}
-+
- #ifdef CONFIG_MMU
- static __latent_entropy int dup_mmap(struct mm_struct *mm,
- 					struct mm_struct *oldmm)
-@@ -493,7 +507,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
- 	mmap_write_lock_nested(mm, SINGLE_DEPTH_NESTING);
+ 		error = vm_mmap(bprm->file, N_DATADDR(ex), ex.a_data,
+ 				PROT_READ | PROT_WRITE | PROT_EXEC,
+-				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE |
+-				MAP_32BIT,
++				MAP_FIXED | MAP_PRIVATE | MAP_32BIT,
+ 				fd_offset + ex.a_text);
+ 		if (error != N_DATADDR(ex))
+ 			return error;
+diff --git a/fs/binfmt_aout.c b/fs/binfmt_aout.c
+index d29de971d3f3..a47496d0f123 100644
+--- a/fs/binfmt_aout.c
++++ b/fs/binfmt_aout.c
+@@ -221,8 +221,7 @@ static int load_aout_binary(struct linux_binprm * bprm)
+ 		}
  
- 	/* No ordering required: file already has been exposed. */
--	RCU_INIT_POINTER(mm->exe_file, get_mm_exe_file(oldmm));
-+	dup_mm_exe_file(mm, oldmm);
+ 		error = vm_mmap(bprm->file, N_TXTADDR(ex), ex.a_text,
+-			PROT_READ | PROT_EXEC,
+-			MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE,
++			PROT_READ | PROT_EXEC, MAP_FIXED | MAP_PRIVATE,
+ 			fd_offset);
  
- 	mm->total_vm = oldmm->total_vm;
- 	mm->data_vm = oldmm->data_vm;
-@@ -639,7 +653,7 @@ static inline void mm_free_pgd(struct mm_struct *mm)
- static int dup_mmap(struct mm_struct *mm, struct mm_struct *oldmm)
- {
- 	mmap_write_lock(oldmm);
--	RCU_INIT_POINTER(mm->exe_file, get_mm_exe_file(oldmm));
-+	dup_mm_exe_file(mm, oldmm);
- 	mmap_write_unlock(oldmm);
- 	return 0;
- }
-@@ -1149,8 +1163,10 @@ void mmput_async(struct mm_struct *mm)
-  * Main users are mmput() and sys_execve(). Callers prevent concurrent
-  * invocations: in mmput() nobody alive left, in execve task is single
-  * threaded.
-+ *
-+ * Can only fail if new_exe_file != NULL.
-  */
--void set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
-+int set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
- {
- 	struct file *old_exe_file;
+ 		if (error != N_TXTADDR(ex))
+@@ -230,7 +229,7 @@ static int load_aout_binary(struct linux_binprm * bprm)
  
-@@ -1161,11 +1177,21 @@ void set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
- 	 */
- 	old_exe_file = rcu_dereference_raw(mm->exe_file);
+ 		error = vm_mmap(bprm->file, N_DATADDR(ex), ex.a_data,
+ 				PROT_READ | PROT_WRITE | PROT_EXEC,
+-				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE,
++				MAP_FIXED | MAP_PRIVATE,
+ 				fd_offset + ex.a_text);
+ 		if (error != N_DATADDR(ex))
+ 			return error;
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 6d2c79533631..69d900a8473d 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -622,7 +622,7 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+ 	eppnt = interp_elf_phdata;
+ 	for (i = 0; i < interp_elf_ex->e_phnum; i++, eppnt++) {
+ 		if (eppnt->p_type == PT_LOAD) {
+-			int elf_type = MAP_PRIVATE | MAP_DENYWRITE;
++			int elf_type = MAP_PRIVATE;
+ 			int elf_prot = make_prot(eppnt->p_flags, arch_state,
+ 						 true, true);
+ 			unsigned long vaddr = 0;
+@@ -1070,7 +1070,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		elf_prot = make_prot(elf_ppnt->p_flags, &arch_state,
+ 				     !!interpreter, false);
  
--	if (new_exe_file)
-+	if (new_exe_file) {
-+		/*
-+		 * We expect the caller (i.e., sys_execve) to already denied
-+		 * write access, so this is unlikely to fail.
-+		 */
-+		if (unlikely(deny_write_access(new_exe_file)))
-+			return -EACCES;
- 		get_file(new_exe_file);
-+	}
- 	rcu_assign_pointer(mm->exe_file, new_exe_file);
--	if (old_exe_file)
-+	if (old_exe_file) {
-+		allow_write_access(old_exe_file);
- 		fput(old_exe_file);
-+	}
-+	return 0;
- }
+-		elf_flags = MAP_PRIVATE | MAP_DENYWRITE;
++		elf_flags = MAP_PRIVATE;
  
- /**
-@@ -1201,10 +1227,22 @@ int replace_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
- 	}
+ 		vaddr = elf_ppnt->p_vaddr;
+ 		/*
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index cf4028487dcc..6d8fd6030cbb 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -1041,7 +1041,7 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
+ 		if (phdr->p_flags & PF_W) prot |= PROT_WRITE;
+ 		if (phdr->p_flags & PF_X) prot |= PROT_EXEC;
  
- 	/* set the new file, lockless */
-+	ret = deny_write_access(new_exe_file);
-+	if (ret)
-+		return -EACCES;
- 	get_file(new_exe_file);
-+
- 	old_exe_file = xchg(&mm->exe_file, new_exe_file);
--	if (old_exe_file)
-+	if (old_exe_file) {
-+		/*
-+		 * Don't race with dup_mmap() getting the file and disallowing
-+		 * write access while someone might open the file writable.
-+		 */
-+		mmap_read_lock(mm);
-+		allow_write_access(old_exe_file);
- 		fput(old_exe_file);
-+		mmap_read_unlock(mm);
-+	}
- 	return 0;
- }
+-		flags = MAP_PRIVATE | MAP_DENYWRITE;
++		flags = MAP_PRIVATE;
+ 		maddr = 0;
  
+ 		switch (params->flags & ELF_FDPIC_FLAG_ARRANGEMENT) {
 -- 
 2.31.1
 
