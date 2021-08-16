@@ -2,182 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13FEA3EDF1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 23:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 520743EDF6C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 23:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233165AbhHPVPH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 17:15:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59302 "EHLO mail.kernel.org"
+        id S233739AbhHPVlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 17:41:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231726AbhHPVPH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 17:15:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 135D760F41;
-        Mon, 16 Aug 2021 21:14:35 +0000 (UTC)
+        id S229987AbhHPVlg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Aug 2021 17:41:36 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2EC9960E09;
+        Mon, 16 Aug 2021 21:41:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629148475;
-        bh=/QMER6iVz8hvkcgI2BgLmz0aB5+YOiNa3ziUyYkzPhE=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=HlYzICEDwcSrgoRkOL65KtNdYqBgTPgDvPAMAOr3oFdQq89q+1jxCuJxwDBRy6Agl
-         tfD394s0R5ZPiuLC6rDWeZHWm4+TB2d7qL91GKarzv2KogzgmQ1uhFzKiU9eDDHuZW
-         Z1Sbl9oHdkDpgHhSYCvOhfVEZTVM1UQN2byrGnCsduuiVHUckse5mgJha/HRb3t/Dq
-         TTc3C6RIYqULmF0s++nhjkG9VycKG2nzcOEePGxB3Q6s9FTgcIKnrXW397Wm5jpGTM
-         jr2AulD7zQPVd9KtITP1/PSQFrB66tYGX0p3yeD6fmmzywWdxrdKEDmIA/uHKCGoFi
-         cqIGc1DYLYFkg==
-Date:   Mon, 16 Aug 2021 14:14:34 -0700
+        s=k20201202; t=1629150064;
+        bh=20nFMMREAcxNH6QbkQ0N0qSyPuh5AN9LdcPTNM8PNjs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RHknz1j31Z6FKlzVMbHugSLYht7pulY+wT/1twvGFT18Ded8tg+SnTo7CMJbjoYeM
+         mfH9BP4EG6+Z7pmD+VhVvJfaTNBRvCNJ5QPpc/yC4LedqeRuv/gqclhPza5i/Zt2vC
+         f0k06hsdVmmsW0sbP6oOX49TLQEraPdhIqyecFn9L/YgHCVbnknusS56sAweuqyXza
+         fJ3Qf18jaLWKuE9JYvd2pBWcbjVjS7H+NXWP2mKPFYbn/eI799doCFPDreJA4UNuBS
+         0xhqozhfFiikTmjt3/6QG0aW/zC84hrOyPFNJVd9fFRGjFILCoxzjiWO9HpBRAXxtI
+         pm/w/jTvq42gg==
+Date:   Mon, 16 Aug 2021 14:41:03 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     linux-xfs@vger.kernel.org, jane.chu@oracle.com,
-        willy@infradead.org, tytso@mit.edu, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, sandeen@sandeen.net
-Subject: Re: [PATCHSET 0/2] dax: fix broken pmem poison narrative
-Message-ID: <20210816211434.GB12640@magnolia>
-References: <162914791879.197065.12619905059952917229.stgit@magnolia>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     amir73il@gmail.com, jack@suse.com, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        khazhy@google.com, dhowells@redhat.com, david@fromorbit.com,
+        tytso@mit.edu, repnop@google.com, kernel@collabora.com
+Subject: Re: [PATCH v6 18/21] fanotify: Emit generic error info type for
+ error event
+Message-ID: <20210816214103.GA12664@magnolia>
+References: <20210812214010.3197279-1-krisman@collabora.com>
+ <20210812214010.3197279-19-krisman@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <162914791879.197065.12619905059952917229.stgit@magnolia>
+In-Reply-To: <20210812214010.3197279-19-krisman@collabora.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 02:05:18PM -0700, Darrick J. Wong wrote:
-> Hi all,
+On Thu, Aug 12, 2021 at 05:40:07PM -0400, Gabriel Krisman Bertazi wrote:
+> The Error info type is a record sent to users on FAN_FS_ERROR events
+> documenting the type of error.  It also carries an error count,
+> documenting how many errors were observed since the last reporting.
 > 
-> Our current "advice" to people using persistent memory and FSDAX who
-> wish to recover upon receipt of a media error (aka 'hwpoison') event
-> from ACPI is to punch-hole that part of the file and then pwrite it,
-> which will magically cause the pmem to be reinitialized and the poison
-> to be cleared.
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 > 
-> Punching doesn't make any sense at all -- we don't allow userspace to
-> allocate from specific parts of the storage, and another writer could
-> grab the poisoned range in the meantime.  In other words, the advice is
-> seriously overfitted to incidental xfs and ext4 behavior and can
-> completely fail.  Worse yet, that concurrent writer now has to deal with
-> the poison that it didn't know about, and someone else is trying to fix.
-> 
-> AFAICT, the only reason why the "punch and write" dance works at all is
-> that the XFS and ext4 currently call blkdev_issue_zeroout when
-> allocating pmem as part of a pwrite call.  A pwrite without the punch
-> won't clear the poison, because pwrite on a DAX file calls
-> dax_direct_access to access the memory directly, and dax_direct_access
-> is only smart enough to bail out on poisoned pmem.  It does not know how
-> to clear it.  Userspace could solve the problem by calling FIEMAP and
-> issuing a BLKZEROOUT, but that requires rawio capabilities.
-> 
-> The whole pmem poison recovery story is is wrong and needs to be
-> corrected ASAP before everyone else starts doing this.  Therefore,
-> create a dax_zeroinit_range function that filesystems can call to reset
-> the contents of the pmem to a known value and clear any state associated
-> with the media error.  Then, connect FALLOC_FL_ZERO_RANGE to this new
-> function (for DAX files) so that unprivileged userspace has a safe way
-> to reset the pmem and clear media errors.
+> ---
+> Changes since v5:
+>   - Move error code here
+> ---
+>  fs/notify/fanotify/fanotify.c      |  1 +
+>  fs/notify/fanotify/fanotify.h      |  1 +
+>  fs/notify/fanotify/fanotify_user.c | 36 ++++++++++++++++++++++++++++++
+>  include/uapi/linux/fanotify.h      |  7 ++++++
+>  4 files changed, 45 insertions(+)
 
-This is a sample copy of a SIGBUS handler that will dump out the siginfo
-data, call ZERO_RANGE to clear the poison, and then simulates being
-fortunate enough to be able to reconstruct the file contents from
-scratch.
+<snip>
 
-Note that I haven't tested this even with simulated pmem because I
-cannot figure out how to inject a poison error into the pmem in such a
-way that the nvdimm driver records it in the badblocks table.
-madvise(HWPOISON) calls the SIGBUS handler, but that code path never
-goes outside of the memory manager.
+> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+> index 16402037fc7a..80040a92e9d9 100644
+> --- a/include/uapi/linux/fanotify.h
+> +++ b/include/uapi/linux/fanotify.h
+> @@ -124,6 +124,7 @@ struct fanotify_event_metadata {
+>  #define FAN_EVENT_INFO_TYPE_FID		1
+>  #define FAN_EVENT_INFO_TYPE_DFID_NAME	2
+>  #define FAN_EVENT_INFO_TYPE_DFID	3
+> +#define FAN_EVENT_INFO_TYPE_ERROR	4
+>  
+>  /* Variable length info record following event metadata */
+>  struct fanotify_event_info_header {
+> @@ -149,6 +150,12 @@ struct fanotify_event_info_fid {
+>  	unsigned char handle[0];
+>  };
+>  
+> +struct fanotify_event_info_error {
+> +	struct fanotify_event_info_header hdr;
+> +	__s32 error;
+> +	__u32 error_count;
+> +};
 
-int fd = open(...);
-char *data = mmap(fd, ... MAP_SYNC);
+My apologies for not having time to review this patchset since it was
+redesigned to use fanotify.  Someday it would be helpful to be able to
+export more detailed error reports from XFS, but as I'm not ready to
+move forward and write that today, I'll try to avoid derailling this at
+the last minute.
 
-static void handle_sigbus(int signal, siginfo_t *info, void *dontcare)
-{
-	char *buf;
-	loff_t err_offset = (char *)info->si_addr - data;
-	loff_t err_len = (1ULL << info->si_addr_lsb);
-	ssize_t ret;
+Eventually, XFS might want to be able to report errors in file data,
+file metadata, allocation group metadata, and whole-filesystem metadata.
+Userspace can already gather reports from XFS about corruptions reported
+by the online fsck code (see xfs_health.c).
 
-	printf("RECEIVED SIGBUS (POISON HANDLER)!\n");
-	printf("    signal %d\n", info->si_signo);
-	printf("    errno %d\n", info->si_errno);
-	printf("    addr %p\n", info->si_addr);
-	printf("    addr_lsb %d\n", info->si_addr_lsb);
+I /think/ we could subclass the file error structure that you've
+provided like so:
 
-	if (info->si_signo != SIGBUS) {
-		printf("    code 0x%x\n", info->si_code);
-		return;
-	}
+struct fanotify_event_info_xfs_filesystem_error {
+	struct fanotify_event_info_error	base;
 
-	switch (info->si_code) {
-	case BUS_ADRALN:
-		printf("    code: BUS_ADRALN\n");
-		break;
-	case BUS_ADRERR:
-		printf("    code: BUS_ADRERR\n");
-		break;
-	case BUS_OBJERR:
-		printf("    code: BUS_OBJERR\n");
-		break;
-	case BUS_MCEERR_AR:
-		printf("    code: BUS_MCEERR_AR\n");
-		break;
-	case BUS_MCEERR_AO:
-		printf("    code: BUS_MCEERR_AO\n");
-		break;
-	default:
-		printf("    code 0x%x\n", info->si_code);
-		break;
-	}
+	__u32 magic; /* 0x58465342 to identify xfs */
+	__u32 type; /* quotas, realtime bitmap, etc. */
+};
 
-	printf("    err_offset %lld\n", (unsigned long long)err_offset);
-	printf("    err_len %lld\n", (unsigned long long)err_len);
+struct fanotify_event_info_xfs_perag_error {
+	struct fanotify_event_info_error	base;
 
-	if (info->si_code != BUS_MCEERR_AR)
-		return;
+	__u32 magic; /* 0x58465342 to identify xfs */
+	__u32 type; /* agf, agi, agfl, bno btree, ino btree, etc. */
+	__u32 agno; /* allocation group number */
+};
 
-	/* clear poison and reset pmem to initial value */
-	ret = fallocate(fd, FALLOC_FL_ZERO_RANGE, err_offset, err_len);
-	if (ret) {
-		perror("fallocate");
-		exit(9);
-	}
+struct fanotify_event_info_xfs_file_error {
+	struct fanotify_event_info_error	base;
 
-	/* simulate being lucky enough to be able to reconstruct the data */
-	buf = malloc(err_len);
-	if (!buf) {
-		perror("malloc pwrite buf");
-		exit(10);
-	}
+	__u32 magic; /* 0x58465342 to identify xfs */
+	__u32 type; /* extent map, dir, attr, etc. */
+	__u64 offset; /* file data offset, if applicable */
+	__u64 length; /* file data length, if applicable */
+};
 
-	memset(buf, 0x59, err_len);
+(A real XFS implementation might have one structure with the type code
+providing for a tagged union or something; I split it into three
+separate structs here to avoid confusing things.)
 
-	ret = pwrite(fd, buf, err_len, err_offset);
-	if (ret < 0) {
-		perror("pwrite");
-		exit(11);
-	}
-	if (ret != err_len) {
-		fprintf(stderr, "short write %zd bytes, wanted %lld\n",
-				ret, (long long)err_len);
-		exit(12);
-	}
+I have three questions at this point:
 
-	free(buf);
-}
+1) What's the maximum size of a fanotify event structure?  None of these
+structures exceed 36 bytes, which I hope will fit in whatever size
+constraints?
+
+2) If a program written for today's notification events sees a
+fanotify_event_info_header from future-XFS with a header length that is
+larger than FANOTIFY_INFO_ERROR_LEN, will it be able to react
+appropriately?  Which is to say, ignore it on the grounds that the
+length is unexpectedly large?
+
+It /looks/ like this is the case; really I'm just fishing around here
+to make sure nothing in the design of /this/ patchset would make it Very
+Difficult(tm) to add more information later.
+
+3) Once we let filesystem implementations create their own extended
+error notifications, should we have a "u32 magic" to aid in decoding?
+Or even add it to fanotify_event_info_error now?
 
 --D
 
-> 
-> If you're going to start using this mess, you probably ought to just
-> pull from my git trees, which are linked below.
-> 
-> This is an extraordinary way to destroy everything.  Enjoy!
-> Comments and questions are, as always, welcome.
-> 
-> --D
-> 
-> kernel git tree:
-> https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=dax-zeroinit-clear-poison-5.15
-> ---
->  fs/dax.c            |   72 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  fs/ext4/extents.c   |   19 +++++++++++++
->  fs/xfs/xfs_file.c   |   20 ++++++++++++++
->  include/linux/dax.h |    7 +++++
->  4 files changed, 118 insertions(+)
+> +
+>  struct fanotify_response {
+>  	__s32 fd;
+>  	__u32 response;
+> -- 
+> 2.32.0
 > 
