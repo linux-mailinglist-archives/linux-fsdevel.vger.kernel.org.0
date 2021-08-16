@@ -2,156 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 520743EDF6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 23:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DB5D3EDF9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 00:01:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233739AbhHPVlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 17:41:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229987AbhHPVlg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 17:41:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2EC9960E09;
-        Mon, 16 Aug 2021 21:41:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629150064;
-        bh=20nFMMREAcxNH6QbkQ0N0qSyPuh5AN9LdcPTNM8PNjs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RHknz1j31Z6FKlzVMbHugSLYht7pulY+wT/1twvGFT18Ded8tg+SnTo7CMJbjoYeM
-         mfH9BP4EG6+Z7pmD+VhVvJfaTNBRvCNJ5QPpc/yC4LedqeRuv/gqclhPza5i/Zt2vC
-         f0k06hsdVmmsW0sbP6oOX49TLQEraPdhIqyecFn9L/YgHCVbnknusS56sAweuqyXza
-         fJ3Qf18jaLWKuE9JYvd2pBWcbjVjS7H+NXWP2mKPFYbn/eI799doCFPDreJA4UNuBS
-         0xhqozhfFiikTmjt3/6QG0aW/zC84hrOyPFNJVd9fFRGjFILCoxzjiWO9HpBRAXxtI
-         pm/w/jTvq42gg==
-Date:   Mon, 16 Aug 2021 14:41:03 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     amir73il@gmail.com, jack@suse.com, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        khazhy@google.com, dhowells@redhat.com, david@fromorbit.com,
-        tytso@mit.edu, repnop@google.com, kernel@collabora.com
-Subject: Re: [PATCH v6 18/21] fanotify: Emit generic error info type for
- error event
-Message-ID: <20210816214103.GA12664@magnolia>
-References: <20210812214010.3197279-1-krisman@collabora.com>
- <20210812214010.3197279-19-krisman@collabora.com>
+        id S233550AbhHPWB6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 18:01:58 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:38859 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232280AbhHPWB5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Aug 2021 18:01:57 -0400
+Received: by mail-io1-f71.google.com with SMTP id g5-20020a05660203c5b02905867ea91fc6so10040418iov.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Aug 2021 15:01:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=Fmq6DkW9N4P+Fks5JBQMGCSMaDogGqZTLA5gyaQ3iDU=;
+        b=npucpiVOfY2mM8fX4uYxARl0Zy2+2dmlItuwzFY6a3ahj4+qVTy7rW8ijGgvb0MHzw
+         ipeMg4JVoyJIHgppxugR6WhSg4WtADdGx2WPgFsNMNi2g8Oob6/v9Xe+WB7O46D5k+Ex
+         1+hkYVO96IuGkcgqISDxNvCxB5QuGC5Xg7o+XMX9ecb2a7ppqZasNkzcVaguZ6oo/iJ0
+         ZJmIqqIsA4YZSn2jJAXmuowo/MZPltw6H+Iu3LaJ5KH68DVvD5OysFOKkWusx4aXqH6c
+         5pITtehreAIDN2hSxvbtlz0pG800AmezQ933WrKQhI177rAsGfZRAvq/LPoh/oQmFjNK
+         X7kA==
+X-Gm-Message-State: AOAM530yo/F8SypstpT+ucxAlBkWhuxLT5WZNemD/lQTtaDHy0421fri
+        LbwkC1GQbUFswBn8PnWvi82HcKLD1SgF4v2/kDc0CrkXu08O
+X-Google-Smtp-Source: ABdhPJyxEKL/Oe87ydwFsejhcaA7+jyKzdNW66j/nYERasDsDbpRwZsYF91tRPilOiOtdLa9qzItiUg4m9FX5772dQ1MN+fkMBG7
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210812214010.3197279-19-krisman@collabora.com>
+X-Received: by 2002:a02:cb46:: with SMTP id k6mr24280jap.15.1629151285172;
+ Mon, 16 Aug 2021 15:01:25 -0700 (PDT)
+Date:   Mon, 16 Aug 2021 15:01:25 -0700
+In-Reply-To: <00000000000080486305c9a8f818@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a3605b05c9b45777@google.com>
+Subject: Re: [syzbot] KFENCE: use-after-free in kvm_fastop_exception
+From:   syzbot <syzbot+7b938780d5deeaaf938f@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 05:40:07PM -0400, Gabriel Krisman Bertazi wrote:
-> The Error info type is a record sent to users on FAN_FS_ERROR events
-> documenting the type of error.  It also carries an error count,
-> documenting how many errors were observed since the last reporting.
-> 
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> 
-> ---
-> Changes since v5:
->   - Move error code here
-> ---
->  fs/notify/fanotify/fanotify.c      |  1 +
->  fs/notify/fanotify/fanotify.h      |  1 +
->  fs/notify/fanotify/fanotify_user.c | 36 ++++++++++++++++++++++++++++++
->  include/uapi/linux/fanotify.h      |  7 ++++++
->  4 files changed, 45 insertions(+)
+syzbot has found a reproducer for the following issue on:
 
-<snip>
+HEAD commit:    b9011c7e671d Add linux-next specific files for 20210816
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=177d4006300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a245d1aa4f055cc1
+dashboard link: https://syzkaller.appspot.com/bug?extid=7b938780d5deeaaf938f
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=157a41ee300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f78ff9300000
 
-> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-> index 16402037fc7a..80040a92e9d9 100644
-> --- a/include/uapi/linux/fanotify.h
-> +++ b/include/uapi/linux/fanotify.h
-> @@ -124,6 +124,7 @@ struct fanotify_event_metadata {
->  #define FAN_EVENT_INFO_TYPE_FID		1
->  #define FAN_EVENT_INFO_TYPE_DFID_NAME	2
->  #define FAN_EVENT_INFO_TYPE_DFID	3
-> +#define FAN_EVENT_INFO_TYPE_ERROR	4
->  
->  /* Variable length info record following event metadata */
->  struct fanotify_event_info_header {
-> @@ -149,6 +150,12 @@ struct fanotify_event_info_fid {
->  	unsigned char handle[0];
->  };
->  
-> +struct fanotify_event_info_error {
-> +	struct fanotify_event_info_header hdr;
-> +	__s32 error;
-> +	__u32 error_count;
-> +};
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7b938780d5deeaaf938f@syzkaller.appspotmail.com
 
-My apologies for not having time to review this patchset since it was
-redesigned to use fanotify.  Someday it would be helpful to be able to
-export more detailed error reports from XFS, but as I'm not ready to
-move forward and write that today, I'll try to avoid derailling this at
-the last minute.
+==================================================================
+BUG: KFENCE: use-after-free read in kvm_fastop_exception+0xf6a/0x1058
 
-Eventually, XFS might want to be able to report errors in file data,
-file metadata, allocation group metadata, and whole-filesystem metadata.
-Userspace can already gather reports from XFS about corruptions reported
-by the online fsck code (see xfs_health.c).
+Use-after-free read at 0xffff88823bd7e020 (in kfence-#190):
+ kvm_fastop_exception+0xf6a/0x1058
+ d_lookup+0xd8/0x170 fs/dcache.c:2370
+ lookup_dcache+0x1e/0x130 fs/namei.c:1520
+ __lookup_hash+0x29/0x180 fs/namei.c:1543
+ kern_path_locked+0x17e/0x320 fs/namei.c:2567
+ handle_remove+0xa2/0x5fe drivers/base/devtmpfs.c:312
+ handle drivers/base/devtmpfs.c:382 [inline]
+ devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+ devtmpfsd+0x1b9/0x2a3 drivers/base/devtmpfs.c:437
+ kthread+0x3e5/0x4d0 kernel/kthread.c:319
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
 
-I /think/ we could subclass the file error structure that you've
-provided like so:
+kfence-#190: 0xffff88823bd7e000-0xffff88823bd7efff, size=4096, cache=names_cache
 
-struct fanotify_event_info_xfs_filesystem_error {
-	struct fanotify_event_info_error	base;
+allocated by task 22 on cpu 0 at 75.061659s:
+ getname_kernel+0x4e/0x370 fs/namei.c:226
+ kern_path_locked+0x71/0x320 fs/namei.c:2558
+ handle_remove+0xa2/0x5fe drivers/base/devtmpfs.c:312
+ handle drivers/base/devtmpfs.c:382 [inline]
+ devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+ devtmpfsd+0x1b9/0x2a3 drivers/base/devtmpfs.c:437
+ kthread+0x3e5/0x4d0 kernel/kthread.c:319
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
 
-	__u32 magic; /* 0x58465342 to identify xfs */
-	__u32 type; /* quotas, realtime bitmap, etc. */
-};
+freed by task 22 on cpu 0 at 75.061679s:
+ putname.part.0+0xe1/0x120 fs/namei.c:270
+ putname include/linux/err.h:41 [inline]
+ filename_parentat fs/namei.c:2547 [inline]
+ kern_path_locked+0xc2/0x320 fs/namei.c:2558
+ handle_remove+0xa2/0x5fe drivers/base/devtmpfs.c:312
+ handle drivers/base/devtmpfs.c:382 [inline]
+ devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+ devtmpfsd+0x1b9/0x2a3 drivers/base/devtmpfs.c:437
+ kthread+0x3e5/0x4d0 kernel/kthread.c:319
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
 
-struct fanotify_event_info_xfs_perag_error {
-	struct fanotify_event_info_error	base;
+CPU: 0 PID: 22 Comm: kdevtmpfs Not tainted 5.14.0-rc5-next-20210816-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:kvm_fastop_exception+0xf6a/0x1058
+Code: d3 ed e9 f7 ae 6c f8 49 8d 0e 48 83 e1 f8 4c 8b 21 41 8d 0e 83 e1 07 c1 e1 03 49 d3 ec e9 4d bc 6c f8 49 8d 4d 00 48 83 e1 f8 <4c> 8b 21 41 8d 4d 00 83 e1 07 c1 e1 03 49 d3 ec e9 3d c6 6c f8 bd
+RSP: 0018:ffffc90000dcfae8 EFLAGS: 00010282
+RAX: 30317974746d7367 RBX: ffff88806c915068 RCX: ffff88823bd7e020
+RDX: ffffed100d922a14 RSI: 0000000000000008 RDI: 0000000000000007
+RBP: 0000000000000008 R08: 0000000000000000 R09: ffff88806c915098
+R10: ffffed100d922a13 R11: 0000000000000000 R12: ffff88823bd7e020
+R13: ffff88823bd7e020 R14: ffff88806c915098 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff88823bd7e020 CR3: 000000006fc3b000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ d_lookup+0xd8/0x170 fs/dcache.c:2370
+ lookup_dcache+0x1e/0x130 fs/namei.c:1520
+ __lookup_hash+0x29/0x180 fs/namei.c:1543
+ kern_path_locked+0x17e/0x320 fs/namei.c:2567
+ handle_remove+0xa2/0x5fe drivers/base/devtmpfs.c:312
+ handle drivers/base/devtmpfs.c:382 [inline]
+ devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+ devtmpfsd+0x1b9/0x2a3 drivers/base/devtmpfs.c:437
+ kthread+0x3e5/0x4d0 kernel/kthread.c:319
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+==================================================================
+----------------
+Code disassembly (best guess):
+   0:	d3 ed                	shr    %cl,%ebp
+   2:	e9 f7 ae 6c f8       	jmpq   0xf86caefe
+   7:	49 8d 0e             	lea    (%r14),%rcx
+   a:	48 83 e1 f8          	and    $0xfffffffffffffff8,%rcx
+   e:	4c 8b 21             	mov    (%rcx),%r12
+  11:	41 8d 0e             	lea    (%r14),%ecx
+  14:	83 e1 07             	and    $0x7,%ecx
+  17:	c1 e1 03             	shl    $0x3,%ecx
+  1a:	49 d3 ec             	shr    %cl,%r12
+  1d:	e9 4d bc 6c f8       	jmpq   0xf86cbc6f
+  22:	49 8d 4d 00          	lea    0x0(%r13),%rcx
+  26:	48 83 e1 f8          	and    $0xfffffffffffffff8,%rcx
+  2a:	4c 8b 21             	mov    (%rcx),%r12 <-- trapping instruction
+  2d:	41 8d 4d 00          	lea    0x0(%r13),%ecx
+  31:	83 e1 07             	and    $0x7,%ecx
+  34:	c1 e1 03             	shl    $0x3,%ecx
+  37:	49 d3 ec             	shr    %cl,%r12
+  3a:	e9 3d c6 6c f8       	jmpq   0xf86cc67c
+  3f:	bd                   	.byte 0xbd
 
-	__u32 magic; /* 0x58465342 to identify xfs */
-	__u32 type; /* agf, agi, agfl, bno btree, ino btree, etc. */
-	__u32 agno; /* allocation group number */
-};
-
-struct fanotify_event_info_xfs_file_error {
-	struct fanotify_event_info_error	base;
-
-	__u32 magic; /* 0x58465342 to identify xfs */
-	__u32 type; /* extent map, dir, attr, etc. */
-	__u64 offset; /* file data offset, if applicable */
-	__u64 length; /* file data length, if applicable */
-};
-
-(A real XFS implementation might have one structure with the type code
-providing for a tagged union or something; I split it into three
-separate structs here to avoid confusing things.)
-
-I have three questions at this point:
-
-1) What's the maximum size of a fanotify event structure?  None of these
-structures exceed 36 bytes, which I hope will fit in whatever size
-constraints?
-
-2) If a program written for today's notification events sees a
-fanotify_event_info_header from future-XFS with a header length that is
-larger than FANOTIFY_INFO_ERROR_LEN, will it be able to react
-appropriately?  Which is to say, ignore it on the grounds that the
-length is unexpectedly large?
-
-It /looks/ like this is the case; really I'm just fishing around here
-to make sure nothing in the design of /this/ patchset would make it Very
-Difficult(tm) to add more information later.
-
-3) Once we let filesystem implementations create their own extended
-error notifications, should we have a "u32 magic" to aid in decoding?
-Or even add it to fanotify_event_info_error now?
-
---D
-
-> +
->  struct fanotify_response {
->  	__s32 fd;
->  	__u32 response;
-> -- 
-> 2.32.0
-> 
