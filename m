@@ -2,230 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A28283ED65F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 15:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4E8E3ED7A2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Aug 2021 15:39:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239277AbhHPNUj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 09:20:39 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:46248 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240169AbhHPNTZ (ORCPT
+        id S236734AbhHPNkM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 09:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52412 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240716AbhHPNjj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 09:19:25 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id DE8661FE6F;
-        Mon, 16 Aug 2021 13:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1629119930; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BoAMWR7Ykja6Ogd0JcusUgpGDWD9ocMKTw5LjQGWy2o=;
-        b=U07WEFV5WbFuiBMtzYN+0zbeUCZKPSxQ68FlCXrHaRThrT9psHB+OMHk8kRMQneUfh64X1
-        x3ztIrIS5fA668nzwjiJKuCs0btxRr3vBfKCQev8vgV6spN0DdH4xDqgj4bx0ue2b1kWZC
-        6UkJ3ZAg3FEohynwKKO9IL0AH9spynI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1629119930;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BoAMWR7Ykja6Ogd0JcusUgpGDWD9ocMKTw5LjQGWy2o=;
-        b=5nXqkKhrz+jDwSLrtyizBs8KDrcSNzrLaD/eXVCGsM65+4ugX9H1lmCN9nNRH1pjt0RS7M
-        451ECAor4w+l5+DA==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id CC6E8A3B94;
-        Mon, 16 Aug 2021 13:18:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B4FFF1E0426; Mon, 16 Aug 2021 15:18:50 +0200 (CEST)
-Date:   Mon, 16 Aug 2021 15:18:50 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     amir73il@gmail.com, jack@suse.com, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        khazhy@google.com, dhowells@redhat.com, david@fromorbit.com,
-        tytso@mit.edu, djwong@kernel.org, repnop@google.com,
-        kernel@collabora.com
-Subject: Re: [PATCH v6 05/21] fanotify: Split superblock marks out to a new
- cache
-Message-ID: <20210816131850.GC30215@quack2.suse.cz>
-References: <20210812214010.3197279-1-krisman@collabora.com>
- <20210812214010.3197279-6-krisman@collabora.com>
+        Mon, 16 Aug 2021 09:39:39 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 676ADC061155;
+        Mon, 16 Aug 2021 06:19:37 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id d4so34302643lfk.9;
+        Mon, 16 Aug 2021 06:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4xjy2k/+Hr19yNQ4XBrfvelrlltpvX1jEjhtBSNo+VM=;
+        b=EI1iN9/WimUKqzMZTG8PvwiDfzmpgSiLseyzGHdfhYt30zb02LS8FhQjawjCw73REI
+         bl5A9GD8GeVHAeYpp1nxWJ6mRUe3NTRFrAFXiPfvhaBLJ9UtdbLACNWRi4HR8msEo0yW
+         6bC7HZ33/ZP+D48JF3+jxrfdLiCAeur61DLOzjgTgdczQFFxScEQOeW8KLHSlPb2i9IN
+         tzHXCtyx6wWQgnklo4WlXgjPhqbUIx22Tcc2qkkRYTZ89n7zQImRUErYbVkeLUW/ydXo
+         edWkV56Ed2nCo9btO4zlWnQE950IUo5j7dr+/3tW4A0/+7hl35wyChYN8jzwFWB7Q/OR
+         UWvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4xjy2k/+Hr19yNQ4XBrfvelrlltpvX1jEjhtBSNo+VM=;
+        b=qNeyDKWUZ2hEfcF2XKZ9L5pmm8oU0d4kDJAxWO5z5oN2ffGInYEVqqIwl0OHW3oz6J
+         fylFkJk4gaDry/5rV3aTpIRZFt1sRvL76fqkVeyk8s6kzZNAKV4j75IPF5y1ch7lNblN
+         mERaSsw3MQj+rFVcC6xGQQj2OfAl0/y26eaZFGtdmQ479TzqGzI5P3gX4m9fI4D8psYr
+         WTNnPwis6A521sNuVifaBw2JAmKWqu7eC34AtftoR7bDmM8AL7MNov1n8Jl8y6i22BVf
+         kH6a9/VQzqxoXdqgz0y11OgYZ+Oy2xwk8cjIXMrXbjY7BbOGRKuGNBKB32GnqFumCnJ7
+         y/CA==
+X-Gm-Message-State: AOAM5310RujQ1b8q/knINNL5qH3Ad75Ph3dHa18HpNMnynRVv8NiDkNE
+        gzZ5+d1apidsAfWG90XbTr0=
+X-Google-Smtp-Source: ABdhPJy/UQO+uCDnyVfenOBhD7j6LKkn57XI/lwxIEuysHSGfmkvQ7BHpIXw0NbJ9cgQ0wTusKLw6g==
+X-Received: by 2002:ac2:5192:: with SMTP id u18mr11820985lfi.527.1629119975363;
+        Mon, 16 Aug 2021 06:19:35 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id v1sm921776lfg.106.2021.08.16.06.19.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Aug 2021 06:19:34 -0700 (PDT)
+Date:   Mon, 16 Aug 2021 16:19:32 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [RFC PATCH 1/4] fs/ntfs3: Use new api for mounting
+Message-ID: <20210816131932.ri2fpog5tncd4xbt@kari-VirtualBox>
+References: <20210816024703.107251-1-kari.argillander@gmail.com>
+ <20210816024703.107251-2-kari.argillander@gmail.com>
+ <20210816032351.yo7lkfrwsio3qvjw@kari-VirtualBox>
+ <20210816121752.GA16815@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210812214010.3197279-6-krisman@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210816121752.GA16815@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 12-08-21 17:39:54, Gabriel Krisman Bertazi wrote:
-> FAN_FS_ERROR will require an error structure to be stored per mark.
-> But, since FAN_FS_ERROR doesn't apply to inode/mount marks, it should
-> suffice to only expose this information for superblock marks. Therefore,
-> wrap this kind of marks into a container and plumb it for the future.
+On Mon, Aug 16, 2021 at 02:17:52PM +0200, Christoph Hellwig wrote:
+> On Mon, Aug 16, 2021 at 06:23:51AM +0300, Kari Argillander wrote:
+> > > Nls loading is changed a little bit because new api not have default
+> > > optioni for mount parameters. So we need to load nls table before and
+> > > change that if user specifie someting else.
+> > > 
+> > > Also try to use fsparam_flag_no as much as possible. This is just nice
+> > > little touch and is not mandatory but it should not make any harm. It
+> > > is just convenient that we can use example acl/noacl mount options.
+> >  
+> > I would like that if someone can comment can we do reconfigure so that
+> > we change mount options? Can we example change iocharset and be ok after
+> > that? I have look some other fs drivers and in my eyes it seems to be
+> > quite random if driver should let reconfigure all parameters. Right now
+> > code is that we can reconfigure every mount parameter but I do not know
+> > if this is right call.
 > 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
-> Changes since v5:
->   - turn the flag bits into defines (jan)
->   - don't use zalloc for consistency (jan)
-> Changes since v2:
->   - Move mark initialization to fanotify_alloc_mark (Amir)
+> Reconfiguring non-trivial mount parameters is hard.  In general I'd
+> recommend to only allow reconfiguring paramters that
 > 
-> Changes since v1:
->   - Only extend superblock marks (Amir)
-> ---
->  fs/notify/fanotify/fanotify.c      | 10 ++++++--
->  fs/notify/fanotify/fanotify.h      | 20 ++++++++++++++++
->  fs/notify/fanotify/fanotify_user.c | 38 ++++++++++++++++++++++++++++--
->  3 files changed, 64 insertions(+), 4 deletions(-)
+>  a) have user demand for that
+>  b) you know what you're actually doing.
 > 
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 310246f8d3f1..c3eefe3f6494 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -869,9 +869,15 @@ static void fanotify_freeing_mark(struct fsnotify_mark *mark,
->  		dec_ucount(group->fanotify_data.ucounts, UCOUNT_FANOTIFY_MARKS);
->  }
->  
-> -static void fanotify_free_mark(struct fsnotify_mark *fsn_mark)
-> +static void fanotify_free_mark(struct fsnotify_mark *mark)
->  {
-> -	kmem_cache_free(fanotify_mark_cache, fsn_mark);
-> +	if (mark->flags & FANOTIFY_MARK_FLAG_SB_MARK) {
-> +		struct fanotify_sb_mark *fa_mark = FANOTIFY_SB_MARK(mark);
-> +
-> +		kmem_cache_free(fanotify_sb_mark_cache, fa_mark);
-> +	} else {
-> +		kmem_cache_free(fanotify_mark_cache, mark);
-> +	}
->  }
->  
->  const struct fsnotify_ops fanotify_fsnotify_ops = {
-> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> index 4a5e555dc3d2..3b11dd03df59 100644
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -6,6 +6,7 @@
->  #include <linux/hashtable.h>
->  
->  extern struct kmem_cache *fanotify_mark_cache;
-> +extern struct kmem_cache *fanotify_sb_mark_cache;
->  extern struct kmem_cache *fanotify_fid_event_cachep;
->  extern struct kmem_cache *fanotify_path_event_cachep;
->  extern struct kmem_cache *fanotify_perm_event_cachep;
-> @@ -129,6 +130,25 @@ static inline void fanotify_info_copy_name(struct fanotify_info *info,
->  	       name->name);
->  }
->  
-> +enum fanotify_mark_bits {
-> +	FANOTIFY_MARK_FLAG_BIT_SB_MARK = FSN_MARK_PRIVATE_FLAGS,
-> +};
-> +
-> +#define FANOTIFY_MARK_FLAG_SB_MARK \
-> +	(1 << FANOTIFY_MARK_FLAG_BIT_SB_MARK)
-> +
-> +struct fanotify_sb_mark {
-> +	struct fsnotify_mark fsn_mark;
-> +};
-> +
-> +static inline
-> +struct fanotify_sb_mark *FANOTIFY_SB_MARK(struct fsnotify_mark *mark)
-> +{
-> +	WARN_ON(!(mark->flags & FANOTIFY_MARK_FLAG_SB_MARK));
-> +
-> +	return container_of(mark, struct fanotify_sb_mark, fsn_mark);
-> +}
-> +
->  /*
->   * Common structure for fanotify events. Concrete structs are allocated in
->   * fanotify_handle_event() and freed when the information is retrieved by
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 67b18dfe0025..c47a5a45c0d3 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -99,6 +99,7 @@ struct ctl_table fanotify_table[] = {
->  extern const struct fsnotify_ops fanotify_fsnotify_ops;
->  
->  struct kmem_cache *fanotify_mark_cache __read_mostly;
-> +struct kmem_cache *fanotify_sb_mark_cache __read_mostly;
->  struct kmem_cache *fanotify_fid_event_cachep __read_mostly;
->  struct kmem_cache *fanotify_path_event_cachep __read_mostly;
->  struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
-> @@ -915,6 +916,38 @@ static __u32 fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
->  	return mask & ~oldmask;
->  }
->  
-> +static struct fsnotify_mark *fanotify_alloc_mark(struct fsnotify_group *group,
-> +						 unsigned int type)
-> +{
-> +	struct fanotify_sb_mark *sb_mark;
-> +	struct fsnotify_mark *mark;
-> +
-> +	switch (type) {
-> +	case FSNOTIFY_OBJ_TYPE_SB:
-> +		sb_mark = kmem_cache_alloc(fanotify_sb_mark_cache, GFP_KERNEL);
-> +		if (!sb_mark)
-> +			return NULL;
-> +		mark = &sb_mark->fsn_mark;
-> +		break;
-> +
-> +	case FSNOTIFY_OBJ_TYPE_INODE:
-> +	case FSNOTIFY_OBJ_TYPE_PARENT:
-> +	case FSNOTIFY_OBJ_TYPE_VFSMOUNT:
-> +		mark = kmem_cache_alloc(fanotify_mark_cache, GFP_KERNEL);
-> +		break;
-> +	default:
-> +		WARN_ON(1);
-> +		return NULL;
-> +	}
-> +
-> +	fsnotify_init_mark(mark, group);
-> +
-> +	if (type == FSNOTIFY_OBJ_TYPE_SB)
-> +		mark->flags |= FANOTIFY_MARK_FLAG_SB_MARK;
-> +
-> +	return mark;
-> +}
-> +
->  static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
->  						   fsnotify_connp_t *connp,
->  						   unsigned int type,
-> @@ -933,13 +966,12 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
->  	    !inc_ucount(ucounts->ns, ucounts->uid, UCOUNT_FANOTIFY_MARKS))
->  		return ERR_PTR(-ENOSPC);
->  
-> -	mark = kmem_cache_alloc(fanotify_mark_cache, GFP_KERNEL);
-> +	mark = fanotify_alloc_mark(group, type);
->  	if (!mark) {
->  		ret = -ENOMEM;
->  		goto out_dec_ucounts;
->  	}
->  
-> -	fsnotify_init_mark(mark, group);
->  	ret = fsnotify_add_mark_locked(mark, connp, type, 0, fsid);
->  	if (ret) {
->  		fsnotify_put_mark(mark);
-> @@ -1497,6 +1529,8 @@ static int __init fanotify_user_setup(void)
->  
->  	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
->  					 SLAB_PANIC|SLAB_ACCOUNT);
-> +	fanotify_sb_mark_cache = KMEM_CACHE(fanotify_sb_mark,
-> +					    SLAB_PANIC|SLAB_ACCOUNT);
->  	fanotify_fid_event_cachep = KMEM_CACHE(fanotify_fid_event,
->  					       SLAB_PANIC);
->  	fanotify_path_event_cachep = KMEM_CACHE(fanotify_path_event,
-> -- 
-> 2.32.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Something like the iocharset clearly isn't something that makes sense
+> to be changed.
+
+I will probably do this series so that nothing can be changed but that
+there will be easy way to enable changing in code. So after I can send
+small patch which will enable changing and I can test each option
+separately. 
+
+If Konstantin can comment if there is some parameters which have real
+demand then I will of course implement those.
+
+Thanks for comments.
+
