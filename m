@@ -2,550 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C172A3EF50F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 23:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60D03EF517
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 23:39:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234360AbhHQVfM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 17:35:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41720 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230515AbhHQVfL (ORCPT
+        id S234545AbhHQVj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 17:39:59 -0400
+Received: from mail.cybernetics.com ([173.71.130.66]:32910 "EHLO
+        mail.cybernetics.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231630AbhHQVj6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 17:35:11 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D9FDC061764;
-        Tue, 17 Aug 2021 14:34:38 -0700 (PDT)
-Received: from localhost.localdomain (unknown [IPv6:2401:4900:1c20:7bc4:61d8:e4ba:272b:3a9c])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: shreeya)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 0596A1F42F53;
-        Tue, 17 Aug 2021 22:34:32 +0100 (BST)
-From:   Shreeya Patel <shreeya.patel@collabora.com>
-To:     krisman@collabora.com, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jaegeuk@kernel.org, chao@kernel.org, ebiggers@google.com,
-        drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com,
-        Shreeya Patel <shreeya.patel@collabora.com>
-Subject: [PATCHi v2] fs: unicode: Add utf8-data module
-Date:   Wed, 18 Aug 2021 03:04:11 +0530
-Message-Id: <20210817213411.27944-1-shreeya.patel@collabora.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 17 Aug 2021 17:39:58 -0400
+X-ASG-Debug-ID: 1629236359-0fb3b00bc411c20001-kl68QG
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id Ay0aCx67Gi3c4LJt; Tue, 17 Aug 2021 17:39:19 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+        bh=CwgGQbJnAx7e81R8CCBmcM3i0wXVlb0O/n3+HhzHIIo=;
+        h=Content-Language:Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; b=lXI5kzRsraQZKx5
+        m/5NRRxeRPuYy/PZPjofZM7qHDKZ7dCnjSFZhsLx/MuHjoYvaunKTJdKvpBI5IpYkn8YOnWRUr8aW
+        h7pNB2NcRElMIEyeseUBXZH26eVkucNPIb8oBYnAYpBqeyH72CnMQO6V/rM49zvfZTLSNcJTOl+K5
+        Qk=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate Pro SMTP 6.2.14)
+  with ESMTPS id 11075885; Tue, 17 Aug 2021 17:39:19 -0400
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+To:     Jens Axboe <axboe@kernel.dk>,
+        Olivier Langlois <olivier@trillion01.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+X-ASG-Orig-Subj: Re: [PATCH] coredump: Limit what can interrupt coredumps
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+ <87eeda7nqe.fsf@disp2133>
+ <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+ <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+ <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+ <87y2bh4jg5.fsf@disp2133>
+ <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+ <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+ <87pmwmn5m0.fsf@disp2133>
+ <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
+ <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
+ <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
+ <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
+ <0bc38b13-5a7e-8620-6dce-18731f15467e@kernel.dk>
+ <24c795c6-4ec4-518e-bf9b-860207eee8c7@kernel.dk>
+ <05c0cadc-029e-78af-795d-e09cf3e80087@cybernetics.com>
+ <b5ab8ca0-cef5-c9b7-e47f-21c0d395f82e@kernel.dk>
+ <84640f18-79ee-d8e4-5204-41a2c2330ed8@kernel.dk>
+From:   Tony Battersby <tonyb@cybernetics.com>
+Message-ID: <3168284a-0b52-7845-07b1-a72bdfed915c@cybernetics.com>
+Date:   Tue, 17 Aug 2021 17:39:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <84640f18-79ee-d8e4-5204-41a2c2330ed8@kernel.dk>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1629236359
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 1690
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-utf8data.h_shipped has a large database table which is an auto-generated
-decodification trie for the unicode normalization functions.
-We can avoid carrying this large table in the kernel unless it is required
-by the filesystem during boot process.
+On 8/17/21 5:28 PM, Jens Axboe wrote:
+>
+> Another approach - don't allow TWA_SIGNAL task_work to get queued if
+> PF_SIGNALED has been set on the task. This is similar to how we reject
+> task_work_add() on process exit, and the callers must be able to handle
+> that already.
+>
+> Can you test this one on top of your 5.10-stable?
+>
+>
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index 07afb5ddb1c4..ca7c1ee44ada 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -602,6 +602,14 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>  		.mm_flags = mm->flags,
+>  	};
+>  
+> +	/*
+> +	 * task_work_add() will refuse to add work after PF_SIGNALED has
+> +	 * been set, ensure that we flush any pending TIF_NOTIFY_SIGNAL work
+> +	 * if any was queued before that.
+> +	 */
+> +	if (test_thread_flag(TIF_NOTIFY_SIGNAL))
+> +		tracehook_notify_signal();
+> +
+>  	audit_core_dumps(siginfo->si_signo);
+>  
+>  	binfmt = mm->binfmt;
+> diff --git a/kernel/task_work.c b/kernel/task_work.c
+> index 1698fbe6f0e1..1ab28904adc4 100644
+> --- a/kernel/task_work.c
+> +++ b/kernel/task_work.c
+> @@ -41,6 +41,12 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
+>  		head = READ_ONCE(task->task_works);
+>  		if (unlikely(head == &work_exited))
+>  			return -ESRCH;
+> +		/*
+> +		 * TIF_NOTIFY_SIGNAL notifications will interfere with
+> +		 * a core dump in progress, reject them.
+> +		 */
+> +		if ((task->flags & PF_SIGNALED) && notify == TWA_SIGNAL)
+> +			return -ESRCH;
+>  		work->next = head;
+>  	} while (cmpxchg(&task->task_works, head, work) != head);
+>  
+>
+Doesn't compile.  5.10 doesn't have TIF_NOTIFY_SIGNAL.
 
-Hence, add utf8-data module which will be loaded only when UTF-8 encoding
-support is needed by the filesystem, provided it is selected as M.
-utf8-data will provide access to the data tables present in utf8data.h.
-
-Also, add support for enabling utf8-data as a built-in option so that
-filesystems that require UTF-8 encoding during boot process can access
-the data tables without any failure.
-
-Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
----
-Changes in v2
- - Since there are no function pointer fields anymore, use utf8_data
-as the name instead of utf8_ops
- - Remove unnecessary variable utf8data_loaded
-
- fs/unicode/Kconfig         | 23 +++++++++++--
- fs/unicode/Makefile        |  3 +-
- fs/unicode/utf8-core.c     | 50 ++++++++++++++++++++++++++--
- fs/unicode/utf8-data.c     | 42 +++++++++++++++++++++++
- fs/unicode/utf8-norm.c     | 68 ++++++++++++++++++++++----------------
- fs/unicode/utf8-selftest.c | 25 ++++++--------
- fs/unicode/utf8n.h         | 30 +++++++++++++++++
- 7 files changed, 193 insertions(+), 48 deletions(-)
- create mode 100644 fs/unicode/utf8-data.c
-
-diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
-index 2c27b9a5cd6c..80341fae5e63 100644
---- a/fs/unicode/Kconfig
-+++ b/fs/unicode/Kconfig
-@@ -2,13 +2,30 @@
- #
- # UTF-8 normalization
- #
-+# This config option will be automatically selected when UNICODE_UTF8_DATA
-+# is enabled. UNICODE config will provide all the UTF-8 core and normalization
-+# functions which will use UTF-8 data tables.
- config UNICODE
- 	bool "UTF-8 normalization and casefolding support"
-+
-+config UNICODE_UTF8_DATA
-+	tristate "UTF-8 support for native Case-Insensitive filesystems"
-+	select UNICODE
- 	help
--	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
--	  support.
-+	  Say M here to enable UTF-8 NFD normalization and NFD+CF casefolding
-+	  support as a loadable module or say Y for building it into the kernel.
-+	  It is currently supported by EXT4 and F2FS filesystems.
-+
-+	  utf8data.h_shipped has a large database table which is an
-+	  auto-generated decodification trie for the unicode normalization
-+	  functions. Enabling UNICODE_UTF8_DATA as M will allow you to avoid
-+	  carrying this large table into the kernel and module will only be
-+	  loaded with the data tables whenever required by any filesystem.
-+	  If your filesystem requires to have the utf8-data during boot time
-+	  then you should have it built into the kernel by saying Y here to
-+	  avoid any boot failure.
- 
- config UNICODE_NORMALIZATION_SELFTEST
- 	tristate "Test UTF-8 normalization support"
--	depends on UNICODE
-+	depends on UNICODE_UTF8_DATA
- 	default n
-diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-index b88aecc86550..fc28a6e2c56f 100644
---- a/fs/unicode/Makefile
-+++ b/fs/unicode/Makefile
-@@ -2,10 +2,11 @@
- 
- obj-$(CONFIG_UNICODE) += unicode.o
- obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
-+obj-$(CONFIG_UNICODE_UTF8_DATA) += utf8-data.o
- 
- unicode-y := utf8-norm.o utf8-core.o
- 
--$(obj)/utf8-norm.o: $(obj)/utf8data.h
-+$(obj)/utf8-data.o: $(obj)/utf8data.h
- 
- # In the normal build, the checked-in utf8data.h is just shipped.
- #
-diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
-index dc25823bfed9..4eb08385e680 100644
---- a/fs/unicode/utf8-core.c
-+++ b/fs/unicode/utf8-core.c
-@@ -192,7 +192,7 @@ static int utf8_parse_version(const char *version, unsigned int *maj,
- 	return 0;
- }
- 
--struct unicode_map *utf8_load(const char *version)
-+static struct unicode_map *utf8_load_core(const char *version)
- {
- 	struct unicode_map *um = NULL;
- 	int unicode_version;
-@@ -225,11 +225,57 @@ struct unicode_map *utf8_load(const char *version)
- 
- 	return um;
- }
-+
-+static void utf8_unload_core(struct unicode_map *um)
-+{
-+	kfree(um);
-+}
-+
-+static int utf8mod_get(void)
-+{
-+	int ret;
-+
-+	spin_lock(&utf8_lock);
-+	ret = utf8_data && try_module_get(utf8_data->owner);
-+	spin_unlock(&utf8_lock);
-+	return ret;
-+}
-+
-+struct unicode_map *utf8_load(const char *version)
-+{
-+	struct unicode_map *um;
-+
-+	/*
-+	 * try_then_request_module() is used here instead of using
-+	 * request_module() because of the following problems that
-+	 * could occur with the usage of request_module().
-+	 * 1) Multiple calls in parallel to utf8_load() would fail if
-+	 * kmod_concurrent_max == 0
-+	 * 2) There would be unnecessary memory allocation and userspace
-+	 * invocation in call_modprobe() that would always happen even if
-+	 * the module is already loaded.
-+	 * Hence, using try_then_request_module() would first check if the
-+	 * module is already loaded, if not then it calls the request_module()
-+	 * and finally would aquire the reference of the loaded module.
-+	 */
-+	if (!try_then_request_module(utf8mod_get(), "utf8-data")) {
-+		pr_err("Failed to load UTF-8 module\n");
-+		return ERR_PTR(-ENODEV);
-+	}
-+	um = utf8_load_core(version);
-+	if (IS_ERR(um))
-+		module_put(utf8_data->owner);
-+
-+	return um;
-+}
- EXPORT_SYMBOL(utf8_load);
- 
- void utf8_unload(struct unicode_map *um)
- {
--	kfree(um);
-+	if (um) {
-+		utf8_unload_core(um);
-+		module_put(utf8_data->owner);
-+	}
- }
- EXPORT_SYMBOL(utf8_unload);
- 
-diff --git a/fs/unicode/utf8-data.c b/fs/unicode/utf8-data.c
-new file mode 100644
-index 000000000000..1ae3c5dda6c7
---- /dev/null
-+++ b/fs/unicode/utf8-data.c
-@@ -0,0 +1,42 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include "utf8n.h"
-+
-+#define __INCLUDED_FROM_UTF8NORM_C__
-+#include "utf8data.h"
-+#undef __INCLUDED_FROM_UTF8NORM_C__
-+
-+struct utf8data_table data = {
-+	.owner = THIS_MODULE,
-+
-+	.utf8vers = utf8vers,
-+
-+	.utf8agetab = utf8agetab,
-+	.utf8agetab_size = ARRAY_SIZE(utf8agetab),
-+
-+	.utf8nfdicfdata = utf8nfdicfdata,
-+	.utf8nfdicfdata_size = ARRAY_SIZE(utf8nfdicfdata),
-+
-+	.utf8nfdidata = utf8nfdidata,
-+	.utf8nfdidata_size = ARRAY_SIZE(utf8nfdidata),
-+
-+	.utf8data = utf8data,
-+	.utf8data_size = ARRAY_SIZE(utf8data),
-+};
-+
-+static int __init utf8_init(void)
-+{
-+	unicode_register(&data);
-+	return 0;
-+}
-+
-+static void __exit utf8_exit(void)
-+{
-+	unicode_unregister();
-+}
-+
-+module_init(utf8_init);
-+module_exit(utf8_exit);
-+
-+MODULE_LICENSE("GPL v2");
-diff --git a/fs/unicode/utf8-norm.c b/fs/unicode/utf8-norm.c
-index 1d2d2e5b906a..a6276f50a18f 100644
---- a/fs/unicode/utf8-norm.c
-+++ b/fs/unicode/utf8-norm.c
-@@ -6,22 +6,18 @@
- 
- #include "utf8n.h"
- 
--struct utf8data {
--	unsigned int maxage;
--	unsigned int offset;
--};
-+/* Spinlock for protecting utf8_data */
-+DEFINE_SPINLOCK(utf8_lock);
- 
--#define __INCLUDED_FROM_UTF8NORM_C__
--#include "utf8data.h"
--#undef __INCLUDED_FROM_UTF8NORM_C__
-+struct utf8data_table *utf8_data;
- 
- int utf8version_is_supported(u8 maj, u8 min, u8 rev)
- {
--	int i = ARRAY_SIZE(utf8agetab) - 1;
-+	int i = utf8_data->utf8agetab_size - 1;
- 	unsigned int sb_utf8version = UNICODE_AGE(maj, min, rev);
- 
--	while (i >= 0 && utf8agetab[i] != 0) {
--		if (sb_utf8version == utf8agetab[i])
-+	while (i >= 0 && utf8_data->utf8agetab[i] != 0) {
-+		if (sb_utf8version == utf8_data->utf8agetab[i])
- 			return 1;
- 		i--;
- 	}
-@@ -31,7 +27,7 @@ EXPORT_SYMBOL(utf8version_is_supported);
- 
- int utf8version_latest(void)
- {
--	return utf8vers;
-+	return utf8_data->utf8vers;
- }
- EXPORT_SYMBOL(utf8version_latest);
- 
-@@ -168,7 +164,7 @@ typedef const unsigned char utf8trie_t;
-  * underlying datatype: unsigned char.
-  *
-  * leaf[0]: The unicode version, stored as a generation number that is
-- *          an index into utf8agetab[].  With this we can filter code
-+ *          an index into utf8_data->utf8agetab[].  With this we can filter code
-  *          points based on the unicode version in which they were
-  *          defined.  The CCC of a non-defined code point is 0.
-  * leaf[1]: Canonical Combining Class. During normalization, we need
-@@ -330,7 +326,7 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
- 	if (len == 0)
- 		return NULL;
- 
--	trie = utf8data + data->offset;
-+	trie = utf8_data->utf8data + data->offset;
- 	node = 1;
- 	while (node) {
- 		offlen = (*trie & OFFLEN) >> OFFLEN_SHIFT;
-@@ -418,7 +414,7 @@ int utf8agemax(const struct utf8data *data, const char *s)
- 		if (!leaf)
- 			return -1;
- 
--		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-+		leaf_age = utf8_data->utf8agetab[LEAF_GEN(leaf)];
- 		if (leaf_age <= data->maxage && leaf_age > age)
- 			age = leaf_age;
- 		s += utf8clen(s);
-@@ -446,7 +442,7 @@ int utf8agemin(const struct utf8data *data, const char *s)
- 		leaf = utf8lookup(data, hangul, s);
- 		if (!leaf)
- 			return -1;
--		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-+		leaf_age = utf8_data->utf8agetab[LEAF_GEN(leaf)];
- 		if (leaf_age <= data->maxage && leaf_age < age)
- 			age = leaf_age;
- 		s += utf8clen(s);
-@@ -473,7 +469,7 @@ int utf8nagemax(const struct utf8data *data, const char *s, size_t len)
- 		leaf = utf8nlookup(data, hangul, s, len);
- 		if (!leaf)
- 			return -1;
--		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-+		leaf_age = utf8_data->utf8agetab[LEAF_GEN(leaf)];
- 		if (leaf_age <= data->maxage && leaf_age > age)
- 			age = leaf_age;
- 		len -= utf8clen(s);
-@@ -501,7 +497,7 @@ int utf8nagemin(const struct utf8data *data, const char *s, size_t len)
- 		leaf = utf8nlookup(data, hangul, s, len);
- 		if (!leaf)
- 			return -1;
--		leaf_age = utf8agetab[LEAF_GEN(leaf)];
-+		leaf_age = utf8_data->utf8agetab[LEAF_GEN(leaf)];
- 		if (leaf_age <= data->maxage && leaf_age < age)
- 			age = leaf_age;
- 		len -= utf8clen(s);
-@@ -529,7 +525,7 @@ ssize_t utf8len(const struct utf8data *data, const char *s)
- 		leaf = utf8lookup(data, hangul, s);
- 		if (!leaf)
- 			return -1;
--		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
-+		if (utf8_data->utf8agetab[LEAF_GEN(leaf)] > data->maxage)
- 			ret += utf8clen(s);
- 		else if (LEAF_CCC(leaf) == DECOMPOSE)
- 			ret += strlen(LEAF_STR(leaf));
-@@ -557,7 +553,7 @@ ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
- 		leaf = utf8nlookup(data, hangul, s, len);
- 		if (!leaf)
- 			return -1;
--		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
-+		if (utf8_data->utf8agetab[LEAF_GEN(leaf)] > data->maxage)
- 			ret += utf8clen(s);
- 		else if (LEAF_CCC(leaf) == DECOMPOSE)
- 			ret += strlen(LEAF_STR(leaf));
-@@ -690,7 +686,7 @@ int utf8byte(struct utf8cursor *u8c)
- 
- 		ccc = LEAF_CCC(leaf);
- 		/* Characters that are too new have CCC 0. */
--		if (utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
-+		if (utf8_data->utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
- 			ccc = STOPPER;
- 		} else if (ccc == DECOMPOSE) {
- 			u8c->len -= utf8clen(u8c->s);
-@@ -769,24 +765,40 @@ EXPORT_SYMBOL(utf8byte);
- 
- const struct utf8data *utf8nfdi(unsigned int maxage)
- {
--	int i = ARRAY_SIZE(utf8nfdidata) - 1;
-+	int i = utf8_data->utf8nfdidata_size - 1;
- 
--	while (maxage < utf8nfdidata[i].maxage)
-+	while (maxage < utf8_data->utf8nfdidata[i].maxage)
- 		i--;
--	if (maxage > utf8nfdidata[i].maxage)
-+	if (maxage > utf8_data->utf8nfdidata[i].maxage)
- 		return NULL;
--	return &utf8nfdidata[i];
-+	return &utf8_data->utf8nfdidata[i];
- }
- EXPORT_SYMBOL(utf8nfdi);
- 
- const struct utf8data *utf8nfdicf(unsigned int maxage)
- {
--	int i = ARRAY_SIZE(utf8nfdicfdata) - 1;
-+	int i = utf8_data->utf8nfdicfdata_size - 1;
- 
--	while (maxage < utf8nfdicfdata[i].maxage)
-+	while (maxage < utf8_data->utf8nfdicfdata[i].maxage)
- 		i--;
--	if (maxage > utf8nfdicfdata[i].maxage)
-+	if (maxage > utf8_data->utf8nfdicfdata[i].maxage)
- 		return NULL;
--	return &utf8nfdicfdata[i];
-+	return &utf8_data->utf8nfdicfdata[i];
- }
- EXPORT_SYMBOL(utf8nfdicf);
-+
-+void unicode_register(struct utf8data_table *data)
-+{
-+	spin_lock(&utf8_lock);
-+	utf8_data = data;
-+	spin_unlock(&utf8_lock);
-+}
-+EXPORT_SYMBOL(unicode_register);
-+
-+void unicode_unregister(void)
-+{
-+	spin_lock(&utf8_lock);
-+	utf8_data = NULL;
-+	spin_unlock(&utf8_lock);
-+}
-+EXPORT_SYMBOL(unicode_unregister);
-diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
-index 6fe8af7edccb..d8069f4ad452 100644
---- a/fs/unicode/utf8-selftest.c
-+++ b/fs/unicode/utf8-selftest.c
-@@ -16,6 +16,7 @@
- 
- unsigned int failed_tests;
- unsigned int total_tests;
-+struct unicode_map *table;
- 
- /* Tests will be based on this version. */
- #define latest_maj 12
-@@ -232,16 +233,9 @@ static void check_utf8_nfdicf(void)
- 	}
- }
- 
--static void check_utf8_comparisons(void)
-+static void check_utf8_comparisons(struct unicode_map *table)
- {
- 	int i;
--	struct unicode_map *table = utf8_load("12.1.0");
--
--	if (IS_ERR(table)) {
--		pr_err("%s: Unable to load utf8 %d.%d.%d. Skipping.\n",
--		       __func__, latest_maj, latest_min, latest_rev);
--		return;
--	}
- 
- 	for (i = 0; i < ARRAY_SIZE(nfdi_test_data); i++) {
- 		const struct qstr s1 = {.name = nfdi_test_data[i].str,
-@@ -262,8 +256,6 @@ static void check_utf8_comparisons(void)
- 		test_f(!utf8_strncasecmp(table, &s1, &s2),
- 		       "%s %s comparison mismatch\n", s1.name, s2.name);
- 	}
--
--	utf8_unload(table);
- }
- 
- static void check_supported_versions(void)
-@@ -274,9 +266,6 @@ static void check_supported_versions(void)
- 	/* Unicode 9.0.0 should be supported. */
- 	test(utf8version_is_supported(9, 0, 0));
- 
--	/* Unicode 1x.0.0 (the latest version) should be supported. */
--	test(utf8version_is_supported(latest_maj, latest_min, latest_rev));
--
- 	/* Next versions don't exist. */
- 	test(!utf8version_is_supported(13, 0, 0));
- 	test(!utf8version_is_supported(0, 0, 0));
-@@ -288,10 +277,17 @@ static int __init init_test_ucd(void)
- 	failed_tests = 0;
- 	total_tests = 0;
- 
-+	table = utf8_load("12.1.0");
-+	if (IS_ERR(table)) {
-+		pr_err("%s: Unable to load utf8 %d.%d.%d. Could not run the tests\n",
-+		       __func__, latest_maj, latest_min, latest_rev);
-+		return -EINVAL;
-+	}
-+
- 	check_supported_versions();
- 	check_utf8_nfdi();
- 	check_utf8_nfdicf();
--	check_utf8_comparisons();
-+	check_utf8_comparisons(table);
- 
- 	if (!failed_tests)
- 		pr_info("All %u tests passed\n", total_tests);
-@@ -303,6 +299,7 @@ static int __init init_test_ucd(void)
- 
- static void __exit exit_test_ucd(void)
- {
-+	utf8_unload(table);
- }
- 
- module_init(init_test_ucd);
-diff --git a/fs/unicode/utf8n.h b/fs/unicode/utf8n.h
-index 0acd530c2c79..eb73fee9efc4 100644
---- a/fs/unicode/utf8n.h
-+++ b/fs/unicode/utf8n.h
-@@ -11,6 +11,7 @@
- #include <linux/export.h>
- #include <linux/string.h>
- #include <linux/module.h>
-+#include <linux/spinlock.h>
- 
- /* Encoding a unicode version number as a single unsigned int. */
- #define UNICODE_MAJ_SHIFT		(16)
-@@ -21,6 +22,9 @@
- 	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
- 	 ((unsigned int)(REV)))
- 
-+extern spinlock_t utf8_lock;
-+extern struct utf8data_table *utf8_data;
-+
- /* Highest unicode version supported by the data tables. */
- extern int utf8version_is_supported(u8 maj, u8 min, u8 rev);
- extern int utf8version_latest(void);
-@@ -105,4 +109,30 @@ extern int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
-  */
- extern int utf8byte(struct utf8cursor *u8c);
- 
-+struct utf8data {
-+	unsigned int maxage;
-+	unsigned int offset;
-+};
-+
-+struct utf8data_table {
-+	struct module *owner;
-+
-+	const unsigned int utf8vers;
-+
-+	const unsigned int *utf8agetab;
-+	int utf8agetab_size;
-+
-+	const struct utf8data *utf8nfdicfdata;
-+	int utf8nfdicfdata_size;
-+
-+	const struct utf8data *utf8nfdidata;
-+	int utf8nfdidata_size;
-+
-+	const unsigned char *utf8data;
-+	int utf8data_size;
-+};
-+
-+void unicode_register(struct utf8data_table *data);
-+void unicode_unregister(void);
-+
- #endif /* UTF8NORM_H */
--- 
-2.30.2
+Tony Battersby
 
