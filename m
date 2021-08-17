@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE8A3EEBAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 13:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C56153EEBB2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 13:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236713AbhHQL35 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 07:29:57 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:23579 "EHLO
+        id S239773AbhHQLaB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 07:30:01 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:23667 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239773AbhHQL3w (ORCPT
+        with ESMTP id S239726AbhHQL37 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 07:29:52 -0400
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210817112918epoutp046ad405f0ebb050eb04718fd60cbdf818~cFIxOhZCZ1039810398epoutp04t
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 11:29:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210817112918epoutp046ad405f0ebb050eb04718fd60cbdf818~cFIxOhZCZ1039810398epoutp04t
+        Tue, 17 Aug 2021 07:29:59 -0400
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210817112925epoutp04070c55d3a6a7f4686c2690f350109cb7~cFI3_YCiD1039610396epoutp04v
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 11:29:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210817112925epoutp04070c55d3a6a7f4686c2690f350109cb7~cFI3_YCiD1039610396epoutp04v
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1629199758;
-        bh=8k4v8Wc22T8Nl4fGkl2T3OtUvUqtjnmyhgGSjr7Uuqs=;
+        s=mail20170921; t=1629199765;
+        bh=wc+WvxlrxFo6cfYgE96D3st/XNkIhsyXUXNjiBbfxn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UXALpCP40dUOXWiE9lkcxp2jMrUYb0j8TfVy6eK0ti6NKD7ST/PWccaB7mOrH4Aev
-         fYwj5EVop2J2XX8L0gHkV1d+MVYkaoruIwNb6VZQ6OIz6I9pdGNk2wong9H0f+NIh1
-         NvxoUEwHQcc9CwJVwaD2E9GEW8kTzLSuwE80IRdo=
+        b=ZedZ/tENruX7+OWaROCLdRskFtf7AvaHUPKhTlj+Qq+OpWzSOHsRsoTRLs9nyOG8T
+         hrjDl8eLivDlJ6ryhH+61fh5zkyxG2IwbixMPLjjxyT2fEMw4tDcs+RL7jXT2vL/ch
+         O3iPIR7TUzxh70VB+eH4zUWyrPp7fH7CZgxSTNLw=
 Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20210817112917epcas5p17eb00a14b2416924d18537aae51021fe~cFIwQ4GbS0075100751epcas5p1V;
-        Tue, 17 Aug 2021 11:29:17 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4GpphP5ngcz4x9Pt; Tue, 17 Aug
-        2021 11:29:09 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7F.AD.41701.58D9B116; Tue, 17 Aug 2021 20:29:09 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210817101803epcas5p10cda1d52f8a8f1172e34b1f9cf8eef3b~cEKkbCg8f0725807258epcas5p1E;
-        Tue, 17 Aug 2021 10:18:03 +0000 (GMT)
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20210817112924epcas5p34748629b4eefb2a5e4447803ad88bac6~cFI3VRqJF0728107281epcas5p34;
+        Tue, 17 Aug 2021 11:29:24 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.180]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4GpphX07Jgz4x9Q3; Tue, 17 Aug
+        2021 11:29:16 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D4.3C.40257.B8D9B116; Tue, 17 Aug 2021 20:29:15 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210817101809epcas5p39eed3531ed82f5f08127eb3dba1fc50f~cEKpkFYrp2834328343epcas5p35;
+        Tue, 17 Aug 2021 10:18:09 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210817101803epsmtrp21b0f42eda6731a61723b78dc17c2ae6c~cEKkZtkPw2821228212epsmtrp2R;
-        Tue, 17 Aug 2021 10:18:03 +0000 (GMT)
-X-AuditID: b6c32a4b-0c1ff7000001a2e5-09-611b9d85ad8f
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210817101809epsmtrp12dea27ad71f675f5748808fd117e1e45~cEKpiyntr2042320423epsmtrp1G;
+        Tue, 17 Aug 2021 10:18:09 +0000 (GMT)
+X-AuditID: b6c32a49-ed1ff70000019d41-55-611b9d8bb635
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        13.19.32548.BDC8B116; Tue, 17 Aug 2021 19:18:03 +0900 (KST)
+        58.19.32548.0EC8B116; Tue, 17 Aug 2021 19:18:09 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.110.206.5]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210817101759epsmtip29d696043a21492e64b762aeb5d3a4451~cEKgr5htn3169331693epsmtip2i;
-        Tue, 17 Aug 2021 10:17:59 +0000 (GMT)
+        20210817101805epsmtip21f597ab79bcdfc0f01aa56cbc0e830ab~cEKl0OOkM0079500795epsmtip2j;
+        Tue, 17 Aug 2021 10:18:05 +0000 (GMT)
 From:   SelvaKumar S <selvakuma.s1@samsung.com>
 To:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org
 Cc:     linux-api@vger.kernel.org, linux-scsi@vger.kernel.org,
@@ -61,186 +61,212 @@ Cc:     linux-api@vger.kernel.org, linux-scsi@vger.kernel.org,
         joshiiitr@gmail.com, nj.shetty@samsung.com,
         nitheshshetty@gmail.com, joshi.k@samsung.com,
         javier.gonz@samsung.com, SelvaKumar S <selvakuma.s1@samsung.com>
-Subject: [PATCH 4/7] block: Introduce a new ioctl for simple copy
-Date:   Tue, 17 Aug 2021 15:44:20 +0530
-Message-Id: <20210817101423.12367-5-selvakuma.s1@samsung.com>
+Subject: [PATCH 5/7] block: add emulation for simple copy
+Date:   Tue, 17 Aug 2021 15:44:21 +0530
+Message-Id: <20210817101423.12367-6-selvakuma.s1@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210817101423.12367-1-selvakuma.s1@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BUVRzHO/cuu4sK3gDhuGBuO6IB8VhYlkMjoAPT3AGmoXFyDBzpCjdg
-        YB/uI6ImoxzUhdpEBRMfKGrlLiEtD9flEfIStihey2vUrGDHRAHZVDZAW7hY/vc5v/P9nu/8
-        fmd+XNztGIfHzZKqaIWUyhGwV7Hq2/y2BBac8aZCFtpfR1fMnTg6rasHSH/rKzYqnbHjqODQ
-        YwwNjLuipqlTTuiyvgNDf960cdBi4W0MdTx7wEa/PmjD0NHWIYAaDcdZqObJYTZqGgtAjU3d
-        LFT+zQQHFQ0b2ejbG08xVHzYgiHj+GcA1c+X42jweAWO7kwPc9DkXDcbHfzhEUDzc6fZ23zI
-        gcEE8lrZLQ5Z850/OdCjJg06DZusufgp2TCazyYfToyxyOlmC5vU1uoAaTO8Qh5qKcKS1iRn
-        b82kqXRawaelabL0LGlGlCBhR2psarg4RBgojEQRAr6UktBRgrjEpMA3s3IcwxDwP6By1I5S
-        EqVUCoKjtypkahXNz5QpVVECWp6eIxfJg5SURKmWZgRJadUbwpCQ0HCH8L3sTNuUiSPv8Pnw
-        7plqp3xQ7FUInLmQEMHK6xbOErsRDQBWmCSFYJWDZwGc7KljMQcbgFMXHmLPHfnWpxzmwgSg
-        ZrEIMHaHqndw/xKziUA4dNHAWmIPIgZetuuclgw4YWbBE9MVy3nuxHb4+8IwvsQswhdebSlY
-        TnAhouCF9p8Bk7YRnux/4tBzuc5ENDTN+jKSl2H3yfHl93GH5EDdKZyR651h82gew3HwftVB
-        FsPu8N6NWg7DPGibamIznAutmtKVxvIB1E7nMhwD+xoXsaVYnPCDV0zBTHkDLDFXYUysK/xy
-        fnzF6gKNZ8eX5ZDYDM1XxUzZB860mVaSSDjS0o8zYysGcHD2C+wI4Je90E3ZC92U/Z98DuA6
-        sJ6WKyUZtDJcHialc//74jSZxACWt8M/wQj+uDMT1AowLmgFkIsLPFy2cHmUm0s6lfcRrZCl
-        KtQ5tLIVhDumXYzz1qXJHOslVaUKRZEhIrFYLIoMEwsFXi67E70pNyKDUtHZNC2nFc99GNeZ
-        l481GakMPq/sbLyXa1sVzzfDMz5lz8i+ZHrPP276r0tDU1bXqC32Ttv5dzbsOvKbltpxLu7R
-        q31rxtJ3H622l+xUUx/fuy28Vnle27PToEm2b/cLnay5L+o8ILZtI3y6PAMiYsP+TvNXlpd4
-        yzb5di3UJZaG9tb2D82IgtcWpLzU9Ut9Xexe97clDTr32nU/ip07qJH3975F/iT6vCq7MTUw
-        D67v9oyJTzjht+lxdIFGUhit6ewdiN8VtnHf/k7tXau1SJQZ0Kf9C7ZsG5gyV+jnI4hI62vv
-        BrpYJi9ZNhvXzo16CFzbrPrvmy/d/GR1EXZdntZ5jENWTdgtlc/a+Qnm9moBS5lJCf1xhZL6
-        F1yxgWOmBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02RfyyUcRzH932ep+eeu3KeLuYJy7qxdBdhqW+/LP+0p+nX+itaXVeesNyx
-        O6e0rGtFRz+Jyo/KHOGMdMLFifyonZC4Y5WzcMoyxFWYH+Worf/e+7xe773/+BAorw1zJiKk
-        MYxMKo7k4xysspHv5vXphovYx9DKh09bXqMwW1MJYLH5Ng7vfZ9BYcK1XwjssnBh7VjWClhU
-        3IzAwV4rC84n9yGw+fcoDt+NNiIwtaEbQL02DYPlUyoc1n4UQn2tAYOPnwyx4PUeHQ4L3iwg
-        MEVlQqDOchnAytnHKDSm5aLw83gPC45MG3CY+OwngLPT2fgeV7rLGES/yDSz6PJCAd3VpqC1
-        miScLs+7RNd8UOL0xNBHjB5/acLpW881gLZq19HX6q8jh1eFcHaFMpERsYxsc8BJTrh1rJoV
-        3ex6fvhh2QolSHFKBmyCIrdQyi8LrGTAIXikDlCTuVNgGbhSJeYkfDmvoYoWvv6VJgD142U6
-        YgM46UV152kxW3YgA6m3k5WITULJbxjVZ65BbWDNIuif61nKGOlBVdUnLJXtyN2Uuqn175ob
-        ldE5tbhAEGwygKqe9LCdeYtKnT6dtayvpgwZlqUtdFG/UpGF3gFk5n8o8z+UAxANWMtEyyVh
-        ErlvtJ+UOectF0vkCmmY9+koiRYsfVwg0AG95rt3A0AI0AAoAuU72G0gnMU8u1Bx3AVGFiWS
-        KSIZeQNwITC+k11HskHEI8PEMcxZholmZP8oQrCdlUhpun9xwaib28X5uqMOG/26MwNFE575
-        MSp7i3GAc27I4dinXZbJ9e5hg68KB3rt4+mSVH2OsJRfeFPUJG1U55g2HRreGhxy4lRTZ1nv
-        Nv8MlSKg6nPsfqFz7MrQB62qkCLli5mgyPA0/nvTprl8r+BuoT7uZ6Dr9v7dNzz3cZEfs6H3
-        z2QNbE1lP5TknRG8iZi3+qUlBhvDSbL9+E5RQszdqiOJpS4+/lfbd16agf7WHT31e4bi+6QF
-        2mBh4oGkEOtmNbd6YEFXpx7X1HuPO6kddfa93O26oL7L1R3smvuPUlrHcke4a81Zporpg3vj
-        vFrm1F8Ud9son7NRjsaCQXc+Jg8X+wpQmVz8B1BWO4dgAwAA
-X-CMS-MailID: 20210817101803epcas5p10cda1d52f8a8f1172e34b1f9cf8eef3b
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf1CTZRy/533Hu+Ft+AZ6PAyq3cAMCtiKrQcDzKB8O72OhM6TTHwP3gOO
+        sa1tiFhdmMoPSQRElIGIQCijIgYRDLBugPLLwwQUEQJ0qFnIlOPXAdHG0Pzv8/1+P5/nc9/P
+        c18O7pjP5nPi5BpGJadlQmIdq77V83XvzHOutOhErgRVd13BUZGuHqCqkZMEyjcv4OhY2iyG
+        +kwOqOVxoR2qrGrH0L3haTZaPv4nhtpXJgnUO9mKoVzjTYCa9XksVDuXTqCWoTdQc0snC52v
+        mGCjzFsNBLp49V8M5aQPYKjBdBig+sXzOOrPK8XR2NQtNvp7vpNAqTUzAC3OFxHvuVF9/Tuo
+        Ru0Im6q95EX1XUuk9LoMgqot/4Zqup1CUE8mhljU1OUBgsqq0wFqWv8KlfZ7JhbKjYgPiGXo
+        aEYlYORRiug4eUygcEdYZHCkRCoSe4v90TtCgZxOYAKFITtDvT+Mk1nCEAoO0LJESyuUVquF
+        vkEBKkWihhHEKtSaQCGjjJYp/ZQ+ajpBnSiP8ZEzmi1ikegtiYW4Pz62+/SCnXLA/eBUzwqe
+        Au64HQf2HEj6we9SevDjYB3HkWwC8Lf2x5iteApgdlE921ZMA/jAcJF4JintvQZsAwOAVRl9
+        2HNWUWoHbmURpDe8Wa5nWfEGciusXNDZWUk42cWCZ6ZK2daBE+kPCxbSVjGL3AT1lYOYFfPI
+        QHhhdBbY7F6FBTfmLBwOx54Mgoanm2yUl2BngWn1fdxCOfJL4eoSkKyyh+dmr7Bs2hCYdXd4
+        DTvBR1fr2DbMh3+dTF3DSfB+Rj5mwykAZk0l2fBW+EfzMmb1xUlPWG3wtbVfhqe7fsJsvg7w
+        xKJpTcqDDcWmVTokX4Ndv0ptbTdobjWsBUfBxiHdWlY5AKbmNdplA4H2hXW0L6yj/d+5BOA6
+        4MIo1QkxjFqiFMuZpOe/HKVI0IPVA/H6qAGMjJl9jADjACOAHFy4gbeZw6cdedF08iFGpYhU
+        JcoYtRFILHHn4PyNUQrLhck1kWI/f5GfVCr1839bKhY68/budKUdyRhaw8QzjJJRPdNhHHt+
+        CobjvPSyCOf07NHSu77jDyu5W+47R/Uuj3evP1rGlObMlBxxmPsRLAUdaBpuq4n9oCIkuEfy
+        5Q/HuHanZnd10CtLzPKhzOptnl8Xpx/s2NwzH+bxQNSIRpcMex4+0h09O+jAKenYbW5y2buL
+        K8iZ3njB8UxBzRy1Pc4/XObzpnuGa+i3pMAzkAsDfk7aHryv3rjbYSL0sDvmerbjsxuF3W39
+        16+vJL//PSfI42MWGTlTNxL+7n7uV7PdWcZP9rhFXMIuf95ToY9qK6/YV2NeDNaO3wvTJoed
+        emL2+EKeq6z1ME06FWdDYQI/6074+n+6zIOezXOMCz83Yhv56VhZUd7tlhEhSx1Li71wlZr+
+        D8IJLompBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Rf1CLcRzHfZ/n8explMfK+aouZ84wK7ULX786P89zuMud487PGh4V22RT
+        5JxGZVkoKncl0vxs5dfKrrTIQla6Omskll/DifSTVTvS2rnz3/s+r9fd648PhfPqCV8qRr6P
+        VcglUj7JJQzV/ImB70/4SYK/tGHoVu0THOXpDAAV2dJJdLazH0cp6l8Ysti9UOWPcyNRYdFj
+        DH1808NBvzWtGHo82E6ihvZqDJ0xvQDIqM8iUIkjlUSVLTOQsdJMoPyrnzgo7WUZia7V/MHQ
+        6VQrhsrsRwAyOPNx1JSlxdG7jpcc9K3PTKJjd34C5OzLIxf5M5amVUx5ro3DlFwXMpb6OEav
+        O04yJZcTmYpXKpLp+tRCMB33rSRzqlQHmB59AKOuSsPWjN7IXbCDlcbEs4qZYZHc6Lrs/pGx
+        1skHOp4N4irw2l8DPChIh0JtQz3QAC7Fo8sAzDmahbmBP7xhO066tzcs/POF45a6APygeUe4
+        AEkHwheX9cPbh14M67oNmEvC6TYCttoqcBfwpufCnH41x7UJegrUFzYPFzzphbDg7S/gLkyE
+        Oc8dQw5FedBh8F73FNeZN6Q8MGZz3PpYaM6xD7fwIT3p7jk8A9C5/6Hc/9BFgOnABDZWKYuS
+        KUNixXJ2f5BSIlPGyaOCtu+R6cHwx4XCMmDUdQaZAEYBE4AUzvfxnEr5SnieOyQJB1nFnghF
+        nJRVmoAfRfDHezZqzBE8Okqyj93NsrGs4h/FKA9fFbZ06+z7AyJvsfqeI1TnWBs/vWnO7oH0
+        n1Z6TevNTON4ca0ps2vc4fDvquDe2SFekX3ra9fx+2puG1cLekIvbRP1zpPfujJLZNauPP9U
+        rCm2LCnyHqgrn7QsISOi4EKHx5b+4u+azTGqk7LGjRh1qUKjDfsxzW9/aX57t2VqzIhEYzhF
+        PHm2IiF9L7NTOmA7OL8qKWnTibYVqaHXA5rFvLERR5cGWkssBb2iKu7DdLZ5gXCMwGfXzRpn
+        4DH7V/9xdmVncoDK0dIQLCg+XMxrBKNup43OW36oXBBlEPp2//6cLIrOrp7klwrVzkyv8I9k
+        ijRkA1/rFByJrC8d8wjG54v5hDJaEiLEFUrJX9ryORVgAwAA
+X-CMS-MailID: 20210817101809epcas5p39eed3531ed82f5f08127eb3dba1fc50f
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210817101803epcas5p10cda1d52f8a8f1172e34b1f9cf8eef3b
+X-CMS-RootMailID: 20210817101809epcas5p39eed3531ed82f5f08127eb3dba1fc50f
 References: <20210817101423.12367-1-selvakuma.s1@samsung.com>
-        <CGME20210817101803epcas5p10cda1d52f8a8f1172e34b1f9cf8eef3b@epcas5p1.samsung.com>
+        <CGME20210817101809epcas5p39eed3531ed82f5f08127eb3dba1fc50f@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Nitesh Shetty <nj.shetty@samsung.com>
 
-Add new BLKCOPY ioctl that offloads copying of one or more sources ranges
-to a destination in the device. COPY ioctl accepts a 'copy_range'
-structure that contains destination (in sectors), no of sources and
-pointer to the array of source ranges. Each source range is represented by
-'range_entry' that contains start and length of source ranges (in sectors)
+For the devices which does not support simple copy, copy emulation is
+added. Also for stacked devices, copy is performed via emulation.
 
-MAX_COPY_NR_RANGE, limits the number of entries for the IOCTL and
-MAX_COPY_TOTAL_LENGTH limits the total copy length, IOCTL can handle.
+Copy-emulation is implemented by allocating maximum possible memory
+less than or equal to total copy size. The source ranges are read
+into memory by chaining bio for each source ranges and submitting them
+async and the last bio waits for completion. After data is read, it is
+written to the destination and the process is repeated till no source
+ranges left.
 
-Example code, to issue BLKCOPY:
-/* Sample example to copy three source-ranges [0, 8] [16, 8] [32,8] to
- * [64,24], on the same device */
-
-int main(void)
-{
-	int ret, fd;
-	struct range_entry source_range[] = {{.src = 0, .len = 8},
-		{.src = 16, .len = 8}, {.src = 32, .len = 8},};
-	struct copy_range cr;
-
-	cr.dest = 64;
-	cr.nr_range = 3;
-	cr.range_list = (__u64)&source_range;
-
-	fd = open("/dev/nvme0n1", O_RDWR);
-	if (fd < 0) return 1;
-
-	ret = ioctl(fd, BLKCOPY, &cr);
-	if (ret < 0) printf("copy failure\n");
-
-	close(fd);
-
-	return ret;
-}
+bio_map_kern() is used to allocate bio and add pages of copy buffer to
+bio. As bio->bi_private and bio->bi_end_io are needed for chaining the
+bio and gets over-written, invalidate_kernel_vmap_range() for read is
+called in the caller.
 
 Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
 Signed-off-by: SelvaKumar S <selvakuma.s1@samsung.com>
-Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 ---
- block/ioctl.c           | 33 +++++++++++++++++++++++++++++++++
- include/uapi/linux/fs.h |  8 ++++++++
- 2 files changed, 41 insertions(+)
+ block/blk-lib.c | 100 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 100 insertions(+)
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index eb0491e90b9a..2af56d01e9fe 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -143,6 +143,37 @@ static int blk_ioctl_discard(struct block_device *bdev, fmode_t mode,
- 				    GFP_KERNEL, flags);
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 7fee0ae95c44..d29c52b90dcf 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -333,6 +333,64 @@ int blk_copy_offload_scc(struct block_device *src_bdev, int nr_srcs,
+ 	return ret;
  }
  
-+static int blk_ioctl_copy(struct block_device *bdev, fmode_t mode,
-+		unsigned long arg)
++int blk_submit_rw_buf(struct block_device *bdev, void *buf, sector_t buf_len,
++				sector_t sector, unsigned int op, gfp_t gfp_mask)
 +{
-+	struct copy_range crange;
-+	struct range_entry *rlist;
++	struct request_queue *q = bdev_get_queue(bdev);
++	struct bio *bio, *parent = NULL;
++	sector_t max_hw_len = min_t(unsigned int, queue_max_hw_sectors(q),
++			queue_max_segments(q) << (PAGE_SHIFT - SECTOR_SHIFT));
++	sector_t len, remaining;
 +	int ret;
 +
-+	if (!(mode & FMODE_WRITE))
-+		return -EBADF;
++	for (remaining = buf_len; remaining > 0; remaining -= len) {
++		len = min_t(int, max_hw_len, remaining);
++retry:
++		bio = bio_map_kern(q, buf, len << SECTOR_SHIFT, gfp_mask);
++		if (IS_ERR(bio)) {
++			len >>= 1;
++			if (len)
++				goto retry;
++			return PTR_ERR(bio);
++		}
 +
-+	if (copy_from_user(&crange, (void __user *)arg, sizeof(crange)))
-+		return -EFAULT;
++		bio->bi_iter.bi_sector = sector;
++		bio->bi_opf = op;
++		bio_set_dev(bio, bdev);
++		bio->bi_end_io = NULL;
++		bio->bi_private = NULL;
 +
-+	rlist = kmalloc_array(crange.nr_range, sizeof(*rlist),
-+			GFP_KERNEL);
-+	if (!rlist)
-+		return -ENOMEM;
-+
-+	if (copy_from_user(rlist, (void __user *)crange.range_list,
-+				sizeof(*rlist) * crange.nr_range)) {
-+		ret = -EFAULT;
-+		goto out;
++		if (parent) {
++			bio_chain(parent, bio);
++			submit_bio(parent);
++		}
++		parent = bio;
++		sector += len;
 +	}
++	ret = submit_bio_wait(bio);
++	bio_put(bio);
 +
-+	ret = blkdev_issue_copy(bdev, crange.nr_range, rlist, bdev, crange.dest,
-+			GFP_KERNEL, 0);
-+out:
-+	kfree(rlist);
 +	return ret;
 +}
 +
- static int blk_ioctl_zeroout(struct block_device *bdev, fmode_t mode,
- 		unsigned long arg)
- {
-@@ -468,6 +499,8 @@ static int blkdev_common_ioctl(struct block_device *bdev, fmode_t mode,
- 	case BLKSECDISCARD:
- 		return blk_ioctl_discard(bdev, mode, arg,
- 				BLKDEV_DISCARD_SECURE);
-+	case BLKCOPY:
-+		return blk_ioctl_copy(bdev, mode, arg);
- 	case BLKZEROOUT:
- 		return blk_ioctl_zeroout(bdev, mode, arg);
- 	case BLKGETDISKSEQ:
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 7a97b588d892..4183688ff398 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -76,6 +76,13 @@ struct range_entry {
- 	__u64 len;
- };
- 
-+struct copy_range {
-+	__u64 dest;
-+	__u64 nr_range;
-+	__u64 range_list;
-+	__u64 rsvd;
-+};
++static void *blk_alloc_buf(sector_t req_size, sector_t *alloc_size, gfp_t gfp_mask)
++{
++	int min_size = PAGE_SIZE;
++	void *buf;
 +
- /* extent-same (dedupe) ioctls; these MUST match the btrfs ioctl definitions */
- #define FILE_DEDUPE_RANGE_SAME		0
- #define FILE_DEDUPE_RANGE_DIFFERS	1
-@@ -197,6 +204,7 @@ struct fsxattr {
- #define BLKROTATIONAL _IO(0x12,126)
- #define BLKZEROOUT _IO(0x12,127)
- #define BLKGETDISKSEQ _IOR(0x12,128,__u64)
-+#define BLKCOPY _IOWR(0x12, 129, struct copy_range)
- /*
-  * A jump here: 130-136 are reserved for zoned block devices
-  * (see uapi/linux/blkzoned.h)
++	while (req_size >= min_size) {
++		buf = kvmalloc(req_size, gfp_mask);
++		if (buf) {
++			*alloc_size = (req_size >> SECTOR_SHIFT);
++			return buf;
++		}
++		/* retry half the requested size */
++		req_size >>= 1;
++	}
++
++	return NULL;
++}
++
+ static inline sector_t blk_copy_len(struct range_entry *rlist, int nr_srcs)
+ {
+ 	int i;
+@@ -348,6 +406,46 @@ static inline sector_t blk_copy_len(struct range_entry *rlist, int nr_srcs)
+ 	return len;
+ }
+ 
++/*
++ * If native copy offload feature is absent, this function tries to emulate,
++ * by copying data from source to a temporary buffer and from buffer to
++ * destination device.
++ */
++static int blk_copy_emulate(struct block_device *src_bdev, int nr_srcs,
++		struct range_entry *rlist, struct block_device *dest_bdev,
++		sector_t dest, gfp_t gfp_mask)
++{
++	void *buf = NULL;
++	int ret, nr_i = 0;
++	sector_t src_blk, copy_len, buf_len, read_len, copied_len, remaining = 0;
++
++	copy_len = blk_copy_len(rlist, nr_srcs);
++	buf = blk_alloc_buf(copy_len << SECTOR_SHIFT, &buf_len, gfp_mask);
++	if (!buf)
++		return -ENOMEM;
++
++	for (copied_len = 0; copied_len < copy_len; copied_len += read_len) {
++		if (!remaining) {
++			src_blk = rlist[nr_i].src;
++			remaining = rlist[nr_i++].len;
++		}
++
++		read_len = min_t(sector_t, remaining, buf_len);
++		ret = blk_submit_rw_buf(src_bdev, buf, read_len, src_blk, REQ_OP_READ, gfp_mask);
++		if (ret)
++			goto out;
++		src_blk += read_len;
++		remaining -= read_len;
++		ret = blk_submit_rw_buf(dest_bdev, buf, read_len, dest + copied_len, REQ_OP_WRITE,
++				gfp_mask);
++		if (ret)
++			goto out;
++	}
++out:
++	kvfree(buf);
++	return ret;
++}
++
+ static inline bool blk_check_offload_scc(struct request_queue *src_q,
+ 		struct request_queue *dest_q)
+ {
+@@ -398,6 +496,8 @@ int blkdev_issue_copy(struct block_device *src_bdev, int nr_srcs,
+ 
+ 	if (blk_check_offload_scc(src_q, dest_q))
+ 		ret = blk_copy_offload_scc(src_bdev, nr_srcs, src_rlist, dest_bdev, dest, gfp_mask);
++	else
++		ret = blk_copy_emulate(src_bdev, nr_srcs, src_rlist, dest_bdev, dest, gfp_mask);
+ 
+ 	return ret;
+ }
 -- 
 2.25.1
 
