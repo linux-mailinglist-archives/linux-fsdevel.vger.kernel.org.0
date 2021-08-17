@@ -2,191 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4860E3EE7E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 09:56:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B7833EE7F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 10:02:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238597AbhHQH4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 03:56:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234741AbhHQH4m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 03:56:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AE6B66054E;
-        Tue, 17 Aug 2021 07:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629186969;
-        bh=ialWZUiGma+hiJ6vkQY6KCDbFYDPBfUEF0qvlOeHQf0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fCAY0aWmgY4G3vZ1IAkz6dHYzN1/ODUqsvYo7yeLWv1j+ViKOgARmsZC4Yu4KPMRL
-         HexDsoLGIYCg7MBa0n8BY1l0HUIwCv1hEpC4tcZznMNivKUF1mfg87eI/5PGA6lTNE
-         uaxV+TTbtVo9gcv3TJLjrjZe5m3F7VuMeXCO8F1rBh0oAOWBGmnYHWlTF2T5cHjP6C
-         Hwy+H7aS6lfgOASd2L1H2n+nGbRTEhRbutmNe+akyNM6uImXnGFQELvj6sOf7MWBfa
-         w584KTmHAXudd90oBkArD45WBS6UsJhHgoAnYLmpeFZEhngAaqLRPuSLJEMI/fq+Ts
-         8xywIR2CAKDTQ==
-Date:   Tue, 17 Aug 2021 10:56:02 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
+        id S234994AbhHQIDM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 04:03:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43295 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238816AbhHQICv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Aug 2021 04:02:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629187335;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hvpGoUHQ8t3bt45zEieMo9unwP1e1e/GqqcZaOJAzRI=;
+        b=WawrlL7ifync7n0o2SLDC6ORAiQGYLjFTH3moBB8S/FT5ziKrMXSYMRU4bdC8f6iAbnhPr
+        tkllxupmeLxCHU8ti/AhhpHtZzybBwQB60gCjUBTzJiMsb09OWxRpLKO80wrEU9hRaQA4P
+        u+5X7eQdJhEqOveBlgLnmzwghVvVYi4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-388-zR01BBMKPwOEwyBgZMUwmg-1; Tue, 17 Aug 2021 04:02:13 -0400
+X-MC-Unique: zR01BBMKPwOEwyBgZMUwmg-1
+Received: by mail-wm1-f69.google.com with SMTP id f19-20020a1c1f13000000b002e6bd83c344so604149wmf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 01:02:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=hvpGoUHQ8t3bt45zEieMo9unwP1e1e/GqqcZaOJAzRI=;
+        b=ESYF/OTQ26bX0cPGGt/jT/InjZY4Be3KntAR5RWnbhQ0cFMd6LfJ47k8laZ0A00OjS
+         0PJpn3ajk01Nqn/Q7Yk36pd0zEH8j2tJZqVeQT9VPb9FTJaSnB4tz7iZPR9S5GVd2uzM
+         0r460sDH6xUB0BXdGMT4YiqM8TpAvzGsLYM5JHihbVi/TLLmkmXsAIVn7UegZqw+CsfI
+         tWRc9Gy7pLoXkh+UjRzj33wDKHf4W3W5YNqdxKNYXUtgVZXJt2P15fVtaqxz+cAROgRE
+         2u5a4uFrwdyuG0jcf9hs2GQP8eSCFkEAirD7nqxr8Bd9eRA+KW8I5LYO/xtrh89QUe5y
+         PXHA==
+X-Gm-Message-State: AOAM533ZzdfQLdxz1BjtKVPQnrJi/16Ahk45N+DfcV7KI/FljOr3St6B
+        WYx8zxQiLt+QKh4NEdbZYW2VrZ5rqa5YP0uvp69uTW6nD72Bkhy//l7F/NWKUYLL9JRuIsKDB77
+        0HAPlf5qnGjH2NYZFS9a1xD2ZvrkupBTDsRL5U5kSlW2vOXFFI7YQMriKopbvXMWk0+a00xs//Q
+        ==
+X-Received: by 2002:a1c:4d13:: with SMTP id o19mr1982204wmh.183.1629187332061;
+        Tue, 17 Aug 2021 01:02:12 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyXvXjJTy8/uUTjsyD3/ogzVaBZQBuhGAyJBHk9eFsdPiSWUYm0duHiKeA/6Ll+EdPvn5yYLQ==
+X-Received: by 2002:a1c:4d13:: with SMTP id o19mr1982173wmh.183.1629187331733;
+        Tue, 17 Aug 2021 01:02:11 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c65c6.dip0.t-ipconnect.de. [91.12.101.198])
+        by smtp.gmail.com with ESMTPSA id o14sm1182219wms.2.2021.08.17.01.02.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Aug 2021 01:02:11 -0700 (PDT)
+Subject: Re: [BUG] general protection fault when reading /proc/kcore
+To:     Mike Rapoport <rppt@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Oscar Salvador <osalvador@suse.de>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [BUG] general protection fault when reading /proc/kcore
-Message-ID: <YRtrktVtNlWMLVZR@kernel.org>
 References: <YRqhqz35tm3hA9CG@krava>
- <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com>
- <YRqqqvaZHDu1IKrD@krava>
+ <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com> <YRqqqvaZHDu1IKrD@krava>
  <2b83f03c-e782-138d-6010-1e4da5829b9a@redhat.com>
- <YRq4typgRn342B4i@kernel.org>
+ <YRq4typgRn342B4i@kernel.org> <YRtrktVtNlWMLVZR@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Message-ID: <0aa3aaca-4ac4-0f34-0012-78c5252b5650@redhat.com>
+Date:   Tue, 17 Aug 2021 10:02:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YRq4typgRn342B4i@kernel.org>
+In-Reply-To: <YRtrktVtNlWMLVZR@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 10:13:18PM +0300, Mike Rapoport wrote:
-> On Mon, Aug 16, 2021 at 08:38:43PM +0200, David Hildenbrand wrote:
-> > On 16.08.21 20:12, Jiri Olsa wrote:
-> > > On Mon, Aug 16, 2021 at 07:49:15PM +0200, David Hildenbrand wrote:
-> > > > On 16.08.21 19:34, Jiri Olsa wrote:
-> > > > > hi,
-> > > > > I'm getting fault below when running:
-> > > > >=20
-> > > > > 	# cat /proc/kallsyms | grep ksys_read
-> > > > > 	ffffffff8136d580 T ksys_read
-> > > > > 	# objdump -d --start-address=3D0xffffffff8136d580 --stop-address=
-=3D0xffffffff8136d590 /proc/kcore
-> > > > >=20
-> > > > > 	/proc/kcore:     file format elf64-x86-64
-> > > > >=20
-> > > > > 	Segmentation fault
-> > > > >=20
-> > > > > any idea? config is attached
-> > > >=20
-> > > > Just tried with a different config on 5.14.0-rc6+
-> > > >=20
-> > > > [root@localhost ~]# cat /proc/kallsyms | grep ksys_read
-> > > > ffffffff8927a800 T ksys_readahead
-> > > > ffffffff89333660 T ksys_read
-> > > >=20
-> > > > [root@localhost ~]# objdump -d --start-address=3D0xffffffff89333660
-> > > > --stop-address=3D0xffffffff89333670
-> > > >=20
-> > > > a.out:     file format elf64-x86-64
-> > > >=20
-> > > >=20
-> > > >=20
-> > > > The kern_addr_valid(start) seems to fault in your case, which is we=
-ird,
-> > > > because it merely walks the page tables. But it seems to complain a=
-bout a
-> > > > non-canonical address 0xf887ffcbff000
-> > > >=20
-> > > > Can you post your QEMU cmdline? Did you test this on other kernel v=
-ersions?
-> > >=20
-> > > I'm using virt-manager so:
-> > >=20
-> > > /usr/bin/qemu-system-x86_64 -name guest=3Dfedora33,debug-threads=3Don=
- -S -object secret,id=3DmasterKey0,format=3Draw,file=3D/var/lib/libvirt/qem=
-u/domain-13-fedora33/master-key.aes -machine pc-q35-5.1,accel=3Dkvm,usb=3Do=
-ff,vmport=3Doff,dump-guest-core=3Doff,memory-backend=3Dpc.ram -cpu Skylake-=
-Server-IBRS,ss=3Don,vmx=3Don,pdcm=3Don,hypervisor=3Don,tsc-adjust=3Don,clfl=
-ushopt=3Don,umip=3Don,pku=3Don,stibp=3Don,arch-capabilities=3Don,ssbd=3Don,=
-xsaves=3Don,ibpb=3Don,amd-stibp=3Don,amd-ssbd=3Don,skip-l1dfl-vmentry=3Don,=
-pschange-mc-no=3Don -m 8192 -object memory-backend-ram,id=3Dpc.ram,size=3D8=
-589934592 -overcommit mem-lock=3Doff -smp 20,sockets=3D20,cores=3D1,threads=
-=3D1 -uuid 2185d5a9-dbad-4d61-aa4e-97af9fd7ebca -no-user-config -nodefaults=
- -chardev socket,id=3Dcharmonitor,fd=3D36,server,nowait -mon chardev=3Dchar=
-monitor,id=3Dmonitor,mode=3Dcontrol -rtc base=3Dutc,driftfix=3Dslew -global=
- kvm-pit.lost_tick_policy=3Ddelay -no-hpet -no-shutdown -global ICH9-LPC.di=
-sable_s3=3D1 -global ICH9-LPC.disable_s4=3D1 -boot strict=3Don -kernel /hom=
-e/jolsa/qemu/run/vmlinux -initrd /home/jolsa/qemu/run/initrd -append root=
-=3D/dev/mapper/fedora_fedora-root ro rd.lvm.lv=3Dfedora_fedora/root console=
-=3Dtty0 console=3DttyS0,115200 -device pcie-root-port,port=3D0x10,chassis=
-=3D1,id=3Dpci.1,bus=3Dpcie.0,multifunction=3Don,addr=3D0x2 -device pcie-roo=
-t-port,port=3D0x11,chassis=3D2,id=3Dpci.2,bus=3Dpcie.0,addr=3D0x2.0x1 -devi=
-ce pcie-root-port,port=3D0x12,chassis=3D3,id=3Dpci.3,bus=3Dpcie.0,addr=3D0x=
-2.0x2 -device pcie-root-port,port=3D0x13,chassis=3D4,id=3Dpci.4,bus=3Dpcie.=
-0,addr=3D0x2.0x3 -device pcie-root-port,port=3D0x14,chassis=3D5,id=3Dpci.5,=
-bus=3Dpcie.0,addr=3D0x2.0x4 -device pcie-root-port,port=3D0x15,chassis=3D6,=
-id=3Dpci.6,bus=3Dpcie.0,addr=3D0x2.0x5 -device pcie-root-port,port=3D0x16,c=
-hassis=3D7,id=3Dpci.7,bus=3Dpcie.0,addr=3D0x2.0x6 -device qemu-xhci,p2=3D15=
-,p3=3D15,id=3Dusb,bus=3Dpci.2,addr=3D0x0 -device virtio-serial-pci,id=3Dvir=
-tio-serial0,bus=3Dpci.3,addr=3D0x0 -blockdev {"driver":"file","filename":"/=
-var/lib/libvirt/images/fedora33.qcow2","node-name":"libvirt-2-storage","aut=
-o-read-only":true,"discard":"unmap"} -blockdev {"node-name":"libvirt-2-form=
-at","read-only":false,"driver":"qcow2","file":"libvirt-2-storage","backing"=
-:null} -device virtio-blk-pci,bus=3Dpci.4,addr=3D0x0,drive=3Dlibvirt-2-form=
-at,id=3Dvirtio-disk0,bootindex=3D1 -device ide-cd,bus=3Dide.0,id=3Dsata0-0-=
-0 -netdev tap,fd=3D38,id=3Dhostnet0,vhost=3Don,vhostfd=3D39 -device virtio-=
-net-pci,netdev=3Dhostnet0,id=3Dnet0,mac=3D52:54:00:f3:c6:e7,bus=3Dpci.1,add=
-r=3D0x0 -chardev pty,id=3Dcharserial0 -device isa-serial,chardev=3Dcharseri=
-al0,id=3Dserial0 -chardev socket,id=3Dcharchannel0,fd=3D40,server,nowait -d=
-evice virtserialport,bus=3Dvirtio-serial0.0,nr=3D1,chardev=3Dcharchannel0,i=
-d=3Dchannel0,name=3Dorg.qemu.guest_agent.0 -chardev spicevmc,id=3Dcharchann=
-el1,name=3Dvdagent -device virtserialport,bus=3Dvirtio-serial0.0,nr=3D2,cha=
-rdev=3Dcharchannel1,id=3Dchannel1,name=3Dcom.redhat.spice.0 -device usb-tab=
-let,id=3Dinput0,bus=3Dusb.0,port=3D1 -spice port=3D5900,addr=3D127.0.0.1,di=
-sable-ticketing,image-compression=3Doff,seamless-migration=3Don -device qxl=
--vga,id=3Dvideo0,ram_size=3D67108864,vram_size=3D67108864,vram64_size_mb=3D=
-0,vgamem_mb=3D16,max_outputs=3D1,bus=3Dpcie.0,addr=3D0x1 -device ich9-intel=
--hda,id=3Dsound0,bus=3Dpcie.0,addr=3D0x1b -device hda-duplex,id=3Dsound0-co=
-dec0,bus=3Dsound0.0,cad=3D0 -chardev spicevmc,id=3Dcharredir0,name=3Dusbred=
-ir -device usb-redir,chardev=3Dcharredir0,id=3Dredir0,bus=3Dusb.0,port=3D2 =
--chardev spicevmc,id=3Dcharredir1,name=3Dusbredir -device usb-redir,chardev=
-=3Dcharredir1,id=3Dredir1,bus=3Dusb.0,port=3D3 -device virtio-balloon-pci,i=
-d=3Dballoon0,bus=3Dpci.5,addr=3D0x0 -object rng-random,id=3Dobjrng0,filenam=
-e=3D/dev/urandom -device virtio-rng-pci,rng=3Dobjrng0,id=3Drng0,bus=3Dpci.6=
-,addr=3D0x0 -sandbox on,obsolete=3Ddeny,elevateprivileges=3Ddeny,spawn=3Dde=
-ny,resourcecontrol=3Ddeny -msg timestamp=3Don
-> =20
-> > > so far I tested just bpf-next/master:
-> > >    git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-> > >=20
-> >=20
-> > Just tried with upstream Linux (5.14.0-rc6) and your config without
-> > triggering it. I'm using "-cpu host", though, on an AMD Ryzen 9 3900X
->=20
-> With Jiri's config and '-cpu <very long string>' it triggers for me on
-> v5.14-rc6.
->=20
-> I'll also try to take a look tomorrow.
+T24gMTcuMDguMjEgMDk6NTYsIE1pa2UgUmFwb3BvcnQgd3JvdGU6DQo+IE9uIE1vbiwgQXVn
+IDE2LCAyMDIxIGF0IDEwOjEzOjE4UE0gKzAzMDAsIE1pa2UgUmFwb3BvcnQgd3JvdGU6DQo+
+PiBPbiBNb24sIEF1ZyAxNiwgMjAyMSBhdCAwODozODo0M1BNICswMjAwLCBEYXZpZCBIaWxk
+ZW5icmFuZCB3cm90ZToNCj4+PiBPbiAxNi4wOC4yMSAyMDoxMiwgSmlyaSBPbHNhIHdyb3Rl
+Og0KPj4+PiBPbiBNb24sIEF1ZyAxNiwgMjAyMSBhdCAwNzo0OToxNVBNICswMjAwLCBEYXZp
+ZCBIaWxkZW5icmFuZCB3cm90ZToNCj4+Pj4+IE9uIDE2LjA4LjIxIDE5OjM0LCBKaXJpIE9s
+c2Egd3JvdGU6DQo+Pj4+Pj4gaGksDQo+Pj4+Pj4gSSdtIGdldHRpbmcgZmF1bHQgYmVsb3cg
+d2hlbiBydW5uaW5nOg0KPj4+Pj4+DQo+Pj4+Pj4gCSMgY2F0IC9wcm9jL2thbGxzeW1zIHwg
+Z3JlcCBrc3lzX3JlYWQNCj4+Pj4+PiAJZmZmZmZmZmY4MTM2ZDU4MCBUIGtzeXNfcmVhZA0K
+Pj4+Pj4+IAkjIG9iamR1bXAgLWQgLS1zdGFydC1hZGRyZXNzPTB4ZmZmZmZmZmY4MTM2ZDU4
+MCAtLXN0b3AtYWRkcmVzcz0weGZmZmZmZmZmODEzNmQ1OTAgL3Byb2Mva2NvcmUNCj4+Pj4+
+Pg0KPj4+Pj4+IAkvcHJvYy9rY29yZTogICAgIGZpbGUgZm9ybWF0IGVsZjY0LXg4Ni02NA0K
+Pj4+Pj4+DQo+Pj4+Pj4gCVNlZ21lbnRhdGlvbiBmYXVsdA0KPj4+Pj4+DQo+Pj4+Pj4gYW55
+IGlkZWE/IGNvbmZpZyBpcyBhdHRhY2hlZA0KPj4+Pj4NCj4+Pj4+IEp1c3QgdHJpZWQgd2l0
+aCBhIGRpZmZlcmVudCBjb25maWcgb24gNS4xNC4wLXJjNisNCj4+Pj4+DQo+Pj4+PiBbcm9v
+dEBsb2NhbGhvc3Qgfl0jIGNhdCAvcHJvYy9rYWxsc3ltcyB8IGdyZXAga3N5c19yZWFkDQo+
+Pj4+PiBmZmZmZmZmZjg5MjdhODAwIFQga3N5c19yZWFkYWhlYWQNCj4+Pj4+IGZmZmZmZmZm
+ODkzMzM2NjAgVCBrc3lzX3JlYWQNCj4+Pj4+DQo+Pj4+PiBbcm9vdEBsb2NhbGhvc3Qgfl0j
+IG9iamR1bXAgLWQgLS1zdGFydC1hZGRyZXNzPTB4ZmZmZmZmZmY4OTMzMzY2MA0KPj4+Pj4g
+LS1zdG9wLWFkZHJlc3M9MHhmZmZmZmZmZjg5MzMzNjcwDQo+Pj4+Pg0KPj4+Pj4gYS5vdXQ6
+ICAgICBmaWxlIGZvcm1hdCBlbGY2NC14ODYtNjQNCj4+Pj4+DQo+Pj4+Pg0KPj4+Pj4NCj4+
+Pj4+IFRoZSBrZXJuX2FkZHJfdmFsaWQoc3RhcnQpIHNlZW1zIHRvIGZhdWx0IGluIHlvdXIg
+Y2FzZSwgd2hpY2ggaXMgd2VpcmQsDQo+Pj4+PiBiZWNhdXNlIGl0IG1lcmVseSB3YWxrcyB0
+aGUgcGFnZSB0YWJsZXMuIEJ1dCBpdCBzZWVtcyB0byBjb21wbGFpbiBhYm91dCBhDQo+Pj4+
+PiBub24tY2Fub25pY2FsIGFkZHJlc3MgMHhmODg3ZmZjYmZmMDAwDQo+Pj4+Pg0KPj4+Pj4g
+Q2FuIHlvdSBwb3N0IHlvdXIgUUVNVSBjbWRsaW5lPyBEaWQgeW91IHRlc3QgdGhpcyBvbiBv
+dGhlciBrZXJuZWwgdmVyc2lvbnM/DQo+Pj4+DQo+Pj4+IEknbSB1c2luZyB2aXJ0LW1hbmFn
+ZXIgc286DQo+Pj4+DQo+Pj4+IC91c3IvYmluL3FlbXUtc3lzdGVtLXg4Nl82NCAtbmFtZSBn
+dWVzdD1mZWRvcmEzMyxkZWJ1Zy10aHJlYWRzPW9uIC1TIC1vYmplY3Qgc2VjcmV0LGlkPW1h
+c3RlcktleTAsZm9ybWF0PXJhdyxmaWxlPS92YXIvbGliL2xpYnZpcnQvcWVtdS9kb21haW4t
+MTMtZmVkb3JhMzMvbWFzdGVyLWtleS5hZXMgLW1hY2hpbmUgcGMtcTM1LTUuMSxhY2NlbD1r
+dm0sdXNiPW9mZix2bXBvcnQ9b2ZmLGR1bXAtZ3Vlc3QtY29yZT1vZmYsbWVtb3J5LWJhY2tl
+bmQ9cGMucmFtIC1jcHUgU2t5bGFrZS1TZXJ2ZXItSUJSUyxzcz1vbix2bXg9b24scGRjbT1v
+bixoeXBlcnZpc29yPW9uLHRzYy1hZGp1c3Q9b24sY2xmbHVzaG9wdD1vbix1bWlwPW9uLHBr
+dT1vbixzdGlicD1vbixhcmNoLWNhcGFiaWxpdGllcz1vbixzc2JkPW9uLHhzYXZlcz1vbixp
+YnBiPW9uLGFtZC1zdGlicD1vbixhbWQtc3NiZD1vbixza2lwLWwxZGZsLXZtZW50cnk9b24s
+cHNjaGFuZ2UtbWMtbm89b24gLW0gODE5MiAtb2JqZWN0IG1lbW9yeS1iYWNrZW5kLXJhbSxp
+ZD1wYy5yYW0sc2l6ZT04NTg5OTM0NTkyIC1vdmVyY29tbWl0IG1lbS1sb2NrPW9mZiAtc21w
+IDIwLHNvY2tldHM9MjAsY29yZXM9MSx0aHJlYWRzPTEgLXV1aWQgMjE4NWQ1YTktZGJhZC00
+ZDYxLWFhNGUtOTdhZjlmZDdlYmNhIC1uby11c2VyLWNvbmZpZyAtbm9kZWZhdWx0cyAtY2hh
+cmRldiBzb2NrZXQsaWQ9Y2hhcm1vbml0b3IsZmQ9MzYsc2VydmVyLG5vd2FpdCAtbW9uIGNo
+YXJkZXY9Y2hhcm1vbml0b3IsaWQ9bW9uaXRvcixtb2RlPWNvbnRyb2wgLXJ0YyBiYXNlPXV0
+YyxkcmlmdGZpeD1zbGV3IC1nbG9iYWwga3ZtLXBpdC5sb3N0X3RpY2tfcG9saWN5PWRlbGF5
+IC1uby1ocGV0IC1uby1zaHV0ZG93biAtZ2xvYmFsIElDSDktTFBDLmRpc2FibGVfczM9MSAt
+Z2xvYmFsIElDSDktTFBDLmRpc2FibGVfczQ9MSAtYm9vdCBzdHJpY3Q9b24gLWtlcm5lbCAv
+aG9tZS9qb2xzYS9xZW11L3J1bi92bWxpbnV4IC1pbml0cmQgL2hvbWUvam9sc2EvcWVtdS9y
+dW4vaW5pdHJkIC1hcHBlbmQgcm9vdD0vZGV2L21hcHBlci9mZWRvcmFfZmVkb3JhLXJvb3Qg
+cm8gcmQubHZtLmx2PWZlZG9yYV9mZWRvcmEvcm9vdCBjb25zb2xlPXR0eTAgY29uc29sZT10
+dHlTMCwxMTUyMDAgLWRldmljZSBwY2llLXJvb3QtcG9ydCxwb3J0PTB4MTAsY2hhc3Npcz0x
+LGlkPXBjaS4xLGJ1cz1wY2llLjAsbXVsdGlmdW5jdGlvbj1vbixhZGRyPTB4MiAtZGV2aWNl
+IHBjaWUtcm9vdC1wb3J0LHBvcnQ9MHgxMSxjaGFzc2lzPTIsaWQ9cGNpLjIsYnVzPXBjaWUu
+MCxhZGRyPTB4Mi4weDEgLWRldmljZSBwY2llLXJvb3QtcG9ydCxwb3J0PTB4MTIsY2hhc3Np
+cz0zLGlkPXBjaS4zLGJ1cz1wY2llLjAsYWRkcj0weDIuMHgyIC1kZXZpY2UgcGNpZS1yb290
+LXBvcnQscG9ydD0weDEzLGNoYXNzaXM9NCxpZD1wY2kuNCxidXM9cGNpZS4wLGFkZHI9MHgy
+LjB4MyAtZGV2aWNlIHBjaWUtcm9vdC1wb3J0LHBvcnQ9MHgxNCxjaGFzc2lzPTUsaWQ9cGNp
+LjUsYnVzPXBjaWUuMCxhZGRyPTB4Mi4weDQgLWRldmljZSBwY2llLXJvb3QtcG9ydCxwb3J0
+PTB4MTUsY2hhc3Npcz02LGlkPXBjaS42LGJ1cz1wY2llLjAsYWRkcj0weDIuMHg1IC1kZXZp
+Y2UgcGNpZS1yb290LXBvcnQscG9ydD0weDE2LGNoYXNzaXM9NyxpZD1wY2kuNyxidXM9cGNp
+ZS4wLGFkZHI9MHgyLjB4NiAtZGV2aWNlIHFlbXUteGhjaSxwMj0xNSxwMz0xNSxpZD11c2Is
+YnVzPXBjaS4yLGFkZHI9MHgwIC1kZXZpY2UgdmlydGlvLXNlcmlhbC1wY2ksaWQ9dmlydGlv
+LXNlcmlhbDAsYnVzPXBjaS4zLGFkZHI9MHgwIC1ibG9ja2RldiB7ImRyaXZlciI6ImZpbGUi
+LCJmaWxlbmFtZSI6Ii92YXIvbGliL2xpYnZpcnQvaW1hZ2VzL2ZlZG9yYTMzLnFjb3cyIiwi
+bm9kZS1uYW1lIjoibGlidmlydC0yLXN0b3JhZ2UiLCJhdXRvLXJlYWQtb25seSI6dHJ1ZSwi
+ZGlzY2FyZCI6InVubWFwIn0gLWJsb2NrZGV2IHsibm9kZS1uYW1lIjoibGlidmlydC0yLWZv
+cm1hdCIsInJlYWQtb25seSI6ZmFsc2UsImRyaXZlciI6InFjb3cyIiwiZmlsZSI6ImxpYnZp
+cnQtMi1zdG9yYWdlIiwiYmFja2luZyI6bnVsbH0gLWRldmljZSB2aXJ0aW8tYmxrLXBjaSxi
+dXM9cGNpLjQsYWRkcj0weDAsZHJpdmU9bGlidmlydC0yLWZvcm1hdCxpZD12aXJ0aW8tZGlz
+azAsYm9vdGluZGV4PTEgLWRldmljZSBpZGUtY2QsYnVzPWlkZS4wLGlkPXNhdGEwLTAtMCAt
+bmV0ZGV2IHRhcCxmZD0zOCxpZD1ob3N0bmV0MCx2aG9zdD1vbix2aG9zdGZkPTM5IC1kZXZp
+Y2UgdmlydGlvLW5ldC1wY2ksbmV0ZGV2PWhvc3RuZXQwLGlkPW5ldDAsbWFjPTUyOjU0OjAw
+OmYzOmM2OmU3LGJ1cz1wY2kuMSxhZGRyPTB4MCAtY2hhcmRldiBwdHksaWQ9Y2hhcnNlcmlh
+bDAgLWRldmljZSBpc2Etc2VyaWFsLGNoYXJkZXY9Y2hhcnNlcmlhbDAsaWQ9c2VyaWFsMCAt
+Y2hhcmRldiBzb2NrZXQsaWQ9Y2hhcmNoYW5uZWwwLGZkPTQwLHNlcnZlcixub3dhaXQgLWRl
+dmljZSB2aXJ0c2VyaWFscG9ydCxidXM9dmlydGlvLXNlcmlhbDAuMCxucj0xLGNoYXJkZXY9
+Y2hhcmNoYW5uZWwwLGlkPWNoYW5uZWwwLG5hbWU9b3JnLnFlbXUuZ3Vlc3RfYWdlbnQuMCAt
+Y2hhcmRldiBzcGljZXZtYyxpZD1jaGFyY2hhbm5lbDEsbmFtZT12ZGFnZW50IC1kZXZpY2Ug
+dmlydHNlcmlhbHBvcnQsYnVzPXZpcnRpby1zZXJpYWwwLjAsbnI9MixjaGFyZGV2PWNoYXJj
+aGFubmVsMSxpZD1jaGFubmVsMSxuYW1lPWNvbS5yZWRoYXQuc3BpY2UuMCAtZGV2aWNlIHVz
+Yi10YWJsZXQsaWQ9aW5wdXQwLGJ1cz11c2IuMCxwb3J0PTEgLXNwaWNlIHBvcnQ9NTkwMCxh
+ZGRyPTEyNy4wLjAuMSxkaXNhYmxlLXRpY2tldGluZyxpbWFnZS1jb21wcmVzc2lvbj1vZmYs
+c2VhbWxlc3MtbWlncmF0aW9uPW9uIC1kZXZpY2UgcXhsLXZnYSxpZD12aWRlbzAscmFtX3Np
+emU9NjcxMDg4NjQsdnJhbV9zaXplPTY3MTA4ODY0LHZyYW02NF9zaXplX21iPTAsdmdhbWVt
+X21iPTE2LG1heF9vdXRwdXRzPTEsYnVzPXBjaWUuMCxhZGRyPTB4MSAtZGV2aWNlIGljaDkt
+aW50ZWwtaGRhLGlkPXNvdW5kMCxidXM9cGNpZS4wLGFkZHI9MHgxYiAtZGV2aWNlIGhkYS1k
+dXBsZXgsaWQ9c291bmQwLWNvZGVjMCxidXM9c291bmQwLjAsY2FkPTAgLWNoYXJkZXYgc3Bp
+Y2V2bWMsaWQ9Y2hhcnJlZGlyMCxuYW1lPXVzYnJlZGlyIC1kZXZpY2UgdXNiLXJlZGlyLGNo
+YXJkZXY9Y2hhcnJlZGlyMCxpZD1yZWRpcjAsYnVzPXVzYi4wLHBvcnQ9MiAtY2hhcmRldiBz
+cGljZXZtYyxpZD1jaGFycmVkaXIxLG5hbWU9dXNicmVkaXIgLWRldmljZSB1c2ItcmVkaXIs
+Y2hhcmRldj1jaGFycmVkaXIxLGlkPXJlZGlyMSxidXM9dXNiLjAscG9ydD0zIC1kZXZpY2Ug
+dmlydGlvLWJhbGxvb24tcGNpLGlkPWJhbGxvb24wLGJ1cz1wY2kuNSxhZGRyPTB4MCAtb2Jq
+ZWN0IHJuZy1yYW5kb20saWQ9b2Jqcm5nMCxmaWxlbmFtZT0vZGV2L3VyYW5kb20gLWRldmlj
+ZSB2aXJ0aW8tcm5nLXBjaSxybmc9b2Jqcm5nMCxpZD1ybmcwLGJ1cz1wY2kuNixhZGRyPTB4
+MCAtc2FuZGJveCBvbixvYnNvbGV0ZT1kZW55LGVsZXZhdGVwcml2aWxlZ2VzPWRlbnksc3Bh
+d249ZGVueSxyZXNvdXJjZWNvbnRyb2w9ZGVueSAtbXNnIHRpbWVzdGFtcD1vbg0KPj4gICAN
+Cj4+Pj4gc28gZmFyIEkgdGVzdGVkIGp1c3QgYnBmLW5leHQvbWFzdGVyOg0KPj4+PiAgICAg
+Z2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2JwZi9icGYt
+bmV4dC5naXQNCj4+Pj4NCj4+Pg0KPj4+IEp1c3QgdHJpZWQgd2l0aCB1cHN0cmVhbSBMaW51
+eCAoNS4xNC4wLXJjNikgYW5kIHlvdXIgY29uZmlnIHdpdGhvdXQNCj4+PiB0cmlnZ2VyaW5n
+IGl0LiBJJ20gdXNpbmcgIi1jcHUgaG9zdCIsIHRob3VnaCwgb24gYW4gQU1EIFJ5emVuIDkg
+MzkwMFgNCj4+DQo+PiBXaXRoIEppcmkncyBjb25maWcgYW5kICctY3B1IDx2ZXJ5IGxvbmcg
+c3RyaW5nPicgaXQgdHJpZ2dlcnMgZm9yIG1lIG9uDQo+PiB2NS4xNC1yYzYuDQo+Pg0KPj4g
+SSdsbCBhbHNvIHRyeSB0byB0YWtlIGEgbG9vayB0b21vcnJvdy4NCj4gDQo+IFRoZXJlIGFy
+ZSBzb21lIG5vbi16ZXJvIFBNRHMgdGhhdCBhcmUgbm90IHByZXNlbnQgaW4gdGhlIGhpZ2gg
+a2VybmVsDQo+IG1hcHBpbmdzLiBUaGUgcGF0Y2ggYmVsb3cgZml4ZXMgZm9yIG1lIHRoZSBp
+c3N1ZSBpbiBrZXJuX2FkZHJfdmFsaWQoKQ0KPiB0cnlpbmcgdG8gYWNjZXNzIGEgbm90LXBy
+ZXNlbnQgUE1ELiBKaXJpLCBjYW4geW91IGNoZWNrIGlmIGl0IHdvcmtzIGZvcg0KPiB5b3U/
+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvbW0vaW5pdF82NC5jIGIvYXJjaC94ODYv
+bW0vaW5pdF82NC5jDQo+IGluZGV4IGRkZWFiYTk0N2ViMy4uMDdiNTZlOTBkYjVkIDEwMDY0
+NA0KPiAtLS0gYS9hcmNoL3g4Ni9tbS9pbml0XzY0LmMNCj4gKysrIGIvYXJjaC94ODYvbW0v
+aW5pdF82NC5jDQo+IEBAIC0xNDMzLDE4ICsxNDMzLDE4IEBAIGludCBrZXJuX2FkZHJfdmFs
+aWQodW5zaWduZWQgbG9uZyBhZGRyKQ0KPiAgIAkJcmV0dXJuIDA7DQo+ICAgDQo+ICAgCXA0
+ZCA9IHA0ZF9vZmZzZXQocGdkLCBhZGRyKTsNCj4gLQlpZiAocDRkX25vbmUoKnA0ZCkpDQo+
+ICsJaWYgKHA0ZF9ub25lKCpwNGQpIHx8ICFwNGRfcHJlc2VudCgqcDRkKSkNCj4gICAJCXJl
+dHVybiAwOw0KPiAgIA0KPiAgIAlwdWQgPSBwdWRfb2Zmc2V0KHA0ZCwgYWRkcik7DQo+IC0J
+aWYgKHB1ZF9ub25lKCpwdWQpKQ0KPiArCWlmIChwdWRfbm9uZSgqcHVkKSB8fCAhcHVkX3By
+ZXNlbnQoKnB1ZCkpDQo+ICAgCQlyZXR1cm4gMDsNCj4gICANCj4gICAJaWYgKHB1ZF9sYXJn
+ZSgqcHVkKSkNCj4gICAJCXJldHVybiBwZm5fdmFsaWQocHVkX3BmbigqcHVkKSk7DQo+ICAg
+DQo+ICAgCXBtZCA9IHBtZF9vZmZzZXQocHVkLCBhZGRyKTsNCj4gLQlpZiAocG1kX25vbmUo
+KnBtZCkpDQo+ICsJaWYgKHBtZF9ub25lKCpwbWQpIHx8ICFwbWRfcHJlc2VudCgqcG1kKSkN
+Cj4gICAJCXJldHVybiAwOw0KPiAgIA0KPiAgIAlpZiAocG1kX2xhcmdlKCpwbWQpKQ0KPiAN
+Cg0KSG93ZXZlciwgd291bGRuJ3QgdGhhdCBtZWFuIHRoYXQgdGhhdCBURVhUIHNlZ21lbnQg
+aXNuJ3QgYWN0dWFsbHkgDQphY2Nlc3NpYmxlIGF0IGFsbD8gT3IgaXMgdGhpcyBzb21lIHdl
+aXJkIGtpbmQgb2YgVEVYVCBwcm90ZWN0aW9uIChub3QgDQpldmVuIGJlaW5nIGFibGUgdG8g
+cmVhZCBpdCwgd2VpcmQsIG5vPykNCg0KV2UgZG9uJ3Qgc3VwcG9ydCBzd2FwcGluZyBhbmQg
+YWxsIHRoYXQgc3R1ZmYgZm9yIGtlcm5lbCBtZW1vcnkuIFNvIHdoYXQgDQpkb2VzICFwcmVz
+ZW50IGV2ZW4gaW5kaWNhdGUgaGVyZT8gKHNtZWxscyBsaWtlIGEgZGlmZmVyZW50IEJVRywg
+YnV0IEkgDQptaWdodCBiZSB3cm9uZywgb2YgY291cnNlKQ0KDQotLSANClRoYW5rcywNCg0K
+RGF2aWQgLyBkaGlsZGVuYg0K
 
-There are some non-zero PMDs that are not present in the high kernel
-mappings. The patch below fixes for me the issue in kern_addr_valid()
-trying to access a not-present PMD. Jiri, can you check if it works for
-you?
-
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index ddeaba947eb3..07b56e90db5d 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1433,18 +1433,18 @@ int kern_addr_valid(unsigned long addr)
- 		return 0;
-=20
- 	p4d =3D p4d_offset(pgd, addr);
--	if (p4d_none(*p4d))
-+	if (p4d_none(*p4d) || !p4d_present(*p4d))
- 		return 0;
-=20
- 	pud =3D pud_offset(p4d, addr);
--	if (pud_none(*pud))
-+	if (pud_none(*pud) || !pud_present(*pud))
- 		return 0;
-=20
- 	if (pud_large(*pud))
- 		return pfn_valid(pud_pfn(*pud));
-=20
- 	pmd =3D pmd_offset(pud, addr);
--	if (pmd_none(*pmd))
-+	if (pmd_none(*pmd) || !pmd_present(*pmd))
- 		return 0;
-=20
- 	if (pmd_large(*pmd))
-
---=20
-Sincerely yours,
-Mike.
