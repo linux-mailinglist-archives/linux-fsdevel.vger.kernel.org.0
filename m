@@ -2,65 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 810AC3EEF4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 17:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 863BF3EEF5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 17:46:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237577AbhHQPmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 11:42:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44650 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233045AbhHQPmf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 11:42:35 -0400
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1CBEC061764
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 08:42:02 -0700 (PDT)
-Received: by mail-ua1-x936.google.com with SMTP id f25so9172863uam.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 08:42:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PHHPSO7jj5Afaui6tVKtLhUAhQD8i8NyYo0isR8GeJg=;
-        b=YSOL+GxlNb0S979n5o2kfajOCu22Bob5lPDXI6IBgRssAlAcRMbcVVX/Gidt16L1OR
-         jTuhRZlQH24ibQhE/kyExIgclwitpCfgme2vgluGUviCww0iXqalV0La9XAP8ciBvK1x
-         UBa6vaUkjX1tpfdJHITL1GxtUGWmzDT2Tstns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PHHPSO7jj5Afaui6tVKtLhUAhQD8i8NyYo0isR8GeJg=;
-        b=qX5KH3pw5Jk/LO3uXcor+YAzejwk70kIXnx1w0qXjlYhoSPFMT+BbGAm4U1oeQUaEO
-         GDMt8NRQL9Fc1jzCSzEevfBWklsjOlohbXMT3Mxnsy7vut1yJzxrdG5PpzFndnlkSz4y
-         CDClmzDjhkmvYZiFqEsECyS5a1EWZoWREaYy6zlrI5XYyqAkPyH8R9Vw9gehkYAYRwkp
-         5DhzyJpThzx7KS+RKpoApmCEHZbMMxTfCq9Y0xnGuMwI2nI8WRD0SABE4Wk1C1jUGpDy
-         GPowoqX86NOgmPCMcMKSvRXzVaKiAHBd8SW/WyM98YltoKjwsrwB6RB8YR13EiGs073y
-         a/eA==
-X-Gm-Message-State: AOAM531zDtwgXPC9oC0ECEphSrKcFU6WliqwltspF8LhoT6H2URRut+4
-        uf3SbnPTrngV+PsJmwp7hryXQwf/BipOygTkv1tXLA==
-X-Google-Smtp-Source: ABdhPJxb/TTQAIpO2p0zoRWOCHSajvQZpOfEeLKrHzg9Rtd51kKyTyAiNDo4k3MtOtVyNxm7iMo1QFl0DYO7gAtwOpo=
-X-Received: by 2002:ab0:3a8f:: with SMTP id r15mr2993319uaw.13.1629214921954;
- Tue, 17 Aug 2021 08:42:01 -0700 (PDT)
+        id S238264AbhHQPqh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 11:46:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48008 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237624AbhHQPqf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Aug 2021 11:46:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 25D186023E;
+        Tue, 17 Aug 2021 15:46:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629215162;
+        bh=oY8KaPK7qomH0Ez+UUblaaHHh3LKex5oX9nMcYYHmZc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KQFMIDbK6+5oThbt3RB4hxXru1aPVTVo7+LdMAsqMDyuEhSsbr6y1tfpyE/y74cbc
+         t6wbS0o6e81yPVD5Yk4ltm4ihFNk4VxwdIpVIWvPdOo1CIZ86EDUU1Iztq4RoKctPc
+         EyeRI8jWYYs9BWlPBw9hUSb+DPOk+wqCH/WYELK0Smir7nBwu/bILDtTDR3XA4ufUk
+         Pqd2uF8aFfyvuHhRLw+/wxpfzzmv4sMWliwITdVitTc36YSjussZNPHo56nPyTmyjT
+         6EUfe9n1z3rQ2+eCQ7R+s5r4nFjuUAWl3pUEVFavrlpqcaTtif3Gt41HlH3vsI0FFm
+         D/zI59IS3IvAg==
+Date:   Tue, 17 Aug 2021 08:46:01 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, jane.chu@oracle.com,
+        willy@infradead.org, tytso@mit.edu, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, sandeen@sandeen.net
+Subject: Re: [PATCHSET 0/2] dax: fix broken pmem poison narrative
+Message-ID: <20210817154601.GD12640@magnolia>
+References: <162914791879.197065.12619905059952917229.stgit@magnolia>
+ <YRtnlPERHfMZ23Tr@infradead.org>
 MIME-Version: 1.0
-References: <CAPm50aLNUNGo94u1yVKSJwy3rehRP84ha8YmbOdMyehFeVah0w@mail.gmail.com>
-In-Reply-To: <CAPm50aLNUNGo94u1yVKSJwy3rehRP84ha8YmbOdMyehFeVah0w@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 17 Aug 2021 17:41:51 +0200
-Message-ID: <CAJfpeguDzHO9rx4eVRi4Lvjj0O9-oT8SEN7JAfWtsNj-6M_YAA@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Use kmap_local_page()
-To:     Hao Peng <flyingpenghao@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YRtnlPERHfMZ23Tr@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 17 Aug 2021 at 05:17, Hao Peng <flyingpenghao@gmail.com> wrote:
->
-> kmap_local_page() is enough.
+On Tue, Aug 17, 2021 at 08:39:00AM +0100, Christoph Hellwig wrote:
+> On Mon, Aug 16, 2021 at 02:05:18PM -0700, Darrick J. Wong wrote:
+> > AFAICT, the only reason why the "punch and write" dance works at all is
+> > that the XFS and ext4 currently call blkdev_issue_zeroout when
+> > allocating pmem as part of a pwrite call.  A pwrite without the punch
+> > won't clear the poison, because pwrite on a DAX file calls
+> > dax_direct_access to access the memory directly, and dax_direct_access
+> > is only smart enough to bail out on poisoned pmem.  It does not know how
+> > to clear it.  Userspace could solve the problem by calling FIEMAP and
+> > issuing a BLKZEROOUT, but that requires rawio capabilities.
+> > 
+> > The whole pmem poison recovery story is is wrong and needs to be
+> > corrected ASAP before everyone else starts doing this.  Therefore,
+> > create a dax_zeroinit_range function that filesystems can call to reset
+> > the contents of the pmem to a known value and clear any state associated
+> > with the media error.  Then, connect FALLOC_FL_ZERO_RANGE to this new
+> > function (for DAX files) so that unprivileged userspace has a safe way
+> > to reset the pmem and clear media errors.
+> 
+> I agree with the problem statement, but I don't think the fix is
+> significantly better than what we have, as it still magically overloads
+> other behavior.  I'd rather have an explicit operation to clear the
+> poison both at the syscall level (maybe another falloc mode), and the
+> internal kernel API level (new method in dax_operations).
 
-This explanation is not enough for me to understand the patch.  Please
-describe in more detail.
+I've long wondered why we can't just pass a write flag to the
+direct_access functions so that pmem_dax_direct_access can clear the
+poison.  Then we ought to be able to tell userspace that they can
+recover from write errors by pwrite() or triggering a write fault on the
+page, I think.  That's how userspace recovers from IO errors on
+traditional disks; I've never understood why it has to be any different
+now.
 
-Thanks,
-Miklos
+> Also for the next iteration please split the iomap changes from the
+> usage in xfs.
+
+ok.
+
+--D
