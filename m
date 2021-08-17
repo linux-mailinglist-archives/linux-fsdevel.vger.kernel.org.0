@@ -2,132 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8244A3EED4D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 15:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE1C83EEDEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 15:59:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239976AbhHQNYh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 09:24:37 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:50134 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239973AbhHQNYV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 09:24:21 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R581e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UjRGOPv_1629206627;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UjRGOPv_1629206627)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 17 Aug 2021 21:23:47 +0800
-Subject: Re: [Virtio-fs] [PATCH v4 6/8] fuse: mark inode DONT_CACHE when
- per-file DAX indication changes
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        joseph.qi@linux.alibaba.com,
-        virtualization@lists.linux-foundation.org
-References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
- <20210817022220.17574-7-jefflexu@linux.alibaba.com>
- <YRuO5ZzqDmuSC3pN@work-vm>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <f5f91a42-3997-2df8-a126-cf390291beea@linux.alibaba.com>
-Date:   Tue, 17 Aug 2021 21:23:47 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        id S230360AbhHQN7g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 09:59:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43204 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229761AbhHQN7g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Aug 2021 09:59:36 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2495960524;
+        Tue, 17 Aug 2021 13:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629208742;
+        bh=B06scW2J7ecNpbEphbLVfcIfuUrfEsxm2wT1v2ApOY0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=sZyPGwMto71flosXVfjeoEOM/ETYsx7U1ZKgAD4baKahspqdE6vgjGktZzN0T4JbM
+         sM/5uJPsF1BeD3BWlU0U+TUVxAloUyCUx4ZLKKdvqJbgvuBDMWa1K98KqGM8RELYba
+         JjYulBVaowr99hOASMcw15lKE5e8xW6imsebgrvvoYgECzePC7U7IIIPVItyJXmUQw
+         nI9LLa7/KrARbpCLCELSe23sVSuwhhqcq5gy75j0J5DSv/e9/Rfxp5wEU4RXQ/W4d0
+         aVb1Z4WpxNhr9l2aSFTMU9jTMRMVu8BWZT5qmmITpZJHYH5jjhlMLPMqEWVJvIy+1K
+         /kPl2V+y5QiKQ==
+From:   Mike Rapoport <rppt@kernel.org>
+To:     x86@kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] x86/mm: fix kern_addr_valid to cope with existing but not present entries
+Date:   Tue, 17 Aug 2021 16:58:54 +0300
+Message-Id: <20210817135854.25407-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <YRuO5ZzqDmuSC3pN@work-vm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Mike Rapoport <rppt@linux.ibm.com>
 
+Jiri Olsa reported a fault when running:
 
-On 8/17/21 6:26 PM, Dr. David Alan Gilbert wrote:
-> * Jeffle Xu (jefflexu@linux.alibaba.com) wrote:
->> When the per-file DAX indication changes while the file is still
->> *opened*, it is quite complicated and maybe fragile to dynamically
->> change the DAX state.
->>
->> Hence mark the inode and corresponding dentries as DONE_CACHE once the
-> 
->                                                      ^^^^^^^^^^
-> typo as DONT ?
-> 
+	# cat /proc/kallsyms | grep ksys_read
+	ffffffff8136d580 T ksys_read
+	# objdump -d --start-address=0xffffffff8136d580 --stop-address=0xffffffff8136d590 /proc/kcore
 
-Thanks. I will fix it.
+	/proc/kcore:     file format elf64-x86-64
 
-> 
->> per-file DAX indication changes, so that the inode instance will be
->> evicted and freed as soon as possible once the file is closed and the
->> last reference to the inode is put. And then when the file gets reopened
->> next time, the inode will reflect the new DAX state.
->>
->> In summary, when the per-file DAX indication changes for an *opened*
->> file, the state of the file won't be updated until this file is closed
->> and reopened later.
->>
->> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
->> ---
->>  fs/fuse/dax.c    | 9 +++++++++
->>  fs/fuse/fuse_i.h | 1 +
->>  fs/fuse/inode.c  | 3 +++
->>  3 files changed, 13 insertions(+)
->>
->> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
->> index 30833f8d37dd..f7ede0be4e00 100644
->> --- a/fs/fuse/dax.c
->> +++ b/fs/fuse/dax.c
->> @@ -1364,6 +1364,15 @@ void fuse_dax_inode_init(struct inode *inode, unsigned int flags)
->>  	inode->i_data.a_ops = &fuse_dax_file_aops;
->>  }
->>  
->> +void fuse_dax_dontcache(struct inode *inode, bool newdax)
->> +{
->> +	struct fuse_conn *fc = get_fuse_conn(inode);
->> +
->> +	if (fc->dax_mode == FUSE_DAX_INODE &&
->> +	    fc->perfile_dax && (!!IS_DAX(inode) != newdax))
->> +		d_mark_dontcache(inode);
->> +}
->> +
->>  bool fuse_dax_check_alignment(struct fuse_conn *fc, unsigned int map_alignment)
->>  {
->>  	if (fc->dax && (map_alignment > FUSE_DAX_SHIFT)) {
->> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
->> index 7b7b4c208af2..56fe1c4d2136 100644
->> --- a/fs/fuse/fuse_i.h
->> +++ b/fs/fuse/fuse_i.h
->> @@ -1260,6 +1260,7 @@ void fuse_dax_conn_free(struct fuse_conn *fc);
->>  bool fuse_dax_inode_alloc(struct super_block *sb, struct fuse_inode *fi);
->>  void fuse_dax_inode_init(struct inode *inode, unsigned int flags);
->>  void fuse_dax_inode_cleanup(struct inode *inode);
->> +void fuse_dax_dontcache(struct inode *inode, bool newdax);
->>  bool fuse_dax_check_alignment(struct fuse_conn *fc, unsigned int map_alignment);
->>  void fuse_dax_cancel_work(struct fuse_conn *fc);
->>  
->> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->> index 8080f78befed..8c9774c6a210 100644
->> --- a/fs/fuse/inode.c
->> +++ b/fs/fuse/inode.c
->> @@ -269,6 +269,9 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
->>  		if (inval)
->>  			invalidate_inode_pages2(inode->i_mapping);
->>  	}
->> +
->> +	if (IS_ENABLED(CONFIG_FUSE_DAX))
->> +		fuse_dax_dontcache(inode, attr->flags & FUSE_ATTR_DAX);
->>  }
->>  
->>  static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr)
->> -- 
->> 2.27.0
->>
->> _______________________________________________
->> Virtio-fs mailing list
->> Virtio-fs@redhat.com
->> https://listman.redhat.com/mailman/listinfo/virtio-fs
->>
+	Segmentation fault
 
+krava33 login: [   68.330612] general protection fault, probably for non-canonical address 0xf887ffcbff000: 0000 [#1] SMP PTI
+[   68.333118] CPU: 12 PID: 1079 Comm: objdump Not tainted 5.14.0-rc5qemu+ #508
+[   68.334922] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-4.fc34 04/01/2014
+[   68.336945] RIP: 0010:kern_addr_valid+0x150/0x300
+[   68.338082] Code: 1f 40 00 48 8b 0d e8 12 61 01 48 85 f6 0f 85 ca 00 00 00 48 81 e1 00 f0 ff ff 48 21 c1 48 b8 00 00 00 00 80 88 ff ff 48 01 ca <48> 8b 3c 02 48 f7 c7 9f ff ff ff 0f 84 d8 fe ff ff 48 89 f8 0f 1f
+[   68.342220] RSP: 0018:ffffc90000bcbc38 EFLAGS: 00010206
+[   68.343428] RAX: ffff888000000000 RBX: 0000000000001000 RCX: 000ffffffcbff000
+[   68.345029] RDX: 000ffffffcbff000 RSI: 0000000000000000 RDI: 800ffffffcbff062
+[   68.346599] RBP: ffffc90000bcbea8 R08: 0000000000001000 R09: 0000000000000000
+[   68.349000] R10: 0000000000000000 R11: 0000000000001000 R12: 00007fcc0fd80010
+[   68.350804] R13: ffffffff83400000 R14: 0000000000400000 R15: ffffffff843d23e0
+[   68.352609] FS:  00007fcc111fcc80(0000) GS:ffff888275e00000(0000) knlGS:0000000000000000
+[   68.354638] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   68.356104] CR2: 00007fcc0fd80000 CR3: 000000011226e004 CR4: 0000000000770ee0
+[   68.357896] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   68.359694] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   68.361597] PKRU: 55555554
+[   68.362460] Call Trace:
+[   68.363252]  read_kcore+0x57f/0x920
+[   68.364289]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.365630]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.366955]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.368277]  ? trace_hardirqs_on+0x1b/0xd0
+[   68.369462]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.370793]  ? lock_acquire+0x195/0x2f0
+[   68.371920]  ? lock_acquire+0x195/0x2f0
+[   68.373035]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.374364]  ? lock_acquire+0x195/0x2f0
+[   68.375498]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.376831]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.379883]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.381268]  ? lock_release+0x22b/0x3e0
+[   68.382458]  ? _raw_spin_unlock+0x1f/0x30
+[   68.383685]  ? __handle_mm_fault+0xcfc/0x15f0
+[   68.384994]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.386389]  ? lock_acquire+0x195/0x2f0
+[   68.387573]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.388969]  ? lock_release+0x22b/0x3e0
+[   68.390145]  proc_reg_read+0x55/0xa0
+[   68.391257]  ? vfs_read+0x78/0x1b0
+[   68.392336]  vfs_read+0xa7/0x1b0
+[   68.393328]  ksys_read+0x68/0xe0
+[   68.394308]  do_syscall_64+0x3b/0x90
+[   68.395391]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[   68.396804] RIP: 0033:0x7fcc11cf92e2
+[   68.397824] Code: c0 e9 b2 fe ff ff 50 48 8d 3d ea 2e 0a 00 e8 95 e9 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
+[   68.402420] RSP: 002b:00007ffd6e0f8da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[   68.404357] RAX: ffffffffffffffda RBX: 0000565439305b20 RCX: 00007fcc11cf92e2
+[   68.406061] RDX: 0000000000800000 RSI: 00007fcc0f980010 RDI: 0000000000000003
+[   68.407747] RBP: 00007fcc11dcd300 R08: 0000000000000003 R09: 00007fcc0d980010
+[   68.410937] R10: 0000000003826000 R11: 0000000000000246 R12: 00007fcc0f980010
+[   68.412624] R13: 0000000000000d68 R14: 00007fcc11dcc700 R15: 0000000000800000
+[   68.414322] Modules linked in: intel_rapl_msr intel_rapl_common nfit kvm_intel kvm irqbypass rapl iTCO_wdt iTCO_vendor_support i2c_i801 i2c_smbus lpc_ich drm drm_panel_orientation_quirks zram xfs crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel
+[   68.419591] ---[ end trace e2c30f827226966b ]---
+[   68.420969] RIP: 0010:kern_addr_valid+0x150/0x300
+[   68.422308] Code: 1f 40 00 48 8b 0d e8 12 61 01 48 85 f6 0f 85 ca 00 00 00 48 81 e1 00 f0 ff ff 48 21 c1 48 b8 00 00 00 00 80 88 ff ff 48 01 ca <48> 8b 3c 02 48 f7 c7 9f ff ff ff 0f 84 d8 fe ff ff 48 89 f8 0f 1f
+[   68.426826] RSP: 0018:ffffc90000bcbc38 EFLAGS: 00010206
+[   68.428150] RAX: ffff888000000000 RBX: 0000000000001000 RCX: 000ffffffcbff000
+[   68.429813] RDX: 000ffffffcbff000 RSI: 0000000000000000 RDI: 800ffffffcbff062
+[   68.431465] RBP: ffffc90000bcbea8 R08: 0000000000001000 R09: 0000000000000000
+[   68.433115] R10: 0000000000000000 R11: 0000000000001000 R12: 00007fcc0fd80010
+[   68.434768] R13: ffffffff83400000 R14: 0000000000400000 R15: ffffffff843d23e0
+[   68.436423] FS:  00007fcc111fcc80(0000) GS:ffff888275e00000(0000) knlGS:0000000000000000
+[   68.438354] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   68.442077] CR2: 00007fcc0fd80000 CR3: 000000011226e004 CR4: 0000000000770ee0
+[   68.443727] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   68.445370] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   68.447010] PKRU: 55555554
+
+The fault happens because kern_addr_valid() dereferences existent but not
+present PMD in the high kernel mappings.
+
+Such PMDs are created when free_kernel_image_pages() frees regions larger
+than 2Mb. In this case a part of the freed memory is mapped with PMDs and
+the set_memory_np_noalias() -> ... -> __change_page_attr() sequence will
+mark the PMD as not present rather than wipe it completely.
+
+Make kern_addr_valid() to check whether higher level page table entries are
+present before trying to dereference them to fix this issue and to avoid
+similar issues in the future.
+
+Reported-by: Jiri Olsa <jolsa@redhat.com>
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ arch/x86/mm/init_64.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index ddeaba947eb3..07b56e90db5d 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -1433,18 +1433,18 @@ int kern_addr_valid(unsigned long addr)
+ 		return 0;
+ 
+ 	p4d = p4d_offset(pgd, addr);
+-	if (p4d_none(*p4d))
++	if (p4d_none(*p4d) || !p4d_present(*p4d))
+ 		return 0;
+ 
+ 	pud = pud_offset(p4d, addr);
+-	if (pud_none(*pud))
++	if (pud_none(*pud) || !pud_present(*pud))
+ 		return 0;
+ 
+ 	if (pud_large(*pud))
+ 		return pfn_valid(pud_pfn(*pud));
+ 
+ 	pmd = pmd_offset(pud, addr);
+-	if (pmd_none(*pmd))
++	if (pmd_none(*pmd) || !pmd_present(*pmd))
+ 		return 0;
+ 
+ 	if (pmd_large(*pmd))
+
+base-commit: 7c60610d476766e128cc4284bb6349732cbd6606
 -- 
-Thanks,
-Jeffle
+2.28.0
+
