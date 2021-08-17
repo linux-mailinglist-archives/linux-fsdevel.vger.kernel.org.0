@@ -2,102 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D65203EED0F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 15:08:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD4163EED13
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 15:08:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237383AbhHQNJL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 09:09:11 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:51044 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230251AbhHQNJK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 09:09:10 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UjQ4ccR_1629205715;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UjQ4ccR_1629205715)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 17 Aug 2021 21:08:36 +0800
-Subject: Re: [Virtio-fs] [PATCH v4 0/8] fuse,virtiofs: support per-file DAX
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     virtualization@lists.linux-foundation.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        linux-fsdevel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
-References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
- <CAJfpeguw1hMOaxpDmjmijhf=-JEW95aEjxfVo_=D_LyWx8LDgw@mail.gmail.com>
- <YRuCHvhICtTzMK04@work-vm>
- <CAJfpegvM+S5Xru3Yfc88C64mecvco=f99y-TajQBDfkLD-S8zQ@mail.gmail.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <0896b1f6-c8c4-6071-c05b-a333c6cccacd@linux.alibaba.com>
-Date:   Tue, 17 Aug 2021 21:08:35 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        id S239865AbhHQNJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 09:09:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230251AbhHQNJT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Aug 2021 09:09:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C925E6054F;
+        Tue, 17 Aug 2021 13:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1629205726;
+        bh=J1u5EkWGe1vhFroD1IkbImRAmY2cS/NhgJTldLkgdQ0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G4sEWuIHg7dPIAdb+CNrXrzTwB17LGwdPnAKkHBjeFaDSeu0zgdgJ3WtuSvwm7Ke5
+         qxE2jqR/gnytpY4Px0tGv4k+kTSRxfZiGjlylGou8T6pgSEfNOHaYfOBoA5tol2NwA
+         1w+n/Xyy20t5QAhTAy0o9AYp+44fdacT9SJtE6lI=
+Date:   Tue, 17 Aug 2021 15:08:43 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     SelvaKumar S <selvakuma.s1@samsung.com>
+Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dm-devel@redhat.com,
+        kbusch@kernel.org, axboe@kernel.dk, damien.lemoal@wdc.com,
+        asml.silence@gmail.com, johannes.thumshirn@wdc.com, hch@lst.de,
+        willy@infradead.org, kch@kernel.org, martin.petersen@oracle.com,
+        mpatocka@redhat.com, bvanassche@acm.org, djwong@kernel.org,
+        snitzer@redhat.com, agk@redhat.com, selvajove@gmail.com,
+        joshiiitr@gmail.com, nj.shetty@samsung.com,
+        nitheshshetty@gmail.com, joshi.k@samsung.com,
+        javier.gonz@samsung.com
+Subject: Re: [PATCH 2/7] block: Introduce queue limits for copy-offload
+ support
+Message-ID: <YRu02+RgnZekKSqi@kroah.com>
+References: <20210817101423.12367-1-selvakuma.s1@samsung.com>
+ <CGME20210817101753epcas5p4f4257f8edda27e184ecbb273b700ccbc@epcas5p4.samsung.com>
+ <20210817101423.12367-3-selvakuma.s1@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegvM+S5Xru3Yfc88C64mecvco=f99y-TajQBDfkLD-S8zQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210817101423.12367-3-selvakuma.s1@samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 8/17/21 6:09 PM, Miklos Szeredi wrote:
-> On Tue, 17 Aug 2021 at 11:32, Dr. David Alan Gilbert
-> <dgilbert@redhat.com> wrote:
->>
->> * Miklos Szeredi (miklos@szeredi.hu) wrote:
->>> On Tue, 17 Aug 2021 at 04:22, Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
->>>>
->>>> This patchset adds support of per-file DAX for virtiofs, which is
->>>> inspired by Ira Weiny's work on ext4[1] and xfs[2].
->>>
->>> Can you please explain the background of this change in detail?
->>>
->>> Why would an admin want to enable DAX for a particular virtiofs file
->>> and not for others?
->>
->> Where we're contending on virtiofs dax cache size it makes a lot of
->> sense; it's quite expensive for us to map something into the cache
->> (especially if we push something else out), so selectively DAXing files
->> that are expected to be hot could help reduce cache churn.
+On Tue, Aug 17, 2021 at 03:44:18PM +0530, SelvaKumar S wrote:
+> From: Nitesh Shetty <nj.shetty@samsung.com>
 > 
-> If this is a performance issue, it should be fixed in a way that
-> doesn't require hand tuning like you suggest, I think.
-> 
-> I'm not sure what the  ext4/xfs case for per-file DAX is.  Maybe that
-> can help understand the virtiofs case as well.
-> 
+> Add device limits as sysfs entries,
+>         - copy_offload (READ_WRITE)
+>         - max_copy_sectors (READ_ONLY)
+>         - max_copy_ranges_sectors (READ_ONLY)
+>         - max_copy_nr_ranges (READ_ONLY)
 
-Some hints why ext4/xfs support per-file DAX can be found [1] and [2].
+You forgot to add Documentation/ABI/ entries for your new sysfs files,
+so we can't properly review them :(
 
-"Boaz Harrosh wondered why someone might want to turn DAX off for a
-persistent memory device. Hellwig said that the performance "could
-suck"; Williams noted that the page cache could be useful for some
-applications as well. Jan Kara pointed out that reads from persistent
-memory are close to DRAM speed, but that writes are not; the page cache
-could be helpful for frequent writes. Applications need to change to
-fully take advantage of DAX, Williams said; part of the promise of
-adding a flag is that users can do DAX on smaller granularities than a
-full filesystem."
+thanks,
 
-In summary, page cache is preferable in some cases, and thus more fine
-grained way of DAX control is needed.
-
-
-As for virtiofs, Dr. David Alan Gilbert has mentioned that various files
-may compete for limited DAX window resource.
-
-Besides, supporting DAX for small files can be expensive. Small files
-can consume DAX window resource rapidly, and if small files are accessed
-only once, the cost of mmap/munmap on host can not be ignored.
-
-
-[1]
-https://lore.kernel.org/lkml/20200428002142.404144-1-ira.weiny@intel.com/
-[2] https://lwn.net/Articles/787973/
-
--- 
-Thanks,
-Jeffle
+greg k-h
