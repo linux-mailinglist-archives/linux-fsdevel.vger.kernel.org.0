@@ -2,156 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D5D23EEEC6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 16:48:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12B3A3EEECC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 16:54:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238070AbhHQOtE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 10:49:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60856 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237387AbhHQOtB (ORCPT
+        id S238032AbhHQOzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 10:55:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28919 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237975AbhHQOzD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 10:49:01 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D09F0C061764;
-        Tue, 17 Aug 2021 07:48:26 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id z2so41934333lft.1;
-        Tue, 17 Aug 2021 07:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LkI5q0Ud7n3yU60UTm3c6JeteGC7wMUAGiEejPjFM0g=;
-        b=Vnd8MvzcyIJss0OkwpMOukq2mHc6qzT3i2r3F2v8Rq3m4IyAu38H3oi2pVyzXM9G+s
-         9VecOZWA8UAF+urrr+2W519JaLBlHuWQzG+UDOngpQkbSQIj0M/0ws8PZhy6xLhG07Wa
-         Vz/DJoYr8NWlmQtvDqIea+oR7xpJHXXiqxGFF3SOwH7uyLdNstSbjKZJ2uXuFYYwEX4r
-         fr0NXkker9zxQM8m6Q9vTdYWONIUCHPKEIJ0MuujaeG25SlMoKnMoV0oCv6SIjnOz5rU
-         sugq1U8oav7TjjWnQTEBM/oIZ7yUGwYL0iDYaL2+yIIAxr4gb+Bxv6Th8TCaf6NRLBLn
-         4brg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LkI5q0Ud7n3yU60UTm3c6JeteGC7wMUAGiEejPjFM0g=;
-        b=ggeSSe0+VIq09hlpo4BnoMUHHT3bZBNwS1pnkZhFgn8LsuzApV/CIaOsXK1UfqNqCI
-         iZDlHh2UQG93phNS//zmaFeLfwKxrNPfP8nDRF3vgTGaesyERXp/8Aw3XpMvbjVpP0c7
-         6VdddArZpu5kV34sr0ZnQjV1EClbPqR1VLSrBZgxb5BDlMPXTxjwM8RMEA38dr0WyVDk
-         V1tkD3Jw0Z6fLUNaWoGhgkJcQCCdu+Ie55Qe7xjGyBdOOcc4SayEmt9tYdt0jQ4OgY2d
-         lm9iJ68tK+grP/YjiJEexs0EFyQ0ohKUwxawfxI1A8holxDa4PAid5mX4pPwAlSs+Q8g
-         BKTw==
-X-Gm-Message-State: AOAM531TDoc2yCzxAZs6yaq1yo1Y8T3nICzL3SG1YpzDqSc3wfGf8I5q
-        SbCGT/HltTeAKuLaAwW2Pn0fwggIkx4Vnqw0EPA=
-X-Google-Smtp-Source: ABdhPJy78VibbpwFw9aY9bJD6KbF0FN0r9oY1sz4LqrxVQ5ggLWZJqClrS+h2E/ukIwkOys47vQF7tDbHI+OS3kdo5Q=
-X-Received: by 2002:ac2:4573:: with SMTP id k19mr2666539lfm.459.1629211705214;
- Tue, 17 Aug 2021 07:48:25 -0700 (PDT)
+        Tue, 17 Aug 2021 10:55:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629212069;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=iwqtQA5c8IMZ/VG1YjrV8VQlVP1OvjA9/1fjYP9qLvA=;
+        b=TzADJ3vrdQstqYDTKdEub5bE/KQj9uNzVZ9D0+c9R3MiRegOTg8ImuN4AePOj48RiRhR4Z
+        L8rpCQ0cW4bCUU+iNCUPCyD9kNYzb5hHmSkRWYNIKoOy47saCdMCcl2p805mw3bYN1HdXa
+        oNX/0rrJoPv9mR5e97m+/gMqpBMiF3g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-237-k9rS56UMMiK1PsCZaz336w-1; Tue, 17 Aug 2021 10:54:28 -0400
+X-MC-Unique: k9rS56UMMiK1PsCZaz336w-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2309087D54D;
+        Tue, 17 Aug 2021 14:54:27 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.10.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2645B19D9D;
+        Tue, 17 Aug 2021 14:54:23 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 9C7B7220637; Tue, 17 Aug 2021 10:54:22 -0400 (EDT)
+Date:   Tue, 17 Aug 2021 10:54:22 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [Virtio-fs] [PATCH v4 0/8] fuse,virtiofs: support per-file DAX
+Message-ID: <YRvNnmy5Mra/AUix@redhat.com>
+References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
+ <CAJfpeguw1hMOaxpDmjmijhf=-JEW95aEjxfVo_=D_LyWx8LDgw@mail.gmail.com>
+ <YRuCHvhICtTzMK04@work-vm>
+ <CAJfpegvM+S5Xru3Yfc88C64mecvco=f99y-TajQBDfkLD-S8zQ@mail.gmail.com>
+ <0896b1f6-c8c4-6071-c05b-a333c6cccacd@linux.alibaba.com>
 MIME-Version: 1.0
-References: <20210817101423.12367-1-selvakuma.s1@samsung.com>
- <CGME20210817101803epcas5p10cda1d52f8a8f1172e34b1f9cf8eef3b@epcas5p1.samsung.com>
- <20210817101423.12367-5-selvakuma.s1@samsung.com> <YRu1WFImFulfpk7s@kroah.com>
-In-Reply-To: <YRu1WFImFulfpk7s@kroah.com>
-From:   Nitesh Shetty <nitheshshetty@gmail.com>
-Date:   Tue, 17 Aug 2021 20:18:13 +0530
-Message-ID: <CAOSviJ2q-y8h=Pf4t7oUZoL7WHdYeFQQOnoeN6Ta07iPNjX-wg@mail.gmail.com>
-Subject: Re: [PATCH 4/7] block: Introduce a new ioctl for simple copy
-To:     Greg KH <greg@kroah.com>
-Cc:     SelvaKumar S <selvakuma.s1@samsung.com>,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dm-devel@redhat.com,
-        kbusch@kernel.org, axboe@kernel.dk, damien.lemoal@wdc.com,
-        asml.silence@gmail.com, johannes.thumshirn@wdc.com, hch@lst.de,
-        willy@infradead.org, kch@kernel.org, martin.petersen@oracle.com,
-        mpatocka@redhat.com, bvanassche@acm.org, djwong@kernel.org,
-        snitzer@redhat.com, agk@redhat.com, selvajove@gmail.com,
-        joshiiitr@gmail.com, nj.shetty@samsung.com, joshi.k@samsung.com,
-        javier.gonz@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0896b1f6-c8c4-6071-c05b-a333c6cccacd@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 17, 2021 at 6:40 PM Greg KH <greg@kroah.com> wrote:
->
-> On Tue, Aug 17, 2021 at 03:44:20PM +0530, SelvaKumar S wrote:
-> > From: Nitesh Shetty <nj.shetty@samsung.com>
-> >
-> > Add new BLKCOPY ioctl that offloads copying of one or more sources ranges
-> > to a destination in the device. COPY ioctl accepts a 'copy_range'
-> > structure that contains destination (in sectors), no of sources and
-> > pointer to the array of source ranges. Each source range is represented by
-> > 'range_entry' that contains start and length of source ranges (in sectors)
-> >
-> > MAX_COPY_NR_RANGE, limits the number of entries for the IOCTL and
-> > MAX_COPY_TOTAL_LENGTH limits the total copy length, IOCTL can handle.
-> >
-> > Example code, to issue BLKCOPY:
-> > /* Sample example to copy three source-ranges [0, 8] [16, 8] [32,8] to
-> >  * [64,24], on the same device */
-> >
-> > int main(void)
-> > {
-> >       int ret, fd;
-> >       struct range_entry source_range[] = {{.src = 0, .len = 8},
-> >               {.src = 16, .len = 8}, {.src = 32, .len = 8},};
-> >       struct copy_range cr;
-> >
-> >       cr.dest = 64;
-> >       cr.nr_range = 3;
-> >       cr.range_list = (__u64)&source_range;
-> >
-> >       fd = open("/dev/nvme0n1", O_RDWR);
-> >       if (fd < 0) return 1;
-> >
-> >       ret = ioctl(fd, BLKCOPY, &cr);
-> >       if (ret < 0) printf("copy failure\n");
-> >
-> >       close(fd);
-> >
-> >       return ret;
-> > }
-> >
-> > Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> > Signed-off-by: SelvaKumar S <selvakuma.s1@samsung.com>
-> > Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> > ---
-> >  block/ioctl.c           | 33 +++++++++++++++++++++++++++++++++
-> >  include/uapi/linux/fs.h |  8 ++++++++
-> >  2 files changed, 41 insertions(+)
-> >
-> > diff --git a/block/ioctl.c b/block/ioctl.c
-> > index eb0491e90b9a..2af56d01e9fe 100644
-> > --- a/block/ioctl.c
-> > +++ b/block/ioctl.c
-> > @@ -143,6 +143,37 @@ static int blk_ioctl_discard(struct block_device *bdev, fmode_t mode,
-> >                                   GFP_KERNEL, flags);
-> >  }
-> >
-> > +static int blk_ioctl_copy(struct block_device *bdev, fmode_t mode,
-> > +             unsigned long arg)
-> > +{
-> > +     struct copy_range crange;
-> > +     struct range_entry *rlist;
-> > +     int ret;
-> > +
-> > +     if (!(mode & FMODE_WRITE))
-> > +             return -EBADF;
-> > +
-> > +     if (copy_from_user(&crange, (void __user *)arg, sizeof(crange)))
-> > +             return -EFAULT;
-> > +
-> > +     rlist = kmalloc_array(crange.nr_range, sizeof(*rlist),
-> > +                     GFP_KERNEL);
->
-> No error checking for huge values of nr_range?  Is that wise?  You
-> really want userspace to be able to allocate "all" of the kernel memory
-> in the system?
->
-> thanks,
->
-> greg k-h
+On Tue, Aug 17, 2021 at 09:08:35PM +0800, JeffleXu wrote:
+> 
+> 
+> On 8/17/21 6:09 PM, Miklos Szeredi wrote:
+> > On Tue, 17 Aug 2021 at 11:32, Dr. David Alan Gilbert
+> > <dgilbert@redhat.com> wrote:
+> >>
+> >> * Miklos Szeredi (miklos@szeredi.hu) wrote:
+> >>> On Tue, 17 Aug 2021 at 04:22, Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+> >>>>
+> >>>> This patchset adds support of per-file DAX for virtiofs, which is
+> >>>> inspired by Ira Weiny's work on ext4[1] and xfs[2].
+> >>>
+> >>> Can you please explain the background of this change in detail?
+> >>>
+> >>> Why would an admin want to enable DAX for a particular virtiofs file
+> >>> and not for others?
+> >>
+> >> Where we're contending on virtiofs dax cache size it makes a lot of
+> >> sense; it's quite expensive for us to map something into the cache
+> >> (especially if we push something else out), so selectively DAXing files
+> >> that are expected to be hot could help reduce cache churn.
+> > 
+> > If this is a performance issue, it should be fixed in a way that
+> > doesn't require hand tuning like you suggest, I think.
+> > 
+> > I'm not sure what the  ext4/xfs case for per-file DAX is.  Maybe that
+> > can help understand the virtiofs case as well.
+> > 
+> 
+> Some hints why ext4/xfs support per-file DAX can be found [1] and [2].
+> 
+> "Boaz Harrosh wondered why someone might want to turn DAX off for a
+> persistent memory device. Hellwig said that the performance "could
+> suck"; Williams noted that the page cache could be useful for some
+> applications as well. Jan Kara pointed out that reads from persistent
+> memory are close to DRAM speed, but that writes are not; the page cache
+> could be helpful for frequent writes. Applications need to change to
+> fully take advantage of DAX, Williams said; part of the promise of
+> adding a flag is that users can do DAX on smaller granularities than a
+> full filesystem."
+> 
+> In summary, page cache is preferable in some cases, and thus more fine
+> grained way of DAX control is needed.
 
-We added a kernel imposed limit MAX_COPY_NR_RANGE for that purpose,
-but missed adding the check here.
-Will have that fixed. Thanks for pointing this out.
+In case of virtiofs, we are using page cache on host. So this probably
+is not a factor for us. Writes will go in page cache of host.
 
-Nitesh Shetty
+> 
+> 
+> As for virtiofs, Dr. David Alan Gilbert has mentioned that various files
+> may compete for limited DAX window resource.
+> 
+> Besides, supporting DAX for small files can be expensive. Small files
+> can consume DAX window resource rapidly, and if small files are accessed
+> only once, the cost of mmap/munmap on host can not be ignored.
+
+W.r.r access pattern, same applies to large files also. So if a section
+of large file is accessed only once, it will consume dax window as well
+and will have to be reclaimed.
+
+Dax in virtiofs provides speed gain only if map file once and access
+it multiple times. If that pattern does not hold true, then dax does
+not seem to provide speed gains and in fact might be slower than
+non-dax.
+
+So if there is a pattern where we know some files are accessed repeatedly
+while others are not, then enabling/disabling dax selectively will make
+sense. Question is how many workloads really know that and how will
+you make that decision. Do you have any data to back that up.
+
+W.r.t small file, is that a real concern. If that file is being accessed
+mutliple times, then we will still see the speed gain. Only down side
+is that there is little wastage of resources because our minimum dax
+mapping granularity is 2MB. I am wondering can we handle that by
+supporting other dax mapping granularities as well. say 256K and let
+users choose it.
+
+Thanks
+Vivek
+> 
+> 
+> [1]
+> https://lore.kernel.org/lkml/20200428002142.404144-1-ira.weiny@intel.com/
+> [2] https://lwn.net/Articles/787973/
+> 
+> -- 
+> Thanks,
+> Jeffle
+> 
+
