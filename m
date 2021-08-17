@@ -2,100 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 714843EEC98
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 14:38:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9EB43EECC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 14:49:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237125AbhHQMjD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 08:39:03 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:59053 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230323AbhHQMjC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 08:39:02 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S237321AbhHQMuJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 08:50:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52975 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229539AbhHQMuI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Aug 2021 08:50:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629204575;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xncVMYj4I8zKo79uuJkhEb9a+TNyKb9f4/f8x3DpaAI=;
+        b=LHeafVg7mbkc9jRtlZQTI1p1oFRFaMmDd19R7YZYUSY7O9NocUVrO2Cpcm9i339LbeteIS
+        10+vagYf2LesNteNipKujo3LVsDOQoufNiOnaPGb0H9Iu7O0auuVf0AEIdaZC8Vy0gNT12
+        oDRCcXnFXfqHdWeMOSD8k2scEVtZHNY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-529-kdxSo6RsMOKNgZGGOCZe3A-1; Tue, 17 Aug 2021 08:49:32 -0400
+X-MC-Unique: kdxSo6RsMOKNgZGGOCZe3A-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4GprDF2h3Tz9sSn;
-        Tue, 17 Aug 2021 22:38:21 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-        s=201909; t=1629203905;
-        bh=NQyXzwQlAo0xsgc18yZpAOusgLGX71Fk6ueV1qdw5rA=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=KYXSccDfXzjB2hBx15MoEIDf+kWmkDX50zC9GoNA+zRe2h6A0PbLhChR5Cdkwlare
-         Skall5IaM+JNYijtEffokiKW2vk3GcnrIXL9w6cyu8ks9EO2+V9EOw5R+GGu1PiYQv
-         D9NxQxRHQN8/BYGs83P6DhfXjoNRsufAILW0QoxjiCBqx4FvSdnLWb7NReYqLmQl3x
-         p3W/80//lGcl/AzT+8dWLeaLNqPIEQLIUJX653gw3u6fYoSlh4acLTdYAto8S4VL1T
-         o4r+VgRPi55oy+/sUiu+QbwiFA1DMF8zLkBn1HY/7VQPrYtD408/c7FtLIJoHUe5Qi
-         Ap9BkljmAJJGw==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Sathyanarayanan Kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Subject: Re: [PATCH v2 04/12] powerpc/pseries/svm: Add a powerpc version of
- prot_guest_has()
-In-Reply-To: <000f627ce20c6504dd8d118d85bd69e7717b752f.1628873970.git.thomas.lendacky@amd.com>
-References: <cover.1628873970.git.thomas.lendacky@amd.com>
- <000f627ce20c6504dd8d118d85bd69e7717b752f.1628873970.git.thomas.lendacky@amd.com>
-Date:   Tue, 17 Aug 2021 22:38:19 +1000
-Message-ID: <874kbogsas.fsf@mpe.ellerman.id.au>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CD485192CC4F;
+        Tue, 17 Aug 2021 12:49:30 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.10.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4BB68620DE;
+        Tue, 17 Aug 2021 12:49:23 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id B210D220637; Tue, 17 Aug 2021 08:39:02 -0400 (EDT)
+Date:   Tue, 17 Aug 2021 08:39:02 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>
+Subject: Re: [PATCH v4 0/8] fuse,virtiofs: support per-file DAX
+Message-ID: <YRut5sioYfc2M1p7@redhat.com>
+References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
+ <CAJfpeguw1hMOaxpDmjmijhf=-JEW95aEjxfVo_=D_LyWx8LDgw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguw1hMOaxpDmjmijhf=-JEW95aEjxfVo_=D_LyWx8LDgw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Tom Lendacky <thomas.lendacky@amd.com> writes:
-> Introduce a powerpc version of the prot_guest_has() function. This will
-> be used to replace the powerpc mem_encrypt_active() implementation, so
-> the implementation will initially only support the PATTR_MEM_ENCRYPT
-> attribute.
->
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
->  arch/powerpc/include/asm/protected_guest.h | 30 ++++++++++++++++++++++
->  arch/powerpc/platforms/pseries/Kconfig     |  1 +
->  2 files changed, 31 insertions(+)
->  create mode 100644 arch/powerpc/include/asm/protected_guest.h
->
-> diff --git a/arch/powerpc/include/asm/protected_guest.h b/arch/powerpc/include/asm/protected_guest.h
-> new file mode 100644
-> index 000000000000..ce55c2c7e534
-> --- /dev/null
-> +++ b/arch/powerpc/include/asm/protected_guest.h
-> @@ -0,0 +1,30 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Protected Guest (and Host) Capability checks
-> + *
-> + * Copyright (C) 2021 Advanced Micro Devices, Inc.
-> + *
-> + * Author: Tom Lendacky <thomas.lendacky@amd.com>
-> + */
-> +
-> +#ifndef _POWERPC_PROTECTED_GUEST_H
-> +#define _POWERPC_PROTECTED_GUEST_H
+On Tue, Aug 17, 2021 at 10:06:53AM +0200, Miklos Szeredi wrote:
+> On Tue, 17 Aug 2021 at 04:22, Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+> >
+> > This patchset adds support of per-file DAX for virtiofs, which is
+> > inspired by Ira Weiny's work on ext4[1] and xfs[2].
+> 
+> Can you please explain the background of this change in detail?
+> 
+> Why would an admin want to enable DAX for a particular virtiofs file
+> and not for others?
 
-Minor nit, we would usually use _ASM_POWERPC_PROTECTED_GUEST_H
+Initially I thought that they needed it because they are downloading
+files on the fly from server. So they don't want to enable dax on the file
+till file is completely downloaded. But later I realized that they should
+be able to block in FUSE_SETUPMAPPING call and make sure associated
+file section has been downloaded before returning and solve the problem.
+So that can't be the primary reason.
 
-Otherwise looks OK to me.
+Other reason mentioned I think was that only certain files benefit
+from DAX. But not much details are there after that. It will be nice
+to hear a more concrete use case and more details about this usage.
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+Thanks
+Vivek
 
-cheers
