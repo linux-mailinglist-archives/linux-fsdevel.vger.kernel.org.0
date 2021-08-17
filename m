@@ -2,92 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 589D33EF214
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 20:42:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE32B3EF259
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 20:57:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233257AbhHQSm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 14:42:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58406 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232964AbhHQSm6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 14:42:58 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3351C061764;
-        Tue, 17 Aug 2021 11:42:24 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f1175006a73053df3c19379.dip0.t-ipconnect.de [IPv6:2003:ec:2f11:7500:6a73:53d:f3c1:9379])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 67D751EC0559;
-        Tue, 17 Aug 2021 20:42:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1629225739;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=jwHmTRBxms0tT4WTh/1AEjKmHnFY2JEsZVwdmytONsI=;
-        b=KUP43T/bbaLdWz5U9wKbKVFP3nxo6dCpoeUMqYVESUmDVYPqF7FOKus0G3XWX3cM5OK90C
-        Z1nlDzK6oSVm6BUH703vTAa0VXAopMrWpN5FYaeDCJW+3HCE3QNA5Iw/IIGv3elLZjmMRp
-        2mfXuzpSvQPweo6qtlAFOCuqNaxW0kk=
-Date:   Tue, 17 Aug 2021 20:43:03 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Sathyanarayanan Kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH v2 06/12] x86/sev: Replace occurrences of sev_active()
- with prot_guest_has()
-Message-ID: <YRwDN+hkQpuSp+Vt@zn.tnic>
-References: <cover.1628873970.git.thomas.lendacky@amd.com>
- <2b3a8fc4659f2e7617399cecdcca549e0fa1dcb7.1628873970.git.thomas.lendacky@amd.com>
- <YRuJPqxFZ6ItZd++@zn.tnic>
- <b346ae1b-dbd3-cdbd-b5cd-b5ab9c304737@amd.com>
+        id S230373AbhHQS6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 14:58:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40454 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230040AbhHQS6V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Aug 2021 14:58:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6D6EE60F58;
+        Tue, 17 Aug 2021 18:57:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629226667;
+        bh=2XcXNJckxVKqAUkQr3OnLHOMlEXeXg+rMqgZHIzsIwQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZM19eiaP830Jjnq7WpgBd757cueDeUTKGXydS3fRcMzp35BHWeA1kbaTfHQntpUKg
+         aBJBvPvUYSoLD7drxmoiyEqyQAUlakf/ToVSnsJLrO+XBdkzVmBZQdCEZYYZK/2dpl
+         ITkP1rQYvN+ddd5YSddzCS4hHinnnovMXQGVQe9/C+VPzsdbYBFfrXixrd+qkGA/wS
+         hQ4yxQTfmnpI9MO6e1AmDv7dwk34YBa1uxj3S3I+WmUWHOgWA6sjb1mhPGK4Mgj7or
+         Vf6M2m1tkPuW5Jgsy4ClIceTF4N6Xjq+Qvqt1fSUnEWqEM7Kac8PNg3IgLHQvTl/GU
+         hOjJWx0rbekdA==
+Date:   Tue, 17 Aug 2021 11:57:46 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>, Chao Yu <chao@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] f2fs: remove broken support for allocating DIO writes
+Message-ID: <YRwGqsLgyKqdbkGX@google.com>
+References: <20210728015154.171507-1-ebiggers@kernel.org>
+ <YQRQRh1zUHSIzcC/@gmail.com>
+ <YQS5eBljtztWwOFE@mit.edu>
+ <YQd3Hbid/mFm0o24@sol.localdomain>
+ <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
+ <YQg4Lukc2dXX3aJc@google.com>
+ <b88328b4-db3e-0097-d8cc-f250ee678e5b@kernel.org>
+ <YQidOD/zNB17fd9v@google.com>
+ <YRsY6dyHyaChkQ6n@gmail.com>
+ <YRtMOqzZU4c1Vjje@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b346ae1b-dbd3-cdbd-b5cd-b5ab9c304737@amd.com>
+In-Reply-To: <YRtMOqzZU4c1Vjje@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 17, 2021 at 10:26:18AM -0500, Tom Lendacky wrote:
-> >>  	/*
-> >> -	 * If SME is active we need to be sure that kexec pages are
-> >> -	 * not encrypted because when we boot to the new kernel the
-> >> +	 * If host memory encryption is active we need to be sure that kexec
-> >> +	 * pages are not encrypted because when we boot to the new kernel the
-> >>  	 * pages won't be accessed encrypted (initially).
-> >>  	 */
+On 08/17, Christoph Hellwig wrote:
+> On Mon, Aug 16, 2021 at 07:03:21PM -0700, Eric Biggers wrote:
+> > Freeing preallocated blocks on error would be better than nothing, although note
+> > that the preallocated blocks may have filled an arbitrary sequence of holes --
+> > so simply truncating past EOF would *not* be sufficient.
 > > 
-> > That hunk belongs logically into the previous patch which removes
-> > sme_active().
+> > But really filesystems need to be designed to never expose uninitialized data,
+> > even if I/O errors or a sudden power failure occurs.  It is unfortunate that
+> > f2fs apparently wasn't designed with that goal in mind.
+> > 
+> > In any case, I don't think we can proceed with any other f2fs direct I/O
+> > improvements until this data leakage bug can be solved one way or another.  If
+> > my patch to remove support for allocating writes isn't acceptable and the
+> > desired solution is going to require some more invasive f2fs surgery, are you or
+> > Chao going to work on it?  I'm not sure there's much I can do here.
 > 
-> I was trying to keep the sev_active() changes separate... so even though
-> it's an SME thing, I kept it here. But I can move it to the previous
-> patch, it just might look strange.
+> Btw, this is generally a problem for buffered I/O as well, although the
+> window for exposing uninitialized blocks on a crash tends to be smaller.
 
-Oh I meant only the comment because it is a SME-related change. But not
-too important so whatever.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+How about adding a warning message when we meet an error with preallocated
+unwritten blocks? In the meantime, can we get the Eric's patches for iomap
+support? I feel that we only need to modify the preallocation and error
+handling parts?
