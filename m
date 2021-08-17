@@ -2,139 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92DDF3EE421
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 04:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA1883EE43C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 04:22:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233565AbhHQCD4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 22:03:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42354 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233394AbhHQCDz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 22:03:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5B1DD60F4B;
-        Tue, 17 Aug 2021 02:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629165803;
-        bh=M4kPfTtv/YCNqqegGw5hhYfKzsIq9j0CDrkKB3eJQAA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YHjQK8GsIwY+/8QKey2Ozcxv8CMsI7psHLUN/o2JVcJ3PCv+cyCLwnOKadOX5TwdR
-         cZFxmFPTvirzcDCotfnIicTVoJsyOW6eVYJHBzid0TGlKjJZULVTLOHL1gmIbIwxGj
-         lXHyAnfHDvY+8u5u07Qp4QCuhIVTUYyBCip+DSZiU1v216RhN+mlkTcG39yNtmLzSe
-         /xavcGH4T0ABqmoE2MhSeuclyZ0AwumqhdK1kW/KIlAYLicwZ+4a92koP2uvsxy2Q5
-         0CYD9vdnmZahKzFrYyUmV3f5fkrarm1i1WsbDrRwhETQ+c46eez/gA1j1W9AANQNv7
-         9MPUo7vBMjuvg==
-Date:   Mon, 16 Aug 2021 19:03:21 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Chao Yu <chao@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] f2fs: remove broken support for allocating DIO writes
-Message-ID: <YRsY6dyHyaChkQ6n@gmail.com>
-References: <20210728015154.171507-1-ebiggers@kernel.org>
- <YQRQRh1zUHSIzcC/@gmail.com>
- <YQS5eBljtztWwOFE@mit.edu>
- <YQd3Hbid/mFm0o24@sol.localdomain>
- <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
- <YQg4Lukc2dXX3aJc@google.com>
- <b88328b4-db3e-0097-d8cc-f250ee678e5b@kernel.org>
- <YQidOD/zNB17fd9v@google.com>
+        id S236315AbhHQCW4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 22:22:56 -0400
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:33600 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233528AbhHQCWy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Aug 2021 22:22:54 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UjH7KAY_1629166940;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UjH7KAY_1629166940)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 17 Aug 2021 10:22:21 +0800
+From:   Jeffle Xu <jefflexu@linux.alibaba.com>
+To:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, virtio-fs@redhat.com,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com
+Subject: [PATCH v4 0/8] fuse,virtiofs: support per-file DAX
+Date:   Tue, 17 Aug 2021 10:22:12 +0800
+Message-Id: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YQidOD/zNB17fd9v@google.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 02, 2021 at 06:34:48PM -0700, Jaegeuk Kim wrote:
-> On 08/03, Chao Yu wrote:
-> > On 2021/8/3 2:23, Jaegeuk Kim wrote:
-> > > On 08/02, Chao Yu wrote:
-> > > > On 2021/8/2 12:39, Eric Biggers wrote:
-> > > > > On Fri, Jul 30, 2021 at 10:46:16PM -0400, Theodore Ts'o wrote:
-> > > > > > On Fri, Jul 30, 2021 at 12:17:26PM -0700, Eric Biggers wrote:
-> > > > > > > > Currently, non-overwrite DIO writes are fundamentally unsafe on f2fs as
-> > > > > > > > they require preallocating blocks, but f2fs doesn't support unwritten
-> > > > > > > > blocks and therefore has to preallocate the blocks as regular blocks.
-> > > > > > > > f2fs has no way to reliably roll back such preallocations, so as a
-> > > > > > > > result, f2fs will leak uninitialized blocks to users if a DIO write
-> > > > > > > > doesn't fully complete.
-> > > > > > 
-> > > > > > There's another way of solving this problem which doesn't require
-> > > > > > supporting unwritten blocks.  What a file system *could* do is to
-> > > > > > allocate the blocks, but *not* update the on-disk data structures ---
-> > > > > > so the allocation happens in memory only, so you know that the
-> > > > > > physical blocks won't get used for another files, and then issue the
-> > > > > > data block writes.  On the block I/O completion, trigger a workqueue
-> > > > > > function which updates the on-disk metadata to assign physical blocks
-> > > > > > to the inode.
-> > > > > > 
-> > > > > > That way if you crash before the data I/O has a chance to complete,
-> > > > > > the on-disk logical block -> physical block map hasn't been updated
-> > > > > > yet, and so you don't need to worry about leaking uninitialized blocks.
-> > > > 
-> > > > Thanks for your suggestion, I think it makes sense.
-> > > > 
-> > > > > > 
-> > > > > > Cheers,
-> > > > > > 
-> > > > > > 					- Ted
-> > > > > 
-> > > > > Jaegeuk and Chao, any idea how feasible it would be for f2fs to do this?
-> > > > 
-> > > > Firstly, let's notice that below metadata will be touched during DIO
-> > > > preallocation flow:
-> > > > - log header
-> > > > - sit bitmap/count
-> > > > - free seg/sec bitmap/count
-> > > > - dirty seg/sec bitmap/count
-> > > > 
-> > > > And there is one case we need to concern about is: checkpoint() can be
-> > > > triggered randomly in between dio_preallocate() and dio_end_io(), we should
-> > > > not persist any DIO preallocation related metadata during checkpoint(),
-> > > > otherwise, sudden power-cut after the checkpoint will corrupt filesytem.
-> > > > 
-> > > > So it needs to well separate two kinds of metadata update:
-> > > > a) belong to dio preallocation
-> > > > b) the left one
-> > > > 
-> > > > After that, it will simply checkpoint() flow to just flush metadata b), for
-> > > > other flow, like GC, data/node allocation, it needs to query/update metadata
-> > > > after we combine metadata a) and b).
-> > > > 
-> > > > In addition, there is an existing in-memory log header framework in f2fs,
-> > > > based on this fwk, it's very easy for us to add a new in-memory log header
-> > > > for DIO preallocation.
-> > > > 
-> > > > So it seems feasible for me until now...
-> > > > 
-> > > > Jaegeuk, any other concerns about the implementation details?
-> > > 
-> > > Hmm, I'm still trying to deal with this as a corner case where the writes
-> > > haven't completed due to an error. How about keeping the preallocated block
-> > > offsets and releasing them if we get an error? Do we need to handle EIO right?
-> > 
-> > What about the case that CP + SPO following DIO preallocation? User will
-> > encounter uninitialized block after recovery.
-> 
-> I think buffered writes as a workaround can expose the last unwritten block as
-> well, if SPO happens right after block allocation. We may need to compromise
-> at certain level?
-> 
+This patchset adds support of per-file DAX for virtiofs, which is
+inspired by Ira Weiny's work on ext4[1] and xfs[2].
 
-Freeing preallocated blocks on error would be better than nothing, although note
-that the preallocated blocks may have filled an arbitrary sequence of holes --
-so simply truncating past EOF would *not* be sufficient.
+Any comment is welcome.
 
-But really filesystems need to be designed to never expose uninitialized data,
-even if I/O errors or a sudden power failure occurs.  It is unfortunate that
-f2fs apparently wasn't designed with that goal in mind.
+[1] commit 9cb20f94afcd ("fs/ext4: Make DAX mount option a tri-state")
+[2] commit 02beb2686ff9 ("fs/xfs: Make DAX mount option a tri-state")
 
-In any case, I don't think we can proceed with any other f2fs direct I/O
-improvements until this data leakage bug can be solved one way or another.  If
-my patch to remove support for allocating writes isn't acceptable and the
-desired solution is going to require some more invasive f2fs surgery, are you or
-Chao going to work on it?  I'm not sure there's much I can do here.
 
-- Eric
+changes since v3:
+- bug fix (patch 6): s/"IS_DAX(inode) != newdax"/"!!IS_DAX(inode) != newdax"
+- during FUSE_INIT, advertise capability for per-file DAX only when
+  mounted as "-o dax=inode" (patch 4)
+
+changes since v2:
+- modify fuse_show_options() accordingly to make it compatible with
+  new tri-state mount option (patch 2)
+- extract FUSE protocol changes into one seperate patch (patch 3)
+- FUSE server/client need to negotiate if they support per-file DAX
+  (patch 4)
+- extract DONT_CACHE logic into patch 6/7
+
+v3: https://www.spinics.net/lists/linux-fsdevel/msg200852.html
+v2: https://www.spinics.net/lists/linux-fsdevel/msg199584.html
+v1: https://www.spinics.net/lists/linux-virtualization/msg51008.html
+
+Jeffle Xu (8):
+  fuse: add fuse_should_enable_dax() helper
+  fuse: Make DAX mount option a tri-state
+  fuse: support per-file DAX
+  fuse: negotiate if server/client supports per-file DAX
+  fuse: enable per-file DAX
+  fuse: mark inode DONT_CACHE when per-file DAX indication changes
+  fuse: support changing per-file DAX flag inside guest
+  fuse: show '-o dax=inode' option only when FUSE server supports
+
+ fs/fuse/dax.c             | 32 +++++++++++++++++++++++++++++---
+ fs/fuse/file.c            |  4 ++--
+ fs/fuse/fuse_i.h          | 22 ++++++++++++++++++----
+ fs/fuse/inode.c           | 27 +++++++++++++++++++--------
+ fs/fuse/ioctl.c           | 15 +++++++++++++--
+ fs/fuse/virtio_fs.c       | 16 ++++++++++++++--
+ include/uapi/linux/fuse.h |  9 ++++++++-
+ 7 files changed, 103 insertions(+), 22 deletions(-)
+
+-- 
+2.27.0
+
