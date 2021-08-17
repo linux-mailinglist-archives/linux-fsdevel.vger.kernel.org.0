@@ -2,69 +2,327 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF83C3EF1C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 20:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D8F23EF1C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 20:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232378AbhHQSXr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 14:23:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53872 "EHLO
+        id S232620AbhHQSYh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 14:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230373AbhHQSXq (ORCPT
+        with ESMTP id S230373AbhHQSYg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 14:23:46 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EAF2C061764
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 11:23:13 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id qk33so40346501ejc.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 11:23:13 -0700 (PDT)
+        Tue, 17 Aug 2021 14:24:36 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21D65C061764
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 11:24:03 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id u13-20020a9d4d8d0000b02905177c9e0a4aso15421405otk.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 11:24:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=kGqWqj6A17xI0jC/kFHtsK8oi1GicSVgBWPrUCLv92M=;
-        b=m8y0r1rRw1BEZVtp26CkQSu1ZEikJ7LakPbFnSSIO9+fxZM9qaCk9yzlVQP+phB4fn
-         tb2ll8v3JfbA8U+7ZMqNmRSkb/iFur+Flsocu4I4vP9kQHulxLof4nNeVCrhPXR5wCHu
-         rahiFvaciFhrFOlbO2yi3O+G/WDw35PQ6Y0bRBku27Wt+iMopBaDTsV1ZgO+xldzFKKc
-         PHeZpU0rCZe2X1DnCNIUTqlfBteQ04OQlL0lvpAZOrelVSk/vsrw5axMgFThqjNvzKLx
-         8HObCxnCnyKia3yDooMeGxUbfXiZSTyr2m4dKMWMkvzgDingvXkBOoKT9rZqwZ6cIIll
-         aKTg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YD49dMesiuiGIs3lWpMyTY0Byv6nyQNGpd82y5PxhRY=;
+        b=TZftNj8CvCCiy65TKOpUe81x8LO0uA/WTMoxnTmWYwO6ScZee+PySmIdUQQX2KUcND
+         M5nOyP5T3yGjMrccflNjKCTyIp+Ro5MH+Wp6PD4NO93iFLr4BwB8DMG7JvDrGVkDA20X
+         N5VPbETpEfpB54HysxxPxeVqigYjLOUeVKEO2EyWnhKu2uw0YVMMy5KP0IYVP4wlKLXc
+         rL2r/KTXwGlGyG+pXNmLFwYFbHHjj8bWHWQk8MDFr2+Vt6r3HogVdhP4TwbTvF9dNOfS
+         snOaqNTS0jOPeY/sqys3NjA2VzYzWBxpnKd94N/PHqOmriSKtPVwx5eQqMy+CJ6l7Rqt
+         zhwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=kGqWqj6A17xI0jC/kFHtsK8oi1GicSVgBWPrUCLv92M=;
-        b=dzc9KRPT6uxcmmYzu+yeswxi6l0d/1yppVQQ4rdTiItJysTJOgE4j54wWkK7XRGta7
-         GLhZ7dxgAmE/O3m4fgWsKLk8az3myfrfkytUI3R/yTtmwFWn8e7GXPTD1kPSrsLiykUq
-         X34JpSML/vXXwxKhjljPBrv/gRe3wFKHVUiMX1VbSt0Jw8evX1Ys30pS4i3GK2FJQTJn
-         XeU+c9ksgPrTfqK2/+E1PJtP3XlKJHKih46grofnAJtOAV3NJocRVFOygFYeCu9zkjxG
-         dW/nALedEvMfqOJJU9Tc1EHgpfpnvfYrhND4aqnNmVR82emMph0STwWOWryedkWZjKmN
-         bsBg==
-X-Gm-Message-State: AOAM530DcXudtTTIVgaAVa5zHxLfWrjf6ZfvmHJCBHYuyCEoYjiImspA
-        NzjmbWl1pdYVKUEFfdAGiUEAj7TxZUEJJOlgKRXSwUjjYilbKw==
-X-Google-Smtp-Source: ABdhPJwh8kUNLejmYxJuDawzb50Mghzzgdd7JySFSFTf/9McNXBHjfCY3r5VasjQh3TcAZSNuIRLQIa0jlJY7TFxlHE=
-X-Received: by 2002:a17:906:2295:: with SMTP id p21mr5377710eja.67.1629224591035;
- Tue, 17 Aug 2021 11:23:11 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YD49dMesiuiGIs3lWpMyTY0Byv6nyQNGpd82y5PxhRY=;
+        b=uCK+Y5mCwJm/GwCzBV9q2znzYK2aU0UjzNVOruznTCIBG7U2PZgs12flnivS2j7w8B
+         aaJfkfJdJ/0kNn5tCP992Af9fJA+TC9jVlNoBWsNUcS607LSmsAEqaJPk5IcaSfFI0Y3
+         bnPUQMHPlUBOKUOcpZsWdX+mfCNufQgbReenIfBKHuugCzleVDlMUR/MR8eKgfVZ7JDQ
+         YpFq2YceyPhgjxg8FLySflMZH2c2fZnGPniDs+GLGh2HcB30UET92xD43qXtCzbDe5TG
+         PFxrk4ihG65esiFoOiBKSGHPpOfqTYKvpcIumuBhw6B4J/LcYQLK7TVkCaS1M/XQlmoo
+         sjXw==
+X-Gm-Message-State: AOAM532AIs5RtqvYeC7M6iN41cYTzd1g0/oX2v2RW9O9iXXv908qymMh
+        q08e1Sim5YzsWahhLsJL28OXkw==
+X-Google-Smtp-Source: ABdhPJyxH5BHKXrb2DJ+vzqG0rFTy0fjfbuLx8MZLavIT7jDUxTvZj4oPyoO8KVQC3MKokU6oJR9dg==
+X-Received: by 2002:a05:6830:31ac:: with SMTP id q12mr3647495ots.152.1629224642503;
+        Tue, 17 Aug 2021 11:24:02 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id 4sm627873oil.38.2021.08.17.11.24.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Aug 2021 11:24:02 -0700 (PDT)
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Olivier Langlois <olivier@trillion01.com>,
+        Tony Battersby <tonyb@cybernetics.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+ <198e912402486f66214146d4eabad8cb3f010a8e.camel@trillion01.com>
+ <87eeda7nqe.fsf@disp2133>
+ <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+ <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+ <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+ <87y2bh4jg5.fsf@disp2133>
+ <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+ <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+ <87pmwmn5m0.fsf@disp2133>
+ <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
+ <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
+ <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
+ <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
+ <0bc38b13-5a7e-8620-6dce-18731f15467e@kernel.dk>
+Message-ID: <24c795c6-4ec4-518e-bf9b-860207eee8c7@kernel.dk>
+Date:   Tue, 17 Aug 2021 12:24:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Received: by 2002:a17:907:3589:0:0:0:0 with HTTP; Tue, 17 Aug 2021 11:23:10
- -0700 (PDT)
-Reply-To: 1234567officialnicole@gmail.com
-From:   Miss Nicole <nicolemmmm1111@gmail.com>
-Date:   Tue, 17 Aug 2021 18:23:10 +0000
-Message-ID: <CACygHGn4p5EorLPZSfEA1EGHcz_USfV0JWjcTQtHHvNV-KHqng@mail.gmail.com>
-Subject: Hi
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0bc38b13-5a7e-8620-6dce-18731f15467e@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I hope you are doing well?
-My name is Miss Nicole I am an Official Air Force Pilot by profession
-I have ($ 3.700.000.00.USD) kept on my behalf,
-I am seeking for your assistance to help me to secure the fund out of
-this Country (Lome Republic) to your own country until I come over to
-your country. I have survived two bomb attacks here on rescue mission,
-which prompted me to search out for a reliable and trust worthy person
-to help me out
-Please reply immediately for more details about myself
-Regards
-Miss Official Nicole
+On 8/17/21 12:15 PM, Jens Axboe wrote:
+> On 8/15/21 2:42 PM, Olivier Langlois wrote:
+>> On Wed, 2021-08-11 at 19:55 -0600, Jens Axboe wrote:
+>>> On 8/10/21 3:48 PM, Tony Battersby wrote:
+>>>> On 8/5/21 9:06 AM, Olivier Langlois wrote:
+>>>>>
+>>>>> Hi all,
+>>>>>
+>>>>> I didn't forgot about this remaining issue and I have kept thinking
+>>>>> about it on and off.
+>>>>>
+>>>>> I did try the following on 5.12.19:
+>>>>>
+>>>>> diff --git a/fs/coredump.c b/fs/coredump.c
+>>>>> index 07afb5ddb1c4..614fe7a54c1a 100644
+>>>>> --- a/fs/coredump.c
+>>>>> +++ b/fs/coredump.c
+>>>>> @@ -41,6 +41,7 @@
+>>>>>  #include <linux/fs.h>
+>>>>>  #include <linux/path.h>
+>>>>>  #include <linux/timekeeping.h>
+>>>>> +#include <linux/io_uring.h>
+>>>>>  
+>>>>>  #include <linux/uaccess.h>
+>>>>>  #include <asm/mmu_context.h>
+>>>>> @@ -625,6 +626,8 @@ void do_coredump(const kernel_siginfo_t
+>>>>> *siginfo)
+>>>>>                 need_suid_safe = true;
+>>>>>         }
+>>>>>  
+>>>>> +       io_uring_files_cancel(current->files);
+>>>>> +
+>>>>>         retval = coredump_wait(siginfo->si_signo, &core_state);
+>>>>>         if (retval < 0)
+>>>>>                 goto fail_creds;
+>>>>> --
+>>>>> 2.32.0
+>>>>>
+>>>>> with my current understanding, io_uring_files_cancel is supposed to
+>>>>> cancel everything that might set the TIF_NOTIFY_SIGNAL.
+>>>>>
+>>>>> I must report that in my testing with generating a core dump
+>>>>> through a
+>>>>> pipe with the modif above, I still get truncated core dumps.
+>>>>>
+>>>>> systemd is having a weird error:
+>>>>> [ 2577.870742] systemd-coredump[4056]: Failed to get COMM: No such
+>>>>> process
+>>>>>
+>>>>> and nothing is captured
+>>>>>
+>>>>> so I have replaced it with a very simple shell:
+>>>>> $ cat /proc/sys/kernel/core_pattern 
+>>>>>> /home/lano1106/bin/pipe_core.sh %e %p
+>>>>>
+>>>>> ~/bin $ cat pipe_core.sh 
+>>>>> #!/bin/sh
+>>>>>
+>>>>> cat > /home/lano1106/core/core.$1.$2
+>>>>>
+>>>>> BFD: warning: /home/lano1106/core/core.test.10886 is truncated:
+>>>>> expected core file size >= 24129536, found: 61440
+>>>>>
+>>>>> I conclude from my attempt that maybe io_uring_files_cancel is not
+>>>>> 100%
+>>>>> cleaning everything that it should clean.
+>>>>>
+>>>>>
+>>>>>
+>>>> I just ran into this problem also - coredumps from an io_uring
+>>>> program
+>>>> to a pipe are truncated.  But I am using kernel 5.10.57, which does
+>>>> NOT
+>>>> have commit 12db8b690010 ("entry: Add support for TIF_NOTIFY_SIGNAL")
+>>>> or
+>>>> commit 06af8679449d ("coredump: Limit what can interrupt coredumps").
+>>>> Kernel 5.4 works though, so I bisected the problem to commit
+>>>> f38c7e3abfba ("io_uring: ensure async buffered read-retry is setup
+>>>> properly") in kernel 5.9.  Note that my io_uring program uses only
+>>>> async
+>>>> buffered reads, which may be why this particular commit makes a
+>>>> difference to my program.
+>>>>
+>>>> My io_uring program is a multi-purpose long-running program with many
+>>>> threads.  Most threads don't use io_uring but a few of them do. 
+>>>> Normally, my core dumps are piped to a program so that they can be
+>>>> compressed before being written to disk, but I can also test writing
+>>>> the
+>>>> core dumps directly to disk.  This is what I have found:
+>>>>
+>>>> *) Unpatched 5.10.57: if a thread that doesn't use io_uring triggers
+>>>> a
+>>>> coredump, the core file is written correctly, whether it is written
+>>>> to
+>>>> disk or piped to a program, even if another thread is using io_uring
+>>>> at
+>>>> the same time.
+>>>>
+>>>> *) Unpatched 5.10.57: if a thread that uses io_uring triggers a
+>>>> coredump, the core file is truncated, whether written directly to
+>>>> disk
+>>>> or piped to a program.
+>>>>
+>>>> *) 5.10.57+backport 06af8679449d: if a thread that uses io_uring
+>>>> triggers a coredump, and the core is written directly to disk, then
+>>>> it
+>>>> is written correctly.
+>>>>
+>>>> *) 5.10.57+backport 06af8679449d: if a thread that uses io_uring
+>>>> triggers a coredump, and the core is piped to a program, then it is
+>>>> truncated.
+>>>>
+>>>> *) 5.10.57+revert f38c7e3abfba: core dumps are written correctly,
+>>>> whether written directly to disk or piped to a program.
+>>>
+>>> That is very interesting. Like Olivier mentioned, it's not that actual
+>>> commit, but rather the change of behavior implemented by it. Before
+>>> that
+>>> commit, we'd hit the async workers more often, whereas after we do the
+>>> correct retry method where it's driven by the wakeup when the page is
+>>> unlocked. This is purely speculation, but perhaps the fact that the
+>>> process changes state potentially mid dump is why the dump ends up
+>>> being
+>>> truncated?
+>>>
+>>> I'd love to dive into this and try and figure it out. Absent a test
+>>> case, at least the above gives me an idea of what to try out. I'll see
+>>> if it makes it easier for me to create a case that does result in a
+>>> truncated core dump.
+>>>
+>> Jens,
+>>
+>> When I have first encountered the issue, the very first thing that I
+>> did try was to create a simple test program that would synthetize the
+>> problem.
+>>
+>> After few time consumming failed attempts, I just gave up the idea and
+>> simply settle to my prod program that showcase systematically the
+>> problem every time that I kill the process with a SEGV signal.
+>>
+>> In a nutshell, all the program does is to issue read operations with
+>> io_uring on a TCP socket on which there is a constant data stream.
+>>
+>> Now that I have a better understanding of what is going on, I think
+>> that one way that could reproduce the problem consistently could be
+>> along those lines:
+>>
+>> 1. Create a pipe
+>> 2. fork a child
+>> 3. Initiate a read operation on the pipe with io_uring from the child
+>> 4. Let the parent kill its child with a core dump generating signal.
+>> 5. Write something in the pipe from the parent so that the io_uring
+>> read operation completes while the core dump is generated.
+>>
+>> I guess that I'll end up doing that if I cannot fix the issue with my
+>> current setup but here is what I have attempted so far:
+>>
+>> 1. Call io_uring_files_cancel from do_coredump
+>> 2. Same as #1 but also make sure that TIF_NOTIFY_SIGNAL is cleared on
+>> returning from io_uring_files_cancel
+>>
+>> Those attempts didn't work but lurking in the io_uring dev mailing list
+>> is starting to pay off. I thought that I did reach the bottom of the
+>> rabbit hole in my journey of understanding io_uring but the recent
+>> patch set sent by Hao Xu
+>>
+>> https://lore.kernel.org/io-uring/90fce498-968e-6812-7b6a-fdf8520ea8d9@kernel.dk/T/#t
+>>
+>> made me realize that I still haven't assimilated all the small io_uring
+>> nuances...
+>>
+>> Here is my feedback. From my casual io_uring code reader point of view,
+>> it is not 100% obvious what the difference is between
+>> io_uring_files_cancel and io_uring_task_cancel
+>>
+>> It seems like io_uring_files_cancel is cancelling polls only if they
+>> have the REQ_F_INFLIGHT flag set.
+>>
+>> I have no idea what an inflight request means and why someone would
+>> want to call io_uring_files_cancel over io_uring_task_cancel.
+>>
+>> I guess that if I was to meditate on the question for few hours, I
+>> would at some point get some illumination strike me but I believe that
+>> it could be a good idea to document in the code those concepts for
+>> helping casual readers...
+>>
+>> Bottomline, I now understand that io_uring_files_cancel does not cancel
+>> all the requests. Therefore, without fully understanding what I am
+>> doing, I am going to replace my call to io_uring_files_cancel from
+>> do_coredump with io_uring_task_cancel and see if this finally fix the
+>> issue for good.
+>>
+>> What I am trying to do is to cancel pending io_uring requests to make
+>> sure that TIF_NOTIFY_SIGNAL isn't set while core dump is generated.
+>>
+>> Maybe another solution would simply be to modify __dump_emit to make it
+>> resilient to TIF_NOTIFY_SIGNAL as Eric W. Biederman originally
+>> suggested.
+>>
+>> or maybe do both...
+>>
+>> Not sure which approach is best. If someone has an opinion, I would be
+>> curious to hear it.
+> 
+> It does indeed sound like it's TIF_NOTIFY_SIGNAL that will trigger some
+> signal_pending() and cause an interruption of the core dump. Just out of
+> curiosity, what is your /proc/sys/kernel/core_pattern set to? If it's
+> set to some piped process, can you try and set it to 'core' and see if
+> that eliminates the truncation of the core dumps for your case?
+
+And assuming that works, then I suspect this one would fix your issue
+even with a piped core dump:
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 07afb5ddb1c4..852737a9ccbf 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -41,6 +41,7 @@
+ #include <linux/fs.h>
+ #include <linux/path.h>
+ #include <linux/timekeeping.h>
++#include <linux/io_uring.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -603,6 +604,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 	};
+ 
+ 	audit_core_dumps(siginfo->si_signo);
++	io_uring_task_cancel();
+ 
+ 	binfmt = mm->binfmt;
+ 	if (!binfmt || !binfmt->core_dump)
+
+-- 
+Jens Axboe
+
